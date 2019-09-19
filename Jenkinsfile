@@ -10,9 +10,6 @@ pipeline {
     options {
         buildDiscarder(logRotator(numToKeepStr: '30'))
     }
-    parameters {
-        booleanParam(defaultValue: true, description: 'Source Analysis', name: 'isAnalysis')
-    }
     environment {
         //Use Pipeline Utility Steps plugin to read information from pom.xml into env variables
         IMAGE = readMavenPom().getArtifactId()
@@ -33,7 +30,7 @@ pipeline {
                 sh "mvn -version"
                 sh "./get-data.sh"
                 sh "mvn license:aggregate-add-third-party license:aggregate-download-licenses install deploy"
-                sh "./code-analysis.sh"
+                sh 'mvn sonar:sonar -Dsonar.host.url=https://build.mtnfog.com/sonarqube -Dsonar.login=a8938795a48d1da708a9a139030077c98308390e'
             }
             post {
                 always {
