@@ -33,24 +33,12 @@ pipeline {
                 sh "mvn -version"
                 sh "./get-data.sh"
                 sh "mvn license:aggregate-add-third-party license:aggregate-download-licenses install deploy"
+                sh "./code-analysis.sh"
             }
             post {
                 always {
                     jiraSendBuildInfo site: 'mtnfog.atlassian.net'
                 }
-            }
-        }
-        stage ('Analysis') {
-            when {
-                expression {
-                    if (env.ISANALYSIS == "true") {
-                        return true
-                    }
-                    return false
-                }
-            }
-            steps {
-                sh "./code-analysis.sh"
             }
         }
     }
