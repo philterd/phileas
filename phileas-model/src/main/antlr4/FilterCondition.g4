@@ -1,6 +1,6 @@
 grammar FilterCondition;
 
-@header {package com.mtnfog.philter.model.conditions.parser;}
+@header {package com.mtnfog.phineas.model.conditions.parser;}
 
 expression: (
     | 'population' COMPARATOR NUMBER (AND expression)?
