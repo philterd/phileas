@@ -15,8 +15,6 @@ import com.mtnfog.phileas.services.anonymization.*;
 import com.mtnfog.phileas.services.filters.custom.PhoneNumberRulesFilter;
 import com.mtnfog.phileas.services.filters.regex.*;
 import com.mtnfog.phileas.services.postfilters.PartOfSpeechFalsePositiveFilter;
-import com.mtnfog.phileas.services.anonymization.*;
-import com.mtnfog.phileas.services.filters.regex.*;
 import com.mtnfog.phileas.store.MongoDBStore;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
@@ -30,11 +28,11 @@ import java.util.*;
 
 import static java.util.stream.Collectors.toList;
 
-public class DefaultPhileasService implements FilterService, Serializable {
+public class PhileasFilterService implements FilterService, Serializable {
 
 	private static final long serialVersionUID = 6998388861197152049L;
 
-	private static final Logger LOGGER = LogManager.getLogger(DefaultPhileasService.class);
+	private static final Logger LOGGER = LogManager.getLogger(PhileasFilterService.class);
 
     private List<RulesFilter> rulesFilters;
     private List<DynamicFilter> dynamicFilters;
@@ -45,7 +43,7 @@ public class DefaultPhileasService implements FilterService, Serializable {
     private Map<String, FilterProfile> filterProfiles;
     private List<FilterProfileService> filterProfileServices;
     
-    public DefaultPhileasService(Properties applicationProperties, List<FilterProfileService> filterProfileServices, AnonymizationCacheService anonymizationCacheService) throws IOException {
+    public PhileasFilterService(Properties applicationProperties, List<FilterProfileService> filterProfileServices, AnonymizationCacheService anonymizationCacheService) throws IOException {
 
         this.filterProfileServices = filterProfileServices;
         this.rulesFilters = new LinkedList<>();
@@ -108,7 +106,7 @@ public class DefaultPhileasService implements FilterService, Serializable {
         // Configure post filters.
         final boolean posTagPostFilterEnabled = StringUtils.equalsIgnoreCase(applicationProperties.getProperty("post.filter.pos.enabled", "true"), "true");
         if(posTagPostFilterEnabled) {
-            final InputStream is = DefaultPhileasService.class.getClassLoader().getResourceAsStream("en-pos-perceptron.bin");
+            final InputStream is = PhileasFilterService.class.getClassLoader().getResourceAsStream("en-pos-perceptron.bin");
             postFilters.add(new PartOfSpeechFalsePositiveFilter(is));
         }
 

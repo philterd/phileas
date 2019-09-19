@@ -3,7 +3,7 @@ package com.mtnfog.test.phileas.services.postfilters;
 import com.mtnfog.phileas.model.enums.FilterType;
 import com.mtnfog.phileas.model.objects.Span;
 import com.mtnfog.phileas.model.services.PostFilter;
-import com.mtnfog.phileas.services.DefaultPhileasService;
+import com.mtnfog.phileas.services.PhileasFilterService;
 import com.mtnfog.phileas.services.postfilters.PartOfSpeechFalsePositiveFilter;
 import opennlp.tools.postag.POSModel;
 import org.junit.Assert;
@@ -18,7 +18,7 @@ public class PartOfSpeechFalsePositiveFilterTest {
     @Test
     public void filter1() throws Exception {
 
-        final InputStream is = DefaultPhileasService.class.getClassLoader().getResourceAsStream("en-pos-perceptron.bin");
+        final InputStream is = PhileasFilterService.class.getClassLoader().getResourceAsStream("en-pos-perceptron.bin");
         final POSModel model = new POSModel(is);
 
         final List<Span> spans = new LinkedList<>();
@@ -34,7 +34,7 @@ public class PartOfSpeechFalsePositiveFilterTest {
     @Test
     public void filter2() throws Exception {
 
-        final InputStream is = DefaultPhileasService.class.getClassLoader().getResourceAsStream("en-pos-perceptron.bin");
+        final InputStream is = PhileasFilterService.class.getClassLoader().getResourceAsStream("en-pos-perceptron.bin");
         final POSModel model = new POSModel(is);
 
         final List<Span> spans = new LinkedList<>();

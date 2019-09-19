@@ -9,7 +9,7 @@ import com.mtnfog.phileas.model.profile.filters.strategies.rules.*;
 import com.mtnfog.phileas.model.responses.FilterResponse;
 import com.mtnfog.phileas.model.services.AnonymizationCacheService;
 import com.mtnfog.phileas.model.services.FilterProfileService;
-import com.mtnfog.phileas.services.DefaultPhileasService;
+import com.mtnfog.phileas.services.PhileasFilterService;
 import com.mtnfog.phileas.services.cache.LocalAnonymizationCacheService;
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
@@ -29,9 +29,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
-public class DefaultPhileasServiceTest {
+public class PhileasFilterServiceTest {
 
-    private static final Logger LOGGER = LogManager.getLogger(DefaultPhileasServiceTest.class);
+    private static final Logger LOGGER = LogManager.getLogger(PhileasFilterServiceTest.class);
 
     private String INDEXES_DIRECTORY = "/mtnfog/code/bitbucket/philter/philter/distribution/indexes/";
     private Gson gson = new Gson();
@@ -58,7 +58,7 @@ public class DefaultPhileasServiceTest {
         LocalFilterProfileService filterProfileService = new LocalFilterProfileService(applicationProperties);
         List<FilterProfileService> filterProfileServices = Arrays.asList(filterProfileService);
 
-        DefaultPhileasService service = new DefaultPhileasService(applicationProperties, filterProfileServices, anonymizationCacheService);
+        PhileasFilterService service = new PhileasFilterService(applicationProperties, filterProfileServices, anonymizationCacheService);
         final FilterResponse response = service.filter("default", "context", "My email is test@something.com");
 
         LOGGER.info(response.getFilteredText());
