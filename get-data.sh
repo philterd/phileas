@@ -10,4 +10,4 @@ fi
 echo "Getting Phineas development data from S3 for version $VERSION."
 
 mkdir -p data
-aws s3 sync s3://mtnfog-development/phineas-data/$VERSION/ ./data/
+aws s3 sync s3://mtnfog-development/phileas-data/$VERSION/ ./data/
