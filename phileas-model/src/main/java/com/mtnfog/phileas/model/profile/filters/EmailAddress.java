@@ -1,0 +1,23 @@
+package com.mtnfog.phileas.model.profile.filters;
+
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+import com.mtnfog.phileas.model.profile.filters.strategies.rules.EmailAddressFilterStrategy;
+
+import java.util.List;
+
+public class EmailAddress {
+
+    @SerializedName("emailAddressFilterStrategies")
+    @Expose
+    private List<EmailAddressFilterStrategy> emailAddressFilterStrategies;
+
+    public List<EmailAddressFilterStrategy> getEmailAddressFilterStrategies() {
+        return emailAddressFilterStrategies;
+    }
+
+    public void setEmailAddressFilterStrategies(List<EmailAddressFilterStrategy> emailAddressFilterStrategies) {
+        this.emailAddressFilterStrategies = emailAddressFilterStrategies;
+    }
+
+}

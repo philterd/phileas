@@ -1,0 +1,71 @@
+package com.mtnfog.test.phileas.services.filters.dictionary.lucene;
+
+import com.mtnfog.phileas.model.enums.FilterType;
+import com.mtnfog.phileas.model.enums.SensitivityLevel;
+import com.mtnfog.phileas.model.filter.rules.dictionary.LuceneDictionaryFilter;
+import com.mtnfog.phileas.model.objects.Span;
+import com.mtnfog.phileas.model.services.AnonymizationService;
+import com.mtnfog.phileas.services.anonymization.HospitalAbbreviationAnonymizationService;
+import com.mtnfog.phileas.services.cache.LocalAnonymizationCacheService;
+import com.mtnfog.test.phileas.services.filters.AbstractFilterTest;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.text.WordUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
+
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.Charset;
+import java.util.List;
+
+public class HospitalAbbreviationFilterTest extends AbstractFilterTest {
+
+    private static final Logger LOGGER = LogManager.getLogger(HospitalAbbreviationFilterTest.class);
+
+    private String INDEX_DIRECTORY = getIndexDirectory("hospital-abbreviations");
+
+    @Test
+    @Ignore
+    public void makeAbbreviations() throws IOException {
+
+        final String file = "/mtnfog/code/bitbucket/philter/philter/index-data/hospitals";
+        final InputStream is = new FileInputStream(file);
+        final List<String> lines = IOUtils.readLines(is, Charset.defaultCharset());
+
+        for(String line : lines) {
+
+            final String abbreviated = WordUtils.initials(line, null);
+
+            System.out.println(abbreviated);
+
+        }
+
+        is.close();
+
+    }
+
+    @Before
+    public void before() {
+        INDEX_DIRECTORY = System.getProperty( "os.name" ).contains( "indow" ) ? INDEX_DIRECTORY.substring(1) : INDEX_DIRECTORY;
+        LOGGER.info("Using index directory {}", INDEX_DIRECTORY);
+    }
+
+    @Test
+    public void filter1() throws IOException {
+
+        final AnonymizationService anonymizationService = new HospitalAbbreviationAnonymizationService(new LocalAnonymizationCacheService());
+
+        final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.HOSPITAL, INDEX_DIRECTORY, LuceneDictionaryFilter.HOSPITAL_ABBREVIATIONS_DISTANCES, anonymizationService);
+
+        final List<Span> spans = filter.filter(getFilterProfile(SensitivityLevel.HIGH), "context", "documentid","Went to WMC");
+        showSpans(spans);
+        Assert.assertEquals(4, spans.size());
+
+    }
+
+}

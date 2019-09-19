@@ -1,0 +1,16 @@
+T__0=1
+T__1=2
+T__2=3
+T__3=4
+T__4=5
+TYPE=6
+AND=7
+COMPARATOR=8
+NUMBER=9
+WORD=10
+WS=11
+'population'=1
+'token'=2
+'"'=3
+'type'=4
+'confidence'=5
