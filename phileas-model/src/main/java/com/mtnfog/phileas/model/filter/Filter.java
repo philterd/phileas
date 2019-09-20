@@ -81,6 +81,8 @@ public abstract class Filter implements Serializable {
 
     public static List<? extends AbstractFilterStrategy> getFilterStrategies(FilterProfile filterProfile, FilterType filterType) {
 
+        LOGGER.info("Getting filter strategies for filter type {}", filterType.getType());
+
         if(filterType == FilterType.AGE) {
             return filterProfile.getIdentifiers().getAge().getAgeFilterStrategies();
         } else if(filterType == FilterType.CREDIT_CARD) {

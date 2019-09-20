@@ -27,7 +27,7 @@ public class ZipCodeFilterStrategy extends AbstractFilterStrategy {
 
     private static FilterType filterType = FilterType.ZIP_CODE;
 
-    private ZipCodeMetadataService zipCodeMetadataService;
+    private transient ZipCodeMetadataService zipCodeMetadataService;
 
     public ZipCodeFilterStrategy() throws IOException {
         this.zipCodeMetadataService = new ZipCodeMetadataService();

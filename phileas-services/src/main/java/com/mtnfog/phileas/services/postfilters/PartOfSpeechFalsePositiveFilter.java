@@ -65,7 +65,7 @@ public class PartOfSpeechFalsePositiveFilter extends PostFilter implements Seria
             final double prob = probs[i];
             final String tag = tags.get(i);
 
-            LOGGER.info("Token: {}, POS: {}, Prob: {}", token, tag, prob);
+            // LOGGER.info("Token: {}, POS: {}, Prob: {}", token, tag, prob);
 
             if(StringUtils.equalsIgnoreCase(token, spanText)) {
 
@@ -77,7 +77,7 @@ public class PartOfSpeechFalsePositiveFilter extends PostFilter implements Seria
 
                     // TODO: PHI-117: Consider the probabilities of the POS tags.
 
-                    LOGGER.info("Token {} is not post-filtered by POS.", spanText);
+                    // LOGGER.info("Token {} is not post-filtered by POS.", spanText);
 
                     return true;
 

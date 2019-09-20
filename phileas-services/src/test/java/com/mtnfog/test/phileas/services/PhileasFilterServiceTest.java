@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.mtnfog.phileas.model.profile.FilterProfile;
 import com.mtnfog.phileas.model.profile.Identifiers;
 import com.mtnfog.phileas.model.profile.filters.*;
+import com.mtnfog.phileas.model.profile.filters.strategies.ai.NerFilterStrategy;
 import com.mtnfog.phileas.model.profile.filters.strategies.dynamic.*;
 import com.mtnfog.phileas.model.profile.filters.strategies.rules.*;
 import com.mtnfog.phileas.model.responses.FilterResponse;
@@ -39,6 +40,14 @@ public class PhileasFilterServiceTest {
     @Before
     public void before() {
         INDEXES_DIRECTORY = System.getProperty( "os.name" ).contains( "indow" ) ? INDEXES_DIRECTORY.substring(1) : INDEXES_DIRECTORY;
+    }
+
+    @Test
+    public void filterProfile() throws IOException {
+
+        final FilterProfile filterProfile = getFilterProfile();
+        LOGGER.info(gson.toJson(filterProfile));
+
     }
 
     @Test
@@ -128,7 +137,12 @@ public class PhileasFilterServiceTest {
         zipCodeFilterStrategy.setTruncateDigits(2);
 
         ZipCode zipCode = new ZipCode();
-      //  zipCode.setZipCodeFilterStrategy(zipCodeFilterStrategy);
+        zipCode.setZipCodeFilterStrategies(Arrays.asList(zipCodeFilterStrategy));
+
+        NerFilterStrategy nerFilterStrategy = new NerFilterStrategy();
+
+        Ner ner = new Ner();
+        ner.setNerStrategies(Arrays.asList(nerFilterStrategy));
 
         // ----------------------------------------------------------------------------------
 
@@ -183,6 +197,7 @@ public class PhileasFilterServiceTest {
         identifiers.setUrl(url);
         identifiers.setVin(vin);
         identifiers.setZipCode(zipCode);
+        identifiers.setNer(ner);
 
         /*identifiers.setCity(city);
         identifiers.setCounty(county);
