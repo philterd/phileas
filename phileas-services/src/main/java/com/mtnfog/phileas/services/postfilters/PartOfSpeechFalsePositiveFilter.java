@@ -71,7 +71,7 @@ public class PartOfSpeechFalsePositiveFilter extends PostFilter implements Seria
 
                 // https://cs.nyu.edu/grishman/jet/guide/PennPOS.html
 
-                if(tag.startsWith("NN") || tag.startsWith("NNS") || tag.startsWith("NNPS")) {
+                if(tag.startsWith("NN") || tag.startsWith("NNP") || tag.startsWith("NNS") || tag.startsWith("NNPS")) {
 
                     //LOGGER.info("Span text: {}, POS: {}", spanText, tag);
 
