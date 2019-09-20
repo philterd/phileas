@@ -19,6 +19,8 @@ pipeline {
     stages {
         stage ('Initialize') {
             steps {
+                deleteDir()
+                checkout scm
                 sh '''
                     echo "PATH = ${PATH}"
                     echo "M2_HOME = ${M2_HOME}"
@@ -50,9 +52,6 @@ pipeline {
             mail to: 'jeff.zemerick@mtnfog.com',
                  subject: "Failed Pipeline: ${currentBuild.fullDisplayName}",
                  body: "Something is wrong with ${env.BUILD_URL}"
-        }
-        always {
-            deleteDir()
         }
     }
 }
