@@ -55,7 +55,9 @@ public class PartOfSpeechFalsePositiveFilter extends PostFilter implements Seria
 
         for(int i = 0; i < tokens.length; i++) {
 
-            String token = tokens[i].replaceAll("\\p{Punct}", "");
+            // PHL-1: Allow for multi-word tokens.
+
+            final String token = tokens[i].replaceAll("\\p{Punct}", "");
 
             final Sequence sequence = sequences[0];
 
@@ -65,19 +67,21 @@ public class PartOfSpeechFalsePositiveFilter extends PostFilter implements Seria
             final double prob = probs[i];
             final String tag = tags.get(i);
 
-            // LOGGER.info("Token: {}, POS: {}, Prob: {}", token, tag, prob);
+            //LOGGER.info("Token: {}, POS: {}, Prob: {}", token, tag, prob);
+
+            //System.out.println("Token: " + token + "\t;\tspanText = " + spanText);
 
             if(StringUtils.equalsIgnoreCase(token, spanText)) {
 
                 // https://cs.nyu.edu/grishman/jet/guide/PennPOS.html
-
+                //System.out.println("Tag = " + tag);
                 if(tag.startsWith("NN") || tag.startsWith("NNP") || tag.startsWith("NNS") || tag.startsWith("NNPS")) {
 
                     //LOGGER.info("Span text: {}, POS: {}", spanText, tag);
 
                     // TODO: PHI-117: Consider the probabilities of the POS tags.
 
-                    // LOGGER.info("Token {} is not post-filtered by POS.", spanText);
+                    //LOGGER.info("Token {} is not post-filtered by POS.", spanText);
 
                     return true;
 
@@ -87,7 +91,7 @@ public class PartOfSpeechFalsePositiveFilter extends PostFilter implements Seria
 
         }
 
-        // LOGGER.info("Token {} is post-filtered by POS.", spanText);
+        //LOGGER.info("Token {} is post-filtered by POS.", spanText);
 
         return false;
 

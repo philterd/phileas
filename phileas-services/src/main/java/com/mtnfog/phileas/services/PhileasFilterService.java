@@ -104,11 +104,12 @@ public class PhileasFilterService implements FilterService, Serializable {
         dynamicFilters.add(new PyTorchFilter(philterNerEndpoint, FilterType.NER_ENTITY, "LOC", stats, metricsService, new LocationsAnonymizationService(anonymizationCacheService)));
 
         // Configure post filters.
-        final boolean posTagPostFilterEnabled = StringUtils.equalsIgnoreCase(applicationProperties.getProperty("post.filter.pos.enabled", "true"), "true");
+        // PHL-1: Allow for multi-word tokens.
+        /*final boolean posTagPostFilterEnabled = StringUtils.equalsIgnoreCase(applicationProperties.getProperty("post.filter.pos.enabled", "true"), "true");
         if(posTagPostFilterEnabled) {
             final InputStream is = PhileasFilterService.class.getClassLoader().getResourceAsStream("en-pos-perceptron.bin");
             postFilters.add(new PartOfSpeechFalsePositiveFilter(is));
-        }
+        }*/
 
     }
 
