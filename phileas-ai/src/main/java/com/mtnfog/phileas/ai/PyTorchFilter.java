@@ -10,6 +10,7 @@ import com.mtnfog.phileas.model.profile.filters.strategies.AbstractFilterStrateg
 import com.mtnfog.phileas.model.profile.filters.strategies.ai.NerFilterStrategy;
 import com.mtnfog.phileas.model.services.AnonymizationService;
 import com.mtnfog.phileas.model.services.MetricsService;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -30,18 +31,21 @@ public class PyTorchFilter extends NerFilter implements Serializable {
     private static final Logger LOGGER = LogManager.getLogger(PyTorchFilter.class);
 
     private transient PyTorchRestService service;
-    private String entityType;
+    private String tag;
 
     // TODO: Can I pass pre-tokenized strings to the REST service so Philter has control over the tokenizing?
 
-    public PyTorchFilter(String baseUrl, FilterType filterType, String entityType,
+    // Response will look like:
+    // [{"text": "George Washington", "tag": "PER", "score": 0.2987019270658493, "start": 0, "end": 17}, {"text": "Virginia", "tag": "LOC", "score": 0.3510116934776306, "start": 95, "end": 103}]
+
+    public PyTorchFilter(String baseUrl, FilterType filterType, String tag,
                          Map<String, DescriptiveStatistics> stats,
                          MetricsService metricsService,
                          AnonymizationService anonymizationService) {
 
         super(filterType, stats, metricsService, anonymizationService);
 
-        this.entityType = entityType;
+        this.tag = tag;
 
         final Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(baseUrl)
@@ -54,20 +58,25 @@ public class PyTorchFilter extends NerFilter implements Serializable {
     }
 
     @Override
-    public List<Span> filter(FilterProfile filterProfile, String context, String documentId, String input) {
+    public List<Span> filter(FilterProfile filterProfile, String context, String documentId, String input) throws IOException {
 
         final List<Span> spans = new LinkedList<>();
 
-        for(AbstractFilterStrategy strategy : Filter.getFilterStrategies(filterProfile, filterType)) {
+        final List<? extends AbstractFilterStrategy> strategies = Filter.getFilterStrategies(filterProfile, filterType);
+
+        LOGGER.debug("Applying {} NER filtering strategies.", strategies.size());
+
+        for(AbstractFilterStrategy strategy : strategies) {
 
             final SensitivityLevel sensitivityLevel = SensitivityLevel.fromName(strategy.getSensitivityLevel());
 
-            try {
+            final Response<List<PhileasSpan>> response = service.process(input).execute();
+            final List<PhileasSpan> phileasSpans = response.body();
 
-                final Response<List<PhileasSpan>> response = service.process(input).execute();
-                final List<PhileasSpan> phileasSpans = response.body();
-                
-                for(PhileasSpan p : phileasSpans) {
+            for(PhileasSpan p : phileasSpans) {
+
+                // Only interested in spans matching the tag we are looking for, e.g. PER, LOC.
+                if(StringUtils.equalsIgnoreCase(p.getTag(), tag)) {
 
                     final Span span = createSpan(filterProfile, context, documentId, p.getText(),
                             p.getTag(), p.getStart(), p.getEnd(), p.getScore(), sensitivityLevel);
@@ -76,11 +85,11 @@ public class PyTorchFilter extends NerFilter implements Serializable {
 
                 }
 
-            } catch (IOException ex) {
-                LOGGER.error("Unable to extract.", ex);
             }
 
         }
+
+        LOGGER.debug("Returning {} NER spans.", spans.size());
 
         return spans;
 
@@ -89,7 +98,7 @@ public class PyTorchFilter extends NerFilter implements Serializable {
     private Span createSpan(FilterProfile filterProfile, String context, String documentId, String text,
                             String type, int start, int end, double confidence, SensitivityLevel sensitivityLevel) throws IOException {
 
-        boolean filtered = false;
+        //boolean filtered = false;
 
         final Map<String, Object> attributes = new HashMap<>();
         attributes.put(NerFilterStrategy.CONFIDENCE, confidence);
@@ -101,7 +110,7 @@ public class PyTorchFilter extends NerFilter implements Serializable {
         // Send the entity to the metrics service for reporting.
         metricsService.reportEntitySpan(span);
 
-        // Store this entity's confidence in the statistics.
+        /*// Store this entity's confidence in the statistics.
         stats.computeIfAbsent(context, k -> new DescriptiveStatistics(STATISTICS_WINDOW_SIZE)).addValue(span.getConfidence());
 
         if(stats.get(context).getN() >= SUFFICIENT_VALUES_COUNT) {
@@ -138,13 +147,15 @@ public class PyTorchFilter extends NerFilter implements Serializable {
 
             }
 
-        }
+        }*/
 
-        if(!filtered) {
+        /*if(!filtered) {
             return span;
         } else {
             return null;
-        }
+        }*/
+
+        return span;
 
     }
 

@@ -6,6 +6,7 @@ import com.mtnfog.phileas.model.filter.Filter;
 import com.mtnfog.phileas.model.profile.FilterProfile;
 import com.mtnfog.phileas.model.services.AnonymizationService;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.List;
 
@@ -19,7 +20,7 @@ public abstract class DynamicFilter extends Filter implements Serializable {
      * @param text The input text.
      * @return A list of {@link Span spans}.
      */
-    public abstract List<Span> filter(FilterProfile filterProfile, String context, String documentId, String text);
+    public abstract List<Span> filter(FilterProfile filterProfile, String context, String documentId, String text) throws IOException;
 
     /**
      * Creates a new dynamic filter.
@@ -36,7 +37,7 @@ public abstract class DynamicFilter extends Filter implements Serializable {
      * @param text The input text.
      * @return The count of occurrences of items in the input.
      */
-    public int getOccurrences(FilterProfile filterProfile, String text) {
+    public int getOccurrences(FilterProfile filterProfile, String text) throws IOException {
         return filter(filterProfile, "none", "none", text).size();
     }
 

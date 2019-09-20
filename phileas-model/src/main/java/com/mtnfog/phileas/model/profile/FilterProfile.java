@@ -3,8 +3,12 @@ package com.mtnfog.phileas.model.profile;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.mtnfog.phileas.model.enums.FilterType;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class FilterProfile {
+
+    private static final Logger LOGGER = LogManager.getLogger(FilterProfile.class);
 
     @SerializedName("name")
     @Expose
@@ -41,6 +45,8 @@ public class FilterProfile {
         if(filterType == FilterType.URL) enabled = (identifiers.getUrl() != null);
         if(filterType == FilterType.VIN) enabled = (identifiers.getVin() != null);
         if(filterType == FilterType.ZIP_CODE) enabled = (identifiers.getZipCode() != null);
+
+        LOGGER.info("Filter {} is enabled = {}", filterType.getType(), enabled);
 
         return enabled;
 

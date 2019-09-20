@@ -45,6 +45,8 @@ public class PhileasFilterService implements FilterService, Serializable {
     
     public PhileasFilterService(Properties applicationProperties, List<FilterProfileService> filterProfileServices, AnonymizationCacheService anonymizationCacheService) throws IOException {
 
+        LOGGER.info("Initializing Phileas engine.");
+
         this.filterProfileServices = filterProfileServices;
         this.rulesFilters = new LinkedList<>();
         this.dynamicFilters = new LinkedList<>();

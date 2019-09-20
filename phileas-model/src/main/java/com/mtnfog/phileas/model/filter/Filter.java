@@ -66,6 +66,7 @@ public abstract class Filter implements Serializable {
 
             final String condition = strategy.getCondition();
 
+            // If there is no condition or if the condition evaluates then get the replacement.
             if(StringUtils.isEmpty(condition) || (strategy.evaluateCondition(context, documentId, token, condition, attributes))) {
 
                 return strategy.getReplacement(context, documentId, token, anonymizationService);
