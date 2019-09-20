@@ -197,7 +197,7 @@ public class PhileasFilterServiceTest {
         identifiers.setUrl(url);
         identifiers.setVin(vin);
         identifiers.setZipCode(zipCode);
-        identifiers.setNer(ner);
+        //identifiers.setNer(ner);
 
         /*identifiers.setCity(city);
         identifiers.setCounty(county);
