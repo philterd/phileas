@@ -100,6 +100,8 @@ public class PyTorchFilter extends NerFilter implements Serializable {
 
         //boolean filtered = false;
 
+        // TODO: PHL-3: Apply sensitivity level to NER entities.
+
         final Map<String, Object> attributes = new HashMap<>();
         attributes.put(NerFilterStrategy.CONFIDENCE, confidence);
         attributes.put(NerFilterStrategy.TYPE, type);
@@ -109,6 +111,10 @@ public class PyTorchFilter extends NerFilter implements Serializable {
 
         // Send the entity to the metrics service for reporting.
         metricsService.reportEntitySpan(span);
+
+        return span;
+
+        // TODO: PHL-2: Revisit intelligent NER filtering based on confidence values.
 
         /*// Store this entity's confidence in the statistics.
         stats.computeIfAbsent(context, k -> new DescriptiveStatistics(STATISTICS_WINDOW_SIZE)).addValue(span.getConfidence());
@@ -147,15 +153,15 @@ public class PyTorchFilter extends NerFilter implements Serializable {
 
             }
 
-        }*/
+        }
 
-        /*if(!filtered) {
+        if(!filtered) {
             return span;
         } else {
             return null;
-        }*/
+        }
 
-        return span;
+        return span;*/
 
     }
 
