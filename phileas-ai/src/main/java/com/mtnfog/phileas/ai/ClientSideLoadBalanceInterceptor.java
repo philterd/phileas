@@ -34,7 +34,11 @@ public class ClientSideLoadBalanceInterceptor implements Interceptor {
 
         for(String host: endpoints) {
 
-            final URL url = new URL(host + "/process");
+            if(!host.endsWith("/")) {
+                host = host + "/";
+            }
+
+            final URL url = new URL(host);
 
             final HttpUrl newUrl = HttpUrl.get(url);
 
