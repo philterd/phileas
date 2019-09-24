@@ -34,7 +34,7 @@ public class ClientSideLoadBalanceInterceptor implements Interceptor {
 
         for(String host: endpoints) {
 
-            final URL url = new URL(host);
+            final URL url = new URL(host + "process");
 
             final HttpUrl newUrl = HttpUrl.get(url);
 
@@ -51,7 +51,8 @@ public class ClientSideLoadBalanceInterceptor implements Interceptor {
                 .skip((int) (hosts.size() * Math.random()))
                 .findFirst().get();
 
-        LOGGER.info("Using philter-ner host {}", newUrl.toString());
+        LOGGER.debug("Original philter-ner host {}", chain.request().url().toString());
+        LOGGER.debug("Using philter-ner host {}", newUrl.toString());
 
         final Request request = chain.request().newBuilder()
                 .url(newUrl)
