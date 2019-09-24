@@ -89,6 +89,8 @@ public class PyTorchFilterTest {
         final AnonymizationService anonymizationService = null;
         final String baseUrl = this.mockServer.url("/").toString();
 
+        LOGGER.info("Mock REST server baseUrl = " + baseUrl);
+
         this.mockServer.enqueue(new MockResponse().setResponseCode(200).setBody("[{\"text\":\"test\",\"tag\":\"LOC\",\"score\":0.5,\"start\":1,\"end\":2}]"));
 
         final PyTorchFilter t = new PyTorchFilter(Arrays.asList(baseUrl), FilterType.NER_ENTITY, "LOC",

@@ -20,7 +20,7 @@ public class ClientSideLoadBalanceInterceptor implements Interceptor {
 
     private static final Logger LOGGER = LogManager.getLogger(ClientSideLoadBalanceInterceptor.class);
 
-    private List<String> hosts;
+    private List<HttpUrl> hosts;
 
     /**
      * To enable client-side load balancing provide a list of endpoints. An endpoint will be
@@ -33,7 +33,13 @@ public class ClientSideLoadBalanceInterceptor implements Interceptor {
         this.hosts = new LinkedList<>();
 
         for(String host: endpoints) {
-            this.hosts.add(new URL(host).getHost());
+
+            final URL url = new URL(host);
+
+            final HttpUrl newUrl = HttpUrl.get(url);
+
+            this.hosts.add(newUrl);
+
         }
 
     }
@@ -41,19 +47,13 @@ public class ClientSideLoadBalanceInterceptor implements Interceptor {
     @Override
     public Response intercept(Chain chain) throws IOException {
 
-        final String randomHost = hosts.stream()
+        final HttpUrl newUrl = hosts.stream()
                 .skip((int) (hosts.size() * Math.random()))
                 .findFirst().get();
 
-        LOGGER.debug("Using philter-ner host {}", randomHost);
+        LOGGER.debug("Using philter-ner host {}", newUrl.toString());
 
-        Request request = chain.request();
-
-        final HttpUrl newUrl = request.url().newBuilder()
-                .host(new URL(randomHost).getHost())
-                .build();
-
-        request = chain.request().newBuilder()
+        final Request request = chain.request().newBuilder()
                 .url(newUrl)
                 .build();
 
