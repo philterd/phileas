@@ -68,7 +68,7 @@ public class PhileasFilterService implements FilterService, Serializable {
         final String indexDirectory = applicationProperties.getProperty("indexes.directory", System.getProperty("user.dir") + "/indexes/");
 
         // Endpoint of the philter-ner API.
-        final String[] philterNerEndpoints = applicationProperties.getProperty("ner.endpoints", "http://localhost:18080/").split(";");
+        final String[] philterNerEndpoints = applicationProperties.getProperty("ner.endpoints", "http://localhost:18081/;http://localhost:18082/").split(";");
 
         // Load the filter profiles into memory.
         for(FilterProfileService filterProfileService : filterProfileServices) {
