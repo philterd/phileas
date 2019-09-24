@@ -51,7 +51,7 @@ public class ClientSideLoadBalanceInterceptor implements Interceptor {
                 .skip((int) (hosts.size() * Math.random()))
                 .findFirst().get();
 
-        LOGGER.debug("Using philter-ner host {}", newUrl.toString());
+        LOGGER.info("Using philter-ner host {}", newUrl.toString());
 
         final Request request = chain.request().newBuilder()
                 .url(newUrl)
