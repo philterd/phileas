@@ -22,10 +22,8 @@ import retrofit2.converter.scalars.ScalarsConverterFactory;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.net.MalformedURLException;
+import java.util.*;
 
 public class PyTorchFilter extends NerFilter implements Serializable {
 
@@ -39,22 +37,26 @@ public class PyTorchFilter extends NerFilter implements Serializable {
     // Response will look like:
     // [{"text": "George Washington", "tag": "PER", "score": 0.2987019270658493, "start": 0, "end": 17}, {"text": "Virginia", "tag": "LOC", "score": 0.3510116934776306, "start": 95, "end": 103}]
 
-    public PyTorchFilter(String baseUrl, FilterType filterType, String tag,
+    public PyTorchFilter(List<String> hosts, FilterType filterType, String tag,
                          Map<String, DescriptiveStatistics> stats,
                          MetricsService metricsService,
-                         AnonymizationService anonymizationService) {
+                         AnonymizationService anonymizationService) throws MalformedURLException {
 
         super(filterType, stats, metricsService, anonymizationService);
 
         this.tag = tag;
 
+        final ClientSideLoadBalanceInterceptor clientSideLoadBalanceInterceptor = new ClientSideLoadBalanceInterceptor(hosts);
+
         final OkHttpClient okHttpClient = new OkHttpClient.Builder()
                 .retryOnConnectionFailure(true)
+                .addInterceptor(clientSideLoadBalanceInterceptor)
                 .build();
 
         final Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(baseUrl)
+                .baseUrl(hosts.get(0))
                 .client(okHttpClient)
+                .callFactory(okHttpClient)
                 .addConverterFactory(ScalarsConverterFactory.create())
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();

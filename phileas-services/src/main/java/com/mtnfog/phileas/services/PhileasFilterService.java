@@ -102,8 +102,8 @@ public class PhileasFilterService implements FilterService, Serializable {
         rulesFilters.add(new IdentifierFilter(new AlphanumericAnonymizationService(anonymizationCacheService)));
 
         // PyTorch filters.
-        dynamicFilters.add(new PyTorchFilter(philterNerEndpoint, FilterType.NER_ENTITY, "PER", stats, metricsService, new PersonsAnonymizationService(anonymizationCacheService)));
-        dynamicFilters.add(new PyTorchFilter(philterNerEndpoint, FilterType.NER_ENTITY, "LOC", stats, metricsService, new LocationsAnonymizationService(anonymizationCacheService)));
+        dynamicFilters.add(new PyTorchFilter(Arrays.asList(philterNerEndpoint), FilterType.NER_ENTITY, "PER", stats, metricsService, new PersonsAnonymizationService(anonymizationCacheService)));
+        dynamicFilters.add(new PyTorchFilter(Arrays.asList(philterNerEndpoint), FilterType.NER_ENTITY, "LOC", stats, metricsService, new LocationsAnonymizationService(anonymizationCacheService)));
 
         // Configure post filters.
         // PHL-1: Allow for multi-word tokens.
