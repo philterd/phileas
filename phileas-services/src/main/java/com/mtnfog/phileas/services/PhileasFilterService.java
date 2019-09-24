@@ -68,7 +68,7 @@ public class PhileasFilterService implements FilterService, Serializable {
         final String indexDirectory = applicationProperties.getProperty("indexes.directory", System.getProperty("user.dir") + "/indexes/");
 
         // Endpoint of the philter-ner API.
-        final String philterNerEndpoint = applicationProperties.getProperty("ner.endpoint", "http://localhost:18080/");
+        final String[] philterNerEndpoints = applicationProperties.getProperty("ner.endpoints", "http://localhost:18080/").split(";");
 
         // Load the filter profiles into memory.
         for(FilterProfileService filterProfileService : filterProfileServices) {
@@ -102,8 +102,8 @@ public class PhileasFilterService implements FilterService, Serializable {
         rulesFilters.add(new IdentifierFilter(new AlphanumericAnonymizationService(anonymizationCacheService)));
 
         // PyTorch filters.
-        dynamicFilters.add(new PyTorchFilter(Arrays.asList(philterNerEndpoint), FilterType.NER_ENTITY, "PER", stats, metricsService, new PersonsAnonymizationService(anonymizationCacheService)));
-        dynamicFilters.add(new PyTorchFilter(Arrays.asList(philterNerEndpoint), FilterType.NER_ENTITY, "LOC", stats, metricsService, new LocationsAnonymizationService(anonymizationCacheService)));
+        dynamicFilters.add(new PyTorchFilter(Arrays.asList(philterNerEndpoints), FilterType.NER_ENTITY, "PER", stats, metricsService, new PersonsAnonymizationService(anonymizationCacheService)));
+        dynamicFilters.add(new PyTorchFilter(Arrays.asList(philterNerEndpoints), FilterType.NER_ENTITY, "LOC", stats, metricsService, new LocationsAnonymizationService(anonymizationCacheService)));
 
         // Configure post filters.
         // PHL-1: Allow for multi-word tokens.
