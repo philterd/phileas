@@ -19,8 +19,6 @@ pipeline {
     stages {
         stage ('Initialize') {
             steps {
-                deleteDir()
-                checkout scm
                 sh '''
                     echo "PATH = ${PATH}"
                     echo "M2_HOME = ${M2_HOME}"
