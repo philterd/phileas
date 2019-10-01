@@ -69,7 +69,7 @@ public class PyTorchFilterTest {
 
         this.mockServer.enqueue(new MockResponse().setResponseCode(200).setBody("[{\"text\":\"test\",\"tag\":\"PER\",\"score\":0.5,\"start\":1,\"end\":2}]"));
 
-        final PyTorchFilter t = new PyTorchFilter(Arrays.asList(baseUrl), FilterType.NER_ENTITY, "PER", stats, metricsService, anonymizationService);
+        final PyTorchFilter t = new PyTorchFilter(baseUrl, FilterType.NER_ENTITY, "PER", stats, metricsService, anonymizationService);
 
         final List<Span> spans = t.filter(getFilterProfile(), "context", "doc", "John Smith lives in New York");
 
@@ -93,7 +93,7 @@ public class PyTorchFilterTest {
 
         this.mockServer.enqueue(new MockResponse().setResponseCode(200).setBody("[{\"text\":\"test\",\"tag\":\"LOC\",\"score\":0.5,\"start\":1,\"end\":2}]"));
 
-        final PyTorchFilter t = new PyTorchFilter(Arrays.asList(baseUrl), FilterType.NER_ENTITY, "LOC",
+        final PyTorchFilter t = new PyTorchFilter(baseUrl, FilterType.NER_ENTITY, "LOC",
                 stats, metricsService, anonymizationService);
 
         final List<Span> spans = t.filter(getFilterProfile(), "context", "doc", "John Smith lives in New York");

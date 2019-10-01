@@ -37,7 +37,7 @@ public class PyTorchFilter extends NerFilter implements Serializable {
     // Response will look like:
     // [{"text": "George Washington", "tag": "PER", "score": 0.2987019270658493, "start": 0, "end": 17}, {"text": "Virginia", "tag": "LOC", "score": 0.3510116934776306, "start": 95, "end": 103}]
 
-    public PyTorchFilter(List<String> hosts, FilterType filterType, String tag,
+    public PyTorchFilter(String baseUrl, FilterType filterType, String tag,
                          Map<String, DescriptiveStatistics> stats,
                          MetricsService metricsService,
                          AnonymizationService anonymizationService) throws MalformedURLException {
@@ -46,15 +46,12 @@ public class PyTorchFilter extends NerFilter implements Serializable {
 
         this.tag = tag;
 
-        final ClientSideLoadBalanceInterceptor clientSideLoadBalanceInterceptor = new ClientSideLoadBalanceInterceptor(hosts);
-
         final OkHttpClient okHttpClient = new OkHttpClient.Builder()
                 .retryOnConnectionFailure(true)
-                .addInterceptor(clientSideLoadBalanceInterceptor)
                 .build();
 
         final Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(hosts.get(0))
+                .baseUrl(baseUrl)
                 .client(okHttpClient)
                 .callFactory(okHttpClient)
                 .addConverterFactory(ScalarsConverterFactory.create())
