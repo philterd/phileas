@@ -2,26 +2,27 @@ package com.mtnfog.test.phileas.services.cache;
 
 import com.mtnfog.phileas.services.cache.RedisAnonymizationCacheService;
 import org.junit.*;
-import org.springframework.util.SocketUtils;
 import redis.embedded.RedisServer;
+
+import java.io.IOException;
 
 public class RedisAnonymizationCacheServiceTest {
 
-    private final int port = SocketUtils.findAvailableTcpPort();
+    private int port = 31000;
     private final RedisServer server = RedisServer.builder().port(port).build();
 
     @BeforeClass
-    public static void beforeClass() {
+    public static void beforeClass() throws IOException {
         Assume.assumeFalse(System.getProperty("os.name").toLowerCase().startsWith("win"));
     }
 
     @Before
-    public void before() {
+    public void before() throws IOException {
         server.start();
     }
 
     @After
-    public void after() {
+    public void after() throws IOException {
         server.stop();
     }
 

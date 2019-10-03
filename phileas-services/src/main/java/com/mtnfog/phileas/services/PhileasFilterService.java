@@ -14,7 +14,6 @@ import com.mtnfog.phileas.model.services.*;
 import com.mtnfog.phileas.services.anonymization.*;
 import com.mtnfog.phileas.services.filters.custom.PhoneNumberRulesFilter;
 import com.mtnfog.phileas.services.filters.regex.*;
-import com.mtnfog.phileas.services.postfilters.PartOfSpeechFalsePositiveFilter;
 import com.mtnfog.phileas.store.MongoDBStore;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
@@ -22,7 +21,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.Serializable;
 import java.util.*;
 
