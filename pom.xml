@@ -94,7 +94,7 @@
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<!-- Project dependency versions -->
 		<antlr.version>4.7.2</antlr.version>
-		<aws.version>1.11.620</aws.version>
+		<aws.version>1.11.642</aws.version>
 		<commons.collections4.version>4.4</commons.collections4.version>
 		<commons.csv.version>1.7</commons.csv.version>
 		<commons.io.version>2.6</commons.io.version>
@@ -103,18 +103,18 @@
 		<commons.validator.version>1.6</commons.validator.version>
 		<dropwizard-metrics-cloudwatch.version>1.0.13</dropwizard-metrics-cloudwatch.version>
 		<equals.verifier.version>3.1.9</equals.verifier.version>
-		<guava.version>28.0-jre</guava.version>
+		<guava.version>28.1-jre</guava.version>
 		<icu4j.version>64.2</icu4j.version>
 		<javafaker.version>0.18</javafaker.version>
 		<jedis.version>3.0.1</jedis.version>
-		<libphonenumber.version>8.10.13</libphonenumber.version>
+		<libphonenumber.version>8.10.20</libphonenumber.version>
 		<lucene.version>8.2.0</lucene.version>
 		<metrics.version>4.1.0</metrics.version>
 		<mongo.driver.version>3.11.0</mongo.driver.version>
 		<mockito.version>1.10.19</mockito.version>
 		<opennlp.version>1.9.1</opennlp.version>
 		<redis-mock.version>0.1.6</redis-mock.version>
-		<retrofit.version>2.6.1</retrofit.version>
+		<retrofit.version>2.6.2</retrofit.version>
 		<scala.major.version>2.12</scala.major.version>
 		<spring.boot.version>2.1.9.RELEASE</spring.boot.version>
 		<thymeleaf.version>3.0.11.RELEASE</thymeleaf.version>
