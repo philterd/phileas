@@ -50,7 +50,7 @@ public class PhileasMetricsService implements MetricsService {
 
         consoleReporter.start(300, TimeUnit.SECONDS);
 
-        if(StringUtils.equalsIgnoreCase(properties.getProperty("metrics.jmx.enabled", "true"), "true")) {
+        if(StringUtils.equalsIgnoreCase(properties.getProperty("metrics.jmx.enabled", "false"), "true")) {
 
             LOGGER.info("Enabling JMX metrics.");
 
