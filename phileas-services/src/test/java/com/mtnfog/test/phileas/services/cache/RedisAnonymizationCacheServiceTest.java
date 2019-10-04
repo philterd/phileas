@@ -6,6 +6,7 @@ import redis.embedded.RedisServer;
 
 import java.io.IOException;
 
+@Ignore
 public class RedisAnonymizationCacheServiceTest {
 
     private int port = 31000;
