@@ -117,7 +117,6 @@
 		<retrofit.version>2.6.2</retrofit.version>
 		<scala.major.version>2.12</scala.major.version>
 		<spring.boot.version>2.1.9.RELEASE</spring.boot.version>
-		<thymeleaf.version>3.0.11.RELEASE</thymeleaf.version>
 		<!-- Sonarqube -->
 		<sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
 		<sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
