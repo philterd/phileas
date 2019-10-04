@@ -91,11 +91,12 @@ public class IdentifierFilterTest extends AbstractFilterTest {
         IdentifierFilter filter = new IdentifierFilter(anonymizationService);
 
         List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "George Washington was president and his ssn was 123-45-6789 and he lived at 90210. Patient id 00076A and 93821A. He is on biotin. Diagnosed with A0100.");
-        Assert.assertEquals(4, spans.size());
+        Assert.assertEquals(5, spans.size());
         Assert.assertTrue(checkSpan(spans.get(0), 48, 59, FilterType.IDENTIFIER));
-        Assert.assertTrue(checkSpan(spans.get(1), 94, 100, FilterType.IDENTIFIER));
-        Assert.assertTrue(checkSpan(spans.get(2), 105, 111, FilterType.IDENTIFIER));
-        Assert.assertTrue(checkSpan(spans.get(3), 145, 150, FilterType.IDENTIFIER));
+        Assert.assertTrue(checkSpan(spans.get(1), 76, 81, FilterType.IDENTIFIER));
+        Assert.assertTrue(checkSpan(spans.get(2), 94, 100, FilterType.IDENTIFIER));
+        Assert.assertTrue(checkSpan(spans.get(3), 105, 111, FilterType.IDENTIFIER));
+        Assert.assertTrue(checkSpan(spans.get(4), 145, 150, FilterType.IDENTIFIER));
 
     }
 
