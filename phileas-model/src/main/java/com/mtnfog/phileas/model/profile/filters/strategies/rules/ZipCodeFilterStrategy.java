@@ -24,6 +24,7 @@ public class ZipCodeFilterStrategy extends AbstractFilterStrategy {
 
     public static final String TRUNCATE = "truncate";
     public static final String POPULATION = "population";
+    public static final String ZERO_LEADING = "zero_leading";
 
     private static FilterType filterType = FilterType.ZIP_CODE;
 
@@ -124,6 +125,10 @@ public class ZipCodeFilterStrategy extends AbstractFilterStrategy {
 
             final int truncateLength = getValueOrDefault(truncateDigits, 2);
             replacement = token.substring(0, truncateDigits) + StringUtils.repeat("*", Math.min(token.length() - truncateLength, 5 - truncateDigits));
+
+        } else if(StringUtils.equalsIgnoreCase(redactionFormat, ZERO_LEADING)) {
+
+            replacement = "000" + token.subSequence(3, 5);
 
         } else {
 

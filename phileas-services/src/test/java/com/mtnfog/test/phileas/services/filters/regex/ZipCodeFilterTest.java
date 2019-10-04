@@ -45,4 +45,26 @@ public class ZipCodeFilterTest extends AbstractFilterTest {
 
     }
 
+    @Test
+    public void filterZipCode4() throws Exception {
+
+        ZipCodeFilter filter = new ZipCodeFilter(new ZipCodeAnonymizationService(new LocalAnonymizationCacheService()));
+
+        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "the zip is 85055 in california.");
+        Assert.assertEquals(1, spans.size());
+        Assert.assertTrue(checkSpan(spans.get(0), 11, 16, FilterType.ZIP_CODE));
+
+    }
+
+    @Test
+    public void filterZipCode5() throws Exception {
+
+        ZipCodeFilter filter = new ZipCodeFilter(new ZipCodeAnonymizationService(new LocalAnonymizationCacheService()));
+
+        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "the zip is 90213-1544 in california.");
+        Assert.assertEquals(1, spans.size());
+        Assert.assertTrue(checkSpan(spans.get(0), 11, 21, FilterType.ZIP_CODE));
+
+    }
+
 }

@@ -131,7 +131,7 @@ public class ZipCodeFilterStrategyTest {
 
         ZipCodeFilterStrategy strategy = new ZipCodeFilterStrategy();
         strategy.setRedactionFormat(ZipCodeFilterStrategy.TRUNCATE);
-        strategy.setTruncateDigits(new Integer(2));
+        strategy.setTruncateDigits(2);
 
         AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
 
@@ -148,7 +148,7 @@ public class ZipCodeFilterStrategyTest {
 
         ZipCodeFilterStrategy strategy = new ZipCodeFilterStrategy();
         strategy.setRedactionFormat(ZipCodeFilterStrategy.TRUNCATE);
-        strategy.setTruncateDigits(new Integer(3));
+        strategy.setTruncateDigits(3);
 
         AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
 
@@ -165,7 +165,7 @@ public class ZipCodeFilterStrategyTest {
 
         ZipCodeFilterStrategy strategy = new ZipCodeFilterStrategy();
         strategy.setRedactionFormat(ZipCodeFilterStrategy.TRUNCATE);
-        strategy.setTruncateDigits(new Integer(1));
+        strategy.setTruncateDigits(1);
 
         AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
 
@@ -174,6 +174,22 @@ public class ZipCodeFilterStrategyTest {
         LOGGER.info(replacement);
 
         Assert.assertEquals("9****", replacement);
+
+    }
+
+    @Test
+    public void zeroLeading1() throws IOException {
+
+        ZipCodeFilterStrategy strategy = new ZipCodeFilterStrategy();
+        strategy.setRedactionFormat(ZipCodeFilterStrategy.ZERO_LEADING);
+
+        AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
+
+        final String replacement = strategy.getReplacement("context", "documentId", "90210-0110", anonymizationService);
+
+        LOGGER.info(replacement);
+
+        Assert.assertEquals("00010", replacement);
 
     }
 

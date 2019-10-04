@@ -22,6 +22,9 @@ public class IdentifierFilterTest extends AbstractFilterTest {
         IdentifierFilter filter = new IdentifierFilter(anonymizationService);
 
         List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "the id is AB4736021 in california.");
+        for(Span span : spans) {
+            System.out.println(span.toString());
+        }
         Assert.assertEquals(1, spans.size());
         Assert.assertTrue(checkSpan(spans.get(0), 10,19, FilterType.IDENTIFIER));
 
@@ -76,9 +79,9 @@ public class IdentifierFilterTest extends AbstractFilterTest {
 
         IdentifierFilter filter = new IdentifierFilter(anonymizationService);
 
-        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "the id is 123-45-6789abc in california.");
+        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "the id is 123-45-6789 in california.");
         Assert.assertEquals(1, spans.size());
-        Assert.assertTrue(checkSpan(spans.get(0), 10,24, FilterType.IDENTIFIER));
+        Assert.assertTrue(checkSpan(spans.get(0), 10,21, FilterType.IDENTIFIER));
 
     }
 
@@ -87,7 +90,7 @@ public class IdentifierFilterTest extends AbstractFilterTest {
 
         IdentifierFilter filter = new IdentifierFilter(anonymizationService);
 
-        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "George Washington was president and his ssn was 123-45-6789 and he lived at 90210. Patient id 00076a and 93821a. He is on biotin. Diagnosed with A0100.");
+        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "George Washington was president and his ssn was 123-45-6789 and he lived at 90210. Patient id 00076A and 93821A. He is on biotin. Diagnosed with A0100.");
         Assert.assertEquals(4, spans.size());
         Assert.assertTrue(checkSpan(spans.get(0), 48, 59, FilterType.IDENTIFIER));
         Assert.assertTrue(checkSpan(spans.get(1), 94, 100, FilterType.IDENTIFIER));
@@ -101,7 +104,7 @@ public class IdentifierFilterTest extends AbstractFilterTest {
 
         IdentifierFilter filter = new IdentifierFilter(anonymizationService);
 
-        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "the id is 000-00-00-00 Abc123 in california.");
+        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "the id is 000-00-00-00 ABC123 in california.");
         Assert.assertEquals(2, spans.size());
         Assert.assertTrue(checkSpan(spans.get(0), 10, 22, FilterType.IDENTIFIER));
         Assert.assertTrue(checkSpan(spans.get(1), 23, 29, FilterType.IDENTIFIER));
@@ -113,11 +116,44 @@ public class IdentifierFilterTest extends AbstractFilterTest {
 
         IdentifierFilter filter = new IdentifierFilter(anonymizationService);
 
-        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "the id is AZ12 ABC123/123Abc in california.");
+        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "the id is AZ12 ABC123/123ABC in california.");
         Assert.assertEquals(3, spans.size());
         Assert.assertTrue(checkSpan(spans.get(0), 10,14, FilterType.IDENTIFIER));
         Assert.assertTrue(checkSpan(spans.get(1), 15, 21, FilterType.IDENTIFIER));
         Assert.assertTrue(checkSpan(spans.get(2), 22, 28, FilterType.IDENTIFIER));
+
+    }
+
+    @Test
+    public void filterId10() throws Exception {
+
+        IdentifierFilter filter = new IdentifierFilter(anonymizationService);
+
+        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "the id is H3SNPUHYEE7JD3H in california.");
+        Assert.assertEquals(1, spans.size());
+        Assert.assertTrue(checkSpan(spans.get(0), 10,25, FilterType.IDENTIFIER));
+
+    }
+
+    @Test
+    public void filterId11() throws Exception {
+
+        IdentifierFilter filter = new IdentifierFilter(anonymizationService);
+
+        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "the id is 86637729 in california.");
+        Assert.assertEquals(1, spans.size());
+        Assert.assertTrue(checkSpan(spans.get(0), 10,18, FilterType.IDENTIFIER));
+
+    }
+
+    @Test
+    public void filterId12() throws Exception {
+
+        IdentifierFilter filter = new IdentifierFilter(anonymizationService);
+
+        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "the id is 33778376 in california.");
+        Assert.assertEquals(1, spans.size());
+        Assert.assertTrue(checkSpan(spans.get(0), 10,18, FilterType.IDENTIFIER));
 
     }
 

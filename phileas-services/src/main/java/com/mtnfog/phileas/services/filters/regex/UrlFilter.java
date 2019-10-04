@@ -13,7 +13,8 @@ import java.util.regex.Pattern;
 
 public class UrlFilter extends RegexFilter implements Serializable {
 
-    private static final Pattern URL_REGEX = Pattern.compile("(https?|ftp|file)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]", Pattern.CASE_INSENSITIVE);
+    // https://www.regexpal.com/93652
+    private static final Pattern URL_REGEX = Pattern.compile("(http:\\/\\/www\\.|https:\\/\\/www\\.|http:\\/\\/|https:\\/\\/)?[a-z0-9]+([\\-\\.]{1}[a-z0-9]+)*\\.[a-z]{2,5}(:[0-9]{1,5})?(\\/.*)?", Pattern.CASE_INSENSITIVE);
 
     public UrlFilter(AnonymizationService anonymizationService) {
         super(FilterType.URL, anonymizationService);

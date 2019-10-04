@@ -13,7 +13,7 @@ import java.util.regex.Pattern;
 
 public class IdentifierFilter extends RegexFilter implements Serializable {
 
-    private static final Pattern ID_REGEX = Pattern.compile("(\\d+[A-Za-z_-]+|[A-Za-z_-]+\\d+)[A-Za-z_\\-\\d]*", Pattern.CASE_INSENSITIVE);
+    private static final Pattern ID_REGEX = Pattern.compile("\\b[A-Z0-9_-]{4,}\\b");
 
     public IdentifierFilter(AnonymizationService anonymizationService) {
         super(FilterType.IDENTIFIER, anonymizationService);
