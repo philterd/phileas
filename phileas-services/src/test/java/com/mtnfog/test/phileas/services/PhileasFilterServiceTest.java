@@ -51,7 +51,7 @@ public class PhileasFilterServiceTest {
     }
 
     @Test
-    public void phoneNumberPlainTextResponse() throws Exception {
+    public void endToEnd1() throws Exception {
 
         final Path temp = Files.createTempDirectory("philter");
         final File file = Paths.get(temp.toFile().getAbsolutePath(), "profile.json").toFile();

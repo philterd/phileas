@@ -20,16 +20,6 @@ import java.util.regex.Pattern;
 public abstract class RulesFilter extends Filter implements Serializable {
 
     /**
-     * Filters the input text.
-     * @param filterProfile The {@link FilterProfile} to use.
-     * @param context The context.
-     * @param documentId An ID uniquely identifying the document.
-     * @param input The input text.
-     * @return The filtered text.
-     */
-    public abstract List<Span> filter(FilterProfile filterProfile, String context, String documentId, String input) throws IOException;
-
-    /**
      * Creates a new rule-based filter.
      * @param filterType The {@link FilterType type} of the filter.
      * @param anonymizationService The {@link AnonymizationService} for this filter.

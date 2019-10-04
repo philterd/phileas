@@ -4,6 +4,7 @@ import com.mtnfog.phileas.ai.PyTorchFilter;
 import com.mtnfog.phileas.metrics.PhileasMetricsService;
 import com.mtnfog.phileas.model.enums.FilterType;
 import com.mtnfog.phileas.model.exceptions.InvalidFilterProfile;
+import com.mtnfog.phileas.model.filter.Filter;
 import com.mtnfog.phileas.model.filter.dynamic.DynamicFilter;
 import com.mtnfog.phileas.model.filter.rules.RulesFilter;
 import com.mtnfog.phileas.model.filter.rules.dictionary.LuceneDictionaryFilter;
@@ -32,25 +33,21 @@ public class PhileasFilterService implements FilterService, Serializable {
 
 	private static final Logger LOGGER = LogManager.getLogger(PhileasFilterService.class);
 
-    private List<RulesFilter> rulesFilters;
-    private List<DynamicFilter> dynamicFilters;
     private MetricsService metricsService;
     private Map<String, DescriptiveStatistics> stats;
     private Store store;
     private List<PostFilter> postFilters;
     private Map<String, FilterProfile> filterProfiles;
-    private List<FilterProfileService> filterProfileServices;
-    
+    private Map<String, List<Filter>> filters;
+
     public PhileasFilterService(Properties applicationProperties, List<FilterProfileService> filterProfileServices, AnonymizationCacheService anonymizationCacheService) throws IOException {
 
         LOGGER.info("Initializing Phileas engine.");
 
-        this.filterProfileServices = filterProfileServices;
-        this.rulesFilters = new LinkedList<>();
-        this.dynamicFilters = new LinkedList<>();
         this.stats = new HashMap<>();
         this.postFilters = new LinkedList<>();
         this.filterProfiles = new HashMap<>();
+        this.filters = new HashMap<>();
 
         // Configure metrics.
         this.metricsService = new PhileasMetricsService(applicationProperties);
@@ -68,40 +65,111 @@ public class PhileasFilterService implements FilterService, Serializable {
         // Endpoint of the philter-ner API.
         final String philterNerEndpoint = applicationProperties.getProperty("ner.endpoint", "http://localhost:18080/");
 
-        // Load the filter profiles into memory.
+        // Load all of the filter profiles into memory from each filter profile service.
         for(FilterProfileService filterProfileService : filterProfileServices) {
             filterProfiles.putAll(filterProfileService.getAll());
         }
 
-        // Regex filters.
-        rulesFilters.add(new AgeFilter(new AgeAnonymizationService(anonymizationCacheService)));
-        rulesFilters.add(new CreditCardFilter(new CreditCardAnonymizationService(anonymizationCacheService)));
-        rulesFilters.add(new DateFilter(new DateAnonymizationService(anonymizationCacheService)));
-        rulesFilters.add(new EmailAddressFilter(new EmailAddressAnonymizationService(anonymizationCacheService)));
-        rulesFilters.add(new IpAddressFilter(new IpAddressAnonymizationService(anonymizationCacheService)));
-        rulesFilters.add(new PhoneNumberExtensionFilter(new AlphanumericAnonymizationService(anonymizationCacheService)));
-        rulesFilters.add(new PhoneNumberRulesFilter(new AlphanumericAnonymizationService(anonymizationCacheService)));
-        rulesFilters.add(new SsnFilter(new AlphanumericAnonymizationService(anonymizationCacheService)));
-        rulesFilters.add(new StateAbbreviationFilter(new StateAbbreviationAnonymizationService(anonymizationCacheService)));
-        rulesFilters.add(new UrlFilter(new UrlAnonymizationService(anonymizationCacheService)));
-        rulesFilters.add(new VinFilter(new VinAnonymizationService(anonymizationCacheService)));
-        rulesFilters.add(new ZipCodeFilter(new ZipCodeAnonymizationService(anonymizationCacheService)));
+        for(FilterProfile filterProfile : filterProfiles.values()) {
 
-        // Lucene dictionary filters.
-        rulesFilters.add(new LuceneDictionaryFilter(FilterType.LOCATION_CITY, indexDirectory + "cities", LuceneDictionaryFilter.CITIES_DISTANCES, new CityAnonymizationService(anonymizationCacheService)));
-        rulesFilters.add(new LuceneDictionaryFilter(FilterType.LOCATION_STATE, indexDirectory + "states", LuceneDictionaryFilter.CITIES_DISTANCES, new StateAnonymizationService(anonymizationCacheService)));
-        rulesFilters.add(new LuceneDictionaryFilter(FilterType.LOCATION_COUNTY, indexDirectory + "counties", LuceneDictionaryFilter.COUNTIES_DISTANCES, new CountyAnonymizationService(anonymizationCacheService)));
-        rulesFilters.add(new LuceneDictionaryFilter(FilterType.HOSPITAL, indexDirectory + "hospitals", LuceneDictionaryFilter.HOSPITALS_DISTANCES, new HospitalAnonymizationService(anonymizationCacheService)));
-        rulesFilters.add(new LuceneDictionaryFilter(FilterType.HOSPITAL_ABBREVIATION, indexDirectory + "hospital-abbreviations", LuceneDictionaryFilter.HOSPITAL_ABBREVIATIONS_DISTANCES, new HospitalAbbreviationAnonymizationService(anonymizationCacheService)));
-        rulesFilters.add(new LuceneDictionaryFilter(FilterType.FIRST_NAME, indexDirectory + "names", LuceneDictionaryFilter.SURNAME_DISTANCES, new PersonsAnonymizationService(anonymizationCacheService)));
-        rulesFilters.add(new LuceneDictionaryFilter(FilterType.SURNAME, indexDirectory + "surnames", LuceneDictionaryFilter.SURNAME_DISTANCES, new SurnameAnonymizationService(anonymizationCacheService)));
+            final List<Filter> enabledFilters = new LinkedList<>();
 
-        // Enable ID filter last since it is a pretty generic pattern that might also match SSN, et. al.
-        rulesFilters.add(new IdentifierFilter(new AlphanumericAnonymizationService(anonymizationCacheService)));
+            // Rules filters.
 
-        // PyTorch filters.
-        dynamicFilters.add(new PyTorchFilter(philterNerEndpoint, FilterType.NER_ENTITY, "PER", stats, metricsService, new PersonsAnonymizationService(anonymizationCacheService)));
-        dynamicFilters.add(new PyTorchFilter(philterNerEndpoint, FilterType.NER_ENTITY, "LOC", stats, metricsService, new LocationsAnonymizationService(anonymizationCacheService)));
+            if(filterProfile.getIdentifiers().isFilterEnabled(FilterType.AGE)) {
+                enabledFilters.add(new AgeFilter(new AgeAnonymizationService(anonymizationCacheService)));
+            }
+
+            if(filterProfile.getIdentifiers().isFilterEnabled(FilterType.CREDIT_CARD)) {
+                enabledFilters.add(new CreditCardFilter(new CreditCardAnonymizationService(anonymizationCacheService)));
+            }
+
+            if(filterProfile.getIdentifiers().isFilterEnabled(FilterType.DATE)) {
+                enabledFilters.add(new DateFilter(new DateAnonymizationService(anonymizationCacheService)));
+            }
+
+            if(filterProfile.getIdentifiers().isFilterEnabled(FilterType.EMAIL_ADDRESS)) {
+                enabledFilters.add(new EmailAddressFilter(new EmailAddressAnonymizationService(anonymizationCacheService)));
+            }
+
+            if(filterProfile.getIdentifiers().isFilterEnabled(FilterType.IP_ADDRESS)) {
+                enabledFilters.add(new IpAddressFilter(new IpAddressAnonymizationService(anonymizationCacheService)));
+            }
+
+            if(filterProfile.getIdentifiers().isFilterEnabled(FilterType.PHONE_NUMBER_EXTENSION)) {
+                enabledFilters.add(new PhoneNumberExtensionFilter(new AlphanumericAnonymizationService(anonymizationCacheService)));
+            }
+
+            if(filterProfile.getIdentifiers().isFilterEnabled(FilterType.PHONE_NUMBER)) {
+                enabledFilters.add(new PhoneNumberRulesFilter(new AlphanumericAnonymizationService(anonymizationCacheService)));
+            }
+
+            if(filterProfile.getIdentifiers().isFilterEnabled(FilterType.SSN)) {
+                enabledFilters.add(new SsnFilter(new AlphanumericAnonymizationService(anonymizationCacheService)));
+            }
+
+            if(filterProfile.getIdentifiers().isFilterEnabled(FilterType.STATE_ABBREVIATION)) {
+                enabledFilters.add(new StateAbbreviationFilter(new StateAbbreviationAnonymizationService(anonymizationCacheService)));
+            }
+
+            if(filterProfile.getIdentifiers().isFilterEnabled(FilterType.URL)) {
+                enabledFilters.add(new UrlFilter(new UrlAnonymizationService(anonymizationCacheService)));
+            }
+
+            if(filterProfile.getIdentifiers().isFilterEnabled(FilterType.VIN)) {
+                enabledFilters.add(new VinFilter(new VinAnonymizationService(anonymizationCacheService)));
+            }
+
+            if(filterProfile.getIdentifiers().isFilterEnabled(FilterType.ZIP_CODE)) {
+                enabledFilters.add(new ZipCodeFilter(new ZipCodeAnonymizationService(anonymizationCacheService)));
+            }
+
+            // Lucene dictionary filters.
+
+            if(filterProfile.getIdentifiers().isFilterEnabled(FilterType.LOCATION_CITY)) {
+                enabledFilters.add(new LuceneDictionaryFilter(FilterType.LOCATION_CITY, indexDirectory + "cities", LuceneDictionaryFilter.CITIES_DISTANCES, new CityAnonymizationService(anonymizationCacheService)));
+            }
+
+            if(filterProfile.getIdentifiers().isFilterEnabled(FilterType.LOCATION_COUNTY)) {
+                enabledFilters.add(new LuceneDictionaryFilter(FilterType.LOCATION_COUNTY, indexDirectory + "states", LuceneDictionaryFilter.COUNTIES_DISTANCES, new CountyAnonymizationService(anonymizationCacheService)));
+            }
+
+            if(filterProfile.getIdentifiers().isFilterEnabled(FilterType.LOCATION_STATE)) {
+                enabledFilters.add(new LuceneDictionaryFilter(FilterType.LOCATION_STATE, indexDirectory + "states", LuceneDictionaryFilter.STATES_DISTANCES, new StateAnonymizationService(anonymizationCacheService)));
+            }
+
+            if(filterProfile.getIdentifiers().isFilterEnabled(FilterType.HOSPITAL)) {
+                enabledFilters.add(new LuceneDictionaryFilter(FilterType.HOSPITAL, indexDirectory + "hospitals", LuceneDictionaryFilter.HOSPITALS_DISTANCES, new HospitalAnonymizationService(anonymizationCacheService)));
+            }
+
+            if(filterProfile.getIdentifiers().isFilterEnabled(FilterType.HOSPITAL_ABBREVIATION)) {
+                enabledFilters.add(new LuceneDictionaryFilter(FilterType.HOSPITAL_ABBREVIATION, indexDirectory + "hospital-abbreviations", LuceneDictionaryFilter.HOSPITAL_ABBREVIATIONS_DISTANCES, new HospitalAbbreviationAnonymizationService(anonymizationCacheService)));
+            }
+
+            if(filterProfile.getIdentifiers().isFilterEnabled(FilterType.FIRST_NAME)) {
+                enabledFilters.add(new LuceneDictionaryFilter(FilterType.FIRST_NAME, indexDirectory + "names", LuceneDictionaryFilter.FIRST_NAME_DISTANCES, new PersonsAnonymizationService(anonymizationCacheService)));
+            }
+
+            if(filterProfile.getIdentifiers().isFilterEnabled(FilterType.SURNAME)) {
+                enabledFilters.add(new LuceneDictionaryFilter(FilterType.SURNAME, indexDirectory + "surnames", LuceneDictionaryFilter.SURNAME_DISTANCES, new SurnameAnonymizationService(anonymizationCacheService)));
+            }
+
+            // Enable ID filter last since it is a pretty generic pattern that might also match SSN, et. al.
+
+            if(filterProfile.getIdentifiers().isFilterEnabled(FilterType.IDENTIFIER)) {
+                enabledFilters.add(new IdentifierFilter(filterProfile.getIdentifiers().getIdentifier().getPattern(), new AlphanumericAnonymizationService(anonymizationCacheService)));
+            }
+
+            // PyTorch filters.
+
+            if(filterProfile.getIdentifiers().isFilterEnabled(FilterType.NER_ENTITY)) {
+                enabledFilters.add(new PyTorchFilter(philterNerEndpoint, FilterType.NER_ENTITY, "PER", stats, metricsService, new PersonsAnonymizationService(anonymizationCacheService)));
+                enabledFilters.add(new PyTorchFilter(philterNerEndpoint, FilterType.NER_ENTITY, "LOC", stats, metricsService, new LocationsAnonymizationService(anonymizationCacheService)));
+            }
+
+            filters.put(filterProfile.getName(), enabledFilters);
+
+        }
 
         // Configure post filters.
         // PHL-1: Allow for multi-word tokens.
@@ -127,7 +195,10 @@ public class PhileasFilterService implements FilterService, Serializable {
             throw new InvalidFilterProfile("The filter profile does not exist.");
         }
 
-        // Get the filter profile that we will be using.
+        // Get the enabled filters for this filter profile.
+        final List<Filter> enabledFilters = filters.get(filterProfileName);
+
+        // Get the filter profile.
         final FilterProfile filterProfile = filterProfiles.get(filterProfileName);
 
         // The list that will contain the spans containing PHI/PII.
@@ -138,20 +209,9 @@ public class PhileasFilterService implements FilterService, Serializable {
         final String documentId = MongoDBStore.generateId();
 
         // Execute the rules filters.
-        for(RulesFilter rulesFilter : rulesFilters) {
+        for(Filter f : enabledFilters) {
 
-            if(filterProfile.isFilterEnabled(rulesFilter.getFilterType())) {
-                spans.addAll(rulesFilter.filter(filterProfile, context, documentId, input));
-            }
-
-        }
-
-        // Execute the dynamic filters.
-        for(DynamicFilter dynamicFilter : dynamicFilters) {
-
-            if(filterProfile.isFilterEnabled(dynamicFilter.getFilterType())) {
-                spans.addAll(dynamicFilter.filter(filterProfile, context, documentId, input));
-            }
+            spans.addAll(f.filter(filterProfile, context, documentId, input));
 
         }
 

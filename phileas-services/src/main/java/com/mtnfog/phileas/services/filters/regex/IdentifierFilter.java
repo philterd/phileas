@@ -13,16 +13,17 @@ import java.util.regex.Pattern;
 
 public class IdentifierFilter extends RegexFilter implements Serializable {
 
-    private static final Pattern ID_REGEX = Pattern.compile("\\b[A-Z0-9_-]{4,}\\b");
+    private Pattern pattern;
 
-    public IdentifierFilter(AnonymizationService anonymizationService) {
+    public IdentifierFilter(String pattern, AnonymizationService anonymizationService) {
         super(FilterType.IDENTIFIER, anonymizationService);
+        this.pattern = Pattern.compile(pattern);
     }
 
     @Override
     public List<Span> filter(FilterProfile filterProfile, String context, String documentId, String input) throws IOException {
 
-        return findSpans(filterProfile, ID_REGEX, input, context, documentId);
+        return findSpans(filterProfile, pattern, input, context, documentId);
 
     }
 

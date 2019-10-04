@@ -1,6 +1,7 @@
 package com.mtnfog.phileas.model.filter;
 
 import com.mtnfog.phileas.model.enums.FilterType;
+import com.mtnfog.phileas.model.objects.Span;
 import com.mtnfog.phileas.model.profile.FilterProfile;
 import com.mtnfog.phileas.model.profile.filters.strategies.AbstractFilterStrategy;
 import com.mtnfog.phileas.model.services.AnonymizationService;
@@ -36,6 +37,16 @@ public abstract class Filter implements Serializable {
      * The {@link AnonymizationService} to use when replacing values if enabled.
      */
     protected AnonymizationService anonymizationService;
+
+    /**
+     * Filters the input text.
+     * @param filterProfile The {@link FilterProfile} to use.
+     * @param context The context.
+     * @param documentId An ID uniquely identifying the document.
+     * @param input The input text.
+     * @return The filtered text.
+     */
+    public abstract List<Span> filter(FilterProfile filterProfile, String context, String documentId, String input) throws IOException;
 
     /**
      * Creates a new filter with anonymization.
