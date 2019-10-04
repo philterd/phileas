@@ -21,6 +21,10 @@ public class Identifier {
     @Expose
     private String pattern = DEFAULT_IDENTIFIER_REGEX;
 
+    @SerializedName("caseSensitive")
+    @Expose
+    private boolean caseSensitive = false;
+
     public List<IdentifierFilterStrategy> getIdentifierFilterStrategies() {
         return identifierFilterStrategies;
     }
@@ -37,4 +41,12 @@ public class Identifier {
         this.pattern = pattern;
     }
 
+    public boolean isCaseSensitive() {
+        return caseSensitive;
+    }
+
+    public void setCaseSensitive(boolean caseSensitive) {
+        this.caseSensitive = caseSensitive;
+    }
+    
 }
