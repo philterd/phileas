@@ -22,6 +22,7 @@ public abstract class AbstractFilterStrategy {
 
     public static final String TOKEN = "token";
     public static final String STARTSWITH = "startswith";
+    public static final String EQUALS = "==";
 
     /**
      * Gets the replacement for a token.
@@ -58,6 +59,9 @@ public abstract class AbstractFilterStrategy {
         switch (parsedCondition.getOperator().toLowerCase()) {
             case STARTSWITH:
                 conditionSatisfied = (token.startsWith(value));
+                break;
+            case EQUALS:
+                conditionSatisfied = (token.equalsIgnoreCase(value));
                 break;
         }
 
