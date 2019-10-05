@@ -13,9 +13,9 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-public class StateAbbreviationsFilterStrategy extends AbstractFilterStrategy {
+public class StateAbbreviationFilterStrategy extends AbstractFilterStrategy {
 
-    private static final Logger LOGGER = LogManager.getLogger(StateAbbreviationsFilterStrategy.class);
+    private static final Logger LOGGER = LogManager.getLogger(StateAbbreviationFilterStrategy.class);
 
     private static FilterType filterType = FilterType.STATE_ABBREVIATION;
 

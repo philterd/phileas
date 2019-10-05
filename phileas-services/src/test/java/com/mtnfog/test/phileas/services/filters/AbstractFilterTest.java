@@ -80,10 +80,10 @@ public abstract class AbstractFilterTest {
         Ssn ssn = new Ssn();
         ssn.setSsnFilterStrategies(Arrays.asList(ssnFilterStrategy));
 
-        StateAbbreviationsFilterStrategy stateAbbreviationsFilterStrategy = new StateAbbreviationsFilterStrategy();
+        StateAbbreviationFilterStrategy stateAbbreviationFilterStrategy = new StateAbbreviationFilterStrategy();
 
         StateAbbreviation stateAbbreviation = new StateAbbreviation();
-        stateAbbreviation.setStateAbbreviationsFilterStrategies(Arrays.asList(stateAbbreviationsFilterStrategy));
+        stateAbbreviation.setStateAbbreviationsFilterStrategies(Arrays.asList(stateAbbreviationFilterStrategy));
 
         UrlFilterStrategy urlFilterStrategy = new UrlFilterStrategy();
 
@@ -134,7 +134,7 @@ public abstract class AbstractFilterTest {
         hospital.setHospitalFilterStrategies(Arrays.asList(hospitalFilterStrategy));
 
         StateFilterStrategy stateFilterStrategy = new StateFilterStrategy();
-        stateAbbreviationsFilterStrategy.setSensitivityLevel(sensitivityLevel.getName());
+        stateAbbreviationFilterStrategy.setSensitivityLevel(sensitivityLevel.getName());
 
         State state = new State();
         state.setStateFilterStrategies(Arrays.asList(stateFilterStrategy));

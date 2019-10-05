@@ -58,10 +58,10 @@ public class FilterProfileTest {
         Ssn ssn = new Ssn();
         ssn.setSsnFilterStrategies(Arrays.asList(ssnFilterStrategy));
 
-        StateAbbreviationsFilterStrategy stateAbbreviationsFilterStrategy = new StateAbbreviationsFilterStrategy();
+        StateAbbreviationFilterStrategy stateAbbreviationFilterStrategy = new StateAbbreviationFilterStrategy();
 
         StateAbbreviation stateAbbreviation = new StateAbbreviation();
-        stateAbbreviation.setStateAbbreviationsFilterStrategies(Arrays.asList(stateAbbreviationsFilterStrategy));
+        stateAbbreviation.setStateAbbreviationsFilterStrategies(Arrays.asList(stateAbbreviationFilterStrategy));
 
         UrlFilterStrategy urlFilterStrategy = new UrlFilterStrategy();
 

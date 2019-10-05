@@ -2,7 +2,7 @@ package com.mtnfog.test.phileas.services.filters.dictionary;
 
 import com.mtnfog.phileas.model.enums.FilterType;
 import com.mtnfog.phileas.model.objects.Span;
-import com.mtnfog.phileas.model.profile.filters.strategies.rules.StateAbbreviationsFilterStrategy;
+import com.mtnfog.phileas.model.profile.filters.strategies.rules.StateAbbreviationFilterStrategy;
 import com.mtnfog.phileas.services.anonymization.StateAbbreviationAnonymizationService;
 import com.mtnfog.phileas.services.cache.LocalAnonymizationCacheService;
 import com.mtnfog.phileas.services.filters.regex.StateAbbreviationFilter;
@@ -22,7 +22,7 @@ public class StateAbbreviationFilterTest extends AbstractFilterTest {
     @Test
     public void filter1() throws Exception {
 
-        final List<StateAbbreviationsFilterStrategy> strategies = Arrays.asList(new StateAbbreviationsFilterStrategy());
+        final List<StateAbbreviationFilterStrategy> strategies = Arrays.asList(new StateAbbreviationFilterStrategy());
         final StateAbbreviationFilter filter = new StateAbbreviationFilter(strategies, new StateAbbreviationAnonymizationService(new LocalAnonymizationCacheService()));
 
         final String input = "The patient is from WV.";
@@ -38,7 +38,7 @@ public class StateAbbreviationFilterTest extends AbstractFilterTest {
     @Test
     public void filter2() throws Exception {
 
-        final List<StateAbbreviationsFilterStrategy> strategies = Arrays.asList(new StateAbbreviationsFilterStrategy());
+        final List<StateAbbreviationFilterStrategy> strategies = Arrays.asList(new StateAbbreviationFilterStrategy());
         final StateAbbreviationFilter filter = new StateAbbreviationFilter(strategies, new StateAbbreviationAnonymizationService(new LocalAnonymizationCacheService()));
 
         final String input = "The patient is from wv.";
