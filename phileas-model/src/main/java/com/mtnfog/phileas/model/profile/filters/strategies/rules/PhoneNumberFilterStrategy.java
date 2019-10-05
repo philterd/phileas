@@ -6,6 +6,8 @@ import com.mtnfog.phileas.model.enums.FilterType;
 import com.mtnfog.phileas.model.services.AnonymizationService;
 import com.mtnfog.phileas.model.profile.filters.strategies.AbstractFilterStrategy;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.util.List;
@@ -13,15 +15,33 @@ import java.util.Map;
 
 public class PhoneNumberFilterStrategy extends AbstractFilterStrategy {
 
+    private static final Logger LOGGER = LogManager.getLogger(PhoneNumberFilterStrategy.class);
+
     private static FilterType filterType = FilterType.PHONE_NUMBER;
 
     @Override
     public boolean evaluateCondition(String context, String documentId, String token, String condition, Map<String, Object> attributes) {
 
+        boolean conditionsSatisfied = false;
+
         final List<ParsedCondition> parsedConditions = ParserListener.getTerminals(condition);
 
-        // TODO: PHI-134: Evaluate the condition.
-        return true;
+        for(ParsedCondition parsedCondition : parsedConditions) {
+
+            if(StringUtils.equalsIgnoreCase(TOKEN, parsedCondition.getField())) {
+
+                conditionsSatisfied = evaluateTokenCondition(parsedCondition, token);
+
+            }
+
+            LOGGER.debug("Condition for [" + condition + "] satisfied: " + conditionsSatisfied);
+
+            // Short-circuit if we have a failure.
+            if(!conditionsSatisfied) break;
+
+        }
+
+        return conditionsSatisfied;
 
     }
 

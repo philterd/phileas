@@ -27,7 +27,7 @@ public class Identifier {
 
     @SerializedName("name")
     @Expose
-    private String name;
+    private String name = "custom-identifier";
 
     public List<IdentifierFilterStrategy> getIdentifierFilterStrategies() {
         return identifierFilterStrategies;
