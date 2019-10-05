@@ -47,57 +47,45 @@ public class LuceneDictionaryFilter extends DictionaryFilter implements Serializ
     private Map<SensitivityLevel, Integer> distances;
 
     public static final Map<SensitivityLevel, Integer> FIRST_NAME_DISTANCES = new HashMap<SensitivityLevel, Integer>() {{
-        FIRST_NAME_DISTANCES.put(SensitivityLevel.LOW, 0);
-        FIRST_NAME_DISTANCES.put(SensitivityLevel.MEDIUM, 1);
-        FIRST_NAME_DISTANCES.put(SensitivityLevel.HIGH, 2);
+        put(SensitivityLevel.LOW, 0);
+        put(SensitivityLevel.MEDIUM, 1);
+        put(SensitivityLevel.HIGH, 2);
     }};
 
     public static final Map<SensitivityLevel, Integer> SURNAME_DISTANCES = new HashMap<SensitivityLevel, Integer>() {{
-
-        SURNAME_DISTANCES.put(SensitivityLevel.LOW, 0);
-        SURNAME_DISTANCES.put(SensitivityLevel.MEDIUM, 1);
-        SURNAME_DISTANCES.put(SensitivityLevel.HIGH, 2);
-
+        put(SensitivityLevel.LOW, 0);
+        put(SensitivityLevel.MEDIUM, 1);
+        put(SensitivityLevel.HIGH, 2);
     }};
 
     public static final Map<SensitivityLevel, Integer> CITIES_DISTANCES = new HashMap<SensitivityLevel, Integer>() {{
-
-        CITIES_DISTANCES.put(SensitivityLevel.LOW, 0);
-        CITIES_DISTANCES.put(SensitivityLevel.MEDIUM, 1);
-        CITIES_DISTANCES.put(SensitivityLevel.HIGH, 2);
-
+        put(SensitivityLevel.LOW, 0);
+        put(SensitivityLevel.MEDIUM, 1);
+        put(SensitivityLevel.HIGH, 2);
     }};
 
     public static final Map<SensitivityLevel, Integer> STATES_DISTANCES = new HashMap<SensitivityLevel, Integer>() {{
-
-        STATES_DISTANCES.put(SensitivityLevel.LOW, 0);
-        STATES_DISTANCES.put(SensitivityLevel.MEDIUM, 1);
-        STATES_DISTANCES.put(SensitivityLevel.HIGH, 2);
-
+        put(SensitivityLevel.LOW, 0);
+        put(SensitivityLevel.MEDIUM, 1);
+        put(SensitivityLevel.HIGH, 2);
     }};
 
     public static final Map<SensitivityLevel, Integer> COUNTIES_DISTANCES = new HashMap<SensitivityLevel, Integer>() {{
-
-        COUNTIES_DISTANCES.put(SensitivityLevel.LOW, 0);
-        COUNTIES_DISTANCES.put(SensitivityLevel.MEDIUM, 1);
-        COUNTIES_DISTANCES.put(SensitivityLevel.HIGH, 2);
-
+        put(SensitivityLevel.LOW, 0);
+        put(SensitivityLevel.MEDIUM, 1);
+        put(SensitivityLevel.HIGH, 2);
     }};
 
     public static final Map<SensitivityLevel, Integer> HOSPITALS_DISTANCES = new HashMap<SensitivityLevel, Integer>() {{
-
-        HOSPITALS_DISTANCES.put(SensitivityLevel.LOW, 0);
-        HOSPITALS_DISTANCES.put(SensitivityLevel.MEDIUM, 1);
-        HOSPITALS_DISTANCES.put(SensitivityLevel.HIGH, 2);
-
+        put(SensitivityLevel.LOW, 0);
+        put(SensitivityLevel.MEDIUM, 1);
+        put(SensitivityLevel.HIGH, 2);
     }};
 
     public static final Map<SensitivityLevel, Integer> HOSPITAL_ABBREVIATIONS_DISTANCES = new HashMap<SensitivityLevel, Integer>() {{
-
-        HOSPITAL_ABBREVIATIONS_DISTANCES.put(SensitivityLevel.LOW, 0);
-        HOSPITAL_ABBREVIATIONS_DISTANCES.put(SensitivityLevel.MEDIUM, 1);
-        HOSPITAL_ABBREVIATIONS_DISTANCES.put(SensitivityLevel.HIGH, 2);
-
+        put(SensitivityLevel.LOW, 0);
+        put(SensitivityLevel.MEDIUM, 1);
+        put(SensitivityLevel.HIGH, 2);
     }};
 
     /**
