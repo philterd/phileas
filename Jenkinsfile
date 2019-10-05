@@ -14,7 +14,7 @@ pipeline {
         //Use Pipeline Utility Steps plugin to read information from pom.xml into env variables
         IMAGE = readMavenPom().getArtifactId()
         VERSION = readMavenPom().getVersion()
-        PHILTER_INDEX_DIR = "${WORKSPACE}"
+        PHILEAS_INDER_DIR = "${WORKSPACE}"
     }
     stages {
         stage ('Initialize') {

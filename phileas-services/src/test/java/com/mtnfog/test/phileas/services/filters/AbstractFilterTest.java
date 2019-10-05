@@ -181,7 +181,7 @@ public abstract class AbstractFilterTest {
 
     public String getIndexDirectory(String indexName) {
 
-        final String baseDir = System.getenv("PHILTER_INDEX_DIR");
+        final String baseDir = System.getenv("PHILEAS_INDER_DIR");
 
         if(!StringUtils.isEmpty(baseDir)) {
 
@@ -193,9 +193,9 @@ public abstract class AbstractFilterTest {
 
         } else {
 
-            LOGGER.warn("Environment variable PHILTER_INDEX_DIR is not set for Lucene index test.");
+            LOGGER.warn("Environment variable PHILEAS_INDER_DIR is not set for Lucene index test.");
 
-            return "/mtnfog/code/bitbucket/philter/philter/data/indexes/" + indexName;
+            return "/mtnfog/code/bitbucket/philter/phileas/data/indexes/" + indexName;
 
         }
 
