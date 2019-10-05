@@ -85,13 +85,13 @@ public class NerFilterStrategy extends AbstractFilterStrategy {
     }
 
     @Override
-    public String getReplacement(String context, String documentId, String token, AnonymizationService anonymizationService) throws IOException {
+    public String getReplacement(String name, String context, String documentId, String token, AnonymizationService anonymizationService) throws IOException {
 
         String replacement = null;
 
         if(StringUtils.equalsIgnoreCase(redactionFormat, REDACT)) {
 
-            replacement = getValueOrDefault(redactionFormat, DEFAULT_REDACTION).replace("%t", filterType.getType());
+            replacement = getRedactedToken(name, filterType);
 
         } else if(StringUtils.equalsIgnoreCase(redactionFormat, RANDOM_REPLACE)) {
 
@@ -111,7 +111,7 @@ public class NerFilterStrategy extends AbstractFilterStrategy {
         } else {
 
             // Default to redaction.
-            replacement = getValueOrDefault(redactionFormat, DEFAULT_REDACTION).replace("%t", filterType.getType());
+            replacement = getRedactedToken(name, filterType);
 
         }
 

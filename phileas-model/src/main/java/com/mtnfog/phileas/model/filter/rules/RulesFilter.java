@@ -50,7 +50,7 @@ public abstract class RulesFilter extends Filter implements Serializable {
             while (matcher.find()) {
 
                 // There are no attributes for the span.
-                final String replacement = getReplacement(context, documentId, matcher.group(0), Collections.emptyMap());
+                final String replacement = getReplacement(name, context, documentId, matcher.group(0), Collections.emptyMap());
 
                 spans.add(Span.make(matcher.start(0), matcher.end(0), getFilterType(), context, documentId, 1.0, replacement));
 

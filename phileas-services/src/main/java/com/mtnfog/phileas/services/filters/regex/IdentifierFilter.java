@@ -15,7 +15,6 @@ import java.util.regex.Pattern;
 public class IdentifierFilter extends RegexFilter implements Serializable {
 
     private Pattern pattern;
-    private String name;
 
     public IdentifierFilter(String name, String pattern, boolean caseSensitive, List<IdentifierFilterStrategy> strategies, AnonymizationService anonymizationService) {
         super(FilterType.IDENTIFIER, strategies, anonymizationService);

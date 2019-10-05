@@ -3,8 +3,10 @@ package com.mtnfog.phileas.model.profile.filters.strategies;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.mtnfog.phileas.model.conditions.ParsedCondition;
+import com.mtnfog.phileas.model.enums.FilterType;
 import com.mtnfog.phileas.model.enums.SensitivityLevel;
 import com.mtnfog.phileas.model.services.AnonymizationService;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
 import java.util.Map;
@@ -32,7 +34,7 @@ public abstract class AbstractFilterStrategy {
      * @param anonymizationService The {@link AnonymizationService} for the token.
      * @return A replacement value for a token.
      */
-    public abstract String getReplacement(String context, String documentId, String token, AnonymizationService anonymizationService) throws IOException;
+    public abstract String getReplacement(String name, String context, String documentId, String token, AnonymizationService anonymizationService) throws IOException;
 
     /**
      * Evaluates the condition on the given token.
@@ -43,6 +45,19 @@ public abstract class AbstractFilterStrategy {
      * @return <code>true</code> if the condition matches; otherwise <code>false</code>.
      */
     public abstract boolean evaluateCondition(String context, String documentId, String token, String condition, Map<String, Object> attributes);
+
+    protected String getRedactedToken(String name, FilterType filterType) {
+
+        String replacement = getValueOrDefault(redactionFormat, DEFAULT_REDACTION)
+                .replaceAll("%t", filterType.getType());
+
+        if(StringUtils.isNotEmpty(name)) {
+            replacement = replacement.replaceAll("%n", name);
+        }
+
+        return replacement;
+
+    }
 
     /**
      * Evaluates a token condition.

@@ -41,6 +41,7 @@ public abstract class Filter implements Serializable {
     protected AnonymizationService anonymizationService;
 
     protected List<? extends AbstractFilterStrategy> strategies;
+    protected String name;
 
     /**
      * Filters the input text.
@@ -71,7 +72,7 @@ public abstract class Filter implements Serializable {
      * @param token The token to replace.
      * @return The replacement string.
      */
-    public String getReplacement(String context, String documentId, String token, Map<String, Object> attributes) throws IOException {
+    public String getReplacement(String name, String context, String documentId, String token, Map<String, Object> attributes) throws IOException {
 
         // Loop through the strategies. The first strategy without a condition or a satisfied condition will provide the replacement.
         for(AbstractFilterStrategy strategy : strategies) {
@@ -81,7 +82,7 @@ public abstract class Filter implements Serializable {
             // If there is no condition or if the condition evaluates then get the replacement.
             if(StringUtils.isEmpty(condition) || (strategy.evaluateCondition(context, documentId, token, condition, attributes))) {
 
-                return strategy.getReplacement(context, documentId, token, anonymizationService);
+                return strategy.getReplacement(name, context, documentId, token, anonymizationService);
 
             }
 

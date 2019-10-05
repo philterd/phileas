@@ -120,7 +120,7 @@ public class ZipCodeFilterStrategyTest {
 
         final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
 
-        final String replacement = strategy.getReplacement("context", "docid", "90210", anonymizationService);
+        final String replacement = strategy.getReplacement("name", "context", "docid", "90210", anonymizationService);
 
         Assert.assertEquals("whoa", replacement);
 
@@ -135,7 +135,7 @@ public class ZipCodeFilterStrategyTest {
 
         AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
 
-        final String replacement = strategy.getReplacement("context", "documentId", "90210", anonymizationService);
+        final String replacement = strategy.getReplacement("name", "context", "documentId", "90210", anonymizationService);
 
         LOGGER.info(replacement);
 
@@ -152,7 +152,7 @@ public class ZipCodeFilterStrategyTest {
 
         AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
 
-        final String replacement = strategy.getReplacement("context", "documentId", "90210-0110", anonymizationService);
+        final String replacement = strategy.getReplacement("name", "context", "documentId", "90210-0110", anonymizationService);
 
         LOGGER.info(replacement);
 
@@ -169,7 +169,7 @@ public class ZipCodeFilterStrategyTest {
 
         AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
 
-        final String replacement = strategy.getReplacement("context", "documentId", "90210-0110", anonymizationService);
+        final String replacement = strategy.getReplacement("name", "context", "documentId", "90210-0110", anonymizationService);
 
         LOGGER.info(replacement);
 
@@ -185,7 +185,7 @@ public class ZipCodeFilterStrategyTest {
 
         AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
 
-        final String replacement = strategy.getReplacement("context", "documentId", "90210-0110", anonymizationService);
+        final String replacement = strategy.getReplacement("name", "context", "documentId", "90210-0110", anonymizationService);
 
         LOGGER.info(replacement);
 
