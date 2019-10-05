@@ -23,7 +23,7 @@ public class Identifier {
 
     @SerializedName("caseSensitive")
     @Expose
-    private boolean caseSensitive = false;
+    private boolean caseSensitive = true;
 
     @SerializedName("name")
     @Expose
