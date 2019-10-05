@@ -7,7 +7,7 @@ import java.util.LinkedList;
 
 public class CountyAnonymizationService extends AbstractAnonymizationService {
 
-    public static final Collection<String> COUNTIES = new LinkedList<String>() {{
+    private static final Collection<String> COUNTIES = new LinkedList<String>() {{
 
         add("Beaver");
         add("Ohio");

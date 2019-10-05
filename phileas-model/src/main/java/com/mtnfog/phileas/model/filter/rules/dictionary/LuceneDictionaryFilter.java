@@ -46,43 +46,43 @@ public class LuceneDictionaryFilter extends DictionaryFilter implements Serializ
 
     private Map<SensitivityLevel, Integer> distances;
 
-    public static final Map<SensitivityLevel, Integer> FIRST_NAME_DISTANCES = new HashMap<SensitivityLevel, Integer>() {{
+    private static final Map<SensitivityLevel, Integer> FIRST_NAME_DISTANCES = new HashMap<SensitivityLevel, Integer>() {{
         put(SensitivityLevel.LOW, 0);
         put(SensitivityLevel.MEDIUM, 1);
         put(SensitivityLevel.HIGH, 2);
     }};
 
-    public static final Map<SensitivityLevel, Integer> SURNAME_DISTANCES = new HashMap<SensitivityLevel, Integer>() {{
+    private static final Map<SensitivityLevel, Integer> SURNAME_DISTANCES = new HashMap<SensitivityLevel, Integer>() {{
         put(SensitivityLevel.LOW, 0);
         put(SensitivityLevel.MEDIUM, 1);
         put(SensitivityLevel.HIGH, 2);
     }};
 
-    public static final Map<SensitivityLevel, Integer> CITIES_DISTANCES = new HashMap<SensitivityLevel, Integer>() {{
+    private static final Map<SensitivityLevel, Integer> CITIES_DISTANCES = new HashMap<SensitivityLevel, Integer>() {{
         put(SensitivityLevel.LOW, 0);
         put(SensitivityLevel.MEDIUM, 1);
         put(SensitivityLevel.HIGH, 2);
     }};
 
-    public static final Map<SensitivityLevel, Integer> STATES_DISTANCES = new HashMap<SensitivityLevel, Integer>() {{
+    private static final Map<SensitivityLevel, Integer> STATES_DISTANCES = new HashMap<SensitivityLevel, Integer>() {{
         put(SensitivityLevel.LOW, 0);
         put(SensitivityLevel.MEDIUM, 1);
         put(SensitivityLevel.HIGH, 2);
     }};
 
-    public static final Map<SensitivityLevel, Integer> COUNTIES_DISTANCES = new HashMap<SensitivityLevel, Integer>() {{
+    private static final Map<SensitivityLevel, Integer> COUNTIES_DISTANCES = new HashMap<SensitivityLevel, Integer>() {{
         put(SensitivityLevel.LOW, 0);
         put(SensitivityLevel.MEDIUM, 1);
         put(SensitivityLevel.HIGH, 2);
     }};
 
-    public static final Map<SensitivityLevel, Integer> HOSPITALS_DISTANCES = new HashMap<SensitivityLevel, Integer>() {{
+    private static final Map<SensitivityLevel, Integer> HOSPITALS_DISTANCES = new HashMap<SensitivityLevel, Integer>() {{
         put(SensitivityLevel.LOW, 0);
         put(SensitivityLevel.MEDIUM, 1);
         put(SensitivityLevel.HIGH, 2);
     }};
 
-    public static final Map<SensitivityLevel, Integer> HOSPITAL_ABBREVIATIONS_DISTANCES = new HashMap<SensitivityLevel, Integer>() {{
+    private static final Map<SensitivityLevel, Integer> HOSPITAL_ABBREVIATIONS_DISTANCES = new HashMap<SensitivityLevel, Integer>() {{
         put(SensitivityLevel.LOW, 0);
         put(SensitivityLevel.MEDIUM, 1);
         put(SensitivityLevel.HIGH, 2);
@@ -269,6 +269,34 @@ public class LuceneDictionaryFilter extends DictionaryFilter implements Serializ
 
         return spans;
 
+    }
+
+    public static Map<SensitivityLevel, Integer> getFirstNameDistances() {
+        return FIRST_NAME_DISTANCES;
+    }
+
+    public static Map<SensitivityLevel, Integer> getSurnameDistances() {
+        return SURNAME_DISTANCES;
+    }
+
+    public static Map<SensitivityLevel, Integer> getCitiesDistances() {
+        return CITIES_DISTANCES;
+    }
+
+    public static Map<SensitivityLevel, Integer> getStatesDistances() {
+        return STATES_DISTANCES;
+    }
+
+    public static Map<SensitivityLevel, Integer> getCountiesDistances() {
+        return COUNTIES_DISTANCES;
+    }
+
+    public static Map<SensitivityLevel, Integer> getHospitalsDistances() {
+        return HOSPITALS_DISTANCES;
+    }
+
+    public static Map<SensitivityLevel, Integer> getHospitalAbbreviationsDistances() {
+        return HOSPITAL_ABBREVIATIONS_DISTANCES;
     }
 
 }

@@ -22,7 +22,6 @@ public class CountyAnonymizationServiceTest {
 
         LOGGER.info("County: " + replacement);
         Assert.assertNotNull(replacement);
-        Assert.assertTrue(CountyAnonymizationService.COUNTIES.contains(replacement));
 
     }
 
@@ -36,7 +35,6 @@ public class CountyAnonymizationServiceTest {
 
         LOGGER.info("County: " + replacement);
         Assert.assertNotNull(replacement);
-        Assert.assertTrue(CountyAnonymizationService.COUNTIES.contains(replacement));
 
     }
 
