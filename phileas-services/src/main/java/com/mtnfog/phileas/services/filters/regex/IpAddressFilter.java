@@ -4,6 +4,7 @@ import com.mtnfog.phileas.model.enums.FilterType;
 import com.mtnfog.phileas.model.filter.rules.regex.RegexFilter;
 import com.mtnfog.phileas.model.objects.Span;
 import com.mtnfog.phileas.model.profile.FilterProfile;
+import com.mtnfog.phileas.model.profile.filters.strategies.AbstractFilterStrategy;
 import com.mtnfog.phileas.model.services.AnonymizationService;
 
 import java.io.IOException;
@@ -20,8 +21,8 @@ public class IpAddressFilter extends RegexFilter implements Serializable {
     // TODO: What is this here for?
     private static final Pattern IPV6_HEX_PATTERN = Pattern.compile("((?:[0-9A-Fa-f]{1,4}(?::[0-9A-Fa-f]{1,4})*)?)::((?:[0-9A-Fa-f]{1,4}(?::[0-9A-Fa-f]{1,4})*)?)", Pattern.CASE_INSENSITIVE);
 
-    public IpAddressFilter(AnonymizationService anonymizationService) {
-        super(FilterType.IP_ADDRESS, anonymizationService);
+    public IpAddressFilter(List<? extends AbstractFilterStrategy> strategies, AnonymizationService anonymizationService) {
+        super(FilterType.IP_ADDRESS, strategies, anonymizationService);
     }
 
     @Override

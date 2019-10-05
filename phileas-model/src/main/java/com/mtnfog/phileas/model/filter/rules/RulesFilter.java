@@ -4,6 +4,7 @@ import com.mtnfog.phileas.model.enums.FilterType;
 import com.mtnfog.phileas.model.filter.Filter;
 import com.mtnfog.phileas.model.objects.Span;
 import com.mtnfog.phileas.model.profile.FilterProfile;
+import com.mtnfog.phileas.model.profile.filters.strategies.AbstractFilterStrategy;
 import com.mtnfog.phileas.model.services.AnonymizationService;
 
 import java.io.IOException;
@@ -24,8 +25,8 @@ public abstract class RulesFilter extends Filter implements Serializable {
      * @param filterType The {@link FilterType type} of the filter.
      * @param anonymizationService The {@link AnonymizationService} for this filter.
      */
-    public RulesFilter(FilterType filterType, AnonymizationService anonymizationService) {
-        super(filterType, anonymizationService);
+    public RulesFilter(FilterType filterType, List<? extends AbstractFilterStrategy> strategies, AnonymizationService anonymizationService) {
+        super(filterType, strategies, anonymizationService);
     }
 
     /**
@@ -49,7 +50,7 @@ public abstract class RulesFilter extends Filter implements Serializable {
             while (matcher.find()) {
 
                 // There are no attributes for the span.
-                final String replacement = getReplacement(filterProfile, context, documentId, matcher.group(0), Collections.emptyMap());
+                final String replacement = getReplacement(context, documentId, matcher.group(0), Collections.emptyMap());
 
                 spans.add(Span.make(matcher.start(0), matcher.end(0), getFilterType(), context, documentId, 1.0, replacement));
 

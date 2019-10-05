@@ -4,6 +4,7 @@ import com.mtnfog.phileas.model.enums.FilterType;
 import com.mtnfog.phileas.model.filter.rules.regex.RegexFilter;
 import com.mtnfog.phileas.model.objects.Span;
 import com.mtnfog.phileas.model.profile.FilterProfile;
+import com.mtnfog.phileas.model.profile.filters.strategies.AbstractFilterStrategy;
 import com.mtnfog.phileas.model.services.AnonymizationService;
 
 import java.io.IOException;
@@ -15,8 +16,8 @@ public class SsnFilter extends RegexFilter implements Serializable {
 
     private static final Pattern SSN_REGEX = Pattern.compile("\\b(?!000|666)[0-8][0-9]{2}[- ]?(?!00)[0-9]{2}[- ]?(?!0000)[0-9]{4}\\b");
 
-    public SsnFilter(AnonymizationService anonymizationService) {
-        super(FilterType.SSN, anonymizationService);
+    public SsnFilter(List<? extends AbstractFilterStrategy> strategies, AnonymizationService anonymizationService) {
+        super(FilterType.SSN, strategies, anonymizationService);
     }
 
     @Override

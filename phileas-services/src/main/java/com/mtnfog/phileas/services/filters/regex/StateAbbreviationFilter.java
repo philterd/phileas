@@ -4,6 +4,7 @@ import com.mtnfog.phileas.model.enums.FilterType;
 import com.mtnfog.phileas.model.filter.rules.regex.RegexFilter;
 import com.mtnfog.phileas.model.objects.Span;
 import com.mtnfog.phileas.model.profile.FilterProfile;
+import com.mtnfog.phileas.model.profile.filters.strategies.AbstractFilterStrategy;
 import com.mtnfog.phileas.model.services.AnonymizationService;
 
 import java.io.IOException;
@@ -73,8 +74,8 @@ public class StateAbbreviationFilter extends RegexFilter implements Serializable
 
     }
 
-    public StateAbbreviationFilter(AnonymizationService anonymizationService) {
-        super(FilterType.STATE_ABBREVIATION, anonymizationService);
+    public StateAbbreviationFilter(List<? extends AbstractFilterStrategy> strategies, AnonymizationService anonymizationService) {
+        super(FilterType.STATE_ABBREVIATION, strategies, anonymizationService);
 
     }
 
@@ -90,7 +91,7 @@ public class StateAbbreviationFilter extends RegexFilter implements Serializable
 
             while(m.find()) {
 
-                final String replacement = getReplacement(filterProfile, context, documentId, input, Collections.emptyMap());
+                final String replacement = getReplacement(context, documentId, input, Collections.emptyMap());
                 final Span span = Span.make(m.start(), m.end(), FilterType.STATE_ABBREVIATION, context, documentId, 1.0, replacement);
 
                 spans.add(span);

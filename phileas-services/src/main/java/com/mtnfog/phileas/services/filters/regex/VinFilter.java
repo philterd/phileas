@@ -4,6 +4,7 @@ import com.mtnfog.phileas.model.enums.FilterType;
 import com.mtnfog.phileas.model.filter.rules.regex.RegexFilter;
 import com.mtnfog.phileas.model.objects.Span;
 import com.mtnfog.phileas.model.profile.FilterProfile;
+import com.mtnfog.phileas.model.profile.filters.strategies.AbstractFilterStrategy;
 import com.mtnfog.phileas.model.services.AnonymizationService;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
@@ -17,8 +18,8 @@ public class VinFilter extends RegexFilter implements Serializable {
 
     private static final Pattern VIN_REGEX = Pattern.compile("\\b[A-HJ-NPR-Z0-9]{17}\\b", Pattern.CASE_INSENSITIVE);
 
-    public VinFilter(AnonymizationService anonymizationService) {
-        super(FilterType.VIN, anonymizationService);
+    public VinFilter(List<? extends AbstractFilterStrategy> strategies, AnonymizationService anonymizationService) {
+        super(FilterType.VIN, strategies, anonymizationService);
     }
 
     @Override

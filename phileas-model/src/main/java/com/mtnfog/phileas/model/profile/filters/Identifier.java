@@ -25,6 +25,10 @@ public class Identifier {
     @Expose
     private boolean caseSensitive = false;
 
+    @SerializedName("name")
+    @Expose
+    private String name;
+
     public List<IdentifierFilterStrategy> getIdentifierFilterStrategies() {
         return identifierFilterStrategies;
     }
@@ -48,5 +52,13 @@ public class Identifier {
     public void setCaseSensitive(boolean caseSensitive) {
         this.caseSensitive = caseSensitive;
     }
-    
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
 }

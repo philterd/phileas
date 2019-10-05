@@ -2,6 +2,8 @@ package com.mtnfog.test.phileas.services.filters.regex;
 
 import com.mtnfog.phileas.model.enums.FilterType;
 import com.mtnfog.phileas.model.objects.Span;
+import com.mtnfog.phileas.model.profile.filters.strategies.dynamic.CityFilterStrategy;
+import com.mtnfog.phileas.model.profile.filters.strategies.rules.CreditCardFilterStrategy;
 import com.mtnfog.phileas.services.anonymization.CreditCardAnonymizationService;
 import com.mtnfog.phileas.services.cache.LocalAnonymizationCacheService;
 import com.mtnfog.phileas.services.filters.regex.CreditCardFilter;
@@ -9,6 +11,7 @@ import com.mtnfog.test.phileas.services.filters.AbstractFilterTest;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.util.Arrays;
 import java.util.List;
 
 public class CreditCardFilterTest extends AbstractFilterTest {
@@ -16,7 +19,8 @@ public class CreditCardFilterTest extends AbstractFilterTest {
     @Test
     public void filterCreditCard() throws Exception {
 
-        CreditCardFilter filter = new CreditCardFilter(new CreditCardAnonymizationService(new LocalAnonymizationCacheService()));
+        final List<CreditCardFilterStrategy> strategies = Arrays.asList(new CreditCardFilterStrategy());
+        CreditCardFilter filter = new CreditCardFilter(strategies, new CreditCardAnonymizationService(new LocalAnonymizationCacheService()));
 
         // VISA
 

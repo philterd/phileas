@@ -8,6 +8,7 @@ import com.mtnfog.phileas.model.objects.Span;
 import com.mtnfog.phileas.model.profile.FilterProfile;
 import com.mtnfog.phileas.model.profile.Identifiers;
 import com.mtnfog.phileas.model.profile.filters.Ner;
+import com.mtnfog.phileas.model.profile.filters.strategies.AbstractFilterStrategy;
 import com.mtnfog.phileas.model.profile.filters.strategies.ai.NerFilterStrategy;
 import com.mtnfog.phileas.model.profile.filters.strategies.rules.ZipCodeFilterStrategy;
 import com.mtnfog.phileas.model.services.AnonymizationService;
@@ -69,7 +70,7 @@ public class PyTorchFilterTest {
 
         this.mockServer.enqueue(new MockResponse().setResponseCode(200).setBody("[{\"text\":\"test\",\"tag\":\"PER\",\"score\":0.5,\"start\":1,\"end\":2}]"));
 
-        final PyTorchFilter t = new PyTorchFilter(baseUrl, FilterType.NER_ENTITY, "PER", stats, metricsService, anonymizationService);
+        final PyTorchFilter t = new PyTorchFilter(baseUrl, FilterType.NER_ENTITY, getStrategies(),"PER", stats, metricsService, anonymizationService);
 
         final List<Span> spans = t.filter(getFilterProfile(), "context", "doc", "John Smith lives in New York");
 
@@ -93,7 +94,7 @@ public class PyTorchFilterTest {
 
         this.mockServer.enqueue(new MockResponse().setResponseCode(200).setBody("[{\"text\":\"test\",\"tag\":\"LOC\",\"score\":0.5,\"start\":1,\"end\":2}]"));
 
-        final PyTorchFilter t = new PyTorchFilter(baseUrl, FilterType.NER_ENTITY, "LOC",
+        final PyTorchFilter t = new PyTorchFilter(baseUrl, FilterType.NER_ENTITY, getStrategies(), "LOC",
                 stats, metricsService, anonymizationService);
 
         final List<Span> spans = t.filter(getFilterProfile(), "context", "doc", "John Smith lives in New York");
@@ -103,6 +104,22 @@ public class PyTorchFilterTest {
         }
 
         Assert.assertEquals(1, spans.size());
+
+    }
+
+    private List<AbstractFilterStrategy> getStrategies() throws IOException {
+
+        final List<AbstractFilterStrategy> strategies = new LinkedList<>();
+
+        NerFilterStrategy nerFilterStrategy = new NerFilterStrategy();
+
+        ZipCodeFilterStrategy zipCodeFilterStrategy = new ZipCodeFilterStrategy();
+        zipCodeFilterStrategy.setTruncateDigits(2);
+
+        strategies.add(nerFilterStrategy);
+        strategies.add(zipCodeFilterStrategy);
+
+        return strategies;
 
     }
 

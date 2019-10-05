@@ -6,6 +6,7 @@ import com.mtnfog.phileas.model.enums.FilterType;
 import com.mtnfog.phileas.model.filter.rules.RulesFilter;
 import com.mtnfog.phileas.model.objects.Span;
 import com.mtnfog.phileas.model.profile.FilterProfile;
+import com.mtnfog.phileas.model.profile.filters.strategies.AbstractFilterStrategy;
 import com.mtnfog.phileas.model.services.AnonymizationService;
 
 import java.io.IOException;
@@ -18,9 +19,9 @@ public class PhoneNumberRulesFilter extends RulesFilter implements Serializable 
 
     private PhoneNumberUtil phoneUtil;
 
-    public PhoneNumberRulesFilter(AnonymizationService anonymizationService) {
+    public PhoneNumberRulesFilter(List<? extends AbstractFilterStrategy> strategies, AnonymizationService anonymizationService) {
 
-        super(FilterType.PHONE_NUMBER, anonymizationService);
+        super(FilterType.PHONE_NUMBER, strategies, anonymizationService);
 
         this.phoneUtil = PhoneNumberUtil.getInstance();
 
@@ -37,7 +38,7 @@ public class PhoneNumberRulesFilter extends RulesFilter implements Serializable 
 
             for (PhoneNumberMatch match : matches) {
 
-                final String replacement = getReplacement(filterProfile, context, documentId, match.rawString(), Collections.emptyMap());
+                final String replacement = getReplacement(context, documentId, match.rawString(), Collections.emptyMap());
 
                 spans.add(Span.make(match.start(), match.end(), getFilterType(), context, documentId, 1.0, replacement));
 

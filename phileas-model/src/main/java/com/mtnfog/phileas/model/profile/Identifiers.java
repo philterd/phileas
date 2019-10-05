@@ -4,6 +4,9 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.mtnfog.phileas.model.enums.FilterType;
 import com.mtnfog.phileas.model.profile.filters.*;
+
+import java.util.List;
+
 public class Identifiers {
 
     @SerializedName("ner")
@@ -26,9 +29,9 @@ public class Identifiers {
     @Expose
     private EmailAddress emailAddress;
 
-    @SerializedName("identifier")
+    @SerializedName("identifiers")
     @Expose
-    private Identifier identifier;
+    private List<Identifier> identifiers;
 
     @SerializedName("ipAddress")
     @Expose
@@ -123,7 +126,7 @@ public class Identifiers {
             case HOSPITAL_ABBREVIATION:
                 if(this.getHospitalAbbreviation() != null) { return true; } break;
             case IDENTIFIER:
-                if(this.getIdentifier() != null) { return true; } break;
+                if(this.getIdentifiers() != null) { return true; } break;
             case IP_ADDRESS:
                 if(this.getIpAddress() != null) { return true; } break;
             case PHONE_NUMBER:
@@ -207,12 +210,12 @@ public class Identifiers {
         this.ipAddress = ipAddress;
     }
 
-    public Identifier getIdentifier() {
-        return identifier;
+    public List<Identifier> getIdentifiers() {
+        return identifiers;
     }
 
-    public void setIdentifier(Identifier identifier) {
-        this.identifier = identifier;
+    public void setIdentifiers(List<Identifier> identifiers) {
+        this.identifiers = identifiers;
     }
 
     public EmailAddress getEmailAddress() {

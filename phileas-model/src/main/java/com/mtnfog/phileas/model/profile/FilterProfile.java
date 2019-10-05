@@ -33,7 +33,7 @@ public class FilterProfile {
         if(filterType == FilterType.CREDIT_CARD) enabled = (identifiers.getCreditCard() != null);
         if(filterType == FilterType.DATE) enabled = (identifiers.getDate() != null);
         if(filterType == FilterType.EMAIL_ADDRESS) enabled = (identifiers.getEmailAddress() != null);
-        if(filterType == FilterType.IDENTIFIER) enabled = (identifiers.getIdentifier() != null);
+        if(filterType == FilterType.IDENTIFIER) enabled = (identifiers.getIdentifiers() != null);
         if(filterType == FilterType.IP_ADDRESS) enabled = (identifiers.getIpAddress() != null);
         if(filterType == FilterType.NER_ENTITY) enabled = (identifiers.getNer() != null);
         if(filterType == FilterType.PHONE_NUMBER) enabled = (identifiers.getPhoneNumber() != null);

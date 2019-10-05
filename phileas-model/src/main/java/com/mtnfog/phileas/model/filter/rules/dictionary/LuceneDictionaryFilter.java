@@ -126,11 +126,12 @@ public class LuceneDictionaryFilter extends DictionaryFilter implements Serializ
      * @throws IOException Thrown if the index cannot be opened or accessed.
      */
     public LuceneDictionaryFilter(FilterType filterType,
+                                  List<? extends AbstractFilterStrategy> strategies,
                                   String indexDirectory,
                                   Map<SensitivityLevel, Integer> distances,
                                   AnonymizationService anonymizationService) throws IOException {
 
-        super(filterType, anonymizationService);
+        super(filterType, strategies, anonymizationService);
 
         LOGGER.info("Loading {} index from {}", filterType, indexDirectory);
 
@@ -230,7 +231,7 @@ public class LuceneDictionaryFilter extends DictionaryFilter implements Serializ
                             if (isMatch) {
 
                                 // There are no attributes for the span.
-                                final String replacement = getReplacement(filterProfile, context, documentId, token, Collections.emptyMap());
+                                final String replacement = getReplacement(context, documentId, token, Collections.emptyMap());
                                 spans.add(Span.make(offsetAttribute.startOffset(), offsetAttribute.endOffset(), getFilterType(), context, documentId, spellChecker.getAccuracy(), replacement));
 
                             }

@@ -3,6 +3,7 @@ package com.mtnfog.phileas.model.filter;
 import com.mtnfog.phileas.model.enums.FilterType;
 import com.mtnfog.phileas.model.objects.Span;
 import com.mtnfog.phileas.model.profile.FilterProfile;
+import com.mtnfog.phileas.model.profile.filters.Identifier;
 import com.mtnfog.phileas.model.profile.filters.strategies.AbstractFilterStrategy;
 import com.mtnfog.phileas.model.services.AnonymizationService;
 import org.apache.commons.lang3.StringUtils;
@@ -13,6 +14,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 public abstract class Filter implements Serializable {
 
@@ -38,6 +40,8 @@ public abstract class Filter implements Serializable {
      */
     protected AnonymizationService anonymizationService;
 
+    protected List<? extends AbstractFilterStrategy> strategies;
+
     /**
      * Filters the input text.
      * @param filterProfile The {@link FilterProfile} to use.
@@ -54,23 +58,20 @@ public abstract class Filter implements Serializable {
      * @param filterType The {@link FilterType type} of the filter.
      * @param anonymizationService The {@link AnonymizationService} for this filter.
      */
-    public Filter(FilterType filterType, AnonymizationService anonymizationService) {
+    public Filter(FilterType filterType, List<? extends AbstractFilterStrategy> strategies, AnonymizationService anonymizationService) {
         this.filterType = filterType;
+        this.strategies = strategies;
         this.anonymizationService = anonymizationService;
     }
 
     /**
      * Gets the string to be used as a replacement.
-     * @param filterProfile The {@link FilterProfile} to use.
      * @param context The context.
      * @param documentId The document ID.
      * @param token The token to replace.
      * @return The replacement string.
      */
-    public String getReplacement(FilterProfile filterProfile, String context, String documentId, String token, Map<String, Object> attributes) throws IOException {
-
-        // Get all the filter strategies for this type of filter.
-        final List<? extends AbstractFilterStrategy> strategies = getFilterStrategies(filterProfile, filterType);
+    public String getReplacement(String context, String documentId, String token, Map<String, Object> attributes) throws IOException {
 
         // Loop through the strategies. The first strategy without a condition or a satisfied condition will provide the replacement.
         for(AbstractFilterStrategy strategy : strategies) {
@@ -91,6 +92,18 @@ public abstract class Filter implements Serializable {
 
     }
 
+    public static List<? extends AbstractFilterStrategy> getIdentifierFilterStrategies(FilterProfile filterProfile, String name) {
+
+        final List<Identifier> identifiers = filterProfile.getIdentifiers().getIdentifiers();
+
+        final Identifier identifier = identifiers.stream().
+                filter(p -> p.getName().equalsIgnoreCase(name)).
+                findFirst().get();
+
+        return identifier.getIdentifierFilterStrategies();
+
+    }
+
     public static List<? extends AbstractFilterStrategy> getFilterStrategies(FilterProfile filterProfile, FilterType filterType) {
 
         LOGGER.info("Getting filter strategies for filter type {}", filterType.getType());
@@ -103,8 +116,6 @@ public abstract class Filter implements Serializable {
             return filterProfile.getIdentifiers().getDate().getDateFilterStrategies();
         } else if(filterType == FilterType.EMAIL_ADDRESS) {
             return filterProfile.getIdentifiers().getEmailAddress().getEmailAddressFilterStrategies();
-        } else if(filterType == FilterType.IDENTIFIER) {
-            return filterProfile.getIdentifiers().getIdentifier().getIdentifierFilterStrategies();
         } else if(filterType == FilterType.IP_ADDRESS) {
             return filterProfile.getIdentifiers().getIpAddress().getIpAddressFilterStrategies();
         } else if(filterType == FilterType.NER_ENTITY) {

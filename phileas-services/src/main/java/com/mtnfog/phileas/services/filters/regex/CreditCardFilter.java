@@ -4,6 +4,7 @@ import com.mtnfog.phileas.model.enums.FilterType;
 import com.mtnfog.phileas.model.filter.rules.regex.RegexFilter;
 import com.mtnfog.phileas.model.objects.Span;
 import com.mtnfog.phileas.model.profile.FilterProfile;
+import com.mtnfog.phileas.model.profile.filters.strategies.AbstractFilterStrategy;
 import com.mtnfog.phileas.model.services.AnonymizationService;
 import org.apache.commons.validator.routines.checkdigit.LuhnCheckDigit;
 
@@ -23,8 +24,8 @@ public class CreditCardFilter extends RegexFilter implements Serializable {
 
     private LuhnCheckDigit luhnCheckDigit;
 
-    public CreditCardFilter(AnonymizationService anonymizationService) {
-        super(FilterType.CREDIT_CARD, anonymizationService);
+    public CreditCardFilter(List<? extends AbstractFilterStrategy> strategies, AnonymizationService anonymizationService) {
+        super(FilterType.CREDIT_CARD, strategies, anonymizationService);
 
         this.luhnCheckDigit = new LuhnCheckDigit();
 

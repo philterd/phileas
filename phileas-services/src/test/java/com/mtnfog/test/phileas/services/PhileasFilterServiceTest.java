@@ -189,7 +189,7 @@ public class PhileasFilterServiceTest {
         identifiers.setCreditCard(creditCard);
         identifiers.setDate(date);
         identifiers.setEmailAddress(emailAddress);
-        identifiers.setIdentifier(identifier);
+        identifiers.setIdentifiers(Arrays.asList(identifier));
         identifiers.setIpAddress(ipAddress);
         identifiers.setPhoneNumber(phoneNumber);
         identifiers.setSsn(ssn);

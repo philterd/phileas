@@ -2,6 +2,7 @@ package com.mtnfog.test.phileas.services.filters.dictionary;
 
 import com.mtnfog.phileas.model.enums.FilterType;
 import com.mtnfog.phileas.model.objects.Span;
+import com.mtnfog.phileas.model.profile.filters.strategies.rules.StateAbbreviationsFilterStrategy;
 import com.mtnfog.phileas.services.anonymization.StateAbbreviationAnonymizationService;
 import com.mtnfog.phileas.services.cache.LocalAnonymizationCacheService;
 import com.mtnfog.phileas.services.filters.regex.StateAbbreviationFilter;
@@ -11,6 +12,7 @@ import org.apache.logging.log4j.Logger;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.util.Arrays;
 import java.util.List;
 
 public class StateAbbreviationFilterTest extends AbstractFilterTest {
@@ -20,7 +22,8 @@ public class StateAbbreviationFilterTest extends AbstractFilterTest {
     @Test
     public void filter1() throws Exception {
 
-        final StateAbbreviationFilter filter = new StateAbbreviationFilter(new StateAbbreviationAnonymizationService(new LocalAnonymizationCacheService()));
+        final List<StateAbbreviationsFilterStrategy> strategies = Arrays.asList(new StateAbbreviationsFilterStrategy());
+        final StateAbbreviationFilter filter = new StateAbbreviationFilter(strategies, new StateAbbreviationAnonymizationService(new LocalAnonymizationCacheService()));
 
         final String input = "The patient is from WV.";
         final List<Span> spans = filter.filter(getFilterProfile(), "context", "docid", input);
@@ -35,7 +38,8 @@ public class StateAbbreviationFilterTest extends AbstractFilterTest {
     @Test
     public void filter2() throws Exception {
 
-        final StateAbbreviationFilter filter = new StateAbbreviationFilter(new StateAbbreviationAnonymizationService(new LocalAnonymizationCacheService()));
+        final List<StateAbbreviationsFilterStrategy> strategies = Arrays.asList(new StateAbbreviationsFilterStrategy());
+        final StateAbbreviationFilter filter = new StateAbbreviationFilter(strategies, new StateAbbreviationAnonymizationService(new LocalAnonymizationCacheService()));
 
         final String input = "The patient is from wv.";
         final List<Span> spans = filter.filter(getFilterProfile(), "context", "docid", input);

@@ -4,6 +4,7 @@ import com.mtnfog.phileas.model.enums.FilterType;
 import com.mtnfog.phileas.model.enums.SensitivityLevel;
 import com.mtnfog.phileas.model.filter.rules.dictionary.LuceneDictionaryFilter;
 import com.mtnfog.phileas.model.objects.Span;
+import com.mtnfog.phileas.model.profile.filters.strategies.dynamic.FirstNameFilterStrategy;
 import com.mtnfog.phileas.model.services.AnonymizationService;
 import com.mtnfog.phileas.services.anonymization.PersonsAnonymizationService;
 import com.mtnfog.phileas.services.cache.LocalAnonymizationCacheService;
@@ -15,6 +16,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 
 public class FirstNameFilterTest extends AbstractFilterTest {
@@ -34,7 +36,8 @@ public class FirstNameFilterTest extends AbstractFilterTest {
 
         AnonymizationService anonymizationService = new PersonsAnonymizationService(new LocalAnonymizationCacheService());
 
-        final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.FIRST_NAME, INDEX_DIRECTORY, LuceneDictionaryFilter.FIRST_NAME_DISTANCES, anonymizationService);
+        final List<FirstNameFilterStrategy> strategies = Arrays.asList(new FirstNameFilterStrategy());
+        final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.FIRST_NAME, strategies, INDEX_DIRECTORY, LuceneDictionaryFilter.FIRST_NAME_DISTANCES, anonymizationService);
 
         final List<Span> spans = filter.filter(getFilterProfile(SensitivityLevel.LOW), "context", "documentid","John lived in Washington");
         showSpans(spans);
@@ -47,7 +50,8 @@ public class FirstNameFilterTest extends AbstractFilterTest {
 
         AnonymizationService anonymizationService = new PersonsAnonymizationService(new LocalAnonymizationCacheService());
 
-        final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.FIRST_NAME, INDEX_DIRECTORY, LuceneDictionaryFilter.FIRST_NAME_DISTANCES, anonymizationService);
+        final List<FirstNameFilterStrategy> strategies = Arrays.asList(new FirstNameFilterStrategy());
+        final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.FIRST_NAME, strategies, INDEX_DIRECTORY, LuceneDictionaryFilter.FIRST_NAME_DISTANCES, anonymizationService);
 
         final List<Span> spans = filter.filter(getFilterProfile(SensitivityLevel.MEDIUM), "context", "documentid","Michel had eye cancer");
         showSpans(spans);
@@ -60,7 +64,8 @@ public class FirstNameFilterTest extends AbstractFilterTest {
 
         AnonymizationService anonymizationService = new PersonsAnonymizationService(new LocalAnonymizationCacheService());
 
-        final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.FIRST_NAME, INDEX_DIRECTORY, LuceneDictionaryFilter.FIRST_NAME_DISTANCES, anonymizationService);
+        final List<FirstNameFilterStrategy> strategies = Arrays.asList(new FirstNameFilterStrategy());
+        final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.FIRST_NAME, strategies, INDEX_DIRECTORY, LuceneDictionaryFilter.FIRST_NAME_DISTANCES, anonymizationService);
 
         final List<Span> spans = filter.filter(getFilterProfile(SensitivityLevel.HIGH), "context", "documentid","Sandra in Washington");
         showSpans(spans);

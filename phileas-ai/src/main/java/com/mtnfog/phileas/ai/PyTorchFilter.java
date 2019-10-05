@@ -37,12 +37,15 @@ public class PyTorchFilter extends NerFilter implements Serializable {
     // Response will look like:
     // [{"text": "George Washington", "tag": "PER", "score": 0.2987019270658493, "start": 0, "end": 17}, {"text": "Virginia", "tag": "LOC", "score": 0.3510116934776306, "start": 95, "end": 103}]
 
-    public PyTorchFilter(String baseUrl, FilterType filterType, String tag,
+    public PyTorchFilter(String baseUrl,
+                         FilterType filterType,
+                         List<? extends AbstractFilterStrategy> strategies,
+                         String tag,
                          Map<String, DescriptiveStatistics> stats,
                          MetricsService metricsService,
                          AnonymizationService anonymizationService) throws MalformedURLException {
 
-        super(filterType, stats, metricsService, anonymizationService);
+        super(filterType, strategies, stats, metricsService, anonymizationService);
 
         this.tag = tag;
 
@@ -111,7 +114,7 @@ public class PyTorchFilter extends NerFilter implements Serializable {
         attributes.put(NerFilterStrategy.CONFIDENCE, confidence);
         attributes.put(NerFilterStrategy.TYPE, type);
 
-        final String replacement = getReplacement(filterProfile, context, documentId, text, attributes);
+        final String replacement = getReplacement(context, documentId, text, attributes);
         final Span span = Span.make(start, end, FilterType.NER_ENTITY, context, documentId, confidence, replacement);
 
         // Send the entity to the metrics service for reporting.
