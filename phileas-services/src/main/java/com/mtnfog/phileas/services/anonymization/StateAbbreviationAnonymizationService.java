@@ -13,8 +13,8 @@ public class StateAbbreviationAnonymizationService extends AbstractAnonymization
     @Override
     public String anonymize(String token) {
 
-        final String anonymized = StateAbbreviationFilter.STATES.stream()
-                .skip((int) (StateAbbreviationFilter.STATES.size() * Math.random()))
+        final String anonymized = StateAbbreviationFilter.getStates().stream()
+                .skip((int) (StateAbbreviationFilter.getStates().size() * Math.random()))
                 .findFirst().orElse("AK");
 
         // Make sure the anonymized and the token aren't the same.

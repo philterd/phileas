@@ -17,7 +17,7 @@ import java.util.regex.Pattern;
 
 public class StateAbbreviationFilter extends RegexFilter implements Serializable {
 
-    public static List<String> STATES = new LinkedList<String>() {{
+    private static final List<String> STATES = new LinkedList<String>() {{
 
         add("AL");
         add("AK");
@@ -100,6 +100,10 @@ public class StateAbbreviationFilter extends RegexFilter implements Serializable
 
         return spans;
 
+    }
+
+    public static List<String> getStates() {
+        return STATES;
     }
 
 }
