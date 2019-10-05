@@ -17,9 +17,7 @@ import java.util.regex.Pattern;
 
 public class StateAbbreviationFilter extends RegexFilter implements Serializable {
 
-    public static List<String> STATES = new LinkedList<>();
-
-    static {
+    public static List<String> STATES = new LinkedList<String>() {{
 
         STATES.add("AL");
         STATES.add("AK");
@@ -72,7 +70,7 @@ public class StateAbbreviationFilter extends RegexFilter implements Serializable
         STATES.add("WI");
         STATES.add("WY");
 
-    }
+    }};
 
     public StateAbbreviationFilter(List<? extends AbstractFilterStrategy> strategies, AnonymizationService anonymizationService) {
         super(FilterType.STATE_ABBREVIATION, strategies, anonymizationService);

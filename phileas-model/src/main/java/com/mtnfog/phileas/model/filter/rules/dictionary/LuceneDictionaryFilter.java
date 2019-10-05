@@ -46,45 +46,59 @@ public class LuceneDictionaryFilter extends DictionaryFilter implements Serializ
 
     private Map<SensitivityLevel, Integer> distances;
 
-    public static final Map<SensitivityLevel, Integer> FIRST_NAME_DISTANCES = new HashMap<>();
-    public static final Map<SensitivityLevel, Integer> SURNAME_DISTANCES = new HashMap<>();
-    public static final Map<SensitivityLevel, Integer> CITIES_DISTANCES = new HashMap<>();
-    public static final Map<SensitivityLevel, Integer> STATES_DISTANCES = new HashMap<>();
-    public static final Map<SensitivityLevel, Integer> COUNTIES_DISTANCES = new HashMap<>();
-    public static final Map<SensitivityLevel, Integer> HOSPITALS_DISTANCES = new HashMap<>();
-    public static final Map<SensitivityLevel, Integer> HOSPITAL_ABBREVIATIONS_DISTANCES = new HashMap<>();
-
-    static {
-
+    public static final Map<SensitivityLevel, Integer> FIRST_NAME_DISTANCES = new HashMap<SensitivityLevel, Integer>() {{
         FIRST_NAME_DISTANCES.put(SensitivityLevel.LOW, 0);
         FIRST_NAME_DISTANCES.put(SensitivityLevel.MEDIUM, 1);
         FIRST_NAME_DISTANCES.put(SensitivityLevel.HIGH, 2);
+    }};
+
+    public static final Map<SensitivityLevel, Integer> SURNAME_DISTANCES = new HashMap<SensitivityLevel, Integer>() {{
 
         SURNAME_DISTANCES.put(SensitivityLevel.LOW, 0);
         SURNAME_DISTANCES.put(SensitivityLevel.MEDIUM, 1);
         SURNAME_DISTANCES.put(SensitivityLevel.HIGH, 2);
 
+    }};
+
+    public static final Map<SensitivityLevel, Integer> CITIES_DISTANCES = new HashMap<SensitivityLevel, Integer>() {{
+
         CITIES_DISTANCES.put(SensitivityLevel.LOW, 0);
         CITIES_DISTANCES.put(SensitivityLevel.MEDIUM, 1);
         CITIES_DISTANCES.put(SensitivityLevel.HIGH, 2);
+
+    }};
+
+    public static final Map<SensitivityLevel, Integer> STATES_DISTANCES = new HashMap<SensitivityLevel, Integer>() {{
 
         STATES_DISTANCES.put(SensitivityLevel.LOW, 0);
         STATES_DISTANCES.put(SensitivityLevel.MEDIUM, 1);
         STATES_DISTANCES.put(SensitivityLevel.HIGH, 2);
 
+    }};
+
+    public static final Map<SensitivityLevel, Integer> COUNTIES_DISTANCES = new HashMap<SensitivityLevel, Integer>() {{
+
         COUNTIES_DISTANCES.put(SensitivityLevel.LOW, 0);
         COUNTIES_DISTANCES.put(SensitivityLevel.MEDIUM, 1);
         COUNTIES_DISTANCES.put(SensitivityLevel.HIGH, 2);
+
+    }};
+
+    public static final Map<SensitivityLevel, Integer> HOSPITALS_DISTANCES = new HashMap<SensitivityLevel, Integer>() {{
 
         HOSPITALS_DISTANCES.put(SensitivityLevel.LOW, 0);
         HOSPITALS_DISTANCES.put(SensitivityLevel.MEDIUM, 1);
         HOSPITALS_DISTANCES.put(SensitivityLevel.HIGH, 2);
 
+    }};
+
+    public static final Map<SensitivityLevel, Integer> HOSPITAL_ABBREVIATIONS_DISTANCES = new HashMap<SensitivityLevel, Integer>() {{
+
         HOSPITAL_ABBREVIATIONS_DISTANCES.put(SensitivityLevel.LOW, 0);
         HOSPITAL_ABBREVIATIONS_DISTANCES.put(SensitivityLevel.MEDIUM, 1);
         HOSPITAL_ABBREVIATIONS_DISTANCES.put(SensitivityLevel.HIGH, 2);
 
-    }
+    }};
 
     /**
      * Run this class to create a Lucene index from a text file.
@@ -109,9 +123,11 @@ public class LuceneDictionaryFilter extends DictionaryFilter implements Serializ
         // "Filters StandardTokenizer with StandardFilter, LowerCaseFilter and StopFilter, using a list of English stop words."
         // https://lucene.apache.org/core/8_1_1/core/org/apache/lucene/analysis/standard/StandardAnalyzer.html
 
-        SpellChecker spellChecker = new SpellChecker(FSDirectory.open(indexDirectory));
-        spellChecker.indexDictionary(new PlainTextDictionary(filetoIndex), new IndexWriterConfig(new StandardAnalyzer(EnglishAnalyzer.getDefaultStopSet())), false);
-        spellChecker.close();
+        try (SpellChecker spellChecker = new SpellChecker(FSDirectory.open(indexDirectory))) {
+
+            spellChecker.indexDictionary(new PlainTextDictionary(filetoIndex), new IndexWriterConfig(new StandardAnalyzer(EnglishAnalyzer.getDefaultStopSet())), false);
+
+        }
 
         LOGGER.info("Index created at: " + indexDirectory);
 
@@ -138,8 +154,12 @@ public class LuceneDictionaryFilter extends DictionaryFilter implements Serializ
         this.distance = new LevenshteinDistance();
         this.distances = distances;
 
+        if(distances == null) {
+            distances = new HashMap<>();
+        }
+
         // Default string edit distances.
-        if(distances == null || distances.isEmpty()) {
+        if(distances.isEmpty()) {
             distances.put(SensitivityLevel.LOW, 1);
             distances.put(SensitivityLevel.MEDIUM, 3);
             distances.put(SensitivityLevel.HIGH, 5);
@@ -166,91 +186,93 @@ public class LuceneDictionaryFilter extends DictionaryFilter implements Serializ
 
         if(filterProfile.getIdentifiers().hasFilter(filterType)) {
 
-            final Analyzer analyzer = new StandardAnalyzer();
+            try(final Analyzer analyzer = new StandardAnalyzer()) {
 
-            for(AbstractFilterStrategy strategy : Filter.getFilterStrategies(filterProfile, filterType)) {
+                for(AbstractFilterStrategy strategy :Filter.getFilterStrategies(filterProfile,filterType)) {
 
-                final SensitivityLevel sensitivityLevel = SensitivityLevel.fromName(strategy.getSensitivityLevel());
+                    final SensitivityLevel sensitivityLevel = SensitivityLevel.fromName(strategy.getSensitivityLevel());
 
-                LOGGER.info("Using sensitivity level = " + sensitivityLevel.getName());
+                    LOGGER.info("Using sensitivity level = " + sensitivityLevel.getName());
 
-                // Tokenize the input text.
-                final TokenStream tokenStream = analyzer.tokenStream(null, new StringReader(text));
+                    // Tokenize the input text.
+                    final TokenStream tokenStream = analyzer.tokenStream(null, new StringReader(text));
 
-                // Make n-grams from the tokens.
-                final ShingleFilter ngrams = new ShingleFilter(tokenStream, 5);
+                    // Make n-grams from the tokens.
+                    final ShingleFilter ngrams = new ShingleFilter(tokenStream, 5);
 
-                final OffsetAttribute offsetAttribute = ngrams.getAttribute(OffsetAttribute.class);
-                final CharTermAttribute termAttribute = ngrams.getAttribute(CharTermAttribute.class);
+                    final OffsetAttribute offsetAttribute = ngrams.getAttribute(OffsetAttribute.class);
+                    final CharTermAttribute termAttribute = ngrams.getAttribute(CharTermAttribute.class);
 
-                try {
+                    try {
 
-                    ngrams.reset();
+                        ngrams.reset();
 
-                    while (ngrams.incrementToken()) {
+                        while (ngrams.incrementToken()) {
 
-                        final String token = termAttribute.toString();
+                            final String token = termAttribute.toString();
 
-                        // An underscore indicates Lucene removed a stopword.
-                        if (!token.contains("_")) {
+                            // An underscore indicates Lucene removed a stopword.
+                            if (!token.contains("_")) {
 
-                            //LOGGER.info("Looking at token '{}'", token);
+                                //LOGGER.info("Looking at token '{}'", token);
 
-                            boolean isMatch = false;
+                                boolean isMatch = false;
 
-                            if (spellChecker.exist(token)) {
+                                if (spellChecker.exist(token)) {
 
-                                //LOGGER.info("Exact match on token '{}'", token);
+                                    //LOGGER.info("Exact match on token '{}'", token);
 
-                                // The token has an identical match in the index.
-                                isMatch = true;
+                                    // The token has an identical match in the index.
+                                    isMatch = true;
 
-                            } else {
+                                } else {
 
-                                // Do a fuzzy search against the index.
-                                final String[] tokenSuggestions = spellChecker.suggestSimilar(token, 3);
-                                LOGGER.debug("{} suggestions for '{}': {}", tokenSuggestions.length, token, tokenSuggestions);
+                                    // Do a fuzzy search against the index.
+                                    final String[] tokenSuggestions = spellChecker.suggestSimilar(token, 3);
+                                    LOGGER.debug("{} suggestions for '{}': {}", tokenSuggestions.length, token, tokenSuggestions);
 
-                                if (tokenSuggestions.length > 0) {
+                                    if (tokenSuggestions.length > 0) {
 
-                                    for (String suggestion : tokenSuggestions) {
+                                        for (String suggestion : tokenSuggestions) {
 
-                                        int d = distance.apply(token.toUpperCase(), suggestion.toUpperCase());
-                                        LOGGER.info("distance for {} and {} is {}", token, suggestion, d);
+                                            int d = distance.apply(token.toUpperCase(), suggestion.toUpperCase());
+                                            LOGGER.info("distance for {} and {} is {}", token, suggestion, d);
 
-                                        if (d <= distances.get(sensitivityLevel)) {
-                                            isMatch = true;
+                                            if (d <= distances.get(sensitivityLevel)) {
+                                                isMatch = true;
+                                            }
+
                                         }
 
                                     }
 
                                 }
 
-                            }
+                                if (isMatch) {
 
-                            if (isMatch) {
+                                    // There are no attributes for the span.
+                                    final String replacement = getReplacement(context, documentId, token, Collections.emptyMap());
+                                    spans.add(Span.make(offsetAttribute.startOffset(), offsetAttribute.endOffset(), getFilterType(), context, documentId, spellChecker.getAccuracy(), replacement));
 
-                                // There are no attributes for the span.
-                                final String replacement = getReplacement(context, documentId, token, Collections.emptyMap());
-                                spans.add(Span.make(offsetAttribute.startOffset(), offsetAttribute.endOffset(), getFilterType(), context, documentId, spellChecker.getAccuracy(), replacement));
+                                }
 
                             }
 
                         }
 
+                    } catch (IOException ex) {
+
+                        LOGGER.error("Error enumerating tokens.", ex);
+
+                    } finally {
+                        try {
+                            ngrams.end();
+                            ngrams.close();
+                        } catch (IOException e) {
+                            // Do nothing.
+                        }
                     }
 
-                } catch (IOException ex) {
-
-                    LOGGER.error("Error enumerating tokens.", ex);
-
-                } finally {
-                    try {
-                        ngrams.end();
-                        ngrams.close();
-                    } catch (IOException e) {
-                        // Do nothing.
-                    }
                 }
 
             }
