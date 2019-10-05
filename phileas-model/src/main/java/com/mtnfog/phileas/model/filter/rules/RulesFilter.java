@@ -43,7 +43,7 @@ public abstract class RulesFilter extends Filter implements Serializable {
         final List<Span> spans = new LinkedList<>();
 
         // Is this filter enabled for this filter profile? If not just return empty list.
-        if(filterProfile.getIdentifiers().isFilterEnabled(filterType)) {
+        if(filterProfile.getIdentifiers().hasFilter(filterType)) {
 
             final Matcher matcher = pattern.matcher(input);
 

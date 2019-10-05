@@ -98,12 +98,12 @@ public class Identifiers {
     }
 
     /**
-     * Determines if a filter is enabled for a filter profile.
+     * Determines if a filter exists for a filter profile.
      * @param filterType The {@link FilterType}.
      * @return <code>true</code> if the filter profile contains a strategy for the corresponding
      * {@link FilterType}; otherwise <code>false</code>.
      */
-    public boolean isFilterEnabled(FilterType filterType) {
+    public boolean hasFilter(FilterType filterType) {
 
         switch(filterType) {
 

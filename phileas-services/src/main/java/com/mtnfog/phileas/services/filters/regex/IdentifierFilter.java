@@ -17,10 +17,16 @@ public class IdentifierFilter extends RegexFilter implements Serializable {
     private Pattern pattern;
     private String name;
 
-    public IdentifierFilter(String name, String pattern, List<IdentifierFilterStrategy> strategies, AnonymizationService anonymizationService) {
+    public IdentifierFilter(String name, String pattern, boolean caseSensitive, List<IdentifierFilterStrategy> strategies, AnonymizationService anonymizationService) {
         super(FilterType.IDENTIFIER, strategies, anonymizationService);
         this.name = name;
-        this.pattern = Pattern.compile(pattern);
+
+        if(caseSensitive) {
+            this.pattern = Pattern.compile(pattern);
+        } else {
+            this.pattern = Pattern.compile(pattern, Pattern.CASE_INSENSITIVE);
+        }
+
     }
 
     @Override

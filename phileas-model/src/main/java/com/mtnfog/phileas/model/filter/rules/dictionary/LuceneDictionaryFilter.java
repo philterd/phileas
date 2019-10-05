@@ -164,7 +164,7 @@ public class LuceneDictionaryFilter extends DictionaryFilter implements Serializ
 
         final List<Span> spans = new LinkedList<>();
 
-        if(filterProfile.getIdentifiers().isFilterEnabled(filterType)) {
+        if(filterProfile.getIdentifiers().hasFilter(filterType)) {
 
             final Analyzer analyzer = new StandardAnalyzer();
 

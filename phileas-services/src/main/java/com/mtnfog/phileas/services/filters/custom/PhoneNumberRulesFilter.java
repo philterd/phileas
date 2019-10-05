@@ -32,7 +32,7 @@ public class PhoneNumberRulesFilter extends RulesFilter implements Serializable 
 
         final List<Span> spans = new LinkedList<>();
 
-        if(filterProfile.getIdentifiers().isFilterEnabled(filterType)) {
+        if(filterProfile.getIdentifiers().hasFilter(filterType)) {
 
             final Iterable<PhoneNumberMatch> matches = phoneUtil.findNumbers(input, "US", PhoneNumberUtil.Leniency.POSSIBLE, Long.MAX_VALUE);
 
