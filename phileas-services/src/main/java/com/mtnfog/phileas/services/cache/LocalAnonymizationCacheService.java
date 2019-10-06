@@ -15,44 +15,44 @@ public class LocalAnonymizationCacheService implements AnonymizationCacheService
     }
 
     @Override
-    public String generateKey(String context, String key) {
+    public String generateKey(String context, String token) {
 
-        return DigestUtils.md5Hex(context + "|" + key);
-
-    }
-
-    @Override
-    public void put(String context, String key, String value) {
-
-        cache.put(generateKey(context, key), value);
+        return DigestUtils.md5Hex(context + "|" + token);
 
     }
 
     @Override
-    public String get(String context, String key) {
+    public void put(String context, String token, String replacement) {
 
-        return cache.get(generateKey(context, key));
-
-    }
-
-    @Override
-    public void remove(String context, String key) {
-
-        cache.remove(generateKey(context, key));
+        cache.put(generateKey(context, token), replacement);
 
     }
 
     @Override
-    public boolean contains(String context, String key) {
+    public String get(String context, String token) {
 
-        return cache.containsKey(generateKey(context, key));
+        return cache.get(generateKey(context, token));
 
     }
 
     @Override
-    public boolean containsValue(String value) {
+    public void remove(String context, String token) {
 
-        return cache.containsValue(value);
+        cache.remove(generateKey(context, token));
+
+    }
+
+    @Override
+    public boolean contains(String context, String token) {
+
+        return cache.containsKey(generateKey(context, token));
+
+    }
+
+    @Override
+    public boolean containsValue(String context, String replacement) {
+
+        return cache.containsValue(replacement);
 
     }
 

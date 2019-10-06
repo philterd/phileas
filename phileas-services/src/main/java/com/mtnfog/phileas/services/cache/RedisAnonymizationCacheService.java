@@ -15,44 +15,46 @@ public class RedisAnonymizationCacheService implements AnonymizationCacheService
     }
 
     @Override
-    public String generateKey(String context, String key) {
+    public String generateKey(String context, String token) {
 
-        return DigestUtils.md5Hex(context + "|" + key);
-
-    }
-
-    @Override
-    public void put(String context, String key, String value) {
-
-        jedis.set(generateKey(context, key), value);
+        return DigestUtils.md5Hex(context + "|" + token);
 
     }
 
     @Override
-    public String get(String context, String key) {
+    public void put(String context, String token, String replacement) {
 
-        return jedis.get(generateKey(context, key));
+        jedis.set(generateKey(context, token), replacement);
+        jedis.hset(context, token, replacement);
 
-    }
-
-    @Override
-    public void remove(String context, String key) {
-
-        jedis.del(generateKey(context, key));
-    }
-
-    @Override
-    public boolean contains(String context, String key) {
-
-        return jedis.exists(generateKey(context, key));
 
     }
 
     @Override
-    public boolean containsValue(String value) {
+    public String get(String context, String token) {
 
-        // TODO: Figure out how to search by value in redis.
-        return false;
+        return jedis.get(generateKey(context, token));
+
+    }
+
+    @Override
+    public void remove(String context, String token) {
+
+        jedis.del(generateKey(context, token));
+
+    }
+
+    @Override
+    public boolean contains(String context, String token) {
+
+        return jedis.exists(generateKey(context, token));
+
+    }
+
+    @Override
+    public boolean containsValue(String context, String replacement) {
+
+        return jedis.hexists(context, replacement);
 
     }
 

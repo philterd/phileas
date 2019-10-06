@@ -124,7 +124,7 @@ public abstract class AbstractFilterStrategy {
      * @param context The context.
      * @param token The token.
      * @param anonymizationService The {@link AnonymizationService} for the token.
-     * @return An anonymized version of the token.
+     * @return An anonymized version of the token, or <code>null</code> if the token has already been anonymized.
      * @throws IOException Thrown if the cache service is not accessible.
      */
     protected String getAnonymizedToken(String context, String token, AnonymizationService anonymizationService) throws IOException {
@@ -140,10 +140,10 @@ public abstract class AbstractFilterStrategy {
         } else {
 
             // Make sure we aren't trying to anonymize a token we have already anonymized.
-            if (anonymizationService.getAnonymizationCacheService().containsValue(token)) {
+            if (anonymizationService.getAnonymizationCacheService().containsValue(context, token)) {
 
                 // This token is the result of an already replaced value.
-                // So the "replacement" is null and the filter won't replace it when it sees a null replacement value.
+                // So the "replacement" is null. The filter won't replace the token when the replacement value is null.
                 replacement = null;
 
             } else {

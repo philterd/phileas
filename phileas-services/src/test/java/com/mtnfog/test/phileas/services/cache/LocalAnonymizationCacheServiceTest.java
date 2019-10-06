@@ -26,8 +26,8 @@ public class LocalAnonymizationCacheServiceTest {
 
         cache.put("context", "k", "v");
 
-        Assert.assertTrue(cache.containsValue("v"));
-        Assert.assertFalse(cache.containsValue("k"));
+        Assert.assertTrue(cache.containsValue("context", "v"));
+        Assert.assertFalse(cache.containsValue("context", "k"));
 
     }
 

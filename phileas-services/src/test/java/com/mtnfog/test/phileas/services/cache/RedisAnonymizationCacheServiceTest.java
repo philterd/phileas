@@ -39,15 +39,14 @@ public class RedisAnonymizationCacheServiceTest {
     }
 
     @Test
-    @Ignore
     public void containsValue() {
 
         final RedisAnonymizationCacheService cache = new RedisAnonymizationCacheService("localhost", port, false);
 
         cache.put("context", "k", "v");
 
-        Assert.assertTrue(cache.containsValue("v"));
-        Assert.assertFalse(cache.containsValue("k"));
+        Assert.assertTrue(cache.containsValue("context", "k"));
+        Assert.assertFalse(cache.containsValue("context", "v"));
 
     }
 
