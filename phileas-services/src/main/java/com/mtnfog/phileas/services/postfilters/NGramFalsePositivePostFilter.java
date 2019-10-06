@@ -2,6 +2,7 @@ package com.mtnfog.phileas.services.postfilters;
 
 import com.mtnfog.phileas.model.objects.Span;
 import com.mtnfog.phileas.model.services.PostFilter;
+import org.apache.commons.lang3.NotImplementedException;
 
 /**
  * Implementation of {@link PostFilter} that performs false positive
@@ -22,9 +23,7 @@ public class NGramFalsePositivePostFilter extends PostFilter {
     @Override
     protected boolean process(String text, Span span) {
 
-        // TODO: Implement this.
-
-        return false;
+        throw new NotImplementedException("Not yet implemented.");
 
     }
 

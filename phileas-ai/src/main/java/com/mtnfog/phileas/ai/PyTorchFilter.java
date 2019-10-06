@@ -104,10 +104,6 @@ public class PyTorchFilter extends NerFilter implements Serializable {
     private Span createSpan(FilterProfile filterProfile, String context, String documentId, String text,
                             String type, int start, int end, double confidence, SensitivityLevel sensitivityLevel) throws IOException {
 
-        //boolean filtered = false;
-
-        // TODO: PHL-3: Apply sensitivity level to NER entities.
-
         final Map<String, Object> attributes = new HashMap<>();
         attributes.put(NerFilterStrategy.CONFIDENCE, confidence);
         attributes.put(NerFilterStrategy.TYPE, type);
@@ -119,55 +115,6 @@ public class PyTorchFilter extends NerFilter implements Serializable {
         metricsService.reportEntitySpan(span);
 
         return span;
-
-        // TODO: PHL-2: Revisit intelligent NER filtering based on confidence values.
-
-        /*// Store this entity's confidence in the statistics.
-        stats.computeIfAbsent(context, k -> new DescriptiveStatistics(STATISTICS_WINDOW_SIZE)).addValue(span.getConfidence());
-
-        if(stats.get(context).getN() >= SUFFICIENT_VALUES_COUNT) {
-
-            final double mean = stats.get(context).getMean();
-
-            if(sensitivityLevel == SensitivityLevel.LOW){
-
-                final double threshold = mean - 10;
-
-                if(span.getConfidence() >= threshold) {
-                    filtered = true;
-                }
-
-            } else if(sensitivityLevel == SensitivityLevel.MEDIUM) {
-
-                final double threshold = mean - 20;
-
-                if(span.getConfidence() >= threshold) {
-                    filtered = true;
-                }
-
-            } else if(sensitivityLevel == SensitivityLevel.HIGH) {
-
-                final double threshold = mean - 30;
-
-                if(span.getConfidence() >= threshold) {
-                    filtered = true;
-                }
-
-            } else {
-
-                // Invalid sensitivity level. Will not happen.
-
-            }
-
-        }
-
-        if(!filtered) {
-            return span;
-        } else {
-            return null;
-        }
-
-        return span;*/
 
     }
 

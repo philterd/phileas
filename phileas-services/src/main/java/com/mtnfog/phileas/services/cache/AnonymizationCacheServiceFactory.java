@@ -25,9 +25,6 @@ public class AnonymizationCacheServiceFactory {
      */
     public static AnonymizationCacheService getAnonymizationCacheService(Properties properties) {
 
-        // TODO: This code duplicates code that is in PhilterApplication.
-        // Move this function somewhere that both classes can access and use it.
-
         AnonymizationCacheService anonymizationCacheService = null;
 
         if(StringUtils.equalsIgnoreCase(properties.getProperty("anonymization.cache.service"), "redis")) {

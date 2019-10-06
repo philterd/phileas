@@ -157,10 +157,12 @@ public class DateFilterTest extends AbstractFilterTest {
         final List<DateFilterStrategy> strategies = Arrays.asList(new DateFilterStrategy());
         DateFilter filter = new DateFilter(strategies, new DateAnonymizationService(new LocalAnonymizationCacheService()));
 
-        // TODO: Why is this finding 2 spans?
+        // This is matching two regexes and since spans is a list both get added.
+        // The duplicate span will be dropped later.
         List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid","12-05-2014");
         Assert.assertEquals(2, spans.size());
         Assert.assertTrue(checkSpan(spans.get(0), 0, 10, FilterType.DATE));
+        Assert.assertTrue(checkSpan(spans.get(1), 0, 10, FilterType.DATE));
 
     }
 
