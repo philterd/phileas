@@ -28,6 +28,7 @@ public class DateFilter extends RegexFilter implements Serializable {
     public List<Span> filter(FilterProfile filterProfile, String context, String documentId, String input) throws IOException {
 
         final List<Span> spans = new LinkedList<>();
+
         spans.addAll(findSpans(filterProfile, DATE_YYYYMMDD_REGEX, input, context, documentId));
         spans.addAll(findSpans(filterProfile, DATE_MMDDYYYY_REGEX, input, context, documentId));
         spans.addAll(findSpans(filterProfile, DATE_MDYYYY_REGEX, input, context, documentId));
