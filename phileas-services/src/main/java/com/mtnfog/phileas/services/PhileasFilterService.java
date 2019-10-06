@@ -3,7 +3,7 @@ package com.mtnfog.phileas.services;
 import com.mtnfog.phileas.ai.PyTorchFilter;
 import com.mtnfog.phileas.metrics.PhileasMetricsService;
 import com.mtnfog.phileas.model.enums.FilterType;
-import com.mtnfog.phileas.model.exceptions.InvalidFilterProfile;
+import com.mtnfog.phileas.model.exceptions.InvalidFilterProfileException;
 import com.mtnfog.phileas.model.filter.Filter;
 import com.mtnfog.phileas.model.filter.rules.dictionary.LuceneDictionaryFilter;
 import com.mtnfog.phileas.model.objects.Span;
@@ -193,10 +193,10 @@ public class PhileasFilterService implements FilterService, Serializable {
     }
 
     @Override
-    public FilterResponse filter(String filterProfileName, String context, String input) throws InvalidFilterProfile, IOException {
+    public FilterResponse filter(String filterProfileName, String context, String input) throws InvalidFilterProfileException, IOException {
 
         if(!filterProfiles.containsKey(filterProfileName)) {
-            throw new InvalidFilterProfile("The filter profile does not exist.");
+            throw new InvalidFilterProfileException("The filter profile does not exist.");
         }
 
         // Get the enabled filters for this filter profile.

@@ -10,11 +10,11 @@ import java.util.Properties;
 /**
  * Factory methods for getting an {@link AnonymizationCacheService}.
  */
-public class AnonymizationCacheFactory {
+public class AnonymizationCacheServiceFactory {
 
-    private static final Logger LOGGER = LogManager.getLogger(AnonymizationCacheFactory.class);
+    private static final Logger LOGGER = LogManager.getLogger(AnonymizationCacheServiceFactory.class);
 
-    private AnonymizationCacheFactory() {
+    private AnonymizationCacheServiceFactory() {
         // This is a utility class.
     }
 

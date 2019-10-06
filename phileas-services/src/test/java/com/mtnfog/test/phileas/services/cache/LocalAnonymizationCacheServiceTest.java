@@ -1,36 +1,17 @@
 package com.mtnfog.test.phileas.services.cache;
 
+import com.mtnfog.phileas.services.cache.LocalAnonymizationCacheService;
 import com.mtnfog.phileas.services.cache.RedisAnonymizationCacheService;
-import org.junit.*;
-import redis.embedded.RedisServer;
+import org.junit.Assert;
+import org.junit.Ignore;
+import org.junit.Test;
 
-import java.io.IOException;
-
-@Ignore
-public class RedisAnonymizationCacheServiceTest {
-
-    private int port = 31000;
-    private final RedisServer server = RedisServer.builder().port(port).build();
-
-    @BeforeClass
-    public static void beforeClass() throws IOException {
-        Assume.assumeFalse(System.getProperty("os.name").toLowerCase().startsWith("win"));
-    }
-
-    @Before
-    public void before() throws IOException {
-        server.start();
-    }
-
-    @After
-    public void after() throws IOException {
-        server.stop();
-    }
+public class LocalAnonymizationCacheServiceTest {
 
     @Test
     public void putAndContains() {
 
-        final RedisAnonymizationCacheService cache = new RedisAnonymizationCacheService("localhost", port, false);
+        final LocalAnonymizationCacheService cache = new LocalAnonymizationCacheService();
 
         cache.put("context", "k", "v");
 
@@ -39,10 +20,9 @@ public class RedisAnonymizationCacheServiceTest {
     }
 
     @Test
-    @Ignore
     public void containsValue() {
 
-        final RedisAnonymizationCacheService cache = new RedisAnonymizationCacheService("localhost", port, false);
+        final LocalAnonymizationCacheService cache = new LocalAnonymizationCacheService();
 
         cache.put("context", "k", "v");
 
@@ -54,7 +34,7 @@ public class RedisAnonymizationCacheServiceTest {
     @Test
     public void getAndPut() {
 
-        final RedisAnonymizationCacheService cache = new RedisAnonymizationCacheService("localhost", port, false);
+        final LocalAnonymizationCacheService cache = new LocalAnonymizationCacheService();
 
         cache.put("context", "k", "v");
         final String value = cache.get("context", "k");
@@ -68,7 +48,7 @@ public class RedisAnonymizationCacheServiceTest {
     @Test
     public void putAndRemove() {
 
-        final RedisAnonymizationCacheService cache = new RedisAnonymizationCacheService("localhost", port, false);
+        final LocalAnonymizationCacheService cache = new LocalAnonymizationCacheService();
 
         cache.put("context", "k", "v");
         final String value = cache.get("context", "k");
@@ -83,7 +63,7 @@ public class RedisAnonymizationCacheServiceTest {
     @Test
     public void generateKey() {
 
-        final RedisAnonymizationCacheService cache = new RedisAnonymizationCacheService("localhost", port, false);
+        final LocalAnonymizationCacheService cache = new LocalAnonymizationCacheService();
 
         final String hash = cache.generateKey("context", "k");
 
