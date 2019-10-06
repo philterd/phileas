@@ -32,8 +32,6 @@ public class PyTorchFilter extends NerFilter implements Serializable {
     private transient PyTorchRestService service;
     private String tag;
 
-    // TODO: Can I pass pre-tokenized strings to the REST service so Philter has control over the tokenizing?
-
     // Response will look like:
     // [{"text": "George Washington", "tag": "PER", "score": 0.2987019270658493, "start": 0, "end": 17}, {"text": "Virginia", "tag": "LOC", "score": 0.3510116934776306, "start": 95, "end": 103}]
 

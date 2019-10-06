@@ -64,7 +64,7 @@ public class HospitalAbbreviationFilterTest extends AbstractFilterTest {
         final AnonymizationService anonymizationService = new HospitalAbbreviationAnonymizationService(new LocalAnonymizationCacheService());
         final List<HospitalAbbreviationFilterStrategy> strategies = Arrays.asList(new HospitalAbbreviationFilterStrategy());
 
-        final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.HOSPITAL, strategies, INDEX_DIRECTORY, LuceneDictionaryFilter.getHospitalAbbreviationsDistances(), anonymizationService);
+        final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.HOSPITAL, strategies, INDEX_DIRECTORY, LuceneDictionaryFilter.getHospitalAbbreviationsDistances().get(SensitivityLevel.HIGH), anonymizationService);
 
         final List<Span> spans = filter.filter(getFilterProfile(SensitivityLevel.HIGH), "context", "documentid","Went to WMC");
         showSpans(spans);

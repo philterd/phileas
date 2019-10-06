@@ -42,9 +42,8 @@ public class LuceneDictionaryFilter extends DictionaryFilter implements Serializ
     private static final Logger LOGGER = LogManager.getLogger(LuceneDictionaryFilter.class);
 
     private SpellChecker spellChecker;
-    private LevenshteinDistance distance;
-
-    private Map<SensitivityLevel, Integer> distances;
+    private LevenshteinDistance distanceFunction;
+    private int distance;
 
     private static final Map<SensitivityLevel, Integer> FIRST_NAME_DISTANCES = new HashMap<SensitivityLevel, Integer>() {{
         put(SensitivityLevel.LOW, 0);
@@ -125,33 +124,22 @@ public class LuceneDictionaryFilter extends DictionaryFilter implements Serializ
      * Creates a new Lucene dictionary filter.
      * @param filterType The {@link FilterType type} of filter.
      * @param indexDirectory The path to the index on disk.
-     * @param distances A map of string edit distances for each {@link SensitivityLevel}.
+     * @param distance The distance for string distance.
      * @param anonymizationService The {@link AnonymizationService} for this filter.
      * @throws IOException Thrown if the index cannot be opened or accessed.
      */
     public LuceneDictionaryFilter(FilterType filterType,
                                   List<? extends AbstractFilterStrategy> strategies,
                                   String indexDirectory,
-                                  Map<SensitivityLevel, Integer> distances,
+                                  int distance,
                                   AnonymizationService anonymizationService) throws IOException {
 
         super(filterType, strategies, anonymizationService);
 
         LOGGER.info("Loading {} index from {}", filterType, indexDirectory);
 
-        this.distance = new LevenshteinDistance();
-        this.distances = distances;
-
-        if(distances == null) {
-            distances = new HashMap<>();
-        }
-
-        // Default string edit distances.
-        if(distances.isEmpty()) {
-            distances.put(SensitivityLevel.LOW, 1);
-            distances.put(SensitivityLevel.MEDIUM, 3);
-            distances.put(SensitivityLevel.HIGH, 5);
-        }
+        this.distanceFunction = new LevenshteinDistance();
+        this.distance = distance;
 
         // Load the index for fuzzy search.
         this.spellChecker = new SpellChecker(FSDirectory.open(Paths.get(indexDirectory), NoLockFactory.INSTANCE));
@@ -223,10 +211,10 @@ public class LuceneDictionaryFilter extends DictionaryFilter implements Serializ
 
                                         for (String suggestion : tokenSuggestions) {
 
-                                            int d = distance.apply(token.toUpperCase(), suggestion.toUpperCase());
+                                            int d = distanceFunction.apply(token.toUpperCase(), suggestion.toUpperCase());
                                             LOGGER.info("distance for {} and {} is {}", token, suggestion, d);
 
-                                            if (d <= distances.get(sensitivityLevel)) {
+                                            if (d <= distance) {
                                                 isMatch = true;
                                             }
 

@@ -37,7 +37,7 @@ public class CountyFilterTest extends AbstractFilterTest {
         AnonymizationService anonymizationService = new CountyAnonymizationService(new LocalAnonymizationCacheService());
 
         final List<CountyFilterStrategy> strategies = Arrays.asList(new CountyFilterStrategy());
-        final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.LOCATION_COUNTY, strategies, INDEX_DIRECTORY, LuceneDictionaryFilter.getCountiesDistances(), anonymizationService);
+        final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.LOCATION_COUNTY, strategies, INDEX_DIRECTORY, LuceneDictionaryFilter.getCountiesDistances().get(SensitivityLevel.LOW), anonymizationService);
 
         List<Span> spans = filter.filter(getFilterProfile(SensitivityLevel.LOW), "context", "documentid","Lived in Fyette");
 
@@ -53,7 +53,7 @@ public class CountyFilterTest extends AbstractFilterTest {
         AnonymizationService anonymizationService = new CountyAnonymizationService(new LocalAnonymizationCacheService());
 
         final List<CountyFilterStrategy> strategies = Arrays.asList(new CountyFilterStrategy());
-        final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.LOCATION_COUNTY, strategies, INDEX_DIRECTORY, LuceneDictionaryFilter.getCountiesDistances(), anonymizationService);
+        final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.LOCATION_COUNTY, strategies, INDEX_DIRECTORY, LuceneDictionaryFilter.getCountiesDistances().get(SensitivityLevel.MEDIUM), anonymizationService);
 
         List<Span> spans = filter.filter(getFilterProfile(SensitivityLevel.MEDIUM), "context", "documentid","Lived in Fyette");
 
@@ -69,7 +69,7 @@ public class CountyFilterTest extends AbstractFilterTest {
         AnonymizationService anonymizationService = new CountyAnonymizationService(new LocalAnonymizationCacheService());
 
         final List<CountyFilterStrategy> strategies = Arrays.asList(new CountyFilterStrategy());
-        final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.LOCATION_COUNTY, strategies, INDEX_DIRECTORY, LuceneDictionaryFilter.getCountiesDistances(), anonymizationService);
+        final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.LOCATION_COUNTY, strategies, INDEX_DIRECTORY, LuceneDictionaryFilter.getCountiesDistances().get(SensitivityLevel.HIGH), anonymizationService);
 
         List<Span> spans = filter.filter(getFilterProfile(SensitivityLevel.HIGH), "context", "documentid","Lived in Fyette");
 
