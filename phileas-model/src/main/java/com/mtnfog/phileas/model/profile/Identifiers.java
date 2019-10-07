@@ -129,6 +129,8 @@ public class Identifiers {
                 if(this.getIdentifiers() != null) { return true; } break;
             case IP_ADDRESS:
                 if(this.getIpAddress() != null) { return true; } break;
+            case NER_ENTITY:
+                if(this.getNer() != null) { return true; } break;
             case PHONE_NUMBER:
                 if(this.getPhoneNumber() != null) { return true; } break;
             case PHONE_NUMBER_EXTENSION:
