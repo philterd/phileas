@@ -89,7 +89,7 @@ public class StateAbbreviationFilter extends RegexFilter implements Serializable
 
             while(m.find()) {
 
-                final String replacement = getReplacement(name, context, documentId, input, Collections.emptyMap());
+                final String replacement = getReplacement(label, context, documentId, input, Collections.emptyMap());
                 final Span span = Span.make(m.start(), m.end(), FilterType.STATE_ABBREVIATION, context, documentId, 1.0, replacement);
 
                 spans.add(span);

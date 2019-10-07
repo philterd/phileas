@@ -18,7 +18,7 @@ public class IdentifierFilter extends RegexFilter implements Serializable {
 
     public IdentifierFilter(String name, String pattern, boolean caseSensitive, List<IdentifierFilterStrategy> strategies, AnonymizationService anonymizationService) {
         super(FilterType.IDENTIFIER, strategies, anonymizationService);
-        this.name = name;
+        this.label = label;
 
         if(caseSensitive) {
             this.pattern = Pattern.compile(pattern);
@@ -33,10 +33,6 @@ public class IdentifierFilter extends RegexFilter implements Serializable {
 
         return findSpans(filterProfile, pattern, input, context, documentId);
 
-    }
-
-    public String getName() {
-        return name;
     }
 
 }

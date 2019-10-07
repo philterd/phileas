@@ -25,9 +25,9 @@ public class Identifier {
     @Expose
     private boolean caseSensitive = true;
 
-    @SerializedName("name")
+    @SerializedName("label")
     @Expose
-    private String name = "custom-identifier";
+    private String label = "custom-identifier";
 
     public List<IdentifierFilterStrategy> getIdentifierFilterStrategies() {
         return identifierFilterStrategies;
@@ -53,12 +53,12 @@ public class Identifier {
         this.caseSensitive = caseSensitive;
     }
 
-    public String getName() {
-        return name;
+    public String getLabel() {
+        return label;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setLabel(String label) {
+        this.label = label;
     }
 
 }

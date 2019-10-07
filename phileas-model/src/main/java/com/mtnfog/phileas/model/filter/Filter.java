@@ -41,7 +41,11 @@ public abstract class Filter implements Serializable {
     protected AnonymizationService anonymizationService;
 
     protected List<? extends AbstractFilterStrategy> strategies;
-    protected String name;
+
+    /**
+     * The label is a custom value that the user can give to some types (identifiers).
+     */
+    protected String label;
 
     /**
      * Filters the input text.
@@ -98,7 +102,7 @@ public abstract class Filter implements Serializable {
         final List<Identifier> identifiers = filterProfile.getIdentifiers().getIdentifiers();
 
         final Identifier identifier = identifiers.stream().
-                filter(p -> p.getName().equalsIgnoreCase(name)).
+                filter(p -> p.getLabel().equalsIgnoreCase(name)).
                 findFirst().get();
 
         return identifier.getIdentifierFilterStrategies();
@@ -158,6 +162,10 @@ public abstract class Filter implements Serializable {
 
     public FilterType getFilterType() {
         return filterType;
+    }
+
+    public String getLabel() {
+        return label;
     }
 
 }

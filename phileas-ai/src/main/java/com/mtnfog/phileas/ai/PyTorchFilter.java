@@ -108,7 +108,7 @@ public class PyTorchFilter extends NerFilter implements Serializable {
         attributes.put(NerFilterStrategy.CONFIDENCE, confidence);
         attributes.put(NerFilterStrategy.TYPE, type);
 
-        final String replacement = getReplacement(name, context, documentId, text, attributes);
+        final String replacement = getReplacement(label, context, documentId, text, attributes);
         final Span span = Span.make(start, end, FilterType.NER_ENTITY, context, documentId, confidence, replacement);
 
         // Send the entity to the metrics service for reporting.
