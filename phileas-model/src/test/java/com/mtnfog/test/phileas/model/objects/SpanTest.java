@@ -3,6 +3,7 @@ package com.mtnfog.test.phileas.model.objects;
 import com.mtnfog.phileas.model.enums.FilterType;
 import com.mtnfog.phileas.model.objects.Span;
 import nl.jqno.equalsverifier.EqualsVerifier;
+import nl.jqno.equalsverifier.Warning;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Assert;
 import org.junit.Test;
@@ -15,7 +16,7 @@ public class SpanTest {
 
     @Test
     public void equalsContract() {
-        EqualsVerifier.forClass(Span.class).verify();
+        EqualsVerifier.forClass(Span.class).suppress(Warning.NONFINAL_FIELDS).verify();
     }
 
     @Test

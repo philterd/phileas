@@ -7,7 +7,7 @@
 	<parent>
 		<groupId>com.mtnfog</groupId>
 		<artifactId>phileas</artifactId>
-		<version>1.0.0</version>
+		<version>1.0.1</version>
 	</parent>
 	<artifactId>phileas-services</artifactId>
 	<name>phileas-services</name>
@@ -70,11 +70,6 @@
 			<groupId>org.apache.lucene</groupId>
 			<artifactId>lucene-suggest</artifactId>
 			<version>${lucene.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.google.guava</groupId>
-			<artifactId>guava</artifactId>
-			<version>${guava.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.googlecode.libphonenumber</groupId>

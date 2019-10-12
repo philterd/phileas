@@ -6,7 +6,6 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.bson.types.ObjectId;
 
-import javax.annotation.concurrent.Immutable;
 import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
@@ -16,7 +15,6 @@ import java.util.stream.IntStream;
 /**
  * Represents a location in text identified as PII or PHI.
  */
-@Immutable
 public final class Span implements Serializable {
 
     private ObjectId id;

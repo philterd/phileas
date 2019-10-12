@@ -4,7 +4,7 @@
 	<artifactId>phileas</artifactId>
 	<groupId>com.mtnfog</groupId>
 	<packaging>pom</packaging>
-	<version>1.0.0</version>
+	<version>1.0.1</version>
 	<name>phileas</name>
 	<url>http://www.mtnfog.com</url>
 	<description>Phileas engine removes PHI data from natural language text.</description>
@@ -103,7 +103,6 @@
 		<commons.validator.version>1.6</commons.validator.version>
 		<dropwizard-metrics-cloudwatch.version>1.0.13</dropwizard-metrics-cloudwatch.version>
 		<equals.verifier.version>3.1.9</equals.verifier.version>
-		<guava.version>28.1-jre</guava.version>
 		<icu4j.version>64.2</icu4j.version>
 		<javafaker.version>0.18</javafaker.version>
 		<jedis.version>3.0.1</jedis.version>
