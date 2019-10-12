@@ -159,7 +159,7 @@ public class PhileasFilterService implements FilterService, Serializable {
 
                 final List<Identifier> identifiers = filterProfile.getIdentifiers().getIdentifiers();
                 for(Identifier identifier : identifiers) {
-                    enabledFilters.add(new IdentifierFilter(identifier.getName(), identifier.getPattern(), identifier.isCaseSensitive(), identifier.getIdentifierFilterStrategies(), new AlphanumericAnonymizationService(anonymizationCacheService)));
+                    enabledFilters.add(new IdentifierFilter(identifier.getLabel(), identifier.getPattern(), identifier.isCaseSensitive(), identifier.getIdentifierFilterStrategies(), new AlphanumericAnonymizationService(anonymizationCacheService)));
                 }
 
             }

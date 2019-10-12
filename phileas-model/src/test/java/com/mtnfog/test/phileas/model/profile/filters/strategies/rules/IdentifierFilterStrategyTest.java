@@ -33,7 +33,7 @@ public class IdentifierFilterStrategyTest {
         final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
 
         final IdentifierFilterStrategy strategy = new IdentifierFilterStrategy();
-        strategy.setRedactionFormat("{{{REDACTED-%n}}}");
+        strategy.setRedactionFormat("{{{REDACTED-%l}}}");
         final String replacement = strategy.getReplacement("custom-name", "context", "documentId", "token", anonymizationService);
 
         Assert.assertEquals("{{{REDACTED-custom-name}}}", replacement);
@@ -46,7 +46,7 @@ public class IdentifierFilterStrategyTest {
         final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
 
         final IdentifierFilterStrategy strategy = new IdentifierFilterStrategy();
-        strategy.setRedactionFormat("{{{REDACTED-%t-%n}}}");
+        strategy.setRedactionFormat("{{{REDACTED-%t-%l}}}");
         final String replacement = strategy.getReplacement("custom-name", "context", "documentId", "token", anonymizationService);
 
         Assert.assertEquals("{{{REDACTED-id-custom-name}}}", replacement);
@@ -59,7 +59,7 @@ public class IdentifierFilterStrategyTest {
         final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
 
         final IdentifierFilterStrategy strategy = new IdentifierFilterStrategy();
-        strategy.setRedactionFormat("***%n-%t***");
+        strategy.setRedactionFormat("***%l-%t***");
         final String replacement = strategy.getReplacement("custom-name", "context", "documentId", "token", anonymizationService);
 
         Assert.assertEquals("***custom-name-id***", replacement);
@@ -72,7 +72,7 @@ public class IdentifierFilterStrategyTest {
         final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
 
         final IdentifierFilterStrategy strategy = new IdentifierFilterStrategy();
-        strategy.setRedactionFormat("***%n-%n-%t***");
+        strategy.setRedactionFormat("***%l-%l-%t***");
         final String replacement = strategy.getReplacement("custom-name", "context", "documentId", "token", anonymizationService);
 
         Assert.assertEquals("***custom-name-custom-name-id***", replacement);

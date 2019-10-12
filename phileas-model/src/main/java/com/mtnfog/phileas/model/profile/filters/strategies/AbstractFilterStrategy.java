@@ -46,13 +46,13 @@ public abstract class AbstractFilterStrategy {
      */
     public abstract boolean evaluateCondition(String context, String documentId, String token, String condition, Map<String, Object> attributes);
 
-    protected String getRedactedToken(String name, FilterType filterType) {
+    protected String getRedactedToken(String label, FilterType filterType) {
 
         String replacement = getValueOrDefault(redactionFormat, DEFAULT_REDACTION)
                 .replaceAll("%t", filterType.getType());
 
-        if(StringUtils.isNotEmpty(name)) {
-            replacement = replacement.replaceAll("%n", name);
+        if(StringUtils.isNotEmpty(label)) {
+            replacement = replacement.replaceAll("%l", label);
         }
 
         return replacement;
