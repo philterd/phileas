@@ -255,9 +255,13 @@ public final class Span implements Serializable {
 
         }
 
-        return nonOverlappingSpans.stream()
-                .distinct()
-                .collect(Collectors.toList());
+        // If there are two spans in the list that have the same character start the one(s)
+        // appear later in the list should be removed. If they have the same start they will
+        // have to have the same end.
+        final HashSet<Integer> seen = new HashSet<>();
+        nonOverlappingSpans.removeIf(e -> !seen.add(e.getCharacterStart()));
+
+        return nonOverlappingSpans;
 
     }
 

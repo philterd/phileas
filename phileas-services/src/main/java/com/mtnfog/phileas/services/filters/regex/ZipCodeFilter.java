@@ -23,10 +23,7 @@ public class ZipCodeFilter extends RegexFilter implements Serializable {
     @Override
     public List<Span> filter(FilterProfile filterProfile, String context, String documentId, String input) throws IOException {
 
-        final List<Span> spans = findSpans(filterProfile, ZIP_CODE_REGEX, input, context, documentId);
-        System.out.println("Zip code spans: " + spans.size());
-        System.out.println(spans.get(0).getText(input));
-        return spans;
+        return findSpans(filterProfile, ZIP_CODE_REGEX, input, context, documentId);
 
     }
 

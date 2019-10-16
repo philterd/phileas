@@ -5,6 +5,8 @@ import com.mtnfog.phileas.model.objects.Span;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -13,6 +15,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class SpanTest {
+
+    private static final Logger LOGGER = LogManager.getLogger(SpanTest.class);
 
     @Test
     public void equalsContract() {
@@ -170,6 +174,8 @@ public class SpanTest {
 
         List<Span> nonOverlappingSpans = Span.dropOverlappingSpans(spans);
 
+        showSpans(nonOverlappingSpans);
+
         Assert.assertEquals(1, nonOverlappingSpans.size());
         Assert.assertEquals(nonOverlappingSpans.get(0).getCharacterStart(), 2);
         Assert.assertEquals(nonOverlappingSpans.get(0).getCharacterEnd(), 12);
@@ -242,12 +248,32 @@ public class SpanTest {
         spans.add(Span.make(7, 17, FilterType.ZIP_CODE, "context", "document", 1.0, "***"));
         spans.add(Span.make(7, 17, FilterType.IDENTIFIER, "context", "document", 1.0, "***"));
 
-        final List<Span> nonOverlappingSpans = Span.removeIdenticalSpans(spans);
+        final List<Span> nonOverlappingSpans = Span.dropOverlappingSpans(spans);
+
+        showSpans(nonOverlappingSpans);
 
         Assert.assertEquals(1, nonOverlappingSpans.size());
         Assert.assertEquals(nonOverlappingSpans.get(0).getCharacterStart(), 7);
         Assert.assertEquals(nonOverlappingSpans.get(0).getCharacterEnd(), 17);
         Assert.assertEquals(nonOverlappingSpans.get(0).getFilterType(), FilterType.ZIP_CODE);
+
+    }
+
+    private void showSpans(List<Span> spans) {
+
+        for(Span span : spans) {
+            LOGGER.info(span.toString());
+        }
+
+    }
+
+    private boolean checkSpan(Span span, int characterStart, int characterEnd, FilterType filterType) {
+
+        LOGGER.info("Checking span: {}", span.toString());
+
+        return (span.getCharacterStart() == characterStart
+                && span.getCharacterEnd() == characterEnd
+                && span.getFilterType() == filterType);
 
     }
 
