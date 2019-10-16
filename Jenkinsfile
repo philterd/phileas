@@ -14,9 +14,6 @@ pipeline {
         gitParameter(defaultValue: 'origin/master', description: 'Branch/tag to build', name: 'BRANCH_TAG', type: 'PT_BRANCH_TAG')
     }
     environment {
-        //Use Pipeline Utility Steps plugin to read information from pom.xml into env variables
-        IMAGE = readMavenPom().getArtifactId()
-        VERSION = readMavenPom().getVersion()
         PHILEAS_INDER_DIR = "${WORKSPACE}"
     }
     stages {
