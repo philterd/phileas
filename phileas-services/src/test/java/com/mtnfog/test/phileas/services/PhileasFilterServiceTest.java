@@ -52,7 +52,33 @@ public class PhileasFilterServiceTest {
     }
 
     @Test
-    public void endToEnd() throws Exception {
+    public void endToEnd1() throws Exception {
+
+        final Path temp = Files.createTempDirectory("philter");
+        final File file = Paths.get(temp.toFile().getAbsolutePath(), "profile.json").toFile();
+        LOGGER.info("Writing profile to {}", file.getAbsolutePath());
+        FileUtils.writeStringToFile(file, gson.toJson(getFilterProfile("default")), Charset.defaultCharset());
+
+        Properties applicationProperties = new Properties();
+        applicationProperties.setProperty("indexes.directory", INDEXES_DIRECTORY);
+        applicationProperties.setProperty("store.enabled", "false");
+        applicationProperties.setProperty("filter.profiles.directory", temp.toFile().getAbsolutePath());
+
+        AnonymizationCacheService anonymizationCacheService = new LocalAnonymizationCacheService();
+        LocalFilterProfileService filterProfileService = new LocalFilterProfileService(applicationProperties);
+        List<FilterProfileService> filterProfileServices = Arrays.asList(filterProfileService);
+
+        PhileasFilterService service = new PhileasFilterService(applicationProperties, filterProfileServices, anonymizationCacheService);
+        final FilterResponse response = service.filter("default", "context", "George Washington was president and his ssn was 123-45-6789 and he lived at 90210.");
+
+        LOGGER.info(response.getFilteredText());
+
+        Assert.assertEquals("George Washington was president and his ssn was {{{REDACTED-ssn}}} and he lived at {{{REDACTED-zip-code}}}.", response.getFilteredText());
+
+    }
+
+    @Test
+    public void endToEnd2() throws Exception {
 
         final Path temp = Files.createTempDirectory("philter");
         final File file = Paths.get(temp.toFile().getAbsolutePath(), "profile.json").toFile();

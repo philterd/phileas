@@ -217,8 +217,16 @@ public class PhileasFilterService implements FilterService, Serializable {
             spans.addAll(f.filter(filterProfile, context, documentId, input));
         }
 
+        for(Span span : spans) {
+            LOGGER.info(span.toString());
+        }
+
         // Drop overlapping spans.
         spans = Span.dropOverlappingSpans(spans);
+System.out.println("----");
+        for(Span span : spans) {
+            LOGGER.info(span.toString());
+        }
 
         // Sort the spans based on the confidence.
         spans.sort(Comparator.comparing(Span::getConfidence));
@@ -229,19 +237,25 @@ public class PhileasFilterService implements FilterService, Serializable {
         }
 
         // The spans that will be persisted. Has to be a deep copy because the shift
-        // below will change the indexes.
+        // below will change the indexes. Doing this to save the original locations of the spans.
         final List<Span> appliedSpans = spans.stream().map(d -> d.copy()).collect(toList());
 
         // Used to manipulate the text.
         final StringBuffer buffer = new StringBuffer(input);
 
+        // Initialize this to the the input length but it may grow in length if redactions/replacements
+        // are longer than the original spans.
+        int stringLength = input.length();
+
         // Go character by character through the input.
-        for(int i = 0; i < input.length(); i++) {
+        for(int i = 0; i < stringLength; i++) {
 
             // Is index i the start of a span?
             final Span span = Span.doesIndexStartSpan(i, spans);
 
             if(span != null) {
+
+                System.out.println("Processing span " + span.toString());
                 
                 // Get the replacement. This might be the token itself or an anonymized version.
                 final String replacement = span.getReplacement();
@@ -258,6 +272,9 @@ public class PhileasFilterService implements FilterService, Serializable {
 
                     // Shift the remaining spans by the shift value.
                     spans = Span.shiftSpans(shift, span, spans);
+
+                    // Update the length of the string.
+                    stringLength += shift;
 
                 }
 

@@ -74,4 +74,16 @@ public class ZipCodeFilterTest extends AbstractFilterTest {
 
     }
 
+    @Test
+    public void filterZipCode6() throws Exception {
+
+        final List<ZipCodeFilterStrategy> strategies = Arrays.asList(new ZipCodeFilterStrategy());
+        ZipCodeFilter filter = new ZipCodeFilter(strategies, new ZipCodeAnonymizationService(new LocalAnonymizationCacheService()));
+
+        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "George Washington was president and his ssn was 123-45-6789 and he lived in 90210.");
+        Assert.assertEquals(1, spans.size());
+        Assert.assertTrue(checkSpan(spans.get(0), 76, 81, FilterType.ZIP_CODE));
+
+    }
+
 }

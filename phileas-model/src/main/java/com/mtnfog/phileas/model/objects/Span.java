@@ -4,18 +4,23 @@ import com.mtnfog.phileas.model.enums.FilterType;
 import org.apache.commons.lang3.Range;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.bson.types.ObjectId;
 
 import java.io.Serializable;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+
+import static java.util.stream.Collectors.toList;
 
 /**
  * Represents a location in text identified as PII or PHI.
  */
 public final class Span implements Serializable {
+
+    private static final Logger LOGGER = LogManager.getLogger(Span.class);
 
     private ObjectId id;
     private int characterStart;
@@ -173,9 +178,9 @@ public final class Span implements Serializable {
      * @param spans A list of {@link Span spans} to check.
      * @return The span encasing the index if found. Otherwise, <code>null</code>.
      */
-    public static Span doesIndexStartSpan(int index, List<Span> spans) {
+    public static Span doesIndexStartSpan(final int index, final List<Span> spans) {
 
-        for(Span span : spans) {
+        for(final Span span : spans) {
 
             if(index == span.getCharacterStart()) {
                 return span;
@@ -198,6 +203,18 @@ public final class Span implements Serializable {
 
     }
 
+    public static List<Span> removeIdenticalSpans(List<Span> spans) {
+
+        final Set<Span> noDuplicateSpans = new LinkedHashSet<>(spans);
+
+        LOGGER.info("No duplicate size = {}", noDuplicateSpans.size());
+
+        return new LinkedList<>(noDuplicateSpans);
+
+        //return spans.stream().distinct().collect(Collectors.toList());
+
+    }
+
     /**
      * Drop overlapping spans that are shorter.
      * @param spans A list of {@link Span spans} that may or may not contain overlapping spans.
@@ -205,13 +222,16 @@ public final class Span implements Serializable {
      */
     public static List<Span> dropOverlappingSpans(List<Span> spans) {
 
-        List<Span> nonOverlappingSpans = new LinkedList<>();
+        final List<Span> nonOverlappingSpans = new LinkedList<>();
 
-        for(Span span : spans) {
+        for(final Span span : spans) {
 
             boolean overlapping = false;
 
-            for(Span span2 : spans) {
+            for(final Span span2 : spans) {
+
+                //LOGGER.info("{} - {}", span.getCharacterStart(), span2.getCharacterStart());
+                //LOGGER.info("{} - {}", span2.getCharacterStart(), span2.getCharacterStart());
 
                 if(span.range.isOverlappedBy(span2.range)) {
 

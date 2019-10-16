@@ -233,4 +233,22 @@ public class SpanTest {
 
     }
 
+    @Test
+    public void overlapping6() {
+
+        // Duplicate spans should be dropped in favor of the one that appears in the list first.
+
+        final List<Span> spans = new LinkedList<>();
+        spans.add(Span.make(7, 17, FilterType.ZIP_CODE, "context", "document", 1.0, "***"));
+        spans.add(Span.make(7, 17, FilterType.IDENTIFIER, "context", "document", 1.0, "***"));
+
+        final List<Span> nonOverlappingSpans = Span.removeIdenticalSpans(spans);
+
+        Assert.assertEquals(1, nonOverlappingSpans.size());
+        Assert.assertEquals(nonOverlappingSpans.get(0).getCharacterStart(), 7);
+        Assert.assertEquals(nonOverlappingSpans.get(0).getCharacterEnd(), 17);
+        Assert.assertEquals(nonOverlappingSpans.get(0).getFilterType(), FilterType.ZIP_CODE);
+
+    }
+
 }
