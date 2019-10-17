@@ -11,6 +11,14 @@
 	</parent>
 	<artifactId>phileas-model</artifactId>
 	<name>phileas-model</name>
+	<licenses>
+		<license>
+			<name>Mountain Fog Commercial License</name>
+			<url>https://www.mtnfog.com</url>
+			<distribution>manual</distribution>
+			<comments>Phileas is proprietary closed-source software.</comments>
+		</license>
+	</licenses>
 	<build>
 		<plugins>
 			<plugin>

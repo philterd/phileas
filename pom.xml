@@ -26,6 +26,14 @@
 			<organizationUrl>http://www.mtnfog.com</organizationUrl>
 		</developer>
 	</developers>
+	<licenses>
+		<license>
+			<name>Mountain Fog Commercial License</name>
+			<url>https://www.mtnfog.com</url>
+			<distribution>manual</distribution>
+			<comments>Phileas is proprietary closed-source software.</comments>
+		</license>
+	</licenses>
 	<distributionManagement>
 		<repository>
 			<id>maven-s3-release-repo</id>

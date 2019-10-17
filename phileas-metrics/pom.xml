@@ -9,6 +9,14 @@
   <groupId>com.mtnfog</groupId>
   <artifactId>phileas-metrics</artifactId>
   <name>phileas-metrics</name>
+  <licenses>
+    <license>
+      <name>Mountain Fog Commercial License</name>
+      <url>https://www.mtnfog.com</url>
+      <distribution>manual</distribution>
+      <comments>Phileas is proprietary closed-source software.</comments>
+    </license>
+  </licenses>
   <dependencies>
     <dependency>
       <groupId>com.mtnfog</groupId>

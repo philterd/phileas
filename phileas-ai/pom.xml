@@ -8,6 +8,14 @@
   </parent>
   <artifactId>phileas-ai</artifactId>
   <name>phileas-ai</name>
+  <licenses>
+    <license>
+      <name>Mountain Fog Commercial License</name>
+      <url>https://www.mtnfog.com</url>
+      <distribution>manual</distribution>
+      <comments>Phileas is proprietary closed-source software.</comments>
+    </license>
+  </licenses>
   <dependencies>
     <dependency>
       <groupId>com.mtnfog</groupId>

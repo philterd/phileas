@@ -8,6 +8,14 @@
   </parent>
   <artifactId>phileas-nlp</artifactId>
   <name>phileas-nlp</name>
+  <licenses>
+    <license>
+      <name>Mountain Fog Commercial License</name>
+      <url>https://www.mtnfog.com</url>
+      <distribution>manual</distribution>
+      <comments>Phileas is proprietary closed-source software.</comments>
+    </license>
+  </licenses>
   <dependencies>
     <dependency>
       <groupId>org.apache.opennlp</groupId>
