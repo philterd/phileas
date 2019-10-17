@@ -217,16 +217,8 @@ public class PhileasFilterService implements FilterService, Serializable {
             spans.addAll(f.filter(filterProfile, context, documentId, input));
         }
 
-        for(Span span : spans) {
-            LOGGER.info(span.toString());
-        }
-
         // Drop overlapping spans.
         spans = Span.dropOverlappingSpans(spans);
-System.out.println("----");
-        for(Span span : spans) {
-            LOGGER.info(span.toString());
-        }
 
         // Sort the spans based on the confidence.
         spans.sort(Comparator.comparing(Span::getConfidence));
@@ -255,8 +247,6 @@ System.out.println("----");
 
             if(span != null) {
 
-                System.out.println("Processing span " + span.toString());
-                
                 // Get the replacement. This might be the token itself or an anonymized version.
                 final String replacement = span.getReplacement();
 
