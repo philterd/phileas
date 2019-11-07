@@ -7,6 +7,7 @@ import com.amazonaws.services.cloudwatch.AmazonCloudWatchAsync;
 import com.amazonaws.services.cloudwatch.AmazonCloudWatchAsyncClientBuilder;
 import com.codahale.metrics.*;
 import com.codahale.metrics.jmx.JmxReporter;
+import com.mtnfog.phileas.model.enums.FilterType;
 import com.mtnfog.phileas.model.objects.Span;
 import com.mtnfog.phileas.model.services.MetricsService;
 import io.github.azagniotov.metrics.reporter.cloudwatch.CloudWatchReporter;
@@ -17,6 +18,8 @@ import org.coursera.metrics.datadog.DatadogReporter;
 import org.coursera.metrics.datadog.transport.HttpTransport;
 
 import java.util.EnumSet;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
@@ -35,6 +38,7 @@ public class PhileasMetricsService implements MetricsService {
     private transient Counter processed;
     private transient Meter documents;
     private transient Histogram entityConfidenceValues;
+    private Map<FilterType, Counter> countersPerFilterType = new LinkedHashMap<>();
 
     private transient ConsoleReporter consoleReporter;
     private transient JmxReporter jmxReporter;
@@ -53,6 +57,11 @@ public class PhileasMetricsService implements MetricsService {
         processed = registry.counter(metricsPrefix + "." + TOTAL_DOCUMENTS_PROCESSED);
         documents = registry.meter(metricsPrefix + "." + DOCUMENTS_PROCESSED);
         entityConfidenceValues = registry.histogram(metricsPrefix + "." + ENTITY_CONFIDENCE);
+
+        // Add a counter for each filter type.
+        for(FilterType filterType : FilterType.values()) {
+            countersPerFilterType.put(filterType, registry.counter(metricsPrefix + "." + filterType.name()));
+        }
 
         // Console reporter is always enabled
         consoleReporter = ConsoleReporter.forRegistry(registry)
@@ -144,6 +153,13 @@ public class PhileasMetricsService implements MetricsService {
             cloudWatchReporter.start(60, TimeUnit.SECONDS);
 
         }
+
+    }
+
+    @Override
+    public void incrementFilterType(FilterType filterType) {
+
+        countersPerFilterType.get(filterType).inc();
 
     }
 

@@ -15,9 +15,6 @@ import java.util.Map;
  */
 public abstract class NerFilter extends DynamicFilter implements Serializable {
 
-    protected static final int STATISTICS_WINDOW_SIZE = 10000;
-    protected static final int SUFFICIENT_VALUES_COUNT = 50;
-
     protected Map<String, DescriptiveStatistics> stats;
     protected String type;
 

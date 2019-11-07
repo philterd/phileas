@@ -232,6 +232,9 @@ public class PhileasFilterService implements FilterService, Serializable {
         // below will change the indexes. Doing this to save the original locations of the spans.
         final List<Span> appliedSpans = spans.stream().map(d -> d.copy()).collect(toList());
 
+        // Log a metric for each filter type.
+        appliedSpans.forEach(k -> metricsService.incrementFilterType(k.getFilterType()));
+
         // Used to manipulate the text.
         final StringBuffer buffer = new StringBuffer(input);
 
