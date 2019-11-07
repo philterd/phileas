@@ -13,9 +13,14 @@ import io.github.azagniotov.metrics.reporter.cloudwatch.CloudWatchReporter;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.coursera.metrics.datadog.DatadogReporter;
+import org.coursera.metrics.datadog.transport.HttpTransport;
 
+import java.util.EnumSet;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
+
+import static org.coursera.metrics.datadog.DatadogReporter.Expansion.*;
 
 public class PhileasMetricsService implements MetricsService {
 
@@ -33,14 +38,21 @@ public class PhileasMetricsService implements MetricsService {
 
     private transient ConsoleReporter consoleReporter;
     private transient JmxReporter jmxReporter;
+    private transient DatadogReporter datadogReporter;
 
+    /**
+     * Creates a new metrics service.
+     * @param properties The {@link Properties properties} used to initialize the application.
+     */
     public PhileasMetricsService(Properties properties) {
 
         registry = new MetricRegistry();
 
-        processed = registry.counter(TOTAL_DOCUMENTS_PROCESSED);
-        documents = registry.meter(DOCUMENTS_PROCESSED);
-        entityConfidenceValues = registry.histogram(ENTITY_CONFIDENCE);
+        final String metricsPrefix = properties.getProperty("metrics.prefix", "philter");
+
+        processed = registry.counter(metricsPrefix + "." + TOTAL_DOCUMENTS_PROCESSED);
+        documents = registry.meter(metricsPrefix + "." + DOCUMENTS_PROCESSED);
+        entityConfidenceValues = registry.histogram(metricsPrefix + "." + ENTITY_CONFIDENCE);
 
         // Console reporter is always enabled
         consoleReporter = ConsoleReporter.forRegistry(registry)
@@ -56,6 +68,31 @@ public class PhileasMetricsService implements MetricsService {
 
             jmxReporter = JmxReporter.forRegistry(registry).build();
             jmxReporter.start();
+
+        }
+
+        if(StringUtils.equalsIgnoreCase(properties.getProperty("metrics.datadog.enabled", "false"), "true")) {
+
+            final String datadogApiKey = properties.getProperty("metrics.datadog.apikey", "");
+
+            if(StringUtils.isEmpty(datadogApiKey)) {
+
+                LOGGER.warn("Datadog metric reporting enabled but no Datadog API key provided. Reporting will not be enabled.");
+
+            } else {
+
+                LOGGER.info("Enabling Datadog metric reporting.");
+
+                final HttpTransport udpTransport = new HttpTransport.Builder().withApiKey(datadogApiKey).build();
+                final EnumSet<DatadogReporter.Expansion> expansions = EnumSet.of(COUNT, RATE_1_MINUTE, RATE_15_MINUTE, MEDIAN, P95, P99);
+                datadogReporter = DatadogReporter.forRegistry(registry)
+                        .withTransport(udpTransport)
+                        .withExpansions(expansions)
+                        .build();
+
+                datadogReporter.start(60, TimeUnit.SECONDS);
+
+            }
 
         }
 
