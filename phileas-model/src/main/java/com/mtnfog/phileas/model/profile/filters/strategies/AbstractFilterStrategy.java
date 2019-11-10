@@ -94,11 +94,11 @@ public abstract class AbstractFilterStrategy {
 
     @SerializedName("replacementScope")
     @Expose
-    protected String replacementScope;
+    protected String replacementScope = REPLACEMENT_SCOPE_DOCUMENT;
 
     @SerializedName("staticReplacement")
     @Expose
-    protected String staticReplacement;
+    protected String staticReplacement = "";
 
     @SerializedName("sensitivityLevel")
     @Expose
@@ -106,7 +106,7 @@ public abstract class AbstractFilterStrategy {
 
     @SerializedName("condition")
     @Expose
-    protected String condition;
+    protected String condition = "";
 
     /**
      * Gets the value of an object or the <code>defaultValue</code> if the value is <code>null</code>.

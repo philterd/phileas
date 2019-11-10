@@ -102,7 +102,7 @@ public class FilterProfileTest {
         filterProfile.setName("default");
         filterProfile.setIdentifiers(identifiers);
 
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        Gson gson = new GsonBuilder().serializeNulls().setPrettyPrinting().create();
         String json = gson.toJson(filterProfile);
 
         System.out.println(json);
