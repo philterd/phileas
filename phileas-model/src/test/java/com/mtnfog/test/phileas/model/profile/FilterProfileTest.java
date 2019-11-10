@@ -5,95 +5,106 @@ import com.google.gson.GsonBuilder;
 import com.mtnfog.phileas.model.profile.FilterProfile;
 import com.mtnfog.phileas.model.profile.Identifiers;
 import com.mtnfog.phileas.model.profile.filters.*;
+import com.mtnfog.phileas.model.profile.filters.strategies.ai.NerFilterStrategy;
+import com.mtnfog.phileas.model.profile.filters.strategies.dynamic.*;
 import com.mtnfog.phileas.model.profile.filters.strategies.rules.*;
 import org.junit.Test;
 
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
 
 public class FilterProfileTest {
 
     @Test
     public void serialize() throws IOException {
 
-        AgeFilterStrategy ageFilterStrategy = new AgeFilterStrategy();
-
         Age age = new Age();
-        age.setAgeFilterStrategies(Arrays.asList(ageFilterStrategy));
+        age.setAgeFilterStrategies(Arrays.asList(new AgeFilterStrategy()));
 
-        CreditCardFilterStrategy creditCardFilterStrategy = new CreditCardFilterStrategy();
+        City city = new City();
+        city.setCityFilterStrategies(Arrays.asList(new CityFilterStrategy()));
+
+        County county = new County();
+        county.setCountyFilterStrategies(Arrays.asList(new CountyFilterStrategy()));
 
         CreditCard creditCard = new CreditCard();
-        creditCard.setCreditCardFilterStrategies(Arrays.asList(creditCardFilterStrategy));
-
-        DateFilterStrategy dateFilterStrategy = new DateFilterStrategy();
+        creditCard.setCreditCardFilterStrategies(Arrays.asList(new CreditCardFilterStrategy()));
 
         Date date = new Date();
-        date.setDateFilterStrategies(Arrays.asList(dateFilterStrategy));
-
-        EmailAddressFilterStrategy emailAddressFilterStrategy = new EmailAddressFilterStrategy();
+        date.setDateFilterStrategies(Arrays.asList(new DateFilterStrategy()));
 
         EmailAddress emailAddress = new EmailAddress();
-        emailAddress.setEmailAddressFilterStrategies(Arrays.asList(emailAddressFilterStrategy));
+        emailAddress.setEmailAddressFilterStrategies(Arrays.asList(new EmailAddressFilterStrategy()));
 
-        IdentifierFilterStrategy identifierFilterStrategy = new IdentifierFilterStrategy();
+        FirstName firstName = new FirstName();
+        firstName.setFirstNameFilterStrategies(Arrays.asList(new FirstNameFilterStrategy()));
+
+        Hospital hospital = new Hospital();
+        hospital.setHospitalFilterStrategies(Arrays.asList(new HospitalFilterStrategy()));
+
+        HospitalAbbreviation hospitalAbbreviation = new HospitalAbbreviation();
+        hospitalAbbreviation.setHospitalAbbreviationFilterStrategies(Arrays.asList(new HospitalAbbreviationFilterStrategy()));
 
         Identifier identifier = new Identifier();
-        identifier.setIdentifierFilterStrategies(Arrays.asList(identifierFilterStrategy));
-
-        IpAddressFilterStrategy ipAddressFilterStrategy = new IpAddressFilterStrategy();
+        identifier.setIdentifierFilterStrategies(Arrays.asList(new IdentifierFilterStrategy()));
 
         IpAddress ipAddress = new IpAddress();
-        ipAddress.setIpAddressFilterStrategies(Arrays.asList(ipAddressFilterStrategy));
+        ipAddress.setIpAddressFilterStrategies(Arrays.asList(new IpAddressFilterStrategy()));
 
-        PhoneNumberFilterStrategy phoneNumberFilterStrategy = new PhoneNumberFilterStrategy();
+        Ner ner = new Ner();
+        ner.setNerStrategies(Arrays.asList(new NerFilterStrategy()));
 
         PhoneNumber phoneNumber = new PhoneNumber();
-        phoneNumber.setPhoneNumberFilterStrategies(Arrays.asList(phoneNumberFilterStrategy));
+        phoneNumber.setPhoneNumberFilterStrategies(Arrays.asList(new PhoneNumberFilterStrategy()));
 
-        SsnFilterStrategy ssnFilterStrategy = new SsnFilterStrategy();
+        PhoneNumberExtension phoneNumberExtension = new PhoneNumberExtension();
+        phoneNumberExtension.setPhoneNumberExtensionFilterStrategies(Arrays.asList(new PhoneNumberExtensionFilterStrategy()));
 
         Ssn ssn = new Ssn();
-        ssn.setSsnFilterStrategies(Arrays.asList(ssnFilterStrategy));
+        ssn.setSsnFilterStrategies(Arrays.asList(new SsnFilterStrategy()));
 
-        StateAbbreviationFilterStrategy stateAbbreviationFilterStrategy = new StateAbbreviationFilterStrategy();
+        State state = new State();
+        state.setStateFilterStrategies(Arrays.asList(new StateFilterStrategy()));
 
         StateAbbreviation stateAbbreviation = new StateAbbreviation();
-        stateAbbreviation.setStateAbbreviationsFilterStrategies(Arrays.asList(stateAbbreviationFilterStrategy));
+        stateAbbreviation.setStateAbbreviationsFilterStrategies(Arrays.asList(new StateAbbreviationFilterStrategy()));
 
-        UrlFilterStrategy urlFilterStrategy = new UrlFilterStrategy();
+        Surname surname = new Surname();
+        surname.setSurnameFilterStrategies(Arrays.asList(new SurnameFilterStrategy()));
 
         Url url = new Url();
-        url.setUrlFilterStrategies(Arrays.asList(urlFilterStrategy));
-
-        VinFilterStrategy vinFilterStrategy = new VinFilterStrategy();
+        url.setUrlFilterStrategies(Arrays.asList(new UrlFilterStrategy()));
 
         Vin vin = new Vin();
-        vin.setVinFilterStrategies(Arrays.asList(vinFilterStrategy));
+        vin.setVinFilterStrategies(Arrays.asList(new VinFilterStrategy()));
 
         ZipCodeFilterStrategy zipCodeFilterStrategy = new ZipCodeFilterStrategy();
         zipCodeFilterStrategy.setStrategy("TRUNCATE");
         zipCodeFilterStrategy.setTruncateDigits(2);
         zipCodeFilterStrategy.setConditions("population < 4500");
 
-        List<ZipCodeFilterStrategy> zipCodeFilterStrategies = new LinkedList<ZipCodeFilterStrategy>();
-        zipCodeFilterStrategies.add(zipCodeFilterStrategy);
-
         ZipCode zipCode = new ZipCode();
-        zipCode.setZipCodeFilterStrategies(zipCodeFilterStrategies);
+        zipCode.setZipCodeFilterStrategies(Arrays.asList(zipCodeFilterStrategy));
 
         Identifiers identifiers = new Identifiers();
         identifiers.setAge(age);
+        identifiers.setCity(city);
+        identifiers.setCounty(county);
         identifiers.setCreditCard(creditCard);
         identifiers.setDate(date);
         identifiers.setEmailAddress(emailAddress);
+        identifiers.setFirstName(firstName);
+        identifiers.setHospital(hospital);
+        identifiers.setHospitalAbbreviation(hospitalAbbreviation);
         identifiers.setIdentifiers(Arrays.asList(identifier));
         identifiers.setIpAddress(ipAddress);
+        identifiers.setNer(ner);
         identifiers.setPhoneNumber(phoneNumber);
+        identifiers.setPhoneNumberExtension(phoneNumberExtension);
         identifiers.setSsn(ssn);
+        identifiers.setState(state);
         identifiers.setStateAbbreviation(stateAbbreviation);
+        identifiers.setSurname(surname);
         identifiers.setUrl(url);
         identifiers.setVin(vin);
         identifiers.setZipCode(zipCode);
