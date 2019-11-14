@@ -214,7 +214,7 @@ public class PhileasFilterService implements FilterService, Serializable {
         final String documentId = MongoDBStore.generateId();
 
         // Execute each filter.
-        for(Filter f : enabledFilters) {
+        for(final Filter f : enabledFilters) {
             spans.addAll(f.filter(filterProfile, context, documentId, input));
         }
 
@@ -232,6 +232,8 @@ public class PhileasFilterService implements FilterService, Serializable {
         // The spans that will be persisted. Has to be a deep copy because the shift
         // below will change the indexes. Doing this to save the original locations of the spans.
         final List<Span> appliedSpans = spans.stream().map(d -> d.copy()).collect(toList());
+
+        // TODO: Set a flag on each "span" not in appliedSpans that it was not used.
 
         // Log a metric for each filter type.
         appliedSpans.forEach(k -> metricsService.incrementFilterType(k.getFilterType()));

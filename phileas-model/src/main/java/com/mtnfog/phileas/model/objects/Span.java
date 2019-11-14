@@ -1,34 +1,47 @@
 package com.mtnfog.phileas.model.objects;
 
+import com.google.gson.annotations.Expose;
 import com.mtnfog.phileas.model.enums.FilterType;
 import org.apache.commons.lang3.Range;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.bson.types.ObjectId;
 
 import java.io.Serializable;
-import java.util.*;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-
-import static java.util.stream.Collectors.toList;
 
 /**
  * Represents a location in text identified as PII or PHI.
  */
 public final class Span implements Serializable {
 
-    private static final Logger LOGGER = LogManager.getLogger(Span.class);
-
+    // This is not @Expose'd because the user does not need to see it.
+    // It is not transient because it won't get persisted to Mongo.
     private ObjectId id;
+
+    @Expose
     private int characterStart;
+
+    @Expose
     private int characterEnd;
+
+    @Expose
     private FilterType filterType;
+
+    @Expose
     private String context;
+
+    @Expose
     private String documentId;
+
+    @Expose
     private double confidence;
+
+    @Expose
     private String replacement;
 
     // Encapsulates the characterStart and characterEnd for easy intersection functions.

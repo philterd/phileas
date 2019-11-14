@@ -36,6 +36,8 @@ public class MongoDBStore implements Store, Closeable {
 
     /**
      * Generate a unique ID.
+     * This function is static because you have to be able to generate the ID
+     * without establishing a connection to Mongo.
      * @return A generated unique ID.
      */
     public static String generateId() {
