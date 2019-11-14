@@ -225,9 +225,9 @@ public class PhileasFilterService implements FilterService, Serializable {
         spans.sort(Comparator.comparing(Span::getConfidence));
 
         // Perform post-filtering for false positives.
-        for(PostFilter postFilter : postFilters) {
+        /*for(PostFilter postFilter : postFilters) {
             spans = postFilter.filter(input, spans);
-        }
+        }*/
 
         // The spans that will be persisted. Has to be a deep copy because the shift
         // below will change the indexes. Doing this to save the original locations of the spans.
@@ -235,6 +235,9 @@ public class PhileasFilterService implements FilterService, Serializable {
 
         // Log a metric for each filter type.
         appliedSpans.forEach(k -> metricsService.incrementFilterType(k.getFilterType()));
+
+        // Define the explanation.
+        final Explanation explanation = new Explanation(appliedSpans, spans);
 
         // Used to manipulate the text.
         final StringBuffer buffer = new StringBuffer(input);
@@ -289,7 +292,7 @@ public class PhileasFilterService implements FilterService, Serializable {
             store.insert(appliedSpans);
         }
 
-        final Explanation explanation = new Explanation(appliedSpans, spans);
+
 
         return new FilterResponse(buffer.toString(), context, documentId, explanation);
 
