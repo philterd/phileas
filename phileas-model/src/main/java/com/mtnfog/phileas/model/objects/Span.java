@@ -203,18 +203,6 @@ public final class Span implements Serializable {
 
     }
 
-    public static List<Span> removeIdenticalSpans(List<Span> spans) {
-
-        final Set<Span> noDuplicateSpans = new LinkedHashSet<>(spans);
-
-        LOGGER.info("No duplicate size = {}", noDuplicateSpans.size());
-
-        return new LinkedList<>(noDuplicateSpans);
-
-        //return spans.stream().distinct().collect(Collectors.toList());
-
-    }
-
     /**
      * Drop overlapping spans that are shorter.
      * @param spans A list of {@link Span spans} that may or may not contain overlapping spans.

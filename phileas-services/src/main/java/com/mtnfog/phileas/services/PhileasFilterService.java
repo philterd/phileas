@@ -6,6 +6,7 @@ import com.mtnfog.phileas.model.enums.FilterType;
 import com.mtnfog.phileas.model.exceptions.InvalidFilterProfileException;
 import com.mtnfog.phileas.model.filter.Filter;
 import com.mtnfog.phileas.model.filter.rules.dictionary.LuceneDictionaryFilter;
+import com.mtnfog.phileas.model.objects.Explanation;
 import com.mtnfog.phileas.model.objects.Span;
 import com.mtnfog.phileas.model.profile.FilterProfile;
 import com.mtnfog.phileas.model.profile.filters.Identifier;
@@ -288,7 +289,9 @@ public class PhileasFilterService implements FilterService, Serializable {
             store.insert(appliedSpans);
         }
 
-        return new FilterResponse(buffer.toString(), context, documentId);
+        final Explanation explanation = new Explanation(appliedSpans, spans);
+
+        return new FilterResponse(buffer.toString(), context, documentId, explanation);
 
     }
 

@@ -1,6 +1,7 @@
 package com.mtnfog.phileas.model.responses;
 
 import com.google.gson.Gson;
+import com.mtnfog.phileas.model.objects.Explanation;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
@@ -14,6 +15,7 @@ public final class FilterResponse implements Serializable {
 	private final String filteredText;
 	private final String context;
     private final String documentId;
+    private final Explanation explanation;
 
     /**
      * Creates a new response.
@@ -21,11 +23,12 @@ public final class FilterResponse implements Serializable {
      * @param context The context.
      * @param documentId The document ID.
      */
-    public FilterResponse(String filteredText, String context, String documentId) {
+    public FilterResponse(String filteredText, String context, String documentId, Explanation explanation) {
 
         this.filteredText = filteredText;
         this.context = context;
         this.documentId = documentId;
+        this.explanation = explanation;
 
     }
 
@@ -36,6 +39,7 @@ public final class FilterResponse implements Serializable {
                 append(filteredText).
                 append(context).
                 append(documentId).
+                append(explanation).
                 toHashCode();
 
     }
@@ -65,6 +69,10 @@ public final class FilterResponse implements Serializable {
 
     public String getContext() {
         return context;
+    }
+
+    public Explanation getExplanation() {
+        return explanation;
     }
 
 }
