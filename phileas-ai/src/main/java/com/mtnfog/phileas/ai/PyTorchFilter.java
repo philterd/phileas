@@ -1,7 +1,6 @@
 package com.mtnfog.phileas.ai;
 
 import com.mtnfog.phileas.model.enums.FilterType;
-import com.mtnfog.phileas.model.enums.SensitivityLevel;
 import com.mtnfog.phileas.model.filter.Filter;
 import com.mtnfog.phileas.model.filter.dynamic.NerFilter;
 import com.mtnfog.phileas.model.objects.Span;
@@ -22,8 +21,10 @@ import retrofit2.converter.scalars.ScalarsConverterFactory;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.net.MalformedURLException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 public class PyTorchFilter extends NerFilter implements Serializable {
 
@@ -41,7 +42,7 @@ public class PyTorchFilter extends NerFilter implements Serializable {
                          String tag,
                          Map<String, DescriptiveStatistics> stats,
                          MetricsService metricsService,
-                         AnonymizationService anonymizationService) throws MalformedURLException {
+                         AnonymizationService anonymizationService) {
 
         super(filterType, strategies, stats, metricsService, anonymizationService);
 
@@ -74,8 +75,6 @@ public class PyTorchFilter extends NerFilter implements Serializable {
 
         for(AbstractFilterStrategy strategy : strategies) {
 
-            final SensitivityLevel sensitivityLevel = SensitivityLevel.fromName(strategy.getSensitivityLevel());
-
             final Response<List<PhileasSpan>> response = service.process(input).execute();
             final List<PhileasSpan> phileasSpans = response.body();
 
@@ -85,7 +84,7 @@ public class PyTorchFilter extends NerFilter implements Serializable {
                 if(StringUtils.equalsIgnoreCase(p.getTag(), tag)) {
 
                     final Span span = createSpan(filterProfile, context, documentId, p.getText(),
-                            p.getTag(), p.getStart(), p.getEnd(), p.getScore(), sensitivityLevel);
+                            p.getTag(), p.getStart(), p.getEnd(), p.getScore());
 
                     spans.add(span);
 
@@ -102,7 +101,7 @@ public class PyTorchFilter extends NerFilter implements Serializable {
     }
 
     private Span createSpan(FilterProfile filterProfile, String context, String documentId, String text,
-                            String type, int start, int end, double confidence, SensitivityLevel sensitivityLevel) throws IOException {
+                            String type, int start, int end, double confidence) throws IOException {
 
         final Map<String, Object> attributes = new HashMap<>();
         attributes.put(NerFilterStrategy.CONFIDENCE, confidence);
