@@ -39,8 +39,9 @@ public class PhileasFilterService implements FilterService, Serializable {
     private List<PostFilter> postFilters;
     private Map<String, FilterProfile> filterProfiles;
     private Map<String, List<Filter>> filters;
+    private String philterNerEndpoint;
 
-    public PhileasFilterService(Properties applicationProperties, List<FilterProfileService> filterProfileServices, AnonymizationCacheService anonymizationCacheService) throws IOException {
+    public PhileasFilterService(Properties applicationProperties, List<FilterProfileService> filterProfileServices, AnonymizationCacheService anonymizationCacheService, String philterNerEndpoint) throws IOException {
 
         LOGGER.info("Initializing Phileas engine.");
 
@@ -61,9 +62,6 @@ public class PhileasFilterService implements FilterService, Serializable {
 
         // Path to the indexes directory.
         final String indexDirectory = applicationProperties.getProperty("indexes.directory", System.getProperty("user.dir") + "/indexes/");
-
-        // Endpoint of the philter-ner API.
-        final String philterNerEndpoint = applicationProperties.getProperty("ner.endpoint", "http://localhost:18080/");
 
         // Load all of the filter profiles into memory from each filter profile service.
         for(FilterProfileService filterProfileService : filterProfileServices) {
