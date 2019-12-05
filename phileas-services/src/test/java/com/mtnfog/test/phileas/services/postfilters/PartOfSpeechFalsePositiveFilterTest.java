@@ -23,7 +23,7 @@ public class PartOfSpeechFalsePositiveFilterTest {
         final POSModel model = new POSModel(is);
 
         final List<Span> spans = new LinkedList<>();
-        spans.add(Span.make(12, 22, FilterType.LOCATION_STATE, "context", "docid", 0.80, "*****"));
+        spans.add(Span.make(12, 22, FilterType.LOCATION_STATE, "context", "docid", 0.80, "test", "*****"));
 
         final PostFilter filter = new PartOfSpeechFalsePositiveFilter(model);
         final List<Span> filteredSpans = filter.filter("He lived in Washington.", spans);
@@ -39,7 +39,7 @@ public class PartOfSpeechFalsePositiveFilterTest {
         final POSModel model = new POSModel(is);
 
         final List<Span> spans = new LinkedList<>();
-        spans.add(Span.make(3, 8, FilterType.LOCATION_STATE, "context", "docid", 0.80, "*****"));
+        spans.add(Span.make(3, 8, FilterType.LOCATION_STATE, "context", "docid", 0.80, "test", "*****"));
 
         final PostFilter filter = new PartOfSpeechFalsePositiveFilter(model);
         final List<Span> filteredSpans = filter.filter("He lived in Washington.", spans);
@@ -56,7 +56,7 @@ public class PartOfSpeechFalsePositiveFilterTest {
         final POSModel model = new POSModel(is);
 
         final List<Span> spans = new LinkedList<>();
-        spans.add(Span.make(0, 17, FilterType.NER_ENTITY, "context", "docid", 0.80, "*****"));
+        spans.add(Span.make(0, 17, FilterType.NER_ENTITY, "context", "docid", 0.80, "test", "*****"));
 
         final PostFilter filter = new PartOfSpeechFalsePositiveFilter(model);
         final List<Span> filteredSpans = filter.filter("George Washington was president and his ssn was 123-45-6789 and he lived at 90210. Patient id 00076a and 93821a. He is on biotin. Diagnosed with A0100.", spans);

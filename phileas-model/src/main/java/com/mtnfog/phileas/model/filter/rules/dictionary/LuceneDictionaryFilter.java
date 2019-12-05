@@ -228,7 +228,7 @@ public class LuceneDictionaryFilter extends DictionaryFilter implements Serializ
 
                                     // There are no attributes for the span.
                                     final String replacement = getReplacement(label, context, documentId, token, Collections.emptyMap());
-                                    spans.add(Span.make(offsetAttribute.startOffset(), offsetAttribute.endOffset(), getFilterType(), context, documentId, spellChecker.getAccuracy(), replacement));
+                                    spans.add(Span.make(offsetAttribute.startOffset(), offsetAttribute.endOffset(), getFilterType(), context, documentId, spellChecker.getAccuracy(), token, replacement));
 
                                 }
 

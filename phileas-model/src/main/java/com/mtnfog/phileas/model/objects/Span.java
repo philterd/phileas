@@ -42,6 +42,9 @@ public final class Span implements Serializable {
     private double confidence;
 
     @Expose
+    private String text;
+
+    @Expose
     private String replacement;
 
     // Encapsulates the characterStart and characterEnd for easy intersection functions.
@@ -55,9 +58,10 @@ public final class Span implements Serializable {
      * @param context The context.
      * @param documentId The document ID.
      * @param confidence The confidence.
+     * @param text The text identified by the span.
      * @param replacement The replacement (anonymized) value for the span.
      */
-    private Span(int characterStart, int characterEnd, FilterType filterType, String context, String documentId, double confidence, String replacement) {
+    private Span(int characterStart, int characterEnd, FilterType filterType, String context, String documentId, double confidence, String text, String replacement) {
 
         this.id = new ObjectId();
         this.characterStart = characterStart;
@@ -66,6 +70,7 @@ public final class Span implements Serializable {
         this.context = context;
         this.documentId = documentId;
         this.confidence = confidence;
+        this.text = text;
         this.replacement = replacement;
 
     }
@@ -78,13 +83,14 @@ public final class Span implements Serializable {
      * @param context The context.
      * @param documentId The document ID.
      * @param confidence The confidence.
+     * @param text The text identified by the span.
      * @param replacement The replacement (anonymized) value for the span.
      * @return A {@link Span} object with the given properties.
      */
     public static Span make(int characterStart, int characterEnd, FilterType filterType, String context,
-                            String documentId, double confidence, String replacement) {
+                            String documentId, double confidence, String text, String replacement) {
 
-        final Span span = new Span(characterStart, characterEnd, filterType, context, documentId, confidence, replacement);
+        final Span span = new Span(characterStart, characterEnd, filterType, context, documentId, confidence, text, replacement);
 
         // This is made here and not passed into the constructor because that would be redundant
         // given the characterStart and characterEnd parameters in the constructor.
@@ -107,7 +113,7 @@ public final class Span implements Serializable {
      */
     public Span copy() {
 
-        final Span clone = Span.make(characterStart, characterEnd, filterType, context, documentId, confidence, replacement);
+        final Span clone = Span.make(characterStart, characterEnd, filterType, context, documentId, confidence, text, replacement);
 
         clone.id = id;
         clone.range = range;
@@ -175,7 +181,7 @@ public final class Span implements Serializable {
                 final int start = span.getCharacterStart() + shift;
                 final int end = span.getCharacterEnd() + shift;
 
-                shiftedSpans.add(Span.make(start, end, span.filterType, span.context, span.documentId, span.confidence, span.replacement));
+                shiftedSpans.add(Span.make(start, end, span.filterType, span.context, span.documentId, span.confidence, span.text, span.replacement));
 
             }
 
@@ -276,6 +282,7 @@ public final class Span implements Serializable {
                 append(confidence).
                 append(context).
                 append(documentId).
+                append(text).
                 append(replacement).
                 append(id).
                 toHashCode();
@@ -298,6 +305,7 @@ public final class Span implements Serializable {
                 + " context: " + context + "; "
                 + " documentId: " + documentId + "; "
                 + " confidence: " + confidence + "; "
+                + " text: " + text + "; "
                 + " replacement: " + replacement + "; "
                 + " id: " + id;
 
@@ -349,6 +357,14 @@ public final class Span implements Serializable {
 
     public void setConfidence(double confidence) {
         this.confidence = confidence;
+    }
+
+    public String getText() {
+        return text;
+    }
+
+    public void setText(String text) {
+        this.text = text;
     }
 
     public String getReplacement() {
