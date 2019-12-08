@@ -9,7 +9,9 @@ import com.mtnfog.phileas.model.filter.rules.dictionary.LuceneDictionaryFilter;
 import com.mtnfog.phileas.model.objects.Explanation;
 import com.mtnfog.phileas.model.objects.Span;
 import com.mtnfog.phileas.model.profile.FilterProfile;
+import com.mtnfog.phileas.model.profile.filters.CustomDictionary;
 import com.mtnfog.phileas.model.profile.filters.Identifier;
+import com.mtnfog.phileas.model.profile.filters.strategies.AbstractFilterStrategy;
 import com.mtnfog.phileas.model.responses.FilterResponse;
 import com.mtnfog.phileas.model.services.*;
 import com.mtnfog.phileas.services.anonymization.*;
@@ -120,6 +122,23 @@ public class PhileasFilterService implements FilterService, Serializable {
 
             if(filterProfile.getIdentifiers().hasFilter(FilterType.ZIP_CODE)) {
                 enabledFilters.add(new ZipCodeFilter(filterProfile.getIdentifiers().getZipCode().getZipCodeFilterStrategies(), new ZipCodeAnonymizationService(anonymizationCacheService)));
+            }
+
+            // Custom dictionary filters.
+
+            if(filterProfile.getIdentifiers().hasFilter(FilterType.CUSTOM_DICTIONARY)) {
+
+                // There can be multiple custom dictionary filters because it is a list.
+                for(CustomDictionary customDictionary : filterProfile.getIdentifiers().getCustomDictionaries()) {
+
+                    // There is no anonymization service because we don't know what to replace custom dictionary items with.
+                    final AnonymizationService anonymizationService = null;
+
+                    enabledFilters.add(new LuceneDictionaryFilter(FilterType.CUSTOM_DICTIONARY, customDictionary.getCustomDictionaryFilterStrategies(),
+                            0, anonymizationService, customDictionary.getType(), customDictionary.getTerms()));
+
+                }
+
             }
 
             // Lucene dictionary filters.

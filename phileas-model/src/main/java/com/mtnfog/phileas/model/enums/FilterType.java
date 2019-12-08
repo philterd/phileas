@@ -5,6 +5,8 @@ package com.mtnfog.phileas.model.enums;
  */
 public enum FilterType {
 
+    // TODO: Are Lucene dictionaries "deterministic"? Yes, if no fuzziness.
+
     AGE("age", true),
     CREDIT_CARD("credit-card", true),
     LOCATION_CITY("city", false),
@@ -25,7 +27,8 @@ public enum FilterType {
     SURNAME("surname", false),
     URL("url", true),
     VIN("vin", true),
-    ZIP_CODE("zip-code", true);
+    ZIP_CODE("zip-code", true),
+    CUSTOM_DICTIONARY("custom-dictionary", false);
 
     private String type;
     private boolean deterministic;

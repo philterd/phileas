@@ -4,6 +4,7 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.mtnfog.phileas.model.enums.FilterType;
 import com.mtnfog.phileas.model.profile.filters.*;
+import org.apache.commons.collections4.CollectionUtils;
 
 import java.util.List;
 
@@ -93,6 +94,10 @@ public class Identifiers {
     @Expose
     private Surname surname;
 
+    @SerializedName("dictionaries")
+    @Expose
+    private List<CustomDictionary> customDictionaries;
+
     public Identifiers() {
 
     }
@@ -149,6 +154,8 @@ public class Identifiers {
                 if(this.getVin() != null) { return true; } break;
             case ZIP_CODE:
                 if(this.getZipCode() != null) { return true; } break;
+            case CUSTOM_DICTIONARY:
+                if(CollectionUtils.isNotEmpty(this.getCustomDictionaries())) { return true; } break;
 
         }
 
@@ -322,6 +329,14 @@ public class Identifiers {
 
     public void setNer(Ner ner) {
         this.ner = ner;
+    }
+
+    public List<CustomDictionary> getCustomDictionaries() {
+        return customDictionaries;
+    }
+
+    public void setCustomDictionaries(List<CustomDictionary> customDictionaries) {
+        this.customDictionaries = customDictionaries;
     }
 
 }
