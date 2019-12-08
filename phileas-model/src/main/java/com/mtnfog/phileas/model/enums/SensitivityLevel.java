@@ -11,7 +11,7 @@ import java.io.Serializable;
  */
 public enum SensitivityLevel implements Serializable {
 
-    LOW("low"), MEDIUM("medium"), HIGH("high");
+    AUTO("auto"), LOW("low"), MEDIUM("medium"), HIGH("high");
 
     private String name;
 
@@ -37,7 +37,9 @@ public enum SensitivityLevel implements Serializable {
 
         final Logger logger = LogManager.getLogger(SensitivityLevel.class);
 
-        if(StringUtils.equalsIgnoreCase(name, LOW.getName())) {
+        if(StringUtils.equalsIgnoreCase(name, AUTO.getName())) {
+            return AUTO;
+        } else if(StringUtils.equalsIgnoreCase(name, LOW.getName())) {
             return LOW;
         } else if(StringUtils.equalsIgnoreCase(name, MEDIUM.getName())) {
             return MEDIUM;

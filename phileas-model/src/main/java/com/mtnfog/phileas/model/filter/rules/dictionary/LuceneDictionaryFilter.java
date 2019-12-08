@@ -7,6 +7,7 @@ import com.mtnfog.phileas.model.objects.Span;
 import com.mtnfog.phileas.model.profile.FilterProfile;
 import com.mtnfog.phileas.model.profile.filters.strategies.AbstractFilterStrategy;
 import com.mtnfog.phileas.model.services.AnonymizationService;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.text.similarity.LevenshteinDistance;
 import org.apache.logging.log4j.LogManager;
@@ -32,6 +33,9 @@ import java.io.StringReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.attribute.FileAttribute;
+import java.nio.file.attribute.PosixFilePermission;
+import java.nio.file.attribute.PosixFilePermissions;
 import java.util.*;
 
 /**
@@ -44,6 +48,12 @@ public class LuceneDictionaryFilter extends DictionaryFilter implements Serializ
     private SpellChecker spellChecker;
     private LevenshteinDistance distanceFunction;
     private int distance;
+
+    private static final Map<SensitivityLevel, Integer> CUSTOM_DICTIONARY_DISTANCES = new HashMap<SensitivityLevel, Integer>() {{
+        put(SensitivityLevel.LOW, 0);
+        put(SensitivityLevel.MEDIUM, 1);
+        put(SensitivityLevel.HIGH, 2);
+    }};
 
     private static final Map<SensitivityLevel, Integer> FIRST_NAME_DISTANCES = new HashMap<SensitivityLevel, Integer>() {{
         put(SensitivityLevel.LOW, 0);
@@ -148,6 +158,50 @@ public class LuceneDictionaryFilter extends DictionaryFilter implements Serializ
 
     }
 
+    /**
+     * Creates a new Lucene dictionary filter from a list of custom terms.
+     * @param filterType The {@link FilterType type} of filter.
+     * @param distance The distance for string distance.
+     * @param anonymizationService The {@link AnonymizationService} for this filter.
+     * @throws IOException Thrown if the index cannot be opened or accessed.
+     */
+    public LuceneDictionaryFilter(FilterType filterType,
+                                        List<? extends AbstractFilterStrategy> strategies,
+                                        int distance,
+                                        AnonymizationService anonymizationService,
+                                        String type,
+                                        List<String> terms) throws IOException {
+
+        super(filterType, strategies, anonymizationService);
+
+        // Write the list of terms to a file in a temporary directory.
+        final Path pathToIndex = Files.createTempDirectory("philter-name-index");
+        final FileAttribute<Set<PosixFilePermission>> fileAttributes = PosixFilePermissions.asFileAttribute(PosixFilePermissions.fromString("rw-------"));
+        final Path fileToIndex = Files.createTempFile(pathToIndex, "philter", type, fileAttributes);
+        FileUtils.writeLines(fileToIndex.toFile(), terms);
+
+        // Make a temp directory to hold the new index.
+        final Path indexDirectory = Files.createTempDirectory(type + "-index-custom");
+
+        LOGGER.info("Creating index of type {} from file {}.", type, pathToIndex);
+
+        // The Lucene StandardAnalyzer uses the StandardTokenizer. It removes punctuation and stop words.
+        // "Filters StandardTokenizer with StandardFilter, LowerCaseFilter and StopFilter, using a list of English stop words."
+        // https://lucene.apache.org/core/8_1_1/core/org/apache/lucene/analysis/standard/StandardAnalyzer.html
+
+        try (SpellChecker spellChecker = new SpellChecker(FSDirectory.open(indexDirectory))) {
+
+            LOGGER.info("Custom index for type [{}] created at {}", type, indexDirectory);
+            spellChecker.indexDictionary(new PlainTextDictionary(pathToIndex), new IndexWriterConfig(new StandardAnalyzer(EnglishAnalyzer.getDefaultStopSet())), false);
+
+            this.spellChecker.setStringDistance(new LuceneLevenshteinDistance());
+            this.spellChecker.setAccuracy(0.0f);
+            this.spellChecker = spellChecker;
+
+        }
+
+    }
+
     @Override
     public void close() throws IOException {
 
@@ -164,7 +218,7 @@ public class LuceneDictionaryFilter extends DictionaryFilter implements Serializ
 
             try(final Analyzer analyzer = new StandardAnalyzer()) {
 
-                for(AbstractFilterStrategy strategy :Filter.getFilterStrategies(filterProfile,filterType)) {
+                for(final AbstractFilterStrategy strategy : Filter.getFilterStrategies(filterProfile,filterType)) {
 
                     final SensitivityLevel sensitivityLevel = SensitivityLevel.fromName(strategy.getSensitivityLevel());
 
@@ -211,7 +265,12 @@ public class LuceneDictionaryFilter extends DictionaryFilter implements Serializ
 
                                         for (String suggestion : tokenSuggestions) {
 
-                                            int d = distanceFunction.apply(token.toUpperCase(), suggestion.toUpperCase());
+                                            // TODO: PHL-31: Automatically adjust the distance based on the length.
+                                            // Len 0 - 3 , Distance = 1
+                                            // Len 3 - 5, Distance = 2
+                                            // Len > 5, Distance = 3
+
+                                            final int d = distanceFunction.apply(token.toUpperCase(), suggestion.toUpperCase());
                                             LOGGER.info("distance for {} and {} is {}", token, suggestion, d);
 
                                             if (d <= distance) {
@@ -257,6 +316,10 @@ public class LuceneDictionaryFilter extends DictionaryFilter implements Serializ
 
         return spans;
 
+    }
+
+    public static Map<SensitivityLevel, Integer> getCustomDictionaryDistances() {
+        return CUSTOM_DICTIONARY_DISTANCES;
     }
 
     public static Map<SensitivityLevel, Integer> getFirstNameDistances() {
