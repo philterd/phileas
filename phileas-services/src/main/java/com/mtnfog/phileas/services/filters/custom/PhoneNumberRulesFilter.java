@@ -38,9 +38,11 @@ public class PhoneNumberRulesFilter extends RulesFilter implements Serializable 
 
             for (PhoneNumberMatch match : matches) {
 
-                final String replacement = getReplacement(label, context, documentId, match.rawString(), Collections.emptyMap());
+                final String text = match.rawString();
 
-                spans.add(Span.make(match.start(), match.end(), getFilterType(), context, documentId, 1.0, replacement));
+                final String replacement = getReplacement(label, context, documentId, text, Collections.emptyMap());
+
+                spans.add(Span.make(match.start(), match.end(), getFilterType(), context, documentId, 1.0, text, replacement));
 
             }
 
