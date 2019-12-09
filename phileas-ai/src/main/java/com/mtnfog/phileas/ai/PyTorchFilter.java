@@ -69,7 +69,7 @@ public class PyTorchFilter extends NerFilter implements Serializable {
 
         final List<Span> spans = new LinkedList<>();
 
-        final List<? extends AbstractFilterStrategy> strategies = Filter.getFilterStrategies(filterProfile, filterType);
+        final List<? extends AbstractFilterStrategy> strategies = Filter.getFilterStrategies(filterProfile, filterType, 0);
 
         LOGGER.debug("Applying {} NER filtering strategies.", strategies.size());
 

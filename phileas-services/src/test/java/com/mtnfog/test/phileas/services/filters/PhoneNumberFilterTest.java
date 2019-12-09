@@ -1,4 +1,4 @@
-package com.mtnfog.test.phileas.services.filters.custom;
+package com.mtnfog.test.phileas.services.filters;
 
 import com.mtnfog.phileas.model.enums.FilterType;
 import com.mtnfog.phileas.model.objects.Span;
@@ -6,7 +6,6 @@ import com.mtnfog.phileas.model.profile.filters.strategies.rules.PhoneNumberFilt
 import com.mtnfog.phileas.services.anonymization.AlphanumericAnonymizationService;
 import com.mtnfog.phileas.services.cache.LocalAnonymizationCacheService;
 import com.mtnfog.phileas.services.filters.custom.PhoneNumberRulesFilter;
-import com.mtnfog.test.phileas.services.filters.AbstractFilterTest;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.Assert;

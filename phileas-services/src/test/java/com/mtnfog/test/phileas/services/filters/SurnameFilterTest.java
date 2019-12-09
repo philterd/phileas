@@ -1,15 +1,13 @@
-package com.mtnfog.test.phileas.services.filters.dictionary.lucene;
+package com.mtnfog.test.phileas.services.filters;
 
 import com.mtnfog.phileas.model.enums.FilterType;
 import com.mtnfog.phileas.model.enums.SensitivityLevel;
 import com.mtnfog.phileas.model.filter.rules.dictionary.LuceneDictionaryFilter;
 import com.mtnfog.phileas.model.objects.Span;
 import com.mtnfog.phileas.model.profile.filters.strategies.dynamic.SurnameFilterStrategy;
-import com.mtnfog.phileas.model.profile.filters.strategies.rules.CreditCardFilterStrategy;
 import com.mtnfog.phileas.model.services.AnonymizationService;
 import com.mtnfog.phileas.services.anonymization.SurnameAnonymizationService;
 import com.mtnfog.phileas.services.cache.LocalAnonymizationCacheService;
-import com.mtnfog.test.phileas.services.filters.AbstractFilterTest;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.Assert;

@@ -109,7 +109,7 @@ public abstract class Filter implements Serializable {
 
     }
 
-    public static List<? extends AbstractFilterStrategy> getFilterStrategies(FilterProfile filterProfile, FilterType filterType) {
+    public static List<? extends AbstractFilterStrategy> getFilterStrategies(FilterProfile filterProfile, FilterType filterType, int index) {
 
         LOGGER.info("Getting filter strategies for filter type {}", filterType.getType());
 
@@ -117,6 +117,10 @@ public abstract class Filter implements Serializable {
             return filterProfile.getIdentifiers().getAge().getAgeFilterStrategies();
         } else if(filterType == FilterType.CREDIT_CARD) {
             return filterProfile.getIdentifiers().getCreditCard().getCreditCardFilterStrategies();
+        } else if(filterType == FilterType.CUSTOM_DICTIONARY) {
+            // There can be multiple custom dictionaries in the filter profile.
+            // How to know which filter strategy to retrieve from the list of custom dictionary filters?
+            return filterProfile.getIdentifiers().getCustomDictionaries().get(index).getCustomDictionaryFilterStrategies();
         } else if(filterType == FilterType.DATE) {
             return filterProfile.getIdentifiers().getDate().getDateFilterStrategies();
         } else if(filterType == FilterType.EMAIL_ADDRESS) {

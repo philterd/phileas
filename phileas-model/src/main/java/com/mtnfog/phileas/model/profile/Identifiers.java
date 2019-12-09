@@ -14,6 +14,10 @@ public class Identifiers {
     @Expose
     private Ner ner;
 
+    @SerializedName("dictionaries")
+    @Expose
+    private List<CustomDictionary> customDictionaries;
+
     @SerializedName("age")
     @Expose
     private Age age;
@@ -93,10 +97,6 @@ public class Identifiers {
     @SerializedName("surname")
     @Expose
     private Surname surname;
-
-    @SerializedName("dictionaries")
-    @Expose
-    private List<CustomDictionary> customDictionaries;
 
     public Identifiers() {
 

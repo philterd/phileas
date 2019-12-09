@@ -128,6 +128,12 @@ public class PhileasFilterService implements FilterService, Serializable {
 
             if(filterProfile.getIdentifiers().hasFilter(FilterType.CUSTOM_DICTIONARY)) {
 
+                // We keep track of the index of the custom dictionary in the list so we know
+                // how to retrieve the strategy for the custom dictionary. This is because
+                // there can be multiple custom dictionaries and not a 1-to-1 between filter
+                // and strategy.
+                int index = 0;
+
                 // There can be multiple custom dictionary filters because it is a list.
                 for(CustomDictionary customDictionary : filterProfile.getIdentifiers().getCustomDictionaries()) {
 
@@ -135,7 +141,10 @@ public class PhileasFilterService implements FilterService, Serializable {
                     final AnonymizationService anonymizationService = null;
 
                     enabledFilters.add(new LuceneDictionaryFilter(FilterType.CUSTOM_DICTIONARY, customDictionary.getCustomDictionaryFilterStrategies(),
-                            0, anonymizationService, customDictionary.getType(), customDictionary.getTerms()));
+                            LuceneDictionaryFilter.getCustomDictionaryDistances().get(customDictionary.getSensitivity()), anonymizationService,
+                            customDictionary.getType(), customDictionary.getTerms(), index));
+
+                    index++;
 
                 }
 

@@ -48,8 +48,10 @@ public class LuceneDictionaryFilter extends DictionaryFilter implements Serializ
     private SpellChecker spellChecker;
     private LevenshteinDistance distanceFunction;
     private int distance;
+    private int filterProfileIndex = 0;
 
     private static final Map<SensitivityLevel, Integer> CUSTOM_DICTIONARY_DISTANCES = new HashMap<SensitivityLevel, Integer>() {{
+        put(SensitivityLevel.AUTO, -1);
         put(SensitivityLevel.LOW, 0);
         put(SensitivityLevel.MEDIUM, 1);
         put(SensitivityLevel.HIGH, 2);
@@ -98,39 +100,6 @@ public class LuceneDictionaryFilter extends DictionaryFilter implements Serializ
     }};
 
     /**
-     * Run this class to create a Lucene index from a text file.
-     * Usage: java -jar ./LuceneDictionaryFilter state states.txt
-     * @param args Command line arguments.
-     * @throws IOException Thrown if the index cannot be created.
-     */
-    public static void main(String[] args) throws IOException {
-
-        // The location of the file containing the lines to index.
-        final Path filetoIndex = Paths.get("/mtnfog/code/bitbucket/philter/philter/data/index-data/hospitals-abbreviations");
-
-        // The name of the file minus the extension is the type of index.
-        final String type = FilenameUtils.removeExtension(filetoIndex.toFile().getName());
-
-        // Make a temp directory to hold the new index.
-        final Path indexDirectory = Files.createTempDirectory(type);
-
-        LOGGER.info("Creating index of type {} from file {}.", type, filetoIndex);
-
-        // The Lucene StandardAnalyzer uses the StandardTokenizer. It removes punctuation and stop words.
-        // "Filters StandardTokenizer with StandardFilter, LowerCaseFilter and StopFilter, using a list of English stop words."
-        // https://lucene.apache.org/core/8_1_1/core/org/apache/lucene/analysis/standard/StandardAnalyzer.html
-
-        try (SpellChecker spellChecker = new SpellChecker(FSDirectory.open(indexDirectory))) {
-
-            spellChecker.indexDictionary(new PlainTextDictionary(filetoIndex), new IndexWriterConfig(new StandardAnalyzer(EnglishAnalyzer.getDefaultStopSet())), false);
-
-        }
-
-        LOGGER.info("Index created at: " + indexDirectory);
-
-    }
-
-    /**
      * Creates a new Lucene dictionary filter.
      * @param filterType The {@link FilterType type} of filter.
      * @param indexDirectory The path to the index on disk.
@@ -170,9 +139,14 @@ public class LuceneDictionaryFilter extends DictionaryFilter implements Serializ
                                         int distance,
                                         AnonymizationService anonymizationService,
                                         String type,
-                                        List<String> terms) throws IOException {
+                                        List<String> terms,
+                                        int filterProfileIndex) throws IOException {
 
         super(filterType, strategies, anonymizationService);
+
+        this.distanceFunction = new LevenshteinDistance();
+        this.distance = distance;
+        this.filterProfileIndex = filterProfileIndex;
 
         // Write the list of terms to a file in a temporary directory.
         final Path pathToIndex = Files.createTempDirectory("philter-name-index");
@@ -189,16 +163,13 @@ public class LuceneDictionaryFilter extends DictionaryFilter implements Serializ
         // "Filters StandardTokenizer with StandardFilter, LowerCaseFilter and StopFilter, using a list of English stop words."
         // https://lucene.apache.org/core/8_1_1/core/org/apache/lucene/analysis/standard/StandardAnalyzer.html
 
-        try (SpellChecker spellChecker = new SpellChecker(FSDirectory.open(indexDirectory))) {
+        this.spellChecker = new SpellChecker(FSDirectory.open(pathToIndex, NoLockFactory.INSTANCE));
+        this.spellChecker.indexDictionary(new PlainTextDictionary(fileToIndex), new IndexWriterConfig(new StandardAnalyzer(EnglishAnalyzer.getDefaultStopSet())), false);
+        this.spellChecker.setStringDistance(new LuceneLevenshteinDistance());
+        this.spellChecker.setAccuracy(0.0f);
 
-            LOGGER.info("Custom index for type [{}] created at {}", type, indexDirectory);
-            spellChecker.indexDictionary(new PlainTextDictionary(pathToIndex), new IndexWriterConfig(new StandardAnalyzer(EnglishAnalyzer.getDefaultStopSet())), false);
+        LOGGER.info("Custom index for type [{}] created at {}", type, indexDirectory);
 
-            this.spellChecker.setStringDistance(new LuceneLevenshteinDistance());
-            this.spellChecker.setAccuracy(0.0f);
-            this.spellChecker = spellChecker;
-
-        }
 
     }
 
@@ -218,7 +189,7 @@ public class LuceneDictionaryFilter extends DictionaryFilter implements Serializ
 
             try(final Analyzer analyzer = new StandardAnalyzer()) {
 
-                for(final AbstractFilterStrategy strategy : Filter.getFilterStrategies(filterProfile,filterType)) {
+                for(final AbstractFilterStrategy strategy : Filter.getFilterStrategies(filterProfile, filterType, filterProfileIndex)) {
 
                     final SensitivityLevel sensitivityLevel = SensitivityLevel.fromName(strategy.getSensitivityLevel());
 
@@ -315,6 +286,39 @@ public class LuceneDictionaryFilter extends DictionaryFilter implements Serializ
         }
 
         return spans;
+
+    }
+
+    /**
+     * Run this class to create a Lucene index from a text file.
+     * Usage: java -jar ./LuceneDictionaryFilter state states.txt
+     * @param args Command line arguments.
+     * @throws IOException Thrown if the index cannot be created.
+     */
+    public static void main(String[] args) throws IOException {
+
+        // The location of the file containing the lines to index.
+        final Path filetoIndex = Paths.get("/mtnfog/code/bitbucket/philter/philter/data/index-data/hospitals-abbreviations");
+
+        // The name of the file minus the extension is the type of index.
+        final String type = FilenameUtils.removeExtension(filetoIndex.toFile().getName());
+
+        // Make a temp directory to hold the new index.
+        final Path indexDirectory = Files.createTempDirectory(type);
+
+        LOGGER.info("Creating index of type {} from file {}.", type, filetoIndex);
+
+        // The Lucene StandardAnalyzer uses the StandardTokenizer. It removes punctuation and stop words.
+        // "Filters StandardTokenizer with StandardFilter, LowerCaseFilter and StopFilter, using a list of English stop words."
+        // https://lucene.apache.org/core/8_1_1/core/org/apache/lucene/analysis/standard/StandardAnalyzer.html
+
+        try (SpellChecker spellChecker = new SpellChecker(FSDirectory.open(indexDirectory))) {
+
+            spellChecker.indexDictionary(new PlainTextDictionary(filetoIndex), new IndexWriterConfig(new StandardAnalyzer(EnglishAnalyzer.getDefaultStopSet())), false);
+
+        }
+
+        LOGGER.info("Index created at: " + indexDirectory);
 
     }
 

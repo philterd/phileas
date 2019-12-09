@@ -2,6 +2,7 @@ package com.mtnfog.phileas.model.profile.filters;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+import com.mtnfog.phileas.model.enums.SensitivityLevel;
 import com.mtnfog.phileas.model.profile.filters.strategies.custom.CustomDictionaryFilterStrategy;
 
 import java.util.List;
@@ -15,6 +16,10 @@ public class CustomDictionary {
     @SerializedName("terms")
     @Expose
     private List<String> terms;
+
+    @SerializedName("sensitivity")
+    @Expose
+    private String sensitivity = SensitivityLevel.MEDIUM.getName();
 
     @SerializedName("customFilterStrategies")
     @Expose
@@ -42,6 +47,14 @@ public class CustomDictionary {
 
     public void setCustomDictionaryFilterStrategies(List<CustomDictionaryFilterStrategy> customDictionaryFilterStrategies) {
         this.customDictionaryFilterStrategies = customDictionaryFilterStrategies;
+    }
+
+    public String getSensitivity() {
+        return sensitivity;
+    }
+
+    public void setSensitivity(String sensitivity) {
+        this.sensitivity = sensitivity;
     }
 
 }

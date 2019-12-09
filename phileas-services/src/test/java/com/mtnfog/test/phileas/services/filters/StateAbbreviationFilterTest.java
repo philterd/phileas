@@ -1,4 +1,4 @@
-package com.mtnfog.test.phileas.services.filters.dictionary;
+package com.mtnfog.test.phileas.services.filters;
 
 import com.mtnfog.phileas.model.enums.FilterType;
 import com.mtnfog.phileas.model.objects.Span;
@@ -6,7 +6,6 @@ import com.mtnfog.phileas.model.profile.filters.strategies.rules.StateAbbreviati
 import com.mtnfog.phileas.services.anonymization.StateAbbreviationAnonymizationService;
 import com.mtnfog.phileas.services.cache.LocalAnonymizationCacheService;
 import com.mtnfog.phileas.services.filters.regex.StateAbbreviationFilter;
-import com.mtnfog.test.phileas.services.filters.AbstractFilterTest;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.Assert;

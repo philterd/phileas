@@ -1,4 +1,4 @@
-package com.mtnfog.test.phileas.services.filters.regex;
+package com.mtnfog.test.phileas.services.filters;
 
 import com.mtnfog.phileas.model.enums.FilterType;
 import com.mtnfog.phileas.model.objects.Span;

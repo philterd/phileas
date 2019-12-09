@@ -6,6 +6,7 @@ import com.mtnfog.phileas.model.objects.Span;
 import com.mtnfog.phileas.model.profile.FilterProfile;
 import com.mtnfog.phileas.model.profile.Identifiers;
 import com.mtnfog.phileas.model.profile.filters.*;
+import com.mtnfog.phileas.model.profile.filters.strategies.custom.CustomDictionaryFilterStrategy;
 import com.mtnfog.phileas.model.profile.filters.strategies.dynamic.*;
 import com.mtnfog.phileas.model.profile.filters.strategies.rules.*;
 import org.apache.commons.lang3.StringUtils;
@@ -35,65 +36,44 @@ public abstract class AbstractFilterTest {
      */
     public FilterProfile getFilterProfile(SensitivityLevel sensitivityLevel) throws IOException {
 
-        AgeFilterStrategy ageFilterStrategy = new AgeFilterStrategy();
+        CustomDictionary customDictionary = new CustomDictionary();
+        customDictionary.setCustomDictionaryFilterStrategies(Arrays.asList(new CustomDictionaryFilterStrategy()));
 
         Age age = new Age();
-        age.setAgeFilterStrategies(Arrays.asList(ageFilterStrategy));
-
-        CreditCardFilterStrategy creditCardFilterStrategy = new CreditCardFilterStrategy();
+        age.setAgeFilterStrategies(Arrays.asList(new AgeFilterStrategy()));
 
         CreditCard creditCard = new CreditCard();
-        creditCard.setCreditCardFilterStrategies(Arrays.asList(creditCardFilterStrategy));
-
-        DateFilterStrategy dateFilterStrategy = new DateFilterStrategy();
+        creditCard.setCreditCardFilterStrategies(Arrays.asList(new CreditCardFilterStrategy()));
 
         Date date = new Date();
-        date.setDateFilterStrategies(Arrays.asList(dateFilterStrategy));
-
-        EmailAddressFilterStrategy emailAddressFilterStrategy = new EmailAddressFilterStrategy();
+        date.setDateFilterStrategies(Arrays.asList(new DateFilterStrategy()));
 
         EmailAddress emailAddress = new EmailAddress();
-        emailAddress.setEmailAddressFilterStrategies(Arrays.asList(emailAddressFilterStrategy));
-
-        IdentifierFilterStrategy identifierFilterStrategy = new IdentifierFilterStrategy();
+        emailAddress.setEmailAddressFilterStrategies(Arrays.asList(new EmailAddressFilterStrategy()));
 
         Identifier identifier = new Identifier();
-        identifier.setIdentifierFilterStrategies(Arrays.asList(identifierFilterStrategy));
-
-        IpAddressFilterStrategy ipAddressFilterStrategy = new IpAddressFilterStrategy();
+        identifier.setIdentifierFilterStrategies(Arrays.asList(new IdentifierFilterStrategy()));
 
         IpAddress ipAddress = new IpAddress();
-        ipAddress.setIpAddressFilterStrategies(Arrays.asList(ipAddressFilterStrategy));
-
-        PhoneNumberFilterStrategy phoneNumberFilterStrategy = new PhoneNumberFilterStrategy();
+        ipAddress.setIpAddressFilterStrategies(Arrays.asList(new IpAddressFilterStrategy()));
 
         PhoneNumber phoneNumber = new PhoneNumber();
-        phoneNumber.setPhoneNumberFilterStrategies(Arrays.asList(phoneNumberFilterStrategy));
-
-        PhoneNumberExtensionFilterStrategy phoneNumberExtensionFilterStrategy = new PhoneNumberExtensionFilterStrategy();
+        phoneNumber.setPhoneNumberFilterStrategies(Arrays.asList(new PhoneNumberFilterStrategy()));
 
         PhoneNumberExtension phoneNumberExtension = new PhoneNumberExtension();
-        phoneNumberExtension.setPhoneNumberExtensionFilterStrategies(Arrays.asList(phoneNumberExtensionFilterStrategy));
-
-        SsnFilterStrategy ssnFilterStrategy = new SsnFilterStrategy();
+        phoneNumberExtension.setPhoneNumberExtensionFilterStrategies(Arrays.asList(new PhoneNumberExtensionFilterStrategy()));
 
         Ssn ssn = new Ssn();
-        ssn.setSsnFilterStrategies(Arrays.asList(ssnFilterStrategy));
-
-        StateAbbreviationFilterStrategy stateAbbreviationFilterStrategy = new StateAbbreviationFilterStrategy();
+        ssn.setSsnFilterStrategies(Arrays.asList(new SsnFilterStrategy()));
 
         StateAbbreviation stateAbbreviation = new StateAbbreviation();
-        stateAbbreviation.setStateAbbreviationsFilterStrategies(Arrays.asList(stateAbbreviationFilterStrategy));
-
-        UrlFilterStrategy urlFilterStrategy = new UrlFilterStrategy();
+        stateAbbreviation.setStateAbbreviationsFilterStrategies(Arrays.asList(new StateAbbreviationFilterStrategy()));
 
         Url url = new Url();
-        url.setUrlFilterStrategies(Arrays.asList(urlFilterStrategy));
-
-        VinFilterStrategy vinFilterStrategy = new VinFilterStrategy();
+        url.setUrlFilterStrategies(Arrays.asList(new UrlFilterStrategy()));
 
         Vin vin = new Vin();
-        vin.setVinFilterStrategies(Arrays.asList(vinFilterStrategy));
+        vin.setVinFilterStrategies(Arrays.asList(new VinFilterStrategy()));
 
         ZipCodeFilterStrategy zipCodeFilterStrategy = new ZipCodeFilterStrategy();
         zipCodeFilterStrategy.setTruncateDigits(2);
@@ -134,7 +114,7 @@ public abstract class AbstractFilterTest {
         hospital.setHospitalFilterStrategies(Arrays.asList(hospitalFilterStrategy));
 
         StateFilterStrategy stateFilterStrategy = new StateFilterStrategy();
-        stateAbbreviationFilterStrategy.setSensitivityLevel(sensitivityLevel.getName());
+        stateFilterStrategy.setSensitivityLevel(sensitivityLevel.getName());
 
         State state = new State();
         state.setStateFilterStrategies(Arrays.asList(stateFilterStrategy));
@@ -148,6 +128,8 @@ public abstract class AbstractFilterTest {
         // ----------------------------------------------------------------------------------
 
         Identifiers identifiers = new Identifiers();
+
+        identifiers.setCustomDictionaries(Arrays.asList(customDictionary));
 
         identifiers.setAge(age);
         identifiers.setCreditCard(creditCard);
