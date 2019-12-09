@@ -14,6 +14,7 @@ import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.action.support.IndicesOptions;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestClientBuilder;
@@ -59,6 +60,8 @@ public class ElasticsearchStore implements Store, Closeable {
 
         final String json = gson.toJson(span);
 
+        LOGGER.info(json);
+
         final IndexRequest request = new IndexRequest(indexName);
         request.source(json, XContentType.JSON);
 
@@ -84,20 +87,28 @@ public class ElasticsearchStore implements Store, Closeable {
     @Override
     public List<Span> getByDocumentId(String documentId) throws IOException {
 
-        SearchRequest searchRequest = new SearchRequest();
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
         searchSourceBuilder.query(QueryBuilders.matchQuery("documentId", documentId));
+
+        SearchRequest searchRequest = new SearchRequest(indexName);
         searchRequest.source(searchSourceBuilder);
+        searchRequest.indicesOptions(IndicesOptions.lenientExpandOpen());
 
-        SearchResponse searchResponse = client.search(searchRequest, RequestOptions.DEFAULT);
+        LOGGER.info(searchRequest.toString());
 
-        SearchHit[] searchHit = searchResponse.getHits().getHits();
+        final SearchResponse searchResponse = client.search(searchRequest, RequestOptions.DEFAULT);
+
+        LOGGER.info(searchResponse.toString());
+
+        final SearchHit[] searchHits = searchResponse.getHits().getHits();
 
         final List<Span> spans = new ArrayList<>();
 
-        if (searchHit.length > 0) {
+        LOGGER.info("Search hits: {}", searchHits.length);
 
-            Arrays.stream(searchHit)
+        if (searchHits.length > 0) {
+
+            Arrays.stream(searchHits)
                     .forEach(hit -> spans
                             .add(gson.fromJson(hit.getSourceAsString(), Span.class))
                     );
