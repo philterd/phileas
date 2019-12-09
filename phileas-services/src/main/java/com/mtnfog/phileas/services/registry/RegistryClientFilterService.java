@@ -1,7 +1,6 @@
 package com.mtnfog.phileas.services.registry;
 
 import com.google.gson.Gson;
-import com.mtnfog.phileas.model.profile.FilterProfile;
 import com.mtnfog.phileas.model.services.FilterProfileService;
 import okhttp3.OkHttpClient;
 import org.apache.logging.log4j.LogManager;
@@ -21,6 +20,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Implementation of {@link FilterProfileService} that acts as a client to a
+ * Filter Profile Registry. Because write operations (save, delete) will never
+ * be called through this class, those functions are not implemented.
+ */
 public class RegistryClientFilterService implements FilterProfileService {
 
     private static final Logger LOGGER = LogManager.getLogger(RegistryClientFilterService.class);
@@ -62,27 +66,40 @@ public class RegistryClientFilterService implements FilterProfileService {
     }
 
     @Override
-    public String getFilterProfile(String filterProfileName) throws IOException {
+    public List<String> get() throws IOException {
+        return service.get().execute().body();
+    }
+
+    @Override
+    public String get(String filterProfileName) throws IOException {
         return service.getFilterProfile(filterProfileName).execute().body();
     }
 
     @Override
-    public Map<String, FilterProfile> getAll() throws IOException {
+    public Map<String, String> getAll() throws IOException {
 
-        final Map<String, FilterProfile> filterProfiles = new HashMap<>();
+        final Map<String, String> filterProfiles = new HashMap<>();
 
-        final List<String> filterProfileNames = service.getFilterProfiles().execute().body();
+        final List<String> filterProfileNames = service.get().execute().body();
 
         for(String filterProfileName : filterProfileNames) {
 
-            final String filterProfileJson = getFilterProfile(filterProfileName);
-            final FilterProfile filterProfile = gson.fromJson(filterProfileJson, FilterProfile.class);
-
-            filterProfiles.put(filterProfileName, filterProfile);
+            final String filterProfileJson = get(filterProfileName);
+            filterProfiles.put(filterProfileName, filterProfileJson);
 
         }
 
         return filterProfiles;
+
+    }
+
+    @Override
+    public void save(String filterProfileJson) throws IOException {
+
+    }
+
+    @Override
+    public void delete(String name) throws IOException {
 
     }
 
@@ -92,7 +109,7 @@ public class RegistryClientFilterService implements FilterProfileService {
         Call<String> getFilterProfile(@Path("name") String filterProfileName);
 
         @GET("/api/profiles")
-        Call<List<String>> getFilterProfiles();
+        Call<List<String>> get();
 
     }
 

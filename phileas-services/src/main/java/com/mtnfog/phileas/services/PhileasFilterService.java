@@ -1,5 +1,6 @@
 package com.mtnfog.phileas.services;
 
+import com.google.gson.Gson;
 import com.mtnfog.phileas.ai.PyTorchFilter;
 import com.mtnfog.phileas.metrics.PhileasMetricsService;
 import com.mtnfog.phileas.model.enums.FilterType;
@@ -45,6 +46,7 @@ public class PhileasFilterService implements FilterService, Serializable {
     private Map<String, FilterProfile> filterProfiles;
     private Map<String, List<Filter>> filters;
     private String philterNerEndpoint;
+    private Gson gson;
 
     public PhileasFilterService(Properties applicationProperties, List<FilterProfileService> filterProfileServices, AnonymizationCacheService anonymizationCacheService, String philterNerEndpoint) throws IOException {
 
@@ -54,6 +56,7 @@ public class PhileasFilterService implements FilterService, Serializable {
         this.postFilters = new LinkedList<>();
         this.filterProfiles = new HashMap<>();
         this.filters = new HashMap<>();
+        this.gson = new Gson();
 
         // Configure metrics.
         this.metricsService = new PhileasMetricsService(applicationProperties);
@@ -70,7 +73,10 @@ public class PhileasFilterService implements FilterService, Serializable {
 
         // Load all of the filter profiles into memory from each filter profile service.
         for(FilterProfileService filterProfileService : filterProfileServices) {
-            filterProfiles.putAll(filterProfileService.getAll());
+            final Map<String, String> fp = filterProfileService.getAll();
+            for(String k : fp.keySet()) {
+                filterProfiles.put(k, gson.fromJson(fp.get(k), FilterProfile.class));
+            }
         }
 
         for(FilterProfile filterProfile : filterProfiles.values()) {

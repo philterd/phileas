@@ -6,7 +6,10 @@ import com.mtnfog.phileas.model.services.FilterProfileService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.IOException;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -41,6 +44,11 @@ public class StaticFilterProfileService implements FilterProfileService {
 
     }
 
+    @Override
+    public List<String> get() throws IOException {
+        return Collections.emptyList();
+    }
+
     /**
      * Gets the filter profile. Note that the <code>filterProfileName</code> argument
      * is ignored since there is only a single filter profile.
@@ -48,7 +56,7 @@ public class StaticFilterProfileService implements FilterProfileService {
      * @return The filter profile.
      */
     @Override
-    public String getFilterProfile(String filterProfileName) {
+    public String get(String filterProfileName) {
 
         // The filterProfileName does not matter.
         // There is only one filter profile and it is returned.
@@ -63,13 +71,23 @@ public class StaticFilterProfileService implements FilterProfileService {
      * @return A map of filter profiles.
      */
     @Override
-    public Map<String, FilterProfile> getAll() {
+    public Map<String, String> getAll() {
 
-        final Map<String, FilterProfile> filterProfiles = new HashMap<>();
+        final Map<String, String> filterProfiles = new HashMap<>();
 
-        filterProfiles.put(filterProfile.getName(), filterProfile);
+        filterProfiles.put(filterProfile.getName(), gson.toJson(filterProfile));
 
         return filterProfiles;
+
+    }
+
+    @Override
+    public void save(String filterProfileJson) throws IOException {
+
+    }
+
+    @Override
+    public void delete(String name) throws IOException {
 
     }
 
