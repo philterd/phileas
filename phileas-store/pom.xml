@@ -15,15 +15,14 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.mongodb</groupId>
-      <artifactId>mongo-java-driver</artifactId>
-      <version>${mongo.driver.version}</version>
+      <groupId>org.elasticsearch</groupId>
+      <artifactId>elasticsearch</artifactId>
+      <version>7.5.0</version>
     </dependency>
     <dependency>
-      <groupId>de.bwaldvogel</groupId>
-      <artifactId>mongo-java-server</artifactId>
-      <version>1.15.0</version>
-      <scope>test</scope>
+      <groupId>org.elasticsearch.client</groupId>
+      <artifactId>elasticsearch-rest-high-level-client</artifactId>
+      <version>7.5.0</version>
     </dependency>
     <dependency>
       <groupId>junit</groupId>

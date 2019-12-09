@@ -125,6 +125,7 @@
 		<retrofit.version>2.6.2</retrofit.version>
 		<scala.major.version>2.12</scala.major.version>
 		<spring.boot.version>2.1.8.RELEASE</spring.boot.version>
+		<spring.data.elasticsearch.version>3.2.3.RELEASE</spring.data.elasticsearch.version>
 		<!-- Sonarqube -->
 		<sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
 		<sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
