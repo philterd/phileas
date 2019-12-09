@@ -23,7 +23,7 @@ public class CustomDictionaryFilterTest extends AbstractFilterTest {
 
         final List<CustomDictionaryFilterStrategy> strategies = Arrays.asList(new CustomDictionaryFilterStrategy());
         final List<String> names = Arrays.asList("george", "ted", "bill", "john");
-        final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.CUSTOM_DICTIONARY, strategies, 0, null, "names", names, 0);
+        final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.CUSTOM_DICTIONARY, strategies, SensitivityLevel.LOW, null, "names", names, 0);
 
         final List<Span> spans = filter.filter(getFilterProfile(SensitivityLevel.LOW), "context", "documentid","He lived with Bill in California.");
 
@@ -39,7 +39,7 @@ public class CustomDictionaryFilterTest extends AbstractFilterTest {
 
         final List<CustomDictionaryFilterStrategy> strategies = Arrays.asList(new CustomDictionaryFilterStrategy());
         final List<String> names = Arrays.asList("george", "ted", "bill", "john");
-        final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.CUSTOM_DICTIONARY, strategies, 0, null, "names", names, 0);
+        final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.CUSTOM_DICTIONARY, strategies, SensitivityLevel.LOW, null, "names", names, 0);
 
         final List<Span> spans = filter.filter(getFilterProfile(SensitivityLevel.LOW), "context", "documentid","He lived with Sam in California.");
 

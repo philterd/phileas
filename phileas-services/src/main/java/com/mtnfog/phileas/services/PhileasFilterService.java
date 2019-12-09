@@ -3,6 +3,7 @@ package com.mtnfog.phileas.services;
 import com.mtnfog.phileas.ai.PyTorchFilter;
 import com.mtnfog.phileas.metrics.PhileasMetricsService;
 import com.mtnfog.phileas.model.enums.FilterType;
+import com.mtnfog.phileas.model.enums.SensitivityLevel;
 import com.mtnfog.phileas.model.exceptions.InvalidFilterProfileException;
 import com.mtnfog.phileas.model.filter.Filter;
 import com.mtnfog.phileas.model.filter.rules.dictionary.LuceneDictionaryFilter;
@@ -141,7 +142,7 @@ public class PhileasFilterService implements FilterService, Serializable {
                     final AnonymizationService anonymizationService = null;
 
                     enabledFilters.add(new LuceneDictionaryFilter(FilterType.CUSTOM_DICTIONARY, customDictionary.getCustomDictionaryFilterStrategies(),
-                            LuceneDictionaryFilter.getCustomDictionaryDistances().get(customDictionary.getSensitivity()), anonymizationService,
+                            SensitivityLevel.fromName(customDictionary.getSensitivity()), anonymizationService,
                             customDictionary.getType(), customDictionary.getTerms(), index));
 
                     index++;
@@ -153,31 +154,31 @@ public class PhileasFilterService implements FilterService, Serializable {
             // Lucene dictionary filters.
 
             if(filterProfile.getIdentifiers().hasFilter(FilterType.LOCATION_CITY)) {
-                enabledFilters.add(new LuceneDictionaryFilter(FilterType.LOCATION_CITY, filterProfile.getIdentifiers().getCity().getCityFilterStrategies(), indexDirectory + "cities", LuceneDictionaryFilter.getCitiesDistances().get(filterProfile.getIdentifiers().getCity().getSensitivityLevel()), new CityAnonymizationService(anonymizationCacheService)));
+                enabledFilters.add(new LuceneDictionaryFilter(FilterType.LOCATION_CITY, filterProfile.getIdentifiers().getCity().getCityFilterStrategies(), indexDirectory + "cities", filterProfile.getIdentifiers().getCity().getSensitivityLevel(), new CityAnonymizationService(anonymizationCacheService)));
             }
 
             if(filterProfile.getIdentifiers().hasFilter(FilterType.LOCATION_COUNTY)) {
-                enabledFilters.add(new LuceneDictionaryFilter(FilterType.LOCATION_COUNTY, filterProfile.getIdentifiers().getCounty().getCountyFilterStrategies(), indexDirectory + "states", LuceneDictionaryFilter.getCountiesDistances().get(filterProfile.getIdentifiers().getCounty().getSensitivityLevel()), new CountyAnonymizationService(anonymizationCacheService)));
+                enabledFilters.add(new LuceneDictionaryFilter(FilterType.LOCATION_COUNTY, filterProfile.getIdentifiers().getCounty().getCountyFilterStrategies(), indexDirectory + "states", filterProfile.getIdentifiers().getCounty().getSensitivityLevel(), new CountyAnonymizationService(anonymizationCacheService)));
             }
 
             if(filterProfile.getIdentifiers().hasFilter(FilterType.LOCATION_STATE)) {
-                enabledFilters.add(new LuceneDictionaryFilter(FilterType.LOCATION_STATE, filterProfile.getIdentifiers().getState().getStateFilterStrategies(), indexDirectory + "states", LuceneDictionaryFilter.getStatesDistances().get(filterProfile.getIdentifiers().getState().getSensitivityLevel()), new StateAnonymizationService(anonymizationCacheService)));
+                enabledFilters.add(new LuceneDictionaryFilter(FilterType.LOCATION_STATE, filterProfile.getIdentifiers().getState().getStateFilterStrategies(), indexDirectory + "states", filterProfile.getIdentifiers().getState().getSensitivityLevel(), new StateAnonymizationService(anonymizationCacheService)));
             }
 
             if(filterProfile.getIdentifiers().hasFilter(FilterType.HOSPITAL)) {
-                enabledFilters.add(new LuceneDictionaryFilter(FilterType.HOSPITAL, filterProfile.getIdentifiers().getHospital().getHospitalFilterStrategies(), indexDirectory + "hospitals", LuceneDictionaryFilter.getHospitalsDistances().get(filterProfile.getIdentifiers().getHospital().getSensitivityLevel()), new HospitalAnonymizationService(anonymizationCacheService)));
+                enabledFilters.add(new LuceneDictionaryFilter(FilterType.HOSPITAL, filterProfile.getIdentifiers().getHospital().getHospitalFilterStrategies(), indexDirectory + "hospitals", filterProfile.getIdentifiers().getHospital().getSensitivityLevel(), new HospitalAnonymizationService(anonymizationCacheService)));
             }
 
             if(filterProfile.getIdentifiers().hasFilter(FilterType.HOSPITAL_ABBREVIATION)) {
-                enabledFilters.add(new LuceneDictionaryFilter(FilterType.HOSPITAL_ABBREVIATION, filterProfile.getIdentifiers().getHospitalAbbreviation().getHospitalAbbreviationFilterStrategies(), indexDirectory + "hospital-abbreviations", LuceneDictionaryFilter.getHospitalAbbreviationsDistances().get(filterProfile.getIdentifiers().getHospitalAbbreviation().getSensitivityLevel()), new HospitalAbbreviationAnonymizationService(anonymizationCacheService)));
+                enabledFilters.add(new LuceneDictionaryFilter(FilterType.HOSPITAL_ABBREVIATION, filterProfile.getIdentifiers().getHospitalAbbreviation().getHospitalAbbreviationFilterStrategies(), indexDirectory + "hospital-abbreviations", filterProfile.getIdentifiers().getHospitalAbbreviation().getSensitivityLevel(), new HospitalAbbreviationAnonymizationService(anonymizationCacheService)));
             }
 
             if(filterProfile.getIdentifiers().hasFilter(FilterType.FIRST_NAME)) {
-                enabledFilters.add(new LuceneDictionaryFilter(FilterType.FIRST_NAME, filterProfile.getIdentifiers().getFirstName().getFirstNameFilterStrategies(), indexDirectory + "names", LuceneDictionaryFilter.getFirstNameDistances().get(filterProfile.getIdentifiers().getFirstName().getSensitivityLevel()), new PersonsAnonymizationService(anonymizationCacheService)));
+                enabledFilters.add(new LuceneDictionaryFilter(FilterType.FIRST_NAME, filterProfile.getIdentifiers().getFirstName().getFirstNameFilterStrategies(), indexDirectory + "names", filterProfile.getIdentifiers().getFirstName().getSensitivityLevel(), new PersonsAnonymizationService(anonymizationCacheService)));
             }
 
             if(filterProfile.getIdentifiers().hasFilter(FilterType.SURNAME)) {
-                enabledFilters.add(new LuceneDictionaryFilter(FilterType.SURNAME, filterProfile.getIdentifiers().getSurname().getSurnameFilterStrategies(), indexDirectory + "surnames", LuceneDictionaryFilter.getSurnameDistances().get(filterProfile.getIdentifiers().getSurname().getSensitivityLevel()), new SurnameAnonymizationService(anonymizationCacheService)));
+                enabledFilters.add(new LuceneDictionaryFilter(FilterType.SURNAME, filterProfile.getIdentifiers().getSurname().getSurnameFilterStrategies(), indexDirectory + "surnames", filterProfile.getIdentifiers().getSurname().getSensitivityLevel(), new SurnameAnonymizationService(anonymizationCacheService)));
             }
 
             // Enable ID filter last since it is a pretty generic pattern that might also match SSN, et. al.

@@ -47,70 +47,20 @@ public class LuceneDictionaryFilter extends DictionaryFilter implements Serializ
 
     private SpellChecker spellChecker;
     private LevenshteinDistance distanceFunction;
-    private int distance;
+    private SensitivityLevel sensitivityLevel;
     private int filterProfileIndex = 0;
-
-    private static final Map<SensitivityLevel, Integer> CUSTOM_DICTIONARY_DISTANCES = new HashMap<SensitivityLevel, Integer>() {{
-        put(SensitivityLevel.AUTO, -1);
-        put(SensitivityLevel.LOW, 0);
-        put(SensitivityLevel.MEDIUM, 1);
-        put(SensitivityLevel.HIGH, 2);
-    }};
-
-    private static final Map<SensitivityLevel, Integer> FIRST_NAME_DISTANCES = new HashMap<SensitivityLevel, Integer>() {{
-        put(SensitivityLevel.LOW, 0);
-        put(SensitivityLevel.MEDIUM, 1);
-        put(SensitivityLevel.HIGH, 2);
-    }};
-
-    private static final Map<SensitivityLevel, Integer> SURNAME_DISTANCES = new HashMap<SensitivityLevel, Integer>() {{
-        put(SensitivityLevel.LOW, 0);
-        put(SensitivityLevel.MEDIUM, 1);
-        put(SensitivityLevel.HIGH, 2);
-    }};
-
-    private static final Map<SensitivityLevel, Integer> CITIES_DISTANCES = new HashMap<SensitivityLevel, Integer>() {{
-        put(SensitivityLevel.LOW, 0);
-        put(SensitivityLevel.MEDIUM, 1);
-        put(SensitivityLevel.HIGH, 2);
-    }};
-
-    private static final Map<SensitivityLevel, Integer> STATES_DISTANCES = new HashMap<SensitivityLevel, Integer>() {{
-        put(SensitivityLevel.LOW, 0);
-        put(SensitivityLevel.MEDIUM, 1);
-        put(SensitivityLevel.HIGH, 2);
-    }};
-
-    private static final Map<SensitivityLevel, Integer> COUNTIES_DISTANCES = new HashMap<SensitivityLevel, Integer>() {{
-        put(SensitivityLevel.LOW, 0);
-        put(SensitivityLevel.MEDIUM, 1);
-        put(SensitivityLevel.HIGH, 2);
-    }};
-
-    private static final Map<SensitivityLevel, Integer> HOSPITALS_DISTANCES = new HashMap<SensitivityLevel, Integer>() {{
-        put(SensitivityLevel.LOW, 0);
-        put(SensitivityLevel.MEDIUM, 1);
-        put(SensitivityLevel.HIGH, 2);
-    }};
-
-    private static final Map<SensitivityLevel, Integer> HOSPITAL_ABBREVIATIONS_DISTANCES = new HashMap<SensitivityLevel, Integer>() {{
-        put(SensitivityLevel.LOW, 0);
-        put(SensitivityLevel.MEDIUM, 1);
-        put(SensitivityLevel.HIGH, 2);
-    }};
 
     /**
      * Creates a new Lucene dictionary filter.
      * @param filterType The {@link FilterType type} of filter.
      * @param indexDirectory The path to the index on disk.
-     * @param distance The distance for string distance.
      * @param anonymizationService The {@link AnonymizationService} for this filter.
      * @throws IOException Thrown if the index cannot be opened or accessed.
      */
     public LuceneDictionaryFilter(FilterType filterType,
                                   List<? extends AbstractFilterStrategy> strategies,
                                   String indexDirectory,
-                                  int distance,
+                                  SensitivityLevel sensitivityLevel,
                                   AnonymizationService anonymizationService) throws IOException {
 
         super(filterType, strategies, anonymizationService);
@@ -118,7 +68,7 @@ public class LuceneDictionaryFilter extends DictionaryFilter implements Serializ
         LOGGER.info("Loading {} index from {}", filterType, indexDirectory);
 
         this.distanceFunction = new LevenshteinDistance();
-        this.distance = distance;
+        this.sensitivityLevel = sensitivityLevel;
 
         // Load the index for fuzzy search.
         this.spellChecker = new SpellChecker(FSDirectory.open(Paths.get(indexDirectory), NoLockFactory.INSTANCE));
@@ -130,13 +80,12 @@ public class LuceneDictionaryFilter extends DictionaryFilter implements Serializ
     /**
      * Creates a new Lucene dictionary filter from a list of custom terms.
      * @param filterType The {@link FilterType type} of filter.
-     * @param distance The distance for string distance.
      * @param anonymizationService The {@link AnonymizationService} for this filter.
      * @throws IOException Thrown if the index cannot be opened or accessed.
      */
     public LuceneDictionaryFilter(FilterType filterType,
                                         List<? extends AbstractFilterStrategy> strategies,
-                                        int distance,
+                                        SensitivityLevel sensitivityLevel,
                                         AnonymizationService anonymizationService,
                                         String type,
                                         List<String> terms,
@@ -145,7 +94,7 @@ public class LuceneDictionaryFilter extends DictionaryFilter implements Serializ
         super(filterType, strategies, anonymizationService);
 
         this.distanceFunction = new LevenshteinDistance();
-        this.distance = distance;
+        this.sensitivityLevel = sensitivityLevel;
         this.filterProfileIndex = filterProfileIndex;
 
         // Write the list of terms to a file in a temporary directory.
@@ -191,8 +140,6 @@ public class LuceneDictionaryFilter extends DictionaryFilter implements Serializ
 
                 for(final AbstractFilterStrategy strategy : Filter.getFilterStrategies(filterProfile, filterType, filterProfileIndex)) {
 
-                    final SensitivityLevel sensitivityLevel = SensitivityLevel.fromName(strategy.getSensitivityLevel());
-
                     LOGGER.info("Using sensitivity level = " + sensitivityLevel.getName());
 
                     // Tokenize the input text.
@@ -234,17 +181,44 @@ public class LuceneDictionaryFilter extends DictionaryFilter implements Serializ
 
                                     if (tokenSuggestions.length > 0) {
 
-                                        for (String suggestion : tokenSuggestions) {
+                                        int distance = 0;
 
-                                            // TODO: PHL-31: Automatically adjust the distance based on the length.
-                                            // Len 0 - 3 , Distance = 1
-                                            // Len 3 - 5, Distance = 2
-                                            // Len > 5, Distance = 3
+                                        // Calculate the distance.
+                                        if(sensitivityLevel == SensitivityLevel.AUTO) {
+
+                                            // Automatically adjust the distance based on the length.
+                                            // https://www.elastic.co/guide/en/elasticsearch/reference/current/common-options.html#fuzziness
+                                            /*0..2
+                                            Must match exactly
+                                            3..5
+                                            One edit allowed
+                                                    >5
+                                            Two edits allowed*/
+
+                                            if(token.length() < 3) {
+                                                distance = 0;
+                                            } else if(token.length() >= 3 && token.length() <= 5) {
+                                                distance = 1;
+                                            } else {
+                                                distance = 2;
+                                            }
+
+                                        } else if(sensitivityLevel == SensitivityLevel.LOW) {
+                                            distance = 0;
+                                        } else if(sensitivityLevel == SensitivityLevel.MEDIUM) {
+                                            distance = 1;
+                                        } else if(sensitivityLevel == SensitivityLevel.HIGH) {
+                                            distance = 2;
+                                        }
+
+                                        LOGGER.debug("Using distance value {}", distance);
+
+                                        for (final String suggestion : tokenSuggestions) {
 
                                             final int d = distanceFunction.apply(token.toUpperCase(), suggestion.toUpperCase());
-                                            LOGGER.info("distance for {} and {} is {}", token, suggestion, d);
 
                                             if (d <= distance) {
+                                                LOGGER.debug("distance for {} and {} is {}", token, suggestion, d);
                                                 isMatch = true;
                                             }
 
@@ -320,38 +294,6 @@ public class LuceneDictionaryFilter extends DictionaryFilter implements Serializ
 
         LOGGER.info("Index created at: " + indexDirectory);
 
-    }
-
-    public static Map<SensitivityLevel, Integer> getCustomDictionaryDistances() {
-        return CUSTOM_DICTIONARY_DISTANCES;
-    }
-
-    public static Map<SensitivityLevel, Integer> getFirstNameDistances() {
-        return FIRST_NAME_DISTANCES;
-    }
-
-    public static Map<SensitivityLevel, Integer> getSurnameDistances() {
-        return SURNAME_DISTANCES;
-    }
-
-    public static Map<SensitivityLevel, Integer> getCitiesDistances() {
-        return CITIES_DISTANCES;
-    }
-
-    public static Map<SensitivityLevel, Integer> getStatesDistances() {
-        return STATES_DISTANCES;
-    }
-
-    public static Map<SensitivityLevel, Integer> getCountiesDistances() {
-        return COUNTIES_DISTANCES;
-    }
-
-    public static Map<SensitivityLevel, Integer> getHospitalsDistances() {
-        return HOSPITALS_DISTANCES;
-    }
-
-    public static Map<SensitivityLevel, Integer> getHospitalAbbreviationsDistances() {
-        return HOSPITAL_ABBREVIATIONS_DISTANCES;
     }
 
 }

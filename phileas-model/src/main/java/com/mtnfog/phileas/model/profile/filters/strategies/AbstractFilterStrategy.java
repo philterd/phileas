@@ -4,7 +4,6 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.mtnfog.phileas.model.conditions.ParsedCondition;
 import com.mtnfog.phileas.model.enums.FilterType;
-import com.mtnfog.phileas.model.enums.SensitivityLevel;
 import com.mtnfog.phileas.model.services.AnonymizationService;
 import org.apache.commons.lang3.StringUtils;
 
@@ -100,10 +99,6 @@ public abstract class AbstractFilterStrategy {
     @Expose
     protected String staticReplacement = "";
 
-    @SerializedName("sensitivityLevel")
-    @Expose
-    protected String sensitivityLevel = SensitivityLevel.HIGH.getName();
-
     @SerializedName("condition")
     @Expose
     protected String condition = "";
@@ -190,36 +185,6 @@ public abstract class AbstractFilterStrategy {
 
     public void setStaticReplacement(String staticReplacement) {
         this.staticReplacement = staticReplacement;
-    }
-
-    /**
-     * Gets the sensitivity level for the filter. The sensitivity level is the string formatted {@link SensitivityLevel}.
-     * @return The sensitivity level for the filter. If none has been set the
-     * default value of <code>HIGH</code> is returned.
-     */
-    public String getSensitivityLevel() {
-
-        // If none is set then default to HIGH.
-        return getValueOrDefault(sensitivityLevel, SensitivityLevel.HIGH.getName());
-
-    }
-
-    /**
-     * Gets the sensitivity level for the filter. The sensitivity level is the string formatted {@link SensitivityLevel}.
-     * @param defaultSensitivityLevel The default {@link SensitivityLevel} to return if not set.
-     * @return The sensitivity level for the filter. If none has been set the
-     * given value is returned.
-     */
-    public String getSensitivityLevel(SensitivityLevel defaultSensitivityLevel) {
-        return getValueOrDefault(sensitivityLevel, defaultSensitivityLevel.getName());
-    }
-
-    /**
-     * Sets the sensitivity level.
-     * @param sensitivityLevel The {@link SensitivityLevel}.
-     */
-    public void setSensitivityLevel(String sensitivityLevel) {
-        this.sensitivityLevel = sensitivityLevel;
     }
 
     public void setConditions(String condition) {

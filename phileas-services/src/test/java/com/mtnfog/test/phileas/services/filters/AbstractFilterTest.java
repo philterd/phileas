@@ -83,47 +83,30 @@ public abstract class AbstractFilterTest {
 
         // ----------------------------------------------------------------------------------
 
-        CityFilterStrategy cityFilterStrategy = new CityFilterStrategy();
-        cityFilterStrategy.setSensitivityLevel(sensitivityLevel.getName());
-
         City city = new City();
-        city.setCityFilterStrategies(Arrays.asList(cityFilterStrategy));
-
-        CountyFilterStrategy countyFilterStrategy = new CountyFilterStrategy();
-        countyFilterStrategy.setSensitivityLevel(sensitivityLevel.getName());
+        city.setCityFilterStrategies(Arrays.asList(new CityFilterStrategy()));
 
         County county = new County();
-        county.setCountyFilterStrategies(Arrays.asList(countyFilterStrategy));
+        county.setCountyFilterStrategies(Arrays.asList(new CountyFilterStrategy()));
 
         FirstNameFilterStrategy firstNameFilterStrategy = new FirstNameFilterStrategy();
-        firstNameFilterStrategy.setSensitivityLevel(sensitivityLevel.getName());
 
         FirstName firstName = new FirstName();
         firstName.setFirstNameFilterStrategies(Arrays.asList(firstNameFilterStrategy));
 
-        HospitalAbbreviationFilterStrategy hospitalAbbreviationFilterStrategy = new HospitalAbbreviationFilterStrategy();
-        hospitalAbbreviationFilterStrategy.setSensitivityLevel(sensitivityLevel.getName());
-
         HospitalAbbreviation hospitalAbbreviation = new HospitalAbbreviation();
-        hospitalAbbreviation.setHospitalAbbreviationFilterStrategies(Arrays.asList(hospitalAbbreviationFilterStrategy));
+        hospitalAbbreviation.setHospitalAbbreviationFilterStrategies(Arrays.asList(new HospitalAbbreviationFilterStrategy()));
 
         HospitalFilterStrategy hospitalFilterStrategy = new HospitalFilterStrategy();
-        hospitalAbbreviationFilterStrategy.setSensitivityLevel(sensitivityLevel.getName());
 
         Hospital hospital = new Hospital();
         hospital.setHospitalFilterStrategies(Arrays.asList(hospitalFilterStrategy));
 
-        StateFilterStrategy stateFilterStrategy = new StateFilterStrategy();
-        stateFilterStrategy.setSensitivityLevel(sensitivityLevel.getName());
-
         State state = new State();
-        state.setStateFilterStrategies(Arrays.asList(stateFilterStrategy));
-
-        SurnameFilterStrategy surnameFilterStrategy = new SurnameFilterStrategy();
-        surnameFilterStrategy.setSensitivityLevel(sensitivityLevel.getName());
+        state.setStateFilterStrategies(Arrays.asList(new StateFilterStrategy()));
 
         Surname surname = new Surname();
-        surname.setSurnameFilterStrategies(Arrays.asList(surnameFilterStrategy));
+        surname.setSurnameFilterStrategies(Arrays.asList(new SurnameFilterStrategy()));
 
         // ----------------------------------------------------------------------------------
 
