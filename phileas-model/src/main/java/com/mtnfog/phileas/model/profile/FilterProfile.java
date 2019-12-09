@@ -5,6 +5,8 @@ import com.google.gson.annotations.SerializedName;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.List;
+
 public class FilterProfile {
 
     private static final Logger LOGGER = LogManager.getLogger(FilterProfile.class);
@@ -16,6 +18,10 @@ public class FilterProfile {
     @SerializedName("identifiers")
     @Expose
     private Identifiers identifiers;
+
+    @SerializedName("ignored")
+    @Expose
+    private List<Ignored> ignored;
 
     public String getName() {
         return name;
@@ -31,6 +37,14 @@ public class FilterProfile {
 
     public void setIdentifiers(Identifiers identifiers) {
         this.identifiers = identifiers;
+    }
+
+    public List<Ignored> getIgnored() {
+        return ignored;
+    }
+
+    public void setIgnored(List<Ignored> ignored) {
+        this.ignored = ignored;
     }
 
 }

@@ -18,7 +18,9 @@ import com.mtnfog.phileas.model.services.*;
 import com.mtnfog.phileas.services.anonymization.*;
 import com.mtnfog.phileas.services.filters.custom.PhoneNumberRulesFilter;
 import com.mtnfog.phileas.services.filters.regex.*;
+import com.mtnfog.phileas.services.postfilters.IgnoredTermsFilter;
 import com.mtnfog.phileas.store.MongoDBStore;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.apache.logging.log4j.LogManager;
@@ -201,15 +203,23 @@ public class PhileasFilterService implements FilterService, Serializable {
 
             filters.put(filterProfile.getName(), enabledFilters);
 
-        }
+            // Post filters.
 
-        // Configure post filters.
-        // PHL-1: Allow for multi-word tokens.
-        /*final boolean posTagPostFilterEnabled = StringUtils.equalsIgnoreCase(applicationProperties.getProperty("post.filter.pos.enabled", "true"), "true");
-        if(posTagPostFilterEnabled) {
-            final InputStream is = PhileasFilterService.class.getClassLoader().getResourceAsStream("en-pos-perceptron.bin");
-            postFilters.add(new PartOfSpeechFalsePositiveFilter(is));
-        }*/
+            // Configure post filters.
+            // PHL-1: Allow for multi-word tokens.
+            /*final boolean posTagPostFilterEnabled = StringUtils.equalsIgnoreCase(applicationProperties.getProperty("post.filter.pos.enabled", "true"), "true");
+            if(posTagPostFilterEnabled) {
+                final InputStream is = PhileasFilterService.class.getClassLoader().getResourceAsStream("en-pos-perceptron.bin");
+                postFilters.add(new PartOfSpeechFalsePositiveFilter(is));
+            }*/
+
+            // Ignored terms filter. Looks for ignored terms in the scope of the whole document (and not just a particular filter).
+            // No matter what filter found the span, it is subject to this ignore list.
+            if(CollectionUtils.isNotEmpty(filterProfile.getIgnored())) {
+                postFilters.add(new IgnoredTermsFilter(filterProfile, false));
+            }
+
+        }
 
     }
 
