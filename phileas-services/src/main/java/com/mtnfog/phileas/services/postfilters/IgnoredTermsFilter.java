@@ -1,5 +1,6 @@
 package com.mtnfog.phileas.services.postfilters;
 
+import com.mtnfog.phileas.model.objects.PostFilterResult;
 import com.mtnfog.phileas.model.objects.Span;
 import com.mtnfog.phileas.model.profile.FilterProfile;
 import com.mtnfog.phileas.model.profile.Ignored;
@@ -52,7 +53,7 @@ public class IgnoredTermsFilter extends PostFilter implements Serializable {
     }
 
     @Override
-    protected boolean process(String text, Span span) {
+    protected PostFilterResult process(String text, Span span) {
 
         String spanText = span.getText(text);
 
@@ -65,7 +66,7 @@ public class IgnoredTermsFilter extends PostFilter implements Serializable {
         boolean ignored = ignoredTerms.contains(spanText);
 
         // Return true if allowed; false if ignored.
-        return !ignored;
+        return new PostFilterResult(ignored);
 
     }
 

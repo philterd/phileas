@@ -1,5 +1,6 @@
 package com.mtnfog.phileas.model.services;
 
+import com.mtnfog.phileas.model.objects.PostFilterResult;
 import com.mtnfog.phileas.model.objects.Span;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -22,7 +23,7 @@ public abstract class PostFilter implements Serializable {
      * @return <code>true</code> if the span should not be filtered.
      * <code>false</code> if the span should be filtered.
      */
-    protected abstract boolean process(String text, Span span);
+    protected abstract PostFilterResult process(String text, Span span);
 
     /**
      * Filters a list of spans per the implementation of <code>process</code>.
@@ -37,15 +38,10 @@ public abstract class PostFilter implements Serializable {
         while (i.hasNext()) {
 
             final Span span = i.next();
+            final PostFilterResult postFilterResult = process(text, span);
 
-            // Only spans found by non-deterministic filters are checked.
-
-            if(!span.getFilterType().isDeterministic()) {
-
-                if (!process(text, span)) {
-                    i.remove();
-                }
-
+            if(postFilterResult.isPostFiltered()) {
+                i.remove();
             }
 
         }

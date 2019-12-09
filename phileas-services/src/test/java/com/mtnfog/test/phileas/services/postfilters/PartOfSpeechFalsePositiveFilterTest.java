@@ -49,7 +49,6 @@ public class PartOfSpeechFalsePositiveFilterTest {
     }
 
     @Test
-    @Ignore
     public void filter3() throws Exception {
 
         final InputStream is = PhileasFilterService.class.getClassLoader().getResourceAsStream("en-pos-perceptron.bin");

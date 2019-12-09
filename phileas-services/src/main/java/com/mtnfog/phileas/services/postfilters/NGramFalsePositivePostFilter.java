@@ -1,5 +1,6 @@
 package com.mtnfog.phileas.services.postfilters;
 
+import com.mtnfog.phileas.model.objects.PostFilterResult;
 import com.mtnfog.phileas.model.objects.Span;
 import com.mtnfog.phileas.model.services.PostFilter;
 import org.apache.commons.lang3.NotImplementedException;
@@ -21,7 +22,7 @@ public class NGramFalsePositivePostFilter extends PostFilter {
     }
 
     @Override
-    protected boolean process(String text, Span span) {
+    protected PostFilterResult process(String text, Span span) {
 
         throw new NotImplementedException("Not yet implemented.");
 

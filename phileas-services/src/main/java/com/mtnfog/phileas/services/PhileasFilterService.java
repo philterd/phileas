@@ -262,9 +262,9 @@ public class PhileasFilterService implements FilterService, Serializable {
         spans.sort(Comparator.comparing(Span::getConfidence));
 
         // Perform post-filtering for false positives.
-        /*for(PostFilter postFilter : postFilters) {
+        for(final PostFilter postFilter : postFilters) {
             spans = postFilter.filter(input, spans);
-        }*/
+        }
 
         // The spans that will be persisted. Has to be a deep copy because the shift
         // below will change the indexes. Doing this to save the original locations of the spans.

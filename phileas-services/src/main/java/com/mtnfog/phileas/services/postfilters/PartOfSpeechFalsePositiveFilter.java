@@ -1,5 +1,6 @@
 package com.mtnfog.phileas.services.postfilters;
 
+import com.mtnfog.phileas.model.objects.PostFilterResult;
 import com.mtnfog.phileas.model.objects.Span;
 import com.mtnfog.phileas.model.services.PostFilter;
 import com.mtnfog.phileas.nlp.UnicodeTokenizer;
@@ -46,7 +47,9 @@ public class PartOfSpeechFalsePositiveFilter extends PostFilter implements Seria
     }
 
     @Override
-    protected boolean process(String text, Span span) {
+    protected PostFilterResult process(String text, Span span) {
+
+        boolean isPostFiltered = true;
 
         final String spanText = span.getText(text);
         final String[] tokens = UnicodeTokenizer.INSTANCE.tokenize(text);
@@ -83,7 +86,7 @@ public class PartOfSpeechFalsePositiveFilter extends PostFilter implements Seria
 
                     //LOGGER.info("Token {} is not post-filtered by POS.", spanText);
 
-                    return true;
+                    isPostFiltered = false;
 
                 }
 
@@ -93,7 +96,7 @@ public class PartOfSpeechFalsePositiveFilter extends PostFilter implements Seria
 
         //LOGGER.info("Token {} is post-filtered by POS.", spanText);
 
-        return false;
+        return new PostFilterResult(isPostFiltered);
 
     }
 
