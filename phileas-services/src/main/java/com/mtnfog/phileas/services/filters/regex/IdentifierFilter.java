@@ -16,7 +16,7 @@ public class IdentifierFilter extends RegexFilter implements Serializable {
 
     private Pattern pattern;
 
-    public IdentifierFilter(String name, String pattern, boolean caseSensitive, List<IdentifierFilterStrategy> strategies, AnonymizationService anonymizationService) {
+    public IdentifierFilter(String label, String pattern, boolean caseSensitive, List<IdentifierFilterStrategy> strategies, AnonymizationService anonymizationService) {
         super(FilterType.IDENTIFIER, strategies, anonymizationService);
         this.label = label;
 
