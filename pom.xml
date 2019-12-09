@@ -110,15 +110,15 @@
 		<commons.text.version>1.7</commons.text.version>
 		<commons.validator.version>1.6</commons.validator.version>
 		<dropwizard-metrics-cloudwatch.version>1.0.13</dropwizard-metrics-cloudwatch.version>
+		<elasticsearch.client.version>7.5.0</elasticsearch.client.version>
 		<equals.verifier.version>3.1.9</equals.verifier.version>
 		<icu4j.version>64.2</icu4j.version>
 		<javafaker.version>0.18</javafaker.version>
 		<jedis.version>3.0.1</jedis.version>
 		<json.version>20180130</json.version>
 		<libphonenumber.version>8.10.20</libphonenumber.version>
-		<lucene.version>8.2.0</lucene.version>
+		<lucene.version>8.3.1</lucene.version>
 		<metrics.version>4.1.0</metrics.version>
-		<mongo.driver.version>3.11.0</mongo.driver.version>
 		<mockito.version>1.10.19</mockito.version>
 		<opennlp.version>1.9.1</opennlp.version>
 		<redis-mock.version>0.1.6</redis-mock.version>

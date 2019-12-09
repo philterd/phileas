@@ -13,14 +13,13 @@ import com.mtnfog.phileas.model.objects.Span;
 import com.mtnfog.phileas.model.profile.FilterProfile;
 import com.mtnfog.phileas.model.profile.filters.CustomDictionary;
 import com.mtnfog.phileas.model.profile.filters.Identifier;
-import com.mtnfog.phileas.model.profile.filters.strategies.AbstractFilterStrategy;
 import com.mtnfog.phileas.model.responses.FilterResponse;
 import com.mtnfog.phileas.model.services.*;
 import com.mtnfog.phileas.services.anonymization.*;
 import com.mtnfog.phileas.services.filters.custom.PhoneNumberRulesFilter;
 import com.mtnfog.phileas.services.filters.regex.*;
 import com.mtnfog.phileas.services.postfilters.IgnoredTermsFilter;
-import com.mtnfog.phileas.store.MongoDBStore;
+import com.mtnfog.phileas.store.ElasticsearchStore;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
@@ -64,8 +63,11 @@ public class PhileasFilterService implements FilterService, Serializable {
         // Configure store.
         final boolean storeEnabled = StringUtils.equalsIgnoreCase(applicationProperties.getProperty("store.enabled", "false"), "true");
         if(storeEnabled) {
-            final String storeUri = applicationProperties.getProperty("store.mongodb.uri", "mongodb://localhost:27017/philter");
-            this.store = new MongoDBStore(storeUri);
+            final String index = applicationProperties.getProperty("store.elasticsearch.index", "philter");
+            final String host = applicationProperties.getProperty("store.elasticsearch.host", "localhost");
+            final String scheme = applicationProperties.getProperty("store.elasticsearch.scheme", "http");
+            final int port = Integer.valueOf(applicationProperties.getProperty("store.elasticsearch.port", "9200"));
+            this.store = new ElasticsearchStore(index, scheme, host, port);
         }
 
         // Path to the indexes directory.
@@ -230,7 +232,7 @@ public class PhileasFilterService implements FilterService, Serializable {
     }
 
     @Override
-    public List<Span> replacements(String documentId) {
+    public List<Span> replacements(String documentId) throws IOException {
 
         return store.getByDocumentId(documentId);
 
@@ -253,8 +255,7 @@ public class PhileasFilterService implements FilterService, Serializable {
         List<Span> spans = new LinkedList<>();
 
         // Generate a random document ID.
-        // TODO: Move the ID generator so it is not specific to Mongo.
-        final String documentId = MongoDBStore.generateId();
+        final String documentId = UUID.randomUUID().toString();
 
         // Execute each filter.
         for(final Filter f : enabledFilters) {
@@ -341,6 +342,10 @@ public class PhileasFilterService implements FilterService, Serializable {
 
         return new FilterResponse(buffer.toString(), context, documentId, explanation);
 
+    }
+
+    public String getPhilterNerEndpoint() {
+        return philterNerEndpoint;
     }
 
 }

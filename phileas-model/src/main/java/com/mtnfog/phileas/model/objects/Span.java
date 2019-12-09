@@ -5,12 +5,12 @@ import com.mtnfog.phileas.model.enums.FilterType;
 import org.apache.commons.lang3.Range;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.bson.types.ObjectId;
 
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -21,7 +21,7 @@ public final class Span implements Serializable {
 
     // This is not @Expose'd because the user does not need to see it.
     // It is not transient because it won't get persisted to Mongo.
-    private ObjectId id;
+    private String id;
 
     @Expose
     private int characterStart;
@@ -63,7 +63,7 @@ public final class Span implements Serializable {
      */
     private Span(int characterStart, int characterEnd, FilterType filterType, String context, String documentId, double confidence, String text, String replacement) {
 
-        this.id = new ObjectId();
+        this.id = UUID.randomUUID().toString();
         this.characterStart = characterStart;
         this.characterEnd = characterEnd;
         this.filterType = filterType;
@@ -375,11 +375,11 @@ public final class Span implements Serializable {
         this.replacement = replacement;
     }
 
-    public ObjectId getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(ObjectId id) {
+    public void setId(String id) {
         this.id = id;
     }
 

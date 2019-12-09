@@ -10,6 +10,6 @@ public interface FilterService {
 
     FilterResponse filter(String filterProfileName, String context, String input) throws IOException;
 
-    List<Span> replacements(String documentId);
+    List<Span> replacements(String documentId) throws IOException;
 
 }
