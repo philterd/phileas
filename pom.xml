@@ -114,6 +114,7 @@
 		<icu4j.version>64.2</icu4j.version>
 		<javafaker.version>0.18</javafaker.version>
 		<jedis.version>3.0.1</jedis.version>
+		<json.version>20180130</json.version>
 		<libphonenumber.version>8.10.20</libphonenumber.version>
 		<lucene.version>8.2.0</lucene.version>
 		<metrics.version>4.1.0</metrics.version>
