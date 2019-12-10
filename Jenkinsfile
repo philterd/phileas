@@ -6,6 +6,7 @@ pipeline {
     }
     options {
         buildDiscarder(logRotator(numToKeepStr: '30'))
+        disableConcurrentBuilds()
     }
     triggers {
         pollSCM 'H/10 * * * *'
