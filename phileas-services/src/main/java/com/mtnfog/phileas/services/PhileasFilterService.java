@@ -139,6 +139,8 @@ public class PhileasFilterService implements FilterService, Serializable {
 
             if(filterProfile.getIdentifiers().hasFilter(FilterType.CUSTOM_DICTIONARY)) {
 
+                LOGGER.info("Filter profile {} has {} custom dictionaries.", filterProfile.getName(), filterProfile.getIdentifiers().getCustomDictionaries().size());
+
                 // We keep track of the index of the custom dictionary in the list so we know
                 // how to retrieve the strategy for the custom dictionary. This is because
                 // there can be multiple custom dictionaries and not a 1-to-1 between filter
@@ -158,6 +160,10 @@ public class PhileasFilterService implements FilterService, Serializable {
                     index++;
 
                 }
+
+            } else {
+
+                LOGGER.info("Filter profile {} has no custom dictionaries.", filterProfile.getName());
 
             }
 

@@ -2,12 +2,18 @@ package com.mtnfog.test.phileas.model.profile;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.mtnfog.phileas.model.enums.FilterType;
+import com.mtnfog.phileas.model.enums.SensitivityLevel;
 import com.mtnfog.phileas.model.profile.FilterProfile;
 import com.mtnfog.phileas.model.profile.Identifiers;
+import com.mtnfog.phileas.model.profile.Ignored;
 import com.mtnfog.phileas.model.profile.filters.*;
 import com.mtnfog.phileas.model.profile.filters.strategies.ai.NerFilterStrategy;
+import com.mtnfog.phileas.model.profile.filters.strategies.custom.CustomDictionaryFilterStrategy;
 import com.mtnfog.phileas.model.profile.filters.strategies.dynamic.*;
 import com.mtnfog.phileas.model.profile.filters.strategies.rules.*;
+import org.apache.commons.collections4.CollectionUtils;
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -17,6 +23,11 @@ public class FilterProfileTest {
 
     @Test
     public void serialize() throws IOException {
+
+        CustomDictionary customDictionary = new CustomDictionary();
+        customDictionary.setTerms(Arrays.asList("123", "456", "jeff", "john"));
+        customDictionary.setSensitivity(SensitivityLevel.AUTO.getName());
+        customDictionary.setCustomDictionaryFilterStrategies(Arrays.asList(new CustomDictionaryFilterStrategy()));
 
         Age age = new Age();
         age.setAgeFilterStrategies(Arrays.asList(new AgeFilterStrategy()));
@@ -87,6 +98,7 @@ public class FilterProfileTest {
         zipCode.setZipCodeFilterStrategies(Arrays.asList(zipCodeFilterStrategy));
 
         Identifiers identifiers = new Identifiers();
+        identifiers.setCustomDictionaries(Arrays.asList(customDictionary));
         identifiers.setAge(age);
         identifiers.setCity(city);
         identifiers.setCounty(county);
@@ -109,9 +121,14 @@ public class FilterProfileTest {
         identifiers.setVin(vin);
         identifiers.setZipCode(zipCode);
 
+        Ignored ignored = new Ignored();
+        ignored.setName("ignored-terms");
+        ignored.setTerms(Arrays.asList("term1", "term2"));
+
         FilterProfile filterProfile = new FilterProfile();
         filterProfile.setName("default");
         filterProfile.setIdentifiers(identifiers);
+        filterProfile.setIgnored(Arrays.asList(ignored));
 
         Gson gson = new GsonBuilder().serializeNulls().setPrettyPrinting().create();
         String json = gson.toJson(filterProfile);
@@ -121,17 +138,53 @@ public class FilterProfileTest {
     }
 
     @Test
-    public void deserialize() {
+    public void deserialize1() {
 
         final String json = "{\n" +
                 "  \"name\": \"default\",\n" +
+                "  \"ignored\": [\n" +
+                "    {\n" +
+                "      \"name\": \"ignored-terms\",\n" +
+                "      \"terms\": [\n" +
+                "        \"term1\",\n" +
+                "        \"term2\",\n" +
+                "        \"Jeff Smith\"\n" +
+                "      ]\n" +
+                "    }\n" +
+                "  ],\n" +
                 "  \"identifiers\": {\n" +
+                "    \"dictionaries\": [\n" +
+                "      {\n" +
+                "        \"type\": \"mylist\",\n" +
+                "        \"terms\": [\n" +
+                "          \"123\",\n" +
+                "          \"456\",\n" +
+                "          \"jeff\",\n" +
+                "          \"john\"\n" +
+                "        ],\n" +
+                "        \"sensitivity\": \"auto\",\n" +
+                "        \"customFilterStrategies\": [\n" +
+                "          {\n" +
+                "            \"strategy\": \"REDACT\",\n" +
+                "            \"redactionFormat\": \"{{{REDACTED-%t}}}\",\n" +
+                "            \"replacementScope\": \"DOCUMENT\"\n" +
+                "          }\n" +
+                "        ]\n" +
+                "      }\n" +
+                "    ],\n" +
+                "    \"ner\": {\n" +
+                "      \"nerFilterStrategies\": [\n" +
+                "        {\n" +
+                "          \"strategy\": \"REDACT\",\n" +
+                "          \"redactionFormat\": \"{{{REDACTED-%t}}}\"\n" +
+                "        }\n" +
+                "      ]\n" +
+                "    },\n" +
                 "    \"age\": {\n" +
                 "      \"ageFilterStrategies\": [\n" +
                 "        {\n" +
                 "          \"strategy\": \"REDACT\",\n" +
-                "          \"redactionFormat\": \"{{{REDACTED-%t}}}\",\n" +
-                "          \"sensitivityLevel\": \"high\"\n" +
+                "          \"redactionFormat\": \"{{{REDACTED-%t}}}\"\n" +
                 "        }\n" +
                 "      ]\n" +
                 "    },\n" +
@@ -139,8 +192,7 @@ public class FilterProfileTest {
                 "      \"creditCardFilterStrategies\": [\n" +
                 "        {\n" +
                 "          \"strategy\": \"REDACT\",\n" +
-                "          \"redactionFormat\": \"{{{REDACTED-%t}}}\",\n" +
-                "          \"sensitivityLevel\": \"high\"\n" +
+                "          \"redactionFormat\": \"{{{REDACTED-%t}}}\"\n" +
                 "        }\n" +
                 "      ]\n" +
                 "    },\n" +
@@ -148,8 +200,7 @@ public class FilterProfileTest {
                 "      \"dateFilterStrategies\": [\n" +
                 "        {\n" +
                 "          \"strategy\": \"REDACT\",\n" +
-                "          \"redactionFormat\": \"{{{REDACTED-%t}}}\",\n" +
-                "          \"sensitivityLevel\": \"high\"\n" +
+                "          \"redactionFormat\": \"{{{REDACTED-%t}}}\"\n" +
                 "        }\n" +
                 "      ]\n" +
                 "    },\n" +
@@ -157,26 +208,23 @@ public class FilterProfileTest {
                 "      \"emailAddressFilterStrategies\": [\n" +
                 "        {\n" +
                 "          \"strategy\": \"REDACT\",\n" +
-                "          \"redactionFormat\": \"{{{REDACTED-%t}}}\",\n" +
-                "          \"sensitivityLevel\": \"high\"\n" +
+                "          \"redactionFormat\": \"{{{REDACTED-%t}}}\"\n" +
                 "        }\n" +
                 "      ]\n" +
                 "    },\n" +
-                "    \"identifiers\": [{\n" +
+                "    \"identifier\": {\n" +
                 "      \"identifierFilterStrategies\": [\n" +
                 "        {\n" +
                 "          \"strategy\": \"REDACT\",\n" +
-                "          \"redactionFormat\": \"{{{REDACTED-%t}}}\",\n" +
-                "          \"sensitivityLevel\": \"high\"\n" +
+                "          \"redactionFormat\": \"{{{REDACTED-%t}}}\"\n" +
                 "        }\n" +
                 "      ]\n" +
-                "    }],\n" +
+                "    },\n" +
                 "    \"ipAddress\": {\n" +
                 "      \"ipAddressFilterStrategies\": [\n" +
                 "        {\n" +
                 "          \"strategy\": \"REDACT\",\n" +
-                "          \"redactionFormat\": \"{{{REDACTED-%t}}}\",\n" +
-                "          \"sensitivityLevel\": \"high\"\n" +
+                "          \"redactionFormat\": \"{{{REDACTED-%t}}}\"\n" +
                 "        }\n" +
                 "      ]\n" +
                 "    },\n" +
@@ -184,8 +232,7 @@ public class FilterProfileTest {
                 "      \"phoneNumberFilterStrategies\": [\n" +
                 "        {\n" +
                 "          \"strategy\": \"REDACT\",\n" +
-                "          \"redactionFormat\": \"{{{REDACTED-%t}}}\",\n" +
-                "          \"sensitivityLevel\": \"high\"\n" +
+                "          \"redactionFormat\": \"{{{REDACTED-%t}}}\"\n" +
                 "        }\n" +
                 "      ]\n" +
                 "    },\n" +
@@ -193,17 +240,7 @@ public class FilterProfileTest {
                 "      \"ssnFilterStrategies\": [\n" +
                 "        {\n" +
                 "          \"strategy\": \"REDACT\",\n" +
-                "          \"redactionFormat\": \"{{{REDACTED-%t}}}\",\n" +
-                "          \"sensitivityLevel\": \"high\"\n" +
-                "        }\n" +
-                "      ]\n" +
-                "    },\n" +
-                "    \"stateAbbreviation\": {\n" +
-                "      \"stateAbbreviationFilterStrategies\": [\n" +
-                "        {\n" +
-                "          \"strategy\": \"REDACT\",\n" +
-                "          \"redactionFormat\": \"{{{REDACTED-%t}}}\",\n" +
-                "          \"sensitivityLevel\": \"high\"\n" +
+                "          \"redactionFormat\": \"{{{REDACTED-%t}}}\"\n" +
                 "        }\n" +
                 "      ]\n" +
                 "    },\n" +
@@ -211,8 +248,7 @@ public class FilterProfileTest {
                 "      \"urlFilterStrategies\": [\n" +
                 "        {\n" +
                 "          \"strategy\": \"REDACT\",\n" +
-                "          \"redactionFormat\": \"{{{REDACTED-%t}}}\",\n" +
-                "          \"sensitivityLevel\": \"high\"\n" +
+                "          \"redactionFormat\": \"{{{REDACTED-%t}}}\"\n" +
                 "        }\n" +
                 "      ]\n" +
                 "    },\n" +
@@ -220,19 +256,15 @@ public class FilterProfileTest {
                 "      \"vinFilterStrategies\": [\n" +
                 "        {\n" +
                 "          \"strategy\": \"REDACT\",\n" +
-                "          \"redactionFormat\": \"{{{REDACTED-%t}}}\",\n" +
-                "          \"sensitivityLevel\": \"high\"\n" +
+                "          \"redactionFormat\": \"{{{REDACTED-%t}}}\"\n" +
                 "        }\n" +
                 "      ]\n" +
                 "    },\n" +
                 "    \"zipCode\": {\n" +
                 "      \"zipCodeFilterStrategy\": [\n" +
                 "        {\n" +
-                "          \"truncateDigits\": 2,\n" +
-                "          \"strategy\": \"TRUNCATE\",\n" +
-                "          \"redactionFormat\": \"{{{REDACTED-%t}}}\",\n" +
-                "          \"sensitivityLevel\": \"high\",\n" +
-                "          \"conditions\": \"population \\u003c 4500\"\n" +
+                "          \"strategy\": \"REDACT\",\n" +
+                "          \"redactionFormat\": \"{{{REDACTED-%t}}}\"\n" +
                 "        }\n" +
                 "      ]\n" +
                 "    }\n" +
@@ -241,6 +273,124 @@ public class FilterProfileTest {
 
         Gson gson = new Gson();
         FilterProfile filterProfile = gson.fromJson(json, FilterProfile.class);
+
+        Assert.assertTrue(CollectionUtils.isNotEmpty(filterProfile.getIdentifiers().getCustomDictionaries()));
+        Assert.assertTrue(CollectionUtils.isNotEmpty(filterProfile.getIgnored()));
+        Assert.assertTrue(filterProfile.getIdentifiers().hasFilter(FilterType.CUSTOM_DICTIONARY));
+
+    }
+
+    @Test
+    public void deserialize2() {
+
+        final String json = "{\n" +
+                "  \"name\": \"default\",\n" +
+                "  \"identifiers\": {\n" +
+                "    \"ner\": {\n" +
+                "      \"nerFilterStrategies\": [\n" +
+                "        {\n" +
+                "          \"strategy\": \"REDACT\",\n" +
+                "          \"redactionFormat\": \"{{{REDACTED-%t}}}\"\n" +
+                "        }\n" +
+                "      ]\n" +
+                "    },\n" +
+                "    \"age\": {\n" +
+                "      \"ageFilterStrategies\": [\n" +
+                "        {\n" +
+                "          \"strategy\": \"REDACT\",\n" +
+                "          \"redactionFormat\": \"{{{REDACTED-%t}}}\"\n" +
+                "        }\n" +
+                "      ]\n" +
+                "    },\n" +
+                "    \"creditCard\": {\n" +
+                "      \"creditCardFilterStrategies\": [\n" +
+                "        {\n" +
+                "          \"strategy\": \"REDACT\",\n" +
+                "          \"redactionFormat\": \"{{{REDACTED-%t}}}\"\n" +
+                "        }\n" +
+                "      ]\n" +
+                "    },\n" +
+                "    \"date\": {\n" +
+                "      \"dateFilterStrategies\": [\n" +
+                "        {\n" +
+                "          \"strategy\": \"REDACT\",\n" +
+                "          \"redactionFormat\": \"{{{REDACTED-%t}}}\"\n" +
+                "        }\n" +
+                "      ]\n" +
+                "    },\n" +
+                "    \"emailAddress\": {\n" +
+                "      \"emailAddressFilterStrategies\": [\n" +
+                "        {\n" +
+                "          \"strategy\": \"REDACT\",\n" +
+                "          \"redactionFormat\": \"{{{REDACTED-%t}}}\"\n" +
+                "        }\n" +
+                "      ]\n" +
+                "    },\n" +
+                "    \"identifier\": {\n" +
+                "      \"identifierFilterStrategies\": [\n" +
+                "        {\n" +
+                "          \"strategy\": \"REDACT\",\n" +
+                "          \"redactionFormat\": \"{{{REDACTED-%t}}}\"\n" +
+                "        }\n" +
+                "      ]\n" +
+                "    },\n" +
+                "    \"ipAddress\": {\n" +
+                "      \"ipAddressFilterStrategies\": [\n" +
+                "        {\n" +
+                "          \"strategy\": \"REDACT\",\n" +
+                "          \"redactionFormat\": \"{{{REDACTED-%t}}}\"\n" +
+                "        }\n" +
+                "      ]\n" +
+                "    },\n" +
+                "    \"phoneNumber\": {\n" +
+                "      \"phoneNumberFilterStrategies\": [\n" +
+                "        {\n" +
+                "          \"strategy\": \"REDACT\",\n" +
+                "          \"redactionFormat\": \"{{{REDACTED-%t}}}\"\n" +
+                "        }\n" +
+                "      ]\n" +
+                "    },\n" +
+                "    \"ssn\": {\n" +
+                "      \"ssnFilterStrategies\": [\n" +
+                "        {\n" +
+                "          \"strategy\": \"REDACT\",\n" +
+                "          \"redactionFormat\": \"{{{REDACTED-%t}}}\"\n" +
+                "        }\n" +
+                "      ]\n" +
+                "    },\n" +
+                "    \"url\": {\n" +
+                "      \"urlFilterStrategies\": [\n" +
+                "        {\n" +
+                "          \"strategy\": \"REDACT\",\n" +
+                "          \"redactionFormat\": \"{{{REDACTED-%t}}}\"\n" +
+                "        }\n" +
+                "      ]\n" +
+                "    },\n" +
+                "    \"vin\": {\n" +
+                "      \"vinFilterStrategies\": [\n" +
+                "        {\n" +
+                "          \"strategy\": \"REDACT\",\n" +
+                "          \"redactionFormat\": \"{{{REDACTED-%t}}}\"\n" +
+                "        }\n" +
+                "      ]\n" +
+                "    },\n" +
+                "    \"zipCode\": {\n" +
+                "      \"zipCodeFilterStrategy\": [\n" +
+                "        {\n" +
+                "          \"strategy\": \"REDACT\",\n" +
+                "          \"redactionFormat\": \"{{{REDACTED-%t}}}\"\n" +
+                "        }\n" +
+                "      ]\n" +
+                "    }\n" +
+                "  }\n" +
+                "}\n";
+
+        Gson gson = new Gson();
+        FilterProfile filterProfile = gson.fromJson(json, FilterProfile.class);
+
+        Assert.assertFalse(CollectionUtils.isNotEmpty(filterProfile.getIdentifiers().getCustomDictionaries()));
+        Assert.assertFalse(CollectionUtils.isNotEmpty(filterProfile.getIgnored()));
+        Assert.assertFalse(filterProfile.getIdentifiers().hasFilter(FilterType.CUSTOM_DICTIONARY));
 
     }
 

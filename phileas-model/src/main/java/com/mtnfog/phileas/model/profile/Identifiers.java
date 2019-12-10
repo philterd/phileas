@@ -112,6 +112,8 @@ public class Identifiers {
 
         switch(filterType) {
 
+            case CUSTOM_DICTIONARY:
+                if(CollectionUtils.isNotEmpty(this.getCustomDictionaries())) { return true; } break;
             case AGE:
                 if(this.getAge() != null) { return true; } break;
             case LOCATION_CITY:
@@ -154,8 +156,6 @@ public class Identifiers {
                 if(this.getVin() != null) { return true; } break;
             case ZIP_CODE:
                 if(this.getZipCode() != null) { return true; } break;
-            case CUSTOM_DICTIONARY:
-                if(CollectionUtils.isNotEmpty(this.getCustomDictionaries())) { return true; } break;
 
         }
 

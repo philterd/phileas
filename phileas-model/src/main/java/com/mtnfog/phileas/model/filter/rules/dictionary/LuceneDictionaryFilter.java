@@ -93,6 +93,8 @@ public class LuceneDictionaryFilter extends DictionaryFilter implements Serializ
 
         super(filterType, strategies, anonymizationService);
 
+        LOGGER.info("Creating custom dictionary filter for custom type [{}]", type);
+
         this.distanceFunction = new LevenshteinDistance();
         this.sensitivityLevel = sensitivityLevel;
         this.filterProfileIndex = filterProfileIndex;
