@@ -7,6 +7,13 @@ pipeline {
     options {
         buildDiscarder(logRotator(numToKeepStr: '30'))
     }
+    triggers {
+        pollSCM 'H/10 * * * *'
+        parameterizedCron('''
+            # Build AMI from master each morning at 1 AM.
+            H 2 * * * %isAMI=true;BRANCH_TAG=master
+        ''')
+    }
     parameters {
         gitParameter(defaultValue: 'origin/master', description: 'Branch/tag to build', name: 'BRANCH_TAG', type: 'PT_BRANCH_TAG')
     }
