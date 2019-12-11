@@ -105,6 +105,7 @@ public class ElasticsearchStoreTest {
 
     }
 
+    @Ignore
     @Test
     public void test3() throws IOException {
 
