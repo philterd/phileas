@@ -111,7 +111,7 @@ public abstract class Filter implements Serializable {
 
     public static List<? extends AbstractFilterStrategy> getFilterStrategies(FilterProfile filterProfile, FilterType filterType, int index) {
 
-        LOGGER.info("Getting filter strategies for filter type {}", filterType.getType());
+        LOGGER.debug("Getting filter strategies for filter type {}", filterType.getType());
 
         if(filterType == FilterType.AGE) {
             return filterProfile.getIdentifiers().getAge().getAgeFilterStrategies();

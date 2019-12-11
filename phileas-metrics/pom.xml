@@ -41,16 +41,18 @@
     <dependency>
       <groupId>org.coursera</groupId>
       <artifactId>dropwizard-metrics-datadog</artifactId>
-      <version>1.1.14</version>
+      <version>${dropwizard-metrics-datadog.version}</version>
     </dependency>
     <dependency>
       <groupId>io.dropwizard.metrics</groupId>
       <artifactId>metrics-jmx</artifactId>
+      <version>${dropwizard.metrics.version}</version>
     </dependency>
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>4.11</version>
+      <version>${junit.version}</version>
+      <scope>test</scope>
     </dependency>
   </dependencies>
 </project>
