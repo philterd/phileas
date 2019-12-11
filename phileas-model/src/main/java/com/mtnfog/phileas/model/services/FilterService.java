@@ -12,4 +12,6 @@ public interface FilterService {
 
     List<Span> replacements(String documentId) throws IOException;
 
+    void reloadFilterProfiles() throws IOException;
+
 }

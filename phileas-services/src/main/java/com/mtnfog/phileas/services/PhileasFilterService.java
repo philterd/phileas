@@ -38,27 +38,25 @@ public class PhileasFilterService implements FilterService, Serializable {
 
 	private static final Logger LOGGER = LogManager.getLogger(PhileasFilterService.class);
 
+    private List<FilterProfileService> filterProfileServices;
     private MetricsService metricsService;
-    private Map<String, DescriptiveStatistics> stats;
     private Store store;
-    private List<PostFilter> postFilters;
-    private Map<String, FilterProfile> filterProfiles;
-    private Map<String, List<Filter>> filters;
-    private String philterNerEndpoint;
-    private Gson gson;
+
+    private Map<String, FilterProfile> filterProfiles = new HashMap<>();
+    private Map<String, DescriptiveStatistics> stats = new HashMap<>();
+    private List<PostFilter> postFilters = new LinkedList<>();
+    private Map<String, List<Filter>> filters = new HashMap<>();
+    private Gson gson = new Gson();
 
     public PhileasFilterService(Properties applicationProperties, List<FilterProfileService> filterProfileServices, AnonymizationCacheService anonymizationCacheService, String philterNerEndpoint) throws IOException {
 
         LOGGER.info("Initializing Phileas engine.");
 
-        this.stats = new HashMap<>();
-        this.postFilters = new LinkedList<>();
-        this.filterProfiles = new HashMap<>();
-        this.filters = new HashMap<>();
-        this.gson = new Gson();
-
         // Configure metrics.
         this.metricsService = new PhileasMetricsService(applicationProperties);
+
+        // Set the filter profile services.
+        this.filterProfileServices = filterProfileServices;
 
         // Configure store.
         final boolean storeEnabled = StringUtils.equalsIgnoreCase(applicationProperties.getProperty("store.enabled", "false"), "true");
@@ -73,15 +71,11 @@ public class PhileasFilterService implements FilterService, Serializable {
         // Path to the indexes directory.
         final String indexDirectory = applicationProperties.getProperty("indexes.directory", System.getProperty("user.dir") + "/indexes/");
 
-        // Load all of the filter profiles into memory from each filter profile service.
-        for(FilterProfileService filterProfileService : filterProfileServices) {
-            final Map<String, String> fp = filterProfileService.getAll();
-            for(String k : fp.keySet()) {
-                filterProfiles.put(k, gson.fromJson(fp.get(k), FilterProfile.class));
-            }
-        }
+        // Load the filter profiles from the services into a map.
+        reloadFilterProfiles();
 
-        for(FilterProfile filterProfile : filterProfiles.values()) {
+        // Load the actual filter profile objects into memory.
+        for(final FilterProfile filterProfile : filterProfiles.values()) {
 
             final List<Filter> enabledFilters = new LinkedList<>();
 
@@ -350,8 +344,19 @@ public class PhileasFilterService implements FilterService, Serializable {
 
     }
 
-    public String getPhilterNerEndpoint() {
-        return philterNerEndpoint;
+    @Override
+    public void reloadFilterProfiles() throws IOException {
+
+        filterProfiles.clear();
+
+        // Load all of the filter profiles into memory from each filter profile service.
+        for(FilterProfileService filterProfileService : filterProfileServices) {
+            final Map<String, String> fp = filterProfileService.getAll();
+            for(String k : fp.keySet()) {
+                filterProfiles.put(k, gson.fromJson(fp.get(k), FilterProfile.class));
+            }
+        }
+
     }
 
 }
