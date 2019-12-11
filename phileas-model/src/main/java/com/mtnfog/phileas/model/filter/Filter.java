@@ -119,7 +119,7 @@ public abstract class Filter implements Serializable {
             return filterProfile.getIdentifiers().getCreditCard().getCreditCardFilterStrategies();
         } else if(filterType == FilterType.CUSTOM_DICTIONARY) {
             // There can be multiple custom dictionaries in the filter profile.
-            // How to know which filter strategy to retrieve from the list of custom dictionary filters?
+            // The index is used to determine which one is the appropriate one.
             return filterProfile.getIdentifiers().getCustomDictionaries().get(index).getCustomDictionaryFilterStrategies();
         } else if(filterType == FilterType.DATE) {
             return filterProfile.getIdentifiers().getDate().getDateFilterStrategies();
