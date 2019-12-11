@@ -43,14 +43,8 @@ public class ElasticsearchStore implements Store, Closeable {
 
     public ElasticsearchStore(String indexName, String scheme, String host, int port) {
 
-        final CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
-        credentialsProvider.setCredentials(AuthScope.ANY, new UsernamePasswordCredentials("username", "password"));
-
-        //RestClientBuilder builder = RestClient.builder(new HttpHost(host, port, scheme)).setHttpClientConfigCallback(httpClientBuilder -> httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider));
-        RestClientBuilder builder = RestClient.builder(new HttpHost(host, port, scheme));
-
+        this.client = new RestHighLevelClient(RestClient.builder(new HttpHost(host, port, scheme)));
         this.indexName = indexName;
-        this.client =  new RestHighLevelClient(builder);
         this.gson = new Gson();
 
     }
@@ -72,7 +66,7 @@ public class ElasticsearchStore implements Store, Closeable {
     @Override
     public void insert(List<Span> spans) throws IOException {
 
-        BulkRequest bulkRequest = new BulkRequest();
+        final BulkRequest bulkRequest = new BulkRequest();
 
         spans.forEach(span -> {
             final String json = gson.toJson(span);
@@ -87,12 +81,13 @@ public class ElasticsearchStore implements Store, Closeable {
     @Override
     public List<Span> getByDocumentId(String documentId) throws IOException {
 
-        SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
-        searchSourceBuilder.query(QueryBuilders.matchQuery("documentId", documentId));
+        LOGGER.info("Searching by documentId {} in index {}", documentId, indexName);
 
-        SearchRequest searchRequest = new SearchRequest(indexName);
+        final SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
+        searchSourceBuilder.query(QueryBuilders.matchQuery("documentId.keyword", documentId));
+
+        final SearchRequest searchRequest = new SearchRequest(indexName);
         searchRequest.source(searchSourceBuilder);
-        searchRequest.indicesOptions(IndicesOptions.lenientExpandOpen());
 
         LOGGER.info(searchRequest.toString());
 
@@ -104,7 +99,7 @@ public class ElasticsearchStore implements Store, Closeable {
 
         final List<Span> spans = new ArrayList<>();
 
-        LOGGER.info("Search hits: {}", searchHits.length);
+        LOGGER.debug("Search hits: {}", searchHits.length);
 
         if (searchHits.length > 0) {
 
