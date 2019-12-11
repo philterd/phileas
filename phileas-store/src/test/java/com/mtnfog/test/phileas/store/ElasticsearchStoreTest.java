@@ -39,7 +39,7 @@ public class ElasticsearchStoreTest {
     @Before
     public void before() throws IOException {
 
-        /*// Delete the index.
+        // Delete the index.
         RestClientBuilder builder = RestClient.builder(new HttpHost(ELASTICSEARCH_HOST, PORT, SCHEME));
         RestHighLevelClient client = new RestHighLevelClient(builder);
 
@@ -54,7 +54,7 @@ public class ElasticsearchStoreTest {
             client.indices().create(new CreateIndexRequest(INDEX_NAME), RequestOptions.DEFAULT);
         } catch (ElasticsearchStatusException ex) {
             fail("Unable to create Elasticsearch index.");
-        }*/
+        }
 
     }
 
