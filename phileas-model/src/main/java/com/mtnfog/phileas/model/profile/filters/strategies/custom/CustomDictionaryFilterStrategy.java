@@ -53,11 +53,11 @@ public class CustomDictionaryFilterStrategy extends AbstractFilterStrategy {
         // Custom dictionary filter replacement does not support random replacement
         // because we don't know what kind of random value to generate.
 
-        if(StringUtils.equalsIgnoreCase(redactionFormat, REDACT)) {
+        if(StringUtils.equalsIgnoreCase(strategy, REDACT)) {
 
             replacement = getRedactedToken(name, filterType);
 
-        } else if(StringUtils.equalsIgnoreCase(redactionFormat, STATIC_REPLACE)) {
+        } else if(StringUtils.equalsIgnoreCase(strategy, STATIC_REPLACE)) {
 
             replacement = staticReplacement;
 

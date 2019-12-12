@@ -13,6 +13,8 @@ public class IpAddressFilterStrategyTest {
 
     private static final Logger LOGGER = LogManager.getLogger(IpAddressFilterStrategyTest.class);
 
+
+
     @Test
     public void evaluateCondition1() throws IOException {
 

@@ -50,11 +50,11 @@ public class StateFilterStrategy extends AbstractFilterStrategy {
 
         String replacement = null;
 
-        if(StringUtils.equalsIgnoreCase(redactionFormat, REDACT)) {
+        if(StringUtils.equalsIgnoreCase(strategy, REDACT)) {
 
             replacement = getRedactedToken(name, filterType);
 
-        } else if(StringUtils.equalsIgnoreCase(redactionFormat, RANDOM_REPLACE)) {
+        } else if(StringUtils.equalsIgnoreCase(strategy, RANDOM_REPLACE)) {
 
             // Default to document scope.
             String scope = REPLACEMENT_SCOPE_DOCUMENT;
@@ -65,7 +65,7 @@ public class StateFilterStrategy extends AbstractFilterStrategy {
 
             replacement = getAnonymizedToken(scope, token, anonymizationService);
 
-        } else if(StringUtils.equalsIgnoreCase(redactionFormat, STATIC_REPLACE)) {
+        } else if(StringUtils.equalsIgnoreCase(strategy, STATIC_REPLACE)) {
 
             replacement = staticReplacement;
 

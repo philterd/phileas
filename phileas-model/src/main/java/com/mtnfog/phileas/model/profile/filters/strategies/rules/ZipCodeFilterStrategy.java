@@ -102,11 +102,11 @@ public class ZipCodeFilterStrategy extends AbstractFilterStrategy {
 
         String replacement = null;
 
-        if(StringUtils.equalsIgnoreCase(redactionFormat, REDACT)) {
+        if(StringUtils.equalsIgnoreCase(strategy, REDACT)) {
 
             replacement = getRedactedToken(name, filterType);
 
-        } else if(StringUtils.equalsIgnoreCase(redactionFormat, RANDOM_REPLACE)) {
+        } else if(StringUtils.equalsIgnoreCase(strategy, RANDOM_REPLACE)) {
 
             // Default to document scope.
             String scope = REPLACEMENT_SCOPE_DOCUMENT;
@@ -117,16 +117,16 @@ public class ZipCodeFilterStrategy extends AbstractFilterStrategy {
 
             replacement = getAnonymizedToken(scope, token, anonymizationService);
 
-        } else if(StringUtils.equalsIgnoreCase(redactionFormat, STATIC_REPLACE)) {
+        } else if(StringUtils.equalsIgnoreCase(strategy, STATIC_REPLACE)) {
 
             replacement = staticReplacement;
 
-        } else if(StringUtils.equalsIgnoreCase(redactionFormat, TRUNCATE)) {
+        } else if(StringUtils.equalsIgnoreCase(strategy, TRUNCATE)) {
 
             final int truncateLength = getValueOrDefault(truncateDigits, 2);
             replacement = token.substring(0, truncateDigits) + StringUtils.repeat("*", Math.min(token.length() - truncateLength, 5 - truncateDigits));
 
-        } else if(StringUtils.equalsIgnoreCase(redactionFormat, ZERO_LEADING)) {
+        } else if(StringUtils.equalsIgnoreCase(strategy, ZERO_LEADING)) {
 
             replacement = "000" + token.subSequence(3, 5);
 

@@ -16,6 +16,21 @@ public class ZipCodeFilterStrategyTest {
 
     private static final Logger LOGGER = LogManager.getLogger(ZipCodeFilterStrategyTest.class);
 
+    @Test
+    public void replacement1() throws IOException {
+
+        final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
+
+        final ZipCodeFilterStrategy strategy = new ZipCodeFilterStrategy();
+        strategy.setStrategy(AbstractFilterStrategy.STATIC_REPLACE);
+        strategy.setStaticReplacement("static-value");
+
+        final String replacement = strategy.getReplacement("name", "context", "docId", "token", anonymizationService);
+
+        Assert.assertEquals("static-value", replacement);
+
+    }
+
     @Test(expected = IllegalArgumentException.class)
     public void invalidLength0() throws IOException {
 
@@ -115,7 +130,7 @@ public class ZipCodeFilterStrategyTest {
     public void staticReplacement1() throws IOException {
 
         ZipCodeFilterStrategy strategy = new ZipCodeFilterStrategy();
-        strategy.setRedactionFormat(AbstractFilterStrategy.STATIC_REPLACE);
+        strategy.setStrategy(AbstractFilterStrategy.STATIC_REPLACE);
         strategy.setStaticReplacement("whoa");
 
         final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
@@ -130,7 +145,7 @@ public class ZipCodeFilterStrategyTest {
     public void truncateTo2() throws IOException {
 
         ZipCodeFilterStrategy strategy = new ZipCodeFilterStrategy();
-        strategy.setRedactionFormat(ZipCodeFilterStrategy.TRUNCATE);
+        strategy.setStrategy(ZipCodeFilterStrategy.TRUNCATE);
         strategy.setTruncateDigits(2);
 
         AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
@@ -147,7 +162,7 @@ public class ZipCodeFilterStrategyTest {
     public void truncateTo3() throws IOException {
 
         ZipCodeFilterStrategy strategy = new ZipCodeFilterStrategy();
-        strategy.setRedactionFormat(ZipCodeFilterStrategy.TRUNCATE);
+        strategy.setStrategy(ZipCodeFilterStrategy.TRUNCATE);
         strategy.setTruncateDigits(3);
 
         AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
@@ -164,7 +179,7 @@ public class ZipCodeFilterStrategyTest {
     public void truncateTo1() throws IOException {
 
         ZipCodeFilterStrategy strategy = new ZipCodeFilterStrategy();
-        strategy.setRedactionFormat(ZipCodeFilterStrategy.TRUNCATE);
+        strategy.setStrategy(ZipCodeFilterStrategy.TRUNCATE);
         strategy.setTruncateDigits(1);
 
         AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
@@ -181,7 +196,7 @@ public class ZipCodeFilterStrategyTest {
     public void zeroLeading1() throws IOException {
 
         ZipCodeFilterStrategy strategy = new ZipCodeFilterStrategy();
-        strategy.setRedactionFormat(ZipCodeFilterStrategy.ZERO_LEADING);
+        strategy.setStrategy(ZipCodeFilterStrategy.ZERO_LEADING);
 
         AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
 
