@@ -17,7 +17,7 @@ public class PhoneNumberExtensionFilterStrategy extends AbstractFilterStrategy {
 
     private static final Logger LOGGER = LogManager.getLogger(PhoneNumberExtensionFilterStrategy.class);
 
-    private static FilterType filterType = FilterType.PHONE_NUMBER;
+    private static FilterType filterType = FilterType.PHONE_NUMBER_EXTENSION;
 
     @Override
     public boolean evaluateCondition(String context, String documentId, String token, String condition, Map<String, Object> attributes) {

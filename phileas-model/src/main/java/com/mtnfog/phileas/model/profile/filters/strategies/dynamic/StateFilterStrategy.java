@@ -17,7 +17,7 @@ public class StateFilterStrategy extends AbstractFilterStrategy {
 
     private static final Logger LOGGER = LogManager.getLogger(StateFilterStrategy.class);
 
-    private static FilterType filterType = FilterType.LOCATION_CITY;
+    private static FilterType filterType = FilterType.LOCATION_STATE;
 
     @Override
     public boolean evaluateCondition(String context, String documentId, String token, String condition, Map<String, Object> attributes) {
