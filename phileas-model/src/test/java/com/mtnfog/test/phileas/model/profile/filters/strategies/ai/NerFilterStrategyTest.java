@@ -3,6 +3,7 @@ package com.mtnfog.test.phileas.model.profile.filters.strategies.ai;
 import com.mtnfog.phileas.model.profile.filters.strategies.AbstractFilterStrategy;
 import com.mtnfog.phileas.model.profile.filters.strategies.ai.NerFilterStrategy;
 import com.mtnfog.phileas.model.profile.filters.strategies.custom.CustomDictionaryFilterStrategy;
+import com.mtnfog.phileas.model.profile.filters.strategies.rules.AgeFilterStrategy;
 import com.mtnfog.phileas.model.profile.filters.strategies.rules.SsnFilterStrategy;
 import com.mtnfog.phileas.model.services.AnonymizationCacheService;
 import com.mtnfog.phileas.model.services.AnonymizationService;
@@ -67,6 +68,24 @@ public class NerFilterStrategyTest {
         final String replacement = strategy.getReplacement("name", "context", "docId", "token", anonymizationService);
 
         Assert.assertNotEquals("random", replacement);
+
+    }
+
+    @Test
+    public void replacement4() throws IOException {
+
+        final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
+        final AnonymizationCacheService anonymizationCacheService = Mockito.mock(AnonymizationCacheService.class);
+
+        when(anonymizationCacheService.get("context", "token")).thenReturn("random");
+        when(anonymizationService.getAnonymizationCacheService()).thenReturn(anonymizationCacheService);
+
+        final NerFilterStrategy strategy = new NerFilterStrategy();
+        strategy.setStrategy("something-wrong");
+
+        final String replacement = strategy.getReplacement("name", "context", "docId", "token", anonymizationService);
+
+        Assert.assertEquals("{{{REDACTED-entity}}}", replacement);
 
     }
 

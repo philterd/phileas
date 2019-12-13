@@ -3,6 +3,7 @@ package com.mtnfog.test.phileas.model.profile.filters.strategies.dyamic;
 import com.mtnfog.phileas.model.profile.filters.strategies.AbstractFilterStrategy;
 import com.mtnfog.phileas.model.profile.filters.strategies.dynamic.FirstNameFilterStrategy;
 import com.mtnfog.phileas.model.profile.filters.strategies.dynamic.HospitalAbbreviationFilterStrategy;
+import com.mtnfog.phileas.model.profile.filters.strategies.rules.AgeFilterStrategy;
 import com.mtnfog.phileas.model.profile.filters.strategies.rules.SsnFilterStrategy;
 import com.mtnfog.phileas.model.services.AnonymizationCacheService;
 import com.mtnfog.phileas.model.services.AnonymizationService;
@@ -66,6 +67,24 @@ public class HospitalAbbreviationFilterStrategyTest {
         final String replacement = strategy.getReplacement("name", "context", "docId", "token", anonymizationService);
 
         Assert.assertNotEquals("random", replacement);
+
+    }
+
+    @Test
+    public void replacement4() throws IOException {
+
+        final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
+        final AnonymizationCacheService anonymizationCacheService = Mockito.mock(AnonymizationCacheService.class);
+
+        when(anonymizationCacheService.get("context", "token")).thenReturn("random");
+        when(anonymizationService.getAnonymizationCacheService()).thenReturn(anonymizationCacheService);
+
+        final HospitalAbbreviationFilterStrategy strategy = new HospitalAbbreviationFilterStrategy();
+        strategy.setStrategy("something-wrong");
+
+        final String replacement = strategy.getReplacement("name", "context", "docId", "token", anonymizationService);
+
+        Assert.assertEquals("{{{REDACTED-hospital-abbreviation}}}", replacement);
 
     }
 
