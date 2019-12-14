@@ -347,6 +347,8 @@ public class PhileasFilterService implements FilterService, Serializable {
     @Override
     public void reloadFilterProfiles() throws IOException {
 
+        LOGGER.info("Reloading filter profiles.");
+
         filterProfiles.clear();
 
         // Load all of the filter profiles into memory from each filter profile service.
