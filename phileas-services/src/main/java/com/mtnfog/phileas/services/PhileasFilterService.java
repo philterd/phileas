@@ -72,7 +72,140 @@ public class PhileasFilterService implements FilterService, Serializable {
         final String indexDirectory = applicationProperties.getProperty("indexes.directory", System.getProperty("user.dir") + "/indexes/");
 
         // Load the filter profiles from the services into a map.
-        reloadFilterProfiles();
+        reloadFilterProfiles(philterNerEndpoint, anonymizationCacheService, indexDirectory);
+
+    }
+    
+    @Override
+    public List<Span> replacements(String documentId) throws IOException {
+
+        return store.getByDocumentId(documentId);
+
+    }
+
+    @Override
+    public FilterResponse filter(String filterProfileName, String context, String input) throws InvalidFilterProfileException, IOException {
+
+        if(!filterProfiles.containsKey(filterProfileName)) {
+            throw new InvalidFilterProfileException("The filter profile does not exist.");
+        }
+
+        // Get the enabled filters for this filter profile.
+        final List<Filter> enabledFilters = filters.get(filterProfileName);
+
+        // Get the filter profile.
+        final FilterProfile filterProfile = filterProfiles.get(filterProfileName);
+
+        // The list that will contain the spans containing PHI/PII.
+        List<Span> spans = new LinkedList<>();
+
+        // Generate a random document ID.
+        final String documentId = UUID.randomUUID().toString();
+
+        // Execute each filter.
+        for(final Filter f : enabledFilters) {
+            spans.addAll(f.filter(filterProfile, context, documentId, input));
+        }
+
+        // Drop overlapping spans.
+        spans = Span.dropOverlappingSpans(spans);
+
+        // Sort the spans based on the confidence.
+        spans.sort(Comparator.comparing(Span::getConfidence));
+
+        // Perform post-filtering for false positives.
+        for(final PostFilter postFilter : postFilters) {
+            spans = postFilter.filter(input, spans);
+        }
+
+        // The spans that will be persisted. Has to be a deep copy because the shift
+        // below will change the indexes. Doing this to save the original locations of the spans.
+        final List<Span> appliedSpans = spans.stream().map(d -> d.copy()).collect(toList());
+
+        // TODO: Set a flag on each "span" not in appliedSpans that it was not used.
+
+        // Log a metric for each filter type.
+        appliedSpans.forEach(k -> metricsService.incrementFilterType(k.getFilterType()));
+
+        // Define the explanation.
+        final Explanation explanation = new Explanation(appliedSpans, spans);
+
+        // Used to manipulate the text.
+        final StringBuffer buffer = new StringBuffer(input);
+
+        // Initialize this to the the input length but it may grow in length if redactions/replacements
+        // are longer than the original spans.
+        int stringLength = input.length();
+
+        // Go character by character through the input.
+        for(int i = 0; i < stringLength; i++) {
+
+            // Is index i the start of a span?
+            final Span span = Span.doesIndexStartSpan(i, spans);
+
+            if(span != null) {
+
+                // Get the replacement. This might be the token itself or an anonymized version.
+                final String replacement = span.getReplacement();
+
+                final int spanLength = span.getCharacterEnd() - span.getCharacterStart();
+                final int replacementLength = replacement.length();
+
+                if(spanLength != replacementLength) {
+
+                    // We need to adjust the characterStart and characterEnd for the remaining spans.
+                    // A negative value means shift left.
+                    // A positive value means shift right.
+                    final int shift = (spanLength - replacementLength) * -1;
+
+                    // Shift the remaining spans by the shift value.
+                    spans = Span.shiftSpans(shift, span, spans);
+
+                    // Update the length of the string.
+                    stringLength += shift;
+
+                }
+
+                // We can now do the replacement.
+                buffer.replace(span.getCharacterStart(), span.getCharacterEnd(), replacement);
+
+                // Jump ahead outside of this span.
+                i = span.getCharacterEnd();
+
+            }
+
+        }
+
+        metricsService.incrementProcessed();
+
+        // Store the applied spans in the database.
+        if(store != null) {
+            store.insert(appliedSpans);
+        }
+
+
+
+        return new FilterResponse(buffer.toString(), context, documentId, explanation);
+
+    }
+
+    @Override
+    public void reloadFilterProfiles(String philterNerEndpoint, AnonymizationCacheService anonymizationCacheService, String indexDirectory) throws IOException {
+
+        LOGGER.info("Reloading filter profiles.");
+
+        // Clear the current filters.
+        filterProfiles.clear();
+        filters.clear();
+        postFilters.clear();
+
+        // Load all of the filter profiles into memory from each filter profile service.
+        for(FilterProfileService filterProfileService : filterProfileServices) {
+            final Map<String, String> fp = filterProfileService.getAll();
+            for(String k : fp.keySet()) {
+                filterProfiles.put(k, gson.fromJson(fp.get(k), FilterProfile.class));
+            }
+        }
 
         // Load the actual filter profile objects into memory.
         for(final FilterProfile filterProfile : filterProfiles.values()) {
@@ -227,136 +360,6 @@ public class PhileasFilterService implements FilterService, Serializable {
                 postFilters.add(new IgnoredTermsFilter(filterProfile, false));
             }
 
-        }
-
-    }
-
-    @Override
-    public List<Span> replacements(String documentId) throws IOException {
-
-        return store.getByDocumentId(documentId);
-
-    }
-
-    @Override
-    public FilterResponse filter(String filterProfileName, String context, String input) throws InvalidFilterProfileException, IOException {
-
-        if(!filterProfiles.containsKey(filterProfileName)) {
-            throw new InvalidFilterProfileException("The filter profile does not exist.");
-        }
-
-        // Get the enabled filters for this filter profile.
-        final List<Filter> enabledFilters = filters.get(filterProfileName);
-
-        // Get the filter profile.
-        final FilterProfile filterProfile = filterProfiles.get(filterProfileName);
-
-        // The list that will contain the spans containing PHI/PII.
-        List<Span> spans = new LinkedList<>();
-
-        // Generate a random document ID.
-        final String documentId = UUID.randomUUID().toString();
-
-        // Execute each filter.
-        for(final Filter f : enabledFilters) {
-            spans.addAll(f.filter(filterProfile, context, documentId, input));
-        }
-
-        // Drop overlapping spans.
-        spans = Span.dropOverlappingSpans(spans);
-
-        // Sort the spans based on the confidence.
-        spans.sort(Comparator.comparing(Span::getConfidence));
-
-        // Perform post-filtering for false positives.
-        for(final PostFilter postFilter : postFilters) {
-            spans = postFilter.filter(input, spans);
-        }
-
-        // The spans that will be persisted. Has to be a deep copy because the shift
-        // below will change the indexes. Doing this to save the original locations of the spans.
-        final List<Span> appliedSpans = spans.stream().map(d -> d.copy()).collect(toList());
-
-        // TODO: Set a flag on each "span" not in appliedSpans that it was not used.
-
-        // Log a metric for each filter type.
-        appliedSpans.forEach(k -> metricsService.incrementFilterType(k.getFilterType()));
-
-        // Define the explanation.
-        final Explanation explanation = new Explanation(appliedSpans, spans);
-
-        // Used to manipulate the text.
-        final StringBuffer buffer = new StringBuffer(input);
-
-        // Initialize this to the the input length but it may grow in length if redactions/replacements
-        // are longer than the original spans.
-        int stringLength = input.length();
-
-        // Go character by character through the input.
-        for(int i = 0; i < stringLength; i++) {
-
-            // Is index i the start of a span?
-            final Span span = Span.doesIndexStartSpan(i, spans);
-
-            if(span != null) {
-
-                // Get the replacement. This might be the token itself or an anonymized version.
-                final String replacement = span.getReplacement();
-
-                final int spanLength = span.getCharacterEnd() - span.getCharacterStart();
-                final int replacementLength = replacement.length();
-
-                if(spanLength != replacementLength) {
-
-                    // We need to adjust the characterStart and characterEnd for the remaining spans.
-                    // A negative value means shift left.
-                    // A positive value means shift right.
-                    final int shift = (spanLength - replacementLength) * -1;
-
-                    // Shift the remaining spans by the shift value.
-                    spans = Span.shiftSpans(shift, span, spans);
-
-                    // Update the length of the string.
-                    stringLength += shift;
-
-                }
-
-                // We can now do the replacement.
-                buffer.replace(span.getCharacterStart(), span.getCharacterEnd(), replacement);
-
-                // Jump ahead outside of this span.
-                i = span.getCharacterEnd();
-
-            }
-
-        }
-
-        metricsService.incrementProcessed();
-
-        // Store the applied spans in the database.
-        if(store != null) {
-            store.insert(appliedSpans);
-        }
-
-
-
-        return new FilterResponse(buffer.toString(), context, documentId, explanation);
-
-    }
-
-    @Override
-    public void reloadFilterProfiles() throws IOException {
-
-        LOGGER.info("Reloading filter profiles.");
-
-        filterProfiles.clear();
-
-        // Load all of the filter profiles into memory from each filter profile service.
-        for(FilterProfileService filterProfileService : filterProfileServices) {
-            final Map<String, String> fp = filterProfileService.getAll();
-            for(String k : fp.keySet()) {
-                filterProfiles.put(k, gson.fromJson(fp.get(k), FilterProfile.class));
-            }
         }
 
     }
