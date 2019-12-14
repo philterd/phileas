@@ -1,2065 +1,920 @@
 {
-  "definitions": {},
-  "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "http://example.com/root.json",
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Philter Filter Profile Schema",
+  "version": "1.1",
   "type": "object",
-  "title": "The Root Schema",
-  "required": [
-    "name",
-    "identifiers"
-  ],
   "properties": {
     "name": {
-      "$id": "#/properties/name",
-      "type": "string",
-      "title": "The Name Schema",
-      "default": "",
-      "examples": [
-        "default"
-      ],
-      "pattern": "^(.*)$"
+      "type": "string"
     },
     "identifiers": {
-      "$id": "#/properties/identifiers",
       "type": "object",
-      "title": "The Identifiers Schema",
       "properties": {
         "ner": {
-          "$id": "#/properties/identifiers/properties/ner",
           "type": "object",
-          "title": "The Ner Schema",
-          "default": null,
-          "required": [
-            "nerFilterStrategies"
-          ],
           "properties": {
             "nerFilterStrategies": {
-              "$id": "#/properties/identifiers/properties/ner/properties/nerFilterStrategies",
               "type": "array",
-              "title": "The Nerfilterstrategies Schema",
-              "items": {
-                "$id": "#/properties/identifiers/properties/ner/properties/nerFilterStrategies/items",
-                "type": "object",
-                "title": "The Items Schema",
-                "required": [
-                  "strategy",
-                  "redactionFormat",
-                  "replacementScope",
-                  "staticReplacement",
-                  "sensitivityLevel",
-                  "condition"
-                ],
-                "properties": {
-                  "strategy": {
-                    "$id": "#/properties/identifiers/properties/ner/properties/nerFilterStrategies/items/properties/strategy",
-                    "type": "string",
-                    "title": "The Strategy Schema",
-                    "default": "",
-                    "examples": [
-                      "REDACT"
-                    ],
-                    "pattern": "^(.*)$"
-                  },
-                  "redactionFormat": {
-                    "$id": "#/properties/identifiers/properties/ner/properties/nerFilterStrategies/items/properties/redactionFormat",
-                    "type": "string",
-                    "title": "The Redactionformat Schema",
-                    "default": "",
-                    "examples": [
-                      "{{{REDACTED-%t}}}"
-                    ],
-                    "pattern": "^(.*)$"
-                  },
-                  "replacementScope": {
-                    "$id": "#/properties/identifiers/properties/ner/properties/nerFilterStrategies/items/properties/replacementScope",
-                    "type": "string",
-                    "title": "The Replacementscope Schema",
-                    "default": "",
-                    "examples": [
-                      "DOCUMENT"
-                    ],
-                    "pattern": "^(.*)$"
-                  },
-                  "staticReplacement": {
-                    "$id": "#/properties/identifiers/properties/ner/properties/nerFilterStrategies/items/properties/staticReplacement",
-                    "type": "string",
-                    "title": "The Staticreplacement Schema",
-                    "default": "",
-                    "examples": [
-                      ""
-                    ],
-                    "pattern": "^(.*)$"
-                  },
-                  "sensitivityLevel": {
-                    "$id": "#/properties/identifiers/properties/ner/properties/nerFilterStrategies/items/properties/sensitivityLevel",
-                    "type": "string",
-                    "title": "The Sensitivitylevel Schema",
-                    "default": "",
-                    "examples": [
-                      "high"
-                    ],
-                    "pattern": "^(.*)$"
-                  },
-                  "condition": {
-                    "$id": "#/properties/identifiers/properties/ner/properties/nerFilterStrategies/items/properties/condition",
-                    "type": "string",
-                    "title": "The Condition Schema",
-                    "default": "",
-                    "examples": [
-                      ""
-                    ],
-                    "pattern": "^(.*)$"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "age": {
-          "$id": "#/properties/identifiers/properties/age",
-          "type": "object",
-          "title": "The Age Schema",
-          "default": null,
-          "required": [
-            "ageFilterStrategies"
-          ],
-          "properties": {
-            "ageFilterStrategies": {
-              "$id": "#/properties/identifiers/properties/age/properties/ageFilterStrategies",
-              "type": "array",
-              "title": "The Agefilterstrategies Schema",
-              "items": {
-                "$id": "#/properties/identifiers/properties/age/properties/ageFilterStrategies/items",
-                "type": "object",
-                "title": "The Items Schema",
-                "required": [
-                  "strategy",
-                  "redactionFormat",
-                  "replacementScope",
-                  "staticReplacement",
-                  "sensitivityLevel",
-                  "condition"
-                ],
-                "properties": {
-                  "strategy": {
-                    "$id": "#/properties/identifiers/properties/age/properties/ageFilterStrategies/items/properties/strategy",
-                    "type": "string",
-                    "title": "The Strategy Schema",
-                    "default": "",
-                    "examples": [
-                      "REDACT"
-                    ],
-                    "pattern": "^(.*)$"
-                  },
-                  "redactionFormat": {
-                    "$id": "#/properties/identifiers/properties/age/properties/ageFilterStrategies/items/properties/redactionFormat",
-                    "type": "string",
-                    "title": "The Redactionformat Schema",
-                    "default": "",
-                    "examples": [
-                      "{{{REDACTED-%t}}}"
-                    ],
-                    "pattern": "^(.*)$"
-                  },
-                  "replacementScope": {
-                    "$id": "#/properties/identifiers/properties/age/properties/ageFilterStrategies/items/properties/replacementScope",
-                    "type": "string",
-                    "title": "The Replacementscope Schema",
-                    "default": "",
-                    "examples": [
-                      "DOCUMENT"
-                    ],
-                    "pattern": "^(.*)$"
-                  },
-                  "staticReplacement": {
-                    "$id": "#/properties/identifiers/properties/age/properties/ageFilterStrategies/items/properties/staticReplacement",
-                    "type": "string",
-                    "title": "The Staticreplacement Schema",
-                    "default": "",
-                    "examples": [
-                      ""
-                    ],
-                    "pattern": "^(.*)$"
-                  },
-                  "sensitivityLevel": {
-                    "$id": "#/properties/identifiers/properties/age/properties/ageFilterStrategies/items/properties/sensitivityLevel",
-                    "type": "string",
-                    "title": "The Sensitivitylevel Schema",
-                    "default": "",
-                    "examples": [
-                      "high"
-                    ],
-                    "pattern": "^(.*)$"
-                  },
-                  "condition": {
-                    "$id": "#/properties/identifiers/properties/age/properties/ageFilterStrategies/items/properties/condition",
-                    "type": "string",
-                    "title": "The Condition Schema",
-                    "default": "",
-                    "examples": [
-                      ""
-                    ],
-                    "pattern": "^(.*)$"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "creditCard": {
-          "$id": "#/properties/identifiers/properties/creditCard",
-          "type": "object",
-          "title": "The Creditcard Schema",
-          "default": null,
-          "required": [
-            "creditCardFilterStrategies"
-          ],
-          "properties": {
-            "creditCardFilterStrategies": {
-              "$id": "#/properties/identifiers/properties/creditCard/properties/creditCardFilterStrategies",
-              "type": "array",
-              "title": "The Creditcardfilterstrategies Schema",
-              "items": {
-                "$id": "#/properties/identifiers/properties/creditCard/properties/creditCardFilterStrategies/items",
-                "type": "object",
-                "title": "The Items Schema",
-                "required": [
-                  "strategy",
-                  "redactionFormat",
-                  "replacementScope",
-                  "staticReplacement",
-                  "sensitivityLevel",
-                  "condition"
-                ],
-                "properties": {
-                  "strategy": {
-                    "$id": "#/properties/identifiers/properties/creditCard/properties/creditCardFilterStrategies/items/properties/strategy",
-                    "type": "string",
-                    "title": "The Strategy Schema",
-                    "default": "",
-                    "examples": [
-                      "REDACT"
-                    ],
-                    "pattern": "^(.*)$"
-                  },
-                  "redactionFormat": {
-                    "$id": "#/properties/identifiers/properties/creditCard/properties/creditCardFilterStrategies/items/properties/redactionFormat",
-                    "type": "string",
-                    "title": "The Redactionformat Schema",
-                    "default": "",
-                    "examples": [
-                      "{{{REDACTED-%t}}}"
-                    ],
-                    "pattern": "^(.*)$"
-                  },
-                  "replacementScope": {
-                    "$id": "#/properties/identifiers/properties/creditCard/properties/creditCardFilterStrategies/items/properties/replacementScope",
-                    "type": "string",
-                    "title": "The Replacementscope Schema",
-                    "default": "",
-                    "examples": [
-                      "DOCUMENT"
-                    ],
-                    "pattern": "^(.*)$"
-                  },
-                  "staticReplacement": {
-                    "$id": "#/properties/identifiers/properties/creditCard/properties/creditCardFilterStrategies/items/properties/staticReplacement",
-                    "type": "string",
-                    "title": "The Staticreplacement Schema",
-                    "default": "",
-                    "examples": [
-                      ""
-                    ],
-                    "pattern": "^(.*)$"
-                  },
-                  "sensitivityLevel": {
-                    "$id": "#/properties/identifiers/properties/creditCard/properties/creditCardFilterStrategies/items/properties/sensitivityLevel",
-                    "type": "string",
-                    "title": "The Sensitivitylevel Schema",
-                    "default": "",
-                    "examples": [
-                      "high"
-                    ],
-                    "pattern": "^(.*)$"
-                  },
-                  "condition": {
-                    "$id": "#/properties/identifiers/properties/creditCard/properties/creditCardFilterStrategies/items/properties/condition",
-                    "type": "string",
-                    "title": "The Condition Schema",
-                    "default": "",
-                    "examples": [
-                      ""
-                    ],
-                    "pattern": "^(.*)$"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "date": {
-          "$id": "#/properties/identifiers/properties/date",
-          "type": "object",
-          "title": "The Date Schema",
-          "default": null,
-          "required": [
-            "dateFilterStrategies"
-          ],
-          "properties": {
-            "dateFilterStrategies": {
-              "$id": "#/properties/identifiers/properties/date/properties/dateFilterStrategies",
-              "type": "array",
-              "title": "The Datefilterstrategies Schema",
-              "items": {
-                "$id": "#/properties/identifiers/properties/date/properties/dateFilterStrategies/items",
-                "type": "object",
-                "title": "The Items Schema",
-                "required": [
-                  "strategy",
-                  "redactionFormat",
-                  "replacementScope",
-                  "staticReplacement",
-                  "sensitivityLevel",
-                  "condition"
-                ],
-                "properties": {
-                  "strategy": {
-                    "$id": "#/properties/identifiers/properties/date/properties/dateFilterStrategies/items/properties/strategy",
-                    "type": "string",
-                    "title": "The Strategy Schema",
-                    "default": "",
-                    "examples": [
-                      "REDACT"
-                    ],
-                    "pattern": "^(.*)$"
-                  },
-                  "redactionFormat": {
-                    "$id": "#/properties/identifiers/properties/date/properties/dateFilterStrategies/items/properties/redactionFormat",
-                    "type": "string",
-                    "title": "The Redactionformat Schema",
-                    "default": "",
-                    "examples": [
-                      "{{{REDACTED-%t}}}"
-                    ],
-                    "pattern": "^(.*)$"
-                  },
-                  "replacementScope": {
-                    "$id": "#/properties/identifiers/properties/date/properties/dateFilterStrategies/items/properties/replacementScope",
-                    "type": "string",
-                    "title": "The Replacementscope Schema",
-                    "default": "",
-                    "examples": [
-                      "DOCUMENT"
-                    ],
-                    "pattern": "^(.*)$"
-                  },
-                  "staticReplacement": {
-                    "$id": "#/properties/identifiers/properties/date/properties/dateFilterStrategies/items/properties/staticReplacement",
-                    "type": "string",
-                    "title": "The Staticreplacement Schema",
-                    "default": "",
-                    "examples": [
-                      ""
-                    ],
-                    "pattern": "^(.*)$"
-                  },
-                  "sensitivityLevel": {
-                    "$id": "#/properties/identifiers/properties/date/properties/dateFilterStrategies/items/properties/sensitivityLevel",
-                    "type": "string",
-                    "title": "The Sensitivitylevel Schema",
-                    "default": "",
-                    "examples": [
-                      "high"
-                    ],
-                    "pattern": "^(.*)$"
-                  },
-                  "condition": {
-                    "$id": "#/properties/identifiers/properties/date/properties/dateFilterStrategies/items/properties/condition",
-                    "type": "string",
-                    "title": "The Condition Schema",
-                    "default": "",
-                    "examples": [
-                      ""
-                    ],
-                    "pattern": "^(.*)$"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "emailAddress": {
-          "$id": "#/properties/identifiers/properties/emailAddress",
-          "type": "object",
-          "title": "The Emailaddress Schema",
-          "default": null,
-          "required": [
-            "emailAddressFilterStrategies"
-          ],
-          "properties": {
-            "emailAddressFilterStrategies": {
-              "$id": "#/properties/identifiers/properties/emailAddress/properties/emailAddressFilterStrategies",
-              "type": "array",
-              "title": "The Emailaddressfilterstrategies Schema",
-              "items": {
-                "$id": "#/properties/identifiers/properties/emailAddress/properties/emailAddressFilterStrategies/items",
-                "type": "object",
-                "title": "The Items Schema",
-                "required": [
-                  "strategy",
-                  "redactionFormat",
-                  "replacementScope",
-                  "staticReplacement",
-                  "sensitivityLevel",
-                  "condition"
-                ],
-                "properties": {
-                  "strategy": {
-                    "$id": "#/properties/identifiers/properties/emailAddress/properties/emailAddressFilterStrategies/items/properties/strategy",
-                    "type": "string",
-                    "title": "The Strategy Schema",
-                    "default": "",
-                    "examples": [
-                      "REDACT"
-                    ],
-                    "pattern": "^(.*)$"
-                  },
-                  "redactionFormat": {
-                    "$id": "#/properties/identifiers/properties/emailAddress/properties/emailAddressFilterStrategies/items/properties/redactionFormat",
-                    "type": "string",
-                    "title": "The Redactionformat Schema",
-                    "default": "",
-                    "examples": [
-                      "{{{REDACTED-%t}}}"
-                    ],
-                    "pattern": "^(.*)$"
-                  },
-                  "replacementScope": {
-                    "$id": "#/properties/identifiers/properties/emailAddress/properties/emailAddressFilterStrategies/items/properties/replacementScope",
-                    "type": "string",
-                    "title": "The Replacementscope Schema",
-                    "default": "",
-                    "examples": [
-                      "DOCUMENT"
-                    ],
-                    "pattern": "^(.*)$"
-                  },
-                  "staticReplacement": {
-                    "$id": "#/properties/identifiers/properties/emailAddress/properties/emailAddressFilterStrategies/items/properties/staticReplacement",
-                    "type": "string",
-                    "title": "The Staticreplacement Schema",
-                    "default": "",
-                    "examples": [
-                      ""
-                    ],
-                    "pattern": "^(.*)$"
-                  },
-                  "sensitivityLevel": {
-                    "$id": "#/properties/identifiers/properties/emailAddress/properties/emailAddressFilterStrategies/items/properties/sensitivityLevel",
-                    "type": "string",
-                    "title": "The Sensitivitylevel Schema",
-                    "default": "",
-                    "examples": [
-                      "high"
-                    ],
-                    "pattern": "^(.*)$"
-                  },
-                  "condition": {
-                    "$id": "#/properties/identifiers/properties/emailAddress/properties/emailAddressFilterStrategies/items/properties/condition",
-                    "type": "string",
-                    "title": "The Condition Schema",
-                    "default": "",
-                    "examples": [
-                      ""
-                    ],
-                    "pattern": "^(.*)$"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "identifiers": {
-          "$id": "#/properties/identifiers/properties/identifiers",
-          "type": "array",
-          "title": "The Identifiers Schema",
-          "default": null,
-          "items": {
-            "$id": "#/properties/identifiers/properties/identifiers/items",
-            "type": "object",
-            "title": "The Items Schema",
-            "required": [
-              "identifierFilterStrategies",
-              "pattern",
-              "caseSensitive",
-              "label"
-            ],
-            "properties": {
-              "identifierFilterStrategies": {
-                "$id": "#/properties/identifiers/properties/identifiers/items/properties/identifierFilterStrategies",
-                "type": "array",
-                "title": "The Identifierfilterstrategies Schema",
-                "items": {
-                  "$id": "#/properties/identifiers/properties/identifiers/items/properties/identifierFilterStrategies/items",
+              "items": [
+                {
                   "type": "object",
-                  "title": "The Items Schema",
-                  "required": [
-                    "strategy",
-                    "redactionFormat",
-                    "replacementScope",
-                    "staticReplacement",
-                    "sensitivityLevel",
-                    "condition"
-                  ],
                   "properties": {
                     "strategy": {
-                      "$id": "#/properties/identifiers/properties/identifiers/items/properties/identifierFilterStrategies/items/properties/strategy",
-                      "type": "string",
-                      "title": "The Strategy Schema",
-                      "default": "",
-                      "examples": [
-                        "REDACT"
-                      ],
-                      "pattern": "^(.*)$"
+                      "type": "string"
                     },
                     "redactionFormat": {
-                      "$id": "#/properties/identifiers/properties/identifiers/items/properties/identifierFilterStrategies/items/properties/redactionFormat",
-                      "type": "string",
-                      "title": "The Redactionformat Schema",
-                      "default": "",
-                      "examples": [
-                        "{{{REDACTED-%t}}}"
-                      ],
-                      "pattern": "^(.*)$"
+                      "type": "string"
                     },
                     "replacementScope": {
-                      "$id": "#/properties/identifiers/properties/identifiers/items/properties/identifierFilterStrategies/items/properties/replacementScope",
-                      "type": "string",
-                      "title": "The Replacementscope Schema",
-                      "default": "",
-                      "examples": [
-                        "DOCUMENT"
-                      ],
-                      "pattern": "^(.*)$"
+                      "type": "string"
                     },
                     "staticReplacement": {
-                      "$id": "#/properties/identifiers/properties/identifiers/items/properties/identifierFilterStrategies/items/properties/staticReplacement",
-                      "type": "string",
-                      "title": "The Staticreplacement Schema",
-                      "default": "",
-                      "examples": [
-                        ""
-                      ],
-                      "pattern": "^(.*)$"
-                    },
-                    "sensitivityLevel": {
-                      "$id": "#/properties/identifiers/properties/identifiers/items/properties/identifierFilterStrategies/items/properties/sensitivityLevel",
-                      "type": "string",
-                      "title": "The Sensitivitylevel Schema",
-                      "default": "",
-                      "examples": [
-                        "high"
-                      ],
-                      "pattern": "^(.*)$"
+                      "type": "string"
                     },
                     "condition": {
-                      "$id": "#/properties/identifiers/properties/identifiers/items/properties/identifierFilterStrategies/items/properties/condition",
-                      "type": "string",
-                      "title": "The Condition Schema",
-                      "default": "",
-                      "examples": [
-                        ""
-                      ],
-                      "pattern": "^(.*)$"
+                      "type": "string"
                     }
-                  }
+                  },
+                  "required": [
+                    "strategy"
+                  ]
+                }
+              ]
+            }
+          },
+          "required": [
+            "nerFilterStrategies"
+          ]
+        },
+        "dictionaries": {
+          "type": "array",
+          "items": [
+            {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "null"
+                },
+                "terms": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "string"
+                    }
+                  ]
+                },
+                "sensitivity": {
+                  "type": "string"
+                },
+                "customFilterStrategies": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "object",
+                      "properties": {
+                        "strategy": {
+                          "type": "string"
+                        },
+                        "redactionFormat": {
+                          "type": "string"
+                        },
+                        "replacementScope": {
+                          "type": "string"
+                        },
+                        "staticReplacement": {
+                          "type": "string"
+                        },
+                        "condition": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "strategy"
+                      ]
+                    }
+                  ]
                 }
               },
-              "pattern": {
-                "$id": "#/properties/identifiers/properties/identifiers/items/properties/pattern",
-                "type": "string",
-                "title": "The Pattern Schema",
-                "default": "",
-                "examples": [
-                  "\\b[A-Z0-9_-]{4,}\\b"
-                ],
-                "pattern": "^(.*)$"
-              },
-              "caseSensitive": {
-                "$id": "#/properties/identifiers/properties/identifiers/items/properties/caseSensitive",
-                "type": "boolean",
-                "title": "The Casesensitive Schema",
-                "default": false,
-                "examples": [
-                  true
-                ]
-              },
-              "label": {
-                "$id": "#/properties/identifiers/properties/identifiers/items/properties/label",
-                "type": "string",
-                "title": "The Label Schema",
-                "default": "",
-                "examples": [
-                  "custom-identifier"
-                ],
-                "pattern": "^(.*)$"
-              }
+              "required": [
+                "type",
+                "terms",
+                "sensitivity",
+                "customFilterStrategies"
+              ]
             }
-          }
+          ]
+        },
+        "age": {
+          "type": "object",
+          "properties": {
+            "ageFilterStrategies": {
+              "type": "array",
+              "items": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "strategy": {
+                      "type": "string"
+                    },
+                    "redactionFormat": {
+                      "type": "string"
+                    },
+                    "replacementScope": {
+                      "type": "string"
+                    },
+                    "staticReplacement": {
+                      "type": "string"
+                    },
+                    "condition": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "strategy"
+                  ]
+                }
+              ]
+            }
+          },
+          "required": [
+            "ageFilterStrategies"
+          ]
+        },
+        "creditCard": {
+          "type": "object",
+          "properties": {
+            "creditCardFilterStrategies": {
+              "type": "array",
+              "items": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "strategy": {
+                      "type": "string"
+                    },
+                    "redactionFormat": {
+                      "type": "string"
+                    },
+                    "replacementScope": {
+                      "type": "string"
+                    },
+                    "staticReplacement": {
+                      "type": "string"
+                    },
+                    "condition": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "strategy"
+                  ]
+                }
+              ]
+            }
+          },
+          "required": [
+            "creditCardFilterStrategies"
+          ]
+        },
+        "date": {
+          "type": "object",
+          "properties": {
+            "dateFilterStrategies": {
+              "type": "array",
+              "items": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "strategy": {
+                      "type": "string"
+                    },
+                    "redactionFormat": {
+                      "type": "string"
+                    },
+                    "replacementScope": {
+                      "type": "string"
+                    },
+                    "staticReplacement": {
+                      "type": "string"
+                    },
+                    "condition": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "strategy"
+                  ]
+                }
+              ]
+            }
+          },
+          "required": [
+            "dateFilterStrategies"
+          ]
+        },
+        "emailAddress": {
+          "type": "object",
+          "properties": {
+            "emailAddressFilterStrategies": {
+              "type": "array",
+              "items": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "strategy": {
+                      "type": "string"
+                    },
+                    "redactionFormat": {
+                      "type": "string"
+                    },
+                    "replacementScope": {
+                      "type": "string"
+                    },
+                    "staticReplacement": {
+                      "type": "string"
+                    },
+                    "condition": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "strategy"
+                  ]
+                }
+              ]
+            }
+          },
+          "required": [
+            "emailAddressFilterStrategies"
+          ]
+        },
+        "identifiers": {
+          "type": "array",
+          "items": [
+            {
+              "type": "object",
+              "properties": {
+                "identifierFilterStrategies": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "object",
+                      "properties": {
+                        "strategy": {
+                          "type": "string"
+                        },
+                        "redactionFormat": {
+                          "type": "string"
+                        },
+                        "replacementScope": {
+                          "type": "string"
+                        },
+                        "staticReplacement": {
+                          "type": "string"
+                        },
+                        "condition": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "strategy"
+                      ]
+                    }
+                  ]
+                },
+                "pattern": {
+                  "type": "string"
+                },
+                "caseSensitive": {
+                  "type": "boolean"
+                },
+                "label": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "identifierFilterStrategies",
+                "pattern",
+                "caseSensitive",
+                "label"
+              ]
+            }
+          ]
         },
         "ipAddress": {
-          "$id": "#/properties/identifiers/properties/ipAddress",
           "type": "object",
-          "title": "The Ipaddress Schema",
-          "default": null,
-          "required": [
-            "ipAddressFilterStrategies"
-          ],
           "properties": {
             "ipAddressFilterStrategies": {
-              "$id": "#/properties/identifiers/properties/ipAddress/properties/ipAddressFilterStrategies",
               "type": "array",
-              "title": "The Ipaddressfilterstrategies Schema",
-              "items": {
-                "$id": "#/properties/identifiers/properties/ipAddress/properties/ipAddressFilterStrategies/items",
-                "type": "object",
-                "title": "The Items Schema",
-                "required": [
-                  "strategy",
-                  "redactionFormat",
-                  "replacementScope",
-                  "staticReplacement",
-                  "sensitivityLevel",
-                  "condition"
-                ],
-                "properties": {
-                  "strategy": {
-                    "$id": "#/properties/identifiers/properties/ipAddress/properties/ipAddressFilterStrategies/items/properties/strategy",
-                    "type": "string",
-                    "title": "The Strategy Schema",
-                    "default": "",
-                    "examples": [
-                      "REDACT"
-                    ],
-                    "pattern": "^(.*)$"
+              "items": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "strategy": {
+                      "type": "string"
+                    },
+                    "redactionFormat": {
+                      "type": "string"
+                    },
+                    "replacementScope": {
+                      "type": "string"
+                    },
+                    "staticReplacement": {
+                      "type": "string"
+                    },
+                    "condition": {
+                      "type": "string"
+                    }
                   },
-                  "redactionFormat": {
-                    "$id": "#/properties/identifiers/properties/ipAddress/properties/ipAddressFilterStrategies/items/properties/redactionFormat",
-                    "type": "string",
-                    "title": "The Redactionformat Schema",
-                    "default": "",
-                    "examples": [
-                      "{{{REDACTED-%t}}}"
-                    ],
-                    "pattern": "^(.*)$"
-                  },
-                  "replacementScope": {
-                    "$id": "#/properties/identifiers/properties/ipAddress/properties/ipAddressFilterStrategies/items/properties/replacementScope",
-                    "type": "string",
-                    "title": "The Replacementscope Schema",
-                    "default": "",
-                    "examples": [
-                      "DOCUMENT"
-                    ],
-                    "pattern": "^(.*)$"
-                  },
-                  "staticReplacement": {
-                    "$id": "#/properties/identifiers/properties/ipAddress/properties/ipAddressFilterStrategies/items/properties/staticReplacement",
-                    "type": "string",
-                    "title": "The Staticreplacement Schema",
-                    "default": "",
-                    "examples": [
-                      ""
-                    ],
-                    "pattern": "^(.*)$"
-                  },
-                  "sensitivityLevel": {
-                    "$id": "#/properties/identifiers/properties/ipAddress/properties/ipAddressFilterStrategies/items/properties/sensitivityLevel",
-                    "type": "string",
-                    "title": "The Sensitivitylevel Schema",
-                    "default": "",
-                    "examples": [
-                      "high"
-                    ],
-                    "pattern": "^(.*)$"
-                  },
-                  "condition": {
-                    "$id": "#/properties/identifiers/properties/ipAddress/properties/ipAddressFilterStrategies/items/properties/condition",
-                    "type": "string",
-                    "title": "The Condition Schema",
-                    "default": "",
-                    "examples": [
-                      ""
-                    ],
-                    "pattern": "^(.*)$"
-                  }
+                  "required": [
+                    "strategy"
+                  ]
                 }
-              }
+              ]
             }
-          }
+          },
+          "required": [
+            "ipAddressFilterStrategies"
+          ]
         },
         "phoneNumber": {
-          "$id": "#/properties/identifiers/properties/phoneNumber",
           "type": "object",
-          "title": "The Phonenumber Schema",
-          "default": null,
-          "required": [
-            "phoneNumberFilterStrategies"
-          ],
           "properties": {
             "phoneNumberFilterStrategies": {
-              "$id": "#/properties/identifiers/properties/phoneNumber/properties/phoneNumberFilterStrategies",
               "type": "array",
-              "title": "The Phonenumberfilterstrategies Schema",
-              "items": {
-                "$id": "#/properties/identifiers/properties/phoneNumber/properties/phoneNumberFilterStrategies/items",
-                "type": "object",
-                "title": "The Items Schema",
-                "required": [
-                  "strategy",
-                  "redactionFormat",
-                  "replacementScope",
-                  "staticReplacement",
-                  "sensitivityLevel",
-                  "condition"
-                ],
-                "properties": {
-                  "strategy": {
-                    "$id": "#/properties/identifiers/properties/phoneNumber/properties/phoneNumberFilterStrategies/items/properties/strategy",
-                    "type": "string",
-                    "title": "The Strategy Schema",
-                    "default": "",
-                    "examples": [
-                      "REDACT"
-                    ],
-                    "pattern": "^(.*)$"
+              "items": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "strategy": {
+                      "type": "string"
+                    },
+                    "redactionFormat": {
+                      "type": "string"
+                    },
+                    "replacementScope": {
+                      "type": "string"
+                    },
+                    "staticReplacement": {
+                      "type": "string"
+                    },
+                    "condition": {
+                      "type": "string"
+                    }
                   },
-                  "redactionFormat": {
-                    "$id": "#/properties/identifiers/properties/phoneNumber/properties/phoneNumberFilterStrategies/items/properties/redactionFormat",
-                    "type": "string",
-                    "title": "The Redactionformat Schema",
-                    "default": "",
-                    "examples": [
-                      "{{{REDACTED-%t}}}"
-                    ],
-                    "pattern": "^(.*)$"
-                  },
-                  "replacementScope": {
-                    "$id": "#/properties/identifiers/properties/phoneNumber/properties/phoneNumberFilterStrategies/items/properties/replacementScope",
-                    "type": "string",
-                    "title": "The Replacementscope Schema",
-                    "default": "",
-                    "examples": [
-                      "DOCUMENT"
-                    ],
-                    "pattern": "^(.*)$"
-                  },
-                  "staticReplacement": {
-                    "$id": "#/properties/identifiers/properties/phoneNumber/properties/phoneNumberFilterStrategies/items/properties/staticReplacement",
-                    "type": "string",
-                    "title": "The Staticreplacement Schema",
-                    "default": "",
-                    "examples": [
-                      ""
-                    ],
-                    "pattern": "^(.*)$"
-                  },
-                  "sensitivityLevel": {
-                    "$id": "#/properties/identifiers/properties/phoneNumber/properties/phoneNumberFilterStrategies/items/properties/sensitivityLevel",
-                    "type": "string",
-                    "title": "The Sensitivitylevel Schema",
-                    "default": "",
-                    "examples": [
-                      "high"
-                    ],
-                    "pattern": "^(.*)$"
-                  },
-                  "condition": {
-                    "$id": "#/properties/identifiers/properties/phoneNumber/properties/phoneNumberFilterStrategies/items/properties/condition",
-                    "type": "string",
-                    "title": "The Condition Schema",
-                    "default": "",
-                    "examples": [
-                      ""
-                    ],
-                    "pattern": "^(.*)$"
-                  }
+                  "required": [
+                    "strategy"
+                  ]
                 }
-              }
+              ]
             }
-          }
+          },
+          "required": [
+            "phoneNumberFilterStrategies"
+          ]
         },
         "phoneNumberExtension": {
-          "$id": "#/properties/identifiers/properties/phoneNumberExtension",
           "type": "object",
-          "title": "The Phonenumberextension Schema",
-          "default": null,
-          "required": [
-            "phoneNumberExtensionFilterStrategies"
-          ],
           "properties": {
             "phoneNumberExtensionFilterStrategies": {
-              "$id": "#/properties/identifiers/properties/phoneNumberExtension/properties/phoneNumberExtensionFilterStrategies",
               "type": "array",
-              "title": "The Phonenumberextensionfilterstrategies Schema",
-              "items": {
-                "$id": "#/properties/identifiers/properties/phoneNumberExtension/properties/phoneNumberExtensionFilterStrategies/items",
-                "type": "object",
-                "title": "The Items Schema",
-                "required": [
-                  "strategy",
-                  "redactionFormat",
-                  "replacementScope",
-                  "staticReplacement",
-                  "sensitivityLevel",
-                  "condition"
-                ],
-                "properties": {
-                  "strategy": {
-                    "$id": "#/properties/identifiers/properties/phoneNumberExtension/properties/phoneNumberExtensionFilterStrategies/items/properties/strategy",
-                    "type": "string",
-                    "title": "The Strategy Schema",
-                    "default": "",
-                    "examples": [
-                      "REDACT"
-                    ],
-                    "pattern": "^(.*)$"
+              "items": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "strategy": {
+                      "type": "string"
+                    },
+                    "redactionFormat": {
+                      "type": "string"
+                    },
+                    "replacementScope": {
+                      "type": "string"
+                    },
+                    "staticReplacement": {
+                      "type": "string"
+                    },
+                    "condition": {
+                      "type": "string"
+                    }
                   },
-                  "redactionFormat": {
-                    "$id": "#/properties/identifiers/properties/phoneNumberExtension/properties/phoneNumberExtensionFilterStrategies/items/properties/redactionFormat",
-                    "type": "string",
-                    "title": "The Redactionformat Schema",
-                    "default": "",
-                    "examples": [
-                      "{{{REDACTED-%t}}}"
-                    ],
-                    "pattern": "^(.*)$"
-                  },
-                  "replacementScope": {
-                    "$id": "#/properties/identifiers/properties/phoneNumberExtension/properties/phoneNumberExtensionFilterStrategies/items/properties/replacementScope",
-                    "type": "string",
-                    "title": "The Replacementscope Schema",
-                    "default": "",
-                    "examples": [
-                      "DOCUMENT"
-                    ],
-                    "pattern": "^(.*)$"
-                  },
-                  "staticReplacement": {
-                    "$id": "#/properties/identifiers/properties/phoneNumberExtension/properties/phoneNumberExtensionFilterStrategies/items/properties/staticReplacement",
-                    "type": "string",
-                    "title": "The Staticreplacement Schema",
-                    "default": "",
-                    "examples": [
-                      ""
-                    ],
-                    "pattern": "^(.*)$"
-                  },
-                  "sensitivityLevel": {
-                    "$id": "#/properties/identifiers/properties/phoneNumberExtension/properties/phoneNumberExtensionFilterStrategies/items/properties/sensitivityLevel",
-                    "type": "string",
-                    "title": "The Sensitivitylevel Schema",
-                    "default": "",
-                    "examples": [
-                      "high"
-                    ],
-                    "pattern": "^(.*)$"
-                  },
-                  "condition": {
-                    "$id": "#/properties/identifiers/properties/phoneNumberExtension/properties/phoneNumberExtensionFilterStrategies/items/properties/condition",
-                    "type": "string",
-                    "title": "The Condition Schema",
-                    "default": "",
-                    "examples": [
-                      ""
-                    ],
-                    "pattern": "^(.*)$"
-                  }
+                  "required": [
+                    "strategy"
+                  ]
                 }
-              }
+              ]
             }
-          }
+          },
+          "required": [
+            "phoneNumberExtensionFilterStrategies"
+          ]
         },
         "ssn": {
-          "$id": "#/properties/identifiers/properties/ssn",
           "type": "object",
-          "title": "The Ssn Schema",
-          "default": null,
-          "required": [
-            "ssnFilterStrategies"
-          ],
           "properties": {
             "ssnFilterStrategies": {
-              "$id": "#/properties/identifiers/properties/ssn/properties/ssnFilterStrategies",
               "type": "array",
-              "title": "The Ssnfilterstrategies Schema",
-              "items": {
-                "$id": "#/properties/identifiers/properties/ssn/properties/ssnFilterStrategies/items",
-                "type": "object",
-                "title": "The Items Schema",
-                "required": [
-                  "strategy",
-                  "redactionFormat",
-                  "replacementScope",
-                  "staticReplacement",
-                  "sensitivityLevel",
-                  "condition"
-                ],
-                "properties": {
-                  "strategy": {
-                    "$id": "#/properties/identifiers/properties/ssn/properties/ssnFilterStrategies/items/properties/strategy",
-                    "type": "string",
-                    "title": "The Strategy Schema",
-                    "default": "",
-                    "examples": [
-                      "REDACT"
-                    ],
-                    "pattern": "^(.*)$"
+              "items": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "strategy": {
+                      "type": "string"
+                    },
+                    "redactionFormat": {
+                      "type": "string"
+                    },
+                    "replacementScope": {
+                      "type": "string"
+                    },
+                    "staticReplacement": {
+                      "type": "string"
+                    },
+                    "condition": {
+                      "type": "string"
+                    }
                   },
-                  "redactionFormat": {
-                    "$id": "#/properties/identifiers/properties/ssn/properties/ssnFilterStrategies/items/properties/redactionFormat",
-                    "type": "string",
-                    "title": "The Redactionformat Schema",
-                    "default": "",
-                    "examples": [
-                      "{{{REDACTED-%t}}}"
-                    ],
-                    "pattern": "^(.*)$"
-                  },
-                  "replacementScope": {
-                    "$id": "#/properties/identifiers/properties/ssn/properties/ssnFilterStrategies/items/properties/replacementScope",
-                    "type": "string",
-                    "title": "The Replacementscope Schema",
-                    "default": "",
-                    "examples": [
-                      "DOCUMENT"
-                    ],
-                    "pattern": "^(.*)$"
-                  },
-                  "staticReplacement": {
-                    "$id": "#/properties/identifiers/properties/ssn/properties/ssnFilterStrategies/items/properties/staticReplacement",
-                    "type": "string",
-                    "title": "The Staticreplacement Schema",
-                    "default": "",
-                    "examples": [
-                      ""
-                    ],
-                    "pattern": "^(.*)$"
-                  },
-                  "sensitivityLevel": {
-                    "$id": "#/properties/identifiers/properties/ssn/properties/ssnFilterStrategies/items/properties/sensitivityLevel",
-                    "type": "string",
-                    "title": "The Sensitivitylevel Schema",
-                    "default": "",
-                    "examples": [
-                      "high"
-                    ],
-                    "pattern": "^(.*)$"
-                  },
-                  "condition": {
-                    "$id": "#/properties/identifiers/properties/ssn/properties/ssnFilterStrategies/items/properties/condition",
-                    "type": "string",
-                    "title": "The Condition Schema",
-                    "default": "",
-                    "examples": [
-                      ""
-                    ],
-                    "pattern": "^(.*)$"
-                  }
+                  "required": [
+                    "strategy"
+                  ]
                 }
-              }
+              ]
             }
-          }
+          },
+          "required": [
+            "ssnFilterStrategies"
+          ]
         },
         "stateAbbreviation": {
-          "$id": "#/properties/identifiers/properties/stateAbbreviation",
           "type": "object",
-          "title": "The Stateabbreviation Schema",
-          "default": null,
-          "required": [
-            "stateAbbreviationFilterStrategies"
-          ],
           "properties": {
             "stateAbbreviationFilterStrategies": {
-              "$id": "#/properties/identifiers/properties/stateAbbreviation/properties/stateAbbreviationFilterStrategies",
               "type": "array",
-              "title": "The Stateabbreviationfilterstrategies Schema",
-              "items": {
-                "$id": "#/properties/identifiers/properties/stateAbbreviation/properties/stateAbbreviationFilterStrategies/items",
-                "type": "object",
-                "title": "The Items Schema",
-                "required": [
-                  "strategy",
-                  "redactionFormat",
-                  "replacementScope",
-                  "staticReplacement",
-                  "sensitivityLevel",
-                  "condition"
-                ],
-                "properties": {
-                  "strategy": {
-                    "$id": "#/properties/identifiers/properties/stateAbbreviation/properties/stateAbbreviationFilterStrategies/items/properties/strategy",
-                    "type": "string",
-                    "title": "The Strategy Schema",
-                    "default": "",
-                    "examples": [
-                      "REDACT"
-                    ],
-                    "pattern": "^(.*)$"
+              "items": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "strategy": {
+                      "type": "string"
+                    },
+                    "redactionFormat": {
+                      "type": "string"
+                    },
+                    "replacementScope": {
+                      "type": "string"
+                    },
+                    "staticReplacement": {
+                      "type": "string"
+                    },
+                    "condition": {
+                      "type": "string"
+                    }
                   },
-                  "redactionFormat": {
-                    "$id": "#/properties/identifiers/properties/stateAbbreviation/properties/stateAbbreviationFilterStrategies/items/properties/redactionFormat",
-                    "type": "string",
-                    "title": "The Redactionformat Schema",
-                    "default": "",
-                    "examples": [
-                      "{{{REDACTED-%t}}}"
-                    ],
-                    "pattern": "^(.*)$"
-                  },
-                  "replacementScope": {
-                    "$id": "#/properties/identifiers/properties/stateAbbreviation/properties/stateAbbreviationFilterStrategies/items/properties/replacementScope",
-                    "type": "string",
-                    "title": "The Replacementscope Schema",
-                    "default": "",
-                    "examples": [
-                      "DOCUMENT"
-                    ],
-                    "pattern": "^(.*)$"
-                  },
-                  "staticReplacement": {
-                    "$id": "#/properties/identifiers/properties/stateAbbreviation/properties/stateAbbreviationFilterStrategies/items/properties/staticReplacement",
-                    "type": "string",
-                    "title": "The Staticreplacement Schema",
-                    "default": "",
-                    "examples": [
-                      ""
-                    ],
-                    "pattern": "^(.*)$"
-                  },
-                  "sensitivityLevel": {
-                    "$id": "#/properties/identifiers/properties/stateAbbreviation/properties/stateAbbreviationFilterStrategies/items/properties/sensitivityLevel",
-                    "type": "string",
-                    "title": "The Sensitivitylevel Schema",
-                    "default": "",
-                    "examples": [
-                      "high"
-                    ],
-                    "pattern": "^(.*)$"
-                  },
-                  "condition": {
-                    "$id": "#/properties/identifiers/properties/stateAbbreviation/properties/stateAbbreviationFilterStrategies/items/properties/condition",
-                    "type": "string",
-                    "title": "The Condition Schema",
-                    "default": "",
-                    "examples": [
-                      ""
-                    ],
-                    "pattern": "^(.*)$"
-                  }
+                  "required": [
+                    "strategy"
+                  ]
                 }
-              }
+              ]
             }
-          }
+          },
+          "required": [
+            "stateAbbreviationFilterStrategies"
+          ]
         },
         "url": {
-          "$id": "#/properties/identifiers/properties/url",
           "type": "object",
-          "title": "The Url Schema",
-          "default": null,
-          "required": [
-            "urlFilterStrategies"
-          ],
           "properties": {
             "urlFilterStrategies": {
-              "$id": "#/properties/identifiers/properties/url/properties/urlFilterStrategies",
               "type": "array",
-              "title": "The Urlfilterstrategies Schema",
-              "items": {
-                "$id": "#/properties/identifiers/properties/url/properties/urlFilterStrategies/items",
-                "type": "object",
-                "title": "The Items Schema",
-                "required": [
-                  "strategy",
-                  "redactionFormat",
-                  "replacementScope",
-                  "staticReplacement",
-                  "sensitivityLevel",
-                  "condition"
-                ],
-                "properties": {
-                  "strategy": {
-                    "$id": "#/properties/identifiers/properties/url/properties/urlFilterStrategies/items/properties/strategy",
-                    "type": "string",
-                    "title": "The Strategy Schema",
-                    "default": "",
-                    "examples": [
-                      "REDACT"
-                    ],
-                    "pattern": "^(.*)$"
+              "items": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "strategy": {
+                      "type": "string"
+                    },
+                    "redactionFormat": {
+                      "type": "string"
+                    },
+                    "replacementScope": {
+                      "type": "string"
+                    },
+                    "staticReplacement": {
+                      "type": "string"
+                    },
+                    "condition": {
+                      "type": "string"
+                    }
                   },
-                  "redactionFormat": {
-                    "$id": "#/properties/identifiers/properties/url/properties/urlFilterStrategies/items/properties/redactionFormat",
-                    "type": "string",
-                    "title": "The Redactionformat Schema",
-                    "default": "",
-                    "examples": [
-                      "{{{REDACTED-%t}}}"
-                    ],
-                    "pattern": "^(.*)$"
-                  },
-                  "replacementScope": {
-                    "$id": "#/properties/identifiers/properties/url/properties/urlFilterStrategies/items/properties/replacementScope",
-                    "type": "string",
-                    "title": "The Replacementscope Schema",
-                    "default": "",
-                    "examples": [
-                      "DOCUMENT"
-                    ],
-                    "pattern": "^(.*)$"
-                  },
-                  "staticReplacement": {
-                    "$id": "#/properties/identifiers/properties/url/properties/urlFilterStrategies/items/properties/staticReplacement",
-                    "type": "string",
-                    "title": "The Staticreplacement Schema",
-                    "default": "",
-                    "examples": [
-                      ""
-                    ],
-                    "pattern": "^(.*)$"
-                  },
-                  "sensitivityLevel": {
-                    "$id": "#/properties/identifiers/properties/url/properties/urlFilterStrategies/items/properties/sensitivityLevel",
-                    "type": "string",
-                    "title": "The Sensitivitylevel Schema",
-                    "default": "",
-                    "examples": [
-                      "high"
-                    ],
-                    "pattern": "^(.*)$"
-                  },
-                  "condition": {
-                    "$id": "#/properties/identifiers/properties/url/properties/urlFilterStrategies/items/properties/condition",
-                    "type": "string",
-                    "title": "The Condition Schema",
-                    "default": "",
-                    "examples": [
-                      ""
-                    ],
-                    "pattern": "^(.*)$"
-                  }
+                  "required": [
+                    "strategy"
+                  ]
                 }
-              }
+              ]
             }
-          }
+          },
+          "required": [
+            "urlFilterStrategies"
+          ]
         },
         "vin": {
-          "$id": "#/properties/identifiers/properties/vin",
           "type": "object",
-          "title": "The Vin Schema",
-          "default": null,
-          "required": [
-            "vinFilterStrategies"
-          ],
           "properties": {
             "vinFilterStrategies": {
-              "$id": "#/properties/identifiers/properties/vin/properties/vinFilterStrategies",
               "type": "array",
-              "title": "The Vinfilterstrategies Schema",
-              "items": {
-                "$id": "#/properties/identifiers/properties/vin/properties/vinFilterStrategies/items",
-                "type": "object",
-                "title": "The Items Schema",
-                "required": [
-                  "strategy",
-                  "redactionFormat",
-                  "replacementScope",
-                  "staticReplacement",
-                  "sensitivityLevel",
-                  "condition"
-                ],
-                "properties": {
-                  "strategy": {
-                    "$id": "#/properties/identifiers/properties/vin/properties/vinFilterStrategies/items/properties/strategy",
-                    "type": "string",
-                    "title": "The Strategy Schema",
-                    "default": "",
-                    "examples": [
-                      "REDACT"
-                    ],
-                    "pattern": "^(.*)$"
+              "items": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "strategy": {
+                      "type": "string"
+                    },
+                    "redactionFormat": {
+                      "type": "string"
+                    },
+                    "replacementScope": {
+                      "type": "string"
+                    },
+                    "staticReplacement": {
+                      "type": "string"
+                    },
+                    "condition": {
+                      "type": "string"
+                    }
                   },
-                  "redactionFormat": {
-                    "$id": "#/properties/identifiers/properties/vin/properties/vinFilterStrategies/items/properties/redactionFormat",
-                    "type": "string",
-                    "title": "The Redactionformat Schema",
-                    "default": "",
-                    "examples": [
-                      "{{{REDACTED-%t}}}"
-                    ],
-                    "pattern": "^(.*)$"
-                  },
-                  "replacementScope": {
-                    "$id": "#/properties/identifiers/properties/vin/properties/vinFilterStrategies/items/properties/replacementScope",
-                    "type": "string",
-                    "title": "The Replacementscope Schema",
-                    "default": "",
-                    "examples": [
-                      "DOCUMENT"
-                    ],
-                    "pattern": "^(.*)$"
-                  },
-                  "staticReplacement": {
-                    "$id": "#/properties/identifiers/properties/vin/properties/vinFilterStrategies/items/properties/staticReplacement",
-                    "type": "string",
-                    "title": "The Staticreplacement Schema",
-                    "default": "",
-                    "examples": [
-                      ""
-                    ],
-                    "pattern": "^(.*)$"
-                  },
-                  "sensitivityLevel": {
-                    "$id": "#/properties/identifiers/properties/vin/properties/vinFilterStrategies/items/properties/sensitivityLevel",
-                    "type": "string",
-                    "title": "The Sensitivitylevel Schema",
-                    "default": "",
-                    "examples": [
-                      "high"
-                    ],
-                    "pattern": "^(.*)$"
-                  },
-                  "condition": {
-                    "$id": "#/properties/identifiers/properties/vin/properties/vinFilterStrategies/items/properties/condition",
-                    "type": "string",
-                    "title": "The Condition Schema",
-                    "default": "",
-                    "examples": [
-                      ""
-                    ],
-                    "pattern": "^(.*)$"
-                  }
+                  "required": [
+                    "strategy"
+                  ]
                 }
-              }
+              ]
             }
-          }
+          },
+          "required": [
+            "vinFilterStrategies"
+          ]
         },
         "zipCode": {
-          "$id": "#/properties/identifiers/properties/zipCode",
           "type": "object",
-          "title": "The Zipcode Schema",
-          "default": null,
-          "required": [
-            "zipCodeFilterStrategy"
-          ],
           "properties": {
             "zipCodeFilterStrategy": {
-              "$id": "#/properties/identifiers/properties/zipCode/properties/zipCodeFilterStrategy",
               "type": "array",
-              "title": "The Zipcodefilterstrategy Schema",
-              "items": {
-                "$id": "#/properties/identifiers/properties/zipCode/properties/zipCodeFilterStrategy/items",
-                "type": "object",
-                "title": "The Items Schema",
-                "required": [
-                  "truncateDigits",
-                  "strategy",
-                  "redactionFormat",
-                  "replacementScope",
-                  "staticReplacement",
-                  "sensitivityLevel",
-                  "condition"
-                ],
-                "properties": {
-                  "truncateDigits": {
-                    "$id": "#/properties/identifiers/properties/zipCode/properties/zipCodeFilterStrategy/items/properties/truncateDigits",
-                    "type": "integer",
-                    "title": "The Truncatedigits Schema",
-                    "default": 0,
-                    "examples": [
-                      2
-                    ]
+              "items": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "truncateDigits": {
+                      "type": "integer"
+                    },
+                    "strategy": {
+                      "type": "string"
+                    },
+                    "redactionFormat": {
+                      "type": "string"
+                    },
+                    "replacementScope": {
+                      "type": "string"
+                    },
+                    "staticReplacement": {
+                      "type": "string"
+                    },
+                    "condition": {
+                      "type": "string"
+                    }
                   },
-                  "strategy": {
-                    "$id": "#/properties/identifiers/properties/zipCode/properties/zipCodeFilterStrategy/items/properties/strategy",
-                    "type": "string",
-                    "title": "The Strategy Schema",
-                    "default": "",
-                    "examples": [
-                      "TRUNCATE"
-                    ],
-                    "pattern": "^(.*)$"
-                  },
-                  "redactionFormat": {
-                    "$id": "#/properties/identifiers/properties/zipCode/properties/zipCodeFilterStrategy/items/properties/redactionFormat",
-                    "type": "string",
-                    "title": "The Redactionformat Schema",
-                    "default": "",
-                    "examples": [
-                      "{{{REDACTED-%t}}}"
-                    ],
-                    "pattern": "^(.*)$"
-                  },
-                  "replacementScope": {
-                    "$id": "#/properties/identifiers/properties/zipCode/properties/zipCodeFilterStrategy/items/properties/replacementScope",
-                    "type": "string",
-                    "title": "The Replacementscope Schema",
-                    "default": "",
-                    "examples": [
-                      "DOCUMENT"
-                    ],
-                    "pattern": "^(.*)$"
-                  },
-                  "staticReplacement": {
-                    "$id": "#/properties/identifiers/properties/zipCode/properties/zipCodeFilterStrategy/items/properties/staticReplacement",
-                    "type": "string",
-                    "title": "The Staticreplacement Schema",
-                    "default": "",
-                    "examples": [
-                      ""
-                    ],
-                    "pattern": "^(.*)$"
-                  },
-                  "sensitivityLevel": {
-                    "$id": "#/properties/identifiers/properties/zipCode/properties/zipCodeFilterStrategy/items/properties/sensitivityLevel",
-                    "type": "string",
-                    "title": "The Sensitivitylevel Schema",
-                    "default": "",
-                    "examples": [
-                      "high"
-                    ],
-                    "pattern": "^(.*)$"
-                  },
-                  "condition": {
-                    "$id": "#/properties/identifiers/properties/zipCode/properties/zipCodeFilterStrategy/items/properties/condition",
-                    "type": "string",
-                    "title": "The Condition Schema",
-                    "default": "",
-                    "examples": [
-                      "population < 4500"
-                    ],
-                    "pattern": "^(.*)$"
-                  }
+                  "required": [
+                    "truncateDigits",
+                    "strategy"
+                  ]
                 }
-              }
+              ]
             }
-          }
+          },
+          "required": [
+            "zipCodeFilterStrategy"
+          ]
         },
         "city": {
-          "$id": "#/properties/identifiers/properties/city",
           "type": "object",
-          "title": "The City Schema",
-          "default": null,
+          "properties": {
+            "cityFilterStrategies": {
+              "type": "array",
+              "items": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "strategy": {
+                      "type": "string"
+                    },
+                    "redactionFormat": {
+                      "type": "string"
+                    },
+                    "replacementScope": {
+                      "type": "string"
+                    },
+                    "staticReplacement": {
+                      "type": "string"
+                    },
+                    "condition": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "strategy"
+                  ]
+                }
+              ]
+            },
+            "sensitivity": {
+              "type": "string"
+            }
+          },
           "required": [
             "cityFilterStrategies",
             "sensitivity"
-          ],
-          "properties": {
-            "cityFilterStrategies": {
-              "$id": "#/properties/identifiers/properties/city/properties/cityFilterStrategies",
-              "type": "array",
-              "title": "The Cityfilterstrategies Schema",
-              "items": {
-                "$id": "#/properties/identifiers/properties/city/properties/cityFilterStrategies/items",
-                "type": "object",
-                "title": "The Items Schema",
-                "required": [
-                  "strategy",
-                  "redactionFormat",
-                  "replacementScope",
-                  "staticReplacement",
-                  "sensitivityLevel",
-                  "condition"
-                ],
-                "properties": {
-                  "strategy": {
-                    "$id": "#/properties/identifiers/properties/city/properties/cityFilterStrategies/items/properties/strategy",
-                    "type": "string",
-                    "title": "The Strategy Schema",
-                    "default": "",
-                    "examples": [
-                      "REDACT"
-                    ],
-                    "pattern": "^(.*)$"
-                  },
-                  "redactionFormat": {
-                    "$id": "#/properties/identifiers/properties/city/properties/cityFilterStrategies/items/properties/redactionFormat",
-                    "type": "string",
-                    "title": "The Redactionformat Schema",
-                    "default": "",
-                    "examples": [
-                      "{{{REDACTED-%t}}}"
-                    ],
-                    "pattern": "^(.*)$"
-                  },
-                  "replacementScope": {
-                    "$id": "#/properties/identifiers/properties/city/properties/cityFilterStrategies/items/properties/replacementScope",
-                    "type": "string",
-                    "title": "The Replacementscope Schema",
-                    "default": "",
-                    "examples": [
-                      "DOCUMENT"
-                    ],
-                    "pattern": "^(.*)$"
-                  },
-                  "staticReplacement": {
-                    "$id": "#/properties/identifiers/properties/city/properties/cityFilterStrategies/items/properties/staticReplacement",
-                    "type": "string",
-                    "title": "The Staticreplacement Schema",
-                    "default": "",
-                    "examples": [
-                      ""
-                    ],
-                    "pattern": "^(.*)$"
-                  },
-                  "sensitivityLevel": {
-                    "$id": "#/properties/identifiers/properties/city/properties/cityFilterStrategies/items/properties/sensitivityLevel",
-                    "type": "string",
-                    "title": "The Sensitivitylevel Schema",
-                    "default": "",
-                    "examples": [
-                      "high"
-                    ],
-                    "pattern": "^(.*)$"
-                  },
-                  "condition": {
-                    "$id": "#/properties/identifiers/properties/city/properties/cityFilterStrategies/items/properties/condition",
-                    "type": "string",
-                    "title": "The Condition Schema",
-                    "default": "",
-                    "examples": [
-                      ""
-                    ],
-                    "pattern": "^(.*)$"
-                  }
-                }
-              }
-            },
-            "sensitivity": {
-              "$id": "#/properties/identifiers/properties/city/properties/sensitivity",
-              "type": "string",
-              "title": "The Sensitivity Schema",
-              "default": "",
-              "examples": [
-                "medium"
-              ],
-              "pattern": "^(.*)$"
-            }
-          }
+          ]
         },
         "county": {
-          "$id": "#/properties/identifiers/properties/county",
           "type": "object",
-          "title": "The County Schema",
-          "default": null,
+          "properties": {
+            "countyFilterStrategies": {
+              "type": "array",
+              "items": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "strategy": {
+                      "type": "string"
+                    },
+                    "redactionFormat": {
+                      "type": "string"
+                    },
+                    "replacementScope": {
+                      "type": "string"
+                    },
+                    "staticReplacement": {
+                      "type": "string"
+                    },
+                    "condition": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "strategy"
+                  ]
+                }
+              ]
+            },
+            "sensitivity": {
+              "type": "string"
+            }
+          },
           "required": [
             "countyFilterStrategies",
             "sensitivity"
-          ],
-          "properties": {
-            "countyFilterStrategies": {
-              "$id": "#/properties/identifiers/properties/county/properties/countyFilterStrategies",
-              "type": "array",
-              "title": "The Countyfilterstrategies Schema",
-              "items": {
-                "$id": "#/properties/identifiers/properties/county/properties/countyFilterStrategies/items",
-                "type": "object",
-                "title": "The Items Schema",
-                "required": [
-                  "strategy",
-                  "redactionFormat",
-                  "replacementScope",
-                  "staticReplacement",
-                  "sensitivityLevel",
-                  "condition"
-                ],
-                "properties": {
-                  "strategy": {
-                    "$id": "#/properties/identifiers/properties/county/properties/countyFilterStrategies/items/properties/strategy",
-                    "type": "string",
-                    "title": "The Strategy Schema",
-                    "default": "",
-                    "examples": [
-                      "REDACT"
-                    ],
-                    "pattern": "^(.*)$"
-                  },
-                  "redactionFormat": {
-                    "$id": "#/properties/identifiers/properties/county/properties/countyFilterStrategies/items/properties/redactionFormat",
-                    "type": "string",
-                    "title": "The Redactionformat Schema",
-                    "default": "",
-                    "examples": [
-                      "{{{REDACTED-%t}}}"
-                    ],
-                    "pattern": "^(.*)$"
-                  },
-                  "replacementScope": {
-                    "$id": "#/properties/identifiers/properties/county/properties/countyFilterStrategies/items/properties/replacementScope",
-                    "type": "string",
-                    "title": "The Replacementscope Schema",
-                    "default": "",
-                    "examples": [
-                      "DOCUMENT"
-                    ],
-                    "pattern": "^(.*)$"
-                  },
-                  "staticReplacement": {
-                    "$id": "#/properties/identifiers/properties/county/properties/countyFilterStrategies/items/properties/staticReplacement",
-                    "type": "string",
-                    "title": "The Staticreplacement Schema",
-                    "default": "",
-                    "examples": [
-                      ""
-                    ],
-                    "pattern": "^(.*)$"
-                  },
-                  "sensitivityLevel": {
-                    "$id": "#/properties/identifiers/properties/county/properties/countyFilterStrategies/items/properties/sensitivityLevel",
-                    "type": "string",
-                    "title": "The Sensitivitylevel Schema",
-                    "default": "",
-                    "examples": [
-                      "high"
-                    ],
-                    "pattern": "^(.*)$"
-                  },
-                  "condition": {
-                    "$id": "#/properties/identifiers/properties/county/properties/countyFilterStrategies/items/properties/condition",
-                    "type": "string",
-                    "title": "The Condition Schema",
-                    "default": "",
-                    "examples": [
-                      ""
-                    ],
-                    "pattern": "^(.*)$"
-                  }
-                }
-              }
-            },
-            "sensitivity": {
-              "$id": "#/properties/identifiers/properties/county/properties/sensitivity",
-              "type": "string",
-              "title": "The Sensitivity Schema",
-              "default": "",
-              "examples": [
-                "medium"
-              ],
-              "pattern": "^(.*)$"
-            }
-          }
+          ]
         },
         "firstName": {
-          "$id": "#/properties/identifiers/properties/firstName",
           "type": "object",
-          "title": "The Firstname Schema",
-          "default": null,
+          "properties": {
+            "firstNameFilterStrategies": {
+              "type": "array",
+              "items": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "strategy": {
+                      "type": "string"
+                    },
+                    "redactionFormat": {
+                      "type": "string"
+                    },
+                    "replacementScope": {
+                      "type": "string"
+                    },
+                    "staticReplacement": {
+                      "type": "string"
+                    },
+                    "condition": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "strategy"
+                  ]
+                }
+              ]
+            },
+            "sensitivity": {
+              "type": "string"
+            }
+          },
           "required": [
             "firstNameFilterStrategies",
             "sensitivity"
-          ],
-          "properties": {
-            "firstNameFilterStrategies": {
-              "$id": "#/properties/identifiers/properties/firstName/properties/firstNameFilterStrategies",
-              "type": "array",
-              "title": "The Firstnamefilterstrategies Schema",
-              "items": {
-                "$id": "#/properties/identifiers/properties/firstName/properties/firstNameFilterStrategies/items",
-                "type": "object",
-                "title": "The Items Schema",
-                "required": [
-                  "strategy",
-                  "redactionFormat",
-                  "replacementScope",
-                  "staticReplacement",
-                  "sensitivityLevel",
-                  "condition"
-                ],
-                "properties": {
-                  "strategy": {
-                    "$id": "#/properties/identifiers/properties/firstName/properties/firstNameFilterStrategies/items/properties/strategy",
-                    "type": "string",
-                    "title": "The Strategy Schema",
-                    "default": "",
-                    "examples": [
-                      "REDACT"
-                    ],
-                    "pattern": "^(.*)$"
-                  },
-                  "redactionFormat": {
-                    "$id": "#/properties/identifiers/properties/firstName/properties/firstNameFilterStrategies/items/properties/redactionFormat",
-                    "type": "string",
-                    "title": "The Redactionformat Schema",
-                    "default": "",
-                    "examples": [
-                      "{{{REDACTED-%t}}}"
-                    ],
-                    "pattern": "^(.*)$"
-                  },
-                  "replacementScope": {
-                    "$id": "#/properties/identifiers/properties/firstName/properties/firstNameFilterStrategies/items/properties/replacementScope",
-                    "type": "string",
-                    "title": "The Replacementscope Schema",
-                    "default": "",
-                    "examples": [
-                      "DOCUMENT"
-                    ],
-                    "pattern": "^(.*)$"
-                  },
-                  "staticReplacement": {
-                    "$id": "#/properties/identifiers/properties/firstName/properties/firstNameFilterStrategies/items/properties/staticReplacement",
-                    "type": "string",
-                    "title": "The Staticreplacement Schema",
-                    "default": "",
-                    "examples": [
-                      ""
-                    ],
-                    "pattern": "^(.*)$"
-                  },
-                  "sensitivityLevel": {
-                    "$id": "#/properties/identifiers/properties/firstName/properties/firstNameFilterStrategies/items/properties/sensitivityLevel",
-                    "type": "string",
-                    "title": "The Sensitivitylevel Schema",
-                    "default": "",
-                    "examples": [
-                      "high"
-                    ],
-                    "pattern": "^(.*)$"
-                  },
-                  "condition": {
-                    "$id": "#/properties/identifiers/properties/firstName/properties/firstNameFilterStrategies/items/properties/condition",
-                    "type": "string",
-                    "title": "The Condition Schema",
-                    "default": "",
-                    "examples": [
-                      ""
-                    ],
-                    "pattern": "^(.*)$"
-                  }
-                }
-              }
-            },
-            "sensitivity": {
-              "$id": "#/properties/identifiers/properties/firstName/properties/sensitivity",
-              "type": "string",
-              "title": "The Sensitivity Schema",
-              "default": "",
-              "examples": [
-                "medium"
-              ],
-              "pattern": "^(.*)$"
-            }
-          }
+          ]
         },
         "hospitalAbbreviation": {
-          "$id": "#/properties/identifiers/properties/hospitalAbbreviation",
           "type": "object",
-          "title": "The Hospitalabbreviation Schema",
-          "default": null,
+          "properties": {
+            "hospitalAbbreviationFilterStrategies": {
+              "type": "array",
+              "items": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "strategy": {
+                      "type": "string"
+                    },
+                    "redactionFormat": {
+                      "type": "string"
+                    },
+                    "replacementScope": {
+                      "type": "string"
+                    },
+                    "staticReplacement": {
+                      "type": "string"
+                    },
+                    "condition": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "strategy"
+                  ]
+                }
+              ]
+            },
+            "sensitivity": {
+              "type": "string"
+            }
+          },
           "required": [
             "hospitalAbbreviationFilterStrategies",
             "sensitivity"
-          ],
-          "properties": {
-            "hospitalAbbreviationFilterStrategies": {
-              "$id": "#/properties/identifiers/properties/hospitalAbbreviation/properties/hospitalAbbreviationFilterStrategies",
-              "type": "array",
-              "title": "The Hospitalabbreviationfilterstrategies Schema",
-              "items": {
-                "$id": "#/properties/identifiers/properties/hospitalAbbreviation/properties/hospitalAbbreviationFilterStrategies/items",
-                "type": "object",
-                "title": "The Items Schema",
-                "required": [
-                  "strategy",
-                  "redactionFormat",
-                  "replacementScope",
-                  "staticReplacement",
-                  "sensitivityLevel",
-                  "condition"
-                ],
-                "properties": {
-                  "strategy": {
-                    "$id": "#/properties/identifiers/properties/hospitalAbbreviation/properties/hospitalAbbreviationFilterStrategies/items/properties/strategy",
-                    "type": "string",
-                    "title": "The Strategy Schema",
-                    "default": "",
-                    "examples": [
-                      "REDACT"
-                    ],
-                    "pattern": "^(.*)$"
-                  },
-                  "redactionFormat": {
-                    "$id": "#/properties/identifiers/properties/hospitalAbbreviation/properties/hospitalAbbreviationFilterStrategies/items/properties/redactionFormat",
-                    "type": "string",
-                    "title": "The Redactionformat Schema",
-                    "default": "",
-                    "examples": [
-                      "{{{REDACTED-%t}}}"
-                    ],
-                    "pattern": "^(.*)$"
-                  },
-                  "replacementScope": {
-                    "$id": "#/properties/identifiers/properties/hospitalAbbreviation/properties/hospitalAbbreviationFilterStrategies/items/properties/replacementScope",
-                    "type": "string",
-                    "title": "The Replacementscope Schema",
-                    "default": "",
-                    "examples": [
-                      "DOCUMENT"
-                    ],
-                    "pattern": "^(.*)$"
-                  },
-                  "staticReplacement": {
-                    "$id": "#/properties/identifiers/properties/hospitalAbbreviation/properties/hospitalAbbreviationFilterStrategies/items/properties/staticReplacement",
-                    "type": "string",
-                    "title": "The Staticreplacement Schema",
-                    "default": "",
-                    "examples": [
-                      ""
-                    ],
-                    "pattern": "^(.*)$"
-                  },
-                  "sensitivityLevel": {
-                    "$id": "#/properties/identifiers/properties/hospitalAbbreviation/properties/hospitalAbbreviationFilterStrategies/items/properties/sensitivityLevel",
-                    "type": "string",
-                    "title": "The Sensitivitylevel Schema",
-                    "default": "",
-                    "examples": [
-                      "high"
-                    ],
-                    "pattern": "^(.*)$"
-                  },
-                  "condition": {
-                    "$id": "#/properties/identifiers/properties/hospitalAbbreviation/properties/hospitalAbbreviationFilterStrategies/items/properties/condition",
-                    "type": "string",
-                    "title": "The Condition Schema",
-                    "default": "",
-                    "examples": [
-                      ""
-                    ],
-                    "pattern": "^(.*)$"
-                  }
-                }
-              }
-            },
-            "sensitivity": {
-              "$id": "#/properties/identifiers/properties/hospitalAbbreviation/properties/sensitivity",
-              "type": "string",
-              "title": "The Sensitivity Schema",
-              "default": "",
-              "examples": [
-                "medium"
-              ],
-              "pattern": "^(.*)$"
-            }
-          }
+          ]
         },
         "hospital": {
-          "$id": "#/properties/identifiers/properties/hospital",
           "type": "object",
-          "title": "The Hospital Schema",
-          "default": null,
+          "properties": {
+            "hospitalFilterStrategies": {
+              "type": "array",
+              "items": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "strategy": {
+                      "type": "string"
+                    },
+                    "redactionFormat": {
+                      "type": "string"
+                    },
+                    "replacementScope": {
+                      "type": "string"
+                    },
+                    "staticReplacement": {
+                      "type": "string"
+                    },
+                    "condition": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "strategy"
+                  ]
+                }
+              ]
+            },
+            "sensitivity": {
+              "type": "string"
+            }
+          },
           "required": [
             "hospitalFilterStrategies",
             "sensitivity"
-          ],
-          "properties": {
-            "hospitalFilterStrategies": {
-              "$id": "#/properties/identifiers/properties/hospital/properties/hospitalFilterStrategies",
-              "type": "array",
-              "title": "The Hospitalfilterstrategies Schema",
-              "items": {
-                "$id": "#/properties/identifiers/properties/hospital/properties/hospitalFilterStrategies/items",
-                "type": "object",
-                "title": "The Items Schema",
-                "required": [
-                  "strategy",
-                  "redactionFormat",
-                  "replacementScope",
-                  "staticReplacement",
-                  "sensitivityLevel",
-                  "condition"
-                ],
-                "properties": {
-                  "strategy": {
-                    "$id": "#/properties/identifiers/properties/hospital/properties/hospitalFilterStrategies/items/properties/strategy",
-                    "type": "string",
-                    "title": "The Strategy Schema",
-                    "default": "",
-                    "examples": [
-                      "REDACT"
-                    ],
-                    "pattern": "^(.*)$"
-                  },
-                  "redactionFormat": {
-                    "$id": "#/properties/identifiers/properties/hospital/properties/hospitalFilterStrategies/items/properties/redactionFormat",
-                    "type": "string",
-                    "title": "The Redactionformat Schema",
-                    "default": "",
-                    "examples": [
-                      "{{{REDACTED-%t}}}"
-                    ],
-                    "pattern": "^(.*)$"
-                  },
-                  "replacementScope": {
-                    "$id": "#/properties/identifiers/properties/hospital/properties/hospitalFilterStrategies/items/properties/replacementScope",
-                    "type": "string",
-                    "title": "The Replacementscope Schema",
-                    "default": "",
-                    "examples": [
-                      "DOCUMENT"
-                    ],
-                    "pattern": "^(.*)$"
-                  },
-                  "staticReplacement": {
-                    "$id": "#/properties/identifiers/properties/hospital/properties/hospitalFilterStrategies/items/properties/staticReplacement",
-                    "type": "string",
-                    "title": "The Staticreplacement Schema",
-                    "default": "",
-                    "examples": [
-                      ""
-                    ],
-                    "pattern": "^(.*)$"
-                  },
-                  "sensitivityLevel": {
-                    "$id": "#/properties/identifiers/properties/hospital/properties/hospitalFilterStrategies/items/properties/sensitivityLevel",
-                    "type": "string",
-                    "title": "The Sensitivitylevel Schema",
-                    "default": "",
-                    "examples": [
-                      "high"
-                    ],
-                    "pattern": "^(.*)$"
-                  },
-                  "condition": {
-                    "$id": "#/properties/identifiers/properties/hospital/properties/hospitalFilterStrategies/items/properties/condition",
-                    "type": "string",
-                    "title": "The Condition Schema",
-                    "default": "",
-                    "examples": [
-                      ""
-                    ],
-                    "pattern": "^(.*)$"
-                  }
-                }
-              }
-            },
-            "sensitivity": {
-              "$id": "#/properties/identifiers/properties/hospital/properties/sensitivity",
-              "type": "string",
-              "title": "The Sensitivity Schema",
-              "default": "",
-              "examples": [
-                "medium"
-              ],
-              "pattern": "^(.*)$"
-            }
-          }
+          ]
         },
         "state": {
-          "$id": "#/properties/identifiers/properties/state",
           "type": "object",
-          "title": "The State Schema",
-          "default": null,
+          "properties": {
+            "stateFilterStrategies": {
+              "type": "array",
+              "items": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "strategy": {
+                      "type": "string"
+                    },
+                    "redactionFormat": {
+                      "type": "string"
+                    },
+                    "replacementScope": {
+                      "type": "string"
+                    },
+                    "staticReplacement": {
+                      "type": "string"
+                    },
+                    "condition": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "strategy"
+                  ]
+                }
+              ]
+            },
+            "sensitivity": {
+              "type": "string"
+            }
+          },
           "required": [
             "stateFilterStrategies",
             "sensitivity"
-          ],
-          "properties": {
-            "stateFilterStrategies": {
-              "$id": "#/properties/identifiers/properties/state/properties/stateFilterStrategies",
-              "type": "array",
-              "title": "The Statefilterstrategies Schema",
-              "items": {
-                "$id": "#/properties/identifiers/properties/state/properties/stateFilterStrategies/items",
-                "type": "object",
-                "title": "The Items Schema",
-                "required": [
-                  "strategy",
-                  "redactionFormat",
-                  "replacementScope",
-                  "staticReplacement",
-                  "sensitivityLevel",
-                  "condition"
-                ],
-                "properties": {
-                  "strategy": {
-                    "$id": "#/properties/identifiers/properties/state/properties/stateFilterStrategies/items/properties/strategy",
-                    "type": "string",
-                    "title": "The Strategy Schema",
-                    "default": "",
-                    "examples": [
-                      "REDACT"
-                    ],
-                    "pattern": "^(.*)$"
-                  },
-                  "redactionFormat": {
-                    "$id": "#/properties/identifiers/properties/state/properties/stateFilterStrategies/items/properties/redactionFormat",
-                    "type": "string",
-                    "title": "The Redactionformat Schema",
-                    "default": "",
-                    "examples": [
-                      "{{{REDACTED-%t}}}"
-                    ],
-                    "pattern": "^(.*)$"
-                  },
-                  "replacementScope": {
-                    "$id": "#/properties/identifiers/properties/state/properties/stateFilterStrategies/items/properties/replacementScope",
-                    "type": "string",
-                    "title": "The Replacementscope Schema",
-                    "default": "",
-                    "examples": [
-                      "DOCUMENT"
-                    ],
-                    "pattern": "^(.*)$"
-                  },
-                  "staticReplacement": {
-                    "$id": "#/properties/identifiers/properties/state/properties/stateFilterStrategies/items/properties/staticReplacement",
-                    "type": "string",
-                    "title": "The Staticreplacement Schema",
-                    "default": "",
-                    "examples": [
-                      ""
-                    ],
-                    "pattern": "^(.*)$"
-                  },
-                  "sensitivityLevel": {
-                    "$id": "#/properties/identifiers/properties/state/properties/stateFilterStrategies/items/properties/sensitivityLevel",
-                    "type": "string",
-                    "title": "The Sensitivitylevel Schema",
-                    "default": "",
-                    "examples": [
-                      "high"
-                    ],
-                    "pattern": "^(.*)$"
-                  },
-                  "condition": {
-                    "$id": "#/properties/identifiers/properties/state/properties/stateFilterStrategies/items/properties/condition",
-                    "type": "string",
-                    "title": "The Condition Schema",
-                    "default": "",
-                    "examples": [
-                      ""
-                    ],
-                    "pattern": "^(.*)$"
-                  }
-                }
-              }
-            },
-            "sensitivity": {
-              "$id": "#/properties/identifiers/properties/state/properties/sensitivity",
-              "type": "string",
-              "title": "The Sensitivity Schema",
-              "default": "",
-              "examples": [
-                "medium"
-              ],
-              "pattern": "^(.*)$"
-            }
-          }
+          ]
         },
         "surname": {
-          "$id": "#/properties/identifiers/properties/surname",
           "type": "object",
-          "title": "The Surname Schema",
-          "default": null,
+          "properties": {
+            "surnameFilterStrategies": {
+              "type": "array",
+              "items": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "strategy": {
+                      "type": "string"
+                    },
+                    "redactionFormat": {
+                      "type": "string"
+                    },
+                    "replacementScope": {
+                      "type": "string"
+                    },
+                    "staticReplacement": {
+                      "type": "string"
+                    },
+                    "condition": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "strategy"
+                  ]
+                }
+              ]
+            },
+            "sensitivity": {
+              "type": "string"
+            }
+          },
           "required": [
             "surnameFilterStrategies",
             "sensitivity"
-          ],
-          "properties": {
-            "surnameFilterStrategies": {
-              "$id": "#/properties/identifiers/properties/surname/properties/surnameFilterStrategies",
-              "type": "array",
-              "title": "The Surnamefilterstrategies Schema",
-              "items": {
-                "$id": "#/properties/identifiers/properties/surname/properties/surnameFilterStrategies/items",
-                "type": "object",
-                "title": "The Items Schema",
-                "required": [
-                  "strategy",
-                  "redactionFormat",
-                  "replacementScope",
-                  "staticReplacement",
-                  "sensitivityLevel",
-                  "condition"
-                ],
-                "properties": {
-                  "strategy": {
-                    "$id": "#/properties/identifiers/properties/surname/properties/surnameFilterStrategies/items/properties/strategy",
-                    "type": "string",
-                    "title": "The Strategy Schema",
-                    "default": "",
-                    "examples": [
-                      "REDACT"
-                    ],
-                    "pattern": "^(.*)$"
-                  },
-                  "redactionFormat": {
-                    "$id": "#/properties/identifiers/properties/surname/properties/surnameFilterStrategies/items/properties/redactionFormat",
-                    "type": "string",
-                    "title": "The Redactionformat Schema",
-                    "default": "",
-                    "examples": [
-                      "{{{REDACTED-%t}}}"
-                    ],
-                    "pattern": "^(.*)$"
-                  },
-                  "replacementScope": {
-                    "$id": "#/properties/identifiers/properties/surname/properties/surnameFilterStrategies/items/properties/replacementScope",
-                    "type": "string",
-                    "title": "The Replacementscope Schema",
-                    "default": "",
-                    "examples": [
-                      "DOCUMENT"
-                    ],
-                    "pattern": "^(.*)$"
-                  },
-                  "staticReplacement": {
-                    "$id": "#/properties/identifiers/properties/surname/properties/surnameFilterStrategies/items/properties/staticReplacement",
-                    "type": "string",
-                    "title": "The Staticreplacement Schema",
-                    "default": "",
-                    "examples": [
-                      ""
-                    ],
-                    "pattern": "^(.*)$"
-                  },
-                  "sensitivityLevel": {
-                    "$id": "#/properties/identifiers/properties/surname/properties/surnameFilterStrategies/items/properties/sensitivityLevel",
-                    "type": "string",
-                    "title": "The Sensitivitylevel Schema",
-                    "default": "",
-                    "examples": [
-                      "high"
-                    ],
-                    "pattern": "^(.*)$"
-                  },
-                  "condition": {
-                    "$id": "#/properties/identifiers/properties/surname/properties/surnameFilterStrategies/items/properties/condition",
-                    "type": "string",
-                    "title": "The Condition Schema",
-                    "default": "",
-                    "examples": [
-                      ""
-                    ],
-                    "pattern": "^(.*)$"
-                  }
-                }
-              }
-            },
-            "sensitivity": {
-              "$id": "#/properties/identifiers/properties/surname/properties/sensitivity",
-              "type": "string",
-              "title": "The Sensitivity Schema",
-              "default": "",
-              "examples": [
-                "medium"
-              ],
-              "pattern": "^(.*)$"
-            }
-          }
+          ]
         }
       }
+    },
+    "ignored": {
+      "type": "array",
+      "items": [
+        {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "terms": {
+              "type": "array",
+              "items": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "required": [
+            "name",
+            "terms"
+          ]
+        }
+      ]
     }
-  }
+  },
+  "required": [
+    "name",
+    "identifiers"
+  ]
 }
