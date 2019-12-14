@@ -48,6 +48,10 @@ public class PhileasFilterService implements FilterService, Serializable {
     private Map<String, List<Filter>> filters = new HashMap<>();
     private Gson gson = new Gson();
 
+    private String philterNerEndpoint;
+    private AnonymizationCacheService anonymizationCacheService;
+    private String indexDirectory;
+
     public PhileasFilterService(Properties applicationProperties, List<FilterProfileService> filterProfileServices, AnonymizationCacheService anonymizationCacheService, String philterNerEndpoint) throws IOException {
 
         LOGGER.info("Initializing Phileas engine.");
@@ -68,14 +72,15 @@ public class PhileasFilterService implements FilterService, Serializable {
             this.store = new ElasticsearchStore(index, scheme, host, port);
         }
 
-        // Path to the indexes directory.
-        final String indexDirectory = applicationProperties.getProperty("indexes.directory", System.getProperty("user.dir") + "/indexes/");
+        this.indexDirectory = applicationProperties.getProperty("indexes.directory", System.getProperty("user.dir") + "/indexes/");
+        this.anonymizationCacheService = anonymizationCacheService;
+        this.philterNerEndpoint = philterNerEndpoint;
 
         // Load the filter profiles from the services into a map.
-        reloadFilterProfiles(philterNerEndpoint, anonymizationCacheService, indexDirectory);
+        reloadFilterProfiles();
 
     }
-    
+
     @Override
     public List<Span> replacements(String documentId) throws IOException {
 
@@ -190,7 +195,7 @@ public class PhileasFilterService implements FilterService, Serializable {
     }
 
     @Override
-    public void reloadFilterProfiles(String philterNerEndpoint, AnonymizationCacheService anonymizationCacheService, String indexDirectory) throws IOException {
+    public void reloadFilterProfiles() throws IOException {
 
         LOGGER.info("Reloading filter profiles.");
 

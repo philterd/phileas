@@ -12,6 +12,6 @@ public interface FilterService {
 
     List<Span> replacements(String documentId) throws IOException;
 
-    void reloadFilterProfiles(String philterNerEndpoint, AnonymizationCacheService anonymizationCacheService, String indexDirectory) throws IOException;
+    void reloadFilterProfiles() throws IOException;
 
 }
