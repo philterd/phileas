@@ -12,7 +12,7 @@ pipeline {
         pollSCM 'H/10 * * * *'
         parameterizedCron('''
             # Build AMI from master each morning at 1 AM.
-            H 2 * * * %isAMI=true;BRANCH_TAG=master
+            H 2 * * * %BRANCH_TAG=master
         ''')
     }
     parameters {
