@@ -1,6 +1,5 @@
 package com.mtnfog.phileas.services.registry;
 
-import com.google.gson.Gson;
 import com.mtnfog.phileas.model.exceptions.api.BadRequestException;
 import com.mtnfog.phileas.model.services.FilterProfileService;
 import org.apache.commons.io.FileUtils;
@@ -20,11 +19,9 @@ public class LocalFilterProfileService implements FilterProfileService {
     private static final Logger LOGGER = LogManager.getLogger(LocalFilterProfileService.class);
 
     private String filterProfilesDirectory;
-    private Gson gson;
 
     public LocalFilterProfileService(Properties applicationProperties) {
-
-        this.gson = new Gson();
+        
         this.filterProfilesDirectory = applicationProperties.getProperty("filter.profiles.directory", System.getProperty("user.dir") + "/profiles/");
         LOGGER.info("Looking for filter profiles in {}", filterProfilesDirectory);
 
