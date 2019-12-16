@@ -6,7 +6,7 @@ import com.mtnfog.phileas.model.profile.filters.strategies.rules.EmailAddressFil
 
 import java.util.List;
 
-public class EmailAddress {
+public class EmailAddress extends AbstractFilter {
 
     @SerializedName("emailAddressFilterStrategies")
     @Expose

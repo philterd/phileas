@@ -7,7 +7,7 @@ import com.mtnfog.phileas.model.profile.filters.strategies.dynamic.CountyFilterS
 
 import java.util.List;
 
-public class County {
+public class County extends AbstractFilter {
 
     @SerializedName("countyFilterStrategies")
     @Expose

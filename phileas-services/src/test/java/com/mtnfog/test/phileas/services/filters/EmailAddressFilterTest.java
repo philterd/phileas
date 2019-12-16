@@ -11,6 +11,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class EmailAddressFilterTest extends AbstractFilterTest {
@@ -19,7 +20,7 @@ public class EmailAddressFilterTest extends AbstractFilterTest {
     public void filterEmail() throws Exception {
 
         final List<EmailAddressFilterStrategy> strategies = Arrays.asList(new EmailAddressFilterStrategy());
-        EmailAddressFilter filter = new EmailAddressFilter(strategies, new EmailAddressAnonymizationService(new LocalAnonymizationCacheService()));
+        EmailAddressFilter filter = new EmailAddressFilter(strategies, new EmailAddressAnonymizationService(new LocalAnonymizationCacheService()), Collections.emptySet());
 
         List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid","my email is none@none.com.");
         Assert.assertEquals(1, spans.size());

@@ -7,7 +7,7 @@ import com.mtnfog.phileas.model.profile.filters.strategies.dynamic.HospitalAbbre
 
 import java.util.List;
 
-public class HospitalAbbreviation {
+public class HospitalAbbreviation extends AbstractFilter {
 
     @SerializedName("hospitalAbbreviationFilterStrategies")
     @Expose

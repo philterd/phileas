@@ -47,6 +47,9 @@ public final class Span implements Serializable {
     @Expose
     private String replacement;
 
+    @Expose
+    private boolean ignored;
+
     // Encapsulates the characterStart and characterEnd for easy intersection functions.
     private transient Range<Integer> range;
 
@@ -61,7 +64,7 @@ public final class Span implements Serializable {
      * @param text The text identified by the span.
      * @param replacement The replacement (anonymized) value for the span.
      */
-    private Span(int characterStart, int characterEnd, FilterType filterType, String context, String documentId, double confidence, String text, String replacement) {
+    private Span(int characterStart, int characterEnd, FilterType filterType, String context, String documentId, double confidence, String text, String replacement, boolean ignored) {
 
         this.id = UUID.randomUUID().toString();
         this.characterStart = characterStart;
@@ -72,6 +75,7 @@ public final class Span implements Serializable {
         this.confidence = confidence;
         this.text = text;
         this.replacement = replacement;
+        this.ignored = ignored;
 
     }
 
@@ -88,9 +92,9 @@ public final class Span implements Serializable {
      * @return A {@link Span} object with the given properties.
      */
     public static Span make(int characterStart, int characterEnd, FilterType filterType, String context,
-                            String documentId, double confidence, String text, String replacement) {
+                            String documentId, double confidence, String text, String replacement, boolean ignored) {
 
-        final Span span = new Span(characterStart, characterEnd, filterType, context, documentId, confidence, text, replacement);
+        final Span span = new Span(characterStart, characterEnd, filterType, context, documentId, confidence, text, replacement, ignored);
 
         // This is made here and not passed into the constructor because that would be redundant
         // given the characterStart and characterEnd parameters in the constructor.
@@ -113,7 +117,7 @@ public final class Span implements Serializable {
      */
     public Span copy() {
 
-        final Span clone = Span.make(characterStart, characterEnd, filterType, context, documentId, confidence, text, replacement);
+        final Span clone = Span.make(characterStart, characterEnd, filterType, context, documentId, confidence, text, replacement, ignored);
 
         clone.id = id;
         clone.range = range;
@@ -181,7 +185,7 @@ public final class Span implements Serializable {
                 final int start = span.getCharacterStart() + shift;
                 final int end = span.getCharacterEnd() + shift;
 
-                shiftedSpans.add(Span.make(start, end, span.filterType, span.context, span.documentId, span.confidence, span.text, span.replacement));
+                shiftedSpans.add(Span.make(start, end, span.filterType, span.context, span.documentId, span.confidence, span.text, span.replacement, span.ignored));
 
             }
 
@@ -284,6 +288,7 @@ public final class Span implements Serializable {
                 append(documentId).
                 append(text).
                 append(replacement).
+                append(ignored).
                 append(id).
                 toHashCode();
 
@@ -307,6 +312,7 @@ public final class Span implements Serializable {
                 + " confidence: " + confidence + "; "
                 + " text: " + text + "; "
                 + " replacement: " + replacement + "; "
+                + " ignored: " + ignored + "; "
                 + " id: " + id;
 
     }
@@ -381,6 +387,14 @@ public final class Span implements Serializable {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public boolean isIgnored() {
+        return ignored;
+    }
+
+    public void setIgnored(boolean ignored) {
+        this.ignored = ignored;
     }
 
 }

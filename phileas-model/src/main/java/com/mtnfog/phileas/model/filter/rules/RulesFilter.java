@@ -12,6 +12,7 @@ import java.io.Serializable;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -25,8 +26,8 @@ public abstract class RulesFilter extends Filter implements Serializable {
      * @param filterType The {@link FilterType type} of the filter.
      * @param anonymizationService The {@link AnonymizationService} for this filter.
      */
-    public RulesFilter(FilterType filterType, List<? extends AbstractFilterStrategy> strategies, AnonymizationService anonymizationService) {
-        super(filterType, strategies, anonymizationService);
+    public RulesFilter(FilterType filterType, List<? extends AbstractFilterStrategy> strategies, AnonymizationService anonymizationService, Set<String> ignored) {
+        super(filterType, strategies, anonymizationService, ignored);
     }
 
     /**
@@ -51,10 +52,13 @@ public abstract class RulesFilter extends Filter implements Serializable {
 
                 final String text = matcher.group(0);
 
+                // Is this term ignored?
+                boolean isIgnored = ignored.contains(text);
+
                 // There are no attributes for the span.
                 final String replacement = getReplacement(label, context, documentId, text, Collections.emptyMap());
 
-                spans.add(Span.make(matcher.start(0), matcher.end(0), getFilterType(), context, documentId, 1.0, text, replacement));
+                spans.add(Span.make(matcher.start(0), matcher.end(0), getFilterType(), context, documentId, 1.0, text, replacement, isIgnored));
 
             }
 

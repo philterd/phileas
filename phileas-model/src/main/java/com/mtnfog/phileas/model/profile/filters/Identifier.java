@@ -6,7 +6,7 @@ import com.mtnfog.phileas.model.profile.filters.strategies.rules.IdentifierFilte
 
 import java.util.List;
 
-public class Identifier {
+public class Identifier extends AbstractFilter {
 
     /**
      * The default regex pattern to use if none is provided in the filter profile.

@@ -14,14 +14,15 @@ import java.io.Serializable;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 public class PhoneNumberRulesFilter extends RulesFilter implements Serializable {
 
     private PhoneNumberUtil phoneUtil;
 
-    public PhoneNumberRulesFilter(List<? extends AbstractFilterStrategy> strategies, AnonymizationService anonymizationService) {
+    public PhoneNumberRulesFilter(List<? extends AbstractFilterStrategy> strategies, AnonymizationService anonymizationService, Set<String> ignored) {
 
-        super(FilterType.PHONE_NUMBER, strategies, anonymizationService);
+        super(FilterType.PHONE_NUMBER, strategies, anonymizationService, ignored);
 
         this.phoneUtil = PhoneNumberUtil.getInstance();
 
@@ -39,10 +40,10 @@ public class PhoneNumberRulesFilter extends RulesFilter implements Serializable 
             for (PhoneNumberMatch match : matches) {
 
                 final String text = match.rawString();
-
                 final String replacement = getReplacement(label, context, documentId, text, Collections.emptyMap());
+                final boolean isIgnored = ignored.contains(text);
 
-                spans.add(Span.make(match.start(), match.end(), getFilterType(), context, documentId, 1.0, text, replacement));
+                spans.add(Span.make(match.start(), match.end(), getFilterType(), context, documentId, 1.0, text, replacement, isIgnored));
 
             }
 

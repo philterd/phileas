@@ -12,14 +12,15 @@ import org.apache.commons.collections.Predicate;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 public class VinFilter extends RegexFilter implements Serializable {
 
     private static final Pattern VIN_REGEX = Pattern.compile("\\b[A-HJ-NPR-Z0-9]{17}\\b", Pattern.CASE_INSENSITIVE);
 
-    public VinFilter(List<? extends AbstractFilterStrategy> strategies, AnonymizationService anonymizationService) {
-        super(FilterType.VIN, strategies, anonymizationService);
+    public VinFilter(List<? extends AbstractFilterStrategy> strategies, AnonymizationService anonymizationService, Set<String> ignored) {
+        super(FilterType.VIN, strategies, anonymizationService, ignored);
     }
 
     @Override

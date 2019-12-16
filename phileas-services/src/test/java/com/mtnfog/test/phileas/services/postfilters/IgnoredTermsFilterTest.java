@@ -24,7 +24,7 @@ public class IgnoredTermsFilterTest {
         filterProfile.setIgnored(Arrays.asList(ignored));
 
         final List<Span> spans = new LinkedList<>();
-        spans.add(Span.make(12, 22, FilterType.LOCATION_STATE, "context", "docid", 0.80, "test", "*****"));
+        spans.add(Span.make(12, 22, FilterType.LOCATION_STATE, "context", "docid", 0.80, "test", "*****", false));
 
         final IgnoredTermsFilter ignoredTermsFilter = new IgnoredTermsFilter(filterProfile);
         final List<Span> filteredSpans = ignoredTermsFilter.filter("He lived in Washington.", spans);
@@ -43,7 +43,7 @@ public class IgnoredTermsFilterTest {
         filterProfile.setIgnored(Arrays.asList(ignored));
 
         final List<Span> spans = new LinkedList<>();
-        spans.add(Span.make(12, 22, FilterType.LOCATION_STATE, "context", "docid", 0.80, "test", "*****"));
+        spans.add(Span.make(12, 22, FilterType.LOCATION_STATE, "context", "docid", 0.80, "test", "*****", false));
 
         final IgnoredTermsFilter ignoredTermsFilter = new IgnoredTermsFilter(filterProfile);
         final List<Span> filteredSpans = ignoredTermsFilter.filter("He lived in Washington.", spans);
@@ -62,7 +62,7 @@ public class IgnoredTermsFilterTest {
         filterProfile.setIgnored(Arrays.asList(ignored));
 
         final List<Span> spans = new LinkedList<>();
-        spans.add(Span.make(12, 22, FilterType.LOCATION_STATE, "context", "docid", 0.80, "test", "*****"));
+        spans.add(Span.make(12, 22, FilterType.LOCATION_STATE, "context", "docid", 0.80, "test", "*****", false));
 
         final IgnoredTermsFilter ignoredTermsFilter = new IgnoredTermsFilter(filterProfile);
         final List<Span> filteredSpans = ignoredTermsFilter.filter("He lived in Washington.", spans);
@@ -81,7 +81,7 @@ public class IgnoredTermsFilterTest {
         filterProfile.setIgnored(Arrays.asList(ignored));
 
         final List<Span> spans = new LinkedList<>();
-        spans.add(Span.make(12, 22, FilterType.LOCATION_STATE, "context", "docid", 0.80, "test", "*****"));
+        spans.add(Span.make(12, 22, FilterType.LOCATION_STATE, "context", "docid", 0.80, "test", "*****", false));
 
         final IgnoredTermsFilter ignoredTermsFilter = new IgnoredTermsFilter(filterProfile);
         final List<Span> filteredSpans = ignoredTermsFilter.filter("He lived in Washington.", spans);

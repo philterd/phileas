@@ -16,6 +16,7 @@ import org.junit.Test;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class HospitalFilterTest extends AbstractFilterTest {
@@ -36,7 +37,7 @@ public class HospitalFilterTest extends AbstractFilterTest {
         AnonymizationService anonymizationService = new HospitalAnonymizationService(new LocalAnonymizationCacheService());
 
         final List<HospitalFilterStrategy> strategies = Arrays.asList(new HospitalFilterStrategy());
-        final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.HOSPITAL, strategies, INDEX_DIRECTORY, SensitivityLevel.LOW, anonymizationService);
+        final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.HOSPITAL, strategies, INDEX_DIRECTORY, SensitivityLevel.LOW, anonymizationService, Collections.emptySet());
 
         List<Span> spans = filter.filter(getFilterProfile(SensitivityLevel.LOW), "context", "documentid","Went to Wyoming Medical Center");
         Assert.assertEquals(1, spans.size());

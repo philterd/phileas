@@ -12,6 +12,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class CreditCardFilterTest extends AbstractFilterTest {
@@ -20,7 +21,7 @@ public class CreditCardFilterTest extends AbstractFilterTest {
     public void filterCreditCard() throws Exception {
 
         final List<CreditCardFilterStrategy> strategies = Arrays.asList(new CreditCardFilterStrategy());
-        CreditCardFilter filter = new CreditCardFilter(strategies, new CreditCardAnonymizationService(new LocalAnonymizationCacheService()));
+        CreditCardFilter filter = new CreditCardFilter(strategies, new CreditCardAnonymizationService(new LocalAnonymizationCacheService()), Collections.emptySet());
 
         // VISA
 

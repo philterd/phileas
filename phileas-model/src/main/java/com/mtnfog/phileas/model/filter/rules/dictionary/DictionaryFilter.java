@@ -7,15 +7,16 @@ import com.mtnfog.phileas.model.services.AnonymizationService;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Set;
 
 /**
  * A filter that operates on a preset list of dictionary words.
  */
 public abstract class DictionaryFilter extends RulesFilter implements Serializable {
 
-    public DictionaryFilter(FilterType filterType, List<? extends AbstractFilterStrategy> strategies, AnonymizationService anonymizationService) {
+    public DictionaryFilter(FilterType filterType, List<? extends AbstractFilterStrategy> strategies, AnonymizationService anonymizationService, Set<String> ignored) {
 
-        super(filterType, strategies, anonymizationService);
+        super(filterType, strategies, anonymizationService, ignored);
 
     }
 

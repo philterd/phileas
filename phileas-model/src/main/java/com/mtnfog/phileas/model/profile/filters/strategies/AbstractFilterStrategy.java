@@ -25,6 +25,26 @@ public abstract class AbstractFilterStrategy {
     public static final String STARTSWITH = "startswith";
     public static final String EQUALS = "==";
 
+    @SerializedName("strategy")
+    @Expose
+    protected String strategy = REDACT;
+
+    @SerializedName("redactionFormat")
+    @Expose
+    protected String redactionFormat = "{{{REDACTED-%t}}}";
+
+    @SerializedName("replacementScope")
+    @Expose
+    protected String replacementScope = REPLACEMENT_SCOPE_DOCUMENT;
+
+    @SerializedName("staticReplacement")
+    @Expose
+    protected String staticReplacement = "";
+
+    @SerializedName("condition")
+    @Expose
+    protected String condition = "";
+
     /**
      * Gets the replacement for a token.
      * @param context The context.
@@ -82,26 +102,6 @@ public abstract class AbstractFilterStrategy {
         return conditionSatisfied;
 
     }
-
-    @SerializedName("strategy")
-    @Expose
-    protected String strategy = REDACT;
-
-    @SerializedName("redactionFormat")
-    @Expose
-    protected String redactionFormat = "{{{REDACTED-%t}}}";
-
-    @SerializedName("replacementScope")
-    @Expose
-    protected String replacementScope = REPLACEMENT_SCOPE_DOCUMENT;
-
-    @SerializedName("staticReplacement")
-    @Expose
-    protected String staticReplacement = "";
-
-    @SerializedName("condition")
-    @Expose
-    protected String condition = "";
 
     /**
      * Gets the value of an object or the <code>defaultValue</code> if the value is <code>null</code>.

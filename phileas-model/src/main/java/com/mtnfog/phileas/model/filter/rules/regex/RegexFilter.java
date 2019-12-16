@@ -7,14 +7,15 @@ import com.mtnfog.phileas.model.services.AnonymizationService;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Set;
 
 /**
  * A filter that works by using one or more regular expressions.
  */
 public abstract class RegexFilter extends RulesFilter implements Serializable {
 
-    public RegexFilter(FilterType filterType, List<? extends AbstractFilterStrategy> strategies, AnonymizationService anonymizationService) {
-        super(filterType, strategies, anonymizationService);
+    public RegexFilter(FilterType filterType, List<? extends AbstractFilterStrategy> strategies, AnonymizationService anonymizationService, Set<String> ignored) {
+        super(filterType, strategies, anonymizationService, ignored);
     }
 
 }

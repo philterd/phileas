@@ -11,6 +11,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class SsnFilterTest extends AbstractFilterTest {
@@ -19,7 +20,7 @@ public class SsnFilterTest extends AbstractFilterTest {
     public void filterSsn1() throws Exception {
 
         final List<SsnFilterStrategy> strategies = Arrays.asList(new SsnFilterStrategy());
-        SsnFilter filter = new SsnFilter(strategies, new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()));
+        SsnFilter filter = new SsnFilter(strategies, new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()), Collections.emptySet());
 
         List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "the ssn is 123-45-6789.");
         Assert.assertEquals(1, spans.size());
@@ -31,7 +32,7 @@ public class SsnFilterTest extends AbstractFilterTest {
     public void filterSsn2() throws Exception {
 
         final List<SsnFilterStrategy> strategies = Arrays.asList(new SsnFilterStrategy());
-        SsnFilter filter = new SsnFilter(strategies, new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()));
+        SsnFilter filter = new SsnFilter(strategies, new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()), Collections.emptySet());
 
         List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "the ssn is 123456789.");
         Assert.assertEquals(1, spans.size());
@@ -43,7 +44,7 @@ public class SsnFilterTest extends AbstractFilterTest {
     public void filterSsn3() throws Exception {
 
         final List<SsnFilterStrategy> strategies = Arrays.asList(new SsnFilterStrategy());
-        SsnFilter filter = new SsnFilter(strategies, new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()));
+        SsnFilter filter = new SsnFilter(strategies, new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()), Collections.emptySet());
 
         List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "the ssn is 123 45 6789.");
         Assert.assertEquals(1, spans.size());
@@ -55,7 +56,7 @@ public class SsnFilterTest extends AbstractFilterTest {
     public void filterSsn4() throws Exception {
 
         final List<SsnFilterStrategy> strategies = Arrays.asList(new SsnFilterStrategy());
-        SsnFilter filter = new SsnFilter(strategies, new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()));
+        SsnFilter filter = new SsnFilter(strategies, new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()), Collections.emptySet());
 
         List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "the ssn is 123 45 6789.");
         Assert.assertEquals(1, spans.size());
@@ -67,7 +68,7 @@ public class SsnFilterTest extends AbstractFilterTest {
     public void filterSsn5() throws Exception {
 
         final List<SsnFilterStrategy> strategies = Arrays.asList(new SsnFilterStrategy());
-        SsnFilter filter = new SsnFilter(strategies, new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()));
+        SsnFilter filter = new SsnFilter(strategies, new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()), Collections.emptySet());
 
         List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "the ssn is 123 454 6789.");
         Assert.assertEquals(0, spans.size());
@@ -78,7 +79,7 @@ public class SsnFilterTest extends AbstractFilterTest {
     public void filterSsn6() throws Exception {
 
         final List<SsnFilterStrategy> strategies = Arrays.asList(new SsnFilterStrategy());
-        SsnFilter filter = new SsnFilter(strategies, new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()));
+        SsnFilter filter = new SsnFilter(strategies, new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()), Collections.emptySet());
 
         List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "the ssn is 123 4f 6789.");
         Assert.assertEquals(0, spans.size());

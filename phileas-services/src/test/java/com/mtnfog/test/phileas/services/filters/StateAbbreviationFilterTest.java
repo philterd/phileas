@@ -12,6 +12,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class StateAbbreviationFilterTest extends AbstractFilterTest {
@@ -22,7 +23,7 @@ public class StateAbbreviationFilterTest extends AbstractFilterTest {
     public void filter1() throws Exception {
 
         final List<StateAbbreviationFilterStrategy> strategies = Arrays.asList(new StateAbbreviationFilterStrategy());
-        final StateAbbreviationFilter filter = new StateAbbreviationFilter(strategies, new StateAbbreviationAnonymizationService(new LocalAnonymizationCacheService()));
+        final StateAbbreviationFilter filter = new StateAbbreviationFilter(strategies, new StateAbbreviationAnonymizationService(new LocalAnonymizationCacheService()), Collections.emptySet());
 
         final String input = "The patient is from WV.";
         final List<Span> spans = filter.filter(getFilterProfile(), "context", "docid", input);
@@ -38,7 +39,7 @@ public class StateAbbreviationFilterTest extends AbstractFilterTest {
     public void filter2() throws Exception {
 
         final List<StateAbbreviationFilterStrategy> strategies = Arrays.asList(new StateAbbreviationFilterStrategy());
-        final StateAbbreviationFilter filter = new StateAbbreviationFilter(strategies, new StateAbbreviationAnonymizationService(new LocalAnonymizationCacheService()));
+        final StateAbbreviationFilter filter = new StateAbbreviationFilter(strategies, new StateAbbreviationAnonymizationService(new LocalAnonymizationCacheService()), Collections.emptySet());
 
         final String input = "The patient is from wv.";
         final List<Span> spans = filter.filter(getFilterProfile(), "context", "docid", input);

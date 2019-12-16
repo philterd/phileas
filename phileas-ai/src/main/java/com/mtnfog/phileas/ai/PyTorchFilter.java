@@ -21,10 +21,7 @@ import retrofit2.converter.scalars.ScalarsConverterFactory;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class PyTorchFilter extends NerFilter implements Serializable {
 
@@ -42,9 +39,10 @@ public class PyTorchFilter extends NerFilter implements Serializable {
                          String tag,
                          Map<String, DescriptiveStatistics> stats,
                          MetricsService metricsService,
-                         AnonymizationService anonymizationService) {
+                         AnonymizationService anonymizationService,
+                         Set<String> ignored) {
 
-        super(filterType, strategies, stats, metricsService, anonymizationService);
+        super(filterType, strategies, stats, metricsService, anonymizationService, ignored);
 
         this.tag = tag;
 
@@ -108,7 +106,8 @@ public class PyTorchFilter extends NerFilter implements Serializable {
         attributes.put(NerFilterStrategy.TYPE, type);
 
         final String replacement = getReplacement(label, context, documentId, text, attributes);
-        final Span span = Span.make(start, end, FilterType.NER_ENTITY, context, documentId, confidence, text, replacement);
+        final boolean isIgnored = ignored.contains(text);
+        final Span span = Span.make(start, end, FilterType.NER_ENTITY, context, documentId, confidence, text, replacement, isIgnored);
 
         // Send the entity to the metrics service for reporting.
         metricsService.reportEntitySpan(span);

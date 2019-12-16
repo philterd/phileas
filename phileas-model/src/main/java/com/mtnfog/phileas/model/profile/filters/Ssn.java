@@ -6,7 +6,7 @@ import com.mtnfog.phileas.model.profile.filters.strategies.rules.SsnFilterStrate
 
 import java.util.List;
 
-public class Ssn {
+public class Ssn extends AbstractFilter {
 
     @SerializedName("ssnFilterStrategies")
     @Expose

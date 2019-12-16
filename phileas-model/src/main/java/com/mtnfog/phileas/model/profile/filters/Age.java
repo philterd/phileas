@@ -6,7 +6,7 @@ import com.mtnfog.phileas.model.profile.filters.strategies.rules.AgeFilterStrate
 
 import java.util.List;
 
-public class Age {
+public class Age extends AbstractFilter {
 
     @SerializedName("ageFilterStrategies")
     @Expose

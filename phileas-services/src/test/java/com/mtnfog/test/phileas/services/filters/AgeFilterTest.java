@@ -12,6 +12,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class AgeFilterTest extends AbstractFilterTest {
@@ -20,7 +21,7 @@ public class AgeFilterTest extends AbstractFilterTest {
     public void filter1() throws Exception {
 
         final List<AgeFilterStrategy> strategies = Arrays.asList(new AgeFilterStrategy());
-        AgeFilter filter = new AgeFilter(strategies, new AgeAnonymizationService(new LocalAnonymizationCacheService()));
+        AgeFilter filter = new AgeFilter(strategies, new AgeAnonymizationService(new LocalAnonymizationCacheService()), Collections.emptySet());
 
         List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "the patient is 3.5years old.");
 
@@ -35,7 +36,7 @@ public class AgeFilterTest extends AbstractFilterTest {
     public void filter2() throws Exception {
 
         final List<AgeFilterStrategy> strategies = Arrays.asList(new AgeFilterStrategy());
-        AgeFilter filter = new AgeFilter(strategies, new AgeAnonymizationService(new LocalAnonymizationCacheService()));
+        AgeFilter filter = new AgeFilter(strategies, new AgeAnonymizationService(new LocalAnonymizationCacheService()), Collections.emptySet());
 
         List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "the patient is 3.yrs.");
 
@@ -50,7 +51,7 @@ public class AgeFilterTest extends AbstractFilterTest {
     public void filter3() throws Exception {
 
         final List<AgeFilterStrategy> strategies = Arrays.asList(new AgeFilterStrategy());
-        AgeFilter filter = new AgeFilter(strategies, new AgeAnonymizationService(new LocalAnonymizationCacheService()));
+        AgeFilter filter = new AgeFilter(strategies, new AgeAnonymizationService(new LocalAnonymizationCacheService()), Collections.emptySet());
 
         List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "the patient is 3yrs.");
 
@@ -65,7 +66,7 @@ public class AgeFilterTest extends AbstractFilterTest {
     public void filter4() throws Exception {
 
         final List<AgeFilterStrategy> strategies = Arrays.asList(new AgeFilterStrategy());
-        AgeFilter filter = new AgeFilter(strategies, new AgeAnonymizationService(new LocalAnonymizationCacheService()));
+        AgeFilter filter = new AgeFilter(strategies, new AgeAnonymizationService(new LocalAnonymizationCacheService()), Collections.emptySet());
 
         List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "the patient is 3.5yrs.");
 
@@ -80,7 +81,7 @@ public class AgeFilterTest extends AbstractFilterTest {
     public void filter5() throws Exception {
 
         final List<AgeFilterStrategy> strategies = Arrays.asList(new AgeFilterStrategy());
-        AgeFilter filter = new AgeFilter(strategies, new AgeAnonymizationService(new LocalAnonymizationCacheService()));
+        AgeFilter filter = new AgeFilter(strategies, new AgeAnonymizationService(new LocalAnonymizationCacheService()), Collections.emptySet());
 
         List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "the patient is 39yrs.");
 
@@ -95,7 +96,7 @@ public class AgeFilterTest extends AbstractFilterTest {
     public void filter6() throws Exception {
 
         final List<AgeFilterStrategy> strategies = Arrays.asList(new AgeFilterStrategy());
-        AgeFilter filter = new AgeFilter(strategies, new AgeAnonymizationService(new LocalAnonymizationCacheService()));
+        AgeFilter filter = new AgeFilter(strategies, new AgeAnonymizationService(new LocalAnonymizationCacheService()), Collections.emptySet());
 
         List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "she is aged 39");
 
@@ -110,7 +111,7 @@ public class AgeFilterTest extends AbstractFilterTest {
     public void filter7() throws Exception {
 
         final List<AgeFilterStrategy> strategies = Arrays.asList(new AgeFilterStrategy());
-        AgeFilter filter = new AgeFilter(strategies, new AgeAnonymizationService(new LocalAnonymizationCacheService()));
+        AgeFilter filter = new AgeFilter(strategies, new AgeAnonymizationService(new LocalAnonymizationCacheService()), Collections.emptySet());
 
         List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "she is age 39");
 
@@ -125,7 +126,7 @@ public class AgeFilterTest extends AbstractFilterTest {
     public void filter8() throws Exception {
 
         final List<AgeFilterStrategy> strategies = Arrays.asList(new AgeFilterStrategy());
-        AgeFilter filter = new AgeFilter(strategies, new AgeAnonymizationService(new LocalAnonymizationCacheService()));
+        AgeFilter filter = new AgeFilter(strategies, new AgeAnonymizationService(new LocalAnonymizationCacheService()), Collections.emptySet());
 
         List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "she is age 39.5");
 

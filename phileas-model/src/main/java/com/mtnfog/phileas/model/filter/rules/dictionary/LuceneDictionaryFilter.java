@@ -61,9 +61,10 @@ public class LuceneDictionaryFilter extends DictionaryFilter implements Serializ
                                   List<? extends AbstractFilterStrategy> strategies,
                                   String indexDirectory,
                                   SensitivityLevel sensitivityLevel,
-                                  AnonymizationService anonymizationService) throws IOException {
+                                  AnonymizationService anonymizationService,
+                                  Set<String> ignored) throws IOException {
 
-        super(filterType, strategies, anonymizationService);
+        super(filterType, strategies, anonymizationService, ignored);
 
         LOGGER.info("Loading {} index from {}", filterType, indexDirectory);
 
@@ -89,9 +90,10 @@ public class LuceneDictionaryFilter extends DictionaryFilter implements Serializ
                                         AnonymizationService anonymizationService,
                                         String type,
                                         List<String> terms,
-                                        int filterProfileIndex) throws IOException {
+                                        int filterProfileIndex,
+                                        Set<String> ignored) throws IOException {
 
-        super(filterType, strategies, anonymizationService);
+        super(filterType, strategies, anonymizationService, ignored);
 
         LOGGER.info("Creating custom dictionary filter for custom type [{}]", type);
 
@@ -232,9 +234,12 @@ public class LuceneDictionaryFilter extends DictionaryFilter implements Serializ
 
                                 if (isMatch) {
 
+                                    // Is this term ignored?
+                                    boolean isIgnored = ignored.contains(text);
+
                                     // There are no attributes for the span.
                                     final String replacement = getReplacement(label, context, documentId, token, Collections.emptyMap());
-                                    spans.add(Span.make(offsetAttribute.startOffset(), offsetAttribute.endOffset(), getFilterType(), context, documentId, spellChecker.getAccuracy(), token, replacement));
+                                    spans.add(Span.make(offsetAttribute.startOffset(), offsetAttribute.endOffset(), getFilterType(), context, documentId, spellChecker.getAccuracy(), token, replacement, isIgnored));
 
                                 }
 
