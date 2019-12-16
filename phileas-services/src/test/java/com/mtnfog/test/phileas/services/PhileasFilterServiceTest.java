@@ -6,6 +6,7 @@ import com.mtnfog.phileas.model.profile.FilterProfile;
 import com.mtnfog.phileas.model.profile.Identifiers;
 import com.mtnfog.phileas.model.profile.Ignored;
 import com.mtnfog.phileas.model.profile.filters.*;
+import com.mtnfog.phileas.model.profile.filters.strategies.AbstractFilterStrategy;
 import com.mtnfog.phileas.model.profile.filters.strategies.ai.NerFilterStrategy;
 import com.mtnfog.phileas.model.profile.filters.strategies.dynamic.*;
 import com.mtnfog.phileas.model.profile.filters.strategies.rules.*;
@@ -183,6 +184,32 @@ public class PhileasFilterServiceTest {
     }
 
     @Test
+    public void endToEnd6() throws Exception {
+
+        final Path temp = Files.createTempDirectory("philter");
+        final File file = Paths.get(temp.toFile().getAbsolutePath(), "profile.json").toFile();
+        LOGGER.info("Writing profile to {}", file.getAbsolutePath());
+        FileUtils.writeStringToFile(file, gson.toJson(getFilterProfile("default")), Charset.defaultCharset());
+
+        Properties applicationProperties = new Properties();
+        applicationProperties.setProperty("indexes.directory", INDEXES_DIRECTORY);
+        applicationProperties.setProperty("store.enabled", "false");
+        applicationProperties.setProperty("filter.profiles.directory", temp.toFile().getAbsolutePath());
+
+        AnonymizationCacheService anonymizationCacheService = new LocalAnonymizationCacheService();
+        LocalFilterProfileService filterProfileService = new LocalFilterProfileService(applicationProperties);
+        List<FilterProfileService> filterProfileServices = Arrays.asList(filterProfileService);
+
+        PhileasFilterService service = new PhileasFilterService(applicationProperties, filterProfileServices, anonymizationCacheService, "http://localhost:18080/");
+        final FilterResponse response = service.filter("default", "context", "his name was JEFF.");
+
+        LOGGER.info(response.getFilteredText());
+
+        Assert.assertEquals("his name was STATIC-REPLACEMENT.", response.getFilteredText());
+
+    }
+
+    @Test
     public void endToEndMultipleFilterProfiles() throws Exception {
 
         final Path temp = Files.createTempDirectory("philter");
@@ -316,10 +343,18 @@ public class PhileasFilterServiceTest {
         EmailAddress emailAddress = new EmailAddress();
         emailAddress.setEmailAddressFilterStrategies(Arrays.asList(emailAddressFilterStrategy));
 
-        IdentifierFilterStrategy identifierFilterStrategy = new IdentifierFilterStrategy();
+        Identifier identifier1 = new Identifier();
+        identifier1.setIdentifierFilterStrategies(Arrays.asList(new IdentifierFilterStrategy()));
+        identifier1.setPattern("asdfasdfasdf");
+        identifier1.setCaseSensitive(true);
 
-        Identifier identifier = new Identifier();
-        identifier.setIdentifierFilterStrategies(Arrays.asList(identifierFilterStrategy));
+        IdentifierFilterStrategy identifier2FilterStrategy = new IdentifierFilterStrategy();
+        identifier2FilterStrategy.setStrategy(AbstractFilterStrategy.STATIC_REPLACE);
+        identifier2FilterStrategy.setStaticReplacement("STATIC-REPLACEMENT");
+        Identifier identifier2 = new Identifier();
+        identifier2.setPattern("JEFF");
+        identifier2.setCaseSensitive(true);
+        identifier2.setIdentifierFilterStrategies(Arrays.asList(identifier2FilterStrategy));
 
         IpAddressFilterStrategy ipAddressFilterStrategy = new IpAddressFilterStrategy();
 
@@ -407,7 +442,7 @@ public class PhileasFilterServiceTest {
         identifiers.setCreditCard(creditCard);
         identifiers.setDate(date);
         identifiers.setEmailAddress(emailAddress);
-        identifiers.setIdentifiers(Arrays.asList(identifier));
+        identifiers.setIdentifiers(Arrays.asList(identifier1, identifier2));
         identifiers.setIpAddress(ipAddress);
         identifiers.setPhoneNumber(phoneNumber);
         identifiers.setSsn(ssn);
