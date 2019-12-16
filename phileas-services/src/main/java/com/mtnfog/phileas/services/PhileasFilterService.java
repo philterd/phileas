@@ -115,6 +115,9 @@ public class PhileasFilterService implements FilterService, Serializable {
         // Drop overlapping spans.
         spans = Span.dropOverlappingSpans(spans);
 
+        // Drop ignored spans.
+        spans = Span.dropIgnoredSpans(spans);
+
         // Sort the spans based on the confidence.
         spans.sort(Comparator.comparing(Span::getConfidence));
 
@@ -187,8 +190,6 @@ public class PhileasFilterService implements FilterService, Serializable {
         if(store != null) {
             store.insert(appliedSpans);
         }
-
-
 
         return new FilterResponse(buffer.toString(), context, documentId, explanation);
 

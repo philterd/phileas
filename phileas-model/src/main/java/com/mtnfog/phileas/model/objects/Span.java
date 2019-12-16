@@ -227,6 +227,27 @@ public final class Span implements Serializable {
     }
 
     /**
+     * Drop overlapping spans that were for text that was ignored.
+     * @param spans A list of {@link Span spans} that may or may not contain ignored spans.
+     * @return A list of {@link Span spans} without ignored spans.
+     */
+    public static List<Span> dropIgnoredSpans(List<Span> spans) {
+
+        final List<Span> nonIgnoredSpans = new LinkedList<>();
+
+        for(final Span span : spans) {
+
+            if(!span.isIgnored()) {
+                nonIgnoredSpans.add(span);
+            }
+
+        }
+
+        return nonIgnoredSpans;
+
+    }
+
+    /**
      * Drop overlapping spans that are shorter.
      * @param spans A list of {@link Span spans} that may or may not contain overlapping spans.
      * @return A list of {@link Span spans} without overlapping spans.
