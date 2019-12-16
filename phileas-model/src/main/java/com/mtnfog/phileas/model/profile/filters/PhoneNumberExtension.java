@@ -6,7 +6,7 @@ import com.mtnfog.phileas.model.profile.filters.strategies.rules.PhoneNumberExte
 
 import java.util.List;
 
-public class PhoneNumberExtension {
+public class PhoneNumberExtension extends AbstractFilter {
 
     @SerializedName("phoneNumberExtensionFilterStrategies")
     @Expose

@@ -10,14 +10,15 @@ import com.mtnfog.phileas.model.services.AnonymizationService;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 public class SsnFilter extends RegexFilter implements Serializable {
 
     private static final Pattern SSN_REGEX = Pattern.compile("\\b(?!000|666)[0-8][0-9]{2}[- ]?(?!00)[0-9]{2}[- ]?(?!0000)[0-9]{4}\\b");
 
-    public SsnFilter(List<? extends AbstractFilterStrategy> strategies, AnonymizationService anonymizationService) {
-        super(FilterType.SSN, strategies, anonymizationService);
+    public SsnFilter(List<? extends AbstractFilterStrategy> strategies, AnonymizationService anonymizationService, Set<String> ignored) {
+        super(FilterType.SSN, strategies, anonymizationService, ignored);
     }
 
     @Override

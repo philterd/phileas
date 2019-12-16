@@ -7,7 +7,7 @@ import com.mtnfog.phileas.model.profile.filters.strategies.custom.CustomDictiona
 
 import java.util.List;
 
-public class CustomDictionary {
+public class CustomDictionary extends AbstractFilter {
 
     @SerializedName("type")
     @Expose

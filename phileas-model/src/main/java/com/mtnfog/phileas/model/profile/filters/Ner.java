@@ -6,7 +6,7 @@ import com.mtnfog.phileas.model.profile.filters.strategies.ai.NerFilterStrategy;
 
 import java.util.List;
 
-public class Ner {
+public class Ner extends AbstractFilter {
 
     @SerializedName("nerFilterStrategies")
     @Expose

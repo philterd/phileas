@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 public class CreditCardFilter extends RegexFilter implements Serializable {
@@ -24,8 +25,8 @@ public class CreditCardFilter extends RegexFilter implements Serializable {
 
     private LuhnCheckDigit luhnCheckDigit;
 
-    public CreditCardFilter(List<? extends AbstractFilterStrategy> strategies, AnonymizationService anonymizationService) {
-        super(FilterType.CREDIT_CARD, strategies, anonymizationService);
+    public CreditCardFilter(List<? extends AbstractFilterStrategy> strategies, AnonymizationService anonymizationService, Set<String> ignored) {
+        super(FilterType.CREDIT_CARD, strategies, anonymizationService, ignored);
 
         this.luhnCheckDigit = new LuhnCheckDigit();
 

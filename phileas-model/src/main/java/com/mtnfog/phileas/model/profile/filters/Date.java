@@ -6,7 +6,7 @@ import com.mtnfog.phileas.model.profile.filters.strategies.rules.DateFilterStrat
 
 import java.util.List;
 
-public class Date {
+public class Date extends AbstractFilter {
 
     @SerializedName("dateFilterStrategies")
     @Expose

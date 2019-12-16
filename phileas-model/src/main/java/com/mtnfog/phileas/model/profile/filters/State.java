@@ -7,7 +7,7 @@ import com.mtnfog.phileas.model.profile.filters.strategies.dynamic.StateFilterSt
 
 import java.util.List;
 
-public class State {
+public class State extends AbstractFilter {
 
     @SerializedName("stateFilterStrategies")
     @Expose

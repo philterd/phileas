@@ -1,9 +1,6 @@
 package com.mtnfog.test.phileas.model.profile.filters.strategies.rules;
 
 import com.mtnfog.phileas.model.profile.filters.strategies.AbstractFilterStrategy;
-import com.mtnfog.phileas.model.profile.filters.strategies.rules.AgeFilterStrategy;
-import com.mtnfog.phileas.model.profile.filters.strategies.rules.SsnFilterStrategy;
-import com.mtnfog.phileas.model.profile.filters.strategies.rules.UrlFilterStrategy;
 import com.mtnfog.phileas.model.profile.filters.strategies.rules.VinFilterStrategy;
 import com.mtnfog.phileas.model.services.AnonymizationCacheService;
 import com.mtnfog.phileas.model.services.AnonymizationService;

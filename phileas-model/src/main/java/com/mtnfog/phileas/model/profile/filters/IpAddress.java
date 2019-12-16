@@ -6,7 +6,7 @@ import com.mtnfog.phileas.model.profile.filters.strategies.rules.IpAddressFilter
 
 import java.util.List;
 
-public class IpAddress {
+public class IpAddress extends AbstractFilter {
 
     @SerializedName("ipAddressFilterStrategies")
     @Expose

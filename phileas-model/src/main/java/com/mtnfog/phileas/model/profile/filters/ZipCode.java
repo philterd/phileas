@@ -6,7 +6,7 @@ import com.mtnfog.phileas.model.profile.filters.strategies.rules.ZipCodeFilterSt
 
 import java.util.List;
 
-public class ZipCode {
+public class ZipCode extends AbstractFilter {
 
     @SerializedName("zipCodeFilterStrategy")
     @Expose

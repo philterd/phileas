@@ -10,6 +10,7 @@ import com.mtnfog.phileas.model.services.AnonymizationService;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 public class AgeFilter extends RegexFilter implements Serializable {
@@ -17,8 +18,8 @@ public class AgeFilter extends RegexFilter implements Serializable {
     private static final Pattern AGE_REGEX_1 = Pattern.compile("\\b[0-9.]+[\\s]*(years|yrs)(\\s)*(old)?\\b", Pattern.CASE_INSENSITIVE);
     private static final Pattern AGE_REGEX_2 = Pattern.compile("\\b(age)(d)?(\\s)*[0-9.]+\\b", Pattern.CASE_INSENSITIVE);
 
-    public AgeFilter(List<? extends AbstractFilterStrategy> strategies, AnonymizationService anonymizationService) {
-        super(FilterType.AGE, strategies, anonymizationService);
+    public AgeFilter(List<? extends AbstractFilterStrategy> strategies, AnonymizationService anonymizationService, Set<String> ignored) {
+        super(FilterType.AGE, strategies, anonymizationService, ignored);
     }
 
     @Override

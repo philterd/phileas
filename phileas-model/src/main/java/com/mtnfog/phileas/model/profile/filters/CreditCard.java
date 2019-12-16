@@ -6,7 +6,7 @@ import com.mtnfog.phileas.model.profile.filters.strategies.rules.CreditCardFilte
 
 import java.util.List;
 
-public class CreditCard {
+public class CreditCard extends AbstractFilter {
 
     @SerializedName("creditCardFilterStrategies")
     @Expose

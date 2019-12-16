@@ -7,7 +7,7 @@ import com.mtnfog.phileas.model.profile.filters.strategies.dynamic.CityFilterStr
 
 import java.util.List;
 
-public class City {
+public class City extends AbstractFilter {
 
     @SerializedName("cityFilterStrategies")
     @Expose

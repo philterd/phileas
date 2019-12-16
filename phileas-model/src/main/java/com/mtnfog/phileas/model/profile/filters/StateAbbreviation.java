@@ -6,7 +6,7 @@ import com.mtnfog.phileas.model.profile.filters.strategies.rules.StateAbbreviati
 
 import java.util.List;
 
-public class StateAbbreviation {
+public class StateAbbreviation extends AbstractFilter {
 
     @SerializedName("stateAbbreviationFilterStrategies")
     @Expose

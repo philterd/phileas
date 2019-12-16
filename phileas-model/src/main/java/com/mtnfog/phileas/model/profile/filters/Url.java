@@ -6,7 +6,7 @@ import com.mtnfog.phileas.model.profile.filters.strategies.rules.UrlFilterStrate
 
 import java.util.List;
 
-public class Url {
+public class Url extends AbstractFilter {
 
     @SerializedName("urlFilterStrategies")
     @Expose

@@ -11,6 +11,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class PhoneNumberExtensionFilterTest extends AbstractFilterTest {
@@ -19,7 +20,7 @@ public class PhoneNumberExtensionFilterTest extends AbstractFilterTest {
     public void filter1() throws Exception {
 
         final List<PhoneNumberExtensionFilterStrategy> strategies = Arrays.asList(new PhoneNumberExtensionFilterStrategy());
-        PhoneNumberExtensionFilter filter = new PhoneNumberExtensionFilter(strategies, new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()));
+        PhoneNumberExtensionFilter filter = new PhoneNumberExtensionFilter(strategies, new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()), Collections.emptySet());
 
         List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid","he is at x123");
 

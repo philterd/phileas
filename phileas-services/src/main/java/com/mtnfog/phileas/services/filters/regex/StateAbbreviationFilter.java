@@ -12,6 +12,7 @@ import java.io.Serializable;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -72,8 +73,8 @@ public class StateAbbreviationFilter extends RegexFilter implements Serializable
 
     }};
 
-    public StateAbbreviationFilter(List<? extends AbstractFilterStrategy> strategies, AnonymizationService anonymizationService) {
-        super(FilterType.STATE_ABBREVIATION, strategies, anonymizationService);
+    public StateAbbreviationFilter(List<? extends AbstractFilterStrategy> strategies, AnonymizationService anonymizationService, Set<String> ignored) {
+        super(FilterType.STATE_ABBREVIATION, strategies, anonymizationService, ignored);
 
     }
 
@@ -90,7 +91,8 @@ public class StateAbbreviationFilter extends RegexFilter implements Serializable
             while(m.find()) {
 
                 final String replacement = getReplacement(label, context, documentId, input, Collections.emptyMap());
-                final Span span = Span.make(m.start(), m.end(), FilterType.STATE_ABBREVIATION, context, documentId, 1.0, input, replacement);
+                final boolean isIgnored = ignored.contains(input);
+                final Span span = Span.make(m.start(), m.end(), FilterType.STATE_ABBREVIATION, context, documentId, 1.0, input, replacement, isIgnored);
 
                 spans.add(span);
 

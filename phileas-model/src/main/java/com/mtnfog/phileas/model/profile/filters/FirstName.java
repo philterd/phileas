@@ -7,7 +7,7 @@ import com.mtnfog.phileas.model.profile.filters.strategies.dynamic.FirstNameFilt
 
 import java.util.List;
 
-public class FirstName {
+public class FirstName extends AbstractFilter {
 
     @SerializedName("firstNameFilterStrategies")
     @Expose

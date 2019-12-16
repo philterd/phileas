@@ -7,6 +7,7 @@ import com.mtnfog.phileas.model.services.AnonymizationService;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Set;
 
 public abstract class DynamicFilter extends Filter implements Serializable {
 
@@ -15,8 +16,8 @@ public abstract class DynamicFilter extends Filter implements Serializable {
      * @param filterType The {@link FilterType type} of the filter.
      * @param anonymizationService The {@link AnonymizationService} for this filter.
      */
-    public DynamicFilter(FilterType filterType, List<? extends AbstractFilterStrategy> strategies, AnonymizationService anonymizationService) {
-        super(filterType, strategies, anonymizationService);
+    public DynamicFilter(FilterType filterType, List<? extends AbstractFilterStrategy> strategies, AnonymizationService anonymizationService, Set<String> ignored) {
+        super(filterType, strategies, anonymizationService, ignored);
     }
 
 }

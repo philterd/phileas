@@ -6,7 +6,7 @@ import com.mtnfog.phileas.model.profile.filters.strategies.rules.VinFilterStrate
 
 import java.util.List;
 
-public class Vin {
+public class Vin extends AbstractFilter {
 
     @SerializedName("vinFilterStrategies")
     @Expose

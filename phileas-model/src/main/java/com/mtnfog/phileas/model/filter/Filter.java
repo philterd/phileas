@@ -14,21 +14,11 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
+import java.util.Set;
 
 public abstract class Filter implements Serializable {
 
     protected static final Logger LOGGER = LogManager.getLogger(Filter.class);
-
-    /**
-     * Scope of a single document.
-     */
-    public static final String ANONYMIZATION_SCOPE_DOCUMENT = "document";
-
-    /**
-     * Scope of a context.
-     */
-    public static final String ANONYMIZATION_SCOPE_CONTEXT = "context";
 
     /**
      * The {@link FilterType type} of identifiers handled by this filter.
@@ -48,6 +38,11 @@ public abstract class Filter implements Serializable {
     protected String label;
 
     /**
+     * A list of ignored terms.
+     */
+    protected Set<String> ignored;
+
+    /**
      * Filters the input text.
      * @param filterProfile The {@link FilterProfile} to use.
      * @param context The context.
@@ -63,10 +58,11 @@ public abstract class Filter implements Serializable {
      * @param filterType The {@link FilterType type} of the filter.
      * @param anonymizationService The {@link AnonymizationService} for this filter.
      */
-    public Filter(FilterType filterType, List<? extends AbstractFilterStrategy> strategies, AnonymizationService anonymizationService) {
+    public Filter(FilterType filterType, List<? extends AbstractFilterStrategy> strategies, AnonymizationService anonymizationService, Set<String> ignored) {
         this.filterType = filterType;
         this.strategies = strategies;
         this.anonymizationService = anonymizationService;
+        this.ignored = ignored;
     }
 
     /**

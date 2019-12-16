@@ -9,6 +9,7 @@ import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * A dynamic filter that operates using named-entity recognition.
@@ -32,9 +33,10 @@ public abstract class NerFilter extends DynamicFilter implements Serializable {
                      List<? extends AbstractFilterStrategy> strategies,
                      Map<String, DescriptiveStatistics> stats,
                      MetricsService metricsService,
-                     AnonymizationService anonymizationService) {
+                     AnonymizationService anonymizationService,
+                     Set<String> ignored) {
 
-        super(filterType, strategies, anonymizationService);
+        super(filterType, strategies, anonymizationService, ignored);
 
         this.stats = stats;
         this.metricsService = metricsService;

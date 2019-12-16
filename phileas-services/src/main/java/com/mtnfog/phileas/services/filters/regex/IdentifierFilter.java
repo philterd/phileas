@@ -10,14 +10,15 @@ import com.mtnfog.phileas.model.services.AnonymizationService;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 public class IdentifierFilter extends RegexFilter implements Serializable {
 
     private Pattern pattern;
 
-    public IdentifierFilter(String label, String pattern, boolean caseSensitive, List<IdentifierFilterStrategy> strategies, AnonymizationService anonymizationService) {
-        super(FilterType.IDENTIFIER, strategies, anonymizationService);
+    public IdentifierFilter(String label, String pattern, boolean caseSensitive, List<IdentifierFilterStrategy> strategies, AnonymizationService anonymizationService, Set<String> ignored) {
+        super(FilterType.IDENTIFIER, strategies, anonymizationService, ignored);
         this.label = label;
 
         if(caseSensitive) {

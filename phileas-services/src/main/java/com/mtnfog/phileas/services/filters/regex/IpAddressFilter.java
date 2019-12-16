@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 public class IpAddressFilter extends RegexFilter implements Serializable {
@@ -64,8 +65,8 @@ public class IpAddressFilter extends RegexFilter implements Serializable {
                     + "(?:[0-9a-fA-F]{1,4}:){6}"                             // 6 blocks of a 1 to 4 digit hex number followed by double colon ':'
                     + "" );                                                 // end of string
 
-    public IpAddressFilter(List<? extends AbstractFilterStrategy> strategies, AnonymizationService anonymizationService) {
-        super(FilterType.IP_ADDRESS, strategies, anonymizationService);
+    public IpAddressFilter(List<? extends AbstractFilterStrategy> strategies, AnonymizationService anonymizationService, Set<String> ignored) {
+        super(FilterType.IP_ADDRESS, strategies, anonymizationService, ignored);
     }
 
     @Override
