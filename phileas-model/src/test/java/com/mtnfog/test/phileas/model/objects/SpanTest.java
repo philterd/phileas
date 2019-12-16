@@ -166,6 +166,54 @@ public class SpanTest {
     }
 
     @Test
+    public void ignored1() {
+
+        List<Span> spans = new LinkedList<>();
+        spans.add(Span.make(1, 5, FilterType.NER_ENTITY, "context", "document", 1.0, "test", "***", false));
+        spans.add(Span.make(2, 12, FilterType.NER_ENTITY, "context", "document", 1.0, "test", "***", true));
+
+        List<Span> nonIgnoredSpans = Span.dropIgnoredSpans(spans);
+
+        showSpans(nonIgnoredSpans);
+
+        Assert.assertEquals(1, nonIgnoredSpans.size());
+        Assert.assertEquals(nonIgnoredSpans.get(0).getCharacterStart(), 1);
+
+    }
+
+    @Test
+    public void ignored2() {
+
+        List<Span> spans = new LinkedList<>();
+        spans.add(Span.make(1, 5, FilterType.NER_ENTITY, "context", "document", 1.0, "test", "***", false));
+        spans.add(Span.make(2, 12, FilterType.NER_ENTITY, "context", "document", 1.0, "test", "***", false));
+
+        List<Span> nonIgnoredSpans = Span.dropIgnoredSpans(spans);
+
+        showSpans(nonIgnoredSpans);
+
+        Assert.assertEquals(2, nonIgnoredSpans.size());
+        Assert.assertEquals(nonIgnoredSpans.get(0).getCharacterStart(), 1);
+        Assert.assertEquals(nonIgnoredSpans.get(1).getCharacterStart(), 2);
+
+    }
+
+    @Test
+    public void ignored3() {
+
+        List<Span> spans = new LinkedList<>();
+        spans.add(Span.make(1, 5, FilterType.NER_ENTITY, "context", "document", 1.0, "test", "***", true));
+        spans.add(Span.make(2, 12, FilterType.NER_ENTITY, "context", "document", 1.0, "test", "***", true));
+
+        List<Span> nonIgnoredSpans = Span.dropIgnoredSpans(spans);
+
+        showSpans(nonIgnoredSpans);
+
+        Assert.assertEquals(0, nonIgnoredSpans.size());
+
+    }
+
+    @Test
     public void overlapping1() {
 
         List<Span> spans = new LinkedList<>();
