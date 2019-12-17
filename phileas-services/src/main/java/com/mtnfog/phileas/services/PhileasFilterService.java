@@ -225,7 +225,7 @@ public class PhileasFilterService implements FilterService, Serializable {
             }
 
             if(filterProfile.getIdentifiers().hasFilter(FilterType.CREDIT_CARD)) {
-                enabledFilters.add(new CreditCardFilter(filterProfile.getIdentifiers().getCreditCard().getCreditCardFilterStrategies(), new CreditCardAnonymizationService(anonymizationCacheService), filterProfile.getIdentifiers().getCreditCard().getIgnored()));
+                enabledFilters.add(new CreditCardFilter(filterProfile.getIdentifiers().getCreditCard().getCreditCardFilterStrategies(), new CreditCardAnonymizationService(anonymizationCacheService), filterProfile.getIdentifiers().getCreditCard().isOnlyValidCreditCardNumbers(), filterProfile.getIdentifiers().getCreditCard().getIgnored()));
             }
 
             if(filterProfile.getIdentifiers().hasFilter(FilterType.DATE)) {

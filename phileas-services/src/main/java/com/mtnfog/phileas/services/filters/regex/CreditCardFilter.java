@@ -23,11 +23,13 @@ public class CreditCardFilter extends RegexFilter implements Serializable {
 
     private static final Pattern ID_REGEX = Pattern.compile("\\b([0-9]{15}(?:[0-9]{1})?)\\b");
 
+    private boolean onlyValidCreditCardNumbers;
     private LuhnCheckDigit luhnCheckDigit;
 
-    public CreditCardFilter(List<? extends AbstractFilterStrategy> strategies, AnonymizationService anonymizationService, Set<String> ignored) {
+    public CreditCardFilter(List<? extends AbstractFilterStrategy> strategies, AnonymizationService anonymizationService, boolean onlyValidCreditCardNumbers, Set<String> ignored) {
         super(FilterType.CREDIT_CARD, strategies, anonymizationService, ignored);
 
+        this.onlyValidCreditCardNumbers = onlyValidCreditCardNumbers;
         this.luhnCheckDigit = new LuhnCheckDigit();
 
     }
@@ -39,11 +41,13 @@ public class CreditCardFilter extends RegexFilter implements Serializable {
 
         final List<Span> validSpans = new LinkedList<>();
 
-        for(Span span : spans) {
+        for(final Span span : spans) {
 
             final String creditCardNumber = input.substring(span.getCharacterStart(), span.getCharacterEnd());
 
-            if(luhnCheckDigit.isValid(creditCardNumber)) {
+            if(onlyValidCreditCardNumbers && luhnCheckDigit.isValid(creditCardNumber)) {
+                validSpans.add(span);
+            } else {
                 validSpans.add(span);
             }
 

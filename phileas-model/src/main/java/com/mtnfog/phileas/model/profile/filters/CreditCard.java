@@ -8,6 +8,10 @@ import java.util.List;
 
 public class CreditCard extends AbstractFilter {
 
+    @SerializedName("onlyValidCreditCardNumbers")
+    @Expose
+    protected boolean onlyValidCreditCardNumbers = true;
+
     @SerializedName("creditCardFilterStrategies")
     @Expose
     private List<CreditCardFilterStrategy> creditCardFilterStrategies;
@@ -18,6 +22,14 @@ public class CreditCard extends AbstractFilter {
 
     public void setCreditCardFilterStrategies(List<CreditCardFilterStrategy> creditCardFilterStrategies) {
         this.creditCardFilterStrategies = creditCardFilterStrategies;
+    }
+
+    public boolean isOnlyValidCreditCardNumbers() {
+        return onlyValidCreditCardNumbers;
+    }
+
+    public void setOnlyValidCreditCardNumbers() {
+        this.onlyValidCreditCardNumbers = onlyValidCreditCardNumbers;
     }
 
 }
