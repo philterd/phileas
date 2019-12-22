@@ -8,6 +8,10 @@ import java.util.List;
 
 public class Date extends AbstractFilter {
 
+    @SerializedName("onlyValidDates")
+    @Expose
+    protected boolean onlyValidDates = false;
+
     @SerializedName("dateFilterStrategies")
     @Expose
     private List<DateFilterStrategy> dateFilterStrategies;
@@ -19,5 +23,13 @@ public class Date extends AbstractFilter {
     public void setDateFilterStrategies(List<DateFilterStrategy> dateFilterStrategies) {
         this.dateFilterStrategies = dateFilterStrategies;
     }
-    
+
+    public void setOnlyValidDates(boolean onlyValidDates) {
+        this.onlyValidDates = onlyValidDates;
+    }
+
+    public boolean isOnlyValidDates() {
+        return onlyValidDates;
+    }
+
 }

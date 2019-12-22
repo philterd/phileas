@@ -229,7 +229,7 @@ public class PhileasFilterService implements FilterService, Serializable {
             }
 
             if(filterProfile.getIdentifiers().hasFilter(FilterType.DATE)) {
-                enabledFilters.add(new DateFilter(filterProfile.getIdentifiers().getDate().getDateFilterStrategies(), new DateAnonymizationService(anonymizationCacheService), filterProfile.getIdentifiers().getDate().getIgnored()));
+                enabledFilters.add(new DateFilter(filterProfile.getIdentifiers().getDate().getDateFilterStrategies(), new DateAnonymizationService(anonymizationCacheService), filterProfile.getIdentifiers().getDate().isOnlyValidDates(), filterProfile.getIdentifiers().getDate().getIgnored()));
             }
 
             if(filterProfile.getIdentifiers().hasFilter(FilterType.EMAIL_ADDRESS)) {
