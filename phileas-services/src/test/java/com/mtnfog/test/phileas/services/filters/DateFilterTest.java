@@ -22,6 +22,7 @@ public class DateFilterTest extends AbstractFilterTest {
         DateFilter filter = new DateFilter(strategies, new DateAnonymizationService(new LocalAnonymizationCacheService()), false, Collections.emptySet());
 
         List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid","May 22, 1999");
+        showSpans(spans);
         Assert.assertEquals(1, spans.size());
         Assert.assertTrue(checkSpan(spans.get(0), 0, 12, FilterType.DATE));
 
@@ -59,11 +60,8 @@ public class DateFilterTest extends AbstractFilterTest {
 
         List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid","02-31-2019");
 
-        // This is matching two regexes and since spans is a list both get added.
-        // The duplicate span will be dropped later.
-        Assert.assertEquals(2, spans.size());
+        Assert.assertEquals(1, spans.size());
         Assert.assertTrue(checkSpan(spans.get(0), 0, 10, FilterType.DATE));
-        Assert.assertTrue(checkSpan(spans.get(1), 0, 10, FilterType.DATE));
 
     }
 
@@ -157,12 +155,9 @@ public class DateFilterTest extends AbstractFilterTest {
         final List<DateFilterStrategy> strategies = Arrays.asList(new DateFilterStrategy());
         DateFilter filter = new DateFilter(strategies, new DateAnonymizationService(new LocalAnonymizationCacheService()), false, Collections.emptySet());
 
-        // This is matching two regexes and since spans is a list both get added.
-        // The duplicate span will be dropped later.
         List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid","12-05-2014");
-        Assert.assertEquals(2, spans.size());
+        Assert.assertEquals(1, spans.size());
         Assert.assertTrue(checkSpan(spans.get(0), 0, 10, FilterType.DATE));
-        Assert.assertTrue(checkSpan(spans.get(1), 0, 10, FilterType.DATE));
 
     }
 
@@ -293,6 +288,7 @@ public class DateFilterTest extends AbstractFilterTest {
         DateFilter filter = new DateFilter(strategies, new DateAnonymizationService(new LocalAnonymizationCacheService()), true, Collections.emptySet());
 
         List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid","02-31-19@12:00");
+        showSpans(spans);
         Assert.assertEquals(0, spans.size());
 
     }
