@@ -21,7 +21,6 @@ public class DateFilter extends RegexFilter implements Serializable {
     public static final Pattern DATE_MONTH_REGEX = Pattern.compile("(?i)(\\b\\d{1,2}\\D{0,3})?\\b(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:tember)?|Oct(?:ober)?|(Nov|Dec)(?:ember)?)\\D?(\\d{1,2}(\\D?(st|nd|rd|th))?\\D?)?(\\D?((19[7-9]\\d|20\\d{2})|\\d{2}))?\\b", Pattern.CASE_INSENSITIVE);
 
     private Map<String, Pattern> datePatterns = new HashMap<>();
-    private List<String> delimeters = Arrays.asList("-", "/", " ");
 
     private SpanValidator spanValidator;
     private boolean onlyValidDates;
@@ -31,6 +30,8 @@ public class DateFilter extends RegexFilter implements Serializable {
 
         this.spanValidator = spanValidator;
         this.onlyValidDates = onlyValidDates;
+
+        final List<String> delimeters = Arrays.asList("-", "/", " ");
 
         for(final String delimeter : delimeters) {
 
@@ -51,29 +52,6 @@ public class DateFilter extends RegexFilter implements Serializable {
     public List<Span> filter(FilterProfile filterProfile, String context, String documentId, String input) throws IOException {
 
         final List<Span> spans = new LinkedList<>();
-
-        /*Parser parser = new Parser();
-        List<DateGroup> groups = parser.parse(input);
-        for(DateGroup group : groups) {
-
-            final List<Date> dates = group.getDates();
-            final int line = group.getLine();
-            final int column = group.getPosition();
-            final String matchingValue = group.getText();
-            final String syntaxTree = group.getSyntaxTree().toStringTree();
-            final  Map<String, List<ParseLocation>> parseMap = group.getParseLocations();
-            //boolean isRecurreing = group.isRecurring();
-            //Date recursUntil = group.getRecursUntil();
-
-            //public static Span make(int characterStart, int characterEnd, FilterType filterType, String context,
-            //        String documentId, double confidence, String text, String replacement, boolean ignored) {
-
-            Span span = Span.make(group.getPosition() - 1, group.getPosition() + group.getText().length() - 1,
-                    FilterType.DATE, context, documentId, 1.0, group.getText(), "replacement", false);
-
-            spans.add(span);
-
-        }*/
 
         for(String format : datePatterns.keySet()) {
 

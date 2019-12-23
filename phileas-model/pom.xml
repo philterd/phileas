@@ -99,11 +99,6 @@
 			<version>${commons.csv.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>com.joestelmach</groupId>
-			<artifactId>natty</artifactId>
-			<version>${natty.version}</version>
-		</dependency>
-		<dependency>
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
 			<version>${commons.io.version}</version>
