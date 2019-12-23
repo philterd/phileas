@@ -53,6 +53,9 @@ public final class Span implements Serializable {
     // Encapsulates the characterStart and characterEnd for easy intersection functions.
     private transient Range<Integer> range;
 
+    // The regex expression, if any, used to identify the span.
+    private transient String pattern;
+
     /**
      * Creates a new span. Use the static <code>make</code> function to create a new {@link Span}.
      * @param characterStart The character-based index of the start of the span.
@@ -89,6 +92,7 @@ public final class Span implements Serializable {
      * @param confidence The confidence.
      * @param text The text identified by the span.
      * @param replacement The replacement (anonymized) value for the span.
+     * @param ignored Whether or not the found span is ultimately ignored.
      * @return A {@link Span} object with the given properties.
      */
     public static Span make(int characterStart, int characterEnd, FilterType filterType, String context,
@@ -416,6 +420,14 @@ public final class Span implements Serializable {
 
     public void setIgnored(boolean ignored) {
         this.ignored = ignored;
+    }
+
+    public String getPattern() {
+        return pattern;
+    }
+
+    public void setPattern(String pattern) {
+        this.pattern = pattern;
     }
 
 }

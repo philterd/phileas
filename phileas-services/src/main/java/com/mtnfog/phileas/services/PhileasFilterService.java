@@ -19,6 +19,7 @@ import com.mtnfog.phileas.services.anonymization.*;
 import com.mtnfog.phileas.services.filters.custom.PhoneNumberRulesFilter;
 import com.mtnfog.phileas.services.filters.regex.*;
 import com.mtnfog.phileas.services.postfilters.IgnoredTermsFilter;
+import com.mtnfog.phileas.services.validators.DateSpanValidator;
 import com.mtnfog.phileas.store.ElasticsearchStore;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -229,7 +230,7 @@ public class PhileasFilterService implements FilterService, Serializable {
             }
 
             if(filterProfile.getIdentifiers().hasFilter(FilterType.DATE)) {
-                enabledFilters.add(new DateFilter(filterProfile.getIdentifiers().getDate().getDateFilterStrategies(), new DateAnonymizationService(anonymizationCacheService), filterProfile.getIdentifiers().getDate().isOnlyValidDates(), filterProfile.getIdentifiers().getDate().getIgnored()));
+                enabledFilters.add(new DateFilter(filterProfile.getIdentifiers().getDate().getDateFilterStrategies(), new DateAnonymizationService(anonymizationCacheService), filterProfile.getIdentifiers().getDate().isOnlyValidDates(), new DateSpanValidator(), filterProfile.getIdentifiers().getDate().getIgnored()));
             }
 
             if(filterProfile.getIdentifiers().hasFilter(FilterType.EMAIL_ADDRESS)) {
