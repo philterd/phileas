@@ -2,7 +2,6 @@ package com.mtnfog.phileas.services.cache;
 
 import com.mtnfog.phileas.model.services.AnonymizationCacheService;
 import org.apache.commons.codec.digest.DigestUtils;
-import org.apache.commons.lang3.StringUtils;
 import redis.clients.jedis.Jedis;
 
 import javax.net.ssl.*;
