@@ -27,17 +27,23 @@ public class AnonymizationCacheServiceFactory {
 
         AnonymizationCacheService anonymizationCacheService = null;
 
-        if(StringUtils.equalsIgnoreCase(properties.getProperty("anonymization.cache.service"), "redis")) {
+        if(StringUtils.equalsIgnoreCase(properties.getProperty("anonymization.cache.service.redis.enabled"), "true")) {
 
             LOGGER.info("Configuring connection to Redis for anonymization cache service.");
 
-            final String host = properties.getProperty("anonymization.cache.service.host");
-            final int port = Integer.parseInt(properties.getProperty("anonymization.cache.service.host", "6379"));
-            final String trustStore = properties.getProperty("anonymization.cache.service.truststore");
+            final String host = properties.getProperty("anonymization.cache.service.redis.host");
+            final int port = Integer.parseInt(properties.getProperty("anonymization.cache.service.redis.host", "6379"));
+            final String authToken = properties.getProperty("anonymization.cache.service.redis.auth.token", "");
+            final String trustStore = properties.getProperty("anonymization.cache.service.redis.truststore", "");
 
             try {
 
-                anonymizationCacheService = new RedisAnonymizationCacheService(host, port, trustStore);
+                if(StringUtils.isEmpty(trustStore)) {
+                    anonymizationCacheService = new RedisAnonymizationCacheService(host, port, authToken);
+                } else {
+                    LOGGER.info("Configuring redis client with truststore {}", trustStore);
+                    anonymizationCacheService = new RedisAnonymizationCacheService(host, port, authToken, trustStore);
+                }
 
             } catch (Exception ex) {
 
@@ -49,7 +55,6 @@ public class AnonymizationCacheServiceFactory {
         } else {
 
             LOGGER.info("Using local anonymization cache service.");
-
             anonymizationCacheService = new LocalAnonymizationCacheService();
 
         }
