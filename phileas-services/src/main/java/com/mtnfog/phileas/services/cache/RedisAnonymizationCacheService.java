@@ -2,15 +2,48 @@ package com.mtnfog.phileas.services.cache;
 
 import com.mtnfog.phileas.model.services.AnonymizationCacheService;
 import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.lang3.StringUtils;
 import redis.clients.jedis.Jedis;
+
+import javax.net.ssl.*;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.security.KeyStore;
+import java.security.SecureRandom;
 
 public class RedisAnonymizationCacheService implements AnonymizationCacheService {
 
     private Jedis jedis;
 
-    public RedisAnonymizationCacheService(String host, int port, boolean ssl) {
+    public RedisAnonymizationCacheService(String host, int port, String authToken, String trustStoreJks) throws Exception {
 
-        this.jedis = new Jedis(host, port, ssl);
+        final SSLSocketFactory sslSocketFactory = createTrustStoreSslSocketFactory(trustStoreJks);
+
+        final SSLParameters sslParameters = new SSLParameters();
+        sslParameters.setEndpointIdentificationAlgorithm("HTTPS");
+
+        final HostnameVerifier hostnameVerifier = HttpsURLConnection.getDefaultHostnameVerifier();
+
+        this.jedis = new Jedis(host, port, true, sslSocketFactory, sslParameters, hostnameVerifier);
+        this.jedis.auth(authToken);
+
+    }
+
+    public RedisAnonymizationCacheService(String host, int port, String authToken) {
+
+        this.jedis = new Jedis(host, port, true);
+        this.jedis.auth(authToken);
+
+    }
+
+    /**
+     * Only used for testing. A production connection to Redis must use SSL.
+     * @param host The hostname  of the Redis server.
+     * @param port The port of the Redis server.
+     */
+    public RedisAnonymizationCacheService(String host, int port) {
+
+        this.jedis = new Jedis(host, port, false);
 
     }
 
@@ -26,7 +59,6 @@ public class RedisAnonymizationCacheService implements AnonymizationCacheService
 
         jedis.set(generateKey(context, token), replacement);
         jedis.hset(context, token, replacement);
-
 
     }
 
@@ -55,6 +87,30 @@ public class RedisAnonymizationCacheService implements AnonymizationCacheService
     public boolean containsValue(String context, String replacement) {
 
         return jedis.hexists(context, replacement);
+
+    }
+
+    private static SSLSocketFactory createTrustStoreSslSocketFactory(String trustStoreJks) throws Exception {
+
+        final KeyStore trustStore = KeyStore.getInstance("jceks");
+
+        InputStream inputStream = null;
+        try {
+            inputStream = new FileInputStream(trustStoreJks);
+            trustStore.load(inputStream, null);
+        } finally {
+            inputStream.close();
+        }
+
+        final TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance("PKIX");
+        trustManagerFactory.init(trustStore);
+
+        final TrustManager[] trustManagers = trustManagerFactory.getTrustManagers();
+
+        final SSLContext sslContext = SSLContext.getInstance("TLS");
+        sslContext.init(null, trustManagers, new SecureRandom());
+
+        return sslContext.getSocketFactory();
 
     }
 

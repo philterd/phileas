@@ -33,9 +33,18 @@ public class AnonymizationCacheServiceFactory {
 
             final String host = properties.getProperty("anonymization.cache.service.host");
             final int port = Integer.parseInt(properties.getProperty("anonymization.cache.service.host", "6379"));
-            final boolean ssl = Boolean.parseBoolean(properties.getProperty("anonymization.cache.service.ssl", "true"));
+            final String trustStore = properties.getProperty("anonymization.cache.service.truststore");
 
-            anonymizationCacheService = new RedisAnonymizationCacheService(host, port, ssl);
+            try {
+
+                anonymizationCacheService = new RedisAnonymizationCacheService(host, port, trustStore);
+
+            } catch (Exception ex) {
+
+                LOGGER.error("Unable to initialize the Redis cache client. A local anonymization cache service will be used instead.", ex);
+                anonymizationCacheService = new LocalAnonymizationCacheService();
+
+            }
 
         } else {
 
