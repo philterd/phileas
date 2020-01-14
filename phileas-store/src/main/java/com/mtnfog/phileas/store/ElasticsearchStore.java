@@ -54,7 +54,7 @@ public class ElasticsearchStore implements Store, Closeable {
 
         final String json = gson.toJson(span);
 
-        LOGGER.info(json);
+        LOGGER.debug(json);
 
         final IndexRequest request = new IndexRequest(indexName);
         request.source(json, XContentType.JSON);
@@ -89,11 +89,11 @@ public class ElasticsearchStore implements Store, Closeable {
         final SearchRequest searchRequest = new SearchRequest(indexName);
         searchRequest.source(searchSourceBuilder);
 
-        LOGGER.info(searchRequest.toString());
+        LOGGER.debug(searchRequest.toString());
 
         final SearchResponse searchResponse = client.search(searchRequest, RequestOptions.DEFAULT);
 
-        LOGGER.info(searchResponse.toString());
+        LOGGER.debug(searchResponse.toString());
 
         final SearchHit[] searchHits = searchResponse.getHits().getHits();
 
