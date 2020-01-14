@@ -25,14 +25,20 @@ public class RedisAnonymizationCacheService implements AnonymizationCacheService
         final HostnameVerifier hostnameVerifier = HttpsURLConnection.getDefaultHostnameVerifier();
 
         this.jedis = new Jedis(host, port, true, sslSocketFactory, sslParameters, hostnameVerifier);
+
+        this.jedis.connect();
         this.jedis.auth(authToken);
+        this.jedis.flushAll();
 
     }
 
     public RedisAnonymizationCacheService(String host, int port, String authToken) {
 
         this.jedis = new Jedis(host, port, true);
+
+        this.jedis.connect();
         this.jedis.auth(authToken);
+        this.jedis.flushAll();
 
     }
 
