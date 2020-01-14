@@ -85,7 +85,7 @@ public class CreditCardFilterStrategyTest {
         Assert.assertEquals("{{{REDACTED-credit-card}}}", replacement);
 
     }
-    
+
     @Test
     public void evaluateCondition1() throws IOException {
 
