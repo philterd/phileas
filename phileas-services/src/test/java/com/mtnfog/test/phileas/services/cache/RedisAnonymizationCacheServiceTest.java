@@ -6,7 +6,7 @@ import redis.embedded.RedisServer;
 
 import java.io.IOException;
 
-@Ignore
+@Ignore("For some reason, the in-memory redis doesn't start on Jenkins builds.")
 public class RedisAnonymizationCacheServiceTest {
 
     private int port = 31000;
