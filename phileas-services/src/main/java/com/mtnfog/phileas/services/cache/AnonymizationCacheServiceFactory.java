@@ -27,20 +27,34 @@ public class AnonymizationCacheServiceFactory {
 
         AnonymizationCacheService anonymizationCacheService = null;
 
-        if(StringUtils.equalsIgnoreCase(properties.getProperty("anonymization.cache.service"), "redis")) {
+        if(StringUtils.equalsIgnoreCase(properties.getProperty("anonymization.cache.service.redis.enabled"), "true")) {
 
             LOGGER.info("Configuring connection to Redis for anonymization cache service.");
 
-            final String host = properties.getProperty("anonymization.cache.service.host");
-            final int port = Integer.parseInt(properties.getProperty("anonymization.cache.service.host", "6379"));
-            final boolean ssl = Boolean.parseBoolean(properties.getProperty("anonymization.cache.service.ssl", "true"));
+            final String host = properties.getProperty("anonymization.cache.service.redis.host");
+            final int port = Integer.parseInt(properties.getProperty("anonymization.cache.service.redis.host", "6379"));
+            final String authToken = properties.getProperty("anonymization.cache.service.redis.auth.token", "");
+            final String trustStore = properties.getProperty("anonymization.cache.service.redis.truststore", "");
 
-            anonymizationCacheService = new RedisAnonymizationCacheService(host, port, ssl);
+            try {
+
+                if(StringUtils.isEmpty(trustStore)) {
+                    anonymizationCacheService = new RedisAnonymizationCacheService(host, port, authToken);
+                } else {
+                    LOGGER.info("Configuring redis client with truststore {}", trustStore);
+                    anonymizationCacheService = new RedisAnonymizationCacheService(host, port, authToken, trustStore);
+                }
+
+            } catch (Exception ex) {
+
+                LOGGER.error("Unable to initialize the Redis cache client. A local anonymization cache service will be used instead.", ex);
+                anonymizationCacheService = new LocalAnonymizationCacheService();
+
+            }
 
         } else {
 
             LOGGER.info("Using local anonymization cache service.");
-
             anonymizationCacheService = new LocalAnonymizationCacheService();
 
         }
