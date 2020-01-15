@@ -32,7 +32,7 @@ public class AnonymizationCacheServiceFactory {
             LOGGER.info("Configuring connection to Redis for anonymization cache service.");
 
             final String host = properties.getProperty("anonymization.cache.service.redis.host");
-            final int port = Integer.parseInt(properties.getProperty("anonymization.cache.service.redis.host", "6379"));
+            final int port = Integer.parseInt(properties.getProperty("anonymization.cache.service.redis.port", "6379"));
             final String authToken = properties.getProperty("anonymization.cache.service.redis.auth.token", "");
             final String trustStore = properties.getProperty("anonymization.cache.service.redis.truststore", "");
 
