@@ -11,6 +11,7 @@ import com.mtnfog.phileas.model.filter.rules.dictionary.LuceneDictionaryFilter;
 import com.mtnfog.phileas.model.objects.Explanation;
 import com.mtnfog.phileas.model.objects.Span;
 import com.mtnfog.phileas.model.profile.FilterProfile;
+import com.mtnfog.phileas.model.profile.Ignored;
 import com.mtnfog.phileas.model.profile.filters.CustomDictionary;
 import com.mtnfog.phileas.model.profile.filters.Identifier;
 import com.mtnfog.phileas.model.responses.FilterResponse;
@@ -127,7 +128,7 @@ public class PhileasFilterService implements FilterService, Serializable {
         // Sort the spans based on the confidence.
         spans.sort(Comparator.comparing(Span::getConfidence));
 
-        // Perform post-filtering for false positives.
+        // Perform post-filtering on the spans.
         for(final PostFilter postFilter : postFilters) {
             spans = postFilter.filter(input, spans);
         }
@@ -418,7 +419,12 @@ public class PhileasFilterService implements FilterService, Serializable {
             // Ignored terms filter. Looks for ignored terms in the scope of the whole document (and not just a particular filter).
             // No matter what filter found the span, it is subject to this ignore list.
             if(CollectionUtils.isNotEmpty(filterProfile.getIgnored())) {
-                postFilters.add(new IgnoredTermsFilter(filterProfile, false));
+
+                // Make a post filter for each Ignored item in the list.
+                for(final Ignored ignored : filterProfile.getIgnored()) {
+                    postFilters.add(new IgnoredTermsFilter(ignored));
+                }
+
             }
 
         }

@@ -26,7 +26,7 @@ public class IgnoredTermsFilterTest {
         final List<Span> spans = new LinkedList<>();
         spans.add(Span.make(12, 22, FilterType.LOCATION_STATE, "context", "docid", 0.80, "test", "*****", false));
 
-        final IgnoredTermsFilter ignoredTermsFilter = new IgnoredTermsFilter(filterProfile);
+        final IgnoredTermsFilter ignoredTermsFilter = new IgnoredTermsFilter(ignored);
         final List<Span> filteredSpans = ignoredTermsFilter.filter("He lived in Washington.", spans);
 
         Assert.assertEquals(0, filteredSpans.size());
@@ -39,13 +39,10 @@ public class IgnoredTermsFilterTest {
         final Ignored ignored = new Ignored();
         ignored.setTerms(Arrays.asList("Seattle", "California", "Virginia"));
 
-        final FilterProfile filterProfile = new FilterProfile();
-        filterProfile.setIgnored(Arrays.asList(ignored));
-
         final List<Span> spans = new LinkedList<>();
         spans.add(Span.make(12, 22, FilterType.LOCATION_STATE, "context", "docid", 0.80, "test", "*****", false));
 
-        final IgnoredTermsFilter ignoredTermsFilter = new IgnoredTermsFilter(filterProfile);
+        final IgnoredTermsFilter ignoredTermsFilter = new IgnoredTermsFilter(ignored);
         final List<Span> filteredSpans = ignoredTermsFilter.filter("He lived in Washington.", spans);
 
         Assert.assertEquals(1, filteredSpans.size());
@@ -58,13 +55,10 @@ public class IgnoredTermsFilterTest {
         final Ignored ignored = new Ignored();
         ignored.setTerms(Arrays.asList("washington", "California", "Virginia"));
 
-        final FilterProfile filterProfile = new FilterProfile();
-        filterProfile.setIgnored(Arrays.asList(ignored));
-
         final List<Span> spans = new LinkedList<>();
         spans.add(Span.make(12, 22, FilterType.LOCATION_STATE, "context", "docid", 0.80, "test", "*****", false));
 
-        final IgnoredTermsFilter ignoredTermsFilter = new IgnoredTermsFilter(filterProfile);
+        final IgnoredTermsFilter ignoredTermsFilter = new IgnoredTermsFilter(ignored);
         final List<Span> filteredSpans = ignoredTermsFilter.filter("He lived in Washington.", spans);
 
         Assert.assertEquals(0, filteredSpans.size());
@@ -77,13 +71,10 @@ public class IgnoredTermsFilterTest {
         final Ignored ignored = new Ignored();
         ignored.setTerms(Arrays.asList("Washington", "California", "Virginia"));
 
-        final FilterProfile filterProfile = new FilterProfile();
-        filterProfile.setIgnored(Arrays.asList(ignored));
-
         final List<Span> spans = new LinkedList<>();
         spans.add(Span.make(12, 22, FilterType.LOCATION_STATE, "context", "docid", 0.80, "test", "*****", false));
 
-        final IgnoredTermsFilter ignoredTermsFilter = new IgnoredTermsFilter(filterProfile);
+        final IgnoredTermsFilter ignoredTermsFilter = new IgnoredTermsFilter(ignored);
         final List<Span> filteredSpans = ignoredTermsFilter.filter("He lived in Washington.", spans);
 
         Assert.assertEquals(0, filteredSpans.size());

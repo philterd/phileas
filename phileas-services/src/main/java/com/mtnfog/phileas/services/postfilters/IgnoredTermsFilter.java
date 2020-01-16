@@ -2,7 +2,6 @@ package com.mtnfog.phileas.services.postfilters;
 
 import com.mtnfog.phileas.model.objects.PostFilterResult;
 import com.mtnfog.phileas.model.objects.Span;
-import com.mtnfog.phileas.model.profile.FilterProfile;
 import com.mtnfog.phileas.model.profile.Ignored;
 import com.mtnfog.phileas.model.services.PostFilter;
 import org.apache.logging.log4j.LogManager;
@@ -24,29 +23,20 @@ public class IgnoredTermsFilter extends PostFilter implements Serializable {
     private Set<String> ignoredTerms = new HashSet<>();
     private boolean caseSensitive;
 
-    public IgnoredTermsFilter(FilterProfile filterProfile) {
-        this(filterProfile, false);
-    }
-
-    public IgnoredTermsFilter(FilterProfile filterProfile, boolean caseSensitive) {
+    public IgnoredTermsFilter(Ignored ignored) {
 
         this.caseSensitive = caseSensitive;
 
-        // Build the full list of ignored terms.
-        for(final Ignored ignored : filterProfile.getIgnored()) {
+        if(ignored.isCaseSensitive()) {
 
-            if(caseSensitive) {
+            ignoredTerms.addAll(ignored.getTerms());
 
-                ignoredTerms.addAll(ignored.getTerms());
+        } else {
 
-            } else {
-
-                // Lowercase everything before adding.
-                ignoredTerms.addAll(ignored.getTerms().stream()
-                        .map(String::toLowerCase)
-                        .collect(Collectors.toList()));
-
-            }
+            // Lowercase everything before adding.
+            ignoredTerms.addAll(ignored.getTerms().stream()
+                    .map(String::toLowerCase)
+                    .collect(Collectors.toList()));
 
         }
 
@@ -63,9 +53,9 @@ public class IgnoredTermsFilter extends PostFilter implements Serializable {
 
         // Look in the ignore lists to see if this token should be ignored.
         // TODO: A bloom filter would provide better performance for long lists of ignored terms.
-        boolean ignored = ignoredTerms.contains(spanText);
+        final boolean ignored = ignoredTerms.contains(spanText);
 
-        // Return true if allowed; false if ignored.
+        // Return false if allowed; true if ignored.
         return new PostFilterResult(ignored);
 
     }

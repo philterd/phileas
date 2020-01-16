@@ -19,6 +19,10 @@ public class Ignored {
     @Expose
     private List<String> terms;
 
+    @SerializedName("caseSensitive")
+    @Expose
+    private boolean caseSensitive = false;
+
     public String getName() {
         return name;
     }
@@ -33,6 +37,14 @@ public class Ignored {
 
     public void setTerms(List<String> terms) {
         this.terms = terms;
+    }
+
+    public boolean isCaseSensitive() {
+        return caseSensitive;
+    }
+
+    public void setCaseSensitive(boolean caseSensitive) {
+        this.caseSensitive = caseSensitive;
     }
 
 }
