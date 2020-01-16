@@ -46,6 +46,17 @@ public class PyTorchFilterTest {
     }
 
     @Test
+    public void removePunctuation() {
+
+        String input = "My name is John St.. John.";
+        String output = input.replaceAll("\\p{Punct}", " ");
+
+        // This test is here to make sure that punctuation is replaced by a space.
+        Assert.assertEquals("My name is John St   John ", output);
+
+    }
+
+    @Test
     public void getJson() {
 
         List<PhileasSpan> spans = new LinkedList<>();
