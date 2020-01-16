@@ -23,6 +23,10 @@ public class FilterProfile {
     @Expose
     private List<Ignored> ignored;
 
+    @SerializedName("removePunctuation")
+    @Expose
+    private boolean removePunctuation = false;
+
     public String getName() {
         return name;
     }
@@ -45,6 +49,14 @@ public class FilterProfile {
 
     public void setIgnored(List<Ignored> ignored) {
         this.ignored = ignored;
+    }
+
+    public boolean isRemovePunctuation() {
+        return removePunctuation;
+    }
+
+    public void setRemovePunctuation(boolean removePunctuation) {
+        this.removePunctuation = removePunctuation;
     }
 
 }

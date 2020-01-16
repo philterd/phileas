@@ -18,7 +18,6 @@ public abstract class NerFilter extends DynamicFilter implements Serializable {
 
     protected Map<String, DescriptiveStatistics> stats;
     protected String type;
-
     protected MetricsService metricsService;
 
     /**

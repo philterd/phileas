@@ -102,6 +102,11 @@ public class PhileasFilterService implements FilterService, Serializable {
         // Get the filter profile.
         final FilterProfile filterProfile = filterProfiles.get(filterProfileName);
 
+        // Remove punctuation from the input.
+        if(filterProfile.isRemovePunctuation()) {
+            input = input.replaceAll("\\p{Punct}", "");
+        }
+
         // The list that will contain the spans containing PHI/PII.
         List<Span> spans = new LinkedList<>();
 
@@ -131,7 +136,7 @@ public class PhileasFilterService implements FilterService, Serializable {
         // below will change the indexes. Doing this to save the original locations of the spans.
         final List<Span> appliedSpans = spans.stream().map(d -> d.copy()).collect(toList());
 
-        // TODO: Set a flag on each "span" not in appliedSpans that it was not used.
+        // TODO: Set a flag on each "span" not in appliedSpans indicating it was not used.
 
         // Log a metric for each filter type.
         appliedSpans.forEach(k -> metricsService.incrementFilterType(k.getFilterType()));
