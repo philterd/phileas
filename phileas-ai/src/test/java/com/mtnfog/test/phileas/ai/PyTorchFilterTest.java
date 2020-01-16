@@ -18,10 +18,7 @@ import com.squareup.okhttp.mockwebserver.MockWebServer;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
 import org.mockito.Mockito;
 
 import java.io.IOException;
@@ -31,18 +28,18 @@ public class PyTorchFilterTest {
 
     private static final Logger LOGGER = LogManager.getLogger(PyTorchFilterTest.class);
 
-    private MockWebServer mockServer;
+    private static MockWebServer mockServer;
 
-    @Before
-    public void before() throws IOException {
+    @BeforeClass
+    public static void before() throws IOException {
 
         mockServer = new  MockWebServer();
         mockServer.start();
 
     }
 
-    @After
-    public void after() throws IOException {
+    @AfterClass
+    public static void after() throws IOException {
 
         mockServer.shutdown();
 
@@ -70,7 +67,7 @@ public class PyTorchFilterTest {
 
         this.mockServer.enqueue(new MockResponse().setResponseCode(200).setBody("[{\"text\":\"test\",\"tag\":\"PER\",\"score\":0.5,\"start\":1,\"end\":2}]"));
 
-        final PyTorchFilter t = new PyTorchFilter(baseUrl, FilterType.NER_ENTITY, getStrategies(),"PER", stats, metricsService, anonymizationService, Collections.emptySet());
+        final PyTorchFilter t = new PyTorchFilter(baseUrl, FilterType.NER_ENTITY, getStrategies(),"PER", stats, metricsService, anonymizationService, Collections.emptySet(), false);
 
         final List<Span> spans = t.filter(getFilterProfile(), "context", "doc", "John Smith lives in New York");
 
@@ -95,7 +92,7 @@ public class PyTorchFilterTest {
         this.mockServer.enqueue(new MockResponse().setResponseCode(200).setBody("[{\"text\":\"test\",\"tag\":\"LOC\",\"score\":0.5,\"start\":1,\"end\":2}]"));
 
         final PyTorchFilter t = new PyTorchFilter(baseUrl, FilterType.NER_ENTITY, getStrategies(), "LOC",
-                stats, metricsService, anonymizationService, Collections.emptySet());
+                stats, metricsService, anonymizationService, Collections.emptySet(), false);
 
         final List<Span> spans = t.filter(getFilterProfile(), "context", "doc", "John Smith lives in New York");
 
@@ -112,12 +109,10 @@ public class PyTorchFilterTest {
         final List<AbstractFilterStrategy> strategies = new LinkedList<>();
 
         NerFilterStrategy nerFilterStrategy = new NerFilterStrategy();
-
-        ZipCodeFilterStrategy zipCodeFilterStrategy = new ZipCodeFilterStrategy();
-        zipCodeFilterStrategy.setTruncateDigits(2);
+        //nerFilterStrategy.setConditions("type == 'PER'");
+        //nerFilterStrategy.setConditions("confidence > 0.9");
 
         strategies.add(nerFilterStrategy);
-        strategies.add(zipCodeFilterStrategy);
 
         return strategies;
 
@@ -130,15 +125,8 @@ public class PyTorchFilterTest {
         Ner ner = new Ner();
         ner.setNerStrategies(Arrays.asList(nerFilterStrategy));
 
-        ZipCodeFilterStrategy zipCodeFilterStrategy = new ZipCodeFilterStrategy();
-        zipCodeFilterStrategy.setTruncateDigits(2);
-
-       // ZipCode zipCode = new ZipCode();
-       // zipCode.setZipCodeFilterStrategy(zipCodeFilterStrategy);
-
         Identifiers identifiers = new Identifiers();
         identifiers.setNer(ner);
-       // identifiers.setZipCode(zipCode);
 
         FilterProfile filterProfile = new FilterProfile();
         filterProfile.setName("default");

@@ -33,7 +33,7 @@ public enum FilterType {
     private String type;
     private boolean deterministic;
 
-    private FilterType(String type, boolean deterministic) {
+    FilterType(String type, boolean deterministic) {
         this.type = type;
         this.deterministic = deterministic;
     }

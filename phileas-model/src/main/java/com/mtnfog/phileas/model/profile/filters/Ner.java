@@ -12,12 +12,24 @@ public class Ner extends AbstractFilter {
     @Expose
     private List<NerFilterStrategy> nerFilterStrategies;
 
+    @SerializedName("removePunctuation")
+    @Expose
+    private boolean removePunctuation = false;
+
     public List<NerFilterStrategy> getNerStrategies() {
         return nerFilterStrategies;
     }
 
     public void setNerStrategies(List<NerFilterStrategy> nerFilterStrategies) {
         this.nerFilterStrategies = nerFilterStrategies;
+    }
+
+    public boolean isRemovePunctuation() {
+        return removePunctuation;
+    }
+
+    public void setRemovePunctuation(boolean removePunctuation) {
+        this.removePunctuation = removePunctuation;
     }
 
 }

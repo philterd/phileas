@@ -103,11 +103,6 @@ public class PhileasFilterService implements FilterService, Serializable {
         // Get the filter profile.
         final FilterProfile filterProfile = filterProfiles.get(filterProfileName);
 
-        // Remove punctuation from the input.
-        if(filterProfile.isRemovePunctuation()) {
-            input = input.replaceAll("\\p{Punct}", "");
-        }
-
         // The list that will contain the spans containing PHI/PII.
         List<Span> spans = new LinkedList<>();
 
@@ -399,8 +394,8 @@ public class PhileasFilterService implements FilterService, Serializable {
 
             if(filterProfile.getIdentifiers().hasFilter(FilterType.NER_ENTITY)) {
                 if(filterProfile.getIdentifiers().getNer().isEnabled()) {
-                    enabledFilters.add(new PyTorchFilter(philterNerEndpoint, FilterType.NER_ENTITY, filterProfile.getIdentifiers().getNer().getNerStrategies(), "PER", stats, metricsService, new PersonsAnonymizationService(anonymizationCacheService), filterProfile.getIdentifiers().getNer().getIgnored()));
-                    enabledFilters.add(new PyTorchFilter(philterNerEndpoint, FilterType.NER_ENTITY, filterProfile.getIdentifiers().getNer().getNerStrategies(), "LOC", stats, metricsService, new LocationsAnonymizationService(anonymizationCacheService), filterProfile.getIdentifiers().getNer().getIgnored()));
+                    enabledFilters.add(new PyTorchFilter(philterNerEndpoint, FilterType.NER_ENTITY, filterProfile.getIdentifiers().getNer().getNerStrategies(), "PER", stats, metricsService, new PersonsAnonymizationService(anonymizationCacheService), filterProfile.getIdentifiers().getNer().getIgnored(), filterProfile.getIdentifiers().getNer().isRemovePunctuation()));
+                    enabledFilters.add(new PyTorchFilter(philterNerEndpoint, FilterType.NER_ENTITY, filterProfile.getIdentifiers().getNer().getNerStrategies(), "LOC", stats, metricsService, new LocationsAnonymizationService(anonymizationCacheService), filterProfile.getIdentifiers().getNer().getIgnored(), filterProfile.getIdentifiers().getNer().isRemovePunctuation()));
                 }
             }
 

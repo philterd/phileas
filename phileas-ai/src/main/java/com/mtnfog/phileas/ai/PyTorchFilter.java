@@ -40,9 +40,10 @@ public class PyTorchFilter extends NerFilter implements Serializable {
                          Map<String, DescriptiveStatistics> stats,
                          MetricsService metricsService,
                          AnonymizationService anonymizationService,
-                         Set<String> ignored) {
+                         Set<String> ignored,
+                         boolean removePunctuation) {
 
-        super(filterType, strategies, stats, metricsService, anonymizationService, ignored);
+        super(filterType, strategies, stats, metricsService, anonymizationService, ignored, removePunctuation);
 
         this.tag = tag;
 
@@ -67,25 +68,25 @@ public class PyTorchFilter extends NerFilter implements Serializable {
 
         final List<Span> spans = new LinkedList<>();
 
-        final List<? extends AbstractFilterStrategy> strategies = Filter.getFilterStrategies(filterProfile, filterType, 0);
+        // Remove punctuation?
+        if(removePunctuation) {
+            input = input.replaceAll("\\p{Punct}", " ");
+        }
 
-        LOGGER.debug("Applying {} NER filtering strategies.", strategies.size());
+        final Response<List<PhileasSpan>> response = service.process(input).execute();
+        final List<PhileasSpan> phileasSpans = response.body();
 
-        for(AbstractFilterStrategy strategy : strategies) {
+        for(final PhileasSpan phileasSpan : phileasSpans) {
 
-            final Response<List<PhileasSpan>> response = service.process(input).execute();
-            final List<PhileasSpan> phileasSpans = response.body();
+            // Only interested in spans matching the tag we are looking for, e.g. PER, LOC.
+            if(StringUtils.equalsIgnoreCase(phileasSpan.getTag(), tag)) {
 
-            for(PhileasSpan p : phileasSpans) {
+                final Span span = createSpan(context, documentId, phileasSpan.getText(),
+                        phileasSpan.getTag(), phileasSpan.getStart(), phileasSpan.getEnd(), phileasSpan.getScore());
 
-                // Only interested in spans matching the tag we are looking for, e.g. PER, LOC.
-                if(StringUtils.equalsIgnoreCase(p.getTag(), tag)) {
-
-                    final Span span = createSpan(filterProfile, context, documentId, p.getText(),
-                            p.getTag(), p.getStart(), p.getEnd(), p.getScore());
-
+                // Span will be null if no span was created due to it being excluded.
+                if(span != null) {
                     spans.add(span);
-
                 }
 
             }
@@ -98,7 +99,7 @@ public class PyTorchFilter extends NerFilter implements Serializable {
 
     }
 
-    private Span createSpan(FilterProfile filterProfile, String context, String documentId, String text,
+    private Span createSpan(String context, String documentId, String text,
                             String type, int start, int end, double confidence) throws IOException {
 
         final Map<String, Object> attributes = new HashMap<>();
@@ -106,13 +107,25 @@ public class PyTorchFilter extends NerFilter implements Serializable {
         attributes.put(NerFilterStrategy.TYPE, type);
 
         final String replacement = getReplacement(label, context, documentId, text, attributes);
-        final boolean isIgnored = ignored.contains(text);
-        final Span span = Span.make(start, end, FilterType.NER_ENTITY, context, documentId, confidence, text, replacement, isIgnored);
 
-        // Send the entity to the metrics service for reporting.
-        metricsService.reportEntitySpan(span);
+        if(StringUtils.equals(replacement, text)) {
 
-        return span;
+            // If the replacement is the same as the token then there is no span.
+            // A condition in the strategy excluded it.
+
+            return null;
+
+        } else {
+
+            final boolean isIgnored = ignored.contains(text);
+            final Span span = Span.make(start, end, FilterType.NER_ENTITY, context, documentId, confidence, text, replacement, isIgnored);
+
+            // Send the entity to the metrics service for reporting.
+            metricsService.reportEntitySpan(span);
+
+            return span;
+
+        }
 
     }
 

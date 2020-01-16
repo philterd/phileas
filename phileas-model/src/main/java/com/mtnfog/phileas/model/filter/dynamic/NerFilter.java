@@ -19,6 +19,7 @@ public abstract class NerFilter extends DynamicFilter implements Serializable {
     protected Map<String, DescriptiveStatistics> stats;
     protected String type;
     protected MetricsService metricsService;
+    protected boolean removePunctuation;
 
     /**
      * Creates a new filter.
@@ -33,12 +34,14 @@ public abstract class NerFilter extends DynamicFilter implements Serializable {
                      Map<String, DescriptiveStatistics> stats,
                      MetricsService metricsService,
                      AnonymizationService anonymizationService,
-                     Set<String> ignored) {
+                     Set<String> ignored,
+                     boolean removePunctuation) {
 
         super(filterType, strategies, anonymizationService, ignored);
 
         this.stats = stats;
         this.metricsService = metricsService;
+        this.removePunctuation = removePunctuation;
 
     }
 
