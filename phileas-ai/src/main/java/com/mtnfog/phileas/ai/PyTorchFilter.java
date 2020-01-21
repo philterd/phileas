@@ -9,6 +9,7 @@ import com.mtnfog.phileas.model.profile.filters.strategies.AbstractFilterStrateg
 import com.mtnfog.phileas.model.profile.filters.strategies.ai.NerFilterStrategy;
 import com.mtnfog.phileas.model.services.AnonymizationService;
 import com.mtnfog.phileas.model.services.MetricsService;
+import okhttp3.ConnectionPool;
 import okhttp3.OkHttpClient;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
@@ -22,10 +23,15 @@ import retrofit2.converter.scalars.ScalarsConverterFactory;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 public class PyTorchFilter extends NerFilter implements Serializable {
 
     private static final Logger LOGGER = LogManager.getLogger(PyTorchFilter.class);
+
+    private static int TIMEOUT_SEC = 30;
+    private static int MAX_IDLE_CONNECTIONS = 30;
+    private static int KEEP_ALIVE_DURATION_MS = 60;
 
     private transient PyTorchRestService service;
     private String tag;
@@ -49,6 +55,10 @@ public class PyTorchFilter extends NerFilter implements Serializable {
 
         final OkHttpClient okHttpClient = new OkHttpClient.Builder()
                 .retryOnConnectionFailure(true)
+                .connectTimeout(TIMEOUT_SEC, TimeUnit.SECONDS)
+                .writeTimeout(TIMEOUT_SEC, TimeUnit.SECONDS)
+                .readTimeout(TIMEOUT_SEC, TimeUnit.SECONDS)
+                .connectionPool(new ConnectionPool(MAX_IDLE_CONNECTIONS, KEEP_ALIVE_DURATION_MS, TimeUnit.MILLISECONDS))
                 .build();
 
         final Retrofit retrofit = new Retrofit.Builder()

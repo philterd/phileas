@@ -395,8 +395,8 @@ public class PhileasFilterService implements FilterService, Serializable {
 
             if(filterProfile.getIdentifiers().hasFilter(FilterType.NER_ENTITY)) {
                 if(filterProfile.getIdentifiers().getNer().isEnabled()) {
+                    // TODO: Allow a single PyTorchFilter to extract many types of entities instead of just one, i.e. "PER".
                     enabledFilters.add(new PyTorchFilter(philterNerEndpoint, FilterType.NER_ENTITY, filterProfile.getIdentifiers().getNer().getNerStrategies(), "PER", stats, metricsService, new PersonsAnonymizationService(anonymizationCacheService), filterProfile.getIdentifiers().getNer().getIgnored(), filterProfile.getIdentifiers().getNer().isRemovePunctuation()));
-                    enabledFilters.add(new PyTorchFilter(philterNerEndpoint, FilterType.NER_ENTITY, filterProfile.getIdentifiers().getNer().getNerStrategies(), "LOC", stats, metricsService, new LocationsAnonymizationService(anonymizationCacheService), filterProfile.getIdentifiers().getNer().getIgnored(), filterProfile.getIdentifiers().getNer().isRemovePunctuation()));
                 }
             }
 
