@@ -68,34 +68,56 @@ public class PyTorchFilter extends NerFilter implements Serializable {
 
         final List<Span> spans = new LinkedList<>();
 
-        // Remove punctuation?
+        // Remove punctuation if instructed to do so.
+        // It is replacing each punctuation mark with an empty space. This will allow span indexes
+        // to remain constant as opposed to removing the punctuation and causing the string to then
+        // have a shorter length.
         if(removePunctuation) {
             input = input.replaceAll("\\p{Punct}", " ");
         }
 
         final Response<List<PhileasSpan>> response = service.process(input).execute();
-        final List<PhileasSpan> phileasSpans = response.body();
 
-        for(final PhileasSpan phileasSpan : phileasSpans) {
+        if(response.isSuccessful()) {
 
-            // Only interested in spans matching the tag we are looking for, e.g. PER, LOC.
-            if(StringUtils.equalsIgnoreCase(phileasSpan.getTag(), tag)) {
+            final List<PhileasSpan> phileasSpans = response.body();
 
-                final Span span = createSpan(context, documentId, phileasSpan.getText(),
-                        phileasSpan.getTag(), phileasSpan.getStart(), phileasSpan.getEnd(), phileasSpan.getScore());
+            if(phileasSpans != null) {
 
-                // Span will be null if no span was created due to it being excluded.
-                if(span != null) {
-                    spans.add(span);
+                for (final PhileasSpan phileasSpan : phileasSpans) {
+
+                    // Only interested in spans matching the tag we are looking for, e.g. PER, LOC.
+                    if (StringUtils.equalsIgnoreCase(phileasSpan.getTag(), tag)) {
+
+                        final Span span = createSpan(context, documentId, phileasSpan.getText(),
+                                phileasSpan.getTag(), phileasSpan.getStart(), phileasSpan.getEnd(), phileasSpan.getScore());
+
+                        // Span will be null if no span was created due to it being excluded.
+                        if (span != null) {
+                            spans.add(span);
+                        }
+
+                    }
+
                 }
+
+                LOGGER.debug("Returning {} NER spans.", spans.size());
+
+                return spans;
+
+            } else {
+
+                // We received a null list of spans from philter-ner. It means something went wrong.
+                throw new IOException("Unable to process document. Received error response from philter-ner.");
 
             }
 
+        } else {
+
+            // The request to philter-ner was not successful.
+            throw new IOException("Unable to process document. Received error response from philter-ner.");
+
         }
-
-        LOGGER.debug("Returning {} NER spans.", spans.size());
-
-        return spans;
 
     }
 
