@@ -107,11 +107,12 @@ public class PhileasFilterService implements FilterService, Serializable {
         List<Span> spans = new LinkedList<>();
 
         // Generate a random document ID.
+        // TODO: PHL-58: Use a hash function to generate the document ID.
         final String documentId = UUID.randomUUID().toString();
 
         // Execute each filter.
-        for(final Filter f : allFiltersFromProfile) {
-            spans.addAll(f.filter(filterProfile, context, documentId, input));
+        for(final Filter filter : allFiltersFromProfile) {
+            spans.addAll(filter.filter(filterProfile, context, documentId, input));
         }
 
         // Drop overlapping spans.
