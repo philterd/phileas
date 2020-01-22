@@ -108,7 +108,7 @@ public class PhileasFilterService implements FilterService, Serializable {
         List<Span> spans = new LinkedList<>();
 
         // PHL-58: Use a hash function to generate the document ID.
-        final String documentId = DigestUtils.md5Hex(context + "-" + filterProfileName + "-" + input);
+        final String documentId = DigestUtils.md5Hex(UUID.randomUUID().toString() + "-" + context + "-" + filterProfileName + "-" + input);
 
         // Execute each filter.
         for(final Filter filter : allFiltersFromProfile) {
