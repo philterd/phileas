@@ -22,6 +22,7 @@ import com.mtnfog.phileas.services.filters.regex.*;
 import com.mtnfog.phileas.services.postfilters.IgnoredTermsFilter;
 import com.mtnfog.phileas.services.validators.DateSpanValidator;
 import com.mtnfog.phileas.store.ElasticsearchStore;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
@@ -106,9 +107,8 @@ public class PhileasFilterService implements FilterService, Serializable {
         // The list that will contain the spans containing PHI/PII.
         List<Span> spans = new LinkedList<>();
 
-        // Generate a random document ID.
-        // TODO: PHL-58: Use a hash function to generate the document ID.
-        final String documentId = UUID.randomUUID().toString();
+        // PHL-58: Use a hash function to generate the document ID.
+        final String documentId = DigestUtils.md5Hex(context + "-" + filterProfileName + "-" + input);
 
         // Execute each filter.
         for(final Filter filter : allFiltersFromProfile) {
