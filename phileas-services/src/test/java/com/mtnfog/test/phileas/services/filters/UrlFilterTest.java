@@ -169,4 +169,30 @@ public class UrlFilterTest extends AbstractFilterTest {
 
     }
 
+    @Test
+    public void filterUrl13() throws Exception {
+
+        final List<UrlFilterStrategy> strategies = Arrays.asList(new UrlFilterStrategy());
+        UrlFilter filter = new UrlFilter(strategies, new UrlAnonymizationService(new LocalAnonymizationCacheService()), false, Collections.emptySet());
+
+        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "the page is http://2001:0db8:85a3:0000:0000:8a2e:0370:7334/test.html.");
+        showSpans(spans);
+        Assert.assertEquals(1, spans.size());
+        Assert.assertTrue(checkSpan(spans.get(0), 12, 69, FilterType.URL));
+
+    }
+
+    @Test
+    public void filterUrl14() throws Exception {
+
+        final List<UrlFilterStrategy> strategies = Arrays.asList(new UrlFilterStrategy());
+        UrlFilter filter = new UrlFilter(strategies, new UrlAnonymizationService(new LocalAnonymizationCacheService()), false, Collections.emptySet());
+
+        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "the page is http://2001:0db8:85a3:0000:0000:8a2e:0370:7334/test/.");
+        showSpans(spans);
+        Assert.assertEquals(1, spans.size());
+        Assert.assertTrue(checkSpan(spans.get(0), 12, 65, FilterType.URL));
+
+    }
+
 }
