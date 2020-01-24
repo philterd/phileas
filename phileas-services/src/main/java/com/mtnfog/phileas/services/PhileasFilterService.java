@@ -21,6 +21,7 @@ import com.mtnfog.phileas.services.filters.custom.PhoneNumberRulesFilter;
 import com.mtnfog.phileas.services.filters.regex.*;
 import com.mtnfog.phileas.services.postfilters.IgnoredTermsFilter;
 import com.mtnfog.phileas.services.postfilters.TrailingPeriodPostFilter;
+import com.mtnfog.phileas.services.postfilters.TrailingSpacePostFilter;
 import com.mtnfog.phileas.services.validators.DateSpanValidator;
 import com.mtnfog.phileas.store.ElasticsearchStore;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -426,6 +427,7 @@ public class PhileasFilterService implements FilterService, Serializable {
 
             // Remove trailing periods from filters.
             postFilters.add(new TrailingPeriodPostFilter());
+            postFilters.add(new TrailingSpacePostFilter());
 
         }
 
