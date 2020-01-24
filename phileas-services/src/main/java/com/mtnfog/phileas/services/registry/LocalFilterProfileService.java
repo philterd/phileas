@@ -113,10 +113,14 @@ public class LocalFilterProfileService implements FilterProfileService {
     @Override
     public void delete(String name) throws IOException {
 
-        final File file = new File(filterProfilesDirectory, name+ ".json");
+        final File file = new File(filterProfilesDirectory, name + ".json");
 
         if(file.exists()) {
-            file.delete();
+
+            if(!file.delete()) {
+                throw new IOException("Unable to delete filter profile " + name + ".json");
+            }
+
         } else {
             throw new FileNotFoundException("Filter profile with name " + name + " does not exist.");
         }
