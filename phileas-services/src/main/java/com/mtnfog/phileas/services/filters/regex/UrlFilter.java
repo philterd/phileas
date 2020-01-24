@@ -9,6 +9,7 @@ import com.mtnfog.phileas.model.services.AnonymizationService;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -16,8 +17,12 @@ import java.util.regex.Pattern;
 public class UrlFilter extends RegexFilter implements Serializable {
 
     // https://www.regexpal.com/93652: This regex will find things like test.link where it might just be two sentences without a space between them.
+    // These two patterns do NOT consider IP addresses instead of domain names.
     private static final Pattern URL_WITH_OPTIONAL_PROTOCOL_REGEX = Pattern.compile("(http:\\/\\/www\\.|https:\\/\\/www\\.|http:\\/\\/|https:\\/\\/)?[a-z0-9]+([\\-\\.]{1}[a-z0-9]+)*\\.[a-z]{2,5}(:[0-9]{1,5})?(\\/.*)?", Pattern.CASE_INSENSITIVE);
     private static final Pattern URL_WITH_PROTOCOL_REGEX = Pattern.compile("(www\\.|http:\\/\\/www\\.|https:\\/\\/www\\.|http:\\/\\/|https:\\/\\/)[a-z0-9]+([\\-\\.]{1}[a-z0-9]+)*\\.[a-z]{2,5}(:[0-9]{1,5})?(\\/.*)?", Pattern.CASE_INSENSITIVE);
+
+    // These two patterns only consider IP addresses.
+    private static final Pattern URL_IP_ADDRESS_REGEX = Pattern.compile("(http:\\/\\/www\\.|https:\\/\\/www\\.|http:\\/\\/|https:\\/\\/)?(?:[0-9]{1,3}\\.){3}[0-9]{1,3}(:[0-9]{1,5})?(\\/.*)?", Pattern.CASE_INSENSITIVE);
 
     private boolean requireHttpWwwPrefix;
 
@@ -29,15 +34,23 @@ public class UrlFilter extends RegexFilter implements Serializable {
     @Override
     public List<Span> filter(FilterProfile filterProfile, String context, String documentId, String input) throws IOException {
 
+        List<Span> spans = new LinkedList<>();
+
         if(requireHttpWwwPrefix) {
 
-            return findSpans(filterProfile, URL_WITH_PROTOCOL_REGEX, input, context, documentId);
+            spans.addAll(findSpans(filterProfile, URL_WITH_PROTOCOL_REGEX, input, context, documentId));
 
         } else {
 
-            return findSpans(filterProfile, URL_WITH_OPTIONAL_PROTOCOL_REGEX, input, context, documentId);
+            spans.addAll(findSpans(filterProfile, URL_WITH_OPTIONAL_PROTOCOL_REGEX, input, context, documentId));
 
         }
+
+        spans.addAll(findSpans(filterProfile, URL_IP_ADDRESS_REGEX, input, context, documentId));
+
+        spans = Span.dropOverlappingSpans(spans);
+
+        return spans;
 
     }
 
