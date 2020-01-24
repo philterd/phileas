@@ -195,4 +195,17 @@ public class UrlFilterTest extends AbstractFilterTest {
 
     }
 
+    @Test
+    public void filterUrl15() throws Exception {
+
+        final List<UrlFilterStrategy> strategies = Arrays.asList(new UrlFilterStrategy());
+        UrlFilter filter = new UrlFilter(strategies, new UrlAnonymizationService(new LocalAnonymizationCacheService()), false, Collections.emptySet());
+
+        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "the page is https://192.168.1.1:80/folder/page.html. this is a new sentence.");
+        showSpans(spans);
+        Assert.assertEquals(1, spans.size());
+        Assert.assertTrue(checkSpan(spans.get(0), 12, 76, FilterType.URL));
+
+    }
+
 }

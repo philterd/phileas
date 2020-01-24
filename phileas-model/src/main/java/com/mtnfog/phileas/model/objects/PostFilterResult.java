@@ -2,9 +2,11 @@ package com.mtnfog.phileas.model.objects;
 
 public class PostFilterResult {
 
-    private boolean isPostFiltered = false;
+    private boolean isPostFiltered;
+    private Span span;
 
-    public PostFilterResult(boolean isPostFiltered) {
+    public PostFilterResult(Span span, boolean isPostFiltered) {
+        this.span = span;
         this.isPostFiltered = isPostFiltered;
     }
 
@@ -12,8 +14,8 @@ public class PostFilterResult {
         return isPostFiltered;
     }
 
-    public void setPostFiltered(boolean postFiltered) {
-        isPostFiltered = postFiltered;
+    public Span getSpan() {
+        return span;
     }
 
 }

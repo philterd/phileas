@@ -96,7 +96,7 @@ public class PartOfSpeechFalsePositiveFilter extends PostFilter implements Seria
 
         //LOGGER.info("Token {} is post-filtered by POS.", spanText);
 
-        return new PostFilterResult(isPostFiltered);
+        return new PostFilterResult(span, isPostFiltered);
 
     }
 

@@ -56,7 +56,7 @@ public class IgnoredTermsFilter extends PostFilter implements Serializable {
         final boolean ignored = ignoredTerms.contains(spanText);
 
         // Return false if allowed; true if ignored.
-        return new PostFilterResult(ignored);
+        return new PostFilterResult(span, ignored);
 
     }
 
