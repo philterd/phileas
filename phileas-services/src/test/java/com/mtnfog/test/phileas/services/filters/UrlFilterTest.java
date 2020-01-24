@@ -2,12 +2,10 @@ package com.mtnfog.test.phileas.services.filters;
 
 import com.mtnfog.phileas.model.enums.FilterType;
 import com.mtnfog.phileas.model.objects.Span;
-import com.mtnfog.phileas.model.profile.filters.strategies.dynamic.StateFilterStrategy;
 import com.mtnfog.phileas.model.profile.filters.strategies.rules.UrlFilterStrategy;
 import com.mtnfog.phileas.services.anonymization.UrlAnonymizationService;
 import com.mtnfog.phileas.services.cache.LocalAnonymizationCacheService;
 import com.mtnfog.phileas.services.filters.regex.UrlFilter;
-import com.mtnfog.test.phileas.services.filters.AbstractFilterTest;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -21,9 +19,10 @@ public class UrlFilterTest extends AbstractFilterTest {
     public void filterUrl1() throws Exception {
 
         final List<UrlFilterStrategy> strategies = Arrays.asList(new UrlFilterStrategy());
-        UrlFilter filter = new UrlFilter(strategies, new UrlAnonymizationService(new LocalAnonymizationCacheService()), Collections.emptySet());
+        UrlFilter filter = new UrlFilter(strategies, new UrlAnonymizationService(new LocalAnonymizationCacheService()), true, Collections.emptySet());
 
         List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "the page is http://page.com.");
+        showSpans(spans);
         Assert.assertEquals(1, spans.size());
         Assert.assertTrue(checkSpan(spans.get(0), 12, 27, FilterType.URL));
 
@@ -33,11 +32,11 @@ public class UrlFilterTest extends AbstractFilterTest {
     public void filterUrl2() throws Exception {
 
         final List<UrlFilterStrategy> strategies = Arrays.asList(new UrlFilterStrategy());
-        UrlFilter filter = new UrlFilter(strategies, new UrlAnonymizationService(new LocalAnonymizationCacheService()), Collections.emptySet());
+        UrlFilter filter = new UrlFilter(strategies, new UrlAnonymizationService(new LocalAnonymizationCacheService()), true, Collections.emptySet());
 
         List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "the page is myhomepage.com.");
-        Assert.assertEquals(1, spans.size());
-        Assert.assertTrue(checkSpan(spans.get(0), 12, 26, FilterType.URL));
+        showSpans(spans);
+        Assert.assertEquals(0, spans.size());
 
     }
 
@@ -45,9 +44,10 @@ public class UrlFilterTest extends AbstractFilterTest {
     public void filterUrl3() throws Exception {
 
         final List<UrlFilterStrategy> strategies = Arrays.asList(new UrlFilterStrategy());
-        UrlFilter filter = new UrlFilter(strategies, new UrlAnonymizationService(new LocalAnonymizationCacheService()), Collections.emptySet());
+        UrlFilter filter = new UrlFilter(strategies, new UrlAnonymizationService(new LocalAnonymizationCacheService()), true, Collections.emptySet());
 
         List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "the page is http://myhomepage.com/folder/page.html.");
+        showSpans(spans);
         Assert.assertEquals(1, spans.size());
         Assert.assertTrue(checkSpan(spans.get(0), 12, 51, FilterType.URL));
 
@@ -57,9 +57,10 @@ public class UrlFilterTest extends AbstractFilterTest {
     public void filterUrl4() throws Exception {
 
         final List<UrlFilterStrategy> strategies = Arrays.asList(new UrlFilterStrategy());
-        UrlFilter filter = new UrlFilter(strategies, new UrlAnonymizationService(new LocalAnonymizationCacheService()), Collections.emptySet());
+        UrlFilter filter = new UrlFilter(strategies, new UrlAnonymizationService(new LocalAnonymizationCacheService()), true, Collections.emptySet());
 
         List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "the page is http://www.myhomepage.com/folder/page.html");
+        showSpans(spans);
         Assert.assertEquals(1, spans.size());
         Assert.assertTrue(checkSpan(spans.get(0), 12, 54, FilterType.URL));
 
@@ -69,11 +70,38 @@ public class UrlFilterTest extends AbstractFilterTest {
     public void filterUrl5() throws Exception {
 
         final List<UrlFilterStrategy> strategies = Arrays.asList(new UrlFilterStrategy());
-        UrlFilter filter = new UrlFilter(strategies, new UrlAnonymizationService(new LocalAnonymizationCacheService()), Collections.emptySet());
+        UrlFilter filter = new UrlFilter(strategies, new UrlAnonymizationService(new LocalAnonymizationCacheService()), true, Collections.emptySet());
 
         List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "the page is www.myhomepage.com/folder/page.html.");
+        showSpans(spans);
         Assert.assertEquals(1, spans.size());
         Assert.assertTrue(checkSpan(spans.get(0), 12, 48, FilterType.URL));
+
+    }
+
+    @Test
+    public void filterUrl6() throws Exception {
+
+        final List<UrlFilterStrategy> strategies = Arrays.asList(new UrlFilterStrategy());
+        UrlFilter filter = new UrlFilter(strategies, new UrlAnonymizationService(new LocalAnonymizationCacheService()), false, Collections.emptySet());
+
+        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "the page is myhomepage.com.");
+        showSpans(spans);
+        Assert.assertEquals(1, spans.size());
+        Assert.assertTrue(checkSpan(spans.get(0), 12, 26, FilterType.URL));
+
+    }
+
+    @Test
+    public void filterUrl7() throws Exception {
+
+        final List<UrlFilterStrategy> strategies = Arrays.asList(new UrlFilterStrategy());
+        UrlFilter filter = new UrlFilter(strategies, new UrlAnonymizationService(new LocalAnonymizationCacheService()), true, Collections.emptySet());
+
+        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "the page is www.myhomepage.com:80/folder/page.html.");
+        showSpans(spans);
+        Assert.assertEquals(1, spans.size());
+        Assert.assertTrue(checkSpan(spans.get(0), 12, 51, FilterType.URL));
 
     }
 

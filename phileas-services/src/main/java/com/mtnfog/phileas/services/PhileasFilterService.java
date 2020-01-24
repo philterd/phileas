@@ -279,7 +279,7 @@ public class PhileasFilterService implements FilterService, Serializable {
 
             if(filterProfile.getIdentifiers().hasFilter(FilterType.URL)) {
                 if(filterProfile.getIdentifiers().getUrl().isEnabled()) {
-                    enabledFilters.add(new UrlFilter(filterProfile.getIdentifiers().getUrl().getUrlFilterStrategies(), new UrlAnonymizationService(anonymizationCacheService), filterProfile.getIdentifiers().getUrl().getIgnored()));
+                    enabledFilters.add(new UrlFilter(filterProfile.getIdentifiers().getUrl().getUrlFilterStrategies(), new UrlAnonymizationService(anonymizationCacheService), filterProfile.getIdentifiers().getUrl().isRequireHttpWwwPrefix(), filterProfile.getIdentifiers().getUrl().getIgnored()));
                 }
             }
 

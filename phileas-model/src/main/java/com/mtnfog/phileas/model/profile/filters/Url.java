@@ -12,12 +12,24 @@ public class Url extends AbstractFilter {
     @Expose
     private List<UrlFilterStrategy> urlFilterStrategies;
 
+    @SerializedName("requireHttpWwwPrefix")
+    @Expose
+    private boolean requireHttpWwwPrefix = true;
+
     public List<UrlFilterStrategy> getUrlFilterStrategies() {
         return urlFilterStrategies;
     }
 
     public void setUrlFilterStrategies(List<UrlFilterStrategy> urlFilterStrategies) {
         this.urlFilterStrategies = urlFilterStrategies;
+    }
+
+    public boolean isRequireHttpWwwPrefix() {
+        return requireHttpWwwPrefix;
+    }
+
+    public void setRequireHttpWwwPrefix(boolean requireHttpWwwPrefix) {
+        this.requireHttpWwwPrefix = requireHttpWwwPrefix;
     }
 
 }
