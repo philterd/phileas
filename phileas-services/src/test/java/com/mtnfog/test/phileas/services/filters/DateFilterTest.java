@@ -316,4 +316,59 @@ public class DateFilterTest extends AbstractFilterTest {
 
     }
 
+    @Test
+    public void filterDate26() throws Exception {
+
+        final List<DateFilterStrategy> strategies = Arrays.asList(new DateFilterStrategy());
+        DateFilter filter = new DateFilter(strategies, new DateAnonymizationService(new LocalAnonymizationCacheService()), false, DateSpanValidator.getInstance(), Collections.emptySet());
+
+        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid","The good news is everywhere we go it is that way but this may be on top of that.");
+        Assert.assertEquals(0, spans.size());
+
+    }
+
+    @Test
+    public void filterDate27() throws Exception {
+
+        final List<DateFilterStrategy> strategies = Arrays.asList(new DateFilterStrategy());
+        DateFilter filter = new DateFilter(strategies, new DateAnonymizationService(new LocalAnonymizationCacheService()), false, DateSpanValidator.getInstance(), Collections.emptySet());
+
+        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid","The good news is everywhere we go it is that way but this may 15 be on top of that.");
+        Assert.assertEquals(1, spans.size());
+
+    }
+
+    @Test
+    public void filterDate28() throws Exception {
+
+        final List<DateFilterStrategy> strategies = Arrays.asList(new DateFilterStrategy());
+        DateFilter filter = new DateFilter(strategies, new DateAnonymizationService(new LocalAnonymizationCacheService()), false, DateSpanValidator.getInstance(), Collections.emptySet());
+
+        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid","The good news is everywhere we go it is that way but this may 15, 2020 be on top of that.");
+        Assert.assertEquals(1, spans.size());
+
+    }
+
+    @Test
+    public void filterDate29() throws Exception {
+
+        final List<DateFilterStrategy> strategies = Arrays.asList(new DateFilterStrategy());
+        DateFilter filter = new DateFilter(strategies, new DateAnonymizationService(new LocalAnonymizationCacheService()), false, DateSpanValidator.getInstance(), Collections.emptySet());
+
+        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid","The good news is everywhere we go it is that way but this may 15 2020 be on top of that.");
+        Assert.assertEquals(1, spans.size());
+
+    }
+
+    @Test
+    public void filterDate30() throws Exception {
+
+        final List<DateFilterStrategy> strategies = Arrays.asList(new DateFilterStrategy());
+        DateFilter filter = new DateFilter(strategies, new DateAnonymizationService(new LocalAnonymizationCacheService()), false, DateSpanValidator.getInstance(), Collections.emptySet());
+
+        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid","The good news is everywhere we go it is that way but this may 15 19 be on top of that.");
+        Assert.assertEquals(1, spans.size());
+
+    }
+
 }
