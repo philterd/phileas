@@ -74,17 +74,27 @@ public abstract class Filter implements Serializable {
      */
     public String getReplacement(String name, String context, String documentId, String token, Map<String, Object> attributes) throws IOException {
 
-        // Loop through the strategies. The first strategy without a condition or a satisfied condition will provide the replacement.
-        for(AbstractFilterStrategy strategy : strategies) {
+        if(strategies != null) {
 
-            final String condition = strategy.getCondition();
+            // Loop through the strategies. The first strategy without a condition or a satisfied condition will provide the replacement.
+            for (AbstractFilterStrategy strategy : strategies) {
 
-            // If there is no condition or if the condition evaluates then get the replacement.
-            if(StringUtils.isEmpty(condition) || (strategy.evaluateCondition(context, documentId, token, condition, attributes))) {
+                final String condition = strategy.getCondition();
 
-                return strategy.getReplacement(name, context, documentId, token, anonymizationService);
+                // If there is no condition or if the condition evaluates then get the replacement.
+                if (StringUtils.isEmpty(condition) || (strategy.evaluateCondition(context, documentId, token, condition, attributes))) {
+
+                    return strategy.getReplacement(name, context, documentId, token, anonymizationService);
+
+                }
 
             }
+
+        } else {
+
+            // PHL-68: When there are no strategies just redact.
+            LOGGER.warn("No filter strategies found for filter type {}. Defaulting to redaction.", filterType.getType());
+            return AbstractFilterStrategy.DEFAULT_REDACTION.replaceAll("%t", filterType.getType());
 
         }
 

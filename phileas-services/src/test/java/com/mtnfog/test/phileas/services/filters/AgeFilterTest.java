@@ -3,11 +3,9 @@ package com.mtnfog.test.phileas.services.filters;
 import com.mtnfog.phileas.model.enums.FilterType;
 import com.mtnfog.phileas.model.objects.Span;
 import com.mtnfog.phileas.model.profile.filters.strategies.rules.AgeFilterStrategy;
-import com.mtnfog.phileas.model.profile.filters.strategies.rules.IpAddressFilterStrategy;
 import com.mtnfog.phileas.services.anonymization.AgeAnonymizationService;
 import com.mtnfog.phileas.services.cache.LocalAnonymizationCacheService;
 import com.mtnfog.phileas.services.filters.regex.AgeFilter;
-import com.mtnfog.test.phileas.services.filters.AbstractFilterTest;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -16,6 +14,22 @@ import java.util.Collections;
 import java.util.List;
 
 public class AgeFilterTest extends AbstractFilterTest {
+
+    @Test
+    public void filter0() throws Exception {
+
+        // This tests PHL-68. When there are no filter strategies just redact.
+        final AgeFilter filter = new AgeFilter(null, new AgeAnonymizationService(new LocalAnonymizationCacheService()), Collections.emptySet());
+
+        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "the patient is 3.5years old.");
+
+        showSpans(spans);
+
+        Assert.assertEquals(1, spans.size());
+        Assert.assertTrue(checkSpan(spans.get(0), 15, 27, FilterType.AGE));
+        Assert.assertEquals("{{{REDACTED-age}}}", spans.get(0).getReplacement());
+
+    }
 
     @Test
     public void filter1() throws Exception {
