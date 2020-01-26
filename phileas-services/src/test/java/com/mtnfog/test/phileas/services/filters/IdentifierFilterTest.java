@@ -200,12 +200,26 @@ public class IdentifierFilterTest extends AbstractFilterTest {
     public void filterId14() throws Exception {
 
         final List<IdentifierFilterStrategy> strategies = Arrays.asList(new IdentifierFilterStrategy());
-        IdentifierFilter filter = new IdentifierFilter("name", "\\b[0-9]{4,}\\b", true, strategies, anonymizationService, Collections.emptySet());
+        IdentifierFilter filter = new IdentifierFilter("name", Identifier.DEFAULT_IDENTIFIER_REGEX, true, strategies, anonymizationService, Collections.emptySet());
 
         List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "the id is 1234.");
 
         Assert.assertEquals(1, spans.size());
         Assert.assertTrue(checkSpan(spans.get(0), 10,14, FilterType.IDENTIFIER));
+
+    }
+
+    @Test
+    public void filterId15() throws Exception {
+
+        final List<IdentifierFilterStrategy> strategies = Arrays.asList(new IdentifierFilterStrategy());
+        IdentifierFilter filter = new IdentifierFilter("name", Identifier.DEFAULT_IDENTIFIER_REGEX, true, strategies, anonymizationService, Collections.emptySet());
+
+        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "John Smith, patient ID A203493, was seen on February 18.");
+
+        showSpans(spans);
+        Assert.assertEquals(1, spans.size());
+        Assert.assertTrue(checkSpan(spans.get(0), 23,30, FilterType.IDENTIFIER));
 
     }
 
