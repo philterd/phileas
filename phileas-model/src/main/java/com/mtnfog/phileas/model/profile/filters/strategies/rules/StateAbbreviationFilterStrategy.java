@@ -32,6 +32,20 @@ public class StateAbbreviationFilterStrategy extends AbstractFilterStrategy {
 
                 conditionsSatisfied = evaluateTokenCondition(parsedCondition, token);
 
+            } else if(StringUtils.equalsIgnoreCase(CONTEXT, parsedCondition.getField())) {
+
+                final String conditionContext = parsedCondition.getValue();
+
+                switch (parsedCondition.getOperator()) {
+                    case "==":
+                        conditionsSatisfied = (StringUtils.equalsIgnoreCase("\"" + context + "\"", conditionContext));
+                        break;
+                    case "!=":
+                        conditionsSatisfied = !(StringUtils.equalsIgnoreCase("\"" + context + "\"", conditionContext));
+                        break;
+
+                }
+
             }
 
             LOGGER.debug("Condition for [" + condition + "] satisfied: " + conditionsSatisfied);

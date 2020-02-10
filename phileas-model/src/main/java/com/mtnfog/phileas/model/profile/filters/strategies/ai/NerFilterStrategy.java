@@ -73,6 +73,20 @@ public class NerFilterStrategy extends AbstractFilterStrategy {
 
                 }
 
+            } else if(StringUtils.equalsIgnoreCase(CONTEXT, parsedCondition.getField())) {
+
+                final String conditionContext = parsedCondition.getValue();
+
+                switch (parsedCondition.getOperator()) {
+                    case "==":
+                        conditionsSatisfied = (StringUtils.equalsIgnoreCase("\"" + context + "\"", conditionContext));
+                        break;
+                    case "!=":
+                        conditionsSatisfied = !(StringUtils.equalsIgnoreCase("\"" + context + "\"", conditionContext));
+                        break;
+
+                }
+
             }
 
             // Short-circuit if we have a failure.

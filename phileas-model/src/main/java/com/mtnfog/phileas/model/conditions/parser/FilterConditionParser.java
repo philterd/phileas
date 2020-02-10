@@ -17,8 +17,8 @@ public class FilterConditionParser extends Parser {
 	protected static final PredictionContextCache _sharedContextCache =
 		new PredictionContextCache();
 	public static final int
-		T__0=1, T__1=2, T__2=3, T__3=4, T__4=5, TYPE=6, AND=7, COMPARATOR=8, NUMBER=9, 
-		WORD=10, WS=11;
+		T__0=1, T__1=2, T__2=3, T__3=4, T__4=5, T__5=6, TYPE=7, AND=8, COMPARATOR=9, 
+		NUMBER=10, WORD=11, WS=12;
 	public static final int
 		RULE_expression = 0;
 	private static String[] makeRuleNames() {
@@ -30,14 +30,14 @@ public class FilterConditionParser extends Parser {
 
 	private static String[] makeLiteralNames() {
 		return new String[] {
-			null, "'population'", "'token'", "'\"'", "'type'", "'confidence'"
+			null, "'population'", "'token'", "'\"'", "'type'", "'confidence'", "'context'"
 		};
 	}
 	private static final String[] _LITERAL_NAMES = makeLiteralNames();
 	private static String[] makeSymbolicNames() {
 		return new String[] {
-			null, null, null, null, null, null, "TYPE", "AND", "COMPARATOR", "NUMBER", 
-			"WORD", "WS"
+			null, null, null, null, null, null, null, "TYPE", "AND", "COMPARATOR", 
+			"NUMBER", "WORD", "WS"
 		};
 	}
 	private static final String[] _SYMBOLIC_NAMES = makeSymbolicNames();
@@ -120,9 +120,9 @@ public class FilterConditionParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(33);
+			setState(40);
 			_errHandler.sync(this);
-			switch ( getInterpreter().adaptivePredict(_input,4,_ctx) ) {
+			switch ( getInterpreter().adaptivePredict(_input,5,_ctx) ) {
 			case 1:
 				{
 				}
@@ -219,6 +219,28 @@ public class FilterConditionParser extends Parser {
 				}
 				}
 				break;
+			case 6:
+				{
+				setState(33);
+				match(T__5);
+				setState(34);
+				match(COMPARATOR);
+				setState(35);
+				match(WORD);
+				setState(38);
+				_errHandler.sync(this);
+				switch ( getInterpreter().adaptivePredict(_input,4,_ctx) ) {
+				case 1:
+					{
+					setState(36);
+					match(AND);
+					setState(37);
+					expression();
+					}
+					break;
+				}
+				}
+				break;
 			}
 			}
 		}
@@ -234,18 +256,19 @@ public class FilterConditionParser extends Parser {
 	}
 
 	public static final String _serializedATN =
-		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\r&\4\2\t\2\3\2\3"+
+		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\16-\4\2\t\2\3\2\3"+
 		"\2\3\2\3\2\3\2\3\2\5\2\13\n\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\5\2\24\n\2\3"+
-		"\2\3\2\3\2\3\2\3\2\5\2\33\n\2\3\2\3\2\3\2\3\2\3\2\5\2\"\n\2\5\2$\n\2\3"+
-		"\2\2\2\3\2\2\2\2,\2#\3\2\2\2\4$\3\2\2\2\5\6\7\3\2\2\6\7\7\n\2\2\7\n\7"+
-		"\13\2\2\b\t\7\t\2\2\t\13\5\2\2\2\n\b\3\2\2\2\n\13\3\2\2\2\13$\3\2\2\2"+
-		"\f\r\7\4\2\2\r\16\7\n\2\2\16\17\7\5\2\2\17\20\7\f\2\2\20\23\7\5\2\2\21"+
-		"\22\7\t\2\2\22\24\5\2\2\2\23\21\3\2\2\2\23\24\3\2\2\2\24$\3\2\2\2\25\26"+
-		"\7\6\2\2\26\27\7\n\2\2\27\32\7\b\2\2\30\31\7\t\2\2\31\33\5\2\2\2\32\30"+
-		"\3\2\2\2\32\33\3\2\2\2\33$\3\2\2\2\34\35\7\7\2\2\35\36\7\n\2\2\36!\7\13"+
-		"\2\2\37 \7\t\2\2 \"\5\2\2\2!\37\3\2\2\2!\"\3\2\2\2\"$\3\2\2\2#\4\3\2\2"+
-		"\2#\5\3\2\2\2#\f\3\2\2\2#\25\3\2\2\2#\34\3\2\2\2$\3\3\2\2\2\7\n\23\32"+
-		"!#";
+		"\2\3\2\3\2\3\2\3\2\5\2\33\n\2\3\2\3\2\3\2\3\2\3\2\5\2\"\n\2\3\2\3\2\3"+
+		"\2\3\2\3\2\5\2)\n\2\5\2+\n\2\3\2\2\2\3\2\2\2\2\65\2*\3\2\2\2\4+\3\2\2"+
+		"\2\5\6\7\3\2\2\6\7\7\13\2\2\7\n\7\f\2\2\b\t\7\n\2\2\t\13\5\2\2\2\n\b\3"+
+		"\2\2\2\n\13\3\2\2\2\13+\3\2\2\2\f\r\7\4\2\2\r\16\7\13\2\2\16\17\7\5\2"+
+		"\2\17\20\7\r\2\2\20\23\7\5\2\2\21\22\7\n\2\2\22\24\5\2\2\2\23\21\3\2\2"+
+		"\2\23\24\3\2\2\2\24+\3\2\2\2\25\26\7\6\2\2\26\27\7\13\2\2\27\32\7\t\2"+
+		"\2\30\31\7\n\2\2\31\33\5\2\2\2\32\30\3\2\2\2\32\33\3\2\2\2\33+\3\2\2\2"+
+		"\34\35\7\7\2\2\35\36\7\13\2\2\36!\7\f\2\2\37 \7\n\2\2 \"\5\2\2\2!\37\3"+
+		"\2\2\2!\"\3\2\2\2\"+\3\2\2\2#$\7\b\2\2$%\7\13\2\2%(\7\r\2\2&\'\7\n\2\2"+
+		"\')\5\2\2\2(&\3\2\2\2()\3\2\2\2)+\3\2\2\2*\4\3\2\2\2*\5\3\2\2\2*\f\3\2"+
+		"\2\2*\25\3\2\2\2*\34\3\2\2\2*#\3\2\2\2+\3\3\2\2\2\b\n\23\32!(*";
 	public static final ATN _ATN =
 		new ATNDeserializer().deserialize(_serializedATN.toCharArray());
 	static {

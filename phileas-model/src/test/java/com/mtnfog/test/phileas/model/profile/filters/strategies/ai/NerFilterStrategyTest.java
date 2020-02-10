@@ -233,4 +233,30 @@ public class NerFilterStrategyTest {
 
     }
 
+    @Test
+    public void evaluateCondition11() {
+
+        final NerFilterStrategy strategy = new NerFilterStrategy();
+
+        final Map<String, Object> attributes = new HashMap<>();
+
+        final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentId", "John Smith", "context == \"c1\"", attributes);
+
+        Assert.assertFalse(conditionSatisfied);
+
+    }
+
+    @Test
+    public void evaluateCondition12() {
+
+        final NerFilterStrategy strategy = new NerFilterStrategy();
+
+        final Map<String, Object> attributes = new HashMap<>();
+
+        final boolean conditionSatisfied = strategy.evaluateCondition("ctx", "documentId", "John Smith", "context == \"ctx\"", attributes);
+
+        Assert.assertTrue(conditionSatisfied);
+
+    }
+
 }

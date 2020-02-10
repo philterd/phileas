@@ -24,6 +24,7 @@ public abstract class AbstractFilterStrategy {
     public static final String TOKEN = "token";
     public static final String STARTSWITH = "startswith";
     public static final String EQUALS = "==";
+    public static final String CONTEXT = "context";
 
     @SerializedName("strategy")
     @Expose

@@ -1,6 +1,7 @@
 package com.mtnfog.test.phileas.model.profile.filters.strategies.rules;
 
 import com.mtnfog.phileas.model.profile.filters.strategies.AbstractFilterStrategy;
+import com.mtnfog.phileas.model.profile.filters.strategies.dynamic.CityFilterStrategy;
 import com.mtnfog.phileas.model.profile.filters.strategies.rules.AgeFilterStrategy;
 import com.mtnfog.phileas.model.profile.filters.strategies.rules.CreditCardFilterStrategy;
 import com.mtnfog.phileas.model.profile.filters.strategies.rules.DateFilterStrategy;
@@ -15,6 +16,8 @@ import org.mockito.Mockito;
 
 import java.io.IOException;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.mockito.Mockito.when;
 
@@ -118,6 +121,32 @@ public class EmailAddressFilterStrategyTest {
         final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentId", "12345", "token == \"90210\"", Collections.emptyMap());
 
         Assert.assertFalse(conditionSatisfied);
+
+    }
+
+    @Test
+    public void evaluateCondition4() {
+
+        final EmailAddressFilterStrategy strategy = new EmailAddressFilterStrategy();
+
+        final Map<String, Object> attributes = new HashMap<>();
+
+        final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentId", "John Smith", "context == \"c1\"", attributes);
+
+        Assert.assertFalse(conditionSatisfied);
+
+    }
+
+    @Test
+    public void evaluateCondition5() {
+
+        final EmailAddressFilterStrategy strategy = new EmailAddressFilterStrategy();
+
+        final Map<String, Object> attributes = new HashMap<>();
+
+        final boolean conditionSatisfied = strategy.evaluateCondition("ctx", "documentId", "John Smith", "context == \"ctx\"", attributes);
+
+        Assert.assertTrue(conditionSatisfied);
 
     }
 

@@ -15,6 +15,8 @@ import org.mockito.Mockito;
 
 import java.io.IOException;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.mockito.Mockito.when;
 
@@ -118,6 +120,32 @@ public class CountyFilterStrategyTest {
         final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentId", "12345", "token == \"90210\"", Collections.emptyMap());
 
         Assert.assertFalse(conditionSatisfied);
+
+    }
+
+    @Test
+    public void evaluateCondition4() {
+
+        final CountyFilterStrategy strategy = new CountyFilterStrategy();
+
+        final Map<String, Object> attributes = new HashMap<>();
+
+        final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentId", "John Smith", "context == \"c1\"", attributes);
+
+        Assert.assertFalse(conditionSatisfied);
+
+    }
+
+    @Test
+    public void evaluateCondition5() {
+
+        final CountyFilterStrategy strategy = new CountyFilterStrategy();
+
+        final Map<String, Object> attributes = new HashMap<>();
+
+        final boolean conditionSatisfied = strategy.evaluateCondition("ctx", "documentId", "John Smith", "context == \"ctx\"", attributes);
+
+        Assert.assertTrue(conditionSatisfied);
 
     }
 

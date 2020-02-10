@@ -1,6 +1,7 @@
 package com.mtnfog.test.phileas.model.profile.filters.strategies.rules;
 
 import com.mtnfog.phileas.model.profile.filters.strategies.AbstractFilterStrategy;
+import com.mtnfog.phileas.model.profile.filters.strategies.dynamic.CityFilterStrategy;
 import com.mtnfog.phileas.model.profile.filters.strategies.rules.ZipCodeFilterStrategy;
 import com.mtnfog.phileas.model.services.AnonymizationCacheService;
 import com.mtnfog.phileas.model.services.AnonymizationService;
@@ -12,6 +13,8 @@ import org.mockito.Mockito;
 
 import java.io.IOException;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.mockito.Mockito.when;
 
@@ -177,6 +180,32 @@ public class ZipCodeFilterStrategyTest {
         final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentId", "31590", "token startswith \"20\"", Collections.emptyMap());
 
         Assert.assertFalse(conditionSatisfied);
+
+    }
+
+    @Test
+    public void evaluateCondition8() throws IOException {
+
+        final ZipCodeFilterStrategy strategy = new ZipCodeFilterStrategy();
+
+        final Map<String, Object> attributes = new HashMap<>();
+
+        final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentId", "John Smith", "context == \"c1\"", attributes);
+
+        Assert.assertFalse(conditionSatisfied);
+
+    }
+
+    @Test
+    public void evaluateCondition9() throws IOException {
+
+        final ZipCodeFilterStrategy strategy = new ZipCodeFilterStrategy();
+
+        final Map<String, Object> attributes = new HashMap<>();
+
+        final boolean conditionSatisfied = strategy.evaluateCondition("ctx", "documentId", "John Smith", "context == \"ctx\"", attributes);
+
+        Assert.assertTrue(conditionSatisfied);
 
     }
 
