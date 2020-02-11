@@ -2,10 +2,7 @@ package com.mtnfog.test.phileas.model.profile.filters.strategies.rules;
 
 import com.mtnfog.phileas.model.profile.filters.strategies.AbstractFilterStrategy;
 import com.mtnfog.phileas.model.profile.filters.strategies.dynamic.CityFilterStrategy;
-import com.mtnfog.phileas.model.profile.filters.strategies.rules.AgeFilterStrategy;
-import com.mtnfog.phileas.model.profile.filters.strategies.rules.EmailAddressFilterStrategy;
-import com.mtnfog.phileas.model.profile.filters.strategies.rules.IpAddressFilterStrategy;
-import com.mtnfog.phileas.model.profile.filters.strategies.rules.PhoneNumberExtensionFilterStrategy;
+import com.mtnfog.phileas.model.profile.filters.strategies.rules.*;
 import com.mtnfog.phileas.model.services.AnonymizationCacheService;
 import com.mtnfog.phileas.model.services.AnonymizationService;
 import org.apache.logging.log4j.LogManager;
@@ -88,6 +85,24 @@ public class PhoneNumberExtensionFilterStrategyTest {
         final String replacement = strategy.getReplacement("name", "context", "docId", "token", anonymizationService);
 
         Assert.assertEquals("{{{REDACTED-phone-number-extension}}}", replacement);
+
+    }
+
+    @Test
+    public void replacement5() throws IOException {
+
+        final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
+        final AnonymizationCacheService anonymizationCacheService = Mockito.mock(AnonymizationCacheService.class);
+
+        when(anonymizationService.getAnonymizationCacheService()).thenReturn(anonymizationCacheService);
+
+        final AbstractFilterStrategy strategy = new PhoneNumberExtensionFilterStrategy();
+        strategy.setStrategy(AbstractFilterStrategy.REDACT);
+        strategy.setRedactionFormat("<ENTITY:%t>%v</ENTITY>");
+
+        final String replacement = strategy.getReplacement("name", "context", "docId", "token", anonymizationService);
+
+        Assert.assertEquals("<ENTITY:phone-number-extension>token</ENTITY>", replacement);
 
     }
 

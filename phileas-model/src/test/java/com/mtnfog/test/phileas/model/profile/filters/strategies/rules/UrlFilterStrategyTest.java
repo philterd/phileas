@@ -2,10 +2,7 @@ package com.mtnfog.test.phileas.model.profile.filters.strategies.rules;
 
 import com.mtnfog.phileas.model.profile.filters.strategies.AbstractFilterStrategy;
 import com.mtnfog.phileas.model.profile.filters.strategies.dynamic.CityFilterStrategy;
-import com.mtnfog.phileas.model.profile.filters.strategies.rules.AgeFilterStrategy;
-import com.mtnfog.phileas.model.profile.filters.strategies.rules.SsnFilterStrategy;
-import com.mtnfog.phileas.model.profile.filters.strategies.rules.StateAbbreviationFilterStrategy;
-import com.mtnfog.phileas.model.profile.filters.strategies.rules.UrlFilterStrategy;
+import com.mtnfog.phileas.model.profile.filters.strategies.rules.*;
 import com.mtnfog.phileas.model.services.AnonymizationCacheService;
 import com.mtnfog.phileas.model.services.AnonymizationService;
 import org.apache.logging.log4j.LogManager;
@@ -88,6 +85,24 @@ public class UrlFilterStrategyTest {
         final String replacement = strategy.getReplacement("name", "context", "docId", "token", anonymizationService);
 
         Assert.assertEquals("{{{REDACTED-url}}}", replacement);
+
+    }
+
+    @Test
+    public void replacement5() throws IOException {
+
+        final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
+        final AnonymizationCacheService anonymizationCacheService = Mockito.mock(AnonymizationCacheService.class);
+
+        when(anonymizationService.getAnonymizationCacheService()).thenReturn(anonymizationCacheService);
+
+        final AbstractFilterStrategy strategy = new UrlFilterStrategy();
+        strategy.setStrategy(AbstractFilterStrategy.REDACT);
+        strategy.setRedactionFormat("<ENTITY:%t>%v</ENTITY>");
+
+        final String replacement = strategy.getReplacement("name", "context", "docId", "token", anonymizationService);
+
+        Assert.assertEquals("<ENTITY:url>token</ENTITY>", replacement);
 
     }
 

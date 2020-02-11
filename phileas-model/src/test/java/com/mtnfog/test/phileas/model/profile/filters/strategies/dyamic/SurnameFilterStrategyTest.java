@@ -92,6 +92,24 @@ public class SurnameFilterStrategyTest {
     }
 
     @Test
+    public void replacement5() throws IOException {
+
+        final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
+        final AnonymizationCacheService anonymizationCacheService = Mockito.mock(AnonymizationCacheService.class);
+
+        when(anonymizationService.getAnonymizationCacheService()).thenReturn(anonymizationCacheService);
+
+        final AbstractFilterStrategy strategy = new SurnameFilterStrategy();
+        strategy.setStrategy(AbstractFilterStrategy.REDACT);
+        strategy.setRedactionFormat("<ENTITY:%t>%v</ENTITY>");
+
+        final String replacement = strategy.getReplacement("name", "context", "docId", "token", anonymizationService);
+
+        Assert.assertEquals("<ENTITY:surname>token</ENTITY>", replacement);
+
+    }
+
+    @Test
     public void evaluateCondition1() throws IOException {
 
         SurnameFilterStrategy strategy = new SurnameFilterStrategy();

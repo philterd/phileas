@@ -5,6 +5,7 @@ import com.mtnfog.phileas.model.profile.filters.strategies.ai.NerFilterStrategy;
 import com.mtnfog.phileas.model.profile.filters.strategies.custom.CustomDictionaryFilterStrategy;
 import com.mtnfog.phileas.model.profile.filters.strategies.dynamic.SurnameFilterStrategy;
 import com.mtnfog.phileas.model.profile.filters.strategies.rules.AgeFilterStrategy;
+import com.mtnfog.phileas.model.profile.filters.strategies.rules.CreditCardFilterStrategy;
 import com.mtnfog.phileas.model.profile.filters.strategies.rules.SsnFilterStrategy;
 import com.mtnfog.phileas.model.services.AnonymizationCacheService;
 import com.mtnfog.phileas.model.services.AnonymizationService;
@@ -88,6 +89,24 @@ public class CustomDictionaryFilterStrategyTest {
         final String replacement = strategy.getReplacement("name", "context", "docId", "token", anonymizationService);
 
         Assert.assertEquals("{{{REDACTED-custom-dictionary}}}", replacement);
+
+    }
+
+    @Test
+    public void replacement5() throws IOException {
+
+        final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
+        final AnonymizationCacheService anonymizationCacheService = Mockito.mock(AnonymizationCacheService.class);
+
+        when(anonymizationService.getAnonymizationCacheService()).thenReturn(anonymizationCacheService);
+
+        final AbstractFilterStrategy strategy = new CustomDictionaryFilterStrategy();
+        strategy.setStrategy(AbstractFilterStrategy.REDACT);
+        strategy.setRedactionFormat("<ENTITY:%t>%v</ENTITY>");
+
+        final String replacement = strategy.getReplacement("name", "context", "docId", "token", anonymizationService);
+
+        Assert.assertEquals("<ENTITY:custom-dictionary>token</ENTITY>", replacement);
 
     }
 

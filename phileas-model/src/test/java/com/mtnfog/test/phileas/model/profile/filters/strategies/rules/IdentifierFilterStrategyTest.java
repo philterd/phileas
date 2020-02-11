@@ -4,6 +4,7 @@ import com.mtnfog.phileas.model.profile.filters.strategies.AbstractFilterStrateg
 import com.mtnfog.phileas.model.profile.filters.strategies.dynamic.CityFilterStrategy;
 import com.mtnfog.phileas.model.profile.filters.strategies.rules.CreditCardFilterStrategy;
 import com.mtnfog.phileas.model.profile.filters.strategies.rules.IdentifierFilterStrategy;
+import com.mtnfog.phileas.model.services.AnonymizationCacheService;
 import com.mtnfog.phileas.model.services.AnonymizationService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -15,6 +16,8 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+
+import static org.mockito.Mockito.when;
 
 public class IdentifierFilterStrategyTest {
 
@@ -81,6 +84,24 @@ public class IdentifierFilterStrategyTest {
         final String replacement = strategy.getReplacement("custom-name", "context", "documentId", "token", anonymizationService);
 
         Assert.assertEquals("***custom-name-custom-name-id***", replacement);
+
+    }
+
+    @Test
+    public void replacement6() throws IOException {
+
+        final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
+        final AnonymizationCacheService anonymizationCacheService = Mockito.mock(AnonymizationCacheService.class);
+
+        when(anonymizationService.getAnonymizationCacheService()).thenReturn(anonymizationCacheService);
+
+        final AbstractFilterStrategy strategy = new IdentifierFilterStrategy();
+        strategy.setStrategy(AbstractFilterStrategy.REDACT);
+        strategy.setRedactionFormat("<ENTITY:%t>%v</ENTITY>");
+
+        final String replacement = strategy.getReplacement("name", "context", "docId", "token", anonymizationService);
+
+        Assert.assertEquals("<ENTITY:id>token</ENTITY>", replacement);
 
     }
 

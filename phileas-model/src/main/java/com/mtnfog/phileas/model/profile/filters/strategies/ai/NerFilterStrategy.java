@@ -105,7 +105,7 @@ public class NerFilterStrategy extends AbstractFilterStrategy {
 
         if(StringUtils.equalsIgnoreCase(strategy, REDACT)) {
 
-            replacement = getRedactedToken(name, filterType);
+            replacement = getRedactedToken(token, name, filterType);
 
         } else if(StringUtils.equalsIgnoreCase(strategy, RANDOM_REPLACE)) {
 
@@ -125,7 +125,7 @@ public class NerFilterStrategy extends AbstractFilterStrategy {
         } else {
 
             // Default to redaction.
-            replacement = getRedactedToken(name, filterType);
+            replacement = getRedactedToken(token, name, filterType);
 
         }
 

@@ -65,7 +65,7 @@ public class DateFilterStrategy extends AbstractFilterStrategy {
 
         if(StringUtils.equalsIgnoreCase(strategy, REDACT)) {
 
-            replacement = getRedactedToken(name, filterType);
+            replacement = getRedactedToken(token, name, filterType);
 
         } else if(StringUtils.equalsIgnoreCase(strategy, RANDOM_REPLACE)) {
 
@@ -85,7 +85,7 @@ public class DateFilterStrategy extends AbstractFilterStrategy {
         } else {
 
             // Default to redaction.
-            replacement = getRedactedToken(name, filterType);
+            replacement = getRedactedToken(token, name, filterType);
 
         }
 
