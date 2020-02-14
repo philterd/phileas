@@ -12,6 +12,7 @@ import com.mtnfog.phileas.model.profile.filters.strategies.rules.*;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.lucene.store.NIOFSDirectory;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -56,6 +57,9 @@ public abstract class AbstractFilterTest {
 
         IpAddress ipAddress = new IpAddress();
         ipAddress.setIpAddressFilterStrategies(Arrays.asList(new IpAddressFilterStrategy()));
+
+        MacAddress macAddress = new MacAddress();
+        macAddress.setMacAddressFilterStrategies(Arrays.asList(new MacAddressFilterStrategy()));
 
         PhoneNumber phoneNumber = new PhoneNumber();
         phoneNumber.setPhoneNumberFilterStrategies(Arrays.asList(new PhoneNumberFilterStrategy()));
@@ -120,6 +124,7 @@ public abstract class AbstractFilterTest {
         identifiers.setEmailAddress(emailAddress);
         identifiers.setIdentifiers(Arrays.asList(identifier));
         identifiers.setIpAddress(ipAddress);
+        identifiers.setMacAddress(macAddress);
         identifiers.setPhoneNumber(phoneNumber);
         identifiers.setPhoneNumberExtension(phoneNumberExtension);
         identifiers.setSsn(ssn);

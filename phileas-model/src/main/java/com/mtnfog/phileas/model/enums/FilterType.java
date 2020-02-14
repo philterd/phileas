@@ -19,6 +19,7 @@ public enum FilterType {
     HOSPITAL_ABBREVIATION("hospital-abbreviation", false),
     IDENTIFIER("id", true),
     IP_ADDRESS("ip-address", true),
+    MAC_ADDRESS("mac-address", true),
     NER_ENTITY("entity", false),
     PHONE_NUMBER("phone-number", true),
     PHONE_NUMBER_EXTENSION("phone-number-extension", true),

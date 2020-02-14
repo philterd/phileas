@@ -255,6 +255,12 @@ public class PhileasFilterService implements FilterService, Serializable {
                 }
             }
 
+            if(filterProfile.getIdentifiers().hasFilter(FilterType.MAC_ADDRESS)) {
+                if(filterProfile.getIdentifiers().getMacAddress().isEnabled()) {
+                    enabledFilters.add(new MacAddressFilter(filterProfile.getIdentifiers().getIpAddress().getIpAddressFilterStrategies(), new MacAddressAnonymizationService(anonymizationCacheService), filterProfile.getIdentifiers().getMacAddress().getIgnored(), filterProfile.getCrypto()));
+                }
+            }
+
             if(filterProfile.getIdentifiers().hasFilter(FilterType.PHONE_NUMBER_EXTENSION)) {
                 if(filterProfile.getIdentifiers().getPhoneNumberExtension().isEnabled()) {
                     enabledFilters.add(new PhoneNumberExtensionFilter(filterProfile.getIdentifiers().getPhoneNumberExtension().getPhoneNumberExtensionFilterStrategies(), new AlphanumericAnonymizationService(anonymizationCacheService), filterProfile.getIdentifiers().getPhoneNumberExtension().getIgnored(), filterProfile.getCrypto()));

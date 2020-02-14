@@ -41,7 +41,11 @@ public class Identifiers {
     @SerializedName("ipAddress")
     @Expose
     private IpAddress ipAddress;
-    
+
+    @SerializedName("macAddress")
+    @Expose
+    private MacAddress macAddress;
+
     @SerializedName("phoneNumber")
     @Expose
     private PhoneNumber phoneNumber;
@@ -136,6 +140,8 @@ public class Identifiers {
                 if(this.getIdentifiers() != null) { return true; } break;
             case IP_ADDRESS:
                 if(this.getIpAddress() != null) { return true; } break;
+            case MAC_ADDRESS:
+                if(this.getMacAddress() != null) { return true; } break;
             case NER_ENTITY:
                 if(this.getNer() != null) { return true; } break;
             case PHONE_NUMBER:
@@ -337,6 +343,14 @@ public class Identifiers {
 
     public void setCustomDictionaries(List<CustomDictionary> customDictionaries) {
         this.customDictionaries = customDictionaries;
+    }
+
+    public MacAddress getMacAddress() {
+        return macAddress;
+    }
+
+    public void setMacAddress(MacAddress macAddress) {
+        this.macAddress = macAddress;
     }
 
 }
