@@ -4,6 +4,7 @@ import com.mtnfog.phileas.model.enums.FilterType;
 import com.mtnfog.phileas.model.enums.SensitivityLevel;
 import com.mtnfog.phileas.model.filter.rules.dictionary.LuceneDictionaryFilter;
 import com.mtnfog.phileas.model.objects.Span;
+import com.mtnfog.phileas.model.profile.Crypto;
 import com.mtnfog.phileas.model.profile.filters.strategies.dynamic.SurnameFilterStrategy;
 import com.mtnfog.phileas.model.services.AnonymizationService;
 import com.mtnfog.phileas.services.anonymization.SurnameAnonymizationService;
@@ -15,7 +16,6 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -34,12 +34,12 @@ public class SurnameFilterTest extends AbstractFilterTest {
     }
 
     @Test
-    public void filter1() throws IOException {
+    public void filter1() throws Exception {
 
         AnonymizationService anonymizationService = new SurnameAnonymizationService(new LocalAnonymizationCacheService());
 
         final List<SurnameFilterStrategy> strategies = Arrays.asList(new SurnameFilterStrategy());
-        final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.SURNAME, strategies, INDEX_DIRECTORY, SensitivityLevel.LOW, anonymizationService, Collections.emptySet());
+        final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.SURNAME, strategies, INDEX_DIRECTORY, SensitivityLevel.LOW, anonymizationService, Collections.emptySet(), new Crypto());
 
         final List<Span> spans = filter.filter(getFilterProfile(SensitivityLevel.LOW), "context", "documentid", "Lived in Wshington");
         showSpans(spans);
@@ -48,12 +48,12 @@ public class SurnameFilterTest extends AbstractFilterTest {
     }
 
     @Test
-    public void filter2() throws IOException {
+    public void filter2() throws Exception {
 
         AnonymizationService anonymizationService = new SurnameAnonymizationService(new LocalAnonymizationCacheService());
 
         final List<SurnameFilterStrategy> strategies = Arrays.asList(new SurnameFilterStrategy());
-        final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.SURNAME, strategies, INDEX_DIRECTORY, SensitivityLevel.MEDIUM, anonymizationService, Collections.emptySet());
+        final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.SURNAME, strategies, INDEX_DIRECTORY, SensitivityLevel.MEDIUM, anonymizationService, Collections.emptySet(), new Crypto());
 
         final List<Span> spans = filter.filter(getFilterProfile(SensitivityLevel.MEDIUM), "context", "documentid", "Lived in Wshington");
         showSpans(spans);
@@ -62,12 +62,12 @@ public class SurnameFilterTest extends AbstractFilterTest {
     }
 
     @Test
-    public void filter3() throws IOException {
+    public void filter3() throws Exception {
 
         AnonymizationService anonymizationService = new SurnameAnonymizationService(new LocalAnonymizationCacheService());
 
         final List<SurnameFilterStrategy> strategies = Arrays.asList(new SurnameFilterStrategy());
-        final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.SURNAME, strategies, INDEX_DIRECTORY, SensitivityLevel.HIGH, anonymizationService, Collections.emptySet());
+        final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.SURNAME, strategies, INDEX_DIRECTORY, SensitivityLevel.HIGH, anonymizationService, Collections.emptySet(), new Crypto());
 
         final List<Span> spans = filter.filter(getFilterProfile(SensitivityLevel.HIGH), "context", "documentid", "Lived in Wasinton");
         showSpans(spans);

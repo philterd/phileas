@@ -4,6 +4,7 @@ import com.mtnfog.phileas.model.enums.FilterType;
 import com.mtnfog.phileas.model.enums.SensitivityLevel;
 import com.mtnfog.phileas.model.filter.rules.dictionary.LuceneDictionaryFilter;
 import com.mtnfog.phileas.model.objects.Span;
+import com.mtnfog.phileas.model.profile.Crypto;
 import com.mtnfog.phileas.model.profile.filters.strategies.dynamic.HospitalAbbreviationFilterStrategy;
 import com.mtnfog.phileas.model.services.AnonymizationService;
 import com.mtnfog.phileas.services.anonymization.HospitalAbbreviationAnonymizationService;
@@ -33,7 +34,7 @@ public class HospitalAbbreviationFilterTest extends AbstractFilterTest {
 
     @Test
     @Ignore
-    public void makeAbbreviations() throws IOException {
+    public void makeAbbreviations() throws Exception {
 
         final String file = "/mtnfog/code/bitbucket/philter/philter/index-data/hospitals";
         final InputStream is = new FileInputStream(file);
@@ -58,12 +59,12 @@ public class HospitalAbbreviationFilterTest extends AbstractFilterTest {
     }
 
     @Test
-    public void filter1() throws IOException {
+    public void filter1() throws Exception {
 
         final AnonymizationService anonymizationService = new HospitalAbbreviationAnonymizationService(new LocalAnonymizationCacheService());
         final List<HospitalAbbreviationFilterStrategy> strategies = Arrays.asList(new HospitalAbbreviationFilterStrategy());
 
-        final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.HOSPITAL, strategies, INDEX_DIRECTORY, SensitivityLevel.HIGH, anonymizationService, Collections.emptySet());
+        final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.HOSPITAL, strategies, INDEX_DIRECTORY, SensitivityLevel.HIGH, anonymizationService, Collections.emptySet(), new Crypto());
 
         final List<Span> spans = filter.filter(getFilterProfile(SensitivityLevel.HIGH), "context", "documentid","Went to WMC");
         showSpans(spans);

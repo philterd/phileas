@@ -4,6 +4,7 @@ import com.mtnfog.phileas.model.enums.FilterType;
 import com.mtnfog.phileas.model.enums.SensitivityLevel;
 import com.mtnfog.phileas.model.filter.Filter;
 import com.mtnfog.phileas.model.objects.Span;
+import com.mtnfog.phileas.model.profile.Crypto;
 import com.mtnfog.phileas.model.profile.FilterProfile;
 import com.mtnfog.phileas.model.profile.filters.strategies.AbstractFilterStrategy;
 import com.mtnfog.phileas.model.services.AnonymizationService;
@@ -62,9 +63,10 @@ public class LuceneDictionaryFilter extends DictionaryFilter implements Serializ
                                   String indexDirectory,
                                   SensitivityLevel sensitivityLevel,
                                   AnonymizationService anonymizationService,
-                                  Set<String> ignored) throws IOException {
+                                  Set<String> ignored,
+                                  Crypto crypto) throws IOException {
 
-        super(filterType, strategies, anonymizationService, ignored);
+        super(filterType, strategies, anonymizationService, ignored, crypto);
 
         LOGGER.info("Loading {} index from {}", filterType, indexDirectory);
 
@@ -91,9 +93,10 @@ public class LuceneDictionaryFilter extends DictionaryFilter implements Serializ
                                         String type,
                                         List<String> terms,
                                         int filterProfileIndex,
-                                        Set<String> ignored) throws IOException {
+                                        Set<String> ignored,
+                                        Crypto crypto) throws IOException {
 
-        super(filterType, strategies, anonymizationService, ignored);
+        super(filterType, strategies, anonymizationService, ignored, crypto);
 
         LOGGER.info("Creating custom dictionary filter for custom type [{}]", type);
 
@@ -134,7 +137,7 @@ public class LuceneDictionaryFilter extends DictionaryFilter implements Serializ
     }
 
     @Override
-    public List<Span> filter(FilterProfile filterProfile, String context, String documentId, String text) {
+    public List<Span> filter(FilterProfile filterProfile, String context, String documentId, String text) throws Exception {
 
         final List<Span> spans = new LinkedList<>();
 

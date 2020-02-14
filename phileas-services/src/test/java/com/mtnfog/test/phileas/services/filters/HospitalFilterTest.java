@@ -4,6 +4,7 @@ import com.mtnfog.phileas.model.enums.FilterType;
 import com.mtnfog.phileas.model.enums.SensitivityLevel;
 import com.mtnfog.phileas.model.filter.rules.dictionary.LuceneDictionaryFilter;
 import com.mtnfog.phileas.model.objects.Span;
+import com.mtnfog.phileas.model.profile.Crypto;
 import com.mtnfog.phileas.model.profile.filters.strategies.dynamic.HospitalFilterStrategy;
 import com.mtnfog.phileas.model.services.AnonymizationService;
 import com.mtnfog.phileas.services.anonymization.HospitalAnonymizationService;
@@ -32,12 +33,12 @@ public class HospitalFilterTest extends AbstractFilterTest {
     }
 
     @Test
-    public void filter1() throws IOException {
+    public void filter1() throws Exception {
 
         AnonymizationService anonymizationService = new HospitalAnonymizationService(new LocalAnonymizationCacheService());
 
         final List<HospitalFilterStrategy> strategies = Arrays.asList(new HospitalFilterStrategy());
-        final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.HOSPITAL, strategies, INDEX_DIRECTORY, SensitivityLevel.LOW, anonymizationService, Collections.emptySet());
+        final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.HOSPITAL, strategies, INDEX_DIRECTORY, SensitivityLevel.LOW, anonymizationService, Collections.emptySet(), new Crypto());
 
         List<Span> spans = filter.filter(getFilterProfile(SensitivityLevel.LOW), "context", "documentid","Went to Wyoming Medical Center");
         Assert.assertEquals(1, spans.size());

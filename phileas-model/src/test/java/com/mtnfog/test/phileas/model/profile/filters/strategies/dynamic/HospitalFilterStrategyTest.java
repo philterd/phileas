@@ -1,10 +1,8 @@
-package com.mtnfog.test.phileas.model.profile.filters.strategies.dyamic;
+package com.mtnfog.test.phileas.model.profile.filters.strategies.dynamic;
 
+import com.mtnfog.phileas.model.profile.Crypto;
 import com.mtnfog.phileas.model.profile.filters.strategies.AbstractFilterStrategy;
-import com.mtnfog.phileas.model.profile.filters.strategies.dynamic.CityFilterStrategy;
-import com.mtnfog.phileas.model.profile.filters.strategies.dynamic.CountyFilterStrategy;
-import com.mtnfog.phileas.model.profile.filters.strategies.rules.AgeFilterStrategy;
-import com.mtnfog.phileas.model.profile.filters.strategies.rules.SsnFilterStrategy;
+import com.mtnfog.phileas.model.profile.filters.strategies.dynamic.HospitalFilterStrategy;
 import com.mtnfog.phileas.model.services.AnonymizationCacheService;
 import com.mtnfog.phileas.model.services.AnonymizationService;
 import org.apache.logging.log4j.LogManager;
@@ -13,49 +11,48 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
 import static org.mockito.Mockito.when;
 
-public class CountyFilterStrategyTest {
+public class HospitalFilterStrategyTest {
 
-    private static final Logger LOGGER = LogManager.getLogger(CountyFilterStrategyTest.class);
+    private static final Logger LOGGER = LogManager.getLogger(HospitalFilterStrategyTest.class);
 
     @Test
-    public void replacement1() throws IOException {
+    public void replacement1() throws Exception {
 
         final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
 
-        final CountyFilterStrategy strategy = new CountyFilterStrategy();
+        final HospitalFilterStrategy strategy = new HospitalFilterStrategy();
         strategy.setStrategy(AbstractFilterStrategy.STATIC_REPLACE);
         strategy.setStaticReplacement("static-value");
 
-        final String replacement = strategy.getReplacement("name", "context", "docId", "token", anonymizationService);
+        final String replacement = strategy.getReplacement("name", "context", "docId", "token", new Crypto(), anonymizationService);
 
         Assert.assertEquals("static-value", replacement);
 
     }
 
     @Test
-    public void replacement2() throws IOException {
+    public void replacement2() throws Exception {
 
         final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
 
-        final CountyFilterStrategy strategy = new CountyFilterStrategy();
+        final HospitalFilterStrategy strategy = new HospitalFilterStrategy();
         strategy.setStrategy(AbstractFilterStrategy.REDACT);
         strategy.setRedactionFormat("REDACTION-%t");
 
-        final String replacement = strategy.getReplacement("name", "context", "docId", "token", anonymizationService);
+        final String replacement = strategy.getReplacement("name", "context", "docId", "token", new Crypto(), anonymizationService);
 
-        Assert.assertEquals("REDACTION-county", replacement);
+        Assert.assertEquals("REDACTION-hospital", replacement);
 
     }
 
     @Test
-    public void replacement3() throws IOException {
+    public void replacement3() throws Exception {
 
         final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
         final AnonymizationCacheService anonymizationCacheService = Mockito.mock(AnonymizationCacheService.class);
@@ -63,17 +60,17 @@ public class CountyFilterStrategyTest {
         when(anonymizationCacheService.get("context", "token")).thenReturn("random");
         when(anonymizationService.getAnonymizationCacheService()).thenReturn(anonymizationCacheService);
 
-        final CountyFilterStrategy strategy = new CountyFilterStrategy();
+        final HospitalFilterStrategy strategy = new HospitalFilterStrategy();
         strategy.setStrategy(AbstractFilterStrategy.RANDOM_REPLACE);
 
-        final String replacement = strategy.getReplacement("name", "context", "docId", "token", anonymizationService);
+        final String replacement = strategy.getReplacement("name", "context", "docId", "token", new Crypto(), anonymizationService);
 
         Assert.assertNotEquals("random", replacement);
 
     }
 
     @Test
-    public void replacement4() throws IOException {
+    public void replacement4() throws Exception {
 
         final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
         final AnonymizationCacheService anonymizationCacheService = Mockito.mock(AnonymizationCacheService.class);
@@ -81,37 +78,37 @@ public class CountyFilterStrategyTest {
         when(anonymizationCacheService.get("context", "token")).thenReturn("random");
         when(anonymizationService.getAnonymizationCacheService()).thenReturn(anonymizationCacheService);
 
-        final CountyFilterStrategy strategy = new CountyFilterStrategy();
+        final HospitalFilterStrategy strategy = new HospitalFilterStrategy();
         strategy.setStrategy("something-wrong");
 
-        final String replacement = strategy.getReplacement("name", "context", "docId", "token", anonymizationService);
+        final String replacement = strategy.getReplacement("name", "context", "docId", "token", new Crypto(), anonymizationService);
 
-        Assert.assertEquals("{{{REDACTED-county}}}", replacement);
+        Assert.assertEquals("{{{REDACTED-hospital}}}", replacement);
 
     }
 
     @Test
-    public void replacement5() throws IOException {
+    public void replacement5() throws Exception {
 
         final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
         final AnonymizationCacheService anonymizationCacheService = Mockito.mock(AnonymizationCacheService.class);
 
         when(anonymizationService.getAnonymizationCacheService()).thenReturn(anonymizationCacheService);
 
-        final AbstractFilterStrategy strategy = new CountyFilterStrategy();
+        final AbstractFilterStrategy strategy = new HospitalFilterStrategy();
         strategy.setStrategy(AbstractFilterStrategy.REDACT);
         strategy.setRedactionFormat("<ENTITY:%t>%v</ENTITY>");
 
-        final String replacement = strategy.getReplacement("name", "context", "docId", "token", anonymizationService);
+        final String replacement = strategy.getReplacement("name", "context", "docId", "token", new Crypto(), anonymizationService);
 
-        Assert.assertEquals("<ENTITY:county>token</ENTITY>", replacement);
+        Assert.assertEquals("<ENTITY:hospital>token</ENTITY>", replacement);
 
     }
 
     @Test
-    public void evaluateCondition1() throws IOException {
+    public void evaluateCondition1() throws Exception {
 
-        CountyFilterStrategy strategy = new CountyFilterStrategy();
+        HospitalFilterStrategy strategy = new HospitalFilterStrategy();
 
         final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentId", "90210", "token startswith \"902\"", Collections.emptyMap());
 
@@ -120,9 +117,9 @@ public class CountyFilterStrategyTest {
     }
 
     @Test
-    public void evaluateCondition2() throws IOException {
+    public void evaluateCondition2() throws Exception {
 
-        CountyFilterStrategy strategy = new CountyFilterStrategy();
+        HospitalFilterStrategy strategy = new HospitalFilterStrategy();
 
         final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentId", "90210", "token == \"90210\"", Collections.emptyMap());
 
@@ -131,9 +128,9 @@ public class CountyFilterStrategyTest {
     }
 
     @Test
-    public void evaluateCondition3() throws IOException {
+    public void evaluateCondition3() throws Exception {
 
-        CountyFilterStrategy strategy = new CountyFilterStrategy();
+        HospitalFilterStrategy strategy = new HospitalFilterStrategy();
 
         final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentId", "12345", "token == \"90210\"", Collections.emptyMap());
 
@@ -144,7 +141,7 @@ public class CountyFilterStrategyTest {
     @Test
     public void evaluateCondition4() {
 
-        final CountyFilterStrategy strategy = new CountyFilterStrategy();
+        final HospitalFilterStrategy strategy = new HospitalFilterStrategy();
 
         final Map<String, Object> attributes = new HashMap<>();
 
@@ -157,7 +154,7 @@ public class CountyFilterStrategyTest {
     @Test
     public void evaluateCondition5() {
 
-        final CountyFilterStrategy strategy = new CountyFilterStrategy();
+        final HospitalFilterStrategy strategy = new HospitalFilterStrategy();
 
         final Map<String, Object> attributes = new HashMap<>();
 

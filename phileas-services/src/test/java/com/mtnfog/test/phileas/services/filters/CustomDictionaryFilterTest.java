@@ -4,6 +4,7 @@ import com.mtnfog.phileas.model.enums.FilterType;
 import com.mtnfog.phileas.model.enums.SensitivityLevel;
 import com.mtnfog.phileas.model.filter.rules.dictionary.LuceneDictionaryFilter;
 import com.mtnfog.phileas.model.objects.Span;
+import com.mtnfog.phileas.model.profile.Crypto;
 import com.mtnfog.phileas.model.profile.filters.strategies.custom.CustomDictionaryFilterStrategy;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -20,11 +21,11 @@ public class CustomDictionaryFilterTest extends AbstractFilterTest {
     private static final Logger LOGGER = LogManager.getLogger(CustomDictionaryFilterTest.class);
 
     @Test
-    public void filterDictionaryExactMatch() throws IOException {
+    public void filterDictionaryExactMatch() throws Exception {
 
         final List<CustomDictionaryFilterStrategy> strategies = Arrays.asList(new CustomDictionaryFilterStrategy());
         final List<String> names = Arrays.asList("george", "ted", "bill", "john");
-        final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.CUSTOM_DICTIONARY, strategies, SensitivityLevel.LOW, null, "names", names, 0, Collections.emptySet());
+        final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.CUSTOM_DICTIONARY, strategies, SensitivityLevel.LOW, null, "names", names, 0, Collections.emptySet(), new Crypto());
 
         final List<Span> spans = filter.filter(getFilterProfile(SensitivityLevel.LOW), "context", "documentid","He lived with Bill in California.");
 
@@ -36,11 +37,11 @@ public class CustomDictionaryFilterTest extends AbstractFilterTest {
     }
 
     @Test
-    public void filterDictionaryNoMatch() throws IOException {
+    public void filterDictionaryNoMatch() throws Exception {
 
         final List<CustomDictionaryFilterStrategy> strategies = Arrays.asList(new CustomDictionaryFilterStrategy());
         final List<String> names = Arrays.asList("george", "ted", "bill", "john");
-        final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.CUSTOM_DICTIONARY, strategies, SensitivityLevel.LOW, null, "names", names, 0, Collections.emptySet());
+        final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.CUSTOM_DICTIONARY, strategies, SensitivityLevel.LOW, null, "names", names, 0, Collections.emptySet(), new Crypto());
 
         final List<Span> spans = filter.filter(getFilterProfile(SensitivityLevel.LOW), "context", "documentid","He lived with Sam in California.");
 

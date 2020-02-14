@@ -4,6 +4,7 @@ import com.mtnfog.phileas.model.enums.FilterType;
 import com.mtnfog.phileas.model.enums.SensitivityLevel;
 import com.mtnfog.phileas.model.filter.rules.dictionary.LuceneDictionaryFilter;
 import com.mtnfog.phileas.model.objects.Span;
+import com.mtnfog.phileas.model.profile.Crypto;
 import com.mtnfog.phileas.model.profile.filters.strategies.dynamic.CountyFilterStrategy;
 import com.mtnfog.phileas.model.services.AnonymizationService;
 import com.mtnfog.phileas.services.anonymization.CountyAnonymizationService;
@@ -14,7 +15,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -32,12 +32,12 @@ public class CountyFilterTest extends AbstractFilterTest {
     }
 
     @Test
-    public void filterCountiesLow() throws IOException {
+    public void filterCountiesLow() throws Exception {
 
         AnonymizationService anonymizationService = new CountyAnonymizationService(new LocalAnonymizationCacheService());
 
         final List<CountyFilterStrategy> strategies = Arrays.asList(new CountyFilterStrategy());
-        final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.LOCATION_COUNTY, strategies, INDEX_DIRECTORY, SensitivityLevel.LOW, anonymizationService, Collections.emptySet());
+        final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.LOCATION_COUNTY, strategies, INDEX_DIRECTORY, SensitivityLevel.LOW, anonymizationService, Collections.emptySet(), new Crypto());
 
         List<Span> spans = filter.filter(getFilterProfile(SensitivityLevel.LOW), "context", "documentid","Lived in Fyette");
 
@@ -48,12 +48,12 @@ public class CountyFilterTest extends AbstractFilterTest {
     }
 
     @Test
-    public void filterCountiesMedium() throws IOException {
+    public void filterCountiesMedium() throws Exception {
 
         AnonymizationService anonymizationService = new CountyAnonymizationService(new LocalAnonymizationCacheService());
 
         final List<CountyFilterStrategy> strategies = Arrays.asList(new CountyFilterStrategy());
-        final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.LOCATION_COUNTY, strategies, INDEX_DIRECTORY, SensitivityLevel.MEDIUM, anonymizationService, Collections.emptySet());
+        final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.LOCATION_COUNTY, strategies, INDEX_DIRECTORY, SensitivityLevel.MEDIUM, anonymizationService, Collections.emptySet(), new Crypto());
 
         List<Span> spans = filter.filter(getFilterProfile(SensitivityLevel.MEDIUM), "context", "documentid","Lived in Fyette");
 
@@ -64,12 +64,12 @@ public class CountyFilterTest extends AbstractFilterTest {
     }
 
     @Test
-    public void filterCountiesHigh() throws IOException {
+    public void filterCountiesHigh() throws Exception {
 
         AnonymizationService anonymizationService = new CountyAnonymizationService(new LocalAnonymizationCacheService());
 
         final List<CountyFilterStrategy> strategies = Arrays.asList(new CountyFilterStrategy());
-        final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.LOCATION_COUNTY, strategies, INDEX_DIRECTORY, SensitivityLevel.HIGH, anonymizationService, Collections.emptySet());
+        final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.LOCATION_COUNTY, strategies, INDEX_DIRECTORY, SensitivityLevel.HIGH, anonymizationService, Collections.emptySet(), new Crypto());
 
         List<Span> spans = filter.filter(getFilterProfile(SensitivityLevel.HIGH), "context", "documentid","Lived in Fyette");
 

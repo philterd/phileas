@@ -15,6 +15,10 @@ public class FilterProfile {
     @Expose
     private String name;
 
+    @SerializedName("crypto")
+    @Expose
+    private Crypto crypto;
+
     @SerializedName("identifiers")
     @Expose
     private Identifiers identifiers;
@@ -45,6 +49,14 @@ public class FilterProfile {
 
     public void setIgnored(List<Ignored> ignored) {
         this.ignored = ignored;
+    }
+
+    public Crypto getCrypto() {
+        return crypto;
+    }
+
+    public void setCrypto(Crypto crypto) {
+        this.crypto = crypto;
     }
 
 }

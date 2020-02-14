@@ -8,6 +8,7 @@ import com.mtnfog.phileas.model.enums.FilterType;
 import com.mtnfog.phileas.model.metadata.zipcode.ZipCodeMetadataRequest;
 import com.mtnfog.phileas.model.metadata.zipcode.ZipCodeMetadataResponse;
 import com.mtnfog.phileas.model.metadata.zipcode.ZipCodeMetadataService;
+import com.mtnfog.phileas.model.profile.Crypto;
 import com.mtnfog.phileas.model.services.AnonymizationService;
 import com.mtnfog.phileas.model.profile.filters.strategies.AbstractFilterStrategy;
 import org.apache.commons.lang3.StringUtils;
@@ -112,7 +113,7 @@ public class ZipCodeFilterStrategy extends AbstractFilterStrategy {
     }
 
     @Override
-    public String getReplacement(String name, String context, String documentId, String token, AnonymizationService anonymizationService) throws IOException {
+    public String getReplacement(String name, String context, String documentId, String token, Crypto crypto, AnonymizationService anonymizationService) throws Exception {
 
         String replacement = null;
 
@@ -143,6 +144,10 @@ public class ZipCodeFilterStrategy extends AbstractFilterStrategy {
         } else if(StringUtils.equalsIgnoreCase(strategy, ZERO_LEADING)) {
 
             replacement = "000" + token.subSequence(3, 5);
+
+        } else if(StringUtils.equalsIgnoreCase(strategy, CRYPTO_REPLACE)) {
+
+            replacement = getEncryptedToken(token, crypto);
 
         } else {
 

@@ -3,6 +3,7 @@ package com.mtnfog.phileas.services.filters.regex;
 import com.mtnfog.phileas.model.enums.FilterType;
 import com.mtnfog.phileas.model.filter.rules.regex.RegexFilter;
 import com.mtnfog.phileas.model.objects.Span;
+import com.mtnfog.phileas.model.profile.Crypto;
 import com.mtnfog.phileas.model.profile.FilterProfile;
 import com.mtnfog.phileas.model.profile.filters.strategies.rules.IdentifierFilterStrategy;
 import com.mtnfog.phileas.model.services.AnonymizationService;
@@ -17,8 +18,8 @@ public class IdentifierFilter extends RegexFilter implements Serializable {
 
     private Pattern pattern;
 
-    public IdentifierFilter(String label, String pattern, boolean caseSensitive, List<IdentifierFilterStrategy> strategies, AnonymizationService anonymizationService, Set<String> ignored) {
-        super(FilterType.IDENTIFIER, strategies, anonymizationService, ignored);
+    public IdentifierFilter(String label, String pattern, boolean caseSensitive, List<IdentifierFilterStrategy> strategies, AnonymizationService anonymizationService, Set<String> ignored, Crypto crypto) {
+        super(FilterType.IDENTIFIER, strategies, anonymizationService, ignored, crypto);
         this.label = label;
 
         if(caseSensitive) {
@@ -30,7 +31,7 @@ public class IdentifierFilter extends RegexFilter implements Serializable {
     }
 
     @Override
-    public List<Span> filter(FilterProfile filterProfile, String context, String documentId, String input) throws IOException {
+    public List<Span> filter(FilterProfile filterProfile, String context, String documentId, String input) throws Exception {
 
         return findSpans(filterProfile, pattern, input, context, documentId);
 

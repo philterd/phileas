@@ -3,11 +3,11 @@ package com.mtnfog.phileas.services.filters.regex;
 import com.mtnfog.phileas.model.enums.FilterType;
 import com.mtnfog.phileas.model.filter.rules.regex.RegexFilter;
 import com.mtnfog.phileas.model.objects.Span;
+import com.mtnfog.phileas.model.profile.Crypto;
 import com.mtnfog.phileas.model.profile.FilterProfile;
 import com.mtnfog.phileas.model.profile.filters.strategies.AbstractFilterStrategy;
 import com.mtnfog.phileas.model.services.AnonymizationService;
 
-import java.io.IOException;
 import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
@@ -65,12 +65,12 @@ public class IpAddressFilter extends RegexFilter implements Serializable {
                     + "(?:[0-9a-fA-F]{1,4}:){6}"                             // 6 blocks of a 1 to 4 digit hex number followed by double colon ':'
                     + "" );                                                 // end of string
 
-    public IpAddressFilter(List<? extends AbstractFilterStrategy> strategies, AnonymizationService anonymizationService, Set<String> ignored) {
-        super(FilterType.IP_ADDRESS, strategies, anonymizationService, ignored);
+    public IpAddressFilter(List<? extends AbstractFilterStrategy> strategies, AnonymizationService anonymizationService, Set<String> ignored, Crypto crypto) {
+        super(FilterType.IP_ADDRESS, strategies, anonymizationService, ignored, crypto);
     }
 
     @Override
-    public List<Span> filter(FilterProfile filterProfile, String context, String documentId, String input) throws IOException {
+    public List<Span> filter(FilterProfile filterProfile, String context, String documentId, String input) throws Exception {
 
         final List<Span> spans = new LinkedList<>();
 

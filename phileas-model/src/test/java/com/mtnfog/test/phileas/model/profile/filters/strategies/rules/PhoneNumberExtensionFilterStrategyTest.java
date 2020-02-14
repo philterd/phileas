@@ -1,5 +1,6 @@
 package com.mtnfog.test.phileas.model.profile.filters.strategies.rules;
 
+import com.mtnfog.phileas.model.profile.Crypto;
 import com.mtnfog.phileas.model.profile.filters.strategies.AbstractFilterStrategy;
 import com.mtnfog.phileas.model.profile.filters.strategies.dynamic.CityFilterStrategy;
 import com.mtnfog.phileas.model.profile.filters.strategies.rules.*;
@@ -23,7 +24,7 @@ public class PhoneNumberExtensionFilterStrategyTest {
     private static final Logger LOGGER = LogManager.getLogger(PhoneNumberExtensionFilterStrategyTest.class);
 
     @Test
-    public void replacement1() throws IOException {
+    public void replacement1() throws Exception {
 
         final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
 
@@ -31,14 +32,14 @@ public class PhoneNumberExtensionFilterStrategyTest {
         strategy.setStrategy(AbstractFilterStrategy.STATIC_REPLACE);
         strategy.setStaticReplacement("static-value");
 
-        final String replacement = strategy.getReplacement("name", "context", "docId", "token", anonymizationService);
+        final String replacement = strategy.getReplacement("name", "context", "docId", "token", new Crypto(), anonymizationService);
 
         Assert.assertEquals("static-value", replacement);
 
     }
 
     @Test
-    public void replacement2() throws IOException {
+    public void replacement2() throws Exception {
 
         final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
 
@@ -46,14 +47,14 @@ public class PhoneNumberExtensionFilterStrategyTest {
         strategy.setStrategy(AbstractFilterStrategy.REDACT);
         strategy.setRedactionFormat("REDACTION-%t");
 
-        final String replacement = strategy.getReplacement("name", "context", "docId", "token", anonymizationService);
+        final String replacement = strategy.getReplacement("name", "context", "docId", "token", new Crypto(), anonymizationService);
 
         Assert.assertEquals("REDACTION-phone-number-extension", replacement);
 
     }
 
     @Test
-    public void replacement3() throws IOException {
+    public void replacement3() throws Exception {
 
         final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
         final AnonymizationCacheService anonymizationCacheService = Mockito.mock(AnonymizationCacheService.class);
@@ -64,14 +65,14 @@ public class PhoneNumberExtensionFilterStrategyTest {
         final PhoneNumberExtensionFilterStrategy strategy = new PhoneNumberExtensionFilterStrategy();
         strategy.setStrategy(AbstractFilterStrategy.RANDOM_REPLACE);
 
-        final String replacement = strategy.getReplacement("name", "context", "docId", "token", anonymizationService);
+        final String replacement = strategy.getReplacement("name", "context", "docId", "token", new Crypto(), anonymizationService);
 
         Assert.assertNotEquals("random", replacement);
 
     }
 
     @Test
-    public void replacement4() throws IOException {
+    public void replacement4() throws Exception {
 
         final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
         final AnonymizationCacheService anonymizationCacheService = Mockito.mock(AnonymizationCacheService.class);
@@ -82,14 +83,14 @@ public class PhoneNumberExtensionFilterStrategyTest {
         final PhoneNumberExtensionFilterStrategy strategy = new PhoneNumberExtensionFilterStrategy();
         strategy.setStrategy("something-wrong");
 
-        final String replacement = strategy.getReplacement("name", "context", "docId", "token", anonymizationService);
+        final String replacement = strategy.getReplacement("name", "context", "docId", "token", new Crypto(), anonymizationService);
 
         Assert.assertEquals("{{{REDACTED-phone-number-extension}}}", replacement);
 
     }
 
     @Test
-    public void replacement5() throws IOException {
+    public void replacement5() throws Exception {
 
         final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
         final AnonymizationCacheService anonymizationCacheService = Mockito.mock(AnonymizationCacheService.class);
@@ -100,7 +101,7 @@ public class PhoneNumberExtensionFilterStrategyTest {
         strategy.setStrategy(AbstractFilterStrategy.REDACT);
         strategy.setRedactionFormat("<ENTITY:%t>%v</ENTITY>");
 
-        final String replacement = strategy.getReplacement("name", "context", "docId", "token", anonymizationService);
+        final String replacement = strategy.getReplacement("name", "context", "docId", "token", new Crypto(), anonymizationService);
 
         Assert.assertEquals("<ENTITY:phone-number-extension>token</ENTITY>", replacement);
 

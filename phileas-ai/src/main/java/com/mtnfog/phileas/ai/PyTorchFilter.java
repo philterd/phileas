@@ -4,6 +4,7 @@ import com.mtnfog.phileas.model.enums.FilterType;
 import com.mtnfog.phileas.model.filter.Filter;
 import com.mtnfog.phileas.model.filter.dynamic.NerFilter;
 import com.mtnfog.phileas.model.objects.Span;
+import com.mtnfog.phileas.model.profile.Crypto;
 import com.mtnfog.phileas.model.profile.FilterProfile;
 import com.mtnfog.phileas.model.profile.filters.strategies.AbstractFilterStrategy;
 import com.mtnfog.phileas.model.profile.filters.strategies.ai.NerFilterStrategy;
@@ -47,9 +48,10 @@ public class PyTorchFilter extends NerFilter implements Serializable {
                          MetricsService metricsService,
                          AnonymizationService anonymizationService,
                          Set<String> ignored,
-                         boolean removePunctuation) {
+                         boolean removePunctuation,
+                         Crypto crypto) {
 
-        super(filterType, strategies, stats, metricsService, anonymizationService, ignored, removePunctuation);
+        super(filterType, strategies, stats, metricsService, anonymizationService, ignored, removePunctuation, crypto);
 
         this.tag = tag;
 
@@ -74,7 +76,7 @@ public class PyTorchFilter extends NerFilter implements Serializable {
     }
 
     @Override
-    public List<Span> filter(FilterProfile filterProfile, String context, String documentId, String input) throws IOException {
+    public List<Span> filter(FilterProfile filterProfile, String context, String documentId, String input) throws Exception {
 
         final List<Span> spans = new LinkedList<>();
 
@@ -132,7 +134,7 @@ public class PyTorchFilter extends NerFilter implements Serializable {
     }
 
     private Span createSpan(String context, String documentId, String text,
-                            String type, int start, int end, double confidence) throws IOException {
+                            String type, int start, int end, double confidence) throws Exception {
 
         final Map<String, Object> attributes = new HashMap<>();
         attributes.put(NerFilterStrategy.CONFIDENCE, confidence);

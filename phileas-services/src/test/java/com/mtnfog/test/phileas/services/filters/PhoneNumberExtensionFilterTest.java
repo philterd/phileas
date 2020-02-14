@@ -2,6 +2,7 @@ package com.mtnfog.test.phileas.services.filters;
 
 import com.mtnfog.phileas.model.enums.FilterType;
 import com.mtnfog.phileas.model.objects.Span;
+import com.mtnfog.phileas.model.profile.Crypto;
 import com.mtnfog.phileas.model.profile.filters.strategies.rules.PhoneNumberExtensionFilterStrategy;
 import com.mtnfog.phileas.services.anonymization.AlphanumericAnonymizationService;
 import com.mtnfog.phileas.services.cache.LocalAnonymizationCacheService;
@@ -20,7 +21,7 @@ public class PhoneNumberExtensionFilterTest extends AbstractFilterTest {
     public void filter1() throws Exception {
 
         final List<PhoneNumberExtensionFilterStrategy> strategies = Arrays.asList(new PhoneNumberExtensionFilterStrategy());
-        PhoneNumberExtensionFilter filter = new PhoneNumberExtensionFilter(strategies, new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()), Collections.emptySet());
+        PhoneNumberExtensionFilter filter = new PhoneNumberExtensionFilter(strategies, new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()), Collections.emptySet(), new Crypto());
 
         List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid","he is at x123");
 

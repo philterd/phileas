@@ -1,5 +1,6 @@
 package com.mtnfog.test.phileas.model.profile.filters.strategies.rules;
 
+import com.mtnfog.phileas.model.profile.Crypto;
 import com.mtnfog.phileas.model.profile.filters.strategies.AbstractFilterStrategy;
 import com.mtnfog.phileas.model.profile.filters.strategies.dynamic.CityFilterStrategy;
 import com.mtnfog.phileas.model.profile.filters.strategies.rules.CreditCardFilterStrategy;
@@ -24,7 +25,7 @@ public class ZipCodeFilterStrategyTest {
     private static final Logger LOGGER = LogManager.getLogger(ZipCodeFilterStrategyTest.class);
 
     @Test
-    public void replacement1() throws IOException {
+    public void replacement1() throws Exception {
 
         final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
 
@@ -32,14 +33,14 @@ public class ZipCodeFilterStrategyTest {
         strategy.setStrategy(AbstractFilterStrategy.STATIC_REPLACE);
         strategy.setStaticReplacement("static-value");
 
-        final String replacement = strategy.getReplacement("name", "context", "docId", "token", anonymizationService);
+        final String replacement = strategy.getReplacement("name", "context", "docId", "token", new Crypto(), anonymizationService);
 
         Assert.assertEquals("static-value", replacement);
 
     }
 
     @Test
-    public void replacement2() throws IOException {
+    public void replacement2() throws Exception {
 
         final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
 
@@ -47,14 +48,14 @@ public class ZipCodeFilterStrategyTest {
         strategy.setStrategy(AbstractFilterStrategy.REDACT);
         strategy.setRedactionFormat("REDACTION-%t");
 
-        final String replacement = strategy.getReplacement("name", "context", "docId", "token", anonymizationService);
+        final String replacement = strategy.getReplacement("name", "context", "docId", "token", new Crypto(), anonymizationService);
 
         Assert.assertEquals("REDACTION-zip-code", replacement);
 
     }
 
     @Test
-    public void replacement3() throws IOException {
+    public void replacement3() throws Exception {
 
         final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
         final AnonymizationCacheService anonymizationCacheService = Mockito.mock(AnonymizationCacheService.class);
@@ -65,14 +66,14 @@ public class ZipCodeFilterStrategyTest {
         final ZipCodeFilterStrategy strategy = new ZipCodeFilterStrategy();
         strategy.setStrategy(AbstractFilterStrategy.RANDOM_REPLACE);
 
-        final String replacement = strategy.getReplacement("name", "context", "docId", "token", anonymizationService);
+        final String replacement = strategy.getReplacement("name", "context", "docId", "token", new Crypto(), anonymizationService);
 
         Assert.assertNotEquals("random", replacement);
 
     }
 
     @Test
-    public void replacement4() throws IOException {
+    public void replacement4() throws Exception {
 
         final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
         final AnonymizationCacheService anonymizationCacheService = Mockito.mock(AnonymizationCacheService.class);
@@ -83,14 +84,14 @@ public class ZipCodeFilterStrategyTest {
         final ZipCodeFilterStrategy strategy = new ZipCodeFilterStrategy();
         strategy.setStrategy("something-wrong");
 
-        final String replacement = strategy.getReplacement("name", "context", "docId", "token", anonymizationService);
+        final String replacement = strategy.getReplacement("name", "context", "docId", "token", new Crypto(), anonymizationService);
 
         Assert.assertEquals("{{{REDACTED-zip-code}}}", replacement);
 
     }
 
     @Test
-    public void replacement5() throws IOException {
+    public void replacement5() throws Exception {
 
         final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
         final AnonymizationCacheService anonymizationCacheService = Mockito.mock(AnonymizationCacheService.class);
@@ -101,7 +102,7 @@ public class ZipCodeFilterStrategyTest {
         strategy.setStrategy(AbstractFilterStrategy.REDACT);
         strategy.setRedactionFormat("<ENTITY:%t>%v</ENTITY>");
 
-        final String replacement = strategy.getReplacement("name", "context", "docId", "token", anonymizationService);
+        final String replacement = strategy.getReplacement("name", "context", "docId", "token", new Crypto(), anonymizationService);
 
         Assert.assertEquals("<ENTITY:zip-code>token</ENTITY>", replacement);
 
@@ -229,7 +230,7 @@ public class ZipCodeFilterStrategyTest {
     }
 
     @Test
-    public void staticReplacement1() throws IOException {
+    public void staticReplacement1() throws Exception {
 
         ZipCodeFilterStrategy strategy = new ZipCodeFilterStrategy();
         strategy.setStrategy(AbstractFilterStrategy.STATIC_REPLACE);
@@ -237,14 +238,14 @@ public class ZipCodeFilterStrategyTest {
 
         final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
 
-        final String replacement = strategy.getReplacement("name", "context", "docid", "90210", anonymizationService);
+        final String replacement = strategy.getReplacement("name", "context", "docid", "90210", new Crypto(), anonymizationService);
 
         Assert.assertEquals("whoa", replacement);
 
     }
 
     @Test
-    public void truncateTo2() throws IOException {
+    public void truncateTo2() throws Exception {
 
         ZipCodeFilterStrategy strategy = new ZipCodeFilterStrategy();
         strategy.setStrategy(ZipCodeFilterStrategy.TRUNCATE);
@@ -252,7 +253,7 @@ public class ZipCodeFilterStrategyTest {
 
         AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
 
-        final String replacement = strategy.getReplacement("name", "context", "documentId", "90210", anonymizationService);
+        final String replacement = strategy.getReplacement("name", "context", "documentId", "90210", new Crypto(), anonymizationService);
 
         LOGGER.info(replacement);
 
@@ -261,7 +262,7 @@ public class ZipCodeFilterStrategyTest {
     }
 
     @Test
-    public void truncateTo3() throws IOException {
+    public void truncateTo3() throws Exception {
 
         ZipCodeFilterStrategy strategy = new ZipCodeFilterStrategy();
         strategy.setStrategy(ZipCodeFilterStrategy.TRUNCATE);
@@ -269,7 +270,7 @@ public class ZipCodeFilterStrategyTest {
 
         AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
 
-        final String replacement = strategy.getReplacement("name", "context", "documentId", "90210-0110", anonymizationService);
+        final String replacement = strategy.getReplacement("name", "context", "documentId", "90210-0110", new Crypto(), anonymizationService);
 
         LOGGER.info(replacement);
 
@@ -278,7 +279,7 @@ public class ZipCodeFilterStrategyTest {
     }
 
     @Test
-    public void truncateTo1() throws IOException {
+    public void truncateTo1() throws Exception {
 
         ZipCodeFilterStrategy strategy = new ZipCodeFilterStrategy();
         strategy.setStrategy(ZipCodeFilterStrategy.TRUNCATE);
@@ -286,7 +287,7 @@ public class ZipCodeFilterStrategyTest {
 
         AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
 
-        final String replacement = strategy.getReplacement("name", "context", "documentId", "90210-0110", anonymizationService);
+        final String replacement = strategy.getReplacement("name", "context", "documentId", "90210-0110", new Crypto(), anonymizationService);
 
         LOGGER.info(replacement);
 
@@ -295,14 +296,14 @@ public class ZipCodeFilterStrategyTest {
     }
 
     @Test
-    public void zeroLeading1() throws IOException {
+    public void zeroLeading1() throws Exception {
 
         ZipCodeFilterStrategy strategy = new ZipCodeFilterStrategy();
         strategy.setStrategy(ZipCodeFilterStrategy.ZERO_LEADING);
 
         AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
 
-        final String replacement = strategy.getReplacement("name", "context", "documentId", "90210-0110", anonymizationService);
+        final String replacement = strategy.getReplacement("name", "context", "documentId", "90210-0110", new Crypto(), anonymizationService);
 
         LOGGER.info(replacement);
 

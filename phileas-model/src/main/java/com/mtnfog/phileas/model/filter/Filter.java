@@ -2,6 +2,7 @@ package com.mtnfog.phileas.model.filter;
 
 import com.mtnfog.phileas.model.enums.FilterType;
 import com.mtnfog.phileas.model.objects.Span;
+import com.mtnfog.phileas.model.profile.Crypto;
 import com.mtnfog.phileas.model.profile.FilterProfile;
 import com.mtnfog.phileas.model.profile.filters.Identifier;
 import com.mtnfog.phileas.model.profile.filters.strategies.AbstractFilterStrategy;
@@ -43,6 +44,11 @@ public abstract class Filter implements Serializable {
     protected Set<String> ignored;
 
     /**
+     * The encryption key for encrypting values.
+     */
+    protected Crypto crypto;
+
+    /**
      * Filters the input text.
      * @param filterProfile The {@link FilterProfile} to use.
      * @param context The context.
@@ -50,7 +56,7 @@ public abstract class Filter implements Serializable {
      * @param input The input text.
      * @return The filtered text.
      */
-    public abstract List<Span> filter(FilterProfile filterProfile, String context, String documentId, String input) throws IOException;
+    public abstract List<Span> filter(FilterProfile filterProfile, String context, String documentId, String input) throws IOException, Exception;
 
     /**
      * Creates a new filter with anonymization.
@@ -58,11 +64,12 @@ public abstract class Filter implements Serializable {
      * @param filterType The {@link FilterType type} of the filter.
      * @param anonymizationService The {@link AnonymizationService} for this filter.
      */
-    public Filter(FilterType filterType, List<? extends AbstractFilterStrategy> strategies, AnonymizationService anonymizationService, Set<String> ignored) {
+    public Filter(FilterType filterType, List<? extends AbstractFilterStrategy> strategies, AnonymizationService anonymizationService, Set<String> ignored, Crypto crypto) {
         this.filterType = filterType;
         this.strategies = strategies;
         this.anonymizationService = anonymizationService;
         this.ignored = ignored;
+        this.crypto = crypto;
     }
 
     /**
@@ -72,7 +79,7 @@ public abstract class Filter implements Serializable {
      * @param token The token to replace.
      * @return The replacement string.
      */
-    public String getReplacement(String name, String context, String documentId, String token, Map<String, Object> attributes) throws IOException {
+    public String getReplacement(String name, String context, String documentId, String token, Map<String, Object> attributes) throws Exception {
 
         if(strategies != null) {
 
@@ -84,7 +91,7 @@ public abstract class Filter implements Serializable {
                 // If there is no condition or if the condition evaluates then get the replacement.
                 if (StringUtils.isEmpty(condition) || (strategy.evaluateCondition(context, documentId, token, condition, attributes))) {
 
-                    return strategy.getReplacement(name, context, documentId, token, anonymizationService);
+                    return strategy.getReplacement(name, context, documentId, token, crypto, anonymizationService);
 
                 }
 
@@ -176,6 +183,10 @@ public abstract class Filter implements Serializable {
 
     public String getLabel() {
         return label;
+    }
+
+    public Crypto getCrypto() {
+        return crypto;
     }
 
 }

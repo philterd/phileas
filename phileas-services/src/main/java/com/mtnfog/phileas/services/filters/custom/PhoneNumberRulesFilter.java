@@ -5,11 +5,11 @@ import com.google.i18n.phonenumbers.PhoneNumberUtil;
 import com.mtnfog.phileas.model.enums.FilterType;
 import com.mtnfog.phileas.model.filter.rules.RulesFilter;
 import com.mtnfog.phileas.model.objects.Span;
+import com.mtnfog.phileas.model.profile.Crypto;
 import com.mtnfog.phileas.model.profile.FilterProfile;
 import com.mtnfog.phileas.model.profile.filters.strategies.AbstractFilterStrategy;
 import com.mtnfog.phileas.model.services.AnonymizationService;
 
-import java.io.IOException;
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -20,16 +20,16 @@ public class PhoneNumberRulesFilter extends RulesFilter implements Serializable 
 
     private PhoneNumberUtil phoneUtil;
 
-    public PhoneNumberRulesFilter(List<? extends AbstractFilterStrategy> strategies, AnonymizationService anonymizationService, Set<String> ignored) {
+    public PhoneNumberRulesFilter(List<? extends AbstractFilterStrategy> strategies, AnonymizationService anonymizationService, Set<String> ignored, Crypto crypto) {
 
-        super(FilterType.PHONE_NUMBER, strategies, anonymizationService, ignored);
+        super(FilterType.PHONE_NUMBER, strategies, anonymizationService, ignored, crypto);
 
         this.phoneUtil = PhoneNumberUtil.getInstance();
 
     }
 
     @Override
-    public List<Span> filter(FilterProfile filterProfile, String context, String documentId, String input) throws IOException {
+    public List<Span> filter(FilterProfile filterProfile, String context, String documentId, String input) throws Exception {
 
         final List<Span> spans = new LinkedList<>();
 

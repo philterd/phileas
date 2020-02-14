@@ -2,6 +2,7 @@ package com.mtnfog.phileas.model.filter.rules.dictionary;
 
 import com.mtnfog.phileas.model.enums.FilterType;
 import com.mtnfog.phileas.model.filter.rules.RulesFilter;
+import com.mtnfog.phileas.model.profile.Crypto;
 import com.mtnfog.phileas.model.profile.filters.strategies.AbstractFilterStrategy;
 import com.mtnfog.phileas.model.services.AnonymizationService;
 
@@ -14,9 +15,9 @@ import java.util.Set;
  */
 public abstract class DictionaryFilter extends RulesFilter implements Serializable {
 
-    public DictionaryFilter(FilterType filterType, List<? extends AbstractFilterStrategy> strategies, AnonymizationService anonymizationService, Set<String> ignored) {
+    public DictionaryFilter(FilterType filterType, List<? extends AbstractFilterStrategy> strategies, AnonymizationService anonymizationService, Set<String> ignored, Crypto crypto) {
 
-        super(filterType, strategies, anonymizationService, ignored);
+        super(filterType, strategies, anonymizationService, ignored, crypto);
 
     }
 

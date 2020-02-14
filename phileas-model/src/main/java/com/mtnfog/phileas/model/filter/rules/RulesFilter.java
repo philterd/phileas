@@ -3,11 +3,11 @@ package com.mtnfog.phileas.model.filter.rules;
 import com.mtnfog.phileas.model.enums.FilterType;
 import com.mtnfog.phileas.model.filter.Filter;
 import com.mtnfog.phileas.model.objects.Span;
+import com.mtnfog.phileas.model.profile.Crypto;
 import com.mtnfog.phileas.model.profile.FilterProfile;
 import com.mtnfog.phileas.model.profile.filters.strategies.AbstractFilterStrategy;
 import com.mtnfog.phileas.model.services.AnonymizationService;
 
-import java.io.IOException;
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -26,8 +26,8 @@ public abstract class RulesFilter extends Filter implements Serializable {
      * @param filterType The {@link FilterType type} of the filter.
      * @param anonymizationService The {@link AnonymizationService} for this filter.
      */
-    public RulesFilter(FilterType filterType, List<? extends AbstractFilterStrategy> strategies, AnonymizationService anonymizationService, Set<String> ignored) {
-        super(filterType, strategies, anonymizationService, ignored);
+    public RulesFilter(FilterType filterType, List<? extends AbstractFilterStrategy> strategies, AnonymizationService anonymizationService, Set<String> ignored, Crypto crypto) {
+        super(filterType, strategies, anonymizationService, ignored, crypto);
     }
 
     /**
@@ -39,7 +39,7 @@ public abstract class RulesFilter extends Filter implements Serializable {
      * @param documentId The document ID.
      * @return A list of matching {@link Span spans}.
      */
-    protected List<Span> findSpans(FilterProfile filterProfile, Pattern pattern, String input, String context, String documentId) throws IOException {
+    protected List<Span> findSpans(FilterProfile filterProfile, Pattern pattern, String input, String context, String documentId) throws Exception {
 
         final List<Span> spans = new LinkedList<>();
 
@@ -50,15 +50,15 @@ public abstract class RulesFilter extends Filter implements Serializable {
 
             while (matcher.find()) {
 
-                final String text = matcher.group(0);
+                final String token = matcher.group(0);
 
                 // Is this term ignored?
-                boolean isIgnored = ignored.contains(text);
+                boolean isIgnored = ignored.contains(token);
 
                 // There are no attributes for the span.
-                final String replacement = getReplacement(label, context, documentId, text, Collections.emptyMap());
+                final String replacement = getReplacement(label, context, documentId, token, Collections.emptyMap());
 
-                final Span span = Span.make(matcher.start(0), matcher.end(0), getFilterType(), context, documentId, 1.0, text, replacement, isIgnored);
+                final Span span = Span.make(matcher.start(0), matcher.end(0), getFilterType(), context, documentId, 1.0, token, replacement, isIgnored);
 
                 spans.add(span);
 
@@ -76,7 +76,7 @@ public abstract class RulesFilter extends Filter implements Serializable {
      * @param input The input text.
      * @return A count of occurrences in the text.
      */
-    public int getOccurrences(FilterProfile filterProfile, String input) throws IOException {
+    public int getOccurrences(FilterProfile filterProfile, String input) throws Exception {
 
         return filter(filterProfile, "none", "none", input).size();
 

@@ -1,6 +1,7 @@
 package com.mtnfog.phileas.model.filter.dynamic;
 
 import com.mtnfog.phileas.model.enums.FilterType;
+import com.mtnfog.phileas.model.profile.Crypto;
 import com.mtnfog.phileas.model.profile.filters.strategies.AbstractFilterStrategy;
 import com.mtnfog.phileas.model.services.AnonymizationService;
 import com.mtnfog.phileas.model.services.MetricsService;
@@ -35,9 +36,10 @@ public abstract class NerFilter extends DynamicFilter implements Serializable {
                      MetricsService metricsService,
                      AnonymizationService anonymizationService,
                      Set<String> ignored,
-                     boolean removePunctuation) {
+                     boolean removePunctuation,
+                     Crypto crypto) {
 
-        super(filterType, strategies, anonymizationService, ignored);
+        super(filterType, strategies, anonymizationService, ignored, crypto);
 
         this.stats = stats;
         this.metricsService = metricsService;

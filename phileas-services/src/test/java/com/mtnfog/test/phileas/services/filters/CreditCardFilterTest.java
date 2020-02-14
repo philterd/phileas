@@ -2,6 +2,7 @@ package com.mtnfog.test.phileas.services.filters;
 
 import com.mtnfog.phileas.model.enums.FilterType;
 import com.mtnfog.phileas.model.objects.Span;
+import com.mtnfog.phileas.model.profile.Crypto;
 import com.mtnfog.phileas.model.profile.filters.strategies.rules.CreditCardFilterStrategy;
 import com.mtnfog.phileas.services.anonymization.CreditCardAnonymizationService;
 import com.mtnfog.phileas.services.cache.LocalAnonymizationCacheService;
@@ -19,7 +20,7 @@ public class CreditCardFilterTest extends AbstractFilterTest {
     public void filterCreditCardOnlyValid() throws Exception {
 
         final List<CreditCardFilterStrategy> strategies = Arrays.asList(new CreditCardFilterStrategy());
-        CreditCardFilter filter = new CreditCardFilter(strategies, new CreditCardAnonymizationService(new LocalAnonymizationCacheService()), true, Collections.emptySet());
+        CreditCardFilter filter = new CreditCardFilter(strategies, new CreditCardAnonymizationService(new LocalAnonymizationCacheService()), true, Collections.emptySet(), new Crypto());
 
         // VISA
 
@@ -70,7 +71,7 @@ public class CreditCardFilterTest extends AbstractFilterTest {
     public void filterCreditCardValidAndInvalid() throws Exception {
 
         final List<CreditCardFilterStrategy> strategies = Arrays.asList(new CreditCardFilterStrategy());
-        CreditCardFilter filter = new CreditCardFilter(strategies, new CreditCardAnonymizationService(new LocalAnonymizationCacheService()), false, Collections.emptySet());
+        CreditCardFilter filter = new CreditCardFilter(strategies, new CreditCardAnonymizationService(new LocalAnonymizationCacheService()), false, Collections.emptySet(), new Crypto());
 
         // VISA
 

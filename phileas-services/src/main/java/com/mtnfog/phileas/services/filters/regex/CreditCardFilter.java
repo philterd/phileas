@@ -3,12 +3,12 @@ package com.mtnfog.phileas.services.filters.regex;
 import com.mtnfog.phileas.model.enums.FilterType;
 import com.mtnfog.phileas.model.filter.rules.regex.RegexFilter;
 import com.mtnfog.phileas.model.objects.Span;
+import com.mtnfog.phileas.model.profile.Crypto;
 import com.mtnfog.phileas.model.profile.FilterProfile;
 import com.mtnfog.phileas.model.profile.filters.strategies.AbstractFilterStrategy;
 import com.mtnfog.phileas.model.services.AnonymizationService;
 import org.apache.commons.validator.routines.checkdigit.LuhnCheckDigit;
 
-import java.io.IOException;
 import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
@@ -26,8 +26,8 @@ public class CreditCardFilter extends RegexFilter implements Serializable {
     private boolean onlyValidCreditCardNumbers;
     private LuhnCheckDigit luhnCheckDigit;
 
-    public CreditCardFilter(List<? extends AbstractFilterStrategy> strategies, AnonymizationService anonymizationService, boolean onlyValidCreditCardNumbers, Set<String> ignored) {
-        super(FilterType.CREDIT_CARD, strategies, anonymizationService, ignored);
+    public CreditCardFilter(List<? extends AbstractFilterStrategy> strategies, AnonymizationService anonymizationService, boolean onlyValidCreditCardNumbers, Set<String> ignored, Crypto crypto) {
+        super(FilterType.CREDIT_CARD, strategies, anonymizationService, ignored, crypto);
 
         this.onlyValidCreditCardNumbers = onlyValidCreditCardNumbers;
         this.luhnCheckDigit = new LuhnCheckDigit();
@@ -35,7 +35,7 @@ public class CreditCardFilter extends RegexFilter implements Serializable {
     }
 
     @Override
-    public List<Span> filter(FilterProfile filterProfile, String context, String documentId, String input) throws IOException {
+    public List<Span> filter(FilterProfile filterProfile, String context, String documentId, String input) throws Exception {
 
         final List<Span> spans = findSpans(filterProfile, ID_REGEX, input, context, documentId);
 

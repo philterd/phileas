@@ -1,5 +1,6 @@
 package com.mtnfog.test.phileas.model.profile.filters.strategies.ai;
 
+import com.mtnfog.phileas.model.profile.Crypto;
 import com.mtnfog.phileas.model.profile.filters.strategies.AbstractFilterStrategy;
 import com.mtnfog.phileas.model.profile.filters.strategies.ai.NerFilterStrategy;
 import com.mtnfog.phileas.model.services.AnonymizationCacheService;
@@ -10,7 +11,6 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -21,7 +21,7 @@ public class NerFilterStrategyTest {
     private static final Logger LOGGER = LogManager.getLogger(NerFilterStrategyTest.class);
 
     @Test
-    public void replacement1() throws IOException {
+    public void replacement1() throws Exception {
 
         final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
 
@@ -29,14 +29,14 @@ public class NerFilterStrategyTest {
         strategy.setStrategy(AbstractFilterStrategy.STATIC_REPLACE);
         strategy.setStaticReplacement("static-value");
 
-        final String replacement = strategy.getReplacement("name", "context", "docId", "token", anonymizationService);
+        final String replacement = strategy.getReplacement("name", "context", "docId", "token", new Crypto(), anonymizationService);
 
         Assert.assertEquals("static-value", replacement);
 
     }
 
     @Test
-    public void replacement2() throws IOException {
+    public void replacement2() throws Exception {
 
         final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
 
@@ -44,14 +44,14 @@ public class NerFilterStrategyTest {
         strategy.setStrategy(AbstractFilterStrategy.REDACT);
         strategy.setRedactionFormat("REDACTION-%t");
 
-        final String replacement = strategy.getReplacement("name", "context", "docId", "token", anonymizationService);
+        final String replacement = strategy.getReplacement("name", "context", "docId", "token", new Crypto(), anonymizationService);
 
         Assert.assertEquals("REDACTION-entity", replacement);
 
     }
 
     @Test
-    public void replacement3() throws IOException {
+    public void replacement3() throws Exception {
 
         final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
         final AnonymizationCacheService anonymizationCacheService = Mockito.mock(AnonymizationCacheService.class);
@@ -62,14 +62,14 @@ public class NerFilterStrategyTest {
         final NerFilterStrategy strategy = new NerFilterStrategy();
         strategy.setStrategy(AbstractFilterStrategy.RANDOM_REPLACE);
 
-        final String replacement = strategy.getReplacement("name", "context", "docId", "token", anonymizationService);
+        final String replacement = strategy.getReplacement("name", "context", "docId", "token", new Crypto(), anonymizationService);
 
         Assert.assertNotEquals("random", replacement);
 
     }
 
     @Test
-    public void replacement4() throws IOException {
+    public void replacement4() throws Exception {
 
         final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
         final AnonymizationCacheService anonymizationCacheService = Mockito.mock(AnonymizationCacheService.class);
@@ -80,14 +80,14 @@ public class NerFilterStrategyTest {
         final NerFilterStrategy strategy = new NerFilterStrategy();
         strategy.setStrategy("something-wrong");
 
-        final String replacement = strategy.getReplacement("name", "context", "docId", "token", anonymizationService);
+        final String replacement = strategy.getReplacement("name", "context", "docId", "token", new Crypto(), anonymizationService);
 
         Assert.assertEquals("{{{REDACTED-entity}}}", replacement);
 
     }
 
     @Test
-    public void replacement5() throws IOException {
+    public void replacement5() throws Exception {
 
         final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
         final AnonymizationCacheService anonymizationCacheService = Mockito.mock(AnonymizationCacheService.class);
@@ -98,7 +98,7 @@ public class NerFilterStrategyTest {
         strategy.setStrategy(AbstractFilterStrategy.REDACT);
         strategy.setRedactionFormat("<ENTITY:%t>%v</ENTITY>");
 
-        final String replacement = strategy.getReplacement("name", "context", "docId", "token", anonymizationService);
+        final String replacement = strategy.getReplacement("name", "context", "docId", "token", new Crypto(), anonymizationService);
 
         Assert.assertEquals("<ENTITY:entity>token</ENTITY>", replacement);
 

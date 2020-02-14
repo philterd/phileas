@@ -5,12 +5,12 @@ import com.mtnfog.phileas.ai.PhileasSpan;
 import com.mtnfog.phileas.ai.PyTorchFilter;
 import com.mtnfog.phileas.model.enums.FilterType;
 import com.mtnfog.phileas.model.objects.Span;
+import com.mtnfog.phileas.model.profile.Crypto;
 import com.mtnfog.phileas.model.profile.FilterProfile;
 import com.mtnfog.phileas.model.profile.Identifiers;
 import com.mtnfog.phileas.model.profile.filters.Ner;
 import com.mtnfog.phileas.model.profile.filters.strategies.AbstractFilterStrategy;
 import com.mtnfog.phileas.model.profile.filters.strategies.ai.NerFilterStrategy;
-import com.mtnfog.phileas.model.profile.filters.strategies.rules.ZipCodeFilterStrategy;
 import com.mtnfog.phileas.model.services.AnonymizationService;
 import com.mtnfog.phileas.model.services.MetricsService;
 import com.squareup.okhttp.mockwebserver.MockResponse;
@@ -18,7 +18,10 @@ import com.squareup.okhttp.mockwebserver.MockWebServer;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.junit.*;
+import org.junit.AfterClass;
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Test;
 import org.mockito.Mockito;
 
 import java.io.IOException;
@@ -69,7 +72,7 @@ public class PyTorchFilterTest {
     }
 
     @Test
-    public void personsTest() throws IOException {
+    public void personsTest() throws Exception {
 
         final Map<String, DescriptiveStatistics> stats = new HashMap<>();
         final MetricsService metricsService = Mockito.mock(MetricsService.class);
@@ -78,7 +81,7 @@ public class PyTorchFilterTest {
 
         this.mockServer.enqueue(new MockResponse().setResponseCode(200).setBody("[{\"text\":\"test\",\"tag\":\"PER\",\"score\":0.5,\"start\":1,\"end\":2}]"));
 
-        final PyTorchFilter t = new PyTorchFilter(baseUrl, FilterType.NER_ENTITY, getStrategies(),"PER", stats, metricsService, anonymizationService, Collections.emptySet(), false);
+        final PyTorchFilter t = new PyTorchFilter(baseUrl, FilterType.NER_ENTITY, getStrategies(),"PER", stats, metricsService, anonymizationService, Collections.emptySet(), false, new Crypto());
 
         final List<Span> spans = t.filter(getFilterProfile(), "context", "doc", "John Smith lives in New York");
 
@@ -91,7 +94,7 @@ public class PyTorchFilterTest {
     }
 
     @Test
-    public void locationsTest() throws IOException {
+    public void locationsTest() throws Exception {
 
         final Map<String, DescriptiveStatistics> stats = new HashMap<>();
         final MetricsService metricsService = Mockito.mock(MetricsService.class);
@@ -103,7 +106,7 @@ public class PyTorchFilterTest {
         this.mockServer.enqueue(new MockResponse().setResponseCode(200).setBody("[{\"text\":\"test\",\"tag\":\"LOC\",\"score\":0.5,\"start\":1,\"end\":2}]"));
 
         final PyTorchFilter t = new PyTorchFilter(baseUrl, FilterType.NER_ENTITY, getStrategies(), "LOC",
-                stats, metricsService, anonymizationService, Collections.emptySet(), false);
+                stats, metricsService, anonymizationService, Collections.emptySet(), false, new Crypto());
 
         final List<Span> spans = t.filter(getFilterProfile(), "context", "doc", "John Smith lives in New York");
 

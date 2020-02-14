@@ -3,6 +3,7 @@ package com.mtnfog.phileas.model.profile.filters.strategies.dynamic;
 import com.mtnfog.phileas.model.conditions.ParsedCondition;
 import com.mtnfog.phileas.model.conditions.ParserListener;
 import com.mtnfog.phileas.model.enums.FilterType;
+import com.mtnfog.phileas.model.profile.Crypto;
 import com.mtnfog.phileas.model.profile.filters.strategies.AbstractFilterStrategy;
 import com.mtnfog.phileas.model.services.AnonymizationService;
 import org.apache.commons.lang3.StringUtils;
@@ -60,7 +61,7 @@ public class CityFilterStrategy extends AbstractFilterStrategy {
     }
 
     @Override
-    public String getReplacement(String name, String context, String documentId, String token, AnonymizationService anonymizationService) throws IOException {
+    public String getReplacement(String name, String context, String documentId, String token, Crypto crypto, AnonymizationService anonymizationService) throws Exception {
 
         String replacement = null;
 
@@ -82,6 +83,10 @@ public class CityFilterStrategy extends AbstractFilterStrategy {
         } else if(StringUtils.equalsIgnoreCase(strategy, STATIC_REPLACE)) {
 
             replacement = staticReplacement;
+
+        } else if(StringUtils.equalsIgnoreCase(strategy, CRYPTO_REPLACE)) {
+
+            replacement = getEncryptedToken(token, crypto);
 
         } else {
 

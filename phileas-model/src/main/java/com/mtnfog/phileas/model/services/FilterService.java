@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface FilterService {
 
-    FilterResponse filter(String filterProfileName, String context, String input) throws IOException;
+    FilterResponse filter(String filterProfileName, String context, String input) throws Exception;
 
     List<Span> replacements(String documentId) throws IOException;
 

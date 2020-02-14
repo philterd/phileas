@@ -4,10 +4,17 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.mtnfog.phileas.model.conditions.ParsedCondition;
 import com.mtnfog.phileas.model.enums.FilterType;
+import com.mtnfog.phileas.model.profile.Crypto;
 import com.mtnfog.phileas.model.services.AnonymizationService;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.codec.binary.Base64;
 
+import javax.crypto.Cipher;
+import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.spec.SecretKeySpec;
 import java.io.IOException;
+import java.nio.charset.Charset;
+import java.security.SecureRandom;
 import java.util.Map;
 
 public abstract class AbstractFilterStrategy {
@@ -17,6 +24,7 @@ public abstract class AbstractFilterStrategy {
     public static final String REDACT = "REDACT";
     public static final String RANDOM_REPLACE = "RANDOM_REPLACE";
     public static final String STATIC_REPLACE = "STATIC_REPLACE";
+    public static final String CRYPTO_REPLACE = "CRYPTO_REPLACE";
 
     public static final String REPLACEMENT_SCOPE_DOCUMENT = "DOCUMENT";
     public static final String REPLACEMENT_SCOPE_CONTEXT = "CONTEXT";
@@ -51,10 +59,11 @@ public abstract class AbstractFilterStrategy {
      * @param context The context.
      * @param documentId The document ID.
      * @param token The token.
+     * @param crypto The encryption key used to encrypt values when enabled.
      * @param anonymizationService The {@link AnonymizationService} for the token.
      * @return A replacement value for a token.
      */
-    public abstract String getReplacement(String name, String context, String documentId, String token, AnonymizationService anonymizationService) throws IOException;
+    public abstract String getReplacement(String name, String context, String documentId, String token, Crypto crypto, AnonymizationService anonymizationService) throws Exception;
 
     /**
      * Evaluates the condition on the given token.
@@ -65,6 +74,23 @@ public abstract class AbstractFilterStrategy {
      * @return <code>true</code> if the condition matches; otherwise <code>false</code>.
      */
     public abstract boolean evaluateCondition(String context, String documentId, String token, String condition, Map<String, Object> attributes);
+
+    protected String getEncryptedToken(String token, Crypto crypto) throws Exception {
+
+        // echo "j6HcaY8m7hPACVVyQtj4PQ=="| openssl enc -a -d -aes-256-cbc -K 9EE7A356FDFE43F069500B0086758346E66D8583E0CE1CFCA04E50F67ECCE5D1 -iv B674D3B8F1C025AEFF8F6D5FA1AEAD3A
+
+        final byte[] secretKey = javax.xml.bind.DatatypeConverter.parseHexBinary(crypto.getKey());
+        final byte[] initVector = javax.xml.bind.DatatypeConverter.parseHexBinary(crypto.getIv());
+        final Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+        cipher.init(Cipher.ENCRYPT_MODE, new SecretKeySpec(secretKey, "AES"), new IvParameterSpec(initVector, 0, cipher.getBlockSize()));
+
+        final byte[] encrypted = cipher.doFinal(token.getBytes(Charset.defaultCharset()));
+
+        final String output = Base64.encodeBase64String(encrypted);
+
+        return output;
+
+    }
 
     protected String getRedactedToken(String token, String label, FilterType filterType) {
 

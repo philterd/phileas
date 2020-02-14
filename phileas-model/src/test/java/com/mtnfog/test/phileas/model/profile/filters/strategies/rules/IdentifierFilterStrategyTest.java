@@ -1,5 +1,6 @@
 package com.mtnfog.test.phileas.model.profile.filters.strategies.rules;
 
+import com.mtnfog.phileas.model.profile.Crypto;
 import com.mtnfog.phileas.model.profile.filters.strategies.AbstractFilterStrategy;
 import com.mtnfog.phileas.model.profile.filters.strategies.dynamic.CityFilterStrategy;
 import com.mtnfog.phileas.model.profile.filters.strategies.rules.CreditCardFilterStrategy;
@@ -24,71 +25,71 @@ public class IdentifierFilterStrategyTest {
     private static final Logger LOGGER = LogManager.getLogger(IdentifierFilterStrategyTest.class);
 
     @Test
-    public void replacement1() throws IOException {
+    public void replacement1() throws Exception {
 
         final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
 
         final IdentifierFilterStrategy strategy = new IdentifierFilterStrategy();
-        final String replacement = strategy.getReplacement("custom-name", "context", "documentId", "token", anonymizationService);
+        final String replacement = strategy.getReplacement("custom-name", "context", "documentId", "token", new Crypto(), anonymizationService);
 
         Assert.assertEquals("{{{REDACTED-id}}}", replacement);
 
     }
 
     @Test
-    public void replacement2() throws IOException {
+    public void replacement2() throws Exception {
 
         final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
 
         final IdentifierFilterStrategy strategy = new IdentifierFilterStrategy();
         strategy.setRedactionFormat("{{{REDACTED-%l}}}");
-        final String replacement = strategy.getReplacement("custom-name", "context", "documentId", "token", anonymizationService);
+        final String replacement = strategy.getReplacement("custom-name", "context", "documentId", "token", new Crypto(), anonymizationService);
 
         Assert.assertEquals("{{{REDACTED-custom-name}}}", replacement);
 
     }
 
     @Test
-    public void replacement3() throws IOException {
+    public void replacement3() throws Exception {
 
         final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
 
         final IdentifierFilterStrategy strategy = new IdentifierFilterStrategy();
         strategy.setRedactionFormat("{{{REDACTED-%t-%l}}}");
-        final String replacement = strategy.getReplacement("custom-name", "context", "documentId", "token", anonymizationService);
+        final String replacement = strategy.getReplacement("custom-name", "context", "documentId", "token", new Crypto(), anonymizationService);
 
         Assert.assertEquals("{{{REDACTED-id-custom-name}}}", replacement);
 
     }
 
     @Test
-    public void replacement4() throws IOException {
+    public void replacement4() throws Exception {
 
         final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
 
         final IdentifierFilterStrategy strategy = new IdentifierFilterStrategy();
         strategy.setRedactionFormat("***%l-%t***");
-        final String replacement = strategy.getReplacement("custom-name", "context", "documentId", "token", anonymizationService);
+        final String replacement = strategy.getReplacement("custom-name", "context", "documentId", "token", new Crypto(), anonymizationService);
 
         Assert.assertEquals("***custom-name-id***", replacement);
 
     }
 
     @Test
-    public void replacement5() throws IOException {
+    public void replacement5() throws Exception {
 
         final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
 
         final IdentifierFilterStrategy strategy = new IdentifierFilterStrategy();
         strategy.setRedactionFormat("***%l-%l-%t***");
-        final String replacement = strategy.getReplacement("custom-name", "context", "documentId", "token", anonymizationService);
+        final String replacement = strategy.getReplacement("custom-name", "context", "documentId", "token", new Crypto(), anonymizationService);
 
         Assert.assertEquals("***custom-name-custom-name-id***", replacement);
 
     }
 
     @Test
-    public void replacement6() throws IOException {
+    public void replacement6() throws Exception {
 
         final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
         final AnonymizationCacheService anonymizationCacheService = Mockito.mock(AnonymizationCacheService.class);
@@ -99,7 +100,7 @@ public class IdentifierFilterStrategyTest {
         strategy.setStrategy(AbstractFilterStrategy.REDACT);
         strategy.setRedactionFormat("<ENTITY:%t>%v</ENTITY>");
 
-        final String replacement = strategy.getReplacement("name", "context", "docId", "token", anonymizationService);
+        final String replacement = strategy.getReplacement("name", "context", "docId", "token", new Crypto(), anonymizationService);
 
         Assert.assertEquals("<ENTITY:id>token</ENTITY>", replacement);
 
