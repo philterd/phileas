@@ -86,4 +86,16 @@ public class SsnFilterTest extends AbstractFilterTest {
 
     }
 
+    @Test
+    public void filterSsn7() throws Exception {
+
+        final List<SsnFilterStrategy> strategies = Arrays.asList(new SsnFilterStrategy());
+        SsnFilter filter = new SsnFilter(strategies, new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()), Collections.emptySet(), new Crypto());
+
+        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "the ssn is 11-1234567.");
+        Assert.assertEquals(1, spans.size());
+        Assert.assertTrue(checkSpan(spans.get(0), 11, 21, FilterType.SSN));
+
+    }
+
 }

@@ -16,7 +16,7 @@ import java.util.regex.Pattern;
 
 public class MacAddressFilter extends RegexFilter implements Serializable {
 
-    private static final Pattern MAC_ADDRESS_PATTERN = Pattern.compile("([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})");
+    private static final Pattern MAC_ADDRESS_PATTERN = Pattern.compile("\\b([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})\\b");
 
     public MacAddressFilter(List<? extends AbstractFilterStrategy> strategies, AnonymizationService anonymizationService, Set<String> ignored, Crypto crypto) {
         super(FilterType.MAC_ADDRESS, strategies, anonymizationService, ignored, crypto);
