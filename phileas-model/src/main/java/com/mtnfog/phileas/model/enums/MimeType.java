@@ -5,7 +5,14 @@ package com.mtnfog.phileas.model.enums;
  */
 public enum MimeType {
 
+    /**
+     * text/plain
+     */
     TEXT_PLAIN("text/plain"),
+
+    /**
+     * application/fhir+json
+     */
     APPLICATION_FHIRJSON("application/fhir+json");
 
     private String value;

@@ -109,10 +109,12 @@ public class PhileasFilterService implements FilterService, Serializable {
 
         if(mimeType == MimeType.TEXT_PLAIN) {
             return processTextPlain(filterProfile, context, documentId, input);
+        } else if(mimeType == MimeType.APPLICATION_FHIRJSON) {
+            return processApplicationFhirJson(filterProfile, context, documentId, input);
         }
 
-        // Don't return null.
-        return null;
+        // Should never happen but just in case.
+        throw new Exception("Unknown mime type.");
 
     }
 
@@ -352,6 +354,12 @@ public class PhileasFilterService implements FilterService, Serializable {
             postFilters.add(new TrailingSpacePostFilter());
 
         }
+
+    }
+
+    private FilterResponse processApplicationFhirJson(FilterProfile filterProfile, String context, String documentId, String input) throws Exception {
+
+        return null;
 
     }
 
