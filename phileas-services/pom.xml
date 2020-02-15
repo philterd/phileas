@@ -46,7 +46,7 @@
 		</dependency>
 		<dependency>
 			<groupId>com.mtnfog</groupId>
-			<artifactId>phileas-fhir</artifactId>
+			<artifactId>phileas-structured-fhir</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>

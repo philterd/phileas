@@ -27,6 +27,10 @@ public class FilterProfile {
     @Expose
     private List<Ignored> ignored;
 
+    @SerializedName("structured")
+    @Expose
+    private Structured structured;
+
     public String getName() {
         return name;
     }
@@ -57,6 +61,14 @@ public class FilterProfile {
 
     public void setCrypto(Crypto crypto) {
         this.crypto = crypto;
+    }
+
+    public Structured getStructured() {
+        return structured;
+    }
+
+    public void setStructured(Structured structured) {
+        this.structured = structured;
     }
 
 }

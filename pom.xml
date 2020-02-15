@@ -84,7 +84,7 @@
 		<module>phileas-store</module>
 		<module>phileas-ai</module>
 		<module>phileas-nlp</module>
-    <module>phileas-fhir</module>
+    <module>phileas-structured</module>
   </modules>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
