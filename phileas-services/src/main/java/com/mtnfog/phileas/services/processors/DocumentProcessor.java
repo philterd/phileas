@@ -5,6 +5,7 @@ import ca.uhn.fhir.parser.IParser;
 import com.mtnfog.phileas.model.filter.Filter;
 import com.mtnfog.phileas.model.objects.Explanation;
 import com.mtnfog.phileas.model.objects.Span;
+import com.mtnfog.phileas.model.profile.Crypto;
 import com.mtnfog.phileas.model.profile.fhir4.FhirItem;
 import com.mtnfog.phileas.model.profile.fhir4.FhirR4;
 import com.mtnfog.phileas.model.profile.FilterProfile;
@@ -12,6 +13,7 @@ import com.mtnfog.phileas.model.responses.FilterResponse;
 import com.mtnfog.phileas.model.services.MetricsService;
 import com.mtnfog.phileas.model.services.PostFilter;
 import com.mtnfog.phileas.model.services.Store;
+import com.mtnfog.phileas.model.utils.Encryption;
 import org.hl7.fhir.r4.model.*;
 
 import java.util.*;
@@ -37,7 +39,7 @@ public class DocumentProcessor {
 
     }
 
-    public FilterResponse processApplicationFhirJson(FilterProfile filterProfile, String context, String documentId, String json) {
+    public FilterResponse processApplicationFhirJson(FilterProfile filterProfile, String context, String documentId, String json) throws Exception {
 
         // TODO: I'm getting FhirR4 here but that version is really unknown to the API.
         // All we know is that it is an application/fhir+json document.
@@ -49,6 +51,9 @@ public class DocumentProcessor {
         final FhirContext ctx = FhirContext.forR4();
         final IParser parser = ctx.newJsonParser();
         final Bundle bundle = parser.parseResource(Bundle.class, json);
+
+        // Used for value encryption. May not be needed.
+        final Crypto crypto = filterProfile.getCrypto();
 
         // Make the changes in the document.
 
@@ -68,8 +73,6 @@ public class DocumentProcessor {
                         patient.setBirthDate(new Date());
                     } else if(birthDateFhirItem.get().getReplacementStrategy().equalsIgnoreCase(FhirItem.FHIR_ITEM_REPLACEMENT_STRATEGY_SHIFT)) {
                         // TODO: Shift the date.
-                    } else if(birthDateFhirItem.get().getReplacementStrategy().equalsIgnoreCase(FhirItem.FHIR_ITEM_REPLACEMENT_STRATEGY_CRYPTO_REPLACE)) {
-                        // TODO: Encrypt the value.
                     }
 
                 }
@@ -90,7 +93,7 @@ public class DocumentProcessor {
                         if(addressFhirItem.get().getReplacementStrategy().equalsIgnoreCase(FhirItem.FHIR_ITEM_REPLACEMENT_STRATEGY_DELETE)) {
                             address.setText("");
                         } else if(addressFhirItem.get().getReplacementStrategy().equalsIgnoreCase(FhirItem.FHIR_ITEM_REPLACEMENT_STRATEGY_CRYPTO_REPLACE)) {
-                            // TODO: Encrypt the value.
+                            address.setText(Encryption.encrypt(address.getText(), crypto));
                         }
                     }
 
@@ -103,7 +106,7 @@ public class DocumentProcessor {
                         if(addressLineFhirItem.get().getReplacementStrategy().equalsIgnoreCase(FhirItem.FHIR_ITEM_REPLACEMENT_STRATEGY_DELETE)) {
                             address.setLine(Collections.emptyList());
                         } else if(addressFhirItem.get().getReplacementStrategy().equalsIgnoreCase(FhirItem.FHIR_ITEM_REPLACEMENT_STRATEGY_CRYPTO_REPLACE)) {
-                            // TODO: Encrypt the value.
+                            address.setLine(Encryption.encrypt(address.getLine(), crypto));
                         }
                     }
 
@@ -116,7 +119,7 @@ public class DocumentProcessor {
                         if(addressCityFhirItem.get().getReplacementStrategy().equalsIgnoreCase(FhirItem.FHIR_ITEM_REPLACEMENT_STRATEGY_DELETE)) {
                             address.setCity("");
                         } else if(addressFhirItem.get().getReplacementStrategy().equalsIgnoreCase(FhirItem.FHIR_ITEM_REPLACEMENT_STRATEGY_CRYPTO_REPLACE)) {
-                            // TODO: Encrypt the value.
+                            address.setCity(Encryption.encrypt(address.getCity(), crypto));
                         }
                     }
 
@@ -129,7 +132,7 @@ public class DocumentProcessor {
                         if(addressDistrictFhirItem.get().getReplacementStrategy().equalsIgnoreCase(FhirItem.FHIR_ITEM_REPLACEMENT_STRATEGY_DELETE)) {
                             address.setDistrict("");
                         } else if(addressFhirItem.get().getReplacementStrategy().equalsIgnoreCase(FhirItem.FHIR_ITEM_REPLACEMENT_STRATEGY_CRYPTO_REPLACE)) {
-                            // TODO: Encrypt the value.
+                            address.setDistrict(Encryption.encrypt(address.getDistrict(), crypto));
                         }
                     }
 
@@ -146,7 +149,7 @@ public class DocumentProcessor {
                             // TODO: Truncate the zip code.
                             // address.setPostalCode();
                         } else if(addressFhirItem.get().getReplacementStrategy().equalsIgnoreCase(FhirItem.FHIR_ITEM_REPLACEMENT_STRATEGY_CRYPTO_REPLACE)) {
-                            // TODO: Encrypt the value.
+                            address.setPostalCode(Encryption.encrypt(address.getPostalCode(), crypto));
                         }
                     }
 

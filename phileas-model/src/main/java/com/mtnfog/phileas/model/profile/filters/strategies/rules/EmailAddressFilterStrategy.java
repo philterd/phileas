@@ -6,6 +6,7 @@ import com.mtnfog.phileas.model.enums.FilterType;
 import com.mtnfog.phileas.model.profile.Crypto;
 import com.mtnfog.phileas.model.profile.filters.strategies.AbstractFilterStrategy;
 import com.mtnfog.phileas.model.services.AnonymizationService;
+import com.mtnfog.phileas.model.utils.Encryption;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -86,7 +87,7 @@ public class EmailAddressFilterStrategy extends AbstractFilterStrategy {
 
         } else if(StringUtils.equalsIgnoreCase(strategy, CRYPTO_REPLACE)) {
 
-            replacement = getEncryptedToken(token, crypto);
+            replacement = Encryption.encrypt(token, crypto);
 
         } else {
 

@@ -5,10 +5,10 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import com.mtnfog.phileas.model.filter.Filter;
-import com.mtnfog.phileas.model.profile.fhir4.FhirItem;
-import com.mtnfog.phileas.model.profile.fhir4.FhirR4;
 import com.mtnfog.phileas.model.profile.FilterProfile;
 import com.mtnfog.phileas.model.profile.Structured;
+import com.mtnfog.phileas.model.profile.fhir4.FhirItem;
+import com.mtnfog.phileas.model.profile.fhir4.FhirR4;
 import com.mtnfog.phileas.model.responses.FilterResponse;
 import com.mtnfog.phileas.model.services.MetricsService;
 import com.mtnfog.phileas.model.services.PostFilter;
@@ -18,14 +18,13 @@ import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.*;
 
 public class DocumentProcessorTest {
 
     @Test
-    public void test1() throws IOException {
+    public void test1() throws Exception {
 
         final MetricsService metricsService = Mockito.mock(MetricsService.class);
         final Store store = Mockito.mock(Store.class);
