@@ -1,6 +1,13 @@
 package com.mtnfog.phileas.services;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.google.gson.Gson;
+import com.google.gson.JsonNull;
+import com.jayway.jsonpath.Configuration;
+import com.jayway.jsonpath.DocumentContext;
+import com.jayway.jsonpath.JsonPath;
+import com.jayway.jsonpath.spi.json.JacksonJsonNodeJsonProvider;
+import com.jayway.jsonpath.spi.mapper.JacksonMappingProvider;
 import com.mtnfog.phileas.ai.PyTorchFilter;
 import com.mtnfog.phileas.metrics.PhileasMetricsService;
 import com.mtnfog.phileas.model.enums.FilterType;
@@ -32,6 +39,7 @@ import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import javax.swing.text.Document;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.*;
@@ -357,9 +365,29 @@ public class PhileasFilterService implements FilterService, Serializable {
 
     }
 
-    private FilterResponse processApplicationFhirJson(FilterProfile filterProfile, String context, String documentId, String input) throws Exception {
+    private FilterResponse processApplicationFhirJson(FilterProfile filterProfile, String context, String documentId, String json) throws Exception {
 
-        return null;
+        final Configuration configuration = Configuration.builder()
+                .jsonProvider(new JacksonJsonNodeJsonProvider())
+                .mappingProvider(new JacksonMappingProvider())
+                .build();
+
+        // TODO: I'm getting FhirR4 here but that version is really unknown to the API.
+        // All we know is that it is an application/fhir+json document.
+        // Should the version be passed in as an API header or something?
+
+        final List<String> itemPaths = filterProfile.getStructured().getFhirR4().getItemPaths();
+        final DocumentContext documentContext = JsonPath.using(configuration).parse(json);
+
+        for(final String itemPath : itemPaths) {
+
+            documentContext.set(itemPath, "");
+
+        }
+
+        final JsonNode updatedJson = documentContext.json();
+
+        return new FilterResponse(updatedJson.toString(), context, documentId);
 
     }
 

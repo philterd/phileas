@@ -22,6 +22,7 @@ public final class FilterResponse implements Serializable {
      * @param filteredText The filtered text.
      * @param context The context.
      * @param documentId The document ID.
+     * @param explanation A {@link Explanation}.
      */
     public FilterResponse(String filteredText, String context, String documentId, Explanation explanation) {
 
@@ -29,6 +30,21 @@ public final class FilterResponse implements Serializable {
         this.context = context;
         this.documentId = documentId;
         this.explanation = explanation;
+
+    }
+
+    /**
+     * Creates a new response without an explanation.
+     * @param filteredText The filtered text.
+     * @param context The context.
+     * @param documentId The document ID.
+     */
+    public FilterResponse(String filteredText, String context, String documentId) {
+
+        this.filteredText = filteredText;
+        this.context = context;
+        this.documentId = documentId;
+        this.explanation = null;
 
     }
 
