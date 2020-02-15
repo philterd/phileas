@@ -22,7 +22,8 @@ import com.mtnfog.phileas.services.filters.regex.*;
 import com.mtnfog.phileas.services.postfilters.IgnoredTermsFilter;
 import com.mtnfog.phileas.services.postfilters.TrailingPeriodPostFilter;
 import com.mtnfog.phileas.services.postfilters.TrailingSpacePostFilter;
-import com.mtnfog.phileas.services.processors.DocumentProcessor;
+import com.mtnfog.phileas.services.processors.FhirV4DocumentProcessor;
+import com.mtnfog.phileas.services.processors.UnstructuredDocumentProcessor;
 import com.mtnfog.phileas.services.validators.DateSpanValidator;
 import com.mtnfog.phileas.store.ElasticsearchStore;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -56,7 +57,8 @@ public class PhileasFilterService implements FilterService, Serializable {
     private AnonymizationCacheService anonymizationCacheService;
     private String indexDirectory;
 
-    private DocumentProcessor documentProcessor;
+    private UnstructuredDocumentProcessor unstructuredDocumentProcessor;
+    private FhirV4DocumentProcessor fhirV4DocumentProcessor;
 
     public PhileasFilterService(Properties applicationProperties, List<FilterProfileService> filterProfileServices, AnonymizationCacheService anonymizationCacheService, String philterNerEndpoint) throws IOException {
 
@@ -81,6 +83,7 @@ public class PhileasFilterService implements FilterService, Serializable {
         this.indexDirectory = applicationProperties.getProperty("indexes.directory", System.getProperty("user.dir") + "/indexes/");
         this.anonymizationCacheService = anonymizationCacheService;
         this.philterNerEndpoint = philterNerEndpoint;
+        this.fhirV4DocumentProcessor = new FhirV4DocumentProcessor(metricsService);
 
         // Load the filter profiles from the services into a map.
         reloadFilterProfiles();
@@ -108,9 +111,9 @@ public class PhileasFilterService implements FilterService, Serializable {
         final String documentId = DigestUtils.md5Hex(UUID.randomUUID().toString() + "-" + context + "-" + filterProfileName + "-" + input);
 
         if(mimeType == MimeType.TEXT_PLAIN) {
-            return documentProcessor.processTextPlain(filterProfile, context, documentId, input);
+            return unstructuredDocumentProcessor.process(filterProfile, context, documentId, input);
         } else if(mimeType == MimeType.APPLICATION_FHIRJSON) {
-            return documentProcessor.processApplicationFhirJson(filterProfile, context, documentId, input);
+            return fhirV4DocumentProcessor.process(filterProfile, context, documentId, input);
         }
 
         // Should never happen but just in case.
@@ -355,7 +358,7 @@ public class PhileasFilterService implements FilterService, Serializable {
 
         }
 
-        documentProcessor = new DocumentProcessor(filters, postFilters, metricsService, store);
+        unstructuredDocumentProcessor = new UnstructuredDocumentProcessor(filters, postFilters, metricsService, store);
 
     }
 
