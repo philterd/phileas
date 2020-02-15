@@ -59,15 +59,17 @@ public class DocumentProcessor {
                 final Patient patient = (Patient) bundleEntryComponent.getResource();
 
                 final Optional<FhirItem> birthDateFhirItem = fhirItems.stream()
-                        .filter(p -> p.getPath().equalsIgnoreCase("birthDate"))
+                        .filter(p -> p.getPath().equalsIgnoreCase("patient.birthDate"))
                         .findFirst();
 
                 if(birthDateFhirItem.isPresent()) {
 
-                    if(birthDateFhirItem.get().getReplacementStrategy().equalsIgnoreCase("DELETE")) {
+                    if(birthDateFhirItem.get().getReplacementStrategy().equalsIgnoreCase(FhirItem.FHIR_ITEM_REPLACEMENT_STRATEGY_DELETE)) {
                         patient.setBirthDate(new Date());
-                    } else if(birthDateFhirItem.get().getReplacementStrategy().equalsIgnoreCase("SHIFT")) {
+                    } else if(birthDateFhirItem.get().getReplacementStrategy().equalsIgnoreCase(FhirItem.FHIR_ITEM_REPLACEMENT_STRATEGY_SHIFT)) {
                         // TODO: Shift the date.
+                    } else if(birthDateFhirItem.get().getReplacementStrategy().equalsIgnoreCase(FhirItem.FHIR_ITEM_REPLACEMENT_STRATEGY_CRYPTO_REPLACE)) {
+                        // TODO: Encrypt the value.
                     }
 
                 }
@@ -81,56 +83,70 @@ public class DocumentProcessor {
 
                     // address.text
                     final Optional<FhirItem> addressFhirItem = fhirItems.stream()
-                            .filter(p -> p.getPath().equalsIgnoreCase("address.text"))
+                            .filter(p -> p.getPath().equalsIgnoreCase("patient.address.text"))
                             .findFirst();
 
                     if(addressFhirItem.isPresent()) {
-                        if(addressFhirItem.get().getReplacementStrategy().equalsIgnoreCase("DELETE")) {
+                        if(addressFhirItem.get().getReplacementStrategy().equalsIgnoreCase(FhirItem.FHIR_ITEM_REPLACEMENT_STRATEGY_DELETE)) {
                             address.setText("");
+                        } else if(addressFhirItem.get().getReplacementStrategy().equalsIgnoreCase(FhirItem.FHIR_ITEM_REPLACEMENT_STRATEGY_CRYPTO_REPLACE)) {
+                            // TODO: Encrypt the value.
                         }
                     }
 
                     // address.line
                     final Optional<FhirItem> addressLineFhirItem = fhirItems.stream()
-                            .filter(p -> p.getPath().equalsIgnoreCase("address.line"))
+                            .filter(p -> p.getPath().equalsIgnoreCase("patient.address.line"))
                             .findFirst();
 
                     if(addressLineFhirItem.isPresent()) {
-                        if(addressLineFhirItem.get().getReplacementStrategy().equalsIgnoreCase("DELETE")) {
+                        if(addressLineFhirItem.get().getReplacementStrategy().equalsIgnoreCase(FhirItem.FHIR_ITEM_REPLACEMENT_STRATEGY_DELETE)) {
                             address.setLine(Collections.emptyList());
+                        } else if(addressFhirItem.get().getReplacementStrategy().equalsIgnoreCase(FhirItem.FHIR_ITEM_REPLACEMENT_STRATEGY_CRYPTO_REPLACE)) {
+                            // TODO: Encrypt the value.
                         }
                     }
 
                     // address.city
                     final Optional<FhirItem> addressCityFhirItem = fhirItems.stream()
-                            .filter(p -> p.getPath().equalsIgnoreCase("address.city"))
+                            .filter(p -> p.getPath().equalsIgnoreCase("patient.address.city"))
                             .findFirst();
 
                     if(addressCityFhirItem.isPresent()) {
-                        if(addressCityFhirItem.get().getReplacementStrategy().equalsIgnoreCase("DELETE")) {
+                        if(addressCityFhirItem.get().getReplacementStrategy().equalsIgnoreCase(FhirItem.FHIR_ITEM_REPLACEMENT_STRATEGY_DELETE)) {
                             address.setCity("");
+                        } else if(addressFhirItem.get().getReplacementStrategy().equalsIgnoreCase(FhirItem.FHIR_ITEM_REPLACEMENT_STRATEGY_CRYPTO_REPLACE)) {
+                            // TODO: Encrypt the value.
                         }
                     }
 
                     // address.district
                     final Optional<FhirItem> addressDistrictFhirItem = fhirItems.stream()
-                            .filter(p -> p.getPath().equalsIgnoreCase("address.district"))
+                            .filter(p -> p.getPath().equalsIgnoreCase("patient.address.district"))
                             .findFirst();
 
                     if(addressDistrictFhirItem.isPresent()) {
-                        if(addressDistrictFhirItem.get().getReplacementStrategy().equalsIgnoreCase("DELETE")) {
+                        if(addressDistrictFhirItem.get().getReplacementStrategy().equalsIgnoreCase(FhirItem.FHIR_ITEM_REPLACEMENT_STRATEGY_DELETE)) {
                             address.setDistrict("");
+                        } else if(addressFhirItem.get().getReplacementStrategy().equalsIgnoreCase(FhirItem.FHIR_ITEM_REPLACEMENT_STRATEGY_CRYPTO_REPLACE)) {
+                            // TODO: Encrypt the value.
                         }
                     }
 
                     // address.postalCode
                     final Optional<FhirItem> addressPostalCodeFhirItem = fhirItems.stream()
-                            .filter(p -> p.getPath().equalsIgnoreCase("address.postalcode"))
+                            .filter(p -> p.getPath().equalsIgnoreCase("patient.address.postalcode"))
                             .findFirst();
 
                     if(addressPostalCodeFhirItem.isPresent()) {
-                        if(addressPostalCodeFhirItem.get().getReplacementStrategy().equalsIgnoreCase("DELETE")) {
+                        if(addressPostalCodeFhirItem.get().getReplacementStrategy().equalsIgnoreCase(FhirItem.FHIR_ITEM_REPLACEMENT_STRATEGY_DELETE)) {
                             address.setPostalCode("");
+                        }
+                        if(addressPostalCodeFhirItem.get().getReplacementStrategy().equalsIgnoreCase(FhirItem.FHIR_ITEM_REPLACEMENT_STRATEGY_TRUNCATE)) {
+                            // TODO: Truncate the zip code.
+                            // address.setPostalCode();
+                        } else if(addressFhirItem.get().getReplacementStrategy().equalsIgnoreCase(FhirItem.FHIR_ITEM_REPLACEMENT_STRATEGY_CRYPTO_REPLACE)) {
+                            // TODO: Encrypt the value.
                         }
                     }
 
@@ -141,56 +157,66 @@ public class DocumentProcessor {
 
                     // name.text
                     final Optional<FhirItem> humanNameFhirItem = fhirItems.stream()
-                            .filter(p -> p.getPath().equalsIgnoreCase("name.text"))
+                            .filter(p -> p.getPath().equalsIgnoreCase("patient.name.text"))
                             .findFirst();
 
                     if(humanNameFhirItem.isPresent()) {
-                        if(humanNameFhirItem.get().getReplacementStrategy().equalsIgnoreCase("DELETE")) {
+                        if(humanNameFhirItem.get().getReplacementStrategy().equalsIgnoreCase(FhirItem.FHIR_ITEM_REPLACEMENT_STRATEGY_DELETE)) {
                             humanName.setText("");
+                        } else if(humanNameFhirItem.get().getReplacementStrategy().equalsIgnoreCase(FhirItem.FHIR_ITEM_REPLACEMENT_STRATEGY_CRYPTO_REPLACE)) {
+                            // TODO: Encrypt the value.
                         }
                     }
 
                     // name.family
                     final Optional<FhirItem> humanNameFamilyFhirItem = fhirItems.stream()
-                            .filter(p -> p.getPath().equalsIgnoreCase("name.family"))
+                            .filter(p -> p.getPath().equalsIgnoreCase("patient.name.family"))
                             .findFirst();
 
                     if(humanNameFamilyFhirItem.isPresent()) {
-                        if(humanNameFamilyFhirItem.get().getReplacementStrategy().equalsIgnoreCase("DELETE")) {
+                        if(humanNameFamilyFhirItem.get().getReplacementStrategy().equalsIgnoreCase(FhirItem.FHIR_ITEM_REPLACEMENT_STRATEGY_DELETE)) {
                             humanName.setFamily("");
+                        } else if(humanNameFamilyFhirItem.get().getReplacementStrategy().equalsIgnoreCase(FhirItem.FHIR_ITEM_REPLACEMENT_STRATEGY_CRYPTO_REPLACE)) {
+                            // TODO: Encrypt the value.
                         }
                     }
 
                     // name.given
                     final Optional<FhirItem> humanNameGivenFhirItem = fhirItems.stream()
-                            .filter(p -> p.getPath().equalsIgnoreCase("name.given"))
+                            .filter(p -> p.getPath().equalsIgnoreCase("patient.name.given"))
                             .findFirst();
 
                     if(humanNameGivenFhirItem.isPresent()) {
-                        if(humanNameGivenFhirItem.get().getReplacementStrategy().equalsIgnoreCase("DELETE")) {
+                        if(humanNameGivenFhirItem.get().getReplacementStrategy().equalsIgnoreCase(FhirItem.FHIR_ITEM_REPLACEMENT_STRATEGY_DELETE)) {
                             humanName.setGiven(Collections.emptyList());
+                        } else if(humanNameGivenFhirItem.get().getReplacementStrategy().equalsIgnoreCase(FhirItem.FHIR_ITEM_REPLACEMENT_STRATEGY_CRYPTO_REPLACE)) {
+                            // TODO: Encrypt the value.
                         }
                     }
 
                     // name.prefix
                     final Optional<FhirItem> humanNamePrefixFhirItem = fhirItems.stream()
-                            .filter(p -> p.getPath().equalsIgnoreCase("name.prefix"))
+                            .filter(p -> p.getPath().equalsIgnoreCase("patient.name.prefix"))
                             .findFirst();
 
                     if(humanNamePrefixFhirItem.isPresent()) {
-                        if(humanNamePrefixFhirItem.get().getReplacementStrategy().equalsIgnoreCase("DELETE")) {
+                        if(humanNamePrefixFhirItem.get().getReplacementStrategy().equalsIgnoreCase(FhirItem.FHIR_ITEM_REPLACEMENT_STRATEGY_DELETE)) {
                             humanName.setPrefix(Collections.emptyList());
+                        } else if(humanNamePrefixFhirItem.get().getReplacementStrategy().equalsIgnoreCase(FhirItem.FHIR_ITEM_REPLACEMENT_STRATEGY_CRYPTO_REPLACE)) {
+                            // TODO: Encrypt the value.
                         }
                     }
 
                     // name.suffix
                     final Optional<FhirItem> humanNameSuffixFhirItem = fhirItems.stream()
-                            .filter(p -> p.getPath().equalsIgnoreCase("name.suffix"))
+                            .filter(p -> p.getPath().equalsIgnoreCase("patient.name.suffix"))
                             .findFirst();
 
                     if(humanNameSuffixFhirItem.isPresent()) {
-                        if(humanNameSuffixFhirItem.get().getReplacementStrategy().equalsIgnoreCase("DELETE")) {
+                        if(humanNameSuffixFhirItem.get().getReplacementStrategy().equalsIgnoreCase(FhirItem.FHIR_ITEM_REPLACEMENT_STRATEGY_DELETE)) {
                             humanName.setSuffix(Collections.emptyList());
+                        } else if(humanNameSuffixFhirItem.get().getReplacementStrategy().equalsIgnoreCase(FhirItem.FHIR_ITEM_REPLACEMENT_STRATEGY_CRYPTO_REPLACE)) {
+                            // TODO: Encrypt the value.
                         }
                     }
 

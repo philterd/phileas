@@ -5,7 +5,10 @@ import com.google.gson.annotations.SerializedName;
 
 public class FhirItem {
 
+    public static final String FHIR_ITEM_REPLACEMENT_STRATEGY_CRYPTO_REPLACE = "CRYPTO_REPLACE";
     public static final String FHIR_ITEM_REPLACEMENT_STRATEGY_DELETE = "DELETE";
+    public static final String FHIR_ITEM_REPLACEMENT_STRATEGY_SHIFT = "SHIFT";
+    public static final String FHIR_ITEM_REPLACEMENT_STRATEGY_TRUNCATE = "TRUNCATE";
 
     @SerializedName("path")
     @Expose
