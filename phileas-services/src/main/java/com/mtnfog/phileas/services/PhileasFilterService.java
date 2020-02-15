@@ -30,6 +30,7 @@ import com.mtnfog.phileas.services.filters.regex.*;
 import com.mtnfog.phileas.services.postfilters.IgnoredTermsFilter;
 import com.mtnfog.phileas.services.postfilters.TrailingPeriodPostFilter;
 import com.mtnfog.phileas.services.postfilters.TrailingSpacePostFilter;
+import com.mtnfog.phileas.services.processors.DocumentProcessor;
 import com.mtnfog.phileas.services.validators.DateSpanValidator;
 import com.mtnfog.phileas.store.ElasticsearchStore;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -65,6 +66,8 @@ public class PhileasFilterService implements FilterService, Serializable {
     private String philterNerEndpoint;
     private AnonymizationCacheService anonymizationCacheService;
     private String indexDirectory;
+
+    private DocumentProcessor documentProcessor;
 
     public PhileasFilterService(Properties applicationProperties, List<FilterProfileService> filterProfileServices, AnonymizationCacheService anonymizationCacheService, String philterNerEndpoint) throws IOException {
 
@@ -116,9 +119,9 @@ public class PhileasFilterService implements FilterService, Serializable {
         final String documentId = DigestUtils.md5Hex(UUID.randomUUID().toString() + "-" + context + "-" + filterProfileName + "-" + input);
 
         if(mimeType == MimeType.TEXT_PLAIN) {
-            return processTextPlain(filterProfile, context, documentId, input);
+            return documentProcessor.processTextPlain(filterProfile, context, documentId, input);
         } else if(mimeType == MimeType.APPLICATION_FHIRJSON) {
-            return processApplicationFhirJson(filterProfile, context, documentId, input);
+            return documentProcessor.processApplicationFhirJson(filterProfile, context, documentId, input);
         }
 
         // Should never happen but just in case.
@@ -363,127 +366,7 @@ public class PhileasFilterService implements FilterService, Serializable {
 
         }
 
-    }
-
-    private FilterResponse processApplicationFhirJson(FilterProfile filterProfile, String context, String documentId, String json) throws Exception {
-
-        final Configuration configuration = Configuration.builder()
-                .jsonProvider(new JacksonJsonNodeJsonProvider())
-                .mappingProvider(new JacksonMappingProvider())
-                .build();
-
-        // TODO: I'm getting FhirR4 here but that version is really unknown to the API.
-        // All we know is that it is an application/fhir+json document.
-        // Should the version be passed in as an API header or something?
-
-        final List<String> itemPaths = filterProfile.getStructured().getFhirR4().getItemPaths();
-        final DocumentContext documentContext = JsonPath.using(configuration).parse(json);
-
-        for(final String itemPath : itemPaths) {
-
-            documentContext.set(itemPath, "");
-
-        }
-
-        final JsonNode updatedJson = documentContext.json();
-
-        return new FilterResponse(updatedJson.toString(), context, documentId);
-
-    }
-
-    private FilterResponse processTextPlain(FilterProfile filterProfile, String context, String documentId, String input) throws Exception {
-
-        // The list that will contain the spans containing PHI/PII.
-        List<Span> spans = new LinkedList<>();
-
-        // Get the enabled filters for this filter profile.
-        final List<Filter> allFiltersFromProfile = filters.get(filterProfile.getName());
-
-        // Execute each filter.
-        for(final Filter filter : allFiltersFromProfile) {
-            spans.addAll(filter.filter(filterProfile, context, documentId, input));
-        }
-
-        // Drop overlapping spans.
-        spans = Span.dropOverlappingSpans(spans);
-
-        // Drop ignored spans.
-        spans = Span.dropIgnoredSpans(spans);
-
-        // Sort the spans based on the confidence.
-        spans.sort(Comparator.comparing(Span::getConfidence));
-
-        // Perform post-filtering on the spans.
-        for(final PostFilter postFilter : postFilters) {
-            spans = postFilter.filter(input, spans);
-        }
-
-        // The spans that will be persisted. Has to be a deep copy because the shift
-        // below will change the indexes. Doing this to save the original locations of the spans.
-        final List<Span> appliedSpans = spans.stream().map(d -> d.copy()).collect(toList());
-
-        // TODO: Set a flag on each "span" not in appliedSpans indicating it was not used.
-
-        // Log a metric for each filter type.
-        appliedSpans.forEach(k -> metricsService.incrementFilterType(k.getFilterType()));
-
-        // Define the explanation.
-        final Explanation explanation = new Explanation(appliedSpans, spans);
-
-        // Used to manipulate the text.
-        final StringBuffer buffer = new StringBuffer(input);
-
-        // Initialize this to the the input length but it may grow in length if redactions/replacements
-        // are longer than the original spans.
-        int stringLength = input.length();
-
-        // Go character by character through the input.
-        for(int i = 0; i < stringLength; i++) {
-
-            // Is index i the start of a span?
-            final Span span = Span.doesIndexStartSpan(i, spans);
-
-            if(span != null) {
-
-                // Get the replacement. This might be the token itself or an anonymized version.
-                final String replacement = span.getReplacement();
-
-                final int spanLength = span.getCharacterEnd() - span.getCharacterStart();
-                final int replacementLength = replacement.length();
-
-                if(spanLength != replacementLength) {
-
-                    // We need to adjust the characterStart and characterEnd for the remaining spans.
-                    // A negative value means shift left.
-                    // A positive value means shift right.
-                    final int shift = (spanLength - replacementLength) * -1;
-
-                    // Shift the remaining spans by the shift value.
-                    spans = Span.shiftSpans(shift, span, spans);
-
-                    // Update the length of the string.
-                    stringLength += shift;
-
-                }
-
-                // We can now do the replacement.
-                buffer.replace(span.getCharacterStart(), span.getCharacterEnd(), replacement);
-
-                // Jump ahead outside of this span.
-                i = span.getCharacterEnd();
-
-            }
-
-        }
-
-        metricsService.incrementProcessed();
-
-        // Store the applied spans in the database.
-        if(store != null) {
-            store.insert(appliedSpans);
-        }
-
-        return new FilterResponse(buffer.toString(), context, documentId, explanation);
+        documentProcessor = new DocumentProcessor(filters, postFilters, metricsService, store);
 
     }
 
