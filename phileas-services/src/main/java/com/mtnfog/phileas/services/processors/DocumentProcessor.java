@@ -1,24 +1,20 @@
 package com.mtnfog.phileas.services.processors;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.jayway.jsonpath.Configuration;
-import com.jayway.jsonpath.DocumentContext;
-import com.jayway.jsonpath.JsonPath;
-import com.jayway.jsonpath.spi.json.JacksonJsonNodeJsonProvider;
-import com.jayway.jsonpath.spi.mapper.JacksonMappingProvider;
+import ca.uhn.fhir.context.FhirContext;
+import ca.uhn.fhir.parser.IParser;
 import com.mtnfog.phileas.model.filter.Filter;
 import com.mtnfog.phileas.model.objects.Explanation;
 import com.mtnfog.phileas.model.objects.Span;
+import com.mtnfog.phileas.model.profile.fhir4.FhirItem;
+import com.mtnfog.phileas.model.profile.fhir4.FhirR4;
 import com.mtnfog.phileas.model.profile.FilterProfile;
 import com.mtnfog.phileas.model.responses.FilterResponse;
 import com.mtnfog.phileas.model.services.MetricsService;
 import com.mtnfog.phileas.model.services.PostFilter;
 import com.mtnfog.phileas.model.services.Store;
+import org.hl7.fhir.r4.model.*;
 
-import java.util.Comparator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static java.util.stream.Collectors.toList;
 
@@ -43,27 +39,170 @@ public class DocumentProcessor {
 
     public FilterResponse processApplicationFhirJson(FilterProfile filterProfile, String context, String documentId, String json) {
 
-        final Configuration configuration = Configuration.builder()
-                .jsonProvider(new JacksonJsonNodeJsonProvider())
-                .mappingProvider(new JacksonMappingProvider())
-                .build();
-
         // TODO: I'm getting FhirR4 here but that version is really unknown to the API.
         // All we know is that it is an application/fhir+json document.
         // Should the version be passed in as an API header or something?
 
-        final List<String> itemPaths = filterProfile.getStructured().getFhirR4().getItemPaths();
-        final DocumentContext documentContext = JsonPath.using(configuration).parse(json);
+        final FhirR4 fhirR4 = filterProfile.getStructured().getFhirR4();
+        final List<FhirItem> fhirItems = fhirR4.getFhirItems();
 
-        for(final String itemPath : itemPaths) {
+        final FhirContext ctx = FhirContext.forR4();
+        final IParser parser = ctx.newJsonParser();
+        final Bundle bundle = parser.parseResource(Bundle.class, json);
 
-            documentContext.set(itemPath, "");
+        // Make the changes in the document.
+
+        for(final Bundle.BundleEntryComponent bundleEntryComponent : bundle.getEntry()) {
+
+            if(bundleEntryComponent.getResource() instanceof Patient) {
+
+                final Patient patient = (Patient) bundleEntryComponent.getResource();
+
+                final Optional<FhirItem> birthDateFhirItem = fhirItems.stream()
+                        .filter(p -> p.getPath().equalsIgnoreCase("birthDate"))
+                        .findFirst();
+
+                if(birthDateFhirItem.isPresent()) {
+
+                    if(birthDateFhirItem.get().getReplacementStrategy().equalsIgnoreCase("DELETE")) {
+                        patient.setBirthDate(new Date());
+                    } else if(birthDateFhirItem.get().getReplacementStrategy().equalsIgnoreCase("SHIFT")) {
+                        // TODO: Shift the date.
+                    }
+
+                }
+
+                final Narrative narrative = patient.getText();
+                // text.div
+                //narrative.setDiv();
+
+                // Address
+                for(Address address : patient.getAddress()) {
+
+                    // address.text
+                    final Optional<FhirItem> addressFhirItem = fhirItems.stream()
+                            .filter(p -> p.getPath().equalsIgnoreCase("address.text"))
+                            .findFirst();
+
+                    if(addressFhirItem.isPresent()) {
+                        if(addressFhirItem.get().getReplacementStrategy().equalsIgnoreCase("DELETE")) {
+                            address.setText("");
+                        }
+                    }
+
+                    // address.line
+                    final Optional<FhirItem> addressLineFhirItem = fhirItems.stream()
+                            .filter(p -> p.getPath().equalsIgnoreCase("address.line"))
+                            .findFirst();
+
+                    if(addressLineFhirItem.isPresent()) {
+                        if(addressLineFhirItem.get().getReplacementStrategy().equalsIgnoreCase("DELETE")) {
+                            address.setLine(Collections.emptyList());
+                        }
+                    }
+
+                    // address.city
+                    final Optional<FhirItem> addressCityFhirItem = fhirItems.stream()
+                            .filter(p -> p.getPath().equalsIgnoreCase("address.city"))
+                            .findFirst();
+
+                    if(addressCityFhirItem.isPresent()) {
+                        if(addressCityFhirItem.get().getReplacementStrategy().equalsIgnoreCase("DELETE")) {
+                            address.setCity("");
+                        }
+                    }
+
+                    // address.district
+                    final Optional<FhirItem> addressDistrictFhirItem = fhirItems.stream()
+                            .filter(p -> p.getPath().equalsIgnoreCase("address.district"))
+                            .findFirst();
+
+                    if(addressDistrictFhirItem.isPresent()) {
+                        if(addressDistrictFhirItem.get().getReplacementStrategy().equalsIgnoreCase("DELETE")) {
+                            address.setDistrict("");
+                        }
+                    }
+
+                    // address.postalCode
+                    final Optional<FhirItem> addressPostalCodeFhirItem = fhirItems.stream()
+                            .filter(p -> p.getPath().equalsIgnoreCase("address.postalcode"))
+                            .findFirst();
+
+                    if(addressPostalCodeFhirItem.isPresent()) {
+                        if(addressPostalCodeFhirItem.get().getReplacementStrategy().equalsIgnoreCase("DELETE")) {
+                            address.setPostalCode("");
+                        }
+                    }
+
+                }
+
+                // Human Name
+                for(HumanName humanName : patient.getName()) {
+
+                    // name.text
+                    final Optional<FhirItem> humanNameFhirItem = fhirItems.stream()
+                            .filter(p -> p.getPath().equalsIgnoreCase("name.text"))
+                            .findFirst();
+
+                    if(humanNameFhirItem.isPresent()) {
+                        if(humanNameFhirItem.get().getReplacementStrategy().equalsIgnoreCase("DELETE")) {
+                            humanName.setText("");
+                        }
+                    }
+
+                    // name.family
+                    final Optional<FhirItem> humanNameFamilyFhirItem = fhirItems.stream()
+                            .filter(p -> p.getPath().equalsIgnoreCase("name.family"))
+                            .findFirst();
+
+                    if(humanNameFamilyFhirItem.isPresent()) {
+                        if(humanNameFamilyFhirItem.get().getReplacementStrategy().equalsIgnoreCase("DELETE")) {
+                            humanName.setFamily("");
+                        }
+                    }
+
+                    // name.given
+                    final Optional<FhirItem> humanNameGivenFhirItem = fhirItems.stream()
+                            .filter(p -> p.getPath().equalsIgnoreCase("name.given"))
+                            .findFirst();
+
+                    if(humanNameGivenFhirItem.isPresent()) {
+                        if(humanNameGivenFhirItem.get().getReplacementStrategy().equalsIgnoreCase("DELETE")) {
+                            humanName.setGiven(Collections.emptyList());
+                        }
+                    }
+
+                    // name.prefix
+                    final Optional<FhirItem> humanNamePrefixFhirItem = fhirItems.stream()
+                            .filter(p -> p.getPath().equalsIgnoreCase("name.prefix"))
+                            .findFirst();
+
+                    if(humanNamePrefixFhirItem.isPresent()) {
+                        if(humanNamePrefixFhirItem.get().getReplacementStrategy().equalsIgnoreCase("DELETE")) {
+                            humanName.setPrefix(Collections.emptyList());
+                        }
+                    }
+
+                    // name.suffix
+                    final Optional<FhirItem> humanNameSuffixFhirItem = fhirItems.stream()
+                            .filter(p -> p.getPath().equalsIgnoreCase("name.suffix"))
+                            .findFirst();
+
+                    if(humanNameSuffixFhirItem.isPresent()) {
+                        if(humanNameSuffixFhirItem.get().getReplacementStrategy().equalsIgnoreCase("DELETE")) {
+                            humanName.setSuffix(Collections.emptyList());
+                        }
+                    }
+
+                }
+
+            }
 
         }
 
-        final JsonNode updatedJson = documentContext.json();
+        final String serialized = parser.encodeResourceToString(bundle);
 
-        return new FilterResponse(updatedJson.toString(), context, documentId);
+        return new FilterResponse(serialized, context, documentId);
 
     }
 

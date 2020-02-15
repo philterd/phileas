@@ -2,6 +2,7 @@ package com.mtnfog.phileas.model.profile;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+import com.mtnfog.phileas.model.profile.fhir4.FhirR4;
 
 public class Structured {
 
