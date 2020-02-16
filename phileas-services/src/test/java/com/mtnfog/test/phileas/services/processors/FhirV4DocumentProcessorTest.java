@@ -38,12 +38,21 @@ public class FhirV4DocumentProcessorTest {
 
         filterProfile.setStructured(structured);
 
+        prettyPrintJson(filterProfile);
+
         final String json = IOUtils.toString(this.getClass().getResourceAsStream("/fhir4/bundle-example.json"), Charset.defaultCharset());
 
         final FilterResponse filterResponse = documentProcessor.process(filterProfile, "context", "documentId", json);
 
         prettyPrintJson(filterResponse.getFilteredText());
 
+    }
+
+    private void prettyPrintJson(Object object) {
+
+        final Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        System.out.println(gson.toJson(object));
+        
     }
 
     private void prettyPrintJson(String uglyJSONString) {

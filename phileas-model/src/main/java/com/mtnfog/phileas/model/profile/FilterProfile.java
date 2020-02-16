@@ -21,7 +21,7 @@ public class FilterProfile {
 
     @SerializedName("identifiers")
     @Expose
-    private Identifiers identifiers;
+    private Identifiers identifiers = new Identifiers();
 
     @SerializedName("ignored")
     @Expose
