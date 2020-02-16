@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
+import com.mtnfog.phileas.model.profile.Crypto;
 import com.mtnfog.phileas.model.profile.FilterProfile;
 import com.mtnfog.phileas.model.profile.Structured;
 import com.mtnfog.phileas.model.profile.fhir4.FhirItem;
@@ -29,6 +30,7 @@ public class FhirV4DocumentProcessorTest {
 
         // FilterProfile filterProfile, String context, String documentId, String json
         final FilterProfile filterProfile = new FilterProfile();
+        filterProfile.setCrypto(new Crypto("key", "iv"));
 
         final Structured structured = new Structured();
 

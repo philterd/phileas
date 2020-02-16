@@ -9,7 +9,7 @@ public class Crypto {
     @Expose
     private String key;
 
-    @SerializedName("ivv")
+    @SerializedName("iv")
     @Expose
     private String iv;
 
