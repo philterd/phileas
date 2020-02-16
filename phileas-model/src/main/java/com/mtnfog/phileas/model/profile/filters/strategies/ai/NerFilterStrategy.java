@@ -126,7 +126,7 @@ public class NerFilterStrategy extends AbstractFilterStrategy {
 
         } else if(StringUtils.equalsIgnoreCase(strategy, CRYPTO_REPLACE)) {
 
-            replacement = Encryption.encrypt(token, crypto);
+            replacement = "{{" + Encryption.encrypt(token, crypto) + "}}";
 
         } else {
 
