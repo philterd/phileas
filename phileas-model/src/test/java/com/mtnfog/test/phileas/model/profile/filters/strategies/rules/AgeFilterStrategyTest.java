@@ -122,7 +122,7 @@ public class AgeFilterStrategyTest {
 
         final String replacement = strategy.getReplacement("name", "context", "docId", "token", crypto, anonymizationService);
 
-        Assert.assertEquals("j6HcaY8m7hPACVVyQtj4PQ==", replacement);
+        Assert.assertEquals("{{j6HcaY8m7hPACVVyQtj4PQ==}}", replacement);
 
     }
 
