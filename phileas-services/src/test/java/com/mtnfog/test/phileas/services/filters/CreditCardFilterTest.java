@@ -35,6 +35,12 @@ public class CreditCardFilterTest extends AbstractFilterTest {
         spans  = filter.filter(getFilterProfile(), "context", "documentid", "the payment method is 4556662764258000");
         Assert.assertEquals(1, spans.size());
 
+        spans  = filter.filter(getFilterProfile(), "context", "documentid", "the payment method is 4556-6627-6425-8000");
+        Assert.assertEquals(1, spans.size());
+
+        spans  = filter.filter(getFilterProfile(), "context", "documentid", "the payment method is 4556 6627 6425 8000");
+        Assert.assertEquals(1, spans.size());
+
         // AMEX
 
         spans = filter.filter(getFilterProfile(), "context", "documentid", "the payment method is 376454057275914");
@@ -84,6 +90,12 @@ public class CreditCardFilterTest extends AbstractFilterTest {
         Assert.assertTrue(checkSpan(spans.get(0), 22, 38, FilterType.CREDIT_CARD));
 
         spans  = filter.filter(getFilterProfile(), "context", "documentid", "the payment method is 9876543219876543");
+        Assert.assertEquals(1, spans.size());
+
+        spans  = filter.filter(getFilterProfile(), "context", "documentid", "the payment method is 9876-5432-1987-6543");
+        Assert.assertEquals(1, spans.size());
+
+        spans  = filter.filter(getFilterProfile(), "context", "documentid", "the payment method is 4556 6627 6425 8000");
         Assert.assertEquals(1, spans.size());
 
         // AMEX

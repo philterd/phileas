@@ -17,11 +17,8 @@ import java.util.regex.Pattern;
 
 public class CreditCardFilter extends RegexFilter implements Serializable {
 
-    // First Data validates 15 digits for Amex and 16 for visa, mc, discover, diners,
-    // and jcb so I only send the card number to them if the number is 15 or 16 digits long using this:
-    // https://stackoverflow.com/questions/9315647/regex-credit-card-number-tests
-
-    private static final Pattern ID_REGEX = Pattern.compile("\\b([0-9]{15}(?:[0-9]{1})?)\\b");
+    // See http://regular-expressions.info/creditcard.html
+    private static final Pattern ID_REGEX = Pattern.compile("\\b(?:\\d[ -]*?){13,16}\\b");
 
     private boolean onlyValidCreditCardNumbers;
     private LuhnCheckDigit luhnCheckDigit;
