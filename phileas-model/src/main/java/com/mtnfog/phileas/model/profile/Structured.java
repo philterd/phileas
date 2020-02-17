@@ -6,7 +6,7 @@ import com.mtnfog.phileas.model.profile.fhir4.FhirR4;
 
 public class Structured {
 
-    @SerializedName("fhir_r4")
+    @SerializedName("fhir_v4")
     @Expose
     private FhirR4 fhirR4;
 

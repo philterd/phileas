@@ -2,6 +2,8 @@ package com.mtnfog.phileas.services.processors;
 
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.parser.IParser;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.mtnfog.phileas.model.profile.Crypto;
 import com.mtnfog.phileas.model.profile.FilterProfile;
 import com.mtnfog.phileas.model.profile.fhir4.FhirItem;
@@ -10,6 +12,8 @@ import com.mtnfog.phileas.model.responses.FilterResponse;
 import com.mtnfog.phileas.model.services.DocumentProcessor;
 import com.mtnfog.phileas.model.services.MetricsService;
 import com.mtnfog.phileas.model.utils.Encryption;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hl7.fhir.r4.model.*;
 
 import java.util.Collections;
@@ -21,6 +25,8 @@ import java.util.Optional;
  * Processes and filters FHIR v4 documents.
  */
 public class FhirV4DocumentProcessor implements DocumentProcessor {
+
+    private static final Logger LOGGER = LogManager.getLogger(FhirV4DocumentProcessor.class);
 
     private MetricsService metricsService;
 
@@ -36,6 +42,8 @@ public class FhirV4DocumentProcessor implements DocumentProcessor {
         // All we know is that it is an application/fhir+json document.
         // Should the version be passed in as an API header or something?
 
+        LOGGER.debug("Doing FHIRv4 processing with filter profile [{}]", filterProfile.getName());
+        
         final FhirR4 fhirR4 = filterProfile.getStructured().getFhirR4();
         final List<FhirItem> fhirItems = fhirR4.getFhirItems();
 
@@ -68,6 +76,7 @@ public class FhirV4DocumentProcessor implements DocumentProcessor {
 
                 }
 
+                // TODO: What to do with the narrative?
                 final Narrative narrative = patient.getText();
                 // text.div
                 //narrative.setDiv();
