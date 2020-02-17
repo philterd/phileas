@@ -329,6 +329,7 @@ public class PhileasFilterService implements FilterService, Serializable {
                 }
             }
 
+            // Put the enabled filters in a map with the filter profile name.
             filters.put(filterProfile.getName(), enabledFilters);
 
             // Post filters.
