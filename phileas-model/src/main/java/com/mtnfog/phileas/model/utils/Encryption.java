@@ -1,7 +1,9 @@
 package com.mtnfog.phileas.model.utils;
 
 import com.mtnfog.phileas.model.profile.Crypto;
+import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.codec.binary.Hex;
 import org.hl7.fhir.r4.model.StringType;
 
 import javax.crypto.Cipher;
@@ -66,10 +68,10 @@ public class Encryption {
 
     }
 
-    private static Cipher getCipher(final Crypto crypto) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidAlgorithmParameterException, InvalidKeyException {
+    private static Cipher getCipher(final Crypto crypto) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidAlgorithmParameterException, InvalidKeyException, DecoderException {
 
-        final byte[] secretKey = javax.xml.bind.DatatypeConverter.parseHexBinary(crypto.getKey());
-        final byte[] initVector = javax.xml.bind.DatatypeConverter.parseHexBinary(crypto.getIv());
+        final byte[] secretKey = Hex.decodeHex(crypto.getKey());
+        final byte[] initVector = Hex.decodeHex(crypto.getIv());
         final Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
         cipher.init(Cipher.ENCRYPT_MODE, new SecretKeySpec(secretKey, "AES"), new IvParameterSpec(initVector, 0, cipher.getBlockSize()));
 
