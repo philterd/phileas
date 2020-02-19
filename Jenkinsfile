@@ -42,7 +42,7 @@ pipeline {
             steps {
                 sh "mvn -version"
                 sh "./get-data.sh"
-                sh "mvn -U clean license:aggregate-add-third-party license:aggregate-download-licenses install deploy -Pit -Dmaven.javadoc.skip=true"
+                sh "mvn -U clean license:aggregate-add-third-party license:aggregate-download-licenses install deploy -Pit"
                 sh 'mvn sonar:sonar -Dsonar.host.url=https://build.mtnfog.com/sonarqube -Dsonar.login=a8938795a48d1da708a9a139030077c98308390e'
             }
             post {
