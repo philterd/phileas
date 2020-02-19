@@ -43,7 +43,7 @@ public class FhirV4DocumentProcessor implements DocumentProcessor {
         // Should the version be passed in as an API header or something?
 
         LOGGER.debug("Doing FHIRv4 processing with filter profile [{}]", filterProfile.getName());
-        
+
         final FhirR4 fhirR4 = filterProfile.getStructured().getFhirR4();
         final List<FhirItem> fhirItems = fhirR4.getFhirItems();
 

@@ -35,7 +35,7 @@ public class FhirV4DocumentProcessorTest {
         final Structured structured = new Structured();
 
         final FhirR4 fhirR4 = new FhirR4();
-        fhirR4.setFhirItems(Arrays.asList(new FhirItem("address.city", "DELETE")));
+        fhirR4.setFhirItems(Arrays.asList(new FhirItem("patient.address.city", "DELETE")));
         structured.setFhirR4(fhirR4);
 
         filterProfile.setStructured(structured);
