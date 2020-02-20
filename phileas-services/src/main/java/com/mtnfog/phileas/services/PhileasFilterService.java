@@ -98,7 +98,7 @@ public class PhileasFilterService implements FilterService, Serializable {
     }
 
     @Override
-    public FilterResponse filter(String filterProfileName, String context, String input, MimeType mimeType) throws Exception {
+    public FilterResponse filter(String filterProfileName, String context, String documentId, String input, MimeType mimeType) throws Exception {
 
         if(!filterProfiles.containsKey(filterProfileName)) {
             throw new InvalidFilterProfileException("The filter profile does not exist.");
@@ -107,8 +107,13 @@ public class PhileasFilterService implements FilterService, Serializable {
         // Get the filter profile.
         final FilterProfile filterProfile = filterProfiles.get(filterProfileName);
 
-        // PHL-58: Use a hash function to generate the document ID.
-        final String documentId = DigestUtils.md5Hex(UUID.randomUUID().toString() + "-" + context + "-" + filterProfileName + "-" + input);
+        // See if we need to generate a document ID.
+        if(StringUtils.isEmpty(documentId)) {
+
+            // PHL-58: Use a hash function to generate the document ID.
+            documentId = DigestUtils.md5Hex(UUID.randomUUID().toString() + "-" + context + "-" + filterProfileName + "-" + input);
+
+        }
 
         if(mimeType == MimeType.TEXT_PLAIN) {
             return unstructuredDocumentProcessor.process(filterProfile, context, documentId, input);

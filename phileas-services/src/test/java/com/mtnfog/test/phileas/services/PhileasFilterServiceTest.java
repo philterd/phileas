@@ -71,12 +71,13 @@ public class PhileasFilterServiceTest {
         List<FilterProfileService> filterProfileServices = Arrays.asList(filterProfileService);
 
         PhileasFilterService service = new PhileasFilterService(applicationProperties, filterProfileServices, anonymizationCacheService, "http://localhost:18080/");
-        final FilterResponse response = service.filter("default", "context", "George Washington was president and his ssn was 123-45-6789 and he lived at 90210.", MimeType.TEXT_PLAIN);
+        final FilterResponse response = service.filter("default", "context", "documentId", "George Washington was president and his ssn was 123-45-6789 and he lived at 90210.", MimeType.TEXT_PLAIN);
 
         LOGGER.info(response.getFilteredText());
 
         Assert.assertEquals("George Washington was president and his ssn was {{{REDACTED-ssn}}} and he lived at {{{REDACTED-zip-code}}}.", response.getFilteredText());
-
+        Assert.assertEquals("documentId", response.getDocumentId());
+        
     }
 
     @Test
@@ -97,11 +98,12 @@ public class PhileasFilterServiceTest {
         List<FilterProfileService> filterProfileServices = Arrays.asList(filterProfileService);
 
         PhileasFilterService service = new PhileasFilterService(applicationProperties, filterProfileServices, anonymizationCacheService, "http://localhost:18080/");
-        final FilterResponse response = service.filter("default", "context", "My email is test@something.com and cc is 4121742025464465", MimeType.TEXT_PLAIN);
+        final FilterResponse response = service.filter("default", "context", "documentId", "My email is test@something.com and cc is 4121742025464465", MimeType.TEXT_PLAIN);
 
         LOGGER.info(response.getFilteredText());
 
         Assert.assertEquals("My email is {{{REDACTED-email-address}}} and cc is {{{REDACTED-credit-card}}}", response.getFilteredText());
+        Assert.assertEquals("documentId", response.getDocumentId());
 
     }
 
@@ -123,11 +125,12 @@ public class PhileasFilterServiceTest {
         List<FilterProfileService> filterProfileServices = Arrays.asList(filterProfileService);
 
         PhileasFilterService service = new PhileasFilterService(applicationProperties, filterProfileServices, anonymizationCacheService, "http://localhost:18080/");
-        final FilterResponse response = service.filter("default", "context", "test@something.com is email and cc is 4121742025464465", MimeType.TEXT_PLAIN);
+        final FilterResponse response = service.filter("default", "context", "documentId", "test@something.com is email and cc is 4121742025464465", MimeType.TEXT_PLAIN);
 
         LOGGER.info(response.getFilteredText());
 
         Assert.assertEquals("{{{REDACTED-email-address}}} is email and cc is {{{REDACTED-credit-card}}}", response.getFilteredText());
+        Assert.assertEquals("documentId", response.getDocumentId());
 
     }
 
@@ -149,11 +152,12 @@ public class PhileasFilterServiceTest {
         List<FilterProfileService> filterProfileServices = Arrays.asList(filterProfileService);
 
         PhileasFilterService service = new PhileasFilterService(applicationProperties, filterProfileServices, anonymizationCacheService, "http://localhost:18080/");
-        final FilterResponse response = service.filter("default", "context", "test@something.com", MimeType.TEXT_PLAIN);
+        final FilterResponse response = service.filter("default", "context", "documentId", "test@something.com", MimeType.TEXT_PLAIN);
 
         LOGGER.info(response.getFilteredText());
 
         Assert.assertEquals("{{{REDACTED-email-address}}}", response.getFilteredText());
+        Assert.assertEquals("documentId", response.getDocumentId());
 
     }
 
@@ -175,11 +179,12 @@ public class PhileasFilterServiceTest {
         List<FilterProfileService> filterProfileServices = Arrays.asList(filterProfileService);
 
         PhileasFilterService service = new PhileasFilterService(applicationProperties, filterProfileServices, anonymizationCacheService, "http://localhost:18080/");
-        final FilterResponse response = service.filter("default", "context", "90210", MimeType.TEXT_PLAIN);
+        final FilterResponse response = service.filter("default", "context", "documentId", "90210", MimeType.TEXT_PLAIN);
 
         LOGGER.info(response.getFilteredText());
 
         Assert.assertEquals("{{{REDACTED-zip-code}}}", response.getFilteredText());
+        Assert.assertEquals("documentId", response.getDocumentId());
 
     }
 
@@ -201,11 +206,40 @@ public class PhileasFilterServiceTest {
         List<FilterProfileService> filterProfileServices = Arrays.asList(filterProfileService);
 
         PhileasFilterService service = new PhileasFilterService(applicationProperties, filterProfileServices, anonymizationCacheService, "http://localhost:18080/");
-        final FilterResponse response = service.filter("default", "context", "his name was JEFF.", MimeType.TEXT_PLAIN);
+        final FilterResponse response = service.filter("default", "context", "documentId", "his name was JEFF.", MimeType.TEXT_PLAIN);
 
         LOGGER.info(response.getFilteredText());
 
         Assert.assertEquals("his name was STATIC-REPLACEMENT.", response.getFilteredText());
+        Assert.assertEquals("documentId", response.getDocumentId());
+
+    }
+
+    @Test
+    public void endToEndWithoutDocumentId() throws Exception {
+
+        final Path temp = Files.createTempDirectory("philter");
+        final File file = Paths.get(temp.toFile().getAbsolutePath(), "profile.json").toFile();
+        LOGGER.info("Writing profile to {}", file.getAbsolutePath());
+        FileUtils.writeStringToFile(file, gson.toJson(getFilterProfile("default")), Charset.defaultCharset());
+
+        Properties applicationProperties = new Properties();
+        applicationProperties.setProperty("indexes.directory", INDEXES_DIRECTORY);
+        applicationProperties.setProperty("store.enabled", "false");
+        applicationProperties.setProperty("filter.profiles.directory", temp.toFile().getAbsolutePath());
+
+        AnonymizationCacheService anonymizationCacheService = new LocalAnonymizationCacheService();
+        LocalFilterProfileService filterProfileService = new LocalFilterProfileService(applicationProperties);
+        List<FilterProfileService> filterProfileServices = Arrays.asList(filterProfileService);
+
+        PhileasFilterService service = new PhileasFilterService(applicationProperties, filterProfileServices, anonymizationCacheService, "http://localhost:18080/");
+        final FilterResponse response = service.filter("default", "context", null, "his name was JEFF.", MimeType.TEXT_PLAIN);
+
+        LOGGER.info("Generated document ID: " + response.getDocumentId());
+        LOGGER.info(response.getFilteredText());
+
+        Assert.assertEquals("his name was STATIC-REPLACEMENT.", response.getFilteredText());
+        Assert.assertNotNull(response.getDocumentId());
 
     }
 
@@ -232,7 +266,7 @@ public class PhileasFilterServiceTest {
         List<FilterProfileService> filterProfileServices = Arrays.asList(filterProfileService);
 
         PhileasFilterService service = new PhileasFilterService(applicationProperties, filterProfileServices, anonymizationCacheService, "http://localhost:18080/");
-        final FilterResponse response = service.filter("justcreditcard", "context", "My email is test@something.com", MimeType.TEXT_PLAIN);
+        final FilterResponse response = service.filter("justcreditcard", "context", "documentId", "My email is test@something.com", MimeType.TEXT_PLAIN);
 
         LOGGER.info(response.getFilteredText());
 
@@ -259,7 +293,7 @@ public class PhileasFilterServiceTest {
         List<FilterProfileService> filterProfileServices = Arrays.asList(filterProfileService);
 
         PhileasFilterService service = new PhileasFilterService(applicationProperties, filterProfileServices, anonymizationCacheService, "http://localhost:18080/");
-        final FilterResponse response = service.filter("justcreditcard", "context", "My cc is 4121742025464465", MimeType.TEXT_PLAIN);
+        final FilterResponse response = service.filter("justcreditcard", "context", "documentId", "My cc is 4121742025464465", MimeType.TEXT_PLAIN);
 
         LOGGER.info(response.getFilteredText());
 
@@ -286,7 +320,7 @@ public class PhileasFilterServiceTest {
         List<FilterProfileService> filterProfileServices = Arrays.asList(filterProfileService);
 
         PhileasFilterService service = new PhileasFilterService(applicationProperties, filterProfileServices, anonymizationCacheService, "http://localhost:18080/");
-        final FilterResponse response = service.filter("justcreditcard", "context", "My cc is 4121742025464400", MimeType.TEXT_PLAIN);
+        final FilterResponse response = service.filter("justcreditcard", "context", "documentId", "My cc is 4121742025464400", MimeType.TEXT_PLAIN);
 
         LOGGER.info(response.getFilteredText());
 
@@ -312,7 +346,7 @@ public class PhileasFilterServiceTest {
         List<FilterProfileService> filterProfileServices = Arrays.asList(filterProfileService);
 
         PhileasFilterService service = new PhileasFilterService(applicationProperties, filterProfileServices, anonymizationCacheService, "http://localhost:18080/");
-        final FilterResponse response = service.filter("default", "context", "George Washington was president and his ssn was 123-45-6789 and he lived at 90210.", MimeType.TEXT_PLAIN);
+        final FilterResponse response = service.filter("default", "context", "documentId", "George Washington was president and his ssn was 123-45-6789 and he lived at 90210.", MimeType.TEXT_PLAIN);
 
         LOGGER.info(response.getFilteredText());
 
@@ -339,7 +373,7 @@ public class PhileasFilterServiceTest {
         List<FilterProfileService> filterProfileServices = Arrays.asList(filterProfileService);
 
         PhileasFilterService service = new PhileasFilterService(applicationProperties, filterProfileServices, anonymizationCacheService, "http://localhost:18080/");
-        final FilterResponse response = service.filter("custom1", "context", "My email is test@something.com", MimeType.TEXT_PLAIN);
+        final FilterResponse response = service.filter("custom1", "context", "documentId", "My email is test@something.com", MimeType.TEXT_PLAIN);
 
         LOGGER.info(response.getFilteredText());
 
