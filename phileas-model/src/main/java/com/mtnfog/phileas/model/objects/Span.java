@@ -254,6 +254,19 @@ public final class Span implements Serializable {
     }
 
     /**
+     * Use the context window of each span to try to verify the filter type is correct.
+     * @param spans A list of spans.
+     * @return A list of disambiguated spans.
+     */
+    public static List<Span> disambiguate(List<Span> spans) {
+
+        // TODO: PHL-83: Look at each span's window to see if it fits the filter type.
+
+        return spans;
+
+    }
+
+    /**
      * Drop overlapping spans that are shorter.
      * @param spans A list of {@link Span spans} that may or may not contain overlapping spans.
      * @return A list of {@link Span spans} without overlapping spans.

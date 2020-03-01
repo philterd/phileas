@@ -56,6 +56,9 @@ public class UnstructuredDocumentProcessor implements DocumentProcessor {
         // Drop overlapping spans.
         spans = Span.dropOverlappingSpans(spans);
 
+        // Disambiguate the spans.
+        spans = Span.disambiguate(spans);
+
         // Sort the spans based on the confidence.
         spans.sort(Comparator.comparing(Span::getConfidence));
 
