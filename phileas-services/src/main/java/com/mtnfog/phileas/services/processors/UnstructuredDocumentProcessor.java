@@ -50,11 +50,11 @@ public class UnstructuredDocumentProcessor implements DocumentProcessor {
             spans.addAll(filter.filter(filterProfile, context, documentId, input));
         }
 
-        // Drop overlapping spans.
-        spans = Span.dropOverlappingSpans(spans);
-
         // Drop ignored spans.
         spans = Span.dropIgnoredSpans(spans);
+
+        // Drop overlapping spans.
+        spans = Span.dropOverlappingSpans(spans);
 
         // Sort the spans based on the confidence.
         spans.sort(Comparator.comparing(Span::getConfidence));
