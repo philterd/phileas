@@ -52,4 +52,29 @@ public class StateAbbreviationFilterTest extends AbstractFilterTest {
 
     }
 
+    @Test
+    public void filter3() throws Exception {
+
+        final List<StateAbbreviationFilterStrategy> strategies = Arrays.asList(new StateAbbreviationFilterStrategy());
+        final StateAbbreviationFilter filter = new StateAbbreviationFilter(strategies, new StateAbbreviationAnonymizationService(new LocalAnonymizationCacheService()), Collections.emptySet(), new Crypto());
+
+        final String input = "Patients from WV and MD.";
+        final List<Span> spans = filter.filter(getFilterProfile(), "context", "docid", input);
+
+        showSpans(spans);
+
+        Assert.assertEquals(2, spans.size());
+
+        Assert.assertEquals(21, spans.get(0).getCharacterStart());
+        Assert.assertEquals(23, spans.get(0).getCharacterEnd());
+        Assert.assertEquals(FilterType.STATE_ABBREVIATION, spans.get(0).getFilterType());
+        Assert.assertEquals("MD", spans.get(0).getText());
+
+        Assert.assertEquals(14, spans.get(1).getCharacterStart());
+        Assert.assertEquals(16, spans.get(1).getCharacterEnd());
+        Assert.assertEquals(FilterType.STATE_ABBREVIATION, spans.get(1).getFilterType());
+        Assert.assertEquals("WV", spans.get(1).getText());
+
+    }
+
 }
