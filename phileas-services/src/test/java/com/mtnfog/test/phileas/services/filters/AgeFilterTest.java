@@ -31,7 +31,7 @@ public class AgeFilterTest extends AbstractFilterTest {
         Assert.assertEquals(1, spans.size());
         Assert.assertTrue(checkSpan(spans.get(0), 41, 54, FilterType.AGE));
         Assert.assertEquals("{{{REDACTED-age}}}", spans.get(0).getReplacement());
-        Assert.assertEquals("Window spans do not equal.", window, spans.get(0).getWindow());
+        Assert.assertArrayEquals("Window spans do not equal.", window, spans.get(0).getWindow());
 
     }
 
