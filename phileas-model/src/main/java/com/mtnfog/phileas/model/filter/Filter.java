@@ -62,7 +62,10 @@ public abstract class Filter implements Serializable {
      * Creates a new filter with anonymization.
      *
      * @param filterType The {@link FilterType type} of the filter.
+     * @param strategies A list of filter strategies for this filter.
      * @param anonymizationService The {@link AnonymizationService} for this filter.
+     * @param ignored A set of strings to ignore when found.
+     * @param crypto A {@link Crypto} for token encryption.
      */
     public Filter(FilterType filterType, List<? extends AbstractFilterStrategy> strategies, AnonymizationService anonymizationService, Set<String> ignored, Crypto crypto) {
         this.filterType = filterType;

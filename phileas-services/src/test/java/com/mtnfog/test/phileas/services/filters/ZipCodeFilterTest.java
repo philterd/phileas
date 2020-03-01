@@ -14,7 +14,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public class ZipCodeFilterTest extends FilterTest {
+public class ZipCodeFilterTest extends AbstractFilterTest {
 
     @Test
     public void filterZipCode1() throws Exception {
@@ -25,6 +25,7 @@ public class ZipCodeFilterTest extends FilterTest {
         List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "the zip is 90210.");
         Assert.assertEquals(1, spans.size());
         Assert.assertTrue(checkSpan(spans.get(0), 11, 16, FilterType.ZIP_CODE));
+        Assert.assertEquals("90210", spans.get(0).getText());
 
     }
 

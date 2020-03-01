@@ -19,7 +19,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public class CountyFilterTest extends FilterTest {
+public class CountyFilterTest extends AbstractFilterTest {
 
     private static final Logger LOGGER = LogManager.getLogger(CountyFilterTest.class);
 
@@ -60,6 +60,7 @@ public class CountyFilterTest extends FilterTest {
         showSpans(spans);
 
         Assert.assertEquals(1, spans.size());
+        Assert.assertEquals("fyette", spans.get(0).getText());
 
     }
 

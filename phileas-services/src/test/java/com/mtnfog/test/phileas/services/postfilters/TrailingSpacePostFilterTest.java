@@ -3,14 +3,14 @@ package com.mtnfog.test.phileas.services.postfilters;
 import com.mtnfog.phileas.model.enums.FilterType;
 import com.mtnfog.phileas.model.objects.Span;
 import com.mtnfog.phileas.services.postfilters.TrailingSpacePostFilter;
-import com.mtnfog.test.phileas.services.filters.FilterTest;
+import com.mtnfog.test.phileas.services.filters.AbstractFilterTest;
 import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.LinkedList;
 import java.util.List;
 
-public class TrailingSpacePostFilterTest extends FilterTest {
+public class TrailingSpacePostFilterTest extends AbstractFilterTest {
 
     @Test
     public void test1() {

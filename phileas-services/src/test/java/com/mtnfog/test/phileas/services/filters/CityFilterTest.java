@@ -19,7 +19,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public class CityFilterTest extends FilterTest {
+public class CityFilterTest extends AbstractFilterTest {
 
     private static final Logger LOGGER = LogManager.getLogger(CityFilterTest.class);
 
@@ -70,6 +70,7 @@ public class CityFilterTest extends FilterTest {
         Assert.assertEquals(2, spans.size());
         Assert.assertTrue(checkSpan(spans.get(0), 9, 17, FilterType.LOCATION_CITY));
         Assert.assertTrue(checkSpan(spans.get(1), 13, 17, FilterType.LOCATION_CITY));
+        Assert.assertEquals("new york", spans.get(0).getText());
 
     }
 

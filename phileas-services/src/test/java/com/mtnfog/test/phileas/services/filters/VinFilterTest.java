@@ -15,7 +15,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public class VinFilterTest extends FilterTest {
+public class VinFilterTest extends AbstractFilterTest {
 
     private final AnonymizationService anonymizationService = new VinAnonymizationService(new LocalAnonymizationCacheService());
 
@@ -28,6 +28,7 @@ public class VinFilterTest extends FilterTest {
         List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "the vin is JB3BA36KXHU036784.");
         Assert.assertEquals(1, spans.size());
         Assert.assertTrue(checkSpan(spans.get(0), 11, 28, FilterType.VIN));
+        Assert.assertEquals("JB3BA36KXHU036784", spans.get(0).getText());
 
     }
 

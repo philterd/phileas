@@ -14,7 +14,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public class IpAddressFilterTest extends FilterTest {
+public class IpAddressFilterTest extends AbstractFilterTest {
 
     @Test
     public void filterIpv41() throws Exception {
@@ -25,6 +25,7 @@ public class IpAddressFilterTest extends FilterTest {
 
         Assert.assertEquals(1, spans.size());
         Assert.assertTrue(checkSpan(spans.get(0), 10, 23, FilterType.IP_ADDRESS));
+        Assert.assertEquals("192.168.1.101", spans.get(0).getText());
 
     }
 

@@ -14,7 +14,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public class CreditCardFilterTest extends FilterTest {
+public class CreditCardFilterTest extends AbstractFilterTest {
 
     @Test
     public void filterCreditCardOnlyValid() throws Exception {
@@ -27,6 +27,7 @@ public class CreditCardFilterTest extends FilterTest {
         List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "the payment method is 4532613702852251 visa.");
         Assert.assertEquals(1, spans.size());
         Assert.assertTrue(checkSpan(spans.get(0), 22, 38, FilterType.CREDIT_CARD));
+        Assert.assertEquals("4532613702852251", spans.get(0).getText());
 
         spans  = filter.filter(getFilterProfile(), "context", "documentid", "the payment method is 4556662764258031");
         Assert.assertEquals(1, spans.size());

@@ -19,7 +19,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public class FirstNameFilterTest extends FilterTest {
+public class FirstNameFilterTest extends AbstractFilterTest {
 
     private static final Logger LOGGER = LogManager.getLogger(FirstNameFilterTest.class);
 

@@ -15,7 +15,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public class CustomDictionaryFilterTest extends FilterTest {
+public class CustomDictionaryFilterTest extends AbstractFilterTest {
 
     private static final Logger LOGGER = LogManager.getLogger(CustomDictionaryFilterTest.class);
 
@@ -32,6 +32,7 @@ public class CustomDictionaryFilterTest extends FilterTest {
 
         Assert.assertEquals(1, spans.size());
         Assert.assertTrue(checkSpan(spans.get(0), 14, 18, FilterType.CUSTOM_DICTIONARY));
+        Assert.assertEquals("bill", spans.get(0).getText());
 
     }
 

@@ -16,7 +16,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public class IdentifierFilterTest extends FilterTest {
+public class IdentifierFilterTest extends AbstractFilterTest {
 
     private final AnonymizationService anonymizationService = new AlphanumericAnonymizationService(new LocalAnonymizationCacheService());
 
@@ -30,6 +30,7 @@ public class IdentifierFilterTest extends FilterTest {
 
         Assert.assertEquals(1, spans.size());
         Assert.assertTrue(checkSpan(spans.get(0), 10,19, FilterType.IDENTIFIER));
+        Assert.assertEquals("AB4736021", spans.get(0).getText());
 
     }
 

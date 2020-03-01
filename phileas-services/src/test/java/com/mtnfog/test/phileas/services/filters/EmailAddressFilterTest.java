@@ -14,7 +14,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public class EmailAddressFilterTest extends FilterTest {
+public class EmailAddressFilterTest extends AbstractFilterTest {
 
     @Test
     public void filterEmail() throws Exception {
@@ -25,6 +25,7 @@ public class EmailAddressFilterTest extends FilterTest {
         List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid","my email is none@none.com.");
         Assert.assertEquals(1, spans.size());
         Assert.assertTrue(checkSpan(spans.get(0), 12, 25, FilterType.EMAIL_ADDRESS));
+        Assert.assertEquals("none@none.com", spans.get(0).getText());
 
     }
 

@@ -14,7 +14,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public class PhoneNumberExtensionFilterTest extends FilterTest {
+public class PhoneNumberExtensionFilterTest extends AbstractFilterTest {
 
     @Test
     public void filter1() throws Exception {
@@ -30,6 +30,7 @@ public class PhoneNumberExtensionFilterTest extends FilterTest {
 
         Assert.assertEquals(1, spans.size());
         Assert.assertTrue(checkSpan(spans.get(0), 9, 13, FilterType.PHONE_NUMBER_EXTENSION));
+        Assert.assertEquals("x123", spans.get(0).getText());
 
     }
 

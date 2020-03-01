@@ -14,7 +14,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public class UrlFilterTest extends FilterTest {
+public class UrlFilterTest extends AbstractFilterTest {
 
     @Test
     public void filterUrl1() throws Exception {
@@ -26,6 +26,7 @@ public class UrlFilterTest extends FilterTest {
         showSpans(spans);
         Assert.assertEquals(1, spans.size());
         Assert.assertTrue(checkSpan(spans.get(0), 12, 27, FilterType.URL));
+        Assert.assertEquals("http://page.com", spans.get(0).getText());
 
     }
 

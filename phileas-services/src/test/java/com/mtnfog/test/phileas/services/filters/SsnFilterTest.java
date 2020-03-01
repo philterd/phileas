@@ -14,7 +14,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public class SsnFilterTest extends FilterTest {
+public class SsnFilterTest extends AbstractFilterTest {
 
     @Test
     public void filterSsn1() throws Exception {
@@ -25,6 +25,7 @@ public class SsnFilterTest extends FilterTest {
         List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "the ssn is 123-45-6789.");
         Assert.assertEquals(1, spans.size());
         Assert.assertTrue(checkSpan(spans.get(0), 11, 22, FilterType.SSN));
+        Assert.assertEquals("123-45-6789", spans.get(0).getText());
 
     }
 

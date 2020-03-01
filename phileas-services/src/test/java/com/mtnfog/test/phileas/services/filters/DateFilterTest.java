@@ -15,7 +15,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public class DateFilterTest extends FilterTest {
+public class DateFilterTest extends AbstractFilterTest {
 
     @Test
     public void filterDate1() throws Exception {
@@ -27,6 +27,7 @@ public class DateFilterTest extends FilterTest {
         showSpans(spans);
         Assert.assertEquals(1, spans.size());
         Assert.assertTrue(checkSpan(spans.get(0), 0, 12, FilterType.DATE));
+        Assert.assertEquals("May 22, 1999", spans.get(0).getText());
 
     }
 

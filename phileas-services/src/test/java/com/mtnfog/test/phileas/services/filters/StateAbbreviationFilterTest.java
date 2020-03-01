@@ -16,7 +16,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public class StateAbbreviationFilterTest extends FilterTest {
+public class StateAbbreviationFilterTest extends AbstractFilterTest {
 
     private static final Logger LOGGER = LogManager.getLogger(StateAbbreviationFilterTest.class);
 
@@ -33,6 +33,7 @@ public class StateAbbreviationFilterTest extends FilterTest {
         Assert.assertEquals(20, spans.get(0).getCharacterStart());
         Assert.assertEquals(22, spans.get(0).getCharacterEnd());
         Assert.assertEquals(FilterType.STATE_ABBREVIATION, spans.get(0).getFilterType());
+        Assert.assertEquals("WV", spans.get(0).getText());
 
     }
 

@@ -16,7 +16,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public class PhoneNumberFilterTest extends FilterTest {
+public class PhoneNumberFilterTest extends AbstractFilterTest {
 
     private static final Logger LOGGER = LogManager.getLogger(PhoneNumberFilterTest.class);
 
@@ -29,6 +29,7 @@ public class PhoneNumberFilterTest extends FilterTest {
         List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "the number is (123) 456-7890.");
         Assert.assertEquals(1, spans.size());
         Assert.assertTrue(checkSpan(spans.get(0), 14, 28, FilterType.PHONE_NUMBER));
+        Assert.assertEquals("(123) 456-7890", spans.get(0).getText());
 
     }
 

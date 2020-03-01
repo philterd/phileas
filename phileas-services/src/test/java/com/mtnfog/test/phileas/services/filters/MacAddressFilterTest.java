@@ -15,7 +15,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public class MacAddressFilterTest extends FilterTest {
+public class MacAddressFilterTest extends AbstractFilterTest {
 
     @Test
     public void filter1() throws Exception {
@@ -26,6 +26,7 @@ public class MacAddressFilterTest extends FilterTest {
 
         Assert.assertEquals(1, spans.size());
         Assert.assertTrue(checkSpan(spans.get(0), 11, 28, FilterType.MAC_ADDRESS));
+        Assert.assertEquals("00-14-22-04-25-37", spans.get(0).getText());
 
     }
 

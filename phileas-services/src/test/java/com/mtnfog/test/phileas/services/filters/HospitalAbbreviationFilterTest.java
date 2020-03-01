@@ -25,7 +25,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public class HospitalAbbreviationFilterTest extends FilterTest {
+public class HospitalAbbreviationFilterTest extends AbstractFilterTest {
 
     private static final Logger LOGGER = LogManager.getLogger(HospitalAbbreviationFilterTest.class);
 

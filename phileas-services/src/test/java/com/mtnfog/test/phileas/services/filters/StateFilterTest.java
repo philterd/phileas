@@ -19,7 +19,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public class StateFilterTest extends FilterTest {
+public class StateFilterTest extends AbstractFilterTest {
 
     private static final Logger LOGGER = LogManager.getLogger(StateFilterTest.class);
 
@@ -41,6 +41,7 @@ public class StateFilterTest extends FilterTest {
 
         List<Span> spans = filter.filter(getFilterProfile(SensitivityLevel.LOW), "context", "documentid","Lived in Washington");
         Assert.assertEquals(1, spans.size());
+        Assert.assertEquals("washington", spans.get(0).getText());
 
     }
 

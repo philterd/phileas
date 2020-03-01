@@ -53,7 +53,7 @@ public abstract class RulesFilter extends Filter implements Serializable {
                 final String token = matcher.group(0);
 
                 // Is this term ignored?
-                boolean isIgnored = ignored.contains(token);
+                final boolean isIgnored = ignored.contains(token);
 
                 // There are no attributes for the span.
                 final String replacement = getReplacement(label, context, documentId, token, Collections.emptyMap());

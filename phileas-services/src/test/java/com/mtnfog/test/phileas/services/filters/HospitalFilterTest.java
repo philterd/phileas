@@ -19,7 +19,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public class HospitalFilterTest extends FilterTest {
+public class HospitalFilterTest extends AbstractFilterTest {
 
     private static final Logger LOGGER = LogManager.getLogger(HospitalFilterTest.class);
 
@@ -41,6 +41,7 @@ public class HospitalFilterTest extends FilterTest {
 
         List<Span> spans = filter.filter(getFilterProfile(SensitivityLevel.LOW), "context", "documentid","Went to Wyoming Medical Center");
         Assert.assertEquals(1, spans.size());
+        Assert.assertEquals("wyoming medical center", spans.get(0).getText());
 
     }
 

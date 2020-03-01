@@ -14,7 +14,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public class AgeFilterTest extends FilterTest {
+public class AgeFilterTest extends AbstractFilterTest {
 
     @Test
     public void filter0() throws Exception {
@@ -29,6 +29,7 @@ public class AgeFilterTest extends FilterTest {
         Assert.assertEquals(1, spans.size());
         Assert.assertTrue(checkSpan(spans.get(0), 15, 27, FilterType.AGE));
         Assert.assertEquals("{{{REDACTED-age}}}", spans.get(0).getReplacement());
+        Assert.assertEquals("3.5years old", spans.get(0).getText());
 
     }
 

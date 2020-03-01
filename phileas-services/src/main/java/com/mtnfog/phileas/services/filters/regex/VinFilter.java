@@ -116,7 +116,7 @@ public class VinFilter extends RegexFilter implements Serializable {
             return 8;
         } else if(check == 'R' || check == 'Z'){
             return 9;
-        } else if(Integer.valueOf(Character.getNumericValue(check)) != null){ //hacky but works
+        } else if(Integer.valueOf(Character.getNumericValue(check)) != null) { //hacky but works
             return Character.getNumericValue(check);
         }
         return -1;

@@ -238,7 +238,7 @@ public class LuceneDictionaryFilter extends DictionaryFilter implements Serializ
                                 if (isMatch) {
 
                                     // Is this term ignored?
-                                    boolean isIgnored = ignored.contains(text);
+                                    final boolean isIgnored = ignored.contains(text);
 
                                     final int characterStart = offsetAttribute.startOffset();
                                     final int characterEnd = offsetAttribute.endOffset();
