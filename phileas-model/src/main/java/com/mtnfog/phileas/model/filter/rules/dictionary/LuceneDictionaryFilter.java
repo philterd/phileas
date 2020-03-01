@@ -240,9 +240,14 @@ public class LuceneDictionaryFilter extends DictionaryFilter implements Serializ
                                     // Is this term ignored?
                                     boolean isIgnored = ignored.contains(text);
 
+                                    final int characterStart = offsetAttribute.startOffset();
+                                    final int characterEnd = offsetAttribute.endOffset();
+
+                                    final String[] window = getWindow(text, token, characterStart, characterEnd);
+
                                     // There are no attributes for the span.
                                     final String replacement = getReplacement(label, context, documentId, token, Collections.emptyMap());
-                                    spans.add(Span.make(offsetAttribute.startOffset(), offsetAttribute.endOffset(), getFilterType(), context, documentId, spellChecker.getAccuracy(), token, replacement, isIgnored));
+                                    spans.add(Span.make(characterStart, characterEnd, getFilterType(), context, documentId, spellChecker.getAccuracy(), token, replacement, isIgnored, window));
 
                                 }
 

@@ -1,7 +1,6 @@
 package com.mtnfog.phileas.ai;
 
 import com.mtnfog.phileas.model.enums.FilterType;
-import com.mtnfog.phileas.model.filter.Filter;
 import com.mtnfog.phileas.model.filter.dynamic.NerFilter;
 import com.mtnfog.phileas.model.objects.Span;
 import com.mtnfog.phileas.model.profile.Crypto;
@@ -101,7 +100,7 @@ public class PyTorchFilter extends NerFilter implements Serializable {
                     // Only interested in spans matching the tag we are looking for, e.g. PER, LOC.
                     if (StringUtils.equalsIgnoreCase(phileasSpan.getTag(), tag)) {
 
-                        final Span span = createSpan(context, documentId, phileasSpan.getText(),
+                        final Span span = createSpan(input, context, documentId, phileasSpan.getText(),
                                 phileasSpan.getTag(), phileasSpan.getStart(), phileasSpan.getEnd(), phileasSpan.getScore());
 
                         // Span will be null if no span was created due to it being excluded.
@@ -133,7 +132,7 @@ public class PyTorchFilter extends NerFilter implements Serializable {
 
     }
 
-    private Span createSpan(String context, String documentId, String text,
+    private Span createSpan(String input, String context, String documentId, String text,
                             String type, int start, int end, double confidence) throws Exception {
 
         final Map<String, Object> attributes = new HashMap<>();
@@ -151,8 +150,10 @@ public class PyTorchFilter extends NerFilter implements Serializable {
 
         } else {
 
+            final String[] window = getWindow(input, text, start, end);
+
             final boolean isIgnored = ignored.contains(text);
-            final Span span = Span.make(start, end, FilterType.NER_ENTITY, context, documentId, confidence, text, replacement, isIgnored);
+            final Span span = Span.make(start, end, FilterType.NER_ENTITY, context, documentId, confidence, text, replacement, isIgnored, window);
 
             // Send the entity to the metrics service for reporting.
             metricsService.reportEntitySpan(span);

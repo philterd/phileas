@@ -16,7 +16,7 @@ public class TrailingPeriodPostFilterTest extends AbstractFilterTest {
     public void test1() {
 
         final List<Span> spans = new LinkedList<>();
-        spans.add(Span.make(12, 22, FilterType.URL, "context", "docid", 0.80, "link.test.", "*****", false));
+        spans.add(Span.make(12, 22, FilterType.URL, "context", "docid", 0.80, "link.test.", "*****", false, new String[0]));
 
         final TrailingPeriodPostFilter postFilter = new TrailingPeriodPostFilter();
         final List<Span> filteredSpans = postFilter.filter("doesn't matter", spans);

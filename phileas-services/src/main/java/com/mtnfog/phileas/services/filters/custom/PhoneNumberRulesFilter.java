@@ -43,7 +43,9 @@ public class PhoneNumberRulesFilter extends RulesFilter implements Serializable 
                 final String replacement = getReplacement(label, context, documentId, text, Collections.emptyMap());
                 final boolean isIgnored = ignored.contains(text);
 
-                spans.add(Span.make(match.start(), match.end(), getFilterType(), context, documentId, 1.0, text, replacement, isIgnored));
+                final String[] window = getWindow(input, text, match.start(), match.end());
+
+                spans.add(Span.make(match.start(), match.end(), getFilterType(), context, documentId, 1.0, text, replacement, isIgnored, window));
 
             }
 

@@ -19,10 +19,6 @@ import java.util.stream.IntStream;
  */
 public final class Span implements Serializable {
 
-    // This is not @Expose'd because the user does not need to see it.
-    // It is not transient because it won't get persisted to Mongo.
-    private String id;
-
     @Expose
     private int characterStart;
 
@@ -56,6 +52,9 @@ public final class Span implements Serializable {
     // The regex expression, if any, used to identify the span.
     private transient String pattern;
 
+    // The window of tokens around the span.
+    private transient String[] window;
+
     /**
      * Creates a new span. Use the static <code>make</code> function to create a new {@link Span}.
      * @param characterStart The character-based index of the start of the span.
@@ -66,10 +65,12 @@ public final class Span implements Serializable {
      * @param confidence The confidence.
      * @param text The text identified by the span.
      * @param replacement The replacement (anonymized) value for the span.
+     * @param ignored Whether or not the span was ignored.
+     * @param window The tokens surrounding the span.
      */
-    private Span(int characterStart, int characterEnd, FilterType filterType, String context, String documentId, double confidence, String text, String replacement, boolean ignored) {
+    private Span(int characterStart, int characterEnd, FilterType filterType, String context, String documentId,
+                 double confidence, String text, String replacement, boolean ignored, String[] window) {
 
-        this.id = UUID.randomUUID().toString();
         this.characterStart = characterStart;
         this.characterEnd = characterEnd;
         this.filterType = filterType;
@@ -79,6 +80,7 @@ public final class Span implements Serializable {
         this.text = text;
         this.replacement = replacement;
         this.ignored = ignored;
+        this.window = window;
 
     }
 
@@ -96,9 +98,9 @@ public final class Span implements Serializable {
      * @return A {@link Span} object with the given properties.
      */
     public static Span make(int characterStart, int characterEnd, FilterType filterType, String context,
-                            String documentId, double confidence, String text, String replacement, boolean ignored) {
+                            String documentId, double confidence, String text, String replacement, boolean ignored, String[] window) {
 
-        final Span span = new Span(characterStart, characterEnd, filterType, context, documentId, confidence, text, replacement, ignored);
+        final Span span = new Span(characterStart, characterEnd, filterType, context, documentId, confidence, text, replacement, ignored, window);
 
         // This is made here and not passed into the constructor because that would be redundant
         // given the characterStart and characterEnd parameters in the constructor.
@@ -121,9 +123,8 @@ public final class Span implements Serializable {
      */
     public Span copy() {
 
-        final Span clone = Span.make(characterStart, characterEnd, filterType, context, documentId, confidence, text, replacement, ignored);
+        final Span clone = Span.make(characterStart, characterEnd, filterType, context, documentId, confidence, text, replacement, ignored, window);
 
-        clone.id = id;
         clone.range = range;
 
         return clone;
@@ -189,7 +190,8 @@ public final class Span implements Serializable {
                 final int start = span.getCharacterStart() + shift;
                 final int end = span.getCharacterEnd() + shift;
 
-                shiftedSpans.add(Span.make(start, end, span.filterType, span.context, span.documentId, span.confidence, span.text, span.replacement, span.ignored));
+                shiftedSpans.add(Span.make(start, end, span.filterType, span.context, span.documentId, span.confidence,
+                        span.text, span.replacement, span.ignored, span.window));
 
             }
 
@@ -314,7 +316,6 @@ public final class Span implements Serializable {
                 append(text).
                 append(replacement).
                 append(ignored).
-                append(id).
                 toHashCode();
 
     }
@@ -338,7 +339,7 @@ public final class Span implements Serializable {
                 + " text: " + text + "; "
                 + " replacement: " + replacement + "; "
                 + " ignored: " + ignored + "; "
-                + " id: " + id;
+                ;
 
     }
 
@@ -406,14 +407,6 @@ public final class Span implements Serializable {
         this.replacement = replacement;
     }
 
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
     public boolean isIgnored() {
         return ignored;
     }
@@ -428,6 +421,14 @@ public final class Span implements Serializable {
 
     public void setPattern(String pattern) {
         this.pattern = pattern;
+    }
+
+    public String[] getWindow() {
+        return window;
+    }
+
+    public void setWindow(String[] window) {
+        this.window = window;
     }
 
 }

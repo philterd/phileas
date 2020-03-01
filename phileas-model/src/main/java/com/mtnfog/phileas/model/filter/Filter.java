@@ -73,6 +73,59 @@ public abstract class Filter implements Serializable {
     }
 
     /**
+     * Get the window of tokens surrounding a token.
+     * @param text The text containing the token.
+     * @param token The token.
+     * @return The window of surrounding tokens.
+     */
+    public String[] getWindow(String text, String token, int characterStart, int characterEnd) {
+
+        // TODO: Make this a setting / environment variable / something external.
+        final int windowSize = 3;
+
+        // X = windowSize
+        // Start at characterStart and walk backwards until X spaces are seen.
+        // Start at characterEnd and walk forward until X spaces are seen.
+        // Take the string between the final start and end and tokenize it.
+        // That's the window.
+
+        int spacesSeen = 0;
+        int finalStart;
+        int finalEnd;
+
+        // TODO: Make all of this null safe.
+
+        for(finalStart = characterStart; finalStart != 0 && spacesSeen <= windowSize; finalStart--) {
+
+            if(Character.isWhitespace(text.charAt(finalStart))) {
+
+                // Count it.
+                spacesSeen++;
+
+            }
+
+        }
+
+        spacesSeen = 0;
+
+        for(finalEnd = characterEnd; finalEnd != text.length() && spacesSeen <= windowSize; finalEnd++) {
+
+            if(Character.isWhitespace(text.charAt(finalEnd))) {
+
+                // Count it.
+                spacesSeen++;
+
+            }
+
+        }
+
+        final String tokens = text.substring(finalStart + 1, finalEnd).trim();
+
+        return tokens.split(" ");
+
+    }
+
+    /**
      * Gets the string to be used as a replacement.
      * @param context The context.
      * @param documentId The document ID.
