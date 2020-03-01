@@ -7,7 +7,6 @@ import com.mtnfog.phileas.model.profile.filters.strategies.rules.ZipCodeFilterSt
 import com.mtnfog.phileas.services.anonymization.ZipCodeAnonymizationService;
 import com.mtnfog.phileas.services.cache.LocalAnonymizationCacheService;
 import com.mtnfog.phileas.services.filters.regex.ZipCodeFilter;
-import com.mtnfog.test.phileas.services.filters.AbstractFilterTest;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -15,7 +14,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public class ZipCodeFilterTest extends AbstractFilterTest {
+public class ZipCodeFilterTest extends FilterTest {
 
     @Test
     public void filterZipCode1() throws Exception {

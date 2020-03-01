@@ -7,7 +7,6 @@ import com.mtnfog.phileas.model.profile.filters.strategies.rules.EmailAddressFil
 import com.mtnfog.phileas.services.anonymization.EmailAddressAnonymizationService;
 import com.mtnfog.phileas.services.cache.LocalAnonymizationCacheService;
 import com.mtnfog.phileas.services.filters.regex.EmailAddressFilter;
-import com.mtnfog.test.phileas.services.filters.AbstractFilterTest;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -15,7 +14,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public class EmailAddressFilterTest extends AbstractFilterTest {
+public class EmailAddressFilterTest extends FilterTest {
 
     @Test
     public void filterEmail() throws Exception {

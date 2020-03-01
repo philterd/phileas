@@ -15,7 +15,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public class DateFilterTest extends AbstractFilterTest {
+public class DateFilterTest extends FilterTest {
 
     @Test
     public void filterDate1() throws Exception {

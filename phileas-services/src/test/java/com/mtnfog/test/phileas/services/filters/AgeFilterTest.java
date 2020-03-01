@@ -14,26 +14,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public class AgeFilterTest extends AbstractFilterTest {
-
-    @Test
-    public void window0() throws Exception {
-
-        // This tests span window creation.
-        final AgeFilter filter = new AgeFilter(null, new AgeAnonymizationService(new LocalAnonymizationCacheService()), Collections.emptySet(), new Crypto());
-
-        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "this is a first sentence. the patient is 3.5 years old and he's cool. this is a surrounding sentence.");
-
-        showSpans(spans);
-
-        final String[] window = new String[]{"the","patient","is","3.5","years","old","and","he's","cool."};
-
-        Assert.assertEquals(1, spans.size());
-        Assert.assertTrue(checkSpan(spans.get(0), 41, 54, FilterType.AGE));
-        Assert.assertEquals("{{{REDACTED-age}}}", spans.get(0).getReplacement());
-        Assert.assertArrayEquals("Window spans do not equal.", window, spans.get(0).getWindow());
-
-    }
+public class AgeFilterTest extends FilterTest {
 
     @Test
     public void filter0() throws Exception {

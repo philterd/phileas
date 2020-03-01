@@ -21,7 +21,7 @@ import java.util.Collections;
 import java.util.List;
 
 @Ignore("This isn't finding anything")
-public class SurnameFilterTest extends AbstractFilterTest {
+public class SurnameFilterTest extends FilterTest {
 
     private static final Logger LOGGER = LogManager.getLogger(SurnameFilterTest.class);
 

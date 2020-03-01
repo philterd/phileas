@@ -3,13 +3,11 @@ package com.mtnfog.test.phileas.services.filters;
 import com.mtnfog.phileas.model.enums.FilterType;
 import com.mtnfog.phileas.model.objects.Span;
 import com.mtnfog.phileas.model.profile.Crypto;
-import com.mtnfog.phileas.model.profile.filters.strategies.dynamic.HospitalAbbreviationFilterStrategy;
 import com.mtnfog.phileas.model.profile.filters.strategies.rules.VinFilterStrategy;
 import com.mtnfog.phileas.model.services.AnonymizationService;
 import com.mtnfog.phileas.services.anonymization.VinAnonymizationService;
 import com.mtnfog.phileas.services.cache.LocalAnonymizationCacheService;
 import com.mtnfog.phileas.services.filters.regex.VinFilter;
-import com.mtnfog.test.phileas.services.filters.AbstractFilterTest;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -17,7 +15,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public class VinFilterTest extends AbstractFilterTest {
+public class VinFilterTest extends FilterTest {
 
     private final AnonymizationService anonymizationService = new VinAnonymizationService(new LocalAnonymizationCacheService());
 

@@ -7,7 +7,6 @@ import com.mtnfog.phileas.model.profile.filters.strategies.rules.IpAddressFilter
 import com.mtnfog.phileas.services.anonymization.IpAddressAnonymizationService;
 import com.mtnfog.phileas.services.cache.LocalAnonymizationCacheService;
 import com.mtnfog.phileas.services.filters.regex.IpAddressFilter;
-import com.mtnfog.test.phileas.services.filters.AbstractFilterTest;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -15,7 +14,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public class IpAddressFilterTest extends AbstractFilterTest {
+public class IpAddressFilterTest extends FilterTest {
 
     @Test
     public void filterIpv41() throws Exception {

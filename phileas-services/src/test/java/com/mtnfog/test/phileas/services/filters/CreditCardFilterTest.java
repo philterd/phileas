@@ -14,7 +14,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public class CreditCardFilterTest extends AbstractFilterTest {
+public class CreditCardFilterTest extends FilterTest {
 
     @Test
     public void filterCreditCardOnlyValid() throws Exception {

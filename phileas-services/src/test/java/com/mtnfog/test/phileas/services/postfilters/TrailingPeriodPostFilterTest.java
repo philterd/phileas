@@ -3,14 +3,14 @@ package com.mtnfog.test.phileas.services.postfilters;
 import com.mtnfog.phileas.model.enums.FilterType;
 import com.mtnfog.phileas.model.objects.Span;
 import com.mtnfog.phileas.services.postfilters.TrailingPeriodPostFilter;
-import com.mtnfog.test.phileas.services.filters.AbstractFilterTest;
+import com.mtnfog.test.phileas.services.filters.FilterTest;
 import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.LinkedList;
 import java.util.List;
 
-public class TrailingPeriodPostFilterTest extends AbstractFilterTest {
+public class TrailingPeriodPostFilterTest extends FilterTest {
 
     @Test
     public void test1() {

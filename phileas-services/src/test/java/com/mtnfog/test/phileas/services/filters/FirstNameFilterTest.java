@@ -15,12 +15,11 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public class FirstNameFilterTest extends AbstractFilterTest {
+public class FirstNameFilterTest extends FilterTest {
 
     private static final Logger LOGGER = LogManager.getLogger(FirstNameFilterTest.class);
 

@@ -16,7 +16,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public class PhoneNumberFilterTest extends AbstractFilterTest {
+public class PhoneNumberFilterTest extends FilterTest {
 
     private static final Logger LOGGER = LogManager.getLogger(PhoneNumberFilterTest.class);
 

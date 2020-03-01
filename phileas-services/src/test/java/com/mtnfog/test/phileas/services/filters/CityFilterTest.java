@@ -19,7 +19,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public class CityFilterTest extends AbstractFilterTest {
+public class CityFilterTest extends FilterTest {
 
     private static final Logger LOGGER = LogManager.getLogger(CityFilterTest.class);
 

@@ -15,7 +15,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public class MacAddressFilterTest extends AbstractFilterTest {
+public class MacAddressFilterTest extends FilterTest {
 
     @Test
     public void filter1() throws Exception {

@@ -14,7 +14,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public class UrlFilterTest extends AbstractFilterTest {
+public class UrlFilterTest extends FilterTest {
 
     @Test
     public void filterUrl1() throws Exception {

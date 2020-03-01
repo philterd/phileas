@@ -19,7 +19,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public class StateFilterTest extends AbstractFilterTest {
+public class StateFilterTest extends FilterTest {
 
     private static final Logger LOGGER = LogManager.getLogger(StateFilterTest.class);
 

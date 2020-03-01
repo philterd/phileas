@@ -19,7 +19,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public class CountyFilterTest extends AbstractFilterTest {
+public class CountyFilterTest extends FilterTest {
 
     private static final Logger LOGGER = LogManager.getLogger(CountyFilterTest.class);
 

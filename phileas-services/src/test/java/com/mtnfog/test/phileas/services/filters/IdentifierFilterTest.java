@@ -16,7 +16,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public class IdentifierFilterTest extends AbstractFilterTest {
+public class IdentifierFilterTest extends FilterTest {
 
     private final AnonymizationService anonymizationService = new AlphanumericAnonymizationService(new LocalAnonymizationCacheService());
 

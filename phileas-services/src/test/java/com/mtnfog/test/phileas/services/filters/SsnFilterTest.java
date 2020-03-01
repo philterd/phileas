@@ -14,7 +14,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public class SsnFilterTest extends AbstractFilterTest {
+public class SsnFilterTest extends FilterTest {
 
     @Test
     public void filterSsn1() throws Exception {

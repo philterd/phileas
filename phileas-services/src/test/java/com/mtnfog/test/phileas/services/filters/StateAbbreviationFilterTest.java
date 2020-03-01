@@ -16,7 +16,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public class StateAbbreviationFilterTest extends AbstractFilterTest {
+public class StateAbbreviationFilterTest extends FilterTest {
 
     private static final Logger LOGGER = LogManager.getLogger(StateAbbreviationFilterTest.class);
 

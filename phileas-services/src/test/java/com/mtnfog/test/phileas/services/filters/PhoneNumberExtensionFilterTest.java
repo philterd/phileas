@@ -7,7 +7,6 @@ import com.mtnfog.phileas.model.profile.filters.strategies.rules.PhoneNumberExte
 import com.mtnfog.phileas.services.anonymization.AlphanumericAnonymizationService;
 import com.mtnfog.phileas.services.cache.LocalAnonymizationCacheService;
 import com.mtnfog.phileas.services.filters.regex.PhoneNumberExtensionFilter;
-import com.mtnfog.test.phileas.services.filters.AbstractFilterTest;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -15,7 +14,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public class PhoneNumberExtensionFilterTest extends AbstractFilterTest {
+public class PhoneNumberExtensionFilterTest extends FilterTest {
 
     @Test
     public void filter1() throws Exception {
