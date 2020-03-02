@@ -157,7 +157,7 @@ public abstract class AbstractFilterTest {
 
     public String getIndexDirectory(String indexName) {
 
-        final String baseDir = System.getenv("PHILEAS_INDER_DIR");
+        final String baseDir = System.getenv("PHILEAS_BASE_DIR");
 
         if(!StringUtils.isEmpty(baseDir)) {
 
@@ -169,14 +169,14 @@ public abstract class AbstractFilterTest {
 
         } else {
 
-            LOGGER.warn("Environment variable PHILEAS_INDER_DIR is not set for Lucene index test.");
+            LOGGER.warn("Environment variable PHILEAS_BASE_DIR is not set for Lucene index test.");
 
             final String indexDir = System.getProperty("user.dir") + "/../data/indexes/" + indexName;
 
             LOGGER.info("Using index directory: {}", indexDir);
 
             return indexDir;
-            
+
         }
 
     }
