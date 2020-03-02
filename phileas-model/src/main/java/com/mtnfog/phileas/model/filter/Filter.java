@@ -130,12 +130,13 @@ public abstract class Filter implements Serializable {
 
     /**
      * Gets the string to be used as a replacement.
+     * @param label The type of item.
      * @param context The context.
      * @param documentId The document ID.
      * @param token The token to replace.
      * @return The replacement string.
      */
-    public String getReplacement(String name, String context, String documentId, String token, Map<String, Object> attributes) throws Exception {
+    public String getReplacement(String label, String context, String documentId, String token, Map<String, Object> attributes) throws Exception {
 
         if(strategies != null) {
 
@@ -147,7 +148,7 @@ public abstract class Filter implements Serializable {
                 // If there is no condition or if the condition evaluates then get the replacement.
                 if (StringUtils.isEmpty(condition) || (strategy.evaluateCondition(context, documentId, token, condition, attributes))) {
 
-                    return strategy.getReplacement(name, context, documentId, token, crypto, anonymizationService);
+                    return strategy.getReplacement(label, context, documentId, token, crypto, anonymizationService);
 
                 }
 

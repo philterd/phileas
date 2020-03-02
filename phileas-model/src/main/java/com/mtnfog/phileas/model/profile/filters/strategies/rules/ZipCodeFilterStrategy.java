@@ -114,13 +114,13 @@ public class ZipCodeFilterStrategy extends AbstractFilterStrategy {
     }
 
     @Override
-    public String getReplacement(String name, String context, String documentId, String token, Crypto crypto, AnonymizationService anonymizationService) throws Exception {
+    public String getReplacement(String label, String context, String documentId, String token, Crypto crypto, AnonymizationService anonymizationService) throws Exception {
 
         String replacement = null;
 
         if(StringUtils.equalsIgnoreCase(strategy, REDACT)) {
 
-            replacement = getRedactedToken(token, name, filterType);
+            replacement = getRedactedToken(token, label, filterType);
 
         } else if(StringUtils.equalsIgnoreCase(strategy, RANDOM_REPLACE)) {
 
@@ -153,7 +153,7 @@ public class ZipCodeFilterStrategy extends AbstractFilterStrategy {
         } else {
 
             // Default to redaction.
-            replacement = getRedactedToken(token, name, filterType);
+            replacement = getRedactedToken(token, label, filterType);
 
         }
 

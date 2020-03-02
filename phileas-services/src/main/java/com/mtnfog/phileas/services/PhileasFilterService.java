@@ -2,6 +2,7 @@ package com.mtnfog.phileas.services;
 
 import com.google.gson.Gson;
 import com.mtnfog.phileas.ai.PyTorchFilter;
+import com.mtnfog.phileas.fhir.FhirDocumentProcessor;
 import com.mtnfog.phileas.metrics.PhileasMetricsService;
 import com.mtnfog.phileas.model.enums.FilterType;
 import com.mtnfog.phileas.model.enums.MimeType;
@@ -22,7 +23,6 @@ import com.mtnfog.phileas.services.filters.regex.*;
 import com.mtnfog.phileas.services.postfilters.IgnoredTermsFilter;
 import com.mtnfog.phileas.services.postfilters.TrailingPeriodPostFilter;
 import com.mtnfog.phileas.services.postfilters.TrailingSpacePostFilter;
-import com.mtnfog.phileas.services.processors.FhirV4DocumentProcessor;
 import com.mtnfog.phileas.services.processors.UnstructuredDocumentProcessor;
 import com.mtnfog.phileas.services.validators.DateSpanValidator;
 import com.mtnfog.phileas.store.ElasticsearchStore;
@@ -57,8 +57,8 @@ public class PhileasFilterService implements FilterService, Serializable {
     private AnonymizationCacheService anonymizationCacheService;
     private String indexDirectory;
 
-    private UnstructuredDocumentProcessor unstructuredDocumentProcessor;
-    private FhirV4DocumentProcessor fhirV4DocumentProcessor;
+    private DocumentProcessor unstructuredDocumentProcessor;
+    private DocumentProcessor fhirDocumentProcessor;
 
     public PhileasFilterService(Properties applicationProperties, List<FilterProfileService> filterProfileServices, AnonymizationCacheService anonymizationCacheService, String philterNerEndpoint) throws IOException {
 
@@ -72,6 +72,7 @@ public class PhileasFilterService implements FilterService, Serializable {
 
         // Configure store.
         final boolean storeEnabled = StringUtils.equalsIgnoreCase(applicationProperties.getProperty("store.enabled", "false"), "true");
+
         if(storeEnabled) {
             final String index = applicationProperties.getProperty("store.elasticsearch.index", "philter");
             final String host = applicationProperties.getProperty("store.elasticsearch.host", "localhost");
@@ -83,7 +84,7 @@ public class PhileasFilterService implements FilterService, Serializable {
         this.indexDirectory = applicationProperties.getProperty("indexes.directory", System.getProperty("user.dir") + "/indexes/");
         this.anonymizationCacheService = anonymizationCacheService;
         this.philterNerEndpoint = philterNerEndpoint;
-        this.fhirV4DocumentProcessor = new FhirV4DocumentProcessor(metricsService);
+        this.fhirDocumentProcessor = new FhirDocumentProcessor(metricsService);
 
         // Load the filter profiles from the services into a map.
         reloadFilterProfiles();
@@ -118,7 +119,7 @@ public class PhileasFilterService implements FilterService, Serializable {
         if(mimeType == MimeType.TEXT_PLAIN) {
             return unstructuredDocumentProcessor.process(filterProfile, context, documentId, input);
         } else if(mimeType == MimeType.APPLICATION_FHIRJSON) {
-            return fhirV4DocumentProcessor.process(filterProfile, context, documentId, input);
+            return fhirDocumentProcessor.process(filterProfile, context, documentId, input);
         }
 
         // Should never happen but just in case.

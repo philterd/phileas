@@ -57,7 +57,7 @@ public abstract class AbstractFilterStrategy {
      * @param anonymizationService The {@link AnonymizationService} for the token.
      * @return A replacement value for a token.
      */
-    public abstract String getReplacement(String name, String context, String documentId, String token, Crypto crypto, AnonymizationService anonymizationService) throws Exception;
+    public abstract String getReplacement(String label, String context, String documentId, String token, Crypto crypto, AnonymizationService anonymizationService) throws Exception;
 
     /**
      * Evaluates the condition on the given token.
