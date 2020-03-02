@@ -171,8 +171,12 @@ public abstract class AbstractFilterTest {
 
             LOGGER.warn("Environment variable PHILEAS_INDER_DIR is not set for Lucene index test.");
 
-            return "/mtnfog/code/bitbucket/philter/phileas/data/indexes/" + indexName;
+            final String indexDir = System.getProperty("user.dir") + "/../data/indexes/" + indexName;
 
+            LOGGER.info("Using index directory: {}", indexDir);
+
+            return indexDir;
+            
         }
 
     }
