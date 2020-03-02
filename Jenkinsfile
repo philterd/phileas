@@ -19,7 +19,7 @@ pipeline {
         gitParameter(defaultValue: 'origin/master', description: 'Branch/tag to build', name: 'BRANCH_TAG', type: 'PT_BRANCH_TAG')
     }
     environment {
-        PHILEAS_INDER_DIR = "${WORKSPACE}"
+        PHILEAS_INDEX_DIR = "${WORKSPACE}"
     }
     stages {
         stage ('Initialize') {
