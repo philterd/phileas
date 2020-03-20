@@ -17,5 +17,4 @@ distribution/model
 distribution/service.py
 distribution/documentation/
 files/
-data/
 manifest.json
