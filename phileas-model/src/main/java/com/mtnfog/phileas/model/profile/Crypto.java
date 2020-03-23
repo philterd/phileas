@@ -13,6 +13,9 @@ public class Crypto {
     @Expose
     private String iv;
 
+    /**
+     * Empty constructor needed for serialization.
+     */
     public Crypto() {
 
     }

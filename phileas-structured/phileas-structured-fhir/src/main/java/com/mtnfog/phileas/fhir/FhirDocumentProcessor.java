@@ -10,19 +10,14 @@ import com.mtnfog.phileas.model.responses.FilterResponse;
 import com.mtnfog.phileas.model.services.DocumentProcessor;
 import com.mtnfog.phileas.model.services.MetricsService;
 import com.mtnfog.phileas.model.utils.Encryption;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.hl7.fhir.r4.model.Address;
-import org.hl7.fhir.r4.model.HumanName;
-import org.hl7.fhir.r4.model.Narrative;
-import org.hl7.fhir.r4.model.Patient;
+import org.hl7.fhir.r4.model.*;
 
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
-public class FhirDocumentProcessor implements DocumentProcessor {
+public class FhirDocumentProcessor extends AbstractFhirDocumentProcessor implements DocumentProcessor {
 
     private static final Logger LOGGER = LogManager.getLogger(FhirDocumentProcessor.class);
 
@@ -161,10 +156,13 @@ public class FhirDocumentProcessor implements DocumentProcessor {
                     address.setPostalCode("");
                 }
                 if(addressPostalCodeFhirItem.get().getReplacementStrategy().equalsIgnoreCase(FhirItem.FHIR_ITEM_REPLACEMENT_STRATEGY_TRUNCATE)) {
-                    // TODO: Truncate the zip code.
-                    // address.setPostalCode();
-                    //ZipCodeFilter zipCodeFilter = new ZipCodeFilter();
-                    //zipCodeFilter.getReplacement();
+
+                    final String token = address.getPostalCode();
+                    final int truncateDigits = 3;
+                    final int truncateLength = 5;
+                    final String truncated = token.substring(0, truncateDigits) + StringUtils.repeat("*", Math.min(token.length() - truncateLength, 5 - truncateDigits));
+                    address.setPostalCode(truncated);
+
                 } else if(addressFhirItem.get().getReplacementStrategy().equalsIgnoreCase(FhirItem.FHIR_ITEM_REPLACEMENT_STRATEGY_CRYPTO_REPLACE)) {
                     address.setPostalCode(Encryption.encrypt(address.getPostalCode(), crypto));
                 }
@@ -210,8 +208,7 @@ public class FhirDocumentProcessor implements DocumentProcessor {
                 if(humanNameGivenFhirItem.get().getReplacementStrategy().equalsIgnoreCase(FhirItem.FHIR_ITEM_REPLACEMENT_STRATEGY_DELETE)) {
                     humanName.setGiven(Collections.emptyList());
                 } else if(humanNameGivenFhirItem.get().getReplacementStrategy().equalsIgnoreCase(FhirItem.FHIR_ITEM_REPLACEMENT_STRATEGY_CRYPTO_REPLACE)) {
-                    // TODO: Encrypt each item in the list.
-                    //humanName.setGiven(Encryption.encrypt(humanName.getGiven(), crypto));
+                    humanName.setGiven(encryptList(humanName.getGiven(), crypto));
                 }
             }
 
@@ -224,8 +221,7 @@ public class FhirDocumentProcessor implements DocumentProcessor {
                 if(humanNamePrefixFhirItem.get().getReplacementStrategy().equalsIgnoreCase(FhirItem.FHIR_ITEM_REPLACEMENT_STRATEGY_DELETE)) {
                     humanName.setPrefix(Collections.emptyList());
                 } else if(humanNamePrefixFhirItem.get().getReplacementStrategy().equalsIgnoreCase(FhirItem.FHIR_ITEM_REPLACEMENT_STRATEGY_CRYPTO_REPLACE)) {
-                    // TODO: Encrypt each item in the list.
-                    //humanName.setPrefix(Encryption.encrypt(humanName.getPrefix(), crypto));
+                    humanName.setPrefix(encryptList(humanName.getPrefix(), crypto));
                 }
             }
 
@@ -238,8 +234,7 @@ public class FhirDocumentProcessor implements DocumentProcessor {
                 if(humanNameSuffixFhirItem.get().getReplacementStrategy().equalsIgnoreCase(FhirItem.FHIR_ITEM_REPLACEMENT_STRATEGY_DELETE)) {
                     humanName.setSuffix(Collections.emptyList());
                 } else if(humanNameSuffixFhirItem.get().getReplacementStrategy().equalsIgnoreCase(FhirItem.FHIR_ITEM_REPLACEMENT_STRATEGY_CRYPTO_REPLACE)) {
-                    // TODO: Encrypt each item in the list.
-                    //humanName.setSuffix(Encryption.encrypt(humanName.getSuffix(), crypto));
+                    humanName.setSuffix(encryptList(humanName.getSuffix(), crypto));
                 }
             }
 

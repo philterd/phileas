@@ -18,6 +18,9 @@ public class FhirItem {
     @Expose
     private String replacementStrategy = FHIR_ITEM_REPLACEMENT_STRATEGY_DELETE;
 
+    /**
+     * Empty constructor needed for serialization.
+     */
     public FhirItem() {
 
     }
