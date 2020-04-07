@@ -4,7 +4,7 @@ grammar FilterCondition;
 
 expression: (
     | 'population' COMPARATOR NUMBER (AND expression)?
-    | 'token' COMPARATOR '"' WORD '"' (AND expression)?
+    | 'token' COMPARATOR WORD (AND expression)?
     | 'type' COMPARATOR TYPE (AND expression)?
     | 'confidence' COMPARATOR NUMBER (AND expression)?
     | 'context' COMPARATOR WORD (AND expression)?

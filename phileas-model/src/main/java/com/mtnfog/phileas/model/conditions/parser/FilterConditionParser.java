@@ -17,8 +17,8 @@ public class FilterConditionParser extends Parser {
 	protected static final PredictionContextCache _sharedContextCache =
 		new PredictionContextCache();
 	public static final int
-		T__0=1, T__1=2, T__2=3, T__3=4, T__4=5, T__5=6, TYPE=7, AND=8, COMPARATOR=9, 
-		NUMBER=10, WORD=11, WS=12;
+		T__0=1, T__1=2, T__2=3, T__3=4, T__4=5, TYPE=6, AND=7, COMPARATOR=8, NUMBER=9, 
+		WORD=10, WS=11;
 	public static final int
 		RULE_expression = 0;
 	private static String[] makeRuleNames() {
@@ -30,14 +30,14 @@ public class FilterConditionParser extends Parser {
 
 	private static String[] makeLiteralNames() {
 		return new String[] {
-			null, "'population'", "'token'", "'\"'", "'type'", "'confidence'", "'context'"
+			null, "'population'", "'token'", "'type'", "'confidence'", "'context'"
 		};
 	}
 	private static final String[] _LITERAL_NAMES = makeLiteralNames();
 	private static String[] makeSymbolicNames() {
 		return new String[] {
-			null, null, null, null, null, null, null, "TYPE", "AND", "COMPARATOR", 
-			"NUMBER", "WORD", "WS"
+			null, null, null, null, null, null, "TYPE", "AND", "COMPARATOR", "NUMBER", 
+			"WORD", "WS"
 		};
 	}
 	private static final String[] _SYMBOLIC_NAMES = makeSymbolicNames();
@@ -120,7 +120,7 @@ public class FilterConditionParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(40);
+			setState(38);
 			_errHandler.sync(this);
 			switch ( getInterpreter().adaptivePredict(_input,5,_ctx) ) {
 			case 1:
@@ -156,19 +156,15 @@ public class FilterConditionParser extends Parser {
 				setState(11);
 				match(COMPARATOR);
 				setState(12);
-				match(T__2);
-				setState(13);
 				match(WORD);
-				setState(14);
-				match(T__2);
-				setState(17);
+				setState(15);
 				_errHandler.sync(this);
 				switch ( getInterpreter().adaptivePredict(_input,1,_ctx) ) {
 				case 1:
 					{
-					setState(15);
+					setState(13);
 					match(AND);
-					setState(16);
+					setState(14);
 					expression();
 					}
 					break;
@@ -177,20 +173,20 @@ public class FilterConditionParser extends Parser {
 				break;
 			case 4:
 				{
-				setState(19);
-				match(T__3);
-				setState(20);
+				setState(17);
+				match(T__2);
+				setState(18);
 				match(COMPARATOR);
-				setState(21);
+				setState(19);
 				match(TYPE);
-				setState(24);
+				setState(22);
 				_errHandler.sync(this);
 				switch ( getInterpreter().adaptivePredict(_input,2,_ctx) ) {
 				case 1:
 					{
-					setState(22);
+					setState(20);
 					match(AND);
-					setState(23);
+					setState(21);
 					expression();
 					}
 					break;
@@ -199,20 +195,20 @@ public class FilterConditionParser extends Parser {
 				break;
 			case 5:
 				{
-				setState(26);
-				match(T__4);
-				setState(27);
+				setState(24);
+				match(T__3);
+				setState(25);
 				match(COMPARATOR);
-				setState(28);
+				setState(26);
 				match(NUMBER);
-				setState(31);
+				setState(29);
 				_errHandler.sync(this);
 				switch ( getInterpreter().adaptivePredict(_input,3,_ctx) ) {
 				case 1:
 					{
-					setState(29);
+					setState(27);
 					match(AND);
-					setState(30);
+					setState(28);
 					expression();
 					}
 					break;
@@ -221,20 +217,20 @@ public class FilterConditionParser extends Parser {
 				break;
 			case 6:
 				{
-				setState(33);
-				match(T__5);
-				setState(34);
+				setState(31);
+				match(T__4);
+				setState(32);
 				match(COMPARATOR);
-				setState(35);
+				setState(33);
 				match(WORD);
-				setState(38);
+				setState(36);
 				_errHandler.sync(this);
 				switch ( getInterpreter().adaptivePredict(_input,4,_ctx) ) {
 				case 1:
 					{
-					setState(36);
+					setState(34);
 					match(AND);
-					setState(37);
+					setState(35);
 					expression();
 					}
 					break;
@@ -256,19 +252,19 @@ public class FilterConditionParser extends Parser {
 	}
 
 	public static final String _serializedATN =
-		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\16-\4\2\t\2\3\2\3"+
-		"\2\3\2\3\2\3\2\3\2\5\2\13\n\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\5\2\24\n\2\3"+
-		"\2\3\2\3\2\3\2\3\2\5\2\33\n\2\3\2\3\2\3\2\3\2\3\2\5\2\"\n\2\3\2\3\2\3"+
-		"\2\3\2\3\2\5\2)\n\2\5\2+\n\2\3\2\2\2\3\2\2\2\2\65\2*\3\2\2\2\4+\3\2\2"+
-		"\2\5\6\7\3\2\2\6\7\7\13\2\2\7\n\7\f\2\2\b\t\7\n\2\2\t\13\5\2\2\2\n\b\3"+
-		"\2\2\2\n\13\3\2\2\2\13+\3\2\2\2\f\r\7\4\2\2\r\16\7\13\2\2\16\17\7\5\2"+
-		"\2\17\20\7\r\2\2\20\23\7\5\2\2\21\22\7\n\2\2\22\24\5\2\2\2\23\21\3\2\2"+
-		"\2\23\24\3\2\2\2\24+\3\2\2\2\25\26\7\6\2\2\26\27\7\13\2\2\27\32\7\t\2"+
-		"\2\30\31\7\n\2\2\31\33\5\2\2\2\32\30\3\2\2\2\32\33\3\2\2\2\33+\3\2\2\2"+
-		"\34\35\7\7\2\2\35\36\7\13\2\2\36!\7\f\2\2\37 \7\n\2\2 \"\5\2\2\2!\37\3"+
-		"\2\2\2!\"\3\2\2\2\"+\3\2\2\2#$\7\b\2\2$%\7\13\2\2%(\7\r\2\2&\'\7\n\2\2"+
-		"\')\5\2\2\2(&\3\2\2\2()\3\2\2\2)+\3\2\2\2*\4\3\2\2\2*\5\3\2\2\2*\f\3\2"+
-		"\2\2*\25\3\2\2\2*\34\3\2\2\2*#\3\2\2\2+\3\3\2\2\2\b\n\23\32!(*";
+		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\r+\4\2\t\2\3\2\3"+
+		"\2\3\2\3\2\3\2\3\2\5\2\13\n\2\3\2\3\2\3\2\3\2\3\2\5\2\22\n\2\3\2\3\2\3"+
+		"\2\3\2\3\2\5\2\31\n\2\3\2\3\2\3\2\3\2\3\2\5\2 \n\2\3\2\3\2\3\2\3\2\3\2"+
+		"\5\2\'\n\2\5\2)\n\2\3\2\2\2\3\2\2\2\2\63\2(\3\2\2\2\4)\3\2\2\2\5\6\7\3"+
+		"\2\2\6\7\7\n\2\2\7\n\7\13\2\2\b\t\7\t\2\2\t\13\5\2\2\2\n\b\3\2\2\2\n\13"+
+		"\3\2\2\2\13)\3\2\2\2\f\r\7\4\2\2\r\16\7\n\2\2\16\21\7\f\2\2\17\20\7\t"+
+		"\2\2\20\22\5\2\2\2\21\17\3\2\2\2\21\22\3\2\2\2\22)\3\2\2\2\23\24\7\5\2"+
+		"\2\24\25\7\n\2\2\25\30\7\b\2\2\26\27\7\t\2\2\27\31\5\2\2\2\30\26\3\2\2"+
+		"\2\30\31\3\2\2\2\31)\3\2\2\2\32\33\7\6\2\2\33\34\7\n\2\2\34\37\7\13\2"+
+		"\2\35\36\7\t\2\2\36 \5\2\2\2\37\35\3\2\2\2\37 \3\2\2\2 )\3\2\2\2!\"\7"+
+		"\7\2\2\"#\7\n\2\2#&\7\f\2\2$%\7\t\2\2%\'\5\2\2\2&$\3\2\2\2&\'\3\2\2\2"+
+		"\')\3\2\2\2(\4\3\2\2\2(\5\3\2\2\2(\f\3\2\2\2(\23\3\2\2\2(\32\3\2\2\2("+
+		"!\3\2\2\2)\3\3\2\2\2\b\n\21\30\37&(";
 	public static final ATN _ATN =
 		new ATNDeserializer().deserialize(_serializedATN.toCharArray());
 	static {
