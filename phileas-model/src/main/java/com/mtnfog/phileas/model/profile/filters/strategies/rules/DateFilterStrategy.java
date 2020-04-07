@@ -47,6 +47,34 @@ public class DateFilterStrategy extends AbstractFilterStrategy {
                         break;
 
                 }
+
+            } else if(StringUtils.equalsIgnoreCase(CONFIDENCE, parsedCondition.getField())) {
+
+                final double confidence = (double) attributes.getOrDefault(CONFIDENCE, 0.00);
+                final double threshold = Double.valueOf(parsedCondition.getValue());
+
+                switch (parsedCondition.getOperator()) {
+                    case ">":
+                        conditionsSatisfied = (confidence > threshold);
+                        break;
+                    case "<":
+                        conditionsSatisfied = (confidence < threshold);
+                        break;
+                    case ">=":
+                        conditionsSatisfied = (confidence >= threshold);
+                        break;
+                    case "<=":
+                        conditionsSatisfied = (confidence <= threshold);
+                        break;
+                    case "==":
+                        conditionsSatisfied = (confidence == threshold);
+                        break;
+                    case "!=":
+                        conditionsSatisfied = (confidence != threshold);
+                        break;
+
+                }
+
             }
 
             LOGGER.debug("Condition for [" + condition + "] satisfied: " + conditionsSatisfied);

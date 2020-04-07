@@ -21,9 +21,6 @@ public class NerFilterStrategy extends AbstractFilterStrategy {
 
     private static FilterType filterType = FilterType.NER_ENTITY;
 
-    public static final String TYPE = "type";
-    public static final String CONFIDENCE = "confidence";
-
     @Override
     public boolean evaluateCondition(String context, String documentId, String token, String condition, Map<String, Object> attributes) {
 

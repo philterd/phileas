@@ -2,8 +2,8 @@ package com.mtnfog.test.phileas.model.profile.filters.strategies.rules;
 
 import com.mtnfog.phileas.model.profile.Crypto;
 import com.mtnfog.phileas.model.profile.filters.strategies.AbstractFilterStrategy;
-import com.mtnfog.phileas.model.profile.filters.strategies.dynamic.CityFilterStrategy;
-import com.mtnfog.phileas.model.profile.filters.strategies.rules.*;
+import com.mtnfog.phileas.model.profile.filters.strategies.ai.NerFilterStrategy;
+import com.mtnfog.phileas.model.profile.filters.strategies.rules.PhoneNumberExtensionFilterStrategy;
 import com.mtnfog.phileas.model.services.AnonymizationCacheService;
 import com.mtnfog.phileas.model.services.AnonymizationService;
 import org.apache.logging.log4j.LogManager;
@@ -23,12 +23,16 @@ public class PhoneNumberExtensionFilterStrategyTest {
 
     private static final Logger LOGGER = LogManager.getLogger(PhoneNumberExtensionFilterStrategyTest.class);
 
+    private AbstractFilterStrategy getFilterStrategy() {
+        return new PhoneNumberExtensionFilterStrategy();
+    }
+
     @Test
     public void replacement1() throws Exception {
 
         final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
 
-        final PhoneNumberExtensionFilterStrategy strategy = new PhoneNumberExtensionFilterStrategy();
+        final AbstractFilterStrategy strategy = getFilterStrategy();
         strategy.setStrategy(AbstractFilterStrategy.STATIC_REPLACE);
         strategy.setStaticReplacement("static-value");
 
@@ -43,7 +47,7 @@ public class PhoneNumberExtensionFilterStrategyTest {
 
         final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
 
-        final PhoneNumberExtensionFilterStrategy strategy = new PhoneNumberExtensionFilterStrategy();
+        final AbstractFilterStrategy strategy = getFilterStrategy();
         strategy.setStrategy(AbstractFilterStrategy.REDACT);
         strategy.setRedactionFormat("REDACTION-%t");
 
@@ -62,7 +66,7 @@ public class PhoneNumberExtensionFilterStrategyTest {
         when(anonymizationCacheService.get("context", "token")).thenReturn("random");
         when(anonymizationService.getAnonymizationCacheService()).thenReturn(anonymizationCacheService);
 
-        final PhoneNumberExtensionFilterStrategy strategy = new PhoneNumberExtensionFilterStrategy();
+        final AbstractFilterStrategy strategy = getFilterStrategy();
         strategy.setStrategy(AbstractFilterStrategy.RANDOM_REPLACE);
 
         final String replacement = strategy.getReplacement("name", "context", "docId", "token", new Crypto(), anonymizationService);
@@ -80,7 +84,7 @@ public class PhoneNumberExtensionFilterStrategyTest {
         when(anonymizationCacheService.get("context", "token")).thenReturn("random");
         when(anonymizationService.getAnonymizationCacheService()).thenReturn(anonymizationCacheService);
 
-        final PhoneNumberExtensionFilterStrategy strategy = new PhoneNumberExtensionFilterStrategy();
+        final AbstractFilterStrategy strategy = getFilterStrategy();
         strategy.setStrategy("something-wrong");
 
         final String replacement = strategy.getReplacement("name", "context", "docId", "token", new Crypto(), anonymizationService);
@@ -143,7 +147,7 @@ public class PhoneNumberExtensionFilterStrategyTest {
     @Test
     public void evaluateCondition4() {
 
-        final PhoneNumberExtensionFilterStrategy strategy = new PhoneNumberExtensionFilterStrategy();
+        final AbstractFilterStrategy strategy = getFilterStrategy();
 
         final Map<String, Object> attributes = new HashMap<>();
 
@@ -156,7 +160,7 @@ public class PhoneNumberExtensionFilterStrategyTest {
     @Test
     public void evaluateCondition5() {
 
-        final PhoneNumberExtensionFilterStrategy strategy = new PhoneNumberExtensionFilterStrategy();
+        final AbstractFilterStrategy strategy = getFilterStrategy();
 
         final Map<String, Object> attributes = new HashMap<>();
 
@@ -165,5 +169,34 @@ public class PhoneNumberExtensionFilterStrategyTest {
         Assert.assertTrue(conditionSatisfied);
 
     }
+
+    @Test
+    public void evaluateCondition6() {
+
+        final AbstractFilterStrategy strategy = getFilterStrategy();
+
+        final Map<String, Object> attributes = new HashMap<>();
+        attributes.put(NerFilterStrategy.CONFIDENCE, 1.0);
+
+        final boolean conditionSatisfied = strategy.evaluateCondition("ctx", "documentId", "John Smith", "confidence > 0.5", attributes);
+
+        Assert.assertTrue(conditionSatisfied);
+
+    }
+
+    @Test
+    public void evaluateCondition7() {
+
+        final AbstractFilterStrategy strategy = getFilterStrategy();
+
+        final Map<String, Object> attributes = new HashMap<>();
+        attributes.put(NerFilterStrategy.CONFIDENCE, 1.0);
+
+        final boolean conditionSatisfied = strategy.evaluateCondition("ctx", "documentId", "John Smith", "confidence < 0.5", attributes);
+
+        Assert.assertFalse(conditionSatisfied);
+
+    }
+
 
 }

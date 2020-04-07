@@ -28,6 +28,9 @@ public abstract class AbstractFilterStrategy {
     public static final String EQUALS = "==";
     public static final String CONTEXT = "context";
 
+    public static final String TYPE = "type";
+    public static final String CONFIDENCE = "confidence";
+
     @SerializedName("strategy")
     @Expose
     protected String strategy = REDACT;

@@ -3,6 +3,7 @@ package com.mtnfog.test.phileas.model.profile.filters.strategies.ai;
 import com.mtnfog.phileas.model.profile.Crypto;
 import com.mtnfog.phileas.model.profile.filters.strategies.AbstractFilterStrategy;
 import com.mtnfog.phileas.model.profile.filters.strategies.ai.NerFilterStrategy;
+import com.mtnfog.phileas.model.profile.filters.strategies.rules.CreditCardFilterStrategy;
 import com.mtnfog.phileas.model.services.AnonymizationCacheService;
 import com.mtnfog.phileas.model.services.AnonymizationService;
 import org.apache.logging.log4j.LogManager;
@@ -20,12 +21,16 @@ public class NerFilterStrategyTest {
 
     private static final Logger LOGGER = LogManager.getLogger(NerFilterStrategyTest.class);
 
+    private AbstractFilterStrategy getFilterStrategy() {
+        return new NerFilterStrategy();
+    }
+
     @Test
     public void replacement1() throws Exception {
 
         final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
 
-        final NerFilterStrategy strategy = new NerFilterStrategy();
+        final AbstractFilterStrategy strategy = getFilterStrategy();
         strategy.setStrategy(AbstractFilterStrategy.STATIC_REPLACE);
         strategy.setStaticReplacement("static-value");
 
@@ -40,7 +45,7 @@ public class NerFilterStrategyTest {
 
         final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
 
-        final NerFilterStrategy strategy = new NerFilterStrategy();
+        final AbstractFilterStrategy strategy = getFilterStrategy();
         strategy.setStrategy(AbstractFilterStrategy.REDACT);
         strategy.setRedactionFormat("REDACTION-%t");
 
@@ -59,7 +64,7 @@ public class NerFilterStrategyTest {
         when(anonymizationCacheService.get("context", "token")).thenReturn("random");
         when(anonymizationService.getAnonymizationCacheService()).thenReturn(anonymizationCacheService);
 
-        final NerFilterStrategy strategy = new NerFilterStrategy();
+        final AbstractFilterStrategy strategy = getFilterStrategy();
         strategy.setStrategy(AbstractFilterStrategy.RANDOM_REPLACE);
 
         final String replacement = strategy.getReplacement("name", "context", "docId", "token", new Crypto(), anonymizationService);
@@ -77,7 +82,7 @@ public class NerFilterStrategyTest {
         when(anonymizationCacheService.get("context", "token")).thenReturn("random");
         when(anonymizationService.getAnonymizationCacheService()).thenReturn(anonymizationCacheService);
 
-        final NerFilterStrategy strategy = new NerFilterStrategy();
+        final AbstractFilterStrategy strategy = getFilterStrategy();
         strategy.setStrategy("something-wrong");
 
         final String replacement = strategy.getReplacement("name", "context", "docId", "token", new Crypto(), anonymizationService);
@@ -107,7 +112,7 @@ public class NerFilterStrategyTest {
     @Test
     public void evaluateCondition1() {
 
-        final NerFilterStrategy strategy = new NerFilterStrategy();
+        final AbstractFilterStrategy strategy = getFilterStrategy();
 
         final Map<String, Object> attributes = new HashMap<>();
         attributes.put(NerFilterStrategy.CONFIDENCE, 0.5);
@@ -121,7 +126,7 @@ public class NerFilterStrategyTest {
     @Test
     public void evaluateCondition2() {
 
-        final NerFilterStrategy strategy = new NerFilterStrategy();
+        final AbstractFilterStrategy strategy = getFilterStrategy();
 
         final Map<String, Object> attributes = new HashMap<>();
         attributes.put(NerFilterStrategy.TYPE, "PER");
@@ -135,7 +140,7 @@ public class NerFilterStrategyTest {
     @Test
     public void evaluateCondition3() {
 
-        final NerFilterStrategy strategy = new NerFilterStrategy();
+        final AbstractFilterStrategy strategy = getFilterStrategy();
 
         final Map<String, Object> attributes = new HashMap<>();
         attributes.put(NerFilterStrategy.TYPE, "LOC");
@@ -149,7 +154,7 @@ public class NerFilterStrategyTest {
     @Test
     public void evaluateCondition4() {
 
-        final NerFilterStrategy strategy = new NerFilterStrategy();
+        final AbstractFilterStrategy strategy = getFilterStrategy();
 
         final Map<String, Object> attributes = new HashMap<>();
         attributes.put(NerFilterStrategy.CONFIDENCE, 0.5);
@@ -163,7 +168,7 @@ public class NerFilterStrategyTest {
     @Test
     public void evaluateCondition5() {
 
-        final NerFilterStrategy strategy = new NerFilterStrategy();
+        final AbstractFilterStrategy strategy = getFilterStrategy();
 
         final Map<String, Object> attributes = new HashMap<>();
         attributes.put(NerFilterStrategy.CONFIDENCE, 0.6);
@@ -177,7 +182,7 @@ public class NerFilterStrategyTest {
     @Test
     public void evaluateCondition6() {
 
-        final NerFilterStrategy strategy = new NerFilterStrategy();
+        final AbstractFilterStrategy strategy = getFilterStrategy();
 
         final Map<String, Object> attributes = new HashMap<>();
         attributes.put(NerFilterStrategy.CONFIDENCE, 0.5);
@@ -191,7 +196,7 @@ public class NerFilterStrategyTest {
     @Test
     public void evaluateCondition7() {
 
-        final NerFilterStrategy strategy = new NerFilterStrategy();
+        final AbstractFilterStrategy strategy = getFilterStrategy();
 
         final Map<String, Object> attributes = new HashMap<>();
         attributes.put(NerFilterStrategy.CONFIDENCE, 0.5);
@@ -206,7 +211,7 @@ public class NerFilterStrategyTest {
     @Test
     public void evaluateCondition8() {
 
-        final NerFilterStrategy strategy = new NerFilterStrategy();
+        final AbstractFilterStrategy strategy = getFilterStrategy();
 
         final Map<String, Object> attributes = new HashMap<>();
         attributes.put(NerFilterStrategy.CONFIDENCE, 0.5);
@@ -221,7 +226,7 @@ public class NerFilterStrategyTest {
     @Test
     public void evaluateCondition9() {
 
-        final NerFilterStrategy strategy = new NerFilterStrategy();
+        final AbstractFilterStrategy strategy = getFilterStrategy();
 
         final Map<String, Object> attributes = new HashMap<>();
         attributes.put(NerFilterStrategy.CONFIDENCE, 0.5);
@@ -236,7 +241,7 @@ public class NerFilterStrategyTest {
     @Test
     public void evaluateCondition10() {
 
-        final NerFilterStrategy strategy = new NerFilterStrategy();
+        final AbstractFilterStrategy strategy = getFilterStrategy();
 
         final Map<String, Object> attributes = new HashMap<>();
         attributes.put(NerFilterStrategy.CONFIDENCE, 0.5);
@@ -251,7 +256,7 @@ public class NerFilterStrategyTest {
     @Test
     public void evaluateCondition11() {
 
-        final NerFilterStrategy strategy = new NerFilterStrategy();
+        final AbstractFilterStrategy strategy = getFilterStrategy();
 
         final Map<String, Object> attributes = new HashMap<>();
 
@@ -264,7 +269,7 @@ public class NerFilterStrategyTest {
     @Test
     public void evaluateCondition12() {
 
-        final NerFilterStrategy strategy = new NerFilterStrategy();
+        final AbstractFilterStrategy strategy = getFilterStrategy();
 
         final Map<String, Object> attributes = new HashMap<>();
 

@@ -2,7 +2,7 @@ package com.mtnfog.test.phileas.model.profile.filters.strategies.rules;
 
 import com.mtnfog.phileas.model.profile.Crypto;
 import com.mtnfog.phileas.model.profile.filters.strategies.AbstractFilterStrategy;
-import com.mtnfog.phileas.model.profile.filters.strategies.dynamic.CityFilterStrategy;
+import com.mtnfog.phileas.model.profile.filters.strategies.ai.NerFilterStrategy;
 import com.mtnfog.phileas.model.profile.filters.strategies.rules.CreditCardFilterStrategy;
 import com.mtnfog.phileas.model.profile.filters.strategies.rules.ZipCodeFilterStrategy;
 import com.mtnfog.phileas.model.services.AnonymizationCacheService;
@@ -24,12 +24,16 @@ public class ZipCodeFilterStrategyTest {
 
     private static final Logger LOGGER = LogManager.getLogger(ZipCodeFilterStrategyTest.class);
 
+    private AbstractFilterStrategy getFilterStrategy() throws IOException {
+        return new ZipCodeFilterStrategy();
+    }
+
     @Test
     public void replacement1() throws Exception {
 
         final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
 
-        final ZipCodeFilterStrategy strategy = new ZipCodeFilterStrategy();
+        final AbstractFilterStrategy strategy = getFilterStrategy();
         strategy.setStrategy(AbstractFilterStrategy.STATIC_REPLACE);
         strategy.setStaticReplacement("static-value");
 
@@ -44,7 +48,7 @@ public class ZipCodeFilterStrategyTest {
 
         final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
 
-        final ZipCodeFilterStrategy strategy = new ZipCodeFilterStrategy();
+        final AbstractFilterStrategy strategy = getFilterStrategy();
         strategy.setStrategy(AbstractFilterStrategy.REDACT);
         strategy.setRedactionFormat("REDACTION-%t");
 
@@ -63,7 +67,7 @@ public class ZipCodeFilterStrategyTest {
         when(anonymizationCacheService.get("context", "token")).thenReturn("random");
         when(anonymizationService.getAnonymizationCacheService()).thenReturn(anonymizationCacheService);
 
-        final ZipCodeFilterStrategy strategy = new ZipCodeFilterStrategy();
+        final AbstractFilterStrategy strategy = getFilterStrategy();
         strategy.setStrategy(AbstractFilterStrategy.RANDOM_REPLACE);
 
         final String replacement = strategy.getReplacement("name", "context", "docId", "token", new Crypto(), anonymizationService);
@@ -81,7 +85,7 @@ public class ZipCodeFilterStrategyTest {
         when(anonymizationCacheService.get("context", "token")).thenReturn("random");
         when(anonymizationService.getAnonymizationCacheService()).thenReturn(anonymizationCacheService);
 
-        final ZipCodeFilterStrategy strategy = new ZipCodeFilterStrategy();
+        final AbstractFilterStrategy strategy = getFilterStrategy();
         strategy.setStrategy("something-wrong");
 
         final String replacement = strategy.getReplacement("name", "context", "docId", "token", new Crypto(), anonymizationService);
@@ -206,7 +210,7 @@ public class ZipCodeFilterStrategyTest {
     @Test
     public void evaluateCondition8() throws IOException {
 
-        final ZipCodeFilterStrategy strategy = new ZipCodeFilterStrategy();
+        final AbstractFilterStrategy strategy = getFilterStrategy();
 
         final Map<String, Object> attributes = new HashMap<>();
 
@@ -219,13 +223,41 @@ public class ZipCodeFilterStrategyTest {
     @Test
     public void evaluateCondition9() throws IOException {
 
-        final ZipCodeFilterStrategy strategy = new ZipCodeFilterStrategy();
+        final AbstractFilterStrategy strategy = getFilterStrategy();
 
         final Map<String, Object> attributes = new HashMap<>();
 
         final boolean conditionSatisfied = strategy.evaluateCondition("ctx", "documentId", "John Smith", "context == \"ctx\"", attributes);
 
         Assert.assertTrue(conditionSatisfied);
+
+    }
+
+    @Test
+    public void evaluateCondition10() throws IOException {
+
+        final AbstractFilterStrategy strategy = getFilterStrategy();
+
+        final Map<String, Object> attributes = new HashMap<>();
+        attributes.put(NerFilterStrategy.CONFIDENCE, 1.0);
+
+        final boolean conditionSatisfied = strategy.evaluateCondition("ctx", "documentId", "John Smith", "confidence > 0.5", attributes);
+
+        Assert.assertTrue(conditionSatisfied);
+
+    }
+
+    @Test
+    public void evaluateCondition11() throws IOException {
+
+        final AbstractFilterStrategy strategy = getFilterStrategy();
+
+        final Map<String, Object> attributes = new HashMap<>();
+        attributes.put(NerFilterStrategy.CONFIDENCE, 1.0);
+
+        final boolean conditionSatisfied = strategy.evaluateCondition("ctx", "documentId", "John Smith", "confidence < 0.5", attributes);
+
+        Assert.assertFalse(conditionSatisfied);
 
     }
 

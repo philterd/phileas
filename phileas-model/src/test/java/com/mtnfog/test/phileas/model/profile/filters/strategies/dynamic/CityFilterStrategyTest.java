@@ -2,7 +2,10 @@ package com.mtnfog.test.phileas.model.profile.filters.strategies.dynamic;
 
 import com.mtnfog.phileas.model.profile.Crypto;
 import com.mtnfog.phileas.model.profile.filters.strategies.AbstractFilterStrategy;
+import com.mtnfog.phileas.model.profile.filters.strategies.ai.NerFilterStrategy;
 import com.mtnfog.phileas.model.profile.filters.strategies.dynamic.CityFilterStrategy;
+import com.mtnfog.phileas.model.profile.filters.strategies.rules.AgeFilterStrategy;
+import com.mtnfog.phileas.model.profile.filters.strategies.rules.CreditCardFilterStrategy;
 import com.mtnfog.phileas.model.services.AnonymizationCacheService;
 import com.mtnfog.phileas.model.services.AnonymizationService;
 import org.apache.logging.log4j.LogManager;
@@ -21,12 +24,16 @@ public class CityFilterStrategyTest {
 
     private static final Logger LOGGER = LogManager.getLogger(CityFilterStrategyTest.class);
 
+    private AbstractFilterStrategy getFilterStrategy() {
+        return new CityFilterStrategy();
+    }
+
     @Test
     public void replacement1() throws Exception {
 
         final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
 
-        final CityFilterStrategy strategy = new CityFilterStrategy();
+        final AbstractFilterStrategy strategy = getFilterStrategy();
         strategy.setStrategy(AbstractFilterStrategy.STATIC_REPLACE);
         strategy.setStaticReplacement("static-value");
 
@@ -41,7 +48,7 @@ public class CityFilterStrategyTest {
 
         final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
 
-        final CityFilterStrategy strategy = new CityFilterStrategy();
+        final AbstractFilterStrategy strategy = getFilterStrategy();
         strategy.setStrategy(AbstractFilterStrategy.REDACT);
         strategy.setRedactionFormat("REDACTION-%t");
 
@@ -60,7 +67,7 @@ public class CityFilterStrategyTest {
         when(anonymizationCacheService.get("context", "token")).thenReturn("random");
         when(anonymizationService.getAnonymizationCacheService()).thenReturn(anonymizationCacheService);
 
-        final CityFilterStrategy strategy = new CityFilterStrategy();
+        final AbstractFilterStrategy strategy = getFilterStrategy();
         strategy.setStrategy(AbstractFilterStrategy.RANDOM_REPLACE);
 
         final String replacement = strategy.getReplacement("name", "context", "docId", "token", new Crypto(), anonymizationService);
@@ -78,7 +85,7 @@ public class CityFilterStrategyTest {
         when(anonymizationCacheService.get("context", "token")).thenReturn("random");
         when(anonymizationService.getAnonymizationCacheService()).thenReturn(anonymizationCacheService);
 
-        final CityFilterStrategy strategy = new CityFilterStrategy();
+        final AbstractFilterStrategy strategy = getFilterStrategy();
         strategy.setStrategy("something-wrong");
 
         final String replacement = strategy.getReplacement("name", "context", "docId", "token", new Crypto(), anonymizationService);
@@ -141,7 +148,7 @@ public class CityFilterStrategyTest {
     @Test
     public void evaluateCondition4() {
 
-        final CityFilterStrategy strategy = new CityFilterStrategy();
+        final AbstractFilterStrategy strategy = getFilterStrategy();
 
         final Map<String, Object> attributes = new HashMap<>();
 
@@ -154,13 +161,41 @@ public class CityFilterStrategyTest {
     @Test
     public void evaluateCondition5() {
 
-        final CityFilterStrategy strategy = new CityFilterStrategy();
+        final AbstractFilterStrategy strategy = getFilterStrategy();
 
         final Map<String, Object> attributes = new HashMap<>();
 
         final boolean conditionSatisfied = strategy.evaluateCondition("ctx", "documentId", "John Smith", "context == \"ctx\"", attributes);
 
         Assert.assertTrue(conditionSatisfied);
+
+    }
+
+    @Test
+    public void evaluateCondition6() {
+
+        final AbstractFilterStrategy strategy = getFilterStrategy();
+
+        final Map<String, Object> attributes = new HashMap<>();
+        attributes.put(NerFilterStrategy.CONFIDENCE, 1.0);
+
+        final boolean conditionSatisfied = strategy.evaluateCondition("ctx", "documentId", "John Smith", "confidence > 0.5", attributes);
+
+        Assert.assertTrue(conditionSatisfied);
+
+    }
+
+    @Test
+    public void evaluateCondition7() {
+
+        final AbstractFilterStrategy strategy = getFilterStrategy();
+
+        final Map<String, Object> attributes = new HashMap<>();
+        attributes.put(NerFilterStrategy.CONFIDENCE, 1.0);
+
+        final boolean conditionSatisfied = strategy.evaluateCondition("ctx", "documentId", "John Smith", "confidence < 0.5", attributes);
+
+        Assert.assertFalse(conditionSatisfied);
 
     }
 

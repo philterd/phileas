@@ -2,7 +2,7 @@ package com.mtnfog.test.phileas.model.profile.filters.strategies.rules;
 
 import com.mtnfog.phileas.model.profile.Crypto;
 import com.mtnfog.phileas.model.profile.filters.strategies.AbstractFilterStrategy;
-import com.mtnfog.phileas.model.profile.filters.strategies.dynamic.CityFilterStrategy;
+import com.mtnfog.phileas.model.profile.filters.strategies.ai.NerFilterStrategy;
 import com.mtnfog.phileas.model.profile.filters.strategies.rules.CreditCardFilterStrategy;
 import com.mtnfog.phileas.model.profile.filters.strategies.rules.IdentifierFilterStrategy;
 import com.mtnfog.phileas.model.services.AnonymizationCacheService;
@@ -24,12 +24,16 @@ public class IdentifierFilterStrategyTest {
 
     private static final Logger LOGGER = LogManager.getLogger(IdentifierFilterStrategyTest.class);
 
+    private AbstractFilterStrategy getFilterStrategy() {
+        return new IdentifierFilterStrategy();
+    }
+
     @Test
     public void replacement1() throws Exception {
 
         final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
 
-        final IdentifierFilterStrategy strategy = new IdentifierFilterStrategy();
+        final AbstractFilterStrategy strategy = getFilterStrategy();
         final String replacement = strategy.getReplacement("custom-name", "context", "documentId", "token", new Crypto(), anonymizationService);
 
         Assert.assertEquals("{{{REDACTED-id}}}", replacement);
@@ -41,7 +45,7 @@ public class IdentifierFilterStrategyTest {
 
         final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
 
-        final IdentifierFilterStrategy strategy = new IdentifierFilterStrategy();
+        final AbstractFilterStrategy strategy = getFilterStrategy();
         strategy.setRedactionFormat("{{{REDACTED-%l}}}");
         final String replacement = strategy.getReplacement("custom-name", "context", "documentId", "token", new Crypto(), anonymizationService);
 
@@ -54,7 +58,7 @@ public class IdentifierFilterStrategyTest {
 
         final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
 
-        final IdentifierFilterStrategy strategy = new IdentifierFilterStrategy();
+        final AbstractFilterStrategy strategy = getFilterStrategy();
         strategy.setRedactionFormat("{{{REDACTED-%t-%l}}}");
         final String replacement = strategy.getReplacement("custom-name", "context", "documentId", "token", new Crypto(), anonymizationService);
 
@@ -67,7 +71,7 @@ public class IdentifierFilterStrategyTest {
 
         final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
 
-        final IdentifierFilterStrategy strategy = new IdentifierFilterStrategy();
+        final AbstractFilterStrategy strategy = getFilterStrategy();
         strategy.setRedactionFormat("***%l-%t***");
         final String replacement = strategy.getReplacement("custom-name", "context", "documentId", "token", new Crypto(), anonymizationService);
 
@@ -80,7 +84,7 @@ public class IdentifierFilterStrategyTest {
 
         final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
 
-        final IdentifierFilterStrategy strategy = new IdentifierFilterStrategy();
+        final AbstractFilterStrategy strategy = getFilterStrategy();
         strategy.setRedactionFormat("***%l-%l-%t***");
         final String replacement = strategy.getReplacement("custom-name", "context", "documentId", "token", new Crypto(), anonymizationService);
 
@@ -142,7 +146,7 @@ public class IdentifierFilterStrategyTest {
     @Test
     public void evaluateCondition4() {
 
-        final IdentifierFilterStrategy strategy = new IdentifierFilterStrategy();
+        final AbstractFilterStrategy strategy = getFilterStrategy();
 
         final Map<String, Object> attributes = new HashMap<>();
 
@@ -155,13 +159,41 @@ public class IdentifierFilterStrategyTest {
     @Test
     public void evaluateCondition5() {
 
-        final IdentifierFilterStrategy strategy = new IdentifierFilterStrategy();
+        final AbstractFilterStrategy strategy = getFilterStrategy();
 
         final Map<String, Object> attributes = new HashMap<>();
 
         final boolean conditionSatisfied = strategy.evaluateCondition("ctx", "documentId", "John Smith", "context == \"ctx\"", attributes);
 
         Assert.assertTrue(conditionSatisfied);
+
+    }
+
+    @Test
+    public void evaluateCondition6() {
+
+        final AbstractFilterStrategy strategy = getFilterStrategy();
+
+        final Map<String, Object> attributes = new HashMap<>();
+        attributes.put(NerFilterStrategy.CONFIDENCE, 1.0);
+
+        final boolean conditionSatisfied = strategy.evaluateCondition("ctx", "documentId", "John Smith", "confidence > 0.5", attributes);
+
+        Assert.assertTrue(conditionSatisfied);
+
+    }
+
+    @Test
+    public void evaluateCondition7() {
+
+        final AbstractFilterStrategy strategy = getFilterStrategy();
+
+        final Map<String, Object> attributes = new HashMap<>();
+        attributes.put(NerFilterStrategy.CONFIDENCE, 1.0);
+
+        final boolean conditionSatisfied = strategy.evaluateCondition("ctx", "documentId", "John Smith", "confidence < 0.5", attributes);
+
+        Assert.assertFalse(conditionSatisfied);
 
     }
 
