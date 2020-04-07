@@ -34,4 +34,22 @@ public class PhoneNumberExtensionFilterTest extends AbstractFilterTest {
 
     }
 
+    @Test
+    public void filter2() throws Exception {
+
+        final List<PhoneNumberExtensionFilterStrategy> strategies = Arrays.asList(new PhoneNumberExtensionFilterStrategy());
+        PhoneNumberExtensionFilter filter = new PhoneNumberExtensionFilter(strategies, new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()), Collections.emptySet(), new Crypto());
+
+        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid","his phone number was +1 151-841-2829 x416.");
+
+        for(Span span : spans) {
+            LOGGER.info(span.toString());
+        }
+
+        Assert.assertEquals(1, spans.size());
+        Assert.assertTrue(checkSpan(spans.get(0), 37, 41, FilterType.PHONE_NUMBER_EXTENSION));
+        Assert.assertEquals("x416", spans.get(0).getText());
+
+    }
+
 }

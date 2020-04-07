@@ -113,7 +113,7 @@
 		<jedis.version>3.0.1</jedis.version>
 		<json.version>20180130</json.version>
 		<junit.version>4.12</junit.version>
-		<libphonenumber.version>8.10.20</libphonenumber.version>
+		<libphonenumber.version>8.12.1</libphonenumber.version>
 		<log4j.version>2.11.2</log4j.version>
 		<lucene.version>8.3.0</lucene.version>
 		<metrics.version>4.1.0</metrics.version>
