@@ -30,7 +30,11 @@ public class NerFilterStrategy extends AbstractFilterStrategy {
 
         for(ParsedCondition parsedCondition : parsedConditions) {
 
-            if(StringUtils.equalsIgnoreCase(TYPE, parsedCondition.getField())) {
+            if(StringUtils.equalsIgnoreCase(TOKEN, parsedCondition.getField())) {
+
+                conditionsSatisfied = evaluateTokenCondition(parsedCondition, token);
+
+            } else if(StringUtils.equalsIgnoreCase(TYPE, parsedCondition.getField())) {
 
                 final String entityType = attributes.getOrDefault(TYPE, "unk").toString();
 

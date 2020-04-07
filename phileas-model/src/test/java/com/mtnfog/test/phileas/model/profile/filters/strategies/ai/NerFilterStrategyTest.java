@@ -279,4 +279,30 @@ public class NerFilterStrategyTest {
 
     }
 
+    @Test
+    public void evaluateCondition13() {
+
+        final AbstractFilterStrategy strategy = getFilterStrategy();
+
+        final Map<String, Object> attributes = new HashMap<>();
+
+        final boolean conditionSatisfied = strategy.evaluateCondition("ctx", "documentId", "John Smith", "token == \"John Smith\"", attributes);
+
+        Assert.assertTrue(conditionSatisfied);
+
+    }
+
+    @Test
+    public void evaluateCondition14() {
+
+        final AbstractFilterStrategy strategy = getFilterStrategy();
+
+        final Map<String, Object> attributes = new HashMap<>();
+
+        final boolean conditionSatisfied = strategy.evaluateCondition("ctx", "documentId", "John Smith", "token != \"John Smith\"", attributes);
+
+        Assert.assertFalse(conditionSatisfied);
+
+    }
+
 }
