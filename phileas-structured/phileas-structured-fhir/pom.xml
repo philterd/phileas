@@ -4,7 +4,7 @@
   <parent>    
     <groupId>com.mtnfog</groupId>
     <artifactId>phileas-structured</artifactId>
-    <version>1.4.0</version>
+    <version>1.4.1-SNAPSHOT</version>
   </parent>
   <artifactId>phileas-structured-fhir</artifactId>
   <name>phileas-structured-fhir</name>
