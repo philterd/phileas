@@ -73,6 +73,9 @@ public abstract class AbstractFilterTest {
         PhoneNumberExtension phoneNumberExtension = new PhoneNumberExtension();
         phoneNumberExtension.setPhoneNumberExtensionFilterStrategies(Arrays.asList(new PhoneNumberExtensionFilterStrategy()));
 
+        Section section = new Section();
+        section.setSectionFilterStrategies(Arrays.asList(new SectionFilterStrategy()));
+
         Ssn ssn = new Ssn();
         ssn.setSsnFilterStrategies(Arrays.asList(new SsnFilterStrategy()));
 
@@ -133,6 +136,7 @@ public abstract class AbstractFilterTest {
         identifiers.setMacAddress(macAddress);
         identifiers.setPhoneNumber(phoneNumber);
         identifiers.setPhoneNumberExtension(phoneNumberExtension);
+        identifiers.setSections(Arrays.asList(section));
         identifiers.setSsn(ssn);
         identifiers.setStateAbbreviation(stateAbbreviation);
         identifiers.setUrl(url);

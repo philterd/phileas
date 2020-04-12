@@ -54,6 +54,10 @@ public class Identifiers {
     @Expose
     private PhoneNumberExtension phoneNumberExtension;
 
+    @SerializedName("sections")
+    @Expose
+    private List<Section> sections;
+
     @SerializedName("ssn")
     @Expose
     private Ssn ssn;
@@ -148,6 +152,8 @@ public class Identifiers {
                 if(this.getPhoneNumber() != null) { return true; } break;
             case PHONE_NUMBER_EXTENSION:
                 if(this.getPhoneNumberExtension() != null) { return true; } break;
+            case SECTION:
+                if(this.getSections() != null) { return true; } break;
             case SSN:
                 if(this.getSsn() != null) { return true; } break;
             case LOCATION_STATE:
@@ -343,6 +349,14 @@ public class Identifiers {
 
     public void setCustomDictionaries(List<CustomDictionary> customDictionaries) {
         this.customDictionaries = customDictionaries;
+    }
+
+    public List<Section> getSections() {
+        return sections;
+    }
+
+    public void setSections(List<Section> sections) {
+        this.sections = sections;
     }
 
     public MacAddress getMacAddress() {

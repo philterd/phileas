@@ -15,6 +15,7 @@ import com.mtnfog.phileas.model.profile.FilterProfile;
 import com.mtnfog.phileas.model.profile.Ignored;
 import com.mtnfog.phileas.model.profile.filters.CustomDictionary;
 import com.mtnfog.phileas.model.profile.filters.Identifier;
+import com.mtnfog.phileas.model.profile.filters.Section;
 import com.mtnfog.phileas.model.responses.FilterResponse;
 import com.mtnfog.phileas.model.services.*;
 import com.mtnfog.phileas.services.anonymization.*;
@@ -198,6 +199,20 @@ public class PhileasFilterService implements FilterService, Serializable {
                 if(filterProfile.getIdentifiers().getPhoneNumber().isEnabled()) {
                     enabledFilters.add(new PhoneNumberRulesFilter(filterProfile.getIdentifiers().getPhoneNumber().getPhoneNumberFilterStrategies(), new AlphanumericAnonymizationService(anonymizationCacheService), filterProfile.getIdentifiers().getPhoneNumber().getIgnored(), filterProfile.getCrypto()));
                 }
+            }
+
+            if(filterProfile.getIdentifiers().hasFilter(FilterType.SECTION)) {
+
+                final List<Section> sections = filterProfile.getIdentifiers().getSections();
+
+                for(final Section section : sections) {
+
+                    if(section.isEnabled()) {
+                        enabledFilters.add(new SectionFilter(section.getSectionFilterStrategies(), new AlphanumericAnonymizationService(anonymizationCacheService), section.getStartPattern(), section.getEndPattern(), section.getIgnored(), filterProfile.getCrypto()));
+                    }
+
+                }
+
             }
 
             if(filterProfile.getIdentifiers().hasFilter(FilterType.SSN)) {
