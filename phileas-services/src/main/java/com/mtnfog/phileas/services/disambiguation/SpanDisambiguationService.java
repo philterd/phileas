@@ -3,7 +3,6 @@ package com.mtnfog.phileas.services.disambiguation;
 import com.mtnfog.phileas.model.enums.FilterType;
 import com.mtnfog.phileas.model.objects.Span;
 import com.mtnfog.phileas.model.services.DisambiguationService;
-import org.apache.commons.lang3.RandomStringUtils;
 
 import java.text.DecimalFormat;
 import java.util.Arrays;
@@ -13,6 +12,10 @@ import java.util.Set;
 
 public class SpanDisambiguationService implements DisambiguationService {
 
+    // Can this vector size be increased over time as the number of documents process grows?
+    // No, because it factors into the hash function.
+    // Changing the size would require starting all over because the values in it would
+    // no longer be valid because the hash function would have changed.
     private static final int VECTOR_SIZE = 8; //2^18;
 
     private Map<FilterType, SpanVector> vectors;
