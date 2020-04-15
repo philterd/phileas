@@ -5,7 +5,7 @@ import com.mtnfog.phileas.model.objects.Span;
 
 public interface DisambiguationService {
 
-    void hashAndInsert(Span span);
-    FilterType disambiguate(Span span1, Span span2, Span ambiguousSpan);
+    void hashAndInsert(String context, Span span);
+    FilterType disambiguate(String context, Span span1, Span span2, Span ambiguousSpan);
 
 }

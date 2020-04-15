@@ -1,21 +1,23 @@
 package com.mtnfog.phileas.services.disambiguation;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 public class SpanVector {
 
-    private Set<Integer> vectorIndexes;
+    private Map<Integer, Integer> vectorIndexes;
 
     public SpanVector() {
-        this.vectorIndexes = new HashSet<>();
+        this.vectorIndexes = new HashMap<>();
     }
 
-    public Set<Integer> getVectorIndexes() {
+    public Map<Integer, Integer> getVectorIndexes() {
         return vectorIndexes;
     }
 
-    public void setVectorIndexes(Set<Integer> vectorIndexes) {
+    public void setVectorIndexes(Map<Integer, Integer> vectorIndexes) {
         this.vectorIndexes = vectorIndexes;
     }
 
