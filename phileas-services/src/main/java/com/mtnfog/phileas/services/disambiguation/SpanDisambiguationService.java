@@ -13,7 +13,7 @@ import java.util.Set;
 
 public class SpanDisambiguationService implements DisambiguationService {
 
-    private static final int VECTOR_SIZE = 32; //2^18;
+    private static final int VECTOR_SIZE = 8; //2^18;
 
     private Map<FilterType, SpanVector> vectors;
 
@@ -80,21 +80,21 @@ public class SpanDisambiguationService implements DisambiguationService {
         // Create vectors from the span1 representation.
         final double[] span1Vector = new double[VECTOR_SIZE];
         for(int d : span1VectorRepresentation) {
-            span1Vector[d] = 1;
+            span1Vector[d] = 5;
         }
         System.out.println("span1: " + Arrays.toString(span1Vector));
 
         // Create vectors from the span2 representation.
         final double[] span2Vector = new double[VECTOR_SIZE];
         for(int d : span2VectorRepresentation) {
-            span2Vector[d] = 1;
+            span2Vector[d] = 5;
         }
         System.out.println("span2: " + Arrays.toString(span2Vector));
 
         // Create vectors from the ambiguousSpan representation.
         final double[] ambiguousSpanVector = new double[VECTOR_SIZE];
         for(int d : ambiguousSpanVectorRepresentation) {
-            ambiguousSpanVector[d] = 1;
+            ambiguousSpanVector[d] = 5;
         }
         System.out.println("ambiguous: " + Arrays.toString(ambiguousSpanVector));
 
