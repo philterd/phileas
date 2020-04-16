@@ -35,24 +35,33 @@ public class RedisFilterProfileCacheService implements FilterProfileCacheService
 
             if (StringUtils.equalsIgnoreCase(ssl, "true")) {
 
+                final String redisAddress = "rediss://" + redisEndpoint + ":" + redisPort;
+                LOGGER.info("Using clustered redis connection: {}", redisAddress);
+
                 config.useClusterServers()
                         .setScanInterval(2000)
-                        .addNodeAddress("rediss://" + redisEndpoint + ":" + redisPort)
+                        .addNodeAddress(redisAddress)
                         .setPassword(authToken);
 
 
             } else {
 
+                final String redisAddress = "redis://" + redisEndpoint + ":" + redisPort;
+                LOGGER.info("Using clustered redis connection: {}", redisAddress);
+
                 config.useClusterServers()
                         .setScanInterval(2000)
-                        .addNodeAddress("redis://" + redisEndpoint + ":" + redisPort)
+                        .addNodeAddress(redisAddress)
                         .setPassword(authToken);
 
             }
 
         } else {
 
-            config.useSingleServer().setAddress("redis://" + redisEndpoint + ":" + redisPort);
+            final String redisAddress = "redis://" + redisEndpoint + ":" + redisPort;
+            LOGGER.info("Using single server redis connection {}", redisAddress);
+
+            config.useSingleServer().setAddress(redisAddress);
 
         }
 
