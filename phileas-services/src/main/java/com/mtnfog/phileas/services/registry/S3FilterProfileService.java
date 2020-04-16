@@ -106,6 +106,8 @@ public class S3FilterProfileService implements FilterProfileService {
 
         } catch (Exception ex) {
 
+            LOGGER.error("Unable to get filter profile names.", ex);
+
             throw new InternalServerErrorException("Unable to get filter profile names.");
 
         }
@@ -127,6 +129,8 @@ public class S3FilterProfileService implements FilterProfileService {
             return json;
 
         } catch (Exception ex) {
+
+            LOGGER.error("Unable to get filter profile.", ex);
 
             throw new InternalServerErrorException("Unable to get filter profile.");
 
@@ -172,7 +176,9 @@ public class S3FilterProfileService implements FilterProfileService {
 
         } catch (Exception ex) {
 
-            throw new InternalServerErrorException("Unable to get filter profiles.");
+            LOGGER.error("Unable to get all filter profile names.", ex);
+
+            throw new InternalServerErrorException("Unable to get all filter profiles.");
 
         }
 
@@ -199,6 +205,8 @@ public class S3FilterProfileService implements FilterProfileService {
 
         } catch (Exception ex) {
 
+            LOGGER.error("Unable to save filter profile.", ex);
+
             throw new InternalServerErrorException("Unable to save filter profile.");
 
         }
@@ -214,6 +222,8 @@ public class S3FilterProfileService implements FilterProfileService {
 
         } catch (Exception ex) {
 
+            LOGGER.error("Unable to delete filter profile.", ex);
+
             throw new InternalServerErrorException("Unable to delete filter profile.");
 
         }
@@ -222,12 +232,12 @@ public class S3FilterProfileService implements FilterProfileService {
 
     private String buildKey(final String name) {
 
-        LOGGER.info("Building key from: {} and {}", bucket, name);
+        LOGGER.debug("Building key from: {} and {} and {}", bucket, prefix, name);
 
         if(StringUtils.equals(prefix, "/")) {
             return name + ".json";
         } else if(prefix.endsWith("/")) {
-            return "/" + name + ".json";
+            return prefix + name + ".json";
         } else {
             return prefix + "/" + name + ".json";
         }
