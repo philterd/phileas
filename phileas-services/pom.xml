@@ -75,6 +75,11 @@
 			<version>${json.version}</version>
 		</dependency>
 		<dependency>
+			<groupId>com.amazonaws</groupId>
+			<artifactId>aws-java-sdk-s3</artifactId>
+			<version>${aws.version}</version>
+		</dependency>
+		<dependency>
 			<groupId>com.github.javafaker</groupId>
 			<artifactId>javafaker</artifactId>
 			<version>${javafaker.version}</version>
@@ -142,6 +147,12 @@
 			<version>${junit.version}</version>
 		</dependency>
 		<dependency>
+			<groupId>io.findify</groupId>
+			<artifactId>s3mock_2.12</artifactId>
+			<version>0.2.5</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
 			<groupId>nl.jqno.equalsverifier</groupId>
 			<artifactId>equalsverifier</artifactId>
 			<version>${equals.verifier.version}</version>
@@ -152,6 +163,12 @@
 			<artifactId>redis-mock</artifactId>
 			<version>${redis-mock.version}</version>
 			<scope>test</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>com.google.guava</groupId>
+					<artifactId>guava</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 	</dependencies>
 </project>

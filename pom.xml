@@ -91,7 +91,7 @@
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<!-- Project dependency versions -->
 		<antlr.version>4.7.2</antlr.version>
-		<aws.version>1.11.642</aws.version>
+		<aws.version>1.11.740</aws.version>
 		<commons.collections4.version>4.4</commons.collections4.version>
 		<commons.lang3.version>3.8.1</commons.lang3.version>
 		<commons.logging.version>1.2</commons.logging.version>
