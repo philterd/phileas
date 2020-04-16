@@ -75,12 +75,18 @@ public class S3FilterProfileService implements FilterProfileService {
 
         try {
 
-            ListObjectsV2Request req = new ListObjectsV2Request().withBucketName(bucket).withPrefix(prefix);
+            LOGGER.info("Looking for filter profiles in s3 bucket {} with prefix {}", bucket, prefix);
+            final ListObjectsV2Request listObjectsV2Request = new ListObjectsV2Request().withBucketName(bucket);
+
+            if(!StringUtils.equalsIgnoreCase(prefix, "/")) {
+                listObjectsV2Request.setPrefix(prefix);
+            }
+
             ListObjectsV2Result result;
 
             do {
 
-                result = s3Client.listObjectsV2(req);
+                result = s3Client.listObjectsV2(listObjectsV2Request);
 
                 for (S3ObjectSummary objectSummary : result.getObjectSummaries()) {
 
@@ -93,14 +99,14 @@ public class S3FilterProfileService implements FilterProfileService {
                     final String name = object.getString("name");
 
                     names.add(name);
-                    LOGGER.debug("Added filter profile named {}", name);
+                    LOGGER.debug("Found filter profile named {}", name);
 
                 }
 
                 // If there are more than maxKeys keys in the bucket, get a continuation token and list the next objects.
                 final String token = result.getNextContinuationToken();
 
-                req.setContinuationToken(token);
+                listObjectsV2Request.setContinuationToken(token);
 
             } while (result.isTruncated());
 
@@ -121,6 +127,7 @@ public class S3FilterProfileService implements FilterProfileService {
 
         try {
 
+            LOGGER.info("Looking for filter profile {} in s3 bucket {} with prefix {}", filterProfileName, bucket, prefix);
             final S3Object fullObject = s3Client.getObject(new GetObjectRequest(bucket, buildKey(filterProfileName)));
             final String json = IOUtils.toString(fullObject.getObjectContent(), StandardCharsets.UTF_8.name());
 
@@ -145,32 +152,45 @@ public class S3FilterProfileService implements FilterProfileService {
 
         try {
 
-            ListObjectsV2Request req = new ListObjectsV2Request().withBucketName(bucket).withPrefix(prefix);
+            LOGGER.info("Looking for all filter profiles in s3 bucket {} with prefix {}", bucket, prefix);
+            ListObjectsV2Request listObjectsV2Request = new ListObjectsV2Request().withBucketName(bucket);
+
+            if(!StringUtils.equalsIgnoreCase(prefix, "/")) {
+                listObjectsV2Request.setPrefix(prefix);
+            }
+
             ListObjectsV2Result result;
 
             do {
 
-                result = s3Client.listObjectsV2(req);
+                result = s3Client.listObjectsV2(listObjectsV2Request);
 
-                for (S3ObjectSummary objectSummary : result.getObjectSummaries()) {
+                LOGGER.info("Found {} filter profiles.", result.getObjectSummaries().size());
 
-                    final S3Object fullObject = s3Client.getObject(new GetObjectRequest(bucket, objectSummary.getKey()));
-                    final String json = IOUtils.toString(fullObject.getObjectContent(), StandardCharsets.UTF_8.name());
+                for (final S3ObjectSummary objectSummary : result.getObjectSummaries()) {
 
-                    fullObject.close();
+                    // Ignore any non .json files.
+                    if(objectSummary.getKey().endsWith(".json")) {
 
-                    final JSONObject object = new JSONObject(json);
-                    final String name = object.getString("name");
+                        final S3Object fullObject = s3Client.getObject(new GetObjectRequest(bucket, objectSummary.getKey()));
+                        final String json = IOUtils.toString(fullObject.getObjectContent(), StandardCharsets.UTF_8.name());
 
-                    filterProfiles.put(name, json);
-                    LOGGER.debug("Added filter profile named {}", name);
+                        fullObject.close();
+
+                        final JSONObject object = new JSONObject(json);
+                        final String name = object.getString("name");
+
+                        filterProfiles.put(name, json);
+                        LOGGER.debug("Added filter profile named {}", name);
+
+                    }
 
                 }
 
                 // If there are more than maxKeys keys in the bucket, get a continuation token and list the next objects.
                 final String token = result.getNextContinuationToken();
 
-                req.setContinuationToken(token);
+                listObjectsV2Request.setContinuationToken(token);
 
             } while (result.isTruncated());
 
