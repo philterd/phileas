@@ -33,7 +33,7 @@ public class RedisFilterProfileCacheService implements FilterProfileCacheService
 
         if(StringUtils.equalsIgnoreCase(cluster, "true")) {
 
-            if (StringUtils.equalsIgnoreCase("ssl", "true")) {
+            if (StringUtils.equalsIgnoreCase(ssl, "true")) {
 
                 config.useClusterServers()
                         .setScanInterval(2000)

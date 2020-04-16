@@ -16,6 +16,7 @@ public class RedisAnonymizationCacheServiceTest {
     private static final Logger LOGGER = LogManager.getLogger(RedisAnonymizationCacheServiceTest.class);
 
     private final RedisServer server = RedisServer.builder().port(31000).build();
+    private boolean isExternalRedis = false;
 
     private Properties getProperties() {
 
@@ -35,11 +36,13 @@ public class RedisAnonymizationCacheServiceTest {
         if(StringUtils.isNotEmpty(redisHost)) {
 
             LOGGER.info("Using redis host: {}", redisHost);
+            isExternalRedis = true;
 
             properties.setProperty("cache.redis.host", redisHost);
             properties.setProperty("cache.redis.port", redisPort);
             properties.setProperty("cache.redis.ssl.enabled", redisSsl);
             properties.setProperty("cache.redis.auth.token", redisToken);
+            properties.setProperty("cache.redis.cluster", "true");
 
         } else {
 
@@ -49,6 +52,7 @@ public class RedisAnonymizationCacheServiceTest {
             properties.setProperty("cache.redis.port", "31000");
             properties.setProperty("cache.redis.ssl.enabled", "false");
             properties.setProperty("cache.redis.auth.token", "");
+            properties.setProperty("cache.redis.cluster", "false");
 
         }
 
@@ -62,13 +66,21 @@ public class RedisAnonymizationCacheServiceTest {
     }
 
     @Before
-    public void before() throws IOException {
-        server.start();
+    public void before() {
+
+        if(!isExternalRedis) {
+            server.start();
+        }
+
     }
 
     @After
-    public void after() throws IOException {
-        server.stop();
+    public void after() {
+
+        if(!isExternalRedis) {
+            server.stop();
+        }
+
     }
 
     @Test

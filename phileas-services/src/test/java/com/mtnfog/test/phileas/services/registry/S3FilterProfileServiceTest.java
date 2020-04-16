@@ -33,6 +33,8 @@ public class S3FilterProfileServiceTest {
     private final RedisServer redisServer = RedisServer.builder().port(31000).build();
     private S3Mock api;
 
+    private boolean isExternalRedis = false;
+
     private Properties getProperties() {
 
         final Properties properties = new Properties();
@@ -45,17 +47,18 @@ public class S3FilterProfileServiceTest {
         properties.setProperty("filter.profiles", "s3");
         properties.setProperty("filter.profiles.s3.bucket", "profiles");
         properties.setProperty("filter.profiles.s3.prefix", "/");
-
         properties.setProperty("cache.redis.enabled", "true");
 
         if(StringUtils.isNotEmpty(redisHost)) {
 
             LOGGER.info("Using redis host: {}", redisHost);
+            isExternalRedis = true;
 
             properties.setProperty("cache.redis.host", redisHost);
             properties.setProperty("cache.redis.port", redisPort);
             properties.setProperty("cache.redis.ssl.enabled", redisSsl);
             properties.setProperty("cache.redis.auth.token", redisToken);
+            properties.setProperty("cache.redis.cluster", "true");
 
         } else {
 
@@ -65,6 +68,7 @@ public class S3FilterProfileServiceTest {
             properties.setProperty("cache.redis.port", "31000");
             properties.setProperty("cache.redis.ssl.enabled", "false");
             properties.setProperty("cache.redis.auth.token", "");
+            properties.setProperty("cache.redis.cluster", "false");
 
         }
 
@@ -73,7 +77,7 @@ public class S3FilterProfileServiceTest {
     }
 
     @BeforeClass
-    public static void beforeClass() throws IOException {
+    public static void beforeClass() {
         Assume.assumeFalse(System.getProperty("os.name").toLowerCase().startsWith("win"));
     }
 
@@ -87,7 +91,9 @@ public class S3FilterProfileServiceTest {
         api = new S3Mock.Builder().withPort(8001).withFileBackend(temporaryDirectory.toFile().getAbsolutePath()).build();
         api.start();
 
-        redisServer.start();
+        if(!isExternalRedis) {
+            redisServer.start();
+        }
 
     }
 
@@ -96,7 +102,9 @@ public class S3FilterProfileServiceTest {
 
         api.shutdown();
 
-        redisServer.stop();
+        if(!isExternalRedis) {
+            redisServer.stop();
+        }
 
     }
 
