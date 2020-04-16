@@ -40,7 +40,7 @@ public class S3FilterProfileService implements FilterProfileService {
         this.prefix = applicationProperties.getProperty("filter.profiles.s3.prefix");
         final String region = applicationProperties.getProperty("filter.profiles.s3.region", "us-east-1");
 
-        LOGGER.info("Looking for filter profiles in s3://{}/", bucket, prefix);
+        LOGGER.info("Configuring S3 backend for filter profiles in s3 bucket {} with prefix {}", bucket, prefix);
 
         if(testing) {
 

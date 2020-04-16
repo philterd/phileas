@@ -275,7 +275,7 @@ public class PhileasFilterService implements FilterService, Serializable {
 
             } else {
 
-                LOGGER.info("Filter profile {} has no custom dictionaries.", filterProfile.getName());
+                LOGGER.debug("Filter profile {} has no custom dictionaries.", filterProfile.getName());
 
             }
 
