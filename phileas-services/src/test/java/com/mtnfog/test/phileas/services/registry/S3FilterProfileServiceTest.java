@@ -30,10 +30,10 @@ public class S3FilterProfileServiceTest {
     private static final Logger LOGGER = LogManager.getLogger(S3FilterProfileServiceTest.class);
 
     private Gson gson = new Gson();
-    private final RedisServer redisServer = RedisServer.builder().port(31000).build();
+    private RedisServer redisServer;
     private S3Mock api;
 
-    private boolean isExternalRedis = false;
+    private static boolean isExternalRedis = false;
 
     private Properties getProperties() {
 
@@ -52,7 +52,6 @@ public class S3FilterProfileServiceTest {
         if(StringUtils.isNotEmpty(redisHost)) {
 
             LOGGER.info("Using redis host: {}", redisHost);
-            isExternalRedis = true;
 
             properties.setProperty("cache.redis.host", redisHost);
             properties.setProperty("cache.redis.port", redisPort);
@@ -78,7 +77,15 @@ public class S3FilterProfileServiceTest {
 
     @BeforeClass
     public static void beforeClass() {
+
         Assume.assumeFalse(System.getProperty("os.name").toLowerCase().startsWith("win"));
+
+        final String redisHost = System.getenv("PHILTER_REDIS_HOST");
+
+        if(StringUtils.isNotEmpty(redisHost)) {
+            isExternalRedis = true;
+        }
+
     }
 
     @Before
@@ -92,6 +99,7 @@ public class S3FilterProfileServiceTest {
         api.start();
 
         if(!isExternalRedis) {
+            redisServer = RedisServer.builder().port(31000).build();
             redisServer.start();
         }
 

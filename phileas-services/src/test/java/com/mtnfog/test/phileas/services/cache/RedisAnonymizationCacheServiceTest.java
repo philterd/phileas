@@ -1,22 +1,20 @@
 package com.mtnfog.test.phileas.services.cache;
 
 import com.mtnfog.phileas.services.cache.anonymization.RedisAnonymizationCacheService;
-import com.mtnfog.test.phileas.services.registry.S3FilterProfileServiceTest;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.*;
 import redis.embedded.RedisServer;
 
-import java.io.IOException;
 import java.util.Properties;
 
 public class RedisAnonymizationCacheServiceTest {
 
     private static final Logger LOGGER = LogManager.getLogger(RedisAnonymizationCacheServiceTest.class);
 
-    private final RedisServer server = RedisServer.builder().port(31000).build();
-    private boolean isExternalRedis = false;
+    private RedisServer redisServer;
+    private static boolean isExternalRedis = false;
 
     private Properties getProperties() {
 
@@ -62,14 +60,23 @@ public class RedisAnonymizationCacheServiceTest {
 
     @BeforeClass
     public static void beforeClass() {
+
         Assume.assumeFalse(System.getProperty("os.name").toLowerCase().startsWith("win"));
+
+        final String redisHost = System.getenv("PHILTER_REDIS_HOST");
+
+        if(StringUtils.isNotEmpty(redisHost)) {
+            isExternalRedis = true;
+        }
+
     }
 
     @Before
     public void before() {
 
         if(!isExternalRedis) {
-            server.start();
+            redisServer = RedisServer.builder().port(31000).build();
+            redisServer.start();
         }
 
     }
@@ -78,7 +85,7 @@ public class RedisAnonymizationCacheServiceTest {
     public void after() {
 
         if(!isExternalRedis) {
-            server.stop();
+            redisServer.stop();
         }
 
     }
