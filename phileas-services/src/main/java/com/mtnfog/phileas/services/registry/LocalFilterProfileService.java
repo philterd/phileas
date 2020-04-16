@@ -28,7 +28,7 @@ public class LocalFilterProfileService implements FilterProfileService {
     }
 
     @Override
-    public List<String> get() throws IOException {
+    public List<String> get(boolean ignoreCache) throws IOException {
 
         final List<String> names = new LinkedList<>();
 
@@ -51,7 +51,7 @@ public class LocalFilterProfileService implements FilterProfileService {
     }
 
     @Override
-    public String get(String filterProfileName) throws IOException {
+    public String get(String filterProfileName, boolean ignoreCache) throws IOException {
 
         final File file = new File(filterProfilesDirectory, filterProfileName + ".json");
 
@@ -64,7 +64,7 @@ public class LocalFilterProfileService implements FilterProfileService {
     }
 
     @Override
-    public Map<String, String> getAll() throws IOException {
+    public Map<String, String> getAll(boolean ignoreCache) throws IOException {
 
         final Map<String, String> filterProfiles = new HashMap<>();
 

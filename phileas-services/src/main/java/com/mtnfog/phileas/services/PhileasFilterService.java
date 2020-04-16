@@ -25,6 +25,7 @@ import com.mtnfog.phileas.services.postfilters.IgnoredTermsFilter;
 import com.mtnfog.phileas.services.postfilters.TrailingPeriodPostFilter;
 import com.mtnfog.phileas.services.postfilters.TrailingSpacePostFilter;
 import com.mtnfog.phileas.services.processors.UnstructuredDocumentProcessor;
+import com.mtnfog.phileas.services.cache.profiles.RedisFilterProfileCacheService;
 import com.mtnfog.phileas.services.validators.DateSpanValidator;
 import com.mtnfog.phileas.store.ElasticsearchStore;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -139,7 +140,7 @@ public class PhileasFilterService implements FilterService, Serializable {
         postFilters.clear();
 
         // Load all of the filter profiles into memory from each filter profile service.
-        final Map<String, String> fp = filterProfileService.getAll();
+        final Map<String, String> fp = filterProfileService.getAll(false);
         for(String k : fp.keySet()) {
             filterProfiles.put(k, gson.fromJson(fp.get(k), FilterProfile.class));
         }

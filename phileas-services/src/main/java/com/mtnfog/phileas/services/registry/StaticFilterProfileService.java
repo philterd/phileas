@@ -45,7 +45,7 @@ public class StaticFilterProfileService implements FilterProfileService {
     }
 
     @Override
-    public List<String> get() throws IOException {
+    public List<String> get(boolean ignoreCache) throws IOException {
         return Collections.emptyList();
     }
 
@@ -56,7 +56,7 @@ public class StaticFilterProfileService implements FilterProfileService {
      * @return The filter profile.
      */
     @Override
-    public String get(String filterProfileName) {
+    public String get(String filterProfileName, boolean ignoreCache) {
 
         // The filterProfileName does not matter.
         // There is only one filter profile and it is returned.
@@ -71,7 +71,7 @@ public class StaticFilterProfileService implements FilterProfileService {
      * @return A map of filter profiles.
      */
     @Override
-    public Map<String, String> getAll() {
+    public Map<String, String> getAll(boolean ignoreCache) {
 
         final Map<String, String> filterProfiles = new HashMap<>();
 
@@ -83,12 +83,12 @@ public class StaticFilterProfileService implements FilterProfileService {
 
     @Override
     public void save(String filterProfileJson) throws IOException {
-
+        // Will not be implemented.
     }
 
     @Override
     public void delete(String name) throws IOException {
-
+        // Will not be implemented.
     }
 
 }

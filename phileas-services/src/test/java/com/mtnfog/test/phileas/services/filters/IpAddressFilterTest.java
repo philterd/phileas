@@ -5,7 +5,7 @@ import com.mtnfog.phileas.model.objects.Span;
 import com.mtnfog.phileas.model.profile.Crypto;
 import com.mtnfog.phileas.model.profile.filters.strategies.rules.IpAddressFilterStrategy;
 import com.mtnfog.phileas.services.anonymization.IpAddressAnonymizationService;
-import com.mtnfog.phileas.services.cache.LocalAnonymizationCacheService;
+import com.mtnfog.phileas.services.cache.anonymization.LocalAnonymizationCacheService;
 import com.mtnfog.phileas.services.filters.regex.IpAddressFilter;
 import org.junit.Assert;
 import org.junit.Test;

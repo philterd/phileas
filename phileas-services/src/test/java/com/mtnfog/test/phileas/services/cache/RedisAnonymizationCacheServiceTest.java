@@ -1,19 +1,31 @@
 package com.mtnfog.test.phileas.services.cache;
 
-import com.mtnfog.phileas.services.cache.RedisAnonymizationCacheService;
+import com.mtnfog.phileas.services.cache.anonymization.RedisAnonymizationCacheService;
 import org.junit.*;
 import redis.embedded.RedisServer;
 
 import java.io.IOException;
+import java.util.Properties;
 
-@Ignore("For some reason, the in-memory redis doesn't start on Jenkins builds.")
+//@Ignore("For some reason, the in-memory redis doesn't start on Jenkins builds.")
 public class RedisAnonymizationCacheServiceTest {
 
-    private int port = 31000;
-    private final RedisServer server = RedisServer.builder().port(port).build();
+    private final RedisServer server = RedisServer.builder().port(31000).build();
+
+    private Properties getProperties() {
+
+        final Properties properties = new Properties();
+
+        properties.setProperty("cache.redis.enabled", "true");
+        properties.setProperty("cache.redis.host", "localhost");
+        properties.setProperty("cache.redis.port", "31000");
+
+        return properties;
+
+    }
 
     @BeforeClass
-    public static void beforeClass() throws IOException {
+    public static void beforeClass() {
         Assume.assumeFalse(System.getProperty("os.name").toLowerCase().startsWith("win"));
     }
 
@@ -30,7 +42,7 @@ public class RedisAnonymizationCacheServiceTest {
     @Test
     public void putAndContains() throws Exception {
 
-        final RedisAnonymizationCacheService cache = new RedisAnonymizationCacheService("localhost", port);
+        final RedisAnonymizationCacheService cache = new RedisAnonymizationCacheService(getProperties());
 
         cache.put("context", "k", "v");
 
@@ -41,19 +53,19 @@ public class RedisAnonymizationCacheServiceTest {
     @Test
     public void containsValue() throws Exception {
 
-        final RedisAnonymizationCacheService cache = new RedisAnonymizationCacheService("localhost", port);
+        final RedisAnonymizationCacheService cache = new RedisAnonymizationCacheService(getProperties());
 
         cache.put("context", "k", "v");
 
-        Assert.assertTrue(cache.containsValue("context", "k"));
-        Assert.assertFalse(cache.containsValue("context", "v"));
+        Assert.assertTrue(cache.containsValue("context", "v"));
+        Assert.assertFalse(cache.containsValue("context", "k"));
 
     }
 
     @Test
     public void getAndPut() throws Exception {
 
-        final RedisAnonymizationCacheService cache = new RedisAnonymizationCacheService("localhost", port);
+        final RedisAnonymizationCacheService cache = new RedisAnonymizationCacheService(getProperties());
 
         cache.put("context", "k", "v");
         final String value = cache.get("context", "k");
@@ -67,7 +79,7 @@ public class RedisAnonymizationCacheServiceTest {
     @Test
     public void putAndRemove() throws Exception {
 
-        final RedisAnonymizationCacheService cache = new RedisAnonymizationCacheService("localhost", port);
+        final RedisAnonymizationCacheService cache = new RedisAnonymizationCacheService(getProperties());
 
         cache.put("context", "k", "v");
         final String value = cache.get("context", "k");
@@ -82,7 +94,7 @@ public class RedisAnonymizationCacheServiceTest {
     @Test
     public void generateKey() throws Exception {
 
-        final RedisAnonymizationCacheService cache = new RedisAnonymizationCacheService("localhost", port);
+        final RedisAnonymizationCacheService cache = new RedisAnonymizationCacheService(getProperties());
 
         final String hash = cache.generateKey("context", "k");
 

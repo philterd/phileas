@@ -7,7 +7,7 @@ import com.mtnfog.phileas.model.profile.filters.Identifier;
 import com.mtnfog.phileas.model.profile.filters.strategies.rules.IdentifierFilterStrategy;
 import com.mtnfog.phileas.model.services.AnonymizationService;
 import com.mtnfog.phileas.services.anonymization.AlphanumericAnonymizationService;
-import com.mtnfog.phileas.services.cache.LocalAnonymizationCacheService;
+import com.mtnfog.phileas.services.cache.anonymization.LocalAnonymizationCacheService;
 import com.mtnfog.phileas.services.filters.regex.IdentifierFilter;
 import org.junit.Assert;
 import org.junit.Test;

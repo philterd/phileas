@@ -6,7 +6,7 @@ import com.mtnfog.phileas.model.profile.Crypto;
 import com.mtnfog.phileas.model.profile.filters.strategies.rules.VinFilterStrategy;
 import com.mtnfog.phileas.model.services.AnonymizationService;
 import com.mtnfog.phileas.services.anonymization.VinAnonymizationService;
-import com.mtnfog.phileas.services.cache.LocalAnonymizationCacheService;
+import com.mtnfog.phileas.services.cache.anonymization.LocalAnonymizationCacheService;
 import com.mtnfog.phileas.services.filters.regex.VinFilter;
 import org.junit.Assert;
 import org.junit.Test;

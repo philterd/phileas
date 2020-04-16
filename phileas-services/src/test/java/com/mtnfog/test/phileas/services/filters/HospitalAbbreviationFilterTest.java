@@ -8,7 +8,7 @@ import com.mtnfog.phileas.model.profile.Crypto;
 import com.mtnfog.phileas.model.profile.filters.strategies.dynamic.HospitalAbbreviationFilterStrategy;
 import com.mtnfog.phileas.model.services.AnonymizationService;
 import com.mtnfog.phileas.services.anonymization.HospitalAbbreviationAnonymizationService;
-import com.mtnfog.phileas.services.cache.LocalAnonymizationCacheService;
+import com.mtnfog.phileas.services.cache.anonymization.LocalAnonymizationCacheService;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.text.WordUtils;
 import org.apache.logging.log4j.LogManager;

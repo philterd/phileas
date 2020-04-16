@@ -1,19 +1,22 @@
 package com.mtnfog.test.phileas.services.cache;
 
-import com.mtnfog.phileas.services.cache.RedisAnonymizationCacheService;
+import com.mtnfog.phileas.services.cache.anonymization.RedisAnonymizationCacheService;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class RedisAnonymizationCacheServiceIT {
+import java.util.Properties;
 
-    private final String host = "master.philter.fl8lv7.use1.cache.amazonaws.com";
-    private final int port = 6379;
-    private final String token = "philterauthtoken";
+public class RedisAnonymizationCacheServiceIT {
 
     @Test
     public void putAndContains() throws Exception {
 
-        final RedisAnonymizationCacheService cache = new RedisAnonymizationCacheService(host, port, token);
+        final Properties properties = new Properties();
+        properties.setProperty("cache.redis.enabled", "true");
+        properties.setProperty("cache.redis.host", "master.philter.fl8lv7.use1.cache.amazonaws.com");
+        properties.setProperty("cache.redis.port", "6379");
+
+        final RedisAnonymizationCacheService cache = new RedisAnonymizationCacheService(properties);
 
         cache.put("context", "k", "v");
 
@@ -24,7 +27,12 @@ public class RedisAnonymizationCacheServiceIT {
     @Test
     public void containsValue() throws Exception {
 
-        final RedisAnonymizationCacheService cache = new RedisAnonymizationCacheService(host, port, token);
+        final Properties properties = new Properties();
+        properties.setProperty("cache.redis.enabled", "true");
+        properties.setProperty("cache.redis.host", "master.philter.fl8lv7.use1.cache.amazonaws.com");
+        properties.setProperty("cache.redis.port", "6379");
+
+        final RedisAnonymizationCacheService cache = new RedisAnonymizationCacheService(properties);
 
         cache.put("context", "k", "v");
 
@@ -36,7 +44,12 @@ public class RedisAnonymizationCacheServiceIT {
     @Test
     public void getAndPut() throws Exception {
 
-        final RedisAnonymizationCacheService cache = new RedisAnonymizationCacheService(host, port, token);
+        final Properties properties = new Properties();
+        properties.setProperty("cache.redis.enabled", "true");
+        properties.setProperty("cache.redis.host", "master.philter.fl8lv7.use1.cache.amazonaws.com");
+        properties.setProperty("cache.redis.port", "6379");
+
+        final RedisAnonymizationCacheService cache = new RedisAnonymizationCacheService(properties);
 
         cache.put("context", "k", "v");
         final String value = cache.get("context", "k");
@@ -50,7 +63,12 @@ public class RedisAnonymizationCacheServiceIT {
     @Test
     public void putAndRemove() throws Exception {
 
-        final RedisAnonymizationCacheService cache = new RedisAnonymizationCacheService(host, port, token);
+        final Properties properties = new Properties();
+        properties.setProperty("cache.redis.enabled", "true");
+        properties.setProperty("cache.redis.host", "master.philter.fl8lv7.use1.cache.amazonaws.com");
+        properties.setProperty("cache.redis.port", "6379");
+
+        final RedisAnonymizationCacheService cache = new RedisAnonymizationCacheService(properties);
 
         cache.put("context", "k", "v");
         final String value = cache.get("context", "k");
@@ -65,7 +83,12 @@ public class RedisAnonymizationCacheServiceIT {
     @Test
     public void generateKey() throws Exception {
 
-        final RedisAnonymizationCacheService cache = new RedisAnonymizationCacheService(host, port, token);
+        final Properties properties = new Properties();
+        properties.setProperty("cache.redis.enabled", "true");
+        properties.setProperty("cache.redis.host", "master.philter.fl8lv7.use1.cache.amazonaws.com");
+        properties.setProperty("cache.redis.port", "6379");
+
+        final RedisAnonymizationCacheService cache = new RedisAnonymizationCacheService(properties);
 
         final String hash = cache.generateKey("context", "k");
 

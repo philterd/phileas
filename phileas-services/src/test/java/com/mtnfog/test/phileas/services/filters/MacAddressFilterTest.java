@@ -6,7 +6,7 @@ import com.mtnfog.phileas.model.objects.Span;
 import com.mtnfog.phileas.model.profile.Crypto;
 import com.mtnfog.phileas.model.profile.filters.strategies.rules.MacAddressFilterStrategy;
 import com.mtnfog.phileas.services.anonymization.MacAddressAnonymizationService;
-import com.mtnfog.phileas.services.cache.LocalAnonymizationCacheService;
+import com.mtnfog.phileas.services.cache.anonymization.LocalAnonymizationCacheService;
 import com.mtnfog.phileas.services.filters.regex.MacAddressFilter;
 import org.junit.Assert;
 import org.junit.Test;

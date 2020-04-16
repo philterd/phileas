@@ -1,4 +1,4 @@
-package com.mtnfog.phileas.services.cache;
+package com.mtnfog.phileas.services.cache.anonymization;
 
 import com.mtnfog.phileas.model.services.AnonymizationCacheService;
 import org.apache.commons.codec.digest.DigestUtils;

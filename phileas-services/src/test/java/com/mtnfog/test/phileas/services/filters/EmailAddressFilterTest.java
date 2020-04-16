@@ -5,7 +5,7 @@ import com.mtnfog.phileas.model.objects.Span;
 import com.mtnfog.phileas.model.profile.Crypto;
 import com.mtnfog.phileas.model.profile.filters.strategies.rules.EmailAddressFilterStrategy;
 import com.mtnfog.phileas.services.anonymization.EmailAddressAnonymizationService;
-import com.mtnfog.phileas.services.cache.LocalAnonymizationCacheService;
+import com.mtnfog.phileas.services.cache.anonymization.LocalAnonymizationCacheService;
 import com.mtnfog.phileas.services.filters.regex.EmailAddressFilter;
 import org.junit.Assert;
 import org.junit.Test;

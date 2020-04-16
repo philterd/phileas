@@ -5,7 +5,7 @@ import com.mtnfog.phileas.model.objects.Span;
 import com.mtnfog.phileas.model.profile.Crypto;
 import com.mtnfog.phileas.model.profile.filters.strategies.rules.DateFilterStrategy;
 import com.mtnfog.phileas.services.anonymization.DateAnonymizationService;
-import com.mtnfog.phileas.services.cache.LocalAnonymizationCacheService;
+import com.mtnfog.phileas.services.cache.anonymization.LocalAnonymizationCacheService;
 import com.mtnfog.phileas.services.filters.regex.DateFilter;
 import com.mtnfog.phileas.services.validators.DateSpanValidator;
 import org.junit.Assert;
