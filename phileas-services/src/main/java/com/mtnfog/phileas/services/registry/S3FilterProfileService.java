@@ -27,8 +27,6 @@ public class S3FilterProfileService implements FilterProfileService {
 
     private static final Logger LOGGER = LogManager.getLogger(S3FilterProfileService.class);
 
-    private Properties applicationProperties;
-
     private AmazonS3 s3Client;
     private String bucket;
     private String prefix;
