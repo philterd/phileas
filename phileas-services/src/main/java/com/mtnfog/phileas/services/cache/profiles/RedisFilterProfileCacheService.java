@@ -47,6 +47,7 @@ public class RedisFilterProfileCacheService implements FilterProfileCacheService
                         .addNodeAddress("rediss://" + redisEndpoint + ":" + redisPort)
                         .setPassword(authToken);
 
+
             } else {
 
                 config.useClusterServers()
