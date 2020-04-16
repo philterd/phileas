@@ -60,7 +60,13 @@ public class RedisAnonymizationCacheService implements AnonymizationCacheService
 
             final String redisAddress = protocol + redisEndpoint + ":" + redisPort;
             LOGGER.info("Using single server redis connection {}", redisAddress);
-            config.useSingleServer().setAddress(redisAddress).setPassword(authToken);
+            config.useSingleServer().setAddress(redisAddress);
+
+            if(StringUtils.isNotEmpty(authToken)) {
+                config.useSingleServer().setAddress(redisAddress).setPassword(authToken);
+            } else {
+                config.useSingleServer().setAddress(redisAddress);
+            }
 
         }
 

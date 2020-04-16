@@ -61,7 +61,12 @@ public class RedisFilterProfileCacheService implements FilterProfileCacheService
 
             final String redisAddress = protocol + redisEndpoint + ":" + redisPort;
             LOGGER.info("Using single server redis connection {}", redisAddress);
-            config.useSingleServer().setAddress(redisAddress).setPassword(authToken);
+
+            if(StringUtils.isNotEmpty(authToken)) {
+                config.useSingleServer().setAddress(redisAddress).setPassword(authToken);
+            } else {
+                config.useSingleServer().setAddress(redisAddress);
+            }
 
         }
 
