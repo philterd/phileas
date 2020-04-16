@@ -2,10 +2,12 @@ package com.mtnfog.test.phileas.services.cache;
 
 import com.mtnfog.phileas.services.cache.anonymization.RedisAnonymizationCacheService;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.Properties;
 
+@Ignore
 public class RedisAnonymizationCacheServiceIT {
 
     @Test

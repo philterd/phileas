@@ -33,32 +33,34 @@ public class RedisFilterProfileCacheService implements FilterProfileCacheService
 
         if(StringUtils.equalsIgnoreCase(cluster, "true")) {
 
+            final String protocol;
+
             if (StringUtils.equalsIgnoreCase(ssl, "true")) {
-
-                final String redisAddress = "rediss://" + redisEndpoint + ":" + redisPort;
-                LOGGER.info("Using clustered redis connection: {}", redisAddress);
-
-                config.useClusterServers()
-                        .setScanInterval(2000)
-                        .addNodeAddress(redisAddress)
-                        .setPassword(authToken);
-
-
+                protocol = "rediss://";
             } else {
-
-                final String redisAddress = "redis://" + redisEndpoint + ":" + redisPort;
-                LOGGER.info("Using clustered redis connection: {}", redisAddress);
-
-                config.useClusterServers()
-                        .setScanInterval(2000)
-                        .addNodeAddress(redisAddress)
-                        .setPassword(authToken);
-
+                protocol = "redis://";
             }
+
+            final String redisAddress = protocol + redisEndpoint + ":" + redisPort;
+            LOGGER.info("Using clustered redis connection: {}", redisAddress);
+
+            config.useClusterServers()
+                    .setScanInterval(2000)
+                    .addNodeAddress(redisAddress)
+                    .setPassword(authToken);
 
         } else {
 
-            final String redisAddress = "redis://" + redisEndpoint + ":" + redisPort;
+            final String protocol;
+
+            if (StringUtils.equalsIgnoreCase(ssl, "true")) {
+                protocol = "rediss://";
+            } else {
+                protocol = "redis://";
+            }
+
+            final String redisAddress = protocol + redisEndpoint + ":" + redisPort;
+
             LOGGER.info("Using single server redis connection {}", redisAddress);
 
             config.useSingleServer().setAddress(redisAddress);

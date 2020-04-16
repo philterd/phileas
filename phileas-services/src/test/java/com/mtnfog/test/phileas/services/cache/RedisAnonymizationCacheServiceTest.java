@@ -24,6 +24,7 @@ public class RedisAnonymizationCacheServiceTest {
         final String redisPort = System.getenv("PHILTER_REDIS_PORT");
         final String redisSsl = System.getenv("PHILTER_REDIS_SSL");
         final String redisToken = System.getenv("PHILTER_REDIS_AUTH_TOKEN");
+        final String redisClustered = System.getenv("PHILTER_REDIS_CLUSTERED");
 
         properties.setProperty("filter.profiles", "s3");
         properties.setProperty("filter.profiles.s3.bucket", "profiles");
@@ -39,7 +40,7 @@ public class RedisAnonymizationCacheServiceTest {
             properties.setProperty("cache.redis.port", redisPort);
             properties.setProperty("cache.redis.ssl", redisSsl);
             properties.setProperty("cache.redis.auth.token", redisToken);
-            properties.setProperty("cache.redis.cluster", "true");
+            properties.setProperty("cache.redis.cluster", redisClustered);
 
         } else {
 

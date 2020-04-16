@@ -3,6 +3,8 @@ package com.mtnfog.phileas.services.cache.anonymization;
 import com.mtnfog.phileas.model.services.AnonymizationCacheService;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.redisson.Redisson;
 import org.redisson.api.RMap;
 import org.redisson.api.RedissonClient;
@@ -11,6 +13,8 @@ import org.redisson.config.Config;
 import java.util.Properties;
 
 public class RedisAnonymizationCacheService implements AnonymizationCacheService {
+
+    private static final Logger LOGGER = LogManager.getLogger(RedisAnonymizationCacheService.class);
 
     private static final String CACHE_ENTRY_NAME = "anonymization";
     
@@ -28,25 +32,37 @@ public class RedisAnonymizationCacheService implements AnonymizationCacheService
 
         if(StringUtils.equalsIgnoreCase(cluster, "true")) {
 
+            final String protocol;
+
             if (StringUtils.equalsIgnoreCase(ssl, "true")) {
-
-                config.useClusterServers()
-                        .setScanInterval(2000)
-                        .addNodeAddress("rediss://" + redisEndpoint + ":" + redisPort)
-                        .setPassword(authToken);
-
+                protocol = "rediss://";
             } else {
-
-                config.useClusterServers()
-                        .setScanInterval(2000)
-                        .addNodeAddress("redis://" + redisEndpoint + ":" + redisPort)
-                        .setPassword(authToken);
-
+                protocol = "redis://";
             }
+
+            final String redisAddress = protocol + redisEndpoint + ":" + redisPort;
+            LOGGER.info("Using clustered redis connection: {}", redisAddress);
+
+            config.useClusterServers()
+                    .setScanInterval(2000)
+                    .addNodeAddress(redisAddress)
+                    .setPassword(authToken);
 
         } else {
 
-            config.useSingleServer().setAddress("redis://" + redisEndpoint + ":" + redisPort);
+            final String protocol;
+
+            if (StringUtils.equalsIgnoreCase(ssl, "true")) {
+                protocol = "rediss://";
+            } else {
+                protocol = "redis://";
+            }
+
+            final String redisAddress = protocol + redisEndpoint + ":" + redisPort;
+
+            LOGGER.info("Using single server redis connection {}", redisAddress);
+
+            config.useSingleServer().setAddress(redisAddress);
 
         }
 
