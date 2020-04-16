@@ -55,7 +55,7 @@ public class S3FilterProfileServiceTest {
 
             properties.setProperty("cache.redis.host", redisHost);
             properties.setProperty("cache.redis.port", redisPort);
-            properties.setProperty("cache.redis.ssl.enabled", redisSsl);
+            properties.setProperty("cache.redis.ssl", redisSsl);
             properties.setProperty("cache.redis.auth.token", redisToken);
             properties.setProperty("cache.redis.cluster", "true");
 
@@ -65,7 +65,7 @@ public class S3FilterProfileServiceTest {
 
             properties.setProperty("cache.redis.host", "localhost");
             properties.setProperty("cache.redis.port", "31000");
-            properties.setProperty("cache.redis.ssl.enabled", "false");
+            properties.setProperty("cache.redis.ssl", "false");
             properties.setProperty("cache.redis.auth.token", "");
             properties.setProperty("cache.redis.cluster", "false");
 
