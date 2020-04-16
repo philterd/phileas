@@ -44,7 +44,7 @@ public class PhileasFilterService implements FilterService, Serializable {
 
 	private static final Logger LOGGER = LogManager.getLogger(PhileasFilterService.class);
 
-    private List<FilterProfileService> filterProfileServices;
+    private FilterProfileService filterProfileService;
     private MetricsService metricsService;
     private Store store;
 
@@ -61,7 +61,7 @@ public class PhileasFilterService implements FilterService, Serializable {
     private DocumentProcessor unstructuredDocumentProcessor;
     private DocumentProcessor fhirDocumentProcessor;
 
-    public PhileasFilterService(Properties applicationProperties, List<FilterProfileService> filterProfileServices, AnonymizationCacheService anonymizationCacheService, String philterNerEndpoint) throws IOException {
+    public PhileasFilterService(Properties applicationProperties, FilterProfileService filterProfileService, AnonymizationCacheService anonymizationCacheService, String philterNerEndpoint) throws IOException {
 
         LOGGER.info("Initializing Phileas engine.");
 
@@ -69,7 +69,7 @@ public class PhileasFilterService implements FilterService, Serializable {
         this.metricsService = new PhileasMetricsService(applicationProperties);
 
         // Set the filter profile services.
-        this.filterProfileServices = filterProfileServices;
+        this.filterProfileService = filterProfileService;
 
         // Configure store.
         final boolean storeEnabled = StringUtils.equalsIgnoreCase(applicationProperties.getProperty("store.enabled", "false"), "true");
@@ -139,11 +139,9 @@ public class PhileasFilterService implements FilterService, Serializable {
         postFilters.clear();
 
         // Load all of the filter profiles into memory from each filter profile service.
-        for(FilterProfileService filterProfileService : filterProfileServices) {
-            final Map<String, String> fp = filterProfileService.getAll();
-            for(String k : fp.keySet()) {
-                filterProfiles.put(k, gson.fromJson(fp.get(k), FilterProfile.class));
-            }
+        final Map<String, String> fp = filterProfileService.getAll();
+        for(String k : fp.keySet()) {
+            filterProfiles.put(k, gson.fromJson(fp.get(k), FilterProfile.class));
         }
 
         // Load the actual filter profile objects into memory.

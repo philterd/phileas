@@ -68,9 +68,8 @@ public class PhileasFilterServiceTest {
 
         AnonymizationCacheService anonymizationCacheService = new LocalAnonymizationCacheService();
         LocalFilterProfileService filterProfileService = new LocalFilterProfileService(applicationProperties);
-        List<FilterProfileService> filterProfileServices = Arrays.asList(filterProfileService);
 
-        PhileasFilterService service = new PhileasFilterService(applicationProperties, filterProfileServices, anonymizationCacheService, "http://localhost:18080/");
+        PhileasFilterService service = new PhileasFilterService(applicationProperties, filterProfileService, anonymizationCacheService, "http://localhost:18080/");
         final FilterResponse response = service.filter("default", "context", "documentId", "George Washington was president and his ssn was 123-45-6789 and he lived at 90210.", MimeType.TEXT_PLAIN);
 
         LOGGER.info(response.getFilteredText());
@@ -95,9 +94,8 @@ public class PhileasFilterServiceTest {
 
         AnonymizationCacheService anonymizationCacheService = new LocalAnonymizationCacheService();
         LocalFilterProfileService filterProfileService = new LocalFilterProfileService(applicationProperties);
-        List<FilterProfileService> filterProfileServices = Arrays.asList(filterProfileService);
 
-        PhileasFilterService service = new PhileasFilterService(applicationProperties, filterProfileServices, anonymizationCacheService, "http://localhost:18080/");
+        PhileasFilterService service = new PhileasFilterService(applicationProperties, filterProfileService, anonymizationCacheService, "http://localhost:18080/");
         final FilterResponse response = service.filter("default", "context", "documentId", "My email is test@something.com and cc is 4121742025464465", MimeType.TEXT_PLAIN);
 
         LOGGER.info(response.getFilteredText());
@@ -122,9 +120,8 @@ public class PhileasFilterServiceTest {
 
         AnonymizationCacheService anonymizationCacheService = new LocalAnonymizationCacheService();
         LocalFilterProfileService filterProfileService = new LocalFilterProfileService(applicationProperties);
-        List<FilterProfileService> filterProfileServices = Arrays.asList(filterProfileService);
 
-        PhileasFilterService service = new PhileasFilterService(applicationProperties, filterProfileServices, anonymizationCacheService, "http://localhost:18080/");
+        PhileasFilterService service = new PhileasFilterService(applicationProperties, filterProfileService, anonymizationCacheService, "http://localhost:18080/");
         final FilterResponse response = service.filter("default", "context", "documentId", "test@something.com is email and cc is 4121742025464465", MimeType.TEXT_PLAIN);
 
         LOGGER.info(response.getFilteredText());
@@ -149,9 +146,8 @@ public class PhileasFilterServiceTest {
 
         AnonymizationCacheService anonymizationCacheService = new LocalAnonymizationCacheService();
         LocalFilterProfileService filterProfileService = new LocalFilterProfileService(applicationProperties);
-        List<FilterProfileService> filterProfileServices = Arrays.asList(filterProfileService);
 
-        PhileasFilterService service = new PhileasFilterService(applicationProperties, filterProfileServices, anonymizationCacheService, "http://localhost:18080/");
+        PhileasFilterService service = new PhileasFilterService(applicationProperties, filterProfileService, anonymizationCacheService, "http://localhost:18080/");
         final FilterResponse response = service.filter("default", "context", "documentId", "test@something.com", MimeType.TEXT_PLAIN);
 
         LOGGER.info(response.getFilteredText());
@@ -176,9 +172,8 @@ public class PhileasFilterServiceTest {
 
         AnonymizationCacheService anonymizationCacheService = new LocalAnonymizationCacheService();
         LocalFilterProfileService filterProfileService = new LocalFilterProfileService(applicationProperties);
-        List<FilterProfileService> filterProfileServices = Arrays.asList(filterProfileService);
 
-        PhileasFilterService service = new PhileasFilterService(applicationProperties, filterProfileServices, anonymizationCacheService, "http://localhost:18080/");
+        PhileasFilterService service = new PhileasFilterService(applicationProperties, filterProfileService, anonymizationCacheService, "http://localhost:18080/");
         final FilterResponse response = service.filter("default", "context", "documentId", "90210", MimeType.TEXT_PLAIN);
 
         LOGGER.info(response.getFilteredText());
@@ -203,9 +198,8 @@ public class PhileasFilterServiceTest {
 
         AnonymizationCacheService anonymizationCacheService = new LocalAnonymizationCacheService();
         LocalFilterProfileService filterProfileService = new LocalFilterProfileService(applicationProperties);
-        List<FilterProfileService> filterProfileServices = Arrays.asList(filterProfileService);
 
-        PhileasFilterService service = new PhileasFilterService(applicationProperties, filterProfileServices, anonymizationCacheService, "http://localhost:18080/");
+        PhileasFilterService service = new PhileasFilterService(applicationProperties, filterProfileService, anonymizationCacheService, "http://localhost:18080/");
         final FilterResponse response = service.filter("default", "context", "documentId", "his name was JEFF.", MimeType.TEXT_PLAIN);
 
         LOGGER.info(response.getFilteredText());
@@ -230,9 +224,8 @@ public class PhileasFilterServiceTest {
 
         AnonymizationCacheService anonymizationCacheService = new LocalAnonymizationCacheService();
         LocalFilterProfileService filterProfileService = new LocalFilterProfileService(applicationProperties);
-        List<FilterProfileService> filterProfileServices = Arrays.asList(filterProfileService);
 
-        PhileasFilterService service = new PhileasFilterService(applicationProperties, filterProfileServices, anonymizationCacheService, "http://localhost:18080/");
+        PhileasFilterService service = new PhileasFilterService(applicationProperties, filterProfileService, anonymizationCacheService, "http://localhost:18080/");
         final FilterResponse response = service.filter("default", "context", null, "his name was JEFF.", MimeType.TEXT_PLAIN);
 
         LOGGER.info("Generated document ID: " + response.getDocumentId());
@@ -263,9 +256,8 @@ public class PhileasFilterServiceTest {
 
         AnonymizationCacheService anonymizationCacheService = new LocalAnonymizationCacheService();
         LocalFilterProfileService filterProfileService = new LocalFilterProfileService(applicationProperties);
-        List<FilterProfileService> filterProfileServices = Arrays.asList(filterProfileService);
 
-        PhileasFilterService service = new PhileasFilterService(applicationProperties, filterProfileServices, anonymizationCacheService, "http://localhost:18080/");
+        PhileasFilterService service = new PhileasFilterService(applicationProperties, filterProfileService, anonymizationCacheService, "http://localhost:18080/");
         final FilterResponse response = service.filter("justcreditcard", "context", "documentId", "My email is test@something.com", MimeType.TEXT_PLAIN);
 
         LOGGER.info(response.getFilteredText());
@@ -290,9 +282,8 @@ public class PhileasFilterServiceTest {
 
         AnonymizationCacheService anonymizationCacheService = new LocalAnonymizationCacheService();
         LocalFilterProfileService filterProfileService = new LocalFilterProfileService(applicationProperties);
-        List<FilterProfileService> filterProfileServices = Arrays.asList(filterProfileService);
 
-        PhileasFilterService service = new PhileasFilterService(applicationProperties, filterProfileServices, anonymizationCacheService, "http://localhost:18080/");
+        PhileasFilterService service = new PhileasFilterService(applicationProperties, filterProfileService, anonymizationCacheService, "http://localhost:18080/");
         final FilterResponse response = service.filter("justcreditcard", "context", "documentId", "My cc is 4121742025464465", MimeType.TEXT_PLAIN);
 
         LOGGER.info(response.getFilteredText());
@@ -317,9 +308,8 @@ public class PhileasFilterServiceTest {
 
         AnonymizationCacheService anonymizationCacheService = new LocalAnonymizationCacheService();
         LocalFilterProfileService filterProfileService = new LocalFilterProfileService(applicationProperties);
-        List<FilterProfileService> filterProfileServices = Arrays.asList(filterProfileService);
 
-        PhileasFilterService service = new PhileasFilterService(applicationProperties, filterProfileServices, anonymizationCacheService, "http://localhost:18080/");
+        PhileasFilterService service = new PhileasFilterService(applicationProperties, filterProfileService, anonymizationCacheService, "http://localhost:18080/");
         final FilterResponse response = service.filter("justcreditcard", "context", "documentId", "My cc is 4121742025464400", MimeType.TEXT_PLAIN);
 
         LOGGER.info(response.getFilteredText());
@@ -343,9 +333,8 @@ public class PhileasFilterServiceTest {
 
         AnonymizationCacheService anonymizationCacheService = new LocalAnonymizationCacheService();
         LocalFilterProfileService filterProfileService = new LocalFilterProfileService(applicationProperties);
-        List<FilterProfileService> filterProfileServices = Arrays.asList(filterProfileService);
 
-        PhileasFilterService service = new PhileasFilterService(applicationProperties, filterProfileServices, anonymizationCacheService, "http://localhost:18080/");
+        PhileasFilterService service = new PhileasFilterService(applicationProperties, filterProfileService, anonymizationCacheService, "http://localhost:18080/");
         final FilterResponse response = service.filter("default", "context", "documentId", "George Washington was president and his ssn was 123-45-6789 and he lived at 90210.", MimeType.TEXT_PLAIN);
 
         LOGGER.info(response.getFilteredText());
@@ -370,9 +359,8 @@ public class PhileasFilterServiceTest {
 
         AnonymizationCacheService anonymizationCacheService = new LocalAnonymizationCacheService();
         LocalFilterProfileService filterProfileService = new LocalFilterProfileService(applicationProperties);
-        List<FilterProfileService> filterProfileServices = Arrays.asList(filterProfileService);
 
-        PhileasFilterService service = new PhileasFilterService(applicationProperties, filterProfileServices, anonymizationCacheService, "http://localhost:18080/");
+        PhileasFilterService service = new PhileasFilterService(applicationProperties, filterProfileService, anonymizationCacheService, "http://localhost:18080/");
         final FilterResponse response = service.filter("custom1", "context", "documentId", "My email is test@something.com", MimeType.TEXT_PLAIN);
 
         LOGGER.info(response.getFilteredText());
