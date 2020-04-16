@@ -40,6 +40,7 @@ public class S3FilterProfileServiceTest {
         final String redisHost = System.getenv("PHILTER_REDIS_HOST");
         final String redisPort = System.getenv("PHILTER_REDIS_PORT");
         final String redisSsl = System.getenv("PHILTER_REDIS_SSL");
+        final String redisToken = System.getenv("PHILTER_REDIS_AUTH_TOKEN");
 
         properties.setProperty("filter.profiles", "s3");
         properties.setProperty("filter.profiles.s3.bucket", "profiles");
@@ -54,6 +55,7 @@ public class S3FilterProfileServiceTest {
             properties.setProperty("cache.redis.host", redisHost);
             properties.setProperty("cache.redis.port", redisPort);
             properties.setProperty("cache.redis.ssl.enabled", redisSsl);
+            properties.setProperty("cache.redis.auth.token", redisToken);
 
         } else {
 
@@ -62,6 +64,7 @@ public class S3FilterProfileServiceTest {
             properties.setProperty("cache.redis.host", "localhost");
             properties.setProperty("cache.redis.port", "31000");
             properties.setProperty("cache.redis.ssl.enabled", "false");
+            properties.setProperty("cache.redis.auth.token", "");
 
         }
 

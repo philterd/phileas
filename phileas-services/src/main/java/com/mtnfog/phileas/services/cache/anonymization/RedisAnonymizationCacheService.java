@@ -22,7 +22,6 @@ public class RedisAnonymizationCacheService implements AnonymizationCacheService
         final String redisEndpoint = applicationProperties.getProperty("cache.redis.host");
         final String redisPort = applicationProperties.getProperty("cache.redis.port");
         final String authToken = applicationProperties.getProperty("cache.redis.auth.token");
-        // TODO: Configure ssl.
         final String ssl = applicationProperties.getProperty("cache.redis.ssl");
 
         final Config config = new Config();

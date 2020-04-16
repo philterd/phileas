@@ -27,14 +27,7 @@ public class RedisFilterProfileCacheService implements FilterProfileCacheService
         final String redisEndpoint = applicationProperties.getProperty("cache.redis.host");
         final String redisPort = applicationProperties.getProperty("cache.redis.port");
         final String authToken = applicationProperties.getProperty("cache.redis.auth.token");
-        // TODO: Configure ssl.
         final String ssl = applicationProperties.getProperty("cache.redis.ssl");
-
-        // Configure the connection to the cache.
-        // use "rediss://" for SSL connection
-
-        // TODO: Configure SSL: https://gist.github.com/eransharv/9de8e94faae5bde70dfcdfa7d8e6157b
-        // https://github.com/redisson/redisson/wiki/2.-Configuration
 
         final Config config = new Config();
 
