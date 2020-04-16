@@ -1,14 +1,19 @@
 package com.mtnfog.test.phileas.services.cache;
 
 import com.mtnfog.phileas.services.cache.anonymization.RedisAnonymizationCacheService;
+import com.mtnfog.test.phileas.services.registry.S3FilterProfileServiceTest;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.*;
 import redis.embedded.RedisServer;
 
 import java.io.IOException;
 import java.util.Properties;
 
-@Ignore("For some reason the mock redis server doesn't start on Jenkins")
 public class RedisAnonymizationCacheServiceTest {
+
+    private static final Logger LOGGER = LogManager.getLogger(RedisAnonymizationCacheServiceTest.class);
 
     private final RedisServer server = RedisServer.builder().port(31000).build();
 
@@ -16,9 +21,33 @@ public class RedisAnonymizationCacheServiceTest {
 
         final Properties properties = new Properties();
 
+        final String redisHost = System.getenv("PHILTER_REDIS_HOST");
+        final String redisPort = System.getenv("PHILTER_REDIS_PORT");
+        final String redisSsl = System.getenv("PHILTER_REDIS_SSL");
+
+        properties.setProperty("filter.profiles", "s3");
+        properties.setProperty("filter.profiles.s3.bucket", "profiles");
+        properties.setProperty("filter.profiles.s3.prefix", "/");
+
         properties.setProperty("cache.redis.enabled", "true");
-        properties.setProperty("cache.redis.host", "localhost");
-        properties.setProperty("cache.redis.port", "31000");
+
+        if(StringUtils.isNotEmpty(redisHost)) {
+
+            LOGGER.info("Using redis host: {}", redisHost);
+
+            properties.setProperty("cache.redis.host", redisHost);
+            properties.setProperty("cache.redis.port", redisPort);
+            properties.setProperty("cache.redis.ssl.enabled", redisSsl);
+
+        } else {
+
+            LOGGER.info("Using local redis host.");
+
+            properties.setProperty("cache.redis.host", "localhost");
+            properties.setProperty("cache.redis.port", "31000");
+            properties.setProperty("cache.redis.ssl.enabled", "false");
+
+        }
 
         return properties;
 

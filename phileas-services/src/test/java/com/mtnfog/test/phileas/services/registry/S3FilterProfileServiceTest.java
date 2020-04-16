@@ -10,6 +10,7 @@ import com.mtnfog.phileas.model.profile.filters.strategies.rules.CreditCardFilte
 import com.mtnfog.phileas.model.services.FilterProfileService;
 import com.mtnfog.phileas.services.registry.S3FilterProfileService;
 import io.findify.s3mock.S3Mock;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.*;
@@ -24,7 +25,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-@Ignore("For some reason the mock redis server doesn't start on Jenkins")
 public class S3FilterProfileServiceTest {
 
     private static final Logger LOGGER = LogManager.getLogger(S3FilterProfileServiceTest.class);
@@ -37,12 +37,33 @@ public class S3FilterProfileServiceTest {
 
         final Properties properties = new Properties();
 
+        final String redisHost = System.getenv("PHILTER_REDIS_HOST");
+        final String redisPort = System.getenv("PHILTER_REDIS_PORT");
+        final String redisSsl = System.getenv("PHILTER_REDIS_SSL");
+
         properties.setProperty("filter.profiles", "s3");
         properties.setProperty("filter.profiles.s3.bucket", "profiles");
         properties.setProperty("filter.profiles.s3.prefix", "/");
+
         properties.setProperty("cache.redis.enabled", "true");
-        properties.setProperty("cache.redis.host", "localhost");
-        properties.setProperty("cache.redis.port", "31000");
+
+        if(StringUtils.isNotEmpty(redisHost)) {
+
+            LOGGER.info("Using redis host: {}", redisHost);
+
+            properties.setProperty("cache.redis.host", redisHost);
+            properties.setProperty("cache.redis.port", redisPort);
+            properties.setProperty("cache.redis.ssl.enabled", redisSsl);
+
+        } else {
+
+            LOGGER.info("Using local redis host.");
+
+            properties.setProperty("cache.redis.host", "localhost");
+            properties.setProperty("cache.redis.port", "31000");
+            properties.setProperty("cache.redis.ssl.enabled", "false");
+
+        }
 
         return properties;
 
