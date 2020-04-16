@@ -20,7 +20,7 @@ public class RedisAnonymizationCacheService implements AnonymizationCacheService
     
     private final RedissonClient redisson;
 
-    public RedisAnonymizationCacheService(Properties applicationProperties) throws Exception {
+    public RedisAnonymizationCacheService(Properties applicationProperties) {
 
         final String cluster = applicationProperties.getProperty("cache.redis.cluster");
         final String redisEndpoint = applicationProperties.getProperty("cache.redis.host");
@@ -59,10 +59,8 @@ public class RedisAnonymizationCacheService implements AnonymizationCacheService
             }
 
             final String redisAddress = protocol + redisEndpoint + ":" + redisPort;
-
             LOGGER.info("Using single server redis connection {}", redisAddress);
-
-            config.useSingleServer().setAddress(redisAddress);
+            config.useSingleServer().setAddress(redisAddress).setPassword(authToken);
 
         }
 
