@@ -115,14 +115,9 @@
 			<version>${commons.codec.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>redis.clients</groupId>
-			<artifactId>jedis</artifactId>
-			<version>${jedis.version}</version>
-		</dependency>
-		<dependency>
 			<groupId>org.redisson</groupId>
 			<artifactId>redisson</artifactId>
-			<version>3.12.4</version>
+			<version>${redisson.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.commons</groupId>
