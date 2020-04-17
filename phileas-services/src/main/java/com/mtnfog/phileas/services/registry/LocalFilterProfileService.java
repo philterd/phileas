@@ -28,7 +28,7 @@ public class LocalFilterProfileService implements FilterProfileService {
     }
 
     @Override
-    public List<String> get(boolean ignoreCache) throws IOException {
+    public List<String> get() throws IOException {
 
         final List<String> names = new LinkedList<>();
 

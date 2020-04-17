@@ -7,12 +7,12 @@ import java.util.Map;
 public interface FilterProfileService {
 
     /**
-     * Gets the names of all filter profiles.
-     * @param ignoreCache Whether or not to reference the cache.
+     * Gets the names of all filter profiles from
+     * the backend store directly by-passing the cache.
      * @return A list of filter profile names.
      * @throws IOException
      */
-    List<String> get(boolean ignoreCache) throws IOException;
+    List<String> get() throws IOException;
 
     /**
      * Gets the content of a filter profile.

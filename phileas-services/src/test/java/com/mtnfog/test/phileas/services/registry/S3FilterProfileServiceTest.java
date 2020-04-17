@@ -125,7 +125,7 @@ public class S3FilterProfileServiceTest {
 
         filterProfileService.save(gson.toJson(getFilterProfile("name1")));
         filterProfileService.save(gson.toJson(getFilterProfile("name2")));
-        final List<String> names = filterProfileService.get(true);
+        final List<String> names = filterProfileService.get();
 
         LOGGER.info("Found {} filter profiles", names.size());
 

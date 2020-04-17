@@ -72,56 +72,46 @@ public class S3FilterProfileService implements FilterProfileService {
     }
 
     @Override
-    public List<String> get(boolean ignoreCache) {
+    public List<String> get() {
 
         List<String> names = new LinkedList<>();
 
         try {
 
-            if(!ignoreCache) {
+            LOGGER.info("Looking for filter profiles in s3 bucket {} with prefix {}", bucket, prefix);
+            final ListObjectsV2Request listObjectsV2Request = new ListObjectsV2Request().withBucketName(bucket);
 
-                // Get from cache.
-                LOGGER.info("Getting profile names from the cache.");
-                names = redisFilterProfileCacheService.get();
+            if (!StringUtils.equalsIgnoreCase(prefix, "/")) {
+                listObjectsV2Request.setPrefix(prefix);
+            }
 
-            } else {
+            ListObjectsV2Result result;
 
-                LOGGER.info("Looking for filter profiles in s3 bucket {} with prefix {}", bucket, prefix);
-                final ListObjectsV2Request listObjectsV2Request = new ListObjectsV2Request().withBucketName(bucket);
+            do {
 
-                if (!StringUtils.equalsIgnoreCase(prefix, "/")) {
-                    listObjectsV2Request.setPrefix(prefix);
+                result = s3Client.listObjectsV2(listObjectsV2Request);
+
+                for (S3ObjectSummary objectSummary : result.getObjectSummaries()) {
+
+                    final S3Object fullObject = s3Client.getObject(new GetObjectRequest(bucket, objectSummary.getKey()));
+                    final String json = IOUtils.toString(fullObject.getObjectContent(), StandardCharsets.UTF_8.name());
+
+                    fullObject.close();
+
+                    final JSONObject object = new JSONObject(json);
+                    final String name = object.getString("name");
+
+                    names.add(name);
+                    LOGGER.debug("Found filter profile named {}", name);
+
                 }
 
-                ListObjectsV2Result result;
+                // If there are more than maxKeys keys in the bucket, get a continuation token and list the next objects.
+                final String token = result.getNextContinuationToken();
 
-                do {
+                listObjectsV2Request.setContinuationToken(token);
 
-                    result = s3Client.listObjectsV2(listObjectsV2Request);
-
-                    for (S3ObjectSummary objectSummary : result.getObjectSummaries()) {
-
-                        final S3Object fullObject = s3Client.getObject(new GetObjectRequest(bucket, objectSummary.getKey()));
-                        final String json = IOUtils.toString(fullObject.getObjectContent(), StandardCharsets.UTF_8.name());
-
-                        fullObject.close();
-
-                        final JSONObject object = new JSONObject(json);
-                        final String name = object.getString("name");
-
-                        names.add(name);
-                        LOGGER.debug("Found filter profile named {}", name);
-
-                    }
-
-                    // If there are more than maxKeys keys in the bucket, get a continuation token and list the next objects.
-                    final String token = result.getNextContinuationToken();
-
-                    listObjectsV2Request.setContinuationToken(token);
-
-                } while (result.isTruncated());
-
-            }
+            } while (result.isTruncated());
 
         } catch (Exception ex) {
 
@@ -140,7 +130,7 @@ public class S3FilterProfileService implements FilterProfileService {
 
         try {
 
-            final String json;
+            String json;
 
             if(!ignoreCache) {
 
@@ -148,15 +138,25 @@ public class S3FilterProfileService implements FilterProfileService {
                 LOGGER.info("Getting profile names from the cache.");
                 json = redisFilterProfileCacheService.get(filterProfileName);
 
+                if(json == null) {
+                    // The filter profile was not in the cache. Look in S3.
+                    LOGGER.info("Filter profile was not cached. Looking for filter profile {} in s3 bucket {} with prefix {}", filterProfileName, bucket, prefix);
+                    final S3Object fullObject = s3Client.getObject(new GetObjectRequest(bucket, buildKey(filterProfileName)));
+                    json = IOUtils.toString(fullObject.getObjectContent(), StandardCharsets.UTF_8.name());
+                    fullObject.close();
+                }
+
             } else {
 
                 LOGGER.info("Looking for filter profile {} in s3 bucket {} with prefix {}", filterProfileName, bucket, prefix);
                 final S3Object fullObject = s3Client.getObject(new GetObjectRequest(bucket, buildKey(filterProfileName)));
                 json = IOUtils.toString(fullObject.getObjectContent(), StandardCharsets.UTF_8.name());
-
                 fullObject.close();
 
             }
+
+            // Put it into the cache.
+            redisFilterProfileCacheService.insert(filterProfileName, json);
 
             return json;
 
@@ -226,6 +226,12 @@ public class S3FilterProfileService implements FilterProfileService {
                     listObjectsV2Request.setContinuationToken(token);
 
                 } while (result.isTruncated());
+
+                // Clear the cache and put the profiles into the cache.
+                redisFilterProfileCacheService.clear();
+                for(String filterProfileName : filterProfiles.keySet()) {
+                    redisFilterProfileCacheService.insert(filterProfileName, filterProfiles.get(redisFilterProfileCacheService));
+                }
 
             }
 

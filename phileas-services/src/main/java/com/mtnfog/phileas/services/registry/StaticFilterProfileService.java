@@ -45,7 +45,7 @@ public class StaticFilterProfileService implements FilterProfileService {
     }
 
     @Override
-    public List<String> get(boolean ignoreCache) throws IOException {
+    public List<String> get() throws IOException {
         return Collections.emptyList();
     }
 

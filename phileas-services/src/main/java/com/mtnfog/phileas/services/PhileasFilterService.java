@@ -140,7 +140,8 @@ public class PhileasFilterService implements FilterService, Serializable {
         postFilters.clear();
 
         // Load all of the filter profiles into memory from each filter profile service.
-        final Map<String, String> fp = filterProfileService.getAll(false);
+        // Ignore the cache when reloading the profiles.
+        final Map<String, String> fp = filterProfileService.getAll(true);
         for(String k : fp.keySet()) {
             filterProfiles.put(k, gson.fromJson(fp.get(k), FilterProfile.class));
         }
