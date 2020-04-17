@@ -10,10 +10,7 @@ import org.redisson.api.RedissonClient;
 import org.redisson.config.Config;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 
 public class RedisFilterProfileCacheService implements FilterProfileCacheService {
 
@@ -88,7 +85,7 @@ public class RedisFilterProfileCacheService implements FilterProfileCacheService
     public String get(String filterProfileName) throws IOException {
 
         // Get the filter profile from the cache and return it.
-        final Map<String, String> map = redisson.getMap("filterProfiles");
+        final RMap<String, String> map = redisson.getMap("filterProfiles");
 
         return map.get(filterProfileName);
 
@@ -97,10 +94,25 @@ public class RedisFilterProfileCacheService implements FilterProfileCacheService
     @Override
     public Map<String, String> getAll() throws IOException {
 
-        // Get the filter profiles from the cache and return them.
-        final Map<String, String> map = redisson.getMap("filterProfiles");
+        final long count = redisson.getKeys().countExists("filterProfiles");
 
-        return map;
+        if(count != 0) {
+
+            // Get the filter profiles from the cache and return them.
+            final RMap<String, String> map = redisson.getMap("filterProfiles");
+
+            Map<String, String> m = new HashMap<>();
+            for(String k : map.keySet()) {
+                m.put(k, map.get(k));
+            }
+
+            return m;
+
+        } else {
+
+            return new HashMap<String, String>();
+
+        }
 
     }
 
@@ -108,7 +120,8 @@ public class RedisFilterProfileCacheService implements FilterProfileCacheService
     public void insert(String filterProfileName, String filterProfile) {
 
         // Insert into the the cache.
-        redisson.getMap("filterProfiles").put(filterProfileName, filterProfile);
+        final RMap<String, String> map = redisson.getMap("filterProfiles");
+        map.put(filterProfileName, filterProfile);
 
     }
 
@@ -116,7 +129,8 @@ public class RedisFilterProfileCacheService implements FilterProfileCacheService
     public void remove(String filterProfileName) {
 
         // Remove from the cache.
-        redisson.getMap("filterProfiles").remove(filterProfileName);
+        final RMap<String, String> map = redisson.getMap("filterProfiles");
+        map.remove(filterProfileName);
 
     }
 
@@ -124,7 +138,8 @@ public class RedisFilterProfileCacheService implements FilterProfileCacheService
     public void clear() throws IOException {
 
         // Clear the cache.
-        redisson.getMap("filterProfiles").clear();
+        final RMap<String, String> map = redisson.getMap("filterProfiles");
+        map.clear();
 
     }
 

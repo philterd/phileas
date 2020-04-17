@@ -188,6 +188,9 @@ public class S3FilterProfileService implements FilterProfileService {
                 LOGGER.info("Looking for all filter profiles in s3 bucket {} with prefix {}", bucket, prefix);
                 ListObjectsV2Request listObjectsV2Request = new ListObjectsV2Request().withBucketName(bucket);
 
+                // Clear the cache and put the profiles into the cache.
+                redisFilterProfileCacheService.clear();
+
                 if (!StringUtils.equalsIgnoreCase(prefix, "/")) {
                     listObjectsV2Request.setPrefix(prefix);
                 }
@@ -216,6 +219,8 @@ public class S3FilterProfileService implements FilterProfileService {
                             filterProfiles.put(name, json);
                             LOGGER.debug("Added filter profile named {}", name);
 
+                            redisFilterProfileCacheService.insert(name, json);
+
                         }
 
                     }
@@ -226,12 +231,6 @@ public class S3FilterProfileService implements FilterProfileService {
                     listObjectsV2Request.setContinuationToken(token);
 
                 } while (result.isTruncated());
-
-                // Clear the cache and put the profiles into the cache.
-                redisFilterProfileCacheService.clear();
-                for(String filterProfileName : filterProfiles.keySet()) {
-                    redisFilterProfileCacheService.insert(filterProfileName, filterProfiles.get(redisFilterProfileCacheService));
-                }
 
             }
 
