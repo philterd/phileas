@@ -103,11 +103,12 @@ public class PhileasFilterService implements FilterService, Serializable {
 
         // Get the filter profile.
         final String filterProfileJson = filterProfileService.get(filterProfileName, false);
-        final FilterProfile filterProfile = gson.fromJson(filterProfileJson, FilterProfile.class);
 
-        if(filterProfile == null) {
+        if(filterProfileJson == null) {
             throw new InvalidFilterProfileException("The filter profile [" + filterProfileName + "] does not exist.");
         }
+
+        final FilterProfile filterProfile = gson.fromJson(filterProfileJson, FilterProfile.class);
 
         // See if we need to generate a document ID.
         if(StringUtils.isEmpty(documentId)) {
@@ -118,9 +119,9 @@ public class PhileasFilterService implements FilterService, Serializable {
         }
 
         if(mimeType == MimeType.TEXT_PLAIN) {
-            return unstructuredDocumentProcessor.process(filterProfile, context, documentId, input);
+            return unstructuredDocumentProcessor.process(filterProfile, filters.get(filterProfile.getName()), context, documentId, input);
         } else if(mimeType == MimeType.APPLICATION_FHIRJSON) {
-            return fhirDocumentProcessor.process(filterProfile, context, documentId, input);
+            return fhirDocumentProcessor.process(filterProfile, filters.get(filterProfile.getName()), context, documentId, input);
         }
 
         // Should never happen but just in case.
@@ -374,7 +375,7 @@ public class PhileasFilterService implements FilterService, Serializable {
 
         }
 
-        unstructuredDocumentProcessor = new UnstructuredDocumentProcessor(filters, postFilters, metricsService, store);
+        unstructuredDocumentProcessor = new UnstructuredDocumentProcessor(postFilters, metricsService, store);
 
     }
 

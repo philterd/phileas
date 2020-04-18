@@ -13,7 +13,6 @@ import com.mtnfog.phileas.model.services.Store;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 import static java.util.stream.Collectors.toList;
 
@@ -22,14 +21,12 @@ import static java.util.stream.Collectors.toList;
  */
 public class UnstructuredDocumentProcessor implements DocumentProcessor {
 
-    private Map<String, List<Filter>> filters;
     private List<PostFilter> postFilters;
     private MetricsService metricsService;
     private Store store;
 
-    public UnstructuredDocumentProcessor(Map<String, List<Filter>> filters, List<PostFilter> postFilters, MetricsService metricsService, Store store) {
+    public UnstructuredDocumentProcessor(List<PostFilter> postFilters, MetricsService metricsService, Store store) {
 
-        this.filters = filters;
         this.postFilters = postFilters;
         this.metricsService = metricsService;
         this.store = store;
@@ -37,16 +34,13 @@ public class UnstructuredDocumentProcessor implements DocumentProcessor {
     }
 
     @Override
-    public FilterResponse process(FilterProfile filterProfile, String context, String documentId, String input) throws Exception {
+    public FilterResponse process(FilterProfile filterProfile, List<Filter> filters, String context, String documentId, String input) throws Exception {
 
         // The list that will contain the spans containing PHI/PII.
         List<Span> spans = new LinkedList<>();
 
-        // Get the enabled filters for this filter profile.
-        final List<Filter> allFiltersFromProfile = filters.get(filterProfile.getName());
-
         // Execute each filter.
-        for(final Filter filter : allFiltersFromProfile) {
+        for(final Filter filter : filters) {
             spans.addAll(filter.filter(filterProfile, context, documentId, input));
         }
 

@@ -26,6 +26,7 @@ import org.mockito.Mockito;
 
 import java.nio.charset.Charset;
 import java.util.Arrays;
+import java.util.Collections;
 
 public class FhirDocumentProcessorTest {
 
@@ -54,7 +55,8 @@ public class FhirDocumentProcessorTest {
 
         final String json = IOUtils.toString(this.getClass().getResourceAsStream("/fhir4/bundle-example.json"), Charset.defaultCharset());
 
-        final FilterResponse filterResponse = documentProcessor.process(filterProfile, "context", "documentId", json);
+        // TODO: Set filters instead of empty list.
+        final FilterResponse filterResponse = documentProcessor.process(filterProfile, Collections.emptyList(), "context", "documentId", json);
 
         prettyPrintJson(filterResponse.getFilteredText());
 

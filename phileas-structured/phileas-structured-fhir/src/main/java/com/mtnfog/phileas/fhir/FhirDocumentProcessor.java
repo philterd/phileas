@@ -2,6 +2,7 @@ package com.mtnfog.phileas.fhir;
 
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.parser.IParser;
+import com.mtnfog.phileas.model.filter.Filter;
 import com.mtnfog.phileas.model.profile.Crypto;
 import com.mtnfog.phileas.model.profile.FilterProfile;
 import com.mtnfog.phileas.model.profile.fhir4.FhirItem;
@@ -13,9 +14,15 @@ import com.mtnfog.phileas.model.utils.Encryption;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.hl7.fhir.r4.model.*;
+import org.hl7.fhir.r4.model.Address;
+import org.hl7.fhir.r4.model.HumanName;
+import org.hl7.fhir.r4.model.Narrative;
+import org.hl7.fhir.r4.model.Patient;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
 
 public class FhirDocumentProcessor extends AbstractFhirDocumentProcessor implements DocumentProcessor {
 
@@ -29,7 +36,7 @@ public class FhirDocumentProcessor extends AbstractFhirDocumentProcessor impleme
     }
 
     @Override
-    public FilterResponse process(FilterProfile filterProfile, String context, String documentId, String json) throws Exception {
+    public FilterResponse process(FilterProfile filterProfile, List<Filter> filters, String context, String documentId, String json) throws Exception {
 
         // TODO: I'm getting FhirR4 here but that version is really unknown to the API.
         // All we know is that it is an application/fhir+json document.

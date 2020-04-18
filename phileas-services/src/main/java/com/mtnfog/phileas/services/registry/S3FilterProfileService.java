@@ -128,15 +128,17 @@ public class S3FilterProfileService implements FilterProfileService {
             if(!ignoreCache) {
 
                 // Get from cache.
-                LOGGER.info("Getting profile names from the cache.");
+                LOGGER.info("Getting profile name [{}] from the cache.", filterProfileName);
                 json = redisFilterProfileCacheService.get(filterProfileName);
 
                 if(json == null) {
+
                     // The filter profile was not in the cache. Look in S3.
                     LOGGER.info("Filter profile was not cached. Looking for filter profile {} in s3 bucket {}", filterProfileName, bucket);
                     final S3Object fullObject = s3Client.getObject(new GetObjectRequest(bucket, filterProfileName + ".json"));
                     json = IOUtils.toString(fullObject.getObjectContent(), StandardCharsets.UTF_8.name());
                     fullObject.close();
+
                 }
 
             } else {
@@ -173,7 +175,7 @@ public class S3FilterProfileService implements FilterProfileService {
             if(!ignoreCache) {
 
                 // Get from cache.
-                LOGGER.info("Getting profile names from the cache.");
+                LOGGER.info("Getting all profile names from the cache.");
                 filterProfiles = redisFilterProfileCacheService.getAll();
 
             } else {
