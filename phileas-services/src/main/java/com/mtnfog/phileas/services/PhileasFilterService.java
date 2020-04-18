@@ -25,7 +25,6 @@ import com.mtnfog.phileas.services.postfilters.IgnoredTermsFilter;
 import com.mtnfog.phileas.services.postfilters.TrailingPeriodPostFilter;
 import com.mtnfog.phileas.services.postfilters.TrailingSpacePostFilter;
 import com.mtnfog.phileas.services.processors.UnstructuredDocumentProcessor;
-import com.mtnfog.phileas.services.cache.profiles.RedisFilterProfileCacheService;
 import com.mtnfog.phileas.services.validators.DateSpanValidator;
 import com.mtnfog.phileas.store.ElasticsearchStore;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -49,7 +48,6 @@ public class PhileasFilterService implements FilterService, Serializable {
     private MetricsService metricsService;
     private Store store;
 
-    private Map<String, FilterProfile> filterProfiles = new HashMap<>();
     private Map<String, DescriptiveStatistics> stats = new HashMap<>();
     private List<PostFilter> postFilters = new LinkedList<>();
     private Map<String, List<Filter>> filters = new HashMap<>();
@@ -104,7 +102,8 @@ public class PhileasFilterService implements FilterService, Serializable {
     public FilterResponse filter(String filterProfileName, String context, String documentId, String input, MimeType mimeType) throws Exception {
 
         // Get the filter profile.
-        final FilterProfile filterProfile = filterProfiles.get(filterProfileName);
+        final String filterProfileJson = filterProfileService.get(filterProfileName, false);
+        final FilterProfile filterProfile = gson.fromJson(filterProfileJson, FilterProfile.class);
 
         if(filterProfile == null) {
             throw new InvalidFilterProfileException("The filter profile [" + filterProfileName + "] does not exist.");
@@ -135,19 +134,14 @@ public class PhileasFilterService implements FilterService, Serializable {
         LOGGER.info("Reloading filter profiles.");
 
         // Clear the current filters.
-        filterProfiles.clear();
         filters.clear();
         postFilters.clear();
 
-        // Load all of the filter profiles into memory from each filter profile service.
-        // Ignore the cache when reloading the profiles.
-        final Map<String, String> fp = filterProfileService.getAll(true);
-        for(String k : fp.keySet()) {
-            filterProfiles.put(k, gson.fromJson(fp.get(k), FilterProfile.class));
-        }
-
         // Load the actual filter profile objects into memory.
-        for(final FilterProfile filterProfile : filterProfiles.values()) {
+        final Map<String, String> filterProfiles = filterProfileService.getAll(true);
+        for(final String filterProfileName : filterProfiles.keySet()) {
+
+            final FilterProfile filterProfile = gson.fromJson(filterProfiles.get(filterProfileName), FilterProfile.class);
 
             final List<Filter> enabledFilters = new LinkedList<>();
 

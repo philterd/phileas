@@ -58,7 +58,7 @@ public class LocalFilterProfileService implements FilterProfileService {
         if(file.exists()) {
             return FileUtils.readFileToString(file, Charset.defaultCharset());
         } else {
-            throw new FileNotFoundException("Filter profile with name " + filterProfileName + " does not exist.");
+            throw new FileNotFoundException("Filter profile [" + filterProfileName + "] does not exist.");
         }
 
     }
@@ -81,7 +81,7 @@ public class LocalFilterProfileService implements FilterProfileService {
             final String name = object.getString("name");
 
             filterProfiles.put(name, json);
-            LOGGER.info("Added filter profile named {}", name);
+            LOGGER.info("Added filter profile named [{}]", name);
 
         }
 

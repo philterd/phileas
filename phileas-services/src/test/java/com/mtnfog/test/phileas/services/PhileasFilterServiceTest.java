@@ -25,6 +25,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
@@ -56,7 +57,7 @@ public class PhileasFilterServiceTest {
     public void endToEnd1() throws Exception {
 
         final Path temp = Files.createTempDirectory("philter");
-        final File file = Paths.get(temp.toFile().getAbsolutePath(), "profile.json").toFile();
+        final File file = Paths.get(temp.toFile().getAbsolutePath(), "default.json").toFile();
         LOGGER.info("Writing profile to {}", file.getAbsolutePath());
         FileUtils.writeStringToFile(file, gson.toJson(getFilterProfile("default")), Charset.defaultCharset());
 
@@ -82,7 +83,7 @@ public class PhileasFilterServiceTest {
     public void endToEnd2() throws Exception {
 
         final Path temp = Files.createTempDirectory("philter");
-        final File file = Paths.get(temp.toFile().getAbsolutePath(), "profile.json").toFile();
+        final File file = Paths.get(temp.toFile().getAbsolutePath(), "default.json").toFile();
         LOGGER.info("Writing profile to {}", file.getAbsolutePath());
         FileUtils.writeStringToFile(file, gson.toJson(getFilterProfile("default")), Charset.defaultCharset());
 
@@ -108,7 +109,7 @@ public class PhileasFilterServiceTest {
     public void endToEnd3() throws Exception {
 
         final Path temp = Files.createTempDirectory("philter");
-        final File file = Paths.get(temp.toFile().getAbsolutePath(), "profile.json").toFile();
+        final File file = Paths.get(temp.toFile().getAbsolutePath(), "default.json").toFile();
         LOGGER.info("Writing profile to {}", file.getAbsolutePath());
         FileUtils.writeStringToFile(file, gson.toJson(getFilterProfile("default")), Charset.defaultCharset());
 
@@ -134,7 +135,7 @@ public class PhileasFilterServiceTest {
     public void endToEnd4() throws Exception {
 
         final Path temp = Files.createTempDirectory("philter");
-        final File file = Paths.get(temp.toFile().getAbsolutePath(), "profile.json").toFile();
+        final File file = Paths.get(temp.toFile().getAbsolutePath(), "default.json").toFile();
         LOGGER.info("Writing profile to {}", file.getAbsolutePath());
         FileUtils.writeStringToFile(file, gson.toJson(getFilterProfile("default")), Charset.defaultCharset());
 
@@ -160,7 +161,7 @@ public class PhileasFilterServiceTest {
     public void endToEnd5() throws Exception {
 
         final Path temp = Files.createTempDirectory("philter");
-        final File file = Paths.get(temp.toFile().getAbsolutePath(), "profile.json").toFile();
+        final File file = Paths.get(temp.toFile().getAbsolutePath(), "default.json").toFile();
         LOGGER.info("Writing profile to {}", file.getAbsolutePath());
         FileUtils.writeStringToFile(file, gson.toJson(getFilterProfile("default")), Charset.defaultCharset());
 
@@ -186,7 +187,7 @@ public class PhileasFilterServiceTest {
     public void endToEnd6() throws Exception {
 
         final Path temp = Files.createTempDirectory("philter");
-        final File file = Paths.get(temp.toFile().getAbsolutePath(), "profile.json").toFile();
+        final File file = Paths.get(temp.toFile().getAbsolutePath(), "default.json").toFile();
         LOGGER.info("Writing profile to {}", file.getAbsolutePath());
         FileUtils.writeStringToFile(file, gson.toJson(getFilterProfile("default")), Charset.defaultCharset());
 
@@ -212,7 +213,7 @@ public class PhileasFilterServiceTest {
     public void endToEndWithoutDocumentId() throws Exception {
 
         final Path temp = Files.createTempDirectory("philter");
-        final File file = Paths.get(temp.toFile().getAbsolutePath(), "profile.json").toFile();
+        final File file = Paths.get(temp.toFile().getAbsolutePath(), "default.json").toFile();
         LOGGER.info("Writing profile to {}", file.getAbsolutePath());
         FileUtils.writeStringToFile(file, gson.toJson(getFilterProfile("default")), Charset.defaultCharset());
 
@@ -240,11 +241,11 @@ public class PhileasFilterServiceTest {
 
         final Path temp = Files.createTempDirectory("philter");
 
-        final File file1 = Paths.get(temp.toFile().getAbsolutePath(), "profile.json").toFile();
+        final File file1 = Paths.get(temp.toFile().getAbsolutePath(), "default.json").toFile();
         LOGGER.info("Writing profile to {}", file1.getAbsolutePath());
         FileUtils.writeStringToFile(file1, gson.toJson(getFilterProfile("default")), Charset.defaultCharset());
 
-        final File file2 = Paths.get(temp.toFile().getAbsolutePath(), "profile.json").toFile();
+        final File file2 = Paths.get(temp.toFile().getAbsolutePath(), "justcreditcard.json").toFile();
         LOGGER.info("Writing profile to {}", file2.getAbsolutePath());
         FileUtils.writeStringToFile(file2, gson.toJson(getFilterProfileJustCreditCard("justcreditcard")), Charset.defaultCharset());
 
@@ -270,7 +271,7 @@ public class PhileasFilterServiceTest {
 
         final Path temp = Files.createTempDirectory("philter");
 
-        final File file2 = Paths.get(temp.toFile().getAbsolutePath(), "profile.json").toFile();
+        final File file2 = Paths.get(temp.toFile().getAbsolutePath(), "justcreditcard.json").toFile();
         LOGGER.info("Writing profile to {}", file2.getAbsolutePath());
         FileUtils.writeStringToFile(file2, gson.toJson(getFilterProfileJustCreditCard("justcreditcard")), Charset.defaultCharset());
 
@@ -296,7 +297,7 @@ public class PhileasFilterServiceTest {
 
         final Path temp = Files.createTempDirectory("philter");
 
-        final File file2 = Paths.get(temp.toFile().getAbsolutePath(), "profile.json").toFile();
+        final File file2 = Paths.get(temp.toFile().getAbsolutePath(), "justcreditcard.json").toFile();
         LOGGER.info("Writing profile to {}", file2.getAbsolutePath());
         FileUtils.writeStringToFile(file2, gson.toJson(getFilterProfileJustCreditCard("justcreditcard")), Charset.defaultCharset());
 
@@ -321,7 +322,7 @@ public class PhileasFilterServiceTest {
     public void endToEndWithFilterSpecificIgnoredTerms() throws Exception {
 
         final Path temp = Files.createTempDirectory("philter");
-        final File file = Paths.get(temp.toFile().getAbsolutePath(), "profile.json").toFile();
+        final File file = Paths.get(temp.toFile().getAbsolutePath(), "default.json").toFile();
         LOGGER.info("Writing profile to {}", file.getAbsolutePath());
         FileUtils.writeStringToFile(file, gson.toJson(getFilterProfileZipCodeWithIgnored("default")), Charset.defaultCharset());
 
@@ -342,12 +343,12 @@ public class PhileasFilterServiceTest {
 
     }
 
-    @Test(expected = InvalidFilterProfileException.class)
+    @Test(expected = FileNotFoundException.class)
     public void endToEndNonexistentFilterProfile() throws Exception {
 
         final Path temp = Files.createTempDirectory("philter");
 
-        final File file1 = Paths.get(temp.toFile().getAbsolutePath(), "profile.json").toFile();
+        final File file1 = Paths.get(temp.toFile().getAbsolutePath(), "default.json").toFile();
         LOGGER.info("Writing profile to {}", file1.getAbsolutePath());
         FileUtils.writeStringToFile(file1, gson.toJson(getFilterProfile("default")), Charset.defaultCharset());
 
