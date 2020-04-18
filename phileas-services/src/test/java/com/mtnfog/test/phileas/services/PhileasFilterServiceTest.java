@@ -2,11 +2,9 @@ package com.mtnfog.test.phileas.services;
 
 import com.google.gson.Gson;
 import com.mtnfog.phileas.model.enums.MimeType;
-import com.mtnfog.phileas.model.exceptions.InvalidFilterProfileException;
 import com.mtnfog.phileas.model.profile.FilterProfile;
 import com.mtnfog.phileas.model.profile.Identifiers;
 import com.mtnfog.phileas.model.profile.Ignored;
-import com.mtnfog.phileas.model.profile.filters.Date;
 import com.mtnfog.phileas.model.profile.filters.*;
 import com.mtnfog.phileas.model.profile.filters.strategies.AbstractFilterStrategy;
 import com.mtnfog.phileas.model.profile.filters.strategies.ai.NerFilterStrategy;
@@ -31,7 +29,10 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Properties;
+import java.util.Set;
 
 public class PhileasFilterServiceTest {
 
@@ -76,7 +77,7 @@ public class PhileasFilterServiceTest {
 
         Assert.assertEquals("George Washington was president and his ssn was {{{REDACTED-ssn}}} and he lived at {{{REDACTED-zip-code}}}.", response.getFilteredText());
         Assert.assertEquals("documentId", response.getDocumentId());
-        
+
     }
 
     @Test
