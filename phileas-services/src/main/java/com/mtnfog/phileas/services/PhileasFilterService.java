@@ -103,12 +103,12 @@ public class PhileasFilterService implements FilterService, Serializable {
     @Override
     public FilterResponse filter(String filterProfileName, String context, String documentId, String input, MimeType mimeType) throws Exception {
 
-        if(!filterProfiles.containsKey(filterProfileName)) {
-            throw new InvalidFilterProfileException("The filter profile does not exist.");
-        }
-
         // Get the filter profile.
         final FilterProfile filterProfile = filterProfiles.get(filterProfileName);
+
+        if(filterProfile == null) {
+            throw new InvalidFilterProfileException("The filter profile " + filterProfileName + " does not exist.");
+        }
 
         // See if we need to generate a document ID.
         if(StringUtils.isEmpty(documentId)) {
