@@ -1,6 +1,7 @@
 package com.mtnfog.phileas.services.registry;
 
 import com.mtnfog.phileas.model.exceptions.api.BadRequestException;
+import com.mtnfog.phileas.model.profile.FilterProfile;
 import com.mtnfog.phileas.model.services.FilterProfileService;
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
@@ -18,6 +19,7 @@ public class LocalFilterProfileService implements FilterProfileService {
 
     private static final Logger LOGGER = LogManager.getLogger(LocalFilterProfileService.class);
 
+    private Map<String, String> internalFilterProileCache;
     private String filterProfilesDirectory;
 
     public LocalFilterProfileService(Properties applicationProperties) {
@@ -25,10 +27,14 @@ public class LocalFilterProfileService implements FilterProfileService {
         this.filterProfilesDirectory = applicationProperties.getProperty("filter.profiles.directory", System.getProperty("user.dir") + "/profiles/");
         LOGGER.info("Looking for filter profiles in {}", filterProfilesDirectory);
 
+        this.internalFilterProileCache = new HashMap<>();
+
     }
 
     @Override
     public List<String> get() throws IOException {
+
+        // This function never uses a cache.
 
         final List<String> names = new LinkedList<>();
 
@@ -53,12 +59,38 @@ public class LocalFilterProfileService implements FilterProfileService {
     @Override
     public String get(String filterProfileName, boolean ignoreCache) throws IOException {
 
-        final File file = new File(filterProfilesDirectory, filterProfileName + ".json");
+        if (!ignoreCache) {
 
-        if(file.exists()) {
-            return FileUtils.readFileToString(file, Charset.defaultCharset());
+            final String filterProfile = internalFilterProileCache.get(filterProfileName);
+
+            if(filterProfile == null) {
+
+                // The filter profile wasn't found in the cache so look on the file system.
+
+                final File file = new File(filterProfilesDirectory, filterProfileName + ".json");
+
+                if (file.exists()) {
+                    return FileUtils.readFileToString(file, Charset.defaultCharset());
+                } else {
+                    throw new FileNotFoundException("Filter profile [" + filterProfileName + "] does not exist.");
+                }
+
+            } else {
+
+                return filterProfile;
+
+            }
+
         } else {
-            throw new FileNotFoundException("Filter profile [" + filterProfileName + "] does not exist.");
+
+            final File file = new File(filterProfilesDirectory, filterProfileName + ".json");
+
+            if (file.exists()) {
+                return FileUtils.readFileToString(file, Charset.defaultCharset());
+            } else {
+                throw new FileNotFoundException("Filter profile [" + filterProfileName + "] does not exist.");
+            }
+
         }
 
     }
@@ -66,26 +98,34 @@ public class LocalFilterProfileService implements FilterProfileService {
     @Override
     public Map<String, String> getAll(boolean ignoreCache) throws IOException {
 
-        final Map<String, String> filterProfiles = new HashMap<>();
+        if(!ignoreCache) {
 
-        // Read the filter profiles from the file system.
-        final Collection<File> files = FileUtils.listFiles(new File(filterProfilesDirectory), new String[]{"json"}, false);
-        LOGGER.info("Found {} filter profiles", files.size());
+            return internalFilterProileCache;
 
-        for(final File file : files) {
+        } else {
 
-            LOGGER.info("Loading filter profile {}", file.getAbsolutePath());
-            final String json = FileUtils.readFileToString(file, Charset.defaultCharset());
+            final Map<String, String> filterProfiles = new HashMap<>();
 
-            final JSONObject object = new JSONObject(json);
-            final String name = object.getString("name");
+            // Read the filter profiles from the file system.
+            final Collection<File> files = FileUtils.listFiles(new File(filterProfilesDirectory), new String[]{"json"}, false);
+            LOGGER.info("Found {} filter profiles", files.size());
 
-            filterProfiles.put(name, json);
-            LOGGER.info("Added filter profile named [{}]", name);
+            for (final File file : files) {
+
+                LOGGER.info("Loading filter profile {}", file.getAbsolutePath());
+                final String json = FileUtils.readFileToString(file, Charset.defaultCharset());
+
+                final JSONObject object = new JSONObject(json);
+                final String name = object.getString("name");
+
+                filterProfiles.put(name, json);
+                LOGGER.info("Added filter profile named [{}]", name);
+
+            }
+
+            return filterProfiles;
 
         }
-
-        return filterProfiles;
 
     }
 
@@ -95,11 +135,14 @@ public class LocalFilterProfileService implements FilterProfileService {
         try {
 
             final JSONObject object = new JSONObject(filterProfileJson);
-            final String name = object.getString("name");
+            final String filterProfileName = object.getString("name");
 
-            final File file = new File(filterProfilesDirectory, name + ".json");
+            final File file = new File(filterProfilesDirectory, filterProfileName + ".json");
 
             FileUtils.writeStringToFile(file, filterProfileJson, Charset.defaultCharset());
+
+            // Put this filter profile into the cache.
+            internalFilterProileCache.put(filterProfileName, filterProfileJson);
 
         } catch (JSONException ex) {
 
@@ -120,6 +163,9 @@ public class LocalFilterProfileService implements FilterProfileService {
             if(!file.delete()) {
                 throw new IOException("Unable to delete filter profile " + name + ".json");
             }
+
+            // Remove it from the cache.
+            internalFilterProileCache.remove(name);
 
         } else {
             throw new FileNotFoundException("Filter profile with name " + name + " does not exist.");
