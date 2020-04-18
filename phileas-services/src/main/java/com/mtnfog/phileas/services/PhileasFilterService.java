@@ -107,7 +107,7 @@ public class PhileasFilterService implements FilterService, Serializable {
         final FilterProfile filterProfile = filterProfiles.get(filterProfileName);
 
         if(filterProfile == null) {
-            throw new InvalidFilterProfileException("The filter profile " + filterProfileName + " does not exist.");
+            throw new InvalidFilterProfileException("The filter profile [" + filterProfileName + "] does not exist.");
         }
 
         // See if we need to generate a document ID.
