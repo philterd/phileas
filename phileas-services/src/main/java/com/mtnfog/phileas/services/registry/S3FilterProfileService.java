@@ -142,7 +142,7 @@ public class S3FilterProfileService implements FilterProfileService {
             } else {
 
                 LOGGER.info("Looking for filter profile {} in s3 bucket {}", filterProfileName, bucket);
-                final S3Object fullObject = s3Client.getObject(new GetObjectRequest(bucket, filterProfileName));
+                final S3Object fullObject = s3Client.getObject(new GetObjectRequest(bucket, filterProfileName + ".json"));
                 json = IOUtils.toString(fullObject.getObjectContent(), StandardCharsets.UTF_8.name());
                 fullObject.close();
 
