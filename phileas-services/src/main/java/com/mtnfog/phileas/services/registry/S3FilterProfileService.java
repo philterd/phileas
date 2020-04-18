@@ -12,7 +12,6 @@ import com.mtnfog.phileas.model.exceptions.api.InternalServerErrorException;
 import com.mtnfog.phileas.model.services.FilterProfileService;
 import com.mtnfog.phileas.services.cache.profiles.RedisFilterProfileCacheService;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.JSONException;
@@ -30,20 +29,18 @@ public class S3FilterProfileService implements FilterProfileService {
 
     private AmazonS3 s3Client;
     private String bucket;
-    private String prefix;
     private RedisFilterProfileCacheService redisFilterProfileCacheService;
 
     public S3FilterProfileService(Properties applicationProperties, boolean testing) {
 
         // Initialize the S3 client.
         this.bucket = applicationProperties.getProperty("filter.profiles.s3.bucket");
-        this.prefix = applicationProperties.getProperty("filter.profiles.s3.prefix");
         final String region = applicationProperties.getProperty("filter.profiles.s3.region", "us-east-1");
 
         // Create a filter profile cache.
         this.redisFilterProfileCacheService = new RedisFilterProfileCacheService(applicationProperties);
 
-        LOGGER.info("Configuring S3 backend for filter profiles in s3 bucket {} with prefix {}", bucket, prefix);
+        LOGGER.info("Configuring S3 backend for filter profiles in s3 bucket {}", bucket);
 
         if(testing) {
 
@@ -78,12 +75,8 @@ public class S3FilterProfileService implements FilterProfileService {
 
         try {
 
-            LOGGER.info("Looking for filter profiles in s3 bucket {} with prefix {}", bucket, prefix);
+            LOGGER.info("Looking for filter profiles in s3 bucket {}", bucket);
             final ListObjectsV2Request listObjectsV2Request = new ListObjectsV2Request().withBucketName(bucket);
-
-            if (!StringUtils.equalsIgnoreCase(prefix, "/")) {
-                listObjectsV2Request.setPrefix(prefix);
-            }
 
             ListObjectsV2Result result;
 
@@ -140,16 +133,16 @@ public class S3FilterProfileService implements FilterProfileService {
 
                 if(json == null) {
                     // The filter profile was not in the cache. Look in S3.
-                    LOGGER.info("Filter profile was not cached. Looking for filter profile {} in s3 bucket {} with prefix {}", filterProfileName, bucket, prefix);
-                    final S3Object fullObject = s3Client.getObject(new GetObjectRequest(bucket, buildKey(filterProfileName)));
+                    LOGGER.info("Filter profile was not cached. Looking for filter profile {} in s3 bucket {}", filterProfileName, bucket);
+                    final S3Object fullObject = s3Client.getObject(new GetObjectRequest(bucket, filterProfileName));
                     json = IOUtils.toString(fullObject.getObjectContent(), StandardCharsets.UTF_8.name());
                     fullObject.close();
                 }
 
             } else {
 
-                LOGGER.info("Looking for filter profile {} in s3 bucket {} with prefix {}", filterProfileName, bucket, prefix);
-                final S3Object fullObject = s3Client.getObject(new GetObjectRequest(bucket, buildKey(filterProfileName)));
+                LOGGER.info("Looking for filter profile {} in s3 bucket {}", filterProfileName, bucket);
+                final S3Object fullObject = s3Client.getObject(new GetObjectRequest(bucket, filterProfileName));
                 json = IOUtils.toString(fullObject.getObjectContent(), StandardCharsets.UTF_8.name());
                 fullObject.close();
 
@@ -185,15 +178,11 @@ public class S3FilterProfileService implements FilterProfileService {
 
             } else {
 
-                LOGGER.info("Looking for all filter profiles in s3 bucket {} with prefix {}", bucket, prefix);
+                LOGGER.info("Looking for all filter profiles in s3 bucket {}", bucket);
                 ListObjectsV2Request listObjectsV2Request = new ListObjectsV2Request().withBucketName(bucket);
 
                 // Clear the cache and put the profiles into the cache.
                 redisFilterProfileCacheService.clear();
-
-                if (!StringUtils.equalsIgnoreCase(prefix, "/")) {
-                    listObjectsV2Request.setPrefix(prefix);
-                }
 
                 ListObjectsV2Result result;
 
@@ -216,9 +205,8 @@ public class S3FilterProfileService implements FilterProfileService {
                             final JSONObject object = new JSONObject(json);
                             final String name = object.getString("name");
 
+                            LOGGER.debug("Adding filter profile named {}", name);
                             filterProfiles.put(name, json);
-                            LOGGER.debug("Added filter profile named {}", name);
-
                             redisFilterProfileCacheService.insert(name, json);
 
                         }
@@ -254,9 +242,8 @@ public class S3FilterProfileService implements FilterProfileService {
             final JSONObject object = new JSONObject(filterProfileJson);
             final String name = object.getString("name");
 
-            final String key = buildKey(name);
-            LOGGER.info("Uploading object to s3://{}/{}", bucket, key);
-            s3Client.putObject(bucket, key, filterProfileJson);
+            LOGGER.info("Uploading object to s3://{}/{}", bucket, name);
+            s3Client.putObject(bucket, name, filterProfileJson);
 
             // Insert it into the cache.
             redisFilterProfileCacheService.insert(name, filterProfileJson);
@@ -281,7 +268,7 @@ public class S3FilterProfileService implements FilterProfileService {
 
         try {
 
-            s3Client.deleteObject(bucket, buildKey(filterProfileName));
+            s3Client.deleteObject(bucket, filterProfileName);
 
             // Remove it from the cache.
             redisFilterProfileCacheService.remove(filterProfileName);
@@ -292,20 +279,6 @@ public class S3FilterProfileService implements FilterProfileService {
 
             throw new InternalServerErrorException("Unable to delete filter profile.");
 
-        }
-
-    }
-
-    private String buildKey(final String filterProfileName) {
-
-        LOGGER.debug("Building key from: {} and {} and {}", bucket, prefix, filterProfileName);
-
-        if(StringUtils.equals(prefix, "/")) {
-            return filterProfileName + ".json";
-        } else if(prefix.endsWith("/")) {
-            return prefix + filterProfileName + ".json";
-        } else {
-            return prefix + "/" + filterProfileName + ".json";
         }
 
     }
