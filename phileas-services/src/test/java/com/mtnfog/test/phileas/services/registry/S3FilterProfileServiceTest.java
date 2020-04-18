@@ -176,6 +176,7 @@ public class S3FilterProfileServiceTest {
         final FilterProfileService filterProfileService = new S3FilterProfileService(getProperties(), true);
 
         filterProfileService.save(profile);
+
         final String filterProfileJson = filterProfileService.get(name, true);
 
         Assert.assertEquals(profile, filterProfileJson);
@@ -186,18 +187,15 @@ public class S3FilterProfileServiceTest {
     public void delete() throws IOException {
 
         final String name = "default";
-
         final String profile = gson.toJson(getFilterProfile(name));
-
-        final Path temp = Files.createTempDirectory("philter");
 
         final FilterProfileService filterProfileService = new S3FilterProfileService(getProperties(), true);
 
         filterProfileService.save(profile);
+
         filterProfileService.delete(name);
 
-        final File file = new File(temp.toFile(), name + ".json");
-        Assert.assertFalse(file.exists());
+        Assert.assertFalse(filterProfileService.getAll(true).containsKey(name));
 
     }
 

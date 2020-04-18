@@ -134,7 +134,7 @@ public class S3FilterProfileService implements FilterProfileService {
                 if(json == null) {
                     // The filter profile was not in the cache. Look in S3.
                     LOGGER.info("Filter profile was not cached. Looking for filter profile {} in s3 bucket {}", filterProfileName, bucket);
-                    final S3Object fullObject = s3Client.getObject(new GetObjectRequest(bucket, filterProfileName));
+                    final S3Object fullObject = s3Client.getObject(new GetObjectRequest(bucket, filterProfileName + ".json"));
                     json = IOUtils.toString(fullObject.getObjectContent(), StandardCharsets.UTF_8.name());
                     fullObject.close();
                 }
@@ -240,10 +240,10 @@ public class S3FilterProfileService implements FilterProfileService {
         try {
 
             final JSONObject object = new JSONObject(filterProfileJson);
-            final String name = object.getString("name") + ".json";
+            final String name = object.getString("name");
 
-            LOGGER.info("Uploading object to s3://{}/{}", bucket, name);
-            s3Client.putObject(bucket, name, filterProfileJson);
+            LOGGER.info("Uploading object to s3://{}/{}", bucket, name + ".json");
+            s3Client.putObject(bucket, name + ".json", filterProfileJson);
 
             // Insert it into the cache.
             redisFilterProfileCacheService.insert(name, filterProfileJson);
@@ -268,7 +268,8 @@ public class S3FilterProfileService implements FilterProfileService {
 
         try {
 
-            s3Client.deleteObject(bucket, filterProfileName);
+            LOGGER.info("Deleting object from s3://{}/{}", bucket, filterProfileName + ".json");
+            s3Client.deleteObject(bucket, filterProfileName + ".json");
 
             // Remove it from the cache.
             redisFilterProfileCacheService.remove(filterProfileName);
