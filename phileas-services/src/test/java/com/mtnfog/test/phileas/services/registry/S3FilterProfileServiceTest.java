@@ -147,7 +147,7 @@ public class S3FilterProfileServiceTest {
 
         LOGGER.info("Found {} profiles", all.size());
 
-        Assert.assertTrue(all.size() == 2);
+        Assert.assertEquals(2, all.size());
         Assert.assertTrue(all.keySet().contains("name1"));
         Assert.assertTrue(all.keySet().contains("name2"));
 

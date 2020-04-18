@@ -240,7 +240,7 @@ public class S3FilterProfileService implements FilterProfileService {
         try {
 
             final JSONObject object = new JSONObject(filterProfileJson);
-            final String name = object.getString("name");
+            final String name = object.getString("name") + ".json";
 
             LOGGER.info("Uploading object to s3://{}/{}", bucket, name);
             s3Client.putObject(bucket, name, filterProfileJson);
