@@ -208,8 +208,10 @@ public class S3FilterProfileService implements FilterProfileService {
                             final JSONObject object = new JSONObject(json);
                             final String name = object.getString("name");
 
-                            LOGGER.debug("Adding filter profile named {}", name);
+                            LOGGER.info("Adding filter profile named [{}]", name);
                             filterProfiles.put(name, json);
+
+                            LOGGER.info("Caching filter profile [{}]", name);
                             redisFilterProfileCacheService.insert(name, json);
 
                         }
