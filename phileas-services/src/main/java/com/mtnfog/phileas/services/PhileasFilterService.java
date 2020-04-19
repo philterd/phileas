@@ -102,10 +102,20 @@ public class PhileasFilterService implements FilterService, Serializable {
     public FilterResponse filter(String filterProfileName, String context, String documentId, String input, MimeType mimeType) throws Exception {
 
         // Get the filter profile.
-        final String filterProfileJson = filterProfileService.get(filterProfileName, false);
+        String filterProfileJson = filterProfileService.get(filterProfileName, false);
 
         if(filterProfileJson == null) {
-            throw new InvalidFilterProfileException("The filter profile [" + filterProfileName + "] does not exist.");
+
+            // Reload the filter profiles. This may be one this instance does not know about.
+            reloadFilterProfiles();
+
+            filterProfileJson = filterProfileService.get(filterProfileName, false);
+
+            // We still can't find the filter profile so throw an exception.
+            if(filterProfileJson == null) {
+                throw new InvalidFilterProfileException("The filter profile [" + filterProfileName + "] does not exist.");
+            }
+
         }
 
         final FilterProfile filterProfile = gson.fromJson(filterProfileJson, FilterProfile.class);
