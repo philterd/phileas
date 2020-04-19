@@ -106,6 +106,8 @@ public class PhileasFilterService implements FilterService, Serializable {
 
         if(filterProfileJson == null) {
 
+            LOGGER.info("Filter profile [{}] was not found so reloading filter profiles.", filterProfileName);
+
             // Reload the filter profiles. This may be one this instance does not know about.
             reloadFilterProfiles();
 
@@ -114,16 +116,20 @@ public class PhileasFilterService implements FilterService, Serializable {
             // We still can't find the filter profile so throw an exception.
             if(filterProfileJson == null) {
                 throw new InvalidFilterProfileException("The filter profile [" + filterProfileName + "] does not exist.");
+            } else {
+                LOGGER.info("Filter profile [{}] was now found.", filterProfileName);
             }
 
         }
 
+        LOGGER.info("Deserializing filter profile [{}]", filterProfileName);
         final FilterProfile filterProfile = gson.fromJson(filterProfileJson, FilterProfile.class);
 
         // See if we need to generate a document ID.
         if(StringUtils.isEmpty(documentId)) {
 
             // PHL-58: Use a hash function to generate the document ID.
+            LOGGER.info("Generating document ID.");
             documentId = DigestUtils.md5Hex(UUID.randomUUID().toString() + "-" + context + "-" + filterProfileName + "-" + input);
 
         }

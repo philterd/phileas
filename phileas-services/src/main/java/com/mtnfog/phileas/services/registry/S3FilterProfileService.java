@@ -151,6 +151,7 @@ public class S3FilterProfileService implements FilterProfileService {
             }
 
             // Put it into the cache.
+            LOGGER.info("Caching filter profile [{}]", filterProfileName);
             redisFilterProfileCacheService.insert(filterProfileName, json);
 
             return json;
