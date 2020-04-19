@@ -1,6 +1,7 @@
 package com.mtnfog.test.phileas.services.registry;
 
 import com.google.gson.Gson;
+import com.mtnfog.phileas.model.objects.GetFilterProfileResult;
 import com.mtnfog.phileas.model.profile.FilterProfile;
 import com.mtnfog.phileas.model.profile.Identifiers;
 import com.mtnfog.phileas.model.profile.filters.Age;
@@ -177,9 +178,9 @@ public class S3FilterProfileServiceTest {
 
         filterProfileService.save(profile);
 
-        final String filterProfileJson = filterProfileService.get(name, true);
+        final GetFilterProfileResult getFilterProfileResult = filterProfileService.get(name, true);
 
-        Assert.assertEquals(profile, filterProfileJson);
+        Assert.assertEquals(profile, getFilterProfileResult.getFilterProfileJson());
 
     }
 

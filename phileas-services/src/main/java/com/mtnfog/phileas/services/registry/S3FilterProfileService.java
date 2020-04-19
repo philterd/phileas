@@ -9,6 +9,7 @@ import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.*;
 import com.mtnfog.phileas.model.exceptions.api.BadRequestException;
 import com.mtnfog.phileas.model.exceptions.api.InternalServerErrorException;
+import com.mtnfog.phileas.model.objects.GetFilterProfileResult;
 import com.mtnfog.phileas.model.services.FilterProfileService;
 import com.mtnfog.phileas.services.cache.profiles.RedisFilterProfileCacheService;
 import org.apache.commons.io.IOUtils;
@@ -119,7 +120,7 @@ public class S3FilterProfileService implements FilterProfileService {
     }
 
     @Override
-    public String get(String filterProfileName, boolean ignoreCache) {
+    public GetFilterProfileResult get(String filterProfileName, boolean ignoreCache) {
 
         try {
 
@@ -139,6 +140,8 @@ public class S3FilterProfileService implements FilterProfileService {
                     json = IOUtils.toString(fullObject.getObjectContent(), StandardCharsets.UTF_8.name());
                     fullObject.close();
 
+                    return new GetFilterProfileResult(json, true);
+
                 }
 
             } else {
@@ -154,7 +157,7 @@ public class S3FilterProfileService implements FilterProfileService {
             LOGGER.info("Caching filter profile [{}]", filterProfileName);
             redisFilterProfileCacheService.insert(filterProfileName, json);
 
-            return json;
+            return new GetFilterProfileResult(json, false);
 
         } catch (Exception ex) {
 

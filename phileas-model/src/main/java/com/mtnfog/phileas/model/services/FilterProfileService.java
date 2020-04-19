@@ -1,5 +1,7 @@
 package com.mtnfog.phileas.model.services;
 
+import com.mtnfog.phileas.model.objects.GetFilterProfileResult;
+
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
@@ -18,10 +20,10 @@ public interface FilterProfileService {
      * Gets the content of a filter profile.
      * @param filterProfileName
      * @param ignoreCache Whether or not to reference the cache.
-     * @return The content of the filter profile.
+     * @return A {@link GetFilterProfileResult} containing the filter profile.
      * @throws IOException
      */
-    String get(String filterProfileName, boolean ignoreCache) throws IOException;
+    GetFilterProfileResult get(String filterProfileName, boolean ignoreCache) throws IOException;
 
     /**
      * Get the names and content of all filter profiles.

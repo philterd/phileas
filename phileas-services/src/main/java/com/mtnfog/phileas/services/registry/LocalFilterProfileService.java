@@ -1,6 +1,7 @@
 package com.mtnfog.phileas.services.registry;
 
 import com.mtnfog.phileas.model.exceptions.api.BadRequestException;
+import com.mtnfog.phileas.model.objects.GetFilterProfileResult;
 import com.mtnfog.phileas.model.profile.FilterProfile;
 import com.mtnfog.phileas.model.services.FilterProfileService;
 import org.apache.commons.io.FileUtils;
@@ -57,7 +58,7 @@ public class LocalFilterProfileService implements FilterProfileService {
     }
 
     @Override
-    public String get(String filterProfileName, boolean ignoreCache) throws IOException {
+    public GetFilterProfileResult get(String filterProfileName, boolean ignoreCache) throws IOException {
 
         if (!ignoreCache) {
 
@@ -70,14 +71,14 @@ public class LocalFilterProfileService implements FilterProfileService {
                 final File file = new File(filterProfilesDirectory, filterProfileName + ".json");
 
                 if (file.exists()) {
-                    return FileUtils.readFileToString(file, Charset.defaultCharset());
+                    return new GetFilterProfileResult(FileUtils.readFileToString(file, Charset.defaultCharset()), true);
                 } else {
                     throw new FileNotFoundException("Filter profile [" + filterProfileName + "] does not exist.");
                 }
 
             } else {
 
-                return filterProfile;
+                return new GetFilterProfileResult(filterProfile, false);
 
             }
 
@@ -86,7 +87,7 @@ public class LocalFilterProfileService implements FilterProfileService {
             final File file = new File(filterProfilesDirectory, filterProfileName + ".json");
 
             if (file.exists()) {
-                return FileUtils.readFileToString(file, Charset.defaultCharset());
+                return new GetFilterProfileResult(FileUtils.readFileToString(file, Charset.defaultCharset()), false);
             } else {
                 throw new FileNotFoundException("Filter profile [" + filterProfileName + "] does not exist.");
             }

@@ -10,6 +10,7 @@ import com.mtnfog.phileas.model.enums.SensitivityLevel;
 import com.mtnfog.phileas.model.exceptions.InvalidFilterProfileException;
 import com.mtnfog.phileas.model.filter.Filter;
 import com.mtnfog.phileas.model.filter.rules.dictionary.LuceneDictionaryFilter;
+import com.mtnfog.phileas.model.objects.GetFilterProfileResult;
 import com.mtnfog.phileas.model.objects.Span;
 import com.mtnfog.phileas.model.profile.FilterProfile;
 import com.mtnfog.phileas.model.profile.Ignored;
@@ -102,28 +103,17 @@ public class PhileasFilterService implements FilterService, Serializable {
     public FilterResponse filter(String filterProfileName, String context, String documentId, String input, MimeType mimeType) throws Exception {
 
         // Get the filter profile.
-        String filterProfileJson = filterProfileService.get(filterProfileName, false);
+        // This will ALWAYS return a filter profile because if it is not in the cache it will be
+        // retrieved from the cache.
+        // TODO: How to trigger a reload if the profile had to be retrieved from disk?
+        final GetFilterProfileResult getFilterProfileResult = filterProfileService.get(filterProfileName, false);
 
-        if(filterProfileJson == null) {
-
-            LOGGER.info("Filter profile [{}] was not found so reloading filter profiles.", filterProfileName);
-
-            // Reload the filter profiles. This may be one this instance does not know about.
+        if(getFilterProfileResult.isRequiresReload()) {
             reloadFilterProfiles();
-
-            filterProfileJson = filterProfileService.get(filterProfileName, false);
-
-            // We still can't find the filter profile so throw an exception.
-            if(filterProfileJson == null) {
-                throw new InvalidFilterProfileException("The filter profile [" + filterProfileName + "] does not exist.");
-            } else {
-                LOGGER.info("Filter profile [{}] was now found.", filterProfileName);
-            }
-
         }
 
         LOGGER.info("Deserializing filter profile [{}]", filterProfileName);
-        final FilterProfile filterProfile = gson.fromJson(filterProfileJson, FilterProfile.class);
+        final FilterProfile filterProfile = gson.fromJson(getFilterProfileResult.getFilterProfileJson(), FilterProfile.class);
 
         // See if we need to generate a document ID.
         if(StringUtils.isEmpty(documentId)) {
