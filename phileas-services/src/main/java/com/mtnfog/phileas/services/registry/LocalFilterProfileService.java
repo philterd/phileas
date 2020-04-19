@@ -1,9 +1,9 @@
 package com.mtnfog.phileas.services.registry;
 
 import com.mtnfog.phileas.model.exceptions.api.BadRequestException;
-import com.mtnfog.phileas.model.objects.GetFilterProfileResult;
-import com.mtnfog.phileas.model.profile.FilterProfile;
+import com.mtnfog.phileas.model.services.FilterProfileCacheService;
 import com.mtnfog.phileas.model.services.FilterProfileService;
+import com.mtnfog.phileas.services.cache.profiles.InMemoryFilterProfileCacheService;
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -20,15 +20,16 @@ public class LocalFilterProfileService implements FilterProfileService {
 
     private static final Logger LOGGER = LogManager.getLogger(LocalFilterProfileService.class);
 
-    private Map<String, String> internalFilterProileCache;
     private String filterProfilesDirectory;
+    private FilterProfileCacheService filterProfileCacheService;
 
-    public LocalFilterProfileService(Properties applicationProperties) {
+    public LocalFilterProfileService(final Properties applicationProperties) {
         
         this.filterProfilesDirectory = applicationProperties.getProperty("filter.profiles.directory", System.getProperty("user.dir") + "/profiles/");
         LOGGER.info("Looking for filter profiles in {}", filterProfilesDirectory);
 
-        this.internalFilterProileCache = new HashMap<>();
+        // Always use an in-memory cache when using a local filter profile service.
+        this.filterProfileCacheService = new InMemoryFilterProfileCacheService();
 
     }
 
@@ -58,75 +59,56 @@ public class LocalFilterProfileService implements FilterProfileService {
     }
 
     @Override
-    public GetFilterProfileResult get(String filterProfileName, boolean ignoreCache) throws IOException {
+    public String get(String filterProfileName) throws IOException {
 
-        if (!ignoreCache) {
+        String filterProfileJson = filterProfileCacheService.get(filterProfileName);
 
-            final String filterProfile = internalFilterProileCache.get(filterProfileName);
+        if(filterProfileJson == null) {
 
-            if(filterProfile == null) {
-
-                // The filter profile wasn't found in the cache so look on the file system.
-
-                final File file = new File(filterProfilesDirectory, filterProfileName + ".json");
-
-                if (file.exists()) {
-                    return new GetFilterProfileResult(FileUtils.readFileToString(file, Charset.defaultCharset()), true);
-                } else {
-                    throw new FileNotFoundException("Filter profile [" + filterProfileName + "] does not exist.");
-                }
-
-            } else {
-
-                return new GetFilterProfileResult(filterProfile, false);
-
-            }
-
-        } else {
+            // The filter profile wasn't found in the cache so look on the file system.
 
             final File file = new File(filterProfilesDirectory, filterProfileName + ".json");
 
             if (file.exists()) {
-                return new GetFilterProfileResult(FileUtils.readFileToString(file, Charset.defaultCharset()), false);
+
+                filterProfileJson = FileUtils.readFileToString(file, Charset.defaultCharset());
+
+                // Put it in the cache.
+                filterProfileCacheService.insert(filterProfileName, filterProfileJson);
+
             } else {
                 throw new FileNotFoundException("Filter profile [" + filterProfileName + "] does not exist.");
             }
 
         }
 
+        return filterProfileJson;
+
     }
 
     @Override
-    public Map<String, String> getAll(boolean ignoreCache) throws IOException {
+    public Map<String, String> getAll() throws IOException {
 
-        if(!ignoreCache) {
+        final Map<String, String> filterProfiles = new HashMap<>();
 
-            return internalFilterProileCache;
+        // Read the filter profiles from the file system.
+        final Collection<File> files = FileUtils.listFiles(new File(filterProfilesDirectory), new String[]{"json"}, false);
+        LOGGER.info("Found {} filter profiles", files.size());
 
-        } else {
+        for (final File file : files) {
 
-            final Map<String, String> filterProfiles = new HashMap<>();
+            LOGGER.info("Loading filter profile {}", file.getAbsolutePath());
+            final String json = FileUtils.readFileToString(file, Charset.defaultCharset());
 
-            // Read the filter profiles from the file system.
-            final Collection<File> files = FileUtils.listFiles(new File(filterProfilesDirectory), new String[]{"json"}, false);
-            LOGGER.info("Found {} filter profiles", files.size());
+            final JSONObject object = new JSONObject(json);
+            final String name = object.getString("name");
 
-            for (final File file : files) {
-
-                LOGGER.info("Loading filter profile {}", file.getAbsolutePath());
-                final String json = FileUtils.readFileToString(file, Charset.defaultCharset());
-
-                final JSONObject object = new JSONObject(json);
-                final String name = object.getString("name");
-
-                filterProfiles.put(name, json);
-                LOGGER.info("Added filter profile named [{}]", name);
-
-            }
-
-            return filterProfiles;
+            filterProfiles.put(name, json);
+            LOGGER.info("Added filter profile named [{}]", name);
 
         }
+
+        return filterProfiles;
 
     }
 
@@ -143,7 +125,7 @@ public class LocalFilterProfileService implements FilterProfileService {
             FileUtils.writeStringToFile(file, filterProfileJson, Charset.defaultCharset());
 
             // Put this filter profile into the cache.
-            internalFilterProileCache.put(filterProfileName, filterProfileJson);
+            filterProfileCacheService.insert(filterProfileName, filterProfileJson);
 
         } catch (JSONException ex) {
 
@@ -166,7 +148,7 @@ public class LocalFilterProfileService implements FilterProfileService {
             }
 
             // Remove it from the cache.
-            internalFilterProileCache.remove(name);
+            filterProfileCacheService.remove(name);
 
         } else {
             throw new FileNotFoundException("Filter profile with name " + name + " does not exist.");

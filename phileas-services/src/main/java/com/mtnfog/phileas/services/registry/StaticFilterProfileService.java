@@ -1,7 +1,6 @@
 package com.mtnfog.phileas.services.registry;
 
 import com.google.gson.Gson;
-import com.mtnfog.phileas.model.objects.GetFilterProfileResult;
 import com.mtnfog.phileas.model.profile.FilterProfile;
 import com.mtnfog.phileas.model.services.FilterProfileService;
 import org.apache.logging.log4j.LogManager;
@@ -57,12 +56,12 @@ public class StaticFilterProfileService implements FilterProfileService {
      * @return The filter profile.
      */
     @Override
-    public GetFilterProfileResult get(String filterProfileName, boolean ignoreCache) {
+    public String get(String filterProfileName) {
 
         // The filterProfileName does not matter.
         // There is only one filter profile and it is returned.
 
-        return new GetFilterProfileResult(gson.toJson(filterProfile), false);
+        return gson.toJson(filterProfile);
 
     }
 
@@ -72,7 +71,7 @@ public class StaticFilterProfileService implements FilterProfileService {
      * @return A map of filter profiles.
      */
     @Override
-    public Map<String, String> getAll(boolean ignoreCache) {
+    public Map<String, String> getAll() {
 
         final Map<String, String> filterProfiles = new HashMap<>();
 

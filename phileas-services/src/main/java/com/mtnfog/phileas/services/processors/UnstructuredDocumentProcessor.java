@@ -21,20 +21,18 @@ import static java.util.stream.Collectors.toList;
  */
 public class UnstructuredDocumentProcessor implements DocumentProcessor {
 
-    private List<PostFilter> postFilters;
     private MetricsService metricsService;
     private Store store;
 
-    public UnstructuredDocumentProcessor(List<PostFilter> postFilters, MetricsService metricsService, Store store) {
+    public UnstructuredDocumentProcessor(MetricsService metricsService, Store store) {
 
-        this.postFilters = postFilters;
         this.metricsService = metricsService;
         this.store = store;
 
     }
 
     @Override
-    public FilterResponse process(FilterProfile filterProfile, List<Filter> filters, String context, String documentId, String input) throws Exception {
+    public FilterResponse process(FilterProfile filterProfile, List<Filter> filters, List<PostFilter> postFilters, String context, String documentId, String input) throws Exception {
 
         // The list that will contain the spans containing PHI/PII.
         List<Span> spans = new LinkedList<>();

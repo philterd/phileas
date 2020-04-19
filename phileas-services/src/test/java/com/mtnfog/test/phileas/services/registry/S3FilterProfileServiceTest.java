@@ -1,7 +1,6 @@
 package com.mtnfog.test.phileas.services.registry;
 
 import com.google.gson.Gson;
-import com.mtnfog.phileas.model.objects.GetFilterProfileResult;
 import com.mtnfog.phileas.model.profile.FilterProfile;
 import com.mtnfog.phileas.model.profile.Identifiers;
 import com.mtnfog.phileas.model.profile.filters.Age;
@@ -17,7 +16,6 @@ import org.apache.logging.log4j.Logger;
 import org.junit.*;
 import redis.embedded.RedisServer;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -144,7 +142,7 @@ public class S3FilterProfileServiceTest {
         filterProfileService.save(gson.toJson(getFilterProfile("name1")));
         filterProfileService.save(gson.toJson(getFilterProfile("name2")));
 
-        final Map<String, String> all = filterProfileService.getAll(true);
+        final Map<String, String> all = filterProfileService.getAll();
 
         LOGGER.info("Found {} profiles", all.size());
 
@@ -178,9 +176,9 @@ public class S3FilterProfileServiceTest {
 
         filterProfileService.save(profile);
 
-        final GetFilterProfileResult getFilterProfileResult = filterProfileService.get(name, true);
+        final String filterProfileJson = filterProfileService.get(name);
 
-        Assert.assertEquals(profile, getFilterProfileResult.getFilterProfileJson());
+        Assert.assertEquals(profile, filterProfileJson);
 
     }
 
@@ -196,7 +194,7 @@ public class S3FilterProfileServiceTest {
 
         filterProfileService.delete(name);
 
-        Assert.assertFalse(filterProfileService.getAll(true).containsKey(name));
+        Assert.assertFalse(filterProfileService.getAll().containsKey(name));
 
     }
 

@@ -19,19 +19,17 @@ public interface FilterProfileService {
     /**
      * Gets the content of a filter profile.
      * @param filterProfileName
-     * @param ignoreCache Whether or not to reference the cache.
-     * @return A {@link GetFilterProfileResult} containing the filter profile.
+     * @return The filter profile.
      * @throws IOException
      */
-    GetFilterProfileResult get(String filterProfileName, boolean ignoreCache) throws IOException;
+    String get(String filterProfileName) throws IOException;
 
     /**
      * Get the names and content of all filter profiles.
-     * @param ignoreCache Whether or not to reference the cache.
      * @return A map of filter profile names to filter profile content.
      * @throws IOException
      */
-    Map<String, String> getAll(boolean ignoreCache) throws IOException;
+    Map<String, String> getAll() throws IOException;
 
     /**
      * Saves a filter profile.

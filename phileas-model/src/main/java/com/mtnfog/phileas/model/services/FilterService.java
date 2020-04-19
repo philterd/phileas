@@ -32,10 +32,4 @@ public interface FilterService {
      */
     List<Span> replacements(String documentId) throws IOException;
 
-    /**
-     * Reload the filter profiles.
-     * @throws IOException Thrown if the filter profiles cannot be reloaded.
-     */
-    void reloadFilterProfiles() throws IOException;
-
 }
