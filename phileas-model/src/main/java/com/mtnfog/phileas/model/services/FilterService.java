@@ -32,4 +32,10 @@ public interface FilterService {
      */
     List<Span> replacements(String documentId) throws IOException;
 
+    /**
+     * Gets the filter profile service being used.
+     * @return A {@link FilterProfileService}.
+     */
+    FilterProfileService getFilterProfileService();
+
 }

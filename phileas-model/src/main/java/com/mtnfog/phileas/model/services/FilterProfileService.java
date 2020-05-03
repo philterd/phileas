@@ -40,9 +40,9 @@ public interface FilterProfileService {
 
     /**
      * Deletes a filter profile.
-     * @param name The name of the filter profile to delete.
+     * @param filterProfileName The name of the filter profile to delete.
      * @throws IOException
      */
-    void delete(String name) throws IOException;
+    void delete(String filterProfileName) throws IOException;
 
 }

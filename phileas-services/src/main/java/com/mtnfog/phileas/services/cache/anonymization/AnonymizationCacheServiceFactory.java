@@ -23,7 +23,7 @@ public class AnonymizationCacheServiceFactory {
      * @param properties Philter configuration {@link Properties}.
      * @return a configured {@link AnonymizationCacheService}.
      */
-    public static AnonymizationCacheService getAnonymizationCacheService(Properties properties) throws Exception {
+    public static AnonymizationCacheService getAnonymizationCacheService(Properties properties) {
 
         final String redisEnabled = properties.getProperty("cache.redis.enabled", "false");
 

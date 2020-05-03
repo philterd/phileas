@@ -18,12 +18,15 @@ import com.mtnfog.phileas.model.profile.filters.Section;
 import com.mtnfog.phileas.model.responses.FilterResponse;
 import com.mtnfog.phileas.model.services.*;
 import com.mtnfog.phileas.services.anonymization.*;
+import com.mtnfog.phileas.services.cache.anonymization.AnonymizationCacheServiceFactory;
 import com.mtnfog.phileas.services.filters.custom.PhoneNumberRulesFilter;
 import com.mtnfog.phileas.services.filters.regex.*;
 import com.mtnfog.phileas.services.postfilters.IgnoredTermsFilter;
 import com.mtnfog.phileas.services.postfilters.TrailingPeriodPostFilter;
 import com.mtnfog.phileas.services.postfilters.TrailingSpacePostFilter;
 import com.mtnfog.phileas.services.processors.UnstructuredDocumentProcessor;
+import com.mtnfog.phileas.services.registry.LocalFilterProfileService;
+import com.mtnfog.phileas.services.registry.S3FilterProfileService;
 import com.mtnfog.phileas.services.validators.DateSpanValidator;
 import com.mtnfog.phileas.store.ElasticsearchStore;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -57,15 +60,18 @@ public class PhileasFilterService implements FilterService, Serializable {
     private DocumentProcessor unstructuredDocumentProcessor;
     private DocumentProcessor fhirDocumentProcessor;
 
-    public PhileasFilterService(Properties applicationProperties, FilterProfileService filterProfileService, AnonymizationCacheService anonymizationCacheService, String philterNerEndpoint) throws IOException {
+    public PhileasFilterService(Properties properties, String philterNerEndpoint) throws IOException {
 
         LOGGER.info("Initializing Phileas engine.");
 
         // Configure metrics.
-        this.metricsService = new PhileasMetricsService(applicationProperties);
+        this.metricsService = new PhileasMetricsService(properties);
 
         // Set the filter profile services.
-        this.filterProfileService = filterProfileService;
+        this.filterProfileService = buildFilterProfileService(properties);
+
+        // Set the anonymization cache service.
+        this.anonymizationCacheService = AnonymizationCacheServiceFactory.getAnonymizationCacheService(properties);
 
         // Instantiate the stats.
         this.stats = new HashMap<>();
@@ -74,22 +80,28 @@ public class PhileasFilterService implements FilterService, Serializable {
         this.unstructuredDocumentProcessor = new UnstructuredDocumentProcessor(metricsService, store);
 
         // Configure store.
-        final boolean storeEnabled = StringUtils.equalsIgnoreCase(applicationProperties.getProperty("store.enabled", "false"), "true");
+        final boolean storeEnabled = StringUtils.equalsIgnoreCase(properties.getProperty("store.enabled", "false"), "true");
 
         if(storeEnabled) {
 
-            final String index = applicationProperties.getProperty("store.elasticsearch.index", "philter");
-            final String host = applicationProperties.getProperty("store.elasticsearch.host", "localhost");
-            final String scheme = applicationProperties.getProperty("store.elasticsearch.scheme", "http");
-            final int port = Integer.valueOf(applicationProperties.getProperty("store.elasticsearch.port", "9200"));
+            final String index = properties.getProperty("store.elasticsearch.index", "philter");
+            final String host = properties.getProperty("store.elasticsearch.host", "localhost");
+            final String scheme = properties.getProperty("store.elasticsearch.scheme", "http");
+            final int port = Integer.valueOf(properties.getProperty("store.elasticsearch.port", "9200"));
             this.store = new ElasticsearchStore(index, scheme, host, port);
 
         }
 
-        this.indexDirectory = applicationProperties.getProperty("indexes.directory", System.getProperty("user.dir") + "/indexes/");
-        this.anonymizationCacheService = anonymizationCacheService;
+        this.indexDirectory = properties.getProperty("indexes.directory", System.getProperty("user.dir") + "/indexes/");
         this.philterNerEndpoint = philterNerEndpoint;
         this.fhirDocumentProcessor = new FhirDocumentProcessor(metricsService);
+
+    }
+
+    @Override
+    public FilterProfileService getFilterProfileService() {
+
+        return filterProfileService;
 
     }
 
@@ -132,6 +144,28 @@ public class PhileasFilterService implements FilterService, Serializable {
 
         // Should never happen but just in case.
         throw new Exception("Unknown mime type.");
+
+    }
+
+    private FilterProfileService buildFilterProfileService(final Properties properties) {
+
+        final FilterProfileService filterProfileService;
+        final String s3Bucket = properties.getProperty("filter.profiles.s3.bucket");
+
+        // If an S3 bucket is provided then instantiate an S3FilterProfileService.
+        if(StringUtils.isNotEmpty(s3Bucket)) {
+
+            LOGGER.info("Initializing configuration for filter profiles S3 bucket.");
+            filterProfileService = new S3FilterProfileService(properties, false);
+
+        } else {
+
+            LOGGER.info("Using local storage for filter profiles.");
+            filterProfileService = new LocalFilterProfileService(properties);
+
+        }
+
+        return filterProfileService;
 
     }
 

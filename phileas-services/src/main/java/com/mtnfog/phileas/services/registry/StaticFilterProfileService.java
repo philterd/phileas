@@ -87,7 +87,7 @@ public class StaticFilterProfileService implements FilterProfileService {
     }
 
     @Override
-    public void delete(String name) throws IOException {
+    public void delete(String filterProfileName) throws IOException {
         // Will not be implemented.
     }
 

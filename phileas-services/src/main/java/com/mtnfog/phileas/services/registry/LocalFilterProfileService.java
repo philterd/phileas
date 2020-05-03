@@ -137,21 +137,21 @@ public class LocalFilterProfileService implements FilterProfileService {
     }
 
     @Override
-    public void delete(String name) throws IOException {
+    public void delete(String filterProfileName) throws IOException {
 
-        final File file = new File(filterProfilesDirectory, name + ".json");
+        final File file = new File(filterProfilesDirectory, filterProfileName + ".json");
 
         if(file.exists()) {
 
             if(!file.delete()) {
-                throw new IOException("Unable to delete filter profile " + name + ".json");
+                throw new IOException("Unable to delete filter profile " + filterProfileName + ".json");
             }
 
             // Remove it from the cache.
-            filterProfileCacheService.remove(name);
+            filterProfileCacheService.remove(filterProfileName);
 
         } else {
-            throw new FileNotFoundException("Filter profile with name " + name + " does not exist.");
+            throw new FileNotFoundException("Filter profile with name " + filterProfileName + " does not exist.");
         }
 
     }
