@@ -15,6 +15,7 @@ import com.mtnfog.phileas.model.profile.fhir4.FhirR4;
 import com.mtnfog.phileas.model.responses.FilterResponse;
 import com.mtnfog.phileas.model.services.DocumentProcessor;
 import com.mtnfog.phileas.model.services.MetricsService;
+import com.mtnfog.phileas.model.services.SpanDisambiguationService;
 import org.apache.commons.io.IOUtils;
 import org.hl7.fhir.r4.model.Bundle;
 import org.hl7.fhir.r4.model.HumanName;
@@ -35,8 +36,8 @@ public class FhirDocumentProcessorTest {
     public void test1() throws Exception {
 
         final MetricsService metricsService = Mockito.mock(MetricsService.class);
-
-        final DocumentProcessor documentProcessor = new FhirDocumentProcessor(metricsService);
+        final SpanDisambiguationService spanDisambiguationService = Mockito.mock(SpanDisambiguationService.class);
+        final DocumentProcessor documentProcessor = new FhirDocumentProcessor(metricsService, spanDisambiguationService);
 
         // FilterProfile filterProfile, String context, String documentId, String json
         final FilterProfile filterProfile = new FilterProfile();

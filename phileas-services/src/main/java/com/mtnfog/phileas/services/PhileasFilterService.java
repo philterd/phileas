@@ -19,6 +19,7 @@ import com.mtnfog.phileas.model.responses.FilterResponse;
 import com.mtnfog.phileas.model.services.*;
 import com.mtnfog.phileas.services.anonymization.*;
 import com.mtnfog.phileas.services.cache.anonymization.AnonymizationCacheServiceFactory;
+import com.mtnfog.phileas.services.disambiguation.VectorBasedSpanDisambiguationService;
 import com.mtnfog.phileas.services.filters.custom.PhoneNumberRulesFilter;
 import com.mtnfog.phileas.services.filters.regex.*;
 import com.mtnfog.phileas.services.postfilters.IgnoredTermsFilter;
@@ -55,12 +56,13 @@ public class PhileasFilterService implements FilterService, Serializable {
 
     private String philterNerEndpoint;
     private AnonymizationCacheService anonymizationCacheService;
+    private SpanDisambiguationService spanDisambiguationService;
     private String indexDirectory;
 
     private DocumentProcessor unstructuredDocumentProcessor;
     private DocumentProcessor fhirDocumentProcessor;
 
-    public PhileasFilterService(Properties properties, String philterNerEndpoint) throws IOException {
+    public PhileasFilterService(Properties properties, String philterNerEndpoint) {
 
         LOGGER.info("Initializing Phileas engine.");
 
@@ -76,8 +78,14 @@ public class PhileasFilterService implements FilterService, Serializable {
         // Instantiate the stats.
         this.stats = new HashMap<>();
 
+        // Configure span disambiguation.
+        this.spanDisambiguationService = new VectorBasedSpanDisambiguationService(properties);
+
         // Create a new unstructured document processor.
-        this.unstructuredDocumentProcessor = new UnstructuredDocumentProcessor(metricsService, store);
+        this.unstructuredDocumentProcessor = new UnstructuredDocumentProcessor(metricsService, spanDisambiguationService, store);
+
+        // Create a new structured FHIRv4 document processor.
+        this.fhirDocumentProcessor = new FhirDocumentProcessor(metricsService, spanDisambiguationService);
 
         // Configure store.
         final boolean storeEnabled = StringUtils.equalsIgnoreCase(properties.getProperty("store.enabled", "false"), "true");
@@ -94,7 +102,6 @@ public class PhileasFilterService implements FilterService, Serializable {
 
         this.indexDirectory = properties.getProperty("indexes.directory", System.getProperty("user.dir") + "/indexes/");
         this.philterNerEndpoint = philterNerEndpoint;
-        this.fhirDocumentProcessor = new FhirDocumentProcessor(metricsService);
 
     }
 

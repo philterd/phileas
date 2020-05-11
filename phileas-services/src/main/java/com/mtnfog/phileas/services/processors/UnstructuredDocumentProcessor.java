@@ -5,14 +5,12 @@ import com.mtnfog.phileas.model.objects.Explanation;
 import com.mtnfog.phileas.model.objects.Span;
 import com.mtnfog.phileas.model.profile.FilterProfile;
 import com.mtnfog.phileas.model.responses.FilterResponse;
-import com.mtnfog.phileas.model.services.DocumentProcessor;
-import com.mtnfog.phileas.model.services.MetricsService;
-import com.mtnfog.phileas.model.services.PostFilter;
-import com.mtnfog.phileas.model.services.Store;
+import com.mtnfog.phileas.model.services.*;
 
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 
@@ -22,17 +20,20 @@ import static java.util.stream.Collectors.toList;
 public class UnstructuredDocumentProcessor implements DocumentProcessor {
 
     private MetricsService metricsService;
+    private SpanDisambiguationService spanDisambiguationService;
     private Store store;
 
-    public UnstructuredDocumentProcessor(MetricsService metricsService, Store store) {
+    public UnstructuredDocumentProcessor(MetricsService metricsService, SpanDisambiguationService spanDisambiguationService, Store store) {
 
         this.metricsService = metricsService;
+        this.spanDisambiguationService = spanDisambiguationService;
         this.store = store;
 
     }
 
     @Override
-    public FilterResponse process(FilterProfile filterProfile, List<Filter> filters, List<PostFilter> postFilters, String context, String documentId, String input) throws Exception {
+    public FilterResponse process(FilterProfile filterProfile, List<Filter> filters, List<PostFilter> postFilters,
+                                  String context, String documentId, String input) throws Exception {
 
         // The list that will contain the spans containing PHI/PII.
         List<Span> spans = new LinkedList<>();
@@ -45,11 +46,13 @@ public class UnstructuredDocumentProcessor implements DocumentProcessor {
         // Drop ignored spans.
         spans = Span.dropIgnoredSpans(spans);
 
+        // Perform span disambiguation.
+        if(spanDisambiguationService.isEnabled()) {
+            spans = spanDisambiguationService.disambiguate(context, spans);
+        }
+
         // Drop overlapping spans.
         spans = Span.dropOverlappingSpans(spans);
-
-        // Disambiguate the spans.
-        spans = Span.disambiguate(spans);
 
         // Sort the spans based on the confidence.
         spans.sort(Comparator.comparing(Span::getConfidence));

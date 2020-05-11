@@ -1,0 +1,73 @@
+package com.mtnfog.test.phileas.services.disambiguation;
+
+import com.mtnfog.phileas.model.enums.FilterType;
+import com.mtnfog.phileas.model.objects.Span;
+import com.mtnfog.phileas.services.disambiguation.VectorBasedSpanDisambiguationService;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+import redis.embedded.RedisServer;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.Properties;
+
+public class RedisVectorBasedSpanDisambiguationServiceTest {
+
+    private RedisServer redisServer;
+
+    @Before
+    public void before() {
+
+        redisServer = RedisServer.builder().port(31000).build();
+        redisServer.start();
+
+    }
+
+    @After
+    public void after() {
+
+        redisServer.stop();
+
+    }
+
+    @Test
+    public void disambiguateWithRedis1() {
+
+        final Properties properties = new Properties();
+
+        properties.setProperty("span.disambiguation.enabled", "true");
+        properties.setProperty("span.disambiguation.ignore.stopwords", "false");
+        properties.setProperty("span.disambiguation.vector.size", "32");
+
+        properties.setProperty("cache.redis.enabled", "true");
+        properties.setProperty("cache.redis.host", "localhost");
+        properties.setProperty("cache.redis.port", "31000");
+        properties.setProperty("cache.redis.ssl", "false");
+        properties.setProperty("cache.redis.auth.token", "");
+        properties.setProperty("cache.redis.cluster", "false");
+
+        final String context = "c";
+
+        final VectorBasedSpanDisambiguationService vectorBasedSpanDisambiguationService = new VectorBasedSpanDisambiguationService(properties);
+
+        final Span span1 = Span.make(0, 4, FilterType.SSN, context, "d", 0.00, "123-45-6789", "000-00-0000", false, new String[]{"ssn", "was", "he", "id"});
+        vectorBasedSpanDisambiguationService.hashAndInsert(context, span1);
+
+        final Span span = Span.make(0, 4, FilterType.SSN, context, "d", 0.00, "123-45-6789", "000-00-0000", false, new String[]{"ssn", "asdf", "he", "was"});
+        vectorBasedSpanDisambiguationService.hashAndInsert(context, span);
+
+        final Span span2 = Span.make(0, 4, FilterType.PHONE_NUMBER, "c", "d", 0.00, "123-45-6789", "000-00-0000", false, new String[]{"phone", "number", "she", "had"});
+        vectorBasedSpanDisambiguationService.hashAndInsert(context, span2);
+
+        final List<FilterType> filterTypes = Arrays.asList(span1.getFilterType(), span2.getFilterType());
+
+        final Span ambiguousSpan = Span.make(0, 4, FilterType.PHONE_NUMBER, "c", "d", 0.00, "123-45-6789", "000-00-0000", false, new String[]{"phone", "number", "called", "is"});
+        final FilterType filterType = vectorBasedSpanDisambiguationService.disambiguate(context, filterTypes, ambiguousSpan);
+
+        Assert.assertEquals(FilterType.PHONE_NUMBER, filterType);
+
+    }
+
+}

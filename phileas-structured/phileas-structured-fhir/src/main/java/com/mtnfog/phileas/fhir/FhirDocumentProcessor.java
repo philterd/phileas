@@ -11,6 +11,7 @@ import com.mtnfog.phileas.model.responses.FilterResponse;
 import com.mtnfog.phileas.model.services.DocumentProcessor;
 import com.mtnfog.phileas.model.services.MetricsService;
 import com.mtnfog.phileas.model.services.PostFilter;
+import com.mtnfog.phileas.model.services.SpanDisambiguationService;
 import com.mtnfog.phileas.model.utils.Encryption;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -30,14 +31,18 @@ public class FhirDocumentProcessor extends AbstractFhirDocumentProcessor impleme
     private static final Logger LOGGER = LogManager.getLogger(FhirDocumentProcessor.class);
 
     private MetricsService metricsService;
+    private SpanDisambiguationService spanDisambiguationService;
 
-    public FhirDocumentProcessor(MetricsService metricsService) {
+    public FhirDocumentProcessor(MetricsService metricsService, SpanDisambiguationService spanDisambiguationService) {
 
         this.metricsService = metricsService;
+        this.spanDisambiguationService = spanDisambiguationService;
+
     }
 
     @Override
-    public FilterResponse process(FilterProfile filterProfile, List<Filter> filters, List<PostFilter> postFilters, String context, String documentId, String json) throws Exception {
+    public FilterResponse process(FilterProfile filterProfile, List<Filter> filters, List<PostFilter> postFilters,
+                                  String context, String documentId, String json) throws Exception {
 
         // TODO: I'm getting FhirR4 here but that version is really unknown to the API.
         // All we know is that it is an application/fhir+json document.

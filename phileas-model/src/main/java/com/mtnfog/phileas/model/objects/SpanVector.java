@@ -1,16 +1,24 @@
-package com.mtnfog.phileas.services.disambiguation;
+package com.mtnfog.phileas.model.objects;
 
+import com.google.gson.Gson;
+
+import java.io.Serializable;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
-public class SpanVector {
+public class SpanVector implements Serializable {
 
     private Map<Integer, Integer> vectorIndexes;
+    private transient Gson gson;
 
     public SpanVector() {
         this.vectorIndexes = new HashMap<>();
+        this.gson = new Gson();
+    }
+
+    @Override
+    public String toString() {
+        return gson.toJson(this);
     }
 
     public Map<Integer, Integer> getVectorIndexes() {

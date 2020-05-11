@@ -3,13 +3,12 @@ package com.mtnfog.phileas.model.objects;
 import com.google.gson.annotations.Expose;
 import com.mtnfog.phileas.model.enums.FilterType;
 import org.apache.commons.lang3.Range;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import java.io.Serializable;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -232,6 +231,48 @@ public final class Span implements Serializable {
     }
 
     /**
+     * Get all spans having the given {@link FilterType}.
+     * @param spans A list of spans.
+     * @param filterType The {@link FilterType}.
+     * @return A list of spans having the given {@link FilterType}.
+     */
+    public static List<Span> getSpansOfFilterType(List<Span> spans, FilterType filterType) {
+
+        return spans.stream().filter(c -> filterType == filterType).collect(Collectors.toList());
+
+    }
+
+    /**
+     * Gets the identical spans that differ only by their filter type.
+     * @param spans A list of {@link Span spans}.
+     * @return A list of the identical {@link Span spans} from the input list.
+     */
+    public static List<Span> getIdenticalSpans(Span span, List<Span> spans) {
+
+        final Set<Span> identicalSpans = new LinkedHashSet<>();
+
+        for(final Span span1 : spans) {
+
+            // Matching the character start and end indexes is sufficient.
+            // If the confidence is not equal don't add it.
+            // The span with the highest confidence will be used.
+            if(span1.getCharacterStart() == span.getCharacterStart()
+                    && span1.getCharacterEnd() == span.getCharacterEnd()
+                    && span1.getFilterType() != span.getFilterType()
+                    && span1.getConfidence() == span.getConfidence()
+                    && !span1.equals(span)) {
+
+                identicalSpans.add(span1);
+
+            }
+
+        }
+
+        return new LinkedList<>(identicalSpans);
+
+    }
+
+    /**
      * Drop overlapping spans that were for text that was ignored.
      * @param spans A list of {@link Span spans} that may or may not contain ignored spans.
      * @return A list of {@link Span spans} without ignored spans.
@@ -249,19 +290,6 @@ public final class Span implements Serializable {
         }
 
         return nonIgnoredSpans;
-
-    }
-
-    /**
-     * Use the context window of each span to try to verify the filter type is correct.
-     * @param spans A list of spans.
-     * @return A list of disambiguated spans.
-     */
-    public static List<Span> disambiguate(List<Span> spans) {
-
-        // TODO: PHL-83: Look at each span's window to see if it fits the filter type.
-
-        return spans;
 
     }
 

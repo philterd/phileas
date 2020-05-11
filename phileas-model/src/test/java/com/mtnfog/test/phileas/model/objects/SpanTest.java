@@ -307,6 +307,62 @@ public class SpanTest {
 
     }
 
+    @Test
+    public void getIdenticalSpans1() {
+
+        final Span span1 = Span.make(7, 17, FilterType.ZIP_CODE, "context", "document", 1.0, "test", "***", false, new String[0]);
+
+        final List<Span> spans = new LinkedList<>();
+        spans.add(span1);
+        spans.add(Span.make(7, 17, FilterType.ZIP_CODE, "context", "document", 1.0, "test", "***", false, new String[0]));
+        spans.add(Span.make(7, 17, FilterType.IDENTIFIER, "context", "document", 1.0, "test", "***", false, new String[0]));
+        spans.add(Span.make(4, 19, FilterType.IDENTIFIER, "context", "document", 1.0, "test", "***", false, new String[0]));
+        spans.add(Span.make(22, 25, FilterType.IDENTIFIER, "context", "document", 1.0, "test", "***", false, new String[0]));
+
+        final List<Span> identicalSpans = Span.getIdenticalSpans(span1, spans);
+
+        Assert.assertEquals(1, identicalSpans.size());
+
+    }
+
+    @Test
+    public void getIdenticalSpans2() {
+
+        final Span span1 = Span.make(7, 17, FilterType.ZIP_CODE, "context", "document", 1.0, "test", "***", false, new String[0]);
+
+        final List<Span> spans = new LinkedList<>();
+        spans.add(span1);
+        spans.add(Span.make(7, 17, FilterType.IDENTIFIER, "context", "document", 1.0, "test", "***", false, new String[0]));
+        spans.add(Span.make(4, 19, FilterType.IDENTIFIER, "context", "document", 1.0, "test", "***", false, new String[0]));
+        spans.add(Span.make(22, 25, FilterType.IDENTIFIER, "context", "document", 1.0, "test", "***", false, new String[0]));
+        spans.add(Span.make(7, 17, FilterType.URL, "context", "document", 1.0, "test", "***", false, new String[0]));
+
+        final List<Span> identicalSpans = Span.getIdenticalSpans(span1, spans);
+
+        Assert.assertEquals(2, identicalSpans.size());
+
+    }
+
+    @Test
+    public void getIdenticalSpans3() {
+
+        final Span span1 = Span.make(7, 17, FilterType.ZIP_CODE, "context", "document", 1.0, "test", "***", false, new String[0]);
+
+        final List<Span> spans = new LinkedList<>();
+        spans.add(span1);
+        spans.add(Span.make(7, 17, FilterType.ZIP_CODE, "context", "document", 1.0, "test", "***", false, new String[0]));
+        spans.add(Span.make(7, 17, FilterType.IDENTIFIER, "context", "document", 1.0, "test", "***", false, new String[0]));
+        spans.add(Span.make(4, 19, FilterType.IDENTIFIER, "context", "document", 1.0, "test", "***", false, new String[0]));
+        spans.add(Span.make(22, 25, FilterType.IDENTIFIER, "context", "document", 1.0, "test", "***", false, new String[0]));
+        spans.add(Span.make(7, 17, FilterType.URL, "context", "document", 1.0, "test", "***", false, new String[0]));
+        spans.add(Span.make(22, 25, FilterType.AGE, "context", "document", 1.0, "test", "***", false, new String[0]));
+
+        final List<Span> identicalSpans = Span.getIdenticalSpans(span1, spans);
+
+        Assert.assertEquals(2, identicalSpans.size());
+
+    }
+
     private void showSpans(List<Span> spans) {
 
         for(Span span : spans) {

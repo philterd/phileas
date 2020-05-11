@@ -121,7 +121,6 @@ public class ElasticsearchStoreTest {
 
     }
 
-
     public void showSpans(List<Span> spans) {
 
         for(Span span : spans) {
