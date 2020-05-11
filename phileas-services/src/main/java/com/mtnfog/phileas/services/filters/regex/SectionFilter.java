@@ -18,8 +18,8 @@ public class SectionFilter extends RegexFilter implements Serializable {
 
     private Pattern regex;
 
-    public SectionFilter(List<? extends AbstractFilterStrategy> strategies, AnonymizationService anonymizationService, String startPattern, String endPattern, Set<String> ignored, Crypto crypto) {
-        super(FilterType.SECTION, strategies, anonymizationService, ignored, crypto);
+    public SectionFilter(List<? extends AbstractFilterStrategy> strategies, AnonymizationService anonymizationService, String startPattern, String endPattern, Set<String> ignored, Crypto crypto, int windowSize) {
+        super(FilterType.SECTION, strategies, anonymizationService, ignored, crypto, windowSize);
 
         regex = Pattern.compile(startPattern + "(.*?)" + endPattern);
 System.out.println(regex.toString());

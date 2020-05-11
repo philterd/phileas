@@ -18,8 +18,8 @@ public class IdentifierFilter extends RegexFilter implements Serializable {
 
     private Pattern pattern;
 
-    public IdentifierFilter(String label, String pattern, boolean caseSensitive, List<IdentifierFilterStrategy> strategies, AnonymizationService anonymizationService, Set<String> ignored, Crypto crypto) {
-        super(FilterType.IDENTIFIER, strategies, anonymizationService, ignored, crypto);
+    public IdentifierFilter(String label, String pattern, boolean caseSensitive, List<IdentifierFilterStrategy> strategies, AnonymizationService anonymizationService, Set<String> ignored, Crypto crypto, int windowSize) {
+        super(FilterType.IDENTIFIER, strategies, anonymizationService, ignored, crypto, windowSize);
         this.label = label;
 
         if(caseSensitive) {

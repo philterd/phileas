@@ -17,8 +17,8 @@ public abstract class DynamicFilter extends Filter implements Serializable {
      * @param filterType The {@link FilterType type} of the filter.
      * @param anonymizationService The {@link AnonymizationService} for this filter.
      */
-    public DynamicFilter(FilterType filterType, List<? extends AbstractFilterStrategy> strategies, AnonymizationService anonymizationService, Set<String> ignored, Crypto crypto) {
-        super(filterType, strategies, anonymizationService, ignored, crypto);
+    public DynamicFilter(FilterType filterType, List<? extends AbstractFilterStrategy> strategies, AnonymizationService anonymizationService, Set<String> ignored, Crypto crypto, int windowSize) {
+        super(filterType, strategies, anonymizationService, ignored, crypto, windowSize);
     }
 
 }

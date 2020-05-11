@@ -37,9 +37,10 @@ public abstract class NerFilter extends DynamicFilter implements Serializable {
                      AnonymizationService anonymizationService,
                      Set<String> ignored,
                      boolean removePunctuation,
-                     Crypto crypto) {
+                     Crypto crypto,
+                     int windowSize) {
 
-        super(filterType, strategies, anonymizationService, ignored, crypto);
+        super(filterType, strategies, anonymizationService, ignored, crypto, windowSize);
 
         this.stats = stats;
         this.metricsService = metricsService;

@@ -20,7 +20,7 @@ public class CreditCardFilterTest extends AbstractFilterTest {
     public void filterCreditCardOnlyValid() throws Exception {
 
         final List<CreditCardFilterStrategy> strategies = Arrays.asList(new CreditCardFilterStrategy());
-        CreditCardFilter filter = new CreditCardFilter(strategies, new CreditCardAnonymizationService(new LocalAnonymizationCacheService()), true, Collections.emptySet(), new Crypto());
+        CreditCardFilter filter = new CreditCardFilter(strategies, new CreditCardAnonymizationService(new LocalAnonymizationCacheService()), true, Collections.emptySet(), new Crypto(), windowSize);
 
         // VISA
 
@@ -78,7 +78,7 @@ public class CreditCardFilterTest extends AbstractFilterTest {
     public void filterCreditCardValidAndInvalid() throws Exception {
 
         final List<CreditCardFilterStrategy> strategies = Arrays.asList(new CreditCardFilterStrategy());
-        CreditCardFilter filter = new CreditCardFilter(strategies, new CreditCardAnonymizationService(new LocalAnonymizationCacheService()), false, Collections.emptySet(), new Crypto());
+        CreditCardFilter filter = new CreditCardFilter(strategies, new CreditCardAnonymizationService(new LocalAnonymizationCacheService()), false, Collections.emptySet(), new Crypto(), windowSize);
 
         // VISA
 

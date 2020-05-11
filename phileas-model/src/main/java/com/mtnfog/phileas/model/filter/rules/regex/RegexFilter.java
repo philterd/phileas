@@ -15,9 +15,9 @@ import java.util.Set;
  */
 public abstract class RegexFilter extends RulesFilter implements Serializable {
 
-    public RegexFilter(FilterType filterType, List<? extends AbstractFilterStrategy> strategies, AnonymizationService anonymizationService, Set<String> ignored, Crypto crypto) {
+    public RegexFilter(FilterType filterType, List<? extends AbstractFilterStrategy> strategies, AnonymizationService anonymizationService, Set<String> ignored, Crypto crypto, int windowSize) {
 
-        super(filterType, strategies, anonymizationService, ignored, crypto);
+        super(filterType, strategies, anonymizationService, ignored, crypto, windowSize);
 
     }
 

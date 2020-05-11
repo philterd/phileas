@@ -33,6 +33,8 @@ public class PyTorchFilterTest {
 
     private static MockWebServer mockServer;
 
+    private int windowSize = 5;
+
     @BeforeClass
     public static void before() throws IOException {
 
@@ -81,7 +83,7 @@ public class PyTorchFilterTest {
 
         this.mockServer.enqueue(new MockResponse().setResponseCode(200).setBody("[{\"text\":\"test\",\"tag\":\"PER\",\"score\":0.5,\"start\":1,\"end\":2}]"));
 
-        final PyTorchFilter t = new PyTorchFilter(baseUrl, FilterType.NER_ENTITY, getStrategies(),"PER", stats, metricsService, anonymizationService, Collections.emptySet(), false, new Crypto());
+        final PyTorchFilter t = new PyTorchFilter(baseUrl, FilterType.NER_ENTITY, getStrategies(),"PER", stats, metricsService, anonymizationService, Collections.emptySet(), false, new Crypto(), windowSize);
 
         final List<Span> spans = t.filter(getFilterProfile(), "context", "doc", "John Smith lives in New York");
 
@@ -106,7 +108,7 @@ public class PyTorchFilterTest {
         this.mockServer.enqueue(new MockResponse().setResponseCode(200).setBody("[{\"text\":\"test\",\"tag\":\"LOC\",\"score\":0.5,\"start\":1,\"end\":2}]"));
 
         final PyTorchFilter t = new PyTorchFilter(baseUrl, FilterType.NER_ENTITY, getStrategies(), "LOC",
-                stats, metricsService, anonymizationService, Collections.emptySet(), false, new Crypto());
+                stats, metricsService, anonymizationService, Collections.emptySet(), false, new Crypto(), windowSize);
 
         final List<Span> spans = t.filter(getFilterProfile(), "context", "doc", "John Smith lives in New York");
 

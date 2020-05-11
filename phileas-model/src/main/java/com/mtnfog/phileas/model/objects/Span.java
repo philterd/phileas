@@ -130,47 +130,6 @@ public final class Span implements Serializable {
     }
 
     /**
-     * Gets the span window for a token.
-     * @param tokens The array of tokens.
-     * @param tokenIndex The index of the token to make the window around.
-     * @param windowSize The size of the window to make.
-     * @return An array of tokens that is the window.
-     */
-    public static String[] getSpanWindow(String[] tokens, int tokenIndex, int windowSize) {
-
-        // windowSize has to be odd so we have the same number of tokens on each side in the window.
-        if(windowSize % 2 == 0) {
-            throw new IllegalArgumentException("The windowSize must be odd.");
-        }
-
-        final String[] window = new String[windowSize];
-
-        final int windowStart = tokenIndex - ((windowSize - 1 ) / 2);
-        final int windowEnd = tokenIndex + ((windowSize - 1) / 2);
-
-        final List<Integer> indexes = IntStream.rangeClosed(windowStart, windowEnd).boxed().collect(Collectors.toList());
-
-        for(int i = 0; i < windowSize; i++) {
-
-            String token;
-
-            if(indexes.get(i) < 0) {
-                token = "_";
-            } else if (indexes.get(i) >= tokens.length) {
-                token = "_";
-            } else {
-                token = tokens[windowStart + i];
-            }
-
-            window[i] = token;
-
-        }
-
-        return window;
-
-    }
-
-    /**
      * Shift spans a given distance.
      * @param shift The distance to shift the spans.
      * @param ignoreSpan The {@link Span span} to ignore.

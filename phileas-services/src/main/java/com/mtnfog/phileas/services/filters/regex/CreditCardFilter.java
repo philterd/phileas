@@ -23,8 +23,8 @@ public class CreditCardFilter extends RegexFilter implements Serializable {
     private boolean onlyValidCreditCardNumbers;
     private LuhnCheckDigit luhnCheckDigit;
 
-    public CreditCardFilter(List<? extends AbstractFilterStrategy> strategies, AnonymizationService anonymizationService, boolean onlyValidCreditCardNumbers, Set<String> ignored, Crypto crypto) {
-        super(FilterType.CREDIT_CARD, strategies, anonymizationService, ignored, crypto);
+    public CreditCardFilter(List<? extends AbstractFilterStrategy> strategies, AnonymizationService anonymizationService, boolean onlyValidCreditCardNumbers, Set<String> ignored, Crypto crypto, int windowSize) {
+        super(FilterType.CREDIT_CARD, strategies, anonymizationService, ignored, crypto, windowSize);
 
         this.onlyValidCreditCardNumbers = onlyValidCreditCardNumbers;
         this.luhnCheckDigit = new LuhnCheckDigit();

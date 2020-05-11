@@ -39,7 +39,7 @@ public class SurnameFilterTest extends AbstractFilterTest {
         AnonymizationService anonymizationService = new SurnameAnonymizationService(new LocalAnonymizationCacheService());
 
         final List<SurnameFilterStrategy> strategies = Arrays.asList(new SurnameFilterStrategy());
-        final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.SURNAME, strategies, INDEX_DIRECTORY, SensitivityLevel.LOW, anonymizationService, Collections.emptySet(), new Crypto());
+        final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.SURNAME, strategies, INDEX_DIRECTORY, SensitivityLevel.LOW, anonymizationService, Collections.emptySet(), new Crypto(), windowSize);
 
         final List<Span> spans = filter.filter(getFilterProfile(SensitivityLevel.LOW), "context", "documentid", "Lived in Wshington");
         showSpans(spans);
@@ -53,7 +53,7 @@ public class SurnameFilterTest extends AbstractFilterTest {
         AnonymizationService anonymizationService = new SurnameAnonymizationService(new LocalAnonymizationCacheService());
 
         final List<SurnameFilterStrategy> strategies = Arrays.asList(new SurnameFilterStrategy());
-        final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.SURNAME, strategies, INDEX_DIRECTORY, SensitivityLevel.MEDIUM, anonymizationService, Collections.emptySet(), new Crypto());
+        final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.SURNAME, strategies, INDEX_DIRECTORY, SensitivityLevel.MEDIUM, anonymizationService, Collections.emptySet(), new Crypto(), windowSize);
 
         final List<Span> spans = filter.filter(getFilterProfile(SensitivityLevel.MEDIUM), "context", "documentid", "Lived in Wshington");
         showSpans(spans);
@@ -67,7 +67,7 @@ public class SurnameFilterTest extends AbstractFilterTest {
         AnonymizationService anonymizationService = new SurnameAnonymizationService(new LocalAnonymizationCacheService());
 
         final List<SurnameFilterStrategy> strategies = Arrays.asList(new SurnameFilterStrategy());
-        final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.SURNAME, strategies, INDEX_DIRECTORY, SensitivityLevel.HIGH, anonymizationService, Collections.emptySet(), new Crypto());
+        final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.SURNAME, strategies, INDEX_DIRECTORY, SensitivityLevel.HIGH, anonymizationService, Collections.emptySet(), new Crypto(), windowSize);
 
         final List<Span> spans = filter.filter(getFilterProfile(SensitivityLevel.HIGH), "context", "documentid", "Lived in Wasinton");
         showSpans(spans);

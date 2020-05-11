@@ -20,7 +20,7 @@ public class IpAddressFilterTest extends AbstractFilterTest {
     public void filterIpv41() throws Exception {
 
         final List<IpAddressFilterStrategy> strategies = Arrays.asList(new IpAddressFilterStrategy());
-        IpAddressFilter filter = new IpAddressFilter(strategies, new IpAddressAnonymizationService(new LocalAnonymizationCacheService()), Collections.emptySet(), new Crypto());
+        IpAddressFilter filter = new IpAddressFilter(strategies, new IpAddressAnonymizationService(new LocalAnonymizationCacheService()), Collections.emptySet(), new Crypto(), windowSize);
         List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "the ip is 192.168.1.101.");
 
         Assert.assertEquals(1, spans.size());
@@ -33,7 +33,7 @@ public class IpAddressFilterTest extends AbstractFilterTest {
     public void filterIpv61() throws Exception {
 
         final List<IpAddressFilterStrategy> strategies = Arrays.asList(new IpAddressFilterStrategy());
-        IpAddressFilter filter = new IpAddressFilter(strategies, new IpAddressAnonymizationService(new LocalAnonymizationCacheService()), Collections.emptySet(), new Crypto());
+        IpAddressFilter filter = new IpAddressFilter(strategies, new IpAddressAnonymizationService(new LocalAnonymizationCacheService()), Collections.emptySet(), new Crypto(), windowSize);
         List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "the ip is 1::");
 
         // Finds duplicate spans. Duplicates/overlapping will be removed by the service prior to returning.
@@ -47,7 +47,7 @@ public class IpAddressFilterTest extends AbstractFilterTest {
     public void filterIpv62() throws Exception {
 
         final List<IpAddressFilterStrategy> strategies = Arrays.asList(new IpAddressFilterStrategy());
-        IpAddressFilter filter = new IpAddressFilter(strategies, new IpAddressAnonymizationService(new LocalAnonymizationCacheService()), Collections.emptySet(), new Crypto());
+        IpAddressFilter filter = new IpAddressFilter(strategies, new IpAddressAnonymizationService(new LocalAnonymizationCacheService()), Collections.emptySet(), new Crypto(), windowSize);
         List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "the ip is 2001:0db8:85a3:0000:0000:8a2e:0370:7334");
 
         // Finds duplicate spans. Duplicates/overlapping will be removed by the service prior to returning.
@@ -61,7 +61,7 @@ public class IpAddressFilterTest extends AbstractFilterTest {
     public void filterIpv63() throws Exception {
 
         final List<IpAddressFilterStrategy> strategies = Arrays.asList(new IpAddressFilterStrategy());
-        IpAddressFilter filter = new IpAddressFilter(strategies, new IpAddressAnonymizationService(new LocalAnonymizationCacheService()), Collections.emptySet(), new Crypto());
+        IpAddressFilter filter = new IpAddressFilter(strategies, new IpAddressAnonymizationService(new LocalAnonymizationCacheService()), Collections.emptySet(), new Crypto(), windowSize);
         List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "the ip is fe80::0202:B3FF:FE1E:8329");
 
         // Finds duplicate spans. Duplicates/overlapping will be removed by the service prior to returning.

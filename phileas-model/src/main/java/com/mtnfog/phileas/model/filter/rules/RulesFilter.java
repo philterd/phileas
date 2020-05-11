@@ -26,8 +26,8 @@ public abstract class RulesFilter extends Filter implements Serializable {
      * @param filterType The {@link FilterType type} of the filter.
      * @param anonymizationService The {@link AnonymizationService} for this filter.
      */
-    public RulesFilter(FilterType filterType, List<? extends AbstractFilterStrategy> strategies, AnonymizationService anonymizationService, Set<String> ignored, Crypto crypto) {
-        super(filterType, strategies, anonymizationService, ignored, crypto);
+    public RulesFilter(FilterType filterType, List<? extends AbstractFilterStrategy> strategies, AnonymizationService anonymizationService, Set<String> ignored, Crypto crypto, int windowSize) {
+        super(filterType, strategies, anonymizationService, ignored, crypto, windowSize);
     }
 
     /**
@@ -61,7 +61,7 @@ public abstract class RulesFilter extends Filter implements Serializable {
                 final int characterStart = matcher.start(0);
                 final int characterEnd = matcher.end(0);
 
-                final String[] window = getWindow(input, token, characterStart, characterEnd);
+                final String[] window = getWindow(input, characterStart, characterEnd);
 
                 final Span span = Span.make(characterStart, characterEnd, getFilterType(), context, documentId, 1.0, token, replacement, isIgnored, window);
 

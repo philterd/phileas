@@ -64,9 +64,10 @@ public class LuceneDictionaryFilter extends DictionaryFilter implements Serializ
                                   SensitivityLevel sensitivityLevel,
                                   AnonymizationService anonymizationService,
                                   Set<String> ignored,
-                                  Crypto crypto) throws IOException {
+                                  Crypto crypto,
+                                  int windowSize) throws IOException {
 
-        super(filterType, strategies, anonymizationService, ignored, crypto);
+        super(filterType, strategies, anonymizationService, ignored, crypto, windowSize);
 
         LOGGER.info("Loading {} index from {}", filterType, indexDirectory);
 
@@ -94,9 +95,10 @@ public class LuceneDictionaryFilter extends DictionaryFilter implements Serializ
                                         List<String> terms,
                                         int filterProfileIndex,
                                         Set<String> ignored,
-                                        Crypto crypto) throws IOException {
+                                        Crypto crypto,
+                                        int windowSize) throws IOException {
 
-        super(filterType, strategies, anonymizationService, ignored, crypto);
+        super(filterType, strategies, anonymizationService, ignored, crypto, windowSize);
 
         LOGGER.info("Creating custom dictionary filter for custom type [{}]", type);
 
@@ -243,7 +245,7 @@ public class LuceneDictionaryFilter extends DictionaryFilter implements Serializ
                                     final int characterStart = offsetAttribute.startOffset();
                                     final int characterEnd = offsetAttribute.endOffset();
 
-                                    final String[] window = getWindow(text, token, characterStart, characterEnd);
+                                    final String[] window = getWindow(text, characterStart, characterEnd);
 
                                     // There are no attributes for the span.
                                     final String replacement = getReplacement(label, context, documentId, token, Collections.emptyMap());

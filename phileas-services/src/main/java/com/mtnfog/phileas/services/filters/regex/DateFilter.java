@@ -25,8 +25,8 @@ public class DateFilter extends RegexFilter implements Serializable {
     private SpanValidator spanValidator;
     private boolean onlyValidDates;
 
-    public DateFilter(List<? extends AbstractFilterStrategy> strategies, AnonymizationService anonymizationService, boolean onlyValidDates, SpanValidator spanValidator, Set<String> ignored, Crypto crypto) {
-        super(FilterType.DATE, strategies, anonymizationService, ignored, crypto);
+    public DateFilter(List<? extends AbstractFilterStrategy> strategies, AnonymizationService anonymizationService, boolean onlyValidDates, SpanValidator spanValidator, Set<String> ignored, Crypto crypto, int windowSize) {
+        super(FilterType.DATE, strategies, anonymizationService, ignored, crypto, windowSize);
 
         this.spanValidator = spanValidator;
         this.onlyValidDates = onlyValidDates;

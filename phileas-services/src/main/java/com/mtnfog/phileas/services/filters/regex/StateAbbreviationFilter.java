@@ -73,8 +73,8 @@ public class StateAbbreviationFilter extends RegexFilter implements Serializable
 
     }};
 
-    public StateAbbreviationFilter(List<? extends AbstractFilterStrategy> strategies, AnonymizationService anonymizationService, Set<String> ignored, Crypto crypto) {
-        super(FilterType.STATE_ABBREVIATION, strategies, anonymizationService, ignored, crypto);
+    public StateAbbreviationFilter(List<? extends AbstractFilterStrategy> strategies, AnonymizationService anonymizationService, Set<String> ignored, Crypto crypto, int windowSize) {
+        super(FilterType.STATE_ABBREVIATION, strategies, anonymizationService, ignored, crypto, windowSize);
 
     }
 
@@ -90,7 +90,7 @@ public class StateAbbreviationFilter extends RegexFilter implements Serializable
 
             while(m.find()) {
 
-                final String[] window = getWindow(input, state, m.start(), m.end());
+                final String[] window = getWindow(input, m.start(), m.end());
                 final String token = m.group();
                 final String replacement = getReplacement(label, context, documentId, token, Collections.emptyMap());
                 final boolean isIgnored = ignored.contains(token);

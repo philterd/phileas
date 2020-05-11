@@ -4,7 +4,6 @@ import com.mtnfog.phileas.model.enums.FilterType;
 import com.mtnfog.phileas.model.objects.Span;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.Assert;
@@ -30,64 +29,6 @@ public class SpanTest {
         Span span2 = span1.copy();
 
         Assert.assertTrue(span1.equals(span2));
-
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void getSpanWindowTestInvalidWindowSize() {
-
-        final String[] tokens = {"George", "Washington", "was", "president", "of", "the", "United", "States"};
-        final String[] window = Span.getSpanWindow(tokens, 3, 2);
-
-    }
-
-    @Test
-    public void getSpanWindowTest1() {
-
-        final String[] tokens = {"George", "Washington", "was", "president", "of", "the", "United", "States"};
-        final String[] window = Span.getSpanWindow(tokens, 3, 3);
-
-        Assert.assertEquals("was, president, of", StringUtils.join(window, ", "));
-
-    }
-
-    @Test
-    public void getSpanWindowTest2() {
-
-        final String[] tokens = {"George", "Washington", "was", "president", "of", "the", "United", "States"};
-        final String[] window = Span.getSpanWindow(tokens, 3, 5);
-
-        Assert.assertEquals("Washington, was, president, of, the", StringUtils.join(window, ", "));
-
-    }
-
-    @Test
-    public void getSpanWindowTest3() {
-
-        final String[] tokens = {"George", "Washington", "was", "president", "of", "the", "United", "States"};
-        final String[] window = Span.getSpanWindow(tokens, 1, 5);
-
-        Assert.assertEquals("_, George, Washington, was, president", StringUtils.join(window, ", "));
-
-    }
-
-    @Test
-    public void getSpanWindowTest4() {
-
-        final String[] tokens = {"George", "Washington", "was", "president", "of", "the", "United", "States"};
-        final String[] window = Span.getSpanWindow(tokens, 5, 5);
-
-        Assert.assertEquals("president, of, the, United, States", StringUtils.join(window, ", "));
-
-    }
-
-    @Test
-    public void getSpanWindowTest5() {
-
-        final String[] tokens = {"George", "Washington", "was", "president", "of", "the", "United", "States"};
-        final String[] window = Span.getSpanWindow(tokens, 6, 5);
-
-        Assert.assertEquals("of, the, United, States, _", StringUtils.join(window, ", "));
 
     }
 

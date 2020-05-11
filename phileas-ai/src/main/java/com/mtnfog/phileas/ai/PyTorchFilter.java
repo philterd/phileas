@@ -48,9 +48,10 @@ public class PyTorchFilter extends NerFilter implements Serializable {
                          AnonymizationService anonymizationService,
                          Set<String> ignored,
                          boolean removePunctuation,
-                         Crypto crypto) {
+                         Crypto crypto,
+                         int windowSize) {
 
-        super(filterType, strategies, stats, metricsService, anonymizationService, ignored, removePunctuation, crypto);
+        super(filterType, strategies, stats, metricsService, anonymizationService, ignored, removePunctuation, crypto, windowSize);
 
         this.tag = tag;
 
@@ -150,7 +151,7 @@ public class PyTorchFilter extends NerFilter implements Serializable {
 
         } else {
 
-            final String[] window = getWindow(input, text, start, end);
+            final String[] window = getWindow(input, start, end);
 
             final boolean isIgnored = ignored.contains(text);
             final Span span = Span.make(start, end, FilterType.NER_ENTITY, context, documentId, confidence, text, replacement, isIgnored, window);

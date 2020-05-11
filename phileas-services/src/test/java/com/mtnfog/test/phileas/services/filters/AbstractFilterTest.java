@@ -21,6 +21,8 @@ public abstract class AbstractFilterTest {
 
     protected static final Logger LOGGER = LogManager.getLogger(AbstractFilterTest.class);
 
+    protected final int windowSize = 3;
+
     /**
      * Gets a {@link FilterProfile} where all non-deterministic filters use a MEDIUM {@link SensitivityLevel}.
      * @return A {@link FilterProfile} where all non-deterministic filters use a MEDIUM {@link SensitivityLevel}.

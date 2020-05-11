@@ -18,8 +18,8 @@ public class PhoneNumberExtensionFilter extends RegexFilter implements Serializa
 
     private static final Pattern EXTENSION_REGEX = Pattern.compile("\\bx[0-9]+\\b");
 
-    public PhoneNumberExtensionFilter(List<? extends AbstractFilterStrategy> strategies, AnonymizationService anonymizationService, Set<String> ignored, Crypto crypto) {
-        super(FilterType.PHONE_NUMBER_EXTENSION, strategies, anonymizationService, ignored, crypto);
+    public PhoneNumberExtensionFilter(List<? extends AbstractFilterStrategy> strategies, AnonymizationService anonymizationService, Set<String> ignored, Crypto crypto, int windowSize) {
+        super(FilterType.PHONE_NUMBER_EXTENSION, strategies, anonymizationService, ignored, crypto, windowSize);
     }
 
     @Override

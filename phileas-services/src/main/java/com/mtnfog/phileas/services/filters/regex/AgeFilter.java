@@ -19,8 +19,8 @@ public class AgeFilter extends RegexFilter implements Serializable {
     private static final Pattern AGE_REGEX_1 = Pattern.compile("\\b[0-9.]+[\\s]*(years|yrs)(\\s)*(old)?\\b", Pattern.CASE_INSENSITIVE);
     private static final Pattern AGE_REGEX_2 = Pattern.compile("\\b(age)(d)?(\\s)*[0-9.]+\\b", Pattern.CASE_INSENSITIVE);
 
-    public AgeFilter(List<? extends AbstractFilterStrategy> strategies, AnonymizationService anonymizationService, Set<String> ignored, Crypto crypto) {
-        super(FilterType.AGE, strategies, anonymizationService, ignored, crypto);
+    public AgeFilter(List<? extends AbstractFilterStrategy> strategies, AnonymizationService anonymizationService, Set<String> ignored, Crypto crypto, int windowSize) {
+        super(FilterType.AGE, strategies, anonymizationService, ignored, crypto, windowSize);
     }
 
     @Override

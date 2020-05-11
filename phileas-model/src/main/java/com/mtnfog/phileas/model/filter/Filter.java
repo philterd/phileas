@@ -13,6 +13,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -24,14 +25,14 @@ public abstract class Filter implements Serializable {
     /**
      * The {@link FilterType type} of identifiers handled by this filter.
      */
-    protected FilterType filterType;
+    protected final FilterType filterType;
 
     /**
      * The {@link AnonymizationService} to use when replacing values if enabled.
      */
-    protected AnonymizationService anonymizationService;
+    protected final AnonymizationService anonymizationService;
 
-    protected List<? extends AbstractFilterStrategy> strategies;
+    protected final List<? extends AbstractFilterStrategy> strategies;
 
     /**
      * The label is a custom value that the user can give to some types (identifiers).
@@ -41,12 +42,17 @@ public abstract class Filter implements Serializable {
     /**
      * A list of ignored terms.
      */
-    protected Set<String> ignored;
+    protected final Set<String> ignored;
 
     /**
      * The encryption key for encrypting values.
      */
-    protected Crypto crypto;
+    protected final Crypto crypto;
+
+    /**
+     * The window size for token spans.
+     */
+    protected int windowSize;
 
     /**
      * Filters the input text.
@@ -56,7 +62,7 @@ public abstract class Filter implements Serializable {
      * @param input The input text.
      * @return The filtered text.
      */
-    public abstract List<Span> filter(FilterProfile filterProfile, String context, String documentId, String input) throws IOException, Exception;
+    public abstract List<Span> filter(FilterProfile filterProfile, String context, String documentId, String input) throws Exception;
 
     /**
      * Creates a new filter with anonymization.
@@ -67,24 +73,26 @@ public abstract class Filter implements Serializable {
      * @param ignored A set of strings to ignore when found.
      * @param crypto A {@link Crypto} for token encryption.
      */
-    public Filter(FilterType filterType, List<? extends AbstractFilterStrategy> strategies, AnonymizationService anonymizationService, Set<String> ignored, Crypto crypto) {
+    public Filter(FilterType filterType, List<? extends AbstractFilterStrategy> strategies, AnonymizationService anonymizationService,
+                  Set<String> ignored, Crypto crypto, int windowSize) {
+
         this.filterType = filterType;
         this.strategies = strategies;
         this.anonymizationService = anonymizationService;
         this.ignored = ignored;
         this.crypto = crypto;
+        this.windowSize = windowSize;
+
     }
 
     /**
      * Get the window of tokens surrounding a token.
      * @param text The text containing the token.
-     * @param token The token.
-     * @return The window of surrounding tokens.
+     * @return The window of surrounding tokens, including the token itself.
      */
-    public String[] getWindow(String text, String token, int characterStart, int characterEnd) {
+    public String[] getWindow(String text, int characterStart, int characterEnd) {
 
-        // TODO: Make this a setting / environment variable / something external.
-        final int windowSize = 3;
+        LOGGER.debug("Getting window of size {}", windowSize);
 
         // X = windowSize
         // Start at characterStart and walk backwards until X spaces are seen.
@@ -122,9 +130,15 @@ public abstract class Filter implements Serializable {
 
         }
 
-        final String tokens = text.substring(finalStart + 1, finalEnd).trim();
+        final String[] tokens = text.substring(finalStart + 1, finalEnd).trim().split("\\s");
 
-        return tokens.split(" ");
+        // Remove punctuation from each token.
+        // TODO: Don't remove punctuation from the actual token.
+        for(int i = 0; i < tokens.length; i++) {
+            tokens[i] = tokens[i].replaceAll("\\p{Punct}", "");
+        }
+
+        return tokens;
 
     }
 

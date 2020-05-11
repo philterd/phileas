@@ -24,7 +24,7 @@ public class StateAbbreviationFilterTest extends AbstractFilterTest {
     public void filter1() throws Exception {
 
         final List<StateAbbreviationFilterStrategy> strategies = Arrays.asList(new StateAbbreviationFilterStrategy());
-        final StateAbbreviationFilter filter = new StateAbbreviationFilter(strategies, new StateAbbreviationAnonymizationService(new LocalAnonymizationCacheService()), Collections.emptySet(), new Crypto());
+        final StateAbbreviationFilter filter = new StateAbbreviationFilter(strategies, new StateAbbreviationAnonymizationService(new LocalAnonymizationCacheService()), Collections.emptySet(), new Crypto(), windowSize);
 
         final String input = "The patient is from WV.";
         final List<Span> spans = filter.filter(getFilterProfile(), "context", "docid", input);
@@ -41,7 +41,7 @@ public class StateAbbreviationFilterTest extends AbstractFilterTest {
     public void filter2() throws Exception {
 
         final List<StateAbbreviationFilterStrategy> strategies = Arrays.asList(new StateAbbreviationFilterStrategy());
-        final StateAbbreviationFilter filter = new StateAbbreviationFilter(strategies, new StateAbbreviationAnonymizationService(new LocalAnonymizationCacheService()), Collections.emptySet(), new Crypto());
+        final StateAbbreviationFilter filter = new StateAbbreviationFilter(strategies, new StateAbbreviationAnonymizationService(new LocalAnonymizationCacheService()), Collections.emptySet(), new Crypto(), windowSize);
 
         final String input = "The patient is from wv.";
         final List<Span> spans = filter.filter(getFilterProfile(), "context", "docid", input);
@@ -57,7 +57,7 @@ public class StateAbbreviationFilterTest extends AbstractFilterTest {
     public void filter3() throws Exception {
 
         final List<StateAbbreviationFilterStrategy> strategies = Arrays.asList(new StateAbbreviationFilterStrategy());
-        final StateAbbreviationFilter filter = new StateAbbreviationFilter(strategies, new StateAbbreviationAnonymizationService(new LocalAnonymizationCacheService()), Collections.emptySet(), new Crypto());
+        final StateAbbreviationFilter filter = new StateAbbreviationFilter(strategies, new StateAbbreviationAnonymizationService(new LocalAnonymizationCacheService()), Collections.emptySet(), new Crypto(), windowSize);
 
         final String input = "Patients from WV and MD.";
         final List<Span> spans = filter.filter(getFilterProfile(), "context", "docid", input);

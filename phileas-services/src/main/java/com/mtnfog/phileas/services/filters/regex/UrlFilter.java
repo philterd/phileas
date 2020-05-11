@@ -27,8 +27,8 @@ public class UrlFilter extends RegexFilter implements Serializable {
 
     private boolean requireHttpWwwPrefix;
 
-    public UrlFilter(List<? extends AbstractFilterStrategy> strategies, AnonymizationService anonymizationService, boolean requireHttpWwwPrefix, Set<String> ignored, Crypto crypto) {
-        super(FilterType.URL, strategies, anonymizationService, ignored, crypto);
+    public UrlFilter(List<? extends AbstractFilterStrategy> strategies, AnonymizationService anonymizationService, boolean requireHttpWwwPrefix, Set<String> ignored, Crypto crypto, int windowSize) {
+        super(FilterType.URL, strategies, anonymizationService, ignored, crypto, windowSize);
         this.requireHttpWwwPrefix = requireHttpWwwPrefix;
     }
 

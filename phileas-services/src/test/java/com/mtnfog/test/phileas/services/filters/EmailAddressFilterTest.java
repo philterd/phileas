@@ -20,7 +20,7 @@ public class EmailAddressFilterTest extends AbstractFilterTest {
     public void filterEmail() throws Exception {
 
         final List<EmailAddressFilterStrategy> strategies = Arrays.asList(new EmailAddressFilterStrategy());
-        EmailAddressFilter filter = new EmailAddressFilter(strategies, new EmailAddressAnonymizationService(new LocalAnonymizationCacheService()), Collections.emptySet(), new Crypto());
+        EmailAddressFilter filter = new EmailAddressFilter(strategies, new EmailAddressAnonymizationService(new LocalAnonymizationCacheService()), Collections.emptySet(), new Crypto(), windowSize);
 
         List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid","my email is none@none.com.");
         Assert.assertEquals(1, spans.size());

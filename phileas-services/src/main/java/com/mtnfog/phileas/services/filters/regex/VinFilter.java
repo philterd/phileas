@@ -19,8 +19,8 @@ public class VinFilter extends RegexFilter implements Serializable {
 
     private static final Pattern VIN_REGEX = Pattern.compile("\\b[A-HJ-NPR-Z0-9]{17}\\b", Pattern.CASE_INSENSITIVE);
 
-    public VinFilter(List<? extends AbstractFilterStrategy> strategies, AnonymizationService anonymizationService, Set<String> ignored, Crypto crypto) {
-        super(FilterType.VIN, strategies, anonymizationService, ignored, crypto);
+    public VinFilter(List<? extends AbstractFilterStrategy> strategies, AnonymizationService anonymizationService, Set<String> ignored, Crypto crypto, int windowSize) {
+        super(FilterType.VIN, strategies, anonymizationService, ignored, crypto, windowSize);
     }
 
     @Override

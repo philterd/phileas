@@ -65,8 +65,8 @@ public class IpAddressFilter extends RegexFilter implements Serializable {
                     + "(?:[0-9a-fA-F]{1,4}:){6}"                             // 6 blocks of a 1 to 4 digit hex number followed by double colon ':'
                     + "" );                                                 // end of string
 
-    public IpAddressFilter(List<? extends AbstractFilterStrategy> strategies, AnonymizationService anonymizationService, Set<String> ignored, Crypto crypto) {
-        super(FilterType.IP_ADDRESS, strategies, anonymizationService, ignored, crypto);
+    public IpAddressFilter(List<? extends AbstractFilterStrategy> strategies, AnonymizationService anonymizationService, Set<String> ignored, Crypto crypto, int windowSize) {
+        super(FilterType.IP_ADDRESS, strategies, anonymizationService, ignored, crypto, windowSize);
     }
 
     @Override

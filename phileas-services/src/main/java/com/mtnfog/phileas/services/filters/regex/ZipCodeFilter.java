@@ -17,8 +17,8 @@ public class ZipCodeFilter extends RegexFilter implements Serializable {
 
     private static final Pattern ZIP_CODE_REGEX = Pattern.compile("\\b[0-9]{5}(?:-[0-9]{4})?\\b");
 
-    public ZipCodeFilter(List<? extends AbstractFilterStrategy> strategies, AnonymizationService anonymizationService, Set<String> ignored, Crypto crypto) {
-        super(FilterType.ZIP_CODE, strategies, anonymizationService, ignored, crypto);
+    public ZipCodeFilter(List<? extends AbstractFilterStrategy> strategies, AnonymizationService anonymizationService, Set<String> ignored, Crypto crypto, int windowSize) {
+        super(FilterType.ZIP_CODE, strategies, anonymizationService, ignored, crypto, windowSize);
     }
 
     @Override
