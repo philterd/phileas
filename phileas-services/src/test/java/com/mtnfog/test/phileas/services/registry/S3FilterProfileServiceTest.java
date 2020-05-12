@@ -1,7 +1,7 @@
 package com.mtnfog.test.phileas.services.registry;
 
 import com.google.gson.Gson;
-import com.mtnfog.phileas.model.configuration.PhileasConfiguration;
+import com.mtnfog.phileas.configuration.PhileasConfiguration;
 import com.mtnfog.phileas.model.profile.FilterProfile;
 import com.mtnfog.phileas.model.profile.Identifiers;
 import com.mtnfog.phileas.model.profile.filters.Age;

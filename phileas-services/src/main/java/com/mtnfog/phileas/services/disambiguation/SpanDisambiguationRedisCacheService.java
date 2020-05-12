@@ -1,7 +1,7 @@
 package com.mtnfog.phileas.services.disambiguation;
 
 import com.google.gson.Gson;
-import com.mtnfog.phileas.model.configuration.PhileasConfiguration;
+import com.mtnfog.phileas.configuration.PhileasConfiguration;
 import com.mtnfog.phileas.model.enums.FilterType;
 import com.mtnfog.phileas.model.objects.Span;
 import com.mtnfog.phileas.model.objects.SpanVector;

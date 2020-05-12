@@ -1,12 +1,9 @@
 package com.mtnfog.phileas.services.cache.anonymization;
 
-import com.mtnfog.phileas.model.configuration.PhileasConfiguration;
+import com.mtnfog.phileas.configuration.PhileasConfiguration;
 import com.mtnfog.phileas.model.services.AnonymizationCacheService;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import java.util.Properties;
 
 /**
  * Factory methods for getting an {@link AnonymizationCacheService}.

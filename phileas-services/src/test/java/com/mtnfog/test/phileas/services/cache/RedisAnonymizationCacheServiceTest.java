@@ -1,6 +1,6 @@
 package com.mtnfog.test.phileas.services.cache;
 
-import com.mtnfog.phileas.model.configuration.PhileasConfiguration;
+import com.mtnfog.phileas.configuration.PhileasConfiguration;
 import com.mtnfog.phileas.services.cache.anonymization.RedisAnonymizationCacheService;
 import org.aeonbits.owner.ConfigFactory;
 import org.apache.commons.lang3.StringUtils;

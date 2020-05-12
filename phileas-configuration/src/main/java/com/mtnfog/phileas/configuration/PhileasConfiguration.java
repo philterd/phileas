@@ -1,4 +1,4 @@
-package com.mtnfog.phileas.model.configuration;
+package com.mtnfog.phileas.configuration;
 
 import org.aeonbits.owner.Config;
 

@@ -1,8 +1,7 @@
 package com.mtnfog.phileas.services.disambiguation;
 
-import com.mtnfog.phileas.model.configuration.PhileasConfiguration;
+import com.mtnfog.phileas.configuration.PhileasConfiguration;
 import com.mtnfog.phileas.model.enums.FilterType;
-import com.mtnfog.phileas.model.filter.Filter;
 import com.mtnfog.phileas.model.objects.Span;
 import com.mtnfog.phileas.model.services.SpanDisambiguationService;
 import org.apache.logging.log4j.LogManager;

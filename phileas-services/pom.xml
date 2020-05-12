@@ -61,6 +61,11 @@
 		</dependency>
 		<dependency>
 			<groupId>com.mtnfog</groupId>
+			<artifactId>phileas-configuration</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.mtnfog</groupId>
 			<artifactId>phileas-store</artifactId>
 			<version>${project.version}</version>
 		</dependency>

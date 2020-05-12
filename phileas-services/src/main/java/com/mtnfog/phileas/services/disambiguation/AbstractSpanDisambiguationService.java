@@ -1,6 +1,6 @@
 package com.mtnfog.phileas.services.disambiguation;
 
-import com.mtnfog.phileas.model.configuration.PhileasConfiguration;
+import com.mtnfog.phileas.configuration.PhileasConfiguration;
 import com.mtnfog.phileas.model.objects.Span;
 import com.mtnfog.phileas.model.services.SpanDisambiguationCacheService;
 import org.apache.commons.codec.digest.MurmurHash3;

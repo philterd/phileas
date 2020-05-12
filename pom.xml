@@ -85,6 +85,7 @@
 		<module>phileas-ai</module>
 		<module>phileas-nlp</module>
     <module>phileas-structured</module>
+    <module>phileas-configuration</module>
   </modules>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
