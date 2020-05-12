@@ -10,6 +10,7 @@ import org.apache.logging.log4j.Logger;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
@@ -19,7 +20,7 @@ public class LocalVectorBasedSpanDisambiguationServiceTest {
     private static final Logger LOGGER = LogManager.getLogger(LocalVectorBasedSpanDisambiguationServiceTest.class);
 
     @Test
-    public void disambiguateLocal1() {
+    public void disambiguateLocal1() throws IOException {
 
         final Properties properties = new Properties();
 
@@ -54,7 +55,7 @@ public class LocalVectorBasedSpanDisambiguationServiceTest {
 
 
     @Test
-    public void disambiguateLocal2() {
+    public void disambiguateLocal2() throws IOException {
 
         final Properties properties = new Properties();
 

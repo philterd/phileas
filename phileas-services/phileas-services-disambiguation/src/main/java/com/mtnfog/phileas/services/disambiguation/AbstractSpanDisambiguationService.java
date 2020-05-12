@@ -7,6 +7,7 @@ import org.apache.commons.codec.digest.MurmurHash3;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
@@ -27,7 +28,7 @@ public abstract class AbstractSpanDisambiguationService {
 
     private Set<String> stopwords;
 
-    public AbstractSpanDisambiguationService(final PhileasConfiguration phileasConfiguration) {
+    public AbstractSpanDisambiguationService(final PhileasConfiguration phileasConfiguration) throws IOException {
 
         this.vectorSize = phileasConfiguration.spanDisambiguationVectorSize();
         this.ignoreStopWords = phileasConfiguration.spanDisambiguationIgnoreStopWords();

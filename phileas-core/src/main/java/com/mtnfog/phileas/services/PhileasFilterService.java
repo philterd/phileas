@@ -67,7 +67,7 @@ public class PhileasFilterService implements FilterService, Serializable {
 
     private final int windowSize;
 
-    public PhileasFilterService(PhileasConfiguration phileasConfiguration) {
+    public PhileasFilterService(PhileasConfiguration phileasConfiguration) throws IOException {
 
         LOGGER.info("Initializing Phileas engine.");
 
@@ -165,7 +165,7 @@ public class PhileasFilterService implements FilterService, Serializable {
 
     }
 
-    private FilterProfileService buildFilterProfileService(PhileasConfiguration phileasConfiguration) {
+    private FilterProfileService buildFilterProfileService(PhileasConfiguration phileasConfiguration) throws IOException {
 
         final FilterProfileService filterProfileService;
         final String s3Bucket = phileasConfiguration.filterProfilesS3Bucket();

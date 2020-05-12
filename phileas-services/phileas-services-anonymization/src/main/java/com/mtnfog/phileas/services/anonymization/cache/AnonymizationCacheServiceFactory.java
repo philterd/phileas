@@ -5,6 +5,8 @@ import com.mtnfog.phileas.model.services.AnonymizationCacheService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.IOException;
+
 /**
  * Factory methods for getting an {@link AnonymizationCacheService}.
  */
@@ -21,7 +23,7 @@ public class AnonymizationCacheServiceFactory {
      * @param phileasConfiguration Philter configuration {@link PhileasConfiguration}.
      * @return a configured {@link AnonymizationCacheService}.
      */
-    public static AnonymizationCacheService getAnonymizationCacheService(PhileasConfiguration phileasConfiguration) {
+    public static AnonymizationCacheService getAnonymizationCacheService(PhileasConfiguration phileasConfiguration) throws IOException {
 
         final boolean redisEnabled = phileasConfiguration.cacheRedisEnabled();
 

@@ -7,6 +7,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.redisson.api.RMap;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -16,7 +17,7 @@ public class RedisFilterProfileCacheService extends AbstractRedisCacheService im
 
     private static final Logger LOGGER = LogManager.getLogger(RedisFilterProfileCacheService.class);
 
-    public RedisFilterProfileCacheService(PhileasConfiguration phileasConfiguration) {
+    public RedisFilterProfileCacheService(PhileasConfiguration phileasConfiguration) throws IOException {
         super(phileasConfiguration);
     }
 

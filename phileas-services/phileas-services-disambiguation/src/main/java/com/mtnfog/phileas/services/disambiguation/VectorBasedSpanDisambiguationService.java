@@ -7,6 +7,7 @@ import com.mtnfog.phileas.model.services.SpanDisambiguationService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -23,10 +24,8 @@ public class VectorBasedSpanDisambiguationService extends AbstractSpanDisambigua
      * Initializes the service.
      * @param phileasConfiguration The {@link PhileasConfiguration} used to configure the service.
      */
-    public VectorBasedSpanDisambiguationService(PhileasConfiguration phileasConfiguration) {
-
+    public VectorBasedSpanDisambiguationService(PhileasConfiguration phileasConfiguration) throws IOException {
         super(phileasConfiguration);
-
     }
 
     @Override

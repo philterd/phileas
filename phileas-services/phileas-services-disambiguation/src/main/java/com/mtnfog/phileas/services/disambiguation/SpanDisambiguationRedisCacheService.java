@@ -11,6 +11,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.redisson.api.RMap;
 
+import java.io.IOException;
 import java.util.Map;
 
 public class SpanDisambiguationRedisCacheService extends AbstractRedisCacheService implements SpanDisambiguationCacheService {
@@ -19,7 +20,7 @@ public class SpanDisambiguationRedisCacheService extends AbstractRedisCacheServi
 
     private Gson gson = new Gson();
 
-    public SpanDisambiguationRedisCacheService(PhileasConfiguration phileasConfiguration) {
+    public SpanDisambiguationRedisCacheService(PhileasConfiguration phileasConfiguration) throws IOException {
         super(phileasConfiguration);
     }
 

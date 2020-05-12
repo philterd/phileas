@@ -19,6 +19,7 @@ import org.apache.logging.log4j.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
@@ -33,7 +34,7 @@ public class S3FilterProfileService implements FilterProfileService {
     private String bucket;
     private FilterProfileCacheService filterProfileCacheService;
 
-    public S3FilterProfileService(PhileasConfiguration phileasConfiguration, boolean testing) {
+    public S3FilterProfileService(PhileasConfiguration phileasConfiguration, boolean testing) throws IOException {
 
         // Initialize the S3 client.
         this.bucket = phileasConfiguration.filterProfilesS3Bucket();

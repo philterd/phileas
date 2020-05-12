@@ -9,6 +9,9 @@ import org.redisson.api.RedissonClient;
 import org.redisson.config.Config;
 import org.redisson.config.SslProvider;
 
+import java.io.IOException;
+import java.net.URL;
+
 /**
  * Base class for classes that use a Redis cache.
  */
@@ -18,7 +21,7 @@ public abstract class AbstractRedisCacheService {
 
     protected final RedissonClient redisson;
 
-    public AbstractRedisCacheService(PhileasConfiguration phileasConfiguration) {
+    public AbstractRedisCacheService(PhileasConfiguration phileasConfiguration) throws IOException {
 
         final boolean cluster = phileasConfiguration.cacheRedisCluster();
         final String redisEndpoint = phileasConfiguration.cacheRedisHost();
@@ -46,6 +49,14 @@ public abstract class AbstractRedisCacheService {
                     .addNodeAddress(redisAddress)
                     .setPassword(authToken);
 
+            if(StringUtils.isNotEmpty(phileasConfiguration.cacheRedisKeyStore())) {
+                config.useClusterServers().setSslKeystore(new URL(phileasConfiguration.cacheRedisKeyStore()));
+                config.useClusterServers().setSslKeystorePassword(phileasConfiguration.cacheRedisKeyStorePassword());
+                config.useClusterServers().setSslTruststore(new URL(phileasConfiguration.cacheRedisTrustStore()));
+                config.useClusterServers().setSslTruststorePassword(phileasConfiguration.cacheRedisTrustStorePassword());
+                config.useClusterServers().setSslProvider(SslProvider.JDK);
+            }
+
         } else {
 
             final String protocol;
@@ -66,11 +77,13 @@ public abstract class AbstractRedisCacheService {
                 config.useSingleServer().setAddress(redisAddress);
             }
 
-            /*config.useSingleServer().setSslKeystore(phileasConfiguration.cacheRedisKeyStore());
-            config.useSingleServer().setSslKeystorePassword(phileasConfiguration.cacheRedisKeyStorePassword());
-            config.useSingleServer().setSslTruststore(phileasConfiguration.cacheRedisTrustStore());
-            config.useSingleServer().setSslTruststorePassword(phileasConfiguration.cacheRedisTrustStorePassword());
-            config.useSingleServer().setSslProvider(SslProvider.JDK);*/
+            if(StringUtils.isNotEmpty(phileasConfiguration.cacheRedisKeyStore())) {
+                config.useSingleServer().setSslKeystore(new URL(phileasConfiguration.cacheRedisKeyStore()));
+                config.useSingleServer().setSslKeystorePassword(phileasConfiguration.cacheRedisKeyStorePassword());
+                config.useSingleServer().setSslTruststore(new URL(phileasConfiguration.cacheRedisTrustStore()));
+                config.useSingleServer().setSslTruststorePassword(phileasConfiguration.cacheRedisTrustStorePassword());
+                config.useSingleServer().setSslProvider(SslProvider.JDK);
+            }
 
         }
 

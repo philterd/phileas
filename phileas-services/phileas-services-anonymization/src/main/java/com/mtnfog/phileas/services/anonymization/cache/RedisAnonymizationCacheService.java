@@ -8,13 +8,15 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.redisson.api.RMap;
 
+import java.io.IOException;
+
 public class RedisAnonymizationCacheService extends AbstractRedisCacheService implements AnonymizationCacheService {
 
     private static final Logger LOGGER = LogManager.getLogger(RedisAnonymizationCacheService.class);
 
     private static final String CACHE_ENTRY_NAME = "anonymization";
 
-    public RedisAnonymizationCacheService(PhileasConfiguration phileasConfiguration) {
+    public RedisAnonymizationCacheService(PhileasConfiguration phileasConfiguration) throws IOException {
         super(phileasConfiguration);
     }
 

@@ -14,6 +14,7 @@ import org.junit.Before;
 import org.junit.Test;
 import redis.embedded.RedisServer;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
@@ -40,7 +41,7 @@ public class RedisVectorBasedSpanDisambiguationServiceTest {
     }
 
     @Test
-    public void disambiguateWithRedis1() {
+    public void disambiguateWithRedis1() throws IOException {
 
         final Properties properties = getProperties();
         final PhileasConfiguration phileasConfiguration = ConfigFactory.create(PhileasConfiguration.class, properties);
