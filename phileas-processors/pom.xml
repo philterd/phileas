@@ -6,8 +6,8 @@
 		<artifactId>phileas</artifactId>
 		<version>1.6.0-SNAPSHOT</version>
 	</parent>
-	<artifactId>phileas-services</artifactId>
-	<name>phileas-services</name>
+	<artifactId>phileas-processors</artifactId>
+	<name>phileas-processors</name>
 	<packaging>pom</packaging>
 	<licenses>
 		<license>
@@ -17,11 +17,8 @@
 			<comments>Phileas is proprietary closed-source software.</comments>
 		</license>
 	</licenses>
-	<modules>
-		<module>phileas-services-metrics</module>
-    	<module>phileas-services-anonymization</module>
-    	<module>phileas-services-disambiguation</module>
-		<module>phileas-services-ai</module>
-    <module>phileas-services-profiles</module>
+  <modules>
+    <module>phileas-processors-unstructured</module>
+	<module>phileas-processors-structured</module>
   </modules>
 </project>

@@ -78,15 +78,13 @@
 		</repository>
 	</repositories>
 	<modules>
+		<module>phileas-core</module>
 		<module>phileas-model</module>
 		<module>phileas-services</module>
-		<module>phileas-metrics</module>
 		<module>phileas-store</module>
-		<module>phileas-ai</module>
-		<module>phileas-nlp</module>
-    <module>phileas-structured</module>
-    <module>phileas-configuration</module>
-  </modules>
+    	<module>phileas-configuration</module>
+		<module>phileas-processors</module>
+  	</modules>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
