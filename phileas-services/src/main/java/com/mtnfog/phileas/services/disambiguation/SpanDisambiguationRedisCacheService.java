@@ -1,6 +1,7 @@
 package com.mtnfog.phileas.services.disambiguation;
 
 import com.google.gson.Gson;
+import com.mtnfog.phileas.model.configuration.PhileasConfiguration;
 import com.mtnfog.phileas.model.enums.FilterType;
 import com.mtnfog.phileas.model.objects.Span;
 import com.mtnfog.phileas.model.objects.SpanVector;
@@ -14,7 +15,6 @@ import org.redisson.api.RedissonClient;
 import org.redisson.config.Config;
 
 import java.util.Map;
-import java.util.Properties;
 
 public class SpanDisambiguationRedisCacheService implements SpanDisambiguationCacheService {
 
@@ -24,21 +24,21 @@ public class SpanDisambiguationRedisCacheService implements SpanDisambiguationCa
 
     private Gson gson = new Gson();
 
-    public SpanDisambiguationRedisCacheService(Properties applicationProperties) {
+    public SpanDisambiguationRedisCacheService(PhileasConfiguration phileasConfiguration) {
 
-        final String cluster = applicationProperties.getProperty("cache.redis.cluster");
-        final String redisEndpoint = applicationProperties.getProperty("cache.redis.host");
-        final String redisPort = applicationProperties.getProperty("cache.redis.port");
-        final String authToken = applicationProperties.getProperty("cache.redis.auth.token");
-        final String ssl = applicationProperties.getProperty("cache.redis.ssl");
+        final boolean cluster = phileasConfiguration.cacheRedisCluster();
+        final String redisEndpoint = phileasConfiguration.cacheRedisHost();
+        final int redisPort = phileasConfiguration.cacheRedisPort();
+        final String authToken = phileasConfiguration.cacheRedisAuthToken();
+        final boolean ssl = phileasConfiguration.cacheRedisSsl();
 
         final Config config = new Config();
 
-        if (StringUtils.equalsIgnoreCase(cluster, "true")) {
+        if (cluster) {
 
             final String protocol;
 
-            if (StringUtils.equalsIgnoreCase(ssl, "true")) {
+            if (ssl) {
                 protocol = "rediss://";
             } else {
                 protocol = "redis://";
@@ -56,7 +56,7 @@ public class SpanDisambiguationRedisCacheService implements SpanDisambiguationCa
 
             final String protocol;
 
-            if (StringUtils.equalsIgnoreCase(ssl, "true")) {
+            if (ssl) {
                 protocol = "rediss://";
             } else {
                 protocol = "redis://";

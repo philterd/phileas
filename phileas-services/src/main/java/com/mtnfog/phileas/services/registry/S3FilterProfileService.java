@@ -7,6 +7,7 @@ import com.amazonaws.client.builder.AwsClientBuilder;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.*;
+import com.mtnfog.phileas.model.configuration.PhileasConfiguration;
 import com.mtnfog.phileas.model.exceptions.api.BadRequestException;
 import com.mtnfog.phileas.model.exceptions.api.InternalServerErrorException;
 import com.mtnfog.phileas.model.objects.GetFilterProfileResult;
@@ -34,14 +35,14 @@ public class S3FilterProfileService implements FilterProfileService {
     private String bucket;
     private FilterProfileCacheService filterProfileCacheService;
 
-    public S3FilterProfileService(Properties applicationProperties, boolean testing) {
+    public S3FilterProfileService(PhileasConfiguration phileasConfiguration, boolean testing) {
 
         // Initialize the S3 client.
-        this.bucket = applicationProperties.getProperty("filter.profiles.s3.bucket");
-        final String region = applicationProperties.getProperty("filter.profiles.s3.region", "us-east-1");
+        this.bucket = phileasConfiguration.filterProfilesS3Bucket();
+        final String region = phileasConfiguration.filterProfilesS3Region();
 
         // Create a filter profile cache.
-        this.filterProfileCacheService = FilterProfileCacheServiceFactory.getInstance(applicationProperties);
+        this.filterProfileCacheService = FilterProfileCacheServiceFactory.getInstance(phileasConfiguration);
 
         LOGGER.info("Configuring S3 backend for filter profiles in s3 bucket {}", bucket);
 

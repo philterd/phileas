@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.mtnfog.phileas.ai.PyTorchFilter;
 import com.mtnfog.phileas.fhir.FhirDocumentProcessor;
 import com.mtnfog.phileas.metrics.PhileasMetricsService;
+import com.mtnfog.phileas.model.configuration.PhileasConfiguration;
 import com.mtnfog.phileas.model.enums.FilterType;
 import com.mtnfog.phileas.model.enums.MimeType;
 import com.mtnfog.phileas.model.enums.SensitivityLevel;
@@ -30,6 +31,7 @@ import com.mtnfog.phileas.services.registry.LocalFilterProfileService;
 import com.mtnfog.phileas.services.registry.S3FilterProfileService;
 import com.mtnfog.phileas.services.validators.DateSpanValidator;
 import com.mtnfog.phileas.store.ElasticsearchStore;
+import org.aeonbits.owner.ConfigFactory;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -46,6 +48,8 @@ public class PhileasFilterService implements FilterService, Serializable {
 	private static final long serialVersionUID = 6998388861197152049L;
 
 	private static final Logger LOGGER = LogManager.getLogger(PhileasFilterService.class);
+
+	private PhileasConfiguration phileasConfiguration;
 
     private FilterProfileService filterProfileService;
     private MetricsService metricsService;
@@ -64,24 +68,27 @@ public class PhileasFilterService implements FilterService, Serializable {
 
     private final int windowSize;
 
-    public PhileasFilterService(Properties properties, String philterNerEndpoint) {
+    public PhileasFilterService(PhileasConfiguration phileasConfiguration) {
 
         LOGGER.info("Initializing Phileas engine.");
 
+        // Create the configuration.
+        this.phileasConfiguration = phileasConfiguration;
+
         // Configure metrics.
-        this.metricsService = new PhileasMetricsService(properties);
+        this.metricsService = new PhileasMetricsService(phileasConfiguration);
 
         // Set the filter profile services.
-        this.filterProfileService = buildFilterProfileService(properties);
+        this.filterProfileService = buildFilterProfileService(phileasConfiguration);
 
         // Set the anonymization cache service.
-        this.anonymizationCacheService = AnonymizationCacheServiceFactory.getAnonymizationCacheService(properties);
+        this.anonymizationCacheService = AnonymizationCacheServiceFactory.getAnonymizationCacheService(phileasConfiguration);
 
         // Instantiate the stats.
         this.stats = new HashMap<>();
 
         // Configure span disambiguation.
-        this.spanDisambiguationService = new VectorBasedSpanDisambiguationService(properties);
+        this.spanDisambiguationService = new VectorBasedSpanDisambiguationService(phileasConfiguration);
 
         // Create a new unstructured document processor.
         this.unstructuredDocumentProcessor = new UnstructuredDocumentProcessor(metricsService, spanDisambiguationService, store);
@@ -90,23 +97,23 @@ public class PhileasFilterService implements FilterService, Serializable {
         this.fhirDocumentProcessor = new FhirDocumentProcessor(metricsService, spanDisambiguationService);
 
         // Configure store.
-        final boolean storeEnabled = StringUtils.equalsIgnoreCase(properties.getProperty("store.enabled", "false"), "true");
+        final boolean storeEnabled = phileasConfiguration.storeEnabled();
 
         // Get the window size.
-        this.windowSize = Integer.valueOf(properties.getProperty("span.window.size", "5"));
+        this.windowSize = phileasConfiguration.spanWindowSize();
 
         if(storeEnabled) {
 
-            final String index = properties.getProperty("store.elasticsearch.index", "philter");
-            final String host = properties.getProperty("store.elasticsearch.host", "localhost");
-            final String scheme = properties.getProperty("store.elasticsearch.scheme", "http");
-            final int port = Integer.valueOf(properties.getProperty("store.elasticsearch.port", "9200"));
+            final String index = phileasConfiguration.storeElasticSearchIndex();
+            final String host = phileasConfiguration.storeElasticSearchHost();
+            final String scheme = phileasConfiguration.storeElasticSearchScheme();
+            final int port = phileasConfiguration.storeElasticSearchPort();
             this.store = new ElasticsearchStore(index, scheme, host, port);
 
         }
 
-        this.indexDirectory = properties.getProperty("indexes.directory", System.getProperty("user.dir") + "/indexes/");
-        this.philterNerEndpoint = philterNerEndpoint;
+        this.indexDirectory = phileasConfiguration.indexesDirectory();
+        this.philterNerEndpoint = phileasConfiguration.philterNerEndpoint();
 
     }
 
@@ -159,21 +166,21 @@ public class PhileasFilterService implements FilterService, Serializable {
 
     }
 
-    private FilterProfileService buildFilterProfileService(final Properties properties) {
+    private FilterProfileService buildFilterProfileService(PhileasConfiguration phileasConfiguration) {
 
         final FilterProfileService filterProfileService;
-        final String s3Bucket = properties.getProperty("filter.profiles.s3.bucket");
+        final String s3Bucket = phileasConfiguration.filterProfilesS3Bucket();
 
         // If an S3 bucket is provided then instantiate an S3FilterProfileService.
         if(StringUtils.isNotEmpty(s3Bucket)) {
 
             LOGGER.info("Initializing configuration for filter profiles S3 bucket.");
-            filterProfileService = new S3FilterProfileService(properties, false);
+            filterProfileService = new S3FilterProfileService(phileasConfiguration, false);
 
         } else {
 
             LOGGER.info("Using local storage for filter profiles.");
-            filterProfileService = new LocalFilterProfileService(properties);
+            filterProfileService = new LocalFilterProfileService(phileasConfiguration);
 
         }
 

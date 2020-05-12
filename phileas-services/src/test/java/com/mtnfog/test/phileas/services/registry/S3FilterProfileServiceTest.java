@@ -1,6 +1,7 @@
 package com.mtnfog.test.phileas.services.registry;
 
 import com.google.gson.Gson;
+import com.mtnfog.phileas.model.configuration.PhileasConfiguration;
 import com.mtnfog.phileas.model.profile.FilterProfile;
 import com.mtnfog.phileas.model.profile.Identifiers;
 import com.mtnfog.phileas.model.profile.filters.Age;
@@ -10,6 +11,7 @@ import com.mtnfog.phileas.model.profile.filters.strategies.rules.CreditCardFilte
 import com.mtnfog.phileas.model.services.FilterProfileService;
 import com.mtnfog.phileas.services.registry.S3FilterProfileService;
 import io.findify.s3mock.S3Mock;
+import org.aeonbits.owner.ConfigFactory;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -34,7 +36,7 @@ public class S3FilterProfileServiceTest {
 
     private static boolean isExternalRedis = false;
 
-    private Properties getProperties() {
+    private PhileasConfiguration getConfiguration() {
 
         final Properties properties = new Properties();
 
@@ -72,7 +74,7 @@ public class S3FilterProfileServiceTest {
 
         }
 
-        return properties;
+        return ConfigFactory.create(PhileasConfiguration.class, properties);
 
     }
 
@@ -120,7 +122,7 @@ public class S3FilterProfileServiceTest {
     @Test
     public void list() throws IOException {
 
-        final FilterProfileService filterProfileService = new S3FilterProfileService(getProperties(), true);
+        final FilterProfileService filterProfileService = new S3FilterProfileService(getConfiguration(), true);
 
         filterProfileService.save(gson.toJson(getFilterProfile("name1")));
         filterProfileService.save(gson.toJson(getFilterProfile("name2")));
@@ -137,7 +139,7 @@ public class S3FilterProfileServiceTest {
     @Test
     public void getAll() throws IOException {
 
-        final FilterProfileService filterProfileService = new S3FilterProfileService(getProperties(), true);
+        final FilterProfileService filterProfileService = new S3FilterProfileService(getConfiguration(), true);
 
         filterProfileService.save(gson.toJson(getFilterProfile("name1")));
         filterProfileService.save(gson.toJson(getFilterProfile("name2")));
@@ -159,7 +161,7 @@ public class S3FilterProfileServiceTest {
 
         final String profile = gson.toJson(getFilterProfile(name));
 
-        final FilterProfileService filterProfileService = new S3FilterProfileService(getProperties(), true);
+        final FilterProfileService filterProfileService = new S3FilterProfileService(getConfiguration(), true);
 
         filterProfileService.save(profile);
 
@@ -172,7 +174,7 @@ public class S3FilterProfileServiceTest {
 
         final String profile = gson.toJson(getFilterProfile(name));
 
-        final FilterProfileService filterProfileService = new S3FilterProfileService(getProperties(), true);
+        final FilterProfileService filterProfileService = new S3FilterProfileService(getConfiguration(), true);
 
         filterProfileService.save(profile);
 
@@ -188,7 +190,7 @@ public class S3FilterProfileServiceTest {
         final String name = "default";
         final String profile = gson.toJson(getFilterProfile(name));
 
-        final FilterProfileService filterProfileService = new S3FilterProfileService(getProperties(), true);
+        final FilterProfileService filterProfileService = new S3FilterProfileService(getConfiguration(), true);
 
         filterProfileService.save(profile);
 

@@ -1,6 +1,7 @@
 package com.mtnfog.test.phileas.services;
 
 import com.google.gson.Gson;
+import com.mtnfog.phileas.model.configuration.PhileasConfiguration;
 import com.mtnfog.phileas.model.enums.MimeType;
 import com.mtnfog.phileas.model.profile.FilterProfile;
 import com.mtnfog.phileas.model.profile.Identifiers;
@@ -12,6 +13,7 @@ import com.mtnfog.phileas.model.profile.filters.strategies.dynamic.*;
 import com.mtnfog.phileas.model.profile.filters.strategies.rules.*;
 import com.mtnfog.phileas.model.responses.FilterResponse;
 import com.mtnfog.phileas.services.PhileasFilterService;
+import org.aeonbits.owner.ConfigFactory;
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -59,12 +61,14 @@ public class PhileasFilterServiceTest {
         LOGGER.info("Writing profile to {}", file.getAbsolutePath());
         FileUtils.writeStringToFile(file, gson.toJson(getFilterProfile("default")), Charset.defaultCharset());
 
-        Properties applicationProperties = new Properties();
-        applicationProperties.setProperty("indexes.directory", INDEXES_DIRECTORY);
-        applicationProperties.setProperty("store.enabled", "false");
-        applicationProperties.setProperty("filter.profiles.directory", temp.toFile().getAbsolutePath());
+        Properties properties = new Properties();
+        properties.setProperty("indexes.directory", INDEXES_DIRECTORY);
+        properties.setProperty("store.enabled", "false");
+        properties.setProperty("filter.profiles.directory", temp.toFile().getAbsolutePath());
 
-        PhileasFilterService service = new PhileasFilterService(applicationProperties, "http://localhost:18080/");
+        final PhileasConfiguration phileasConfiguration = ConfigFactory.create(PhileasConfiguration.class, properties);
+
+        PhileasFilterService service = new PhileasFilterService(phileasConfiguration);
         final FilterResponse response = service.filter("default", "context", "documentId", "George Washington was president and his ssn was 123-45-6789 and he lived at 90210.", MimeType.TEXT_PLAIN);
 
         LOGGER.info(response.getFilteredText());
@@ -82,12 +86,14 @@ public class PhileasFilterServiceTest {
         LOGGER.info("Writing profile to {}", file.getAbsolutePath());
         FileUtils.writeStringToFile(file, gson.toJson(getFilterProfile("default")), Charset.defaultCharset());
 
-        Properties applicationProperties = new Properties();
-        applicationProperties.setProperty("indexes.directory", INDEXES_DIRECTORY);
-        applicationProperties.setProperty("store.enabled", "false");
-        applicationProperties.setProperty("filter.profiles.directory", temp.toFile().getAbsolutePath());
+        Properties properties = new Properties();
+        properties.setProperty("indexes.directory", INDEXES_DIRECTORY);
+        properties.setProperty("store.enabled", "false");
+        properties.setProperty("filter.profiles.directory", temp.toFile().getAbsolutePath());
 
-        PhileasFilterService service = new PhileasFilterService(applicationProperties, "http://localhost:18080/");
+        final PhileasConfiguration phileasConfiguration = ConfigFactory.create(PhileasConfiguration.class, properties);
+
+        PhileasFilterService service = new PhileasFilterService(phileasConfiguration);
         final FilterResponse response = service.filter("default", "context", "documentId", "My email is test@something.com and cc is 4121742025464465", MimeType.TEXT_PLAIN);
 
         LOGGER.info(response.getFilteredText());
@@ -105,12 +111,14 @@ public class PhileasFilterServiceTest {
         LOGGER.info("Writing profile to {}", file.getAbsolutePath());
         FileUtils.writeStringToFile(file, gson.toJson(getFilterProfile("default")), Charset.defaultCharset());
 
-        Properties applicationProperties = new Properties();
-        applicationProperties.setProperty("indexes.directory", INDEXES_DIRECTORY);
-        applicationProperties.setProperty("store.enabled", "false");
-        applicationProperties.setProperty("filter.profiles.directory", temp.toFile().getAbsolutePath());
+        Properties properties = new Properties();
+        properties.setProperty("indexes.directory", INDEXES_DIRECTORY);
+        properties.setProperty("store.enabled", "false");
+        properties.setProperty("filter.profiles.directory", temp.toFile().getAbsolutePath());
 
-        PhileasFilterService service = new PhileasFilterService(applicationProperties, "http://localhost:18080/");
+        final PhileasConfiguration phileasConfiguration = ConfigFactory.create(PhileasConfiguration.class, properties);
+
+        PhileasFilterService service = new PhileasFilterService(phileasConfiguration);
         final FilterResponse response = service.filter("default", "context", "documentId", "test@something.com is email and cc is 4121742025464465", MimeType.TEXT_PLAIN);
 
         LOGGER.info(response.getFilteredText());
@@ -128,12 +136,14 @@ public class PhileasFilterServiceTest {
         LOGGER.info("Writing profile to {}", file.getAbsolutePath());
         FileUtils.writeStringToFile(file, gson.toJson(getFilterProfile("default")), Charset.defaultCharset());
 
-        Properties applicationProperties = new Properties();
-        applicationProperties.setProperty("indexes.directory", INDEXES_DIRECTORY);
-        applicationProperties.setProperty("store.enabled", "false");
-        applicationProperties.setProperty("filter.profiles.directory", temp.toFile().getAbsolutePath());
+        Properties properties = new Properties();
+        properties.setProperty("indexes.directory", INDEXES_DIRECTORY);
+        properties.setProperty("store.enabled", "false");
+        properties.setProperty("filter.profiles.directory", temp.toFile().getAbsolutePath());
 
-        PhileasFilterService service = new PhileasFilterService(applicationProperties, "http://localhost:18080/");
+        final PhileasConfiguration phileasConfiguration = ConfigFactory.create(PhileasConfiguration.class, properties);
+
+        PhileasFilterService service = new PhileasFilterService(phileasConfiguration);
         final FilterResponse response = service.filter("default", "context", "documentId", "test@something.com", MimeType.TEXT_PLAIN);
 
         LOGGER.info(response.getFilteredText());
@@ -151,12 +161,14 @@ public class PhileasFilterServiceTest {
         LOGGER.info("Writing profile to {}", file.getAbsolutePath());
         FileUtils.writeStringToFile(file, gson.toJson(getFilterProfile("default")), Charset.defaultCharset());
 
-        Properties applicationProperties = new Properties();
-        applicationProperties.setProperty("indexes.directory", INDEXES_DIRECTORY);
-        applicationProperties.setProperty("store.enabled", "false");
-        applicationProperties.setProperty("filter.profiles.directory", temp.toFile().getAbsolutePath());
+        Properties properties = new Properties();
+        properties.setProperty("indexes.directory", INDEXES_DIRECTORY);
+        properties.setProperty("store.enabled", "false");
+        properties.setProperty("filter.profiles.directory", temp.toFile().getAbsolutePath());
 
-        PhileasFilterService service = new PhileasFilterService(applicationProperties, "http://localhost:18080/");
+        final PhileasConfiguration phileasConfiguration = ConfigFactory.create(PhileasConfiguration.class, properties);
+
+        PhileasFilterService service = new PhileasFilterService(phileasConfiguration);
         final FilterResponse response = service.filter("default", "context", "documentId", "90210", MimeType.TEXT_PLAIN);
 
         LOGGER.info(response.getFilteredText());
@@ -174,12 +186,14 @@ public class PhileasFilterServiceTest {
         LOGGER.info("Writing profile to {}", file.getAbsolutePath());
         FileUtils.writeStringToFile(file, gson.toJson(getFilterProfile("default")), Charset.defaultCharset());
 
-        Properties applicationProperties = new Properties();
-        applicationProperties.setProperty("indexes.directory", INDEXES_DIRECTORY);
-        applicationProperties.setProperty("store.enabled", "false");
-        applicationProperties.setProperty("filter.profiles.directory", temp.toFile().getAbsolutePath());
+        Properties properties = new Properties();
+        properties.setProperty("indexes.directory", INDEXES_DIRECTORY);
+        properties.setProperty("store.enabled", "false");
+        properties.setProperty("filter.profiles.directory", temp.toFile().getAbsolutePath());
 
-        PhileasFilterService service = new PhileasFilterService(applicationProperties, "http://localhost:18080/");
+        final PhileasConfiguration phileasConfiguration = ConfigFactory.create(PhileasConfiguration.class, properties);
+
+        PhileasFilterService service = new PhileasFilterService(phileasConfiguration);
         final FilterResponse response = service.filter("default", "context", "documentId", "his name was JEFF.", MimeType.TEXT_PLAIN);
 
         LOGGER.info(response.getFilteredText());
@@ -197,12 +211,14 @@ public class PhileasFilterServiceTest {
         LOGGER.info("Writing profile to {}", file.getAbsolutePath());
         FileUtils.writeStringToFile(file, gson.toJson(getFilterProfile("default")), Charset.defaultCharset());
 
-        Properties applicationProperties = new Properties();
-        applicationProperties.setProperty("indexes.directory", INDEXES_DIRECTORY);
-        applicationProperties.setProperty("store.enabled", "false");
-        applicationProperties.setProperty("filter.profiles.directory", temp.toFile().getAbsolutePath());
+        Properties properties = new Properties();
+        properties.setProperty("indexes.directory", INDEXES_DIRECTORY);
+        properties.setProperty("store.enabled", "false");
+        properties.setProperty("filter.profiles.directory", temp.toFile().getAbsolutePath());
 
-        PhileasFilterService service = new PhileasFilterService(applicationProperties, "http://localhost:18080/");
+        final PhileasConfiguration phileasConfiguration = ConfigFactory.create(PhileasConfiguration.class, properties);
+
+        PhileasFilterService service = new PhileasFilterService(phileasConfiguration);
         final FilterResponse response = service.filter("default", "context", null, "his name was JEFF.", MimeType.TEXT_PLAIN);
 
         LOGGER.info("Generated document ID: " + response.getDocumentId());
@@ -226,12 +242,14 @@ public class PhileasFilterServiceTest {
         LOGGER.info("Writing profile to {}", file2.getAbsolutePath());
         FileUtils.writeStringToFile(file2, gson.toJson(getFilterProfileJustCreditCard("justcreditcard")), Charset.defaultCharset());
 
-        Properties applicationProperties = new Properties();
-        applicationProperties.setProperty("indexes.directory", INDEXES_DIRECTORY);
-        applicationProperties.setProperty("store.enabled", "false");
-        applicationProperties.setProperty("filter.profiles.directory", temp.toFile().getAbsolutePath());
+        Properties properties = new Properties();
+        properties.setProperty("indexes.directory", INDEXES_DIRECTORY);
+        properties.setProperty("store.enabled", "false");
+        properties.setProperty("filter.profiles.directory", temp.toFile().getAbsolutePath());
 
-        PhileasFilterService service = new PhileasFilterService(applicationProperties, "http://localhost:18080/");
+        final PhileasConfiguration phileasConfiguration = ConfigFactory.create(PhileasConfiguration.class, properties);
+
+        PhileasFilterService service = new PhileasFilterService(phileasConfiguration);
         final FilterResponse response = service.filter("justcreditcard", "context", "documentId", "My email is test@something.com", MimeType.TEXT_PLAIN);
 
         LOGGER.info(response.getFilteredText());
@@ -249,12 +267,14 @@ public class PhileasFilterServiceTest {
         LOGGER.info("Writing profile to {}", file2.getAbsolutePath());
         FileUtils.writeStringToFile(file2, gson.toJson(getFilterProfileJustCreditCard("justcreditcard")), Charset.defaultCharset());
 
-        Properties applicationProperties = new Properties();
-        applicationProperties.setProperty("indexes.directory", INDEXES_DIRECTORY);
-        applicationProperties.setProperty("store.enabled", "false");
-        applicationProperties.setProperty("filter.profiles.directory", temp.toFile().getAbsolutePath());
+        Properties properties = new Properties();
+        properties.setProperty("indexes.directory", INDEXES_DIRECTORY);
+        properties.setProperty("store.enabled", "false");
+        properties.setProperty("filter.profiles.directory", temp.toFile().getAbsolutePath());
 
-        PhileasFilterService service = new PhileasFilterService(applicationProperties, "http://localhost:18080/");
+        final PhileasConfiguration phileasConfiguration = ConfigFactory.create(PhileasConfiguration.class, properties);
+
+        PhileasFilterService service = new PhileasFilterService(phileasConfiguration);
         final FilterResponse response = service.filter("justcreditcard", "context", "documentId", "My cc is 4121742025464465", MimeType.TEXT_PLAIN);
 
         LOGGER.info(response.getFilteredText());
@@ -272,12 +292,14 @@ public class PhileasFilterServiceTest {
         LOGGER.info("Writing profile to {}", file2.getAbsolutePath());
         FileUtils.writeStringToFile(file2, gson.toJson(getFilterProfileJustCreditCard("justcreditcard")), Charset.defaultCharset());
 
-        Properties applicationProperties = new Properties();
-        applicationProperties.setProperty("indexes.directory", INDEXES_DIRECTORY);
-        applicationProperties.setProperty("store.enabled", "false");
-        applicationProperties.setProperty("filter.profiles.directory", temp.toFile().getAbsolutePath());
+        Properties properties = new Properties();
+        properties.setProperty("indexes.directory", INDEXES_DIRECTORY);
+        properties.setProperty("store.enabled", "false");
+        properties.setProperty("filter.profiles.directory", temp.toFile().getAbsolutePath());
 
-        PhileasFilterService service = new PhileasFilterService(applicationProperties, "http://localhost:18080/");
+        final PhileasConfiguration phileasConfiguration = ConfigFactory.create(PhileasConfiguration.class, properties);
+
+        PhileasFilterService service = new PhileasFilterService(phileasConfiguration);
         final FilterResponse response = service.filter("justcreditcard", "context", "documentId", "My cc is 4121742025464400", MimeType.TEXT_PLAIN);
 
         LOGGER.info(response.getFilteredText());
@@ -294,12 +316,14 @@ public class PhileasFilterServiceTest {
         LOGGER.info("Writing profile to {}", file.getAbsolutePath());
         FileUtils.writeStringToFile(file, gson.toJson(getFilterProfileZipCodeWithIgnored("default")), Charset.defaultCharset());
 
-        Properties applicationProperties = new Properties();
-        applicationProperties.setProperty("indexes.directory", INDEXES_DIRECTORY);
-        applicationProperties.setProperty("store.enabled", "false");
-        applicationProperties.setProperty("filter.profiles.directory", temp.toFile().getAbsolutePath());
+        Properties properties = new Properties();
+        properties.setProperty("indexes.directory", INDEXES_DIRECTORY);
+        properties.setProperty("store.enabled", "false");
+        properties.setProperty("filter.profiles.directory", temp.toFile().getAbsolutePath());
 
-        PhileasFilterService service = new PhileasFilterService(applicationProperties,  "http://localhost:18080/");
+        final PhileasConfiguration phileasConfiguration = ConfigFactory.create(PhileasConfiguration.class, properties);
+
+        PhileasFilterService service = new PhileasFilterService(phileasConfiguration);
         final FilterResponse response = service.filter("default", "context", "documentId", "George Washington was president and his ssn was 123-45-6789 and he lived at 90210.", MimeType.TEXT_PLAIN);
 
         LOGGER.info(response.getFilteredText());
@@ -317,12 +341,14 @@ public class PhileasFilterServiceTest {
         LOGGER.info("Writing profile to {}", file1.getAbsolutePath());
         FileUtils.writeStringToFile(file1, gson.toJson(getFilterProfile("default")), Charset.defaultCharset());
 
-        Properties applicationProperties = new Properties();
-        applicationProperties.setProperty("indexes.directory", INDEXES_DIRECTORY);
-        applicationProperties.setProperty("store.enabled", "false");
-        applicationProperties.setProperty("filter.profiles.directory", temp.toFile().getAbsolutePath());
+        Properties properties = new Properties();
+        properties.setProperty("indexes.directory", INDEXES_DIRECTORY);
+        properties.setProperty("store.enabled", "false");
+        properties.setProperty("filter.profiles.directory", temp.toFile().getAbsolutePath());
 
-        PhileasFilterService service = new PhileasFilterService(applicationProperties, "http://localhost:18080/");
+        final PhileasConfiguration phileasConfiguration = ConfigFactory.create(PhileasConfiguration.class, properties);
+
+        PhileasFilterService service = new PhileasFilterService(phileasConfiguration);
         final FilterResponse response = service.filter("custom1", "context", "documentId", "My email is test@something.com", MimeType.TEXT_PLAIN);
 
         LOGGER.info(response.getFilteredText());

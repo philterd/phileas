@@ -1,5 +1,6 @@
 package com.mtnfog.phileas.services.cache.anonymization;
 
+import com.mtnfog.phileas.model.configuration.PhileasConfiguration;
 import com.mtnfog.phileas.model.services.AnonymizationCacheService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -20,18 +21,18 @@ public class AnonymizationCacheServiceFactory {
 
     /**
      * Gets a configured {@link AnonymizationCacheService}.
-     * @param properties Philter configuration {@link Properties}.
+     * @param phileasConfiguration Philter configuration {@link PhileasConfiguration}.
      * @return a configured {@link AnonymizationCacheService}.
      */
-    public static AnonymizationCacheService getAnonymizationCacheService(Properties properties) {
+    public static AnonymizationCacheService getAnonymizationCacheService(PhileasConfiguration phileasConfiguration) {
 
-        final String redisEnabled = properties.getProperty("cache.redis.enabled", "false");
+        final boolean redisEnabled = phileasConfiguration.cacheRedisEnabled();
 
-        if(StringUtils.equalsIgnoreCase(redisEnabled, "true")) {
+        if(redisEnabled) {
 
             LOGGER.info("Initializing Redis anonymization cache service.");
 
-            return new RedisAnonymizationCacheService(properties);
+            return new RedisAnonymizationCacheService(phileasConfiguration);
 
         } else {
 

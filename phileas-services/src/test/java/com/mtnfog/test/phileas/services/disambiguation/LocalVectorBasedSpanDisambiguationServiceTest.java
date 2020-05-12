@@ -1,8 +1,10 @@
 package com.mtnfog.test.phileas.services.disambiguation;
 
+import com.mtnfog.phileas.model.configuration.PhileasConfiguration;
 import com.mtnfog.phileas.model.enums.FilterType;
 import com.mtnfog.phileas.model.objects.Span;
 import com.mtnfog.phileas.services.disambiguation.VectorBasedSpanDisambiguationService;
+import org.aeonbits.owner.ConfigFactory;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.Assert;
@@ -24,12 +26,13 @@ public class LocalVectorBasedSpanDisambiguationServiceTest {
         properties.setProperty("span.disambiguation.enabled", "true");
         properties.setProperty("span.disambiguation.ignore.stopwords", "false");
         properties.setProperty("span.disambiguation.vector.size", "32");
-
         properties.setProperty("cache.redis.enabled", "false");
+
+        final PhileasConfiguration phileasConfiguration = ConfigFactory.create(PhileasConfiguration.class, properties);
 
         final String context = "c";
 
-        final VectorBasedSpanDisambiguationService vectorBasedSpanDisambiguationService = new VectorBasedSpanDisambiguationService(properties);
+        final VectorBasedSpanDisambiguationService vectorBasedSpanDisambiguationService = new VectorBasedSpanDisambiguationService(phileasConfiguration);
 
         final Span span1 = Span.make(0, 4, FilterType.SSN, context, "d", 0.00, "123-45-6789", "000-00-0000", false, new String[]{"ssn", "was", "he", "id"});
         vectorBasedSpanDisambiguationService.hashAndInsert(context, span1);
@@ -58,12 +61,13 @@ public class LocalVectorBasedSpanDisambiguationServiceTest {
         properties.setProperty("span.disambiguation.enabled", "true");
         properties.setProperty("span.disambiguation.ignore.stopwords", "false");
         properties.setProperty("span.disambiguation.vector.size", "32");
-
         properties.setProperty("cache.redis.enabled", "false");
+
+        final PhileasConfiguration phileasConfiguration = ConfigFactory.create(PhileasConfiguration.class, properties);
 
         final String context = "c";
 
-        final VectorBasedSpanDisambiguationService vectorBasedSpanDisambiguationService = new VectorBasedSpanDisambiguationService(properties);
+        final VectorBasedSpanDisambiguationService vectorBasedSpanDisambiguationService = new VectorBasedSpanDisambiguationService(phileasConfiguration);
 
         final Span span1 = Span.make(0, 4, FilterType.SSN, context, "d", 0.00, "123-45-6789", "000-00-0000", false, new String[]{"ssn", "was", "he", "id"});
         vectorBasedSpanDisambiguationService.hashAndInsert(context, span1);

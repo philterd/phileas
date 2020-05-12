@@ -1,5 +1,6 @@
 package com.mtnfog.phileas.services.cache.anonymization;
 
+import com.mtnfog.phileas.model.configuration.PhileasConfiguration;
 import com.mtnfog.phileas.model.services.AnonymizationCacheService;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -10,8 +11,6 @@ import org.redisson.api.RMap;
 import org.redisson.api.RedissonClient;
 import org.redisson.config.Config;
 
-import java.util.Properties;
-
 public class RedisAnonymizationCacheService implements AnonymizationCacheService {
 
     private static final Logger LOGGER = LogManager.getLogger(RedisAnonymizationCacheService.class);
@@ -20,21 +19,21 @@ public class RedisAnonymizationCacheService implements AnonymizationCacheService
     
     private final RedissonClient redisson;
 
-    public RedisAnonymizationCacheService(Properties applicationProperties) {
+    public RedisAnonymizationCacheService(PhileasConfiguration phileasConfiguration) {
 
-        final String cluster = applicationProperties.getProperty("cache.redis.cluster");
-        final String redisEndpoint = applicationProperties.getProperty("cache.redis.host");
-        final String redisPort = applicationProperties.getProperty("cache.redis.port");
-        final String authToken = applicationProperties.getProperty("cache.redis.auth.token");
-        final String ssl = applicationProperties.getProperty("cache.redis.ssl");
+        final boolean cluster = phileasConfiguration.cacheRedisCluster();
+        final String redisEndpoint = phileasConfiguration.cacheRedisHost();
+        final int redisPort = phileasConfiguration.cacheRedisPort();
+        final String authToken = phileasConfiguration.cacheRedisAuthToken();
+        final boolean ssl = phileasConfiguration.cacheRedisSsl();
 
         final Config config = new Config();
 
-        if(StringUtils.equalsIgnoreCase(cluster, "true")) {
+        if (cluster) {
 
             final String protocol;
 
-            if (StringUtils.equalsIgnoreCase(ssl, "true")) {
+            if (ssl) {
                 protocol = "rediss://";
             } else {
                 protocol = "redis://";
@@ -52,7 +51,7 @@ public class RedisAnonymizationCacheService implements AnonymizationCacheService
 
             final String protocol;
 
-            if (StringUtils.equalsIgnoreCase(ssl, "true")) {
+            if (ssl) {
                 protocol = "rediss://";
             } else {
                 protocol = "redis://";

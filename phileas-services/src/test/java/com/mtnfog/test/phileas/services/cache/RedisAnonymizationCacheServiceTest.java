@@ -1,6 +1,8 @@
 package com.mtnfog.test.phileas.services.cache;
 
+import com.mtnfog.phileas.model.configuration.PhileasConfiguration;
 import com.mtnfog.phileas.services.cache.anonymization.RedisAnonymizationCacheService;
+import org.aeonbits.owner.ConfigFactory;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -16,7 +18,7 @@ public class RedisAnonymizationCacheServiceTest {
     private RedisServer redisServer;
     private static boolean isExternalRedis = false;
 
-    private Properties getProperties() {
+    private PhileasConfiguration getConfiguration() {
 
         final Properties properties = new Properties();
 
@@ -54,7 +56,9 @@ public class RedisAnonymizationCacheServiceTest {
 
         }
 
-        return properties;
+        final PhileasConfiguration phileasConfiguration = ConfigFactory.create(PhileasConfiguration.class, properties);
+
+        return phileasConfiguration;
 
     }
 
@@ -93,7 +97,7 @@ public class RedisAnonymizationCacheServiceTest {
     @Test
     public void putAndContains() throws Exception {
 
-        final RedisAnonymizationCacheService cache = new RedisAnonymizationCacheService(getProperties());
+        final RedisAnonymizationCacheService cache = new RedisAnonymizationCacheService(getConfiguration());
 
         cache.put("context", "k", "v");
 
@@ -104,7 +108,7 @@ public class RedisAnonymizationCacheServiceTest {
     @Test
     public void containsValue() throws Exception {
 
-        final RedisAnonymizationCacheService cache = new RedisAnonymizationCacheService(getProperties());
+        final RedisAnonymizationCacheService cache = new RedisAnonymizationCacheService(getConfiguration());
 
         cache.put("context", "k", "v");
 
@@ -116,7 +120,7 @@ public class RedisAnonymizationCacheServiceTest {
     @Test
     public void getAndPut() throws Exception {
 
-        final RedisAnonymizationCacheService cache = new RedisAnonymizationCacheService(getProperties());
+        final RedisAnonymizationCacheService cache = new RedisAnonymizationCacheService(getConfiguration());
 
         cache.put("context", "k", "v");
         final String value = cache.get("context", "k");
@@ -130,7 +134,7 @@ public class RedisAnonymizationCacheServiceTest {
     @Test
     public void putAndRemove() throws Exception {
 
-        final RedisAnonymizationCacheService cache = new RedisAnonymizationCacheService(getProperties());
+        final RedisAnonymizationCacheService cache = new RedisAnonymizationCacheService(getConfiguration());
 
         cache.put("context", "k", "v");
         final String value = cache.get("context", "k");
@@ -145,7 +149,7 @@ public class RedisAnonymizationCacheServiceTest {
     @Test
     public void generateKey() throws Exception {
 
-        final RedisAnonymizationCacheService cache = new RedisAnonymizationCacheService(getProperties());
+        final RedisAnonymizationCacheService cache = new RedisAnonymizationCacheService(getConfiguration());
 
         final String hash = cache.generateKey("context", "k");
 

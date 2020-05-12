@@ -1,5 +1,6 @@
 package com.mtnfog.phileas.services.disambiguation;
 
+import com.mtnfog.phileas.model.configuration.PhileasConfiguration;
 import com.mtnfog.phileas.model.enums.FilterType;
 import com.mtnfog.phileas.model.filter.Filter;
 import com.mtnfog.phileas.model.objects.Span;
@@ -21,11 +22,11 @@ public class VectorBasedSpanDisambiguationService extends AbstractSpanDisambigua
 
     /**
      * Initializes the service.
-     * @param applicationProperties The {@link Properties} used to configure the service.
+     * @param phileasConfiguration The {@link PhileasConfiguration} used to configure the service.
      */
-    public VectorBasedSpanDisambiguationService(Properties applicationProperties) {
+    public VectorBasedSpanDisambiguationService(PhileasConfiguration phileasConfiguration) {
 
-        super(applicationProperties);
+        super(phileasConfiguration);
 
     }
 

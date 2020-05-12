@@ -1,5 +1,6 @@
 package com.mtnfog.phileas.services.cache.profiles;
 
+import com.mtnfog.phileas.model.configuration.PhileasConfiguration;
 import com.mtnfog.phileas.model.services.FilterProfileCacheService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -10,7 +11,10 @@ import org.redisson.api.RedissonClient;
 import org.redisson.config.Config;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class RedisFilterProfileCacheService implements FilterProfileCacheService {
 
@@ -18,21 +22,21 @@ public class RedisFilterProfileCacheService implements FilterProfileCacheService
 
     private final RedissonClient redisson;
 
-    public RedisFilterProfileCacheService(Properties applicationProperties) {
+    public RedisFilterProfileCacheService(PhileasConfiguration phileasConfiguration) {
 
-        final String cluster = applicationProperties.getProperty("cache.redis.cluster");
-        final String redisEndpoint = applicationProperties.getProperty("cache.redis.host");
-        final String redisPort = applicationProperties.getProperty("cache.redis.port");
-        final String authToken = applicationProperties.getProperty("cache.redis.auth.token");
-        final String ssl = applicationProperties.getProperty("cache.redis.ssl");
+        final boolean cluster = phileasConfiguration.cacheRedisCluster();
+        final String redisEndpoint = phileasConfiguration.cacheRedisHost();
+        final int redisPort = phileasConfiguration.cacheRedisPort();
+        final String authToken = phileasConfiguration.cacheRedisAuthToken();
+        final boolean ssl = phileasConfiguration.cacheRedisSsl();
 
         final Config config = new Config();
 
-        if(StringUtils.equalsIgnoreCase(cluster, "true")) {
+        if(cluster) {
 
             final String protocol;
 
-            if (StringUtils.equalsIgnoreCase(ssl, "true")) {
+            if (ssl) {
                 protocol = "rediss://";
             } else {
                 protocol = "redis://";
@@ -50,7 +54,7 @@ public class RedisFilterProfileCacheService implements FilterProfileCacheService
 
             final String protocol;
 
-            if (StringUtils.equalsIgnoreCase(ssl, "true")) {
+            if (ssl) {
                 protocol = "rediss://";
             } else {
                 protocol = "redis://";
@@ -72,7 +76,7 @@ public class RedisFilterProfileCacheService implements FilterProfileCacheService
     }
 
     @Override
-    public List<String> get() throws IOException {
+    public List<String> get() {
 
         // Get the names from the cache and return them.
         final RMap<String, String> names = redisson.getMap("filterProfiles");
@@ -82,7 +86,7 @@ public class RedisFilterProfileCacheService implements FilterProfileCacheService
     }
 
     @Override
-    public String get(String filterProfileName) throws IOException {
+    public String get(String filterProfileName) {
 
         // Get the filter profile from the cache and return it.
         final RMap<String, String> map = redisson.getMap("filterProfiles");
@@ -92,7 +96,7 @@ public class RedisFilterProfileCacheService implements FilterProfileCacheService
     }
 
     @Override
-    public Map<String, String> getAll() throws IOException {
+    public Map<String, String> getAll() {
 
         final long count = redisson.getKeys().countExists("filterProfiles");
 
@@ -110,7 +114,7 @@ public class RedisFilterProfileCacheService implements FilterProfileCacheService
 
         } else {
 
-            return new HashMap<String, String>();
+            return new HashMap<>();
 
         }
 
@@ -135,7 +139,7 @@ public class RedisFilterProfileCacheService implements FilterProfileCacheService
     }
 
     @Override
-    public void clear() throws IOException {
+    public void clear() {
 
         // Clear the cache.
         final RMap<String, String> map = redisson.getMap("filterProfiles");

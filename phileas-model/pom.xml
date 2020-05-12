@@ -104,6 +104,11 @@
 			<version>${hapi.fhir.version}</version>
 		</dependency>
 		<dependency>
+			<groupId>org.aeonbits.owner</groupId>
+			<artifactId>owner</artifactId>
+			<version>${owner.version}</version>
+		</dependency>
+		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-csv</artifactId>
 			<version>${commons.csv.version}</version>

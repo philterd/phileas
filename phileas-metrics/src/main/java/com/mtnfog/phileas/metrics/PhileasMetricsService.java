@@ -7,6 +7,7 @@ import com.amazonaws.services.cloudwatch.AmazonCloudWatchAsync;
 import com.amazonaws.services.cloudwatch.AmazonCloudWatchAsyncClientBuilder;
 import com.codahale.metrics.*;
 import com.codahale.metrics.jmx.JmxReporter;
+import com.mtnfog.phileas.model.configuration.PhileasConfiguration;
 import com.mtnfog.phileas.model.enums.FilterType;
 import com.mtnfog.phileas.model.objects.Span;
 import com.mtnfog.phileas.model.services.MetricsService;
@@ -20,7 +21,6 @@ import org.coursera.metrics.datadog.transport.HttpTransport;
 import java.util.EnumSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
 import static org.coursera.metrics.datadog.DatadogReporter.Expansion.*;
@@ -46,13 +46,13 @@ public class PhileasMetricsService implements MetricsService {
 
     /**
      * Creates a new metrics service.
-     * @param properties The {@link Properties properties} used to initialize the application.
+     * @param phileasConfiguration The {@link PhileasConfiguration phileasConfiguration} used to initialize the application.
      */
-    public PhileasMetricsService(Properties properties) {
+    public PhileasMetricsService(PhileasConfiguration phileasConfiguration) {
 
         registry = new MetricRegistry();
 
-        final String metricsPrefix = properties.getProperty("metrics.prefix", "philter");
+        final String metricsPrefix = phileasConfiguration.metricsPrefix();
 
         processed = registry.counter(metricsPrefix + "." + TOTAL_DOCUMENTS_PROCESSED);
         documents = registry.meter(metricsPrefix + "." + DOCUMENTS_PROCESSED);
@@ -71,7 +71,7 @@ public class PhileasMetricsService implements MetricsService {
 
         consoleReporter.start(300, TimeUnit.SECONDS);
 
-        if(StringUtils.equalsIgnoreCase(properties.getProperty("metrics.jmx.enabled", "false"), "true")) {
+        if(phileasConfiguration.metricsJmxEnabled()) {
 
             LOGGER.info("Enabling JMX metrics.");
 
@@ -80,9 +80,9 @@ public class PhileasMetricsService implements MetricsService {
 
         }
 
-        if(StringUtils.equalsIgnoreCase(properties.getProperty("metrics.datadog.enabled", "false"), "true")) {
+        if(phileasConfiguration.metricsDataDogEnabled()) {
 
-            final String datadogApiKey = properties.getProperty("metrics.datadog.apikey", "");
+            final String datadogApiKey = phileasConfiguration.metricsDataDogApiKey();
 
             if(StringUtils.isEmpty(datadogApiKey)) {
 
@@ -105,14 +105,14 @@ public class PhileasMetricsService implements MetricsService {
 
         }
 
-        if(StringUtils.equalsIgnoreCase(properties.getProperty("metrics.cloudwatch.enabled", "false"), "true")) {
+        if(phileasConfiguration.metricsCloudWatchEnabled()) {
 
             LOGGER.info("Enabling AWS CloudWatch metrics.");
 
-            final String region = properties.getProperty("metrics.cloudwatch.region", "us-east-1");
-            final String accessKey = properties.getProperty("metrics.cloudwatch.access.key", "");
-            final String secretKey = properties.getProperty("metrics.cloudwatch.secret.key", "");
-            final String namespace = properties.getProperty("metrics.cloudwatch.namespace", "Philter");
+            final String region = phileasConfiguration.metricsCloudWatchRegion();
+            final String accessKey = phileasConfiguration.metricsCloudWatchAccessKey();
+            final String secretKey = phileasConfiguration.metricsCloudWatchSecretKey();
+            final String namespace = phileasConfiguration.metricsCloudWatchNamespace();
 
             AmazonCloudWatchAsync amazonCloudWatchAsync;
 

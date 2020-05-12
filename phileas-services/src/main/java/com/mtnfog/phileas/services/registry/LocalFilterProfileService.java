@@ -1,5 +1,6 @@
 package com.mtnfog.phileas.services.registry;
 
+import com.mtnfog.phileas.model.configuration.PhileasConfiguration;
 import com.mtnfog.phileas.model.exceptions.api.BadRequestException;
 import com.mtnfog.phileas.model.services.FilterProfileCacheService;
 import com.mtnfog.phileas.model.services.FilterProfileService;
@@ -23,9 +24,9 @@ public class LocalFilterProfileService implements FilterProfileService {
     private String filterProfilesDirectory;
     private FilterProfileCacheService filterProfileCacheService;
 
-    public LocalFilterProfileService(final Properties applicationProperties) {
+    public LocalFilterProfileService(PhileasConfiguration phileasConfiguration) {
         
-        this.filterProfilesDirectory = applicationProperties.getProperty("filter.profiles.directory", System.getProperty("user.dir") + "/profiles/");
+        this.filterProfilesDirectory = phileasConfiguration.filterProfilesDirectory();
         LOGGER.info("Looking for filter profiles in {}", filterProfilesDirectory);
 
         // Always use an in-memory cache when using a local filter profile service.
