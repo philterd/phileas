@@ -6,7 +6,7 @@
     <groupId>com.mtnfog</groupId>
     <version>1.6.0-SNAPSHOT</version>
   </parent>
-  <artifactId>phileas-anonymization-service</artifactId>
+  <artifactId>phileas-services-anonymization</artifactId>
   <dependencies>
     <dependency>
       <groupId>com.mtnfog</groupId>

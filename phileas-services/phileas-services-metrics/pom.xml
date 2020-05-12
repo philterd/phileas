@@ -6,8 +6,8 @@
     <groupId>com.mtnfog</groupId>
     <version>1.6.0-SNAPSHOT</version>
   </parent>
-  <artifactId>phileas-metrics-service</artifactId>
-  <name>phileas-metrics-service</name>
+  <artifactId>phileas-services-metrics</artifactId>
+  <name>phileas-services-metrics</name>
   <licenses>
     <license>
       <name>Mountain Fog Commercial License</name>
