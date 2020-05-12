@@ -133,7 +133,7 @@ public abstract class Filter implements Serializable {
         final String[] tokens = text.substring(finalStart + 1, finalEnd).trim().split("\\s");
 
         // Remove punctuation from each token.
-        // TODO: Don't remove punctuation from the actual token.
+        // TODO: Should punctuation be preserved in the token itself?
         for(int i = 0; i < tokens.length; i++) {
             tokens[i] = tokens[i].replaceAll("\\p{Punct}", "");
         }
