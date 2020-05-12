@@ -1,77 +1,23 @@
 package com.mtnfog.phileas.services.profiles.cache;
 
 import com.mtnfog.phileas.configuration.PhileasConfiguration;
+import com.mtnfog.phileas.model.cache.AbstractRedisCacheService;
 import com.mtnfog.phileas.model.services.FilterProfileCacheService;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.redisson.Redisson;
 import org.redisson.api.RMap;
-import org.redisson.api.RedissonClient;
-import org.redisson.config.Config;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class RedisFilterProfileCacheService implements FilterProfileCacheService {
+public class RedisFilterProfileCacheService extends AbstractRedisCacheService implements FilterProfileCacheService {
 
     private static final Logger LOGGER = LogManager.getLogger(RedisFilterProfileCacheService.class);
 
-    private final RedissonClient redisson;
-
     public RedisFilterProfileCacheService(PhileasConfiguration phileasConfiguration) {
-
-        final boolean cluster = phileasConfiguration.cacheRedisCluster();
-        final String redisEndpoint = phileasConfiguration.cacheRedisHost();
-        final int redisPort = phileasConfiguration.cacheRedisPort();
-        final String authToken = phileasConfiguration.cacheRedisAuthToken();
-        final boolean ssl = phileasConfiguration.cacheRedisSsl();
-
-        final Config config = new Config();
-
-        if(cluster) {
-
-            final String protocol;
-
-            if (ssl) {
-                protocol = "rediss://";
-            } else {
-                protocol = "redis://";
-            }
-
-            final String redisAddress = protocol + redisEndpoint + ":" + redisPort;
-            LOGGER.info("Using clustered redis connection: {}", redisAddress);
-
-            config.useClusterServers()
-                    .setScanInterval(2000)
-                    .addNodeAddress(redisAddress)
-                    .setPassword(authToken);
-
-        } else {
-
-            final String protocol;
-
-            if (ssl) {
-                protocol = "rediss://";
-            } else {
-                protocol = "redis://";
-            }
-
-            final String redisAddress = protocol + redisEndpoint + ":" + redisPort;
-            LOGGER.info("Using single server redis connection {}", redisAddress);
-
-            if(StringUtils.isNotEmpty(authToken)) {
-                config.useSingleServer().setAddress(redisAddress).setPassword(authToken);
-            } else {
-                config.useSingleServer().setAddress(redisAddress);
-            }
-
-        }
-
-        redisson = Redisson.create(config);
-
+        super(phileasConfiguration);
     }
 
     @Override

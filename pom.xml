@@ -116,7 +116,7 @@
 		<lucene.version>8.3.0</lucene.version>
 		<metrics.version>4.1.0</metrics.version>
 		<mockito.version>1.10.19</mockito.version>
-		<opennlp.version>1.9.1</opennlp.version>
+		<opennlp.version>1.9.2</opennlp.version>
 		<owner.version>1.0.11</owner.version>
 		<redis-mock.version>0.1.6</redis-mock.version>
 		<redisson.version>3.12.4</redisson.version>
