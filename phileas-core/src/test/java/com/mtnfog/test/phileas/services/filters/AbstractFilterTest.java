@@ -170,7 +170,7 @@ public abstract class AbstractFilterTest {
 
             LOGGER.warn("Environment variable PHILEAS_BASE_DIR is not set for Lucene index test.");
 
-            final String indexDir = System.getProperty("user.dir") + "/../../data/indexes/" + indexName;
+            final String indexDir = System.getProperty("user.dir") + "/../data/indexes/" + indexName;
 
             LOGGER.info("Using index directory: {}", indexDir);
 
