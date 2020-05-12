@@ -21,15 +21,7 @@ public interface PhileasConfiguration extends Config {
     @DefaultValue("http://localhost:18080/")
     @Key("PHILTER_NER_ENDPOINT")
     String philterNerEndpoint();
-
-    // API Authentication
-    @DefaultValue("false")
-    @Key("auth.enabled")
-    String authEnabled();
-
-    @Key("auth.token")
-    String authToken();
-
+    
     // Span Disambiguation
     @DefaultValue("false")
     @Key("span.disambiguation.enabled")
