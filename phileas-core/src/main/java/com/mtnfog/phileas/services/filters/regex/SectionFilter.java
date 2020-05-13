@@ -22,7 +22,7 @@ public class SectionFilter extends RegexFilter implements Serializable {
         super(FilterType.SECTION, strategies, anonymizationService, ignored, crypto, windowSize);
 
         regex = Pattern.compile(startPattern + "(.*?)" + endPattern);
-System.out.println(regex.toString());
+
     }
 
     @Override
