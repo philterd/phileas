@@ -21,7 +21,7 @@ public interface PhileasConfiguration extends Config {
     @DefaultValue("http://localhost:18080/")
     @Key("PHILTER_NER_ENDPOINT")
     String philterNerEndpoint();
-    
+
     // Span Disambiguation
     @DefaultValue("false")
     @Key("span.disambiguation.enabled")
@@ -48,6 +48,7 @@ public interface PhileasConfiguration extends Config {
     @Key("cache.redis.enabled")
     boolean cacheRedisEnabled();
 
+    @DefaultValue("false")
     @Key("cache.redis.cluster")
     boolean cacheRedisCluster();
 
