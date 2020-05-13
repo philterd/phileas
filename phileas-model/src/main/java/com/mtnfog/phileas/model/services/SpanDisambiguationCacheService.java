@@ -13,10 +13,10 @@ public interface SpanDisambiguationCacheService {
     /**
      * Hashes and inserts the span into the cache.
      * @param context The context.
-     * @param span The {@link Span}.
+     * @param span The {@link Span} containing the window.
      * @param vectorSize The size of the vector.
      */
-    void hashAndInsert(String context, Span span, int vectorSize);
+    void hashAndInsert(String context, double[] hashes, Span span, int vectorSize);
 
     /**
      * Gets a vector representation for a {@link Span} given a context.
@@ -24,6 +24,6 @@ public interface SpanDisambiguationCacheService {
      * @param filterType The {@link FilterType} whose vector representation to get.
      * @return A map of integers representing the vector for the span.
      */
-    Map<Integer, Integer> getVectorRepresentation(String context, FilterType filterType);
+    Map<Double, Double> getVectorRepresentation(String context, FilterType filterType);
 
 }

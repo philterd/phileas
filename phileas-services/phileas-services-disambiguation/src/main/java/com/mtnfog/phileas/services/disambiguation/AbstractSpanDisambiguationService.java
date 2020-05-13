@@ -1,8 +1,9 @@
 package com.mtnfog.phileas.services.disambiguation;
 
 import com.mtnfog.phileas.configuration.PhileasConfiguration;
-import com.mtnfog.phileas.model.objects.Span;
 import com.mtnfog.phileas.model.services.SpanDisambiguationCacheService;
+import com.mtnfog.phileas.services.disambiguation.cache.SpanDisambiguationLocalCacheService;
+import com.mtnfog.phileas.services.disambiguation.cache.SpanDisambiguationRedisCacheService;
 import org.apache.commons.codec.digest.MurmurHash3;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -25,8 +26,7 @@ public abstract class AbstractSpanDisambiguationService {
     protected final int vectorSize;
     protected final boolean ignoreStopWords;
     protected SpanDisambiguationCacheService spanDisambiguationCacheService;
-
-    private Set<String> stopwords;
+    protected Set<String> stopwords;
 
     public AbstractSpanDisambiguationService(final PhileasConfiguration phileasConfiguration) throws IOException {
 
@@ -34,9 +34,7 @@ public abstract class AbstractSpanDisambiguationService {
         this.ignoreStopWords = phileasConfiguration.spanDisambiguationIgnoreStopWords();
         this.stopwords = new HashSet<>(Arrays.asList(phileasConfiguration.spanDisambiguationStopWords().split("")));
 
-        final boolean useRedis = phileasConfiguration.cacheRedisEnabled();
-
-        if(useRedis) {
+        if(phileasConfiguration.cacheRedisEnabled()) {
             LOGGER.info("Using Redis disambiguation cache.");
             this.spanDisambiguationCacheService = new SpanDisambiguationRedisCacheService(phileasConfiguration);
         } else {
@@ -48,37 +46,9 @@ public abstract class AbstractSpanDisambiguationService {
 
     }
 
-    protected double[] hash(Span span) {
-
-        final double[] vector = new double[vectorSize];
-
-        final String[] window = span.getWindow();
-
-        for(final String token : window) {
-
-            // Lowercase the token and remove any whitespace.
-            final String lowerCasedToken = token.toLowerCase().trim();
-
-            // Ignore stop words?
-            if(ignoreStopWords && stopwords.contains(lowerCasedToken)) {
-
-                // Ignore it as a stop word.
-
-            } else {
-
-                final int hash = Math.abs(MurmurHash3.hash32x86(token.getBytes()) % vectorSize);
-
-                // We're only looking for what the window has. How many of each token is irrelevant.
-                // TODO: But is it irrelevant though? If a word occurs more often than others
-                // it is probably more indicative of the type than a word that only occurs once.
-                vector[hash] = 1;
-
-            }
-
-        }
-
-        return vector;
-
+    public int hashToken(String token) {
+        return Math.abs(MurmurHash3.hash32x86(token.getBytes()) % vectorSize);
+        //return Math.abs(token.hashCode() % vectorSize);
     }
 
     // TODO: I don't like this. I did this because the SpanDisambiguationService has to be created

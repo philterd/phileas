@@ -1,4 +1,4 @@
-package com.mtnfog.phileas.services.disambiguation;
+package com.mtnfog.phileas.services.disambiguation.cache;
 
 import com.mtnfog.phileas.model.enums.FilterType;
 import com.mtnfog.phileas.model.objects.Span;
@@ -23,7 +23,7 @@ public class SpanDisambiguationLocalCacheService implements SpanDisambiguationCa
     }
 
     @Override
-    public void hashAndInsert(String context, Span span, int vectorSize) {
+    public void hashAndInsert(String context, double[] hashes, Span span, int vectorSize) {
 
         // Initialize the cached map for all filter types if it does not already exist.
         if(vectors.get(context) == null) {
@@ -31,7 +31,6 @@ public class SpanDisambiguationLocalCacheService implements SpanDisambiguationCa
             final Map<FilterType, SpanVector> vector = new HashMap<>();
 
             for(final FilterType filterType : FilterType.values()) {
-                //LOGGER.info("Putting entry of {} - {}", context, filterType.name());
                 vector.put(filterType, new SpanVector());
             }
 
@@ -39,30 +38,25 @@ public class SpanDisambiguationLocalCacheService implements SpanDisambiguationCa
 
         }
 
-        final String[] window = span.getWindow();
+        for(double i = 0; i < hashes.length; i++) {
 
-        for(final String token : window) {
+            if(hashes[(int) i] != 0) {
 
-            // TODO: Hash the token with an actual algorithm.
-            final int hash = Math.abs(token.hashCode() % vectorSize);
+                if (vectors.get(context).get(span.getFilterType()).getVectorIndexes().get(i) == null) {
+                    vectors.get(context).get(span.getFilterType()).getVectorIndexes().putIfAbsent(i, 0.0);
+                }
 
-            //LOGGER.info("Getting entry of {} - {}", context, span.getFilterType().name());
+                final double value = vectors.get(context).get(span.getFilterType()).getVectorIndexes().get(i);
+                vectors.get(context).get(span.getFilterType()).getVectorIndexes().put(i, value + 1.0);
 
-            final SpanVector sv = vectors.get(context).get(span.getFilterType());
-
-            if(vectors.get(context).get(span.getFilterType()).getVectorIndexes().get(hash) == null) {
-                vectors.get(context).get(span.getFilterType()).getVectorIndexes().putIfAbsent(hash, 0);
             }
-
-            int value = vectors.get(context).get(span.getFilterType()).getVectorIndexes().get(hash);
-            vectors.get(context).get(span.getFilterType()).getVectorIndexes().put(hash, value + 1);
 
         }
 
     }
 
     @Override
-    public Map<Integer, Integer> getVectorRepresentation(String context, FilterType filterType) {
+    public Map<Double, Double> getVectorRepresentation(String context, FilterType filterType) {
 
         return vectors.get(context).get(filterType).getVectorIndexes();
 

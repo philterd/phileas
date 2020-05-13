@@ -53,7 +53,6 @@ public class LocalVectorBasedSpanDisambiguationServiceTest {
 
     }
 
-
     @Test
     public void disambiguateLocal2() throws IOException {
 

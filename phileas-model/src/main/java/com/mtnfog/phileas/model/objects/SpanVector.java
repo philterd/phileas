@@ -8,7 +8,7 @@ import java.util.Map;
 
 public class SpanVector implements Serializable {
 
-    private Map<Integer, Integer> vectorIndexes;
+    private Map<Double, Double> vectorIndexes;
     private transient Gson gson;
 
     public SpanVector() {
@@ -21,11 +21,11 @@ public class SpanVector implements Serializable {
         return gson.toJson(this);
     }
 
-    public Map<Integer, Integer> getVectorIndexes() {
+    public Map<Double, Double> getVectorIndexes() {
         return vectorIndexes;
     }
 
-    public void setVectorIndexes(Map<Integer, Integer> vectorIndexes) {
+    public void setVectorIndexes(Map<Double, Double> vectorIndexes) {
         this.vectorIndexes = vectorIndexes;
     }
 

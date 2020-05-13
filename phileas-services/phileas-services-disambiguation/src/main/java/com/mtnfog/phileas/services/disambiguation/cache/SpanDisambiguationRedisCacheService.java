@@ -1,4 +1,4 @@
-package com.mtnfog.phileas.services.disambiguation;
+package com.mtnfog.phileas.services.disambiguation.cache;
 
 import com.google.gson.Gson;
 import com.mtnfog.phileas.configuration.PhileasConfiguration;
@@ -25,39 +25,19 @@ public class SpanDisambiguationRedisCacheService extends AbstractRedisCacheServi
     }
 
     @Override
-    public void hashAndInsert(String context, Span span, int vectorSize) {
+    public void hashAndInsert(String context, double[] hashes, Span span, int vectorSize) {
 
-        // Initialize the cached map for all filter types if it does not already exist.
-        //if(vectors.get(context) == null) {
+        final RMap<String, String> vectors = redisson.getMap(context);
 
-            //final RMap<FilterType, SpanVector> vector = new HashMap<>();
-            final RMap<String, String> vectors = redisson.getMap(context);
-
-            /*for(final FilterType filterType : FilterType.values()) {
-                vector.put(filterType, new SpanVector());
-            }
-
-            vectors.put(context, vector);*/
-
-        //}
-
-        final String[] window = span.getWindow();
-
-        for(final String token : window) {
-
-            // TODO: Hash the token with an actual algorithm.
-            final int hash = Math.abs(token.hashCode() % vectorSize);
-
-            System.out.println(token + ": hash = " + hash);
+        for(final double hash : hashes) {
 
             // Insert it into the appropriate vector.
             vectors.putIfAbsent(span.getFilterType().name(), new SpanVector().toString());
 
             final SpanVector sv = gson.fromJson(vectors.getOrDefault(span.getFilterType().name(), new SpanVector().toString()), SpanVector.class);
 
-            int val = sv.getVectorIndexes().getOrDefault(hash, 0);
-            sv.getVectorIndexes().put(hash, val + 1);
-         //   int val = sv.getVectorIndexes().getOrDefault(hash, 0) + 1;
+            final double val = sv.getVectorIndexes().getOrDefault(hash, 1.0);
+            sv.getVectorIndexes().put(hash, val + 1.0);
 
             vectors.put(span.getFilterType().name(), gson.toJson(sv));
 
@@ -66,9 +46,9 @@ public class SpanDisambiguationRedisCacheService extends AbstractRedisCacheServi
     }
 
     @Override
-    public Map<Integer, Integer> getVectorRepresentation(String context, FilterType filterType) {
+    public Map<Double, Double> getVectorRepresentation(String context, FilterType filterType) {
 
-        Map<String, String> m = redisson.getMap(context);
+        final Map<String, String> m = redisson.getMap(context);
 
         final SpanVector sv = gson.fromJson(m.get(filterType.name()), SpanVector.class);
 

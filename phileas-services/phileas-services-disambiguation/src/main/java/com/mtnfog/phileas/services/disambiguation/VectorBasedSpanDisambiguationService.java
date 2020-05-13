@@ -4,6 +4,8 @@ import com.mtnfog.phileas.configuration.PhileasConfiguration;
 import com.mtnfog.phileas.model.enums.FilterType;
 import com.mtnfog.phileas.model.objects.Span;
 import com.mtnfog.phileas.model.services.SpanDisambiguationService;
+import org.apache.commons.codec.digest.MurmurHash3;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -31,7 +33,9 @@ public class VectorBasedSpanDisambiguationService extends AbstractSpanDisambigua
     @Override
     public void hashAndInsert(String context, Span span) {
 
-        spanDisambiguationCacheService.hashAndInsert(context, span, vectorSize);
+        final double[] hashes = hash(span);
+
+        spanDisambiguationCacheService.hashAndInsert(context, hashes, span, vectorSize);
 
     }
 
@@ -80,29 +84,27 @@ public class VectorBasedSpanDisambiguationService extends AbstractSpanDisambigua
         // Holds all the span vectors.
         final Map<FilterType, double[]> spanVectors = new HashMap<>();
 
+        // Loop over each filter type to determine which filter type most closely resembles the ambiguous span.
         for(final FilterType filterType : filterTypes) {
 
             LOGGER.debug("Getting vector representation for filter type {}", filterType.name());
 
             // Get the vector representations for each potential filter type.
-            final Map<Integer, Integer> vectorRepresentation = spanDisambiguationCacheService.getVectorRepresentation(context, filterType);
+            final Map<Double, Double> vectorRepresentation = spanDisambiguationCacheService.getVectorRepresentation(context, filterType);
 
             // Create vectors for the representations.
             final double[] spanVector = new double[vectorSize];
-            for(int d : vectorRepresentation.keySet()) {
-                spanVector[d] = vectorRepresentation.get(d);
+            for(final double d : vectorRepresentation.keySet()) {
+                spanVector[(int) d] = vectorRepresentation.get(d);
             }
-            //System.out.println("span:     " + Arrays.toString(span1Vector));
-            //spanVectors.add(span1Vector);
+
             spanVectors.put(filterType, spanVector);
 
         }
 
         // Build the ambiguousSpanVector from the ambiguousSpan.
         final double[] ambiguousSpanVector = hash(ambiguousSpan);
-
-        // TODO: If the ambiguousSpanVector has a non-zero value for any index in
-        LOGGER.debug("Ambiguous: {}", Arrays.toString(ambiguousSpanVector));
+        LOGGER.debug("Ambiguous: {}", StringUtils.leftPad(Arrays.toString(ambiguousSpanVector), 20));
 
         // Map of filter type to distance from the ambiguous span.
         final Map<FilterType, Double> distances = new HashMap<>();
@@ -112,10 +114,11 @@ public class VectorBasedSpanDisambiguationService extends AbstractSpanDisambigua
 
             // Get the span vector for this filter type.
             final double[] spanVector = spanVectors.get(filterType);
+            LOGGER.debug("Vector {}: {}", StringUtils.rightPad(filterType.name(), 20), Arrays.toString(spanVector));
 
             // Calculate the distance of the vector from the ambiguous span's vector.
             final double[] normalized = normalize(spanVector, ambiguousSpanVector);
-            LOGGER.info("Normalized {}: {}", filterType.name(), Arrays.toString(normalized));
+            LOGGER.debug("Normalized {}: {}", StringUtils.rightPad(filterType.name(), 20), Arrays.toString(normalized));
             final double distance = cosineSimilarity(spanVector, normalized);
 
             // Record this distance.
@@ -134,9 +137,42 @@ public class VectorBasedSpanDisambiguationService extends AbstractSpanDisambigua
 
     }
 
+    private double[] hash(Span span) {
+
+        final double[] vector = new double[vectorSize];
+
+        final String[] window = span.getWindow();
+
+        for(final String token : window) {
+
+            // Lowercase the token and remove any whitespace.
+            final String lowerCasedToken = token.toLowerCase().trim();
+
+            // Ignore stop words?
+            if(ignoreStopWords && stopwords.contains(lowerCasedToken)) {
+
+                // Ignore it because it is a stop word.
+
+            } else {
+
+                final int hash = hashToken(token);
+
+                // We're only looking for what the window has. How many of each token is irrelevant.
+                // TODO: But is it irrelevant though? If a word occurs more often than others
+                // it is probably more indicative of the type than a word that only occurs once.
+                vector[hash] = 1;
+
+            }
+
+        }
+
+        return vector;
+
+    }
+
     private double[] normalize(double[] vector, double[] ambiguousVector) {
 
-        double[] normalized = new double[vectorSize];
+        final double[] normalized = new double[vectorSize];
 
         for(int x = 0; x < vector.length; x++) {
 
