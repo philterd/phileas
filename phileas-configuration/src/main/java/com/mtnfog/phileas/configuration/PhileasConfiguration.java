@@ -27,6 +27,10 @@ public interface PhileasConfiguration extends Config {
     @Key("span.disambiguation.enabled")
     boolean spanDisambiguationEnabled();
 
+    @DefaultValue("murmur3")
+    @Key("span.disambiguation.hash.algorithm")
+    String spanDisambiguationHashAlgorithm();
+
     @DefaultValue("5")
     @Key("span.window.size")
     int spanWindowSize();

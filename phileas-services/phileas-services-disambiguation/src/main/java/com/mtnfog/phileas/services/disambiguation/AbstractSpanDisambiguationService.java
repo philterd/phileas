@@ -5,6 +5,7 @@ import com.mtnfog.phileas.model.services.SpanDisambiguationCacheService;
 import com.mtnfog.phileas.services.disambiguation.cache.SpanDisambiguationLocalCacheService;
 import com.mtnfog.phileas.services.disambiguation.cache.SpanDisambiguationRedisCacheService;
 import org.apache.commons.codec.digest.MurmurHash3;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -22,6 +23,8 @@ public abstract class AbstractSpanDisambiguationService {
     // Changing the size would require starting all over because the values in it would
     // no longer be valid because the hash function would have changed.
 
+    private PhileasConfiguration phileasConfiguration;
+
     protected boolean enabled;
     protected final int vectorSize;
     protected final boolean ignoreStopWords;
@@ -30,6 +33,7 @@ public abstract class AbstractSpanDisambiguationService {
 
     public AbstractSpanDisambiguationService(final PhileasConfiguration phileasConfiguration) throws IOException {
 
+        this.phileasConfiguration = phileasConfiguration;
         this.vectorSize = phileasConfiguration.spanDisambiguationVectorSize();
         this.ignoreStopWords = phileasConfiguration.spanDisambiguationIgnoreStopWords();
         this.stopwords = new HashSet<>(Arrays.asList(phileasConfiguration.spanDisambiguationStopWords().split("")));
@@ -47,8 +51,13 @@ public abstract class AbstractSpanDisambiguationService {
     }
 
     public int hashToken(String token) {
-        return Math.abs(MurmurHash3.hash32x86(token.getBytes()) % vectorSize);
-        //return Math.abs(token.hashCode() % vectorSize);
+
+        if(StringUtils.equalsIgnoreCase(phileasConfiguration.spanDisambiguationHashAlgorithm(), "murmu3")) {
+            return Math.abs(MurmurHash3.hash32x86(token.getBytes()) % vectorSize);
+        } else {
+            return Math.abs(token.hashCode() % vectorSize);
+        }
+
     }
 
     // TODO: I don't like this. I did this because the SpanDisambiguationService has to be created
