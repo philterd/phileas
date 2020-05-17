@@ -151,6 +151,24 @@ public class AgeFilterStrategyTest {
     }
 
     @Test
+    public void replacement8() throws Exception {
+
+        final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
+        final AnonymizationCacheService anonymizationCacheService = Mockito.mock(AnonymizationCacheService.class);
+
+        when(anonymizationService.getAnonymizationCacheService()).thenReturn(anonymizationCacheService);
+
+        final AbstractFilterStrategy strategy = getFilterStrategy();
+        strategy.setStrategy(AbstractFilterStrategy.HASH_SHA256_REPLACE);
+
+        final String replacement = strategy.getReplacement("name", "context", "docId", "token", null, anonymizationService);
+
+        // This is the hash of "token"
+        Assert.assertEquals("3c469e9d6c5875d37a43f353d4f88e61fcf812c66eee3457465a40b0da4153e0", replacement);
+
+    }
+
+    @Test
     public void evaluateCondition1() throws IOException {
 
         AgeFilterStrategy strategy = new AgeFilterStrategy();
