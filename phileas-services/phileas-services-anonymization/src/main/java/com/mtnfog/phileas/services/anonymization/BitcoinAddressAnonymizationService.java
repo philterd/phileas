@@ -12,7 +12,7 @@ public class BitcoinAddressAnonymizationService extends AbstractAnonymizationSer
     @Override
     public String anonymize(String token) {
 
-        // TODO: Generate valid Bitcoin address?
+        // TODO: PHL-117: Generate valid Bitcoin address?
         return RandomStringUtils.randomAlphanumeric(32);
 
     }
