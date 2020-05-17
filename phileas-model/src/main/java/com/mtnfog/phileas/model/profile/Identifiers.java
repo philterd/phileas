@@ -22,6 +22,10 @@ public class Identifiers {
     @Expose
     private Age age;
 
+    @SerializedName("bitcoinAddress")
+    @Expose
+    private BitcoinAddress bitcoinAddress;
+
     @SerializedName("creditCard")
     @Expose
     private CreditCard creditCard;
@@ -128,6 +132,8 @@ public class Identifiers {
                 if(CollectionUtils.isNotEmpty(this.getCustomDictionaries())) { return true; } break;
             case AGE:
                 if(this.getAge() != null) { return true; } break;
+            case BITCOIN_ADDRESS:
+                if(this.getBitcoinAddress() != null) { return true; } break;
             case LOCATION_CITY:
                 if(this.getCity() != null) { return true; } break;
             case LOCATION_COUNTY:
@@ -379,6 +385,14 @@ public class Identifiers {
 
     public void setIbanCode(IbanCode ibanCode) {
         this.ibanCode = ibanCode;
+    }
+
+    public BitcoinAddress getBitcoinAddress() {
+        return bitcoinAddress;
+    }
+
+    public void setBitcoinAddress(BitcoinAddress bitcoinAddress) {
+        this.bitcoinAddress = bitcoinAddress;
     }
 
 }

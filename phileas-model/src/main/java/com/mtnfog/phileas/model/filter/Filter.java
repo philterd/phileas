@@ -199,6 +199,8 @@ public abstract class Filter implements Serializable {
 
         if(filterType == FilterType.AGE) {
             return filterProfile.getIdentifiers().getAge().getAgeFilterStrategies();
+        } else if(filterType == FilterType.BITCOIN_ADDRESS) {
+            return filterProfile.getIdentifiers().getBitcoinAddress().getBitcoinFilterStrategies();
         } else if(filterType == FilterType.CREDIT_CARD) {
             return filterProfile.getIdentifiers().getCreditCard().getCreditCardFilterStrategies();
         } else if(filterType == FilterType.CUSTOM_DICTIONARY) {

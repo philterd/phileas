@@ -242,6 +242,12 @@ public class PhileasFilterService implements FilterService, Serializable {
             }
         }
 
+        if(filterProfile.getIdentifiers().hasFilter(FilterType.BITCOIN_ADDRESS)) {
+            if(filterProfile.getIdentifiers().getBitcoinAddress().isEnabled()) {
+                enabledFilters.add(new BitcoinAddressFilter(filterProfile.getIdentifiers().getBitcoinAddress().getBitcoinFilterStrategies(), new BitcoinAddressAnonymizationService(anonymizationCacheService), filterProfile.getIdentifiers().getBitcoinAddress().getIgnored(), filterProfile.getCrypto(), windowSize));
+            }
+        }
+
         if(filterProfile.getIdentifiers().hasFilter(FilterType.CREDIT_CARD)) {
             if(filterProfile.getIdentifiers().getCreditCard().isEnabled()) {
                 enabledFilters.add(new CreditCardFilter(filterProfile.getIdentifiers().getCreditCard().getCreditCardFilterStrategies(), new CreditCardAnonymizationService(anonymizationCacheService), filterProfile.getIdentifiers().getCreditCard().isOnlyValidCreditCardNumbers(), filterProfile.getIdentifiers().getCreditCard().getIgnored(), filterProfile.getCrypto(), windowSize));
