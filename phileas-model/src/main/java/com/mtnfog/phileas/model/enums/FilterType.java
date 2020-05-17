@@ -17,6 +17,7 @@ public enum FilterType {
     FIRST_NAME("first-name", false),
     HOSPITAL("hospital", false),
     HOSPITAL_ABBREVIATION("hospital-abbreviation", false),
+    IBAN_CODE("iban-code", true),
     IDENTIFIER("id", true),
     IP_ADDRESS("ip-address", true),
     MAC_ADDRESS("mac-address", true),

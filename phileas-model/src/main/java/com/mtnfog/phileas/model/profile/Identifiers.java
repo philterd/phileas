@@ -34,6 +34,10 @@ public class Identifiers {
     @Expose
     private EmailAddress emailAddress;
 
+    @SerializedName("ibanCode")
+    @Expose
+    private IbanCode ibanCode;
+
     @SerializedName("identifiers")
     @Expose
     private List<Identifier> identifiers;
@@ -140,6 +144,8 @@ public class Identifiers {
                 if(this.getHospital() != null) { return true; } break;
             case HOSPITAL_ABBREVIATION:
                 if(this.getHospitalAbbreviation() != null) { return true; } break;
+            case IBAN_CODE:
+                if(this.getIbanCode() != null) { return true; } break;
             case IDENTIFIER:
                 if(this.getIdentifiers() != null) { return true; } break;
             case IP_ADDRESS:
@@ -365,6 +371,14 @@ public class Identifiers {
 
     public void setMacAddress(MacAddress macAddress) {
         this.macAddress = macAddress;
+    }
+
+    public IbanCode getIbanCode() {
+        return ibanCode;
+    }
+
+    public void setIbanCode(IbanCode ibanCode) {
+        this.ibanCode = ibanCode;
     }
 
 }

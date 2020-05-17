@@ -53,6 +53,9 @@ public abstract class AbstractFilterTest {
         EmailAddress emailAddress = new EmailAddress();
         emailAddress.setEmailAddressFilterStrategies(Arrays.asList(new EmailAddressFilterStrategy()));
 
+        IbanCode ibanCode = new IbanCode();
+        ibanCode.setIbanCodeFilterStrategies(Arrays.asList(new IbanCodeFilterStrategy()));
+
         Identifier identifier = new Identifier();
         identifier.setIdentifierFilterStrategies(Arrays.asList(new IdentifierFilterStrategy()));
 
@@ -127,6 +130,7 @@ public abstract class AbstractFilterTest {
         identifiers.setDate(date);
         identifiers.setEmailAddress(emailAddress);
         identifiers.setIdentifiers(Arrays.asList(identifier));
+        identifiers.setIbanCode(ibanCode);
         identifiers.setIpAddress(ipAddress);
         identifiers.setMacAddress(macAddress);
         identifiers.setPhoneNumber(phoneNumber);

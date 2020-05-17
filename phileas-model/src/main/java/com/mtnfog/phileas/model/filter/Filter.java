@@ -209,6 +209,8 @@ public abstract class Filter implements Serializable {
             return filterProfile.getIdentifiers().getDate().getDateFilterStrategies();
         } else if(filterType == FilterType.EMAIL_ADDRESS) {
             return filterProfile.getIdentifiers().getEmailAddress().getEmailAddressFilterStrategies();
+        } else if(filterType == FilterType.IBAN_CODE) {
+            return filterProfile.getIdentifiers().getIbanCode().getIbanCodeFilterStrategies();
         } else if(filterType == FilterType.IP_ADDRESS) {
             return filterProfile.getIdentifiers().getIpAddress().getIpAddressFilterStrategies();
         } else if(filterType == FilterType.NER_ENTITY) {

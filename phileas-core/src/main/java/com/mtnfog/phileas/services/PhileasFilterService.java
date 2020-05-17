@@ -260,6 +260,12 @@ public class PhileasFilterService implements FilterService, Serializable {
             }
         }
 
+        if(filterProfile.getIdentifiers().hasFilter(FilterType.IBAN_CODE)) {
+            if(filterProfile.getIdentifiers().getIbanCode().isEnabled()) {
+                enabledFilters.add(new IbanCodeFilter(filterProfile.getIdentifiers().getIbanCode().getIbanCodeFilterStrategies(), new IbanCodeAnonymizationService(anonymizationCacheService), filterProfile.getIdentifiers().getIbanCode().getIgnored(), filterProfile.getCrypto(), filterProfile.getIdentifiers().getIbanCode().isOnlyValidIBANCodes(), windowSize));
+            }
+        }
+
         if(filterProfile.getIdentifiers().hasFilter(FilterType.IP_ADDRESS)) {
             if(filterProfile.getIdentifiers().getIpAddress().isEnabled()) {
                 enabledFilters.add(new IpAddressFilter(filterProfile.getIdentifiers().getIpAddress().getIpAddressFilterStrategies(), new IpAddressAnonymizationService(anonymizationCacheService), filterProfile.getIdentifiers().getIpAddress().getIgnored(), filterProfile.getCrypto(), windowSize));
