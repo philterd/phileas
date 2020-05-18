@@ -2,6 +2,7 @@ package com.mtnfog.phileas.services.filters.regex;
 
 import com.mtnfog.phileas.model.enums.FilterType;
 import com.mtnfog.phileas.model.filter.rules.regex.RegexFilter;
+import com.mtnfog.phileas.model.objects.Analyzer;
 import com.mtnfog.phileas.model.objects.Span;
 import com.mtnfog.phileas.model.profile.Crypto;
 import com.mtnfog.phileas.model.profile.FilterProfile;
@@ -10,6 +11,7 @@ import com.mtnfog.phileas.model.services.AnonymizationService;
 import org.apache.commons.validator.routines.IBANValidator;
 
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -28,12 +30,14 @@ public class IbanCodeFilter extends RegexFilter implements Serializable {
         // Whether or not to validate the found IBAN codes.
         this.validate = validate;
 
+        analyzer = new Analyzer(IBAN_REGEX);
+
     }
 
     @Override
     public List<Span> filter(FilterProfile filterProfile, String context, String documentId, String input) throws Exception {
 
-        final List<Span> spans = findSpans(filterProfile, IBAN_REGEX, input, context, documentId);
+        final List<Span> spans = findSpans(filterProfile, analyzer, input, context, documentId);
 
         final List<Span> validSpans = new LinkedList<>();
 

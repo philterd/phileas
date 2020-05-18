@@ -20,7 +20,7 @@ public class DriversLicenseFilter extends RegexFilter implements Serializable {
     private static final HashMap<String, Pattern> DRIVERS_LICENSES_REGEX = new HashMap<>();
 
     public DriversLicenseFilter(List<? extends AbstractFilterStrategy> strategies, AnonymizationService anonymizationService, Set<String> ignored, Crypto crypto, int windowSize) {
-        super(FilterType.BITCOIN_ADDRESS, strategies, anonymizationService, ignored, crypto, windowSize);
+        super(FilterType.DRIVERS_LICENSE, strategies, anonymizationService, ignored, crypto, windowSize);
 
         // https://ntsi.com/drivers-license-format/
         // https://www.mvrdecoder.com/content/drvlicformats.aspx
@@ -76,7 +76,6 @@ public class DriversLicenseFilter extends RegexFilter implements Serializable {
         DRIVERS_LICENSES_REGEX.put("WEST VIRGINIA", Pattern.compile("\\b([0-9]{7})|([A-Z][0-9]{6})\\b"));
         DRIVERS_LICENSES_REGEX.put("WISCONSIN", Pattern.compile("\\b[A-Z][0-9]{13}\\b"));
         DRIVERS_LICENSES_REGEX.put("WYOMING", Pattern.compile("\\b([0-9]{9})|([0-9]{6}-[0-9]{3})\\b"));
-
 
     }
 

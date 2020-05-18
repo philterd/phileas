@@ -53,7 +53,7 @@ public class DateFilter extends RegexFilter implements Serializable {
 
         final List<Span> spans = new LinkedList<>();
 
-        for(String format : datePatterns.keySet()) {
+        for(final String format : datePatterns.keySet()) {
 
             final List<Span> rawSpans = findSpans(filterProfile, datePatterns.get(format), input, context, documentId);
 

@@ -2,6 +2,7 @@ package com.mtnfog.phileas.services.filters.regex;
 
 import com.mtnfog.phileas.model.enums.FilterType;
 import com.mtnfog.phileas.model.filter.rules.regex.RegexFilter;
+import com.mtnfog.phileas.model.objects.Analyzer;
 import com.mtnfog.phileas.model.objects.Span;
 import com.mtnfog.phileas.model.profile.Crypto;
 import com.mtnfog.phileas.model.profile.FilterProfile;
@@ -9,6 +10,7 @@ import com.mtnfog.phileas.model.profile.filters.strategies.AbstractFilterStrateg
 import com.mtnfog.phileas.model.services.AnonymizationService;
 
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -20,16 +22,15 @@ public class MacAddressFilter extends RegexFilter implements Serializable {
 
     public MacAddressFilter(List<? extends AbstractFilterStrategy> strategies, AnonymizationService anonymizationService, Set<String> ignored, Crypto crypto, int windowSize) {
         super(FilterType.MAC_ADDRESS, strategies, anonymizationService, ignored, crypto, windowSize);
+
+        analyzer = new Analyzer(MAC_ADDRESS_PATTERN);
+
     }
 
     @Override
     public List<Span> filter(FilterProfile filterProfile, String context, String documentId, String input) throws Exception {
 
-        final List<Span> spans = new LinkedList<>();
-
-        spans.addAll(findSpans(filterProfile, MAC_ADDRESS_PATTERN, input, context, documentId));
-
-        return spans;
+        return findSpans(filterProfile, analyzer, input, context, documentId);
 
     }
 

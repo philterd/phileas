@@ -2,6 +2,7 @@ package com.mtnfog.phileas.services.filters.regex;
 
 import com.mtnfog.phileas.model.enums.FilterType;
 import com.mtnfog.phileas.model.filter.rules.regex.RegexFilter;
+import com.mtnfog.phileas.model.objects.Analyzer;
 import com.mtnfog.phileas.model.objects.Span;
 import com.mtnfog.phileas.model.profile.Crypto;
 import com.mtnfog.phileas.model.profile.FilterProfile;
@@ -10,6 +11,7 @@ import com.mtnfog.phileas.model.services.AnonymizationService;
 import org.apache.commons.validator.routines.checkdigit.LuhnCheckDigit;
 
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -29,12 +31,14 @@ public class CreditCardFilter extends RegexFilter implements Serializable {
         this.onlyValidCreditCardNumbers = onlyValidCreditCardNumbers;
         this.luhnCheckDigit = new LuhnCheckDigit();
 
+        analyzer = new Analyzer(ID_REGEX);
+
     }
 
     @Override
     public List<Span> filter(FilterProfile filterProfile, String context, String documentId, String input) throws Exception {
 
-        final List<Span> spans = findSpans(filterProfile, ID_REGEX, input, context, documentId);
+        final List<Span> spans = findSpans(filterProfile, analyzer, input, context, documentId);
 
         final List<Span> validSpans = new LinkedList<>();
 

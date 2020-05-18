@@ -2,6 +2,7 @@ package com.mtnfog.phileas.services.filters.regex;
 
 import com.mtnfog.phileas.model.enums.FilterType;
 import com.mtnfog.phileas.model.filter.rules.regex.RegexFilter;
+import com.mtnfog.phileas.model.objects.Analyzer;
 import com.mtnfog.phileas.model.objects.Span;
 import com.mtnfog.phileas.model.profile.Crypto;
 import com.mtnfog.phileas.model.profile.FilterProfile;
@@ -11,6 +12,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
 
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -21,21 +23,19 @@ public class VinFilter extends RegexFilter implements Serializable {
 
     public VinFilter(List<? extends AbstractFilterStrategy> strategies, AnonymizationService anonymizationService, Set<String> ignored, Crypto crypto, int windowSize) {
         super(FilterType.VIN, strategies, anonymizationService, ignored, crypto, windowSize);
+
+        analyzer = new Analyzer(VIN_REGEX);
+
     }
 
     @Override
     public List<Span> filter(FilterProfile filterProfile, String context, String documentId, String input) throws Exception {
 
-        final List<Span> spans = findSpans(filterProfile, VIN_REGEX, input, context, documentId);
+        final List<Span> spans = findSpans(filterProfile, analyzer, input, context, documentId);
 
-        CollectionUtils.filter(spans, new Predicate() {
-
-            @Override
-            public boolean evaluate(Object object) {
-                Span s = (Span) object;
-                return isVinValid(input.substring(s.getCharacterStart(), s.getCharacterEnd()));
-            }
-
+        CollectionUtils.filter(spans, object -> {
+            Span s = (Span) object;
+            return isVinValid(input.substring(s.getCharacterStart(), s.getCharacterEnd()));
         });
 
         return spans;

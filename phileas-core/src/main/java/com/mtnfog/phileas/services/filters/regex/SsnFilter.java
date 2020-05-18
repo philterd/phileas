@@ -2,6 +2,7 @@ package com.mtnfog.phileas.services.filters.regex;
 
 import com.mtnfog.phileas.model.enums.FilterType;
 import com.mtnfog.phileas.model.filter.rules.regex.RegexFilter;
+import com.mtnfog.phileas.model.objects.Analyzer;
 import com.mtnfog.phileas.model.objects.Span;
 import com.mtnfog.phileas.model.profile.Crypto;
 import com.mtnfog.phileas.model.profile.FilterProfile;
@@ -10,6 +11,7 @@ import com.mtnfog.phileas.model.services.AnonymizationService;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -22,17 +24,15 @@ public class SsnFilter extends RegexFilter implements Serializable {
 
     public SsnFilter(List<? extends AbstractFilterStrategy> strategies, AnonymizationService anonymizationService, Set<String> ignored, Crypto crypto, int windowSize) {
         super(FilterType.SSN, strategies, anonymizationService, ignored, crypto, windowSize);
+
+        analyzer = new Analyzer(SSN_REGEX, TIN_REGEX);
+
     }
 
     @Override
     public List<Span> filter(FilterProfile filterProfile, String context, String documentId, String input) throws Exception {
 
-        final List<Span> spans = new LinkedList<>();
-
-        spans.addAll(findSpans(filterProfile, SSN_REGEX, input, context, documentId));
-        spans.addAll(findSpans(filterProfile, TIN_REGEX, input, context, documentId));
-
-        return spans;
+        return findSpans(filterProfile, analyzer, input, context, documentId);
 
     }
 
