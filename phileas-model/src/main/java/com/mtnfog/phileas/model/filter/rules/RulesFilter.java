@@ -67,8 +67,7 @@ public abstract class RulesFilter extends Filter implements Serializable {
 
                     final String[] window = getWindow(input, characterStart, characterEnd);
 
-                    // TODO: Adjust the confidence based on the initial confidence.
-
+                    // TODO: PHL-119: Adjust the confidence based on the initial confidence.
                     final Span span = Span.make(characterStart, characterEnd, getFilterType(), context, documentId, 1.0, token, replacement, isIgnored, window);
 
                     // TODO: Add "format" to Span.make() so we don't have to make a separate call here.
