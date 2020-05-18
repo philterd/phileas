@@ -26,8 +26,8 @@ public class SectionFilter extends RegexFilter implements Serializable {
         final Pattern pattern = Pattern.compile(startPattern + "(.*?)" + endPattern);
         final FilterPattern sectionPattern1 = new FilterPattern(pattern, 0.90);
 
-        this.contextualTerms = new HashSet<>();
-        this.analyzer = new Analyzer(contextualTerms, sectionPattern1);
+        // There are no contextual terms for a section.
+        this.analyzer = new Analyzer(sectionPattern1);
 
     }
 

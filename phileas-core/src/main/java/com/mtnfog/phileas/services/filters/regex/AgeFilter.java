@@ -27,7 +27,11 @@ public class AgeFilter extends RegexFilter implements Serializable {
         final Pattern AGE_REGEX_2 = Pattern.compile("\\b(age)(d)?(\\s)*[0-9.]+\\b", Pattern.CASE_INSENSITIVE);
         final FilterPattern age2 = new FilterPattern(AGE_REGEX_2, 0.90);
 
-        this.contextualTerms = new HashSet<>();
+        this.contextualTerms = new HashSet<>(){{
+            add("age");
+            add("years");
+        }};
+
         this.analyzer = new Analyzer(contextualTerms, age1, age2);
 
     }

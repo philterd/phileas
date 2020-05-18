@@ -26,7 +26,13 @@ public class SsnFilter extends RegexFilter implements Serializable {
         final Pattern TIN_REGEX = Pattern.compile("\\b\\d{2}-\\d{7}\\b");
         final FilterPattern tin1 = new FilterPattern(TIN_REGEX, 0.90);
 
-        this.contextualTerms = new HashSet<>();
+        this.contextualTerms = new HashSet<>(){{
+            add("ssn");
+            add("tin");
+            add("social");
+            add("ssid");
+        }};
+
         this.analyzer = new Analyzer(contextualTerms, ssn1, tin1);
 
     }

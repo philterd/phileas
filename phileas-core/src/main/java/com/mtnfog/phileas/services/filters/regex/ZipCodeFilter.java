@@ -24,7 +24,12 @@ public class ZipCodeFilter extends RegexFilter implements Serializable {
         final Pattern ZIP_CODE_REGEX = Pattern.compile("\\b[0-9]{5}(?:-[0-9]{4})?\\b");
         final FilterPattern zipCode1 = new FilterPattern(ZIP_CODE_REGEX, 0.90);
 
-        this.contextualTerms = new HashSet<>();
+        this.contextualTerms = new HashSet<>(){{
+            add("zip");
+            add("zipcode");
+            add("zip code");
+        }};
+
         this.analyzer = new Analyzer(contextualTerms, zipCode1);
 
     }

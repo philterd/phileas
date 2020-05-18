@@ -27,7 +27,12 @@ public class VinFilter extends RegexFilter implements Serializable {
         final Pattern VIN_REGEX = Pattern.compile("\\b[A-HJ-NPR-Z0-9]{17}\\b", Pattern.CASE_INSENSITIVE);
         final FilterPattern vin1 = new FilterPattern(VIN_REGEX, 0.90);
 
-        this.contextualTerms = new HashSet<>();
+        this.contextualTerms = new HashSet<>(){{
+            add("vin");
+            add("car");
+            add("truck");
+        }};
+
         this.analyzer = new Analyzer(contextualTerms, vin1);
 
     }

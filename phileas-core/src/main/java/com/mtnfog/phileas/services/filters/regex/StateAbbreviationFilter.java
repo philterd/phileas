@@ -84,8 +84,8 @@ public class StateAbbreviationFilter extends RegexFilter implements Serializable
 
         }
 
-        this.contextualTerms = new HashSet<>();
-        this.analyzer = new Analyzer(contextualTerms, filterPatterns);
+        // No contextual terms.
+        this.analyzer = new Analyzer(filterPatterns);
 
     }
 

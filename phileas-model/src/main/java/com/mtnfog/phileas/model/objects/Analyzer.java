@@ -10,6 +10,16 @@ public class Analyzer {
     private Set<String> contextualTerms;
     private List<FilterPattern> filterPatterns;
 
+    public Analyzer(FilterPattern ... p) {
+
+        this.filterPatterns = new LinkedList<>();
+
+        for(final FilterPattern filterPattern : p) {
+            filterPatterns.add(filterPattern);
+        }
+
+    }
+
     public Analyzer(Set<String> contextualTerms, FilterPattern ... p) {
 
         this.contextualTerms = contextualTerms;
@@ -18,6 +28,12 @@ public class Analyzer {
         for(final FilterPattern filterPattern : p) {
             filterPatterns.add(filterPattern);
         }
+
+    }
+
+    public Analyzer(List<FilterPattern> filterPatterns) {
+
+        this.filterPatterns = filterPatterns;
 
     }
 

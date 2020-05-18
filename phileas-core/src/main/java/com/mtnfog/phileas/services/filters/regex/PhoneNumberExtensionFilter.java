@@ -26,7 +26,12 @@ public class PhoneNumberExtensionFilter extends RegexFilter implements Serializa
         final Pattern PHONE_NUMBER_EXTENSION_REGEX = Pattern.compile("\\bx[0-9]+\\b");
         final FilterPattern phoneExtension1 = new FilterPattern(PHONE_NUMBER_EXTENSION_REGEX, 0.90);
 
-        this.contextualTerms = new HashSet<>();
+        this.contextualTerms = new HashSet<>(){{
+            add("phone");
+            add("extension");
+            add("ext");
+        }};
+
         this.analyzer = new Analyzer(contextualTerms, phoneExtension1);
 
     }

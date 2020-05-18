@@ -29,7 +29,11 @@ public class IbanCodeFilter extends RegexFilter implements Serializable {
         final Pattern IBAN_REGEX = Pattern.compile("\\b[A-Z]{2}[0-9]{2}[A-Z0-9]{1,30}\\b", Pattern.CASE_INSENSITIVE);
         final FilterPattern iban1 = new FilterPattern(IBAN_REGEX, 0.90);
 
-        this.contextualTerms = new HashSet<>();
+        this.contextualTerms = new HashSet<>(){{
+            add("iban");
+            add("bank");
+        }};
+
         this.analyzer = new Analyzer(contextualTerms, iban1);
 
     }
