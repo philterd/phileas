@@ -53,6 +53,9 @@ public abstract class AbstractFilterTest {
         Date date = new Date();
         date.setDateFilterStrategies(Arrays.asList(new DateFilterStrategy()));
 
+        DriversLicense driversLicense = new DriversLicense();
+        driversLicense.setDriversLicenseFilterStrategies(Arrays.asList(new DriversLicenseFilterStrategy()));
+
         EmailAddress emailAddress = new EmailAddress();
         emailAddress.setEmailAddressFilterStrategies(Arrays.asList(new EmailAddressFilterStrategy()));
 
@@ -132,6 +135,7 @@ public abstract class AbstractFilterTest {
         identifiers.setBitcoinAddress(bitcoinAddress);
         identifiers.setCreditCard(creditCard);
         identifiers.setDate(date);
+        identifiers.setDriversLicense(driversLicense);
         identifiers.setEmailAddress(emailAddress);
         identifiers.setIdentifiers(Arrays.asList(identifier));
         identifiers.setIbanCode(ibanCode);

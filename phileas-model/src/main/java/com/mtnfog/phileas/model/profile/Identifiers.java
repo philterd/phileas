@@ -34,6 +34,10 @@ public class Identifiers {
     @Expose
     private Date date;
 
+    @SerializedName("driversLicense")
+    @Expose
+    private DriversLicense driversLicense;
+
     @SerializedName("emailAddress")
     @Expose
     private EmailAddress emailAddress;
@@ -393,6 +397,14 @@ public class Identifiers {
 
     public void setBitcoinAddress(BitcoinAddress bitcoinAddress) {
         this.bitcoinAddress = bitcoinAddress;
+    }
+
+    public DriversLicense getDriversLicense() {
+        return driversLicense;
+    }
+
+    public void setDriversLicense(DriversLicense driversLicense) {
+        this.driversLicense = driversLicense;
     }
 
 }
