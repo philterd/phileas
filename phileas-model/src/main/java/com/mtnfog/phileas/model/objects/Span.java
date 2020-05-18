@@ -47,7 +47,8 @@ public final class Span implements Serializable {
     // Encapsulates the characterStart and characterEnd for easy intersection functions.
     private transient Range<Integer> range;
 
-    // The regex expression, if any, used to identify the span.
+    // The textual (nonn-compiled) regex expression, if any, used to identify the span.
+    // This is used to validate a regex after finding.
     private transient String pattern;
 
     // The window of tokens around the span.

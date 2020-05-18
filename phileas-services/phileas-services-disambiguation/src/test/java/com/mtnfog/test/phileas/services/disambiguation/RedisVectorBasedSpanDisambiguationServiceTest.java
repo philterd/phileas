@@ -8,10 +8,7 @@ import org.aeonbits.owner.ConfigFactory;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
 import redis.embedded.RedisServer;
 
 import java.io.IOException;
@@ -19,6 +16,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
+@Ignore
 public class RedisVectorBasedSpanDisambiguationServiceTest {
 
     private static final Logger LOGGER = LogManager.getLogger(RedisVectorBasedSpanDisambiguationServiceTest.class);

@@ -128,8 +128,9 @@ public class UrlFilterTest extends AbstractFilterTest {
 
         List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "the page is 192.168.1.1:80/folder/page.html.");
         showSpans(spans);
-        Assert.assertEquals(1, spans.size());
-        Assert.assertTrue(checkSpan(spans.get(0), 12, 44, FilterType.URL));
+        Assert.assertEquals(2, spans.size());
+        Assert.assertTrue(checkSpan(spans.get(0), 34, 43, FilterType.URL));
+        Assert.assertTrue(checkSpan(spans.get(1), 12, 44, FilterType.URL));
 
     }
 
@@ -141,8 +142,9 @@ public class UrlFilterTest extends AbstractFilterTest {
 
         List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "the page is http://192.168.1.1:80/folder/page.html.");
         showSpans(spans);
-        Assert.assertEquals(1, spans.size());
-        Assert.assertTrue(checkSpan(spans.get(0), 12, 51, FilterType.URL));
+        Assert.assertEquals(2, spans.size());
+        Assert.assertTrue(checkSpan(spans.get(0), 41, 50, FilterType.URL));
+        Assert.assertTrue(checkSpan(spans.get(1), 12, 51, FilterType.URL));
 
     }
 
@@ -154,8 +156,9 @@ public class UrlFilterTest extends AbstractFilterTest {
 
         List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "the page is https://192.168.1.1:80/folder/page.html.");
         showSpans(spans);
-        Assert.assertEquals(1, spans.size());
-        Assert.assertTrue(checkSpan(spans.get(0), 12, 52, FilterType.URL));
+        Assert.assertEquals(2, spans.size());
+        Assert.assertTrue(checkSpan(spans.get(0), 42, 51, FilterType.URL));
+        Assert.assertTrue(checkSpan(spans.get(1), 12, 52, FilterType.URL));
 
     }
 
@@ -179,8 +182,9 @@ public class UrlFilterTest extends AbstractFilterTest {
 
         List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "the page is http://2001:0db8:85a3:0000:0000:8a2e:0370:7334/test.html.");
         showSpans(spans);
-        Assert.assertEquals(1, spans.size());
-        Assert.assertTrue(checkSpan(spans.get(0), 12, 69, FilterType.URL));
+        Assert.assertEquals(2, spans.size());
+        Assert.assertTrue(checkSpan(spans.get(0), 59, 68, FilterType.URL));
+        Assert.assertTrue(checkSpan(spans.get(1), 12, 69, FilterType.URL));
 
     }
 
@@ -205,8 +209,9 @@ public class UrlFilterTest extends AbstractFilterTest {
 
         List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "the page is https://192.168.1.1:80/folder/page.html. this is a new sentence.");
         showSpans(spans);
-        Assert.assertEquals(1, spans.size());
-        Assert.assertTrue(checkSpan(spans.get(0), 12, 76, FilterType.URL));
+        Assert.assertEquals(2, spans.size());
+        Assert.assertTrue(checkSpan(spans.get(0), 42, 51, FilterType.URL));
+        Assert.assertTrue(checkSpan(spans.get(1), 12, 76, FilterType.URL));
 
     }
 

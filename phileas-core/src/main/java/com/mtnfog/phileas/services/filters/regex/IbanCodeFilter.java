@@ -3,6 +3,7 @@ package com.mtnfog.phileas.services.filters.regex;
 import com.mtnfog.phileas.model.enums.FilterType;
 import com.mtnfog.phileas.model.filter.rules.regex.RegexFilter;
 import com.mtnfog.phileas.model.objects.Analyzer;
+import com.mtnfog.phileas.model.objects.FilterPattern;
 import com.mtnfog.phileas.model.objects.Span;
 import com.mtnfog.phileas.model.profile.Crypto;
 import com.mtnfog.phileas.model.profile.FilterProfile;
@@ -11,16 +12,10 @@ import com.mtnfog.phileas.model.services.AnonymizationService;
 import org.apache.commons.validator.routines.IBANValidator;
 
 import java.io.Serializable;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Pattern;
 
 public class IbanCodeFilter extends RegexFilter implements Serializable {
-
-    // https://stackoverflow.com/q/44656264
-    private static final Pattern IBAN_REGEX = Pattern.compile("\\b[A-Z]{2}[0-9]{2}[A-Z0-9]{1,30}\\b", Pattern.CASE_INSENSITIVE);
 
     private boolean validate;
 
@@ -30,7 +25,12 @@ public class IbanCodeFilter extends RegexFilter implements Serializable {
         // Whether or not to validate the found IBAN codes.
         this.validate = validate;
 
-        analyzer = new Analyzer(IBAN_REGEX);
+        // https://stackoverflow.com/q/44656264
+        final Pattern IBAN_REGEX = Pattern.compile("\\b[A-Z]{2}[0-9]{2}[A-Z0-9]{1,30}\\b", Pattern.CASE_INSENSITIVE);
+        final FilterPattern iban1 = new FilterPattern(IBAN_REGEX, 0.90);
+
+        this.contextualTerms = new HashSet<>();
+        this.analyzer = new Analyzer(contextualTerms, iban1);
 
     }
 

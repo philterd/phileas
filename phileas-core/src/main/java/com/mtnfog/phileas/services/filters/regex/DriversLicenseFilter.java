@@ -2,6 +2,8 @@ package com.mtnfog.phileas.services.filters.regex;
 
 import com.mtnfog.phileas.model.enums.FilterType;
 import com.mtnfog.phileas.model.filter.rules.regex.RegexFilter;
+import com.mtnfog.phileas.model.objects.Analyzer;
+import com.mtnfog.phileas.model.objects.FilterPattern;
 import com.mtnfog.phileas.model.objects.Span;
 import com.mtnfog.phileas.model.profile.Crypto;
 import com.mtnfog.phileas.model.profile.FilterProfile;
@@ -9,10 +11,7 @@ import com.mtnfog.phileas.model.profile.filters.strategies.AbstractFilterStrateg
 import com.mtnfog.phileas.model.services.AnonymizationService;
 
 import java.io.Serializable;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Pattern;
 
 public class DriversLicenseFilter extends RegexFilter implements Serializable {
@@ -77,6 +76,19 @@ public class DriversLicenseFilter extends RegexFilter implements Serializable {
         DRIVERS_LICENSES_REGEX.put("WISCONSIN", Pattern.compile("\\b[A-Z][0-9]{13}\\b"));
         DRIVERS_LICENSES_REGEX.put("WYOMING", Pattern.compile("\\b([0-9]{9})|([0-9]{6}-[0-9]{3})\\b"));
 
+        this.contextualTerms = new HashSet<>();
+
+        final List<FilterPattern> filterPatterns = new LinkedList<>();
+
+        for(final String state : DRIVERS_LICENSES_REGEX.keySet()) {
+
+            final FilterPattern filterPattern = new FilterPattern(DRIVERS_LICENSES_REGEX.get(state), 0.50);
+            filterPatterns.add(filterPattern);
+
+        }
+
+        this.analyzer = new Analyzer(contextualTerms, filterPatterns);
+
     }
 
     @Override
@@ -86,7 +98,7 @@ public class DriversLicenseFilter extends RegexFilter implements Serializable {
 
         for(final String state : DRIVERS_LICENSES_REGEX.keySet()) {
 
-            spans.addAll(findSpans(filterProfile, DRIVERS_LICENSES_REGEX.get(state), input, context, documentId));
+            spans.addAll(findSpans(filterProfile, analyzer, input, context, documentId));
 
         }
 

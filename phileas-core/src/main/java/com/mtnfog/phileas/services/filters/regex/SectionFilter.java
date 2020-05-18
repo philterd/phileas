@@ -3,6 +3,7 @@ package com.mtnfog.phileas.services.filters.regex;
 import com.mtnfog.phileas.model.enums.FilterType;
 import com.mtnfog.phileas.model.filter.rules.regex.RegexFilter;
 import com.mtnfog.phileas.model.objects.Analyzer;
+import com.mtnfog.phileas.model.objects.FilterPattern;
 import com.mtnfog.phileas.model.objects.Span;
 import com.mtnfog.phileas.model.profile.Crypto;
 import com.mtnfog.phileas.model.profile.FilterProfile;
@@ -12,6 +13,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.io.Serializable;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -22,8 +24,10 @@ public class SectionFilter extends RegexFilter implements Serializable {
         super(FilterType.SECTION, strategies, anonymizationService, ignored, crypto, windowSize);
 
         final Pattern pattern = Pattern.compile(startPattern + "(.*?)" + endPattern);
+        final FilterPattern sectionPattern1 = new FilterPattern(pattern, 0.90);
 
-        analyzer = new Analyzer(pattern);
+        this.contextualTerms = new HashSet<>();
+        this.analyzer = new Analyzer(contextualTerms, sectionPattern1);
 
     }
 

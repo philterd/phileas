@@ -3,6 +3,7 @@ package com.mtnfog.phileas.model.filter.rules;
 import com.mtnfog.phileas.model.enums.FilterType;
 import com.mtnfog.phileas.model.filter.Filter;
 import com.mtnfog.phileas.model.objects.Analyzer;
+import com.mtnfog.phileas.model.objects.FilterPattern;
 import com.mtnfog.phileas.model.objects.Span;
 import com.mtnfog.phileas.model.profile.Crypto;
 import com.mtnfog.phileas.model.profile.FilterProfile;
@@ -47,9 +48,9 @@ public abstract class RulesFilter extends Filter implements Serializable {
         // Is this filter enabled for this filter profile? If not just return empty list.
         if(filterProfile.getIdentifiers().hasFilter(filterType)) {
 
-            for(final Pattern pattern : analyzer.getPatterns()) {
+            for(final FilterPattern filterPattern : analyzer.getFilterPatterns()) {
 
-                final Matcher matcher = pattern.matcher(input);
+                final Matcher matcher = filterPattern.getPattern().matcher(input);
 
                 while (matcher.find()) {
 
@@ -66,7 +67,12 @@ public abstract class RulesFilter extends Filter implements Serializable {
 
                     final String[] window = getWindow(input, characterStart, characterEnd);
 
+                    // TODO: Adjust the confidence based on the initial confidence.
+
                     final Span span = Span.make(characterStart, characterEnd, getFilterType(), context, documentId, 1.0, token, replacement, isIgnored, window);
+
+                    // TODO: Add "format" to Span.make() so we don't have to make a separate call here.
+                    span.setPattern(filterPattern.getFormat());
 
                     spans.add(span);
 

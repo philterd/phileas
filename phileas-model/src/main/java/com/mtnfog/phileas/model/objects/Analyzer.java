@@ -1,28 +1,35 @@
 package com.mtnfog.phileas.model.objects;
 
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 public class Analyzer {
 
-    private List<Pattern> patterns;
+    private Set<String> contextualTerms;
+    private List<FilterPattern> filterPatterns;
 
-    public Analyzer(Pattern ... p) {
+    public Analyzer(Set<String> contextualTerms, FilterPattern ... p) {
 
-        for(final Pattern pattern : p) {
-            patterns.add(pattern);
+        this.contextualTerms = contextualTerms;
+        this.filterPatterns = new LinkedList<>();
+
+        for(final FilterPattern filterPattern : p) {
+            filterPatterns.add(filterPattern);
         }
 
     }
 
-    public Analyzer(List<Pattern> patterns) {
+    public Analyzer(Set<String> contextualTerms, List<FilterPattern> filterPatterns) {
 
-        this.patterns = patterns;
+        this.contextualTerms = contextualTerms;
+        this.filterPatterns = filterPatterns;
 
     }
 
-    public List<Pattern> getPatterns() {
-        return patterns;
+    public List<FilterPattern> getFilterPatterns() {
+        return filterPatterns;
     }
 
 }

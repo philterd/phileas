@@ -3,6 +3,7 @@ package com.mtnfog.phileas.services.filters.regex;
 import com.mtnfog.phileas.model.enums.FilterType;
 import com.mtnfog.phileas.model.filter.rules.regex.RegexFilter;
 import com.mtnfog.phileas.model.objects.Analyzer;
+import com.mtnfog.phileas.model.objects.FilterPattern;
 import com.mtnfog.phileas.model.objects.Span;
 import com.mtnfog.phileas.model.profile.Crypto;
 import com.mtnfog.phileas.model.profile.FilterProfile;
@@ -11,16 +12,10 @@ import com.mtnfog.phileas.model.services.AnonymizationService;
 import org.apache.commons.validator.routines.checkdigit.LuhnCheckDigit;
 
 import java.io.Serializable;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Pattern;
 
 public class CreditCardFilter extends RegexFilter implements Serializable {
-
-    // See http://regular-expressions.info/creditcard.html
-    private static final Pattern ID_REGEX = Pattern.compile("\\b(?:\\d[ -]*?){13,16}\\b");
 
     private boolean onlyValidCreditCardNumbers;
     private LuhnCheckDigit luhnCheckDigit;
@@ -31,7 +26,12 @@ public class CreditCardFilter extends RegexFilter implements Serializable {
         this.onlyValidCreditCardNumbers = onlyValidCreditCardNumbers;
         this.luhnCheckDigit = new LuhnCheckDigit();
 
-        analyzer = new Analyzer(ID_REGEX);
+        // See http://regular-expressions.info/creditcard.html
+        final Pattern CREDIT_CARD_REGEX = Pattern.compile("\\b(?:\\d[ -]*?){13,16}\\b", Pattern.CASE_INSENSITIVE);
+        final FilterPattern creditcard1 = new FilterPattern(CREDIT_CARD_REGEX, 0.90);
+
+        this.contextualTerms = new HashSet<>();
+        this.analyzer = new Analyzer(contextualTerms, creditcard1);
 
     }
 

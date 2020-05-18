@@ -3,6 +3,7 @@ package com.mtnfog.phileas.services.filters.regex;
 import com.mtnfog.phileas.model.enums.FilterType;
 import com.mtnfog.phileas.model.filter.rules.regex.RegexFilter;
 import com.mtnfog.phileas.model.objects.Analyzer;
+import com.mtnfog.phileas.model.objects.FilterPattern;
 import com.mtnfog.phileas.model.objects.Span;
 import com.mtnfog.phileas.model.profile.Crypto;
 import com.mtnfog.phileas.model.profile.FilterProfile;
@@ -13,18 +14,21 @@ import org.apache.commons.collections.Predicate;
 
 import java.io.Serializable;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
 
 public class VinFilter extends RegexFilter implements Serializable {
 
-    private static final Pattern VIN_REGEX = Pattern.compile("\\b[A-HJ-NPR-Z0-9]{17}\\b", Pattern.CASE_INSENSITIVE);
-
     public VinFilter(List<? extends AbstractFilterStrategy> strategies, AnonymizationService anonymizationService, Set<String> ignored, Crypto crypto, int windowSize) {
         super(FilterType.VIN, strategies, anonymizationService, ignored, crypto, windowSize);
 
-        analyzer = new Analyzer(VIN_REGEX);
+        final Pattern VIN_REGEX = Pattern.compile("\\b[A-HJ-NPR-Z0-9]{17}\\b", Pattern.CASE_INSENSITIVE);
+        final FilterPattern vin1 = new FilterPattern(VIN_REGEX, 0.90);
+
+        this.contextualTerms = new HashSet<>();
+        this.analyzer = new Analyzer(contextualTerms, vin1);
 
     }
 

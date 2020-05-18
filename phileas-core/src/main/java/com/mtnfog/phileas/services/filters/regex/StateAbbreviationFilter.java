@@ -2,6 +2,8 @@ package com.mtnfog.phileas.services.filters.regex;
 
 import com.mtnfog.phileas.model.enums.FilterType;
 import com.mtnfog.phileas.model.filter.rules.regex.RegexFilter;
+import com.mtnfog.phileas.model.objects.Analyzer;
+import com.mtnfog.phileas.model.objects.FilterPattern;
 import com.mtnfog.phileas.model.objects.Span;
 import com.mtnfog.phileas.model.profile.Crypto;
 import com.mtnfog.phileas.model.profile.FilterProfile;
@@ -9,10 +11,7 @@ import com.mtnfog.phileas.model.profile.filters.strategies.AbstractFilterStrateg
 import com.mtnfog.phileas.model.services.AnonymizationService;
 
 import java.io.Serializable;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -75,6 +74,18 @@ public class StateAbbreviationFilter extends RegexFilter implements Serializable
 
     public StateAbbreviationFilter(List<? extends AbstractFilterStrategy> strategies, AnonymizationService anonymizationService, Set<String> ignored, Crypto crypto, int windowSize) {
         super(FilterType.STATE_ABBREVIATION, strategies, anonymizationService, ignored, crypto, windowSize);
+
+        final List<FilterPattern> filterPatterns = new LinkedList<>();
+
+        for(final String state : STATES) {
+
+            final Pattern STATE_REGEX = Pattern.compile("(?i)\\b" + state + "\\b");
+            filterPatterns.add(new FilterPattern(STATE_REGEX, 0.25));
+
+        }
+
+        this.contextualTerms = new HashSet<>();
+        this.analyzer = new Analyzer(contextualTerms, filterPatterns);
 
     }
 

@@ -17,6 +17,7 @@ import java.util.Set;
 public abstract class RegexFilter extends RulesFilter implements Serializable {
 
     protected Analyzer analyzer;
+    protected Set<String> contextualTerms;
 
     public RegexFilter(FilterType filterType, List<? extends AbstractFilterStrategy> strategies, AnonymizationService anonymizationService, Set<String> ignored, Crypto crypto, int windowSize) {
 
