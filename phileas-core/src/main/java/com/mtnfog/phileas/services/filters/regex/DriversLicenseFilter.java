@@ -19,7 +19,7 @@ public class DriversLicenseFilter extends RegexFilter implements Serializable {
     private static final HashMap<String, Pattern> DRIVERS_LICENSES_REGEX = new HashMap<>();
 
     public DriversLicenseFilter(List<? extends AbstractFilterStrategy> strategies, AnonymizationService anonymizationService, Set<String> ignored, Crypto crypto, int windowSize) {
-        super(FilterType.DRIVERS_LICENSE, strategies, anonymizationService, ignored, crypto, windowSize);
+        super(FilterType.DRIVERS_LICENSE_NUMBER, strategies, anonymizationService, ignored, crypto, windowSize);
 
         // https://ntsi.com/drivers-license-format/
         // https://www.mvrdecoder.com/content/drvlicformats.aspx
@@ -82,8 +82,8 @@ public class DriversLicenseFilter extends RegexFilter implements Serializable {
 
         for(final String state : DRIVERS_LICENSES_REGEX.keySet()) {
 
-            final FilterPattern filterPattern = new FilterPattern(DRIVERS_LICENSES_REGEX.get(state), 0.50);
-            filterPatterns.add(filterPattern);
+            // TODO: How to include the state so it is part of the span?
+            filterPatterns.add(new FilterPattern(DRIVERS_LICENSES_REGEX.get(state), 0.50));
 
         }
 
@@ -94,15 +94,9 @@ public class DriversLicenseFilter extends RegexFilter implements Serializable {
     @Override
     public List<Span> filter(FilterProfile filterProfile, String context, String documentId, String input) throws Exception {
 
-        final List<Span> spans = new LinkedList<>();
+        final List<Span> spans = findSpans(filterProfile, analyzer, input, context, documentId);
 
-        for(final String state : DRIVERS_LICENSES_REGEX.keySet()) {
-
-            spans.addAll(findSpans(filterProfile, analyzer, input, context, documentId));
-
-        }
-
-        return spans;
+        return Span.dropOverlappingSpans(spans);
 
     }
 

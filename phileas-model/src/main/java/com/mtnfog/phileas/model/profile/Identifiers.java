@@ -146,6 +146,8 @@ public class Identifiers {
                 if(this.getCreditCard() != null) { return true; } break;
             case DATE:
                 if(this.getDate() != null) { return true; } break;
+            case DRIVERS_LICENSE_NUMBER:
+                if(this.getDriversLicense() != null) { return true; } break;
             case EMAIL_ADDRESS:
                 if(this.getEmailAddress() != null) { return true; } break;
             case FIRST_NAME:

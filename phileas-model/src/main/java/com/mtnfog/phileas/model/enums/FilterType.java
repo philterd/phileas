@@ -10,7 +10,7 @@ public enum FilterType {
     AGE("age", true),
     BITCOIN_ADDRESS("bitcoin-address", true),
     CREDIT_CARD("credit-card", true),
-    DRIVERS_LICENSE("drivers-license", true),
+    DRIVERS_LICENSE_NUMBER("drivers-license-number", true),
     LOCATION_CITY("city", false),
     LOCATION_STATE("state", false),
     LOCATION_COUNTY("county", false),

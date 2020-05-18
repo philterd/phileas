@@ -11,9 +11,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.io.IOException;
 import java.io.Serializable;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -209,6 +207,8 @@ public abstract class Filter implements Serializable {
             return filterProfile.getIdentifiers().getCustomDictionaries().get(index).getCustomDictionaryFilterStrategies();
         } else if(filterType == FilterType.DATE) {
             return filterProfile.getIdentifiers().getDate().getDateFilterStrategies();
+        } else if(filterType == FilterType.DRIVERS_LICENSE_NUMBER) {
+            return filterProfile.getIdentifiers().getDriversLicense().getDriversLicenseFilterStrategies();
         } else if(filterType == FilterType.EMAIL_ADDRESS) {
             return filterProfile.getIdentifiers().getEmailAddress().getEmailAddressFilterStrategies();
         } else if(filterType == FilterType.IBAN_CODE) {

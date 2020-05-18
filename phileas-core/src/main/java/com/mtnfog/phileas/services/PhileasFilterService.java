@@ -260,7 +260,7 @@ public class PhileasFilterService implements FilterService, Serializable {
             }
         }
 
-        if(filterProfile.getIdentifiers().hasFilter(FilterType.DRIVERS_LICENSE)) {
+        if(filterProfile.getIdentifiers().hasFilter(FilterType.DRIVERS_LICENSE_NUMBER)) {
             if(filterProfile.getIdentifiers().getDriversLicense().isEnabled()) {
                 enabledFilters.add(new DriversLicenseFilter(filterProfile.getIdentifiers().getDriversLicense().getDriversLicenseFilterStrategies(), new DriversLicenseAnonymizationService(anonymizationCacheService), filterProfile.getIdentifiers().getDriversLicense().getIgnored(), filterProfile.getCrypto(), windowSize));
             }
