@@ -6,6 +6,7 @@ import org.aeonbits.owner.Config;
  * Phileas configuration using Aeonbits OWNER.
  * Not all of the properties exposed through this file may be documented.
  */
+@Config.LoadPolicy(Config.LoadType.MERGE)
 @Config.Sources({
         "file:application.properties",
         "system:properties",
