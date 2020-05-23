@@ -99,6 +99,10 @@ public interface PhileasConfiguration extends Config {
     @Key("metrics.prefix")
     String metricsPrefix();
 
+    @DefaultValue("true")
+    @Key("metrics.console.enabled")
+    boolean metricsConsoleEnabled();
+
     @DefaultValue("false")
     @Key("metrics.jmx.enabled")
     boolean metricsJmxEnabled();

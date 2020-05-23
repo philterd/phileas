@@ -63,13 +63,15 @@ public class PhileasMetricsService implements MetricsService {
             countersPerFilterType.put(filterType, registry.counter(metricsPrefix + "." + filterType.name()));
         }
 
-        // Console reporter is always enabled
         consoleReporter = ConsoleReporter.forRegistry(registry)
                 .convertRatesTo(TimeUnit.SECONDS)
                 .convertDurationsTo(TimeUnit.MILLISECONDS)
                 .build();
 
-        consoleReporter.start(300, TimeUnit.SECONDS);
+        // PHL-121: Only start console reporter if it is enabled.
+        if(phileasConfiguration.metricsConsoleEnabled()) {
+            consoleReporter.start(300, TimeUnit.SECONDS);
+        }
 
         if(phileasConfiguration.metricsJmxEnabled()) {
 
