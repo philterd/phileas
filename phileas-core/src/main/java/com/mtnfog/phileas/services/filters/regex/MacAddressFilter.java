@@ -8,6 +8,7 @@ import com.mtnfog.phileas.model.objects.Span;
 import com.mtnfog.phileas.model.profile.Crypto;
 import com.mtnfog.phileas.model.profile.FilterProfile;
 import com.mtnfog.phileas.model.profile.filters.strategies.AbstractFilterStrategy;
+import com.mtnfog.phileas.model.services.AlertService;
 import com.mtnfog.phileas.model.services.AnonymizationService;
 
 import java.io.Serializable;
@@ -16,8 +17,8 @@ import java.util.regex.Pattern;
 
 public class MacAddressFilter extends RegexFilter implements Serializable {
 
-    public MacAddressFilter(List<? extends AbstractFilterStrategy> strategies, AnonymizationService anonymizationService, Set<String> ignored, Crypto crypto, int windowSize) {
-        super(FilterType.MAC_ADDRESS, strategies, anonymizationService, ignored, crypto, windowSize);
+    public MacAddressFilter(List<? extends AbstractFilterStrategy> strategies, AnonymizationService anonymizationService, AlertService alertService, Set<String> ignored, Crypto crypto, int windowSize) {
+        super(FilterType.MAC_ADDRESS, strategies, anonymizationService, alertService, ignored, crypto, windowSize);
 
         final Pattern MAC_ADDRESS_PATTERN = Pattern.compile("\\b([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})\\b");
         final FilterPattern macAddress1 = new FilterPattern(MAC_ADDRESS_PATTERN, 0.90);

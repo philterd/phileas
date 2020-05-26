@@ -8,6 +8,7 @@ import com.mtnfog.phileas.model.objects.Span;
 import com.mtnfog.phileas.model.profile.Crypto;
 import com.mtnfog.phileas.model.profile.FilterProfile;
 import com.mtnfog.phileas.model.profile.filters.strategies.AbstractFilterStrategy;
+import com.mtnfog.phileas.model.services.AlertService;
 import com.mtnfog.phileas.model.services.AnonymizationService;
 
 import java.io.IOException;
@@ -20,8 +21,8 @@ import java.util.regex.Pattern;
 
 public class PhoneNumberExtensionFilter extends RegexFilter implements Serializable {
 
-    public PhoneNumberExtensionFilter(List<? extends AbstractFilterStrategy> strategies, AnonymizationService anonymizationService, Set<String> ignored, Crypto crypto, int windowSize) {
-        super(FilterType.PHONE_NUMBER_EXTENSION, strategies, anonymizationService, ignored, crypto, windowSize);
+    public PhoneNumberExtensionFilter(List<? extends AbstractFilterStrategy> strategies, AnonymizationService anonymizationService, AlertService alertService, Set<String> ignored, Crypto crypto, int windowSize) {
+        super(FilterType.PHONE_NUMBER_EXTENSION, strategies, anonymizationService, alertService, ignored, crypto, windowSize);
 
         final Pattern PHONE_NUMBER_EXTENSION_REGEX = Pattern.compile("\\bx[0-9]+\\b");
         final FilterPattern phoneExtension1 = new FilterPattern(PHONE_NUMBER_EXTENSION_REGEX, 0.90);

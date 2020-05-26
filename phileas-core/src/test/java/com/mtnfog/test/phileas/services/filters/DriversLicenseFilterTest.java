@@ -4,19 +4,23 @@ import com.mtnfog.phileas.model.enums.FilterType;
 import com.mtnfog.phileas.model.filter.Filter;
 import com.mtnfog.phileas.model.objects.Span;
 import com.mtnfog.phileas.model.profile.Crypto;
+import com.mtnfog.phileas.model.services.AlertService;
 import com.mtnfog.phileas.services.anonymization.DriversLicenseAnonymizationService;
 import com.mtnfog.phileas.services.anonymization.cache.LocalAnonymizationCacheService;
 import com.mtnfog.phileas.services.filters.regex.DriversLicenseFilter;
 import org.junit.Assert;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 import java.util.Collections;
 import java.util.List;
 
 public class DriversLicenseFilterTest extends AbstractFilterTest {
 
+    private AlertService alertService = Mockito.mock(AlertService.class);
+
     private Filter getFilter() {
-        return new DriversLicenseFilter(null, new DriversLicenseAnonymizationService(new LocalAnonymizationCacheService()), Collections.emptySet(), new Crypto(), windowSize);
+        return new DriversLicenseFilter(null, new DriversLicenseAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), new Crypto(), windowSize);
     }
 
     @Test

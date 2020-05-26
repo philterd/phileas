@@ -8,6 +8,7 @@ import com.mtnfog.phileas.model.objects.Span;
 import com.mtnfog.phileas.model.profile.Crypto;
 import com.mtnfog.phileas.model.profile.FilterProfile;
 import com.mtnfog.phileas.model.profile.filters.strategies.rules.IdentifierFilterStrategy;
+import com.mtnfog.phileas.model.services.AlertService;
 import com.mtnfog.phileas.model.services.AnonymizationService;
 
 import java.io.IOException;
@@ -20,8 +21,8 @@ import java.util.regex.Pattern;
 
 public class IdentifierFilter extends RegexFilter implements Serializable {
 
-    public IdentifierFilter(String label, String regex, boolean caseSensitive, List<IdentifierFilterStrategy> strategies, AnonymizationService anonymizationService, Set<String> ignored, Crypto crypto, int windowSize) {
-        super(FilterType.IDENTIFIER, strategies, anonymizationService, ignored, crypto, windowSize);
+    public IdentifierFilter(String label, String regex, boolean caseSensitive, List<IdentifierFilterStrategy> strategies, AnonymizationService anonymizationService, AlertService alertService, Set<String> ignored, Crypto crypto, int windowSize) {
+        super(FilterType.IDENTIFIER, strategies, anonymizationService, alertService, ignored, crypto, windowSize);
         this.label = label;
 
         final Pattern pattern;

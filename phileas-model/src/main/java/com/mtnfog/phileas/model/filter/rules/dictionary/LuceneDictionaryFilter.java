@@ -7,6 +7,7 @@ import com.mtnfog.phileas.model.objects.Span;
 import com.mtnfog.phileas.model.profile.Crypto;
 import com.mtnfog.phileas.model.profile.FilterProfile;
 import com.mtnfog.phileas.model.profile.filters.strategies.AbstractFilterStrategy;
+import com.mtnfog.phileas.model.services.AlertService;
 import com.mtnfog.phileas.model.services.AnonymizationService;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
@@ -63,11 +64,12 @@ public class LuceneDictionaryFilter extends DictionaryFilter implements Serializ
                                   String indexDirectory,
                                   SensitivityLevel sensitivityLevel,
                                   AnonymizationService anonymizationService,
+                                  AlertService alertService,
                                   Set<String> ignored,
                                   Crypto crypto,
                                   int windowSize) throws IOException {
 
-        super(filterType, strategies, anonymizationService, ignored, crypto, windowSize);
+        super(filterType, strategies, anonymizationService, alertService, ignored, crypto, windowSize);
 
         LOGGER.info("Loading {} index from {}", filterType, indexDirectory);
 
@@ -91,6 +93,7 @@ public class LuceneDictionaryFilter extends DictionaryFilter implements Serializ
                                         List<? extends AbstractFilterStrategy> strategies,
                                         SensitivityLevel sensitivityLevel,
                                         AnonymizationService anonymizationService,
+                                        AlertService alertService,
                                         String type,
                                         List<String> terms,
                                         int filterProfileIndex,
@@ -98,7 +101,7 @@ public class LuceneDictionaryFilter extends DictionaryFilter implements Serializ
                                         Crypto crypto,
                                         int windowSize) throws IOException {
 
-        super(filterType, strategies, anonymizationService, ignored, crypto, windowSize);
+        super(filterType, strategies, anonymizationService, alertService, ignored, crypto, windowSize);
 
         LOGGER.info("Creating custom dictionary filter for custom type [{}]", type);
 

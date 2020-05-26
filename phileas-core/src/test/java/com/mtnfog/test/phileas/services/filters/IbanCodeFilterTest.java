@@ -5,6 +5,7 @@ import com.mtnfog.phileas.model.filter.Filter;
 import com.mtnfog.phileas.model.objects.Span;
 import com.mtnfog.phileas.model.profile.Crypto;
 import com.mtnfog.phileas.model.profile.filters.strategies.rules.AgeFilterStrategy;
+import com.mtnfog.phileas.model.services.AlertService;
 import com.mtnfog.phileas.services.anonymization.AgeAnonymizationService;
 import com.mtnfog.phileas.services.anonymization.IbanCodeAnonymizationService;
 import com.mtnfog.phileas.services.anonymization.cache.LocalAnonymizationCacheService;
@@ -12,6 +13,7 @@ import com.mtnfog.phileas.services.filters.regex.AgeFilter;
 import com.mtnfog.phileas.services.filters.regex.IbanCodeFilter;
 import org.junit.Assert;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -19,8 +21,10 @@ import java.util.List;
 
 public class IbanCodeFilterTest extends AbstractFilterTest {
 
+    private AlertService alertService = Mockito.mock(AlertService.class);
+
     private Filter getFilter(boolean validate) {
-        return new IbanCodeFilter(null, new IbanCodeAnonymizationService(new LocalAnonymizationCacheService()), Collections.emptySet(), new Crypto(), validate, windowSize);
+        return new IbanCodeFilter(null, new IbanCodeAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), new Crypto(), validate, windowSize);
     }
 
     @Test

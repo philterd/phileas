@@ -7,6 +7,7 @@ import com.mtnfog.phileas.model.profile.Crypto;
 import com.mtnfog.phileas.model.profile.FilterProfile;
 import com.mtnfog.phileas.model.profile.filters.strategies.AbstractFilterStrategy;
 import com.mtnfog.phileas.model.profile.filters.strategies.ai.NerFilterStrategy;
+import com.mtnfog.phileas.model.services.AlertService;
 import com.mtnfog.phileas.model.services.AnonymizationService;
 import com.mtnfog.phileas.model.services.MetricsService;
 import okhttp3.ConnectionPool;
@@ -46,12 +47,13 @@ public class PyTorchFilter extends NerFilter implements Serializable {
                          Map<String, DescriptiveStatistics> stats,
                          MetricsService metricsService,
                          AnonymizationService anonymizationService,
+                         AlertService alertService,
                          Set<String> ignored,
                          boolean removePunctuation,
                          Crypto crypto,
                          int windowSize) {
 
-        super(filterType, strategies, stats, metricsService, anonymizationService, ignored, removePunctuation, crypto, windowSize);
+        super(filterType, strategies, stats, metricsService, anonymizationService, alertService, ignored, removePunctuation, crypto, windowSize);
 
         this.tag = tag;
 

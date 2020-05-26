@@ -10,6 +10,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
 import java.util.Map;
+import java.util.UUID;
 
 public abstract class AbstractFilterStrategy {
 
@@ -32,6 +33,10 @@ public abstract class AbstractFilterStrategy {
     public static final String TYPE = "type";
     public static final String CONFIDENCE = "confidence";
 
+    @SerializedName("id")
+    @Expose
+    protected String id = UUID.randomUUID().toString();
+
     @SerializedName("strategy")
     @Expose
     protected String strategy = REDACT;
@@ -51,6 +56,10 @@ public abstract class AbstractFilterStrategy {
     @SerializedName("condition")
     @Expose
     protected String condition = "";
+
+    @SerializedName("alert")
+    @Expose
+    protected boolean alert = false;
 
     /**
      * Gets the replacement for a token.
@@ -165,6 +174,14 @@ public abstract class AbstractFilterStrategy {
 
     }
 
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
     public String getStrategy() {
         return strategy;
     }
@@ -203,6 +220,14 @@ public abstract class AbstractFilterStrategy {
 
     public String getCondition() {
         return condition;
+    }
+
+    public boolean isAlert() {
+        return alert;
+    }
+
+    public void setAlert(boolean alert) {
+        this.alert = alert;
     }
 
 }

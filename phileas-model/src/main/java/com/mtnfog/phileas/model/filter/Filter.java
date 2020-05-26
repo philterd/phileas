@@ -1,11 +1,13 @@
 package com.mtnfog.phileas.model.filter;
 
 import com.mtnfog.phileas.model.enums.FilterType;
+import com.mtnfog.phileas.model.objects.Alert;
 import com.mtnfog.phileas.model.objects.Span;
 import com.mtnfog.phileas.model.profile.Crypto;
 import com.mtnfog.phileas.model.profile.FilterProfile;
 import com.mtnfog.phileas.model.profile.filters.Identifier;
 import com.mtnfog.phileas.model.profile.filters.strategies.AbstractFilterStrategy;
+import com.mtnfog.phileas.model.services.AlertService;
 import com.mtnfog.phileas.model.services.AnonymizationService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -24,6 +26,8 @@ public abstract class Filter implements Serializable {
      * The {@link FilterType type} of identifiers handled by this filter.
      */
     protected final FilterType filterType;
+
+    protected final AlertService alertService;
 
     /**
      * The {@link AnonymizationService} to use when replacing values if enabled.
@@ -72,11 +76,12 @@ public abstract class Filter implements Serializable {
      * @param crypto A {@link Crypto} for token encryption.
      */
     public Filter(FilterType filterType, List<? extends AbstractFilterStrategy> strategies, AnonymizationService anonymizationService,
-                  Set<String> ignored, Crypto crypto, int windowSize) {
+                  AlertService alertService, Set<String> ignored, Crypto crypto, int windowSize) {
 
         this.filterType = filterType;
         this.strategies = strategies;
         this.anonymizationService = anonymizationService;
+        this.alertService = alertService;
         this.ignored = ignored;
         this.crypto = crypto;
         this.windowSize = windowSize;
@@ -156,6 +161,33 @@ public abstract class Filter implements Serializable {
             for (AbstractFilterStrategy strategy : strategies) {
 
                 final String condition = strategy.getCondition();
+
+                // Is there a condition for this strategy?
+                final boolean hasCondition = StringUtils.isEmpty(condition);
+
+                if(hasCondition) {
+
+                    // If there is a condition, does it evaluate?
+                    final boolean evaluates = strategy.evaluateCondition(context, documentId, token, condition, attributes);
+
+                    if(evaluates) {
+
+                        if(strategy.isAlert()) {
+
+                            LOGGER.info("Generating alert for strategy ID {}", strategy.getId());
+                            alertService.generateAlert(strategy.getId(), documentId, context, filterType);
+
+                        }
+
+                        return strategy.getReplacement(label, context, documentId, token, crypto, anonymizationService);
+
+                    }
+
+                } else {
+
+                    return strategy.getReplacement(label, context, documentId, token, crypto, anonymizationService);
+
+                }
 
                 // If there is no condition or if the condition evaluates then get the replacement.
                 if (StringUtils.isEmpty(condition) || (strategy.evaluateCondition(context, documentId, token, condition, attributes))) {

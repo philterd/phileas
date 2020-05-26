@@ -1,6 +1,7 @@
 package com.mtnfog.test.phileas.services.ai;
 
 import com.google.gson.Gson;
+import com.mtnfog.phileas.model.services.AlertService;
 import com.mtnfog.phileas.service.ai.PhileasSpan;
 import com.mtnfog.phileas.service.ai.PyTorchFilter;
 import com.mtnfog.phileas.model.enums.FilterType;
@@ -79,11 +80,12 @@ public class PyTorchFilterTest {
         final Map<String, DescriptiveStatistics> stats = new HashMap<>();
         final MetricsService metricsService = Mockito.mock(MetricsService.class);
         final AnonymizationService anonymizationService = null;
+        final AlertService alertService = Mockito.mock(AlertService.class);
         final String baseUrl = this.mockServer.url("/").toString();
 
         this.mockServer.enqueue(new MockResponse().setResponseCode(200).setBody("[{\"text\":\"test\",\"tag\":\"PER\",\"score\":0.5,\"start\":1,\"end\":2}]"));
 
-        final PyTorchFilter t = new PyTorchFilter(baseUrl, FilterType.NER_ENTITY, getStrategies(),"PER", stats, metricsService, anonymizationService, Collections.emptySet(), false, new Crypto(), windowSize);
+        final PyTorchFilter t = new PyTorchFilter(baseUrl, FilterType.NER_ENTITY, getStrategies(),"PER", stats, metricsService, anonymizationService, alertService, Collections.emptySet(), false, new Crypto(), windowSize);
 
         final List<Span> spans = t.filter(getFilterProfile(), "context", "doc", "John Smith lives in New York");
 
@@ -101,6 +103,7 @@ public class PyTorchFilterTest {
         final Map<String, DescriptiveStatistics> stats = new HashMap<>();
         final MetricsService metricsService = Mockito.mock(MetricsService.class);
         final AnonymizationService anonymizationService = null;
+        final AlertService alertService = Mockito.mock(AlertService.class);
         final String baseUrl = this.mockServer.url("/").toString();
 
         LOGGER.info("Mock REST server baseUrl = " + baseUrl);
@@ -108,7 +111,7 @@ public class PyTorchFilterTest {
         this.mockServer.enqueue(new MockResponse().setResponseCode(200).setBody("[{\"text\":\"test\",\"tag\":\"LOC\",\"score\":0.5,\"start\":1,\"end\":2}]"));
 
         final PyTorchFilter t = new PyTorchFilter(baseUrl, FilterType.NER_ENTITY, getStrategies(), "LOC",
-                stats, metricsService, anonymizationService, Collections.emptySet(), false, new Crypto(), windowSize);
+                stats, metricsService, anonymizationService, alertService, Collections.emptySet(), false, new Crypto(), windowSize);
 
         final List<Span> spans = t.filter(getFilterProfile(), "context", "doc", "John Smith lives in New York");
 
