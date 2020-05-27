@@ -79,20 +79,28 @@ public class RedisAlertServiceTest {
     }
 
     @Before
-    public void before() {
+    public void before() throws IOException {
 
         if(!isExternalRedis) {
             redisServer = RedisServer.builder().port(31000).build();
             redisServer.start();
+        } else {
+            // Clear alerts from the cache.
+            final AlertService alertService = new RedisAlertService(getConfiguration());
+            alertService.clear();
         }
 
     }
 
     @After
-    public void after() {
+    public void after() throws IOException {
 
         if(!isExternalRedis) {
             redisServer.stop();
+        } else {
+            // Clear alerts from the cache.
+            final AlertService alertService = new RedisAlertService(getConfiguration());
+            alertService.clear();
         }
 
     }
