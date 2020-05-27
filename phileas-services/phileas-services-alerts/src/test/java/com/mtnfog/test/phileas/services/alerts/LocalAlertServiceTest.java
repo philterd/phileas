@@ -35,7 +35,7 @@ public class LocalAlertServiceTest {
 
         Assert.assertEquals(1, alerts.size());
 
-        alertService.remove(alerts.get(0).getId());
+        alertService.delete(alerts.get(0).getId());
 
         alerts = alertService.getAlerts();
 

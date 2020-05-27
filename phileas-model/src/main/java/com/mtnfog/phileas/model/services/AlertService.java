@@ -25,10 +25,10 @@ public interface AlertService {
     List<Alert> getAlerts();
 
     /**
-     * Remove an alert from the list.
+     * Delete an alert.
      * @param alertId The ID of the alert.
      */
-    void remove(String alertId);
+    void delete(String alertId);
 
     /**
      * Remove all alerts.

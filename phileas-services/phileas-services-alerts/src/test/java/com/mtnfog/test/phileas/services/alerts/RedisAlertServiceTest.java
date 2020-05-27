@@ -133,7 +133,7 @@ public class RedisAlertServiceTest {
 
         LOGGER.info("Removing alert ID {}", alertId);
 
-        alertService.remove(alertId);
+        alertService.delete(alertId);
 
         alerts = alertService.getAlerts();
 

@@ -39,7 +39,7 @@ public class LocalAlertService implements AlertService {
     }
 
     @Override
-    public void remove(String alertId) {
+    public void delete(String alertId) {
 
         alerts.removeIf(obj -> obj.getId() == alertId);
 

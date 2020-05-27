@@ -41,7 +41,7 @@ public class RedisAlertService extends AbstractRedisCacheService implements Aler
     }
 
     @Override
-    public void remove(String alertId) {
+    public void delete(String alertId) {
 
         // TODO: Can this be improved so we don't have to enumerate over
         // all of the alerts?
