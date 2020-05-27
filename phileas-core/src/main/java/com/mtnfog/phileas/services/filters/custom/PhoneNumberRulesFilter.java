@@ -41,7 +41,7 @@ public class PhoneNumberRulesFilter extends RulesFilter implements Serializable 
             for (PhoneNumberMatch match : matches) {
 
                 final String text = match.rawString();
-                final String replacement = getReplacement(label, context, documentId, text, Collections.emptyMap());
+                final String replacement = getReplacement(filterProfile.getName(), label, context, documentId, text, Collections.emptyMap());
                 final boolean isIgnored = ignored.contains(text);
 
                 final String[] window = getWindow(input, match.start(), match.end());

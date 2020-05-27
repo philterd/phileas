@@ -10,6 +10,7 @@ import java.util.UUID;
 public class Alert implements Serializable {
 
     private String id;
+    private String filterProfile;
     private String strategyId;
     private String context;
     private String documentId;
@@ -21,9 +22,10 @@ public class Alert implements Serializable {
 
     }
 
-    public Alert(String strategyId, String context, String documentId, String filterType) {
+    public Alert(String filterProfile, String strategyId, String context, String documentId, String filterType) {
 
         this.id = UUID.randomUUID().toString();
+        this.filterProfile = filterProfile;
         this.strategyId = strategyId;
         this.context = context;
         this.documentId = documentId;
@@ -101,4 +103,13 @@ public class Alert implements Serializable {
     public void setViewed(boolean viewed) {
         this.viewed = viewed;
     }
+
+    public String getFilterProfile() {
+        return filterProfile;
+    }
+
+    public void setFilterProfile(String filterProfile) {
+        this.filterProfile = filterProfile;
+    }
+
 }

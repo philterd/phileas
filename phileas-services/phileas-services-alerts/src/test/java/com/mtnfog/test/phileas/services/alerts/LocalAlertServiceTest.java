@@ -16,7 +16,7 @@ public class LocalAlertServiceTest {
 
         final AlertService alertService = new LocalAlertService();
 
-        alertService.generateAlert("id", "context", "docid", FilterType.NER_ENTITY);
+        alertService.generateAlert("fp", "id", "context", "docid", FilterType.NER_ENTITY);
 
         final List<Alert> alerts = alertService.getAlerts();
 
@@ -29,7 +29,7 @@ public class LocalAlertServiceTest {
 
         final AlertService alertService = new LocalAlertService();
 
-        alertService.generateAlert("id", "context", "docid", FilterType.NER_ENTITY);
+        alertService.generateAlert("fp", "id", "context", "docid", FilterType.NER_ENTITY);
 
         List<Alert> alerts = alertService.getAlerts();
 
@@ -48,7 +48,7 @@ public class LocalAlertServiceTest {
 
         final AlertService alertService = new LocalAlertService();
 
-        alertService.generateAlert("id", "context", "docid", FilterType.NER_ENTITY);
+        alertService.generateAlert("fp", "id", "context", "docid", FilterType.NER_ENTITY);
 
         List<Alert> alerts = alertService.getAlerts();
 

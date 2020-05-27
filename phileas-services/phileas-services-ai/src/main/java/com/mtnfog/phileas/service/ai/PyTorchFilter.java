@@ -103,7 +103,7 @@ public class PyTorchFilter extends NerFilter implements Serializable {
                     // Only interested in spans matching the tag we are looking for, e.g. PER, LOC.
                     if (StringUtils.equalsIgnoreCase(phileasSpan.getTag(), tag)) {
 
-                        final Span span = createSpan(input, context, documentId, phileasSpan.getText(),
+                        final Span span = createSpan(filterProfile.getName(), input, context, documentId, phileasSpan.getText(),
                                 phileasSpan.getTag(), phileasSpan.getStart(), phileasSpan.getEnd(), phileasSpan.getScore());
 
                         // Span will be null if no span was created due to it being excluded.
@@ -135,14 +135,14 @@ public class PyTorchFilter extends NerFilter implements Serializable {
 
     }
 
-    private Span createSpan(String input, String context, String documentId, String text,
+    private Span createSpan(String filterProfile, String input, String context, String documentId, String text,
                             String type, int start, int end, double confidence) throws Exception {
 
         final Map<String, Object> attributes = new HashMap<>();
         attributes.put(NerFilterStrategy.CONFIDENCE, confidence);
         attributes.put(NerFilterStrategy.TYPE, type);
 
-        final String replacement = getReplacement(label, context, documentId, text, attributes);
+        final String replacement = getReplacement(filterProfile, label, context, documentId, text, attributes);
 
         if(StringUtils.equals(replacement, text)) {
 

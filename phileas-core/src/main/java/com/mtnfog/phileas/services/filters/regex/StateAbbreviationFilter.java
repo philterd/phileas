@@ -104,7 +104,7 @@ public class StateAbbreviationFilter extends RegexFilter implements Serializable
 
                 final String[] window = getWindow(input, m.start(), m.end());
                 final String token = m.group();
-                final String replacement = getReplacement(label, context, documentId, token, Collections.emptyMap());
+                final String replacement = getReplacement(filterProfile.getName(), label, context, documentId, token, Collections.emptyMap());
                 final boolean isIgnored = ignored.contains(token);
                 final Span span = Span.make(m.start(), m.end(), FilterType.STATE_ABBREVIATION, context, documentId, 1.0, token, replacement, isIgnored, window);
 

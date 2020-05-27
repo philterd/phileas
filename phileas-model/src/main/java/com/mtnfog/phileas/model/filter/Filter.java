@@ -1,7 +1,6 @@
 package com.mtnfog.phileas.model.filter;
 
 import com.mtnfog.phileas.model.enums.FilterType;
-import com.mtnfog.phileas.model.objects.Alert;
 import com.mtnfog.phileas.model.objects.Span;
 import com.mtnfog.phileas.model.profile.Crypto;
 import com.mtnfog.phileas.model.profile.FilterProfile;
@@ -147,13 +146,14 @@ public abstract class Filter implements Serializable {
 
     /**
      * Gets the string to be used as a replacement.
+     * @param filterProfile The name of the filter profile.
      * @param label The type of item.
      * @param context The context.
      * @param documentId The document ID.
      * @param token The token to replace.
      * @return The replacement string.
      */
-    public String getReplacement(String label, String context, String documentId, String token, Map<String, Object> attributes) throws Exception {
+    public String getReplacement(String filterProfile, String label, String context, String documentId, String token, Map<String, Object> attributes) throws Exception {
 
         if(strategies != null) {
 
@@ -175,7 +175,7 @@ public abstract class Filter implements Serializable {
                         if(strategy.isAlert()) {
 
                             LOGGER.info("Generating alert for strategy ID {}", strategy.getId());
-                            alertService.generateAlert(strategy.getId(), documentId, context, filterType);
+                            alertService.generateAlert(filterProfile, strategy.getId(), documentId, context, filterType);
 
                         }
 
