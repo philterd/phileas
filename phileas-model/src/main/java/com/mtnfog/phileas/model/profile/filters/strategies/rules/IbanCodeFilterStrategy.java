@@ -39,10 +39,10 @@ public class IbanCodeFilterStrategy extends AbstractFilterStrategy {
                 final String conditionContext = parsedCondition.getValue();
 
                 switch (parsedCondition.getOperator()) {
-                    case "==":
+                    case EQUALS:
                         conditionsSatisfied = (StringUtils.equalsIgnoreCase("\"" + context + "\"", conditionContext));
                         break;
-                    case "!=":
+                    case NOT_EQUALS:
                         conditionsSatisfied = !(StringUtils.equalsIgnoreCase("\"" + context + "\"", conditionContext));
                         break;
 

@@ -39,10 +39,10 @@ public class HospitalAbbreviationFilterStrategy extends AbstractFilterStrategy {
                 final String conditionContext = parsedCondition.getValue();
 
                 switch (parsedCondition.getOperator()) {
-                    case "==":
+                    case EQUALS:
                         conditionsSatisfied = (StringUtils.equalsIgnoreCase("\"" + context + "\"", conditionContext));
                         break;
-                    case "!=":
+                    case NOT_EQUALS:
                         conditionsSatisfied = !(StringUtils.equalsIgnoreCase("\"" + context + "\"", conditionContext));
                         break;
 
@@ -54,22 +54,22 @@ public class HospitalAbbreviationFilterStrategy extends AbstractFilterStrategy {
                 final double threshold = Double.valueOf(parsedCondition.getValue());
 
                 switch (parsedCondition.getOperator()) {
-                    case ">":
+                    case GREATER_THAN:
                         conditionsSatisfied = (confidence > threshold);
                         break;
-                    case "<":
+                    case LESS_THAN:
                         conditionsSatisfied = (confidence < threshold);
                         break;
-                    case ">=":
+                    case GREATER_THAN_EQUALS:
                         conditionsSatisfied = (confidence >= threshold);
                         break;
-                    case "<=":
+                    case LESS_THAN_EQUALS:
                         conditionsSatisfied = (confidence <= threshold);
                         break;
-                    case "==":
+                    case EQUALS:
                         conditionsSatisfied = (confidence == threshold);
                         break;
-                    case "!=":
+                    case NOT_EQUALS:
                         conditionsSatisfied = (confidence != threshold);
                         break;
 
