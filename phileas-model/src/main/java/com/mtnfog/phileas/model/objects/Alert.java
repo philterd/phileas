@@ -5,10 +5,14 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import java.io.Serializable;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.UUID;
 
 public class Alert implements Serializable {
+
+    private static final DateFormat utcDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 
     private String id;
     private String filterProfile;
@@ -16,7 +20,7 @@ public class Alert implements Serializable {
     private String context;
     private String documentId;
     private String filterType;
-    private Date date;
+    private String date;
 
     public Alert() {
 
@@ -30,7 +34,7 @@ public class Alert implements Serializable {
         this.context = context;
         this.documentId = documentId;
         this.filterType = filterType;
-        this.date = new Date();
+        this.date = utcDateFormat.format(new Date());
 
     }
 
@@ -60,11 +64,11 @@ public class Alert implements Serializable {
                 toHashCode();
     }
 
-    public Date getDate() {
+    public String getDate() {
         return date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(String date) {
         this.date = date;
     }
 
