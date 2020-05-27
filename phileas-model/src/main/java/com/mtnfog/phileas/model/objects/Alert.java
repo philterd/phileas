@@ -16,7 +16,6 @@ public class Alert implements Serializable {
     private String context;
     private String documentId;
     private String filterType;
-    private boolean viewed;
     private Date date;
 
     public Alert() {
@@ -31,7 +30,6 @@ public class Alert implements Serializable {
         this.context = context;
         this.documentId = documentId;
         this.filterType = filterType;
-        this.viewed = false;
         this.date = new Date();
 
     }
@@ -58,7 +56,6 @@ public class Alert implements Serializable {
                 append(context).
                 append(documentId).
                 append(filterType).
-                append(viewed).
                 append(date).
                 toHashCode();
     }
@@ -109,14 +106,6 @@ public class Alert implements Serializable {
 
     public void setId(String id) {
         this.id = id;
-    }
-
-    public boolean isViewed() {
-        return viewed;
-    }
-
-    public void setViewed(boolean viewed) {
-        this.viewed = viewed;
     }
 
     public String getFilterProfile() {
