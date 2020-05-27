@@ -42,6 +42,7 @@ public class LocalAlertService implements AlertService {
     @Override
     public void delete(String alertId) {
 
+        LOGGER.info("Deleting alert {}", alertId);
         alerts.removeIf(alert -> StringUtils.equalsIgnoreCase(alert.getId(), alertId));
 
     }
