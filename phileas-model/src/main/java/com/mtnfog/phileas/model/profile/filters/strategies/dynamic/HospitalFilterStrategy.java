@@ -4,15 +4,14 @@ import com.mtnfog.phileas.model.conditions.ParsedCondition;
 import com.mtnfog.phileas.model.conditions.ParserListener;
 import com.mtnfog.phileas.model.enums.FilterType;
 import com.mtnfog.phileas.model.profile.Crypto;
-import com.mtnfog.phileas.model.services.AnonymizationService;
 import com.mtnfog.phileas.model.profile.filters.strategies.AbstractFilterStrategy;
+import com.mtnfog.phileas.model.services.AnonymizationService;
 import com.mtnfog.phileas.model.utils.Encryption;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 

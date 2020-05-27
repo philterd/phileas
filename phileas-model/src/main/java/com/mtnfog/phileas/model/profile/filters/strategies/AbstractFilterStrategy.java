@@ -43,7 +43,7 @@ public abstract class AbstractFilterStrategy {
 
     @SerializedName("redactionFormat")
     @Expose
-    protected String redactionFormat = "{{{REDACTED-%t}}}";
+    protected String redactionFormat = DEFAULT_REDACTION;
 
     @SerializedName("replacementScope")
     @Expose
