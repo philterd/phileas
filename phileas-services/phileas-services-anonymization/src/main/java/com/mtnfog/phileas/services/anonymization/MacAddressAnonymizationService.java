@@ -2,16 +2,16 @@ package com.mtnfog.phileas.services.anonymization;
 
 import com.mtnfog.phileas.model.services.AnonymizationCacheService;
 
-import java.util.Random;
+import java.security.SecureRandom;
 
 public class MacAddressAnonymizationService extends AbstractAnonymizationService {
 
-    private Random random;
+    private SecureRandom secureRandom;
 
     public MacAddressAnonymizationService(AnonymizationCacheService anonymizationCacheService) {
         super(anonymizationCacheService);
 
-        this.random = new Random();
+        this.secureRandom = new SecureRandom();
 
     }
 
@@ -19,7 +19,7 @@ public class MacAddressAnonymizationService extends AbstractAnonymizationService
     public String anonymize(String token) {
 
         byte[] macAddr = new byte[6];
-        random.nextBytes(macAddr);
+        secureRandom.nextBytes(macAddr);
 
         final StringBuilder sb = new StringBuilder(18);
 
