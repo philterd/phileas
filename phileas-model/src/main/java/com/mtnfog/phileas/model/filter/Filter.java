@@ -163,7 +163,7 @@ public abstract class Filter {
                 final String condition = strategy.getCondition();
 
                 // Is there a condition for this strategy?
-                final boolean hasCondition = StringUtils.isEmpty(condition);
+                final boolean hasCondition = StringUtils.isNotEmpty(condition);
 
                 if(hasCondition) {
 

@@ -28,6 +28,8 @@ public class EmailAddressFilterStrategy extends AbstractFilterStrategy {
 
         final List<ParsedCondition> parsedConditions = ParserListener.getTerminals(condition);
 
+        LOGGER.debug("Filter {} has {} conditions to parse.", this.getClass().getName(), parsedConditions.size());
+
         for(ParsedCondition parsedCondition : parsedConditions) {
 
             if(StringUtils.equalsIgnoreCase(TOKEN, parsedCondition.getField())) {

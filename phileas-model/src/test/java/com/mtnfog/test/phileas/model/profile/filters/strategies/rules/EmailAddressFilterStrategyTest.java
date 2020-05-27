@@ -199,4 +199,15 @@ public class EmailAddressFilterStrategyTest {
 
     }
 
+    @Test
+    public void evaluateCondition8() {
+
+        final EmailAddressFilterStrategy strategy = new EmailAddressFilterStrategy();
+
+        final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentId", "test@test.com", "token == \"test@test.com\"", Collections.emptyMap());
+
+        Assert.assertTrue(conditionSatisfied);
+
+    }
+
 }

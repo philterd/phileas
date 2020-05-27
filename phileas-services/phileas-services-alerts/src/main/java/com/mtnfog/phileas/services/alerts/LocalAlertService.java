@@ -3,6 +3,7 @@ package com.mtnfog.phileas.services.alerts;
 import com.mtnfog.phileas.model.enums.FilterType;
 import com.mtnfog.phileas.model.objects.Alert;
 import com.mtnfog.phileas.model.services.AlertService;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -41,7 +42,7 @@ public class LocalAlertService implements AlertService {
     @Override
     public void delete(String alertId) {
 
-        alerts.removeIf(obj -> obj.getId() == alertId);
+        alerts.removeIf(alert -> StringUtils.equalsIgnoreCase(alert.getId(), alertId));
 
     }
 
