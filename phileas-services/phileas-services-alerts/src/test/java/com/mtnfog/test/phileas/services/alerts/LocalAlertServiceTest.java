@@ -25,21 +25,23 @@ public class LocalAlertServiceTest {
     }
 
     @Test
-    public void remove1() {
+    public void delete1() {
 
         final AlertService alertService = new LocalAlertService();
 
         alertService.generateAlert("fp", "id", "context", "docid", FilterType.NER_ENTITY);
+        alertService.generateAlert("fp", "id", "context", "docid", FilterType.NER_ENTITY);
+        alertService.generateAlert("fp", "id", "context", "docid", FilterType.NER_ENTITY);
 
         List<Alert> alerts = alertService.getAlerts();
 
-        Assert.assertEquals(1, alerts.size());
+        Assert.assertEquals(3, alerts.size());
 
         alertService.delete(alerts.get(0).getId());
 
         alerts = alertService.getAlerts();
 
-        Assert.assertEquals(0, alerts.size());
+        Assert.assertEquals(1, alerts.size());
 
     }
 
