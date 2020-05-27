@@ -43,6 +43,8 @@ public class RedisAlertService extends AbstractRedisCacheService implements Aler
     @Override
     public void delete(String alertId) {
 
+        LOGGER.info("Deleting alert {}", alertId);
+
         // TODO: Can this be improved so we don't have to enumerate over
         // all of the alerts?
         final RList<Alert> alerts = redisson.getList(CACHE_LIST_NAME);
