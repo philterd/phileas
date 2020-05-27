@@ -41,7 +41,7 @@ public class LocalAlertServiceTest {
 
         alerts = alertService.getAlerts();
 
-        Assert.assertEquals(1, alerts.size());
+        Assert.assertEquals(2, alerts.size());
 
     }
 
