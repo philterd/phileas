@@ -1,9 +1,8 @@
 package com.mtnfog.phileas.services;
 
 import com.google.gson.Gson;
-import com.mtnfog.phileas.processors.structured.fhir.FhirDocumentProcessor;
-import com.mtnfog.phileas.metrics.PhileasMetricsService;
 import com.mtnfog.phileas.configuration.PhileasConfiguration;
+import com.mtnfog.phileas.metrics.PhileasMetricsService;
 import com.mtnfog.phileas.model.enums.FilterType;
 import com.mtnfog.phileas.model.enums.MimeType;
 import com.mtnfog.phileas.model.enums.SensitivityLevel;
@@ -17,6 +16,7 @@ import com.mtnfog.phileas.model.profile.filters.Identifier;
 import com.mtnfog.phileas.model.profile.filters.Section;
 import com.mtnfog.phileas.model.responses.FilterResponse;
 import com.mtnfog.phileas.model.services.*;
+import com.mtnfog.phileas.processors.structured.fhir.FhirDocumentProcessor;
 import com.mtnfog.phileas.processors.unstructured.UnstructuredDocumentProcessor;
 import com.mtnfog.phileas.service.ai.PyTorchFilter;
 import com.mtnfog.phileas.services.alerts.AlertServiceFactory;
@@ -40,7 +40,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
-import java.io.Serializable;
 import java.util.*;
 
 public class PhileasFilterService implements FilterService {

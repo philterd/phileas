@@ -21,67 +21,67 @@ import java.util.regex.Pattern;
 
 public class StateAbbreviationFilter extends RegexFilter implements Serializable {
 
-    private static final List<String> STATES = new LinkedList<>() {{
-
-        add("AL");
-        add("AK");
-        add("AZ");
-        add("AR");
-        add("CA");
-        add("CO");
-        add("CT");
-        add("DE");
-        add("FL");
-        add("GA");
-        add("HI");
-        add("ID");
-        add("IL");
-        add("IN");
-        add("IA");
-        add("KS");
-        add("KY");
-        add("LA");
-        add("ME");
-        add("MD");
-        add("MA");
-        add("MI");
-        add("MN");
-        add("MS");
-        add("MO");
-        add("MT");
-        add("NE");
-        add("NV");
-        add("NH");
-        add("NJ");
-        add("NM");
-        add("NY");
-        add("NC");
-        add("ND");
-        add("OH");
-        add("OK");
-        add("OR");
-        add("PA");
-        add("RI");
-        add("SC");
-        add("SD");
-        add("TN");
-        add("TX");
-        add("UT");
-        add("VT");
-        add("VA");
-        add("WA");
-        add("WV");
-        add("WI");
-        add("WY");
-
-    }};
-
+    private final List<String> states;
+    
     public StateAbbreviationFilter(List<? extends AbstractFilterStrategy> strategies, AnonymizationService anonymizationService, AlertService alertService, Set<String> ignored, Crypto crypto, int windowSize) {
         super(FilterType.STATE_ABBREVIATION, strategies, anonymizationService, alertService, ignored, crypto, windowSize);
 
+        this.states = new LinkedList<>();
+
+        states.add("AL");
+        states.add("AK");
+        states.add("AZ");
+        states.add("AR");
+        states.add("CA");
+        states.add("CO");
+        states.add("CT");
+        states.add("DE");
+        states.add("FL");
+        states.add("GA");
+        states.add("HI");
+        states.add("ID");
+        states.add("IL");
+        states.add("IN");
+        states.add("IA");
+        states.add("KS");
+        states.add("KY");
+        states.add("LA");
+        states.add("ME");
+        states.add("MD");
+        states.add("MA");
+        states.add("MI");
+        states.add("MN");
+        states.add("MS");
+        states.add("MO");
+        states.add("MT");
+        states.add("NE");
+        states.add("NV");
+        states.add("NH");
+        states.add("NJ");
+        states.add("NM");
+        states.add("NY");
+        states.add("NC");
+        states.add("ND");
+        states.add("OH");
+        states.add("OK");
+        states.add("OR");
+        states.add("PA");
+        states.add("RI");
+        states.add("SC");
+        states.add("SD");
+        states.add("TN");
+        states.add("TX");
+        states.add("UT");
+        states.add("VT");
+        states.add("VA");
+        states.add("WA");
+        states.add("WV");
+        states.add("WI");
+        states.add("WY");
+
         final List<FilterPattern> filterPatterns = new LinkedList<>();
 
-        for(final String state : STATES) {
+        for(final String state : states) {
 
             final Pattern STATE_REGEX = Pattern.compile("(?i)\\b" + state + "\\b");
             filterPatterns.add(new FilterPattern(STATE_REGEX, 0.25));
@@ -98,7 +98,7 @@ public class StateAbbreviationFilter extends RegexFilter implements Serializable
 
         final List<Span> spans = new LinkedList<>();
 
-        for(final String state : STATES) {
+        for(final String state : states) {
 
             final Pattern p = Pattern.compile("(?i)\\b" + state + "\\b");
             final Matcher m = p.matcher(input);
@@ -121,8 +121,5 @@ public class StateAbbreviationFilter extends RegexFilter implements Serializable
 
     }
 
-    public static List<String> getStates() {
-        return STATES;
-    }
 
 }

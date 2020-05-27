@@ -18,7 +18,8 @@ import java.util.Set;
  */
 public abstract class NerFilter extends DynamicFilter implements Serializable {
 
-    protected Map<String, DescriptiveStatistics> stats;
+    private final Map<String, DescriptiveStatistics> stats;
+
     protected String type;
     protected MetricsService metricsService;
     protected boolean removePunctuation;

@@ -2,6 +2,7 @@ package com.mtnfog.phileas.model.objects;
 
 import com.google.gson.Gson;
 import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -46,6 +47,20 @@ public class Alert implements Serializable {
     @Override
     public boolean equals(Object o) {
         return EqualsBuilder.reflectionEquals(this, o);
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder(17, 37).
+                append(id).
+                append(filterProfile).
+                append(strategyId).
+                append(context).
+                append(documentId).
+                append(filterType).
+                append(viewed).
+                append(date).
+                toHashCode();
     }
 
     public Date getDate() {

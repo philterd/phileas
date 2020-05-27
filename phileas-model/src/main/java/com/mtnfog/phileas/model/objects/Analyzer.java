@@ -3,7 +3,6 @@ package com.mtnfog.phileas.model.objects;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
-import java.util.regex.Pattern;
 
 public class Analyzer {
 

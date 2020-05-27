@@ -49,7 +49,10 @@ public class PhileasFilterServiceTest {
     public void filterProfile() throws IOException {
 
         final FilterProfile filterProfile = getFilterProfile("default");
-        LOGGER.info(gson.toJson(filterProfile));
+        final String json = gson.toJson(filterProfile);
+        LOGGER.info(json);
+        final FilterProfile deserialized = gson.fromJson(json, FilterProfile.class);
+        Assert.assertEquals("default", deserialized.getName());
 
     }
 

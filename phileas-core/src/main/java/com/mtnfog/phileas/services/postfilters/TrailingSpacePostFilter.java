@@ -11,11 +11,6 @@ import org.apache.commons.lang3.StringUtils;
  */
 public class TrailingSpacePostFilter extends PostFilter {
 
-    /**
-     * Creates a new post filter.
-     */
-    public TrailingSpacePostFilter() {}
-
     @Override
     protected PostFilterResult process(String text, Span span) {
 

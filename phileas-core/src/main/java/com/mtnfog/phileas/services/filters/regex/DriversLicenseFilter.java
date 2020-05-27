@@ -83,10 +83,10 @@ public class DriversLicenseFilter extends RegexFilter implements Serializable {
 
         final List<FilterPattern> filterPatterns = new LinkedList<>();
 
-        for(final String state : DRIVERS_LICENSES_REGEX.keySet()) {
+        for(final Map.Entry<String, Pattern> entry : DRIVERS_LICENSES_REGEX.entrySet()) {
 
             // TODO: How to include the state so it is part of the span?
-            filterPatterns.add(new FilterPattern(DRIVERS_LICENSES_REGEX.get(state), 0.50));
+            filterPatterns.add(new FilterPattern(DRIVERS_LICENSES_REGEX.get(entry.getValue()), 0.50));
 
         }
 

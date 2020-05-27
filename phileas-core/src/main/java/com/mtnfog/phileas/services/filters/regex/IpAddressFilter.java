@@ -12,7 +12,6 @@ import com.mtnfog.phileas.model.services.AlertService;
 import com.mtnfog.phileas.model.services.AnonymizationService;
 
 import java.io.Serializable;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
