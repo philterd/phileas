@@ -44,8 +44,6 @@ import java.util.*;
 
 public class PhileasFilterService implements FilterService {
 
-	private static final long serialVersionUID = 6998388861197152049L;
-
 	private static final Logger LOGGER = LogManager.getLogger(PhileasFilterService.class);
 
     private FilterProfileService filterProfileService;
@@ -117,16 +115,17 @@ public class PhileasFilterService implements FilterService {
 
     @Override
     public FilterProfileService getFilterProfileService() {
-
         return filterProfileService;
+    }
 
+    @Override
+    public AlertService getAlertService() {
+        return alertService;
     }
 
     @Override
     public List<Span> replacements(String documentId) throws IOException {
-
         return store.getByDocumentId(documentId);
-
     }
 
     @Override

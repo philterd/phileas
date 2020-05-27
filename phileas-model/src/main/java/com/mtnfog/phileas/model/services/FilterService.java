@@ -38,4 +38,10 @@ public interface FilterService {
      */
     FilterProfileService getFilterProfileService();
 
+    /**
+     * Returns the alert service being used.
+     * @return An {@link AlertService}.
+     */
+    AlertService getAlertService();
+
 }
