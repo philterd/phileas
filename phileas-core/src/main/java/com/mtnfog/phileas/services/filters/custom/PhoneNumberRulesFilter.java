@@ -11,13 +11,12 @@ import com.mtnfog.phileas.model.profile.filters.strategies.AbstractFilterStrateg
 import com.mtnfog.phileas.model.services.AlertService;
 import com.mtnfog.phileas.model.services.AnonymizationService;
 
-import java.io.Serializable;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-public class PhoneNumberRulesFilter extends RulesFilter implements Serializable {
+public class PhoneNumberRulesFilter extends RulesFilter {
 
     private PhoneNumberUtil phoneUtil;
 

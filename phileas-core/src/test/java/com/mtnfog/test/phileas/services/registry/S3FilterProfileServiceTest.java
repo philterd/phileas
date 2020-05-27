@@ -165,6 +165,11 @@ public class S3FilterProfileServiceTest {
 
         filterProfileService.save(profile);
 
+        final String saved = filterProfileService.get("default");
+
+        Assert.assertNotNull(saved);
+        Assert.assertEquals(profile, saved);
+
     }
 
     @Test

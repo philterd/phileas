@@ -8,64 +8,65 @@ import java.util.List;
 
 public class StateAbbreviationAnonymizationService extends AbstractAnonymizationService {
 
-    // TODO: Don't duplicate this from StateFilter.
-    public static final List<String> STATES = new LinkedList<>() {{
-
-        add("AL");
-        add("AK");
-        add("AZ");
-        add("AR");
-        add("CA");
-        add("CO");
-        add("CT");
-        add("DE");
-        add("FL");
-        add("GA");
-        add("HI");
-        add("ID");
-        add("IL");
-        add("IN");
-        add("IA");
-        add("KS");
-        add("KY");
-        add("LA");
-        add("ME");
-        add("MD");
-        add("MA");
-        add("MI");
-        add("MN");
-        add("MS");
-        add("MO");
-        add("MT");
-        add("NE");
-        add("NV");
-        add("NH");
-        add("NJ");
-        add("NM");
-        add("NY");
-        add("NC");
-        add("ND");
-        add("OH");
-        add("OK");
-        add("OR");
-        add("PA");
-        add("RI");
-        add("SC");
-        add("SD");
-        add("TN");
-        add("TX");
-        add("UT");
-        add("VT");
-        add("VA");
-        add("WA");
-        add("WV");
-        add("WI");
-        add("WY");
-
-    }};
+    private final List<String> STATES;
 
     public StateAbbreviationAnonymizationService(AnonymizationCacheService anonymizationCacheService) {
         super(anonymizationCacheService);
+
+        this.STATES = new LinkedList<>();
+
+        // TODO: Don't duplicate this from StateFilter.
+        STATES.add("AL");
+        STATES.add("AK");
+        STATES.add("AZ");
+        STATES.add("AR");
+        STATES.add("CA");
+        STATES.add("CO");
+        STATES.add("CT");
+        STATES.add("DE");
+        STATES.add("FL");
+        STATES.add("GA");
+        STATES.add("HI");
+        STATES.add("ID");
+        STATES.add("IL");
+        STATES.add("IN");
+        STATES.add("IA");
+        STATES.add("KS");
+        STATES.add("KY");
+        STATES.add("LA");
+        STATES.add("ME");
+        STATES.add("MD");
+        STATES.add("MA");
+        STATES.add("MI");
+        STATES.add("MN");
+        STATES.add("MS");
+        STATES.add("MO");
+        STATES.add("MT");
+        STATES.add("NE");
+        STATES.add("NV");
+        STATES.add("NH");
+        STATES.add("NJ");
+        STATES.add("NM");
+        STATES.add("NY");
+        STATES.add("NC");
+        STATES.add("ND");
+        STATES.add("OH");
+        STATES.add("OK");
+        STATES.add("OR");
+        STATES.add("PA");
+        STATES.add("RI");
+        STATES.add("SC");
+        STATES.add("SD");
+        STATES.add("TN");
+        STATES.add("TX");
+        STATES.add("UT");
+        STATES.add("VT");
+        STATES.add("VA");
+        STATES.add("WA");
+        STATES.add("WV");
+        STATES.add("WI");
+        STATES.add("WY");
+
     }
 
     @Override

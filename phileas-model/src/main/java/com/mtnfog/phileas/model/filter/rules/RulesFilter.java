@@ -22,7 +22,7 @@ import java.util.regex.Pattern;
 /**
  * Base class for rules-based filters.
  */
-public abstract class RulesFilter extends Filter implements Serializable {
+public abstract class RulesFilter extends Filter {
 
     /**
      * Creates a new rule-based filter.

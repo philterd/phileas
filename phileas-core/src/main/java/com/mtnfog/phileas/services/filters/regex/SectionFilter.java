@@ -11,12 +11,11 @@ import com.mtnfog.phileas.model.profile.filters.strategies.AbstractFilterStrateg
 import com.mtnfog.phileas.model.services.AlertService;
 import com.mtnfog.phileas.model.services.AnonymizationService;
 
-import java.io.Serializable;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
 
-public class SectionFilter extends RegexFilter implements Serializable {
+public class SectionFilter extends RegexFilter {
 
     public SectionFilter(List<? extends AbstractFilterStrategy> strategies, AnonymizationService anonymizationService, AlertService alertService, String startPattern, String endPattern, Set<String> ignored, Crypto crypto, int windowSize) {
         super(FilterType.SECTION, strategies, anonymizationService, alertService, ignored, crypto, windowSize);

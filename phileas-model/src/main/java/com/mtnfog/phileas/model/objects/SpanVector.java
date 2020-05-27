@@ -6,7 +6,7 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-public class SpanVector implements Serializable {
+public class SpanVector {
 
     private Map<Double, Double> vectorIndexes;
     private transient Gson gson;

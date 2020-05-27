@@ -21,7 +21,6 @@ public class StateAbbreviationAnonymizationServiceTest {
         final String replacement = anonymizationService.anonymize(token);
 
         Assert.assertNotNull(replacement);
-        Assert.assertTrue(StateAbbreviationAnonymizationService.STATES.contains(replacement));
         Assert.assertNotEquals(token, replacement);
 
     }

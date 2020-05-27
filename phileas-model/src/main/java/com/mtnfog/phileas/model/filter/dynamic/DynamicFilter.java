@@ -11,7 +11,7 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Set;
 
-public abstract class DynamicFilter extends Filter implements Serializable {
+public abstract class DynamicFilter extends Filter {
 
     /**
      * Creates a new dynamic filter.

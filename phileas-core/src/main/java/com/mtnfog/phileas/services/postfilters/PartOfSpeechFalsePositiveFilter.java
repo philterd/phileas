@@ -20,7 +20,7 @@ import java.util.List;
  * Implementation of {@link PostFilter} that performs false positive
  * filtering by determining text parts-of-speech.
  */
-public class PartOfSpeechFalsePositiveFilter extends PostFilter implements Serializable {
+public class PartOfSpeechFalsePositiveFilter extends PostFilter {
 
     private static final Logger LOGGER = LogManager.getLogger(PartOfSpeechFalsePositiveFilter.class);
 

@@ -12,11 +12,10 @@ import com.mtnfog.phileas.model.services.AlertService;
 import com.mtnfog.phileas.model.services.AnonymizationService;
 import com.mtnfog.phileas.model.services.SpanValidator;
 
-import java.io.Serializable;
 import java.util.*;
 import java.util.regex.Pattern;
 
-public class DateFilter extends RegexFilter implements Serializable {
+public class DateFilter extends RegexFilter {
 
     private SpanValidator spanValidator;
     private boolean onlyValidDates;

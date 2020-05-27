@@ -15,7 +15,7 @@ import java.util.stream.IntStream;
 /**
  * Represents a location in text identified as PII or PHI.
  */
-public final class Span implements Serializable {
+public final class Span {
 
     @Expose
     private int characterStart;

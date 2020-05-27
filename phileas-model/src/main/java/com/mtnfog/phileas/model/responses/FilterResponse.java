@@ -10,7 +10,7 @@ import java.io.Serializable;
 /**
  * Response to a filter operation.
  */
-public final class FilterResponse implements Serializable {
+public final class FilterResponse {
 	
 	private final String filteredText;
 	private final String context;

@@ -26,7 +26,7 @@ import java.io.Serializable;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
-public class PyTorchFilter extends NerFilter implements Serializable {
+public class PyTorchFilter extends NerFilter {
 
     private static final Logger LOGGER = LogManager.getLogger(PyTorchFilter.class);
 

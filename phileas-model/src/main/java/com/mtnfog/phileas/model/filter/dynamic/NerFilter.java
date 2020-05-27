@@ -16,7 +16,7 @@ import java.util.Set;
 /**
  * A dynamic filter that operates using named-entity recognition.
  */
-public abstract class NerFilter extends DynamicFilter implements Serializable {
+public abstract class NerFilter extends DynamicFilter {
 
     private final Map<String, DescriptiveStatistics> stats;
 

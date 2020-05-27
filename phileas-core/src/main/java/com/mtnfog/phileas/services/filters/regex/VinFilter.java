@@ -12,13 +12,12 @@ import com.mtnfog.phileas.model.services.AlertService;
 import com.mtnfog.phileas.model.services.AnonymizationService;
 import org.apache.commons.collections.CollectionUtils;
 
-import java.io.Serializable;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
 
-public class VinFilter extends RegexFilter implements Serializable {
+public class VinFilter extends RegexFilter {
 
     public VinFilter(List<? extends AbstractFilterStrategy> strategies, AnonymizationService anonymizationService, AlertService alertService, Set<String> ignored, Crypto crypto, int windowSize) {
         super(FilterType.VIN, strategies, anonymizationService, alertService, ignored, crypto, windowSize);

@@ -12,11 +12,13 @@ import com.mtnfog.phileas.model.services.AlertService;
 import com.mtnfog.phileas.model.services.AnonymizationService;
 import org.apache.commons.validator.routines.checkdigit.LuhnCheckDigit;
 
-import java.io.Serializable;
-import java.util.*;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
 import java.util.regex.Pattern;
 
-public class CreditCardFilter extends RegexFilter implements Serializable {
+public class CreditCardFilter extends RegexFilter {
 
     private boolean onlyValidCreditCardNumbers;
     private LuhnCheckDigit luhnCheckDigit;

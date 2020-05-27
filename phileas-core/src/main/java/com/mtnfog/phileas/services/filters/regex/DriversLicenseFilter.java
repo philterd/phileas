@@ -11,11 +11,10 @@ import com.mtnfog.phileas.model.profile.filters.strategies.AbstractFilterStrateg
 import com.mtnfog.phileas.model.services.AlertService;
 import com.mtnfog.phileas.model.services.AnonymizationService;
 
-import java.io.Serializable;
 import java.util.*;
 import java.util.regex.Pattern;
 
-public class DriversLicenseFilter extends RegexFilter implements Serializable {
+public class DriversLicenseFilter extends RegexFilter {
 
     private static final HashMap<String, Pattern> DRIVERS_LICENSES_REGEX = new HashMap<>();
 

@@ -15,7 +15,7 @@ import java.util.Set;
 /**
  * A filter that works by using one or more regular expressions.
  */
-public abstract class RegexFilter extends RulesFilter implements Serializable {
+public abstract class RegexFilter extends RulesFilter {
 
     protected Analyzer analyzer;
     protected Set<String> contextualTerms;

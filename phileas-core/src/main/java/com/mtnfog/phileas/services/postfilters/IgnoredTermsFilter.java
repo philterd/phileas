@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
  * Implementation of {@link PostFilter} that removes identified
  * tokens found in an ignore list.
  */
-public class IgnoredTermsFilter extends PostFilter implements Serializable {
+public class IgnoredTermsFilter extends PostFilter {
 
     private static final Logger LOGGER = LogManager.getLogger(IgnoredTermsFilter.class);
 

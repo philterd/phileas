@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public abstract class Filter implements Serializable {
+public abstract class Filter {
 
     protected static final Logger LOGGER = LogManager.getLogger(Filter.class);
 

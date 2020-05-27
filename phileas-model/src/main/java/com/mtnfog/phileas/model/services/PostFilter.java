@@ -12,7 +12,7 @@ import java.util.List;
 /**
  * Performs post-filtering.
  */
-public abstract class PostFilter implements Serializable {
+public abstract class PostFilter {
 
     protected static final Logger LOGGER = LogManager.getLogger(PostFilter.class);
 

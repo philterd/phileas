@@ -9,7 +9,7 @@ import java.io.Serializable;
 /**
  * A sensitivity level.
  */
-public enum SensitivityLevel implements Serializable {
+public enum SensitivityLevel {
 
     AUTO("auto"), LOW("low"), MEDIUM("medium"), HIGH("high");
 

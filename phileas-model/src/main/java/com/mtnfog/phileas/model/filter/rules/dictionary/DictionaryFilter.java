@@ -14,7 +14,7 @@ import java.util.Set;
 /**
  * A filter that operates on a preset list of dictionary words.
  */
-public abstract class DictionaryFilter extends RulesFilter implements Serializable {
+public abstract class DictionaryFilter extends RulesFilter {
 
     public DictionaryFilter(FilterType filterType, List<? extends AbstractFilterStrategy> strategies, AnonymizationService anonymizationService, AlertService alertService, Set<String> ignored, Crypto crypto, int windowSize) {
 
