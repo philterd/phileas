@@ -16,7 +16,7 @@ public class MacAddress extends AbstractFilter {
         return macAddressFilterStrategies;
     }
 
-    public void setMacAddressFilterStrategies(List<MacAddressFilterStrategy> ipAddressFilterStrategies) {
+    public void setMacAddressFilterStrategies(List<MacAddressFilterStrategy> macAddressFilterStrategies) {
         this.macAddressFilterStrategies = macAddressFilterStrategies;
     }
 
