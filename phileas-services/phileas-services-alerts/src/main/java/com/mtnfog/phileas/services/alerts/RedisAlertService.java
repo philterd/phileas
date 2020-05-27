@@ -21,6 +21,7 @@ public class RedisAlertService extends AbstractRedisCacheService implements Aler
 
     public RedisAlertService(PhileasConfiguration phileasConfiguration) throws IOException {
         super(phileasConfiguration);
+        LOGGER.info("Initializing Redis alert service.");
     }
 
     @Override

@@ -18,7 +18,8 @@ public class SpanDisambiguationLocalCacheService implements SpanDisambiguationCa
 
     public SpanDisambiguationLocalCacheService() {
 
-       this.vectors = new HashMap<>();
+        LOGGER.info("Initializing local span disambiguation cache.");
+        this.vectors = new HashMap<>();
 
     }
 

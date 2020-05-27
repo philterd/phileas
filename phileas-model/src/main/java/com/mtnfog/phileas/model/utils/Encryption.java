@@ -24,6 +24,10 @@ public class Encryption {
 
     // echo "j6HcaY8m7hPACVVyQtj4PQ=="| openssl enc -a -d -aes-256-cbc -K 9EE7A356FDFE43F069500B0086758346E66D8583E0CE1CFCA04E50F67ECCE5D1 -iv B674D3B8F1C025AEFF8F6D5FA1AEAD3A
 
+    private Encryption() {
+        // Access the methods in this class through the static functions.
+    }
+
     /**
      * Encrypt a string token.
      * @param token The token to encrypt.
@@ -36,9 +40,7 @@ public class Encryption {
         final Cipher cipher = getCipher(crypto);
 
         final byte[] encrypted = cipher.doFinal(token.getBytes(Charset.defaultCharset()));
-        final String output = Base64.encodeBase64String(encrypted);
-
-        return output;
+        return Base64.encodeBase64String(encrypted);
 
     }
 

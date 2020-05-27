@@ -1,13 +1,12 @@
 package com.mtnfog.phileas.model.services;
 
 import java.io.IOException;
-import java.io.Serializable;
 
 /**
  * An anonymization cache service used to store
  * anonymized values in memory.
  */
-public interface AnonymizationCacheService extends Serializable {
+public interface AnonymizationCacheService {
 
     /**
      * Generates the key for the map.

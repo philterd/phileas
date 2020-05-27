@@ -118,7 +118,7 @@ public class SpanTest {
         showSpans(nonIgnoredSpans);
 
         Assert.assertEquals(1, nonIgnoredSpans.size());
-        Assert.assertEquals(nonIgnoredSpans.get(0).getCharacterStart(), 1);
+        Assert.assertEquals(1, nonIgnoredSpans.get(0).getCharacterStart());
 
     }
 
@@ -134,8 +134,8 @@ public class SpanTest {
         showSpans(nonIgnoredSpans);
 
         Assert.assertEquals(2, nonIgnoredSpans.size());
-        Assert.assertEquals(nonIgnoredSpans.get(0).getCharacterStart(), 1);
-        Assert.assertEquals(nonIgnoredSpans.get(1).getCharacterStart(), 2);
+        Assert.assertEquals(1, nonIgnoredSpans.get(0).getCharacterStart());
+        Assert.assertEquals(2, nonIgnoredSpans.get(1).getCharacterStart());
 
     }
 
@@ -166,8 +166,8 @@ public class SpanTest {
         showSpans(nonOverlappingSpans);
 
         Assert.assertEquals(1, nonOverlappingSpans.size());
-        Assert.assertEquals(nonOverlappingSpans.get(0).getCharacterStart(), 2);
-        Assert.assertEquals(nonOverlappingSpans.get(0).getCharacterEnd(), 12);
+        Assert.assertEquals(2, nonOverlappingSpans.get(0).getCharacterStart());
+        Assert.assertEquals(12, nonOverlappingSpans.get(0).getCharacterEnd());
 
     }
 
@@ -222,9 +222,9 @@ public class SpanTest {
         List<Span> nonOverlappingSpans = Span.dropOverlappingSpans(spans);
 
         Assert.assertEquals(1, nonOverlappingSpans.size());
-        Assert.assertEquals(nonOverlappingSpans.get(0).getCharacterStart(), 0);
-        Assert.assertEquals(nonOverlappingSpans.get(0).getCharacterEnd(), 17);
-        Assert.assertEquals(nonOverlappingSpans.get(0).getConfidence(), 1.0, 0);
+        Assert.assertEquals(0, nonOverlappingSpans.get(0).getCharacterStart());
+        Assert.assertEquals(17, nonOverlappingSpans.get(0).getCharacterEnd());
+        Assert.assertEquals(1.0, nonOverlappingSpans.get(0).getConfidence(), 0);
 
     }
 
@@ -242,9 +242,9 @@ public class SpanTest {
         showSpans(nonOverlappingSpans);
 
         Assert.assertEquals(1, nonOverlappingSpans.size());
-        Assert.assertEquals(nonOverlappingSpans.get(0).getCharacterStart(), 7);
-        Assert.assertEquals(nonOverlappingSpans.get(0).getCharacterEnd(), 17);
-        Assert.assertEquals(nonOverlappingSpans.get(0).getFilterType(), FilterType.ZIP_CODE);
+        Assert.assertEquals(7, nonOverlappingSpans.get(0).getCharacterStart());
+        Assert.assertEquals(17, nonOverlappingSpans.get(0).getCharacterEnd());
+        Assert.assertEquals(FilterType.ZIP_CODE, nonOverlappingSpans.get(0).getFilterType());
 
     }
 

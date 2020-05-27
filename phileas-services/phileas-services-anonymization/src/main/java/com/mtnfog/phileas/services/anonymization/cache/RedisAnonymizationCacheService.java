@@ -18,6 +18,9 @@ public class RedisAnonymizationCacheService extends AbstractRedisCacheService im
 
     public RedisAnonymizationCacheService(PhileasConfiguration phileasConfiguration) throws IOException {
         super(phileasConfiguration);
+
+        LOGGER.info("Initializing Redis anonymization cache.");
+
     }
 
     @Override

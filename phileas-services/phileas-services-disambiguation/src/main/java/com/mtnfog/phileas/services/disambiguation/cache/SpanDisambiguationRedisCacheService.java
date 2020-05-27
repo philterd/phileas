@@ -22,6 +22,8 @@ public class SpanDisambiguationRedisCacheService extends AbstractRedisCacheServi
 
     public SpanDisambiguationRedisCacheService(PhileasConfiguration phileasConfiguration) throws IOException {
         super(phileasConfiguration);
+
+        LOGGER.info("Initializing Redis span disambiguation cache.");
     }
 
     @Override

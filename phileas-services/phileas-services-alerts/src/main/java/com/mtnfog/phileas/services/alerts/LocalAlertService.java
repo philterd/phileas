@@ -3,18 +3,23 @@ package com.mtnfog.phileas.services.alerts;
 import com.mtnfog.phileas.model.enums.FilterType;
 import com.mtnfog.phileas.model.objects.Alert;
 import com.mtnfog.phileas.model.services.AlertService;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 public class LocalAlertService implements AlertService {
+
+    private static final Logger LOGGER = LogManager.getLogger(LocalAlertService.class);
 
     private List<Alert> alerts;
 
     public LocalAlertService() {
+
+        LOGGER.info("Initializing local alert service.");
         this.alerts = new LinkedList<>();
+
     }
 
     @Override
