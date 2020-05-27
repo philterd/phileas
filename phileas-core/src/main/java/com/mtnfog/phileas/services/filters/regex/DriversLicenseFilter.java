@@ -77,10 +77,9 @@ public class DriversLicenseFilter extends RegexFilter implements Serializable {
         DRIVERS_LICENSES_REGEX.put("WISCONSIN", Pattern.compile("\\b[A-Z][0-9]{13}\\b"));
         DRIVERS_LICENSES_REGEX.put("WYOMING", Pattern.compile("\\b([0-9]{9})|([0-9]{6}-[0-9]{3})\\b"));
 
-        this.contextualTerms = new HashSet<>(){{
-            add("license");
-            add("drivers");
-        }};
+        this.contextualTerms = new HashSet<>();
+        this.contextualTerms.add("license");
+        this.contextualTerms.add("drivers");
 
         final List<FilterPattern> filterPatterns = new LinkedList<>();
 

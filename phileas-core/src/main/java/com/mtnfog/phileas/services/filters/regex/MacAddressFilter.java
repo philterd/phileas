@@ -23,10 +23,9 @@ public class MacAddressFilter extends RegexFilter implements Serializable {
         final Pattern MAC_ADDRESS_PATTERN = Pattern.compile("\\b([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})\\b");
         final FilterPattern macAddress1 = new FilterPattern(MAC_ADDRESS_PATTERN, 0.90);
 
-        this.contextualTerms = new HashSet<>(){{
-            add("mac");
-            add("network");
-        }};
+        this.contextualTerms = new HashSet<>();
+        this.contextualTerms.add("mac");
+        this.contextualTerms.add("network");
 
         this.analyzer = new Analyzer(contextualTerms, macAddress1);
 

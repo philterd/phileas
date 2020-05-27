@@ -11,9 +11,7 @@ import com.mtnfog.phileas.model.profile.filters.strategies.AbstractFilterStrateg
 import com.mtnfog.phileas.model.services.AlertService;
 import com.mtnfog.phileas.model.services.AnonymizationService;
 
-import java.io.IOException;
 import java.io.Serializable;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -27,11 +25,10 @@ public class PhoneNumberExtensionFilter extends RegexFilter implements Serializa
         final Pattern PHONE_NUMBER_EXTENSION_REGEX = Pattern.compile("\\bx[0-9]+\\b");
         final FilterPattern phoneExtension1 = new FilterPattern(PHONE_NUMBER_EXTENSION_REGEX, 0.90);
 
-        this.contextualTerms = new HashSet<>(){{
-            add("phone");
-            add("extension");
-            add("ext");
-        }};
+        this.contextualTerms = new HashSet<>();
+        this.contextualTerms.add("phone");
+        this.contextualTerms.add("extension");
+        this.contextualTerms.add("ext");
 
         this.analyzer = new Analyzer(contextualTerms, phoneExtension1);
 

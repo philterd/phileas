@@ -11,10 +11,8 @@ import com.mtnfog.phileas.model.profile.filters.strategies.AbstractFilterStrateg
 import com.mtnfog.phileas.model.services.AlertService;
 import com.mtnfog.phileas.model.services.AnonymizationService;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.Predicate;
 
 import java.io.Serializable;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -28,11 +26,10 @@ public class VinFilter extends RegexFilter implements Serializable {
         final Pattern VIN_REGEX = Pattern.compile("\\b[A-HJ-NPR-Z0-9]{17}\\b", Pattern.CASE_INSENSITIVE);
         final FilterPattern vin1 = new FilterPattern(VIN_REGEX, 0.90);
 
-        this.contextualTerms = new HashSet<>(){{
-            add("vin");
-            add("car");
-            add("truck");
-        }};
+        this.contextualTerms = new HashSet<>();
+        this.contextualTerms.add("vin");
+        this.contextualTerms.add("car");
+        this.contextualTerms.add("truck");
 
         this.analyzer = new Analyzer(contextualTerms, vin1);
 

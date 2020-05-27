@@ -26,12 +26,11 @@ public class BitcoinAddressFilter extends RegexFilter implements Serializable {
         final Pattern BITCOIN_ADDRESS_REGEX = Pattern.compile("\\b[13][a-km-zA-HJ-NP-Z1-9]{25,34}\\b", Pattern.CASE_INSENSITIVE);
         final FilterPattern bitcoin1 = new FilterPattern(BITCOIN_ADDRESS_REGEX, 0.90);
 
-        this.contextualTerms = new HashSet<>(){{
-            add("bitcoin");
-            add("wallet");
-            add("btc");
-            add("crypto");
-        }};
+        this.contextualTerms = new HashSet<>();
+        this.contextualTerms.add("bitcoin");
+        this.contextualTerms.add("wallet");
+        this.contextualTerms.add("btc");
+        this.contextualTerms.add("crypto");
 
         this.analyzer = new Analyzer(contextualTerms, bitcoin1);
 

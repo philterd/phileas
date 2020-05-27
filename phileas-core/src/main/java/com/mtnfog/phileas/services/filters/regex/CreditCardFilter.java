@@ -31,15 +31,14 @@ public class CreditCardFilter extends RegexFilter implements Serializable {
         final Pattern CREDIT_CARD_REGEX = Pattern.compile("\\b(?:\\d[ -]*?){13,16}\\b", Pattern.CASE_INSENSITIVE);
         final FilterPattern creditcard1 = new FilterPattern(CREDIT_CARD_REGEX, 0.90);
 
-        this.contextualTerms = new HashSet<>(){{
-            add("credit");
-            add("card");
-            add("american express");
-            add("amex");
-            add("discover");
-            add("jcb");
-            add("diners");
-        }};
+        this.contextualTerms = new HashSet<>();
+        this.contextualTerms.add("credit");
+        this.contextualTerms.add("card");
+        this.contextualTerms.add("american express");
+        this.contextualTerms.add("amex");
+        this.contextualTerms.add("discover");
+        this.contextualTerms.add("jcb");
+        this.contextualTerms.add("diners");
 
         this.analyzer = new Analyzer(contextualTerms, creditcard1);
 

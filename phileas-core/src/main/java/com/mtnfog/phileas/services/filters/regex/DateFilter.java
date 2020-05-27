@@ -43,10 +43,9 @@ public class DateFilter extends RegexFilter implements Serializable {
 
         }
 
-        this.contextualTerms = new HashSet<>(){{
-            add("date");
-            add("day");
-        }};
+        this.contextualTerms = new HashSet<>();
+        this.contextualTerms.add("date");
+        this.contextualTerms.add("day");
 
         this.analyzer = new Analyzer(contextualTerms, filterPatterns);
 

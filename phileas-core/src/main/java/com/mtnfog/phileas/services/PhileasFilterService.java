@@ -43,13 +43,11 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.*;
 
-public class PhileasFilterService implements FilterService, Serializable {
+public class PhileasFilterService implements FilterService {
 
 	private static final long serialVersionUID = 6998388861197152049L;
 
 	private static final Logger LOGGER = LogManager.getLogger(PhileasFilterService.class);
-
-	private PhileasConfiguration phileasConfiguration;
 
     private FilterProfileService filterProfileService;
     private MetricsService metricsService;
@@ -72,9 +70,6 @@ public class PhileasFilterService implements FilterService, Serializable {
     public PhileasFilterService(PhileasConfiguration phileasConfiguration) throws IOException {
 
         LOGGER.info("Initializing Phileas engine.");
-
-        // Create the configuration.
-        this.phileasConfiguration = phileasConfiguration;
 
         // Configure metrics.
         this.metricsService = new PhileasMetricsService(phileasConfiguration);
@@ -241,70 +236,48 @@ public class PhileasFilterService implements FilterService, Serializable {
 
         // Rules filters.
 
-        if(filterProfile.getIdentifiers().hasFilter(FilterType.AGE)) {
-            if(filterProfile.getIdentifiers().getAge().isEnabled()) {
-                enabledFilters.add(new AgeFilter(filterProfile.getIdentifiers().getAge().getAgeFilterStrategies(), new AgeAnonymizationService(anonymizationCacheService), alertService, filterProfile.getIdentifiers().getAge().getIgnored(), filterProfile.getCrypto(), windowSize));
-            }
+        if(filterProfile.getIdentifiers().hasFilter(FilterType.AGE) && filterProfile.getIdentifiers().getAge().isEnabled()) {
+            enabledFilters.add(new AgeFilter(filterProfile.getIdentifiers().getAge().getAgeFilterStrategies(), new AgeAnonymizationService(anonymizationCacheService), alertService, filterProfile.getIdentifiers().getAge().getIgnored(), filterProfile.getCrypto(), windowSize));
         }
 
-        if(filterProfile.getIdentifiers().hasFilter(FilterType.BITCOIN_ADDRESS)) {
-            if(filterProfile.getIdentifiers().getBitcoinAddress().isEnabled()) {
-                enabledFilters.add(new BitcoinAddressFilter(filterProfile.getIdentifiers().getBitcoinAddress().getBitcoinFilterStrategies(), new BitcoinAddressAnonymizationService(anonymizationCacheService), alertService,  filterProfile.getIdentifiers().getBitcoinAddress().getIgnored(), filterProfile.getCrypto(), windowSize));
-            }
+        if(filterProfile.getIdentifiers().hasFilter(FilterType.BITCOIN_ADDRESS) && filterProfile.getIdentifiers().getBitcoinAddress().isEnabled()) {
+            enabledFilters.add(new BitcoinAddressFilter(filterProfile.getIdentifiers().getBitcoinAddress().getBitcoinFilterStrategies(), new BitcoinAddressAnonymizationService(anonymizationCacheService), alertService,  filterProfile.getIdentifiers().getBitcoinAddress().getIgnored(), filterProfile.getCrypto(), windowSize));
         }
 
-        if(filterProfile.getIdentifiers().hasFilter(FilterType.CREDIT_CARD)) {
-            if(filterProfile.getIdentifiers().getCreditCard().isEnabled()) {
-                enabledFilters.add(new CreditCardFilter(filterProfile.getIdentifiers().getCreditCard().getCreditCardFilterStrategies(), new CreditCardAnonymizationService(anonymizationCacheService), alertService, filterProfile.getIdentifiers().getCreditCard().isOnlyValidCreditCardNumbers(), filterProfile.getIdentifiers().getCreditCard().getIgnored(), filterProfile.getCrypto(), windowSize));
-            }
+        if(filterProfile.getIdentifiers().hasFilter(FilterType.CREDIT_CARD) && filterProfile.getIdentifiers().getCreditCard().isEnabled()) {
+            enabledFilters.add(new CreditCardFilter(filterProfile.getIdentifiers().getCreditCard().getCreditCardFilterStrategies(), new CreditCardAnonymizationService(anonymizationCacheService), alertService, filterProfile.getIdentifiers().getCreditCard().isOnlyValidCreditCardNumbers(), filterProfile.getIdentifiers().getCreditCard().getIgnored(), filterProfile.getCrypto(), windowSize));
         }
 
-        if(filterProfile.getIdentifiers().hasFilter(FilterType.DATE)) {
-            if(filterProfile.getIdentifiers().getDate().isEnabled()) {
-                enabledFilters.add(new DateFilter(filterProfile.getIdentifiers().getDate().getDateFilterStrategies(), new DateAnonymizationService(anonymizationCacheService), alertService, filterProfile.getIdentifiers().getDate().isOnlyValidDates(), new DateSpanValidator(), filterProfile.getIdentifiers().getDate().getIgnored(), filterProfile.getCrypto(), windowSize));
-            }
+        if(filterProfile.getIdentifiers().hasFilter(FilterType.DATE) && filterProfile.getIdentifiers().getDate().isEnabled()) {
+            enabledFilters.add(new DateFilter(filterProfile.getIdentifiers().getDate().getDateFilterStrategies(), new DateAnonymizationService(anonymizationCacheService), alertService, filterProfile.getIdentifiers().getDate().isOnlyValidDates(), new DateSpanValidator(), filterProfile.getIdentifiers().getDate().getIgnored(), filterProfile.getCrypto(), windowSize));
         }
 
-        if(filterProfile.getIdentifiers().hasFilter(FilterType.DRIVERS_LICENSE_NUMBER)) {
-            if(filterProfile.getIdentifiers().getDriversLicense().isEnabled()) {
-                enabledFilters.add(new DriversLicenseFilter(filterProfile.getIdentifiers().getDriversLicense().getDriversLicenseFilterStrategies(), new DriversLicenseAnonymizationService(anonymizationCacheService), alertService, filterProfile.getIdentifiers().getDriversLicense().getIgnored(), filterProfile.getCrypto(), windowSize));
-            }
+        if(filterProfile.getIdentifiers().hasFilter(FilterType.DRIVERS_LICENSE_NUMBER) && filterProfile.getIdentifiers().getDriversLicense().isEnabled()) {
+            enabledFilters.add(new DriversLicenseFilter(filterProfile.getIdentifiers().getDriversLicense().getDriversLicenseFilterStrategies(), new DriversLicenseAnonymizationService(anonymizationCacheService), alertService, filterProfile.getIdentifiers().getDriversLicense().getIgnored(), filterProfile.getCrypto(), windowSize));
         }
 
-        if(filterProfile.getIdentifiers().hasFilter(FilterType.EMAIL_ADDRESS)) {
-            if(filterProfile.getIdentifiers().getEmailAddress().isEnabled()) {
-                enabledFilters.add(new EmailAddressFilter(filterProfile.getIdentifiers().getEmailAddress().getEmailAddressFilterStrategies(), new EmailAddressAnonymizationService(anonymizationCacheService), alertService, filterProfile.getIdentifiers().getEmailAddress().getIgnored(), filterProfile.getCrypto(), windowSize));
-            }
+        if(filterProfile.getIdentifiers().hasFilter(FilterType.EMAIL_ADDRESS) && filterProfile.getIdentifiers().getEmailAddress().isEnabled()) {
+            enabledFilters.add(new EmailAddressFilter(filterProfile.getIdentifiers().getEmailAddress().getEmailAddressFilterStrategies(), new EmailAddressAnonymizationService(anonymizationCacheService), alertService, filterProfile.getIdentifiers().getEmailAddress().getIgnored(), filterProfile.getCrypto(), windowSize));
         }
 
-        if(filterProfile.getIdentifiers().hasFilter(FilterType.IBAN_CODE)) {
-            if(filterProfile.getIdentifiers().getIbanCode().isEnabled()) {
-                enabledFilters.add(new IbanCodeFilter(filterProfile.getIdentifiers().getIbanCode().getIbanCodeFilterStrategies(), new IbanCodeAnonymizationService(anonymizationCacheService), alertService, filterProfile.getIdentifiers().getIbanCode().getIgnored(), filterProfile.getCrypto(), filterProfile.getIdentifiers().getIbanCode().isOnlyValidIBANCodes(), windowSize));
-            }
+        if(filterProfile.getIdentifiers().hasFilter(FilterType.IBAN_CODE) && filterProfile.getIdentifiers().getIbanCode().isEnabled()) {
+            enabledFilters.add(new IbanCodeFilter(filterProfile.getIdentifiers().getIbanCode().getIbanCodeFilterStrategies(), new IbanCodeAnonymizationService(anonymizationCacheService), alertService, filterProfile.getIdentifiers().getIbanCode().getIgnored(), filterProfile.getCrypto(), filterProfile.getIdentifiers().getIbanCode().isOnlyValidIBANCodes(), windowSize));
         }
 
-        if(filterProfile.getIdentifiers().hasFilter(FilterType.IP_ADDRESS)) {
-            if(filterProfile.getIdentifiers().getIpAddress().isEnabled()) {
-                enabledFilters.add(new IpAddressFilter(filterProfile.getIdentifiers().getIpAddress().getIpAddressFilterStrategies(), new IpAddressAnonymizationService(anonymizationCacheService), alertService, filterProfile.getIdentifiers().getIpAddress().getIgnored(), filterProfile.getCrypto(), windowSize));
-            }
+        if(filterProfile.getIdentifiers().hasFilter(FilterType.IP_ADDRESS) && filterProfile.getIdentifiers().getIpAddress().isEnabled()) {
+            enabledFilters.add(new IpAddressFilter(filterProfile.getIdentifiers().getIpAddress().getIpAddressFilterStrategies(), new IpAddressAnonymizationService(anonymizationCacheService), alertService, filterProfile.getIdentifiers().getIpAddress().getIgnored(), filterProfile.getCrypto(), windowSize));
         }
 
-        if(filterProfile.getIdentifiers().hasFilter(FilterType.MAC_ADDRESS)) {
-            if(filterProfile.getIdentifiers().getMacAddress().isEnabled()) {
-                enabledFilters.add(new MacAddressFilter(filterProfile.getIdentifiers().getIpAddress().getIpAddressFilterStrategies(), new MacAddressAnonymizationService(anonymizationCacheService), alertService, filterProfile.getIdentifiers().getMacAddress().getIgnored(), filterProfile.getCrypto(), windowSize));
-            }
+        if(filterProfile.getIdentifiers().hasFilter(FilterType.MAC_ADDRESS) && filterProfile.getIdentifiers().getMacAddress().isEnabled()) {
+            enabledFilters.add(new MacAddressFilter(filterProfile.getIdentifiers().getIpAddress().getIpAddressFilterStrategies(), new MacAddressAnonymizationService(anonymizationCacheService), alertService, filterProfile.getIdentifiers().getMacAddress().getIgnored(), filterProfile.getCrypto(), windowSize));
         }
 
-        if(filterProfile.getIdentifiers().hasFilter(FilterType.PHONE_NUMBER_EXTENSION)) {
-            if(filterProfile.getIdentifiers().getPhoneNumberExtension().isEnabled()) {
-                enabledFilters.add(new PhoneNumberExtensionFilter(filterProfile.getIdentifiers().getPhoneNumberExtension().getPhoneNumberExtensionFilterStrategies(), new AlphanumericAnonymizationService(anonymizationCacheService), alertService, filterProfile.getIdentifiers().getPhoneNumberExtension().getIgnored(), filterProfile.getCrypto(), windowSize));
-            }
+        if(filterProfile.getIdentifiers().hasFilter(FilterType.PHONE_NUMBER_EXTENSION) && filterProfile.getIdentifiers().getPhoneNumberExtension().isEnabled()) {
+            enabledFilters.add(new PhoneNumberExtensionFilter(filterProfile.getIdentifiers().getPhoneNumberExtension().getPhoneNumberExtensionFilterStrategies(), new AlphanumericAnonymizationService(anonymizationCacheService), alertService, filterProfile.getIdentifiers().getPhoneNumberExtension().getIgnored(), filterProfile.getCrypto(), windowSize));
         }
 
-        if(filterProfile.getIdentifiers().hasFilter(FilterType.PHONE_NUMBER)) {
-            if(filterProfile.getIdentifiers().getPhoneNumber().isEnabled()) {
-                enabledFilters.add(new PhoneNumberRulesFilter(filterProfile.getIdentifiers().getPhoneNumber().getPhoneNumberFilterStrategies(), new AlphanumericAnonymizationService(anonymizationCacheService), alertService, filterProfile.getIdentifiers().getPhoneNumber().getIgnored(), filterProfile.getCrypto(), windowSize));
-            }
+        if(filterProfile.getIdentifiers().hasFilter(FilterType.PHONE_NUMBER) && filterProfile.getIdentifiers().getPhoneNumber().isEnabled()) {
+            enabledFilters.add(new PhoneNumberRulesFilter(filterProfile.getIdentifiers().getPhoneNumber().getPhoneNumberFilterStrategies(), new AlphanumericAnonymizationService(anonymizationCacheService), alertService, filterProfile.getIdentifiers().getPhoneNumber().getIgnored(), filterProfile.getCrypto(), windowSize));
         }
 
         if(filterProfile.getIdentifiers().hasFilter(FilterType.SECTION)) {
@@ -321,34 +294,24 @@ public class PhileasFilterService implements FilterService, Serializable {
 
         }
 
-        if(filterProfile.getIdentifiers().hasFilter(FilterType.SSN)) {
-            if(filterProfile.getIdentifiers().getSsn().isEnabled()) {
-                enabledFilters.add(new SsnFilter(filterProfile.getIdentifiers().getSsn().getSsnFilterStrategies(), new AlphanumericAnonymizationService(anonymizationCacheService), alertService, filterProfile.getIdentifiers().getSsn().getIgnored(), filterProfile.getCrypto(), windowSize));
-            }
+        if(filterProfile.getIdentifiers().hasFilter(FilterType.SSN) && filterProfile.getIdentifiers().getSsn().isEnabled()) {
+            enabledFilters.add(new SsnFilter(filterProfile.getIdentifiers().getSsn().getSsnFilterStrategies(), new AlphanumericAnonymizationService(anonymizationCacheService), alertService, filterProfile.getIdentifiers().getSsn().getIgnored(), filterProfile.getCrypto(), windowSize));
         }
 
-        if(filterProfile.getIdentifiers().hasFilter(FilterType.STATE_ABBREVIATION)) {
-            if(filterProfile.getIdentifiers().getStateAbbreviation().isEnabled()) {
-                enabledFilters.add(new StateAbbreviationFilter(filterProfile.getIdentifiers().getStateAbbreviation().getStateAbbreviationsFilterStrategies(), new StateAbbreviationAnonymizationService(anonymizationCacheService), alertService, filterProfile.getIdentifiers().getStateAbbreviation().getIgnored(), filterProfile.getCrypto(), windowSize));
-            }
+        if(filterProfile.getIdentifiers().hasFilter(FilterType.STATE_ABBREVIATION) && filterProfile.getIdentifiers().getStateAbbreviation().isEnabled()) {
+            enabledFilters.add(new StateAbbreviationFilter(filterProfile.getIdentifiers().getStateAbbreviation().getStateAbbreviationsFilterStrategies(), new StateAbbreviationAnonymizationService(anonymizationCacheService), alertService, filterProfile.getIdentifiers().getStateAbbreviation().getIgnored(), filterProfile.getCrypto(), windowSize));
         }
 
-        if(filterProfile.getIdentifiers().hasFilter(FilterType.URL)) {
-            if(filterProfile.getIdentifiers().getUrl().isEnabled()) {
-                enabledFilters.add(new UrlFilter(filterProfile.getIdentifiers().getUrl().getUrlFilterStrategies(), new UrlAnonymizationService(anonymizationCacheService), alertService, filterProfile.getIdentifiers().getUrl().isRequireHttpWwwPrefix(), filterProfile.getIdentifiers().getUrl().getIgnored(), filterProfile.getCrypto(), windowSize));
-            }
+        if(filterProfile.getIdentifiers().hasFilter(FilterType.URL) && filterProfile.getIdentifiers().getUrl().isEnabled()) {
+            enabledFilters.add(new UrlFilter(filterProfile.getIdentifiers().getUrl().getUrlFilterStrategies(), new UrlAnonymizationService(anonymizationCacheService), alertService, filterProfile.getIdentifiers().getUrl().isRequireHttpWwwPrefix(), filterProfile.getIdentifiers().getUrl().getIgnored(), filterProfile.getCrypto(), windowSize));
         }
 
-        if(filterProfile.getIdentifiers().hasFilter(FilterType.VIN)) {
-            if(filterProfile.getIdentifiers().getVin().isEnabled()) {
-                enabledFilters.add(new VinFilter(filterProfile.getIdentifiers().getVin().getVinFilterStrategies(), new VinAnonymizationService(anonymizationCacheService), alertService, filterProfile.getIdentifiers().getVin().getIgnored(), filterProfile.getCrypto(), windowSize));
-            }
+        if(filterProfile.getIdentifiers().hasFilter(FilterType.VIN) && filterProfile.getIdentifiers().getVin().isEnabled()) {
+            enabledFilters.add(new VinFilter(filterProfile.getIdentifiers().getVin().getVinFilterStrategies(), new VinAnonymizationService(anonymizationCacheService), alertService, filterProfile.getIdentifiers().getVin().getIgnored(), filterProfile.getCrypto(), windowSize));
         }
 
-        if(filterProfile.getIdentifiers().hasFilter(FilterType.ZIP_CODE)) {
-            if(filterProfile.getIdentifiers().getZipCode().isEnabled()) {
-                enabledFilters.add(new ZipCodeFilter(filterProfile.getIdentifiers().getZipCode().getZipCodeFilterStrategies(), new ZipCodeAnonymizationService(anonymizationCacheService), alertService, filterProfile.getIdentifiers().getZipCode().getIgnored(), filterProfile.getCrypto(), windowSize));
-            }
+        if(filterProfile.getIdentifiers().hasFilter(FilterType.ZIP_CODE) && filterProfile.getIdentifiers().getZipCode().isEnabled()) {
+            enabledFilters.add(new ZipCodeFilter(filterProfile.getIdentifiers().getZipCode().getZipCodeFilterStrategies(), new ZipCodeAnonymizationService(anonymizationCacheService), alertService, filterProfile.getIdentifiers().getZipCode().getIgnored(), filterProfile.getCrypto(), windowSize));
         }
 
         // Custom dictionary filters.
@@ -389,46 +352,32 @@ public class PhileasFilterService implements FilterService, Serializable {
 
         // Lucene dictionary filters.
 
-        if(filterProfile.getIdentifiers().hasFilter(FilterType.LOCATION_CITY)) {
-            if(filterProfile.getIdentifiers().getCity().isEnabled()) {
-                enabledFilters.add(new LuceneDictionaryFilter(FilterType.LOCATION_CITY, filterProfile.getIdentifiers().getCity().getCityFilterStrategies(), indexDirectory + "cities", filterProfile.getIdentifiers().getCity().getSensitivityLevel(), new CityAnonymizationService(anonymizationCacheService), alertService, filterProfile.getIdentifiers().getCity().getIgnored(), filterProfile.getCrypto(), windowSize));
-            }
+        if(filterProfile.getIdentifiers().hasFilter(FilterType.LOCATION_CITY) && filterProfile.getIdentifiers().getCity().isEnabled()) {
+            enabledFilters.add(new LuceneDictionaryFilter(FilterType.LOCATION_CITY, filterProfile.getIdentifiers().getCity().getCityFilterStrategies(), indexDirectory + "cities", filterProfile.getIdentifiers().getCity().getSensitivityLevel(), new CityAnonymizationService(anonymizationCacheService), alertService, filterProfile.getIdentifiers().getCity().getIgnored(), filterProfile.getCrypto(), windowSize));
         }
 
-        if(filterProfile.getIdentifiers().hasFilter(FilterType.LOCATION_COUNTY)) {
-            if(filterProfile.getIdentifiers().getCounty().isEnabled()) {
+        if(filterProfile.getIdentifiers().hasFilter(FilterType.LOCATION_COUNTY) && filterProfile.getIdentifiers().getCounty().isEnabled()) {
                 enabledFilters.add(new LuceneDictionaryFilter(FilterType.LOCATION_COUNTY, filterProfile.getIdentifiers().getCounty().getCountyFilterStrategies(), indexDirectory + "states", filterProfile.getIdentifiers().getCounty().getSensitivityLevel(), new CountyAnonymizationService(anonymizationCacheService), alertService, filterProfile.getIdentifiers().getCounty().getIgnored(), filterProfile.getCrypto(), windowSize));
-            }
         }
 
-        if(filterProfile.getIdentifiers().hasFilter(FilterType.LOCATION_STATE)) {
-            if(filterProfile.getIdentifiers().getState().isEnabled()) {
-                enabledFilters.add(new LuceneDictionaryFilter(FilterType.LOCATION_STATE, filterProfile.getIdentifiers().getState().getStateFilterStrategies(), indexDirectory + "states", filterProfile.getIdentifiers().getState().getSensitivityLevel(), new StateAnonymizationService(anonymizationCacheService), alertService, filterProfile.getIdentifiers().getState().getIgnored(), filterProfile.getCrypto(), windowSize));
-            }
+        if(filterProfile.getIdentifiers().hasFilter(FilterType.LOCATION_STATE) && filterProfile.getIdentifiers().getState().isEnabled()) {
+            enabledFilters.add(new LuceneDictionaryFilter(FilterType.LOCATION_STATE, filterProfile.getIdentifiers().getState().getStateFilterStrategies(), indexDirectory + "states", filterProfile.getIdentifiers().getState().getSensitivityLevel(), new StateAnonymizationService(anonymizationCacheService), alertService, filterProfile.getIdentifiers().getState().getIgnored(), filterProfile.getCrypto(), windowSize));
         }
 
-        if(filterProfile.getIdentifiers().hasFilter(FilterType.HOSPITAL)) {
-            if(filterProfile.getIdentifiers().getHospital().isEnabled()) {
-                enabledFilters.add(new LuceneDictionaryFilter(FilterType.HOSPITAL, filterProfile.getIdentifiers().getHospital().getHospitalFilterStrategies(), indexDirectory + "hospitals", filterProfile.getIdentifiers().getHospital().getSensitivityLevel(), new HospitalAnonymizationService(anonymizationCacheService), alertService, filterProfile.getIdentifiers().getHospital().getIgnored(), filterProfile.getCrypto(), windowSize));
-            }
+        if(filterProfile.getIdentifiers().hasFilter(FilterType.HOSPITAL) && filterProfile.getIdentifiers().getHospital().isEnabled()) {
+            enabledFilters.add(new LuceneDictionaryFilter(FilterType.HOSPITAL, filterProfile.getIdentifiers().getHospital().getHospitalFilterStrategies(), indexDirectory + "hospitals", filterProfile.getIdentifiers().getHospital().getSensitivityLevel(), new HospitalAnonymizationService(anonymizationCacheService), alertService, filterProfile.getIdentifiers().getHospital().getIgnored(), filterProfile.getCrypto(), windowSize));
         }
 
-        if(filterProfile.getIdentifiers().hasFilter(FilterType.HOSPITAL_ABBREVIATION)) {
-            if(filterProfile.getIdentifiers().getHospitalAbbreviation().isEnabled()) {
-                enabledFilters.add(new LuceneDictionaryFilter(FilterType.HOSPITAL_ABBREVIATION, filterProfile.getIdentifiers().getHospitalAbbreviation().getHospitalAbbreviationFilterStrategies(), indexDirectory + "hospital-abbreviations", filterProfile.getIdentifiers().getHospitalAbbreviation().getSensitivityLevel(), new HospitalAbbreviationAnonymizationService(anonymizationCacheService), alertService, filterProfile.getIdentifiers().getHospitalAbbreviation().getIgnored(), filterProfile.getCrypto(), windowSize));
-            }
+        if(filterProfile.getIdentifiers().hasFilter(FilterType.HOSPITAL_ABBREVIATION) && filterProfile.getIdentifiers().getHospitalAbbreviation().isEnabled()) {
+            enabledFilters.add(new LuceneDictionaryFilter(FilterType.HOSPITAL_ABBREVIATION, filterProfile.getIdentifiers().getHospitalAbbreviation().getHospitalAbbreviationFilterStrategies(), indexDirectory + "hospital-abbreviations", filterProfile.getIdentifiers().getHospitalAbbreviation().getSensitivityLevel(), new HospitalAbbreviationAnonymizationService(anonymizationCacheService), alertService, filterProfile.getIdentifiers().getHospitalAbbreviation().getIgnored(), filterProfile.getCrypto(), windowSize));
         }
 
-        if(filterProfile.getIdentifiers().hasFilter(FilterType.FIRST_NAME)) {
-            if(filterProfile.getIdentifiers().getFirstName().isEnabled()) {
-                enabledFilters.add(new LuceneDictionaryFilter(FilterType.FIRST_NAME, filterProfile.getIdentifiers().getFirstName().getFirstNameFilterStrategies(), indexDirectory + "names", filterProfile.getIdentifiers().getFirstName().getSensitivityLevel(), new PersonsAnonymizationService(anonymizationCacheService), alertService, filterProfile.getIdentifiers().getFirstName().getIgnored(), filterProfile.getCrypto(), windowSize));
-            }
+        if(filterProfile.getIdentifiers().hasFilter(FilterType.FIRST_NAME) && filterProfile.getIdentifiers().getFirstName().isEnabled()) {
+            enabledFilters.add(new LuceneDictionaryFilter(FilterType.FIRST_NAME, filterProfile.getIdentifiers().getFirstName().getFirstNameFilterStrategies(), indexDirectory + "names", filterProfile.getIdentifiers().getFirstName().getSensitivityLevel(), new PersonsAnonymizationService(anonymizationCacheService), alertService, filterProfile.getIdentifiers().getFirstName().getIgnored(), filterProfile.getCrypto(), windowSize));
         }
 
-        if(filterProfile.getIdentifiers().hasFilter(FilterType.SURNAME)) {
-            if(filterProfile.getIdentifiers().getSurname().isEnabled()) {
-                enabledFilters.add(new LuceneDictionaryFilter(FilterType.SURNAME, filterProfile.getIdentifiers().getSurname().getSurnameFilterStrategies(), indexDirectory + "surnames", filterProfile.getIdentifiers().getSurname().getSensitivityLevel(), new SurnameAnonymizationService(anonymizationCacheService), alertService, filterProfile.getIdentifiers().getSurname().getIgnored(), filterProfile.getCrypto(), windowSize));
-            }
+        if(filterProfile.getIdentifiers().hasFilter(FilterType.SURNAME) && filterProfile.getIdentifiers().getSurname().isEnabled()) {
+            enabledFilters.add(new LuceneDictionaryFilter(FilterType.SURNAME, filterProfile.getIdentifiers().getSurname().getSurnameFilterStrategies(), indexDirectory + "surnames", filterProfile.getIdentifiers().getSurname().getSensitivityLevel(), new SurnameAnonymizationService(anonymizationCacheService), alertService, filterProfile.getIdentifiers().getSurname().getIgnored(), filterProfile.getCrypto(), windowSize));
         }
 
         // Enable ID filter last since it is a pretty generic pattern that might also match SSN, et. al.
@@ -449,11 +398,9 @@ public class PhileasFilterService implements FilterService, Serializable {
 
         // PyTorch filters.
 
-        if(filterProfile.getIdentifiers().hasFilter(FilterType.NER_ENTITY)) {
-            if(filterProfile.getIdentifiers().getNer().isEnabled()) {
-                // TODO: Allow a single PyTorchFilter to extract many types of entities instead of just one, i.e. "PER".
-                enabledFilters.add(new PyTorchFilter(philterNerEndpoint, FilterType.NER_ENTITY, filterProfile.getIdentifiers().getNer().getNerStrategies(), "PER", stats, metricsService, new PersonsAnonymizationService(anonymizationCacheService), alertService, filterProfile.getIdentifiers().getNer().getIgnored(), filterProfile.getIdentifiers().getNer().isRemovePunctuation(), filterProfile.getCrypto(), windowSize));
-            }
+        if(filterProfile.getIdentifiers().hasFilter(FilterType.NER_ENTITY) && filterProfile.getIdentifiers().getNer().isEnabled()) {
+            // TODO: Allow a single PyTorchFilter to extract many types of entities instead of just one, i.e. "PER".
+            enabledFilters.add(new PyTorchFilter(philterNerEndpoint, FilterType.NER_ENTITY, filterProfile.getIdentifiers().getNer().getNerStrategies(), "PER", stats, metricsService, new PersonsAnonymizationService(anonymizationCacheService), alertService, filterProfile.getIdentifiers().getNer().getIgnored(), filterProfile.getIdentifiers().getNer().isRemovePunctuation(), filterProfile.getCrypto(), windowSize));
         }
 
         return enabledFilters;

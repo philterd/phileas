@@ -81,12 +81,11 @@ public class IpAddressFilter extends RegexFilter implements Serializable {
 
         final FilterPattern ipv64 = new FilterPattern(IPV6_MIXED_UNCOMPRESSED_REGEX, 0.90);
 
-        this.contextualTerms = new HashSet<>(){{
-            add("ipv4");
-            add("ipv6");
-            add("ip");
-            add("ip address");
-        }};
+        this.contextualTerms = new HashSet<>();
+        this.contextualTerms.add("ipv4");
+        this.contextualTerms.add("ipv6");
+        this.contextualTerms.add("ip");
+        this.contextualTerms.add("ip address");
 
         this.analyzer = new Analyzer(contextualTerms, ipv4, ipv61, ipv62, ipv63, ipv64);
 
