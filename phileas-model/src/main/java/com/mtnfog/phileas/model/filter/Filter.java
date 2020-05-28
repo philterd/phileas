@@ -249,6 +249,8 @@ public abstract class Filter {
             return filterProfile.getIdentifiers().getIpAddress().getIpAddressFilterStrategies();
         } else if(filterType == FilterType.NER_ENTITY) {
             return filterProfile.getIdentifiers().getNer().getNerStrategies();
+        } else if(filterType == FilterType.PASSPORT_NUMBER) {
+            return filterProfile.getIdentifiers().getPassportNumber().getPassportNumberFilterStrategies();
         } else if(filterType == FilterType.PHONE_NUMBER) {
             return filterProfile.getIdentifiers().getPhoneNumber().getPhoneNumberFilterStrategies();
         } else if(filterType == FilterType.PHONE_NUMBER_EXTENSION) {

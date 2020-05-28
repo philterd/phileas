@@ -71,6 +71,9 @@ public abstract class AbstractFilterTest {
         MacAddress macAddress = new MacAddress();
         macAddress.setMacAddressFilterStrategies(Arrays.asList(new MacAddressFilterStrategy()));
 
+        PassportNumber passportNumber = new PassportNumber();
+        passportNumber.setPassportNumberFilterStrategies(Arrays.asList(new PassportNumberFilterStrategy()));
+
         PhoneNumber phoneNumber = new PhoneNumber();
         phoneNumber.setPhoneNumberFilterStrategies(Arrays.asList(new PhoneNumberFilterStrategy()));
 
@@ -141,6 +144,7 @@ public abstract class AbstractFilterTest {
         identifiers.setIbanCode(ibanCode);
         identifiers.setIpAddress(ipAddress);
         identifiers.setMacAddress(macAddress);
+        identifiers.setPassportNumber(passportNumber);
         identifiers.setPhoneNumber(phoneNumber);
         identifiers.setPhoneNumberExtension(phoneNumberExtension);
         identifiers.setSections(Arrays.asList(section));

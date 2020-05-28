@@ -24,6 +24,7 @@ public enum FilterType {
     IP_ADDRESS("ip-address", true),
     MAC_ADDRESS("mac-address", true),
     NER_ENTITY("entity", false),
+    PASSPORT_NUMBER("passport-number", true),
     PHONE_NUMBER("phone-number", true),
     PHONE_NUMBER_EXTENSION("phone-number-extension", true),
     SECTION("section", true),

@@ -270,6 +270,10 @@ public class PhileasFilterService implements FilterService {
             enabledFilters.add(new MacAddressFilter(filterProfile.getIdentifiers().getIpAddress().getIpAddressFilterStrategies(), new MacAddressAnonymizationService(anonymizationCacheService), alertService, filterProfile.getIdentifiers().getMacAddress().getIgnored(), filterProfile.getCrypto(), windowSize));
         }
 
+        if(filterProfile.getIdentifiers().hasFilter(FilterType.PASSPORT_NUMBER) && filterProfile.getIdentifiers().getPassportNumber().isEnabled()) {
+            enabledFilters.add(new PassportNumberFilter(filterProfile.getIdentifiers().getPassportNumber().getPassportNumberFilterStrategies(), new PassportNumberAnonymizationService(anonymizationCacheService), filterProfile.getIdentifiers().getPassportNumber().getIgnored(), filterProfile.getCrypto(), windowSize));
+        }
+
         if(filterProfile.getIdentifiers().hasFilter(FilterType.PHONE_NUMBER_EXTENSION) && filterProfile.getIdentifiers().getPhoneNumberExtension().isEnabled()) {
             enabledFilters.add(new PhoneNumberExtensionFilter(filterProfile.getIdentifiers().getPhoneNumberExtension().getPhoneNumberExtensionFilterStrategies(), new AlphanumericAnonymizationService(anonymizationCacheService), alertService, filterProfile.getIdentifiers().getPhoneNumberExtension().getIgnored(), filterProfile.getCrypto(), windowSize));
         }

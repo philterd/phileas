@@ -58,6 +58,10 @@ public class Identifiers {
     @Expose
     private MacAddress macAddress;
 
+    @SerializedName("passportNumber")
+    @Expose
+    private PassportNumber passportNumber;
+
     @SerializedName("phoneNumber")
     @Expose
     private PhoneNumber phoneNumber;
@@ -407,6 +411,14 @@ public class Identifiers {
 
     public void setDriversLicense(DriversLicense driversLicense) {
         this.driversLicense = driversLicense;
+    }
+
+    public PassportNumber getPassportNumber() {
+        return passportNumber;
+    }
+
+    public void setPassportNumber(PassportNumber passportNumber) {
+        this.passportNumber = passportNumber;
     }
 
 }
