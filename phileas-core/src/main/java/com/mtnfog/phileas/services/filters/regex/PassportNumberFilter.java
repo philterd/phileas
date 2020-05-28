@@ -26,7 +26,7 @@ public class PassportNumberFilter extends RegexFilter implements Serializable {
         // U.S. Passport numbers must be between six and nine alphanumeric characters (letters and numbers).
         // The "C" that precedes a U.S. Passport Card number is no longer case sensitive.
         // U.S. visa numbers must be exactly eight alphanumeric characters (letters and numbers). Entering a visa number is still optional though if an employee provides one, we encourage you to enter it, as doing so may prevent a tentative nonconfirmation (TNC).
-        
+
         // U.S. Passports Issued: 1981-Current
         // TODO: Set the regex such that the initial two digits are valid and not just 0-9.
         // See the chart at https://passportinfo.com/blog/what-is-my-passport-number/.

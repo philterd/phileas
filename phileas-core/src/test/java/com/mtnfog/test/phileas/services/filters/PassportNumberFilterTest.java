@@ -36,6 +36,7 @@ public class PassportNumberFilterTest extends AbstractFilterTest {
         Assert.assertTrue(checkSpan(spans.get(0), 23, 32, FilterType.PASSPORT_NUMBER));
         Assert.assertEquals("{{{REDACTED-passport-number}}}", spans.get(0).getReplacement());
         Assert.assertEquals("986001231", spans.get(0).getText());
+        Assert.assertEquals("US", spans.get(0).getClassification());
 
     }
 
