@@ -7,14 +7,14 @@ public class FilterPattern {
     private Pattern pattern;
     private String format;
     private double initialConfidence;
-    private String label;
+    private String classification;
 
     public static class FilterPatternBuilder {
 
         private Pattern pattern;
         private double initialConfidence;
         private String format;
-        private String label;
+        private String classification;
 
         public FilterPatternBuilder(Pattern pattern, double initialConfidence) {
             this.pattern = pattern;
@@ -26,23 +26,23 @@ public class FilterPattern {
             return this;
         }
 
-        public FilterPatternBuilder withLabel(String label) {
-            this.label = label;
+        public FilterPatternBuilder withClassification(String classification) {
+            this.classification = classification;
             return this;
         }
 
         public FilterPattern build() {
-            return new FilterPattern(pattern, initialConfidence, format, label);
+            return new FilterPattern(pattern, initialConfidence, format, classification);
         }
 
     }
 
-    private FilterPattern(Pattern pattern, double initialConfidence, String format, String label) {
+    private FilterPattern(Pattern pattern, double initialConfidence, String format, String classification) {
 
         this.pattern = pattern;
         this.initialConfidence = initialConfidence;
         this.format = format;
-        this.label = label;
+        this.classification = classification;
 
     }
 
@@ -58,8 +58,8 @@ public class FilterPattern {
         return initialConfidence;
     }
 
-    public String getLabel() {
-        return label;
+    public String getClassification() {
+        return classification;
     }
 
 }

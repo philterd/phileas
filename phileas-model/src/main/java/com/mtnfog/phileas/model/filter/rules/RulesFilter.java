@@ -69,10 +69,15 @@ public abstract class RulesFilter extends Filter {
                     final String[] window = getWindow(input, characterStart, characterEnd);
 
                     // TODO: PHL-119: Adjust the confidence based on the initial confidence.
-                    final Span span = Span.make(characterStart, characterEnd, getFilterType(), context, documentId, 1.0, token, replacement, isIgnored, window);
+                    // TODO: Should this be an option? Use "simple" confidence values or "calculated"?
+                    final double initialConfidence = filterPattern.getInitialConfidence();
+                    final Span span = Span.make(characterStart, characterEnd, getFilterType(), context, documentId, initialConfidence, token, replacement, isIgnored, window);
 
                     // TODO: Add "format" to Span.make() so we don't have to make a separate call here.
                     span.setPattern(filterPattern.getFormat());
+
+                    // TODO: Add "classification" to Span.make() so we don't have to make a separate call here.
+                    span.setClassification(filterPattern.getClassification());
 
                     spans.add(span);
 

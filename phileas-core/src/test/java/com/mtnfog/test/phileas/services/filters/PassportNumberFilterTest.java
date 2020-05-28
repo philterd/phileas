@@ -28,12 +28,12 @@ public class PassportNumberFilterTest extends AbstractFilterTest {
 
         final Filter filter = getFilter();
 
-        final List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "the number is 986001231.");
+        final List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "the passport number is 986001231.");
 
         showSpans(spans);
 
         Assert.assertEquals(1, spans.size());
-        Assert.assertTrue(checkSpan(spans.get(0), 15, 49, FilterType.BITCOIN_ADDRESS));
+        Assert.assertTrue(checkSpan(spans.get(0), 23, 32, FilterType.PASSPORT_NUMBER));
         Assert.assertEquals("{{{REDACTED-passport-number}}}", spans.get(0).getReplacement());
         Assert.assertEquals("986001231", spans.get(0).getText());
 

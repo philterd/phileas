@@ -170,6 +170,8 @@ public class Identifiers {
                 if(this.getMacAddress() != null) { return true; } break;
             case NER_ENTITY:
                 if(this.getNer() != null) { return true; } break;
+            case PASSPORT_NUMBER:
+                if(this.getPassportNumber() != null) { return true; } break;
             case PHONE_NUMBER:
                 if(this.getPhoneNumber() != null) { return true; } break;
             case PHONE_NUMBER_EXTENSION:

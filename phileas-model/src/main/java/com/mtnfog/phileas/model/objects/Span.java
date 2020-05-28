@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 /**
- * Represents a location in text identified as PII or PHI.
+ * Represents a location in text identified as sensitive information.
  */
 public final class Span {
 
@@ -31,6 +31,9 @@ public final class Span {
 
     @Expose
     private String documentId;
+
+    @Expose
+    private String classification;
 
     @Expose
     private double confidence;
@@ -429,6 +432,14 @@ public final class Span {
 
     public void setWindow(String[] window) {
         this.window = window;
+    }
+
+    public String getClassification() {
+        return classification;
+    }
+
+    public void setClassification(String classification) {
+        this.classification = classification;
     }
 
 }
