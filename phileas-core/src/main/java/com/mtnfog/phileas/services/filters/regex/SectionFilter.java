@@ -21,7 +21,7 @@ public class SectionFilter extends RegexFilter {
         super(FilterType.SECTION, strategies, anonymizationService, alertService, ignored, crypto, windowSize);
 
         final Pattern pattern = Pattern.compile(startPattern + "(.*?)" + endPattern);
-        final FilterPattern sectionPattern1 = new FilterPattern(pattern, 0.90);
+        final FilterPattern sectionPattern1 = new FilterPattern.FilterPatternBuilder(pattern, 0.90).build();
 
         // There are no contextual terms for a section.
         this.analyzer = new Analyzer(sectionPattern1);

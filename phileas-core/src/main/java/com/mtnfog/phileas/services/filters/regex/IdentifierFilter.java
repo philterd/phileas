@@ -32,7 +32,7 @@ public class IdentifierFilter extends RegexFilter {
 
         // TODO: Expose initialConfidence via the filter profile.
         // TODO: Expose the contextual terms via the filter profile.
-        final FilterPattern id1 = new FilterPattern(pattern, 0.90);
+        final FilterPattern id1 = new FilterPattern.FilterPatternBuilder(pattern, 0.90).build();
 
         this.contextualTerms = new HashSet<>();
         this.analyzer = new Analyzer(contextualTerms, id1);

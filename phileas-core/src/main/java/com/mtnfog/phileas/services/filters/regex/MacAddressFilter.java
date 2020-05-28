@@ -22,7 +22,7 @@ public class MacAddressFilter extends RegexFilter {
         super(FilterType.MAC_ADDRESS, strategies, anonymizationService, alertService, ignored, crypto, windowSize);
 
         final Pattern MAC_ADDRESS_PATTERN = Pattern.compile("\\b([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})\\b");
-        final FilterPattern macAddress1 = new FilterPattern(MAC_ADDRESS_PATTERN, 0.90);
+        final FilterPattern macAddress1 = new FilterPattern.FilterPatternBuilder(MAC_ADDRESS_PATTERN, 0.90).build();
 
         this.contextualTerms = new HashSet<>();
         this.contextualTerms.add("mac");

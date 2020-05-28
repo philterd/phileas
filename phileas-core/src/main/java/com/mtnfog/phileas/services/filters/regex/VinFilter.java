@@ -23,7 +23,7 @@ public class VinFilter extends RegexFilter {
         super(FilterType.VIN, strategies, anonymizationService, alertService, ignored, crypto, windowSize);
 
         final Pattern VIN_REGEX = Pattern.compile("\\b[A-HJ-NPR-Z0-9]{17}\\b", Pattern.CASE_INSENSITIVE);
-        final FilterPattern vin1 = new FilterPattern(VIN_REGEX, 0.90);
+        final FilterPattern vin1 = new FilterPattern.FilterPatternBuilder(VIN_REGEX, 0.90).build();
 
         this.contextualTerms = new HashSet<>();
         this.contextualTerms.add("vin");

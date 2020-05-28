@@ -30,7 +30,7 @@ public class IbanCodeFilter extends RegexFilter {
 
         // https://stackoverflow.com/q/44656264
         final Pattern IBAN_REGEX = Pattern.compile("\\b[A-Z]{2}[0-9]{2}[A-Z0-9]{1,30}\\b", Pattern.CASE_INSENSITIVE);
-        final FilterPattern iban1 = new FilterPattern(IBAN_REGEX, 0.90);
+        final FilterPattern iban1 = new FilterPattern.FilterPatternBuilder(IBAN_REGEX, 0.90).build();
 
         this.contextualTerms = new HashSet<>();
         this.contextualTerms.add("iban");

@@ -85,7 +85,7 @@ public class DriversLicenseFilter extends RegexFilter {
         for(final String state : DRIVERS_LICENSES_REGEX.keySet()) {
 
             // TODO: How to include the state so it is part of the span?
-            filterPatterns.add(new FilterPattern(DRIVERS_LICENSES_REGEX.get(state), 0.50));
+            filterPatterns.add(new FilterPattern.FilterPatternBuilder(DRIVERS_LICENSES_REGEX.get(state), 0.50).build());
 
         }
 

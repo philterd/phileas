@@ -7,19 +7,42 @@ public class FilterPattern {
     private Pattern pattern;
     private String format;
     private double initialConfidence;
+    private String label;
 
-    public FilterPattern(Pattern pattern, double initialConfidence) {
+    public static class FilterPatternBuilder {
 
-        this.pattern = pattern;
-        this.initialConfidence = initialConfidence;
+        private Pattern pattern;
+        private double initialConfidence;
+        private String format;
+        private String label;
+
+        public FilterPatternBuilder(Pattern pattern, double initialConfidence) {
+            this.pattern = pattern;
+            this.initialConfidence = initialConfidence;
+        }
+
+        public FilterPatternBuilder withFormat(String format) {
+            this.format = format;
+            return this;
+        }
+
+        public FilterPatternBuilder withLabel(String label) {
+            this.label = label;
+            return this;
+        }
+
+        public FilterPattern build() {
+            return new FilterPattern(pattern, initialConfidence, format, label);
+        }
 
     }
 
-    public FilterPattern(Pattern pattern, String format, double initialConfidence) {
+    private FilterPattern(Pattern pattern, double initialConfidence, String format, String label) {
 
         this.pattern = pattern;
-        this.format = format;
         this.initialConfidence = initialConfidence;
+        this.format = format;
+        this.label = label;
 
     }
 
@@ -33,6 +56,10 @@ public class FilterPattern {
 
     public double getInitialConfidence() {
         return initialConfidence;
+    }
+
+    public String getLabel() {
+        return label;
     }
 
 }

@@ -31,7 +31,7 @@ public class CreditCardFilter extends RegexFilter {
 
         // See http://regular-expressions.info/creditcard.html
         final Pattern CREDIT_CARD_REGEX = Pattern.compile("\\b(?:\\d[ -]*?){13,16}\\b", Pattern.CASE_INSENSITIVE);
-        final FilterPattern creditcard1 = new FilterPattern(CREDIT_CARD_REGEX, 0.90);
+        final FilterPattern creditcard1 = new FilterPattern.FilterPatternBuilder(CREDIT_CARD_REGEX, 0.90).build();
 
         this.contextualTerms = new HashSet<>();
         this.contextualTerms.add("credit");

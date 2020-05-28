@@ -83,7 +83,7 @@ public class StateAbbreviationFilter extends RegexFilter {
         for(final String state : states) {
 
             final Pattern STATE_REGEX = Pattern.compile("(?i)\\b" + state + "\\b");
-            filterPatterns.add(new FilterPattern(STATE_REGEX, 0.25));
+            filterPatterns.add(new FilterPattern.FilterPatternBuilder(STATE_REGEX, 0.25).build());
 
         }
 

@@ -23,7 +23,7 @@ public class IpAddressFilter extends RegexFilter {
 
         final Pattern IPV4_PATTERN = Pattern.compile("([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\." + "([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\." + "([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\." + "([01]?\\d\\d?|2[0-4]\\d|25[0-5])");
 
-        final FilterPattern ipv4 = new FilterPattern(IPV4_PATTERN, 0.90);
+        final FilterPattern ipv4 = new FilterPattern.FilterPatternBuilder(IPV4_PATTERN, 0.90).build();
 
         // IPv6 patterns taken from https://github.com/Dynatrace/openkit-java
         // https://github.com/Dynatrace/openkit-java/blob/master/src/main/java/com/dynatrace/openkit/core/util/InetAddressValidator.java
@@ -37,7 +37,7 @@ public class IpAddressFilter extends RegexFilter {
                                 + "[0-9a-fA-F]{1,4}"            // one more block of a 1 to 4 digit hex number
                                 + "");                          // end of string
 
-        final FilterPattern ipv61 = new FilterPattern(IPV6_STD_PATTERN, 0.90);
+        final FilterPattern ipv61 = new FilterPattern.FilterPatternBuilder(IPV6_STD_PATTERN, 0.90).build();
 
         final Pattern IPV6_HEX_COMPRESSED_PATTERN =
                 Pattern.compile(
@@ -53,7 +53,7 @@ public class IpAddressFilter extends RegexFilter {
                                 + ")"
                                 + "");                           // end of string
 
-        final FilterPattern ipv62 = new FilterPattern(IPV6_HEX_COMPRESSED_PATTERN, 0.90);
+        final FilterPattern ipv62 = new FilterPattern.FilterPatternBuilder(IPV6_HEX_COMPRESSED_PATTERN, 0.90).build();
 
         //this regex checks the ipv6 uncompressed part of a ipv6 mixed address
         final Pattern IPV6_MIXED_COMPRESSED_REGEX =
@@ -69,7 +69,7 @@ public class IpAddressFilter extends RegexFilter {
                         + ")"
                         + "");                                             // end of string
 
-        final FilterPattern ipv63 = new FilterPattern(IPV6_MIXED_COMPRESSED_REGEX, 0.90);
+        final FilterPattern ipv63 = new FilterPattern.FilterPatternBuilder(IPV6_MIXED_COMPRESSED_REGEX, 0.90).build();
 
         //this regex checks the ipv6 uncompressed part of a ipv6 mixed address
         final Pattern IPV6_MIXED_UNCOMPRESSED_REGEX =
@@ -77,7 +77,7 @@ public class IpAddressFilter extends RegexFilter {
                         + "(?:[0-9a-fA-F]{1,4}:){6}"                             // 6 blocks of a 1 to 4 digit hex number followed by double colon ':'
                         + "" );                                                 // end of string
 
-        final FilterPattern ipv64 = new FilterPattern(IPV6_MIXED_UNCOMPRESSED_REGEX, 0.90);
+        final FilterPattern ipv64 = new FilterPattern.FilterPatternBuilder(IPV6_MIXED_UNCOMPRESSED_REGEX, 0.90).build();
 
         this.contextualTerms = new HashSet<>();
         this.contextualTerms.add("ipv4");

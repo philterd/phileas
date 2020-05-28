@@ -22,7 +22,7 @@ public class PhoneNumberExtensionFilter extends RegexFilter {
         super(FilterType.PHONE_NUMBER_EXTENSION, strategies, anonymizationService, alertService, ignored, crypto, windowSize);
 
         final Pattern PHONE_NUMBER_EXTENSION_REGEX = Pattern.compile("\\bx[0-9]+\\b");
-        final FilterPattern phoneExtension1 = new FilterPattern(PHONE_NUMBER_EXTENSION_REGEX, 0.90);
+        final FilterPattern phoneExtension1 = new FilterPattern.FilterPatternBuilder(PHONE_NUMBER_EXTENSION_REGEX, 0.75).build();
 
         this.contextualTerms = new HashSet<>();
         this.contextualTerms.add("phone");

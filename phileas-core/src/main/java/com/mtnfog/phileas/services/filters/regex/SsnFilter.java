@@ -22,10 +22,10 @@ public class SsnFilter extends RegexFilter {
         super(FilterType.SSN, strategies, anonymizationService, alertService, ignored, crypto, windowSize);
 
         final Pattern SSN_REGEX = Pattern.compile("\\b(?!000|666)[0-8][0-9]{2}[- ]?(?!00)[0-9]{2}[- ]?(?!0000)[0-9]{4}\\b");
-        final FilterPattern ssn1 = new FilterPattern(SSN_REGEX, 0.90);
+        final FilterPattern ssn1 = new FilterPattern.FilterPatternBuilder(SSN_REGEX, 0.90).build();
 
         final Pattern TIN_REGEX = Pattern.compile("\\b\\d{2}-\\d{7}\\b");
-        final FilterPattern tin1 = new FilterPattern(TIN_REGEX, 0.90);
+        final FilterPattern tin1 = new FilterPattern.FilterPatternBuilder(TIN_REGEX, 0.90).build();
 
         this.contextualTerms = new HashSet<>();
         this.contextualTerms.add("ssn");

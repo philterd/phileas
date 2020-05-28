@@ -22,10 +22,10 @@ public class AgeFilter extends RegexFilter {
         super(FilterType.AGE, strategies, anonymizationService, alertService, ignored, crypto, windowSize);
 
         final Pattern AGE_REGEX_1 = Pattern.compile("\\b[0-9.]+[\\s]*(years|yrs)(\\s)*(old)?\\b", Pattern.CASE_INSENSITIVE);
-        final FilterPattern age1 = new FilterPattern(AGE_REGEX_1, 0.90);
+        final FilterPattern age1 = new FilterPattern.FilterPatternBuilder(AGE_REGEX_1, 0.90).build();
 
         final Pattern AGE_REGEX_2 = Pattern.compile("\\b(age)(d)?(\\s)*[0-9.]+\\b", Pattern.CASE_INSENSITIVE);
-        final FilterPattern age2 = new FilterPattern(AGE_REGEX_2, 0.90);
+        final FilterPattern age2 = new FilterPattern.FilterPatternBuilder(AGE_REGEX_2, 0.90).build();
 
         this.contextualTerms = new HashSet<>();
         this.contextualTerms.add("age");

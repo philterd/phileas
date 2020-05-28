@@ -4,19 +4,23 @@ import com.mtnfog.phileas.model.enums.FilterType;
 import com.mtnfog.phileas.model.filter.Filter;
 import com.mtnfog.phileas.model.objects.Span;
 import com.mtnfog.phileas.model.profile.Crypto;
+import com.mtnfog.phileas.model.services.AlertService;
 import com.mtnfog.phileas.services.anonymization.PassportNumberAnonymizationService;
 import com.mtnfog.phileas.services.anonymization.cache.LocalAnonymizationCacheService;
 import com.mtnfog.phileas.services.filters.regex.PassportNumberFilter;
 import org.junit.Assert;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 import java.util.Collections;
 import java.util.List;
 
 public class PassportNumberFilterTest extends AbstractFilterTest {
 
+    final AlertService alertService = Mockito.mock(AlertService.class);
+
     private Filter getFilter() {
-        return new PassportNumberFilter(null, new PassportNumberAnonymizationService(new LocalAnonymizationCacheService()), Collections.emptySet(), new Crypto(), windowSize);
+        return new PassportNumberFilter(null, new PassportNumberAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), new Crypto(), windowSize);
     }
 
     @Test
