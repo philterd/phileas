@@ -82,11 +82,9 @@ public class DriversLicenseFilter extends RegexFilter {
 
         final List<FilterPattern> filterPatterns = new LinkedList<>();
 
+        // Create a filter pattern for each state's regex.
         for(final String state : DRIVERS_LICENSES_REGEX.keySet()) {
-
-            // TODO: How to include the state so it is part of the span?
-            filterPatterns.add(new FilterPattern.FilterPatternBuilder(DRIVERS_LICENSES_REGEX.get(state), 0.50).build());
-
+            filterPatterns.add(new FilterPattern.FilterPatternBuilder(DRIVERS_LICENSES_REGEX.get(state), 0.50).withClassification(state).build());
         }
 
         this.analyzer = new Analyzer(contextualTerms, filterPatterns);
