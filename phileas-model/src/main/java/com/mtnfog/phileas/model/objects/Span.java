@@ -319,6 +319,7 @@ public final class Span {
                 append(text).
                 append(replacement).
                 append(ignored).
+                append(classification).
                 toHashCode();
 
     }
@@ -342,6 +343,7 @@ public final class Span {
                 + " text: " + text + "; "
                 + " replacement: " + replacement + "; "
                 + " ignored: " + ignored + "; "
+                + " classification: " + classification + "; "
                 ;
 
     }
