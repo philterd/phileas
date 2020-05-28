@@ -1,14 +1,13 @@
 // Generated from FilterCondition.g4 by ANTLR 4.8
 package com.mtnfog.phileas.model.conditions.parser;
-
-import org.antlr.v4.runtime.*;
-import org.antlr.v4.runtime.atn.ATN;
-import org.antlr.v4.runtime.atn.ATNDeserializer;
-import org.antlr.v4.runtime.atn.ParserATNSimulator;
-import org.antlr.v4.runtime.atn.PredictionContextCache;
+import org.antlr.v4.runtime.atn.*;
 import org.antlr.v4.runtime.dfa.DFA;
-import org.antlr.v4.runtime.tree.ParseTreeListener;
-import org.antlr.v4.runtime.tree.TerminalNode;
+import org.antlr.v4.runtime.*;
+import org.antlr.v4.runtime.misc.*;
+import org.antlr.v4.runtime.tree.*;
+import java.util.List;
+import java.util.Iterator;
+import java.util.ArrayList;
 
 @SuppressWarnings({"all", "warnings", "unchecked", "unused", "cast"})
 public class FilterConditionParser extends Parser {
@@ -18,8 +17,8 @@ public class FilterConditionParser extends Parser {
 	protected static final PredictionContextCache _sharedContextCache =
 		new PredictionContextCache();
 	public static final int
-		T__0=1, T__1=2, T__2=3, T__3=4, T__4=5, TYPE=6, AND=7, COMPARATOR=8, NUMBER=9, 
-		WORD=10, WS=11;
+		T__0=1, T__1=2, T__2=3, T__3=4, T__4=5, T__5=6, TYPE=7, AND=8, COMPARATOR=9, 
+		NUMBER=10, WORD=11, WS=12;
 	public static final int
 		RULE_expression = 0;
 	private static String[] makeRuleNames() {
@@ -31,14 +30,15 @@ public class FilterConditionParser extends Parser {
 
 	private static String[] makeLiteralNames() {
 		return new String[] {
-			null, "'population'", "'token'", "'type'", "'confidence'", "'context'"
+			null, "'population'", "'token'", "'type'", "'confidence'", "'context'", 
+			"'classification'"
 		};
 	}
 	private static final String[] _LITERAL_NAMES = makeLiteralNames();
 	private static String[] makeSymbolicNames() {
 		return new String[] {
-			null, null, null, null, null, null, "TYPE", "AND", "COMPARATOR", "NUMBER", 
-			"WORD", "WS"
+			null, null, null, null, null, null, null, "TYPE", "AND", "COMPARATOR", 
+			"NUMBER", "WORD", "WS"
 		};
 	}
 	private static final String[] _SYMBOLIC_NAMES = makeSymbolicNames();
@@ -121,9 +121,9 @@ public class FilterConditionParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(38);
+			setState(45);
 			_errHandler.sync(this);
-			switch ( getInterpreter().adaptivePredict(_input,5,_ctx) ) {
+			switch ( getInterpreter().adaptivePredict(_input,6,_ctx) ) {
 			case 1:
 				{
 				}
@@ -238,6 +238,28 @@ public class FilterConditionParser extends Parser {
 				}
 				}
 				break;
+			case 7:
+				{
+				setState(38);
+				match(T__5);
+				setState(39);
+				match(COMPARATOR);
+				setState(40);
+				match(WORD);
+				setState(43);
+				_errHandler.sync(this);
+				switch ( getInterpreter().adaptivePredict(_input,5,_ctx) ) {
+				case 1:
+					{
+					setState(41);
+					match(AND);
+					setState(42);
+					expression();
+					}
+					break;
+				}
+				}
+				break;
 			}
 			}
 		}
@@ -253,19 +275,21 @@ public class FilterConditionParser extends Parser {
 	}
 
 	public static final String _serializedATN =
-		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\r+\4\2\t\2\3\2\3"+
-		"\2\3\2\3\2\3\2\3\2\5\2\13\n\2\3\2\3\2\3\2\3\2\3\2\5\2\22\n\2\3\2\3\2\3"+
-		"\2\3\2\3\2\5\2\31\n\2\3\2\3\2\3\2\3\2\3\2\5\2 \n\2\3\2\3\2\3\2\3\2\3\2"+
-		"\5\2\'\n\2\5\2)\n\2\3\2\2\2\3\2\2\2\2\63\2(\3\2\2\2\4)\3\2\2\2\5\6\7\3"+
-		"\2\2\6\7\7\n\2\2\7\n\7\13\2\2\b\t\7\t\2\2\t\13\5\2\2\2\n\b\3\2\2\2\n\13"+
-		"\3\2\2\2\13)\3\2\2\2\f\r\7\4\2\2\r\16\7\n\2\2\16\21\7\f\2\2\17\20\7\t"+
-		"\2\2\20\22\5\2\2\2\21\17\3\2\2\2\21\22\3\2\2\2\22)\3\2\2\2\23\24\7\5\2"+
-		"\2\24\25\7\n\2\2\25\30\7\b\2\2\26\27\7\t\2\2\27\31\5\2\2\2\30\26\3\2\2"+
-		"\2\30\31\3\2\2\2\31)\3\2\2\2\32\33\7\6\2\2\33\34\7\n\2\2\34\37\7\13\2"+
-		"\2\35\36\7\t\2\2\36 \5\2\2\2\37\35\3\2\2\2\37 \3\2\2\2 )\3\2\2\2!\"\7"+
-		"\7\2\2\"#\7\n\2\2#&\7\f\2\2$%\7\t\2\2%\'\5\2\2\2&$\3\2\2\2&\'\3\2\2\2"+
-		"\')\3\2\2\2(\4\3\2\2\2(\5\3\2\2\2(\f\3\2\2\2(\23\3\2\2\2(\32\3\2\2\2("+
-		"!\3\2\2\2)\3\3\2\2\2\b\n\21\30\37&(";
+		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\16\62\4\2\t\2\3\2"+
+		"\3\2\3\2\3\2\3\2\3\2\5\2\13\n\2\3\2\3\2\3\2\3\2\3\2\5\2\22\n\2\3\2\3\2"+
+		"\3\2\3\2\3\2\5\2\31\n\2\3\2\3\2\3\2\3\2\3\2\5\2 \n\2\3\2\3\2\3\2\3\2\3"+
+		"\2\5\2\'\n\2\3\2\3\2\3\2\3\2\3\2\5\2.\n\2\5\2\60\n\2\3\2\2\2\3\2\2\2\2"+
+		"<\2/\3\2\2\2\4\60\3\2\2\2\5\6\7\3\2\2\6\7\7\13\2\2\7\n\7\f\2\2\b\t\7\n"+
+		"\2\2\t\13\5\2\2\2\n\b\3\2\2\2\n\13\3\2\2\2\13\60\3\2\2\2\f\r\7\4\2\2\r"+
+		"\16\7\13\2\2\16\21\7\r\2\2\17\20\7\n\2\2\20\22\5\2\2\2\21\17\3\2\2\2\21"+
+		"\22\3\2\2\2\22\60\3\2\2\2\23\24\7\5\2\2\24\25\7\13\2\2\25\30\7\t\2\2\26"+
+		"\27\7\n\2\2\27\31\5\2\2\2\30\26\3\2\2\2\30\31\3\2\2\2\31\60\3\2\2\2\32"+
+		"\33\7\6\2\2\33\34\7\13\2\2\34\37\7\f\2\2\35\36\7\n\2\2\36 \5\2\2\2\37"+
+		"\35\3\2\2\2\37 \3\2\2\2 \60\3\2\2\2!\"\7\7\2\2\"#\7\13\2\2#&\7\r\2\2$"+
+		"%\7\n\2\2%\'\5\2\2\2&$\3\2\2\2&\'\3\2\2\2\'\60\3\2\2\2()\7\b\2\2)*\7\13"+
+		"\2\2*-\7\r\2\2+,\7\n\2\2,.\5\2\2\2-+\3\2\2\2-.\3\2\2\2.\60\3\2\2\2/\4"+
+		"\3\2\2\2/\5\3\2\2\2/\f\3\2\2\2/\23\3\2\2\2/\32\3\2\2\2/!\3\2\2\2/(\3\2"+
+		"\2\2\60\3\3\2\2\2\t\n\21\30\37&-/";
 	public static final ATN _ATN =
 		new ATNDeserializer().deserialize(_serializedATN.toCharArray());
 	static {

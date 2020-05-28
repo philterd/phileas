@@ -11,8 +11,6 @@ import com.mtnfog.phileas.model.profile.filters.strategies.AbstractFilterStrateg
 import com.mtnfog.phileas.model.services.AlertService;
 import com.mtnfog.phileas.model.services.AnonymizationService;
 
-import java.io.Serializable;
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -60,17 +58,18 @@ public abstract class RulesFilter extends Filter {
                     // Is this term ignored?
                     final boolean isIgnored = ignored.contains(token);
 
-                    // There are no attributes for the span.
-                    final String replacement = getReplacement(filterProfile.getName(), label, context, documentId, token, Collections.emptyMap());
+                    // TODO: PHL-119: Adjust the confidence based on the initial confidence.
+                    // TODO: Should this be an option? Use "simple" confidence values or "calculated"?
+                    final double initialConfidence = filterPattern.getInitialConfidence();
+
+                    // Get the span's replacement.
+                    final String replacement = getReplacement(filterProfile.getName(), label, context, documentId, token, initialConfidence, filterPattern.getClassification());
 
                     final int characterStart = matcher.start(0);
                     final int characterEnd = matcher.end(0);
 
                     final String[] window = getWindow(input, characterStart, characterEnd);
 
-                    // TODO: PHL-119: Adjust the confidence based on the initial confidence.
-                    // TODO: Should this be an option? Use "simple" confidence values or "calculated"?
-                    final double initialConfidence = filterPattern.getInitialConfidence();
                     final Span span = Span.make(characterStart, characterEnd, getFilterType(), context, documentId, initialConfidence, token, replacement, isIgnored, window);
 
                     // TODO: Add "format" to Span.make() so we don't have to make a separate call here.

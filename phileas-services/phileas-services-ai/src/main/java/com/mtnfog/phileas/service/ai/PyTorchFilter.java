@@ -6,7 +6,6 @@ import com.mtnfog.phileas.model.objects.Span;
 import com.mtnfog.phileas.model.profile.Crypto;
 import com.mtnfog.phileas.model.profile.FilterProfile;
 import com.mtnfog.phileas.model.profile.filters.strategies.AbstractFilterStrategy;
-import com.mtnfog.phileas.model.profile.filters.strategies.ai.NerFilterStrategy;
 import com.mtnfog.phileas.model.services.AlertService;
 import com.mtnfog.phileas.model.services.AnonymizationService;
 import com.mtnfog.phileas.model.services.MetricsService;
@@ -22,8 +21,10 @@ import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.converter.scalars.ScalarsConverterFactory;
 
 import java.io.IOException;
-import java.io.Serializable;
-import java.util.*;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 public class PyTorchFilter extends NerFilter {
@@ -138,11 +139,7 @@ public class PyTorchFilter extends NerFilter {
     private Span createSpan(String filterProfile, String input, String context, String documentId, String text,
                             String type, int start, int end, double confidence) throws Exception {
 
-        final Map<String, Object> attributes = new HashMap<>();
-        attributes.put(NerFilterStrategy.CONFIDENCE, confidence);
-        attributes.put(NerFilterStrategy.TYPE, type);
-
-        final String replacement = getReplacement(filterProfile, label, context, documentId, text, attributes);
+        final String replacement = getReplacement(filterProfile, label, context, documentId, text, confidence, type);
 
         if(StringUtils.equals(replacement, text)) {
 

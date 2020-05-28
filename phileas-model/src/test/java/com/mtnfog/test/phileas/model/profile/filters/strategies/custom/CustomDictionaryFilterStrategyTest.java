@@ -121,7 +121,7 @@ public class CustomDictionaryFilterStrategyTest {
 
         CustomDictionaryFilterStrategy strategy = new CustomDictionaryFilterStrategy();
 
-        final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentId", "90210", "token startswith \"902\"", Collections.emptyMap());
+        final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentId", "90210", "token startswith \"902\"", 1.0, "");
 
         Assert.assertTrue(conditionSatisfied);
 
@@ -132,9 +132,7 @@ public class CustomDictionaryFilterStrategyTest {
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
 
-        final Map<String, Object> attributes = new HashMap<>();
-
-        final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentId", "John Smith", "context == \"c1\"", attributes);
+        final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentId", "John Smith", "context == \"c1\"",  1.0, "");
 
         Assert.assertFalse(conditionSatisfied);
 
@@ -145,9 +143,7 @@ public class CustomDictionaryFilterStrategyTest {
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
 
-        final Map<String, Object> attributes = new HashMap<>();
-
-        final boolean conditionSatisfied = strategy.evaluateCondition("ctx", "documentId", "John Smith", "context == \"ctx\"", attributes);
+        final boolean conditionSatisfied = strategy.evaluateCondition("ctx", "documentId", "John Smith", "context == \"ctx\"",  1.0, "");
 
         Assert.assertTrue(conditionSatisfied);
 
@@ -158,10 +154,7 @@ public class CustomDictionaryFilterStrategyTest {
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
 
-        final Map<String, Object> attributes = new HashMap<>();
-        attributes.put(NerFilterStrategy.CONFIDENCE, 1.0);
-
-        final boolean conditionSatisfied = strategy.evaluateCondition("ctx", "documentId", "John Smith", "confidence > 0.5", attributes);
+        final boolean conditionSatisfied = strategy.evaluateCondition("ctx", "documentId", "John Smith", "confidence > 0.5",  1.0, "");
 
         Assert.assertTrue(conditionSatisfied);
 
@@ -172,10 +165,7 @@ public class CustomDictionaryFilterStrategyTest {
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
 
-        final Map<String, Object> attributes = new HashMap<>();
-        attributes.put(NerFilterStrategy.CONFIDENCE, 1.0);
-
-        final boolean conditionSatisfied = strategy.evaluateCondition("ctx", "documentId", "John Smith", "confidence < 0.5", attributes);
+        final boolean conditionSatisfied = strategy.evaluateCondition("ctx", "documentId", "John Smith", "confidence < 0.5",  1.0, "");
 
         Assert.assertFalse(conditionSatisfied);
 

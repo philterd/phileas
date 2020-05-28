@@ -13,7 +13,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.List;
-import java.util.Map;
 
 public class IbanCodeFilterStrategy extends AbstractFilterStrategy {
 
@@ -22,7 +21,7 @@ public class IbanCodeFilterStrategy extends AbstractFilterStrategy {
     private static FilterType filterType = FilterType.AGE;
 
     @Override
-    public boolean evaluateCondition(String context, String documentId, String token, String condition, Map<String, Object> attributes) {
+    public boolean evaluateCondition(String context, String documentId, String token, String condition, double confidence, String classification) {
 
         boolean conditionsSatisfied = false;
 
@@ -44,6 +43,32 @@ public class IbanCodeFilterStrategy extends AbstractFilterStrategy {
                         break;
                     case NOT_EQUALS:
                         conditionsSatisfied = !(StringUtils.equalsIgnoreCase("\"" + context + "\"", conditionContext));
+                        break;
+
+                }
+
+            } else if(StringUtils.equalsIgnoreCase(CONFIDENCE, parsedCondition.getField())) {
+
+                final double threshold = Double.valueOf(parsedCondition.getValue());
+
+                switch (parsedCondition.getOperator()) {
+                    case GREATER_THAN:
+                        conditionsSatisfied = (confidence > threshold);
+                        break;
+                    case LESS_THAN:
+                        conditionsSatisfied = (confidence < threshold);
+                        break;
+                    case GREATER_THAN_EQUALS:
+                        conditionsSatisfied = (confidence >= threshold);
+                        break;
+                    case LESS_THAN_EQUALS:
+                        conditionsSatisfied = (confidence <= threshold);
+                        break;
+                    case EQUALS:
+                        conditionsSatisfied = (confidence == threshold);
+                        break;
+                    case NOT_EQUALS:
+                        conditionsSatisfied = (confidence != threshold);
                         break;
 
                 }

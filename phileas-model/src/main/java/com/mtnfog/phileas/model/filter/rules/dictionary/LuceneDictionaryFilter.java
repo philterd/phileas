@@ -38,7 +38,9 @@ import java.nio.file.Paths;
 import java.nio.file.attribute.FileAttribute;
 import java.nio.file.attribute.PosixFilePermission;
 import java.nio.file.attribute.PosixFilePermissions;
-import java.util.*;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
 
 /**
  * A filter that operates on a Lucene index.
@@ -242,17 +244,16 @@ public class LuceneDictionaryFilter extends DictionaryFilter implements Serializ
 
                                 if (isMatch) {
 
-                                    // Is this term ignored?
+                                    // Set the meta values for the span.
                                     final boolean isIgnored = ignored.contains(text);
-
                                     final int characterStart = offsetAttribute.startOffset();
                                     final int characterEnd = offsetAttribute.endOffset();
-
                                     final String[] window = getWindow(text, characterStart, characterEnd);
+                                    final double confidence = spellChecker.getAccuracy();
+                                    final String classification = "";
 
-                                    // There are no attributes for the span.
-                                    final String replacement = getReplacement(filterProfile.getName(), label, context, documentId, token, Collections.emptyMap());
-                                    spans.add(Span.make(characterStart, characterEnd, getFilterType(), context, documentId, spellChecker.getAccuracy(), token, replacement, isIgnored, window));
+                                    final String replacement = getReplacement(filterProfile.getName(), label, context, documentId, token, confidence, classification);
+                                    spans.add(Span.make(characterStart, characterEnd, getFilterType(), context, documentId, confidence, token, replacement, isIgnored, window));
 
                                 }
 

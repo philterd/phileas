@@ -3,7 +3,6 @@ package com.mtnfog.test.phileas.model.profile.filters.strategies.ai;
 import com.mtnfog.phileas.model.profile.Crypto;
 import com.mtnfog.phileas.model.profile.filters.strategies.AbstractFilterStrategy;
 import com.mtnfog.phileas.model.profile.filters.strategies.ai.NerFilterStrategy;
-import com.mtnfog.phileas.model.profile.filters.strategies.rules.CreditCardFilterStrategy;
 import com.mtnfog.phileas.model.services.AnonymizationCacheService;
 import com.mtnfog.phileas.model.services.AnonymizationService;
 import org.apache.logging.log4j.LogManager;
@@ -11,9 +10,6 @@ import org.apache.logging.log4j.Logger;
 import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
-
-import java.util.HashMap;
-import java.util.Map;
 
 import static org.mockito.Mockito.when;
 
@@ -114,10 +110,7 @@ public class NerFilterStrategyTest {
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
 
-        final Map<String, Object> attributes = new HashMap<>();
-        attributes.put(NerFilterStrategy.CONFIDENCE, 0.5);
-
-        final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentId", "John Smith", "confidence > 0.25", attributes);
+        final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentId", "John Smith", "confidence > 0.25",  0.5, "");
 
         Assert.assertTrue(conditionSatisfied);
 
@@ -128,10 +121,7 @@ public class NerFilterStrategyTest {
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
 
-        final Map<String, Object> attributes = new HashMap<>();
-        attributes.put(NerFilterStrategy.TYPE, "PER");
-
-        final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentId", "John Smith", "type == PER", attributes);
+        final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentId", "John Smith", "type == PER",  1.0, "PER");
 
         Assert.assertTrue(conditionSatisfied);
 
@@ -142,10 +132,7 @@ public class NerFilterStrategyTest {
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
 
-        final Map<String, Object> attributes = new HashMap<>();
-        attributes.put(NerFilterStrategy.TYPE, "LOC");
-
-        final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentId", "John Smith", "type == PER", attributes);
+        final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentId", "John Smith", "type == PER",  1.0, "LOC");
 
         Assert.assertFalse(conditionSatisfied);
 
@@ -156,10 +143,7 @@ public class NerFilterStrategyTest {
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
 
-        final Map<String, Object> attributes = new HashMap<>();
-        attributes.put(NerFilterStrategy.CONFIDENCE, 0.5);
-
-        final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentId", "John Smith", "confidence == 0.5", attributes);
+        final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentId", "John Smith", "confidence == 0.5",  0.5, "");
 
         Assert.assertTrue(conditionSatisfied);
 
@@ -170,10 +154,7 @@ public class NerFilterStrategyTest {
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
 
-        final Map<String, Object> attributes = new HashMap<>();
-        attributes.put(NerFilterStrategy.CONFIDENCE, 0.6);
-
-        final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentId", "John Smith", "confidence != 0.5", attributes);
+        final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentId", "John Smith", "confidence != 0.5",  0.6, "");
 
         Assert.assertTrue(conditionSatisfied);
 
@@ -184,10 +165,7 @@ public class NerFilterStrategyTest {
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
 
-        final Map<String, Object> attributes = new HashMap<>();
-        attributes.put(NerFilterStrategy.CONFIDENCE, 0.5);
-
-        final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentId", "John Smith", "confidence != 0.5", attributes);
+        final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentId", "John Smith", "confidence != 0.5",  0.5, "");
 
         Assert.assertFalse(conditionSatisfied);
 
@@ -198,11 +176,7 @@ public class NerFilterStrategyTest {
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
 
-        final Map<String, Object> attributes = new HashMap<>();
-        attributes.put(NerFilterStrategy.CONFIDENCE, 0.5);
-        attributes.put(NerFilterStrategy.TYPE, "LOC");
-
-        final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentId", "John Smith", "confidence != 0.5 and type == PER", attributes);
+        final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentId", "John Smith", "confidence != 0.5 and type == PER",  0.5, "LOC");
 
         Assert.assertFalse(conditionSatisfied);
 
@@ -213,11 +187,7 @@ public class NerFilterStrategyTest {
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
 
-        final Map<String, Object> attributes = new HashMap<>();
-        attributes.put(NerFilterStrategy.CONFIDENCE, 0.5);
-        attributes.put(NerFilterStrategy.TYPE, "PER");
-
-        final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentId", "John Smith", "confidence != 0.5 and type != LOC", attributes);
+        final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentId", "John Smith", "confidence != 0.5 and type != LOC",  0.5, "PER");
 
         Assert.assertFalse(conditionSatisfied);
 
@@ -228,11 +198,7 @@ public class NerFilterStrategyTest {
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
 
-        final Map<String, Object> attributes = new HashMap<>();
-        attributes.put(NerFilterStrategy.CONFIDENCE, 0.5);
-        attributes.put(NerFilterStrategy.TYPE, "PER");
-
-        final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentId", "John Smith", "confidence > 0.4 and type == PER", attributes);
+        final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentId", "John Smith", "confidence > 0.4 and type == PER",  0.5, "PER");
 
         Assert.assertTrue(conditionSatisfied);
 
@@ -243,11 +209,8 @@ public class NerFilterStrategyTest {
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
 
-        final Map<String, Object> attributes = new HashMap<>();
-        attributes.put(NerFilterStrategy.CONFIDENCE, 0.5);
-        attributes.put(NerFilterStrategy.TYPE, "PER");
 
-        final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentId", "John Smith", "confidence < 0.4 and type == PER", attributes);
+        final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentId", "John Smith", "confidence < 0.4 and type == PER",  0.5, "PER");
 
         Assert.assertFalse(conditionSatisfied);
 
@@ -258,9 +221,7 @@ public class NerFilterStrategyTest {
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
 
-        final Map<String, Object> attributes = new HashMap<>();
-
-        final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentId", "John Smith", "context == \"c1\"", attributes);
+        final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentId", "John Smith", "context == \"c1\"",  1.0, "");
 
         Assert.assertFalse(conditionSatisfied);
 
@@ -271,9 +232,7 @@ public class NerFilterStrategyTest {
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
 
-        final Map<String, Object> attributes = new HashMap<>();
-
-        final boolean conditionSatisfied = strategy.evaluateCondition("ctx", "documentId", "John Smith", "context == \"ctx\"", attributes);
+        final boolean conditionSatisfied = strategy.evaluateCondition("ctx", "documentId", "John Smith", "context == \"ctx\"",  1.0, "");
 
         Assert.assertTrue(conditionSatisfied);
 
@@ -284,9 +243,7 @@ public class NerFilterStrategyTest {
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
 
-        final Map<String, Object> attributes = new HashMap<>();
-
-        final boolean conditionSatisfied = strategy.evaluateCondition("ctx", "documentId", "John Smith", "token == \"John Smith\"", attributes);
+        final boolean conditionSatisfied = strategy.evaluateCondition("ctx", "documentId", "John Smith", "token == \"John Smith\"",  1.0, "");
 
         Assert.assertTrue(conditionSatisfied);
 
@@ -297,9 +254,7 @@ public class NerFilterStrategyTest {
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
 
-        final Map<String, Object> attributes = new HashMap<>();
-
-        final boolean conditionSatisfied = strategy.evaluateCondition("ctx", "documentId", "John Smith", "token != \"John Smith\"", attributes);
+        final boolean conditionSatisfied = strategy.evaluateCondition("ctx", "documentId", "John Smith", "token != \"John Smith\"",  1.0, "");
 
         Assert.assertFalse(conditionSatisfied);
 

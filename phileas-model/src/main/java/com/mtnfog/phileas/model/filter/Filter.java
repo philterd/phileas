@@ -12,9 +12,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.io.Serializable;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 public abstract class Filter {
@@ -153,7 +151,7 @@ public abstract class Filter {
      * @param token The token to replace.
      * @return The replacement string.
      */
-    public String getReplacement(String filterProfile, String label, String context, String documentId, String token, Map<String, Object> attributes) throws Exception {
+    public String getReplacement(String filterProfile, String label, String context, String documentId, String token, double confidence, String classification) throws Exception {
 
         if(strategies != null) {
 
@@ -168,7 +166,7 @@ public abstract class Filter {
                 if(hasCondition) {
 
                     // If there is a condition, does it evaluate?
-                    final boolean evaluates = strategy.evaluateCondition(context, documentId, token, condition, attributes);
+                    final boolean evaluates = strategy.evaluateCondition(context, documentId, token, condition, confidence, classification);
 
                     if(evaluates) {
 
@@ -190,7 +188,7 @@ public abstract class Filter {
                 }
 
                 // If there is no condition or if the condition evaluates then get the replacement.
-                if (StringUtils.isEmpty(condition) || (strategy.evaluateCondition(context, documentId, token, condition, attributes))) {
+                if (StringUtils.isEmpty(condition) || (strategy.evaluateCondition(context, documentId, token, condition, confidence, classification))) {
 
                     return strategy.getReplacement(label, context, documentId, token, crypto, anonymizationService);
 

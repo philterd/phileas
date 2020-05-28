@@ -13,7 +13,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.List;
-import java.util.Map;
 
 public class PassportNumberFilterStrategy extends AbstractFilterStrategy {
 
@@ -22,7 +21,7 @@ public class PassportNumberFilterStrategy extends AbstractFilterStrategy {
     private static FilterType filterType = FilterType.AGE;
 
     @Override
-    public boolean evaluateCondition(String context, String documentId, String token, String condition, Map<String, Object> attributes) {
+    public boolean evaluateCondition(String context, String documentId, String token, String condition, double confidence, String classification) {
 
         boolean conditionsSatisfied = false;
 
@@ -50,7 +49,6 @@ public class PassportNumberFilterStrategy extends AbstractFilterStrategy {
 
             } else if(StringUtils.equalsIgnoreCase(CONFIDENCE, parsedCondition.getField())) {
 
-                final double confidence = (double) attributes.getOrDefault(CONFIDENCE, 0.00);
                 final double threshold = Double.valueOf(parsedCondition.getValue());
 
                 switch (parsedCondition.getOperator()) {
@@ -71,6 +69,20 @@ public class PassportNumberFilterStrategy extends AbstractFilterStrategy {
                         break;
                     case "!=":
                         conditionsSatisfied = (confidence != threshold);
+                        break;
+
+                }
+
+            } else if(StringUtils.equalsIgnoreCase(CLASSIFICATION, parsedCondition.getField())) {
+
+                final String conditionClassification = parsedCondition.getValue();
+
+                switch (parsedCondition.getOperator()) {
+                    case "==":
+                        conditionsSatisfied = (StringUtils.equalsIgnoreCase("\"" + classification + "\"", conditionClassification));
+                        break;
+                    case "!=":
+                        conditionsSatisfied = !(StringUtils.equalsIgnoreCase("\"" + classification + "\"", conditionClassification));
                         break;
 
                 }

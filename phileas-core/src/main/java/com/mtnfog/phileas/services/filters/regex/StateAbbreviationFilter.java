@@ -11,11 +11,9 @@ import com.mtnfog.phileas.model.profile.filters.strategies.AbstractFilterStrateg
 import com.mtnfog.phileas.model.services.AlertService;
 import com.mtnfog.phileas.model.services.AnonymizationService;
 
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class StateAbbreviationFilter extends RegexFilter {
@@ -95,28 +93,7 @@ public class StateAbbreviationFilter extends RegexFilter {
     @Override
     public List<Span> filter(FilterProfile filterProfile, String context, String documentId, String input) throws Exception {
 
-        final List<Span> spans = new LinkedList<>();
-
-        for(final String state : states) {
-
-            final Pattern p = Pattern.compile("(?i)\\b" + state + "\\b");
-            final Matcher m = p.matcher(input);
-
-            while(m.find()) {
-
-                final String[] window = getWindow(input, m.start(), m.end());
-                final String token = m.group();
-                final String replacement = getReplacement(filterProfile.getName(), label, context, documentId, token, Collections.emptyMap());
-                final boolean isIgnored = ignored.contains(token);
-                final Span span = Span.make(m.start(), m.end(), FilterType.STATE_ABBREVIATION, context, documentId, 1.0, token, replacement, isIgnored, window);
-
-                spans.add(span);
-
-            }
-
-        }
-
-        return spans;
+        return findSpans(filterProfile, analyzer, input, context, documentId);
 
     }
 

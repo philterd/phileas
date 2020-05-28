@@ -19,7 +19,6 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Map;
 
 public class ZipCodeFilterStrategy extends AbstractFilterStrategy {
 
@@ -42,7 +41,7 @@ public class ZipCodeFilterStrategy extends AbstractFilterStrategy {
     private Integer truncateDigits;
 
     @Override
-    public boolean evaluateCondition(String context, String documentId, String token, String condition, Map<String, Object> attributes) {
+    public boolean evaluateCondition(String context, String documentId, String token, String condition, double confidence, String classification) {
 
         boolean conditionsSatisfied = false;
 
@@ -103,7 +102,6 @@ public class ZipCodeFilterStrategy extends AbstractFilterStrategy {
 
             } else if(StringUtils.equalsIgnoreCase(CONFIDENCE, parsedCondition.getField())) {
 
-                final double confidence = (double) attributes.getOrDefault(CONFIDENCE, 0.00);
                 final double threshold = Double.valueOf(parsedCondition.getValue());
 
                 switch (parsedCondition.getOperator()) {

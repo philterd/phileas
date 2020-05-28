@@ -13,7 +13,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.List;
-import java.util.Map;
 
 public class NerFilterStrategy extends AbstractFilterStrategy {
 
@@ -22,7 +21,7 @@ public class NerFilterStrategy extends AbstractFilterStrategy {
     private static FilterType filterType = FilterType.NER_ENTITY;
 
     @Override
-    public boolean evaluateCondition(String context, String documentId, String token, String condition, Map<String, Object> attributes) {
+    public boolean evaluateCondition(String context, String documentId, String token, String condition, double confidence, String classification) {
 
         final List<ParsedCondition> parsedConditions = ParserListener.getTerminals(condition);
 
@@ -34,9 +33,9 @@ public class NerFilterStrategy extends AbstractFilterStrategy {
 
                 conditionsSatisfied = evaluateTokenCondition(parsedCondition, token);
 
-            } else if(StringUtils.equalsIgnoreCase(TYPE, parsedCondition.getField())) {
+            } else if(StringUtils.equalsIgnoreCase(CLASSIFICATION, parsedCondition.getField()) || StringUtils.equalsIgnoreCase(TYPE, parsedCondition.getField())) {
 
-                final String entityType = attributes.getOrDefault(TYPE, "unk").toString();
+                final String entityType = classification;
 
                 if(parsedCondition.getOperator().equalsIgnoreCase("==")) {
                     conditionsSatisfied = StringUtils.equalsIgnoreCase(entityType, parsedCondition.getValue());
@@ -51,7 +50,6 @@ public class NerFilterStrategy extends AbstractFilterStrategy {
 
             } else if(StringUtils.equalsIgnoreCase(CONFIDENCE, parsedCondition.getField())) {
 
-                final double confidence = (double) attributes.getOrDefault(CONFIDENCE, 0.00);
                 final double threshold = Double.valueOf(parsedCondition.getValue());
 
                 switch (parsedCondition.getOperator()) {

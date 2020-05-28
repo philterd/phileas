@@ -37,6 +37,7 @@ public abstract class AbstractFilterStrategy {
     public static final String CONTEXT = "context";
     public static final String TYPE = "type";
     public static final String CONFIDENCE = "confidence";
+    public static final String CLASSIFICATION = "classification";
 
     @SerializedName("id")
     @Expose
@@ -82,10 +83,11 @@ public abstract class AbstractFilterStrategy {
      * @param context The context.
      * @param documentId The document ID.
      * @param token The token.
-     * @param attributes Attributes about the token such as NER attributes.
+     * @param confidence The span's confidence.
+     * @param classification The span's classification.
      * @return <code>true</code> if the condition matches; otherwise <code>false</code>.
      */
-    public abstract boolean evaluateCondition(String context, String documentId, String token, String condition, Map<String, Object> attributes);
+    public abstract boolean evaluateCondition(String context, String documentId, String token, String condition, double confidence, String classification);
 
     protected String getRedactedToken(String token, String label, FilterType filterType) {
 

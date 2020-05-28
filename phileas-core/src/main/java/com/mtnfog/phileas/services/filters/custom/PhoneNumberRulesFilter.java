@@ -4,6 +4,7 @@ import com.google.i18n.phonenumbers.PhoneNumberMatch;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
 import com.mtnfog.phileas.model.enums.FilterType;
 import com.mtnfog.phileas.model.filter.rules.RulesFilter;
+import com.mtnfog.phileas.model.objects.Analyzer;
 import com.mtnfog.phileas.model.objects.Span;
 import com.mtnfog.phileas.model.profile.Crypto;
 import com.mtnfog.phileas.model.profile.FilterProfile;
@@ -11,10 +12,9 @@ import com.mtnfog.phileas.model.profile.filters.strategies.AbstractFilterStrateg
 import com.mtnfog.phileas.model.services.AlertService;
 import com.mtnfog.phileas.model.services.AnonymizationService;
 
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+
+// TODO: This should not extend RulesFilter because it is not a rule-based filter.
 
 public class PhoneNumberRulesFilter extends RulesFilter {
 
@@ -37,15 +37,17 @@ public class PhoneNumberRulesFilter extends RulesFilter {
 
             final Iterable<PhoneNumberMatch> matches = phoneUtil.findNumbers(input, "US", PhoneNumberUtil.Leniency.POSSIBLE, Long.MAX_VALUE);
 
-            for (PhoneNumberMatch match : matches) {
+            for (final PhoneNumberMatch match : matches) {
 
+                final double confidence = 1.0;
                 final String text = match.rawString();
-                final String replacement = getReplacement(filterProfile.getName(), label, context, documentId, text, Collections.emptyMap());
+                final String classification = "";
+                final String replacement = getReplacement(filterProfile.getName(), label, context, documentId, text, confidence, classification);
                 final boolean isIgnored = ignored.contains(text);
 
                 final String[] window = getWindow(input, match.start(), match.end());
 
-                spans.add(Span.make(match.start(), match.end(), getFilterType(), context, documentId, 1.0, text, replacement, isIgnored, window));
+                spans.add(Span.make(match.start(), match.end(), getFilterType(), context, documentId, confidence, text, replacement, isIgnored, window));
 
             }
 

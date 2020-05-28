@@ -2,8 +2,6 @@ package com.mtnfog.test.phileas.model.profile.filters.strategies.rules;
 
 import com.mtnfog.phileas.model.profile.Crypto;
 import com.mtnfog.phileas.model.profile.filters.strategies.AbstractFilterStrategy;
-import com.mtnfog.phileas.model.profile.filters.strategies.ai.NerFilterStrategy;
-import com.mtnfog.phileas.model.profile.filters.strategies.rules.CreditCardFilterStrategy;
 import com.mtnfog.phileas.model.profile.filters.strategies.rules.ZipCodeFilterStrategy;
 import com.mtnfog.phileas.model.services.AnonymizationCacheService;
 import com.mtnfog.phileas.model.services.AnonymizationService;
@@ -14,9 +12,6 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import java.io.IOException;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 
 import static org.mockito.Mockito.when;
 
@@ -135,7 +130,7 @@ public class ZipCodeFilterStrategyTest {
 
         ZipCodeFilterStrategy strategy = new ZipCodeFilterStrategy();
 
-        final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentId", "90210", "population < 10000", Collections.emptyMap());
+        final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentId", "90210", "population < 10000", 1.0, "");
 
         Assert.assertFalse(conditionSatisfied);
 
@@ -146,7 +141,7 @@ public class ZipCodeFilterStrategyTest {
 
         ZipCodeFilterStrategy strategy = new ZipCodeFilterStrategy();
 
-        final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentId", "90210", "population > 10000", Collections.emptyMap());
+        final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentId", "90210", "population > 10000", 1.0, "");
 
         Assert.assertTrue(conditionSatisfied);
 
@@ -157,7 +152,7 @@ public class ZipCodeFilterStrategyTest {
 
         ZipCodeFilterStrategy strategy = new ZipCodeFilterStrategy();
 
-        final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentId", "90210", "population == 21741", Collections.emptyMap());
+        final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentId", "90210", "population == 21741", 1.0, "");
 
         Assert.assertTrue(conditionSatisfied);
 
@@ -168,7 +163,7 @@ public class ZipCodeFilterStrategyTest {
 
         ZipCodeFilterStrategy strategy = new ZipCodeFilterStrategy();
 
-        final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentId", "90210", "population > 20000 and population < 25000", Collections.emptyMap());
+        final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentId", "90210", "population > 20000 and population < 25000", 1.0, "");
 
         Assert.assertTrue(conditionSatisfied);
 
@@ -179,7 +174,7 @@ public class ZipCodeFilterStrategyTest {
 
         ZipCodeFilterStrategy strategy = new ZipCodeFilterStrategy();
 
-        final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentId", "90210", "population > 20000 and population < 20010", Collections.emptyMap());
+        final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentId", "90210", "population > 20000 and population < 20010", 1.0, "");
 
         Assert.assertFalse(conditionSatisfied);
 
@@ -190,7 +185,7 @@ public class ZipCodeFilterStrategyTest {
 
         ZipCodeFilterStrategy strategy = new ZipCodeFilterStrategy();
 
-        final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentId", "20500", "token startswith \"20\"", Collections.emptyMap());
+        final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentId", "20500", "token startswith \"20\"", 1.0, "");
 
         Assert.assertTrue(conditionSatisfied);
 
@@ -201,7 +196,7 @@ public class ZipCodeFilterStrategyTest {
 
         ZipCodeFilterStrategy strategy = new ZipCodeFilterStrategy();
 
-        final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentId", "31590", "token startswith \"20\"", Collections.emptyMap());
+        final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentId", "31590", "token startswith \"20\"", 1.0, "");
 
         Assert.assertFalse(conditionSatisfied);
 
@@ -212,9 +207,7 @@ public class ZipCodeFilterStrategyTest {
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
 
-        final Map<String, Object> attributes = new HashMap<>();
-
-        final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentId", "John Smith", "context == \"c1\"", attributes);
+        final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentId", "John Smith", "context == \"c1\"",  1.0, "");
 
         Assert.assertFalse(conditionSatisfied);
 
@@ -225,9 +218,7 @@ public class ZipCodeFilterStrategyTest {
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
 
-        final Map<String, Object> attributes = new HashMap<>();
-
-        final boolean conditionSatisfied = strategy.evaluateCondition("ctx", "documentId", "John Smith", "context == \"ctx\"", attributes);
+        final boolean conditionSatisfied = strategy.evaluateCondition("ctx", "documentId", "John Smith", "context == \"ctx\"",  1.0, "");
 
         Assert.assertTrue(conditionSatisfied);
 
@@ -238,10 +229,7 @@ public class ZipCodeFilterStrategyTest {
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
 
-        final Map<String, Object> attributes = new HashMap<>();
-        attributes.put(NerFilterStrategy.CONFIDENCE, 1.0);
-
-        final boolean conditionSatisfied = strategy.evaluateCondition("ctx", "documentId", "John Smith", "confidence > 0.5", attributes);
+        final boolean conditionSatisfied = strategy.evaluateCondition("ctx", "documentId", "John Smith", "confidence > 0.5",  1.0, "");
 
         Assert.assertTrue(conditionSatisfied);
 
@@ -252,10 +240,7 @@ public class ZipCodeFilterStrategyTest {
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
 
-        final Map<String, Object> attributes = new HashMap<>();
-        attributes.put(NerFilterStrategy.CONFIDENCE, 1.0);
-
-        final boolean conditionSatisfied = strategy.evaluateCondition("ctx", "documentId", "John Smith", "confidence < 0.5", attributes);
+        final boolean conditionSatisfied = strategy.evaluateCondition("ctx", "documentId", "John Smith", "confidence < 0.5",  1.0, "");
 
         Assert.assertFalse(conditionSatisfied);
 
