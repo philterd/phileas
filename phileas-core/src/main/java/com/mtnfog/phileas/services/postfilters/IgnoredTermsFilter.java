@@ -7,7 +7,6 @@ import com.mtnfog.phileas.model.services.PostFilter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -21,11 +20,11 @@ public class IgnoredTermsFilter extends PostFilter {
     private static final Logger LOGGER = LogManager.getLogger(IgnoredTermsFilter.class);
 
     private Set<String> ignoredTerms = new HashSet<>();
-    private boolean caseSensitive;
+    private Ignored ignored;
 
-    public IgnoredTermsFilter(Ignored ignored) {
+    public IgnoredTermsFilter(final Ignored ignored) {
 
-        this.caseSensitive = caseSensitive;
+        this.ignored = ignored;
 
         if(ignored.isCaseSensitive()) {
 
@@ -33,7 +32,7 @@ public class IgnoredTermsFilter extends PostFilter {
 
         } else {
 
-            // Lowercase everything before adding.
+            // Not case-sensitive. Lowercase everything before adding.
             ignoredTerms.addAll(ignored.getTerms().stream()
                     .map(String::toLowerCase)
                     .collect(Collectors.toList()));
@@ -47,7 +46,7 @@ public class IgnoredTermsFilter extends PostFilter {
 
         String spanText = span.getText(text);
 
-        if(!caseSensitive) {
+        if(!ignored.isCaseSensitive()) {
             spanText = spanText.toLowerCase();
         }
 
