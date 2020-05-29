@@ -55,7 +55,9 @@ public class CreditCardFilter extends RegexFilter {
 
         for(final Span span : spans) {
 
-            final String creditCardNumber = input.substring(span.getCharacterStart(), span.getCharacterEnd());
+            final String creditCardNumber = input.substring(span.getCharacterStart(), span.getCharacterEnd())
+                    .replaceAll(" ", "")
+                    .replaceAll("-", "");
 
             if(onlyValidCreditCardNumbers) {
 
