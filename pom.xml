@@ -116,7 +116,6 @@
 		<log4j.version>2.13.2</log4j.version>
 		<lucene.version>8.3.0</lucene.version>
 		<mockito.version>1.10.19</mockito.version>
-		<opennlp.version>1.9.2</opennlp.version>
 		<owner.version>1.0.11</owner.version>
 		<redis-mock.version>0.1.6</redis-mock.version>
 		<redisson.version>3.12.5</redisson.version>
