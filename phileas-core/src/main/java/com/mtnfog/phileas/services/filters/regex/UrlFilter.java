@@ -38,7 +38,10 @@ public class UrlFilter extends RegexFilter {
 
         this.contextualTerms = new HashSet<>();
         this.contextualTerms.add("web");
+        this.contextualTerms.add("webpage");
+        this.contextualTerms.add("website");
         this.contextualTerms.add("url");
+        this.contextualTerms.add("uri");
         this.contextualTerms.add("address");
 
         if(requireHttpWwwPrefix) {

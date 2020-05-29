@@ -33,6 +33,8 @@ public class IdentifierFilter extends RegexFilter {
         // TODO: Expose the contextual terms via the filter profile.
         final FilterPattern id1 = new FilterPattern.FilterPatternBuilder(pattern, 0.90).build();
 
+        // There are no contextual terms because we don't know what they would be.
+        // TODO: Let the user set a list of contextual terms?
         this.contextualTerms = new HashSet<>();
         this.analyzer = new Analyzer(contextualTerms, id1);
 

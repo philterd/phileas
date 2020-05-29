@@ -11,6 +11,7 @@ import com.mtnfog.phileas.model.profile.filters.strategies.AbstractFilterStrateg
 import com.mtnfog.phileas.model.services.AlertService;
 import com.mtnfog.phileas.model.services.AnonymizationService;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -23,7 +24,9 @@ public class SectionFilter extends RegexFilter {
         final Pattern pattern = Pattern.compile(startPattern + "(.*?)" + endPattern);
         final FilterPattern sectionPattern1 = new FilterPattern.FilterPatternBuilder(pattern, 0.90).build();
 
-        // There are no contextual terms for a section.
+        // There are no contextual terms because it doesn't make sense to have them for a section.
+        this.contextualTerms = new HashSet<>();
+
         this.analyzer = new Analyzer(sectionPattern1);
 
     }

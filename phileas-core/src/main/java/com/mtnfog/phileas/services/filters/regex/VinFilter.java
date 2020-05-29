@@ -29,6 +29,8 @@ public class VinFilter extends RegexFilter {
         this.contextualTerms.add("vin");
         this.contextualTerms.add("car");
         this.contextualTerms.add("truck");
+        this.contextualTerms.add("vehicle");
+        this.contextualTerms.add("automobile");
 
         this.analyzer = new Analyzer(contextualTerms, vin1);
 

@@ -11,6 +11,7 @@ import com.mtnfog.phileas.model.profile.filters.strategies.AbstractFilterStrateg
 import com.mtnfog.phileas.model.services.AlertService;
 import com.mtnfog.phileas.model.services.AnonymizationService;
 
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -85,7 +86,9 @@ public class StateAbbreviationFilter extends RegexFilter {
 
         }
 
-        // No contextual terms.
+        this.contextualTerms = new HashSet<>();
+        this.contextualTerms.add("state");
+
         this.analyzer = new Analyzer(filterPatterns);
 
     }

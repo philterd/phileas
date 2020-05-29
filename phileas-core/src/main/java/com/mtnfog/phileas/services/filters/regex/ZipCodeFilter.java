@@ -27,7 +27,7 @@ public class ZipCodeFilter extends RegexFilter {
         this.contextualTerms = new HashSet<>();
         this.contextualTerms.add("zip");
         this.contextualTerms.add("zipcode");
-        this.contextualTerms.add("zip code");
+        this.contextualTerms.add("postal");
 
         this.analyzer = new Analyzer(contextualTerms, zipCode1);
 
