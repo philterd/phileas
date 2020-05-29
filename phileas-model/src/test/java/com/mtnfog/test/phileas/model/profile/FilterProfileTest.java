@@ -135,6 +135,8 @@ public class FilterProfileTest {
 
         System.out.println(json);
 
+        Assertions.assertNotNull(json);
+
     }
 
     @Test

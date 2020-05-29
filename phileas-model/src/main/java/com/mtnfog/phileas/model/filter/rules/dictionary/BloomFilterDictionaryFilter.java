@@ -28,7 +28,6 @@ public class BloomFilterDictionaryFilter extends DictionaryFilter {
 
     private BloomFilter<String> bloomFilter;
     private Set<String> terms;
-    private String classification;
 
     public BloomFilterDictionaryFilter(FilterType filterType,
                                        List<? extends AbstractFilterStrategy> strategies,

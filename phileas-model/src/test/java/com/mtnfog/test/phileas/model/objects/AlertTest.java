@@ -3,6 +3,7 @@ package com.mtnfog.test.phileas.model.objects;
 import com.google.gson.Gson;
 import com.mtnfog.phileas.model.enums.FilterType;
 import com.mtnfog.phileas.model.objects.Alert;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 public class AlertTest {
@@ -14,6 +15,8 @@ public class AlertTest {
 
         final Gson gson = new Gson();
         final String json = gson.toJson(alert);
+
+        Assertions.assertNotNull(json);
 
         System.out.println(json);
 

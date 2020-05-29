@@ -57,8 +57,12 @@ public class CreditCardFilter extends RegexFilter {
 
             final String creditCardNumber = input.substring(span.getCharacterStart(), span.getCharacterEnd());
 
-            if(onlyValidCreditCardNumbers && luhnCheckDigit.isValid(creditCardNumber)) {
-                validSpans.add(span);
+            if(onlyValidCreditCardNumbers) {
+
+                if(luhnCheckDigit.isValid(creditCardNumber)) {
+                    validSpans.add(span);
+                }
+
             } else {
                 validSpans.add(span);
             }
