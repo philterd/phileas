@@ -21,6 +21,8 @@ public class LocalFilterProfileService implements FilterProfileService {
 
     private static final Logger LOGGER = LogManager.getLogger(LocalFilterProfileService.class);
 
+    private static final String JSON_EXTENSION = ".json";
+
     private String filterProfilesDirectory;
     private FilterProfileCacheService filterProfileCacheService;
 
@@ -68,7 +70,7 @@ public class LocalFilterProfileService implements FilterProfileService {
 
             // The filter profile wasn't found in the cache so look on the file system.
 
-            final File file = new File(filterProfilesDirectory, filterProfileName + ".json");
+            final File file = new File(filterProfilesDirectory, filterProfileName + JSON_EXTENSION);
 
             if (file.exists()) {
 
@@ -121,7 +123,7 @@ public class LocalFilterProfileService implements FilterProfileService {
             final JSONObject object = new JSONObject(filterProfileJson);
             final String filterProfileName = object.getString("name");
 
-            final File file = new File(filterProfilesDirectory, filterProfileName + ".json");
+            final File file = new File(filterProfilesDirectory, filterProfileName + JSON_EXTENSION);
 
             FileUtils.writeStringToFile(file, filterProfileJson, Charset.defaultCharset());
 
@@ -140,12 +142,12 @@ public class LocalFilterProfileService implements FilterProfileService {
     @Override
     public void delete(String filterProfileName) throws IOException {
 
-        final File file = new File(filterProfilesDirectory, filterProfileName + ".json");
+        final File file = new File(filterProfilesDirectory, filterProfileName + JSON_EXTENSION);
 
         if(file.exists()) {
 
             if(!file.delete()) {
-                throw new IOException("Unable to delete filter profile " + filterProfileName + ".json");
+                throw new IOException("Unable to delete filter profile " + filterProfileName + JSON_EXTENSION);
             }
 
             // Remove it from the cache.

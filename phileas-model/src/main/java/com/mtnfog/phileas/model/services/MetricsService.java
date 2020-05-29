@@ -3,9 +3,7 @@ package com.mtnfog.phileas.model.services;
 import com.mtnfog.phileas.model.enums.FilterType;
 import com.mtnfog.phileas.model.objects.Span;
 
-import java.io.Serializable;
-
-public interface MetricsService extends Serializable {
+public interface MetricsService {
 
     void incrementProcessed();
     void incrementProcessed(long count);

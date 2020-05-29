@@ -7,6 +7,10 @@ import java.io.IOException;
 
 public class FilterProfileCacheServiceFactory {
 
+    private FilterProfileCacheServiceFactory() {
+        // Use the static methods.
+    }
+
     public static FilterProfileCacheService getInstance(PhileasConfiguration phileasConfiguration) throws IOException {
 
         if(phileasConfiguration.cacheRedisEnabled()) {

@@ -30,6 +30,8 @@ public class S3FilterProfileService implements FilterProfileService {
 
     private static final Logger LOGGER = LogManager.getLogger(S3FilterProfileService.class);
 
+    private static final String JSON_EXTENSION = ".json";
+
     private AmazonS3 s3Client;
     private String bucket;
     private FilterProfileCacheService filterProfileCacheService;
@@ -134,7 +136,7 @@ public class S3FilterProfileService implements FilterProfileService {
 
                 // The filter profile was not in the cache. Look in S3.
                 LOGGER.info("Filter profile was not cached. Looking for filter profile {} in s3 bucket {}", filterProfileName, bucket);
-                final S3Object fullObject = s3Client.getObject(new GetObjectRequest(bucket, filterProfileName + ".json"));
+                final S3Object fullObject = s3Client.getObject(new GetObjectRequest(bucket, filterProfileName + JSON_EXTENSION));
                 json = IOUtils.toString(fullObject.getObjectContent(), StandardCharsets.UTF_8.name());
                 fullObject.close();
 
@@ -177,7 +179,7 @@ public class S3FilterProfileService implements FilterProfileService {
                 for (final S3ObjectSummary objectSummary : result.getObjectSummaries()) {
 
                     // Ignore any non .json files.
-                    if (objectSummary.getKey().endsWith(".json")) {
+                    if (objectSummary.getKey().endsWith(JSON_EXTENSION)) {
 
                         final S3Object fullObject = s3Client.getObject(new GetObjectRequest(bucket, objectSummary.getKey()));
                         final String json = IOUtils.toString(fullObject.getObjectContent(), StandardCharsets.UTF_8.name());
@@ -224,8 +226,8 @@ public class S3FilterProfileService implements FilterProfileService {
             final JSONObject object = new JSONObject(filterProfileJson);
             final String name = object.getString("name");
 
-            LOGGER.info("Uploading object to s3://{}/{}", bucket, name + ".json");
-            s3Client.putObject(bucket, name + ".json", filterProfileJson);
+            LOGGER.info("Uploading object to s3://{}/{}", bucket, name + JSON_EXTENSION);
+            s3Client.putObject(bucket, name + JSON_EXTENSION, filterProfileJson);
 
             // Insert it into the cache.
             filterProfileCacheService.insert(name, filterProfileJson);
@@ -250,8 +252,8 @@ public class S3FilterProfileService implements FilterProfileService {
 
         try {
 
-            LOGGER.info("Deleting object from s3://{}/{}", bucket, filterProfileName + ".json");
-            s3Client.deleteObject(bucket, filterProfileName + ".json");
+            LOGGER.info("Deleting object from s3://{}/{}", bucket, filterProfileName + JSON_EXTENSION);
+            s3Client.deleteObject(bucket, filterProfileName + JSON_EXTENSION);
 
             // Remove it from the cache.
             filterProfileCacheService.remove(filterProfileName);

@@ -60,6 +60,7 @@ public class StaticFilterProfileService implements FilterProfileService {
 
         // The filterProfileName does not matter.
         // There is only one filter profile and it is returned.
+        LOGGER.debug("Retrieving filter profile {}", filterProfile);
 
         return gson.toJson(filterProfile);
 
