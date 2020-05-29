@@ -12,7 +12,7 @@ import java.util.UUID;
 
 public class Alert implements Serializable {
 
-    private final DateFormat utcDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+    private final transient DateFormat utcDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 
     private String id;
     private String filterProfile;
