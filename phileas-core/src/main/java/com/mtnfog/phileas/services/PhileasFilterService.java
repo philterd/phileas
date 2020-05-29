@@ -335,11 +335,11 @@ public class PhileasFilterService implements FilterService {
             // There can be multiple custom dictionary filters because it is a list.
             for(final CustomDictionary customDictionary : filterProfile.getIdentifiers().getCustomDictionaries()) {
 
-                // TODO: Should there be an anonymization service?
-                // There is no anonymization service because we don't know what to replace custom dictionary items with.
-                final AnonymizationService anonymizationService = null;
-
                 if(customDictionary.isEnabled()) {
+
+                    // TODO: Should there be an anonymization service?
+                    // There is no anonymization service because we don't know what to replace custom dictionary items with.
+                    final AnonymizationService anonymizationService = null;
 
                     // All of the custom terms.
                     final Set<String> terms = new LinkedHashSet<>();
@@ -354,18 +354,29 @@ public class PhileasFilterService implements FilterService {
                         terms.addAll(FileUtils.readLines(new File(file), Charset.defaultCharset()));
                     }
 
-                    LOGGER.info("Custom dictionary contains {} terms.", terms.size());
-
                     if(customDictionary.isFuzzy()) {
 
+                        LOGGER.info("Custom fuzzy dictionary contains {} terms.", terms.size());
+
                         // Use a Lucene dictionary filter.
-                        final DictionaryFilter dictionaryFilter = new LuceneDictionaryFilter(FilterType.CUSTOM_DICTIONARY, customDictionary.getCustomDictionaryFilterStrategies(),
-                                SensitivityLevel.fromName(customDictionary.getSensitivity()), anonymizationService, alertService,
-                                customDictionary.getClassification(), customDictionary.getTerms(), index, customDictionary.getIgnored(), filterProfile.getCrypto(), windowSize);
+                        final DictionaryFilter dictionaryFilter = new LuceneDictionaryFilter(
+                                FilterType.CUSTOM_DICTIONARY,
+                                customDictionary.getCustomDictionaryFilterStrategies(),
+                                SensitivityLevel.fromName(customDictionary.getSensitivity()),
+                                anonymizationService,
+                                alertService,
+                                customDictionary.getClassification(),
+                                terms,
+                                index,
+                                customDictionary.getIgnored(),
+                                filterProfile.getCrypto(),
+                                windowSize);
 
                         enabledFilters.add(dictionaryFilter);
 
                     } else {
+
+                        LOGGER.info("Custom dictionary contains {} terms.", terms.size());
 
                         // Use a bloomfilter.
                         final DictionaryFilter dictionaryFilter = new BloomFilterDictionaryFilter(FilterType.CUSTOM_DICTIONARY,

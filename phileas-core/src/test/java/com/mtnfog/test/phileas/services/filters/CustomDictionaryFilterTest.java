@@ -13,9 +13,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 public class CustomDictionaryFilterTest extends AbstractFilterTest {
 
@@ -27,7 +25,7 @@ public class CustomDictionaryFilterTest extends AbstractFilterTest {
     public void filterDictionaryExactMatch() throws Exception {
 
         final List<CustomDictionaryFilterStrategy> strategies = Arrays.asList(new CustomDictionaryFilterStrategy());
-        final List<String> names = Arrays.asList("george", "ted", "bill", "john");
+        final Set<String> names = new HashSet<>(Arrays.asList("george", "ted", "bill", "john"));
         final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.CUSTOM_DICTIONARY, strategies, SensitivityLevel.LOW, null, alertService, "names", names, 0, Collections.emptySet(), new Crypto(), windowSize);
 
         final List<Span> spans = filter.filter(getFilterProfile(SensitivityLevel.LOW), "context", "documentid","He lived with Bill in California.");
@@ -44,7 +42,7 @@ public class CustomDictionaryFilterTest extends AbstractFilterTest {
     public void filterDictionaryNoMatch() throws Exception {
 
         final List<CustomDictionaryFilterStrategy> strategies = Arrays.asList(new CustomDictionaryFilterStrategy());
-        final List<String> names = Arrays.asList("george", "ted", "bill", "john");
+        final Set<String> names = new HashSet<>(Arrays.asList("george", "ted", "bill", "john"));
         final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.CUSTOM_DICTIONARY, strategies, SensitivityLevel.LOW, null, alertService, "names", names, 0, Collections.emptySet(), new Crypto(), windowSize);
 
         final List<Span> spans = filter.filter(getFilterProfile(SensitivityLevel.LOW), "context", "documentid","He lived with Sam in California.");

@@ -159,6 +159,7 @@ public abstract class Filter {
             // Loop through the strategies. The first strategy without a condition or a satisfied condition will provide the replacement.
             for (AbstractFilterStrategy strategy : strategies) {
 
+                // Get the condition. (There might not be one.)
                 final String condition = strategy.getCondition();
 
                 // Is there a condition for this strategy?
@@ -171,6 +172,7 @@ public abstract class Filter {
 
                     if(evaluates) {
 
+                        // Generate an alert for this strategy?
                         if(strategy.isAlert()) {
 
                             LOGGER.info("Generating alert for strategy ID {}", strategy.getId());
@@ -178,19 +180,14 @@ public abstract class Filter {
 
                         }
 
+                        // Break early since we met the strategy's condition.
                         return strategy.getReplacement(classification, context, documentId, token, crypto, anonymizationService);
 
                     }
 
                 } else {
 
-                    return strategy.getReplacement(classification, context, documentId, token, crypto, anonymizationService);
-
-                }
-
-                // If there is no condition or if the condition evaluates then get the replacement.
-                if (StringUtils.isEmpty(condition) || (strategy.evaluateCondition(context, documentId, token, condition, confidence, classification))) {
-
+                    // Break early since there is no condition.
                     return strategy.getReplacement(classification, context, documentId, token, crypto, anonymizationService);
 
                 }

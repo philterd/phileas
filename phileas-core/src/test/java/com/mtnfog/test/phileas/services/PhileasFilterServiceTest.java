@@ -209,7 +209,48 @@ public class PhileasFilterServiceTest {
     }
 
     @Test
-    public void endToEndUsingCustomDictionaryFile() throws Exception {
+    public void endToEndUsingCustomDictionaryFileLuceneFilter() throws Exception {
+
+        final Path temp = Files.createTempDirectory("philter");
+
+        final String terms = IOUtils.toString(this.getClass().getResourceAsStream("/customdictionaries/terms1.txt"), Charset.defaultCharset());
+        final File termsFile = Paths.get(temp.toFile().getAbsolutePath(), "terms1.txt").toFile();
+        FileUtils.writeStringToFile(termsFile, terms, Charset.defaultCharset());
+        LOGGER.info("Terms file written to {}", termsFile.getAbsolutePath());
+
+        final CustomDictionary customDictionary = new CustomDictionary();
+        customDictionary.setFiles(Arrays.asList(termsFile.getAbsolutePath()));
+        customDictionary.setCustomDictionaryFilterStrategies(Arrays.asList(new CustomDictionaryFilterStrategy()));
+        customDictionary.setClassification("names");
+        customDictionary.setFuzzy(true);
+
+        final FilterProfile filterProfile = new FilterProfile();
+        filterProfile.setName("custom-dictionary");
+        filterProfile.getIdentifiers().setCustomDictionaries(Arrays.asList(customDictionary));
+
+        final File file = Paths.get(temp.toFile().getAbsolutePath(), "default.json").toFile();
+        FileUtils.writeStringToFile(file, gson.toJson(filterProfile), Charset.defaultCharset());
+        LOGGER.info("Filter profile written to {}", file.getAbsolutePath());
+
+        final Properties properties = new Properties();
+        properties.setProperty("indexes.directory", INDEXES_DIRECTORY);
+        properties.setProperty("store.enabled", "false");
+        properties.setProperty("filter.profiles.directory", temp.toFile().getAbsolutePath());
+
+        final PhileasConfiguration phileasConfiguration = ConfigFactory.create(PhileasConfiguration.class, properties);
+
+        final PhileasFilterService service = new PhileasFilterService(phileasConfiguration);
+        final FilterResponse response = service.filter("default", "context", "documentId", "his name was samuel.", MimeType.TEXT_PLAIN);
+
+        LOGGER.info(response.getFilteredText());
+
+        Assertions.assertEquals("his name was {{{REDACTED-custom-dictionary}}}.", response.getFilteredText());
+        Assertions.assertEquals("documentId", response.getDocumentId());
+
+    }
+
+    @Test
+    public void endToEndUsingCustomDictionaryFileBloomFilter() throws Exception {
 
         final Path temp = Files.createTempDirectory("philter");
 

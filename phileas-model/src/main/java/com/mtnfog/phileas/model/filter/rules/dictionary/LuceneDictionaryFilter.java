@@ -2,7 +2,6 @@ package com.mtnfog.phileas.model.filter.rules.dictionary;
 
 import com.mtnfog.phileas.model.enums.FilterType;
 import com.mtnfog.phileas.model.enums.SensitivityLevel;
-import com.mtnfog.phileas.model.filter.Filter;
 import com.mtnfog.phileas.model.objects.Span;
 import com.mtnfog.phileas.model.profile.Crypto;
 import com.mtnfog.phileas.model.profile.FilterProfile;
@@ -97,7 +96,7 @@ public class LuceneDictionaryFilter extends DictionaryFilter implements Serializ
                                         AnonymizationService anonymizationService,
                                         AlertService alertService,
                                         String type,
-                                        List<String> terms,
+                                        Set<String> terms,
                                         int filterProfileIndex,
                                         Set<String> ignored,
                                         Crypto crypto,
@@ -151,128 +150,127 @@ public class LuceneDictionaryFilter extends DictionaryFilter implements Serializ
 
             try(final Analyzer analyzer = new StandardAnalyzer()) {
 
-                for(final AbstractFilterStrategy strategy : Filter.getFilterStrategies(filterProfile, filterType, filterProfileIndex)) {
+                LOGGER.info("Using sensitivity level = " + sensitivityLevel.getName());
 
-                    LOGGER.info("Using sensitivity level = " + sensitivityLevel.getName());
+                // Tokenize the input text.
+                final TokenStream tokenStream = analyzer.tokenStream(null, new StringReader(text));
 
-                    // Tokenize the input text.
-                    final TokenStream tokenStream = analyzer.tokenStream(null, new StringReader(text));
+                // Make n-grams from the tokens.
+                final ShingleFilter ngrams = new ShingleFilter(tokenStream, 5);
 
-                    // Make n-grams from the tokens.
-                    final ShingleFilter ngrams = new ShingleFilter(tokenStream, 5);
+                final OffsetAttribute offsetAttribute = ngrams.getAttribute(OffsetAttribute.class);
+                final CharTermAttribute termAttribute = ngrams.getAttribute(CharTermAttribute.class);
 
-                    final OffsetAttribute offsetAttribute = ngrams.getAttribute(OffsetAttribute.class);
-                    final CharTermAttribute termAttribute = ngrams.getAttribute(CharTermAttribute.class);
+                try {
 
-                    try {
+                    ngrams.reset();
 
-                        ngrams.reset();
+                    while (ngrams.incrementToken()) {
 
-                        while (ngrams.incrementToken()) {
+                        final String token = termAttribute.toString();
 
-                            final String token = termAttribute.toString();
+                        // An underscore indicates Lucene removed a stopword.
+                        if (!token.contains("_")) {
 
-                            // An underscore indicates Lucene removed a stopword.
-                            if (!token.contains("_")) {
+                            LOGGER.info("Looking at token [{}]", token);
 
-                                //LOGGER.info("Looking at token '{}'", token);
+                            boolean isMatch = false;
 
-                                boolean isMatch = false;
+                            if (spellChecker.exist(token)) {
 
-                                if (spellChecker.exist(token)) {
+                                //LOGGER.info("Exact match on token '{}'", token);
 
-                                    //LOGGER.info("Exact match on token '{}'", token);
+                                // The token has an identical match in the index.
+                                isMatch = true;
 
-                                    // The token has an identical match in the index.
-                                    isMatch = true;
+                            } else {
 
-                                } else {
+                                // Do a fuzzy search against the index.
+                                final String[] tokenSuggestions = spellChecker.suggestSimilar(token, 3);
+                                LOGGER.debug("{} suggestions for '{}': {}", tokenSuggestions.length, token, tokenSuggestions);
 
-                                    // Do a fuzzy search against the index.
-                                    final String[] tokenSuggestions = spellChecker.suggestSimilar(token, 3);
-                                    LOGGER.debug("{} suggestions for '{}': {}", tokenSuggestions.length, token, tokenSuggestions);
+                                if (tokenSuggestions.length > 0) {
 
-                                    if (tokenSuggestions.length > 0) {
+                                    int distance = 0;
 
-                                        int distance = 0;
+                                    // Calculate the distance.
+                                    if(sensitivityLevel == SensitivityLevel.AUTO) {
 
-                                        // Calculate the distance.
-                                        if(sensitivityLevel == SensitivityLevel.AUTO) {
+                                        // Automatically adjust the distance based on the length.
+                                        // https://www.elastic.co/guide/en/elasticsearch/reference/current/common-options.html#fuzziness
+                                        /*0..2
+                                        Must match exactly
+                                        3..5
+                                        One edit allowed
+                                                >5
+                                        Two edits allowed*/
 
-                                            // Automatically adjust the distance based on the length.
-                                            // https://www.elastic.co/guide/en/elasticsearch/reference/current/common-options.html#fuzziness
-                                            /*0..2
-                                            Must match exactly
-                                            3..5
-                                            One edit allowed
-                                                    >5
-                                            Two edits allowed*/
-
-                                            if(token.length() < 3) {
-                                                distance = 0;
-                                            } else if(token.length() >= 3 && token.length() <= 5) {
-                                                distance = 1;
-                                            } else {
-                                                distance = 2;
-                                            }
-
-                                        } else if(sensitivityLevel == SensitivityLevel.LOW) {
+                                        if(token.length() < 3) {
                                             distance = 0;
-                                        } else if(sensitivityLevel == SensitivityLevel.MEDIUM) {
+                                        } else if(token.length() >= 3 && token.length() <= 5) {
                                             distance = 1;
-                                        } else if(sensitivityLevel == SensitivityLevel.HIGH) {
+                                        } else {
                                             distance = 2;
                                         }
 
-                                        LOGGER.debug("Using distance value {}", distance);
+                                    } else if(sensitivityLevel == SensitivityLevel.LOW) {
+                                        distance = 0;
+                                    } else if(sensitivityLevel == SensitivityLevel.MEDIUM) {
+                                        distance = 1;
+                                    } else if(sensitivityLevel == SensitivityLevel.HIGH) {
+                                        distance = 2;
+                                    }
 
-                                        for (final String suggestion : tokenSuggestions) {
+                                    LOGGER.debug("Using distance value {}", distance);
 
-                                            final int d = distanceFunction.apply(token.toUpperCase(), suggestion.toUpperCase());
+                                    for (final String suggestion : tokenSuggestions) {
 
-                                            if (d <= distance) {
-                                                LOGGER.debug("distance for {} and {} is {}", token, suggestion, d);
-                                                isMatch = true;
-                                            }
+                                        final int d = distanceFunction.apply(token.toUpperCase(), suggestion.toUpperCase());
 
+                                        if (d <= distance) {
+                                            LOGGER.debug("distance for {} and {} is {}", token, suggestion, d);
+                                            isMatch = true;
                                         }
 
                                     }
 
                                 }
 
-                                if (isMatch) {
+                            }
 
-                                    // Set the meta values for the span.
-                                    final boolean isIgnored = ignored.contains(token);
-                                    final int characterStart = offsetAttribute.startOffset();
-                                    final int characterEnd = offsetAttribute.endOffset();
-                                    final String[] window = getWindow(text, characterStart, characterEnd);
-                                    final double confidence = spellChecker.getAccuracy();
-                                    final String classification = "";
+                            if (isMatch) {
 
-                                    final String replacement = getReplacement(filterProfile.getName(), context, documentId, token, confidence, classification);
-                                    spans.add(Span.make(characterStart, characterEnd, getFilterType(), context, documentId, confidence, token, replacement, isIgnored, window));
+                                // Set the meta values for the span.
+                                final boolean isIgnored = ignored.contains(token);
+                                final int characterStart = offsetAttribute.startOffset();
+                                final int characterEnd = offsetAttribute.endOffset();
+                                final String[] window = getWindow(text, characterStart, characterEnd);
+                                final double confidence = spellChecker.getAccuracy();
+                                final String classification = "";
 
-                                }
+                                // Get the replacement token or the original token if no filter strategy conditions are met.
+                                final String replacement = getReplacement(filterProfile.getName(), context, documentId, token, confidence, classification);
+
+                                // Add the span to the list.
+                                spans.add(Span.make(characterStart, characterEnd, getFilterType(), context, documentId, confidence, token, replacement, isIgnored, window));
 
                             }
 
                         }
 
-                    } catch (IOException ex) {
-
-                        LOGGER.error("Error enumerating tokens.", ex);
-
-                    } finally {
-                        try {
-                            ngrams.end();
-                            ngrams.close();
-                        } catch (IOException e) {
-                            // Do nothing.
-                        }
                     }
 
+                } catch (IOException ex) {
+
+                    LOGGER.error("Error enumerating tokens.", ex);
+
+                } finally {
+                    try {
+                        ngrams.end();
+                        ngrams.close();
+                    } catch (IOException e) {
+                        // Do nothing.
+                    }
                 }
 
             }
