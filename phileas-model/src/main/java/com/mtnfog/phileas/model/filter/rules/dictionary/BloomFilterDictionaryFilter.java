@@ -12,7 +12,6 @@ import com.mtnfog.phileas.model.services.AnonymizationService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.io.Serializable;
 import java.nio.charset.Charset;
 import java.text.BreakIterator;
 import java.util.LinkedList;
@@ -23,7 +22,7 @@ import java.util.Set;
 /**
  * A filter that operates on a bloom filter.
  */
-public class BloomFilterDictionaryFilter extends DictionaryFilter implements Serializable {
+public class BloomFilterDictionaryFilter extends DictionaryFilter {
 
     private static final Logger LOGGER = LogManager.getLogger(BloomFilterDictionaryFilter.class);
 
