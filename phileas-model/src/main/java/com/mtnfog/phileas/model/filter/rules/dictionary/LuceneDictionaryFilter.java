@@ -247,11 +247,11 @@ public class LuceneDictionaryFilter extends DictionaryFilter implements Serializ
                                     final boolean isIgnored = ignored.contains(token);
                                     final int characterStart = offsetAttribute.startOffset();
                                     final int characterEnd = offsetAttribute.endOffset();
-                                    final String[] window = getWindow(token, characterStart, characterEnd);
+                                    final String[] window = getWindow(text, characterStart, characterEnd);
                                     final double confidence = spellChecker.getAccuracy();
                                     final String classification = "";
 
-                                    final String replacement = getReplacement(filterProfile.getName(), label, context, documentId, token, confidence, classification);
+                                    final String replacement = getReplacement(filterProfile.getName(), context, documentId, token, confidence, classification);
                                     spans.add(Span.make(characterStart, characterEnd, getFilterType(), context, documentId, confidence, token, replacement, isIgnored, window));
 
                                 }
