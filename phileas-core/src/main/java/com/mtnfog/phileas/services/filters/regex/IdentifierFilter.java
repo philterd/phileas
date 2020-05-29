@@ -18,7 +18,7 @@ import java.util.regex.Pattern;
 
 public class IdentifierFilter extends RegexFilter {
 
-    public IdentifierFilter(String label, String regex, boolean caseSensitive, List<IdentifierFilterStrategy> strategies, AnonymizationService anonymizationService, AlertService alertService, Set<String> ignored, Crypto crypto, int windowSize) {
+    public IdentifierFilter(String classification, String regex, boolean caseSensitive, List<IdentifierFilterStrategy> strategies, AnonymizationService anonymizationService, AlertService alertService, Set<String> ignored, Crypto crypto, int windowSize) {
         super(FilterType.IDENTIFIER, strategies, anonymizationService, alertService, ignored, crypto, windowSize);
 
         final Pattern pattern;
@@ -31,7 +31,7 @@ public class IdentifierFilter extends RegexFilter {
 
         // TODO: Expose initialConfidence via the filter profile.
         // TODO: Expose the contextual terms via the filter profile.
-        final FilterPattern id1 = new FilterPattern.FilterPatternBuilder(pattern, 0.90).build();
+        final FilterPattern id1 = new FilterPattern.FilterPatternBuilder(pattern, 0.90).withClassification(classification).build();
 
         // There are no contextual terms because we don't know what they would be.
         // TODO: Let the user set a list of contextual terms?

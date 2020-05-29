@@ -25,9 +25,9 @@ public class Identifier extends AbstractFilter {
     @Expose
     private boolean caseSensitive = true;
 
-    @SerializedName("label")
+    @SerializedName("classification")
     @Expose
-    private String label = "custom-identifier";
+    private String classification = "custom-identifier";
 
     public List<IdentifierFilterStrategy> getIdentifierFilterStrategies() {
         return identifierFilterStrategies;
@@ -53,12 +53,12 @@ public class Identifier extends AbstractFilter {
         this.caseSensitive = caseSensitive;
     }
 
-    public String getLabel() {
-        return label;
+    public String getClassification() {
+        return classification;
     }
 
-    public void setLabel(String label) {
-        this.label = label;
+    public void setClassification(String classification) {
+        this.classification = classification;
     }
 
 }
