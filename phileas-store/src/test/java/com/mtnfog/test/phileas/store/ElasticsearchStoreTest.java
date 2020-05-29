@@ -13,18 +13,18 @@ import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestClientBuilder;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.client.indices.CreateIndexRequest;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 
-@Ignore
+@Disabled
 public class ElasticsearchStoreTest {
 
     private static final Logger LOGGER = LogManager.getLogger(ElasticsearchStoreTest.class);
@@ -36,7 +36,7 @@ public class ElasticsearchStoreTest {
 
     private static final int SLEEP_DELAY_MS = 1000;
 
-    @Before
+    @BeforeEach
     public void before() throws IOException {
 
         // Delete the index.
@@ -58,6 +58,7 @@ public class ElasticsearchStoreTest {
 
     }
 
+    @Disabled
     @Test
     public void test1() throws IOException, InterruptedException {
 
@@ -75,12 +76,13 @@ public class ElasticsearchStoreTest {
 
         showSpans(spans);
 
-        Assert.assertEquals(1, spans.size());
-        Assert.assertEquals(span.getCharacterStart(), spans.get(0).getCharacterStart());
-        Assert.assertEquals(span.getCharacterEnd(), spans.get(0).getCharacterEnd());
+        Assertions.assertEquals(1, spans.size());
+        Assertions.assertEquals(span.getCharacterStart(), spans.get(0).getCharacterStart());
+        Assertions.assertEquals(span.getCharacterEnd(), spans.get(0).getCharacterEnd());
 
     }
 
+    @Disabled
     @Test
     public void test2() throws IOException, InterruptedException {
 
@@ -98,14 +100,14 @@ public class ElasticsearchStoreTest {
 
         store.close();
 
-        Assert.assertEquals(3, spans.size());
-        Assert.assertEquals(span1, spans.get(0));
-        Assert.assertEquals(span2, spans.get(1));
-        Assert.assertEquals(span3, spans.get(2));
+        Assertions.assertEquals(3, spans.size());
+        Assertions.assertEquals(span1, spans.get(0));
+        Assertions.assertEquals(span2, spans.get(1));
+        Assertions.assertEquals(span3, spans.get(2));
 
     }
 
-    @Ignore
+    @Disabled
     @Test
     public void test3() throws IOException {
 
@@ -115,7 +117,7 @@ public class ElasticsearchStoreTest {
 
         store.close();
 
-        Assert.assertEquals(4, spans.size());
+        Assertions.assertEquals(4, spans.size());
 
         showSpans(spans);
 

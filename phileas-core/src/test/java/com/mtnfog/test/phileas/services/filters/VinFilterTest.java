@@ -9,8 +9,8 @@ import com.mtnfog.phileas.model.services.AnonymizationService;
 import com.mtnfog.phileas.services.anonymization.VinAnonymizationService;
 import com.mtnfog.phileas.services.anonymization.cache.LocalAnonymizationCacheService;
 import com.mtnfog.phileas.services.filters.regex.VinFilter;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.util.Arrays;
@@ -30,9 +30,9 @@ public class VinFilterTest extends AbstractFilterTest {
         VinFilter filter = new VinFilter(strategies, anonymizationService, alertService, Collections.emptySet(), new Crypto(), windowSize);
 
         List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "the vin is JB3BA36KXHU036784.");
-        Assert.assertEquals(1, spans.size());
-        Assert.assertTrue(checkSpan(spans.get(0), 11, 28, FilterType.VIN));
-        Assert.assertEquals("JB3BA36KXHU036784", spans.get(0).getText());
+        Assertions.assertEquals(1, spans.size());
+        Assertions.assertTrue(checkSpan(spans.get(0), 11, 28, FilterType.VIN));
+        Assertions.assertEquals("JB3BA36KXHU036784", spans.get(0).getText());
 
     }
 
@@ -43,8 +43,8 @@ public class VinFilterTest extends AbstractFilterTest {
         VinFilter filter = new VinFilter(strategies, anonymizationService, alertService, Collections.emptySet(), new Crypto(), windowSize);
 
         List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "the vin is 2T2HK31U38C057399.");
-        Assert.assertEquals(1, spans.size());
-        Assert.assertTrue(checkSpan(spans.get(0), 11, 28, FilterType.VIN));
+        Assertions.assertEquals(1, spans.size());
+        Assertions.assertTrue(checkSpan(spans.get(0), 11, 28, FilterType.VIN));
 
     }
 
@@ -55,7 +55,7 @@ public class VinFilterTest extends AbstractFilterTest {
         VinFilter filter = new VinFilter(strategies, anonymizationService, alertService, Collections.emptySet(), new Crypto(), windowSize);
 
         List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "the vin is 11131517191011111.");
-        Assert.assertEquals(0, spans.size());
+        Assertions.assertEquals(0, spans.size());
 
     }
 
@@ -66,7 +66,7 @@ public class VinFilterTest extends AbstractFilterTest {
         VinFilter filter = new VinFilter(strategies, anonymizationService, alertService, Collections.emptySet(), new Crypto(), windowSize);
 
         List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "the vin is 11131517191X11111.");
-        Assert.assertEquals(0, spans.size());
+        Assertions.assertEquals(0, spans.size());
 
     }
 
@@ -77,8 +77,8 @@ public class VinFilterTest extends AbstractFilterTest {
         VinFilter filter = new VinFilter(strategies, anonymizationService, alertService, Collections.emptySet(), new Crypto(), windowSize);
 
         List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "the vin is 2t2hk31u38c057399.");
-        Assert.assertEquals(1, spans.size());
-        Assert.assertTrue(checkSpan(spans.get(0), 11, 28, FilterType.VIN));
+        Assertions.assertEquals(1, spans.size());
+        Assertions.assertTrue(checkSpan(spans.get(0), 11, 28, FilterType.VIN));
 
     }
 

@@ -11,8 +11,8 @@ import com.mtnfog.phileas.services.anonymization.IbanCodeAnonymizationService;
 import com.mtnfog.phileas.services.anonymization.cache.LocalAnonymizationCacheService;
 import com.mtnfog.phileas.services.filters.regex.AgeFilter;
 import com.mtnfog.phileas.services.filters.regex.IbanCodeFilter;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.util.Arrays;
@@ -36,10 +36,10 @@ public class IbanCodeFilterTest extends AbstractFilterTest {
 
         showSpans(spans);
 
-        Assert.assertEquals(1, spans.size());
-        Assert.assertTrue(checkSpan(spans.get(0), 13, 35, FilterType.IBAN_CODE));
-        Assert.assertEquals("{{{REDACTED-iban-code}}}", spans.get(0).getReplacement());
-        Assert.assertEquals("GB33BUKB20201555555555", spans.get(0).getText());
+        Assertions.assertEquals(1, spans.size());
+        Assertions.assertTrue(checkSpan(spans.get(0), 13, 35, FilterType.IBAN_CODE));
+        Assertions.assertEquals("{{{REDACTED-iban-code}}}", spans.get(0).getReplacement());
+        Assertions.assertEquals("GB33BUKB20201555555555", spans.get(0).getText());
 
     }
 
@@ -52,10 +52,10 @@ public class IbanCodeFilterTest extends AbstractFilterTest {
 
         showSpans(spans);
 
-        Assert.assertEquals(1, spans.size());
-        Assert.assertTrue(checkSpan(spans.get(0), 13, 35, FilterType.IBAN_CODE));
-        Assert.assertEquals("{{{REDACTED-iban-code}}}", spans.get(0).getReplacement());
-        Assert.assertEquals("GB15MIDL40051512345678", spans.get(0).getText());
+        Assertions.assertEquals(1, spans.size());
+        Assertions.assertTrue(checkSpan(spans.get(0), 13, 35, FilterType.IBAN_CODE));
+        Assertions.assertEquals("{{{REDACTED-iban-code}}}", spans.get(0).getReplacement());
+        Assertions.assertEquals("GB15MIDL40051512345678", spans.get(0).getText());
 
     }
 

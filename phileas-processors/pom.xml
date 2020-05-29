@@ -19,6 +19,6 @@
 	</licenses>
   <modules>
     <module>phileas-processors-unstructured</module>
-	<module>phileas-processors-structured</module>
+	<!--<module>phileas-processors-structured</module>-->
   </modules>
 </project>

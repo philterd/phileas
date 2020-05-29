@@ -1,8 +1,8 @@
 package com.mtnfog.test.phileas.model.enums;
 
 import com.mtnfog.phileas.model.enums.SensitivityLevel;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class SensitivityLevelTest {
 
@@ -10,7 +10,7 @@ public class SensitivityLevelTest {
     public void test1() {
 
         SensitivityLevel sensitivityLevel = SensitivityLevel.fromName("low");
-        Assert.assertEquals(SensitivityLevel.LOW, sensitivityLevel);
+        Assertions.assertEquals(SensitivityLevel.LOW, sensitivityLevel);
 
     }
 
@@ -18,7 +18,7 @@ public class SensitivityLevelTest {
     public void test2() {
 
         SensitivityLevel sensitivityLevel = SensitivityLevel.fromName("medium");
-        Assert.assertEquals(SensitivityLevel.MEDIUM, sensitivityLevel);
+        Assertions.assertEquals(SensitivityLevel.MEDIUM, sensitivityLevel);
 
     }
 
@@ -26,7 +26,7 @@ public class SensitivityLevelTest {
     public void test3() {
 
         SensitivityLevel sensitivityLevel = SensitivityLevel.fromName("high");
-        Assert.assertEquals(SensitivityLevel.HIGH, sensitivityLevel);
+        Assertions.assertEquals(SensitivityLevel.HIGH, sensitivityLevel);
 
     }
 

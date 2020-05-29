@@ -19,9 +19,9 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -42,7 +42,7 @@ public class PhileasFilterServiceTest {
     private String INDEXES_DIRECTORY = "/mtnfog/code/bitbucket/philter/philter/distribution/indexes/";
     private Gson gson = new Gson();
 
-    @Before
+    @BeforeEach
     public void before() {
         INDEXES_DIRECTORY = System.getProperty( "os.name" ).contains( "indow" ) ? INDEXES_DIRECTORY.substring(1) : INDEXES_DIRECTORY;
     }
@@ -54,7 +54,7 @@ public class PhileasFilterServiceTest {
         final String json = gson.toJson(filterProfile);
         LOGGER.info(json);
         final FilterProfile deserialized = gson.fromJson(json, FilterProfile.class);
-        Assert.assertEquals("default", deserialized.getName());
+        Assertions.assertEquals("default", deserialized.getName());
 
     }
 
@@ -78,8 +78,8 @@ public class PhileasFilterServiceTest {
 
         LOGGER.info(response.getFilteredText());
 
-        Assert.assertEquals("George Washington was president and his ssn was {{{REDACTED-ssn}}} and he lived at {{{REDACTED-zip-code}}}.", response.getFilteredText());
-        Assert.assertEquals("documentId", response.getDocumentId());
+        Assertions.assertEquals("George Washington was president and his ssn was {{{REDACTED-ssn}}} and he lived at {{{REDACTED-zip-code}}}.", response.getFilteredText());
+        Assertions.assertEquals("documentId", response.getDocumentId());
 
     }
 
@@ -103,8 +103,8 @@ public class PhileasFilterServiceTest {
 
         LOGGER.info(response.getFilteredText());
 
-        Assert.assertEquals("My email is {{{REDACTED-email-address}}} and cc is {{{REDACTED-credit-card}}}", response.getFilteredText());
-        Assert.assertEquals("documentId", response.getDocumentId());
+        Assertions.assertEquals("My email is {{{REDACTED-email-address}}} and cc is {{{REDACTED-credit-card}}}", response.getFilteredText());
+        Assertions.assertEquals("documentId", response.getDocumentId());
 
     }
 
@@ -128,8 +128,8 @@ public class PhileasFilterServiceTest {
 
         LOGGER.info(response.getFilteredText());
 
-        Assert.assertEquals("{{{REDACTED-email-address}}} is email and cc is {{{REDACTED-credit-card}}}", response.getFilteredText());
-        Assert.assertEquals("documentId", response.getDocumentId());
+        Assertions.assertEquals("{{{REDACTED-email-address}}} is email and cc is {{{REDACTED-credit-card}}}", response.getFilteredText());
+        Assertions.assertEquals("documentId", response.getDocumentId());
 
     }
 
@@ -153,8 +153,8 @@ public class PhileasFilterServiceTest {
 
         LOGGER.info(response.getFilteredText());
 
-        Assert.assertEquals("{{{REDACTED-email-address}}}", response.getFilteredText());
-        Assert.assertEquals("documentId", response.getDocumentId());
+        Assertions.assertEquals("{{{REDACTED-email-address}}}", response.getFilteredText());
+        Assertions.assertEquals("documentId", response.getDocumentId());
 
     }
 
@@ -178,8 +178,8 @@ public class PhileasFilterServiceTest {
 
         LOGGER.info(response.getFilteredText());
 
-        Assert.assertEquals("{{{REDACTED-zip-code}}}", response.getFilteredText());
-        Assert.assertEquals("documentId", response.getDocumentId());
+        Assertions.assertEquals("{{{REDACTED-zip-code}}}", response.getFilteredText());
+        Assertions.assertEquals("documentId", response.getDocumentId());
 
     }
 
@@ -203,8 +203,8 @@ public class PhileasFilterServiceTest {
 
         LOGGER.info(response.getFilteredText());
 
-        Assert.assertEquals("his name was STATIC-REPLACEMENT.", response.getFilteredText());
-        Assert.assertEquals("documentId", response.getDocumentId());
+        Assertions.assertEquals("his name was STATIC-REPLACEMENT.", response.getFilteredText());
+        Assertions.assertEquals("documentId", response.getDocumentId());
 
     }
 
@@ -244,8 +244,8 @@ public class PhileasFilterServiceTest {
 
         LOGGER.info(response.getFilteredText());
 
-        Assert.assertEquals("his name was {{{REDACTED-custom-dictionary}}}.", response.getFilteredText());
-        Assert.assertEquals("documentId", response.getDocumentId());
+        Assertions.assertEquals("his name was {{{REDACTED-custom-dictionary}}}.", response.getFilteredText());
+        Assertions.assertEquals("documentId", response.getDocumentId());
 
     }
 
@@ -270,8 +270,8 @@ public class PhileasFilterServiceTest {
         LOGGER.info("Generated document ID: " + response.getDocumentId());
         LOGGER.info(response.getFilteredText());
 
-        Assert.assertEquals("his name was STATIC-REPLACEMENT.", response.getFilteredText());
-        Assert.assertNotNull(response.getDocumentId());
+        Assertions.assertEquals("his name was STATIC-REPLACEMENT.", response.getFilteredText());
+        Assertions.assertNotNull(response.getDocumentId());
 
     }
 
@@ -300,7 +300,7 @@ public class PhileasFilterServiceTest {
 
         LOGGER.info(response.getFilteredText());
 
-        Assert.assertEquals("My email is test@something.com", response.getFilteredText());
+        Assertions.assertEquals("My email is test@something.com", response.getFilteredText());
 
     }
 
@@ -325,7 +325,7 @@ public class PhileasFilterServiceTest {
 
         LOGGER.info(response.getFilteredText());
 
-        Assert.assertEquals("My cc is {{{REDACTED-credit-card}}}", response.getFilteredText());
+        Assertions.assertEquals("My cc is {{{REDACTED-credit-card}}}", response.getFilteredText());
 
     }
 
@@ -350,7 +350,7 @@ public class PhileasFilterServiceTest {
 
         LOGGER.info(response.getFilteredText());
 
-        Assert.assertEquals("My cc is 4121742025464400", response.getFilteredText());
+        Assertions.assertEquals("My cc is 4121742025464400", response.getFilteredText());
 
     }
 
@@ -374,11 +374,11 @@ public class PhileasFilterServiceTest {
 
         LOGGER.info(response.getFilteredText());
 
-        Assert.assertEquals("George Washington was president and his ssn was {{{REDACTED-ssn}}} and he lived at 90210.", response.getFilteredText());
+        Assertions.assertEquals("George Washington was president and his ssn was {{{REDACTED-ssn}}} and he lived at 90210.", response.getFilteredText());
 
     }
 
-    @Test(expected = FileNotFoundException.class)
+    @Test
     public void endToEndNonexistentFilterProfile() throws Exception {
 
         final Path temp = Files.createTempDirectory("philter");
@@ -394,12 +394,12 @@ public class PhileasFilterServiceTest {
 
         final PhileasConfiguration phileasConfiguration = ConfigFactory.create(PhileasConfiguration.class, properties);
 
-        PhileasFilterService service = new PhileasFilterService(phileasConfiguration);
-        final FilterResponse response = service.filter("custom1", "context", "documentId", "My email is test@something.com", MimeType.TEXT_PLAIN);
+        Assertions.assertThrows(FileNotFoundException.class, () -> {
 
-        LOGGER.info(response.getFilteredText());
+            PhileasFilterService service = new PhileasFilterService(phileasConfiguration);
+            final FilterResponse response = service.filter("custom1", "context", "documentId", "My email is test@something.com", MimeType.TEXT_PLAIN);
 
-        Assert.assertEquals("My email is {{{REDACTED-email-address}}}", response.getFilteredText());
+        });
 
     }
 

@@ -7,8 +7,8 @@ import com.mtnfog.phileas.model.services.AnonymizationCacheService;
 import com.mtnfog.phileas.model.services.AnonymizationService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.io.IOException;
@@ -34,7 +34,7 @@ public class ZipCodeFilterStrategyTest {
 
         final String replacement = strategy.getReplacement("name", "context", "docId", "token", new Crypto(), anonymizationService);
 
-        Assert.assertEquals("static-value", replacement);
+        Assertions.assertEquals("static-value", replacement);
 
     }
 
@@ -49,7 +49,7 @@ public class ZipCodeFilterStrategyTest {
 
         final String replacement = strategy.getReplacement("name", "context", "docId", "token", new Crypto(), anonymizationService);
 
-        Assert.assertEquals("REDACTION-zip-code", replacement);
+        Assertions.assertEquals("REDACTION-zip-code", replacement);
 
     }
 
@@ -67,7 +67,7 @@ public class ZipCodeFilterStrategyTest {
 
         final String replacement = strategy.getReplacement("name", "context", "docId", "token", new Crypto(), anonymizationService);
 
-        Assert.assertNotEquals("random", replacement);
+        Assertions.assertNotEquals("random", replacement);
 
     }
 
@@ -85,7 +85,7 @@ public class ZipCodeFilterStrategyTest {
 
         final String replacement = strategy.getReplacement("name", "context", "docId", "token", new Crypto(), anonymizationService);
 
-        Assert.assertEquals("{{{REDACTED-zip-code}}}", replacement);
+        Assertions.assertEquals("{{{REDACTED-zip-code}}}", replacement);
 
     }
 
@@ -103,25 +103,29 @@ public class ZipCodeFilterStrategyTest {
 
         final String replacement = strategy.getReplacement("name", "context", "docId", "token", new Crypto(), anonymizationService);
 
-        Assert.assertEquals("<ENTITY:zip-code>token</ENTITY>", replacement);
+        Assertions.assertEquals("<ENTITY:zip-code>token</ENTITY>", replacement);
 
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void invalidLength0() throws IOException {
 
-        ZipCodeFilterStrategy strategy = new ZipCodeFilterStrategy();
-        strategy.setRedactionFormat(ZipCodeFilterStrategy.TRUNCATE);
-        strategy.setTruncateDigits(new Integer(0));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> {
+            ZipCodeFilterStrategy strategy = new ZipCodeFilterStrategy();
+            strategy.setRedactionFormat(ZipCodeFilterStrategy.TRUNCATE);
+            strategy.setTruncateDigits(new Integer(0));
+        });
 
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void invalidLength5() throws IOException {
 
-        ZipCodeFilterStrategy strategy = new ZipCodeFilterStrategy();
-        strategy.setRedactionFormat(ZipCodeFilterStrategy.TRUNCATE);
-        strategy.setTruncateDigits(new Integer(5));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> {
+            ZipCodeFilterStrategy strategy = new ZipCodeFilterStrategy();
+            strategy.setRedactionFormat(ZipCodeFilterStrategy.TRUNCATE);
+            strategy.setTruncateDigits(new Integer(5));
+        });
 
     }
 
@@ -132,7 +136,7 @@ public class ZipCodeFilterStrategyTest {
 
         final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentId", "90210", "population < 10000", 1.0, "");
 
-        Assert.assertFalse(conditionSatisfied);
+        Assertions.assertFalse(conditionSatisfied);
 
     }
 
@@ -143,7 +147,7 @@ public class ZipCodeFilterStrategyTest {
 
         final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentId", "90210", "population > 10000", 1.0, "");
 
-        Assert.assertTrue(conditionSatisfied);
+        Assertions.assertTrue(conditionSatisfied);
 
     }
 
@@ -154,7 +158,7 @@ public class ZipCodeFilterStrategyTest {
 
         final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentId", "90210", "population == 21741", 1.0, "");
 
-        Assert.assertTrue(conditionSatisfied);
+        Assertions.assertTrue(conditionSatisfied);
 
     }
 
@@ -165,7 +169,7 @@ public class ZipCodeFilterStrategyTest {
 
         final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentId", "90210", "population > 20000 and population < 25000", 1.0, "");
 
-        Assert.assertTrue(conditionSatisfied);
+        Assertions.assertTrue(conditionSatisfied);
 
     }
 
@@ -176,7 +180,7 @@ public class ZipCodeFilterStrategyTest {
 
         final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentId", "90210", "population > 20000 and population < 20010", 1.0, "");
 
-        Assert.assertFalse(conditionSatisfied);
+        Assertions.assertFalse(conditionSatisfied);
 
     }
 
@@ -187,7 +191,7 @@ public class ZipCodeFilterStrategyTest {
 
         final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentId", "20500", "token startswith \"20\"", 1.0, "");
 
-        Assert.assertTrue(conditionSatisfied);
+        Assertions.assertTrue(conditionSatisfied);
 
     }
 
@@ -198,7 +202,7 @@ public class ZipCodeFilterStrategyTest {
 
         final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentId", "31590", "token startswith \"20\"", 1.0, "");
 
-        Assert.assertFalse(conditionSatisfied);
+        Assertions.assertFalse(conditionSatisfied);
 
     }
 
@@ -209,7 +213,7 @@ public class ZipCodeFilterStrategyTest {
 
         final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentId", "John Smith", "context == \"c1\"",  1.0, "");
 
-        Assert.assertFalse(conditionSatisfied);
+        Assertions.assertFalse(conditionSatisfied);
 
     }
 
@@ -220,7 +224,7 @@ public class ZipCodeFilterStrategyTest {
 
         final boolean conditionSatisfied = strategy.evaluateCondition("ctx", "documentId", "John Smith", "context == \"ctx\"",  1.0, "");
 
-        Assert.assertTrue(conditionSatisfied);
+        Assertions.assertTrue(conditionSatisfied);
 
     }
 
@@ -231,7 +235,7 @@ public class ZipCodeFilterStrategyTest {
 
         final boolean conditionSatisfied = strategy.evaluateCondition("ctx", "documentId", "John Smith", "confidence > 0.5",  1.0, "");
 
-        Assert.assertTrue(conditionSatisfied);
+        Assertions.assertTrue(conditionSatisfied);
 
     }
 
@@ -242,7 +246,7 @@ public class ZipCodeFilterStrategyTest {
 
         final boolean conditionSatisfied = strategy.evaluateCondition("ctx", "documentId", "John Smith", "confidence < 0.5",  1.0, "");
 
-        Assert.assertFalse(conditionSatisfied);
+        Assertions.assertFalse(conditionSatisfied);
 
     }
 
@@ -257,7 +261,7 @@ public class ZipCodeFilterStrategyTest {
 
         final String replacement = strategy.getReplacement("name", "context", "docid", "90210", new Crypto(), anonymizationService);
 
-        Assert.assertEquals("whoa", replacement);
+        Assertions.assertEquals("whoa", replacement);
 
     }
 
@@ -274,7 +278,7 @@ public class ZipCodeFilterStrategyTest {
 
         LOGGER.info(replacement);
 
-        Assert.assertEquals("90***", replacement);
+        Assertions.assertEquals("90***", replacement);
 
     }
 
@@ -291,7 +295,7 @@ public class ZipCodeFilterStrategyTest {
 
         LOGGER.info(replacement);
 
-        Assert.assertEquals("902**", replacement);
+        Assertions.assertEquals("902**", replacement);
 
     }
 
@@ -308,7 +312,7 @@ public class ZipCodeFilterStrategyTest {
 
         LOGGER.info(replacement);
 
-        Assert.assertEquals("9****", replacement);
+        Assertions.assertEquals("9****", replacement);
 
     }
 
@@ -324,7 +328,7 @@ public class ZipCodeFilterStrategyTest {
 
         LOGGER.info(replacement);
 
-        Assert.assertEquals("00010", replacement);
+        Assertions.assertEquals("00010", replacement);
 
     }
 

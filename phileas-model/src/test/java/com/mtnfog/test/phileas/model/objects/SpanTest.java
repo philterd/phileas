@@ -6,8 +6,8 @@ import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -28,7 +28,7 @@ public class SpanTest {
         Span span1 = Span.make(1, 6, FilterType.NER_ENTITY, "context", "document", 1.0,  "test", "***", false, new String[0]);
         Span span2 = span1.copy();
 
-        Assert.assertTrue(span1.equals(span2));
+        Assertions.assertTrue(span1.equals(span2));
 
     }
 
@@ -42,11 +42,11 @@ public class SpanTest {
         final List<Span> spans = Arrays.asList(span1, span2, span3);
         final List<Span> shiftedSpans = Span.shiftSpans(4, span1, spans);
 
-        Assert.assertEquals(2, shiftedSpans.size());
-        Assert.assertEquals(12, shiftedSpans.get(0).getCharacterStart());
-        Assert.assertEquals(16, shiftedSpans.get(0).getCharacterEnd());
-        Assert.assertEquals(18, shiftedSpans.get(1).getCharacterStart());
-        Assert.assertEquals(24, shiftedSpans.get(1).getCharacterEnd());
+        Assertions.assertEquals(2, shiftedSpans.size());
+        Assertions.assertEquals(12, shiftedSpans.get(0).getCharacterStart());
+        Assertions.assertEquals(16, shiftedSpans.get(0).getCharacterEnd());
+        Assertions.assertEquals(18, shiftedSpans.get(1).getCharacterStart());
+        Assertions.assertEquals(24, shiftedSpans.get(1).getCharacterEnd());
 
     }
 
@@ -58,7 +58,7 @@ public class SpanTest {
         final List<Span> spans = Arrays.asList(span1);
         final List<Span> shiftedSpans = Span.shiftSpans(4, span1, spans);
 
-        Assert.assertEquals(0, shiftedSpans.size());
+        Assertions.assertEquals(0, shiftedSpans.size());
 
     }
 
@@ -72,8 +72,8 @@ public class SpanTest {
 
         Span span = Span.doesIndexStartSpan(8, spans);
 
-        Assert.assertNotNull(span);
-        Assert.assertEquals(span2, span);
+        Assertions.assertNotNull(span);
+        Assertions.assertEquals(span2, span);
 
     }
 
@@ -87,8 +87,8 @@ public class SpanTest {
 
         Span span = Span.doesIndexStartSpan(1, spans);
 
-        Assert.assertNotNull(span);
-        Assert.assertEquals(span1, span);
+        Assertions.assertNotNull(span);
+        Assertions.assertEquals(span1, span);
 
     }
 
@@ -102,7 +102,7 @@ public class SpanTest {
 
         Span span = Span.doesIndexStartSpan(4, spans);
 
-        Assert.assertNull(span);
+        Assertions.assertNull(span);
 
     }
 
@@ -117,8 +117,8 @@ public class SpanTest {
 
         showSpans(nonIgnoredSpans);
 
-        Assert.assertEquals(1, nonIgnoredSpans.size());
-        Assert.assertEquals(1, nonIgnoredSpans.get(0).getCharacterStart());
+        Assertions.assertEquals(1, nonIgnoredSpans.size());
+        Assertions.assertEquals(1, nonIgnoredSpans.get(0).getCharacterStart());
 
     }
 
@@ -133,9 +133,9 @@ public class SpanTest {
 
         showSpans(nonIgnoredSpans);
 
-        Assert.assertEquals(2, nonIgnoredSpans.size());
-        Assert.assertEquals(1, nonIgnoredSpans.get(0).getCharacterStart());
-        Assert.assertEquals(2, nonIgnoredSpans.get(1).getCharacterStart());
+        Assertions.assertEquals(2, nonIgnoredSpans.size());
+        Assertions.assertEquals(1, nonIgnoredSpans.get(0).getCharacterStart());
+        Assertions.assertEquals(2, nonIgnoredSpans.get(1).getCharacterStart());
 
     }
 
@@ -150,7 +150,7 @@ public class SpanTest {
 
         showSpans(nonIgnoredSpans);
 
-        Assert.assertEquals(0, nonIgnoredSpans.size());
+        Assertions.assertEquals(0, nonIgnoredSpans.size());
 
     }
 
@@ -165,9 +165,9 @@ public class SpanTest {
 
         showSpans(nonOverlappingSpans);
 
-        Assert.assertEquals(1, nonOverlappingSpans.size());
-        Assert.assertEquals(2, nonOverlappingSpans.get(0).getCharacterStart());
-        Assert.assertEquals(12, nonOverlappingSpans.get(0).getCharacterEnd());
+        Assertions.assertEquals(1, nonOverlappingSpans.size());
+        Assertions.assertEquals(2, nonOverlappingSpans.get(0).getCharacterStart());
+        Assertions.assertEquals(12, nonOverlappingSpans.get(0).getCharacterEnd());
 
     }
 
@@ -180,10 +180,10 @@ public class SpanTest {
 
         List<Span> nonOverlappingSpans = Span.dropOverlappingSpans(spans);
 
-        Assert.assertEquals(1, nonOverlappingSpans.size());
-        Assert.assertEquals(nonOverlappingSpans.get(0).getCharacterStart(), 2);
-        Assert.assertEquals(nonOverlappingSpans.get(0).getCharacterEnd(), 12);
-        Assert.assertEquals(nonOverlappingSpans.get(0).getConfidence(), 1.0, 0);
+        Assertions.assertEquals(1, nonOverlappingSpans.size());
+        Assertions.assertEquals(nonOverlappingSpans.get(0).getCharacterStart(), 2);
+        Assertions.assertEquals(nonOverlappingSpans.get(0).getCharacterEnd(), 12);
+        Assertions.assertEquals(nonOverlappingSpans.get(0).getConfidence(), 1.0, 0);
 
     }
 
@@ -196,7 +196,7 @@ public class SpanTest {
 
         List<Span> nonOverlappingSpans = Span.dropOverlappingSpans(spans);
 
-        Assert.assertEquals(2, nonOverlappingSpans.size());
+        Assertions.assertEquals(2, nonOverlappingSpans.size());
 
     }
 
@@ -208,7 +208,7 @@ public class SpanTest {
 
         List<Span> nonOverlappingSpans = Span.dropOverlappingSpans(spans);
 
-        Assert.assertEquals(1, nonOverlappingSpans.size());
+        Assertions.assertEquals(1, nonOverlappingSpans.size());
 
     }
 
@@ -221,10 +221,10 @@ public class SpanTest {
 
         List<Span> nonOverlappingSpans = Span.dropOverlappingSpans(spans);
 
-        Assert.assertEquals(1, nonOverlappingSpans.size());
-        Assert.assertEquals(0, nonOverlappingSpans.get(0).getCharacterStart());
-        Assert.assertEquals(17, nonOverlappingSpans.get(0).getCharacterEnd());
-        Assert.assertEquals(1.0, nonOverlappingSpans.get(0).getConfidence(), 0);
+        Assertions.assertEquals(1, nonOverlappingSpans.size());
+        Assertions.assertEquals(0, nonOverlappingSpans.get(0).getCharacterStart());
+        Assertions.assertEquals(17, nonOverlappingSpans.get(0).getCharacterEnd());
+        Assertions.assertEquals(1.0, nonOverlappingSpans.get(0).getConfidence(), 0);
 
     }
 
@@ -241,10 +241,10 @@ public class SpanTest {
 
         showSpans(nonOverlappingSpans);
 
-        Assert.assertEquals(1, nonOverlappingSpans.size());
-        Assert.assertEquals(7, nonOverlappingSpans.get(0).getCharacterStart());
-        Assert.assertEquals(17, nonOverlappingSpans.get(0).getCharacterEnd());
-        Assert.assertEquals(FilterType.ZIP_CODE, nonOverlappingSpans.get(0).getFilterType());
+        Assertions.assertEquals(1, nonOverlappingSpans.size());
+        Assertions.assertEquals(7, nonOverlappingSpans.get(0).getCharacterStart());
+        Assertions.assertEquals(17, nonOverlappingSpans.get(0).getCharacterEnd());
+        Assertions.assertEquals(FilterType.ZIP_CODE, nonOverlappingSpans.get(0).getFilterType());
 
     }
 
@@ -262,7 +262,7 @@ public class SpanTest {
 
         final List<Span> identicalSpans = Span.getIdenticalSpans(span1, spans);
 
-        Assert.assertEquals(1, identicalSpans.size());
+        Assertions.assertEquals(1, identicalSpans.size());
 
     }
 
@@ -280,7 +280,7 @@ public class SpanTest {
 
         final List<Span> identicalSpans = Span.getIdenticalSpans(span1, spans);
 
-        Assert.assertEquals(2, identicalSpans.size());
+        Assertions.assertEquals(2, identicalSpans.size());
 
     }
 
@@ -300,7 +300,7 @@ public class SpanTest {
 
         final List<Span> identicalSpans = Span.getIdenticalSpans(span1, spans);
 
-        Assert.assertEquals(2, identicalSpans.size());
+        Assertions.assertEquals(2, identicalSpans.size());
 
     }
 

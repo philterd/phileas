@@ -5,8 +5,8 @@ import com.mtnfog.phileas.services.anonymization.AgeAnonymizationService;
 import com.mtnfog.phileas.services.anonymization.cache.LocalAnonymizationCacheService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class AgeAnonymizationServiceTest {
 
@@ -21,7 +21,7 @@ public class AgeAnonymizationServiceTest {
         final String replacement = anonymizationService.anonymize(token);
 
         LOGGER.info("Age: " + replacement);
-        Assert.assertEquals(token.length(), replacement.length());
+        Assertions.assertEquals(token.length(), replacement.length());
 
     }
 
@@ -34,7 +34,7 @@ public class AgeAnonymizationServiceTest {
         final String replacement = anonymizationService.anonymize(token);
 
         LOGGER.info("Age: " + replacement);
-        Assert.assertEquals(token.length(), replacement.length());
+        Assertions.assertEquals(token.length(), replacement.length());
 
     }
 

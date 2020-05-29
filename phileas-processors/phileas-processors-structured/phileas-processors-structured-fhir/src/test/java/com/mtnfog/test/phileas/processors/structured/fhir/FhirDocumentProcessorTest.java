@@ -20,9 +20,9 @@ import org.apache.commons.io.IOUtils;
 import org.hl7.fhir.r4.model.Bundle;
 import org.hl7.fhir.r4.model.HumanName;
 import org.hl7.fhir.r4.model.Patient;
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.nio.charset.Charset;
@@ -31,7 +31,7 @@ import java.util.Collections;
 
 public class FhirDocumentProcessorTest {
 
-    @Ignore
+    @Disabled
     @Test
     public void test1() throws Exception {
 
@@ -79,8 +79,8 @@ public class FhirDocumentProcessorTest {
                     System.out.println("Filtered human family name: " + humanName.getFamily());
                     System.out.println("Filtered human given name: " + humanName.getGiven().size());
 
-                    Assert.assertEquals("", humanName.getFamily());
-                    Assert.assertEquals(true, humanName.getGiven().isEmpty());
+                    Assertions.assertEquals("", humanName.getFamily());
+                    Assertions.assertEquals(true, humanName.getGiven().isEmpty());
 
                 }
 

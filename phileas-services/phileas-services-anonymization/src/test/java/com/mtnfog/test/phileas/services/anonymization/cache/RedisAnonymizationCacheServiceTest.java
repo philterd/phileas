@@ -6,10 +6,12 @@ import org.aeonbits.owner.ConfigFactory;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.junit.*;
+import org.junit.jupiter.api.*;
 import redis.embedded.RedisServer;
 
 import java.util.Properties;
+
+import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
 public class RedisAnonymizationCacheServiceTest {
 
@@ -62,10 +64,10 @@ public class RedisAnonymizationCacheServiceTest {
 
     }
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
 
-        Assume.assumeFalse(System.getProperty("os.name").toLowerCase().startsWith("win"));
+        assumeFalse(System.getProperty("os.name").toLowerCase().startsWith("win"));
 
         final String redisHost = System.getenv("PHILTER_REDIS_HOST");
 
@@ -75,7 +77,7 @@ public class RedisAnonymizationCacheServiceTest {
 
     }
 
-    @Before
+    @BeforeEach
     public void before() {
 
         if(!isExternalRedis) {
@@ -85,7 +87,7 @@ public class RedisAnonymizationCacheServiceTest {
 
     }
 
-    @After
+    @AfterEach
     public void after() {
 
         if(!isExternalRedis) {
@@ -101,7 +103,7 @@ public class RedisAnonymizationCacheServiceTest {
 
         cache.put("context", "k", "v");
 
-        Assert.assertTrue(cache.contains("context", "k"));
+        Assertions.assertTrue(cache.contains("context", "k"));
 
     }
 
@@ -112,8 +114,8 @@ public class RedisAnonymizationCacheServiceTest {
 
         cache.put("context", "k", "v");
 
-        Assert.assertTrue(cache.containsValue("context", "v"));
-        Assert.assertFalse(cache.containsValue("context", "k"));
+        Assertions.assertTrue(cache.containsValue("context", "v"));
+        Assertions.assertFalse(cache.containsValue("context", "k"));
 
     }
 
@@ -124,10 +126,10 @@ public class RedisAnonymizationCacheServiceTest {
 
         cache.put("context", "k", "v");
         final String value = cache.get("context", "k");
-        Assert.assertEquals("v", value);
+        Assertions.assertEquals("v", value);
 
         final String value2 = cache.get("context", "doesnotexist");
-        Assert.assertNull(value2);
+        Assertions.assertNull(value2);
 
     }
 
@@ -138,11 +140,11 @@ public class RedisAnonymizationCacheServiceTest {
 
         cache.put("context", "k", "v");
         final String value = cache.get("context", "k");
-        Assert.assertEquals("v", value);
+        Assertions.assertEquals("v", value);
 
         cache.remove("context", "k");
         final String value2 = cache.get("context", "k");
-        Assert.assertNull(value2);
+        Assertions.assertNull(value2);
 
     }
 
@@ -153,8 +155,8 @@ public class RedisAnonymizationCacheServiceTest {
 
         final String hash = cache.generateKey("context", "k");
 
-        Assert.assertTrue(hash.matches("^[a-f0-9]{32}$"));
-        Assert.assertEquals("84e86fe7599f42d95d8ef20375b5a66e", hash);
+        Assertions.assertTrue(hash.matches("^[a-f0-9]{32}$"));
+        Assertions.assertEquals("84e86fe7599f42d95d8ef20375b5a66e", hash);
 
     }
 

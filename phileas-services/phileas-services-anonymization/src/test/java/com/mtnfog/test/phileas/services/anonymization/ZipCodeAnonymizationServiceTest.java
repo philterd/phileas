@@ -5,7 +5,7 @@ import com.mtnfog.phileas.services.anonymization.ZipCodeAnonymizationService;
 import com.mtnfog.phileas.services.anonymization.cache.LocalAnonymizationCacheService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class ZipCodeAnonymizationServiceTest {
 

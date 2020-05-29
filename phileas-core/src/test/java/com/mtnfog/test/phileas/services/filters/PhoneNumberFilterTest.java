@@ -10,8 +10,8 @@ import com.mtnfog.phileas.services.anonymization.cache.LocalAnonymizationCacheSe
 import com.mtnfog.phileas.services.filters.custom.PhoneNumberRulesFilter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.util.Arrays;
@@ -31,9 +31,9 @@ public class PhoneNumberFilterTest extends AbstractFilterTest {
         PhoneNumberRulesFilter filter = new PhoneNumberRulesFilter(strategies, new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), new Crypto(), windowSize);
 
         List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "the number is (123) 456-7890.");
-        Assert.assertEquals(1, spans.size());
-        Assert.assertTrue(checkSpan(spans.get(0), 14, 28, FilterType.PHONE_NUMBER));
-        Assert.assertEquals("(123) 456-7890", spans.get(0).getText());
+        Assertions.assertEquals(1, spans.size());
+        Assertions.assertTrue(checkSpan(spans.get(0), 14, 28, FilterType.PHONE_NUMBER));
+        Assertions.assertEquals("(123) 456-7890", spans.get(0).getText());
 
     }
 
@@ -44,9 +44,9 @@ public class PhoneNumberFilterTest extends AbstractFilterTest {
         PhoneNumberRulesFilter filter = new PhoneNumberRulesFilter(strategies, new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), new Crypto(), windowSize);
 
         List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "the number is (123) 456-7890 and (123) 456-7890.");
-        Assert.assertEquals(2, spans.size());
-        Assert.assertTrue(checkSpan(spans.get(0), 14, 28, FilterType.PHONE_NUMBER));
-        Assert.assertTrue(checkSpan(spans.get(1), 33, 47, FilterType.PHONE_NUMBER));
+        Assertions.assertEquals(2, spans.size());
+        Assertions.assertTrue(checkSpan(spans.get(0), 14, 28, FilterType.PHONE_NUMBER));
+        Assertions.assertTrue(checkSpan(spans.get(1), 33, 47, FilterType.PHONE_NUMBER));
 
     }
 
@@ -57,8 +57,8 @@ public class PhoneNumberFilterTest extends AbstractFilterTest {
         PhoneNumberRulesFilter filter = new PhoneNumberRulesFilter(strategies, new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), new Crypto(), windowSize);
 
         List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "the number is 123-456-7890.");
-        Assert.assertEquals(1, spans.size());
-        Assert.assertTrue(checkSpan(spans.get(0), 14, 26, FilterType.PHONE_NUMBER));
+        Assertions.assertEquals(1, spans.size());
+        Assertions.assertTrue(checkSpan(spans.get(0), 14, 26, FilterType.PHONE_NUMBER));
 
     }
 
@@ -69,8 +69,8 @@ public class PhoneNumberFilterTest extends AbstractFilterTest {
         PhoneNumberRulesFilter filter = new PhoneNumberRulesFilter(strategies, new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), new Crypto(), windowSize);
 
         List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "the number is 123-456-7890 and he was ok.");
-        Assert.assertEquals(1, spans.size());
-        Assert.assertTrue(checkSpan(spans.get(0), 14, 26, FilterType.PHONE_NUMBER));
+        Assertions.assertEquals(1, spans.size());
+        Assertions.assertTrue(checkSpan(spans.get(0), 14, 26, FilterType.PHONE_NUMBER));
 
     }
 
@@ -81,8 +81,8 @@ public class PhoneNumberFilterTest extends AbstractFilterTest {
         PhoneNumberRulesFilter filter = new PhoneNumberRulesFilter(strategies, new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), new Crypto(), windowSize);
 
         List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "the number is ( 800 ) 123-4567 and he was ok.");
-        Assert.assertEquals(1, spans.size());
-        Assert.assertTrue(checkSpan(spans.get(0), 14, 30, FilterType.PHONE_NUMBER));
+        Assertions.assertEquals(1, spans.size());
+        Assertions.assertTrue(checkSpan(spans.get(0), 14, 30, FilterType.PHONE_NUMBER));
 
     }
 
@@ -98,8 +98,8 @@ public class PhoneNumberFilterTest extends AbstractFilterTest {
             LOGGER.info(span.toString());
         }
 
-        Assert.assertEquals(1, spans.size());
-        Assert.assertTrue(checkSpan(spans.get(0), 14, 33, FilterType.PHONE_NUMBER));
+        Assertions.assertEquals(1, spans.size());
+        Assertions.assertTrue(checkSpan(spans.get(0), 14, 33, FilterType.PHONE_NUMBER));
 
     }
 
@@ -115,8 +115,8 @@ public class PhoneNumberFilterTest extends AbstractFilterTest {
             LOGGER.info(span.toString());
         }
 
-        Assert.assertEquals(1, spans.size());
-        Assert.assertTrue(checkSpan(spans.get(0), 14, 32, FilterType.PHONE_NUMBER));
+        Assertions.assertEquals(1, spans.size());
+        Assertions.assertTrue(checkSpan(spans.get(0), 14, 32, FilterType.PHONE_NUMBER));
 
     }
 

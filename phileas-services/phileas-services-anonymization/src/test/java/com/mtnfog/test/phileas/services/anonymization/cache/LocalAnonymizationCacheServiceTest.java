@@ -1,8 +1,8 @@
 package com.mtnfog.test.phileas.services.anonymization.cache;
 
 import com.mtnfog.phileas.services.anonymization.cache.LocalAnonymizationCacheService;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class LocalAnonymizationCacheServiceTest {
 
@@ -13,7 +13,7 @@ public class LocalAnonymizationCacheServiceTest {
 
         cache.put("context", "k", "v");
 
-        Assert.assertTrue(cache.contains("context", "k"));
+        Assertions.assertTrue(cache.contains("context", "k"));
 
     }
 
@@ -24,8 +24,8 @@ public class LocalAnonymizationCacheServiceTest {
 
         cache.put("context", "k", "v");
 
-        Assert.assertTrue(cache.containsValue("context", "v"));
-        Assert.assertFalse(cache.containsValue("context", "k"));
+        Assertions.assertTrue(cache.containsValue("context", "v"));
+        Assertions.assertFalse(cache.containsValue("context", "k"));
 
     }
 
@@ -36,10 +36,10 @@ public class LocalAnonymizationCacheServiceTest {
 
         cache.put("context", "k", "v");
         final String value = cache.get("context", "k");
-        Assert.assertEquals("v", value);
+        Assertions.assertEquals("v", value);
 
         final String value2 = cache.get("context", "doesnotexist");
-        Assert.assertNull(value2);
+        Assertions.assertNull(value2);
 
     }
 
@@ -50,11 +50,11 @@ public class LocalAnonymizationCacheServiceTest {
 
         cache.put("context", "k", "v");
         final String value = cache.get("context", "k");
-        Assert.assertEquals("v", value);
+        Assertions.assertEquals("v", value);
 
         cache.remove("context", "k");
         final String value2 = cache.get("context", "k");
-        Assert.assertNull(value2);
+        Assertions.assertNull(value2);
 
     }
 
@@ -65,8 +65,8 @@ public class LocalAnonymizationCacheServiceTest {
 
         final String hash = cache.generateKey("context", "k");
 
-        Assert.assertTrue(hash.matches("^[a-f0-9]{32}$"));
-        Assert.assertEquals("84e86fe7599f42d95d8ef20375b5a66e", hash);
+        Assertions.assertTrue(hash.matches("^[a-f0-9]{32}$"));
+        Assertions.assertEquals("84e86fe7599f42d95d8ef20375b5a66e", hash);
 
     }
 

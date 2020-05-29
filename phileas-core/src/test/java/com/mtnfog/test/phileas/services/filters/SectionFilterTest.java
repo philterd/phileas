@@ -8,8 +8,8 @@ import com.mtnfog.phileas.model.services.AlertService;
 import com.mtnfog.phileas.services.anonymization.AlphanumericAnonymizationService;
 import com.mtnfog.phileas.services.anonymization.cache.LocalAnonymizationCacheService;
 import com.mtnfog.phileas.services.filters.regex.SectionFilter;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.util.Arrays;
@@ -31,9 +31,9 @@ public class SectionFilterTest extends AbstractFilterTest {
 
         final List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "This is some test. BEGIN-REDACT This text should be redacted. END-REDACT This is outside the text.");
 
-        Assert.assertEquals(1, spans.size());
-        Assert.assertTrue(checkSpan(spans.get(0), 19, 72, FilterType.SECTION));
-        Assert.assertEquals("BEGIN-REDACT This text should be redacted. END-REDACT", spans.get(0).getText());
+        Assertions.assertEquals(1, spans.size());
+        Assertions.assertTrue(checkSpan(spans.get(0), 19, 72, FilterType.SECTION));
+        Assertions.assertEquals("BEGIN-REDACT This text should be redacted. END-REDACT", spans.get(0).getText());
 
     }
 
@@ -48,7 +48,7 @@ public class SectionFilterTest extends AbstractFilterTest {
 
         final List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "This is some test. BEGIN-REDACT This text should be redacted. This is outside the text.");
 
-        Assert.assertEquals(0, spans.size());
+        Assertions.assertEquals(0, spans.size());
 
     }
 
@@ -63,9 +63,9 @@ public class SectionFilterTest extends AbstractFilterTest {
 
         final List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "BEGIN-REDACT This text should be redacted. END-REDACT This is outside the text.");
 
-        Assert.assertEquals(1, spans.size());
-        Assert.assertTrue(checkSpan(spans.get(0), 0, 53, FilterType.SECTION));
-        Assert.assertEquals("BEGIN-REDACT This text should be redacted. END-REDACT", spans.get(0).getText());
+        Assertions.assertEquals(1, spans.size());
+        Assertions.assertTrue(checkSpan(spans.get(0), 0, 53, FilterType.SECTION));
+        Assertions.assertEquals("BEGIN-REDACT This text should be redacted. END-REDACT", spans.get(0).getText());
 
     }
 

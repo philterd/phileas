@@ -10,8 +10,8 @@ import com.mtnfog.phileas.services.anonymization.cache.LocalAnonymizationCacheSe
 import com.mtnfog.phileas.services.filters.regex.StateAbbreviationFilter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.util.Arrays;
@@ -33,11 +33,11 @@ public class StateAbbreviationFilterTest extends AbstractFilterTest {
         final String input = "The patient is from WV.";
         final List<Span> spans = filter.filter(getFilterProfile(), "context", "docid", input);
 
-        Assert.assertEquals(1, spans.size());
-        Assert.assertEquals(20, spans.get(0).getCharacterStart());
-        Assert.assertEquals(22, spans.get(0).getCharacterEnd());
-        Assert.assertEquals(FilterType.STATE_ABBREVIATION, spans.get(0).getFilterType());
-        Assert.assertEquals("WV", spans.get(0).getText());
+        Assertions.assertEquals(1, spans.size());
+        Assertions.assertEquals(20, spans.get(0).getCharacterStart());
+        Assertions.assertEquals(22, spans.get(0).getCharacterEnd());
+        Assertions.assertEquals(FilterType.STATE_ABBREVIATION, spans.get(0).getFilterType());
+        Assertions.assertEquals("WV", spans.get(0).getText());
 
     }
 
@@ -50,10 +50,10 @@ public class StateAbbreviationFilterTest extends AbstractFilterTest {
         final String input = "The patient is from wv.";
         final List<Span> spans = filter.filter(getFilterProfile(), "context", "docid", input);
 
-        Assert.assertEquals(1, spans.size());
-        Assert.assertEquals(20, spans.get(0).getCharacterStart());
-        Assert.assertEquals(22, spans.get(0).getCharacterEnd());
-        Assert.assertEquals(FilterType.STATE_ABBREVIATION, spans.get(0).getFilterType());
+        Assertions.assertEquals(1, spans.size());
+        Assertions.assertEquals(20, spans.get(0).getCharacterStart());
+        Assertions.assertEquals(22, spans.get(0).getCharacterEnd());
+        Assertions.assertEquals(FilterType.STATE_ABBREVIATION, spans.get(0).getFilterType());
 
     }
 
@@ -68,17 +68,17 @@ public class StateAbbreviationFilterTest extends AbstractFilterTest {
 
         showSpans(spans);
 
-        Assert.assertEquals(2, spans.size());
+        Assertions.assertEquals(2, spans.size());
 
-        Assert.assertEquals(21, spans.get(0).getCharacterStart());
-        Assert.assertEquals(23, spans.get(0).getCharacterEnd());
-        Assert.assertEquals(FilterType.STATE_ABBREVIATION, spans.get(0).getFilterType());
-        Assert.assertEquals("MD", spans.get(0).getText());
+        Assertions.assertEquals(21, spans.get(0).getCharacterStart());
+        Assertions.assertEquals(23, spans.get(0).getCharacterEnd());
+        Assertions.assertEquals(FilterType.STATE_ABBREVIATION, spans.get(0).getFilterType());
+        Assertions.assertEquals("MD", spans.get(0).getText());
 
-        Assert.assertEquals(14, spans.get(1).getCharacterStart());
-        Assert.assertEquals(16, spans.get(1).getCharacterEnd());
-        Assert.assertEquals(FilterType.STATE_ABBREVIATION, spans.get(1).getFilterType());
-        Assert.assertEquals("WV", spans.get(1).getText());
+        Assertions.assertEquals(14, spans.get(1).getCharacterStart());
+        Assertions.assertEquals(16, spans.get(1).getCharacterEnd());
+        Assertions.assertEquals(FilterType.STATE_ABBREVIATION, spans.get(1).getFilterType());
+        Assertions.assertEquals("WV", spans.get(1).getText());
 
     }
 

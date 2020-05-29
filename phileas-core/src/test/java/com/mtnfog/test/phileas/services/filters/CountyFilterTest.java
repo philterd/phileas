@@ -12,9 +12,9 @@ import com.mtnfog.phileas.services.anonymization.CountyAnonymizationService;
 import com.mtnfog.phileas.services.anonymization.cache.LocalAnonymizationCacheService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.util.Arrays;
@@ -29,7 +29,7 @@ public class CountyFilterTest extends AbstractFilterTest {
 
     private AlertService alertService = Mockito.mock(AlertService.class);
 
-    @Before
+    @BeforeEach
     public void before() {
         INDEX_DIRECTORY = System.getProperty( "os.name" ).contains( "indow" ) ? INDEX_DIRECTORY.substring(1) : INDEX_DIRECTORY;
         LOGGER.info("Using index directory {}", INDEX_DIRECTORY);
@@ -47,7 +47,7 @@ public class CountyFilterTest extends AbstractFilterTest {
 
         showSpans(spans);
 
-        Assert.assertEquals(0, spans.size());
+        Assertions.assertEquals(0, spans.size());
 
     }
 
@@ -63,8 +63,8 @@ public class CountyFilterTest extends AbstractFilterTest {
 
         showSpans(spans);
 
-        Assert.assertEquals(1, spans.size());
-        Assert.assertEquals("fyette", spans.get(0).getText());
+        Assertions.assertEquals(1, spans.size());
+        Assertions.assertEquals("fyette", spans.get(0).getText());
 
     }
 
@@ -80,7 +80,7 @@ public class CountyFilterTest extends AbstractFilterTest {
 
         showSpans(spans);
 
-        Assert.assertEquals(3, spans.size());
+        Assertions.assertEquals(3, spans.size());
 
     }
 

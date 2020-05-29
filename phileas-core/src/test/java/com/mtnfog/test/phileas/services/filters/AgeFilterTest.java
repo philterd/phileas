@@ -8,8 +8,8 @@ import com.mtnfog.phileas.model.services.AlertService;
 import com.mtnfog.phileas.services.anonymization.AgeAnonymizationService;
 import com.mtnfog.phileas.services.anonymization.cache.LocalAnonymizationCacheService;
 import com.mtnfog.phileas.services.filters.regex.AgeFilter;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.util.Arrays;
@@ -30,10 +30,10 @@ public class AgeFilterTest extends AbstractFilterTest {
 
         showSpans(spans);
 
-        Assert.assertEquals(1, spans.size());
-        Assert.assertTrue(checkSpan(spans.get(0), 15, 27, FilterType.AGE));
-        Assert.assertEquals("{{{REDACTED-age}}}", spans.get(0).getReplacement());
-        Assert.assertEquals("3.5years old", spans.get(0).getText());
+        Assertions.assertEquals(1, spans.size());
+        Assertions.assertTrue(checkSpan(spans.get(0), 15, 27, FilterType.AGE));
+        Assertions.assertEquals("{{{REDACTED-age}}}", spans.get(0).getReplacement());
+        Assertions.assertEquals("3.5years old", spans.get(0).getText());
 
     }
 
@@ -47,8 +47,8 @@ public class AgeFilterTest extends AbstractFilterTest {
 
         showSpans(spans);
 
-        Assert.assertEquals(1, spans.size());
-        Assert.assertTrue(checkSpan(spans.get(0), 15, 27, FilterType.AGE));
+        Assertions.assertEquals(1, spans.size());
+        Assertions.assertTrue(checkSpan(spans.get(0), 15, 27, FilterType.AGE));
 
     }
 
@@ -62,8 +62,8 @@ public class AgeFilterTest extends AbstractFilterTest {
 
         showSpans(spans);
 
-        Assert.assertEquals(1, spans.size());
-        Assert.assertTrue(checkSpan(spans.get(0), 15, 20, FilterType.AGE));
+        Assertions.assertEquals(1, spans.size());
+        Assertions.assertTrue(checkSpan(spans.get(0), 15, 20, FilterType.AGE));
 
     }
 
@@ -77,8 +77,8 @@ public class AgeFilterTest extends AbstractFilterTest {
 
         showSpans(spans);
 
-        Assert.assertEquals(1, spans.size());
-        Assert.assertTrue(checkSpan(spans.get(0), 15, 19, FilterType.AGE));
+        Assertions.assertEquals(1, spans.size());
+        Assertions.assertTrue(checkSpan(spans.get(0), 15, 19, FilterType.AGE));
 
     }
 
@@ -92,8 +92,8 @@ public class AgeFilterTest extends AbstractFilterTest {
 
         showSpans(spans);
 
-        Assert.assertEquals(1, spans.size());
-        Assert.assertTrue(checkSpan(spans.get(0), 15, 21, FilterType.AGE));
+        Assertions.assertEquals(1, spans.size());
+        Assertions.assertTrue(checkSpan(spans.get(0), 15, 21, FilterType.AGE));
 
     }
 
@@ -107,8 +107,8 @@ public class AgeFilterTest extends AbstractFilterTest {
 
         showSpans(spans);
 
-        Assert.assertEquals(1, spans.size());
-        Assert.assertTrue(checkSpan(spans.get(0), 15, 20, FilterType.AGE));
+        Assertions.assertEquals(1, spans.size());
+        Assertions.assertTrue(checkSpan(spans.get(0), 15, 20, FilterType.AGE));
 
     }
 
@@ -122,8 +122,8 @@ public class AgeFilterTest extends AbstractFilterTest {
 
         showSpans(spans);
 
-        Assert.assertEquals(1, spans.size());
-        Assert.assertTrue(checkSpan(spans.get(0), 7, 14, FilterType.AGE));
+        Assertions.assertEquals(1, spans.size());
+        Assertions.assertTrue(checkSpan(spans.get(0), 7, 14, FilterType.AGE));
 
     }
 
@@ -137,8 +137,8 @@ public class AgeFilterTest extends AbstractFilterTest {
 
         showSpans(spans);
 
-        Assert.assertEquals(1, spans.size());
-        Assert.assertTrue(checkSpan(spans.get(0), 7, 13, FilterType.AGE));
+        Assertions.assertEquals(1, spans.size());
+        Assertions.assertTrue(checkSpan(spans.get(0), 7, 13, FilterType.AGE));
 
     }
 
@@ -152,8 +152,8 @@ public class AgeFilterTest extends AbstractFilterTest {
 
         showSpans(spans);
 
-        Assert.assertEquals(1, spans.size());
-        Assert.assertTrue(checkSpan(spans.get(0), 7, 15, FilterType.AGE));
+        Assertions.assertEquals(1, spans.size());
+        Assertions.assertTrue(checkSpan(spans.get(0), 7, 15, FilterType.AGE));
 
     }
 

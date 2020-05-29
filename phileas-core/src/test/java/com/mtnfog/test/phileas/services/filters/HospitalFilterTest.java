@@ -12,9 +12,9 @@ import com.mtnfog.phileas.services.anonymization.HospitalAnonymizationService;
 import com.mtnfog.phileas.services.anonymization.cache.LocalAnonymizationCacheService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.util.Arrays;
@@ -29,7 +29,7 @@ public class HospitalFilterTest extends AbstractFilterTest {
 
     private AlertService alertService = Mockito.mock(AlertService.class);
 
-    @Before
+    @BeforeEach
     public void before() {
         INDEX_DIRECTORY = System.getProperty( "os.name" ).contains( "indow" ) ? INDEX_DIRECTORY.substring(1) : INDEX_DIRECTORY;
         LOGGER.info("Using index directory {}", INDEX_DIRECTORY);
@@ -44,8 +44,8 @@ public class HospitalFilterTest extends AbstractFilterTest {
         final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.HOSPITAL, strategies, INDEX_DIRECTORY, SensitivityLevel.LOW, anonymizationService, alertService, Collections.emptySet(), new Crypto(), windowSize);
 
         List<Span> spans = filter.filter(getFilterProfile(SensitivityLevel.LOW), "context", "documentid","Went to Wyoming Medical Center");
-        Assert.assertEquals(1, spans.size());
-        Assert.assertEquals("wyoming medical center", spans.get(0).getText());
+        Assertions.assertEquals(1, spans.size());
+        Assertions.assertEquals("wyoming medical center", spans.get(0).getText());
 
     }
 

@@ -13,8 +13,8 @@ import com.mtnfog.phileas.model.profile.filters.strategies.custom.CustomDictiona
 import com.mtnfog.phileas.model.profile.filters.strategies.dynamic.*;
 import com.mtnfog.phileas.model.profile.filters.strategies.rules.*;
 import org.apache.commons.collections4.CollectionUtils;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -274,9 +274,9 @@ public class FilterProfileTest {
         Gson gson = new Gson();
         FilterProfile filterProfile = gson.fromJson(json, FilterProfile.class);
 
-        Assert.assertTrue(CollectionUtils.isNotEmpty(filterProfile.getIdentifiers().getCustomDictionaries()));
-        Assert.assertTrue(CollectionUtils.isNotEmpty(filterProfile.getIgnored()));
-        Assert.assertTrue(filterProfile.getIdentifiers().hasFilter(FilterType.CUSTOM_DICTIONARY));
+        Assertions.assertTrue(CollectionUtils.isNotEmpty(filterProfile.getIdentifiers().getCustomDictionaries()));
+        Assertions.assertTrue(CollectionUtils.isNotEmpty(filterProfile.getIgnored()));
+        Assertions.assertTrue(filterProfile.getIdentifiers().hasFilter(FilterType.CUSTOM_DICTIONARY));
 
     }
 
@@ -388,9 +388,9 @@ public class FilterProfileTest {
         Gson gson = new Gson();
         FilterProfile filterProfile = gson.fromJson(json, FilterProfile.class);
 
-        Assert.assertFalse(CollectionUtils.isNotEmpty(filterProfile.getIdentifiers().getCustomDictionaries()));
-        Assert.assertFalse(CollectionUtils.isNotEmpty(filterProfile.getIgnored()));
-        Assert.assertFalse(filterProfile.getIdentifiers().hasFilter(FilterType.CUSTOM_DICTIONARY));
+        Assertions.assertFalse(CollectionUtils.isNotEmpty(filterProfile.getIdentifiers().getCustomDictionaries()));
+        Assertions.assertFalse(CollectionUtils.isNotEmpty(filterProfile.getIgnored()));
+        Assertions.assertFalse(filterProfile.getIdentifiers().hasFilter(FilterType.CUSTOM_DICTIONARY));
 
     }
 

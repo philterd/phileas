@@ -7,8 +7,8 @@ import com.mtnfog.phileas.model.services.AnonymizationCacheService;
 import com.mtnfog.phileas.model.services.AnonymizationService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.io.IOException;
@@ -34,7 +34,7 @@ public class AgeFilterStrategyTest {
 
         final String replacement = strategy.getReplacement("name", "context", "docId", "token", new Crypto(), anonymizationService);
 
-        Assert.assertEquals("static-value", replacement);
+        Assertions.assertEquals("static-value", replacement);
 
     }
 
@@ -49,7 +49,7 @@ public class AgeFilterStrategyTest {
 
         final String replacement = strategy.getReplacement("name", "context", "docId", "token", new Crypto(), anonymizationService);
 
-        Assert.assertEquals("REDACTION-age", replacement);
+        Assertions.assertEquals("REDACTION-age", replacement);
 
     }
 
@@ -67,7 +67,7 @@ public class AgeFilterStrategyTest {
 
         final String replacement = strategy.getReplacement("name", "context", "docId", "token", new Crypto(), anonymizationService);
 
-        Assert.assertNotEquals("random", replacement);
+        Assertions.assertNotEquals("random", replacement);
 
     }
 
@@ -85,7 +85,7 @@ public class AgeFilterStrategyTest {
 
         final String replacement = strategy.getReplacement("name", "context", "docId", "token", new Crypto(), anonymizationService);
 
-        Assert.assertEquals("{{{REDACTED-age}}}", replacement);
+        Assertions.assertEquals("{{{REDACTED-age}}}", replacement);
 
     }
 
@@ -103,7 +103,7 @@ public class AgeFilterStrategyTest {
 
         final String replacement = strategy.getReplacement("name", "context", "docId", "token", new Crypto(), anonymizationService);
 
-        Assert.assertEquals("<ENTITY:age>token</ENTITY>", replacement);
+        Assertions.assertEquals("<ENTITY:age>token</ENTITY>", replacement);
 
     }
 
@@ -123,12 +123,12 @@ public class AgeFilterStrategyTest {
 
         final String replacement = strategy.getReplacement("name", "context", "docId", "token", crypto, anonymizationService);
 
-        Assert.assertEquals("{{j6HcaY8m7hPACVVyQtj4PQ==}}", replacement);
+        Assertions.assertEquals("{{j6HcaY8m7hPACVVyQtj4PQ==}}", replacement);
 
     }
 
-    @Test(expected = Exception.class)
-    public void replacement7() throws Exception {
+    @Test
+    public void replacement7() {
 
         final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
         final AnonymizationCacheService anonymizationCacheService = Mockito.mock(AnonymizationCacheService.class);
@@ -141,8 +141,12 @@ public class AgeFilterStrategyTest {
 
         final Crypto crypto = new Crypto();
 
-        // Throws an exception because we tried to use CRYPTO_REPLACE without any keys.
-        strategy.getReplacement("name", "context", "docId", "token", crypto, anonymizationService);
+        Assertions.assertThrows(Exception.class, () -> {
+
+            // Throws an exception because we tried to use CRYPTO_REPLACE without any keys.
+            strategy.getReplacement("name", "context", "docId", "token", crypto, anonymizationService);
+
+        });
 
     }
 
@@ -160,7 +164,7 @@ public class AgeFilterStrategyTest {
         final String replacement = strategy.getReplacement("name", "context", "docId", "token", null, anonymizationService);
 
         // This is the hash of "token"
-        Assert.assertEquals("3c469e9d6c5875d37a43f353d4f88e61fcf812c66eee3457465a40b0da4153e0", replacement);
+        Assertions.assertEquals("3c469e9d6c5875d37a43f353d4f88e61fcf812c66eee3457465a40b0da4153e0", replacement);
 
     }
 
@@ -171,7 +175,7 @@ public class AgeFilterStrategyTest {
 
         final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentId", "90210", "token startswith \"902\"", 1.0, "");
 
-        Assert.assertTrue(conditionSatisfied);
+        Assertions.assertTrue(conditionSatisfied);
 
     }
 
@@ -182,7 +186,7 @@ public class AgeFilterStrategyTest {
 
         final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentId", "90210", "token == \"90210\"", 1.0, "");
 
-        Assert.assertTrue(conditionSatisfied);
+        Assertions.assertTrue(conditionSatisfied);
 
     }
 
@@ -193,7 +197,7 @@ public class AgeFilterStrategyTest {
 
         final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentId", "12345", "token == \"90210\"", 1.0, "");
 
-        Assert.assertFalse(conditionSatisfied);
+        Assertions.assertFalse(conditionSatisfied);
 
     }
 
@@ -204,7 +208,7 @@ public class AgeFilterStrategyTest {
 
         final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentId", "John Smith", "context == \"c1\"",  1.0, "");
 
-        Assert.assertFalse(conditionSatisfied);
+        Assertions.assertFalse(conditionSatisfied);
 
     }
 
@@ -215,7 +219,7 @@ public class AgeFilterStrategyTest {
 
         final boolean conditionSatisfied = strategy.evaluateCondition("ctx", "documentId", "John Smith", "context == \"ctx\"",  1.0, "");
 
-        Assert.assertTrue(conditionSatisfied);
+        Assertions.assertTrue(conditionSatisfied);
 
     }
 
@@ -226,7 +230,7 @@ public class AgeFilterStrategyTest {
 
         final boolean conditionSatisfied = strategy.evaluateCondition("ctx", "documentId", "John Smith", "confidence > 0.5",  1.0, "");
 
-        Assert.assertTrue(conditionSatisfied);
+        Assertions.assertTrue(conditionSatisfied);
 
     }
 
@@ -237,7 +241,7 @@ public class AgeFilterStrategyTest {
 
         final boolean conditionSatisfied = strategy.evaluateCondition("ctx", "documentId", "John Smith", "confidence < 0.5",  1.0, "");
 
-        Assert.assertFalse(conditionSatisfied);
+        Assertions.assertFalse(conditionSatisfied);
 
     }
 

@@ -12,17 +12,17 @@ import com.mtnfog.phileas.services.anonymization.SurnameAnonymizationService;
 import com.mtnfog.phileas.services.anonymization.cache.LocalAnonymizationCacheService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-@Ignore("This isn't finding anything")
+@Disabled("This isn't finding anything")
 public class SurnameFilterTest extends AbstractFilterTest {
 
     private static final Logger LOGGER = LogManager.getLogger(SurnameFilterTest.class);
@@ -31,7 +31,7 @@ public class SurnameFilterTest extends AbstractFilterTest {
 
     private AlertService alertService = Mockito.mock(AlertService.class);
 
-    @Before
+    @BeforeEach
     public void before() {
         INDEX_DIRECTORY = System.getProperty( "os.name" ).contains( "indow" ) ? INDEX_DIRECTORY.substring(1) : INDEX_DIRECTORY;
         LOGGER.info("Using index directory {}", INDEX_DIRECTORY);
@@ -47,7 +47,7 @@ public class SurnameFilterTest extends AbstractFilterTest {
 
         final List<Span> spans = filter.filter(getFilterProfile(SensitivityLevel.LOW), "context", "documentid", "Lived in Wshington");
         showSpans(spans);
-        Assert.assertEquals(0, spans.size());
+        Assertions.assertEquals(0, spans.size());
 
     }
 
@@ -61,7 +61,7 @@ public class SurnameFilterTest extends AbstractFilterTest {
 
         final List<Span> spans = filter.filter(getFilterProfile(SensitivityLevel.MEDIUM), "context", "documentid", "Lived in Wshington");
         showSpans(spans);
-        Assert.assertEquals(0, spans.size());
+        Assertions.assertEquals(0, spans.size());
 
     }
 
@@ -75,7 +75,7 @@ public class SurnameFilterTest extends AbstractFilterTest {
 
         final List<Span> spans = filter.filter(getFilterProfile(SensitivityLevel.HIGH), "context", "documentid", "Lived in Wasinton");
         showSpans(spans);
-        Assert.assertEquals(0, spans.size());
+        Assertions.assertEquals(0, spans.size());
 
     }
 

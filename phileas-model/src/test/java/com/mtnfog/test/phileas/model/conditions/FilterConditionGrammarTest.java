@@ -4,8 +4,8 @@ import com.mtnfog.phileas.model.conditions.ParsedCondition;
 import com.mtnfog.phileas.model.conditions.ParserListener;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
@@ -20,19 +20,19 @@ public class FilterConditionGrammarTest {
 
         final List<ParsedCondition> conditions = parserListener.getTerminals("population < 2500 and population > 10000");
 
-        Assert.assertEquals(2, conditions.size());
+        Assertions.assertEquals(2, conditions.size());
 
         ParsedCondition parsedCondition = conditions.get(0);
 
-        Assert.assertEquals("population", parsedCondition.getField());
-        Assert.assertEquals("<", parsedCondition.getOperator());
-        Assert.assertEquals("2500", parsedCondition.getValue());
+        Assertions.assertEquals("population", parsedCondition.getField());
+        Assertions.assertEquals("<", parsedCondition.getOperator());
+        Assertions.assertEquals("2500", parsedCondition.getValue());
 
         parsedCondition = conditions.get(1);
 
-        Assert.assertEquals("population", parsedCondition.getField());
-        Assert.assertEquals(">", parsedCondition.getOperator());
-        Assert.assertEquals("10000", parsedCondition.getValue());
+        Assertions.assertEquals("population", parsedCondition.getField());
+        Assertions.assertEquals(">", parsedCondition.getOperator());
+        Assertions.assertEquals("10000", parsedCondition.getValue());
 
     }
 
@@ -45,9 +45,9 @@ public class FilterConditionGrammarTest {
 
         final ParsedCondition parsedCondition = conditions.get(0);
 
-        Assert.assertEquals("population", parsedCondition.getField());
-        Assert.assertEquals("<", parsedCondition.getOperator());
-        Assert.assertEquals("2500", parsedCondition.getValue());
+        Assertions.assertEquals("population", parsedCondition.getField());
+        Assertions.assertEquals("<", parsedCondition.getOperator());
+        Assertions.assertEquals("2500", parsedCondition.getValue());
 
     }
 
@@ -60,9 +60,9 @@ public class FilterConditionGrammarTest {
 
         ParsedCondition parsedCondition = conditions.get(0);
 
-        Assert.assertEquals("token", parsedCondition.getField());
-        Assert.assertEquals("==", parsedCondition.getOperator());
-        Assert.assertEquals("\"test\"", parsedCondition.getValue());
+        Assertions.assertEquals("token", parsedCondition.getField());
+        Assertions.assertEquals("==", parsedCondition.getOperator());
+        Assertions.assertEquals("\"test\"", parsedCondition.getValue());
 
     }
 
@@ -73,19 +73,19 @@ public class FilterConditionGrammarTest {
 
         final List<ParsedCondition> conditions = parserListener.getTerminals("confidence != 0.5 and type != LOC");
 
-        Assert.assertEquals(2, conditions.size());
+        Assertions.assertEquals(2, conditions.size());
 
         ParsedCondition parsedCondition = conditions.get(0);
 
-        Assert.assertEquals("confidence", parsedCondition.getField());
-        Assert.assertEquals("!=", parsedCondition.getOperator());
-        Assert.assertEquals("0.5", parsedCondition.getValue());
+        Assertions.assertEquals("confidence", parsedCondition.getField());
+        Assertions.assertEquals("!=", parsedCondition.getOperator());
+        Assertions.assertEquals("0.5", parsedCondition.getValue());
 
         parsedCondition = conditions.get(1);
 
-        Assert.assertEquals("type", parsedCondition.getField());
-        Assert.assertEquals("!=", parsedCondition.getOperator());
-        Assert.assertEquals("LOC", parsedCondition.getValue());
+        Assertions.assertEquals("type", parsedCondition.getField());
+        Assertions.assertEquals("!=", parsedCondition.getOperator());
+        Assertions.assertEquals("LOC", parsedCondition.getValue());
 
     }
 
@@ -96,19 +96,19 @@ public class FilterConditionGrammarTest {
 
         final List<ParsedCondition> conditions = parserListener.getTerminals("confidence < 0.4 and type == PER");
 
-        Assert.assertEquals(2, conditions.size());
+        Assertions.assertEquals(2, conditions.size());
 
         ParsedCondition parsedCondition = conditions.get(0);
 
-        Assert.assertEquals("confidence", parsedCondition.getField());
-        Assert.assertEquals("<", parsedCondition.getOperator());
-        Assert.assertEquals("0.4", parsedCondition.getValue());
+        Assertions.assertEquals("confidence", parsedCondition.getField());
+        Assertions.assertEquals("<", parsedCondition.getOperator());
+        Assertions.assertEquals("0.4", parsedCondition.getValue());
 
         parsedCondition = conditions.get(1);
 
-        Assert.assertEquals("type", parsedCondition.getField());
-        Assert.assertEquals("==", parsedCondition.getOperator());
-        Assert.assertEquals("PER", parsedCondition.getValue());
+        Assertions.assertEquals("type", parsedCondition.getField());
+        Assertions.assertEquals("==", parsedCondition.getOperator());
+        Assertions.assertEquals("PER", parsedCondition.getValue());
 
     }
 

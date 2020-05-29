@@ -8,8 +8,8 @@ import com.mtnfog.phileas.model.services.AlertService;
 import com.mtnfog.phileas.services.anonymization.PassportNumberAnonymizationService;
 import com.mtnfog.phileas.services.anonymization.cache.LocalAnonymizationCacheService;
 import com.mtnfog.phileas.services.filters.regex.PassportNumberFilter;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.util.Collections;
@@ -32,11 +32,11 @@ public class PassportNumberFilterTest extends AbstractFilterTest {
 
         showSpans(spans);
 
-        Assert.assertEquals(1, spans.size());
-        Assert.assertTrue(checkSpan(spans.get(0), 23, 32, FilterType.PASSPORT_NUMBER));
-        Assert.assertEquals("{{{REDACTED-passport-number}}}", spans.get(0).getReplacement());
-        Assert.assertEquals("986001231", spans.get(0).getText());
-        Assert.assertEquals("US", spans.get(0).getClassification());
+        Assertions.assertEquals(1, spans.size());
+        Assertions.assertTrue(checkSpan(spans.get(0), 23, 32, FilterType.PASSPORT_NUMBER));
+        Assertions.assertEquals("{{{REDACTED-passport-number}}}", spans.get(0).getReplacement());
+        Assertions.assertEquals("986001231", spans.get(0).getText());
+        Assertions.assertEquals("US", spans.get(0).getClassification());
 
     }
 

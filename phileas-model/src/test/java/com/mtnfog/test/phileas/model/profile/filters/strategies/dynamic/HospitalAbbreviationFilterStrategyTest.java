@@ -7,8 +7,8 @@ import com.mtnfog.phileas.model.services.AnonymizationCacheService;
 import com.mtnfog.phileas.model.services.AnonymizationService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import static org.mockito.Mockito.when;
@@ -32,7 +32,7 @@ public class HospitalAbbreviationFilterStrategyTest {
 
         final String replacement = strategy.getReplacement("name", "context", "docId", "token", new Crypto(), anonymizationService);
 
-        Assert.assertEquals("static-value", replacement);
+        Assertions.assertEquals("static-value", replacement);
 
     }
 
@@ -47,7 +47,7 @@ public class HospitalAbbreviationFilterStrategyTest {
 
         final String replacement = strategy.getReplacement("name", "context", "docId", "token", new Crypto(), anonymizationService);
 
-        Assert.assertEquals("REDACTION-hospital-abbreviation", replacement);
+        Assertions.assertEquals("REDACTION-hospital-abbreviation", replacement);
 
     }
 
@@ -65,7 +65,7 @@ public class HospitalAbbreviationFilterStrategyTest {
 
         final String replacement = strategy.getReplacement("name", "context", "docId", "token", new Crypto(), anonymizationService);
 
-        Assert.assertNotEquals("random", replacement);
+        Assertions.assertNotEquals("random", replacement);
 
     }
 
@@ -83,7 +83,7 @@ public class HospitalAbbreviationFilterStrategyTest {
 
         final String replacement = strategy.getReplacement("name", "context", "docId", "token", new Crypto(), anonymizationService);
 
-        Assert.assertEquals("{{{REDACTED-hospital-abbreviation}}}", replacement);
+        Assertions.assertEquals("{{{REDACTED-hospital-abbreviation}}}", replacement);
 
     }
 
@@ -101,7 +101,7 @@ public class HospitalAbbreviationFilterStrategyTest {
 
         final String replacement = strategy.getReplacement("name", "context", "docId", "token", new Crypto(), anonymizationService);
 
-        Assert.assertEquals("<ENTITY:hospital-abbreviation>token</ENTITY>", replacement);
+        Assertions.assertEquals("<ENTITY:hospital-abbreviation>token</ENTITY>", replacement);
 
     }
 
@@ -112,7 +112,7 @@ public class HospitalAbbreviationFilterStrategyTest {
 
         final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentId", "90210", "token startswith \"902\"", 1.0, "");
 
-        Assert.assertTrue(conditionSatisfied);
+        Assertions.assertTrue(conditionSatisfied);
 
     }
 
@@ -123,7 +123,7 @@ public class HospitalAbbreviationFilterStrategyTest {
 
         final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentId", "90210", "token == \"90210\"", 1.0, "");
 
-        Assert.assertTrue(conditionSatisfied);
+        Assertions.assertTrue(conditionSatisfied);
 
     }
 
@@ -134,7 +134,7 @@ public class HospitalAbbreviationFilterStrategyTest {
 
         final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentId", "12345", "token == \"90210\"", 1.0, "");
 
-        Assert.assertFalse(conditionSatisfied);
+        Assertions.assertFalse(conditionSatisfied);
 
     }
 
@@ -145,7 +145,7 @@ public class HospitalAbbreviationFilterStrategyTest {
 
         final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentId", "John Smith", "context == \"c1\"",  1.0, "");
 
-        Assert.assertFalse(conditionSatisfied);
+        Assertions.assertFalse(conditionSatisfied);
 
     }
 
@@ -156,7 +156,7 @@ public class HospitalAbbreviationFilterStrategyTest {
 
         final boolean conditionSatisfied = strategy.evaluateCondition("ctx", "documentId", "John Smith", "context == \"ctx\"",  1.0, "");
 
-        Assert.assertTrue(conditionSatisfied);
+        Assertions.assertTrue(conditionSatisfied);
 
     }
 
@@ -167,7 +167,7 @@ public class HospitalAbbreviationFilterStrategyTest {
 
         final boolean conditionSatisfied = strategy.evaluateCondition("ctx", "documentId", "John Smith", "confidence > 0.5",  1.0, "");
 
-        Assert.assertTrue(conditionSatisfied);
+        Assertions.assertTrue(conditionSatisfied);
 
     }
 
@@ -178,7 +178,7 @@ public class HospitalAbbreviationFilterStrategyTest {
 
         final boolean conditionSatisfied = strategy.evaluateCondition("ctx", "documentId", "John Smith", "confidence < 0.5",  1.0, "");
 
-        Assert.assertFalse(conditionSatisfied);
+        Assertions.assertFalse(conditionSatisfied);
 
     }
 

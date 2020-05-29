@@ -2,7 +2,7 @@ package com.mtnfog.test.phileas.model.responses;
 
 import com.mtnfog.phileas.model.responses.FilterResponse;
 import nl.jqno.equalsverifier.EqualsVerifier;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class FilterResponseTest {
 

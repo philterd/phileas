@@ -3,7 +3,7 @@ package com.mtnfog.test.phileas.model.objects;
 import com.google.gson.Gson;
 import com.mtnfog.phileas.model.enums.FilterType;
 import com.mtnfog.phileas.model.objects.Alert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class AlertTest {
 

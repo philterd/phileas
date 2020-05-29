@@ -7,8 +7,8 @@ import com.mtnfog.phileas.model.services.AnonymizationCacheService;
 import com.mtnfog.phileas.model.services.AnonymizationService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import static org.mockito.Mockito.when;
@@ -32,7 +32,7 @@ public class NerFilterStrategyTest {
 
         final String replacement = strategy.getReplacement("name", "context", "docId", "token", new Crypto(), anonymizationService);
 
-        Assert.assertEquals("static-value", replacement);
+        Assertions.assertEquals("static-value", replacement);
 
     }
 
@@ -47,7 +47,7 @@ public class NerFilterStrategyTest {
 
         final String replacement = strategy.getReplacement("name", "context", "docId", "token", new Crypto(), anonymizationService);
 
-        Assert.assertEquals("REDACTION-entity", replacement);
+        Assertions.assertEquals("REDACTION-entity", replacement);
 
     }
 
@@ -65,7 +65,7 @@ public class NerFilterStrategyTest {
 
         final String replacement = strategy.getReplacement("name", "context", "docId", "token", new Crypto(), anonymizationService);
 
-        Assert.assertNotEquals("random", replacement);
+        Assertions.assertNotEquals("random", replacement);
 
     }
 
@@ -83,7 +83,7 @@ public class NerFilterStrategyTest {
 
         final String replacement = strategy.getReplacement("name", "context", "docId", "token", new Crypto(), anonymizationService);
 
-        Assert.assertEquals("{{{REDACTED-entity}}}", replacement);
+        Assertions.assertEquals("{{{REDACTED-entity}}}", replacement);
 
     }
 
@@ -101,7 +101,7 @@ public class NerFilterStrategyTest {
 
         final String replacement = strategy.getReplacement("name", "context", "docId", "token", new Crypto(), anonymizationService);
 
-        Assert.assertEquals("<ENTITY:entity>token</ENTITY>", replacement);
+        Assertions.assertEquals("<ENTITY:entity>token</ENTITY>", replacement);
 
     }
 
@@ -112,7 +112,7 @@ public class NerFilterStrategyTest {
 
         final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentId", "John Smith", "confidence > 0.25",  0.5, "");
 
-        Assert.assertTrue(conditionSatisfied);
+        Assertions.assertTrue(conditionSatisfied);
 
     }
 
@@ -123,7 +123,7 @@ public class NerFilterStrategyTest {
 
         final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentId", "John Smith", "type == PER",  1.0, "PER");
 
-        Assert.assertTrue(conditionSatisfied);
+        Assertions.assertTrue(conditionSatisfied);
 
     }
 
@@ -134,7 +134,7 @@ public class NerFilterStrategyTest {
 
         final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentId", "John Smith", "type == PER",  1.0, "LOC");
 
-        Assert.assertFalse(conditionSatisfied);
+        Assertions.assertFalse(conditionSatisfied);
 
     }
 
@@ -145,7 +145,7 @@ public class NerFilterStrategyTest {
 
         final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentId", "John Smith", "confidence == 0.5",  0.5, "");
 
-        Assert.assertTrue(conditionSatisfied);
+        Assertions.assertTrue(conditionSatisfied);
 
     }
 
@@ -156,7 +156,7 @@ public class NerFilterStrategyTest {
 
         final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentId", "John Smith", "confidence != 0.5",  0.6, "");
 
-        Assert.assertTrue(conditionSatisfied);
+        Assertions.assertTrue(conditionSatisfied);
 
     }
 
@@ -167,7 +167,7 @@ public class NerFilterStrategyTest {
 
         final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentId", "John Smith", "confidence != 0.5",  0.5, "");
 
-        Assert.assertFalse(conditionSatisfied);
+        Assertions.assertFalse(conditionSatisfied);
 
     }
 
@@ -178,7 +178,7 @@ public class NerFilterStrategyTest {
 
         final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentId", "John Smith", "confidence != 0.5 and type == PER",  0.5, "LOC");
 
-        Assert.assertFalse(conditionSatisfied);
+        Assertions.assertFalse(conditionSatisfied);
 
     }
 
@@ -189,7 +189,7 @@ public class NerFilterStrategyTest {
 
         final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentId", "John Smith", "confidence != 0.5 and type != LOC",  0.5, "PER");
 
-        Assert.assertFalse(conditionSatisfied);
+        Assertions.assertFalse(conditionSatisfied);
 
     }
 
@@ -200,7 +200,7 @@ public class NerFilterStrategyTest {
 
         final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentId", "John Smith", "confidence > 0.4 and type == PER",  0.5, "PER");
 
-        Assert.assertTrue(conditionSatisfied);
+        Assertions.assertTrue(conditionSatisfied);
 
     }
 
@@ -212,7 +212,7 @@ public class NerFilterStrategyTest {
 
         final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentId", "John Smith", "confidence < 0.4 and type == PER",  0.5, "PER");
 
-        Assert.assertFalse(conditionSatisfied);
+        Assertions.assertFalse(conditionSatisfied);
 
     }
 
@@ -223,7 +223,7 @@ public class NerFilterStrategyTest {
 
         final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentId", "John Smith", "context == \"c1\"",  1.0, "");
 
-        Assert.assertFalse(conditionSatisfied);
+        Assertions.assertFalse(conditionSatisfied);
 
     }
 
@@ -234,7 +234,7 @@ public class NerFilterStrategyTest {
 
         final boolean conditionSatisfied = strategy.evaluateCondition("ctx", "documentId", "John Smith", "context == \"ctx\"",  1.0, "");
 
-        Assert.assertTrue(conditionSatisfied);
+        Assertions.assertTrue(conditionSatisfied);
 
     }
 
@@ -245,7 +245,7 @@ public class NerFilterStrategyTest {
 
         final boolean conditionSatisfied = strategy.evaluateCondition("ctx", "documentId", "John Smith", "token == \"John Smith\"",  1.0, "");
 
-        Assert.assertTrue(conditionSatisfied);
+        Assertions.assertTrue(conditionSatisfied);
 
     }
 
@@ -256,7 +256,7 @@ public class NerFilterStrategyTest {
 
         final boolean conditionSatisfied = strategy.evaluateCondition("ctx", "documentId", "John Smith", "token != \"John Smith\"",  1.0, "");
 
-        Assert.assertFalse(conditionSatisfied);
+        Assertions.assertFalse(conditionSatisfied);
 
     }
 

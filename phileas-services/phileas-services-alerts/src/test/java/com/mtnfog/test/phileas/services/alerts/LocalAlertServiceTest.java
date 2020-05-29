@@ -4,8 +4,8 @@ import com.mtnfog.phileas.model.enums.FilterType;
 import com.mtnfog.phileas.model.objects.Alert;
 import com.mtnfog.phileas.model.services.AlertService;
 import com.mtnfog.phileas.services.alerts.LocalAlertService;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
@@ -20,7 +20,7 @@ public class LocalAlertServiceTest {
 
         final List<Alert> alerts = alertService.getAlerts();
 
-        Assert.assertEquals(1, alerts.size());
+        Assertions.assertEquals(1, alerts.size());
 
     }
 
@@ -35,13 +35,13 @@ public class LocalAlertServiceTest {
 
         List<Alert> alerts = alertService.getAlerts();
 
-        Assert.assertEquals(3, alerts.size());
+        Assertions.assertEquals(3, alerts.size());
 
         alertService.delete(alerts.get(0).getId());
 
         alerts = alertService.getAlerts();
 
-        Assert.assertEquals(2, alerts.size());
+        Assertions.assertEquals(2, alerts.size());
 
     }
 
@@ -54,13 +54,13 @@ public class LocalAlertServiceTest {
 
         List<Alert> alerts = alertService.getAlerts();
 
-        Assert.assertEquals(1, alerts.size());
+        Assertions.assertEquals(1, alerts.size());
 
         alertService.clear();
 
         alerts = alertService.getAlerts();
 
-        Assert.assertEquals(0, alerts.size());
+        Assertions.assertEquals(0, alerts.size());
 
     }
 

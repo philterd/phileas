@@ -8,8 +8,8 @@ import com.mtnfog.phileas.model.services.AlertService;
 import com.mtnfog.phileas.services.anonymization.AlphanumericAnonymizationService;
 import com.mtnfog.phileas.services.anonymization.cache.LocalAnonymizationCacheService;
 import com.mtnfog.phileas.services.filters.regex.PhoneNumberExtensionFilter;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.util.Arrays;
@@ -32,9 +32,9 @@ public class PhoneNumberExtensionFilterTest extends AbstractFilterTest {
             LOGGER.info(span.toString());
         }
 
-        Assert.assertEquals(1, spans.size());
-        Assert.assertTrue(checkSpan(spans.get(0), 9, 13, FilterType.PHONE_NUMBER_EXTENSION));
-        Assert.assertEquals("x123", spans.get(0).getText());
+        Assertions.assertEquals(1, spans.size());
+        Assertions.assertTrue(checkSpan(spans.get(0), 9, 13, FilterType.PHONE_NUMBER_EXTENSION));
+        Assertions.assertEquals("x123", spans.get(0).getText());
 
     }
 
@@ -50,9 +50,9 @@ public class PhoneNumberExtensionFilterTest extends AbstractFilterTest {
             LOGGER.info(span.toString());
         }
 
-        Assert.assertEquals(1, spans.size());
-        Assert.assertTrue(checkSpan(spans.get(0), 37, 41, FilterType.PHONE_NUMBER_EXTENSION));
-        Assert.assertEquals("x416", spans.get(0).getText());
+        Assertions.assertEquals(1, spans.size());
+        Assertions.assertTrue(checkSpan(spans.get(0), 37, 41, FilterType.PHONE_NUMBER_EXTENSION));
+        Assertions.assertEquals("x416", spans.get(0).getText());
 
     }
 

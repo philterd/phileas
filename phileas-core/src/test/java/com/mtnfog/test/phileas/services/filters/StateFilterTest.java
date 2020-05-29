@@ -12,9 +12,9 @@ import com.mtnfog.phileas.services.anonymization.StateAnonymizationService;
 import com.mtnfog.phileas.services.anonymization.cache.LocalAnonymizationCacheService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.util.Arrays;
@@ -29,7 +29,7 @@ public class StateFilterTest extends AbstractFilterTest {
 
     private AlertService alertService = Mockito.mock(AlertService.class);
 
-    @Before
+    @BeforeEach
     public void before() {
         INDEX_DIRECTORY = System.getProperty( "os.name" ).contains( "indow" ) ? INDEX_DIRECTORY.substring(1) : INDEX_DIRECTORY;
         LOGGER.info("Using index directory {}", INDEX_DIRECTORY);
@@ -44,8 +44,8 @@ public class StateFilterTest extends AbstractFilterTest {
         final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.LOCATION_STATE, strategies, INDEX_DIRECTORY, SensitivityLevel.LOW, anonymizationService, alertService, Collections.emptySet(), new Crypto(), windowSize);
 
         List<Span> spans = filter.filter(getFilterProfile(SensitivityLevel.LOW), "context", "documentid","Lived in Washington");
-        Assert.assertEquals(1, spans.size());
-        Assert.assertEquals("washington", spans.get(0).getText());
+        Assertions.assertEquals(1, spans.size());
+        Assertions.assertEquals("washington", spans.get(0).getText());
 
     }
 
@@ -58,7 +58,7 @@ public class StateFilterTest extends AbstractFilterTest {
         final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.LOCATION_STATE, strategies, INDEX_DIRECTORY, SensitivityLevel.MEDIUM, anonymizationService, alertService, Collections.emptySet(), new Crypto(), windowSize);
 
         List<Span> spans = filter.filter(getFilterProfile(SensitivityLevel.MEDIUM), "context", "documentid","Lived in Wshington");
-        Assert.assertEquals(1, spans.size());
+        Assertions.assertEquals(1, spans.size());
 
     }
 
@@ -71,7 +71,7 @@ public class StateFilterTest extends AbstractFilterTest {
         final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.LOCATION_STATE, strategies, INDEX_DIRECTORY, SensitivityLevel.HIGH, anonymizationService, alertService, Collections.emptySet(), new Crypto(), windowSize);
 
         List<Span> spans = filter.filter(getFilterProfile(SensitivityLevel.HIGH), "context", "documentid","Lived in Wasinton");
-        Assert.assertEquals(1, spans.size());
+        Assertions.assertEquals(1, spans.size());
 
     }
 

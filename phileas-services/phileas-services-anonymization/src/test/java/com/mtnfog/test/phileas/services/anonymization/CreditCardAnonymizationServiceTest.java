@@ -5,8 +5,8 @@ import com.mtnfog.phileas.services.anonymization.CreditCardAnonymizationService;
 import com.mtnfog.phileas.services.anonymization.cache.LocalAnonymizationCacheService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class CreditCardAnonymizationServiceTest {
 
@@ -21,8 +21,8 @@ public class CreditCardAnonymizationServiceTest {
         final String replacement = anonymizationService.anonymize(token);
 
         LOGGER.info("Credit Card: " + replacement);
-        Assert.assertNotNull(replacement);
-        Assert.assertTrue(replacement.length() == 16);
+        Assertions.assertNotNull(replacement);
+        Assertions.assertTrue(replacement.length() == 16);
 
     }
 
@@ -35,8 +35,8 @@ public class CreditCardAnonymizationServiceTest {
         final String replacement = anonymizationService.anonymize(token);
 
         LOGGER.info("Credit Card: " + replacement);
-        Assert.assertNotNull(replacement);
-        Assert.assertTrue(replacement.length() == 16);
+        Assertions.assertNotNull(replacement);
+        Assertions.assertTrue(replacement.length() == 16);
 
     }
 

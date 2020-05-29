@@ -5,8 +5,8 @@ import com.mtnfog.phileas.services.anonymization.VinAnonymizationService;
 import com.mtnfog.phileas.services.anonymization.cache.LocalAnonymizationCacheService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class VinAnonymizationServiceTest {
 
@@ -22,8 +22,8 @@ public class VinAnonymizationServiceTest {
 
         LOGGER.info("VIN replacement: " + replacement);
 
-        Assert.assertNotNull(replacement);
-        Assert.assertEquals(17, replacement.length());
+        Assertions.assertNotNull(replacement);
+        Assertions.assertEquals(17, replacement.length());
 
     }
 

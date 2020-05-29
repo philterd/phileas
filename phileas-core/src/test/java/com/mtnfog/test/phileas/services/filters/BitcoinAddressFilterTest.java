@@ -10,8 +10,8 @@ import com.mtnfog.phileas.services.anonymization.BitcoinAddressAnonymizationServ
 import com.mtnfog.phileas.services.anonymization.cache.LocalAnonymizationCacheService;
 import com.mtnfog.phileas.services.filters.regex.AgeFilter;
 import com.mtnfog.phileas.services.filters.regex.BitcoinAddressFilter;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.util.Collections;
@@ -34,10 +34,10 @@ public class BitcoinAddressFilterTest extends AbstractFilterTest {
 
         showSpans(spans);
 
-        Assert.assertEquals(1, spans.size());
-        Assert.assertTrue(checkSpan(spans.get(0), 15, 49, FilterType.BITCOIN_ADDRESS));
-        Assert.assertEquals("{{{REDACTED-bitcoin-address}}}", spans.get(0).getReplacement());
-        Assert.assertEquals("127NVqnjf8gB9BFAW2dnQeM6wqmy1gbGtv", spans.get(0).getText());
+        Assertions.assertEquals(1, spans.size());
+        Assertions.assertTrue(checkSpan(spans.get(0), 15, 49, FilterType.BITCOIN_ADDRESS));
+        Assertions.assertEquals("{{{REDACTED-bitcoin-address}}}", spans.get(0).getReplacement());
+        Assertions.assertEquals("127NVqnjf8gB9BFAW2dnQeM6wqmy1gbGtv", spans.get(0).getText());
 
     }
 
@@ -50,10 +50,10 @@ public class BitcoinAddressFilterTest extends AbstractFilterTest {
 
         showSpans(spans);
 
-        Assert.assertEquals(1, spans.size());
-        Assert.assertTrue(checkSpan(spans.get(0), 15, 42, FilterType.BITCOIN_ADDRESS));
-        Assert.assertEquals("{{{REDACTED-bitcoin-address}}}", spans.get(0).getReplacement());
-        Assert.assertEquals("12qnjf8FAW2dnQeM6wqmy1gbGtv", spans.get(0).getText());
+        Assertions.assertEquals(1, spans.size());
+        Assertions.assertTrue(checkSpan(spans.get(0), 15, 42, FilterType.BITCOIN_ADDRESS));
+        Assertions.assertEquals("{{{REDACTED-bitcoin-address}}}", spans.get(0).getReplacement());
+        Assertions.assertEquals("12qnjf8FAW2dnQeM6wqmy1gbGtv", spans.get(0).getText());
 
     }
 
@@ -66,7 +66,7 @@ public class BitcoinAddressFilterTest extends AbstractFilterTest {
 
         showSpans(spans);
 
-        Assert.assertEquals(0, spans.size());
+        Assertions.assertEquals(0, spans.size());
 
     }
 

@@ -8,8 +8,8 @@ import com.mtnfog.phileas.model.services.AlertService;
 import com.mtnfog.phileas.services.anonymization.DriversLicenseAnonymizationService;
 import com.mtnfog.phileas.services.anonymization.cache.LocalAnonymizationCacheService;
 import com.mtnfog.phileas.services.filters.regex.DriversLicenseFilter;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.util.Collections;
@@ -32,10 +32,10 @@ public class DriversLicenseFilterTest extends AbstractFilterTest {
 
         showSpans(spans);
 
-        Assert.assertEquals(1, spans.size());
-        Assert.assertTrue(checkSpan(spans.get(0), 14, 23, FilterType.DRIVERS_LICENSE_NUMBER));
-        Assert.assertEquals("{{{REDACTED-drivers-license-number}}}", spans.get(0).getReplacement());
-        Assert.assertEquals("123456789", spans.get(0).getText());
+        Assertions.assertEquals(1, spans.size());
+        Assertions.assertTrue(checkSpan(spans.get(0), 14, 23, FilterType.DRIVERS_LICENSE_NUMBER));
+        Assertions.assertEquals("{{{REDACTED-drivers-license-number}}}", spans.get(0).getReplacement());
+        Assertions.assertEquals("123456789", spans.get(0).getText());
 
     }
 

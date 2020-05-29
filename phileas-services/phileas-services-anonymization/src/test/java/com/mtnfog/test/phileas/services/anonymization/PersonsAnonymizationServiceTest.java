@@ -5,8 +5,8 @@ import com.mtnfog.phileas.services.anonymization.PersonsAnonymizationService;
 import com.mtnfog.phileas.services.anonymization.cache.LocalAnonymizationCacheService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class PersonsAnonymizationServiceTest {
 
@@ -21,8 +21,8 @@ public class PersonsAnonymizationServiceTest {
         final String replacement = anonymizationService.anonymize(token);
 
         LOGGER.info("Entity: " + replacement);
-        Assert.assertNotNull(replacement);
-        Assert.assertTrue(replacement.length() > 0);
+        Assertions.assertNotNull(replacement);
+        Assertions.assertTrue(replacement.length() > 0);
 
     }
 
@@ -35,8 +35,8 @@ public class PersonsAnonymizationServiceTest {
         final String replacement = anonymizationService.anonymize(token);
 
         LOGGER.info("Entity: " + replacement);
-        Assert.assertNotNull(replacement);
-        Assert.assertTrue(replacement.length() > 0);
+        Assertions.assertNotNull(replacement);
+        Assertions.assertTrue(replacement.length() > 0);
 
     }
 

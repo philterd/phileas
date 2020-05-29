@@ -4,8 +4,8 @@ import com.mtnfog.phileas.model.profile.filters.strategies.AbstractFilterStrateg
 import com.mtnfog.phileas.model.profile.filters.strategies.rules.PassportNumberFilterStrategy;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
@@ -24,7 +24,7 @@ public class PassportNumberFilterStrategyTest {
 
         final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentId", "986001231", "classification == \"US\"", 1.0, "US");
 
-        Assert.assertTrue(conditionSatisfied);
+        Assertions.assertTrue(conditionSatisfied);
 
     }
 

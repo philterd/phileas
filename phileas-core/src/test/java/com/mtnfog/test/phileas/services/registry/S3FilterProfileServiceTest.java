@@ -15,7 +15,7 @@ import org.aeonbits.owner.ConfigFactory;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.junit.*;
+import org.junit.jupiter.api.*;
 import redis.embedded.RedisServer;
 
 import java.io.IOException;
@@ -25,6 +25,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+
+import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
 public class S3FilterProfileServiceTest {
 
@@ -78,10 +80,10 @@ public class S3FilterProfileServiceTest {
 
     }
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
 
-        Assume.assumeFalse(System.getProperty("os.name").toLowerCase().startsWith("win"));
+        assumeFalse(System.getProperty("os.name").toLowerCase().startsWith("win"));
 
         final String redisHost = System.getenv("PHILTER_REDIS_HOST");
 
@@ -91,7 +93,7 @@ public class S3FilterProfileServiceTest {
 
     }
 
-    @Before
+    @BeforeEach
     public void before() throws IOException {
 
         LOGGER.info("Starting S3 emulator.");
@@ -108,7 +110,7 @@ public class S3FilterProfileServiceTest {
 
     }
 
-    @After
+    @AfterEach
     public void after() {
 
         api.shutdown();
@@ -130,9 +132,9 @@ public class S3FilterProfileServiceTest {
 
         LOGGER.info("Found {} filter profiles", names.size());
 
-        Assert.assertTrue(names.size() == 2);
-        Assert.assertTrue(names.contains("name1"));
-        Assert.assertTrue(names.contains("name2"));
+        Assertions.assertTrue(names.size() == 2);
+        Assertions.assertTrue(names.contains("name1"));
+        Assertions.assertTrue(names.contains("name2"));
 
     }
 
@@ -148,9 +150,9 @@ public class S3FilterProfileServiceTest {
 
         LOGGER.info("Found {} profiles", all.size());
 
-        Assert.assertEquals(2, all.size());
-        Assert.assertTrue(all.keySet().contains("name1"));
-        Assert.assertTrue(all.keySet().contains("name2"));
+        Assertions.assertEquals(2, all.size());
+        Assertions.assertTrue(all.keySet().contains("name1"));
+        Assertions.assertTrue(all.keySet().contains("name2"));
 
     }
 
@@ -167,8 +169,8 @@ public class S3FilterProfileServiceTest {
 
         final String saved = filterProfileService.get("default");
 
-        Assert.assertNotNull(saved);
-        Assert.assertEquals(profile, saved);
+        Assertions.assertNotNull(saved);
+        Assertions.assertEquals(profile, saved);
 
     }
 
@@ -185,7 +187,7 @@ public class S3FilterProfileServiceTest {
 
         final String filterProfileJson = filterProfileService.get(name);
 
-        Assert.assertEquals(profile, filterProfileJson);
+        Assertions.assertEquals(profile, filterProfileJson);
 
     }
 
@@ -201,7 +203,7 @@ public class S3FilterProfileServiceTest {
 
         filterProfileService.delete(name);
 
-        Assert.assertFalse(filterProfileService.getAll().containsKey(name));
+        Assertions.assertFalse(filterProfileService.getAll().containsKey(name));
 
     }
 

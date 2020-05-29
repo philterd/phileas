@@ -1,8 +1,8 @@
 package com.mtnfog.test.phileas.model.exceptions;
 
 import com.mtnfog.phileas.model.exceptions.api.ServiceUnavailableException;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class ServiceUnavailableExceptionTest {
 
@@ -12,7 +12,7 @@ public class ServiceUnavailableExceptionTest {
         final String message = "This is a test exceptinon.";
 
         ServiceUnavailableException ex = new ServiceUnavailableException(message);
-        Assert.assertEquals(message, ex.getMessage());
+        Assertions.assertEquals(message, ex.getMessage());
 
     }
 

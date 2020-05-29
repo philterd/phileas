@@ -7,8 +7,8 @@ import com.mtnfog.phileas.model.services.AnonymizationCacheService;
 import com.mtnfog.phileas.model.services.AnonymizationService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.io.IOException;
@@ -34,7 +34,7 @@ public class VinFilterStrategyTest {
 
         final String replacement = strategy.getReplacement("name", "context", "docId", "token", new Crypto(), anonymizationService);
 
-        Assert.assertEquals("static-value", replacement);
+        Assertions.assertEquals("static-value", replacement);
 
     }
 
@@ -49,7 +49,7 @@ public class VinFilterStrategyTest {
 
         final String replacement = strategy.getReplacement("name", "context", "docId", "token", new Crypto(), anonymizationService);
 
-        Assert.assertEquals("REDACTION-vin", replacement);
+        Assertions.assertEquals("REDACTION-vin", replacement);
 
     }
 
@@ -67,7 +67,7 @@ public class VinFilterStrategyTest {
 
         final String replacement = strategy.getReplacement("name", "context", "docId", "token", new Crypto(), anonymizationService);
 
-        Assert.assertNotEquals("random", replacement);
+        Assertions.assertNotEquals("random", replacement);
 
     }
 
@@ -85,7 +85,7 @@ public class VinFilterStrategyTest {
 
         final String replacement = strategy.getReplacement("name", "context", "docId", "token", new Crypto(), anonymizationService);
 
-        Assert.assertEquals("{{{REDACTED-vin}}}", replacement);
+        Assertions.assertEquals("{{{REDACTED-vin}}}", replacement);
 
     }
 
@@ -103,7 +103,7 @@ public class VinFilterStrategyTest {
 
         final String replacement = strategy.getReplacement("name", "context", "docId", "token", new Crypto(), anonymizationService);
 
-        Assert.assertEquals("<ENTITY:vin>token</ENTITY>", replacement);
+        Assertions.assertEquals("<ENTITY:vin>token</ENTITY>", replacement);
 
     }
 
@@ -114,7 +114,7 @@ public class VinFilterStrategyTest {
 
         final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentId", "90210", "token startswith \"902\"", 1.0, "");
 
-        Assert.assertTrue(conditionSatisfied);
+        Assertions.assertTrue(conditionSatisfied);
 
     }
 
@@ -125,7 +125,7 @@ public class VinFilterStrategyTest {
 
         final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentId", "90210", "token == \"90210\"", 1.0, "");
 
-        Assert.assertTrue(conditionSatisfied);
+        Assertions.assertTrue(conditionSatisfied);
 
     }
 
@@ -136,7 +136,7 @@ public class VinFilterStrategyTest {
 
         final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentId", "12345", "token == \"90210\"", 1.0, "");
 
-        Assert.assertFalse(conditionSatisfied);
+        Assertions.assertFalse(conditionSatisfied);
 
     }
 
@@ -147,7 +147,7 @@ public class VinFilterStrategyTest {
 
         final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentId", "John Smith", "context == \"c1\"",  1.0, "");
 
-        Assert.assertFalse(conditionSatisfied);
+        Assertions.assertFalse(conditionSatisfied);
 
     }
 
@@ -158,7 +158,7 @@ public class VinFilterStrategyTest {
 
         final boolean conditionSatisfied = strategy.evaluateCondition("ctx", "documentId", "John Smith", "context == \"ctx\"",  1.0, "");
 
-        Assert.assertTrue(conditionSatisfied);
+        Assertions.assertTrue(conditionSatisfied);
 
     }
 
@@ -169,7 +169,7 @@ public class VinFilterStrategyTest {
 
         final boolean conditionSatisfied = strategy.evaluateCondition("ctx", "documentId", "John Smith", "confidence > 0.5",  1.0, "");
 
-        Assert.assertTrue(conditionSatisfied);
+        Assertions.assertTrue(conditionSatisfied);
 
     }
 
@@ -180,7 +180,7 @@ public class VinFilterStrategyTest {
 
         final boolean conditionSatisfied = strategy.evaluateCondition("ctx", "documentId", "John Smith", "confidence < 0.5",  1.0, "");
 
-        Assert.assertFalse(conditionSatisfied);
+        Assertions.assertFalse(conditionSatisfied);
 
     }
 

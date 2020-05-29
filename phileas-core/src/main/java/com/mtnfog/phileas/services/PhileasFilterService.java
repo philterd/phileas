@@ -18,7 +18,6 @@ import com.mtnfog.phileas.model.profile.filters.Identifier;
 import com.mtnfog.phileas.model.profile.filters.Section;
 import com.mtnfog.phileas.model.responses.FilterResponse;
 import com.mtnfog.phileas.model.services.*;
-import com.mtnfog.phileas.processors.structured.fhir.FhirDocumentProcessor;
 import com.mtnfog.phileas.processors.unstructured.UnstructuredDocumentProcessor;
 import com.mtnfog.phileas.service.ai.PyTorchFilter;
 import com.mtnfog.phileas.services.alerts.AlertServiceFactory;
@@ -66,7 +65,6 @@ public class PhileasFilterService implements FilterService {
     private double bloomFilterFpp;
 
     private DocumentProcessor unstructuredDocumentProcessor;
-    private DocumentProcessor fhirDocumentProcessor;
 
     private final int windowSize;
 
@@ -97,9 +95,6 @@ public class PhileasFilterService implements FilterService {
 
         // Create a new unstructured document processor.
         this.unstructuredDocumentProcessor = new UnstructuredDocumentProcessor(metricsService, spanDisambiguationService, store);
-
-        // Create a new structured FHIRv4 document processor.
-        this.fhirDocumentProcessor = new FhirDocumentProcessor(metricsService, spanDisambiguationService);
 
         // Configure store.
         final boolean storeEnabled = phileasConfiguration.storeEnabled();
@@ -163,9 +158,9 @@ public class PhileasFilterService implements FilterService {
 
         if(mimeType == MimeType.TEXT_PLAIN) {
             return unstructuredDocumentProcessor.process(filterProfile, filters, postFilters, context, documentId, input);
-        } else if(mimeType == MimeType.APPLICATION_FHIRJSON) {
+        }/* else if(mimeType == MimeType.APPLICATION_FHIRJSON) {
             return fhirDocumentProcessor.process(filterProfile, filters, postFilters, context, documentId, input);
-        }
+        }*/
 
         // Should never happen but just in case.
         throw new Exception("Unknown mime type.");

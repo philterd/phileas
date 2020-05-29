@@ -19,20 +19,6 @@
 			<comments>Phileas is proprietary closed-source software.</comments>
 		</license>
 	</licenses>
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-surefire-plugin</artifactId>
-				<configuration>
-					<systemPropertyVariables>
-						<propertyName>baseDir</propertyName>
-						<buildDirectory>${project.basedir}</buildDirectory>
-					</systemPropertyVariables>
-				</configuration>
-			</plugin>
-		</plugins>
-	</build>
 	<dependencies>
 		<dependency>
 			<groupId>com.mtnfog</groupId>
@@ -47,11 +33,6 @@
 		<dependency>
 			<groupId>com.mtnfog</groupId>
 			<artifactId>phileas-services-anonymization</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.mtnfog</groupId>
-			<artifactId>phileas-processors-structured-fhir</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
@@ -82,11 +63,6 @@
 		<dependency>
 			<groupId>com.mtnfog</groupId>
 			<artifactId>phileas-services-alerts</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.mtnfog</groupId>
-			<artifactId>phileas-services-disambiguation</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
@@ -161,10 +137,10 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<scope>test</scope>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter-api</artifactId>
 			<version>${junit.version}</version>
+			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>io.findify</groupId>

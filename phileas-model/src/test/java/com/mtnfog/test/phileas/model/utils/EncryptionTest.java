@@ -4,8 +4,8 @@ import com.mtnfog.phileas.model.profile.Crypto;
 import com.mtnfog.phileas.model.utils.Encryption;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class EncryptionTest {
 
@@ -22,7 +22,7 @@ public class EncryptionTest {
 
         LOGGER.info("Encrypted '{}' is '{}'", token, encrypted);
 
-        Assert.assertEquals("r6cPN50ikH9qBZD0FNPG2g==", encrypted);
+        Assertions.assertEquals("r6cPN50ikH9qBZD0FNPG2g==", encrypted);
 
     }
 
@@ -34,7 +34,7 @@ public class EncryptionTest {
 
         LOGGER.info("Encrypted '{}' is '{}'", token, encrypted);
 
-        Assert.assertEquals("5G4lCAQADM68uvVumZ9Lxw==", encrypted);
+        Assertions.assertEquals("5G4lCAQADM68uvVumZ9Lxw==", encrypted);
 
     }
 

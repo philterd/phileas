@@ -7,8 +7,8 @@ import com.mtnfog.phileas.services.disambiguation.VectorBasedSpanDisambiguationS
 import org.aeonbits.owner.ConfigFactory;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -49,7 +49,7 @@ public class LocalVectorBasedSpanDisambiguationServiceTest {
         final Span ambiguousSpan = Span.make(0, 4, FilterType.PHONE_NUMBER, "c", "d", 0.00, "123-45-6789", "000-00-0000", false, new String[]{"phone", "number", "called", "is"});
         final FilterType filterType = vectorBasedSpanDisambiguationService.disambiguate(context, filterTypes, ambiguousSpan);
 
-        Assert.assertEquals(FilterType.PHONE_NUMBER, filterType);
+        Assertions.assertEquals(FilterType.PHONE_NUMBER, filterType);
 
     }
 
@@ -86,8 +86,8 @@ public class LocalVectorBasedSpanDisambiguationServiceTest {
 
         showSpans(disambiguatedSpans);
 
-        Assert.assertEquals(1, disambiguatedSpans.size());
-        Assert.assertEquals(FilterType.PHONE_NUMBER, disambiguatedSpans.get(0).getFilterType());
+        Assertions.assertEquals(1, disambiguatedSpans.size());
+        Assertions.assertEquals(FilterType.PHONE_NUMBER, disambiguatedSpans.get(0).getFilterType());
 
     }
 

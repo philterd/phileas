@@ -5,8 +5,8 @@ import com.mtnfog.phileas.model.services.AnonymizationCacheService;
 import com.mtnfog.phileas.services.anonymization.cache.AnonymizationCacheServiceFactory;
 import com.mtnfog.phileas.services.anonymization.cache.LocalAnonymizationCacheService;
 import org.aeonbits.owner.ConfigFactory;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import java.util.Properties;
 
@@ -19,7 +19,7 @@ public class AnonymizationCacheServiceFactoryTest {
 
         final AnonymizationCacheService anonymizationCacheService = AnonymizationCacheServiceFactory.getAnonymizationCacheService(getConfiguration());
 
-        Assert.assertTrue(anonymizationCacheService instanceof LocalAnonymizationCacheService);
+        Assertions.assertTrue(anonymizationCacheService instanceof LocalAnonymizationCacheService);
 
     }
 

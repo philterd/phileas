@@ -8,7 +8,7 @@ import org.aeonbits.owner.ConfigFactory;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.junit.*;
+import org.junit.jupiter.api.*;
 import redis.embedded.RedisServer;
 
 import java.io.IOException;
@@ -16,14 +16,14 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
-@Ignore
+@Disabled
 public class RedisVectorBasedSpanDisambiguationServiceTest {
 
     private static final Logger LOGGER = LogManager.getLogger(RedisVectorBasedSpanDisambiguationServiceTest.class);
 
     private RedisServer redisServer;
 
-    @Before
+    @BeforeEach
     public void before() {
 
         redisServer = RedisServer.builder().port(31000).build();
@@ -31,7 +31,7 @@ public class RedisVectorBasedSpanDisambiguationServiceTest {
 
     }
 
-    @After
+    @AfterEach
     public void after() {
 
         redisServer.stop();
@@ -62,7 +62,7 @@ public class RedisVectorBasedSpanDisambiguationServiceTest {
         final Span ambiguousSpan = Span.make(0, 4, FilterType.PHONE_NUMBER, "c", "d", 0.00, "123-45-6789", "000-00-0000", false, new String[]{"phone", "number", "called", "is"});
         final FilterType filterType = vectorBasedSpanDisambiguationService.disambiguate(context, filterTypes, ambiguousSpan);
 
-        Assert.assertEquals(FilterType.PHONE_NUMBER, filterType);
+        Assertions.assertEquals(FilterType.PHONE_NUMBER, filterType);
 
     }
 

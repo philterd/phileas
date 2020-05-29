@@ -1,8 +1,8 @@
 package com.mtnfog.test.phileas.model.exceptions;
 
 import com.mtnfog.phileas.model.exceptions.api.BadRequestException;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class BadRequestExceptionTest {
 
@@ -12,7 +12,7 @@ public class BadRequestExceptionTest {
         final String message = "This is a test exceptinon.";
 
         BadRequestException ex = new BadRequestException(message);
-        Assert.assertEquals(message, ex.getMessage());
+        Assertions.assertEquals(message, ex.getMessage());
 
     }
 

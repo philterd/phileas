@@ -5,8 +5,8 @@ import com.mtnfog.phileas.model.objects.Span;
 import com.mtnfog.phileas.model.profile.FilterProfile;
 import com.mtnfog.phileas.model.profile.Ignored;
 import com.mtnfog.phileas.services.postfilters.IgnoredTermsFilter;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -29,7 +29,7 @@ public class IgnoredTermsFilterTest {
         final IgnoredTermsFilter ignoredTermsFilter = new IgnoredTermsFilter(ignored);
         final List<Span> filteredSpans = ignoredTermsFilter.filter("He lived in Washington.", spans);
 
-        Assert.assertEquals(0, filteredSpans.size());
+        Assertions.assertEquals(0, filteredSpans.size());
 
     }
 
@@ -45,7 +45,7 @@ public class IgnoredTermsFilterTest {
         final IgnoredTermsFilter ignoredTermsFilter = new IgnoredTermsFilter(ignored);
         final List<Span> filteredSpans = ignoredTermsFilter.filter("He lived in Washington.", spans);
 
-        Assert.assertEquals(1, filteredSpans.size());
+        Assertions.assertEquals(1, filteredSpans.size());
 
     }
 
@@ -61,7 +61,7 @@ public class IgnoredTermsFilterTest {
         final IgnoredTermsFilter ignoredTermsFilter = new IgnoredTermsFilter(ignored);
         final List<Span> filteredSpans = ignoredTermsFilter.filter("He lived in Washington.", spans);
 
-        Assert.assertEquals(0, filteredSpans.size());
+        Assertions.assertEquals(0, filteredSpans.size());
 
     }
 
@@ -77,7 +77,7 @@ public class IgnoredTermsFilterTest {
         final IgnoredTermsFilter ignoredTermsFilter = new IgnoredTermsFilter(ignored);
         final List<Span> filteredSpans = ignoredTermsFilter.filter("He lived in Washington.", spans);
 
-        Assert.assertEquals(0, filteredSpans.size());
+        Assertions.assertEquals(0, filteredSpans.size());
 
     }
 

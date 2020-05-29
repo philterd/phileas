@@ -9,8 +9,8 @@ import com.mtnfog.phileas.services.anonymization.cache.LocalAnonymizationCacheSe
 import com.mtnfog.phileas.services.filters.regex.AgeFilter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.util.Arrays;
@@ -40,11 +40,11 @@ public class FilterTest extends AbstractFilterTest {
         LOGGER.info("Expected: {}", Arrays.toString(window));
         LOGGER.info("Actual:   {}", Arrays.toString(spans.get(0).getWindow()));
 
-        Assert.assertEquals(1, spans.size());
-        Assert.assertTrue(checkSpan(spans.get(0), 41, 54, FilterType.AGE));
-        Assert.assertEquals("{{{REDACTED-age}}}", spans.get(0).getReplacement());
-        Assert.assertArrayEquals("Window spans do not equal.", window, spans.get(0).getWindow());
-        Assert.assertEquals("3.5 years old", spans.get(0).getText());
+        Assertions.assertEquals(1, spans.size());
+        Assertions.assertTrue(checkSpan(spans.get(0), 41, 54, FilterType.AGE));
+        Assertions.assertEquals("{{{REDACTED-age}}}", spans.get(0).getReplacement());
+        Assertions.assertArrayEquals(window, spans.get(0).getWindow());
+        Assertions.assertEquals("3.5 years old", spans.get(0).getText());
 
     }
 
@@ -65,11 +65,11 @@ public class FilterTest extends AbstractFilterTest {
         LOGGER.info("Expected: {}", Arrays.toString(window));
         LOGGER.info("Actual:   {}", Arrays.toString(spans.get(0).getWindow()));
 
-        Assert.assertEquals(1, spans.size());
-        Assert.assertTrue(checkSpan(spans.get(0), 41, 54, FilterType.AGE));
-        Assert.assertEquals("{{{REDACTED-age}}}", spans.get(0).getReplacement());
-        Assert.assertArrayEquals("Window spans do not equal.", window, spans.get(0).getWindow());
-        Assert.assertEquals("3.5 years old", spans.get(0).getText());
+        Assertions.assertEquals(1, spans.size());
+        Assertions.assertTrue(checkSpan(spans.get(0), 41, 54, FilterType.AGE));
+        Assertions.assertEquals("{{{REDACTED-age}}}", spans.get(0).getReplacement());
+        Assertions.assertArrayEquals(window, spans.get(0).getWindow());
+        Assertions.assertEquals("3.5 years old", spans.get(0).getText());
 
     }
 

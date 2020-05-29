@@ -4,7 +4,6 @@ import com.mtnfog.phileas.model.profile.Crypto;
 import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.binary.Hex;
-import org.hl7.fhir.r4.model.StringType;
 
 import javax.crypto.Cipher;
 import javax.crypto.NoSuchPaddingException;
@@ -44,14 +43,8 @@ public class Encryption {
 
     }
 
-    /**
-     *
-     * @param tokens A list of tokens to encrypt.
-     * @param crypto crypto The encryption {@link Crypto} key.
-     * @return A list of encrypted tokens.
-     * @throws Exception Thrown if the tokens cannot be encrypted.
-     */
-    public static List<StringType> encrypt(List<StringType> tokens, Crypto crypto) throws Exception {
+    // This is for FHIR values.
+    /*public static List<StringType> encrypt(List<StringType> tokens, Crypto crypto) throws Exception {
 
         final Cipher cipher = getCipher(crypto);
 
@@ -68,7 +61,7 @@ public class Encryption {
 
         return encryptedTokens;
 
-    }
+    }*/
 
     private static Cipher getCipher(final Crypto crypto) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidAlgorithmParameterException, InvalidKeyException, DecoderException {
 

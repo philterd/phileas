@@ -9,12 +9,14 @@ import org.aeonbits.owner.ConfigFactory;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.junit.*;
+import org.junit.jupiter.api.*;
 import redis.embedded.RedisServer;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.Properties;
+
+import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
 public class RedisAlertServiceTest {
 
@@ -65,10 +67,10 @@ public class RedisAlertServiceTest {
 
     }
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
 
-        Assume.assumeFalse(System.getProperty("os.name").toLowerCase().startsWith("win"));
+        assumeFalse(System.getProperty("os.name").toLowerCase().startsWith("win"));
 
         final String redisHost = System.getenv("PHILTER_REDIS_HOST");
 
@@ -78,7 +80,7 @@ public class RedisAlertServiceTest {
 
     }
 
-    @Before
+    @BeforeEach
     public void before() throws IOException {
 
         if(!isExternalRedis) {
@@ -92,7 +94,7 @@ public class RedisAlertServiceTest {
 
     }
 
-    @After
+    @AfterEach
     public void after() throws IOException {
 
         if(!isExternalRedis) {
@@ -114,7 +116,7 @@ public class RedisAlertServiceTest {
 
         final List<Alert> alerts = alertService.getAlerts();
 
-        Assert.assertEquals(1, alerts.size());
+        Assertions.assertEquals(1, alerts.size());
 
     }
 
@@ -127,7 +129,7 @@ public class RedisAlertServiceTest {
 
         List<Alert> alerts = alertService.getAlerts();
 
-        Assert.assertEquals(1, alerts.size());
+        Assertions.assertEquals(1, alerts.size());
 
         final String alertId = alerts.get(0).getId();
 
@@ -141,7 +143,7 @@ public class RedisAlertServiceTest {
             LOGGER.info(alert.toString());
         }
 
-        Assert.assertEquals(0, alerts.size());
+        Assertions.assertEquals(0, alerts.size());
 
     }
 
@@ -154,7 +156,7 @@ public class RedisAlertServiceTest {
 
         List<Alert> alerts = alertService.getAlerts();
 
-        Assert.assertEquals(1, alerts.size());
+        Assertions.assertEquals(1, alerts.size());
 
         alertService.clear();
 
@@ -164,7 +166,7 @@ public class RedisAlertServiceTest {
             LOGGER.info(alert.toString());
         }
 
-        Assert.assertEquals(0, alerts.size());
+        Assertions.assertEquals(0, alerts.size());
 
     }
 

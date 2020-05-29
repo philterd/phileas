@@ -5,8 +5,8 @@ import com.mtnfog.phileas.services.anonymization.StateAbbreviationAnonymizationS
 import com.mtnfog.phileas.services.anonymization.cache.LocalAnonymizationCacheService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class StateAbbreviationAnonymizationServiceTest {
 
@@ -20,8 +20,8 @@ public class StateAbbreviationAnonymizationServiceTest {
         final String token = "AK";
         final String replacement = anonymizationService.anonymize(token);
 
-        Assert.assertNotNull(replacement);
-        Assert.assertNotEquals(token, replacement);
+        Assertions.assertNotNull(replacement);
+        Assertions.assertNotEquals(token, replacement);
 
     }
 

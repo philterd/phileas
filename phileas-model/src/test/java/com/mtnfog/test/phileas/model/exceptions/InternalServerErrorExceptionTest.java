@@ -1,8 +1,8 @@
 package com.mtnfog.test.phileas.model.exceptions;
 
 import com.mtnfog.phileas.model.exceptions.api.InternalServerErrorException;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class InternalServerErrorExceptionTest {
 
@@ -12,7 +12,7 @@ public class InternalServerErrorExceptionTest {
         final String message = "This is a test exceptinon.";
 
         InternalServerErrorException ex = new InternalServerErrorException(message);
-        Assert.assertEquals(message, ex.getMessage());
+        Assertions.assertEquals(message, ex.getMessage());
 
     }
 

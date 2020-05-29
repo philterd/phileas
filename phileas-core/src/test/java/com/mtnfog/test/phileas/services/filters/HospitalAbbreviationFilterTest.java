@@ -14,10 +14,10 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.text.WordUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.io.FileInputStream;
@@ -36,7 +36,7 @@ public class HospitalAbbreviationFilterTest extends AbstractFilterTest {
     private AlertService alertService = Mockito.mock(AlertService.class);
 
     @Test
-    @Ignore
+    @Disabled
     public void makeAbbreviations() throws Exception {
 
         final String file = "/mtnfog/code/bitbucket/philter/philter/index-data/hospitals";
@@ -55,7 +55,7 @@ public class HospitalAbbreviationFilterTest extends AbstractFilterTest {
 
     }
 
-    @Before
+    @BeforeEach
     public void before() {
         INDEX_DIRECTORY = System.getProperty( "os.name" ).contains( "indow" ) ? INDEX_DIRECTORY.substring(1) : INDEX_DIRECTORY;
         LOGGER.info("Using index directory {}", INDEX_DIRECTORY);
@@ -71,7 +71,7 @@ public class HospitalAbbreviationFilterTest extends AbstractFilterTest {
 
         final List<Span> spans = filter.filter(getFilterProfile(SensitivityLevel.HIGH), "context", "documentid","Went to WMC");
         showSpans(spans);
-        Assert.assertEquals(4, spans.size());
+        Assertions.assertEquals(4, spans.size());
 
     }
 

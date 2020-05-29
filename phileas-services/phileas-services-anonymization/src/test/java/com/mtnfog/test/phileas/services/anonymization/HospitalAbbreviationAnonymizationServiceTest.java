@@ -6,8 +6,8 @@ import com.mtnfog.phileas.services.anonymization.cache.LocalAnonymizationCacheSe
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class HospitalAbbreviationAnonymizationServiceTest {
 
@@ -23,8 +23,8 @@ public class HospitalAbbreviationAnonymizationServiceTest {
 
         LOGGER.info("Hospital abbreviation: " + replacement);
 
-        Assert.assertTrue(StringUtils.isAllUpperCase(replacement));
-        Assert.assertEquals(-1, replacement.indexOf(" "));
+        Assertions.assertTrue(StringUtils.isAllUpperCase(replacement));
+        Assertions.assertEquals(-1, replacement.indexOf(" "));
 
     }
 
