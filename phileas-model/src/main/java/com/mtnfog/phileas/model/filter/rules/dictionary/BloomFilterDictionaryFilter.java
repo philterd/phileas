@@ -2,7 +2,6 @@ package com.mtnfog.phileas.model.filter.rules.dictionary;
 
 import com.google.common.hash.BloomFilter;
 import com.google.common.hash.Funnels;
-import com.ibm.icu.util.StringTokenizer;
 import com.mtnfog.phileas.model.enums.FilterType;
 import com.mtnfog.phileas.model.objects.Span;
 import com.mtnfog.phileas.model.profile.Crypto;
@@ -15,8 +14,10 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.Serializable;
 import java.nio.charset.Charset;
+import java.text.BreakIterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
 /**
@@ -60,13 +61,16 @@ public class BloomFilterDictionaryFilter extends DictionaryFilter implements Ser
         final List<Span> spans = new LinkedList<>();
 
         // Tokenize the text.
-        final StringTokenizer stringTokenizer = new StringTokenizer(text);
+        //final StringTokenizer stringTokenizer = new StringTokenizer(text);
+        final BreakIterator breakIterator = BreakIterator.getWordInstance(Locale.US);
+        breakIterator.setText(text);
 
         int index = 0;
 
-        while(stringTokenizer.hasMoreTokens()) {
+        int start = breakIterator.first();
+        for(int end = breakIterator.next(); end != BreakIterator.DONE; start = end, end = breakIterator.next()) {
 
-            final String token = stringTokenizer.nextToken();
+            final String token = text.substring(start, end);
 
             if(bloomFilter.mightContain(token)) {
 
@@ -74,8 +78,8 @@ public class BloomFilterDictionaryFilter extends DictionaryFilter implements Ser
 
                     // Set the meta values for the span.
                     final boolean isIgnored = ignored.contains(token);
-                    final int characterStart = text.indexOf(token, index);
-                    final int characterEnd = characterStart + token.length();
+                    final int characterStart = start;
+                    final int characterEnd = end;
                     final double confidence = 1.0;
                     final String[] window = getWindow(text, characterStart, characterEnd);
 
@@ -85,10 +89,6 @@ public class BloomFilterDictionaryFilter extends DictionaryFilter implements Ser
                 }
 
             }
-
-            // This accounts for the token length but not any punctuation or whitespace
-            // so the index will always remain behind the actual location of the token.
-            index += token.length();
 
         }
 
