@@ -21,25 +21,25 @@ public class IpAddressFilter extends RegexFilter {
     public IpAddressFilter(List<? extends AbstractFilterStrategy> strategies, AnonymizationService anonymizationService, AlertService alertService, Set<String> ignored, Crypto crypto, int windowSize) {
         super(FilterType.IP_ADDRESS, strategies, anonymizationService, alertService, ignored, crypto, windowSize);
 
-        final Pattern IPV4_PATTERN = Pattern.compile("([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\." + "([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\." + "([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\." + "([01]?\\d\\d?|2[0-4]\\d|25[0-5])");
+        final Pattern ipv4Pattern = Pattern.compile("([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\." + "([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\." + "([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\." + "([01]?\\d\\d?|2[0-4]\\d|25[0-5])");
 
-        final FilterPattern ipv4 = new FilterPattern.FilterPatternBuilder(IPV4_PATTERN, 0.90).build();
+        final FilterPattern ipv4 = new FilterPattern.FilterPatternBuilder(ipv4Pattern, 0.90).build();
 
         // IPv6 patterns taken from https://github.com/Dynatrace/openkit-java
         // https://github.com/Dynatrace/openkit-java/blob/master/src/main/java/com/dynatrace/openkit/core/util/InetAddressValidator.java
         // At commit 1d7118913bf2ea6befc1522724eed3ef6378b9d1
         // Apache License, version 2.0: https://github.com/Dynatrace/openkit-java/blob/master/LICENSE
 
-        final Pattern IPV6_STD_PATTERN =
+        final Pattern ipv6StdPattern =
                 Pattern.compile(
                         ""                           // start of string
                                 + "(?:[0-9a-fA-F]{1,4}:){7}"    // 7 blocks of a 1 to 4 digit hex number followed by double colon ':'
                                 + "[0-9a-fA-F]{1,4}"            // one more block of a 1 to 4 digit hex number
                                 + "");                          // end of string
 
-        final FilterPattern ipv61 = new FilterPattern.FilterPatternBuilder(IPV6_STD_PATTERN, 0.90).build();
+        final FilterPattern ipv61 = new FilterPattern.FilterPatternBuilder(ipv6StdPattern, 0.90).build();
 
-        final Pattern IPV6_HEX_COMPRESSED_PATTERN =
+        final Pattern ipv6HexCompressedPattern =
                 Pattern.compile(
                         ""                             // start of string
                                 + "("                             // 1st group
@@ -53,10 +53,10 @@ public class IpAddressFilter extends RegexFilter {
                                 + ")"
                                 + "");                           // end of string
 
-        final FilterPattern ipv62 = new FilterPattern.FilterPatternBuilder(IPV6_HEX_COMPRESSED_PATTERN, 0.90).build();
+        final FilterPattern ipv62 = new FilterPattern.FilterPatternBuilder(ipv6HexCompressedPattern, 0.90).build();
 
         //this regex checks the ipv6 uncompressed part of a ipv6 mixed address
-        final Pattern IPV6_MIXED_COMPRESSED_REGEX =
+        final Pattern ipv6MixedCompressedPattern =
                 Pattern.compile(""                                               // start of string
                         + "("                                               // 1st group
                         + "(?:[0-9A-Fa-f]{1,4}"                             // at least one block of a 1 to 4 digit hex number
@@ -69,7 +69,7 @@ public class IpAddressFilter extends RegexFilter {
                         + ")"
                         + "");                                             // end of string
 
-        final FilterPattern ipv63 = new FilterPattern.FilterPatternBuilder(IPV6_MIXED_COMPRESSED_REGEX, 0.90).build();
+        final FilterPattern ipv63 = new FilterPattern.FilterPatternBuilder(ipv6MixedCompressedPattern, 0.90).build();
 
         //this regex checks the ipv6 uncompressed part of a ipv6 mixed address
         final Pattern IPV6_MIXED_UNCOMPRESSED_REGEX =

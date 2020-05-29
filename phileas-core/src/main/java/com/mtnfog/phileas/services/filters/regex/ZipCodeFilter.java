@@ -21,8 +21,8 @@ public class ZipCodeFilter extends RegexFilter {
     public ZipCodeFilter(List<? extends AbstractFilterStrategy> strategies, AnonymizationService anonymizationService, AlertService alertService, Set<String> ignored, Crypto crypto, int windowSize) {
         super(FilterType.ZIP_CODE, strategies, anonymizationService, alertService, ignored, crypto, windowSize);
 
-        final Pattern ZIP_CODE_REGEX = Pattern.compile("\\b[0-9]{5}(?:-[0-9]{4})?\\b");
-        final FilterPattern zipCode1 = new FilterPattern.FilterPatternBuilder(ZIP_CODE_REGEX, 0.90).build();
+        final Pattern zipCodePattern = Pattern.compile("\\b[0-9]{5}(?:-[0-9]{4})?\\b");
+        final FilterPattern zipCode1 = new FilterPattern.FilterPatternBuilder(zipCodePattern, 0.90).build();
 
         this.contextualTerms = new HashSet<>();
         this.contextualTerms.add("zip");

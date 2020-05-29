@@ -21,8 +21,8 @@ public class BitcoinAddressFilter extends RegexFilter {
     public BitcoinAddressFilter(List<? extends AbstractFilterStrategy> strategies, AnonymizationService anonymizationService, AlertService alertService, Set<String> ignored, Crypto crypto, int windowSize) {
         super(FilterType.BITCOIN_ADDRESS, strategies, anonymizationService, alertService, ignored, crypto, windowSize);
 
-        final Pattern BITCOIN_ADDRESS_REGEX = Pattern.compile("\\b[13][a-km-zA-HJ-NP-Z1-9]{25,34}\\b", Pattern.CASE_INSENSITIVE);
-        final FilterPattern bitcoin1 = new FilterPattern.FilterPatternBuilder(BITCOIN_ADDRESS_REGEX, 0.90).build();
+        final Pattern bitcoinPattern = Pattern.compile("\\b[13][a-km-zA-HJ-NP-Z1-9]{25,34}\\b", Pattern.CASE_INSENSITIVE);
+        final FilterPattern bitcoin1 = new FilterPattern.FilterPatternBuilder(bitcoinPattern, 0.90).build();
 
         this.contextualTerms = new HashSet<>();
         this.contextualTerms.add("bitcoin");
