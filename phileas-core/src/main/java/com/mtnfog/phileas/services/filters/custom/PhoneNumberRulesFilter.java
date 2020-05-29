@@ -26,6 +26,13 @@ public class PhoneNumberRulesFilter extends RulesFilter {
 
         this.phoneUtil = PhoneNumberUtil.getInstance();
 
+        this.contextualTerms = new HashSet<>();
+        this.contextualTerms.add("phone");
+        this.contextualTerms.add("telephone");
+        this.contextualTerms.add("fax");
+        this.contextualTerms.add("cell");
+        this.contextualTerms.add("mobile");
+
     }
 
     @Override

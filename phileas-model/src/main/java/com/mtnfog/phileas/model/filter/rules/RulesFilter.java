@@ -22,6 +22,8 @@ import java.util.regex.Pattern;
  */
 public abstract class RulesFilter extends Filter {
 
+    protected Set<String> contextualTerms;
+
     /**
      * Creates a new rule-based filter.
      * @param filterType The {@link FilterType type} of the filter.

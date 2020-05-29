@@ -18,7 +18,6 @@ import java.util.Set;
 public abstract class RegexFilter extends RulesFilter {
 
     protected Analyzer analyzer;
-    protected Set<String> contextualTerms;
 
     public RegexFilter(FilterType filterType, List<? extends AbstractFilterStrategy> strategies, AnonymizationService anonymizationService, AlertService alertService, Set<String> ignored, Crypto crypto, int windowSize) {
 
