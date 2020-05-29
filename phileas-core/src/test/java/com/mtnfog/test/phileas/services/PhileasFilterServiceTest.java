@@ -222,6 +222,7 @@ public class PhileasFilterServiceTest {
         customDictionary.setFiles(Arrays.asList(termsFile.getAbsolutePath()));
         customDictionary.setCustomDictionaryFilterStrategies(Arrays.asList(new CustomDictionaryFilterStrategy()));
         customDictionary.setClassification("names");
+        customDictionary.setTerms(Arrays.asList("george"));
         customDictionary.setFuzzy(true);
 
         final FilterProfile filterProfile = new FilterProfile();
@@ -240,11 +241,11 @@ public class PhileasFilterServiceTest {
         final PhileasConfiguration phileasConfiguration = ConfigFactory.create(PhileasConfiguration.class, properties);
 
         final PhileasFilterService service = new PhileasFilterService(phileasConfiguration);
-        final FilterResponse response = service.filter("default", "context", "documentId", "his name was samuel.", MimeType.TEXT_PLAIN);
+        final FilterResponse response = service.filter("default", "context", "documentId", "his name was samuel and george.", MimeType.TEXT_PLAIN);
 
         LOGGER.info(response.getFilteredText());
 
-        Assertions.assertEquals("his name was {{{REDACTED-custom-dictionary}}}.", response.getFilteredText());
+        Assertions.assertEquals("his name was {{{REDACTED-custom-dictionary}}} and {{{REDACTED-custom-dictionary}}}.", response.getFilteredText());
         Assertions.assertEquals("documentId", response.getDocumentId());
 
     }
