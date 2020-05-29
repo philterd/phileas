@@ -2,14 +2,10 @@ package com.mtnfog.phileas.model.profile;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import java.util.List;
 
 public class FilterProfile {
-
-    private static final Logger LOGGER = LogManager.getLogger(FilterProfile.class);
 
     @SerializedName("name")
     @Expose

@@ -77,7 +77,7 @@ public class EmailAddressFilterStrategy extends AbstractFilterStrategy {
 
             }
 
-            LOGGER.debug("Condition for [" + condition + "] satisfied: " + conditionsSatisfied);
+            LOGGER.debug("Condition for [{}] satisfied: {}", condition, conditionsSatisfied);
 
             // Short-circuit if we have a failure.
             if(!conditionsSatisfied) break;

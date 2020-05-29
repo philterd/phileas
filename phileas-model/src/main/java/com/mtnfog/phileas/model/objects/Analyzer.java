@@ -47,4 +47,8 @@ public class Analyzer {
         return filterPatterns;
     }
 
+    public Set<String> getContextualTerms() {
+        return contextualTerms;
+    }
+
 }
