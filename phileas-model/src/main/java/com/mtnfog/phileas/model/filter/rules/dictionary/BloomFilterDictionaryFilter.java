@@ -59,13 +59,13 @@ public class BloomFilterDictionaryFilter extends DictionaryFilter implements Ser
         final List<Span> spans = new LinkedList<>();
 
         // Tokenize the text.
-        final StringTokenizer st = new StringTokenizer(text);
+        final StringTokenizer stringTokenizer = new StringTokenizer(text);
 
         int index = 0;
 
-        while(st.hasMoreTokens()) {
+        while(stringTokenizer.hasMoreTokens()) {
 
-            final String token = st.nextToken();
+            final String token = stringTokenizer.nextToken();
 
             if(bloomFilter.mightContain(token)) {
 
@@ -78,7 +78,7 @@ public class BloomFilterDictionaryFilter extends DictionaryFilter implements Ser
                     final double confidence = 1.0;
                     final String[] window = getWindow(text, characterStart, characterEnd);
 
-                    final String replacement = getReplacement(filterProfile.getName(), label, context, documentId, token, confidence, classification);
+                    final String replacement = getReplacement(filterProfile.getName(), context, documentId, token, confidence, classification);
                     spans.add(Span.make(characterStart, characterEnd, getFilterType(), context, documentId, confidence, token, replacement, isIgnored, window));
 
                 }

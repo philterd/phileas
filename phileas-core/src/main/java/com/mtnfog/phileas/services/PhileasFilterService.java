@@ -41,7 +41,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.elasticsearch.common.lucene.Lucene;
 
 import java.io.File;
 import java.io.IOException;
@@ -363,15 +362,16 @@ public class PhileasFilterService implements FilterService {
                         // Use a Lucene dictionary filter.
                         final DictionaryFilter dictionaryFilter = new LuceneDictionaryFilter(FilterType.CUSTOM_DICTIONARY, customDictionary.getCustomDictionaryFilterStrategies(),
                                 SensitivityLevel.fromName(customDictionary.getSensitivity()), anonymizationService, alertService,
-                                customDictionary.getType(), customDictionary.getTerms(), index, customDictionary.getIgnored(), filterProfile.getCrypto(), windowSize);
+                                customDictionary.getClassification(), customDictionary.getTerms(), index, customDictionary.getIgnored(), filterProfile.getCrypto(), windowSize);
 
                         enabledFilters.add(dictionaryFilter);
 
                     } else {
 
                         // Use a bloomfilter.
-                        final DictionaryFilter dictionaryFilter = new BloomFilterDictionaryFilter(FilterType.CUSTOM_DICTIONARY, customDictionary.getCustomDictionaryFilterStrategies(),
-                                terms, anonymizationService, alertService, customDictionary.getIgnored(), filterProfile.getCrypto(), windowSize);
+                        final DictionaryFilter dictionaryFilter = new BloomFilterDictionaryFilter(FilterType.CUSTOM_DICTIONARY,
+                                customDictionary.getCustomDictionaryFilterStrategies(), terms, customDictionary.getClassification(), anonymizationService, alertService,
+                                customDictionary.getIgnored(), filterProfile.getCrypto(), windowSize);
 
                         enabledFilters.add(dictionaryFilter);
 

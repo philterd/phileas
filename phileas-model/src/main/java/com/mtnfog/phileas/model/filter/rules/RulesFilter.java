@@ -63,7 +63,7 @@ public abstract class RulesFilter extends Filter {
                     final double initialConfidence = filterPattern.getInitialConfidence();
 
                     // Get the span's replacement.
-                    final String replacement = getReplacement(filterProfile.getName(), label, context, documentId, token, initialConfidence, filterPattern.getClassification());
+                    final String replacement = getReplacement(filterProfile.getName(), context, documentId, token, initialConfidence, filterPattern.getClassification());
 
                     final int characterStart = matcher.start(0);
                     final int characterEnd = matcher.end(0);

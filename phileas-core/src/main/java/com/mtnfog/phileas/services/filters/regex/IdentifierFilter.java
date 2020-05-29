@@ -20,7 +20,6 @@ public class IdentifierFilter extends RegexFilter {
 
     public IdentifierFilter(String label, String regex, boolean caseSensitive, List<IdentifierFilterStrategy> strategies, AnonymizationService anonymizationService, AlertService alertService, Set<String> ignored, Crypto crypto, int windowSize) {
         super(FilterType.IDENTIFIER, strategies, anonymizationService, alertService, ignored, crypto, windowSize);
-        this.label = label;
 
         final Pattern pattern;
 

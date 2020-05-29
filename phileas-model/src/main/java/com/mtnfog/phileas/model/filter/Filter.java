@@ -36,7 +36,7 @@ public abstract class Filter {
     /**
      * The label is a custom value that the user can give to some types (identifiers).
      */
-    protected String label;
+    protected String classification;
 
     /**
      * A list of ignored terms.
@@ -145,13 +145,14 @@ public abstract class Filter {
     /**
      * Gets the string to be used as a replacement.
      * @param filterProfile The name of the filter profile.
-     * @param label The type of item.
      * @param context The context.
      * @param documentId The document ID.
      * @param token The token to replace.
+     * @param confidence The confidence of the item.
+     * @param classification The classification of the item.
      * @return The replacement string.
      */
-    public String getReplacement(String filterProfile, String label, String context, String documentId, String token, double confidence, String classification) throws Exception {
+    public String getReplacement(String filterProfile, String context, String documentId, String token, double confidence, String classification) throws Exception {
 
         if(strategies != null) {
 
@@ -177,20 +178,20 @@ public abstract class Filter {
 
                         }
 
-                        return strategy.getReplacement(label, context, documentId, token, crypto, anonymizationService);
+                        return strategy.getReplacement(classification, context, documentId, token, crypto, anonymizationService);
 
                     }
 
                 } else {
 
-                    return strategy.getReplacement(label, context, documentId, token, crypto, anonymizationService);
+                    return strategy.getReplacement(classification, context, documentId, token, crypto, anonymizationService);
 
                 }
 
                 // If there is no condition or if the condition evaluates then get the replacement.
                 if (StringUtils.isEmpty(condition) || (strategy.evaluateCondition(context, documentId, token, condition, confidence, classification))) {
 
-                    return strategy.getReplacement(label, context, documentId, token, crypto, anonymizationService);
+                    return strategy.getReplacement(classification, context, documentId, token, crypto, anonymizationService);
 
                 }
 
@@ -288,8 +289,8 @@ public abstract class Filter {
         return filterType;
     }
 
-    public String getLabel() {
-        return label;
+    public String getClassification() {
+        return classification;
     }
 
     public Crypto getCrypto() {

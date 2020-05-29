@@ -42,7 +42,7 @@ public class PhoneNumberRulesFilter extends RulesFilter {
                 final double confidence = 1.0;
                 final String text = match.rawString();
                 final String classification = "";
-                final String replacement = getReplacement(filterProfile.getName(), label, context, documentId, text, confidence, classification);
+                final String replacement = getReplacement(filterProfile.getName(), context, documentId, text, confidence, classification);
                 final boolean isIgnored = ignored.contains(text);
 
                 final String[] window = getWindow(input, match.start(), match.end());

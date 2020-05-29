@@ -9,9 +9,9 @@ import java.util.List;
 
 public class CustomDictionary extends AbstractFilter {
 
-    @SerializedName("type")
+    @SerializedName("classification")
     @Expose
-    private String type;
+    private String classification;
 
     @SerializedName("terms")
     @Expose
@@ -32,14 +32,6 @@ public class CustomDictionary extends AbstractFilter {
     @SerializedName("customFilterStrategies")
     @Expose
     private List<CustomDictionaryFilterStrategy> customDictionaryFilterStrategies;
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
 
     public List<String> getTerms() {
         return terms;
@@ -79,6 +71,14 @@ public class CustomDictionary extends AbstractFilter {
 
     public void setFuzzy(boolean fuzzy) {
         this.fuzzy = fuzzy;
+    }
+
+    public String getClassification() {
+        return classification;
+    }
+
+    public void setClassification(String classification) {
+        this.classification = classification;
     }
 
 }

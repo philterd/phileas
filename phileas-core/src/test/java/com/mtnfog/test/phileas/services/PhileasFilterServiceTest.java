@@ -221,7 +221,7 @@ public class PhileasFilterServiceTest {
         final CustomDictionary customDictionary = new CustomDictionary();
         customDictionary.setFiles(Arrays.asList(termsFile.getAbsolutePath()));
         customDictionary.setCustomDictionaryFilterStrategies(Arrays.asList(new CustomDictionaryFilterStrategy()));
-        customDictionary.setType("names");
+        customDictionary.setClassification("names");
         customDictionary.setFuzzy(false);
 
         final FilterProfile filterProfile = new FilterProfile();
