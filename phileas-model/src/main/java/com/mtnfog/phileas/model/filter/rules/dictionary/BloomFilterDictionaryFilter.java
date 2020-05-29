@@ -34,6 +34,7 @@ public class BloomFilterDictionaryFilter extends DictionaryFilter implements Ser
                                        List<? extends AbstractFilterStrategy> strategies,
                                        Set<String> terms,
                                        String classification,
+                                       double fpp,
                                        AnonymizationService anonymizationService,
                                        AlertService alertService,
                                        Set<String> ignored,
@@ -42,7 +43,7 @@ public class BloomFilterDictionaryFilter extends DictionaryFilter implements Ser
 
         super(filterType, strategies, anonymizationService, alertService, ignored, crypto, windowSize);
 
-        this.bloomFilter = BloomFilter.create(Funnels.stringFunnel(Charset.defaultCharset()),terms.size(),0.01);
+        this.bloomFilter = BloomFilter.create(Funnels.stringFunnel(Charset.defaultCharset()), terms.size(), fpp);
         this.terms = terms;
         this.classification = classification;
 
@@ -73,8 +74,8 @@ public class BloomFilterDictionaryFilter extends DictionaryFilter implements Ser
 
                     // Set the meta values for the span.
                     final boolean isIgnored = ignored.contains(token);
-                    final int characterStart = 0;
-                    final int characterEnd = 0;
+                    final int characterStart = text.indexOf(token, index);
+                    final int characterEnd = characterStart + token.length();
                     final double confidence = 1.0;
                     final String[] window = getWindow(text, characterStart, characterEnd);
 

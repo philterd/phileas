@@ -240,11 +240,11 @@ public class PhileasFilterServiceTest {
         final PhileasConfiguration phileasConfiguration = ConfigFactory.create(PhileasConfiguration.class, properties);
 
         final PhileasFilterService service = new PhileasFilterService(phileasConfiguration);
-        final FilterResponse response = service.filter("default", "context", "documentId", "his name was samuel .", MimeType.TEXT_PLAIN);
+        final FilterResponse response = service.filter("default", "context", "documentId", "his name was samuel.", MimeType.TEXT_PLAIN);
 
         LOGGER.info(response.getFilteredText());
 
-        Assert.assertEquals("his name was {{REDACTED-custom-dictionary}}.", response.getFilteredText());
+        Assert.assertEquals("his name was {{{REDACTED-custom-dictionary}}}.", response.getFilteredText());
         Assert.assertEquals("documentId", response.getDocumentId());
 
     }

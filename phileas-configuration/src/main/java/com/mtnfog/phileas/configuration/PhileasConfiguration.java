@@ -48,6 +48,11 @@ public interface PhileasConfiguration extends Config {
     @Key("span.disambiguation.stopwords")
     String spanDisambiguationStopWords();
 
+    // Bloom filter for custom dictionary filters.
+    @DefaultValue("0.05")
+    @Key("filter.fpp")
+    double bloomFilterFpp();
+
     // Cache Service
     @DefaultValue("false")
     @Key("cache.redis.enabled")

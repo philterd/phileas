@@ -63,6 +63,7 @@ public class PhileasFilterService implements FilterService {
     private AlertService alertService;
     private SpanDisambiguationService spanDisambiguationService;
     private String indexDirectory;
+    private double bloomFilterFpp;
 
     private DocumentProcessor unstructuredDocumentProcessor;
     private DocumentProcessor fhirDocumentProcessor;
@@ -87,6 +88,9 @@ public class PhileasFilterService implements FilterService {
 
         // Instantiate the stats.
         this.stats = new HashMap<>();
+
+        // Set the bloom filter FPP.
+        this.bloomFilterFpp = phileasConfiguration.bloomFilterFpp();
 
         // Configure span disambiguation.
         this.spanDisambiguationService = new VectorBasedSpanDisambiguationService(phileasConfiguration);
@@ -370,7 +374,8 @@ public class PhileasFilterService implements FilterService {
 
                         // Use a bloomfilter.
                         final DictionaryFilter dictionaryFilter = new BloomFilterDictionaryFilter(FilterType.CUSTOM_DICTIONARY,
-                                customDictionary.getCustomDictionaryFilterStrategies(), terms, customDictionary.getClassification(), anonymizationService, alertService,
+                                customDictionary.getCustomDictionaryFilterStrategies(), terms, customDictionary.getClassification(),
+                                bloomFilterFpp, anonymizationService, alertService,
                                 customDictionary.getIgnored(), filterProfile.getCrypto(), windowSize);
 
                         enabledFilters.add(dictionaryFilter);
