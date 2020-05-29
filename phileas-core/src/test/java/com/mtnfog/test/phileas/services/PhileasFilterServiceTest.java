@@ -9,12 +9,14 @@ import com.mtnfog.phileas.model.profile.Ignored;
 import com.mtnfog.phileas.model.profile.filters.*;
 import com.mtnfog.phileas.model.profile.filters.strategies.AbstractFilterStrategy;
 import com.mtnfog.phileas.model.profile.filters.strategies.ai.NerFilterStrategy;
+import com.mtnfog.phileas.model.profile.filters.strategies.custom.CustomDictionaryFilterStrategy;
 import com.mtnfog.phileas.model.profile.filters.strategies.dynamic.*;
 import com.mtnfog.phileas.model.profile.filters.strategies.rules.*;
 import com.mtnfog.phileas.model.responses.FilterResponse;
 import com.mtnfog.phileas.services.PhileasFilterService;
 import org.aeonbits.owner.ConfigFactory;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.Assert;
@@ -202,6 +204,47 @@ public class PhileasFilterServiceTest {
         LOGGER.info(response.getFilteredText());
 
         Assert.assertEquals("his name was STATIC-REPLACEMENT.", response.getFilteredText());
+        Assert.assertEquals("documentId", response.getDocumentId());
+
+    }
+
+    @Test
+    public void endToEndUsingCustomDictionaryFile() throws Exception {
+
+        final Path temp = Files.createTempDirectory("philter");
+
+        final String terms = IOUtils.toString(this.getClass().getResourceAsStream("/customdictionaries/terms1.txt"), Charset.defaultCharset());
+        final File termsFile = Paths.get(temp.toFile().getAbsolutePath(), "terms1.txt").toFile();
+        FileUtils.writeStringToFile(termsFile, terms, Charset.defaultCharset());
+        LOGGER.info("Terms file written to {}", termsFile.getAbsolutePath());
+
+        final CustomDictionary customDictionary = new CustomDictionary();
+        customDictionary.setFiles(Arrays.asList(termsFile.getAbsolutePath()));
+        customDictionary.setCustomDictionaryFilterStrategies(Arrays.asList(new CustomDictionaryFilterStrategy()));
+        customDictionary.setType("names");
+        customDictionary.setFuzzy(false);
+
+        final FilterProfile filterProfile = new FilterProfile();
+        filterProfile.setName("custom-dictionary-bloom");
+        filterProfile.getIdentifiers().setCustomDictionaries(Arrays.asList(customDictionary));
+
+        final File file = Paths.get(temp.toFile().getAbsolutePath(), "default.json").toFile();
+        FileUtils.writeStringToFile(file, gson.toJson(filterProfile), Charset.defaultCharset());
+        LOGGER.info("Filter profile written to {}", file.getAbsolutePath());
+
+        final Properties properties = new Properties();
+        properties.setProperty("indexes.directory", INDEXES_DIRECTORY);
+        properties.setProperty("store.enabled", "false");
+        properties.setProperty("filter.profiles.directory", temp.toFile().getAbsolutePath());
+
+        final PhileasConfiguration phileasConfiguration = ConfigFactory.create(PhileasConfiguration.class, properties);
+
+        final PhileasFilterService service = new PhileasFilterService(phileasConfiguration);
+        final FilterResponse response = service.filter("default", "context", "documentId", "his name was samuel .", MimeType.TEXT_PLAIN);
+
+        LOGGER.info(response.getFilteredText());
+
+        Assert.assertEquals("his name was {{REDACTED-custom-dictionary}}.", response.getFilteredText());
         Assert.assertEquals("documentId", response.getDocumentId());
 
     }

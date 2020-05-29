@@ -7,6 +7,8 @@ import com.mtnfog.phileas.model.enums.FilterType;
 import com.mtnfog.phileas.model.enums.MimeType;
 import com.mtnfog.phileas.model.enums.SensitivityLevel;
 import com.mtnfog.phileas.model.filter.Filter;
+import com.mtnfog.phileas.model.filter.rules.dictionary.BloomFilterDictionaryFilter;
+import com.mtnfog.phileas.model.filter.rules.dictionary.DictionaryFilter;
 import com.mtnfog.phileas.model.filter.rules.dictionary.LuceneDictionaryFilter;
 import com.mtnfog.phileas.model.objects.Span;
 import com.mtnfog.phileas.model.profile.FilterProfile;
@@ -34,12 +36,16 @@ import com.mtnfog.phileas.services.validators.DateSpanValidator;
 import com.mtnfog.phileas.store.ElasticsearchStore;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.elasticsearch.common.lucene.Lucene;
 
+import java.io.File;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.*;
 
 public class PhileasFilterService implements FilterService {
@@ -329,16 +335,47 @@ public class PhileasFilterService implements FilterService {
             int index = 0;
 
             // There can be multiple custom dictionary filters because it is a list.
-            for(CustomDictionary customDictionary : filterProfile.getIdentifiers().getCustomDictionaries()) {
+            for(final CustomDictionary customDictionary : filterProfile.getIdentifiers().getCustomDictionaries()) {
 
+                // TODO: Should there be an anonymization service?
                 // There is no anonymization service because we don't know what to replace custom dictionary items with.
                 final AnonymizationService anonymizationService = null;
 
                 if(customDictionary.isEnabled()) {
 
-                    enabledFilters.add(new LuceneDictionaryFilter(FilterType.CUSTOM_DICTIONARY, customDictionary.getCustomDictionaryFilterStrategies(),
-                            SensitivityLevel.fromName(customDictionary.getSensitivity()), anonymizationService, alertService,
-                            customDictionary.getType(), customDictionary.getTerms(), index, customDictionary.getIgnored(), filterProfile.getCrypto(), windowSize));
+                    // All of the custom terms.
+                    final Set<String> terms = new LinkedHashSet<>();
+
+                    // First, read the terms from the filter profile.
+                    if(CollectionUtils.isNotEmpty(customDictionary.getTerms())) {
+                        terms.addAll(customDictionary.getTerms());
+                    }
+
+                    // Next, read terms from files, if given.
+                    for(final String file : customDictionary.getFiles()) {
+                        terms.addAll(FileUtils.readLines(new File(file), Charset.defaultCharset()));
+                    }
+
+                    LOGGER.info("Custom dictionary contains {} terms.", terms.size());
+
+                    if(customDictionary.isFuzzy()) {
+
+                        // Use a Lucene dictionary filter.
+                        final DictionaryFilter dictionaryFilter = new LuceneDictionaryFilter(FilterType.CUSTOM_DICTIONARY, customDictionary.getCustomDictionaryFilterStrategies(),
+                                SensitivityLevel.fromName(customDictionary.getSensitivity()), anonymizationService, alertService,
+                                customDictionary.getType(), customDictionary.getTerms(), index, customDictionary.getIgnored(), filterProfile.getCrypto(), windowSize);
+
+                        enabledFilters.add(dictionaryFilter);
+
+                    } else {
+
+                        // Use a bloomfilter.
+                        final DictionaryFilter dictionaryFilter = new BloomFilterDictionaryFilter(FilterType.CUSTOM_DICTIONARY, customDictionary.getCustomDictionaryFilterStrategies(),
+                                terms, anonymizationService, alertService, customDictionary.getIgnored(), filterProfile.getCrypto(), windowSize);
+
+                        enabledFilters.add(dictionaryFilter);
+
+                    }
 
                     index++;
 

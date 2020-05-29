@@ -17,6 +17,14 @@ public class CustomDictionary extends AbstractFilter {
     @Expose
     private List<String> terms;
 
+    @SerializedName("files")
+    @Expose
+    private List<String> files;
+
+    @SerializedName("fuzzy")
+    @Expose
+    private boolean fuzzy = false;
+
     @SerializedName("sensitivity")
     @Expose
     private String sensitivity = SensitivityLevel.MEDIUM.getName();
@@ -55,6 +63,22 @@ public class CustomDictionary extends AbstractFilter {
 
     public void setSensitivity(String sensitivity) {
         this.sensitivity = sensitivity;
+    }
+
+    public List<String> getFiles() {
+        return files;
+    }
+
+    public void setFiles(List<String> files) {
+        this.files = files;
+    }
+
+    public boolean isFuzzy() {
+        return fuzzy;
+    }
+
+    public void setFuzzy(boolean fuzzy) {
+        this.fuzzy = fuzzy;
     }
 
 }

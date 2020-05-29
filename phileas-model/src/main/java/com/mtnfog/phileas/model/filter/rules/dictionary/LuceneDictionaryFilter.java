@@ -133,7 +133,6 @@ public class LuceneDictionaryFilter extends DictionaryFilter implements Serializ
 
         LOGGER.info("Custom index for type [{}] created at {}", type, indexDirectory);
 
-
     }
 
     @Override
