@@ -28,7 +28,7 @@ public class CreditCard extends AbstractFilter {
         return onlyValidCreditCardNumbers;
     }
 
-    public void setOnlyValidCreditCardNumbers() {
+    public void setOnlyValidCreditCardNumbers(boolean onlyValidCreditCardNumbers) {
         this.onlyValidCreditCardNumbers = onlyValidCreditCardNumbers;
     }
 
