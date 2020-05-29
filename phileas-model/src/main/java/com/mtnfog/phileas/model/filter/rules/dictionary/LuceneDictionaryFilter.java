@@ -244,10 +244,10 @@ public class LuceneDictionaryFilter extends DictionaryFilter implements Serializ
                                 if (isMatch) {
 
                                     // Set the meta values for the span.
-                                    final boolean isIgnored = ignored.contains(text);
+                                    final boolean isIgnored = ignored.contains(token);
                                     final int characterStart = offsetAttribute.startOffset();
                                     final int characterEnd = offsetAttribute.endOffset();
-                                    final String[] window = getWindow(text, characterStart, characterEnd);
+                                    final String[] window = getWindow(token, characterStart, characterEnd);
                                     final double confidence = spellChecker.getAccuracy();
                                     final String classification = "";
 
