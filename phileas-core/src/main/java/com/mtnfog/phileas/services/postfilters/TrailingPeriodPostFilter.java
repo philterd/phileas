@@ -11,11 +11,6 @@ import org.apache.commons.lang3.StringUtils;
  */
 public class TrailingPeriodPostFilter extends PostFilter {
 
-    /**
-     * Creates a new post filter.
-     */
-    public TrailingPeriodPostFilter() {}
-
     @Override
     protected PostFilterResult process(String text, Span span) {
 
