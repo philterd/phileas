@@ -215,7 +215,7 @@ public abstract class Filter {
         final List<Identifier> identifiers = filterProfile.getIdentifiers().getIdentifiers();
 
         final Identifier identifier = identifiers.stream().
-                filter(p -> p.getLabel().equalsIgnoreCase(name)).
+                filter(p -> p.getClassification().equalsIgnoreCase(name)).
                 findFirst().get();
 
         return identifier.getIdentifierFilterStrategies();

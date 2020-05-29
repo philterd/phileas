@@ -21,11 +21,11 @@ public class AgeFilter extends RegexFilter {
     public AgeFilter(List<? extends AbstractFilterStrategy> strategies, AnonymizationService anonymizationService, AlertService alertService, Set<String> ignored, Crypto crypto, int windowSize) {
         super(FilterType.AGE, strategies, anonymizationService, alertService, ignored, crypto, windowSize);
 
-        final Pattern AGE_REGEX_1 = Pattern.compile("\\b[0-9.]+[\\s]*(years|yrs)(\\s)*(old)?\\b", Pattern.CASE_INSENSITIVE);
-        final FilterPattern age1 = new FilterPattern.FilterPatternBuilder(AGE_REGEX_1, 0.90).build();
+        final Pattern patternAgeRegex1 = Pattern.compile("\\b[0-9.]+[\\s]*(years|yrs)(\\s)*(old)?\\b", Pattern.CASE_INSENSITIVE);
+        final FilterPattern age1 = new FilterPattern.FilterPatternBuilder(patternAgeRegex1, 0.90).build();
 
-        final Pattern AGE_REGEX_2 = Pattern.compile("\\b(age)(d)?(\\s)*[0-9.]+\\b", Pattern.CASE_INSENSITIVE);
-        final FilterPattern age2 = new FilterPattern.FilterPatternBuilder(AGE_REGEX_2, 0.90).build();
+        final Pattern patternAgeRegex2 = Pattern.compile("\\b(age)(d)?(\\s)*[0-9.]+\\b", Pattern.CASE_INSENSITIVE);
+        final FilterPattern age2 = new FilterPattern.FilterPatternBuilder(patternAgeRegex2, 0.90).build();
 
         this.contextualTerms = new HashSet<>();
         this.contextualTerms.add("age");
