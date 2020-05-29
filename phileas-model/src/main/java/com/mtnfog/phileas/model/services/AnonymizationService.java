@@ -1,11 +1,9 @@
 package com.mtnfog.phileas.model.services;
 
-import java.io.Serializable;
-
 /**
  * An anonymization service.
  */
-public interface AnonymizationService extends Serializable {
+public interface AnonymizationService {
 
     /**
      * Anonymize the given token.

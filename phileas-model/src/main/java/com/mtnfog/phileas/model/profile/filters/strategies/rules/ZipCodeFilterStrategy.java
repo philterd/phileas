@@ -102,7 +102,7 @@ public class ZipCodeFilterStrategy extends AbstractFilterStrategy {
 
             } else if(StringUtils.equalsIgnoreCase(CONFIDENCE, parsedCondition.getField())) {
 
-                final double threshold = Double.valueOf(parsedCondition.getValue());
+                final double threshold = Double.parseDouble(parsedCondition.getValue());
 
                 switch (parsedCondition.getOperator()) {
                     case GREATER_THAN:

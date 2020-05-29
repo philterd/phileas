@@ -428,7 +428,7 @@ public class PhileasFilterService implements FilterService {
             for(final Identifier identifier : identifiers) {
 
                 if(identifier.isEnabled()) {
-                    enabledFilters.add(new IdentifierFilter(identifier.getLabel(), identifier.getPattern(), identifier.isCaseSensitive(), identifier.getIdentifierFilterStrategies(), new AlphanumericAnonymizationService(anonymizationCacheService), alertService, identifier.getIgnored(), filterProfile.getCrypto(), windowSize));
+                    enabledFilters.add(new IdentifierFilter(identifier.getClassification(), identifier.getPattern(), identifier.isCaseSensitive(), identifier.getIdentifierFilterStrategies(), new AlphanumericAnonymizationService(anonymizationCacheService), alertService, identifier.getIgnored(), filterProfile.getCrypto(), windowSize));
                 }
 
             }

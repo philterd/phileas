@@ -181,9 +181,9 @@ public class SpanTest {
         List<Span> nonOverlappingSpans = Span.dropOverlappingSpans(spans);
 
         Assertions.assertEquals(1, nonOverlappingSpans.size());
-        Assertions.assertEquals(nonOverlappingSpans.get(0).getCharacterStart(), 2);
-        Assertions.assertEquals(nonOverlappingSpans.get(0).getCharacterEnd(), 12);
-        Assertions.assertEquals(nonOverlappingSpans.get(0).getConfidence(), 1.0, 0);
+        Assertions.assertEquals(2, nonOverlappingSpans.get(0).getCharacterStart());
+        Assertions.assertEquals(12, nonOverlappingSpans.get(0).getCharacterEnd());
+        Assertions.assertEquals(1.0, nonOverlappingSpans.get(0).getConfidence(), 0);
 
     }
 

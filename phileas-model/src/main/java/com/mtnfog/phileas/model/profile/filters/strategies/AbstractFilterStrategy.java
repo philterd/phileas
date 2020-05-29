@@ -9,7 +9,6 @@ import com.mtnfog.phileas.model.services.AnonymizationService;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
-import java.util.Map;
 import java.util.UUID;
 
 public abstract class AbstractFilterStrategy {

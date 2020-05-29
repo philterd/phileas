@@ -11,6 +11,10 @@ public class AlertServiceFactory {
 
     private static final Logger LOGGER = LogManager.getLogger(AlertServiceFactory.class);
 
+    private AlertServiceFactory() {
+        // Use the static methods.
+    }
+
     public static AlertService getAlertService(PhileasConfiguration phileasConfiguration) throws IOException {
 
         final boolean redisEnabled = phileasConfiguration.cacheRedisEnabled();
