@@ -18,7 +18,7 @@ public class IbanCodeFilterStrategy extends AbstractFilterStrategy {
 
     private static final Logger LOGGER = LogManager.getLogger(IbanCodeFilterStrategy.class);
 
-    private static FilterType filterType = FilterType.AGE;
+    private static FilterType filterType = FilterType.IBAN_CODE;
 
     @Override
     public boolean evaluateCondition(String context, String documentId, String token, String condition, double confidence, String classification) {
