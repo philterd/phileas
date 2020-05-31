@@ -3,7 +3,6 @@ package com.mtnfog.test.phileas.model.profile.filters.strategies.rules;
 import com.mtnfog.phileas.model.objects.Replacement;
 import com.mtnfog.phileas.model.profile.Crypto;
 import com.mtnfog.phileas.model.profile.filters.strategies.AbstractFilterStrategy;
-import com.mtnfog.phileas.model.profile.filters.strategies.rules.AgeFilterStrategy;
 import com.mtnfog.phileas.model.services.AnonymizationCacheService;
 import com.mtnfog.phileas.model.services.AnonymizationService;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -22,7 +21,7 @@ public class AgeFilterStrategyTest {
     private static final Logger LOGGER = LogManager.getLogger(AgeFilterStrategyTest.class);
 
     private AbstractFilterStrategy getFilterStrategy() {
-        return new AgeFilterStrategy();
+        return getFilterStrategy();
     }
     
     @Test
@@ -165,6 +164,7 @@ public class AgeFilterStrategyTest {
 
         final Replacement replacement = strategy.getReplacement("name", "context", "docId", "token", null, anonymizationService);
 
+        Assertions.assertNotNull(replacement.getSalt());
         final String expected = DigestUtils.sha256Hex("token" + replacement.getSalt());
 
         // This is the hash of "token"
@@ -175,7 +175,7 @@ public class AgeFilterStrategyTest {
     @Test
     public void evaluateCondition1() throws IOException {
 
-        AgeFilterStrategy strategy = new AgeFilterStrategy();
+        final AbstractFilterStrategy strategy = getFilterStrategy();
 
         final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentId", "90210", "token startswith \"902\"", 1.0, "");
 
@@ -186,7 +186,7 @@ public class AgeFilterStrategyTest {
     @Test
     public void evaluateCondition2() throws IOException {
 
-        AgeFilterStrategy strategy = new AgeFilterStrategy();
+        final AbstractFilterStrategy strategy = getFilterStrategy();
 
         final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentId", "90210", "token == \"90210\"", 1.0, "");
 
@@ -197,7 +197,7 @@ public class AgeFilterStrategyTest {
     @Test
     public void evaluateCondition3() throws IOException {
 
-        AgeFilterStrategy strategy = new AgeFilterStrategy();
+        final AbstractFilterStrategy strategy = getFilterStrategy();
 
         final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentId", "12345", "token == \"90210\"", 1.0, "");
 

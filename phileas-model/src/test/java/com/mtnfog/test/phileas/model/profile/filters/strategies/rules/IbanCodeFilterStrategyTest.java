@@ -176,7 +176,7 @@ public class IbanCodeFilterStrategyTest {
     @Test
     public void evaluateCondition1() throws IOException {
 
-        AgeFilterStrategy strategy = new AgeFilterStrategy();
+        final AbstractFilterStrategy strategy = getFilterStrategy();
 
         final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentId", "90210", "token startswith \"902\"", 1.0, "");
 
@@ -187,7 +187,7 @@ public class IbanCodeFilterStrategyTest {
     @Test
     public void evaluateCondition2() throws IOException {
 
-        AgeFilterStrategy strategy = new AgeFilterStrategy();
+        final AbstractFilterStrategy strategy = getFilterStrategy();
 
         final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentId", "90210", "token == \"90210\"", 1.0, "");
 
@@ -198,7 +198,7 @@ public class IbanCodeFilterStrategyTest {
     @Test
     public void evaluateCondition3() throws IOException {
 
-        AgeFilterStrategy strategy = new AgeFilterStrategy();
+        final AbstractFilterStrategy strategy = getFilterStrategy();
 
         final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentId", "12345", "token == \"90210\"", 1.0, "");
 

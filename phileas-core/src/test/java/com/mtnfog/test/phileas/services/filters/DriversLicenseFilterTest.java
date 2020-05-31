@@ -36,6 +36,7 @@ public class DriversLicenseFilterTest extends AbstractFilterTest {
         Assertions.assertTrue(checkSpan(spans.get(0), 14, 23, FilterType.DRIVERS_LICENSE_NUMBER));
         Assertions.assertEquals("{{{REDACTED-drivers-license-number}}}", spans.get(0).getReplacement());
         Assertions.assertEquals("123456789", spans.get(0).getText());
+        Assertions.assertEquals("NORTH CAROLINA", spans.get(0).getClassification());
 
     }
 
