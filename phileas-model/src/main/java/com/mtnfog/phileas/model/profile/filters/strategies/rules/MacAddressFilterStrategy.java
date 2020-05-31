@@ -18,7 +18,7 @@ public class MacAddressFilterStrategy extends AbstractFilterStrategy {
 
     private static final Logger LOGGER = LogManager.getLogger(MacAddressFilterStrategy.class);
 
-    private static FilterType filterType = FilterType.IP_ADDRESS;
+    private static FilterType filterType = FilterType.MAC_ADDRESS;
 
     @Override
     public boolean evaluateCondition(String context, String documentId, String token, String condition, double confidence, String classification) {
