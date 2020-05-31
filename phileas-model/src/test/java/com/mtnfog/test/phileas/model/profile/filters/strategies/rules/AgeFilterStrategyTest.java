@@ -3,6 +3,7 @@ package com.mtnfog.test.phileas.model.profile.filters.strategies.rules;
 import com.mtnfog.phileas.model.objects.Replacement;
 import com.mtnfog.phileas.model.profile.Crypto;
 import com.mtnfog.phileas.model.profile.filters.strategies.AbstractFilterStrategy;
+import com.mtnfog.phileas.model.profile.filters.strategies.rules.AgeFilterStrategy;
 import com.mtnfog.phileas.model.services.AnonymizationCacheService;
 import com.mtnfog.phileas.model.services.AnonymizationService;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -21,7 +22,7 @@ public class AgeFilterStrategyTest {
     private static final Logger LOGGER = LogManager.getLogger(AgeFilterStrategyTest.class);
 
     private AbstractFilterStrategy getFilterStrategy() {
-        return getFilterStrategy();
+        return new AgeFilterStrategy();
     }
     
     @Test
