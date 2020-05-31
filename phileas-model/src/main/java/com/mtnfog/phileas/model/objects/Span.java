@@ -129,7 +129,7 @@ public final class Span {
      */
     public Span copy() {
 
-        final Span clone = Span.make(characterStart, characterEnd, filterType, context, documentId, confidence, text, salt, replacement, ignored, window);
+        final Span clone = Span.make(characterStart, characterEnd, filterType, context, documentId, confidence, text, replacement, salt, ignored, window);
 
         clone.range = range;
 
@@ -322,6 +322,7 @@ public final class Span {
                 append(documentId).
                 append(text).
                 append(replacement).
+                append(salt).
                 append(ignored).
                 append(classification).
                 toHashCode();
@@ -346,6 +347,7 @@ public final class Span {
                 + " confidence: " + confidence + "; "
                 + " text: " + text + "; "
                 + " replacement: " + replacement + "; "
+                + " salt: " + salt + "; "
                 + " ignored: " + ignored + "; "
                 + " classification: " + classification + "; "
                 ;
