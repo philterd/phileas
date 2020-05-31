@@ -7,15 +7,28 @@ import org.apache.logging.log4j.Logger;
 
 import java.time.DateTimeException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.ResolverStyle;
+import java.util.Locale;
 
 public class DateSpanValidator implements SpanValidator {
 
     private static final Logger LOGGER = LogManager.getLogger(DateSpanValidator.class);
 
+    private static SpanValidator spanValidator;
+
     public static SpanValidator getInstance() {
-        return new DateSpanValidator();
+
+        if(spanValidator == null) {
+            spanValidator = new DateSpanValidator();
+        }
+
+        return spanValidator;
+    }
+
+    private DateSpanValidator() {
+        // Use the static getInstance().
     }
 
     @Override
@@ -25,7 +38,8 @@ public class DateSpanValidator implements SpanValidator {
 
         try {
 
-            LocalDate.parse(span.getText(), DateTimeFormatter.ofPattern(span.getPattern()).withResolverStyle(ResolverStyle.STRICT));
+            final DateTimeFormatter dtf = DateTimeFormatter.ofPattern(span.getPattern(), Locale.US).withResolverStyle(ResolverStyle.STRICT);
+            LocalDateTime localDateTime = LocalDate.parse(span.getText(), dtf).atStartOfDay();
 
         } catch (DateTimeException ex) {
             // Not a date.

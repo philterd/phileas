@@ -251,7 +251,7 @@ public class PhileasFilterService implements FilterService {
         }
 
         if(filterProfile.getIdentifiers().hasFilter(FilterType.DATE) && filterProfile.getIdentifiers().getDate().isEnabled()) {
-            enabledFilters.add(new DateFilter(filterProfile.getIdentifiers().getDate().getDateFilterStrategies(), new DateAnonymizationService(anonymizationCacheService), alertService, filterProfile.getIdentifiers().getDate().isOnlyValidDates(), new DateSpanValidator(), filterProfile.getIdentifiers().getDate().getIgnored(), filterProfile.getCrypto(), windowSize));
+            enabledFilters.add(new DateFilter(filterProfile.getIdentifiers().getDate().getDateFilterStrategies(), new DateAnonymizationService(anonymizationCacheService), alertService, filterProfile.getIdentifiers().getDate().isOnlyValidDates(), DateSpanValidator.getInstance(), filterProfile.getIdentifiers().getDate().getIgnored(), filterProfile.getCrypto(), windowSize));
         }
 
         if(filterProfile.getIdentifiers().hasFilter(FilterType.DRIVERS_LICENSE_NUMBER) && filterProfile.getIdentifiers().getDriversLicense().isEnabled()) {
