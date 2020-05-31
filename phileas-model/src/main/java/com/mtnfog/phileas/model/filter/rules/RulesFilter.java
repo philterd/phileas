@@ -4,6 +4,7 @@ import com.mtnfog.phileas.model.enums.FilterType;
 import com.mtnfog.phileas.model.filter.Filter;
 import com.mtnfog.phileas.model.objects.Analyzer;
 import com.mtnfog.phileas.model.objects.FilterPattern;
+import com.mtnfog.phileas.model.objects.Replacement;
 import com.mtnfog.phileas.model.objects.Span;
 import com.mtnfog.phileas.model.profile.Crypto;
 import com.mtnfog.phileas.model.profile.FilterProfile;
@@ -65,14 +66,14 @@ public abstract class RulesFilter extends Filter {
                     final double initialConfidence = filterPattern.getInitialConfidence();
 
                     // Get the span's replacement.
-                    final String replacement = getReplacement(filterProfile.getName(), context, documentId, token, initialConfidence, filterPattern.getClassification());
+                    final Replacement replacement = getReplacement(filterProfile.getName(), context, documentId, token, initialConfidence, filterPattern.getClassification());
 
                     final int characterStart = matcher.start(0);
                     final int characterEnd = matcher.end(0);
 
                     final String[] window = getWindow(input, characterStart, characterEnd);
 
-                    final Span span = Span.make(characterStart, characterEnd, getFilterType(), context, documentId, initialConfidence, token, replacement, isIgnored, window);
+                    final Span span = Span.make(characterStart, characterEnd, getFilterType(), context, documentId, initialConfidence, token, replacement.getReplacement(), replacement.getSalt(), isIgnored, window);
 
                     // TODO: Add "format" to Span.make() so we don't have to make a separate call here.
                     span.setPattern(filterPattern.getFormat());

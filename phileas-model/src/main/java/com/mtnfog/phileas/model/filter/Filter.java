@@ -1,6 +1,7 @@
 package com.mtnfog.phileas.model.filter;
 
 import com.mtnfog.phileas.model.enums.FilterType;
+import com.mtnfog.phileas.model.objects.Replacement;
 import com.mtnfog.phileas.model.objects.Span;
 import com.mtnfog.phileas.model.profile.Crypto;
 import com.mtnfog.phileas.model.profile.FilterProfile;
@@ -152,7 +153,7 @@ public abstract class Filter {
      * @param classification The classification of the item.
      * @return The replacement string.
      */
-    public String getReplacement(String filterProfile, String context, String documentId, String token, double confidence, String classification) throws Exception {
+    public Replacement getReplacement(String filterProfile, String context, String documentId, String token, double confidence, String classification) throws Exception {
 
         if(strategies != null) {
 
@@ -198,12 +199,12 @@ public abstract class Filter {
 
             // PHL-68: When there are no strategies just redact.
             LOGGER.warn("No filter strategies found for filter type {}. Defaulting to redaction.", filterType.getType());
-            return AbstractFilterStrategy.DEFAULT_REDACTION.replaceAll("%t", filterType.getType());
+            return new Replacement(AbstractFilterStrategy.DEFAULT_REDACTION.replaceAll("%t", filterType.getType()));
 
         }
 
         // No conditions matched so there is no replacement. Just return the original token.
-        return token;
+        return new Replacement(token);
 
     }
 

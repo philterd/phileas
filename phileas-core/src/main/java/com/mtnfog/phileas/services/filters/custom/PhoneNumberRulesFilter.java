@@ -4,6 +4,7 @@ import com.google.i18n.phonenumbers.PhoneNumberMatch;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
 import com.mtnfog.phileas.model.enums.FilterType;
 import com.mtnfog.phileas.model.filter.rules.RulesFilter;
+import com.mtnfog.phileas.model.objects.Replacement;
 import com.mtnfog.phileas.model.objects.Span;
 import com.mtnfog.phileas.model.profile.Crypto;
 import com.mtnfog.phileas.model.profile.FilterProfile;
@@ -51,12 +52,12 @@ public class PhoneNumberRulesFilter extends RulesFilter {
                 final double confidence = 1.0;
                 final String text = match.rawString();
                 final String classification = "";
-                final String replacement = getReplacement(filterProfile.getName(), context, documentId, text, confidence, classification);
+                final Replacement replacement = getReplacement(filterProfile.getName(), context, documentId, text, confidence, classification);
                 final boolean isIgnored = ignored.contains(text);
 
                 final String[] window = getWindow(input, match.start(), match.end());
 
-                spans.add(Span.make(match.start(), match.end(), getFilterType(), context, documentId, confidence, text, replacement, isIgnored, window));
+                spans.add(Span.make(match.start(), match.end(), getFilterType(), context, documentId, confidence, text, replacement.getReplacement(), replacement.getSalt(), isIgnored, window));
 
             }
 

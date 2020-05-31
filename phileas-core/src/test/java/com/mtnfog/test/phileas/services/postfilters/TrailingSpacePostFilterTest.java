@@ -16,7 +16,7 @@ public class TrailingSpacePostFilterTest extends AbstractFilterTest {
     public void test1() {
 
         final List<Span> spans = new LinkedList<>();
-        spans.add(Span.make(12, 22, FilterType.URL, "context", "docid", 0.80, "Washington ", "*****", false, new String[0]));
+        spans.add(Span.make(12, 22, FilterType.URL, "context", "docid", 0.80, "Washington ", "*****",  "", false, new String[0]));
 
         final TrailingSpacePostFilter postFilter = new TrailingSpacePostFilter();
         final List<Span> filteredSpans = postFilter.filter("doesn't matter", spans);

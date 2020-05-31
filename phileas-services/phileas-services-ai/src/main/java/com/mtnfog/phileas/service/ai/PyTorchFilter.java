@@ -2,6 +2,7 @@ package com.mtnfog.phileas.service.ai;
 
 import com.mtnfog.phileas.model.enums.FilterType;
 import com.mtnfog.phileas.model.filter.dynamic.NerFilter;
+import com.mtnfog.phileas.model.objects.Replacement;
 import com.mtnfog.phileas.model.objects.Span;
 import com.mtnfog.phileas.model.profile.Crypto;
 import com.mtnfog.phileas.model.profile.FilterProfile;
@@ -139,9 +140,9 @@ public class PyTorchFilter extends NerFilter {
     private Span createSpan(String filterProfile, String input, String context, String documentId, String text,
                             String classification, int start, int end, double confidence) throws Exception {
 
-        final String replacement = getReplacement(filterProfile, context, documentId, text, confidence, classification);
+        final Replacement replacement = getReplacement(filterProfile, context, documentId, text, confidence, classification);
 
-        if(StringUtils.equals(replacement, text)) {
+        if(StringUtils.equals(replacement.getReplacement(), text)) {
 
             // If the replacement is the same as the token then there is no span.
             // A condition in the strategy excluded it.
@@ -153,7 +154,7 @@ public class PyTorchFilter extends NerFilter {
             final String[] window = getWindow(input, start, end);
 
             final boolean isIgnored = ignored.contains(text);
-            final Span span = Span.make(start, end, FilterType.NER_ENTITY, context, documentId, confidence, text, replacement, isIgnored, window);
+            final Span span = Span.make(start, end, FilterType.NER_ENTITY, context, documentId, confidence, text, replacement.getReplacement(), replacement.getSalt(), isIgnored, window);
 
             // Send the entity to the metrics service for reporting.
             metricsService.reportEntitySpan(span);

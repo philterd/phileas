@@ -4,6 +4,7 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.mtnfog.phileas.model.conditions.ParsedCondition;
 import com.mtnfog.phileas.model.enums.FilterType;
+import com.mtnfog.phileas.model.objects.Replacement;
 import com.mtnfog.phileas.model.profile.Crypto;
 import com.mtnfog.phileas.model.services.AnonymizationService;
 import org.apache.commons.lang3.StringUtils;
@@ -20,6 +21,8 @@ public abstract class AbstractFilterStrategy {
     public static final String STATIC_REPLACE = "STATIC_REPLACE";
     public static final String CRYPTO_REPLACE = "CRYPTO_REPLACE";
     public static final String HASH_SHA256_REPLACE = "HASH_SHA256_REPLACE";
+
+    public static final String HASH_SALT = "HASH_SALT";
 
     public static final String REPLACEMENT_SCOPE_DOCUMENT = "DOCUMENT";
     public static final String REPLACEMENT_SCOPE_CONTEXT = "CONTEXT";
@@ -66,6 +69,10 @@ public abstract class AbstractFilterStrategy {
     @Expose
     protected boolean alert = false;
 
+    @SerializedName("salt")
+    @Expose
+    protected boolean salt;
+
     /**
      * Gets the replacement for a token.
      * @param context The context.
@@ -75,7 +82,7 @@ public abstract class AbstractFilterStrategy {
      * @param anonymizationService The {@link AnonymizationService} for the token.
      * @return A replacement value for a token.
      */
-    public abstract String getReplacement(String classification, String context, String documentId, String token, Crypto crypto, AnonymizationService anonymizationService) throws Exception;
+    public abstract Replacement getReplacement(String classification, String context, String documentId, String token, Crypto crypto, AnonymizationService anonymizationService) throws Exception;
 
     /**
      * Evaluates the condition on the given token.
@@ -234,6 +241,14 @@ public abstract class AbstractFilterStrategy {
 
     public void setAlert(boolean alert) {
         this.alert = alert;
+    }
+
+    public boolean isSalt() {
+        return salt;
+    }
+
+    public void setSalt(boolean salt) {
+        this.salt = salt;
     }
 
 }

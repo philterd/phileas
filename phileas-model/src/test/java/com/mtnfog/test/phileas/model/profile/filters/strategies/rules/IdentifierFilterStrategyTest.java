@@ -1,5 +1,6 @@
 package com.mtnfog.test.phileas.model.profile.filters.strategies.rules;
 
+import com.mtnfog.phileas.model.objects.Replacement;
 import com.mtnfog.phileas.model.profile.Crypto;
 import com.mtnfog.phileas.model.profile.filters.strategies.AbstractFilterStrategy;
 import com.mtnfog.phileas.model.profile.filters.strategies.rules.IdentifierFilterStrategy;
@@ -29,9 +30,9 @@ public class IdentifierFilterStrategyTest {
         final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
-        final String replacement = strategy.getReplacement("custom-name", "context", "documentId", "token", new Crypto(), anonymizationService);
+        final Replacement replacement = strategy.getReplacement("custom-name", "context", "documentId", "token", new Crypto(), anonymizationService);
 
-        Assertions.assertEquals("{{{REDACTED-id}}}", replacement);
+        Assertions.assertEquals("{{{REDACTED-id}}}", replacement.getReplacement());
 
     }
 
@@ -42,9 +43,9 @@ public class IdentifierFilterStrategyTest {
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
         strategy.setRedactionFormat("{{{REDACTED-%l}}}");
-        final String replacement = strategy.getReplacement("custom-name", "context", "documentId", "token", new Crypto(), anonymizationService);
+        final Replacement replacement = strategy.getReplacement("custom-name", "context", "documentId", "token", new Crypto(), anonymizationService);
 
-        Assertions.assertEquals("{{{REDACTED-custom-name}}}", replacement);
+        Assertions.assertEquals("{{{REDACTED-custom-name}}}", replacement.getReplacement());
 
     }
 
@@ -55,9 +56,9 @@ public class IdentifierFilterStrategyTest {
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
         strategy.setRedactionFormat("{{{REDACTED-%t-%l}}}");
-        final String replacement = strategy.getReplacement("custom-name", "context", "documentId", "token", new Crypto(), anonymizationService);
+        final Replacement replacement = strategy.getReplacement("custom-name", "context", "documentId", "token", new Crypto(), anonymizationService);
 
-        Assertions.assertEquals("{{{REDACTED-id-custom-name}}}", replacement);
+        Assertions.assertEquals("{{{REDACTED-id-custom-name}}}", replacement.getReplacement());
 
     }
 
@@ -68,9 +69,9 @@ public class IdentifierFilterStrategyTest {
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
         strategy.setRedactionFormat("***%l-%t***");
-        final String replacement = strategy.getReplacement("custom-name", "context", "documentId", "token", new Crypto(), anonymizationService);
+        final Replacement replacement = strategy.getReplacement("custom-name", "context", "documentId", "token", new Crypto(), anonymizationService);
 
-        Assertions.assertEquals("***custom-name-id***", replacement);
+        Assertions.assertEquals("***custom-name-id***", replacement.getReplacement());
 
     }
 
@@ -81,9 +82,9 @@ public class IdentifierFilterStrategyTest {
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
         strategy.setRedactionFormat("***%l-%l-%t***");
-        final String replacement = strategy.getReplacement("custom-name", "context", "documentId", "token", new Crypto(), anonymizationService);
+        final Replacement replacement = strategy.getReplacement("custom-name", "context", "documentId", "token", new Crypto(), anonymizationService);
 
-        Assertions.assertEquals("***custom-name-custom-name-id***", replacement);
+        Assertions.assertEquals("***custom-name-custom-name-id***", replacement.getReplacement());
 
     }
 
@@ -99,9 +100,9 @@ public class IdentifierFilterStrategyTest {
         strategy.setStrategy(AbstractFilterStrategy.REDACT);
         strategy.setRedactionFormat("<ENTITY:%t>%v</ENTITY>");
 
-        final String replacement = strategy.getReplacement("name", "context", "docId", "token", new Crypto(), anonymizationService);
+        final Replacement replacement = strategy.getReplacement("name", "context", "docId", "token", new Crypto(), anonymizationService);
 
-        Assertions.assertEquals("<ENTITY:id>token</ENTITY>", replacement);
+        Assertions.assertEquals("<ENTITY:id>token</ENTITY>", replacement.getReplacement());
 
     }
 

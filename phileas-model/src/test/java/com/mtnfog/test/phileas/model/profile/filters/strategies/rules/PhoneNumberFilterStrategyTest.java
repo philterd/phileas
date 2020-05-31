@@ -1,5 +1,6 @@
 package com.mtnfog.test.phileas.model.profile.filters.strategies.rules;
 
+import com.mtnfog.phileas.model.objects.Replacement;
 import com.mtnfog.phileas.model.profile.Crypto;
 import com.mtnfog.phileas.model.profile.filters.strategies.AbstractFilterStrategy;
 import com.mtnfog.phileas.model.profile.filters.strategies.rules.PhoneNumberFilterStrategy;
@@ -32,9 +33,9 @@ public class PhoneNumberFilterStrategyTest {
         strategy.setStrategy(AbstractFilterStrategy.STATIC_REPLACE);
         strategy.setStaticReplacement("static-value");
 
-        final String replacement = strategy.getReplacement("name", "context", "docId", "token", new Crypto(), anonymizationService);
+        final Replacement replacement = strategy.getReplacement("name", "context", "docId", "token", new Crypto(), anonymizationService);
 
-        Assertions.assertEquals("static-value", replacement);
+        Assertions.assertEquals("static-value", replacement.getReplacement());
 
     }
 
@@ -47,9 +48,9 @@ public class PhoneNumberFilterStrategyTest {
         strategy.setStrategy(AbstractFilterStrategy.REDACT);
         strategy.setRedactionFormat("REDACTION-%t");
 
-        final String replacement = strategy.getReplacement("name", "context", "docId", "token", new Crypto(), anonymizationService);
+        final Replacement replacement = strategy.getReplacement("name", "context", "docId", "token", new Crypto(), anonymizationService);
 
-        Assertions.assertEquals("REDACTION-phone-number", replacement);
+        Assertions.assertEquals("REDACTION-phone-number", replacement.getReplacement());
 
     }
 
@@ -65,9 +66,9 @@ public class PhoneNumberFilterStrategyTest {
         final AbstractFilterStrategy strategy = getFilterStrategy();
         strategy.setStrategy(AbstractFilterStrategy.RANDOM_REPLACE);
 
-        final String replacement = strategy.getReplacement("name", "context", "docId", "token", new Crypto(), anonymizationService);
+        final Replacement replacement = strategy.getReplacement("name", "context", "docId", "token", new Crypto(), anonymizationService);
 
-        Assertions.assertNotEquals("random", replacement);
+        Assertions.assertNotEquals("random", replacement.getReplacement());
 
     }
 
@@ -83,9 +84,9 @@ public class PhoneNumberFilterStrategyTest {
         final AbstractFilterStrategy strategy = getFilterStrategy();
         strategy.setStrategy("something-wrong");
 
-        final String replacement = strategy.getReplacement("name", "context", "docId", "token", new Crypto(), anonymizationService);
+        final Replacement replacement = strategy.getReplacement("name", "context", "docId", "token", new Crypto(), anonymizationService);
 
-        Assertions.assertEquals("{{{REDACTED-phone-number}}}", replacement);
+        Assertions.assertEquals("{{{REDACTED-phone-number}}}", replacement.getReplacement());
 
     }
 
@@ -101,9 +102,9 @@ public class PhoneNumberFilterStrategyTest {
         strategy.setStrategy(AbstractFilterStrategy.REDACT);
         strategy.setRedactionFormat("<ENTITY:%t>%v</ENTITY>");
 
-        final String replacement = strategy.getReplacement("name", "context", "docId", "token", new Crypto(), anonymizationService);
+        final Replacement replacement = strategy.getReplacement("name", "context", "docId", "token", new Crypto(), anonymizationService);
 
-        Assertions.assertEquals("<ENTITY:phone-number>token</ENTITY>", replacement);
+        Assertions.assertEquals("<ENTITY:phone-number>token</ENTITY>", replacement.getReplacement());
 
     }
 

@@ -25,7 +25,7 @@ public class SpanTest {
     @Test
     public void cloneTest() {
 
-        Span span1 = Span.make(1, 6, FilterType.NER_ENTITY, "context", "document", 1.0,  "test", "***", false, new String[0]);
+        Span span1 = Span.make(1, 6, FilterType.NER_ENTITY, "context", "document", 1.0,  "test", "***", "salt",  false, new String[0]);
         Span span2 = span1.copy();
 
         Assertions.assertTrue(span1.equals(span2));
@@ -35,9 +35,9 @@ public class SpanTest {
     @Test
     public void shiftSpansTest1() {
 
-        Span span1 = Span.make(1, 6, FilterType.NER_ENTITY, "context", "document", 1.0, "test", "***", false, new String[0]);
-        Span span2 = Span.make(8, 12, FilterType.NER_ENTITY, "context", "document", 1.0, "test", "***", false, new String[0]);
-        Span span3 = Span.make(14, 20, FilterType.NER_ENTITY, "context", "document", 1.0, "test", "***", false, new String[0]);
+        Span span1 = Span.make(1, 6, FilterType.NER_ENTITY, "context", "document", 1.0, "test", "***", "salt",  false, new String[0]);
+        Span span2 = Span.make(8, 12, FilterType.NER_ENTITY, "context", "document", 1.0, "test", "***", "salt",  false, new String[0]);
+        Span span3 = Span.make(14, 20, FilterType.NER_ENTITY, "context", "document", 1.0, "test", "***", "salt",  false, new String[0]);
 
         final List<Span> spans = Arrays.asList(span1, span2, span3);
         final List<Span> shiftedSpans = Span.shiftSpans(4, span1, spans);
@@ -53,7 +53,7 @@ public class SpanTest {
     @Test
     public void shiftSpansTest2() {
 
-        Span span1 = Span.make(1, 6, FilterType.NER_ENTITY, "context", "document", 1.0, "test", "***", false, new String[0]);
+        Span span1 = Span.make(1, 6, FilterType.NER_ENTITY, "context", "document", 1.0, "test", "***", "salt",  false, new String[0]);
 
         final List<Span> spans = Arrays.asList(span1);
         final List<Span> shiftedSpans = Span.shiftSpans(4, span1, spans);
@@ -65,8 +65,8 @@ public class SpanTest {
     @Test
     public void doesIndexStartSpanTest1() {
 
-        Span span1 = Span.make(1, 6, FilterType.NER_ENTITY, "context", "document", 1.0, "test", "***", false, new String[0]);
-        Span span2 = Span.make(8, 12, FilterType.NER_ENTITY, "context", "document", 1.0, "test", "***", false, new String[0]);
+        Span span1 = Span.make(1, 6, FilterType.NER_ENTITY, "context", "document", 1.0, "test", "***", "salt",  false, new String[0]);
+        Span span2 = Span.make(8, 12, FilterType.NER_ENTITY, "context", "document", 1.0, "test", "***", "salt",  false, new String[0]);
 
         List<Span> spans = Arrays.asList(span1, span2);
 
@@ -80,8 +80,8 @@ public class SpanTest {
     @Test
     public void doesIndexStartSpanTest2() {
 
-        Span span1 = Span.make(1, 6, FilterType.NER_ENTITY, "context", "document", 1.0, "test", "***", false, new String[0]);
-        Span span2 = Span.make(8, 12, FilterType.NER_ENTITY, "context", "document", 1.0, "test", "***", false, new String[0]);
+        Span span1 = Span.make(1, 6, FilterType.NER_ENTITY, "context", "document", 1.0, "test", "***", "salt",  false, new String[0]);
+        Span span2 = Span.make(8, 12, FilterType.NER_ENTITY, "context", "document", 1.0, "test", "***", "salt",  false, new String[0]);
 
         List<Span> spans = Arrays.asList(span1, span2);
 
@@ -95,8 +95,8 @@ public class SpanTest {
     @Test
     public void doesIndexStartSpanTest3() {
 
-        Span span1 = Span.make(1, 6, FilterType.NER_ENTITY, "context", "document", 1.0, "test", "***", false, new String[0]);
-        Span span2 = Span.make(8, 12, FilterType.NER_ENTITY, "context", "document", 1.0, "test", "***", false, new String[0]);
+        Span span1 = Span.make(1, 6, FilterType.NER_ENTITY, "context", "document", 1.0, "test", "***", "salt",  false, new String[0]);
+        Span span2 = Span.make(8, 12, FilterType.NER_ENTITY, "context", "document", 1.0, "test", "***", "salt",  false, new String[0]);
 
         List<Span> spans = Arrays.asList(span1, span2);
 
@@ -110,8 +110,8 @@ public class SpanTest {
     public void ignored1() {
 
         List<Span> spans = new LinkedList<>();
-        spans.add(Span.make(1, 5, FilterType.NER_ENTITY, "context", "document", 1.0, "test", "***", false, new String[0]));
-        spans.add(Span.make(2, 12, FilterType.NER_ENTITY, "context", "document", 1.0, "test", "***", true, new String[0]));
+        spans.add(Span.make(1, 5, FilterType.NER_ENTITY, "context", "document", 1.0, "test", "***", "salt",  false, new String[0]));
+        spans.add(Span.make(2, 12, FilterType.NER_ENTITY, "context", "document", 1.0, "test", "***", "salt",  true, new String[0]));
 
         List<Span> nonIgnoredSpans = Span.dropIgnoredSpans(spans);
 
@@ -126,8 +126,8 @@ public class SpanTest {
     public void ignored2() {
 
         List<Span> spans = new LinkedList<>();
-        spans.add(Span.make(1, 5, FilterType.NER_ENTITY, "context", "document", 1.0, "test", "***", false, new String[0]));
-        spans.add(Span.make(2, 12, FilterType.NER_ENTITY, "context", "document", 1.0, "test", "***", false, new String[0]));
+        spans.add(Span.make(1, 5, FilterType.NER_ENTITY, "context", "document", 1.0, "test", "***", "salt",  false, new String[0]));
+        spans.add(Span.make(2, 12, FilterType.NER_ENTITY, "context", "document", 1.0, "test", "***", "salt",  false, new String[0]));
 
         List<Span> nonIgnoredSpans = Span.dropIgnoredSpans(spans);
 
@@ -143,8 +143,8 @@ public class SpanTest {
     public void ignored3() {
 
         List<Span> spans = new LinkedList<>();
-        spans.add(Span.make(1, 5, FilterType.NER_ENTITY, "context", "document", 1.0, "test", "***", true, new String[0]));
-        spans.add(Span.make(2, 12, FilterType.NER_ENTITY, "context", "document", 1.0, "test", "***", true, new String[0]));
+        spans.add(Span.make(1, 5, FilterType.NER_ENTITY, "context", "document", 1.0, "test", "***", "salt",  true, new String[0]));
+        spans.add(Span.make(2, 12, FilterType.NER_ENTITY, "context", "document", 1.0, "test", "***", "salt",  true, new String[0]));
 
         List<Span> nonIgnoredSpans = Span.dropIgnoredSpans(spans);
 
@@ -158,8 +158,8 @@ public class SpanTest {
     public void overlapping1() {
 
         List<Span> spans = new LinkedList<>();
-        spans.add(Span.make(1, 5, FilterType.NER_ENTITY, "context", "document", 1.0, "test", "***", false, new String[0]));
-        spans.add(Span.make(2, 12, FilterType.NER_ENTITY, "context", "document", 1.0, "test", "***", false, new String[0]));
+        spans.add(Span.make(1, 5, FilterType.NER_ENTITY, "context", "document", 1.0, "test", "***", "salt",  false, new String[0]));
+        spans.add(Span.make(2, 12, FilterType.NER_ENTITY, "context", "document", 1.0, "test", "***", "salt",  false, new String[0]));
 
         List<Span> nonOverlappingSpans = Span.dropOverlappingSpans(spans);
 
@@ -175,8 +175,8 @@ public class SpanTest {
     public void overlapping2() {
 
         List<Span> spans = new LinkedList<>();
-        spans.add(Span.make(2, 12, FilterType.NER_ENTITY, "context", "document", 0.5, "test", "***", false, new String[0]));
-        spans.add(Span.make(2, 12, FilterType.NER_ENTITY, "context", "document", 1.0, "test", "***", false, new String[0]));
+        spans.add(Span.make(2, 12, FilterType.NER_ENTITY, "context", "document", 0.5, "test", "***", "salt",  false, new String[0]));
+        spans.add(Span.make(2, 12, FilterType.NER_ENTITY, "context", "document", 1.0, "test", "***", "salt",  false, new String[0]));
 
         List<Span> nonOverlappingSpans = Span.dropOverlappingSpans(spans);
 
@@ -191,8 +191,8 @@ public class SpanTest {
     public void overlapping3() {
 
         List<Span> spans = new LinkedList<>();
-        spans.add(Span.make(2, 12, FilterType.NER_ENTITY, "context", "document", 0.5, "test", "***", false, new String[0]));
-        spans.add(Span.make(14, 20, FilterType.NER_ENTITY, "context", "document", 1.0, "test", "***", false, new String[0]));
+        spans.add(Span.make(2, 12, FilterType.NER_ENTITY, "context", "document", 0.5, "test", "***", "salt",  false, new String[0]));
+        spans.add(Span.make(14, 20, FilterType.NER_ENTITY, "context", "document", 1.0, "test", "***", "salt",  false, new String[0]));
 
         List<Span> nonOverlappingSpans = Span.dropOverlappingSpans(spans);
 
@@ -204,7 +204,7 @@ public class SpanTest {
     public void overlapping4() {
 
         List<Span> spans = new LinkedList<>();
-        spans.add(Span.make(2, 12, FilterType.NER_ENTITY, "context", "document", 0.5, "test", "***", false, new String[0]));
+        spans.add(Span.make(2, 12, FilterType.NER_ENTITY, "context", "document", 0.5, "test", "***", "salt",  false, new String[0]));
 
         List<Span> nonOverlappingSpans = Span.dropOverlappingSpans(spans);
 
@@ -216,8 +216,8 @@ public class SpanTest {
     public void overlapping5() {
 
         List<Span> spans = new LinkedList<>();
-        spans.add(Span.make(7, 17, FilterType.NER_ENTITY, "context", "document", 0.5, "test", "***", false, new String[0]));
-        spans.add(Span.make(0, 17, FilterType.NER_ENTITY, "context", "document", 1.0, "test", "***", false, new String[0]));
+        spans.add(Span.make(7, 17, FilterType.NER_ENTITY, "context", "document", 0.5, "test", "***", "salt",  false, new String[0]));
+        spans.add(Span.make(0, 17, FilterType.NER_ENTITY, "context", "document", 1.0, "test", "***", "salt",  false, new String[0]));
 
         List<Span> nonOverlappingSpans = Span.dropOverlappingSpans(spans);
 
@@ -234,8 +234,8 @@ public class SpanTest {
         // Duplicate spans should be dropped in favor of the one that appears in the list first.
 
         final List<Span> spans = new LinkedList<>();
-        spans.add(Span.make(7, 17, FilterType.ZIP_CODE, "context", "document", 1.0, "test", "***", false, new String[0]));
-        spans.add(Span.make(7, 17, FilterType.IDENTIFIER, "context", "document", 1.0, "test", "***", false, new String[0]));
+        spans.add(Span.make(7, 17, FilterType.ZIP_CODE, "context", "document", 1.0, "test", "***", "salt",  false, new String[0]));
+        spans.add(Span.make(7, 17, FilterType.IDENTIFIER, "context", "document", 1.0, "test", "***", "salt",  false, new String[0]));
 
         final List<Span> nonOverlappingSpans = Span.dropOverlappingSpans(spans);
 
@@ -251,14 +251,14 @@ public class SpanTest {
     @Test
     public void getIdenticalSpans1() {
 
-        final Span span1 = Span.make(7, 17, FilterType.ZIP_CODE, "context", "document", 1.0, "test", "***", false, new String[0]);
+        final Span span1 = Span.make(7, 17, FilterType.ZIP_CODE, "context", "document", 1.0, "test", "***", "salt",  false, new String[0]);
 
         final List<Span> spans = new LinkedList<>();
         spans.add(span1);
-        spans.add(Span.make(7, 17, FilterType.ZIP_CODE, "context", "document", 1.0, "test", "***", false, new String[0]));
-        spans.add(Span.make(7, 17, FilterType.IDENTIFIER, "context", "document", 1.0, "test", "***", false, new String[0]));
-        spans.add(Span.make(4, 19, FilterType.IDENTIFIER, "context", "document", 1.0, "test", "***", false, new String[0]));
-        spans.add(Span.make(22, 25, FilterType.IDENTIFIER, "context", "document", 1.0, "test", "***", false, new String[0]));
+        spans.add(Span.make(7, 17, FilterType.ZIP_CODE, "context", "document", 1.0, "test", "***", "salt",  false, new String[0]));
+        spans.add(Span.make(7, 17, FilterType.IDENTIFIER, "context", "document", 1.0, "test", "***", "salt",  false, new String[0]));
+        spans.add(Span.make(4, 19, FilterType.IDENTIFIER, "context", "document", 1.0, "test", "***", "salt",  false, new String[0]));
+        spans.add(Span.make(22, 25, FilterType.IDENTIFIER, "context", "document", 1.0, "test", "***", "salt",  false, new String[0]));
 
         final List<Span> identicalSpans = Span.getIdenticalSpans(span1, spans);
 
@@ -269,14 +269,14 @@ public class SpanTest {
     @Test
     public void getIdenticalSpans2() {
 
-        final Span span1 = Span.make(7, 17, FilterType.ZIP_CODE, "context", "document", 1.0, "test", "***", false, new String[0]);
+        final Span span1 = Span.make(7, 17, FilterType.ZIP_CODE, "context", "document", 1.0, "test", "***", "salt",  false, new String[0]);
 
         final List<Span> spans = new LinkedList<>();
         spans.add(span1);
-        spans.add(Span.make(7, 17, FilterType.IDENTIFIER, "context", "document", 1.0, "test", "***", false, new String[0]));
-        spans.add(Span.make(4, 19, FilterType.IDENTIFIER, "context", "document", 1.0, "test", "***", false, new String[0]));
-        spans.add(Span.make(22, 25, FilterType.IDENTIFIER, "context", "document", 1.0, "test", "***", false, new String[0]));
-        spans.add(Span.make(7, 17, FilterType.URL, "context", "document", 1.0, "test", "***", false, new String[0]));
+        spans.add(Span.make(7, 17, FilterType.IDENTIFIER, "context", "document", 1.0, "test", "***", "salt",  false, new String[0]));
+        spans.add(Span.make(4, 19, FilterType.IDENTIFIER, "context", "document", 1.0, "test", "***", "salt",  false, new String[0]));
+        spans.add(Span.make(22, 25, FilterType.IDENTIFIER, "context", "document", 1.0, "test", "***", "salt",  false, new String[0]));
+        spans.add(Span.make(7, 17, FilterType.URL, "context", "document", 1.0, "test", "***", "salt",  false, new String[0]));
 
         final List<Span> identicalSpans = Span.getIdenticalSpans(span1, spans);
 
@@ -287,16 +287,16 @@ public class SpanTest {
     @Test
     public void getIdenticalSpans3() {
 
-        final Span span1 = Span.make(7, 17, FilterType.ZIP_CODE, "context", "document", 1.0, "test", "***", false, new String[0]);
+        final Span span1 = Span.make(7, 17, FilterType.ZIP_CODE, "context", "document", 1.0, "test", "***", "salt",  false, new String[0]);
 
         final List<Span> spans = new LinkedList<>();
         spans.add(span1);
-        spans.add(Span.make(7, 17, FilterType.ZIP_CODE, "context", "document", 1.0, "test", "***", false, new String[0]));
-        spans.add(Span.make(7, 17, FilterType.IDENTIFIER, "context", "document", 1.0, "test", "***", false, new String[0]));
-        spans.add(Span.make(4, 19, FilterType.IDENTIFIER, "context", "document", 1.0, "test", "***", false, new String[0]));
-        spans.add(Span.make(22, 25, FilterType.IDENTIFIER, "context", "document", 1.0, "test", "***", false, new String[0]));
-        spans.add(Span.make(7, 17, FilterType.URL, "context", "document", 1.0, "test", "***", false, new String[0]));
-        spans.add(Span.make(22, 25, FilterType.AGE, "context", "document", 1.0, "test", "***", false, new String[0]));
+        spans.add(Span.make(7, 17, FilterType.ZIP_CODE, "context", "document", 1.0, "test", "***", "salt",  false, new String[0]));
+        spans.add(Span.make(7, 17, FilterType.IDENTIFIER, "context", "document", 1.0, "test", "***", "salt",  false, new String[0]));
+        spans.add(Span.make(4, 19, FilterType.IDENTIFIER, "context", "document", 1.0, "test", "***", "salt",  false, new String[0]));
+        spans.add(Span.make(22, 25, FilterType.IDENTIFIER, "context", "document", 1.0, "test", "***", "salt",  false, new String[0]));
+        spans.add(Span.make(7, 17, FilterType.URL, "context", "document", 1.0, "test", "***", "salt",  false, new String[0]));
+        spans.add(Span.make(22, 25, FilterType.AGE, "context", "document", 1.0, "test", "***", "salt",  false, new String[0]));
 
         final List<Span> identicalSpans = Span.getIdenticalSpans(span1, spans);
 

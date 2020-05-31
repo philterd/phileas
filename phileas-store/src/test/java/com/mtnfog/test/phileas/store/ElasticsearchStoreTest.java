@@ -64,7 +64,7 @@ public class ElasticsearchStoreTest {
 
         final ElasticsearchStore store = new ElasticsearchStore(INDEX_NAME, SCHEME, ELASTICSEARCH_HOST, PORT);
 
-        final Span span = Span.make(1, 2, FilterType.NER_ENTITY, "context", "documentId", 1.0, "test", "***", false, new String[0]);
+        final Span span = Span.make(1, 2, FilterType.NER_ENTITY, "context", "documentId", 1.0, "test", "***",  "", false, new String[0]);
 
         store.insert(span);
 
@@ -88,9 +88,9 @@ public class ElasticsearchStoreTest {
 
         final ElasticsearchStore store = new ElasticsearchStore(INDEX_NAME, SCHEME, ELASTICSEARCH_HOST, PORT);
 
-        final Span span1 = Span.make(1, 2, FilterType.NER_ENTITY, "context", "documentId", 1.0, "test", "***", false, new String[0]);
-        final Span span2 = Span.make(3, 6, FilterType.NER_ENTITY, "context", "documentId", 1.0, "test", "***", false, new String[0]);
-        final Span span3 = Span.make(7, 9, FilterType.NER_ENTITY, "context", "documentId", 1.0, "test", "***", false, new String[0]);
+        final Span span1 = Span.make(1, 2, FilterType.NER_ENTITY, "context", "documentId", 1.0, "test", "***",  "", false, new String[0]);
+        final Span span2 = Span.make(3, 6, FilterType.NER_ENTITY, "context", "documentId", 1.0, "test", "***",  "", false, new String[0]);
+        final Span span3 = Span.make(7, 9, FilterType.NER_ENTITY, "context", "documentId", 1.0, "test", "***",  "", false, new String[0]);
 
         store.insert(Arrays.asList(span1, span2, span3));
 

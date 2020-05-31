@@ -1,10 +1,9 @@
 package com.mtnfog.test.phileas.model.profile.filters.strategies.dynamic;
 
+import com.mtnfog.phileas.model.objects.Replacement;
 import com.mtnfog.phileas.model.profile.Crypto;
 import com.mtnfog.phileas.model.profile.filters.strategies.AbstractFilterStrategy;
-import com.mtnfog.phileas.model.profile.filters.strategies.ai.NerFilterStrategy;
 import com.mtnfog.phileas.model.profile.filters.strategies.dynamic.HospitalFilterStrategy;
-import com.mtnfog.phileas.model.profile.filters.strategies.rules.CreditCardFilterStrategy;
 import com.mtnfog.phileas.model.services.AnonymizationCacheService;
 import com.mtnfog.phileas.model.services.AnonymizationService;
 import org.apache.logging.log4j.LogManager;
@@ -12,10 +11,6 @@ import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 
 import static org.mockito.Mockito.when;
 
@@ -36,9 +31,9 @@ public class HospitalFilterStrategyTest {
         strategy.setStrategy(AbstractFilterStrategy.STATIC_REPLACE);
         strategy.setStaticReplacement("static-value");
 
-        final String replacement = strategy.getReplacement("name", "context", "docId", "token", new Crypto(), anonymizationService);
+        final Replacement replacement = strategy.getReplacement("name", "context", "docId", "token", new Crypto(), anonymizationService);
 
-        Assertions.assertEquals("static-value", replacement);
+        Assertions.assertEquals("static-value", replacement.getReplacement());
 
     }
 
@@ -51,9 +46,9 @@ public class HospitalFilterStrategyTest {
         strategy.setStrategy(AbstractFilterStrategy.REDACT);
         strategy.setRedactionFormat("REDACTION-%t");
 
-        final String replacement = strategy.getReplacement("name", "context", "docId", "token", new Crypto(), anonymizationService);
+        final Replacement replacement = strategy.getReplacement("name", "context", "docId", "token", new Crypto(), anonymizationService);
 
-        Assertions.assertEquals("REDACTION-hospital", replacement);
+        Assertions.assertEquals("REDACTION-hospital", replacement.getReplacement());
 
     }
 
@@ -69,9 +64,9 @@ public class HospitalFilterStrategyTest {
         final AbstractFilterStrategy strategy = getFilterStrategy();
         strategy.setStrategy(AbstractFilterStrategy.RANDOM_REPLACE);
 
-        final String replacement = strategy.getReplacement("name", "context", "docId", "token", new Crypto(), anonymizationService);
+        final Replacement replacement = strategy.getReplacement("name", "context", "docId", "token", new Crypto(), anonymizationService);
 
-        Assertions.assertNotEquals("random", replacement);
+        Assertions.assertNotEquals("random", replacement.getReplacement());
 
     }
 
@@ -87,9 +82,9 @@ public class HospitalFilterStrategyTest {
         final AbstractFilterStrategy strategy = getFilterStrategy();
         strategy.setStrategy("something-wrong");
 
-        final String replacement = strategy.getReplacement("name", "context", "docId", "token", new Crypto(), anonymizationService);
+        final Replacement replacement = strategy.getReplacement("name", "context", "docId", "token", new Crypto(), anonymizationService);
 
-        Assertions.assertEquals("{{{REDACTED-hospital}}}", replacement);
+        Assertions.assertEquals("{{{REDACTED-hospital}}}", replacement.getReplacement());
 
     }
 
@@ -105,9 +100,9 @@ public class HospitalFilterStrategyTest {
         strategy.setStrategy(AbstractFilterStrategy.REDACT);
         strategy.setRedactionFormat("<ENTITY:%t>%v</ENTITY>");
 
-        final String replacement = strategy.getReplacement("name", "context", "docId", "token", new Crypto(), anonymizationService);
+        final Replacement replacement = strategy.getReplacement("name", "context", "docId", "token", new Crypto(), anonymizationService);
 
-        Assertions.assertEquals("<ENTITY:hospital>token</ENTITY>", replacement);
+        Assertions.assertEquals("<ENTITY:hospital>token</ENTITY>", replacement.getReplacement());
 
     }
 

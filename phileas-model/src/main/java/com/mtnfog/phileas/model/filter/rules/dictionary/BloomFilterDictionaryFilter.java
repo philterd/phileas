@@ -3,6 +3,7 @@ package com.mtnfog.phileas.model.filter.rules.dictionary;
 import com.google.common.hash.BloomFilter;
 import com.google.common.hash.Funnels;
 import com.mtnfog.phileas.model.enums.FilterType;
+import com.mtnfog.phileas.model.objects.Replacement;
 import com.mtnfog.phileas.model.objects.Span;
 import com.mtnfog.phileas.model.profile.Crypto;
 import com.mtnfog.phileas.model.profile.FilterProfile;
@@ -81,8 +82,8 @@ public class BloomFilterDictionaryFilter extends DictionaryFilter {
                     final double confidence = 1.0;
                     final String[] window = getWindow(text, characterStart, characterEnd);
 
-                    final String replacement = getReplacement(filterProfile.getName(), context, documentId, token, confidence, classification);
-                    spans.add(Span.make(characterStart, characterEnd, getFilterType(), context, documentId, confidence, token, replacement, isIgnored, window));
+                    final Replacement replacement = getReplacement(filterProfile.getName(), context, documentId, token, confidence, classification);
+                    spans.add(Span.make(characterStart, characterEnd, getFilterType(), context, documentId, confidence, token, replacement.getReplacement(), replacement.getSalt(), isIgnored, window));
 
                 }
 

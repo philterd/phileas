@@ -45,6 +45,9 @@ public final class Span {
     private String replacement;
 
     @Expose
+    private String salt;
+
+    @Expose
     private boolean ignored;
 
     // Encapsulates the characterStart and characterEnd for easy intersection functions.
@@ -71,7 +74,7 @@ public final class Span {
      * @param window The tokens surrounding the span.
      */
     private Span(int characterStart, int characterEnd, FilterType filterType, String context, String documentId,
-                 double confidence, String text, String replacement, boolean ignored, String[] window) {
+                 double confidence, String text, String replacement, String salt, boolean ignored, String[] window) {
 
         this.characterStart = characterStart;
         this.characterEnd = characterEnd;
@@ -81,6 +84,7 @@ public final class Span {
         this.confidence = confidence;
         this.text = text;
         this.replacement = replacement;
+        this.salt = salt;
         this.ignored = ignored;
         this.window = window;
 
@@ -100,9 +104,9 @@ public final class Span {
      * @return A {@link Span} object with the given properties.
      */
     public static Span make(int characterStart, int characterEnd, FilterType filterType, String context,
-                            String documentId, double confidence, String text, String replacement, boolean ignored, String[] window) {
+                            String documentId, double confidence, String text, String replacement, String salt, boolean ignored, String[] window) {
 
-        final Span span = new Span(characterStart, characterEnd, filterType, context, documentId, confidence, text, replacement, ignored, window);
+        final Span span = new Span(characterStart, characterEnd, filterType, context, documentId, confidence, text, replacement, salt, ignored, window);
 
         // This is made here and not passed into the constructor because that would be redundant
         // given the characterStart and characterEnd parameters in the constructor.
@@ -125,7 +129,7 @@ public final class Span {
      */
     public Span copy() {
 
-        final Span clone = Span.make(characterStart, characterEnd, filterType, context, documentId, confidence, text, replacement, ignored, window);
+        final Span clone = Span.make(characterStart, characterEnd, filterType, context, documentId, confidence, text, salt, replacement, ignored, window);
 
         clone.range = range;
 
@@ -152,7 +156,7 @@ public final class Span {
                 final int end = span.getCharacterEnd() + shift;
 
                 shiftedSpans.add(Span.make(start, end, span.filterType, span.context, span.documentId, span.confidence,
-                        span.text, span.replacement, span.ignored, span.window));
+                        span.text, span.replacement, span.salt, span.ignored, span.window));
 
             }
 
@@ -442,6 +446,14 @@ public final class Span {
 
     public void setClassification(String classification) {
         this.classification = classification;
+    }
+
+    public String getSalt() {
+        return salt;
+    }
+
+    public void setSalt(String salt) {
+        this.salt = salt;
     }
 
 }

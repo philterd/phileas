@@ -3,11 +3,13 @@ package com.mtnfog.phileas.model.profile.filters.strategies.ai;
 import com.mtnfog.phileas.model.conditions.ParsedCondition;
 import com.mtnfog.phileas.model.conditions.ParserListener;
 import com.mtnfog.phileas.model.enums.FilterType;
+import com.mtnfog.phileas.model.objects.Replacement;
 import com.mtnfog.phileas.model.profile.Crypto;
 import com.mtnfog.phileas.model.profile.filters.strategies.AbstractFilterStrategy;
 import com.mtnfog.phileas.model.services.AnonymizationService;
 import com.mtnfog.phileas.model.utils.Encryption;
 import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -100,9 +102,10 @@ public class NerFilterStrategy extends AbstractFilterStrategy {
     }
 
     @Override
-    public String getReplacement(String label, String context, String documentId, String token, Crypto crypto, AnonymizationService anonymizationService) throws Exception {
+    public Replacement getReplacement(String label, String context, String documentId, String token, Crypto crypto, AnonymizationService anonymizationService) throws Exception {
 
         String replacement = null;
+        String salt = "";
 
         if(StringUtils.equalsIgnoreCase(strategy, REDACT)) {
 
@@ -129,7 +132,11 @@ public class NerFilterStrategy extends AbstractFilterStrategy {
 
         } else if(StringUtils.equalsIgnoreCase(strategy, HASH_SHA256_REPLACE)) {
 
-            replacement = DigestUtils.sha256Hex(token);
+            if(isSalt()) {
+                salt = RandomStringUtils.randomAlphanumeric(16);
+            }
+
+            replacement = DigestUtils.sha256Hex(token + salt);
 
         } else {
 
@@ -138,7 +145,7 @@ public class NerFilterStrategy extends AbstractFilterStrategy {
 
         }
 
-        return replacement;
+        return new Replacement(replacement, salt);
 
     }
 

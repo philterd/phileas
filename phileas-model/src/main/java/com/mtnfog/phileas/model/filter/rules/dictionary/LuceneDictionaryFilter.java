@@ -2,6 +2,7 @@ package com.mtnfog.phileas.model.filter.rules.dictionary;
 
 import com.mtnfog.phileas.model.enums.FilterType;
 import com.mtnfog.phileas.model.enums.SensitivityLevel;
+import com.mtnfog.phileas.model.objects.Replacement;
 import com.mtnfog.phileas.model.objects.Span;
 import com.mtnfog.phileas.model.profile.Crypto;
 import com.mtnfog.phileas.model.profile.FilterProfile;
@@ -249,10 +250,10 @@ public class LuceneDictionaryFilter extends DictionaryFilter implements Serializ
                                 final String classification = "";
 
                                 // Get the replacement token or the original token if no filter strategy conditions are met.
-                                final String replacement = getReplacement(filterProfile.getName(), context, documentId, token, confidence, classification);
+                                final Replacement replacement = getReplacement(filterProfile.getName(), context, documentId, token, confidence, classification);
 
                                 // Add the span to the list.
-                                spans.add(Span.make(characterStart, characterEnd, getFilterType(), context, documentId, confidence, token, replacement, isIgnored, window));
+                                spans.add(Span.make(characterStart, characterEnd, getFilterType(), context, documentId, confidence, token, replacement.getReplacement(), replacement.getSalt(), isIgnored, window));
 
                             }
 

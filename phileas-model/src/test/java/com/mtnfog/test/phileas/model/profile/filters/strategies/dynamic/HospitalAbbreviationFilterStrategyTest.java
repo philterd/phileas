@@ -1,5 +1,6 @@
 package com.mtnfog.test.phileas.model.profile.filters.strategies.dynamic;
 
+import com.mtnfog.phileas.model.objects.Replacement;
 import com.mtnfog.phileas.model.profile.Crypto;
 import com.mtnfog.phileas.model.profile.filters.strategies.AbstractFilterStrategy;
 import com.mtnfog.phileas.model.profile.filters.strategies.dynamic.HospitalAbbreviationFilterStrategy;
@@ -30,9 +31,9 @@ public class HospitalAbbreviationFilterStrategyTest {
         strategy.setStrategy(AbstractFilterStrategy.STATIC_REPLACE);
         strategy.setStaticReplacement("static-value");
 
-        final String replacement = strategy.getReplacement("name", "context", "docId", "token", new Crypto(), anonymizationService);
+        final Replacement replacement = strategy.getReplacement("name", "context", "docId", "token", new Crypto(), anonymizationService);
 
-        Assertions.assertEquals("static-value", replacement);
+        Assertions.assertEquals("static-value", replacement.getReplacement());
 
     }
 
@@ -45,9 +46,9 @@ public class HospitalAbbreviationFilterStrategyTest {
         strategy.setStrategy(AbstractFilterStrategy.REDACT);
         strategy.setRedactionFormat("REDACTION-%t");
 
-        final String replacement = strategy.getReplacement("name", "context", "docId", "token", new Crypto(), anonymizationService);
+        final Replacement replacement = strategy.getReplacement("name", "context", "docId", "token", new Crypto(), anonymizationService);
 
-        Assertions.assertEquals("REDACTION-hospital-abbreviation", replacement);
+        Assertions.assertEquals("REDACTION-hospital-abbreviation", replacement.getReplacement());
 
     }
 
@@ -63,9 +64,9 @@ public class HospitalAbbreviationFilterStrategyTest {
         final AbstractFilterStrategy strategy = getFilterStrategy();
         strategy.setStrategy(AbstractFilterStrategy.RANDOM_REPLACE);
 
-        final String replacement = strategy.getReplacement("name", "context", "docId", "token", new Crypto(), anonymizationService);
+        final Replacement replacement = strategy.getReplacement("name", "context", "docId", "token", new Crypto(), anonymizationService);
 
-        Assertions.assertNotEquals("random", replacement);
+        Assertions.assertNotEquals("random", replacement.getReplacement());
 
     }
 
@@ -81,9 +82,9 @@ public class HospitalAbbreviationFilterStrategyTest {
         final AbstractFilterStrategy strategy = getFilterStrategy();
         strategy.setStrategy("something-wrong");
 
-        final String replacement = strategy.getReplacement("name", "context", "docId", "token", new Crypto(), anonymizationService);
+        final Replacement replacement = strategy.getReplacement("name", "context", "docId", "token", new Crypto(), anonymizationService);
 
-        Assertions.assertEquals("{{{REDACTED-hospital-abbreviation}}}", replacement);
+        Assertions.assertEquals("{{{REDACTED-hospital-abbreviation}}}", replacement.getReplacement());
 
     }
 
@@ -99,9 +100,9 @@ public class HospitalAbbreviationFilterStrategyTest {
         strategy.setStrategy(AbstractFilterStrategy.REDACT);
         strategy.setRedactionFormat("<ENTITY:%t>%v</ENTITY>");
 
-        final String replacement = strategy.getReplacement("name", "context", "docId", "token", new Crypto(), anonymizationService);
+        final Replacement replacement = strategy.getReplacement("name", "context", "docId", "token", new Crypto(), anonymizationService);
 
-        Assertions.assertEquals("<ENTITY:hospital-abbreviation>token</ENTITY>", replacement);
+        Assertions.assertEquals("<ENTITY:hospital-abbreviation>token</ENTITY>", replacement.getReplacement());
 
     }
 

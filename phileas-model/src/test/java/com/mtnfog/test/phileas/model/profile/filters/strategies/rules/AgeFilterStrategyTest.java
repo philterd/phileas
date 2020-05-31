@@ -1,10 +1,12 @@
 package com.mtnfog.test.phileas.model.profile.filters.strategies.rules;
 
+import com.mtnfog.phileas.model.objects.Replacement;
 import com.mtnfog.phileas.model.profile.Crypto;
 import com.mtnfog.phileas.model.profile.filters.strategies.AbstractFilterStrategy;
 import com.mtnfog.phileas.model.profile.filters.strategies.rules.AgeFilterStrategy;
 import com.mtnfog.phileas.model.services.AnonymizationCacheService;
 import com.mtnfog.phileas.model.services.AnonymizationService;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Assertions;
@@ -32,9 +34,9 @@ public class AgeFilterStrategyTest {
         strategy.setStrategy(AbstractFilterStrategy.STATIC_REPLACE);
         strategy.setStaticReplacement("static-value");
 
-        final String replacement = strategy.getReplacement("name", "context", "docId", "token", new Crypto(), anonymizationService);
+        final Replacement replacement = strategy.getReplacement("name", "context", "docId", "token", new Crypto(), anonymizationService);
 
-        Assertions.assertEquals("static-value", replacement);
+        Assertions.assertEquals("static-value", replacement.getReplacement());
 
     }
 
@@ -47,9 +49,9 @@ public class AgeFilterStrategyTest {
         strategy.setStrategy(AbstractFilterStrategy.REDACT);
         strategy.setRedactionFormat("REDACTION-%t");
 
-        final String replacement = strategy.getReplacement("name", "context", "docId", "token", new Crypto(), anonymizationService);
+        final Replacement replacement = strategy.getReplacement("name", "context", "docId", "token", new Crypto(), anonymizationService);
 
-        Assertions.assertEquals("REDACTION-age", replacement);
+        Assertions.assertEquals("REDACTION-age", replacement.getReplacement());
 
     }
 
@@ -65,9 +67,9 @@ public class AgeFilterStrategyTest {
         final AbstractFilterStrategy strategy = getFilterStrategy();
         strategy.setStrategy(AbstractFilterStrategy.RANDOM_REPLACE);
 
-        final String replacement = strategy.getReplacement("name", "context", "docId", "token", new Crypto(), anonymizationService);
+        final Replacement replacement = strategy.getReplacement("name", "context", "docId", "token", new Crypto(), anonymizationService);
 
-        Assertions.assertNotEquals("random", replacement);
+        Assertions.assertNotEquals("random", replacement.getReplacement());
 
     }
 
@@ -83,9 +85,9 @@ public class AgeFilterStrategyTest {
         final AbstractFilterStrategy strategy = getFilterStrategy();
         strategy.setStrategy("something-wrong");
 
-        final String replacement = strategy.getReplacement("name", "context", "docId", "token", new Crypto(), anonymizationService);
+        final Replacement replacement = strategy.getReplacement("name", "context", "docId", "token", new Crypto(), anonymizationService);
 
-        Assertions.assertEquals("{{{REDACTED-age}}}", replacement);
+        Assertions.assertEquals("{{{REDACTED-age}}}", replacement.getReplacement());
 
     }
 
@@ -101,9 +103,9 @@ public class AgeFilterStrategyTest {
         strategy.setStrategy(AbstractFilterStrategy.REDACT);
         strategy.setRedactionFormat("<ENTITY:%t>%v</ENTITY>");
 
-        final String replacement = strategy.getReplacement("name", "context", "docId", "token", new Crypto(), anonymizationService);
+        final Replacement replacement = strategy.getReplacement("name", "context", "docId", "token", new Crypto(), anonymizationService);
 
-        Assertions.assertEquals("<ENTITY:age>token</ENTITY>", replacement);
+        Assertions.assertEquals("<ENTITY:age>token</ENTITY>", replacement.getReplacement());
 
     }
 
@@ -121,9 +123,9 @@ public class AgeFilterStrategyTest {
 
         final Crypto crypto = new Crypto("9EE7A356FDFE43F069500B0086758346E66D8583E0CE1CFCA04E50F67ECCE5D1", "B674D3B8F1C025AEFF8F6D5FA1AEAD3A");
 
-        final String replacement = strategy.getReplacement("name", "context", "docId", "token", crypto, anonymizationService);
+        final Replacement replacement = strategy.getReplacement("name", "context", "docId", "token", crypto, anonymizationService);
 
-        Assertions.assertEquals("{{j6HcaY8m7hPACVVyQtj4PQ==}}", replacement);
+        Assertions.assertEquals("{{j6HcaY8m7hPACVVyQtj4PQ==}}", replacement.getReplacement());
 
     }
 
@@ -161,10 +163,12 @@ public class AgeFilterStrategyTest {
         final AbstractFilterStrategy strategy = getFilterStrategy();
         strategy.setStrategy(AbstractFilterStrategy.HASH_SHA256_REPLACE);
 
-        final String replacement = strategy.getReplacement("name", "context", "docId", "token", null, anonymizationService);
+        final Replacement replacement = strategy.getReplacement("name", "context", "docId", "token", null, anonymizationService);
+
+        final String expected = DigestUtils.sha256Hex("token" + replacement.getSalt());
 
         // This is the hash of "token"
-        Assertions.assertEquals("3c469e9d6c5875d37a43f353d4f88e61fcf812c66eee3457465a40b0da4153e0", replacement);
+        Assertions.assertEquals(expected, replacement.getReplacement());
 
     }
 
