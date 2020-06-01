@@ -23,6 +23,11 @@ public class AgeFilterStrategy extends AbstractFilterStrategy {
     private static FilterType filterType = FilterType.AGE;
 
     @Override
+    public FilterType getFilterType() {
+        return filterType;
+    }
+
+    @Override
     public boolean evaluateCondition(String context, String documentId, String token, String condition, double confidence, String classification) {
 
         boolean conditionsSatisfied = false;

@@ -18,7 +18,7 @@ public class StateFilterStrategyTest {
 
     private static final Logger LOGGER = LogManager.getLogger(StateFilterStrategyTest.class);
 
-    private AbstractFilterStrategy getFilterStrategy() {
+    public AbstractFilterStrategy getFilterStrategy() {
         return new StateFilterStrategy();
     }
 

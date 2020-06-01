@@ -29,7 +29,7 @@ public class CustomDictionaryFilterStrategyTest {
 
     private static final Logger LOGGER = LogManager.getLogger(CustomDictionaryFilterStrategyTest.class);
 
-    private AbstractFilterStrategy getFilterStrategy() {
+    public AbstractFilterStrategy getFilterStrategy() {
         return new CustomDictionaryFilterStrategy();
     }
 

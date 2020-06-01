@@ -18,7 +18,7 @@ public class HospitalFilterStrategyTest {
 
     private static final Logger LOGGER = LogManager.getLogger(HospitalFilterStrategyTest.class);
 
-    private AbstractFilterStrategy getFilterStrategy() {
+    public AbstractFilterStrategy getFilterStrategy() {
         return new HospitalFilterStrategy();
     }
 

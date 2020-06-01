@@ -95,6 +95,8 @@ public abstract class AbstractFilterStrategy {
      */
     public abstract boolean evaluateCondition(String context, String documentId, String token, String condition, double confidence, String classification);
 
+    public abstract FilterType getFilterType();
+
     protected String getRedactedToken(String token, String label, FilterType filterType) {
 
         String replacement = getValueOrDefault(redactionFormat, DEFAULT_REDACTION)

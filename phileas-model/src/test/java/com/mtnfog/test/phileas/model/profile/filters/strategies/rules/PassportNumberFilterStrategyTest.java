@@ -9,11 +9,11 @@ import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
-public class PassportNumberFilterStrategyTest {
+public class PassportNumberFilterStrategyTest extends AbstractFilterStrategyTest {
 
     private static final Logger LOGGER = LogManager.getLogger(PassportNumberFilterStrategyTest.class);
 
-    private AbstractFilterStrategy getFilterStrategy() {
+    public AbstractFilterStrategy getFilterStrategy() {
         return new PassportNumberFilterStrategy();
     }
 

@@ -23,6 +23,11 @@ public class CustomDictionaryFilterStrategy extends AbstractFilterStrategy {
     private static FilterType filterType = FilterType.CUSTOM_DICTIONARY;
 
     @Override
+    public FilterType getFilterType() {
+        return filterType;
+    }
+
+    @Override
     public boolean evaluateCondition(String context, String documentId, String token, String condition, double confidence, String classification) {
 
         boolean conditionsSatisfied = false;

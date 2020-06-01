@@ -18,7 +18,7 @@ public class NerFilterStrategyTest {
 
     private static final Logger LOGGER = LogManager.getLogger(NerFilterStrategyTest.class);
 
-    private AbstractFilterStrategy getFilterStrategy() {
+    public AbstractFilterStrategy getFilterStrategy() {
         return new NerFilterStrategy();
     }
 

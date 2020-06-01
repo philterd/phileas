@@ -1,176 +1,20 @@
 package com.mtnfog.test.phileas.model.profile.filters.strategies.rules;
 
-import com.mtnfog.phileas.model.objects.Replacement;
-import com.mtnfog.phileas.model.profile.Crypto;
 import com.mtnfog.phileas.model.profile.filters.strategies.AbstractFilterStrategy;
-import com.mtnfog.phileas.model.profile.filters.strategies.rules.AgeFilterStrategy;
 import com.mtnfog.phileas.model.profile.filters.strategies.rules.IbanCodeFilterStrategy;
-import com.mtnfog.phileas.model.services.AnonymizationCacheService;
-import com.mtnfog.phileas.model.services.AnonymizationService;
-import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
 import java.io.IOException;
 
-import static org.mockito.Mockito.when;
-
-public class IbanCodeFilterStrategyTest {
+public class IbanCodeFilterStrategyTest extends AbstractFilterStrategyTest {
 
     private static final Logger LOGGER = LogManager.getLogger(IbanCodeFilterStrategyTest.class);
 
-    private AbstractFilterStrategy getFilterStrategy() {
+    public AbstractFilterStrategy getFilterStrategy() {
         return new IbanCodeFilterStrategy();
-    }
-    
-    @Test
-    public void replacement1() throws Exception {
-
-        final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
-
-        final AbstractFilterStrategy strategy = getFilterStrategy();
-        strategy.setStrategy(AbstractFilterStrategy.STATIC_REPLACE);
-        strategy.setStaticReplacement("static-value");
-
-        final Replacement replacement = strategy.getReplacement("name", "context", "docId", "token", new Crypto(), anonymizationService);
-
-        Assertions.assertEquals("static-value", replacement.getReplacement());
-
-    }
-
-    @Test
-    public void replacement2() throws Exception {
-
-        final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
-
-        final AbstractFilterStrategy strategy = getFilterStrategy();
-        strategy.setStrategy(AbstractFilterStrategy.REDACT);
-        strategy.setRedactionFormat("REDACTION-%t");
-
-        final Replacement replacement = strategy.getReplacement("name", "context", "docId", "token", new Crypto(), anonymizationService);
-
-        Assertions.assertEquals("REDACTION-iban-code", replacement.getReplacement());
-
-    }
-
-    @Test
-    public void replacement3() throws Exception {
-
-        final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
-        final AnonymizationCacheService anonymizationCacheService = Mockito.mock(AnonymizationCacheService.class);
-
-        when(anonymizationCacheService.get("context", "token")).thenReturn("random");
-        when(anonymizationService.getAnonymizationCacheService()).thenReturn(anonymizationCacheService);
-
-        final AbstractFilterStrategy strategy = getFilterStrategy();
-        strategy.setStrategy(AbstractFilterStrategy.RANDOM_REPLACE);
-
-        final Replacement replacement = strategy.getReplacement("name", "context", "docId", "token", new Crypto(), anonymizationService);
-
-        Assertions.assertNotEquals("random", replacement.getReplacement());
-
-    }
-
-    @Test
-    public void replacement4() throws Exception {
-
-        final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
-        final AnonymizationCacheService anonymizationCacheService = Mockito.mock(AnonymizationCacheService.class);
-
-        when(anonymizationCacheService.get("context", "token")).thenReturn("random");
-        when(anonymizationService.getAnonymizationCacheService()).thenReturn(anonymizationCacheService);
-
-        final AbstractFilterStrategy strategy = getFilterStrategy();
-        strategy.setStrategy("something-wrong");
-
-        final Replacement replacement = strategy.getReplacement("name", "context", "docId", "token", new Crypto(), anonymizationService);
-
-        Assertions.assertEquals("{{{REDACTED-iban-code}}}", replacement.getReplacement());
-
-    }
-
-    @Test
-    public void replacement5() throws Exception {
-
-        final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
-        final AnonymizationCacheService anonymizationCacheService = Mockito.mock(AnonymizationCacheService.class);
-
-        when(anonymizationService.getAnonymizationCacheService()).thenReturn(anonymizationCacheService);
-
-        final AbstractFilterStrategy strategy = getFilterStrategy();
-        strategy.setStrategy(AbstractFilterStrategy.REDACT);
-        strategy.setRedactionFormat("<ENTITY:%t>%v</ENTITY>");
-
-        final Replacement replacement = strategy.getReplacement("name", "context", "docId", "token", new Crypto(), anonymizationService);
-
-        Assertions.assertEquals("<ENTITY:iban-code>token</ENTITY>", replacement.getReplacement());
-
-    }
-
-    @Test
-    public void replacement6() throws Exception {
-
-        final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
-        final AnonymizationCacheService anonymizationCacheService = Mockito.mock(AnonymizationCacheService.class);
-
-        when(anonymizationService.getAnonymizationCacheService()).thenReturn(anonymizationCacheService);
-
-        final AbstractFilterStrategy strategy = getFilterStrategy();
-        strategy.setStrategy(AbstractFilterStrategy.CRYPTO_REPLACE);
-        strategy.setRedactionFormat("<ENTITY:%t>%v</ENTITY>");
-
-        final Crypto crypto = new Crypto("9EE7A356FDFE43F069500B0086758346E66D8583E0CE1CFCA04E50F67ECCE5D1", "B674D3B8F1C025AEFF8F6D5FA1AEAD3A");
-
-        final Replacement replacement = strategy.getReplacement("name", "context", "docId", "token", crypto, anonymizationService);
-
-        Assertions.assertEquals("{{j6HcaY8m7hPACVVyQtj4PQ==}}", replacement.getReplacement());
-
-    }
-
-    @Test
-    public void replacement7() {
-
-        final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
-        final AnonymizationCacheService anonymizationCacheService = Mockito.mock(AnonymizationCacheService.class);
-
-        when(anonymizationService.getAnonymizationCacheService()).thenReturn(anonymizationCacheService);
-
-        final AbstractFilterStrategy strategy = getFilterStrategy();
-        strategy.setStrategy(AbstractFilterStrategy.CRYPTO_REPLACE);
-        strategy.setRedactionFormat("<ENTITY:%t>%v</ENTITY>");
-
-        final Crypto crypto = new Crypto();
-
-        Assertions.assertThrows(Exception.class, () -> {
-
-            // Throws an exception because we tried to use CRYPTO_REPLACE without any keys.
-            strategy.getReplacement("name", "context", "docId", "token", crypto, anonymizationService);
-
-        });
-
-    }
-
-    @Test
-    public void replacement8() throws Exception {
-
-        final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
-        final AnonymizationCacheService anonymizationCacheService = Mockito.mock(AnonymizationCacheService.class);
-
-        when(anonymizationService.getAnonymizationCacheService()).thenReturn(anonymizationCacheService);
-
-        final AbstractFilterStrategy strategy = getFilterStrategy();
-        strategy.setStrategy(AbstractFilterStrategy.HASH_SHA256_REPLACE);
-
-        final Replacement replacement = strategy.getReplacement("name", "context", "docId", "token", null, anonymizationService);
-
-        final String expected = DigestUtils.sha256Hex("token" + replacement.getSalt());
-
-        // This is the hash of "token"
-        Assertions.assertEquals(expected, replacement.getReplacement());
-
     }
 
     @Test

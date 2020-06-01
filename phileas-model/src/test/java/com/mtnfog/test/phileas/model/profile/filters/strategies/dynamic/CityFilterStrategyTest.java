@@ -18,7 +18,7 @@ public class CityFilterStrategyTest {
 
     private static final Logger LOGGER = LogManager.getLogger(CityFilterStrategyTest.class);
 
-    private AbstractFilterStrategy getFilterStrategy() {
+    public AbstractFilterStrategy getFilterStrategy() {
         return new CityFilterStrategy();
     }
 

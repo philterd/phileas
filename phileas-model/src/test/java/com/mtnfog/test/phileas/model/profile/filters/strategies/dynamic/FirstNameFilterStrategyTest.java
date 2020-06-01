@@ -18,7 +18,7 @@ public class FirstNameFilterStrategyTest {
 
     private static final Logger LOGGER = LogManager.getLogger(FirstNameFilterStrategyTest.class);
 
-    private AbstractFilterStrategy getFilterStrategy() {
+    public AbstractFilterStrategy getFilterStrategy() {
         return new FirstNameFilterStrategy();
     }
 

@@ -23,6 +23,11 @@ public class NerFilterStrategy extends AbstractFilterStrategy {
     private static FilterType filterType = FilterType.NER_ENTITY;
 
     @Override
+    public FilterType getFilterType() {
+        return filterType;
+    }
+
+    @Override
     public boolean evaluateCondition(String context, String documentId, String token, String condition, double confidence, String classification) {
 
         final List<ParsedCondition> parsedConditions = ParserListener.getTerminals(condition);

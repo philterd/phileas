@@ -38,6 +38,11 @@ public class ZipCodeFilterStrategy extends AbstractFilterStrategy {
         this.zipCodeMetadataService = new ZipCodeMetadataService();
     }
 
+    @Override
+    public FilterType getFilterType() {
+        return filterType;
+    }
+
     @SerializedName("truncateDigits")
     @Expose
     private Integer truncateDigits;
