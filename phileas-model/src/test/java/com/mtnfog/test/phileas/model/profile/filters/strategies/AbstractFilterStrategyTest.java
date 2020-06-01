@@ -1,4 +1,4 @@
-package com.mtnfog.test.phileas.model.profile.filters.strategies.rules;
+package com.mtnfog.test.phileas.model.profile.filters.strategies;
 
 import com.mtnfog.phileas.model.objects.Replacement;
 import com.mtnfog.phileas.model.profile.Crypto;
@@ -200,6 +200,83 @@ public abstract class AbstractFilterStrategyTest {
 
         // This is the hash of "token"
         Assertions.assertEquals(expected, replacement.getReplacement());
+
+    }
+
+    @Test
+    public void evaluateCondition1() throws IOException {
+
+        final AbstractFilterStrategy strategy = getFilterStrategy();
+
+        final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentId", "90210", "token startswith \"902\"", 1.0, "");
+
+        Assertions.assertTrue(conditionSatisfied);
+
+    }
+
+    @Test
+    public void evaluateCondition2() throws IOException {
+
+        final AbstractFilterStrategy strategy = getFilterStrategy();
+
+        final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentId", "90210", "token == \"90210\"", 1.0, "");
+
+        Assertions.assertTrue(conditionSatisfied);
+
+    }
+
+    @Test
+    public void evaluateCondition3() throws IOException {
+
+        final AbstractFilterStrategy strategy = getFilterStrategy();
+
+        final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentId", "12345", "token == \"90210\"", 1.0, "");
+
+        Assertions.assertFalse(conditionSatisfied);
+
+    }
+
+    @Test
+    public void evaluateCondition4() throws IOException {
+
+        final AbstractFilterStrategy strategy = getFilterStrategy();
+
+        final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentId", "John Smith", "context == \"c1\"",  1.0, "");
+
+        Assertions.assertFalse(conditionSatisfied);
+
+    }
+
+    @Test
+    public void evaluateCondition5() throws IOException {
+
+        final AbstractFilterStrategy strategy = getFilterStrategy();
+
+        final boolean conditionSatisfied = strategy.evaluateCondition("ctx", "documentId", "John Smith", "context == \"ctx\"",  1.0, "");
+
+        Assertions.assertTrue(conditionSatisfied);
+
+    }
+
+    @Test
+    public void evaluateCondition6() throws IOException {
+
+        final AbstractFilterStrategy strategy = getFilterStrategy();
+
+        final boolean conditionSatisfied = strategy.evaluateCondition("ctx", "documentId", "John Smith", "confidence > 0.5",  1.0, "");
+
+        Assertions.assertTrue(conditionSatisfied);
+
+    }
+
+    @Test
+    public void evaluateCondition7() throws IOException {
+
+        final AbstractFilterStrategy strategy = getFilterStrategy();
+
+        final boolean conditionSatisfied = strategy.evaluateCondition("ctx", "documentId", "John Smith", "confidence < 0.5",  1.0, "");
+
+        Assertions.assertFalse(conditionSatisfied);
 
     }
 

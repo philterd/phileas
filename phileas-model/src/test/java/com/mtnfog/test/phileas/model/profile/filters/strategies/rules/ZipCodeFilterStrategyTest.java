@@ -5,6 +5,7 @@ import com.mtnfog.phileas.model.profile.Crypto;
 import com.mtnfog.phileas.model.profile.filters.strategies.AbstractFilterStrategy;
 import com.mtnfog.phileas.model.profile.filters.strategies.rules.ZipCodeFilterStrategy;
 import com.mtnfog.phileas.model.services.AnonymizationService;
+import com.mtnfog.test.phileas.model.profile.filters.strategies.AbstractFilterStrategyTest;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Assertions;
@@ -93,72 +94,6 @@ public class ZipCodeFilterStrategyTest extends AbstractFilterStrategyTest {
         ZipCodeFilterStrategy strategy = new ZipCodeFilterStrategy();
 
         final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentId", "90210", "population > 20000 and population < 20010", 1.0, "");
-
-        Assertions.assertFalse(conditionSatisfied);
-
-    }
-
-    @Test
-    public void evaluateCondition6() throws IOException {
-
-        ZipCodeFilterStrategy strategy = new ZipCodeFilterStrategy();
-
-        final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentId", "20500", "token startswith \"20\"", 1.0, "");
-
-        Assertions.assertTrue(conditionSatisfied);
-
-    }
-
-    @Test
-    public void evaluateCondition7() throws IOException {
-
-        ZipCodeFilterStrategy strategy = new ZipCodeFilterStrategy();
-
-        final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentId", "31590", "token startswith \"20\"", 1.0, "");
-
-        Assertions.assertFalse(conditionSatisfied);
-
-    }
-
-    @Test
-    public void evaluateCondition8() throws IOException {
-
-        final AbstractFilterStrategy strategy = getFilterStrategy();
-
-        final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentId", "John Smith", "context == \"c1\"",  1.0, "");
-
-        Assertions.assertFalse(conditionSatisfied);
-
-    }
-
-    @Test
-    public void evaluateCondition9() throws IOException {
-
-        final AbstractFilterStrategy strategy = getFilterStrategy();
-
-        final boolean conditionSatisfied = strategy.evaluateCondition("ctx", "documentId", "John Smith", "context == \"ctx\"",  1.0, "");
-
-        Assertions.assertTrue(conditionSatisfied);
-
-    }
-
-    @Test
-    public void evaluateCondition10() throws IOException {
-
-        final AbstractFilterStrategy strategy = getFilterStrategy();
-
-        final boolean conditionSatisfied = strategy.evaluateCondition("ctx", "documentId", "John Smith", "confidence > 0.5",  1.0, "");
-
-        Assertions.assertTrue(conditionSatisfied);
-
-    }
-
-    @Test
-    public void evaluateCondition11() throws IOException {
-
-        final AbstractFilterStrategy strategy = getFilterStrategy();
-
-        final boolean conditionSatisfied = strategy.evaluateCondition("ctx", "documentId", "John Smith", "confidence < 0.5",  1.0, "");
 
         Assertions.assertFalse(conditionSatisfied);
 
