@@ -129,7 +129,9 @@
 		<sonar.jacoco.reportPath>${project.build.directory}/jacoco.exec</sonar.jacoco.reportPath>
 		<sonar.language>java</sonar.language>
 		<sonar.exclusions>src/main/java/com/mtnfog/phileas/model/conditions/parser/**</sonar.exclusions>
-		<sonar.dependencyCheck.htmlReportPath>${project.build.directory}</sonar.dependencyCheck.htmlReportPath>
+		<sonar.dependencyCheck.reportPath>${project.build.directory}/dependency-check-report.xml</sonar.dependencyCheck.reportPath>
+		<sonar.dependencyCheck.htmlReportPath>${project.build.directory}/dependency-check-report.html</sonar.dependencyCheck.htmlReportPath>
+		<sonar.dependencyCheck.jsonReportPath>${project.build.directory}/dependency-check-report.json</sonar.dependencyCheck.jsonReportPath>
 	</properties>
 	<build>
 		<extensions>
@@ -276,12 +278,12 @@
 					<plugin>
 						<groupId>org.owasp</groupId>
 						<artifactId>dependency-check-maven</artifactId>
-						<version>5.2.1</version>
+						<version>5.3.2</version>
 						<configuration>
 							<retireJsAnalyzerEnabled>false</retireJsAnalyzerEnabled>
 							<failOnError>false</failOnError>
 							<failBuildOnAnyVulnerability>false</failBuildOnAnyVulnerability>
-							<format>xml</format>
+							<format>ALL</format>
 							<skipProvidedScope>true</skipProvidedScope>
 							<skipTestScope>true</skipTestScope>
 						</configuration>
