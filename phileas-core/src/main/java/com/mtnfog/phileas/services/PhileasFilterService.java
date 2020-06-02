@@ -191,7 +191,7 @@ public class PhileasFilterService implements FilterService {
 
     public List<PostFilter> getPostFiltersForFilterProfile(final String filterProfileName) throws IOException {
 
-        LOGGER.info("Reloading filter profiles.");
+        LOGGER.debug("Reloading filter profiles.");
 
         final String filterProfileJson = filterProfileService.get(filterProfileName);
         final FilterProfile filterProfile = gson.fromJson(filterProfileJson, FilterProfile.class);
@@ -229,7 +229,7 @@ public class PhileasFilterService implements FilterService {
 
     public List<Filter> getFiltersForFilterProfile(final String filterProfileName) throws IOException {
 
-        LOGGER.info("Getting filters for filter profile [{}]", filterProfileName);
+        LOGGER.debug("Getting filters for filter profile [{}]", filterProfileName);
 
         final String filterProfileJson = filterProfileService.get(filterProfileName);
         final FilterProfile filterProfile = gson.fromJson(filterProfileJson, FilterProfile.class);
