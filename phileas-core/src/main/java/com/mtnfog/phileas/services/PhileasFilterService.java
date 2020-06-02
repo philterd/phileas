@@ -141,15 +141,15 @@ public class PhileasFilterService implements FilterService {
         // TODO: How to trigger a reload if the profile had to be retrieved from disk?
         final String filterProfileJson = filterProfileService.get(filterProfileName);
 
-        LOGGER.info("Deserializing filter profile [{}]", filterProfileName);
+        LOGGER.debug("Deserializing filter profile [{}]", filterProfileName);
         final FilterProfile filterProfile = gson.fromJson(filterProfileJson, FilterProfile.class);
 
         // See if we need to generate a document ID.
         if(StringUtils.isEmpty(documentId)) {
 
             // PHL-58: Use a hash function to generate the document ID.
-            LOGGER.info("Generating document ID.");
             documentId = DigestUtils.md5Hex(UUID.randomUUID().toString() + "-" + context + "-" + filterProfileName + "-" + input);
+            LOGGER.debug("Generated document ID {}", documentId);
 
         }
 
