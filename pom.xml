@@ -129,6 +129,7 @@
 		<sonar.jacoco.reportPath>${project.build.directory}/jacoco.exec</sonar.jacoco.reportPath>
 		<sonar.language>java</sonar.language>
 		<sonar.exclusions>src/main/java/com/mtnfog/phileas/model/conditions/parser/**</sonar.exclusions>
+		<sonar.dependencyCheck.htmlReportPath>${project.build.directory}</sonar.dependencyCheck.htmlReportPath>
 	</properties>
 	<build>
 		<extensions>
