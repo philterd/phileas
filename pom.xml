@@ -115,6 +115,7 @@
 		<libphonenumber.version>8.12.3</libphonenumber.version>
 		<log4j.version>2.13.2</log4j.version>
 		<lucene.version>8.3.0</lucene.version>
+		<micrometer.version>1.5.1</micrometer.version>
 		<mockito.version>1.10.19</mockito.version>
 		<owner.version>1.0.11</owner.version>
 		<redis-mock.version>0.1.6</redis-mock.version>

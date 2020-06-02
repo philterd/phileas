@@ -104,10 +104,6 @@ public interface PhileasConfiguration extends Config {
     @Key("metrics.prefix")
     String metricsPrefix();
 
-    @DefaultValue("true")
-    @Key("metrics.console.enabled")
-    boolean metricsConsoleEnabled();
-
     @DefaultValue("false")
     @Key("metrics.jmx.enabled")
     boolean metricsJmxEnabled();
@@ -126,12 +122,6 @@ public interface PhileasConfiguration extends Config {
     @DefaultValue("us-east-1")
     @Key("metrics.cloudwatch.region")
     String metricsCloudWatchRegion();
-
-    @Key("metrics.cloudwatch.access.key")
-    String metricsCloudWatchAccessKey();
-
-    @Key("metrics.cloudwatch.secret.key")
-    String metricsCloudWatchSecretKey();
 
     @Key("metrics.cloudwatch.namespace")
     String metricsCloudWatchNamespace();

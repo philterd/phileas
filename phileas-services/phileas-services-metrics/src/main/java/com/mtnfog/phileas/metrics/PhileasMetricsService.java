@@ -1,29 +1,27 @@
 package com.mtnfog.phileas.metrics;
 
-import com.amazonaws.auth.AWSStaticCredentialsProvider;
-import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.cloudwatch.AmazonCloudWatchAsync;
 import com.amazonaws.services.cloudwatch.AmazonCloudWatchAsyncClientBuilder;
-import com.codahale.metrics.*;
-import com.codahale.metrics.jmx.JmxReporter;
 import com.mtnfog.phileas.configuration.PhileasConfiguration;
 import com.mtnfog.phileas.model.enums.FilterType;
-import com.mtnfog.phileas.model.objects.Span;
 import com.mtnfog.phileas.model.services.MetricsService;
-import io.github.azagniotov.metrics.reporter.cloudwatch.CloudWatchReporter;
+import io.micrometer.cloudwatch.CloudWatchConfig;
+import io.micrometer.cloudwatch.CloudWatchMeterRegistry;
+import io.micrometer.core.instrument.Clock;
+import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.composite.CompositeMeterRegistry;
+import io.micrometer.datadog.DatadogConfig;
+import io.micrometer.datadog.DatadogMeterRegistry;
+import io.micrometer.jmx.JmxConfig;
+import io.micrometer.jmx.JmxMeterRegistry;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.coursera.metrics.datadog.DatadogReporter;
-import org.coursera.metrics.datadog.transport.HttpTransport;
 
-import java.util.EnumSet;
-import java.util.LinkedHashMap;
+import java.time.Duration;
+import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
-
-import static org.coursera.metrics.datadog.DatadogReporter.Expansion.*;
 
 public class PhileasMetricsService implements MetricsService {
 
@@ -31,18 +29,12 @@ public class PhileasMetricsService implements MetricsService {
 
     private static final String TOTAL_DOCUMENTS_PROCESSED = "total.documents.processed";
     private static final String DOCUMENTS_PROCESSED = "documents.processed";
-    private static final String ENTITY_CONFIDENCE = "entity.confidence";
 
-    private transient MetricRegistry registry;
+    private transient CompositeMeterRegistry compositeMeterRegistry;
 
     private transient Counter processed;
-    private transient Meter documents;
-    private transient Histogram entityConfidenceValues;
-    private Map<FilterType, Counter> countersPerFilterType = new LinkedHashMap<>();
-
-    private transient ConsoleReporter consoleReporter;
-    private transient JmxReporter jmxReporter;
-    private transient DatadogReporter datadogReporter;
+    private transient Counter documents;
+    private transient Map<FilterType, Counter> filterTypes;
 
     /**
      * Creates a new metrics service.
@@ -50,58 +42,67 @@ public class PhileasMetricsService implements MetricsService {
      */
     public PhileasMetricsService(PhileasConfiguration phileasConfiguration) {
 
-        registry = new MetricRegistry();
-
-        final String metricsPrefix = phileasConfiguration.metricsPrefix();
-
-        processed = registry.counter(metricsPrefix + "." + TOTAL_DOCUMENTS_PROCESSED);
-        documents = registry.meter(metricsPrefix + "." + DOCUMENTS_PROCESSED);
-        entityConfidenceValues = registry.histogram(metricsPrefix + "." + ENTITY_CONFIDENCE);
-
-        // Add a counter for each filter type.
-        for(FilterType filterType : FilterType.values()) {
-            countersPerFilterType.put(filterType, registry.counter(metricsPrefix + "." + filterType.name()));
-        }
-
-        consoleReporter = ConsoleReporter.forRegistry(registry)
-                .convertRatesTo(TimeUnit.SECONDS)
-                .convertDurationsTo(TimeUnit.MILLISECONDS)
-                .build();
-
-        // PHL-121: Only start console reporter if it is enabled.
-        if(phileasConfiguration.metricsConsoleEnabled()) {
-            consoleReporter.start(300, TimeUnit.SECONDS);
-        }
+        compositeMeterRegistry = new CompositeMeterRegistry();
 
         if(phileasConfiguration.metricsJmxEnabled()) {
+            LOGGER.info("Initializing JMX metric reporting.");
 
-            LOGGER.info("Enabling JMX metrics.");
+            final JmxConfig jmxConfig = new JmxConfig() {
+                @Override
+                public String get(String s) {
+                    return null;
+                }
 
-            jmxReporter = JmxReporter.forRegistry(registry).build();
-            jmxReporter.start();
+                @Override
+                public Duration step() {
+                    return Duration.ofSeconds(60);
+                }
 
+                @Override
+                public String prefix() {
+                    return phileasConfiguration.metricsPrefix();
+                }
+            };
+
+            compositeMeterRegistry.add(new JmxMeterRegistry(jmxConfig, Clock.SYSTEM));
         }
 
         if(phileasConfiguration.metricsDataDogEnabled()) {
 
+            LOGGER.info("Initializing Datadog metric reporting.");
+
             final String datadogApiKey = phileasConfiguration.metricsDataDogApiKey();
 
-            if(StringUtils.isEmpty(datadogApiKey)) {
+            if (StringUtils.isEmpty(datadogApiKey)) {
 
                 LOGGER.warn("Datadog metric reporting enabled but no Datadog API key provided. Reporting will not be enabled.");
 
             } else {
 
-                LOGGER.info("Enabling Datadog metric reporting.");
+                final DatadogConfig datadogConfig = new DatadogConfig() {
+                    @Override
+                    public String apiKey() {
+                        return phileasConfiguration.metricsDataDogApiKey();
+                    }
 
-                final HttpTransport udpTransport = new HttpTransport.Builder().withApiKey(datadogApiKey).build();
-                final EnumSet<DatadogReporter.Expansion> expansions = EnumSet.of(COUNT, RATE_1_MINUTE, RATE_15_MINUTE, MEDIAN, P95, P99);
-                datadogReporter = DatadogReporter.forRegistry(registry)
-                        .withTransport(udpTransport)
-                        .withExpansions(expansions)
-                        .build();
+                    @Override
+                    public Duration step() {
+                        return Duration.ofSeconds(60);
+                    }
 
-                datadogReporter.start(60, TimeUnit.SECONDS);
+                    @Override
+                    public String get(String k) {
+                        return null;
+                    }
+
+                    @Override
+                    public String prefix() {
+                        return phileasConfiguration.metricsPrefix();
+                    }
+
+                };
+
+                compositeMeterRegistry.add(new DatadogMeterRegistry(datadogConfig, Clock.SYSTEM));
 
             }
 
@@ -109,51 +110,47 @@ public class PhileasMetricsService implements MetricsService {
 
         if(phileasConfiguration.metricsCloudWatchEnabled()) {
 
-            LOGGER.info("Enabling AWS CloudWatch metrics.");
+            LOGGER.info("Initializing AWS CloudWatch metric reporting.");
 
-            final String region = phileasConfiguration.metricsCloudWatchRegion();
-            final String accessKey = phileasConfiguration.metricsCloudWatchAccessKey();
-            final String secretKey = phileasConfiguration.metricsCloudWatchSecretKey();
-            final String namespace = phileasConfiguration.metricsCloudWatchNamespace();
+            final CloudWatchConfig cloudWatchConfig = new CloudWatchConfig() {
+                @Override
+                public String get(String s) {
+                    return null;
+                }
 
-            AmazonCloudWatchAsync amazonCloudWatchAsync;
+                @Override
+                public Duration step() {
+                    return Duration.ofSeconds(60);
+                }
 
-            if(StringUtils.isEmpty(accessKey) || StringUtils.isEmpty(secretKey)) {
+                @Override
+                public String namespace() {
+                    return phileasConfiguration.metricsCloudWatchNamespace();
+                }
 
-                amazonCloudWatchAsync = AmazonCloudWatchAsyncClientBuilder
-                        .standard()
-                        .withRegion(Regions.fromName(region))
-                        .build();
+                @Override
+                public String prefix() {
+                    return phileasConfiguration.metricsPrefix();
+                }
 
-            } else {
+            };
 
-                amazonCloudWatchAsync = AmazonCloudWatchAsyncClientBuilder
-                        .standard()
-                        .withCredentials(new AWSStaticCredentialsProvider(new BasicAWSCredentials(accessKey, secretKey)))
-                        .withRegion(Regions.fromName(region))
-                        .build();
+            final AmazonCloudWatchAsync amazonCloudWatchAsync = AmazonCloudWatchAsyncClientBuilder
+                    .standard()
+                    .withRegion(Regions.fromName(phileasConfiguration.metricsCloudWatchRegion()))
+                    .build();
 
-            }
+            compositeMeterRegistry.add(new CloudWatchMeterRegistry(cloudWatchConfig, Clock.SYSTEM, amazonCloudWatchAsync));
 
-            final CloudWatchReporter cloudWatchReporter =
-                    CloudWatchReporter.forRegistry(registry, amazonCloudWatchAsync, namespace)
-                            .convertRatesTo(TimeUnit.SECONDS)
-                            .convertDurationsTo(TimeUnit.MILLISECONDS)
-                            .filter(MetricFilter.ALL)
-                            .withPercentiles(CloudWatchReporter.Percentile.P75, CloudWatchReporter.Percentile.P99)
-                            .withOneMinuteMeanRate()
-                            .withFiveMinuteMeanRate()
-                            .withFifteenMinuteMeanRate()
-                            .withMeanRate()
-                            .withArithmeticMean()
-                            .withStdDev()
-                            .withStatisticSet()
-                            .withZeroValuesSubmission()
-                            .withReportRawCountValue()
-                            .build();
+        }
 
-            cloudWatchReporter.start(60, TimeUnit.SECONDS);
+        this.processed = compositeMeterRegistry.counter(phileasConfiguration.metricsPrefix() + "." + TOTAL_DOCUMENTS_PROCESSED);
+        this.documents = compositeMeterRegistry.counter(phileasConfiguration.metricsPrefix() + "." + DOCUMENTS_PROCESSED);
 
+        // Add a counter for each filter type.
+        this.filterTypes = new HashMap<>();
+        for(FilterType filterType : FilterType.values()) {
+            filterTypes.put(filterType, compositeMeterRegistry.counter(phileasConfiguration.metricsPrefix() + "." + filterType.name()));
         }
 
     }
@@ -161,7 +158,7 @@ public class PhileasMetricsService implements MetricsService {
     @Override
     public void incrementFilterType(FilterType filterType) {
 
-        countersPerFilterType.get(filterType).inc();
+        filterTypes.get(filterType).increment();
 
     }
 
@@ -175,15 +172,8 @@ public class PhileasMetricsService implements MetricsService {
     @Override
     public void incrementProcessed(long count) {
 
-        processed.inc(count);
-        documents.mark(count);
-
-    }
-
-    @Override
-    public void reportEntitySpan(Span span) {
-
-        entityConfidenceValues.update((int) (span.getConfidence() * 100));
+        processed.increment(count);
+        documents.increment(count);
 
     }
 

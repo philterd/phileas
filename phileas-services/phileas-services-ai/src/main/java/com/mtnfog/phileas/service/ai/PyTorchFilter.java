@@ -154,12 +154,7 @@ public class PyTorchFilter extends NerFilter {
             final String[] window = getWindow(input, start, end);
 
             final boolean isIgnored = ignored.contains(text);
-            final Span span = Span.make(start, end, FilterType.NER_ENTITY, context, documentId, confidence, text, replacement.getReplacement(), replacement.getSalt(), isIgnored, window);
-
-            // Send the entity to the metrics service for reporting.
-            metricsService.reportEntitySpan(span);
-
-            return span;
+            return Span.make(start, end, FilterType.NER_ENTITY, context, documentId, confidence, text, replacement.getReplacement(), replacement.getSalt(), isIgnored, window);
 
         }
 
