@@ -10,6 +10,7 @@ import io.micrometer.cloudwatch.CloudWatchConfig;
 import io.micrometer.cloudwatch.CloudWatchMeterRegistry;
 import io.micrometer.core.instrument.Clock;
 import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.Tag;
 import io.micrometer.core.instrument.composite.CompositeMeterRegistry;
 import io.micrometer.datadog.DatadogConfig;
 import io.micrometer.datadog.DatadogMeterRegistry;
@@ -20,6 +21,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.time.Duration;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -151,13 +153,17 @@ public class PhileasMetricsService implements MetricsService {
 
         }
 
-        this.processed = compositeMeterRegistry.counter(phileasConfiguration.metricsPrefix() + "." + TOTAL_DOCUMENTS_PROCESSED, phileasConfiguration.metricsTag());
-        this.documents = compositeMeterRegistry.counter(phileasConfiguration.metricsPrefix() + "." + DOCUMENTS_PROCESSED, phileasConfiguration.metricsTag());
+        if(StringUtils.isNotEmpty(phileasConfiguration.metricsHost())) {
+            compositeMeterRegistry.config().commonTags("host", phileasConfiguration.metricsHost());
+        }
+        
+        this.processed = compositeMeterRegistry.counter(phileasConfiguration.metricsPrefix() + "." + TOTAL_DOCUMENTS_PROCESSED);
+        this.documents = compositeMeterRegistry.counter(phileasConfiguration.metricsPrefix() + "." + DOCUMENTS_PROCESSED);
 
         // Add a counter for each filter type.
         this.filterTypes = new HashMap<>();
         for(FilterType filterType : FilterType.values()) {
-            filterTypes.put(filterType, compositeMeterRegistry.counter(phileasConfiguration.metricsPrefix() + "." + filterType.name().toLowerCase().replace("-", "."), phileasConfiguration.metricsTag()));
+            filterTypes.put(filterType, compositeMeterRegistry.counter(phileasConfiguration.metricsPrefix() + "." + filterType.name().toLowerCase().replace("-", ".")));
         }
 
     }
