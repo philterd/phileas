@@ -46,7 +46,7 @@ pipeline {
         stage ('Build') {
             steps {
                 sh "mvn -version"
-                sh "mvn -U clean license:aggregate-add-third-party license:aggregate-download-licenses install deploy -Pit"
+                sh "mvn -U clean license:aggregate-add-third-party license:aggregate-download-licenses install deploy -Pit,owasp"
                 sh "mvn sonar:sonar -Dsonar.host.url=https://build.mtnfog.com/sonarqube -Dsonar.login=${env.SONARQUBE_TOKEN}"
             }
             post {
