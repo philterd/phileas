@@ -113,6 +113,7 @@ public class PhileasMetricsService implements MetricsService {
             LOGGER.info("Initializing AWS CloudWatch metric reporting.");
 
             final CloudWatchConfig cloudWatchConfig = new CloudWatchConfig() {
+
                 @Override
                 public String get(String s) {
                     return null;
@@ -133,6 +134,12 @@ public class PhileasMetricsService implements MetricsService {
                     return phileasConfiguration.metricsPrefix();
                 }
 
+                @Override
+                public int batchSize() {
+                    // 20 is the maximum batch size.
+                    return CloudWatchConfig.MAX_BATCH_SIZE;
+                }
+
             };
 
             final AmazonCloudWatchAsync amazonCloudWatchAsync = AmazonCloudWatchAsyncClientBuilder
@@ -144,13 +151,13 @@ public class PhileasMetricsService implements MetricsService {
 
         }
 
-        this.processed = compositeMeterRegistry.counter(phileasConfiguration.metricsPrefix() + "." + TOTAL_DOCUMENTS_PROCESSED);
-        this.documents = compositeMeterRegistry.counter(phileasConfiguration.metricsPrefix() + "." + DOCUMENTS_PROCESSED);
+        this.processed = compositeMeterRegistry.counter(phileasConfiguration.metricsPrefix() + "." + TOTAL_DOCUMENTS_PROCESSED, phileasConfiguration.metricsTag());
+        this.documents = compositeMeterRegistry.counter(phileasConfiguration.metricsPrefix() + "." + DOCUMENTS_PROCESSED, phileasConfiguration.metricsTag());
 
         // Add a counter for each filter type.
         this.filterTypes = new HashMap<>();
         for(FilterType filterType : FilterType.values()) {
-            filterTypes.put(filterType, compositeMeterRegistry.counter(phileasConfiguration.metricsPrefix() + "." + filterType.name()));
+            filterTypes.put(filterType, compositeMeterRegistry.counter(phileasConfiguration.metricsPrefix() + "." + filterType.name().toLowerCase().replace("-", "."), phileasConfiguration.metricsTag()));
         }
 
     }
