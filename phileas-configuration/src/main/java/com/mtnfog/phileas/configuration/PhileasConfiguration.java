@@ -126,8 +126,8 @@ public interface PhileasConfiguration extends Config {
     @Key("metrics.cloudwatch.namespace")
     String metricsCloudWatchNamespace();
 
-    @Key("metrics.host")
-    String metricsHost();
+    @Key("metrics.hostname")
+    String metricsHostname();
 
     // Store
     @DefaultValue("false")
