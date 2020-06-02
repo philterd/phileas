@@ -154,9 +154,9 @@ public class PhileasMetricsService implements MetricsService {
         }
 
         if(StringUtils.isNotEmpty(phileasConfiguration.metricsHost())) {
-            compositeMeterRegistry.config().commonTags("host", phileasConfiguration.metricsHost());
+            compositeMeterRegistry.config().commonTags("hostname", phileasConfiguration.metricsHost());
         }
-        
+
         this.processed = compositeMeterRegistry.counter(phileasConfiguration.metricsPrefix() + "." + TOTAL_DOCUMENTS_PROCESSED);
         this.documents = compositeMeterRegistry.counter(phileasConfiguration.metricsPrefix() + "." + DOCUMENTS_PROCESSED);
 
