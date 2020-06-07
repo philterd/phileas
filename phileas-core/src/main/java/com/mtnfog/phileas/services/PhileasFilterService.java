@@ -16,6 +16,7 @@ import com.mtnfog.phileas.model.profile.Ignored;
 import com.mtnfog.phileas.model.profile.filters.CustomDictionary;
 import com.mtnfog.phileas.model.profile.filters.Identifier;
 import com.mtnfog.phileas.model.profile.filters.Section;
+import com.mtnfog.phileas.model.profile.filters.TrackingNumber;
 import com.mtnfog.phileas.model.responses.FilterResponse;
 import com.mtnfog.phileas.model.services.*;
 import com.mtnfog.phileas.processors.unstructured.UnstructuredDocumentProcessor;
@@ -306,6 +307,10 @@ public class PhileasFilterService implements FilterService {
 
         if(filterProfile.getIdentifiers().hasFilter(FilterType.STATE_ABBREVIATION) && filterProfile.getIdentifiers().getStateAbbreviation().isEnabled()) {
             enabledFilters.add(new StateAbbreviationFilter(filterProfile.getIdentifiers().getStateAbbreviation().getStateAbbreviationsFilterStrategies(), new StateAbbreviationAnonymizationService(anonymizationCacheService), alertService, filterProfile.getIdentifiers().getStateAbbreviation().getIgnored(), filterProfile.getCrypto(), windowSize));
+        }
+
+        if(filterProfile.getIdentifiers().hasFilter(FilterType.TRACKING_NUMBER) && filterProfile.getIdentifiers().getTrackingNumber().isEnabled()) {
+            enabledFilters.add(new TrackingNumberFilter(filterProfile.getIdentifiers().getTrackingNumber().getTrackingNumberFilterStrategies(), new AlphanumericAnonymizationService(anonymizationCacheService), alertService, filterProfile.getIdentifiers().getTrackingNumber().getIgnored(), filterProfile.getCrypto(), windowSize));
         }
 
         if(filterProfile.getIdentifiers().hasFilter(FilterType.URL) && filterProfile.getIdentifiers().getUrl().isEnabled()) {

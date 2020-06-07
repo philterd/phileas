@@ -89,6 +89,9 @@ public abstract class AbstractFilterTest {
         StateAbbreviation stateAbbreviation = new StateAbbreviation();
         stateAbbreviation.setStateAbbreviationsFilterStrategies(Arrays.asList(new StateAbbreviationFilterStrategy()));
 
+        TrackingNumber trackingNumber = new TrackingNumber();
+        trackingNumber.setTrackingNumberFilterStrategies(Arrays.asList(new TrackingNumberFilterStrategy()));
+
         Url url = new Url();
         url.setUrlFilterStrategies(Arrays.asList(new UrlFilterStrategy()));
 
@@ -150,6 +153,7 @@ public abstract class AbstractFilterTest {
         identifiers.setSections(Arrays.asList(section));
         identifiers.setSsn(ssn);
         identifiers.setStateAbbreviation(stateAbbreviation);
+        identifiers.setTrackingNumber(trackingNumber);
         identifiers.setUrl(url);
         identifiers.setVin(vin);
         identifiers.setZipCode(zipCode);

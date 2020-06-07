@@ -31,6 +31,7 @@ public enum FilterType {
     SSN("ssn", true),
     STATE_ABBREVIATION("state-abbreviation", false),
     SURNAME("surname", false),
+    TRACKING_NUMBER("tracking-number", true),
     URL("url", true),
     VIN("vin", true),
     ZIP_CODE("zip-code", true),
