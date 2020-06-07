@@ -25,16 +25,16 @@ public class TrackingNumberFilter extends RegexFilter {
 
         // FedEx
         final Pattern fedex1 = Pattern.compile("\\b[0-9]{20}\\b", Pattern.CASE_INSENSITIVE);
-        final FilterPattern fedex1FilterPattern = new FilterPattern.FilterPatternBuilder(fedex1, 0.90).withClassification("fedex").build();
+        final FilterPattern fedex1FilterPattern = new FilterPattern.FilterPatternBuilder(fedex1, 0.75).withClassification("fedex").build();
 
         final Pattern fedex2 = Pattern.compile("\\b[0-9]{15}\\b", Pattern.CASE_INSENSITIVE);
-        final FilterPattern fedex2FilterPattern = new FilterPattern.FilterPatternBuilder(fedex2, 0.90).withClassification("fedex").build();
+        final FilterPattern fedex2FilterPattern = new FilterPattern.FilterPatternBuilder(fedex2, 0.75).withClassification("fedex").build();
 
         final Pattern fedex3 = Pattern.compile("\\b[0-9]{12}\\b", Pattern.CASE_INSENSITIVE);
-        final FilterPattern fedex3FilterPattern = new FilterPattern.FilterPatternBuilder(fedex3, 0.90).withClassification("fedex").build();
+        final FilterPattern fedex3FilterPattern = new FilterPattern.FilterPatternBuilder(fedex3, 0.75).withClassification("fedex").build();
 
         final Pattern fedex4 = Pattern.compile("\\b[0-9]{22}\\b", Pattern.CASE_INSENSITIVE);
-        final FilterPattern fedex4FilterPattern = new FilterPattern.FilterPatternBuilder(fedex4, 0.90).withClassification("fedex").build();
+        final FilterPattern fedex4FilterPattern = new FilterPattern.FilterPatternBuilder(fedex4, 0.75).withClassification("fedex").build();
 
         // UPS
 
@@ -45,10 +45,10 @@ public class TrackingNumberFilter extends RegexFilter {
         final FilterPattern ups2FilterPattern = new FilterPattern.FilterPatternBuilder(ups2, 0.90).withClassification("ups").build();
 
         final Pattern ups3 = Pattern.compile("\\b[0-9]{9}\\b", Pattern.CASE_INSENSITIVE);
-        final FilterPattern ups3FilterPattern = new FilterPattern.FilterPatternBuilder(ups3, 0.90).withClassification("ups").build();
+        final FilterPattern ups3FilterPattern = new FilterPattern.FilterPatternBuilder(ups3, 0.75).withClassification("ups").build();
 
         final Pattern ups4 = Pattern.compile("\\b[0-9]{26}\\b", Pattern.CASE_INSENSITIVE);
-        final FilterPattern ups4FilterPattern = new FilterPattern.FilterPatternBuilder(ups4, 0.90).withClassification("ups").build();
+        final FilterPattern ups4FilterPattern = new FilterPattern.FilterPatternBuilder(ups4, 0.75).withClassification("ups").build();
 
         // USPS
 
@@ -64,6 +64,18 @@ public class TrackingNumberFilter extends RegexFilter {
         final Pattern usps4 = Pattern.compile("\\b([A-Z]{2})[0-9]{9}([A-Z]{2})\\b", Pattern.CASE_INSENSITIVE);
         final FilterPattern usps4FilterPattern = new FilterPattern.FilterPatternBuilder(usps4, 0.90).withClassification("usps").build();
 
+        final Pattern usps5 = Pattern.compile("\\b[0-9]{34}\\b", Pattern.CASE_INSENSITIVE);
+        final FilterPattern usps5FilterPattern = new FilterPattern.FilterPatternBuilder(usps5, 0.75).withClassification("usps").build();
+
+        final Pattern usps6 = Pattern.compile("\\b[0-9]{30}\\b", Pattern.CASE_INSENSITIVE);
+        final FilterPattern usps6FilterPattern = new FilterPattern.FilterPatternBuilder(usps6, 0.75).withClassification("usps").build();
+
+        final Pattern usps7 = Pattern.compile("\\b[0-9]{28}\\b", Pattern.CASE_INSENSITIVE);
+        final FilterPattern usps7FilterPattern = new FilterPattern.FilterPatternBuilder(usps7, 0.75).withClassification("usps").build();
+
+        final Pattern usps8 = Pattern.compile("\\b[0-9]{26}\\b", Pattern.CASE_INSENSITIVE);
+        final FilterPattern usps8FilterPattern = new FilterPattern.FilterPatternBuilder(usps8, 0.75).withClassification("usps").build();
+
         this.contextualTerms = new HashSet<>();
         this.contextualTerms.add("tracking");
         this.contextualTerms.add("shipment");
@@ -75,7 +87,7 @@ public class TrackingNumberFilter extends RegexFilter {
         this.analyzer = new Analyzer(contextualTerms,
                 fedex1FilterPattern, fedex2FilterPattern, fedex3FilterPattern, fedex4FilterPattern,
                 ups1FilterPattern, ups2FilterPattern, ups3FilterPattern, ups4FilterPattern,
-                usps1FilterPattern, usps2FilterPattern, usps3FilterPattern, usps4FilterPattern);
+                usps1FilterPattern, usps2FilterPattern, usps3FilterPattern, usps4FilterPattern, usps5FilterPattern, usps6FilterPattern, usps7FilterPattern, usps8FilterPattern);
 
     }
 
