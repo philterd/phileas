@@ -5,7 +5,10 @@ import com.mtnfog.phileas.model.profile.Crypto;
 import com.mtnfog.phileas.model.profile.filters.strategies.AbstractFilterStrategy;
 import com.mtnfog.phileas.model.services.AnonymizationCacheService;
 import com.mtnfog.phileas.model.services.AnonymizationService;
+import com.mtnfog.test.phileas.model.profile.filters.strategies.rules.DriversLicenseFilterStrategyTest;
 import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -15,6 +18,8 @@ import java.io.IOException;
 import static org.mockito.Mockito.when;
 
 public abstract class AbstractFilterStrategyTest {
+
+    protected static final Logger LOGGER = LogManager.getLogger(AbstractFilterStrategyTest.class);
 
     public abstract AbstractFilterStrategy getFilterStrategy() throws IOException;
 

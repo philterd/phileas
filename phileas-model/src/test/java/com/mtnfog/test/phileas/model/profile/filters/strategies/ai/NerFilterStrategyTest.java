@@ -6,8 +6,6 @@ import com.mtnfog.phileas.model.profile.filters.strategies.AbstractFilterStrateg
 import com.mtnfog.phileas.model.profile.filters.strategies.ai.NerFilterStrategy;
 import com.mtnfog.phileas.model.services.AnonymizationCacheService;
 import com.mtnfog.phileas.model.services.AnonymizationService;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -15,8 +13,6 @@ import org.mockito.Mockito;
 import static org.mockito.Mockito.when;
 
 public class NerFilterStrategyTest {
-
-    private static final Logger LOGGER = LogManager.getLogger(NerFilterStrategyTest.class);
 
     public AbstractFilterStrategy getFilterStrategy() {
         return new NerFilterStrategy();

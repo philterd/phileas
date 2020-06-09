@@ -6,8 +6,6 @@ import com.mtnfog.phileas.model.profile.filters.strategies.AbstractFilterStrateg
 import com.mtnfog.phileas.model.profile.filters.strategies.rules.ZipCodeFilterStrategy;
 import com.mtnfog.phileas.model.services.AnonymizationService;
 import com.mtnfog.test.phileas.model.profile.filters.strategies.AbstractFilterStrategyTest;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -15,8 +13,6 @@ import org.mockito.Mockito;
 import java.io.IOException;
 
 public class ZipCodeFilterStrategyTest extends AbstractFilterStrategyTest {
-
-    private static final Logger LOGGER = LogManager.getLogger(ZipCodeFilterStrategyTest.class);
 
     public AbstractFilterStrategy getFilterStrategy() throws IOException {
         return new ZipCodeFilterStrategy();
@@ -28,7 +24,7 @@ public class ZipCodeFilterStrategyTest extends AbstractFilterStrategyTest {
         Assertions.assertThrows(IllegalArgumentException.class, () -> {
             ZipCodeFilterStrategy strategy = new ZipCodeFilterStrategy();
             strategy.setRedactionFormat(ZipCodeFilterStrategy.TRUNCATE);
-            strategy.setTruncateDigits(new Integer(0));
+            strategy.setTruncateDigits(0);
         });
 
     }
@@ -39,7 +35,7 @@ public class ZipCodeFilterStrategyTest extends AbstractFilterStrategyTest {
         Assertions.assertThrows(IllegalArgumentException.class, () -> {
             ZipCodeFilterStrategy strategy = new ZipCodeFilterStrategy();
             strategy.setRedactionFormat(ZipCodeFilterStrategy.TRUNCATE);
-            strategy.setTruncateDigits(new Integer(5));
+            strategy.setTruncateDigits(5);
         });
 
     }

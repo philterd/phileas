@@ -3,16 +3,12 @@ package com.mtnfog.test.phileas.model.profile.filters.strategies.rules;
 import com.mtnfog.phileas.model.profile.filters.strategies.AbstractFilterStrategy;
 import com.mtnfog.phileas.model.profile.filters.strategies.rules.PhoneNumberExtensionFilterStrategy;
 import com.mtnfog.test.phileas.model.profile.filters.strategies.AbstractFilterStrategyTest;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
 public class PhoneNumberExtensionFilterStrategyTest extends AbstractFilterStrategyTest {
-
-    private static final Logger LOGGER = LogManager.getLogger(PhoneNumberExtensionFilterStrategyTest.class);
 
     public AbstractFilterStrategy getFilterStrategy() {
         return new PhoneNumberExtensionFilterStrategy();
