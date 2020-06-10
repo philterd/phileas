@@ -23,7 +23,7 @@ pipeline {
         PHILTER_REDIS_HOST = "philter-001.philter.fl8lv7.use1.cache.amazonaws.com"
         PHILTER_REDIS_PORT = "6379"
         PHILTER_REDIS_SSL = "true"
-        PHILTER_REDIS_AUTH_TOKEN = "thisismytokenf3n1xTar"
+        PHILTER_REDIS_AUTH_TOKEN = "Randompassword1!"
         PHILTER_REDIS_CLUSTERED = "false"
     }
     stages {
