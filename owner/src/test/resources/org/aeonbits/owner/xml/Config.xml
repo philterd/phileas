@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (c) 2012-2015, Luigi R. Viggiano
+  ~ All rights reserved.
+  ~
+  ~ This software is distributable under the BSD license.
+  ~ See the terms of the BSD license in the documentation provided with this software.
+  -->
+
+<foo>
+    fooValue
+    <bar><![CDATA[this contains "tags" that =  can break <xml> or properties 
+foo=bar]]></bar>
+    <baz attr="bazValue" specialChars="å∫ç∂´ƒ©˙ˆ∆ü"/>
+    <qux value="quxValue" other="quxValue2">
+        quux
+    </qux>
+</foo>

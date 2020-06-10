@@ -11,9 +11,9 @@
   <name>phileas-configuration</name>
   <dependencies>
     <dependency>
-      <groupId>org.aeonbits.owner</groupId>
+      <groupId>com.mtnfog</groupId>
       <artifactId>owner</artifactId>
-      <version>${owner.version}</version>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.junit.jupiter</groupId>
