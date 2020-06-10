@@ -26,7 +26,7 @@ public class SpanDisambiguationLocalCacheService implements SpanDisambiguationCa
     @Override
     public void hashAndInsert(String context, double[] hashes, Span span, int vectorSize) {
 
-        // Make sure there is an entry for this context.
+        // Insert a new map for this context if it's needed to avoid an NPE.
         initialize(context);
 
         for(double i = 0; i < hashes.length; i++) {
@@ -49,7 +49,7 @@ public class SpanDisambiguationLocalCacheService implements SpanDisambiguationCa
     @Override
     public Map<Double, Double> getVectorRepresentation(String context, FilterType filterType) {
 
-        // Make sure there is an entry for this context.
+        // Insert a new map for this context if it's needed to avoid an NPE.
         initialize(context);
 
         return vectors.get(context).get(filterType).getVectorIndexes();

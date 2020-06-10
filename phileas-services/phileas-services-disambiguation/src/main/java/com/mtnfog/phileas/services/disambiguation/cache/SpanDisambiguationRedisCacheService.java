@@ -33,8 +33,8 @@ public class SpanDisambiguationRedisCacheService extends AbstractRedisCacheServi
 
         for(final double hash : hashes) {
 
-            // Insert it into the appropriate vector.
-            vectors.putIfAbsent(span.getFilterType().name(), new SpanVector().toString());
+            // Insert a new map for this context if it's needed to avoid an NPE.
+            initialize(span.getFilterType(), context);
 
             final SpanVector sv = gson.fromJson(vectors.getOrDefault(span.getFilterType().name(), new SpanVector().toString()), SpanVector.class);
 
@@ -50,11 +50,21 @@ public class SpanDisambiguationRedisCacheService extends AbstractRedisCacheServi
     @Override
     public Map<Double, Double> getVectorRepresentation(String context, FilterType filterType) {
 
+        // Insert a new map for this context if it's needed to avoid an NPE.
+        initialize(filterType, context);
+
         final Map<String, String> m = redisson.getMap(context);
 
         final SpanVector sv = gson.fromJson(m.get(filterType.name()), SpanVector.class);
 
         return sv.getVectorIndexes();
+
+    }
+
+    private void initialize(FilterType filterType, String context) {
+
+        final RMap<String, String> vectors = redisson.getMap(context);
+        vectors.putIfAbsent(filterType.name(), new SpanVector().toString());
 
     }
 
