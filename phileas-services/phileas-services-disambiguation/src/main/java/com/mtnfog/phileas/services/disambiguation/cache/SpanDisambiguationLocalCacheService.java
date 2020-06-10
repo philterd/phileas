@@ -26,18 +26,8 @@ public class SpanDisambiguationLocalCacheService implements SpanDisambiguationCa
     @Override
     public void hashAndInsert(String context, double[] hashes, Span span, int vectorSize) {
 
-        // Initialize the cached map for all filter types if it does not already exist.
-        if(vectors.get(context) == null) {
-
-            final Map<FilterType, SpanVector> vector = new HashMap<>();
-
-            for(final FilterType filterType : FilterType.values()) {
-                vector.put(filterType, new SpanVector());
-            }
-
-            vectors.put(context, vector);
-
-        }
+        // Make sure there is an entry for this context.
+        initialize(context);
 
         for(double i = 0; i < hashes.length; i++) {
 
@@ -59,7 +49,27 @@ public class SpanDisambiguationLocalCacheService implements SpanDisambiguationCa
     @Override
     public Map<Double, Double> getVectorRepresentation(String context, FilterType filterType) {
 
+        // Make sure there is an entry for this context.
+        initialize(context);
+
         return vectors.get(context).get(filterType).getVectorIndexes();
+
+    }
+
+    private void initialize(String context) {
+
+        // Initialize the cached map for all filter types if it does not already exist.
+        if(vectors.get(context) == null) {
+
+            final Map<FilterType, SpanVector> vector = new HashMap<>();
+
+            for(final FilterType filterType : FilterType.values()) {
+                vector.put(filterType, new SpanVector());
+            }
+
+            vectors.put(context, vector);
+
+        }
 
     }
 
