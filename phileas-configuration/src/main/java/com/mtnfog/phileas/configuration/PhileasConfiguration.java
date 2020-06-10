@@ -36,7 +36,7 @@ public interface PhileasConfiguration extends Config {
     @Key("span.window.size")
     int spanWindowSize();
 
-    @DefaultValue("32")
+    @DefaultValue("512")
     @Key("span.disambiguation.vector.size")
     int spanDisambiguationVectorSize();
 
