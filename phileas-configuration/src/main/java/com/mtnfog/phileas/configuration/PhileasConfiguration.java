@@ -8,9 +8,9 @@ import org.aeonbits.owner.Config;
  */
 @Config.LoadPolicy(Config.LoadType.MERGE)
 @Config.Sources({
-        "file:application.properties",
+        "system:env",
         "system:properties",
-        "system:env"
+        "file:application.properties"
 })
 public interface PhileasConfiguration extends Config {
 
