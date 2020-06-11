@@ -20,7 +20,7 @@ public interface PhileasConfiguration extends Config {
     String indexesDirectory();
 
     @DefaultValue("http://localhost:18080/")
-    @Key("PHILTER_NER_ENDPOINT")
+    @Key("ner.endpoint")
     String philterNerEndpoint();
 
     // Span Disambiguation
