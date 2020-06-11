@@ -43,6 +43,8 @@ public class ElasticsearchStore implements Store, Closeable {
 
     public ElasticsearchStore(String indexName, String scheme, String host, int port) {
 
+        LOGGER.info("Initializing store with Elasticsearch index {} at {}:{}", indexName, host, port);
+
         this.client = new RestHighLevelClient(RestClient.builder(new HttpHost(host, port, scheme)));
         this.indexName = indexName;
         this.gson = new Gson();

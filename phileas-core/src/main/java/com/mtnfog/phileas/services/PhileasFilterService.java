@@ -96,13 +96,16 @@ public class PhileasFilterService implements FilterService {
         // Create a new unstructured document processor.
         this.unstructuredDocumentProcessor = new UnstructuredDocumentProcessor(metricsService, spanDisambiguationService, store);
 
+        // Get the window size.
+        this.windowSize = phileasConfiguration.spanWindowSize();
+        LOGGER.info("Using window size {}", this.windowSize);
+
         // Configure store.
         final boolean storeEnabled = phileasConfiguration.storeEnabled();
 
-        // Get the window size.
-        this.windowSize = phileasConfiguration.spanWindowSize();
-
         if(storeEnabled) {
+
+            LOGGER.info("Store is enabled.");
 
             final String index = phileasConfiguration.storeElasticSearchIndex();
             final String host = phileasConfiguration.storeElasticSearchHost();
@@ -110,10 +113,17 @@ public class PhileasFilterService implements FilterService {
             final int port = phileasConfiguration.storeElasticSearchPort();
             this.store = new ElasticsearchStore(index, scheme, host, port);
 
+        } else {
+
+            LOGGER.info("Store is disabled.");
+
         }
 
         this.indexDirectory = phileasConfiguration.indexesDirectory();
+        LOGGER.info("Using indexes directory {}", this.indexDirectory);
+
         this.philterNerEndpoint = phileasConfiguration.philterNerEndpoint();
+        LOGGER.info("Using Philter NER endpoint {}", phileasConfiguration.philterNerEndpoint());
 
     }
 
@@ -411,7 +421,7 @@ public class PhileasFilterService implements FilterService {
         }
 
         if(filterProfile.getIdentifiers().hasFilter(FilterType.LOCATION_COUNTY) && filterProfile.getIdentifiers().getCounty().isEnabled()) {
-                enabledFilters.add(new LuceneDictionaryFilter(FilterType.LOCATION_COUNTY, filterProfile.getIdentifiers().getCounty().getCountyFilterStrategies(), indexDirectory + "states", filterProfile.getIdentifiers().getCounty().getSensitivityLevel(), new CountyAnonymizationService(anonymizationCacheService), alertService, filterProfile.getIdentifiers().getCounty().getIgnored(), filterProfile.getCrypto(), windowSize));
+            enabledFilters.add(new LuceneDictionaryFilter(FilterType.LOCATION_COUNTY, filterProfile.getIdentifiers().getCounty().getCountyFilterStrategies(), indexDirectory + "states", filterProfile.getIdentifiers().getCounty().getSensitivityLevel(), new CountyAnonymizationService(anonymizationCacheService), alertService, filterProfile.getIdentifiers().getCounty().getIgnored(), filterProfile.getCrypto(), windowSize));
         }
 
         if(filterProfile.getIdentifiers().hasFilter(FilterType.LOCATION_STATE) && filterProfile.getIdentifiers().getState().isEnabled()) {
