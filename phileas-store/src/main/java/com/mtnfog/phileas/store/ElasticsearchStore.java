@@ -3,6 +3,7 @@ package com.mtnfog.phileas.store;
 import com.google.gson.Gson;
 import com.mtnfog.phileas.model.objects.Span;
 import com.mtnfog.phileas.model.services.Store;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.http.HttpHost;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
@@ -66,15 +67,19 @@ public class ElasticsearchStore implements Store, Closeable {
     @Override
     public void insert(List<Span> spans) throws IOException {
 
-        final BulkRequest bulkRequest = new BulkRequest();
+        if(CollectionUtils.isNotEmpty(spans)) {
 
-        spans.forEach(span -> {
-            final String json = gson.toJson(span);
-            IndexRequest indexRequest = new IndexRequest(indexName).source(json, XContentType.JSON);
-            bulkRequest.add(indexRequest);
-        });
+            final BulkRequest bulkRequest = new BulkRequest();
 
-        client.bulk(bulkRequest, RequestOptions.DEFAULT);
+            spans.forEach(span -> {
+                final String json = gson.toJson(span);
+                IndexRequest indexRequest = new IndexRequest(indexName).source(json, XContentType.JSON);
+                bulkRequest.add(indexRequest);
+            });
+
+            client.bulk(bulkRequest, RequestOptions.DEFAULT);
+
+        }
 
     }
 
