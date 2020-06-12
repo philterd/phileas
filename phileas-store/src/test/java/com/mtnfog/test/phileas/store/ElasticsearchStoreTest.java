@@ -34,7 +34,7 @@ public class ElasticsearchStoreTest {
     private static final int PORT = 443;
     private static final String SCHEME = "https";
 
-    private static final int SLEEP_DELAY_MS = 1000;
+    private static final int SLEEP_DELAY_MS = 2048;
 
     @BeforeEach
     public void before() throws IOException {
@@ -58,7 +58,6 @@ public class ElasticsearchStoreTest {
 
     }
 
-    @Disabled
     @Test
     public void test1() throws IOException, InterruptedException {
 
@@ -82,7 +81,6 @@ public class ElasticsearchStoreTest {
 
     }
 
-    @Disabled
     @Test
     public void test2() throws IOException, InterruptedException {
 
@@ -91,6 +89,7 @@ public class ElasticsearchStoreTest {
         final Span span1 = Span.make(1, 2, FilterType.NER_ENTITY, "context", "documentId", 1.0, "test", "***",  "", false, new String[0]);
         final Span span2 = Span.make(3, 6, FilterType.NER_ENTITY, "context", "documentId", 1.0, "test", "***",  "", false, new String[0]);
         final Span span3 = Span.make(7, 9, FilterType.NER_ENTITY, "context", "documentId", 1.0, "test", "***",  "", false, new String[0]);
+        final List<Span> originalSpans = Arrays.asList(span1, span2, span3);
 
         store.insert(Arrays.asList(span1, span2, span3));
 
@@ -101,13 +100,10 @@ public class ElasticsearchStoreTest {
         store.close();
 
         Assertions.assertEquals(3, spans.size());
-        Assertions.assertEquals(span1, spans.get(0));
-        Assertions.assertEquals(span2, spans.get(1));
-        Assertions.assertEquals(span3, spans.get(2));
+        Assertions.assertTrue(originalSpans.containsAll(spans));
 
     }
 
-    @Disabled
     @Test
     public void test3() throws IOException {
 
@@ -117,7 +113,7 @@ public class ElasticsearchStoreTest {
 
         store.close();
 
-        Assertions.assertEquals(4, spans.size());
+        Assertions.assertEquals(0, spans.size());
 
         showSpans(spans);
 
