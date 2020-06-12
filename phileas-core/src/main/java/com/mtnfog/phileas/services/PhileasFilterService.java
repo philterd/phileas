@@ -50,6 +50,8 @@ public class PhileasFilterService implements FilterService {
 
 	private static final Logger LOGGER = LogManager.getLogger(PhileasFilterService.class);
 
+	private PhileasConfiguration phileasConfiguration;
+
     private FilterProfileService filterProfileService;
     private MetricsService metricsService;
     private Store store;
@@ -71,6 +73,8 @@ public class PhileasFilterService implements FilterService {
     public PhileasFilterService(PhileasConfiguration phileasConfiguration) throws IOException {
 
         LOGGER.info("Initializing Phileas engine.");
+
+        this.phileasConfiguration = phileasConfiguration;
 
         // Configure metrics.
         this.metricsService = new PhileasMetricsService(phileasConfiguration);
@@ -143,7 +147,7 @@ public class PhileasFilterService implements FilterService {
     }
 
     @Override
-    public FilterResponse filter(PhileasConfiguration phileasConfiguration, String filterProfileName, String context, String documentId, String input, MimeType mimeType) throws Exception {
+    public FilterResponse filter(String filterProfileName, String context, String documentId, String input, MimeType mimeType) throws Exception {
 
         // Get the filter profile.
         // This will ALWAYS return a filter profile because if it is not in the cache it will be
