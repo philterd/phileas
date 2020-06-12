@@ -1,5 +1,6 @@
 package com.mtnfog.phileas.model.services;
 
+import com.mtnfog.phileas.configuration.PhileasConfiguration;
 import com.mtnfog.phileas.model.enums.MimeType;
 import com.mtnfog.phileas.model.objects.Span;
 import com.mtnfog.phileas.model.responses.FilterResponse;
@@ -14,6 +15,7 @@ public interface FilterService {
 
     /**
      * Filter text.
+     * @param phileasConfiguration The {@link PhileasConfiguration configuration}.
      * @param filterProfileName The name of the filter profile.
      * @param context The context.
      * @param documentId A document ID. Provide <code>null</code> for a document ID to be generated.
@@ -22,7 +24,7 @@ public interface FilterService {
      * @return A {@link FilterResponse}.
      * @throws Exception Thrown if the text cannot be filtered.
      */
-    FilterResponse filter(String filterProfileName, String context, String documentId, String input, MimeType mimeType) throws Exception;
+    FilterResponse filter(PhileasConfiguration phileasConfiguration, String filterProfileName, String context, String documentId, String input, MimeType mimeType) throws Exception;
 
     /**
      * Get the replacement spans for a document.

@@ -143,7 +143,7 @@ public class PhileasFilterService implements FilterService {
     }
 
     @Override
-    public FilterResponse filter(String filterProfileName, String context, String documentId, String input, MimeType mimeType) throws Exception {
+    public FilterResponse filter(PhileasConfiguration phileasConfiguration, String filterProfileName, String context, String documentId, String input, MimeType mimeType) throws Exception {
 
         // Get the filter profile.
         // This will ALWAYS return a filter profile because if it is not in the cache it will be
@@ -166,14 +166,24 @@ public class PhileasFilterService implements FilterService {
         final List<Filter> filters = getFiltersForFilterProfile(filterProfileName);
         final List<PostFilter> postFilters = getPostFiltersForFilterProfile(filterProfileName);
 
-        if(mimeType == MimeType.TEXT_PLAIN) {
-            return unstructuredDocumentProcessor.process(filterProfile, filters, postFilters, context, documentId, input);
-        }/* else if(mimeType == MimeType.APPLICATION_FHIRJSON) {
-            return fhirDocumentProcessor.process(filterProfile, filters, postFilters, context, documentId, input);
-        }*/
+        final FilterResponse filterResponse;
 
-        // Should never happen but just in case.
-        throw new Exception("Unknown mime type.");
+        if(mimeType == MimeType.TEXT_PLAIN) {
+            filterResponse = unstructuredDocumentProcessor.process(filterProfile, filters, postFilters, context, documentId, input);
+        //} else if(mimeType == MimeType.APPLICATION_FHIRJSON) {
+        //    filterResponse = fhirDocumentProcessor.process(filterProfile, filters, postFilters, context, documentId, input);
+        } else {
+            // Should never happen but just in case.
+            throw new Exception("Unknown mime type.");
+        }
+
+
+        // Store the spans, if enabled.
+        if(phileasConfiguration.storeEnabled()) {
+            store.insert(filterResponse.getExplanation().getAppliedSpans());
+        }
+
+        return filterResponse;
 
     }
 

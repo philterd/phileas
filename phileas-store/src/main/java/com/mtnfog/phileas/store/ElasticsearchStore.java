@@ -56,8 +56,6 @@ public class ElasticsearchStore implements Store, Closeable {
 
         final String json = gson.toJson(span);
 
-        LOGGER.debug(json);
-
         final IndexRequest request = new IndexRequest(indexName);
         request.source(json, XContentType.JSON);
 
