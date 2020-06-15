@@ -80,6 +80,20 @@ public class IdentifierFilterStrategy extends AbstractFilterStrategy {
 
                 }
 
+            } else if(StringUtils.equalsIgnoreCase(CLASSIFICATION, parsedCondition.getField())) {
+
+                final String conditionClassification = parsedCondition.getValue();
+
+                switch (parsedCondition.getOperator()) {
+                    case "==":
+                        conditionsSatisfied = (StringUtils.equalsIgnoreCase("\"" + classification + "\"", conditionClassification));
+                        break;
+                    case "!=":
+                        conditionsSatisfied = !(StringUtils.equalsIgnoreCase("\"" + classification + "\"", conditionClassification));
+                        break;
+
+                }
+
             }
 
             LOGGER.debug("Condition for [{}] satisfied: {}", condition, conditionsSatisfied);
