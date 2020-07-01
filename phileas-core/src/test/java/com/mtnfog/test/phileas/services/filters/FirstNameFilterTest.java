@@ -50,7 +50,7 @@ public class FirstNameFilterTest extends AbstractFilterTest {
     }
 
     @Test
-    public void filterMedium() throws Exception {
+    public void filterMedium1() throws Exception {
 
         AnonymizationService anonymizationService = new PersonsAnonymizationService(new LocalAnonymizationCacheService());
 
@@ -60,6 +60,20 @@ public class FirstNameFilterTest extends AbstractFilterTest {
         final List<Span> spans = filter.filter(getFilterProfile(SensitivityLevel.MEDIUM), "context", "documentid","Michel had eye cancer");
         showSpans(spans);
         Assertions.assertEquals(3, spans.size());
+
+    }
+
+    @Test
+    public void filterMedium2() throws Exception {
+
+        AnonymizationService anonymizationService = new PersonsAnonymizationService(new LocalAnonymizationCacheService());
+
+        final List<FirstNameFilterStrategy> strategies = Arrays.asList(new FirstNameFilterStrategy());
+        final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.FIRST_NAME, strategies, INDEX_DIRECTORY, SensitivityLevel.LOW, anonymizationService, alertService, Collections.emptySet(), new Crypto(), windowSize);
+
+        final List<Span> spans = filter.filter(getFilterProfile(SensitivityLevel.MEDIUM), "context", "documentid","Jennifer had eye cancer");
+        showSpans(spans);
+        Assertions.assertEquals(1, spans.size());
 
     }
 
