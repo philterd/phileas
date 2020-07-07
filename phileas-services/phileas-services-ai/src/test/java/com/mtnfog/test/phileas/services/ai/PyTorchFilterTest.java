@@ -1,6 +1,7 @@
 package com.mtnfog.test.phileas.services.ai;
 
 import com.google.gson.Gson;
+import com.mtnfog.phileas.configuration.PhileasConfiguration;
 import com.mtnfog.phileas.model.enums.FilterType;
 import com.mtnfog.phileas.model.objects.Span;
 import com.mtnfog.phileas.model.profile.Crypto;
@@ -16,6 +17,7 @@ import com.mtnfog.phileas.service.ai.PhileasSpan;
 import com.mtnfog.phileas.service.ai.PyTorchFilter;
 import com.squareup.okhttp.mockwebserver.MockResponse;
 import com.squareup.okhttp.mockwebserver.MockWebServer;
+import org.aeonbits.owner.ConfigFactory;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -83,9 +85,11 @@ public class PyTorchFilterTest {
         final AlertService alertService = Mockito.mock(AlertService.class);
         final String baseUrl = this.mockServer.url("/").toString();
 
+        final PhileasConfiguration phileasConfiguration = getConfiguration();
+
         this.mockServer.enqueue(new MockResponse().setResponseCode(200).setBody("[{\"text\":\"test\",\"tag\":\"PER\",\"score\":0.5,\"start\":1,\"end\":2}]"));
 
-        final PyTorchFilter t = new PyTorchFilter(baseUrl, FilterType.NER_ENTITY, getStrategies(),"PER", stats, metricsService, anonymizationService, alertService, Collections.emptySet(), false, new Crypto(), windowSize);
+        final PyTorchFilter t = new PyTorchFilter(baseUrl, FilterType.NER_ENTITY, getStrategies(), phileasConfiguration, "PER", stats, metricsService, anonymizationService, alertService, Collections.emptySet(), false, new Crypto(), windowSize);
 
         final List<Span> spans = t.filter(getFilterProfile(), "context", "doc", "John Smith lives in New York");
 
@@ -106,11 +110,13 @@ public class PyTorchFilterTest {
         final AlertService alertService = Mockito.mock(AlertService.class);
         final String baseUrl = this.mockServer.url("/").toString();
 
+        final PhileasConfiguration phileasConfiguration = getConfiguration();
+
         LOGGER.info("Mock REST server baseUrl = " + baseUrl);
 
         this.mockServer.enqueue(new MockResponse().setResponseCode(200).setBody("[{\"text\":\"test\",\"tag\":\"LOC\",\"score\":0.5,\"start\":1,\"end\":2}]"));
 
-        final PyTorchFilter t = new PyTorchFilter(baseUrl, FilterType.NER_ENTITY, getStrategies(), "LOC",
+        final PyTorchFilter t = new PyTorchFilter(baseUrl, FilterType.NER_ENTITY, getStrategies(), phileasConfiguration, "LOC",
                 stats, metricsService, anonymizationService, alertService, Collections.emptySet(), false, new Crypto(), windowSize);
 
         final List<Span> spans = t.filter(getFilterProfile(), "context", "doc", "John Smith lives in New York");
@@ -152,6 +158,14 @@ public class PyTorchFilterTest {
         filterProfile.setIdentifiers(identifiers);
 
         return filterProfile;
+
+    }
+
+    private PhileasConfiguration getConfiguration() {
+
+        final Properties properties = new Properties();
+
+        return ConfigFactory.create(PhileasConfiguration.class, properties);
 
     }
 

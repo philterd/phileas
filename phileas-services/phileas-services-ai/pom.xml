@@ -23,6 +23,11 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
+      <groupId>com.mtnfog</groupId>
+      <artifactId>phileas-configuration</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
       <groupId>com.squareup.retrofit2</groupId>
       <artifactId>retrofit</artifactId>
       <version>${retrofit.version}</version>

@@ -48,6 +48,20 @@ public interface PhileasConfiguration extends Config {
     @Key("span.disambiguation.stopwords")
     String spanDisambiguationStopWords();
 
+    // Timeouts for connection to Philter NER.
+
+    @DefaultValue("30")
+    @Key("ner.timeout.sec")
+    int nerTimeoutSec();
+
+    @DefaultValue("30")
+    @Key("ner.max.idle.connections")
+    int nerMaxIdleConnections();
+
+    @DefaultValue("60")
+    @Key("ner.keep.alive.duration.ms")
+    int nerKeepAliveDurationMs();
+
     // Bloom filter for custom dictionary filters.
     @DefaultValue("0.05")
     @Key("filter.fpp")

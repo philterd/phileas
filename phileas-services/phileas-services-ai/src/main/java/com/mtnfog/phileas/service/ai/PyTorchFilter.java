@@ -1,5 +1,6 @@
 package com.mtnfog.phileas.service.ai;
 
+import com.mtnfog.phileas.configuration.PhileasConfiguration;
 import com.mtnfog.phileas.model.enums.FilterType;
 import com.mtnfog.phileas.model.filter.dynamic.NerFilter;
 import com.mtnfog.phileas.model.objects.Replacement;
@@ -32,9 +33,9 @@ public class PyTorchFilter extends NerFilter {
 
     private static final Logger LOGGER = LogManager.getLogger(PyTorchFilter.class);
 
-    private static int TIMEOUT_SEC = 30;
-    private static int MAX_IDLE_CONNECTIONS = 30;
-    private static int KEEP_ALIVE_DURATION_MS = 60;
+    private final int timeoutSec;
+    private final int maxIdleConnections;
+    private final int keepAliveDurationMs;
 
     private transient PyTorchRestService service;
     private String tag;
@@ -45,6 +46,7 @@ public class PyTorchFilter extends NerFilter {
     public PyTorchFilter(String baseUrl,
                          FilterType filterType,
                          List<? extends AbstractFilterStrategy> strategies,
+                         PhileasConfiguration phileaseConfiguration,
                          String tag,
                          Map<String, DescriptiveStatistics> stats,
                          MetricsService metricsService,
@@ -58,13 +60,16 @@ public class PyTorchFilter extends NerFilter {
         super(filterType, strategies, stats, metricsService, anonymizationService, alertService, ignored, removePunctuation, crypto, windowSize);
 
         this.tag = tag;
+        this.timeoutSec = phileaseConfiguration.nerTimeoutSec();
+        this.maxIdleConnections = phileaseConfiguration.nerMaxIdleConnections();
+        this.keepAliveDurationMs = phileaseConfiguration.nerKeepAliveDurationMs();
 
         final OkHttpClient okHttpClient = new OkHttpClient.Builder()
                 .retryOnConnectionFailure(true)
-                .connectTimeout(TIMEOUT_SEC, TimeUnit.SECONDS)
-                .writeTimeout(TIMEOUT_SEC, TimeUnit.SECONDS)
-                .readTimeout(TIMEOUT_SEC, TimeUnit.SECONDS)
-                .connectionPool(new ConnectionPool(MAX_IDLE_CONNECTIONS, KEEP_ALIVE_DURATION_MS, TimeUnit.MILLISECONDS))
+                .connectTimeout(timeoutSec, TimeUnit.SECONDS)
+                .writeTimeout(timeoutSec, TimeUnit.SECONDS)
+                .readTimeout(timeoutSec, TimeUnit.SECONDS)
+                .connectionPool(new ConnectionPool(maxIdleConnections, keepAliveDurationMs, TimeUnit.MILLISECONDS))
                 .build();
 
         final Retrofit retrofit = new Retrofit.Builder()
