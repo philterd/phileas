@@ -2,10 +2,13 @@ package com.mtnfog.phileas.model.responses;
 
 import com.google.gson.Gson;
 import com.mtnfog.phileas.model.objects.Explanation;
+import com.mtnfog.phileas.model.objects.Span;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import java.io.Serializable;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Response to a filter operation.
@@ -45,6 +48,29 @@ public final class FilterResponse {
         this.context = context;
         this.documentId = documentId;
         this.explanation = null;
+
+    }
+
+    public static FilterResponse combine(final List<FilterResponse> filterResponses, String context, String documentId) {
+
+        // Combine the results into a single filterResponse object.
+
+        final StringBuilder filteredText = new StringBuilder();
+        final List<Span> appliedSpans = new LinkedList<>();
+        final List<Span> identifiedSpans = new LinkedList<>();
+
+        for(final FilterResponse filterResponse : filterResponses) {
+
+            // Append the filtered text.
+            filteredText.append(filterResponse.getFilteredText());
+
+            // TODO: Adjust the character offsets when combining.
+            appliedSpans.addAll(filterResponse.getExplanation().getAppliedSpans());
+            identifiedSpans.addAll(filterResponse.getExplanation().getIdentifiedSpans());
+
+        }
+
+        return new FilterResponse(filteredText.toString(), context, documentId, new Explanation(appliedSpans, identifiedSpans));
 
     }
 

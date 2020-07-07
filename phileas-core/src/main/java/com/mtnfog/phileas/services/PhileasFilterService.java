@@ -181,14 +181,15 @@ public class PhileasFilterService implements FilterService {
                 // Get the splitter to use from the filter profile.
                 final SplitService splitService = SplitFactory.getSplitService(filterProfile.getConfig().getSplitting().getMethod());
 
-                // Split the text.
-                final List<String> splits = splitService.split(input);
+                final List<FilterResponse> filterResponses = new LinkedList<>();
 
-                // TODO: Process each split.
+                // Process each split.
+                for(final String split : splitService.split(input)) {
+                    filterResponses.add(unstructuredDocumentProcessor.process(filterProfile, filters, postFilters, context, documentId, split));
+                }
 
-                // TODO: Combine the results into a single filterResponse object.
-                // Adjust the character offsets when combining.
-                filterResponse = null;
+                // Combine the results into a single filterResponse object.
+                filterResponse = FilterResponse.combine(filterResponses, context, documentId);
 
             } else {
 
