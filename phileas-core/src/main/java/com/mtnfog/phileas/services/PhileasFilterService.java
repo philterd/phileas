@@ -31,6 +31,7 @@ import com.mtnfog.phileas.services.postfilters.TrailingPeriodPostFilter;
 import com.mtnfog.phileas.services.postfilters.TrailingSpacePostFilter;
 import com.mtnfog.phileas.services.profiles.LocalFilterProfileService;
 import com.mtnfog.phileas.services.profiles.S3FilterProfileService;
+import com.mtnfog.phileas.services.split.SplitFactory;
 import com.mtnfog.phileas.services.validators.DateSpanValidator;
 import com.mtnfog.phileas.store.ElasticsearchStore;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -150,8 +151,7 @@ public class PhileasFilterService implements FilterService {
     public FilterResponse filter(String filterProfileName, String context, String documentId, String input, MimeType mimeType) throws Exception {
 
         // Get the filter profile.
-        // This will ALWAYS return a filter profile because if it is not in the cache it will be
-        // retrieved from the cache.
+        // This will ALWAYS return a filter profile because if it is not in the cache it will be retrieved from the cache.
         // TODO: How to trigger a reload if the profile had to be retrieved from disk?
         final String filterProfileJson = filterProfileService.get(filterProfileName);
 
@@ -173,14 +173,37 @@ public class PhileasFilterService implements FilterService {
         final FilterResponse filterResponse;
 
         if(mimeType == MimeType.TEXT_PLAIN) {
-            filterResponse = unstructuredDocumentProcessor.process(filterProfile, filters, postFilters, context, documentId, input);
+
+            // PHL-145: Do we need to split the input text due to its size?
+            // TODO: Make this length a constant or configurable.
+            if(input.length() >= 10000) {
+
+                // Get the splitter to use from the filter profile.
+                final SplitService splitService = SplitFactory.getSplitService(filterProfile.getConfig().getSplitting().getMethod());
+
+                // Split the text.
+                final List<String> splits = splitService.split(input);
+
+                // TODO: Process each split.
+
+                // TODO: Combine the results into a single filterResponse object.
+                // Adjust the character offsets when combining.
+                filterResponse = null;
+
+            } else {
+
+                // No need to split.
+                filterResponse = unstructuredDocumentProcessor.process(filterProfile, filters, postFilters, context, documentId, input);
+
+            }
+
         //} else if(mimeType == MimeType.APPLICATION_FHIRJSON) {
         //    filterResponse = fhirDocumentProcessor.process(filterProfile, filters, postFilters, context, documentId, input);
+
         } else {
             // Should never happen but just in case.
             throw new Exception("Unknown mime type.");
         }
-
 
         // Store the spans, if enabled.
         if(phileasConfiguration.storeEnabled()) {
