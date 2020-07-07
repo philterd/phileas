@@ -14,10 +14,9 @@ public class NewLineSplitService extends AbstractSplitService implements SplitSe
     @Override
     public List<String> split(String input) {
 
+        // Simply splits the input based on a number of new line operators.
         // See https://stackoverflow.com/a/31060125/1428388.
-        final String[] splits = input.split("\\R");
-
-        return Arrays.asList(splits);
+        return Arrays.asList(input.split("\\R"));
 
     }
 

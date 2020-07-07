@@ -11,12 +11,19 @@ public class SplitFactory {
 
     public static SplitService getSplitService(String method) {
 
-        if(StringUtils.equalsIgnoreCase("sentence", method)) {
+        if(StringUtils.equalsIgnoreCase("newline", method)) {
 
+            LOGGER.debug("Instantiating a newline split service.");
+            return new NewLineSplitService();
+
+        } else if(StringUtils.equalsIgnoreCase("sentence", method)) {
+
+            LOGGER.debug("Instantiating a sentence split service.");
             return new SentenceSplitService();
 
         }
 
+        LOGGER.warn("No matching split service found for {}. Defaulting to newline split service.", method);
         return new NewLineSplitService();
 
     }

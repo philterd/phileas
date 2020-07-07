@@ -51,6 +51,15 @@ public final class FilterResponse {
 
     }
 
+    /**
+     * Combine multiple {@link FilterResponse} objects into a single {@link FilterResponse}.
+     * The list of {@link FilterResponse} objects must be in order from first to last.
+     * @param filterResponses A list of {@link FilterResponse} objects to combine.
+     *                        Objects must be in order from first to last.
+     * @param context The context for the returned {@link FilterResponse}.
+     * @param documentId The document ID for the returned {@link FilterResponse}.
+     * @return A single, combined {@link FilterResponse}.
+     */
     public static FilterResponse combine(final List<FilterResponse> filterResponses, String context, String documentId) {
 
         // Combine the results into a single filterResponse object.
