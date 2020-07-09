@@ -30,7 +30,7 @@ public class IdentifierFilterTest extends AbstractFilterTest {
         final List<IdentifierFilterStrategy> strategies = Arrays.asList(new IdentifierFilterStrategy());
         IdentifierFilter filter = new IdentifierFilter("name", Identifier.DEFAULT_IDENTIFIER_REGEX, true, strategies, anonymizationService, alertService, Collections.emptySet(), new Crypto(), windowSize);
 
-        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "the id is AB4736021 in california.");
+        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", 0, "the id is AB4736021 in california.");
 
         Assertions.assertEquals(1, spans.size());
         Assertions.assertTrue(checkSpan(spans.get(0), 10,19, FilterType.IDENTIFIER));
@@ -44,7 +44,7 @@ public class IdentifierFilterTest extends AbstractFilterTest {
         final List<IdentifierFilterStrategy> strategies = Arrays.asList(new IdentifierFilterStrategy());
         IdentifierFilter filter = new IdentifierFilter("name", Identifier.DEFAULT_IDENTIFIER_REGEX, true, strategies, anonymizationService, alertService, Collections.emptySet(), new Crypto(), windowSize);
 
-        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "the id is AB473-6021 in california.");
+        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", 0, "the id is AB473-6021 in california.");
 
         Assertions.assertEquals(1, spans.size());
         Assertions.assertTrue(checkSpan(spans.get(0), 10,20, FilterType.IDENTIFIER));
@@ -57,7 +57,7 @@ public class IdentifierFilterTest extends AbstractFilterTest {
         final List<IdentifierFilterStrategy> strategies = Arrays.asList(new IdentifierFilterStrategy());
         IdentifierFilter filter = new IdentifierFilter("name", Identifier.DEFAULT_IDENTIFIER_REGEX, true, strategies, anonymizationService, alertService, Collections.emptySet(), new Crypto(), windowSize);
 
-        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "the id is 473-6AB021 in california.");
+        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", 0, "the id is 473-6AB021 in california.");
 
         Assertions.assertEquals(1, spans.size());
         Assertions.assertTrue(checkSpan(spans.get(0), 10,20, FilterType.IDENTIFIER));
@@ -70,7 +70,7 @@ public class IdentifierFilterTest extends AbstractFilterTest {
         final List<IdentifierFilterStrategy> strategies = Arrays.asList(new IdentifierFilterStrategy());
         IdentifierFilter filter = new IdentifierFilter("name", Identifier.DEFAULT_IDENTIFIER_REGEX, true, strategies, anonymizationService, alertService, Collections.emptySet(), new Crypto(), windowSize);
 
-        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "the id is AB473-6021 in california.");
+        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", 0, "the id is AB473-6021 in california.");
 
         Assertions.assertEquals(1, spans.size());
         Assertions.assertTrue(checkSpan(spans.get(0), 10,20, FilterType.IDENTIFIER));
@@ -83,7 +83,7 @@ public class IdentifierFilterTest extends AbstractFilterTest {
         final List<IdentifierFilterStrategy> strategies = Arrays.asList(new IdentifierFilterStrategy());
         IdentifierFilter filter = new IdentifierFilter("name", Identifier.DEFAULT_IDENTIFIER_REGEX, true, strategies, anonymizationService, alertService, Collections.emptySet(), new Crypto(), windowSize);
 
-        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "the id is 473-6AB021 in california.");
+        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", 0, "the id is 473-6AB021 in california.");
 
         Assertions.assertEquals(1, spans.size());
         Assertions.assertTrue(checkSpan(spans.get(0), 10,20, FilterType.IDENTIFIER));
@@ -96,7 +96,7 @@ public class IdentifierFilterTest extends AbstractFilterTest {
         final List<IdentifierFilterStrategy> strategies = Arrays.asList(new IdentifierFilterStrategy());
         IdentifierFilter filter = new IdentifierFilter("name", Identifier.DEFAULT_IDENTIFIER_REGEX, true, strategies, anonymizationService, alertService, Collections.emptySet(), new Crypto(), windowSize);
 
-        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "the id is 123-45-6789 in california.");
+        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", 0, "the id is 123-45-6789 in california.");
 
         Assertions.assertEquals(1, spans.size());
         Assertions.assertTrue(checkSpan(spans.get(0), 10,21, FilterType.IDENTIFIER));
@@ -109,7 +109,7 @@ public class IdentifierFilterTest extends AbstractFilterTest {
         final List<IdentifierFilterStrategy> strategies = Arrays.asList(new IdentifierFilterStrategy());
         IdentifierFilter filter = new IdentifierFilter("name", Identifier.DEFAULT_IDENTIFIER_REGEX, true, strategies, anonymizationService, alertService, Collections.emptySet(), new Crypto(), windowSize);
 
-        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "George Washington was president and his ssn was 123-45-6789 and he lived at 90210. Patient id 00076A and 93821A. He is on biotin. Diagnosed with A0100.");
+        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", 0, "George Washington was president and his ssn was 123-45-6789 and he lived at 90210. Patient id 00076A and 93821A. He is on biotin. Diagnosed with A0100.");
 
         Assertions.assertEquals(5, spans.size());
         Assertions.assertTrue(checkSpan(spans.get(0), 48, 59, FilterType.IDENTIFIER));
@@ -126,7 +126,7 @@ public class IdentifierFilterTest extends AbstractFilterTest {
         final List<IdentifierFilterStrategy> strategies = Arrays.asList(new IdentifierFilterStrategy());
         IdentifierFilter filter = new IdentifierFilter("name", Identifier.DEFAULT_IDENTIFIER_REGEX, true, strategies, anonymizationService, alertService, Collections.emptySet(), new Crypto(), windowSize);
 
-        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "the id is 000-00-00-00 ABC123 in california.");
+        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", 0, "the id is 000-00-00-00 ABC123 in california.");
 
         Assertions.assertEquals(2, spans.size());
         Assertions.assertTrue(checkSpan(spans.get(0), 10, 22, FilterType.IDENTIFIER));
@@ -140,7 +140,7 @@ public class IdentifierFilterTest extends AbstractFilterTest {
         final List<IdentifierFilterStrategy> strategies = Arrays.asList(new IdentifierFilterStrategy());
         IdentifierFilter filter = new IdentifierFilter("name", Identifier.DEFAULT_IDENTIFIER_REGEX, true, strategies, anonymizationService, alertService, Collections.emptySet(), new Crypto(), windowSize);
 
-        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "the id is AZ12 ABC123/123ABC in california.");
+        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", 0, "the id is AZ12 ABC123/123ABC in california.");
 
         Assertions.assertEquals(3, spans.size());
         Assertions.assertTrue(checkSpan(spans.get(0), 10,14, FilterType.IDENTIFIER));
@@ -155,7 +155,7 @@ public class IdentifierFilterTest extends AbstractFilterTest {
         final List<IdentifierFilterStrategy> strategies = Arrays.asList(new IdentifierFilterStrategy());
         IdentifierFilter filter = new IdentifierFilter("name", Identifier.DEFAULT_IDENTIFIER_REGEX, true, strategies, anonymizationService, alertService, Collections.emptySet(), new Crypto(), windowSize);
 
-        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "the id is H3SNPUHYEE7JD3H in california.");
+        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", 0, "the id is H3SNPUHYEE7JD3H in california.");
 
         Assertions.assertEquals(1, spans.size());
         Assertions.assertTrue(checkSpan(spans.get(0), 10,25, FilterType.IDENTIFIER));
@@ -168,7 +168,7 @@ public class IdentifierFilterTest extends AbstractFilterTest {
         final List<IdentifierFilterStrategy> strategies = Arrays.asList(new IdentifierFilterStrategy());
         IdentifierFilter filter = new IdentifierFilter("name", Identifier.DEFAULT_IDENTIFIER_REGEX, true, strategies, anonymizationService, alertService, Collections.emptySet(), new Crypto(), windowSize);
 
-        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "the id is 86637729 in california.");
+        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", 0, "the id is 86637729 in california.");
 
         Assertions.assertEquals(1, spans.size());
         Assertions.assertTrue(checkSpan(spans.get(0), 10,18, FilterType.IDENTIFIER));
@@ -181,7 +181,7 @@ public class IdentifierFilterTest extends AbstractFilterTest {
         final List<IdentifierFilterStrategy> strategies = Arrays.asList(new IdentifierFilterStrategy());
         IdentifierFilter filter = new IdentifierFilter("name", Identifier.DEFAULT_IDENTIFIER_REGEX, true, strategies, anonymizationService, alertService, Collections.emptySet(), new Crypto(), windowSize);
 
-        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "the id is 33778376 in california.");
+        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", 0, "the id is 33778376 in california.");
 
         Assertions.assertEquals(1, spans.size());
         Assertions.assertTrue(checkSpan(spans.get(0), 10,18, FilterType.IDENTIFIER));
@@ -194,7 +194,7 @@ public class IdentifierFilterTest extends AbstractFilterTest {
         final List<IdentifierFilterStrategy> strategies = Arrays.asList(new IdentifierFilterStrategy());
         IdentifierFilter filter = new IdentifierFilter("name", "\\b[A-Z]{4,}\\b", true, strategies, anonymizationService, alertService, Collections.emptySet(), new Crypto(), windowSize);
 
-        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "the id is ABCD.");
+        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", 0, "the id is ABCD.");
 
         Assertions.assertEquals(1, spans.size());
         Assertions.assertTrue(checkSpan(spans.get(0), 10,14, FilterType.IDENTIFIER));
@@ -207,7 +207,7 @@ public class IdentifierFilterTest extends AbstractFilterTest {
         final List<IdentifierFilterStrategy> strategies = Arrays.asList(new IdentifierFilterStrategy());
         IdentifierFilter filter = new IdentifierFilter("name", Identifier.DEFAULT_IDENTIFIER_REGEX, true, strategies, anonymizationService, alertService, Collections.emptySet(), new Crypto(), windowSize);
 
-        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "the id is 1234.");
+        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", 0, "the id is 1234.");
 
         Assertions.assertEquals(1, spans.size());
         Assertions.assertTrue(checkSpan(spans.get(0), 10,14, FilterType.IDENTIFIER));
@@ -220,7 +220,7 @@ public class IdentifierFilterTest extends AbstractFilterTest {
         final List<IdentifierFilterStrategy> strategies = Arrays.asList(new IdentifierFilterStrategy());
         IdentifierFilter filter = new IdentifierFilter("name", Identifier.DEFAULT_IDENTIFIER_REGEX, true, strategies, anonymizationService, alertService, Collections.emptySet(), new Crypto(), windowSize);
 
-        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "John Smith, patient ID A203493, was seen on February 18.");
+        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", 0, "John Smith, patient ID A203493, was seen on February 18.");
 
         showSpans(spans);
         Assertions.assertEquals(1, spans.size());

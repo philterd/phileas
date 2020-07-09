@@ -175,17 +175,18 @@ public class PhileasFilterService implements FilterService {
         if(mimeType == MimeType.TEXT_PLAIN) {
 
             // PHL-145: Do we need to split the input text due to its size?
-            // TODO: Make this length a constant or configurable.
-            if(input.length() >= 10000) {
+            if(input.length() >= phileasConfiguration.splitThresholdLength()) {
 
                 // Get the splitter to use from the filter profile.
                 final SplitService splitService = SplitFactory.getSplitService(filterProfile.getConfig().getSplitting().getMethod());
 
+                // Holds all of the filter responses that will ultimately be combined into a single response.
                 final List<FilterResponse> filterResponses = new LinkedList<>();
 
                 // Process each split.
                 for(final String split : splitService.split(input)) {
-                    filterResponses.add(unstructuredDocumentProcessor.process(filterProfile, filters, postFilters, context, documentId, split));
+                    // TODO: Set the piece.
+                    filterResponses.add(unstructuredDocumentProcessor.process(filterProfile, filters, postFilters, context, documentId, 1, split));
                 }
 
                 // Combine the results into a single filterResponse object.
@@ -194,7 +195,7 @@ public class PhileasFilterService implements FilterService {
             } else {
 
                 // No need to split.
-                filterResponse = unstructuredDocumentProcessor.process(filterProfile, filters, postFilters, context, documentId, input);
+                filterResponse = unstructuredDocumentProcessor.process(filterProfile, filters, postFilters, context, documentId, 0, input);
 
             }
 

@@ -29,7 +29,7 @@ public class SectionFilterTest extends AbstractFilterTest {
         final List<SectionFilterStrategy> strategies = Arrays.asList(new SectionFilterStrategy());
         final SectionFilter filter = new SectionFilter(strategies, new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()), alertService, startPattern, endPattern, Collections.emptySet(), new Crypto(), windowSize);
 
-        final List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "This is some test. BEGIN-REDACT This text should be redacted. END-REDACT This is outside the text.");
+        final List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", 0, "This is some test. BEGIN-REDACT This text should be redacted. END-REDACT This is outside the text.");
 
         Assertions.assertEquals(1, spans.size());
         Assertions.assertTrue(checkSpan(spans.get(0), 19, 72, FilterType.SECTION));
@@ -46,7 +46,7 @@ public class SectionFilterTest extends AbstractFilterTest {
         final List<SectionFilterStrategy> strategies = Arrays.asList(new SectionFilterStrategy());
         final SectionFilter filter = new SectionFilter(strategies, new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()), alertService, startPattern, endPattern, Collections.emptySet(), new Crypto(), windowSize);
 
-        final List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "This is some test. BEGIN-REDACT This text should be redacted. This is outside the text.");
+        final List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", 0, "This is some test. BEGIN-REDACT This text should be redacted. This is outside the text.");
 
         Assertions.assertEquals(0, spans.size());
 
@@ -61,7 +61,7 @@ public class SectionFilterTest extends AbstractFilterTest {
         final List<SectionFilterStrategy> strategies = Arrays.asList(new SectionFilterStrategy());
         final SectionFilter filter = new SectionFilter(strategies, new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()), alertService, startPattern, endPattern, Collections.emptySet(), new Crypto(), windowSize);
 
-        final List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "BEGIN-REDACT This text should be redacted. END-REDACT This is outside the text.");
+        final List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", 0, "BEGIN-REDACT This text should be redacted. END-REDACT This is outside the text.");
 
         Assertions.assertEquals(1, spans.size());
         Assertions.assertTrue(checkSpan(spans.get(0), 0, 53, FilterType.SECTION));

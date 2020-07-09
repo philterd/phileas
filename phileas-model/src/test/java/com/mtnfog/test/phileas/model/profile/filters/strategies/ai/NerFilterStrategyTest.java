@@ -107,7 +107,7 @@ public class NerFilterStrategyTest {
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
 
-        final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentId", "John Smith", "confidence > 0.25",  0.5, "");
+        final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentid", "John Smith", "confidence > 0.25",  0.5, "");
 
         Assertions.assertTrue(conditionSatisfied);
 
@@ -118,7 +118,7 @@ public class NerFilterStrategyTest {
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
 
-        final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentId", "John Smith", "type == PER",  1.0, "PER");
+        final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentid", "John Smith", "type == PER",  1.0, "PER");
 
         Assertions.assertTrue(conditionSatisfied);
 
@@ -129,7 +129,7 @@ public class NerFilterStrategyTest {
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
 
-        final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentId", "John Smith", "type == PER",  1.0, "LOC");
+        final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentid", "John Smith", "type == PER",  1.0, "LOC");
 
         Assertions.assertFalse(conditionSatisfied);
 
@@ -140,7 +140,7 @@ public class NerFilterStrategyTest {
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
 
-        final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentId", "John Smith", "confidence == 0.5",  0.5, "");
+        final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentid", "John Smith", "confidence == 0.5",  0.5, "");
 
         Assertions.assertTrue(conditionSatisfied);
 
@@ -151,7 +151,7 @@ public class NerFilterStrategyTest {
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
 
-        final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentId", "John Smith", "confidence != 0.5",  0.6, "");
+        final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentid", "John Smith", "confidence != 0.5",  0.6, "");
 
         Assertions.assertTrue(conditionSatisfied);
 
@@ -162,7 +162,7 @@ public class NerFilterStrategyTest {
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
 
-        final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentId", "John Smith", "confidence != 0.5",  0.5, "");
+        final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentid", "John Smith", "confidence != 0.5",  0.5, "");
 
         Assertions.assertFalse(conditionSatisfied);
 
@@ -173,7 +173,7 @@ public class NerFilterStrategyTest {
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
 
-        final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentId", "John Smith", "confidence != 0.5 and type == PER",  0.5, "LOC");
+        final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentid", "John Smith", "confidence != 0.5 and type == PER",  0.5, "LOC");
 
         Assertions.assertFalse(conditionSatisfied);
 
@@ -184,7 +184,7 @@ public class NerFilterStrategyTest {
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
 
-        final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentId", "John Smith", "confidence != 0.5 and type != LOC",  0.5, "PER");
+        final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentid", "John Smith", "confidence != 0.5 and type != LOC",  0.5, "PER");
 
         Assertions.assertFalse(conditionSatisfied);
 
@@ -195,7 +195,7 @@ public class NerFilterStrategyTest {
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
 
-        final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentId", "John Smith", "confidence > 0.4 and type == PER",  0.5, "PER");
+        final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentid", "John Smith", "confidence > 0.4 and type == PER",  0.5, "PER");
 
         Assertions.assertTrue(conditionSatisfied);
 
@@ -207,7 +207,7 @@ public class NerFilterStrategyTest {
         final AbstractFilterStrategy strategy = getFilterStrategy();
 
 
-        final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentId", "John Smith", "confidence < 0.4 and type == PER",  0.5, "PER");
+        final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentid", "John Smith", "confidence < 0.4 and type == PER",  0.5, "PER");
 
         Assertions.assertFalse(conditionSatisfied);
 
@@ -218,7 +218,7 @@ public class NerFilterStrategyTest {
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
 
-        final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentId", "John Smith", "context == \"c1\"",  1.0, "");
+        final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentid", "John Smith", "context == \"c1\"",  1.0, "");
 
         Assertions.assertFalse(conditionSatisfied);
 

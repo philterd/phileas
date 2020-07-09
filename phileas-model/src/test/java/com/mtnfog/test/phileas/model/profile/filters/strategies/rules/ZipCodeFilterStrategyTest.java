@@ -45,7 +45,7 @@ public class ZipCodeFilterStrategyTest extends AbstractFilterStrategyTest {
 
         ZipCodeFilterStrategy strategy = new ZipCodeFilterStrategy();
 
-        final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentId", "90210", "population < 10000", 1.0, "");
+        final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentid", "90210", "population < 10000", 1.0, "");
 
         Assertions.assertFalse(conditionSatisfied);
 
@@ -56,7 +56,7 @@ public class ZipCodeFilterStrategyTest extends AbstractFilterStrategyTest {
 
         ZipCodeFilterStrategy strategy = new ZipCodeFilterStrategy();
 
-        final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentId", "90210", "population > 10000", 1.0, "");
+        final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentid", "90210", "population > 10000", 1.0, "");
 
         Assertions.assertTrue(conditionSatisfied);
 
@@ -67,7 +67,7 @@ public class ZipCodeFilterStrategyTest extends AbstractFilterStrategyTest {
 
         ZipCodeFilterStrategy strategy = new ZipCodeFilterStrategy();
 
-        final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentId", "90210", "population == 21741", 1.0, "");
+        final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentid", "90210", "population == 21741", 1.0, "");
 
         Assertions.assertTrue(conditionSatisfied);
 
@@ -78,7 +78,7 @@ public class ZipCodeFilterStrategyTest extends AbstractFilterStrategyTest {
 
         ZipCodeFilterStrategy strategy = new ZipCodeFilterStrategy();
 
-        final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentId", "90210", "population > 20000 and population < 25000", 1.0, "");
+        final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentid","90210", "population > 20000 and population < 25000", 1.0, "");
 
         Assertions.assertTrue(conditionSatisfied);
 
@@ -89,7 +89,7 @@ public class ZipCodeFilterStrategyTest extends AbstractFilterStrategyTest {
 
         ZipCodeFilterStrategy strategy = new ZipCodeFilterStrategy();
 
-        final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentId", "90210", "population > 20000 and population < 20010", 1.0, "");
+        final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentid", "90210", "population > 20000 and population < 20010", 1.0, "");
 
         Assertions.assertFalse(conditionSatisfied);
 
@@ -119,7 +119,7 @@ public class ZipCodeFilterStrategyTest extends AbstractFilterStrategyTest {
 
         AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
 
-        final Replacement replacement = strategy.getReplacement("name", "context", "documentId", "90210", new Crypto(), anonymizationService);
+        final Replacement replacement = strategy.getReplacement("name", "context", "documentid", "90210", new Crypto(), anonymizationService);
 
         LOGGER.info(replacement);
 
@@ -136,7 +136,7 @@ public class ZipCodeFilterStrategyTest extends AbstractFilterStrategyTest {
 
         AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
 
-        final Replacement replacement = strategy.getReplacement("name", "context", "documentId", "90210-0110", new Crypto(), anonymizationService);
+        final Replacement replacement = strategy.getReplacement("name", "context", "documentid", "90210-0110", new Crypto(), anonymizationService);
 
         LOGGER.info(replacement);
 
@@ -153,7 +153,7 @@ public class ZipCodeFilterStrategyTest extends AbstractFilterStrategyTest {
 
         AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
 
-        final Replacement replacement = strategy.getReplacement("name", "context", "documentId", "90210-0110", new Crypto(), anonymizationService);
+        final Replacement replacement = strategy.getReplacement("name", "context", "documentid", "90210-0110", new Crypto(), anonymizationService);
 
         LOGGER.info(replacement);
 
@@ -169,7 +169,7 @@ public class ZipCodeFilterStrategyTest extends AbstractFilterStrategyTest {
 
         AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
 
-        final Replacement replacement = strategy.getReplacement("name", "context", "documentId", "90210-0110", new Crypto(), anonymizationService);
+        final Replacement replacement = strategy.getReplacement("name", "context", "documentid", "90210-0110", new Crypto(), anonymizationService);
 
         LOGGER.info(replacement);
 

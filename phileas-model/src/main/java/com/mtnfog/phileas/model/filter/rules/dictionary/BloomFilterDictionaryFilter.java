@@ -52,7 +52,7 @@ public class BloomFilterDictionaryFilter extends DictionaryFilter {
     }
 
     @Override
-    public List<Span> filter(FilterProfile filterProfile, String context, String documentId, String text) throws Exception {
+    public List<Span> filter(FilterProfile filterProfile, String context, String documentId, int piece, String text) throws Exception {
 
         final List<Span> spans = new LinkedList<>();
 

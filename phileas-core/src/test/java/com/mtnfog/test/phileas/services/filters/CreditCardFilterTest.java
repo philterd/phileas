@@ -28,51 +28,51 @@ public class CreditCardFilterTest extends AbstractFilterTest {
 
         // VISA
 
-        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "the payment method is 4532613702852251 visa.");
+        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", 0, "the payment method is 4532613702852251 visa.");
         Assertions.assertEquals(1, spans.size());
         Assertions.assertTrue(checkSpan(spans.get(0), 22, 38, FilterType.CREDIT_CARD));
         Assertions.assertEquals("4532613702852251", spans.get(0).getText());
 
-        spans  = filter.filter(getFilterProfile(), "context", "documentid", "the payment method is 4556662764258031");
+        spans  = filter.filter(getFilterProfile(), "context", "documentid", 0, "the payment method is 4556662764258031");
         Assertions.assertEquals(1, spans.size());
         Assertions.assertTrue(checkSpan(spans.get(0), 22, 38, FilterType.CREDIT_CARD));
 
-        spans  = filter.filter(getFilterProfile(), "context", "documentid", "the payment method is 4929081870602661");
+        spans  = filter.filter(getFilterProfile(), "context", "documentid", 0, "the payment method is 4929081870602661");
         Assertions.assertEquals(1, spans.size());
 
-        spans  = filter.filter(getFilterProfile(), "context", "documentid", "the payment method is 4716-4366-8767-7438");
+        spans  = filter.filter(getFilterProfile(), "context", "documentid", 0, "the payment method is 4716-4366-8767-7438");
         Assertions.assertEquals(1, spans.size());
 
-        spans  = filter.filter(getFilterProfile(), "context", "documentid", "the payment method is 4556 5849 8186 7933");
+        spans  = filter.filter(getFilterProfile(), "context", "documentid", 0, "the payment method is 4556 5849 8186 7933");
         Assertions.assertEquals(1, spans.size());
 
         // AMEX
 
-        spans = filter.filter(getFilterProfile(), "context", "documentid", "the payment method is 376454057275914");
+        spans = filter.filter(getFilterProfile(), "context", "documentid", 0, "the payment method is 376454057275914");
         Assertions.assertEquals(1, spans.size());
         Assertions.assertTrue(checkSpan(spans.get(0), 22, 37, FilterType.CREDIT_CARD));
 
-        spans = filter.filter(getFilterProfile(), "context", "documentid", "the payment method is 346009657106278.");
+        spans = filter.filter(getFilterProfile(), "context", "documentid", 0, "the payment method is 346009657106278.");
         Assertions.assertEquals(1, spans.size());
         Assertions.assertTrue(checkSpan(spans.get(0), 22, 37, FilterType.CREDIT_CARD));
 
         // MASTERCARD
 
-        spans = filter.filter(getFilterProfile(), "context", "documentid", "the payment method is 5567408136464012");
+        spans = filter.filter(getFilterProfile(), "context", "documentid", 0, "the payment method is 5567408136464012");
         Assertions.assertEquals(1, spans.size());
         Assertions.assertTrue(checkSpan(spans.get(0), 22, 38, FilterType.CREDIT_CARD));
 
-        spans = filter.filter(getFilterProfile(), "context", "documentid", "the payment method is 5100170632668801.");
+        spans = filter.filter(getFilterProfile(), "context", "documentid", 0, "the payment method is 5100170632668801.");
         Assertions.assertEquals(1, spans.size());
         Assertions.assertTrue(checkSpan(spans.get(0), 22, 38, FilterType.CREDIT_CARD));
 
         // DISCOVER
 
-        spans = filter.filter(getFilterProfile(), "context", "documentid", "the payment method is 6011485579364263");
+        spans = filter.filter(getFilterProfile(), "context", "documentid", 0, "the payment method is 6011485579364263");
         Assertions.assertEquals(1, spans.size());
         Assertions.assertTrue(checkSpan(spans.get(0), 22, 38, FilterType.CREDIT_CARD));
 
-        spans = filter.filter(getFilterProfile(), "context", "documentid", "the payment method is 6011792597726344.");
+        spans = filter.filter(getFilterProfile(), "context", "documentid", 0, "the payment method is 6011792597726344.");
         Assertions.assertEquals(1, spans.size());
         Assertions.assertTrue(checkSpan(spans.get(0), 22, 38, FilterType.CREDIT_CARD));
 
@@ -86,50 +86,50 @@ public class CreditCardFilterTest extends AbstractFilterTest {
 
         // VISA
 
-        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "the payment method is 1234567812345678 visa.");
+        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", 0, "the payment method is 1234567812345678 visa.");
         Assertions.assertEquals(1, spans.size());
         Assertions.assertTrue(checkSpan(spans.get(0), 22, 38, FilterType.CREDIT_CARD));
 
-        spans  = filter.filter(getFilterProfile(), "context", "documentid", "the payment method is 0000000000000000");
+        spans  = filter.filter(getFilterProfile(), "context", "documentid", 0, "the payment method is 0000000000000000");
         Assertions.assertEquals(1, spans.size());
         Assertions.assertTrue(checkSpan(spans.get(0), 22, 38, FilterType.CREDIT_CARD));
 
-        spans  = filter.filter(getFilterProfile(), "context", "documentid", "the payment method is 9876543219876543");
+        spans  = filter.filter(getFilterProfile(), "context", "documentid", 0, "the payment method is 9876543219876543");
         Assertions.assertEquals(1, spans.size());
 
-        spans  = filter.filter(getFilterProfile(), "context", "documentid", "the payment method is 9876-5432-1987-6543");
+        spans  = filter.filter(getFilterProfile(), "context", "documentid", 0, "the payment method is 9876-5432-1987-6543");
         Assertions.assertEquals(1, spans.size());
 
-        spans  = filter.filter(getFilterProfile(), "context", "documentid", "the payment method is 4556 6627 6425 8000");
+        spans  = filter.filter(getFilterProfile(), "context", "documentid", 0, "the payment method is 4556 6627 6425 8000");
         Assertions.assertEquals(1, spans.size());
 
         // AMEX
 
-        spans = filter.filter(getFilterProfile(), "context", "documentid", "the payment method is 376454057005914");
+        spans = filter.filter(getFilterProfile(), "context", "documentid", 0, "the payment method is 376454057005914");
         Assertions.assertEquals(1, spans.size());
         Assertions.assertTrue(checkSpan(spans.get(0), 22, 37, FilterType.CREDIT_CARD));
 
-        spans = filter.filter(getFilterProfile(), "context", "documentid", "the payment method is 346119657106278.");
+        spans = filter.filter(getFilterProfile(), "context", "documentid", 0, "the payment method is 346119657106278.");
         Assertions.assertEquals(1, spans.size());
         Assertions.assertTrue(checkSpan(spans.get(0), 22, 37, FilterType.CREDIT_CARD));
 
         // MASTERCARD
 
-        spans = filter.filter(getFilterProfile(), "context", "documentid", "the payment method is 5567408136464000");
+        spans = filter.filter(getFilterProfile(), "context", "documentid", 0, "the payment method is 5567408136464000");
         Assertions.assertEquals(1, spans.size());
         Assertions.assertTrue(checkSpan(spans.get(0), 22, 38, FilterType.CREDIT_CARD));
 
-        spans = filter.filter(getFilterProfile(), "context", "documentid", "the payment method is 5100170632668000.");
+        spans = filter.filter(getFilterProfile(), "context", "documentid", 0, "the payment method is 5100170632668000.");
         Assertions.assertEquals(1, spans.size());
         Assertions.assertTrue(checkSpan(spans.get(0), 22, 38, FilterType.CREDIT_CARD));
 
         // DISCOVER
 
-        spans = filter.filter(getFilterProfile(), "context", "documentid", "the payment method is 6011485579364000");
+        spans = filter.filter(getFilterProfile(), "context", "documentid", 0, "the payment method is 6011485579364000");
         Assertions.assertEquals(1, spans.size());
         Assertions.assertTrue(checkSpan(spans.get(0), 22, 38, FilterType.CREDIT_CARD));
 
-        spans = filter.filter(getFilterProfile(), "context", "documentid", "the payment method is 6011792597726000.");
+        spans = filter.filter(getFilterProfile(), "context", "documentid", 0, "the payment method is 6011792597726000.");
         Assertions.assertEquals(1, spans.size());
         Assertions.assertTrue(checkSpan(spans.get(0), 22, 38, FilterType.CREDIT_CARD));
 

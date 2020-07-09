@@ -29,7 +29,7 @@ public class TrackingNumberFilterTest extends AbstractFilterTest {
 
         final Filter filter = new TrackingNumberFilter(null, new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), new Crypto(), windowSize);
 
-        final List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "the tracking number is 1Z9YF1280343418566");
+        final List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", 0, "the tracking number is 1Z9YF1280343418566");
 
         showSpans(spans);
 
@@ -46,7 +46,7 @@ public class TrackingNumberFilterTest extends AbstractFilterTest {
 
         final Filter filter = new TrackingNumberFilter(null, new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), new Crypto(), windowSize);
 
-        final List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "the tracking number is 9400100000000000000000");
+        final List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", 0, "the tracking number is 9400100000000000000000");
 
         showSpans(spans);
 
@@ -64,7 +64,7 @@ public class TrackingNumberFilterTest extends AbstractFilterTest {
 
         final Filter filter = new TrackingNumberFilter(null, new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), new Crypto(), windowSize);
 
-        final List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "the tracking number is 9400 1000 0000 0000 0000");
+        final List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", 0, "the tracking number is 9400 1000 0000 0000 0000");
 
         showSpans(spans);
 
@@ -81,7 +81,7 @@ public class TrackingNumberFilterTest extends AbstractFilterTest {
 
         final Filter filter = new TrackingNumberFilter(null, new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), new Crypto(), windowSize);
 
-        final List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "the tracking number is 4204319935009201990138501144099814");
+        final List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", 0, "the tracking number is 4204319935009201990138501144099814");
 
         showSpans(spans);
 
@@ -98,7 +98,7 @@ public class TrackingNumberFilterTest extends AbstractFilterTest {
 
         final Filter filter = new TrackingNumberFilter(null, new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), new Crypto(), windowSize);
 
-        final List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "the tracking number is 420431993500920199013850114409");
+        final List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", 0, "the tracking number is 420431993500920199013850114409");
 
         showSpans(spans);
 
@@ -115,7 +115,7 @@ public class TrackingNumberFilterTest extends AbstractFilterTest {
 
         final Filter filter = new TrackingNumberFilter(null, new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), new Crypto(), windowSize);
 
-        final List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "the tracking number is 4204319935009201990138501144");
+        final List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", 0, "the tracking number is 4204319935009201990138501144");
 
         showSpans(spans);
 
@@ -132,7 +132,7 @@ public class TrackingNumberFilterTest extends AbstractFilterTest {
 
         final Filter filter = new TrackingNumberFilter(null, new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), new Crypto(), windowSize);
 
-        final List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "the tracking number is 42043199350092019901385011");
+        final List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", 0, "the tracking number is 42043199350092019901385011");
 
         showSpans(spans);
 

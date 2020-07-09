@@ -28,7 +28,7 @@ public class PassportNumberFilterTest extends AbstractFilterTest {
 
         final Filter filter = getFilter();
 
-        final List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "the passport number is 036001231.");
+        final List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", 0, "the passport number is 036001231.");
 
         showSpans(spans);
 

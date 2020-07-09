@@ -26,7 +26,7 @@ public class EmailAddressFilterTest extends AbstractFilterTest {
         final List<EmailAddressFilterStrategy> strategies = Arrays.asList(new EmailAddressFilterStrategy());
         EmailAddressFilter filter = new EmailAddressFilter(strategies, new EmailAddressAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), new Crypto(), windowSize);
 
-        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid","my email is none@none.com.");
+        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", 0, "my email is none@none.com.");
         Assertions.assertEquals(1, spans.size());
         Assertions.assertTrue(checkSpan(spans.get(0), 12, 25, FilterType.EMAIL_ADDRESS));
         Assertions.assertEquals("none@none.com", spans.get(0).getText());

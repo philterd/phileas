@@ -28,7 +28,7 @@ public class BloomFilterDictionaryFilterTest extends AbstractFilterTest {
         final Set<String> names = new HashSet<>(Arrays.asList("george", "ted", "Bill", "john"));
         final DictionaryFilter filter = new BloomFilterDictionaryFilter(FilterType.CUSTOM_DICTIONARY, strategies, names, "none", 0.05, null, alertService, Collections.emptySet(), new Crypto(), windowSize);
 
-        final List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid","He lived with Bill in California.");
+        final List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", 0, "He lived with Bill in California.");
 
         showSpans(spans);
 
@@ -45,7 +45,7 @@ public class BloomFilterDictionaryFilterTest extends AbstractFilterTest {
         final Set<String> names = new HashSet<>(Arrays.asList("george", "ted", "bill", "john"));
         final DictionaryFilter filter = new BloomFilterDictionaryFilter(FilterType.CUSTOM_DICTIONARY, strategies, names, "none", 0.05, null, alertService, Collections.emptySet(), new Crypto(), windowSize);
 
-        final List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid","He lived with Bill in California.");
+        final List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", 0, "He lived with Bill in California.");
 
         showSpans(spans);
 
@@ -62,7 +62,7 @@ public class BloomFilterDictionaryFilterTest extends AbstractFilterTest {
         final Set<String> names = new HashSet<>(Arrays.asList("george", "ted", "bill", "john"));
         final DictionaryFilter filter = new BloomFilterDictionaryFilter(FilterType.CUSTOM_DICTIONARY, strategies, Collections.emptySet(), "none", 0.05, null, alertService, Collections.emptySet(), new Crypto(), windowSize);
 
-        final List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid","He lived with Sam in California.");
+        final List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", 0, "He lived with Sam in California.");
 
         showSpans(spans);
 

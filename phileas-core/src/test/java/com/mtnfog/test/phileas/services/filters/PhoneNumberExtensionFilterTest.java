@@ -26,7 +26,7 @@ public class PhoneNumberExtensionFilterTest extends AbstractFilterTest {
         final List<PhoneNumberExtensionFilterStrategy> strategies = Arrays.asList(new PhoneNumberExtensionFilterStrategy());
         PhoneNumberExtensionFilter filter = new PhoneNumberExtensionFilter(strategies, new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), new Crypto(), windowSize);
 
-        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid","he is at x123");
+        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", 0, "he is at x123");
 
         for(Span span : spans) {
             LOGGER.info(span.toString());
@@ -44,7 +44,7 @@ public class PhoneNumberExtensionFilterTest extends AbstractFilterTest {
         final List<PhoneNumberExtensionFilterStrategy> strategies = Arrays.asList(new PhoneNumberExtensionFilterStrategy());
         PhoneNumberExtensionFilter filter = new PhoneNumberExtensionFilter(strategies, new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), new Crypto(), windowSize);
 
-        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid","his phone number was +1 151-841-2829 x416.");
+        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", 0, "his phone number was +1 151-841-2829 x416.");
 
         for(Span span : spans) {
             LOGGER.info(span.toString());

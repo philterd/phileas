@@ -31,7 +31,7 @@ public class FilterTest extends AbstractFilterTest {
 
         final AgeFilter filter = new AgeFilter(null, new AgeAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), new Crypto(), windowSize);
 
-        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "this is a first sentence. the patient is 3.5 years old and he's cool. this is a surrounding sentence.");
+        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", 0, "this is a first sentence. the patient is 3.5 years old and he's cool. this is a surrounding sentence.");
 
         showSpans(spans);
 
@@ -56,7 +56,7 @@ public class FilterTest extends AbstractFilterTest {
 
         final AgeFilter filter = new AgeFilter(null, new AgeAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), new Crypto(), windowSize);
 
-        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "this is a first sentence. the patient is 3.5 years old and he's cool. this is a surrounding sentence.");
+        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", 0, "this is a first sentence. the patient is 3.5 years old and he's cool. this is a surrounding sentence.");
 
         showSpans(spans);
 

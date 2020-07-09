@@ -45,7 +45,7 @@ public class SurnameFilterTest extends AbstractFilterTest {
         final List<SurnameFilterStrategy> strategies = Arrays.asList(new SurnameFilterStrategy());
         final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.SURNAME, strategies, INDEX_DIRECTORY, SensitivityLevel.LOW, anonymizationService, alertService, Collections.emptySet(), new Crypto(), windowSize);
 
-        final List<Span> spans = filter.filter(getFilterProfile(SensitivityLevel.LOW), "context", "documentid", "Lived in Wshington");
+        final List<Span> spans = filter.filter(getFilterProfile(SensitivityLevel.LOW), "context", "documentid", 0, "Lived in Wshington");
         showSpans(spans);
         Assertions.assertEquals(0, spans.size());
 
@@ -59,7 +59,7 @@ public class SurnameFilterTest extends AbstractFilterTest {
         final List<SurnameFilterStrategy> strategies = Arrays.asList(new SurnameFilterStrategy());
         final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.SURNAME, strategies, INDEX_DIRECTORY, SensitivityLevel.MEDIUM, anonymizationService, alertService, Collections.emptySet(), new Crypto(), windowSize);
 
-        final List<Span> spans = filter.filter(getFilterProfile(SensitivityLevel.MEDIUM), "context", "documentid", "Lived in Wshington");
+        final List<Span> spans = filter.filter(getFilterProfile(SensitivityLevel.MEDIUM), "context", "documentid", 0, "Lived in Wshington");
         showSpans(spans);
         Assertions.assertEquals(0, spans.size());
 
@@ -73,7 +73,7 @@ public class SurnameFilterTest extends AbstractFilterTest {
         final List<SurnameFilterStrategy> strategies = Arrays.asList(new SurnameFilterStrategy());
         final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.SURNAME, strategies, INDEX_DIRECTORY, SensitivityLevel.HIGH, anonymizationService, alertService, Collections.emptySet(), new Crypto(), windowSize);
 
-        final List<Span> spans = filter.filter(getFilterProfile(SensitivityLevel.HIGH), "context", "documentid", "Lived in Wasinton");
+        final List<Span> spans = filter.filter(getFilterProfile(SensitivityLevel.HIGH), "context", "documentid", 0, "Lived in Wasinton");
         showSpans(spans);
         Assertions.assertEquals(0, spans.size());
 

@@ -26,7 +26,7 @@ public class SsnFilterTest extends AbstractFilterTest {
         final List<SsnFilterStrategy> strategies = Arrays.asList(new SsnFilterStrategy());
         SsnFilter filter = new SsnFilter(strategies, new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), new Crypto(), windowSize);
 
-        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "the ssn is 123-45-6789.");
+        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", 0, "the ssn is 123-45-6789.");
         Assertions.assertEquals(1, spans.size());
         Assertions.assertTrue(checkSpan(spans.get(0), 11, 22, FilterType.SSN));
         Assertions.assertEquals("123-45-6789", spans.get(0).getText());
@@ -39,7 +39,7 @@ public class SsnFilterTest extends AbstractFilterTest {
         final List<SsnFilterStrategy> strategies = Arrays.asList(new SsnFilterStrategy());
         SsnFilter filter = new SsnFilter(strategies, new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), new Crypto(), windowSize);
 
-        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "the ssn is 123456789.");
+        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", 0, "the ssn is 123456789.");
         Assertions.assertEquals(1, spans.size());
         Assertions.assertTrue(checkSpan(spans.get(0), 11, 20, FilterType.SSN));
 
@@ -51,7 +51,7 @@ public class SsnFilterTest extends AbstractFilterTest {
         final List<SsnFilterStrategy> strategies = Arrays.asList(new SsnFilterStrategy());
         SsnFilter filter = new SsnFilter(strategies, new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), new Crypto(), windowSize);
 
-        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "the ssn is 123 45 6789.");
+        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", 0, "the ssn is 123 45 6789.");
         Assertions.assertEquals(1, spans.size());
         Assertions.assertTrue(checkSpan(spans.get(0), 11, 22, FilterType.SSN));
 
@@ -63,7 +63,7 @@ public class SsnFilterTest extends AbstractFilterTest {
         final List<SsnFilterStrategy> strategies = Arrays.asList(new SsnFilterStrategy());
         SsnFilter filter = new SsnFilter(strategies, new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), new Crypto(), windowSize);
 
-        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "the ssn is 123 45 6789.");
+        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", 0, "the ssn is 123 45 6789.");
         Assertions.assertEquals(1, spans.size());
         Assertions.assertTrue(checkSpan(spans.get(0), 11, 22, FilterType.SSN));
 
@@ -75,7 +75,7 @@ public class SsnFilterTest extends AbstractFilterTest {
         final List<SsnFilterStrategy> strategies = Arrays.asList(new SsnFilterStrategy());
         SsnFilter filter = new SsnFilter(strategies, new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), new Crypto(), windowSize);
 
-        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "the ssn is 123 454 6789.");
+        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", 0, "the ssn is 123 454 6789.");
         Assertions.assertEquals(0, spans.size());
 
     }
@@ -86,7 +86,7 @@ public class SsnFilterTest extends AbstractFilterTest {
         final List<SsnFilterStrategy> strategies = Arrays.asList(new SsnFilterStrategy());
         SsnFilter filter = new SsnFilter(strategies, new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), new Crypto(), windowSize);
 
-        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "the ssn is 123 4f 6789.");
+        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", 0, "the ssn is 123 4f 6789.");
         Assertions.assertEquals(0, spans.size());
 
     }
@@ -97,7 +97,7 @@ public class SsnFilterTest extends AbstractFilterTest {
         final List<SsnFilterStrategy> strategies = Arrays.asList(new SsnFilterStrategy());
         SsnFilter filter = new SsnFilter(strategies, new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), new Crypto(), windowSize);
 
-        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "the ssn is 11-1234567.");
+        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", 0, "the ssn is 11-1234567.");
         Assertions.assertEquals(1, spans.size());
         Assertions.assertTrue(checkSpan(spans.get(0), 11, 21, FilterType.SSN));
 

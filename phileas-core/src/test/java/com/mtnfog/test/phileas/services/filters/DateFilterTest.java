@@ -27,7 +27,7 @@ public class DateFilterTest extends AbstractFilterTest {
         final List<DateFilterStrategy> strategies = Arrays.asList(new DateFilterStrategy());
         DateFilter filter = new DateFilter(strategies, new DateAnonymizationService(new LocalAnonymizationCacheService()), alertService, false, DateSpanValidator.getInstance(), Collections.emptySet(), new Crypto(), windowSize);
 
-        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid","May 22, 1999");
+        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", 0, "May 22, 1999");
         showSpans(spans);
         Assertions.assertEquals(1, spans.size());
         Assertions.assertTrue(checkSpan(spans.get(0), 0, 12, FilterType.DATE));
@@ -41,7 +41,7 @@ public class DateFilterTest extends AbstractFilterTest {
         final List<DateFilterStrategy> strategies = Arrays.asList(new DateFilterStrategy());
         DateFilter filter = new DateFilter(strategies, new DateAnonymizationService(new LocalAnonymizationCacheService()), alertService, false, DateSpanValidator.getInstance(), Collections.emptySet(), new Crypto(), windowSize);
 
-        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid","13-06-31");
+        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", 0, "13-06-31");
         Assertions.assertEquals(1, spans.size());
         Assertions.assertTrue(checkSpan(spans.get(0), 0, 8, FilterType.DATE));
 
@@ -53,7 +53,7 @@ public class DateFilterTest extends AbstractFilterTest {
         final List<DateFilterStrategy> strategies = Arrays.asList(new DateFilterStrategy());
         DateFilter filter = new DateFilter(strategies, new DateAnonymizationService(new LocalAnonymizationCacheService()), alertService, false, DateSpanValidator.getInstance(), Collections.emptySet(), new Crypto(), windowSize);
 
-        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid","2205-02-31");
+        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", 0, "2205-02-31");
         Assertions.assertEquals(1, spans.size());
         Assertions.assertTrue(checkSpan(spans.get(0), 0, 10, FilterType.DATE));
 
@@ -65,7 +65,7 @@ public class DateFilterTest extends AbstractFilterTest {
         final List<DateFilterStrategy> strategies = Arrays.asList(new DateFilterStrategy());
         DateFilter filter = new DateFilter(strategies, new DateAnonymizationService(new LocalAnonymizationCacheService()), alertService, false, DateSpanValidator.getInstance(), Collections.emptySet(), new Crypto(), windowSize);
 
-        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid","02-31-2019");
+        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", 0, "02-31-2019");
 
         Assertions.assertEquals(1, spans.size());
         Assertions.assertTrue(checkSpan(spans.get(0), 0, 10, FilterType.DATE));
@@ -78,7 +78,7 @@ public class DateFilterTest extends AbstractFilterTest {
         final List<DateFilterStrategy> strategies = Arrays.asList(new DateFilterStrategy());
         DateFilter filter = new DateFilter(strategies, new DateAnonymizationService(new LocalAnonymizationCacheService()), alertService, false, DateSpanValidator.getInstance(), Collections.emptySet(), new Crypto(), windowSize);
 
-        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid","02-31-19");
+        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", 0, "02-31-19");
         Assertions.assertEquals(1, spans.size());
         Assertions.assertTrue(checkSpan(spans.get(0), 0, 8, FilterType.DATE));
 
@@ -90,7 +90,7 @@ public class DateFilterTest extends AbstractFilterTest {
         final List<DateFilterStrategy> strategies = Arrays.asList(new DateFilterStrategy());
         DateFilter filter = new DateFilter(strategies, new DateAnonymizationService(new LocalAnonymizationCacheService()), alertService, false, DateSpanValidator.getInstance(), Collections.emptySet(), new Crypto(), windowSize);
 
-        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid","2-8-2019");
+        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", 0, "2-8-2019");
         Assertions.assertEquals(1, spans.size());
         Assertions.assertTrue(checkSpan(spans.get(0), 0, 8, FilterType.DATE));
 
@@ -102,7 +102,7 @@ public class DateFilterTest extends AbstractFilterTest {
         final List<DateFilterStrategy> strategies = Arrays.asList(new DateFilterStrategy());
         DateFilter filter = new DateFilter(strategies, new DateAnonymizationService(new LocalAnonymizationCacheService()), alertService, false, DateSpanValidator.getInstance(), Collections.emptySet(), new Crypto(), windowSize);
 
-        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid","2-15-2019");
+        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", 0, "2-15-2019");
         Assertions.assertEquals(1, spans.size());
         Assertions.assertTrue(checkSpan(spans.get(0), 0, 9, FilterType.DATE));
 
@@ -114,7 +114,7 @@ public class DateFilterTest extends AbstractFilterTest {
         final List<DateFilterStrategy> strategies = Arrays.asList(new DateFilterStrategy());
         DateFilter filter = new DateFilter(strategies, new DateAnonymizationService(new LocalAnonymizationCacheService()), alertService, false, DateSpanValidator.getInstance(), Collections.emptySet(), new Crypto(), windowSize);
 
-        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid","January 2012");
+        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", 0, "January 2012");
         Assertions.assertEquals(1, spans.size());
         Assertions.assertTrue(checkSpan(spans.get(0), 0, 12, FilterType.DATE));
 
@@ -126,7 +126,7 @@ public class DateFilterTest extends AbstractFilterTest {
         final List<DateFilterStrategy> strategies = Arrays.asList(new DateFilterStrategy());
         DateFilter filter = new DateFilter(strategies, new DateAnonymizationService(new LocalAnonymizationCacheService()), alertService, false, DateSpanValidator.getInstance(), Collections.emptySet(), new Crypto(), windowSize);
 
-        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid","December 2015");
+        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", 0, "December 2015");
         Assertions.assertEquals(1, spans.size());
         Assertions.assertTrue(checkSpan(spans.get(0), 0, 13, FilterType.DATE));
 
@@ -138,7 +138,7 @@ public class DateFilterTest extends AbstractFilterTest {
         final List<DateFilterStrategy> strategies = Arrays.asList(new DateFilterStrategy());
         DateFilter filter = new DateFilter(strategies, new DateAnonymizationService(new LocalAnonymizationCacheService()), alertService, false, DateSpanValidator.getInstance(), Collections.emptySet(), new Crypto(), windowSize);
 
-        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid","November 1999");
+        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", 0, "November 1999");
         Assertions.assertEquals(1, spans.size());
         Assertions.assertTrue(checkSpan(spans.get(0), 0, 13, FilterType.DATE));
 
@@ -150,7 +150,7 @@ public class DateFilterTest extends AbstractFilterTest {
         final List<DateFilterStrategy> strategies = Arrays.asList(new DateFilterStrategy());
         DateFilter filter = new DateFilter(strategies, new DateAnonymizationService(new LocalAnonymizationCacheService()), alertService, false, DateSpanValidator.getInstance(), Collections.emptySet(), new Crypto(), windowSize);
 
-        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid","april 1999");
+        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", 0, "april 1999");
         Assertions.assertEquals(1, spans.size());
         Assertions.assertTrue(checkSpan(spans.get(0), 0, 10, FilterType.DATE));
 
@@ -162,7 +162,7 @@ public class DateFilterTest extends AbstractFilterTest {
         final List<DateFilterStrategy> strategies = Arrays.asList(new DateFilterStrategy());
         DateFilter filter = new DateFilter(strategies, new DateAnonymizationService(new LocalAnonymizationCacheService()), alertService, false, DateSpanValidator.getInstance(), Collections.emptySet(), new Crypto(), windowSize);
 
-        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid","12-05-2014");
+        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", 0, "12-05-2014");
         Assertions.assertEquals(1, spans.size());
         Assertions.assertTrue(checkSpan(spans.get(0), 0, 10, FilterType.DATE));
 
@@ -174,7 +174,7 @@ public class DateFilterTest extends AbstractFilterTest {
         final List<DateFilterStrategy> strategies = Arrays.asList(new DateFilterStrategy());
         DateFilter filter = new DateFilter(strategies, new DateAnonymizationService(new LocalAnonymizationCacheService()), alertService, false, DateSpanValidator.getInstance(), Collections.emptySet(), new Crypto(), windowSize);
 
-        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid","November 22, 1999");
+        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", 0, "November 22, 1999");
         Assertions.assertEquals(1, spans.size());
         Assertions.assertTrue(checkSpan(spans.get(0), 0, 17, FilterType.DATE));
 
@@ -186,7 +186,7 @@ public class DateFilterTest extends AbstractFilterTest {
         final List<DateFilterStrategy> strategies = Arrays.asList(new DateFilterStrategy());
         DateFilter filter = new DateFilter(strategies, new DateAnonymizationService(new LocalAnonymizationCacheService()), alertService, false, DateSpanValidator.getInstance(), Collections.emptySet(), new Crypto(), windowSize);
 
-        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid","November 22nd, 1999");
+        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", 0, "November 22nd, 1999");
         Assertions.assertEquals(1, spans.size());
         Assertions.assertTrue(checkSpan(spans.get(0), 0, 19, FilterType.DATE));
 
@@ -198,7 +198,7 @@ public class DateFilterTest extends AbstractFilterTest {
         final List<DateFilterStrategy> strategies = Arrays.asList(new DateFilterStrategy());
         DateFilter filter = new DateFilter(strategies, new DateAnonymizationService(new LocalAnonymizationCacheService()), alertService, false, DateSpanValidator.getInstance(), Collections.emptySet(), new Crypto(), windowSize);
 
-        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid","November 22 nd, 1999");
+        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", 0, "November 22 nd, 1999");
         Assertions.assertEquals(1, spans.size());
         Assertions.assertTrue(checkSpan(spans.get(0), 0, 20, FilterType.DATE));
 
@@ -210,7 +210,7 @@ public class DateFilterTest extends AbstractFilterTest {
         final List<DateFilterStrategy> strategies = Arrays.asList(new DateFilterStrategy());
         DateFilter filter = new DateFilter(strategies, new DateAnonymizationService(new LocalAnonymizationCacheService()), alertService, false, DateSpanValidator.getInstance(), Collections.emptySet(), new Crypto(), windowSize);
 
-        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid","November 22nd");
+        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", 0, "November 22nd");
         Assertions.assertEquals(1, spans.size());
         Assertions.assertTrue(checkSpan(spans.get(0), 0, 13, FilterType.DATE));
 
@@ -222,7 +222,7 @@ public class DateFilterTest extends AbstractFilterTest {
         final List<DateFilterStrategy> strategies = Arrays.asList(new DateFilterStrategy());
         DateFilter filter = new DateFilter(strategies, new DateAnonymizationService(new LocalAnonymizationCacheService()), alertService, false, DateSpanValidator.getInstance(), Collections.emptySet(), new Crypto(), windowSize);
 
-        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid","May 1 st");
+        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", 0, "May 1 st");
         Assertions.assertEquals(1, spans.size());
         Assertions.assertTrue(checkSpan(spans.get(0), 0, 8, FilterType.DATE));
 
@@ -234,7 +234,7 @@ public class DateFilterTest extends AbstractFilterTest {
         final List<DateFilterStrategy> strategies = Arrays.asList(new DateFilterStrategy());
         DateFilter filter = new DateFilter(strategies, new DateAnonymizationService(new LocalAnonymizationCacheService()), alertService, false, DateSpanValidator.getInstance(), Collections.emptySet(), new Crypto(), windowSize);
 
-        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid","June 13th");
+        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", 0, "June 13th");
         Assertions.assertEquals(1, spans.size());
         Assertions.assertTrue(checkSpan(spans.get(0), 0, 9, FilterType.DATE));
 
@@ -246,7 +246,7 @@ public class DateFilterTest extends AbstractFilterTest {
         final List<DateFilterStrategy> strategies = Arrays.asList(new DateFilterStrategy());
         DateFilter filter = new DateFilter(strategies, new DateAnonymizationService(new LocalAnonymizationCacheService()), alertService, false, DateSpanValidator.getInstance(), Collections.emptySet(), new Crypto(), windowSize);
 
-        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid","November 2, 1999");
+        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", 0, "November 2, 1999");
         Assertions.assertEquals(1, spans.size());
         Assertions.assertTrue(checkSpan(spans.get(0), 0, 16, FilterType.DATE));
 
@@ -258,7 +258,7 @@ public class DateFilterTest extends AbstractFilterTest {
         final List<DateFilterStrategy> strategies = Arrays.asList(new DateFilterStrategy());
         DateFilter filter = new DateFilter(strategies, new DateAnonymizationService(new LocalAnonymizationCacheService()), alertService, false, DateSpanValidator.getInstance(), Collections.emptySet(), new Crypto(), windowSize);
 
-        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid","May 1st");
+        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", 0, "May 1st");
         Assertions.assertEquals(1, spans.size());
         Assertions.assertTrue(checkSpan(spans.get(0), 0, 7, FilterType.DATE));
 
@@ -270,7 +270,7 @@ public class DateFilterTest extends AbstractFilterTest {
         final List<DateFilterStrategy> strategies = Arrays.asList(new DateFilterStrategy());
         DateFilter filter = new DateFilter(strategies, new DateAnonymizationService(new LocalAnonymizationCacheService()), alertService, false, DateSpanValidator.getInstance(), Collections.emptySet(), new Crypto(), windowSize);
 
-        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid","December 4th");
+        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", 0, "December 4th");
         Assertions.assertEquals(1, spans.size());
         Assertions.assertTrue(checkSpan(spans.get(0), 0, 12, FilterType.DATE));
 
@@ -282,7 +282,7 @@ public class DateFilterTest extends AbstractFilterTest {
         final List<DateFilterStrategy> strategies = Arrays.asList(new DateFilterStrategy());
         DateFilter filter = new DateFilter(strategies, new DateAnonymizationService(new LocalAnonymizationCacheService()), alertService, false, DateSpanValidator.getInstance(), Collections.emptySet(), new Crypto(), windowSize);
 
-        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid","02-31-19@12:00");
+        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", 0, "02-31-19@12:00");
         Assertions.assertEquals(1, spans.size());
         Assertions.assertTrue(checkSpan(spans.get(0), 0, 8, FilterType.DATE));
 
@@ -294,7 +294,7 @@ public class DateFilterTest extends AbstractFilterTest {
         final List<DateFilterStrategy> strategies = Arrays.asList(new DateFilterStrategy());
         DateFilter filter = new DateFilter(strategies, new DateAnonymizationService(new LocalAnonymizationCacheService()), alertService, true, DateSpanValidator.getInstance(), Collections.emptySet(), new Crypto(), windowSize);
 
-        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid","02-31-19@12:00");
+        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", 0, "02-31-19@12:00");
         showSpans(spans);
         Assertions.assertEquals(0, spans.size());
 
@@ -306,7 +306,7 @@ public class DateFilterTest extends AbstractFilterTest {
         final List<DateFilterStrategy> strategies = Arrays.asList(new DateFilterStrategy());
         DateFilter filter = new DateFilter(strategies, new DateAnonymizationService(new LocalAnonymizationCacheService()), alertService, true, DateSpanValidator.getInstance(), Collections.emptySet(), new Crypto(), windowSize);
 
-        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid","02-35-19@12:00");
+        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", 0, "02-35-19@12:00");
         Assertions.assertEquals(0, spans.size());
 
     }
@@ -317,7 +317,7 @@ public class DateFilterTest extends AbstractFilterTest {
         final List<DateFilterStrategy> strategies = Arrays.asList(new DateFilterStrategy());
         DateFilter filter = new DateFilter(strategies, new DateAnonymizationService(new LocalAnonymizationCacheService()), alertService, true, DateSpanValidator.getInstance(), Collections.emptySet(), new Crypto(), windowSize);
 
-        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid","02-15-19");
+        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", 0, "02-15-19");
         Assertions.assertEquals(1, spans.size());
 
     }
@@ -328,7 +328,7 @@ public class DateFilterTest extends AbstractFilterTest {
         final List<DateFilterStrategy> strategies = Arrays.asList(new DateFilterStrategy());
         DateFilter filter = new DateFilter(strategies, new DateAnonymizationService(new LocalAnonymizationCacheService()), alertService, false, DateSpanValidator.getInstance(), Collections.emptySet(), new Crypto(), windowSize);
 
-        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid","The good news is everywhere we go it is that way but this may be on top of that.");
+        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", 0, "The good news is everywhere we go it is that way but this may be on top of that.");
         Assertions.assertEquals(0, spans.size());
 
     }
@@ -339,7 +339,7 @@ public class DateFilterTest extends AbstractFilterTest {
         final List<DateFilterStrategy> strategies = Arrays.asList(new DateFilterStrategy());
         DateFilter filter = new DateFilter(strategies, new DateAnonymizationService(new LocalAnonymizationCacheService()), alertService, false, DateSpanValidator.getInstance(), Collections.emptySet(), new Crypto(), windowSize);
 
-        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid","The good news is everywhere we go it is that way but this may 15 be on top of that.");
+        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", 0, "The good news is everywhere we go it is that way but this may 15 be on top of that.");
         Assertions.assertEquals(1, spans.size());
 
     }
@@ -350,7 +350,7 @@ public class DateFilterTest extends AbstractFilterTest {
         final List<DateFilterStrategy> strategies = Arrays.asList(new DateFilterStrategy());
         DateFilter filter = new DateFilter(strategies, new DateAnonymizationService(new LocalAnonymizationCacheService()), alertService, false, DateSpanValidator.getInstance(), Collections.emptySet(), new Crypto(), windowSize);
 
-        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid","The good news is everywhere we go it is that way but this may 15, 2020 be on top of that.");
+        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", 0, "The good news is everywhere we go it is that way but this may 15, 2020 be on top of that.");
         Assertions.assertEquals(1, spans.size());
 
     }
@@ -361,7 +361,7 @@ public class DateFilterTest extends AbstractFilterTest {
         final List<DateFilterStrategy> strategies = Arrays.asList(new DateFilterStrategy());
         DateFilter filter = new DateFilter(strategies, new DateAnonymizationService(new LocalAnonymizationCacheService()), alertService, false, DateSpanValidator.getInstance(), Collections.emptySet(), new Crypto(), windowSize);
 
-        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid","The good news is everywhere we go it is that way but this may 15 2020 be on top of that.");
+        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", 0, "The good news is everywhere we go it is that way but this may 15 2020 be on top of that.");
         Assertions.assertEquals(1, spans.size());
 
     }
@@ -372,7 +372,7 @@ public class DateFilterTest extends AbstractFilterTest {
         final List<DateFilterStrategy> strategies = Arrays.asList(new DateFilterStrategy());
         DateFilter filter = new DateFilter(strategies, new DateAnonymizationService(new LocalAnonymizationCacheService()), alertService, false, DateSpanValidator.getInstance(), Collections.emptySet(), new Crypto(), windowSize);
 
-        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid","The good news is everywhere we go it is that way but this may 15 19 be on top of that.");
+        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", 0, "The good news is everywhere we go it is that way but this may 15 19 be on top of that.");
         Assertions.assertEquals(1, spans.size());
 
     }

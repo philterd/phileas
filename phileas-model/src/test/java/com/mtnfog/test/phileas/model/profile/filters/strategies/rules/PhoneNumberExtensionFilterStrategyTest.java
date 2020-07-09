@@ -19,7 +19,7 @@ public class PhoneNumberExtensionFilterStrategyTest extends AbstractFilterStrate
 
         PhoneNumberExtensionFilterStrategy strategy = new PhoneNumberExtensionFilterStrategy();
 
-        final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentId", "90210", "token startswith \"902\"", 1.0, "");
+        final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentid", "90210", "token startswith \"902\"", 1.0, "");
 
         Assertions.assertTrue(conditionSatisfied);
 
@@ -30,7 +30,7 @@ public class PhoneNumberExtensionFilterStrategyTest extends AbstractFilterStrate
 
         PhoneNumberExtensionFilterStrategy strategy = new PhoneNumberExtensionFilterStrategy();
 
-        final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentId", "90210", "token == \"90210\"", 1.0, "");
+        final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentid", "90210", "token == \"90210\"", 1.0, "");
 
         Assertions.assertTrue(conditionSatisfied);
 
@@ -41,7 +41,7 @@ public class PhoneNumberExtensionFilterStrategyTest extends AbstractFilterStrate
 
         PhoneNumberExtensionFilterStrategy strategy = new PhoneNumberExtensionFilterStrategy();
 
-        final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentId", "12345", "token == \"90210\"", 1.0, "");
+        final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentid", "12345", "token == \"90210\"", 1.0, "");
 
         Assertions.assertFalse(conditionSatisfied);
 
@@ -52,7 +52,7 @@ public class PhoneNumberExtensionFilterStrategyTest extends AbstractFilterStrate
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
 
-        final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentId", "John Smith", "context == \"c1\"",  1.0, "");
+        final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentid", "John Smith", "context == \"c1\"",  1.0, "");
 
         Assertions.assertFalse(conditionSatisfied);
 

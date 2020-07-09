@@ -4,6 +4,7 @@ import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.Headers;
 import retrofit2.http.POST;
+import retrofit2.http.Query;
 
 import java.util.List;
 
@@ -13,6 +14,6 @@ public interface PyTorchRestService {
 
     @POST("process")
     @Headers({"Content-Type: text/plain", "Accept: application/json"})
-    Call<List<PhileasSpan>> process(@Body String text);
+    Call<List<PhileasSpan>> process(@Query("c") String context, @Query("d") String documentId, @Query("p") int piece, @Body String text);
 
 }

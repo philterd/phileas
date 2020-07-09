@@ -32,7 +32,7 @@ public class IbanCodeFilterTest extends AbstractFilterTest {
 
         final Filter filter = getFilter(true);
 
-        final List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "bank code of GB33BUKB20201555555555 ok?");
+        final List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", 0, "bank code of GB33BUKB20201555555555 ok?");
 
         showSpans(spans);
 
@@ -48,7 +48,7 @@ public class IbanCodeFilterTest extends AbstractFilterTest {
 
         final Filter filter = getFilter(false);
 
-        final List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "bank code of GB15MIDL40051512345678 ok?");
+        final List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", 0, "bank code of GB15MIDL40051512345678 ok?");
 
         showSpans(spans);
 

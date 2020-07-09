@@ -85,7 +85,7 @@ public class PyTorchFilter extends NerFilter {
     }
 
     @Override
-    public List<Span> filter(FilterProfile filterProfile, String context, String documentId, String input) throws Exception {
+    public List<Span> filter(FilterProfile filterProfile, String context, String documentId, int piece, String input) throws Exception {
 
         final List<Span> spans = new LinkedList<>();
 
@@ -97,7 +97,7 @@ public class PyTorchFilter extends NerFilter {
             input = input.replaceAll("\\p{Punct}", " ");
         }
 
-        final Response<List<PhileasSpan>> response = service.process(input).execute();
+        final Response<List<PhileasSpan>> response = service.process(context, documentId, piece, input).execute();
 
         if(response.isSuccessful()) {
 

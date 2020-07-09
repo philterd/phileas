@@ -53,7 +53,7 @@ public class UrlFilter extends RegexFilter {
     }
 
     @Override
-    public List<Span> filter(FilterProfile filterProfile, String context, String documentId, String input) throws Exception {
+    public List<Span> filter(FilterProfile filterProfile, String context, String documentId, int piece, String input) throws Exception {
 
         return findSpans(filterProfile, analyzer, input, context, documentId);
 

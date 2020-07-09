@@ -33,14 +33,14 @@ public class UnstructuredDocumentProcessor implements DocumentProcessor {
 
     @Override
     public FilterResponse process(FilterProfile filterProfile, List<Filter> filters, List<PostFilter> postFilters,
-                                  String context, String documentId, String input) throws Exception {
+                                  String context, String documentId, int piece, String input) throws Exception {
 
         // The list that will contain the spans containing PHI/PII.
         List<Span> spans = new LinkedList<>();
 
         // Execute each filter.
         for(final Filter filter : filters) {
-            spans.addAll(filter.filter(filterProfile, context, documentId, input));
+            spans.addAll(filter.filter(filterProfile, context, documentId, piece, input));
         }
 
         // Drop ignored spans.

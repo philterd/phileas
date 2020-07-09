@@ -30,7 +30,7 @@ public class BitcoinAddressFilterTest extends AbstractFilterTest {
 
         final Filter filter = getFilter();
 
-        final List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "the address is 127NVqnjf8gB9BFAW2dnQeM6wqmy1gbGtv.");
+        final List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", 0, "the address is 127NVqnjf8gB9BFAW2dnQeM6wqmy1gbGtv.");
 
         showSpans(spans);
 
@@ -46,7 +46,7 @@ public class BitcoinAddressFilterTest extends AbstractFilterTest {
 
         final Filter filter = getFilter();
 
-        final List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "the address is 12qnjf8FAW2dnQeM6wqmy1gbGtv.");
+        final List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", 0, "the address is 12qnjf8FAW2dnQeM6wqmy1gbGtv.");
 
         showSpans(spans);
 
@@ -62,7 +62,7 @@ public class BitcoinAddressFilterTest extends AbstractFilterTest {
 
         final Filter filter = getFilter();
 
-        final List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "the address is 126wqmy1gbGtv.");
+        final List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", 0, "the address is 126wqmy1gbGtv.");
 
         showSpans(spans);
 

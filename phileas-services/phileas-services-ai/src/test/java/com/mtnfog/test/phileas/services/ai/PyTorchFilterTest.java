@@ -91,7 +91,7 @@ public class PyTorchFilterTest {
 
         final PyTorchFilter t = new PyTorchFilter(baseUrl, FilterType.NER_ENTITY, getStrategies(), phileasConfiguration, "PER", stats, metricsService, anonymizationService, alertService, Collections.emptySet(), false, new Crypto(), windowSize);
 
-        final List<Span> spans = t.filter(getFilterProfile(), "context", "doc", "John Smith lives in New York");
+        final List<Span> spans = t.filter(getFilterProfile(), "context", "doc", 0, "John Smith lives in New York");
 
         for(Span span : spans) {
             LOGGER.info(span.toString());
@@ -119,7 +119,7 @@ public class PyTorchFilterTest {
         final PyTorchFilter t = new PyTorchFilter(baseUrl, FilterType.NER_ENTITY, getStrategies(), phileasConfiguration, "LOC",
                 stats, metricsService, anonymizationService, alertService, Collections.emptySet(), false, new Crypto(), windowSize);
 
-        final List<Span> spans = t.filter(getFilterProfile(), "context", "doc", "John Smith lives in New York");
+        final List<Span> spans = t.filter(getFilterProfile(), "context", "doc", 0,"John Smith lives in New York");
 
         for(Span span : spans) {
             LOGGER.info(span.toString());

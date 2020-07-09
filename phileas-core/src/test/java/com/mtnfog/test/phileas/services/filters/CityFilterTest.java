@@ -54,7 +54,7 @@ public class CityFilterTest extends AbstractFilterTest {
         final List<CityFilterStrategy> strategies = Arrays.asList(new CityFilterStrategy());
         final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.LOCATION_CITY, strategies, INDEX_DIRECTORY, SensitivityLevel.MEDIUM, anonymizationService, alertService, Collections.emptySet(), new Crypto(), windowSize);
 
-        List<Span> spans = filter.filter(getFilterProfile(SensitivityLevel.MEDIUM), "context", "documentid","Lived in Washington.");
+        List<Span> spans = filter.filter(getFilterProfile(SensitivityLevel.MEDIUM), "context", "documentid", 0,"Lived in Washington.");
 
         showSpans(spans);
 
@@ -69,7 +69,7 @@ public class CityFilterTest extends AbstractFilterTest {
         final List<CityFilterStrategy> strategies = Arrays.asList(new CityFilterStrategy());
         final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.LOCATION_CITY, strategies, INDEX_DIRECTORY, SensitivityLevel.HIGH, anonymizationService, alertService, Collections.emptySet(), new Crypto(), windowSize);
 
-        List<Span> spans = filter.filter(getFilterProfile(SensitivityLevel.HIGH), "context", "documentid","Lived in New York.");
+        List<Span> spans = filter.filter(getFilterProfile(SensitivityLevel.HIGH), "context", "documentid",0, "Lived in New York.");
 
         showSpans(spans);
 
@@ -86,7 +86,7 @@ public class CityFilterTest extends AbstractFilterTest {
         final List<CityFilterStrategy> strategies = Arrays.asList(new CityFilterStrategy());
         final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.LOCATION_CITY, strategies, INDEX_DIRECTORY, SensitivityLevel.LOW, anonymizationService, alertService, Collections.emptySet(), new Crypto(), windowSize);
 
-        List<Span> spans = filter.filter(getFilterProfile(SensitivityLevel.LOW), "context", "documentid","Lived in Wshington");
+        List<Span> spans = filter.filter(getFilterProfile(SensitivityLevel.LOW), "context", "documentid", 0,"Lived in Wshington");
 
         showSpans(spans);
 
@@ -100,7 +100,7 @@ public class CityFilterTest extends AbstractFilterTest {
         final List<CityFilterStrategy> strategies = Arrays.asList(new CityFilterStrategy());
         final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.LOCATION_CITY, strategies, INDEX_DIRECTORY, SensitivityLevel.MEDIUM, anonymizationService, alertService, Collections.emptySet(), new Crypto(), windowSize);
 
-        List<Span> spans = filter.filter(getFilterProfile(SensitivityLevel.MEDIUM), "context", "documentid","Lived in Wshington");
+        List<Span> spans = filter.filter(getFilterProfile(SensitivityLevel.MEDIUM), "context", "documentid", 0,"Lived in Wshington");
 
         showSpans(spans);
 
@@ -115,7 +115,7 @@ public class CityFilterTest extends AbstractFilterTest {
         final List<CityFilterStrategy> strategies = Arrays.asList(new CityFilterStrategy());
         final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.LOCATION_CITY, strategies, INDEX_DIRECTORY, SensitivityLevel.HIGH, anonymizationService, alertService, Collections.emptySet(), new Crypto(), windowSize);
 
-        List<Span> spans = filter.filter(getFilterProfile(SensitivityLevel.LOW), "context", "documentid","Lived in Wasinton");
+        List<Span> spans = filter.filter(getFilterProfile(SensitivityLevel.LOW), "context", "documentid", 0,"Lived in Wasinton");
 
         showSpans(spans);
 

@@ -31,7 +31,7 @@ public class StateAbbreviationFilterTest extends AbstractFilterTest {
         final StateAbbreviationFilter filter = new StateAbbreviationFilter(strategies, new StateAbbreviationAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), new Crypto(), windowSize);
 
         final String input = "The patient is from WV.";
-        final List<Span> spans = filter.filter(getFilterProfile(), "context", "docid", input);
+        final List<Span> spans = filter.filter(getFilterProfile(), "context", "docid", 0, input);
 
         Assertions.assertEquals(1, spans.size());
         Assertions.assertEquals(20, spans.get(0).getCharacterStart());
@@ -48,7 +48,7 @@ public class StateAbbreviationFilterTest extends AbstractFilterTest {
         final StateAbbreviationFilter filter = new StateAbbreviationFilter(strategies, new StateAbbreviationAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), new Crypto(), windowSize);
 
         final String input = "The patient is from wv.";
-        final List<Span> spans = filter.filter(getFilterProfile(), "context", "docid", input);
+        final List<Span> spans = filter.filter(getFilterProfile(), "context", "docid", 0, input);
 
         Assertions.assertEquals(1, spans.size());
         Assertions.assertEquals(20, spans.get(0).getCharacterStart());
@@ -64,7 +64,7 @@ public class StateAbbreviationFilterTest extends AbstractFilterTest {
         final StateAbbreviationFilter filter = new StateAbbreviationFilter(strategies, new StateAbbreviationAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), new Crypto(), windowSize);
 
         final String input = "Patients from WV and MD.";
-        final List<Span> spans = filter.filter(getFilterProfile(), "context", "docid", input);
+        final List<Span> spans = filter.filter(getFilterProfile(), "context", "docid", 0, input);
 
         showSpans(spans);
 

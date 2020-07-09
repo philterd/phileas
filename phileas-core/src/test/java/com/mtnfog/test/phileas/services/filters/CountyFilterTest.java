@@ -43,7 +43,7 @@ public class CountyFilterTest extends AbstractFilterTest {
         final List<CountyFilterStrategy> strategies = Arrays.asList(new CountyFilterStrategy());
         final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.LOCATION_COUNTY, strategies, INDEX_DIRECTORY, SensitivityLevel.LOW, anonymizationService, alertService, Collections.emptySet(), new Crypto(), windowSize);
 
-        List<Span> spans = filter.filter(getFilterProfile(SensitivityLevel.LOW), "context", "documentid","Lived in Fyette");
+        List<Span> spans = filter.filter(getFilterProfile(SensitivityLevel.LOW), "context", "documentid", 0,"Lived in Fyette");
 
         showSpans(spans);
 
@@ -59,7 +59,7 @@ public class CountyFilterTest extends AbstractFilterTest {
         final List<CountyFilterStrategy> strategies = Arrays.asList(new CountyFilterStrategy());
         final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.LOCATION_COUNTY, strategies, INDEX_DIRECTORY, SensitivityLevel.MEDIUM, anonymizationService, alertService, Collections.emptySet(), new Crypto(), windowSize);
 
-        List<Span> spans = filter.filter(getFilterProfile(SensitivityLevel.MEDIUM), "context", "documentid","Lived in Fyette");
+        List<Span> spans = filter.filter(getFilterProfile(SensitivityLevel.MEDIUM), "context", "documentid", 0,"Lived in Fyette");
 
         showSpans(spans);
 
@@ -76,7 +76,7 @@ public class CountyFilterTest extends AbstractFilterTest {
         final List<CountyFilterStrategy> strategies = Arrays.asList(new CountyFilterStrategy());
         final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.LOCATION_COUNTY, strategies, INDEX_DIRECTORY, SensitivityLevel.HIGH, anonymizationService, alertService, Collections.emptySet(), new Crypto(), windowSize);
 
-        List<Span> spans = filter.filter(getFilterProfile(SensitivityLevel.HIGH), "context", "documentid","Lived in Fyette");
+        List<Span> spans = filter.filter(getFilterProfile(SensitivityLevel.HIGH), "context", "documentid", 0,"Lived in Fyette");
 
         showSpans(spans);
 

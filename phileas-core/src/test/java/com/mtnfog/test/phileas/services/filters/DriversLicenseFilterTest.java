@@ -28,7 +28,7 @@ public class DriversLicenseFilterTest extends AbstractFilterTest {
 
         final Filter filter = getFilter();
 
-        final List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "the number is 123456789.");
+        final List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", 0, "the number is 123456789.");
 
         showSpans(spans);
 

@@ -11,7 +11,7 @@ public class AlertTest {
     @Test
     public void alertJson1() {
 
-        final Alert alert = new Alert("my-filter-profile", "my-strategy", "context", "documentId", FilterType.CREDIT_CARD.getType());
+        final Alert alert = new Alert("my-filter-profile", "my-strategy", "context", "documentid", FilterType.CREDIT_CARD.getType());
 
         final Gson gson = new Gson();
         final String json = gson.toJson(alert);

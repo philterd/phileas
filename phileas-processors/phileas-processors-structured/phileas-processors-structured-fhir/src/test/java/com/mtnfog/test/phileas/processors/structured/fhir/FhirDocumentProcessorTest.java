@@ -57,7 +57,7 @@ public class FhirDocumentProcessorTest {
         final String json = IOUtils.toString(this.getClass().getResourceAsStream("/fhir4/bundle-example.json"), Charset.defaultCharset());
 
         // TODO: Set filters instead of empty list.
-        final FilterResponse filterResponse = documentProcessor.process(filterProfile, Collections.emptyList(), Collections.emptyList(), "context", "documentId", json);
+        final FilterResponse filterResponse = documentProcessor.process(filterProfile, Collections.emptyList(), Collections.emptyList(), "context", "documentid", 0, json);
 
         prettyPrintJson(filterResponse.getFilteredText());
 

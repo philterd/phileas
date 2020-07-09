@@ -92,7 +92,7 @@ public class DriversLicenseFilter extends RegexFilter {
     }
 
     @Override
-    public List<Span> filter(FilterProfile filterProfile, String context, String documentId, String input) throws Exception {
+    public List<Span> filter(FilterProfile filterProfile, String context, String documentId, int piece, String input) throws Exception {
 
         final List<Span> spans = findSpans(filterProfile, analyzer, input, context, documentId);
 
