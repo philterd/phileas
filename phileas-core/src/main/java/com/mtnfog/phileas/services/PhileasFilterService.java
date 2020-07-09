@@ -192,7 +192,7 @@ public class PhileasFilterService implements FilterService {
                 }
 
                 // Combine the results into a single filterResponse object.
-                filterResponse = FilterResponse.combine(filterResponses, context, documentId);
+                filterResponse = FilterResponse.combine(filterResponses, context, documentId, splitService.getSeparator());
 
             } else {
 

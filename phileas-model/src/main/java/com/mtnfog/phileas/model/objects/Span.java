@@ -148,7 +148,7 @@ public final class Span {
 
         final List<Span> shiftedSpans = new LinkedList<>();
 
-        for(Span span : spans) {
+        for(final Span span : spans) {
 
             if(span != ignoreSpan) {
 
@@ -159,6 +159,30 @@ public final class Span {
                         span.text, span.replacement, span.salt, span.ignored, span.window));
 
             }
+
+        }
+
+        return shiftedSpans;
+
+    }
+
+    /**
+     * Shift spans a given distance.
+     * @param shift The distance to shift the spans.
+     * @param spans The list of {@link Span spans}.
+     * @return A list of {@link Span spans} shifted per the input parameters.
+     */
+    public static List<Span> shiftSpans(int shift, List<Span> spans) {
+
+        final List<Span> shiftedSpans = new LinkedList<>();
+
+        for(final Span span : spans) {
+
+                final int start = span.getCharacterStart() + shift;
+                final int end = span.getCharacterEnd() + shift;
+
+                shiftedSpans.add(Span.make(start, end, span.filterType, span.context, span.documentId, span.confidence,
+                        span.text, span.replacement, span.salt, span.ignored, span.window));
 
         }
 

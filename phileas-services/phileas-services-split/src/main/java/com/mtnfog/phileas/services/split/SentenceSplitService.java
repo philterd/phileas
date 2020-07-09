@@ -15,4 +15,9 @@ public class SentenceSplitService extends AbstractSplitService implements SplitS
         return null;
     }
 
+    @Override
+    public String getSeparator() {
+        return " ";
+    }
+
 }

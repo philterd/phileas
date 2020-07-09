@@ -41,22 +41,6 @@ public final class FilterResponse {
     }
 
     /**
-     * Creates a new response without an explanation.
-     * @param filteredText The filtered text.
-     * @param context The context.
-     * @param documentId The document ID.
-     */
-    public FilterResponse(String filteredText, String context, int piece, String documentId) {
-
-        this.filteredText = filteredText;
-        this.context = context;
-        this.documentId = documentId;
-        this.piece = piece;
-        this.explanation = null;
-
-    }
-
-    /**
      * Combine multiple {@link FilterResponse} objects into a single {@link FilterResponse}.
      * The list of {@link FilterResponse} objects must be in order from first to last.
      * @param filterResponses A list of {@link FilterResponse} objects to combine.
@@ -65,7 +49,7 @@ public final class FilterResponse {
      * @param documentId The document ID for the returned {@link FilterResponse}.
      * @return A single, combined {@link FilterResponse}.
      */
-    public static FilterResponse combine(List<FilterResponse> filterResponses, String context, String documentId) {
+    public static FilterResponse combine(List<FilterResponse> filterResponses, String context, String documentId, String separator) {
 
         // Combine the results into a single filterResponse object.
         final StringBuilder filteredText = new StringBuilder();
@@ -75,19 +59,27 @@ public final class FilterResponse {
         // Order the filter responses by piece number, lowest to greatest.
         filterResponses = filterResponses.stream().sorted(Comparator.comparing(FilterResponse::getPiece)).collect(Collectors.toList());
 
+        // Tracks the document offset for each piece so the span locations can be adjusted.
+        int documentOffset = 0;
+
         // Loop over each filter response and build the combined filter response.
         for(final FilterResponse filterResponse : filterResponses) {
 
-            // Append the filtered text.
-            filteredText.append(filterResponse.getFilteredText());
+            final String pieceFilteredText = filterResponse.getFilteredText() + separator;
 
-            // TODO: Adjust the character offsets when combining.
-            appliedSpans.addAll(filterResponse.getExplanation().getAppliedSpans());
-            identifiedSpans.addAll(filterResponse.getExplanation().getIdentifiedSpans());
+            // Append the filtered text.
+            filteredText.append(pieceFilteredText);
+
+            // Adjust the character offsets when combining.
+            appliedSpans.addAll(Span.shiftSpans(documentOffset, filterResponse.getExplanation().getAppliedSpans()));
+            identifiedSpans.addAll(Span.shiftSpans(documentOffset, filterResponse.getExplanation().getIdentifiedSpans()));
+
+            // Adjust the document offset.
+            documentOffset += pieceFilteredText.length();
 
         }
 
-        return new FilterResponse(filteredText.toString(), context, documentId, 0, new Explanation(appliedSpans, identifiedSpans));
+        return new FilterResponse(filteredText.toString().trim(), context, documentId, 0, new Explanation(appliedSpans, identifiedSpans));
 
     }
 

@@ -6,4 +6,6 @@ public interface SplitService {
 
     List<String> split(String input);
 
+    String getSeparator();
+
 }
