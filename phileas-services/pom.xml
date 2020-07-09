@@ -25,5 +25,6 @@
 		<module>phileas-services-profiles</module>
 		<module>phileas-services-alerts</module>
 		<module>phileas-services-split</module>
-	</modules>
+    <module>phileas-services-nlp</module>
+  </modules>
 </project>

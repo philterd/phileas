@@ -21,6 +21,11 @@ public class SplitFactory {
             LOGGER.debug("Instantiating a sentence split service.");
             return new SentenceSplitService();
 
+        } else if(StringUtils.equalsIgnoreCase("sentence-rule-based", method)) {
+
+            LOGGER.debug("Instantiating a sentence rule-based split service.");
+            return new SentenceRuleBasedSplitService();
+
         }
 
         LOGGER.warn("No matching split service found for {}. Defaulting to newline split service.", method);

@@ -25,6 +25,7 @@ public class FilterResponseTest {
     public void combine1() {
 
         final String input = "George Washington was president." + System.lineSeparator() + "Another president was Abraham Lincoln.";
+        final String separator = System.lineSeparator();
 
         final Span span1 = Span.make(0, 17, FilterType.NER_ENTITY, "context", "docid", 1.0, "George Washington", "{{{REDACTED-person}}}", null, false, new String[]{});
         final List<Span> identifiedSpans1 = Arrays.asList(span1);
@@ -40,7 +41,7 @@ public class FilterResponseTest {
         final String filtered2 = "Another president was {{{REDACTED-person}}}.";
         final FilterResponse filterResponse2 = new FilterResponse(filtered2, "context", "docid", 1, explanation2);
 
-        final FilterResponse combined = FilterResponse.combine(Arrays.asList(filterResponse1, filterResponse2), "context", "docid", System.lineSeparator());
+        final FilterResponse combined = FilterResponse.combine(Arrays.asList(filterResponse1, filterResponse2), "context", "docid", separator);
         LOGGER.info(combined.getFilteredText());
 
         assertEquals(2, combined.getExplanation().getIdentifiedSpans().size());
@@ -48,7 +49,7 @@ public class FilterResponseTest {
 
         showSpans(combined.getExplanation().getIdentifiedSpans());
 
-        assertEquals(filtered1 + System.lineSeparator() + filtered2, combined.getFilteredText());
+        assertEquals(filtered1 + separator + filtered2, combined.getFilteredText());
 
     }
 
