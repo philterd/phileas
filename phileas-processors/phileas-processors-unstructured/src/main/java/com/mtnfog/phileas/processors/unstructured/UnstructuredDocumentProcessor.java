@@ -131,7 +131,7 @@ public class UnstructuredDocumentProcessor implements DocumentProcessor {
             store.insert(appliedSpans);
         }
 
-        return new FilterResponse(buffer.toString(), context, documentId, explanation);
+        return new FilterResponse(buffer.toString(), context, documentId, piece, explanation);
 
     }
 

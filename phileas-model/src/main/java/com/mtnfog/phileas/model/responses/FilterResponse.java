@@ -7,8 +7,10 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import java.io.Serializable;
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Response to a filter operation.
@@ -18,6 +20,7 @@ public final class FilterResponse {
 	private final String filteredText;
 	private final String context;
     private final String documentId;
+    private final int piece;
     private final Explanation explanation;
 
     /**
@@ -27,11 +30,12 @@ public final class FilterResponse {
      * @param documentId The document ID.
      * @param explanation A {@link Explanation}.
      */
-    public FilterResponse(String filteredText, String context, String documentId, Explanation explanation) {
+    public FilterResponse(String filteredText, String context, String documentId, int piece, Explanation explanation) {
 
         this.filteredText = filteredText;
         this.context = context;
         this.documentId = documentId;
+        this.piece = piece;
         this.explanation = explanation;
 
     }
@@ -42,11 +46,12 @@ public final class FilterResponse {
      * @param context The context.
      * @param documentId The document ID.
      */
-    public FilterResponse(String filteredText, String context, String documentId) {
+    public FilterResponse(String filteredText, String context, int piece, String documentId) {
 
         this.filteredText = filteredText;
         this.context = context;
         this.documentId = documentId;
+        this.piece = piece;
         this.explanation = null;
 
     }
@@ -60,14 +65,17 @@ public final class FilterResponse {
      * @param documentId The document ID for the returned {@link FilterResponse}.
      * @return A single, combined {@link FilterResponse}.
      */
-    public static FilterResponse combine(final List<FilterResponse> filterResponses, String context, String documentId) {
+    public static FilterResponse combine(List<FilterResponse> filterResponses, String context, String documentId) {
 
         // Combine the results into a single filterResponse object.
-
         final StringBuilder filteredText = new StringBuilder();
         final List<Span> appliedSpans = new LinkedList<>();
         final List<Span> identifiedSpans = new LinkedList<>();
 
+        // Order the filter responses by piece number, lowest to greatest.
+        filterResponses = filterResponses.stream().sorted(Comparator.comparing(FilterResponse::getPiece)).collect(Collectors.toList());
+
+        // Loop over each filter response and build the combined filter response.
         for(final FilterResponse filterResponse : filterResponses) {
 
             // Append the filtered text.
@@ -79,7 +87,7 @@ public final class FilterResponse {
 
         }
 
-        return new FilterResponse(filteredText.toString(), context, documentId, new Explanation(appliedSpans, identifiedSpans));
+        return new FilterResponse(filteredText.toString(), context, documentId, 0, new Explanation(appliedSpans, identifiedSpans));
 
     }
 
@@ -90,6 +98,7 @@ public final class FilterResponse {
                 append(filteredText).
                 append(context).
                 append(documentId).
+                append(piece).
                 append(explanation).
                 toHashCode();
 
@@ -116,6 +125,10 @@ public final class FilterResponse {
 
     public String getDocumentId() {
         return documentId;
+    }
+
+    public int getPiece() {
+        return piece;
     }
 
     public String getContext() {

@@ -183,10 +183,12 @@ public class PhileasFilterService implements FilterService {
                 // Holds all of the filter responses that will ultimately be combined into a single response.
                 final List<FilterResponse> filterResponses = new LinkedList<>();
 
+                // Split the string.
+                final List<String> splits = splitService.split(input);
+
                 // Process each split.
-                for(final String split : splitService.split(input)) {
-                    // TODO: Set the piece.
-                    filterResponses.add(unstructuredDocumentProcessor.process(filterProfile, filters, postFilters, context, documentId, 1, split));
+                for(int i = 0; i < splits.size(); i++) {
+                    filterResponses.add(unstructuredDocumentProcessor.process(filterProfile, filters, postFilters, context, documentId, i, splits.get(i)));
                 }
 
                 // Combine the results into a single filterResponse object.
