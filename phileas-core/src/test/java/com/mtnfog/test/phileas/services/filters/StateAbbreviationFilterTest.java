@@ -1,6 +1,7 @@
 package com.mtnfog.test.phileas.services.filters;
 
 import com.mtnfog.phileas.model.enums.FilterType;
+import com.mtnfog.phileas.model.objects.FilterResult;
 import com.mtnfog.phileas.model.objects.Span;
 import com.mtnfog.phileas.model.profile.Crypto;
 import com.mtnfog.phileas.model.profile.filters.strategies.rules.StateAbbreviationFilterStrategy;
@@ -31,13 +32,13 @@ public class StateAbbreviationFilterTest extends AbstractFilterTest {
         final StateAbbreviationFilter filter = new StateAbbreviationFilter(strategies, new StateAbbreviationAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), new Crypto(), windowSize);
 
         final String input = "The patient is from WV.";
-        final List<Span> spans = filter.filter(getFilterProfile(), "context", "docid", 0, input);
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "docid", 0, input);
 
-        Assertions.assertEquals(1, spans.size());
-        Assertions.assertEquals(20, spans.get(0).getCharacterStart());
-        Assertions.assertEquals(22, spans.get(0).getCharacterEnd());
-        Assertions.assertEquals(FilterType.STATE_ABBREVIATION, spans.get(0).getFilterType());
-        Assertions.assertEquals("WV", spans.get(0).getText());
+        Assertions.assertEquals(1, filterResult.getSpans().size());
+        Assertions.assertEquals(20, filterResult.getSpans().get(0).getCharacterStart());
+        Assertions.assertEquals(22, filterResult.getSpans().get(0).getCharacterEnd());
+        Assertions.assertEquals(FilterType.STATE_ABBREVIATION, filterResult.getSpans().get(0).getFilterType());
+        Assertions.assertEquals("WV", filterResult.getSpans().get(0).getText());
 
     }
 
@@ -48,12 +49,12 @@ public class StateAbbreviationFilterTest extends AbstractFilterTest {
         final StateAbbreviationFilter filter = new StateAbbreviationFilter(strategies, new StateAbbreviationAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), new Crypto(), windowSize);
 
         final String input = "The patient is from wv.";
-        final List<Span> spans = filter.filter(getFilterProfile(), "context", "docid", 0, input);
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "docid", 0, input);
 
-        Assertions.assertEquals(1, spans.size());
-        Assertions.assertEquals(20, spans.get(0).getCharacterStart());
-        Assertions.assertEquals(22, spans.get(0).getCharacterEnd());
-        Assertions.assertEquals(FilterType.STATE_ABBREVIATION, spans.get(0).getFilterType());
+        Assertions.assertEquals(1, filterResult.getSpans().size());
+        Assertions.assertEquals(20, filterResult.getSpans().get(0).getCharacterStart());
+        Assertions.assertEquals(22, filterResult.getSpans().get(0).getCharacterEnd());
+        Assertions.assertEquals(FilterType.STATE_ABBREVIATION, filterResult.getSpans().get(0).getFilterType());
 
     }
 
@@ -64,21 +65,21 @@ public class StateAbbreviationFilterTest extends AbstractFilterTest {
         final StateAbbreviationFilter filter = new StateAbbreviationFilter(strategies, new StateAbbreviationAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), new Crypto(), windowSize);
 
         final String input = "Patients from WV and MD.";
-        final List<Span> spans = filter.filter(getFilterProfile(), "context", "docid", 0, input);
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "docid", 0, input);
 
-        showSpans(spans);
+        showSpans(filterResult.getSpans());
 
-        Assertions.assertEquals(2, spans.size());
+        Assertions.assertEquals(2, filterResult.getSpans().size());
 
-        Assertions.assertEquals(21, spans.get(0).getCharacterStart());
-        Assertions.assertEquals(23, spans.get(0).getCharacterEnd());
-        Assertions.assertEquals(FilterType.STATE_ABBREVIATION, spans.get(0).getFilterType());
-        Assertions.assertEquals("MD", spans.get(0).getText());
+        Assertions.assertEquals(21, filterResult.getSpans().get(0).getCharacterStart());
+        Assertions.assertEquals(23, filterResult.getSpans().get(0).getCharacterEnd());
+        Assertions.assertEquals(FilterType.STATE_ABBREVIATION, filterResult.getSpans().get(0).getFilterType());
+        Assertions.assertEquals("MD", filterResult.getSpans().get(0).getText());
 
-        Assertions.assertEquals(14, spans.get(1).getCharacterStart());
-        Assertions.assertEquals(16, spans.get(1).getCharacterEnd());
-        Assertions.assertEquals(FilterType.STATE_ABBREVIATION, spans.get(1).getFilterType());
-        Assertions.assertEquals("WV", spans.get(1).getText());
+        Assertions.assertEquals(14, filterResult.getSpans().get(1).getCharacterStart());
+        Assertions.assertEquals(16, filterResult.getSpans().get(1).getCharacterEnd());
+        Assertions.assertEquals(FilterType.STATE_ABBREVIATION, filterResult.getSpans().get(1).getFilterType());
+        Assertions.assertEquals("WV", filterResult.getSpans().get(1).getText());
 
     }
 

@@ -1,6 +1,7 @@
 package com.mtnfog.test.phileas.services.filters;
 
 import com.mtnfog.phileas.model.enums.FilterType;
+import com.mtnfog.phileas.model.objects.FilterResult;
 import com.mtnfog.phileas.model.objects.Span;
 import com.mtnfog.phileas.model.profile.Crypto;
 import com.mtnfog.phileas.model.profile.filters.strategies.rules.VinFilterStrategy;
@@ -29,10 +30,10 @@ public class VinFilterTest extends AbstractFilterTest {
         final List<VinFilterStrategy> strategies = Arrays.asList(new VinFilterStrategy());
         VinFilter filter = new VinFilter(strategies, anonymizationService, alertService, Collections.emptySet(), new Crypto(), windowSize);
 
-        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", 0, "the vin is JB3BA36KXHU036784.");
-        Assertions.assertEquals(1, spans.size());
-        Assertions.assertTrue(checkSpan(spans.get(0), 11, 28, FilterType.VIN));
-        Assertions.assertEquals("JB3BA36KXHU036784", spans.get(0).getText());
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "the vin is JB3BA36KXHU036784.");
+        Assertions.assertEquals(1, filterResult.getSpans().size());
+        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 11, 28, FilterType.VIN));
+        Assertions.assertEquals("JB3BA36KXHU036784", filterResult.getSpans().get(0).getText());
 
     }
 
@@ -42,9 +43,9 @@ public class VinFilterTest extends AbstractFilterTest {
         final List<VinFilterStrategy> strategies = Arrays.asList(new VinFilterStrategy());
         VinFilter filter = new VinFilter(strategies, anonymizationService, alertService, Collections.emptySet(), new Crypto(), windowSize);
 
-        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", 0, "the vin is 2T2HK31U38C057399.");
-        Assertions.assertEquals(1, spans.size());
-        Assertions.assertTrue(checkSpan(spans.get(0), 11, 28, FilterType.VIN));
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "the vin is 2T2HK31U38C057399.");
+        Assertions.assertEquals(1, filterResult.getSpans().size());
+        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 11, 28, FilterType.VIN));
 
     }
 
@@ -54,8 +55,8 @@ public class VinFilterTest extends AbstractFilterTest {
         final List<VinFilterStrategy> strategies = Arrays.asList(new VinFilterStrategy());
         VinFilter filter = new VinFilter(strategies, anonymizationService, alertService, Collections.emptySet(), new Crypto(), windowSize);
 
-        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", 0, "the vin is 11131517191011111.");
-        Assertions.assertEquals(0, spans.size());
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "the vin is 11131517191011111.");
+        Assertions.assertEquals(0, filterResult.getSpans().size());
 
     }
 
@@ -65,8 +66,8 @@ public class VinFilterTest extends AbstractFilterTest {
         final List<VinFilterStrategy> strategies = Arrays.asList(new VinFilterStrategy());
         VinFilter filter = new VinFilter(strategies, anonymizationService, alertService, Collections.emptySet(), new Crypto(), windowSize);
 
-        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", 0, "the vin is 11131517191X11111.");
-        Assertions.assertEquals(0, spans.size());
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "the vin is 11131517191X11111.");
+        Assertions.assertEquals(0, filterResult.getSpans().size());
 
     }
 
@@ -76,9 +77,9 @@ public class VinFilterTest extends AbstractFilterTest {
         final List<VinFilterStrategy> strategies = Arrays.asList(new VinFilterStrategy());
         VinFilter filter = new VinFilter(strategies, anonymizationService, alertService, Collections.emptySet(), new Crypto(), windowSize);
 
-        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", 0, "the vin is 2t2hk31u38c057399.");
-        Assertions.assertEquals(1, spans.size());
-        Assertions.assertTrue(checkSpan(spans.get(0), 11, 28, FilterType.VIN));
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "the vin is 2t2hk31u38c057399.");
+        Assertions.assertEquals(1, filterResult.getSpans().size());
+        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 11, 28, FilterType.VIN));
 
     }
 

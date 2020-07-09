@@ -3,6 +3,7 @@ package com.mtnfog.phileas.model.filter.rules.dictionary;
 import com.google.common.hash.BloomFilter;
 import com.google.common.hash.Funnels;
 import com.mtnfog.phileas.model.enums.FilterType;
+import com.mtnfog.phileas.model.objects.FilterResult;
 import com.mtnfog.phileas.model.objects.Replacement;
 import com.mtnfog.phileas.model.objects.Span;
 import com.mtnfog.phileas.model.profile.Crypto;
@@ -52,7 +53,7 @@ public class BloomFilterDictionaryFilter extends DictionaryFilter {
     }
 
     @Override
-    public List<Span> filter(FilterProfile filterProfile, String context, String documentId, int piece, String text) throws Exception {
+    public FilterResult filter(FilterProfile filterProfile, String context, String documentId, int piece, String text) throws Exception {
 
         final List<Span> spans = new LinkedList<>();
 
@@ -87,7 +88,7 @@ public class BloomFilterDictionaryFilter extends DictionaryFilter {
 
         }
 
-        return spans;
+        return new FilterResult(context, documentId, spans);
 
     }
 

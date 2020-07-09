@@ -3,6 +3,7 @@ package com.mtnfog.test.phileas.services.filters;
 import com.mtnfog.phileas.model.enums.FilterType;
 import com.mtnfog.phileas.model.enums.SensitivityLevel;
 import com.mtnfog.phileas.model.filter.rules.dictionary.LuceneDictionaryFilter;
+import com.mtnfog.phileas.model.objects.FilterResult;
 import com.mtnfog.phileas.model.objects.Span;
 import com.mtnfog.phileas.model.profile.Crypto;
 import com.mtnfog.phileas.model.profile.filters.strategies.dynamic.HospitalFilterStrategy;
@@ -43,9 +44,9 @@ public class HospitalFilterTest extends AbstractFilterTest {
         final List<HospitalFilterStrategy> strategies = Arrays.asList(new HospitalFilterStrategy());
         final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.HOSPITAL, strategies, INDEX_DIRECTORY, SensitivityLevel.LOW, anonymizationService, alertService, Collections.emptySet(), new Crypto(), windowSize);
 
-        List<Span> spans = filter.filter(getFilterProfile(SensitivityLevel.LOW), "context", "documentid", 0,"Went to Wyoming Medical Center");
-        Assertions.assertEquals(1, spans.size());
-        Assertions.assertEquals("wyoming medical center", spans.get(0).getText());
+        FilterResult filterResult = filter.filter(getFilterProfile(SensitivityLevel.LOW), "context", "documentid", 0,"Went to Wyoming Medical Center");
+        Assertions.assertEquals(1, filterResult.getSpans().size());
+        Assertions.assertEquals("wyoming medical center", filterResult.getSpans().get(0).getText());
 
     }
 

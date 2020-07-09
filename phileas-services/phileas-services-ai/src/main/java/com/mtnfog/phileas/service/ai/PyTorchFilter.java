@@ -3,6 +3,7 @@ package com.mtnfog.phileas.service.ai;
 import com.mtnfog.phileas.configuration.PhileasConfiguration;
 import com.mtnfog.phileas.model.enums.FilterType;
 import com.mtnfog.phileas.model.filter.dynamic.NerFilter;
+import com.mtnfog.phileas.model.objects.FilterResult;
 import com.mtnfog.phileas.model.objects.Replacement;
 import com.mtnfog.phileas.model.objects.Span;
 import com.mtnfog.phileas.model.profile.Crypto;
@@ -85,7 +86,7 @@ public class PyTorchFilter extends NerFilter {
     }
 
     @Override
-    public List<Span> filter(FilterProfile filterProfile, String context, String documentId, int piece, String input) throws Exception {
+    public FilterResult filter(FilterProfile filterProfile, String context, String documentId, int piece, String input) throws Exception {
 
         final List<Span> spans = new LinkedList<>();
 
@@ -124,7 +125,7 @@ public class PyTorchFilter extends NerFilter {
 
                 LOGGER.debug("Returning {} NER spans.", spans.size());
 
-                return spans;
+                return new FilterResult(context, documentId, piece, spans);
 
             } else {
 

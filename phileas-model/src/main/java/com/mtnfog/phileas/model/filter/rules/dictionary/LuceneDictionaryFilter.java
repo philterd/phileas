@@ -2,6 +2,7 @@ package com.mtnfog.phileas.model.filter.rules.dictionary;
 
 import com.mtnfog.phileas.model.enums.FilterType;
 import com.mtnfog.phileas.model.enums.SensitivityLevel;
+import com.mtnfog.phileas.model.objects.FilterResult;
 import com.mtnfog.phileas.model.objects.Replacement;
 import com.mtnfog.phileas.model.objects.Span;
 import com.mtnfog.phileas.model.profile.Crypto;
@@ -143,7 +144,7 @@ public class LuceneDictionaryFilter extends DictionaryFilter implements Serializ
     }
 
     @Override
-    public List<Span> filter(FilterProfile filterProfile, String context, String documentId, int piece, String text) throws Exception {
+    public FilterResult filter(FilterProfile filterProfile, String context, String documentId, int piece, String text) throws Exception {
 
         final List<Span> spans = new LinkedList<>();
 
@@ -278,7 +279,7 @@ public class LuceneDictionaryFilter extends DictionaryFilter implements Serializ
 
         }
 
-        return spans;
+        return new FilterResult(context, documentId, spans);
 
     }
 

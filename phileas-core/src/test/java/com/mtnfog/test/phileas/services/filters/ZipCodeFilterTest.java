@@ -1,6 +1,7 @@
 package com.mtnfog.test.phileas.services.filters;
 
 import com.mtnfog.phileas.model.enums.FilterType;
+import com.mtnfog.phileas.model.objects.FilterResult;
 import com.mtnfog.phileas.model.objects.Span;
 import com.mtnfog.phileas.model.profile.Crypto;
 import com.mtnfog.phileas.model.profile.filters.strategies.rules.ZipCodeFilterStrategy;
@@ -26,10 +27,10 @@ public class ZipCodeFilterTest extends AbstractFilterTest {
         final List<ZipCodeFilterStrategy> strategies = Arrays.asList(new ZipCodeFilterStrategy());
         ZipCodeFilter filter = new ZipCodeFilter(strategies, new ZipCodeAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), new Crypto(), windowSize);
 
-        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", 0, "the zip is 90210.");
-        Assertions.assertEquals(1, spans.size());
-        Assertions.assertTrue(checkSpan(spans.get(0), 11, 16, FilterType.ZIP_CODE));
-        Assertions.assertEquals("90210", spans.get(0).getText());
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "the zip is 90210.");
+        Assertions.assertEquals(1, filterResult.getSpans().size());
+        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 11, 16, FilterType.ZIP_CODE));
+        Assertions.assertEquals("90210", filterResult.getSpans().get(0).getText());
 
     }
 
@@ -39,8 +40,8 @@ public class ZipCodeFilterTest extends AbstractFilterTest {
         final List<ZipCodeFilterStrategy> strategies = Arrays.asList(new ZipCodeFilterStrategy());
         ZipCodeFilter filter = new ZipCodeFilter(strategies, new ZipCodeAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), new Crypto(), windowSize);
 
-        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", 0, "the zip is 90210abd.");
-        Assertions.assertEquals(0, spans.size());
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "the zip is 90210abd.");
+        Assertions.assertEquals(0, filterResult.getSpans().size());
 
     }
 
@@ -50,9 +51,9 @@ public class ZipCodeFilterTest extends AbstractFilterTest {
         final List<ZipCodeFilterStrategy> strategies = Arrays.asList(new ZipCodeFilterStrategy());
         ZipCodeFilter filter = new ZipCodeFilter(strategies, new ZipCodeAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), new Crypto(), windowSize);
 
-        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", 0, "the zip is 90210 in california.");
-        Assertions.assertEquals(1, spans.size());
-        Assertions.assertTrue(checkSpan(spans.get(0), 11, 16, FilterType.ZIP_CODE));
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "the zip is 90210 in california.");
+        Assertions.assertEquals(1, filterResult.getSpans().size());
+        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 11, 16, FilterType.ZIP_CODE));
 
     }
 
@@ -62,9 +63,9 @@ public class ZipCodeFilterTest extends AbstractFilterTest {
         final List<ZipCodeFilterStrategy> strategies = Arrays.asList(new ZipCodeFilterStrategy());
         ZipCodeFilter filter = new ZipCodeFilter(strategies, new ZipCodeAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), new Crypto(), windowSize);
 
-        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", 0, "the zip is 85055 in california.");
-        Assertions.assertEquals(1, spans.size());
-        Assertions.assertTrue(checkSpan(spans.get(0), 11, 16, FilterType.ZIP_CODE));
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "the zip is 85055 in california.");
+        Assertions.assertEquals(1, filterResult.getSpans().size());
+        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 11, 16, FilterType.ZIP_CODE));
 
     }
 
@@ -74,9 +75,9 @@ public class ZipCodeFilterTest extends AbstractFilterTest {
         final List<ZipCodeFilterStrategy> strategies = Arrays.asList(new ZipCodeFilterStrategy());
         ZipCodeFilter filter = new ZipCodeFilter(strategies, new ZipCodeAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), new Crypto(), windowSize);
 
-        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", 0, "the zip is 90213-1544 in california.");
-        Assertions.assertEquals(1, spans.size());
-        Assertions.assertTrue(checkSpan(spans.get(0), 11, 21, FilterType.ZIP_CODE));
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "the zip is 90213-1544 in california.");
+        Assertions.assertEquals(1, filterResult.getSpans().size());
+        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 11, 21, FilterType.ZIP_CODE));
 
     }
 
@@ -86,9 +87,9 @@ public class ZipCodeFilterTest extends AbstractFilterTest {
         final List<ZipCodeFilterStrategy> strategies = Arrays.asList(new ZipCodeFilterStrategy());
         ZipCodeFilter filter = new ZipCodeFilter(strategies, new ZipCodeAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), new Crypto(), windowSize);
 
-        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", 0, "George Washington was president and his ssn was 123-45-6789 and he lived in 90210.");
-        Assertions.assertEquals(1, spans.size());
-        Assertions.assertTrue(checkSpan(spans.get(0), 76, 81, FilterType.ZIP_CODE));
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "George Washington was president and his ssn was 123-45-6789 and he lived in 90210.");
+        Assertions.assertEquals(1, filterResult.getSpans().size());
+        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 76, 81, FilterType.ZIP_CODE));
 
     }
 

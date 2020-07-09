@@ -79,7 +79,7 @@ public class PhileasFilterServiceTest {
         LOGGER.info(response.getFilteredText());
 
         Assertions.assertEquals("George Washington was president and his ssn was {{{REDACTED-ssn}}} and he lived at {{{REDACTED-zip-code}}}.", response.getFilteredText());
-        Assertions.assertEquals("documentId", response.getDocumentId());
+        Assertions.assertEquals("documentid", response.getDocumentId());
 
     }
 
@@ -104,7 +104,7 @@ public class PhileasFilterServiceTest {
         LOGGER.info(response.getFilteredText());
 
         Assertions.assertEquals("My email is {{{REDACTED-email-address}}} and cc is {{{REDACTED-credit-card}}}", response.getFilteredText());
-        Assertions.assertEquals("documentId", response.getDocumentId());
+        Assertions.assertEquals("documentid", response.getDocumentId());
 
     }
 
@@ -129,7 +129,7 @@ public class PhileasFilterServiceTest {
         LOGGER.info(response.getFilteredText());
 
         Assertions.assertEquals("{{{REDACTED-email-address}}} is email and cc is {{{REDACTED-credit-card}}}", response.getFilteredText());
-        Assertions.assertEquals("documentId", response.getDocumentId());
+        Assertions.assertEquals("documentid", response.getDocumentId());
 
     }
 
@@ -154,7 +154,7 @@ public class PhileasFilterServiceTest {
         LOGGER.info(response.getFilteredText());
 
         Assertions.assertEquals("{{{REDACTED-email-address}}}", response.getFilteredText());
-        Assertions.assertEquals("documentId", response.getDocumentId());
+        Assertions.assertEquals("documentid", response.getDocumentId());
 
     }
 
@@ -179,7 +179,7 @@ public class PhileasFilterServiceTest {
         LOGGER.info(response.getFilteredText());
 
         Assertions.assertEquals("{{{REDACTED-zip-code}}}", response.getFilteredText());
-        Assertions.assertEquals("documentId", response.getDocumentId());
+        Assertions.assertEquals("documentid", response.getDocumentId());
 
     }
 
@@ -204,7 +204,7 @@ public class PhileasFilterServiceTest {
         LOGGER.info(response.getFilteredText());
 
         Assertions.assertEquals("his name was STATIC-REPLACEMENT.", response.getFilteredText());
-        Assertions.assertEquals("documentId", response.getDocumentId());
+        Assertions.assertEquals("documentid", response.getDocumentId());
 
     }
 
@@ -246,7 +246,7 @@ public class PhileasFilterServiceTest {
         LOGGER.info(response.getFilteredText());
 
         Assertions.assertEquals("his name was {{{REDACTED-custom-dictionary}}} and {{{REDACTED-custom-dictionary}}}.", response.getFilteredText());
-        Assertions.assertEquals("documentId", response.getDocumentId());
+        Assertions.assertEquals("documentid", response.getDocumentId());
 
     }
 
@@ -287,7 +287,7 @@ public class PhileasFilterServiceTest {
         LOGGER.info(response.getFilteredText());
 
         Assertions.assertEquals("his name was {{{REDACTED-custom-dictionary}}}.", response.getFilteredText());
-        Assertions.assertEquals("documentId", response.getDocumentId());
+        Assertions.assertEquals("documentid", response.getDocumentId());
 
     }
 

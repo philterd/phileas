@@ -3,7 +3,7 @@ package com.mtnfog.test.phileas.services.filters;
 import com.mtnfog.phileas.model.enums.FilterType;
 import com.mtnfog.phileas.model.enums.SensitivityLevel;
 import com.mtnfog.phileas.model.filter.rules.dictionary.LuceneDictionaryFilter;
-import com.mtnfog.phileas.model.objects.Span;
+import com.mtnfog.phileas.model.objects.FilterResult;
 import com.mtnfog.phileas.model.profile.Crypto;
 import com.mtnfog.phileas.model.profile.filters.strategies.dynamic.SurnameFilterStrategy;
 import com.mtnfog.phileas.model.services.AlertService;
@@ -45,9 +45,9 @@ public class SurnameFilterTest extends AbstractFilterTest {
         final List<SurnameFilterStrategy> strategies = Arrays.asList(new SurnameFilterStrategy());
         final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.SURNAME, strategies, INDEX_DIRECTORY, SensitivityLevel.LOW, anonymizationService, alertService, Collections.emptySet(), new Crypto(), windowSize);
 
-        final List<Span> spans = filter.filter(getFilterProfile(SensitivityLevel.LOW), "context", "documentid", 0, "Lived in Wshington");
-        showSpans(spans);
-        Assertions.assertEquals(0, spans.size());
+        final FilterResult filterResult = filter.filter(getFilterProfile(SensitivityLevel.LOW), "context", "documentid", 0, "Lived in Wshington");
+        showSpans(filterResult.getSpans());
+        Assertions.assertEquals(0, filterResult.getSpans().size());
 
     }
 
@@ -59,9 +59,9 @@ public class SurnameFilterTest extends AbstractFilterTest {
         final List<SurnameFilterStrategy> strategies = Arrays.asList(new SurnameFilterStrategy());
         final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.SURNAME, strategies, INDEX_DIRECTORY, SensitivityLevel.MEDIUM, anonymizationService, alertService, Collections.emptySet(), new Crypto(), windowSize);
 
-        final List<Span> spans = filter.filter(getFilterProfile(SensitivityLevel.MEDIUM), "context", "documentid", 0, "Lived in Wshington");
-        showSpans(spans);
-        Assertions.assertEquals(0, spans.size());
+        final FilterResult filterResult = filter.filter(getFilterProfile(SensitivityLevel.MEDIUM), "context", "documentid", 0, "Lived in Wshington");
+        showSpans(filterResult.getSpans());
+        Assertions.assertEquals(0, filterResult.getSpans().size());
 
     }
 
@@ -73,9 +73,9 @@ public class SurnameFilterTest extends AbstractFilterTest {
         final List<SurnameFilterStrategy> strategies = Arrays.asList(new SurnameFilterStrategy());
         final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.SURNAME, strategies, INDEX_DIRECTORY, SensitivityLevel.HIGH, anonymizationService, alertService, Collections.emptySet(), new Crypto(), windowSize);
 
-        final List<Span> spans = filter.filter(getFilterProfile(SensitivityLevel.HIGH), "context", "documentid", 0, "Lived in Wasinton");
-        showSpans(spans);
-        Assertions.assertEquals(0, spans.size());
+        final FilterResult filterResult = filter.filter(getFilterProfile(SensitivityLevel.HIGH), "context", "documentid", 0, "Lived in Wasinton");
+        showSpans(filterResult.getSpans());
+        Assertions.assertEquals(0, filterResult.getSpans().size());
 
     }
 

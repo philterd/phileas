@@ -2,6 +2,7 @@ package com.mtnfog.test.phileas.services.filters;
 
 import com.mtnfog.phileas.model.enums.FilterType;
 import com.mtnfog.phileas.model.filter.Filter;
+import com.mtnfog.phileas.model.objects.FilterResult;
 import com.mtnfog.phileas.model.objects.Span;
 import com.mtnfog.phileas.model.profile.Crypto;
 import com.mtnfog.phileas.model.profile.filters.strategies.rules.MacAddressFilterStrategy;
@@ -26,11 +27,11 @@ public class MacAddressFilterTest extends AbstractFilterTest {
 
         final List<MacAddressFilterStrategy> strategies = Arrays.asList(new MacAddressFilterStrategy());
         Filter filter = new MacAddressFilter(strategies, new MacAddressAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), new Crypto(), windowSize);
-        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", 0, "the mac is 00-14-22-04-25-37.");
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "the mac is 00-14-22-04-25-37.");
 
-        Assertions.assertEquals(1, spans.size());
-        Assertions.assertTrue(checkSpan(spans.get(0), 11, 28, FilterType.MAC_ADDRESS));
-        Assertions.assertEquals("00-14-22-04-25-37", spans.get(0).getText());
+        Assertions.assertEquals(1, filterResult.getSpans().size());
+        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 11, 28, FilterType.MAC_ADDRESS));
+        Assertions.assertEquals("00-14-22-04-25-37", filterResult.getSpans().get(0).getText());
 
     }
 
@@ -39,10 +40,10 @@ public class MacAddressFilterTest extends AbstractFilterTest {
 
         final List<MacAddressFilterStrategy> strategies = Arrays.asList(new MacAddressFilterStrategy());
         Filter filter = new MacAddressFilter(strategies, new MacAddressAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), new Crypto(), windowSize);
-        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", 0, "the mac is 00:14:22:04:25:37.");
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "the mac is 00:14:22:04:25:37.");
 
-        Assertions.assertEquals(1, spans.size());
-        Assertions.assertTrue(checkSpan(spans.get(0), 11, 28, FilterType.MAC_ADDRESS));
+        Assertions.assertEquals(1, filterResult.getSpans().size());
+        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 11, 28, FilterType.MAC_ADDRESS));
 
     }
 
