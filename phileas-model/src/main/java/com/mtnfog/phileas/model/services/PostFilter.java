@@ -30,7 +30,7 @@ public abstract class PostFilter {
      * @param spans A list of {@link Span spans}.
      * @return A filtered list of {@link Span spans}.
      */
-    public List<Span> filter(String text, List<Span> spans) {
+    public List<Span> filter(final String text, final List<Span> spans) {
 
         final Iterator<Span> i = spans.iterator();
 

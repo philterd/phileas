@@ -23,6 +23,10 @@ public class FilterProfile {
     @Expose
     private List<Ignored> ignored;
 
+    @SerializedName("ignoredPatterns")
+    @Expose
+    private List<IgnoredPattern> ignoredPatterns;
+
     @SerializedName("structured")
     @Expose
     private Structured structured;
@@ -65,6 +69,14 @@ public class FilterProfile {
 
     public void setStructured(Structured structured) {
         this.structured = structured;
+    }
+
+    public List<IgnoredPattern> getIgnoredPatterns() {
+        return ignoredPatterns;
+    }
+
+    public void setIgnoredPatterns(List<IgnoredPattern> ignoredPatterns) {
+        this.ignoredPatterns = ignoredPatterns;
     }
 
 }

@@ -13,6 +13,7 @@ import com.mtnfog.phileas.model.filter.rules.dictionary.LuceneDictionaryFilter;
 import com.mtnfog.phileas.model.objects.Span;
 import com.mtnfog.phileas.model.profile.FilterProfile;
 import com.mtnfog.phileas.model.profile.Ignored;
+import com.mtnfog.phileas.model.profile.IgnoredPattern;
 import com.mtnfog.phileas.model.profile.filters.CustomDictionary;
 import com.mtnfog.phileas.model.profile.filters.Identifier;
 import com.mtnfog.phileas.model.profile.filters.Section;
@@ -26,6 +27,7 @@ import com.mtnfog.phileas.services.anonymization.cache.AnonymizationCacheService
 import com.mtnfog.phileas.services.disambiguation.VectorBasedSpanDisambiguationService;
 import com.mtnfog.phileas.services.filters.custom.PhoneNumberRulesFilter;
 import com.mtnfog.phileas.services.filters.regex.*;
+import com.mtnfog.phileas.services.postfilters.IgnoredPatternsFilter;
 import com.mtnfog.phileas.services.postfilters.IgnoredTermsFilter;
 import com.mtnfog.phileas.services.postfilters.TrailingPeriodPostFilter;
 import com.mtnfog.phileas.services.postfilters.TrailingSpacePostFilter;
@@ -241,6 +243,12 @@ public class PhileasFilterService implements FilterService {
                 postFilters.add(new IgnoredTermsFilter(ignored));
             }
 
+        }
+
+        // Ignored patterns filter. Looks for terms matching a pattern in the scope of the whole document (and not just a particular filter).
+        // No matter what filter found the span, it is subject to this ignore list.
+        if(CollectionUtils.isNotEmpty(filterProfile.getIgnored())) {
+            postFilters.add(new IgnoredPatternsFilter(filterProfile.getIgnoredPatterns()));
         }
 
         // Remove trailing periods from filters.
