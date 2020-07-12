@@ -15,7 +15,7 @@ import java.util.List;
 public class IgnoredPatternsFilterTest {
 
     @Test
-    public void ignored() {
+    public void ignored1() {
 
         final IgnoredPattern ignoredPattern = new IgnoredPattern();
         ignoredPattern.setPattern("[A-Z0-9]{4}");
@@ -31,6 +31,26 @@ public class IgnoredPatternsFilterTest {
         final List<Span> filteredSpans = ignoredPatternsFilter.filter("ID is AB01.", spans);
 
         Assertions.assertEquals(0, filteredSpans.size());
+
+    }
+
+    @Test
+    public void notIgnored1() {
+
+        final IgnoredPattern ignoredPattern = new IgnoredPattern();
+        ignoredPattern.setPattern("[A-Z0-9]{4}");
+        ignoredPattern.setName("example-id");
+
+        final FilterProfile filterProfile = new FilterProfile();
+        filterProfile.setIgnoredPatterns(Arrays.asList(ignoredPattern));
+
+        final List<Span> spans = new LinkedList<>();
+        spans.add(Span.make(6, 10, FilterType.IDENTIFIER, "context", "docid", 0.80, "Ab01", "*****",  "", false, new String[0]));
+
+        final IgnoredPatternsFilter ignoredPatternsFilter = new IgnoredPatternsFilter(Arrays.asList(ignoredPattern));
+        final List<Span> filteredSpans = ignoredPatternsFilter.filter("ID is Ab01.", spans);
+
+        Assertions.assertEquals(1, filteredSpans.size());
 
     }
 
