@@ -247,7 +247,7 @@ public class PhileasFilterService implements FilterService {
 
         // Ignored patterns filter. Looks for terms matching a pattern in the scope of the whole document (and not just a particular filter).
         // No matter what filter found the span, it is subject to this ignore list.
-        if(CollectionUtils.isNotEmpty(filterProfile.getIgnored())) {
+        if(CollectionUtils.isNotEmpty(filterProfile.getIgnoredPatterns())) {
             postFilters.add(new IgnoredPatternsFilter(filterProfile.getIgnoredPatterns()));
         }
 

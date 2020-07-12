@@ -17,7 +17,7 @@ public class IgnoredPatternsFilter extends PostFilter {
 
     private static final Logger LOGGER = LogManager.getLogger(IgnoredPatternsFilter.class);
 
-    private List<IgnoredPattern> ignoredPatterns = new LinkedList<>();
+    private List<IgnoredPattern> ignoredPatterns;
 
     public IgnoredPatternsFilter(final List<IgnoredPattern> ignoredPatterns) {
 
