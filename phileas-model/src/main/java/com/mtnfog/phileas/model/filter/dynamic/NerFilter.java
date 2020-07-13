@@ -2,6 +2,7 @@ package com.mtnfog.phileas.model.filter.dynamic;
 
 import com.mtnfog.phileas.model.enums.FilterType;
 import com.mtnfog.phileas.model.profile.Crypto;
+import com.mtnfog.phileas.model.profile.IgnoredPattern;
 import com.mtnfog.phileas.model.profile.filters.strategies.AbstractFilterStrategy;
 import com.mtnfog.phileas.model.services.AlertService;
 import com.mtnfog.phileas.model.services.AnonymizationService;
@@ -39,11 +40,12 @@ public abstract class NerFilter extends DynamicFilter {
                      AnonymizationService anonymizationService,
                      AlertService alertService,
                      Set<String> ignored,
+                     List<IgnoredPattern> ignoredPatterns,
                      boolean removePunctuation,
                      Crypto crypto,
                      int windowSize) {
 
-        super(filterType, strategies, anonymizationService, alertService, ignored, crypto, windowSize);
+        super(filterType, strategies, anonymizationService, alertService, ignored, ignoredPatterns, crypto, windowSize);
 
         this.stats = stats;
         this.metricsService = metricsService;

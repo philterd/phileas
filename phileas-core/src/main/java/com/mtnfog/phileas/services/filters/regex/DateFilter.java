@@ -7,6 +7,7 @@ import com.mtnfog.phileas.model.objects.FilterPattern;
 import com.mtnfog.phileas.model.objects.Span;
 import com.mtnfog.phileas.model.profile.Crypto;
 import com.mtnfog.phileas.model.profile.FilterProfile;
+import com.mtnfog.phileas.model.profile.IgnoredPattern;
 import com.mtnfog.phileas.model.profile.filters.strategies.AbstractFilterStrategy;
 import com.mtnfog.phileas.model.services.AlertService;
 import com.mtnfog.phileas.model.services.AnonymizationService;
@@ -20,8 +21,8 @@ public class DateFilter extends RegexFilter {
     private SpanValidator spanValidator;
     private boolean onlyValidDates;
 
-    public DateFilter(List<? extends AbstractFilterStrategy> strategies, AnonymizationService anonymizationService, AlertService alertService, boolean onlyValidDates, SpanValidator spanValidator, Set<String> ignored, Crypto crypto, int windowSize) {
-        super(FilterType.DATE, strategies, anonymizationService, alertService, ignored, crypto, windowSize);
+    public DateFilter(List<? extends AbstractFilterStrategy> strategies, AnonymizationService anonymizationService, AlertService alertService, boolean onlyValidDates, SpanValidator spanValidator, Set<String> ignored, List<IgnoredPattern> ignoredPatterns, Crypto crypto, int windowSize) {
+        super(FilterType.DATE, strategies, anonymizationService, alertService, ignored, ignoredPatterns, crypto, windowSize);
 
         this.spanValidator = spanValidator;
         this.onlyValidDates = onlyValidDates;

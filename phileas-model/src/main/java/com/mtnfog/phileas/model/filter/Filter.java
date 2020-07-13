@@ -5,6 +5,7 @@ import com.mtnfog.phileas.model.objects.Replacement;
 import com.mtnfog.phileas.model.objects.Span;
 import com.mtnfog.phileas.model.profile.Crypto;
 import com.mtnfog.phileas.model.profile.FilterProfile;
+import com.mtnfog.phileas.model.profile.IgnoredPattern;
 import com.mtnfog.phileas.model.profile.filters.Identifier;
 import com.mtnfog.phileas.model.profile.filters.strategies.AbstractFilterStrategy;
 import com.mtnfog.phileas.model.services.AlertService;
@@ -45,6 +46,11 @@ public abstract class Filter {
     protected final Set<String> ignored;
 
     /**
+     * A list of ignored patterns;
+     */
+    protected final List<IgnoredPattern> ignoredPatterns;
+
+    /**
      * The encryption key for encrypting values.
      */
     protected final Crypto crypto;
@@ -74,13 +80,14 @@ public abstract class Filter {
      * @param crypto A {@link Crypto} for token encryption.
      */
     public Filter(FilterType filterType, List<? extends AbstractFilterStrategy> strategies, AnonymizationService anonymizationService,
-                  AlertService alertService, Set<String> ignored, Crypto crypto, int windowSize) {
+                  AlertService alertService, Set<String> ignored, List<IgnoredPattern> ignoredPatterns, Crypto crypto, int windowSize) {
 
         this.filterType = filterType;
         this.strategies = strategies;
         this.anonymizationService = anonymizationService;
         this.alertService = alertService;
         this.ignored = ignored;
+        this.ignoredPatterns = ignoredPatterns;
         this.crypto = crypto;
         this.windowSize = windowSize;
 
@@ -293,6 +300,10 @@ public abstract class Filter {
 
     public Crypto getCrypto() {
         return crypto;
+    }
+
+    public List<IgnoredPattern> getIgnoredPatterns() {
+        return ignoredPatterns;
     }
 
 }

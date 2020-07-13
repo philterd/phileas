@@ -2,8 +2,10 @@ package com.mtnfog.phileas.model.profile.filters;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+import com.mtnfog.phileas.model.profile.IgnoredPattern;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Set;
 
 public abstract class AbstractFilter {
@@ -15,6 +17,10 @@ public abstract class AbstractFilter {
     @SerializedName("ignored")
     @Expose
     protected Set<String> ignored = Collections.emptySet();
+
+    @SerializedName("ignoredPatterns")
+    @Expose
+    protected List<IgnoredPattern> ignoredPatterns = Collections.emptyList();
 
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
@@ -30,6 +36,14 @@ public abstract class AbstractFilter {
 
     public Set<String> getIgnored() {
         return ignored;
+    }
+
+    public List<IgnoredPattern> getIgnoredPatterns() {
+        return ignoredPatterns;
+    }
+
+    public void setIgnoredPatterns(List<IgnoredPattern> ignoredPatterns) {
+        this.ignoredPatterns = ignoredPatterns;
     }
 
 }

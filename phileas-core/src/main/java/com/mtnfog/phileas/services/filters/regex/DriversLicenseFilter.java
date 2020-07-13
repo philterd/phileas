@@ -7,6 +7,7 @@ import com.mtnfog.phileas.model.objects.FilterPattern;
 import com.mtnfog.phileas.model.objects.Span;
 import com.mtnfog.phileas.model.profile.Crypto;
 import com.mtnfog.phileas.model.profile.FilterProfile;
+import com.mtnfog.phileas.model.profile.IgnoredPattern;
 import com.mtnfog.phileas.model.profile.filters.strategies.AbstractFilterStrategy;
 import com.mtnfog.phileas.model.services.AlertService;
 import com.mtnfog.phileas.model.services.AnonymizationService;
@@ -18,8 +19,8 @@ public class DriversLicenseFilter extends RegexFilter {
 
     private static final HashMap<String, Pattern> driversLicensePatterns = new HashMap<>();
 
-    public DriversLicenseFilter(List<? extends AbstractFilterStrategy> strategies, AnonymizationService anonymizationService, AlertService alertService, Set<String> ignored, Crypto crypto, int windowSize) {
-        super(FilterType.DRIVERS_LICENSE_NUMBER, strategies, anonymizationService, alertService, ignored, crypto, windowSize);
+    public DriversLicenseFilter(List<? extends AbstractFilterStrategy> strategies, AnonymizationService anonymizationService, AlertService alertService, Set<String> ignored, List<IgnoredPattern> ignoredPatterns, Crypto crypto, int windowSize) {
+        super(FilterType.DRIVERS_LICENSE_NUMBER, strategies, anonymizationService, alertService, ignored, ignoredPatterns, crypto, windowSize);
 
         // https://ntsi.com/drivers-license-format/
         // https://www.mvrdecoder.com/content/drvlicformats.aspx

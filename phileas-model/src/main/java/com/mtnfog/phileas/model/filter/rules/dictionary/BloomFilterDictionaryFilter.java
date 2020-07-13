@@ -7,6 +7,7 @@ import com.mtnfog.phileas.model.objects.Replacement;
 import com.mtnfog.phileas.model.objects.Span;
 import com.mtnfog.phileas.model.profile.Crypto;
 import com.mtnfog.phileas.model.profile.FilterProfile;
+import com.mtnfog.phileas.model.profile.IgnoredPattern;
 import com.mtnfog.phileas.model.profile.filters.strategies.AbstractFilterStrategy;
 import com.mtnfog.phileas.model.services.AlertService;
 import com.mtnfog.phileas.model.services.AnonymizationService;
@@ -35,10 +36,11 @@ public class BloomFilterDictionaryFilter extends DictionaryFilter {
                                        AnonymizationService anonymizationService,
                                        AlertService alertService,
                                        Set<String> ignored,
+                                       List<IgnoredPattern> ignoredPatterns,
                                        Crypto crypto,
                                        int windowSize) {
 
-        super(filterType, strategies, anonymizationService, alertService, ignored, crypto, windowSize);
+        super(filterType, strategies, anonymizationService, alertService, ignored, ignoredPatterns, crypto, windowSize);
 
         this.lowerCaseTerms = new HashSet<>();
         this.bloomFilter = BloomFilter.create(Funnels.stringFunnel(Charset.defaultCharset()), terms.size(), fpp);

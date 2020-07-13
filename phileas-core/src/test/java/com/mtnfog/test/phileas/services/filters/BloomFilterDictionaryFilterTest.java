@@ -26,7 +26,7 @@ public class BloomFilterDictionaryFilterTest extends AbstractFilterTest {
 
         final List<CustomDictionaryFilterStrategy> strategies = Arrays.asList(new CustomDictionaryFilterStrategy());
         final Set<String> names = new HashSet<>(Arrays.asList("george", "ted", "Bill", "john"));
-        final DictionaryFilter filter = new BloomFilterDictionaryFilter(FilterType.CUSTOM_DICTIONARY, strategies, names, "none", 0.05, null, alertService, Collections.emptySet(), new Crypto(), windowSize);
+        final DictionaryFilter filter = new BloomFilterDictionaryFilter(FilterType.CUSTOM_DICTIONARY, strategies, names, "none", 0.05, null, alertService, Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
 
         final List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid","He lived with Bill in California.");
 
@@ -43,7 +43,7 @@ public class BloomFilterDictionaryFilterTest extends AbstractFilterTest {
 
         final List<CustomDictionaryFilterStrategy> strategies = Arrays.asList(new CustomDictionaryFilterStrategy());
         final Set<String> names = new HashSet<>(Arrays.asList("george", "ted", "bill", "john"));
-        final DictionaryFilter filter = new BloomFilterDictionaryFilter(FilterType.CUSTOM_DICTIONARY, strategies, names, "none", 0.05, null, alertService, Collections.emptySet(), new Crypto(), windowSize);
+        final DictionaryFilter filter = new BloomFilterDictionaryFilter(FilterType.CUSTOM_DICTIONARY, strategies, names, "none", 0.05, null, alertService, Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
 
         final List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid","He lived with Bill in California.");
 
@@ -60,7 +60,7 @@ public class BloomFilterDictionaryFilterTest extends AbstractFilterTest {
 
         final List<CustomDictionaryFilterStrategy> strategies = Arrays.asList(new CustomDictionaryFilterStrategy());
         final Set<String> names = new HashSet<>(Arrays.asList("george", "ted", "bill", "john"));
-        final DictionaryFilter filter = new BloomFilterDictionaryFilter(FilterType.CUSTOM_DICTIONARY, strategies, Collections.emptySet(), "none", 0.05, null, alertService, Collections.emptySet(), new Crypto(), windowSize);
+        final DictionaryFilter filter = new BloomFilterDictionaryFilter(FilterType.CUSTOM_DICTIONARY, strategies, Collections.emptySet(), "none", 0.05, null, alertService, Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
 
         final List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid","He lived with Sam in California.");
 

@@ -7,6 +7,7 @@ import com.mtnfog.phileas.model.objects.FilterPattern;
 import com.mtnfog.phileas.model.objects.Span;
 import com.mtnfog.phileas.model.profile.Crypto;
 import com.mtnfog.phileas.model.profile.FilterProfile;
+import com.mtnfog.phileas.model.profile.IgnoredPattern;
 import com.mtnfog.phileas.model.profile.filters.strategies.AbstractFilterStrategy;
 import com.mtnfog.phileas.model.services.AlertService;
 import com.mtnfog.phileas.model.services.AnonymizationService;
@@ -18,8 +19,8 @@ import java.util.regex.Pattern;
 
 public class UrlFilter extends RegexFilter {
 
-    public UrlFilter(List<? extends AbstractFilterStrategy> strategies, AnonymizationService anonymizationService, AlertService alertService, boolean requireHttpWwwPrefix, Set<String> ignored, Crypto crypto, int windowSize) {
-        super(FilterType.URL, strategies, anonymizationService, alertService, ignored, crypto, windowSize);
+    public UrlFilter(List<? extends AbstractFilterStrategy> strategies, AnonymizationService anonymizationService, AlertService alertService, boolean requireHttpWwwPrefix, Set<String> ignored, List<IgnoredPattern> ignoredPatterns, Crypto crypto, int windowSize) {
+        super(FilterType.URL, strategies, anonymizationService, alertService, ignored, ignoredPatterns, crypto, windowSize);
 
         // https://www.regexpal.com/93652: This regex will find things like test.link where it might just be two sentences without a space between them.
         // These two patterns do NOT consider IP addresses instead of domain names.

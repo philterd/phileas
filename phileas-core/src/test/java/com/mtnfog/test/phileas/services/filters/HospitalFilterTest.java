@@ -41,7 +41,7 @@ public class HospitalFilterTest extends AbstractFilterTest {
         AnonymizationService anonymizationService = new HospitalAnonymizationService(new LocalAnonymizationCacheService());
 
         final List<HospitalFilterStrategy> strategies = Arrays.asList(new HospitalFilterStrategy());
-        final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.HOSPITAL, strategies, INDEX_DIRECTORY, SensitivityLevel.LOW, anonymizationService, alertService, Collections.emptySet(), new Crypto(), windowSize);
+        final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.HOSPITAL, strategies, INDEX_DIRECTORY, SensitivityLevel.LOW, anonymizationService, alertService, Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
 
         List<Span> spans = filter.filter(getFilterProfile(SensitivityLevel.LOW), "context", "documentid","Went to Wyoming Medical Center");
         Assertions.assertEquals(1, spans.size());

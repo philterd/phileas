@@ -41,7 +41,7 @@ public class StateFilterTest extends AbstractFilterTest {
         AnonymizationService anonymizationService = new StateAnonymizationService(new LocalAnonymizationCacheService());
 
         final List<StateFilterStrategy> strategies = Arrays.asList(new StateFilterStrategy());
-        final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.LOCATION_STATE, strategies, INDEX_DIRECTORY, SensitivityLevel.LOW, anonymizationService, alertService, Collections.emptySet(), new Crypto(), windowSize);
+        final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.LOCATION_STATE, strategies, INDEX_DIRECTORY, SensitivityLevel.LOW, anonymizationService, alertService, Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
 
         List<Span> spans = filter.filter(getFilterProfile(SensitivityLevel.LOW), "context", "documentid","Lived in Washington");
         Assertions.assertEquals(1, spans.size());
@@ -55,7 +55,7 @@ public class StateFilterTest extends AbstractFilterTest {
         AnonymizationService anonymizationService = new StateAnonymizationService(new LocalAnonymizationCacheService());
 
         final List<StateFilterStrategy> strategies = Arrays.asList(new StateFilterStrategy());
-        final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.LOCATION_STATE, strategies, INDEX_DIRECTORY, SensitivityLevel.MEDIUM, anonymizationService, alertService, Collections.emptySet(), new Crypto(), windowSize);
+        final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.LOCATION_STATE, strategies, INDEX_DIRECTORY, SensitivityLevel.MEDIUM, anonymizationService, alertService, Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
 
         List<Span> spans = filter.filter(getFilterProfile(SensitivityLevel.MEDIUM), "context", "documentid","Lived in Wshington");
         Assertions.assertEquals(1, spans.size());
@@ -68,7 +68,7 @@ public class StateFilterTest extends AbstractFilterTest {
         AnonymizationService anonymizationService = new StateAnonymizationService(new LocalAnonymizationCacheService());
 
         final List<StateFilterStrategy> strategies = Arrays.asList(new StateFilterStrategy());
-        final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.LOCATION_STATE, strategies, INDEX_DIRECTORY, SensitivityLevel.HIGH, anonymizationService, alertService, Collections.emptySet(), new Crypto(), windowSize);
+        final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.LOCATION_STATE, strategies, INDEX_DIRECTORY, SensitivityLevel.HIGH, anonymizationService, alertService, Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
 
         List<Span> spans = filter.filter(getFilterProfile(SensitivityLevel.HIGH), "context", "documentid","Lived in Wasinton");
         Assertions.assertEquals(1, spans.size());

@@ -27,7 +27,7 @@ public class VinFilterTest extends AbstractFilterTest {
     public void filterVin1() throws Exception {
 
         final List<VinFilterStrategy> strategies = Arrays.asList(new VinFilterStrategy());
-        VinFilter filter = new VinFilter(strategies, anonymizationService, alertService, Collections.emptySet(), new Crypto(), windowSize);
+        VinFilter filter = new VinFilter(strategies, anonymizationService, alertService, Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
 
         List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "the vin is JB3BA36KXHU036784.");
         Assertions.assertEquals(1, spans.size());
@@ -40,7 +40,7 @@ public class VinFilterTest extends AbstractFilterTest {
     public void filterVin2() throws Exception {
 
         final List<VinFilterStrategy> strategies = Arrays.asList(new VinFilterStrategy());
-        VinFilter filter = new VinFilter(strategies, anonymizationService, alertService, Collections.emptySet(), new Crypto(), windowSize);
+        VinFilter filter = new VinFilter(strategies, anonymizationService, alertService, Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
 
         List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "the vin is 2T2HK31U38C057399.");
         Assertions.assertEquals(1, spans.size());
@@ -52,7 +52,7 @@ public class VinFilterTest extends AbstractFilterTest {
     public void filterVin3() throws Exception {
 
         final List<VinFilterStrategy> strategies = Arrays.asList(new VinFilterStrategy());
-        VinFilter filter = new VinFilter(strategies, anonymizationService, alertService, Collections.emptySet(), new Crypto(), windowSize);
+        VinFilter filter = new VinFilter(strategies, anonymizationService, alertService, Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
 
         List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "the vin is 11131517191011111.");
         Assertions.assertEquals(0, spans.size());
@@ -63,7 +63,7 @@ public class VinFilterTest extends AbstractFilterTest {
     public void filterVin4() throws Exception {
 
         final List<VinFilterStrategy> strategies = Arrays.asList(new VinFilterStrategy());
-        VinFilter filter = new VinFilter(strategies, anonymizationService, alertService, Collections.emptySet(), new Crypto(), windowSize);
+        VinFilter filter = new VinFilter(strategies, anonymizationService, alertService, Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
 
         List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "the vin is 11131517191X11111.");
         Assertions.assertEquals(0, spans.size());
@@ -74,7 +74,7 @@ public class VinFilterTest extends AbstractFilterTest {
     public void filterVin5() throws Exception {
 
         final List<VinFilterStrategy> strategies = Arrays.asList(new VinFilterStrategy());
-        VinFilter filter = new VinFilter(strategies, anonymizationService, alertService, Collections.emptySet(), new Crypto(), windowSize);
+        VinFilter filter = new VinFilter(strategies, anonymizationService, alertService, Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
 
         List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "the vin is 2t2hk31u38c057399.");
         Assertions.assertEquals(1, spans.size());

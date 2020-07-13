@@ -27,7 +27,7 @@ public class TrackingNumberFilterTest extends AbstractFilterTest {
     @Test
     public void filter0() throws Exception {
 
-        final Filter filter = new TrackingNumberFilter(null, new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), new Crypto(), windowSize);
+        final Filter filter = new TrackingNumberFilter(null, new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
 
         final List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "the tracking number is 1Z9YF1280343418566");
 
@@ -44,7 +44,7 @@ public class TrackingNumberFilterTest extends AbstractFilterTest {
     @Test
     public void filter1() throws Exception {
 
-        final Filter filter = new TrackingNumberFilter(null, new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), new Crypto(), windowSize);
+        final Filter filter = new TrackingNumberFilter(null, new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
 
         final List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "the tracking number is 9400100000000000000000");
 
@@ -62,7 +62,7 @@ public class TrackingNumberFilterTest extends AbstractFilterTest {
     @Disabled
     public void filter2() throws Exception {
 
-        final Filter filter = new TrackingNumberFilter(null, new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), new Crypto(), windowSize);
+        final Filter filter = new TrackingNumberFilter(null, new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
 
         final List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "the tracking number is 9400 1000 0000 0000 0000");
 
@@ -79,7 +79,7 @@ public class TrackingNumberFilterTest extends AbstractFilterTest {
     @Test
     public void filter3() throws Exception {
 
-        final Filter filter = new TrackingNumberFilter(null, new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), new Crypto(), windowSize);
+        final Filter filter = new TrackingNumberFilter(null, new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
 
         final List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "the tracking number is 4204319935009201990138501144099814");
 
@@ -96,7 +96,7 @@ public class TrackingNumberFilterTest extends AbstractFilterTest {
     @Test
     public void filter4() throws Exception {
 
-        final Filter filter = new TrackingNumberFilter(null, new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), new Crypto(), windowSize);
+        final Filter filter = new TrackingNumberFilter(null, new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
 
         final List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "the tracking number is 420431993500920199013850114409");
 
@@ -113,7 +113,7 @@ public class TrackingNumberFilterTest extends AbstractFilterTest {
     @Test
     public void filter5() throws Exception {
 
-        final Filter filter = new TrackingNumberFilter(null, new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), new Crypto(), windowSize);
+        final Filter filter = new TrackingNumberFilter(null, new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
 
         final List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "the tracking number is 4204319935009201990138501144");
 
@@ -130,7 +130,7 @@ public class TrackingNumberFilterTest extends AbstractFilterTest {
     @Test
     public void filter6() throws Exception {
 
-        final Filter filter = new TrackingNumberFilter(null, new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), new Crypto(), windowSize);
+        final Filter filter = new TrackingNumberFilter(null, new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
 
         final List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "the tracking number is 42043199350092019901385011");
 

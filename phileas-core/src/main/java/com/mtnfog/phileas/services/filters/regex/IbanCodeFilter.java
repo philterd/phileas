@@ -7,6 +7,7 @@ import com.mtnfog.phileas.model.objects.FilterPattern;
 import com.mtnfog.phileas.model.objects.Span;
 import com.mtnfog.phileas.model.profile.Crypto;
 import com.mtnfog.phileas.model.profile.FilterProfile;
+import com.mtnfog.phileas.model.profile.IgnoredPattern;
 import com.mtnfog.phileas.model.profile.filters.strategies.AbstractFilterStrategy;
 import com.mtnfog.phileas.model.services.AlertService;
 import com.mtnfog.phileas.model.services.AnonymizationService;
@@ -22,8 +23,8 @@ public class IbanCodeFilter extends RegexFilter {
 
     private boolean validate;
 
-    public IbanCodeFilter(List<? extends AbstractFilterStrategy> strategies, AnonymizationService anonymizationService, AlertService alertService,  Set<String> ignored, Crypto crypto, boolean validate, int windowSize) {
-        super(FilterType.IBAN_CODE, strategies, anonymizationService, alertService, ignored, crypto, windowSize);
+    public IbanCodeFilter(List<? extends AbstractFilterStrategy> strategies, AnonymizationService anonymizationService, AlertService alertService, Set<String> ignored, List<IgnoredPattern> ignoredPatterns, Crypto crypto, boolean validate, int windowSize) {
+        super(FilterType.IBAN_CODE, strategies, anonymizationService, alertService, ignored, ignoredPatterns, crypto, windowSize);
 
         // Whether or not to validate the found IBAN codes.
         this.validate = validate;

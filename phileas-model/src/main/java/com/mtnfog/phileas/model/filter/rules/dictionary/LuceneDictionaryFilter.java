@@ -6,6 +6,7 @@ import com.mtnfog.phileas.model.objects.Replacement;
 import com.mtnfog.phileas.model.objects.Span;
 import com.mtnfog.phileas.model.profile.Crypto;
 import com.mtnfog.phileas.model.profile.FilterProfile;
+import com.mtnfog.phileas.model.profile.IgnoredPattern;
 import com.mtnfog.phileas.model.profile.filters.strategies.AbstractFilterStrategy;
 import com.mtnfog.phileas.model.services.AlertService;
 import com.mtnfog.phileas.model.services.AnonymizationService;
@@ -68,10 +69,11 @@ public class LuceneDictionaryFilter extends DictionaryFilter implements Serializ
                                   AnonymizationService anonymizationService,
                                   AlertService alertService,
                                   Set<String> ignored,
+                                  List<IgnoredPattern> ignoredPatterns,
                                   Crypto crypto,
                                   int windowSize) throws IOException {
 
-        super(filterType, strategies, anonymizationService, alertService, ignored, crypto, windowSize);
+        super(filterType, strategies, anonymizationService, alertService, ignored, ignoredPatterns, crypto, windowSize);
 
         LOGGER.info("Loading {} index from {}", filterType, indexDirectory);
 
@@ -100,10 +102,11 @@ public class LuceneDictionaryFilter extends DictionaryFilter implements Serializ
                                         Set<String> terms,
                                         int filterProfileIndex,
                                         Set<String> ignored,
+                                        List<IgnoredPattern> ignoredPatterns,
                                         Crypto crypto,
                                         int windowSize) throws IOException {
 
-        super(filterType, strategies, anonymizationService, alertService, ignored, crypto, windowSize);
+        super(filterType, strategies, anonymizationService, alertService, ignored, ignoredPatterns, crypto, windowSize);
 
         LOGGER.info("Creating custom dictionary filter for custom type [{}]", type);
 

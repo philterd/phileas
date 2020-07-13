@@ -8,6 +8,7 @@ import com.mtnfog.phileas.model.objects.Replacement;
 import com.mtnfog.phileas.model.objects.Span;
 import com.mtnfog.phileas.model.profile.Crypto;
 import com.mtnfog.phileas.model.profile.FilterProfile;
+import com.mtnfog.phileas.model.profile.IgnoredPattern;
 import com.mtnfog.phileas.model.profile.filters.strategies.AbstractFilterStrategy;
 import com.mtnfog.phileas.model.services.AlertService;
 import com.mtnfog.phileas.model.services.AnonymizationService;
@@ -30,8 +31,8 @@ public abstract class RulesFilter extends Filter {
      * @param filterType The {@link FilterType type} of the filter.
      * @param anonymizationService The {@link AnonymizationService} for this filter.
      */
-    public RulesFilter(FilterType filterType, List<? extends AbstractFilterStrategy> strategies, AnonymizationService anonymizationService, AlertService alertService, Set<String> ignored, Crypto crypto, int windowSize) {
-        super(filterType, strategies, anonymizationService, alertService, ignored, crypto, windowSize);
+    public RulesFilter(FilterType filterType, List<? extends AbstractFilterStrategy> strategies, AnonymizationService anonymizationService, AlertService alertService, Set<String> ignored, List<IgnoredPattern> ignoredPatterns, Crypto crypto, int windowSize) {
+        super(filterType, strategies, anonymizationService, alertService, ignored, ignoredPatterns, crypto, windowSize);
     }
 
     /**
@@ -59,7 +60,18 @@ public abstract class RulesFilter extends Filter {
                     final String token = matcher.group(0);
 
                     // Is this term ignored?
-                    final boolean isIgnored = ignored.contains(token);
+                    boolean isIgnored = ignored.contains(token);
+
+                    // Is this term ignored by a pattern?
+                    // No reason to check if it is already ignored by an ignored term.
+                    if(!isIgnored) {
+                        for (final IgnoredPattern ignoredPattern : ignoredPatterns) {
+                            if (token.matches(ignoredPattern.getPattern())) {
+                                isIgnored = true;
+                                break;
+                            }
+                        }
+                    }
 
                     // TODO: PHL-119: Adjust the confidence based on the initial confidence.
                     // TODO: Should this be an option? Use "simple" confidence values or "calculated"?

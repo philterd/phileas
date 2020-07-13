@@ -7,6 +7,7 @@ import com.mtnfog.phileas.model.objects.Replacement;
 import com.mtnfog.phileas.model.objects.Span;
 import com.mtnfog.phileas.model.profile.Crypto;
 import com.mtnfog.phileas.model.profile.FilterProfile;
+import com.mtnfog.phileas.model.profile.IgnoredPattern;
 import com.mtnfog.phileas.model.profile.filters.strategies.AbstractFilterStrategy;
 import com.mtnfog.phileas.model.services.AlertService;
 import com.mtnfog.phileas.model.services.AnonymizationService;
@@ -53,11 +54,12 @@ public class PyTorchFilter extends NerFilter {
                          AnonymizationService anonymizationService,
                          AlertService alertService,
                          Set<String> ignored,
+                         List<IgnoredPattern> ignoredPatterns,
                          boolean removePunctuation,
                          Crypto crypto,
                          int windowSize) {
 
-        super(filterType, strategies, stats, metricsService, anonymizationService, alertService, ignored, removePunctuation, crypto, windowSize);
+        super(filterType, strategies, stats, metricsService, anonymizationService, alertService, ignored, ignoredPatterns, removePunctuation, crypto, windowSize);
 
         this.tag = tag;
         this.timeoutSec = phileaseConfiguration.nerTimeoutSec();

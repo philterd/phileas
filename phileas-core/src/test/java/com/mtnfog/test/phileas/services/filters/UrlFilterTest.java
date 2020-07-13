@@ -24,7 +24,7 @@ public class UrlFilterTest extends AbstractFilterTest {
     public void filterUrl1() throws Exception {
 
         final List<UrlFilterStrategy> strategies = Arrays.asList(new UrlFilterStrategy());
-        UrlFilter filter = new UrlFilter(strategies, new UrlAnonymizationService(new LocalAnonymizationCacheService()), alertService, true, Collections.emptySet(), new Crypto(), windowSize);
+        UrlFilter filter = new UrlFilter(strategies, new UrlAnonymizationService(new LocalAnonymizationCacheService()), alertService, true, Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
 
         List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "the page is http://page.com.");
         showSpans(spans);
@@ -38,7 +38,7 @@ public class UrlFilterTest extends AbstractFilterTest {
     public void filterUrl2() throws Exception {
 
         final List<UrlFilterStrategy> strategies = Arrays.asList(new UrlFilterStrategy());
-        UrlFilter filter = new UrlFilter(strategies, new UrlAnonymizationService(new LocalAnonymizationCacheService()), alertService, true, Collections.emptySet(), new Crypto(), windowSize);
+        UrlFilter filter = new UrlFilter(strategies, new UrlAnonymizationService(new LocalAnonymizationCacheService()), alertService, true, Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
 
         List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "the page is myhomepage.com.");
         showSpans(spans);
@@ -50,7 +50,7 @@ public class UrlFilterTest extends AbstractFilterTest {
     public void filterUrl3() throws Exception {
 
         final List<UrlFilterStrategy> strategies = Arrays.asList(new UrlFilterStrategy());
-        UrlFilter filter = new UrlFilter(strategies, new UrlAnonymizationService(new LocalAnonymizationCacheService()), alertService, true, Collections.emptySet(), new Crypto(), windowSize);
+        UrlFilter filter = new UrlFilter(strategies, new UrlAnonymizationService(new LocalAnonymizationCacheService()), alertService, true, Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
 
         List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "the page is http://myhomepage.com/folder/page.html.");
         showSpans(spans);
@@ -63,7 +63,7 @@ public class UrlFilterTest extends AbstractFilterTest {
     public void filterUrl4() throws Exception {
 
         final List<UrlFilterStrategy> strategies = Arrays.asList(new UrlFilterStrategy());
-        UrlFilter filter = new UrlFilter(strategies, new UrlAnonymizationService(new LocalAnonymizationCacheService()), alertService, true, Collections.emptySet(), new Crypto(), windowSize);
+        UrlFilter filter = new UrlFilter(strategies, new UrlAnonymizationService(new LocalAnonymizationCacheService()), alertService, true, Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
 
         List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "the page is http://www.myhomepage.com/folder/page.html");
         showSpans(spans);
@@ -76,7 +76,7 @@ public class UrlFilterTest extends AbstractFilterTest {
     public void filterUrl5() throws Exception {
 
         final List<UrlFilterStrategy> strategies = Arrays.asList(new UrlFilterStrategy());
-        UrlFilter filter = new UrlFilter(strategies, new UrlAnonymizationService(new LocalAnonymizationCacheService()), alertService, true, Collections.emptySet(), new Crypto(), windowSize);
+        UrlFilter filter = new UrlFilter(strategies, new UrlAnonymizationService(new LocalAnonymizationCacheService()), alertService, true, Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
 
         List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "the page is www.myhomepage.com/folder/page.html.");
         showSpans(spans);
@@ -89,7 +89,7 @@ public class UrlFilterTest extends AbstractFilterTest {
     public void filterUrl6() throws Exception {
 
         final List<UrlFilterStrategy> strategies = Arrays.asList(new UrlFilterStrategy());
-        UrlFilter filter = new UrlFilter(strategies, new UrlAnonymizationService(new LocalAnonymizationCacheService()), alertService, false, Collections.emptySet(), new Crypto(), windowSize);
+        UrlFilter filter = new UrlFilter(strategies, new UrlAnonymizationService(new LocalAnonymizationCacheService()), alertService, false, Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
 
         List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "the page is myhomepage.com.");
         showSpans(spans);
@@ -102,7 +102,7 @@ public class UrlFilterTest extends AbstractFilterTest {
     public void filterUrl7() throws Exception {
 
         final List<UrlFilterStrategy> strategies = Arrays.asList(new UrlFilterStrategy());
-        UrlFilter filter = new UrlFilter(strategies, new UrlAnonymizationService(new LocalAnonymizationCacheService()), alertService, true, Collections.emptySet(), new Crypto(), windowSize);
+        UrlFilter filter = new UrlFilter(strategies, new UrlAnonymizationService(new LocalAnonymizationCacheService()), alertService, true, Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
 
         List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "the page is www.myhomepage.com:80/folder/page.html.");
         showSpans(spans);
@@ -115,7 +115,7 @@ public class UrlFilterTest extends AbstractFilterTest {
     public void filterUrl8() throws Exception {
 
         final List<UrlFilterStrategy> strategies = Arrays.asList(new UrlFilterStrategy());
-        UrlFilter filter = new UrlFilter(strategies, new UrlAnonymizationService(new LocalAnonymizationCacheService()), alertService, true, Collections.emptySet(), new Crypto(), windowSize);
+        UrlFilter filter = new UrlFilter(strategies, new UrlAnonymizationService(new LocalAnonymizationCacheService()), alertService, true, Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
 
         List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "the page is http://192.168.1.1:80/folder/page.html.");
         showSpans(spans);
@@ -128,7 +128,7 @@ public class UrlFilterTest extends AbstractFilterTest {
     public void filterUrl9() throws Exception {
 
         final List<UrlFilterStrategy> strategies = Arrays.asList(new UrlFilterStrategy());
-        UrlFilter filter = new UrlFilter(strategies, new UrlAnonymizationService(new LocalAnonymizationCacheService()), alertService, false, Collections.emptySet(), new Crypto(), windowSize);
+        UrlFilter filter = new UrlFilter(strategies, new UrlAnonymizationService(new LocalAnonymizationCacheService()), alertService, false, Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
 
         List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "the page is 192.168.1.1:80/folder/page.html.");
         showSpans(spans);
@@ -142,7 +142,7 @@ public class UrlFilterTest extends AbstractFilterTest {
     public void filterUrl10() throws Exception {
 
         final List<UrlFilterStrategy> strategies = Arrays.asList(new UrlFilterStrategy());
-        UrlFilter filter = new UrlFilter(strategies, new UrlAnonymizationService(new LocalAnonymizationCacheService()), alertService, false, Collections.emptySet(), new Crypto(), windowSize);
+        UrlFilter filter = new UrlFilter(strategies, new UrlAnonymizationService(new LocalAnonymizationCacheService()), alertService, false, Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
 
         List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "the page is http://192.168.1.1:80/folder/page.html.");
         showSpans(spans);
@@ -156,7 +156,7 @@ public class UrlFilterTest extends AbstractFilterTest {
     public void filterUrl11() throws Exception {
 
         final List<UrlFilterStrategy> strategies = Arrays.asList(new UrlFilterStrategy());
-        UrlFilter filter = new UrlFilter(strategies, new UrlAnonymizationService(new LocalAnonymizationCacheService()), alertService, false, Collections.emptySet(), new Crypto(), windowSize);
+        UrlFilter filter = new UrlFilter(strategies, new UrlAnonymizationService(new LocalAnonymizationCacheService()), alertService, false, Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
 
         List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "the page is https://192.168.1.1:80/folder/page.html.");
         showSpans(spans);
@@ -170,7 +170,7 @@ public class UrlFilterTest extends AbstractFilterTest {
     public void filterUrl12() throws Exception {
 
         final List<UrlFilterStrategy> strategies = Arrays.asList(new UrlFilterStrategy());
-        UrlFilter filter = new UrlFilter(strategies, new UrlAnonymizationService(new LocalAnonymizationCacheService()), alertService, true, Collections.emptySet(), new Crypto(), windowSize);
+        UrlFilter filter = new UrlFilter(strategies, new UrlAnonymizationService(new LocalAnonymizationCacheService()), alertService, true, Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
 
         List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "the page is test.ok new sentence");
         showSpans(spans);
@@ -182,7 +182,7 @@ public class UrlFilterTest extends AbstractFilterTest {
     public void filterUrl13() throws Exception {
 
         final List<UrlFilterStrategy> strategies = Arrays.asList(new UrlFilterStrategy());
-        UrlFilter filter = new UrlFilter(strategies, new UrlAnonymizationService(new LocalAnonymizationCacheService()), alertService, false, Collections.emptySet(), new Crypto(), windowSize);
+        UrlFilter filter = new UrlFilter(strategies, new UrlAnonymizationService(new LocalAnonymizationCacheService()), alertService, false, Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
 
         List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "the page is http://2001:0db8:85a3:0000:0000:8a2e:0370:7334/test.html.");
         showSpans(spans);
@@ -196,7 +196,7 @@ public class UrlFilterTest extends AbstractFilterTest {
     public void filterUrl14() throws Exception {
 
         final List<UrlFilterStrategy> strategies = Arrays.asList(new UrlFilterStrategy());
-        UrlFilter filter = new UrlFilter(strategies, new UrlAnonymizationService(new LocalAnonymizationCacheService()), alertService, false, Collections.emptySet(), new Crypto(), windowSize);
+        UrlFilter filter = new UrlFilter(strategies, new UrlAnonymizationService(new LocalAnonymizationCacheService()), alertService, false, Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
 
         List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "the page is http://2001:0db8:85a3:0000:0000:8a2e:0370:7334/test/.");
         showSpans(spans);
@@ -209,7 +209,7 @@ public class UrlFilterTest extends AbstractFilterTest {
     public void filterUrl15() throws Exception {
 
         final List<UrlFilterStrategy> strategies = Arrays.asList(new UrlFilterStrategy());
-        UrlFilter filter = new UrlFilter(strategies, new UrlAnonymizationService(new LocalAnonymizationCacheService()), alertService, false, Collections.emptySet(), new Crypto(), windowSize);
+        UrlFilter filter = new UrlFilter(strategies, new UrlAnonymizationService(new LocalAnonymizationCacheService()), alertService, false, Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
 
         List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "the page is https://192.168.1.1:80/folder/page.html. this is a new sentence.");
         showSpans(spans);
