@@ -160,8 +160,10 @@ public class PyTorchFilter extends NerFilter {
 
             final String[] window = getWindow(input, start, end);
 
-            final boolean isIgnored = ignored.contains(text);
-            return Span.make(start, end, FilterType.NER_ENTITY, context, documentId, confidence, text, replacement.getReplacement(), replacement.getSalt(), isIgnored, window);
+            // Is this term ignored?
+            final boolean ignored = isIgnored(text);
+
+            return Span.make(start, end, FilterType.NER_ENTITY, context, documentId, confidence, text, replacement.getReplacement(), replacement.getSalt(), ignored, window);
 
         }
 

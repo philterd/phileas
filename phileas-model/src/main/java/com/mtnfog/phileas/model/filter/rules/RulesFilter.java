@@ -60,18 +60,7 @@ public abstract class RulesFilter extends Filter {
                     final String token = matcher.group(0);
 
                     // Is this term ignored?
-                    boolean isIgnored = ignored.contains(token);
-
-                    // Is this term ignored by a pattern?
-                    // No reason to check if it is already ignored by an ignored term.
-                    if(!isIgnored) {
-                        for (final IgnoredPattern ignoredPattern : ignoredPatterns) {
-                            if (token.matches(ignoredPattern.getPattern())) {
-                                isIgnored = true;
-                                break;
-                            }
-                        }
-                    }
+                    boolean ignored = isIgnored(token);
 
                     // TODO: PHL-119: Adjust the confidence based on the initial confidence.
                     // TODO: Should this be an option? Use "simple" confidence values or "calculated"?
@@ -85,7 +74,7 @@ public abstract class RulesFilter extends Filter {
 
                     final String[] window = getWindow(input, characterStart, characterEnd);
 
-                    final Span span = Span.make(characterStart, characterEnd, getFilterType(), context, documentId, initialConfidence, token, replacement.getReplacement(), replacement.getSalt(), isIgnored, window);
+                    final Span span = Span.make(characterStart, characterEnd, getFilterType(), context, documentId, initialConfidence, token, replacement.getReplacement(), replacement.getSalt(), ignored, window);
 
                     // TODO: Add "format" to Span.make() so we don't have to make a separate call here.
                     span.setPattern(filterPattern.getFormat());

@@ -215,6 +215,31 @@ public abstract class Filter {
 
     }
 
+    /**
+     * Determines if a token is ignored.
+     * @param token The token.
+     * @return Returns <code>true</code> if the token is ignored; <code>false</code> otherwise.
+     */
+    public boolean isIgnored(String token) {
+
+        // Is this term ignored?
+        boolean isIgnored = ignored.contains(token);
+
+        // Is this term ignored by a pattern?
+        // No reason to check if it is already ignored by an ignored term.
+        if(!isIgnored) {
+            for (final IgnoredPattern ignoredPattern : ignoredPatterns) {
+                if (token.matches(ignoredPattern.getPattern())) {
+                    isIgnored = true;
+                    break;
+                }
+            }
+        }
+
+        return isIgnored;
+
+    }
+
     public static List<? extends AbstractFilterStrategy> getIdentifierFilterStrategies(FilterProfile filterProfile, String name) {
 
         final List<Identifier> identifiers = filterProfile.getIdentifiers().getIdentifiers();

@@ -245,7 +245,10 @@ public class LuceneDictionaryFilter extends DictionaryFilter implements Serializ
                             if (isMatch) {
 
                                 // Set the meta values for the span.
-                                final boolean isIgnored = ignored.contains(token);
+
+                                // Is this term ignored?
+                                final boolean ignored = isIgnored(text);
+
                                 final int characterStart = offsetAttribute.startOffset();
                                 final int characterEnd = offsetAttribute.endOffset();
                                 final String[] window = getWindow(text, characterStart, characterEnd);
@@ -256,7 +259,7 @@ public class LuceneDictionaryFilter extends DictionaryFilter implements Serializ
                                 final Replacement replacement = getReplacement(filterProfile.getName(), context, documentId, token, confidence, classification);
 
                                 // Add the span to the list.
-                                spans.add(Span.make(characterStart, characterEnd, getFilterType(), context, documentId, confidence, token, replacement.getReplacement(), replacement.getSalt(), isIgnored, window));
+                                spans.add(Span.make(characterStart, characterEnd, getFilterType(), context, documentId, confidence, token, replacement.getReplacement(), replacement.getSalt(), ignored, window));
 
                             }
 
