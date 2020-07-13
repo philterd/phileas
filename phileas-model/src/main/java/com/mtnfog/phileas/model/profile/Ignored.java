@@ -3,6 +3,7 @@ package com.mtnfog.phileas.model.profile;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.util.Collections;
 import java.util.List;
 
 public class Ignored {
@@ -13,7 +14,11 @@ public class Ignored {
 
     @SerializedName("terms")
     @Expose
-    private List<String> terms;
+    private List<String> terms = Collections.emptyList();
+
+    @SerializedName("files")
+    @Expose
+    private List<String> files = Collections.emptyList();
 
     @SerializedName("caseSensitive")
     @Expose
@@ -41,6 +46,14 @@ public class Ignored {
 
     public void setCaseSensitive(boolean caseSensitive) {
         this.caseSensitive = caseSensitive;
+    }
+
+    public List<String> getFiles() {
+        return files;
+    }
+
+    public void setFiles(List<String> files) {
+        this.files = files;
     }
 
 }

@@ -4,9 +4,13 @@ import com.mtnfog.phileas.model.objects.PostFilterResult;
 import com.mtnfog.phileas.model.objects.Span;
 import com.mtnfog.phileas.model.profile.Ignored;
 import com.mtnfog.phileas.model.services.PostFilter;
+import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -22,22 +26,37 @@ public class IgnoredTermsFilter extends PostFilter {
     private Set<String> ignoredTerms = new HashSet<>();
     private Ignored ignored;
 
-    public IgnoredTermsFilter(final Ignored ignored) {
+    public IgnoredTermsFilter(final Ignored ignored) throws IOException {
 
         this.ignored = ignored;
+
+        // Read the ignored terms from the files.
+        final Set<String> ignoredTermsFromFiles = new HashSet<>();
+        for(final String file : ignored.getFiles()) {
+            ignoredTermsFromFiles.addAll(FileUtils.readLines(new File(file), Charset.defaultCharset()));
+        }
 
         if(ignored.isCaseSensitive()) {
 
             ignoredTerms.addAll(ignored.getTerms());
+            ignoredTerms.addAll(ignoredTermsFromFiles);
 
         } else {
+
+            LOGGER.debug("Ignore terms is not case sensitive.");
 
             // Not case-sensitive. Lowercase everything before adding.
             ignoredTerms.addAll(ignored.getTerms().stream()
                     .map(String::toLowerCase)
                     .collect(Collectors.toList()));
 
+            ignoredTerms.addAll(ignoredTermsFromFiles.stream()
+                    .map(String::toLowerCase)
+                    .collect(Collectors.toList()));
+
         }
+
+        LOGGER.info("Added {} terms to ignore.", ignoredTerms.size());
 
     }
 
