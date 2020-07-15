@@ -12,6 +12,10 @@ public class IbanCode extends AbstractFilter {
     @Expose
     protected boolean onlyValidIBANCodes = true;
 
+    @SerializedName("allowSpaces")
+    @Expose
+    protected boolean allowSpaces = true;
+
     @SerializedName("ibanCodeFilterStrategies")
     @Expose
     private List<IbanCodeFilterStrategy> ibanCodeFilterStrategies;
@@ -30,6 +34,14 @@ public class IbanCode extends AbstractFilter {
 
     public void setOnlyValidIBANCodes(boolean onlyValidIBANCodes) {
         this.onlyValidIBANCodes = onlyValidIBANCodes;
+    }
+
+    public boolean isAllowSpaces() {
+        return allowSpaces;
+    }
+
+    public void setAllowSpaces(boolean allowSpaces) {
+        this.allowSpaces = allowSpaces;
     }
 
 }

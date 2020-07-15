@@ -23,14 +23,14 @@ public class IbanCodeFilterTest extends AbstractFilterTest {
 
     private AlertService alertService = Mockito.mock(AlertService.class);
 
-    private Filter getFilter(boolean validate) {
-        return new IbanCodeFilter(null, new IbanCodeAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), Collections.emptyList(), new Crypto(), validate, windowSize);
+    private Filter getFilter(boolean validate, boolean allowSpaces) {
+        return new IbanCodeFilter(null, new IbanCodeAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), Collections.emptyList(), new Crypto(), validate, allowSpaces, windowSize);
     }
 
     @Test
     public void filter1() throws Exception {
 
-        final Filter filter = getFilter(true);
+        final Filter filter = getFilter(true, false);
 
         final List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "bank code of GB33BUKB20201555555555 ok?");
 
@@ -46,7 +46,7 @@ public class IbanCodeFilterTest extends AbstractFilterTest {
     @Test
     public void filter2() throws Exception {
 
-        final Filter filter = getFilter(false);
+        final Filter filter = getFilter(false, false);
 
         final List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "bank code of GB15MIDL40051512345678 ok?");
 
@@ -62,7 +62,7 @@ public class IbanCodeFilterTest extends AbstractFilterTest {
     @Test
     public void filter3() throws Exception {
 
-        final Filter filter = getFilter(false);
+        final Filter filter = getFilter(true, true);
 
         final List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "bank code of GB15 MIDL 4005 1512 3456 78 ok?");
 
@@ -72,6 +72,19 @@ public class IbanCodeFilterTest extends AbstractFilterTest {
         Assertions.assertTrue(checkSpan(spans.get(0), 13, 40, FilterType.IBAN_CODE));
         Assertions.assertEquals("{{{REDACTED-iban-code}}}", spans.get(0).getReplacement());
         Assertions.assertEquals("GB15 MIDL 4005 1512 3456 78", spans.get(0).getText());
+
+    }
+
+    @Test
+    public void filter4() throws Exception {
+
+        final Filter filter = getFilter(true, true);
+
+        final List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "bank code of GB15 MIDL 4005 1512 3456 zz ok?");
+
+        showSpans(spans);
+
+        Assertions.assertEquals(0, spans.size());
 
     }
 

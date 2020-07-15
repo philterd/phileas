@@ -23,7 +23,7 @@ public class IbanCodeFilter extends RegexFilter {
 
     private boolean validate;
 
-    public IbanCodeFilter(List<? extends AbstractFilterStrategy> strategies, AnonymizationService anonymizationService, AlertService alertService, Set<String> ignored, List<IgnoredPattern> ignoredPatterns, Crypto crypto, boolean validate, int windowSize) {
+    public IbanCodeFilter(List<? extends AbstractFilterStrategy> strategies, AnonymizationService anonymizationService, AlertService alertService, Set<String> ignored, List<IgnoredPattern> ignoredPatterns, Crypto crypto, boolean validate, boolean allowSpaces, int windowSize) {
         super(FilterType.IBAN_CODE, strategies, anonymizationService, alertService, ignored, ignoredPatterns, crypto, windowSize);
 
         // Whether or not to validate the found IBAN codes.
@@ -34,9 +34,15 @@ public class IbanCodeFilter extends RegexFilter {
         // When printed it is expressed in groups of four characters separated by a single space, the last group being of variable length.
         // https://fexco.com/fexco/news/swift-bic-iban-explained/
 
-        // This pattern does not allow spaces to group in 4s. See https://stackoverflow.com/q/44656264
-        // final Pattern ibanPattern = Pattern.compile("\\b[A-Z]{2}[0-9]{2}[A-Z0-9]{1,30}\\b", Pattern.CASE_INSENSITIVE);
-        final Pattern ibanPattern = Pattern.compile("\\b[A-Z]{2}[0-9]{2}[\\s]?[A-Z0-9]{4}[\\s]{0,1}[A-Z0-9]{4}[\\s]?[A-Z0-9]{4}[\\s]?[A-Z0-9]{4}[\\s]?[A-Z0-9]{2}\\b", Pattern.CASE_INSENSITIVE);
+        // See https://stackoverflow.com/q/44656264
+        final Pattern ibanPattern;
+
+        if(allowSpaces) {
+            ibanPattern = Pattern.compile("\\b[A-Z]{2}[0-9]{2}[\\s]?[A-Z0-9]{4}[\\s]{0,1}[A-Z0-9]{4}[\\s]?[A-Z0-9]{4}[\\s]?[A-Z0-9]{4}[\\s]?[A-Z0-9]{2}\\b", Pattern.CASE_INSENSITIVE);
+        } else {
+            ibanPattern = Pattern.compile("\\b[A-Z]{2}[0-9]{2}[A-Z0-9]{1,30}\\b", Pattern.CASE_INSENSITIVE);
+        }
+
         final FilterPattern iban = new FilterPattern.FilterPatternBuilder(ibanPattern, 0.90).build();
 
         this.contextualTerms = new HashSet<>();
@@ -62,7 +68,7 @@ public class IbanCodeFilter extends RegexFilter {
 
             for (final Span span : spans) {
 
-                final boolean valid = IBANValidator.getInstance().isValid(span.getText());
+                final boolean valid = IBANValidator.getInstance().isValid(span.getText().replaceAll("\\s", ""));
 
                 if(valid) {
                     validSpans.add(span);
@@ -76,7 +82,7 @@ public class IbanCodeFilter extends RegexFilter {
 
         }
 
-        return spans;
+        return validSpans;
 
     }
 
