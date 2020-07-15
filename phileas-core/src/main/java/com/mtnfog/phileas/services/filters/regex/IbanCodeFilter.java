@@ -36,7 +36,7 @@ public class IbanCodeFilter extends RegexFilter {
 
         // This pattern does not allow spaces to group in 4s. See https://stackoverflow.com/q/44656264
         // final Pattern ibanPattern = Pattern.compile("\\b[A-Z]{2}[0-9]{2}[A-Z0-9]{1,30}\\b", Pattern.CASE_INSENSITIVE);
-        final Pattern ibanPattern = Pattern.compile("\\b[A-Z]{2}[0-9]{2}[\\s]{0,1}[A-Z0-9]{4}[\\s]{0,1}[A-Z0-9]{4}[\\s]{0,1}[A-Z0-9]{4}[\\s]{0,1}[A-Z0-9]{4}[\\s]{0,1}[A-Z0-9]{2}\\b", Pattern.CASE_INSENSITIVE);
+        final Pattern ibanPattern = Pattern.compile("\\b[A-Z]{2}[0-9]{2}[\\s]?[A-Z0-9]{4}[\\s]{0,1}[A-Z0-9]{4}[\\s]?[A-Z0-9]{4}[\\s]?[A-Z0-9]{4}[\\s]?[A-Z0-9]{2}\\b", Pattern.CASE_INSENSITIVE);
         final FilterPattern iban = new FilterPattern.FilterPatternBuilder(ibanPattern, 0.90).build();
 
         this.contextualTerms = new HashSet<>();
