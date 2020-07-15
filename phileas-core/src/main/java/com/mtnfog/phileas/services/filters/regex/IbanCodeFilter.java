@@ -29,15 +29,21 @@ public class IbanCodeFilter extends RegexFilter {
         // Whether or not to validate the found IBAN codes.
         this.validate = validate;
 
-        // https://stackoverflow.com/q/44656264
-        final Pattern ibanPattern = Pattern.compile("\\b[A-Z]{2}[0-9]{2}[A-Z0-9]{1,30}\\b", Pattern.CASE_INSENSITIVE);
-        final FilterPattern iban1 = new FilterPattern.FilterPatternBuilder(ibanPattern, 0.90).build();
+        // PHL-139: Allow spaces in IBAN Codes.
+        // It is important to note that there are no spaces in an IBAN when transmitted electronically.
+        // When printed it is expressed in groups of four characters separated by a single space, the last group being of variable length.
+        // https://fexco.com/fexco/news/swift-bic-iban-explained/
+
+        // This pattern does not allow spaces to group in 4s. See https://stackoverflow.com/q/44656264
+        // final Pattern ibanPattern = Pattern.compile("\\b[A-Z]{2}[0-9]{2}[A-Z0-9]{1,30}\\b", Pattern.CASE_INSENSITIVE);
+        final Pattern ibanPattern = Pattern.compile("\\b[A-Z]{2}[0-9]{2}[\\s]{0,1}[A-Z0-9]{4}[\\s]{0,1}[A-Z0-9]{4}[\\s]{0,1}[A-Z0-9]{4}[\\s]{0,1}[A-Z0-9]{4}[\\s]{0,1}[A-Z0-9]{2}\\b", Pattern.CASE_INSENSITIVE);
+        final FilterPattern iban = new FilterPattern.FilterPatternBuilder(ibanPattern, 0.90).build();
 
         this.contextualTerms = new HashSet<>();
         this.contextualTerms.add("iban");
         this.contextualTerms.add("bank");
 
-        this.analyzer = new Analyzer(contextualTerms, iban1);
+        this.analyzer = new Analyzer(contextualTerms, iban);
 
     }
 

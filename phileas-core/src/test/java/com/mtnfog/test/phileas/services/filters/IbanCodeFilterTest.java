@@ -59,4 +59,20 @@ public class IbanCodeFilterTest extends AbstractFilterTest {
 
     }
 
+    @Test
+    public void filter3() throws Exception {
+
+        final Filter filter = getFilter(false);
+
+        final List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "bank code of GB15 MIDL 4005 1512 3456 78 ok?");
+
+        showSpans(spans);
+
+        Assertions.assertEquals(1, spans.size());
+        Assertions.assertTrue(checkSpan(spans.get(0), 13, 40, FilterType.IBAN_CODE));
+        Assertions.assertEquals("{{{REDACTED-iban-code}}}", spans.get(0).getReplacement());
+        Assertions.assertEquals("GB15 MIDL 4005 1512 3456 78", spans.get(0).getText());
+
+    }
+
 }
