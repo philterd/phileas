@@ -58,6 +58,10 @@ public class BloomFilterDictionaryFilter extends DictionaryFilter {
 
         final List<Span> spans = new LinkedList<>();
 
+        // TODO: PHL-150
+        // TODO: This filter only works on individual words and not phrases.
+        // TODO: Look at the LuceneDictionaryFilter and see how it breaks the text into n-grams.
+
         // Tokenize the text.
         //final StringTokenizer stringTokenizer = new StringTokenizer(text);
         final BreakIterator breakIterator = BreakIterator.getWordInstance(Locale.US);
