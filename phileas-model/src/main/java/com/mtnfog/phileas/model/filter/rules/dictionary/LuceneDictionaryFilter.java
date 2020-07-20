@@ -114,6 +114,16 @@ public class LuceneDictionaryFilter extends DictionaryFilter implements Serializ
         this.sensitivityLevel = sensitivityLevel;
         this.filterProfileIndex = filterProfileIndex;
 
+        // Find the max n-gram size. It is equal to the maximum
+        // number of spaces in any single dictionary entry.
+        for(final String term : terms) {
+            final String[] split = term.split("\\s");
+            if(split.length > this.maxNgramSize) {
+                this.maxNgramSize = split.length;
+            }
+        }
+        LOGGER.info("Max ngram size is {}", maxNgramSize);
+
         // Write the list of terms to a file in a temporary directory.
         final Path pathToIndex = Files.createTempDirectory("philter-name-index");
         final FileAttribute<Set<PosixFilePermission>> fileAttributes = PosixFilePermissions.asFileAttribute(PosixFilePermissions.fromString("rw-------"));
@@ -156,11 +166,8 @@ public class LuceneDictionaryFilter extends DictionaryFilter implements Serializ
 
                 LOGGER.info("Using sensitivity level = " + sensitivityLevel.getName());
 
-                // Tokenize the input text.
-                final TokenStream tokenStream = analyzer.tokenStream(null, new StringReader(text));
-
-                // Make n-grams from the tokens.
-                final ShingleFilter ngrams = new ShingleFilter(tokenStream, 5);
+                // Get the n-grams in the input.
+                final ShingleFilter ngrams = getNGrams(5, text);
 
                 final OffsetAttribute offsetAttribute = ngrams.getAttribute(OffsetAttribute.class);
                 final CharTermAttribute termAttribute = ngrams.getAttribute(CharTermAttribute.class);

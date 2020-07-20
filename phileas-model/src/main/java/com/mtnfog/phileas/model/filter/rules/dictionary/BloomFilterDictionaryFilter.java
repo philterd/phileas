@@ -13,10 +13,16 @@ import com.mtnfog.phileas.model.services.AlertService;
 import com.mtnfog.phileas.model.services.AnonymizationService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.lucene.analysis.shingle.ShingleFilter;
+import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
+import org.apache.lucene.analysis.tokenattributes.OffsetAttribute;
 
+import java.io.IOException;
 import java.nio.charset.Charset;
-import java.text.BreakIterator;
-import java.util.*;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
 
 /**
  * A filter that operates on a bloom filter.
@@ -46,8 +52,18 @@ public class BloomFilterDictionaryFilter extends DictionaryFilter {
         this.bloomFilter = BloomFilter.create(Funnels.stringFunnel(Charset.defaultCharset()), terms.size(), fpp);
         this.classification = classification;
 
+        // Find the max n-gram size. It is equal to the maximum
+        // number of spaces in any single dictionary entry.
+        for(final String term : terms) {
+            final String[] split = term.split("\\s");
+            if(split.length > maxNgramSize) {
+                maxNgramSize = split.length;
+            }
+        }
+        LOGGER.info("Max ngram size is {}", maxNgramSize);
+
         // Lowercase the terms and add each to the bloom filter.
-        LOGGER.info("Creating bloom filter from {} terms.", lowerCaseTerms.size());
+        LOGGER.info("Creating bloom filter from {} terms.", terms.size());
         terms.forEach(t -> lowerCaseTerms.add(t.toLowerCase()));
         lowerCaseTerms.forEach(t -> bloomFilter.put(t.toLowerCase()));
 
@@ -58,39 +74,55 @@ public class BloomFilterDictionaryFilter extends DictionaryFilter {
 
         final List<Span> spans = new LinkedList<>();
 
-        // TODO: PHL-150
-        // TODO: This filter only works on individual words and not phrases.
-        // TODO: Look at the LuceneDictionaryFilter and see how it breaks the text into n-grams.
+        // PHL-150: Break the input text into n-grams of size max n-grams and smaller.
+        final ShingleFilter ngrams = getNGrams(maxNgramSize, text);
 
-        // Tokenize the text.
-        //final StringTokenizer stringTokenizer = new StringTokenizer(text);
-        final BreakIterator breakIterator = BreakIterator.getWordInstance(Locale.US);
-        breakIterator.setText(text);
+        final OffsetAttribute offsetAttribute = ngrams.getAttribute(OffsetAttribute.class);
+        final CharTermAttribute termAttribute = ngrams.getAttribute(CharTermAttribute.class);
 
-        int start = breakIterator.first();
-        for(int end = breakIterator.next(); end != BreakIterator.DONE; start = end, end = breakIterator.next()) {
+        try {
 
-            final String token = text.substring(start, end);
-            final String lowerCaseToken = token.toLowerCase();
+            ngrams.reset();
 
-            if(bloomFilter.mightContain(lowerCaseToken)) {
+            while (ngrams.incrementToken()) {
 
-                if(lowerCaseTerms.contains(lowerCaseToken)) {
+                final String token = termAttribute.toString();
+                final String lowerCaseToken = token.toLowerCase();
 
-                    // Set the meta values for the span.
-                    final boolean isIgnored = ignored.contains(token);
-                    final int characterStart = start;
-                    final int characterEnd = end;
-                    final double confidence = 1.0;
-                    final String[] window = getWindow(text, characterStart, characterEnd);
+                if(bloomFilter.mightContain(lowerCaseToken)) {
 
-                    final Replacement replacement = getReplacement(filterProfile.getName(), context, documentId, token, confidence, classification);
-                    spans.add(Span.make(characterStart, characterEnd, getFilterType(), context, documentId, confidence, token, replacement.getReplacement(), replacement.getSalt(), isIgnored, window));
+                    if(lowerCaseTerms.contains(lowerCaseToken)) {
+
+                        // Set the meta values for the span.
+                        final boolean isIgnored = ignored.contains(token);
+                        final int characterStart = offsetAttribute.startOffset();
+                        final int characterEnd = offsetAttribute.endOffset();
+                        final double confidence = 1.0;
+                        final String[] window = getWindow(text, characterStart, characterEnd);
+
+                        // Get the original token to get the right casing.
+                        final String originalToken = text.substring(characterStart, characterEnd);
+
+                        final Replacement replacement = getReplacement(filterProfile.getName(), context, documentId, originalToken, confidence, classification);
+                        spans.add(Span.make(characterStart, characterEnd, getFilterType(), context, documentId, confidence, originalToken, replacement.getReplacement(), replacement.getSalt(), isIgnored, window));
+
+                    }
 
                 }
 
             }
 
+        } catch (IOException ex) {
+
+            LOGGER.error("Error enumerating tokens.", ex);
+
+        } finally {
+            try {
+                ngrams.end();
+                ngrams.close();
+            } catch (IOException e) {
+                // Do nothing.
+            }
         }
 
         return spans;

@@ -7,8 +7,12 @@ import com.mtnfog.phileas.model.profile.IgnoredPattern;
 import com.mtnfog.phileas.model.profile.filters.strategies.AbstractFilterStrategy;
 import com.mtnfog.phileas.model.services.AlertService;
 import com.mtnfog.phileas.model.services.AnonymizationService;
+import org.apache.lucene.analysis.TokenStream;
+import org.apache.lucene.analysis.shingle.ShingleFilter;
+import org.apache.lucene.analysis.standard.StandardAnalyzer;
 
 import java.io.Serializable;
+import java.io.StringReader;
 import java.util.List;
 import java.util.Set;
 
@@ -17,9 +21,31 @@ import java.util.Set;
  */
 public abstract class DictionaryFilter extends RulesFilter {
 
+    // Lucene requires a min size of 2 for the ShingleFilter.
+    protected int maxNgramSize = 2;
+
     public DictionaryFilter(FilterType filterType, List<? extends AbstractFilterStrategy> strategies, AnonymizationService anonymizationService, AlertService alertService, Set<String> ignored, List<IgnoredPattern> ignoredPatterns, Crypto crypto, int windowSize) {
 
         super(filterType, strategies, anonymizationService, alertService, ignored, ignoredPatterns, crypto, windowSize);
+
+    }
+
+    /**
+     * Gets the n-grams from text having length 2 to <code>maxNgramSize</code>.
+     * @param maxNgramSize The maximum size of the n-grams.
+     * @param text The text to split.
+     * @return The n-grams.
+     */
+    public ShingleFilter getNGrams(int maxNgramSize, String text) {
+
+        // The standard analyzer lowercases the text.
+        final StandardAnalyzer analyzer = new StandardAnalyzer();
+
+        // Tokenize the input text.
+        final TokenStream tokenStream = analyzer.tokenStream(null, new StringReader(text));
+
+        // Make n-grams from the tokens.
+        return new ShingleFilter(tokenStream, 2, maxNgramSize);
 
     }
 

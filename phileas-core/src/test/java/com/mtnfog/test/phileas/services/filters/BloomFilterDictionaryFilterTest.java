@@ -70,4 +70,42 @@ public class BloomFilterDictionaryFilterTest extends AbstractFilterTest {
 
     }
 
+    @Test
+    public void filterDictionaryPhraseMatch1() throws Exception {
+
+        final List<CustomDictionaryFilterStrategy> strategies = Arrays.asList(new CustomDictionaryFilterStrategy());
+        final Set<String> names = new HashSet<>(Arrays.asList("george jones", "ted", "bill", "john"));
+        final DictionaryFilter filter = new BloomFilterDictionaryFilter(FilterType.CUSTOM_DICTIONARY, strategies, names, "none", 0.05, null, alertService, Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+
+        final List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid","He lived with george jones in California.");
+
+        showSpans(spans);
+
+        Assertions.assertEquals(1, spans.size());
+        Assertions.assertTrue(checkSpan(spans.get(0), 14, 26, FilterType.CUSTOM_DICTIONARY));
+        Assertions.assertEquals("george jones", spans.get(0).getText());
+
+    }
+
+    @Test
+    public void filterDictionaryPhraseMatch2() throws Exception {
+
+        final List<CustomDictionaryFilterStrategy> strategies = Arrays.asList(new CustomDictionaryFilterStrategy());
+        final Set<String> names = new HashSet<>(Arrays.asList("george jones jr", "ted", "bill smith", "john"));
+        final DictionaryFilter filter = new BloomFilterDictionaryFilter(FilterType.CUSTOM_DICTIONARY, strategies, names, "none", 0.05, null, alertService, Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+
+        final List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid","Bill Smith lived with george jones jr in California.");
+
+        showSpans(spans);
+
+        Assertions.assertEquals(2, spans.size());
+
+        Assertions.assertTrue(checkSpan(spans.get(0), 0, 10, FilterType.CUSTOM_DICTIONARY));
+        Assertions.assertEquals("Bill Smith", spans.get(0).getText());
+
+        Assertions.assertTrue(checkSpan(spans.get(1), 22, 37, FilterType.CUSTOM_DICTIONARY));
+        Assertions.assertEquals("george jones jr", spans.get(1).getText());
+
+    }
+
 }
