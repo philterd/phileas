@@ -13,9 +13,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 public class AgeFilterTest extends AbstractFilterTest {
 
@@ -32,6 +30,23 @@ public class AgeFilterTest extends AbstractFilterTest {
         final AgeFilter filter = new AgeFilter(null, new AgeAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), ignoredPatterns, new Crypto(), windowSize);
 
         List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "the patient is 35years old.");
+
+        Assertions.assertEquals(1, spans.size());
+        Assertions.assertTrue(spans.get(0).isIgnored());
+
+    }
+
+    @Test
+    public void filterIgnoredCaseSensitive() throws Exception {
+
+        final AlertService alertService = Mockito.mock(AlertService.class);
+
+        final Set<String> ignore = new LinkedHashSet<>();
+        ignore.add("35yEaRs old");
+
+        final AgeFilter filter = new AgeFilter(null, new AgeAnonymizationService(new LocalAnonymizationCacheService()), alertService, ignore, Collections.emptyList(), new Crypto(), windowSize);
+
+        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "the patient is 35yEaRs old.");
 
         Assertions.assertEquals(1, spans.size());
         Assertions.assertTrue(spans.get(0).isIgnored());

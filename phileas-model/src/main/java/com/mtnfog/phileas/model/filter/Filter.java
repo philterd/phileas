@@ -16,6 +16,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public abstract class Filter {
 
@@ -86,10 +87,12 @@ public abstract class Filter {
         this.strategies = strategies;
         this.anonymizationService = anonymizationService;
         this.alertService = alertService;
-        this.ignored = ignored;
         this.ignoredPatterns = ignoredPatterns;
         this.crypto = crypto;
         this.windowSize = windowSize;
+
+        // PHL-151: Lowercase all terms in the ignore list to not be case-sensitive.
+        this.ignored = ignored.stream().map(String::toLowerCase).collect(Collectors.toSet());
 
     }
 
@@ -220,10 +223,10 @@ public abstract class Filter {
      * @param token The token.
      * @return Returns <code>true</code> if the token is ignored; <code>false</code> otherwise.
      */
-    public boolean isIgnored(String token) {
+    public boolean isIgnored(final String token) {
 
         // Is this term ignored?
-        boolean isIgnored = ignored.contains(token);
+        boolean isIgnored = ignored.contains(token.toLowerCase());
 
         // Is this term ignored by a pattern?
         // No reason to check if it is already ignored by an ignored term.
