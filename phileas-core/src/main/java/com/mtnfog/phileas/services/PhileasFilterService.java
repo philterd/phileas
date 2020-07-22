@@ -6,6 +6,7 @@ import com.mtnfog.phileas.metrics.PhileasMetricsService;
 import com.mtnfog.phileas.model.enums.FilterType;
 import com.mtnfog.phileas.model.enums.MimeType;
 import com.mtnfog.phileas.model.enums.SensitivityLevel;
+import com.mtnfog.phileas.model.exceptions.api.PayloadTooLargeException;
 import com.mtnfog.phileas.model.filter.Filter;
 import com.mtnfog.phileas.model.filter.rules.dictionary.BloomFilterDictionaryFilter;
 import com.mtnfog.phileas.model.filter.rules.dictionary.DictionaryFilter;
@@ -150,6 +151,12 @@ public class PhileasFilterService implements FilterService {
 
     @Override
     public FilterResponse filter(String filterProfileName, String context, String documentId, String input, MimeType mimeType) throws Exception {
+
+        if(!phileasConfiguration.splitLongText()) {
+            if(input.length() > 20000) {
+                throw new PayloadTooLargeException("The request body was too large. Either reduce the size or enable text splitting.");
+            }
+        }
 
         // Get the filter profile.
         // This will ALWAYS return a filter profile because if it is not in the cache it will be retrieved from the cache.

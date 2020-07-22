@@ -50,6 +50,10 @@ public interface PhileasConfiguration extends Config {
 
     // Split settings.
 
+    @DefaultValue("true")
+    @Key("split.long.text")
+    boolean splitLongText();
+
     @DefaultValue("10000")
     @Key("split.threshold.length")
     int splitThresholdLength();
