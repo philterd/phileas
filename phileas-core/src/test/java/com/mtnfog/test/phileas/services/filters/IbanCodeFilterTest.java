@@ -79,7 +79,7 @@ public class IbanCodeFilterTest extends AbstractFilterTest {
 
         showSpans(filterResult.getSpans());
 
-        Assertions.assertEquals(0, filterResult.getSpans().size());
+        Assertions.assertEquals(1, filterResult.getSpans().size());
 
     }
 
