@@ -57,14 +57,15 @@ public final class FilterResponse {
         final List<Span> identifiedSpans = new LinkedList<>();
 
         // Order the filter responses by piece number, lowest to greatest.
-        filterResponses = filterResponses.stream().sorted(Comparator.comparing(FilterResponse::getPiece)).collect(Collectors.toList());
+        final List<FilterResponse> sortedFilterResponses = filterResponses.stream().sorted(Comparator.comparing(FilterResponse::getPiece)).collect(Collectors.toList());
 
         // Tracks the document offset for each piece so the span locations can be adjusted.
         int documentOffset = 0;
 
         // Loop over each filter response and build the combined filter response.
-        for(final FilterResponse filterResponse : filterResponses) {
+        for(final FilterResponse filterResponse : sortedFilterResponses) {
 
+            // The text is the filtered text plus the separator.
             final String pieceFilteredText = filterResponse.getFilteredText() + separator;
 
             // Append the filtered text.
@@ -79,6 +80,7 @@ public final class FilterResponse {
 
         }
 
+        // Return the newly built FilterResponse.
         return new FilterResponse(filteredText.toString().trim(), context, documentId, 0, new Explanation(appliedSpans, identifiedSpans));
 
     }

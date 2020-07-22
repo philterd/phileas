@@ -16,6 +16,8 @@ public class NewLineSplitService extends AbstractSplitService implements SplitSe
     @Override
     public List<String> split(String input) {
 
+        // return Arrays.asList(input.split(SEPARATOR));
+
         // Simply splits the input based on a number of new line operators.
         // See https://stackoverflow.com/a/31060125/1428388
         // return Arrays.asList(input.split("\\R+", -1));
@@ -23,9 +25,7 @@ public class NewLineSplitService extends AbstractSplitService implements SplitSe
         // This method is faster than the \R regex.
         // https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/String.html#lines()
         // This method provides better performance than split("\R") by supplying elements lazily and by faster search of new line terminators.
-        //return Arrays.asList(input.lines().toArray(String[]::new));
-
-        return Arrays.asList(input.split(SEPARATOR));
+        return Arrays.asList(input.lines().toArray(String[]::new));
 
     }
 

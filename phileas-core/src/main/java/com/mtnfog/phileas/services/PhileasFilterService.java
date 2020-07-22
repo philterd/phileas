@@ -152,6 +152,7 @@ public class PhileasFilterService implements FilterService {
     @Override
     public FilterResponse filter(String filterProfileName, String context, String documentId, String input, MimeType mimeType) throws Exception {
 
+        // PHL-145: Accept long text or throw an exception?
         if(!phileasConfiguration.splitLongText()) {
             if(input.length() >= phileasConfiguration.splitThresholdLength()) {
                 throw new PayloadTooLargeException("The request body was too large. Either reduce the size or enable text splitting.");

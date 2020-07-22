@@ -5,26 +5,18 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.IOException;
+
 public class SplitFactory {
 
     private static final Logger LOGGER = LogManager.getLogger(SplitFactory.class);
 
-    public static SplitService getSplitService(String method) {
+    public static SplitService getSplitService(String method) throws IOException {
 
         if(StringUtils.equalsIgnoreCase("newline", method)) {
 
             LOGGER.debug("Instantiating a newline split service.");
             return new NewLineSplitService();
-
-        } else if(StringUtils.equalsIgnoreCase("sentence", method)) {
-
-            LOGGER.debug("Instantiating a sentence split service.");
-            return new SentenceSplitService();
-
-        } else if(StringUtils.equalsIgnoreCase("sentence-rule-based", method)) {
-
-            LOGGER.debug("Instantiating a sentence rule-based split service.");
-            return new SentenceRuleBasedSplitService();
 
         }
 

@@ -24,6 +24,7 @@ public class NewLineSplitServiceTest {
 
         final File file = new File("src/test/resources/alice29.txt");
         final String input = FileUtils.readFileToString(file, Charset.defaultCharset());
+
         assertTrue(input != null);
         LOGGER.info("Input text length = " + input.length());
 
@@ -32,9 +33,36 @@ public class NewLineSplitServiceTest {
 
         LOGGER.info("Splits = " + splits.size());
         assertEquals(3609, splits.size());
-        /*for(final String split : splits) {
+
+        for(final String split : splits) {
             LOGGER.info(split);
-        }*/
+            LOGGER.info("=====");
+        }
+
+        /*final String joined = String.join(System.lineSeparator(), splits);
+        assertEquals(input, joined);*/
+
+    }
+
+    @Test
+    public void split2() throws IOException {
+
+        final File file = new File("src/test/resources/alice29-formatted.txt");
+        String input = FileUtils.readFileToString(file, Charset.defaultCharset());
+
+        assertTrue(input != null);
+        LOGGER.info("Input text length = " + input.length());
+
+        final SplitService splitService = new NewLineSplitService();
+        final List<String> splits = splitService.split(input);
+
+        LOGGER.info("Splits = " + splits.size());
+        assertEquals(10, splits.size());
+
+        for(final String split : splits) {
+            LOGGER.info(split);
+            LOGGER.info("=====");
+        }
 
         /*final String joined = String.join(System.lineSeparator(), splits);
         assertEquals(input, joined);*/
