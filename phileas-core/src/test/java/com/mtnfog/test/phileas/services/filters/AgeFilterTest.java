@@ -1,7 +1,7 @@
 package com.mtnfog.test.phileas.services.filters;
 
 import com.mtnfog.phileas.model.enums.FilterType;
-import com.mtnfog.phileas.model.objects.Span;
+import com.mtnfog.phileas.model.objects.FilterResult;
 import com.mtnfog.phileas.model.profile.Crypto;
 import com.mtnfog.phileas.model.profile.IgnoredPattern;
 import com.mtnfog.phileas.model.profile.filters.strategies.rules.AgeFilterStrategy;
@@ -29,10 +29,10 @@ public class AgeFilterTest extends AbstractFilterTest {
 
         final AgeFilter filter = new AgeFilter(null, new AgeAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), ignoredPatterns, new Crypto(), windowSize);
 
-        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "the patient is 35years old.");
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "the patient is 35years old.");
 
-        Assertions.assertEquals(1, spans.size());
-        Assertions.assertTrue(spans.get(0).isIgnored());
+        Assertions.assertEquals(1, filterResult.getSpans().size());
+        Assertions.assertTrue(filterResult.getSpans().get(0).isIgnored());
 
     }
 
@@ -46,10 +46,10 @@ public class AgeFilterTest extends AbstractFilterTest {
 
         final AgeFilter filter = new AgeFilter(null, new AgeAnonymizationService(new LocalAnonymizationCacheService()), alertService, ignore, Collections.emptyList(), new Crypto(), windowSize);
 
-        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "the patient is 35yEaRs old.");
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "the patient is 35yEaRs old.");
 
-        Assertions.assertEquals(1, spans.size());
-        Assertions.assertTrue(spans.get(0).isIgnored());
+        Assertions.assertEquals(1, filterResult.getSpans().size());
+        Assertions.assertTrue(filterResult.getSpans().get(0).isIgnored());
 
     }
 
@@ -59,14 +59,14 @@ public class AgeFilterTest extends AbstractFilterTest {
         // This tests PHL-68. When there are no filter strategies just redact.
         final AgeFilter filter = new AgeFilter(null, new AgeAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
 
-        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "the patient is 3.5years old.");
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "the patient is 3.5years old.");
 
-        showSpans(spans);
+        showSpans(filterResult.getSpans());
 
-        Assertions.assertEquals(1, spans.size());
-        Assertions.assertTrue(checkSpan(spans.get(0), 15, 27, FilterType.AGE));
-        Assertions.assertEquals("{{{REDACTED-age}}}", spans.get(0).getReplacement());
-        Assertions.assertEquals("3.5years old", spans.get(0).getText());
+        Assertions.assertEquals(1, filterResult.getSpans().size());
+        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 15, 27, FilterType.AGE));
+        Assertions.assertEquals("{{{REDACTED-age}}}", filterResult.getSpans().get(0).getReplacement());
+        Assertions.assertEquals("3.5years old", filterResult.getSpans().get(0).getText());
 
     }
 
@@ -76,12 +76,12 @@ public class AgeFilterTest extends AbstractFilterTest {
         final List<AgeFilterStrategy> strategies = Arrays.asList(new AgeFilterStrategy());
         AgeFilter filter = new AgeFilter(strategies, new AgeAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
 
-        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "the patient is 3.5years old.");
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "the patient is 3.5years old.");
 
-        showSpans(spans);
+        showSpans(filterResult.getSpans());
 
-        Assertions.assertEquals(1, spans.size());
-        Assertions.assertTrue(checkSpan(spans.get(0), 15, 27, FilterType.AGE));
+        Assertions.assertEquals(1, filterResult.getSpans().size());
+        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 15, 27, FilterType.AGE));
 
     }
 
@@ -91,12 +91,12 @@ public class AgeFilterTest extends AbstractFilterTest {
         final List<AgeFilterStrategy> strategies = Arrays.asList(new AgeFilterStrategy());
         AgeFilter filter = new AgeFilter(strategies, new AgeAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
 
-        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "the patient is 3.yrs.");
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "the patient is 3.yrs.");
 
-        showSpans(spans);
+        showSpans(filterResult.getSpans());
 
-        Assertions.assertEquals(1, spans.size());
-        Assertions.assertTrue(checkSpan(spans.get(0), 15, 20, FilterType.AGE));
+        Assertions.assertEquals(1, filterResult.getSpans().size());
+        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 15, 20, FilterType.AGE));
 
     }
 
@@ -106,12 +106,12 @@ public class AgeFilterTest extends AbstractFilterTest {
         final List<AgeFilterStrategy> strategies = Arrays.asList(new AgeFilterStrategy());
         AgeFilter filter = new AgeFilter(strategies, new AgeAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
 
-        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "the patient is 3yrs.");
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "the patient is 3yrs.");
 
-        showSpans(spans);
+        showSpans(filterResult.getSpans());
 
-        Assertions.assertEquals(1, spans.size());
-        Assertions.assertTrue(checkSpan(spans.get(0), 15, 19, FilterType.AGE));
+        Assertions.assertEquals(1, filterResult.getSpans().size());
+        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 15, 19, FilterType.AGE));
 
     }
 
@@ -121,12 +121,12 @@ public class AgeFilterTest extends AbstractFilterTest {
         final List<AgeFilterStrategy> strategies = Arrays.asList(new AgeFilterStrategy());
         AgeFilter filter = new AgeFilter(strategies, new AgeAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
 
-        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "the patient is 3.5yrs.");
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "the patient is 3.5yrs.");
 
-        showSpans(spans);
+        showSpans(filterResult.getSpans());
 
-        Assertions.assertEquals(1, spans.size());
-        Assertions.assertTrue(checkSpan(spans.get(0), 15, 21, FilterType.AGE));
+        Assertions.assertEquals(1, filterResult.getSpans().size());
+        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 15, 21, FilterType.AGE));
 
     }
 
@@ -136,12 +136,12 @@ public class AgeFilterTest extends AbstractFilterTest {
         final List<AgeFilterStrategy> strategies = Arrays.asList(new AgeFilterStrategy());
         AgeFilter filter = new AgeFilter(strategies, new AgeAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
 
-        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "the patient is 39yrs.");
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "the patient is 39yrs.");
 
-        showSpans(spans);
+        showSpans(filterResult.getSpans());
 
-        Assertions.assertEquals(1, spans.size());
-        Assertions.assertTrue(checkSpan(spans.get(0), 15, 20, FilterType.AGE));
+        Assertions.assertEquals(1, filterResult.getSpans().size());
+        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 15, 20, FilterType.AGE));
 
     }
 
@@ -151,12 +151,12 @@ public class AgeFilterTest extends AbstractFilterTest {
         final List<AgeFilterStrategy> strategies = Arrays.asList(new AgeFilterStrategy());
         AgeFilter filter = new AgeFilter(strategies, new AgeAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
 
-        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "she is aged 39");
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "she is aged 39");
 
-        showSpans(spans);
+        showSpans(filterResult.getSpans());
 
-        Assertions.assertEquals(1, spans.size());
-        Assertions.assertTrue(checkSpan(spans.get(0), 7, 14, FilterType.AGE));
+        Assertions.assertEquals(1, filterResult.getSpans().size());
+        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 7, 14, FilterType.AGE));
 
     }
 
@@ -166,12 +166,12 @@ public class AgeFilterTest extends AbstractFilterTest {
         final List<AgeFilterStrategy> strategies = Arrays.asList(new AgeFilterStrategy());
         AgeFilter filter = new AgeFilter(strategies, new AgeAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
 
-        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "she is age 39");
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "she is age 39");
 
-        showSpans(spans);
+        showSpans(filterResult.getSpans());
 
-        Assertions.assertEquals(1, spans.size());
-        Assertions.assertTrue(checkSpan(spans.get(0), 7, 13, FilterType.AGE));
+        Assertions.assertEquals(1, filterResult.getSpans().size());
+        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 7, 13, FilterType.AGE));
 
     }
 
@@ -181,12 +181,12 @@ public class AgeFilterTest extends AbstractFilterTest {
         final List<AgeFilterStrategy> strategies = Arrays.asList(new AgeFilterStrategy());
         AgeFilter filter = new AgeFilter(strategies, new AgeAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
 
-        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "she is age 39.5");
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "she is age 39.5");
 
-        showSpans(spans);
+        showSpans(filterResult.getSpans());
 
-        Assertions.assertEquals(1, spans.size());
-        Assertions.assertTrue(checkSpan(spans.get(0), 7, 15, FilterType.AGE));
+        Assertions.assertEquals(1, filterResult.getSpans().size());
+        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 7, 15, FilterType.AGE));
 
     }
 

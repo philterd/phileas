@@ -3,6 +3,7 @@ package com.mtnfog.test.phileas.services.ai;
 import com.google.gson.Gson;
 import com.mtnfog.phileas.configuration.PhileasConfiguration;
 import com.mtnfog.phileas.model.enums.FilterType;
+import com.mtnfog.phileas.model.objects.FilterResult;
 import com.mtnfog.phileas.model.objects.Span;
 import com.mtnfog.phileas.model.profile.Crypto;
 import com.mtnfog.phileas.model.profile.FilterProfile;
@@ -91,13 +92,13 @@ public class PyTorchFilterTest {
 
         final PyTorchFilter t = new PyTorchFilter(baseUrl, FilterType.NER_ENTITY, getStrategies(), phileasConfiguration, "PER", stats, metricsService, anonymizationService, alertService, Collections.emptySet(), Collections.emptyList(),false, new Crypto(), windowSize);
 
-        final List<Span> spans = t.filter(getFilterProfile(), "context", "doc", "John Smith lives in New York");
+        final FilterResult filterResult = t.filter(getFilterProfile(), "context", "doc", 0, "John Smith lives in New York");
 
-        for(Span span : spans) {
+        for(Span span : filterResult.getSpans()) {
             LOGGER.info(span.toString());
         }
 
-        Assertions.assertEquals(1, spans.size());
+        Assertions.assertEquals(1, filterResult.getSpans().size());
 
     }
 
@@ -119,13 +120,13 @@ public class PyTorchFilterTest {
         final PyTorchFilter t = new PyTorchFilter(baseUrl, FilterType.NER_ENTITY, getStrategies(), phileasConfiguration, "LOC",
                 stats, metricsService, anonymizationService, alertService, Collections.emptySet(), Collections.emptyList(), false, new Crypto(), windowSize);
 
-        final List<Span> spans = t.filter(getFilterProfile(), "context", "doc", "John Smith lives in New York");
+        final FilterResult filterResult = t.filter(getFilterProfile(), "context", "doc", 0,"John Smith lives in New York");
 
-        for(Span span : spans) {
+        for(Span span : filterResult.getSpans()) {
             LOGGER.info(span.toString());
         }
 
-        Assertions.assertEquals(1, spans.size());
+        Assertions.assertEquals(1, filterResult.getSpans().size());
 
     }
 

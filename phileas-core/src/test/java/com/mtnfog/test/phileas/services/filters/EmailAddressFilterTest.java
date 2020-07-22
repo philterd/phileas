@@ -1,6 +1,7 @@
 package com.mtnfog.test.phileas.services.filters;
 
 import com.mtnfog.phileas.model.enums.FilterType;
+import com.mtnfog.phileas.model.objects.FilterResult;
 import com.mtnfog.phileas.model.objects.Span;
 import com.mtnfog.phileas.model.profile.Crypto;
 import com.mtnfog.phileas.model.profile.filters.strategies.rules.EmailAddressFilterStrategy;
@@ -26,10 +27,10 @@ public class EmailAddressFilterTest extends AbstractFilterTest {
         final List<EmailAddressFilterStrategy> strategies = Arrays.asList(new EmailAddressFilterStrategy());
         EmailAddressFilter filter = new EmailAddressFilter(strategies, new EmailAddressAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
 
-        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid","my email is none@none.com.");
-        Assertions.assertEquals(1, spans.size());
-        Assertions.assertTrue(checkSpan(spans.get(0), 12, 25, FilterType.EMAIL_ADDRESS));
-        Assertions.assertEquals("none@none.com", spans.get(0).getText());
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "my email is none@none.com.");
+        Assertions.assertEquals(1, filterResult.getSpans().size());
+        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 12, 25, FilterType.EMAIL_ADDRESS));
+        Assertions.assertEquals("none@none.com", filterResult.getSpans().get(0).getText());
 
     }
 

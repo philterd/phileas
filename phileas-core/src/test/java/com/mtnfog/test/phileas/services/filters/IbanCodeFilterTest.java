@@ -2,22 +2,17 @@ package com.mtnfog.test.phileas.services.filters;
 
 import com.mtnfog.phileas.model.enums.FilterType;
 import com.mtnfog.phileas.model.filter.Filter;
-import com.mtnfog.phileas.model.objects.Span;
+import com.mtnfog.phileas.model.objects.FilterResult;
 import com.mtnfog.phileas.model.profile.Crypto;
-import com.mtnfog.phileas.model.profile.filters.strategies.rules.AgeFilterStrategy;
 import com.mtnfog.phileas.model.services.AlertService;
-import com.mtnfog.phileas.services.anonymization.AgeAnonymizationService;
 import com.mtnfog.phileas.services.anonymization.IbanCodeAnonymizationService;
 import com.mtnfog.phileas.services.anonymization.cache.LocalAnonymizationCacheService;
-import com.mtnfog.phileas.services.filters.regex.AgeFilter;
 import com.mtnfog.phileas.services.filters.regex.IbanCodeFilter;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
 
 public class IbanCodeFilterTest extends AbstractFilterTest {
 
@@ -32,14 +27,14 @@ public class IbanCodeFilterTest extends AbstractFilterTest {
 
         final Filter filter = getFilter(true, false);
 
-        final List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "bank code of GB33BUKB20201555555555 ok?");
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "bank code of GB33BUKB20201555555555 ok?");
 
-        showSpans(spans);
+        showSpans(filterResult.getSpans());
 
-        Assertions.assertEquals(1, spans.size());
-        Assertions.assertTrue(checkSpan(spans.get(0), 13, 35, FilterType.IBAN_CODE));
-        Assertions.assertEquals("{{{REDACTED-iban-code}}}", spans.get(0).getReplacement());
-        Assertions.assertEquals("GB33BUKB20201555555555", spans.get(0).getText());
+        Assertions.assertEquals(1, filterResult.getSpans().size());
+        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 13, 35, FilterType.IBAN_CODE));
+        Assertions.assertEquals("{{{REDACTED-iban-code}}}", filterResult.getSpans().get(0).getReplacement());
+        Assertions.assertEquals("GB33BUKB20201555555555", filterResult.getSpans().get(0).getText());
 
     }
 
@@ -48,14 +43,14 @@ public class IbanCodeFilterTest extends AbstractFilterTest {
 
         final Filter filter = getFilter(false, false);
 
-        final List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "bank code of GB15MIDL40051512345678 ok?");
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "bank code of GB15MIDL40051512345678 ok?");
 
-        showSpans(spans);
+        showSpans(filterResult.getSpans());
 
-        Assertions.assertEquals(1, spans.size());
-        Assertions.assertTrue(checkSpan(spans.get(0), 13, 35, FilterType.IBAN_CODE));
-        Assertions.assertEquals("{{{REDACTED-iban-code}}}", spans.get(0).getReplacement());
-        Assertions.assertEquals("GB15MIDL40051512345678", spans.get(0).getText());
+        Assertions.assertEquals(1, filterResult.getSpans().size());
+        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 13, 35, FilterType.IBAN_CODE));
+        Assertions.assertEquals("{{{REDACTED-iban-code}}}", filterResult.getSpans().get(0).getReplacement());
+        Assertions.assertEquals("GB15MIDL40051512345678", filterResult.getSpans().get(0).getText());
 
     }
 
@@ -64,14 +59,14 @@ public class IbanCodeFilterTest extends AbstractFilterTest {
 
         final Filter filter = getFilter(true, true);
 
-        final List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "bank code of GB15 MIDL 4005 1512 3456 78 ok?");
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "bank code of GB15 MIDL 4005 1512 3456 78 ok?");
 
-        showSpans(spans);
+        showSpans(filterResult.getSpans());
 
-        Assertions.assertEquals(1, spans.size());
-        Assertions.assertTrue(checkSpan(spans.get(0), 13, 40, FilterType.IBAN_CODE));
-        Assertions.assertEquals("{{{REDACTED-iban-code}}}", spans.get(0).getReplacement());
-        Assertions.assertEquals("GB15 MIDL 4005 1512 3456 78", spans.get(0).getText());
+        Assertions.assertEquals(1, filterResult.getSpans().size());
+        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 13, 40, FilterType.IBAN_CODE));
+        Assertions.assertEquals("{{{REDACTED-iban-code}}}", filterResult.getSpans().get(0).getReplacement());
+        Assertions.assertEquals("GB15 MIDL 4005 1512 3456 78", filterResult.getSpans().get(0).getText());
 
     }
 
@@ -80,11 +75,11 @@ public class IbanCodeFilterTest extends AbstractFilterTest {
 
         final Filter filter = getFilter(true, true);
 
-        final List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "bank code of GB15 MIDL 4005 1512 3456 zz ok?");
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "bank code of GB15 MIDL 4005 1512 3456 zz ok?");
 
-        showSpans(spans);
+        showSpans(filterResult.getSpans());
 
-        Assertions.assertEquals(0, spans.size());
+        Assertions.assertEquals(0, filterResult.getSpans().size());
 
     }
 

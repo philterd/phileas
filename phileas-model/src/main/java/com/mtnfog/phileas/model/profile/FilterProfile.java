@@ -31,6 +31,10 @@ public class FilterProfile {
     @Expose
     private Structured structured;
 
+    @SerializedName("config")
+    @Expose
+    private Config config = new Config();
+
     public String getName() {
         return name;
     }
@@ -77,6 +81,14 @@ public class FilterProfile {
 
     public void setIgnoredPatterns(List<IgnoredPattern> ignoredPatterns) {
         this.ignoredPatterns = ignoredPatterns;
+    }
+
+    public Config getConfig() {
+        return config;
+    }
+
+    public void setConfig(Config config) {
+        this.config = config;
     }
 
 }

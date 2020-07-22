@@ -2,6 +2,7 @@ package com.mtnfog.test.phileas.services.filters;
 
 import com.mtnfog.phileas.model.enums.FilterType;
 import com.mtnfog.phileas.model.filter.Filter;
+import com.mtnfog.phileas.model.objects.FilterResult;
 import com.mtnfog.phileas.model.objects.Span;
 import com.mtnfog.phileas.model.profile.Crypto;
 import com.mtnfog.phileas.model.profile.filters.strategies.rules.AgeFilterStrategy;
@@ -29,15 +30,15 @@ public class TrackingNumberFilterTest extends AbstractFilterTest {
 
         final Filter filter = new TrackingNumberFilter(null, new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
 
-        final List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "the tracking number is 1Z9YF1280343418566");
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "the tracking number is 1Z9YF1280343418566");
 
-        showSpans(spans);
+        showSpans(filterResult.getSpans());
 
-        Assertions.assertEquals(1, spans.size());
-        Assertions.assertTrue(checkSpan(spans.get(0), 23, 41, FilterType.TRACKING_NUMBER));
-        Assertions.assertEquals("{{{REDACTED-tracking-number}}}", spans.get(0).getReplacement());
-        Assertions.assertEquals("1Z9YF1280343418566", spans.get(0).getText());
-        Assertions.assertEquals("ups", spans.get(0).getClassification());
+        Assertions.assertEquals(1, filterResult.getSpans().size());
+        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 23, 41, FilterType.TRACKING_NUMBER));
+        Assertions.assertEquals("{{{REDACTED-tracking-number}}}", filterResult.getSpans().get(0).getReplacement());
+        Assertions.assertEquals("1Z9YF1280343418566", filterResult.getSpans().get(0).getText());
+        Assertions.assertEquals("ups", filterResult.getSpans().get(0).getClassification());
 
     }
 
@@ -46,15 +47,15 @@ public class TrackingNumberFilterTest extends AbstractFilterTest {
 
         final Filter filter = new TrackingNumberFilter(null, new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
 
-        final List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "the tracking number is 9400100000000000000000");
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "the tracking number is 9400100000000000000000");
 
-        showSpans(spans);
+        showSpans(filterResult.getSpans());
 
-        Assertions.assertEquals(2, spans.size());
-        Assertions.assertTrue(checkSpan(spans.get(1), 23, 45, FilterType.TRACKING_NUMBER));
-        Assertions.assertEquals("{{{REDACTED-tracking-number}}}", spans.get(1).getReplacement());
-        Assertions.assertEquals("9400100000000000000000", spans.get(1).getText());
-        Assertions.assertEquals("usps", spans.get(1).getClassification());
+        Assertions.assertEquals(2, filterResult.getSpans().size());
+        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(1), 23, 45, FilterType.TRACKING_NUMBER));
+        Assertions.assertEquals("{{{REDACTED-tracking-number}}}", filterResult.getSpans().get(1).getReplacement());
+        Assertions.assertEquals("9400100000000000000000", filterResult.getSpans().get(1).getText());
+        Assertions.assertEquals("usps", filterResult.getSpans().get(1).getClassification());
 
     }
 
@@ -64,15 +65,15 @@ public class TrackingNumberFilterTest extends AbstractFilterTest {
 
         final Filter filter = new TrackingNumberFilter(null, new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
 
-        final List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "the tracking number is 9400 1000 0000 0000 0000");
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "the tracking number is 9400 1000 0000 0000 0000");
 
-        showSpans(spans);
+        showSpans(filterResult.getSpans());
 
-        Assertions.assertEquals(1, spans.size());
-        Assertions.assertTrue(checkSpan(spans.get(0), 23, 47, FilterType.TRACKING_NUMBER));
-        Assertions.assertEquals("{{{REDACTED-tracking-number}}}", spans.get(0).getReplacement());
-        Assertions.assertEquals("9400 1000 0000 0000 0000", spans.get(0).getText());
-        Assertions.assertEquals("usps", spans.get(0).getClassification());
+        Assertions.assertEquals(1, filterResult.getSpans().size());
+        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 23, 47, FilterType.TRACKING_NUMBER));
+        Assertions.assertEquals("{{{REDACTED-tracking-number}}}", filterResult.getSpans().get(0).getReplacement());
+        Assertions.assertEquals("9400 1000 0000 0000 0000", filterResult.getSpans().get(0).getText());
+        Assertions.assertEquals("usps", filterResult.getSpans().get(0).getClassification());
 
     }
 
@@ -81,15 +82,15 @@ public class TrackingNumberFilterTest extends AbstractFilterTest {
 
         final Filter filter = new TrackingNumberFilter(null, new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
 
-        final List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "the tracking number is 4204319935009201990138501144099814");
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "the tracking number is 4204319935009201990138501144099814");
 
-        showSpans(spans);
+        showSpans(filterResult.getSpans());
 
-        Assertions.assertEquals(1, spans.size());
-        Assertions.assertTrue(checkSpan(spans.get(0), 23, 57, FilterType.TRACKING_NUMBER));
-        Assertions.assertEquals("{{{REDACTED-tracking-number}}}", spans.get(0).getReplacement());
-        Assertions.assertEquals("4204319935009201990138501144099814", spans.get(0).getText());
-        Assertions.assertEquals("usps", spans.get(0).getClassification());
+        Assertions.assertEquals(1, filterResult.getSpans().size());
+        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 23, 57, FilterType.TRACKING_NUMBER));
+        Assertions.assertEquals("{{{REDACTED-tracking-number}}}", filterResult.getSpans().get(0).getReplacement());
+        Assertions.assertEquals("4204319935009201990138501144099814", filterResult.getSpans().get(0).getText());
+        Assertions.assertEquals("usps", filterResult.getSpans().get(0).getClassification());
 
     }
 
@@ -98,15 +99,15 @@ public class TrackingNumberFilterTest extends AbstractFilterTest {
 
         final Filter filter = new TrackingNumberFilter(null, new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
 
-        final List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "the tracking number is 420431993500920199013850114409");
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "the tracking number is 420431993500920199013850114409");
 
-        showSpans(spans);
+        showSpans(filterResult.getSpans());
 
-        Assertions.assertEquals(1, spans.size());
-        Assertions.assertTrue(checkSpan(spans.get(0), 23, 53, FilterType.TRACKING_NUMBER));
-        Assertions.assertEquals("{{{REDACTED-tracking-number}}}", spans.get(0).getReplacement());
-        Assertions.assertEquals("420431993500920199013850114409", spans.get(0).getText());
-        Assertions.assertEquals("usps", spans.get(0).getClassification());
+        Assertions.assertEquals(1, filterResult.getSpans().size());
+        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 23, 53, FilterType.TRACKING_NUMBER));
+        Assertions.assertEquals("{{{REDACTED-tracking-number}}}", filterResult.getSpans().get(0).getReplacement());
+        Assertions.assertEquals("420431993500920199013850114409", filterResult.getSpans().get(0).getText());
+        Assertions.assertEquals("usps", filterResult.getSpans().get(0).getClassification());
 
     }
 
@@ -115,15 +116,15 @@ public class TrackingNumberFilterTest extends AbstractFilterTest {
 
         final Filter filter = new TrackingNumberFilter(null, new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
 
-        final List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "the tracking number is 4204319935009201990138501144");
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "the tracking number is 4204319935009201990138501144");
 
-        showSpans(spans);
+        showSpans(filterResult.getSpans());
 
-        Assertions.assertEquals(1, spans.size());
-        Assertions.assertTrue(checkSpan(spans.get(0), 23, 51, FilterType.TRACKING_NUMBER));
-        Assertions.assertEquals("{{{REDACTED-tracking-number}}}", spans.get(0).getReplacement());
-        Assertions.assertEquals("4204319935009201990138501144", spans.get(0).getText());
-        Assertions.assertEquals("usps", spans.get(0).getClassification());
+        Assertions.assertEquals(1, filterResult.getSpans().size());
+        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 23, 51, FilterType.TRACKING_NUMBER));
+        Assertions.assertEquals("{{{REDACTED-tracking-number}}}", filterResult.getSpans().get(0).getReplacement());
+        Assertions.assertEquals("4204319935009201990138501144", filterResult.getSpans().get(0).getText());
+        Assertions.assertEquals("usps", filterResult.getSpans().get(0).getClassification());
 
     }
 
@@ -132,21 +133,21 @@ public class TrackingNumberFilterTest extends AbstractFilterTest {
 
         final Filter filter = new TrackingNumberFilter(null, new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
 
-        final List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "the tracking number is 42043199350092019901385011");
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "the tracking number is 42043199350092019901385011");
 
-        showSpans(spans);
+        showSpans(filterResult.getSpans());
 
-        Assertions.assertEquals(2, spans.size());
+        Assertions.assertEquals(2, filterResult.getSpans().size());
 
-        Assertions.assertTrue(checkSpan(spans.get(0), 23, 49, FilterType.TRACKING_NUMBER));
-        Assertions.assertEquals("{{{REDACTED-tracking-number}}}", spans.get(0).getReplacement());
-        Assertions.assertEquals("42043199350092019901385011", spans.get(0).getText());
-        Assertions.assertEquals("ups", spans.get(0).getClassification());
+        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 23, 49, FilterType.TRACKING_NUMBER));
+        Assertions.assertEquals("{{{REDACTED-tracking-number}}}", filterResult.getSpans().get(0).getReplacement());
+        Assertions.assertEquals("42043199350092019901385011", filterResult.getSpans().get(0).getText());
+        Assertions.assertEquals("ups", filterResult.getSpans().get(0).getClassification());
 
-        Assertions.assertTrue(checkSpan(spans.get(1), 23, 49, FilterType.TRACKING_NUMBER));
-        Assertions.assertEquals("{{{REDACTED-tracking-number}}}", spans.get(1).getReplacement());
-        Assertions.assertEquals("42043199350092019901385011", spans.get(1).getText());
-        Assertions.assertEquals("usps", spans.get(1).getClassification());
+        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(1), 23, 49, FilterType.TRACKING_NUMBER));
+        Assertions.assertEquals("{{{REDACTED-tracking-number}}}", filterResult.getSpans().get(1).getReplacement());
+        Assertions.assertEquals("42043199350092019901385011", filterResult.getSpans().get(1).getText());
+        Assertions.assertEquals("usps", filterResult.getSpans().get(1).getClassification());
 
     }
 

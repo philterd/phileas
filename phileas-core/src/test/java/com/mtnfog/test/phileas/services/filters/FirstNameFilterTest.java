@@ -3,6 +3,7 @@ package com.mtnfog.test.phileas.services.filters;
 import com.mtnfog.phileas.model.enums.FilterType;
 import com.mtnfog.phileas.model.enums.SensitivityLevel;
 import com.mtnfog.phileas.model.filter.rules.dictionary.LuceneDictionaryFilter;
+import com.mtnfog.phileas.model.objects.FilterResult;
 import com.mtnfog.phileas.model.objects.Span;
 import com.mtnfog.phileas.model.profile.Crypto;
 import com.mtnfog.phileas.model.profile.filters.strategies.dynamic.FirstNameFilterStrategy;
@@ -43,9 +44,9 @@ public class FirstNameFilterTest extends AbstractFilterTest {
         final List<FirstNameFilterStrategy> strategies = Arrays.asList(new FirstNameFilterStrategy());
         final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.FIRST_NAME, strategies, INDEX_DIRECTORY, SensitivityLevel.LOW, anonymizationService, alertService, Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
 
-        final List<Span> spans = filter.filter(getFilterProfile(SensitivityLevel.LOW), "context", "documentid","John lived in Washington");
-        showSpans(spans);
-        Assertions.assertEquals(2, spans.size());
+        final FilterResult filterResult = filter.filter(getFilterProfile(SensitivityLevel.LOW), "context", "documentid", 0,"John lived in Washington");
+        showSpans(filterResult.getSpans());
+        Assertions.assertEquals(2, filterResult.getSpans().size());
 
     }
 
@@ -57,9 +58,9 @@ public class FirstNameFilterTest extends AbstractFilterTest {
         final List<FirstNameFilterStrategy> strategies = Arrays.asList(new FirstNameFilterStrategy());
         final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.FIRST_NAME, strategies, INDEX_DIRECTORY, SensitivityLevel.MEDIUM, anonymizationService, alertService, Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
 
-        final List<Span> spans = filter.filter(getFilterProfile(SensitivityLevel.MEDIUM), "context", "documentid","Michel had eye cancer");
-        showSpans(spans);
-        Assertions.assertEquals(3, spans.size());
+        final FilterResult filterResult = filter.filter(getFilterProfile(SensitivityLevel.MEDIUM), "context", "documentid", 0, "Michel had eye cancer");
+        showSpans(filterResult.getSpans());
+        Assertions.assertEquals(3, filterResult.getSpans().size());
 
     }
 
@@ -71,9 +72,9 @@ public class FirstNameFilterTest extends AbstractFilterTest {
         final List<FirstNameFilterStrategy> strategies = Arrays.asList(new FirstNameFilterStrategy());
         final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.FIRST_NAME, strategies, INDEX_DIRECTORY, SensitivityLevel.LOW, anonymizationService, alertService, Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
 
-        final List<Span> spans = filter.filter(getFilterProfile(SensitivityLevel.MEDIUM), "context", "documentid","Jennifer had eye cancer");
-        showSpans(spans);
-        Assertions.assertEquals(1, spans.size());
+        final FilterResult filterResult = filter.filter(getFilterProfile(SensitivityLevel.MEDIUM), "context", "documentid", 0,"Jennifer had eye cancer");
+        showSpans(filterResult.getSpans());
+        Assertions.assertEquals(1, filterResult.getSpans().size());
 
     }
 
@@ -85,9 +86,9 @@ public class FirstNameFilterTest extends AbstractFilterTest {
         final List<FirstNameFilterStrategy> strategies = Arrays.asList(new FirstNameFilterStrategy());
         final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.FIRST_NAME, strategies, INDEX_DIRECTORY, SensitivityLevel.HIGH, anonymizationService, alertService, Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
 
-        final List<Span> spans = filter.filter(getFilterProfile(SensitivityLevel.HIGH), "context", "documentid","Sandra in Washington");
-        showSpans(spans);
-        Assertions.assertEquals(3, spans.size());
+        final FilterResult filterResult = filter.filter(getFilterProfile(SensitivityLevel.HIGH), "context", "documentid", 0,"Sandra in Washington");
+        showSpans(filterResult.getSpans());
+        Assertions.assertEquals(3, filterResult.getSpans().size());
 
     }
 

@@ -20,8 +20,8 @@ public class TrailingSpacePostFilterTest extends AbstractFilterTest {
 
         final TrailingSpacePostFilter postFilter = new TrailingSpacePostFilter();
         final List<Span> filteredSpans = postFilter.filter("doesn't matter", spans);
-
         showSpans(filteredSpans);
+
         Assertions.assertEquals(1, filteredSpans.size());
         Assertions.assertEquals("Washington", filteredSpans.get(0).getText());
 

@@ -3,6 +3,7 @@ package com.mtnfog.test.phileas.services.filters;
 import com.mtnfog.phileas.model.enums.FilterType;
 import com.mtnfog.phileas.model.enums.SensitivityLevel;
 import com.mtnfog.phileas.model.filter.rules.dictionary.LuceneDictionaryFilter;
+import com.mtnfog.phileas.model.objects.FilterResult;
 import com.mtnfog.phileas.model.objects.Span;
 import com.mtnfog.phileas.model.profile.Crypto;
 import com.mtnfog.phileas.model.profile.filters.strategies.dynamic.CityFilterStrategy;
@@ -54,12 +55,12 @@ public class CityFilterTest extends AbstractFilterTest {
         final List<CityFilterStrategy> strategies = Arrays.asList(new CityFilterStrategy());
         final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.LOCATION_CITY, strategies, INDEX_DIRECTORY, SensitivityLevel.MEDIUM, anonymizationService, alertService, Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
 
-        List<Span> spans = filter.filter(getFilterProfile(SensitivityLevel.MEDIUM), "context", "documentid","Lived in Washington.");
+        FilterResult filterResult = filter.filter(getFilterProfile(SensitivityLevel.MEDIUM), "context", "documentid", 0,"Lived in Washington.");
 
-        showSpans(spans);
+        showSpans(filterResult.getSpans());
 
-        Assertions.assertEquals(1, spans.size());
-        Assertions.assertTrue(checkSpan(spans.get(0), 9, 19, FilterType.LOCATION_CITY));
+        Assertions.assertEquals(1, filterResult.getSpans().size());
+        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 9, 19, FilterType.LOCATION_CITY));
 
     }
 
@@ -69,14 +70,14 @@ public class CityFilterTest extends AbstractFilterTest {
         final List<CityFilterStrategy> strategies = Arrays.asList(new CityFilterStrategy());
         final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.LOCATION_CITY, strategies, INDEX_DIRECTORY, SensitivityLevel.HIGH, anonymizationService, alertService, Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
 
-        List<Span> spans = filter.filter(getFilterProfile(SensitivityLevel.HIGH), "context", "documentid","Lived in New York.");
+        FilterResult filterResult = filter.filter(getFilterProfile(SensitivityLevel.HIGH), "context", "documentid",0, "Lived in New York.");
 
-        showSpans(spans);
+        showSpans(filterResult.getSpans());
 
-        Assertions.assertEquals(2, spans.size());
-        Assertions.assertTrue(checkSpan(spans.get(0), 9, 17, FilterType.LOCATION_CITY));
-        Assertions.assertTrue(checkSpan(spans.get(1), 13, 17, FilterType.LOCATION_CITY));
-        Assertions.assertEquals("new york", spans.get(0).getText());
+        Assertions.assertEquals(2, filterResult.getSpans().size());
+        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 9, 17, FilterType.LOCATION_CITY));
+        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(1), 13, 17, FilterType.LOCATION_CITY));
+        Assertions.assertEquals("new york", filterResult.getSpans().get(0).getText());
 
     }
 
@@ -86,11 +87,11 @@ public class CityFilterTest extends AbstractFilterTest {
         final List<CityFilterStrategy> strategies = Arrays.asList(new CityFilterStrategy());
         final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.LOCATION_CITY, strategies, INDEX_DIRECTORY, SensitivityLevel.LOW, anonymizationService, alertService, Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
 
-        List<Span> spans = filter.filter(getFilterProfile(SensitivityLevel.LOW), "context", "documentid","Lived in Wshington");
+        FilterResult filterResult = filter.filter(getFilterProfile(SensitivityLevel.LOW), "context", "documentid", 0,"Lived in Wshington");
 
-        showSpans(spans);
+        showSpans(filterResult.getSpans());
 
-        Assertions.assertEquals(0, spans.size());
+        Assertions.assertEquals(0, filterResult.getSpans().size());
 
     }
 
@@ -100,12 +101,12 @@ public class CityFilterTest extends AbstractFilterTest {
         final List<CityFilterStrategy> strategies = Arrays.asList(new CityFilterStrategy());
         final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.LOCATION_CITY, strategies, INDEX_DIRECTORY, SensitivityLevel.MEDIUM, anonymizationService, alertService, Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
 
-        List<Span> spans = filter.filter(getFilterProfile(SensitivityLevel.MEDIUM), "context", "documentid","Lived in Wshington");
+        FilterResult filterResult = filter.filter(getFilterProfile(SensitivityLevel.MEDIUM), "context", "documentid", 0,"Lived in Wshington");
 
-        showSpans(spans);
+        showSpans(filterResult.getSpans());
 
-        Assertions.assertEquals(1, spans.size());
-        Assertions.assertTrue(checkSpan(spans.get(0), 9, 18, FilterType.LOCATION_CITY));
+        Assertions.assertEquals(1, filterResult.getSpans().size());
+        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 9, 18, FilterType.LOCATION_CITY));
 
     }
 
@@ -115,12 +116,12 @@ public class CityFilterTest extends AbstractFilterTest {
         final List<CityFilterStrategy> strategies = Arrays.asList(new CityFilterStrategy());
         final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.LOCATION_CITY, strategies, INDEX_DIRECTORY, SensitivityLevel.HIGH, anonymizationService, alertService, Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
 
-        List<Span> spans = filter.filter(getFilterProfile(SensitivityLevel.LOW), "context", "documentid","Lived in Wasinton");
+        FilterResult filterResult = filter.filter(getFilterProfile(SensitivityLevel.LOW), "context", "documentid", 0,"Lived in Wasinton");
 
-        showSpans(spans);
+        showSpans(filterResult.getSpans());
 
-        Assertions.assertEquals(1, spans.size());
-        Assertions.assertTrue(checkSpan(spans.get(0), 9, 17, FilterType.LOCATION_CITY));
+        Assertions.assertEquals(1, filterResult.getSpans().size());
+        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 9, 17, FilterType.LOCATION_CITY));
 
     }
 

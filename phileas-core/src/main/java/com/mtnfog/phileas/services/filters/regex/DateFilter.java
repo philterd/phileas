@@ -4,6 +4,7 @@ import com.mtnfog.phileas.model.enums.FilterType;
 import com.mtnfog.phileas.model.filter.rules.regex.RegexFilter;
 import com.mtnfog.phileas.model.objects.Analyzer;
 import com.mtnfog.phileas.model.objects.FilterPattern;
+import com.mtnfog.phileas.model.objects.FilterResult;
 import com.mtnfog.phileas.model.objects.Span;
 import com.mtnfog.phileas.model.profile.Crypto;
 import com.mtnfog.phileas.model.profile.FilterProfile;
@@ -52,7 +53,7 @@ public class DateFilter extends RegexFilter {
     }
 
     @Override
-    public List<Span> filter(FilterProfile filterProfile, String context, String documentId, String input) throws Exception {
+    public FilterResult filter(FilterProfile filterProfile, String context, String documentId, int piece, String input) throws Exception {
 
         final List<Span> spans = new LinkedList<>();
 
@@ -84,7 +85,7 @@ public class DateFilter extends RegexFilter {
 
         }
 
-        return Span.dropOverlappingSpans(spans);
+        return new FilterResult(context, documentId, Span.dropOverlappingSpans(spans));
 
     }
 

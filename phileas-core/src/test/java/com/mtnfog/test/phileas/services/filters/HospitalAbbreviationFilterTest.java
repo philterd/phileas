@@ -3,7 +3,7 @@ package com.mtnfog.test.phileas.services.filters;
 import com.mtnfog.phileas.model.enums.FilterType;
 import com.mtnfog.phileas.model.enums.SensitivityLevel;
 import com.mtnfog.phileas.model.filter.rules.dictionary.LuceneDictionaryFilter;
-import com.mtnfog.phileas.model.objects.Span;
+import com.mtnfog.phileas.model.objects.FilterResult;
 import com.mtnfog.phileas.model.profile.Crypto;
 import com.mtnfog.phileas.model.profile.filters.strategies.dynamic.HospitalAbbreviationFilterStrategy;
 import com.mtnfog.phileas.model.services.AlertService;
@@ -69,9 +69,9 @@ public class HospitalAbbreviationFilterTest extends AbstractFilterTest {
 
         final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.HOSPITAL, strategies, INDEX_DIRECTORY, SensitivityLevel.HIGH, anonymizationService, alertService, Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
 
-        final List<Span> spans = filter.filter(getFilterProfile(SensitivityLevel.HIGH), "context", "documentid","Went to WMC");
-        showSpans(spans);
-        Assertions.assertEquals(4, spans.size());
+        final FilterResult filterResult = filter.filter(getFilterProfile(SensitivityLevel.HIGH), "context", "documentid", 0, "Went to WMC");
+        showSpans(filterResult.getSpans());
+        Assertions.assertEquals(4, filterResult.getSpans().size());
 
     }
 

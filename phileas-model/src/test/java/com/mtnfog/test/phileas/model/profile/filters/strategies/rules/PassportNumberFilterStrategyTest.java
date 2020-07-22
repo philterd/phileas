@@ -19,7 +19,7 @@ public class PassportNumberFilterStrategyTest extends AbstractFilterStrategyTest
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
 
-        final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentId", "986001231", "classification == \"US\"", 1.0, "US");
+        final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentid", "986001231", "classification == \"US\"", 1.0, "US");
 
         Assertions.assertTrue(conditionSatisfied);
 

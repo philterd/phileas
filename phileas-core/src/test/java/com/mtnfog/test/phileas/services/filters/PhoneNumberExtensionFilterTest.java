@@ -1,6 +1,7 @@
 package com.mtnfog.test.phileas.services.filters;
 
 import com.mtnfog.phileas.model.enums.FilterType;
+import com.mtnfog.phileas.model.objects.FilterResult;
 import com.mtnfog.phileas.model.objects.Span;
 import com.mtnfog.phileas.model.profile.Crypto;
 import com.mtnfog.phileas.model.profile.filters.strategies.rules.PhoneNumberExtensionFilterStrategy;
@@ -26,15 +27,12 @@ public class PhoneNumberExtensionFilterTest extends AbstractFilterTest {
         final List<PhoneNumberExtensionFilterStrategy> strategies = Arrays.asList(new PhoneNumberExtensionFilterStrategy());
         PhoneNumberExtensionFilter filter = new PhoneNumberExtensionFilter(strategies, new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
 
-        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid","he is at x123");
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "he is at x123");
+        showSpans(filterResult.getSpans());
 
-        for(Span span : spans) {
-            LOGGER.info(span.toString());
-        }
-
-        Assertions.assertEquals(1, spans.size());
-        Assertions.assertTrue(checkSpan(spans.get(0), 9, 13, FilterType.PHONE_NUMBER_EXTENSION));
-        Assertions.assertEquals("x123", spans.get(0).getText());
+        Assertions.assertEquals(1, filterResult.getSpans().size());
+        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 9, 13, FilterType.PHONE_NUMBER_EXTENSION));
+        Assertions.assertEquals("x123", filterResult.getSpans().get(0).getText());
 
     }
 
@@ -44,15 +42,12 @@ public class PhoneNumberExtensionFilterTest extends AbstractFilterTest {
         final List<PhoneNumberExtensionFilterStrategy> strategies = Arrays.asList(new PhoneNumberExtensionFilterStrategy());
         PhoneNumberExtensionFilter filter = new PhoneNumberExtensionFilter(strategies, new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
 
-        List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid","his phone number was +1 151-841-2829 x416.");
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "his phone number was +1 151-841-2829 x416.");
+        showSpans(filterResult.getSpans());
 
-        for(Span span : spans) {
-            LOGGER.info(span.toString());
-        }
-
-        Assertions.assertEquals(1, spans.size());
-        Assertions.assertTrue(checkSpan(spans.get(0), 37, 41, FilterType.PHONE_NUMBER_EXTENSION));
-        Assertions.assertEquals("x416", spans.get(0).getText());
+        Assertions.assertEquals(1, filterResult.getSpans().size());
+        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 37, 41, FilterType.PHONE_NUMBER_EXTENSION));
+        Assertions.assertEquals("x416", filterResult.getSpans().get(0).getText());
 
     }
 

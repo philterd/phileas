@@ -102,7 +102,7 @@ public abstract class RulesFilter extends Filter {
      */
     public int getOccurrences(FilterProfile filterProfile, String input) throws Exception {
 
-        return filter(filterProfile, "none", "none", input).size();
+        return filter(filterProfile, "none", "none", 0, input).getSpans().size();
 
     }
 

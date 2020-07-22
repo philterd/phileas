@@ -2,6 +2,7 @@ package com.mtnfog.test.phileas.services.filters;
 
 import com.mtnfog.phileas.model.enums.FilterType;
 import com.mtnfog.phileas.model.filter.Filter;
+import com.mtnfog.phileas.model.objects.FilterResult;
 import com.mtnfog.phileas.model.objects.Span;
 import com.mtnfog.phileas.model.profile.Crypto;
 import com.mtnfog.phileas.model.services.AlertService;
@@ -28,15 +29,15 @@ public class PassportNumberFilterTest extends AbstractFilterTest {
 
         final Filter filter = getFilter();
 
-        final List<Span> spans = filter.filter(getFilterProfile(), "context", "documentid", "the passport number is 036001231.");
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "the passport number is 036001231.");
 
-        showSpans(spans);
+        showSpans(filterResult.getSpans());
 
-        Assertions.assertEquals(1, spans.size());
-        Assertions.assertTrue(checkSpan(spans.get(0), 23, 32, FilterType.PASSPORT_NUMBER));
-        Assertions.assertEquals("{{{REDACTED-passport-number}}}", spans.get(0).getReplacement());
-        Assertions.assertEquals("036001231", spans.get(0).getText());
-        Assertions.assertEquals("US", spans.get(0).getClassification());
+        Assertions.assertEquals(1, filterResult.getSpans().size());
+        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 23, 32, FilterType.PASSPORT_NUMBER));
+        Assertions.assertEquals("{{{REDACTED-passport-number}}}", filterResult.getSpans().get(0).getReplacement());
+        Assertions.assertEquals("036001231", filterResult.getSpans().get(0).getText());
+        Assertions.assertEquals("US", filterResult.getSpans().get(0).getClassification());
 
     }
 

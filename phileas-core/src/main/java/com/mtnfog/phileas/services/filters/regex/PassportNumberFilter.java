@@ -4,6 +4,7 @@ import com.mtnfog.phileas.model.enums.FilterType;
 import com.mtnfog.phileas.model.filter.rules.regex.RegexFilter;
 import com.mtnfog.phileas.model.objects.Analyzer;
 import com.mtnfog.phileas.model.objects.FilterPattern;
+import com.mtnfog.phileas.model.objects.FilterResult;
 import com.mtnfog.phileas.model.objects.Span;
 import com.mtnfog.phileas.model.profile.Crypto;
 import com.mtnfog.phileas.model.profile.FilterProfile;
@@ -90,9 +91,11 @@ public class PassportNumberFilter extends RegexFilter {
     }
 
     @Override
-    public List<Span> filter(FilterProfile filterProfile, String context, String documentId, String input) throws Exception {
+    public FilterResult filter(FilterProfile filterProfile, String context, String documentId, int piece, String input) throws Exception {
 
-        return findSpans(filterProfile, analyzer, input, context, documentId);
+        final List<Span> spans = findSpans(filterProfile, analyzer, input, context, documentId);
+
+        return new FilterResult(context, documentId, spans);
 
     }
 

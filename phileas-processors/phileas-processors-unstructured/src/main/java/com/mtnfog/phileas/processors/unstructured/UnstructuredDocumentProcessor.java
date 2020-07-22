@@ -2,6 +2,7 @@ package com.mtnfog.phileas.processors.unstructured;
 
 import com.mtnfog.phileas.model.filter.Filter;
 import com.mtnfog.phileas.model.objects.Explanation;
+import com.mtnfog.phileas.model.objects.FilterResult;
 import com.mtnfog.phileas.model.objects.Span;
 import com.mtnfog.phileas.model.profile.FilterProfile;
 import com.mtnfog.phileas.model.responses.FilterResponse;
@@ -33,14 +34,17 @@ public class UnstructuredDocumentProcessor implements DocumentProcessor {
 
     @Override
     public FilterResponse process(FilterProfile filterProfile, List<Filter> filters, List<PostFilter> postFilters,
-                                  String context, String documentId, String input) throws Exception {
+                                  String context, String documentId, int piece, String input) throws Exception {
 
         // The list that will contain the spans containing PHI/PII.
         List<Span> spans = new LinkedList<>();
 
         // Execute each filter.
         for(final Filter filter : filters) {
-            spans.addAll(filter.filter(filterProfile, context, documentId, input));
+
+            final FilterResult filterResult = filter.filter(filterProfile, context, documentId, piece, input);
+            spans.addAll(filterResult.getSpans());
+
         }
 
         // Drop ignored spans.
@@ -127,7 +131,7 @@ public class UnstructuredDocumentProcessor implements DocumentProcessor {
             store.insert(appliedSpans);
         }
 
-        return new FilterResponse(buffer.toString(), context, documentId, explanation);
+        return new FilterResponse(buffer.toString(), context, documentId, piece, explanation);
 
     }
 
