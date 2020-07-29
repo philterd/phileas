@@ -88,7 +88,7 @@ public class PyTorchFilterTest {
 
         final PhileasConfiguration phileasConfiguration = getConfiguration();
 
-        this.mockServer.enqueue(new MockResponse().setResponseCode(200).setBody("[{\"text\":\"test\",\"tag\":\"PER\",\"score\":0.5,\"start\":1,\"end\":2}]"));
+        this.mockServer.enqueue(new MockResponse().setResponseCode(200).setBody("{\"c\": \"context\", \"d\": \"docid\", \"p\": \"0\", \"spans\": [{\"text\":\"test\",\"tag\":\"PER\",\"score\":0.5,\"start\":1,\"end\":2}]}"));
 
         final PyTorchFilter t = new PyTorchFilter(baseUrl, FilterType.NER_ENTITY, getStrategies(), phileasConfiguration, "PER", stats, metricsService, anonymizationService, alertService, Collections.emptySet(), Collections.emptyList(),false, new Crypto(), windowSize);
 
@@ -115,12 +115,12 @@ public class PyTorchFilterTest {
 
         LOGGER.info("Mock REST server baseUrl = " + baseUrl);
 
-        this.mockServer.enqueue(new MockResponse().setResponseCode(200).setBody("[{\"text\":\"test\",\"tag\":\"LOC\",\"score\":0.5,\"start\":1,\"end\":2}]"));
+        this.mockServer.enqueue(new MockResponse().setResponseCode(200).setBody("{\"c\": \"context\", \"d\": \"docid\", \"p\": \"0\", \"spans\": [{\"text\":\"test\",\"tag\":\"LOC\",\"score\":0.5,\"start\":1,\"end\":2}]}"));
 
         final PyTorchFilter t = new PyTorchFilter(baseUrl, FilterType.NER_ENTITY, getStrategies(), phileasConfiguration, "LOC",
                 stats, metricsService, anonymizationService, alertService, Collections.emptySet(), Collections.emptyList(), false, new Crypto(), windowSize);
 
-        final FilterResult filterResult = t.filter(getFilterProfile(), "context", "doc", 0,"John Smith lives in New York");
+        final FilterResult filterResult = t.filter(getFilterProfile(), "context", "docid", 0,"John Smith lives in New York");
 
         for(Span span : filterResult.getSpans()) {
             LOGGER.info(span.toString());
