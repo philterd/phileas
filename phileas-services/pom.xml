@@ -19,8 +19,8 @@
 	</licenses>
 	<modules>
 		<module>phileas-services-metrics</module>
-    	<module>phileas-services-anonymization</module>
-    	<module>phileas-services-disambiguation</module>
+	    	<module>phileas-services-anonymization</module>
+    		<module>phileas-services-disambiguation</module>
 		<module>phileas-services-ai</module>
 		<module>phileas-services-profiles</module>
 		<module>phileas-services-alerts</module>
