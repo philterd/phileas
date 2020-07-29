@@ -100,11 +100,11 @@ public class PyTorchFilter extends NerFilter {
             input = input.replaceAll("\\p{Punct}", " ");
         }
 
-        final Response<List<PhileasSpan>> response = service.process(context, documentId, piece, input).execute();
+        final Response<PyTorchResponse> response = service.process(context, documentId, piece, input).execute();
 
         if(response.isSuccessful()) {
 
-            final List<PhileasSpan> phileasSpans = response.body();
+            final List<PhileasSpan> phileasSpans = response.body().getSpans();
 
             if(phileasSpans != null) {
 
