@@ -151,14 +151,11 @@ public class PhileasFilterService implements FilterService {
     }
 
     @Override
-    public DetectResponse detect(String filterProfileName, String input, MimeType mimeType) throws Exception {
+    public DetectResponse detect(FilterProfile filterProfile, String input, MimeType mimeType) throws Exception {
 
         final List<String> types = new LinkedList<>();
 
         if(mimeType == MimeType.TEXT_PLAIN) {
-
-            final String filterProfileJson = filterProfileService.get(filterProfileName);
-            final FilterProfile filterProfile = gson.fromJson(filterProfileJson, FilterProfile.class);
 
             final List<Filter> filters = getFiltersForFilterProfile(filterProfile);
 

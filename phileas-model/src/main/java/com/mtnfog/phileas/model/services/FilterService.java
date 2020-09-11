@@ -1,8 +1,8 @@
 package com.mtnfog.phileas.model.services;
 
-import com.mtnfog.phileas.configuration.PhileasConfiguration;
 import com.mtnfog.phileas.model.enums.MimeType;
 import com.mtnfog.phileas.model.objects.Span;
+import com.mtnfog.phileas.model.profile.FilterProfile;
 import com.mtnfog.phileas.model.responses.DetectResponse;
 import com.mtnfog.phileas.model.responses.FilterResponse;
 
@@ -28,12 +28,12 @@ public interface FilterService {
 
     /**
      * Detect the possible types of sensitive information in text.
-     * @param filterProfileName The name of the filter profile.
+     * @param filterProfile The {@link FilterProfile}.
      * @param input The input text.
      * @param mimeType The {@link MimeType}.
      * @return A {@link DetectResponse}.
      */
-    DetectResponse detect(String filterProfileName, String input, MimeType mimeType) throws Exception;
+    DetectResponse detect(FilterProfile filterProfile, String input, MimeType mimeType) throws Exception;
 
     /**
      * Get the replacement spans for a document.
