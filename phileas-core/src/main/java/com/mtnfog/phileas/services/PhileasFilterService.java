@@ -11,12 +11,14 @@ import com.mtnfog.phileas.model.filter.Filter;
 import com.mtnfog.phileas.model.filter.rules.dictionary.BloomFilterDictionaryFilter;
 import com.mtnfog.phileas.model.filter.rules.dictionary.DictionaryFilter;
 import com.mtnfog.phileas.model.filter.rules.dictionary.LuceneDictionaryFilter;
+import com.mtnfog.phileas.model.objects.FilterResult;
 import com.mtnfog.phileas.model.objects.Span;
 import com.mtnfog.phileas.model.profile.FilterProfile;
 import com.mtnfog.phileas.model.profile.Ignored;
 import com.mtnfog.phileas.model.profile.filters.CustomDictionary;
 import com.mtnfog.phileas.model.profile.filters.Identifier;
 import com.mtnfog.phileas.model.profile.filters.Section;
+import com.mtnfog.phileas.model.responses.DetectResponse;
 import com.mtnfog.phileas.model.responses.FilterResponse;
 import com.mtnfog.phileas.model.services.*;
 import com.mtnfog.phileas.processors.unstructured.UnstructuredDocumentProcessor;
@@ -147,6 +149,31 @@ public class PhileasFilterService implements FilterService {
     @Override
     public List<Span> replacements(String documentId) throws IOException {
         return store.getByDocumentId(documentId);
+    }
+
+    @Override
+    public DetectResponse detect(String input, MimeType mimeType) throws Exception {
+
+        // Get all filters we want to use.
+        final List<Filter> filters = Arrays.asList();
+
+        if(mimeType == MimeType.TEXT_PLAIN) {
+
+            // TODO: Add the necessary filters to the filter profile.
+            final String filterProfileJson = filterProfileService.get("phinder");
+            final FilterProfile filterProfile = gson.fromJson(filterProfileJson, FilterProfile.class);
+
+            // Execute each filter.
+            for(final Filter filter : filters) {
+
+                final int occurrences = filter.getOccurrences(filterProfile, input);
+
+            }
+
+        }
+
+        return null;
+
     }
 
     @Override

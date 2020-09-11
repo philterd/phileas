@@ -3,6 +3,7 @@ package com.mtnfog.phileas.model.services;
 import com.mtnfog.phileas.configuration.PhileasConfiguration;
 import com.mtnfog.phileas.model.enums.MimeType;
 import com.mtnfog.phileas.model.objects.Span;
+import com.mtnfog.phileas.model.responses.DetectResponse;
 import com.mtnfog.phileas.model.responses.FilterResponse;
 
 import java.io.IOException;
@@ -24,6 +25,14 @@ public interface FilterService {
      * @throws Exception Thrown if the text cannot be filtered.
      */
     FilterResponse filter(String filterProfileName, String context, String documentId, String input, MimeType mimeType) throws Exception;
+
+    /**
+     * Detect the possible types of sensitive information in text.
+     * @param input The input text.
+     * @param mimeType The {@link MimeType}.
+     * @return A {@link DetectResponse}.
+     */
+    DetectResponse detect(String input, MimeType mimeType) throws Exception;
 
     /**
      * Get the replacement spans for a document.

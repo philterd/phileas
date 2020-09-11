@@ -74,6 +74,14 @@ public abstract class Filter {
     public abstract FilterResult filter(FilterProfile filterProfile, String context, String documentId, int piece, String input) throws Exception;
 
     /**
+     * Determines if the input text may contain sensitive information matching the filter type.
+     * @param filterProfile The {@link FilterProfile}.
+     * @param input The input text.
+     * @return A count of possible occurrences of the filter type in the input text.
+     */
+    public abstract int getOccurrences(FilterProfile filterProfile, String input) throws Exception;
+
+    /**
      * Creates a new filter with anonymization.
      *
      * @param filterType The {@link FilterType type} of the filter.

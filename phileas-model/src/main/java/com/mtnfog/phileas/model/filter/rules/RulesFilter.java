@@ -100,6 +100,7 @@ public abstract class RulesFilter extends Filter {
      * @param input The input text.
      * @return A count of occurrences in the text.
      */
+    @Override
     public int getOccurrences(FilterProfile filterProfile, String input) throws Exception {
 
         return filter(filterProfile, "none", "none", 0, input).getSpans().size();

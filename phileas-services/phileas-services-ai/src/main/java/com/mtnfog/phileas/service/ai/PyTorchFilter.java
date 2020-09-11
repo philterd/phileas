@@ -145,6 +145,13 @@ public class PyTorchFilter extends NerFilter {
 
     }
 
+    @Override
+    public int getOccurrences(FilterProfile filterProfile, String input) throws Exception {
+
+        return filter(filterProfile, "none", "none", 0, input).getSpans().size();
+
+    }
+
     private Span createSpan(String filterProfile, String input, String context, String documentId, String text,
                             String classification, int start, int end, double confidence) throws Exception {
 

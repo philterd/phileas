@@ -296,6 +296,13 @@ public class LuceneDictionaryFilter extends DictionaryFilter implements Serializ
 
     }
 
+    @Override
+    public int getOccurrences(FilterProfile filterProfile, String input) throws Exception {
+
+        return filter(filterProfile, "none", "none", 0, input).getSpans().size();
+
+    }
+
     /**
      * Run this class to create a Lucene index from a text file.
      * Usage: java -jar ./LuceneDictionaryFilter state states.txt
