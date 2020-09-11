@@ -157,9 +157,10 @@ public class PhileasFilterService implements FilterService {
 
         if(mimeType == MimeType.TEXT_PLAIN) {
 
-            final List<Filter> filters = getFiltersForFilterProfile(filterProfileName);
             final String filterProfileJson = filterProfileService.get(filterProfileName);
             final FilterProfile filterProfile = gson.fromJson(filterProfileJson, FilterProfile.class);
+
+            final List<Filter> filters = getFiltersForFilterProfile(filterProfile);
 
             for(final Filter filter : filters) {
 
@@ -200,6 +201,9 @@ public class PhileasFilterService implements FilterService {
         LOGGER.debug("Deserializing filter profile [{}]", filterProfileName);
         final FilterProfile filterProfile = gson.fromJson(filterProfileJson, FilterProfile.class);
 
+        final List<Filter> filters = getFiltersForFilterProfile(filterProfile);
+        final List<PostFilter> postFilters = getPostFiltersForFilterProfile(filterProfileName);
+
         // See if we need to generate a document ID.
         if(StringUtils.isEmpty(documentId)) {
 
@@ -208,9 +212,6 @@ public class PhileasFilterService implements FilterService {
             LOGGER.debug("Generated document ID {}", documentId);
 
         }
-
-        final List<Filter> filters = getFiltersForFilterProfile(filterProfileName);
-        final List<PostFilter> postFilters = getPostFiltersForFilterProfile(filterProfileName);
 
         final FilterResponse filterResponse;
 
@@ -326,12 +327,9 @@ public class PhileasFilterService implements FilterService {
 
     }
 
-    public List<Filter> getFiltersForFilterProfile(final String filterProfileName) throws IOException {
+    public List<Filter> getFiltersForFilterProfile(final FilterProfile filterProfile) throws IOException {
 
-        LOGGER.debug("Getting filters for filter profile [{}]", filterProfileName);
-
-        final String filterProfileJson = filterProfileService.get(filterProfileName);
-        final FilterProfile filterProfile = gson.fromJson(filterProfileJson, FilterProfile.class);
+        LOGGER.debug("Getting filters for filter profile [{}]", filterProfile.getName());
 
         final List<Filter> enabledFilters = new LinkedList<>();
 
