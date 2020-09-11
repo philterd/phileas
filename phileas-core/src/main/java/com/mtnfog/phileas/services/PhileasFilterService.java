@@ -11,7 +11,6 @@ import com.mtnfog.phileas.model.filter.Filter;
 import com.mtnfog.phileas.model.filter.rules.dictionary.BloomFilterDictionaryFilter;
 import com.mtnfog.phileas.model.filter.rules.dictionary.DictionaryFilter;
 import com.mtnfog.phileas.model.filter.rules.dictionary.LuceneDictionaryFilter;
-import com.mtnfog.phileas.model.objects.FilterResult;
 import com.mtnfog.phileas.model.objects.Span;
 import com.mtnfog.phileas.model.profile.FilterProfile;
 import com.mtnfog.phileas.model.profile.Ignored;
@@ -152,27 +151,34 @@ public class PhileasFilterService implements FilterService {
     }
 
     @Override
-    public DetectResponse detect(String input, MimeType mimeType) throws Exception {
+    public DetectResponse detect(String filterProfileName, String input, MimeType mimeType) throws Exception {
 
-        // Get all filters we want to use.
-        final List<Filter> filters = Arrays.asList();
+        final List<String> types = new LinkedList<>();
 
         if(mimeType == MimeType.TEXT_PLAIN) {
 
-            // TODO: Add the necessary filters to the filter profile.
-            final String filterProfileJson = filterProfileService.get("phinder");
+            final List<Filter> filters = getFiltersForFilterProfile(filterProfileName);
+            final String filterProfileJson = filterProfileService.get(filterProfileName);
             final FilterProfile filterProfile = gson.fromJson(filterProfileJson, FilterProfile.class);
 
-            // Execute each filter.
             for(final Filter filter : filters) {
 
                 final int occurrences = filter.getOccurrences(filterProfile, input);
 
+                if(occurrences > 0) {
+                    types.add(filter.getFilterType().getType());
+                }
+
             }
+
+        } else {
+
+            // Should never happen but just in case.
+            throw new Exception("Unknown mime type.");
 
         }
 
-        return null;
+        return new DetectResponse(types);
 
     }
 

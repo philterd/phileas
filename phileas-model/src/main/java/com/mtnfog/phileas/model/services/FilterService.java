@@ -28,11 +28,12 @@ public interface FilterService {
 
     /**
      * Detect the possible types of sensitive information in text.
+     * @param filterProfileName The name of the filter profile.
      * @param input The input text.
      * @param mimeType The {@link MimeType}.
      * @return A {@link DetectResponse}.
      */
-    DetectResponse detect(String input, MimeType mimeType) throws Exception;
+    DetectResponse detect(String filterProfileName, String input, MimeType mimeType) throws Exception;
 
     /**
      * Get the replacement spans for a document.
