@@ -22,7 +22,7 @@ pipeline {
         PHILEAS_INDEX_DIR = "${WORKSPACE}"
         PHILTER_REDIS_HOST = "localhost"
         PHILTER_REDIS_PORT = "6379"
-        PHILTER_REDIS_SSL = "true"
+        PHILTER_REDIS_SSL = "false"
         PHILTER_REDIS_AUTH_TOKEN = "Randompassword1!"
         PHILTER_REDIS_CLUSTERED = "false"
     }
