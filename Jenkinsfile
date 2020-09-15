@@ -20,7 +20,7 @@ pipeline {
     }
     environment {
         PHILEAS_INDEX_DIR = "${WORKSPACE}"
-        PHILTER_REDIS_HOST = "philter-001.philter.fl8lv7.use1.cache.amazonaws.com"
+        PHILTER_REDIS_HOST = "localhost"
         PHILTER_REDIS_PORT = "6379"
         PHILTER_REDIS_SSL = "true"
         PHILTER_REDIS_AUTH_TOKEN = "Randompassword1!"
