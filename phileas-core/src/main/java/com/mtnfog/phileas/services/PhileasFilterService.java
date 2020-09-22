@@ -183,13 +183,6 @@ public class PhileasFilterService implements FilterService {
     @Override
     public FilterResponse filter(String filterProfileName, String context, String documentId, String input, MimeType mimeType) throws Exception {
 
-        // PHL-145: Accept long text or throw an exception?
-        if(!phileasConfiguration.splitLongText()) {
-            if(input.length() >= phileasConfiguration.splitThresholdLength()) {
-                throw new PayloadTooLargeException("The request body was too large. Either reduce the size or enable text splitting.");
-            }
-        }
-
         // Get the filter profile.
         // This will ALWAYS return a filter profile because if it is not in the cache it will be retrieved from the cache.
         // TODO: How to trigger a reload if the profile had to be retrieved from disk?
@@ -197,6 +190,13 @@ public class PhileasFilterService implements FilterService {
 
         LOGGER.debug("Deserializing filter profile [{}]", filterProfileName);
         final FilterProfile filterProfile = gson.fromJson(filterProfileJson, FilterProfile.class);
+
+        // PHL-145: Accept long text or throw an exception?
+        if(!filterProfile.getConfig().getSplitting().isEnabled()) {
+            if(input.length() >= filterProfile.getConfig().getSplitting().getThreshold()) {
+                throw new PayloadTooLargeException("The request body was too large. Either reduce the size or enable text splitting.");
+            }
+        }
 
         final List<Filter> filters = getFiltersForFilterProfile(filterProfile);
         final List<PostFilter> postFilters = getPostFiltersForFilterProfile(filterProfileName);
@@ -215,7 +215,7 @@ public class PhileasFilterService implements FilterService {
         if(mimeType == MimeType.TEXT_PLAIN) {
 
             // PHL-145: Do we need to split the input text due to its size?
-            if(input.length() >= phileasConfiguration.splitThresholdLength()) {
+            if(filterProfile.getConfig().getSplitting().isEnabled() && input.length() >= filterProfile.getConfig().getSplitting().getThreshold()) {
 
                 // Get the splitter to use from the filter profile.
                 final SplitService splitService = SplitFactory.getSplitService(filterProfile.getConfig().getSplitting().getMethod());
@@ -227,7 +227,7 @@ public class PhileasFilterService implements FilterService {
                 final List<String> splits = splitService.split(input);
 
                 // Process each split.
-                for(int i = 0; i < splits.size(); i++) {
+                for (int i = 0; i < splits.size(); i++) {
                     filterResponses.add(unstructuredDocumentProcessor.process(filterProfile, filters, postFilters, context, documentId, i, splits.get(i)));
                 }
 

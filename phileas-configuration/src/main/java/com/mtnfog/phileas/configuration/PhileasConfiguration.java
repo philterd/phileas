@@ -48,16 +48,6 @@ public interface PhileasConfiguration extends Config {
     @Key("span.disambiguation.stopwords")
     String spanDisambiguationStopWords();
 
-    // Split settings.
-
-    @DefaultValue("true")
-    @Key("split.long.text")
-    boolean splitLongText();
-
-    @DefaultValue("10000")
-    @Key("split.threshold.length")
-    int splitThresholdLength();
-
     // Timeouts for connection to Philter NER.
 
     @DefaultValue("30")
