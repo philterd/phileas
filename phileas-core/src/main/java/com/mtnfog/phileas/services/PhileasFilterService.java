@@ -236,7 +236,7 @@ public class PhileasFilterService implements FilterService {
 
             } else {
 
-                // No need to split.
+                // Do not split. Process the entire string at once.
                 filterResponse = unstructuredDocumentProcessor.process(filterProfile, filters, postFilters, context, documentId, 0, input);
 
             }
