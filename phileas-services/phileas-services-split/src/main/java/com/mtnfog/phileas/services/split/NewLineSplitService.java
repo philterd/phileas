@@ -25,7 +25,11 @@ public class NewLineSplitService extends AbstractSplitService implements SplitSe
         // This method is faster than the \R regex.
         // https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/String.html#lines()
         // This method provides better performance than split("\R") by supplying elements lazily and by faster search of new line terminators.
-        return Arrays.asList(input.lines().toArray(String[]::new));
+        final List<String> splits = Arrays.asList(input.lines().toArray(String[]::new));
+
+        LOGGER.info("Split large input exceeding threshold into {} splits using new line split method.", splits.size());
+
+        return splits;
 
     }
 
