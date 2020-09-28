@@ -20,9 +20,9 @@ public class SplitFactory {
 
         } else if(StringUtils.equalsIgnoreCase("width", method)) {
 
-            // TODO: Set line width.
+            // TODO: Make line width configurable.
             LOGGER.debug("Instantiating a line width split service.");
-            return new LineWidthSplitService(80);
+            return new LineWidthSplitService(500);
 
         }
 
