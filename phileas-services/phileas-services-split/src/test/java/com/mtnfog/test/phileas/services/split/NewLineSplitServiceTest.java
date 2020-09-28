@@ -20,6 +20,24 @@ public class NewLineSplitServiceTest {
     private static final Logger LOGGER = LogManager.getLogger(NewLineSplitServiceTest.class);
 
     @Test
+    public void split0() throws IOException {
+
+        final File file = new File("src/test/resources/simple-test.txt");
+        final String input = FileUtils.readFileToString(file, Charset.defaultCharset());
+
+        assertTrue(input != null);
+        LOGGER.info("Input text length = " + input.length());
+
+        final SplitService splitService = new NewLineSplitService();
+        final List<String> splits = splitService.split(input);
+
+        for(final String split : splits) {
+            LOGGER.info(split);
+        }
+
+    }
+
+    @Test
     public void split1() throws IOException {
 
         final File file = new File("src/test/resources/alice29.txt");
@@ -32,15 +50,11 @@ public class NewLineSplitServiceTest {
         final List<String> splits = splitService.split(input);
 
         LOGGER.info("Splits = " + splits.size());
-        assertEquals(3609, splits.size());
+        assertEquals(2732, splits.size());
 
         for(final String split : splits) {
             LOGGER.info(split);
-            LOGGER.info("=====");
         }
-
-        /*final String joined = String.join(System.lineSeparator(), splits);
-        assertEquals(input, joined);*/
 
     }
 
@@ -57,15 +71,11 @@ public class NewLineSplitServiceTest {
         final List<String> splits = splitService.split(input);
 
         LOGGER.info("Splits = " + splits.size());
-        assertEquals(10, splits.size());
+        assertEquals(6, splits.size());
 
         for(final String split : splits) {
             LOGGER.info(split);
-            LOGGER.info("=====");
         }
-
-        /*final String joined = String.join(System.lineSeparator(), splits);
-        assertEquals(input, joined);*/
 
     }
 

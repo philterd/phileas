@@ -18,6 +18,12 @@ public class SplitFactory {
             LOGGER.debug("Instantiating a newline split service.");
             return new NewLineSplitService();
 
+        } else if(StringUtils.equalsIgnoreCase("width", method)) {
+
+            // TODO: Set line width.
+            LOGGER.debug("Instantiating a line width split service.");
+            return new LineWidthSplitService(80);
+
         }
 
         LOGGER.warn("No matching split service found for {}. Defaulting to newline split service.", method);
