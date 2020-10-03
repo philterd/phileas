@@ -123,6 +123,18 @@ public interface PhileasConfiguration extends Config {
     boolean metricsJmxEnabled();
 
     @DefaultValue("false")
+    @Key("metrics.prometheus.enabled")
+    boolean metricsPrometheusEnabled();
+
+    @DefaultValue("9100")
+    @Key("metrics.prometheus.port")
+    int metricsPrometheusPort();
+
+    @DefaultValue("metrics")
+    @Key("metrics.prometheus.metrics")
+    String metricsPrometheusContext();
+
+    @DefaultValue("false")
     @Key("metrics.datadog.enabled")
     boolean metricsDataDogEnabled();
 

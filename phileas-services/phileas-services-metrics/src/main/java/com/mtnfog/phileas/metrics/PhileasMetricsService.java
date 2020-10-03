@@ -6,22 +6,26 @@ import com.amazonaws.services.cloudwatch.AmazonCloudWatchAsyncClientBuilder;
 import com.mtnfog.phileas.configuration.PhileasConfiguration;
 import com.mtnfog.phileas.model.enums.FilterType;
 import com.mtnfog.phileas.model.services.MetricsService;
+import com.sun.net.httpserver.HttpServer;
 import io.micrometer.cloudwatch.CloudWatchConfig;
 import io.micrometer.cloudwatch.CloudWatchMeterRegistry;
 import io.micrometer.core.instrument.Clock;
 import io.micrometer.core.instrument.Counter;
-import io.micrometer.core.instrument.Tag;
 import io.micrometer.core.instrument.composite.CompositeMeterRegistry;
 import io.micrometer.datadog.DatadogConfig;
 import io.micrometer.datadog.DatadogMeterRegistry;
 import io.micrometer.jmx.JmxConfig;
 import io.micrometer.jmx.JmxMeterRegistry;
+import io.micrometer.prometheus.PrometheusConfig;
+import io.micrometer.prometheus.PrometheusMeterRegistry;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.IOException;
+import java.io.OutputStream;
+import java.net.InetSocketAddress;
 import java.time.Duration;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -47,6 +51,7 @@ public class PhileasMetricsService implements MetricsService {
         compositeMeterRegistry = new CompositeMeterRegistry();
 
         if(phileasConfiguration.metricsJmxEnabled()) {
+
             LOGGER.info("Initializing JMX metric reporting.");
 
             final JmxConfig jmxConfig = new JmxConfig() {
@@ -67,6 +72,32 @@ public class PhileasMetricsService implements MetricsService {
             };
 
             compositeMeterRegistry.add(new JmxMeterRegistry(jmxConfig, Clock.SYSTEM));
+
+        }
+
+        if(phileasConfiguration.metricsPrometheusEnabled()) {
+            
+            LOGGER.info("Initializing Prometheus metric reporting.");
+
+            final PrometheusMeterRegistry prometheusRegistry = new PrometheusMeterRegistry(PrometheusConfig.DEFAULT);
+            final int port = phileasConfiguration.metricsPrometheusPort();
+            final String context = phileasConfiguration.metricsPrometheusContext();
+
+            try {
+                HttpServer server = HttpServer.create(new InetSocketAddress(port), 0);
+                server.createContext("/" + context, httpExchange -> {
+                    final String response = prometheusRegistry.scrape();
+                    httpExchange.sendResponseHeaders(200, response.getBytes().length);
+                    try (OutputStream os = httpExchange.getResponseBody()) {
+                        os.write(response.getBytes());
+                    }
+                });
+
+                new Thread(server::start).start();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+
         }
 
         if(phileasConfiguration.metricsDataDogEnabled()) {
