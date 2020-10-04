@@ -98,6 +98,8 @@ public class PhileasMetricsService implements MetricsService {
                 throw new RuntimeException(e);
             }
 
+            compositeMeterRegistry.add(prometheusRegistry);
+
         }
 
         if(phileasConfiguration.metricsDataDogEnabled()) {
