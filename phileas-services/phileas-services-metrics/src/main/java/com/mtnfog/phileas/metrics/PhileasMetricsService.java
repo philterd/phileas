@@ -50,6 +50,12 @@ public class PhileasMetricsService implements MetricsService {
 
         compositeMeterRegistry = new CompositeMeterRegistry();
 
+        compositeMeterRegistry.config().commonTags("application", "philter");
+
+        if(StringUtils.isNotEmpty(phileasConfiguration.metricsHostname())) {
+            compositeMeterRegistry.config().commonTags("hostname", phileasConfiguration.metricsHostname());
+        }
+
         final int step = phileasConfiguration.metricsStep();
 
         if(phileasConfiguration.metricsJmxEnabled()) {
@@ -205,10 +211,6 @@ public class PhileasMetricsService implements MetricsService {
 
             compositeMeterRegistry.add(new CloudWatchMeterRegistry(cloudWatchConfig, Clock.SYSTEM, amazonCloudWatchAsync));
 
-        }
-
-        if(StringUtils.isNotEmpty(phileasConfiguration.metricsHostname())) {
-            compositeMeterRegistry.config().commonTags("hostname", phileasConfiguration.metricsHostname());
         }
 
         this.processed = compositeMeterRegistry.counter(phileasConfiguration.metricsPrefix() + "." + TOTAL_DOCUMENTS_PROCESSED);
