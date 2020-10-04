@@ -50,6 +50,8 @@ public class PhileasMetricsService implements MetricsService {
 
         compositeMeterRegistry = new CompositeMeterRegistry();
 
+        final int step = phileasConfiguration.metricsStep();
+
         if(phileasConfiguration.metricsJmxEnabled()) {
 
             LOGGER.info("Initializing JMX metric reporting.");
@@ -62,7 +64,7 @@ public class PhileasMetricsService implements MetricsService {
 
                 @Override
                 public Duration step() {
-                    return Duration.ofSeconds(60);
+                    return Duration.ofSeconds(step);
                 }
 
                 @Override
@@ -79,7 +81,26 @@ public class PhileasMetricsService implements MetricsService {
             
             LOGGER.info("Initializing Prometheus metric reporting.");
 
-            final PrometheusMeterRegistry prometheusRegistry = new PrometheusMeterRegistry(PrometheusConfig.DEFAULT);
+            final PrometheusConfig prometheusConfig = new PrometheusConfig() {
+
+                @Override
+                public Duration step() {
+                    return Duration.ofSeconds(step);
+                }
+
+                @Override
+                public String get(String k) {
+                    return null;
+                }
+
+                @Override
+                public String prefix() {
+                    return phileasConfiguration.metricsPrefix();
+                }
+
+            };
+
+            final PrometheusMeterRegistry prometheusRegistry = new PrometheusMeterRegistry(prometheusConfig);
             final int port = phileasConfiguration.metricsPrometheusPort();
             final String context = phileasConfiguration.metricsPrometheusContext();
 
@@ -122,7 +143,7 @@ public class PhileasMetricsService implements MetricsService {
 
                     @Override
                     public Duration step() {
-                        return Duration.ofSeconds(60);
+                        return Duration.ofSeconds(step);
                     }
 
                     @Override
@@ -156,7 +177,7 @@ public class PhileasMetricsService implements MetricsService {
 
                 @Override
                 public Duration step() {
-                    return Duration.ofSeconds(60);
+                    return Duration.ofSeconds(step);
                 }
 
                 @Override
