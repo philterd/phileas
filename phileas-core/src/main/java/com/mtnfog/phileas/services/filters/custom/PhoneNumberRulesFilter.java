@@ -25,9 +25,9 @@ public class PhoneNumberRulesFilter extends RulesFilter {
 
     private PhoneNumberUtil phoneUtil;
 
-    public PhoneNumberRulesFilter(List<? extends AbstractFilterStrategy> strategies, AnonymizationService anonymizationService, AlertService alertService, Set<String> ignored, List<IgnoredPattern> ignoredPatterns, Crypto crypto, int windowSize) {
+    public PhoneNumberRulesFilter(List<? extends AbstractFilterStrategy> strategies, AnonymizationService anonymizationService, AlertService alertService, Set<String> ignored, Set<String> ignoredFiles, List<IgnoredPattern> ignoredPatterns, Crypto crypto, int windowSize) {
 
-        super(FilterType.PHONE_NUMBER, strategies, anonymizationService, alertService, ignored, ignoredPatterns, crypto, windowSize);
+        super(FilterType.PHONE_NUMBER, strategies, anonymizationService, alertService, ignored, ignoredFiles, ignoredPatterns, crypto, windowSize);
 
         this.phoneUtil = PhoneNumberUtil.getInstance();
 

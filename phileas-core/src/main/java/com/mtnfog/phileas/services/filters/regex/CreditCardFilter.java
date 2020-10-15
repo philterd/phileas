@@ -25,8 +25,8 @@ public class CreditCardFilter extends RegexFilter {
     private boolean onlyValidCreditCardNumbers;
     private LuhnCheckDigit luhnCheckDigit;
 
-    public CreditCardFilter(List<? extends AbstractFilterStrategy> strategies, AnonymizationService anonymizationService, AlertService alertService, boolean onlyValidCreditCardNumbers, Set<String> ignored, List<IgnoredPattern> ignoredPatterns, Crypto crypto, int windowSize) {
-        super(FilterType.CREDIT_CARD, strategies, anonymizationService, alertService, ignored, ignoredPatterns, crypto, windowSize);
+    public CreditCardFilter(List<? extends AbstractFilterStrategy> strategies, AnonymizationService anonymizationService, AlertService alertService, boolean onlyValidCreditCardNumbers, Set<String> ignored, Set<String> ignoredFiles, List<IgnoredPattern> ignoredPatterns, Crypto crypto, int windowSize) {
+        super(FilterType.CREDIT_CARD, strategies, anonymizationService, alertService, ignored, ignoredFiles, ignoredPatterns, crypto, windowSize);
 
         this.onlyValidCreditCardNumbers = onlyValidCreditCardNumbers;
         this.luhnCheckDigit = new LuhnCheckDigit();

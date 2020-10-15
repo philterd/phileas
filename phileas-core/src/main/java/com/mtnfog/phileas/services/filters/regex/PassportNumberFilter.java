@@ -20,8 +20,8 @@ import java.util.regex.Pattern;
 
 public class PassportNumberFilter extends RegexFilter {
 
-    public PassportNumberFilter(List<? extends AbstractFilterStrategy> strategies, AnonymizationService anonymizationService, AlertService alertService, Set<String> ignored, List<IgnoredPattern> ignoredPatterns, Crypto crypto, int windowSize) {
-        super(FilterType.PASSPORT_NUMBER, strategies, anonymizationService, alertService, ignored, ignoredPatterns, crypto, windowSize);
+    public PassportNumberFilter(List<? extends AbstractFilterStrategy> strategies, AnonymizationService anonymizationService, AlertService alertService, Set<String> ignored, Set<String> ignoredFiles, List<IgnoredPattern> ignoredPatterns, Crypto crypto, int windowSize) {
+        super(FilterType.PASSPORT_NUMBER, strategies, anonymizationService, alertService, ignored, ignoredFiles, ignoredPatterns, crypto, windowSize);
 
         // https://www.e-verify.gov/about-e-verify/e-verify-data/e-verify-enhancements/june-2011
         // U.S. Passport numbers must be between six and nine alphanumeric characters (letters and numbers).

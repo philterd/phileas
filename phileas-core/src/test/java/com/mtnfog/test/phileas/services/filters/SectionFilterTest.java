@@ -28,7 +28,7 @@ public class SectionFilterTest extends AbstractFilterTest {
         final String endPattern = "END-REDACT";
 
         final List<SectionFilterStrategy> strategies = Arrays.asList(new SectionFilterStrategy());
-        final SectionFilter filter = new SectionFilter(strategies, new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()), alertService, startPattern, endPattern, Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+        final SectionFilter filter = new SectionFilter(strategies, new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()), alertService, startPattern, endPattern, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
 
         final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "This is some test. BEGIN-REDACT This text should be redacted. END-REDACT This is outside the text.");
 
@@ -45,7 +45,7 @@ public class SectionFilterTest extends AbstractFilterTest {
         final String endPattern = "END-REDACT";
 
         final List<SectionFilterStrategy> strategies = Arrays.asList(new SectionFilterStrategy());
-        final SectionFilter filter = new SectionFilter(strategies, new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()), alertService, startPattern, endPattern, Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+        final SectionFilter filter = new SectionFilter(strategies, new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()), alertService, startPattern, endPattern, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
 
         final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "This is some test. BEGIN-REDACT This text should be redacted. This is outside the text.");
 
@@ -60,7 +60,7 @@ public class SectionFilterTest extends AbstractFilterTest {
         final String endPattern = "END-REDACT";
 
         final List<SectionFilterStrategy> strategies = Arrays.asList(new SectionFilterStrategy());
-        final SectionFilter filter = new SectionFilter(strategies, new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()), alertService, startPattern, endPattern, Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+        final SectionFilter filter = new SectionFilter(strategies, new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()), alertService, startPattern, endPattern, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
 
         final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "BEGIN-REDACT This text should be redacted. END-REDACT This is outside the text.");
 

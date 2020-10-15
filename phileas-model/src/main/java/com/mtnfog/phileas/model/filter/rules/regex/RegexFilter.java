@@ -20,9 +20,9 @@ public abstract class RegexFilter extends RulesFilter {
 
     protected Analyzer analyzer;
 
-    public RegexFilter(FilterType filterType, List<? extends AbstractFilterStrategy> strategies, AnonymizationService anonymizationService, AlertService alertService, Set<String> ignored, List<IgnoredPattern> ignoredPatterns, Crypto crypto, int windowSize) {
+    public RegexFilter(FilterType filterType, List<? extends AbstractFilterStrategy> strategies, AnonymizationService anonymizationService, AlertService alertService, Set<String> ignored, Set<String> ignoredFiles, List<IgnoredPattern> ignoredPatterns, Crypto crypto, int windowSize) {
 
-        super(filterType, strategies, anonymizationService, alertService, ignored, ignoredPatterns, crypto, windowSize);
+        super(filterType, strategies, anonymizationService, alertService, ignored, ignoredFiles, ignoredPatterns, crypto, windowSize);
 
     }
 

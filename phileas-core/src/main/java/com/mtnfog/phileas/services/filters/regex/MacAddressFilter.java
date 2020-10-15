@@ -20,8 +20,8 @@ import java.util.regex.Pattern;
 
 public class MacAddressFilter extends RegexFilter {
 
-    public MacAddressFilter(List<? extends AbstractFilterStrategy> strategies, AnonymizationService anonymizationService, AlertService alertService, Set<String> ignored, List<IgnoredPattern> ignoredPatterns, Crypto crypto, int windowSize) {
-        super(FilterType.MAC_ADDRESS, strategies, anonymizationService, alertService, ignored, ignoredPatterns, crypto, windowSize);
+    public MacAddressFilter(List<? extends AbstractFilterStrategy> strategies, AnonymizationService anonymizationService, AlertService alertService, Set<String> ignored, Set<String> ignoredFiles, List<IgnoredPattern> ignoredPatterns, Crypto crypto, int windowSize) {
+        super(FilterType.MAC_ADDRESS, strategies, anonymizationService, alertService, ignored, ignoredFiles, ignoredPatterns, crypto, windowSize);
 
         final Pattern macAddressPattern = Pattern.compile("\\b([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})\\b");
         final FilterPattern macAddress1 = new FilterPattern.FilterPatternBuilder(macAddressPattern, 0.90).build();

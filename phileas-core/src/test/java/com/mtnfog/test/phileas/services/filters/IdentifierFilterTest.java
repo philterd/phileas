@@ -29,7 +29,7 @@ public class IdentifierFilterTest extends AbstractFilterTest {
     public void filterId1() throws Exception {
 
         final List<IdentifierFilterStrategy> strategies = Arrays.asList(new IdentifierFilterStrategy());
-        IdentifierFilter filter = new IdentifierFilter("name", Identifier.DEFAULT_IDENTIFIER_REGEX, true, strategies, anonymizationService, alertService, Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+        IdentifierFilter filter = new IdentifierFilter("name", Identifier.DEFAULT_IDENTIFIER_REGEX, true, strategies, anonymizationService, alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
 
         final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "the id is AB4736021 in california.");
 
@@ -43,7 +43,7 @@ public class IdentifierFilterTest extends AbstractFilterTest {
     public void filterId2() throws Exception {
 
         final List<IdentifierFilterStrategy> strategies = Arrays.asList(new IdentifierFilterStrategy());
-        IdentifierFilter filter = new IdentifierFilter("name", Identifier.DEFAULT_IDENTIFIER_REGEX, true, strategies, anonymizationService, alertService, Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+        IdentifierFilter filter = new IdentifierFilter("name", Identifier.DEFAULT_IDENTIFIER_REGEX, true, strategies, anonymizationService, alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
 
         final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "the id is AB473-6021 in california.");
 
@@ -56,7 +56,7 @@ public class IdentifierFilterTest extends AbstractFilterTest {
     public void filterId3() throws Exception {
 
         final List<IdentifierFilterStrategy> strategies = Arrays.asList(new IdentifierFilterStrategy());
-        IdentifierFilter filter = new IdentifierFilter("name", Identifier.DEFAULT_IDENTIFIER_REGEX, true, strategies, anonymizationService, alertService, Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+        IdentifierFilter filter = new IdentifierFilter("name", Identifier.DEFAULT_IDENTIFIER_REGEX, true, strategies, anonymizationService, alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
 
         final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "the id is 473-6AB021 in california.");
 
@@ -69,7 +69,7 @@ public class IdentifierFilterTest extends AbstractFilterTest {
     public void filterId4() throws Exception {
 
         final List<IdentifierFilterStrategy> strategies = Arrays.asList(new IdentifierFilterStrategy());
-        IdentifierFilter filter = new IdentifierFilter("name", Identifier.DEFAULT_IDENTIFIER_REGEX, true, strategies, anonymizationService, alertService, Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+        IdentifierFilter filter = new IdentifierFilter("name", Identifier.DEFAULT_IDENTIFIER_REGEX, true, strategies, anonymizationService, alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
 
         final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "the id is AB473-6021 in california.");
 
@@ -82,7 +82,7 @@ public class IdentifierFilterTest extends AbstractFilterTest {
     public void filterId5() throws Exception {
 
         final List<IdentifierFilterStrategy> strategies = Arrays.asList(new IdentifierFilterStrategy());
-        IdentifierFilter filter = new IdentifierFilter("name", Identifier.DEFAULT_IDENTIFIER_REGEX, true, strategies, anonymizationService, alertService, Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+        IdentifierFilter filter = new IdentifierFilter("name", Identifier.DEFAULT_IDENTIFIER_REGEX, true, strategies, anonymizationService, alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
 
         final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "the id is 473-6AB021 in california.");
 
@@ -95,7 +95,7 @@ public class IdentifierFilterTest extends AbstractFilterTest {
     public void filterId6() throws Exception {
 
         final List<IdentifierFilterStrategy> strategies = Arrays.asList(new IdentifierFilterStrategy());
-        IdentifierFilter filter = new IdentifierFilter("name", Identifier.DEFAULT_IDENTIFIER_REGEX, true, strategies, anonymizationService, alertService, Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+        IdentifierFilter filter = new IdentifierFilter("name", Identifier.DEFAULT_IDENTIFIER_REGEX, true, strategies, anonymizationService, alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
 
         final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "the id is 123-45-6789 in california.");
 
@@ -108,7 +108,7 @@ public class IdentifierFilterTest extends AbstractFilterTest {
     public void filterId7() throws Exception {
 
         final List<IdentifierFilterStrategy> strategies = Arrays.asList(new IdentifierFilterStrategy());
-        IdentifierFilter filter = new IdentifierFilter("name", Identifier.DEFAULT_IDENTIFIER_REGEX, true, strategies, anonymizationService, alertService, Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+        IdentifierFilter filter = new IdentifierFilter("name", Identifier.DEFAULT_IDENTIFIER_REGEX, true, strategies, anonymizationService, alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
 
         final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "George Washington was president and his ssn was 123-45-6789 and he lived at 90210. Patient id 00076A and 93821A. He is on biotin. Diagnosed with A0100.");
 
@@ -125,7 +125,7 @@ public class IdentifierFilterTest extends AbstractFilterTest {
     public void filterId8() throws Exception {
 
         final List<IdentifierFilterStrategy> strategies = Arrays.asList(new IdentifierFilterStrategy());
-        IdentifierFilter filter = new IdentifierFilter("name", Identifier.DEFAULT_IDENTIFIER_REGEX, true, strategies, anonymizationService, alertService, Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+        IdentifierFilter filter = new IdentifierFilter("name", Identifier.DEFAULT_IDENTIFIER_REGEX, true, strategies, anonymizationService, alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
 
         final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "the id is 000-00-00-00 ABC123 in california.");
 
@@ -139,7 +139,7 @@ public class IdentifierFilterTest extends AbstractFilterTest {
     public void filterId9() throws Exception {
 
         final List<IdentifierFilterStrategy> strategies = Arrays.asList(new IdentifierFilterStrategy());
-        IdentifierFilter filter = new IdentifierFilter("name", Identifier.DEFAULT_IDENTIFIER_REGEX, true, strategies, anonymizationService, alertService, Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+        IdentifierFilter filter = new IdentifierFilter("name", Identifier.DEFAULT_IDENTIFIER_REGEX, true, strategies, anonymizationService, alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
 
         final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "the id is AZ12 ABC123/123ABC in california.");
 
@@ -154,7 +154,7 @@ public class IdentifierFilterTest extends AbstractFilterTest {
     public void filterId10() throws Exception {
 
         final List<IdentifierFilterStrategy> strategies = Arrays.asList(new IdentifierFilterStrategy());
-        IdentifierFilter filter = new IdentifierFilter("name", Identifier.DEFAULT_IDENTIFIER_REGEX, true, strategies, anonymizationService, alertService, Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+        IdentifierFilter filter = new IdentifierFilter("name", Identifier.DEFAULT_IDENTIFIER_REGEX, true, strategies, anonymizationService, alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
 
         final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "the id is H3SNPUHYEE7JD3H in california.");
 
@@ -167,7 +167,7 @@ public class IdentifierFilterTest extends AbstractFilterTest {
     public void filterId11() throws Exception {
 
         final List<IdentifierFilterStrategy> strategies = Arrays.asList(new IdentifierFilterStrategy());
-        IdentifierFilter filter = new IdentifierFilter("name", Identifier.DEFAULT_IDENTIFIER_REGEX, true, strategies, anonymizationService, alertService, Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+        IdentifierFilter filter = new IdentifierFilter("name", Identifier.DEFAULT_IDENTIFIER_REGEX, true, strategies, anonymizationService, alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
 
         final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "the id is 86637729 in california.");
 
@@ -180,7 +180,7 @@ public class IdentifierFilterTest extends AbstractFilterTest {
     public void filterId12() throws Exception {
 
         final List<IdentifierFilterStrategy> strategies = Arrays.asList(new IdentifierFilterStrategy());
-        IdentifierFilter filter = new IdentifierFilter("name", Identifier.DEFAULT_IDENTIFIER_REGEX, true, strategies, anonymizationService, alertService, Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+        IdentifierFilter filter = new IdentifierFilter("name", Identifier.DEFAULT_IDENTIFIER_REGEX, true, strategies, anonymizationService, alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
 
         final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "the id is 33778376 in california.");
 
@@ -193,7 +193,7 @@ public class IdentifierFilterTest extends AbstractFilterTest {
     public void filterId13() throws Exception {
 
         final List<IdentifierFilterStrategy> strategies = Arrays.asList(new IdentifierFilterStrategy());
-        IdentifierFilter filter = new IdentifierFilter("name", "\\b[A-Z]{4,}\\b", true, strategies, anonymizationService, alertService, Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+        IdentifierFilter filter = new IdentifierFilter("name", "\\b[A-Z]{4,}\\b", true, strategies, anonymizationService, alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
 
         final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "the id is ABCD.");
 
@@ -206,7 +206,7 @@ public class IdentifierFilterTest extends AbstractFilterTest {
     public void filterId14() throws Exception {
 
         final List<IdentifierFilterStrategy> strategies = Arrays.asList(new IdentifierFilterStrategy());
-        IdentifierFilter filter = new IdentifierFilter("name", Identifier.DEFAULT_IDENTIFIER_REGEX, true, strategies, anonymizationService, alertService, Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+        IdentifierFilter filter = new IdentifierFilter("name", Identifier.DEFAULT_IDENTIFIER_REGEX, true, strategies, anonymizationService, alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
 
         final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "the id is 1234.");
 
@@ -219,7 +219,7 @@ public class IdentifierFilterTest extends AbstractFilterTest {
     public void filterId15() throws Exception {
 
         final List<IdentifierFilterStrategy> strategies = Arrays.asList(new IdentifierFilterStrategy());
-        IdentifierFilter filter = new IdentifierFilter("name", Identifier.DEFAULT_IDENTIFIER_REGEX, true, strategies, anonymizationService, alertService, Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+        IdentifierFilter filter = new IdentifierFilter("name", Identifier.DEFAULT_IDENTIFIER_REGEX, true, strategies, anonymizationService, alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
 
         final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "John Smith, patient ID A203493, was seen on February 18.");
 

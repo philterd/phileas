@@ -11,10 +11,15 @@ import com.mtnfog.phileas.model.profile.filters.Identifier;
 import com.mtnfog.phileas.model.profile.filters.strategies.AbstractFilterStrategy;
 import com.mtnfog.phileas.model.services.AlertService;
 import com.mtnfog.phileas.model.services.AnonymizationService;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -91,7 +96,7 @@ public abstract class Filter {
      * @param crypto A {@link Crypto} for token encryption.
      */
     public Filter(FilterType filterType, List<? extends AbstractFilterStrategy> strategies, AnonymizationService anonymizationService,
-                  AlertService alertService, Set<String> ignored, List<IgnoredPattern> ignoredPatterns, Crypto crypto, int windowSize) {
+                  AlertService alertService, Set<String> ignored, Set<String> ignoredFiles, List<IgnoredPattern> ignoredPatterns, Crypto crypto, int windowSize) {
 
         this.filterType = filterType;
         this.strategies = strategies;
@@ -103,6 +108,21 @@ public abstract class Filter {
 
         // PHL-151: Lowercase all terms in the ignore list to not be case-sensitive.
         this.ignored = ignored.stream().map(String::toLowerCase).collect(Collectors.toSet());
+
+        // Add the terms from the ignored files.
+        for(final String fileName : ignoredFiles) {
+            final File file = new File(fileName);
+            if(file.exists()) {
+                try {
+                    final List<String> words = FileUtils.readLines(file, Charset.defaultCharset());
+                    ignored.addAll(words.stream().map(String::toLowerCase).collect(Collectors.toSet()));
+                } catch (IOException ex) {
+                    LOGGER.error("Unable to process file of ignored terms: {}", fileName, ex);
+                }
+            } else {
+                LOGGER.error("Ignore list file specified in filter profile does not exist: {}", fileName);
+            }
+        }
 
     }
 

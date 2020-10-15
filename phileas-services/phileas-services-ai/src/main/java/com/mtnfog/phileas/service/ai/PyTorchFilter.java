@@ -55,12 +55,13 @@ public class PyTorchFilter extends NerFilter {
                          AnonymizationService anonymizationService,
                          AlertService alertService,
                          Set<String> ignored,
+                         Set<String> ignoredFiles,
                          List<IgnoredPattern> ignoredPatterns,
                          boolean removePunctuation,
                          Crypto crypto,
                          int windowSize) {
 
-        super(filterType, strategies, stats, metricsService, anonymizationService, alertService, ignored, ignoredPatterns, removePunctuation, crypto, windowSize);
+        super(filterType, strategies, stats, metricsService, anonymizationService, alertService, ignored, ignoredFiles, ignoredPatterns, removePunctuation, crypto, windowSize);
 
         this.tag = tag;
         this.timeoutSec = phileaseConfiguration.nerTimeoutSec();

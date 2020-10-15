@@ -42,7 +42,7 @@ public class CountyFilterTest extends AbstractFilterTest {
         AnonymizationService anonymizationService = new CountyAnonymizationService(new LocalAnonymizationCacheService());
 
         final List<CountyFilterStrategy> strategies = Arrays.asList(new CountyFilterStrategy());
-        final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.LOCATION_COUNTY, strategies, INDEX_DIRECTORY, SensitivityLevel.LOW, anonymizationService, alertService, Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+        final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.LOCATION_COUNTY, strategies, INDEX_DIRECTORY, SensitivityLevel.LOW, anonymizationService, alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
 
         FilterResult filterResult = filter.filter(getFilterProfile(SensitivityLevel.LOW), "context", "documentid", 0,"Lived in Fyette");
 
@@ -58,7 +58,7 @@ public class CountyFilterTest extends AbstractFilterTest {
         AnonymizationService anonymizationService = new CountyAnonymizationService(new LocalAnonymizationCacheService());
 
         final List<CountyFilterStrategy> strategies = Arrays.asList(new CountyFilterStrategy());
-        final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.LOCATION_COUNTY, strategies, INDEX_DIRECTORY, SensitivityLevel.MEDIUM, anonymizationService, alertService, Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+        final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.LOCATION_COUNTY, strategies, INDEX_DIRECTORY, SensitivityLevel.MEDIUM, anonymizationService, alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
 
         FilterResult filterResult = filter.filter(getFilterProfile(SensitivityLevel.MEDIUM), "context", "documentid", 0,"Lived in Fyette");
 
@@ -75,7 +75,7 @@ public class CountyFilterTest extends AbstractFilterTest {
         AnonymizationService anonymizationService = new CountyAnonymizationService(new LocalAnonymizationCacheService());
 
         final List<CountyFilterStrategy> strategies = Arrays.asList(new CountyFilterStrategy());
-        final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.LOCATION_COUNTY, strategies, INDEX_DIRECTORY, SensitivityLevel.HIGH, anonymizationService, alertService, Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+        final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.LOCATION_COUNTY, strategies, INDEX_DIRECTORY, SensitivityLevel.HIGH, anonymizationService, alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
 
         FilterResult filterResult = filter.filter(getFilterProfile(SensitivityLevel.HIGH), "context", "documentid", 0,"Lived in Fyette");
 

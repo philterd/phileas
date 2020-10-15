@@ -43,11 +43,12 @@ public class BloomFilterDictionaryFilter extends DictionaryFilter {
                                        AnonymizationService anonymizationService,
                                        AlertService alertService,
                                        Set<String> ignored,
+                                       Set<String> ignoredFiles,
                                        List<IgnoredPattern> ignoredPatterns,
                                        Crypto crypto,
                                        int windowSize) {
 
-        super(filterType, strategies, anonymizationService, alertService, ignored, ignoredPatterns, crypto, windowSize);
+        super(filterType, strategies, anonymizationService, alertService, ignored, ignoredFiles, ignoredPatterns, crypto, windowSize);
 
         this.lowerCaseTerms = new HashSet<>();
         this.bloomFilter = BloomFilter.create(Funnels.stringFunnel(Charset.defaultCharset()), terms.size(), fpp);

@@ -27,7 +27,7 @@ public class AgeFilterTest extends AbstractFilterTest {
         final IgnoredPattern ignoredPattern = new IgnoredPattern("[0-9]+(years old)");
         final List<IgnoredPattern> ignoredPatterns = Arrays.asList(ignoredPattern);
 
-        final AgeFilter filter = new AgeFilter(null, new AgeAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), ignoredPatterns, new Crypto(), windowSize);
+        final AgeFilter filter = new AgeFilter(null, new AgeAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), Collections.emptySet(), ignoredPatterns, new Crypto(), windowSize);
 
         final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "the patient is 35years old.");
 
@@ -44,7 +44,7 @@ public class AgeFilterTest extends AbstractFilterTest {
         final Set<String> ignore = new LinkedHashSet<>();
         ignore.add("35yEaRs old");
 
-        final AgeFilter filter = new AgeFilter(null, new AgeAnonymizationService(new LocalAnonymizationCacheService()), alertService, ignore, Collections.emptyList(), new Crypto(), windowSize);
+        final AgeFilter filter = new AgeFilter(null, new AgeAnonymizationService(new LocalAnonymizationCacheService()), alertService, ignore, Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
 
         final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "the patient is 35yEaRs old.");
 
@@ -57,7 +57,7 @@ public class AgeFilterTest extends AbstractFilterTest {
     public void filter0() throws Exception {
 
         // This tests PHL-68. When there are no filter strategies just redact.
-        final AgeFilter filter = new AgeFilter(null, new AgeAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+        final AgeFilter filter = new AgeFilter(null, new AgeAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
 
         final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "the patient is 3.5years old.");
 
@@ -74,7 +74,7 @@ public class AgeFilterTest extends AbstractFilterTest {
     public void filter1() throws Exception {
 
         final List<AgeFilterStrategy> strategies = Arrays.asList(new AgeFilterStrategy());
-        AgeFilter filter = new AgeFilter(strategies, new AgeAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+        AgeFilter filter = new AgeFilter(strategies, new AgeAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
 
         final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "the patient is 3.5years old.");
 
@@ -89,7 +89,7 @@ public class AgeFilterTest extends AbstractFilterTest {
     public void filter2() throws Exception {
 
         final List<AgeFilterStrategy> strategies = Arrays.asList(new AgeFilterStrategy());
-        AgeFilter filter = new AgeFilter(strategies, new AgeAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+        AgeFilter filter = new AgeFilter(strategies, new AgeAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
 
         final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "the patient is 3.yrs.");
 
@@ -104,7 +104,7 @@ public class AgeFilterTest extends AbstractFilterTest {
     public void filter3() throws Exception {
 
         final List<AgeFilterStrategy> strategies = Arrays.asList(new AgeFilterStrategy());
-        AgeFilter filter = new AgeFilter(strategies, new AgeAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+        AgeFilter filter = new AgeFilter(strategies, new AgeAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
 
         final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "the patient is 3yrs.");
 
@@ -119,7 +119,7 @@ public class AgeFilterTest extends AbstractFilterTest {
     public void filter4() throws Exception {
 
         final List<AgeFilterStrategy> strategies = Arrays.asList(new AgeFilterStrategy());
-        AgeFilter filter = new AgeFilter(strategies, new AgeAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+        AgeFilter filter = new AgeFilter(strategies, new AgeAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
 
         final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "the patient is 3.5yrs.");
 
@@ -134,7 +134,7 @@ public class AgeFilterTest extends AbstractFilterTest {
     public void filter5() throws Exception {
 
         final List<AgeFilterStrategy> strategies = Arrays.asList(new AgeFilterStrategy());
-        AgeFilter filter = new AgeFilter(strategies, new AgeAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+        AgeFilter filter = new AgeFilter(strategies, new AgeAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
 
         final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "the patient is 39yrs.");
 
@@ -149,7 +149,7 @@ public class AgeFilterTest extends AbstractFilterTest {
     public void filter6() throws Exception {
 
         final List<AgeFilterStrategy> strategies = Arrays.asList(new AgeFilterStrategy());
-        AgeFilter filter = new AgeFilter(strategies, new AgeAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+        AgeFilter filter = new AgeFilter(strategies, new AgeAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
 
         final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "she is aged 39");
 
@@ -164,7 +164,7 @@ public class AgeFilterTest extends AbstractFilterTest {
     public void filter7() throws Exception {
 
         final List<AgeFilterStrategy> strategies = Arrays.asList(new AgeFilterStrategy());
-        AgeFilter filter = new AgeFilter(strategies, new AgeAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+        AgeFilter filter = new AgeFilter(strategies, new AgeAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
 
         final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "she is age 39");
 
@@ -179,7 +179,7 @@ public class AgeFilterTest extends AbstractFilterTest {
     public void filter8() throws Exception {
 
         final List<AgeFilterStrategy> strategies = Arrays.asList(new AgeFilterStrategy());
-        AgeFilter filter = new AgeFilter(strategies, new AgeAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+        AgeFilter filter = new AgeFilter(strategies, new AgeAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
 
         final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "she is age 39.5");
 

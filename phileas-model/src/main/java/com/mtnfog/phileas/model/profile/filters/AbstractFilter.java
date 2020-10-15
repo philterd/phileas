@@ -18,6 +18,10 @@ public abstract class AbstractFilter {
     @Expose
     protected Set<String> ignored = Collections.emptySet();
 
+    @SerializedName("ignoredFiles")
+    @Expose
+    protected Set<String> ignoredFiles = Collections.emptySet();
+
     @SerializedName("ignoredPatterns")
     @Expose
     protected List<IgnoredPattern> ignoredPatterns = Collections.emptyList();
@@ -44,6 +48,14 @@ public abstract class AbstractFilter {
 
     public void setIgnoredPatterns(List<IgnoredPattern> ignoredPatterns) {
         this.ignoredPatterns = ignoredPatterns;
+    }
+
+    public void setIgnoredFiles(Set<String> ignoredFiles) {
+        this.ignoredFiles = ignoredFiles;
+    }
+
+    public Set<String> getIgnoredFiles() {
+        return ignoredFiles;
     }
 
 }

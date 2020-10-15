@@ -40,12 +40,13 @@ public abstract class NerFilter extends DynamicFilter {
                      AnonymizationService anonymizationService,
                      AlertService alertService,
                      Set<String> ignored,
+                     Set<String> ignoredFiles,
                      List<IgnoredPattern> ignoredPatterns,
                      boolean removePunctuation,
                      Crypto crypto,
                      int windowSize) {
 
-        super(filterType, strategies, anonymizationService, alertService, ignored, ignoredPatterns, crypto, windowSize);
+        super(filterType, strategies, anonymizationService, alertService, ignored, ignoredFiles, ignoredPatterns, crypto, windowSize);
 
         this.stats = stats;
         this.metricsService = metricsService;

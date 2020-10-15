@@ -20,8 +20,8 @@ import java.util.regex.Pattern;
 
 public class UrlFilter extends RegexFilter {
 
-    public UrlFilter(List<? extends AbstractFilterStrategy> strategies, AnonymizationService anonymizationService, AlertService alertService, boolean requireHttpWwwPrefix, Set<String> ignored, List<IgnoredPattern> ignoredPatterns, Crypto crypto, int windowSize) {
-        super(FilterType.URL, strategies, anonymizationService, alertService, ignored, ignoredPatterns, crypto, windowSize);
+    public UrlFilter(List<? extends AbstractFilterStrategy> strategies, AnonymizationService anonymizationService, AlertService alertService, boolean requireHttpWwwPrefix, Set<String> ignored, Set<String> ignoredFiles, List<IgnoredPattern> ignoredPatterns, Crypto crypto, int windowSize) {
+        super(FilterType.URL, strategies, anonymizationService, alertService, ignored, ignoredFiles, ignoredPatterns, crypto, windowSize);
 
         // https://www.regexpal.com/93652: This regex will find things like test.link where it might just be two sentences without a space between them.
         // These two patterns do NOT consider IP addresses instead of domain names.

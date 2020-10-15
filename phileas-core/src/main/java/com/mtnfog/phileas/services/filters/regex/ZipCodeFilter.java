@@ -20,8 +20,8 @@ import java.util.regex.Pattern;
 
 public class ZipCodeFilter extends RegexFilter {
 
-    public ZipCodeFilter(List<? extends AbstractFilterStrategy> strategies, AnonymizationService anonymizationService, AlertService alertService, Set<String> ignored, List<IgnoredPattern> ignoredPatterns, Crypto crypto, int windowSize) {
-        super(FilterType.ZIP_CODE, strategies, anonymizationService, alertService, ignored, ignoredPatterns, crypto, windowSize);
+    public ZipCodeFilter(List<? extends AbstractFilterStrategy> strategies, AnonymizationService anonymizationService, AlertService alertService, Set<String> ignored, Set<String> ignoredFiles, List<IgnoredPattern> ignoredPatterns, Crypto crypto, int windowSize) {
+        super(FilterType.ZIP_CODE, strategies, anonymizationService, alertService, ignored, ignoredFiles, ignoredPatterns, crypto, windowSize);
 
         final Pattern zipCodePattern = Pattern.compile("\\b[0-9]{5}(?:-[0-9]{4})?\\b");
         final FilterPattern zipCode1 = new FilterPattern.FilterPatternBuilder(zipCodePattern, 0.90).build();

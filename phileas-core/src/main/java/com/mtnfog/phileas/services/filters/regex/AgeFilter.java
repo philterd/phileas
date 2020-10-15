@@ -20,8 +20,8 @@ import java.util.regex.Pattern;
 
 public class AgeFilter extends RegexFilter {
 
-    public AgeFilter(List<? extends AbstractFilterStrategy> strategies, AnonymizationService anonymizationService, AlertService alertService, Set<String> ignored, List<IgnoredPattern> ignoredPatterns, Crypto crypto, int windowSize) {
-        super(FilterType.AGE, strategies, anonymizationService, alertService, ignored, ignoredPatterns, crypto, windowSize);
+    public AgeFilter(List<? extends AbstractFilterStrategy> strategies, AnonymizationService anonymizationService, AlertService alertService, Set<String> ignored, Set<String> ignoredFiles, List<IgnoredPattern> ignoredPatterns, Crypto crypto, int windowSize) {
+        super(FilterType.AGE, strategies, anonymizationService, alertService, ignored, ignoredFiles, ignoredPatterns, crypto, windowSize);
 
         final Pattern agePattern1 = Pattern.compile("\\b[0-9.]+[\\s]*(years|yrs)(\\s)*(old)?\\b", Pattern.CASE_INSENSITIVE);
         final FilterPattern age1 = new FilterPattern.FilterPatternBuilder(agePattern1, 0.90).build();

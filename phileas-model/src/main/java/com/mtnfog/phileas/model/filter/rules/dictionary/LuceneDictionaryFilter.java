@@ -70,11 +70,12 @@ public class LuceneDictionaryFilter extends DictionaryFilter implements Serializ
                                   AnonymizationService anonymizationService,
                                   AlertService alertService,
                                   Set<String> ignored,
+                                  Set<String> ignoredFiles,
                                   List<IgnoredPattern> ignoredPatterns,
                                   Crypto crypto,
                                   int windowSize) throws IOException {
 
-        super(filterType, strategies, anonymizationService, alertService, ignored, ignoredPatterns, crypto, windowSize);
+        super(filterType, strategies, anonymizationService, alertService, ignored, ignoredFiles, ignoredPatterns, crypto, windowSize);
 
         LOGGER.info("Loading {} index from {}", filterType, indexDirectory);
 
@@ -103,11 +104,12 @@ public class LuceneDictionaryFilter extends DictionaryFilter implements Serializ
                                         Set<String> terms,
                                         int filterProfileIndex,
                                         Set<String> ignored,
+                                        Set<String> ignoredFiles,
                                         List<IgnoredPattern> ignoredPatterns,
                                         Crypto crypto,
                                         int windowSize) throws IOException {
 
-        super(filterType, strategies, anonymizationService, alertService, ignored, ignoredPatterns, crypto, windowSize);
+        super(filterType, strategies, anonymizationService, alertService, ignored, ignoredFiles, ignoredPatterns, crypto, windowSize);
 
         LOGGER.info("Creating custom dictionary filter for custom type [{}]", type);
 

@@ -21,8 +21,8 @@ import java.util.regex.Pattern;
 
 public class VinFilter extends RegexFilter {
 
-    public VinFilter(List<? extends AbstractFilterStrategy> strategies, AnonymizationService anonymizationService, AlertService alertService, Set<String> ignored, List<IgnoredPattern> ignoredPatterns, Crypto crypto, int windowSize) {
-        super(FilterType.VIN, strategies, anonymizationService, alertService, ignored, ignoredPatterns, crypto, windowSize);
+    public VinFilter(List<? extends AbstractFilterStrategy> strategies, AnonymizationService anonymizationService, AlertService alertService, Set<String> ignored, Set<String> ignoredFiles, List<IgnoredPattern> ignoredPatterns, Crypto crypto, int windowSize) {
+        super(FilterType.VIN, strategies, anonymizationService, alertService, ignored, ignoredFiles, ignoredPatterns, crypto, windowSize);
 
         final Pattern vinPattern = Pattern.compile("\\b[A-HJ-NPR-Z0-9]{17}\\b", Pattern.CASE_INSENSITIVE);
         final FilterPattern vin1 = new FilterPattern.FilterPatternBuilder(vinPattern, 0.90).build();

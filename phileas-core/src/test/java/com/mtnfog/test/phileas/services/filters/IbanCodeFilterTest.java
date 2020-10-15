@@ -19,7 +19,7 @@ public class IbanCodeFilterTest extends AbstractFilterTest {
     private AlertService alertService = Mockito.mock(AlertService.class);
 
     private Filter getFilter(boolean validate, boolean allowSpaces) {
-        return new IbanCodeFilter(null, new IbanCodeAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), Collections.emptyList(), new Crypto(), validate, allowSpaces, windowSize);
+        return new IbanCodeFilter(null, new IbanCodeAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), validate, allowSpaces, windowSize);
     }
 
     @Test

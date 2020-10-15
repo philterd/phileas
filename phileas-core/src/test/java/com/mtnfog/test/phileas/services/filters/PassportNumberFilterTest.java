@@ -21,7 +21,7 @@ public class PassportNumberFilterTest extends AbstractFilterTest {
     final AlertService alertService = Mockito.mock(AlertService.class);
 
     private Filter getFilter() {
-        return new PassportNumberFilter(null, new PassportNumberAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+        return new PassportNumberFilter(null, new PassportNumberAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
     }
 
     @Test

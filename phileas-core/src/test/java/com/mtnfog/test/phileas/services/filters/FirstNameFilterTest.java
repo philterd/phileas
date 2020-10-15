@@ -42,7 +42,7 @@ public class FirstNameFilterTest extends AbstractFilterTest {
         AnonymizationService anonymizationService = new PersonsAnonymizationService(new LocalAnonymizationCacheService());
 
         final List<FirstNameFilterStrategy> strategies = Arrays.asList(new FirstNameFilterStrategy());
-        final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.FIRST_NAME, strategies, INDEX_DIRECTORY, SensitivityLevel.LOW, anonymizationService, alertService, Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+        final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.FIRST_NAME, strategies, INDEX_DIRECTORY, SensitivityLevel.LOW, anonymizationService, alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
 
         final FilterResult filterResult = filter.filter(getFilterProfile(SensitivityLevel.LOW), "context", "documentid", 0,"John lived in Washington");
         showSpans(filterResult.getSpans());
@@ -56,7 +56,7 @@ public class FirstNameFilterTest extends AbstractFilterTest {
         AnonymizationService anonymizationService = new PersonsAnonymizationService(new LocalAnonymizationCacheService());
 
         final List<FirstNameFilterStrategy> strategies = Arrays.asList(new FirstNameFilterStrategy());
-        final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.FIRST_NAME, strategies, INDEX_DIRECTORY, SensitivityLevel.MEDIUM, anonymizationService, alertService, Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+        final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.FIRST_NAME, strategies, INDEX_DIRECTORY, SensitivityLevel.MEDIUM, anonymizationService, alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
 
         final FilterResult filterResult = filter.filter(getFilterProfile(SensitivityLevel.MEDIUM), "context", "documentid", 0, "Michel had eye cancer");
         showSpans(filterResult.getSpans());
@@ -70,7 +70,7 @@ public class FirstNameFilterTest extends AbstractFilterTest {
         AnonymizationService anonymizationService = new PersonsAnonymizationService(new LocalAnonymizationCacheService());
 
         final List<FirstNameFilterStrategy> strategies = Arrays.asList(new FirstNameFilterStrategy());
-        final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.FIRST_NAME, strategies, INDEX_DIRECTORY, SensitivityLevel.LOW, anonymizationService, alertService, Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+        final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.FIRST_NAME, strategies, INDEX_DIRECTORY, SensitivityLevel.LOW, anonymizationService, alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
 
         final FilterResult filterResult = filter.filter(getFilterProfile(SensitivityLevel.MEDIUM), "context", "documentid", 0,"Jennifer had eye cancer");
         showSpans(filterResult.getSpans());
@@ -84,7 +84,7 @@ public class FirstNameFilterTest extends AbstractFilterTest {
         AnonymizationService anonymizationService = new PersonsAnonymizationService(new LocalAnonymizationCacheService());
 
         final List<FirstNameFilterStrategy> strategies = Arrays.asList(new FirstNameFilterStrategy());
-        final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.FIRST_NAME, strategies, INDEX_DIRECTORY, SensitivityLevel.HIGH, anonymizationService, alertService, Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+        final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.FIRST_NAME, strategies, INDEX_DIRECTORY, SensitivityLevel.HIGH, anonymizationService, alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
 
         final FilterResult filterResult = filter.filter(getFilterProfile(SensitivityLevel.HIGH), "context", "documentid", 0,"Sandra in Washington");
         showSpans(filterResult.getSpans());

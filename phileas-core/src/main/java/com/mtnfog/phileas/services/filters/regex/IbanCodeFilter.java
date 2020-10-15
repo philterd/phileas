@@ -24,8 +24,8 @@ public class IbanCodeFilter extends RegexFilter {
 
     private boolean validate;
 
-    public IbanCodeFilter(List<? extends AbstractFilterStrategy> strategies, AnonymizationService anonymizationService, AlertService alertService, Set<String> ignored, List<IgnoredPattern> ignoredPatterns, Crypto crypto, boolean validate, boolean allowSpaces, int windowSize) {
-        super(FilterType.IBAN_CODE, strategies, anonymizationService, alertService, ignored, ignoredPatterns, crypto, windowSize);
+    public IbanCodeFilter(List<? extends AbstractFilterStrategy> strategies, AnonymizationService anonymizationService, AlertService alertService, Set<String> ignored, Set<String> ignoredFiles, List<IgnoredPattern> ignoredPatterns, Crypto crypto, boolean validate, boolean allowSpaces, int windowSize) {
+        super(FilterType.IBAN_CODE, strategies, anonymizationService, alertService, ignored, ignoredFiles, ignoredPatterns, crypto, windowSize);
 
         // Whether or not to validate the found IBAN codes.
         this.validate = validate;

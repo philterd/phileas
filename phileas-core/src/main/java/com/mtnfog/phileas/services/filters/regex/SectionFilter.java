@@ -20,8 +20,8 @@ import java.util.regex.Pattern;
 
 public class SectionFilter extends RegexFilter {
 
-    public SectionFilter(List<? extends AbstractFilterStrategy> strategies, AnonymizationService anonymizationService, AlertService alertService, String startPattern, String endPattern, Set<String> ignored, List<IgnoredPattern> ignoredPatterns, Crypto crypto, int windowSize) {
-        super(FilterType.SECTION, strategies, anonymizationService, alertService, ignored, ignoredPatterns, crypto, windowSize);
+    public SectionFilter(List<? extends AbstractFilterStrategy> strategies, AnonymizationService anonymizationService, AlertService alertService, String startPattern, String endPattern, Set<String> ignored, Set<String> ignoredFiles, List<IgnoredPattern> ignoredPatterns, Crypto crypto, int windowSize) {
+        super(FilterType.SECTION, strategies, anonymizationService, alertService, ignored, ignoredFiles, ignoredPatterns, crypto, windowSize);
 
         final Pattern pattern = Pattern.compile(startPattern + "(.*?)" + endPattern);
         final FilterPattern sectionPattern1 = new FilterPattern.FilterPatternBuilder(pattern, 0.90).build();

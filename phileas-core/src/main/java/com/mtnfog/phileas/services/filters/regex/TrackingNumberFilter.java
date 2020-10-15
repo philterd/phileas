@@ -20,8 +20,8 @@ import java.util.regex.Pattern;
 
 public class TrackingNumberFilter extends RegexFilter {
 
-    public TrackingNumberFilter(List<? extends AbstractFilterStrategy> strategies, AnonymizationService anonymizationService, AlertService alertService, Set<String> ignored, List<IgnoredPattern> ignoredPatterns, Crypto crypto, int windowSize) {
-        super(FilterType.TRACKING_NUMBER, strategies, anonymizationService, alertService, ignored, ignoredPatterns, crypto, windowSize);
+    public TrackingNumberFilter(List<? extends AbstractFilterStrategy> strategies, AnonymizationService anonymizationService, AlertService alertService, Set<String> ignored, Set<String> ignoredFiles, List<IgnoredPattern> ignoredPatterns, Crypto crypto, int windowSize) {
+        super(FilterType.TRACKING_NUMBER, strategies, anonymizationService, alertService, ignored, ignoredFiles, ignoredPatterns, crypto, windowSize);
 
         // https://andrewkurochkin.com/blog/code-for-recognizing-delivery-company-by-track
 

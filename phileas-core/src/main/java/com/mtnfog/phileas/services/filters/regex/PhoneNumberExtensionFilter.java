@@ -20,8 +20,8 @@ import java.util.regex.Pattern;
 
 public class PhoneNumberExtensionFilter extends RegexFilter {
 
-    public PhoneNumberExtensionFilter(List<? extends AbstractFilterStrategy> strategies, AnonymizationService anonymizationService, AlertService alertService, Set<String> ignored, List<IgnoredPattern> ignoredPatterns, Crypto crypto, int windowSize) {
-        super(FilterType.PHONE_NUMBER_EXTENSION, strategies, anonymizationService, alertService, ignored, ignoredPatterns, crypto, windowSize);
+    public PhoneNumberExtensionFilter(List<? extends AbstractFilterStrategy> strategies, AnonymizationService anonymizationService, AlertService alertService, Set<String> ignored, Set<String> ignoredFiles, List<IgnoredPattern> ignoredPatterns, Crypto crypto, int windowSize) {
+        super(FilterType.PHONE_NUMBER_EXTENSION, strategies, anonymizationService, alertService, ignored, ignoredFiles, ignoredPatterns, crypto, windowSize);
 
         final Pattern phoneNumberExtendionPattern = Pattern.compile("\\bx[0-9]+\\b");
         final FilterPattern phoneExtension1 = new FilterPattern.FilterPatternBuilder(phoneNumberExtendionPattern, 0.75).build();

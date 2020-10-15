@@ -23,8 +23,8 @@ public class StateAbbreviationFilter extends RegexFilter {
 
     private final List<String> states;
     
-    public StateAbbreviationFilter(List<? extends AbstractFilterStrategy> strategies, AnonymizationService anonymizationService, AlertService alertService, Set<String> ignored, List<IgnoredPattern> ignoredPatterns, Crypto crypto, int windowSize) {
-        super(FilterType.STATE_ABBREVIATION, strategies, anonymizationService, alertService, ignored, ignoredPatterns, crypto, windowSize);
+    public StateAbbreviationFilter(List<? extends AbstractFilterStrategy> strategies, AnonymizationService anonymizationService, AlertService alertService, Set<String> ignored, Set<String> ignoredFiles, List<IgnoredPattern> ignoredPatterns, Crypto crypto, int windowSize) {
+        super(FilterType.STATE_ABBREVIATION, strategies, anonymizationService, alertService, ignored, ignoredFiles, ignoredPatterns, crypto, windowSize);
 
         this.states = new LinkedList<>();
 

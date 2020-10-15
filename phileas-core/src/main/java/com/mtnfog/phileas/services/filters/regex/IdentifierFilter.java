@@ -20,8 +20,8 @@ import java.util.regex.Pattern;
 
 public class IdentifierFilter extends RegexFilter {
 
-    public IdentifierFilter(String classification, String regex, boolean caseSensitive, List<IdentifierFilterStrategy> strategies, AnonymizationService anonymizationService, AlertService alertService, Set<String> ignored, List<IgnoredPattern> ignoredPatterns, Crypto crypto, int windowSize) {
-        super(FilterType.IDENTIFIER, strategies, anonymizationService, alertService, ignored, ignoredPatterns, crypto, windowSize);
+    public IdentifierFilter(String classification, String regex, boolean caseSensitive, List<IdentifierFilterStrategy> strategies, AnonymizationService anonymizationService, AlertService alertService, Set<String> ignored, Set<String> ignoredFiles, List<IgnoredPattern> ignoredPatterns, Crypto crypto, int windowSize) {
+        super(FilterType.IDENTIFIER, strategies, anonymizationService, alertService, ignored, ignoredFiles, ignoredPatterns, crypto, windowSize);
 
         final Pattern pattern;
 

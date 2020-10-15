@@ -24,9 +24,9 @@ public abstract class DictionaryFilter extends RulesFilter {
     // Lucene requires a min size of 2 for the ShingleFilter.
     protected int maxNgramSize = 2;
 
-    public DictionaryFilter(FilterType filterType, List<? extends AbstractFilterStrategy> strategies, AnonymizationService anonymizationService, AlertService alertService, Set<String> ignored, List<IgnoredPattern> ignoredPatterns, Crypto crypto, int windowSize) {
+    public DictionaryFilter(FilterType filterType, List<? extends AbstractFilterStrategy> strategies, AnonymizationService anonymizationService, AlertService alertService, Set<String> ignored, Set<String> ignoredFiles, List<IgnoredPattern> ignoredPatterns, Crypto crypto, int windowSize) {
 
-        super(filterType, strategies, anonymizationService, alertService, ignored, ignoredPatterns, crypto, windowSize);
+        super(filterType, strategies, anonymizationService, alertService, ignored, ignoredFiles, ignoredPatterns, crypto, windowSize);
 
     }
 

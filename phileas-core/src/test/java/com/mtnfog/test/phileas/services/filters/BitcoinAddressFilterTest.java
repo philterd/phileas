@@ -23,7 +23,7 @@ public class BitcoinAddressFilterTest extends AbstractFilterTest {
     private AlertService alertService = Mockito.mock(AlertService.class);
 
     private Filter getFilter() {
-        return new BitcoinAddressFilter(null, new BitcoinAddressAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+        return new BitcoinAddressFilter(null, new BitcoinAddressAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
     }
 
     @Test

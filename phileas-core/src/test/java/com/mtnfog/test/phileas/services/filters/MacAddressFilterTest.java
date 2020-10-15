@@ -27,7 +27,7 @@ public class MacAddressFilterTest extends AbstractFilterTest {
 
         final List<MacAddressFilterStrategy> strategies = Arrays.asList(new MacAddressFilterStrategy());
 
-        Filter filter = new MacAddressFilter(strategies, new MacAddressAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+        Filter filter = new MacAddressFilter(strategies, new MacAddressAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
         final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "the mac is 00-14-22-04-25-37.");
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
@@ -41,7 +41,7 @@ public class MacAddressFilterTest extends AbstractFilterTest {
 
         final List<MacAddressFilterStrategy> strategies = Arrays.asList(new MacAddressFilterStrategy());
 
-        Filter filter = new MacAddressFilter(strategies, new MacAddressAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+        Filter filter = new MacAddressFilter(strategies, new MacAddressAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
         final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "the mac is 00:14:22:04:25:37.");
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
