@@ -26,6 +26,8 @@ import org.junit.jupiter.api.Test;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -421,6 +423,30 @@ public class PhileasFilterServiceTest {
     }
 
     @Test
+    public void endToEndWithFilterIgnoredTermsFromFile() throws Exception {
+
+        final Path temp = Files.createTempDirectory("philter");
+        final File file = Paths.get(temp.toFile().getAbsolutePath(), "default.json").toFile();
+        LOGGER.info("Writing profile to {}", file.getAbsolutePath());
+        FileUtils.writeStringToFile(file, gson.toJson(getFilterProfileZipCodeWithIgnoredFromFile("default")), Charset.defaultCharset());
+
+        Properties properties = new Properties();
+        properties.setProperty("indexes.directory", INDEXES_DIRECTORY);
+        properties.setProperty("store.enabled", "false");
+        properties.setProperty("filter.profiles.directory", temp.toFile().getAbsolutePath());
+
+        final PhileasConfiguration phileasConfiguration = ConfigFactory.create(PhileasConfiguration.class, properties);
+
+        final PhileasFilterService service = new PhileasFilterService(phileasConfiguration);
+        final FilterResponse response = service.filter("default", "context", "documentid", "George Washington was president and his ssn was 123-45-6789 and he lived at 90210.", MimeType.TEXT_PLAIN);
+
+        LOGGER.info(response.getFilteredText());
+
+        Assertions.assertEquals("George Washington was president and his ssn was {{{REDACTED-ssn}}} and he lived at 90210.", response.getFilteredText());
+
+    }
+
+    @Test
     public void endToEndNonexistentFilterProfile() throws Exception {
 
         final Path temp = Files.createTempDirectory("philter");
@@ -461,6 +487,39 @@ public class PhileasFilterServiceTest {
         ZipCode zipCode = new ZipCode();
         zipCode.setZipCodeFilterStrategies(Arrays.asList(zipCodeFilterStrategy));
         zipCode.setIgnored(ignored);
+
+        Identifiers identifiers = new Identifiers();
+        identifiers.setSsn(ssn);
+        identifiers.setZipCode(zipCode);
+
+        FilterProfile filterProfile = new FilterProfile();
+        filterProfile.setName(filterProfileName);
+        filterProfile.setIdentifiers(identifiers);
+
+        return filterProfile;
+
+    }
+
+    private FilterProfile getFilterProfileZipCodeWithIgnoredFromFile(String filterProfileName) throws IOException, URISyntaxException {
+
+        // Copy file to temp directory.
+        final File file = File.createTempFile("philter", "ignore");
+        FileUtils.writeLines(file, Arrays.asList("90210", "John Smith"));
+
+        Set<String> ignoredFiles = new HashSet<>();
+        ignoredFiles.add(file.getAbsolutePath());
+
+        SsnFilterStrategy ssnFilterStrategy = new SsnFilterStrategy();
+
+        Ssn ssn = new Ssn();
+        ssn.setSsnFilterStrategies(Arrays.asList(ssnFilterStrategy));
+
+        ZipCodeFilterStrategy zipCodeFilterStrategy = new ZipCodeFilterStrategy();
+        zipCodeFilterStrategy.setTruncateDigits(2);
+
+        ZipCode zipCode = new ZipCode();
+        zipCode.setZipCodeFilterStrategies(Arrays.asList(zipCodeFilterStrategy));
+        zipCode.setIgnoredFiles(ignoredFiles);
 
         Identifiers identifiers = new Identifiers();
         identifiers.setSsn(ssn);

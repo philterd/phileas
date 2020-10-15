@@ -102,12 +102,10 @@ public abstract class Filter {
         this.strategies = strategies;
         this.anonymizationService = anonymizationService;
         this.alertService = alertService;
+        this.ignored = ignored;
         this.ignoredPatterns = ignoredPatterns;
         this.crypto = crypto;
         this.windowSize = windowSize;
-
-        // PHL-151: Lowercase all terms in the ignore list to not be case-sensitive.
-        this.ignored = ignored.stream().map(String::toLowerCase).collect(Collectors.toSet());
 
         // Add the terms from the ignored files.
         for(final String fileName : ignoredFiles) {
@@ -123,6 +121,9 @@ public abstract class Filter {
                 LOGGER.error("Ignore list file specified in filter profile does not exist: {}", fileName);
             }
         }
+
+        // PHL-151: Lowercase all terms in the ignore list to not be case-sensitive.
+        ignored.stream().map(String::toLowerCase).collect(Collectors.toSet());
 
     }
 
