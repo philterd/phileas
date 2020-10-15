@@ -11,6 +11,7 @@ import io.micrometer.cloudwatch.CloudWatchConfig;
 import io.micrometer.cloudwatch.CloudWatchMeterRegistry;
 import io.micrometer.core.instrument.Clock;
 import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.Timer;
 import io.micrometer.core.instrument.composite.CompositeMeterRegistry;
 import io.micrometer.datadog.DatadogConfig;
 import io.micrometer.datadog.DatadogMeterRegistry;
@@ -28,6 +29,7 @@ import java.net.InetSocketAddress;
 import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 public class PhileasMetricsService implements MetricsService {
 
@@ -41,6 +43,7 @@ public class PhileasMetricsService implements MetricsService {
     private transient Counter processed;
     private transient Counter documents;
     private transient Map<FilterType, Counter> filterTypes;
+    private transient Map<FilterType, Timer> filterTimers;
 
     /**
      * Creates a new metrics service.
@@ -218,8 +221,15 @@ public class PhileasMetricsService implements MetricsService {
 
         // Add a counter for each filter type.
         this.filterTypes = new HashMap<>();
-        for(FilterType filterType : FilterType.values()) {
+        for(final FilterType filterType : FilterType.values()) {
             filterTypes.put(filterType, compositeMeterRegistry.counter(phileasConfiguration.metricsPrefix() + "." + filterType.name().toLowerCase().replace("-", ".")));
+        }
+
+        // Add a timer for each filter type.
+        this.filterTimers = new HashMap<>();
+        for(final FilterType filterType : FilterType.values()) {
+            final String name = phileasConfiguration.metricsPrefix() + "." + filterType.name().toLowerCase().replace("-", ".") + ".time.ms";
+            filterTimers.put(filterType, compositeMeterRegistry.timer(name));
         }
 
     }
@@ -243,6 +253,13 @@ public class PhileasMetricsService implements MetricsService {
 
         processed.increment(count);
         documents.increment(count);
+
+    }
+
+    @Override
+    public void logFilterTime(FilterType filterType, long timeMs) {
+
+        filterTimers.get(filterType).record(timeMs, TimeUnit.MILLISECONDS);
 
     }
 

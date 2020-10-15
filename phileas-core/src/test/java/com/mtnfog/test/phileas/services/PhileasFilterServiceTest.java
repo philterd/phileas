@@ -73,7 +73,7 @@ public class PhileasFilterServiceTest {
 
         final PhileasConfiguration phileasConfiguration = ConfigFactory.create(PhileasConfiguration.class, properties);
 
-        PhileasFilterService service = new PhileasFilterService(phileasConfiguration);
+        final PhileasFilterService service = new PhileasFilterService(phileasConfiguration);
         final FilterResponse response = service.filter("default", "context", "documentid", "George Washington was president and his ssn was 123-45-6789 and he lived at 90210.", MimeType.TEXT_PLAIN);
 
         LOGGER.info(response.getFilteredText());
@@ -306,7 +306,7 @@ public class PhileasFilterServiceTest {
 
         final PhileasConfiguration phileasConfiguration = ConfigFactory.create(PhileasConfiguration.class, properties);
 
-        PhileasFilterService service = new PhileasFilterService(phileasConfiguration);
+        final PhileasFilterService service = new PhileasFilterService(phileasConfiguration);
         final FilterResponse response = service.filter("default", "context", null, "his name was JEFF.", MimeType.TEXT_PLAIN);
 
         LOGGER.info("Generated document ID: " + response.getDocumentId());
@@ -337,7 +337,7 @@ public class PhileasFilterServiceTest {
 
         final PhileasConfiguration phileasConfiguration = ConfigFactory.create(PhileasConfiguration.class, properties);
 
-        PhileasFilterService service = new PhileasFilterService(phileasConfiguration);
+        final PhileasFilterService service = new PhileasFilterService(phileasConfiguration);
         final FilterResponse response = service.filter("justcreditcard", "context", "documentid", "My email is test@something.com", MimeType.TEXT_PLAIN);
 
         LOGGER.info(response.getFilteredText());
@@ -362,7 +362,7 @@ public class PhileasFilterServiceTest {
 
         final PhileasConfiguration phileasConfiguration = ConfigFactory.create(PhileasConfiguration.class, properties);
 
-        PhileasFilterService service = new PhileasFilterService(phileasConfiguration);
+        final PhileasFilterService service = new PhileasFilterService(phileasConfiguration);
         final FilterResponse response = service.filter("justcreditcard", "context", "documentid", "My cc is 4121742025464465", MimeType.TEXT_PLAIN);
 
         LOGGER.info(response.getFilteredText());
@@ -387,7 +387,7 @@ public class PhileasFilterServiceTest {
 
         final PhileasConfiguration phileasConfiguration = ConfigFactory.create(PhileasConfiguration.class, properties);
 
-        PhileasFilterService service = new PhileasFilterService(phileasConfiguration);
+        final PhileasFilterService service = new PhileasFilterService(phileasConfiguration);
         final FilterResponse response = service.filter("justcreditcard", "context", "documentid", "My cc is 4121742025464400", MimeType.TEXT_PLAIN);
 
         LOGGER.info(response.getFilteredText());
@@ -411,7 +411,7 @@ public class PhileasFilterServiceTest {
 
         final PhileasConfiguration phileasConfiguration = ConfigFactory.create(PhileasConfiguration.class, properties);
 
-        PhileasFilterService service = new PhileasFilterService(phileasConfiguration);
+        final PhileasFilterService service = new PhileasFilterService(phileasConfiguration);
         final FilterResponse response = service.filter("default", "context", "documentid", "George Washington was president and his ssn was 123-45-6789 and he lived at 90210.", MimeType.TEXT_PLAIN);
 
         LOGGER.info(response.getFilteredText());

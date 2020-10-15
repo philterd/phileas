@@ -11,6 +11,7 @@ import com.mtnfog.phileas.model.services.*;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
@@ -42,7 +43,12 @@ public class UnstructuredDocumentProcessor implements DocumentProcessor {
         // Execute each filter.
         for(final Filter filter : filters) {
 
+            final long startTimeMs = System.currentTimeMillis();
             final FilterResult filterResult = filter.filter(filterProfile, context, documentId, piece, input);
+            final long elapsedTimeMs = System.currentTimeMillis() - startTimeMs;
+
+            metricsService.logFilterTime(filter.getFilterType(), elapsedTimeMs);
+
             spans.addAll(filterResult.getSpans());
 
         }
