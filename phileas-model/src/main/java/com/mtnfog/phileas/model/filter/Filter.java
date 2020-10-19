@@ -102,7 +102,6 @@ public abstract class Filter {
         this.strategies = strategies;
         this.anonymizationService = anonymizationService;
         this.alertService = alertService;
-        this.ignored = ignored;
         this.ignoredPatterns = ignoredPatterns;
         this.crypto = crypto;
         this.windowSize = windowSize;
@@ -113,7 +112,7 @@ public abstract class Filter {
             if(file.exists()) {
                 try {
                     final List<String> words = FileUtils.readLines(file, Charset.defaultCharset());
-                    ignored.addAll(words.stream().map(String::toLowerCase).collect(Collectors.toSet()));
+                    ignored.addAll(words);
                 } catch (IOException ex) {
                     LOGGER.error("Unable to process file of ignored terms: {}", fileName, ex);
                 }
@@ -123,7 +122,7 @@ public abstract class Filter {
         }
 
         // PHL-151: Lowercase all terms in the ignore list to not be case-sensitive.
-        ignored.stream().map(String::toLowerCase).collect(Collectors.toSet());
+        this.ignored = ignored.stream().map(String::toLowerCase).collect(Collectors.toSet());
 
     }
 
