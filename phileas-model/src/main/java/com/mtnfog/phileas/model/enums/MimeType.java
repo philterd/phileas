@@ -11,6 +11,11 @@ public enum MimeType {
     TEXT_PLAIN("text/plain"),
 
     /**
+     * text/html
+     */
+    TEXT_HTML("text/html"),
+
+    /**
      * application/fhir+json
      */
     APPLICATION_FHIRJSON("application/fhir+json");

@@ -44,6 +44,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jsoup.Jsoup;
+import org.jsoup.safety.Whitelist;
 
 import java.io.File;
 import java.io.IOException;
@@ -155,15 +157,30 @@ public class PhileasFilterService implements FilterService {
 
         final List<String> types = new LinkedList<>();
 
+        final List<Filter> filters = getFiltersForFilterProfile(filterProfile);
+
         if(mimeType == MimeType.TEXT_PLAIN) {
 
-            final List<Filter> filters = getFiltersForFilterProfile(filterProfile);
-
-            for(final Filter filter : filters) {
+            for (final Filter filter : filters) {
 
                 final int occurrences = filter.getOccurrences(filterProfile, input);
 
-                if(occurrences > 0) {
+                if (occurrences > 0) {
+                    types.add(filter.getFilterType().getType());
+                }
+
+            }
+
+        } if(mimeType == MimeType.TEXT_HTML) {
+
+            // Remove the HTML tags.
+            final String plain = Jsoup.clean(input, Whitelist.none());
+
+            for (final Filter filter : filters) {
+
+                final int occurrences = filter.getOccurrences(filterProfile, plain);
+
+                if (occurrences > 0) {
                     types.add(filter.getFilterType().getType());
                 }
 
