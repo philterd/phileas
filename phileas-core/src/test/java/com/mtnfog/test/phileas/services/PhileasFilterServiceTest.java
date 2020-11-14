@@ -211,6 +211,40 @@ public class PhileasFilterServiceTest {
     }
 
     @Test
+    public void endToEndUsingCustomDictionary() throws Exception {
+
+        final CustomDictionary customDictionary = new CustomDictionary();
+        customDictionary.setCustomDictionaryFilterStrategies(Arrays.asList(new CustomDictionaryFilterStrategy()));
+        customDictionary.setTerms(Arrays.asList("george", "samuel"));
+        customDictionary.setFuzzy(false);
+
+        final FilterProfile filterProfile = new FilterProfile();
+        filterProfile.setName("custom-dictionary");
+        filterProfile.getIdentifiers().setCustomDictionaries(Arrays.asList(customDictionary));
+
+        final Path temp = Files.createTempDirectory("philter");
+        final File file = Paths.get(temp.toFile().getAbsolutePath(), "default.json").toFile();
+        FileUtils.writeStringToFile(file, gson.toJson(filterProfile), Charset.defaultCharset());
+        LOGGER.info("Filter profile written to {}", file.getAbsolutePath());
+
+        final Properties properties = new Properties();
+        properties.setProperty("indexes.directory", INDEXES_DIRECTORY);
+        properties.setProperty("store.enabled", "false");
+        properties.setProperty("filter.profiles.directory", temp.toFile().getAbsolutePath());
+
+        final PhileasConfiguration phileasConfiguration = ConfigFactory.create(PhileasConfiguration.class, properties);
+
+        final PhileasFilterService service = new PhileasFilterService(phileasConfiguration);
+        final FilterResponse response = service.filter("default", "context", "documentid", "his name was samuel and george.", MimeType.TEXT_PLAIN);
+
+        LOGGER.info(response.getFilteredText());
+
+        Assertions.assertEquals("his name was {{{REDACTED-custom-dictionary}}} and {{{REDACTED-custom-dictionary}}}.", response.getFilteredText());
+        Assertions.assertEquals("documentid", response.getDocumentId());
+
+    }
+
+    @Test
     public void endToEndUsingCustomDictionaryFileLuceneFilter() throws Exception {
 
         final Path temp = Files.createTempDirectory("philter");

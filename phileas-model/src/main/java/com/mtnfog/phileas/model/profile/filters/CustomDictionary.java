@@ -5,6 +5,7 @@ import com.google.gson.annotations.SerializedName;
 import com.mtnfog.phileas.model.enums.SensitivityLevel;
 import com.mtnfog.phileas.model.profile.filters.strategies.custom.CustomDictionaryFilterStrategy;
 
+import java.util.Collections;
 import java.util.List;
 
 public class CustomDictionary extends AbstractFilter {
@@ -15,11 +16,11 @@ public class CustomDictionary extends AbstractFilter {
 
     @SerializedName("terms")
     @Expose
-    private List<String> terms;
+    private List<String> terms = Collections.emptyList();
 
     @SerializedName("files")
     @Expose
-    private List<String> files;
+    private List<String> files = Collections.emptyList();
 
     @SerializedName("fuzzy")
     @Expose
