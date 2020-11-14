@@ -210,8 +210,10 @@ public class PhileasFilterService implements FilterService {
 
         // PHL-145: Accept long text or throw an exception?
         if(!filterProfile.getConfig().getSplitting().isEnabled()) {
-            if(input.length() >= filterProfile.getConfig().getSplitting().getThreshold()) {
-                throw new PayloadTooLargeException("The request body was too large. Either reduce the size or enable text splitting.");
+            if(filterProfile.getConfig().getSplitting().getThreshold() != -1) {
+                if (input.length() >= filterProfile.getConfig().getSplitting().getThreshold()) {
+                    throw new PayloadTooLargeException("The request body was too large. Either reduce the size or enable text splitting.");
+                }
             }
         }
 
