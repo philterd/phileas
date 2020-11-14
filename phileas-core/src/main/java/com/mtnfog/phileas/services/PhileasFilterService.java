@@ -467,8 +467,10 @@ public class PhileasFilterService implements FilterService {
                     }
 
                     // Next, read terms from files, if given.
-                    for(final String file : customDictionary.getFiles()) {
-                        terms.addAll(FileUtils.readLines(new File(file), Charset.defaultCharset()));
+                    if(CollectionUtils.isNotEmpty(customDictionary.getFiles())) {
+                        for (final String file : customDictionary.getFiles()) {
+                            terms.addAll(FileUtils.readLines(new File(file), Charset.defaultCharset()));
+                        }
                     }
 
                     if(customDictionary.isFuzzy()) {
@@ -497,13 +499,19 @@ public class PhileasFilterService implements FilterService {
 
                         LOGGER.info("Custom dictionary contains {} terms.", terms.size());
 
-                        // Use a bloomfilter.
-                        final DictionaryFilter dictionaryFilter = new BloomFilterDictionaryFilter(FilterType.CUSTOM_DICTIONARY,
-                                customDictionary.getCustomDictionaryFilterStrategies(), terms, customDictionary.getClassification(),
-                                bloomFilterFpp, anonymizationService, alertService,
-                                customDictionary.getIgnored(), customDictionary.getIgnoredFiles(), customDictionary.getIgnoredPatterns(), filterProfile.getCrypto(), windowSize);
+                        // Only enable the filter if there is at least one term.
+                        // TODO: Should a bloom filter be used for small numbers of terms?
+                        if(terms.size() > 0) {
 
-                        enabledFilters.add(dictionaryFilter);
+                            // Use a bloomfilter.
+                            final DictionaryFilter dictionaryFilter = new BloomFilterDictionaryFilter(FilterType.CUSTOM_DICTIONARY,
+                                    customDictionary.getCustomDictionaryFilterStrategies(), terms, customDictionary.getClassification(),
+                                    bloomFilterFpp, anonymizationService, alertService,
+                                    customDictionary.getIgnored(), customDictionary.getIgnoredFiles(), customDictionary.getIgnoredPatterns(), filterProfile.getCrypto(), windowSize);
+
+                            enabledFilters.add(dictionaryFilter);
+
+                        }
 
                     }
 
