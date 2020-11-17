@@ -260,10 +260,10 @@ public class PhileasFilterService implements FilterService {
 
             }
 
-        } else if(mimeType == MimeType.TEXT_HTML) {
+        /*} else if(mimeType == MimeType.TEXT_HTML) {
 
             // Remove the HTML tags.
-            final String plain = Jsoup.clean(input, Whitelist.none());
+            final String plain = Jsoup.clean(input, Whitelist.none());*/
 
 
 
