@@ -260,6 +260,13 @@ public class PhileasFilterService implements FilterService {
 
             }
 
+        } else if(mimeType == MimeType.TEXT_HTML) {
+
+            // Remove the HTML tags.
+            final String plain = Jsoup.clean(input, Whitelist.none());
+
+
+
         //} else if(mimeType == MimeType.APPLICATION_FHIRJSON) {
         //    filterResponse = fhirDocumentProcessor.process(filterProfile, filters, postFilters, context, documentId, input);
 
