@@ -211,6 +211,31 @@ public class PhileasFilterServiceTest {
     }
 
     @Test
+    public void endToEnd7() throws Exception {
+
+        final Path temp = Files.createTempDirectory("philter");
+        final File file = Paths.get(temp.toFile().getAbsolutePath(), "default.json").toFile();
+        LOGGER.info("Writing profile to {}", file.getAbsolutePath());
+        FileUtils.writeStringToFile(file, gson.toJson(getFilterProfile("default")), Charset.defaultCharset());
+
+        Properties properties = new Properties();
+        properties.setProperty("indexes.directory", INDEXES_DIRECTORY);
+        properties.setProperty("store.enabled", "false");
+        properties.setProperty("filter.profiles.directory", temp.toFile().getAbsolutePath());
+
+        final PhileasConfiguration phileasConfiguration = ConfigFactory.create(PhileasConfiguration.class, properties);
+
+        PhileasFilterService service = new PhileasFilterService(phileasConfiguration);
+        final FilterResponse response = service.filter("default", "context", "documentid", "he was seen on 10-19-2020.", MimeType.TEXT_PLAIN);
+
+        LOGGER.info(response.getFilteredText());
+
+        Assertions.assertEquals("he was seen on 12-20-2023.", response.getFilteredText());
+        Assertions.assertEquals("documentid", response.getDocumentId());
+
+    }
+
+    @Test
     public void endToEndUsingCustomDictionary() throws Exception {
 
         final CustomDictionary customDictionary = new CustomDictionary();
@@ -580,6 +605,10 @@ public class PhileasFilterServiceTest {
         creditCard.setCreditCardFilterStrategies(Arrays.asList(creditCardFilterStrategy));
 
         DateFilterStrategy dateFilterStrategy = new DateFilterStrategy();
+        dateFilterStrategy.setStrategy(AbstractFilterStrategy.SHIFT);
+        dateFilterStrategy.setShiftYears(3);
+        dateFilterStrategy.setShiftMonths(2);
+        dateFilterStrategy.setShiftDays(1);
 
         Date date = new Date();
         date.setDateFilterStrategies(Arrays.asList(dateFilterStrategy));
