@@ -104,7 +104,7 @@ public class ZipCodeFilterStrategyTest extends AbstractFilterStrategyTest {
 
         final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
 
-        final Replacement replacement = strategy.getReplacement("name", "context", "docid", "90210", new Crypto(), anonymizationService);
+        final Replacement replacement = strategy.getReplacement("name", "context", "docid", "90210", new Crypto(), anonymizationService, null);
 
         Assertions.assertEquals("whoa", replacement.getReplacement());
 
@@ -119,7 +119,7 @@ public class ZipCodeFilterStrategyTest extends AbstractFilterStrategyTest {
 
         AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
 
-        final Replacement replacement = strategy.getReplacement("name", "context", "documentid", "90210", new Crypto(), anonymizationService);
+        final Replacement replacement = strategy.getReplacement("name", "context", "documentid", "90210", new Crypto(), anonymizationService, null);
 
         LOGGER.info(replacement);
 
@@ -136,7 +136,7 @@ public class ZipCodeFilterStrategyTest extends AbstractFilterStrategyTest {
 
         AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
 
-        final Replacement replacement = strategy.getReplacement("name", "context", "documentid", "90210-0110", new Crypto(), anonymizationService);
+        final Replacement replacement = strategy.getReplacement("name", "context", "documentid", "90210-0110", new Crypto(), anonymizationService, null);
 
         LOGGER.info(replacement);
 
@@ -153,7 +153,7 @@ public class ZipCodeFilterStrategyTest extends AbstractFilterStrategyTest {
 
         AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
 
-        final Replacement replacement = strategy.getReplacement("name", "context", "documentid", "90210-0110", new Crypto(), anonymizationService);
+        final Replacement replacement = strategy.getReplacement("name", "context", "documentid", "90210-0110", new Crypto(), anonymizationService, null);
 
         LOGGER.info(replacement);
 
@@ -169,7 +169,7 @@ public class ZipCodeFilterStrategyTest extends AbstractFilterStrategyTest {
 
         AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
 
-        final Replacement replacement = strategy.getReplacement("name", "context", "documentid", "90210-0110", new Crypto(), anonymizationService);
+        final Replacement replacement = strategy.getReplacement("name", "context", "documentid", "90210-0110", new Crypto(), anonymizationService, null);
 
         LOGGER.info(replacement);
 

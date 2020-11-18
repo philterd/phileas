@@ -1,6 +1,7 @@
 package com.mtnfog.phileas.model.filter;
 
 import com.mtnfog.phileas.model.enums.FilterType;
+import com.mtnfog.phileas.model.objects.FilterPattern;
 import com.mtnfog.phileas.model.objects.FilterResult;
 import com.mtnfog.phileas.model.objects.Replacement;
 import com.mtnfog.phileas.model.objects.Span;
@@ -193,7 +194,7 @@ public abstract class Filter {
      * @param classification The classification of the item.
      * @return The replacement string.
      */
-    public Replacement getReplacement(String filterProfile, String context, String documentId, String token, double confidence, String classification) throws Exception {
+    public Replacement getReplacement(String filterProfile, String context, String documentId, String token, double confidence, String classification, FilterPattern filterPattern) throws Exception {
 
         if(strategies != null) {
 
@@ -222,14 +223,14 @@ public abstract class Filter {
                         }
 
                         // Break early since we met the strategy's condition.
-                        return strategy.getReplacement(classification, context, documentId, token, crypto, anonymizationService);
+                        return strategy.getReplacement(classification, context, documentId, token, crypto, anonymizationService, filterPattern);
 
                     }
 
                 } else {
 
                     // Break early since there is no condition.
-                    return strategy.getReplacement(classification, context, documentId, token, crypto, anonymizationService);
+                    return strategy.getReplacement(classification, context, documentId, token, crypto, anonymizationService, filterPattern);
 
                 }
 

@@ -54,7 +54,7 @@ public class PhoneNumberRulesFilter extends RulesFilter {
                 final double confidence = 1.0;
                 final String text = match.rawString();
                 final String classification = "";
-                final Replacement replacement = getReplacement(filterProfile.getName(), context, documentId, text, confidence, classification);
+                final Replacement replacement = getReplacement(filterProfile.getName(), context, documentId, text, confidence, classification, null);
                 final boolean isIgnored = ignored.contains(text);
 
                 final String[] window = getWindow(input, match.start(), match.end());

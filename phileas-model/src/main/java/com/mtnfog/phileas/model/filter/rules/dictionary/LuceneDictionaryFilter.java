@@ -2,7 +2,6 @@ package com.mtnfog.phileas.model.filter.rules.dictionary;
 
 import com.mtnfog.phileas.model.enums.FilterType;
 import com.mtnfog.phileas.model.enums.SensitivityLevel;
-import com.mtnfog.phileas.model.objects.Candidate;
 import com.mtnfog.phileas.model.objects.FilterResult;
 import com.mtnfog.phileas.model.objects.Replacement;
 import com.mtnfog.phileas.model.objects.Span;
@@ -18,7 +17,6 @@ import org.apache.commons.text.similarity.LevenshteinDistance;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.lucene.analysis.Analyzer;
-import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.en.EnglishAnalyzer;
 import org.apache.lucene.analysis.shingle.ShingleFilter;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
@@ -34,7 +32,6 @@ import org.apache.lucene.store.NoLockFactory;
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.Serializable;
-import java.io.StringReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -267,7 +264,7 @@ public class LuceneDictionaryFilter extends DictionaryFilter implements Serializ
                                 final String classification = "";
 
                                 // Get the replacement token or the original token if no filter strategy conditions are met.
-                                final Replacement replacement = getReplacement(filterProfile.getName(), context, documentId, token, confidence, classification);
+                                final Replacement replacement = getReplacement(filterProfile.getName(), context, documentId, token, confidence, classification, null);
 
                                 // Add the span to the list.
                                 spans.add(Span.make(characterStart, characterEnd, getFilterType(), context, documentId, confidence, token, replacement.getReplacement(), replacement.getSalt(), ignored, window));

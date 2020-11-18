@@ -156,7 +156,7 @@ public class PyTorchFilter extends NerFilter {
     private Span createSpan(String filterProfile, String input, String context, String documentId, String text,
                             String classification, int start, int end, double confidence) throws Exception {
 
-        final Replacement replacement = getReplacement(filterProfile, context, documentId, text, confidence, classification);
+        final Replacement replacement = getReplacement(filterProfile, context, documentId, text, confidence, classification, null);
 
         if(StringUtils.equals(replacement.getReplacement(), text)) {
 

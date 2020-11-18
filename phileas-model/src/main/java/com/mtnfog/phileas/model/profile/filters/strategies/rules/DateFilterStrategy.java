@@ -5,6 +5,7 @@ import com.google.gson.annotations.SerializedName;
 import com.mtnfog.phileas.model.conditions.ParsedCondition;
 import com.mtnfog.phileas.model.conditions.ParserListener;
 import com.mtnfog.phileas.model.enums.FilterType;
+import com.mtnfog.phileas.model.objects.FilterPattern;
 import com.mtnfog.phileas.model.objects.Replacement;
 import com.mtnfog.phileas.model.profile.Crypto;
 import com.mtnfog.phileas.model.profile.filters.strategies.AbstractFilterStrategy;
@@ -113,7 +114,7 @@ public class DateFilterStrategy extends AbstractFilterStrategy {
     }
 
     @Override
-    public Replacement getReplacement(String label, String context, String documentId, String token, Crypto crypto, AnonymizationService anonymizationService) throws Exception {
+    public Replacement getReplacement(String label, String context, String documentId, String token, Crypto crypto, AnonymizationService anonymizationService, FilterPattern filterPattern) throws Exception {
 
         String replacement = null;
         String salt = "";
@@ -151,7 +152,7 @@ public class DateFilterStrategy extends AbstractFilterStrategy {
 
         } else if(StringUtils.equalsIgnoreCase(strategy, SHIFT)) {
 
-            final DateTimeFormatter dtf = DateTimeFormatter.ofPattern("uuuu-MM-dd", Locale.US).withResolverStyle(ResolverStyle.STRICT);
+            final DateTimeFormatter dtf = DateTimeFormatter.ofPattern(filterPattern.getFormat(), Locale.US).withResolverStyle(ResolverStyle.STRICT);
             final LocalDateTime parsedDate = LocalDate.parse(token, dtf).atStartOfDay();
 
             // Shift the date.

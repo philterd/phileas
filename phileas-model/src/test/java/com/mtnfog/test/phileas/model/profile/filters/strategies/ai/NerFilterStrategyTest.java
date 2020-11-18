@@ -27,7 +27,7 @@ public class NerFilterStrategyTest {
         strategy.setStrategy(AbstractFilterStrategy.STATIC_REPLACE);
         strategy.setStaticReplacement("static-value");
 
-        final Replacement replacement = strategy.getReplacement("name", "context", "docId", "token", new Crypto(), anonymizationService);
+        final Replacement replacement = strategy.getReplacement("name", "context", "docId", "token", new Crypto(), anonymizationService, null);
 
         Assertions.assertEquals("static-value", replacement.getReplacement());
 
@@ -42,7 +42,7 @@ public class NerFilterStrategyTest {
         strategy.setStrategy(AbstractFilterStrategy.REDACT);
         strategy.setRedactionFormat("REDACTION-%t");
 
-        final Replacement replacement = strategy.getReplacement("name", "context", "docId", "token", new Crypto(), anonymizationService);
+        final Replacement replacement = strategy.getReplacement("name", "context", "docId", "token", new Crypto(), anonymizationService, null);
 
         Assertions.assertEquals("REDACTION-entity", replacement.getReplacement());
 
@@ -60,7 +60,7 @@ public class NerFilterStrategyTest {
         final AbstractFilterStrategy strategy = getFilterStrategy();
         strategy.setStrategy(AbstractFilterStrategy.RANDOM_REPLACE);
 
-        final Replacement replacement = strategy.getReplacement("name", "context", "docId", "token", new Crypto(), anonymizationService);
+        final Replacement replacement = strategy.getReplacement("name", "context", "docId", "token", new Crypto(), anonymizationService, null);
 
         Assertions.assertNotEquals("random", replacement.getReplacement());
 
@@ -78,7 +78,7 @@ public class NerFilterStrategyTest {
         final AbstractFilterStrategy strategy = getFilterStrategy();
         strategy.setStrategy("something-wrong");
 
-        final Replacement replacement = strategy.getReplacement("name", "context", "docId", "token", new Crypto(), anonymizationService);
+        final Replacement replacement = strategy.getReplacement("name", "context", "docId", "token", new Crypto(), anonymizationService, null);
 
         Assertions.assertEquals("{{{REDACTED-entity}}}", replacement.getReplacement());
 
@@ -96,7 +96,7 @@ public class NerFilterStrategyTest {
         strategy.setStrategy(AbstractFilterStrategy.REDACT);
         strategy.setRedactionFormat("<ENTITY:%t>%v</ENTITY>");
 
-        final Replacement replacement = strategy.getReplacement("name", "context", "docId", "token", new Crypto(), anonymizationService);
+        final Replacement replacement = strategy.getReplacement("name", "context", "docId", "token", new Crypto(), anonymizationService, null);
 
         Assertions.assertEquals("<ENTITY:entity>token</ENTITY>", replacement.getReplacement());
 
