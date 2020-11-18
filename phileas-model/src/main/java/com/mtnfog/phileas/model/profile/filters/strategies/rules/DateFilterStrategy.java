@@ -1,5 +1,7 @@
 package com.mtnfog.phileas.model.profile.filters.strategies.rules;
 
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 import com.mtnfog.phileas.model.conditions.ParsedCondition;
 import com.mtnfog.phileas.model.conditions.ParserListener;
 import com.mtnfog.phileas.model.enums.FilterType;
@@ -14,13 +16,30 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.ResolverStyle;
 import java.util.List;
+import java.util.Locale;
 
 public class DateFilterStrategy extends AbstractFilterStrategy {
 
     private static final Logger LOGGER = LogManager.getLogger(CreditCardFilterStrategy.class);
 
     private static FilterType filterType = FilterType.DATE;
+
+    @SerializedName("shiftDays")
+    @Expose
+    private Integer shiftDays = 0;
+
+    @SerializedName("shiftMonths")
+    @Expose
+    private Integer shiftMonths = 0;
+
+    @SerializedName("shiftYears")
+    @Expose
+    private Integer shiftYears = 0;
 
     @Override
     public FilterType getFilterType() {
@@ -124,11 +143,21 @@ public class DateFilterStrategy extends AbstractFilterStrategy {
 
         } else if(StringUtils.equalsIgnoreCase(strategy, HASH_SHA256_REPLACE)) {
 
-            if(isSalt()) {
+            if (isSalt()) {
                 salt = RandomStringUtils.randomAlphanumeric(16);
             }
 
             replacement = DigestUtils.sha256Hex(token + salt);
+
+        } else if(StringUtils.equalsIgnoreCase(strategy, SHIFT)) {
+
+            final DateTimeFormatter dtf = DateTimeFormatter.ofPattern("uuuu-MM-dd", Locale.US).withResolverStyle(ResolverStyle.STRICT);
+            final LocalDateTime parsedDate = LocalDate.parse(token, dtf).atStartOfDay();
+
+            // Shift the date.
+            final LocalDateTime shiftedDate = parsedDate.plusDays(shiftDays).plusMonths(shiftMonths).plusYears(shiftYears);
+
+            replacement = shiftedDate.format(dtf);
 
         } else {
 
@@ -139,6 +168,30 @@ public class DateFilterStrategy extends AbstractFilterStrategy {
 
         return new Replacement(replacement, salt);
 
+    }
+
+    public Integer getShiftDays() {
+        return shiftDays;
+    }
+
+    public void setShiftDays(Integer shiftDays) {
+        this.shiftDays = shiftDays;
+    }
+
+    public Integer getShiftMonths() {
+        return shiftMonths;
+    }
+
+    public void setShiftMonths(Integer shiftMonths) {
+        this.shiftMonths = shiftMonths;
+    }
+
+    public Integer getShiftYears() {
+        return shiftYears;
+    }
+
+    public void setShiftYears(Integer shiftYears) {
+        this.shiftYears = shiftYears;
     }
 
 }
