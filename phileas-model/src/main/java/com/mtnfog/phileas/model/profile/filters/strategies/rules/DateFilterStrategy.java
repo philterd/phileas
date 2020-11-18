@@ -19,11 +19,13 @@ import org.apache.logging.log4j.Logger;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.Period;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.time.format.ResolverStyle;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 
 public class DateFilterStrategy extends AbstractFilterStrategy {
 
@@ -162,6 +164,52 @@ public class DateFilterStrategy extends AbstractFilterStrategy {
                 final LocalDateTime shiftedDate = parsedDate.plusDays(shiftDays).plusMonths(shiftMonths).plusYears(shiftYears);
 
                 replacement = shiftedDate.format(dtf);
+
+            } catch (DateTimeParseException ex) {
+
+                // This will be thrown if the input date is not a valid date.
+                // Default back to redaction.
+                replacement = getRedactedToken(token, label, filterType);
+
+            }
+
+        } else if(StringUtils.equalsIgnoreCase(strategy, RELATIVE)) {
+
+            try {
+
+                final DateTimeFormatter dtf = DateTimeFormatter.ofPattern(filterPattern.getFormat(), Locale.US).withResolverStyle(ResolverStyle.STRICT);
+                final LocalDateTime parsedDate = LocalDate.parse(token, dtf).atStartOfDay();
+                final LocalDateTime currentDate = LocalDateTime.now();
+
+                // Convert the date to a spelled out date.
+
+                final Period period = Period.between(parsedDate.toLocalDate(), currentDate.toLocalDate());
+
+                // Only convert past dates to relative.
+                if(period.getDays() > 0) {
+
+                    int months = period.getMonths();
+
+                    if (period.getDays() >= 15) {
+                        months = months + 1;
+                    }
+
+                    final int years = period.getYears();
+
+                    String relative = years + " years " + months + " months ago";
+
+                    if (years == 0) {
+                        relative = months + " months ago";
+                    }
+
+                    replacement = relative;
+
+                } else {
+
+                    // This is a future date so don't modify it.
+                    replacement = token;
+
+                }
 
             } catch (DateTimeParseException ex) {
 

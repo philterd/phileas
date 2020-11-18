@@ -121,4 +121,49 @@ public class DateFilterStrategyTest extends AbstractFilterStrategyTest {
 
     }
 
+    @Test
+    public void relativeReplacement1() throws Exception {
+
+        final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
+
+        final AbstractFilterStrategy strategy = getFilterStrategy();
+        strategy.setStrategy(AbstractFilterStrategy.RELATIVE);
+
+        final FilterPattern filterPattern = new FilterPattern.FilterPatternBuilder(Pattern.compile("\\b\\d{2}-\\d{2}-\\d{4}"), 0.75).withFormat("dd-MM-uuuu").build();
+        final Replacement replacement = strategy.getReplacement("name", "context", "docId", "05-09-2020", new Crypto(), anonymizationService, filterPattern);
+
+        Assertions.assertEquals("2 months ago", replacement.getReplacement());
+
+    }
+
+    @Test
+    public void relativeReplacement2() throws Exception {
+
+        final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
+
+        final AbstractFilterStrategy strategy = getFilterStrategy();
+        strategy.setStrategy(AbstractFilterStrategy.RELATIVE);
+
+        final FilterPattern filterPattern = new FilterPattern.FilterPatternBuilder(Pattern.compile("\\b\\d{2}-\\d{2}-\\d{4}"), 0.75).withFormat("dd-MM-uuuu").build();
+        final Replacement replacement = strategy.getReplacement("name", "context", "docId", "05-09-2018", new Crypto(), anonymizationService, filterPattern);
+
+        Assertions.assertEquals("2 years 2 months ago", replacement.getReplacement());
+
+    }
+
+    @Test
+    public void relativeReplacement3() throws Exception {
+
+        final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
+
+        final AbstractFilterStrategy strategy = getFilterStrategy();
+        strategy.setStrategy(AbstractFilterStrategy.RELATIVE);
+
+        final FilterPattern filterPattern = new FilterPattern.FilterPatternBuilder(Pattern.compile("\\b\\d{2}-\\d{2}-\\d{4}"), 0.75).withFormat("dd-MM-uuuu").build();
+        final Replacement replacement = strategy.getReplacement("name", "context", "docId", "05-09-2022", new Crypto(), anonymizationService, filterPattern);
+
+        Assertions.assertEquals("05-09-2022", replacement.getReplacement());
+
+    }
+
 }

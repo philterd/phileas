@@ -22,7 +22,10 @@ public abstract class AbstractFilterStrategy {
     public static final String STATIC_REPLACE = "STATIC_REPLACE";
     public static final String CRYPTO_REPLACE = "CRYPTO_REPLACE";
     public static final String HASH_SHA256_REPLACE = "HASH_SHA256_REPLACE";
+
+    // Date strategies
     public static final String SHIFT = "SHIFT";
+    public static final String RELATIVE = "RELATIVE";
 
     public static final String REPLACEMENT_SCOPE_DOCUMENT = "DOCUMENT";
     public static final String REPLACEMENT_SCOPE_CONTEXT = "CONTEXT";
