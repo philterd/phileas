@@ -20,6 +20,7 @@ import org.apache.logging.log4j.Logger;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.time.format.ResolverStyle;
 import java.util.List;
 import java.util.Locale;
@@ -152,13 +153,23 @@ public class DateFilterStrategy extends AbstractFilterStrategy {
 
         } else if(StringUtils.equalsIgnoreCase(strategy, SHIFT)) {
 
-            final DateTimeFormatter dtf = DateTimeFormatter.ofPattern(filterPattern.getFormat(), Locale.US).withResolverStyle(ResolverStyle.STRICT);
-            final LocalDateTime parsedDate = LocalDate.parse(token, dtf).atStartOfDay();
+            try {
 
-            // Shift the date.
-            final LocalDateTime shiftedDate = parsedDate.plusDays(shiftDays).plusMonths(shiftMonths).plusYears(shiftYears);
+                final DateTimeFormatter dtf = DateTimeFormatter.ofPattern(filterPattern.getFormat(), Locale.US).withResolverStyle(ResolverStyle.STRICT);
+                final LocalDateTime parsedDate = LocalDate.parse(token, dtf).atStartOfDay();
 
-            replacement = shiftedDate.format(dtf);
+                // Shift the date. Only valid dates can be shifted.
+                final LocalDateTime shiftedDate = parsedDate.plusDays(shiftDays).plusMonths(shiftMonths).plusYears(shiftYears);
+
+                replacement = shiftedDate.format(dtf);
+
+            } catch (DateTimeParseException ex) {
+
+                // This will be thrown if the input date is not a valid date.
+                // Default back to redaction.
+                replacement = getRedactedToken(token, label, filterType);
+
+            }
 
         } else {
 

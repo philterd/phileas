@@ -106,4 +106,19 @@ public class DateFilterStrategyTest extends AbstractFilterStrategyTest {
 
     }
 
+    @Test
+    public void shiftReplacementInvalidDate() throws Exception {
+
+        final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
+
+        final AbstractFilterStrategy strategy = getShiftedFilterStrategy(1, 1, 1);
+        strategy.setStrategy(AbstractFilterStrategy.SHIFT);
+
+        final FilterPattern filterPattern = new FilterPattern.FilterPatternBuilder(Pattern.compile("\\b\\d{2}-\\d{2}-\\d{4}"), 0.75).withFormat("dd-MM-uuuu").build();
+        final Replacement replacement = strategy.getReplacement("name", "context", "docId", "18-18-2020", new Crypto(), anonymizationService, filterPattern);
+
+        Assertions.assertEquals("{{{REDACTED-date}}}", replacement.getReplacement());
+
+    }
+
 }
