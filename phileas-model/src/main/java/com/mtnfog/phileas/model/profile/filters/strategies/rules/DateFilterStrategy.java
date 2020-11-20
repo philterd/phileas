@@ -182,34 +182,7 @@ public class DateFilterStrategy extends AbstractFilterStrategy {
                 final LocalDateTime currentDate = LocalDateTime.now();
 
                 // Convert the date to a spelled out date.
-
-                final Period period = Period.between(parsedDate.toLocalDate(), currentDate.toLocalDate());
-
-                // Only convert past dates to relative.
-                if(period.getDays() > 0) {
-
-                    int months = period.getMonths();
-
-                    if (period.getDays() >= 15) {
-                        months = months + 1;
-                    }
-
-                    final int years = period.getYears();
-
-                    String relative = years + " years " + months + " months ago";
-
-                    if (years == 0) {
-                        relative = months + " months ago";
-                    }
-
-                    replacement = relative;
-
-                } else {
-
-                    // This is a future date so don't modify it.
-                    replacement = token;
-
-                }
+                replacement = getReadableDate(parsedDate, currentDate, token);
 
             } catch (DateTimeParseException ex) {
 
@@ -227,6 +200,42 @@ public class DateFilterStrategy extends AbstractFilterStrategy {
         }
 
         return new Replacement(replacement, salt);
+
+    }
+
+    public String getReadableDate(LocalDateTime parsedDate, LocalDateTime currentDate, String token) {
+
+        final String replacement;
+
+        final Period period = Period.between(parsedDate.toLocalDate(), currentDate.toLocalDate());
+
+        // Only convert past dates to relative.
+        if(period.getDays() > 0) {
+
+            int months = period.getMonths();
+
+            if (period.getDays() >= 15) {
+                months = months + 1;
+            }
+
+            final int years = period.getYears();
+
+            String relative = years + " years " + months + " months ago";
+
+            if (years == 0) {
+                relative = months + " months ago";
+            }
+
+            replacement = relative;
+
+        } else {
+
+            // This is a future date so don't modify it.
+            replacement = token;
+
+        }
+
+        return replacement;
 
     }
 

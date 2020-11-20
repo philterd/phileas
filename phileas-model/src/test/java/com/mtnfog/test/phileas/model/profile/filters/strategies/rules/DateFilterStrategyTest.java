@@ -11,6 +11,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
+import java.time.LocalDateTime;
+import java.time.Period;
 import java.util.regex.Pattern;
 
 public class DateFilterStrategyTest extends AbstractFilterStrategyTest {
@@ -122,6 +124,32 @@ public class DateFilterStrategyTest extends AbstractFilterStrategyTest {
     }
 
     @Test
+    public void getReadableDate1() {
+
+        final LocalDateTime parsedDate = LocalDateTime.now().minusDays(3).minusMonths(2);
+        final LocalDateTime currentDate = LocalDateTime.now();
+
+        final DateFilterStrategy dateFilterStrategy = new DateFilterStrategy();
+        final String replacement = dateFilterStrategy.getReadableDate(parsedDate, currentDate, "token");
+
+        Assertions.assertEquals("2 months ago", replacement);
+
+    }
+
+    @Test
+    public void getReadableDate2() {
+
+        final LocalDateTime parsedDate = LocalDateTime.now().minusDays(3).minusMonths(2).minusYears(10);
+        final LocalDateTime currentDate = LocalDateTime.now();
+
+        final DateFilterStrategy dateFilterStrategy = new DateFilterStrategy();
+        final String replacement = dateFilterStrategy.getReadableDate(parsedDate, currentDate, "token");
+
+        Assertions.assertEquals("10 years 2 months ago", replacement);
+
+    }
+
+    @Test
     public void relativeReplacement1() throws Exception {
 
         final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
@@ -132,7 +160,7 @@ public class DateFilterStrategyTest extends AbstractFilterStrategyTest {
         final FilterPattern filterPattern = new FilterPattern.FilterPatternBuilder(Pattern.compile("\\b\\d{2}-\\d{2}-\\d{4}"), 0.75).withFormat("dd-MM-uuuu").build();
         final Replacement replacement = strategy.getReplacement("name", "context", "docId", "05-09-2020", new Crypto(), anonymizationService, filterPattern);
 
-        Assertions.assertEquals("2 months ago", replacement.getReplacement());
+        Assertions.assertTrue(replacement.getReplacement().contains(" months ago"));
 
     }
 
@@ -147,7 +175,7 @@ public class DateFilterStrategyTest extends AbstractFilterStrategyTest {
         final FilterPattern filterPattern = new FilterPattern.FilterPatternBuilder(Pattern.compile("\\b\\d{2}-\\d{2}-\\d{4}"), 0.75).withFormat("dd-MM-uuuu").build();
         final Replacement replacement = strategy.getReplacement("name", "context", "docId", "05-09-2018", new Crypto(), anonymizationService, filterPattern);
 
-        Assertions.assertEquals("2 years 2 months ago", replacement.getReplacement());
+        Assertions.assertTrue(replacement.getReplacement().contains(" months ago"));
 
     }
 
