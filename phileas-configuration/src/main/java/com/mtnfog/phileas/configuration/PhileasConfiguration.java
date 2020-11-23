@@ -50,7 +50,7 @@ public interface PhileasConfiguration extends Config {
 
     // Timeouts for connection to Philter NER.
 
-    @DefaultValue("30")
+    @DefaultValue("600")
     @Key("ner.timeout.sec")
     int nerTimeoutSec();
 
