@@ -208,4 +208,21 @@ public class AgeFilterTest extends AbstractFilterTest {
 
     }
 
+    @Test
+    public void filter10() throws Exception {
+
+        final List<AgeFilterStrategy> strategies = Arrays.asList(new AgeFilterStrategy());
+        AgeFilter filter = new AgeFilter(strategies, new AgeAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "Cari Morris is 75 yo female alert and oriented x’s3 with some mild memory loss.");
+
+        showSpans(filterResult.getSpans());
+
+        Assertions.assertEquals(1, filterResult.getSpans().size());
+        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 15, 21, FilterType.AGE));
+
+        LOGGER.info("Span text: " + filterResult.getSpans().get(0).getText());
+
+    }
+
 }
