@@ -23,7 +23,7 @@ public class AgeFilter extends RegexFilter {
     public AgeFilter(List<? extends AbstractFilterStrategy> strategies, AnonymizationService anonymizationService, AlertService alertService, Set<String> ignored, Set<String> ignoredFiles, List<IgnoredPattern> ignoredPatterns, Crypto crypto, int windowSize) {
         super(FilterType.AGE, strategies, anonymizationService, alertService, ignored, ignoredFiles, ignoredPatterns, crypto, windowSize);
 
-        final Pattern agePattern1 = Pattern.compile("\\b[0-9.]+[\\s]*(years|yrs)(\\s)*(old)?\\b", Pattern.CASE_INSENSITIVE);
+        final Pattern agePattern1 = Pattern.compile("\\b[0-9.]+[\\s]*(years|yrs|yr)(.?)(\\s)*(old)?\\b", Pattern.CASE_INSENSITIVE);
         final FilterPattern age1 = new FilterPattern.FilterPatternBuilder(agePattern1, 0.90).build();
 
         final Pattern agePattern2 = Pattern.compile("\\b(age)(d)?(\\s)*[0-9.]+\\b", Pattern.CASE_INSENSITIVE);
