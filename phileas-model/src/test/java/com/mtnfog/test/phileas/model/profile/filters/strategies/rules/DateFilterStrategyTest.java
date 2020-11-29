@@ -1,5 +1,6 @@
 package com.mtnfog.test.phileas.model.profile.filters.strategies.rules;
 
+import com.mtnfog.phileas.model.enums.FilterType;
 import com.mtnfog.phileas.model.objects.FilterPattern;
 import com.mtnfog.phileas.model.objects.Replacement;
 import com.mtnfog.phileas.model.profile.Crypto;
@@ -13,12 +14,13 @@ import org.mockito.Mockito;
 
 import java.time.LocalDateTime;
 import java.time.Period;
+import java.util.List;
 import java.util.regex.Pattern;
 
 public class DateFilterStrategyTest extends AbstractFilterStrategyTest {
 
     @Override
-    public AbstractFilterStrategy getFilterStrategy() {
+    public DateFilterStrategy getFilterStrategy() {
         return new DateFilterStrategy();
     }
 
@@ -109,6 +111,21 @@ public class DateFilterStrategyTest extends AbstractFilterStrategyTest {
     }
 
     @Test
+    public void shiftReplacement6() throws Exception {
+
+        final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
+
+        final AbstractFilterStrategy strategy = getShiftedFilterStrategy(1, 1, 1);
+        strategy.setStrategy(AbstractFilterStrategy.SHIFT);
+
+        final FilterPattern filterPattern = new FilterPattern.FilterPatternBuilder(Pattern.compile("\\b\\d{2}-\\d{2}-\\d{4}"), 0.75).withFormat("MMMM d uuuu").build();
+        final Replacement replacement = strategy.getReplacement("name", "context", "docId", "June 2 2021", new Crypto(), anonymizationService, filterPattern);
+
+        Assertions.assertEquals("July 3 2022", replacement.getReplacement());
+
+    }
+
+    @Test
     public void shiftReplacementInvalidDate() throws Exception {
 
         final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
@@ -130,7 +147,7 @@ public class DateFilterStrategyTest extends AbstractFilterStrategyTest {
         final LocalDateTime currentDate = LocalDateTime.now();
 
         final DateFilterStrategy dateFilterStrategy = new DateFilterStrategy();
-        final String replacement = dateFilterStrategy.getReadableDate(parsedDate, currentDate, "token");
+        final String replacement = dateFilterStrategy.getReadableDate(parsedDate, currentDate, "token", "date", FilterType.DATE);
 
         Assertions.assertEquals("2 months ago", replacement);
 
@@ -143,7 +160,7 @@ public class DateFilterStrategyTest extends AbstractFilterStrategyTest {
         final LocalDateTime currentDate = LocalDateTime.now();
 
         final DateFilterStrategy dateFilterStrategy = new DateFilterStrategy();
-        final String replacement = dateFilterStrategy.getReadableDate(parsedDate, currentDate, "token");
+        final String replacement = dateFilterStrategy.getReadableDate(parsedDate, currentDate, "token", "date", FilterType.DATE);
 
         Assertions.assertEquals("10 years 2 months ago", replacement);
 
@@ -184,13 +201,56 @@ public class DateFilterStrategyTest extends AbstractFilterStrategyTest {
 
         final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
 
+        final LocalDateTime parsedDate = LocalDateTime.now().plusYears(5).plusMonths(4);
+        final String date = parsedDate.getMonthValue() + "-" + parsedDate.getDayOfMonth() + "-" + parsedDate.getYear();
+
+        final DateFilterStrategy strategy = getFilterStrategy();
+        strategy.setStrategy(AbstractFilterStrategy.RELATIVE);
+        strategy.setFutureDates(false);
+
+        final FilterPattern filterPattern = new FilterPattern.FilterPatternBuilder(Pattern.compile("\\b\\d{2}-\\d{2}-\\d{4}"), 0.75).withFormat("M-dd-uuuu").build();
+        final Replacement replacement = strategy.getReplacement("name", "context", "docId", date, new Crypto(), anonymizationService, filterPattern);
+
+        // This is a future date and futures are disabled so expect redaction.
+        Assertions.assertEquals("{{{REDACTED-date}}}", replacement.getReplacement());
+
+    }
+
+    @Test
+    public void relativeReplacement4() throws Exception {
+
+        final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
+
+        final LocalDateTime parsedDate = LocalDateTime.now().plusYears(5).plusMonths(4);
+        final String date = parsedDate.getMonthValue() + "-" + parsedDate.getDayOfMonth() + "-" + parsedDate.getYear();
+
+        final DateFilterStrategy strategy = getFilterStrategy();
+        strategy.setStrategy(AbstractFilterStrategy.RELATIVE);
+        strategy.setFutureDates(true);
+
+        final FilterPattern filterPattern = new FilterPattern.FilterPatternBuilder(Pattern.compile("\\b\\d{2}-\\d{2}-\\d{4}"), 0.75).withFormat("M-dd-uuuu").build();
+        final Replacement replacement = strategy.getReplacement("name", "context", "docId", date, new Crypto(), anonymizationService, filterPattern);
+
+        // This is a future date but futures are enabled.
+        Assertions.assertEquals("in 5 years 4 months", replacement.getReplacement());
+
+    }
+
+    @Test
+    public void relativeReplacement5() throws Exception {
+
+        final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
+
+        final LocalDateTime parsedDate = LocalDateTime.now().minusDays(3).minusMonths(7).minusYears(5);
+        final String date = parsedDate.getMonthValue() + "-" + parsedDate.getDayOfMonth() + "-" + parsedDate.getYear();
+
         final AbstractFilterStrategy strategy = getFilterStrategy();
         strategy.setStrategy(AbstractFilterStrategy.RELATIVE);
 
-        final FilterPattern filterPattern = new FilterPattern.FilterPatternBuilder(Pattern.compile("\\b\\d{2}-\\d{2}-\\d{4}"), 0.75).withFormat("dd-MM-uuuu").build();
-        final Replacement replacement = strategy.getReplacement("name", "context", "docId", "05-09-2022", new Crypto(), anonymizationService, filterPattern);
+        final FilterPattern filterPattern = new FilterPattern.FilterPatternBuilder(Pattern.compile("\\b\\d{2}-\\d{2}-\\d{4}"), 0.75).withFormat("M-dd-uuuu").build();
+        final Replacement replacement = strategy.getReplacement("name", "context", "docId", date, new Crypto(), anonymizationService, filterPattern);
 
-        Assertions.assertEquals("05-09-2022", replacement.getReplacement());
+        Assertions.assertEquals("5 years 7 months ago", replacement.getReplacement());
 
     }
 

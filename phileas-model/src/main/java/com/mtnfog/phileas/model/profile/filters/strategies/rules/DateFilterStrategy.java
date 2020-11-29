@@ -45,6 +45,10 @@ public class DateFilterStrategy extends AbstractFilterStrategy {
     @Expose
     private Integer shiftYears = 0;
 
+    @SerializedName("future")
+    @Expose
+    private boolean futureDates = false;
+
     @Override
     public FilterType getFilterType() {
         return filterType;
@@ -155,6 +159,8 @@ public class DateFilterStrategy extends AbstractFilterStrategy {
 
         } else if(StringUtils.equalsIgnoreCase(strategy, SHIFT)) {
 
+            // Shift the date given some number of days, months, and/or years.
+
             try {
 
                 final DateTimeFormatter dtf = DateTimeFormatter.ofPattern(filterPattern.getFormat(), Locale.US).withResolverStyle(ResolverStyle.STRICT);
@@ -167,6 +173,8 @@ public class DateFilterStrategy extends AbstractFilterStrategy {
 
             } catch (DateTimeParseException ex) {
 
+                LOGGER.error("Unable to parse date with format " + filterPattern.getFormat() + ". Falling back to redaction.", ex);
+
                 // This will be thrown if the input date is not a valid date.
                 // Default back to redaction.
                 replacement = getRedactedToken(token, label, filterType);
@@ -175,6 +183,8 @@ public class DateFilterStrategy extends AbstractFilterStrategy {
 
         } else if(StringUtils.equalsIgnoreCase(strategy, RELATIVE)) {
 
+            // Make the date relative such as "3 months ago."
+
             try {
 
                 final DateTimeFormatter dtf = DateTimeFormatter.ofPattern(filterPattern.getFormat(), Locale.US).withResolverStyle(ResolverStyle.STRICT);
@@ -182,9 +192,11 @@ public class DateFilterStrategy extends AbstractFilterStrategy {
                 final LocalDateTime currentDate = LocalDateTime.now();
 
                 // Convert the date to a spelled out date.
-                replacement = getReadableDate(parsedDate, currentDate, token);
+                replacement = getReadableDate(parsedDate, currentDate, token, label, filterType);
 
             } catch (DateTimeParseException ex) {
+
+                LOGGER.error("Unable to parse date. Falling back to redaction.", ex);
 
                 // This will be thrown if the input date is not a valid date.
                 // Default back to redaction.
@@ -203,22 +215,22 @@ public class DateFilterStrategy extends AbstractFilterStrategy {
 
     }
 
-    public String getReadableDate(LocalDateTime parsedDate, LocalDateTime currentDate, String token) {
+    public String getReadableDate(LocalDateTime parsedDate, LocalDateTime currentDate, String token, String label, FilterType filterType) {
 
         final String replacement;
 
         final Period period = Period.between(parsedDate.toLocalDate(), currentDate.toLocalDate());
 
         // Only convert past dates to relative.
-        if(period.getDays() > 0) {
+        if(!period.isNegative()) {
 
-            int months = period.getMonths();
+            int months = Math.abs(period.getMonths());
 
             if (period.getDays() >= 15) {
                 months = months + 1;
             }
 
-            final int years = period.getYears();
+            final int years = Math.abs(period.getYears());
 
             String relative = years + " years " + months + " months ago";
 
@@ -230,8 +242,30 @@ public class DateFilterStrategy extends AbstractFilterStrategy {
 
         } else {
 
-            // This is a future date so don't modify it.
-            replacement = token;
+            if(futureDates) {
+
+                int months = Math.abs(period.getMonths());
+
+                if (period.getDays() >= 15) {
+                    months = months + 1;
+                }
+
+                final int years = Math.abs(period.getYears());
+
+                String relative = "in " + years + " years " + months + " months";
+
+                if (years == 0) {
+                    relative = "in " + months + " months";
+                }
+
+                replacement = relative;
+
+            } else {
+
+                // Ignore future dates so just redact them.
+                replacement = getRedactedToken(token, label, filterType);
+
+            }
 
         }
 
@@ -261,6 +295,14 @@ public class DateFilterStrategy extends AbstractFilterStrategy {
 
     public void setShiftYears(Integer shiftYears) {
         this.shiftYears = shiftYears;
+    }
+
+    public boolean getFutureDates() {
+        return futureDates;
+    }
+
+    public void setFutureDates(boolean futureDates) {
+        this.futureDates = futureDates;
     }
 
 }
