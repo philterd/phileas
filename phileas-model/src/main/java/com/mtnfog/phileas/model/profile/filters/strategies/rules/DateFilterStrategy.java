@@ -45,7 +45,7 @@ public class DateFilterStrategy extends AbstractFilterStrategy {
     @Expose
     private Integer shiftYears = 0;
 
-    @SerializedName("future")
+    @SerializedName("futureDates")
     @Expose
     private boolean futureDates = false;
 
