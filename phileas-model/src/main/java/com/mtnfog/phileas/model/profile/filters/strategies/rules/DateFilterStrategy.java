@@ -29,7 +29,7 @@ import java.util.concurrent.TimeUnit;
 
 public class DateFilterStrategy extends AbstractFilterStrategy {
 
-    private static final Logger LOGGER = LogManager.getLogger(CreditCardFilterStrategy.class);
+    private static final Logger LOGGER = LogManager.getLogger(DateFilterStrategy.class);
 
     private static FilterType filterType = FilterType.DATE;
 

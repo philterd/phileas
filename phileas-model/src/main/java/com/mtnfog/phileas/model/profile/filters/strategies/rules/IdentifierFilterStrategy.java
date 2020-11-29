@@ -19,7 +19,7 @@ import java.util.List;
 
 public class IdentifierFilterStrategy extends AbstractFilterStrategy {
 
-    private static final Logger LOGGER = LogManager.getLogger(ZipCodeFilterStrategy.class);
+    private static final Logger LOGGER = LogManager.getLogger(IdentifierFilterStrategy.class);
 
     private static FilterType filterType = FilterType.IDENTIFIER;
 
