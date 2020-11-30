@@ -5,20 +5,14 @@ import com.mtnfog.phileas.model.objects.Span;
 import com.mtnfog.phileas.model.services.Store;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.http.HttpHost;
-import org.apache.http.auth.AuthScope;
-import org.apache.http.auth.UsernamePasswordCredentials;
-import org.apache.http.client.CredentialsProvider;
-import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
-import org.elasticsearch.action.support.IndicesOptions;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestClient;
-import org.elasticsearch.client.RestClientBuilder;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.common.xcontent.XContentType;
 import org.elasticsearch.index.query.QueryBuilders;
@@ -38,9 +32,9 @@ public class ElasticsearchStore implements Store, Closeable {
 
     private static final Logger LOGGER = LogManager.getLogger(ElasticsearchStore.class);
 
-    private String indexName;
-    private RestHighLevelClient client;
-    private Gson gson;
+    private final String indexName;
+    private final RestHighLevelClient client;
+    private final Gson gson;
 
     public ElasticsearchStore(String indexName, String scheme, String host, int port) {
 
