@@ -403,4 +403,18 @@ public class DateFilterTest extends AbstractFilterTest {
 
     }
 
+    @Test
+    public void filterDate33() throws Exception {
+
+        final List<DateFilterStrategy> strategies = Arrays.asList(new DateFilterStrategy());
+        DateFilter filter = new DateFilter(strategies, new DateAnonymizationService(new LocalAnonymizationCacheService()), alertService, false, DateSpanValidator.getInstance(), Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "The good news is everywhere we go it is that way but this 09-2021 be on top of that.");
+        Assertions.assertEquals(1, filterResult.getSpans().size());
+        Assertions.assertEquals("09-2021", filterResult.getSpans().get(0).getText());
+
+        showSpans(filterResult.getSpans());
+
+    }
+
 }

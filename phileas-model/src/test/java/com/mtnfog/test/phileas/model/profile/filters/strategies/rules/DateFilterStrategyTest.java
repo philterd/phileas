@@ -12,9 +12,15 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Period;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
+import java.time.format.ResolverStyle;
+import java.time.temporal.ChronoField;
 import java.util.List;
+import java.util.Locale;
 import java.util.regex.Pattern;
 
 public class DateFilterStrategyTest extends AbstractFilterStrategyTest {
@@ -222,7 +228,8 @@ public class DateFilterStrategyTest extends AbstractFilterStrategyTest {
         final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
 
         final LocalDateTime parsedDate = LocalDateTime.now().plusYears(5).plusMonths(4);
-        final String date = parsedDate.getMonthValue() + "-" + parsedDate.getDayOfMonth() + "-" + parsedDate.getYear();
+        final DateTimeFormatter dtf = DateTimeFormatter.ofPattern("M-dd-uuuu");
+        final String date = parsedDate.format(dtf);
 
         final DateFilterStrategy strategy = getFilterStrategy();
         strategy.setStrategy(AbstractFilterStrategy.RELATIVE);
@@ -251,6 +258,26 @@ public class DateFilterStrategyTest extends AbstractFilterStrategyTest {
         final Replacement replacement = strategy.getReplacement("name", "context", "docId", date, new Crypto(), anonymizationService, filterPattern);
 
         Assertions.assertEquals("5 years 7 months ago", replacement.getReplacement());
+
+    }
+
+    @Test
+    public void format1() {
+
+        // TODO: Change this to execute the code in DateFilterStrategy under RELATIVE instead of here.
+
+        final FilterPattern filterPattern = new FilterPattern.FilterPatternBuilder(Pattern.compile("\\b\\d{1,2}" + "-" + "\\d{2,4}"), 75).withFormat("M-u".replaceAll("-", "-")).build();
+        final String token = "09-2021";
+
+        DateTimeFormatter dtf = new DateTimeFormatterBuilder()
+                .appendPattern(filterPattern.getFormat())
+                .parseDefaulting(ChronoField.DAY_OF_MONTH, 1)
+                .toFormatter();
+
+        // final DateTimeFormatter dtf = DateTimeFormatter.ofPattern(filterPattern.getFormat(), Locale.US).withResolverStyle(ResolverStyle.STRICT);
+        final LocalDateTime parsedDate = LocalDate.parse(token, dtf).atStartOfDay();
+
+        LOGGER.info(parsedDate.toString());
 
     }
 

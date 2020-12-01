@@ -21,8 +21,10 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Period;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
 import java.time.format.DateTimeParseException;
 import java.time.format.ResolverStyle;
+import java.time.temporal.ChronoField;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
@@ -187,7 +189,12 @@ public class DateFilterStrategy extends AbstractFilterStrategy {
 
             try {
 
-                final DateTimeFormatter dtf = DateTimeFormatter.ofPattern(filterPattern.getFormat(), Locale.US).withResolverStyle(ResolverStyle.STRICT);
+                final DateTimeFormatter dtf = new DateTimeFormatterBuilder()
+                        .appendPattern(filterPattern.getFormat())
+                        .parseDefaulting(ChronoField.DAY_OF_MONTH, 1)
+                        .toFormatter();
+
+                //final DateTimeFormatter dtf = DateTimeFormatter.ofPattern(filterPattern.getFormat(), Locale.US).withResolverStyle(ResolverStyle.STRICT);
                 final LocalDateTime parsedDate = LocalDate.parse(token, dtf).atStartOfDay();
                 final LocalDateTime currentDate = LocalDateTime.now();
 
