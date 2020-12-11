@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Period;
@@ -207,8 +208,12 @@ public class DateFilterStrategyTest extends AbstractFilterStrategyTest {
 
         final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
 
+        final DateTimeFormatter formatter = new DateTimeFormatterBuilder()
+                .appendOptional(DateTimeFormatter.ofPattern(("MM-dd-yyyy")))
+                .toFormatter();
+
         final LocalDateTime parsedDate = LocalDateTime.now().plusYears(5).plusMonths(4);
-        final String date = parsedDate.getMonthValue() + "-" + parsedDate.getDayOfMonth() + "-" + parsedDate.getYear();
+        final String date = parsedDate.format(formatter);
 
         final DateFilterStrategy strategy = getFilterStrategy();
         strategy.setStrategy(AbstractFilterStrategy.RELATIVE);
@@ -248,13 +253,17 @@ public class DateFilterStrategyTest extends AbstractFilterStrategyTest {
 
         final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
 
+        final DateTimeFormatter formatter = new DateTimeFormatterBuilder()
+                .appendOptional(DateTimeFormatter.ofPattern(("MM-dd-yyyy")))
+                .toFormatter();
+
         final LocalDateTime parsedDate = LocalDateTime.now().minusDays(3).minusMonths(7).minusYears(5);
-        final String date = parsedDate.getMonthValue() + "-" + parsedDate.getDayOfMonth() + "-" + parsedDate.getYear();
+        final String date = parsedDate.format(formatter);
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
         strategy.setStrategy(AbstractFilterStrategy.RELATIVE);
 
-        final FilterPattern filterPattern = new FilterPattern.FilterPatternBuilder(Pattern.compile("\\b\\d{2}-\\d{2}-\\d{4}"), 0.75).withFormat("M-dd-uuuu").build();
+        final FilterPattern filterPattern = new FilterPattern.FilterPatternBuilder(Pattern.compile("\\b\\d{2}-\\d{2}-\\d{4}"), 0.75).withFormat("MM-dd-uuuu").build();
         final Replacement replacement = strategy.getReplacement("name", "context", "docId", date, new Crypto(), anonymizationService, filterPattern);
 
         Assertions.assertEquals("5 years 7 months ago", replacement.getReplacement());
