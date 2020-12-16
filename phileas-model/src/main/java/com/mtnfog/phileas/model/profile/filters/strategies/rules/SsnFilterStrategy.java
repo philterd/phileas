@@ -97,7 +97,7 @@ public class SsnFilterStrategy extends AbstractFilterStrategy {
     @Override
     public Replacement getReplacement(String label, String context, String documentId, String token, Crypto crypto, AnonymizationService anonymizationService, FilterPattern filterPattern) throws Exception {
 
-        String replacement = null;
+        String replacement;
         String salt = "";
 
         if(StringUtils.equalsIgnoreCase(strategy, REDACT)) {
@@ -125,11 +125,15 @@ public class SsnFilterStrategy extends AbstractFilterStrategy {
 
         } else if(StringUtils.equalsIgnoreCase(strategy, HASH_SHA256_REPLACE)) {
 
-            if(isSalt()) {
+            if (isSalt()) {
                 salt = RandomStringUtils.randomAlphanumeric(16);
             }
 
             replacement = DigestUtils.sha256Hex(token + salt);
+
+        } else if(StringUtils.equalsIgnoreCase(strategy, LAST_4)) {
+
+            replacement = token.substring(token.length() - 4);
 
         } else {
 

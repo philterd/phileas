@@ -1,23 +1,19 @@
 package com.mtnfog.test.phileas.model.profile.filters.strategies.rules;
 
-import com.mtnfog.phileas.model.objects.FilterPattern;
 import com.mtnfog.phileas.model.objects.Replacement;
 import com.mtnfog.phileas.model.profile.Crypto;
 import com.mtnfog.phileas.model.profile.filters.strategies.AbstractFilterStrategy;
-import com.mtnfog.phileas.model.profile.filters.strategies.rules.CreditCardFilterStrategy;
+import com.mtnfog.phileas.model.profile.filters.strategies.rules.TrackingNumberFilterStrategy;
 import com.mtnfog.phileas.model.services.AnonymizationService;
 import com.mtnfog.test.phileas.model.profile.filters.strategies.AbstractFilterStrategyTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import java.util.regex.Pattern;
+public class TrackingNumberFilterStrategyTest extends AbstractFilterStrategyTest {
 
-public class CreditCardFilterStrategyTest extends AbstractFilterStrategyTest {
-
-    @Override
     public AbstractFilterStrategy getFilterStrategy() {
-        return new CreditCardFilterStrategy();
+        return new TrackingNumberFilterStrategy();
     }
 
     @Test
@@ -25,7 +21,7 @@ public class CreditCardFilterStrategyTest extends AbstractFilterStrategyTest {
 
         final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
 
-        final AbstractFilterStrategy strategy = new CreditCardFilterStrategy();
+        final AbstractFilterStrategy strategy = new TrackingNumberFilterStrategy();
         strategy.setStrategy(AbstractFilterStrategy.LAST_4);
 
         final Replacement replacement = strategy.getReplacement("name", "context", "docId", "4111111111111111", new Crypto(), anonymizationService, null);

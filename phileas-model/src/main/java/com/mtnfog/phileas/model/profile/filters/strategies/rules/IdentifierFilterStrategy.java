@@ -145,6 +145,10 @@ public class IdentifierFilterStrategy extends AbstractFilterStrategy {
 
             replacement = DigestUtils.sha256Hex(token + salt);
 
+        } else if(StringUtils.equalsIgnoreCase(strategy, LAST_4)) {
+
+            replacement = token.substring(token.length() - 4);
+
         } else {
 
             // Default to redaction.
