@@ -12,6 +12,7 @@ import com.mtnfog.phileas.model.utils.Encryption;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.text.WordUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -138,11 +139,15 @@ public class NerFilterStrategy extends AbstractFilterStrategy {
 
         } else if(StringUtils.equalsIgnoreCase(strategy, HASH_SHA256_REPLACE)) {
 
-            if(isSalt()) {
+            if (isSalt()) {
                 salt = RandomStringUtils.randomAlphanumeric(16);
             }
 
             replacement = DigestUtils.sha256Hex(token + salt);
+
+        } else if(StringUtils.equalsIgnoreCase(strategy, ABBREVIATE)) {
+
+            replacement = WordUtils.initials(token,null);
 
         } else {
 

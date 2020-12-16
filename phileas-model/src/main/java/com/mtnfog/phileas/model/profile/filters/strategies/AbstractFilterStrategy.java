@@ -24,6 +24,9 @@ public abstract class AbstractFilterStrategy {
     public static final String HASH_SHA256_REPLACE = "HASH_SHA256_REPLACE";
     public static final String LAST_4 = "LAST_4";
 
+    // NER Person's name strategies
+    public static final String ABBREVIATE = "ABBREVIATE";
+
     // Date strategies
     public static final String SHIFT = "SHIFT";
     public static final String RELATIVE = "RELATIVE";

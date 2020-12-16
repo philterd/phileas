@@ -103,6 +103,42 @@ public class NerFilterStrategyTest {
     }
 
     @Test
+    public void replacement6() throws Exception {
+
+        final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
+        final AnonymizationCacheService anonymizationCacheService = Mockito.mock(AnonymizationCacheService.class);
+
+        when(anonymizationService.getAnonymizationCacheService()).thenReturn(anonymizationCacheService);
+
+        final AbstractFilterStrategy strategy = new NerFilterStrategy();
+        strategy.setStrategy(AbstractFilterStrategy.ABBREVIATE);
+
+        Replacement replacement = null;
+
+        replacement = strategy.getReplacement("name", "context", "docId", "John Smith", new Crypto(), anonymizationService, null);
+        Assertions.assertEquals("JS", replacement.getReplacement());
+
+        replacement = strategy.getReplacement("name", "context", "docId", "John P. Smith", new Crypto(), anonymizationService, null);
+        Assertions.assertEquals("JPS", replacement.getReplacement());
+
+        replacement = strategy.getReplacement("name", "context", "docId", "John P Smith", new Crypto(), anonymizationService, null);
+        Assertions.assertEquals("JPS", replacement.getReplacement());
+
+        replacement = strategy.getReplacement("name", "context", "docId", "John P.", new Crypto(), anonymizationService, null);
+        Assertions.assertEquals("JP", replacement.getReplacement());
+
+        replacement = strategy.getReplacement("name", "context", "docId", "John", new Crypto(), anonymizationService, null);
+        Assertions.assertEquals("J", replacement.getReplacement());
+
+        replacement = strategy.getReplacement("name", "context", "docId", "J Smith", new Crypto(), anonymizationService, null);
+        Assertions.assertEquals("JS", replacement.getReplacement());
+
+        replacement = strategy.getReplacement("name", "context", "docId", "J. Peter Smith", new Crypto(), anonymizationService, null);
+        Assertions.assertEquals("JPS", replacement.getReplacement());
+
+    }
+
+    @Test
     public void evaluateCondition1() {
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
