@@ -148,6 +148,7 @@ public class NerFilterStrategy extends AbstractFilterStrategy {
         } else if(StringUtils.equalsIgnoreCase(strategy, ABBREVIATE)) {
 
             // TODO: Make PER a constant somewhere.
+            // Philter-NER is only returning PER entities at this point.
             if(StringUtils.equalsIgnoreCase(label, "PER")) {
                 replacement = WordUtils.initials(token, null);
             }
