@@ -35,6 +35,9 @@ public class DateFilter extends RegexFilter {
         this.contextualTerms = new HashSet<>();
         this.contextualTerms.add("date");
         this.contextualTerms.add("day");
+        this.contextualTerms.add("birthdate");
+        this.contextualTerms.add("dob");
+        this.contextualTerms.add("d.o.b.");
 
         this.analyzer = new Analyzer(contextualTerms, filterPatterns);
 

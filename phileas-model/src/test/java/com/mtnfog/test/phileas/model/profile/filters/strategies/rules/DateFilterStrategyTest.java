@@ -271,6 +271,28 @@ public class DateFilterStrategyTest extends AbstractFilterStrategyTest {
     }
 
     @Test
+    public void truncateToYear1() throws Exception {
+
+        final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
+
+        final DateTimeFormatter formatter = new DateTimeFormatterBuilder()
+                .appendOptional(DateTimeFormatter.ofPattern(("MM-dd-yyyy")))
+                .toFormatter();
+
+        final LocalDateTime parsedDate = LocalDateTime.now();
+        final String date = parsedDate.format(formatter);
+
+        final AbstractFilterStrategy strategy = getFilterStrategy();
+        strategy.setStrategy(AbstractFilterStrategy.TRUNCATE_TO_YEAR);
+
+        final FilterPattern filterPattern = new FilterPattern.FilterPatternBuilder(Pattern.compile("\\b\\d{2}-\\d{2}-\\d{4}"), 0.75).withFormat("MM-dd-uuuu").build();
+        final Replacement replacement = strategy.getReplacement("name", "context", "docId", date, new Crypto(), anonymizationService, filterPattern);
+
+        Assertions.assertEquals(String.valueOf(parsedDate.getYear()), replacement.getReplacement());
+
+    }
+
+    @Test
     public void format1() {
 
         // TODO: Change this to execute the code in DateFilterStrategy under RELATIVE instead of here.
