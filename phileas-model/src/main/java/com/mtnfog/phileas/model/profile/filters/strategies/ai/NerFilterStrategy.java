@@ -147,7 +147,10 @@ public class NerFilterStrategy extends AbstractFilterStrategy {
 
         } else if(StringUtils.equalsIgnoreCase(strategy, ABBREVIATE)) {
 
-            replacement = WordUtils.initials(token,null);
+            // TODO: Make PER a constant somewhere.
+            if(StringUtils.equalsIgnoreCase(label, "PER")) {
+                replacement = WordUtils.initials(token, null);
+            }
 
         } else {
 
