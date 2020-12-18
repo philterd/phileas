@@ -43,7 +43,7 @@ public class PdfRedacterTest {
         FileUtils.writeByteArrayToFile(outputFile, redacted);
 
         try (InputStream md5is = Files.newInputStream(Paths.get(output))) {
-            Assertions.assertEquals("d006864c8213707138f52a9ae0911875", org.apache.commons.codec.digest.DigestUtils.md5Hex(md5is));
+            Assertions.assertEquals("7edeabef20f588253018ff90f93a32b7", org.apache.commons.codec.digest.DigestUtils.md5Hex(md5is));
         }
 
     }
