@@ -2,6 +2,8 @@ package com.mtnfog.services.pdf;
 
 import com.mtnfog.phileas.model.enums.MimeType;
 import com.mtnfog.phileas.model.services.Redacter;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
@@ -16,17 +18,23 @@ import org.apache.pdfbox.text.PDFTextStripper;
 import org.apache.pdfbox.text.TextPosition;
 
 import javax.imageio.ImageIO;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.util.List;
 import java.util.*;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 /**
  * Redacts a list of given terms in a PDF document.
  */
 public class PdfRedacter extends PDFTextStripper implements Redacter {
+
+    private static final Logger LOGGER = LogManager.getLogger(PdfRedacter.class);
 
     private Map<Integer, List<PDRectangle>> rectangles = new HashMap<>();
 
@@ -58,12 +66,38 @@ public class PdfRedacter extends PDFTextStripper implements Redacter {
 
         } else if(outputType == MimeType.IMAGE_JPEG) {
 
-            // Write the PDF out to an image.
-
             final PDFRenderer pdfRenderer = new PDFRenderer(pdDocument);
-            final BufferedImage bufferedImage = pdfRenderer.renderImageWithDPI(0, 600);
 
-            ImageIO.write(bufferedImage,"jpg", outputStream);
+            final ZipOutputStream zipOut = new ZipOutputStream(outputStream);
+
+            for (int x = 0; x < pdDocument.getNumberOfPages(); x++) {
+
+                LOGGER.debug("Creating iamge from PDF page " + x);
+                final BufferedImage bufferedImage = pdfRenderer.renderImageWithDPI(x,600);
+
+                final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                ImageIO.write(bufferedImage, "jpg", baos);
+                baos.close();
+
+                ZipEntry zipEntry = new ZipEntry("page-" + x + ".jpeg");
+                zipEntry.setSize(baos.size());
+
+                zipOut.putNextEntry(zipEntry);
+                zipOut.write(baos.toByteArray());
+                zipOut.closeEntry();
+
+            }
+
+            zipOut.close();
+
+            //ImageIO.write(joinBufferedImage, "jpg", outputStream);
+            pdDocument.close();
+
+
+
+            //final BufferedImage bufferedImage = pdfRenderer.renderImageWithDPI(0, 600);
+
+            //ImageIO.write(bufferedImage,"jpg", outputStream);
 
             // Convert image back to PDF.
             /*PDDocument document2 = new PDDocument();
@@ -176,6 +210,24 @@ public class PdfRedacter extends PDFTextStripper implements Redacter {
 
         }
 
+    }
+
+    public static BufferedImage joinBufferedImage(BufferedImage img1,
+                                                  BufferedImage img2) {
+        //int offset = 2;
+        int width = img1.getWidth();
+        int height = img1.getHeight() + img2.getHeight();
+        BufferedImage newImage = new BufferedImage(width, height,
+                BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g2 = newImage.createGraphics();
+        Color oldColor = g2.getColor();
+        g2.setPaint(Color.WHITE);
+        g2.fillRect(0, 0, width, height);
+        g2.setColor(oldColor);
+        g2.drawImage(img1, null, 0, 0);
+        g2.drawImage(img2, null, 0, img1.getHeight());
+        g2.dispose();
+        return newImage;
     }
 
 }
