@@ -2,11 +2,12 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
-    <artifactId>phileas-processors</artifactId>
+    <artifactId>phileas-services</artifactId>
     <groupId>com.mtnfog</groupId>
     <version>1.9.0-SNAPSHOT</version>
   </parent>
-  <artifactId>phileas-processors-unstructured</artifactId>
+  <artifactId>phileas-services-pdf</artifactId>
+   <name>phileas-services-pdf</name>
   <dependencies>
     <dependency>
       <groupId>com.mtnfog</groupId>
@@ -14,9 +15,14 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>com.mtnfog</groupId>
-      <artifactId>phileas-services-pdf</artifactId>
-      <version>${project.version}</version>
+      <groupId>org.apache.pdfbox</groupId>
+      <artifactId>pdfbox</artifactId>
+      <version>${pdfbox.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-core</artifactId>
+      <version>${log4j.version}</version>
     </dependency>
     <dependency>
       <groupId>org.junit.jupiter</groupId>

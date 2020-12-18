@@ -12,6 +12,7 @@ import com.mtnfog.phileas.model.profile.filters.strategies.ai.NerFilterStrategy;
 import com.mtnfog.phileas.model.profile.filters.strategies.custom.CustomDictionaryFilterStrategy;
 import com.mtnfog.phileas.model.profile.filters.strategies.dynamic.*;
 import com.mtnfog.phileas.model.profile.filters.strategies.rules.*;
+import com.mtnfog.phileas.model.responses.BinaryDocumentFilterResponse;
 import com.mtnfog.phileas.model.responses.FilterResponse;
 import com.mtnfog.phileas.services.PhileasFilterService;
 import org.aeonbits.owner.ConfigFactory;
@@ -26,8 +27,8 @@ import org.junit.jupiter.api.Test;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -530,6 +531,44 @@ public class PhileasFilterServiceTest {
 
     }
 
+    @Test
+    public void pdf() throws Exception {
+
+        final String filename = "12-12110 K.pdf";
+
+        final InputStream is = this.getClass().getResourceAsStream("/pdfs/" + filename);
+        final byte[] document = IOUtils.toByteArray(is);
+        is.close();
+
+        final Path temp = Files.createTempDirectory("philter");
+
+        final File file1 = Paths.get(temp.toFile().getAbsolutePath(), "pdf.json").toFile();
+        LOGGER.info("Writing profile to {}", file1.getAbsolutePath());
+        FileUtils.writeStringToFile(file1, gson.toJson(getPdfFilterProfile("pdf")), Charset.defaultCharset());
+
+        Properties properties = new Properties();
+        properties.setProperty("indexes.directory", INDEXES_DIRECTORY);
+        properties.setProperty("store.enabled", "false");
+        properties.setProperty("filter.profiles.directory", temp.toFile().getAbsolutePath());
+
+        final PhileasConfiguration phileasConfiguration = ConfigFactory.create(PhileasConfiguration.class, properties);
+
+        PhileasFilterService service = new PhileasFilterService(phileasConfiguration);
+        final BinaryDocumentFilterResponse response = service.filter("pdf", "context", "documentid", document, MimeType.APPLICATION_PDF, MimeType.APPLICATION_PDF);
+
+        // Write the byte array to a file.
+        final File outputFile = File.createTempFile("redact", ".pdf");
+        outputFile.deleteOnExit();
+        final String output = outputFile.getAbsolutePath();
+        LOGGER.info("Writing redacted PDF to {}", output);
+        FileUtils.writeByteArrayToFile(new File(output), response.getDocument());
+
+        try (InputStream md5is = Files.newInputStream(Paths.get(output))) {
+            Assertions.assertEquals("713c247b5b00fdc40aa69a742c84e173", org.apache.commons.codec.digest.DigestUtils.md5Hex(md5is));
+        }
+
+    }
+
     private FilterProfile getFilterProfileZipCodeWithIgnored(String filterProfileName) throws IOException {
 
         Set<String> ignored = new HashSet<>();
@@ -559,7 +598,7 @@ public class PhileasFilterServiceTest {
 
     }
 
-    private FilterProfile getFilterProfileZipCodeWithIgnoredFromFile(String filterProfileName) throws IOException, URISyntaxException {
+    private FilterProfile getFilterProfileZipCodeWithIgnoredFromFile(String filterProfileName) throws IOException {
 
         // Copy file to temp directory.
         final File file = File.createTempFile("philter", "ignore");
@@ -734,6 +773,34 @@ public class PhileasFilterServiceTest {
         identifiers.setHospitalAbbreviation(hospitalAbbreviation);
         identifiers.setState(state);
         identifiers.setSurname(surname);*/
+
+        FilterProfile filterProfile = new FilterProfile();
+        filterProfile.setName(filterProfileName);
+        filterProfile.setIdentifiers(identifiers);
+
+        return filterProfile;
+
+    }
+
+    private FilterProfile getPdfFilterProfile(String filterProfileName) throws IOException {
+
+        ZipCodeFilterStrategy zipCodeFilterStrategy = new ZipCodeFilterStrategy();
+        zipCodeFilterStrategy.setTruncateDigits(2);
+
+        ZipCode zipCode = new ZipCode();
+        zipCode.setZipCodeFilterStrategies(Arrays.asList(zipCodeFilterStrategy));
+
+        CustomDictionaryFilterStrategy customDictionaryFilterStrategy = new CustomDictionaryFilterStrategy();
+        customDictionaryFilterStrategy.setStrategy("REDACT");
+
+        CustomDictionary customDictionary = new CustomDictionary();
+        customDictionary.setCustomDictionaryFilterStrategies(Arrays.asList(customDictionaryFilterStrategy));
+        customDictionary.setTerms(Arrays.asList("Wendy"));
+
+        Identifiers identifiers = new Identifiers();
+
+        identifiers.setCustomDictionaries(Arrays.asList(customDictionary));
+        identifiers.setZipCode(zipCode);
 
         FilterProfile filterProfile = new FilterProfile();
         filterProfile.setName(filterProfileName);

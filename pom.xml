@@ -121,6 +121,7 @@
 		<mockito.version>1.10.19</mockito.version>
 		<nv-i18n.version>1.27</nv-i18n.version>
 		<owner.version>1.0.13-SNAPSHOT</owner.version>
+		<pdfbox.version>2.0.21</pdfbox.version>
 		<redis-mock.version>0.1.6</redis-mock.version>
 		<redisson.version>3.12.5</redisson.version>
 		<retrofit.version>2.8.1</retrofit.version>

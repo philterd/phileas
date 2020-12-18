@@ -134,7 +134,7 @@ public abstract class Filter {
      */
     public String[] getWindow(String text, int characterStart, int characterEnd) {
 
-        LOGGER.debug("Getting window of size {}", windowSize);
+        LOGGER.trace("Getting window of size {}", windowSize);
 
         // X = windowSize
         // Start at characterStart and walk backwards until X spaces are seen.

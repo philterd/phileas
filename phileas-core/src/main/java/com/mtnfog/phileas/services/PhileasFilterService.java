@@ -17,6 +17,7 @@ import com.mtnfog.phileas.model.profile.Ignored;
 import com.mtnfog.phileas.model.profile.filters.CustomDictionary;
 import com.mtnfog.phileas.model.profile.filters.Identifier;
 import com.mtnfog.phileas.model.profile.filters.Section;
+import com.mtnfog.phileas.model.responses.BinaryDocumentFilterResponse;
 import com.mtnfog.phileas.model.responses.DetectResponse;
 import com.mtnfog.phileas.model.responses.FilterResponse;
 import com.mtnfog.phileas.model.services.*;
@@ -37,6 +38,8 @@ import com.mtnfog.phileas.services.profiles.S3FilterProfileService;
 import com.mtnfog.phileas.services.split.SplitFactory;
 import com.mtnfog.phileas.services.validators.DateSpanValidator;
 import com.mtnfog.phileas.store.ElasticsearchStore;
+import com.mtnfog.services.pdf.PdfRedacter;
+import com.mtnfog.services.pdf.PdfTextExtractor;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.FileUtils;
@@ -51,6 +54,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class PhileasFilterService implements FilterService {
 
@@ -234,7 +238,7 @@ public class PhileasFilterService implements FilterService {
         if(mimeType == MimeType.TEXT_PLAIN) {
 
             // PHL-145: Do we need to split the input text due to its size?
-            if(filterProfile.getConfig().getSplitting().isEnabled() && input.length() >= filterProfile.getConfig().getSplitting().getThreshold()) {
+            if (filterProfile.getConfig().getSplitting().isEnabled() && input.length() >= filterProfile.getConfig().getSplitting().getThreshold()) {
 
                 // Get the splitter to use from the filter profile.
                 final SplitService splitService = SplitFactory.getSplitService(filterProfile.getConfig().getSplitting().getMethod());
@@ -281,6 +285,67 @@ public class PhileasFilterService implements FilterService {
         }
 
         return filterResponse;
+
+    }
+
+    @Override
+    public BinaryDocumentFilterResponse filter(String filterProfileName, String context, String documentId, byte[] input, MimeType mimeType, MimeType outputMimeType) throws Exception {
+
+        // Get the filter profile.
+        // This will ALWAYS return a filter profile because if it is not in the cache it will be retrieved from the cache.
+        // TODO: How to trigger a reload if the profile had to be retrieved from disk?
+        final String filterProfileJson = filterProfileService.get(filterProfileName);
+
+        LOGGER.debug("Deserializing filter profile [{}]", filterProfileName);
+        final FilterProfile filterProfile = gson.fromJson(filterProfileJson, FilterProfile.class);
+
+        final List<Filter> filters = getFiltersForFilterProfile(filterProfile);
+        final List<PostFilter> postFilters = getPostFiltersForFilterProfile(filterProfileName);
+
+        // See if we need to generate a document ID.
+        if(StringUtils.isEmpty(documentId)) {
+
+            // PHL-58: Use a hash function to generate the document ID.
+            documentId = DigestUtils.md5Hex(UUID.randomUUID().toString() + "-" + context + "-" + filterProfileName + "-" + input);
+            LOGGER.debug("Generated document ID {}", documentId);
+
+        }
+
+        final BinaryDocumentFilterResponse binaryDocumentFilterResponse;
+
+        if(mimeType == MimeType.APPLICATION_PDF) {
+
+            // Get the lines of text from the PDF file.
+            final PdfTextExtractor pdfTextExtractor = new PdfTextExtractor();
+            final List<String> lines = pdfTextExtractor.getLines(input);
+            //final String text = StringUtils.join(lines, System.lineSeparator());
+
+            // Get a list of identified terms.
+            final Set<String> terms = new LinkedHashSet<>();
+
+            for(final String line : lines) {
+                final FilterResponse filterResponse = unstructuredDocumentProcessor.process(filterProfile, filters, postFilters, context, documentId, 0, line);
+                terms.addAll(filterResponse.getExplanation().getAppliedSpans().stream().map(Span::getText).collect(Collectors.toList()));
+            }
+
+            // Redact those terms in the document.
+            final Redacter redacter = new PdfRedacter(terms);
+            final byte[] redacted = redacter.process(input, outputMimeType);
+
+            // Create the response.
+            binaryDocumentFilterResponse = new BinaryDocumentFilterResponse(redacted, context, documentId, null);// filterResponse.getExplanation());
+
+            // Store the spans, if enabled.
+            if(phileasConfiguration.storeEnabled()) {
+              //  store.insert(filterResponse.getExplanation().getAppliedSpans());
+            }
+
+        } else {
+            // Should never happen but just in case.
+            throw new Exception("Unknown mime type.");
+        }
+
+        return binaryDocumentFilterResponse;
 
     }
 

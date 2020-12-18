@@ -16,6 +16,16 @@ public enum MimeType {
     TEXT_HTML("text/html"),
 
     /**
+     * application/pdf
+     */
+    APPLICATION_PDF("application/pdf"),
+
+    /**
+     * image/jpeg
+     */
+    IMAGE_JPEG("image/jpeg"),
+
+    /**
      * application/fhir+json
      */
     APPLICATION_FHIRJSON("application/fhir+json");
