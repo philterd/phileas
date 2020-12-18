@@ -18,13 +18,11 @@ import org.apache.pdfbox.text.PDFTextStripper;
 import org.apache.pdfbox.text.TextPosition;
 
 import javax.imageio.ImageIO;
-import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
-import java.util.List;
 import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -89,31 +87,7 @@ public class PdfRedacter extends PDFTextStripper implements Redacter {
             }
 
             zipOut.close();
-
-            //ImageIO.write(joinBufferedImage, "jpg", outputStream);
             pdDocument.close();
-
-
-
-            //final BufferedImage bufferedImage = pdfRenderer.renderImageWithDPI(0, 600);
-
-            //ImageIO.write(bufferedImage,"jpg", outputStream);
-
-            // Convert image back to PDF.
-            /*PDDocument document2 = new PDDocument();
-            InputStream in = new FileInputStream("/tmp/redact2.jpg");
-            BufferedImage bimg = ImageIO.read(in);
-            float width = bimg.getWidth();
-            float height = bimg.getHeight();
-            PDPage page = new PDPage(new PDRectangle(width, height));
-            document2.addPage(page);
-            PDImageXObject img =  PDImageXObject.createFromFile("/tmp/redact2.jpg", document2);
-            PDPageContentStream contentStream = new PDPageContentStream(document2, page);
-            contentStream.drawImage(img, 0, 0);
-            contentStream.close();
-            in.close();
-
-            pdDocument.save("/tmp/test.pdf");*/
 
         } else {
             throw new IllegalArgumentException("Invalid output mime type.");
@@ -210,24 +184,6 @@ public class PdfRedacter extends PDFTextStripper implements Redacter {
 
         }
 
-    }
-
-    public static BufferedImage joinBufferedImage(BufferedImage img1,
-                                                  BufferedImage img2) {
-        //int offset = 2;
-        int width = img1.getWidth();
-        int height = img1.getHeight() + img2.getHeight();
-        BufferedImage newImage = new BufferedImage(width, height,
-                BufferedImage.TYPE_INT_ARGB);
-        Graphics2D g2 = newImage.createGraphics();
-        Color oldColor = g2.getColor();
-        g2.setPaint(Color.WHITE);
-        g2.fillRect(0, 0, width, height);
-        g2.setColor(oldColor);
-        g2.drawImage(img1, null, 0, 0);
-        g2.drawImage(img2, null, 0, img1.getHeight());
-        g2.dispose();
-        return newImage;
     }
 
 }
