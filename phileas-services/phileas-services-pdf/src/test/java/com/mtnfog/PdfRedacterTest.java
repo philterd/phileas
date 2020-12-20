@@ -51,9 +51,7 @@ public class PdfRedacterTest {
         LOGGER.info("Writing redacted PDF to {}", outputFile.getAbsolutePath());
         FileUtils.writeByteArrayToFile(outputFile, redacted);
 
-        try (InputStream md5is = Files.newInputStream(Paths.get(output))) {
-            Assertions.assertEquals("7edeabef20f588253018ff90f93a32b7", org.apache.commons.codec.digest.DigestUtils.md5Hex(md5is));
-        }
+        // TODO: How to assert? MD5 gives a different value each time.
 
     }
 
