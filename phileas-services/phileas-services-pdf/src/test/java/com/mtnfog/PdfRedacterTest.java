@@ -1,6 +1,10 @@
 package com.mtnfog;
 
+import com.mtnfog.phileas.model.enums.FilterType;
 import com.mtnfog.phileas.model.enums.MimeType;
+import com.mtnfog.phileas.model.objects.RedactionOptions;
+import com.mtnfog.phileas.model.objects.Span;
+import com.mtnfog.phileas.model.profile.FilterProfile;
 import com.mtnfog.phileas.model.services.Redacter;
 import com.mtnfog.services.pdf.PdfRedacter;
 import org.apache.commons.io.FileUtils;
@@ -26,13 +30,18 @@ public class PdfRedacterTest {
     @Test
     public void testPDF() throws IOException {
 
-        final Set<String> terms = Set.copyOf(Arrays.asList("Wendy", "Bankruptcy"));
+        final Span span1 = Span.make(0, 1, FilterType.NER_ENTITY, "ctx", "docid", 0.25, "Wendy", "repl", null, false, null);
+        final Span span2 = Span.make(0, 1, FilterType.NER_ENTITY, "ctx", "docid", 0.25, "Bankruptcy", "repl", null, false, null);
+        final Set<Span> spans = Set.copyOf(Arrays.asList(span1, span2));
 
         final String filename = "12-12110 K.pdf";
         final InputStream is = getClass().getClassLoader().getResourceAsStream(filename);
         final byte[] document = IOUtils.toByteArray(is);
 
-        final Redacter pdfRedacter = new PdfRedacter(terms);
+        final FilterProfile filterProfile = new FilterProfile();
+        final RedactionOptions redactionOptions = new RedactionOptions();
+
+        final Redacter pdfRedacter = new PdfRedacter(filterProfile, spans, redactionOptions);
         final byte[] redacted = pdfRedacter.process(document, MimeType.APPLICATION_PDF);
 
         final File outputFile = File.createTempFile("output", ".pdf");
@@ -51,13 +60,18 @@ public class PdfRedacterTest {
     @Test
     public void testJpeg() throws IOException {
 
-        final Set<String> terms = Set.copyOf(Arrays.asList("Wendy", "Bankruptcy"));
+        final Span span1 = Span.make(0, 1, FilterType.NER_ENTITY, "ctx", "docid", 0.25, "Wendy", "repl", null, false, null);
+        final Span span2 = Span.make(0, 1, FilterType.NER_ENTITY, "ctx", "docid", 0.25, "Bankruptcy", "repl", null, false, null);
+        final Set<Span> spans = Set.copyOf(Arrays.asList(span1, span2));
 
         final String filename = "12-12110 K.pdf";
         final InputStream is = getClass().getClassLoader().getResourceAsStream(filename);
         final byte[] document = IOUtils.toByteArray(is);
 
-        final Redacter pdfRedacter = new PdfRedacter(terms);
+        final FilterProfile filterProfile = new FilterProfile();
+        final RedactionOptions redactionOptions = new RedactionOptions();
+
+        final Redacter pdfRedacter = new PdfRedacter(filterProfile, spans, redactionOptions);
         final byte[] redacted = pdfRedacter.process(document, MimeType.IMAGE_JPEG);
 
         final File outputFile = File.createTempFile("output", ".zip");

@@ -31,10 +31,18 @@ public abstract class AbstractFilterStrategy {
     public static final String SHIFT = "SHIFT";
     public static final String RELATIVE = "RELATIVE";
 
+    // Scopes
     public static final String REPLACEMENT_SCOPE_DOCUMENT = "DOCUMENT";
     public static final String REPLACEMENT_SCOPE_CONTEXT = "CONTEXT";
 
+    // Conditions
     public static final String TOKEN = "token";
+    public static final String CONTEXT = "context";
+    public static final String TYPE = "type";
+    public static final String CONFIDENCE = "confidence";
+    public static final String CLASSIFICATION = "classification";
+
+    // Conditions comparators
     public static final String STARTSWITH = "startswith";
     public static final String EQUALS = "==";
     public static final String NOT_EQUALS = "!=";
@@ -42,11 +50,6 @@ public abstract class AbstractFilterStrategy {
     public static final String LESS_THAN = "<";
     public static final String GREATER_THAN_EQUALS = ">=";
     public static final String LESS_THAN_EQUALS = "<=";
-
-    public static final String CONTEXT = "context";
-    public static final String TYPE = "type";
-    public static final String CONFIDENCE = "confidence";
-    public static final String CLASSIFICATION = "classification";
 
     @SerializedName("id")
     @Expose

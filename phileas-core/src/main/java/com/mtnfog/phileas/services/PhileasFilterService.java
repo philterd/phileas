@@ -11,6 +11,7 @@ import com.mtnfog.phileas.model.filter.Filter;
 import com.mtnfog.phileas.model.filter.rules.dictionary.BloomFilterDictionaryFilter;
 import com.mtnfog.phileas.model.filter.rules.dictionary.DictionaryFilter;
 import com.mtnfog.phileas.model.filter.rules.dictionary.LuceneDictionaryFilter;
+import com.mtnfog.phileas.model.objects.RedactionOptions;
 import com.mtnfog.phileas.model.objects.Span;
 import com.mtnfog.phileas.model.profile.FilterProfile;
 import com.mtnfog.phileas.model.profile.Ignored;
@@ -54,7 +55,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class PhileasFilterService implements FilterService {
 
@@ -318,27 +318,36 @@ public class PhileasFilterService implements FilterService {
             // Get the lines of text from the PDF file.
             final PdfTextExtractor pdfTextExtractor = new PdfTextExtractor();
             final List<String> lines = pdfTextExtractor.getLines(input);
-            //final String text = StringUtils.join(lines, System.lineSeparator());
 
-            // Get a list of identified terms.
-            final Set<String> terms = new LinkedHashSet<>();
+            // A list of identified terms.
+            final Set<Span> spans = new LinkedHashSet<>();
 
+            // Process each line looking for sensitive information in each line.
             for(final String line : lines) {
+
+                // Process the text.
                 final FilterResponse filterResponse = unstructuredDocumentProcessor.process(filterProfile, filters, postFilters, context, documentId, 0, line);
-                terms.addAll(filterResponse.getExplanation().getAppliedSpans().stream().map(Span::getText).collect(Collectors.toList()));
+
+                // Add all the found spans to the list of spans.
+                spans.addAll(filterResponse.getExplanation().getAppliedSpans());
+
             }
 
+            final RedactionOptions redactionOptions = new RedactionOptions();
+
             // Redact those terms in the document.
-            final Redacter redacter = new PdfRedacter(terms);
+            final Redacter redacter = new PdfRedacter(filterProfile, spans, redactionOptions);
             final byte[] redacted = redacter.process(input, outputMimeType);
 
             // Create the response.
-            binaryDocumentFilterResponse = new BinaryDocumentFilterResponse(redacted, context, documentId, null);// filterResponse.getExplanation());
+            // TODO: What can we do about the null explanation?
+            binaryDocumentFilterResponse = new BinaryDocumentFilterResponse(redacted, context, documentId, null);
 
+            // TODO: How to handle store for PDFs? There is no meaningful span to persist.
             // Store the spans, if enabled.
-            if(phileasConfiguration.storeEnabled()) {
-              //  store.insert(filterResponse.getExplanation().getAppliedSpans());
-            }
+            /*if(phileasConfiguration.storeEnabled()) {
+                store.insert(binaryDocumentFilterResponse.getExplanation().getAppliedSpans());
+            }*/
 
         } else {
             // Should never happen but just in case.

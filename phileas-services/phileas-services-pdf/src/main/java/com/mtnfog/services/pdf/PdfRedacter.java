@@ -1,7 +1,11 @@
 package com.mtnfog.services.pdf;
 
 import com.mtnfog.phileas.model.enums.MimeType;
+import com.mtnfog.phileas.model.objects.RedactionOptions;
+import com.mtnfog.phileas.model.objects.Span;
+import com.mtnfog.phileas.model.profile.FilterProfile;
 import com.mtnfog.phileas.model.services.Redacter;
+import com.mtnfog.services.pdf.model.RedactedRectangle;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.pdfbox.pdmodel.PDDocument;
@@ -11,8 +15,6 @@ import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.graphics.color.PDColor;
 import org.apache.pdfbox.pdmodel.graphics.color.PDDeviceRGB;
 import org.apache.pdfbox.pdmodel.graphics.state.RenderingMode;
-import org.apache.pdfbox.pdmodel.interactive.annotation.PDAnnotation;
-import org.apache.pdfbox.pdmodel.interactive.annotation.PDAnnotationTextMarkup;
 import org.apache.pdfbox.rendering.PDFRenderer;
 import org.apache.pdfbox.text.PDFTextStripper;
 import org.apache.pdfbox.text.TextPosition;
@@ -34,26 +36,39 @@ public class PdfRedacter extends PDFTextStripper implements Redacter {
 
     private static final Logger LOGGER = LogManager.getLogger(PdfRedacter.class);
 
-    private Map<Integer, List<PDRectangle>> rectangles = new HashMap<>();
+    private Map<Integer, List<RedactedRectangle>> rectangles = new HashMap<>();
 
-    private final Set<String> terms;
+    private FilterProfile filterProfile;
+    private final Set<Span> spans;
+    private final RedactionOptions redactionOptions;
 
-    public PdfRedacter(Set<String> terms) throws IOException {
-        this.terms = terms;
+    private static final Map<String, PDColor> COLORS = new LinkedHashMap<>();
+
+    static {
+        COLORS.put("black", new PDColor(new float[]{0, 0, 0}, PDDeviceRGB.INSTANCE));
+        COLORS.put("red", new PDColor(new float[]{0, 0, 0}, PDDeviceRGB.INSTANCE));
+        COLORS.put("yellow", new PDColor(new float[]{0, 0, 0}, PDDeviceRGB.INSTANCE));
+    }
+
+    public PdfRedacter(FilterProfile filterProfile, Set<Span> spans, RedactionOptions redactionOptions) throws IOException {
+
+        this.filterProfile = filterProfile;
+        this.spans = spans;
+        this.redactionOptions = redactionOptions;
+
     }
 
     @Override
     public byte[] process(byte[] document, MimeType outputType) throws IOException {
 
         final PDDocument pdDocument = PDDocument.load(document);
-        final PDFTextStripper stripper = new PdfRedacter(terms);
 
-        stripper.setSortByPosition(true);
-        stripper.setStartPage(0);
-        stripper.setEndPage(pdDocument.getNumberOfPages());
+        setSortByPosition(true);
+        setStartPage(0);
+        setEndPage(pdDocument.getNumberOfPages());
 
         final Writer dummy = new OutputStreamWriter(new ByteArrayOutputStream());
-        stripper.writeText(pdDocument, dummy);
+        writeText(pdDocument, dummy);
 
         final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
@@ -100,7 +115,6 @@ public class PdfRedacter extends PDFTextStripper implements Redacter {
     @Override
     protected void endDocument(PDDocument doc) throws IOException {
 
-        final PDColor black = new PDColor(new float[]{0, 0, 0}, PDDeviceRGB.INSTANCE);
         final int buffer = 10;
 
         for(int pageNumber : rectangles.keySet()) {
@@ -108,11 +122,19 @@ public class PdfRedacter extends PDFTextStripper implements Redacter {
             final PDPage page = document.getPage(pageNumber);
             final PDPageContentStream contentStream = new PDPageContentStream(doc, page, true, true, true);
 
-            for(final PDRectangle rectangle : rectangles.get(pageNumber)) {
-                contentStream.addRect(rectangle.getLowerLeftX(), rectangle.getLowerLeftY() - 3, rectangle.getWidth(), rectangle.getHeight() + buffer);
+            for(final RedactedRectangle rectangle : rectangles.get(pageNumber)) {
+
+                contentStream.addRect(
+                        rectangle.getPdRectangle().getLowerLeftX(),
+                        rectangle.getPdRectangle().getLowerLeftY() - 3,
+                        rectangle.getPdRectangle().getWidth(),
+                        rectangle.getPdRectangle().getHeight() + buffer);
+
             }
 
-            contentStream.setNonStrokingColor(black);
+            // Get the color based on the filter.
+            final PDColor pdColor = COLORS.getOrDefault(filterProfile.getConfig().getPdf().getRedactionColor(), COLORS.get("black"));
+            contentStream.setNonStrokingColor(pdColor);
             contentStream.setRenderingMode(RenderingMode.FILL);
             contentStream.fill();
             contentStream.close();
@@ -124,7 +146,8 @@ public class PdfRedacter extends PDFTextStripper implements Redacter {
     @Override
     protected void writeString(String text, List<TextPosition> textPositions) throws IOException {
 
-        float posXInit  = 0,
+        float
+                posXInit  = 0,
                 posXEnd   = 0,
                 posYInit  = 0,
                 posYEnd   = 0,
@@ -132,34 +155,36 @@ public class PdfRedacter extends PDFTextStripper implements Redacter {
                 height    = 0,
                 fontHeight = 0;
 
-        for(final String term : terms) {
+        for(final Span span : spans) {
 
-            if (text.contains(term)) {
+            if (text.contains(span.getText())) {
+
+                final String term = span.getText();
 
                 // Set index to 0 to do the whole line
-                final int index = text.indexOf(term);
+                final int index = text.indexOf(span.getText());
 
                 posXInit = textPositions.get(index).getXDirAdj();
                 posXEnd = textPositions.get(index + term.length()).getXDirAdj() + textPositions.get(index + term.length()).getWidth();
-                posYInit = textPositions.get(index).getPageHeight() - textPositions.get(index).getYDirAdj();
+                //posYInit = textPositions.get(index).getPageHeight() - textPositions.get(index).getYDirAdj();
                 posYEnd = textPositions.get(index).getPageHeight() - textPositions.get(index + term.length()).getYDirAdj();
-                width = textPositions.get(index).getWidthDirAdj();
+                //width = textPositions.get(index).getWidthDirAdj();
                 height = textPositions.get(index).getHeightDir();
 
                 // quadPoints is array of x,y coordinates in Z-like order (top-left, top-right, bottom-left,bottom-right)
                 // of the area to be highlighted
 
-                final int buffer = 5;
+                //final int buffer = 5;
 
-                final float quadPoints[] = {
+                /*final float quadPoints[] = {
                         posXInit, posYEnd + height + buffer,
                         posXEnd, posYEnd + height + buffer,
                         posXInit, posYInit - buffer,
                         posXEnd, posYEnd - buffer
-                };
+                };*/
 
-                final List<PDAnnotation> annotations = document.getPage(this.getCurrentPageNo() - 1).getAnnotations();
-                final PDAnnotationTextMarkup highlight = new PDAnnotationTextMarkup(PDAnnotationTextMarkup.SUB_TYPE_HIGHLIGHT);
+                //final List<PDAnnotation> annotations = document.getPage(this.getCurrentPageNo() - 1).getAnnotations();
+                //final PDAnnotationTextMarkup highlight = new PDAnnotationTextMarkup(PDAnnotationTextMarkup.SUB_TYPE_HIGHLIGHT);
 
                 final PDRectangle position = new PDRectangle();
                 position.setLowerLeftX(posXInit);
@@ -168,7 +193,9 @@ public class PdfRedacter extends PDFTextStripper implements Redacter {
                 position.setUpperRightY(posYEnd + height);
 
                 rectangles.putIfAbsent(this.getCurrentPageNo() - 1, new LinkedList<>());
-                rectangles.get(this.getCurrentPageNo() - 1).add(position);
+
+                final RedactedRectangle redactedRectangle = new RedactedRectangle(position, span);
+                rectangles.get(this.getCurrentPageNo() - 1).add(redactedRectangle);
 
                 /*highlight.setRectangle(position);
                 highlight.setQuadPoints(quadPoints);
