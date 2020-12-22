@@ -211,7 +211,7 @@ public abstract class Filter {
                 if(hasCondition) {
 
                     // If there is a condition, does it evaluate?
-                    final boolean evaluates = strategy.evaluateCondition(context, documentId, token, condition, confidence, classification);
+                    final boolean evaluates = strategy.evaluateCondition(context, documentId, token, window, condition, confidence, classification);
 
                     if(evaluates) {
 

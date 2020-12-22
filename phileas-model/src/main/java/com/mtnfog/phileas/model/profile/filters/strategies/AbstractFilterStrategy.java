@@ -103,11 +103,13 @@ public abstract class AbstractFilterStrategy {
      * @param context The context.
      * @param documentId The document ID.
      * @param token The token.
+     * @param window The window containing the token.
+     * @param condition The condition to evaluate.
      * @param confidence The span's confidence.
      * @param classification The span's classification.
      * @return <code>true</code> if the condition matches; otherwise <code>false</code>.
      */
-    public abstract boolean evaluateCondition(String context, String documentId, String token, String condition, double confidence, String classification);
+    public abstract boolean evaluateCondition(String context, String documentId, String token, String[] window, String condition, double confidence, String classification);
 
     public abstract FilterType getFilterType();
 

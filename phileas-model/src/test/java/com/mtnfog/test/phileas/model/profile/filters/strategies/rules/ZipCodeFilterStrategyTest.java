@@ -45,7 +45,7 @@ public class ZipCodeFilterStrategyTest extends AbstractFilterStrategyTest {
 
         ZipCodeFilterStrategy strategy = new ZipCodeFilterStrategy();
 
-        final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentid", "90210", "population < 10000", 1.0, "");
+        final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentid", "90210", WINDOW,"population < 10000", 1.0, "");
 
         Assertions.assertFalse(conditionSatisfied);
 
@@ -56,7 +56,7 @@ public class ZipCodeFilterStrategyTest extends AbstractFilterStrategyTest {
 
         ZipCodeFilterStrategy strategy = new ZipCodeFilterStrategy();
 
-        final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentid", "90210", "population > 10000", 1.0, "");
+        final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentid", "90210", WINDOW,"population > 10000", 1.0, "");
 
         Assertions.assertTrue(conditionSatisfied);
 
@@ -67,7 +67,7 @@ public class ZipCodeFilterStrategyTest extends AbstractFilterStrategyTest {
 
         ZipCodeFilterStrategy strategy = new ZipCodeFilterStrategy();
 
-        final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentid", "90210", "population == 21741", 1.0, "");
+        final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentid", "90210", WINDOW,"population == 21741", 1.0, "");
 
         Assertions.assertTrue(conditionSatisfied);
 
@@ -78,7 +78,7 @@ public class ZipCodeFilterStrategyTest extends AbstractFilterStrategyTest {
 
         ZipCodeFilterStrategy strategy = new ZipCodeFilterStrategy();
 
-        final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentid","90210", "population > 20000 and population < 25000", 1.0, "");
+        final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentid","90210", WINDOW,"population > 20000 and population < 25000", 1.0, "");
 
         Assertions.assertTrue(conditionSatisfied);
 
@@ -89,7 +89,7 @@ public class ZipCodeFilterStrategyTest extends AbstractFilterStrategyTest {
 
         ZipCodeFilterStrategy strategy = new ZipCodeFilterStrategy();
 
-        final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentid", "90210", "population > 20000 and population < 20010", 1.0, "");
+        final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentid", "90210", WINDOW,"population > 20000 and population < 20010", 1.0, "");
 
         Assertions.assertFalse(conditionSatisfied);
 

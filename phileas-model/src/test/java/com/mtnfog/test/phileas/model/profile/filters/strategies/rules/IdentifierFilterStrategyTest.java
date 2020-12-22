@@ -22,7 +22,7 @@ public class IdentifierFilterStrategyTest extends AbstractFilterStrategyTest {
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
 
-        final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentid", "90210", "classification == \"WV\"", 1.0, "WV");
+        final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentid", "90210", WINDOW, "classification == \"WV\"", 1.0, "WV");
 
         Assertions.assertTrue(conditionSatisfied);
 

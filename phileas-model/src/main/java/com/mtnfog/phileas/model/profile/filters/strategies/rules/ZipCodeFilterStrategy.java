@@ -49,7 +49,7 @@ public class ZipCodeFilterStrategy extends AbstractFilterStrategy {
     private Integer truncateDigits;
 
     @Override
-    public boolean evaluateCondition(String context, String documentId, String token, String condition, double confidence, String classification) {
+    public boolean evaluateCondition(String context, String documentId, String token, String[] window, String condition, double confidence, String classification) {
 
         boolean conditionsSatisfied = false;
 
