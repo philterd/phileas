@@ -68,7 +68,7 @@ public class DateFilterStrategy extends AbstractFilterStrategy {
 
             if(StringUtils.equalsIgnoreCase(TOKEN, parsedCondition.getField())) {
 
-                conditionsSatisfied = evaluateTokenCondition(parsedCondition, token);
+                conditionsSatisfied = evaluateTokenCondition(parsedCondition, token, window);
 
             } else if(StringUtils.equalsIgnoreCase(CONTEXT, parsedCondition.getField())) {
 
@@ -176,45 +176,6 @@ public class DateFilterStrategy extends AbstractFilterStrategy {
                 // This will be thrown if the input date is not a valid date.
                 // Default back to redaction.
                 replacement = getRedactedToken(token, label, filterType);
-
-            }
-
-        } else if(StringUtils.equalsIgnoreCase(strategy, TRUNCATE_TO_YEAR_IF_BIRTHDAY)) {
-
-            // PHL-165: Is this a birthday?
-            final String joinedWindow = StringUtils.join(window, " ").replaceAll("[^a-zA-Z ]", "").toLowerCase();
-            final boolean isBirthday =
-                joinedWindow.contains("dob") ||
-                joinedWindow.contains("birthday") ||
-                joinedWindow.contains("birthdate") ||
-                joinedWindow.contains("date of birth") ||
-                joinedWindow.contains("birth") ||
-                joinedWindow.contains("born") ||
-                joinedWindow.contains("born on");
-
-            if(isBirthday) {
-
-                try {
-
-                    final DateTimeFormatter dtf = DateTimeFormatter.ofPattern(filterPattern.getFormat(), Locale.US).withResolverStyle(ResolverStyle.STRICT);
-                    final LocalDateTime parsedDate = LocalDate.parse(token, dtf).atStartOfDay();
-
-                    replacement = String.valueOf(parsedDate.getYear());
-
-                } catch (DateTimeParseException ex) {
-
-                    LOGGER.error("Unable to parse date with format " + filterPattern.getFormat() + ". Falling back to redaction.", ex);
-
-                    // This will be thrown if the input date is not a valid date.
-                    // Default back to redaction.
-                    replacement = getRedactedToken(token, label, filterType);
-
-                }
-
-            } else {
-
-                // If it is not a birthday don't do anything.
-                replacement = token;
 
             }
 

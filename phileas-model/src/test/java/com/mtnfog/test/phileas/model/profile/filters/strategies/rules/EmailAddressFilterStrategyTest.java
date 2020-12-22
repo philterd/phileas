@@ -15,7 +15,7 @@ public class EmailAddressFilterStrategyTest extends AbstractFilterStrategyTest {
     @Test
     public void evaluateCondition1() {
 
-        final EmailAddressFilterStrategy strategy = new EmailAddressFilterStrategy();
+        final AbstractFilterStrategy strategy = new EmailAddressFilterStrategy();
 
         final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentid",  "test@test.com", WINDOW, "token == \"test@test.com\"", 1.0, "");
 

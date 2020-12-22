@@ -6,6 +6,7 @@ import com.mtnfog.phileas.model.objects.Replacement;
 import com.mtnfog.phileas.model.profile.Crypto;
 import com.mtnfog.phileas.model.profile.filters.strategies.AbstractFilterStrategy;
 import com.mtnfog.phileas.model.profile.filters.strategies.rules.DateFilterStrategy;
+import com.mtnfog.phileas.model.profile.filters.strategies.rules.EmailAddressFilterStrategy;
 import com.mtnfog.phileas.model.services.AnonymizationService;
 import com.mtnfog.test.phileas.model.profile.filters.strategies.AbstractFilterStrategyTest;
 import org.junit.jupiter.api.Assertions;
@@ -39,6 +40,32 @@ public class DateFilterStrategyTest extends AbstractFilterStrategyTest {
         dateFilterStrategy.setShiftYears(years);
 
         return dateFilterStrategy;
+
+    }
+
+    @Test
+    public void evaluateCondition1() {
+
+        final String[] window = new String[]{"born", "on", "10-05-2005"};
+
+        final AbstractFilterStrategy strategy = new DateFilterStrategy();
+
+        final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentid", "test@test.com", window, "token is \"birthdate\"", 1.0, "");
+
+        Assertions.assertTrue(conditionSatisfied);
+
+    }
+
+    @Test
+    public void evaluateCondition2() {
+
+        final String[] window = new String[]{"document", "filed", "10-05-2005", "on"};
+
+        final AbstractFilterStrategy strategy = new DateFilterStrategy();
+
+        final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentid", "test@test.com", window, "token is \"birthdate\"", 1.0, "");
+
+        Assertions.assertFalse(conditionSatisfied);
 
     }
 
@@ -300,29 +327,12 @@ public class DateFilterStrategyTest extends AbstractFilterStrategyTest {
         final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
-        strategy.setStrategy(AbstractFilterStrategy.TRUNCATE_TO_YEAR_IF_BIRTHDAY);
+        strategy.setStrategy(AbstractFilterStrategy.TRUNCATE_TO_YEAR);
 
         final FilterPattern filterPattern = new FilterPattern.FilterPatternBuilder(Pattern.compile("\\b\\d{2}-\\d{2}-\\d{4}"), 0.75).withFormat("MM-dd-uuuu").build();
         final Replacement replacement = strategy.getReplacement("name", "context", "docId", "10-05-2005", window, new Crypto(), anonymizationService, filterPattern);
 
         Assertions.assertEquals("2005", replacement.getReplacement());
-
-    }
-
-    @Test
-    public void birthdate2() throws Exception {
-
-        final String[] window = new String[]{"document", "filed", "10-05-2005", "successfully"};
-
-        final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
-
-        final AbstractFilterStrategy strategy = getFilterStrategy();
-        strategy.setStrategy(AbstractFilterStrategy.TRUNCATE_TO_YEAR_IF_BIRTHDAY);
-
-        final FilterPattern filterPattern = new FilterPattern.FilterPatternBuilder(Pattern.compile("\\b\\d{2}-\\d{2}-\\d{4}"), 0.75).withFormat("MM-dd-uuuu").build();
-        final Replacement replacement = strategy.getReplacement("name", "context", "docId", "10-05-2020", window, new Crypto(), anonymizationService, filterPattern);
-
-        Assertions.assertEquals("10-05-2020", replacement.getReplacement());
 
     }
 

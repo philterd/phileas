@@ -29,7 +29,6 @@ public abstract class AbstractFilterStrategy {
 
     // Date strategies
     public static final String TRUNCATE_TO_YEAR = "TRUNCATE_TO_YEAR";
-    public static final String TRUNCATE_TO_YEAR_IF_BIRTHDAY = "TRUNCATE_TO_YEAR_IF_BIRTHDAY";
     public static final String SHIFT = "SHIFT";
     public static final String RELATIVE = "RELATIVE";
 
@@ -43,6 +42,7 @@ public abstract class AbstractFilterStrategy {
     public static final String TYPE = "type";
     public static final String CONFIDENCE = "confidence";
     public static final String CLASSIFICATION = "classification";
+    public static final String BIRTHDATE = "birthdate";
 
     // Conditions comparators
     public static final String STARTSWITH = "startswith";
@@ -52,6 +52,7 @@ public abstract class AbstractFilterStrategy {
     public static final String LESS_THAN = "<";
     public static final String GREATER_THAN_EQUALS = ">=";
     public static final String LESS_THAN_EQUALS = "<=";
+    public static final String IS = "is";
 
     @SerializedName("id")
     @Expose
@@ -132,9 +133,10 @@ public abstract class AbstractFilterStrategy {
      * Evaluates a token condition.
      * @param parsedCondition The {@link ParsedCondition} to evaluate.
      * @param token The token.
+     * @param window The window surrounding the token.
      * @return <code>true</code> if the condition is satisfied; otherwise <code>false</code>.
      */
-    protected boolean evaluateTokenCondition(ParsedCondition parsedCondition, String token) {
+    protected boolean evaluateTokenCondition(ParsedCondition parsedCondition, String token, String[] window) {
 
         boolean conditionSatisfied = false;
 
@@ -147,9 +149,36 @@ public abstract class AbstractFilterStrategy {
             case EQUALS:
                 conditionSatisfied = (token.equalsIgnoreCase(value));
                 break;
+            case IS:
+                conditionSatisfied = (value.equalsIgnoreCase(BIRTHDATE) && isBirthdate(window));
+                break;
+
         }
 
         return conditionSatisfied;
+
+    }
+
+    /**
+     * Determines whether or not a token (date) is a birthdate based on the context.
+     * @param window The window surrounding the token.
+     * @return <code>true</code> if the date is found to be a birthdate, otherwise <code>false</code>.
+     */
+    protected boolean isBirthdate(String[] window) {
+
+        // PHL-165: Is this a birthday?
+        final String joinedWindow = StringUtils.join(window, " ").replaceAll("[^a-zA-Z ]", "").toLowerCase();
+
+        final boolean isBirthdate =
+                joinedWindow.contains("dob") ||
+                        joinedWindow.contains("birthday") ||
+                        joinedWindow.contains("birthdate") ||
+                        joinedWindow.contains("date of birth") ||
+                        joinedWindow.contains("birth") ||
+                        joinedWindow.contains("born") ||
+                        joinedWindow.contains("born on");
+
+        return isBirthdate;
 
     }
 

@@ -40,7 +40,7 @@ public class NerFilterStrategy extends AbstractFilterStrategy {
 
             if(StringUtils.equalsIgnoreCase(TOKEN, parsedCondition.getField())) {
 
-                conditionsSatisfied = evaluateTokenCondition(parsedCondition, token);
+                conditionsSatisfied = evaluateTokenCondition(parsedCondition, token, window);
 
             } else if(StringUtils.equalsIgnoreCase(CLASSIFICATION, parsedCondition.getField()) || StringUtils.equalsIgnoreCase(TYPE, parsedCondition.getField())) {
 

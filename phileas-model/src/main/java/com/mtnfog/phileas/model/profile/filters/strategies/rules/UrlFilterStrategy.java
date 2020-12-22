@@ -39,7 +39,7 @@ public class UrlFilterStrategy extends AbstractFilterStrategy {
 
             if(StringUtils.equalsIgnoreCase(TOKEN, parsedCondition.getField())) {
 
-                conditionsSatisfied = evaluateTokenCondition(parsedCondition, token);
+                conditionsSatisfied = evaluateTokenCondition(parsedCondition, token, window);
 
             } else if(StringUtils.equalsIgnoreCase(CONTEXT, parsedCondition.getField())) {
 

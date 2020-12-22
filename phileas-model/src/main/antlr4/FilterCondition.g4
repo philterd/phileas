@@ -29,6 +29,7 @@ COMPARATOR: (
     | '=='
     | '!='
     | 'startswith'
+    | 'is'
     );
 
 NUMBER: (
