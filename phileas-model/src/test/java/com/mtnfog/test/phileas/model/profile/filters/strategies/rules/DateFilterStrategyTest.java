@@ -286,9 +286,43 @@ public class DateFilterStrategyTest extends AbstractFilterStrategyTest {
         strategy.setStrategy(AbstractFilterStrategy.TRUNCATE_TO_YEAR);
 
         final FilterPattern filterPattern = new FilterPattern.FilterPatternBuilder(Pattern.compile("\\b\\d{2}-\\d{2}-\\d{4}"), 0.75).withFormat("MM-dd-uuuu").build();
-        final Replacement replacement = strategy.getReplacement("name", "context", "docId", date, new Crypto(), anonymizationService, filterPattern);
+        final Replacement replacement = strategy.getReplacement("name", "context", "docId", date, WINDOW, new Crypto(), anonymizationService, filterPattern);
 
         Assertions.assertEquals(String.valueOf(parsedDate.getYear()), replacement.getReplacement());
+
+    }
+
+    @Test
+    public void birthdate1() throws Exception {
+
+        final String[] window = new String[]{"born", "on", "10-05-2005"};
+
+        final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
+
+        final AbstractFilterStrategy strategy = getFilterStrategy();
+        strategy.setStrategy(AbstractFilterStrategy.TRUNCATE_TO_YEAR_IF_BIRTHDAY);
+
+        final FilterPattern filterPattern = new FilterPattern.FilterPatternBuilder(Pattern.compile("\\b\\d{2}-\\d{2}-\\d{4}"), 0.75).withFormat("MM-dd-uuuu").build();
+        final Replacement replacement = strategy.getReplacement("name", "context", "docId", "10-05-2005", window, new Crypto(), anonymizationService, filterPattern);
+
+        Assertions.assertEquals("2005", replacement.getReplacement());
+
+    }
+
+    @Test
+    public void birthdate2() throws Exception {
+
+        final String[] window = new String[]{"document", "filed", "10-05-2005", "successfully"};
+
+        final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
+
+        final AbstractFilterStrategy strategy = getFilterStrategy();
+        strategy.setStrategy(AbstractFilterStrategy.TRUNCATE_TO_YEAR_IF_BIRTHDAY);
+
+        final FilterPattern filterPattern = new FilterPattern.FilterPatternBuilder(Pattern.compile("\\b\\d{2}-\\d{2}-\\d{4}"), 0.75).withFormat("MM-dd-uuuu").build();
+        final Replacement replacement = strategy.getReplacement("name", "context", "docId", "10-05-2020", window, new Crypto(), anonymizationService, filterPattern);
+
+        Assertions.assertEquals("10-05-2020", replacement.getReplacement());
 
     }
 
