@@ -93,4 +93,28 @@ public class ZipCodeFilterTest extends AbstractFilterTest {
 
     }
 
+    @Test
+    public void filterZipCode7() throws Exception {
+
+        final List<ZipCodeFilterStrategy> strategies = Arrays.asList(new ZipCodeFilterStrategy());
+        ZipCodeFilter filter = new ZipCodeFilter(strategies, new ZipCodeAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+
+        // Tests whole word only.
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "George Washington was president and his ssn was 123-45-6789 and he lived in 9021032.");
+        Assertions.assertEquals(0, filterResult.getSpans().size());
+
+    }
+
+    @Test
+    public void filterZipCode8() throws Exception {
+
+        final List<ZipCodeFilterStrategy> strategies = Arrays.asList(new ZipCodeFilterStrategy());
+        ZipCodeFilter filter = new ZipCodeFilter(strategies, new ZipCodeAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+
+        // Tests whole word only.
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "George Washington was president and his ssn was 123-45-6789 and he lived in 90210-1234.");
+        Assertions.assertEquals(1, filterResult.getSpans().size());
+
+    }
+
 }
