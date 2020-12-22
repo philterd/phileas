@@ -298,6 +298,50 @@ public class DateFilterStrategyTest extends AbstractFilterStrategyTest {
     }
 
     @Test
+    public void relativeReplacement6() throws Exception {
+
+        final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
+
+        final DateTimeFormatter formatter = new DateTimeFormatterBuilder()
+                .appendOptional(DateTimeFormatter.ofPattern("MMM yyyy"))
+                .toFormatter();
+
+        final LocalDateTime parsedDate = LocalDateTime.now().minusDays(3).minusMonths(7).minusYears(5);
+        final String date = parsedDate.format(formatter);
+
+        final AbstractFilterStrategy strategy = getFilterStrategy();
+        strategy.setStrategy(AbstractFilterStrategy.RELATIVE);
+
+        final FilterPattern filterPattern = new FilterPattern.FilterPatternBuilder(Pattern.compile("\\b\\d{2}-\\d{2}-\\d{4}"), 0.75).withFormat("MMM uuuu").build();
+        final Replacement replacement = strategy.getReplacement("name", "context", "docId", date, WINDOW, new Crypto(), anonymizationService, filterPattern);
+
+        Assertions.assertEquals("5 years 8 months ago", replacement.getReplacement());
+
+    }
+
+    @Test
+    public void relativeReplacement7() throws Exception {
+
+        final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
+
+        final DateTimeFormatter formatter = new DateTimeFormatterBuilder()
+                .appendOptional(DateTimeFormatter.ofPattern("MMM yyyy"))
+                .toFormatter();
+
+        final LocalDateTime parsedDate = LocalDateTime.now().minusDays(3).minusMonths(7);
+        final String date = parsedDate.format(formatter);
+
+        final AbstractFilterStrategy strategy = getFilterStrategy();
+        strategy.setStrategy(AbstractFilterStrategy.RELATIVE);
+
+        final FilterPattern filterPattern = new FilterPattern.FilterPatternBuilder(Pattern.compile("\\b\\d{2}-\\d{2}-\\d{4}"), 0.75).withFormat("MMM uuuu").build();
+        final Replacement replacement = strategy.getReplacement("name", "context", "docId", date, WINDOW, new Crypto(), anonymizationService, filterPattern);
+
+        Assertions.assertEquals("8 months ago", replacement.getReplacement());
+
+    }
+
+    @Test
     public void truncateToYear1() throws Exception {
 
         final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
