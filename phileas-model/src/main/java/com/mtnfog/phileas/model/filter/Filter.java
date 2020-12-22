@@ -190,11 +190,12 @@ public abstract class Filter {
      * @param context The context.
      * @param documentId The document ID.
      * @param token The token to replace.
+     * @param window The window surrounding the token.
      * @param confidence The confidence of the item.
      * @param classification The classification of the item.
      * @return The replacement string.
      */
-    public Replacement getReplacement(String filterProfile, String context, String documentId, String token, double confidence, String classification, FilterPattern filterPattern) throws Exception {
+    public Replacement getReplacement(String filterProfile, String context, String documentId, String token, String[] window, double confidence, String classification, FilterPattern filterPattern) throws Exception {
 
         if(strategies != null) {
 
@@ -223,14 +224,14 @@ public abstract class Filter {
                         }
 
                         // Break early since we met the strategy's condition.
-                        return strategy.getReplacement(classification, context, documentId, token, crypto, anonymizationService, filterPattern);
+                        return strategy.getReplacement(classification, context, documentId, token, window, crypto, anonymizationService, filterPattern);
 
                     }
 
                 } else {
 
                     // Break early since there is no condition.
-                    return strategy.getReplacement(classification, context, documentId, token, crypto, anonymizationService, filterPattern);
+                    return strategy.getReplacement(classification, context, documentId, token, window, crypto, anonymizationService, filterPattern);
 
                 }
 

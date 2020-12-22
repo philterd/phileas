@@ -88,11 +88,13 @@ public abstract class AbstractFilterStrategy {
      * @param context The context.
      * @param documentId The document ID.
      * @param token The token.
-     * @param crypto The encryption key used to encrypt values when enabled.
+     * @param window The window containing the token.
+     * @param crypto The encryption key used to encrypt values when enabled, otherwise <code>null</code>.
      * @param anonymizationService The {@link AnonymizationService} for the token.
+     * @param filterPattern The filter pattern that identified the filter, or <code>null</code> if no pattern was used.
      * @return A replacement value for a token.
      */
-    public abstract Replacement getReplacement(String classification, String context, String documentId, String token, Crypto crypto, AnonymizationService anonymizationService, FilterPattern filterPattern) throws Exception;
+    public abstract Replacement getReplacement(String classification, String context, String documentId, String token, String[] window, Crypto crypto, AnonymizationService anonymizationService, FilterPattern filterPattern) throws Exception;
 
     /**
      * Evaluates the condition on the given token.

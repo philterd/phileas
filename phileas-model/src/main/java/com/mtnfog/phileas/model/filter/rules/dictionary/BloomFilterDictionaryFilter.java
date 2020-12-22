@@ -105,7 +105,7 @@ public class BloomFilterDictionaryFilter extends DictionaryFilter {
                         // Get the original token to get the right casing.
                         final String originalToken = text.substring(characterStart, characterEnd);
 
-                        final Replacement replacement = getReplacement(filterProfile.getName(), context, documentId, originalToken, confidence, classification, null);
+                        final Replacement replacement = getReplacement(filterProfile.getName(), context, documentId, originalToken, window, confidence, classification, null);
                         spans.add(Span.make(characterStart, characterEnd, getFilterType(), context, documentId, confidence, originalToken, replacement.getReplacement(), replacement.getSalt(), isIgnored, window));
 
                     }

@@ -114,8 +114,11 @@ public class PyTorchFilter extends NerFilter {
                     // Only interested in spans matching the tag we are looking for, e.g. PER, LOC.
                     if (StringUtils.equalsIgnoreCase(phileasSpan.getTag(), tag)) {
 
+                        // Ge tthe window of text surrounding the token.
+                        final String[] window = getWindow(input, phileasSpan.getStart(), phileasSpan.getEnd());
+
                         final Span span = createSpan(filterProfile.getName(), input, context, documentId, phileasSpan.getText(),
-                                phileasSpan.getTag(), phileasSpan.getStart(), phileasSpan.getEnd(), phileasSpan.getScore());
+                                window, phileasSpan.getTag(), phileasSpan.getStart(), phileasSpan.getEnd(), phileasSpan.getScore());
 
                         // Span will be null if no span was created due to it being excluded.
                         if (span != null) {
@@ -154,9 +157,9 @@ public class PyTorchFilter extends NerFilter {
     }
 
     private Span createSpan(String filterProfile, String input, String context, String documentId, String text,
-                            String classification, int start, int end, double confidence) throws Exception {
+                            String[] window, String classification, int start, int end, double confidence) throws Exception {
 
-        final Replacement replacement = getReplacement(filterProfile, context, documentId, text, confidence, classification, null);
+        final Replacement replacement = getReplacement(filterProfile, context, documentId, text, window, confidence, classification, null);
 
         if(StringUtils.equals(replacement.getReplacement(), text)) {
 
@@ -166,8 +169,6 @@ public class PyTorchFilter extends NerFilter {
             return null;
 
         } else {
-
-            final String[] window = getWindow(input, start, end);
 
             // Is this term ignored?
             final boolean ignored = isIgnored(text);

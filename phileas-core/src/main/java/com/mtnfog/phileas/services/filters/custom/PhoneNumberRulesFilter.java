@@ -51,13 +51,12 @@ public class PhoneNumberRulesFilter extends RulesFilter {
 
             for (final PhoneNumberMatch match : matches) {
 
+                final String[] window = getWindow(input, match.start(), match.end());
                 final double confidence = 1.0;
                 final String text = match.rawString();
                 final String classification = "";
-                final Replacement replacement = getReplacement(filterProfile.getName(), context, documentId, text, confidence, classification, null);
+                final Replacement replacement = getReplacement(filterProfile.getName(), context, documentId, text, window, confidence, classification, null);
                 final boolean isIgnored = ignored.contains(text);
-
-                final String[] window = getWindow(input, match.start(), match.end());
 
                 spans.add(Span.make(match.start(), match.end(), getFilterType(), context, documentId, confidence, text, replacement.getReplacement(), replacement.getSalt(), isIgnored, window));
 

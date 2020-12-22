@@ -23,6 +23,8 @@ public abstract class AbstractFilterStrategyTest {
 
     public abstract AbstractFilterStrategy getFilterStrategy() throws IOException;
 
+    public static final String[] WINDOW = new String[3];
+
     @Test
     public void replacement1() throws Exception {
 
@@ -32,7 +34,7 @@ public abstract class AbstractFilterStrategyTest {
         strategy.setStrategy(AbstractFilterStrategy.STATIC_REPLACE);
         strategy.setStaticReplacement("static-value");
 
-        final Replacement replacement = strategy.getReplacement("name", "context", "docId", "token", new Crypto(), anonymizationService, null);
+        final Replacement replacement = strategy.getReplacement("name", "context", "docId", "token", WINDOW, new Crypto(), anonymizationService, null);
 
         Assertions.assertEquals("static-value", replacement.getReplacement());
 
@@ -47,7 +49,7 @@ public abstract class AbstractFilterStrategyTest {
         strategy.setStrategy(AbstractFilterStrategy.REDACT);
         strategy.setRedactionFormat("REDACTION-%t");
 
-        final Replacement replacement = strategy.getReplacement("name", "context", "docId", "token", new Crypto(), anonymizationService, null);
+        final Replacement replacement = strategy.getReplacement("name", "context", "docId", "token", WINDOW, new Crypto(), anonymizationService, null);
 
         Assertions.assertEquals("REDACTION-" + strategy.getFilterType().getType(), replacement.getReplacement());
 
@@ -65,7 +67,7 @@ public abstract class AbstractFilterStrategyTest {
         final AbstractFilterStrategy strategy = getFilterStrategy();
         strategy.setStrategy(AbstractFilterStrategy.RANDOM_REPLACE);
 
-        final Replacement replacement = strategy.getReplacement("name", "context", "docId", "token", new Crypto(), anonymizationService, null);
+        final Replacement replacement = strategy.getReplacement("name", "context", "docId", "token", WINDOW, new Crypto(), anonymizationService, null);
 
         Assertions.assertNotEquals("random", replacement.getReplacement());
 
@@ -83,7 +85,7 @@ public abstract class AbstractFilterStrategyTest {
         final AbstractFilterStrategy strategy = getFilterStrategy();
         strategy.setStrategy("something-wrong");
 
-        final Replacement replacement = strategy.getReplacement("name", "context", "docId", "token", new Crypto(), anonymizationService, null);
+        final Replacement replacement = strategy.getReplacement("name", "context", "docId", "token", WINDOW, new Crypto(), anonymizationService, null);
 
         Assertions.assertEquals("{{{REDACTED-" + strategy.getFilterType().getType() + "}}}", replacement.getReplacement());
 
@@ -101,7 +103,7 @@ public abstract class AbstractFilterStrategyTest {
         strategy.setStrategy(AbstractFilterStrategy.REDACT);
         strategy.setRedactionFormat("<ENTITY:%t>%v</ENTITY>");
 
-        final Replacement replacement = strategy.getReplacement("name", "context", "docId", "token", new Crypto(), anonymizationService, null);
+        final Replacement replacement = strategy.getReplacement("name", "context", "docId", "token", WINDOW, new Crypto(), anonymizationService, null);
 
         Assertions.assertEquals("<ENTITY:" + strategy.getFilterType().getType() + ">token</ENTITY>", replacement.getReplacement());
 
@@ -121,7 +123,7 @@ public abstract class AbstractFilterStrategyTest {
 
         final Crypto crypto = new Crypto("9EE7A356FDFE43F069500B0086758346E66D8583E0CE1CFCA04E50F67ECCE5D1", "B674D3B8F1C025AEFF8F6D5FA1AEAD3A");
 
-        final Replacement replacement = strategy.getReplacement("name", "context", "docId", "token", crypto, anonymizationService, null);
+        final Replacement replacement = strategy.getReplacement("name", "context", "docId", "token", WINDOW, crypto, anonymizationService, null);
 
         Assertions.assertEquals("{{j6HcaY8m7hPACVVyQtj4PQ==}}", replacement.getReplacement());
 
@@ -140,7 +142,7 @@ public abstract class AbstractFilterStrategyTest {
         final AbstractFilterStrategy strategy = getFilterStrategy();
         strategy.setStrategy(AbstractFilterStrategy.RANDOM_REPLACE);
 
-        final Replacement replacement = strategy.getReplacement("name", "context", "docId", "token", new Crypto(), anonymizationService, null);
+        final Replacement replacement = strategy.getReplacement("name", "context", "docId", "token", WINDOW, new Crypto(), anonymizationService, null);
 
         Assertions.assertEquals("randomtoken", replacement.getReplacement());
 
@@ -158,7 +160,7 @@ public abstract class AbstractFilterStrategyTest {
         strategy.setStrategy(AbstractFilterStrategy.STATIC_REPLACE);
         strategy.setStaticReplacement("staticreplacement");
 
-        final Replacement replacement = strategy.getReplacement("name", "context", "docId", "token", new Crypto(), anonymizationService, null);
+        final Replacement replacement = strategy.getReplacement("name", "context", "docId", "token", WINDOW, new Crypto(), anonymizationService, null);
 
         Assertions.assertEquals("staticreplacement", replacement.getReplacement());
 
@@ -181,7 +183,7 @@ public abstract class AbstractFilterStrategyTest {
         Assertions.assertThrows(Exception.class, () -> {
 
             // Throws an exception because we tried to use CRYPTO_REPLACE without any keys.
-            strategy.getReplacement("name", "context", "docId", "token", crypto, anonymizationService, null);
+            strategy.getReplacement("name", "context", "docId", "token", WINDOW, crypto, anonymizationService, null);
 
         });
 
@@ -198,7 +200,7 @@ public abstract class AbstractFilterStrategyTest {
         final AbstractFilterStrategy strategy = getFilterStrategy();
         strategy.setStrategy(AbstractFilterStrategy.HASH_SHA256_REPLACE);
 
-        final Replacement replacement = strategy.getReplacement("name", "context", "docId", "token", null, anonymizationService, null);
+        final Replacement replacement = strategy.getReplacement("name", "context", "docId", "token", WINDOW, null, anonymizationService, null);
 
         Assertions.assertNotNull(replacement.getSalt());
         final String expected = DigestUtils.sha256Hex("token" + replacement.getSalt());

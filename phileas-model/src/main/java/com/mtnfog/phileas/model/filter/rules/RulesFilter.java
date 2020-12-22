@@ -66,13 +66,15 @@ public abstract class RulesFilter extends Filter {
                     // TODO: Should this be an option? Use "simple" confidence values or "calculated"?
                     final double initialConfidence = filterPattern.getInitialConfidence();
 
-                    // Get the span's replacement.
-                    final Replacement replacement = getReplacement(filterProfile.getName(), context, documentId, token, initialConfidence, filterPattern.getClassification(), filterPattern);
-
+                    // The token's position inside the text.
                     final int characterStart = matcher.start(0);
                     final int characterEnd = matcher.end(0);
 
+                    // Get the window of words around the token.
                     final String[] window = getWindow(input, characterStart, characterEnd);
+
+                    // Get the span's replacement.
+                    final Replacement replacement = getReplacement(filterProfile.getName(), context, documentId, token, window, initialConfidence, filterPattern.getClassification(), filterPattern);
 
                     final Span span = Span.make(characterStart, characterEnd, getFilterType(), context, documentId, initialConfidence, token, replacement.getReplacement(), replacement.getSalt(), ignored, window);
 

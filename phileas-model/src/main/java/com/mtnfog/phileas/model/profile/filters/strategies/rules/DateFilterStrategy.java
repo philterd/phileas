@@ -123,7 +123,7 @@ public class DateFilterStrategy extends AbstractFilterStrategy {
     }
 
     @Override
-    public Replacement getReplacement(String label, String context, String documentId, String token, Crypto crypto, AnonymizationService anonymizationService, FilterPattern filterPattern) throws Exception {
+    public Replacement getReplacement(String label, String context, String documentId, String token, String[] window, Crypto crypto, AnonymizationService anonymizationService, FilterPattern filterPattern) throws Exception {
 
         String replacement = null;
         String salt = "";

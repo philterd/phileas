@@ -264,7 +264,7 @@ public class LuceneDictionaryFilter extends DictionaryFilter implements Serializ
                                 final String classification = "";
 
                                 // Get the replacement token or the original token if no filter strategy conditions are met.
-                                final Replacement replacement = getReplacement(filterProfile.getName(), context, documentId, token, confidence, classification, null);
+                                final Replacement replacement = getReplacement(filterProfile.getName(), context, documentId, token, window, confidence, classification, null);
 
                                 // Add the span to the list.
                                 spans.add(Span.make(characterStart, characterEnd, getFilterType(), context, documentId, confidence, token, replacement.getReplacement(), replacement.getSalt(), ignored, window));
