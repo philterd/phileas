@@ -159,6 +159,25 @@ public class DateFilterStrategy extends AbstractFilterStrategy {
 
             replacement = DigestUtils.sha256Hex(token + salt);
 
+        } else if(StringUtils.equalsIgnoreCase(strategy, TRUNCATE_TO_YEAR)) {
+
+            try {
+
+                final DateTimeFormatter dtf = DateTimeFormatter.ofPattern(filterPattern.getFormat(), Locale.US).withResolverStyle(ResolverStyle.STRICT);
+                final LocalDateTime parsedDate = LocalDate.parse(token, dtf).atStartOfDay();
+
+                replacement = String.valueOf(parsedDate.getYear());
+
+            } catch (DateTimeParseException ex) {
+
+                LOGGER.error("Unable to parse date with format " + filterPattern.getFormat() + ". Falling back to redaction.", ex);
+
+                // This will be thrown if the input date is not a valid date.
+                // Default back to redaction.
+                replacement = getRedactedToken(token, label, filterType);
+
+            }
+
         } else if(StringUtils.equalsIgnoreCase(strategy, SHIFT)) {
 
             // Shift the date given some number of days, months, and/or years.
@@ -194,7 +213,6 @@ public class DateFilterStrategy extends AbstractFilterStrategy {
                         .parseDefaulting(ChronoField.DAY_OF_MONTH, 1)
                         .toFormatter();
 
-                //final DateTimeFormatter dtf = DateTimeFormatter.ofPattern(filterPattern.getFormat(), Locale.US).withResolverStyle(ResolverStyle.STRICT);
                 final LocalDateTime parsedDate = LocalDate.parse(token, dtf).atStartOfDay();
                 final LocalDateTime currentDate = LocalDateTime.now();
 

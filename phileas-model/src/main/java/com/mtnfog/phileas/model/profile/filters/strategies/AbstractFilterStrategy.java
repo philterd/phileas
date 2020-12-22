@@ -28,6 +28,7 @@ public abstract class AbstractFilterStrategy {
     public static final String ABBREVIATE = "ABBREVIATE";
 
     // Date strategies
+    public static final String TRUNCATE_TO_YEAR = "TRUNCATE_TO_YEAR";
     public static final String SHIFT = "SHIFT";
     public static final String RELATIVE = "RELATIVE";
 
