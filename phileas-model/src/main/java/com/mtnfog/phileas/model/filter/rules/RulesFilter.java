@@ -35,6 +35,18 @@ public abstract class RulesFilter extends Filter {
         super(filterType, strategies, anonymizationService, alertService, ignored, ignoredFiles, ignoredPatterns, crypto, windowSize);
     }
 
+    // TODO: Move this to Filter.java to all filters can have access to it.
+    /**
+     * Provides the ability to apply a post filter to identified spans.
+     * This can be used to remove false positives.
+     * Override this function in subclasses.
+     * @param spans The identified spans.
+     * @return A subset of the input spans.
+     */
+    public List<Span> postFilter(List<Span> spans) {
+        return spans;
+    }
+
     /**
      * Find {@link Span spans} matching the {@link Pattern}.
      * @param filterProfile The {@link FilterProfile} to use.
@@ -92,7 +104,9 @@ public abstract class RulesFilter extends Filter {
 
         }
 
-        return spans;
+        final List<Span> postFilteredSpans = postFilter(spans);
+
+        return postFilteredSpans;
 
     }
 

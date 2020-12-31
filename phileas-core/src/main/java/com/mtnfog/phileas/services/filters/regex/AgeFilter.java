@@ -13,9 +13,7 @@ import com.mtnfog.phileas.model.profile.filters.strategies.AbstractFilterStrateg
 import com.mtnfog.phileas.model.services.AlertService;
 import com.mtnfog.phileas.model.services.AnonymizationService;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Pattern;
 
 public class AgeFilter extends RegexFilter {
@@ -43,6 +41,34 @@ public class AgeFilter extends RegexFilter {
         final List<Span> spans = findSpans(filterProfile, analyzer, input, context, documentId);
 
         return new FilterResult(context, documentId, spans);
+
+    }
+
+    @Override
+    public List<Span> postFilter(List<Span> spans) {
+
+        final List<Span> postFilteredSpans = new LinkedList<>();
+
+        for(final Span span : spans) {
+
+            final List<String> window = Arrays.asList(span.getWindow());
+
+            // Does it contain 'age' or 'old' or 'yo'?
+            // If not, drop it.
+            // TODO: Should this list be exposed to the user and customizable?
+            if(window.contains("age")
+                    || span.getText().contains("aged")
+                    || span.getText().contains("old")
+                    || span.getText().contains("yo")) {
+
+                postFilteredSpans.add(span);
+
+            }
+
+        }
+
+        return postFilteredSpans;
+
     }
 
 }
