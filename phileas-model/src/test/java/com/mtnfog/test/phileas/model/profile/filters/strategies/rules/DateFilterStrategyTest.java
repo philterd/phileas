@@ -259,7 +259,8 @@ public class DateFilterStrategyTest extends AbstractFilterStrategyTest {
 
         final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
 
-        final LocalDateTime parsedDate = LocalDateTime.now().plusYears(5).plusMonths(4);
+        // Minus days is to prevent test failures based on how late in the month we currently are.
+        final LocalDateTime parsedDate = LocalDateTime.now().plusYears(5).plusMonths(4).minusDays(LocalDateTime.now().getDayOfMonth());
         final DateTimeFormatter dtf = DateTimeFormatter.ofPattern("M-dd-uuuu");
         final String date = parsedDate.format(dtf);
 
@@ -271,7 +272,7 @@ public class DateFilterStrategyTest extends AbstractFilterStrategyTest {
         final Replacement replacement = strategy.getReplacement("name", "context", "docId", date, WINDOW, new Crypto(), anonymizationService, filterPattern);
 
         // This is a future date but futures are enabled.
-        Assertions.assertEquals("in 5 years 4 months", replacement.getReplacement());
+        Assertions.assertEquals("in 5 years 2 months", replacement.getReplacement());
 
     }
 
