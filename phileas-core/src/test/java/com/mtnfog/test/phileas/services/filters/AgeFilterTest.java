@@ -239,4 +239,21 @@ public class AgeFilterTest extends AbstractFilterTest {
 
     }
 
+    @Test
+    public void filter12() throws Exception {
+
+        // PHL-175: Date format "64-year-old"
+
+        final List<AgeFilterStrategy> strategies = Arrays.asList(new AgeFilterStrategy());
+        AgeFilter filter = new AgeFilter(strategies, new AgeAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "She is a 22-year-old female");
+
+        showSpans(filterResult.getSpans());
+
+        Assertions.assertEquals(1, filterResult.getSpans().size());
+        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 9, 20, FilterType.AGE));
+
+    }
+
 }
