@@ -25,6 +25,10 @@ pipeline {
         PHILTER_REDIS_SSL = "false"
         PHILTER_REDIS_AUTH_TOKEN = "Randompassword1!"
         PHILTER_REDIS_CLUSTERED = "false"
+        CODEARTIFACT_AUTH_TOKEN = sh(
+          returnStatus: true,
+          script: 'aws codeartifact get-authorization-token --domain mtnfog --domain-owner 341239660749 --query authorizationToken --output text --region us-east-1'
+        )
     }
     stages {
         stage ('Initialize') {
@@ -32,7 +36,6 @@ pipeline {
                 sh '''
                     echo "PATH = ${PATH}"
                     echo "M2_HOME = ${M2_HOME}"
-                    export CODEARTIFACT_AUTH_TOKEN=`aws codeartifact get-authorization-token --domain mtnfog --domain-owner 341239660749 --query authorizationToken --output text --region us-east-1`
                 '''
                 checkout([$class: 'GitSCM',
                           branches: [[name: "${params.BRANCH_TAG}"]],
