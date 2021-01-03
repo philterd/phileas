@@ -40,15 +40,7 @@
 			<name>mtnfog--maven-releases</name>
 			<url>https://mtnfog-341239660749.d.codeartifact.us-east-1.amazonaws.com/maven/maven-releases/</url>
 		</repository>
-		<!--<repository>
-			<id>maven-s3-release-repo</id>
-			<name>maven-s3-release-repo</name>
-			<url>s3://mtnfog-repository/releases</url>
-		</repository>-->
 		<snapshotRepository>
-			<!--<id>maven-s3-snapshot-repo</id>
-			<name>maven-s3-snapshot-repo</name>
-			<url>s3://mtnfog-repository/snapshots</url>-->
 			<id>mtnfog--maven-snapshots</id>
 			<name>mtnfog--maven-snapshots</name>
 			<url>https://mtnfog-341239660749.d.codeartifact.us-east-1.amazonaws.com/maven/maven-snapshots/</url>
