@@ -32,6 +32,7 @@ pipeline {
                 sh '''
                     echo "PATH = ${PATH}"
                     echo "M2_HOME = ${M2_HOME}"
+                    export CODEARTIFACT_AUTH_TOKEN=`aws codeartifact get-authorization-token --domain mtnfog --domain-owner 341239660749 --query authorizationToken --output text --region us-east-1`
                 '''
                 checkout([$class: 'GitSCM',
                           branches: [[name: "${params.BRANCH_TAG}"]],
