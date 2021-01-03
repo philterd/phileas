@@ -25,10 +25,7 @@ pipeline {
         PHILTER_REDIS_SSL = "false"
         PHILTER_REDIS_AUTH_TOKEN = "Randompassword1!"
         PHILTER_REDIS_CLUSTERED = "false"
-        CODEARTIFACT_AUTH_TOKEN = sh(
-          returnStatus: true,
-          script: 'aws codeartifact get-authorization-token --domain mtnfog --domain-owner 341239660749 --query authorizationToken --output text --region us-east-1'
-        )
+        CODEARTIFACT_AUTH_TOKEN = sh(returnStdout: true, script: 'aws codeartifact get-authorization-token --domain mtnfog --domain-owner 341239660749 --query authorizationToken --output text --region us-east-1')
     }
     stages {
         stage ('Initialize') {
