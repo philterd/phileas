@@ -61,17 +61,17 @@
 			<url>https://repo1.maven.org/maven2</url>
 		</repository>
 		<repository>
-			<id>maven-s3-release-repo</id>
-			<name>maven-s3-release-repo</name>
-			<url>s3://mtnfog-repository/releases</url>
+			<id>mtnfog--maven-releases</id>
+			<name>mtnfog--maven-releases</name>
+			<url>https://mtnfog-341239660749.d.codeartifact.us-east-1.amazonaws.com/maven/maven-releases/</url>
 			<snapshots>
 				<enabled>false</enabled>
 			</snapshots>
 		</repository>
 		<repository>
-			<id>maven-s3-snapshot-repo</id>
-			<name>maven-s3-snapshot-repo</name>
-			<url>s3://mtnfog-repository/snapshots</url>
+			<id>mtnfog--maven-snapshots/id>
+			<name>mtnfog--maven-snapshots/name>
+			<url>https://mtnfog-341239660749.d.codeartifact.us-east-1.amazonaws.com/maven/maven-snapshots/</url>
 			<snapshots>
 				<enabled>true</enabled>
 			</snapshots>
