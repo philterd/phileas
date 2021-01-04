@@ -260,7 +260,7 @@ public class DateFilterStrategyTest extends AbstractFilterStrategyTest {
         final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
 
         // Minus days is to prevent test failures based on how late in the month we currently are.
-        final LocalDateTime parsedDate = LocalDateTime.now().plusYears(5).plusMonths(4).minusDays(LocalDateTime.now().getDayOfMonth());
+        final LocalDateTime parsedDate = LocalDateTime.now().plusYears(5).plusMonths(3);
         final DateTimeFormatter dtf = DateTimeFormatter.ofPattern("M-dd-uuuu");
         final String date = parsedDate.format(dtf);
 
@@ -272,7 +272,7 @@ public class DateFilterStrategyTest extends AbstractFilterStrategyTest {
         final Replacement replacement = strategy.getReplacement("name", "context", "docId", date, WINDOW, new Crypto(), anonymizationService, filterPattern);
 
         // This is a future date but futures are enabled.
-        Assertions.assertEquals("in 5 years 2 months", replacement.getReplacement());
+        Assertions.assertEquals("in 5 years 3 months", replacement.getReplacement());
 
     }
 
@@ -316,7 +316,7 @@ public class DateFilterStrategyTest extends AbstractFilterStrategyTest {
         final FilterPattern filterPattern = new FilterPattern.FilterPatternBuilder(Pattern.compile("\\b\\d{2}-\\d{2}-\\d{4}"), 0.75).withFormat("MMM uuuu").build();
         final Replacement replacement = strategy.getReplacement("name", "context", "docId", date, WINDOW, new Crypto(), anonymizationService, filterPattern);
 
-        Assertions.assertEquals("5 years 8 months ago", replacement.getReplacement());
+        Assertions.assertEquals("5 years 7 months ago", replacement.getReplacement());
 
     }
 
@@ -338,7 +338,7 @@ public class DateFilterStrategyTest extends AbstractFilterStrategyTest {
         final FilterPattern filterPattern = new FilterPattern.FilterPatternBuilder(Pattern.compile("\\b\\d{2}-\\d{2}-\\d{4}"), 0.75).withFormat("MMM uuuu").build();
         final Replacement replacement = strategy.getReplacement("name", "context", "docId", date, WINDOW, new Crypto(), anonymizationService, filterPattern);
 
-        Assertions.assertEquals("8 months ago", replacement.getReplacement());
+        Assertions.assertEquals("7 months ago", replacement.getReplacement());
 
     }
 
