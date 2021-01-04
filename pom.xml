@@ -69,8 +69,8 @@
 			</snapshots>
 		</repository>
 		<repository>
-			<id>mtnfog--maven-snapshots/id>
-			<name>mtnfog--maven-snapshots/name>
+			<id>mtnfog--maven-snapshots</id>
+			<name>mtnfog--maven-snapshots</name>
 			<url>https://mtnfog-341239660749.d.codeartifact.us-east-1.amazonaws.com/maven/maven-snapshots/</url>
 			<snapshots>
 				<enabled>true</enabled>
