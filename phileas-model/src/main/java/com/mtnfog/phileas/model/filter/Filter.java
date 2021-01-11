@@ -319,6 +319,8 @@ public abstract class Filter {
             return filterProfile.getIdentifiers().getPhoneNumber().getPhoneNumberFilterStrategies();
         } else if(filterType == FilterType.PHONE_NUMBER_EXTENSION) {
             return filterProfile.getIdentifiers().getPhoneNumberExtension().getPhoneNumberExtensionFilterStrategies();
+        } else if(filterType == FilterType.PHYSICIAN_NAME) {
+            return filterProfile.getIdentifiers().getPhysicianName().getPhysicianNameFilterStrategies();
         } else if(filterType == FilterType.SSN) {
             return filterProfile.getIdentifiers().getSsn().getSsnFilterStrategies();
         } else if(filterType == FilterType.STATE_ABBREVIATION) {

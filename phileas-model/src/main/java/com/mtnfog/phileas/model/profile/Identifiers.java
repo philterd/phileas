@@ -74,6 +74,10 @@ public class Identifiers {
     @Expose
     private PhoneNumberExtension phoneNumberExtension;
 
+    @SerializedName("physicialName")
+    @Expose
+    private PhysicianName physicianName;
+
     @SerializedName("sections")
     @Expose
     private List<Section> sections;
@@ -184,6 +188,8 @@ public class Identifiers {
                 if(this.getPhoneNumber() != null) { return true; } break;
             case PHONE_NUMBER_EXTENSION:
                 if(this.getPhoneNumberExtension() != null) { return true; } break;
+            case PHYSICIAN_NAME:
+                if(this.getPhysicianName() != null) { return true; } break;
             case SECTION:
                 if(this.getSections() != null) { return true; } break;
             case SSN:
@@ -447,6 +453,14 @@ public class Identifiers {
 
     public void setTrackingNumber(TrackingNumber trackingNumber) {
         this.trackingNumber = trackingNumber;
+    }
+
+    public PhysicianName getPhysicianName() {
+        return physicianName;
+    }
+
+    public void setPhysicianName(PhysicianName physicianName) {
+        this.physicianName = physicianName;
     }
 
 }

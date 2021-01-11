@@ -27,6 +27,7 @@ public enum FilterType {
     PASSPORT_NUMBER("passport-number", true),
     PHONE_NUMBER("phone-number", true),
     PHONE_NUMBER_EXTENSION("phone-number-extension", true),
+    PHYSICIAN_NAME("physician-name", true),
     SECTION("section", true),
     SSN("ssn", true),
     STATE_ABBREVIATION("state-abbreviation", false),
