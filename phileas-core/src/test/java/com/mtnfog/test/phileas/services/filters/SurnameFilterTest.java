@@ -22,7 +22,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-@Disabled("This isn't finding anything")
 public class SurnameFilterTest extends AbstractFilterTest {
 
     private static final Logger LOGGER = LogManager.getLogger(SurnameFilterTest.class);
@@ -57,25 +56,11 @@ public class SurnameFilterTest extends AbstractFilterTest {
         AnonymizationService anonymizationService = new SurnameAnonymizationService(new LocalAnonymizationCacheService());
 
         final List<SurnameFilterStrategy> strategies = Arrays.asList(new SurnameFilterStrategy());
-        final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.SURNAME, strategies, INDEX_DIRECTORY, SensitivityLevel.MEDIUM, anonymizationService, alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+        final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.SURNAME, strategies, INDEX_DIRECTORY, SensitivityLevel.LOW, anonymizationService, alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
 
-        final FilterResult filterResult = filter.filter(getFilterProfile(SensitivityLevel.MEDIUM), "context", "documentid", 0, "Lived in Wshington");
+        final FilterResult filterResult = filter.filter(getFilterProfile(SensitivityLevel.LOW), "context", "documentid", 0, "Jones");
         showSpans(filterResult.getSpans());
-        Assertions.assertEquals(0, filterResult.getSpans().size());
-
-    }
-
-    @Test
-    public void filter3() throws Exception {
-
-        AnonymizationService anonymizationService = new SurnameAnonymizationService(new LocalAnonymizationCacheService());
-
-        final List<SurnameFilterStrategy> strategies = Arrays.asList(new SurnameFilterStrategy());
-        final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.SURNAME, strategies, INDEX_DIRECTORY, SensitivityLevel.HIGH, anonymizationService, alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
-
-        final FilterResult filterResult = filter.filter(getFilterProfile(SensitivityLevel.HIGH), "context", "documentid", 0, "Lived in Wasinton");
-        showSpans(filterResult.getSpans());
-        Assertions.assertEquals(0, filterResult.getSpans().size());
+        Assertions.assertEquals(1, filterResult.getSpans().size());
 
     }
 

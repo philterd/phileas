@@ -23,6 +23,8 @@ public class PhysicianNameFilter extends RegexFilter {
     public PhysicianNameFilter(List<? extends AbstractFilterStrategy> strategies, AnonymizationService anonymizationService, AlertService alertService, Set<String> ignored, Set<String> ignoredFiles, List<IgnoredPattern> ignoredPatterns, Crypto crypto, int windowSize) {
         super(FilterType.PHYSICIAN_NAME, strategies, anonymizationService, alertService, ignored, ignoredFiles, ignoredPatterns, crypto, windowSize);
 
+        // \b[A-Z][A-Za-z'\s+]+,[A-Z][A-Za-z'\s+]+,(MD|PhD)\b
+
         // TODO: Set the pattern here.
         final Pattern bitcoinPattern = Pattern.compile("\\b[13][a-km-zA-HJ-NP-Z1-9]{25,34}\\b", Pattern.CASE_INSENSITIVE);
         final FilterPattern bitcoin1 = new FilterPattern.FilterPatternBuilder(bitcoinPattern, 0.90).build();

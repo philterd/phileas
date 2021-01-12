@@ -92,4 +92,18 @@ public class FirstNameFilterTest extends AbstractFilterTest {
 
     }
 
+    @Test
+    public void filterMediumCustom1() throws Exception {
+
+        AnonymizationService anonymizationService = new PersonsAnonymizationService(new LocalAnonymizationCacheService());
+
+        final List<FirstNameFilterStrategy> strategies = Arrays.asList(new FirstNameFilterStrategy());
+        final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.FIRST_NAME, strategies, INDEX_DIRECTORY, SensitivityLevel.MEDIUM, anonymizationService, alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+
+        final FilterResult filterResult = filter.filter(getFilterProfile(SensitivityLevel.HIGH), "context", "documentid", 0,"Melissa");
+        showSpans(filterResult.getSpans());
+        Assertions.assertEquals(1, filterResult.getSpans().size());
+
+    }
+
 }
