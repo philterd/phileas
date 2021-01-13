@@ -150,7 +150,7 @@ public abstract class Filter {
 
         for(finalStart = characterStart; finalStart != 0 && spacesSeen <= windowSize; finalStart--) {
 
-            if(Character.isWhitespace(text.charAt(finalStart))) {
+            if(finalStart < text.length() && Character.isWhitespace(text.charAt(finalStart))) {
 
                 // Count it.
                 spacesSeen++;
