@@ -81,13 +81,24 @@ public class PhysicianNameFilter extends RegexFilter {
                 final String[] tokens = input.split(" ");
                 final int count = tokens.length;
 
+                final String text;
+
                 if(tokens.length >= 3) {
-                    System.out.println(StringUtils.joinWith(" ", tokens[count + 0], tokens[count + 1], tokens[count + 2], tokens[count + 3]));
+                    text = StringUtils.joinWith(" ", tokens[0], tokens[1], tokens[2]);
                 } else if(tokens.length >= 2) {
-                    System.out.println(StringUtils.joinWith(" ", tokens[count + 0], tokens[count + 1]));
+                    text = StringUtils.joinWith(" ", tokens[0], tokens[1]);
+                } else {
+                    // Not a name.
+                    text = StringUtils.joinWith(" ", tokens[0], tokens[1]);
                 }
 
+                // TODO: Update the span text.
+                span.setText(text);
+                span.setCharacterStart(span.get);
+
             }
+
+            spans.addAll(preNominalSpans);
 
         }
 
