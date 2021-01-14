@@ -47,7 +47,7 @@ public class PhoneNumberRulesFilter extends RulesFilter {
 
         if(filterProfile.getIdentifiers().hasFilter(filterType)) {
 
-            final Iterable<PhoneNumberMatch> matches = phoneUtil.findNumbers(input, "US", PhoneNumberUtil.Leniency.POSSIBLE, Long.MAX_VALUE);
+            final Iterable<PhoneNumberMatch> matches = phoneUtil.findNumbers(input, "US", PhoneNumberUtil.Leniency.POSSIBLE, 1);
 
             for (final PhoneNumberMatch match : matches) {
 
