@@ -13,7 +13,14 @@ import com.mtnfog.phileas.model.profile.filters.strategies.AbstractFilterStrateg
 import com.mtnfog.phileas.model.services.AlertService;
 import com.mtnfog.phileas.model.services.AnonymizationService;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.lucene.analysis.TokenStream;
+import org.apache.lucene.analysis.shingle.ShingleFilter;
+import org.apache.lucene.analysis.standard.StandardAnalyzer;
+import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
+import org.apache.lucene.analysis.tokenattributes.OffsetAttribute;
 
+import java.io.IOException;
+import java.io.StringReader;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -58,7 +65,39 @@ public class PhysicianNameFilter extends RegexFilter {
 
         // \b([A-Z][A-Za-z'\s+]+)(,|\s)?([A-Z][A-Za-z'\s+]+(,|\s))?([A-Z][A-Za-z'\s+]+(,|\s)?(MD|PhD))\b
 
-        final List<Span> spans = new LinkedList<>();
+        final ShingleFilter ngrams = getNGrams(5, input);
+
+        final OffsetAttribute offsetAttribute = ngrams.getAttribute(OffsetAttribute.class);
+        final CharTermAttribute termAttribute = ngrams.getAttribute(CharTermAttribute.class);
+
+        try {
+
+            ngrams.reset();
+
+            while (ngrams.incrementToken()) {
+
+                if(termAttribute.length() > 1) {
+                    System.out.println(termAttribute);
+                }
+
+            }
+
+        } catch (IOException ex) {
+
+            LOGGER.error("Error enumerating tokens.", ex);
+
+        } finally {
+            try {
+                ngrams.end();
+                ngrams.close();
+            } catch (IOException e) {
+                // Do nothing.
+            }
+        }
+
+        return null;
+
+        /*final List<Span> spans = new LinkedList<>();
 
         // Do prenominals  ----------------------------------------------------------
 
@@ -139,7 +178,20 @@ public class PhysicianNameFilter extends RegexFilter {
 
         }
 
-        return new FilterResult(context, documentId, spans);
+        return new FilterResult(context, documentId, spans);*/
+
+    }
+
+    private ShingleFilter getNGrams(int maxNgramSize, String text) {
+
+        // The standard analyzer lowercases the text.
+        final StandardAnalyzer analyzer = new StandardAnalyzer();
+
+        // Tokenize the input text.
+        final TokenStream tokenStream = analyzer.tokenStream(null, new StringReader(text));
+
+        // Make n-grams from the tokens.
+        return new ShingleFilter(tokenStream, 2, maxNgramSize);
 
     }
 

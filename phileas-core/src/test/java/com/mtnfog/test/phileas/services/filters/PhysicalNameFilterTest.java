@@ -32,7 +32,7 @@ public class PhysicalNameFilterTest extends AbstractFilterTest {
         final List<PhysicianNameFilterStrategy> strategies = Arrays.asList(new PhysicianNameFilterStrategy());
         final PhysicianNameFilter filter = new PhysicianNameFilter(strategies, new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
 
-        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "Doctor Smith");
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "Doctor Smith was the attending physician.");
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 0, 12, FilterType.PHYSICIAN_NAME));
         Assertions.assertEquals("Doctor Smith", filterResult.getSpans().get(0).getText());
