@@ -30,10 +30,7 @@ import com.mtnfog.phileas.services.anonymization.cache.AnonymizationCacheService
 import com.mtnfog.phileas.services.disambiguation.VectorBasedSpanDisambiguationService;
 import com.mtnfog.phileas.services.filters.custom.PhoneNumberRulesFilter;
 import com.mtnfog.phileas.services.filters.regex.*;
-import com.mtnfog.phileas.services.postfilters.IgnoredPatternsFilter;
-import com.mtnfog.phileas.services.postfilters.IgnoredTermsFilter;
-import com.mtnfog.phileas.services.postfilters.TrailingPeriodPostFilter;
-import com.mtnfog.phileas.services.postfilters.TrailingSpacePostFilter;
+import com.mtnfog.phileas.services.postfilters.*;
 import com.mtnfog.phileas.services.profiles.LocalFilterProfileService;
 import com.mtnfog.phileas.services.profiles.S3FilterProfileService;
 import com.mtnfog.phileas.services.split.SplitFactory;
@@ -417,8 +414,10 @@ public class PhileasFilterService implements FilterService {
         }
 
         // Remove trailing periods from filters.
+        // TODO: Have properties to enable/disable these.
         postFilters.add(new TrailingPeriodPostFilter());
         postFilters.add(new TrailingSpacePostFilter());
+        postFilters.add(new TrailingNewLinePostFilter());
 
         return postFilters;
 
