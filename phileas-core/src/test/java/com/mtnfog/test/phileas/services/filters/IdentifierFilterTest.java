@@ -110,14 +110,13 @@ public class IdentifierFilterTest extends AbstractFilterTest {
         final List<IdentifierFilterStrategy> strategies = Arrays.asList(new IdentifierFilterStrategy());
         IdentifierFilter filter = new IdentifierFilter("name", Identifier.DEFAULT_IDENTIFIER_REGEX, true, strategies, anonymizationService, alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
 
-        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "George Washington was president and his ssn was 123-45-6789 and he lived at 90210. Patient id 00076A and 93821A. He is on biotin. Diagnosed with A0100.");
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "George Washington was president and his ssn was 123-45-6789 and he lived at 90210. Patient id 00076A and 93821A. He is on biotin. Diagnosed with A01000.");
 
-        Assertions.assertEquals(5, filterResult.getSpans().size());
+        Assertions.assertEquals(4, filterResult.getSpans().size());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 48, 59, FilterType.IDENTIFIER));
-        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(1), 76, 81, FilterType.IDENTIFIER));
-        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(2), 94, 100, FilterType.IDENTIFIER));
-        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(3), 105, 111, FilterType.IDENTIFIER));
-        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(4), 145, 150, FilterType.IDENTIFIER));
+        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(1), 94, 100, FilterType.IDENTIFIER));
+        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(2), 105, 111, FilterType.IDENTIFIER));
+        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(3), 145, 151, FilterType.IDENTIFIER));
 
     }
 
@@ -141,12 +140,11 @@ public class IdentifierFilterTest extends AbstractFilterTest {
         final List<IdentifierFilterStrategy> strategies = Arrays.asList(new IdentifierFilterStrategy());
         IdentifierFilter filter = new IdentifierFilter("name", Identifier.DEFAULT_IDENTIFIER_REGEX, true, strategies, anonymizationService, alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
 
-        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "the id is AZ12 ABC123/123ABC in california.");
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "the id is AZ12 ABC1234/123ABC4 in california.");
 
-        Assertions.assertEquals(3, filterResult.getSpans().size());
-        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 10,14, FilterType.IDENTIFIER));
-        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(1), 15, 21, FilterType.IDENTIFIER));
-        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(2), 22, 28, FilterType.IDENTIFIER));
+        Assertions.assertEquals(2, filterResult.getSpans().size());
+        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 15, 22, FilterType.IDENTIFIER));
+        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(1), 23, 30, FilterType.IDENTIFIER));
 
     }
 
@@ -208,10 +206,10 @@ public class IdentifierFilterTest extends AbstractFilterTest {
         final List<IdentifierFilterStrategy> strategies = Arrays.asList(new IdentifierFilterStrategy());
         IdentifierFilter filter = new IdentifierFilter("name", Identifier.DEFAULT_IDENTIFIER_REGEX, true, strategies, anonymizationService, alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
 
-        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "the id is 1234.");
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "the id is 123456.");
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
-        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 10,14, FilterType.IDENTIFIER));
+        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 10,16, FilterType.IDENTIFIER));
 
     }
 
