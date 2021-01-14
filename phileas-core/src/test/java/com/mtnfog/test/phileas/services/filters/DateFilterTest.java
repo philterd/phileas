@@ -431,4 +431,17 @@ public class DateFilterTest extends AbstractFilterTest {
 
     }
 
+    @Test
+    public void filterDate35() throws Exception {
+
+        final List<DateFilterStrategy> strategies = Arrays.asList(new DateFilterStrategy());
+        DateFilter filter = new DateFilter(strategies, new DateAnonymizationService(new LocalAnonymizationCacheService()), alertService, true, DateSpanValidator.getInstance(), Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "Observation: 91-100% strong nuclear staining");
+        Assertions.assertEquals(0, filterResult.getSpans().size());
+
+        showSpans(filterResult.getSpans());
+
+    }
+
 }
