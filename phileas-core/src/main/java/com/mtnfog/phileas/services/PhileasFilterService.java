@@ -501,6 +501,10 @@ public class PhileasFilterService implements FilterService {
             enabledFilters.add(new StateAbbreviationFilter(filterProfile.getIdentifiers().getStateAbbreviation().getStateAbbreviationsFilterStrategies(), new StateAbbreviationAnonymizationService(anonymizationCacheService), alertService, filterProfile.getIdentifiers().getStateAbbreviation().getIgnored(), filterProfile.getIdentifiers().getStateAbbreviation().getIgnoredFiles(), filterProfile.getIdentifiers().getStateAbbreviation().getIgnoredPatterns(), filterProfile.getCrypto(), windowSize));
         }
 
+        if(filterProfile.getIdentifiers().hasFilter(FilterType.STREET_ADDRESS) && filterProfile.getIdentifiers().getStreetAddress().isEnabled()) {
+            enabledFilters.add(new StreetAddressFilter(filterProfile.getIdentifiers().getStreetAddress().getStreetAddressFilterStrategies(), new StreetAddressAnonymizationService(anonymizationCacheService), alertService, filterProfile.getIdentifiers().getStreetAddress().getIgnored(), filterProfile.getIdentifiers().getStreetAddress().getIgnoredFiles(), filterProfile.getIdentifiers().getStreetAddress().getIgnoredPatterns(), filterProfile.getCrypto(), windowSize));
+        }
+
         if(filterProfile.getIdentifiers().hasFilter(FilterType.TRACKING_NUMBER) && filterProfile.getIdentifiers().getTrackingNumber().isEnabled()) {
             enabledFilters.add(new TrackingNumberFilter(filterProfile.getIdentifiers().getTrackingNumber().getTrackingNumberFilterStrategies(), new AlphanumericAnonymizationService(anonymizationCacheService), alertService, filterProfile.getIdentifiers().getTrackingNumber().getIgnored(), filterProfile.getIdentifiers().getTrackingNumber().getIgnoredFiles(), filterProfile.getIdentifiers().getTrackingNumber().getIgnoredPatterns(), filterProfile.getCrypto(), windowSize));
         }
