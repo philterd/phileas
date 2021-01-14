@@ -7,14 +7,14 @@ import org.apache.commons.lang3.StringUtils;
 
 /**
  * Implementation of {@link PostFilter} that modifies the span
- * if it ends with a space.
+ * if it ends with a new line.
  */
-public class TrailingSpacePostFilter extends PostFilter {
+public class TrailingNewLinePostFilter extends PostFilter {
 
     @Override
     protected PostFilterResult process(String text, Span span) {
 
-        if(span.getText().endsWith(" ")) {
+        if(span.getText().endsWith(System.lineSeparator())) {
 
             // Modify the span to remove the period from the span.
             span.setText(StringUtils.substring(span.getText(), 0, span.getText().length() - 1));
@@ -22,7 +22,7 @@ public class TrailingSpacePostFilter extends PostFilter {
 
         }
 
-        while(span.getText().endsWith(" ")) {
+        while(span.getText().endsWith("\n")) {
             span = process(text, span).getSpan();
         }
 

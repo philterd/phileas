@@ -292,7 +292,6 @@ public class AgeFilterTest extends AbstractFilterTest {
     }
 
     @Test
-    @Disabled
     public void filter15() throws Exception {
 
         // PHL-184: New line at the end of span
@@ -300,7 +299,7 @@ public class AgeFilterTest extends AbstractFilterTest {
         final List<AgeFilterStrategy> strategies = Arrays.asList(new AgeFilterStrategy());
         AgeFilter filter = new AgeFilter(strategies, new AgeAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
 
-        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "69 years\n");
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "Female Admit Age: 69 years\n");
 
         showSpans(filterResult.getSpans());
 

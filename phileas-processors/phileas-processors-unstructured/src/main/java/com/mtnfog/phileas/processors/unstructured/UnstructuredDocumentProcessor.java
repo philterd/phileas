@@ -73,6 +73,42 @@ public class UnstructuredDocumentProcessor implements DocumentProcessor {
             spans = postFilter.filter(input, spans);
         }
 
+        // PHL-185: Remove non-adjacent firstname/surname spans.
+        /*// A first name filter must be adjacent to a surname filter.
+        final List<Span> dontRemove = new LinkedList<>();
+        for(final Span span1 : spans) {
+
+            for(final Span span2 : spans) {
+
+                if(span1.getFilterType() == FilterType.FIRST_NAME && span2.getFilterType() == FilterType.SURNAME) {
+
+                    // Are they adjacent?
+                    if(Span.areSpansAdjacent(span1, span2, input)) {
+
+                        // Yes, don't remove them.
+                        dontRemove.add(span1);
+                        dontRemove.add(span2);
+
+                    }
+
+                }
+
+            }
+
+        }
+
+        // Remove all first name / surname spans.
+        final List<Span> doRemove = new LinkedList<>();
+        for(final Span span : spans) {
+            if(span.getFilterType() == FilterType.FIRST_NAME || span.getFilterType() == FilterType.SURNAME) {
+                doRemove.add(span);
+            }
+        }
+        spans.removeAll(doRemove);
+
+        // Add back adjacent spans.
+        spans.addAll(dontRemove);*/
+
         // The spans that will be persisted. Has to be a deep copy because the shift
         // below will change the indexes. Doing this to save the original locations of the spans.
         final List<Span> appliedSpans = spans.stream().map(d -> d.copy()).collect(toList());

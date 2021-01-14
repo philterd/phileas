@@ -22,6 +22,10 @@ public class TrailingPeriodPostFilter extends PostFilter {
 
         }
 
+        while(span.getText().endsWith(".")) {
+            span = process(text, span).getSpan();
+        }
+
         return new PostFilterResult(span, false);
 
     }
