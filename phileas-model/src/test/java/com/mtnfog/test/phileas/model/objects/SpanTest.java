@@ -304,6 +304,84 @@ public class SpanTest {
 
     }
 
+    @Test
+    public void adjacent1() {
+
+        final Span span1 = Span.make(7, 11, FilterType.ZIP_CODE, "context", "document", 1.0, "test", "***", "salt",  false, new String[0]);
+        final Span span2 = Span.make(13, 17, FilterType.ZIP_CODE, "context", "document", 1.0, "qwer", "***", "salt",  false, new String[0]);
+        final String text = "asdfbf test qwer asdf";
+
+        final boolean adjacent = Span.areSpansAdjacent(span1, span2, text);
+
+        Assertions.assertTrue(adjacent);
+
+    }
+
+    @Test
+    public void adjacent2() {
+
+        final Span span1 = Span.make(7, 11, FilterType.ZIP_CODE, "context", "document", 1.0, "test", "***", "salt",  false, new String[0]);
+        final Span span2 = Span.make(12, 16, FilterType.ZIP_CODE, "context", "document", 1.0, "qwer", "***", "salt",  false, new String[0]);
+        final String text = "asdfbf testqwer asdf";
+
+        final boolean adjacent = Span.areSpansAdjacent(span1, span2, text);
+
+        Assertions.assertTrue(adjacent);
+
+    }
+
+    @Test
+    public void adjacent3() {
+
+        final Span span1 = Span.make(7, 11, FilterType.ZIP_CODE, "context", "document", 1.0, "test", "***", "salt",  false, new String[0]);
+        final Span span2 = Span.make(15, 16, FilterType.ZIP_CODE, "context", "document", 1.0, "qwer", "***", "salt",  false, new String[0]);
+        final String text = "asdfbf test   qwer asdf";
+
+        final boolean adjacent = Span.areSpansAdjacent(span1, span2, text);
+
+        Assertions.assertTrue(adjacent);
+
+    }
+
+    @Test
+    public void adjacent4() {
+
+        final Span span1 = Span.make(7, 11, FilterType.ZIP_CODE, "context", "document", 1.0, "test", "***", "salt",  false, new String[0]);
+        final Span span2 = Span.make(15, 16, FilterType.ZIP_CODE, "context", "document", 1.0, "qwer", "***", "salt",  false, new String[0]);
+        final String text = "asdfbf test f  qwer asdf";
+
+        final boolean adjacent = Span.areSpansAdjacent(span1, span2, text);
+
+        Assertions.assertFalse(adjacent);
+
+    }
+
+    @Test
+    public void adjacent5() {
+
+        final Span span1 = Span.make(7, 11, FilterType.ZIP_CODE, "context", "document", 1.0, "test", "***", "salt",  false, new String[0]);
+        final Span span2 = Span.make(15, 16, FilterType.ZIP_CODE, "context", "document", 1.0, "qwer", "***", "salt",  false, new String[0]);
+        final String text = "asdfbf test .  qwer asdf";
+
+        final boolean adjacent = Span.areSpansAdjacent(span1, span2, text);
+
+        Assertions.assertFalse(adjacent);
+
+    }
+
+    @Test
+    public void adjacent6() {
+
+        final Span span1 = Span.make(7, 11, FilterType.ZIP_CODE, "context", "document", 1.0, "test", "***", "salt",  false, new String[0]);
+        final Span span2 = Span.make(15, 16, FilterType.ZIP_CODE, "context", "document", 1.0, "qwer", "***", "salt",  false, new String[0]);
+        final String text = "asdfbf test    qwer asdf";
+
+        final boolean adjacent = Span.areSpansAdjacent(span2, span1, text);
+
+        Assertions.assertFalse(adjacent);
+
+    }
+
     private void showSpans(List<Span> spans) {
 
         for(Span span : spans) {

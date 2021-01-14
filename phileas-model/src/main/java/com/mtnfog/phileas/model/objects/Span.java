@@ -285,6 +285,39 @@ public final class Span {
     }
 
     /**
+     * Determines if two spans are immediately adjacent.
+     * <code>span1</code> must occur in the test prior to <code>span2</code>.
+     * @param span1 The first span.
+     * @param span2 The second span.
+     * @return <code>true</code> if the spans are immediately adjacent.
+     */
+    public static boolean areSpansAdjacent(final Span span1, final Span span2, final String text) {
+
+        if(span1.getCharacterStart() > span2.getCharacterStart()) {
+            return false;
+        }
+
+        if(span1.getCharacterEnd() == span1.getCharacterStart() + 1) {
+
+            // The two spans are right next to each other.
+            return true;
+
+        }
+
+        final String separators = text.substring(span1.getCharacterEnd(), span2.getCharacterStart() - 1);
+
+        if(StringUtils.isWhitespace(separators)) {
+
+            // The two spans are only separated by whitespace.
+            return true;
+
+        }
+
+        return false;
+
+    }
+
+    /**
      * Drop overlapping spans that are shorter.
      * @param spans A list of {@link Span spans} that may or may not contain overlapping spans.
      * @return A list of {@link Span spans} without overlapping spans.
