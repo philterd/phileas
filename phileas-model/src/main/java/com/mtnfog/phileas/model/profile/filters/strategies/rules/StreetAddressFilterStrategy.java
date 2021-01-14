@@ -21,7 +21,7 @@ public class StreetAddressFilterStrategy extends AbstractFilterStrategy {
 
     private static final Logger LOGGER = LogManager.getLogger(StreetAddressFilterStrategy.class);
 
-    private static FilterType filterType = FilterType.AGE;
+    private static FilterType filterType = FilterType.STREET_ADDRESS;
 
     @Override
     public FilterType getFilterType() {

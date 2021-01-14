@@ -20,16 +20,16 @@ import java.util.stream.Collectors;
 public class StreetAddressFilter extends RegexFilter {
 
     public StreetAddressFilter(List<? extends AbstractFilterStrategy> strategies, AnonymizationService anonymizationService, AlertService alertService, Set<String> ignored, Set<String> ignoredFiles, List<IgnoredPattern> ignoredPatterns, Crypto crypto, int windowSize) {
-        super(FilterType.AGE, strategies, anonymizationService, alertService, ignored, ignoredFiles, ignoredPatterns, crypto, windowSize);
+        super(FilterType.STREET_ADDRESS, strategies, anonymizationService, alertService, ignored, ignoredFiles, ignoredPatterns, crypto, windowSize);
 
-        final Pattern agePattern1 = Pattern.compile("\\b[0-9.]+[\\s]*(year|years|yrs|yr|yo)(.?)(\\s)*(old)?\\b", Pattern.CASE_INSENSITIVE);
-        final FilterPattern age1 = new FilterPattern.FilterPatternBuilder(agePattern1, 0.90).build();
+        final Pattern addressPattern = Pattern.compile("\\b\\d{1,6} +.{2,25}\\b(avenue|ave|court|ct|street|st|drive|dr|lane|ln|road|rd|blvd|plaza|parkway|pkwy)[.,]?(.{0,25} +\\b\\d{5}\\b)?", Pattern.CASE_INSENSITIVE);
+        final FilterPattern filterPattern = new FilterPattern.FilterPatternBuilder(addressPattern, 0.90).build();
 
         this.contextualTerms = new HashSet<>();
-        this.contextualTerms.add("age");
-        this.contextualTerms.add("years");
+        this.contextualTerms.add("address");
+        this.contextualTerms.add("location");
 
-        this.analyzer = new Analyzer(contextualTerms, age1);
+        this.analyzer = new Analyzer(contextualTerms, filterPattern);
 
     }
 
@@ -38,39 +38,7 @@ public class StreetAddressFilter extends RegexFilter {
 
         final List<Span> spans = findSpans(filterProfile, analyzer, input, context, documentId);
 
-        final List<Span> nonOverlappingSpans = Span.dropOverlappingSpans(spans);
-
-        return new FilterResult(context, documentId, nonOverlappingSpans);
-
-    }
-
-    @Override
-    public List<Span> postFilter(List<Span> spans) {
-
-        final List<Span> postFilteredSpans = new LinkedList<>();
-
-        for(final Span span : spans) {
-
-            final List<String> window = Arrays.asList(span.getWindow())
-                    .stream()
-                    .map(String::toLowerCase)
-                    .collect(Collectors.toList());
-
-            // Determine between a date and an age.
-            // Does it contain 'age' or 'old' or 'yo'? If not, drop it.
-            // TODO: Should this list be exposed to the user and customizable?
-            if(window.contains("age")
-                    || span.getText().contains("aged")
-                    || span.getText().contains("old")
-                    || span.getText().contains("yo")) {
-
-                postFilteredSpans.add(span);
-
-            }
-
-        }
-
-        return postFilteredSpans;
+        return new FilterResult(context, documentId, spans);
 
     }
 
