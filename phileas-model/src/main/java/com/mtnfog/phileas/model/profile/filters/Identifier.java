@@ -11,7 +11,7 @@ public class Identifier extends AbstractFilter {
     /**
      * The default regex pattern to use if none is provided in the filter profile.
      */
-    public static final String DEFAULT_IDENTIFIER_REGEX = "\\b[A-Z0-9_-]{4,}\\b";
+    public static final String DEFAULT_IDENTIFIER_REGEX = "\\b[A-Z0-9_-]{6,}\\b";
 
     @SerializedName("identifierFilterStrategies")
     @Expose
