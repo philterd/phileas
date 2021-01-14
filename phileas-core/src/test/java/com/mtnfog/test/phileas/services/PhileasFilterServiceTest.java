@@ -311,7 +311,8 @@ public class PhileasFilterServiceTest {
         customDictionary.setCustomDictionaryFilterStrategies(Arrays.asList(new CustomDictionaryFilterStrategy()));
         customDictionary.setClassification("names");
         customDictionary.setTerms(Arrays.asList("george"));
-        customDictionary.setFuzzy(true);
+        customDictionary.setFuzzy(false);
+        customDictionary.setSensitivity("low");
 
         final FilterProfile filterProfile = new FilterProfile();
         filterProfile.setName("custom-dictionary");

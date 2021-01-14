@@ -188,22 +188,12 @@ public class LuceneDictionaryFilter extends DictionaryFilter implements Serializ
 
                             boolean isMatch = false;
 
-                            if(sensitivityLevel == SensitivityLevel.LOW) {
+                            if(spellChecker.exist(token)) {
 
-                                if(spellChecker.exist(token)) {
+                                //LOGGER.info("Exact match on token '{}'", token);
 
-                                    LOGGER.info("Exact match on token '{}'", token);
-
-                                    // The token has an identical match in the index.
-                                    isMatch = true;
-
-                                } else {
-
-                                    LOGGER.info("Low sensitivity level but no match.");
-
-                                    isMatch = false;
-
-                                }
+                                // The token has an identical match in the index.
+                                isMatch = true;
 
                             } else {
 
@@ -322,7 +312,7 @@ public class LuceneDictionaryFilter extends DictionaryFilter implements Serializ
     public static void main(String[] args) throws IOException {
 
         // The location of the file containing the lines to index.
-        final Path filetoIndex = Paths.get("/mtnfog/code/philter/phileas/data/index-data/firstnames");
+        final Path filetoIndex = Paths.get("/mtnfog/code/philter/phileas/data/index-data/cities");
 
         // The name of the file minus the extension is the type of index.
         final String type = FilenameUtils.removeExtension(filetoIndex.toFile().getName());

@@ -88,7 +88,7 @@ public class FirstNameFilterTest extends AbstractFilterTest {
 
         final FilterResult filterResult = filter.filter(getFilterProfile(SensitivityLevel.HIGH), "context", "documentid", 0,"Sandra in Washington");
         showSpans(filterResult.getSpans());
-        Assertions.assertEquals(2, filterResult.getSpans().size());
+        Assertions.assertEquals(3, filterResult.getSpans().size());
 
     }
 

@@ -22,7 +22,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-@Disabled("This isn't finding anything")
 public class SurnameFilterTest extends AbstractFilterTest {
 
     private static final Logger LOGGER = LogManager.getLogger(SurnameFilterTest.class);
