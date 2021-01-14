@@ -12,6 +12,7 @@ import com.mtnfog.phileas.services.filters.custom.PhoneNumberRulesFilter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
@@ -112,6 +113,22 @@ public class PhoneNumberFilterTest extends AbstractFilterTest {
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 14, 32, FilterType.PHONE_NUMBER));
+
+    }
+
+    @Disabled
+    @Test
+    public void filterPhone8() throws Exception {
+
+        // PHL-183: False positive phone number
+
+        final List<PhoneNumberFilterStrategy> strategies = Arrays.asList(new PhoneNumberFilterStrategy());
+        PhoneNumberRulesFilter filter = new PhoneNumberRulesFilter(strategies, new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "7 64116-3220");
+        showSpans(filterResult.getSpans());
+
+        Assertions.assertEquals(0, filterResult.getSpans().size());
 
     }
 
