@@ -1,5 +1,6 @@
 package com.mtnfog.phileas.processors.unstructured;
 
+import com.mtnfog.phileas.model.enums.FilterType;
 import com.mtnfog.phileas.model.filter.Filter;
 import com.mtnfog.phileas.model.objects.Explanation;
 import com.mtnfog.phileas.model.objects.FilterResult;

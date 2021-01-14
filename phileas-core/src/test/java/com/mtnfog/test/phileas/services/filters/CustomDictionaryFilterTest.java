@@ -27,7 +27,7 @@ public class CustomDictionaryFilterTest extends AbstractFilterTest {
 
         final List<CustomDictionaryFilterStrategy> strategies = Arrays.asList(new CustomDictionaryFilterStrategy());
         final Set<String> names = new HashSet<>(Arrays.asList("george", "ted", "bill", "john"));
-        final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.CUSTOM_DICTIONARY, strategies, SensitivityLevel.LOW, null, alertService, "names", names, 0, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+        final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.CUSTOM_DICTIONARY, strategies, SensitivityLevel.LOW, false,null, alertService, "names", names, 0, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
 
         final FilterResult filterResult = filter.filter(getFilterProfile(SensitivityLevel.LOW), "context", "documentid", 0,"He lived with Bill in California.");
         showSpans(filterResult.getSpans());
@@ -43,7 +43,7 @@ public class CustomDictionaryFilterTest extends AbstractFilterTest {
 
         final List<CustomDictionaryFilterStrategy> strategies = Arrays.asList(new CustomDictionaryFilterStrategy());
         final Set<String> names = new HashSet<>(Arrays.asList("george", "ted", "bill", "john"));
-        final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.CUSTOM_DICTIONARY, strategies, SensitivityLevel.LOW, null, alertService, "names", names, 0, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+        final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.CUSTOM_DICTIONARY, strategies, SensitivityLevel.LOW,false, null, alertService, "names", names, 0, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
 
         final FilterResult filterResult = filter.filter(getFilterProfile(SensitivityLevel.LOW), "context", "documentid", 0,"He lived with Sam in California.");
         showSpans(filterResult.getSpans());

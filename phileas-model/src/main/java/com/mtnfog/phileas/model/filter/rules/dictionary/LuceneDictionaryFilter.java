@@ -52,6 +52,7 @@ public class LuceneDictionaryFilter extends DictionaryFilter implements Serializ
     private SpellChecker spellChecker;
     private LevenshteinDistance distanceFunction;
     private SensitivityLevel sensitivityLevel;
+    private boolean capitalized;
     private int filterProfileIndex = 0;
 
     /**
@@ -65,6 +66,7 @@ public class LuceneDictionaryFilter extends DictionaryFilter implements Serializ
                                   List<? extends AbstractFilterStrategy> strategies,
                                   String indexDirectory,
                                   SensitivityLevel sensitivityLevel,
+                                  boolean capitalized,
                                   AnonymizationService anonymizationService,
                                   AlertService alertService,
                                   Set<String> ignored,
@@ -79,6 +81,7 @@ public class LuceneDictionaryFilter extends DictionaryFilter implements Serializ
 
         this.distanceFunction = new LevenshteinDistance();
         this.sensitivityLevel = sensitivityLevel;
+        this.capitalized = capitalized;
 
         // Load the index for fuzzy search.
         this.spellChecker = new SpellChecker(FSDirectory.open(Paths.get(indexDirectory), NoLockFactory.INSTANCE));
@@ -96,6 +99,7 @@ public class LuceneDictionaryFilter extends DictionaryFilter implements Serializ
     public LuceneDictionaryFilter(FilterType filterType,
                                         List<? extends AbstractFilterStrategy> strategies,
                                         SensitivityLevel sensitivityLevel,
+                                        boolean capitalized,
                                         AnonymizationService anonymizationService,
                                         AlertService alertService,
                                         String type,
@@ -113,6 +117,7 @@ public class LuceneDictionaryFilter extends DictionaryFilter implements Serializ
 
         this.distanceFunction = new LevenshteinDistance();
         this.sensitivityLevel = sensitivityLevel;
+        this.capitalized = capitalized;
         this.filterProfileIndex = filterProfileIndex;
 
         // Find the max n-gram size. It is equal to the maximum
@@ -252,22 +257,26 @@ public class LuceneDictionaryFilter extends DictionaryFilter implements Serializ
 
                             if (isMatch) {
 
-                                // Set the meta values for the span.
+                                if(!capitalized || (capitalized && Character.isUpperCase(text.charAt(0)))) {
 
-                                // Is this term ignored?
-                                final boolean ignored = isIgnored(text);
+                                    // Set the meta values for the span.
 
-                                final int characterStart = offsetAttribute.startOffset();
-                                final int characterEnd = offsetAttribute.endOffset();
-                                final String[] window = getWindow(text, characterStart, characterEnd);
-                                final double confidence = spellChecker.getAccuracy();
-                                final String classification = "";
+                                    // Is this term ignored?
+                                    final boolean ignored = isIgnored(text);
 
-                                // Get the replacement token or the original token if no filter strategy conditions are met.
-                                final Replacement replacement = getReplacement(filterProfile.getName(), context, documentId, token, window, confidence, classification, null);
+                                    final int characterStart = offsetAttribute.startOffset();
+                                    final int characterEnd = offsetAttribute.endOffset();
+                                    final String[] window = getWindow(text, characterStart, characterEnd);
+                                    final double confidence = spellChecker.getAccuracy();
+                                    final String classification = "";
 
-                                // Add the span to the list.
-                                spans.add(Span.make(characterStart, characterEnd, getFilterType(), context, documentId, confidence, token, replacement.getReplacement(), replacement.getSalt(), ignored, window));
+                                    // Get the replacement token or the original token if no filter strategy conditions are met.
+                                    final Replacement replacement = getReplacement(filterProfile.getName(), context, documentId, token, window, confidence, classification, null);
+
+                                    // Add the span to the list.
+                                    spans.add(Span.make(characterStart, characterEnd, getFilterType(), context, documentId, confidence, token, replacement.getReplacement(), replacement.getSalt(), ignored, window));
+
+                                }
 
                             }
 

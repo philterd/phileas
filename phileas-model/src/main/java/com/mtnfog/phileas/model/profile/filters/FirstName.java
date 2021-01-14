@@ -17,6 +17,10 @@ public class FirstName extends AbstractFilter {
     @Expose
     private String sensitivity = SensitivityLevel.MEDIUM.getName();
 
+    @SerializedName("capitalized")
+    @Expose
+    private boolean capitalized = false;
+
     public List<FirstNameFilterStrategy> getFirstNameFilterStrategies() {
         return firstNameFilterStrategies;
     }
@@ -35,6 +39,14 @@ public class FirstName extends AbstractFilter {
 
     public void setSensitivity(String sensitivity) {
         this.sensitivity = sensitivity;
+    }
+
+    public boolean isCapitalized() {
+        return capitalized;
+    }
+
+    public void setCapitalized(boolean capitalized) {
+        this.capitalized = capitalized;
     }
 
 }

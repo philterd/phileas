@@ -17,6 +17,10 @@ public class Hospital extends AbstractFilter {
     @Expose
     private String sensitivity = SensitivityLevel.MEDIUM.getName();
 
+    @SerializedName("capitalized")
+    @Expose
+    private boolean capitalized = false;
+
     public List<HospitalFilterStrategy> getHospitalFilterStrategies() {
         return hospitalFilterStrategies;
     }
@@ -37,4 +41,11 @@ public class Hospital extends AbstractFilter {
         this.sensitivity = sensitivity;
     }
 
+    public boolean isCapitalized() {
+        return capitalized;
+    }
+
+    public void setCapitalized(boolean capitalized) {
+        this.capitalized = capitalized;
+    }
 }

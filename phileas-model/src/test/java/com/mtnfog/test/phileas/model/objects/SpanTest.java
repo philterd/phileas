@@ -382,6 +382,19 @@ public class SpanTest {
 
     }
 
+    @Test
+    public void adjacent7() {
+
+        final Span span1 = Span.make(0, 5, FilterType.ZIP_CODE, "context", "document", 1.0, "Smith", "***", "salt",  false, new String[0]);
+        final Span span2 = Span.make(7, 11, FilterType.ZIP_CODE, "context", "document", 1.0, "John", "***", "salt",  false, new String[0]);
+        final String text = "Smith, John D asdf";
+
+        final boolean adjacent = Span.areSpansAdjacent(span1, span2, text);
+
+        Assertions.assertTrue(adjacent);
+
+    }
+
     private void showSpans(List<Span> spans) {
 
         for(Span span : spans) {

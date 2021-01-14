@@ -42,7 +42,7 @@ public class StateFilterTest extends AbstractFilterTest {
         AnonymizationService anonymizationService = new StateAnonymizationService(new LocalAnonymizationCacheService());
 
         final List<StateFilterStrategy> strategies = Arrays.asList(new StateFilterStrategy());
-        final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.LOCATION_STATE, strategies, INDEX_DIRECTORY, SensitivityLevel.LOW, anonymizationService, alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+        final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.LOCATION_STATE, strategies, INDEX_DIRECTORY, SensitivityLevel.LOW, false, anonymizationService, alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
 
         FilterResult filterResult = filter.filter(getFilterProfile(SensitivityLevel.LOW), "context", "documentid", 0,"Lived in Washington");
         Assertions.assertEquals(1, filterResult.getSpans().size());
@@ -56,7 +56,7 @@ public class StateFilterTest extends AbstractFilterTest {
         AnonymizationService anonymizationService = new StateAnonymizationService(new LocalAnonymizationCacheService());
 
         final List<StateFilterStrategy> strategies = Arrays.asList(new StateFilterStrategy());
-        final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.LOCATION_STATE, strategies, INDEX_DIRECTORY, SensitivityLevel.MEDIUM, anonymizationService, alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+        final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.LOCATION_STATE, strategies, INDEX_DIRECTORY, SensitivityLevel.MEDIUM, false, anonymizationService, alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
 
         FilterResult filterResult = filter.filter(getFilterProfile(SensitivityLevel.MEDIUM), "context", "documentid", 0,"Lived in Wshington");
         Assertions.assertEquals(1, filterResult.getSpans().size());
@@ -69,7 +69,7 @@ public class StateFilterTest extends AbstractFilterTest {
         AnonymizationService anonymizationService = new StateAnonymizationService(new LocalAnonymizationCacheService());
 
         final List<StateFilterStrategy> strategies = Arrays.asList(new StateFilterStrategy());
-        final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.LOCATION_STATE, strategies, INDEX_DIRECTORY, SensitivityLevel.HIGH, anonymizationService, alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+        final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.LOCATION_STATE, strategies, INDEX_DIRECTORY, SensitivityLevel.HIGH, false,anonymizationService, alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
 
         FilterResult filterResult = filter.filter(getFilterProfile(SensitivityLevel.HIGH), "context", "documentid", 0,"Lived in Wasinton");
         Assertions.assertEquals(1, filterResult.getSpans().size());
