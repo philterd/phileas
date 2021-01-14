@@ -184,7 +184,7 @@ public class LuceneDictionaryFilter extends DictionaryFilter implements Serializ
                         // An underscore indicates Lucene removed a stopword.
                         if (!token.contains("_")) {
 
-                            LOGGER.info("Looking at token [{}]", token);
+                            //LOGGER.info("Looking at token [{}]", token);
 
                             boolean isMatch = false;
 
@@ -199,7 +199,7 @@ public class LuceneDictionaryFilter extends DictionaryFilter implements Serializ
 
                                 // Do a fuzzy search against the index.
                                 final String[] tokenSuggestions = spellChecker.suggestSimilar(token, 3);
-                                LOGGER.debug("{} suggestions for '{}': {}", tokenSuggestions.length, token, tokenSuggestions);
+                                //LOGGER.debug("{} suggestions for '{}': {}", tokenSuggestions.length, token, tokenSuggestions);
 
                                 if (tokenSuggestions.length > 0) {
 
@@ -233,14 +233,14 @@ public class LuceneDictionaryFilter extends DictionaryFilter implements Serializ
                                         distance = 2;
                                     }
 
-                                    LOGGER.debug("Using distance value {}", distance);
+                                    //LOGGER.debug("Using distance value {}", distance);
 
                                     for (final String suggestion : tokenSuggestions) {
 
                                         final int d = distanceFunction.apply(token.toUpperCase(), suggestion.toUpperCase());
 
                                         if (d <= distance) {
-                                            LOGGER.debug("distance for {} and {} is {}", token, suggestion, d);
+                                            //LOGGER.debug("distance for {} and {} is {}", token, suggestion, d);
                                             isMatch = true;
                                         }
 
