@@ -79,4 +79,46 @@ public class SurnameFilterTest extends AbstractFilterTest {
 
     }
 
+    @Test
+    public void filter4() throws Exception {
+
+        AnonymizationService anonymizationService = new SurnameAnonymizationService(new LocalAnonymizationCacheService());
+
+        final List<SurnameFilterStrategy> strategies = Arrays.asList(new SurnameFilterStrategy());
+        final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.SURNAME, strategies, INDEX_DIRECTORY, SensitivityLevel.LOW, anonymizationService, alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+
+        final FilterResult filterResult = filter.filter(getFilterProfile(SensitivityLevel.LOW), "context", "documentid", 0, "date");
+        showSpans(filterResult.getSpans());
+        Assertions.assertEquals(0, filterResult.getSpans().size());
+
+    }
+
+    @Test
+    public void filter5() throws Exception {
+
+        AnonymizationService anonymizationService = new SurnameAnonymizationService(new LocalAnonymizationCacheService());
+
+        final List<SurnameFilterStrategy> strategies = Arrays.asList(new SurnameFilterStrategy());
+        final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.SURNAME, strategies, INDEX_DIRECTORY, SensitivityLevel.LOW, anonymizationService, alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+
+        final FilterResult filterResult = filter.filter(getFilterProfile(SensitivityLevel.LOW), "context", "documentid", 0, "DATE");
+        showSpans(filterResult.getSpans());
+        Assertions.assertEquals(0, filterResult.getSpans().size());
+
+    }
+
+    @Test
+    public void filter6() throws Exception {
+
+        AnonymizationService anonymizationService = new SurnameAnonymizationService(new LocalAnonymizationCacheService());
+
+        final List<SurnameFilterStrategy> strategies = Arrays.asList(new SurnameFilterStrategy());
+        final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.SURNAME, strategies, INDEX_DIRECTORY, SensitivityLevel.LOW, anonymizationService, alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+
+        final FilterResult filterResult = filter.filter(getFilterProfile(SensitivityLevel.LOW), "context", "documentid", 0, "from");
+        showSpans(filterResult.getSpans());
+        Assertions.assertEquals(0, filterResult.getSpans().size());
+
+    }
+
 }

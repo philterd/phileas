@@ -165,7 +165,7 @@ public class LuceneDictionaryFilter extends DictionaryFilter implements Serializ
 
             try(final Analyzer analyzer = new StandardAnalyzer()) {
 
-                LOGGER.info("Using sensitivity level = " + sensitivityLevel.getName());
+                LOGGER.debug("Using sensitivity level = " + sensitivityLevel.getName());
 
                 // Get the n-grams in the input.
                 final ShingleFilter ngrams = getNGrams(5, text);
@@ -182,24 +182,34 @@ public class LuceneDictionaryFilter extends DictionaryFilter implements Serializ
                         final String token = termAttribute.toString();
 
                         // An underscore indicates Lucene removed a stopword.
-                        if (!token.contains("_")) {
+                        if(!token.contains("_")) {
 
                             //LOGGER.info("Looking at token [{}]", token);
 
                             boolean isMatch = false;
 
-                            if (spellChecker.exist(token)) {
+                            if(sensitivityLevel == SensitivityLevel.LOW) {
 
-                                //LOGGER.info("Exact match on token '{}'", token);
+                                if(spellChecker.exist(token)) {
 
-                                // The token has an identical match in the index.
-                                isMatch = true;
+                                    LOGGER.info("Exact match on token '{}'", token);
+
+                                    // The token has an identical match in the index.
+                                    isMatch = true;
+
+                                } else {
+
+                                    LOGGER.info("Low sensitivity level but no match.");
+
+                                    isMatch = false;
+
+                                }
 
                             } else {
 
                                 // Do a fuzzy search against the index.
                                 final String[] tokenSuggestions = spellChecker.suggestSimilar(token, 3);
-                                //LOGGER.debug("{} suggestions for '{}': {}", tokenSuggestions.length, token, tokenSuggestions);
+                                LOGGER.debug("{} suggestions for '{}': {}", tokenSuggestions.length, token, tokenSuggestions);
 
                                 if (tokenSuggestions.length > 0) {
 
@@ -312,7 +322,7 @@ public class LuceneDictionaryFilter extends DictionaryFilter implements Serializ
     public static void main(String[] args) throws IOException {
 
         // The location of the file containing the lines to index.
-        final Path filetoIndex = Paths.get("/mtnfog/code/bitbucket/philter/philter/data/index-data/hospitals-abbreviations");
+        final Path filetoIndex = Paths.get("/mtnfog/code/philter/phileas/data/index-data/firstnames");
 
         // The name of the file minus the extension is the type of index.
         final String type = FilenameUtils.removeExtension(filetoIndex.toFile().getName());
