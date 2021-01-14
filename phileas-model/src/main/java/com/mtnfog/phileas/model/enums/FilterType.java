@@ -30,6 +30,7 @@ public enum FilterType {
     SECTION("section", true),
     SSN("ssn", true),
     STATE_ABBREVIATION("state-abbreviation", false),
+    STREET_ADDRESS("street-address", true),
     SURNAME("surname", false),
     TRACKING_NUMBER("tracking-number", true),
     URL("url", true),

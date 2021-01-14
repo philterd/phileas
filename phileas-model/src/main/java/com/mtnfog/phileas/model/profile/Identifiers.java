@@ -86,6 +86,10 @@ public class Identifiers {
     @Expose
     private StateAbbreviation stateAbbreviation;
 
+    @SerializedName("streetAddress")
+    @Expose
+    private StreetAddress streetAddress;
+
     @SerializedName("trackingNumber")
     @Expose
     private TrackingNumber trackingNumber;
@@ -192,6 +196,8 @@ public class Identifiers {
                 if(this.getState() != null) { return true; } break;
             case STATE_ABBREVIATION:
                 if(this.getStateAbbreviation() != null) { return true; } break;
+            case STREET_ADDRESS:
+                if(this.getStreetAddress() != null) { return true; } break;
             case SURNAME:
                 if(this.getSurname() != null) { return true; } break;
             case TRACKING_NUMBER:
@@ -447,6 +453,14 @@ public class Identifiers {
 
     public void setTrackingNumber(TrackingNumber trackingNumber) {
         this.trackingNumber = trackingNumber;
+    }
+
+    public StreetAddress getStreetAddress() {
+        return streetAddress;
+    }
+
+    public void setStreetAddress(StreetAddress streetAddress) {
+        this.streetAddress = streetAddress;
     }
 
 }

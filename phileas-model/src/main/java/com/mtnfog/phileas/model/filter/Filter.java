@@ -323,6 +323,8 @@ public abstract class Filter {
             return filterProfile.getIdentifiers().getSsn().getSsnFilterStrategies();
         } else if(filterType == FilterType.STATE_ABBREVIATION) {
             return filterProfile.getIdentifiers().getStateAbbreviation().getStateAbbreviationsFilterStrategies();
+        } else if(filterType == FilterType.STREET_ADDRESS) {
+            return filterProfile.getIdentifiers().getStateAbbreviation().getStateAbbreviationsFilterStrategies();
         } else if(filterType == FilterType.URL) {
             return filterProfile.getIdentifiers().getUrl().getUrlFilterStrategies();
         } else if(filterType == FilterType.VIN) {
