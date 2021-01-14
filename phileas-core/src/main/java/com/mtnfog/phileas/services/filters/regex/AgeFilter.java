@@ -15,6 +15,7 @@ import com.mtnfog.phileas.model.services.AnonymizationService;
 
 import java.util.*;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public class AgeFilter extends RegexFilter {
 
@@ -56,10 +57,13 @@ public class AgeFilter extends RegexFilter {
 
         for(final Span span : spans) {
 
-            final List<String> window = Arrays.asList(span.getWindow());
+            final List<String> window = Arrays.asList(span.getWindow())
+                    .stream()
+                    .map(String::toLowerCase)
+                    .collect(Collectors.toList());
 
-            // Does it contain 'age' or 'old' or 'yo'?
-            // If not, drop it.
+            // Determine between a date and an age.
+            // Does it contain 'age' or 'old' or 'yo'? If not, drop it.
             // TODO: Should this list be exposed to the user and customizable?
             if(window.contains("age")
                     || span.getText().contains("aged")

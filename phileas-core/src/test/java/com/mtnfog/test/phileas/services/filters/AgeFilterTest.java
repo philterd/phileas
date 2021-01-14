@@ -256,4 +256,38 @@ public class AgeFilterTest extends AbstractFilterTest {
 
     }
 
+    @Test
+    public void filter13() throws Exception {
+
+        // PHL-175: Date format "69 years"
+
+        final List<AgeFilterStrategy> strategies = Arrays.asList(new AgeFilterStrategy());
+        AgeFilter filter = new AgeFilter(strategies, new AgeAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "Admit age: 69 years");
+
+        showSpans(filterResult.getSpans());
+
+        Assertions.assertEquals(1, filterResult.getSpans().size());
+        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 11, 19, FilterType.AGE));
+
+    }
+
+    @Test
+    public void filter14() throws Exception {
+
+        // PHL-175: Date format "69 years"
+
+        final List<AgeFilterStrategy> strategies = Arrays.asList(new AgeFilterStrategy());
+        AgeFilter filter = new AgeFilter(strategies, new AgeAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "Female Admit Age: 69 years");
+
+        showSpans(filterResult.getSpans());
+
+        Assertions.assertEquals(1, filterResult.getSpans().size());
+        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 18, 26, FilterType.AGE));
+
+    }
+
 }
