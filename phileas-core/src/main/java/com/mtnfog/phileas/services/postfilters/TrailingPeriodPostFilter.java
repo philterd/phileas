@@ -1,5 +1,6 @@
 package com.mtnfog.phileas.services.postfilters;
 
+import com.mtnfog.phileas.model.enums.FilterType;
 import com.mtnfog.phileas.model.objects.PostFilterResult;
 import com.mtnfog.phileas.model.objects.Span;
 import com.mtnfog.phileas.model.services.PostFilter;
@@ -14,16 +15,21 @@ public class TrailingPeriodPostFilter extends PostFilter {
     @Override
     protected PostFilterResult process(String text, Span span) {
 
-        if(span.getText().endsWith(".")) {
+        // A street filter can end with a period.
+        if(span.getFilterType() != FilterType.STREET_ADDRESS) {
 
-            // Modify the span to remove the period from the span.
-            span.setText(StringUtils.substring(span.getText(), 0, span.getText().length() - 1));
-            span.setCharacterEnd(span.getCharacterEnd() - 1);
+            if (span.getText().endsWith(".")) {
 
-        }
+                // Modify the span to remove the period from the span.
+                span.setText(StringUtils.substring(span.getText(), 0, span.getText().length() - 1));
+                span.setCharacterEnd(span.getCharacterEnd() - 1);
 
-        while(span.getText().endsWith(".")) {
-            span = process(text, span).getSpan();
+            }
+
+            while (span.getText().endsWith(".")) {
+                span = process(text, span).getSpan();
+            }
+
         }
 
         return new PostFilterResult(span, false);

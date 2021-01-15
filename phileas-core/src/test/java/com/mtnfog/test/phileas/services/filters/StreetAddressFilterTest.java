@@ -86,4 +86,186 @@ public class StreetAddressFilterTest extends AbstractFilterTest {
 
     }
 
+    @Test
+    public void filter6() throws Exception {
+
+        final AlertService alertService = Mockito.mock(AlertService.class);
+
+        final StreetAddressFilter filter = new StreetAddressFilter(null, new StreetAddressAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "14 Southampton St.");
+
+        Assertions.assertEquals(1, filterResult.getSpans().size());
+        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 0, 18, FilterType.STREET_ADDRESS));
+
+    }
+
+    @Test
+    public void filter7() throws Exception {
+
+        final AlertService alertService = Mockito.mock(AlertService.class);
+
+        final StreetAddressFilter filter = new StreetAddressFilter(null, new StreetAddressAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "22 Newport Drive");
+
+        Assertions.assertEquals(1, filterResult.getSpans().size());
+        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 0, 16, FilterType.STREET_ADDRESS));
+
+    }
+
+    @Test
+    public void filter8() throws Exception {
+
+        final AlertService alertService = Mockito.mock(AlertService.class);
+
+        final StreetAddressFilter filter = new StreetAddressFilter(null, new StreetAddressAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "78 Glendale Street");
+
+        Assertions.assertEquals(1, filterResult.getSpans().size());
+        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 0, 18, FilterType.STREET_ADDRESS));
+
+    }
+
+    @Test
+    public void filter9() throws Exception {
+
+        final AlertService alertService = Mockito.mock(AlertService.class);
+
+        final StreetAddressFilter filter = new StreetAddressFilter(null, new StreetAddressAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "6 Berkshire Court");
+
+        Assertions.assertEquals(1, filterResult.getSpans().size());
+        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 0, 17, FilterType.STREET_ADDRESS));
+
+    }
+
+    @Test
+    public void filter10() throws Exception {
+
+        final AlertService alertService = Mockito.mock(AlertService.class);
+
+        final StreetAddressFilter filter = new StreetAddressFilter(null, new StreetAddressAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "291 North Pawnee Ave.");
+
+        Assertions.assertEquals(1, filterResult.getSpans().size());
+        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 0, 21, FilterType.STREET_ADDRESS));
+
+    }
+
+    @Test
+    public void filter11() throws Exception {
+
+        final AlertService alertService = Mockito.mock(AlertService.class);
+
+        final StreetAddressFilter filter = new StreetAddressFilter(null, new StreetAddressAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "468 William Street");
+
+        Assertions.assertEquals(1, filterResult.getSpans().size());
+        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 0, 18, FilterType.STREET_ADDRESS));
+
+    }
+
+    @Test
+    public void filter12() throws Exception {
+
+        final AlertService alertService = Mockito.mock(AlertService.class);
+
+        final StreetAddressFilter filter = new StreetAddressFilter(null, new StreetAddressAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "291 6th Dr.");
+
+        Assertions.assertEquals(1, filterResult.getSpans().size());
+        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 0, 11, FilterType.STREET_ADDRESS));
+
+    }
+
+    @Test
+    public void filter13() throws Exception {
+
+        final AlertService alertService = Mockito.mock(AlertService.class);
+
+        final StreetAddressFilter filter = new StreetAddressFilter(null, new StreetAddressAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "9444 Heritage St.");
+
+        Assertions.assertEquals(1, filterResult.getSpans().size());
+        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 0, 17, FilterType.STREET_ADDRESS));
+
+    }
+
+    @Test
+    public void filter14() throws Exception {
+
+        final AlertService alertService = Mockito.mock(AlertService.class);
+
+        final StreetAddressFilter filter = new StreetAddressFilter(null, new StreetAddressAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "70 Birchpond Street");
+
+        Assertions.assertEquals(1, filterResult.getSpans().size());
+        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 0, 19, FilterType.STREET_ADDRESS));
+
+    }
+
+    @Test
+    public void filter15() throws Exception {
+
+        final AlertService alertService = Mockito.mock(AlertService.class);
+
+        final StreetAddressFilter filter = new StreetAddressFilter(null, new StreetAddressAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "656 S. Inverness St.");
+
+        Assertions.assertEquals(1, filterResult.getSpans().size());
+        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 0, 20, FilterType.STREET_ADDRESS));
+
+    }
+
+    @Test
+    public void filter16() throws Exception {
+
+        final AlertService alertService = Mockito.mock(AlertService.class);
+
+        final StreetAddressFilter filter = new StreetAddressFilter(null, new StreetAddressAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "9142 Arlington Court");
+
+        Assertions.assertEquals(1, filterResult.getSpans().size());
+        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 0, 20, FilterType.STREET_ADDRESS));
+
+    }
+
+    @Test
+    public void filter17() throws Exception {
+
+        final AlertService alertService = Mockito.mock(AlertService.class);
+
+        final StreetAddressFilter filter = new StreetAddressFilter(null, new StreetAddressAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "4 Devonshire Ct.");
+
+        Assertions.assertEquals(1, filterResult.getSpans().size());
+        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 0, 16, FilterType.STREET_ADDRESS));
+
+    }
+
+    @Test
+    public void filter18() throws Exception {
+
+        final AlertService alertService = Mockito.mock(AlertService.class);
+
+        final StreetAddressFilter filter = new StreetAddressFilter(null, new StreetAddressAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "4 Devonshire Ct");
+
+        Assertions.assertEquals(1, filterResult.getSpans().size());
+        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 0, 15, FilterType.STREET_ADDRESS));
+
+    }
+
 }
