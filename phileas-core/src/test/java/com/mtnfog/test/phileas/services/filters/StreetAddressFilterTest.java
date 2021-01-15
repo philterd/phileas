@@ -72,4 +72,18 @@ public class StreetAddressFilterTest extends AbstractFilterTest {
 
     }
 
+    @Test
+    public void filter5() throws Exception {
+
+        final AlertService alertService = Mockito.mock(AlertService.class);
+
+        final StreetAddressFilter filter = new StreetAddressFilter(null, new StreetAddressAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "North 2800 Clay Edwards Drive");
+
+        Assertions.assertEquals(1, filterResult.getSpans().size());
+        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 6, 29, FilterType.STREET_ADDRESS));
+
+    }
+
 }
