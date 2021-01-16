@@ -33,6 +33,8 @@ public class PhysicalNameFilterTest extends AbstractFilterTest {
         final PhysicianNameFilter filter = new PhysicianNameFilter(strategies, new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
 
         final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "Doctor Smith was the attending physician.");
+        showSpans(filterResult.getSpans());
+
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 0, 12, FilterType.PHYSICIAN_NAME));
         Assertions.assertEquals("Doctor Smith", filterResult.getSpans().get(0).getText());
@@ -46,6 +48,8 @@ public class PhysicalNameFilterTest extends AbstractFilterTest {
         final PhysicianNameFilter filter = new PhysicianNameFilter(strategies, new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
 
         final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "Doctor James Smith");
+        showSpans(filterResult.getSpans());
+
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 0, 18, FilterType.PHYSICIAN_NAME));
         Assertions.assertEquals("Doctor James Smith", filterResult.getSpans().get(0).getText());
@@ -59,8 +63,10 @@ public class PhysicalNameFilterTest extends AbstractFilterTest {
         final PhysicianNameFilter filter = new PhysicianNameFilter(strategies, new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
 
         final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "John Smith, MD");
-        Assertions.assertEquals(2, filterResult.getSpans().size());
-        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 14, 28, FilterType.PHYSICIAN_NAME));
+        showSpans(filterResult.getSpans());
+
+        Assertions.assertEquals(1, filterResult.getSpans().size());
+        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 0, 14, FilterType.PHYSICIAN_NAME));
         Assertions.assertEquals("John Smith, MD", filterResult.getSpans().get(0).getText());
 
     }
@@ -71,10 +77,12 @@ public class PhysicalNameFilterTest extends AbstractFilterTest {
         final List<PhysicianNameFilterStrategy> strategies = Arrays.asList(new PhysicianNameFilterStrategy());
         final PhysicianNameFilter filter = new PhysicianNameFilter(strategies, new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
 
-        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "was John Smith, MD");
-        Assertions.assertEquals(2, filterResult.getSpans().size());
-        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 14, 28, FilterType.PHYSICIAN_NAME));
-        Assertions.assertEquals("John Smith, MD", filterResult.getSpans().get(0).getText());
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "attending physician was John Smith, MD");
+        showSpans(filterResult.getSpans());
+
+        Assertions.assertEquals(1, filterResult.getSpans().size());
+        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 10, 38, FilterType.PHYSICIAN_NAME));
+        Assertions.assertEquals("physician was John Smith, MD", filterResult.getSpans().get(0).getText());
 
     }
 
@@ -85,9 +93,11 @@ public class PhysicalNameFilterTest extends AbstractFilterTest {
         final PhysicianNameFilter filter = new PhysicianNameFilter(strategies, new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
 
         final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "was John J. van Smith, MD");
-        Assertions.assertEquals(2, filterResult.getSpans().size());
-        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 14, 28, FilterType.PHYSICIAN_NAME));
-        Assertions.assertEquals("John Smith, MD", filterResult.getSpans().get(0).getText());
+        showSpans(filterResult.getSpans());
+
+        Assertions.assertEquals(1, filterResult.getSpans().size());
+        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 4, 25, FilterType.PHYSICIAN_NAME));
+        Assertions.assertEquals("John J. van Smith, MD", filterResult.getSpans().get(0).getText());
 
     }
 

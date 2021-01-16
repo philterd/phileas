@@ -6,6 +6,8 @@ import org.apache.commons.lang3.Range;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.Serializable;
 import java.util.*;
@@ -16,6 +18,8 @@ import java.util.stream.IntStream;
  * Represents a location in text identified as sensitive information.
  */
 public final class Span {
+
+    private static final Logger LOGGER = LogManager.getLogger(Span.class);
 
     @Expose
     private int characterStart;
@@ -324,26 +328,37 @@ public final class Span {
      */
     public static List<Span> dropOverlappingSpans(List<Span> spans) {
 
-        final List<Span> nonOverlappingSpans = new LinkedList<>();
+        List<Span> nonOverlappingSpans = new LinkedList<>();
 
-        for(final Span span : spans) {
+        // Loop over each span.
+        for (final Span span : spans) {
 
             boolean overlapping = false;
 
-            for(final Span span2 : spans) {
+            // Loop over each span.
+            for (final Span span2 : spans) {
 
-                //LOGGER.info("{} - {}", span.getCharacterStart(), span2.getCharacterStart());
-                //LOGGER.info("{} - {}", span2.getCharacterStart(), span2.getCharacterStart());
+                // Ignore if the span is the same.
+                if (!span.equals(span2)) {
 
-                if(span.range.isOverlappedBy(span2.range)) {
+                    //LOGGER.info("{} - {}", span.getCharacterStart(), span2.getCharacterStart());
+                    //LOGGER.info("{} - {}", span2.getCharacterStart(), span2.getCharacterStart());
 
-                    final int spanLength = span.getCharacterEnd() - span.getCharacterStart();
-                    final int span2Length = span2.getCharacterEnd() - span2.getCharacterStart();
+                    if (span.range.isOverlappedBy(span2.range)) {
 
-                    if((span2Length > spanLength) || (span2Length == spanLength && span2.confidence > span.confidence)) {
+                        //System.out.println("span is overlapped by span2");
 
-                        overlapping = true;
-                        nonOverlappingSpans.add(span2);
+                        // Get the span with the longest length.
+
+                        final int spanLength = span.getCharacterEnd() - span.getCharacterStart();
+                        final int span2Length = span2.getCharacterEnd() - span2.getCharacterStart();
+
+                        if ((span2Length > spanLength) || (span2Length == spanLength && span2.confidence > span.confidence)) {
+
+                            overlapping = true;
+                            nonOverlappingSpans.add(span2);
+
+                        }
 
                     }
 
@@ -351,17 +366,23 @@ public final class Span {
 
             }
 
-            if(!overlapping) {
+            if (!overlapping) {
                 nonOverlappingSpans.add(span);
             }
 
         }
 
-        // If there are two spans in the list that have the same character start the one(s)
+        // If there are two spans in the list that have the same character start, the one(s)
         // appear later in the list should be removed. If they have the same start they will
         // have to have the same end.
         final HashSet<Integer> seen = new HashSet<>();
         nonOverlappingSpans.removeIf(e -> !seen.add(e.getCharacterStart()));
+
+        // Keep calling this until the sizes of the input and output are equal.
+        int removed = spans.size() - nonOverlappingSpans.size();
+        if(removed > 0) {
+            nonOverlappingSpans = dropOverlappingSpans(nonOverlappingSpans);
+        }
 
         return nonOverlappingSpans;
 

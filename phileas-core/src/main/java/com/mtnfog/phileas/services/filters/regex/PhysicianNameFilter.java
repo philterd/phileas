@@ -12,12 +12,12 @@ import com.mtnfog.phileas.model.profile.IgnoredPattern;
 import com.mtnfog.phileas.model.profile.filters.strategies.AbstractFilterStrategy;
 import com.mtnfog.phileas.model.services.AlertService;
 import com.mtnfog.phileas.model.services.AnonymizationService;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.lucene.analysis.TokenStream;
+import org.apache.lucene.analysis.core.SimpleAnalyzer;
+import org.apache.lucene.analysis.core.WhitespaceAnalyzer;
 import org.apache.lucene.analysis.shingle.ShingleFilter;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
-import org.apache.lucene.analysis.tokenattributes.OffsetAttribute;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -39,18 +39,13 @@ public class PhysicianNameFilter extends RegexFilter {
     public PhysicianNameFilter(List<? extends AbstractFilterStrategy> strategies, AnonymizationService anonymizationService, AlertService alertService, Set<String> ignored, Set<String> ignoredFiles, List<IgnoredPattern> ignoredPatterns, Crypto crypto, int windowSize) {
         super(FilterType.PHYSICIAN_NAME, strategies, anonymizationService, alertService, ignored, ignoredFiles, ignoredPatterns, crypto, windowSize);
 
-        // \b[A-Z][A-Za-z'\s+]+,[A-Z][A-Za-z'\s+]+,(MD|PhD)\b
-
-        // TODO: Set the pattern here.
-        final Pattern bitcoinPattern = Pattern.compile("\\b[13][a-km-zA-HJ-NP-Z1-9]{25,34}\\b", Pattern.CASE_INSENSITIVE);
-        final FilterPattern bitcoin1 = new FilterPattern.FilterPatternBuilder(bitcoinPattern, 0.90).build();
-
         // TODO: Set the contextual terms.
         this.contextualTerms = new HashSet<>();
 
         this.preNominals = new LinkedList<>();
-        this.preNominals.add("Dr.");
-        this.preNominals.add("Doctor");
+        this.preNominals.add("DR.");
+        this.preNominals.add("DR");
+        this.preNominals.add("DOCTOR");
 
         this.postNominals = new LinkedList<>();
         populatePostNominals();
@@ -65,19 +60,37 @@ public class PhysicianNameFilter extends RegexFilter {
 
         // \b([A-Z][A-Za-z'\s+]+)(,|\s)?([A-Z][A-Za-z'\s+]+(,|\s))?([A-Z][A-Za-z'\s+]+(,|\s)?(MD|PhD))\b
 
+        final List<Span> spans = new LinkedList<>();
+
         final ShingleFilter ngrams = getNGrams(5, input);
 
-        final OffsetAttribute offsetAttribute = ngrams.getAttribute(OffsetAttribute.class);
         final CharTermAttribute termAttribute = ngrams.getAttribute(CharTermAttribute.class);
 
         try {
 
             ngrams.reset();
 
-            while (ngrams.incrementToken()) {
+            while(ngrams.incrementToken()) {
 
-                if(termAttribute.length() > 1) {
-                    System.out.println(termAttribute);
+                final String candidate = termAttribute.toString();
+
+                if(endsWithPostNominal(candidate.toUpperCase()) || startsWithPreNominal(candidate.toUpperCase())) {
+
+                    //System.out.println(candidate);
+
+                    // Use this text as a literal regex pattern.
+                    final Pattern candidatePattern = Pattern.compile(candidate, Pattern.CASE_INSENSITIVE);
+                    final FilterPattern filterPattern = new FilterPattern.FilterPatternBuilder(candidatePattern, 0.90).build();
+                    this.analyzer = new Analyzer(contextualTerms, filterPattern);
+
+                    final List<Span> patternSpans = findSpans(filterProfile, analyzer, input, context, documentId);
+
+                    for(Span span : patternSpans) {
+                        LOGGER.info(span.toString());
+                    }
+
+                    spans.addAll(patternSpans);
+
                 }
 
             }
@@ -95,97 +108,16 @@ public class PhysicianNameFilter extends RegexFilter {
             }
         }
 
-        return null;
+        final List<Span> droppedOverlappingSpans = Span.dropOverlappingSpans(spans);
 
-        /*final List<Span> spans = new LinkedList<>();
-
-        // Do prenominals  ----------------------------------------------------------
-
-        for(final String preNominal : preNominals) {
-
-            final Pattern pattern = Pattern.compile("\\b" + preNominal + "\\b", Pattern.CASE_INSENSITIVE);
-            final FilterPattern filterPattern = new FilterPattern.FilterPatternBuilder(pattern, 0.90).build();
-            this.analyzer = new Analyzer(contextualTerms, filterPattern);
-
-            final List<Span> preNominalSpans = findSpans(filterProfile, analyzer, input, context, documentId);
-
-            if(preNominalSpans.size() > 0) {
-                System.out.println("preNominalSpans: " + preNominalSpans.size());
-            }
-
-            for(final Span span : preNominalSpans) {
-
-                final int start = span.getCharacterStart();
-
-                final String[] tokens = input.split(" ");
-                final int count = tokens.length;
-
-                final String text;
-
-                if(tokens.length >= 3) {
-                    text = StringUtils.joinWith(" ", tokens[0], tokens[1], tokens[2]);
-                } else if(tokens.length >= 2) {
-                    text = StringUtils.joinWith(" ", tokens[0], tokens[1]);
-                } else {
-                    // Not a name.
-                    text = StringUtils.joinWith(" ", tokens[0], tokens[1]);
-                }
-
-                // TODO: Update the span text.
-                span.setText(text);
-                span.setCharacterStart(span.get);
-
-            }
-
-            spans.addAll(preNominalSpans);
-
-        }
-
-        // Do postnominals ----------------------------------------------------------
-
-        for(final String postNominal : postNominals) {
-
-            final Pattern pattern = Pattern.compile("\\b" + postNominal + "\\b", Pattern.CASE_INSENSITIVE);
-            final FilterPattern filterPattern = new FilterPattern.FilterPatternBuilder(pattern, 0.90).build();
-            this.analyzer = new Analyzer(contextualTerms, filterPattern);
-
-            final List<Span> postNominalSpans = findSpans(filterProfile, analyzer, input, context, documentId);
-
-            if(postNominalSpans.size() > 0) {
-                System.out.println("postNominalSpans: " + postNominalSpans.size());
-            }
-
-            for(final Span span : postNominalSpans) {
-
-                final int start = span.getCharacterStart();
-
-                final String[] tokens = input.split(" ");
-                final int count = tokens.length;
-
-                if(tokens.length >= 4) {
-                    System.out.println(StringUtils.joinWith(" ", tokens[count - 5], tokens[count - 4], tokens[count - 3], tokens[count - 2], tokens[count - 1]));
-                } else if(tokens.length >= 3) {
-                    System.out.println(StringUtils.joinWith(" ", tokens[count - 4], tokens[count - 3], tokens[count - 2], tokens[count - 1]));
-                } else if(tokens.length >= 2) {
-                    System.out.println(StringUtils.joinWith(" ", tokens[count - 3], tokens[count - 2], tokens[count - 1]));
-                }
-
-            }
-
-            // TODO: Remove stop words.
-
-            spans.addAll(postNominalSpans);
-
-        }
-
-        return new FilterResult(context, documentId, spans);*/
+        return new FilterResult(context, documentId, droppedOverlappingSpans);
 
     }
 
     private ShingleFilter getNGrams(int maxNgramSize, String text) {
 
         // The standard analyzer lowercases the text.
-        final StandardAnalyzer analyzer = new StandardAnalyzer();
+        final WhitespaceAnalyzer analyzer = new WhitespaceAnalyzer();
 
         // Tokenize the input text.
         final TokenStream tokenStream = analyzer.tokenStream(null, new StringReader(text));
@@ -193,6 +125,14 @@ public class PhysicianNameFilter extends RegexFilter {
         // Make n-grams from the tokens.
         return new ShingleFilter(tokenStream, 2, maxNgramSize);
 
+    }
+
+    private boolean startsWithPreNominal(String text) {
+        return preNominals.stream().anyMatch(entry -> text.startsWith(entry));
+    }
+
+    private boolean endsWithPostNominal(String text) {
+        return postNominals.stream().anyMatch(entry -> text.endsWith(entry));
     }
 
     private void populatePostNominals() {

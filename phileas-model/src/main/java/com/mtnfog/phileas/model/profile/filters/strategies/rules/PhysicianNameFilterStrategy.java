@@ -21,7 +21,7 @@ public class PhysicianNameFilterStrategy extends AbstractFilterStrategy {
 
     private static final Logger LOGGER = LogManager.getLogger(PhysicianNameFilterStrategy.class);
 
-    private static FilterType filterType = FilterType.PHONE_NUMBER_EXTENSION;
+    private static FilterType filterType = FilterType.PHYSICIAN_NAME;
 
     @Override
     public FilterType getFilterType() {
