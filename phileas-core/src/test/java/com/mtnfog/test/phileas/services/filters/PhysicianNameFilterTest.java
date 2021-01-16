@@ -3,12 +3,10 @@ package com.mtnfog.test.phileas.services.filters;
 import com.mtnfog.phileas.model.enums.FilterType;
 import com.mtnfog.phileas.model.objects.FilterResult;
 import com.mtnfog.phileas.model.profile.Crypto;
-import com.mtnfog.phileas.model.profile.filters.strategies.rules.PhoneNumberFilterStrategy;
 import com.mtnfog.phileas.model.profile.filters.strategies.rules.PhysicianNameFilterStrategy;
 import com.mtnfog.phileas.model.services.AlertService;
 import com.mtnfog.phileas.services.anonymization.AlphanumericAnonymizationService;
 import com.mtnfog.phileas.services.anonymization.cache.LocalAnonymizationCacheService;
-import com.mtnfog.phileas.services.filters.custom.PhoneNumberRulesFilter;
 import com.mtnfog.phileas.services.filters.regex.PhysicianNameFilter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -20,9 +18,9 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public class PhysicalNameFilterTest extends AbstractFilterTest {
+public class PhysicianNameFilterTest extends AbstractFilterTest {
 
-    private static final Logger LOGGER = LogManager.getLogger(PhysicalNameFilterTest.class);
+    private static final Logger LOGGER = LogManager.getLogger(PhysicianNameFilterTest.class);
 
     private AlertService alertService = Mockito.mock(AlertService.class);
 
@@ -36,8 +34,8 @@ public class PhysicalNameFilterTest extends AbstractFilterTest {
         showSpans(filterResult.getSpans());
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
-        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 0, 12, FilterType.PHYSICIAN_NAME));
-        Assertions.assertEquals("Doctor Smith", filterResult.getSpans().get(0).getText());
+        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 0, 30, FilterType.PHYSICIAN_NAME));
+        Assertions.assertEquals("Doctor Smith was the attending", filterResult.getSpans().get(0).getText());
 
     }
 

@@ -330,6 +330,11 @@ public final class Span {
 
         List<Span> nonOverlappingSpans = new LinkedList<>();
 
+        // Order spans by length and reverse so the spans
+        // are sorted longest to shortest.
+        spans.sort((s1, s2) -> (s1.length()));
+        Collections.reverse(spans);
+
         // Loop over each span.
         for (final Span span : spans) {
 
@@ -372,9 +377,8 @@ public final class Span {
 
         }
 
-        // If there are two spans in the list that have the same character start, the one(s)
-        // appear later in the list should be removed. If they have the same start they will
-        // have to have the same end.
+        // If there are two spans in the list that have the same character start and
+        // the same confidence, the one(s) appear later in the list will be kept.
         final HashSet<Integer> seen = new HashSet<>();
         nonOverlappingSpans.removeIf(e -> !seen.add(e.getCharacterStart()));
 
@@ -430,6 +434,10 @@ public final class Span {
                 + " classification: " + classification + "; "
                 ;
 
+    }
+
+    public int length() {
+        return characterEnd - characterStart;
     }
 
     public int getCharacterStart() {

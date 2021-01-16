@@ -244,7 +244,7 @@ public class SpanTest {
         Assertions.assertEquals(1, nonOverlappingSpans.size());
         Assertions.assertEquals(7, nonOverlappingSpans.get(0).getCharacterStart());
         Assertions.assertEquals(17, nonOverlappingSpans.get(0).getCharacterEnd());
-        Assertions.assertEquals(FilterType.ZIP_CODE, nonOverlappingSpans.get(0).getFilterType());
+        Assertions.assertEquals(FilterType.IDENTIFIER, nonOverlappingSpans.get(0).getFilterType());
 
     }
 

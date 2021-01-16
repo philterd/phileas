@@ -316,7 +316,7 @@ public class DateFilterStrategyTest extends AbstractFilterStrategyTest {
         final FilterPattern filterPattern = new FilterPattern.FilterPatternBuilder(Pattern.compile("\\b\\d{2}-\\d{2}-\\d{4}"), 0.75).withFormat("MMM uuuu").build();
         final Replacement replacement = strategy.getReplacement("name", "context", "docId", date, WINDOW, new Crypto(), anonymizationService, filterPattern);
 
-        Assertions.assertEquals("5 years 7 months ago", replacement.getReplacement());
+        Assertions.assertEquals("5 years 8 months ago", replacement.getReplacement());
 
     }
 
@@ -338,7 +338,7 @@ public class DateFilterStrategyTest extends AbstractFilterStrategyTest {
         final FilterPattern filterPattern = new FilterPattern.FilterPatternBuilder(Pattern.compile("\\b\\d{2}-\\d{2}-\\d{4}"), 0.75).withFormat("MMM uuuu").build();
         final Replacement replacement = strategy.getReplacement("name", "context", "docId", date, WINDOW, new Crypto(), anonymizationService, filterPattern);
 
-        Assertions.assertEquals("7 months ago", replacement.getReplacement());
+        Assertions.assertEquals("8 months ago", replacement.getReplacement());
 
     }
 
