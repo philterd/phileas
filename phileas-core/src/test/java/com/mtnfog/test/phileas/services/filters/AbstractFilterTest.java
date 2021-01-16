@@ -80,6 +80,9 @@ public abstract class AbstractFilterTest {
         PhoneNumberExtension phoneNumberExtension = new PhoneNumberExtension();
         phoneNumberExtension.setPhoneNumberExtensionFilterStrategies(Arrays.asList(new PhoneNumberExtensionFilterStrategy()));
 
+        PhysicianName physicianName = new PhysicianName();
+        physicianName.setPhysicianNameFilterStrategies(Arrays.asList(new PhysicianNameFilterStrategy()));
+
         Section section = new Section();
         section.setSectionFilterStrategies(Arrays.asList(new SectionFilterStrategy()));
 
@@ -153,6 +156,7 @@ public abstract class AbstractFilterTest {
         identifiers.setPassportNumber(passportNumber);
         identifiers.setPhoneNumber(phoneNumber);
         identifiers.setPhoneNumberExtension(phoneNumberExtension);
+        identifiers.setPhysicianName(physicianName);
         identifiers.setSections(Arrays.asList(section));
         identifiers.setSsn(ssn);
         identifiers.setStateAbbreviation(stateAbbreviation);

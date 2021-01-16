@@ -150,7 +150,7 @@ public abstract class Filter {
 
         for(finalStart = characterStart; finalStart != 0 && spacesSeen <= windowSize; finalStart--) {
 
-            if(Character.isWhitespace(text.charAt(finalStart))) {
+            if(finalStart < text.length() && Character.isWhitespace(text.charAt(finalStart))) {
 
                 // Count it.
                 spacesSeen++;
@@ -319,6 +319,8 @@ public abstract class Filter {
             return filterProfile.getIdentifiers().getPhoneNumber().getPhoneNumberFilterStrategies();
         } else if(filterType == FilterType.PHONE_NUMBER_EXTENSION) {
             return filterProfile.getIdentifiers().getPhoneNumberExtension().getPhoneNumberExtensionFilterStrategies();
+        } else if(filterType == FilterType.PHYSICIAN_NAME) {
+            return filterProfile.getIdentifiers().getPhysicianName().getPhysicianNameFilterStrategies();
         } else if(filterType == FilterType.SSN) {
             return filterProfile.getIdentifiers().getSsn().getSsnFilterStrategies();
         } else if(filterType == FilterType.STATE_ABBREVIATION) {

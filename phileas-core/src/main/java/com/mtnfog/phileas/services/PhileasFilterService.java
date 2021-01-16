@@ -479,6 +479,10 @@ public class PhileasFilterService implements FilterService {
             enabledFilters.add(new PhoneNumberRulesFilter(filterProfile.getIdentifiers().getPhoneNumber().getPhoneNumberFilterStrategies(), new AlphanumericAnonymizationService(anonymizationCacheService), alertService, filterProfile.getIdentifiers().getPhoneNumber().getIgnored(), filterProfile.getIdentifiers().getPhoneNumber().getIgnoredFiles(), filterProfile.getIdentifiers().getPhoneNumber().getIgnoredPatterns(), filterProfile.getCrypto(), windowSize));
         }
 
+        if(filterProfile.getIdentifiers().hasFilter(FilterType.PHYSICIAN_NAME) && filterProfile.getIdentifiers().getPhysicianName().isEnabled()) {
+            enabledFilters.add(new PhysicianNameFilter(filterProfile.getIdentifiers().getPhysicianName().getPhysicianNameFilterStrategies(), new AlphanumericAnonymizationService(anonymizationCacheService), alertService, filterProfile.getIdentifiers().getPhoneNumber().getIgnored(), filterProfile.getIdentifiers().getPhoneNumber().getIgnoredFiles(), filterProfile.getIdentifiers().getPhoneNumber().getIgnoredPatterns(), filterProfile.getCrypto(), windowSize));
+        }
+
         if(filterProfile.getIdentifiers().hasFilter(FilterType.SECTION)) {
 
             final List<Section> sections = filterProfile.getIdentifiers().getSections();

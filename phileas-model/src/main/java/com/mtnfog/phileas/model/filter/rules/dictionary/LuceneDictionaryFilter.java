@@ -321,7 +321,7 @@ public class LuceneDictionaryFilter extends DictionaryFilter implements Serializ
     public static void main(String[] args) throws IOException {
 
         // The location of the file containing the lines to index.
-        final Path filetoIndex = Paths.get("/mtnfog/code/philter/phileas/data/index-data/cities");
+        final Path filetoIndex = Paths.get("/mtnfog/code/philter/phileas/data/index-data/surnames");
 
         // The name of the file minus the extension is the type of index.
         final String type = FilenameUtils.removeExtension(filetoIndex.toFile().getName());
@@ -335,13 +335,25 @@ public class LuceneDictionaryFilter extends DictionaryFilter implements Serializ
         // "Filters StandardTokenizer with StandardFilter, LowerCaseFilter and StopFilter, using a list of English stop words."
         // https://lucene.apache.org/core/8_1_1/core/org/apache/lucene/analysis/standard/StandardAnalyzer.html
 
-        try (SpellChecker spellChecker = new SpellChecker(FSDirectory.open(indexDirectory))) {
+        try(final SpellChecker spellChecker = new SpellChecker(FSDirectory.open(indexDirectory))) {
 
-            spellChecker.indexDictionary(new PlainTextDictionary(filetoIndex), new IndexWriterConfig(new StandardAnalyzer(EnglishAnalyzer.getDefaultStopSet())), false);
+            spellChecker.indexDictionary(new PlainTextDictionary(filetoIndex), new IndexWriterConfig(new StandardAnalyzer(EnglishAnalyzer.getDefaultStopSet())), true);
 
         }
 
         LOGGER.info("Index created at: " + indexDirectory);
+
+        final SpellChecker spellChecker = new SpellChecker(FSDirectory.open(indexDirectory, NoLockFactory.INSTANCE));
+        spellChecker.setStringDistance(new LuceneLevenshteinDistance());
+        spellChecker.setAccuracy(0.0f);
+
+        // Test the index.
+        LOGGER.info("Index contains Jones: {}", spellChecker.exist("Jones"));
+        final String[] suggestions = spellChecker.suggestSimilar("Jones", 2);
+        LOGGER.info("Suggestions for Jones: {}", suggestions.length);
+        for(final String s : suggestions) {
+            LOGGER.info("Suggestion: {}", s);
+        }
 
     }
 

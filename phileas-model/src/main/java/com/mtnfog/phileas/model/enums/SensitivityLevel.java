@@ -11,7 +11,7 @@ import java.io.Serializable;
  */
 public enum SensitivityLevel {
 
-    AUTO("auto"), LOW("low"), MEDIUM("medium"), HIGH("high");
+    AUTO("auto"), OFF("off"), LOW("low"), MEDIUM("medium"), HIGH("high");
 
     private String name;
 
@@ -39,6 +39,8 @@ public enum SensitivityLevel {
 
         if(StringUtils.equalsIgnoreCase(name, AUTO.getName())) {
             return AUTO;
+        } else if(StringUtils.equalsIgnoreCase(name, OFF.getName())) {
+            return OFF;
         } else if(StringUtils.equalsIgnoreCase(name, LOW.getName())) {
             return LOW;
         } else if(StringUtils.equalsIgnoreCase(name, MEDIUM.getName())) {
@@ -46,7 +48,7 @@ public enum SensitivityLevel {
         } if(StringUtils.equalsIgnoreCase(name, HIGH.getName())) {
             return HIGH;
         } else {
-            logger.warn("Invalid sensitivity level. Valid are low, medium, high. Defaulting to high.");
+            logger.warn("Invalid sensitivity level. Valid are off, low, medium, high. Defaulting to high.");
             return HIGH;
         }
 
