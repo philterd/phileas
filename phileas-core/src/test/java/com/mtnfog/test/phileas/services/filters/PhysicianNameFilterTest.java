@@ -99,4 +99,19 @@ public class PhysicianNameFilterTest extends AbstractFilterTest {
 
     }
 
+    @Test
+    public void physicianNameTestPostNominal4() throws Exception {
+
+        final List<PhysicianNameFilterStrategy> strategies = Arrays.asList(new PhysicianNameFilterStrategy());
+        final PhysicianNameFilter filter = new PhysicianNameFilter(strategies, new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "Smith,James D,MD -General Surgery");
+        showSpans(filterResult.getSpans());
+
+        Assertions.assertEquals(1, filterResult.getSpans().size());
+        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 0, 16, FilterType.PHYSICIAN_NAME));
+        Assertions.assertEquals("Smith,James D,MD", filterResult.getSpans().get(0).getText());
+
+    }
+
 }

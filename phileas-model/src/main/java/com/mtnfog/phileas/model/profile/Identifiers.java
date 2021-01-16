@@ -74,7 +74,7 @@ public class Identifiers {
     @Expose
     private PhoneNumberExtension phoneNumberExtension;
 
-    @SerializedName("physicialName")
+    @SerializedName("physicianName")
     @Expose
     private PhysicianName physicianName;
 

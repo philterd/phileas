@@ -85,10 +85,6 @@ public class PhysicianNameFilter extends RegexFilter {
 
                     final List<Span> patternSpans = findSpans(filterProfile, analyzer, input, context, documentId);
 
-                    for(Span span : patternSpans) {
-                        LOGGER.info(span.toString());
-                    }
-
                     spans.addAll(patternSpans);
 
                 }
