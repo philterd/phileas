@@ -30,6 +30,9 @@ import java.util.stream.Collectors;
 
 public class PhysicianNameFilter extends RegexFilter {
 
+    // The percentage of letters each candidate string must contain.
+    private static final double LETTER_PERCENTAGE_THRESHOLD = 0.75;
+
     private final List<String> preNominals;
 
     private final List<String> postNominals;
@@ -43,9 +46,7 @@ public class PhysicianNameFilter extends RegexFilter {
         this.contextualTerms = new HashSet<>();
 
         this.preNominals = new LinkedList<>();
-        this.preNominals.add("DR.");
-        this.preNominals.add("DR");
-        this.preNominals.add("DOCTOR");
+        populatePreNominals();
 
         this.postNominals = new LinkedList<>();
         populatePostNominals();
@@ -74,16 +75,21 @@ public class PhysicianNameFilter extends RegexFilter {
 
                 final String candidate = termAttribute.toString();
 
-                if(endsWithPostNominal(candidate.toUpperCase()) || startsWithPreNominal(candidate.toUpperCase())) {
+                if(endsWithPostNominal(candidate) || startsWithPreNominal(candidate)) {
 
-                    // Use this text as a literal regex pattern.
-                    final Pattern candidatePattern = Pattern.compile(Pattern.quote(candidate), Pattern.CASE_INSENSITIVE);
-                    final FilterPattern filterPattern = new FilterPattern.FilterPatternBuilder(candidatePattern, 0.90).build();
-                    this.analyzer = new Analyzer(contextualTerms, filterPattern);
+                    // The candidate has to be some percentage of ASCII letters.
+                    if(letterPercentage(candidate) > LETTER_PERCENTAGE_THRESHOLD) {
 
-                    final List<Span> patternSpans = findSpans(filterProfile, analyzer, input, context, documentId);
+                        // Use this text as a literal regex pattern.
+                        final Pattern candidatePattern = Pattern.compile(Pattern.quote(candidate), Pattern.CASE_INSENSITIVE);
+                        final FilterPattern filterPattern = new FilterPattern.FilterPatternBuilder(candidatePattern, 0.90).build();
+                        this.analyzer = new Analyzer(contextualTerms, filterPattern);
 
-                    spans.addAll(patternSpans);
+                        final List<Span> patternSpans = findSpans(filterProfile, analyzer, input, context, documentId);
+
+                        spans.addAll(patternSpans);
+
+                    }
 
                 }
 
@@ -108,6 +114,23 @@ public class PhysicianNameFilter extends RegexFilter {
 
     }
 
+    private double letterPercentage(String text) {
+
+        int count = 0;
+        text = text.replaceAll("\\p{Punct}", "");
+
+        for(int i = 0; i < text.length() ; i++) {
+
+            if(Character.isAlphabetic(text.charAt(i))) {
+                count++;
+            }
+
+        }
+
+        return Double.valueOf(count) / Double.valueOf(text.length());
+
+    }
+
     private ShingleFilter getNGrams(int maxNgramSize, String text) {
 
         // The standard analyzer lowercases the text.
@@ -122,11 +145,22 @@ public class PhysicianNameFilter extends RegexFilter {
     }
 
     private boolean startsWithPreNominal(String text) {
-        return preNominals.stream().anyMatch(entry -> text.startsWith(entry));
+        return preNominals.stream().anyMatch(entry -> text.startsWith(entry + " "));
     }
 
     private boolean endsWithPostNominal(String text) {
-        return postNominals.stream().anyMatch(entry -> text.endsWith(entry));
+        return postNominals.stream().anyMatch(entry -> text.endsWith(" " + entry) || text.endsWith("," + entry));
+    }
+
+    private void populatePreNominals() {
+
+        this.preNominals.clear();
+        this.preNominals.add("DR.");
+        this.preNominals.add("DR");
+        this.preNominals.add("DOCTOR");
+        this.preNominals.add("Doctor");
+        this.preNominals.add("Dr.");
+
     }
 
     private void populatePostNominals() {

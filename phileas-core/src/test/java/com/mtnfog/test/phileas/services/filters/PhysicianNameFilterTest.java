@@ -129,4 +129,60 @@ public class PhysicianNameFilterTest extends AbstractFilterTest {
 
     }
 
+    @Test
+    public void physicianNameTestPostNominal6() throws Exception {
+
+        final List<PhysicianNameFilterStrategy> strategies = Arrays.asList(new PhysicianNameFilterStrategy());
+        final PhysicianNameFilter filter = new PhysicianNameFilter(strategies, new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "1.0 cm in outside diameter pink tan everted");
+        showSpans(filterResult.getSpans());
+
+        Assertions.assertEquals(0, filterResult.getSpans().size());
+
+    }
+
+    @Test
+    public void physicianNameTestPostNominal7() throws Exception {
+
+        final List<PhysicianNameFilterStrategy> strategies = Arrays.asList(new PhysicianNameFilterStrategy());
+        final PhysicianNameFilter filter = new PhysicianNameFilter(strategies, new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "1.0 cm");
+        showSpans(filterResult.getSpans());
+
+        Assertions.assertEquals(0, filterResult.getSpans().size());
+
+    }
+
+    @Test
+    public void physicianNameTestPostNominal8() throws Exception {
+
+        final List<PhysicianNameFilterStrategy> strategies = Arrays.asList(new PhysicianNameFilterStrategy());
+        final PhysicianNameFilter filter = new PhysicianNameFilter(strategies, new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "Ahu,Amanda D,MD -General Surgery");
+        showSpans(filterResult.getSpans());
+
+        Assertions.assertEquals(1, filterResult.getSpans().size());
+        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 0, 15, FilterType.PHYSICIAN_NAME));
+        Assertions.assertEquals("Ahu,Amanda D,MD", filterResult.getSpans().get(0).getText());
+
+    }
+
+    @Test
+    public void physicianNameTestPostNominal9() throws Exception {
+
+        final List<PhysicianNameFilterStrategy> strategies = Arrays.asList(new PhysicianNameFilterStrategy());
+        final PhysicianNameFilter filter = new PhysicianNameFilter(strategies, new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "Johnns,Melinda S,MD - 1/2/2018 11:54 CST 1/2/2018 12:46 CST");
+        showSpans(filterResult.getSpans());
+
+        Assertions.assertEquals(1, filterResult.getSpans().size());
+        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 0, 19, FilterType.PHYSICIAN_NAME));
+        Assertions.assertEquals("Johnns,Melinda S,MD", filterResult.getSpans().get(0).getText());
+
+    }
+
 }
