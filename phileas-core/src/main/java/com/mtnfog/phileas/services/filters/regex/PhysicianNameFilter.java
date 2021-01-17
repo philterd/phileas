@@ -76,10 +76,8 @@ public class PhysicianNameFilter extends RegexFilter {
 
                 if(endsWithPostNominal(candidate.toUpperCase()) || startsWithPreNominal(candidate.toUpperCase())) {
 
-                    //System.out.println(candidate);
-
                     // Use this text as a literal regex pattern.
-                    final Pattern candidatePattern = Pattern.compile(candidate, Pattern.CASE_INSENSITIVE);
+                    final Pattern candidatePattern = Pattern.compile(Pattern.quote(candidate), Pattern.CASE_INSENSITIVE);
                     final FilterPattern filterPattern = new FilterPattern.FilterPatternBuilder(candidatePattern, 0.90).build();
                     this.analyzer = new Analyzer(contextualTerms, filterPattern);
 
