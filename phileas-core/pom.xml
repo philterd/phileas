@@ -62,11 +62,6 @@
 		</dependency>
 		<dependency>
 			<groupId>com.mtnfog</groupId>
-			<artifactId>phileas-services-anonymization</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.mtnfog</groupId>
 			<artifactId>phileas-services-alerts</artifactId>
 			<version>${project.version}</version>
 		</dependency>
