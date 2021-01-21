@@ -31,4 +31,18 @@ public class SsnFilterStrategyTest extends AbstractFilterStrategyTest {
 
     }
 
+    @Test
+    public void lastFour2() throws Exception {
+
+        final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
+
+        final AbstractFilterStrategy strategy = new SsnFilterStrategy();
+        strategy.setStrategy(AbstractFilterStrategy.LAST_4);
+
+        final Replacement replacement = strategy.getReplacement("name", "context", "docId", "123-456-7890", WINDOW, new Crypto(), anonymizationService, null);
+
+        Assertions.assertEquals("7890", replacement.getReplacement());
+
+    }
+
 }
