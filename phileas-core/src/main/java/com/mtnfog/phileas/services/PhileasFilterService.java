@@ -480,7 +480,7 @@ public class PhileasFilterService implements FilterService {
         }
 
         if(filterProfile.getIdentifiers().hasFilter(FilterType.PHYSICIAN_NAME) && filterProfile.getIdentifiers().getPhysicianName().isEnabled()) {
-            enabledFilters.add(new PhysicianNameFilter(filterProfile.getIdentifiers().getPhysicianName().getPhysicianNameFilterStrategies(), new AlphanumericAnonymizationService(anonymizationCacheService), alertService, filterProfile.getIdentifiers().getPhoneNumber().getIgnored(), filterProfile.getIdentifiers().getPhoneNumber().getIgnoredFiles(), filterProfile.getIdentifiers().getPhoneNumber().getIgnoredPatterns(), filterProfile.getCrypto(), windowSize));
+            enabledFilters.add(new PhysicianNameFilter(filterProfile.getIdentifiers().getPhysicianName().getPhysicianNameFilterStrategies(), new AlphanumericAnonymizationService(anonymizationCacheService), alertService, filterProfile.getIdentifiers().getPhysicianName().getIgnored(), filterProfile.getIdentifiers().getPhysicianName().getIgnoredFiles(), filterProfile.getIdentifiers().getPhysicianName().getIgnoredPatterns(), filterProfile.getCrypto(), windowSize));
         }
 
         if(filterProfile.getIdentifiers().hasFilter(FilterType.SECTION)) {
