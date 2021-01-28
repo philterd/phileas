@@ -159,53 +159,62 @@ public class PdfRedacter extends PDFTextStripper implements Redacter {
 
             if (text.contains(span.getText())) {
 
-                final String term = span.getText();
+                try {
 
-                // Set index to 0 to do the whole line
-                final int index = text.indexOf(span.getText());
+                    //LOGGER.info(span.toString());
 
-                posXInit = textPositions.get(index).getXDirAdj();
-                posXEnd = textPositions.get(index + term.length()).getXDirAdj() + textPositions.get(index + term.length()).getWidth();
-                //posYInit = textPositions.get(index).getPageHeight() - textPositions.get(index).getYDirAdj();
-                posYEnd = textPositions.get(index).getPageHeight() - textPositions.get(index + term.length()).getYDirAdj();
-                //width = textPositions.get(index).getWidthDirAdj();
-                height = textPositions.get(index).getHeightDir();
+                    final String term = span.getText();
 
-                // quadPoints is array of x,y coordinates in Z-like order (top-left, top-right, bottom-left,bottom-right)
-                // of the area to be highlighted
+                    // Set index to 0 to do the whole line
+                    final int index = text.indexOf(span.getText());
 
-                //final int buffer = 5;
+                    posXInit = textPositions.get(index).getXDirAdj();
+                    posXEnd = textPositions.get(index + term.length()).getXDirAdj() + textPositions.get(index + term.length()).getWidth();
+                    //posYInit = textPositions.get(index).getPageHeight() - textPositions.get(index).getYDirAdj();
+                    posYEnd = textPositions.get(index).getPageHeight() - textPositions.get(index + term.length()).getYDirAdj();
+                    //width = textPositions.get(index).getWidthDirAdj();
+                    height = textPositions.get(index).getHeightDir();
 
-                /*final float quadPoints[] = {
-                        posXInit, posYEnd + height + buffer,
-                        posXEnd, posYEnd + height + buffer,
-                        posXInit, posYInit - buffer,
-                        posXEnd, posYEnd - buffer
-                };*/
+                    // quadPoints is array of x,y coordinates in Z-like order (top-left, top-right, bottom-left,bottom-right)
+                    // of the area to be highlighted
 
-                //final List<PDAnnotation> annotations = document.getPage(this.getCurrentPageNo() - 1).getAnnotations();
-                //final PDAnnotationTextMarkup highlight = new PDAnnotationTextMarkup(PDAnnotationTextMarkup.SUB_TYPE_HIGHLIGHT);
+                    //final int buffer = 5;
 
-                final PDRectangle position = new PDRectangle();
-                position.setLowerLeftX(posXInit);
-                position.setLowerLeftY(posYEnd);
-                position.setUpperRightX(posXEnd);
-                position.setUpperRightY(posYEnd + height);
+                    /*final float quadPoints[] = {
+                            posXInit, posYEnd + height + buffer,
+                            posXEnd, posYEnd + height + buffer,
+                            posXInit, posYInit - buffer,
+                            posXEnd, posYEnd - buffer
+                    };*/
 
-                rectangles.putIfAbsent(this.getCurrentPageNo() - 1, new LinkedList<>());
+                    //final List<PDAnnotation> annotations = document.getPage(this.getCurrentPageNo() - 1).getAnnotations();
+                    //final PDAnnotationTextMarkup highlight = new PDAnnotationTextMarkup(PDAnnotationTextMarkup.SUB_TYPE_HIGHLIGHT);
 
-                final RedactedRectangle redactedRectangle = new RedactedRectangle(position, span);
-                rectangles.get(this.getCurrentPageNo() - 1).add(redactedRectangle);
+                    final PDRectangle position = new PDRectangle();
+                    position.setLowerLeftX(posXInit);
+                    position.setLowerLeftY(posYEnd);
+                    position.setUpperRightX(posXEnd);
+                    position.setUpperRightY(posYEnd + height);
 
-                /*highlight.setRectangle(position);
-                highlight.setQuadPoints(quadPoints);
-                highlight.setConstantOpacity(100);
-                highlight.setHidden(false);
-                highlight.setNoView(false);
+                    rectangles.putIfAbsent(this.getCurrentPageNo() - 1, new LinkedList<>());
 
-                final PDColor yellow = new PDColor(new float[]{1, 1, 1 / 255F}, PDDeviceRGB.INSTANCE);
-                highlight.setColor(yellow);
-                annotations.add(highlight);*/
+                    final RedactedRectangle redactedRectangle = new RedactedRectangle(position, span);
+                    rectangles.get(this.getCurrentPageNo() - 1).add(redactedRectangle);
+
+                    /*highlight.setRectangle(position);
+                    highlight.setQuadPoints(quadPoints);
+                    highlight.setConstantOpacity(100);
+                    highlight.setHidden(false);
+                    highlight.setNoView(false);
+
+                    final PDColor yellow = new PDColor(new float[]{1, 1, 1 / 255F}, PDDeviceRGB.INSTANCE);
+                    highlight.setColor(yellow);
+                    annotations.add(highlight);*/
+
+                } catch (Exception ex) {
+                    // TODO: Need to figure out why this sometimes fail.
+                    LOGGER.warn("Problem parsing PDF span: " + ex.getMessage());
+                }
 
             }
 
