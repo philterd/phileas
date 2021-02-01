@@ -436,6 +436,19 @@ public final class Span {
 
     }
 
+    public String toCSV() {
+
+        return
+                characterStart + "," +
+                characterEnd + "," +
+                filterType + "," +
+                context + "," +
+                documentId + "," +
+                confidence + "," +
+                text;
+
+    }
+
     public int length() {
         return characterEnd - characterStart;
     }
