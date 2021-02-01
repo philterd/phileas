@@ -11,6 +11,7 @@ import com.mtnfog.phileas.model.filter.Filter;
 import com.mtnfog.phileas.model.filter.rules.dictionary.BloomFilterDictionaryFilter;
 import com.mtnfog.phileas.model.filter.rules.dictionary.DictionaryFilter;
 import com.mtnfog.phileas.model.filter.rules.dictionary.LuceneDictionaryFilter;
+import com.mtnfog.phileas.model.objects.Explanation;
 import com.mtnfog.phileas.model.objects.RedactionOptions;
 import com.mtnfog.phileas.model.objects.Span;
 import com.mtnfog.phileas.model.profile.FilterProfile;
@@ -337,8 +338,10 @@ public class PhileasFilterService implements FilterService {
             final byte[] redacted = redacter.process(input, outputMimeType);
 
             // Create the response.
-            // TODO: What can we do about the null explanation?
-            binaryDocumentFilterResponse = new BinaryDocumentFilterResponse(redacted, context, documentId, null);
+            final List<Span> spansList = new ArrayList<>(spans);
+            // TODO: The identified vs the applied will actually be different.
+            final Explanation explanation = new Explanation(spansList, spansList);
+            binaryDocumentFilterResponse = new BinaryDocumentFilterResponse(redacted, context, documentId, explanation);
 
             // TODO: How to handle store for PDFs? There is no meaningful span to persist.
             // Store the spans, if enabled.
