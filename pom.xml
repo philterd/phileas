@@ -45,11 +45,6 @@
 			<name>mtnfog--maven-snapshots</name>
 			<url>https://mtnfog-341239660749.d.codeartifact.us-east-1.amazonaws.com/maven/maven-snapshots/</url>
 		</snapshotRepository>
-		<site>
-			<id>site</id>
-			<name>site</name>
-			<url>file:///tmp/staged</url>
-		</site>
 	</distributionManagement>
 	<repositories>
 		<repository>
