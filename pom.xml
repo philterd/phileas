@@ -35,15 +35,10 @@
 		</license>
 	</licenses>
 	<distributionManagement>
-		<!--<repository>
-			<id>mtnfog-maven-releases</id>
-			<name>mtnfog-maven-releases</name>
-			<url>https://mtnfog-341239660749.d.codeartifact.us-east-1.amazonaws.com/maven/maven-releases/</url>
-		</repository>-->
 		<repository>
-			<id>maven-s3-release-repo</id>
-			<name>maven-s3-release-repo</name>
-			<url>s3://mtnfog-repository/releases</url>
+			<id>mtnfog--maven-releases</id>
+			<name>mtnfog--maven-releases</name>
+			<url>https://mtnfog-341239660749.d.codeartifact.us-east-1.amazonaws.com/maven/maven-releases/</url>
 		</repository>
 		<snapshotRepository>
 			<id>mtnfog--maven-snapshots</id>
@@ -65,18 +60,10 @@
 			<name>Maven Central</name>
 			<url>https://repo1.maven.org/maven2</url>
 		</repository>
-		<!--<repository>
-			<id>mtnfog-maven-releases</id>
-			<name>mtnfog-maven-releases</name>
-			<url>https://mtnfog-341239660749.d.codeartifact.us-east-1.amazonaws.com/maven/maven-releases/</url>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-		</repository>-->
 		<repository>
-			<id>maven-s3-release-repo</id>
-			<name>maven-s3-release-repo</name>
-			<url>s3://mtnfog-repository/releases</url>
+			<id>mtnfog--maven-releases</id>
+			<name>mtnfog--maven-releases</name>
+			<url>https://mtnfog-341239660749.d.codeartifact.us-east-1.amazonaws.com/maven/maven-releases/</url>
 			<snapshots>
 				<enabled>false</enabled>
 			</snapshots>
@@ -95,7 +82,7 @@
 		<module>phileas-model</module>
 		<module>phileas-services</module>
 		<module>phileas-store</module>
-    	<module>phileas-configuration</module>
+    <module>phileas-configuration</module>
 		<module>phileas-processors</module>
 		<module>owner</module>
   	</modules>
@@ -153,13 +140,6 @@
 		<sonar.dependencyCheck.jsonReportPath>${project.build.directory}/dependency-check-report.json</sonar.dependencyCheck.jsonReportPath>
 	</properties>
 	<build>
-		<extensions>
-			<extension>
-				<groupId>com.gkatzioura.maven.cloud</groupId>
-				<artifactId>s3-storage-wagon</artifactId>
-				<version>2.3</version>
-			</extension>
-		</extensions>
 		<pluginManagement>
 			<plugins>
 				<plugin>
