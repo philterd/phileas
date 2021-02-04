@@ -58,10 +58,11 @@ public class PyTorchFilter extends NerFilter {
                          Set<String> ignoredFiles,
                          List<IgnoredPattern> ignoredPatterns,
                          boolean removePunctuation,
+                         Map<String, Double> thresholds,
                          Crypto crypto,
                          int windowSize) {
 
-        super(filterType, strategies, stats, metricsService, anonymizationService, alertService, ignored, ignoredFiles, ignoredPatterns, removePunctuation, crypto, windowSize);
+        super(filterType, strategies, stats, metricsService, anonymizationService, alertService, ignored, ignoredFiles, ignoredPatterns, removePunctuation, thresholds, crypto, windowSize);
 
         this.tag = tag;
         this.timeoutSec = phileaseConfiguration.nerTimeoutSec();
@@ -114,15 +115,20 @@ public class PyTorchFilter extends NerFilter {
                     // Only interested in spans matching the tag we are looking for, e.g. PER, LOC.
                     if (StringUtils.equalsIgnoreCase(phileasSpan.getTag(), tag)) {
 
-                        // Ge tthe window of text surrounding the token.
-                        final String[] window = getWindow(input, phileasSpan.getStart(), phileasSpan.getEnd());
+                        // Check the confidence threshold.
+                        if(!thresholds.containsKey(tag.toUpperCase()) || phileasSpan.getScore() >= thresholds.get(tag.toUpperCase())) {
 
-                        final Span span = createSpan(filterProfile.getName(), input, context, documentId, phileasSpan.getText(),
-                                window, phileasSpan.getTag(), phileasSpan.getStart(), phileasSpan.getEnd(), phileasSpan.getScore());
+                            // Get the window of text surrounding the token.
+                            final String[] window = getWindow(input, phileasSpan.getStart(), phileasSpan.getEnd());
 
-                        // Span will be null if no span was created due to it being excluded.
-                        if (span != null) {
-                            spans.add(span);
+                            final Span span = createSpan(filterProfile.getName(), input, context, documentId, phileasSpan.getText(),
+                                    window, phileasSpan.getTag(), phileasSpan.getStart(), phileasSpan.getEnd(), phileasSpan.getScore());
+
+                            // Span will be null if no span was created due to it being excluded.
+                            if (span != null) {
+                                spans.add(span);
+                            }
+
                         }
 
                     }

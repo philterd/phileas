@@ -78,7 +78,7 @@ public class PyTorchFilterTest {
     }
 
     @Test
-    public void personsTest() throws Exception {
+    public void personsTest1() throws Exception {
 
         final Map<String, DescriptiveStatistics> stats = new HashMap<>();
         final MetricsService metricsService = Mockito.mock(MetricsService.class);
@@ -90,7 +90,9 @@ public class PyTorchFilterTest {
 
         this.mockServer.enqueue(new MockResponse().setResponseCode(200).setBody("{\"c\": \"context\", \"d\": \"docid\", \"p\": \"0\", \"spans\": [{\"text\":\"test\",\"tag\":\"PER\",\"score\":0.5,\"start\":1,\"end\":2}]}"));
 
-        final PyTorchFilter t = new PyTorchFilter(baseUrl, FilterType.NER_ENTITY, getStrategies(), phileasConfiguration, "PER", stats, metricsService, anonymizationService, alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(),false, new Crypto(), windowSize);
+        final Map<String, Double> thresholds = new LinkedHashMap<>();
+
+        final PyTorchFilter t = new PyTorchFilter(baseUrl, FilterType.NER_ENTITY, getStrategies(), phileasConfiguration, "PER", stats, metricsService, anonymizationService, alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(),false, thresholds, new Crypto(), windowSize);
 
         final FilterResult filterResult = t.filter(getFilterProfile(), "context", "doc", 0, "John Smith lives in New York");
 
@@ -98,6 +100,64 @@ public class PyTorchFilterTest {
             LOGGER.info(span.toString());
         }
 
+        Assertions.assertEquals(1, filterResult.getSpans().size());
+
+    }
+
+    @Test
+    public void personsTest2() throws Exception {
+
+        final Map<String, DescriptiveStatistics> stats = new HashMap<>();
+        final MetricsService metricsService = Mockito.mock(MetricsService.class);
+        final AnonymizationService anonymizationService = null;
+        final AlertService alertService = Mockito.mock(AlertService.class);
+        final String baseUrl = this.mockServer.url("/").toString();
+
+        final PhileasConfiguration phileasConfiguration = getConfiguration();
+
+        this.mockServer.enqueue(new MockResponse().setResponseCode(200).setBody("{\"c\": \"context\", \"d\": \"docid\", \"p\": \"0\", \"spans\": [{\"text\":\"test\",\"tag\":\"PER\",\"score\":0.5,\"start\":1,\"end\":2}]}"));
+
+        final Map<String, Double> thresholds = new LinkedHashMap<>();
+        thresholds.put("PER", 0.6);
+
+        final PyTorchFilter t = new PyTorchFilter(baseUrl, FilterType.NER_ENTITY, getStrategies(), phileasConfiguration, "PER", stats, metricsService, anonymizationService, alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(),false, thresholds, new Crypto(), windowSize);
+
+        final FilterResult filterResult = t.filter(getFilterProfile(), "context", "doc", 0, "John Smith lives in New York");
+
+        for(Span span : filterResult.getSpans()) {
+            LOGGER.info(span.toString());
+        }
+
+        // No spans because it's below the threshold.
+        Assertions.assertEquals(0, filterResult.getSpans().size());
+
+    }
+
+    @Test
+    public void personsTest3() throws Exception {
+
+        final Map<String, DescriptiveStatistics> stats = new HashMap<>();
+        final MetricsService metricsService = Mockito.mock(MetricsService.class);
+        final AnonymizationService anonymizationService = null;
+        final AlertService alertService = Mockito.mock(AlertService.class);
+        final String baseUrl = this.mockServer.url("/").toString();
+
+        final PhileasConfiguration phileasConfiguration = getConfiguration();
+
+        this.mockServer.enqueue(new MockResponse().setResponseCode(200).setBody("{\"c\": \"context\", \"d\": \"docid\", \"p\": \"0\", \"spans\": [{\"text\":\"test\",\"tag\":\"PER\",\"score\":0.5,\"start\":1,\"end\":2}]}"));
+
+        final Map<String, Double> thresholds = new LinkedHashMap<>();
+        thresholds.put("PER", 0.3);
+
+        final PyTorchFilter t = new PyTorchFilter(baseUrl, FilterType.NER_ENTITY, getStrategies(), phileasConfiguration, "PER", stats, metricsService, anonymizationService, alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(),false, thresholds, new Crypto(), windowSize);
+
+        final FilterResult filterResult = t.filter(getFilterProfile(), "context", "doc", 0, "John Smith lives in New York");
+
+        for(Span span : filterResult.getSpans()) {
+            LOGGER.info(span.toString());
+        }
+
+        // The span is above the threshold.
         Assertions.assertEquals(1, filterResult.getSpans().size());
 
     }
@@ -113,12 +173,14 @@ public class PyTorchFilterTest {
 
         final PhileasConfiguration phileasConfiguration = getConfiguration();
 
+        final Map<String, Double> thresholds = new LinkedHashMap<>();
+
         LOGGER.info("Mock REST server baseUrl = " + baseUrl);
 
         this.mockServer.enqueue(new MockResponse().setResponseCode(200).setBody("{\"c\": \"context\", \"d\": \"docid\", \"p\": \"0\", \"spans\": [{\"text\":\"test\",\"tag\":\"LOC\",\"score\":0.5,\"start\":1,\"end\":2}]}"));
 
         final PyTorchFilter t = new PyTorchFilter(baseUrl, FilterType.NER_ENTITY, getStrategies(), phileasConfiguration, "LOC",
-                stats, metricsService, anonymizationService, alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), false, new Crypto(), windowSize);
+                stats, metricsService, anonymizationService, alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), false, thresholds, new Crypto(), windowSize);
 
         final FilterResult filterResult = t.filter(getFilterProfile(), "context", "docid", 0,"John Smith lives in New York");
 

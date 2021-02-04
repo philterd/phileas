@@ -24,6 +24,7 @@ public abstract class NerFilter extends DynamicFilter {
     protected String type;
     protected MetricsService metricsService;
     protected boolean removePunctuation;
+    protected Map<String, Double> thresholds;
 
     /**
      * Creates a new filter.
@@ -43,6 +44,7 @@ public abstract class NerFilter extends DynamicFilter {
                      Set<String> ignoredFiles,
                      List<IgnoredPattern> ignoredPatterns,
                      boolean removePunctuation,
+                     Map<String, Double> thresholds,
                      Crypto crypto,
                      int windowSize) {
 
@@ -51,6 +53,7 @@ public abstract class NerFilter extends DynamicFilter {
         this.stats = stats;
         this.metricsService = metricsService;
         this.removePunctuation = removePunctuation;
+        this.thresholds = thresholds;
 
     }
 
