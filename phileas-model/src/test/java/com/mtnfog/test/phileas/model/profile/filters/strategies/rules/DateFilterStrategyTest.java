@@ -316,7 +316,10 @@ public class DateFilterStrategyTest extends AbstractFilterStrategyTest {
         final FilterPattern filterPattern = new FilterPattern.FilterPatternBuilder(Pattern.compile("\\b\\d{2}-\\d{2}-\\d{4}"), 0.75).withFormat("MMM uuuu").build();
         final Replacement replacement = strategy.getReplacement("name", "context", "docId", date, WINDOW, new Crypto(), anonymizationService, filterPattern);
 
-        Assertions.assertEquals("5 years 8 months ago", replacement.getReplacement());
+        // Depending on when the test is run it may be either 7 or 8 months ago. That's fine.
+        Assertions.assertTrue(
+                replacement.getReplacement().equalsIgnoreCase("5 years 7 months ago") ||
+                        replacement.getReplacement().equalsIgnoreCase("5 years 8 months ago"));
 
     }
 
@@ -338,7 +341,11 @@ public class DateFilterStrategyTest extends AbstractFilterStrategyTest {
         final FilterPattern filterPattern = new FilterPattern.FilterPatternBuilder(Pattern.compile("\\b\\d{2}-\\d{2}-\\d{4}"), 0.75).withFormat("MMM uuuu").build();
         final Replacement replacement = strategy.getReplacement("name", "context", "docId", date, WINDOW, new Crypto(), anonymizationService, filterPattern);
 
-        Assertions.assertEquals("8 months ago", replacement.getReplacement());
+        // Depending on when the test is run it may be either 7 or 8 months ago. That's fine.
+        Assertions.assertTrue(
+                replacement.getReplacement().equalsIgnoreCase("7 months ago") ||
+                        replacement.getReplacement().equalsIgnoreCase("8 months ago"));
+
 
     }
 
