@@ -416,11 +416,11 @@ public class PhileasFilterService implements FilterService {
             postFilters.add(new IgnoredPatternsFilter(filterProfile.getIgnoredPatterns()));
         }
 
-        // Remove trailing periods from filters.
-        // TODO: Have properties to enable/disable these.
-        postFilters.add(new TrailingPeriodPostFilter());
-        postFilters.add(new TrailingSpacePostFilter());
-        postFilters.add(new TrailingNewLinePostFilter());
+        // Add the post filters.
+        // TODO: Add properties to enable/disable these.
+        postFilters.add(TrailingPeriodPostFilter.getInstance());
+        postFilters.add(TrailingSpacePostFilter.getInstance());
+        postFilters.add(TrailingNewLinePostFilter.getInstance());
 
         return postFilters;
 

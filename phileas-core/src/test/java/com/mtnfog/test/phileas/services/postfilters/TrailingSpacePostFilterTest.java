@@ -18,7 +18,7 @@ public class TrailingSpacePostFilterTest extends AbstractFilterTest {
         final List<Span> spans = new LinkedList<>();
         spans.add(Span.make(12, 22, FilterType.URL, "context", "docid", 0.80, "Washington ", "*****",  "", false, new String[0]));
 
-        final TrailingSpacePostFilter postFilter = new TrailingSpacePostFilter();
+        final TrailingSpacePostFilter postFilter = TrailingSpacePostFilter.getInstance();
         final List<Span> filteredSpans = postFilter.filter("doesn't matter", spans);
         showSpans(filteredSpans);
 
@@ -33,7 +33,7 @@ public class TrailingSpacePostFilterTest extends AbstractFilterTest {
         final List<Span> spans = new LinkedList<>();
         spans.add(Span.make(12, 22, FilterType.URL, "context", "docid", 0.80, "Washington   ", "*****",  "", false, new String[0]));
 
-        final TrailingSpacePostFilter postFilter = new TrailingSpacePostFilter();
+        final TrailingSpacePostFilter postFilter = TrailingSpacePostFilter.getInstance();
         final List<Span> filteredSpans = postFilter.filter("doesn't matter", spans);
         showSpans(filteredSpans);
 

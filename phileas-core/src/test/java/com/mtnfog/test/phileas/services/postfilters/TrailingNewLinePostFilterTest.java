@@ -18,7 +18,7 @@ public class TrailingNewLinePostFilterTest extends AbstractFilterTest {
         final List<Span> spans = new LinkedList<>();
         spans.add(Span.make(12, 22, FilterType.URL, "context", "docid", 0.80, "ends with\n", "*****",  "", false, new String[0]));
 
-        final TrailingNewLinePostFilter postFilter = new TrailingNewLinePostFilter();
+        final TrailingNewLinePostFilter postFilter = TrailingNewLinePostFilter.getInstance();
         final List<Span> filteredSpans = postFilter.filter("doesn't matter", spans);
 
         showSpans(filteredSpans);
@@ -33,7 +33,7 @@ public class TrailingNewLinePostFilterTest extends AbstractFilterTest {
         final List<Span> spans = new LinkedList<>();
         spans.add(Span.make(12, 22, FilterType.URL, "context", "docid", 0.80, "ends with", "*****",  "", false, new String[0]));
 
-        final TrailingNewLinePostFilter postFilter = new TrailingNewLinePostFilter();
+        final TrailingNewLinePostFilter postFilter = TrailingNewLinePostFilter.getInstance();
         final List<Span> filteredSpans = postFilter.filter("doesn't matter", spans);
 
         showSpans(filteredSpans);
@@ -48,7 +48,7 @@ public class TrailingNewLinePostFilterTest extends AbstractFilterTest {
         final List<Span> spans = new LinkedList<>();
         spans.add(Span.make(12, 22, FilterType.URL, "context", "docid", 0.80, "ends with\n\n", "*****",  "", false, new String[0]));
 
-        final TrailingNewLinePostFilter postFilter = new TrailingNewLinePostFilter();
+        final TrailingNewLinePostFilter postFilter = TrailingNewLinePostFilter.getInstance();
         final List<Span> filteredSpans = postFilter.filter("doesn't matter", spans);
 
         showSpans(filteredSpans);

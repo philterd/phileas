@@ -18,7 +18,7 @@ public class TrailingPeriodPostFilterTest extends AbstractFilterTest {
         final List<Span> spans = new LinkedList<>();
         spans.add(Span.make(12, 22, FilterType.URL, "context", "docid", 0.80, "link.test.", "*****",  "", false, new String[0]));
 
-        final TrailingPeriodPostFilter postFilter = new TrailingPeriodPostFilter();
+        final TrailingPeriodPostFilter postFilter = TrailingPeriodPostFilter.getInstance();
         final List<Span> filteredSpans = postFilter.filter("doesn't matter", spans);
 
         showSpans(filteredSpans);
@@ -33,7 +33,7 @@ public class TrailingPeriodPostFilterTest extends AbstractFilterTest {
         final List<Span> spans = new LinkedList<>();
         spans.add(Span.make(12, 22, FilterType.URL, "context", "docid", 0.80, "link.test....", "*****",  "", false, new String[0]));
 
-        final TrailingPeriodPostFilter postFilter = new TrailingPeriodPostFilter();
+        final TrailingPeriodPostFilter postFilter = TrailingPeriodPostFilter.getInstance();
         final List<Span> filteredSpans = postFilter.filter("doesn't matter", spans);
 
         showSpans(filteredSpans);
@@ -50,7 +50,7 @@ public class TrailingPeriodPostFilterTest extends AbstractFilterTest {
         final List<Span> spans = new LinkedList<>();
         spans.add(Span.make(12, 22, FilterType.STREET_ADDRESS, "context", "docid", 0.80, "4 Devonshire Ct.", "*****",  "", false, new String[0]));
 
-        final TrailingPeriodPostFilter postFilter = new TrailingPeriodPostFilter();
+        final TrailingPeriodPostFilter postFilter = TrailingPeriodPostFilter.getInstance();
         final List<Span> filteredSpans = postFilter.filter("doesn't matter", spans);
 
         showSpans(filteredSpans);

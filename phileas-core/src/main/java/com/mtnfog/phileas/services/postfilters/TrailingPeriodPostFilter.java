@@ -12,6 +12,22 @@ import org.apache.commons.lang3.StringUtils;
  */
 public class TrailingPeriodPostFilter extends PostFilter {
 
+    public static TrailingPeriodPostFilter trailingPeriodPostFilter;
+
+    public static TrailingPeriodPostFilter getInstance() {
+
+        if(trailingPeriodPostFilter == null) {
+            trailingPeriodPostFilter = new TrailingPeriodPostFilter();
+        }
+
+        return trailingPeriodPostFilter;
+
+    }
+
+    private TrailingPeriodPostFilter() {
+        // This is a singleton class.
+    }
+
     @Override
     protected PostFilterResult process(String text, Span span) {
 

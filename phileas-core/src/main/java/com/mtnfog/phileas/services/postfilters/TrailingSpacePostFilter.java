@@ -11,6 +11,22 @@ import org.apache.commons.lang3.StringUtils;
  */
 public class TrailingSpacePostFilter extends PostFilter {
 
+    public static TrailingSpacePostFilter trailingSpacePostFilter;
+
+    public static TrailingSpacePostFilter getInstance() {
+
+        if(trailingSpacePostFilter == null) {
+            trailingSpacePostFilter = new TrailingSpacePostFilter();
+        }
+
+        return trailingSpacePostFilter;
+
+    }
+
+    private TrailingSpacePostFilter() {
+        // This is a singleton class.
+    }
+
     @Override
     protected PostFilterResult process(String text, Span span) {
 

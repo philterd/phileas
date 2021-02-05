@@ -11,6 +11,22 @@ import org.apache.commons.lang3.StringUtils;
  */
 public class TrailingNewLinePostFilter extends PostFilter {
 
+    public static TrailingNewLinePostFilter trailingNewLinePostFilter;
+
+    public static TrailingNewLinePostFilter getInstance() {
+
+        if(trailingNewLinePostFilter == null) {
+            trailingNewLinePostFilter = new TrailingNewLinePostFilter();
+        }
+
+        return trailingNewLinePostFilter;
+
+    }
+
+    private TrailingNewLinePostFilter() {
+        // This is a singleton class.
+    }
+
     @Override
     protected PostFilterResult process(String text, Span span) {
 
