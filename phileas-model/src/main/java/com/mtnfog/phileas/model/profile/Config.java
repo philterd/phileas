@@ -15,6 +15,10 @@ public class Config {
     @Expose
     private Pdf pdf = new Pdf();
 
+    @SerializedName("postFilters")
+    @Expose
+    private PostFilters postFilters = new PostFilters();
+
     public Splitting getSplitting() {
         return splitting;
     }
@@ -29,6 +33,14 @@ public class Config {
 
     public void setPdf(Pdf pdf) {
         this.pdf = pdf;
+    }
+
+    public PostFilters getPostFilters() {
+        return postFilters;
+    }
+
+    public void setPostFilters(PostFilters postFilters) {
+        this.postFilters = postFilters;
     }
 
 }

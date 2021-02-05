@@ -416,11 +416,19 @@ public class PhileasFilterService implements FilterService {
             postFilters.add(new IgnoredPatternsFilter(filterProfile.getIgnoredPatterns()));
         }
 
-        // Add the post filters.
-        // TODO: Add properties to enable/disable these.
-        postFilters.add(TrailingPeriodPostFilter.getInstance());
-        postFilters.add(TrailingSpacePostFilter.getInstance());
-        postFilters.add(TrailingNewLinePostFilter.getInstance());
+        // Add the post filters if they are enabled in the filter profile.
+
+        if(filterProfile.getConfig().getPostFilters().isRemoveTrailingPeriods()) {
+            postFilters.add(TrailingPeriodPostFilter.getInstance());
+        }
+
+        if(filterProfile.getConfig().getPostFilters().isRemoveTrailingSpaces()) {
+            postFilters.add(TrailingSpacePostFilter.getInstance());
+        }
+
+        if(filterProfile.getConfig().getPostFilters().isRemoveTrailingNewLines()) {
+            postFilters.add(TrailingNewLinePostFilter.getInstance());
+        }
 
         return postFilters;
 
