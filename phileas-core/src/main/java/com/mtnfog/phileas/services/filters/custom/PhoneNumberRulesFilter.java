@@ -18,12 +18,14 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 // TODO: This should not extend RulesFilter because it is not a rule-based filter.
 
 public class PhoneNumberRulesFilter extends RulesFilter {
 
-    private PhoneNumberUtil phoneUtil;
+    private final PhoneNumberUtil phoneUtil;
+    private final Pattern pattern = Pattern.compile("^(\\+\\d{1,2}\\s)?\\(?\\d{3}\\)?[\\s.-]\\d{3}[\\s.-]\\d{4}$");
 
     public PhoneNumberRulesFilter(List<? extends AbstractFilterStrategy> strategies, AnonymizationService anonymizationService, AlertService alertService, Set<String> ignored, Set<String> ignoredFiles, List<IgnoredPattern> ignoredPatterns, Crypto crypto, int windowSize) {
 
@@ -51,9 +53,21 @@ public class PhoneNumberRulesFilter extends RulesFilter {
 
             for (final PhoneNumberMatch match : matches) {
 
-                final String[] window = getWindow(input, match.start(), match.end());
-                final double confidence = 1.0;
                 final String text = match.rawString();
+
+                // Is it formatted like a phone number?
+                double confidence = 0.0;
+                if(text.matches(pattern.pattern())) {
+                    confidence = 0.95;
+                } else{
+                    if(text.length() > 14) {
+                        confidence = 0.75;
+                    } else {
+                        confidence = 0.60;
+                    }
+                }
+
+                final String[] window = getWindow(input, match.start(), match.end());
                 final String classification = "";
                 final Replacement replacement = getReplacement(filterProfile.getName(), context, documentId, text, window, confidence, classification, null);
                 final boolean isIgnored = ignored.contains(text);

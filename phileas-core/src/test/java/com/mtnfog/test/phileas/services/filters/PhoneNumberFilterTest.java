@@ -36,6 +36,7 @@ public class PhoneNumberFilterTest extends AbstractFilterTest {
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 14, 28, FilterType.PHONE_NUMBER));
         Assertions.assertEquals("(123) 456-7890", filterResult.getSpans().get(0).getText());
+        Assertions.assertEquals(0.95, filterResult.getSpans().get(0).getConfidence());
 
     }
 
@@ -48,7 +49,9 @@ public class PhoneNumberFilterTest extends AbstractFilterTest {
         final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "the number is (123) 456-7890 and (123) 456-7890.");
         Assertions.assertEquals(2, filterResult.getSpans().size());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 14, 28, FilterType.PHONE_NUMBER));
+        Assertions.assertEquals(0.95, filterResult.getSpans().get(0).getConfidence());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(1), 33, 47, FilterType.PHONE_NUMBER));
+        Assertions.assertEquals(0.95, filterResult.getSpans().get(1).getConfidence());
 
     }
 
@@ -61,6 +64,7 @@ public class PhoneNumberFilterTest extends AbstractFilterTest {
         final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "the number is 123-456-7890.");
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 14, 26, FilterType.PHONE_NUMBER));
+        Assertions.assertEquals(0.95, filterResult.getSpans().get(0).getConfidence());
 
     }
 
@@ -85,6 +89,7 @@ public class PhoneNumberFilterTest extends AbstractFilterTest {
         final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "the number is ( 800 ) 123-4567 and he was ok.");
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 14, 30, FilterType.PHONE_NUMBER));
+        Assertions.assertEquals(0.75, filterResult.getSpans().get(0).getConfidence());
 
     }
 
@@ -99,6 +104,7 @@ public class PhoneNumberFilterTest extends AbstractFilterTest {
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 14, 33, FilterType.PHONE_NUMBER));
+        Assertions.assertEquals(0.75, filterResult.getSpans().get(0).getConfidence());
 
     }
 
@@ -113,14 +119,12 @@ public class PhoneNumberFilterTest extends AbstractFilterTest {
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 14, 32, FilterType.PHONE_NUMBER));
+        Assertions.assertEquals(0.75, filterResult.getSpans().get(0).getConfidence());
 
     }
 
-    @Disabled
     @Test
     public void filterPhone8() throws Exception {
-
-        // PHL-183: False positive phone number
 
         final List<PhoneNumberFilterStrategy> strategies = Arrays.asList(new PhoneNumberFilterStrategy());
         PhoneNumberRulesFilter filter = new PhoneNumberRulesFilter(strategies, new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
@@ -128,7 +132,8 @@ public class PhoneNumberFilterTest extends AbstractFilterTest {
         final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "7 64116-3220");
         showSpans(filterResult.getSpans());
 
-        Assertions.assertEquals(0, filterResult.getSpans().size());
+        Assertions.assertEquals(1, filterResult.getSpans().size());
+        Assertions.assertEquals(0.60, filterResult.getSpans().get(0).getConfidence());
 
     }
 
