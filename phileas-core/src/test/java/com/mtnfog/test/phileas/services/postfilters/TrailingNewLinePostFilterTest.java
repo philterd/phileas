@@ -24,6 +24,7 @@ public class TrailingNewLinePostFilterTest extends AbstractFilterTest {
         showSpans(filteredSpans);
         Assertions.assertEquals(1, filteredSpans.size());
         Assertions.assertEquals("ends with", filteredSpans.get(0).getText());
+        Assertions.assertEquals(21, filteredSpans.get(0).getCharacterEnd());
 
     }
 
@@ -39,6 +40,7 @@ public class TrailingNewLinePostFilterTest extends AbstractFilterTest {
         showSpans(filteredSpans);
         Assertions.assertEquals(1, filteredSpans.size());
         Assertions.assertEquals("ends with", filteredSpans.get(0).getText());
+        Assertions.assertEquals(22, filteredSpans.get(0).getCharacterEnd());
 
     }
 
@@ -54,6 +56,7 @@ public class TrailingNewLinePostFilterTest extends AbstractFilterTest {
         showSpans(filteredSpans);
         Assertions.assertEquals(1, filteredSpans.size());
         Assertions.assertEquals("ends with", filteredSpans.get(0).getText());
+        Assertions.assertEquals(20, filteredSpans.get(0).getCharacterEnd());
 
     }
 

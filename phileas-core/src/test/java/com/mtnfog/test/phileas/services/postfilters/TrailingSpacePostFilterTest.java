@@ -24,6 +24,7 @@ public class TrailingSpacePostFilterTest extends AbstractFilterTest {
 
         Assertions.assertEquals(1, filteredSpans.size());
         Assertions.assertEquals("Washington", filteredSpans.get(0).getText());
+        Assertions.assertEquals(21, filteredSpans.get(0).getCharacterEnd());
 
     }
 
@@ -39,6 +40,7 @@ public class TrailingSpacePostFilterTest extends AbstractFilterTest {
 
         Assertions.assertEquals(1, filteredSpans.size());
         Assertions.assertEquals("Washington", filteredSpans.get(0).getText());
+        Assertions.assertEquals(19, filteredSpans.get(0).getCharacterEnd());
 
     }
 

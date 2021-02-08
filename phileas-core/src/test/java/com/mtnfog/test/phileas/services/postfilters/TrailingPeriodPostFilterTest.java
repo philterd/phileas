@@ -24,6 +24,7 @@ public class TrailingPeriodPostFilterTest extends AbstractFilterTest {
         showSpans(filteredSpans);
         Assertions.assertEquals(1, filteredSpans.size());
         Assertions.assertEquals("link.test", filteredSpans.get(0).getText());
+        Assertions.assertEquals(21, filteredSpans.get(0).getCharacterEnd());
 
     }
 
@@ -39,6 +40,7 @@ public class TrailingPeriodPostFilterTest extends AbstractFilterTest {
         showSpans(filteredSpans);
         Assertions.assertEquals(1, filteredSpans.size());
         Assertions.assertEquals("link.test", filteredSpans.get(0).getText());
+        Assertions.assertEquals(18, filteredSpans.get(0).getCharacterEnd());
 
     }
 
@@ -56,6 +58,7 @@ public class TrailingPeriodPostFilterTest extends AbstractFilterTest {
         showSpans(filteredSpans);
         Assertions.assertEquals(1, filteredSpans.size());
         Assertions.assertEquals("4 Devonshire Ct.", filteredSpans.get(0).getText());
+        Assertions.assertEquals(22, filteredSpans.get(0).getCharacterEnd());
 
     }
 
