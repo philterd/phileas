@@ -214,6 +214,20 @@ public final class Span {
 
     }
 
+    public static boolean doesSpanExist(final int startIndex, final int endIndex, final List<Span> spans) {
+
+        for(final Span span : spans) {
+
+            if(startIndex == span.getCharacterStart() && endIndex == span.getCharacterEnd()) {
+                return true;
+            }
+
+        }
+
+        return false;
+
+    }
+
     /**
      * Gets the text the span covers.
      * @param text The text.

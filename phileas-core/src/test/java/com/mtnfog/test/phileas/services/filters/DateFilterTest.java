@@ -4,6 +4,7 @@ import com.mtnfog.phileas.model.enums.FilterType;
 import com.mtnfog.phileas.model.objects.FilterResult;
 import com.mtnfog.phileas.model.objects.Span;
 import com.mtnfog.phileas.model.profile.Crypto;
+import com.mtnfog.phileas.model.profile.filters.strategies.AbstractFilterStrategy;
 import com.mtnfog.phileas.model.profile.filters.strategies.rules.DateFilterStrategy;
 import com.mtnfog.phileas.model.services.AlertService;
 import com.mtnfog.phileas.services.anonymization.DateAnonymizationService;
@@ -420,14 +421,18 @@ public class DateFilterTest extends AbstractFilterTest {
     @Test
     public void filterDate34() throws Exception {
 
-        final List<DateFilterStrategy> strategies = Arrays.asList(new DateFilterStrategy());
+        final DateFilterStrategy dateFilterStrategy = new DateFilterStrategy();
+        dateFilterStrategy.setStrategy(AbstractFilterStrategy.RELATIVE);
+        dateFilterStrategy.setShiftYears(3);
+
+        final List<DateFilterStrategy> strategies = Arrays.asList(dateFilterStrategy);
         DateFilter filter = new DateFilter(strategies, new DateAnonymizationService(new LocalAnonymizationCacheService()), alertService, false, DateSpanValidator.getInstance(), Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
 
         final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "Owns and drives his own vehicle but states he has not driven his car since last October 2009.");
-        Assertions.assertEquals(1, filterResult.getSpans().size());
-        Assertions.assertEquals("October 2009", filterResult.getSpans().get(0).getText());
 
         showSpans(filterResult.getSpans());
+        Assertions.assertEquals(1, filterResult.getSpans().size());
+        Assertions.assertEquals("11 years 4 months ago", filterResult.getSpans().get(0).getReplacement());
 
     }
 

@@ -71,32 +71,37 @@ public abstract class RulesFilter extends Filter {
 
                     final String token = matcher.group(0);
 
-                    // Is this term ignored?
-                    boolean ignored = isIgnored(token);
-
-                    // TODO: PHL-119: Adjust the confidence based on the initial confidence.
-                    // TODO: Should this be an option? Use "simple" confidence values or "calculated"?
-                    final double initialConfidence = filterPattern.getInitialConfidence();
-
                     // The token's position inside the text.
                     final int characterStart = matcher.start(0);
                     final int characterEnd = matcher.end(0);
 
-                    // Get the window of words around the token.
-                    final String[] window = getWindow(input, characterStart, characterEnd);
+                    // Is there already a span encompassing this location?
+                    if(!Span.doesSpanExist(characterStart, characterEnd, spans)) {
 
-                    // Get the span's replacement.
-                    final Replacement replacement = getReplacement(filterProfile.getName(), context, documentId, token, window, initialConfidence, filterPattern.getClassification(), filterPattern);
+                        // Is this term ignored?
+                        boolean ignored = isIgnored(token);
 
-                    final Span span = Span.make(characterStart, characterEnd, getFilterType(), context, documentId, initialConfidence, token, replacement.getReplacement(), replacement.getSalt(), ignored, window);
+                        // TODO: PHL-119: Adjust the confidence based on the initial confidence.
+                        // TODO: Should this be an option? Use "simple" confidence values or "calculated"?
+                        final double initialConfidence = filterPattern.getInitialConfidence();
 
-                    // TODO: Add "format" to Span.make() so we don't have to make a separate call here.
-                    span.setPattern(filterPattern.getFormat());
+                        // Get the window of words around the token.
+                        final String[] window = getWindow(input, characterStart, characterEnd);
 
-                    // TODO: Add "classification" to Span.make() so we don't have to make a separate call here.
-                    span.setClassification(filterPattern.getClassification());
+                        // Get the span's replacement.
+                        final Replacement replacement = getReplacement(filterProfile.getName(), context, documentId, token, window, initialConfidence, filterPattern.getClassification(), filterPattern);
 
-                    spans.add(span);
+                        final Span span = Span.make(characterStart, characterEnd, getFilterType(), context, documentId, initialConfidence, token, replacement.getReplacement(), replacement.getSalt(), ignored, window);
+
+                        // TODO: Add "format" to Span.make() so we don't have to make a separate call here.
+                        span.setPattern(filterPattern.getFormat());
+
+                        // TODO: Add "classification" to Span.make() so we don't have to make a separate call here.
+                        span.setClassification(filterPattern.getClassification());
+
+                        spans.add(span);
+
+                    }
 
                 }
 
