@@ -110,10 +110,8 @@ public abstract class RulesFilter extends Filter {
 
         }
 
-        final List<Span> postFilteredSpans = postFilter(spans);
-
-        return postFilteredSpans;
-
+        return postFilter(spans);
+        
     }
 
     /**
