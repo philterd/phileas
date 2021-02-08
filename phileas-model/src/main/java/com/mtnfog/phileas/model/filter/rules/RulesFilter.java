@@ -76,6 +76,7 @@ public abstract class RulesFilter extends Filter {
                     final int characterEnd = matcher.end(0);
 
                     // Is there already a span encompassing this location?
+                    // If so just quit. This means the first match wins.
                     if(!Span.doesSpanExist(characterStart, characterEnd, spans)) {
 
                         // Is this term ignored?

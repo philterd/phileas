@@ -43,10 +43,8 @@ public class IpAddressFilterTest extends AbstractFilterTest {
         IpAddressFilter filter = new IpAddressFilter(strategies, new IpAddressAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
         final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "the ip is 1::");
 
-        // Finds duplicate spans. Duplicates/overlapping will be removed by the service prior to returning.
-        Assertions.assertEquals(2, filterResult.getSpans().size());
+        Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 10, 13, FilterType.IP_ADDRESS));
-        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(1), 10, 13, FilterType.IP_ADDRESS));
 
     }
 

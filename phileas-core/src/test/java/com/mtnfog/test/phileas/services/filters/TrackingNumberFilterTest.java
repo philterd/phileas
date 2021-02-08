@@ -51,11 +51,11 @@ public class TrackingNumberFilterTest extends AbstractFilterTest {
 
         showSpans(filterResult.getSpans());
 
-        Assertions.assertEquals(2, filterResult.getSpans().size());
-        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(1), 23, 45, FilterType.TRACKING_NUMBER));
-        Assertions.assertEquals("{{{REDACTED-tracking-number}}}", filterResult.getSpans().get(1).getReplacement());
-        Assertions.assertEquals("9400100000000000000000", filterResult.getSpans().get(1).getText());
-        Assertions.assertEquals("usps", filterResult.getSpans().get(1).getClassification());
+        Assertions.assertEquals(1, filterResult.getSpans().size());
+        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 23, 45, FilterType.TRACKING_NUMBER));
+        Assertions.assertEquals("{{{REDACTED-tracking-number}}}", filterResult.getSpans().get(0).getReplacement());
+        Assertions.assertEquals("9400100000000000000000", filterResult.getSpans().get(0).getText());
+        Assertions.assertEquals("fedex", filterResult.getSpans().get(0).getClassification());
 
     }
 
@@ -137,17 +137,12 @@ public class TrackingNumberFilterTest extends AbstractFilterTest {
 
         showSpans(filterResult.getSpans());
 
-        Assertions.assertEquals(2, filterResult.getSpans().size());
+        Assertions.assertEquals(1, filterResult.getSpans().size());
 
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 23, 49, FilterType.TRACKING_NUMBER));
         Assertions.assertEquals("{{{REDACTED-tracking-number}}}", filterResult.getSpans().get(0).getReplacement());
         Assertions.assertEquals("42043199350092019901385011", filterResult.getSpans().get(0).getText());
         Assertions.assertEquals("ups", filterResult.getSpans().get(0).getClassification());
-
-        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(1), 23, 49, FilterType.TRACKING_NUMBER));
-        Assertions.assertEquals("{{{REDACTED-tracking-number}}}", filterResult.getSpans().get(1).getReplacement());
-        Assertions.assertEquals("42043199350092019901385011", filterResult.getSpans().get(1).getText());
-        Assertions.assertEquals("usps", filterResult.getSpans().get(1).getClassification());
 
     }
 
