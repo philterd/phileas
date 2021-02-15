@@ -100,6 +100,9 @@ public abstract class RulesFilter extends Filter {
                         // TODO: Add "classification" to Span.make() so we don't have to make a separate call here.
                         span.setClassification(filterPattern.getClassification());
 
+                        // TODO: Add "alwaysValid" to Span.make() so we don't have to make a separate call here.
+                        span.setAlwaysValid(filterPattern.isAlwaysValid());
+
                         spans.add(span);
 
                     }

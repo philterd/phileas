@@ -8,6 +8,7 @@ public class FilterPattern {
     private String format;
     private double initialConfidence;
     private String classification;
+    private boolean alwaysValid;
 
     public static class FilterPatternBuilder {
 
@@ -15,6 +16,7 @@ public class FilterPattern {
         private double initialConfidence;
         private String format;
         private String classification;
+        private boolean alwaysValid = false;
 
         public FilterPatternBuilder(Pattern pattern, double initialConfidence) {
             this.pattern = pattern;
@@ -31,19 +33,29 @@ public class FilterPattern {
             return this;
         }
 
+        public FilterPatternBuilder withAlwaysValid(boolean alwaysValid) {
+            this.alwaysValid = alwaysValid;
+            return this;
+        }
+
         public FilterPattern build() {
-            return new FilterPattern(pattern, initialConfidence, format, classification);
+            return new FilterPattern(pattern, initialConfidence, format, classification, alwaysValid);
         }
 
     }
 
-    private FilterPattern(Pattern pattern, double initialConfidence, String format, String classification) {
+    private FilterPattern(Pattern pattern, double initialConfidence, String format, String classification, boolean alwaysValid) {
 
         this.pattern = pattern;
         this.initialConfidence = initialConfidence;
         this.format = format;
         this.classification = classification;
+        this.alwaysValid = alwaysValid;
 
+    }
+
+    public boolean isAlwaysValid() {
+        return alwaysValid;
     }
 
     public Pattern getPattern() {

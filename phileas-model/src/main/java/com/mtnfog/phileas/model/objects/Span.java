@@ -64,6 +64,9 @@ public final class Span {
     // The window of tokens around the span.
     private transient String[] window;
 
+    // Whether or not the span should always pass validation.
+    private transient boolean alwaysValid = false;
+
     /**
      * Creates a new span. Use the static <code>make</code> function to create a new {@link Span}.
      * @param characterStart The character-based index of the start of the span.
@@ -571,4 +574,11 @@ public final class Span {
         this.salt = salt;
     }
 
+    public boolean isAlwaysValid() {
+        return alwaysValid;
+    }
+
+    public void setAlwaysValid(boolean alwaysValid) {
+        this.alwaysValid = alwaysValid;
+    }
 }

@@ -85,7 +85,7 @@ public class PdfRedacter extends PDFTextStripper implements Redacter {
 
             for (int x = 0; x < pdDocument.getNumberOfPages(); x++) {
 
-                LOGGER.debug("Creating iamge from PDF page " + x);
+                LOGGER.debug("Creating image from PDF page " + x);
                 final BufferedImage bufferedImage = pdfRenderer.renderImageWithDPI(x,600);
 
                 final ByteArrayOutputStream baos = new ByteArrayOutputStream();
