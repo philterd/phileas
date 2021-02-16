@@ -432,7 +432,7 @@ public class DateFilterTest extends AbstractFilterTest {
 
         showSpans(filterResult.getSpans());
         Assertions.assertEquals(1, filterResult.getSpans().size());
-        Assertions.assertEquals("11 years 4 months ago", filterResult.getSpans().get(0).getReplacement());
+        Assertions.assertEquals("11 years 5 months ago", filterResult.getSpans().get(0).getReplacement());
 
     }
 
@@ -482,6 +482,51 @@ public class DateFilterTest extends AbstractFilterTest {
         Assertions.assertEquals(8, filterResult.getSpans().get(0).getCharacterStart());
         Assertions.assertEquals(20, filterResult.getSpans().get(0).getCharacterEnd());
         Assertions.assertEquals("July 3, 2012", filterResult.getSpans().get(0).getText());
+
+    }
+
+    @Test
+    public void filterDate38() throws Exception {
+
+        final List<DateFilterStrategy> strategies = Arrays.asList(new DateFilterStrategy());
+        DateFilter filter = new DateFilter(strategies, new DateAnonymizationService(new LocalAnonymizationCacheService()), alertService, false, DateSpanValidator.getInstance(), Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "Case No. 12-12110 K");
+
+        showSpans(filterResult.getSpans());
+
+        Assertions.assertEquals(1, filterResult.getSpans().size());
+        Assertions.assertEquals(9, filterResult.getSpans().get(0).getCharacterStart());
+        Assertions.assertEquals(16, filterResult.getSpans().get(0).getCharacterEnd());
+        Assertions.assertEquals("12-1211", filterResult.getSpans().get(0).getText());
+
+    }
+
+    @Test
+    public void filterDate39() throws Exception {
+
+        final List<DateFilterStrategy> strategies = Arrays.asList(new DateFilterStrategy());
+        DateFilter filter = new DateFilter(strategies, new DateAnonymizationService(new LocalAnonymizationCacheService()), alertService, true, DateSpanValidator.getInstance(), Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "Case No. 12-12110 K");
+
+        showSpans(filterResult.getSpans());
+
+        Assertions.assertEquals(0, filterResult.getSpans().size());
+
+    }
+
+    @Test
+    public void filterDate40() throws Exception {
+
+        final List<DateFilterStrategy> strategies = Arrays.asList(new DateFilterStrategy());
+        DateFilter filter = new DateFilter(strategies, new DateAnonymizationService(new LocalAnonymizationCacheService()), alertService, true, DateSpanValidator.getInstance(), Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "Case 1-20-01023-MJK");
+
+        showSpans(filterResult.getSpans());
+
+        Assertions.assertEquals(0, filterResult.getSpans().size());
 
     }
 

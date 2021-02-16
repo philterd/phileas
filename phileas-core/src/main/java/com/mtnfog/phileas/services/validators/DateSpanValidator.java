@@ -39,7 +39,21 @@ public class DateSpanValidator implements SpanValidator {
         try {
 
             final DateTimeFormatter dtf = DateTimeFormatter.ofPattern(span.getPattern(), Locale.US).withResolverStyle(ResolverStyle.STRICT);
-            LocalDateTime localDateTime = LocalDate.parse(span.getText(), dtf).atStartOfDay();
+            final LocalDateTime localDateTime = LocalDate.parse(span.getText(), dtf).atStartOfDay();
+
+            // If it's a 2 digit year add 2000.
+            final int length = String.valueOf(localDateTime.getYear()).length();
+            int year = localDateTime.getYear();
+            if(length == 2) {
+                year += + 2000;
+            }
+
+            // Sanity check on the year. It should be greater than 1800 and less than 2200.
+            if(year >= 1800 && year <= 2200) {
+                valid = true;
+            } else {
+                valid = false;
+            }
 
         } catch (DateTimeException ex) {
             // Not a date.
