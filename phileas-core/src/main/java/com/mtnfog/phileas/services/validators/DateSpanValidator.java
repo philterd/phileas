@@ -34,9 +34,11 @@ public class DateSpanValidator implements SpanValidator {
     @Override
     public boolean validate(Span span) {
 
-        boolean valid = true;
+        boolean valid;
 
         try {
+
+            LOGGER.info("Date {} : Pattern {}", span.getText(), span.getPattern());
 
             final DateTimeFormatter dtf = DateTimeFormatter.ofPattern(span.getPattern(), Locale.US).withResolverStyle(ResolverStyle.STRICT);
             final LocalDateTime localDateTime = LocalDate.parse(span.getText(), dtf).atStartOfDay();

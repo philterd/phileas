@@ -462,7 +462,7 @@ public final class Span {
                 context + "," +
                 documentId + "," +
                 confidence + "," +
-                text;
+                "\"" + text + "\"";
 
     }
 

@@ -161,55 +161,57 @@ public class PdfRedacter extends PDFTextStripper implements Redacter {
 
                 try {
 
-                    //LOGGER.info(span.toString());
-
                     final String term = span.getText();
 
                     // Set index to 0 to do the whole line
-                    final int index = text.indexOf(span.getText());
+                    final List<Integer> indexes = findIndexes(text, span);
 
-                    posXInit = textPositions.get(index).getXDirAdj();
-                    posXEnd = textPositions.get(index + term.length()).getXDirAdj() + textPositions.get(index + term.length()).getWidth();
-                    //posYInit = textPositions.get(index).getPageHeight() - textPositions.get(index).getYDirAdj();
-                    posYEnd = textPositions.get(index).getPageHeight() - textPositions.get(index + term.length()).getYDirAdj();
-                    //width = textPositions.get(index).getWidthDirAdj();
-                    height = textPositions.get(index).getHeightDir();
+                    for(final int index : indexes) {
 
-                    // quadPoints is array of x,y coordinates in Z-like order (top-left, top-right, bottom-left,bottom-right)
-                    // of the area to be highlighted
+                        posXInit = textPositions.get(index).getXDirAdj();
+                        posXEnd = textPositions.get(index + term.length()).getXDirAdj() + textPositions.get(index + term.length()).getWidth();
+                        //posYInit = textPositions.get(index).getPageHeight() - textPositions.get(index).getYDirAdj();
+                        posYEnd = textPositions.get(index).getPageHeight() - textPositions.get(index + term.length()).getYDirAdj();
+                        //width = textPositions.get(index).getWidthDirAdj();
+                        height = textPositions.get(index).getHeightDir();
 
-                    //final int buffer = 5;
+                        // quadPoints is array of x,y coordinates in Z-like order (top-left, top-right, bottom-left,bottom-right)
+                        // of the area to be highlighted
 
-                    /*final float quadPoints[] = {
-                            posXInit, posYEnd + height + buffer,
-                            posXEnd, posYEnd + height + buffer,
-                            posXInit, posYInit - buffer,
-                            posXEnd, posYEnd - buffer
-                    };*/
+                        //final int buffer = 5;
 
-                    //final List<PDAnnotation> annotations = document.getPage(this.getCurrentPageNo() - 1).getAnnotations();
-                    //final PDAnnotationTextMarkup highlight = new PDAnnotationTextMarkup(PDAnnotationTextMarkup.SUB_TYPE_HIGHLIGHT);
+                        /*final float quadPoints[] = {
+                        posXInit, posYEnd + height + buffer,
+                        posXEnd, posYEnd + height + buffer,
+                        posXInit, posYInit - buffer,
+                        posXEnd, posYEnd - buffer
+                        };*/
 
-                    final PDRectangle position = new PDRectangle();
-                    position.setLowerLeftX(posXInit);
-                    position.setLowerLeftY(posYEnd);
-                    position.setUpperRightX(posXEnd);
-                    position.setUpperRightY(posYEnd + height);
+                        //final List<PDAnnotation> annotations = document.getPage(this.getCurrentPageNo() - 1).getAnnotations();
+                        //final PDAnnotationTextMarkup highlight = new PDAnnotationTextMarkup(PDAnnotationTextMarkup.SUB_TYPE_HIGHLIGHT);
 
-                    rectangles.putIfAbsent(this.getCurrentPageNo() - 1, new LinkedList<>());
+                        final PDRectangle position = new PDRectangle();
+                        position.setLowerLeftX(posXInit);
+                        position.setLowerLeftY(posYEnd);
+                        position.setUpperRightX(posXEnd);
+                        position.setUpperRightY(posYEnd + height);
 
-                    final RedactedRectangle redactedRectangle = new RedactedRectangle(position, span);
-                    rectangles.get(this.getCurrentPageNo() - 1).add(redactedRectangle);
+                        rectangles.putIfAbsent(this.getCurrentPageNo() - 1, new LinkedList<>());
 
-                    /*highlight.setRectangle(position);
-                    highlight.setQuadPoints(quadPoints);
-                    highlight.setConstantOpacity(100);
-                    highlight.setHidden(false);
-                    highlight.setNoView(false);
+                        final RedactedRectangle redactedRectangle = new RedactedRectangle(position, span);
+                        rectangles.get(this.getCurrentPageNo() - 1).add(redactedRectangle);
 
-                    final PDColor yellow = new PDColor(new float[]{1, 1, 1 / 255F}, PDDeviceRGB.INSTANCE);
-                    highlight.setColor(yellow);
-                    annotations.add(highlight);*/
+                        /*highlight.setRectangle(position);
+                        highlight.setQuadPoints(quadPoints);
+                        highlight.setConstantOpacity(100);
+                        highlight.setHidden(false);
+                        highlight.setNoView(false);
+
+                        final PDColor yellow = new PDColor(new float[]{1, 1, 1 / 255F}, PDDeviceRGB.INSTANCE);
+                        highlight.setColor(yellow);
+                        annotations.add(highlight);*/
+
+                    }
 
                 } catch (Exception ex) {
                     // TODO: Need to figure out why this sometimes fail.
@@ -219,6 +221,30 @@ public class PdfRedacter extends PDFTextStripper implements Redacter {
             }
 
         }
+
+    }
+
+    /**
+     * Find all indexes of a span in a string.
+     */
+    private List<Integer> findIndexes(String text, Span span) {
+
+        final List<Integer> indexes = new ArrayList<>();
+
+        int index = 0;
+
+        while(index != -1){
+
+            index = text.indexOf(span.getText(), index);
+
+            if (index != -1) {
+                indexes.add(index);
+                index++;
+            }
+
+        }
+
+        return indexes;
 
     }
 

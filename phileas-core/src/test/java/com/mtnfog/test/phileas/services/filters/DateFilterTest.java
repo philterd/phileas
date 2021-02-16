@@ -530,4 +530,75 @@ public class DateFilterTest extends AbstractFilterTest {
 
     }
 
+    @Test
+    public void filterDate41() throws Exception {
+
+        final List<DateFilterStrategy> strategies = Arrays.asList(new DateFilterStrategy());
+        DateFilter filter = new DateFilter(strategies, new DateAnonymizationService(new LocalAnonymizationCacheService()), alertService, true, DateSpanValidator.getInstance(), Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "That on July 3, 2012 an involuntary");
+
+        showSpans(filterResult.getSpans());
+
+        Assertions.assertEquals(1, filterResult.getSpans().size());
+        Assertions.assertEquals(8, filterResult.getSpans().get(0).getCharacterStart());
+        Assertions.assertEquals(20, filterResult.getSpans().get(0).getCharacterEnd());
+        Assertions.assertEquals("July 3, 2012", filterResult.getSpans().get(0).getText());
+
+    }
+
+    @Test
+    public void filterDate42() throws Exception {
+
+        final List<DateFilterStrategy> strategies = Arrays.asList(new DateFilterStrategy());
+        DateFilter filter = new DateFilter(strategies, new DateAnonymizationService(new LocalAnonymizationCacheService()), alertService, true, DateSpanValidator.getInstance(), Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "Entered 06/16/20 11:55:37,");
+
+        showSpans(filterResult.getSpans());
+
+        Assertions.assertEquals(1, filterResult.getSpans().size());
+        Assertions.assertEquals(8, filterResult.getSpans().get(0).getCharacterStart());
+        Assertions.assertEquals(16, filterResult.getSpans().get(0).getCharacterEnd());
+        Assertions.assertEquals("06/16/20", filterResult.getSpans().get(0).getText());
+
+    }
+
+    @Test
+    public void filterDate43() throws Exception {
+
+        final List<DateFilterStrategy> strategies = Arrays.asList(new DateFilterStrategy());
+        DateFilter filter = new DateFilter(strategies, new DateAnonymizationService(new LocalAnonymizationCacheService()), alertService, true, DateSpanValidator.getInstance(), Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "Case 1-20-01023-MJK,    Doc 1,    Filed 06/16/20,    Entered 06/16/20 11:55:37,");
+
+        showSpans(filterResult.getSpans());
+
+        Assertions.assertEquals(2, filterResult.getSpans().size());
+        Assertions.assertEquals(61, filterResult.getSpans().get(0).getCharacterStart());
+        Assertions.assertEquals(69, filterResult.getSpans().get(0).getCharacterEnd());
+        Assertions.assertEquals("06/16/20", filterResult.getSpans().get(0).getText());
+        Assertions.assertEquals(40, filterResult.getSpans().get(1).getCharacterStart());
+        Assertions.assertEquals(48, filterResult.getSpans().get(1).getCharacterEnd());
+        Assertions.assertEquals("06/16/20", filterResult.getSpans().get(1).getText());
+
+    }
+
+    @Test
+    public void filterDate44() throws Exception {
+
+        final List<DateFilterStrategy> strategies = Arrays.asList(new DateFilterStrategy());
+        DateFilter filter = new DateFilter(strategies, new DateAnonymizationService(new LocalAnonymizationCacheService()), alertService, true, DateSpanValidator.getInstance(), Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "On August 22, 2012, Plaintiff, Wendy J. Christophersen, was appointed as interim");
+
+        showSpans(filterResult.getSpans());
+
+        Assertions.assertEquals(1, filterResult.getSpans().size());
+        Assertions.assertEquals(3, filterResult.getSpans().get(0).getCharacterStart());
+        Assertions.assertEquals(18, filterResult.getSpans().get(0).getCharacterEnd());
+        Assertions.assertEquals("August 22, 2012", filterResult.getSpans().get(0).getText());
+
+    }
+
 }

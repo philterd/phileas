@@ -323,7 +323,7 @@ public class PhileasFilterService implements FilterService {
             // Process each line looking for sensitive information in each line.
             for(final String line : lines) {
 
-                // Process the text.
+                  // Process the text.
                 final FilterResponse filterResponse = unstructuredDocumentProcessor.process(filterProfile, filters, postFilters, context, documentId, 0, line);
 
                 // Add all the found spans to the list of spans.
