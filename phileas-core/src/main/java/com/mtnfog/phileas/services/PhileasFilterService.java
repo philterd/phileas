@@ -210,6 +210,13 @@ public class PhileasFilterService implements FilterService {
         LOGGER.debug("Deserializing filter profile [{}]", filterProfileName);
         final FilterProfile filterProfile = gson.fromJson(filterProfileJson, FilterProfile.class);
 
+        // TODO: Load default values based on the domain.
+        if(StringUtils.equalsIgnoreCase(FilterProfile.DOMAIN_LEGAL, filterProfile.getDomain())) {
+            // PHL-209: Implement legal domain.
+        } else if(StringUtils.equalsIgnoreCase(FilterProfile.DOMAIN_HEALTH, filterProfile.getDomain())) {
+            // PHL-210: Implement health domain.
+        }
+
         // PHL-145: Accept long text or throw an exception?
         if(!filterProfile.getConfig().getSplitting().isEnabled()) {
             if(filterProfile.getConfig().getSplitting().getThreshold() != -1) {

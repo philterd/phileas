@@ -8,6 +8,7 @@ import java.util.List;
 public class FilterProfile {
 
     public static final String DOMAIN_LEGAL = "legal";
+    public static final String DOMAIN_HEALTH = "health";
 
     @SerializedName("name")
     @Expose
