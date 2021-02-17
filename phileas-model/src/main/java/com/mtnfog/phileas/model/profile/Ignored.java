@@ -24,6 +24,17 @@ public class Ignored {
     @Expose
     private boolean caseSensitive = false;
 
+    public Ignored() {
+
+    }
+
+    public Ignored(String name, List<String> terms, List<String> files, boolean caseSensitive) {
+        this.name = name;
+        this.terms = terms;
+        this.files = files;
+        this.caseSensitive = caseSensitive;
+    }
+
     public String getName() {
         return name;
     }

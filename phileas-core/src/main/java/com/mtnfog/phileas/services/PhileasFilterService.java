@@ -3,6 +3,8 @@ package com.mtnfog.phileas.services;
 import com.google.gson.Gson;
 import com.mtnfog.phileas.configuration.PhileasConfiguration;
 import com.mtnfog.phileas.metrics.PhileasMetricsService;
+import com.mtnfog.phileas.model.domain.HealthDomain;
+import com.mtnfog.phileas.model.domain.LegalDomain;
 import com.mtnfog.phileas.model.enums.FilterType;
 import com.mtnfog.phileas.model.enums.MimeType;
 import com.mtnfog.phileas.model.enums.SensitivityLevel;
@@ -14,6 +16,7 @@ import com.mtnfog.phileas.model.filter.rules.dictionary.LuceneDictionaryFilter;
 import com.mtnfog.phileas.model.objects.Explanation;
 import com.mtnfog.phileas.model.objects.RedactionOptions;
 import com.mtnfog.phileas.model.objects.Span;
+import com.mtnfog.phileas.model.domain.Domain;
 import com.mtnfog.phileas.model.profile.FilterProfile;
 import com.mtnfog.phileas.model.profile.Ignored;
 import com.mtnfog.phileas.model.profile.filters.CustomDictionary;
@@ -210,11 +213,13 @@ public class PhileasFilterService implements FilterService {
         LOGGER.debug("Deserializing filter profile [{}]", filterProfileName);
         final FilterProfile filterProfile = gson.fromJson(filterProfileJson, FilterProfile.class);
 
-        // TODO: Load default values based on the domain.
-        if(StringUtils.equalsIgnoreCase(FilterProfile.DOMAIN_LEGAL, filterProfile.getDomain())) {
+        // Load default values based on the domain.
+        if(StringUtils.equalsIgnoreCase(Domain.DOMAIN_LEGAL, filterProfile.getDomain())) {
             // PHL-209: Implement legal domain.
-        } else if(StringUtils.equalsIgnoreCase(FilterProfile.DOMAIN_HEALTH, filterProfile.getDomain())) {
+            filterProfile.getIgnored().add(LegalDomain.getInstance().getIgnored());
+        } else if(StringUtils.equalsIgnoreCase(Domain.DOMAIN_HEALTH, filterProfile.getDomain())) {
             // PHL-210: Implement health domain.
+            filterProfile.getIgnored().add(HealthDomain.getInstance().getIgnored());
         }
 
         // PHL-145: Accept long text or throw an exception?

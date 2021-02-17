@@ -3,12 +3,10 @@ package com.mtnfog.phileas.model.profile;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.util.Collections;
 import java.util.List;
 
 public class FilterProfile {
-
-    public static final String DOMAIN_LEGAL = "legal";
-    public static final String DOMAIN_HEALTH = "health";
 
     @SerializedName("name")
     @Expose
@@ -28,11 +26,11 @@ public class FilterProfile {
 
     @SerializedName("ignored")
     @Expose
-    private List<Ignored> ignored;
+    private List<Ignored> ignored = Collections.EMPTY_LIST;
 
     @SerializedName("ignoredPatterns")
     @Expose
-    private List<IgnoredPattern> ignoredPatterns;
+    private List<IgnoredPattern> ignoredPatterns = Collections.EMPTY_LIST;
 
     @SerializedName("structured")
     @Expose
