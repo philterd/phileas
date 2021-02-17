@@ -7,9 +7,15 @@ import java.util.List;
 
 public class FilterProfile {
 
+    public static final String DOMAIN_LEGAL = "legal";
+
     @SerializedName("name")
     @Expose
     private String name;
+
+    @SerializedName("domain")
+    @Expose
+    private String domain;
 
     @SerializedName("crypto")
     @Expose
@@ -89,6 +95,14 @@ public class FilterProfile {
 
     public void setConfig(Config config) {
         this.config = config;
+    }
+
+    public String getDomain() {
+        return domain;
+    }
+
+    public void setDomain(String domain) {
+        this.domain = domain;
     }
 
 }
