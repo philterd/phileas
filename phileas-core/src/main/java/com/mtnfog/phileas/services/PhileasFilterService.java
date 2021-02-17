@@ -19,6 +19,7 @@ import com.mtnfog.phileas.model.objects.Span;
 import com.mtnfog.phileas.model.domain.Domain;
 import com.mtnfog.phileas.model.profile.FilterProfile;
 import com.mtnfog.phileas.model.profile.Ignored;
+import com.mtnfog.phileas.model.profile.filters.AbstractFilter;
 import com.mtnfog.phileas.model.profile.filters.CustomDictionary;
 import com.mtnfog.phileas.model.profile.filters.Identifier;
 import com.mtnfog.phileas.model.profile.filters.Section;
@@ -215,11 +216,19 @@ public class PhileasFilterService implements FilterService {
 
         // Load default values based on the domain.
         if(StringUtils.equalsIgnoreCase(Domain.DOMAIN_LEGAL, filterProfile.getDomain())) {
+
             // PHL-209: Implement legal domain.
             filterProfile.getIgnored().add(LegalDomain.getInstance().getIgnored());
+
+            // TODO: Add filters.
+
         } else if(StringUtils.equalsIgnoreCase(Domain.DOMAIN_HEALTH, filterProfile.getDomain())) {
+
             // PHL-210: Implement health domain.
             filterProfile.getIgnored().add(HealthDomain.getInstance().getIgnored());
+
+            // TODO: Add filters.
+
         }
 
         // PHL-145: Accept long text or throw an exception?
