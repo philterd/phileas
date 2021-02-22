@@ -34,6 +34,9 @@ public abstract class Filter {
      */
     protected final FilterType filterType;
 
+    /**
+     * The alert service.
+     */
     protected final AlertService alertService;
 
     /**
@@ -41,6 +44,9 @@ public abstract class Filter {
      */
     protected final AnonymizationService anonymizationService;
 
+    /**
+     * A list of filter strategies.
+     */
     protected final List<? extends AbstractFilterStrategy> strategies;
 
     /**
