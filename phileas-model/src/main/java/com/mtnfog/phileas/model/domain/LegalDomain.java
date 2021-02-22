@@ -1,15 +1,15 @@
 package com.mtnfog.phileas.model.domain;
 
-import com.mtnfog.phileas.model.filter.Filter;
 import com.mtnfog.phileas.model.profile.Ignored;
 import com.mtnfog.phileas.model.profile.filters.AbstractFilter;
-import com.mtnfog.phileas.model.profile.filters.PhysicianName;
-import com.mtnfog.phileas.model.profile.filters.strategies.rules.PhysicianNameFilterStrategy;
 
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
+/**
+ * A {@link Domain} for legal.
+ */
 public class LegalDomain extends Domain {
 
     private static LegalDomain legalDomain;

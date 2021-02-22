@@ -9,6 +9,9 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
+/**
+ * A {@link Domain} for healthcare.
+ */
 public class HealthDomain extends Domain {
 
     private static HealthDomain legalDomain;
