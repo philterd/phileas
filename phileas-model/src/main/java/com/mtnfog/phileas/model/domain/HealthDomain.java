@@ -16,6 +16,10 @@ public class HealthDomain extends Domain {
 
     private static HealthDomain legalDomain;
 
+    /**
+     * Get an instance of the {@link HealthDomain} class.
+     * @return An instance of the {@link HealthDomain} class.
+     */
     public static Domain getInstance() {
 
         if(legalDomain == null) {

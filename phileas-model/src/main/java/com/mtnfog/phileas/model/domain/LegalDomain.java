@@ -14,6 +14,10 @@ public class LegalDomain extends Domain {
 
     private static LegalDomain legalDomain;
 
+    /**
+     * Get an instance of the {@link LegalDomain} class.
+     * @return An instance of the {@link LegalDomain} class.
+     */
     public static Domain getInstance() {
 
         if(legalDomain == null) {
