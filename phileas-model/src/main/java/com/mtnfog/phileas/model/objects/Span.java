@@ -1,7 +1,11 @@
 package com.mtnfog.phileas.model.objects;
 
+import com.google.gson.Gson;
 import com.google.gson.annotations.Expose;
 import com.mtnfog.phileas.model.enums.FilterType;
+import com.mtnfog.phileas.model.formats.lapps.Annotation;
+import com.mtnfog.phileas.model.formats.lapps.Lapps;
+import com.mtnfog.phileas.model.formats.lapps.View;
 import org.apache.commons.lang3.Range;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -335,6 +339,50 @@ public final class Span {
         }
 
         return false;
+
+    }
+
+    /**
+     * Create a list of spans from LAPPS JSON.
+     * @param lappsJson LAPPS JSON.
+     * @return A list of spans.
+     */
+    public static List<Span> fromLappsJson(String lappsJson) {
+
+        final List<Span> spans = new LinkedList<>();
+
+        final Gson gson = new Gson();
+        final Lapps lapps = gson.fromJson(lappsJson, Lapps.class);
+
+        for(final View view : lapps.getViews()) {
+
+            for(final Annotation annotation : view.getAnnotations()) {
+
+                if(StringUtils.equalsIgnoreCase("http://vocab.lappsgrid.org/NamedEntity", annotation.getType())) {
+
+                    if(annotation.getFeatures() != null) {
+
+                        final Span span = new Span();
+
+                        span.setCharacterStart(annotation.getStart());
+                        span.setCharacterEnd(annotation.getEnd());
+                        span.setText(lapps.getText().getValue().substring(annotation.getStart(), annotation.getEnd()));
+
+                        if(StringUtils.equalsIgnoreCase("PER", annotation.getFeatures().getCategory())) {
+                            span.setFilterType(FilterType.NER_ENTITY);
+                        }
+
+                        spans.add(span);
+
+                    }
+
+                }
+
+            }
+
+        }
+
+        return spans;
 
     }
 

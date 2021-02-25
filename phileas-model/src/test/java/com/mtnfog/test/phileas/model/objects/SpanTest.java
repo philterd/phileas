@@ -4,11 +4,15 @@ import com.mtnfog.phileas.model.enums.FilterType;
 import com.mtnfog.phileas.model.objects.Span;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
+import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
@@ -453,6 +457,18 @@ public class SpanTest {
         final boolean adjacent = Span.areSpansAdjacent(span1, span2, text);
 
         Assertions.assertTrue(adjacent);
+
+    }
+
+    @Test
+    public void lapps1() throws IOException {
+
+        final File file = new File("src/test/resources/lapps/lapps1.json");
+        final String input = FileUtils.readFileToString(file, Charset.defaultCharset());
+
+        final List<Span> spans = Span.fromLappsJson(input);
+        
+        Assertions.assertEquals(1, spans.size());
 
     }
 
