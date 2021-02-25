@@ -467,8 +467,8 @@ public class SpanTest {
         final String input = FileUtils.readFileToString(file, Charset.defaultCharset());
 
         final List<Span> spans = Span.fromLappsJson(input);
-        
-        Assertions.assertEquals(1, spans.size());
+
+        Assertions.assertEquals(2, spans.size());
 
     }
 
@@ -477,16 +477,6 @@ public class SpanTest {
         for(Span span : spans) {
             LOGGER.info(span.toString());
         }
-
-    }
-
-    private boolean checkSpan(Span span, int characterStart, int characterEnd, FilterType filterType) {
-
-        LOGGER.info("Checking span: {}", span.toString());
-
-        return (span.getCharacterStart() == characterStart
-                && span.getCharacterEnd() == characterEnd
-                && span.getFilterType() == filterType);
 
     }
 

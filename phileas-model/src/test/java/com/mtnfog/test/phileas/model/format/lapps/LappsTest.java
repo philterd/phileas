@@ -28,18 +28,30 @@ public class LappsTest {
 
         for(final View view : lapps.getViews()) {
 
-            Assertions.assertEquals(164, view.getAnnotations().size());
+            Assertions.assertEquals(165, view.getAnnotations().size());
 
             for(final Annotation annotation : view.getAnnotations()) {
 
-                if(StringUtils.equalsIgnoreCase("http://vocab.lappsgrid.org/NamedEntity", annotation.getType())) {
+                if(StringUtils.equalsIgnoreCase(Lapps.NAMED_ENTITY, annotation.getType())) {
 
                     if(annotation.getFeatures() != null) {
 
-                        Assertions.assertEquals(282, annotation.getStart());
-                        Assertions.assertEquals(295, annotation.getEnd());
-                        Assertions.assertEquals("PER", annotation.getFeatures().getCategory());
-                        Assertions.assertEquals("James Smith's", lapps.getText().getValue().substring(annotation.getStart(), annotation.getEnd()));
+                        if(StringUtils.equalsIgnoreCase("PER", annotation.getFeatures().getCategory())) {
+
+                            Assertions.assertEquals(282, annotation.getStart());
+                            Assertions.assertEquals(295, annotation.getEnd());
+                            Assertions.assertEquals("PER", annotation.getFeatures().getCategory());
+                            Assertions.assertEquals("James Smith's", lapps.getText().getValue().substring(annotation.getStart(), annotation.getEnd()));
+
+                        }
+
+                        if(StringUtils.equalsIgnoreCase("PHONE_NUMBER", annotation.getFeatures().getCategory())) {
+
+                            Assertions.assertEquals(300, annotation.getStart());
+                            Assertions.assertEquals(315, annotation.getEnd());
+                            Assertions.assertEquals("PHONE_NUMBER", annotation.getFeatures().getCategory());
+
+                        }
 
                     }
 

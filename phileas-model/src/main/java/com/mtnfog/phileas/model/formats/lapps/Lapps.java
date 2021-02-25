@@ -6,6 +6,8 @@ import com.google.gson.annotations.SerializedName;
 
 public class Lapps {
 
+    public static final String NAMED_ENTITY = "http://vocab.lappsgrid.org/NamedEntity";
+
     @SerializedName("@context")
     @Expose
     private String context;

@@ -358,7 +358,7 @@ public final class Span {
 
             for(final Annotation annotation : view.getAnnotations()) {
 
-                if(StringUtils.equalsIgnoreCase("http://vocab.lappsgrid.org/NamedEntity", annotation.getType())) {
+                if(StringUtils.equalsIgnoreCase(Lapps.NAMED_ENTITY, annotation.getType())) {
 
                     if(annotation.getFeatures() != null) {
 
@@ -369,7 +369,16 @@ public final class Span {
                         span.setText(lapps.getText().getValue().substring(annotation.getStart(), annotation.getEnd()));
 
                         if(StringUtils.equalsIgnoreCase("PER", annotation.getFeatures().getCategory())) {
+
                             span.setFilterType(FilterType.NER_ENTITY);
+
+                        } else {
+
+                            // The other types are defined in Inception.
+                            // DATE EMAIL PER PHONE SSN STATE ...
+                            // If I make their names in Inception make the FilterType I can just use those names.
+                            span.setFilterType(FilterType.valueOf(annotation.getFeatures().getCategory()));
+
                         }
 
                         spans.add(span);

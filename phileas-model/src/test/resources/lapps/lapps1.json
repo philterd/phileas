@@ -866,6 +866,13 @@
       "@type" : "http://vocab.lappsgrid.org/NamedEntity",
       "features" : {
         "category" : "PER"
+      }}, {
+      "id" : "ne-1",
+      "start" : 300,
+      "end" : 315,
+      "@type" : "http://vocab.lappsgrid.org/NamedEntity",
+      "features" : {
+        "category" : "PHONE_NUMBER"
       }
     } ]
   } ]
