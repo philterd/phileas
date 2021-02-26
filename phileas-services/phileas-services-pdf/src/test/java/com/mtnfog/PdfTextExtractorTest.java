@@ -27,6 +27,10 @@ public class PdfTextExtractorTest {
 
         LOGGER.info("Read " + lines.size() + " lines");
 
+        for(final String line : lines) {
+            LOGGER.info(line);
+        }
+
         Assertions.assertEquals(215, lines.size());
 
     }

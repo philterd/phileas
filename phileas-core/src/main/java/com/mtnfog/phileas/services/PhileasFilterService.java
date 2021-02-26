@@ -338,8 +338,16 @@ public class PhileasFilterService implements FilterService {
             final PdfTextExtractor pdfTextExtractor = new PdfTextExtractor();
             final List<String> lines = pdfTextExtractor.getLines(input);
 
-            // A list of identified terms.
+            // A list of identified spans.
+            // These spans start/end are relative to the line containing the span.
             final Set<Span> spans = new LinkedHashSet<>();
+
+            // A list of identified spans.
+            // These spans start/end are relative to the whole document.
+            final Set<Span> nonRelativeSpans = new LinkedHashSet<>();
+
+            // Track the document offset.
+            int offset = 0;
 
             // Process each line looking for sensitive information in each line.
             for(final String line : lines) {
@@ -350,6 +358,14 @@ public class PhileasFilterService implements FilterService {
                 // Add all the found spans to the list of spans.
                 spans.addAll(filterResponse.getExplanation().getAppliedSpans());
 
+                for(final Span span : filterResponse.getExplanation().getAppliedSpans()) {
+                    span.setCharacterStart(span.getCharacterStart() + offset);
+                    span.setCharacterEnd(span.getCharacterEnd() + offset);
+                    nonRelativeSpans.add(span);
+                }
+
+                offset += line.length();
+
             }
 
             final RedactionOptions redactionOptions = new RedactionOptions();
@@ -359,12 +375,14 @@ public class PhileasFilterService implements FilterService {
             final byte[] redacted = redacter.process(input, outputMimeType);
 
             // Create the response.
-            final List<Span> spansList = new ArrayList<>(spans);
-            // TODO: The identified vs the applied will actually be different.
+            final List<Span> spansList = new ArrayList<>(nonRelativeSpans);
+
+            // TODO: The identified vs the applied will actually be different
+            // but we are setting the same here. Fix this at some point.
             final Explanation explanation = new Explanation(spansList, spansList);
             binaryDocumentFilterResponse = new BinaryDocumentFilterResponse(redacted, context, documentId, explanation);
 
-            // TODO: How to handle store for PDFs? There is no meaningful span to persist.
+            // TODO: PHL-212: Persist the spans.
             // Store the spans, if enabled.
             /*if(phileasConfiguration.storeEnabled()) {
                 store.insert(binaryDocumentFilterResponse.getExplanation().getAppliedSpans());

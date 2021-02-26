@@ -3,10 +3,12 @@ package com.mtnfog.test.phileas.services;
 import com.google.gson.Gson;
 import com.mtnfog.phileas.configuration.PhileasConfiguration;
 import com.mtnfog.phileas.model.enums.MimeType;
+import com.mtnfog.phileas.model.objects.Span;
 import com.mtnfog.phileas.model.profile.FilterProfile;
 import com.mtnfog.phileas.model.profile.Identifiers;
 import com.mtnfog.phileas.model.profile.Ignored;
 import com.mtnfog.phileas.model.profile.filters.*;
+import com.mtnfog.phileas.model.profile.filters.Date;
 import com.mtnfog.phileas.model.profile.filters.strategies.AbstractFilterStrategy;
 import com.mtnfog.phileas.model.profile.filters.strategies.ai.NerFilterStrategy;
 import com.mtnfog.phileas.model.profile.filters.strategies.custom.CustomDictionaryFilterStrategy;
@@ -33,10 +35,7 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Properties;
-import java.util.Set;
+import java.util.*;
 
 public class PhileasFilterServiceTest {
 
@@ -559,7 +558,7 @@ public class PhileasFilterServiceTest {
     }
 
     @Test
-    public void pdf() throws Exception {
+    public void pdf1() throws Exception {
 
         final String filename = "12-12110 K.pdf";
 
@@ -589,6 +588,49 @@ public class PhileasFilterServiceTest {
         final String output = outputFile.getAbsolutePath();
         LOGGER.info("Writing redacted PDF to {}", output);
         FileUtils.writeByteArrayToFile(new File(output), response.getDocument());
+
+        LOGGER.info("Spans: {}", response.getExplanation().getAppliedSpans().size());
+        showSpans(response.getExplanation().getAppliedSpans());
+
+        // TODO: How to assert? MD5 gives a different value each time.
+
+    }
+
+    @Test
+    public void pdf2() throws Exception {
+
+        final InputStream is = this.getClass().getResourceAsStream("/pdfs/new-lines.pdf");
+        final byte[] document = IOUtils.toByteArray(is);
+        is.close();
+
+        final Path temp = Files.createTempDirectory("philter");
+
+        final File file1 = Paths.get(temp.toFile().getAbsolutePath(), "pdf.json").toFile();
+        LOGGER.info("Writing profile to {}", file1.getAbsolutePath());
+        FileUtils.writeStringToFile(file1, gson.toJson(getPdfFilterProfile("pdf")), Charset.defaultCharset());
+
+        Properties properties = new Properties();
+        properties.setProperty("indexes.directory", INDEXES_DIRECTORY);
+        properties.setProperty("store.enabled", "false");
+        properties.setProperty("filter.profiles.directory", temp.toFile().getAbsolutePath());
+
+        final PhileasConfiguration phileasConfiguration = ConfigFactory.create(PhileasConfiguration.class, properties);
+
+        PhileasFilterService service = new PhileasFilterService(phileasConfiguration);
+        final BinaryDocumentFilterResponse response = service.filter("pdf", "context", "documentid", document, MimeType.APPLICATION_PDF, MimeType.APPLICATION_PDF);
+
+        // Write the byte array to a file.
+        final File outputFile = File.createTempFile("redact", ".pdf");
+        outputFile.deleteOnExit();
+        final String output = outputFile.getAbsolutePath();
+        LOGGER.info("Writing redacted PDF to {}", output);
+        FileUtils.writeByteArrayToFile(new File(output), response.getDocument());
+
+        LOGGER.info("Spans: {}", response.getExplanation().getAppliedSpans().size());
+        showSpans(response.getExplanation().getAppliedSpans());
+
+        // output:
+        // characterStart: 35;  characterEnd: 40;  filterType: zip-code;  context: context;  documentId: documentid;  confidence: 0.9;  text: 90210;  replacement: {{{REDACTED-zip-code}}};  salt: ;  ignored: false;  classification: null;
 
         // TODO: How to assert? MD5 gives a different value each time.
 
@@ -854,6 +896,14 @@ public class PhileasFilterServiceTest {
         filterProfile.setIgnored(Arrays.asList(ignored));
 
         return filterProfile;
+
+    }
+
+    private void showSpans(List<Span> spans) {
+
+        for(Span span : spans) {
+            LOGGER.info(span.toString());
+        }
 
     }
 
