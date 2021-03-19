@@ -4,7 +4,7 @@
   <parent>
     <artifactId>phileas-processors</artifactId>
     <groupId>com.mtnfog</groupId>
-    <version>1.10.0-SNAPSHOT</version>
+    <version>1.10.0</version>
   </parent>
   <artifactId>phileas-processors-unstructured</artifactId>
   <dependencies>
