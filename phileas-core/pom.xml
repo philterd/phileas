@@ -7,7 +7,7 @@
 	<parent>
 		<groupId>com.mtnfog</groupId>
 		<artifactId>phileas</artifactId>
-		<version>1.10.0</version>
+		<version>1.10.0-RC1</version>
 	</parent>
 	<artifactId>phileas-core</artifactId>
 	<name>phileas-core</name>
