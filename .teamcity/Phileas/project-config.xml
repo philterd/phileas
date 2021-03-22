@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" uuid="f7ed48c4-d250-451f-9f48-ebb85fc102a3" xsi:noNamespaceSchemaLocation="https://www.jetbrains.com/teamcity/schemas/2020.1/project-config.xsd">
+  <name>Phileas</name>
+  <parameters />
+  <project-extensions>
+    <extension id="PROJECT_EXT_2" type="versionedSettings">
+      <parameters>
+        <param name="buildSettings" value="PREFER_VCS" />
+        <param name="credentialsStorageType" value="credentialsJSON" />
+        <param name="enabled" value="true" />
+        <param name="rootId" value="Phileas_HttpsMtnfogBitbucketOrgMountainfogPhileasGitRefsHeadsMaster" />
+        <param name="showChanges" value="false" />
+      </parameters>
+    </extension>
+  </project-extensions>
+  <cleanup />
+</project>
+

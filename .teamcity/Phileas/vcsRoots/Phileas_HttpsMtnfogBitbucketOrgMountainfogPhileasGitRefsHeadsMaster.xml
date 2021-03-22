@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<vcs-root xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" uuid="649c6011-5038-4f23-a616-229d6f29e882" type="jetbrains.git" xsi:noNamespaceSchemaLocation="https://www.jetbrains.com/teamcity/schemas/2020.1/project-config.xsd">
+  <name>git@bitbucket.org:mountainfog/phileas.git</name>
+  <param name="agentCleanFilesPolicy" value="ALL_UNTRACKED" />
+  <param name="agentCleanPolicy" value="ON_BRANCH_CHANGE" />
+  <param name="authMethod" value="TEAMCITY_SSH_KEY" />
+  <param name="branch" value="refs/heads/master" />
+  <param name="ignoreKnownHosts" value="true" />
+  <param name="submoduleCheckout" value="CHECKOUT" />
+  <param name="teamcity:branchSpec" value="refs/heads/*" />
+  <param name="teamcitySshKey" value="id_rsa" />
+  <param name="url" value="git@bitbucket.org:mountainfog/phileas.git" />
+  <param name="useAlternates" value="true" />
+  <param name="usernameStyle" value="USERID" />
+</vcs-root>
+
