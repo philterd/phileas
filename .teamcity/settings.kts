@@ -32,7 +32,7 @@ project {
 }
 
 object Build : BuildType({
-    name = "Build"
+    name = "BuildPhilter"
 
     vcs {
         root(DslContext.settingsRoot)
