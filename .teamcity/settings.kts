@@ -45,6 +45,10 @@ object Build : BuildType({
             runnerArgs = "-Dmaven.test.failure.ignore=true"
         }
         script {
+
+            conditions {
+                equals("deploy", "true")
+            }
             scriptContent = "echo %build.number%"
         }
     }
