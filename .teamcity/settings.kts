@@ -1,5 +1,6 @@
 import jetbrains.buildServer.configs.kotlin.v2019_2.*
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.maven
+import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.script
 import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.vcs
 
 /*
@@ -32,7 +33,7 @@ project {
 }
 
 object Build : BuildType({
-    name = "BuildPhilter"
+    name = "Build"
 
     vcs {
         root(DslContext.settingsRoot)
@@ -40,8 +41,11 @@ object Build : BuildType({
 
     steps {
         maven {
-            goals = "clean install"
+            goals = "clean package"
             runnerArgs = "-Dmaven.test.failure.ignore=true"
+        }
+        script {
+            scriptContent = "echo %build.number%"
         }
     }
 
