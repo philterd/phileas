@@ -35,6 +35,10 @@ project {
 object Build : BuildType({
     name = "Build"
 
+    params {
+        param("deploy", "true")
+    }
+
     vcs {
         root(DslContext.settingsRoot)
     }
