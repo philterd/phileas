@@ -36,13 +36,13 @@
 	</licenses>
 	<distributionManagement>
 		<repository>
-			<id>mtnfog--maven-releases</id>
-			<name>mtnfog--maven-releases</name>
+			<id>mtnfog-maven-releases</id>
+			<name>mtnfog-maven-releases</name>
 			<url>https://mtnfog-341239660749.d.codeartifact.us-east-1.amazonaws.com/maven/maven-releases/</url>
 		</repository>
 		<snapshotRepository>
-			<id>mtnfog--maven-snapshots</id>
-			<name>mtnfog--maven-snapshots</name>
+			<id>mtnfog-maven-snapshots</id>
+			<name>mtnfog-maven-snapshots</name>
 			<url>https://mtnfog-341239660749.d.codeartifact.us-east-1.amazonaws.com/maven/maven-snapshots/</url>
 		</snapshotRepository>
 	</distributionManagement>
@@ -56,16 +56,16 @@
 			<url>https://repo1.maven.org/maven2</url>
 		</repository>
 		<repository>
-			<id>mtnfog--maven-releases</id>
-			<name>mtnfog--maven-releases</name>
+			<id>mtnfog-maven-releases</id>
+			<name>mtnfog-maven-releases</name>
 			<url>https://mtnfog-341239660749.d.codeartifact.us-east-1.amazonaws.com/maven/maven-releases/</url>
 			<snapshots>
 				<enabled>false</enabled>
 			</snapshots>
 		</repository>
 		<repository>
-			<id>mtnfog--maven-snapshots</id>
-			<name>mtnfog--maven-snapshots</name>
+			<id>mtnfog-maven-snapshots</id>
+			<name>mtnfog-maven-snapshots</name>
 			<url>https://mtnfog-341239660749.d.codeartifact.us-east-1.amazonaws.com/maven/maven-snapshots/</url>
 			<snapshots>
 				<enabled>true</enabled>
