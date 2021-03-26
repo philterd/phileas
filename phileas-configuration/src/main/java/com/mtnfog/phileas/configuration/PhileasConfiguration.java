@@ -10,7 +10,7 @@ import org.aeonbits.owner.Config;
 @Config.Sources({
         "system:env",
         "system:properties",
-        "file:application.properties"
+        "file:philter.properties"
 })
 public interface PhileasConfiguration extends Config {
 
