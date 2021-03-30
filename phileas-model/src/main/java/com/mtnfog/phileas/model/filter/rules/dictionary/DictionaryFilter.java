@@ -1,6 +1,7 @@
 package com.mtnfog.phileas.model.filter.rules.dictionary;
 
 import com.mtnfog.phileas.model.enums.FilterType;
+import com.mtnfog.phileas.model.filter.FilterConfiguration;
 import com.mtnfog.phileas.model.filter.rules.RulesFilter;
 import com.mtnfog.phileas.model.profile.Crypto;
 import com.mtnfog.phileas.model.profile.IgnoredPattern;
@@ -24,10 +25,13 @@ public abstract class DictionaryFilter extends RulesFilter {
     // Lucene requires a min size of 2 for the ShingleFilter.
     protected int maxNgramSize = 2;
 
-    public DictionaryFilter(FilterType filterType, List<? extends AbstractFilterStrategy> strategies, AnonymizationService anonymizationService, AlertService alertService, Set<String> ignored, Set<String> ignoredFiles, List<IgnoredPattern> ignoredPatterns, Crypto crypto, int windowSize) {
-
-        super(filterType, strategies, anonymizationService, alertService, ignored, ignoredFiles, ignoredPatterns, crypto, windowSize);
-
+    /**
+     * Creates a new dictionary-based filter.
+     * @param filterType
+     * @param filterConfiguration The {@link FilterConfiguration} for the filter.
+     */
+    public DictionaryFilter(FilterType filterType, FilterConfiguration filterConfiguration) {
+        super(filterType, filterConfiguration);
     }
 
     /**

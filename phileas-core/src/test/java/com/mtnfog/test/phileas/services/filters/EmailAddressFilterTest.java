@@ -1,12 +1,11 @@
 package com.mtnfog.test.phileas.services.filters;
 
 import com.mtnfog.phileas.model.enums.FilterType;
+import com.mtnfog.phileas.model.filter.FilterConfiguration;
 import com.mtnfog.phileas.model.objects.FilterResult;
-import com.mtnfog.phileas.model.objects.Span;
-import com.mtnfog.phileas.model.profile.Crypto;
 import com.mtnfog.phileas.model.profile.filters.strategies.rules.EmailAddressFilterStrategy;
 import com.mtnfog.phileas.model.services.AlertService;
-import com.mtnfog.phileas.services.anonymization.EmailAddressAnonymizationService;
+import com.mtnfog.phileas.services.anonymization.AlphanumericAnonymizationService;
 import com.mtnfog.phileas.services.anonymization.cache.LocalAnonymizationCacheService;
 import com.mtnfog.phileas.services.filters.regex.EmailAddressFilter;
 import org.junit.jupiter.api.Assertions;
@@ -14,8 +13,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 
 public class EmailAddressFilterTest extends AbstractFilterTest {
 
@@ -24,8 +21,14 @@ public class EmailAddressFilterTest extends AbstractFilterTest {
     @Test
     public void filterEmail() throws Exception {
 
-        final List<EmailAddressFilterStrategy> strategies = Arrays.asList(new EmailAddressFilterStrategy());
-        EmailAddressFilter filter = new EmailAddressFilter(strategies, new EmailAddressAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(Arrays.asList(new EmailAddressFilterStrategy()))
+                .withAlertService(alertService)
+                .withAnonymizationService(new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()))
+                .withWindowSize(windowSize)
+                .build();
+
+        final EmailAddressFilter filter = new EmailAddressFilter(filterConfiguration);
 
         final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "my email is none@none.com.");
         Assertions.assertEquals(1, filterResult.getSpans().size());

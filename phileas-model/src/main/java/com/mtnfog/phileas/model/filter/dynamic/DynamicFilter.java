@@ -2,25 +2,17 @@ package com.mtnfog.phileas.model.filter.dynamic;
 
 import com.mtnfog.phileas.model.enums.FilterType;
 import com.mtnfog.phileas.model.filter.Filter;
-import com.mtnfog.phileas.model.profile.Crypto;
-import com.mtnfog.phileas.model.profile.IgnoredPattern;
-import com.mtnfog.phileas.model.profile.filters.strategies.AbstractFilterStrategy;
-import com.mtnfog.phileas.model.services.AlertService;
-import com.mtnfog.phileas.model.services.AnonymizationService;
-
-import java.io.Serializable;
-import java.util.List;
-import java.util.Set;
+import com.mtnfog.phileas.model.filter.FilterConfiguration;
 
 public abstract class DynamicFilter extends Filter {
 
     /**
      * Creates a new dynamic filter.
-     * @param filterType The {@link FilterType type} of the filter.
-     * @param anonymizationService The {@link AnonymizationService} for this filter.
+     * @param filterType
+     * @param filterConfiguration The {@link FilterConfiguration} for the filter.
      */
-    public DynamicFilter(FilterType filterType, List<? extends AbstractFilterStrategy> strategies, AnonymizationService anonymizationService, AlertService alertService, Set<String> ignored, Set<String> ignoredFiles, List<IgnoredPattern> ignoredPatterns, Crypto crypto, int windowSize) {
-        super(filterType, strategies, anonymizationService, alertService, ignored, ignoredFiles, ignoredPatterns, crypto, windowSize);
+    public DynamicFilter(FilterType filterType, FilterConfiguration filterConfiguration) {
+        super(filterType, filterConfiguration);
     }
 
 }

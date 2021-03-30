@@ -2,16 +2,12 @@ package com.mtnfog.phileas.service.ai;
 
 import com.mtnfog.phileas.configuration.PhileasConfiguration;
 import com.mtnfog.phileas.model.enums.FilterType;
+import com.mtnfog.phileas.model.filter.FilterConfiguration;
 import com.mtnfog.phileas.model.filter.dynamic.NerFilter;
 import com.mtnfog.phileas.model.objects.FilterResult;
 import com.mtnfog.phileas.model.objects.Replacement;
 import com.mtnfog.phileas.model.objects.Span;
-import com.mtnfog.phileas.model.profile.Crypto;
 import com.mtnfog.phileas.model.profile.FilterProfile;
-import com.mtnfog.phileas.model.profile.IgnoredPattern;
-import com.mtnfog.phileas.model.profile.filters.strategies.AbstractFilterStrategy;
-import com.mtnfog.phileas.model.services.AlertService;
-import com.mtnfog.phileas.model.services.AnonymizationService;
 import com.mtnfog.phileas.model.services.MetricsService;
 import okhttp3.ConnectionPool;
 import okhttp3.OkHttpClient;
@@ -28,7 +24,6 @@ import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 public class PyTorchFilter extends NerFilter {
@@ -45,24 +40,16 @@ public class PyTorchFilter extends NerFilter {
     // Response will look like:
     // [{"text": "George Washington", "tag": "PER", "score": 0.2987019270658493, "start": 0, "end": 17}, {"text": "Virginia", "tag": "LOC", "score": 0.3510116934776306, "start": 95, "end": 103}]
 
-    public PyTorchFilter(String baseUrl,
-                         FilterType filterType,
-                         List<? extends AbstractFilterStrategy> strategies,
+    public PyTorchFilter(FilterConfiguration filterConfiguration,
+                         String baseUrl,
                          PhileasConfiguration phileaseConfiguration,
                          String tag,
                          Map<String, DescriptiveStatistics> stats,
                          MetricsService metricsService,
-                         AnonymizationService anonymizationService,
-                         AlertService alertService,
-                         Set<String> ignored,
-                         Set<String> ignoredFiles,
-                         List<IgnoredPattern> ignoredPatterns,
                          boolean removePunctuation,
-                         Map<String, Double> thresholds,
-                         Crypto crypto,
-                         int windowSize) {
+                         Map<String, Double> thresholds) {
 
-        super(filterType, strategies, stats, metricsService, anonymizationService, alertService, ignored, ignoredFiles, ignoredPatterns, removePunctuation, thresholds, crypto, windowSize);
+        super(filterConfiguration, stats, metricsService, removePunctuation, thresholds);
 
         this.tag = tag;
         this.timeoutSec = phileaseConfiguration.nerTimeoutSec();

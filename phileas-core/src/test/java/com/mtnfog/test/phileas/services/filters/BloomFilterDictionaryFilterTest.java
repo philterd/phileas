@@ -1,20 +1,22 @@
 package com.mtnfog.test.phileas.services.filters;
 
 import com.mtnfog.phileas.model.enums.FilterType;
+import com.mtnfog.phileas.model.filter.FilterConfiguration;
 import com.mtnfog.phileas.model.filter.rules.dictionary.BloomFilterDictionaryFilter;
-import com.mtnfog.phileas.model.filter.rules.dictionary.DictionaryFilter;
 import com.mtnfog.phileas.model.objects.FilterResult;
-import com.mtnfog.phileas.model.objects.Span;
-import com.mtnfog.phileas.model.profile.Crypto;
 import com.mtnfog.phileas.model.profile.filters.strategies.custom.CustomDictionaryFilterStrategy;
 import com.mtnfog.phileas.model.services.AlertService;
+import com.mtnfog.phileas.services.anonymization.AlphanumericAnonymizationService;
+import com.mtnfog.phileas.services.anonymization.cache.LocalAnonymizationCacheService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 public class BloomFilterDictionaryFilterTest extends AbstractFilterTest {
 
@@ -25,11 +27,17 @@ public class BloomFilterDictionaryFilterTest extends AbstractFilterTest {
     @Test
     public void filterDictionaryExactMatch() throws Exception {
 
-        final List<CustomDictionaryFilterStrategy> strategies = Arrays.asList(new CustomDictionaryFilterStrategy());
-        final Set<String> names = new HashSet<>(Arrays.asList("george", "ted", "Bill", "john"));
-        final DictionaryFilter filter = new BloomFilterDictionaryFilter(FilterType.CUSTOM_DICTIONARY, strategies, names, "none", 0.05, null, alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(Arrays.asList(new CustomDictionaryFilterStrategy()))
+                .withAlertService(alertService)
+                .withAnonymizationService(new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()))
+                .withWindowSize(windowSize)
+                .build();
 
-        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "He lived with Bill in California.");
+        final Set<String> names = new HashSet<>(Arrays.asList("george", "ted", "Bill", "john"));
+        final BloomFilterDictionaryFilter filter = new BloomFilterDictionaryFilter(FilterType.CUSTOM_DICTIONARY, filterConfiguration, names, "none", 0.05);
+
+         final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "He lived with Bill in California.");
 
         showSpans(filterResult.getSpans());
 
@@ -42,9 +50,15 @@ public class BloomFilterDictionaryFilterTest extends AbstractFilterTest {
     @Test
     public void filterDictionaryCaseInsensitiveMatch() throws Exception {
 
-        final List<CustomDictionaryFilterStrategy> strategies = Arrays.asList(new CustomDictionaryFilterStrategy());
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(Arrays.asList(new CustomDictionaryFilterStrategy()))
+                .withAlertService(alertService)
+                .withAnonymizationService(new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()))
+                .withWindowSize(windowSize)
+                .build();
+
         final Set<String> names = new HashSet<>(Arrays.asList("george", "ted", "bill", "john"));
-        final DictionaryFilter filter = new BloomFilterDictionaryFilter(FilterType.CUSTOM_DICTIONARY, strategies, names, "none", 0.05, null, alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+        final BloomFilterDictionaryFilter filter = new BloomFilterDictionaryFilter(FilterType.CUSTOM_DICTIONARY, filterConfiguration, names, "none", 0.05);
 
         final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "He lived with Bill in California.");
 
@@ -59,9 +73,15 @@ public class BloomFilterDictionaryFilterTest extends AbstractFilterTest {
     @Test
     public void filterDictionaryNoMatch() throws Exception {
 
-        final List<CustomDictionaryFilterStrategy> strategies = Arrays.asList(new CustomDictionaryFilterStrategy());
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(Arrays.asList(new CustomDictionaryFilterStrategy()))
+                .withAlertService(alertService)
+                .withAnonymizationService(new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()))
+                .withWindowSize(windowSize)
+                .build();
+
         final Set<String> names = new HashSet<>(Arrays.asList("george", "ted", "bill", "john"));
-        final DictionaryFilter filter = new BloomFilterDictionaryFilter(FilterType.CUSTOM_DICTIONARY, strategies, Collections.emptySet(), "none", 0.05, null, alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+        final BloomFilterDictionaryFilter filter = new BloomFilterDictionaryFilter(FilterType.CUSTOM_DICTIONARY, filterConfiguration, names, "none", 0.05);
 
         final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "He lived with Sam in California.");
 
@@ -74,9 +94,15 @@ public class BloomFilterDictionaryFilterTest extends AbstractFilterTest {
     @Test
     public void filterDictionaryPhraseMatch1() throws Exception {
 
-        final List<CustomDictionaryFilterStrategy> strategies = Arrays.asList(new CustomDictionaryFilterStrategy());
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(Arrays.asList(new CustomDictionaryFilterStrategy()))
+                .withAlertService(alertService)
+                .withAnonymizationService(new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()))
+                .withWindowSize(windowSize)
+                .build();
+
         final Set<String> names = new HashSet<>(Arrays.asList("george jones", "ted", "bill", "john"));
-        final DictionaryFilter filter = new BloomFilterDictionaryFilter(FilterType.CUSTOM_DICTIONARY, strategies, names, "none", 0.05, null, alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+        final BloomFilterDictionaryFilter filter = new BloomFilterDictionaryFilter(FilterType.CUSTOM_DICTIONARY, filterConfiguration, names, "none", 0.05);
 
         final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0,"He lived with george jones in California.");
 
@@ -91,9 +117,15 @@ public class BloomFilterDictionaryFilterTest extends AbstractFilterTest {
     @Test
     public void filterDictionaryPhraseMatch2() throws Exception {
 
-        final List<CustomDictionaryFilterStrategy> strategies = Arrays.asList(new CustomDictionaryFilterStrategy());
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(Arrays.asList(new CustomDictionaryFilterStrategy()))
+                .withAlertService(alertService)
+                .withAnonymizationService(new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()))
+                .withWindowSize(windowSize)
+                .build();
+
         final Set<String> names = new HashSet<>(Arrays.asList("george jones jr", "ted", "bill smith", "john"));
-        final DictionaryFilter filter = new BloomFilterDictionaryFilter(FilterType.CUSTOM_DICTIONARY, strategies, names, "none", 0.05, null, alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+        final BloomFilterDictionaryFilter filter = new BloomFilterDictionaryFilter(FilterType.CUSTOM_DICTIONARY, filterConfiguration, names, "none", 0.05);
 
         final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0,"Bill Smith lived with george jones jr in California.");
 

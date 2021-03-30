@@ -2,13 +2,11 @@ package com.mtnfog.test.phileas.services.filters;
 
 import com.mtnfog.phileas.model.enums.FilterType;
 import com.mtnfog.phileas.model.enums.SensitivityLevel;
+import com.mtnfog.phileas.model.filter.FilterConfiguration;
 import com.mtnfog.phileas.model.filter.rules.dictionary.LuceneDictionaryFilter;
 import com.mtnfog.phileas.model.objects.FilterResult;
-import com.mtnfog.phileas.model.objects.Span;
-import com.mtnfog.phileas.model.profile.Crypto;
 import com.mtnfog.phileas.model.profile.filters.strategies.dynamic.StateFilterStrategy;
 import com.mtnfog.phileas.model.services.AlertService;
-import com.mtnfog.phileas.model.services.AnonymizationService;
 import com.mtnfog.phileas.services.anonymization.StateAnonymizationService;
 import com.mtnfog.phileas.services.anonymization.cache.LocalAnonymizationCacheService;
 import org.apache.logging.log4j.LogManager;
@@ -19,8 +17,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 
 public class StateFilterTest extends AbstractFilterTest {
 
@@ -28,7 +24,7 @@ public class StateFilterTest extends AbstractFilterTest {
 
     private String INDEX_DIRECTORY = getIndexDirectory("states");
 
-    private AlertService alertService = Mockito.mock(AlertService.class);
+    private final AlertService alertService = Mockito.mock(AlertService.class);
 
     @BeforeEach
     public void before() {
@@ -39,10 +35,14 @@ public class StateFilterTest extends AbstractFilterTest {
     @Test
     public void filterStatesLow() throws Exception {
 
-        AnonymizationService anonymizationService = new StateAnonymizationService(new LocalAnonymizationCacheService());
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(Arrays.asList(new StateFilterStrategy()))
+                .withAlertService(alertService)
+                .withAnonymizationService(new StateAnonymizationService(new LocalAnonymizationCacheService()))
+                .withWindowSize(windowSize)
+                .build();
 
-        final List<StateFilterStrategy> strategies = Arrays.asList(new StateFilterStrategy());
-        final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.LOCATION_STATE, strategies, INDEX_DIRECTORY, SensitivityLevel.LOW, false, anonymizationService, alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+        final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.LOCATION_STATE, filterConfiguration, INDEX_DIRECTORY, SensitivityLevel.LOW, false);
 
         FilterResult filterResult = filter.filter(getFilterProfile(SensitivityLevel.LOW), "context", "documentid", 0,"Lived in Washington");
         Assertions.assertEquals(1, filterResult.getSpans().size());
@@ -53,10 +53,14 @@ public class StateFilterTest extends AbstractFilterTest {
     @Test
     public void filterStatesMedium() throws Exception {
 
-        AnonymizationService anonymizationService = new StateAnonymizationService(new LocalAnonymizationCacheService());
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(Arrays.asList(new StateFilterStrategy()))
+                .withAlertService(alertService)
+                .withAnonymizationService(new StateAnonymizationService(new LocalAnonymizationCacheService()))
+                .withWindowSize(windowSize)
+                .build();
 
-        final List<StateFilterStrategy> strategies = Arrays.asList(new StateFilterStrategy());
-        final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.LOCATION_STATE, strategies, INDEX_DIRECTORY, SensitivityLevel.MEDIUM, false, anonymizationService, alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+        final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.LOCATION_STATE, filterConfiguration, INDEX_DIRECTORY, SensitivityLevel.MEDIUM, false);
 
         FilterResult filterResult = filter.filter(getFilterProfile(SensitivityLevel.MEDIUM), "context", "documentid", 0,"Lived in Wshington");
         Assertions.assertEquals(1, filterResult.getSpans().size());
@@ -66,10 +70,14 @@ public class StateFilterTest extends AbstractFilterTest {
     @Test
     public void filterStatesHigh() throws Exception {
 
-        AnonymizationService anonymizationService = new StateAnonymizationService(new LocalAnonymizationCacheService());
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(Arrays.asList(new StateFilterStrategy()))
+                .withAlertService(alertService)
+                .withAnonymizationService(new StateAnonymizationService(new LocalAnonymizationCacheService()))
+                .withWindowSize(windowSize)
+                .build();
 
-        final List<StateFilterStrategy> strategies = Arrays.asList(new StateFilterStrategy());
-        final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.LOCATION_STATE, strategies, INDEX_DIRECTORY, SensitivityLevel.HIGH, false,anonymizationService, alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+        final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.LOCATION_STATE, filterConfiguration, INDEX_DIRECTORY, SensitivityLevel.HIGH, false);
 
         FilterResult filterResult = filter.filter(getFilterProfile(SensitivityLevel.HIGH), "context", "documentid", 0,"Lived in Wasinton");
         Assertions.assertEquals(1, filterResult.getSpans().size());

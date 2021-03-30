@@ -1,10 +1,10 @@
 package com.mtnfog.test.phileas.services.filters;
 
 import com.mtnfog.phileas.model.enums.FilterType;
+import com.mtnfog.phileas.model.filter.FilterConfiguration;
 import com.mtnfog.phileas.model.objects.FilterResult;
-import com.mtnfog.phileas.model.profile.Crypto;
+import com.mtnfog.phileas.model.profile.filters.strategies.rules.StreetAddressFilterStrategy;
 import com.mtnfog.phileas.model.services.AlertService;
-import com.mtnfog.phileas.services.anonymization.AgeAnonymizationService;
 import com.mtnfog.phileas.services.anonymization.StreetAddressAnonymizationService;
 import com.mtnfog.phileas.services.anonymization.cache.LocalAnonymizationCacheService;
 import com.mtnfog.phileas.services.filters.regex.StreetAddressFilter;
@@ -12,16 +12,23 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import java.util.Collections;
+import java.util.Arrays;
 
 public class StreetAddressFilterTest extends AbstractFilterTest {
+
+    final AlertService alertService = Mockito.mock(AlertService.class);
 
     @Test
     public void filter1() throws Exception {
 
-        final AlertService alertService = Mockito.mock(AlertService.class);
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(Arrays.asList(new StreetAddressFilterStrategy()))
+                .withAlertService(alertService)
+                .withAnonymizationService(new StreetAddressAnonymizationService(new LocalAnonymizationCacheService()))
+                .withWindowSize(windowSize)
+                .build();
 
-        final StreetAddressFilter filter = new StreetAddressFilter(null, new StreetAddressAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+        final StreetAddressFilter filter = new StreetAddressFilter(filterConfiguration);
 
         final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "lived at 100 Main St");
 
@@ -33,9 +40,14 @@ public class StreetAddressFilterTest extends AbstractFilterTest {
     @Test
     public void filter2() throws Exception {
 
-        final AlertService alertService = Mockito.mock(AlertService.class);
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(Arrays.asList(new StreetAddressFilterStrategy()))
+                .withAlertService(alertService)
+                .withAnonymizationService(new StreetAddressAnonymizationService(new LocalAnonymizationCacheService()))
+                .withWindowSize(windowSize)
+                .build();
 
-        final StreetAddressFilter filter = new StreetAddressFilter(null, new StreetAddressAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+        final StreetAddressFilter filter = new StreetAddressFilter(filterConfiguration);
 
         final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "lived at 100 S Main St");
 
@@ -47,9 +59,14 @@ public class StreetAddressFilterTest extends AbstractFilterTest {
     @Test
     public void filter3() throws Exception {
 
-        final AlertService alertService = Mockito.mock(AlertService.class);
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(Arrays.asList(new StreetAddressFilterStrategy()))
+                .withAlertService(alertService)
+                .withAnonymizationService(new StreetAddressAnonymizationService(new LocalAnonymizationCacheService()))
+                .withWindowSize(windowSize)
+                .build();
 
-        final StreetAddressFilter filter = new StreetAddressFilter(null, new StreetAddressAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+        final StreetAddressFilter filter = new StreetAddressFilter(filterConfiguration);
 
         final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "lived at 100 South Main St");
 
@@ -61,9 +78,14 @@ public class StreetAddressFilterTest extends AbstractFilterTest {
     @Test
     public void filter4() throws Exception {
 
-        final AlertService alertService = Mockito.mock(AlertService.class);
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(Arrays.asList(new StreetAddressFilterStrategy()))
+                .withAlertService(alertService)
+                .withAnonymizationService(new StreetAddressAnonymizationService(new LocalAnonymizationCacheService()))
+                .withWindowSize(windowSize)
+                .build();
 
-        final StreetAddressFilter filter = new StreetAddressFilter(null, new StreetAddressAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+        final StreetAddressFilter filter = new StreetAddressFilter(filterConfiguration);
 
         final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "lived at 1000 Main Street");
 
@@ -75,9 +97,14 @@ public class StreetAddressFilterTest extends AbstractFilterTest {
     @Test
     public void filter5() throws Exception {
 
-        final AlertService alertService = Mockito.mock(AlertService.class);
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(Arrays.asList(new StreetAddressFilterStrategy()))
+                .withAlertService(alertService)
+                .withAnonymizationService(new StreetAddressAnonymizationService(new LocalAnonymizationCacheService()))
+                .withWindowSize(windowSize)
+                .build();
 
-        final StreetAddressFilter filter = new StreetAddressFilter(null, new StreetAddressAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+        final StreetAddressFilter filter = new StreetAddressFilter(filterConfiguration);
 
         final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "North 2800 Clay Edwards Drive");
 
@@ -89,9 +116,14 @@ public class StreetAddressFilterTest extends AbstractFilterTest {
     @Test
     public void filter6() throws Exception {
 
-        final AlertService alertService = Mockito.mock(AlertService.class);
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(Arrays.asList(new StreetAddressFilterStrategy()))
+                .withAlertService(alertService)
+                .withAnonymizationService(new StreetAddressAnonymizationService(new LocalAnonymizationCacheService()))
+                .withWindowSize(windowSize)
+                .build();
 
-        final StreetAddressFilter filter = new StreetAddressFilter(null, new StreetAddressAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+        final StreetAddressFilter filter = new StreetAddressFilter(filterConfiguration);
 
         final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "14 Southampton St.");
 
@@ -103,9 +135,14 @@ public class StreetAddressFilterTest extends AbstractFilterTest {
     @Test
     public void filter7() throws Exception {
 
-        final AlertService alertService = Mockito.mock(AlertService.class);
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(Arrays.asList(new StreetAddressFilterStrategy()))
+                .withAlertService(alertService)
+                .withAnonymizationService(new StreetAddressAnonymizationService(new LocalAnonymizationCacheService()))
+                .withWindowSize(windowSize)
+                .build();
 
-        final StreetAddressFilter filter = new StreetAddressFilter(null, new StreetAddressAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+        final StreetAddressFilter filter = new StreetAddressFilter(filterConfiguration);
 
         final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "22 Newport Drive");
 
@@ -117,9 +154,14 @@ public class StreetAddressFilterTest extends AbstractFilterTest {
     @Test
     public void filter8() throws Exception {
 
-        final AlertService alertService = Mockito.mock(AlertService.class);
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(Arrays.asList(new StreetAddressFilterStrategy()))
+                .withAlertService(alertService)
+                .withAnonymizationService(new StreetAddressAnonymizationService(new LocalAnonymizationCacheService()))
+                .withWindowSize(windowSize)
+                .build();
 
-        final StreetAddressFilter filter = new StreetAddressFilter(null, new StreetAddressAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+        final StreetAddressFilter filter = new StreetAddressFilter(filterConfiguration);
 
         final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "78 Glendale Street");
 
@@ -131,9 +173,14 @@ public class StreetAddressFilterTest extends AbstractFilterTest {
     @Test
     public void filter9() throws Exception {
 
-        final AlertService alertService = Mockito.mock(AlertService.class);
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(Arrays.asList(new StreetAddressFilterStrategy()))
+                .withAlertService(alertService)
+                .withAnonymizationService(new StreetAddressAnonymizationService(new LocalAnonymizationCacheService()))
+                .withWindowSize(windowSize)
+                .build();
 
-        final StreetAddressFilter filter = new StreetAddressFilter(null, new StreetAddressAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+        final StreetAddressFilter filter = new StreetAddressFilter(filterConfiguration);
 
         final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "6 Berkshire Court");
 
@@ -145,9 +192,14 @@ public class StreetAddressFilterTest extends AbstractFilterTest {
     @Test
     public void filter10() throws Exception {
 
-        final AlertService alertService = Mockito.mock(AlertService.class);
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(Arrays.asList(new StreetAddressFilterStrategy()))
+                .withAlertService(alertService)
+                .withAnonymizationService(new StreetAddressAnonymizationService(new LocalAnonymizationCacheService()))
+                .withWindowSize(windowSize)
+                .build();
 
-        final StreetAddressFilter filter = new StreetAddressFilter(null, new StreetAddressAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+        final StreetAddressFilter filter = new StreetAddressFilter(filterConfiguration);
 
         final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "291 North Pawnee Ave.");
 
@@ -159,9 +211,14 @@ public class StreetAddressFilterTest extends AbstractFilterTest {
     @Test
     public void filter11() throws Exception {
 
-        final AlertService alertService = Mockito.mock(AlertService.class);
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(Arrays.asList(new StreetAddressFilterStrategy()))
+                .withAlertService(alertService)
+                .withAnonymizationService(new StreetAddressAnonymizationService(new LocalAnonymizationCacheService()))
+                .withWindowSize(windowSize)
+                .build();
 
-        final StreetAddressFilter filter = new StreetAddressFilter(null, new StreetAddressAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+        final StreetAddressFilter filter = new StreetAddressFilter(filterConfiguration);
 
         final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "468 William Street");
 
@@ -173,9 +230,14 @@ public class StreetAddressFilterTest extends AbstractFilterTest {
     @Test
     public void filter12() throws Exception {
 
-        final AlertService alertService = Mockito.mock(AlertService.class);
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(Arrays.asList(new StreetAddressFilterStrategy()))
+                .withAlertService(alertService)
+                .withAnonymizationService(new StreetAddressAnonymizationService(new LocalAnonymizationCacheService()))
+                .withWindowSize(windowSize)
+                .build();
 
-        final StreetAddressFilter filter = new StreetAddressFilter(null, new StreetAddressAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+        final StreetAddressFilter filter = new StreetAddressFilter(filterConfiguration);
 
         final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "291 6th Dr.");
 
@@ -187,9 +249,14 @@ public class StreetAddressFilterTest extends AbstractFilterTest {
     @Test
     public void filter13() throws Exception {
 
-        final AlertService alertService = Mockito.mock(AlertService.class);
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(Arrays.asList(new StreetAddressFilterStrategy()))
+                .withAlertService(alertService)
+                .withAnonymizationService(new StreetAddressAnonymizationService(new LocalAnonymizationCacheService()))
+                .withWindowSize(windowSize)
+                .build();
 
-        final StreetAddressFilter filter = new StreetAddressFilter(null, new StreetAddressAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+        final StreetAddressFilter filter = new StreetAddressFilter(filterConfiguration);
 
         final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "9444 Heritage St.");
 
@@ -201,9 +268,14 @@ public class StreetAddressFilterTest extends AbstractFilterTest {
     @Test
     public void filter14() throws Exception {
 
-        final AlertService alertService = Mockito.mock(AlertService.class);
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(Arrays.asList(new StreetAddressFilterStrategy()))
+                .withAlertService(alertService)
+                .withAnonymizationService(new StreetAddressAnonymizationService(new LocalAnonymizationCacheService()))
+                .withWindowSize(windowSize)
+                .build();
 
-        final StreetAddressFilter filter = new StreetAddressFilter(null, new StreetAddressAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+        final StreetAddressFilter filter = new StreetAddressFilter(filterConfiguration);
 
         final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "70 Birchpond Street");
 
@@ -215,9 +287,14 @@ public class StreetAddressFilterTest extends AbstractFilterTest {
     @Test
     public void filter15() throws Exception {
 
-        final AlertService alertService = Mockito.mock(AlertService.class);
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(Arrays.asList(new StreetAddressFilterStrategy()))
+                .withAlertService(alertService)
+                .withAnonymizationService(new StreetAddressAnonymizationService(new LocalAnonymizationCacheService()))
+                .withWindowSize(windowSize)
+                .build();
 
-        final StreetAddressFilter filter = new StreetAddressFilter(null, new StreetAddressAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+        final StreetAddressFilter filter = new StreetAddressFilter(filterConfiguration);
 
         final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "656 S. Inverness St.");
 
@@ -229,9 +306,14 @@ public class StreetAddressFilterTest extends AbstractFilterTest {
     @Test
     public void filter16() throws Exception {
 
-        final AlertService alertService = Mockito.mock(AlertService.class);
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(Arrays.asList(new StreetAddressFilterStrategy()))
+                .withAlertService(alertService)
+                .withAnonymizationService(new StreetAddressAnonymizationService(new LocalAnonymizationCacheService()))
+                .withWindowSize(windowSize)
+                .build();
 
-        final StreetAddressFilter filter = new StreetAddressFilter(null, new StreetAddressAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+        final StreetAddressFilter filter = new StreetAddressFilter(filterConfiguration);
 
         final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "9142 Arlington Court");
 
@@ -243,9 +325,14 @@ public class StreetAddressFilterTest extends AbstractFilterTest {
     @Test
     public void filter17() throws Exception {
 
-        final AlertService alertService = Mockito.mock(AlertService.class);
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(Arrays.asList(new StreetAddressFilterStrategy()))
+                .withAlertService(alertService)
+                .withAnonymizationService(new StreetAddressAnonymizationService(new LocalAnonymizationCacheService()))
+                .withWindowSize(windowSize)
+                .build();
 
-        final StreetAddressFilter filter = new StreetAddressFilter(null, new StreetAddressAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+        final StreetAddressFilter filter = new StreetAddressFilter(filterConfiguration);
 
         final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "4 Devonshire Ct.");
 
@@ -257,9 +344,14 @@ public class StreetAddressFilterTest extends AbstractFilterTest {
     @Test
     public void filter18() throws Exception {
 
-        final AlertService alertService = Mockito.mock(AlertService.class);
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(Arrays.asList(new StreetAddressFilterStrategy()))
+                .withAlertService(alertService)
+                .withAnonymizationService(new StreetAddressAnonymizationService(new LocalAnonymizationCacheService()))
+                .withWindowSize(windowSize)
+                .build();
 
-        final StreetAddressFilter filter = new StreetAddressFilter(null, new StreetAddressAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+        final StreetAddressFilter filter = new StreetAddressFilter(filterConfiguration);
 
         final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "4 Devonshire Ct");
 

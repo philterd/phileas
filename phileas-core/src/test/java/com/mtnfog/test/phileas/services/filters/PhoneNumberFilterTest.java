@@ -1,36 +1,38 @@
 package com.mtnfog.test.phileas.services.filters;
 
 import com.mtnfog.phileas.model.enums.FilterType;
+import com.mtnfog.phileas.model.filter.FilterConfiguration;
 import com.mtnfog.phileas.model.objects.FilterResult;
-import com.mtnfog.phileas.model.objects.Span;
-import com.mtnfog.phileas.model.profile.Crypto;
 import com.mtnfog.phileas.model.profile.filters.strategies.rules.PhoneNumberFilterStrategy;
 import com.mtnfog.phileas.model.services.AlertService;
-import com.mtnfog.phileas.services.anonymization.AlphanumericAnonymizationService;
+import com.mtnfog.phileas.services.anonymization.MacAddressAnonymizationService;
 import com.mtnfog.phileas.services.anonymization.cache.LocalAnonymizationCacheService;
 import com.mtnfog.phileas.services.filters.custom.PhoneNumberRulesFilter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 
 public class PhoneNumberFilterTest extends AbstractFilterTest {
 
     private static final Logger LOGGER = LogManager.getLogger(PhoneNumberFilterTest.class);
 
-    private AlertService alertService = Mockito.mock(AlertService.class);
+    private final AlertService alertService = Mockito.mock(AlertService.class);
 
     @Test
     public void filterPhone1() throws Exception {
 
-        final List<PhoneNumberFilterStrategy> strategies = Arrays.asList(new PhoneNumberFilterStrategy());
-        PhoneNumberRulesFilter filter = new PhoneNumberRulesFilter(strategies, new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(Arrays.asList(new PhoneNumberFilterStrategy()))
+                .withAlertService(alertService)
+                .withAnonymizationService(new MacAddressAnonymizationService(new LocalAnonymizationCacheService()))
+                .withWindowSize(windowSize)
+                .build();
+
+        final PhoneNumberRulesFilter filter = new PhoneNumberRulesFilter(filterConfiguration);
 
         final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "the number is (123) 456-7890.");
         Assertions.assertEquals(1, filterResult.getSpans().size());
@@ -43,8 +45,14 @@ public class PhoneNumberFilterTest extends AbstractFilterTest {
     @Test
     public void filterPhone2() throws Exception {
 
-        final List<PhoneNumberFilterStrategy> strategies = Arrays.asList(new PhoneNumberFilterStrategy());
-        PhoneNumberRulesFilter filter = new PhoneNumberRulesFilter(strategies, new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(Arrays.asList(new PhoneNumberFilterStrategy()))
+                .withAlertService(alertService)
+                .withAnonymizationService(new MacAddressAnonymizationService(new LocalAnonymizationCacheService()))
+                .withWindowSize(windowSize)
+                .build();
+
+        final PhoneNumberRulesFilter filter = new PhoneNumberRulesFilter(filterConfiguration);
 
         final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "the number is (123) 456-7890 and (123) 456-7890.");
         Assertions.assertEquals(2, filterResult.getSpans().size());
@@ -58,8 +66,14 @@ public class PhoneNumberFilterTest extends AbstractFilterTest {
     @Test
     public void filterPhone3() throws Exception {
 
-        final List<PhoneNumberFilterStrategy> strategies = Arrays.asList(new PhoneNumberFilterStrategy());
-        PhoneNumberRulesFilter filter = new PhoneNumberRulesFilter(strategies, new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(Arrays.asList(new PhoneNumberFilterStrategy()))
+                .withAlertService(alertService)
+                .withAnonymizationService(new MacAddressAnonymizationService(new LocalAnonymizationCacheService()))
+                .withWindowSize(windowSize)
+                .build();
+
+        final PhoneNumberRulesFilter filter = new PhoneNumberRulesFilter(filterConfiguration);
 
         final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "the number is 123-456-7890.");
         Assertions.assertEquals(1, filterResult.getSpans().size());
@@ -71,8 +85,14 @@ public class PhoneNumberFilterTest extends AbstractFilterTest {
     @Test
     public void filterPhone4() throws Exception {
 
-        final List<PhoneNumberFilterStrategy> strategies = Arrays.asList(new PhoneNumberFilterStrategy());
-        PhoneNumberRulesFilter filter = new PhoneNumberRulesFilter(strategies, new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(Arrays.asList(new PhoneNumberFilterStrategy()))
+                .withAlertService(alertService)
+                .withAnonymizationService(new MacAddressAnonymizationService(new LocalAnonymizationCacheService()))
+                .withWindowSize(windowSize)
+                .build();
+
+        final PhoneNumberRulesFilter filter = new PhoneNumberRulesFilter(filterConfiguration);
 
         final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "the number is 123-456-7890 and he was ok.");
         Assertions.assertEquals(1, filterResult.getSpans().size());
@@ -83,8 +103,14 @@ public class PhoneNumberFilterTest extends AbstractFilterTest {
     @Test
     public void filterPhone5() throws Exception {
 
-        final List<PhoneNumberFilterStrategy> strategies = Arrays.asList(new PhoneNumberFilterStrategy());
-        PhoneNumberRulesFilter filter = new PhoneNumberRulesFilter(strategies, new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(Arrays.asList(new PhoneNumberFilterStrategy()))
+                .withAlertService(alertService)
+                .withAnonymizationService(new MacAddressAnonymizationService(new LocalAnonymizationCacheService()))
+                .withWindowSize(windowSize)
+                .build();
+
+        final PhoneNumberRulesFilter filter = new PhoneNumberRulesFilter(filterConfiguration);
 
         final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "the number is ( 800 ) 123-4567 and he was ok.");
         Assertions.assertEquals(1, filterResult.getSpans().size());
@@ -96,8 +122,14 @@ public class PhoneNumberFilterTest extends AbstractFilterTest {
     @Test
     public void filterPhone6() throws Exception {
 
-        final List<PhoneNumberFilterStrategy> strategies = Arrays.asList(new PhoneNumberFilterStrategy());
-        PhoneNumberRulesFilter filter = new PhoneNumberRulesFilter(strategies, new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(Arrays.asList(new PhoneNumberFilterStrategy()))
+                .withAlertService(alertService)
+                .withAnonymizationService(new MacAddressAnonymizationService(new LocalAnonymizationCacheService()))
+                .withWindowSize(windowSize)
+                .build();
+
+        final PhoneNumberRulesFilter filter = new PhoneNumberRulesFilter(filterConfiguration);
 
         final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "the number is (800) 123-4567 x532 and he was ok.");
         showSpans(filterResult.getSpans());
@@ -111,8 +143,14 @@ public class PhoneNumberFilterTest extends AbstractFilterTest {
     @Test
     public void filterPhone7() throws Exception {
 
-        final List<PhoneNumberFilterStrategy> strategies = Arrays.asList(new PhoneNumberFilterStrategy());
-        PhoneNumberRulesFilter filter = new PhoneNumberRulesFilter(strategies, new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(Arrays.asList(new PhoneNumberFilterStrategy()))
+                .withAlertService(alertService)
+                .withAnonymizationService(new MacAddressAnonymizationService(new LocalAnonymizationCacheService()))
+                .withWindowSize(windowSize)
+                .build();
+
+        final PhoneNumberRulesFilter filter = new PhoneNumberRulesFilter(filterConfiguration);
 
         final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "the number is (800) 123-4567x532 and he was ok.");
         showSpans(filterResult.getSpans());
@@ -126,8 +164,14 @@ public class PhoneNumberFilterTest extends AbstractFilterTest {
     @Test
     public void filterPhone8() throws Exception {
 
-        final List<PhoneNumberFilterStrategy> strategies = Arrays.asList(new PhoneNumberFilterStrategy());
-        PhoneNumberRulesFilter filter = new PhoneNumberRulesFilter(strategies, new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(Arrays.asList(new PhoneNumberFilterStrategy()))
+                .withAlertService(alertService)
+                .withAnonymizationService(new MacAddressAnonymizationService(new LocalAnonymizationCacheService()))
+                .withWindowSize(windowSize)
+                .build();
+
+        final PhoneNumberRulesFilter filter = new PhoneNumberRulesFilter(filterConfiguration);
 
         final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "7 64116-3220");
         showSpans(filterResult.getSpans());

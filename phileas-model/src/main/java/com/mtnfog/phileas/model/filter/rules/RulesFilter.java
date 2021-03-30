@@ -2,16 +2,12 @@ package com.mtnfog.phileas.model.filter.rules;
 
 import com.mtnfog.phileas.model.enums.FilterType;
 import com.mtnfog.phileas.model.filter.Filter;
+import com.mtnfog.phileas.model.filter.FilterConfiguration;
 import com.mtnfog.phileas.model.objects.Analyzer;
 import com.mtnfog.phileas.model.objects.FilterPattern;
 import com.mtnfog.phileas.model.objects.Replacement;
 import com.mtnfog.phileas.model.objects.Span;
-import com.mtnfog.phileas.model.profile.Crypto;
 import com.mtnfog.phileas.model.profile.FilterProfile;
-import com.mtnfog.phileas.model.profile.IgnoredPattern;
-import com.mtnfog.phileas.model.profile.filters.strategies.AbstractFilterStrategy;
-import com.mtnfog.phileas.model.services.AlertService;
-import com.mtnfog.phileas.model.services.AnonymizationService;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -28,11 +24,11 @@ public abstract class RulesFilter extends Filter {
 
     /**
      * Creates a new rule-based filter.
-     * @param filterType The {@link FilterType type} of the filter.
-     * @param anonymizationService The {@link AnonymizationService} for this filter.
+     * @param filterType
+      * @param filterConfiguration The {@link FilterConfiguration} for the filter.
      */
-    public RulesFilter(FilterType filterType, List<? extends AbstractFilterStrategy> strategies, AnonymizationService anonymizationService, AlertService alertService, Set<String> ignored, Set<String> ignoredFiles, List<IgnoredPattern> ignoredPatterns, Crypto crypto, int windowSize) {
-        super(filterType, strategies, anonymizationService, alertService, ignored, ignoredFiles, ignoredPatterns, crypto, windowSize);
+    public RulesFilter(FilterType filterType, FilterConfiguration filterConfiguration) {
+        super(filterType, filterConfiguration);
     }
 
     // TODO: Move this to Filter.java to all filters can have access to it.

@@ -2,10 +2,9 @@ package com.mtnfog.test.phileas.services.filters;
 
 import com.mtnfog.phileas.model.enums.FilterType;
 import com.mtnfog.phileas.model.enums.SensitivityLevel;
+import com.mtnfog.phileas.model.filter.FilterConfiguration;
 import com.mtnfog.phileas.model.filter.rules.dictionary.LuceneDictionaryFilter;
 import com.mtnfog.phileas.model.objects.FilterResult;
-import com.mtnfog.phileas.model.objects.Span;
-import com.mtnfog.phileas.model.profile.Crypto;
 import com.mtnfog.phileas.model.profile.filters.strategies.dynamic.CityFilterStrategy;
 import com.mtnfog.phileas.model.services.AlertService;
 import com.mtnfog.phileas.model.services.AnonymizationService;
@@ -19,8 +18,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
@@ -42,8 +39,14 @@ public class CityFilterTest extends AbstractFilterTest {
     @Test
     public void filterCitiesClose() throws Exception {
 
-        final List<CityFilterStrategy> strategies = Arrays.asList(new CityFilterStrategy());
-        final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.LOCATION_CITY, strategies, INDEX_DIRECTORY, SensitivityLevel.LOW, false, anonymizationService, alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(Arrays.asList(new CityFilterStrategy()))
+                .withAlertService(alertService)
+                .withAnonymizationService(new CityAnonymizationService(new LocalAnonymizationCacheService()))
+                .withWindowSize(windowSize)
+                .build();
+
+        final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.LOCATION_CITY, filterConfiguration, INDEX_DIRECTORY, SensitivityLevel.LOW, false);
 
         assertDoesNotThrow(() -> filter.close());
 
@@ -52,8 +55,14 @@ public class CityFilterTest extends AbstractFilterTest {
     @Test
     public void filterCitiesExactMatch() throws Exception {
 
-        final List<CityFilterStrategy> strategies = Arrays.asList(new CityFilterStrategy());
-        final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.LOCATION_CITY, strategies, INDEX_DIRECTORY, SensitivityLevel.MEDIUM, false, anonymizationService, alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(Arrays.asList(new CityFilterStrategy()))
+                .withAlertService(alertService)
+                .withAnonymizationService(new CityAnonymizationService(new LocalAnonymizationCacheService()))
+                .withWindowSize(windowSize)
+                .build();
+
+        final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.LOCATION_CITY, filterConfiguration, INDEX_DIRECTORY, SensitivityLevel.MEDIUM, false);
 
         FilterResult filterResult = filter.filter(getFilterProfile(SensitivityLevel.MEDIUM), "context", "documentid", 0,"Lived in Washington.");
 
@@ -67,8 +76,14 @@ public class CityFilterTest extends AbstractFilterTest {
     @Test
     public void filterCitiesExactMatch2() throws Exception {
 
-        final List<CityFilterStrategy> strategies = Arrays.asList(new CityFilterStrategy());
-        final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.LOCATION_CITY, strategies, INDEX_DIRECTORY, SensitivityLevel.HIGH, false, anonymizationService, alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(Arrays.asList(new CityFilterStrategy()))
+                .withAlertService(alertService)
+                .withAnonymizationService(new CityAnonymizationService(new LocalAnonymizationCacheService()))
+                .withWindowSize(windowSize)
+                .build();
+
+        final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.LOCATION_CITY, filterConfiguration, INDEX_DIRECTORY, SensitivityLevel.HIGH, false);
 
         FilterResult filterResult = filter.filter(getFilterProfile(SensitivityLevel.HIGH), "context", "documentid",0, "Lived in New York.");
 
@@ -84,8 +99,14 @@ public class CityFilterTest extends AbstractFilterTest {
     @Test
     public void filterCitiesLow() throws Exception {
 
-        final List<CityFilterStrategy> strategies = Arrays.asList(new CityFilterStrategy());
-        final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.LOCATION_CITY, strategies, INDEX_DIRECTORY, SensitivityLevel.LOW, false, anonymizationService, alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(Arrays.asList(new CityFilterStrategy()))
+                .withAlertService(alertService)
+                .withAnonymizationService(new CityAnonymizationService(new LocalAnonymizationCacheService()))
+                .withWindowSize(windowSize)
+                .build();
+
+        final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.LOCATION_CITY, filterConfiguration, INDEX_DIRECTORY, SensitivityLevel.LOW, false);
 
         FilterResult filterResult = filter.filter(getFilterProfile(SensitivityLevel.LOW), "context", "documentid", 0,"Lived in Wshington");
 
@@ -98,8 +119,14 @@ public class CityFilterTest extends AbstractFilterTest {
     @Test
     public void filterCitiesMedium() throws Exception {
 
-        final List<CityFilterStrategy> strategies = Arrays.asList(new CityFilterStrategy());
-        final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.LOCATION_CITY, strategies, INDEX_DIRECTORY, SensitivityLevel.MEDIUM, false, anonymizationService, alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(Arrays.asList(new CityFilterStrategy()))
+                .withAlertService(alertService)
+                .withAnonymizationService(new CityAnonymizationService(new LocalAnonymizationCacheService()))
+                .withWindowSize(windowSize)
+                .build();
+
+        final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.LOCATION_CITY, filterConfiguration, INDEX_DIRECTORY, SensitivityLevel.MEDIUM, false);
 
         FilterResult filterResult = filter.filter(getFilterProfile(SensitivityLevel.MEDIUM), "context", "documentid", 0,"Lived in Wshington");
 
@@ -113,8 +140,14 @@ public class CityFilterTest extends AbstractFilterTest {
     @Test
     public void filterCitiesHigh() throws Exception {
 
-        final List<CityFilterStrategy> strategies = Arrays.asList(new CityFilterStrategy());
-        final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.LOCATION_CITY, strategies, INDEX_DIRECTORY, SensitivityLevel.HIGH, false, anonymizationService, alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(Arrays.asList(new CityFilterStrategy()))
+                .withAlertService(alertService)
+                .withAnonymizationService(new CityAnonymizationService(new LocalAnonymizationCacheService()))
+                .withWindowSize(windowSize)
+                .build();
+
+        final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.LOCATION_CITY, filterConfiguration, INDEX_DIRECTORY, SensitivityLevel.HIGH, false);
 
         FilterResult filterResult = filter.filter(getFilterProfile(SensitivityLevel.LOW), "context", "documentid", 0,"Lived in Wasinton");
 

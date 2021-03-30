@@ -21,7 +21,7 @@ public class PassportNumberFilterStrategy extends AbstractFilterStrategy {
 
     private static final Logger LOGGER = LogManager.getLogger(PassportNumberFilterStrategy.class);
 
-    private static FilterType filterType = FilterType.AGE;
+    private static FilterType filterType = FilterType.PASSPORT_NUMBER;
 
     @Override
     public FilterType getFilterType() {

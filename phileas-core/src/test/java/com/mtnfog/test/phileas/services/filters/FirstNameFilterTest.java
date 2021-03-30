@@ -2,13 +2,11 @@ package com.mtnfog.test.phileas.services.filters;
 
 import com.mtnfog.phileas.model.enums.FilterType;
 import com.mtnfog.phileas.model.enums.SensitivityLevel;
+import com.mtnfog.phileas.model.filter.FilterConfiguration;
 import com.mtnfog.phileas.model.filter.rules.dictionary.LuceneDictionaryFilter;
 import com.mtnfog.phileas.model.objects.FilterResult;
-import com.mtnfog.phileas.model.objects.Span;
-import com.mtnfog.phileas.model.profile.Crypto;
 import com.mtnfog.phileas.model.profile.filters.strategies.dynamic.FirstNameFilterStrategy;
 import com.mtnfog.phileas.model.services.AlertService;
-import com.mtnfog.phileas.model.services.AnonymizationService;
 import com.mtnfog.phileas.services.anonymization.PersonsAnonymizationService;
 import com.mtnfog.phileas.services.anonymization.cache.LocalAnonymizationCacheService;
 import org.apache.logging.log4j.LogManager;
@@ -19,8 +17,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 
 public class FirstNameFilterTest extends AbstractFilterTest {
 
@@ -39,10 +35,14 @@ public class FirstNameFilterTest extends AbstractFilterTest {
     @Test
     public void filterLow() throws Exception {
 
-        AnonymizationService anonymizationService = new PersonsAnonymizationService(new LocalAnonymizationCacheService());
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(Arrays.asList(new FirstNameFilterStrategy()))
+                .withAlertService(alertService)
+                .withAnonymizationService(new PersonsAnonymizationService(new LocalAnonymizationCacheService()))
+                .withWindowSize(windowSize)
+                .build();
 
-        final List<FirstNameFilterStrategy> strategies = Arrays.asList(new FirstNameFilterStrategy());
-        final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.FIRST_NAME, strategies, INDEX_DIRECTORY, SensitivityLevel.LOW, false, anonymizationService, alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+        final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.FIRST_NAME, filterConfiguration, INDEX_DIRECTORY, SensitivityLevel.LOW, false);
 
         final FilterResult filterResult = filter.filter(getFilterProfile(SensitivityLevel.LOW), "context", "documentid", 0,"John");
         showSpans(filterResult.getSpans());
@@ -53,10 +53,14 @@ public class FirstNameFilterTest extends AbstractFilterTest {
     @Test
     public void filterMedium1() throws Exception {
 
-        AnonymizationService anonymizationService = new PersonsAnonymizationService(new LocalAnonymizationCacheService());
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(Arrays.asList(new FirstNameFilterStrategy()))
+                .withAlertService(alertService)
+                .withAnonymizationService(new PersonsAnonymizationService(new LocalAnonymizationCacheService()))
+                .withWindowSize(windowSize)
+                .build();
 
-        final List<FirstNameFilterStrategy> strategies = Arrays.asList(new FirstNameFilterStrategy());
-        final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.FIRST_NAME, strategies, INDEX_DIRECTORY, SensitivityLevel.MEDIUM, false, anonymizationService, alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+        final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.FIRST_NAME, filterConfiguration, INDEX_DIRECTORY, SensitivityLevel.MEDIUM, false);
 
         final FilterResult filterResult = filter.filter(getFilterProfile(SensitivityLevel.MEDIUM), "context", "documentid", 0, "Michel had eye cancer");
         showSpans(filterResult.getSpans());
@@ -67,10 +71,14 @@ public class FirstNameFilterTest extends AbstractFilterTest {
     @Test
     public void filterMedium2() throws Exception {
 
-        AnonymizationService anonymizationService = new PersonsAnonymizationService(new LocalAnonymizationCacheService());
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(Arrays.asList(new FirstNameFilterStrategy()))
+                .withAlertService(alertService)
+                .withAnonymizationService(new PersonsAnonymizationService(new LocalAnonymizationCacheService()))
+                .withWindowSize(windowSize)
+                .build();
 
-        final List<FirstNameFilterStrategy> strategies = Arrays.asList(new FirstNameFilterStrategy());
-        final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.FIRST_NAME, strategies, INDEX_DIRECTORY, SensitivityLevel.LOW, false, anonymizationService, alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+        final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.FIRST_NAME, filterConfiguration, INDEX_DIRECTORY, SensitivityLevel.LOW, false);
 
         final FilterResult filterResult = filter.filter(getFilterProfile(SensitivityLevel.MEDIUM), "context", "documentid", 0,"Jennifer had eye cancer");
         showSpans(filterResult.getSpans());
@@ -81,10 +89,14 @@ public class FirstNameFilterTest extends AbstractFilterTest {
     @Test
     public void filterHigh() throws Exception {
 
-        AnonymizationService anonymizationService = new PersonsAnonymizationService(new LocalAnonymizationCacheService());
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(Arrays.asList(new FirstNameFilterStrategy()))
+                .withAlertService(alertService)
+                .withAnonymizationService(new PersonsAnonymizationService(new LocalAnonymizationCacheService()))
+                .withWindowSize(windowSize)
+                .build();
 
-        final List<FirstNameFilterStrategy> strategies = Arrays.asList(new FirstNameFilterStrategy());
-        final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.FIRST_NAME, strategies, INDEX_DIRECTORY, SensitivityLevel.HIGH,false, anonymizationService, alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+        final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.FIRST_NAME, filterConfiguration, INDEX_DIRECTORY, SensitivityLevel.HIGH, false);
 
         final FilterResult filterResult = filter.filter(getFilterProfile(SensitivityLevel.HIGH), "context", "documentid", 0,"Sandra in Washington");
         showSpans(filterResult.getSpans());
@@ -95,11 +107,14 @@ public class FirstNameFilterTest extends AbstractFilterTest {
     @Test
     public void filter1() throws Exception {
 
-        AnonymizationService anonymizationService = new PersonsAnonymizationService(new LocalAnonymizationCacheService());
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(Arrays.asList(new FirstNameFilterStrategy()))
+                .withAlertService(alertService)
+                .withAnonymizationService(new PersonsAnonymizationService(new LocalAnonymizationCacheService()))
+                .withWindowSize(windowSize)
+                .build();
 
-        final List<FirstNameFilterStrategy> strategies = Arrays.asList(new FirstNameFilterStrategy());
-
-        final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.FIRST_NAME, strategies, INDEX_DIRECTORY, SensitivityLevel.MEDIUM, false, anonymizationService, alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+        final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.FIRST_NAME, filterConfiguration, INDEX_DIRECTORY, SensitivityLevel.MEDIUM, false);
 
         final FilterResult filterResult = filter.filter(getFilterProfile(SensitivityLevel.HIGH), "context", "documentid", 0,"Melissa");
 
@@ -111,10 +126,14 @@ public class FirstNameFilterTest extends AbstractFilterTest {
     @Test
     public void filter2() throws Exception {
 
-        AnonymizationService anonymizationService = new PersonsAnonymizationService(new LocalAnonymizationCacheService());
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(Arrays.asList(new FirstNameFilterStrategy()))
+                .withAlertService(alertService)
+                .withAnonymizationService(new PersonsAnonymizationService(new LocalAnonymizationCacheService()))
+                .withWindowSize(windowSize)
+                .build();
 
-        final List<FirstNameFilterStrategy> strategies = Arrays.asList(new FirstNameFilterStrategy());
-        final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.FIRST_NAME, strategies, INDEX_DIRECTORY, SensitivityLevel.LOW, false, anonymizationService, alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+        final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.FIRST_NAME, filterConfiguration, INDEX_DIRECTORY, SensitivityLevel.LOW, false);
 
         final FilterResult filterResult = filter.filter(getFilterProfile(SensitivityLevel.LOW), "context", "documentid", 0,"que");
         showSpans(filterResult.getSpans());
@@ -125,10 +144,14 @@ public class FirstNameFilterTest extends AbstractFilterTest {
     @Test
     public void filter3() throws Exception {
 
-        AnonymizationService anonymizationService = new PersonsAnonymizationService(new LocalAnonymizationCacheService());
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(Arrays.asList(new FirstNameFilterStrategy()))
+                .withAlertService(alertService)
+                .withAnonymizationService(new PersonsAnonymizationService(new LocalAnonymizationCacheService()))
+                .withWindowSize(windowSize)
+                .build();
 
-        final List<FirstNameFilterStrategy> strategies = Arrays.asList(new FirstNameFilterStrategy());
-        final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.FIRST_NAME, strategies, INDEX_DIRECTORY, SensitivityLevel.LOW, false, anonymizationService, alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+        final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.FIRST_NAME, filterConfiguration, INDEX_DIRECTORY, SensitivityLevel.LOW, false);
 
         final FilterResult filterResult = filter.filter(getFilterProfile(SensitivityLevel.LOW), "context", "documentid", 0,"dat");
         showSpans(filterResult.getSpans());
@@ -139,10 +162,14 @@ public class FirstNameFilterTest extends AbstractFilterTest {
     @Test
     public void filter4() throws Exception {
 
-        AnonymizationService anonymizationService = new PersonsAnonymizationService(new LocalAnonymizationCacheService());
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(Arrays.asList(new FirstNameFilterStrategy()))
+                .withAlertService(alertService)
+                .withAnonymizationService(new PersonsAnonymizationService(new LocalAnonymizationCacheService()))
+                .withWindowSize(windowSize)
+                .build();
 
-        final List<FirstNameFilterStrategy> strategies = Arrays.asList(new FirstNameFilterStrategy());
-        final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.FIRST_NAME, strategies, INDEX_DIRECTORY, SensitivityLevel.LOW, false, anonymizationService, alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+        final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.FIRST_NAME, filterConfiguration, INDEX_DIRECTORY, SensitivityLevel.LOW, false);
 
         final FilterResult filterResult = filter.filter(getFilterProfile(SensitivityLevel.LOW), "context", "documentid", 0,"joie");
         showSpans(filterResult.getSpans());
@@ -153,10 +180,14 @@ public class FirstNameFilterTest extends AbstractFilterTest {
     @Test
     public void filter5() throws Exception {
 
-        AnonymizationService anonymizationService = new PersonsAnonymizationService(new LocalAnonymizationCacheService());
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(Arrays.asList(new FirstNameFilterStrategy()))
+                .withAlertService(alertService)
+                .withAnonymizationService(new PersonsAnonymizationService(new LocalAnonymizationCacheService()))
+                .withWindowSize(windowSize)
+                .build();
 
-        final List<FirstNameFilterStrategy> strategies = Arrays.asList(new FirstNameFilterStrategy());
-        final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.FIRST_NAME, strategies, INDEX_DIRECTORY, SensitivityLevel.LOW, false, anonymizationService, alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+        final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.FIRST_NAME, filterConfiguration, INDEX_DIRECTORY, SensitivityLevel.LOW, false);
 
         final FilterResult filterResult = filter.filter(getFilterProfile(SensitivityLevel.LOW), "context", "documentid", 0,"John");
         showSpans(filterResult.getSpans());
@@ -167,10 +198,14 @@ public class FirstNameFilterTest extends AbstractFilterTest {
     @Test
     public void filter6() throws Exception {
 
-        AnonymizationService anonymizationService = new PersonsAnonymizationService(new LocalAnonymizationCacheService());
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(Arrays.asList(new FirstNameFilterStrategy()))
+                .withAlertService(alertService)
+                .withAnonymizationService(new PersonsAnonymizationService(new LocalAnonymizationCacheService()))
+                .withWindowSize(windowSize)
+                .build();
 
-        final List<FirstNameFilterStrategy> strategies = Arrays.asList(new FirstNameFilterStrategy());
-        final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.FIRST_NAME, strategies, INDEX_DIRECTORY, SensitivityLevel.LOW, false, anonymizationService, alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+        final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.FIRST_NAME, filterConfiguration, INDEX_DIRECTORY, SensitivityLevel.LOW, false);
 
         final FilterResult filterResult = filter.filter(getFilterProfile(SensitivityLevel.LOW), "context", "documentid", 0,"Smith,Melissa A,MD");
         showSpans(filterResult.getSpans());

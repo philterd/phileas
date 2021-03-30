@@ -1,10 +1,9 @@
 package com.mtnfog.test.phileas.services.filters;
 
 import com.mtnfog.phileas.model.enums.FilterType;
-import com.mtnfog.phileas.model.filter.Filter;
+import com.mtnfog.phileas.model.filter.FilterConfiguration;
 import com.mtnfog.phileas.model.objects.FilterResult;
-import com.mtnfog.phileas.model.objects.Span;
-import com.mtnfog.phileas.model.profile.Crypto;
+import com.mtnfog.phileas.model.profile.filters.strategies.rules.DriversLicenseFilterStrategy;
 import com.mtnfog.phileas.model.services.AlertService;
 import com.mtnfog.phileas.services.anonymization.AlphanumericAnonymizationService;
 import com.mtnfog.phileas.services.anonymization.cache.LocalAnonymizationCacheService;
@@ -13,21 +12,23 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import java.util.Collections;
-import java.util.List;
+import java.util.Arrays;
 
 public class DriversLicenseFilterTest extends AbstractFilterTest {
 
     private AlertService alertService = Mockito.mock(AlertService.class);
 
-    private Filter getFilter() {
-        return new DriversLicenseFilter(null, new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
-    }
-
     @Test
     public void filter1() throws Exception {
 
-        final Filter filter = getFilter();
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(Arrays.asList(new DriversLicenseFilterStrategy()))
+                .withAlertService(alertService)
+                .withAnonymizationService(new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()))
+                .withWindowSize(windowSize)
+                .build();
+
+        final DriversLicenseFilter filter = new DriversLicenseFilter(filterConfiguration);
 
         final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "the number is 123456789.");
 

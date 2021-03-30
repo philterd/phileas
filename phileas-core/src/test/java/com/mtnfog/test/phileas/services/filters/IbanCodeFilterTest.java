@@ -2,8 +2,9 @@ package com.mtnfog.test.phileas.services.filters;
 
 import com.mtnfog.phileas.model.enums.FilterType;
 import com.mtnfog.phileas.model.filter.Filter;
+import com.mtnfog.phileas.model.filter.FilterConfiguration;
 import com.mtnfog.phileas.model.objects.FilterResult;
-import com.mtnfog.phileas.model.profile.Crypto;
+import com.mtnfog.phileas.model.profile.filters.strategies.rules.IbanCodeFilterStrategy;
 import com.mtnfog.phileas.model.services.AlertService;
 import com.mtnfog.phileas.services.anonymization.IbanCodeAnonymizationService;
 import com.mtnfog.phileas.services.anonymization.cache.LocalAnonymizationCacheService;
@@ -12,14 +13,25 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import java.util.Collections;
+import java.util.Arrays;
 
 public class IbanCodeFilterTest extends AbstractFilterTest {
 
-    private AlertService alertService = Mockito.mock(AlertService.class);
+    private final AlertService alertService = Mockito.mock(AlertService.class);
 
     private Filter getFilter(boolean validate, boolean allowSpaces) {
-        return new IbanCodeFilter(null, new IbanCodeAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), validate, allowSpaces, windowSize);
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(Arrays.asList(new IbanCodeFilterStrategy()))
+                .withAlertService(alertService)
+                .withAnonymizationService(new IbanCodeAnonymizationService(new LocalAnonymizationCacheService()))
+                .withWindowSize(windowSize)
+                .build();
+
+        final IbanCodeFilter filter = new IbanCodeFilter(filterConfiguration, validate, allowSpaces);
+
+        return filter;
+
     }
 
     @Test

@@ -3,15 +3,11 @@ package com.mtnfog.phileas.model.filter.rules.dictionary;
 import com.google.common.hash.BloomFilter;
 import com.google.common.hash.Funnels;
 import com.mtnfog.phileas.model.enums.FilterType;
+import com.mtnfog.phileas.model.filter.FilterConfiguration;
 import com.mtnfog.phileas.model.objects.FilterResult;
 import com.mtnfog.phileas.model.objects.Replacement;
 import com.mtnfog.phileas.model.objects.Span;
-import com.mtnfog.phileas.model.profile.Crypto;
 import com.mtnfog.phileas.model.profile.FilterProfile;
-import com.mtnfog.phileas.model.profile.IgnoredPattern;
-import com.mtnfog.phileas.model.profile.filters.strategies.AbstractFilterStrategy;
-import com.mtnfog.phileas.model.services.AlertService;
-import com.mtnfog.phileas.model.services.AnonymizationService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.lucene.analysis.shingle.ShingleFilter;
@@ -35,20 +31,20 @@ public class BloomFilterDictionaryFilter extends DictionaryFilter {
     private BloomFilter<String> bloomFilter;
     private Set<String> lowerCaseTerms;
 
+    /**
+     * Creates a new bloom filter-based filter.
+     * @param filterConfiguration The {@link FilterConfiguration} for the filter.
+     * @param terms
+     * @param classification
+     * @param fpp
+     */
     public BloomFilterDictionaryFilter(FilterType filterType,
-                                       List<? extends AbstractFilterStrategy> strategies,
+                                       FilterConfiguration filterConfiguration,
                                        Set<String> terms,
                                        String classification,
-                                       double fpp,
-                                       AnonymizationService anonymizationService,
-                                       AlertService alertService,
-                                       Set<String> ignored,
-                                       Set<String> ignoredFiles,
-                                       List<IgnoredPattern> ignoredPatterns,
-                                       Crypto crypto,
-                                       int windowSize) {
+                                       double fpp) {
 
-        super(filterType, strategies, anonymizationService, alertService, ignored, ignoredFiles, ignoredPatterns, crypto, windowSize);
+        super(FilterType.CUSTOM_DICTIONARY, filterConfiguration);
 
         this.lowerCaseTerms = new HashSet<>();
         this.bloomFilter = BloomFilter.create(Funnels.stringFunnel(Charset.defaultCharset()), terms.size(), fpp);

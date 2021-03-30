@@ -2,10 +2,9 @@ package com.mtnfog.test.phileas.services.ai;
 
 import com.google.gson.Gson;
 import com.mtnfog.phileas.configuration.PhileasConfiguration;
-import com.mtnfog.phileas.model.enums.FilterType;
+import com.mtnfog.phileas.model.filter.FilterConfiguration;
 import com.mtnfog.phileas.model.objects.FilterResult;
 import com.mtnfog.phileas.model.objects.Span;
-import com.mtnfog.phileas.model.profile.Crypto;
 import com.mtnfog.phileas.model.profile.FilterProfile;
 import com.mtnfog.phileas.model.profile.Identifiers;
 import com.mtnfog.phileas.model.profile.filters.Ner;
@@ -92,7 +91,13 @@ public class PyTorchFilterTest {
 
         final Map<String, Double> thresholds = new LinkedHashMap<>();
 
-        final PyTorchFilter t = new PyTorchFilter(baseUrl, FilterType.NER_ENTITY, getStrategies(), phileasConfiguration, "PER", stats, metricsService, anonymizationService, alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(),false, thresholds, new Crypto(), windowSize);
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(getStrategies())
+                .withAnonymizationService(anonymizationService)
+                .withAlertService(alertService)
+                .build();
+
+        final PyTorchFilter t = new PyTorchFilter(filterConfiguration, baseUrl, phileasConfiguration, "PER", stats, metricsService,false, thresholds);
 
         final FilterResult filterResult = t.filter(getFilterProfile(), "context", "doc", 0, "John Smith lives in New York");
 
@@ -120,7 +125,14 @@ public class PyTorchFilterTest {
         final Map<String, Double> thresholds = new LinkedHashMap<>();
         thresholds.put("PER", 0.6);
 
-        final PyTorchFilter t = new PyTorchFilter(baseUrl, FilterType.NER_ENTITY, getStrategies(), phileasConfiguration, "PER", stats, metricsService, anonymizationService, alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(),false, thresholds, new Crypto(), windowSize);
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(getStrategies())
+                .withAnonymizationService(anonymizationService)
+                .withAlertService(alertService)
+                .build();
+
+        final PyTorchFilter t = new PyTorchFilter(filterConfiguration, baseUrl, phileasConfiguration, "PER", stats, metricsService,false, thresholds);
+
 
         final FilterResult filterResult = t.filter(getFilterProfile(), "context", "doc", 0, "John Smith lives in New York");
 
@@ -149,7 +161,14 @@ public class PyTorchFilterTest {
         final Map<String, Double> thresholds = new LinkedHashMap<>();
         thresholds.put("PER", 0.3);
 
-        final PyTorchFilter t = new PyTorchFilter(baseUrl, FilterType.NER_ENTITY, getStrategies(), phileasConfiguration, "PER", stats, metricsService, anonymizationService, alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(),false, thresholds, new Crypto(), windowSize);
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(getStrategies())
+                .withAnonymizationService(anonymizationService)
+                .withAlertService(alertService)
+                .build();
+
+        final PyTorchFilter t = new PyTorchFilter(filterConfiguration, baseUrl, phileasConfiguration, "PER", stats, metricsService,false, thresholds);
+
 
         final FilterResult filterResult = t.filter(getFilterProfile(), "context", "doc", 0, "John Smith lives in New York");
 
@@ -179,8 +198,13 @@ public class PyTorchFilterTest {
 
         this.mockServer.enqueue(new MockResponse().setResponseCode(200).setBody("{\"c\": \"context\", \"d\": \"docid\", \"p\": \"0\", \"spans\": [{\"text\":\"test\",\"tag\":\"LOC\",\"score\":0.5,\"start\":1,\"end\":2}]}"));
 
-        final PyTorchFilter t = new PyTorchFilter(baseUrl, FilterType.NER_ENTITY, getStrategies(), phileasConfiguration, "LOC",
-                stats, metricsService, anonymizationService, alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), false, thresholds, new Crypto(), windowSize);
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(getStrategies())
+                .withAnonymizationService(anonymizationService)
+                .withAlertService(alertService)
+                .build();
+
+        final PyTorchFilter t = new PyTorchFilter(filterConfiguration, baseUrl, phileasConfiguration, "LOC", stats, metricsService,false, thresholds);
 
         final FilterResult filterResult = t.filter(getFilterProfile(), "context", "docid", 0,"John Smith lives in New York");
 

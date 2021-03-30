@@ -1,18 +1,11 @@
 package com.mtnfog.phileas.model.filter.dynamic;
 
 import com.mtnfog.phileas.model.enums.FilterType;
-import com.mtnfog.phileas.model.profile.Crypto;
-import com.mtnfog.phileas.model.profile.IgnoredPattern;
-import com.mtnfog.phileas.model.profile.filters.strategies.AbstractFilterStrategy;
-import com.mtnfog.phileas.model.services.AlertService;
-import com.mtnfog.phileas.model.services.AnonymizationService;
+import com.mtnfog.phileas.model.filter.FilterConfiguration;
 import com.mtnfog.phileas.model.services.MetricsService;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 
-import java.io.Serializable;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * A dynamic filter that operates using named-entity recognition.
@@ -29,26 +22,19 @@ public abstract class NerFilter extends DynamicFilter {
     /**
      * Creates a new filter.
      *
-     * @param filterType The {@link FilterType type} of the filter.
+     * @param filterConfiguration The {@link FilterConfiguration} for the filter.
      * @param stats A map of {@link DescriptiveStatistics}.
      * @param metricsService The {@link MetricsService}.
-     * @param anonymizationService The {@link AnonymizationService} for this filter.
+     * @param removePunctuation
+     * @param thresholds
      */
-    public NerFilter(FilterType filterType,
-                     List<? extends AbstractFilterStrategy> strategies,
+    public NerFilter(FilterConfiguration filterConfiguration,
                      Map<String, DescriptiveStatistics> stats,
                      MetricsService metricsService,
-                     AnonymizationService anonymizationService,
-                     AlertService alertService,
-                     Set<String> ignored,
-                     Set<String> ignoredFiles,
-                     List<IgnoredPattern> ignoredPatterns,
                      boolean removePunctuation,
-                     Map<String, Double> thresholds,
-                     Crypto crypto,
-                     int windowSize) {
+                     Map<String, Double> thresholds) {
 
-        super(filterType, strategies, anonymizationService, alertService, ignored, ignoredFiles, ignoredPatterns, crypto, windowSize);
+        super(FilterType.NER_ENTITY, filterConfiguration);
 
         this.stats = stats;
         this.metricsService = metricsService;

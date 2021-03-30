@@ -1,9 +1,8 @@
 package com.mtnfog.test.phileas.services.filters;
 
 import com.mtnfog.phileas.model.enums.FilterType;
+import com.mtnfog.phileas.model.filter.FilterConfiguration;
 import com.mtnfog.phileas.model.objects.FilterResult;
-import com.mtnfog.phileas.model.objects.Span;
-import com.mtnfog.phileas.model.profile.Crypto;
 import com.mtnfog.phileas.model.services.AlertService;
 import com.mtnfog.phileas.services.anonymization.AgeAnonymizationService;
 import com.mtnfog.phileas.services.anonymization.cache.LocalAnonymizationCacheService;
@@ -15,14 +14,12 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 
 public class FilterTest extends AbstractFilterTest {
 
     protected static final Logger LOGGER = LogManager.getLogger(FilterTest.class);
 
-    private AlertService alertService = Mockito.mock(AlertService.class);
+    private final AlertService alertService = Mockito.mock(AlertService.class);
 
     @Test
     public void window0() throws Exception {
@@ -30,7 +27,14 @@ public class FilterTest extends AbstractFilterTest {
         // This tests span window creation.
         int windowSize = 3;
 
-        final AgeFilter filter = new AgeFilter(null, new AgeAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withAlertService(alertService)
+                .withAnonymizationService(new AgeAnonymizationService(new LocalAnonymizationCacheService()))
+                .withWindowSize(windowSize)
+                .build();
+
+        final AgeFilter filter = new AgeFilter(filterConfiguration);
 
         final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "this is a first sentence. the patient is 3.5 years old and he's cool. this is a surrounding sentence.");
 
@@ -55,7 +59,13 @@ public class FilterTest extends AbstractFilterTest {
         // This tests span window creation.
         int windowSize = 5;
 
-        final AgeFilter filter = new AgeFilter(null, new AgeAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withAlertService(alertService)
+                .withAnonymizationService(new AgeAnonymizationService(new LocalAnonymizationCacheService()))
+                .withWindowSize(windowSize)
+                .build();
+
+        final AgeFilter filter = new AgeFilter(filterConfiguration);
 
         final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "this is a first sentence. the patient is 3.5 years old and he's cool. this is a surrounding sentence.");
 

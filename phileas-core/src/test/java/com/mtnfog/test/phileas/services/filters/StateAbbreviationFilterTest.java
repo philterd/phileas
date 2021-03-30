@@ -1,9 +1,8 @@
 package com.mtnfog.test.phileas.services.filters;
 
 import com.mtnfog.phileas.model.enums.FilterType;
+import com.mtnfog.phileas.model.filter.FilterConfiguration;
 import com.mtnfog.phileas.model.objects.FilterResult;
-import com.mtnfog.phileas.model.objects.Span;
-import com.mtnfog.phileas.model.profile.Crypto;
 import com.mtnfog.phileas.model.profile.filters.strategies.rules.StateAbbreviationFilterStrategy;
 import com.mtnfog.phileas.model.services.AlertService;
 import com.mtnfog.phileas.services.anonymization.StateAbbreviationAnonymizationService;
@@ -16,20 +15,24 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 
 public class StateAbbreviationFilterTest extends AbstractFilterTest {
 
     private static final Logger LOGGER = LogManager.getLogger(StateAbbreviationFilterTest.class);
 
-    private AlertService alertService = Mockito.mock(AlertService.class);
+    private final AlertService alertService = Mockito.mock(AlertService.class);
 
     @Test
     public void filter1() throws Exception {
 
-        final List<StateAbbreviationFilterStrategy> strategies = Arrays.asList(new StateAbbreviationFilterStrategy());
-        final StateAbbreviationFilter filter = new StateAbbreviationFilter(strategies, new StateAbbreviationAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(Arrays.asList(new StateAbbreviationFilterStrategy()))
+                .withAlertService(alertService)
+                .withAnonymizationService(new StateAbbreviationAnonymizationService(new LocalAnonymizationCacheService()))
+                .withWindowSize(windowSize)
+                .build();
+
+        final StateAbbreviationFilter filter = new StateAbbreviationFilter(filterConfiguration);
 
         final String input = "The patient is from WV.";
         final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "docid", 0, input);
@@ -45,8 +48,14 @@ public class StateAbbreviationFilterTest extends AbstractFilterTest {
     @Test
     public void filter2() throws Exception {
 
-        final List<StateAbbreviationFilterStrategy> strategies = Arrays.asList(new StateAbbreviationFilterStrategy());
-        final StateAbbreviationFilter filter = new StateAbbreviationFilter(strategies, new StateAbbreviationAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(Arrays.asList(new StateAbbreviationFilterStrategy()))
+                .withAlertService(alertService)
+                .withAnonymizationService(new StateAbbreviationAnonymizationService(new LocalAnonymizationCacheService()))
+                .withWindowSize(windowSize)
+                .build();
+
+        final StateAbbreviationFilter filter = new StateAbbreviationFilter(filterConfiguration);
 
         final String input = "The patient is from wv.";
         final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "docid", 0, input);
@@ -61,8 +70,14 @@ public class StateAbbreviationFilterTest extends AbstractFilterTest {
     @Test
     public void filter3() throws Exception {
 
-        final List<StateAbbreviationFilterStrategy> strategies = Arrays.asList(new StateAbbreviationFilterStrategy());
-        final StateAbbreviationFilter filter = new StateAbbreviationFilter(strategies, new StateAbbreviationAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(Arrays.asList(new StateAbbreviationFilterStrategy()))
+                .withAlertService(alertService)
+                .withAnonymizationService(new StateAbbreviationAnonymizationService(new LocalAnonymizationCacheService()))
+                .withWindowSize(windowSize)
+                .build();
+
+        final StateAbbreviationFilter filter = new StateAbbreviationFilter(filterConfiguration);
 
         final String input = "Patients from WV and MD.";
         final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "docid", 0, input);

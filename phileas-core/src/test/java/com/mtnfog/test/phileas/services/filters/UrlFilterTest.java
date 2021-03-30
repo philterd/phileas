@@ -1,12 +1,11 @@
 package com.mtnfog.test.phileas.services.filters;
 
 import com.mtnfog.phileas.model.enums.FilterType;
+import com.mtnfog.phileas.model.filter.FilterConfiguration;
 import com.mtnfog.phileas.model.objects.FilterResult;
-import com.mtnfog.phileas.model.objects.Span;
-import com.mtnfog.phileas.model.profile.Crypto;
 import com.mtnfog.phileas.model.profile.filters.strategies.rules.UrlFilterStrategy;
 import com.mtnfog.phileas.model.services.AlertService;
-import com.mtnfog.phileas.services.anonymization.UrlAnonymizationService;
+import com.mtnfog.phileas.services.anonymization.AlphanumericAnonymizationService;
 import com.mtnfog.phileas.services.anonymization.cache.LocalAnonymizationCacheService;
 import com.mtnfog.phileas.services.filters.regex.UrlFilter;
 import org.junit.jupiter.api.Assertions;
@@ -14,18 +13,22 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 
 public class UrlFilterTest extends AbstractFilterTest {
 
-    private AlertService alertService = Mockito.mock(AlertService.class);
+    private final AlertService alertService = Mockito.mock(AlertService.class);
 
     @Test
     public void filterUrl1() throws Exception {
 
-        final List<UrlFilterStrategy> strategies = Arrays.asList(new UrlFilterStrategy());
-        UrlFilter filter = new UrlFilter(strategies, new UrlAnonymizationService(new LocalAnonymizationCacheService()), alertService, true, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(Arrays.asList(new UrlFilterStrategy()))
+                .withAlertService(alertService)
+                .withAnonymizationService(new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()))
+                .withWindowSize(windowSize)
+                .build();
+
+        final UrlFilter filter = new UrlFilter(filterConfiguration, true);
 
         final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid",  0, "the page is http://page.com.");
         showSpans(filterResult.getSpans());
@@ -38,8 +41,14 @@ public class UrlFilterTest extends AbstractFilterTest {
     @Test
     public void filterUrl2() throws Exception {
 
-        final List<UrlFilterStrategy> strategies = Arrays.asList(new UrlFilterStrategy());
-        UrlFilter filter = new UrlFilter(strategies, new UrlAnonymizationService(new LocalAnonymizationCacheService()), alertService, true, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(Arrays.asList(new UrlFilterStrategy()))
+                .withAlertService(alertService)
+                .withAnonymizationService(new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()))
+                .withWindowSize(windowSize)
+                .build();
+
+        final UrlFilter filter = new UrlFilter(filterConfiguration, true);
 
         final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid",  0, "the page is myhomepage.com.");
         showSpans(filterResult.getSpans());
@@ -50,8 +59,14 @@ public class UrlFilterTest extends AbstractFilterTest {
     @Test
     public void filterUrl3() throws Exception {
 
-        final List<UrlFilterStrategy> strategies = Arrays.asList(new UrlFilterStrategy());
-        UrlFilter filter = new UrlFilter(strategies, new UrlAnonymizationService(new LocalAnonymizationCacheService()), alertService, true, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(Arrays.asList(new UrlFilterStrategy()))
+                .withAlertService(alertService)
+                .withAnonymizationService(new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()))
+                .withWindowSize(windowSize)
+                .build();
+
+        final UrlFilter filter = new UrlFilter(filterConfiguration, true);
 
         final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid",   0, "the page is http://myhomepage.com/folder/page.html.");
         showSpans(filterResult.getSpans());
@@ -63,8 +78,14 @@ public class UrlFilterTest extends AbstractFilterTest {
     @Test
     public void filterUrl4() throws Exception {
 
-        final List<UrlFilterStrategy> strategies = Arrays.asList(new UrlFilterStrategy());
-        UrlFilter filter = new UrlFilter(strategies, new UrlAnonymizationService(new LocalAnonymizationCacheService()), alertService, true, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(Arrays.asList(new UrlFilterStrategy()))
+                .withAlertService(alertService)
+                .withAnonymizationService(new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()))
+                .withWindowSize(windowSize)
+                .build();
+
+        final UrlFilter filter = new UrlFilter(filterConfiguration, true);
 
         final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "the page is http://www.myhomepage.com/folder/page.html");
         showSpans(filterResult.getSpans());
@@ -76,8 +97,14 @@ public class UrlFilterTest extends AbstractFilterTest {
     @Test
     public void filterUrl5() throws Exception {
 
-        final List<UrlFilterStrategy> strategies = Arrays.asList(new UrlFilterStrategy());
-        UrlFilter filter = new UrlFilter(strategies, new UrlAnonymizationService(new LocalAnonymizationCacheService()), alertService, true, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(Arrays.asList(new UrlFilterStrategy()))
+                .withAlertService(alertService)
+                .withAnonymizationService(new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()))
+                .withWindowSize(windowSize)
+                .build();
+
+        final UrlFilter filter = new UrlFilter(filterConfiguration, true);
 
         final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "the page is www.myhomepage.com/folder/page.html.");
         showSpans(filterResult.getSpans());
@@ -89,8 +116,14 @@ public class UrlFilterTest extends AbstractFilterTest {
     @Test
     public void filterUrl6() throws Exception {
 
-        final List<UrlFilterStrategy> strategies = Arrays.asList(new UrlFilterStrategy());
-        UrlFilter filter = new UrlFilter(strategies, new UrlAnonymizationService(new LocalAnonymizationCacheService()), alertService, false, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(Arrays.asList(new UrlFilterStrategy()))
+                .withAlertService(alertService)
+                .withAnonymizationService(new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()))
+                .withWindowSize(windowSize)
+                .build();
+
+        final UrlFilter filter = new UrlFilter(filterConfiguration, false);
 
         final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "the page is myhomepage.com.");
         showSpans(filterResult.getSpans());
@@ -102,8 +135,14 @@ public class UrlFilterTest extends AbstractFilterTest {
     @Test
     public void filterUrl7() throws Exception {
 
-        final List<UrlFilterStrategy> strategies = Arrays.asList(new UrlFilterStrategy());
-        UrlFilter filter = new UrlFilter(strategies, new UrlAnonymizationService(new LocalAnonymizationCacheService()), alertService, true, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(Arrays.asList(new UrlFilterStrategy()))
+                .withAlertService(alertService)
+                .withAnonymizationService(new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()))
+                .withWindowSize(windowSize)
+                .build();
+
+        final UrlFilter filter = new UrlFilter(filterConfiguration, true);
 
         final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "the page is www.myhomepage.com:80/folder/page.html.");
         showSpans(filterResult.getSpans());
@@ -115,8 +154,14 @@ public class UrlFilterTest extends AbstractFilterTest {
     @Test
     public void filterUrl8() throws Exception {
 
-        final List<UrlFilterStrategy> strategies = Arrays.asList(new UrlFilterStrategy());
-        UrlFilter filter = new UrlFilter(strategies, new UrlAnonymizationService(new LocalAnonymizationCacheService()), alertService, true, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(Arrays.asList(new UrlFilterStrategy()))
+                .withAlertService(alertService)
+                .withAnonymizationService(new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()))
+                .withWindowSize(windowSize)
+                .build();
+
+        final UrlFilter filter = new UrlFilter(filterConfiguration, true);
 
         final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "the page is http://192.168.1.1:80/folder/page.html.");
         showSpans(filterResult.getSpans());
@@ -128,8 +173,14 @@ public class UrlFilterTest extends AbstractFilterTest {
     @Test
     public void filterUrl9() throws Exception {
 
-        final List<UrlFilterStrategy> strategies = Arrays.asList(new UrlFilterStrategy());
-        UrlFilter filter = new UrlFilter(strategies, new UrlAnonymizationService(new LocalAnonymizationCacheService()), alertService, false, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(Arrays.asList(new UrlFilterStrategy()))
+                .withAlertService(alertService)
+                .withAnonymizationService(new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()))
+                .withWindowSize(windowSize)
+                .build();
+
+        final UrlFilter filter = new UrlFilter(filterConfiguration, false);
 
         final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "the page is 192.168.1.1:80/folder/page.html.");
         showSpans(filterResult.getSpans());
@@ -142,8 +193,14 @@ public class UrlFilterTest extends AbstractFilterTest {
     @Test
     public void filterUrl10() throws Exception {
 
-        final List<UrlFilterStrategy> strategies = Arrays.asList(new UrlFilterStrategy());
-        UrlFilter filter = new UrlFilter(strategies, new UrlAnonymizationService(new LocalAnonymizationCacheService()), alertService, false, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(Arrays.asList(new UrlFilterStrategy()))
+                .withAlertService(alertService)
+                .withAnonymizationService(new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()))
+                .withWindowSize(windowSize)
+                .build();
+
+        final UrlFilter filter = new UrlFilter(filterConfiguration, false);
 
         final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "the page is http://192.168.1.1:80/folder/page.html.");
         showSpans(filterResult.getSpans());
@@ -156,8 +213,14 @@ public class UrlFilterTest extends AbstractFilterTest {
     @Test
     public void filterUrl11() throws Exception {
 
-        final List<UrlFilterStrategy> strategies = Arrays.asList(new UrlFilterStrategy());
-        UrlFilter filter = new UrlFilter(strategies, new UrlAnonymizationService(new LocalAnonymizationCacheService()), alertService, false, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(Arrays.asList(new UrlFilterStrategy()))
+                .withAlertService(alertService)
+                .withAnonymizationService(new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()))
+                .withWindowSize(windowSize)
+                .build();
+
+        final UrlFilter filter = new UrlFilter(filterConfiguration, false);
 
         final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "the page is https://192.168.1.1:80/folder/page.html.");
         showSpans(filterResult.getSpans());
@@ -170,8 +233,14 @@ public class UrlFilterTest extends AbstractFilterTest {
     @Test
     public void filterUrl12() throws Exception {
 
-        final List<UrlFilterStrategy> strategies = Arrays.asList(new UrlFilterStrategy());
-        UrlFilter filter = new UrlFilter(strategies, new UrlAnonymizationService(new LocalAnonymizationCacheService()), alertService, true, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(Arrays.asList(new UrlFilterStrategy()))
+                .withAlertService(alertService)
+                .withAnonymizationService(new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()))
+                .withWindowSize(windowSize)
+                .build();
+
+        final UrlFilter filter = new UrlFilter(filterConfiguration, true);
 
         final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "the page is test.ok new sentence");
         showSpans(filterResult.getSpans());
@@ -182,8 +251,14 @@ public class UrlFilterTest extends AbstractFilterTest {
     @Test
     public void filterUrl13() throws Exception {
 
-        final List<UrlFilterStrategy> strategies = Arrays.asList(new UrlFilterStrategy());
-        UrlFilter filter = new UrlFilter(strategies, new UrlAnonymizationService(new LocalAnonymizationCacheService()), alertService, false, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(Arrays.asList(new UrlFilterStrategy()))
+                .withAlertService(alertService)
+                .withAnonymizationService(new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()))
+                .withWindowSize(windowSize)
+                .build();
+
+        final UrlFilter filter = new UrlFilter(filterConfiguration, false);
 
         final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "the page is http://2001:0db8:85a3:0000:0000:8a2e:0370:7334/test.html.");
         showSpans(filterResult.getSpans());
@@ -196,8 +271,14 @@ public class UrlFilterTest extends AbstractFilterTest {
     @Test
     public void filterUrl14() throws Exception {
 
-        final List<UrlFilterStrategy> strategies = Arrays.asList(new UrlFilterStrategy());
-        UrlFilter filter = new UrlFilter(strategies, new UrlAnonymizationService(new LocalAnonymizationCacheService()), alertService, false, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(Arrays.asList(new UrlFilterStrategy()))
+                .withAlertService(alertService)
+                .withAnonymizationService(new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()))
+                .withWindowSize(windowSize)
+                .build();
+
+        final UrlFilter filter = new UrlFilter(filterConfiguration, false);
 
         final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "the page is http://2001:0db8:85a3:0000:0000:8a2e:0370:7334/test/.");
         showSpans(filterResult.getSpans());
@@ -209,8 +290,14 @@ public class UrlFilterTest extends AbstractFilterTest {
     @Test
     public void filterUrl15() throws Exception {
 
-        final List<UrlFilterStrategy> strategies = Arrays.asList(new UrlFilterStrategy());
-        UrlFilter filter = new UrlFilter(strategies, new UrlAnonymizationService(new LocalAnonymizationCacheService()), alertService, false, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(Arrays.asList(new UrlFilterStrategy()))
+                .withAlertService(alertService)
+                .withAnonymizationService(new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()))
+                .withWindowSize(windowSize)
+                .build();
+
+        final UrlFilter filter = new UrlFilter(filterConfiguration, false);
 
         final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "the page is https://192.168.1.1:80/folder/page.html. this is a new sentence.");
         showSpans(filterResult.getSpans());

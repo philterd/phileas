@@ -1,6 +1,7 @@
 package com.mtnfog.phileas.services.filters.regex;
 
 import com.mtnfog.phileas.model.enums.FilterType;
+import com.mtnfog.phileas.model.filter.FilterConfiguration;
 import com.mtnfog.phileas.model.filter.rules.regex.RegexFilter;
 import com.mtnfog.phileas.model.objects.Analyzer;
 import com.mtnfog.phileas.model.objects.FilterPattern;
@@ -20,8 +21,8 @@ import java.util.regex.Pattern;
 
 public class BitcoinAddressFilter extends RegexFilter {
 
-    public BitcoinAddressFilter(List<? extends AbstractFilterStrategy> strategies, AnonymizationService anonymizationService, AlertService alertService, Set<String> ignored, Set<String> ignoredFiles, List<IgnoredPattern> ignoredPatterns, Crypto crypto, int windowSize) {
-        super(FilterType.BITCOIN_ADDRESS, strategies, anonymizationService, alertService, ignored, ignoredFiles, ignoredPatterns, crypto, windowSize);
+    public BitcoinAddressFilter(FilterConfiguration filterConfiguration) {
+        super(FilterType.BITCOIN_ADDRESS, filterConfiguration);
 
         final Pattern bitcoinPattern = Pattern.compile("\\b[13][a-km-zA-HJ-NP-Z1-9]{25,34}\\b", Pattern.CASE_INSENSITIVE);
         final FilterPattern bitcoin1 = new FilterPattern.FilterPatternBuilder(bitcoinPattern, 0.90).build();

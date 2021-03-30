@@ -12,6 +12,7 @@ import com.mtnfog.phileas.model.profile.filters.Identifier;
 import com.mtnfog.phileas.model.profile.filters.strategies.AbstractFilterStrategy;
 import com.mtnfog.phileas.model.services.AlertService;
 import com.mtnfog.phileas.model.services.AnonymizationService;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -20,9 +21,7 @@ import org.apache.logging.log4j.Logger;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public abstract class Filter {
@@ -57,12 +56,12 @@ public abstract class Filter {
     /**
      * A list of ignored terms.
      */
-    protected final Set<String> ignored;
+    protected Set<String> ignored;
 
     /**
      * A list of ignored patterns;
      */
-    protected final List<IgnoredPattern> ignoredPatterns;
+    protected List<IgnoredPattern> ignoredPatterns;
 
     /**
      * The encryption key for encrypting values.
@@ -94,42 +93,50 @@ public abstract class Filter {
     public abstract int getOccurrences(FilterProfile filterProfile, String input) throws Exception;
 
     /**
-     * Creates a new filter with anonymization.
+     * Creates a new filter.
      *
-     * @param filterType The {@link FilterType type} of the filter.
-     * @param strategies A list of filter strategies for this filter.
-     * @param anonymizationService The {@link AnonymizationService} for this filter.
-     * @param ignored A set of strings to ignore when found.
-     * @param crypto A {@link Crypto} for token encryption.
+     * @param filterConfiguration The {@link FilterConfiguration} for the filter.
      */
-    public Filter(FilterType filterType, List<? extends AbstractFilterStrategy> strategies, AnonymizationService anonymizationService,
-                  AlertService alertService, Set<String> ignored, Set<String> ignoredFiles, List<IgnoredPattern> ignoredPatterns, Crypto crypto, int windowSize) {
+    public Filter(FilterType filterType, FilterConfiguration filterConfiguration) {
 
         this.filterType = filterType;
-        this.strategies = strategies;
-        this.anonymizationService = anonymizationService;
-        this.alertService = alertService;
-        this.ignoredPatterns = ignoredPatterns;
-        this.crypto = crypto;
-        this.windowSize = windowSize;
+        this.strategies = filterConfiguration.getStrategies();
+        this.anonymizationService = filterConfiguration.getAnonymizationService();
+        this.alertService = filterConfiguration.getAlertService();
+        this.ignoredPatterns = filterConfiguration.getIgnoredPatterns();
+        this.ignored = filterConfiguration.getIgnored();
+        this.crypto = filterConfiguration.getCrypto();
+        this.windowSize = filterConfiguration.getWindowSize();
 
-        // Add the terms from the ignored files.
-        for(final String fileName : ignoredFiles) {
-            final File file = new File(fileName);
-            if(file.exists()) {
-                try {
-                    final List<String> words = FileUtils.readLines(file, Charset.defaultCharset());
-                    ignored.addAll(words);
-                } catch (IOException ex) {
-                    LOGGER.error("Unable to process file of ignored terms: {}", fileName, ex);
+        if(this.ignored == null) {
+            this.ignored = new LinkedHashSet<>();
+        }
+
+        if(this.ignoredPatterns == null) {
+            this.ignoredPatterns = new LinkedList<>();
+        }
+
+        // Add the terms from the ignored files if there are any.
+        if(CollectionUtils.isNotEmpty(filterConfiguration.getIgnoredFiles())) {
+            for (final String fileName : filterConfiguration.getIgnoredFiles()) {
+                final File file = new File(fileName);
+                if (file.exists()) {
+                    try {
+                        final List<String> words = FileUtils.readLines(file, Charset.defaultCharset());
+                        ignored.addAll(words);
+                    } catch (IOException ex) {
+                        LOGGER.error("Unable to process file of ignored terms: {}", fileName, ex);
+                    }
+                } else {
+                    LOGGER.error("Ignore list file specified in filter profile does not exist: {}", fileName);
                 }
-            } else {
-                LOGGER.error("Ignore list file specified in filter profile does not exist: {}", fileName);
             }
         }
 
-        // PHL-151: Lowercase all terms in the ignore list to not be case-sensitive.
-        this.ignored = ignored.stream().map(String::toLowerCase).collect(Collectors.toSet());
+        if(CollectionUtils.isNotEmpty(this.ignored)) {
+            // PHL-151: Lowercase all terms in the ignore list to not be case-sensitive.
+            this.ignored = ignored.stream().map(String::toLowerCase).collect(Collectors.toSet());
+        }
 
     }
 

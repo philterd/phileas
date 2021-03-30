@@ -1,16 +1,12 @@
 package com.mtnfog.test.phileas.services.filters;
 
 import com.mtnfog.phileas.model.enums.FilterType;
-import com.mtnfog.phileas.model.filter.Filter;
+import com.mtnfog.phileas.model.filter.FilterConfiguration;
 import com.mtnfog.phileas.model.objects.FilterResult;
-import com.mtnfog.phileas.model.objects.Span;
-import com.mtnfog.phileas.model.profile.Crypto;
-import com.mtnfog.phileas.model.profile.filters.strategies.rules.AgeFilterStrategy;
+import com.mtnfog.phileas.model.profile.filters.strategies.rules.TrackingNumberFilterStrategy;
 import com.mtnfog.phileas.model.services.AlertService;
-import com.mtnfog.phileas.services.anonymization.AgeAnonymizationService;
 import com.mtnfog.phileas.services.anonymization.AlphanumericAnonymizationService;
 import com.mtnfog.phileas.services.anonymization.cache.LocalAnonymizationCacheService;
-import com.mtnfog.phileas.services.filters.regex.AgeFilter;
 import com.mtnfog.phileas.services.filters.regex.TrackingNumberFilter;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Disabled;
@@ -18,8 +14,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 
 public class TrackingNumberFilterTest extends AbstractFilterTest {
 
@@ -28,7 +22,14 @@ public class TrackingNumberFilterTest extends AbstractFilterTest {
     @Test
     public void filter0() throws Exception {
 
-        final Filter filter = new TrackingNumberFilter(null, new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(Arrays.asList(new TrackingNumberFilterStrategy()))
+                .withAlertService(alertService)
+                .withAnonymizationService(new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()))
+                .withWindowSize(windowSize)
+                .build();
+
+        final TrackingNumberFilter filter = new TrackingNumberFilter(filterConfiguration);
 
         final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "the tracking number is 1Z9YF1280343418566");
 
@@ -45,7 +46,14 @@ public class TrackingNumberFilterTest extends AbstractFilterTest {
     @Test
     public void filter1() throws Exception {
 
-        final Filter filter = new TrackingNumberFilter(null, new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(Arrays.asList(new TrackingNumberFilterStrategy()))
+                .withAlertService(alertService)
+                .withAnonymizationService(new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()))
+                .withWindowSize(windowSize)
+                .build();
+
+        final TrackingNumberFilter filter = new TrackingNumberFilter(filterConfiguration);
 
         final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "the tracking number is 9400100000000000000000");
 
@@ -63,7 +71,14 @@ public class TrackingNumberFilterTest extends AbstractFilterTest {
     @Disabled
     public void filter2() throws Exception {
 
-        final Filter filter = new TrackingNumberFilter(null, new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(Arrays.asList(new TrackingNumberFilterStrategy()))
+                .withAlertService(alertService)
+                .withAnonymizationService(new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()))
+                .withWindowSize(windowSize)
+                .build();
+
+        final TrackingNumberFilter filter = new TrackingNumberFilter(filterConfiguration);
 
         final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "the tracking number is 9400 1000 0000 0000 0000");
 
@@ -80,7 +95,14 @@ public class TrackingNumberFilterTest extends AbstractFilterTest {
     @Test
     public void filter3() throws Exception {
 
-        final Filter filter = new TrackingNumberFilter(null, new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(Arrays.asList(new TrackingNumberFilterStrategy()))
+                .withAlertService(alertService)
+                .withAnonymizationService(new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()))
+                .withWindowSize(windowSize)
+                .build();
+
+        final TrackingNumberFilter filter = new TrackingNumberFilter(filterConfiguration);
 
         final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "the tracking number is 4204319935009201990138501144099814");
 
@@ -97,7 +119,14 @@ public class TrackingNumberFilterTest extends AbstractFilterTest {
     @Test
     public void filter4() throws Exception {
 
-        final Filter filter = new TrackingNumberFilter(null, new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(Arrays.asList(new TrackingNumberFilterStrategy()))
+                .withAlertService(alertService)
+                .withAnonymizationService(new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()))
+                .withWindowSize(windowSize)
+                .build();
+
+        final TrackingNumberFilter filter = new TrackingNumberFilter(filterConfiguration);
 
         final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "the tracking number is 420431993500920199013850114409");
 
@@ -114,7 +143,14 @@ public class TrackingNumberFilterTest extends AbstractFilterTest {
     @Test
     public void filter5() throws Exception {
 
-        final Filter filter = new TrackingNumberFilter(null, new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(Arrays.asList(new TrackingNumberFilterStrategy()))
+                .withAlertService(alertService)
+                .withAnonymizationService(new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()))
+                .withWindowSize(windowSize)
+                .build();
+
+        final TrackingNumberFilter filter = new TrackingNumberFilter(filterConfiguration);
 
         final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "the tracking number is 4204319935009201990138501144");
 
@@ -131,7 +167,14 @@ public class TrackingNumberFilterTest extends AbstractFilterTest {
     @Test
     public void filter6() throws Exception {
 
-        final Filter filter = new TrackingNumberFilter(null, new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(Arrays.asList(new TrackingNumberFilterStrategy()))
+                .withAlertService(alertService)
+                .withAnonymizationService(new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()))
+                .withWindowSize(windowSize)
+                .build();
+
+        final TrackingNumberFilter filter = new TrackingNumberFilter(filterConfiguration);
 
         final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "the tracking number is 42043199350092019901385011");
 

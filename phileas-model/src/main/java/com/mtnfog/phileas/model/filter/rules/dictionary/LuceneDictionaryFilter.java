@@ -2,15 +2,11 @@ package com.mtnfog.phileas.model.filter.rules.dictionary;
 
 import com.mtnfog.phileas.model.enums.FilterType;
 import com.mtnfog.phileas.model.enums.SensitivityLevel;
+import com.mtnfog.phileas.model.filter.FilterConfiguration;
 import com.mtnfog.phileas.model.objects.FilterResult;
 import com.mtnfog.phileas.model.objects.Replacement;
 import com.mtnfog.phileas.model.objects.Span;
-import com.mtnfog.phileas.model.profile.Crypto;
 import com.mtnfog.phileas.model.profile.FilterProfile;
-import com.mtnfog.phileas.model.profile.IgnoredPattern;
-import com.mtnfog.phileas.model.profile.filters.strategies.AbstractFilterStrategy;
-import com.mtnfog.phileas.model.services.AlertService;
-import com.mtnfog.phileas.model.services.AnonymizationService;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.text.similarity.LevenshteinDistance;
@@ -57,25 +53,19 @@ public class LuceneDictionaryFilter extends DictionaryFilter implements Serializ
 
     /**
      * Creates a new Lucene dictionary filter.
-     * @param filterType The {@link FilterType type} of filter.
+     * @param filterConfiguration @param filterConfiguration The {@link FilterConfiguration} for the filter.
      * @param indexDirectory The path to the index on disk.
-     * @param anonymizationService The {@link AnonymizationService} for this filter.
+     * @param sensitivityLevel
+     * @param capitalized
      * @throws IOException Thrown if the index cannot be opened or accessed.
      */
     public LuceneDictionaryFilter(FilterType filterType,
-                                  List<? extends AbstractFilterStrategy> strategies,
+                                  FilterConfiguration filterConfiguration,
                                   String indexDirectory,
                                   SensitivityLevel sensitivityLevel,
-                                  boolean capitalized,
-                                  AnonymizationService anonymizationService,
-                                  AlertService alertService,
-                                  Set<String> ignored,
-                                  Set<String> ignoredFiles,
-                                  List<IgnoredPattern> ignoredPatterns,
-                                  Crypto crypto,
-                                  int windowSize) throws IOException {
+                                  boolean capitalized) throws IOException {
 
-        super(filterType, strategies, anonymizationService, alertService, ignored, ignoredFiles, ignoredPatterns, crypto, windowSize);
+        super(filterType, filterConfiguration);
 
         LOGGER.info("Loading {} index from {}", filterType, indexDirectory);
 
@@ -92,26 +82,23 @@ public class LuceneDictionaryFilter extends DictionaryFilter implements Serializ
 
     /**
      * Creates a new Lucene dictionary filter from a list of custom terms.
-     * @param filterType The {@link FilterType type} of filter.
-     * @param anonymizationService The {@link AnonymizationService} for this filter.
+     * @param filterConfiguration The {@link FilterConfiguration} for the filter.
+     * @param sensitivityLevel
+     * @param terms
+     * @param capitalized
+     * @param type
+     * @param filterProfileIndex
      * @throws IOException Thrown if the index cannot be opened or accessed.
      */
     public LuceneDictionaryFilter(FilterType filterType,
-                                        List<? extends AbstractFilterStrategy> strategies,
-                                        SensitivityLevel sensitivityLevel,
-                                        boolean capitalized,
-                                        AnonymizationService anonymizationService,
-                                        AlertService alertService,
-                                        String type,
-                                        Set<String> terms,
-                                        int filterProfileIndex,
-                                        Set<String> ignored,
-                                        Set<String> ignoredFiles,
-                                        List<IgnoredPattern> ignoredPatterns,
-                                        Crypto crypto,
-                                        int windowSize) throws IOException {
+                                  FilterConfiguration filterConfiguration,
+                                  SensitivityLevel sensitivityLevel,
+                                  Set<String> terms,
+                                  boolean capitalized,
+                                  String type,
+                                  int filterProfileIndex) throws IOException {
 
-        super(filterType, strategies, anonymizationService, alertService, ignored, ignoredFiles, ignoredPatterns, crypto, windowSize);
+        super(filterType, filterConfiguration);
 
         LOGGER.info("Creating custom dictionary filter for custom type [{}]", type);
 

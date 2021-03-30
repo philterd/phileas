@@ -1,9 +1,8 @@
 package com.mtnfog.test.phileas.services.filters;
 
 import com.mtnfog.phileas.model.enums.FilterType;
+import com.mtnfog.phileas.model.filter.FilterConfiguration;
 import com.mtnfog.phileas.model.objects.FilterResult;
-import com.mtnfog.phileas.model.objects.Span;
-import com.mtnfog.phileas.model.profile.Crypto;
 import com.mtnfog.phileas.model.profile.filters.strategies.rules.IpAddressFilterStrategy;
 import com.mtnfog.phileas.model.services.AlertService;
 import com.mtnfog.phileas.services.anonymization.IpAddressAnonymizationService;
@@ -14,8 +13,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 
 public class IpAddressFilterTest extends AbstractFilterTest {
 
@@ -24,9 +21,15 @@ public class IpAddressFilterTest extends AbstractFilterTest {
     @Test
     public void filterIpv41() throws Exception {
 
-        final List<IpAddressFilterStrategy> strategies = Arrays.asList(new IpAddressFilterStrategy());
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(Arrays.asList(new IpAddressFilterStrategy()))
+                .withAlertService(alertService)
+                .withAnonymizationService(new IpAddressAnonymizationService(new LocalAnonymizationCacheService()))
+                .withWindowSize(windowSize)
+                .build();
 
-        IpAddressFilter filter = new IpAddressFilter(strategies, new IpAddressAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+        final IpAddressFilter filter = new IpAddressFilter(filterConfiguration);
+
         final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "the ip is 192.168.1.101.");
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
@@ -38,9 +41,15 @@ public class IpAddressFilterTest extends AbstractFilterTest {
     @Test
     public void filterIpv61() throws Exception {
 
-        final List<IpAddressFilterStrategy> strategies = Arrays.asList(new IpAddressFilterStrategy());
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(Arrays.asList(new IpAddressFilterStrategy()))
+                .withAlertService(alertService)
+                .withAnonymizationService(new IpAddressAnonymizationService(new LocalAnonymizationCacheService()))
+                .withWindowSize(windowSize)
+                .build();
 
-        IpAddressFilter filter = new IpAddressFilter(strategies, new IpAddressAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+        final IpAddressFilter filter = new IpAddressFilter(filterConfiguration);
+
         final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "the ip is 1::");
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
@@ -51,9 +60,15 @@ public class IpAddressFilterTest extends AbstractFilterTest {
     @Test
     public void filterIpv62() throws Exception {
 
-        final List<IpAddressFilterStrategy> strategies = Arrays.asList(new IpAddressFilterStrategy());
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(Arrays.asList(new IpAddressFilterStrategy()))
+                .withAlertService(alertService)
+                .withAnonymizationService(new IpAddressAnonymizationService(new LocalAnonymizationCacheService()))
+                .withWindowSize(windowSize)
+                .build();
 
-        IpAddressFilter filter = new IpAddressFilter(strategies, new IpAddressAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+        final IpAddressFilter filter = new IpAddressFilter(filterConfiguration);
+
         final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "the ip is 2001:0db8:85a3:0000:0000:8a2e:0370:7334");
 
         // Finds duplicate spans. Duplicates/overlapping will be removed by the service prior to returning.
@@ -66,9 +81,15 @@ public class IpAddressFilterTest extends AbstractFilterTest {
     @Test
     public void filterIpv63() throws Exception {
 
-        final List<IpAddressFilterStrategy> strategies = Arrays.asList(new IpAddressFilterStrategy());
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(Arrays.asList(new IpAddressFilterStrategy()))
+                .withAlertService(alertService)
+                .withAnonymizationService(new IpAddressAnonymizationService(new LocalAnonymizationCacheService()))
+                .withWindowSize(windowSize)
+                .build();
 
-        IpAddressFilter filter = new IpAddressFilter(strategies, new IpAddressAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+        final IpAddressFilter filter = new IpAddressFilter(filterConfiguration);
+
         final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "the ip is fe80::0202:B3FF:FE1E:8329");
 
         // Finds duplicate spans. Duplicates/overlapping will be removed by the service prior to returning.

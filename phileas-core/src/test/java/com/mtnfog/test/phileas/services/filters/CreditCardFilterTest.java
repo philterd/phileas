@@ -1,8 +1,8 @@
 package com.mtnfog.test.phileas.services.filters;
 
 import com.mtnfog.phileas.model.enums.FilterType;
+import com.mtnfog.phileas.model.filter.FilterConfiguration;
 import com.mtnfog.phileas.model.objects.FilterResult;
-import com.mtnfog.phileas.model.profile.Crypto;
 import com.mtnfog.phileas.model.profile.filters.strategies.rules.CreditCardFilterStrategy;
 import com.mtnfog.phileas.model.services.AlertService;
 import com.mtnfog.phileas.services.anonymization.CreditCardAnonymizationService;
@@ -13,8 +13,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 
 public class CreditCardFilterTest extends AbstractFilterTest {
 
@@ -23,8 +21,14 @@ public class CreditCardFilterTest extends AbstractFilterTest {
     @Test
     public void filterCreditCardOnlyValid() throws Exception {
 
-        final List<CreditCardFilterStrategy> strategies = Arrays.asList(new CreditCardFilterStrategy());
-        CreditCardFilter filter = new CreditCardFilter(strategies, new CreditCardAnonymizationService(new LocalAnonymizationCacheService()), alertService,true, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(Arrays.asList(new CreditCardFilterStrategy()))
+                .withAlertService(alertService)
+                .withAnonymizationService(new CreditCardAnonymizationService(new LocalAnonymizationCacheService()))
+                .withWindowSize(windowSize)
+                .build();
+
+        final CreditCardFilter filter = new CreditCardFilter(filterConfiguration, true);
 
         // VISA
 
@@ -81,8 +85,14 @@ public class CreditCardFilterTest extends AbstractFilterTest {
     @Test
     public void filterCreditCardValidAndInvalid() throws Exception {
 
-        final List<CreditCardFilterStrategy> strategies = Arrays.asList(new CreditCardFilterStrategy());
-        CreditCardFilter filter = new CreditCardFilter(strategies, new CreditCardAnonymizationService(new LocalAnonymizationCacheService()), alertService, false, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(Arrays.asList(new CreditCardFilterStrategy()))
+                .withAlertService(alertService)
+                .withAnonymizationService(new CreditCardAnonymizationService(new LocalAnonymizationCacheService()))
+                .withWindowSize(windowSize)
+                .build();
+
+        final CreditCardFilter filter = new CreditCardFilter(filterConfiguration, false);
 
         // VISA
 

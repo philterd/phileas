@@ -1,12 +1,11 @@
 package com.mtnfog.test.phileas.services.filters;
 
 import com.mtnfog.phileas.model.enums.FilterType;
+import com.mtnfog.phileas.model.filter.FilterConfiguration;
 import com.mtnfog.phileas.model.objects.FilterResult;
-import com.mtnfog.phileas.model.objects.Span;
-import com.mtnfog.phileas.model.profile.Crypto;
 import com.mtnfog.phileas.model.profile.filters.strategies.rules.PhoneNumberExtensionFilterStrategy;
 import com.mtnfog.phileas.model.services.AlertService;
-import com.mtnfog.phileas.services.anonymization.AlphanumericAnonymizationService;
+import com.mtnfog.phileas.services.anonymization.MacAddressAnonymizationService;
 import com.mtnfog.phileas.services.anonymization.cache.LocalAnonymizationCacheService;
 import com.mtnfog.phileas.services.filters.regex.PhoneNumberExtensionFilter;
 import org.junit.jupiter.api.Assertions;
@@ -14,8 +13,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 
 public class PhoneNumberExtensionFilterTest extends AbstractFilterTest {
 
@@ -24,8 +21,14 @@ public class PhoneNumberExtensionFilterTest extends AbstractFilterTest {
     @Test
     public void filter1() throws Exception {
 
-        final List<PhoneNumberExtensionFilterStrategy> strategies = Arrays.asList(new PhoneNumberExtensionFilterStrategy());
-        PhoneNumberExtensionFilter filter = new PhoneNumberExtensionFilter(strategies, new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(Arrays.asList(new PhoneNumberExtensionFilterStrategy()))
+                .withAlertService(alertService)
+                .withAnonymizationService(new MacAddressAnonymizationService(new LocalAnonymizationCacheService()))
+                .withWindowSize(windowSize)
+                .build();
+
+        final PhoneNumberExtensionFilter filter = new PhoneNumberExtensionFilter(filterConfiguration);
 
         final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "he is at x123");
         showSpans(filterResult.getSpans());
@@ -39,8 +42,14 @@ public class PhoneNumberExtensionFilterTest extends AbstractFilterTest {
     @Test
     public void filter2() throws Exception {
 
-        final List<PhoneNumberExtensionFilterStrategy> strategies = Arrays.asList(new PhoneNumberExtensionFilterStrategy());
-        PhoneNumberExtensionFilter filter = new PhoneNumberExtensionFilter(strategies, new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()), alertService, Collections.emptySet(), Collections.emptySet(), Collections.emptyList(), new Crypto(), windowSize);
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(Arrays.asList(new PhoneNumberExtensionFilterStrategy()))
+                .withAlertService(alertService)
+                .withAnonymizationService(new MacAddressAnonymizationService(new LocalAnonymizationCacheService()))
+                .withWindowSize(windowSize)
+                .build();
+
+        final PhoneNumberExtensionFilter filter = new PhoneNumberExtensionFilter(filterConfiguration);
 
         final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "his phone number was +1 151-841-2829 x416.");
         showSpans(filterResult.getSpans());
