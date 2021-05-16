@@ -14,6 +14,7 @@ import com.mtnfog.phileas.model.filter.Filter;
 import com.mtnfog.phileas.model.filter.FilterConfiguration;
 import com.mtnfog.phileas.model.filter.rules.dictionary.BloomFilterDictionaryFilter;
 import com.mtnfog.phileas.model.filter.rules.dictionary.LuceneDictionaryFilter;
+import com.mtnfog.phileas.model.objects.DocumentAnalysis;
 import com.mtnfog.phileas.model.objects.Explanation;
 import com.mtnfog.phileas.model.objects.RedactionOptions;
 import com.mtnfog.phileas.model.objects.Span;
@@ -29,6 +30,7 @@ import com.mtnfog.phileas.model.services.*;
 import com.mtnfog.phileas.processors.unstructured.UnstructuredDocumentProcessor;
 import com.mtnfog.phileas.service.ai.PyTorchFilter;
 import com.mtnfog.phileas.services.alerts.AlertServiceFactory;
+import com.mtnfog.phileas.services.analyzers.DocumentAnalyzer;
 import com.mtnfog.phileas.services.anonymization.*;
 import com.mtnfog.phileas.services.anonymization.cache.AnonymizationCacheServiceFactory;
 import com.mtnfog.phileas.services.disambiguation.VectorBasedSpanDisambiguationService;
@@ -78,6 +80,7 @@ public class PhileasFilterService implements FilterService {
     private double bloomFilterFpp;
 
     private DocumentProcessor unstructuredDocumentProcessor;
+    private DocumentAnalyzer documentAnalyzer;
 
     private final int windowSize;
 
@@ -110,6 +113,9 @@ public class PhileasFilterService implements FilterService {
 
         // Create a new unstructured document processor.
         this.unstructuredDocumentProcessor = new UnstructuredDocumentProcessor(metricsService, spanDisambiguationService, store);
+
+        // Create a new document analyzer.
+        this.documentAnalyzer = new DocumentAnalyzer();
 
         // Get the window size.
         this.windowSize = phileasConfiguration.spanWindowSize();
@@ -162,9 +168,10 @@ public class PhileasFilterService implements FilterService {
 
         final List<String> types = new LinkedList<>();
 
-        final List<Filter> filters = getFiltersForFilterProfile(filterProfile);
-
         if(mimeType == MimeType.TEXT_PLAIN) {
+
+            final DocumentAnalysis documentAnalysis = documentAnalyzer.analyze(input);
+            final List<Filter> filters = getFiltersForFilterProfile(filterProfile, documentAnalysis);
 
             for (final Filter filter : filters) {
 
@@ -180,6 +187,9 @@ public class PhileasFilterService implements FilterService {
 
             // Remove the HTML tags.
             final String plain = Jsoup.clean(input, Whitelist.none());
+
+            final DocumentAnalysis documentAnalysis = documentAnalyzer.analyze(input);
+            final List<Filter> filters = getFiltersForFilterProfile(filterProfile, documentAnalysis);
 
             for (final Filter filter : filters) {
 
@@ -239,7 +249,10 @@ public class PhileasFilterService implements FilterService {
             }
         }
 
-        final List<Filter> filters = getFiltersForFilterProfile(filterProfile);
+        // Analyze the document.
+        final DocumentAnalysis documentAnalysis = documentAnalyzer.analyze(input);
+
+        final List<Filter> filters = getFiltersForFilterProfile(filterProfile, documentAnalysis);
         final List<PostFilter> postFilters = getPostFiltersForFilterProfile(filterProfileName);
 
         // See if we need to generate a document ID.
@@ -317,9 +330,6 @@ public class PhileasFilterService implements FilterService {
         LOGGER.debug("Deserializing filter profile [{}]", filterProfileName);
         final FilterProfile filterProfile = gson.fromJson(filterProfileJson, FilterProfile.class);
 
-        final List<Filter> filters = getFiltersForFilterProfile(filterProfile);
-        final List<PostFilter> postFilters = getPostFiltersForFilterProfile(filterProfileName);
-
         // See if we need to generate a document ID.
         if(StringUtils.isEmpty(documentId)) {
 
@@ -348,10 +358,16 @@ public class PhileasFilterService implements FilterService {
             // Track the document offset.
             int offset = 0;
 
+            // Analyze the lines to determine the type of document.
+            final DocumentAnalysis documentAnalysis = documentAnalyzer.analyze(lines);
+
+            final List<Filter> filters = getFiltersForFilterProfile(filterProfile, documentAnalysis);
+            final List<PostFilter> postFilters = getPostFiltersForFilterProfile(filterProfileName);
+
             // Process each line looking for sensitive information in each line.
             for(final String line : lines) {
 
-                  // Process the text.
+                // Process the text.
                 final FilterResponse filterResponse = unstructuredDocumentProcessor.process(filterProfile, filters, postFilters, context, documentId, 0, line);
 
                 // Add all the found spans to the list of spans.
@@ -472,7 +488,7 @@ public class PhileasFilterService implements FilterService {
 
     }
 
-    public List<Filter> getFiltersForFilterProfile(final FilterProfile filterProfile) throws IOException {
+    public List<Filter> getFiltersForFilterProfile(final FilterProfile filterProfile, DocumentAnalysis documentAnalysis) throws IOException {
 
         LOGGER.debug("Getting filters for filter profile [{}]", filterProfile.getName());
 
@@ -491,6 +507,7 @@ public class PhileasFilterService implements FilterService {
                     .withIgnoredPatterns(filterProfile.getIdentifiers().getAge().getIgnoredPatterns())
                     .withCrypto(filterProfile.getCrypto())
                     .withWindowSize(windowSize)
+                    .withDocumentAnalysis(documentAnalysis)
                     .build();
 
             enabledFilters.add(new AgeFilter(filterConfiguration));
@@ -508,6 +525,7 @@ public class PhileasFilterService implements FilterService {
                     .withIgnoredPatterns(filterProfile.getIdentifiers().getBitcoinAddress().getIgnoredPatterns())
                     .withCrypto(filterProfile.getCrypto())
                     .withWindowSize(windowSize)
+                    .withDocumentAnalysis(documentAnalysis)
                     .build();
 
             enabledFilters.add(new BitcoinAddressFilter(filterConfiguration));
@@ -525,6 +543,7 @@ public class PhileasFilterService implements FilterService {
                     .withIgnoredPatterns(filterProfile.getIdentifiers().getCreditCard().getIgnoredPatterns())
                     .withCrypto(filterProfile.getCrypto())
                     .withWindowSize(windowSize)
+                    .withDocumentAnalysis(documentAnalysis)
                     .build();
 
             final boolean onlyValidCreditCardNumbers = filterProfile.getIdentifiers().getCreditCard().isOnlyValidCreditCardNumbers();
@@ -544,6 +563,7 @@ public class PhileasFilterService implements FilterService {
                     .withIgnoredPatterns(filterProfile.getIdentifiers().getDate().getIgnoredPatterns())
                     .withCrypto(filterProfile.getCrypto())
                     .withWindowSize(windowSize)
+                    .withDocumentAnalysis(documentAnalysis)
                     .build();
 
             final boolean onlyValidDates = filterProfile.getIdentifiers().getDate().isOnlyValidDates();
@@ -564,6 +584,7 @@ public class PhileasFilterService implements FilterService {
                     .withIgnoredPatterns(filterProfile.getIdentifiers().getDriversLicense().getIgnoredPatterns())
                     .withCrypto(filterProfile.getCrypto())
                     .withWindowSize(windowSize)
+                    .withDocumentAnalysis(documentAnalysis)
                     .build();
 
             enabledFilters.add(new DriversLicenseFilter(filterConfiguration));
@@ -581,6 +602,7 @@ public class PhileasFilterService implements FilterService {
                     .withIgnoredPatterns(filterProfile.getIdentifiers().getEmailAddress().getIgnoredPatterns())
                     .withCrypto(filterProfile.getCrypto())
                     .withWindowSize(windowSize)
+                    .withDocumentAnalysis(documentAnalysis)
                     .build();
 
             enabledFilters.add(new EmailAddressFilter(filterConfiguration));
@@ -598,6 +620,7 @@ public class PhileasFilterService implements FilterService {
                     .withIgnoredPatterns(filterProfile.getIdentifiers().getIbanCode().getIgnoredPatterns())
                     .withCrypto(filterProfile.getCrypto())
                     .withWindowSize(windowSize)
+                    .withDocumentAnalysis(documentAnalysis)
                     .build();
 
             final boolean onlyValidIBANCodes = filterProfile.getIdentifiers().getIbanCode().isOnlyValidIBANCodes();
@@ -618,6 +641,7 @@ public class PhileasFilterService implements FilterService {
                     .withIgnoredPatterns(filterProfile.getIdentifiers().getIpAddress().getIgnoredPatterns())
                     .withCrypto(filterProfile.getCrypto())
                     .withWindowSize(windowSize)
+                    .withDocumentAnalysis(documentAnalysis)
                     .build();
 
             enabledFilters.add(new IpAddressFilter(filterConfiguration));
@@ -635,6 +659,7 @@ public class PhileasFilterService implements FilterService {
                     .withIgnoredPatterns(filterProfile.getIdentifiers().getMacAddress().getIgnoredPatterns())
                     .withCrypto(filterProfile.getCrypto())
                     .withWindowSize(windowSize)
+                    .withDocumentAnalysis(documentAnalysis)
                     .build();
 
             enabledFilters.add(new MacAddressFilter(filterConfiguration));
@@ -652,6 +677,7 @@ public class PhileasFilterService implements FilterService {
                     .withIgnoredPatterns(filterProfile.getIdentifiers().getPassportNumber().getIgnoredPatterns())
                     .withCrypto(filterProfile.getCrypto())
                     .withWindowSize(windowSize)
+                    .withDocumentAnalysis(documentAnalysis)
                     .build();
 
             enabledFilters.add(new PassportNumberFilter(filterConfiguration));
@@ -669,6 +695,7 @@ public class PhileasFilterService implements FilterService {
                     .withIgnoredPatterns(filterProfile.getIdentifiers().getPhoneNumberExtension().getIgnoredPatterns())
                     .withCrypto(filterProfile.getCrypto())
                     .withWindowSize(windowSize)
+                    .withDocumentAnalysis(documentAnalysis)
                     .build();
 
             enabledFilters.add(new PhoneNumberExtensionFilter(filterConfiguration));
@@ -686,6 +713,7 @@ public class PhileasFilterService implements FilterService {
                     .withIgnoredPatterns(filterProfile.getIdentifiers().getPhoneNumber().getIgnoredPatterns())
                     .withCrypto(filterProfile.getCrypto())
                     .withWindowSize(windowSize)
+                    .withDocumentAnalysis(documentAnalysis)
                     .build();
 
             enabledFilters.add(new PhoneNumberRulesFilter(filterConfiguration));
@@ -703,6 +731,7 @@ public class PhileasFilterService implements FilterService {
                     .withIgnoredPatterns(filterProfile.getIdentifiers().getPhysicianName().getIgnoredPatterns())
                     .withCrypto(filterProfile.getCrypto())
                     .withWindowSize(windowSize)
+                    .withDocumentAnalysis(documentAnalysis)
                     .build();
 
             enabledFilters.add(new PhysicianNameFilter(filterConfiguration));
@@ -726,6 +755,7 @@ public class PhileasFilterService implements FilterService {
                             .withIgnoredPatterns(section.getIgnoredPatterns())
                             .withCrypto(filterProfile.getCrypto())
                             .withWindowSize(windowSize)
+                            .withDocumentAnalysis(documentAnalysis)
                             .build();
 
                     final String startPattern = section.getStartPattern();
@@ -750,6 +780,7 @@ public class PhileasFilterService implements FilterService {
                     .withIgnoredPatterns(filterProfile.getIdentifiers().getSsn().getIgnoredPatterns())
                     .withCrypto(filterProfile.getCrypto())
                     .withWindowSize(windowSize)
+                    .withDocumentAnalysis(documentAnalysis)
                     .build();
 
             enabledFilters.add(new SsnFilter(filterConfiguration));
@@ -767,6 +798,7 @@ public class PhileasFilterService implements FilterService {
                     .withIgnoredPatterns(filterProfile.getIdentifiers().getStateAbbreviation().getIgnoredPatterns())
                     .withCrypto(filterProfile.getCrypto())
                     .withWindowSize(windowSize)
+                    .withDocumentAnalysis(documentAnalysis)
                     .build();
 
             enabledFilters.add(new StateAbbreviationFilter(filterConfiguration));
@@ -784,6 +816,7 @@ public class PhileasFilterService implements FilterService {
                     .withIgnoredPatterns(filterProfile.getIdentifiers().getStreetAddress().getIgnoredPatterns())
                     .withCrypto(filterProfile.getCrypto())
                     .withWindowSize(windowSize)
+                    .withDocumentAnalysis(documentAnalysis)
                     .build();
 
             enabledFilters.add(new StreetAddressFilter(filterConfiguration));
@@ -801,6 +834,7 @@ public class PhileasFilterService implements FilterService {
                     .withIgnoredPatterns(filterProfile.getIdentifiers().getTrackingNumber().getIgnoredPatterns())
                     .withCrypto(filterProfile.getCrypto())
                     .withWindowSize(windowSize)
+                    .withDocumentAnalysis(documentAnalysis)
                     .build();
 
             enabledFilters.add(new TrackingNumberFilter(filterConfiguration));
@@ -818,6 +852,7 @@ public class PhileasFilterService implements FilterService {
                     .withIgnoredPatterns(filterProfile.getIdentifiers().getUrl().getIgnoredPatterns())
                     .withCrypto(filterProfile.getCrypto())
                     .withWindowSize(windowSize)
+                    .withDocumentAnalysis(documentAnalysis)
                     .build();
 
             final boolean requireHttpWwwPrefix = filterProfile.getIdentifiers().getUrl().isRequireHttpWwwPrefix();
@@ -837,6 +872,7 @@ public class PhileasFilterService implements FilterService {
                     .withIgnoredPatterns(filterProfile.getIdentifiers().getVin().getIgnoredPatterns())
                     .withCrypto(filterProfile.getCrypto())
                     .withWindowSize(windowSize)
+                    .withDocumentAnalysis(documentAnalysis)
                     .build();
 
             enabledFilters.add(new VinFilter(filterConfiguration));
@@ -854,6 +890,7 @@ public class PhileasFilterService implements FilterService {
                     .withIgnoredPatterns(filterProfile.getIdentifiers().getZipCode().getIgnoredPatterns())
                     .withCrypto(filterProfile.getCrypto())
                     .withWindowSize(windowSize)
+                    .withDocumentAnalysis(documentAnalysis)
                     .build();
 
             enabledFilters.add(new ZipCodeFilter(filterConfiguration));
@@ -909,6 +946,7 @@ public class PhileasFilterService implements FilterService {
                                 .withIgnoredPatterns(filterProfile.getIdentifiers().getZipCode().getIgnoredPatterns())
                                 .withCrypto(filterProfile.getCrypto())
                                 .withWindowSize(windowSize)
+                                .withDocumentAnalysis(documentAnalysis)
                                 .build();
 
                         final SensitivityLevel sensitivityLevel = SensitivityLevel.fromName(customDictionary.getSensitivity());
@@ -935,6 +973,7 @@ public class PhileasFilterService implements FilterService {
                                     .withIgnoredPatterns(customDictionary.getIgnoredPatterns())
                                     .withCrypto(filterProfile.getCrypto())
                                     .withWindowSize(windowSize)
+                                    .withDocumentAnalysis(documentAnalysis)
                                     .build();
 
                             final String classification = customDictionary.getClassification();
@@ -971,6 +1010,7 @@ public class PhileasFilterService implements FilterService {
                     .withIgnoredPatterns(filterProfile.getIdentifiers().getCity().getIgnoredPatterns())
                     .withCrypto(filterProfile.getCrypto())
                     .withWindowSize(windowSize)
+                    .withDocumentAnalysis(documentAnalysis)
                     .build();
 
             final SensitivityLevel sensitivityLevel = filterProfile.getIdentifiers().getCity().getSensitivityLevel();
@@ -991,6 +1031,7 @@ public class PhileasFilterService implements FilterService {
                     .withIgnoredPatterns(filterProfile.getIdentifiers().getCounty().getIgnoredPatterns())
                     .withCrypto(filterProfile.getCrypto())
                     .withWindowSize(windowSize)
+                    .withDocumentAnalysis(documentAnalysis)
                     .build();
 
             final SensitivityLevel sensitivityLevel = filterProfile.getIdentifiers().getCounty().getSensitivityLevel();
@@ -1011,6 +1052,7 @@ public class PhileasFilterService implements FilterService {
                     .withIgnoredPatterns(filterProfile.getIdentifiers().getState().getIgnoredPatterns())
                     .withCrypto(filterProfile.getCrypto())
                     .withWindowSize(windowSize)
+                    .withDocumentAnalysis(documentAnalysis)
                     .build();
 
             final SensitivityLevel sensitivityLevel = filterProfile.getIdentifiers().getState().getSensitivityLevel();
@@ -1031,6 +1073,7 @@ public class PhileasFilterService implements FilterService {
                     .withIgnoredPatterns(filterProfile.getIdentifiers().getHospital().getIgnoredPatterns())
                     .withCrypto(filterProfile.getCrypto())
                     .withWindowSize(windowSize)
+                    .withDocumentAnalysis(documentAnalysis)
                     .build();
 
             final SensitivityLevel sensitivityLevel = filterProfile.getIdentifiers().getHospital().getSensitivityLevel();
@@ -1051,6 +1094,7 @@ public class PhileasFilterService implements FilterService {
                     .withIgnoredPatterns(filterProfile.getIdentifiers().getHospitalAbbreviation().getIgnoredPatterns())
                     .withCrypto(filterProfile.getCrypto())
                     .withWindowSize(windowSize)
+                    .withDocumentAnalysis(documentAnalysis)
                     .build();
 
             final SensitivityLevel sensitivityLevel = filterProfile.getIdentifiers().getHospitalAbbreviation().getSensitivityLevel();
@@ -1071,6 +1115,7 @@ public class PhileasFilterService implements FilterService {
                     .withIgnoredPatterns(filterProfile.getIdentifiers().getFirstName().getIgnoredPatterns())
                     .withCrypto(filterProfile.getCrypto())
                     .withWindowSize(windowSize)
+                    .withDocumentAnalysis(documentAnalysis)
                     .build();
 
             final SensitivityLevel sensitivityLevel = filterProfile.getIdentifiers().getFirstName().getSensitivityLevel();
@@ -1091,6 +1136,7 @@ public class PhileasFilterService implements FilterService {
                     .withIgnoredPatterns(filterProfile.getIdentifiers().getSurname().getIgnoredPatterns())
                     .withCrypto(filterProfile.getCrypto())
                     .withWindowSize(windowSize)
+                    .withDocumentAnalysis(documentAnalysis)
                     .build();
 
             final SensitivityLevel sensitivityLevel = filterProfile.getIdentifiers().getSurname().getSensitivityLevel();
@@ -1119,6 +1165,7 @@ public class PhileasFilterService implements FilterService {
                             .withIgnoredPatterns(identifier.getIgnoredPatterns())
                             .withCrypto(filterProfile.getCrypto())
                             .withWindowSize(windowSize)
+                            .withDocumentAnalysis(documentAnalysis)
                             .build();
 
                     final String classification = identifier.getClassification();
@@ -1146,6 +1193,7 @@ public class PhileasFilterService implements FilterService {
                     .withIgnoredPatterns(filterProfile.getIdentifiers().getNer().getIgnoredPatterns())
                     .withCrypto(filterProfile.getCrypto())
                     .withWindowSize(windowSize)
+                    .withDocumentAnalysis(documentAnalysis)
                     .build();
 
             // TODO: Allow a single PyTorchFilter to extract many types of entities instead of just one, i.e. "PER".

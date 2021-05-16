@@ -4,6 +4,7 @@ import com.mtnfog.phileas.model.enums.FilterType;
 import com.mtnfog.phileas.model.filter.FilterConfiguration;
 import com.mtnfog.phileas.model.filter.rules.RulesFilter;
 import com.mtnfog.phileas.model.objects.Analyzer;
+import com.mtnfog.phileas.model.objects.DocumentAnalysis;
 
 /**
  * A filter that works by using one or more regular expressions.

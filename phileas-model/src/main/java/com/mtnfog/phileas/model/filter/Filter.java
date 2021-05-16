@@ -1,10 +1,7 @@
 package com.mtnfog.phileas.model.filter;
 
 import com.mtnfog.phileas.model.enums.FilterType;
-import com.mtnfog.phileas.model.objects.FilterPattern;
-import com.mtnfog.phileas.model.objects.FilterResult;
-import com.mtnfog.phileas.model.objects.Replacement;
-import com.mtnfog.phileas.model.objects.Span;
+import com.mtnfog.phileas.model.objects.*;
 import com.mtnfog.phileas.model.profile.Crypto;
 import com.mtnfog.phileas.model.profile.FilterProfile;
 import com.mtnfog.phileas.model.profile.IgnoredPattern;
@@ -18,6 +15,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import javax.swing.text.Document;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -74,6 +72,11 @@ public abstract class Filter {
     protected int windowSize;
 
     /**
+     * The document analysis results.
+     */
+    protected DocumentAnalysis documentAnalysis;
+
+    /**
      * Filters the input text.
      * @param filterProfile The {@link FilterProfile} to use.
      * @param context The context.
@@ -100,6 +103,7 @@ public abstract class Filter {
     public Filter(FilterType filterType, FilterConfiguration filterConfiguration) {
 
         this.filterType = filterType;
+
         this.strategies = filterConfiguration.getStrategies();
         this.anonymizationService = filterConfiguration.getAnonymizationService();
         this.alertService = filterConfiguration.getAlertService();
@@ -107,6 +111,7 @@ public abstract class Filter {
         this.ignored = filterConfiguration.getIgnored();
         this.crypto = filterConfiguration.getCrypto();
         this.windowSize = filterConfiguration.getWindowSize();
+        this.documentAnalysis = filterConfiguration.getDocumentAnalysis();
 
         if(this.ignored == null) {
             this.ignored = new LinkedHashSet<>();
@@ -208,12 +213,27 @@ public abstract class Filter {
      * @param classification The classification of the item.
      * @return The replacement string.
      */
-    public Replacement getReplacement(String filterProfile, String context, String documentId, String token, String[] window, double confidence, String classification, FilterPattern filterPattern) throws Exception {
+    public Replacement getReplacement(String filterProfile, String context, String documentId, String token, String[] window,
+                                      double confidence, String classification, FilterPattern filterPattern) throws Exception {
 
         if(strategies != null) {
 
             // Loop through the strategies. The first strategy without a condition or a satisfied condition will provide the replacement.
             for (AbstractFilterStrategy strategy : strategies) {
+
+                // Check the documentAnalysis against the strategy to make sure we can redact in this document.
+                if(CollectionUtils.isNotEmpty(documentAnalysis.getDocumentTypes())) {
+
+                    // disjoint() will return true if the two collections have no items in common.
+                    // disjoint() will return false if there is at least one item common in the collections.
+                    if (!Collections.disjoint(documentAnalysis.getDocumentTypes(), strategy.getExcludeDocumentTypes())) {
+
+                        // We cannot redact in this document type so just return the original token.
+                        return new Replacement(token);
+
+                    }
+
+                }
 
                 // Get the condition. (There might not be one.)
                 final String condition = strategy.getCondition();

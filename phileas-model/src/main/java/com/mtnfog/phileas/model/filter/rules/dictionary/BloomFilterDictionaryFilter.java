@@ -4,6 +4,7 @@ import com.google.common.hash.BloomFilter;
 import com.google.common.hash.Funnels;
 import com.mtnfog.phileas.model.enums.FilterType;
 import com.mtnfog.phileas.model.filter.FilterConfiguration;
+import com.mtnfog.phileas.model.objects.DocumentAnalysis;
 import com.mtnfog.phileas.model.objects.FilterResult;
 import com.mtnfog.phileas.model.objects.Replacement;
 import com.mtnfog.phileas.model.objects.Span;
@@ -101,8 +102,11 @@ public class BloomFilterDictionaryFilter extends DictionaryFilter {
                         // Get the original token to get the right casing.
                         final String originalToken = text.substring(characterStart, characterEnd);
 
-                        final Replacement replacement = getReplacement(filterProfile.getName(), context, documentId, originalToken, window, confidence, classification, null);
-                        spans.add(Span.make(characterStart, characterEnd, getFilterType(), context, documentId, confidence, originalToken, replacement.getReplacement(), replacement.getSalt(), isIgnored, window));
+                        final Replacement replacement = getReplacement(filterProfile.getName(), context, documentId,
+                                originalToken, window, confidence, classification, null);
+
+                        spans.add(Span.make(characterStart, characterEnd, getFilterType(), context, documentId,
+                                confidence, originalToken, replacement.getReplacement(), replacement.getSalt(), isIgnored, window));
 
                     }
 

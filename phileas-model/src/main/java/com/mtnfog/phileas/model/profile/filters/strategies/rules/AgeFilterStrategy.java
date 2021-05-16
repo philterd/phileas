@@ -1,5 +1,7 @@
 package com.mtnfog.phileas.model.profile.filters.strategies.rules;
 
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 import com.mtnfog.phileas.model.conditions.ParsedCondition;
 import com.mtnfog.phileas.model.conditions.ParserListener;
 import com.mtnfog.phileas.model.enums.FilterType;
@@ -15,6 +17,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.LinkedList;
 import java.util.List;
 
 public class AgeFilterStrategy extends AbstractFilterStrategy {

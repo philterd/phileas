@@ -2,6 +2,7 @@ package com.mtnfog.phileas.model.filter.dynamic;
 
 import com.mtnfog.phileas.model.enums.FilterType;
 import com.mtnfog.phileas.model.filter.FilterConfiguration;
+import com.mtnfog.phileas.model.objects.DocumentAnalysis;
 import com.mtnfog.phileas.model.services.MetricsService;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 

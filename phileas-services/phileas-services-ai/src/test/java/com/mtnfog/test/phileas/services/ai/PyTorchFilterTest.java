@@ -3,6 +3,7 @@ package com.mtnfog.test.phileas.services.ai;
 import com.google.gson.Gson;
 import com.mtnfog.phileas.configuration.PhileasConfiguration;
 import com.mtnfog.phileas.model.filter.FilterConfiguration;
+import com.mtnfog.phileas.model.objects.DocumentAnalysis;
 import com.mtnfog.phileas.model.objects.FilterResult;
 import com.mtnfog.phileas.model.objects.Span;
 import com.mtnfog.phileas.model.profile.FilterProfile;
@@ -35,8 +36,6 @@ public class PyTorchFilterTest {
     private static final Logger LOGGER = LogManager.getLogger(PyTorchFilterTest.class);
 
     private static MockWebServer mockServer;
-
-    private int windowSize = 5;
 
     @BeforeAll
     public static void before() throws IOException {

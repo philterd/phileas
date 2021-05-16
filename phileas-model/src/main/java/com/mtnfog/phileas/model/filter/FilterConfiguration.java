@@ -1,5 +1,6 @@
 package com.mtnfog.phileas.model.filter;
 
+import com.mtnfog.phileas.model.objects.DocumentAnalysis;
 import com.mtnfog.phileas.model.profile.Crypto;
 import com.mtnfog.phileas.model.profile.IgnoredPattern;
 import com.mtnfog.phileas.model.profile.filters.strategies.AbstractFilterStrategy;
@@ -18,6 +19,7 @@ public class FilterConfiguration {
     private List<IgnoredPattern> ignoredPatterns = new LinkedList<>();
     private Crypto crypto;
     private int windowSize = 5;
+    private DocumentAnalysis documentAnalysis;
 
     private FilterConfiguration(
             List<? extends AbstractFilterStrategy> strategies,
@@ -27,7 +29,8 @@ public class FilterConfiguration {
             Set<String> ignoredFiles,
             List<IgnoredPattern> ignoredPatterns,
             Crypto crypto,
-            int windowSize
+            int windowSize,
+            DocumentAnalysis documentAnalysis
     ) {
 
         this.strategies = strategies;
@@ -38,6 +41,7 @@ public class FilterConfiguration {
         this.ignoredPatterns = ignoredPatterns;
         this.crypto = crypto;
         this.windowSize = windowSize;
+        this.documentAnalysis = documentAnalysis;
 
     }
 
@@ -51,8 +55,17 @@ public class FilterConfiguration {
         private List<IgnoredPattern> ignoredPatterns;
         private Crypto crypto;
         private int windowSize;
+        private DocumentAnalysis documentAnalysis;
 
         public FilterConfiguration build() {
+
+            // Always make sure there is a document analysis.
+            // This is needed for unit tests in which the text has not gone through the filter process
+            // and the input text was not first analyzed.
+            if(documentAnalysis == null) {
+                documentAnalysis = new DocumentAnalysis();
+            }
+
             return new FilterConfiguration(
                     strategies,
                     anonymizationService,
@@ -61,8 +74,10 @@ public class FilterConfiguration {
                     ignoredFiles,
                     ignoredPatterns,
                     crypto,
-                    windowSize
+                    windowSize,
+                    documentAnalysis
             );
+
         }
 
         public FilterConfigurationBuilder withStrategies(List<? extends AbstractFilterStrategy> strategies) {
@@ -105,6 +120,11 @@ public class FilterConfiguration {
             return this;
         }
 
+        public FilterConfigurationBuilder withDocumentAnalysis(DocumentAnalysis documentAnalysis) {
+            this.documentAnalysis = documentAnalysis;
+            return this;
+        }
+
     }
 
     public List<? extends AbstractFilterStrategy> getStrategies() {
@@ -137,6 +157,10 @@ public class FilterConfiguration {
 
     public int getWindowSize() {
         return windowSize;
+    }
+
+    public DocumentAnalysis getDocumentAnalysis() {
+        return documentAnalysis;
     }
 
 }

@@ -3,12 +3,11 @@ package com.mtnfog.phileas.model.filter.rules;
 import com.mtnfog.phileas.model.enums.FilterType;
 import com.mtnfog.phileas.model.filter.Filter;
 import com.mtnfog.phileas.model.filter.FilterConfiguration;
-import com.mtnfog.phileas.model.objects.Analyzer;
-import com.mtnfog.phileas.model.objects.FilterPattern;
-import com.mtnfog.phileas.model.objects.Replacement;
-import com.mtnfog.phileas.model.objects.Span;
+import com.mtnfog.phileas.model.objects.*;
 import com.mtnfog.phileas.model.profile.FilterProfile;
 
+import javax.swing.text.Document;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -25,7 +24,7 @@ public abstract class RulesFilter extends Filter {
     /**
      * Creates a new rule-based filter.
      * @param filterType
-      * @param filterConfiguration The {@link FilterConfiguration} for the filter.
+     * @param filterConfiguration The {@link FilterConfiguration} for the filter.
      */
     public RulesFilter(FilterType filterType, FilterConfiguration filterConfiguration) {
         super(filterType, filterConfiguration);
@@ -52,7 +51,8 @@ public abstract class RulesFilter extends Filter {
      * @param documentId The document ID.
      * @return A list of matching {@link Span spans}.
      */
-    protected List<Span> findSpans(FilterProfile filterProfile, Analyzer analyzer, String input, String context, String documentId) throws Exception {
+    protected List<Span> findSpans(FilterProfile filterProfile, Analyzer analyzer, String input, String context,
+                                   String documentId) throws Exception {
 
         final List<Span> spans = new LinkedList<>();
 
@@ -86,9 +86,11 @@ public abstract class RulesFilter extends Filter {
                         final String[] window = getWindow(input, characterStart, characterEnd);
 
                         // Get the span's replacement.
-                        final Replacement replacement = getReplacement(filterProfile.getName(), context, documentId, token, window, initialConfidence, filterPattern.getClassification(), filterPattern);
+                        final Replacement replacement = getReplacement(filterProfile.getName(), context, documentId, token,
+                                window, initialConfidence, filterPattern.getClassification(), filterPattern);
 
-                        final Span span = Span.make(characterStart, characterEnd, getFilterType(), context, documentId, initialConfidence, token, replacement.getReplacement(), replacement.getSalt(), ignored, window);
+                        final Span span = Span.make(characterStart, characterEnd, getFilterType(), context, documentId,
+                                initialConfidence, token, replacement.getReplacement(), replacement.getSalt(), ignored, window);
 
                         // TODO: Add "format" to Span.make() so we don't have to make a separate call here.
                         span.setPattern(filterPattern.getFormat());
