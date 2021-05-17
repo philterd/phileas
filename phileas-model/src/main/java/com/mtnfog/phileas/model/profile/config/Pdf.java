@@ -1,7 +1,12 @@
 package com.mtnfog.phileas.model.profile.config;
 
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+
 public class Pdf {
 
+    @SerializedName("enabled")
+    @Expose
     private String redactionColor = "black";
 
     public String getRedactionColor() {

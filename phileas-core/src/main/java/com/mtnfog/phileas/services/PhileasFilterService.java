@@ -170,7 +170,14 @@ public class PhileasFilterService implements FilterService {
 
         if(mimeType == MimeType.TEXT_PLAIN) {
 
-            final DocumentAnalysis documentAnalysis = documentAnalyzer.analyze(input);
+            // Analyze the document.
+            final DocumentAnalysis documentAnalysis;
+            if(filterProfile.getConfig().getAnalysis().isEnabled()) {
+                documentAnalysis = documentAnalyzer.analyze(input);
+            } else {
+                documentAnalysis = new DocumentAnalysis();
+            }
+            
             final List<Filter> filters = getFiltersForFilterProfile(filterProfile, documentAnalysis);
 
             for (final Filter filter : filters) {
@@ -188,7 +195,14 @@ public class PhileasFilterService implements FilterService {
             // Remove the HTML tags.
             final String plain = Jsoup.clean(input, Whitelist.none());
 
-            final DocumentAnalysis documentAnalysis = documentAnalyzer.analyze(input);
+            // Analyze the document.
+            final DocumentAnalysis documentAnalysis;
+            if(filterProfile.getConfig().getAnalysis().isEnabled()) {
+                documentAnalysis = documentAnalyzer.analyze(input);
+            } else {
+                documentAnalysis = new DocumentAnalysis();
+            }
+
             final List<Filter> filters = getFiltersForFilterProfile(filterProfile, documentAnalysis);
 
             for (final Filter filter : filters) {
@@ -250,7 +264,12 @@ public class PhileasFilterService implements FilterService {
         }
 
         // Analyze the document.
-        final DocumentAnalysis documentAnalysis = documentAnalyzer.analyze(input);
+        final DocumentAnalysis documentAnalysis;
+        if(filterProfile.getConfig().getAnalysis().isEnabled()) {
+            documentAnalysis = documentAnalyzer.analyze(input);
+        } else {
+            documentAnalysis = new DocumentAnalysis();
+        }
 
         final List<Filter> filters = getFiltersForFilterProfile(filterProfile, documentAnalysis);
         final List<PostFilter> postFilters = getPostFiltersForFilterProfile(filterProfileName);
@@ -359,7 +378,12 @@ public class PhileasFilterService implements FilterService {
             int offset = 0;
 
             // Analyze the lines to determine the type of document.
-            final DocumentAnalysis documentAnalysis = documentAnalyzer.analyze(lines);
+            final DocumentAnalysis documentAnalysis;
+            if(filterProfile.getConfig().getAnalysis().isEnabled()) {
+                documentAnalysis = documentAnalyzer.analyze(lines);
+            } else {
+                documentAnalysis = new DocumentAnalysis();
+            }
 
             final List<Filter> filters = getFiltersForFilterProfile(filterProfile, documentAnalysis);
             final List<PostFilter> postFilters = getPostFiltersForFilterProfile(filterProfileName);

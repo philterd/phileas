@@ -54,7 +54,7 @@ public class DocumentAnalyzer {
         } else
 
         // AO 88A
-        if(lowerCase.contains("AO 88".toLowerCase()) || lowerCase.contains("SUBPOENA TO TESTIFY AT A DEPOSITION IN A CIVIL ACTION".toLowerCase())) {
+        if(lowerCase.contains("AO 88A".toLowerCase()) || lowerCase.contains("SUBPOENA TO TESTIFY AT A DEPOSITION IN A CIVIL ACTION".toLowerCase())) {
             documentAnalysis.setDocumentType(DocumentType.SUBPOENA);
             documentAnalysis.setDocument("AO 88A");
         } else
@@ -78,9 +78,9 @@ public class DocumentAnalyzer {
         } else
 
         // AO 110
-        if(lowerCase.contains("AO 90".toLowerCase()) || lowerCase.contains("SUBPOENA TO TESTIFY BEFORE A GRAND JURY".toLowerCase())) {
+        if(lowerCase.contains("AO 110".toLowerCase()) || lowerCase.contains("SUBPOENA TO TESTIFY BEFORE A GRAND JURY".toLowerCase())) {
             documentAnalysis.setDocumentType(DocumentType.SUBPOENA);
-            documentAnalysis.setDocument("AO 90");
+            documentAnalysis.setDocument("AO 110");
         }
 
         return documentAnalysis;
