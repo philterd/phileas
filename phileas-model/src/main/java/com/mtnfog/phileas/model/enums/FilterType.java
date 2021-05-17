@@ -8,6 +8,7 @@ public enum FilterType {
     // TODO: Are Lucene dictionaries "deterministic"? Yes, if no fuzziness.
 
     AGE("age", true),
+    BANK_ROUTING_NUMBER("bank-routing-number", true),
     BITCOIN_ADDRESS("bitcoin-address", true),
     CREDIT_CARD("credit-card", true),
     DRIVERS_LICENSE_NUMBER("drivers-license-number", true),

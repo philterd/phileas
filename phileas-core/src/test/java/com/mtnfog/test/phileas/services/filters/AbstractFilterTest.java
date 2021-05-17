@@ -44,6 +44,9 @@ public abstract class AbstractFilterTest {
         Age age = new Age();
         age.setAgeFilterStrategies(Arrays.asList(new AgeFilterStrategy()));
 
+        BankRoutingNumber bankRoutingNumber = new BankRoutingNumber();
+        bankRoutingNumber.setBankRoutingNumberFilterStrategies(Arrays.asList(new BankRoutingNumberFilterStrategy()));
+
         BitcoinAddress bitcoinAddress = new BitcoinAddress();
         bitcoinAddress.setBitcoinFilterStrategies(Arrays.asList(new BitcoinAddressFilterStrategy()));
 
@@ -144,6 +147,7 @@ public abstract class AbstractFilterTest {
         identifiers.setCustomDictionaries(Arrays.asList(customDictionary));
 
         identifiers.setAge(age);
+        identifiers.setBankRoutingNumber(bankRoutingNumber);
         identifiers.setBitcoinAddress(bitcoinAddress);
         identifiers.setCreditCard(creditCard);
         identifiers.setDate(date);
