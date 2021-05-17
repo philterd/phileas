@@ -1,20 +1,34 @@
 package com.mtnfog.phileas.model.objects;
 
-import java.util.LinkedList;
-import java.util.List;
-
 public class DocumentAnalysis {
 
-    private List<DocumentType> documentTypes;
+    private DocumentType documentType;
+    private String document;
 
     public DocumentAnalysis() {
 
-        this.documentTypes = new LinkedList<>();
+    }
+
+    public DocumentAnalysis(DocumentType documentType, String document) {
+        this.documentType = documentType;
+        this.document = document;
+    }
+
+    public DocumentType getDocumentType() {
+        return documentType;
+    }
+
+    public void setDocumentType(DocumentType documentType) {
+        this.documentType = documentType;
 
     }
 
-    public List<DocumentType> getDocumentTypes() {
-        return documentTypes;
+    public String getDocument() {
+        return document;
+    }
+
+    public void setDocument(String document) {
+        this.document = document;
     }
 
 }

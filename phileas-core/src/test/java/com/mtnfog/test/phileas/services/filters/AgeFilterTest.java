@@ -2,6 +2,8 @@ package com.mtnfog.test.phileas.services.filters;
 
 import com.mtnfog.phileas.model.enums.FilterType;
 import com.mtnfog.phileas.model.filter.FilterConfiguration;
+import com.mtnfog.phileas.model.objects.DocumentAnalysis;
+import com.mtnfog.phileas.model.objects.DocumentType;
 import com.mtnfog.phileas.model.objects.FilterResult;
 import com.mtnfog.phileas.model.profile.IgnoredPattern;
 import com.mtnfog.phileas.model.profile.filters.strategies.rules.AgeFilterStrategy;
@@ -43,6 +45,7 @@ public class AgeFilterTest extends AbstractFilterTest {
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertTrue(filterResult.getSpans().get(0).isIgnored());
+        Assertions.assertNotEquals(filterResult.getSpans().get(0).getText(), filterResult.getSpans().get(0).getReplacement());
 
     }
 
@@ -67,6 +70,7 @@ public class AgeFilterTest extends AbstractFilterTest {
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertTrue(filterResult.getSpans().get(0).isIgnored());
+        Assertions.assertNotEquals(filterResult.getSpans().get(0).getText(), filterResult.getSpans().get(0).getReplacement());
 
     }
 
@@ -91,6 +95,7 @@ public class AgeFilterTest extends AbstractFilterTest {
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 15, 27, FilterType.AGE));
         Assertions.assertEquals("{{{REDACTED-age}}}", filterResult.getSpans().get(0).getReplacement());
         Assertions.assertEquals("3.5years old", filterResult.getSpans().get(0).getText());
+        Assertions.assertNotEquals(filterResult.getSpans().get(0).getText(), filterResult.getSpans().get(0).getReplacement());
 
     }
 
@@ -112,6 +117,7 @@ public class AgeFilterTest extends AbstractFilterTest {
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 15, 27, FilterType.AGE));
+        Assertions.assertNotEquals(filterResult.getSpans().get(0).getText(), filterResult.getSpans().get(0).getReplacement());
 
     }
 
@@ -133,6 +139,7 @@ public class AgeFilterTest extends AbstractFilterTest {
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 19, 24, FilterType.AGE));
+        Assertions.assertNotEquals(filterResult.getSpans().get(0).getText(), filterResult.getSpans().get(0).getReplacement());
 
     }
 
@@ -154,6 +161,7 @@ public class AgeFilterTest extends AbstractFilterTest {
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 19, 23, FilterType.AGE));
+        Assertions.assertNotEquals(filterResult.getSpans().get(0).getText(), filterResult.getSpans().get(0).getReplacement());
 
     }
 
@@ -175,6 +183,7 @@ public class AgeFilterTest extends AbstractFilterTest {
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 15, 25, FilterType.AGE));
+        Assertions.assertNotEquals(filterResult.getSpans().get(0).getText(), filterResult.getSpans().get(0).getReplacement());
 
     }
 
@@ -196,6 +205,7 @@ public class AgeFilterTest extends AbstractFilterTest {
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 15, 25, FilterType.AGE));
+        Assertions.assertNotEquals(filterResult.getSpans().get(0).getText(), filterResult.getSpans().get(0).getReplacement());
 
     }
 
@@ -217,6 +227,7 @@ public class AgeFilterTest extends AbstractFilterTest {
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 7, 14, FilterType.AGE));
+        Assertions.assertNotEquals(filterResult.getSpans().get(0).getText(), filterResult.getSpans().get(0).getReplacement());
 
     }
 
@@ -238,6 +249,7 @@ public class AgeFilterTest extends AbstractFilterTest {
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 7, 13, FilterType.AGE));
+        Assertions.assertNotEquals(filterResult.getSpans().get(0).getText(), filterResult.getSpans().get(0).getReplacement());
 
     }
 
@@ -259,6 +271,7 @@ public class AgeFilterTest extends AbstractFilterTest {
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 7, 15, FilterType.AGE));
+        Assertions.assertNotEquals(filterResult.getSpans().get(0).getText(), filterResult.getSpans().get(0).getReplacement());
 
     }
 
@@ -280,6 +293,7 @@ public class AgeFilterTest extends AbstractFilterTest {
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 24, 34, FilterType.AGE));
+        Assertions.assertNotEquals(filterResult.getSpans().get(0).getText(), filterResult.getSpans().get(0).getReplacement());
 
         LOGGER.info("Span text: " + filterResult.getSpans().get(0).getText());
 
@@ -303,6 +317,7 @@ public class AgeFilterTest extends AbstractFilterTest {
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 15, 21, FilterType.AGE));
+        Assertions.assertNotEquals(filterResult.getSpans().get(0).getText(), filterResult.getSpans().get(0).getReplacement());
 
         LOGGER.info("Span text: " + filterResult.getSpans().get(0).getText());
 
@@ -348,6 +363,7 @@ public class AgeFilterTest extends AbstractFilterTest {
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 9, 20, FilterType.AGE));
+        Assertions.assertNotEquals(filterResult.getSpans().get(0).getText(), filterResult.getSpans().get(0).getReplacement());
 
     }
 
@@ -371,6 +387,7 @@ public class AgeFilterTest extends AbstractFilterTest {
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 11, 19, FilterType.AGE));
+        Assertions.assertNotEquals(filterResult.getSpans().get(0).getText(), filterResult.getSpans().get(0).getReplacement());
 
     }
 
@@ -394,6 +411,7 @@ public class AgeFilterTest extends AbstractFilterTest {
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 18, 26, FilterType.AGE));
+        Assertions.assertNotEquals(filterResult.getSpans().get(0).getText(), filterResult.getSpans().get(0).getReplacement());
 
     }
 
@@ -417,6 +435,63 @@ public class AgeFilterTest extends AbstractFilterTest {
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 18, 26, FilterType.AGE));
+        Assertions.assertNotEquals(filterResult.getSpans().get(0).getText(), filterResult.getSpans().get(0).getReplacement());
+
+    }
+
+    @Test
+    public void filter_subpoena() throws Exception {
+
+        final AgeFilterStrategy ageFilterStrategy = new AgeFilterStrategy();
+        ageFilterStrategy.setExcludeDocumentTypes(Arrays.asList(DocumentType.SUBPOENA));
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(Arrays.asList(ageFilterStrategy))
+                .withAlertService(alertService)
+                .withAnonymizationService(new AgeAnonymizationService(new LocalAnonymizationCacheService()))
+                .withWindowSize(windowSize)
+                .withDocumentAnalysis(new DocumentAnalysis(DocumentType.SUBPOENA, "B254"))
+                .build();
+
+        final AgeFilter filter = new AgeFilter(filterConfiguration);
+
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "Female Admit Age: 69 years\n");
+
+        showSpans(filterResult.getSpans());
+
+        Assertions.assertEquals(1, filterResult.getSpans().size());
+        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 18, 26, FilterType.AGE));
+
+        // The replacement value is the same as the token because the subpoena document type is excluded.
+        Assertions.assertEquals(filterResult.getSpans().get(0).getText(), filterResult.getSpans().get(0).getReplacement());
+
+    }
+
+    @Test
+    public void filter_no_document_type() throws Exception {
+
+        final AgeFilterStrategy ageFilterStrategy = new AgeFilterStrategy();
+        ageFilterStrategy.setExcludeDocumentTypes(Arrays.asList(DocumentType.SUBPOENA));
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(Arrays.asList(ageFilterStrategy))
+                .withAlertService(alertService)
+                .withAnonymizationService(new AgeAnonymizationService(new LocalAnonymizationCacheService()))
+                .withWindowSize(windowSize)
+                .withDocumentAnalysis(new DocumentAnalysis(DocumentType.UNKNOWN, "Unknown"))
+                .build();
+
+        final AgeFilter filter = new AgeFilter(filterConfiguration);
+
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "Female Admit Age: 69 years\n");
+
+        showSpans(filterResult.getSpans());
+
+        Assertions.assertEquals(1, filterResult.getSpans().size());
+        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 18, 26, FilterType.AGE));
+
+        // The replacement value is the same as the token because the subpoena document type is excluded.
+        Assertions.assertNotEquals(filterResult.getSpans().get(0).getText(), filterResult.getSpans().get(0).getReplacement());
 
     }
 

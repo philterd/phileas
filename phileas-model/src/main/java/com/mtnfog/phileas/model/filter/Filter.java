@@ -221,12 +221,11 @@ public abstract class Filter {
             // Loop through the strategies. The first strategy without a condition or a satisfied condition will provide the replacement.
             for (AbstractFilterStrategy strategy : strategies) {
 
-                // Check the documentAnalysis against the strategy to make sure we can redact in this document.
-                if(CollectionUtils.isNotEmpty(documentAnalysis.getDocumentTypes())) {
+                // See if a document type was assigned to this document.
+                if(documentAnalysis.getDocumentType() != null) {
 
-                    // disjoint() will return true if the two collections have no items in common.
-                    // disjoint() will return false if there is at least one item common in the collections.
-                    if (!Collections.disjoint(documentAnalysis.getDocumentTypes(), strategy.getExcludeDocumentTypes())) {
+                    // Check the documentAnalysis against the strategy to make sure we can redact in this document.
+                    if(strategy.getExcludeDocumentTypes().contains(documentAnalysis.getDocumentType())) {
 
                         // We cannot redact in this document type so just return the original token.
                         return new Replacement(token);

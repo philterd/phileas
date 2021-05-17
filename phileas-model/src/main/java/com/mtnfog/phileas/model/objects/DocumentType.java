@@ -2,7 +2,8 @@ package com.mtnfog.phileas.model.objects;
 
 public enum DocumentType {
 
-    SUBPOENA("SUBPOENA");
+    SUBPOENA("SUBPOENA"),
+    UNKNOWN("UNKNOWN");
 
     private String name;
 
