@@ -538,6 +538,24 @@ public class PhileasFilterService implements FilterService {
 
         }
 
+        if(filterProfile.getIdentifiers().hasFilter(FilterType.BANK_ROUTING_NUMBER) && filterProfile.getIdentifiers().getBankRoutingNumber().isEnabled()) {
+
+            final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                    .withStrategies(filterProfile.getIdentifiers().getBankRoutingNumber().getBankRoutingNumberFilterStrategies())
+                    .withAnonymizationService(new AlphanumericAnonymizationService(anonymizationCacheService))
+                    .withAlertService(alertService)
+                    .withIgnored(filterProfile.getIdentifiers().getBankRoutingNumber().getIgnored())
+                    .withIgnoredFiles(filterProfile.getIdentifiers().getBankRoutingNumber().getIgnoredFiles())
+                    .withIgnoredPatterns(filterProfile.getIdentifiers().getBankRoutingNumber().getIgnoredPatterns())
+                    .withCrypto(filterProfile.getCrypto())
+                    .withWindowSize(windowSize)
+                    .withDocumentAnalysis(documentAnalysis)
+                    .build();
+
+            enabledFilters.add(new BankRoutingNumberFilter(filterConfiguration));
+
+        }
+
         if(filterProfile.getIdentifiers().hasFilter(FilterType.BITCOIN_ADDRESS) && filterProfile.getIdentifiers().getBitcoinAddress().isEnabled()) {
 
             final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()

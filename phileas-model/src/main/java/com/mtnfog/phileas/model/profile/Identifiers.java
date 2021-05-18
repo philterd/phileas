@@ -26,6 +26,10 @@ public class Identifiers {
     @Expose
     private Age age;
 
+    @SerializedName("bankRoutingNumber")
+    @Expose
+    private BankRoutingNumber bankRoutingNumber;
+
     @SerializedName("bitcoinAddress")
     @Expose
     private BitcoinAddress bitcoinAddress;
@@ -156,6 +160,8 @@ public class Identifiers {
                 if(CollectionUtils.isNotEmpty(this.getCustomDictionaries())) { return true; } break;
             case AGE:
                 if(this.getAge() != null) { return true; } break;
+            case BANK_ROUTING_NUMBER:
+                if(this.getBankRoutingNumber() != null) {return true; } break;
             case BITCOIN_ADDRESS:
                 if(this.getBitcoinAddress() != null) { return true; } break;
             case LOCATION_CITY:
@@ -475,6 +481,14 @@ public class Identifiers {
 
     public void setPhysicianName(PhysicianName physicianName) {
         this.physicianName = physicianName;
+    }
+
+    public BankRoutingNumber getBankRoutingNumber() {
+        return bankRoutingNumber;
+    }
+
+    public void setBankRoutingNumber(BankRoutingNumber bankRoutingNumber) {
+        this.bankRoutingNumber = bankRoutingNumber;
     }
 
 }
