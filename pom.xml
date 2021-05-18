@@ -77,7 +77,7 @@
 		<module>phileas-model</module>
 		<module>phileas-services</module>
 		<module>phileas-store</module>
-    <module>phileas-configuration</module>
+    	<module>phileas-configuration</module>
 		<module>phileas-processors</module>
 		<module>owner</module>
   	</modules>
@@ -115,6 +115,7 @@
 		<micrometer.version>1.6.5</micrometer.version>
 		<mockito.version>1.10.19</mockito.version>
 		<nv-i18n.version>1.27</nv-i18n.version>
+		<opencv.version>4.5.1-2</opencv.version>
 		<owner.version>1.0.13-SNAPSHOT</owner.version>
 		<pdfbox.version>2.0.23</pdfbox.version>
 		<redis-mock.version>0.1.6</redis-mock.version>
