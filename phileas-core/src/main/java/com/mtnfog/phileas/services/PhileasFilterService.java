@@ -26,7 +26,9 @@ import com.mtnfog.phileas.model.profile.filters.Section;
 import com.mtnfog.phileas.model.responses.BinaryDocumentFilterResponse;
 import com.mtnfog.phileas.model.responses.DetectResponse;
 import com.mtnfog.phileas.model.responses.FilterResponse;
+import com.mtnfog.phileas.model.responses.ImageFilterResponse;
 import com.mtnfog.phileas.model.services.*;
+import com.mtnfog.phileas.processors.images.OpenCVImageProcessor;
 import com.mtnfog.phileas.processors.unstructured.UnstructuredDocumentProcessor;
 import com.mtnfog.phileas.service.ai.PyTorchFilter;
 import com.mtnfog.phileas.services.alerts.AlertServiceFactory;
@@ -63,24 +65,25 @@ public class PhileasFilterService implements FilterService {
 
 	private static final Logger LOGGER = LogManager.getLogger(PhileasFilterService.class);
 
-	private PhileasConfiguration phileasConfiguration;
+	private final PhileasConfiguration phileasConfiguration;
 
-    private FilterProfileService filterProfileService;
-    private MetricsService metricsService;
-    private Store store;
+    private final FilterProfileService filterProfileService;
+    private final MetricsService metricsService;
+    private final Store store;
 
-    private Map<String, DescriptiveStatistics> stats;
-    private Gson gson = new Gson();
+    private final Map<String, DescriptiveStatistics> stats;
+    private final Gson gson = new Gson();
 
-    private String philterNerEndpoint;
-    private AnonymizationCacheService anonymizationCacheService;
-    private AlertService alertService;
-    private SpanDisambiguationService spanDisambiguationService;
-    private String indexDirectory;
-    private double bloomFilterFpp;
+    private final String philterNerEndpoint;
+    private final AnonymizationCacheService anonymizationCacheService;
+    private final AlertService alertService;
+    private final SpanDisambiguationService spanDisambiguationService;
+    private final String indexDirectory;
+    private final double bloomFilterFpp;
 
-    private DocumentProcessor unstructuredDocumentProcessor;
-    private DocumentAnalyzer documentAnalyzer;
+    private final DocumentProcessor unstructuredDocumentProcessor;
+    private final DocumentAnalyzer documentAnalyzer;
+    private final ImageProcessor imageProcessor;
 
     private final int windowSize;
 
@@ -111,16 +114,6 @@ public class PhileasFilterService implements FilterService {
         // Configure span disambiguation.
         this.spanDisambiguationService = new VectorBasedSpanDisambiguationService(phileasConfiguration);
 
-        // Create a new unstructured document processor.
-        this.unstructuredDocumentProcessor = new UnstructuredDocumentProcessor(metricsService, spanDisambiguationService, store);
-
-        // Create a new document analyzer.
-        this.documentAnalyzer = new DocumentAnalyzer();
-
-        // Get the window size.
-        this.windowSize = phileasConfiguration.spanWindowSize();
-        LOGGER.info("Using window size {}", this.windowSize);
-
         // Configure store.
         final boolean storeEnabled = phileasConfiguration.storeEnabled();
 
@@ -137,8 +130,22 @@ public class PhileasFilterService implements FilterService {
         } else {
 
             LOGGER.info("Store is disabled.");
+            this.store = null;
 
         }
+
+        // Create a new unstructured document processor.
+        this.unstructuredDocumentProcessor = new UnstructuredDocumentProcessor(metricsService, spanDisambiguationService, store);
+
+        // Create a new document analyzer.
+        this.documentAnalyzer = new DocumentAnalyzer();
+
+        // Create a new image processor.
+        this.imageProcessor = new OpenCVImageProcessor();
+
+        // Get the window size.
+        this.windowSize = phileasConfiguration.spanWindowSize();
+        LOGGER.info("Using window size {}", this.windowSize);
 
         this.indexDirectory = phileasConfiguration.indexesDirectory();
         LOGGER.info("Using indexes directory {}", this.indexDirectory);
@@ -379,7 +386,7 @@ public class PhileasFilterService implements FilterService {
 
             // Analyze the lines to determine the type of document.
             final DocumentAnalysis documentAnalysis;
-            if(filterProfile.getConfig().getAnalysis().isEnabled()) {
+            if (filterProfile.getConfig().getAnalysis().isEnabled()) {
                 documentAnalysis = documentAnalyzer.analyze(lines);
             } else {
                 documentAnalysis = new DocumentAnalysis();
@@ -389,7 +396,7 @@ public class PhileasFilterService implements FilterService {
             final List<PostFilter> postFilters = getPostFiltersForFilterProfile(filterProfileName);
 
             // Process each line looking for sensitive information in each line.
-            for(final String line : lines) {
+            for (final String line : lines) {
 
                 // Process the text.
                 final FilterResponse filterResponse = unstructuredDocumentProcessor.process(filterProfile, filters, postFilters, context, documentId, 0, line);
@@ -397,7 +404,7 @@ public class PhileasFilterService implements FilterService {
                 // Add all the found spans to the list of spans.
                 spans.addAll(filterResponse.getExplanation().getAppliedSpans());
 
-                for(final Span span : filterResponse.getExplanation().getAppliedSpans()) {
+                for (final Span span : filterResponse.getExplanation().getAppliedSpans()) {
                     span.setCharacterStart(span.getCharacterStart() + offset);
                     span.setCharacterEnd(span.getCharacterEnd() + offset);
                     nonRelativeSpans.add(span);
@@ -426,6 +433,16 @@ public class PhileasFilterService implements FilterService {
             /*if(phileasConfiguration.storeEnabled()) {
                 store.insert(binaryDocumentFilterResponse.getExplanation().getAppliedSpans());
             }*/
+
+        } else if(mimeType == MimeType.IMAGE_JPEG) {
+
+            final ImageFilterResponse imageFilterResponse = imageProcessor.process(input);
+
+            // TODO: Explanation?
+            final Explanation explanation = new Explanation(Collections.emptyList(), Collections.emptyList());
+
+            binaryDocumentFilterResponse = new BinaryDocumentFilterResponse(imageFilterResponse.getImage(),
+                    context, documentId, explanation);
 
         } else {
             // Should never happen but just in case.

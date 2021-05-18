@@ -42,6 +42,11 @@
 		</dependency>
 		<dependency>
 			<groupId>com.mtnfog</groupId>
+			<artifactId>phileas-processors-images</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.mtnfog</groupId>
 			<artifactId>phileas-services-metrics</artifactId>
 			<version>${project.version}</version>
 		</dependency>

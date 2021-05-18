@@ -558,6 +558,45 @@ public class PhileasFilterServiceTest {
     }
 
     @Test
+    public void imageFaces() throws Exception {
+
+        final String filename = "05-29-Small-crowd.jpg";
+
+        final InputStream is = this.getClass().getResourceAsStream("/images/" + filename);
+        final byte[] document = IOUtils.toByteArray(is);
+        is.close();
+
+        final Path temp = Files.createTempDirectory("philter");
+
+        final File file1 = Paths.get(temp.toFile().getAbsolutePath(), "pdf.json").toFile();
+        LOGGER.info("Writing profile to {}", file1.getAbsolutePath());
+        FileUtils.writeStringToFile(file1, gson.toJson(getPdfFilterProfile("pdf")), Charset.defaultCharset());
+
+        Properties properties = new Properties();
+        properties.setProperty("indexes.directory", INDEXES_DIRECTORY);
+        properties.setProperty("store.enabled", "false");
+        properties.setProperty("filter.profiles.directory", temp.toFile().getAbsolutePath());
+
+        final PhileasConfiguration phileasConfiguration = ConfigFactory.create(PhileasConfiguration.class, properties);
+
+        PhileasFilterService service = new PhileasFilterService(phileasConfiguration);
+        final BinaryDocumentFilterResponse response = service.filter("pdf", "context", "documentid", document, MimeType.IMAGE_JPEG, MimeType.IMAGE_JPEG);
+
+        // Write the byte array to a file.
+        final File outputFile = File.createTempFile("redact", ".jpg");
+        //outputFile.deleteOnExit();
+        final String output = outputFile.getAbsolutePath();
+        LOGGER.info("Writing redacted PDF to {}", output);
+        FileUtils.writeByteArrayToFile(new File(output), response.getDocument());
+
+        LOGGER.info("Spans: {}", response.getExplanation().getAppliedSpans().size());
+        showSpans(response.getExplanation().getAppliedSpans());
+
+        // TODO: How to assert? MD5 gives a different value each time.
+
+    }
+
+    @Test
     public void pdf1() throws Exception {
 
         final String filename = "12-12110 K.pdf";
