@@ -579,7 +579,7 @@ public class PhileasFilterServiceTest {
 
         final PhileasConfiguration phileasConfiguration = ConfigFactory.create(PhileasConfiguration.class, properties);
 
-        PhileasFilterService service = new PhileasFilterService(phileasConfiguration);
+        final PhileasFilterService service = new PhileasFilterService(phileasConfiguration);
         final BinaryDocumentFilterResponse response = service.filter("pdf", "context", "documentid", document, MimeType.IMAGE_JPEG, MimeType.IMAGE_JPEG);
 
         // Write the byte array to a file.

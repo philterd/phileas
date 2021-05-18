@@ -436,6 +436,7 @@ public class PhileasFilterService implements FilterService {
 
         } else if(mimeType == MimeType.IMAGE_JPEG) {
 
+            // TODO: Get options from the filter profile.
             final ImageFilterResponse imageFilterResponse = imageProcessor.process(input);
 
             // TODO: Explanation?
