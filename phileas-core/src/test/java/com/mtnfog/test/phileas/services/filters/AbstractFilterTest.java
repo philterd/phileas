@@ -53,6 +53,9 @@ public abstract class AbstractFilterTest {
         CreditCard creditCard = new CreditCard();
         creditCard.setCreditCardFilterStrategies(Arrays.asList(new CreditCardFilterStrategy()));
 
+        Currency currency = new Currency();
+        currency.setCurrencyFilterStrategies(Arrays.asList(new CurrencyFilterStrategy()));
+
         Date date = new Date();
         date.setDateFilterStrategies(Arrays.asList(new DateFilterStrategy()));
 
@@ -150,6 +153,7 @@ public abstract class AbstractFilterTest {
         identifiers.setBankRoutingNumber(bankRoutingNumber);
         identifiers.setBitcoinAddress(bitcoinAddress);
         identifiers.setCreditCard(creditCard);
+        identifiers.setCurrency(currency);
         identifiers.setDate(date);
         identifiers.setDriversLicense(driversLicense);
         identifiers.setEmailAddress(emailAddress);

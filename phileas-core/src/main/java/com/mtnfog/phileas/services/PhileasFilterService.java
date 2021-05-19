@@ -612,6 +612,24 @@ public class PhileasFilterService implements FilterService {
 
         }
 
+        if(filterProfile.getIdentifiers().hasFilter(FilterType.CURRENCY) && filterProfile.getIdentifiers().getCurrency().isEnabled()) {
+
+            final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                    .withStrategies(filterProfile.getIdentifiers().getCurrency().getCurrencyFilterStrategies())
+                    .withAnonymizationService(new CurrencyAnonymizationService(anonymizationCacheService))
+                    .withAlertService(alertService)
+                    .withIgnored(filterProfile.getIdentifiers().getCurrency().getIgnored())
+                    .withIgnoredFiles(filterProfile.getIdentifiers().getCurrency().getIgnoredFiles())
+                    .withIgnoredPatterns(filterProfile.getIdentifiers().getCurrency().getIgnoredPatterns())
+                    .withCrypto(filterProfile.getCrypto())
+                    .withWindowSize(windowSize)
+                    .withDocumentAnalysis(documentAnalysis)
+                    .build();
+
+            enabledFilters.add(new CurrencyFilter(filterConfiguration));
+
+        }
+
         if(filterProfile.getIdentifiers().hasFilter(FilterType.DATE) && filterProfile.getIdentifiers().getDate().isEnabled()) {
 
             final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
