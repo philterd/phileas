@@ -4,7 +4,7 @@
 	<artifactId>phileas</artifactId>
 	<groupId>com.mtnfog</groupId>
 	<packaging>pom</packaging>
-	<version>1.11.0-SNAPSHOT</version>
+	<version>1.11.0</version>
 	<name>phileas</name>
 	<url>https://www.mtnfog.com</url>
 	<description>Phileas is capable of identify and removing sensitive information from natural language text.</description>
