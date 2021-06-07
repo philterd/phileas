@@ -40,11 +40,11 @@
 			<artifactId>phileas-processors-unstructured</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-		<dependency>
+		<!--<dependency>
 			<groupId>com.mtnfog</groupId>
 			<artifactId>phileas-processors-images</artifactId>
 			<version>${project.version}</version>
-		</dependency>
+		</dependency>-->
 		<dependency>
 			<groupId>com.mtnfog</groupId>
 			<artifactId>phileas-services-metrics</artifactId>

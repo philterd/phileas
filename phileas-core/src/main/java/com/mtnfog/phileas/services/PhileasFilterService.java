@@ -26,9 +26,7 @@ import com.mtnfog.phileas.model.profile.filters.Section;
 import com.mtnfog.phileas.model.responses.BinaryDocumentFilterResponse;
 import com.mtnfog.phileas.model.responses.DetectResponse;
 import com.mtnfog.phileas.model.responses.FilterResponse;
-import com.mtnfog.phileas.model.responses.ImageFilterResponse;
 import com.mtnfog.phileas.model.services.*;
-import com.mtnfog.phileas.processors.images.OpenCVImageProcessor;
 import com.mtnfog.phileas.processors.unstructured.UnstructuredDocumentProcessor;
 import com.mtnfog.phileas.service.ai.PyTorchFilter;
 import com.mtnfog.phileas.services.alerts.AlertServiceFactory;
@@ -83,7 +81,9 @@ public class PhileasFilterService implements FilterService {
 
     private final DocumentProcessor unstructuredDocumentProcessor;
     private final DocumentAnalyzer documentAnalyzer;
-    private final ImageProcessor imageProcessor;
+
+    // PHL-223: Face recognition
+    //private final ImageProcessor imageProcessor;
 
     private final int windowSize;
 
@@ -140,8 +140,9 @@ public class PhileasFilterService implements FilterService {
         // Create a new document analyzer.
         this.documentAnalyzer = new DocumentAnalyzer();
 
+        // PHL-223: Face recognition
         // Create a new image processor.
-        this.imageProcessor = new OpenCVImageProcessor();
+        //this.imageProcessor = new OpenCVImageProcessor();
 
         // Get the window size.
         this.windowSize = phileasConfiguration.spanWindowSize();
@@ -434,7 +435,8 @@ public class PhileasFilterService implements FilterService {
                 store.insert(binaryDocumentFilterResponse.getExplanation().getAppliedSpans());
             }*/
 
-        } else if(mimeType == MimeType.IMAGE_JPEG) {
+        /*} else if(mimeType == MimeType.IMAGE_JPEG) {
+            // PHL-223: Face recognition
 
             // TODO: Get options from the filter profile.
             final ImageFilterResponse imageFilterResponse = imageProcessor.process(input);
@@ -443,7 +445,7 @@ public class PhileasFilterService implements FilterService {
             final Explanation explanation = new Explanation(Collections.emptyList(), Collections.emptyList());
 
             binaryDocumentFilterResponse = new BinaryDocumentFilterResponse(imageFilterResponse.getImage(),
-                    context, documentId, explanation);
+                    context, documentId, explanation);*/
 
         } else {
             // Should never happen but just in case.

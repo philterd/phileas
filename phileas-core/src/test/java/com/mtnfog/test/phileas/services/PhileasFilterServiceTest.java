@@ -557,7 +557,8 @@ public class PhileasFilterServiceTest {
 
     }
 
-    @Test
+    // PHL-223: Face recognition
+    /*@Test
     public void imageFaces() throws Exception {
 
         final String filename = "05-29-Small-crowd.jpg";
@@ -594,7 +595,7 @@ public class PhileasFilterServiceTest {
 
         // TODO: How to assert? MD5 gives a different value each time.
 
-    }
+    }*/
 
     @Test
     public void pdf1() throws Exception {
