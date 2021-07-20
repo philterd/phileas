@@ -1,7 +1,5 @@
 package com.mtnfog.phileas.model.services;
 
-import com.mtnfog.phileas.model.objects.GetFilterProfileResult;
-
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;

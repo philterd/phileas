@@ -92,6 +92,7 @@ public class PdfRedacter extends PDFTextStripper implements Redacter {
                 ImageIO.write(bufferedImage, "jpg", baos);
                 baos.close();
 
+                // Add the image to the zip file to be returned.
                 ZipEntry zipEntry = new ZipEntry("page-" + x + ".jpeg");
                 zipEntry.setSize(baos.size());
 

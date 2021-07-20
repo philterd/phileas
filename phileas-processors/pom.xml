@@ -1,24 +1,25 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<parent>
-		<groupId>com.mtnfog</groupId>
-		<artifactId>phileas</artifactId>
-		<version>1.11.0-SNAPSHOT</version>
-	</parent>
-	<artifactId>phileas-processors</artifactId>
-	<name>phileas-processors</name>
-	<packaging>pom</packaging>
-	<licenses>
-		<license>
-			<name>Mountain Fog Commercial License</name>
-			<url>https://www.mtnfog.com</url>
-			<distribution>manual</distribution>
-			<comments>Phileas is proprietary closed-source software.</comments>
-		</license>
-	</licenses>
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>com.mtnfog</groupId>
+    <artifactId>phileas</artifactId>
+    <version>1.11.0</version>
+  </parent>
+  <artifactId>phileas-processors</artifactId>
+  <name>phileas-processors</name>
+  <packaging>pom</packaging>
+  <licenses>
+    <license>
+      <name>Mountain Fog Commercial License</name>
+      <url>https://www.mtnfog.com</url>
+      <distribution>manual</distribution>
+      <comments>Phileas is proprietary closed-source software.</comments>
+    </license>
+  </licenses>
   <modules>
     <module>phileas-processors-unstructured</module>
-	<!--<module>phileas-processors-structured</module>-->
+    <!--<module>phileas-processors-structured</module>-->
+    <!--<module>phileas-processors-images</module>-->
   </modules>
 </project>

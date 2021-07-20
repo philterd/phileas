@@ -38,6 +38,10 @@ public class Identifiers {
     @Expose
     private CreditCard creditCard;
 
+    @SerializedName("currency")
+    @Expose
+    private Currency currency;
+
     @SerializedName("date")
     @Expose
     private Date date;
@@ -164,6 +168,8 @@ public class Identifiers {
                 if(this.getBankRoutingNumber() != null) {return true; } break;
             case BITCOIN_ADDRESS:
                 if(this.getBitcoinAddress() != null) { return true; } break;
+            case CURRENCY:
+                if(this.getCurrency() != null) { return true; } break;
             case LOCATION_CITY:
                 if(this.getCity() != null) { return true; } break;
             case LOCATION_COUNTY:
@@ -489,6 +495,14 @@ public class Identifiers {
 
     public void setBankRoutingNumber(BankRoutingNumber bankRoutingNumber) {
         this.bankRoutingNumber = bankRoutingNumber;
+    }
+
+    public Currency getCurrency() {
+        return currency;
+    }
+
+    public void setCurrency(Currency currency) {
+        this.currency = currency;
     }
 
 }
