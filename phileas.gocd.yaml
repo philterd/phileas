@@ -30,11 +30,8 @@ pipelines:
                 arguments:
                 - -c
                 - export CODEARTIFACT_AUTH_TOKEN=`aws codeartifact get-authorization-token --domain mtnfog --domain-owner 341239660749 --query authorizationToken --output text`
-                run_if: passed
-            - exec:
-                arguments:
+                - &&
+                - mvn
                 - clean
                 - install
-                - deploy
-                command: mvn
                 run_if: passed
