@@ -7,7 +7,7 @@ environments:
       - phileas
 pipelines:
   phileas:
-    group: github-projects
+    group: bitbucket-projects
     label_template: ${COUNT}
     lock_behavior: none
     display_order: -1
