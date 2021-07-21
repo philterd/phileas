@@ -1,4 +1,10 @@
 format_version: 10
+environments:
+  dev:
+    environment_variables:
+      JAVA_HOME: /usr/lib/jvm/java-1.11.0-openjdk-amd64
+    pipelines:
+      - phileas
 pipelines:
   phileas:
     group: github-projects
