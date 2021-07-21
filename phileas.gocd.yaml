@@ -39,5 +39,6 @@ pipelines:
                 arguments:
                 - clean
                 - install
+                - deploy
                 command: mvn
                 run_if: passed
