@@ -4,9 +4,9 @@ pipelines:
     environment_variables:
       JAVA_HOME: /usr/lib/jvm/java-1.11.0-openjdk-amd64
       PHILTER_REDIS_HOST: 172.17.0.1
-      PHILTER_REDIS_PORT: 31000
+      PHILTER_REDIS_PORT: 6379
       PHILTER_REDIS_SSL: false
-      PHILTER_REDIS_AUTH_TOKEN: 
+      PHILTER_REDIS_AUTH_TOKEN:
       PHILTER_REDIS_CLUSTERED: false
     group: bitbucket-projects
     label_template: ${COUNT}
