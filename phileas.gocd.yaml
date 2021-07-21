@@ -26,5 +26,7 @@ pipelines:
             timeout: 0
             tasks:
             - exec:
-                command: build.sh
+                command: /bin/bash
+                arguments:
+                  - build.sh
                 run_if: passed
