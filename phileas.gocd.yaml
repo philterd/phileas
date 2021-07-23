@@ -8,7 +8,7 @@ pipelines:
       PHILTER_REDIS_SSL: false
       PHILTER_REDIS_AUTH_TOKEN:
       PHILTER_REDIS_CLUSTERED: false
-    group: bitbucket-projects
+    group: build
     label_template: ${COUNT}
     lock_behavior: none
     display_order: -1
