@@ -51,11 +51,6 @@ pipeline {
                 sh "mvn dependency-check:aggregate -Powasp"
                 sh "mvn sonar:sonar -Dsonar.host.url=https://build.mtnfog.com/sonarqube -Dsonar.login=${env.SONARQUBE_TOKEN}"
             }
-            post {
-                always {
-                    jiraSendBuildInfo site: 'mtnfog.atlassian.net'
-                }
-            }
         }
     }
     post {
