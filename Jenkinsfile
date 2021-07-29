@@ -49,7 +49,7 @@ pipeline {
                 sh "mvn -version"
                 sh "mvn -U clean license:aggregate-add-third-party license:aggregate-download-licenses install deploy -Pit"
                 sh "mvn dependency-check:aggregate -Powasp"
-                sh "mvn sonar:sonar -Dsonar.host.url=http://build.mtnfog.com/sonarqube -Dsonar.login=${env.SONARQUBE_TOKEN}"
+                sh "mvn sonar:sonar -Dsonar.host.url=${env.SONARQUBE_URL} -Dsonar.login=${env.SONARQUBE_TOKEN}"
             }
         }
     }
