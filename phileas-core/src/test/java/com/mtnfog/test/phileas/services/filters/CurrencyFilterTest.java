@@ -45,7 +45,7 @@ public class CurrencyFilterTest extends AbstractFilterTest {
         showSpans(filterResult.getSpans());
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
-        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 18, 23, FilterType.CURRENCY));
+        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 17, 23, FilterType.CURRENCY));
         Assertions.assertNotEquals(filterResult.getSpans().get(0).getText(), filterResult.getSpans().get(0).getReplacement());
 
     }
@@ -67,7 +67,7 @@ public class CurrencyFilterTest extends AbstractFilterTest {
         showSpans(filterResult.getSpans());
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
-        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 18, 23, FilterType.CURRENCY));
+        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 17, 23, FilterType.CURRENCY));
         Assertions.assertNotEquals(filterResult.getSpans().get(0).getText(), filterResult.getSpans().get(0).getReplacement());
 
     }
@@ -89,7 +89,7 @@ public class CurrencyFilterTest extends AbstractFilterTest {
         showSpans(filterResult.getSpans());
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
-        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 18, 23, FilterType.CURRENCY));
+        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 17, 23, FilterType.CURRENCY));
         Assertions.assertNotEquals(filterResult.getSpans().get(0).getText(), filterResult.getSpans().get(0).getReplacement());
 
     }
@@ -111,7 +111,7 @@ public class CurrencyFilterTest extends AbstractFilterTest {
         showSpans(filterResult.getSpans());
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
-        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 18, 22, FilterType.CURRENCY));
+        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 17, 22, FilterType.CURRENCY));
         Assertions.assertNotEquals(filterResult.getSpans().get(0).getText(), filterResult.getSpans().get(0).getReplacement());
 
     }
@@ -133,7 +133,7 @@ public class CurrencyFilterTest extends AbstractFilterTest {
         showSpans(filterResult.getSpans());
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
-        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 19, 21, FilterType.CURRENCY));
+        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 17, 21, FilterType.CURRENCY));
         Assertions.assertNotEquals(filterResult.getSpans().get(0).getText(), filterResult.getSpans().get(0).getReplacement());
 
     }
@@ -158,7 +158,7 @@ public class CurrencyFilterTest extends AbstractFilterTest {
         showSpans(filterResult.getSpans());
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
-        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 18, 20, FilterType.CURRENCY));
+        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 17, 20, FilterType.CURRENCY));
         Assertions.assertNotEquals(filterResult.getSpans().get(0).getText(), filterResult.getSpans().get(0).getReplacement());
 
     }
@@ -183,7 +183,7 @@ public class CurrencyFilterTest extends AbstractFilterTest {
         showSpans(filterResult.getSpans());
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
-        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 19, 21, FilterType.CURRENCY));
+        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 17, 21, FilterType.CURRENCY));
         Assertions.assertNotEquals(filterResult.getSpans().get(0).getText(), filterResult.getSpans().get(0).getReplacement());
 
     }

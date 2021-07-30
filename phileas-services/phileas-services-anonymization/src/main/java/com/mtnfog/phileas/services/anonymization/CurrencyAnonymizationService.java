@@ -38,7 +38,17 @@ public class CurrencyAnonymizationService extends AbstractAnonymizationService {
 
         }
 
-        final String anonymized = "$" + sb;
+        final String anonymized;
+
+        if(!sb.toString().startsWith("$")) {
+
+            anonymized = "$" + sb;
+
+        } else {
+
+            anonymized = sb.toString();
+
+        }
 
         // Just ensure that the new one does not equal the original.
         if(StringUtils.equalsIgnoreCase(token, anonymized)) {
