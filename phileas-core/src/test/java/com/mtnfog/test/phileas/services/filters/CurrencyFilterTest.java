@@ -163,4 +163,29 @@ public class CurrencyFilterTest extends AbstractFilterTest {
 
     }
 
+    @Test
+    public void filter7() throws Exception {
+
+        final CurrencyFilterStrategy currencyFilterStrategy = new CurrencyFilterStrategy();
+        currencyFilterStrategy.setStrategy(AbstractFilterStrategy.RANDOM_REPLACE);
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(Arrays.asList(currencyFilterStrategy))
+                .withAlertService(alertService)
+                .withAnonymizationService(new CurrencyAnonymizationService(new LocalAnonymizationCacheService()))
+                .withWindowSize(windowSize)
+                .build();
+
+        final CurrencyFilter filter = new CurrencyFilter(filterConfiguration);
+
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "the drug cost is $.50.");
+
+        showSpans(filterResult.getSpans());
+
+        Assertions.assertEquals(1, filterResult.getSpans().size());
+        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 19, 21, FilterType.CURRENCY));
+        Assertions.assertNotEquals(filterResult.getSpans().get(0).getText(), filterResult.getSpans().get(0).getReplacement());
+
+    }
+
 }

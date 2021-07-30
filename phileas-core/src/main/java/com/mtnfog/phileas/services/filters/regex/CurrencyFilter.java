@@ -17,8 +17,9 @@ public class CurrencyFilter extends RegexFilter {
 
     public CurrencyFilter(FilterConfiguration filterConfiguration) {
         super(FilterType.CURRENCY, filterConfiguration);
-
-        final Pattern currencyPattern1 = Pattern.compile("\\b[0-9]+(\\.[0-9][0-9])?\\b", Pattern.CASE_INSENSITIVE);
+        
+        // See https://stackoverflow.com/a/14174261/1428388
+        final Pattern currencyPattern1 = Pattern.compile("\\b\\ ?[+-]?[0-9]{1,3}(?:,?[0-9])*(?:\\.[0-9]{1,2})?\\b", Pattern.CASE_INSENSITIVE);
         final FilterPattern currency1 = new FilterPattern.FilterPatternBuilder(currencyPattern1, 0.80).build();
 
         this.contextualTerms = new HashSet<>();
