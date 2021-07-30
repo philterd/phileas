@@ -15,18 +15,31 @@ import java.util.regex.Pattern;
 
 public class ZipCodeFilter extends RegexFilter {
 
-    public ZipCodeFilter(FilterConfiguration filterConfiguration) {
+    public ZipCodeFilter(FilterConfiguration filterConfiguration, boolean requireDelimiter) {
         super(FilterType.ZIP_CODE, filterConfiguration);
-
-        final Pattern zipCodePattern = Pattern.compile("\\b[0-9]{5}(?:-[0-9]{4})?\\b");
-        final FilterPattern zipCode1 = new FilterPattern.FilterPatternBuilder(zipCodePattern, 0.90).build();
 
         this.contextualTerms = new HashSet<>();
         this.contextualTerms.add("zip");
         this.contextualTerms.add("zipcode");
         this.contextualTerms.add("postal");
 
-        this.analyzer = new Analyzer(contextualTerms, zipCode1);
+        if(requireDelimiter) {
+
+            // With delimeter
+            final Pattern zipCodePattern = Pattern.compile("\\b[0-9]{5}(?:-[0-9]{4})?\\b");
+            final FilterPattern zipCode = new FilterPattern.FilterPatternBuilder(zipCodePattern, 0.90).build();
+
+            this.analyzer = new Analyzer(contextualTerms, zipCode);
+
+        } else {
+
+            // Without delimeter.
+            final Pattern zipCodePattern = Pattern.compile("\\b[0-9]{5}(?:-?[0-9]{4})?\\b");
+            final FilterPattern zipCode = new FilterPattern.FilterPatternBuilder(zipCodePattern, 0.50).build();
+
+            this.analyzer = new Analyzer(contextualTerms, zipCode);
+
+        }
 
     }
 

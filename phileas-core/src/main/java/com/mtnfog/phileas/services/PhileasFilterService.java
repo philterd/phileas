@@ -973,7 +973,9 @@ public class PhileasFilterService implements FilterService {
                     .withDocumentAnalysis(documentAnalysis)
                     .build();
 
-            enabledFilters.add(new ZipCodeFilter(filterConfiguration));
+            final boolean requireDelimiter = filterProfile.getIdentifiers().getZipCode().isRequireDelimiter();
+
+            enabledFilters.add(new ZipCodeFilter(filterConfiguration, requireDelimiter));
 
         }
 

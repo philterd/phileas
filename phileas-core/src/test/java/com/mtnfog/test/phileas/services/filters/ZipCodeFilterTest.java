@@ -28,7 +28,7 @@ public class ZipCodeFilterTest extends AbstractFilterTest {
                 .withWindowSize(windowSize)
                 .build();
 
-        final ZipCodeFilter filter = new ZipCodeFilter(filterConfiguration);
+        final ZipCodeFilter filter = new ZipCodeFilter(filterConfiguration, true);
 
         final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "the zip is 90210.");
         Assertions.assertEquals(1, filterResult.getSpans().size());
@@ -47,7 +47,7 @@ public class ZipCodeFilterTest extends AbstractFilterTest {
                 .withWindowSize(windowSize)
                 .build();
 
-        final ZipCodeFilter filter = new ZipCodeFilter(filterConfiguration);
+        final ZipCodeFilter filter = new ZipCodeFilter(filterConfiguration, true);
 
         final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "the zip is 90210abd.");
         Assertions.assertEquals(0, filterResult.getSpans().size());
@@ -64,7 +64,7 @@ public class ZipCodeFilterTest extends AbstractFilterTest {
                 .withWindowSize(windowSize)
                 .build();
 
-        final ZipCodeFilter filter = new ZipCodeFilter(filterConfiguration);
+        final ZipCodeFilter filter = new ZipCodeFilter(filterConfiguration, true);
 
         final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "the zip is 90210 in california.");
         Assertions.assertEquals(1, filterResult.getSpans().size());
@@ -82,7 +82,7 @@ public class ZipCodeFilterTest extends AbstractFilterTest {
                 .withWindowSize(windowSize)
                 .build();
 
-        final ZipCodeFilter filter = new ZipCodeFilter(filterConfiguration);
+        final ZipCodeFilter filter = new ZipCodeFilter(filterConfiguration, true);
 
         final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "the zip is 85055 in california.");
         Assertions.assertEquals(1, filterResult.getSpans().size());
@@ -100,7 +100,7 @@ public class ZipCodeFilterTest extends AbstractFilterTest {
                 .withWindowSize(windowSize)
                 .build();
 
-        final ZipCodeFilter filter = new ZipCodeFilter(filterConfiguration);
+        final ZipCodeFilter filter = new ZipCodeFilter(filterConfiguration, true);
 
         final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "the zip is 90213-1544 in california.");
         Assertions.assertEquals(1, filterResult.getSpans().size());
@@ -118,7 +118,7 @@ public class ZipCodeFilterTest extends AbstractFilterTest {
                 .withWindowSize(windowSize)
                 .build();
 
-        final ZipCodeFilter filter = new ZipCodeFilter(filterConfiguration);
+        final ZipCodeFilter filter = new ZipCodeFilter(filterConfiguration, true);
 
         final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "George Washington was president and his ssn was 123-45-6789 and he lived in 90210.");
         Assertions.assertEquals(1, filterResult.getSpans().size());
@@ -136,7 +136,7 @@ public class ZipCodeFilterTest extends AbstractFilterTest {
                 .withWindowSize(windowSize)
                 .build();
 
-        final ZipCodeFilter filter = new ZipCodeFilter(filterConfiguration);
+        final ZipCodeFilter filter = new ZipCodeFilter(filterConfiguration, true);
 
         // Tests whole word only.
         final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "George Washington was president and his ssn was 123-45-6789 and he lived in 9021032.");
@@ -154,11 +154,47 @@ public class ZipCodeFilterTest extends AbstractFilterTest {
                 .withWindowSize(windowSize)
                 .build();
 
-        final ZipCodeFilter filter = new ZipCodeFilter(filterConfiguration);
+        final ZipCodeFilter filter = new ZipCodeFilter(filterConfiguration, true);
 
         // Tests whole word only.
         final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "George Washington was president and his ssn was 123-45-6789 and he lived in 90210-1234.");
         Assertions.assertEquals(1, filterResult.getSpans().size());
+
+    }
+
+    @Test
+    public void filterZipCode9() throws Exception {
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(Arrays.asList(new ZipCodeFilterStrategy()))
+                .withAlertService(alertService)
+                .withAnonymizationService(new ZipCodeAnonymizationService(new LocalAnonymizationCacheService()))
+                .withWindowSize(windowSize)
+                .build();
+
+        final ZipCodeFilter filter = new ZipCodeFilter(filterConfiguration, false);
+
+        // Tests without delimiter.
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "George Washington was president and his ssn was 123-45-6789 and he lived in 902101234.");
+        Assertions.assertEquals(1, filterResult.getSpans().size());
+
+    }
+
+    @Test
+    public void filterZipCode10() throws Exception {
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(Arrays.asList(new ZipCodeFilterStrategy()))
+                .withAlertService(alertService)
+                .withAnonymizationService(new ZipCodeAnonymizationService(new LocalAnonymizationCacheService()))
+                .withWindowSize(windowSize)
+                .build();
+
+        final ZipCodeFilter filter = new ZipCodeFilter(filterConfiguration, true);
+
+        // Tests without delimiter.
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "George Washington was president and his ssn was 123-45-6789 and he lived in 902101234.");
+        Assertions.assertEquals(0, filterResult.getSpans().size());
 
     }
 
