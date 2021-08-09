@@ -1,6 +1,7 @@
 package com.mtnfog.phileas.services;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.mtnfog.phileas.configuration.PhileasConfiguration;
 import com.mtnfog.phileas.metrics.PhileasMetricsService;
 import com.mtnfog.phileas.model.domain.Domain;
@@ -26,6 +27,7 @@ import com.mtnfog.phileas.model.profile.filters.Section;
 import com.mtnfog.phileas.model.responses.BinaryDocumentFilterResponse;
 import com.mtnfog.phileas.model.responses.DetectResponse;
 import com.mtnfog.phileas.model.responses.FilterResponse;
+import com.mtnfog.phileas.model.serializers.PlaceholderDeserializer;
 import com.mtnfog.phileas.model.services.*;
 import com.mtnfog.phileas.processors.unstructured.UnstructuredDocumentProcessor;
 import com.mtnfog.phileas.service.ai.PyTorchFilter;
@@ -70,7 +72,7 @@ public class PhileasFilterService implements FilterService {
     private final Store store;
 
     private final Map<String, DescriptiveStatistics> stats;
-    private final Gson gson = new Gson();
+    private final Gson gson;
 
     private final String philterNerEndpoint;
     private final AnonymizationCacheService anonymizationCacheService;
@@ -92,6 +94,11 @@ public class PhileasFilterService implements FilterService {
         LOGGER.info("Initializing Phileas engine.");
 
         this.phileasConfiguration = phileasConfiguration;
+
+        // Configure the deserialization.
+        final GsonBuilder gsonBuilder = new GsonBuilder();
+        gsonBuilder.registerTypeAdapter(String.class, new PlaceholderDeserializer());
+        gson = gsonBuilder.create();
 
         // Configure metrics.
         this.metricsService = new PhileasMetricsService(phileasConfiguration);

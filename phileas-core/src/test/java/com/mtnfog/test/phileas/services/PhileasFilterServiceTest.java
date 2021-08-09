@@ -1,6 +1,7 @@
 package com.mtnfog.test.phileas.services;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.mtnfog.phileas.configuration.PhileasConfiguration;
 import com.mtnfog.phileas.model.enums.MimeType;
 import com.mtnfog.phileas.model.objects.Span;
@@ -16,6 +17,7 @@ import com.mtnfog.phileas.model.profile.filters.strategies.dynamic.*;
 import com.mtnfog.phileas.model.profile.filters.strategies.rules.*;
 import com.mtnfog.phileas.model.responses.BinaryDocumentFilterResponse;
 import com.mtnfog.phileas.model.responses.FilterResponse;
+import com.mtnfog.phileas.model.serializers.PlaceholderDeserializer;
 import com.mtnfog.phileas.services.PhileasFilterService;
 import org.aeonbits.owner.ConfigFactory;
 import org.apache.commons.io.FileUtils;
@@ -42,11 +44,15 @@ public class PhileasFilterServiceTest {
     private static final Logger LOGGER = LogManager.getLogger(PhileasFilterServiceTest.class);
 
     private String INDEXES_DIRECTORY = "/mtnfog/code/bitbucket/philter/philter/distribution/indexes/";
-    private Gson gson = new Gson();
+    private Gson gson;
 
     @BeforeEach
     public void before() {
         INDEXES_DIRECTORY = System.getProperty( "os.name" ).contains( "indow" ) ? INDEXES_DIRECTORY.substring(1) : INDEXES_DIRECTORY;
+
+        final GsonBuilder gsonBuilder = new GsonBuilder();
+        gsonBuilder.registerTypeAdapter(String.class, new PlaceholderDeserializer());
+        gson = gsonBuilder.create();
     }
 
     @Test
@@ -55,8 +61,29 @@ public class PhileasFilterServiceTest {
         final FilterProfile filterProfile = getFilterProfile("default");
         final String json = gson.toJson(filterProfile);
         LOGGER.info(json);
+
         final FilterProfile deserialized = gson.fromJson(json, FilterProfile.class);
+
         Assertions.assertEquals("default", deserialized.getName());
+
+    }
+
+    @Test
+    public void filterProfileWithPlaceholder() throws IOException {
+
+        final Ignored ignored = new Ignored();
+        ignored.setTerms(Arrays.asList("john", "jeff", "${WINDOWPATH}"));
+
+        final FilterProfile filterProfile = getFilterProfile("placeholder");
+        filterProfile.setIgnored(Arrays.asList(ignored));
+        final String json = gson.toJson(filterProfile);
+        LOGGER.info(json);
+
+        final FilterProfile deserialized = gson.fromJson(json, FilterProfile.class);
+
+        Assertions.assertEquals("placeholder", deserialized.getName());
+        Assertions.assertEquals(3, filterProfile.getIgnored().get(0).getTerms().size());
+        Assertions.assertTrue(deserialized.getIgnored().get(0).getTerms().contains("2"));
 
     }
 
