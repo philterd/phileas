@@ -72,7 +72,7 @@ public class PhileasFilterServiceTest {
     public void filterProfileWithPlaceholder() throws IOException {
 
         final Ignored ignored = new Ignored();
-        ignored.setTerms(Arrays.asList("john", "jeff", "${WINDOWPATH}"));
+        ignored.setTerms(Arrays.asList("john", "jeff", "${USER}"));
 
         final FilterProfile filterProfile = getFilterProfile("placeholder");
         filterProfile.setIgnored(Arrays.asList(ignored));
