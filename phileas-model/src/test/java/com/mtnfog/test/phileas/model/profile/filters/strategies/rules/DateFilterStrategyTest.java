@@ -6,23 +6,19 @@ import com.mtnfog.phileas.model.objects.Replacement;
 import com.mtnfog.phileas.model.profile.Crypto;
 import com.mtnfog.phileas.model.profile.filters.strategies.AbstractFilterStrategy;
 import com.mtnfog.phileas.model.profile.filters.strategies.rules.DateFilterStrategy;
-import com.mtnfog.phileas.model.profile.filters.strategies.rules.EmailAddressFilterStrategy;
 import com.mtnfog.phileas.model.services.AnonymizationService;
 import com.mtnfog.test.phileas.model.profile.filters.strategies.AbstractFilterStrategyTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.Period;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
-import java.time.format.ResolverStyle;
 import java.time.temporal.ChronoField;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Locale;
 import java.util.regex.Pattern;
 
 public class DateFilterStrategyTest extends AbstractFilterStrategyTest {
@@ -272,8 +268,12 @@ public class DateFilterStrategyTest extends AbstractFilterStrategyTest {
         final Replacement replacement = strategy.getReplacement("name", "context", "docId", date, WINDOW, new Crypto(), anonymizationService, filterPattern);
 
         // This is a future date but futures are enabled.
-        Assertions.assertEquals("in 5 years 3 months", replacement.getReplacement());
-
+        // The value will either be:
+        // - "in 5 years 3 months"
+        // - "in 5 years 2 months"
+        // This is due to when in the month the test was run.
+        final List<String> values = Arrays.asList("in 5 years 3 months", "in 5 years 2 months");
+        Assertions.assertTrue(values.contains(replacement.getReplacement()));
     }
 
     @Test
