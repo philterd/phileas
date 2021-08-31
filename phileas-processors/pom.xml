@@ -20,6 +20,5 @@
   <modules>
     <module>phileas-processors-unstructured</module>
     <!--<module>phileas-processors-structured</module>-->
-    <module>phileas-processors-images</module>
   </modules>
 </project>

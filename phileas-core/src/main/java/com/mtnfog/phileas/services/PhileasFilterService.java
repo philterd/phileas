@@ -147,10 +147,6 @@ public class PhileasFilterService implements FilterService {
         // Create a new document analyzer.
         this.documentAnalyzer = new DocumentAnalyzer();
 
-        // PHL-223: Face recognition
-        // Create a new image processor.
-        //this.imageProcessor = new OpenCVImageProcessor();
-
         // Get the window size.
         this.windowSize = phileasConfiguration.spanWindowSize();
         LOGGER.info("Using window size {}", this.windowSize);
