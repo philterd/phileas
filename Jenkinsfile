@@ -48,6 +48,10 @@ pipeline {
             steps {
                 sh "mvn -version"
                 sh "mvn -U clean license:aggregate-add-third-party license:aggregate-download-licenses install deploy -Pit"
+            }
+        }
+        stage ('Analyze') {
+            steps {
                 sh "mvn dependency-check:aggregate -Powasp"
                 sh "mvn sonar:sonar -Dsonar.host.url=${env.SONARQUBE_URL} -Dsonar.login=${env.SONARQUBE_TOKEN}"
             }
