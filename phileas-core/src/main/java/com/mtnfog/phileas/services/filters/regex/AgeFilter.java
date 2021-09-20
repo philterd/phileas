@@ -30,11 +30,15 @@ public class AgeFilter extends RegexFilter {
         final Pattern agePattern3 = Pattern.compile("\\b[0-9.]+[-]*(year|years|yrs|yr|yo)(.?)(-)*(old)?\\b", Pattern.CASE_INSENSITIVE);
         final FilterPattern age3 = new FilterPattern.FilterPatternBuilder(agePattern3, 0.90).build();
 
+        // 61 y/o
+        final Pattern agePattern4 = Pattern.compile("\\b([0-9]{1,3}) (y\\/o)\\b", Pattern.CASE_INSENSITIVE);
+        final FilterPattern age4 = new FilterPattern.FilterPatternBuilder(agePattern4, 0.90).build();
+
         this.contextualTerms = new HashSet<>();
         this.contextualTerms.add("age");
         this.contextualTerms.add("years");
 
-        this.analyzer = new Analyzer(contextualTerms, age1, age2, age3);
+        this.analyzer = new Analyzer(contextualTerms, age1, age2, age3, age4);
 
     }
 
@@ -67,6 +71,7 @@ public class AgeFilter extends RegexFilter {
             if(window.contains("age")
                     || span.getText().contains("aged")
                     || span.getText().contains("old")
+                    || span.getText().contains("y/o")
                     || span.getText().contains("yo")) {
 
                 postFilteredSpans.add(span);

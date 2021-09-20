@@ -440,6 +440,76 @@ public class AgeFilterTest extends AbstractFilterTest {
     }
 
     @Test
+    public void filter16() throws Exception {
+
+        // PHL-238: Support ages like: 61 y/o
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(Arrays.asList(new AgeFilterStrategy()))
+                .withAlertService(alertService)
+                .withAnonymizationService(new AgeAnonymizationService(new LocalAnonymizationCacheService()))
+                .withWindowSize(windowSize)
+                .build();
+
+        final AgeFilter filter = new AgeFilter(filterConfiguration);
+
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "patient is 61 y/o and");
+
+        showSpans(filterResult.getSpans());
+
+        Assertions.assertEquals(1, filterResult.getSpans().size());
+        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 11, 17, FilterType.AGE));
+        Assertions.assertNotEquals(filterResult.getSpans().get(0).getText(), filterResult.getSpans().get(0).getReplacement());
+
+    }
+
+    @Test
+    public void filter17() throws Exception {
+
+        // PHL-238: Support ages like: 61 y/o
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(Arrays.asList(new AgeFilterStrategy()))
+                .withAlertService(alertService)
+                .withAnonymizationService(new AgeAnonymizationService(new LocalAnonymizationCacheService()))
+                .withWindowSize(windowSize)
+                .build();
+
+        final AgeFilter filter = new AgeFilter(filterConfiguration);
+
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "patient is 161 y/o and");
+
+        showSpans(filterResult.getSpans());
+
+        Assertions.assertEquals(1, filterResult.getSpans().size());
+        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 11, 18, FilterType.AGE));
+        Assertions.assertNotEquals(filterResult.getSpans().get(0).getText(), filterResult.getSpans().get(0).getReplacement());
+
+    }
+
+    @Test
+    public void filter18() throws Exception {
+
+        // PHL-238: Support ages like: 61 y/o
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(Arrays.asList(new AgeFilterStrategy()))
+                .withAlertService(alertService)
+                .withAnonymizationService(new AgeAnonymizationService(new LocalAnonymizationCacheService()))
+                .withWindowSize(windowSize)
+                .build();
+
+        final AgeFilter filter = new AgeFilter(filterConfiguration);
+
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "patient is 4161 y/o and");
+
+        showSpans(filterResult.getSpans());
+
+        Assertions.assertEquals(0, filterResult.getSpans().size());
+
+    }
+
+    @Test
     public void filter_subpoena() throws Exception {
 
         final AgeFilterStrategy ageFilterStrategy = new AgeFilterStrategy();
