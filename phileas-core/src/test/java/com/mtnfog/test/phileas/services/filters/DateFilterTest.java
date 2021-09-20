@@ -570,4 +570,22 @@ public class DateFilterTest extends AbstractFilterTest {
 
     }
 
+    @Test
+    public void filterDate45() throws Exception {
+
+        // PHL-239: Support dates like Aug. 31, 2020
+
+        final DateFilter filter = new DateFilter(buildFilterConfiguration(), true, DateSpanValidator.getInstance());
+
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "On Aug. 31, 2020, Plaintiff, Wendy J. Christophersen, was appointed as interim");
+
+        showSpans(filterResult.getSpans());
+
+        Assertions.assertEquals(1, filterResult.getSpans().size());
+        Assertions.assertEquals(3, filterResult.getSpans().get(0).getCharacterStart());
+        Assertions.assertEquals(16, filterResult.getSpans().get(0).getCharacterEnd());
+        Assertions.assertEquals("Aug. 31, 2020", filterResult.getSpans().get(0).getText());
+
+    }
+
 }
