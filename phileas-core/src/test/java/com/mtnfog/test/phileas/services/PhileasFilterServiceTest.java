@@ -105,7 +105,7 @@ public class PhileasFilterServiceTest {
         final PhileasConfiguration phileasConfiguration = ConfigFactory.create(PhileasConfiguration.class, properties);
 
         final PhileasFilterService service = new PhileasFilterService(phileasConfiguration);
-        final FilterResponse response = service.filter("default", "context", "documentid", "George Washington was president and his ssn was 123-45-6789 and he lived at 90210.", MimeType.TEXT_PLAIN);
+        final FilterResponse response = service.filter(Arrays.asList("default"), "context", "documentid", "George Washington was president and his ssn was 123-45-6789 and he lived at 90210.", MimeType.TEXT_PLAIN);
 
         LOGGER.info(response.getFilteredText());
 
@@ -130,7 +130,7 @@ public class PhileasFilterServiceTest {
         final PhileasConfiguration phileasConfiguration = ConfigFactory.create(PhileasConfiguration.class, properties);
 
         PhileasFilterService service = new PhileasFilterService(phileasConfiguration);
-        final FilterResponse response = service.filter("default", "context", "documentid", "My email is test@something.com and cc is 4121742025464465", MimeType.TEXT_PLAIN);
+        final FilterResponse response = service.filter(Arrays.asList("default"), "context", "documentid", "My email is test@something.com and cc is 4121742025464465", MimeType.TEXT_PLAIN);
 
         LOGGER.info(response.getFilteredText());
 
@@ -155,7 +155,7 @@ public class PhileasFilterServiceTest {
         final PhileasConfiguration phileasConfiguration = ConfigFactory.create(PhileasConfiguration.class, properties);
 
         PhileasFilterService service = new PhileasFilterService(phileasConfiguration);
-        final FilterResponse response = service.filter("default", "context", "documentid", "test@something.com is email and cc is 4121742025464465", MimeType.TEXT_PLAIN);
+        final FilterResponse response = service.filter(Arrays.asList("default"), "context", "documentid", "test@something.com is email and cc is 4121742025464465", MimeType.TEXT_PLAIN);
 
         LOGGER.info(response.getFilteredText());
 
@@ -180,7 +180,7 @@ public class PhileasFilterServiceTest {
         final PhileasConfiguration phileasConfiguration = ConfigFactory.create(PhileasConfiguration.class, properties);
 
         PhileasFilterService service = new PhileasFilterService(phileasConfiguration);
-        final FilterResponse response = service.filter("default", "context", "documentid", "test@something.com", MimeType.TEXT_PLAIN);
+        final FilterResponse response = service.filter(Arrays.asList("default"), "context", "documentid", "test@something.com", MimeType.TEXT_PLAIN);
 
         LOGGER.info(response.getFilteredText());
 
@@ -205,7 +205,7 @@ public class PhileasFilterServiceTest {
         final PhileasConfiguration phileasConfiguration = ConfigFactory.create(PhileasConfiguration.class, properties);
 
         PhileasFilterService service = new PhileasFilterService(phileasConfiguration);
-        final FilterResponse response = service.filter("default", "context", "documentid", "90210", MimeType.TEXT_PLAIN);
+        final FilterResponse response = service.filter(Arrays.asList("default"), "context", "documentid", "90210", MimeType.TEXT_PLAIN);
 
         LOGGER.info(response.getFilteredText());
 
@@ -230,7 +230,7 @@ public class PhileasFilterServiceTest {
         final PhileasConfiguration phileasConfiguration = ConfigFactory.create(PhileasConfiguration.class, properties);
 
         PhileasFilterService service = new PhileasFilterService(phileasConfiguration);
-        final FilterResponse response = service.filter("default", "context", "documentid", "his name was JEFF.", MimeType.TEXT_PLAIN);
+        final FilterResponse response = service.filter(Arrays.asList("default"), "context", "documentid", "his name was JEFF.", MimeType.TEXT_PLAIN);
 
         LOGGER.info(response.getFilteredText());
 
@@ -255,7 +255,7 @@ public class PhileasFilterServiceTest {
         final PhileasConfiguration phileasConfiguration = ConfigFactory.create(PhileasConfiguration.class, properties);
 
         PhileasFilterService service = new PhileasFilterService(phileasConfiguration);
-        final FilterResponse response = service.filter("default", "context", "documentid", "he was seen on 10-19-2020.", MimeType.TEXT_PLAIN);
+        final FilterResponse response = service.filter(Arrays.asList("default"), "context", "documentid", "he was seen on 10-19-2020.", MimeType.TEXT_PLAIN);
 
         LOGGER.info(response.getFilteredText());
 
@@ -280,7 +280,7 @@ public class PhileasFilterServiceTest {
         final PhileasConfiguration phileasConfiguration = ConfigFactory.create(PhileasConfiguration.class, properties);
 
         PhileasFilterService service = new PhileasFilterService(phileasConfiguration);
-        final FilterResponse response = service.filter("default", "context", "documentid",
+        final FilterResponse response = service.filter(Arrays.asList("default"), "context", "documentid",
                 "George Washington was president." + System.lineSeparator() + "Abraham Lincoln was president.", MimeType.TEXT_PLAIN);
 
         LOGGER.info(response.getFilteredText());
@@ -315,7 +315,7 @@ public class PhileasFilterServiceTest {
         final PhileasConfiguration phileasConfiguration = ConfigFactory.create(PhileasConfiguration.class, properties);
 
         final PhileasFilterService service = new PhileasFilterService(phileasConfiguration);
-        final FilterResponse response = service.filter("default", "context", "documentid", "his name was samuel and george.", MimeType.TEXT_PLAIN);
+        final FilterResponse response = service.filter(Arrays.asList("default"), "context", "documentid", "his name was samuel and george.", MimeType.TEXT_PLAIN);
 
         LOGGER.info(response.getFilteredText());
 
@@ -358,7 +358,7 @@ public class PhileasFilterServiceTest {
         final PhileasConfiguration phileasConfiguration = ConfigFactory.create(PhileasConfiguration.class, properties);
 
         final PhileasFilterService service = new PhileasFilterService(phileasConfiguration);
-        final FilterResponse response = service.filter("default", "context", "documentid", "his name was samuel and george.", MimeType.TEXT_PLAIN);
+        final FilterResponse response = service.filter(Arrays.asList("default"), "context", "documentid", "his name was samuel and george.", MimeType.TEXT_PLAIN);
 
         LOGGER.info(response.getFilteredText());
 
@@ -399,7 +399,7 @@ public class PhileasFilterServiceTest {
         final PhileasConfiguration phileasConfiguration = ConfigFactory.create(PhileasConfiguration.class, properties);
 
         final PhileasFilterService service = new PhileasFilterService(phileasConfiguration);
-        final FilterResponse response = service.filter("default", "context", "documentid", "his name was samuel.", MimeType.TEXT_PLAIN);
+        final FilterResponse response = service.filter(Arrays.asList("default"), "context", "documentid", "his name was samuel.", MimeType.TEXT_PLAIN);
 
         LOGGER.info(response.getFilteredText());
 
@@ -424,7 +424,7 @@ public class PhileasFilterServiceTest {
         final PhileasConfiguration phileasConfiguration = ConfigFactory.create(PhileasConfiguration.class, properties);
 
         final PhileasFilterService service = new PhileasFilterService(phileasConfiguration);
-        final FilterResponse response = service.filter("default", "context", null, "his name was JEFF.", MimeType.TEXT_PLAIN);
+        final FilterResponse response = service.filter(Arrays.asList("default"), "context", null, "his name was JEFF.", MimeType.TEXT_PLAIN);
 
         LOGGER.info("Generated document ID: " + response.getDocumentId());
         LOGGER.info(response.getFilteredText());
@@ -455,7 +455,7 @@ public class PhileasFilterServiceTest {
         final PhileasConfiguration phileasConfiguration = ConfigFactory.create(PhileasConfiguration.class, properties);
 
         final PhileasFilterService service = new PhileasFilterService(phileasConfiguration);
-        final FilterResponse response = service.filter("justcreditcard", "context", "documentid", "My email is test@something.com", MimeType.TEXT_PLAIN);
+        final FilterResponse response = service.filter(Arrays.asList("justcreditcard"), "context", "documentid", "My email is test@something.com", MimeType.TEXT_PLAIN);
 
         LOGGER.info(response.getFilteredText());
 
@@ -480,7 +480,7 @@ public class PhileasFilterServiceTest {
         final PhileasConfiguration phileasConfiguration = ConfigFactory.create(PhileasConfiguration.class, properties);
 
         final PhileasFilterService service = new PhileasFilterService(phileasConfiguration);
-        final FilterResponse response = service.filter("justcreditcard", "context", "documentid", "My cc is 4121742025464465", MimeType.TEXT_PLAIN);
+        final FilterResponse response = service.filter(Arrays.asList("justcreditcard"), "context", "documentid", "My cc is 4121742025464465", MimeType.TEXT_PLAIN);
 
         LOGGER.info(response.getFilteredText());
 
@@ -505,7 +505,7 @@ public class PhileasFilterServiceTest {
         final PhileasConfiguration phileasConfiguration = ConfigFactory.create(PhileasConfiguration.class, properties);
 
         final PhileasFilterService service = new PhileasFilterService(phileasConfiguration);
-        final FilterResponse response = service.filter("justcreditcard", "context", "documentid", "My cc is 4121742025464400", MimeType.TEXT_PLAIN);
+        final FilterResponse response = service.filter(Arrays.asList("justcreditcard"), "context", "documentid", "My cc is 4121742025464400", MimeType.TEXT_PLAIN);
 
         LOGGER.info(response.getFilteredText());
 
@@ -529,7 +529,7 @@ public class PhileasFilterServiceTest {
         final PhileasConfiguration phileasConfiguration = ConfigFactory.create(PhileasConfiguration.class, properties);
 
         final PhileasFilterService service = new PhileasFilterService(phileasConfiguration);
-        final FilterResponse response = service.filter("default", "context", "documentid", "George Washington was president and his ssn was 123-45-6789 and he lived at 90210.", MimeType.TEXT_PLAIN);
+        final FilterResponse response = service.filter(Arrays.asList("default"), "context", "documentid", "George Washington was president and his ssn was 123-45-6789 and he lived at 90210.", MimeType.TEXT_PLAIN);
 
         LOGGER.info(response.getFilteredText());
 
@@ -553,7 +553,7 @@ public class PhileasFilterServiceTest {
         final PhileasConfiguration phileasConfiguration = ConfigFactory.create(PhileasConfiguration.class, properties);
 
         final PhileasFilterService service = new PhileasFilterService(phileasConfiguration);
-        final FilterResponse response = service.filter("default", "context", "documentid", "George Washington was president and his ssn was 123-45-6789 and he lived at 90210.", MimeType.TEXT_PLAIN);
+        final FilterResponse response = service.filter(Arrays.asList("default"), "context", "documentid", "George Washington was president and his ssn was 123-45-6789 and he lived at 90210.", MimeType.TEXT_PLAIN);
 
         LOGGER.info(response.getFilteredText());
 
@@ -580,7 +580,7 @@ public class PhileasFilterServiceTest {
         Assertions.assertThrows(FileNotFoundException.class, () -> {
 
             PhileasFilterService service = new PhileasFilterService(phileasConfiguration);
-            final FilterResponse response = service.filter("custom1", "context", "documentid", "My email is test@something.com", MimeType.TEXT_PLAIN);
+            final FilterResponse response = service.filter(Arrays.asList("custom1"), "context", "documentid", "My email is test@something.com", MimeType.TEXT_PLAIN);
 
         });
 
@@ -649,7 +649,7 @@ public class PhileasFilterServiceTest {
         final PhileasConfiguration phileasConfiguration = ConfigFactory.create(PhileasConfiguration.class, properties);
 
         PhileasFilterService service = new PhileasFilterService(phileasConfiguration);
-        final BinaryDocumentFilterResponse response = service.filter("pdf", "context", "documentid", document, MimeType.APPLICATION_PDF, MimeType.APPLICATION_PDF);
+        final BinaryDocumentFilterResponse response = service.filter(Arrays.asList("pdf"), "context", "documentid", document, MimeType.APPLICATION_PDF, MimeType.APPLICATION_PDF);
 
         // Write the byte array to a file.
         final File outputFile = File.createTempFile("redact", ".pdf");
@@ -686,7 +686,7 @@ public class PhileasFilterServiceTest {
         final PhileasConfiguration phileasConfiguration = ConfigFactory.create(PhileasConfiguration.class, properties);
 
         PhileasFilterService service = new PhileasFilterService(phileasConfiguration);
-        final BinaryDocumentFilterResponse response = service.filter("pdf", "context", "documentid", document, MimeType.APPLICATION_PDF, MimeType.APPLICATION_PDF);
+        final BinaryDocumentFilterResponse response = service.filter(Arrays.asList("pdf"), "context", "documentid", document, MimeType.APPLICATION_PDF, MimeType.APPLICATION_PDF);
 
         // Write the byte array to a file.
         final File outputFile = File.createTempFile("redact", ".pdf");

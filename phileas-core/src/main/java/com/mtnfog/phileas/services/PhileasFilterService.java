@@ -240,55 +240,6 @@ public class PhileasFilterService implements FilterService {
 
     }
 
-    private FilterProfile getCombinedFilterProfiles(List<String> filterProfileNames) throws IOException, IllegalStateException {
-
-        // In some chases there may be only one filter profile. We need to make sure
-        // the combined filter profile and that one filter profile are identical.
-
-        if(filterProfileNames.size() == 1) {
-
-            final String filterProfileName = filterProfileNames.get(0);
-
-            // This will ALWAYS return a filter profile because if it is not in the cache it will be retrieved from the cache.
-            // TODO: How to trigger a reload if the profile had to be retrieved from disk?
-            final String filterProfileJson = filterProfileService.get(filterProfileName);
-
-            LOGGER.debug("Deserializing filter profile [{}]", filterProfileName);
-            return gson.fromJson(filterProfileJson, FilterProfile.class);
-
-        } else {
-
-            final FilterProfile combinedFilterProfile = new FilterProfile();
-
-            for (final String filterProfileName : filterProfileNames) {
-
-                // This will ALWAYS return a filter profile because if it is not in the cache it will be retrieved from the cache.
-                // TODO: How to trigger a reload if the profile had to be retrieved from disk?
-                final String filterProfileJson = filterProfileService.get(filterProfileName);
-
-                LOGGER.debug("Deserializing filter profile [{}]", filterProfileName);
-                final FilterProfile filterProfile = gson.fromJson(filterProfileJson, FilterProfile.class);
-
-                if (filterProfile.getIdentifiers().hasFilter(FilterType.AGE)) {
-                    if (filterProfile.getIdentifiers().hasFilter(FilterType.AGE)) {
-                        combinedFilterProfile.getIdentifiers().setAge(filterProfile.getIdentifiers().getAge());
-                    } else {
-                        throw new IllegalStateException("Filter profile has duplicate filter: Age");
-                    }
-                }
-
-                // TODO: Add the logic for the rest of the filters.
-
-                // TODO: Set the name of the combined filter profile.
-
-            }
-
-            return combinedFilterProfile;
-
-        }
-
-    }
-
     @Override
     public FilterResponse filter(List<String> filterProfileNames, String context, String documentId, String input, MimeType mimeType) throws Exception {
 
@@ -501,6 +452,55 @@ public class PhileasFilterService implements FilterService {
 
     }
 
+    private FilterProfile getCombinedFilterProfiles(List<String> filterProfileNames) throws IOException, IllegalStateException {
+
+        // In some chases there may be only one filter profile. We need to make sure
+        // the combined filter profile and that one filter profile are identical.
+
+        if(filterProfileNames.size() == 1) {
+
+            final String filterProfileName = filterProfileNames.get(0);
+
+            // This will ALWAYS return a filter profile because if it is not in the cache it will be retrieved from the cache.
+            // TODO: How to trigger a reload if the profile had to be retrieved from disk?
+            final String filterProfileJson = filterProfileService.get(filterProfileName);
+
+            LOGGER.debug("Deserializing filter profile [{}]", filterProfileName);
+            return gson.fromJson(filterProfileJson, FilterProfile.class);
+
+        } else {
+
+            final FilterProfile combinedFilterProfile = new FilterProfile();
+
+            for (final String filterProfileName : filterProfileNames) {
+
+                // This will ALWAYS return a filter profile because if it is not in the cache it will be retrieved from the cache.
+                // TODO: How to trigger a reload if the profile had to be retrieved from disk?
+                final String filterProfileJson = filterProfileService.get(filterProfileName);
+
+                LOGGER.debug("Deserializing filter profile [{}]", filterProfileName);
+                final FilterProfile filterProfile = gson.fromJson(filterProfileJson, FilterProfile.class);
+
+                if (filterProfile.getIdentifiers().hasFilter(FilterType.AGE)) {
+                    if (filterProfile.getIdentifiers().hasFilter(FilterType.AGE)) {
+                        combinedFilterProfile.getIdentifiers().setAge(filterProfile.getIdentifiers().getAge());
+                    } else {
+                        throw new IllegalStateException("Filter profile has duplicate filter: Age");
+                    }
+                }
+
+                // TODO: Add the logic for the rest of the filters.
+
+                // TODO: Set the name of the combined filter profile.
+
+            }
+
+            return combinedFilterProfile;
+
+        }
+
+    }
+
     private FilterProfileService buildFilterProfileService(PhileasConfiguration phileasConfiguration) throws IOException {
 
         final FilterProfileService filterProfileService;
@@ -523,7 +523,7 @@ public class PhileasFilterService implements FilterService {
 
     }
 
-    public List<PostFilter> getPostFiltersForFilterProfile(final FilterProfile filterProfile) throws IOException {
+    private List<PostFilter> getPostFiltersForFilterProfile(final FilterProfile filterProfile) throws IOException {
 
         LOGGER.debug("Reloading filter profiles.");
 

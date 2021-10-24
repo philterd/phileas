@@ -10,6 +10,7 @@ import com.amazonaws.services.s3.model.*;
 import com.mtnfog.phileas.configuration.PhileasConfiguration;
 import com.mtnfog.phileas.model.exceptions.api.BadRequestException;
 import com.mtnfog.phileas.model.exceptions.api.InternalServerErrorException;
+import com.mtnfog.phileas.model.services.AbstractFilterProfileService;
 import com.mtnfog.phileas.model.services.FilterProfileCacheService;
 import com.mtnfog.phileas.model.services.FilterProfileService;
 import com.mtnfog.phileas.services.profiles.cache.FilterProfileCacheServiceFactory;
@@ -26,7 +27,7 @@ import java.util.*;
 /**
  * Implementation of {@link FilterProfileService} that is backed by S3.
  */
-public class S3FilterProfileService implements FilterProfileService {
+public class S3FilterProfileService extends AbstractFilterProfileService implements FilterProfileService {
 
     private static final Logger LOGGER = LogManager.getLogger(S3FilterProfileService.class);
 

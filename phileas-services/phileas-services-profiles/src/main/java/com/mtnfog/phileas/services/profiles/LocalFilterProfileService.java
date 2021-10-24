@@ -2,6 +2,7 @@ package com.mtnfog.phileas.services.profiles;
 
 import com.mtnfog.phileas.configuration.PhileasConfiguration;
 import com.mtnfog.phileas.model.exceptions.api.BadRequestException;
+import com.mtnfog.phileas.model.services.AbstractFilterProfileService;
 import com.mtnfog.phileas.model.services.FilterProfileCacheService;
 import com.mtnfog.phileas.model.services.FilterProfileService;
 import com.mtnfog.phileas.services.profiles.cache.InMemoryFilterProfileCacheService;
@@ -17,7 +18,7 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.*;
 
-public class LocalFilterProfileService implements FilterProfileService {
+public class LocalFilterProfileService extends AbstractFilterProfileService implements FilterProfileService {
 
     private static final Logger LOGGER = LogManager.getLogger(LocalFilterProfileService.class);
 
