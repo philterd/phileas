@@ -17,7 +17,7 @@ public interface FilterService {
 
     /**
      * Filter text from a string.
-     * @param filterProfileName The name of the filter profile.
+     * @param filterProfileNames The list of the filter profiles to use.
      * @param context The context.
      * @param documentId A document ID. Provide <code>null</code> for a document ID to be generated.
      * @param input The input text.
@@ -25,11 +25,11 @@ public interface FilterService {
      * @return A {@link FilterResponse}.
      * @throws Exception Thrown if the text cannot be filtered.
      */
-    FilterResponse filter(String filterProfileName, String context, String documentId, String input, MimeType mimeType) throws Exception;
+    FilterResponse filter(List<String> filterProfileNames, String context, String documentId, String input, MimeType mimeType) throws Exception;
 
     /**
      * Filter text from a binary document.
-     * @param filterProfileName The name of the filter profile.
+     * @param filterProfileNames The list of the filter profiles to use.
      * @param context The context.
      * @param documentId A document ID. Provide <code>null</code> for a document ID to be generated.
      * @param input The input document as a byte array.
@@ -38,16 +38,16 @@ public interface FilterService {
      * @return A {@link BinaryDocumentFilterResponse}.
      * @throws Exception Thrown if the text cannot be filtered.
      */
-    BinaryDocumentFilterResponse filter(String filterProfileName, String context, String documentId, byte[] input, MimeType mimeType, MimeType outputMimeType) throws Exception;
+    BinaryDocumentFilterResponse filter(List<String> filterProfileNames, String context, String documentId, byte[] input, MimeType mimeType, MimeType outputMimeType) throws Exception;
 
     /**
      * Detect the possible types of sensitive information in text.
-     * @param filterProfile The {@link FilterProfile}.
+     * @param filterProfileNames The list of the filter profiles to use.
      * @param input The input text.
      * @param mimeType The {@link MimeType}.
      * @return A {@link DetectResponse}.
      */
-    DetectResponse detect(FilterProfile filterProfile, String input, MimeType mimeType) throws Exception;
+    DetectResponse detect(List<String> filterProfileNames, String input, MimeType mimeType) throws Exception;
 
     /**
      * Get the replacement spans for a document.

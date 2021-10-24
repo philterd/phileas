@@ -175,7 +175,10 @@ public class PhileasFilterService implements FilterService {
     }
 
     @Override
-    public DetectResponse detect(FilterProfile filterProfile, String input, MimeType mimeType) throws Exception {
+    public DetectResponse detect(List<String> filterProfileNames, String input, MimeType mimeType) throws Exception {
+
+        // Get the filter profile.
+        final FilterProfile filterProfile = getCombinedFilterProfiles(filterProfileNames);
 
         final List<String> types = new LinkedList<>();
 
@@ -237,16 +240,60 @@ public class PhileasFilterService implements FilterService {
 
     }
 
+    private FilterProfile getCombinedFilterProfiles(List<String> filterProfileNames) throws IOException, IllegalStateException {
+
+        // In some chases there may be only one filter profile. We need to make sure
+        // the combined filter profile and that one filter profile are identical.
+
+        if(filterProfileNames.size() == 1) {
+
+            final String filterProfileName = filterProfileNames.get(0);
+
+            // This will ALWAYS return a filter profile because if it is not in the cache it will be retrieved from the cache.
+            // TODO: How to trigger a reload if the profile had to be retrieved from disk?
+            final String filterProfileJson = filterProfileService.get(filterProfileName);
+
+            LOGGER.debug("Deserializing filter profile [{}]", filterProfileName);
+            return gson.fromJson(filterProfileJson, FilterProfile.class);
+
+        } else {
+
+            final FilterProfile combinedFilterProfile = new FilterProfile();
+
+            for (final String filterProfileName : filterProfileNames) {
+
+                // This will ALWAYS return a filter profile because if it is not in the cache it will be retrieved from the cache.
+                // TODO: How to trigger a reload if the profile had to be retrieved from disk?
+                final String filterProfileJson = filterProfileService.get(filterProfileName);
+
+                LOGGER.debug("Deserializing filter profile [{}]", filterProfileName);
+                final FilterProfile filterProfile = gson.fromJson(filterProfileJson, FilterProfile.class);
+
+                if (filterProfile.getIdentifiers().hasFilter(FilterType.AGE)) {
+                    if (filterProfile.getIdentifiers().hasFilter(FilterType.AGE)) {
+                        combinedFilterProfile.getIdentifiers().setAge(filterProfile.getIdentifiers().getAge());
+                    } else {
+                        throw new IllegalStateException("Filter profile has duplicate filter: Age");
+                    }
+                }
+
+                // TODO: Add the logic for the rest of the filters.
+
+                // TODO: Set the name of the combined filter profile.
+
+            }
+
+            return combinedFilterProfile;
+
+        }
+
+    }
+
     @Override
-    public FilterResponse filter(String filterProfileName, String context, String documentId, String input, MimeType mimeType) throws Exception {
+    public FilterResponse filter(List<String> filterProfileNames, String context, String documentId, String input, MimeType mimeType) throws Exception {
 
         // Get the filter profile.
-        // This will ALWAYS return a filter profile because if it is not in the cache it will be retrieved from the cache.
-        // TODO: How to trigger a reload if the profile had to be retrieved from disk?
-        final String filterProfileJson = filterProfileService.get(filterProfileName);
-
-        LOGGER.debug("Deserializing filter profile [{}]", filterProfileName);
-        final FilterProfile filterProfile = gson.fromJson(filterProfileJson, FilterProfile.class);
+        final FilterProfile filterProfile = getCombinedFilterProfiles(filterProfileNames);
 
         // Load default values based on the domain.
         if(StringUtils.equalsIgnoreCase(Domain.DOMAIN_LEGAL, filterProfile.getDomain())) {
@@ -283,13 +330,13 @@ public class PhileasFilterService implements FilterService {
         }
 
         final List<Filter> filters = getFiltersForFilterProfile(filterProfile, documentAnalysis);
-        final List<PostFilter> postFilters = getPostFiltersForFilterProfile(filterProfileName);
+        final List<PostFilter> postFilters = getPostFiltersForFilterProfile(filterProfile);
 
         // See if we need to generate a document ID.
         if(StringUtils.isEmpty(documentId)) {
 
             // PHL-58: Use a hash function to generate the document ID.
-            documentId = DigestUtils.md5Hex(UUID.randomUUID().toString() + "-" + context + "-" + filterProfileName + "-" + input);
+            documentId = DigestUtils.md5Hex(UUID.randomUUID().toString() + "-" + context + "-" + filterProfile.getName() + "-" + input);
             LOGGER.debug("Generated document ID {}", documentId);
 
         }
@@ -350,21 +397,16 @@ public class PhileasFilterService implements FilterService {
     }
 
     @Override
-    public BinaryDocumentFilterResponse filter(String filterProfileName, String context, String documentId, byte[] input, MimeType mimeType, MimeType outputMimeType) throws Exception {
+    public BinaryDocumentFilterResponse filter(List<String> filterProfileNames, String context, String documentId, byte[] input, MimeType mimeType, MimeType outputMimeType) throws Exception {
 
         // Get the filter profile.
-        // This will ALWAYS return a filter profile because if it is not in the cache it will be retrieved from the cache.
-        // TODO: How to trigger a reload if the profile had to be retrieved from disk?
-        final String filterProfileJson = filterProfileService.get(filterProfileName);
-
-        LOGGER.debug("Deserializing filter profile [{}]", filterProfileName);
-        final FilterProfile filterProfile = gson.fromJson(filterProfileJson, FilterProfile.class);
+        final FilterProfile filterProfile = getCombinedFilterProfiles(filterProfileNames);
 
         // See if we need to generate a document ID.
         if(StringUtils.isEmpty(documentId)) {
 
             // PHL-58: Use a hash function to generate the document ID.
-            documentId = DigestUtils.md5Hex(UUID.randomUUID().toString() + "-" + context + "-" + filterProfileName + "-" + input);
+            documentId = DigestUtils.md5Hex(UUID.randomUUID().toString() + "-" + context + "-" + filterProfile.getName() + "-" + input);
             LOGGER.debug("Generated document ID {}", documentId);
 
         }
@@ -397,7 +439,7 @@ public class PhileasFilterService implements FilterService {
             }
 
             final List<Filter> filters = getFiltersForFilterProfile(filterProfile, documentAnalysis);
-            final List<PostFilter> postFilters = getPostFiltersForFilterProfile(filterProfileName);
+            final List<PostFilter> postFilters = getPostFiltersForFilterProfile(filterProfile);
 
             // Process each line looking for sensitive information in each line.
             for (final String line : lines) {
@@ -481,12 +523,9 @@ public class PhileasFilterService implements FilterService {
 
     }
 
-    public List<PostFilter> getPostFiltersForFilterProfile(final String filterProfileName) throws IOException {
+    public List<PostFilter> getPostFiltersForFilterProfile(final FilterProfile filterProfile) throws IOException {
 
         LOGGER.debug("Reloading filter profiles.");
-
-        final String filterProfileJson = filterProfileService.get(filterProfileName);
-        final FilterProfile filterProfile = gson.fromJson(filterProfileJson, FilterProfile.class);
 
         final List<PostFilter> postFilters = new LinkedList<>();
 
