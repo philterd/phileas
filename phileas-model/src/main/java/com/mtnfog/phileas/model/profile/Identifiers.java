@@ -3,6 +3,7 @@ package com.mtnfog.phileas.model.profile;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.mtnfog.phileas.model.enums.FilterType;
+import com.mtnfog.phileas.model.filter.Filter;
 import com.mtnfog.phileas.model.profile.filters.*;
 import org.apache.commons.collections4.CollectionUtils;
 
@@ -230,6 +231,159 @@ public class Identifiers {
         }
 
         return false;
+
+    }
+
+    public AbstractFilter getFilter(FilterType filterType) {
+
+        switch(filterType) {
+
+            case CUSTOM_DICTIONARY:
+                return this.customDictionaries;
+            case AGE:
+                return this.age;
+            case BANK_ROUTING_NUMBER:
+                return this.bankRoutingNumber;
+            /*case BITCOIN_ADDRESS:
+                if(this.getBitcoinAddress() != null) { return true; } break;
+            case CURRENCY:
+                if(this.getCurrency() != null) { return true; } break;
+            case LOCATION_CITY:
+                if(this.getCity() != null) { return true; } break;
+            case LOCATION_COUNTY:
+                if(this.getCounty() != null) { return true; } break;
+            case CREDIT_CARD:
+                if(this.getCreditCard() != null) { return true; } break;
+            case DATE:
+                if(this.getDate() != null) { return true; } break;
+            case DRIVERS_LICENSE_NUMBER:
+                if(this.getDriversLicense() != null) { return true; } break;
+            case EMAIL_ADDRESS:
+                if(this.getEmailAddress() != null) { return true; } break;
+            case FIRST_NAME:
+                if(this.getFirstName() != null) { return true; } break;
+            case HOSPITAL:
+                if(this.getHospital() != null) { return true; } break;
+            case HOSPITAL_ABBREVIATION:
+                if(this.getHospitalAbbreviation() != null) { return true; } break;
+            case IBAN_CODE:
+                if(this.getIbanCode() != null) { return true; } break;
+            case IDENTIFIER:
+                if(this.getIdentifiers() != null) { return true; } break;
+            case IP_ADDRESS:
+                if(this.getIpAddress() != null) { return true; } break;
+            case MAC_ADDRESS:
+                if(this.getMacAddress() != null) { return true; } break;
+            case NER_ENTITY:
+                if(this.getNer() != null) { return true; } break;
+            case PASSPORT_NUMBER:
+                if(this.getPassportNumber() != null) { return true; } break;
+            case PHONE_NUMBER:
+                if(this.getPhoneNumber() != null) { return true; } break;
+            case PHONE_NUMBER_EXTENSION:
+                if(this.getPhoneNumberExtension() != null) { return true; } break;
+            case PHYSICIAN_NAME:
+                if(this.getPhysicianName() != null) { return true; } break;
+            case SECTION:
+                if(this.getSections() != null) { return true; } break;
+            case SSN:
+                if(this.getSsn() != null) { return true; } break;
+            case LOCATION_STATE:
+                if(this.getState() != null) { return true; } break;
+            case STATE_ABBREVIATION:
+                if(this.getStateAbbreviation() != null) { return true; } break;
+            case STREET_ADDRESS:
+                if(this.getStreetAddress() != null) { return true; } break;
+            case SURNAME:
+                if(this.getSurname() != null) { return true; } break;
+            case TRACKING_NUMBER:
+                if(this.getTrackingNumber() != null) { return true; } break;
+            case URL:
+                if(this.getUrl() != null) { return true; } break;
+            case VIN:
+                if(this.getVin() != null) { return true; } break;
+            case ZIP_CODE:
+                if(this.getZipCode() != null) { return true; } break;*/
+
+        }
+
+        // Should never happen.
+        return null;
+
+    }
+
+    public void setFilter(FilterType filterType, AbstractFilter filter) {
+
+        switch(filterType) {
+
+            case CUSTOM_DICTIONARY:
+                this.customDictionaries = filter;
+            case AGE:
+                this.age = (Age) filter;
+            case BANK_ROUTING_NUMBER:
+                this.bankRoutingNumber = (BankRoutingNumber) filter;
+            case BITCOIN_ADDRESS:
+                this.bitcoinAddress = (BitcoinAddress) filter;
+            case CURRENCY:
+                this.currency = (Currency) filter;
+            case LOCATION_CITY:
+                this.city = (City) filter;
+            case LOCATION_COUNTY:
+                this.county = (County) filter;
+            case CREDIT_CARD:
+                this.creditCard = (CreditCard) filter;
+            case DATE:
+                this.date = (Date) filter;
+            case DRIVERS_LICENSE_NUMBER:
+                this.driversLicense = (DriversLicense) filter;
+            case EMAIL_ADDRESS:
+                this.emailAddress = (EmailAddress) filter;
+            case FIRST_NAME:
+                this.firstName = (FirstName) filter;
+            case HOSPITAL:
+                this.hospital = (Hospital) filter;
+            case HOSPITAL_ABBREVIATION:
+                this.hospitalAbbreviation = (HospitalAbbreviation) filter;
+            case IBAN_CODE:
+                this.ibanCode = (IbanCode) filter;
+            case IDENTIFIER:
+                this.identifiers = (Identifiers) filter;
+            case IP_ADDRESS:
+                this.ipAddress = (IpAddress) filter;
+            case MAC_ADDRESS:
+                this.macAddress = (MacAddress) filter;
+            case NER_ENTITY:
+                this.ner = (Ner) filter;
+            case PASSPORT_NUMBER:
+                this.passportNumber = (PassportNumber) filter;
+            case PHONE_NUMBER:
+                this.phoneNumber = (PhoneNumber) filter;
+            case PHONE_NUMBER_EXTENSION:
+                this.phoneNumberExtension = (PhoneNumberExtension) filter;
+            case PHYSICIAN_NAME:
+                this.physicianName = (PhysicianName) filter;
+            case SECTION:
+                this.sections = (Section) filter;
+            case SSN:
+                this.ssn = (Ssn) filter;
+            case LOCATION_STATE:
+                this.state = (State) filter;
+            case STATE_ABBREVIATION:
+                this.stateAbbreviation = (StateAbbreviation) filter;
+            case STREET_ADDRESS:
+                this.streetAddress = (StreetAddress) filter;
+            case SURNAME:
+                this.surname = (Surname) filter;
+            case TRACKING_NUMBER:
+                this.trackingNumber = (TrackingNumber) filter;
+            case URL:
+                this.url = (Url) filter;
+            case VIN:
+                this.vin = (Vin) filter;
+            case ZIP_CODE:
+                this.zipCode = (ZipCode) filter;
+
+        }
 
     }
 

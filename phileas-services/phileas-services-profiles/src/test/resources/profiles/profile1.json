@@ -1,0 +1,20 @@
+{
+  "name": "default",
+  "ignored": [],
+  "config": {
+    "splitting": {
+      "enabled": false,
+      "threshold": 100000000,
+      "method": "newline"
+    }
+  },
+  "identifiers": {
+    "dictionaries": [],
+    "age": {
+      "ageFilterStrategies": [{
+        "strategy": "REDACT",
+        "redactionFormat": "{{{REDACTED-%t}}}"
+      }]
+    }
+  }
+}
