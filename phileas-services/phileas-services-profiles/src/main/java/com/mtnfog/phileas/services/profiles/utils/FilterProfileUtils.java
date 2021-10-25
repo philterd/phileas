@@ -26,36 +26,26 @@ public class FilterProfileUtils {
 
     public FilterProfile getCombinedFilterProfiles(List<String> filterProfileNames) throws IOException, IllegalStateException {
 
-        // In some chases there may be only one filter profile. We need to make sure
-        // the combined filter profile and that one filter profile are identical.
+        // Get the deserialized filter profile of the first profile in the list.
+        // By starting off with a full profile we don't have to worry about adding
+        // Config and Crypto (and other sections) since those will always be
+        // taken from the first profile.
+        final FilterProfile combinedFilterProfile = getFilterProfile(filterProfileNames.get(0));
 
-        if(filterProfileNames.size() == 1) {
+        // In some chases there may be only one filter profile.
+        if(filterProfileNames.size() > 1) {
 
-            final String filterProfileName = filterProfileNames.get(0);
+            combinedFilterProfile.setName("combined");
 
-            // This will ALWAYS return a filter profile because if it is not in the cache it will be retrieved from the cache.
-            // TODO: How to trigger a reload if the profile had to be retrieved from disk?
-            final String filterProfileJson = filterProfileService.get(filterProfileName);
-
-            LOGGER.debug("Deserializing filter profile [{}]", filterProfileName);
-            return gson.fromJson(filterProfileJson, FilterProfile.class);
-
-        } else {
-
-            final FilterProfile combinedFilterProfile = new FilterProfile();
-
-            for (final String filterProfileName : filterProfileNames) {
-
-                // This will ALWAYS return a filter profile because if it is not in the cache it will be retrieved from the cache.
-                // TODO: How to trigger a reload if the profile had to be retrieved from disk?
-                final String filterProfileJson = filterProfileService.get(filterProfileName);
-
-                LOGGER.debug("Deserializing filter profile [{}]", filterProfileName);
-                final FilterProfile filterProfile = gson.fromJson(filterProfileJson, FilterProfile.class);
+            // Loop over the filter profile names and skip the first one since we have already
+            // deserialized it to a filter profile to start with.
+            for (final String filterProfileName : filterProfileNames.subList(1, filterProfileNames.size())) {
 
                 // For each of the filter types, copy the filter (if it exists) from the source filter profile
                 // to the destination (combined) filter profile. If a filter already exists in the destination (combined)
                 // filter profile then throw an error.
+
+                final FilterProfile filterProfile = getFilterProfile(filterProfileName);
 
                 for(FilterType filterType : FilterType.values()) {
                     if (filterProfile.getIdentifiers().hasFilter(filterType)) {
@@ -67,14 +57,26 @@ public class FilterProfileUtils {
                     }
                 }
 
-                // Set the name of the combined filter profile. This doesn't have any use so it does not matter.");
-                combinedFilterProfile.setName("combined");
+                // Aggregate the Ignored and IgnoredPatterns into the combined profile.
+                combinedFilterProfile.getIgnored().addAll(filterProfile.getIgnored());
+                combinedFilterProfile.getIgnoredPatterns().addAll(filterProfile.getIgnoredPatterns());
 
             }
 
-            return combinedFilterProfile;
-
         }
+
+        return combinedFilterProfile;
+
+    }
+
+    private FilterProfile getFilterProfile(String filterProfileName) throws IOException {
+
+        // This will ALWAYS return a filter profile because if it is not in the cache it will be retrieved from the cache.
+        // TODO: How to trigger a reload if the profile had to be retrieved from disk?
+        final String filterProfileJson = filterProfileService.get(filterProfileName);
+
+        LOGGER.debug("Deserializing filter profile [{}]", filterProfileName);
+        return gson.fromJson(filterProfileJson, FilterProfile.class);
 
     }
 
