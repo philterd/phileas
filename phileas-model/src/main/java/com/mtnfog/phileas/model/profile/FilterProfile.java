@@ -14,13 +14,17 @@ public class FilterProfile {
     @Expose
     private String name;
 
-    @SerializedName("domain")
+    @SerializedName("config")
     @Expose
-    private String domain;
+    private Config config = new Config();
 
     @SerializedName("crypto")
     @Expose
     private Crypto crypto;
+
+    @SerializedName("domain")
+    @Expose
+    private String domain;
 
     @SerializedName("identifiers")
     @Expose
@@ -37,10 +41,6 @@ public class FilterProfile {
     @SerializedName("structured")
     @Expose
     private Structured structured;
-
-    @SerializedName("config")
-    @Expose
-    private Config config = new Config();
 
     @Override
     public boolean equals(Object o) {
