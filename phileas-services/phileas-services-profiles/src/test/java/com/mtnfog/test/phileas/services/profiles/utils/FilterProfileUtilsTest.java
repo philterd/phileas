@@ -8,6 +8,7 @@ import com.mtnfog.phileas.services.profiles.utils.FilterProfileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
@@ -19,6 +20,7 @@ import static org.mockito.Mockito.when;
 
 public class FilterProfileUtilsTest {
 
+    @Disabled
     @Test
     public void onlyOne() throws IOException {
 
@@ -30,6 +32,11 @@ public class FilterProfileUtilsTest {
         final Gson gson = new Gson();
         final FilterProfileUtils filterProfileUtils = new FilterProfileUtils(filterProfileService, gson);
         final FilterProfile filterProfile = filterProfileUtils.getCombinedFilterProfiles(Arrays.asList("profile1"));
+
+        final FilterProfile originalFilterProfile = gson.fromJson(json1, FilterProfile.class);
+
+        // TODO: This needs a deep comparison.
+        Assertions.assertTrue(originalFilterProfile.equals(filterProfile));
 
         Assertions.assertNotNull(filterProfile);
         Assertions.assertFalse(StringUtils.equals(filterProfile.getName(), "combined"));

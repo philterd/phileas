@@ -2,6 +2,8 @@ package com.mtnfog.phileas.model.profile;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import java.util.Collections;
 import java.util.List;
@@ -39,6 +41,25 @@ public class FilterProfile {
     @SerializedName("config")
     @Expose
     private Config config = new Config();
+
+    @Override
+    public boolean equals(Object o) {
+        return EqualsBuilder.reflectionEquals(this, o);
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder(17, 37).
+                append(name).
+                append(domain).
+                append(crypto).
+                append(identifiers).
+                append(ignored).
+                append(ignoredPatterns).
+                append(structured).
+                append(config).
+                toHashCode();
+    }
 
     public String getName() {
         return name;
