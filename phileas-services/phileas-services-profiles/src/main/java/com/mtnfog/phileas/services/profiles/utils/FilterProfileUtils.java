@@ -67,7 +67,8 @@ public class FilterProfileUtils {
                     }
                 }
 
-                // TODO: Set the name of the combined filter profile.
+                // Set the name of the combined filter profile. This doesn't have any use so it does not matter.");
+                combinedFilterProfile.setName("combined");
 
             }
 
