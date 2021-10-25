@@ -3,8 +3,8 @@ package com.mtnfog.phileas.model.profile;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.mtnfog.phileas.model.enums.FilterType;
-import com.mtnfog.phileas.model.filter.Filter;
 import com.mtnfog.phileas.model.profile.filters.*;
+import com.mtnfog.phileas.model.profile.graphical.BoundingBox;
 import org.apache.commons.collections4.CollectionUtils;
 
 import java.util.List;
@@ -34,6 +34,10 @@ public class Identifiers {
     @SerializedName("bitcoinAddress")
     @Expose
     private BitcoinAddress bitcoinAddress;
+
+    @SerializedName("boundingBoxes")
+    @Expose
+    private List<BoundingBox> boundingBoxes;
 
     @SerializedName("creditCard")
     @Expose
@@ -690,6 +694,14 @@ public class Identifiers {
 
     public void setCurrency(Currency currency) {
         this.currency = currency;
+    }
+
+    public List<BoundingBox> getBoundingBoxes() {
+        return boundingBoxes;
+    }
+
+    public void setBoundingBoxes(List<BoundingBox> boundingBoxes) {
+        this.boundingBoxes = boundingBoxes;
     }
 
 }

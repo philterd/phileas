@@ -4,6 +4,7 @@ import com.mtnfog.phileas.model.enums.MimeType;
 import com.mtnfog.phileas.model.objects.RedactionOptions;
 import com.mtnfog.phileas.model.objects.Span;
 import com.mtnfog.phileas.model.profile.FilterProfile;
+import com.mtnfog.phileas.model.profile.graphical.BoundingBox;
 import com.mtnfog.phileas.model.services.Redacter;
 import com.mtnfog.services.pdf.model.RedactedRectangle;
 import org.apache.logging.log4j.LogManager;
@@ -20,12 +21,14 @@ import org.apache.pdfbox.text.PDFTextStripper;
 import org.apache.pdfbox.text.TextPosition;
 
 import javax.imageio.ImageIO;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.*;
+import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -41,20 +44,24 @@ public class PdfRedacter extends PDFTextStripper implements Redacter {
     private FilterProfile filterProfile;
     private final Set<Span> spans;
     private final RedactionOptions redactionOptions;
+    private final List<BoundingBox> boundingBoxes;
 
     private static final Map<String, PDColor> COLORS = new LinkedHashMap<>();
 
     static {
         COLORS.put("black", new PDColor(new float[]{0, 0, 0}, PDDeviceRGB.INSTANCE));
-        COLORS.put("red", new PDColor(new float[]{0, 0, 0}, PDDeviceRGB.INSTANCE));
-        COLORS.put("yellow", new PDColor(new float[]{0, 0, 0}, PDDeviceRGB.INSTANCE));
+        COLORS.put("red", new PDColor(new float[]{255, 0, 0}, PDDeviceRGB.INSTANCE));
+        COLORS.put("yellow", new PDColor(new float[]{1, 1, 100 / 255F}, PDDeviceRGB.INSTANCE));
     }
 
-    public PdfRedacter(FilterProfile filterProfile, Set<Span> spans, RedactionOptions redactionOptions) throws IOException {
+    public PdfRedacter(FilterProfile filterProfile,
+                       Set<Span> spans, RedactionOptions redactionOptions,
+                       List<BoundingBox> boundingBoxes) throws IOException {
 
         this.filterProfile = filterProfile;
         this.spans = spans;
         this.redactionOptions = redactionOptions;
+        this.boundingBoxes = boundingBoxes;
 
     }
 
@@ -69,6 +76,20 @@ public class PdfRedacter extends PDFTextStripper implements Redacter {
 
         final Writer dummy = new OutputStreamWriter(new ByteArrayOutputStream());
         writeText(pdDocument, dummy);
+        dummy.close();
+
+        // PHL-244: Redact the bounding boxes in the output stream.
+        for(final BoundingBox boundingBox : boundingBoxes) {
+
+            final PDPage page = pdDocument.getPage(boundingBox.getPage() - 1);
+            final PDPageContentStream contentStream = new PDPageContentStream(pdDocument, page, PDPageContentStream.AppendMode.APPEND, true);
+
+            contentStream.setNonStrokingColor(COLORS.get(boundingBox.getColor()));
+            contentStream.addRect(boundingBox.getX(), boundingBox.getY(), boundingBox.getW(), boundingBox.getH());
+            contentStream.fill();
+            contentStream.close();
+
+        }
 
         final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 

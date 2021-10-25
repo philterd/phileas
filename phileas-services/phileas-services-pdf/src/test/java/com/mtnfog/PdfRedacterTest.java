@@ -5,6 +5,7 @@ import com.mtnfog.phileas.model.enums.MimeType;
 import com.mtnfog.phileas.model.objects.RedactionOptions;
 import com.mtnfog.phileas.model.objects.Span;
 import com.mtnfog.phileas.model.profile.FilterProfile;
+import com.mtnfog.phileas.model.profile.graphical.BoundingBox;
 import com.mtnfog.phileas.model.services.AlertService;
 import com.mtnfog.phileas.model.services.Redacter;
 import com.mtnfog.services.pdf.PdfRedacter;
@@ -19,6 +20,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.Set;
 
 public class PdfRedacterTest {
@@ -41,7 +44,8 @@ public class PdfRedacterTest {
         final FilterProfile filterProfile = new FilterProfile();
         final RedactionOptions redactionOptions = new RedactionOptions();
 
-        final Redacter pdfRedacter = new PdfRedacter(filterProfile, spans, redactionOptions);
+        final List<BoundingBox> boundingBoxes = Collections.emptyList();
+        final Redacter pdfRedacter = new PdfRedacter(filterProfile, spans, redactionOptions, boundingBoxes);
         final byte[] redacted = pdfRedacter.process(document, MimeType.APPLICATION_PDF);
 
         final File outputFile = File.createTempFile("output", ".pdf");
@@ -67,7 +71,8 @@ public class PdfRedacterTest {
         final FilterProfile filterProfile = new FilterProfile();
         final RedactionOptions redactionOptions = new RedactionOptions();
 
-        final Redacter pdfRedacter = new PdfRedacter(filterProfile, spans, redactionOptions);
+        final List<BoundingBox> boundingBoxes = Collections.emptyList();
+        final Redacter pdfRedacter = new PdfRedacter(filterProfile, spans, redactionOptions, boundingBoxes);
         final byte[] redacted = pdfRedacter.process(document, MimeType.APPLICATION_PDF);
 
         final File outputFile = File.createTempFile("output", ".pdf");
@@ -94,7 +99,8 @@ public class PdfRedacterTest {
         final FilterProfile filterProfile = new FilterProfile();
         final RedactionOptions redactionOptions = new RedactionOptions();
 
-        final Redacter pdfRedacter = new PdfRedacter(filterProfile, spans, redactionOptions);
+        final List<BoundingBox> boundingBoxes = Collections.emptyList();
+        final Redacter pdfRedacter = new PdfRedacter(filterProfile, spans, redactionOptions, boundingBoxes);
         final byte[] redacted = pdfRedacter.process(document, MimeType.IMAGE_JPEG);
 
         final File outputFile = File.createTempFile("output", ".zip");
@@ -120,13 +126,139 @@ public class PdfRedacterTest {
         final FilterProfile filterProfile = new FilterProfile();
         final RedactionOptions redactionOptions = new RedactionOptions();
 
-        final Redacter pdfRedacter = new PdfRedacter(filterProfile, spans, redactionOptions);
+        final List<BoundingBox> boundingBoxes = Collections.emptyList();
+        final Redacter pdfRedacter = new PdfRedacter(filterProfile, spans, redactionOptions, boundingBoxes);
         final byte[] redacted = pdfRedacter.process(document, MimeType.IMAGE_JPEG);
 
         final File outputFile = File.createTempFile("output", ".zip");
         outputFile.deleteOnExit();
 
         LOGGER.info("Writing redacted JPEG to {}", outputFile.getAbsolutePath());
+        FileUtils.writeByteArrayToFile(outputFile, redacted);
+
+        // TODO: How to assert? MD5 gives a different value each time.
+
+    }
+
+    @Test
+    public void textPdfBoundingBox1() throws IOException {
+
+        final String filename = "12-12110 K.pdf";
+        final InputStream is = getClass().getClassLoader().getResourceAsStream(filename);
+        final byte[] document = IOUtils.toByteArray(is);
+
+        final FilterProfile filterProfile = new FilterProfile();
+        final RedactionOptions redactionOptions = new RedactionOptions();
+
+        final BoundingBox boundingBox1 = new BoundingBox();
+        boundingBox1.setX(100);
+        boundingBox1.setY(100);
+        boundingBox1.setW(500);
+        boundingBox1.setH(150);
+        boundingBox1.setPage(1);
+
+        final BoundingBox boundingBox2 = new BoundingBox();
+        boundingBox2.setX(100);
+        boundingBox2.setY(100);
+        boundingBox2.setW(500);
+        boundingBox2.setH(150);
+        boundingBox2.setPage(2);
+
+        final List<BoundingBox> boundingBoxes = Arrays.asList(boundingBox1, boundingBox2);
+
+        final Redacter pdfRedacter = new PdfRedacter(filterProfile, Collections.emptySet(), redactionOptions, boundingBoxes);
+        final byte[] redacted = pdfRedacter.process(document, MimeType.APPLICATION_PDF);
+
+        final File outputFile = File.createTempFile("output", ".pdf");
+        outputFile.deleteOnExit();
+
+        LOGGER.info("Writing redacted PDF to {}", outputFile.getAbsolutePath());
+        FileUtils.writeByteArrayToFile(outputFile, redacted);
+
+        // TODO: How to assert? MD5 gives a different value each time.
+
+    }
+
+    @Test
+    public void textPdfBoundingBox2() throws IOException {
+
+        final String filename = "12-12110 K.pdf";
+        final InputStream is = getClass().getClassLoader().getResourceAsStream(filename);
+        final byte[] document = IOUtils.toByteArray(is);
+
+        final FilterProfile filterProfile = new FilterProfile();
+        final RedactionOptions redactionOptions = new RedactionOptions();
+
+        final BoundingBox boundingBox1 = new BoundingBox();
+        boundingBox1.setX(100);
+        boundingBox1.setY(100);
+        boundingBox1.setW(500);
+        boundingBox1.setH(150);
+        boundingBox1.setPage(1);
+        boundingBox1.setColor("yellow");
+        boundingBox1.setMimeType(MimeType.APPLICATION_PDF.toString());
+
+        final BoundingBox boundingBox2 = new BoundingBox();
+        boundingBox2.setX(100);
+        boundingBox2.setY(50);
+        boundingBox2.setW(250);
+        boundingBox2.setH(75);
+        boundingBox2.setPage(2);
+        boundingBox2.setColor("red");
+        boundingBox2.setMimeType(MimeType.APPLICATION_PDF.toString());
+
+        final List<BoundingBox> boundingBoxes = Arrays.asList(boundingBox1, boundingBox2);
+
+        final Redacter pdfRedacter = new PdfRedacter(filterProfile, Collections.emptySet(), redactionOptions, boundingBoxes);
+        final byte[] redacted = pdfRedacter.process(document, MimeType.APPLICATION_PDF);
+
+        final File outputFile = File.createTempFile("output", ".pdf");
+        outputFile.deleteOnExit();
+
+        LOGGER.info("Writing redacted PDF to {}", outputFile.getAbsolutePath());
+        FileUtils.writeByteArrayToFile(outputFile, redacted);
+
+        // TODO: How to assert? MD5 gives a different value each time.
+
+    }
+
+    @Test
+    public void testPdfSpansAndBoundingBoxes() throws IOException {
+
+        final Span span1 = Span.make(0, 1, FilterType.NER_ENTITY, "ctx", "docid", 0.25, "Wendy", "repl", null, false, null);
+        final Span span2 = Span.make(0, 1, FilterType.NER_ENTITY, "ctx", "docid", 0.25, "Bankruptcy", "repl", null, false, null);
+        final Set<Span> spans = Set.copyOf(Arrays.asList(span1, span2));
+
+        final String filename = "12-12110 K.pdf";
+        final InputStream is = getClass().getClassLoader().getResourceAsStream(filename);
+        final byte[] document = IOUtils.toByteArray(is);
+
+        final FilterProfile filterProfile = new FilterProfile();
+        final RedactionOptions redactionOptions = new RedactionOptions();
+
+        final BoundingBox boundingBox1 = new BoundingBox();
+        boundingBox1.setX(100);
+        boundingBox1.setY(100);
+        boundingBox1.setW(500);
+        boundingBox1.setH(150);
+        boundingBox1.setPage(1);
+
+        final BoundingBox boundingBox2 = new BoundingBox();
+        boundingBox2.setX(100);
+        boundingBox2.setY(100);
+        boundingBox2.setW(500);
+        boundingBox2.setH(150);
+        boundingBox2.setPage(2);
+
+        final List<BoundingBox> boundingBoxes = Arrays.asList(boundingBox1, boundingBox2);
+
+        final Redacter pdfRedacter = new PdfRedacter(filterProfile, spans, redactionOptions, boundingBoxes);
+        final byte[] redacted = pdfRedacter.process(document, MimeType.APPLICATION_PDF);
+
+        final File outputFile = File.createTempFile("output", ".pdf");
+        outputFile.deleteOnExit();
+
+        LOGGER.info("Writing redacted PDF to {}", outputFile.getAbsolutePath());
         FileUtils.writeByteArrayToFile(outputFile, redacted);
 
         // TODO: How to assert? MD5 gives a different value each time.

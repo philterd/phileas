@@ -38,6 +38,10 @@ public class FilterProfile {
     @Expose
     private List<IgnoredPattern> ignoredPatterns = Collections.EMPTY_LIST;
 
+    @SerializedName("graphical")
+    @Expose
+    private Graphical graphical;
+
     @SerializedName("structured")
     @Expose
     private Structured structured;
@@ -123,6 +127,15 @@ public class FilterProfile {
 
     public void setDomain(String domain) {
         this.domain = domain;
+    }
+
+
+    public Graphical getGraphical() {
+        return graphical;
+    }
+
+    public void setGraphical(Graphical graphical) {
+        this.graphical = graphical;
     }
 
 }

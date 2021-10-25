@@ -24,6 +24,7 @@ import com.mtnfog.phileas.model.profile.Ignored;
 import com.mtnfog.phileas.model.profile.filters.CustomDictionary;
 import com.mtnfog.phileas.model.profile.filters.Identifier;
 import com.mtnfog.phileas.model.profile.filters.Section;
+import com.mtnfog.phileas.model.profile.graphical.BoundingBox;
 import com.mtnfog.phileas.model.responses.BinaryDocumentFilterResponse;
 import com.mtnfog.phileas.model.responses.DetectResponse;
 import com.mtnfog.phileas.model.responses.FilterResponse;
@@ -395,6 +396,9 @@ public class PhileasFilterService implements FilterService {
             final List<Filter> filters = getFiltersForFilterProfile(filterProfile, documentAnalysis);
             final List<PostFilter> postFilters = getPostFiltersForFilterProfile(filterProfile);
 
+            // TODO: The following code really only needs to be done if there is at least
+            // one filter defined in the filter profile.
+
             // Process each line looking for sensitive information in each line.
             for (final String line : lines) {
 
@@ -416,8 +420,9 @@ public class PhileasFilterService implements FilterService {
 
             final RedactionOptions redactionOptions = new RedactionOptions();
 
-            // Redact those terms in the document.
-            final Redacter redacter = new PdfRedacter(filterProfile, spans, redactionOptions);
+            // Redact those terms in the document along with any bounding boxes identified in the filter profile.
+            final List<BoundingBox> boundingBoxes = getBoundingBoxes(filterProfile, mimeType);
+            final Redacter redacter = new PdfRedacter(filterProfile, spans, redactionOptions, boundingBoxes);
             final byte[] redacted = redacter.process(input, outputMimeType);
 
             // Create the response.
@@ -452,6 +457,26 @@ public class PhileasFilterService implements FilterService {
         }
 
         return binaryDocumentFilterResponse;
+
+    }
+
+    /**
+     * Get the bounding boxes from the filter profile for a given mime type.
+     * @param filterProfile The filter profile.
+     * @param mimeType The mime type.
+     * @return A list of bounding boxes from the filter profile for the given mime type.
+     */
+    private List<BoundingBox> getBoundingBoxes(final FilterProfile filterProfile, final MimeType mimeType) {
+
+        final List<BoundingBox> boundingBoxes = new LinkedList<>();
+
+        for(final BoundingBox boundingBox : filterProfile.getGraphical().getBoundingBoxes()) {
+            if(StringUtils.equalsIgnoreCase(boundingBox.getMimeType(), mimeType.toString())) {
+                boundingBoxes.add(boundingBox);
+            }
+        }
+
+        return boundingBoxes;
 
     }
 
