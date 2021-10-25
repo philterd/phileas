@@ -1,0 +1,17 @@
+{
+  "name": "default",
+  "identifiers": {
+    "dictionaries": [
+      {
+        "classification": "terms",
+        "terms": ["term1", "term2"],
+        "customFilterStrategies": [
+          {
+            "strategy": "REDACT",
+            "redactionFormat": "{{{REDACTED-%t}}}"
+          }
+        ]
+      }
+    ]
+  }
+}

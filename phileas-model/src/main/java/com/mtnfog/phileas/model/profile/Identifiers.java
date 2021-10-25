@@ -234,7 +234,7 @@ public class Identifiers {
 
     }
 
-    public AbstractFilter getFilter(FilterType filterType) {
+    public Object getFilter(FilterType filterType) {
 
         switch(filterType) {
 
@@ -244,66 +244,66 @@ public class Identifiers {
                 return this.age;
             case BANK_ROUTING_NUMBER:
                 return this.bankRoutingNumber;
-            /*case BITCOIN_ADDRESS:
-                if(this.getBitcoinAddress() != null) { return true; } break;
+            case BITCOIN_ADDRESS:
+                return this.bitcoinAddress;
             case CURRENCY:
-                if(this.getCurrency() != null) { return true; } break;
+                return this.currency;
             case LOCATION_CITY:
-                if(this.getCity() != null) { return true; } break;
+                return this.city;
             case LOCATION_COUNTY:
-                if(this.getCounty() != null) { return true; } break;
+                return this.county;
             case CREDIT_CARD:
-                if(this.getCreditCard() != null) { return true; } break;
+                return this.creditCard;
             case DATE:
-                if(this.getDate() != null) { return true; } break;
+                return this.date;
             case DRIVERS_LICENSE_NUMBER:
-                if(this.getDriversLicense() != null) { return true; } break;
+                return this.driversLicense;
             case EMAIL_ADDRESS:
-                if(this.getEmailAddress() != null) { return true; } break;
+                return this.emailAddress;
             case FIRST_NAME:
-                if(this.getFirstName() != null) { return true; } break;
+                return this.firstName;
             case HOSPITAL:
-                if(this.getHospital() != null) { return true; } break;
+                return this.hospital;
             case HOSPITAL_ABBREVIATION:
-                if(this.getHospitalAbbreviation() != null) { return true; } break;
+                return this.hospitalAbbreviation;
             case IBAN_CODE:
-                if(this.getIbanCode() != null) { return true; } break;
+                return this.ibanCode;
             case IDENTIFIER:
-                if(this.getIdentifiers() != null) { return true; } break;
+                return this.identifiers;
             case IP_ADDRESS:
-                if(this.getIpAddress() != null) { return true; } break;
+                return this.ipAddress;
             case MAC_ADDRESS:
-                if(this.getMacAddress() != null) { return true; } break;
+                return this.macAddress;
             case NER_ENTITY:
-                if(this.getNer() != null) { return true; } break;
+                return this.ner;
             case PASSPORT_NUMBER:
-                if(this.getPassportNumber() != null) { return true; } break;
+                return this.passportNumber;
             case PHONE_NUMBER:
-                if(this.getPhoneNumber() != null) { return true; } break;
+                return this.phoneNumber;
             case PHONE_NUMBER_EXTENSION:
-                if(this.getPhoneNumberExtension() != null) { return true; } break;
+                return this.phoneNumberExtension;
             case PHYSICIAN_NAME:
-                if(this.getPhysicianName() != null) { return true; } break;
+                return this.physicianName;
             case SECTION:
-                if(this.getSections() != null) { return true; } break;
+                return this.sections;
             case SSN:
-                if(this.getSsn() != null) { return true; } break;
+                return this.ssn;
             case LOCATION_STATE:
-                if(this.getState() != null) { return true; } break;
+                return this.state;
             case STATE_ABBREVIATION:
-                if(this.getStateAbbreviation() != null) { return true; } break;
+                return this.stateAbbreviation;
             case STREET_ADDRESS:
-                if(this.getStreetAddress() != null) { return true; } break;
+                return this.streetAddress;
             case SURNAME:
-                if(this.getSurname() != null) { return true; } break;
+                return this.surname;
             case TRACKING_NUMBER:
-                if(this.getTrackingNumber() != null) { return true; } break;
+                return this.trackingNumber;
             case URL:
-                if(this.getUrl() != null) { return true; } break;
+                return this.url;
             case VIN:
-                if(this.getVin() != null) { return true; } break;
+                return this.vin;
             case ZIP_CODE:
-                if(this.getZipCode() != null) { return true; } break;*/
+                return this.zipCode;
 
         }
 
@@ -312,76 +312,109 @@ public class Identifiers {
 
     }
 
-    public void setFilter(FilterType filterType, AbstractFilter filter) {
+    public void setFilter(FilterType filterType, Object filter) {
 
         switch(filterType) {
 
             case CUSTOM_DICTIONARY:
-                this.customDictionaries = filter;
+                this.customDictionaries = (List<CustomDictionary>) filter;
+                break;
             case AGE:
                 this.age = (Age) filter;
+                break;
             case BANK_ROUTING_NUMBER:
                 this.bankRoutingNumber = (BankRoutingNumber) filter;
+                break;
             case BITCOIN_ADDRESS:
                 this.bitcoinAddress = (BitcoinAddress) filter;
+                break;
             case CURRENCY:
                 this.currency = (Currency) filter;
+                break;
             case LOCATION_CITY:
                 this.city = (City) filter;
+                break;
             case LOCATION_COUNTY:
                 this.county = (County) filter;
+                break;
             case CREDIT_CARD:
                 this.creditCard = (CreditCard) filter;
+                break;
             case DATE:
                 this.date = (Date) filter;
+                break;
             case DRIVERS_LICENSE_NUMBER:
                 this.driversLicense = (DriversLicense) filter;
+                break;
             case EMAIL_ADDRESS:
                 this.emailAddress = (EmailAddress) filter;
+                break;
             case FIRST_NAME:
                 this.firstName = (FirstName) filter;
+                break;
             case HOSPITAL:
                 this.hospital = (Hospital) filter;
+                break;
             case HOSPITAL_ABBREVIATION:
                 this.hospitalAbbreviation = (HospitalAbbreviation) filter;
+                break;
             case IBAN_CODE:
                 this.ibanCode = (IbanCode) filter;
+                break;
             case IDENTIFIER:
-                this.identifiers = (Identifiers) filter;
+                this.identifiers = (List<Identifier>) filter;
+                break;
             case IP_ADDRESS:
                 this.ipAddress = (IpAddress) filter;
+                break;
             case MAC_ADDRESS:
                 this.macAddress = (MacAddress) filter;
+                break;
             case NER_ENTITY:
                 this.ner = (Ner) filter;
+                break;
             case PASSPORT_NUMBER:
                 this.passportNumber = (PassportNumber) filter;
+                break;
             case PHONE_NUMBER:
                 this.phoneNumber = (PhoneNumber) filter;
+                break;
             case PHONE_NUMBER_EXTENSION:
                 this.phoneNumberExtension = (PhoneNumberExtension) filter;
+                break;
             case PHYSICIAN_NAME:
                 this.physicianName = (PhysicianName) filter;
+                break;
             case SECTION:
-                this.sections = (Section) filter;
+                this.sections = (List<Section>) filter;
+                break;
             case SSN:
                 this.ssn = (Ssn) filter;
+                break;
             case LOCATION_STATE:
                 this.state = (State) filter;
+                break;
             case STATE_ABBREVIATION:
                 this.stateAbbreviation = (StateAbbreviation) filter;
+                break;
             case STREET_ADDRESS:
                 this.streetAddress = (StreetAddress) filter;
+                break;
             case SURNAME:
                 this.surname = (Surname) filter;
+                break;
             case TRACKING_NUMBER:
                 this.trackingNumber = (TrackingNumber) filter;
+                break;
             case URL:
                 this.url = (Url) filter;
+                break;
             case VIN:
                 this.vin = (Vin) filter;
+                break;
             case ZIP_CODE:
                 this.zipCode = (ZipCode) filter;
+                break;
 
         }
 

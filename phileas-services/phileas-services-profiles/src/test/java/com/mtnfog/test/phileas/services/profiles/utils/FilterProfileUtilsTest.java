@@ -19,7 +19,7 @@ import static org.mockito.Mockito.when;
 public class FilterProfileUtilsTest {
 
     @Test
-    public void combine1() throws IOException {
+    public void combineAgeAndCreditCard() throws IOException {
 
         final String json1 = IOUtils.toString(this.getClass().getResourceAsStream("/profiles/profile1.json"), Charset.defaultCharset());
         final String json2 = IOUtils.toString(this.getClass().getResourceAsStream("/profiles/profile2.json"), Charset.defaultCharset());
@@ -36,6 +36,45 @@ public class FilterProfileUtilsTest {
         Assertions.assertTrue(filterProfile.getIdentifiers().hasFilter(FilterType.AGE));
         Assertions.assertTrue(filterProfile.getIdentifiers().hasFilter(FilterType.CREDIT_CARD));
         Assertions.assertFalse(filterProfile.getIdentifiers().hasFilter(FilterType.URL));
+
+    }
+
+    @Test
+    public void combineDuplicateFilter() throws IOException {
+
+        final String json1 = IOUtils.toString(this.getClass().getResourceAsStream("/profiles/profile1.json"), Charset.defaultCharset());
+        final String json2 = IOUtils.toString(this.getClass().getResourceAsStream("/profiles/profile1.json"), Charset.defaultCharset());
+
+        final FilterProfileService filterProfileService = Mockito.mock(FilterProfileService.class);
+        when(filterProfileService.get("profile1")).thenReturn(json1);
+        when(filterProfileService.get("profile2")).thenReturn(json2);
+
+        final Gson gson = new Gson();
+        final FilterProfileUtils filterProfileUtils = new FilterProfileUtils(filterProfileService, gson);
+
+        Assertions.assertThrows(IllegalStateException.class, () -> {
+            final FilterProfile filterProfile = filterProfileUtils.getCombinedFilterProfiles(Arrays.asList("profile1", "profile2"));
+        });
+
+    }
+
+    @Test
+    public void combineCustomDictionaryAndZipCode() throws IOException {
+
+        final String json1 = IOUtils.toString(this.getClass().getResourceAsStream("/profiles/profile3.json"), Charset.defaultCharset());
+        final String json2 = IOUtils.toString(this.getClass().getResourceAsStream("/profiles/profile4.json"), Charset.defaultCharset());
+
+        final FilterProfileService filterProfileService = Mockito.mock(FilterProfileService.class);
+        when(filterProfileService.get("profile3")).thenReturn(json1);
+        when(filterProfileService.get("profile4")).thenReturn(json2);
+
+        final Gson gson = new Gson();
+        final FilterProfileUtils filterProfileUtils = new FilterProfileUtils(filterProfileService, gson);
+        final FilterProfile filterProfile = filterProfileUtils.getCombinedFilterProfiles(Arrays.asList("profile3", "profile4"));
+
+        Assertions.assertNotNull(filterProfile);
+        Assertions.assertTrue(filterProfile.getIdentifiers().hasFilter(FilterType.CUSTOM_DICTIONARY));
+        Assertions.assertTrue(filterProfile.getIdentifiers().hasFilter(FilterType.ZIP_CODE));
 
     }
 
