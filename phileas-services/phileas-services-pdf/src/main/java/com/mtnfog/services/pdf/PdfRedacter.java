@@ -84,7 +84,7 @@ public class PdfRedacter extends PDFTextStripper implements Redacter {
             final PDPage page = pdDocument.getPage(boundingBox.getPage() - 1);
             final PDPageContentStream contentStream = new PDPageContentStream(pdDocument, page, PDPageContentStream.AppendMode.APPEND, true);
 
-            contentStream.setNonStrokingColor(COLORS.get(boundingBox.getColor()));
+            contentStream.setNonStrokingColor(COLORS.getOrDefault(boundingBox.getColor(), COLORS.get("black")));
             contentStream.addRect(boundingBox.getX(), boundingBox.getY(), boundingBox.getW(), boundingBox.getH());
             contentStream.fill();
             contentStream.close();
