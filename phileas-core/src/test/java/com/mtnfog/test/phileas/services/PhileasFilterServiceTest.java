@@ -45,7 +45,7 @@ public class PhileasFilterServiceTest {
 
     private static final Logger LOGGER = LogManager.getLogger(PhileasFilterServiceTest.class);
 
-    private String INDEXES_DIRECTORY = "/mtnfog/code/bitbucket/philter/philter/distribution/indexes/";
+    private String INDEXES_DIRECTORY = "/mtnfog/code/philter/philter/distribution/indexes/";
     private Gson gson;
 
     @BeforeEach

@@ -40,7 +40,7 @@ public class FilterProfile {
 
     @SerializedName("graphical")
     @Expose
-    private Graphical graphical;
+    private Graphical graphical = new Graphical();
 
     @SerializedName("structured")
     @Expose
