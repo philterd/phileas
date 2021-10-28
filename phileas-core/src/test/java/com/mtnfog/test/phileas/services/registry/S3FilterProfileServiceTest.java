@@ -50,7 +50,7 @@ public class S3FilterProfileServiceTest {
 
         properties.setProperty("filter.profiles", "s3");
         properties.setProperty("filter.profiles.s3.bucket", "profiles");
-        properties.setProperty("filter.profiles.s3.prefix", "/");
+        properties.setProperty("filter.profiles.s3.prefix", "test/");
         properties.setProperty("cache.redis.enabled", "true");
 
         if(StringUtils.isNotEmpty(redisHost)) {
