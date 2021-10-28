@@ -15,6 +15,7 @@ import com.mtnfog.phileas.model.services.FilterProfileCacheService;
 import com.mtnfog.phileas.model.services.FilterProfileService;
 import com.mtnfog.phileas.services.profiles.cache.FilterProfileCacheServiceFactory;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.JSONException;
@@ -35,13 +36,20 @@ public class S3FilterProfileService extends AbstractFilterProfileService impleme
 
     private AmazonS3 s3Client;
     private String bucket;
+    private String prefix;
     private FilterProfileCacheService filterProfileCacheService;
 
     public S3FilterProfileService(PhileasConfiguration phileasConfiguration, boolean testing) throws IOException {
 
-        // Initialize the S3 client.
         this.bucket = phileasConfiguration.filterProfilesS3Bucket();
         final String region = phileasConfiguration.filterProfilesS3Region();
+
+        // If the prefix is not empty it must end with a forward slash.
+        if(!StringUtils.isEmpty(phileasConfiguration.filterProfilesS3Prefix())) {
+            if(!phileasConfiguration.filterProfilesS3Prefix().endsWith("/")) {
+                this.prefix = phileasConfiguration.filterProfilesS3Prefix() + "/";
+            }
+        }
 
         // Create a filter profile cache.
         this.filterProfileCacheService = FilterProfileCacheServiceFactory.getInstance(phileasConfiguration);
@@ -82,7 +90,9 @@ public class S3FilterProfileService extends AbstractFilterProfileService impleme
         try {
 
             LOGGER.info("Looking for filter profiles in s3 bucket {}", bucket);
-            final ListObjectsV2Request listObjectsV2Request = new ListObjectsV2Request().withBucketName(bucket);
+            final ListObjectsV2Request listObjectsV2Request = new ListObjectsV2Request()
+                    .withBucketName(bucket)
+                    .withPrefix(prefix);
 
             ListObjectsV2Result result;
 
@@ -137,7 +147,7 @@ public class S3FilterProfileService extends AbstractFilterProfileService impleme
 
                 // The filter profile was not in the cache. Look in S3.
                 LOGGER.info("Filter profile was not cached. Looking for filter profile {} in s3 bucket {}", filterProfileName, bucket);
-                final S3Object fullObject = s3Client.getObject(new GetObjectRequest(bucket, filterProfileName + JSON_EXTENSION));
+                final S3Object fullObject = s3Client.getObject(new GetObjectRequest(bucket, prefix + filterProfileName + JSON_EXTENSION));
                 json = IOUtils.toString(fullObject.getObjectContent(), StandardCharsets.UTF_8.name());
                 fullObject.close();
 
@@ -167,7 +177,9 @@ public class S3FilterProfileService extends AbstractFilterProfileService impleme
         try {
 
             LOGGER.info("Looking for all filter profiles in s3 bucket {}", bucket);
-            ListObjectsV2Request listObjectsV2Request = new ListObjectsV2Request().withBucketName(bucket);
+            final ListObjectsV2Request listObjectsV2Request = new ListObjectsV2Request()
+                    .withBucketName(bucket)
+                    .withPrefix(prefix);
 
             ListObjectsV2Result result;
 
@@ -228,7 +240,7 @@ public class S3FilterProfileService extends AbstractFilterProfileService impleme
             final String name = object.getString("name");
 
             LOGGER.info("Uploading object to s3://{}/{}", bucket, name + JSON_EXTENSION);
-            s3Client.putObject(bucket, name + JSON_EXTENSION, filterProfileJson);
+            s3Client.putObject(bucket, prefix + name + JSON_EXTENSION, filterProfileJson);
 
             // Insert it into the cache.
             filterProfileCacheService.insert(name, filterProfileJson);
@@ -254,7 +266,7 @@ public class S3FilterProfileService extends AbstractFilterProfileService impleme
         try {
 
             LOGGER.info("Deleting object from s3://{}/{}", bucket, filterProfileName + JSON_EXTENSION);
-            s3Client.deleteObject(bucket, filterProfileName + JSON_EXTENSION);
+            s3Client.deleteObject(bucket, prefix + filterProfileName + JSON_EXTENSION);
 
             // Remove it from the cache.
             filterProfileCacheService.remove(filterProfileName);

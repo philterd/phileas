@@ -109,6 +109,10 @@ public interface PhileasConfiguration extends Config {
     @Key("filter.profiles.s3.bucket")
     String filterProfilesS3Bucket();
 
+    @DefaultValue("")
+    @Key("filter.profiles.s3.prefix")
+    String filterProfilesS3Prefix();
+
     @DefaultValue("us-east-1")
     @Key("filter.profiles.s3.region")
     String filterProfilesS3Region();
