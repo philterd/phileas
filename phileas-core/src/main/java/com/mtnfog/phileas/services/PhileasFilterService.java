@@ -26,7 +26,6 @@ import com.mtnfog.phileas.model.profile.filters.Identifier;
 import com.mtnfog.phileas.model.profile.filters.Section;
 import com.mtnfog.phileas.model.profile.graphical.BoundingBox;
 import com.mtnfog.phileas.model.responses.BinaryDocumentFilterResponse;
-import com.mtnfog.phileas.model.responses.DetectResponse;
 import com.mtnfog.phileas.model.responses.FilterResponse;
 import com.mtnfog.phileas.model.serializers.PlaceholderDeserializer;
 import com.mtnfog.phileas.model.services.*;
@@ -45,7 +44,6 @@ import com.mtnfog.phileas.services.profiles.S3FilterProfileService;
 import com.mtnfog.phileas.services.profiles.utils.FilterProfileUtils;
 import com.mtnfog.phileas.services.split.SplitFactory;
 import com.mtnfog.phileas.services.validators.DateSpanValidator;
-import com.mtnfog.phileas.store.ElasticsearchStore;
 import com.mtnfog.services.pdf.PdfRedacter;
 import com.mtnfog.services.pdf.PdfTextExtractor;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -55,8 +53,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.jsoup.Jsoup;
-import org.jsoup.safety.Whitelist;
 
 import java.io.File;
 import java.io.IOException;
@@ -72,7 +68,6 @@ public class PhileasFilterService implements FilterService {
     private final FilterProfileService filterProfileService;
     private final FilterProfileUtils filterProfileUtils;
     private final MetricsService metricsService;
-    private final Store store;
 
     private final Map<String, DescriptiveStatistics> stats;
     private final Gson gson;
@@ -125,28 +120,8 @@ public class PhileasFilterService implements FilterService {
         // Configure span disambiguation.
         this.spanDisambiguationService = new VectorBasedSpanDisambiguationService(phileasConfiguration);
 
-        // Configure store.
-        final boolean storeEnabled = phileasConfiguration.storeEnabled();
-
-        if(storeEnabled) {
-
-            LOGGER.info("Store is enabled.");
-
-            final String index = phileasConfiguration.storeElasticSearchIndex();
-            final String host = phileasConfiguration.storeElasticSearchHost();
-            final String scheme = phileasConfiguration.storeElasticSearchScheme();
-            final int port = phileasConfiguration.storeElasticSearchPort();
-            this.store = new ElasticsearchStore(index, scheme, host, port);
-
-        } else {
-
-            LOGGER.info("Store is disabled.");
-            this.store = null;
-
-        }
-
         // Create a new unstructured document processor.
-        this.unstructuredDocumentProcessor = new UnstructuredDocumentProcessor(metricsService, spanDisambiguationService, store);
+        this.unstructuredDocumentProcessor = new UnstructuredDocumentProcessor(metricsService, spanDisambiguationService);
 
         // Create a new document analyzer.
         this.documentAnalyzer = new DocumentAnalyzer();
@@ -171,77 +146,6 @@ public class PhileasFilterService implements FilterService {
     @Override
     public AlertService getAlertService() {
         return alertService;
-    }
-
-    @Override
-    public List<Span> replacements(String documentId) throws IOException {
-        return store.getByDocumentId(documentId);
-    }
-
-    @Override
-    public DetectResponse detect(List<String> filterProfileNames, String input, MimeType mimeType) throws Exception {
-
-        // Get the filter profile.
-        final FilterProfile filterProfile = filterProfileUtils.getCombinedFilterProfiles(filterProfileNames);
-
-        final List<String> types = new LinkedList<>();
-
-        if(mimeType == MimeType.TEXT_PLAIN) {
-
-            // Analyze the document.
-            final DocumentAnalysis documentAnalysis;
-            if(filterProfile.getConfig().getAnalysis().isEnabled()) {
-                documentAnalysis = documentAnalyzer.analyze(input);
-            } else {
-                documentAnalysis = new DocumentAnalysis();
-            }
-            
-            final List<Filter> filters = getFiltersForFilterProfile(filterProfile, documentAnalysis);
-
-            for (final Filter filter : filters) {
-
-                final int occurrences = filter.getOccurrences(filterProfile, input);
-
-                if (occurrences > 0) {
-                    types.add(filter.getFilterType().getType());
-                }
-
-            }
-
-        } if(mimeType == MimeType.TEXT_HTML) {
-
-            // Remove the HTML tags.
-            final String plain = Jsoup.clean(input, Whitelist.none());
-
-            // Analyze the document.
-            final DocumentAnalysis documentAnalysis;
-            if(filterProfile.getConfig().getAnalysis().isEnabled()) {
-                documentAnalysis = documentAnalyzer.analyze(input);
-            } else {
-                documentAnalysis = new DocumentAnalysis();
-            }
-
-            final List<Filter> filters = getFiltersForFilterProfile(filterProfile, documentAnalysis);
-
-            for (final Filter filter : filters) {
-
-                final int occurrences = filter.getOccurrences(filterProfile, plain);
-
-                if (occurrences > 0) {
-                    types.add(filter.getFilterType().getType());
-                }
-
-            }
-
-        } else {
-
-            // Should never happen but just in case.
-            throw new Exception("Unknown mime type.");
-
-        }
-
-        return new DetectResponse(types);
-
     }
 
     @Override
@@ -340,11 +244,6 @@ public class PhileasFilterService implements FilterService {
         } else {
             // Should never happen but just in case.
             throw new Exception("Unknown mime type.");
-        }
-
-        // Store the spans, if enabled.
-        if(phileasConfiguration.storeEnabled()) {
-            store.insert(filterResponse.getExplanation().getAppliedSpans());
         }
 
         return filterResponse;

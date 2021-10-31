@@ -166,25 +166,4 @@ public interface PhileasConfiguration extends Config {
     @Key("metrics.hostname")
     String metricsHostname();
 
-    // Store
-    @DefaultValue("false")
-    @Key("store.enabled")
-    boolean storeEnabled();
-
-    @DefaultValue("philter")
-    @Key("store.elasticsearch.index")
-    String storeElasticSearchIndex();
-
-    @DefaultValue("localhost")
-    @Key("store.elasticsearch.host")
-    String storeElasticSearchHost();
-
-    @DefaultValue("https")
-    @Key("store.elasticsearch.scheme")
-    String storeElasticSearchScheme();
-
-    @DefaultValue("9200")
-    @Key("store.elasticsearch.port")
-    int storeElasticSearchPort();
-
 }

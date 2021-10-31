@@ -1,13 +1,9 @@
 package com.mtnfog.phileas.model.services;
 
 import com.mtnfog.phileas.model.enums.MimeType;
-import com.mtnfog.phileas.model.objects.Span;
-import com.mtnfog.phileas.model.profile.FilterProfile;
 import com.mtnfog.phileas.model.responses.BinaryDocumentFilterResponse;
-import com.mtnfog.phileas.model.responses.DetectResponse;
 import com.mtnfog.phileas.model.responses.FilterResponse;
 
-import java.io.IOException;
 import java.util.List;
 
 /**
@@ -39,23 +35,6 @@ public interface FilterService {
      * @throws Exception Thrown if the text cannot be filtered.
      */
     BinaryDocumentFilterResponse filter(List<String> filterProfileNames, String context, String documentId, byte[] input, MimeType mimeType, MimeType outputMimeType) throws Exception;
-
-    /**
-     * Detect the possible types of sensitive information in text.
-     * @param filterProfileNames The list of the filter profiles to use.
-     * @param input The input text.
-     * @param mimeType The {@link MimeType}.
-     * @return A {@link DetectResponse}.
-     */
-    DetectResponse detect(List<String> filterProfileNames, String input, MimeType mimeType) throws Exception;
-
-    /**
-     * Get the replacement spans for a document.
-     * @param documentId The document ID.
-     * @return A list of {@link Span}.
-     * @throws IOException Thrown if the replacements cannot be retrieved.
-     */
-    List<Span> replacements(String documentId) throws IOException;
 
     /**
      * Gets the filter profile service being used.

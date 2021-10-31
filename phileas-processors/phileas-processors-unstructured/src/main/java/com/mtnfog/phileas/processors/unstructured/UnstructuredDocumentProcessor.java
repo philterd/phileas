@@ -1,19 +1,19 @@
 package com.mtnfog.phileas.processors.unstructured;
 
-import com.mtnfog.phileas.model.enums.FilterType;
 import com.mtnfog.phileas.model.filter.Filter;
 import com.mtnfog.phileas.model.objects.Explanation;
 import com.mtnfog.phileas.model.objects.FilterResult;
 import com.mtnfog.phileas.model.objects.Span;
 import com.mtnfog.phileas.model.profile.FilterProfile;
 import com.mtnfog.phileas.model.responses.FilterResponse;
-import com.mtnfog.phileas.model.services.*;
+import com.mtnfog.phileas.model.services.DocumentProcessor;
+import com.mtnfog.phileas.model.services.MetricsService;
+import com.mtnfog.phileas.model.services.PostFilter;
+import com.mtnfog.phileas.model.services.SpanDisambiguationService;
 
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 
@@ -24,13 +24,11 @@ public class UnstructuredDocumentProcessor implements DocumentProcessor {
 
     private MetricsService metricsService;
     private SpanDisambiguationService spanDisambiguationService;
-    private Store store;
 
-    public UnstructuredDocumentProcessor(MetricsService metricsService, SpanDisambiguationService spanDisambiguationService, Store store) {
+    public UnstructuredDocumentProcessor(MetricsService metricsService, SpanDisambiguationService spanDisambiguationService) {
 
         this.metricsService = metricsService;
         this.spanDisambiguationService = spanDisambiguationService;
-        this.store = store;
 
     }
 
@@ -168,11 +166,6 @@ public class UnstructuredDocumentProcessor implements DocumentProcessor {
         }
 
         metricsService.incrementProcessed();
-
-        // Store the applied spans in the database.
-        if(store != null) {
-            store.insert(appliedSpans);
-        }
 
         return new FilterResponse(buffer.toString(), context, documentId, piece, explanation);
 
