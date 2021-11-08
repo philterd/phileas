@@ -1,0 +1,12 @@
+{
+  "name": "profile6",
+  "ignored": [],
+  "identifiers": {
+    "zipCode": {
+      "zipCodeFilterStrategy": [{
+        "strategy": "REDACT",
+        "redactionFormat": "{{{REDACTED-%t}}}"
+      }]
+    }
+  }
+}

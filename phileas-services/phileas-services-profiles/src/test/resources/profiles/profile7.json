@@ -1,0 +1,17 @@
+{
+  "name": "profile7",
+  "ignored": [],
+  "config": {
+    "splitting": {
+      "enabled": true
+    }
+  },
+  "identifiers": {
+    "zipCode": {
+      "zipCodeFilterStrategy": [{
+        "strategy": "REDACT",
+        "redactionFormat": "{{{REDACTED-%t}}}"
+      }]
+    }
+  }
+}

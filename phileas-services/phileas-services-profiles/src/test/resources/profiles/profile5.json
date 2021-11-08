@@ -1,0 +1,10 @@
+{
+  "name": "profile5",
+  "ignored": [],
+  "crypto": {
+    "key": "keyhere",
+    "iv": "ivhere"
+  },
+  "identifiers": {
+  }
+}

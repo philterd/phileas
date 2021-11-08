@@ -1,0 +1,22 @@
+{
+  "name": "profile8",
+  "ignored": [
+    {
+      "name": "test",
+      "terms": ["item1", "item2"]
+    }
+  ],
+  "config": {
+    "splitting": {
+      "enabled": true
+    }
+  },
+  "identifiers": {
+    "zipCode": {
+      "zipCodeFilterStrategy": [{
+        "strategy": "REDACT",
+        "redactionFormat": "{{{REDACTED-%t}}}"
+      }]
+    }
+  }
+}

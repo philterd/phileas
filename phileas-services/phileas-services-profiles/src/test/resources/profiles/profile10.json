@@ -1,0 +1,17 @@
+{
+  "name": "profile10",
+  "ignoredPatterns": [
+    {
+      "name": "test",
+      "pattern": "pattern1"
+    }
+  ],
+  "config": {
+    "splitting": {
+      "enabled": true
+    }
+  },
+  "identifiers": {
+
+  }
+}
