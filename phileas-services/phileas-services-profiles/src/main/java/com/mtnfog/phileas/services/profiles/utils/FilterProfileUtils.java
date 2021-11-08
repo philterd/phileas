@@ -24,7 +24,7 @@ public class FilterProfileUtils {
 
     }
 
-    public FilterProfile getCombinedFilterProfiles(List<String> filterProfileNames) throws IOException, IllegalStateException {
+    public FilterProfile getCombinedFilterProfiles(final List<String> filterProfileNames) throws IOException, IllegalStateException {
 
         // Get the deserialized filter profile of the first profile in the list.
         // By starting off with a full profile we don't have to worry about adding
@@ -35,17 +35,19 @@ public class FilterProfileUtils {
         // In some chases there may be only one filter profile.
         if(filterProfileNames.size() > 1) {
 
+            // The name has no bearing on the results. We just want to give it a name.
             combinedFilterProfile.setName("combined");
 
             // Loop over the filter profile names and skip the first one since we have already
-            // deserialized it to a filter profile to start with.
+            // deserialized it to a filter profile a few lines above.
             for (final String filterProfileName : filterProfileNames.subList(1, filterProfileNames.size())) {
+
+                // Get the filter profile.
+                final FilterProfile filterProfile = getFilterProfile(filterProfileName);
 
                 // For each of the filter types, copy the filter (if it exists) from the source filter profile
                 // to the destination (combined) filter profile. If a filter already exists in the destination (combined)
                 // filter profile then throw an error.
-
-                final FilterProfile filterProfile = getFilterProfile(filterProfileName);
 
                 for(FilterType filterType : FilterType.values()) {
                     if (filterProfile.getIdentifiers().hasFilter(filterType)) {
@@ -62,6 +64,11 @@ public class FilterProfileUtils {
                 combinedFilterProfile.getIgnoredPatterns().addAll(filterProfile.getIgnoredPatterns());
 
             }
+
+            // The Config and Crypto sections are expected to be in the first filter profile.
+            // The Config and Crypto sections in the other filter profiles are ignored.
+
+            // As other sections are added to the filter profile they will need added here, too.
 
         }
 
