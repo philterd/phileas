@@ -409,11 +409,11 @@ public class DateFilterTest extends AbstractFilterTest {
 
         final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "Owns and drives his own vehicle but states he has not driven his car since last October 2009.");
 
+        LOGGER.info(filterResult.getSpans().get(0).getReplacement());
+
         showSpans(filterResult.getSpans());
         Assertions.assertEquals(1, filterResult.getSpans().size());
-        Assertions.assertTrue(
-                filterResult.getSpans().get(0).getReplacement().contains("11 years")
-            || filterResult.getSpans().get(0).getReplacement().contains("12 years 1 months ago"));
+        Assertions.assertTrue(filterResult.getSpans().get(0).getReplacement().startsWith("12 years"));
 
     }
 
