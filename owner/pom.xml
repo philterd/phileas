@@ -11,7 +11,7 @@
     <parent>
         <groupId>com.mtnfog</groupId>
         <artifactId>phileas</artifactId>
-        <version>1.12.0</version>
+        <version>1.12.1</version>
     </parent>
     <name>owner</name>
     <artifactId>owner</artifactId>
