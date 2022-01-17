@@ -18,11 +18,11 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.List;
 
-public class NerFilterStrategy extends AbstractFilterStrategy {
+public class PersonFilterStrategy extends AbstractFilterStrategy {
 
-    private static final Logger LOGGER = LogManager.getLogger(NerFilterStrategy.class);
+    private static final Logger LOGGER = LogManager.getLogger(PersonFilterStrategy.class);
 
-    private static FilterType filterType = FilterType.NER_ENTITY;
+    private static FilterType filterType = FilterType.PERSON;
 
     @Override
     public FilterType getFilterType() {

@@ -15,7 +15,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import javax.swing.text.Document;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -343,8 +342,8 @@ public abstract class Filter {
             return filterProfile.getIdentifiers().getIbanCode().getIbanCodeFilterStrategies();
         } else if(filterType == FilterType.IP_ADDRESS) {
             return filterProfile.getIdentifiers().getIpAddress().getIpAddressFilterStrategies();
-        } else if(filterType == FilterType.NER_ENTITY) {
-            return filterProfile.getIdentifiers().getNer().getNerStrategies();
+        } else if(filterType == FilterType.PERSON) {
+            return filterProfile.getIdentifiers().getPerson().getNerStrategies();
         } else if(filterType == FilterType.PASSPORT_NUMBER) {
             return filterProfile.getIdentifiers().getPassportNumber().getPassportNumberFilterStrategies();
         } else if(filterType == FilterType.PHONE_NUMBER) {

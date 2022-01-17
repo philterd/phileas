@@ -27,14 +27,14 @@ public class FilterResponseTest {
         final String input = "George Washington was president." + System.lineSeparator() + "Another president was Abraham Lincoln.";
         final String separator = System.lineSeparator();
 
-        final Span span1 = Span.make(0, 17, FilterType.NER_ENTITY, "context", "docid", 1.0, "George Washington", "{{{REDACTED-person}}}", null, false, new String[]{});
+        final Span span1 = Span.make(0, 17, FilterType.PERSON, "context", "docid", 1.0, "George Washington", "{{{REDACTED-person}}}", null, false, new String[]{});
         final List<Span> identifiedSpans1 = Arrays.asList(span1);
         final List<Span> appliedSpans1 = Arrays.asList(span1);
         final Explanation explanation1 = new Explanation(identifiedSpans1, appliedSpans1);
         final String filtered1 = "{{{REDACTED-person}}} was president.";
         final FilterResponse filterResponse1 = new FilterResponse(filtered1, "context", "docid", 0, explanation1);
 
-        final Span span2 = Span.make(22, 37, FilterType.NER_ENTITY, "context", "docid", 1.0, "Abraham Lincoln", "{{{REDACTED-person}}}", null, false, new String[]{});
+        final Span span2 = Span.make(22, 37, FilterType.PERSON, "context", "docid", 1.0, "Abraham Lincoln", "{{{REDACTED-person}}}", null, false, new String[]{});
         final List<Span> identifiedSpans2 = Arrays.asList(span2);
         final List<Span> appliedSpans2 = Arrays.asList(span2);
         final Explanation explanation2 = new Explanation(identifiedSpans2, appliedSpans2);

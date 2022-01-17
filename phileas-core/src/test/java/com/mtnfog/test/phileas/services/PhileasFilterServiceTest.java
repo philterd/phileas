@@ -11,7 +11,7 @@ import com.mtnfog.phileas.model.profile.Ignored;
 import com.mtnfog.phileas.model.profile.filters.*;
 import com.mtnfog.phileas.model.profile.filters.Date;
 import com.mtnfog.phileas.model.profile.filters.strategies.AbstractFilterStrategy;
-import com.mtnfog.phileas.model.profile.filters.strategies.ai.NerFilterStrategy;
+import com.mtnfog.phileas.model.profile.filters.strategies.ai.PersonFilterStrategy;
 import com.mtnfog.phileas.model.profile.filters.strategies.custom.CustomDictionaryFilterStrategy;
 import com.mtnfog.phileas.model.profile.filters.strategies.dynamic.*;
 import com.mtnfog.phileas.model.profile.filters.strategies.rules.*;
@@ -23,7 +23,6 @@ import org.aeonbits.owner.ConfigFactory;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Assertions;
@@ -34,7 +33,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URISyntaxException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -842,10 +840,10 @@ public class PhileasFilterServiceTest {
         ZipCode zipCode = new ZipCode();
         zipCode.setZipCodeFilterStrategies(Arrays.asList(zipCodeFilterStrategy));
 
-        NerFilterStrategy nerFilterStrategy = new NerFilterStrategy();
+        PersonFilterStrategy personFilterStrategy = new PersonFilterStrategy();
 
-        Ner ner = new Ner();
-        ner.setNerStrategies(Arrays.asList(nerFilterStrategy));
+        Person person = new Person();
+        person.setPersonFilterStrategies(Arrays.asList(personFilterStrategy));
 
         // ----------------------------------------------------------------------------------
 

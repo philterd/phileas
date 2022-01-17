@@ -3,7 +3,7 @@ package com.mtnfog.test.phileas.model.profile.filters.strategies.ai;
 import com.mtnfog.phileas.model.objects.Replacement;
 import com.mtnfog.phileas.model.profile.Crypto;
 import com.mtnfog.phileas.model.profile.filters.strategies.AbstractFilterStrategy;
-import com.mtnfog.phileas.model.profile.filters.strategies.ai.NerFilterStrategy;
+import com.mtnfog.phileas.model.profile.filters.strategies.ai.PersonFilterStrategy;
 import com.mtnfog.phileas.model.services.AnonymizationCacheService;
 import com.mtnfog.phileas.model.services.AnonymizationService;
 import com.mtnfog.test.phileas.model.profile.filters.strategies.AbstractFilterStrategyTest;
@@ -13,10 +13,10 @@ import org.mockito.Mockito;
 
 import static org.mockito.Mockito.when;
 
-public class NerFilterStrategyTest extends AbstractFilterStrategyTest {
+public class PersonFilterStrategyTest extends AbstractFilterStrategyTest {
 
     public AbstractFilterStrategy getFilterStrategy() {
-        return new NerFilterStrategy();
+        return new PersonFilterStrategy();
     }
 
     @Test
@@ -45,7 +45,7 @@ public class NerFilterStrategyTest extends AbstractFilterStrategyTest {
 
         final Replacement replacement = strategy.getReplacement("PER", "context", "docId", "token", WINDOW, new Crypto(), anonymizationService, null);
 
-        Assertions.assertEquals("REDACTION-entity", replacement.getReplacement());
+        Assertions.assertEquals("REDACTION-person", replacement.getReplacement());
 
     }
 
@@ -81,7 +81,7 @@ public class NerFilterStrategyTest extends AbstractFilterStrategyTest {
 
         final Replacement replacement = strategy.getReplacement("PER", "context", "docId", "token", WINDOW, new Crypto(), anonymizationService, null);
 
-        Assertions.assertEquals("{{{REDACTED-entity}}}", replacement.getReplacement());
+        Assertions.assertEquals("{{{REDACTED-person}}}", replacement.getReplacement());
 
     }
 
@@ -93,13 +93,13 @@ public class NerFilterStrategyTest extends AbstractFilterStrategyTest {
 
         when(anonymizationService.getAnonymizationCacheService()).thenReturn(anonymizationCacheService);
 
-        final AbstractFilterStrategy strategy = new NerFilterStrategy();
+        final AbstractFilterStrategy strategy = new PersonFilterStrategy();
         strategy.setStrategy(AbstractFilterStrategy.REDACT);
         strategy.setRedactionFormat("<ENTITY:%t>%v</ENTITY>");
 
         final Replacement replacement = strategy.getReplacement("PER", "context", "docId", "token", WINDOW, new Crypto(), anonymizationService, null);
 
-        Assertions.assertEquals("<ENTITY:entity>token</ENTITY>", replacement.getReplacement());
+        Assertions.assertEquals("<ENTITY:person>token</ENTITY>", replacement.getReplacement());
 
     }
 
@@ -111,7 +111,7 @@ public class NerFilterStrategyTest extends AbstractFilterStrategyTest {
 
         when(anonymizationService.getAnonymizationCacheService()).thenReturn(anonymizationCacheService);
 
-        final AbstractFilterStrategy strategy = new NerFilterStrategy();
+        final AbstractFilterStrategy strategy = new PersonFilterStrategy();
         strategy.setStrategy(AbstractFilterStrategy.ABBREVIATE);
 
         Replacement replacement;

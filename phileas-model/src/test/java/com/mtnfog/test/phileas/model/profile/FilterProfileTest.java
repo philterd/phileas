@@ -8,7 +8,7 @@ import com.mtnfog.phileas.model.profile.FilterProfile;
 import com.mtnfog.phileas.model.profile.Identifiers;
 import com.mtnfog.phileas.model.profile.Ignored;
 import com.mtnfog.phileas.model.profile.filters.*;
-import com.mtnfog.phileas.model.profile.filters.strategies.ai.NerFilterStrategy;
+import com.mtnfog.phileas.model.profile.filters.strategies.ai.PersonFilterStrategy;
 import com.mtnfog.phileas.model.profile.filters.strategies.custom.CustomDictionaryFilterStrategy;
 import com.mtnfog.phileas.model.profile.filters.strategies.dynamic.*;
 import com.mtnfog.phileas.model.profile.filters.strategies.rules.*;
@@ -62,8 +62,8 @@ public class FilterProfileTest {
         IpAddress ipAddress = new IpAddress();
         ipAddress.setIpAddressFilterStrategies(Arrays.asList(new IpAddressFilterStrategy()));
 
-        Ner ner = new Ner();
-        ner.setNerStrategies(Arrays.asList(new NerFilterStrategy()));
+        Person person = new Person();
+        person.setPersonFilterStrategies(Arrays.asList(new PersonFilterStrategy()));
 
         PhoneNumber phoneNumber = new PhoneNumber();
         phoneNumber.setPhoneNumberFilterStrategies(Arrays.asList(new PhoneNumberFilterStrategy()));
@@ -110,7 +110,7 @@ public class FilterProfileTest {
         identifiers.setHospitalAbbreviation(hospitalAbbreviation);
         identifiers.setIdentifiers(Arrays.asList(identifier));
         identifiers.setIpAddress(ipAddress);
-        identifiers.setNer(ner);
+        identifiers.setPerson(person);
         identifiers.setPhoneNumber(phoneNumber);
         identifiers.setPhoneNumberExtension(phoneNumberExtension);
         identifiers.setSsn(ssn);

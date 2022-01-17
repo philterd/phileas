@@ -13,8 +13,6 @@ dependency-reduced-pom.xml
 .srl
 deployment-bucket/
 distribution/indexes
-distribution/model
-distribution/service.py
 distribution/documentation/
 files/
 manifest.json

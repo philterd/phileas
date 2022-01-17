@@ -113,15 +113,15 @@
 		<micrometer.version>1.6.5</micrometer.version>
 		<mockito.version>1.10.19</mockito.version>
 		<nv-i18n.version>1.27</nv-i18n.version>
+		<onnxruntime.version>1.10.0</onnxruntime.version>
+		<opennlp.version>1.9.4</opennlp.version>
 		<owner.version>1.0.13-SNAPSHOT</owner.version>
 		<pdfbox.version>2.0.23</pdfbox.version>
 		<redis-mock.version>0.1.6</redis-mock.version>
 		<redisson.version>3.15.1</redisson.version>
-		<retrofit.version>2.9.0</retrofit.version>
 		<scala.major.version>2.12</scala.major.version>
 		<segment.version>2.0.1</segment.version>
 		<spring.boot.version>2.1.8.RELEASE</spring.boot.version>
-		<spring.data.elasticsearch.version>3.2.3.RELEASE</spring.data.elasticsearch.version>
 		<!-- Sonarqube -->
 		<sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
 		<sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>

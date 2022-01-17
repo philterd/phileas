@@ -19,10 +19,6 @@ public interface PhileasConfiguration extends Config {
     @Key("indexes.directory")
     String indexesDirectory();
 
-    @DefaultValue("http://localhost:18080/")
-    @Key("ner.endpoint")
-    String philterNerEndpoint();
-
     // Span Disambiguation
     @DefaultValue("false")
     @Key("span.disambiguation.enabled")

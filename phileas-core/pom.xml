@@ -52,6 +52,11 @@
 		</dependency>
 		<dependency>
 			<groupId>com.mtnfog</groupId>
+			<artifactId>phileas-services-ai</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.mtnfog</groupId>
 			<artifactId>phileas-services-split</artifactId>
 			<version>${project.version}</version>
 		</dependency>
@@ -74,11 +79,6 @@
 			<groupId>com.mtnfog</groupId>
 			<artifactId>phileas-configuration</artifactId>
 			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.squareup.retrofit2</groupId>
-			<artifactId>retrofit</artifactId>
-			<version>${retrofit.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.jsoup</groupId>

@@ -30,12 +30,12 @@ import com.mtnfog.phileas.model.responses.FilterResponse;
 import com.mtnfog.phileas.model.serializers.PlaceholderDeserializer;
 import com.mtnfog.phileas.model.services.*;
 import com.mtnfog.phileas.processors.unstructured.UnstructuredDocumentProcessor;
-import com.mtnfog.phileas.service.ai.PyTorchFilter;
 import com.mtnfog.phileas.services.alerts.AlertServiceFactory;
 import com.mtnfog.phileas.services.analyzers.DocumentAnalyzer;
 import com.mtnfog.phileas.services.anonymization.*;
 import com.mtnfog.phileas.services.anonymization.cache.AnonymizationCacheServiceFactory;
 import com.mtnfog.phileas.services.disambiguation.VectorBasedSpanDisambiguationService;
+import com.mtnfog.phileas.services.filters.ai.PersonsFilter;
 import com.mtnfog.phileas.services.filters.custom.PhoneNumberRulesFilter;
 import com.mtnfog.phileas.services.filters.regex.*;
 import com.mtnfog.phileas.services.postfilters.*;
@@ -72,7 +72,6 @@ public class PhileasFilterService implements FilterService {
     private final Map<String, DescriptiveStatistics> stats;
     private final Gson gson;
 
-    private final String philterNerEndpoint;
     private final AnonymizationCacheService anonymizationCacheService;
     private final AlertService alertService;
     private final SpanDisambiguationService spanDisambiguationService;
@@ -132,9 +131,6 @@ public class PhileasFilterService implements FilterService {
 
         this.indexDirectory = phileasConfiguration.indexesDirectory();
         LOGGER.info("Using indexes directory {}", this.indexDirectory);
-
-        this.philterNerEndpoint = phileasConfiguration.philterNerEndpoint();
-        LOGGER.info("Using Philter NER endpoint {}", phileasConfiguration.philterNerEndpoint());
 
     }
 
@@ -452,7 +448,7 @@ public class PhileasFilterService implements FilterService {
 
     }
 
-    private List<Filter> getFiltersForFilterProfile(final FilterProfile filterProfile, DocumentAnalysis documentAnalysis) throws IOException {
+    private List<Filter> getFiltersForFilterProfile(final FilterProfile filterProfile, DocumentAnalysis documentAnalysis) throws Exception {
 
         LOGGER.debug("Getting filters for filter profile [{}]", filterProfile.getName());
 
@@ -1184,26 +1180,28 @@ public class PhileasFilterService implements FilterService {
 
         // PyTorch filters.
 
-        if(filterProfile.getIdentifiers().hasFilter(FilterType.NER_ENTITY) && filterProfile.getIdentifiers().getNer().isEnabled()) {
+        if(filterProfile.getIdentifiers().hasFilter(FilterType.PERSON) && filterProfile.getIdentifiers().getPerson().isEnabled()) {
 
             final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
-                    .withStrategies(filterProfile.getIdentifiers().getNer().getNerStrategies())
+                    .withStrategies(filterProfile.getIdentifiers().getPerson().getNerStrategies())
                     .withAnonymizationService(new PersonsAnonymizationService(anonymizationCacheService))
                     .withAlertService(alertService)
-                    .withIgnored(filterProfile.getIdentifiers().getNer().getIgnored())
-                    .withIgnoredFiles(filterProfile.getIdentifiers().getNer().getIgnoredFiles())
-                    .withIgnoredPatterns(filterProfile.getIdentifiers().getNer().getIgnoredPatterns())
+                    .withIgnored(filterProfile.getIdentifiers().getPerson().getIgnored())
+                    .withIgnoredFiles(filterProfile.getIdentifiers().getPerson().getIgnoredFiles())
+                    .withIgnoredPatterns(filterProfile.getIdentifiers().getPerson().getIgnoredPatterns())
                     .withCrypto(filterProfile.getCrypto())
                     .withWindowSize(windowSize)
                     .withDocumentAnalysis(documentAnalysis)
                     .build();
 
-            // TODO: Allow a single PyTorchFilter to extract many types of entities instead of just one, i.e. "PER".
-            enabledFilters.add(new PyTorchFilter(filterConfiguration, philterNerEndpoint,
-                    phileasConfiguration, "PER", stats, metricsService,
-                    filterProfile.getIdentifiers().getNer().isRemovePunctuation(),
-                    filterProfile.getIdentifiers().getNer().getThresholds()
-                    ));
+            enabledFilters.add(new PersonsFilter(
+                    filterConfiguration,
+                    filterProfile.getIdentifiers().getPerson().getModel(),
+                    filterProfile.getIdentifiers().getPerson().getVocab(),
+                    stats,
+                    metricsService,
+                    filterProfile.getIdentifiers().getPerson().getThresholds()
+            ));
 
         }
 

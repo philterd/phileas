@@ -112,7 +112,7 @@ public class RedisAlertServiceTest {
 
         final AlertService alertService = new RedisAlertService(getConfiguration());
 
-        alertService.generateAlert("fp", "id", "context", "docid", FilterType.NER_ENTITY);
+        alertService.generateAlert("fp", "id", "context", "docid", FilterType.PERSON);
 
         final List<Alert> alerts = alertService.getAlerts();
 
@@ -125,7 +125,7 @@ public class RedisAlertServiceTest {
 
         final AlertService alertService = new RedisAlertService(getConfiguration());
 
-        alertService.generateAlert("fp", "id", "context", "docid", FilterType.NER_ENTITY);
+        alertService.generateAlert("fp", "id", "context", "docid", FilterType.PERSON);
 
         List<Alert> alerts = alertService.getAlerts();
 
@@ -152,7 +152,7 @@ public class RedisAlertServiceTest {
 
         final AlertService alertService = new RedisAlertService(getConfiguration());
 
-        alertService.generateAlert("fp", "id", "context", "docid", FilterType.NER_ENTITY);
+        alertService.generateAlert("fp", "id", "context", "docid", FilterType.PERSON);
 
         List<Alert> alerts = alertService.getAlerts();
 

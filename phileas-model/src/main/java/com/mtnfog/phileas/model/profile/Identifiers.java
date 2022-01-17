@@ -15,9 +15,9 @@ public class Identifiers {
     @Expose
     private boolean all;
 
-    @SerializedName("ner")
+    @SerializedName("person")
     @Expose
-    private Ner ner;
+    private Person person;
 
     @SerializedName("dictionaries")
     @Expose
@@ -201,8 +201,8 @@ public class Identifiers {
                 if(this.getIpAddress() != null) { return true; } break;
             case MAC_ADDRESS:
                 if(this.getMacAddress() != null) { return true; } break;
-            case NER_ENTITY:
-                if(this.getNer() != null) { return true; } break;
+            case PERSON:
+                if(this.getPerson() != null) { return true; } break;
             case PASSPORT_NUMBER:
                 if(this.getPassportNumber() != null) { return true; } break;
             case PHONE_NUMBER:
@@ -278,10 +278,10 @@ public class Identifiers {
                 return this.ipAddress;
             case MAC_ADDRESS:
                 return this.macAddress;
-            case NER_ENTITY:
-                return this.ner;
             case PASSPORT_NUMBER:
                 return this.passportNumber;
+            case PERSON:
+                return this.person;
             case PHONE_NUMBER:
                 return this.phoneNumber;
             case PHONE_NUMBER_EXTENSION:
@@ -374,11 +374,11 @@ public class Identifiers {
             case MAC_ADDRESS:
                 this.macAddress = (MacAddress) filter;
                 break;
-            case NER_ENTITY:
-                this.ner = (Ner) filter;
-                break;
             case PASSPORT_NUMBER:
                 this.passportNumber = (PassportNumber) filter;
+                break;
+            case PERSON:
+                this.person = (Person) filter;
                 break;
             case PHONE_NUMBER:
                 this.phoneNumber = (PhoneNumber) filter;
@@ -584,12 +584,12 @@ public class Identifiers {
         this.phoneNumberExtension = phoneNumberExtension;
     }
 
-    public Ner getNer() {
-        return ner;
+    public Person getPerson() {
+        return person;
     }
 
-    public void setNer(Ner ner) {
-        this.ner = ner;
+    public void setPerson(Person person) {
+        this.person = person;
     }
 
     public List<CustomDictionary> getCustomDictionaries() {

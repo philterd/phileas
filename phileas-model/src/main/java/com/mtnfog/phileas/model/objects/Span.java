@@ -370,7 +370,7 @@ public final class Span {
 
                         if(StringUtils.equalsIgnoreCase("PER", annotation.getFeatures().getCategory())) {
 
-                            span.setFilterType(FilterType.NER_ENTITY);
+                            span.setFilterType(FilterType.PERSON);
 
                         } else {
 

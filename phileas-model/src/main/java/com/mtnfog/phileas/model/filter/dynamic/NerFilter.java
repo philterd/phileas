@@ -17,7 +17,6 @@ public abstract class NerFilter extends DynamicFilter {
 
     protected String type;
     protected MetricsService metricsService;
-    protected boolean removePunctuation;
     protected Map<String, Double> thresholds;
 
     /**
@@ -26,20 +25,18 @@ public abstract class NerFilter extends DynamicFilter {
      * @param filterConfiguration The {@link FilterConfiguration} for the filter.
      * @param stats A map of {@link DescriptiveStatistics}.
      * @param metricsService The {@link MetricsService}.
-     * @param removePunctuation
      * @param thresholds
      */
     public NerFilter(FilterConfiguration filterConfiguration,
                      Map<String, DescriptiveStatistics> stats,
                      MetricsService metricsService,
-                     boolean removePunctuation,
-                     Map<String, Double> thresholds) {
+                     Map<String, Double> thresholds,
+                     FilterType filterType) {
 
-        super(FilterType.NER_ENTITY, filterConfiguration);
+        super(filterType, filterConfiguration);
 
         this.stats = stats;
         this.metricsService = metricsService;
-        this.removePunctuation = removePunctuation;
         this.thresholds = thresholds;
 
     }

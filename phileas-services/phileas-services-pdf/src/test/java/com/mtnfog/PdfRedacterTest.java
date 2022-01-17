@@ -33,8 +33,8 @@ public class PdfRedacterTest {
     @Test
     public void testPDF1() throws IOException {
 
-        final Span span1 = Span.make(0, 1, FilterType.NER_ENTITY, "ctx", "docid", 0.25, "Wendy", "repl", null, false, null);
-        final Span span2 = Span.make(0, 1, FilterType.NER_ENTITY, "ctx", "docid", 0.25, "Bankruptcy", "repl", null, false, null);
+        final Span span1 = Span.make(0, 1, FilterType.PERSON, "ctx", "docid", 0.25, "Wendy", "repl", null, false, null);
+        final Span span2 = Span.make(0, 1, FilterType.PERSON, "ctx", "docid", 0.25, "Bankruptcy", "repl", null, false, null);
         final Set<Span> spans = Set.copyOf(Arrays.asList(span1, span2));
 
         final String filename = "12-12110 K.pdf";
@@ -88,8 +88,8 @@ public class PdfRedacterTest {
     @Test
     public void testJpeg1() throws IOException {
 
-        final Span span1 = Span.make(0, 1, FilterType.NER_ENTITY, "ctx", "docid", 0.25, "Wendy", "repl", null, false, null);
-        final Span span2 = Span.make(0, 1, FilterType.NER_ENTITY, "ctx", "docid", 0.25, "Bankruptcy", "repl", null, false, null);
+        final Span span1 = Span.make(0, 1, FilterType.PERSON, "ctx", "docid", 0.25, "Wendy", "repl", null, false, null);
+        final Span span2 = Span.make(0, 1, FilterType.PERSON, "ctx", "docid", 0.25, "Bankruptcy", "repl", null, false, null);
         final Set<Span> spans = Set.copyOf(Arrays.asList(span1, span2));
 
         final String filename = "12-12110 K.pdf";
@@ -225,8 +225,8 @@ public class PdfRedacterTest {
     @Test
     public void testPdfSpansAndBoundingBoxes() throws IOException {
 
-        final Span span1 = Span.make(0, 1, FilterType.NER_ENTITY, "ctx", "docid", 0.25, "Wendy", "repl", null, false, null);
-        final Span span2 = Span.make(0, 1, FilterType.NER_ENTITY, "ctx", "docid", 0.25, "Bankruptcy", "repl", null, false, null);
+        final Span span1 = Span.make(0, 1, FilterType.PERSON, "ctx", "docid", 0.25, "Wendy", "repl", null, false, null);
+        final Span span2 = Span.make(0, 1, FilterType.PERSON, "ctx", "docid", 0.25, "Bankruptcy", "repl", null, false, null);
         final Set<Span> spans = Set.copyOf(Arrays.asList(span1, span2));
 
         final String filename = "12-12110 K.pdf";
