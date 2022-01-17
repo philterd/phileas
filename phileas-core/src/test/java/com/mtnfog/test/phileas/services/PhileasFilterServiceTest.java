@@ -11,7 +11,7 @@ import com.mtnfog.phileas.model.profile.Ignored;
 import com.mtnfog.phileas.model.profile.filters.*;
 import com.mtnfog.phileas.model.profile.filters.Date;
 import com.mtnfog.phileas.model.profile.filters.strategies.AbstractFilterStrategy;
-import com.mtnfog.phileas.model.profile.filters.strategies.ai.PersonFilterStrategy;
+import com.mtnfog.phileas.model.profile.filters.strategies.ai.PersonsFilterStrategy;
 import com.mtnfog.phileas.model.profile.filters.strategies.custom.CustomDictionaryFilterStrategy;
 import com.mtnfog.phileas.model.profile.filters.strategies.dynamic.*;
 import com.mtnfog.phileas.model.profile.filters.strategies.rules.*;
@@ -285,6 +285,31 @@ public class PhileasFilterServiceTest {
 
         // Ensure that the line separator in the input text was not removed.
         Assertions.assertTrue(response.getFilteredText().contains(System.lineSeparator()));
+
+    }
+
+    @Test
+    public void endToEnd9() throws Exception {
+
+        final Path temp = Files.createTempDirectory("philter");
+        final File file = Paths.get(temp.toFile().getAbsolutePath(), "default.json").toFile();
+        LOGGER.info("Writing profile to {}", file.getAbsolutePath());
+        FileUtils.writeStringToFile(file, gson.toJson(getFilterProfile("default")), Charset.defaultCharset());
+
+        Properties properties = new Properties();
+        properties.setProperty("indexes.directory", INDEXES_DIRECTORY);
+        properties.setProperty("store.enabled", "false");
+        properties.setProperty("filter.profiles.directory", temp.toFile().getAbsolutePath());
+
+        final PhileasConfiguration phileasConfiguration = ConfigFactory.create(PhileasConfiguration.class, properties);
+
+        final PhileasFilterService service = new PhileasFilterService(phileasConfiguration);
+        final FilterResponse response = service.filter(Arrays.asList("default"), "context", "documentid", "George Washington was president and his ssn was 123-45-6789 and he lived at 90210. The name 456 should be filtered. Jeff Smith should be ignored.", MimeType.TEXT_PLAIN);
+
+        LOGGER.info(response.getFilteredText());
+
+        Assertions.assertEquals("George Washington was president and his ssn was {{{REDACTED-ssn}}} and he lived at {{{REDACTED-zip-code}}}. The name 456 should be filtered. Jeff Smith should be ignored.", response.getFilteredText());
+        Assertions.assertEquals("documentid", response.getDocumentId());
 
     }
 
@@ -840,10 +865,10 @@ public class PhileasFilterServiceTest {
         ZipCode zipCode = new ZipCode();
         zipCode.setZipCodeFilterStrategies(Arrays.asList(zipCodeFilterStrategy));
 
-        PersonFilterStrategy personFilterStrategy = new PersonFilterStrategy();
+        PersonsFilterStrategy personsFilterStrategy = new PersonsFilterStrategy();
 
         Person person = new Person();
-        person.setPersonFilterStrategies(Arrays.asList(personFilterStrategy));
+        person.setPersonFilterStrategies(Arrays.asList(personsFilterStrategy));
 
         // ----------------------------------------------------------------------------------
 

@@ -10,6 +10,11 @@ public class SpanEnd {
         this.characterEnd = characterEnd;
     }
 
+    @Override
+    public String toString() {
+        return "index: " + index + "; character end: " + characterEnd;
+    }
+
     public int getIndex() {
         return index;
     }

@@ -2,7 +2,7 @@ package com.mtnfog.phileas.model.profile.filters;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
-import com.mtnfog.phileas.model.profile.filters.strategies.ai.PersonFilterStrategy;
+import com.mtnfog.phileas.model.profile.filters.strategies.ai.PersonsFilterStrategy;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -12,7 +12,7 @@ public class Person extends AbstractFilter {
 
     @SerializedName("personFilterStrategies")
     @Expose
-    private List<PersonFilterStrategy> personFilterStrategies;
+    private List<PersonsFilterStrategy> personFilterStrategies;
 
     @SerializedName("thresholds")
     @Expose
@@ -26,11 +26,11 @@ public class Person extends AbstractFilter {
     @Expose
     private String vocab = "/opt/philter/vocab.txt";
 
-    public List<PersonFilterStrategy> getNerStrategies() {
+    public List<PersonsFilterStrategy> getNerStrategies() {
         return personFilterStrategies;
     }
 
-    public void setPersonFilterStrategies(List<PersonFilterStrategy> personFilterStrategies) {
+    public void setPersonFilterStrategies(List<PersonsFilterStrategy> personFilterStrategies) {
         this.personFilterStrategies = personFilterStrategies;
     }
 

@@ -4,7 +4,9 @@ import com.mtnfog.phileas.configuration.PhileasConfiguration;
 import com.mtnfog.phileas.model.enums.FilterType;
 import com.mtnfog.phileas.model.filter.FilterConfiguration;
 import com.mtnfog.phileas.model.filter.dynamic.NerFilter;
+import com.mtnfog.phileas.model.objects.Entity;
 import com.mtnfog.phileas.model.objects.FilterResult;
+import com.mtnfog.phileas.model.objects.Replacement;
 import com.mtnfog.phileas.model.objects.Span;
 import com.mtnfog.phileas.model.profile.FilterProfile;
 import com.mtnfog.phileas.model.services.MetricsService;
@@ -13,6 +15,7 @@ import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 
 import java.io.File;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -52,7 +55,33 @@ public class PersonsFilter extends NerFilter {
     @Override
     public FilterResult filter(FilterProfile filterProfile, String context, String documentId, int piece, String input) throws Exception {
 
-        final List<Span> spans = onnxNer.find(input, context, documentId);
+        final List<Entity> entities = onnxNer.find(input, context, documentId);
+
+        final List<Span> spans = new LinkedList<>();
+
+        for(final Entity entity : entities) {
+
+            final String[] window = getWindow(input, entity.getCharacterStart(), entity.getCharacterEnd());
+            final Replacement replacement = getReplacement(filterProfile.getName(), context, documentId, entity.getText(), window, entity.getConfidence(), classification, null);
+            final boolean isIgnored = ignored.contains(entity.getText());
+
+            final Span span = Span.make(
+                    entity.getCharacterStart(),
+                    entity.getCharacterEnd(),
+                    entity.getFilterType(),
+                    entity.getContext(),
+                    entity.getDocumentId(),
+                    entity.getConfidence(),
+                    entity.getText(),
+                    replacement.getReplacement(),
+                    replacement.getSalt(),
+                    isIgnored,
+                    window
+            );
+
+            spans.add(span);
+
+        }
 
         return new FilterResult(context, documentId, spans);
 

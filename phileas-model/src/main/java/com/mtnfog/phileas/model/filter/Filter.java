@@ -153,6 +153,10 @@ public abstract class Filter {
 
         LOGGER.trace("Getting window of size {}", windowSize);
 
+        if(characterEnd > text.length()) {
+            characterEnd = text.length();
+        }
+
         // X = windowSize
         // Start at characterStart and walk backwards until X spaces are seen.
         // Start at characterEnd and walk forward until X spaces are seen.

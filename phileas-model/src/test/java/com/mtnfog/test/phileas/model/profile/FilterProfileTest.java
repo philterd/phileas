@@ -8,7 +8,7 @@ import com.mtnfog.phileas.model.profile.FilterProfile;
 import com.mtnfog.phileas.model.profile.Identifiers;
 import com.mtnfog.phileas.model.profile.Ignored;
 import com.mtnfog.phileas.model.profile.filters.*;
-import com.mtnfog.phileas.model.profile.filters.strategies.ai.PersonFilterStrategy;
+import com.mtnfog.phileas.model.profile.filters.strategies.ai.PersonsFilterStrategy;
 import com.mtnfog.phileas.model.profile.filters.strategies.custom.CustomDictionaryFilterStrategy;
 import com.mtnfog.phileas.model.profile.filters.strategies.dynamic.*;
 import com.mtnfog.phileas.model.profile.filters.strategies.rules.*;
@@ -63,7 +63,7 @@ public class FilterProfileTest {
         ipAddress.setIpAddressFilterStrategies(Arrays.asList(new IpAddressFilterStrategy()));
 
         Person person = new Person();
-        person.setPersonFilterStrategies(Arrays.asList(new PersonFilterStrategy()));
+        person.setPersonFilterStrategies(Arrays.asList(new PersonsFilterStrategy()));
 
         PhoneNumber phoneNumber = new PhoneNumber();
         phoneNumber.setPhoneNumberFilterStrategies(Arrays.asList(new PhoneNumberFilterStrategy()));

@@ -18,9 +18,9 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.List;
 
-public class PersonFilterStrategy extends AbstractFilterStrategy {
+public class PersonsFilterStrategy extends AbstractFilterStrategy {
 
-    private static final Logger LOGGER = LogManager.getLogger(PersonFilterStrategy.class);
+    private static final Logger LOGGER = LogManager.getLogger(PersonsFilterStrategy.class);
 
     private static FilterType filterType = FilterType.PERSON;
 

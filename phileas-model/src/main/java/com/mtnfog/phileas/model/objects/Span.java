@@ -72,6 +72,14 @@ public final class Span {
     private transient boolean alwaysValid = false;
 
     /**
+     * Don't use this constructor.
+     * Use <code>span.make()</code> instead.
+     */
+    public Span() {
+
+    }
+
+    /**
      * Creates a new span. Use the static <code>make</code> function to create a new {@link Span}.
      * @param characterStart The character-based index of the start of the span.
      * @param characterEnd The character-based index of the end of the span.
@@ -125,13 +133,6 @@ public final class Span {
 
         return span;
 
-    }
-
-    /**
-     * Creates a new span. Use the static <code>make</code> instead of this constructor.
-     */
-    public Span() {
-        // Used by MongoDB when reading objects from the database.
     }
 
     /**

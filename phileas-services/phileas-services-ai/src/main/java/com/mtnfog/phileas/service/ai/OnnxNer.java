@@ -1,6 +1,6 @@
 package com.mtnfog.phileas.service.ai;
 
-import com.mtnfog.phileas.model.objects.Span;
+import com.mtnfog.phileas.model.objects.Entity;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -20,14 +20,9 @@ public class OnnxNer {
 
     }
 
-    public List<Span> find(final String tokens, final String context, final String documentId) throws Exception {
+    public List<Entity> find(final String tokens, final String context, final String documentId) throws Exception {
 
-        // Remove punctuation.
-        final String tokensWithoutPunctuation = tokens.replaceAll("\\p{P}", "");
-
-        final List<Span> spans = inference.predict(tokensWithoutPunctuation, context, documentId);
-
-        return spans;
+        return inference.predict(tokens, context, documentId);
 
     }
 

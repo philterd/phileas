@@ -4,6 +4,7 @@ import ai.onnxruntime.OnnxTensor;
 import ai.onnxruntime.OrtEnvironment;
 import ai.onnxruntime.OrtSession;
 import com.mtnfog.phileas.model.enums.FilterType;
+import com.mtnfog.phileas.model.objects.Entity;
 import com.mtnfog.phileas.model.objects.Span;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -38,14 +39,14 @@ public class Inference {
 
     }
 
-    public List<Span> predict(final String text, final String context, final String documentId) throws Exception {
+    public List<Entity> predict(final String text, final String context, final String documentId) throws Exception {
 
         // TODO: I don't think this is needed and can be deleted.
         // Replace all multiple spaces with a single space.
         //text = text.replaceAll("\\s+", " ");
 
         // The NER spans found in the input text.
-        final List<Span> spans = new LinkedList<>();
+        final List<Entity> entities = new LinkedList<>();
 
         // The WordPiece tokenized text. This changes the spacing in the text.
         final Tokens tokens = tokenize(text);
@@ -89,14 +90,15 @@ public class Inference {
 
                 // If the end is -1 it means this is a single-span token.
                 // If the end is != -1 it means this is a multi-span token.
-                if(spanEnd.getIndex() != -1) {
+                if (spanEnd.getIndex() != -1) {
 
                     final StringBuilder sb = new StringBuilder();
 
                     // We have to concatenate the tokens.
                     // Add each token in the array and separate them with a space.
-                    // TODO: What if the entities are not separated by a single space in the original text?
-                    for(int i = x; i <= spanEnd.getIndex(); i++) {
+                    // We'll separate each with a single space because later we'll find the original span
+                    // in the text and ignore spacing between individual tokens in findByRegex().
+                    for (int i = x; i <= spanEnd.getIndex(); i++) {
                         sb.append(tokens.getTokens()[i]);
                         sb.append(" ");
                     }
@@ -114,20 +116,20 @@ public class Inference {
                 // This ignores other potential matches in the same sentence
                 // by only taking the first occurrence.
                 characterStart = text.indexOf(spanText, characterStart);
-                final int characterEnd = spanEnd.getCharacterEnd();
+                final int characterEnd = characterStart + spanText.length();
 
                 // Create a span for this text.
-                final Span span = new Span();
-                span.setFilterType(FilterType.PERSON);
-                span.setConfidence(confidence);
-                span.setContext(context);
-                span.setDocumentId(documentId);
-                span.setText(spanText);
-                span.setCharacterStart(characterStart);
-                span.setCharacterEnd(characterEnd);
+                final Entity entity = new Entity(
+                        characterStart,
+                        characterEnd,
+                        FilterType.PERSON,
+                        context,
+                        documentId,
+                        spanText,
+                        confidence);
 
                 // Add it to the list of spans to return.
-                spans.add(span);
+                entities.add(entity);
 
                 characterStart = characterEnd;
 
@@ -135,7 +137,7 @@ public class Inference {
 
         }
 
-        return spans;
+        return entities;
 
     }
 
@@ -144,6 +146,9 @@ public class Inference {
         final String regex = span.replaceAll(" ", "\\\\s+");
         final Pattern pattern = Pattern.compile(regex);
         final Matcher matcher = pattern.matcher(text);
+
+        // System.out.println("Text: " + text);
+        // System.out.println("Span: " + span);
 
         if(matcher.find()) {
             return matcher.group(0);
@@ -173,7 +178,7 @@ public class Inference {
             // See if the next token has an I-PER label.
             final String nextTokenClassification = id2Labels.get(maxIndex(arr));
 
-            if(!StringUtils.equalsIgnoreCase(nextTokenClassification, "I-PER")) {
+            if (!StringUtils.equalsIgnoreCase(nextTokenClassification, "I-PER")) {
                 index = x - 1;
                 break;
             }
@@ -185,9 +190,8 @@ public class Inference {
             characterEnd += tokens[x].length();
         }
 
-        // Add the number of spaces that is the number of tokens.
+        // Account for the number of spaces (that is the number of tokens).
         // (One space per token.)
-        // TODO: What if there are multiple spaces separating each token?
         characterEnd += index - 1;
 
         return new SpanEnd(index, characterEnd);

@@ -3,7 +3,7 @@ package com.mtnfog.test.phileas.model.profile.filters.strategies.ai;
 import com.mtnfog.phileas.model.objects.Replacement;
 import com.mtnfog.phileas.model.profile.Crypto;
 import com.mtnfog.phileas.model.profile.filters.strategies.AbstractFilterStrategy;
-import com.mtnfog.phileas.model.profile.filters.strategies.ai.PersonFilterStrategy;
+import com.mtnfog.phileas.model.profile.filters.strategies.ai.PersonsFilterStrategy;
 import com.mtnfog.phileas.model.services.AnonymizationCacheService;
 import com.mtnfog.phileas.model.services.AnonymizationService;
 import com.mtnfog.test.phileas.model.profile.filters.strategies.AbstractFilterStrategyTest;
@@ -13,10 +13,10 @@ import org.mockito.Mockito;
 
 import static org.mockito.Mockito.when;
 
-public class PersonFilterStrategyTest extends AbstractFilterStrategyTest {
+public class PersonsFilterStrategyTest extends AbstractFilterStrategyTest {
 
     public AbstractFilterStrategy getFilterStrategy() {
-        return new PersonFilterStrategy();
+        return new PersonsFilterStrategy();
     }
 
     @Test
@@ -93,7 +93,7 @@ public class PersonFilterStrategyTest extends AbstractFilterStrategyTest {
 
         when(anonymizationService.getAnonymizationCacheService()).thenReturn(anonymizationCacheService);
 
-        final AbstractFilterStrategy strategy = new PersonFilterStrategy();
+        final AbstractFilterStrategy strategy = new PersonsFilterStrategy();
         strategy.setStrategy(AbstractFilterStrategy.REDACT);
         strategy.setRedactionFormat("<ENTITY:%t>%v</ENTITY>");
 
@@ -111,7 +111,7 @@ public class PersonFilterStrategyTest extends AbstractFilterStrategyTest {
 
         when(anonymizationService.getAnonymizationCacheService()).thenReturn(anonymizationCacheService);
 
-        final AbstractFilterStrategy strategy = new PersonFilterStrategy();
+        final AbstractFilterStrategy strategy = new PersonsFilterStrategy();
         strategy.setStrategy(AbstractFilterStrategy.ABBREVIATE);
 
         Replacement replacement;
