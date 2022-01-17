@@ -37,7 +37,16 @@ pipeline {
                 checkout([$class: 'GitSCM',
                           branches: [[name: "${params.BRANCH_TAG}"]],
                           doGenerateSubmoduleConfigurations: false,
-                          extensions: [],
+                            extensions: [
+                                [$class: 'GitLFSPull'],
+                                [$class: 'CheckoutOption', timeout: 20],
+                                [$class: 'CloneOption',
+                                        depth: 0,
+                                        noTags: false,
+                                        reference: '/other/optional/local/reference/clone',
+                                        shallow: false,
+                                        timeout: 180]
+                            ],
                           gitTool: 'Default',
                           submoduleCfg: [],
                           userRemoteConfigs: [[url: 'git@bitbucket.org:mountainfog/phileas.git']]
