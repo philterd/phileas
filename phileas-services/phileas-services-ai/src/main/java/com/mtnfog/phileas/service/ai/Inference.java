@@ -15,6 +15,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.LongBuffer;
+import java.text.BreakIterator;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -47,105 +48,110 @@ public class Inference {
         final List<Entity> entities = new LinkedList<>();
 
         // The WordPiece tokenized text. This changes the spacing in the text.
-        final Tokens tokens = tokenize(text);
+        final List<Tokens> t = tokenize(text);
 
-        // The inputs to the ONNX model.
-        final Map<String, OnnxTensor> inputs = new HashMap<>();
-        inputs.put("input_ids", OnnxTensor.createTensor(env, LongBuffer.wrap(tokens.getIds()), new long[]{1, tokens.getIds().length}));
-        inputs.put("attention_mask", OnnxTensor.createTensor(env, LongBuffer.wrap(tokens.getMask()), new long[]{1, tokens.getMask().length}));
-        inputs.put("token_type_ids", OnnxTensor.createTensor(env, LongBuffer.wrap(tokens.getTypes()), new long[]{1, tokens.getTypes().length}));
+        for(final Tokens tokens : t) {
 
-        // The outputs from the model.
-        final float[][][] v = (float[][][]) session.run(inputs).get(0).getValue();
+            // The inputs to the ONNX model.
+            final Map<String, OnnxTensor> inputs = new HashMap<>();
+            inputs.put("input_ids", OnnxTensor.createTensor(env, LongBuffer.wrap(tokens.getIds()), new long[]{1, tokens.getIds().length}));
+            inputs.put("attention_mask", OnnxTensor.createTensor(env, LongBuffer.wrap(tokens.getMask()), new long[]{1, tokens.getMask().length}));
+            inputs.put("token_type_ids", OnnxTensor.createTensor(env, LongBuffer.wrap(tokens.getTypes()), new long[]{1, tokens.getTypes().length}));
 
-        // Find consecutive B-PER and I-PER labels and combine the spans where necessary.
-        // There are also B-LOC and I-LOC tags for locations that might be useful at some point.
+            // The outputs from the model.
+            final float[][][] v = (float[][][]) session.run(inputs).get(0).getValue();
 
-        // Keep track of where the last span was so when there are multiple/duplicate
-        // spans we can get the next one instead of the first one each time.
-        int characterStart = 0;
+            // Find consecutive B-PER and I-PER labels and combine the spans where necessary.
+            // There are also B-LOC and I-LOC tags for locations that might be useful at some point.
 
-        // We are looping over the vector for each word,
-        // finding the index of the array that has the maximum value,
-        // and then finding the token classification that corresponds to that index.
-        for(int x = 0; x < v[0].length; x++) {
+            // Keep track of where the last span was so when there are multiple/duplicate
+            // spans we can get the next one instead of the first one each time.
+            int characterStart = 0;
 
-            final float[] arr = v[0][x];
-            final int maxIndex = maxIndex(arr);
-            final String classification = id2Labels.get(maxIndex);
+            // We are looping over the vector for each word,
+            // finding the index of the array that has the maximum value,
+            // and then finding the token classification that corresponds to that index.
+            for (int x = 0; x < v[0].length; x++) {
 
-            // TODO: Need to make sure this value is between 0 and 1?
-            // Can we do thresholding without it between 0 and 1?
-            final double confidence = arr[maxIndex] / 10;
+                final float[] arr = v[0][x];
+                final int maxIndex = maxIndex(arr);
+                final String classification = id2Labels.get(maxIndex);
 
-            // Is this is the start of a person entity.
-            if (StringUtils.equalsIgnoreCase(classification, "B-PER")) {
+                // TODO: Need to make sure this value is between 0 and 1?
+                // Can we do thresholding without it between 0 and 1?
+                final double confidence = arr[maxIndex] / 10;
 
-                final String spanText;
+                // Is this is the start of a person entity.
+                if (StringUtils.equalsIgnoreCase(classification, "B-PER")) {
 
-                // Find the end index of the span in the array (where the label is not I-PER).
-                final SpanEnd spanEnd = findSpanEnd(v, x, id2Labels, tokens.getTokens());
+                    final String spanText;
 
-                // If the end is -1 it means this is a single-span token.
-                // If the end is != -1 it means this is a multi-span token.
-                if (spanEnd.getIndex() != -1) {
+                    // Find the end index of the span in the array (where the label is not I-PER).
+                    final SpanEnd spanEnd = findSpanEnd(v, x, id2Labels, tokens.getTokens());
 
-                    final StringBuilder sb = new StringBuilder();
+                    // If the end is -1 it means this is a single-span token.
+                    // If the end is != -1 it means this is a multi-span token.
+                    if (spanEnd.getIndex() != -1) {
 
-                    // We have to concatenate the tokens.
-                    // Add each token in the array and separate them with a space.
-                    // We'll separate each with a single space because later we'll find the original span
-                    // in the text and ignore spacing between individual tokens in findByRegex().
-                    int end = spanEnd.getIndex();
-                    for (int i = x; i <= end; i++) {
+                        final StringBuilder sb = new StringBuilder();
 
-                        // If the next token starts with ##, combine it with this token.
-                        if(tokens.getTokens()[i+1].startsWith("##")) {
+                        // We have to concatenate the tokens.
+                        // Add each token in the array and separate them with a space.
+                        // We'll separate each with a single space because later we'll find the original span
+                        // in the text and ignore spacing between individual tokens in findByRegex().
+                        int end = spanEnd.getIndex();
+                        for (int i = x; i <= end; i++) {
 
-                            sb.append(tokens.getTokens()[i] + tokens.getTokens()[i+1].replaceAll("##", ""));
-                            sb.append(" ");
+                            // If the next token starts with ##, combine it with this token.
+                            if (tokens.getTokens()[i + 1].startsWith("##")) {
 
-                            // Skip the next token since we just included it in this iteration.
-                            i++;
+                                sb.append(tokens.getTokens()[i] + tokens.getTokens()[i + 1].replaceAll("##", ""));
+                                sb.append(" ");
 
-                        } else {
+                                // Skip the next token since we just included it in this iteration.
+                                i++;
 
-                            sb.append(tokens.getTokens()[i]);
-                            sb.append(" ");
+                            } else {
+
+                                sb.append(tokens.getTokens()[i]);
+                                sb.append(" ");
+
+                            }
 
                         }
 
+                        // This is the text of the span. We use the whole original input text and not one
+                        // of the splits. This gives us accurate character positions.
+                        spanText = findByRegex(text, sb.toString().trim()).trim();
+
+                    } else {
+
+                        // This is a single-token span so there is nothing else to do except grab the token.
+                        spanText = tokens.getTokens()[x];
+
                     }
 
-                    // This is the text of the span.
-                    spanText = findByRegex(text, sb.toString().trim()).trim();
+                    // This ignores other potential matches in the same sentence
+                    // by only taking the first occurrence.
+                    characterStart = text.indexOf(spanText, characterStart);
+                    final int characterEnd = characterStart + spanText.length();
 
-                } else {
+                    // Create a span for this text.
+                    final Entity entity = new Entity(
+                            characterStart,
+                            characterEnd,
+                            FilterType.PERSON,
+                            context,
+                            documentId,
+                            spanText,
+                            confidence);
 
-                    // This is a single-token span so there is nothing else to do except grab the token.
-                    spanText = tokens.getTokens()[x];
+                    // Add it to the list of spans to return.
+                    entities.add(entity);
+
+                    characterStart = characterEnd;
 
                 }
-
-                // This ignores other potential matches in the same sentence
-                // by only taking the first occurrence.
-                characterStart = text.indexOf(spanText, characterStart);
-                final int characterEnd = characterStart + spanText.length();
-
-                // Create a span for this text.
-                final Entity entity = new Entity(
-                        characterStart,
-                        characterEnd,
-                        FilterType.PERSON,
-                        context,
-                        documentId,
-                        spanText,
-                        confidence);
-
-                // Add it to the list of spans to return.
-                entities.add(entity);
-
-                characterStart = characterEnd;
 
             }
 
@@ -153,7 +159,7 @@ public class Inference {
 
         // Sometimes there may be two entities right next to each other that
         // should actually be one entity.
-        List<Entity> combinedEntities = Entity.combineAdjacentEntities(entities);
+        final List<Entity> combinedEntities = Entity.combineAdjacentEntities(entities);
 
         return combinedEntities;
 
@@ -232,25 +238,39 @@ public class Inference {
 
     }
 
-    public Tokens tokenize(String text) {
+    public List<Tokens> tokenize(String text) {
 
-        final String[] tokens = tokenizer.tokenize(text);
+        final List<Tokens> t = new LinkedList<>();
 
-        final int[] ids = new int[tokens.length];
+        final BreakIterator breakIterator = BreakIterator.getSentenceInstance(Locale.ENGLISH);
+        breakIterator.setText(text);
+        int start = breakIterator.first();
 
-        for(int x = 0; x < tokens.length; x++) {
-            ids[x] = vocabulary.get(tokens[x]);
+        for (int end = breakIterator.next(); end != BreakIterator.DONE; start = end, end = breakIterator.next()) {
+
+            final String sentence = text.substring(start, end);
+
+            final String[] tokens = tokenizer.tokenize(sentence);
+
+            final int[] ids = new int[tokens.length];
+
+            for(int x = 0; x < tokens.length; x++) {
+                ids[x] = vocabulary.get(tokens[x]);
+            }
+
+            final long[] lids = Arrays.stream(ids).mapToLong(i -> i).toArray();
+
+            final long[] mask = new long[ids.length];
+            Arrays.fill(mask, 1);
+
+            final long[] types = new long[ids.length];
+            Arrays.fill(types, 0);
+
+            t.add(new Tokens(tokens, lids, mask, types));
+
         }
 
-        final long[] lids = Arrays.stream(ids).mapToLong(i -> i).toArray();
-
-        final long[] mask = new long[ids.length];
-        Arrays.fill(mask, 1);
-
-        final long[] types = new long[ids.length];
-        Arrays.fill(types, 0);
-
-        return new Tokens(tokens, lids, mask, types);
+        return t;
 
     }
 

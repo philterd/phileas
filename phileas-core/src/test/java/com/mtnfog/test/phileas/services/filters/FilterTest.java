@@ -84,4 +84,36 @@ public class FilterTest extends AbstractFilterTest {
 
     }
 
+    @Test
+    public void window2() throws Exception {
+
+        // Getting window of size 5 for start -1 and end 12
+
+        int windowSize = 5;
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withAlertService(alertService)
+                .withAnonymizationService(new AgeAnonymizationService(new LocalAnonymizationCacheService()))
+                .withWindowSize(windowSize)
+                .build();
+
+        final AgeFilter filter = new AgeFilter(filterConfiguration);
+
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "this is a first sentence. the patient is 3.5 years old and he's cool. this is a surrounding sentence.");
+
+        showSpans(filterResult.getSpans());
+
+        final String[] window = new String[]{"first", "sentence", "the", "patient", "is", "35", "years", "old", "and", "hes", "cool", "this", "is"};
+
+        LOGGER.info("Expected: {}", Arrays.toString(window));
+        LOGGER.info("Actual:   {}", Arrays.toString(filterResult.getSpans().get(0).getWindow()));
+
+        Assertions.assertEquals(1, filterResult.getSpans().size());
+        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 41, 54, FilterType.AGE));
+        Assertions.assertEquals("{{{REDACTED-age}}}", filterResult.getSpans().get(0).getReplacement());
+        Assertions.assertArrayEquals(window, filterResult.getSpans().get(0).getWindow());
+        Assertions.assertEquals("3.5 years old", filterResult.getSpans().get(0).getText());
+
+    }
+
 }
