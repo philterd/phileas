@@ -1,6 +1,5 @@
 package com.mtnfog.phileas.services.filters.ai;
 
-import com.mtnfog.phileas.configuration.PhileasConfiguration;
 import com.mtnfog.phileas.model.enums.FilterType;
 import com.mtnfog.phileas.model.filter.FilterConfiguration;
 import com.mtnfog.phileas.model.filter.dynamic.NerFilter;
