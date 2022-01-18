@@ -252,7 +252,8 @@ public class Inference {
         // Split the input text into 200 word chunks with 50 overlapping between chunks.
         final String[] whitespaceTokenized = text.split("\\s+");
 
-        final int splitLength = 200;
+        //
+        final int splitLength = 150;
 
         for(int start = 0; start < whitespaceTokenized.length; start = start + splitLength) {
 
