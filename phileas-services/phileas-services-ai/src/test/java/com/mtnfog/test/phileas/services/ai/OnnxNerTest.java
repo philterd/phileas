@@ -62,23 +62,32 @@ public class OnnxNerTest {
         final File model = new File(getClass().getClassLoader().getResource("ner/model.onnx").toURI());
         final File vocab = new File(getClass().getClassLoader().getResource("ner/vocab.txt").toURI());
 
-        final String tokens = "George Washington lives in 90210 and his SSN was 123-45-6789.";
+        final String tokens1 = "George Washington lives in 90210 and his SSN was 123-45-6789.";
+        final String tokens2 = "George Washington was president.";
+        final String tokens3 = "George Washington lived in the United States.";
 
         final OnnxNer nameFinderDL1 = new OnnxNer(model, vocab, getLabels());
-        final List<Entity> spans1 = nameFinderDL1.find(tokens, "context", "documentId");
+        final List<Entity> spans1 = nameFinderDL1.find(tokens1, "context", "documentId");
 
         final OnnxNer nameFinderDL2 = new OnnxNer(model, vocab, getLabels());
-        final List<Entity> spans2 = nameFinderDL2.find(tokens, "context", "documentId");
+        final List<Entity> spans2 = nameFinderDL2.find(tokens2, "context", "documentId");
 
         final OnnxNer nameFinderDL3 = new OnnxNer(model, vocab, getLabels());
-        final List<Entity> spans3 = nameFinderDL3.find(tokens, "context", "documentId");
+        final List<Entity> spans3 = nameFinderDL3.find(tokens3, "context", "documentId");
+        final List<Entity> spans4 = nameFinderDL3.find(tokens2, "context", "documentId");
+        final List<Entity> spans5 = nameFinderDL3.find(tokens3, "context", "documentId");
 
-        showEntities(spans3);
+        showEntities(spans5);
 
-        Assertions.assertEquals(1, spans3.size());
-        Assertions.assertEquals("George Washington", spans3.get(0).getText());
-        Assertions.assertEquals(0, spans3.get(0).getCharacterStart());
-        Assertions.assertEquals(17, spans3.get(0).getCharacterEnd());
+        Assertions.assertEquals(1, spans4.size());
+        Assertions.assertEquals("George Washington", spans4.get(0).getText());
+        Assertions.assertEquals(0, spans4.get(0).getCharacterStart());
+        Assertions.assertEquals(17, spans4.get(0).getCharacterEnd());
+
+        Assertions.assertEquals(1, spans5.size());
+        Assertions.assertEquals("George Washington", spans5.get(0).getText());
+        Assertions.assertEquals(0, spans5.get(0).getCharacterStart());
+        Assertions.assertEquals(17, spans5.get(0).getCharacterEnd());
 
     }
 
