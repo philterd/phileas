@@ -10,7 +10,6 @@ import com.mtnfog.phileas.model.domain.LegalDomain;
 import com.mtnfog.phileas.model.enums.FilterType;
 import com.mtnfog.phileas.model.enums.MimeType;
 import com.mtnfog.phileas.model.enums.SensitivityLevel;
-import com.mtnfog.phileas.model.exceptions.api.PayloadTooLargeException;
 import com.mtnfog.phileas.model.filter.Filter;
 import com.mtnfog.phileas.model.filter.FilterConfiguration;
 import com.mtnfog.phileas.model.filter.rules.dictionary.BloomFilterDictionaryFilter;
@@ -42,7 +41,6 @@ import com.mtnfog.phileas.services.postfilters.*;
 import com.mtnfog.phileas.services.profiles.LocalFilterProfileService;
 import com.mtnfog.phileas.services.profiles.S3FilterProfileService;
 import com.mtnfog.phileas.services.profiles.utils.FilterProfileUtils;
-import com.mtnfog.phileas.services.split.SplitFactory;
 import com.mtnfog.phileas.services.validators.DateSpanValidator;
 import com.mtnfog.services.pdf.PdfRedacter;
 import com.mtnfog.services.pdf.PdfTextExtractor;
@@ -171,15 +169,6 @@ public class PhileasFilterService implements FilterService {
 
         }
 
-        // PHL-145: Accept long text or throw an exception?
-        if(!filterProfile.getConfig().getSplitting().isEnabled()) {
-            if(filterProfile.getConfig().getSplitting().getThreshold() != -1) {
-                if (input.length() >= filterProfile.getConfig().getSplitting().getThreshold()) {
-                    throw new PayloadTooLargeException("The request body was too large. Either reduce the size or enable text splitting.");
-                }
-            }
-        }
-
         // Analyze the document.
         final DocumentAnalysis documentAnalysis;
         if(filterProfile.getConfig().getAnalysis().isEnabled()) {
@@ -204,39 +193,13 @@ public class PhileasFilterService implements FilterService {
 
         if(mimeType == MimeType.TEXT_PLAIN) {
 
-            // PHL-145: Do we need to split the input text due to its size?
-            if (filterProfile.getConfig().getSplitting().isEnabled() && input.length() >= filterProfile.getConfig().getSplitting().getThreshold()) {
-
-                // Get the splitter to use from the filter profile.
-                final SplitService splitService = SplitFactory.getSplitService(filterProfile.getConfig().getSplitting().getMethod());
-
-                // Holds all of the filter responses that will ultimately be combined into a single response.
-                final List<FilterResponse> filterResponses = new LinkedList<>();
-
-                // Split the string.
-                final List<String> splits = splitService.split(input);
-
-                // Process each split.
-                for (int i = 0; i < splits.size(); i++) {
-                    filterResponses.add(unstructuredDocumentProcessor.process(filterProfile, filters, postFilters, context, documentId, i, splits.get(i)));
-                }
-
-                // Combine the results into a single filterResponse object.
-                filterResponse = FilterResponse.combine(filterResponses, context, documentId, splitService.getSeparator());
-
-            } else {
-
-                // Do not split. Process the entire string at once.
-                filterResponse = unstructuredDocumentProcessor.process(filterProfile, filters, postFilters, context, documentId, 0, input);
-
-            }
+            // Do not split. Process the entire string at once.
+            filterResponse = unstructuredDocumentProcessor.process(filterProfile, filters, postFilters, context, documentId, 0, input);
 
         /*} else if(mimeType == MimeType.TEXT_HTML) {
 
             // Remove the HTML tags.
             final String plain = Jsoup.clean(input, Whitelist.none());*/
-
-
 
         //} else if(mimeType == MimeType.APPLICATION_FHIRJSON) {
         //    filterResponse = fhirDocumentProcessor.process(filterProfile, filters, postFilters, context, documentId, input);
