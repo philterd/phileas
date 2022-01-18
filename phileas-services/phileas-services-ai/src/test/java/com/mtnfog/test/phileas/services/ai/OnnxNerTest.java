@@ -57,6 +57,28 @@ public class OnnxNerTest {
     }
 
     @Test
+    public void findMultipleInvocations() throws Exception {
+
+        final File model = new File(getClass().getClassLoader().getResource("ner/model.onnx").toURI());
+        final File vocab = new File(getClass().getClassLoader().getResource("ner/vocab.txt").toURI());
+
+        final String tokens = "George Washington lives in 90210 and his SSN was 123-45-6789.";
+
+        final OnnxNer nameFinderDL = new OnnxNer(model, vocab, getLabels());
+        final List<Entity> spans1 = nameFinderDL.find(tokens, "context", "documentId");
+        final List<Entity> spans2 = nameFinderDL.find(tokens, "context", "documentId");
+        final List<Entity> spans3 = nameFinderDL.find(tokens, "context", "documentId");
+
+        showEntities(spans3);
+
+        Assertions.assertEquals(1, spans3.size());
+        Assertions.assertEquals("George Washington", spans3.get(0).getText());
+        Assertions.assertEquals(0, spans3.get(0).getCharacterStart());
+        Assertions.assertEquals(17, spans3.get(0).getCharacterEnd());
+
+    }
+
+    @Test
     public void findWithSpacesInEntity() throws Exception {
 
         final File model = new File(getClass().getClassLoader().getResource("ner/model.onnx").toURI());
