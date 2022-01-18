@@ -98,9 +98,25 @@ public class Inference {
                     // Add each token in the array and separate them with a space.
                     // We'll separate each with a single space because later we'll find the original span
                     // in the text and ignore spacing between individual tokens in findByRegex().
-                    for (int i = x; i <= spanEnd.getIndex(); i++) {
-                        sb.append(tokens.getTokens()[i]);
-                        sb.append(" ");
+                    int end = spanEnd.getIndex();
+                    for (int i = x; i <= end; i++) {
+
+                        // If the next token starts with ##, combine it with this token.
+                        if(tokens.getTokens()[i+1].startsWith("##")) {
+
+                            sb.append(tokens.getTokens()[i] + tokens.getTokens()[i+1].replaceAll("##", ""));
+                            sb.append(" ");
+
+                            // Skip the next token since we just included it in this iteration.
+                            i++;
+
+                        } else {
+
+                            sb.append(tokens.getTokens()[i]);
+                            sb.append(" ");
+
+                        }
+
                     }
 
                     // This is the text of the span.
