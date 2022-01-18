@@ -137,7 +137,11 @@ public class Inference {
 
         }
 
-        return entities;
+        // Sometimes there may be two entities right next to each other that
+        // should actually be one entity.
+        List<Entity> combinedEntities = Entity.combineAdjacentEntities(entities);
+
+        return combinedEntities;
 
     }
 

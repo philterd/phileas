@@ -225,6 +225,35 @@ public class OnnxNerTest {
 
     }
 
+    @Test
+    public void findWithParagraph() throws Exception {
+
+        final File model = new File(getClass().getClassLoader().getResource("ner/model.onnx").toURI());
+        final File vocab = new File(getClass().getClassLoader().getResource("ner/vocab.txt").toURI());
+
+        final String tokens = "In recent days, healthcare facilities across the nation have again begun to buckle under spiking infection rates. Last week, some local hospitals temporarily postponed scheduled surgeries that require an inpatient stay following an operation, and the trauma center at Harbor-UCLA Medical Center closed for hours because of a blood shortage - a step it hadn't taken in over three decades. A staff shortage at some local ambulance companies further complicated the situation.The virus has spread so fast since the arrival of the Omicron variant that it could take just about a week for California to tally a million new cases. It was only on Jan. 10 that California surpassed 6 million total reported coronavirus cases in the nearly two years since the start of the pandemic, according to data released by state health officials. Even during last winter's surge, it took three weeks to accumulate a million new cases, with the state peaking at 46,000 new infections a day. \"On this national holiday where we celebrate the life and legacy of Dr. Martin Luther King, we remember his deep commitment to health equity,\" said L.A. County Public Health Director Barbara Ferrer. \"As Reverend King memorably said, \"Of all the forms of inequality, injustice in health is the most shocking and the most inhuman because it often results in physical death.\"";
+
+        final OnnxNer nameFinderDL = new OnnxNer(model, vocab, getLabels());
+        final List<Entity> spans = nameFinderDL.find(tokens, "context", "documentId");
+
+        showEntities(spans);
+
+        Assertions.assertEquals(3, spans.size());
+
+        Assertions.assertEquals("Martin Luther King", spans.get(0).getText());
+        Assertions.assertEquals(1043, spans.get(0).getCharacterStart());
+        Assertions.assertEquals(1061, spans.get(0).getCharacterEnd());
+
+        Assertions.assertEquals("Barbara Ferrer", spans.get(1).getText());
+        Assertions.assertEquals(1155, spans.get(1).getCharacterStart());
+        Assertions.assertEquals(1168, spans.get(1).getCharacterEnd());
+
+        Assertions.assertEquals("Reverend King", spans.get(2).getText());
+        Assertions.assertEquals(1174, spans.get(2).getCharacterStart());
+        Assertions.assertEquals(1187, spans.get(2).getCharacterEnd());
+
+    }
+
     private Map<Integer, String> getLabels() {
 
         final Map<Integer, String> id2Labels = new HashMap<>();
