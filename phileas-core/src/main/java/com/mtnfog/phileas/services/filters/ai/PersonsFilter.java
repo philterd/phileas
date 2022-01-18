@@ -83,7 +83,10 @@ public class PersonsFilter extends NerFilter {
 
         }
 
-        return new FilterResult(context, documentId, spans);
+        // Drop overlapping spans.
+        final List<Span> nonoverlappingSpans = Span.dropOverlappingSpans(spans);
+
+        return new FilterResult(context, documentId, nonoverlappingSpans);
 
     }
 

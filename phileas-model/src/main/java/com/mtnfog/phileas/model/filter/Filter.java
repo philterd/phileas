@@ -151,9 +151,6 @@ public abstract class Filter {
      */
     public String[] getWindow(String text, int characterStart, int characterEnd) {
 
-        LOGGER.info("Getting window of size {} for start {} and end {}", windowSize, characterStart, characterEnd);
-        LOGGER.info(text);
-
         if(characterStart < 0) {
             characterStart = 0;
         }

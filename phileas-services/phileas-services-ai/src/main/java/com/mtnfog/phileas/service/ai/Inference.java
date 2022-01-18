@@ -161,6 +161,8 @@ public class Inference {
         // should actually be one entity.
         final List<Entity> combinedEntities = Entity.combineAdjacentEntities(entities);
 
+        // Duplicates are removed once spans are created in PersonsFilter.
+
         return combinedEntities;
 
     }
@@ -238,19 +240,38 @@ public class Inference {
 
     }
 
-    public List<Tokens> tokenize(String text) {
+    public List<Tokens> tokenize(final String text) {
 
         final List<Tokens> t = new LinkedList<>();
 
-        final BreakIterator breakIterator = BreakIterator.getSentenceInstance(Locale.ENGLISH);
-        breakIterator.setText(text);
-        int start = breakIterator.first();
+        // In this article as the paper suggests, we are going to segment the input into smaller text and feed
+        // each of them into BERT, it means for each row, we will split the text in order to have some
+        // smaller text (200 words long each )
+        // https://medium.com/analytics-vidhya/text-classification-with-bert-using-transformers-for-long-text-inputs-f54833994dfd
 
-        for (int end = breakIterator.next(); end != BreakIterator.DONE; start = end, end = breakIterator.next()) {
+        // Split the input text into 200 word chunks with 50 overlapping between chunks.
+        final String[] whitespaceTokenized = text.split("\\s+");
 
-            final String sentence = text.substring(start, end);
+        final int splitLength = 200;
 
-            final String[] tokens = tokenizer.tokenize(sentence);
+        for(int start = 0; start < whitespaceTokenized.length; start = start + splitLength) {
+
+            // 200 word length chunk
+            // Check the end do don't go past and get a StringIndexOutOfBoundsException
+            int end = start + splitLength;
+            if(end > whitespaceTokenized.length) {
+                end = whitespaceTokenized.length;
+            }
+
+            // The group is that subsection of string.
+            final String group = String.join(" ", Arrays.copyOfRange(whitespaceTokenized, start, end));
+            //final String group = text.substring(start, end);
+
+            // We want to overlap each chunk by 50 words so scoot back 50 words for the next iteration.
+            start = start - 50;
+
+            // Now we can tokenize the group and continue.
+            final String[] tokens = tokenizer.tokenize(group);
 
             final int[] ids = new int[tokens.length];
 
