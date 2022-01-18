@@ -64,10 +64,14 @@ public class OnnxNerTest {
 
         final String tokens = "George Washington lives in 90210 and his SSN was 123-45-6789.";
 
-        final OnnxNer nameFinderDL = new OnnxNer(model, vocab, getLabels());
-        final List<Entity> spans1 = nameFinderDL.find(tokens, "context", "documentId");
-        final List<Entity> spans2 = nameFinderDL.find(tokens, "context", "documentId");
-        final List<Entity> spans3 = nameFinderDL.find(tokens, "context", "documentId");
+        final OnnxNer nameFinderDL1 = new OnnxNer(model, vocab, getLabels());
+        final List<Entity> spans1 = nameFinderDL1.find(tokens, "context", "documentId");
+
+        final OnnxNer nameFinderDL2 = new OnnxNer(model, vocab, getLabels());
+        final List<Entity> spans2 = nameFinderDL2.find(tokens, "context", "documentId");
+
+        final OnnxNer nameFinderDL3 = new OnnxNer(model, vocab, getLabels());
+        final List<Entity> spans3 = nameFinderDL3.find(tokens, "context", "documentId");
 
         showEntities(spans3);
 
