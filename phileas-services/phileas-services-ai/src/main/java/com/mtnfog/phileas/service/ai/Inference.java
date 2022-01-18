@@ -31,6 +31,8 @@ public class Inference {
 
     public Inference(File model, File vocab, Map<Integer, String> id2Labels) throws Exception {
 
+        LOGGER.info("Initializing ONNX session for model {}", model.getAbsolutePath());
+
         this.env = OrtEnvironment.getEnvironment();
         this.session = env.createSession(model.getPath(), new OrtSession.SessionOptions());
         this.vocabulary = loadVocab(vocab);
@@ -40,10 +42,6 @@ public class Inference {
     }
 
     public List<Entity> predict(final String text, final String context, final String documentId) throws Exception {
-
-        // TODO: I don't think this is needed and can be deleted.
-        // Replace all multiple spaces with a single space.
-        //text = text.replaceAll("\\s+", " ");
 
         // The NER spans found in the input text.
         final List<Entity> entities = new LinkedList<>();

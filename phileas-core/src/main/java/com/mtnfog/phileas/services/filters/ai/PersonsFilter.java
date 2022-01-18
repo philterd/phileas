@@ -48,6 +48,7 @@ public class PersonsFilter extends NerFilter {
         id2Labels.put(7, "B-LOC");
         id2Labels.put(8, "I-LOC");
 
+        LOGGER.info("Initializing persons filter with model {}", modelFile);
         this.onnxNer = new OnnxNer(model, vocab, id2Labels);
 
     }
