@@ -1178,8 +1178,6 @@ public class PhileasFilterService implements FilterService {
 
         }
 
-        // PyTorch filters.
-
         if(filterProfile.getIdentifiers().hasFilter(FilterType.PERSON) && filterProfile.getIdentifiers().getPerson().isEnabled()) {
 
             final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
