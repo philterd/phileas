@@ -5,7 +5,6 @@ import ai.onnxruntime.OrtEnvironment;
 import ai.onnxruntime.OrtSession;
 import com.mtnfog.phileas.model.enums.FilterType;
 import com.mtnfog.phileas.model.objects.Entity;
-import com.mtnfog.phileas.model.objects.Span;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -15,7 +14,6 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.LongBuffer;
-import java.text.BreakIterator;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -23,6 +21,8 @@ import java.util.regex.Pattern;
 public class Inference {
 
     private static final Logger LOGGER = LogManager.getLogger(Inference.class);
+
+    private static final int SPLIT_LENGTH = 125;
 
     private final OrtEnvironment env;
     private final OrtSession session;
@@ -167,9 +167,13 @@ public class Inference {
 
     }
 
-    private String findByRegex(String text, String span) {
+    public static String findByRegex(String text, String span) {
 
-        final String regex = span.replaceAll(" ", "\\\\s+");
+        final String regex = span
+                .replaceAll(" ", "\\\\s+")
+                .replaceAll("\\)", "\\\\)")
+                .replaceAll("\\(", "\\\\(");
+
         final Pattern pattern = Pattern.compile(regex);
         final Matcher matcher = pattern.matcher(text);
 
@@ -252,14 +256,11 @@ public class Inference {
         // Split the input text into 200 word chunks with 50 overlapping between chunks.
         final String[] whitespaceTokenized = text.split("\\s+");
 
-        //
-        final int splitLength = 150;
-
-        for(int start = 0; start < whitespaceTokenized.length; start = start + splitLength) {
+        for(int start = 0; start < whitespaceTokenized.length; start = start + SPLIT_LENGTH) {
 
             // 200 word length chunk
             // Check the end do don't go past and get a StringIndexOutOfBoundsException
-            int end = start + splitLength;
+            int end = start + SPLIT_LENGTH;
             if(end > whitespaceTokenized.length) {
                 end = whitespaceTokenized.length;
             }

@@ -306,7 +306,7 @@ public class OnnxNerTest {
 
         showEntities(spans);
 
-        Assertions.assertEquals(2, spans.size());
+        Assertions.assertEquals(6, spans.size());
 
         // This doesn't check all 6. It only spot checks.
 
@@ -337,9 +337,9 @@ public class OnnxNerTest {
 
         showEntities(spans);
 
-        Assertions.assertEquals(3, spans.size());
+        Assertions.assertEquals(6, spans.size());
 
-        // This doesn't check all 7. It only spot checks.
+        // This doesn't check all 6, It only spot checks.
 
         Assertions.assertEquals("Martin Luther King", spans.get(0).getText());
         Assertions.assertEquals(1043, spans.get(0).getCharacterStart());
@@ -368,7 +368,9 @@ public class OnnxNerTest {
 
         showEntities(spans);
 
-        Assertions.assertEquals(2, spans.size());
+        Assertions.assertEquals(6, spans.size());
+
+        // This doesn't check all 6. It only spot checks.
 
         Assertions.assertEquals("Martin Luther King", spans.get(0).getText());
         Assertions.assertEquals(1043, spans.get(0).getCharacterStart());
