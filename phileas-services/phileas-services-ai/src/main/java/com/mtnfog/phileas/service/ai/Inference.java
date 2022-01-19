@@ -75,14 +75,17 @@ public class Inference {
 
                 final float[] arr = v[0][x];
                 final int maxIndex = maxIndex(arr);
-                final String classification = id2Labels.get(maxIndex);
+                final String label = id2Labels.get(maxIndex);
 
                 // TODO: Need to make sure this value is between 0 and 1?
                 // Can we do thresholding without it between 0 and 1?
                 final double confidence = arr[maxIndex] / 10;
 
+                // Show each token and its label per the model.
+                // System.out.println(tokens.getTokens()[x] + " : " + label);
+
                 // Is this is the start of a person entity.
-                if (StringUtils.equalsIgnoreCase(classification, "B-PER")) {
+                if (StringUtils.equalsIgnoreCase(label, "B-PER")) {
 
                     final String spanText;
 
@@ -114,7 +117,12 @@ public class Inference {
                             } else {
 
                                 sb.append(tokens.getTokens()[i]);
-                                sb.append(" ");
+
+                                // Append a space unless the next token is a period.
+                                // This formats "Charles A. Smith" instead of "Charles A . Smith"
+                                if(!StringUtils.equals(tokens.getTokens()[i+1], ".")) {
+                                    sb.append(" ");
+                                }
 
                             }
 
@@ -174,7 +182,7 @@ public class Inference {
                 .replaceAll("\\)", "\\\\)")
                 .replaceAll("\\(", "\\\\(");
 
-        final Pattern pattern = Pattern.compile(regex);
+        final Pattern pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
         final Matcher matcher = pattern.matcher(text);
 
         // System.out.println("Text: " + text);

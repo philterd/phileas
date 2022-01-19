@@ -144,4 +144,37 @@ public class PersonsFilterTest extends AbstractFilterTest {
 
     }
 
+    @Test
+    public void filter4() throws Exception {
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(Arrays.asList(new PersonsFilterStrategy()))
+                .withAlertService(alertService)
+                .withAnonymizationService(new PersonsAnonymizationService(new LocalAnonymizationCacheService()))
+                .withWindowSize(windowSize)
+                .build();
+
+        final File model = new File(getClass().getClassLoader().getResource("ner/model.onnx").toURI());
+        final File vocab = new File(getClass().getClassLoader().getResource("ner/vocab.txt").toURI());
+        final Map<String, DescriptiveStatistics> stats = new LinkedHashMap<>();
+        final Map<String, Double> thresholds = new LinkedHashMap<>();
+
+        final PersonsFilter filter = new PersonsFilter(
+                filterConfiguration,
+                model.getAbsolutePath(),
+                vocab.getAbsolutePath(),
+                stats,
+                metricsService,
+                thresholds);
+
+        final String input = "IN THE UNITED STATES DISTRICT COURT \nEASTERN DISTRICT OF ARKANSAS \nWESTERN DIVISION \nJAMES EDWARD SMITH, \nafk/a James Edward Bridges, \nADC#103093 \nv. No. 4:14-cv-455-DPM \nPLAINTIFF \nCHARLES A. SMITH; \nMARY ANN CONLEY, \nafk/a Mary Ann Smith; and \nROBERT CASTILLOW DEFENDANTS \nORDER \nJames Smith's prose complaint must be dismissed without prejudice. \nHe hasn't paid the filing fee, moved to proceed in forma pauperis, or provided \nproof of service on any defendant. FED. R. CIV. P. 4(I); Local Rule 5.5(c)(2). \nSo Ordered. \nD.P. Marshall Jr. \nUnited States District Judge \nCase 4:14-cv-00455-DPM   Document 2   Filed 12/09/14   Page 1 of 1\n";
+
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, input);
+
+        showSpans(filterResult.getSpans());
+
+        Assertions.assertEquals(7, filterResult.getSpans().size());
+
+    }
+
 }

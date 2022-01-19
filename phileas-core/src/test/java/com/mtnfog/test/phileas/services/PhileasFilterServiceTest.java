@@ -107,7 +107,7 @@ public class PhileasFilterServiceTest {
 
         LOGGER.info(response.getFilteredText());
 
-        Assertions.assertEquals("George Washington was president and his ssn was {{{REDACTED-ssn}}} and he lived at {{{REDACTED-zip-code}}}.", response.getFilteredText());
+        Assertions.assertEquals("{{{REDACTED-person}}} was president and his ssn was {{{REDACTED-ssn}}} and he lived at {{{REDACTED-zip-code}}}.", response.getFilteredText());
         Assertions.assertEquals("documentid", response.getDocumentId());
 
     }
@@ -308,7 +308,34 @@ public class PhileasFilterServiceTest {
 
         LOGGER.info(response.getFilteredText());
 
-        Assertions.assertEquals("George Washington was president and his ssn was {{{REDACTED-ssn}}} and he lived at {{{REDACTED-zip-code}}}. The name 456 should be filtered. Jeff Smith should be ignored.", response.getFilteredText());
+        Assertions.assertEquals("{{{REDACTED-person}}} was president and his ssn was {{{REDACTED-ssn}}} and he lived at {{{REDACTED-zip-code}}}. The name 456 should be filtered. {{{REDACTED-person}}} should be ignored.", response.getFilteredText());
+        Assertions.assertEquals("documentid", response.getDocumentId());
+
+    }
+
+    @Test
+    public void endToEnd10() throws Exception {
+
+        final Path temp = Files.createTempDirectory("philter");
+        final File file = Paths.get(temp.toFile().getAbsolutePath(), "default.json").toFile();
+        LOGGER.info("Writing profile to {}", file.getAbsolutePath());
+        FileUtils.writeStringToFile(file, gson.toJson(getFilterProfile("default")), Charset.defaultCharset());
+
+        Properties properties = new Properties();
+        properties.setProperty("indexes.directory", INDEXES_DIRECTORY);
+        properties.setProperty("store.enabled", "false");
+        properties.setProperty("filter.profiles.directory", temp.toFile().getAbsolutePath());
+
+        final PhileasConfiguration phileasConfiguration = ConfigFactory.create(PhileasConfiguration.class, properties);
+
+        final String input = "IN THE UNITED STATES DISTRICT COURT \nEASTERN DISTRICT OF ARKANSAS \nWESTERN DIVISION \nJAMES EDWARD SMITH, \nafk/a James Edward Bridges, \nADC#103093 \nv. No. 4:14-cv-455-DPM \nPLAINTIFF \nCHARLES A. SMITH; \nMARY ANN CONLEY, \nafk/a Mary Ann Smith; and \nROBERT CASTILLOW DEFENDANTS \nORDER \nJames Smith's prose complaint must be dismissed without prejudice. \nHe hasn't paid the filing fee, moved to proceed in forma pauperis, or provided \nproof of service on any defendant. FED. R. CIV. P. 4(I); Local Rule 5.5(c)(2). \nSo Ordered. \nD.P. Marshall Jr. \nUnited States District Judge \nCase 4:14-cv-00455-DPM   Document 2   Filed 12/09/14   Page 1 of 1\n";
+
+        final PhileasFilterService service = new PhileasFilterService(phileasConfiguration);
+        final FilterResponse response = service.filter(Arrays.asList("default"), "context", "documentid", input, MimeType.TEXT_PLAIN);
+
+        LOGGER.info(response.getFilteredText());
+
+        //Assertions.assertEquals("George Washington was president and his ssn was {{{REDACTED-ssn}}} and he lived at {{{REDACTED-zip-code}}}. The name 456 should be filtered. Jeff Smith should be ignored.", response.getFilteredText());
         Assertions.assertEquals("documentid", response.getDocumentId());
 
     }
@@ -917,13 +944,13 @@ public class PhileasFilterServiceTest {
         identifiers.setEmailAddress(emailAddress);
         identifiers.setIdentifiers(Arrays.asList(identifier1, identifier2));
         identifiers.setIpAddress(ipAddress);
+        identifiers.setPerson(person);
         identifiers.setPhoneNumber(phoneNumber);
         identifiers.setSsn(ssn);
         identifiers.setStateAbbreviation(stateAbbreviation);
         identifiers.setUrl(url);
         identifiers.setVin(vin);
         identifiers.setZipCode(zipCode);
-        //identifiers.setNer(ner);
 
         /*identifiers.setCity(city);
         identifiers.setCounty(county);

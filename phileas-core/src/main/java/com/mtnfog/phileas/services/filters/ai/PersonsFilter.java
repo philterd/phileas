@@ -11,6 +11,7 @@ import com.mtnfog.phileas.model.profile.FilterProfile;
 import com.mtnfog.phileas.model.services.MetricsService;
 import com.mtnfog.phileas.service.ai.OnnxNer;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
+import org.apache.commons.text.WordUtils;
 
 import java.io.File;
 import java.util.HashMap;
@@ -54,6 +55,13 @@ public class PersonsFilter extends NerFilter {
 
     @Override
     public FilterResult filter(FilterProfile filterProfile, String context, String documentId, int piece, String input) throws Exception {
+
+        // Remove line breaks.
+        input = input.replaceAll("\n", " ");
+
+        // Convert all caps words to just first letter capitalized.
+        // This changes things like JAMES SMITH to James Smith which the model likes better.
+        input = WordUtils.capitalizeFully(input);
 
         final List<Entity> entities = onnxNer.find(input, context, documentId);
 
