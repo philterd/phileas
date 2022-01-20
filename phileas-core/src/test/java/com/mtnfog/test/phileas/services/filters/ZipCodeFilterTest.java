@@ -30,7 +30,7 @@ public class ZipCodeFilterTest extends AbstractFilterTest {
 
         final ZipCodeFilter filter = new ZipCodeFilter(filterConfiguration, true);
 
-        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "the zip is 90210.");
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", "the zip is 90210.");
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 11, 16, FilterType.ZIP_CODE));
         Assertions.assertEquals("90210", filterResult.getSpans().get(0).getText());
@@ -49,7 +49,7 @@ public class ZipCodeFilterTest extends AbstractFilterTest {
 
         final ZipCodeFilter filter = new ZipCodeFilter(filterConfiguration, true);
 
-        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "the zip is 90210abd.");
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", "the zip is 90210abd.");
         Assertions.assertEquals(0, filterResult.getSpans().size());
 
     }
@@ -66,7 +66,7 @@ public class ZipCodeFilterTest extends AbstractFilterTest {
 
         final ZipCodeFilter filter = new ZipCodeFilter(filterConfiguration, true);
 
-        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "the zip is 90210 in california.");
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", "the zip is 90210 in california.");
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 11, 16, FilterType.ZIP_CODE));
 
@@ -84,7 +84,7 @@ public class ZipCodeFilterTest extends AbstractFilterTest {
 
         final ZipCodeFilter filter = new ZipCodeFilter(filterConfiguration, true);
 
-        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "the zip is 85055 in california.");
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", "the zip is 85055 in california.");
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 11, 16, FilterType.ZIP_CODE));
 
@@ -102,7 +102,7 @@ public class ZipCodeFilterTest extends AbstractFilterTest {
 
         final ZipCodeFilter filter = new ZipCodeFilter(filterConfiguration, true);
 
-        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "the zip is 90213-1544 in california.");
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", "the zip is 90213-1544 in california.");
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 11, 21, FilterType.ZIP_CODE));
 
@@ -120,7 +120,7 @@ public class ZipCodeFilterTest extends AbstractFilterTest {
 
         final ZipCodeFilter filter = new ZipCodeFilter(filterConfiguration, true);
 
-        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "George Washington was president and his ssn was 123-45-6789 and he lived in 90210.");
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", "George Washington was president and his ssn was 123-45-6789 and he lived in 90210.");
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 76, 81, FilterType.ZIP_CODE));
 
@@ -139,7 +139,7 @@ public class ZipCodeFilterTest extends AbstractFilterTest {
         final ZipCodeFilter filter = new ZipCodeFilter(filterConfiguration, true);
 
         // Tests whole word only.
-        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "George Washington was president and his ssn was 123-45-6789 and he lived in 9021032.");
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", "George Washington was president and his ssn was 123-45-6789 and he lived in 9021032.");
         Assertions.assertEquals(0, filterResult.getSpans().size());
 
     }
@@ -157,7 +157,7 @@ public class ZipCodeFilterTest extends AbstractFilterTest {
         final ZipCodeFilter filter = new ZipCodeFilter(filterConfiguration, true);
 
         // Tests whole word only.
-        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "George Washington was president and his ssn was 123-45-6789 and he lived in 90210-1234.");
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", "George Washington was president and his ssn was 123-45-6789 and he lived in 90210-1234.");
         Assertions.assertEquals(1, filterResult.getSpans().size());
 
     }
@@ -175,7 +175,7 @@ public class ZipCodeFilterTest extends AbstractFilterTest {
         final ZipCodeFilter filter = new ZipCodeFilter(filterConfiguration, false);
 
         // Tests without delimiter.
-        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "George Washington was president and his ssn was 123-45-6789 and he lived in 902101234.");
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", "George Washington was president and his ssn was 123-45-6789 and he lived in 902101234.");
         Assertions.assertEquals(1, filterResult.getSpans().size());
 
     }
@@ -193,7 +193,7 @@ public class ZipCodeFilterTest extends AbstractFilterTest {
         final ZipCodeFilter filter = new ZipCodeFilter(filterConfiguration, true);
 
         // Tests without delimiter.
-        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "George Washington was president and his ssn was 123-45-6789 and he lived in 902101234.");
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", "George Washington was president and his ssn was 123-45-6789 and he lived in 902101234.");
         Assertions.assertEquals(0, filterResult.getSpans().size());
 
     }

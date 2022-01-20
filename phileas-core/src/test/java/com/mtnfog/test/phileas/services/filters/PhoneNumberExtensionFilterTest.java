@@ -30,7 +30,7 @@ public class PhoneNumberExtensionFilterTest extends AbstractFilterTest {
 
         final PhoneNumberExtensionFilter filter = new PhoneNumberExtensionFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "he is at x123");
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", "he is at x123");
         showSpans(filterResult.getSpans());
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
@@ -51,7 +51,7 @@ public class PhoneNumberExtensionFilterTest extends AbstractFilterTest {
 
         final PhoneNumberExtensionFilter filter = new PhoneNumberExtensionFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "his phone number was +1 151-841-2829 x416.");
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", "his phone number was +1 151-841-2829 x416.");
         showSpans(filterResult.getSpans());
 
         Assertions.assertEquals(1, filterResult.getSpans().size());

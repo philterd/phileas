@@ -37,7 +37,7 @@ public class BloomFilterDictionaryFilterTest extends AbstractFilterTest {
         final Set<String> names = new HashSet<>(Arrays.asList("george", "ted", "Bill", "john"));
         final BloomFilterDictionaryFilter filter = new BloomFilterDictionaryFilter(FilterType.CUSTOM_DICTIONARY, filterConfiguration, names, "none", 0.05);
 
-         final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "He lived with Bill in California.");
+         final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", "He lived with Bill in California.");
 
         showSpans(filterResult.getSpans());
 
@@ -60,7 +60,7 @@ public class BloomFilterDictionaryFilterTest extends AbstractFilterTest {
         final Set<String> names = new HashSet<>(Arrays.asList("george", "ted", "bill", "john"));
         final BloomFilterDictionaryFilter filter = new BloomFilterDictionaryFilter(FilterType.CUSTOM_DICTIONARY, filterConfiguration, names, "none", 0.05);
 
-        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "He lived with Bill in California.");
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", "He lived with Bill in California.");
 
         showSpans(filterResult.getSpans());
 
@@ -83,7 +83,7 @@ public class BloomFilterDictionaryFilterTest extends AbstractFilterTest {
         final Set<String> names = new HashSet<>(Arrays.asList("george", "ted", "bill", "john"));
         final BloomFilterDictionaryFilter filter = new BloomFilterDictionaryFilter(FilterType.CUSTOM_DICTIONARY, filterConfiguration, names, "none", 0.05);
 
-        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "He lived with Sam in California.");
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", "He lived with Sam in California.");
 
         showSpans(filterResult.getSpans());
 
@@ -104,7 +104,7 @@ public class BloomFilterDictionaryFilterTest extends AbstractFilterTest {
         final Set<String> names = new HashSet<>(Arrays.asList("george jones", "ted", "bill", "john"));
         final BloomFilterDictionaryFilter filter = new BloomFilterDictionaryFilter(FilterType.CUSTOM_DICTIONARY, filterConfiguration, names, "none", 0.05);
 
-        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0,"He lived with george jones in California.");
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid","He lived with george jones in California.");
 
         showSpans(filterResult.getSpans());
 
@@ -127,7 +127,7 @@ public class BloomFilterDictionaryFilterTest extends AbstractFilterTest {
         final Set<String> names = new HashSet<>(Arrays.asList("george jones jr", "ted", "bill smith", "john"));
         final BloomFilterDictionaryFilter filter = new BloomFilterDictionaryFilter(FilterType.CUSTOM_DICTIONARY, filterConfiguration, names, "none", 0.05);
 
-        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0,"Bill Smith lived with george jones jr in California.");
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid","Bill Smith lived with george jones jr in California.");
 
         showSpans(filterResult.getSpans());
 

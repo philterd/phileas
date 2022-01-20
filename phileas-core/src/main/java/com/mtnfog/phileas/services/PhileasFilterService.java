@@ -194,7 +194,7 @@ public class PhileasFilterService implements FilterService {
         if(mimeType == MimeType.TEXT_PLAIN) {
 
             // Do not split. Process the entire string at once.
-            filterResponse = unstructuredDocumentProcessor.process(filterProfile, filters, postFilters, context, documentId, 0, input);
+            filterResponse = unstructuredDocumentProcessor.process(filterProfile, filters, postFilters, context, documentId, input);
 
         /*} else if(mimeType == MimeType.TEXT_HTML) {
 
@@ -264,8 +264,10 @@ public class PhileasFilterService implements FilterService {
             // Process each line looking for sensitive information in each line.
             for (final String line : lines) {
 
+//System.out.println(line);
+
                 // Process the text.
-                final FilterResponse filterResponse = unstructuredDocumentProcessor.process(filterProfile, filters, postFilters, context, documentId, 0, line);
+                final FilterResponse filterResponse = unstructuredDocumentProcessor.process(filterProfile, filters, postFilters, context, documentId, line);
 
                 // Add all the found spans to the list of spans.
                 spans.addAll(filterResponse.getExplanation().getAppliedSpans());

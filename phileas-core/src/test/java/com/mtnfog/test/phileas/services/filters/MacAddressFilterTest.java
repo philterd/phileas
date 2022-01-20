@@ -30,7 +30,7 @@ public class MacAddressFilterTest extends AbstractFilterTest {
 
         final MacAddressFilter filter = new MacAddressFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "the mac is 00-14-22-04-25-37.");
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", "the mac is 00-14-22-04-25-37.");
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 11, 28, FilterType.MAC_ADDRESS));
@@ -50,7 +50,7 @@ public class MacAddressFilterTest extends AbstractFilterTest {
 
         final MacAddressFilter filter = new MacAddressFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "the mac is 00:14:22:04:25:37.");
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", "the mac is 00:14:22:04:25:37.");
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 11, 28, FilterType.MAC_ADDRESS));

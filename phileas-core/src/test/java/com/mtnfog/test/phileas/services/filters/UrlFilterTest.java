@@ -30,7 +30,7 @@ public class UrlFilterTest extends AbstractFilterTest {
 
         final UrlFilter filter = new UrlFilter(filterConfiguration, true);
 
-        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid",  0, "the page is http://page.com.");
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid","the page is http://page.com.");
         showSpans(filterResult.getSpans());
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 12, 27, FilterType.URL));
@@ -50,7 +50,7 @@ public class UrlFilterTest extends AbstractFilterTest {
 
         final UrlFilter filter = new UrlFilter(filterConfiguration, true);
 
-        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid",  0, "the page is myhomepage.com.");
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", "the page is myhomepage.com.");
         showSpans(filterResult.getSpans());
         Assertions.assertEquals(0, filterResult.getSpans().size());
 
@@ -68,7 +68,7 @@ public class UrlFilterTest extends AbstractFilterTest {
 
         final UrlFilter filter = new UrlFilter(filterConfiguration, true);
 
-        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid",   0, "the page is http://myhomepage.com/folder/page.html.");
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", "the page is http://myhomepage.com/folder/page.html.");
         showSpans(filterResult.getSpans());
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 12, 51, FilterType.URL));
@@ -87,7 +87,7 @@ public class UrlFilterTest extends AbstractFilterTest {
 
         final UrlFilter filter = new UrlFilter(filterConfiguration, true);
 
-        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "the page is http://www.myhomepage.com/folder/page.html");
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", "the page is http://www.myhomepage.com/folder/page.html");
         showSpans(filterResult.getSpans());
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 12, 54, FilterType.URL));
@@ -106,7 +106,7 @@ public class UrlFilterTest extends AbstractFilterTest {
 
         final UrlFilter filter = new UrlFilter(filterConfiguration, true);
 
-        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "the page is www.myhomepage.com/folder/page.html.");
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", "the page is www.myhomepage.com/folder/page.html.");
         showSpans(filterResult.getSpans());
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 12, 48, FilterType.URL));
@@ -125,7 +125,7 @@ public class UrlFilterTest extends AbstractFilterTest {
 
         final UrlFilter filter = new UrlFilter(filterConfiguration, false);
 
-        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "the page is myhomepage.com.");
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", "the page is myhomepage.com.");
         showSpans(filterResult.getSpans());
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 12, 26, FilterType.URL));
@@ -144,7 +144,7 @@ public class UrlFilterTest extends AbstractFilterTest {
 
         final UrlFilter filter = new UrlFilter(filterConfiguration, true);
 
-        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "the page is www.myhomepage.com:80/folder/page.html.");
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", "the page is www.myhomepage.com:80/folder/page.html.");
         showSpans(filterResult.getSpans());
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 12, 51, FilterType.URL));
@@ -163,7 +163,7 @@ public class UrlFilterTest extends AbstractFilterTest {
 
         final UrlFilter filter = new UrlFilter(filterConfiguration, true);
 
-        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "the page is http://192.168.1.1:80/folder/page.html.");
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", "the page is http://192.168.1.1:80/folder/page.html.");
         showSpans(filterResult.getSpans());
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 12, 51, FilterType.URL));
@@ -182,7 +182,7 @@ public class UrlFilterTest extends AbstractFilterTest {
 
         final UrlFilter filter = new UrlFilter(filterConfiguration, false);
 
-        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "the page is 192.168.1.1:80/folder/page.html.");
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", "the page is 192.168.1.1:80/folder/page.html.");
         showSpans(filterResult.getSpans());
         Assertions.assertEquals(2, filterResult.getSpans().size());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 34, 43, FilterType.URL));
@@ -202,7 +202,7 @@ public class UrlFilterTest extends AbstractFilterTest {
 
         final UrlFilter filter = new UrlFilter(filterConfiguration, false);
 
-        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "the page is http://192.168.1.1:80/folder/page.html.");
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", "the page is http://192.168.1.1:80/folder/page.html.");
         showSpans(filterResult.getSpans());
         Assertions.assertEquals(2, filterResult.getSpans().size());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 41, 50, FilterType.URL));
@@ -222,7 +222,7 @@ public class UrlFilterTest extends AbstractFilterTest {
 
         final UrlFilter filter = new UrlFilter(filterConfiguration, false);
 
-        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "the page is https://192.168.1.1:80/folder/page.html.");
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", "the page is https://192.168.1.1:80/folder/page.html.");
         showSpans(filterResult.getSpans());
         Assertions.assertEquals(2, filterResult.getSpans().size());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 42, 51, FilterType.URL));
@@ -242,7 +242,7 @@ public class UrlFilterTest extends AbstractFilterTest {
 
         final UrlFilter filter = new UrlFilter(filterConfiguration, true);
 
-        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "the page is test.ok new sentence");
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", "the page is test.ok new sentence");
         showSpans(filterResult.getSpans());
         Assertions.assertEquals(0, filterResult.getSpans().size());
 
@@ -260,7 +260,7 @@ public class UrlFilterTest extends AbstractFilterTest {
 
         final UrlFilter filter = new UrlFilter(filterConfiguration, false);
 
-        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "the page is http://2001:0db8:85a3:0000:0000:8a2e:0370:7334/test.html.");
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", "the page is http://2001:0db8:85a3:0000:0000:8a2e:0370:7334/test.html.");
         showSpans(filterResult.getSpans());
         Assertions.assertEquals(2, filterResult.getSpans().size());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 59, 68, FilterType.URL));
@@ -280,7 +280,7 @@ public class UrlFilterTest extends AbstractFilterTest {
 
         final UrlFilter filter = new UrlFilter(filterConfiguration, false);
 
-        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "the page is http://2001:0db8:85a3:0000:0000:8a2e:0370:7334/test/.");
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", "the page is http://2001:0db8:85a3:0000:0000:8a2e:0370:7334/test/.");
         showSpans(filterResult.getSpans());
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 12, 65, FilterType.URL));
@@ -299,7 +299,7 @@ public class UrlFilterTest extends AbstractFilterTest {
 
         final UrlFilter filter = new UrlFilter(filterConfiguration, false);
 
-        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "the page is https://192.168.1.1:80/folder/page.html. this is a new sentence.");
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", "the page is https://192.168.1.1:80/folder/page.html. this is a new sentence.");
         showSpans(filterResult.getSpans());
         Assertions.assertEquals(2, filterResult.getSpans().size());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 42, 51, FilterType.URL));

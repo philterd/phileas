@@ -30,7 +30,7 @@ public class DriversLicenseFilterTest extends AbstractFilterTest {
 
         final DriversLicenseFilter filter = new DriversLicenseFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "the number is 123456789.");
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", "the number is 123456789.");
 
         showSpans(filterResult.getSpans());
 

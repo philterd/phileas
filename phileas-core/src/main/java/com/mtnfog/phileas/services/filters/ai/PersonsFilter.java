@@ -54,7 +54,7 @@ public class PersonsFilter extends NerFilter {
     }
 
     @Override
-    public FilterResult filter(FilterProfile filterProfile, String context, String documentId, int piece, String input) throws Exception {
+    public FilterResult filter(FilterProfile filterProfile, String context, String documentId, String input) throws Exception {
 
         // Remove line breaks.
         input = input.replaceAll("\n", " ");

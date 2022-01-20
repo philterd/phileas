@@ -30,7 +30,7 @@ public class EmailAddressFilterTest extends AbstractFilterTest {
 
         final EmailAddressFilter filter = new EmailAddressFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "my email is none@none.com.");
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", "my email is none@none.com.");
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 12, 25, FilterType.EMAIL_ADDRESS));
         Assertions.assertEquals("none@none.com", filterResult.getSpans().get(0).getText());

@@ -30,7 +30,7 @@ public class BitcoinAddressFilterTest extends AbstractFilterTest {
 
         final BitcoinAddressFilter filter = new BitcoinAddressFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "the address is 127NVqnjf8gB9BFAW2dnQeM6wqmy1gbGtv.");
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", "the address is 127NVqnjf8gB9BFAW2dnQeM6wqmy1gbGtv.");
 
         showSpans(filterResult.getSpans());
 
@@ -53,7 +53,7 @@ public class BitcoinAddressFilterTest extends AbstractFilterTest {
 
         final BitcoinAddressFilter filter = new BitcoinAddressFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "the address is 12qnjf8FAW2dnQeM6wqmy1gbGtv.");
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", "the address is 12qnjf8FAW2dnQeM6wqmy1gbGtv.");
 
         showSpans(filterResult.getSpans());
 
@@ -76,7 +76,7 @@ public class BitcoinAddressFilterTest extends AbstractFilterTest {
 
         final BitcoinAddressFilter filter = new BitcoinAddressFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "the address is 126wqmy1gbGtv.");
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", "the address is 126wqmy1gbGtv.");
 
         showSpans(filterResult.getSpans());
 

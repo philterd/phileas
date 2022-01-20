@@ -11,6 +11,6 @@ import java.util.List;
  */
 public interface DocumentProcessor {
 
-    FilterResponse process(FilterProfile filterProfile, List<Filter> filters, List<PostFilter> postFilters, String context, String documentId, int piece, String input) throws Exception;
+    FilterResponse process(FilterProfile filterProfile, List<Filter> filters, List<PostFilter> postFilters, String context, String documentId, String input) throws Exception;
 
 }

@@ -39,7 +39,7 @@ public class IbanCodeFilterTest extends AbstractFilterTest {
 
         final Filter filter = getFilter(true, false);
 
-        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "bank code of GB33BUKB20201555555555 ok?");
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", "bank code of GB33BUKB20201555555555 ok?");
 
         showSpans(filterResult.getSpans());
 
@@ -55,7 +55,7 @@ public class IbanCodeFilterTest extends AbstractFilterTest {
 
         final Filter filter = getFilter(false, false);
 
-        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "bank code of GB15MIDL40051512345678 ok?");
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", "bank code of GB15MIDL40051512345678 ok?");
 
         showSpans(filterResult.getSpans());
 
@@ -71,7 +71,7 @@ public class IbanCodeFilterTest extends AbstractFilterTest {
 
         final Filter filter = getFilter(true, true);
 
-        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "bank code of GB15 MIDL 4005 1512 3456 78 ok?");
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", "bank code of GB15 MIDL 4005 1512 3456 78 ok?");
 
         showSpans(filterResult.getSpans());
 
@@ -87,7 +87,7 @@ public class IbanCodeFilterTest extends AbstractFilterTest {
 
         final Filter filter = getFilter(true, true);
 
-        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", 0, "bank code of GB15 MIDL 4005 1512 3456 zz ok?");
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", "bank code of GB15 MIDL 4005 1512 3456 zz ok?");
 
         showSpans(filterResult.getSpans());
 

@@ -35,7 +35,7 @@ public class SsnFilter extends RegexFilter {
     }
 
     @Override
-    public FilterResult filter(FilterProfile filterProfile, String context, String documentId, int piece, String input) throws Exception {
+    public FilterResult filter(FilterProfile filterProfile, String context, String documentId, String input) throws Exception {
 
         final List<Span> spans = findSpans(filterProfile, analyzer, input, context, documentId);
 

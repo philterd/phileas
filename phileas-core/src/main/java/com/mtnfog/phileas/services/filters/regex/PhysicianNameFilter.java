@@ -58,7 +58,7 @@ public class PhysicianNameFilter extends RegexFilter {
     }
 
     @Override
-    public FilterResult filter(FilterProfile filterProfile, String context, String documentId, int piece, String input) throws Exception {
+    public FilterResult filter(FilterProfile filterProfile, String context, String documentId, String input) throws Exception {
 
         // \b([A-Z][A-Za-z'\s+]+)(,|\s)?([A-Z][A-Za-z'\s+]+(,|\s))?([A-Z][A-Za-z'\s+]+(,|\s)?(MD|PhD))\b
 
