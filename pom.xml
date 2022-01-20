@@ -76,7 +76,7 @@
 		<module>phileas-core</module>
 		<module>phileas-model</module>
 		<module>phileas-services</module>
-    	<module>phileas-configuration</module>
+	    	<module>phileas-configuration</module>
 		<module>phileas-processors</module>
 		<module>owner</module>
   	</modules>
@@ -115,7 +115,6 @@
 		<nv-i18n.version>1.27</nv-i18n.version>
 		<onnxruntime.version>1.10.0</onnxruntime.version>
 		<opennlp.version>1.9.4</opennlp.version>
-		<owner.version>1.0.13-SNAPSHOT</owner.version>
 		<pdfbox.version>2.0.23</pdfbox.version>
 		<redis-mock.version>0.1.6</redis-mock.version>
 		<redisson.version>3.15.1</redisson.version>
