@@ -166,7 +166,7 @@
 					</dependency>
 				</dependencies>
 				<configuration>
-					<argLine>-Xmx4096m -XX:MaxPermSize=256m</argLine>
+					<useSystemClassLoader>false</useSystemClassLoader>
 					<excludes>
 						<exclude>**/*IT.java</exclude>
 					</excludes>
