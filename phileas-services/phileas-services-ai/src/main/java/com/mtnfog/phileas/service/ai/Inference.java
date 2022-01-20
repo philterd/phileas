@@ -109,28 +109,41 @@ public class Inference {
                             if (tokens.getTokens()[i + 1].startsWith("##")) {
 
                                 sb.append(tokens.getTokens()[i] + tokens.getTokens()[i + 1].replaceAll("##", ""));
-                                sb.append(" ");
+
+                                // Append a space unless the next token starts with ##.
+                                if(!tokens.getTokens()[i+1].startsWith("##")) {
+                                    sb.append(" ");
+                                }
 
                                 // Skip the next token since we just included it in this iteration.
                                 i++;
 
                             } else {
 
-                                sb.append(tokens.getTokens()[i]);
+                                sb.append(tokens.getTokens()[i].replaceAll("##", ""));
 
-                                // Append a space unless the next token is a period.
+                                // Append a space unless:
+                                // 1. The next token is a period, or
+                                // 2. The next token starts with "##"
                                 // This formats "Charles A. Smith" instead of "Charles A . Smith"
                                 if(!StringUtils.equals(tokens.getTokens()[i+1], ".")) {
-                                    sb.append(" ");
+                                    if (!tokens.getTokens()[i+1].startsWith("##")) {
+                                        sb.append(" ");
+                                    }
                                 }
 
                             }
 
                         }
 
+                        // Remove any stray ## from the token.
+                        // TODO: Fix this in the logic above instead of doing it as a bandaid here.
+                        //final String bandaid = sb.toString().trim().replaceAll("##", "");
+                        final String bandaid = sb.toString().trim();
+
                         // This is the text of the span. We use the whole original input text and not one
                         // of the splits. This gives us accurate character positions.
-                        spanText = findByRegex(text, sb.toString().trim()).trim();
+                        spanText = findByRegex(text, bandaid).trim();
 
                     } else {
 

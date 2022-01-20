@@ -20,6 +20,7 @@ import com.mtnfog.phileas.model.responses.FilterResponse;
 import com.mtnfog.phileas.model.serializers.PlaceholderDeserializer;
 import com.mtnfog.phileas.services.PhileasFilterService;
 import org.aeonbits.owner.ConfigFactory;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -30,6 +31,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -756,6 +758,46 @@ public class PhileasFilterServiceTest {
 
     }
 
+    @Test
+    public void pdf3() throws Exception {
+
+        final String filename = "12-12110 K.pdf";
+
+        final InputStream is = this.getClass().getResourceAsStream("/pdfs/" + filename);
+        final byte[] document = IOUtils.toByteArray(is);
+        is.close();
+
+        final Path temp = Files.createTempDirectory("philter");
+
+        final File file1 = Paths.get(temp.toFile().getAbsolutePath(), "pdf.json").toFile();
+        LOGGER.info("Writing profile to {}", file1.getAbsolutePath());
+        FileUtils.writeStringToFile(file1, gson.toJson(getPdfFilterWithPersonProfile("pdf")), Charset.defaultCharset());
+
+        Properties properties = new Properties();
+        properties.setProperty("indexes.directory", INDEXES_DIRECTORY);
+        properties.setProperty("store.enabled", "false");
+        properties.setProperty("filter.profiles.directory", temp.toFile().getAbsolutePath());
+
+        final PhileasConfiguration phileasConfiguration = ConfigFactory.create(PhileasConfiguration.class, properties);
+
+        PhileasFilterService service = new PhileasFilterService(phileasConfiguration);
+        final BinaryDocumentFilterResponse response = service.filter(Arrays.asList("pdf"), "context", "documentid", document, MimeType.APPLICATION_PDF, MimeType.APPLICATION_PDF);
+
+        // Write the byte array to a file.
+        final File outputFile = File.createTempFile("redact", ".pdf");
+        //outputFile.deleteOnExit();
+        final String output = outputFile.getAbsolutePath();
+        LOGGER.info("Writing redacted PDF to {}", output);
+        FileUtils.writeByteArrayToFile(new File(output), response.getDocument());
+
+        LOGGER.info("Spans: {}", response.getExplanation().getAppliedSpans().size());
+        showSpans(response.getExplanation().getAppliedSpans());
+
+        final String md5 = DigestUtils.md5Hex(new FileInputStream(outputFile));
+        Assertions.assertEquals("6a7076dff4299650a5f3341f006831c6", md5);
+
+    }
+
     private FilterProfile getFilterProfileZipCodeWithIgnored(String filterProfileName) throws IOException {
 
         Set<String> ignored = new HashSet<>();
@@ -993,6 +1035,26 @@ public class PhileasFilterServiceTest {
 
         identifiers.setCustomDictionaries(Arrays.asList(customDictionary));
         identifiers.setZipCode(zipCode);
+
+        FilterProfile filterProfile = new FilterProfile();
+        filterProfile.setName(filterProfileName);
+        filterProfile.setIdentifiers(identifiers);
+
+        return filterProfile;
+
+    }
+
+    private FilterProfile getPdfFilterWithPersonProfile(String filterProfileName) throws URISyntaxException {
+
+        final File model = new File(getClass().getClassLoader().getResource("ner/model.onnx").toURI());
+        final File vocab = new File(getClass().getClassLoader().getResource("ner/vocab.txt").toURI());
+
+        final Person person = new Person();
+        person.setModel(model.getAbsolutePath());
+        person.setVocab(vocab.getAbsolutePath());
+
+        Identifiers identifiers = new Identifiers();
+        identifiers.setPerson(person);
 
         FilterProfile filterProfile = new FilterProfile();
         filterProfile.setName(filterProfileName);
