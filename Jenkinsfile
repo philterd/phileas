@@ -56,7 +56,7 @@ pipeline {
         stage ('Build') {
             steps {
                 sh "mvn -version"
-                sh "mvn -U clean license:aggregate-add-third-party license:aggregate-download-licenses install deploy -Pit"
+                sh "mvn -X -U clean license:aggregate-add-third-party license:aggregate-download-licenses install deploy -Pit"
             }
         }
         stage ('Analyze') {
