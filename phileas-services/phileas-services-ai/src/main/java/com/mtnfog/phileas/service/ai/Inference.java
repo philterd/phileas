@@ -110,8 +110,8 @@ public class Inference {
 
                                 sb.append(tokens.getTokens()[i] + tokens.getTokens()[i + 1].replaceAll("##", ""));
 
-                                // Append a space unless the next token starts with ##.
-                                if(!tokens.getTokens()[i+1].startsWith("##")) {
+                                // Append a space unless the next (next) token starts with ##.
+                                if(!tokens.getTokens()[i+2].startsWith("##")) {
                                     sb.append(" ");
                                 }
 
@@ -122,14 +122,9 @@ public class Inference {
 
                                 sb.append(tokens.getTokens()[i].replaceAll("##", ""));
 
-                                // Append a space unless:
-                                // 1. The next token is a period, or
-                                // 2. The next token starts with "##"
-                                // This formats "Charles A. Smith" instead of "Charles A . Smith"
+                                // Append a space unless yhe next token is a period.
                                 if(!StringUtils.equals(tokens.getTokens()[i+1], ".")) {
-                                    if (!tokens.getTokens()[i+1].startsWith("##")) {
                                         sb.append(" ");
-                                    }
                                 }
 
                             }
