@@ -165,7 +165,7 @@
 					</dependency>
 				</dependencies>
 				<configuration>
-					<useSystemClassLoader>false</useSystemClassLoader>
+					<argLine>-Xmx8g</argLine>
 					<excludes>
 						<exclude>**/*IT.java</exclude>
 					</excludes>
