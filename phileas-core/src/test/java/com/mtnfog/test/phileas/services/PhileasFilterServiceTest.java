@@ -33,6 +33,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URISyntaxException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -56,7 +57,7 @@ public class PhileasFilterServiceTest {
     }
 
     @Test
-    public void filterProfile() throws IOException {
+    public void filterProfile() throws IOException, URISyntaxException {
 
         final FilterProfile filterProfile = getFilterProfile("default");
         final String json = gson.toJson(filterProfile);
@@ -69,7 +70,7 @@ public class PhileasFilterServiceTest {
     }
 
     @Test
-    public void filterProfileWithPlaceholder() throws IOException {
+    public void filterProfileWithPlaceholder() throws IOException, URISyntaxException {
 
         final Ignored ignored = new Ignored();
         ignored.setTerms(Arrays.asList("john", "jeff", "${USER}"));
@@ -817,7 +818,7 @@ public class PhileasFilterServiceTest {
 
     }
 
-    private FilterProfile getFilterProfile(String filterProfileName) throws IOException {
+    private FilterProfile getFilterProfile(String filterProfileName) throws IOException, URISyntaxException {
 
         AgeFilterStrategy ageFilterStrategy = new AgeFilterStrategy();
 
@@ -894,7 +895,12 @@ public class PhileasFilterServiceTest {
 
         PersonsFilterStrategy personsFilterStrategy = new PersonsFilterStrategy();
 
+        final File model = new File(getClass().getClassLoader().getResource("ner/model.onnx").toURI());
+        final File vocab = new File(getClass().getClassLoader().getResource("ner/vocab.txt").toURI());
+
         Person person = new Person();
+        person.setModel(model.getAbsolutePath());
+        person.setVocab(vocab.getAbsolutePath());
         person.setPersonFilterStrategies(Arrays.asList(personsFilterStrategy));
 
         // ----------------------------------------------------------------------------------
