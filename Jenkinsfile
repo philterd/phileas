@@ -49,7 +49,7 @@ pipeline {
                             ],
                           gitTool: 'Default',
                           submoduleCfg: [],
-                          userRemoteConfigs: [[url: 'git@bitbucket.org:mountainfog/phileas.git']]
+                          userRemoteConfigs: [[url: 'git@github.com:mtnfog/phileas.git']]
                         ])
             }
         }
