@@ -14,8 +14,8 @@
 		<url>https://www.mtnfog.com</url>
 	</organization>
 	<scm>
-		<connection>scm:git@bitbucket.org:mountainfog/phileas.git</connection>
-		<developerConnection>scm:git@bitbucket.org:mountainfog/phileas.git</developerConnection>
+		<connection>scm:git@github.com:mtnfog/phileas.git</connection>
+		<developerConnection>scm:git@github.com:mtnfog/phileas.git</developerConnection>
 		<url>https://bitbucket.org/mountainfog/phileas/</url>
 	</scm>
 	<developers>
