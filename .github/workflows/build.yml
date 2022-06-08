@@ -21,7 +21,10 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.CODE_ARTIFACT_AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.CODE_ARTIFACT_AWS_SECRET_ACCESS_KEY }}
-          aws-region: eu-west-1
+          aws-region: us-east-1
+      - run: echo CODEARTIFACT_AUTH_TOKEN=$(aws codeartifact get-authorization-token --domain mtnfog --domain-owner ${{ secrets.CODE_ARTIFACT_AWS_ACCOUNT_ID }} --query authorizationToken --output text --region us-east-1 ) >> $GITHUB_ENV
       - name: Build with Maven
         run: mvn --batch-mode --update-snapshots package deploy
       
+
+
