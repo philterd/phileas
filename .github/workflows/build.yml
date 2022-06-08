@@ -22,7 +22,10 @@ jobs:
           aws-access-key-id: ${{ secrets.CODE_ARTIFACT_AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.CODE_ARTIFACT_AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
-      - run: echo CODEARTIFACT_AUTH_TOKEN=$(aws codeartifact get-authorization-token --domain mtnfog --domain-owner ${{ secrets.CODE_ARTIFACT_AWS_ACCOUNT_ID }} --query authorizationToken --output text --region us-east-1 ) >> $GITHUB_ENV
+      - name: Set CodeArtifact token
+        run: echo CODEARTIFACT_AUTH_TOKEN=$(aws codeartifact get-authorization-token --domain mtnfog --domain-owner ${{ secrets.CODE_ARTIFACT_AWS_ACCOUNT_ID }} --query authorizationToken --output text --region us-east-1 ) >> $GITHUB_ENV
+      - name: Test token
+        run: echo $CODEARTIFACT_AUTH_TOKEN
       - name: Generate settings.xml for Maven Builds
         uses: whelk-io/maven-settings-xml-action@v20
         with:
