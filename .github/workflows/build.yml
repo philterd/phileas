@@ -17,7 +17,8 @@ jobs:
           distribution: 'adopt'
           architecture: 'x64'
           cache: 'maven'
-      - uses: aws-actions/configure-aws-credentials@v1
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
         with:
           aws-access-key-id: ${{ secrets.CODE_ARTIFACT_AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.CODE_ARTIFACT_AWS_SECRET_ACCESS_KEY }}
@@ -25,7 +26,7 @@ jobs:
       - name: Set CodeArtifact token
         run: echo CODEARTIFACT_AUTH_TOKEN=$(aws codeartifact get-authorization-token --domain mtnfog --domain-owner ${{ secrets.CODE_ARTIFACT_AWS_ACCOUNT_ID }} --query authorizationToken --output text --region us-east-1 ) >> $GITHUB_ENV
       - name: Test token
-        run: echo $CODEARTIFACT_AUTH_TOKEN
+        run: cat ~/.m2/settings.xml
       - name: Generate settings.xml for Maven Builds
         uses: whelk-io/maven-settings-xml-action@v20
         with:
