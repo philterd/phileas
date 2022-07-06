@@ -45,7 +45,7 @@ public class BloomFilterDictionaryFilter extends DictionaryFilter {
                                        String classification,
                                        double fpp) {
 
-        super(FilterType.CUSTOM_DICTIONARY, filterConfiguration);
+        super(filterType, filterConfiguration);
 
         this.lowerCaseTerms = new HashSet<>();
         this.bloomFilter = BloomFilter.create(Funnels.stringFunnel(Charset.defaultCharset()), terms.size(), fpp);
