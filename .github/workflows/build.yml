@@ -40,8 +40,3 @@ jobs:
           servers: '[{ "id": "mtnfog-maven-snapshots", "username": "aws", "password": "${{ env.CODEARTIFACT_AUTH_TOKEN }}" }, { "id": "mtnfog-maven-releases", "username": "aws", "password": "${{ env.CODEARTIFACT_AUTH_TOKEN }}" }]'
       - name: Build with Maven
         run: mvn --batch-mode --update-snapshots package deploy
-      - name: Analyze
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=mtnfog_phileas
