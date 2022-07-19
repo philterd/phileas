@@ -19,7 +19,8 @@ public class EncryptionTest {
     public void formatPreservingEncryption1() {
 
         // Test from https://csrc.nist.gov/csrc/media/projects/cryptographic-standards-and-guidelines/documents/examples/ff3samples.pdf
-
+        // Also done in the library: https://github.com/mysto/java-fpe/blob/main/src/test/java/com/privacylogistics/FF3CipherTest.java
+        
         final String plainText = "890121234567890000";
         final FPE fpe = new FPE("EF4359D8D580AA4F7F036D6F04FC6A94", "D8E7920AFA330A73");
         final String encrypted = Encryption.formatPreservingEncrypt(fpe, plainText);
@@ -32,6 +33,7 @@ public class EncryptionTest {
     public void formatPreservingEncryption2() {
 
         // Test from https://csrc.nist.gov/csrc/media/projects/cryptographic-standards-and-guidelines/documents/examples/ff3samples.pdf
+        // Also done in the library: https://github.com/mysto/java-fpe/blob/main/src/test/java/com/privacylogistics/FF3CipherTest.java
 
         final String plainText = "890121234567890000";
         final FPE fpe = new FPE("EF4359D8D580AA4F7F036D6F04FC6A94", "9A768A92F60E12D8");
@@ -45,6 +47,7 @@ public class EncryptionTest {
     public void formatPreservingEncryption3() {
 
         // Test from https://csrc.nist.gov/csrc/media/projects/cryptographic-standards-and-guidelines/documents/examples/ff3samples.pdf
+        // Also done in the library: https://github.com/mysto/java-fpe/blob/main/src/test/java/com/privacylogistics/FF3CipherTest.java
 
         final String plainText = "89012123456789000000789000000";
         final FPE fpe = new FPE("EF4359D8D580AA4F7F036D6F04FC6A94", "D8E7920AFA330A73");
