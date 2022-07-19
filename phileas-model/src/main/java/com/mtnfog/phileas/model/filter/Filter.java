@@ -3,6 +3,7 @@ package com.mtnfog.phileas.model.filter;
 import com.mtnfog.phileas.model.enums.FilterType;
 import com.mtnfog.phileas.model.objects.*;
 import com.mtnfog.phileas.model.profile.Crypto;
+import com.mtnfog.phileas.model.profile.FPE;
 import com.mtnfog.phileas.model.profile.FilterProfile;
 import com.mtnfog.phileas.model.profile.IgnoredPattern;
 import com.mtnfog.phileas.model.profile.filters.Identifier;
@@ -66,6 +67,11 @@ public abstract class Filter {
     protected final Crypto crypto;
 
     /**
+     * The encryption details for format-preserving encryption.
+     */
+    protected final FPE fpe;
+
+    /**
      * The window size for token spans.
      */
     protected int windowSize;
@@ -108,6 +114,7 @@ public abstract class Filter {
         this.ignoredPatterns = filterConfiguration.getIgnoredPatterns();
         this.ignored = filterConfiguration.getIgnored();
         this.crypto = filterConfiguration.getCrypto();
+        this.fpe = filterConfiguration.getFPE();
         this.windowSize = filterConfiguration.getWindowSize();
         this.documentAnalysis = filterConfiguration.getDocumentAnalysis();
 
@@ -260,14 +267,14 @@ public abstract class Filter {
                         }
 
                         // Break early since we met the strategy's condition.
-                        return strategy.getReplacement(classification, context, documentId, token, window, crypto, anonymizationService, filterPattern);
+                        return strategy.getReplacement(classification, context, documentId, token, window, crypto, fpe, anonymizationService, filterPattern);
 
                     }
 
                 } else {
 
                     // Break early since there is no condition.
-                    return strategy.getReplacement(classification, context, documentId, token, window, crypto, anonymizationService, filterPattern);
+                    return strategy.getReplacement(classification, context, documentId, token, window, crypto, fpe, anonymizationService, filterPattern);
 
                 }
 

@@ -8,9 +8,11 @@ import com.mtnfog.phileas.model.enums.FilterType;
 import com.mtnfog.phileas.model.objects.FilterPattern;
 import com.mtnfog.phileas.model.objects.Replacement;
 import com.mtnfog.phileas.model.profile.Crypto;
+import com.mtnfog.phileas.model.profile.FPE;
 import com.mtnfog.phileas.model.profile.filters.strategies.AbstractFilterStrategy;
 import com.mtnfog.phileas.model.services.AnonymizationService;
 import com.mtnfog.phileas.model.utils.Encryption;
+import com.privacylogistics.FF3Cipher;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -98,7 +100,10 @@ public class AgeFilterStrategy extends AbstractFilterStrategy {
     }
 
     @Override
-    public Replacement getReplacement(String label, String context, String documentId, String token, String[] window, Crypto crypto, AnonymizationService anonymizationService, FilterPattern filterPattern) throws Exception {
+    public Replacement getReplacement(String label, String context, String documentId, String token,
+                                      String[] window, Crypto crypto, FPE fpe,
+                                      AnonymizationService anonymizationService,
+                                      FilterPattern filterPattern) throws Exception {
 
         String replacement;
         String salt = "";

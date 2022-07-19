@@ -2,6 +2,7 @@ package com.mtnfog.test.phileas.model.profile.filters.strategies.ai;
 
 import com.mtnfog.phileas.model.objects.Replacement;
 import com.mtnfog.phileas.model.profile.Crypto;
+import com.mtnfog.phileas.model.profile.FPE;
 import com.mtnfog.phileas.model.profile.filters.strategies.AbstractFilterStrategy;
 import com.mtnfog.phileas.model.profile.filters.strategies.ai.PersonsFilterStrategy;
 import com.mtnfog.phileas.model.services.AnonymizationCacheService;
@@ -28,7 +29,7 @@ public class PersonsFilterStrategyTest extends AbstractFilterStrategyTest {
         strategy.setStrategy(AbstractFilterStrategy.STATIC_REPLACE);
         strategy.setStaticReplacement("static-value");
 
-        final Replacement replacement = strategy.getReplacement("PER", "context", "docId", "token", WINDOW, new Crypto(), anonymizationService, null);
+        final Replacement replacement = strategy.getReplacement("PER", "context", "docId", "token", WINDOW, new Crypto(), new FPE(), anonymizationService, null);
 
         Assertions.assertEquals("static-value", replacement.getReplacement());
 
@@ -43,7 +44,7 @@ public class PersonsFilterStrategyTest extends AbstractFilterStrategyTest {
         strategy.setStrategy(AbstractFilterStrategy.REDACT);
         strategy.setRedactionFormat("REDACTION-%t");
 
-        final Replacement replacement = strategy.getReplacement("PER", "context", "docId", "token", WINDOW, new Crypto(), anonymizationService, null);
+        final Replacement replacement = strategy.getReplacement("PER", "context", "docId", "token", WINDOW, new Crypto(), new FPE(), anonymizationService, null);
 
         Assertions.assertEquals("REDACTION-person", replacement.getReplacement());
 
@@ -61,7 +62,7 @@ public class PersonsFilterStrategyTest extends AbstractFilterStrategyTest {
         final AbstractFilterStrategy strategy = getFilterStrategy();
         strategy.setStrategy(AbstractFilterStrategy.RANDOM_REPLACE);
 
-        final Replacement replacement = strategy.getReplacement("PER", "context", "docId", "token", WINDOW, new Crypto(), anonymizationService, null);
+        final Replacement replacement = strategy.getReplacement("PER", "context", "docId", "token", WINDOW, new Crypto(), new FPE(), anonymizationService, null);
 
         Assertions.assertNotEquals("random", replacement.getReplacement());
 
@@ -79,7 +80,7 @@ public class PersonsFilterStrategyTest extends AbstractFilterStrategyTest {
         final AbstractFilterStrategy strategy = getFilterStrategy();
         strategy.setStrategy("something-wrong");
 
-        final Replacement replacement = strategy.getReplacement("PER", "context", "docId", "token", WINDOW, new Crypto(), anonymizationService, null);
+        final Replacement replacement = strategy.getReplacement("PER", "context", "docId", "token", WINDOW, new Crypto(), new FPE(), anonymizationService, null);
 
         Assertions.assertEquals("{{{REDACTED-person}}}", replacement.getReplacement());
 
@@ -97,7 +98,7 @@ public class PersonsFilterStrategyTest extends AbstractFilterStrategyTest {
         strategy.setStrategy(AbstractFilterStrategy.REDACT);
         strategy.setRedactionFormat("<ENTITY:%t>%v</ENTITY>");
 
-        final Replacement replacement = strategy.getReplacement("PER", "context", "docId", "token", WINDOW, new Crypto(), anonymizationService, null);
+        final Replacement replacement = strategy.getReplacement("PER", "context", "docId", "token", WINDOW, new Crypto(), new FPE(), anonymizationService, null);
 
         Assertions.assertEquals("<ENTITY:person>token</ENTITY>", replacement.getReplacement());
 
@@ -116,25 +117,25 @@ public class PersonsFilterStrategyTest extends AbstractFilterStrategyTest {
 
         Replacement replacement;
 
-        replacement = strategy.getReplacement("PER", "context", "docId", "John Smith", WINDOW, new Crypto(), anonymizationService, null);
+        replacement = strategy.getReplacement("PER", "context", "docId", "John Smith", WINDOW, new Crypto(), new FPE(), anonymizationService, null);
         Assertions.assertEquals("JS", replacement.getReplacement());
 
-        replacement = strategy.getReplacement("PER", "context", "docId", "John P. Smith", WINDOW, new Crypto(), anonymizationService, null);
+        replacement = strategy.getReplacement("PER", "context", "docId", "John P. Smith", WINDOW, new Crypto(), new FPE(), anonymizationService, null);
         Assertions.assertEquals("JPS", replacement.getReplacement());
 
-        replacement = strategy.getReplacement("PER", "context", "docId", "John P Smith", WINDOW, new Crypto(), anonymizationService, null);
+        replacement = strategy.getReplacement("PER", "context", "docId", "John P Smith", WINDOW, new Crypto(), new FPE(), anonymizationService, null);
         Assertions.assertEquals("JPS", replacement.getReplacement());
 
-        replacement = strategy.getReplacement("PER", "context", "docId", "John P.", WINDOW, new Crypto(), anonymizationService, null);
+        replacement = strategy.getReplacement("PER", "context", "docId", "John P.", WINDOW, new Crypto(), new FPE(), anonymizationService, null);
         Assertions.assertEquals("JP", replacement.getReplacement());
 
-        replacement = strategy.getReplacement("PER", "context", "docId", "John", WINDOW, new Crypto(), anonymizationService, null);
+        replacement = strategy.getReplacement("PER", "context", "docId", "John", WINDOW, new Crypto(), new FPE(), anonymizationService, null);
         Assertions.assertEquals("J", replacement.getReplacement());
 
-        replacement = strategy.getReplacement("PER", "context", "docId", "J Smith", WINDOW, new Crypto(), anonymizationService, null);
+        replacement = strategy.getReplacement("PER", "context", "docId", "J Smith", WINDOW, new Crypto(), new FPE(), anonymizationService, null);
         Assertions.assertEquals("JS", replacement.getReplacement());
 
-        replacement = strategy.getReplacement("PER", "context", "docId", "J. Peter Smith", WINDOW, new Crypto(), anonymizationService, null);
+        replacement = strategy.getReplacement("PER", "context", "docId", "J. Peter Smith", WINDOW, new Crypto(), new FPE(), anonymizationService, null);
         Assertions.assertEquals("JPS", replacement.getReplacement());
 
     }

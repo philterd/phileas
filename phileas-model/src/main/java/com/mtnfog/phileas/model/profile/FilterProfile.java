@@ -22,6 +22,10 @@ public class FilterProfile {
     @Expose
     private Crypto crypto;
 
+    @SerializedName("fpe")
+    @Expose
+    private FPE fpe;
+
     @SerializedName("domain")
     @Expose
     private String domain;
@@ -136,6 +140,14 @@ public class FilterProfile {
 
     public void setGraphical(Graphical graphical) {
         this.graphical = graphical;
+    }
+
+    public FPE getFpe() {
+        return fpe;
+    }
+
+    public void setFpe(FPE fpe) {
+        this.fpe = fpe;
     }
 
 }

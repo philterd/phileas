@@ -6,12 +6,15 @@ import com.mtnfog.phileas.model.enums.FilterType;
 import com.mtnfog.phileas.model.objects.FilterPattern;
 import com.mtnfog.phileas.model.objects.Replacement;
 import com.mtnfog.phileas.model.profile.Crypto;
+import com.mtnfog.phileas.model.profile.FPE;
 import com.mtnfog.phileas.model.profile.filters.strategies.AbstractFilterStrategy;
 import com.mtnfog.phileas.model.services.AnonymizationService;
 import com.mtnfog.phileas.model.utils.Encryption;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.validator.routines.checkdigit.LuhnCheckDigit;
+import org.apache.commons.validator.routines.checkdigit.ModulusCheckDigit;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -95,7 +98,7 @@ public class CreditCardFilterStrategy extends AbstractFilterStrategy {
     }
 
     @Override
-    public Replacement getReplacement(String label, String context, String documentId, String token, String[] window, Crypto crypto, AnonymizationService anonymizationService, FilterPattern filterPattern) throws Exception {
+    public Replacement getReplacement(String label, String context, String documentId, String token, String[] window, Crypto crypto, FPE fpe, AnonymizationService anonymizationService, FilterPattern filterPattern) throws Exception {
 
         String replacement = null;
         String salt = "";
@@ -122,6 +125,20 @@ public class CreditCardFilterStrategy extends AbstractFilterStrategy {
         } else if(StringUtils.equalsIgnoreCase(strategy, CRYPTO_REPLACE)) {
 
             replacement = "{{" + Encryption.encrypt(token, crypto) + "}}";
+
+        } else if(StringUtils.equalsIgnoreCase(strategy, FPE_ENCRYPT_REPLACE)) {
+
+            // Remove the last digit because it is the checksum.
+            final String tokenWithoutChecksum = token.substring(0, token.length() - 1);
+
+            final String encrypted = Encryption.formatPreservingEncrypt(fpe, tokenWithoutChecksum);
+
+            // Create a new checksum digit.
+            final ModulusCheckDigit m = new LuhnCheckDigit();
+            final String checksum = m.calculate(encrypted);
+
+            // The replacement is the encrypted and the checksum.
+            replacement = encrypted + checksum;
 
         } else if(StringUtils.equalsIgnoreCase(strategy, HASH_SHA256_REPLACE)) {
 

@@ -2,22 +2,29 @@ package com.mtnfog.phileas.model.filter;
 
 import com.mtnfog.phileas.model.objects.DocumentAnalysis;
 import com.mtnfog.phileas.model.profile.Crypto;
+import com.mtnfog.phileas.model.profile.FPE;
 import com.mtnfog.phileas.model.profile.IgnoredPattern;
 import com.mtnfog.phileas.model.profile.filters.strategies.AbstractFilterStrategy;
 import com.mtnfog.phileas.model.services.AlertService;
 import com.mtnfog.phileas.model.services.AnonymizationService;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.*;
 
+import static com.mtnfog.phileas.model.profile.filters.strategies.AbstractFilterStrategy.CRYPTO_REPLACE;
+import static com.mtnfog.phileas.model.profile.filters.strategies.AbstractFilterStrategy.FPE_ENCRYPT_REPLACE;
+
 public class FilterConfiguration {
 
-    private List<? extends AbstractFilterStrategy> strategies = new LinkedList<>();
+    private List<? extends AbstractFilterStrategy> strategies;
     private AnonymizationService anonymizationService;
     private AlertService alertService;
-    private Set<String> ignored = new LinkedHashSet<>();
-    private Set<String> ignoredFiles = new LinkedHashSet<>();
-    private List<IgnoredPattern> ignoredPatterns = new LinkedList<>();
+    private Set<String> ignored;
+    private Set<String> ignoredFiles;
+    private List<IgnoredPattern> ignoredPatterns;
     private Crypto crypto;
+    private FPE fpe;
     private int windowSize = 5;
     private DocumentAnalysis documentAnalysis;
 
@@ -29,6 +36,7 @@ public class FilterConfiguration {
             Set<String> ignoredFiles,
             List<IgnoredPattern> ignoredPatterns,
             Crypto crypto,
+            FPE fpe,
             int windowSize,
             DocumentAnalysis documentAnalysis
     ) {
@@ -40,6 +48,7 @@ public class FilterConfiguration {
         this.ignoredFiles = ignoredFiles;
         this.ignoredPatterns = ignoredPatterns;
         this.crypto = crypto;
+        this.fpe = fpe;
         this.windowSize = windowSize;
         this.documentAnalysis = documentAnalysis;
 
@@ -54,6 +63,7 @@ public class FilterConfiguration {
         private Set<String> ignoredFiles;
         private List<IgnoredPattern> ignoredPatterns;
         private Crypto crypto;
+        private FPE fpe;
         private int windowSize;
         private DocumentAnalysis documentAnalysis;
 
@@ -66,6 +76,9 @@ public class FilterConfiguration {
                 documentAnalysis = new DocumentAnalysis();
             }
 
+            // Validate the configuration. This throws an exception if it is invalid.
+            validate();
+
             return new FilterConfiguration(
                     strategies,
                     anonymizationService,
@@ -74,9 +87,60 @@ public class FilterConfiguration {
                     ignoredFiles,
                     ignoredPatterns,
                     crypto,
+                    fpe,
                     windowSize,
                     documentAnalysis
             );
+
+        }
+
+        /**
+         * Validate the configuration of the filter.
+         * Throw an exception if the configuration is invalid.
+         */
+        private void validate() {
+
+            if(CollectionUtils.isNotEmpty(strategies)) {
+
+                for (final AbstractFilterStrategy strategy : strategies) {
+
+                    if (StringUtils.equalsIgnoreCase(FPE_ENCRYPT_REPLACE, strategy.getStrategy())) {
+
+                        if (this.fpe != null) {
+
+                            if (StringUtils.isEmpty(this.fpe.getKey())) {
+                                throw new RuntimeException("Invalid configuration for filter: Missing FPE encryption key.");
+                            }
+
+                            if (StringUtils.isEmpty(this.fpe.getTweak())) {
+                                throw new RuntimeException("Invalid configuration for filter: Missing FPE encryption tweak value.");
+                            }
+
+                        } else {
+                            throw new RuntimeException("Invalid configuration for filter: Missing FPE encryption property.");
+                        }
+
+                    } else if (StringUtils.equalsIgnoreCase(CRYPTO_REPLACE, strategy.getStrategy())) {
+
+                        if (this.crypto != null) {
+
+                            if (StringUtils.isEmpty(this.crypto.getKey())) {
+                                throw new RuntimeException("Invalid configuration for filter: Missing crypto encryption key.");
+                            }
+
+                            if (StringUtils.isEmpty(this.crypto.getIv())) {
+                                throw new RuntimeException("Invalid configuration for filter: Missing crypto encryption IV value.");
+                            }
+
+                        } else {
+                            throw new RuntimeException("Invalid configuration for filter: Missing crypto encryption property.");
+                        }
+
+                    }
+
+                }
+
+            }
 
         }
 
@@ -112,6 +176,11 @@ public class FilterConfiguration {
 
         public FilterConfigurationBuilder withCrypto(Crypto crypto) {
             this.crypto = crypto;
+            return this;
+        }
+
+        public FilterConfigurationBuilder withFPE(FPE fpe) {
+            this.fpe = fpe;
             return this;
         }
 
@@ -153,6 +222,10 @@ public class FilterConfiguration {
 
     public Crypto getCrypto() {
         return crypto;
+    }
+
+    public FPE getFPE() {
+        return fpe;
     }
 
     public int getWindowSize() {
