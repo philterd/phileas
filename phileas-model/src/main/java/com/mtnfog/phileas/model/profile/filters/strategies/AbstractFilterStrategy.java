@@ -9,9 +9,13 @@ import com.mtnfog.phileas.model.objects.DocumentType;
 import com.mtnfog.phileas.model.objects.FilterPattern;
 import com.mtnfog.phileas.model.objects.Replacement;
 import com.mtnfog.phileas.model.profile.Crypto;
+import com.mtnfog.phileas.model.profile.FPE;
 import com.mtnfog.phileas.model.services.AnonymizationService;
+import com.privacylogistics.FF3Cipher;
 import org.apache.commons.lang3.StringUtils;
 
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
@@ -25,6 +29,7 @@ public abstract class AbstractFilterStrategy {
     public static final String RANDOM_REPLACE = "RANDOM_REPLACE";
     public static final String STATIC_REPLACE = "STATIC_REPLACE";
     public static final String CRYPTO_REPLACE = "CRYPTO_REPLACE";
+    public static final String FPE_ENCRYPT_REPLACE = "FPE_ENCRYPT_REPLACE";
     public static final String HASH_SHA256_REPLACE = "HASH_SHA256_REPLACE";
     public static final String LAST_4 = "LAST_4";
 
@@ -102,11 +107,13 @@ public abstract class AbstractFilterStrategy {
      * @param token The token.
      * @param window The window containing the token.
      * @param crypto The encryption key used to encrypt values when enabled, otherwise <code>null</code>.
+     * @param fpe The {@link FPE} information for format-preserving encryption.
      * @param anonymizationService The {@link AnonymizationService} for the token.
      * @param filterPattern The filter pattern that identified the filter, or <code>null</code> if no pattern was used.
      * @return A replacement value for a token.
      */
-    public abstract Replacement getReplacement(String classification, String context, String documentId, String token, String[] window, Crypto crypto,
+    public abstract Replacement getReplacement(String classification, String context, String documentId, String token,
+                                               String[] window, Crypto crypto, FPE fpe,
                                                AnonymizationService anonymizationService, FilterPattern filterPattern) throws Exception;
 
     /**

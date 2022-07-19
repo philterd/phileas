@@ -4,6 +4,7 @@ import com.mtnfog.phileas.model.enums.FilterType;
 import com.mtnfog.phileas.model.objects.FilterPattern;
 import com.mtnfog.phileas.model.objects.Replacement;
 import com.mtnfog.phileas.model.profile.Crypto;
+import com.mtnfog.phileas.model.profile.FPE;
 import com.mtnfog.phileas.model.profile.filters.strategies.AbstractFilterStrategy;
 import com.mtnfog.phileas.model.profile.filters.strategies.rules.DateFilterStrategy;
 import com.mtnfog.phileas.model.services.AnonymizationService;
@@ -74,7 +75,7 @@ public class DateFilterStrategyTest extends AbstractFilterStrategyTest {
         strategy.setStrategy(AbstractFilterStrategy.SHIFT);
 
         final FilterPattern filterPattern = new FilterPattern.FilterPatternBuilder(Pattern.compile("\\b\\d{4}-\\d{2}-\\d{2}"), 0.75).withFormat("uuuu-MM-dd").build();
-        final Replacement replacement = strategy.getReplacement("name", "context", "docId", "2010-05-09", WINDOW, new Crypto(), anonymizationService, filterPattern);
+        final Replacement replacement = strategy.getReplacement("name", "context", "docId", "2010-05-09", WINDOW, new Crypto(), new FPE(), anonymizationService, filterPattern);
 
         Assertions.assertEquals("2010-05-11", replacement.getReplacement());
 
@@ -89,7 +90,7 @@ public class DateFilterStrategyTest extends AbstractFilterStrategyTest {
         strategy.setStrategy(AbstractFilterStrategy.SHIFT);
 
         final FilterPattern filterPattern = new FilterPattern.FilterPatternBuilder(Pattern.compile("\\b\\d{4}-\\d{2}-\\d{2}"), 0.75).withFormat("uuuu-MM-dd").build();
-        final Replacement replacement = strategy.getReplacement("name", "context", "docId", "2010-05-09", WINDOW, new Crypto(), anonymizationService, filterPattern);
+        final Replacement replacement = strategy.getReplacement("name", "context", "docId", "2010-05-09", WINDOW, new Crypto(), new FPE(), anonymizationService, filterPattern);
 
         Assertions.assertEquals("2010-07-11", replacement.getReplacement());
 
@@ -104,7 +105,7 @@ public class DateFilterStrategyTest extends AbstractFilterStrategyTest {
         strategy.setStrategy(AbstractFilterStrategy.SHIFT);
 
         final FilterPattern filterPattern = new FilterPattern.FilterPatternBuilder(Pattern.compile("\\b\\d{4}-\\d{2}-\\d{2}"), 0.75).withFormat("uuuu-MM-dd").build();
-        final Replacement replacement = strategy.getReplacement("name", "context", "docId", "2010-05-09", WINDOW, new Crypto(), anonymizationService, filterPattern);
+        final Replacement replacement = strategy.getReplacement("name", "context", "docId", "2010-05-09", WINDOW, new Crypto(), new FPE(), anonymizationService, filterPattern);
 
         Assertions.assertEquals("2010-07-07", replacement.getReplacement());
 
@@ -119,7 +120,7 @@ public class DateFilterStrategyTest extends AbstractFilterStrategyTest {
         strategy.setStrategy(AbstractFilterStrategy.SHIFT);
 
         final FilterPattern filterPattern = new FilterPattern.FilterPatternBuilder(Pattern.compile("\\b\\d{4}-\\d{2}-\\d{2}"), 0.75).withFormat("uuuu-MM-dd").build();
-        final Replacement replacement = strategy.getReplacement("name", "context", "docId", "2010-05-09", WINDOW, new Crypto(), anonymizationService, filterPattern);
+        final Replacement replacement = strategy.getReplacement("name", "context", "docId", "2010-05-09", WINDOW, new Crypto(), new FPE(), anonymizationService, filterPattern);
 
         Assertions.assertEquals("2010-05-09", replacement.getReplacement());
 
@@ -134,7 +135,7 @@ public class DateFilterStrategyTest extends AbstractFilterStrategyTest {
         strategy.setStrategy(AbstractFilterStrategy.SHIFT);
 
         final FilterPattern filterPattern = new FilterPattern.FilterPatternBuilder(Pattern.compile("\\b\\d{2}-\\d{2}-\\d{4}"), 0.75).withFormat("dd-MM-uuuu").build();
-        final Replacement replacement = strategy.getReplacement("name", "context", "docId", "05-09-2020", WINDOW, new Crypto(), anonymizationService, filterPattern);
+        final Replacement replacement = strategy.getReplacement("name", "context", "docId", "05-09-2020", WINDOW, new Crypto(), new FPE(), anonymizationService, filterPattern);
 
         Assertions.assertEquals("06-10-2021", replacement.getReplacement());
 
@@ -149,7 +150,7 @@ public class DateFilterStrategyTest extends AbstractFilterStrategyTest {
         strategy.setStrategy(AbstractFilterStrategy.SHIFT);
 
         final FilterPattern filterPattern = new FilterPattern.FilterPatternBuilder(Pattern.compile("\\b\\d{2}-\\d{2}-\\d{4}"), 0.75).withFormat("MMMM d uuuu").build();
-        final Replacement replacement = strategy.getReplacement("name", "context", "docId", "June 2 2021", WINDOW, new Crypto(), anonymizationService, filterPattern);
+        final Replacement replacement = strategy.getReplacement("name", "context", "docId", "June 2 2021", WINDOW, new Crypto(), new FPE(), anonymizationService, filterPattern);
 
         Assertions.assertEquals("July 3 2022", replacement.getReplacement());
 
@@ -164,7 +165,7 @@ public class DateFilterStrategyTest extends AbstractFilterStrategyTest {
         strategy.setStrategy(AbstractFilterStrategy.SHIFT);
 
         final FilterPattern filterPattern = new FilterPattern.FilterPatternBuilder(Pattern.compile("\\b\\d{2}-\\d{2}-\\d{4}"), 0.75).withFormat("dd-MM-uuuu").build();
-        final Replacement replacement = strategy.getReplacement("name", "context", "docId", "18-18-2020", WINDOW, new Crypto(), anonymizationService, filterPattern);
+        final Replacement replacement = strategy.getReplacement("name", "context", "docId", "18-18-2020", WINDOW, new Crypto(), new FPE(), anonymizationService, filterPattern);
 
         Assertions.assertEquals("{{{REDACTED-date}}}", replacement.getReplacement());
 
@@ -205,7 +206,7 @@ public class DateFilterStrategyTest extends AbstractFilterStrategyTest {
         strategy.setStrategy(AbstractFilterStrategy.RELATIVE);
 
         final FilterPattern filterPattern = new FilterPattern.FilterPatternBuilder(Pattern.compile("\\b\\d{2}-\\d{2}-\\d{4}"), 0.75).withFormat("dd-MM-uuuu").build();
-        final Replacement replacement = strategy.getReplacement("name", "context", "docId", "05-09-2020", WINDOW, new Crypto(), anonymizationService, filterPattern);
+        final Replacement replacement = strategy.getReplacement("name", "context", "docId", "05-09-2020", WINDOW, new Crypto(), new FPE(), anonymizationService, filterPattern);
 
         Assertions.assertTrue(replacement.getReplacement().contains(" months ago"));
 
@@ -220,7 +221,7 @@ public class DateFilterStrategyTest extends AbstractFilterStrategyTest {
         strategy.setStrategy(AbstractFilterStrategy.RELATIVE);
 
         final FilterPattern filterPattern = new FilterPattern.FilterPatternBuilder(Pattern.compile("\\b\\d{2}-\\d{2}-\\d{4}"), 0.75).withFormat("dd-MM-uuuu").build();
-        final Replacement replacement = strategy.getReplacement("name", "context", "docId", "05-09-2018", WINDOW, new Crypto(), anonymizationService, filterPattern);
+        final Replacement replacement = strategy.getReplacement("name", "context", "docId", "05-09-2018", WINDOW, new Crypto(), new FPE(), anonymizationService, filterPattern);
 
         Assertions.assertTrue(replacement.getReplacement().contains(" months ago"));
 
@@ -243,7 +244,7 @@ public class DateFilterStrategyTest extends AbstractFilterStrategyTest {
         strategy.setFutureDates(false);
 
         final FilterPattern filterPattern = new FilterPattern.FilterPatternBuilder(Pattern.compile("\\b\\d{2}-\\d{2}-\\d{4}"), 0.75).withFormat("M-dd-uuuu").build();
-        final Replacement replacement = strategy.getReplacement("name", "context", "docId", date, WINDOW, new Crypto(), anonymizationService, filterPattern);
+        final Replacement replacement = strategy.getReplacement("name", "context", "docId", date, WINDOW, new Crypto(), new FPE(), anonymizationService, filterPattern);
 
         // This is a future date and futures are disabled so expect redaction.
         Assertions.assertEquals("{{{REDACTED-date}}}", replacement.getReplacement());
@@ -265,7 +266,7 @@ public class DateFilterStrategyTest extends AbstractFilterStrategyTest {
         strategy.setFutureDates(true);
 
         final FilterPattern filterPattern = new FilterPattern.FilterPatternBuilder(Pattern.compile("\\b\\d{2}-\\d{2}-\\d{4}"), 0.75).withFormat("M-dd-uuuu").build();
-        final Replacement replacement = strategy.getReplacement("name", "context", "docId", date, WINDOW, new Crypto(), anonymizationService, filterPattern);
+        final Replacement replacement = strategy.getReplacement("name", "context", "docId", date, WINDOW, new Crypto(), new FPE(), anonymizationService, filterPattern);
 
         // This is a future date but futures are enabled.
         // The value will either be:
@@ -292,7 +293,7 @@ public class DateFilterStrategyTest extends AbstractFilterStrategyTest {
         strategy.setStrategy(AbstractFilterStrategy.RELATIVE);
 
         final FilterPattern filterPattern = new FilterPattern.FilterPatternBuilder(Pattern.compile("\\b\\d{2}-\\d{2}-\\d{4}"), 0.75).withFormat("MM-dd-uuuu").build();
-        final Replacement replacement = strategy.getReplacement("name", "context", "docId", date, WINDOW, new Crypto(), anonymizationService, filterPattern);
+        final Replacement replacement = strategy.getReplacement("name", "context", "docId", date, WINDOW, new Crypto(), new FPE(), anonymizationService, filterPattern);
 
         Assertions.assertEquals("5 years 7 months ago", replacement.getReplacement());
 
@@ -314,7 +315,7 @@ public class DateFilterStrategyTest extends AbstractFilterStrategyTest {
         strategy.setStrategy(AbstractFilterStrategy.RELATIVE);
 
         final FilterPattern filterPattern = new FilterPattern.FilterPatternBuilder(Pattern.compile("\\b\\d{2}-\\d{2}-\\d{4}"), 0.75).withFormat("MMM uuuu").build();
-        final Replacement replacement = strategy.getReplacement("name", "context", "docId", date, WINDOW, new Crypto(), anonymizationService, filterPattern);
+        final Replacement replacement = strategy.getReplacement("name", "context", "docId", date, WINDOW, new Crypto(), new FPE(), anonymizationService, filterPattern);
 
         // Depending on when the test is run it may be either 7 or 8 months ago. That's fine.
         Assertions.assertTrue(
@@ -339,7 +340,7 @@ public class DateFilterStrategyTest extends AbstractFilterStrategyTest {
         strategy.setStrategy(AbstractFilterStrategy.RELATIVE);
 
         final FilterPattern filterPattern = new FilterPattern.FilterPatternBuilder(Pattern.compile("\\b\\d{2}-\\d{2}-\\d{4}"), 0.75).withFormat("MMM uuuu").build();
-        final Replacement replacement = strategy.getReplacement("name", "context", "docId", date, WINDOW, new Crypto(), anonymizationService, filterPattern);
+        final Replacement replacement = strategy.getReplacement("name", "context", "docId", date, WINDOW, new Crypto(), new FPE(), anonymizationService, filterPattern);
 
         // Depending on when the test is run it may be either 7 or 8 months ago. That's fine.
         Assertions.assertTrue(
@@ -365,7 +366,7 @@ public class DateFilterStrategyTest extends AbstractFilterStrategyTest {
         strategy.setStrategy(AbstractFilterStrategy.TRUNCATE_TO_YEAR);
 
         final FilterPattern filterPattern = new FilterPattern.FilterPatternBuilder(Pattern.compile("\\b\\d{2}-\\d{2}-\\d{4}"), 0.75).withFormat("MM-dd-uuuu").build();
-        final Replacement replacement = strategy.getReplacement("name", "context", "docId", date, WINDOW, new Crypto(), anonymizationService, filterPattern);
+        final Replacement replacement = strategy.getReplacement("name", "context", "docId", date, WINDOW, new Crypto(), new FPE(), anonymizationService, filterPattern);
 
         Assertions.assertEquals(String.valueOf(parsedDate.getYear()), replacement.getReplacement());
 
@@ -382,7 +383,7 @@ public class DateFilterStrategyTest extends AbstractFilterStrategyTest {
         strategy.setStrategy(AbstractFilterStrategy.TRUNCATE_TO_YEAR);
 
         final FilterPattern filterPattern = new FilterPattern.FilterPatternBuilder(Pattern.compile("\\b\\d{2}-\\d{2}-\\d{4}"), 0.75).withFormat("MM-dd-uuuu").build();
-        final Replacement replacement = strategy.getReplacement("name", "context", "docId", "10-05-2005", window, new Crypto(), anonymizationService, filterPattern);
+        final Replacement replacement = strategy.getReplacement("name", "context", "docId", "10-05-2005", WINDOW, new Crypto(), new FPE(), anonymizationService, filterPattern);
 
         Assertions.assertEquals("2005", replacement.getReplacement());
 

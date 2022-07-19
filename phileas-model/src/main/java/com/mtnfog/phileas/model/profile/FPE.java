@@ -2,28 +2,27 @@ package com.mtnfog.phileas.model.profile;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
-import org.apache.commons.lang3.StringUtils;
 
-public class Crypto {
+public class FPE {
 
     @SerializedName("key")
     @Expose
     private String key;
 
-    @SerializedName("iv")
+    @SerializedName("tweak")
     @Expose
-    private String iv;
+    private String tweak;
 
     /**
      * Empty constructor needed for serialization.
      */
-    public Crypto() {
+    public FPE() {
 
     }
 
-    public Crypto(String key, String iv) {
+    public FPE(String key, String tweak) {
         this.key = key;
-        this.iv = iv;
+        this.tweak = tweak;
     }
 
     public String getKey() {
@@ -39,16 +38,16 @@ public class Crypto {
 
     }
 
-    public String getIv() {
+    public String getTweak() {
 
-        if(iv.startsWith("env:")) {
+        if(tweak.startsWith("env:")) {
 
-            final String envVarName = iv.substring(4);
+            final String envVarName = tweak.substring(4);
             return System.getenv(envVarName);
 
         }
 
-        return iv;
+        return tweak;
 
     }
 

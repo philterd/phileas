@@ -469,6 +469,7 @@ public class PhileasFilterService implements FilterService {
                         .withIgnoredFiles(filterProfile.getIdentifiers().getBankRoutingNumber().getIgnoredFiles())
                         .withIgnoredPatterns(filterProfile.getIdentifiers().getBankRoutingNumber().getIgnoredPatterns())
                         .withCrypto(filterProfile.getCrypto())
+                        .withFPE(filterProfile.getFpe())
                         .withWindowSize(windowSize)
                         .withDocumentAnalysis(documentAnalysis)
                         .build();
@@ -495,6 +496,7 @@ public class PhileasFilterService implements FilterService {
                         .withIgnoredFiles(filterProfile.getIdentifiers().getBitcoinAddress().getIgnoredFiles())
                         .withIgnoredPatterns(filterProfile.getIdentifiers().getBitcoinAddress().getIgnoredPatterns())
                         .withCrypto(filterProfile.getCrypto())
+                        .withFPE(filterProfile.getFpe())
                         .withWindowSize(windowSize)
                         .withDocumentAnalysis(documentAnalysis)
                         .build();
@@ -521,6 +523,7 @@ public class PhileasFilterService implements FilterService {
                         .withIgnoredFiles(filterProfile.getIdentifiers().getCreditCard().getIgnoredFiles())
                         .withIgnoredPatterns(filterProfile.getIdentifiers().getCreditCard().getIgnoredPatterns())
                         .withCrypto(filterProfile.getCrypto())
+                        .withFPE(filterProfile.getFpe())
                         .withWindowSize(windowSize)
                         .withDocumentAnalysis(documentAnalysis)
                         .build();
@@ -604,6 +607,7 @@ public class PhileasFilterService implements FilterService {
                         .withIgnoredFiles(filterProfile.getIdentifiers().getDriversLicense().getIgnoredFiles())
                         .withIgnoredPatterns(filterProfile.getIdentifiers().getDriversLicense().getIgnoredPatterns())
                         .withCrypto(filterProfile.getCrypto())
+                        .withFPE(filterProfile.getFpe())
                         .withWindowSize(windowSize)
                         .withDocumentAnalysis(documentAnalysis)
                         .build();
@@ -656,6 +660,7 @@ public class PhileasFilterService implements FilterService {
                         .withIgnoredFiles(filterProfile.getIdentifiers().getIbanCode().getIgnoredFiles())
                         .withIgnoredPatterns(filterProfile.getIdentifiers().getIbanCode().getIgnoredPatterns())
                         .withCrypto(filterProfile.getCrypto())
+                        .withFPE(filterProfile.getFpe())
                         .withWindowSize(windowSize)
                         .withDocumentAnalysis(documentAnalysis)
                         .build();
@@ -737,6 +742,7 @@ public class PhileasFilterService implements FilterService {
                         .withIgnoredFiles(filterProfile.getIdentifiers().getPassportNumber().getIgnoredFiles())
                         .withIgnoredPatterns(filterProfile.getIdentifiers().getPassportNumber().getIgnoredPatterns())
                         .withCrypto(filterProfile.getCrypto())
+                        .withFPE(filterProfile.getFpe())
                         .withWindowSize(windowSize)
                         .withDocumentAnalysis(documentAnalysis)
                         .build();
@@ -872,6 +878,7 @@ public class PhileasFilterService implements FilterService {
                         .withIgnoredFiles(filterProfile.getIdentifiers().getSsn().getIgnoredFiles())
                         .withIgnoredPatterns(filterProfile.getIdentifiers().getSsn().getIgnoredPatterns())
                         .withCrypto(filterProfile.getCrypto())
+                        .withFPE(filterProfile.getFpe())
                         .withWindowSize(windowSize)
                         .withDocumentAnalysis(documentAnalysis)
                         .build();
@@ -950,6 +957,7 @@ public class PhileasFilterService implements FilterService {
                         .withIgnoredFiles(filterProfile.getIdentifiers().getTrackingNumber().getIgnoredFiles())
                         .withIgnoredPatterns(filterProfile.getIdentifiers().getTrackingNumber().getIgnoredPatterns())
                         .withCrypto(filterProfile.getCrypto())
+                        .withFPE(filterProfile.getFpe())
                         .withWindowSize(windowSize)
                         .withDocumentAnalysis(documentAnalysis)
                         .build();
@@ -1004,6 +1012,7 @@ public class PhileasFilterService implements FilterService {
                         .withIgnoredFiles(filterProfile.getIdentifiers().getVin().getIgnoredFiles())
                         .withIgnoredPatterns(filterProfile.getIdentifiers().getVin().getIgnoredPatterns())
                         .withCrypto(filterProfile.getCrypto())
+                        .withFPE(filterProfile.getFpe())
                         .withWindowSize(windowSize)
                         .withDocumentAnalysis(documentAnalysis)
                         .build();

@@ -2,6 +2,7 @@ package com.mtnfog.test.phileas.model.profile.filters.strategies.rules;
 
 import com.mtnfog.phileas.model.objects.Replacement;
 import com.mtnfog.phileas.model.profile.Crypto;
+import com.mtnfog.phileas.model.profile.FPE;
 import com.mtnfog.phileas.model.profile.filters.strategies.AbstractFilterStrategy;
 import com.mtnfog.phileas.model.profile.filters.strategies.rules.ZipCodeFilterStrategy;
 import com.mtnfog.phileas.model.services.AnonymizationService;
@@ -104,7 +105,7 @@ public class ZipCodeFilterStrategyTest extends AbstractFilterStrategyTest {
 
         final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
 
-        final Replacement replacement = strategy.getReplacement("name", "context", "docid", "90210", WINDOW, new Crypto(), anonymizationService, null);
+        final Replacement replacement = strategy.getReplacement("name", "context", "docid", "90210", WINDOW, new Crypto(), new FPE(), anonymizationService, null);
 
         Assertions.assertEquals("whoa", replacement.getReplacement());
 
@@ -119,7 +120,7 @@ public class ZipCodeFilterStrategyTest extends AbstractFilterStrategyTest {
 
         AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
 
-        final Replacement replacement = strategy.getReplacement("name", "context", "documentid", "90210", WINDOW, new Crypto(), anonymizationService, null);
+        final Replacement replacement = strategy.getReplacement("name", "context", "documentid", "90210", WINDOW, new Crypto(), new FPE(), anonymizationService, null);
 
         LOGGER.info(replacement);
 
@@ -136,7 +137,7 @@ public class ZipCodeFilterStrategyTest extends AbstractFilterStrategyTest {
 
         AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
 
-        final Replacement replacement = strategy.getReplacement("name", "context", "documentid", "90210-0110", WINDOW, new Crypto(), anonymizationService, null);
+        final Replacement replacement = strategy.getReplacement("name", "context", "documentid", "90210-0110", WINDOW, new Crypto(), new FPE(), anonymizationService, null);
 
         LOGGER.info(replacement);
 
@@ -153,7 +154,7 @@ public class ZipCodeFilterStrategyTest extends AbstractFilterStrategyTest {
 
         AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
 
-        final Replacement replacement = strategy.getReplacement("name", "context", "documentid", "90210-0110", WINDOW, new Crypto(), anonymizationService, null);
+        final Replacement replacement = strategy.getReplacement("name", "context", "documentid", "90210-0110", WINDOW, new Crypto(), new FPE(), anonymizationService, null);
 
         LOGGER.info(replacement);
 
@@ -169,7 +170,7 @@ public class ZipCodeFilterStrategyTest extends AbstractFilterStrategyTest {
 
         AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
 
-        final Replacement replacement = strategy.getReplacement("name", "context", "documentid", "90210-0110", WINDOW, new Crypto(), anonymizationService, null);
+        final Replacement replacement = strategy.getReplacement("name", "context", "documentid", "90210-0110", WINDOW, new Crypto(), new FPE(), anonymizationService, null);
 
         LOGGER.info(replacement);
 

@@ -74,6 +74,11 @@
 			<version>${commons.collections4.version}</version>
 		</dependency>
 		<dependency>
+			<groupId>commons-validator</groupId>
+			<artifactId>commons-validator</artifactId>
+			<version>${commons.validator.version}</version>
+		</dependency>
+		<dependency>
 			<groupId>org.apache.logging.log4j</groupId>
 			<artifactId>log4j-core</artifactId>
 			<version>${log4j.version}</version>
@@ -149,6 +154,11 @@
 			<version>${redisson.version}</version>
 		</dependency>
 		<dependency>
+			<groupId>io.github.mysto</groupId>
+			<artifactId>ff3</artifactId>
+			<version>${ff3.version}</version>
+		</dependency>
+		<dependency>
 			<groupId>ai.grakn</groupId>
 			<artifactId>redis-mock</artifactId>
 			<version>${redis-mock.version}</version>
@@ -176,6 +186,12 @@
 			<groupId>nl.jqno.equalsverifier</groupId>
 			<artifactId>equalsverifier</artifactId>
 			<version>${equals.verifier.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.github.stefanbirkner</groupId>
+			<artifactId>system-lambda</artifactId>
+			<version>1.2.1</version>
 			<scope>test</scope>
 		</dependency>
     </dependencies>
