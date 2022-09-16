@@ -1,10 +1,10 @@
 package com.mtnfog.phileas.service.ai;
 
-import ai.onnxruntime.OnnxTensor;
-import ai.onnxruntime.OrtEnvironment;
 import ai.onnxruntime.OrtSession;
 import com.mtnfog.phileas.model.enums.FilterType;
 import com.mtnfog.phileas.model.objects.Entity;
+import opennlp.dl.namefinder.NameFinderDL;
+import opennlp.tools.util.Span;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -24,25 +24,44 @@ public class Inference {
 
     private static final int SPLIT_LENGTH = 125;
 
-    private final OrtEnvironment env;
-    private final OrtSession session;
     private final WordpieceTokenizer tokenizer;
     private final Map<String, Integer> vocabulary;
     private final Map<Integer, String> id2Labels;
+    private final NameFinderDL nameFinderDL;
 
     public Inference(File model, File vocab, Map<Integer, String> id2Labels) throws Exception {
 
         LOGGER.info("Initializing ONNX session for model {}", model.getAbsolutePath());
 
-        this.env = OrtEnvironment.getEnvironment();
-        this.session = env.createSession(model.getPath(), new OrtSession.SessionOptions());
         this.vocabulary = loadVocab(vocab);
         this.tokenizer = new WordpieceTokenizer(vocabulary);
         this.id2Labels = id2Labels;
+        this.nameFinderDL = new NameFinderDL(model, vocab, false, id2Labels);
 
     }
 
     public List<Entity> predict(final String text, final String context, final String documentId) throws Exception {
+
+        /*final String[] tokens = text.split(" ");
+        final Span[] spans = nameFinderDL.find(tokens);
+
+        final List<Entity> entities = new LinkedList<>();
+
+        for(final Span span : spans) {
+
+            // Create a span for this text.
+            final Entity entity = new Entity(
+                    span.getStart(),
+                    span.getEnd(),
+                    FilterType.PERSON,
+                    context,
+                    documentId,
+                    span.getCoveredText(text).toString(),
+                    span.getProb());
+
+            entities.add(entity);
+
+        }*/
 
         // The NER spans found in the input text.
         final List<Entity> entities = new LinkedList<>();
@@ -122,7 +141,7 @@ public class Inference {
 
                                 sb.append(tokens.getTokens()[i].replaceAll("##", ""));
 
-                                // Append a space unless yhe next token is a period.
+                                // Append a space unless the next token is a period.
                                 if(!StringUtils.equals(tokens.getTokens()[i+1], ".")) {
                                         sb.append(" ");
                                 }
@@ -178,7 +197,6 @@ public class Inference {
         final List<Entity> combinedEntities = Entity.combineAdjacentEntities(entities);
 
         // Duplicates are removed once spans are created in PersonsFilter.
-
         return combinedEntities;
 
     }
