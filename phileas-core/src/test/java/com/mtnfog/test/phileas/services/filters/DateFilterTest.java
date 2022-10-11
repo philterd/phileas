@@ -413,7 +413,8 @@ public class DateFilterTest extends AbstractFilterTest {
 
         showSpans(filterResult.getSpans());
         Assertions.assertEquals(1, filterResult.getSpans().size());
-        Assertions.assertTrue(filterResult.getSpans().get(0).getReplacement().startsWith("12 years"));
+        // This can be "12 years" or "13 years" depending on when the test is run.
+        Assertions.assertTrue(filterResult.getSpans().get(0).getReplacement().startsWith("12 years") || filterResult.getSpans().get(0).getReplacement().startsWith("13 years"));
 
     }
 
