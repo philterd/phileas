@@ -58,8 +58,11 @@ public class Inference {
             inputs.put("attention_mask", OnnxTensor.createTensor(env, LongBuffer.wrap(tokens.getMask()), new long[]{1, tokens.getMask().length}));
             inputs.put("token_type_ids", OnnxTensor.createTensor(env, LongBuffer.wrap(tokens.getTypes()), new long[]{1, tokens.getTypes().length}));
 
-            // The outputs from the model.
+            // Do and time the inference.
+            final long startTime = System.currentTimeMillis();
             final float[][][] v = (float[][][]) session.run(inputs).get(0).getValue();
+            final long endTime = System.currentTimeMillis() - startTime;
+            LOGGER.info("Inference took {} ms", endTime - startTime);
 
             // Find consecutive B-PER and I-PER labels and combine the spans where necessary.
             // There are also B-LOC and I-LOC tags for locations that might be useful at some point.
