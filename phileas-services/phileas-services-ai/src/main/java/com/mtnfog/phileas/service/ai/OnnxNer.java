@@ -14,9 +14,9 @@ public class OnnxNer {
 
     private final Inference inference;
 
-    public OnnxNer(File model, File vocab, final Map<Integer, String> id2Labels) throws Exception {
+    public OnnxNer(File model, File vocab, boolean doLowerCase, final Map<Integer, String> id2Labels) throws Exception {
 
-        this.inference = new Inference(model, vocab, id2Labels);
+        this.inference = new Inference(model, vocab, doLowerCase, id2Labels);
 
     }
 

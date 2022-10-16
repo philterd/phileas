@@ -19,10 +19,10 @@ public class Inference {
     private final Map<Integer, String> id2Labels;
     private final NameFinderDL nameFinderDL;
 
-    public Inference(File model, File vocab, Map<Integer, String> id2Labels) throws Exception {
+    public Inference(File model, File vocab, boolean doLowerCase, Map<Integer, String> id2Labels) throws Exception {
 
         this.id2Labels = id2Labels;
-        this.nameFinderDL = new NameFinderDL(model, vocab, id2Labels);
+        this.nameFinderDL = new NameFinderDL(model, vocab, doLowerCase, id2Labels);
 
     }
 
