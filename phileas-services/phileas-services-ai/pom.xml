@@ -28,13 +28,13 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>com.microsoft.onnxruntime</groupId>
-      <artifactId>onnxruntime</artifactId>
-      <version>${onnxruntime.version}</version>
+      <groupId>org.apache.opennlp</groupId>
+      <artifactId>opennlp-tools</artifactId>
+      <version>${opennlp.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.opennlp</groupId>
-      <artifactId>opennlp-tools</artifactId>
+      <artifactId>opennlp-dl</artifactId>
       <version>${opennlp.version}</version>
     </dependency>
     <dependency>
