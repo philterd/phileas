@@ -27,7 +27,7 @@ public class Inference {
     }
 
     public List<Entity> predict(final String text, final String context, final String documentId) throws Exception {
-        
+
         final String[] tokens = text.split(" ");
 
         final long startTime = System.currentTimeMillis();

@@ -114,7 +114,7 @@
 		<micrometer.version>1.6.5</micrometer.version>
 		<mockito.version>1.10.19</mockito.version>
 		<nv-i18n.version>1.27</nv-i18n.version>
-		<opennlp.version>2.0.1-SNAPSHOT</opennlp.version>
+		<opennlp.version>2.0.0</opennlp.version>
 		<pdfbox.version>2.0.23</pdfbox.version>
 		<redis-mock.version>0.1.6</redis-mock.version>
 		<redisson.version>3.15.1</redisson.version>
