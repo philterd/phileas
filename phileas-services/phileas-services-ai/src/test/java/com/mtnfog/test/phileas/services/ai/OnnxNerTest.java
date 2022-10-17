@@ -66,13 +66,13 @@ public class OnnxNerTest {
         final String tokens2 = "George Washington was president.";
         final String tokens3 = "George Washington lived in the United States.";
 
-        final OnnxNer nameFinderDL1 = new OnnxNer(model, vocab, false, getLabels());
+        final OnnxNer nameFinderDL1 = new OnnxNer(model, vocab, getLabels());
         final List<Entity> spans1 = nameFinderDL1.find(tokens1, "context", "documentId");
 
-        final OnnxNer nameFinderDL2 = new OnnxNer(model, vocab, false, getLabels());
+        final OnnxNer nameFinderDL2 = new OnnxNer(model, vocab, getLabels());
         final List<Entity> spans2 = nameFinderDL2.find(tokens2, "context", "documentId");
 
-        final OnnxNer nameFinderDL3 = new OnnxNer(model, vocab, false, getLabels());
+        final OnnxNer nameFinderDL3 = new OnnxNer(model, vocab, getLabels());
         final List<Entity> spans3 = nameFinderDL3.find(tokens3, "context", "documentId");
         final List<Entity> spans4 = nameFinderDL3.find(tokens2, "context", "documentId");
         final List<Entity> spans5 = nameFinderDL3.find(tokens3, "context", "documentId");

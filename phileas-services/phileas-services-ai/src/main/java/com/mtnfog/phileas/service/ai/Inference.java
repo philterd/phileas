@@ -11,8 +11,6 @@ import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class Inference {
 
@@ -58,27 +56,6 @@ public class Inference {
         }
 
         return entities;
-
-    }
-
-    public static String findByRegex(String text, String span) {
-
-        final String regex = span
-                .replaceAll(" ", "\\\\s+")
-                .replaceAll("\\)", "\\\\)")
-                .replaceAll("\\(", "\\\\(");
-
-        final long startTime = System.currentTimeMillis();
-        final Span[] spans = nameFinderDL.find(tokens);
-        final long endTime = System.currentTimeMillis();
-        LOGGER.info("Inference took {} ms", endTime - startTime);
-
-        if(matcher.find()) {
-            return matcher.group(0);
-        }
-
-        // For some reason the regex match wasn't found. Just return the original span.
-        return span;
 
     }
 
