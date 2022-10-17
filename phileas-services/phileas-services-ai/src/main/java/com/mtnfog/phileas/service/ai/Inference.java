@@ -68,8 +68,10 @@ public class Inference {
                 .replaceAll("\\)", "\\\\)")
                 .replaceAll("\\(", "\\\\(");
 
-        final Pattern pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
-        final Matcher matcher = pattern.matcher(text);
+        final long startTime = System.currentTimeMillis();
+        final Span[] spans = nameFinderDL.find(tokens);
+        final long endTime = System.currentTimeMillis();
+        LOGGER.info("Inference took {} ms", endTime - startTime);
 
         if(matcher.find()) {
             return matcher.group(0);

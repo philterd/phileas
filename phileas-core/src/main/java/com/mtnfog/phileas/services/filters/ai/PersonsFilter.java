@@ -49,7 +49,7 @@ public class PersonsFilter extends NerFilter {
         id2Labels.put(8, "I-LOC");
 
         LOGGER.info("Initializing persons filter with model {}", modelFile);
-        this.onnxNer = new OnnxNer(model, vocab, id2Labels);
+        this.onnxNer = new OnnxNer(model, vocab, false, id2Labels);
 
     }
 
