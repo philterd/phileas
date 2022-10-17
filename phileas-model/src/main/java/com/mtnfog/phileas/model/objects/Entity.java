@@ -13,6 +13,8 @@ public class Entity {
 
     private int characterStart;
     private int characterEnd;
+    private int tokenStart;
+    private int tokenEnd;
     private FilterType filterType = FilterType.PERSON;
     private String context;
     private String documentId;
@@ -23,6 +25,20 @@ public class Entity {
 
         this.characterStart = characterStart;
         this.characterEnd = characterEnd;
+        this.filterType = filterType;
+        this.context = context;
+        this.documentId = documentId;
+        this.text = text;
+        this.confidence = confidence;
+
+    }
+
+    public Entity(int characterStart, int characterEnd, int tokenStart, int tokenEnd, FilterType filterType, String context, String documentId, String text, double confidence) {
+
+        this.characterStart = characterStart;
+        this.characterEnd = characterEnd;
+        this.tokenStart = tokenStart;
+        this.tokenEnd = tokenEnd;
         this.filterType = filterType;
         this.context = context;
         this.documentId = documentId;
@@ -93,6 +109,8 @@ public class Entity {
 
         return "characterStart: " + characterStart + "; "
                 + " characterEnd: " + characterEnd + "; "
+                + " tokenStart: " + tokenStart + "; "
+                + " tokenEnd: " + tokenEnd + "; "
                 + " filterType: " + filterType.getType() + "; "
                 + " context: " + context + "; "
                 + " documentId: " + documentId + "; "
@@ -177,6 +195,22 @@ public class Entity {
 
     public double getConfidence() {
         return confidence;
+    }
+
+    public int getTokenStart() {
+        return tokenStart;
+    }
+
+    public void setTokenStart(int tokenStart) {
+        this.tokenStart = tokenStart;
+    }
+
+    public int getTokenEnd() {
+        return tokenEnd;
+    }
+
+    public void setTokenEnd(int tokenEnd) {
+        this.tokenEnd = tokenEnd;
     }
 
 }
