@@ -33,4 +33,4 @@ jobs:
         with:
           servers: '[{ "id": "mtnfog-maven-snapshots", "username": "aws", "password": "${{ env.CODEARTIFACT_AUTH_TOKEN }}" }, { "id": "mtnfog-maven-releases", "username": "aws", "password": "${{ env.CODEARTIFACT_AUTH_TOKEN }}" }]'
       - name: Build with Maven
-        run: mvn -f opennlp-pom.xml --batch-mode --update-snapshots package deploy
+        run: mvn --batch-mode --update-snapshots package deploy
