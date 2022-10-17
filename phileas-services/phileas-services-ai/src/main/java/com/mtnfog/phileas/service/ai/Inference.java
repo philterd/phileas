@@ -8,9 +8,12 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Inference {
 
@@ -26,36 +29,25 @@ public class Inference {
 
     }
 
-    public List<Entity> predict(final String text, final String context, final String documentId) throws Exception {
+    public List<Entity> predict(final String text, final String context, final String documentId) {
 
         final String[] tokens = text.split(" ");
 
         final long startTime = System.currentTimeMillis();
         final Span[] spans = nameFinderDL.find(tokens);
         final long endTime = System.currentTimeMillis();
-        LOGGER.info("Inference took {} ms", endTime - startTime);
+        LOGGER.info("Inference took {} ms. Found {} spans.", endTime - startTime, spans.length);
 
         final List<Entity> entities = new LinkedList<>();
 
         for(final Span span : spans) {
 
-            final String spanText = span.getCoveredText(text).toString();
-
-            // The difference between the OpenNLP Span and Phileas Span
-            // is that the OpenNLP span is based on token position instead of character position.
-
-            final int characterStart = text.indexOf(spanText);
-            final int characterEnd = characterStart + spanText.length();
-
-            LOGGER.info("Span text = " + spanText);
-            LOGGER.info("Span text length = " + spanText.length());
-            LOGGER.info("Character start = " + characterStart);
-            LOGGER.info("Character end = " + characterEnd);
+            final String spanText = (String) span.getCoveredText(text);
 
             // Create a span for this text.
             final Entity entity = new Entity(
-                    characterStart,
-                    characterEnd,
+                    span.getStart(),
+                    span.getEnd(),
                     FilterType.PERSON,
                     context,
                     documentId,
@@ -67,6 +59,25 @@ public class Inference {
         }
 
         return entities;
+
+    }
+
+    public static String findByRegex(String text, String span) {
+
+        final String regex = span
+                .replaceAll(" ", "\\\\s+")
+                .replaceAll("\\)", "\\\\)")
+                .replaceAll("\\(", "\\\\(");
+
+        final Pattern pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
+        final Matcher matcher = pattern.matcher(text);
+
+        if(matcher.find()) {
+            return matcher.group(0);
+        }
+
+        // For some reason the regex match wasn't found. Just return the original span.
+        return span;
 
     }
 
