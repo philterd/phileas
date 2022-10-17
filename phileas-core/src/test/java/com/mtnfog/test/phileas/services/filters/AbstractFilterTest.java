@@ -234,4 +234,26 @@ public abstract class AbstractFilterTest {
 
     }
 
+    public boolean checkSpanInSpans(List<Span> spans, int characterStart, int characterEnd,
+                                    FilterType filterType, String text, String replacement) {
+
+        for(final Span span : spans) {
+
+            if (span.getCharacterStart() == characterStart
+                    && span.getCharacterEnd() == characterEnd
+                    && span.getFilterType() == filterType
+                    && StringUtils.equals(text, span.getText())
+                    && StringUtils.equals(replacement, span.getReplacement()) == true) {
+
+                return true;
+
+            }
+
+        }
+
+        // None of the spans in the list match this one.
+        return false;
+
+    }
+
 }

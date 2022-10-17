@@ -235,7 +235,7 @@ public class PhileasFilterServiceTest {
 
         LOGGER.info(response.getFilteredText());
 
-        Assertions.assertEquals("his name was STATIC-REPLACEMENT.", response.getFilteredText());
+        Assertions.assertEquals("his name was {{{REDACTED-person}}}.", response.getFilteredText());
         Assertions.assertEquals("documentid", response.getDocumentId());
 
     }
@@ -482,7 +482,7 @@ public class PhileasFilterServiceTest {
         LOGGER.info("Generated document ID: " + response.getDocumentId());
         LOGGER.info(response.getFilteredText());
 
-        Assertions.assertEquals("his name was STATIC-REPLACEMENT.", response.getFilteredText());
+        Assertions.assertEquals("his name was {{{REDACTED-person}}}.", response.getFilteredText());
         Assertions.assertNotNull(response.getDocumentId());
 
     }
@@ -794,7 +794,7 @@ public class PhileasFilterServiceTest {
         showSpans(response.getExplanation().getAppliedSpans());
 
         final String md5 = DigestUtils.md5Hex(new FileInputStream(outputFile));
-        Assertions.assertEquals("6a7076dff4299650a5f3341f006831c6", md5);
+        Assertions.assertEquals("c89cb09e91a3bb84ddbd1837fc0ad44e", md5);
 
     }
 

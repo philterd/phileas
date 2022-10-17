@@ -130,17 +130,9 @@ public class PersonsFilterTest extends AbstractFilterTest {
 
         Assertions.assertEquals(3, filterResult.getSpans().size());
 
-        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 1043, 1061, FilterType.PERSON));
-        Assertions.assertEquals("Martin Luther King", filterResult.getSpans().get(0).getText());
-        Assertions.assertEquals("{{{REDACTED-person}}}", filterResult.getSpans().get(0).getReplacement());
-
-        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(1), 1154, 1175, FilterType.PERSON));
-        Assertions.assertEquals("Barbara Ferrer Ferrer", filterResult.getSpans().get(1).getText());
-        Assertions.assertEquals("{{{REDACTED-person}}}", filterResult.getSpans().get(1).getReplacement());
-
-        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(2), 1181, 1194, FilterType.PERSON));
-        Assertions.assertEquals("Reverend King", filterResult.getSpans().get(2).getText());
-        Assertions.assertEquals("{{{REDACTED-person}}}", filterResult.getSpans().get(2).getReplacement());
+        Assertions.assertTrue(checkSpanInSpans(filterResult.getSpans(), 1181, 1194, FilterType.PERSON, "Reverend King", "{{{REDACTED-person}}}"));
+        Assertions.assertTrue(checkSpanInSpans(filterResult.getSpans(), 1154, 1175, FilterType.PERSON, "Barbara Ferrer Ferrer", "{{{REDACTED-person}}}"));
+        Assertions.assertTrue(checkSpanInSpans(filterResult.getSpans(), 1043, 1061, FilterType.PERSON, "Martin Luther King", "{{{REDACTED-person}}}"));
 
     }
 
