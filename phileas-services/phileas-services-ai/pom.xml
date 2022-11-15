@@ -28,12 +28,12 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>com.mtnfog</groupId>
+      <groupId>org.apache.opennlp</groupId>
       <artifactId>opennlp-tools</artifactId>
       <version>${opennlp.version}</version>
     </dependency>
     <dependency>
-      <groupId>com.mtnfog</groupId>
+      <groupId>org.apache.opennlp</groupId>
       <artifactId>opennlp-dl</artifactId>
       <version>${opennlp.version}</version>
     </dependency>
