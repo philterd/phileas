@@ -2,7 +2,7 @@ name: Build Artifacts
 on: [push, workflow_dispatch]
 jobs:
   build:
-    runs-on: self-hosted
+    runs-on: phileas-runner
     steps:
       - uses: actions/checkout@v3
         with:
