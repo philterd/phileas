@@ -1,6 +1,7 @@
 package com.mtnfog.phileas.service.ai;
 
 import com.mtnfog.phileas.model.objects.Entity;
+import opennlp.tools.sentdetect.SentenceDetector;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -14,9 +15,9 @@ public class OnnxNer {
 
     private final Inference inference;
 
-    public OnnxNer(File model, File vocab, final Map<Integer, String> id2Labels) throws Exception {
+    public OnnxNer(File model, File vocab, final Map<Integer, String> id2Labels, SentenceDetector sentenceDetector) throws Exception {
 
-        this.inference = new Inference(model, vocab, id2Labels);
+        this.inference = new Inference(model, vocab, id2Labels, sentenceDetector);
 
     }
 

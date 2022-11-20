@@ -3,6 +3,7 @@ package com.mtnfog.phileas.service.ai;
 import com.mtnfog.phileas.model.enums.FilterType;
 import com.mtnfog.phileas.model.objects.Entity;
 import opennlp.dl.namefinder.NameFinderDL;
+import opennlp.tools.sentdetect.SentenceDetector;
 import opennlp.tools.util.Span;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -19,10 +20,10 @@ public class Inference {
     private final Map<Integer, String> id2Labels;
     private final NameFinderDL nameFinderDL;
 
-    public Inference(File model, File vocab, Map<Integer, String> id2Labels) throws Exception {
+    public Inference(File model, File vocab, Map<Integer, String> id2Labels, SentenceDetector sentenceDetector) throws Exception {
 
         this.id2Labels = id2Labels;
-        this.nameFinderDL = new NameFinderDL(model, vocab, id2Labels);
+        this.nameFinderDL = new NameFinderDL(model, vocab, id2Labels, sentenceDetector);
 
     }
 

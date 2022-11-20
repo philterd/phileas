@@ -2,6 +2,8 @@ package com.mtnfog.test.phileas.services.ai;
 
 import com.mtnfog.phileas.model.objects.Entity;
 import com.mtnfog.phileas.service.ai.OnnxNer;
+import opennlp.tools.sentdetect.SentenceDetector;
+import opennlp.tools.sentdetect.SentenceDetectorME;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Assertions;
@@ -16,6 +18,12 @@ public class OnnxNerTest {
 
     private static final Logger LOGGER = LogManager.getLogger(OnnxNerTest.class);
 
+    private final SentenceDetector sentenceDetector;
+
+    public OnnxNerTest() throws Exception {
+        this.sentenceDetector = new SentenceDetectorME("en");
+    }
+
     @Test
     public void find1() throws Exception {
 
@@ -24,7 +32,7 @@ public class OnnxNerTest {
 
         final String tokens = "George Washington was president of the United States.";
 
-        final OnnxNer nameFinderDL = new OnnxNer(model, vocab, getLabels());
+        final OnnxNer nameFinderDL = new OnnxNer(model, vocab, getLabels(), sentenceDetector);
         final List<Entity> entities = nameFinderDL.find(tokens, "context", "documentId");
 
         showEntities(entities);
@@ -44,7 +52,7 @@ public class OnnxNerTest {
 
         final String tokens = "George Washington lives in 90210 and his SSN was 123-45-6789.";
 
-        final OnnxNer nameFinderDL = new OnnxNer(model, vocab, getLabels());
+        final OnnxNer nameFinderDL = new OnnxNer(model, vocab, getLabels(), sentenceDetector);
         final List<Entity> entities = nameFinderDL.find(tokens, "context", "documentId");
 
         showEntities(entities);
@@ -66,13 +74,13 @@ public class OnnxNerTest {
         final String tokens2 = "George Washington was president.";
         final String tokens3 = "George Washington lived in the United States.";
 
-        final OnnxNer nameFinderDL1 = new OnnxNer(model, vocab, getLabels());
+        final OnnxNer nameFinderDL1 = new OnnxNer(model, vocab, getLabels(), sentenceDetector);
         final List<Entity> spans1 = nameFinderDL1.find(tokens1, "context", "documentId");
 
-        final OnnxNer nameFinderDL2 = new OnnxNer(model, vocab, getLabels());
+        final OnnxNer nameFinderDL2 = new OnnxNer(model, vocab, getLabels(), sentenceDetector);
         final List<Entity> spans2 = nameFinderDL2.find(tokens2, "context", "documentId");
 
-        final OnnxNer nameFinderDL3 = new OnnxNer(model, vocab, getLabels());
+        final OnnxNer nameFinderDL3 = new OnnxNer(model, vocab, getLabels(), sentenceDetector);
         final List<Entity> spans3 = nameFinderDL3.find(tokens3, "context", "documentId");
         final List<Entity> spans4 = nameFinderDL3.find(tokens2, "context", "documentId");
         final List<Entity> spans5 = nameFinderDL3.find(tokens3, "context", "documentId");
@@ -126,7 +134,7 @@ public class OnnxNerTest {
                 "week of September versus August. The number of job openings rose by 617,000 to 6.618 million in July. " +
                 "The Treasury is set to auction 10-year notes at 1:00 p.m. ET.";
 
-        final OnnxNer nameFinderDL = new OnnxNer(model, vocab, getLabels());
+        final OnnxNer nameFinderDL = new OnnxNer(model, vocab, getLabels(), sentenceDetector);
         final List<Entity> entities = nameFinderDL.find(tokens, "context", "documentId");
 
         showEntities(entities);
@@ -151,7 +159,7 @@ public class OnnxNerTest {
 
         final String tokens = "George  Washington lives in California.";
 
-        final OnnxNer nameFinderDL = new OnnxNer(model, vocab, getLabels());
+        final OnnxNer nameFinderDL = new OnnxNer(model, vocab, getLabels(), sentenceDetector);
         final List<Entity> entities = nameFinderDL.find(tokens, "context", "documentId");
 
         showEntities(entities);
@@ -171,7 +179,7 @@ public class OnnxNerTest {
 
         final String tokens = "George   Washington lives in California.";
 
-        final OnnxNer nameFinderDL = new OnnxNer(model, vocab, getLabels());
+        final OnnxNer nameFinderDL = new OnnxNer(model, vocab, getLabels(), sentenceDetector);
         final List<Entity> entities = nameFinderDL.find(tokens, "context", "documentId");
 
         showEntities(entities);
@@ -191,7 +199,7 @@ public class OnnxNerTest {
 
         final String tokens = "George Washington lives in George. Washington is a state.";
 
-        final OnnxNer nameFinderDL = new OnnxNer(model, vocab, getLabels());
+        final OnnxNer nameFinderDL = new OnnxNer(model, vocab, getLabels(), sentenceDetector);
         final List<Entity> entities = nameFinderDL.find(tokens, "context", "documentId");
 
         showEntities(entities);
@@ -211,7 +219,7 @@ public class OnnxNerTest {
 
         final String tokens = "123-45-6789 was George Washington ssn.";
 
-        final OnnxNer nameFinderDL = new OnnxNer(model, vocab, getLabels());
+        final OnnxNer nameFinderDL = new OnnxNer(model, vocab, getLabels(), sentenceDetector);
         final List<Entity> entities = nameFinderDL.find(tokens, "context", "documentId");
 
         showEntities(entities);
@@ -231,7 +239,7 @@ public class OnnxNerTest {
 
         final String tokens = "George Washington Carver lives in California.";
 
-        final OnnxNer nameFinderDL = new OnnxNer(model, vocab, getLabels());
+        final OnnxNer nameFinderDL = new OnnxNer(model, vocab, getLabels(), sentenceDetector);
         final List<Entity> entities = nameFinderDL.find(tokens, "context", "documentId");
 
         showEntities(entities);
@@ -251,7 +259,7 @@ public class OnnxNerTest {
 
         final String tokens = "George Washington was friends with Bob Ross.";
 
-        final OnnxNer nameFinderDL = new OnnxNer(model, vocab, getLabels());
+        final OnnxNer nameFinderDL = new OnnxNer(model, vocab, getLabels(), sentenceDetector);
         final List<Entity> entities = nameFinderDL.find(tokens, "context", "documentId");
 
         showEntities(entities);
@@ -274,7 +282,7 @@ public class OnnxNerTest {
 
         final String tokens = "George Washington was friends with George Washington.";
 
-        final OnnxNer nameFinderDL = new OnnxNer(model, vocab, getLabels());
+        final OnnxNer nameFinderDL = new OnnxNer(model, vocab, getLabels(), sentenceDetector);
         final List<Entity> entities = nameFinderDL.find(tokens, "context", "documentId");
 
         showEntities(entities);
@@ -297,7 +305,7 @@ public class OnnxNerTest {
 
         final String tokens = "George Washington was friends with George Washington.";
 
-        final OnnxNer nameFinderDL = new OnnxNer(model, vocab, getLabels());
+        final OnnxNer nameFinderDL = new OnnxNer(model, vocab, getLabels(), sentenceDetector);
         final List<Entity> entities = nameFinderDL.find(tokens, "context", "documentId");
 
         showEntities(entities);
@@ -338,12 +346,12 @@ public class OnnxNerTest {
                 "said, \"Of all the forms of inequality, injustice in health is the most shocking and the most " +
                 "inhuman because it often results in physical death.\"";
 
-        final OnnxNer nameFinderDL = new OnnxNer(model, vocab, getLabels());
+        final OnnxNer nameFinderDL = new OnnxNer(model, vocab, getLabels(), sentenceDetector);
         final List<Entity> entities = nameFinderDL.find(tokens, "context", "documentId");
 
         showEntities(entities);
 
-        Assertions.assertEquals(4, entities.size());
+        Assertions.assertEquals(3, entities.size());
 
         // This doesn't check all 6. It only spot checks.
 
@@ -351,9 +359,9 @@ public class OnnxNerTest {
         Assertions.assertEquals(1043, entities.get(0).getCharacterStart());
         Assertions.assertEquals(1061, entities.get(0).getCharacterEnd());
 
-        Assertions.assertEquals("Barbara Ferrer", entities.get(1).getText());
-        Assertions.assertEquals(1154, entities.get(1).getCharacterStart());
-        Assertions.assertEquals(1168, entities.get(1).getCharacterEnd());
+        Assertions.assertEquals("Barbara Ferrer", entities.get(2).getText());
+        Assertions.assertEquals(1154, entities.get(2).getCharacterStart());
+        Assertions.assertEquals(1168, entities.get(2).getCharacterEnd());
 
     }
 
@@ -383,12 +391,12 @@ public class OnnxNerTest {
                 "of inequality, injustice in health is the most shocking and the most inhuman because it often " +
                 "results in physical death.\"";
 
-        final OnnxNer nameFinderDL = new OnnxNer(model, vocab, getLabels());
+        final OnnxNer nameFinderDL = new OnnxNer(model, vocab, getLabels(), sentenceDetector);
         final List<Entity> entities = nameFinderDL.find(tokens, "context", "documentId");
 
         showEntities(entities);
 
-        Assertions.assertEquals(4, entities.size());
+        Assertions.assertEquals(3, entities.size());
 
         // This doesn't check all 7, It only spot checks.
 
@@ -396,9 +404,9 @@ public class OnnxNerTest {
         Assertions.assertEquals(1043, entities.get(0).getCharacterStart());
         Assertions.assertEquals(1061, entities.get(0).getCharacterEnd());
 
-        Assertions.assertEquals("Barbara Ferrer Smith", entities.get(1).getText());
-        Assertions.assertEquals(1154, entities.get(1).getCharacterStart());
-        Assertions.assertEquals(1174, entities.get(1).getCharacterEnd());
+        Assertions.assertEquals("Barbara Ferrer Smith", entities.get(2).getText());
+        Assertions.assertEquals(1154, entities.get(2).getCharacterStart());
+        Assertions.assertEquals(1174, entities.get(2).getCharacterEnd());
 
     }
 
@@ -414,12 +422,12 @@ public class OnnxNerTest {
 
         final String tokens = "In recent days, healthcare facilities across the nation have again begun to buckle under spiking infection rates. Last week, some local hospitals temporarily postponed scheduled surgeries that require an inpatient stay following an operation, and the trauma center at Harbor-UCLA Medical Center closed for hours because of a blood shortage - a step it hadn't taken in over three decades. A staff shortage at some local ambulance companies further complicated the situation.The virus has spread so fast since the arrival of the Omicron variant that it could take just about a week for California to tally a million new cases. It was only on Jan. 10 that California surpassed 6 million total reported coronavirus cases in the nearly two years since the start of the pandemic, according to data released by state health officials. Even during last winter's surge, it took three weeks to accumulate a million new cases, with the state peaking at 46,000 new infections a day. \"On this national holiday where we celebrate the life and legacy of Dr. Martin Luther King, we remember his deep commitment to health equity,\" said L.A. County Public Health Director Barbara Ferrer Ferrer. \"As Reverend King memorably said, \"Of all the forms of inequality, injustice in health is the most shocking and the most inhuman because it often results in physical death.\"";
 
-        final OnnxNer nameFinderDL = new OnnxNer(model, vocab, getLabels());
+        final OnnxNer nameFinderDL = new OnnxNer(model, vocab, getLabels(), sentenceDetector);
         final List<Entity> entities = nameFinderDL.find(tokens, "context", "documentId");
 
         showEntities(entities);
 
-        Assertions.assertEquals(4, entities.size());
+        Assertions.assertEquals(3, entities.size());
 
         // This doesn't check all 7. It only spot checks.
 
@@ -427,9 +435,9 @@ public class OnnxNerTest {
         Assertions.assertEquals(1043, entities.get(0).getCharacterStart());
         Assertions.assertEquals(1061, entities.get(0).getCharacterEnd());
 
-        Assertions.assertEquals("Barbara Ferrer Ferrer", entities.get(1).getText());
-        Assertions.assertEquals(1154, entities.get(1).getCharacterStart());
-        Assertions.assertEquals(1175, entities.get(1).getCharacterEnd());
+        Assertions.assertEquals("Barbara Ferrer Ferrer", entities.get(2).getText());
+        Assertions.assertEquals(1154, entities.get(2).getCharacterStart());
+        Assertions.assertEquals(1175, entities.get(2).getCharacterEnd());
 
     }
 
