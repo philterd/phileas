@@ -36,4 +36,5 @@ jobs:
       - name: Build with Maven
         run: mvn --batch-mode --update-snapshots package deploy
       - name: Trigger Philter
-        run: curl -X POST -u "jzonthemtn:${{secrets.PERSONAL_ACCESS_GITHUB_TOKEN}}" -H "Accept: application/vnd.github.everest-preview+json" -H "Content-Type: application/json" https://api.github.com/repos/mtnfog/philter/dispatches --data '{"event_type": "build_application"}'
+        run: |
+          curl -X POST -u "jzonthemtn:${{secrets.PERSONAL_ACCESS_GITHUB_TOKEN}}" -H "Accept: application/vnd.github.everest-preview+json" -H "Content-Type: application/json" https://api.github.com/repos/mtnfog/philter/dispatches --data '{"event_type": "build_application"}'
