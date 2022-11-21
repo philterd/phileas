@@ -1,8 +1,8 @@
 name: Build Artifacts
 on: [push, workflow_dispatch]
 concurrency:
-  group: philter
-  cancel-in-progress: false
+  group: ${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
 jobs:
   build:
     runs-on:
