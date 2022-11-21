@@ -1,5 +1,8 @@
 name: Build Artifacts
 on: [push, workflow_dispatch]
+concurrency:
+  group: philter
+  cancel-in-progress: false
 jobs:
   build:
     runs-on:
