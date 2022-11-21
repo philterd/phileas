@@ -10,6 +10,8 @@ import com.mtnfog.phileas.model.objects.Span;
 import com.mtnfog.phileas.model.profile.FilterProfile;
 import com.mtnfog.phileas.model.services.MetricsService;
 import com.mtnfog.phileas.service.ai.OnnxNer;
+import opennlp.tools.sentdetect.SentenceDetector;
+import opennlp.tools.sentdetect.SentenceDetectorME;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.apache.commons.text.WordUtils;
 
@@ -48,8 +50,12 @@ public class PersonsFilter extends NerFilter {
         id2Labels.put(7, "B-LOC");
         id2Labels.put(8, "I-LOC");
 
+        // Initialize the sentence detector.
+        // TODO: Load this model locally.
+        final SentenceDetector sentenceDetector = new SentenceDetectorME("en");
+
         LOGGER.info("Initializing persons filter with model {}", modelFile);
-        this.onnxNer = new OnnxNer(model, vocab, id2Labels);
+        this.onnxNer = new OnnxNer(model, vocab, id2Labels, sentenceDetector);
 
     }
 
