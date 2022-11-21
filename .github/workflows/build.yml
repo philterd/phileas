@@ -1,8 +1,12 @@
 name: Build Artifacts
 on: [push, workflow_dispatch]
+concurrency:
+  group: ${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on:
+      labels: ubuntu-latest-4-cores
     steps:
       - uses: actions/checkout@v3
         with:
@@ -34,3 +38,10 @@ jobs:
           servers: '[{ "id": "mtnfog-maven-snapshots", "username": "aws", "password": "${{ env.CODEARTIFACT_AUTH_TOKEN }}" }, { "id": "mtnfog-maven-releases", "username": "aws", "password": "${{ env.CODEARTIFACT_AUTH_TOKEN }}" }]'
       - name: Build with Maven
         run: mvn --batch-mode --update-snapshots package deploy
+      - name: Trigger Philter
+        run: |
+          curl -X POST \
+            -u "jzonthemtn:${{secrets.PERSONAL_ACCESS_GITHUB_TOKEN}}" \
+            -H "Accept: application/vnd.github.v3+json" \
+            -H "Content-Type: application/json" \
+            https://api.github.com/repos/mtnfog/philter/actions/workflows/build.yml/dispatches --data '{"philter_tag": "main"}'
