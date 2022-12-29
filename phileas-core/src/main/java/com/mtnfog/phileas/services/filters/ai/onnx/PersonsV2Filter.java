@@ -1,4 +1,4 @@
-package com.mtnfog.phileas.services.filters.ai;
+package com.mtnfog.phileas.services.filters.ai.onnx;
 
 import com.mtnfog.phileas.model.enums.FilterType;
 import com.mtnfog.phileas.model.filter.FilterConfiguration;
@@ -9,7 +9,7 @@ import com.mtnfog.phileas.model.objects.Replacement;
 import com.mtnfog.phileas.model.objects.Span;
 import com.mtnfog.phileas.model.profile.FilterProfile;
 import com.mtnfog.phileas.model.services.MetricsService;
-import com.mtnfog.phileas.service.ai.OnnxNer;
+import com.mtnfog.phileas.service.ai.onnx.OnnxNer;
 import opennlp.tools.sentdetect.SentenceDetector;
 import opennlp.tools.sentdetect.SentenceDetectorME;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
@@ -21,17 +21,17 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-public class PersonsFilter extends NerFilter {
+public class PersonsV2Filter extends NerFilter {
 
     private final OnnxNer onnxNer;
     private Map<Integer, String> id2Labels;
 
-    public PersonsFilter(FilterConfiguration filterConfiguration,
-                         String modelFile,
-                         String vocabFile,
-                         Map<String, DescriptiveStatistics> stats,
-                         MetricsService metricsService,
-                         Map<String, Double> thresholds) throws Exception {
+    public PersonsV2Filter(FilterConfiguration filterConfiguration,
+                           String modelFile,
+                           String vocabFile,
+                           Map<String, DescriptiveStatistics> stats,
+                           MetricsService metricsService,
+                           Map<String, Double> thresholds) throws Exception {
 
         super(filterConfiguration, stats, metricsService, thresholds, FilterType.PERSON);
 
@@ -60,7 +60,7 @@ public class PersonsFilter extends NerFilter {
     }
 
     @Override
-    public FilterResult filter(FilterProfile filterProfile, String context, String documentId, String input) throws Exception {
+    public FilterResult filter(FilterProfile filterProfile, String context, String documentId, int piece, String input) throws Exception {
 
         // Remove line breaks.
         input = input.replaceAll("\n", " ");

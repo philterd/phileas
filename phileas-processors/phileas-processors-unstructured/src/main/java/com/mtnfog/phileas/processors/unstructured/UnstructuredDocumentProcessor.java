@@ -34,7 +34,7 @@ public class UnstructuredDocumentProcessor implements DocumentProcessor {
 
     @Override
     public FilterResponse process(FilterProfile filterProfile, List<Filter> filters, List<PostFilter> postFilters,
-                                  String context, String documentId, String input) throws Exception {
+                                  String context, String documentId, int piece, String input) throws Exception {
 
         // The list that will contain the spans containing PHI/PII.
         List<Span> spans = new LinkedList<>();
@@ -43,7 +43,7 @@ public class UnstructuredDocumentProcessor implements DocumentProcessor {
         for(final Filter filter : filters) {
 
             final long startTimeMs = System.currentTimeMillis();
-            final FilterResult filterResult = filter.filter(filterProfile, context, documentId, input);
+            final FilterResult filterResult = filter.filter(filterProfile, context, documentId, piece, input);
             final long elapsedTimeMs = System.currentTimeMillis() - startTimeMs;
 
             metricsService.logFilterTime(filter.getFilterType(), elapsedTimeMs);
@@ -167,7 +167,7 @@ public class UnstructuredDocumentProcessor implements DocumentProcessor {
 
         metricsService.incrementProcessed();
 
-        return new FilterResponse(buffer.toString(), context, documentId, explanation);
+        return new FilterResponse(buffer.toString(), context, documentId, piece, explanation);
 
     }
 

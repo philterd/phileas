@@ -150,7 +150,7 @@ public class LuceneDictionaryFilter extends DictionaryFilter implements Serializ
     }
 
     @Override
-    public FilterResult filter(FilterProfile filterProfile, String context, String documentId, String text) throws Exception {
+    public FilterResult filter(FilterProfile filterProfile, String context, String documentId, int piece, String text) throws Exception {
 
         final List<Span> spans = new LinkedList<>();
 
@@ -296,7 +296,7 @@ public class LuceneDictionaryFilter extends DictionaryFilter implements Serializ
     @Override
     public int getOccurrences(FilterProfile filterProfile, String input) throws Exception {
 
-        return filter(filterProfile, "none", "none", input).getSpans().size();
+        return filter(filterProfile, "none", "none", 0, input).getSpans().size();
 
     }
 

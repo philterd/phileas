@@ -34,13 +34,14 @@ import com.mtnfog.phileas.services.analyzers.DocumentAnalyzer;
 import com.mtnfog.phileas.services.anonymization.*;
 import com.mtnfog.phileas.services.anonymization.cache.AnonymizationCacheServiceFactory;
 import com.mtnfog.phileas.services.disambiguation.VectorBasedSpanDisambiguationService;
-import com.mtnfog.phileas.services.filters.ai.PersonsFilter;
+import com.mtnfog.phileas.services.filters.ai.python.PersonsV1Filter;
 import com.mtnfog.phileas.services.filters.custom.PhoneNumberRulesFilter;
 import com.mtnfog.phileas.services.filters.regex.*;
 import com.mtnfog.phileas.services.postfilters.*;
 import com.mtnfog.phileas.services.profiles.LocalFilterProfileService;
 import com.mtnfog.phileas.services.profiles.S3FilterProfileService;
 import com.mtnfog.phileas.services.profiles.utils.FilterProfileUtils;
+import com.mtnfog.phileas.services.split.SplitFactory;
 import com.mtnfog.phileas.services.validators.DateSpanValidator;
 import com.mtnfog.services.pdf.PdfRedacter;
 import com.mtnfog.services.pdf.PdfTextExtractor;
@@ -193,16 +194,32 @@ public class PhileasFilterService implements FilterService {
 
         if(mimeType == MimeType.TEXT_PLAIN) {
 
-            // Do not split. Process the entire string at once.
-            filterResponse = unstructuredDocumentProcessor.process(filterProfile, filters, postFilters, context, documentId, input);
+            // PHL-145: Do we need to split the input text due to its size?
+            if (filterProfile.getConfig().getSplitting().isEnabled() && input.length() >= filterProfile.getConfig().getSplitting().getThreshold()) {
 
-        /*} else if(mimeType == MimeType.TEXT_HTML) {
+                // Get the splitter to use from the filter profile.
+                final SplitService splitService = SplitFactory.getSplitService(filterProfile.getConfig().getSplitting().getMethod());
 
-            // Remove the HTML tags.
-            final String plain = Jsoup.clean(input, Whitelist.none());*/
+                // Holds all of the filter responses that will ultimately be combined into a single response.
+                final List<FilterResponse> filterResponses = new LinkedList<>();
 
-        //} else if(mimeType == MimeType.APPLICATION_FHIRJSON) {
-        //    filterResponse = fhirDocumentProcessor.process(filterProfile, filters, postFilters, context, documentId, input);
+                // Split the string.
+                final List<String> splits = splitService.split(input);
+
+                // Process each split.
+                for (int i = 0; i < splits.size(); i++) {
+                    filterResponses.add(unstructuredDocumentProcessor.process(filterProfile, filters, postFilters, context, documentId, i, splits.get(i)));
+                }
+
+                // Combine the results into a single filterResponse object.
+                filterResponse = FilterResponse.combine(filterResponses, context, documentId, splitService.getSeparator());
+
+            } else {
+
+                // Do not split. Process the entire string at once.
+                filterResponse = unstructuredDocumentProcessor.process(filterProfile, filters, postFilters, context, documentId, 0, input);
+
+            }
 
         } else {
             // Should never happen but just in case.
@@ -264,10 +281,10 @@ public class PhileasFilterService implements FilterService {
             // Process each line looking for sensitive information in each line.
             for (final String line : lines) {
 
-//System.out.println(line);
+                final int piece = 0;
 
                 // Process the text.
-                final FilterResponse filterResponse = unstructuredDocumentProcessor.process(filterProfile, filters, postFilters, context, documentId, line);
+                final FilterResponse filterResponse = unstructuredDocumentProcessor.process(filterProfile, filters, postFilters, context, documentId, piece, line);
 
                 // Add all the found spans to the list of spans.
                 spans.addAll(filterResponse.getExplanation().getAppliedSpans());
@@ -1372,13 +1389,23 @@ public class PhileasFilterService implements FilterService {
                         .withDocumentAnalysis(documentAnalysis)
                         .build();
 
-                final Filter filter = new PersonsFilter(
+                final Filter filter = new PersonsV1Filter(
+                        filterConfiguration,
+                        phileasConfiguration,
+                        "PER",
+                        stats,
+                        metricsService,
+                        filterProfile.getIdentifiers().getPerson().isRemovePunctuation(),
+                        filterProfile.getIdentifiers().getPerson().getThresholds()
+                );
+
+                /*final Filter filter = new PersonsV2Filter(
                         filterConfiguration,
                         filterProfile.getIdentifiers().getPerson().getModel(),
                         filterProfile.getIdentifiers().getPerson().getVocab(),
                         stats,
                         metricsService,
-                        filterProfile.getIdentifiers().getPerson().getThresholds());
+                        filterProfile.getIdentifiers().getPerson().getThresholds());*/
 
                 enabledFilters.add(filter);
                 filterCache.get(filterProfile.getName()).put(FilterType.PERSON, filter);

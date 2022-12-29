@@ -1,4 +1,4 @@
-package com.mtnfog.phileas.service.ai;
+package com.mtnfog.phileas.service.ai.onnx;
 
 import com.mtnfog.phileas.model.enums.FilterType;
 import com.mtnfog.phileas.model.objects.Entity;

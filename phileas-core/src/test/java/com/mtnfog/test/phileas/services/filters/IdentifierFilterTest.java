@@ -41,7 +41,7 @@ public class IdentifierFilterTest extends AbstractFilterTest {
 
         final IdentifierFilter filter = new IdentifierFilter(filterConfiguration, "name", Identifier.DEFAULT_IDENTIFIER_REGEX, true);
 
-        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", "the id is AB4736021 in california.");
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", PIECE, "the id is AB4736021 in california.");
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 10,19, FilterType.IDENTIFIER));
@@ -61,7 +61,7 @@ public class IdentifierFilterTest extends AbstractFilterTest {
 
         final IdentifierFilter filter = new IdentifierFilter(filterConfiguration, "name", Identifier.DEFAULT_IDENTIFIER_REGEX, true);
 
-        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", "the id is AB473-6021 in california.");
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", PIECE, "the id is AB473-6021 in california.");
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 10,20, FilterType.IDENTIFIER));
@@ -80,7 +80,7 @@ public class IdentifierFilterTest extends AbstractFilterTest {
 
         final IdentifierFilter filter = new IdentifierFilter(filterConfiguration, "name", Identifier.DEFAULT_IDENTIFIER_REGEX, true);
 
-        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", "the id is 473-6AB021 in california.");
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", PIECE, "the id is 473-6AB021 in california.");
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 10,20, FilterType.IDENTIFIER));
@@ -99,7 +99,7 @@ public class IdentifierFilterTest extends AbstractFilterTest {
 
         final IdentifierFilter filter = new IdentifierFilter(filterConfiguration, "name", Identifier.DEFAULT_IDENTIFIER_REGEX, true);
 
-        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", "the id is AB473-6021 in california.");
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", PIECE, "the id is AB473-6021 in california.");
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 10,20, FilterType.IDENTIFIER));
@@ -118,7 +118,7 @@ public class IdentifierFilterTest extends AbstractFilterTest {
 
         final IdentifierFilter filter = new IdentifierFilter(filterConfiguration, "name", Identifier.DEFAULT_IDENTIFIER_REGEX, true);
 
-        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", "the id is 473-6AB021 in california.");
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", PIECE, "the id is 473-6AB021 in california.");
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 10,20, FilterType.IDENTIFIER));
@@ -137,7 +137,7 @@ public class IdentifierFilterTest extends AbstractFilterTest {
 
         final IdentifierFilter filter = new IdentifierFilter(filterConfiguration, "name", Identifier.DEFAULT_IDENTIFIER_REGEX, true);
 
-        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", "the id is 123-45-6789 in california.");
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", PIECE, "the id is 123-45-6789 in california.");
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 10,21, FilterType.IDENTIFIER));
@@ -156,7 +156,7 @@ public class IdentifierFilterTest extends AbstractFilterTest {
 
         final IdentifierFilter filter = new IdentifierFilter(filterConfiguration, "name", Identifier.DEFAULT_IDENTIFIER_REGEX, true);
 
-        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", "George Washington was president and his ssn was 123-45-6789 and he lived at 90210. Patient id 00076A and 93821A. He is on biotin. Diagnosed with A01000.");
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", PIECE, "George Washington was president and his ssn was 123-45-6789 and he lived at 90210. Patient id 00076A and 93821A. He is on biotin. Diagnosed with A01000.");
 
         Assertions.assertEquals(4, filterResult.getSpans().size());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 48, 59, FilterType.IDENTIFIER));
@@ -178,7 +178,7 @@ public class IdentifierFilterTest extends AbstractFilterTest {
 
         final IdentifierFilter filter = new IdentifierFilter(filterConfiguration, "name", Identifier.DEFAULT_IDENTIFIER_REGEX, true);
 
-        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", "the id is 000-00-00-00 ABC123 in california.");
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", PIECE, "the id is 000-00-00-00 ABC123 in california.");
 
         Assertions.assertEquals(2, filterResult.getSpans().size());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 10, 22, FilterType.IDENTIFIER));
@@ -198,7 +198,7 @@ public class IdentifierFilterTest extends AbstractFilterTest {
 
         final IdentifierFilter filter = new IdentifierFilter(filterConfiguration, "name", Identifier.DEFAULT_IDENTIFIER_REGEX, true);
 
-        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", "the id is AZ12 ABC1234/123ABC4 in california.");
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", PIECE, "the id is AZ12 ABC1234/123ABC4 in california.");
 
         Assertions.assertEquals(2, filterResult.getSpans().size());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 15, 22, FilterType.IDENTIFIER));
@@ -218,7 +218,7 @@ public class IdentifierFilterTest extends AbstractFilterTest {
 
         final IdentifierFilter filter = new IdentifierFilter(filterConfiguration, "name", Identifier.DEFAULT_IDENTIFIER_REGEX, true);
 
-        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", "the id is H3SNPUHYEE7JD3H in california.");
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", PIECE, "the id is H3SNPUHYEE7JD3H in california.");
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 10,25, FilterType.IDENTIFIER));
@@ -237,7 +237,7 @@ public class IdentifierFilterTest extends AbstractFilterTest {
 
         final IdentifierFilter filter = new IdentifierFilter(filterConfiguration, "name", Identifier.DEFAULT_IDENTIFIER_REGEX, true);
 
-        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", "the id is 86637729 in california.");
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", PIECE, "the id is 86637729 in california.");
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 10,18, FilterType.IDENTIFIER));
@@ -256,7 +256,7 @@ public class IdentifierFilterTest extends AbstractFilterTest {
 
         final IdentifierFilter filter = new IdentifierFilter(filterConfiguration, "name", Identifier.DEFAULT_IDENTIFIER_REGEX, true);
 
-        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", "the id is 33778376 in california.");
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", PIECE, "the id is 33778376 in california.");
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 10,18, FilterType.IDENTIFIER));
@@ -275,7 +275,7 @@ public class IdentifierFilterTest extends AbstractFilterTest {
 
         final IdentifierFilter filter = new IdentifierFilter(filterConfiguration, "name", "\\b[A-Z]{4,}\\b", true);
 
-        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", "the id is ABCD.");
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", PIECE, "the id is ABCD.");
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 10,14, FilterType.IDENTIFIER));
@@ -294,7 +294,7 @@ public class IdentifierFilterTest extends AbstractFilterTest {
 
         final IdentifierFilter filter = new IdentifierFilter(filterConfiguration, "name", Identifier.DEFAULT_IDENTIFIER_REGEX, true);
 
-        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", "the id is 123456.");
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", PIECE, "the id is 123456.");
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 10,16, FilterType.IDENTIFIER));
@@ -313,7 +313,7 @@ public class IdentifierFilterTest extends AbstractFilterTest {
 
         final IdentifierFilter filter = new IdentifierFilter(filterConfiguration, "name", Identifier.DEFAULT_IDENTIFIER_REGEX, true);
 
-        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", "John Smith, patient ID A203493, was seen on February 18.");
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", PIECE, "John Smith, patient ID A203493, was seen on February 18.");
 
         showSpans(filterResult.getSpans());
         Assertions.assertEquals(1, filterResult.getSpans().size());

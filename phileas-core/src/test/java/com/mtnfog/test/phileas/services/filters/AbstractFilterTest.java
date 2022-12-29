@@ -21,6 +21,7 @@ public abstract class AbstractFilterTest {
 
     protected static final Logger LOGGER = LogManager.getLogger(AbstractFilterTest.class);
 
+    protected static final int PIECE = 0;
     protected final int windowSize = 3;
 
     /**
