@@ -86,10 +86,11 @@ public abstract class Filter {
      * @param filterProfile The {@link FilterProfile} to use.
      * @param context The context.
      * @param documentId An ID uniquely identifying the document.
-      * @param input The input text.
+     * @param piece A numbered piece of the document. Pass <code>0</code> if only piece of document.
+     * @param input The input text.
      * @return A {@link FilterResult} containing the identified {@link Span spans}.
      */
-    public abstract FilterResult filter(FilterProfile filterProfile, String context, String documentId, String input) throws Exception;
+    public abstract FilterResult filter(FilterProfile filterProfile, String context, String documentId, int piece, String input) throws Exception;
 
     /**
      * Determines if the input text may contain sensitive information matching the filter type.

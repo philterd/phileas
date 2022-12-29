@@ -14,6 +14,10 @@ public class Person extends AbstractFilter {
     @Expose
     private List<PersonsFilterStrategy> personFilterStrategies;
 
+    @SerializedName("removePunctuation")
+    @Expose
+    private boolean removePunctuation = false;
+
     @SerializedName("thresholds")
     @Expose
     private Map<String, Double> thresholds = new LinkedHashMap<>();
@@ -48,6 +52,14 @@ public class Person extends AbstractFilter {
 
     public void setModel(String model) {
         this.model = model;
+    }
+
+    public boolean isRemovePunctuation() {
+        return removePunctuation;
+    }
+
+    public void setRemovePunctuation(boolean removePunctuation) {
+        this.removePunctuation = removePunctuation;
     }
 
     public String getVocab() {

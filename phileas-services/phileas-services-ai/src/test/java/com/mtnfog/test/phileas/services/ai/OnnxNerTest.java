@@ -1,7 +1,7 @@
 package com.mtnfog.test.phileas.services.ai;
 
 import com.mtnfog.phileas.model.objects.Entity;
-import com.mtnfog.phileas.service.ai.OnnxNer;
+import com.mtnfog.phileas.service.ai.onnx.OnnxNer;
 import opennlp.tools.sentdetect.SentenceDetector;
 import opennlp.tools.sentdetect.SentenceDetectorME;
 import org.apache.logging.log4j.LogManager;

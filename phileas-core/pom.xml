@@ -32,6 +32,11 @@
 		</dependency>
 		<dependency>
 			<groupId>com.mtnfog</groupId>
+			<artifactId>phileas-services-split</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.mtnfog</groupId>
 			<artifactId>phileas-services-anonymization</artifactId>
 			<version>${project.version}</version>
 		</dependency>
@@ -94,6 +99,21 @@
 			<groupId>com.googlecode.libphonenumber</groupId>
 			<artifactId>libphonenumber</artifactId>
 			<version>${libphonenumber.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.squareup.retrofit2</groupId>
+			<artifactId>retrofit</artifactId>
+			<version>${retrofit.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.squareup.retrofit2</groupId>
+			<artifactId>converter-gson</artifactId>
+			<version>${retrofit.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.squareup.retrofit2</groupId>
+			<artifactId>converter-scalars</artifactId>
+			<version>${retrofit.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.commons</groupId>

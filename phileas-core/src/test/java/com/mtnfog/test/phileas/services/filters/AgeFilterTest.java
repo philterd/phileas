@@ -41,7 +41,7 @@ public class AgeFilterTest extends AbstractFilterTest {
 
         final AgeFilter filter = new AgeFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", "the patient is 35years old.");
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", PIECE, "the patient is 35years old.");
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertTrue(filterResult.getSpans().get(0).isIgnored());
@@ -66,7 +66,7 @@ public class AgeFilterTest extends AbstractFilterTest {
 
         final AgeFilter filter = new AgeFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", "the patient is 35yEaRs old.");
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", PIECE, "the patient is 35yEaRs old.");
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertTrue(filterResult.getSpans().get(0).isIgnored());
@@ -87,7 +87,7 @@ public class AgeFilterTest extends AbstractFilterTest {
 
         final AgeFilter filter = new AgeFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", "the patient is 3.5years old.");
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", PIECE, "the patient is 3.5years old.");
 
         showSpans(filterResult.getSpans());
 
@@ -111,7 +111,7 @@ public class AgeFilterTest extends AbstractFilterTest {
 
         final AgeFilter filter = new AgeFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", "the patient is 3.5years old.");
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", PIECE, "the patient is 3.5years old.");
 
         showSpans(filterResult.getSpans());
 
@@ -133,7 +133,7 @@ public class AgeFilterTest extends AbstractFilterTest {
 
         final AgeFilter filter = new AgeFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", "the patient age is 3.yrs.");
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", PIECE, "the patient age is 3.yrs.");
 
         showSpans(filterResult.getSpans());
 
@@ -155,7 +155,7 @@ public class AgeFilterTest extends AbstractFilterTest {
 
         final AgeFilter filter = new AgeFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", "the patient age is 3yrs.");
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", PIECE, "the patient age is 3yrs.");
 
         showSpans(filterResult.getSpans());
 
@@ -177,7 +177,7 @@ public class AgeFilterTest extends AbstractFilterTest {
 
         final AgeFilter filter = new AgeFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", "the patient is 3.5yrs old.");
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", PIECE, "the patient is 3.5yrs old.");
 
         showSpans(filterResult.getSpans());
 
@@ -199,7 +199,7 @@ public class AgeFilterTest extends AbstractFilterTest {
 
         final AgeFilter filter = new AgeFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", "the patient is 39yrs. old");
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", PIECE, "the patient is 39yrs. old");
 
         showSpans(filterResult.getSpans());
 
@@ -221,7 +221,7 @@ public class AgeFilterTest extends AbstractFilterTest {
 
         final AgeFilter filter = new AgeFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", "she is aged 39");
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", PIECE, "she is aged 39");
 
         showSpans(filterResult.getSpans());
 
@@ -243,7 +243,7 @@ public class AgeFilterTest extends AbstractFilterTest {
 
         final AgeFilter filter = new AgeFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", "she is age 39");
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", PIECE, "she is age 39");
 
         showSpans(filterResult.getSpans());
 
@@ -265,7 +265,7 @@ public class AgeFilterTest extends AbstractFilterTest {
 
         final AgeFilter filter = new AgeFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", "she is age 39.5");
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", PIECE, "she is age 39.5");
 
         showSpans(filterResult.getSpans());
 
@@ -287,7 +287,7 @@ public class AgeFilterTest extends AbstractFilterTest {
 
         final AgeFilter filter = new AgeFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", "Patient Timothy Hook is 72 Yr. old male lives alone.");
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", PIECE, "Patient Timothy Hook is 72 Yr. old male lives alone.");
 
         showSpans(filterResult.getSpans());
 
@@ -311,7 +311,7 @@ public class AgeFilterTest extends AbstractFilterTest {
 
         final AgeFilter filter = new AgeFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", "Cari Morris is 75 yo female alert and oriented x’s3 with some mild memory loss.");
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", PIECE, "Cari Morris is 75 yo female alert and oriented x’s3 with some mild memory loss.");
 
         showSpans(filterResult.getSpans());
 
@@ -335,7 +335,7 @@ public class AgeFilterTest extends AbstractFilterTest {
 
         final AgeFilter filter = new AgeFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", "Had symptoms for the past 10 years");
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", PIECE, "Had symptoms for the past 10 years");
 
         showSpans(filterResult.getSpans());
 
@@ -357,7 +357,7 @@ public class AgeFilterTest extends AbstractFilterTest {
 
         final AgeFilter filter = new AgeFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", "She is a 22-year-old female");
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", PIECE, "She is a 22-year-old female");
 
         showSpans(filterResult.getSpans());
 
@@ -381,7 +381,7 @@ public class AgeFilterTest extends AbstractFilterTest {
 
         final AgeFilter filter = new AgeFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", "Admit age: 69 years");
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", PIECE, "Admit age: 69 years");
 
         showSpans(filterResult.getSpans());
 
@@ -405,7 +405,7 @@ public class AgeFilterTest extends AbstractFilterTest {
 
         final AgeFilter filter = new AgeFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", "Female Admit Age: 69 years");
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", PIECE, "Female Admit Age: 69 years");
 
         showSpans(filterResult.getSpans());
 
@@ -429,7 +429,7 @@ public class AgeFilterTest extends AbstractFilterTest {
 
         final AgeFilter filter = new AgeFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", "Female Admit Age: 69 years\n");
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", PIECE, "Female Admit Age: 69 years\n");
 
         showSpans(filterResult.getSpans());
 
@@ -453,7 +453,7 @@ public class AgeFilterTest extends AbstractFilterTest {
 
         final AgeFilter filter = new AgeFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", "patient is 61 y/o and");
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", PIECE, "patient is 61 y/o and");
 
         showSpans(filterResult.getSpans());
 
@@ -477,7 +477,7 @@ public class AgeFilterTest extends AbstractFilterTest {
 
         final AgeFilter filter = new AgeFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", "patient is 161 y/o and");
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", PIECE, "patient is 161 y/o and");
 
         showSpans(filterResult.getSpans());
 
@@ -501,7 +501,7 @@ public class AgeFilterTest extends AbstractFilterTest {
 
         final AgeFilter filter = new AgeFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", "patient is 4161 y/o and");
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", PIECE, "patient is 4161 y/o and");
 
         showSpans(filterResult.getSpans());
 
@@ -525,7 +525,7 @@ public class AgeFilterTest extends AbstractFilterTest {
 
         final AgeFilter filter = new AgeFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", "Female Admit Age: 69 years\n");
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", PIECE, "Female Admit Age: 69 years\n");
 
         showSpans(filterResult.getSpans());
 
@@ -553,7 +553,7 @@ public class AgeFilterTest extends AbstractFilterTest {
 
         final AgeFilter filter = new AgeFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", "Female Admit Age: 69 years\n");
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", PIECE, "Female Admit Age: 69 years\n");
 
         showSpans(filterResult.getSpans());
 

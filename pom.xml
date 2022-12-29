@@ -118,6 +118,7 @@
 		<pdfbox.version>2.0.23</pdfbox.version>
 		<redis-mock.version>0.1.6</redis-mock.version>
 		<redisson.version>3.15.1</redisson.version>
+		<retrofit.version>2.9.0</retrofit.version>
 		<scala.major.version>2.12</scala.major.version>
 		<segment.version>2.0.1</segment.version>
 		<spring.boot.version>2.1.8.RELEASE</spring.boot.version>

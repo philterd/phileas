@@ -44,7 +44,7 @@ public class SurnameFilterTest extends AbstractFilterTest {
 
         final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.SURNAME, filterConfiguration, INDEX_DIRECTORY, SensitivityLevel.LOW, false);
 
-        final FilterResult filterResult = filter.filter(getFilterProfile(SensitivityLevel.LOW), "context", "documentid", "Lived in Wshington");
+        final FilterResult filterResult = filter.filter(getFilterProfile(SensitivityLevel.LOW), "context", "documentid", PIECE, "Lived in Wshington");
         showSpans(filterResult.getSpans());
         Assertions.assertEquals(0, filterResult.getSpans().size());
 
@@ -62,7 +62,7 @@ public class SurnameFilterTest extends AbstractFilterTest {
 
         final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.SURNAME, filterConfiguration, INDEX_DIRECTORY, SensitivityLevel.MEDIUM, false);
 
-        final FilterResult filterResult = filter.filter(getFilterProfile(SensitivityLevel.MEDIUM), "context", "documentid", "Lived in Wshington");
+        final FilterResult filterResult = filter.filter(getFilterProfile(SensitivityLevel.MEDIUM), "context", "documentid", PIECE, "Lived in Wshington");
         showSpans(filterResult.getSpans());
         Assertions.assertEquals(2, filterResult.getSpans().size());
 
@@ -80,7 +80,7 @@ public class SurnameFilterTest extends AbstractFilterTest {
 
         final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.SURNAME, filterConfiguration, INDEX_DIRECTORY, SensitivityLevel.HIGH, false);
 
-        final FilterResult filterResult = filter.filter(getFilterProfile(SensitivityLevel.LOW), "context", "documentid", "Jones");
+        final FilterResult filterResult = filter.filter(getFilterProfile(SensitivityLevel.LOW), "context", "documentid", PIECE, "Jones");
         showSpans(filterResult.getSpans());
         Assertions.assertEquals(1, filterResult.getSpans().size());
 
@@ -98,7 +98,7 @@ public class SurnameFilterTest extends AbstractFilterTest {
 
         final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.SURNAME, filterConfiguration, INDEX_DIRECTORY, SensitivityLevel.LOW, true);
 
-        final FilterResult filterResult = filter.filter(getFilterProfile(SensitivityLevel.LOW), "context", "documentid", "date");
+        final FilterResult filterResult = filter.filter(getFilterProfile(SensitivityLevel.LOW), "context", "documentid", PIECE, "date");
         showSpans(filterResult.getSpans());
         Assertions.assertEquals(0, filterResult.getSpans().size());
 
@@ -116,7 +116,7 @@ public class SurnameFilterTest extends AbstractFilterTest {
 
         final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.SURNAME, filterConfiguration, INDEX_DIRECTORY, SensitivityLevel.LOW, false);
 
-        final FilterResult filterResult = filter.filter(getFilterProfile(SensitivityLevel.LOW), "context", "documentid", "Jones");
+        final FilterResult filterResult = filter.filter(getFilterProfile(SensitivityLevel.LOW), "context", "documentid", PIECE, "Jones");
         showSpans(filterResult.getSpans());
         Assertions.assertEquals(1, filterResult.getSpans().size());
 
@@ -134,7 +134,7 @@ public class SurnameFilterTest extends AbstractFilterTest {
 
         final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.SURNAME, filterConfiguration, INDEX_DIRECTORY, SensitivityLevel.LOW, true);
 
-        final FilterResult filterResult = filter.filter(getFilterProfile(SensitivityLevel.LOW), "context", "documentid", "from");
+        final FilterResult filterResult = filter.filter(getFilterProfile(SensitivityLevel.LOW), "context", "documentid", PIECE, "from");
         showSpans(filterResult.getSpans());
         Assertions.assertEquals(0, filterResult.getSpans().size());
 

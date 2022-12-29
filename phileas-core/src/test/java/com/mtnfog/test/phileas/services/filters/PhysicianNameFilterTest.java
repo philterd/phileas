@@ -41,7 +41,7 @@ public class PhysicianNameFilterTest extends AbstractFilterTest {
 
         final PhysicianNameFilter filter = new PhysicianNameFilter(filterConfiguration);
 
-          final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", "Doctor Smith was the attending physician.");
+          final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", PIECE, "Doctor Smith was the attending physician.");
         showSpans(filterResult.getSpans());
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
@@ -62,7 +62,7 @@ public class PhysicianNameFilterTest extends AbstractFilterTest {
 
         final PhysicianNameFilter filter = new PhysicianNameFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", "Doctor James Smith");
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", PIECE, "Doctor James Smith");
         showSpans(filterResult.getSpans());
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
@@ -83,7 +83,7 @@ public class PhysicianNameFilterTest extends AbstractFilterTest {
 
         final PhysicianNameFilter filter = new PhysicianNameFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", "John Smith, MD");
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", PIECE, "John Smith, MD");
         showSpans(filterResult.getSpans());
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
@@ -104,7 +104,7 @@ public class PhysicianNameFilterTest extends AbstractFilterTest {
 
         final PhysicianNameFilter filter = new PhysicianNameFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", "attending physician was John Smith, MD");
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", PIECE, "attending physician was John Smith, MD");
         showSpans(filterResult.getSpans());
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
@@ -125,7 +125,7 @@ public class PhysicianNameFilterTest extends AbstractFilterTest {
 
         final PhysicianNameFilter filter = new PhysicianNameFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", "was John J. van Smith, MD");
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", PIECE, "was John J. van Smith, MD");
         showSpans(filterResult.getSpans());
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
@@ -146,7 +146,7 @@ public class PhysicianNameFilterTest extends AbstractFilterTest {
 
         final PhysicianNameFilter filter = new PhysicianNameFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", "Smith,James D,MD -General Surgery");
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", PIECE, "Smith,James D,MD -General Surgery");
         showSpans(filterResult.getSpans());
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
@@ -167,7 +167,7 @@ public class PhysicianNameFilterTest extends AbstractFilterTest {
 
         final PhysicianNameFilter filter = new PhysicianNameFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", "Smith,James )D,MD -General Surgery");
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", PIECE, "Smith,James )D,MD -General Surgery");
         showSpans(filterResult.getSpans());
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
@@ -188,7 +188,7 @@ public class PhysicianNameFilterTest extends AbstractFilterTest {
 
         final PhysicianNameFilter filter = new PhysicianNameFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", "1.0 cm in outside diameter pink tan everted");
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", PIECE, "1.0 cm in outside diameter pink tan everted");
         showSpans(filterResult.getSpans());
 
         Assertions.assertEquals(0, filterResult.getSpans().size());
@@ -207,7 +207,7 @@ public class PhysicianNameFilterTest extends AbstractFilterTest {
 
         final PhysicianNameFilter filter = new PhysicianNameFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", "1.0 cm");
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", PIECE, "1.0 cm");
         showSpans(filterResult.getSpans());
 
         Assertions.assertEquals(0, filterResult.getSpans().size());
@@ -226,7 +226,7 @@ public class PhysicianNameFilterTest extends AbstractFilterTest {
 
         final PhysicianNameFilter filter = new PhysicianNameFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", "Ahu,Amanda D,MD -General Surgery");
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", PIECE, "Ahu,Amanda D,MD -General Surgery");
         showSpans(filterResult.getSpans());
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
@@ -247,7 +247,7 @@ public class PhysicianNameFilterTest extends AbstractFilterTest {
 
         final PhysicianNameFilter filter = new PhysicianNameFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", "Johnns,Melinda S,MD - 1/2/2018 11:54 CST 1/2/2018 12:46 CST");
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", PIECE, "Johnns,Melinda S,MD - 1/2/2018 11:54 CST 1/2/2018 12:46 CST");
         showSpans(filterResult.getSpans());
 
         Assertions.assertEquals(1, filterResult.getSpans().size());

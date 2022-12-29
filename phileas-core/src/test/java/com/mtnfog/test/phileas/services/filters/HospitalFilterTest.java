@@ -44,7 +44,7 @@ public class HospitalFilterTest extends AbstractFilterTest {
 
         final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.HOSPITAL, filterConfiguration, INDEX_DIRECTORY, SensitivityLevel.LOW, false);
 
-        FilterResult filterResult = filter.filter(getFilterProfile(SensitivityLevel.LOW), "context", "documentid","Wyoming Medical Center");
+        FilterResult filterResult = filter.filter(getFilterProfile(SensitivityLevel.LOW), "context", "documentid", PIECE,"Wyoming Medical Center");
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertEquals("wyoming medical center", filterResult.getSpans().get(0).getText());
 

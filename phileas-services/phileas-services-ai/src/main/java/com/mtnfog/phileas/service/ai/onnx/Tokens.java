@@ -1,4 +1,4 @@
-package com.mtnfog.phileas.service.ai;
+package com.mtnfog.phileas.service.ai.onnx;
 
 import java.util.Arrays;
 import java.util.LinkedList;
