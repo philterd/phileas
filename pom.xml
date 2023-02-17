@@ -102,15 +102,6 @@
 		<scala.major.version>2.12</scala.major.version>
 		<segment.version>2.0.1</segment.version>
 		<spring.boot.version>2.1.8.RELEASE</spring.boot.version>
-		<!-- Sonarqube -->
-		<sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
-		<sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
-		<sonar.jacoco.reportPath>${project.build.directory}/jacoco.exec</sonar.jacoco.reportPath>
-		<sonar.language>java</sonar.language>
-		<sonar.exclusions>src/main/java/com/mtnfog/phileas/model/conditions/parser/**</sonar.exclusions>
-		<sonar.dependencyCheck.reportPath>${project.build.directory}/dependency-check-report.xml</sonar.dependencyCheck.reportPath>
-		<sonar.dependencyCheck.htmlReportPath>${project.build.directory}/dependency-check-report.html</sonar.dependencyCheck.htmlReportPath>
-		<sonar.dependencyCheck.jsonReportPath>${project.build.directory}/dependency-check-report.json</sonar.dependencyCheck.jsonReportPath>
 	</properties>
 	<build>
 		<pluginManagement>
