@@ -1,12 +1,11 @@
 name: Build Artifacts
 on: [push, workflow_dispatch]
-concurrency:
-  group: ${{ github.head_ref || github.run_id }}
-  cancel-in-progress: true
 jobs:
   build:
-    runs-on:
-      labels: ubuntu-latest-4-cores
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write      
     steps:
       - uses: actions/checkout@v3
         with:
@@ -24,24 +23,7 @@ jobs:
           distribution: adopt
           architecture: x64
           cache: maven
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.CODE_ARTIFACT_AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.CODE_ARTIFACT_AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-1
-      - name: Set CodeArtifact token
-        run: echo CODEARTIFACT_AUTH_TOKEN=$(aws codeartifact get-authorization-token --domain mtnfog --domain-owner ${{ secrets.CODE_ARTIFACT_AWS_ACCOUNT_ID }} --query authorizationToken --output text --region us-east-1 ) >> $GITHUB_ENV
-      - name: Generate settings.xml for Maven Builds
-        uses: whelk-io/maven-settings-xml-action@v20
-        with:
-          servers: '[{ "id": "mtnfog-maven-snapshots", "username": "aws", "password": "${{ env.CODEARTIFACT_AUTH_TOKEN }}" }, { "id": "mtnfog-maven-releases", "username": "aws", "password": "${{ env.CODEARTIFACT_AUTH_TOKEN }}" }]'
-      - name: Build with Maven
-        run: mvn --batch-mode --update-snapshots package deploy
-      - name: Trigger Philter
-        run: |
-          curl -X POST \
-            -u "jzonthemtn:${{secrets.PERSONAL_ACCESS_GITHUB_TOKEN}}" \
-            -H "Accept: application/vnd.github.v3+json" \
-            -H "Content-Type: application/json" \
-            https://api.github.com/repos/mtnfog/philter/actions/workflows/build.yml/dispatches --data '{"philter_tag": "main"}'
+      - name: Publish to GitHub Packages
+        run: mvn --batch-mode --update-snapshots package deploy -DskipTests=true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}          
