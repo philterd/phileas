@@ -20,4 +20,4 @@ After cloning, run `git lfs pull` to download models needed for unit tests. Phil
 
 As of Phileas 2.2.1, Phileas is licensed under the Apache License, version 2.0. Previous versions were under a proprietary license.
 
-Phileas is copyright 2018-2023 Mountain Fog, Inc.
+Copyright 2018-2023 Mountain Fog, Inc.
