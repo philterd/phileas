@@ -14,9 +14,9 @@
 		<url>https://www.mtnfog.com</url>
 	</organization>
 	<scm>
-		<connection>scm:git@github.com:mtnfog/phileas.git</connection>
-		<developerConnection>scm:git@github.com:mtnfog/phileas.git</developerConnection>
-		<url>https://bitbucket.org/mountainfog/phileas/</url>
+		<connection>scm:git@github.com:philterd/phileas.git</connection>
+		<developerConnection>scm:git@github.com:philterd/phileas.git</developerConnection>
+		<url>https://github.com/philterd/phileas/</url>
 	</scm>
 	<developers>
 		<developer>
@@ -28,16 +28,14 @@
 	</developers>
 	<licenses>
 		<license>
-			<name>Mountain Fog Commercial License</name>
-			<url>https://www.mtnfog.com</url>
-			<distribution>manual</distribution>
-			<comments>Phileas is proprietary closed-source software.</comments>
+			<name>Apache License, version 2.0</name>
+			<url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
 		</license>
 	</licenses>
 	<distributionManagement>
 	   <repository>
 	     <id>github</id>
-	     <name>GitHub OWNER Apache Maven Packages</name>
+	     <name>GitHub Philterd/Phileas Apache Maven Packages</name>
 	     <url>https://maven.pkg.github.com/philterd/phileas</url>
 	   </repository>
 	</distributionManagement>
