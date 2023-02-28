@@ -12,12 +12,14 @@ jobs:
       - uses: actions/checkout@v3
         with:
           lfs: true
+          
       - name: Cache Maven packages
         uses: actions/cache@v1
         with:
           path: ~/.m2
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
+
       - name: Set up JDK 11
         uses: actions/setup-java@v3
         with:
@@ -28,7 +30,14 @@ jobs:
       - name: Build and Test
         run: mvn --batch-mode --update-snapshots test jacoco:report-aggregate
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}      
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload Report
+        uses: 'actions/upload-artifact@v2'
+        with:
+          name: jacoco-report
+          path: ${{ github.workspace }}/target/site/jacoco-aggregate/jacoco.xml
+
       - name: Add code coverage to pull request
         id: jacoco
         uses: madrapps/jacoco-report@v1.3
@@ -37,3 +46,4 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           min-coverage-overall: 40
           min-coverage-changed-files: 60
+          title: Code Coverage
