@@ -1,5 +1,7 @@
 name: Build Artifacts
-on: [push, workflow_dispatch]
+on: 
+  pull_request
+  
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -23,7 +25,19 @@ jobs:
           distribution: adopt
           architecture: x64
           cache: maven
+      - name: Run Coverage
+        run: |
+          chmod +x gradlew
+          ./gradlew testCoverage     
       - name: Publish to GitHub Packages
         run: mvn --batch-mode --update-snapshots package deploy -DskipTests=true
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}          
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}      
+      - name: Add coverage to PR
+        id: jacoco
+        uses: madrapps/jacoco-report@v1.3
+        with:
+          paths: ${{ github.workspace }}/build/reports/jacoco/testCoverage/testCoverage.xml
+          token: ${{ secrets.GITHUB_TOKEN }}
+          min-coverage-overall: 40
+          min-coverage-changed-files: 60
