@@ -16,6 +16,35 @@ Phileas is a highly-configurable library for managing sensitive information in t
 
 After cloning, run `git lfs pull` to download models needed for unit tests. Phileas can then be built with `mvn clean install`.
 
+## Using Phileas
+
+Add the Phileas dependency to your project:
+
+```
+<dependency>
+	<groupId>com.mtnfog</groupId>
+	<artifactId>phileas-core</artifactId>
+	<version>${phileas.version}</version>
+</dependency>
+
+```
+
+Now create a `FilterService`, using a `PhileasConfiguration`, and call `filter()` on the service:
+
+```
+
+PhileasConfiguration phileasConfiguration = ConfigFactory.create(PhileasConfiguration.class);
+
+FilterService filterService = new PhileasFilterService(phileasConfiguration);
+
+FilterResponse response = filterService.filter(filterProfiles, context, documentId, body, MimeType.TEXT_PLAIN);
+```
+
+The `filterProfiles` is a list of `FilterProfile` classes. A "filter profile" tells Phileas the types of sensitive information you want to identify and what to do with it (redact, anonymize, etc.) when it is found. The `context` and `documentId` are arbitrary values you can use to uniquely identify the text being filtered. The `body` is the text you are filtering. Lastly, we specify that the data is plain text.
+
+The `response` contains information about the identified sensitive information along with the filtered text.
+
+
 ## License
 
 As of Phileas 2.2.1, Phileas is licensed under the Apache License, version 2.0. Previous versions were under a proprietary license.
