@@ -5,7 +5,7 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
-		<groupId>com.mtnfog</groupId>
+		<groupId>io.philterd</groupId>
 		<artifactId>phileas</artifactId>
 		<version>2.2.1-SNAPSHOT</version>
 	</parent>
@@ -27,7 +27,7 @@
 					<appendAssemblyId>false</appendAssemblyId>
 					<archive>
 						<manifest>
-							<mainClass>com.mtnfog.phileas.model.filter.rules.dictionary.LuceneDictionaryFilter</mainClass>
+							<mainClass>io.philterd.phileas.model.filter.rules.dictionary.LuceneDictionaryFilter</mainClass>
 						</manifest>
 					</archive>
 					<descriptorRefs>
@@ -52,7 +52,7 @@
 				<executions>
 					<execution>
 						<configuration>
-							<outputDirectory>src/main/java/com/mtnfog/phileas/model/conditions/parser/</outputDirectory>
+							<outputDirectory>src/main/java/io.philterd/phileas/model/conditions/parser/</outputDirectory>
 						</configuration>
 						<goals>
 							<goal>antlr4</goal>
@@ -64,7 +64,7 @@
 	</build>
 	<dependencies>
 		<dependency>
-			<groupId>com.mtnfog</groupId>
+			<groupId>io.philterd</groupId>
 			<artifactId>phileas-configuration</artifactId>
 			<version>${project.version}</version>
 		</dependency>
