@@ -3,15 +3,15 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <artifactId>phileas</artifactId>
-    <groupId>com.mtnfog</groupId>
+    <groupId>io.philterd</groupId>
     <version>2.2.1-SNAPSHOT</version>
   </parent>
-  <groupId>com.mtnfog</groupId>
+  <groupId>io.philterd</groupId>
   <artifactId>phileas-configuration</artifactId>
   <name>phileas-configuration</name>
   <dependencies>
     <dependency>
-      <groupId>com.mtnfog</groupId>
+      <groupId>io.philterd</groupId>
       <artifactId>owner</artifactId>
       <version>${project.version}</version>
     </dependency>

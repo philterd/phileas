@@ -22,7 +22,7 @@ Add the Phileas dependency to your project:
 
 ```
 <dependency>
-	<groupId>com.mtnfog</groupId>
+	<groupId>io.philterd</groupId>
 	<artifactId>phileas-core</artifactId>
 	<version>${phileas.version}</version>
 </dependency>
