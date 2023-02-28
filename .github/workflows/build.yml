@@ -25,15 +25,15 @@ jobs:
           distribution: adopt
           architecture: x64
           cache: maven
-      - name: Publish to GitHub Packages
+      - name: Build and Test
         run: mvn --batch-mode --update-snapshots test
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}      
-      - name: Add coverage to PR
+      - name: Add code coverage to pull request
         id: jacoco
         uses: madrapps/jacoco-report@v1.3
         with:
-          paths: ${{ github.workspace }}/build/reports/jacoco/testCoverage/testCoverage.xml
+          paths: ${{ github.workspace }}/target/site/jacoco-aggregate/jacoco.xml
           token: ${{ secrets.GITHUB_TOKEN }}
           min-coverage-overall: 40
           min-coverage-changed-files: 60

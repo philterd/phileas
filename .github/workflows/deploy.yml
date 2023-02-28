@@ -27,7 +27,7 @@ jobs:
           distribution: adopt
           architecture: x64
           cache: maven
-      - name: Publish to GitHub Packages
-        run: mvn --batch-mode --update-snapshots package
+      - name: Build and Deploy
+        run: mvn --batch-mode --update-snapshots deploy
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}      
