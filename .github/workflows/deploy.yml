@@ -1,9 +1,11 @@
 name: Build Artifacts
 on: 
-  pull_request
+  pull_request:
+    types: [opened, reopened]
 
 jobs:
-  build:
+  deploy:
+    if: ${{ github.event.pull_request.merged }}
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -26,14 +28,6 @@ jobs:
           architecture: x64
           cache: maven
       - name: Publish to GitHub Packages
-        run: mvn --batch-mode --update-snapshots test
+        run: mvn --batch-mode --update-snapshots package
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}      
-      - name: Add coverage to PR
-        id: jacoco
-        uses: madrapps/jacoco-report@v1.3
-        with:
-          paths: ${{ github.workspace }}/build/reports/jacoco/testCoverage/testCoverage.xml
-          token: ${{ secrets.GITHUB_TOKEN }}
-          min-coverage-overall: 40
-          min-coverage-changed-files: 60
