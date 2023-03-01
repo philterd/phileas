@@ -44,6 +44,27 @@ The `filterProfiles` is a list of `FilterProfile` classes. A "filter profile" te
 
 The `response` contains information about the identified sensitive information along with the filtered text.
 
+### Filter Profile
+
+A filter profile is a JSON document that tells Phileas the types of sensitive information to identify, and what to do with the sensitive information when found. A filter profile describes the entire filtering process, from what filters to apply, terms to ignore, to everything in between. Here is an basic filter profile that identifies and redacts ages:
+
+```
+{
+  "name": "default",
+  "ignored": [],
+  "identifiers": {
+    "age": {
+      "ageFilterStrategies": [{
+        "strategy": "REDACT",
+        "redactionFormat": "{{{REDACTED-%t}}}"
+      }]
+    }
+  }
+}
+```
+
+There is a long list of `identifiers` that can be applied, and each identifier has several possible `strategy` values. In this case, when a age is found, it is redacted by being replaced with the text `{{{REDACTED-age}}}`. The `%t` is a placeholder for the type of filter. In this case, it is `age`.
+
 
 ## License
 
