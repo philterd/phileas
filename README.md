@@ -39,7 +39,7 @@ FilterService filterService = new PhileasFilterService(phileasConfiguration);
 FilterResponse response = filterService.filter(filterProfiles, context, documentId, body, MimeType.TEXT_PLAIN);
 ```
 
-The `filterProfiles` is a list of `FilterProfile` classes. A "filter profile" tells Phileas the types of sensitive information you want to identify and what to do with it (redact, anonymize, etc.) when it is found. The `context` and `documentId` are arbitrary values you can use to uniquely identify the text being filtered. The `body` is the text you are filtering. Lastly, we specify that the data is plain text.
+The `filterProfiles` is a list of `FilterProfile` classes which are created by deserializing a filter profile from JSON. A "filter profile" tells Phileas the types of sensitive information you want to identify and what to do with it (redact, anonymize, etc.) when it is found. The `context` and `documentId` are arbitrary values you can use to uniquely identify the text being filtered. The `body` is the text you are filtering. Lastly, we specify that the data is plain text.
 
 The `response` contains information about the identified sensitive information along with the filtered text.
 
