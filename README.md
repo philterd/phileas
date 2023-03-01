@@ -31,9 +31,7 @@ Add the Phileas dependency to your project:
 
 Now create a `FilterService`, using a `PhileasConfiguration`, and call `filter()` on the service:
 
-```
-
-PhileasConfiguration phileasConfiguration = ConfigFactory.create(PhileasConfiguration.class);
+```PhileasConfiguration phileasConfiguration = ConfigFactory.create(PhileasConfiguration.class);
 
 FilterService filterService = new PhileasFilterService(phileasConfiguration);
 
@@ -48,8 +46,7 @@ The `response` contains information about the identified sensitive information a
 
 A filter profile is a JSON document that tells Phileas the types of sensitive information to identify, and what to do with the sensitive information when found. A filter profile describes the entire filtering process, from what filters to apply, terms to ignore, to everything in between. Here is an basic filter profile that identifies and redacts ages:
 
-```
-{
+```{
   "name": "default",
   "ignored": [],
   "identifiers": {
