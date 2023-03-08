@@ -46,7 +46,7 @@ The `filterProfiles` is a list of `FilterProfile` classes which are created by d
 
 The `response` contains information about the identified sensitive information along with the filtered text.
 
-### Finding and Redacting Sensitive Information in a PDF Cocument
+### Finding and Redacting Sensitive Information in a PDF Document
 
 Create a `FilterService`, using a `PhileasConfiguration`, and call `filter()` on the service:
 
