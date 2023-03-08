@@ -2,7 +2,7 @@
 
 *The PII and PHI redaction engine.*
 
-For a turnkey text redaction engine, see [Philter](https://www.mtnfog.com/products/philter), which is built on top of Phileas.
+For a turnkey text redaction engine, see [Philter](https://www.mtnfog.com/products/philter), which is built on top of Phileas. Philter includes commercial support and access to optimized natural language processing (NLP) models for general, legal, financial, and healthcare text.
 
 Phileas is a framework to find, identify, and remove sensitive information from text. Given text or documents (PDF), Phileas analyzes the text searching for sensitive information such as persons' names, ages, addresses, and many other types of information.
 
