@@ -1,6 +1,6 @@
 # Phileas
 
-*The PII and PHI redaction engine.*
+*Phileas is a PII and PHI redaction engine.*
 
 For a turnkey text redaction engine, see [Philter](https://www.mtnfog.com/products/philter), which is built on top of Phileas. Philter includes commercial support and access to optimized natural language processing (NLP) models for general, legal, financial, and healthcare text. Philter is available on the cloud marketplaces:
 
