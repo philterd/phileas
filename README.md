@@ -20,13 +20,16 @@ Phileas is a highly-configurable library for managing sensitive information in t
 
 ## Capabilities of Phileas
 
-Below are some of the capabilities of Phileas:
+Below are some of the key capabilities of Phileas:
 
 * Can identify and redact over 30 types of sensitive information (see list below).
-* Can apply logic when redating (only ages > 30, zip codes starting with specific digits, etc.)
-* Can disambiguate types of sensitive information (i.e. SSN vs. phone number)
-* Can deidentify text consistently ("John Smith" is replaced consistently in certain documents)
-* Can shift dates or replace dates with approximate representations (i.e. "3 months ago")
+* Can redact, encrypt, and anonymize sensitive information.
+* Can replace persons names with random names, dates with similar but random dates, etc.
+* Can apply logic when redating (only ages > 30, zip codes starting with specific digits, etc.).
+* Can disambiguate types of sensitive information (i.e. SSN vs. phone number).
+* Can deidentify text consistently ("John Smith" is replaced consistently in certain documents).
+* Can shift dates or replace dates with approximate representations (i.e. "3 months ago").
+* Fully customizable using "filter profiles" that define what sensitive information to find and how to redact it.
 
 ## Sensitive Information Supported by Phileas
 
