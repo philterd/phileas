@@ -17,22 +17,16 @@ import static org.aeonbits.owner.util.Util.system;
 /**
  * Allows specifying <code>system:properties</code> and <code>system:env</code> with the <code>@Sources</code> annotation.
  *
- * @author Ting-Kuan Wu
- * @author Luigi R. Viggiano
- * @since 1.0.10
- */
-public class PhileasSystemLoader implements Loader {
-/*
  * This class accesses <code>Util.system()</code> which is package accessible; for this reason this class cannot be moved
  * inside the package loaders.
  *
- * I think this class should be splitted in two separate classes:
+ * I think this class should be split into two separate classes:
  * one for system:properties and one for system:env.
  */
+public class PhileasSystemLoader implements Loader {
 
     private static final String SYSTEM_PROPERTIES_URI = "system:properties";
     private static final String ENVIRONMENT_VARIABLES_URI = "system:env";
-
 
     public boolean accept(URI uri) {
         String path = uri.toString();
