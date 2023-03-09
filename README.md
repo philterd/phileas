@@ -18,6 +18,62 @@ Information can be redacted based on the content of the information and other at
 
 Phileas is a highly-configurable library for managing sensitive information in text and documents.
 
+## Capabilities of Phileas
+
+Below are some of the capabilities of Phileas:
+
+* Can identify and redact over 30 types of sensitive information (see list below).
+* Can apply logic when redating (only ages > 30, zip codes starting with specific digits, etc.)
+* Can disambiguate types of sensitive information (i.e. SSN vs. phone number)
+* Can deidentify text consistently ("John Smith" is replaced consistently in certain documents)
+* Can shift dates or replace dates with approximate representations (i.e. "3 months ago")
+
+## Sensitive Information Supported by Phileas
+
+### Persons
+
+* Person's Names (NER)
+* Physician Names
+* First Names
+* Surnames
+
+### Common
+
+* Ages
+* Bank Account Numbers
+* Bitcoin Addresses
+* Credit Cards
+* Currency (USD)
+* Dates
+* (US) Driver's License Numbers
+* Email Addresses
+* IBAN Codes
+* IP Addresses (IPv4 and IPv6)
+* MAC Addresses
+* (US) Passport Numbers
+* Phone Numbers
+* Phone Number Extensions
+* Sections (of a document)
+* SSNs and TINs
+* Tracking Numbers (UPS / FedEx / USPS)
+* URLs
+* VINs
+* Zip Codes
+
+### (US) Locations
+
+* Cities
+* Counties
+* Hospitals
+* Hospital Abbreviations
+* States
+* State Abbreviations
+
+### Custom Filters
+
+* Dictionary
+* Identifier
+
 ## Building Phileas
 
 After cloning, run `git lfs pull` to download models needed for unit tests. Phileas can then be built with `mvn clean install`.
