@@ -111,6 +111,10 @@ The `filterProfiles` is a list of `FilterProfile` classes. (See below for more a
 
 The `response` contains information about the identified sensitive information along with the filtered text.
 
+#### Usage Examples
+
+The [PhileasFilterServiceTest](https://github.com/philterd/phileas/blob/main/phileas-core/src/test/java/io/philterd/test/phileas/services/PhileasFilterServiceTest.java) and [EndToEndTests](https://github.com/philterd/phileas/blob/main/phileas-core/src/test/java/io/philterd/test/phileas/services/EndToEndTests.java) test classes have examples of how to configure Phileas and filter text.
+
 ### Finding and Redacting Sensitive Information in a PDF Document
 
 Create a `FilterService`, using a `PhileasConfiguration`, and call `filter()` on the service:
