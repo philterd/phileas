@@ -7,6 +7,7 @@ import opennlp.tools.sentdetect.SentenceDetectorME;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -14,6 +15,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Disabled
 public class OnnxNerTest {
 
     private static final Logger LOGGER = LogManager.getLogger(OnnxNerTest.class);

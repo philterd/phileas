@@ -1,4 +1,4 @@
-name: Build Artifacts
+name: Build Artifacts on Pull Request
 on: 
   pull_request
 
@@ -29,25 +29,3 @@ jobs:
         run: mvn --batch-mode --update-snapshots test
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      # - name: Upload Report
-      #   uses: actions/upload-artifact@v2
-      #   with:
-      #     name: jacoco.xml
-      #     path: ${{ github.workspace }}/target/site/jacoco-aggregate/jacoco.xml
-
-      # - name: Add code coverage to pull request
-      #   id: jacoco
-      #   uses: madrapps/jacoco-report@v1.3
-      #   with:
-      #     paths: ${{ github.workspace }}/target/site/jacoco-aggregate/jacoco.xml
-      #     token: ${{ secrets.GITHUB_TOKEN }}
-      #     min-coverage-overall: 40
-      #     min-coverage-changed-files: 60
-      #     title: Code Coverage
-      #     debug-mode: false
-
-      # - name: Get the Coverage info
-      #   run: |
-      #     echo "Total coverage ${{ steps.jacoco.outputs.coverage-overall }}"
-      #     echo "Changed Files coverage ${{ steps.jacoco.outputs.coverage-changed-files }}"
