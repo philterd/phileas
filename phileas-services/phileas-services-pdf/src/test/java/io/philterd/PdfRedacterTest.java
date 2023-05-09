@@ -2,6 +2,7 @@ package io.philterd;
 
 import io.philterd.phileas.model.enums.FilterType;
 import io.philterd.phileas.model.enums.MimeType;
+import io.philterd.phileas.model.objects.PdfRedactionOptions;
 import io.philterd.phileas.model.objects.RedactionOptions;
 import io.philterd.phileas.model.objects.Span;
 import io.philterd.phileas.model.profile.FilterProfile;
@@ -42,10 +43,11 @@ public class PdfRedacterTest {
         final byte[] document = IOUtils.toByteArray(is);
 
         final FilterProfile filterProfile = new FilterProfile();
-        final RedactionOptions redactionOptions = new RedactionOptions();
+        final PdfRedactionOptions redactionOptions = new PdfRedactionOptions();
 
         final List<BoundingBox> boundingBoxes = Collections.emptyList();
         final Redacter pdfRedacter = new PdfRedacter(filterProfile, spans, redactionOptions, boundingBoxes);
+
         final byte[] redacted = pdfRedacter.process(document, MimeType.APPLICATION_PDF);
 
         final File outputFile = File.createTempFile("output", ".pdf");
@@ -53,8 +55,6 @@ public class PdfRedacterTest {
 
         LOGGER.info("Writing redacted PDF to {}", outputFile.getAbsolutePath());
         FileUtils.writeByteArrayToFile(outputFile, redacted);
-
-        // TODO: How to assert? MD5 gives a different value each time.
 
     }
 
@@ -69,10 +69,11 @@ public class PdfRedacterTest {
         final byte[] document = IOUtils.toByteArray(is);
 
         final FilterProfile filterProfile = new FilterProfile();
-        final RedactionOptions redactionOptions = new RedactionOptions();
+        final PdfRedactionOptions redactionOptions = new PdfRedactionOptions();
 
         final List<BoundingBox> boundingBoxes = Collections.emptyList();
         final Redacter pdfRedacter = new PdfRedacter(filterProfile, spans, redactionOptions, boundingBoxes);
+
         final byte[] redacted = pdfRedacter.process(document, MimeType.APPLICATION_PDF);
 
         final File outputFile = File.createTempFile("output", ".pdf");
@@ -80,8 +81,6 @@ public class PdfRedacterTest {
 
         LOGGER.info("Writing redacted PDF to {}", outputFile.getAbsolutePath());
         FileUtils.writeByteArrayToFile(outputFile, redacted);
-
-        // TODO: How to assert? MD5 gives a different value each time.
 
     }
 
@@ -97,19 +96,17 @@ public class PdfRedacterTest {
         final byte[] document = IOUtils.toByteArray(is);
 
         final FilterProfile filterProfile = new FilterProfile();
-        final RedactionOptions redactionOptions = new RedactionOptions();
+        final PdfRedactionOptions redactionOptions = new PdfRedactionOptions();
 
         final List<BoundingBox> boundingBoxes = Collections.emptyList();
         final Redacter pdfRedacter = new PdfRedacter(filterProfile, spans, redactionOptions, boundingBoxes);
         final byte[] redacted = pdfRedacter.process(document, MimeType.IMAGE_JPEG);
 
         final File outputFile = File.createTempFile("output", ".zip");
-        outputFile.deleteOnExit();
+        //outputFile.deleteOnExit();
 
         LOGGER.info("Writing redacted JPEG to {}", outputFile.getAbsolutePath());
         FileUtils.writeByteArrayToFile(outputFile, redacted);
-
-        // TODO: How to assert? MD5 gives a different value each time.
 
     }
 
@@ -124,7 +121,7 @@ public class PdfRedacterTest {
         final byte[] document = IOUtils.toByteArray(is);
 
         final FilterProfile filterProfile = new FilterProfile();
-        final RedactionOptions redactionOptions = new RedactionOptions();
+        final PdfRedactionOptions redactionOptions = new PdfRedactionOptions();
 
         final List<BoundingBox> boundingBoxes = Collections.emptyList();
         final Redacter pdfRedacter = new PdfRedacter(filterProfile, spans, redactionOptions, boundingBoxes);
@@ -136,8 +133,6 @@ public class PdfRedacterTest {
         LOGGER.info("Writing redacted JPEG to {}", outputFile.getAbsolutePath());
         FileUtils.writeByteArrayToFile(outputFile, redacted);
 
-        // TODO: How to assert? MD5 gives a different value each time.
-
     }
 
     @Test
@@ -148,7 +143,7 @@ public class PdfRedacterTest {
         final byte[] document = IOUtils.toByteArray(is);
 
         final FilterProfile filterProfile = new FilterProfile();
-        final RedactionOptions redactionOptions = new RedactionOptions();
+        final PdfRedactionOptions redactionOptions = new PdfRedactionOptions();
 
         final BoundingBox boundingBox1 = new BoundingBox();
         boundingBox1.setX(100);
@@ -175,8 +170,6 @@ public class PdfRedacterTest {
         LOGGER.info("Writing redacted PDF to {}", outputFile.getAbsolutePath());
         FileUtils.writeByteArrayToFile(outputFile, redacted);
 
-        // TODO: How to assert? MD5 gives a different value each time.
-
     }
 
     @Test
@@ -187,7 +180,7 @@ public class PdfRedacterTest {
         final byte[] document = IOUtils.toByteArray(is);
 
         final FilterProfile filterProfile = new FilterProfile();
-        final RedactionOptions redactionOptions = new RedactionOptions();
+        final PdfRedactionOptions redactionOptions = new PdfRedactionOptions();
 
         final BoundingBox boundingBox1 = new BoundingBox();
         boundingBox1.setX(100);
@@ -218,8 +211,6 @@ public class PdfRedacterTest {
         LOGGER.info("Writing redacted PDF to {}", outputFile.getAbsolutePath());
         FileUtils.writeByteArrayToFile(outputFile, redacted);
 
-        // TODO: How to assert? MD5 gives a different value each time.
-
     }
 
     @Test
@@ -234,7 +225,7 @@ public class PdfRedacterTest {
         final byte[] document = IOUtils.toByteArray(is);
 
         final FilterProfile filterProfile = new FilterProfile();
-        final RedactionOptions redactionOptions = new RedactionOptions();
+        final PdfRedactionOptions redactionOptions = new PdfRedactionOptions();
 
         final BoundingBox boundingBox1 = new BoundingBox();
         boundingBox1.setX(100);
@@ -260,8 +251,6 @@ public class PdfRedacterTest {
 
         LOGGER.info("Writing redacted PDF to {}", outputFile.getAbsolutePath());
         FileUtils.writeByteArrayToFile(outputFile, redacted);
-
-        // TODO: How to assert? MD5 gives a different value each time.
 
     }
 

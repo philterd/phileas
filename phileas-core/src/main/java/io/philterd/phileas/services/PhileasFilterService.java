@@ -14,10 +14,7 @@ import io.philterd.phileas.model.filter.Filter;
 import io.philterd.phileas.model.filter.FilterConfiguration;
 import io.philterd.phileas.model.filter.rules.dictionary.BloomFilterDictionaryFilter;
 import io.philterd.phileas.model.filter.rules.dictionary.LuceneDictionaryFilter;
-import io.philterd.phileas.model.objects.DocumentAnalysis;
-import io.philterd.phileas.model.objects.Explanation;
-import io.philterd.phileas.model.objects.RedactionOptions;
-import io.philterd.phileas.model.objects.Span;
+import io.philterd.phileas.model.objects.*;
 import io.philterd.phileas.model.profile.FilterProfile;
 import io.philterd.phileas.model.profile.Ignored;
 import io.philterd.phileas.model.profile.filters.CustomDictionary;
@@ -299,11 +296,11 @@ public class PhileasFilterService implements FilterService {
 
             }
 
-            final RedactionOptions redactionOptions = new RedactionOptions();
+            final PdfRedactionOptions pdfRedactionOptions = new PdfRedactionOptions();
 
             // Redact those terms in the document along with any bounding boxes identified in the filter profile.
             final List<BoundingBox> boundingBoxes = getBoundingBoxes(filterProfile, mimeType);
-            final Redacter redacter = new PdfRedacter(filterProfile, spans, redactionOptions, boundingBoxes);
+            final Redacter redacter = new PdfRedacter(filterProfile, spans, pdfRedactionOptions, boundingBoxes);
             final byte[] redacted = redacter.process(input, outputMimeType);
 
             // Create the response.

@@ -1,7 +1,7 @@
 package io.philterd.services.pdf;
 
 import io.philterd.phileas.model.enums.MimeType;
-import io.philterd.phileas.model.objects.RedactionOptions;
+import io.philterd.phileas.model.objects.PdfRedactionOptions;
 import io.philterd.phileas.model.objects.Span;
 import io.philterd.phileas.model.profile.FilterProfile;
 import io.philterd.phileas.model.profile.graphical.BoundingBox;
@@ -15,20 +15,22 @@ import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.graphics.color.PDColor;
 import org.apache.pdfbox.pdmodel.graphics.color.PDDeviceRGB;
+import org.apache.pdfbox.pdmodel.graphics.image.LosslessFactory;
+import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 import org.apache.pdfbox.pdmodel.graphics.state.RenderingMode;
 import org.apache.pdfbox.rendering.PDFRenderer;
 import org.apache.pdfbox.text.PDFTextStripper;
 import org.apache.pdfbox.text.TextPosition;
 
+import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
-import java.awt.*;
+import javax.imageio.ImageWriteParam;
+import javax.imageio.ImageWriter;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
+import java.io.OutputStream;
 import java.util.*;
-import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -43,7 +45,7 @@ public class PdfRedacter extends PDFTextStripper implements Redacter {
 
     private FilterProfile filterProfile;
     private final Set<Span> spans;
-    private final RedactionOptions redactionOptions;
+    private final PdfRedactionOptions pdfRedactionOptions;
     private final List<BoundingBox> boundingBoxes;
 
     private static final Map<String, PDColor> COLORS = new LinkedHashMap<>();
@@ -55,12 +57,12 @@ public class PdfRedacter extends PDFTextStripper implements Redacter {
     }
 
     public PdfRedacter(FilterProfile filterProfile,
-                       Set<Span> spans, RedactionOptions redactionOptions,
+                       Set<Span> spans, PdfRedactionOptions pdfRedactionOptions,
                        List<BoundingBox> boundingBoxes) throws IOException {
 
         this.filterProfile = filterProfile;
         this.spans = spans;
-        this.redactionOptions = redactionOptions;
+        this.pdfRedactionOptions = pdfRedactionOptions;
         this.boundingBoxes = boundingBoxes;
 
     }
@@ -73,10 +75,6 @@ public class PdfRedacter extends PDFTextStripper implements Redacter {
         setSortByPosition(true);
         setStartPage(0);
         setEndPage(pdDocument.getNumberOfPages());
-
-        final Writer dummy = new OutputStreamWriter(new ByteArrayOutputStream());
-        writeText(pdDocument, dummy);
-        dummy.close();
 
         // PHL-244: Redact the bounding boxes in the output stream.
         for(final BoundingBox boundingBox : boundingBoxes) {
@@ -94,37 +92,56 @@ public class PdfRedacter extends PDFTextStripper implements Redacter {
 
         final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
-        if(outputType == MimeType.APPLICATION_PDF) {
-
-            pdDocument.save(outputStream);
-            pdDocument.close();
-
-        } else if(outputType == MimeType.IMAGE_JPEG) {
+        if(outputType == MimeType.IMAGE_JPEG) {
 
             final PDFRenderer pdfRenderer = new PDFRenderer(pdDocument);
-
             final ZipOutputStream zipOut = new ZipOutputStream(outputStream);
+            final List<BufferedImage> bufferedImages = new LinkedList<>();
 
             for (int x = 0; x < pdDocument.getNumberOfPages(); x++) {
 
                 LOGGER.debug("Creating image from PDF page " + x);
-                final BufferedImage bufferedImage = pdfRenderer.renderImageWithDPI(x,600);
+                final BufferedImage bufferedImage = pdfRenderer.renderImageWithDPI(x, pdfRedactionOptions.getDpi());
+                //final BufferedImage bufferedImage = pdfRenderer.renderImage(x, scale);
+                bufferedImages.add(bufferedImage);
 
-                final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                ImageIO.write(bufferedImage, "jpg", baos);
-                baos.close();
+                final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+
+                final ImageWriter writer = ImageIO.getImageWritersByFormatName("png").next();
+                final ImageWriteParam param = writer.getDefaultWriteParam();
+                param.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
+                param.setCompressionQuality(pdfRedactionOptions.getCompressionQuality());
+                writer.setOutput(ImageIO.createImageOutputStream(byteArrayOutputStream));
+                writer.write(null, new IIOImage(bufferedImage, null, null), param);
 
                 // Add the image to the zip file to be returned.
-                ZipEntry zipEntry = new ZipEntry("page-" + x + ".jpeg");
-                zipEntry.setSize(baos.size());
+                ZipEntry zipEntry = new ZipEntry("page-" + x + ".png");
+                zipEntry.setSize(byteArrayOutputStream.size());
 
                 zipOut.putNextEntry(zipEntry);
-                zipOut.write(baos.toByteArray());
+                zipOut.write(byteArrayOutputStream.toByteArray());
                 zipOut.closeEntry();
 
             }
 
             zipOut.close();
+            pdDocument.close();
+
+        } else if(outputType == MimeType.APPLICATION_PDF) {
+
+            final PDFRenderer pdfRenderer = new PDFRenderer(pdDocument);
+            final List<BufferedImage> bufferedImages = new LinkedList<>();
+
+            for (int x = 0; x < pdDocument.getNumberOfPages(); x++) {
+
+                LOGGER.debug("Creating image from PDF page " + x);
+                final BufferedImage bufferedImage = pdfRenderer.renderImageWithDPI(x, pdfRedactionOptions.getDpi());
+                bufferedImages.add(bufferedImage);
+
+            }
+
+            createPDFFromImage(bufferedImages, pdfRedactionOptions.getScale(), outputStream);
+
             pdDocument.close();
 
         } else {
@@ -268,6 +285,28 @@ public class PdfRedacter extends PDFTextStripper implements Redacter {
         }
 
         return indexes;
+
+    }
+
+    private void createPDFFromImage(List<BufferedImage> bufferedImages, float scale, OutputStream outputStream) throws IOException {
+
+        final PDDocument doc = new PDDocument();
+
+        for(final BufferedImage bufferedImage : bufferedImages) {
+
+            final PDImageXObject pdImage = LosslessFactory.createFromImage(doc, bufferedImage);
+
+            final PDRectangle pdRectangle = new PDRectangle(pdImage.getWidth() * scale, pdImage.getHeight() * scale);
+            final PDPage page = new PDPage(pdRectangle);
+            doc.addPage(page);
+
+            try (PDPageContentStream contentStream = new PDPageContentStream(doc, page, PDPageContentStream.AppendMode.APPEND, false, true)) {
+                contentStream.drawImage(pdImage, 0, 0, pdImage.getWidth() * scale, pdImage.getHeight() * scale);
+            }
+
+        }
+
+        doc.save(outputStream);
 
     }
 
