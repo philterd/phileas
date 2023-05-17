@@ -6,6 +6,16 @@ public class PdfRedactionOptions extends RedactionOptions {
     private float compressionQuality = 1.0F;
     private float scale = 1.0F;
 
+    public PdfRedactionOptions() {
+
+    }
+
+    public PdfRedactionOptions(int dpi, float compressionQuality, float scale) {
+        this.dpi = dpi;
+        this.compressionQuality = compressionQuality;
+        this.scale = scale;
+    }
+
     public int getDpi() {
         return dpi;
     }
