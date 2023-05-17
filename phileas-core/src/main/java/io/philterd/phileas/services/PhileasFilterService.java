@@ -296,6 +296,7 @@ public class PhileasFilterService implements FilterService {
 
             }
 
+            // TODO: Build this from the config in the filter profile.
             final PdfRedactionOptions pdfRedactionOptions = new PdfRedactionOptions();
 
             // Redact those terms in the document along with any bounding boxes identified in the filter profile.

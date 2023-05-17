@@ -3,11 +3,9 @@ package io.philterd;
 import io.philterd.phileas.model.enums.FilterType;
 import io.philterd.phileas.model.enums.MimeType;
 import io.philterd.phileas.model.objects.PdfRedactionOptions;
-import io.philterd.phileas.model.objects.RedactionOptions;
 import io.philterd.phileas.model.objects.Span;
 import io.philterd.phileas.model.profile.FilterProfile;
 import io.philterd.phileas.model.profile.graphical.BoundingBox;
-import io.philterd.phileas.model.services.AlertService;
 import io.philterd.phileas.model.services.Redacter;
 import io.philterd.services.pdf.PdfRedacter;
 import org.apache.commons.io.FileUtils;
@@ -15,11 +13,12 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.pdfbox.io.IOUtils;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -29,8 +28,6 @@ public class PdfRedacterTest {
 
     private static final Logger LOGGER = LogManager.getLogger(PdfRedacterTest.class);
 
-    private AlertService alertService = Mockito.mock(AlertService.class);
-
     @Test
     public void testPDF1() throws IOException {
 
@@ -38,15 +35,18 @@ public class PdfRedacterTest {
         final Span span2 = Span.make(0, 1, FilterType.PERSON, "ctx", "docid", 0.25, "Bankruptcy", "repl", null, false, null);
         final Set<Span> spans = Set.copyOf(Arrays.asList(span1, span2));
 
-        final String filename = "12-12110 K.pdf";
+        final String filename = "33011-pdf-118-pages.pdf"; //"12-12110 K.pdf";
         final InputStream is = getClass().getClassLoader().getResourceAsStream(filename);
         final byte[] document = IOUtils.toByteArray(is);
 
         final FilterProfile filterProfile = new FilterProfile();
-        final PdfRedactionOptions redactionOptions = new PdfRedactionOptions();
+
+        final PdfRedactionOptions pdfRedactionOptions = new PdfRedactionOptions();
+        pdfRedactionOptions.setDpi(150);
+        pdfRedactionOptions.setScale(0.5f);
 
         final List<BoundingBox> boundingBoxes = Collections.emptyList();
-        final Redacter pdfRedacter = new PdfRedacter(filterProfile, spans, redactionOptions, boundingBoxes);
+        final Redacter pdfRedacter = new PdfRedacter(filterProfile, spans, pdfRedactionOptions, boundingBoxes);
 
         final byte[] redacted = pdfRedacter.process(document, MimeType.APPLICATION_PDF);
 
@@ -55,6 +55,8 @@ public class PdfRedacterTest {
 
         LOGGER.info("Writing redacted PDF to {}", outputFile.getAbsolutePath());
         FileUtils.writeByteArrayToFile(outputFile, redacted);
+
+        showFileSizes(new File("src/test/resources/" + filename).toPath(), outputFile.toPath());
 
     }
 
@@ -69,10 +71,10 @@ public class PdfRedacterTest {
         final byte[] document = IOUtils.toByteArray(is);
 
         final FilterProfile filterProfile = new FilterProfile();
-        final PdfRedactionOptions redactionOptions = new PdfRedactionOptions();
+        final PdfRedactionOptions pdfRedactionOptions = new PdfRedactionOptions();
 
         final List<BoundingBox> boundingBoxes = Collections.emptyList();
-        final Redacter pdfRedacter = new PdfRedacter(filterProfile, spans, redactionOptions, boundingBoxes);
+        final Redacter pdfRedacter = new PdfRedacter(filterProfile, spans, pdfRedactionOptions, boundingBoxes);
 
         final byte[] redacted = pdfRedacter.process(document, MimeType.APPLICATION_PDF);
 
@@ -81,6 +83,8 @@ public class PdfRedacterTest {
 
         LOGGER.info("Writing redacted PDF to {}", outputFile.getAbsolutePath());
         FileUtils.writeByteArrayToFile(outputFile, redacted);
+
+        showFileSizes(new File("src/test/resources/12-12110 K.pdf").toPath(), outputFile.toPath());
 
     }
 
@@ -96,10 +100,10 @@ public class PdfRedacterTest {
         final byte[] document = IOUtils.toByteArray(is);
 
         final FilterProfile filterProfile = new FilterProfile();
-        final PdfRedactionOptions redactionOptions = new PdfRedactionOptions();
+        final PdfRedactionOptions pdfRedactionOptions = new PdfRedactionOptions();
 
         final List<BoundingBox> boundingBoxes = Collections.emptyList();
-        final Redacter pdfRedacter = new PdfRedacter(filterProfile, spans, redactionOptions, boundingBoxes);
+        final Redacter pdfRedacter = new PdfRedacter(filterProfile, spans, pdfRedactionOptions, boundingBoxes);
         final byte[] redacted = pdfRedacter.process(document, MimeType.IMAGE_JPEG);
 
         final File outputFile = File.createTempFile("output", ".zip");
@@ -107,6 +111,8 @@ public class PdfRedacterTest {
 
         LOGGER.info("Writing redacted JPEG to {}", outputFile.getAbsolutePath());
         FileUtils.writeByteArrayToFile(outputFile, redacted);
+
+        showFileSizes(new File("src/test/resources/12-12110 K.pdf").toPath(), outputFile.toPath());
 
     }
 
@@ -121,10 +127,10 @@ public class PdfRedacterTest {
         final byte[] document = IOUtils.toByteArray(is);
 
         final FilterProfile filterProfile = new FilterProfile();
-        final PdfRedactionOptions redactionOptions = new PdfRedactionOptions();
+        final PdfRedactionOptions pdfRedactionOptions = new PdfRedactionOptions();
 
         final List<BoundingBox> boundingBoxes = Collections.emptyList();
-        final Redacter pdfRedacter = new PdfRedacter(filterProfile, spans, redactionOptions, boundingBoxes);
+        final Redacter pdfRedacter = new PdfRedacter(filterProfile, spans, pdfRedactionOptions, boundingBoxes);
         final byte[] redacted = pdfRedacter.process(document, MimeType.IMAGE_JPEG);
 
         final File outputFile = File.createTempFile("output", ".zip");
@@ -132,6 +138,8 @@ public class PdfRedacterTest {
 
         LOGGER.info("Writing redacted JPEG to {}", outputFile.getAbsolutePath());
         FileUtils.writeByteArrayToFile(outputFile, redacted);
+
+        showFileSizes(new File("src/test/resources/12-12110 K.pdf").toPath(), outputFile.toPath());
 
     }
 
@@ -143,7 +151,7 @@ public class PdfRedacterTest {
         final byte[] document = IOUtils.toByteArray(is);
 
         final FilterProfile filterProfile = new FilterProfile();
-        final PdfRedactionOptions redactionOptions = new PdfRedactionOptions();
+        final PdfRedactionOptions pdfRedactionOptions = new PdfRedactionOptions();
 
         final BoundingBox boundingBox1 = new BoundingBox();
         boundingBox1.setX(100);
@@ -161,7 +169,7 @@ public class PdfRedacterTest {
 
         final List<BoundingBox> boundingBoxes = Arrays.asList(boundingBox1, boundingBox2);
 
-        final Redacter pdfRedacter = new PdfRedacter(filterProfile, Collections.emptySet(), redactionOptions, boundingBoxes);
+        final Redacter pdfRedacter = new PdfRedacter(filterProfile, Collections.emptySet(), pdfRedactionOptions, boundingBoxes);
         final byte[] redacted = pdfRedacter.process(document, MimeType.APPLICATION_PDF);
 
         final File outputFile = File.createTempFile("output", ".pdf");
@@ -180,7 +188,7 @@ public class PdfRedacterTest {
         final byte[] document = IOUtils.toByteArray(is);
 
         final FilterProfile filterProfile = new FilterProfile();
-        final PdfRedactionOptions redactionOptions = new PdfRedactionOptions();
+        final PdfRedactionOptions pdfRedactionOptions = new PdfRedactionOptions();
 
         final BoundingBox boundingBox1 = new BoundingBox();
         boundingBox1.setX(100);
@@ -202,7 +210,7 @@ public class PdfRedacterTest {
 
         final List<BoundingBox> boundingBoxes = Arrays.asList(boundingBox1, boundingBox2);
 
-        final Redacter pdfRedacter = new PdfRedacter(filterProfile, Collections.emptySet(), redactionOptions, boundingBoxes);
+        final Redacter pdfRedacter = new PdfRedacter(filterProfile, Collections.emptySet(), pdfRedactionOptions, boundingBoxes);
         final byte[] redacted = pdfRedacter.process(document, MimeType.APPLICATION_PDF);
 
         final File outputFile = File.createTempFile("output", ".pdf");
@@ -225,7 +233,7 @@ public class PdfRedacterTest {
         final byte[] document = IOUtils.toByteArray(is);
 
         final FilterProfile filterProfile = new FilterProfile();
-        final PdfRedactionOptions redactionOptions = new PdfRedactionOptions();
+        final PdfRedactionOptions pdfRedactionOptions = new PdfRedactionOptions();
 
         final BoundingBox boundingBox1 = new BoundingBox();
         boundingBox1.setX(100);
@@ -243,7 +251,7 @@ public class PdfRedacterTest {
 
         final List<BoundingBox> boundingBoxes = Arrays.asList(boundingBox1, boundingBox2);
 
-        final Redacter pdfRedacter = new PdfRedacter(filterProfile, spans, redactionOptions, boundingBoxes);
+        final Redacter pdfRedacter = new PdfRedacter(filterProfile, spans, pdfRedactionOptions, boundingBoxes);
         final byte[] redacted = pdfRedacter.process(document, MimeType.APPLICATION_PDF);
 
         final File outputFile = File.createTempFile("output", ".pdf");
@@ -251,6 +259,16 @@ public class PdfRedacterTest {
 
         LOGGER.info("Writing redacted PDF to {}", outputFile.getAbsolutePath());
         FileUtils.writeByteArrayToFile(outputFile, redacted);
+
+    }
+
+    private void showFileSizes(Path inputFile, Path outputFile) throws IOException {
+
+        long inputFileBytes = Files.size(inputFile);
+        long outputFileBytes = Files.size(outputFile);
+        long difference = inputFileBytes - outputFileBytes;
+        LOGGER.info("Input PDF: {} ({}), Redacted PDF: {} ({})", inputFileBytes, FileUtils.byteCountToDisplaySize(inputFileBytes), outputFileBytes, FileUtils.byteCountToDisplaySize(outputFileBytes));
+        LOGGER.info("Size difference of {} ({})", difference, FileUtils.byteCountToDisplaySize(Math.abs(difference)));
 
     }
 

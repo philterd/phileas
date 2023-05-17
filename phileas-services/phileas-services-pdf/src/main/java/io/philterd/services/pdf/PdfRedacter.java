@@ -29,7 +29,6 @@ import javax.imageio.ImageWriter;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -68,7 +67,7 @@ public class PdfRedacter extends PDFTextStripper implements Redacter {
     }
 
     @Override
-    public byte[] process(byte[] document, MimeType outputType) throws IOException {
+    public byte[] process(byte[] document, MimeType outputMimeType) throws IOException {
 
         final PDDocument pdDocument = PDDocument.load(document);
 
@@ -92,27 +91,28 @@ public class PdfRedacter extends PDFTextStripper implements Redacter {
 
         final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
-        if(outputType == MimeType.IMAGE_JPEG) {
+        // Don't use the disk for caching.
+        ImageIO.setUseCache(false);
 
-            final PDFRenderer pdfRenderer = new PDFRenderer(pdDocument);
+        final PDFRenderer pdfRenderer = new PDFRenderer(pdDocument);
+
+        if(outputMimeType == MimeType.IMAGE_JPEG) {
+
             final ZipOutputStream zipOut = new ZipOutputStream(outputStream);
-            final List<BufferedImage> bufferedImages = new LinkedList<>();
 
             for (int x = 0; x < pdDocument.getNumberOfPages(); x++) {
 
                 LOGGER.debug("Creating image from PDF page " + x);
                 final BufferedImage bufferedImage = pdfRenderer.renderImageWithDPI(x, pdfRedactionOptions.getDpi());
-                //final BufferedImage bufferedImage = pdfRenderer.renderImage(x, scale);
-                bufferedImages.add(bufferedImage);
 
                 final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
 
                 final ImageWriter writer = ImageIO.getImageWritersByFormatName("png").next();
-                final ImageWriteParam param = writer.getDefaultWriteParam();
-                param.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
-                param.setCompressionQuality(pdfRedactionOptions.getCompressionQuality());
+                final ImageWriteParam imageWriteParam = writer.getDefaultWriteParam();
+                imageWriteParam.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
+                imageWriteParam.setCompressionQuality(pdfRedactionOptions.getCompressionQuality());
                 writer.setOutput(ImageIO.createImageOutputStream(byteArrayOutputStream));
-                writer.write(null, new IIOImage(bufferedImage, null, null), param);
+                writer.write(null, new IIOImage(bufferedImage, null, null), imageWriteParam);
 
                 // Add the image to the zip file to be returned.
                 ZipEntry zipEntry = new ZipEntry("page-" + x + ".png");
@@ -127,20 +127,33 @@ public class PdfRedacter extends PDFTextStripper implements Redacter {
             zipOut.close();
             pdDocument.close();
 
-        } else if(outputType == MimeType.APPLICATION_PDF) {
+        } else if(outputMimeType == MimeType.APPLICATION_PDF) {
 
-            final PDFRenderer pdfRenderer = new PDFRenderer(pdDocument);
-            final List<BufferedImage> bufferedImages = new LinkedList<>();
+            pdfRenderer.setSubsamplingAllowed(true);
+
+            final PDDocument outputPdfDocument = new PDDocument();
 
             for (int x = 0; x < pdDocument.getNumberOfPages(); x++) {
 
+                final float scale = pdfRedactionOptions.getScale();
+
                 LOGGER.debug("Creating image from PDF page " + x);
                 final BufferedImage bufferedImage = pdfRenderer.renderImageWithDPI(x, pdfRedactionOptions.getDpi());
-                bufferedImages.add(bufferedImage);
+
+                final PDImageXObject pdImage = LosslessFactory.createFromImage(outputPdfDocument, bufferedImage);
+
+                final PDRectangle pdRectangle = new PDRectangle(pdImage.getWidth() * scale, pdImage.getHeight() * scale);
+                final PDPage page = new PDPage(pdRectangle);
+                outputPdfDocument.addPage(page);
+
+                try (PDPageContentStream contentStream = new PDPageContentStream(outputPdfDocument, page, PDPageContentStream.AppendMode.APPEND, false, true)) {
+                    contentStream.drawImage(pdImage, 0, 0, pdImage.getWidth() * scale, pdImage.getHeight() * scale);
+                }
 
             }
 
-            createPDFFromImage(bufferedImages, pdfRedactionOptions.getScale(), outputStream);
+            outputPdfDocument.save(outputStream);
+            outputPdfDocument.close();
 
             pdDocument.close();
 
@@ -285,28 +298,6 @@ public class PdfRedacter extends PDFTextStripper implements Redacter {
         }
 
         return indexes;
-
-    }
-
-    private void createPDFFromImage(List<BufferedImage> bufferedImages, float scale, OutputStream outputStream) throws IOException {
-
-        final PDDocument doc = new PDDocument();
-
-        for(final BufferedImage bufferedImage : bufferedImages) {
-
-            final PDImageXObject pdImage = LosslessFactory.createFromImage(doc, bufferedImage);
-
-            final PDRectangle pdRectangle = new PDRectangle(pdImage.getWidth() * scale, pdImage.getHeight() * scale);
-            final PDPage page = new PDPage(pdRectangle);
-            doc.addPage(page);
-
-            try (PDPageContentStream contentStream = new PDPageContentStream(doc, page, PDPageContentStream.AppendMode.APPEND, false, true)) {
-                contentStream.drawImage(pdImage, 0, 0, pdImage.getWidth() * scale, pdImage.getHeight() * scale);
-            }
-
-        }
-
-        doc.save(outputStream);
 
     }
 
