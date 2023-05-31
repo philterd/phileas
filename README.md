@@ -2,7 +2,7 @@
 
 *Phileas is a PII and PHI redaction engine.*
 
-For a turnkey text redaction engine, see [Philter](https://www.mtnfog.com/products/philter), which is built on top of Phileas and provides a REST API interface for redacting text. Philter includes commercial support and access to optimized natural language processing (NLP) models for general, legal, financial, and healthcare text. Philter is available on the cloud marketplaces:
+For a turnkey text redaction engine, see [Philter](https://philterd.ai/philter/), which is built on top of Phileas and provides a REST API interface for redacting text. Philter includes commercial support and access to optimized natural language processing (NLP) models for general, legal, financial, and healthcare text. Philter is available on the cloud marketplaces:
 
 * [Philter on AWS Marketplace](https://aws.amazon.com/marketplace/pp/B07YVB8FFT?ref=_ptnr_philterd)
 * [Philter on Google Cloud Marketplace](https://console.cloud.google.com/marketplace/details/mountainfog-public/philter)
@@ -160,4 +160,5 @@ There is a long list of `identifiers` that can be applied, and each identifier h
 
 As of Phileas 2.2.1, Phileas is licensed under the Apache License, version 2.0. Previous versions were under a proprietary license.
 
+Copyright 2023 Philterd, LLC.
 Copyright 2018-2023 Mountain Fog, Inc.
