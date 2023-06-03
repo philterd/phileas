@@ -11,7 +11,6 @@ import ai.philterd.phileas.model.responses.BinaryDocumentFilterResponse;
 import ai.philterd.phileas.model.serializers.PlaceholderDeserializer;
 import ai.philterd.phileas.services.PhileasFilterService;
 import org.aeonbits.owner.ConfigFactory;
-import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -22,7 +21,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
@@ -36,7 +34,6 @@ import java.util.Properties;
 
 import static ai.philterd.test.phileas.services.EndToEndTestsHelper.getFilterProfile;
 import static ai.philterd.test.phileas.services.EndToEndTestsHelper.getPdfFilterProfile;
-import static ai.philterd.test.phileas.services.EndToEndTestsHelper.getPdfFilterWithPersonProfile;
 
 public class PhileasFilterServiceTest {
 

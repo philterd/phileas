@@ -2,27 +2,18 @@ package ai.philterd.test.phileas.services.filters;
 
 import ai.philterd.phileas.model.enums.FilterType;
 import ai.philterd.phileas.model.filter.FilterConfiguration;
-import ai.philterd.phileas.model.objects.DocumentAnalysis;
-import ai.philterd.phileas.model.objects.DocumentType;
 import ai.philterd.phileas.model.objects.FilterResult;
-import ai.philterd.phileas.model.profile.IgnoredPattern;
 import ai.philterd.phileas.model.profile.filters.strategies.AbstractFilterStrategy;
-import ai.philterd.phileas.model.profile.filters.strategies.rules.AgeFilterStrategy;
 import ai.philterd.phileas.model.profile.filters.strategies.rules.CurrencyFilterStrategy;
 import ai.philterd.phileas.model.services.AlertService;
-import ai.philterd.phileas.services.anonymization.AgeAnonymizationService;
 import ai.philterd.phileas.services.anonymization.CurrencyAnonymizationService;
 import ai.philterd.phileas.services.anonymization.cache.LocalAnonymizationCacheService;
-import ai.philterd.phileas.services.filters.regex.AgeFilter;
 import ai.philterd.phileas.services.filters.regex.CurrencyFilter;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.util.Arrays;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
 
 public class CurrencyFilterTest extends AbstractFilterTest {
 
