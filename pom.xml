@@ -6,12 +6,12 @@
 	<packaging>pom</packaging>
 	<version>2.2.1-SNAPSHOT</version>
 	<name>phileas</name>
-	<url>https://www.mtnfog.com</url>
+	<url>https://www.philterd.ai</url>
 	<description>Phileas is capable of identify and removing sensitive information from natural language text.</description>
 	<inceptionYear>2019</inceptionYear>
 	<organization>
-		<name>Mountain Fog, Inc.</name>
-		<url>https://www.mtnfog.com</url>
+		<name>Philterd, LLC</name>
+		<url>https://www.philterd.ai</url>
 	</organization>
 	<scm>
 		<connection>scm:git@github.com:philterd/phileas.git</connection>
@@ -20,10 +20,10 @@
 	</scm>
 	<developers>
 		<developer>
-			<name>Mountain Fog</name>
-			<email>support@mtnfog.com</email>
-			<organization>Mountain Fog</organization>
-			<organizationUrl>https://www.mtnfog.com</organizationUrl>
+			<name>Philterd, LLC</name>
+			<email>support@philterd.ai</email>
+			<organization>Philterd</organization>
+			<organizationUrl>https://www.philterd.ai</organizationUrl>
 		</developer>
 	</developers>
 	<licenses>
