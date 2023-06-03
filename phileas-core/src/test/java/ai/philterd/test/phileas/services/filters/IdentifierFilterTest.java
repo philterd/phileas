@@ -3,25 +3,18 @@ package ai.philterd.test.phileas.services.filters;
 import ai.philterd.phileas.model.enums.FilterType;
 import ai.philterd.phileas.model.filter.FilterConfiguration;
 import ai.philterd.phileas.model.objects.FilterResult;
-import ai.philterd.phileas.model.objects.Span;
-import ai.philterd.phileas.model.profile.Crypto;
 import ai.philterd.phileas.model.profile.filters.Identifier;
 import ai.philterd.phileas.model.profile.filters.strategies.rules.IdentifierFilterStrategy;
-import ai.philterd.phileas.model.profile.filters.strategies.rules.PhoneNumberFilterStrategy;
 import ai.philterd.phileas.model.services.AlertService;
 import ai.philterd.phileas.model.services.AnonymizationService;
 import ai.philterd.phileas.services.anonymization.AlphanumericAnonymizationService;
-import ai.philterd.phileas.services.anonymization.MacAddressAnonymizationService;
 import ai.philterd.phileas.services.anonymization.cache.LocalAnonymizationCacheService;
-import ai.philterd.phileas.services.filters.custom.PhoneNumberRulesFilter;
 import ai.philterd.phileas.services.filters.regex.IdentifierFilter;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 
 public class IdentifierFilterTest extends AbstractFilterTest {
 

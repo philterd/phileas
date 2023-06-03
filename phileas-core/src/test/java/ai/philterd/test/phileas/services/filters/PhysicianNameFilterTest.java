@@ -3,15 +3,10 @@ package ai.philterd.test.phileas.services.filters;
 import ai.philterd.phileas.model.enums.FilterType;
 import ai.philterd.phileas.model.filter.FilterConfiguration;
 import ai.philterd.phileas.model.objects.FilterResult;
-import ai.philterd.phileas.model.profile.Crypto;
-import ai.philterd.phileas.model.profile.filters.strategies.rules.BitcoinAddressFilterStrategy;
 import ai.philterd.phileas.model.profile.filters.strategies.rules.PhysicianNameFilterStrategy;
 import ai.philterd.phileas.model.services.AlertService;
-import ai.philterd.phileas.services.anonymization.AlphanumericAnonymizationService;
-import ai.philterd.phileas.services.anonymization.BitcoinAddressAnonymizationService;
 import ai.philterd.phileas.services.anonymization.PersonsAnonymizationService;
 import ai.philterd.phileas.services.anonymization.cache.LocalAnonymizationCacheService;
-import ai.philterd.phileas.services.filters.regex.BitcoinAddressFilter;
 import ai.philterd.phileas.services.filters.regex.PhysicianNameFilter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -20,8 +15,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 
 public class PhysicianNameFilterTest extends AbstractFilterTest {
 
