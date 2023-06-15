@@ -370,7 +370,7 @@ public abstract class Filter {
         } else if(filterType == FilterType.STATE_ABBREVIATION) {
             return filterProfile.getIdentifiers().getStateAbbreviation().getStateAbbreviationsFilterStrategies();
         } else if(filterType == FilterType.STREET_ADDRESS) {
-            return filterProfile.getIdentifiers().getStateAbbreviation().getStateAbbreviationsFilterStrategies();
+            return filterProfile.getIdentifiers().getStreetAddress().getStreetAddressFilterStrategies();
         } else if(filterType == FilterType.URL) {
             return filterProfile.getIdentifiers().getUrl().getUrlFilterStrategies();
         } else if(filterType == FilterType.VIN) {
