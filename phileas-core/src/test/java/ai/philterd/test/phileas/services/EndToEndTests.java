@@ -35,18 +35,14 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
-import static ai.philterd.test.phileas.services.EndToEndTestsHelper.getFilterProfile;
-import static ai.philterd.test.phileas.services.EndToEndTestsHelper.getFilterProfileJustCreditCard;
-import static ai.philterd.test.phileas.services.EndToEndTestsHelper.getFilterProfileZipCodeWithIgnored;
-import static ai.philterd.test.phileas.services.EndToEndTestsHelper.getFilterProfileZipCodeWithIgnoredFromFile;
-import static ai.philterd.test.phileas.services.EndToEndTestsHelper.getPdfFilterWithPersonProfile;
+import static ai.philterd.test.phileas.services.EndToEndTestsHelper.*;
 
-@Disabled("These tests require a running philter-ner service")
+@Disabled("Some of these tests require a running philter-ner service")
 public class EndToEndTests {
 
     private static final Logger LOGGER = LogManager.getLogger(EndToEndTests.class);
 
-    private String INDEXES_DIRECTORY = "/mtnfog/code/philter/philter/distribution/indexes/";
+    private String INDEXES_DIRECTORY = "/not/set/";
     private Gson gson;
 
     @BeforeEach
@@ -500,6 +496,38 @@ public class EndToEndTests {
         Assertions.assertEquals("documentid", response.getDocumentId());
         Assertions.assertEquals(32, response.getExplanation().getAppliedSpans().size());
         Assertions.assertEquals("For the most part, {{{REDACTED-person}}} and I have been pretty patient with struggling players on Fantasy Baseball Today. We are now getting to the point, however, where we would need to change our stance on struggling stars even in a full-length season. I know it feels like the season just started, but we're nearly seven weeks in. While you may not want to flat-out drop names like {{{REDACTED-person}}} and {{{REDACTED-person}}} so that your opponents can't have them, you can certainly bench these players. There isn't really much that suggests they're going to get much better besides their track records, and the Fantasy playoffs start next week. We don't have any more time to waste. Now is the time to make moves if you're tired of the lackluster production. We discussed slumping players who should be benched plus reviewed Tuesday's action on the Wednesday edition of the Fantasy Baseball Today podcast. Follow all our podcasts and subscribe here. Let's find out what happened on Tuesday. The latest in the world of Fantasy Baseballn• Braves placed {{{REDACTED-person}}} on the 10-day IL Tuesday, retroactive to Sept. 6, with muscle spasms in his back. He's expected to return when first eligible Sept. 16 or soon after, according to David O'Brien.n• {{{REDACTED-person}}}er suffered a fractured left index finger while trying to lay down a bunt with two strikes on Monday night against the Rockies. He was officially placed on the 10-day IL Tuesday, but {{{REDACTED-person}}} of the San Diego Union Tribune believes {{{REDACTED-person}}}er will be able to return before the end of the regular season.n• {{{REDACTED-person}}} was not in the lineup Tuesday. An MRI revealed a left-hand bruise. The team will reassess his status Wednesday.n• {{{REDACTED-person}}} is progressing well with his ankle injury and could come off the IL when first eligible Thursday.n• {{{REDACTED-person}}}, dealing with an elbow injury, was back in the lineup Tuesday as the designated hitter.n• {{{REDACTED-person}}} returned to the lineup for the A's in the first game of their doubleheader Tuesday. He had missed seven consecutive games before that.n• {{{REDACTED-person}}} is dealing with right hip tendinitis, but he'll test things out on Wednesday. He didn't rule out a return by Thursday, but his timetable likely depends on how he feels after participating in baseball activities.n• {{{REDACTED-person}}} is dealing with left wrist soreness that kept him out of the lineup for Tuesday's games against the Astrosn• {{{REDACTED-person}}} will play the field at the Blue Jays' alternate training site Tuesday. A weekend return has not been ruled out.n• {{{REDACTED-person}}} threw a live batting practice session that went well Tuesday. He can return as early as Thursday.n• Sticking with the Blue Jays, Row{{{REDACTED-person}}} left Tuesday's game and is set to undergo an MRI on his right knee on Wednesday.n• Ren{{{REDACTED-person}}} was back in the lineup for the Orioles on Tuesday. He had missed the previous two games with a hamstring injury.n• {{{REDACTED-person}}} returned for the first game of their doubleheader Tuesday and went 0-for-3 with a walk and two strikeouts.n• The Cardinals optioned OF {{{REDACTED-person}}} to their alternate training site due to his struggles.n• Recently I mentioned how awesome {{{REDACTED-person}}} has been and that his hype might get out of control heading into the 2021 season. I think the same can be said for Six{{{REDACTED-person}}} who looks like a stud to this point. He tossed another six shutout innings Tuesday against the Braves, striking out six while walking just one. He now has 25 strikeouts to just two walks over his first four starts. It's a small sample but so far he does exactly what you want from a pitcher; get whiffs, limit walks and induce ground balls. I'm starting to think he might be drafted as Top-25 starting pitcher heading into next season.n• Like last season, {{{REDACTED-person}}} got off to a slow start in the power department this year. That's not the case anymore, however, as he's now homered in three straight. Additionally, he has multiple hits in seven of his past 10 games. If you stuck with him throughout his slow start, enjoy reaping the benefits over these final few weeks.n• {{{REDACTED-person}}} is back. After a down season in 2019, he looks like the Jeffress of old. He locked down his sixth save of the season Tuesday, including the fourth consecutive save for the Chicago Cubs. He certainly seems like the go-to guy for manager {{{REDACTED-person}}}. Through his first 15 games this season, Jeffress has a 1.06 ERA and a 0.82 WHIP. In the words of Borat, very nice!n• Man, what are the Dodgers thinking? {{{REDACTED-person}}} clearly isn't himself and now it seems like they rushed him back from his blister issue. According to manager {{{REDACTED-person}}}, the plan is for B{{{REDACTED-person}}} to make his next start although there will be discussions and that nothing's off the table. Buehler last just 2.2 innings on Tuesday, allowing five runs (two earned). It's been quite a weird season for the {{{REDACTED-age}}}.n• If we're talking weird seasons, let's throw J.D. {{{REDACTED-person}}} in the mix. It looks like Martinez was showing signs of life recently and then came to a crashing halt, going 0-for-12 over his last three games. He's struggled big time against right-handed pitching this season to the tune of just a .652 OPS. Like I mentioned in the open, I think Martinez is one of those names you can bench if you have better options, especially in a three-outfielder league.n• It looks like we've hit the end of the road for {{{REDACTED-person}}}. After a nice start to the season, Dobnak has been knocked around in two of his last three starts. On Tuesday, he allowed five runs in just 2.2 innings pitched. His next start comes against the White Sox and, considering Dobnak pitches to contact, I'm not really a fan of that matchup. I'd be OK dropping him for {{{REDACTED-person}}}e or {{{REDACTED-person}}} if they're available.", response.getFilteredText().trim());
+
+    }
+
+    @Test
+    public void endToEnd16() throws Exception {
+
+        final Path temp = Files.createTempDirectory("philter");
+        final File file = Paths.get(temp.toFile().getAbsolutePath(), "default.json").toFile();
+        LOGGER.info("Writing profile to {}", file.getAbsolutePath());
+        final String profile = gson.toJson(getFilterProfileJustIdentifier("default"));
+        LOGGER.info(profile);
+        FileUtils.writeStringToFile(file, profile);
+
+        Properties properties = new Properties();
+        properties.setProperty("indexes.directory", INDEXES_DIRECTORY);
+        properties.setProperty("store.enabled", "false");
+        properties.setProperty("filter.profiles.directory", temp.toFile().getAbsolutePath());
+
+        final PhileasConfiguration phileasConfiguration = ConfigFactory.create(PhileasConfiguration.class, properties);
+
+        final String input = "the id is 123456.";
+
+        final PhileasFilterService service = new PhileasFilterService(phileasConfiguration);
+        final FilterResponse response = service.filter(Arrays.asList("default"), "context", "documentid", input, MimeType.TEXT_PLAIN);
+
+        LOGGER.info(response.getFilteredText());
+
+        showSpans(response.getExplanation().getAppliedSpans());
+
+        Assertions.assertEquals("documentid", response.getDocumentId());
+        Assertions.assertEquals(1, response.getExplanation().getAppliedSpans().size());
+        Assertions.assertEquals("the id is {{{REDACTED-id}}}.", response.getFilteredText().trim());
 
     }
 
