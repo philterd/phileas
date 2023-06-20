@@ -314,4 +314,24 @@ public class IdentifierFilterTest extends AbstractFilterTest {
 
     }
 
+    @Test
+    public void filterId16() throws Exception {
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(Arrays.asList(new IdentifierFilterStrategy()))
+                .withAlertService(alertService)
+                .withAnonymizationService(new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()))
+                .withWindowSize(windowSize)
+                .build();
+
+        final IdentifierFilter filter = new IdentifierFilter(filterConfiguration, "name", "\\b\\d{3,8}\\b", false);
+
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", PIECE, "The ID is 123456.");
+
+        showSpans(filterResult.getSpans());
+        Assertions.assertEquals(1, filterResult.getSpans().size());
+        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 10,16, FilterType.IDENTIFIER));
+
+    }
+
 }

@@ -346,4 +346,23 @@ public class EndToEndTestsHelper {
 
     }
 
+    public static FilterProfile getFilterProfileJustIdentifier(String filterProfileName) throws IOException, URISyntaxException {
+
+        Identifier identifier1 = new Identifier();
+        identifier1.setIdentifierFilterStrategies(Arrays.asList(new IdentifierFilterStrategy()));
+        identifier1.setPattern("\\b\\d{3,8}\\b");
+        identifier1.setCaseSensitive(false);
+
+        Identifiers identifiers = new Identifiers();
+
+        identifiers.setIdentifiers(Arrays.asList(identifier1));
+
+        FilterProfile filterProfile = new FilterProfile();
+        filterProfile.setName(filterProfileName);
+        filterProfile.setIdentifiers(identifiers);
+
+        return filterProfile;
+
+    }
+
 }
