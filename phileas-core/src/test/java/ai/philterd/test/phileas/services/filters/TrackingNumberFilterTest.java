@@ -29,7 +29,7 @@ public class TrackingNumberFilterTest extends AbstractFilterTest {
                 .withWindowSize(windowSize)
                 .build();
 
-        final TrackingNumberFilter filter = new TrackingNumberFilter(filterConfiguration);
+        final TrackingNumberFilter filter = new TrackingNumberFilter(filterConfiguration, true, true, true);
 
         final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", PIECE, "the tracking number is 1Z9YF1280343418566");
 
@@ -53,7 +53,7 @@ public class TrackingNumberFilterTest extends AbstractFilterTest {
                 .withWindowSize(windowSize)
                 .build();
 
-        final TrackingNumberFilter filter = new TrackingNumberFilter(filterConfiguration);
+        final TrackingNumberFilter filter = new TrackingNumberFilter(filterConfiguration, true, true, true);
 
         final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", PIECE, "the tracking number is 9400100000000000000000");
 
@@ -78,7 +78,7 @@ public class TrackingNumberFilterTest extends AbstractFilterTest {
                 .withWindowSize(windowSize)
                 .build();
 
-        final TrackingNumberFilter filter = new TrackingNumberFilter(filterConfiguration);
+        final TrackingNumberFilter filter = new TrackingNumberFilter(filterConfiguration, true, true, true);
 
         final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", PIECE, "the tracking number is 9400 1000 0000 0000 0000");
 
@@ -102,7 +102,7 @@ public class TrackingNumberFilterTest extends AbstractFilterTest {
                 .withWindowSize(windowSize)
                 .build();
 
-        final TrackingNumberFilter filter = new TrackingNumberFilter(filterConfiguration);
+        final TrackingNumberFilter filter = new TrackingNumberFilter(filterConfiguration, true, true, true);
 
         final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", PIECE, "the tracking number is 4204319935009201990138501144099814");
 
@@ -126,7 +126,7 @@ public class TrackingNumberFilterTest extends AbstractFilterTest {
                 .withWindowSize(windowSize)
                 .build();
 
-        final TrackingNumberFilter filter = new TrackingNumberFilter(filterConfiguration);
+        final TrackingNumberFilter filter = new TrackingNumberFilter(filterConfiguration, true, true, true);
 
         final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", PIECE, "the tracking number is 420431993500920199013850114409");
 
@@ -150,7 +150,7 @@ public class TrackingNumberFilterTest extends AbstractFilterTest {
                 .withWindowSize(windowSize)
                 .build();
 
-        final TrackingNumberFilter filter = new TrackingNumberFilter(filterConfiguration);
+        final TrackingNumberFilter filter = new TrackingNumberFilter(filterConfiguration, true, true, true);
 
         final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", PIECE, "the tracking number is 4204319935009201990138501144");
 
@@ -174,7 +174,7 @@ public class TrackingNumberFilterTest extends AbstractFilterTest {
                 .withWindowSize(windowSize)
                 .build();
 
-        final TrackingNumberFilter filter = new TrackingNumberFilter(filterConfiguration);
+        final TrackingNumberFilter filter = new TrackingNumberFilter(filterConfiguration, true, true, true);
 
         final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", PIECE, "the tracking number is 42043199350092019901385011");
 
@@ -186,6 +186,124 @@ public class TrackingNumberFilterTest extends AbstractFilterTest {
         Assertions.assertEquals("{{{REDACTED-tracking-number}}}", filterResult.getSpans().get(0).getReplacement());
         Assertions.assertEquals("42043199350092019901385011", filterResult.getSpans().get(0).getText());
         Assertions.assertEquals("ups", filterResult.getSpans().get(0).getClassification());
+
+    }
+
+    @Test
+    public void filter7() throws Exception {
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(Arrays.asList(new TrackingNumberFilterStrategy()))
+                .withAlertService(alertService)
+                .withAnonymizationService(new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()))
+                .withWindowSize(windowSize)
+                .build();
+
+        final TrackingNumberFilter filter = new TrackingNumberFilter(filterConfiguration, false, false, true);
+
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", PIECE, "the tracking number is 42043199350092019901385011");
+
+        showSpans(filterResult.getSpans());
+
+        Assertions.assertEquals(1, filterResult.getSpans().size());
+
+        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 23, 49, FilterType.TRACKING_NUMBER));
+        Assertions.assertEquals("{{{REDACTED-tracking-number}}}", filterResult.getSpans().get(0).getReplacement());
+        Assertions.assertEquals("42043199350092019901385011", filterResult.getSpans().get(0).getText());
+        Assertions.assertEquals("usps", filterResult.getSpans().get(0).getClassification());
+
+    }
+
+    @Test
+    public void filter8() throws Exception {
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(Arrays.asList(new TrackingNumberFilterStrategy()))
+                .withAlertService(alertService)
+                .withAnonymizationService(new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()))
+                .withWindowSize(windowSize)
+                .build();
+
+        final TrackingNumberFilter filter = new TrackingNumberFilter(filterConfiguration, false, false, false);
+
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", PIECE, "the tracking number is 42043199350092019901385011");
+
+        showSpans(filterResult.getSpans());
+
+        Assertions.assertEquals(0, filterResult.getSpans().size());
+
+    }
+
+    @Test
+    public void filter9() throws Exception {
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(Arrays.asList(new TrackingNumberFilterStrategy()))
+                .withAlertService(alertService)
+                .withAnonymizationService(new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()))
+                .withWindowSize(windowSize)
+                .build();
+
+        final TrackingNumberFilter filter = new TrackingNumberFilter(filterConfiguration, true, false, true);
+
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", PIECE, "the tracking number is 9400100000000000000000");
+
+        showSpans(filterResult.getSpans());
+
+        Assertions.assertEquals(1, filterResult.getSpans().size());
+
+        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 23, 45, FilterType.TRACKING_NUMBER));
+        Assertions.assertEquals("{{{REDACTED-tracking-number}}}", filterResult.getSpans().get(0).getReplacement());
+        Assertions.assertEquals("9400100000000000000000", filterResult.getSpans().get(0).getText());
+        Assertions.assertEquals("usps", filterResult.getSpans().get(0).getClassification());
+
+    }
+
+    public void filter10() throws Exception {
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(Arrays.asList(new TrackingNumberFilterStrategy()))
+                .withAlertService(alertService)
+                .withAnonymizationService(new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()))
+                .withWindowSize(windowSize)
+                .build();
+
+        final TrackingNumberFilter filter = new TrackingNumberFilter(filterConfiguration, true, true, false);
+
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", PIECE, "the tracking number is 9400100000000000000000");
+
+        showSpans(filterResult.getSpans());
+
+        Assertions.assertEquals(1, filterResult.getSpans().size());
+
+        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 23, 45, FilterType.TRACKING_NUMBER));
+        Assertions.assertEquals("{{{REDACTED-tracking-number}}}", filterResult.getSpans().get(0).getReplacement());
+        Assertions.assertEquals("9400100000000000000000", filterResult.getSpans().get(0).getText());
+        Assertions.assertEquals("fedex", filterResult.getSpans().get(0).getClassification());
+
+    }
+
+    public void filter11() throws Exception {
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(Arrays.asList(new TrackingNumberFilterStrategy()))
+                .withAlertService(alertService)
+                .withAnonymizationService(new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()))
+                .withWindowSize(windowSize)
+                .build();
+
+        final TrackingNumberFilter filter = new TrackingNumberFilter(filterConfiguration, true, true, true);
+
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", PIECE, "the tracking number is 9400100000000000000000");
+
+        showSpans(filterResult.getSpans());
+
+        Assertions.assertEquals(1, filterResult.getSpans().size());
+
+        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 23, 45, FilterType.TRACKING_NUMBER));
+        Assertions.assertEquals("{{{REDACTED-tracking-number}}}", filterResult.getSpans().get(0).getReplacement());
+        Assertions.assertEquals("9400100000000000000000", filterResult.getSpans().get(0).getText());
+        Assertions.assertEquals("fedex", filterResult.getSpans().get(0).getClassification());
 
     }
 

@@ -980,7 +980,11 @@ public class PhileasFilterService implements FilterService {
                         .withDocumentAnalysis(documentAnalysis)
                         .build();
 
-                final Filter filter = new TrackingNumberFilter(filterConfiguration);
+                final boolean ups = filterProfile.getIdentifiers().getTrackingNumber().isUps();
+                final boolean fedex = filterProfile.getIdentifiers().getTrackingNumber().isFedex();
+                final boolean usps = filterProfile.getIdentifiers().getTrackingNumber().isUsps();
+
+                final Filter filter = new TrackingNumberFilter(filterConfiguration, ups, fedex, usps);
                 enabledFilters.add(filter);
                 filterCache.get(filterProfile.getName()).put(FilterType.TRACKING_NUMBER, filter);
 
