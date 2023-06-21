@@ -6,11 +6,7 @@ import ai.philterd.phileas.model.filter.FilterConfiguration;
 import ai.philterd.phileas.model.objects.*;
 import ai.philterd.phileas.model.profile.FilterProfile;
 
-import javax.swing.text.Document;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -53,6 +49,21 @@ public abstract class RulesFilter extends Filter {
      */
     protected List<Span> findSpans(FilterProfile filterProfile, Analyzer analyzer, String input, String context,
                                    String documentId) throws Exception {
+        return findSpans(filterProfile, analyzer, input, context, documentId, Collections.emptyMap());
+    }
+
+    /**
+     * Find {@link Span spans} matching the {@link Pattern}.
+     * @param filterProfile The {@link FilterProfile} to use.
+     * @param analyzer A filter {@link Analyzer}.
+     * @param input The text input.
+     * @param context The context.
+     * @param documentId The document ID.
+     * @param restrictions Restrictions placed on what is a span for the filter.
+     * @return A list of matching {@link Span spans}.
+     */
+    protected List<Span> findSpans(FilterProfile filterProfile, Analyzer analyzer, String input, String context,
+                                   String documentId, Map<Restriction, List<String>> restrictions) throws Exception {
 
         final List<Span> spans = new LinkedList<>();
 
@@ -101,7 +112,19 @@ public abstract class RulesFilter extends Filter {
                         // TODO: Add "alwaysValid" to Span.make() so we don't have to make a separate call here.
                         span.setAlwaysValid(filterPattern.isAlwaysValid());
 
-                        spans.add(span);
+                        // Lastly, look at any restrictions before adding the span.
+                        boolean restricted = false;
+                        for(final Restriction restriction : restrictions.keySet()) {
+                            if(restriction == Restriction.CLASSIFICATION) {
+                                if(!restrictions.get(restriction).contains(filterPattern.getClassification())) {
+                                    restricted = true;
+                                }
+                            }
+                        }
+
+                        if(!restricted) {
+                            spans.add(span);
+                        }
 
                     }
 

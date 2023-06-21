@@ -3,21 +3,24 @@ package ai.philterd.phileas.services.filters.regex;
 import ai.philterd.phileas.model.enums.FilterType;
 import ai.philterd.phileas.model.filter.FilterConfiguration;
 import ai.philterd.phileas.model.filter.rules.regex.RegexFilter;
-import ai.philterd.phileas.model.objects.Analyzer;
-import ai.philterd.phileas.model.objects.FilterPattern;
-import ai.philterd.phileas.model.objects.FilterResult;
-import ai.philterd.phileas.model.objects.Span;
+import ai.philterd.phileas.model.objects.*;
 import ai.philterd.phileas.model.profile.FilterProfile;
 
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 import java.util.regex.Pattern;
 
 public class TrackingNumberFilter extends RegexFilter {
 
+    private boolean ups;
+    private boolean fedex;
+    private boolean usps;
+
     public TrackingNumberFilter(FilterConfiguration filterConfiguration, boolean ups, boolean fedex, boolean usps) {
         super(FilterType.TRACKING_NUMBER, filterConfiguration);
+
+        this.ups = ups;
+        this.fedex = fedex;
+        this.usps = usps;
 
         // https://andrewkurochkin.com/blog/code-for-recognizing-delivery-company-by-track
 
@@ -119,7 +122,24 @@ public class TrackingNumberFilter extends RegexFilter {
     @Override
     public FilterResult filter(FilterProfile filterProfile, String context, String documentId, int piece, String input) throws Exception {
 
-        final List<Span> spans = findSpans(filterProfile, analyzer, input, context, documentId);
+        final List<String> classifications = new LinkedList<>();
+
+        if(ups) {
+            classifications.add("ups");
+        }
+
+        if(fedex) {
+            classifications.add("fedex");
+        }
+
+        if(usps) {
+            classifications.add("usps");
+        }
+
+        final Map<Restriction, List<String>> restrictions = new HashMap<>();
+        restrictions.put(Restriction.CLASSIFICATION, classifications);
+
+        final List<Span> spans = findSpans(filterProfile, analyzer, input, context, documentId, restrictions);
 
         return new FilterResult(context, documentId, spans);
 

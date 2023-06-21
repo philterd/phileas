@@ -250,7 +250,60 @@ public class TrackingNumberFilterTest extends AbstractFilterTest {
 
         showSpans(filterResult.getSpans());
 
-        Assertions.assertEquals(0, filterResult.getSpans().size());
+        Assertions.assertEquals(1, filterResult.getSpans().size());
+
+        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 23, 45, FilterType.TRACKING_NUMBER));
+        Assertions.assertEquals("{{{REDACTED-tracking-number}}}", filterResult.getSpans().get(0).getReplacement());
+        Assertions.assertEquals("9400100000000000000000", filterResult.getSpans().get(0).getText());
+        Assertions.assertEquals("usps", filterResult.getSpans().get(0).getClassification());
+
+    }
+
+    public void filter10() throws Exception {
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(Arrays.asList(new TrackingNumberFilterStrategy()))
+                .withAlertService(alertService)
+                .withAnonymizationService(new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()))
+                .withWindowSize(windowSize)
+                .build();
+
+        final TrackingNumberFilter filter = new TrackingNumberFilter(filterConfiguration, true, true, false);
+
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", PIECE, "the tracking number is 9400100000000000000000");
+
+        showSpans(filterResult.getSpans());
+
+        Assertions.assertEquals(1, filterResult.getSpans().size());
+
+        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 23, 45, FilterType.TRACKING_NUMBER));
+        Assertions.assertEquals("{{{REDACTED-tracking-number}}}", filterResult.getSpans().get(0).getReplacement());
+        Assertions.assertEquals("9400100000000000000000", filterResult.getSpans().get(0).getText());
+        Assertions.assertEquals("fedex", filterResult.getSpans().get(0).getClassification());
+
+    }
+
+    public void filter11() throws Exception {
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(Arrays.asList(new TrackingNumberFilterStrategy()))
+                .withAlertService(alertService)
+                .withAnonymizationService(new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()))
+                .withWindowSize(windowSize)
+                .build();
+
+        final TrackingNumberFilter filter = new TrackingNumberFilter(filterConfiguration, true, true, true);
+
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", PIECE, "the tracking number is 9400100000000000000000");
+
+        showSpans(filterResult.getSpans());
+
+        Assertions.assertEquals(1, filterResult.getSpans().size());
+
+        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 23, 45, FilterType.TRACKING_NUMBER));
+        Assertions.assertEquals("{{{REDACTED-tracking-number}}}", filterResult.getSpans().get(0).getReplacement());
+        Assertions.assertEquals("9400100000000000000000", filterResult.getSpans().get(0).getText());
+        Assertions.assertEquals("fedex", filterResult.getSpans().get(0).getClassification());
 
     }
 
