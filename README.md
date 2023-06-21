@@ -6,7 +6,6 @@ For a turnkey text redaction engine, see [Philter](https://philterd.ai/philter/)
 
 * [Philter on AWS Marketplace](https://aws.amazon.com/marketplace/pp/B07YVB8FFT?ref=_ptnr_philterd)
 * [Philter on Google Cloud Marketplace](https://console.cloud.google.com/marketplace/details/mountainfog-public/philter)
-* [Philter on Microsoft Azure Marketplace](https://azuremarketplace.microsoft.com/en-us/marketplace/apps/mtnfog.philter)
 
 ## What is Phileas?
 
@@ -31,7 +30,7 @@ Below are some of the key capabilities of Phileas:
 * Can shift dates or replace dates with approximate representations (i.e. "3 months ago").
 * Fully customizable using "filter profiles" that define what sensitive information to find and how to redact it.
 
-## Sensitive Information Supported by Phileas
+## Supported PII, PHI, Other Sensitive Information
 
 ### Persons
 
