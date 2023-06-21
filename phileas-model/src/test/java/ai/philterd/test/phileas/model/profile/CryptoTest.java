@@ -17,11 +17,8 @@ package ai.philterd.test.phileas.model.profile;
 
 import ai.philterd.phileas.model.profile.Crypto;
 import org.junit.jupiter.api.Test;
+import org.junitpioneer.jupiter.SetEnvironmentVariable;
 
-import java.util.List;
-
-import static com.github.stefanbirkner.systemlambda.SystemLambda.withEnvironmentVariable;
-import static java.util.Arrays.asList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CryptoTest {
@@ -37,11 +34,11 @@ public class CryptoTest {
     }
 
     @Test
-    public void test2() throws Exception {
+    @SetEnvironmentVariable(key="mykey", value="value")
+    public void test2() {
 
         final Crypto crypto = new Crypto("env:mykey", "myiv");
-
-        final String value = withEnvironmentVariable("mykey", "value").execute(() -> crypto.getKey());
+        final String value = crypto.getKey();
 
         assertEquals("value", value);
         assertEquals("myiv", crypto.getIv());
@@ -49,11 +46,11 @@ public class CryptoTest {
     }
 
     @Test
-    public void test3() throws Exception {
+    @SetEnvironmentVariable(key="myiv", value="value")
+    public void test3() {
 
         final Crypto crypto = new Crypto("mykey", "env:myiv");
-
-        final String value = withEnvironmentVariable("myiv", "value").execute(() -> crypto.getIv());
+        final String value = crypto.getIv();
 
         assertEquals("mykey", crypto.getKey());
         assertEquals("value", value);
