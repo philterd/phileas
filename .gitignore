@@ -16,3 +16,4 @@ distribution/indexes
 distribution/documentation/
 files/
 manifest.json
+.attach_*

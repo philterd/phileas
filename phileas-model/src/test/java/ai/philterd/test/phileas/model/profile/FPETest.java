@@ -17,8 +17,8 @@ package ai.philterd.test.phileas.model.profile;
 
 import ai.philterd.phileas.model.profile.FPE;
 import org.junit.jupiter.api.Test;
+import org.junitpioneer.jupiter.SetEnvironmentVariable;
 
-import static com.github.stefanbirkner.systemlambda.SystemLambda.withEnvironmentVariable;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class FPETest {
@@ -34,11 +34,12 @@ public class FPETest {
     }
 
     @Test
+    @SetEnvironmentVariable(key="mykey", value="value")
     public void test2() throws Exception {
 
         final FPE crypto = new FPE("env:mykey", "myiv");
 
-        final String value = withEnvironmentVariable("mykey", "value").execute(() -> crypto.getKey());
+        final String value = crypto.getKey();
 
         assertEquals("value", value);
         assertEquals("myiv", crypto.getTweak());
@@ -46,11 +47,12 @@ public class FPETest {
     }
 
     @Test
-    public void test3() throws Exception {
+    @SetEnvironmentVariable(key="myiv", value="value")
+    public void test3() {
 
         final FPE crypto = new FPE("mykey", "env:myiv");
 
-        final String value = withEnvironmentVariable("myiv", "value").execute(() -> crypto.getTweak());
+        final String value = crypto.getTweak();
 
         assertEquals("mykey", crypto.getKey());
         assertEquals("value", value);
