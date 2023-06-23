@@ -15,6 +15,7 @@
  */
 package ai.philterd.phileas.services.profiles;
 
+import ai.philterd.phileas.model.objects.FilterProfileType;
 import com.google.gson.Gson;
 import ai.philterd.phileas.model.profile.FilterProfile;
 import ai.philterd.phileas.model.services.FilterProfileService;
@@ -98,12 +99,12 @@ public class StaticFilterProfileService implements FilterProfileService {
     }
 
     @Override
-    public void save(String filterProfileJson) throws IOException {
+    public void save(String filterProfileJson, FilterProfileType filterProfileType) throws IOException {
         // Will not be implemented.
     }
 
     @Override
-    public void delete(String filterProfileName) throws IOException {
+    public void delete(String filterProfileName, FilterProfileType filterProfileType) throws IOException {
         // Will not be implemented.
     }
 

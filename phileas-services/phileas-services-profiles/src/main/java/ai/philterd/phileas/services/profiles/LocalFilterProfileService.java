@@ -17,6 +17,7 @@ package ai.philterd.phileas.services.profiles;
 
 import ai.philterd.phileas.configuration.PhileasConfiguration;
 import ai.philterd.phileas.model.exceptions.api.BadRequestException;
+import ai.philterd.phileas.model.objects.FilterProfileType;
 import ai.philterd.phileas.model.services.AbstractFilterProfileService;
 import ai.philterd.phileas.model.services.FilterProfileCacheService;
 import ai.philterd.phileas.model.services.FilterProfileService;
@@ -37,8 +38,6 @@ public class LocalFilterProfileService extends AbstractFilterProfileService impl
 
     private static final Logger LOGGER = LogManager.getLogger(LocalFilterProfileService.class);
 
-    private static final String JSON_EXTENSION = ".json";
-
     private String filterProfilesDirectory;
     private FilterProfileCacheService filterProfileCacheService;
 
@@ -56,21 +55,13 @@ public class LocalFilterProfileService extends AbstractFilterProfileService impl
     public List<String> get() throws IOException {
 
         // This function never uses a cache.
-
         final List<String> names = new LinkedList<>();
 
         // Read the filter profiles from the file system.
-        final Collection<File> files = FileUtils.listFiles(new File(filterProfilesDirectory), new String[]{"json"}, false);
+        final Collection<File> files = FileUtils.listFiles(new File(filterProfilesDirectory), new String[]{"json", "yml"}, false);
 
         for(final File file : files) {
-
-            final String json = FileUtils.readFileToString(file, Charset.defaultCharset());
-
-            final JSONObject object = new JSONObject(json);
-            final String name = object.getString("name");
-
-            names.add(name);
-
+            names.add(file.getName());
         }
 
         return names;
@@ -80,28 +71,41 @@ public class LocalFilterProfileService extends AbstractFilterProfileService impl
     @Override
     public String get(String filterProfileName) throws IOException {
 
-        String filterProfileJson = filterProfileCacheService.get(filterProfileName);
+        String filterProfile = filterProfileCacheService.get(filterProfileName);
 
-        if(filterProfileJson == null) {
+        if(filterProfile == null) {
 
             // The filter profile wasn't found in the cache so look on the file system.
+            final File jsonFile = new File(filterProfilesDirectory, filterProfileName + FilterProfileType.JSON);
 
-            final File file = new File(filterProfilesDirectory, filterProfileName + JSON_EXTENSION);
+            if (jsonFile.exists()) {
 
-            if (file.exists()) {
-
-                filterProfileJson = FileUtils.readFileToString(file, Charset.defaultCharset());
+                filterProfile = FileUtils.readFileToString(jsonFile, Charset.defaultCharset());
 
                 // Put it in the cache.
-                filterProfileCacheService.insert(filterProfileName, filterProfileJson);
+                filterProfileCacheService.insert(filterProfileName, filterProfile);
 
             } else {
-                throw new FileNotFoundException("Filter profile [" + filterProfileName + "] does not exist.");
+
+                // A JSON file was not found so look for a yml file instead.
+                final File yamlFile = new File(filterProfilesDirectory, filterProfileName + FilterProfileType.YML);
+
+                if (yamlFile.exists()) {
+
+                    filterProfile = FileUtils.readFileToString(yamlFile, Charset.defaultCharset());
+
+                    // Put it in the cache.
+                    filterProfileCacheService.insert(filterProfileName, filterProfile);
+
+                } else {
+                    throw new FileNotFoundException("Filter profile [" + filterProfileName + "] does not exist.");
+                }
+
             }
 
         }
 
-        return filterProfileJson;
+        return filterProfile;
 
     }
 
@@ -111,7 +115,7 @@ public class LocalFilterProfileService extends AbstractFilterProfileService impl
         final Map<String, String> filterProfiles = new HashMap<>();
 
         // Read the filter profiles from the file system.
-        final Collection<File> files = FileUtils.listFiles(new File(filterProfilesDirectory), new String[]{"json"}, false);
+        final Collection<File> files = FileUtils.listFiles(new File(filterProfilesDirectory), new String[]{"json", "yml"}, false);
         LOGGER.info("Found {} filter profiles", files.size());
 
         for (final File file : files) {
@@ -132,38 +136,71 @@ public class LocalFilterProfileService extends AbstractFilterProfileService impl
     }
 
     @Override
-    public void save(String filterProfileJson) throws IOException {
+    public void save(String filterProfile, FilterProfileType filterProfileType) {
 
-        try {
+        if(filterProfileType == FilterProfileType.JSON) {
 
-            final JSONObject object = new JSONObject(filterProfileJson);
-            final String filterProfileName = object.getString("name");
+            try {
 
-            final File file = new File(filterProfilesDirectory, filterProfileName + JSON_EXTENSION);
+                final JSONObject object = new JSONObject(filterProfile);
+                final String filterProfileName = object.getString("name");
 
-            FileUtils.writeStringToFile(file, filterProfileJson, Charset.defaultCharset());
+                final File file = new File(filterProfilesDirectory, filterProfileName + filterProfileType.getFileExtension());
 
-            // Put this filter profile into the cache.
-            filterProfileCacheService.insert(filterProfileName, filterProfileJson);
+                FileUtils.writeStringToFile(file, filterProfile, Charset.defaultCharset());
 
-        } catch (JSONException ex) {
+                // Put this filter profile into the cache.
+                filterProfileCacheService.insert(filterProfileName, filterProfile);
 
-            LOGGER.error("The provided filter profile is not valid.", ex);
-            throw new BadRequestException("The provided filter profile is not valid.");
+            } catch (JSONException | IOException ex) {
+
+                LOGGER.error("The provided filter profile is not valid or could not be saved.", ex);
+                throw new BadRequestException("The provided filter profile is not valid or could not be saved.");
+
+            }
+
+        } else if(filterProfileType == FilterProfileType.YML) {
+
+            try {
+
+                // TODO: Get the name from the yaml.
+                final String filterProfileName = "filterprofile";
+
+                final File file = new File(filterProfilesDirectory, filterProfileName + filterProfileType.getFileExtension());
+
+                FileUtils.writeStringToFile(file, filterProfile, Charset.defaultCharset());
+
+                // Put this filter profile into the cache.
+                filterProfileCacheService.insert(filterProfileName, filterProfile);
+
+            } catch (JSONException | IOException ex) {
+
+                LOGGER.error("The provided filter profile is not valid or could not be saved.", ex);
+                throw new BadRequestException("The provided filter profile is not valid or could not be saved.");
+
+            }
+
+        } else {
 
         }
 
     }
 
     @Override
-    public void delete(String filterProfileName) throws IOException {
+    public void delete(String filterProfileName, FilterProfileType filterProfileType) throws IOException {
 
-        final File file = new File(filterProfilesDirectory, filterProfileName + JSON_EXTENSION);
+        File file = null;
+
+        if(filterProfileType == FilterProfileType.JSON) {
+            file = new File(filterProfilesDirectory, filterProfileName + filterProfileType.getFileExtension());
+        } else {
+            file = new File(filterProfilesDirectory, filterProfileName + filterProfileType.getFileExtension());
+        }
 
         if(file.exists()) {
 
             if(!file.delete()) {
-                throw new IOException("Unable to delete filter profile " + filterProfileName + JSON_EXTENSION);
+                throw new IOException("Unable to delete filter profile " + filterProfileName + filterProfileType.getFileExtension());
             }
 
             // Remove it from the cache.
