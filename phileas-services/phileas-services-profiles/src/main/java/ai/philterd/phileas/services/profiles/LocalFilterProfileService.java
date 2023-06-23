@@ -76,7 +76,7 @@ public class LocalFilterProfileService extends AbstractFilterProfileService impl
         if(filterProfile == null) {
 
             // The filter profile wasn't found in the cache so look on the file system.
-            final File jsonFile = new File(filterProfilesDirectory, filterProfileName + FilterProfileType.JSON);
+            final File jsonFile = new File(filterProfilesDirectory, filterProfileName + FilterProfileType.JSON.getFileExtension());
 
             if (jsonFile.exists()) {
 
@@ -88,7 +88,7 @@ public class LocalFilterProfileService extends AbstractFilterProfileService impl
             } else {
 
                 // A JSON file was not found so look for a yml file instead.
-                final File yamlFile = new File(filterProfilesDirectory, filterProfileName + FilterProfileType.YML);
+                final File yamlFile = new File(filterProfilesDirectory, filterProfileName + FilterProfileType.YML.getFileExtension());
 
                 if (yamlFile.exists()) {
 
