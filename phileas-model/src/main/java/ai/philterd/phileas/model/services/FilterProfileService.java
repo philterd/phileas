@@ -15,6 +15,8 @@
  */
 package ai.philterd.phileas.model.services;
 
+import ai.philterd.phileas.model.objects.FilterProfileType;
+
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
@@ -46,16 +48,18 @@ public interface FilterProfileService {
 
     /**
      * Saves a filter profile.
-     * @param filterProfileJson The content of the filter profile as JSON.
+     * @param filterProfile The content of the filter profile as either JSON or YML.
+     * @param filterProfileType The {@link FilterProfileType type} of the filter profile.
      * @throws IOException
      */
-    void save(String filterProfileJson) throws IOException;
+    void save(String filterProfile, FilterProfileType filterProfileType) throws IOException;
 
     /**
      * Deletes a filter profile.
      * @param filterProfileName The name of the filter profile to delete.
+     * @param filterProfileType The {@link FilterProfileType type} of the filter profile.
      * @throws IOException
      */
-    void delete(String filterProfileName) throws IOException;
+    void delete(String filterProfileName, FilterProfileType filterProfileType) throws IOException;
 
 }

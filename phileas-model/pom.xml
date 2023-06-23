@@ -159,6 +159,11 @@
 			<version>${ff3.version}</version>
 		</dependency>
 		<dependency>
+			<groupId>org.yaml</groupId>
+			<artifactId>snakeyaml</artifactId>
+			<version>1.21</version>
+		</dependency>
+		<dependency>
 			<groupId>ai.grakn</groupId>
 			<artifactId>redis-mock</artifactId>
 			<version>${redis-mock.version}</version>

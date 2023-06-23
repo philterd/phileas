@@ -15,6 +15,8 @@
  */
 package ai.philterd.phileas.services.profiles;
 
+import ai.philterd.phileas.model.objects.FilterProfileType;
+import ai.philterd.phileas.model.profile.FilterProfile;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.AnonymousAWSCredentials;
 import com.amazonaws.auth.DefaultAWSCredentialsProviderChain;
@@ -46,8 +48,6 @@ import java.util.*;
 public class S3FilterProfileService extends AbstractFilterProfileService implements FilterProfileService {
 
     private static final Logger LOGGER = LogManager.getLogger(S3FilterProfileService.class);
-
-    private static final String JSON_EXTENSION = ".json";
 
     private AmazonS3 s3Client;
     private String bucket;
@@ -162,9 +162,11 @@ public class S3FilterProfileService extends AbstractFilterProfileService impleme
 
                 // The filter profile was not in the cache. Look in S3.
                 LOGGER.info("Filter profile was not cached. Looking for filter profile {} in s3 bucket {}", filterProfileName, bucket);
-                final S3Object fullObject = s3Client.getObject(new GetObjectRequest(bucket, prefix + filterProfileName + JSON_EXTENSION));
+                final S3Object fullObject = s3Client.getObject(new GetObjectRequest(bucket, prefix + filterProfileName + ".json"));
                 json = IOUtils.toString(fullObject.getObjectContent(), StandardCharsets.UTF_8.name());
                 fullObject.close();
+
+                // TODO: Support yaml files from S3, too.
 
                 // Put it in the cache.
                 LOGGER.info("Caching filter profile [{}]", filterProfileName);
@@ -206,22 +208,34 @@ public class S3FilterProfileService extends AbstractFilterProfileService impleme
 
                 for (final S3ObjectSummary objectSummary : result.getObjectSummaries()) {
 
-                    // Ignore any non .json files.
-                    if (objectSummary.getKey().endsWith(JSON_EXTENSION)) {
+                    // Ignore any non .json or non .yml files.
+                    if (objectSummary.getKey().endsWith(FilterProfileType.JSON.getFileExtension())
+                        || objectSummary.getKey().endsWith(FilterProfileType.YML.getFileExtension())) {
 
                         final S3Object fullObject = s3Client.getObject(new GetObjectRequest(bucket, objectSummary.getKey()));
-                        final String json = IOUtils.toString(fullObject.getObjectContent(), StandardCharsets.UTF_8.name());
+                        final String rawFilterProfile = IOUtils.toString(fullObject.getObjectContent(), StandardCharsets.UTF_8.name());
 
                         fullObject.close();
 
-                        final JSONObject object = new JSONObject(json);
-                        final String name = object.getString("name");
+                        String filterProfileName;
 
-                        LOGGER.info("Adding filter profile named [{}]", name);
-                        filterProfiles.put(name, json);
+                        if(fullObject.getKey().endsWith(FilterProfileType.JSON.getFileExtension())) {
 
-                        LOGGER.info("Caching filter profile [{}]", name);
-                        filterProfileCacheService.insert(name, json);
+                            final JSONObject object = new JSONObject(rawFilterProfile);
+                            filterProfileName = object.getString("name");
+
+                        } else {
+
+                            // TODO: Read the profile name from the yaml.
+                            filterProfileName = "filterprofile";
+
+                        }
+
+                        LOGGER.info("Adding filter profile named [{}]", filterProfileName);
+                        filterProfiles.put(filterProfileName, rawFilterProfile);
+
+                        LOGGER.info("Caching filter profile [{}]", filterProfileName);
+                        filterProfileCacheService.insert(filterProfileName, rawFilterProfile);
 
                     }
 
@@ -247,18 +261,18 @@ public class S3FilterProfileService extends AbstractFilterProfileService impleme
     }
 
     @Override
-    public void save(String filterProfileJson) {
+    public void save(String filterProfile, FilterProfileType filterProfileType) {
 
         try {
 
-            final JSONObject object = new JSONObject(filterProfileJson);
+            final JSONObject object = new JSONObject(filterProfile);
             final String name = object.getString("name");
 
-            LOGGER.info("Uploading object to s3://{}/{}", bucket, name + JSON_EXTENSION);
-            s3Client.putObject(bucket, prefix + name + JSON_EXTENSION, filterProfileJson);
+            LOGGER.info("Uploading object to s3://{}/{}", bucket, name + filterProfileType.getFileExtension());
+            s3Client.putObject(bucket, prefix + name + filterProfileType.getFileExtension(), filterProfile);
 
             // Insert it into the cache.
-            filterProfileCacheService.insert(name, filterProfileJson);
+            filterProfileCacheService.insert(name, filterProfile);
 
         } catch (JSONException ex) {
 
@@ -276,12 +290,12 @@ public class S3FilterProfileService extends AbstractFilterProfileService impleme
     }
 
     @Override
-    public void delete(String filterProfileName) {
+    public void delete(String filterProfileName, FilterProfileType filterProfileType) {
 
         try {
 
-            LOGGER.info("Deleting object from s3://{}/{}", bucket, filterProfileName + JSON_EXTENSION);
-            s3Client.deleteObject(bucket, prefix + filterProfileName + JSON_EXTENSION);
+            LOGGER.info("Deleting object from s3://{}/{}", bucket, filterProfileName + filterProfileType.getFileExtension());
+            s3Client.deleteObject(bucket, prefix + filterProfileName + filterProfileType.getFileExtension());
 
             // Remove it from the cache.
             filterProfileCacheService.remove(filterProfileName);

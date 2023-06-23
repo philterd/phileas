@@ -15,6 +15,7 @@
  */
 package ai.philterd.test.phileas.services.registry;
 
+import ai.philterd.phileas.model.objects.FilterProfileType;
 import com.google.gson.Gson;
 import ai.philterd.phileas.configuration.PhileasConfiguration;
 import ai.philterd.phileas.model.profile.FilterProfile;
@@ -141,8 +142,8 @@ public class S3FilterProfileServiceTest {
 
         final FilterProfileService filterProfileService = new S3FilterProfileService(getConfiguration(), true);
 
-        filterProfileService.save(gson.toJson(getFilterProfile("name1")));
-        filterProfileService.save(gson.toJson(getFilterProfile("name2")));
+        filterProfileService.save(gson.toJson(getFilterProfile("name1")), FilterProfileType.JSON);
+        filterProfileService.save(gson.toJson(getFilterProfile("name2")), FilterProfileType.JSON);
         final List<String> names = filterProfileService.get();
 
         LOGGER.info("Found {} filter profiles", names.size());
@@ -158,8 +159,8 @@ public class S3FilterProfileServiceTest {
 
         final FilterProfileService filterProfileService = new S3FilterProfileService(getConfiguration(), true);
 
-        filterProfileService.save(gson.toJson(getFilterProfile("name1")));
-        filterProfileService.save(gson.toJson(getFilterProfile("name2")));
+        filterProfileService.save(gson.toJson(getFilterProfile("name1")), FilterProfileType.JSON);
+        filterProfileService.save(gson.toJson(getFilterProfile("name2")), FilterProfileType.JSON);
 
         final Map<String, String> all = filterProfileService.getAll();
 
@@ -180,7 +181,7 @@ public class S3FilterProfileServiceTest {
 
         final FilterProfileService filterProfileService = new S3FilterProfileService(getConfiguration(), true);
 
-        filterProfileService.save(profile);
+        filterProfileService.save(profile, FilterProfileType.JSON);
 
         final String saved = filterProfileService.get("default");
 
@@ -198,7 +199,7 @@ public class S3FilterProfileServiceTest {
 
         final FilterProfileService filterProfileService = new S3FilterProfileService(getConfiguration(), true);
 
-        filterProfileService.save(profile);
+        filterProfileService.save(profile, FilterProfileType.JSON);
 
         final String filterProfileJson = filterProfileService.get(name);
 
@@ -214,9 +215,9 @@ public class S3FilterProfileServiceTest {
 
         final FilterProfileService filterProfileService = new S3FilterProfileService(getConfiguration(), true);
 
-        filterProfileService.save(profile);
+        filterProfileService.save(profile, FilterProfileType.JSON);
 
-        filterProfileService.delete(name);
+        filterProfileService.delete(name, FilterProfileType.JSON);
 
         Assertions.assertFalse(filterProfileService.getAll().containsKey(name));
 
