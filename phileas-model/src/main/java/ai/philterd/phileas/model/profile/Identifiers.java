@@ -34,6 +34,14 @@ public class Identifiers {
     @Expose
     private Person person;
 
+    @SerializedName("person-v2")
+    @Expose
+    private PersonV2 personV2;
+
+    @SerializedName("person-v3")
+    @Expose
+    private PersonV3 personV3;
+
     @SerializedName("dictionaries")
     @Expose
     private List<CustomDictionary> customDictionaries;
@@ -218,6 +226,10 @@ public class Identifiers {
                 if(this.getMacAddress() != null) { return true; } break;
             case PERSON:
                 if(this.getPerson() != null) { return true; } break;
+            case PERSON_V2:
+                if(this.getPersonV2() != null) { return true; } break;
+            case PERSON_V3:
+                if(this.getPersonV3() != null) { return true; } break;
             case PASSPORT_NUMBER:
                 if(this.getPassportNumber() != null) { return true; } break;
             case PHONE_NUMBER:
@@ -605,6 +617,22 @@ public class Identifiers {
 
     public void setPerson(Person person) {
         this.person = person;
+    }
+
+    public PersonV2 getPersonV2() {
+        return personV2;
+    }
+
+    public void setPersonV2(PersonV2 personV2) {
+        this.personV2 = personV2;
+    }
+
+    public PersonV3 getPersonV3() {
+        return personV3;
+    }
+
+    public void setPerson(PersonV3 personV3) {
+        this.personV3 = personV3;
     }
 
     public List<CustomDictionary> getCustomDictionaries() {
