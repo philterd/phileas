@@ -1,1 +1,2 @@
 *.onnx filter=lfs diff=lfs merge=lfs -text
+phileas-core/src/test/resources/ner/en-ner-person.bin filter=lfs diff=lfs merge=lfs -text

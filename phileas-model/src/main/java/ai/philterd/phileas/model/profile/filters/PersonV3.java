@@ -23,19 +23,19 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-public class Person extends AbstractFilter {
+public class PersonV3 extends AbstractFilter {
 
     @SerializedName("personFilterStrategies")
     @Expose
     private List<PersonsFilterStrategy> personFilterStrategies;
 
-    @SerializedName("removePunctuation")
-    @Expose
-    private boolean removePunctuation = false;
-
     @SerializedName("thresholds")
     @Expose
     private Map<String, Double> thresholds = new LinkedHashMap<>();
+
+    @SerializedName("model")
+    @Expose
+    private String model = "/opt/philter/en-ner-person.bin";
 
     public List<PersonsFilterStrategy> getNerStrategies() {
         return personFilterStrategies;
@@ -53,12 +53,12 @@ public class Person extends AbstractFilter {
         this.thresholds = thresholds;
     }
 
-    public boolean isRemovePunctuation() {
-        return removePunctuation;
+    public String getModel() {
+        return model;
     }
 
-    public void setRemovePunctuation(boolean removePunctuation) {
-        this.removePunctuation = removePunctuation;
+    public void setModel(String model) {
+        this.model = model;
     }
 
 }

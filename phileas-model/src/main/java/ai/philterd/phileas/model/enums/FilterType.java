@@ -42,6 +42,8 @@ public enum FilterType {
     MAC_ADDRESS("mac-address", true),
     PASSPORT_NUMBER("passport-number", true),
     PERSON("person", false),
+    PERSON_V2("person-v2", false),
+    PERSON_V3("person-v3", false),
     PHONE_NUMBER("phone-number", true),
     PHONE_NUMBER_EXTENSION("phone-number-extension", true),
     PHYSICIAN_NAME("physician-name", true),
