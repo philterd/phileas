@@ -15,6 +15,8 @@
  */
 package ai.philterd.phileas.services;
 
+import ai.philterd.phileas.services.filters.ai.opennlp.PersonsV2Filter;
+import ai.philterd.phileas.services.filters.ai.opennlp.PersonsV3Filter;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import ai.philterd.phileas.configuration.PhileasConfiguration;
@@ -1419,16 +1421,73 @@ public class PhileasFilterService implements FilterService {
                         filterProfile.getIdentifiers().getPerson().getThresholds()
                 );
 
-                /*final Filter filter = new PersonsV2Filter(
-                        filterConfiguration,
-                        filterProfile.getIdentifiers().getPerson().getModel(),
-                        filterProfile.getIdentifiers().getPerson().getVocab(),
-                        stats,
-                        metricsService,
-                        filterProfile.getIdentifiers().getPerson().getThresholds());*/
-
                 enabledFilters.add(filter);
                 filterCache.get(filterProfile.getName()).put(FilterType.PERSON, filter);
+
+            }
+
+        }
+
+        if(filterProfile.getIdentifiers().hasFilter(FilterType.PERSON_V2) && filterProfile.getIdentifiers().getPersonV2().isEnabled()) {
+
+            if(cache.containsKey(FilterType.PERSON_V2)) {
+                enabledFilters.add(cache.get(FilterType.PERSON_V2));
+            } else {
+
+                final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                        .withStrategies(filterProfile.getIdentifiers().getPersonV2().getNerStrategies())
+                        .withAnonymizationService(new PersonsAnonymizationService(anonymizationCacheService))
+                        .withAlertService(alertService)
+                        .withIgnored(filterProfile.getIdentifiers().getPersonV2().getIgnored())
+                        .withIgnoredFiles(filterProfile.getIdentifiers().getPersonV2().getIgnoredFiles())
+                        .withIgnoredPatterns(filterProfile.getIdentifiers().getPersonV2().getIgnoredPatterns())
+                        .withCrypto(filterProfile.getCrypto())
+                        .withWindowSize(windowSize)
+                        .withDocumentAnalysis(documentAnalysis)
+                        .build();
+
+                final Filter filter = new PersonsV2Filter(
+                        filterConfiguration,
+                        filterProfile.getIdentifiers().getPersonV2().getModel(),
+                        filterProfile.getIdentifiers().getPersonV2().getVocab(),
+                        stats,
+                        metricsService,
+                        filterProfile.getIdentifiers().getPersonV2().getThresholds());
+
+                enabledFilters.add(filter);
+                filterCache.get(filterProfile.getName()).put(FilterType.PERSON_V2, filter);
+
+            }
+
+        }
+
+        if(filterProfile.getIdentifiers().hasFilter(FilterType.PERSON_V3) && filterProfile.getIdentifiers().getPersonV3().isEnabled()) {
+
+            if(cache.containsKey(FilterType.PERSON_V3)) {
+                enabledFilters.add(cache.get(FilterType.PERSON_V3));
+            } else {
+
+                final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                        .withStrategies(filterProfile.getIdentifiers().getPersonV3().getNerStrategies())
+                        .withAnonymizationService(new PersonsAnonymizationService(anonymizationCacheService))
+                        .withAlertService(alertService)
+                        .withIgnored(filterProfile.getIdentifiers().getPersonV3().getIgnored())
+                        .withIgnoredFiles(filterProfile.getIdentifiers().getPersonV3().getIgnoredFiles())
+                        .withIgnoredPatterns(filterProfile.getIdentifiers().getPersonV3().getIgnoredPatterns())
+                        .withCrypto(filterProfile.getCrypto())
+                        .withWindowSize(windowSize)
+                        .withDocumentAnalysis(documentAnalysis)
+                        .build();
+
+                final Filter filter = new PersonsV3Filter(
+                        filterConfiguration,
+                        filterProfile.getIdentifiers().getPersonV3().getModel(),
+                        stats,
+                        metricsService,
+                        filterProfile.getIdentifiers().getPersonV3().getThresholds());
+
+                enabledFilters.add(filter);
+                filterCache.get(filterProfile.getName()).put(FilterType.PERSON_V3, filter);
 
             }
 

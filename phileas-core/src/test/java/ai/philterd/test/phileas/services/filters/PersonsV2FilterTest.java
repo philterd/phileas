@@ -23,7 +23,7 @@ import ai.philterd.phileas.model.services.AlertService;
 import ai.philterd.phileas.model.services.MetricsService;
 import ai.philterd.phileas.services.anonymization.PersonsAnonymizationService;
 import ai.philterd.phileas.services.anonymization.cache.LocalAnonymizationCacheService;
-import ai.philterd.phileas.services.filters.ai.onnx.PersonsV2Filter;
+import ai.philterd.phileas.services.filters.ai.opennlp.PersonsV2Filter;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

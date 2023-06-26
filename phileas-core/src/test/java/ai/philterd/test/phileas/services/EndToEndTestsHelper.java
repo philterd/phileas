@@ -18,27 +18,7 @@ package ai.philterd.test.phileas.services;
 import ai.philterd.phileas.model.profile.FilterProfile;
 import ai.philterd.phileas.model.profile.Identifiers;
 import ai.philterd.phileas.model.profile.Ignored;
-import ai.philterd.phileas.model.profile.filters.Age;
-import ai.philterd.phileas.model.profile.filters.City;
-import ai.philterd.phileas.model.profile.filters.County;
-import ai.philterd.phileas.model.profile.filters.CreditCard;
-import ai.philterd.phileas.model.profile.filters.CustomDictionary;
-import ai.philterd.phileas.model.profile.filters.Date;
-import ai.philterd.phileas.model.profile.filters.EmailAddress;
-import ai.philterd.phileas.model.profile.filters.FirstName;
-import ai.philterd.phileas.model.profile.filters.Hospital;
-import ai.philterd.phileas.model.profile.filters.HospitalAbbreviation;
-import ai.philterd.phileas.model.profile.filters.Identifier;
-import ai.philterd.phileas.model.profile.filters.IpAddress;
-import ai.philterd.phileas.model.profile.filters.Person;
-import ai.philterd.phileas.model.profile.filters.PhoneNumber;
-import ai.philterd.phileas.model.profile.filters.Ssn;
-import ai.philterd.phileas.model.profile.filters.State;
-import ai.philterd.phileas.model.profile.filters.StateAbbreviation;
-import ai.philterd.phileas.model.profile.filters.Surname;
-import ai.philterd.phileas.model.profile.filters.Url;
-import ai.philterd.phileas.model.profile.filters.Vin;
-import ai.philterd.phileas.model.profile.filters.ZipCode;
+import ai.philterd.phileas.model.profile.filters.*;
 import ai.philterd.phileas.model.profile.filters.strategies.AbstractFilterStrategy;
 import ai.philterd.phileas.model.profile.filters.strategies.ai.PersonsFilterStrategy;
 import ai.philterd.phileas.model.profile.filters.strategies.custom.CustomDictionaryFilterStrategy;
@@ -168,12 +148,12 @@ public class EndToEndTestsHelper {
         final File model = new File(EndToEndTestsHelper.class.getClassLoader().getResource("ner/model.onnx").toURI());
         final File vocab = new File(EndToEndTestsHelper.class.getClassLoader().getResource("ner/vocab.txt").toURI());
 
-        final Person person = new Person();
-        person.setModel(model.getAbsolutePath());
-        person.setVocab(vocab.getAbsolutePath());
+        final PersonV2 personV2 = new PersonV2();
+        personV2.setModel(model.getAbsolutePath());
+        personV2.setVocab(vocab.getAbsolutePath());
 
         Identifiers identifiers = new Identifiers();
-        identifiers.setPerson(person);
+        identifiers.setPersonV2(personV2);
 
         FilterProfile filterProfile = new FilterProfile();
         filterProfile.setName(filterProfileName);
@@ -285,10 +265,10 @@ public class EndToEndTestsHelper {
         final File model = new File(EndToEndTestsHelper.class.getClassLoader().getResource("ner/model.onnx").toURI());
         final File vocab = new File(EndToEndTestsHelper.class.getClassLoader().getResource("ner/vocab.txt").toURI());
 
-        Person person = new Person();
-        person.setModel(model.getAbsolutePath());
-        person.setVocab(vocab.getAbsolutePath());
-        person.setPersonFilterStrategies(Arrays.asList(personsFilterStrategy));
+        PersonV2 personV2 = new PersonV2();
+        personV2.setModel(model.getAbsolutePath());
+        personV2.setVocab(vocab.getAbsolutePath());
+        personV2.setPersonFilterStrategies(Arrays.asList(personsFilterStrategy));
 
         // ----------------------------------------------------------------------------------
 
@@ -337,7 +317,7 @@ public class EndToEndTestsHelper {
         identifiers.setEmailAddress(emailAddress);
         identifiers.setIdentifiers(Arrays.asList(identifier1, identifier2));
         identifiers.setIpAddress(ipAddress);
-        identifiers.setPerson(person);
+        identifiers.setPersonV2(personV2);
         identifiers.setPhoneNumber(phoneNumber);
         identifiers.setSsn(ssn);
         //identifiers.setStateAbbreviation(stateAbbreviation);
