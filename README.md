@@ -38,7 +38,7 @@ Phileas requires Java 17.
 
 ### Persons
 
-* Person's Names (NER)
+* Person's Names - Multiple methods, e.g. NER, dictionary, census data
 * Physician Names
 * First Names
 * Surnames
