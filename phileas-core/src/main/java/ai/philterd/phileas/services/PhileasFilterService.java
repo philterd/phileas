@@ -1428,7 +1428,7 @@ public class PhileasFilterService implements FilterService {
 
         }
 
-        if(filterProfile.getIdentifiers().hasFilter(FilterType.PERSON_V2) && filterProfile.getIdentifiers().getPerson().isEnabled()) {
+        if(filterProfile.getIdentifiers().hasFilter(FilterType.PERSON_V2) && filterProfile.getIdentifiers().getPersonV2().isEnabled()) {
 
             if(cache.containsKey(FilterType.PERSON_V2)) {
                 enabledFilters.add(cache.get(FilterType.PERSON_V2));
@@ -1461,7 +1461,7 @@ public class PhileasFilterService implements FilterService {
 
         }
 
-        if(filterProfile.getIdentifiers().hasFilter(FilterType.PERSON_V3) && filterProfile.getIdentifiers().getPerson().isEnabled()) {
+        if(filterProfile.getIdentifiers().hasFilter(FilterType.PERSON_V3) && filterProfile.getIdentifiers().getPersonV3().isEnabled()) {
 
             if(cache.containsKey(FilterType.PERSON_V3)) {
                 enabledFilters.add(cache.get(FilterType.PERSON_V3));
