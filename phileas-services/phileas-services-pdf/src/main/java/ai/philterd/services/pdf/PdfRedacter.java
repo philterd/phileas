@@ -249,7 +249,7 @@ public class PdfRedacter extends PDFTextStripper implements Redacter {
 
             if (text.contains(span.getText())) {
 
-                try {
+                //try {
 
                     final String term = span.getText();
 
@@ -258,10 +258,17 @@ public class PdfRedacter extends PDFTextStripper implements Redacter {
 
                     for(final int index : indexes) {
 
+                        if(index + term.length() >= textPositions.size()) {
+                            posXEnd = textPositions.get(textPositions.size() - 1).getXDirAdj() + textPositions.get(textPositions.size() - 1).getWidth();
+                            posYEnd = textPositions.get(index).getPageHeight() - textPositions.get(textPositions.size() - 1).getYDirAdj();
+                        } else {
+                            posXEnd = textPositions.get(index + term.length()).getXDirAdj() + textPositions.get(index + term.length()).getWidth();
+                            posYEnd = textPositions.get(index).getPageHeight() - textPositions.get(index + term.length()).getYDirAdj();
+                        }
+
                         posXInit = textPositions.get(index).getXDirAdj();
-                        posXEnd = textPositions.get(index + term.length()).getXDirAdj() + textPositions.get(index + term.length()).getWidth();
                         //posYInit = textPositions.get(index).getPageHeight() - textPositions.get(index).getYDirAdj();
-                        posYEnd = textPositions.get(index).getPageHeight() - textPositions.get(index + term.length()).getYDirAdj();
+
                         //width = textPositions.get(index).getWidthDirAdj();
                         height = textPositions.get(index).getHeightDir();
 
@@ -303,10 +310,10 @@ public class PdfRedacter extends PDFTextStripper implements Redacter {
 
                     }
 
-                } catch (Exception ex) {
+                /*} catch (Exception ex) {
                     // TODO: Need to figure out why this sometimes fail.
                     LOGGER.warn("Problem parsing PDF span: " + ex.getMessage());
-                }
+                }*/
 
             }
 

@@ -54,7 +54,7 @@ public class Inference {
         final long startTime = System.currentTimeMillis();
         final Span[] spans = nameFinderDL.find(tokens);
         final long endTime = System.currentTimeMillis();
-        LOGGER.info("Inference took {} ms. Found {} spans.", endTime - startTime, spans.length);
+        LOGGER.debug("Inference took {} ms. Found {} spans.", endTime - startTime, spans.length);
 
         final List<Entity> entities = new LinkedList<>();
 
