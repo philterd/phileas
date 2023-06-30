@@ -24,6 +24,7 @@ public class FilterPattern {
     private double initialConfidence;
     private String classification;
     private boolean alwaysValid;
+    private int groupNumber = 0;
 
     public static class FilterPatternBuilder {
 
@@ -32,6 +33,7 @@ public class FilterPattern {
         private String format;
         private String classification;
         private boolean alwaysValid = false;
+        private int groupNumber = 0;
 
         public FilterPatternBuilder(Pattern pattern, double initialConfidence) {
             this.pattern = pattern;
@@ -53,19 +55,25 @@ public class FilterPattern {
             return this;
         }
 
+        public FilterPatternBuilder withGroupNumber(int groupNumber) {
+            this.groupNumber = groupNumber;
+            return this;
+        }
+
         public FilterPattern build() {
-            return new FilterPattern(pattern, initialConfidence, format, classification, alwaysValid);
+            return new FilterPattern(pattern, initialConfidence, format, classification, alwaysValid, groupNumber);
         }
 
     }
 
-    private FilterPattern(Pattern pattern, double initialConfidence, String format, String classification, boolean alwaysValid) {
+    private FilterPattern(Pattern pattern, double initialConfidence, String format, String classification, boolean alwaysValid, int groupNumber) {
 
         this.pattern = pattern;
         this.initialConfidence = initialConfidence;
         this.format = format;
         this.classification = classification;
         this.alwaysValid = alwaysValid;
+        this.groupNumber = groupNumber;
 
     }
 
@@ -88,5 +96,7 @@ public class FilterPattern {
     public String getClassification() {
         return classification;
     }
+
+    public int getGroupNumber() { return groupNumber; }
 
 }

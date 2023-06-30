@@ -30,7 +30,7 @@ import java.util.regex.Pattern;
 
 public class IdentifierFilter extends RegexFilter {
 
-    public IdentifierFilter(FilterConfiguration filterConfiguration, String classification, String regex, boolean caseSensitive) {
+    public IdentifierFilter(FilterConfiguration filterConfiguration, String classification, String regex, boolean caseSensitive, int groupNumber) {
         super(FilterType.IDENTIFIER, filterConfiguration);
 
         final Pattern pattern;
@@ -43,7 +43,10 @@ public class IdentifierFilter extends RegexFilter {
 
         // TODO: Expose initialConfidence via the filter profile.
         // TODO: Expose the contextual terms via the filter profile.
-        final FilterPattern id1 = new FilterPattern.FilterPatternBuilder(pattern, 0.90).withClassification(classification).build();
+        final FilterPattern id1 = new FilterPattern.FilterPatternBuilder(pattern, 0.90)
+                .withClassification(classification)
+                .withGroupNumber(groupNumber)
+                .build();
 
         // There are no contextual terms because we don't know what they would be.
         // TODO: Let the user set a list of contextual terms?

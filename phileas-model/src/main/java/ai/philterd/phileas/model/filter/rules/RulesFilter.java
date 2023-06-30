@@ -91,11 +91,11 @@ public abstract class RulesFilter extends Filter {
 
                 while (matcher.find()) {
 
-                    final String token = matcher.group(0);
+                    final String token = matcher.group(filterPattern.getGroupNumber());
 
                     // The token's position inside the text.
-                    final int characterStart = matcher.start(0);
-                    final int characterEnd = matcher.end(0);
+                    final int characterStart = matcher.start(filterPattern.getGroupNumber());
+                    final int characterEnd = matcher.end(filterPattern.getGroupNumber());
 
                     // Is there already a span encompassing this location?
                     // If so just quit. This means the first match wins.

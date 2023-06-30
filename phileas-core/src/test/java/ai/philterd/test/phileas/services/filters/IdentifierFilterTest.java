@@ -47,7 +47,7 @@ public class IdentifierFilterTest extends AbstractFilterTest {
                 .withWindowSize(windowSize)
                 .build();
 
-        final IdentifierFilter filter = new IdentifierFilter(filterConfiguration, "name", Identifier.DEFAULT_IDENTIFIER_REGEX, true);
+        final IdentifierFilter filter = new IdentifierFilter(filterConfiguration, "name", Identifier.DEFAULT_IDENTIFIER_REGEX, true, 0);
 
         final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", PIECE, "the id is AB4736021 in california.");
 
@@ -67,7 +67,7 @@ public class IdentifierFilterTest extends AbstractFilterTest {
                 .withWindowSize(windowSize)
                 .build();
 
-        final IdentifierFilter filter = new IdentifierFilter(filterConfiguration, "name", Identifier.DEFAULT_IDENTIFIER_REGEX, true);
+        final IdentifierFilter filter = new IdentifierFilter(filterConfiguration, "name", Identifier.DEFAULT_IDENTIFIER_REGEX, true, 0);
 
         final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", PIECE, "the id is AB473-6021 in california.");
 
@@ -86,7 +86,7 @@ public class IdentifierFilterTest extends AbstractFilterTest {
                 .withWindowSize(windowSize)
                 .build();
 
-        final IdentifierFilter filter = new IdentifierFilter(filterConfiguration, "name", Identifier.DEFAULT_IDENTIFIER_REGEX, true);
+        final IdentifierFilter filter = new IdentifierFilter(filterConfiguration, "name", Identifier.DEFAULT_IDENTIFIER_REGEX, true, 0);
 
         final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", PIECE, "the id is 473-6AB021 in california.");
 
@@ -105,7 +105,7 @@ public class IdentifierFilterTest extends AbstractFilterTest {
                 .withWindowSize(windowSize)
                 .build();
 
-        final IdentifierFilter filter = new IdentifierFilter(filterConfiguration, "name", Identifier.DEFAULT_IDENTIFIER_REGEX, true);
+        final IdentifierFilter filter = new IdentifierFilter(filterConfiguration, "name", Identifier.DEFAULT_IDENTIFIER_REGEX, true, 0);
 
         final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", PIECE, "the id is AB473-6021 in california.");
 
@@ -124,7 +124,7 @@ public class IdentifierFilterTest extends AbstractFilterTest {
                 .withWindowSize(windowSize)
                 .build();
 
-        final IdentifierFilter filter = new IdentifierFilter(filterConfiguration, "name", Identifier.DEFAULT_IDENTIFIER_REGEX, true);
+        final IdentifierFilter filter = new IdentifierFilter(filterConfiguration, "name", Identifier.DEFAULT_IDENTIFIER_REGEX, true, 0);
 
         final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", PIECE, "the id is 473-6AB021 in california.");
 
@@ -143,7 +143,7 @@ public class IdentifierFilterTest extends AbstractFilterTest {
                 .withWindowSize(windowSize)
                 .build();
 
-        final IdentifierFilter filter = new IdentifierFilter(filterConfiguration, "name", Identifier.DEFAULT_IDENTIFIER_REGEX, true);
+        final IdentifierFilter filter = new IdentifierFilter(filterConfiguration, "name", Identifier.DEFAULT_IDENTIFIER_REGEX, true, 0);
 
         final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", PIECE, "the id is 123-45-6789 in california.");
 
@@ -162,7 +162,7 @@ public class IdentifierFilterTest extends AbstractFilterTest {
                 .withWindowSize(windowSize)
                 .build();
 
-        final IdentifierFilter filter = new IdentifierFilter(filterConfiguration, "name", Identifier.DEFAULT_IDENTIFIER_REGEX, true);
+        final IdentifierFilter filter = new IdentifierFilter(filterConfiguration, "name", Identifier.DEFAULT_IDENTIFIER_REGEX, true, 0);
 
         final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", PIECE, "George Washington was president and his ssn was 123-45-6789 and he lived at 90210. Patient id 00076A and 93821A. He is on biotin. Diagnosed with A01000.");
 
@@ -184,7 +184,7 @@ public class IdentifierFilterTest extends AbstractFilterTest {
                 .withWindowSize(windowSize)
                 .build();
 
-        final IdentifierFilter filter = new IdentifierFilter(filterConfiguration, "name", Identifier.DEFAULT_IDENTIFIER_REGEX, true);
+        final IdentifierFilter filter = new IdentifierFilter(filterConfiguration, "name", Identifier.DEFAULT_IDENTIFIER_REGEX, true, 0);
 
         final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", PIECE, "the id is 000-00-00-00 ABC123 in california.");
 
@@ -204,7 +204,7 @@ public class IdentifierFilterTest extends AbstractFilterTest {
                 .withWindowSize(windowSize)
                 .build();
 
-        final IdentifierFilter filter = new IdentifierFilter(filterConfiguration, "name", Identifier.DEFAULT_IDENTIFIER_REGEX, true);
+        final IdentifierFilter filter = new IdentifierFilter(filterConfiguration, "name", Identifier.DEFAULT_IDENTIFIER_REGEX, true, 0);
 
         final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", PIECE, "the id is AZ12 ABC1234/123ABC4 in california.");
 
@@ -224,7 +224,7 @@ public class IdentifierFilterTest extends AbstractFilterTest {
                 .withWindowSize(windowSize)
                 .build();
 
-        final IdentifierFilter filter = new IdentifierFilter(filterConfiguration, "name", Identifier.DEFAULT_IDENTIFIER_REGEX, true);
+        final IdentifierFilter filter = new IdentifierFilter(filterConfiguration, "name", Identifier.DEFAULT_IDENTIFIER_REGEX, true, 0);
 
         final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", PIECE, "the id is H3SNPUHYEE7JD3H in california.");
 
@@ -243,7 +243,7 @@ public class IdentifierFilterTest extends AbstractFilterTest {
                 .withWindowSize(windowSize)
                 .build();
 
-        final IdentifierFilter filter = new IdentifierFilter(filterConfiguration, "name", Identifier.DEFAULT_IDENTIFIER_REGEX, true);
+        final IdentifierFilter filter = new IdentifierFilter(filterConfiguration, "name", Identifier.DEFAULT_IDENTIFIER_REGEX, true, 0);
 
         final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", PIECE, "the id is 86637729 in california.");
 
@@ -262,7 +262,7 @@ public class IdentifierFilterTest extends AbstractFilterTest {
                 .withWindowSize(windowSize)
                 .build();
 
-        final IdentifierFilter filter = new IdentifierFilter(filterConfiguration, "name", Identifier.DEFAULT_IDENTIFIER_REGEX, true);
+        final IdentifierFilter filter = new IdentifierFilter(filterConfiguration, "name", Identifier.DEFAULT_IDENTIFIER_REGEX, true, 0);
 
         final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", PIECE, "the id is 33778376 in california.");
 
@@ -281,7 +281,7 @@ public class IdentifierFilterTest extends AbstractFilterTest {
                 .withWindowSize(windowSize)
                 .build();
 
-        final IdentifierFilter filter = new IdentifierFilter(filterConfiguration, "name", "\\b[A-Z]{4,}\\b", true);
+        final IdentifierFilter filter = new IdentifierFilter(filterConfiguration, "name", "\\b[A-Z]{4,}\\b", true, 0);
 
         final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", PIECE, "the id is ABCD.");
 
@@ -300,7 +300,7 @@ public class IdentifierFilterTest extends AbstractFilterTest {
                 .withWindowSize(windowSize)
                 .build();
 
-        final IdentifierFilter filter = new IdentifierFilter(filterConfiguration, "name", Identifier.DEFAULT_IDENTIFIER_REGEX, true);
+        final IdentifierFilter filter = new IdentifierFilter(filterConfiguration, "name", Identifier.DEFAULT_IDENTIFIER_REGEX, true, 0);
 
         final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", PIECE, "the id is 123456.");
 
@@ -319,7 +319,7 @@ public class IdentifierFilterTest extends AbstractFilterTest {
                 .withWindowSize(windowSize)
                 .build();
 
-        final IdentifierFilter filter = new IdentifierFilter(filterConfiguration, "name", Identifier.DEFAULT_IDENTIFIER_REGEX, true);
+        final IdentifierFilter filter = new IdentifierFilter(filterConfiguration, "name", Identifier.DEFAULT_IDENTIFIER_REGEX, true, 0);
 
         final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", PIECE, "John Smith, patient ID A203493, was seen on February 18.");
 
@@ -339,13 +339,33 @@ public class IdentifierFilterTest extends AbstractFilterTest {
                 .withWindowSize(windowSize)
                 .build();
 
-        final IdentifierFilter filter = new IdentifierFilter(filterConfiguration, "name", "\\b\\d{3,8}\\b", false);
+        final IdentifierFilter filter = new IdentifierFilter(filterConfiguration, "name", "\\b\\d{3,8}\\b", false, 0);
 
         final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", PIECE, "The ID is 123456.");
 
         showSpans(filterResult.getSpans());
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 10,16, FilterType.IDENTIFIER));
+
+    }
+
+    @Test
+    public void filterId17() throws Exception {
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(Arrays.asList(new IdentifierFilterStrategy()))
+                .withAlertService(alertService)
+                .withAnonymizationService(new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()))
+                .withWindowSize(windowSize)
+                .build();
+
+        final IdentifierFilter filter = new IdentifierFilter(filterConfiguration, "name", "(?i)([^Application Name])(.*)$", false, 0);
+
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", PIECE, "Application Name John Smith");
+
+        showSpans(filterResult.getSpans());
+        Assertions.assertEquals(1, filterResult.getSpans().size());
+        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 17,27, FilterType.IDENTIFIER));
 
     }
 

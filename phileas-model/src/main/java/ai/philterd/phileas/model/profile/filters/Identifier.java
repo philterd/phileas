@@ -36,6 +36,10 @@ public class Identifier extends AbstractFilter {
     @Expose
     private String pattern = DEFAULT_IDENTIFIER_REGEX;
 
+    @SerializedName("groupNumber")
+    @Expose
+    private int groupNumber = 0;
+
     @SerializedName("caseSensitive")
     @Expose
     private boolean caseSensitive = true;
@@ -74,6 +78,14 @@ public class Identifier extends AbstractFilter {
 
     public void setClassification(String classification) {
         this.classification = classification;
+    }
+
+    public int getGroupNumber() {
+        return groupNumber;
+    }
+
+    public void setGroupNumber(int groupNumber) {
+        this.groupNumber = groupNumber;
     }
 
 }

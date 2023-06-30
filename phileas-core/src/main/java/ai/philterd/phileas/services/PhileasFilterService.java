@@ -1384,8 +1384,9 @@ public class PhileasFilterService implements FilterService {
                     final String classification = identifier.getClassification();
                     final String pattern = identifier.getPattern();
                     final boolean caseSensitive = identifier.isCaseSensitive();
+                    final int groupNumber = identifier.getGroupNumber();
 
-                    enabledFilters.add(new IdentifierFilter(filterConfiguration, classification, pattern, caseSensitive));
+                    enabledFilters.add(new IdentifierFilter(filterConfiguration, classification, pattern, caseSensitive, groupNumber));
 
                 }
 
