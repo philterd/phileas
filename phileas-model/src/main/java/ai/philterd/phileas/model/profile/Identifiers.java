@@ -631,7 +631,7 @@ public class Identifiers {
         return personV3;
     }
 
-    public void setPerson(PersonV3 personV3) {
+    public void setPersonV3(PersonV3 personV3) {
         this.personV3 = personV3;
     }
 
