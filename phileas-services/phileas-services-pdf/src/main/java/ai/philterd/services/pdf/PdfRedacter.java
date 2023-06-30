@@ -44,10 +44,7 @@ import javax.imageio.ImageIO;
 import javax.imageio.ImageWriteParam;
 import javax.imageio.ImageWriter;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -93,6 +90,11 @@ public class PdfRedacter extends PDFTextStripper implements Redacter {
         setSortByPosition(true);
         setStartPage(0);
         setEndPage(pdDocument.getNumberOfPages());
+
+        final Writer dummy = new OutputStreamWriter(new ByteArrayOutputStream());
+        writeText(pdDocument, dummy);
+        dummy.close();
+
 
         // PHL-244: Redact the bounding boxes in the output stream.
         for(final BoundingBox boundingBox : boundingBoxes) {
