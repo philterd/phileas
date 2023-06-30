@@ -40,19 +40,10 @@ public abstract class AbstractFilterTest {
     protected final int windowSize = 3;
 
     /**
-     * Gets a {@link FilterProfile} where all non-deterministic filters use a MEDIUM {@link SensitivityLevel}.
-     * @return A {@link FilterProfile} where all non-deterministic filters use a MEDIUM {@link SensitivityLevel}.
-     */
-    public FilterProfile getFilterProfile() throws IOException {
-        return getFilterProfile(SensitivityLevel.MEDIUM);
-    }
-
-    /**
      * Gets a {@link FilterProfile} where all non-deterministic filters use the given {@link SensitivityLevel}.
-     * @param sensitivityLevel The {@link SensitivityLevel} for all non-deterministic filters.
      * @return A {@link FilterProfile} where all non-deterministic filters use the given {@link SensitivityLevel}.
      */
-    public FilterProfile getFilterProfile(SensitivityLevel sensitivityLevel) throws IOException {
+    public FilterProfile getFilterProfile() throws IOException {
 
         CustomDictionary customDictionary = new CustomDictionary();
         customDictionary.setCustomDictionaryFilterStrategies(Arrays.asList(new CustomDictionaryFilterStrategy()));

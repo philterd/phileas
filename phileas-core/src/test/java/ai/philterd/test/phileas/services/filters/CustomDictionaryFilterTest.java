@@ -53,7 +53,7 @@ public class CustomDictionaryFilterTest extends AbstractFilterTest {
         final Set<String> names = new HashSet<>(Arrays.asList("george", "ted", "bill", "john"));
         final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.CUSTOM_DICTIONARY, filterConfiguration, SensitivityLevel.LOW, names, false, "names", 0);
 
-        final FilterResult filterResult = filter.filter(getFilterProfile(SensitivityLevel.LOW), "context", "documentid", PIECE,"He lived with Bill in California.");
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", PIECE,"He lived with Bill in California.");
         showSpans(filterResult.getSpans());
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
@@ -75,7 +75,7 @@ public class CustomDictionaryFilterTest extends AbstractFilterTest {
         final Set<String> names = new HashSet<>(Arrays.asList("george", "ted", "bill", "john"));
         final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.CUSTOM_DICTIONARY, filterConfiguration, SensitivityLevel.LOW, names, false, "names", 0);
 
-        final FilterResult filterResult = filter.filter(getFilterProfile(SensitivityLevel.LOW), "context", "documentid", PIECE,"He lived with Sam in California.");
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", PIECE,"He lived with Sam in California.");
         showSpans(filterResult.getSpans());
 
         Assertions.assertEquals(0, filterResult.getSpans().size());

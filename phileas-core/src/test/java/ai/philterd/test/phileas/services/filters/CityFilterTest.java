@@ -79,7 +79,7 @@ public class CityFilterTest extends AbstractFilterTest {
 
         final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.LOCATION_CITY, filterConfiguration, INDEX_DIRECTORY, SensitivityLevel.MEDIUM, false);
 
-        FilterResult filterResult = filter.filter(getFilterProfile(SensitivityLevel.MEDIUM), "context", "documentid", PIECE, "Lived in Washington.");
+        FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", PIECE, "Lived in Washington.");
 
         showSpans(filterResult.getSpans());
 
@@ -100,7 +100,7 @@ public class CityFilterTest extends AbstractFilterTest {
 
         final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.LOCATION_CITY, filterConfiguration, INDEX_DIRECTORY, SensitivityLevel.HIGH, false);
 
-        FilterResult filterResult = filter.filter(getFilterProfile(SensitivityLevel.HIGH), "context", "documentid", PIECE, "Lived in New York.");
+        FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", PIECE, "Lived in New York.");
 
         showSpans(filterResult.getSpans());
 
@@ -123,7 +123,7 @@ public class CityFilterTest extends AbstractFilterTest {
 
         final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.LOCATION_CITY, filterConfiguration, INDEX_DIRECTORY, SensitivityLevel.LOW, false);
 
-        FilterResult filterResult = filter.filter(getFilterProfile(SensitivityLevel.LOW), "context", "documentid", PIECE,"Lived in Wshington");
+        FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", PIECE,"Lived in Wshington");
 
         showSpans(filterResult.getSpans());
 
@@ -143,7 +143,7 @@ public class CityFilterTest extends AbstractFilterTest {
 
         final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.LOCATION_CITY, filterConfiguration, INDEX_DIRECTORY, SensitivityLevel.MEDIUM, false);
 
-        FilterResult filterResult = filter.filter(getFilterProfile(SensitivityLevel.MEDIUM), "context", "documentid", PIECE, "Lived in Wshington");
+        FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", PIECE, "Lived in Wshington");
 
         showSpans(filterResult.getSpans());
 
@@ -164,7 +164,7 @@ public class CityFilterTest extends AbstractFilterTest {
 
         final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.LOCATION_CITY, filterConfiguration, INDEX_DIRECTORY, SensitivityLevel.HIGH, false);
 
-        FilterResult filterResult = filter.filter(getFilterProfile(SensitivityLevel.LOW), "context", "documentid", PIECE,"Lived in Wasinton");
+        FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", PIECE,"Lived in Wasinton");
 
         showSpans(filterResult.getSpans());
 
