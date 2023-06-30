@@ -375,4 +375,118 @@ public class StreetAddressFilterTest extends AbstractFilterTest {
 
     }
 
+    @Test
+    public void filter19() throws Exception {
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(Arrays.asList(new StreetAddressFilterStrategy()))
+                .withAlertService(alertService)
+                .withAnonymizationService(new StreetAddressAnonymizationService(new LocalAnonymizationCacheService()))
+                .withWindowSize(windowSize)
+                .build();
+
+        final StreetAddressFilter filter = new StreetAddressFilter(filterConfiguration);
+
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", PIECE, "4 Devonshire Ct ste 2");
+
+        Assertions.assertEquals(1, filterResult.getSpans().size());
+        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 0, 21, FilterType.STREET_ADDRESS));
+
+    }
+
+    @Test
+    public void filter20() throws Exception {
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(Arrays.asList(new StreetAddressFilterStrategy()))
+                .withAlertService(alertService)
+                .withAnonymizationService(new StreetAddressAnonymizationService(new LocalAnonymizationCacheService()))
+                .withWindowSize(windowSize)
+                .build();
+
+        final StreetAddressFilter filter = new StreetAddressFilter(filterConfiguration);
+
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", PIECE, "4 Devonshire Ct apartment 222");
+
+        Assertions.assertEquals(1, filterResult.getSpans().size());
+        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 0, 29, FilterType.STREET_ADDRESS));
+
+    }
+
+    @Test
+    public void filter21() throws Exception {
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(Arrays.asList(new StreetAddressFilterStrategy()))
+                .withAlertService(alertService)
+                .withAnonymizationService(new StreetAddressAnonymizationService(new LocalAnonymizationCacheService()))
+                .withWindowSize(windowSize)
+                .build();
+
+        final StreetAddressFilter filter = new StreetAddressFilter(filterConfiguration);
+
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", PIECE, "4 Devonshire Ct apt 222");
+
+        Assertions.assertEquals(1, filterResult.getSpans().size());
+        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 0, 23, FilterType.STREET_ADDRESS));
+
+    }
+
+    @Test
+    public void filter22() throws Exception {
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(Arrays.asList(new StreetAddressFilterStrategy()))
+                .withAlertService(alertService)
+                .withAnonymizationService(new StreetAddressAnonymizationService(new LocalAnonymizationCacheService()))
+                .withWindowSize(windowSize)
+                .build();
+
+        final StreetAddressFilter filter = new StreetAddressFilter(filterConfiguration);
+
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", PIECE, "4 Devonshire Ct apt 222 anywhere");
+
+        Assertions.assertEquals(1, filterResult.getSpans().size());
+        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 0, 23, FilterType.STREET_ADDRESS));
+
+    }
+
+    @Test
+    public void filter23() throws Exception {
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(Arrays.asList(new StreetAddressFilterStrategy()))
+                .withAlertService(alertService)
+                .withAnonymizationService(new StreetAddressAnonymizationService(new LocalAnonymizationCacheService()))
+                .withWindowSize(windowSize)
+                .build();
+
+        final StreetAddressFilter filter = new StreetAddressFilter(filterConfiguration);
+
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", PIECE, "address is 9444 Heritage St. over there");
+
+        Assertions.assertEquals(1, filterResult.getSpans().size());
+        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 11, 28, FilterType.STREET_ADDRESS));
+
+    }
+
+    @Test
+    public void filter24() throws Exception {
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(Arrays.asList(new StreetAddressFilterStrategy()))
+                .withAlertService(alertService)
+                .withAnonymizationService(new StreetAddressAnonymizationService(new LocalAnonymizationCacheService()))
+                .withWindowSize(windowSize)
+                .build();
+
+        final StreetAddressFilter filter = new StreetAddressFilter(filterConfiguration);
+
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", PIECE, "address is 9444 Heritage St. apt 2 over there");
+
+        Assertions.assertEquals(1, filterResult.getSpans().size());
+        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 11, 34, FilterType.STREET_ADDRESS));
+
+    }
+
 }

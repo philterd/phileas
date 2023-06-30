@@ -33,7 +33,7 @@ public class StreetAddressFilter extends RegexFilter {
     public StreetAddressFilter(FilterConfiguration filterConfiguration) {
         super(FilterType.STREET_ADDRESS, filterConfiguration);
 
-        final Pattern addressPattern = Pattern.compile("\\b\\d{1,6} +.{2,25}\\b(avenue|ave|court|ct|street|st|drive|dr|lane|ln|road|rd|blvd|plaza|parkway|pkwy)[.,]?(.{0,25} +\\b\\d{5}\\b)?", Pattern.CASE_INSENSITIVE);
+        final Pattern addressPattern = Pattern.compile("(?i)\\b\\d{1,6} +.*?\\b(avenue|ave|av e|cir|court|ct|street|st|drive|dr|lane|ln|road|rd|blvd|boulevard|plaza|parkway|pkwy)[.]?(([,\\s]+)?\\b(suite|ste|apt|apartment)[\\s]+\\d{1,6})?", Pattern.CASE_INSENSITIVE);
         final FilterPattern filterPattern = new FilterPattern.FilterPatternBuilder(addressPattern, 0.90).build();
 
         this.contextualTerms = new HashSet<>();
