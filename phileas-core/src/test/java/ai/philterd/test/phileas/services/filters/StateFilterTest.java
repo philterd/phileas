@@ -59,7 +59,7 @@ public class StateFilterTest extends AbstractFilterTest {
 
         final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.LOCATION_STATE, filterConfiguration, INDEX_DIRECTORY, SensitivityLevel.LOW, false);
 
-        FilterResult filterResult = filter.filter(getFilterProfile(SensitivityLevel.LOW), "context", "documentid", PIECE,"Lived in Washington");
+        FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", PIECE,"Lived in Washington");
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertEquals("washington", filterResult.getSpans().get(0).getText());
 
@@ -77,7 +77,7 @@ public class StateFilterTest extends AbstractFilterTest {
 
         final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.LOCATION_STATE, filterConfiguration, INDEX_DIRECTORY, SensitivityLevel.MEDIUM, false);
 
-        FilterResult filterResult = filter.filter(getFilterProfile(SensitivityLevel.MEDIUM), "context", "documentid", PIECE, "Lived in Wshington");
+        FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", PIECE, "Lived in Wshington");
         Assertions.assertEquals(1, filterResult.getSpans().size());
 
     }
@@ -94,7 +94,7 @@ public class StateFilterTest extends AbstractFilterTest {
 
         final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.LOCATION_STATE, filterConfiguration, INDEX_DIRECTORY, SensitivityLevel.HIGH, false);
 
-        FilterResult filterResult = filter.filter(getFilterProfile(SensitivityLevel.HIGH), "context", "documentid", PIECE, "Lived in Wasinton");
+        FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", PIECE, "Lived in Wasinton");
         Assertions.assertEquals(1, filterResult.getSpans().size());
 
     }

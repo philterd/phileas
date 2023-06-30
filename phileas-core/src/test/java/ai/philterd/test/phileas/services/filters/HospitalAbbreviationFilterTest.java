@@ -86,7 +86,7 @@ public class HospitalAbbreviationFilterTest extends AbstractFilterTest {
 
         final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.HOSPITAL_ABBREVIATION, filterConfiguration, INDEX_DIRECTORY, SensitivityLevel.HIGH, false);
 
-        final FilterResult filterResult = filter.filter(getFilterProfile(SensitivityLevel.HIGH), "context", "documentid", PIECE, "Went to WMC");
+        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", PIECE, "Went to WMC");
         showSpans(filterResult.getSpans());
         Assertions.assertEquals(4, filterResult.getSpans().size());
 
