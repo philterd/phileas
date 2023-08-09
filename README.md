@@ -9,7 +9,7 @@ For a turnkey text redaction engine, see [Philter](https://philterd.ai/philter/)
 Philter is available on the cloud marketplaces:
 
 * [Philter on AWS Marketplace](https://aws.amazon.com/marketplace/pp/B07YVB8FFT?ref=_ptnr_philterd)
-* [Philter on Google Cloud Marketplace](https://console.cloud.google.com/marketplace/details/mountainfog-public/philter)
+* [Philter on Azure Marketplace](https://azuremarketplace.microsoft.com/en-us/marketplace/apps/philterdllc1687189098111.philter?tab=Overview)
 
 Philter is also available for on-prem deployments by contacting us at [https://www.philterd.ai/](https://www.philterd.ai). 
 
