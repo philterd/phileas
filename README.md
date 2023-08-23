@@ -4,14 +4,15 @@
 
 For a turnkey text redaction engine, see [Philter](https://philterd.ai/philter/), which is built on top of Phileas and provides a REST API interface for redacting text.
 
-**For optimal security, Philter runs entirely within your cloud and never transmits data outside of your cloud.** Custom AI models are available for domains like healthcare, legal, and news. Learn more at [Philter](https://philterd.ai/philter/).
+**For optimal security, Philter runs entirely within your cloud and never transmits data outside of your cloud.** Custom AI models are available for domains like healthcare, legal, and news.
 
-Philter is available on the cloud marketplaces:
+Philter is available via:
 
-* [Philter on AWS Marketplace](https://aws.amazon.com/marketplace/pp/B07YVB8FFT?ref=_ptnr_philterd)
-* [Philter on Azure Marketplace](https://azuremarketplace.microsoft.com/en-us/marketplace/apps/philterdllc1687189098111.philter?tab=Overview)
+* [Philter on the AWS Marketplace](https://aws.amazon.com/marketplace/pp/B07YVB8FFT?ref=_ptnr_philterd)
+* [Philter on the Azure Marketplace](https://azuremarketplace.microsoft.com/en-us/marketplace/apps/philterdllc1687189098111.philter?tab=Overview)
+* On-prem deployments by contacting us at [https://www.philterd.ai/](https://www.philterd.ai). 
 
-Philter is also available for on-prem deployments by contacting us at [https://www.philterd.ai/](https://www.philterd.ai). 
+Learn more at [Philter](https://philterd.ai/philter/).
 
 ## What is Phileas?
 
