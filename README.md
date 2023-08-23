@@ -22,7 +22,7 @@ When sensitive information is identified, Phileas can manipulate the sensitive i
 
 Information can be redacted based on the content of the information and other attributes. For example, only certain persons' names, only zip codes meeting some qualification, or IP addresses that match a given pattern.
 
-Phileas requires Java 17.
+Phileas is the underlying core of [Philter](https://philterd.ai/philter/).
 
 ## What Phileas Can Do
 
