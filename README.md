@@ -2,7 +2,7 @@
 
 *Phileas is a PII and PHI redaction engine.*
 
-For a turnkey text redaction engine, see [Philter](https://philterd.ai/philter/), which is built on top of Phileas and provides a REST API interface for redacting text. Philter includes commercial support and access to optimized natural language processing (NLP) models for general, legal, financial, and healthcare text.
+For a turnkey text redaction engine, see [Philter](https://philterd.ai/philter/), which is built on top of Phileas and provides a REST API interface for redacting text.
 
 **For optimal security, Philter runs entirely within your cloud and never transmits data outside of your cloud.** Custom AI models are available for domains like healthcare, legal, and news. Learn more at [Philter](https://philterd.ai/philter/).
 
