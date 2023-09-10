@@ -1,9 +1,8 @@
-name: Build Artifacts on Commit to main
+name: Build and Deploy Artifacts on commit to main
 on: 
   push:
     branches:
       - main
-
 jobs:
   deploy:
     runs-on: ubuntu-latest
