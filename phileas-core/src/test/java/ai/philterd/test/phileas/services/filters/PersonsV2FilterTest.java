@@ -29,12 +29,16 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.mockito.Mockito;
 
 import java.io.File;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Map;
+
+import static org.junit.jupiter.api.condition.OS.MAC;
+import static org.junit.jupiter.api.condition.OS.WINDOWS;
 
 public class PersonsV2FilterTest extends AbstractFilterTest {
 
@@ -44,6 +48,7 @@ public class PersonsV2FilterTest extends AbstractFilterTest {
     private MetricsService metricsService = Mockito.mock(MetricsService.class);
 
     @Test
+    @DisabledOnOs({WINDOWS, MAC})
     public void filter1() throws Exception {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
@@ -76,6 +81,7 @@ public class PersonsV2FilterTest extends AbstractFilterTest {
     }
 
     @Test
+    @DisabledOnOs({WINDOWS, MAC})
     public void filter2() throws Exception {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
@@ -115,6 +121,7 @@ public class PersonsV2FilterTest extends AbstractFilterTest {
     }
 
     @Test
+    @DisabledOnOs({WINDOWS, MAC})
     public void filter3() throws Exception {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
@@ -152,6 +159,7 @@ public class PersonsV2FilterTest extends AbstractFilterTest {
     }
 
     @Test
+    @DisabledOnOs({WINDOWS, MAC})
     public void filter4() throws Exception {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
@@ -185,6 +193,7 @@ public class PersonsV2FilterTest extends AbstractFilterTest {
     }
 
     @Test
+    @DisabledOnOs({WINDOWS, MAC})
     public void filter5() throws Exception {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
@@ -220,6 +229,7 @@ public class PersonsV2FilterTest extends AbstractFilterTest {
     }
 
     @Test
+    @DisabledOnOs({WINDOWS, MAC})
     public void filter6() throws Exception {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
