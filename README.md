@@ -2,16 +2,17 @@
 
 *Phileas is a PII and PHI redaction engine.*
 
-For a turnkey text redaction engine, see [Philter](https://philterd.ai/philter/), which is built on top of Phileas and provides a REST API interface for redacting text. Philter includes commercial support and access to optimized natural language processing (NLP) models for general, legal, financial, and healthcare text.
+For a turnkey text redaction engine, see [Philter](https://philterd.ai/philter/), which is built on top of Phileas and provides a REST API interface for redacting text.
 
-**For optimal security, Philter runs entirely within your cloud and never transmits data outside of your cloud.**
+**For optimal security, Philter runs entirely within your cloud and never transmits data outside of your cloud.** Custom AI models are available for domains like healthcare, legal, and news.
 
-Philter is available on the cloud marketplaces:
+Philter is available via:
 
-* [Philter on AWS Marketplace](https://aws.amazon.com/marketplace/pp/B07YVB8FFT?ref=_ptnr_philterd)
-* [Philter on Google Cloud Marketplace](https://console.cloud.google.com/marketplace/details/mountainfog-public/philter)
+* [Philter on the AWS Marketplace](https://aws.amazon.com/marketplace/pp/B07YVB8FFT?ref=_ptnr_philterd)
+* [Philter on the Azure Marketplace](https://azuremarketplace.microsoft.com/en-us/marketplace/apps/philterdllc1687189098111.philter?tab=Overview)
+* On-prem deployments by contacting us at [https://www.philterd.ai/](https://www.philterd.ai). 
 
-Philter is also available for on-prem deployments by contacting us at [https://www.philterd.ai/](https://www.philterd.ai). 
+Learn more at [Philter](https://philterd.ai/philter/).
 
 ## What is Phileas?
 
@@ -21,7 +22,7 @@ When sensitive information is identified, Phileas can manipulate the sensitive i
 
 Information can be redacted based on the content of the information and other attributes. For example, only certain persons' names, only zip codes meeting some qualification, or IP addresses that match a given pattern.
 
-Phileas requires Java 17.
+Phileas is the underlying core of [Philter](https://philterd.ai/philter/).
 
 ## What Phileas Can Do
 
