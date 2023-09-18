@@ -29,25 +29,16 @@ import ai.philterd.phileas.model.profile.filters.strategies.dynamic.HospitalAbbr
 import ai.philterd.phileas.model.profile.filters.strategies.dynamic.HospitalFilterStrategy;
 import ai.philterd.phileas.model.profile.filters.strategies.dynamic.StateFilterStrategy;
 import ai.philterd.phileas.model.profile.filters.strategies.dynamic.SurnameFilterStrategy;
-import ai.philterd.phileas.model.profile.filters.strategies.rules.AgeFilterStrategy;
-import ai.philterd.phileas.model.profile.filters.strategies.rules.CreditCardFilterStrategy;
-import ai.philterd.phileas.model.profile.filters.strategies.rules.DateFilterStrategy;
-import ai.philterd.phileas.model.profile.filters.strategies.rules.EmailAddressFilterStrategy;
-import ai.philterd.phileas.model.profile.filters.strategies.rules.IdentifierFilterStrategy;
-import ai.philterd.phileas.model.profile.filters.strategies.rules.IpAddressFilterStrategy;
-import ai.philterd.phileas.model.profile.filters.strategies.rules.PhoneNumberFilterStrategy;
-import ai.philterd.phileas.model.profile.filters.strategies.rules.SsnFilterStrategy;
-import ai.philterd.phileas.model.profile.filters.strategies.rules.StateAbbreviationFilterStrategy;
-import ai.philterd.phileas.model.profile.filters.strategies.rules.UrlFilterStrategy;
-import ai.philterd.phileas.model.profile.filters.strategies.rules.VinFilterStrategy;
-import ai.philterd.phileas.model.profile.filters.strategies.rules.ZipCodeFilterStrategy;
+import ai.philterd.phileas.model.profile.filters.strategies.rules.*;
 import org.apache.commons.io.FileUtils;
+import org.jsoup.select.Evaluator;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class EndToEndTestsHelper {
@@ -341,7 +332,7 @@ public class EndToEndTestsHelper {
 
     }
 
-    public static FilterProfile getFilterProfileJustIdentifier(String filterProfileName) throws IOException, URISyntaxException {
+    public static FilterProfile getFilterProfileJustIdentifier(String filterProfileName) {
 
         Identifier identifier1 = new Identifier();
         identifier1.setIdentifierFilterStrategies(Arrays.asList(new IdentifierFilterStrategy()));
@@ -351,6 +342,24 @@ public class EndToEndTestsHelper {
         Identifiers identifiers = new Identifiers();
 
         identifiers.setIdentifiers(Arrays.asList(identifier1));
+
+        FilterProfile filterProfile = new FilterProfile();
+        filterProfile.setName(filterProfileName);
+        filterProfile.setIdentifiers(identifiers);
+
+        return filterProfile;
+
+    }
+
+    public static FilterProfile getFilterProfileJustStreetAddress(String filterProfileName) {
+
+        StreetAddressFilterStrategy streetAddressFilterStrategy = new StreetAddressFilterStrategy();
+
+        StreetAddress streetAddress = new StreetAddress();
+        streetAddress.setStreetAddressFilterStrategies(List.of(streetAddressFilterStrategy));
+
+        Identifiers identifiers = new Identifiers();
+        identifiers.setStreetAddress(streetAddress);
 
         FilterProfile filterProfile = new FilterProfile();
         filterProfile.setName(filterProfileName);
