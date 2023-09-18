@@ -547,6 +547,38 @@ public class EndToEndTests {
     }
 
     @Test
+    public void endToEnd17() throws Exception {
+
+        final Path temp = Files.createTempDirectory("philter");
+        final File file = Paths.get(temp.toFile().getAbsolutePath(), "streetaddress.json").toFile();
+        LOGGER.info("Writing profile to {}", file.getAbsolutePath());
+        final String profile = gson.toJson(getFilterProfileJustStreetAddress("streetaddress"));
+        LOGGER.info(profile);
+        FileUtils.writeStringToFile(file, profile);
+
+        Properties properties = new Properties();
+        properties.setProperty("indexes.directory", INDEXES_DIRECTORY);
+        properties.setProperty("store.enabled", "false");
+        properties.setProperty("filter.profiles.directory", temp.toFile().getAbsolutePath());
+
+        final PhileasConfiguration phileasConfiguration = ConfigFactory.create(PhileasConfiguration.class, properties);
+
+        final String input = "he lived at 100 main street";
+
+        final PhileasFilterService service = new PhileasFilterService(phileasConfiguration);
+        final FilterResponse response = service.filter(Arrays.asList("streetaddress"), "context", "documentid", input, MimeType.TEXT_PLAIN);
+
+        LOGGER.info(response.getFilteredText());
+
+        showSpans(response.getExplanation().getAppliedSpans());
+
+        Assertions.assertEquals("documentid", response.getDocumentId());
+        Assertions.assertEquals(1, response.getExplanation().getAppliedSpans().size());
+        Assertions.assertEquals("he lived at {{{REDACTED-street-address}}}", response.getFilteredText().trim());
+
+    }
+
+    @Test
     public void endToEndUsingCustomDictionary() throws Exception {
 
         final CustomDictionary customDictionary = new CustomDictionary();
