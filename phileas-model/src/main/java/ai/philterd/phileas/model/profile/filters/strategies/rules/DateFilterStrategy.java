@@ -29,6 +29,7 @@ import ai.philterd.phileas.model.services.AnonymizationService;
 import ai.philterd.phileas.model.utils.Encryption;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.lang3.RandomUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -51,6 +52,10 @@ public class DateFilterStrategy extends AbstractFilterStrategy {
     private static final Logger LOGGER = LogManager.getLogger(DateFilterStrategy.class);
 
     private static FilterType filterType = FilterType.DATE;
+
+    @SerializedName("shiftRandom")
+    @Expose
+    private boolean shiftRandom = false;
 
     @SerializedName("shiftDays")
     @Expose
@@ -205,9 +210,18 @@ public class DateFilterStrategy extends AbstractFilterStrategy {
                 final LocalDateTime parsedDate = LocalDate.parse(token, dtf).atStartOfDay();
 
                 // Shift the date. Only valid dates can be shifted.
-                final LocalDateTime shiftedDate = parsedDate.plusDays(shiftDays).plusMonths(shiftMonths).plusYears(shiftYears);
-
-                replacement = shiftedDate.format(dtf);
+                if(shiftRandom == true) {
+                    // Shifting based on a random days, months, years.
+                    final int randomShiftDays = RandomUtils.nextInt(1, 30);
+                    final int randomShiftMonths = RandomUtils.nextInt(1, 12);
+                    final int randomShiftYears = 0 - RandomUtils.nextInt(1, 3);
+                    final LocalDateTime shiftedDate = parsedDate.plusDays(randomShiftDays).plusMonths(randomShiftMonths).plusYears(randomShiftYears);
+                    replacement = shiftedDate.format(dtf);
+                } else {
+                    // Shifting based on the given days, months, and years given.
+                    final LocalDateTime shiftedDate = parsedDate.plusDays(shiftDays).plusMonths(shiftMonths).plusYears(shiftYears);
+                    replacement = shiftedDate.format(dtf);
+                }
 
             } catch (DateTimeParseException ex) {
 
@@ -345,6 +359,14 @@ public class DateFilterStrategy extends AbstractFilterStrategy {
 
     public void setFutureDates(boolean futureDates) {
         this.futureDates = futureDates;
+    }
+
+    public void setShiftRandom(boolean shiftRandom) {
+        this.shiftRandom = shiftRandom;
+    }
+
+    public boolean isShiftRandom() {
+        return this.shiftRandom;
     }
 
 }

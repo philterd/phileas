@@ -424,4 +424,27 @@ public class DateFilterStrategyTest extends AbstractFilterStrategyTest {
 
     }
 
+    @Test
+    public void randomShift1() throws Exception {
+
+        final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
+
+        final DateTimeFormatter formatter = new DateTimeFormatterBuilder()
+                .appendOptional(DateTimeFormatter.ofPattern(("MM-dd-yyyy")))
+                .toFormatter();
+
+        final LocalDateTime parsedDate = LocalDateTime.now();
+        final String date = parsedDate.format(formatter);
+
+        final AbstractFilterStrategy strategy = getFilterStrategy();
+        ((DateFilterStrategy)strategy).setShiftRandom(true);
+        strategy.setStrategy(AbstractFilterStrategy.SHIFT);
+
+        final FilterPattern filterPattern = new FilterPattern.FilterPatternBuilder(Pattern.compile("\\b\\d{2}-\\d{2}-\\d{4}"), 0.75).withFormat("MM-dd-uuuu").build();
+        final Replacement replacement = strategy.getReplacement("name", "context", "docId", date, WINDOW, new Crypto(), new FPE(), anonymizationService, filterPattern);
+
+        Assertions.assertNotEquals(parsedDate.getMonthValue() + "-" + parsedDate.getDayOfMonth() + "-" + parsedDate.getYear(), replacement.getReplacement());
+
+    }
+
 }
