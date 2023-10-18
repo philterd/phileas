@@ -50,9 +50,9 @@ public class RedisAlertServiceTest {
         final String redisToken = System.getenv("PHILTER_REDIS_AUTH_TOKEN");
         final String redisClustered = System.getenv("PHILTER_REDIS_CLUSTERED");
 
-        properties.setProperty("filter.profiles", "s3");
-        properties.setProperty("filter.profiles.s3.bucket", "profiles");
-        properties.setProperty("filter.profiles.s3.prefix", "/");
+        properties.setProperty("filter.policies", "s3");
+        properties.setProperty("filter.policies.s3.bucket", "policies");
+        properties.setProperty("filter.policies.s3.prefix", "/");
 
         properties.setProperty("cache.redis.enabled", "true");
 

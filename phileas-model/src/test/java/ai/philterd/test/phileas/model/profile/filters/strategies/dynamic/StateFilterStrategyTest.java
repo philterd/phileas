@@ -13,11 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ai.philterd.test.phileas.model.profile.filters.strategies.dynamic;
+package ai.philterd.test.phileas.model.policy.filters.strategies.dynamic;
 
-import ai.philterd.phileas.model.profile.filters.strategies.AbstractFilterStrategy;
-import ai.philterd.phileas.model.profile.filters.strategies.dynamic.StateFilterStrategy;
-import ai.philterd.test.phileas.model.profile.filters.strategies.AbstractFilterStrategyTest;
+import ai.philterd.phileas.model.policy.filters.strategies.AbstractFilterStrategy;
+import ai.philterd.phileas.model.policy.filters.strategies.dynamic.StateFilterStrategy;
+import ai.philterd.test.phileas.model.policy.filters.strategies.AbstractFilterStrategyTest;
 
 public class StateFilterStrategyTest extends AbstractFilterStrategyTest {
 

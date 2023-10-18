@@ -20,8 +20,8 @@ import com.google.gson.GsonBuilder;
 import ai.philterd.phileas.configuration.PhileasConfiguration;
 import ai.philterd.phileas.model.enums.MimeType;
 import ai.philterd.phileas.model.objects.Span;
-import ai.philterd.phileas.model.profile.FilterProfile;
-import ai.philterd.phileas.model.profile.Ignored;
+import ai.philterd.phileas.model.policy.Policy;
+import ai.philterd.phileas.model.policy.Ignored;
 import ai.philterd.phileas.model.responses.BinaryDocumentFilterResponse;
 import ai.philterd.phileas.model.serializers.PlaceholderDeserializer;
 import ai.philterd.phileas.services.PhileasFilterService;
@@ -47,8 +47,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
-import static ai.philterd.test.phileas.services.EndToEndTestsHelper.getFilterProfile;
-import static ai.philterd.test.phileas.services.EndToEndTestsHelper.getPdfFilterProfile;
+import static ai.philterd.test.phileas.services.EndToEndTestsHelper.getPolicy;
+import static ai.philterd.test.phileas.services.EndToEndTestsHelper.getPdfPolicy;
 
 public class PhileasFilterServiceTest {
 
@@ -67,33 +67,33 @@ public class PhileasFilterServiceTest {
     }
 
     @Test
-    public void filterProfile() throws IOException, URISyntaxException {
+    public void policy() throws IOException, URISyntaxException {
 
-        final FilterProfile filterProfile = getFilterProfile("default");
-        final String json = gson.toJson(filterProfile);
+        final Policy policy = getPolicy("default");
+        final String json = gson.toJson(policy);
         LOGGER.info(json);
 
-        final FilterProfile deserialized = gson.fromJson(json, FilterProfile.class);
+        final Policy deserialized = gson.fromJson(json, Policy.class);
 
         Assertions.assertEquals("default", deserialized.getName());
 
     }
 
     @Test
-    public void filterProfileWithPlaceholder() throws IOException, URISyntaxException {
+    public void policyWithPlaceholder() throws IOException, URISyntaxException {
 
         final Ignored ignored = new Ignored();
         ignored.setTerms(Arrays.asList("john", "jeff", "${USER}"));
 
-        final FilterProfile filterProfile = getFilterProfile("placeholder");
-        filterProfile.setIgnored(Arrays.asList(ignored));
-        final String json = gson.toJson(filterProfile);
+        final Policy policy = getPolicy("placeholder");
+        policy.setIgnored(Arrays.asList(ignored));
+        final String json = gson.toJson(policy);
         LOGGER.info(json);
 
-        final FilterProfile deserialized = gson.fromJson(json, FilterProfile.class);
+        final Policy deserialized = gson.fromJson(json, Policy.class);
 
         Assertions.assertEquals("placeholder", deserialized.getName());
-        Assertions.assertEquals(3, filterProfile.getIgnored().get(0).getTerms().size());
+        Assertions.assertEquals(3, policy.getIgnored().get(0).getTerms().size());
         Assertions.assertTrue(CollectionUtils.isNotEmpty(deserialized.getIgnored().get(0).getTerms()));
 
     }
@@ -110,13 +110,13 @@ public class PhileasFilterServiceTest {
         final Path temp = Files.createTempDirectory("philter");
 
         final File file1 = Paths.get(temp.toFile().getAbsolutePath(), "pdf.json").toFile();
-        LOGGER.info("Writing profile to {}", file1.getAbsolutePath());
-        FileUtils.writeStringToFile(file1, gson.toJson(getPdfFilterProfile("pdf")), Charset.defaultCharset());
+        LOGGER.info("Writing policy to {}", file1.getAbsolutePath());
+        FileUtils.writeStringToFile(file1, gson.toJson(getPdfPolicy("pdf")), Charset.defaultCharset());
 
         Properties properties = new Properties();
         properties.setProperty("indexes.directory", INDEXES_DIRECTORY);
         properties.setProperty("store.enabled", "false");
-        properties.setProperty("filter.profiles.directory", temp.toFile().getAbsolutePath());
+        properties.setProperty("filter.policies.directory", temp.toFile().getAbsolutePath());
 
         final PhileasConfiguration phileasConfiguration = ConfigFactory.create(PhileasConfiguration.class, properties);
 
@@ -147,13 +147,13 @@ public class PhileasFilterServiceTest {
         final Path temp = Files.createTempDirectory("philter");
 
         final File file1 = Paths.get(temp.toFile().getAbsolutePath(), "pdf.json").toFile();
-        LOGGER.info("Writing profile to {}", file1.getAbsolutePath());
-        FileUtils.writeStringToFile(file1, gson.toJson(getPdfFilterProfile("pdf")), Charset.defaultCharset());
+        LOGGER.info("Writing policy to {}", file1.getAbsolutePath());
+        FileUtils.writeStringToFile(file1, gson.toJson(getPdfPolicy("pdf")), Charset.defaultCharset());
 
         Properties properties = new Properties();
         properties.setProperty("indexes.directory", INDEXES_DIRECTORY);
         properties.setProperty("store.enabled", "false");
-        properties.setProperty("filter.profiles.directory", temp.toFile().getAbsolutePath());
+        properties.setProperty("filter.policies.directory", temp.toFile().getAbsolutePath());
 
         final PhileasConfiguration phileasConfiguration = ConfigFactory.create(PhileasConfiguration.class, properties);
 

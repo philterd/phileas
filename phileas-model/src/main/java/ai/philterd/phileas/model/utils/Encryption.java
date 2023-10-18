@@ -15,8 +15,8 @@
  */
 package ai.philterd.phileas.model.utils;
 
-import ai.philterd.phileas.model.profile.Crypto;
-import ai.philterd.phileas.model.profile.FPE;
+import ai.philterd.phileas.model.policy.Crypto;
+import ai.philterd.phileas.model.policy.FPE;
 import com.privacylogistics.FF3Cipher;
 import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.binary.Base64;
@@ -32,8 +32,6 @@ import java.nio.charset.Charset;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
-import java.util.LinkedList;
-import java.util.List;
 
 /**
  * Provides encryption methods.

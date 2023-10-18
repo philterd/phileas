@@ -19,7 +19,7 @@ import ai.philterd.phileas.model.enums.FilterType;
 import ai.philterd.phileas.model.filter.FilterConfiguration;
 import ai.philterd.phileas.model.filter.rules.regex.RegexFilter;
 import ai.philterd.phileas.model.objects.*;
-import ai.philterd.phileas.model.profile.FilterProfile;
+import ai.philterd.phileas.model.policy.Policy;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -105,9 +105,9 @@ public class DriversLicenseFilter extends RegexFilter {
     }
 
     @Override
-    public FilterResult filter(FilterProfile filterProfile, String context, String documentId, int piece, String input) throws Exception {
+    public FilterResult filter(Policy policy, String context, String documentId, int piece, String input) throws Exception {
 
-        final List<Span> spans = findSpans(filterProfile, analyzer, input, context, documentId);
+        final List<Span> spans = findSpans(policy, analyzer, input, context, documentId);
 
         return new FilterResult(context, documentId, Span.dropOverlappingSpans(spans));
 

@@ -22,7 +22,7 @@ import ai.philterd.phileas.model.filter.dynamic.NerFilter;
 import ai.philterd.phileas.model.objects.FilterResult;
 import ai.philterd.phileas.model.objects.Replacement;
 import ai.philterd.phileas.model.objects.Span;
-import ai.philterd.phileas.model.profile.FilterProfile;
+import ai.philterd.phileas.model.policy.Policy;
 import ai.philterd.phileas.model.services.MetricsService;
 import okhttp3.ConnectionPool;
 import okhttp3.OkHttpClient;
@@ -93,7 +93,7 @@ public class PersonsV1Filter extends NerFilter {
     }
 
     @Override
-    public FilterResult filter(FilterProfile filterProfile, String context, String documentId, int piece, String input) throws Exception {
+    public FilterResult filter(Policy policy, String context, String documentId, int piece, String input) throws Exception {
 
         final List<Span> spans = new LinkedList<>();
 
@@ -124,7 +124,7 @@ public class PersonsV1Filter extends NerFilter {
                             // Get the window of text surrounding the token.
                             final String[] window = getWindow(input, phileasSpan.getStart(), phileasSpan.getEnd());
 
-                            final Span span = createSpan(filterProfile.getName(), input, context, documentId, phileasSpan.getText(),
+                            final Span span = createSpan(policy.getName(), input, context, documentId, phileasSpan.getText(),
                                     window, phileasSpan.getTag(), phileasSpan.getStart(), phileasSpan.getEnd(), phileasSpan.getScore());
 
                             // Span will be null if no span was created due to it being excluded.
@@ -159,16 +159,16 @@ public class PersonsV1Filter extends NerFilter {
     }
 
     @Override
-    public int getOccurrences(FilterProfile filterProfile, String input) throws Exception {
+    public int getOccurrences(Policy policy, String input) throws Exception {
 
-        return filter(filterProfile, "none", "none", 0, input).getSpans().size();
+        return filter(policy, "none", "none", 0, input).getSpans().size();
 
     }
 
-    private Span createSpan(String filterProfile, String input, String context, String documentId, String text,
+    private Span createSpan(String policy, String input, String context, String documentId, String text,
                             String[] window, String classification, int start, int end, double confidence) throws Exception {
 
-        final Replacement replacement = getReplacement(filterProfile, context, documentId, text, window, confidence, classification, null);
+        final Replacement replacement = getReplacement(policy, context, documentId, text, window, confidence, classification, null);
 
         if(StringUtils.equals(replacement.getReplacement(), text)) {
 

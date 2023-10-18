@@ -20,7 +20,7 @@ import ai.philterd.phileas.model.enums.SensitivityLevel;
 import ai.philterd.phileas.model.filter.FilterConfiguration;
 import ai.philterd.phileas.model.filter.rules.dictionary.LuceneDictionaryFilter;
 import ai.philterd.phileas.model.objects.FilterResult;
-import ai.philterd.phileas.model.profile.filters.strategies.dynamic.StateFilterStrategy;
+import ai.philterd.phileas.model.policy.filters.strategies.dynamic.StateFilterStrategy;
 import ai.philterd.phileas.model.services.AlertService;
 import ai.philterd.phileas.services.anonymization.StateAnonymizationService;
 import ai.philterd.phileas.services.anonymization.cache.LocalAnonymizationCacheService;
@@ -59,7 +59,7 @@ public class StateFilterTest extends AbstractFilterTest {
 
         final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.LOCATION_STATE, filterConfiguration, INDEX_DIRECTORY, SensitivityLevel.LOW, false);
 
-        FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", PIECE,"Lived in Washington");
+        FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE,"Lived in Washington");
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertEquals("washington", filterResult.getSpans().get(0).getText());
 
@@ -77,7 +77,7 @@ public class StateFilterTest extends AbstractFilterTest {
 
         final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.LOCATION_STATE, filterConfiguration, INDEX_DIRECTORY, SensitivityLevel.MEDIUM, false);
 
-        FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", PIECE, "Lived in Wshington");
+        FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "Lived in Wshington");
         Assertions.assertEquals(1, filterResult.getSpans().size());
 
     }
@@ -94,7 +94,7 @@ public class StateFilterTest extends AbstractFilterTest {
 
         final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.LOCATION_STATE, filterConfiguration, INDEX_DIRECTORY, SensitivityLevel.HIGH, false);
 
-        FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", PIECE, "Lived in Wasinton");
+        FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "Lived in Wasinton");
         Assertions.assertEquals(1, filterResult.getSpans().size());
 
     }

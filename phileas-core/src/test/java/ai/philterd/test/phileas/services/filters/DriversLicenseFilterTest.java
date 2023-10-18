@@ -18,7 +18,7 @@ package ai.philterd.test.phileas.services.filters;
 import ai.philterd.phileas.model.enums.FilterType;
 import ai.philterd.phileas.model.filter.FilterConfiguration;
 import ai.philterd.phileas.model.objects.FilterResult;
-import ai.philterd.phileas.model.profile.filters.strategies.rules.DriversLicenseFilterStrategy;
+import ai.philterd.phileas.model.policy.filters.strategies.rules.DriversLicenseFilterStrategy;
 import ai.philterd.phileas.model.services.AlertService;
 import ai.philterd.phileas.services.anonymization.AlphanumericAnonymizationService;
 import ai.philterd.phileas.services.anonymization.cache.LocalAnonymizationCacheService;
@@ -45,7 +45,7 @@ public class DriversLicenseFilterTest extends AbstractFilterTest {
 
         final DriversLicenseFilter filter = new DriversLicenseFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", PIECE, "the number is 123456789.");
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "the number is 123456789.");
 
         showSpans(filterResult.getSpans());
 

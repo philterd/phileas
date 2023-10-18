@@ -19,11 +19,10 @@ import com.google.common.hash.BloomFilter;
 import com.google.common.hash.Funnels;
 import ai.philterd.phileas.model.enums.FilterType;
 import ai.philterd.phileas.model.filter.FilterConfiguration;
-import ai.philterd.phileas.model.objects.DocumentAnalysis;
 import ai.philterd.phileas.model.objects.FilterResult;
 import ai.philterd.phileas.model.objects.Replacement;
 import ai.philterd.phileas.model.objects.Span;
-import ai.philterd.phileas.model.profile.FilterProfile;
+import ai.philterd.phileas.model.policy.Policy;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.lucene.analysis.shingle.ShingleFilter;
@@ -84,7 +83,7 @@ public class BloomFilterDictionaryFilter extends DictionaryFilter {
     }
 
     @Override
-    public FilterResult filter(FilterProfile filterProfile, String context, String documentId, int piece, String text) throws Exception {
+    public FilterResult filter(Policy policy, String context, String documentId, int piece, String text) throws Exception {
 
         final List<Span> spans = new LinkedList<>();
 
@@ -117,7 +116,7 @@ public class BloomFilterDictionaryFilter extends DictionaryFilter {
                         // Get the original token to get the right casing.
                         final String originalToken = text.substring(characterStart, characterEnd);
 
-                        final Replacement replacement = getReplacement(filterProfile.getName(), context, documentId,
+                        final Replacement replacement = getReplacement(policy.getName(), context, documentId,
                                 originalToken, window, confidence, classification, null);
 
                         spans.add(Span.make(characterStart, characterEnd, getFilterType(), context, documentId,

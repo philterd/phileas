@@ -18,8 +18,8 @@ package ai.philterd.services.pdf;
 import ai.philterd.phileas.model.enums.MimeType;
 import ai.philterd.phileas.model.objects.PdfRedactionOptions;
 import ai.philterd.phileas.model.objects.Span;
-import ai.philterd.phileas.model.profile.FilterProfile;
-import ai.philterd.phileas.model.profile.graphical.BoundingBox;
+import ai.philterd.phileas.model.policy.Policy;
+import ai.philterd.phileas.model.policy.graphical.BoundingBox;
 import ai.philterd.phileas.model.services.Redacter;
 import ai.philterd.services.pdf.model.RedactedRectangle;
 import org.apache.logging.log4j.LogManager;
@@ -31,7 +31,6 @@ import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.graphics.color.PDColor;
 import org.apache.pdfbox.pdmodel.graphics.color.PDDeviceRGB;
 import org.apache.pdfbox.pdmodel.graphics.image.JPEGFactory;
-import org.apache.pdfbox.pdmodel.graphics.image.LosslessFactory;
 import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 import org.apache.pdfbox.pdmodel.graphics.state.RenderingMode;
 import org.apache.pdfbox.rendering.ImageType;
@@ -58,7 +57,7 @@ public class PdfRedacter extends PDFTextStripper implements Redacter {
 
     private Map<Integer, List<RedactedRectangle>> rectangles = new HashMap<>();
 
-    private FilterProfile filterProfile;
+    private Policy policy;
     private final Set<Span> spans;
     private final PdfRedactionOptions pdfRedactionOptions;
     private final List<BoundingBox> boundingBoxes;
@@ -71,11 +70,11 @@ public class PdfRedacter extends PDFTextStripper implements Redacter {
         COLORS.put("yellow", new PDColor(new float[]{1, 1, 100 / 255F}, PDDeviceRGB.INSTANCE));
     }
 
-    public PdfRedacter(FilterProfile filterProfile,
+    public PdfRedacter(Policy policy,
                        Set<Span> spans, PdfRedactionOptions pdfRedactionOptions,
                        List<BoundingBox> boundingBoxes) throws IOException {
 
-        this.filterProfile = filterProfile;
+        this.policy = policy;
         this.spans = spans;
         this.pdfRedactionOptions = pdfRedactionOptions;
         this.boundingBoxes = boundingBoxes;
@@ -223,7 +222,7 @@ public class PdfRedacter extends PDFTextStripper implements Redacter {
             }
 
             // Get the color based on the filter.
-            final PDColor pdColor = COLORS.getOrDefault(filterProfile.getConfig().getPdf().getRedactionColor(), COLORS.get("black"));
+            final PDColor pdColor = COLORS.getOrDefault(policy.getConfig().getPdf().getRedactionColor(), COLORS.get("black"));
             contentStream.setNonStrokingColor(pdColor);
             contentStream.setRenderingMode(RenderingMode.FILL);
             contentStream.fill();

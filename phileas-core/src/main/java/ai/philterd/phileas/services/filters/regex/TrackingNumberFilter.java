@@ -19,7 +19,7 @@ import ai.philterd.phileas.model.enums.FilterType;
 import ai.philterd.phileas.model.filter.FilterConfiguration;
 import ai.philterd.phileas.model.filter.rules.regex.RegexFilter;
 import ai.philterd.phileas.model.objects.*;
-import ai.philterd.phileas.model.profile.FilterProfile;
+import ai.philterd.phileas.model.policy.Policy;
 
 import java.util.*;
 import java.util.regex.Pattern;
@@ -135,7 +135,7 @@ public class TrackingNumberFilter extends RegexFilter {
     }
 
     @Override
-    public FilterResult filter(FilterProfile filterProfile, String context, String documentId, int piece, String input) throws Exception {
+    public FilterResult filter(Policy policy, String context, String documentId, int piece, String input) throws Exception {
 
         final List<String> classifications = new LinkedList<>();
 
@@ -154,7 +154,7 @@ public class TrackingNumberFilter extends RegexFilter {
         final Map<Restriction, List<String>> restrictions = new HashMap<>();
         restrictions.put(Restriction.CLASSIFICATION, classifications);
 
-        final List<Span> spans = findSpans(filterProfile, analyzer, input, context, documentId, restrictions);
+        final List<Span> spans = findSpans(policy, analyzer, input, context, documentId, restrictions);
 
         return new FilterResult(context, documentId, spans);
 

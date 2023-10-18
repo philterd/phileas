@@ -40,9 +40,9 @@ public class RedisAlertService extends AbstractRedisCacheService implements Aler
     }
 
     @Override
-    public void generateAlert(String filterProfile, String strategyId, String context, String documentId, FilterType filterType) {
+    public void generateAlert(String policy, String strategyId, String context, String documentId, FilterType filterType) {
 
-        final Alert alert = new Alert(filterProfile, strategyId, context, documentId, filterType.getType());
+        final Alert alert = new Alert(policy, strategyId, context, documentId, filterType.getType());
 
         redisson.getList(CACHE_LIST_NAME).add(alert);
 

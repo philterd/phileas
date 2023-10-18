@@ -13,11 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ai.philterd.test.phileas.model.profile.filters.strategies.rules;
+package ai.philterd.test.phileas.model.policy.filters.strategies.rules;
 
-import ai.philterd.phileas.model.profile.filters.strategies.AbstractFilterStrategy;
-import ai.philterd.phileas.model.profile.filters.strategies.rules.EmailAddressFilterStrategy;
-import ai.philterd.test.phileas.model.profile.filters.strategies.AbstractFilterStrategyTest;
+import ai.philterd.phileas.model.policy.filters.strategies.AbstractFilterStrategy;
+import ai.philterd.phileas.model.policy.filters.strategies.rules.EmailAddressFilterStrategy;
+import ai.philterd.test.phileas.model.policy.filters.strategies.AbstractFilterStrategyTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

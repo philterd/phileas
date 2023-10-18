@@ -17,8 +17,8 @@ package ai.philterd.test.phileas.services.postfilters;
 
 import ai.philterd.phileas.model.enums.FilterType;
 import ai.philterd.phileas.model.objects.Span;
-import ai.philterd.phileas.model.profile.FilterProfile;
-import ai.philterd.phileas.model.profile.IgnoredPattern;
+import ai.philterd.phileas.model.policy.Policy;
+import ai.philterd.phileas.model.policy.IgnoredPattern;
 import ai.philterd.phileas.services.postfilters.IgnoredPatternsFilter;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -36,8 +36,8 @@ public class IgnoredPatternsFilterTest {
         ignoredPattern.setPattern("[A-Z0-9]{4}");
         ignoredPattern.setName("example-id");
 
-        final FilterProfile filterProfile = new FilterProfile();
-        filterProfile.setIgnoredPatterns(Arrays.asList(ignoredPattern));
+        final Policy policy = new Policy();
+        policy.setIgnoredPatterns(Arrays.asList(ignoredPattern));
 
         final List<Span> spans = new LinkedList<>();
         spans.add(Span.make(6, 10, FilterType.IDENTIFIER, "context", "docid", 0.80, "AB01", "*****",  "", false, new String[0]));
@@ -56,8 +56,8 @@ public class IgnoredPatternsFilterTest {
         ignoredPattern.setPattern("[A-Z0-9]{4}");
         ignoredPattern.setName("example-id");
 
-        final FilterProfile filterProfile = new FilterProfile();
-        filterProfile.setIgnoredPatterns(Arrays.asList(ignoredPattern));
+        final Policy policy = new Policy();
+        policy.setIgnoredPatterns(Arrays.asList(ignoredPattern));
 
         final List<Span> spans = new LinkedList<>();
         spans.add(Span.make(6, 10, FilterType.IDENTIFIER, "context", "docid", 0.80, "Ab01", "*****",  "", false, new String[0]));

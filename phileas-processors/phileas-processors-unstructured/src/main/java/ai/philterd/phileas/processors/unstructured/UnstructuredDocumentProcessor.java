@@ -19,7 +19,7 @@ import ai.philterd.phileas.model.filter.Filter;
 import ai.philterd.phileas.model.objects.Explanation;
 import ai.philterd.phileas.model.objects.FilterResult;
 import ai.philterd.phileas.model.objects.Span;
-import ai.philterd.phileas.model.profile.FilterProfile;
+import ai.philterd.phileas.model.policy.Policy;
 import ai.philterd.phileas.model.responses.FilterResponse;
 import ai.philterd.phileas.model.services.DocumentProcessor;
 import ai.philterd.phileas.model.services.MetricsService;
@@ -48,7 +48,7 @@ public class UnstructuredDocumentProcessor implements DocumentProcessor {
     }
 
     @Override
-    public FilterResponse process(FilterProfile filterProfile, List<Filter> filters, List<PostFilter> postFilters,
+    public FilterResponse process(Policy policy, List<Filter> filters, List<PostFilter> postFilters,
                                   String context, String documentId, int piece, String input) throws Exception {
 
         // The list that will contain the spans containing PHI/PII.
@@ -58,7 +58,7 @@ public class UnstructuredDocumentProcessor implements DocumentProcessor {
         for(final Filter filter : filters) {
 
             final long startTimeMs = System.currentTimeMillis();
-            final FilterResult filterResult = filter.filter(filterProfile, context, documentId, piece, input);
+            final FilterResult filterResult = filter.filter(policy, context, documentId, piece, input);
             final long elapsedTimeMs = System.currentTimeMillis() - startTimeMs;
 
             metricsService.logFilterTime(filter.getFilterType(), elapsedTimeMs);

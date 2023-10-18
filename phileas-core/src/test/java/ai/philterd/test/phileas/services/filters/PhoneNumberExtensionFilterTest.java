@@ -18,7 +18,7 @@ package ai.philterd.test.phileas.services.filters;
 import ai.philterd.phileas.model.enums.FilterType;
 import ai.philterd.phileas.model.filter.FilterConfiguration;
 import ai.philterd.phileas.model.objects.FilterResult;
-import ai.philterd.phileas.model.profile.filters.strategies.rules.PhoneNumberExtensionFilterStrategy;
+import ai.philterd.phileas.model.policy.filters.strategies.rules.PhoneNumberExtensionFilterStrategy;
 import ai.philterd.phileas.model.services.AlertService;
 import ai.philterd.phileas.services.anonymization.MacAddressAnonymizationService;
 import ai.philterd.phileas.services.anonymization.cache.LocalAnonymizationCacheService;
@@ -45,7 +45,7 @@ public class PhoneNumberExtensionFilterTest extends AbstractFilterTest {
 
         final PhoneNumberExtensionFilter filter = new PhoneNumberExtensionFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", PIECE, "he is at x123");
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "he is at x123");
         showSpans(filterResult.getSpans());
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
@@ -66,7 +66,7 @@ public class PhoneNumberExtensionFilterTest extends AbstractFilterTest {
 
         final PhoneNumberExtensionFilter filter = new PhoneNumberExtensionFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", PIECE, "his phone number was +1 151-841-2829 x416.");
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "his phone number was +1 151-841-2829 x416.");
         showSpans(filterResult.getSpans());
 
         Assertions.assertEquals(1, filterResult.getSpans().size());

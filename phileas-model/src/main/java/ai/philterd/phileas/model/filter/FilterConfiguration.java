@@ -16,10 +16,10 @@
 package ai.philterd.phileas.model.filter;
 
 import ai.philterd.phileas.model.objects.DocumentAnalysis;
-import ai.philterd.phileas.model.profile.Crypto;
-import ai.philterd.phileas.model.profile.FPE;
-import ai.philterd.phileas.model.profile.IgnoredPattern;
-import ai.philterd.phileas.model.profile.filters.strategies.AbstractFilterStrategy;
+import ai.philterd.phileas.model.policy.Crypto;
+import ai.philterd.phileas.model.policy.FPE;
+import ai.philterd.phileas.model.policy.IgnoredPattern;
+import ai.philterd.phileas.model.policy.filters.strategies.AbstractFilterStrategy;
 import ai.philterd.phileas.model.services.AlertService;
 import ai.philterd.phileas.model.services.AnonymizationService;
 import org.apache.commons.collections4.CollectionUtils;
@@ -27,8 +27,8 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.*;
 
-import static ai.philterd.phileas.model.profile.filters.strategies.AbstractFilterStrategy.CRYPTO_REPLACE;
-import static ai.philterd.phileas.model.profile.filters.strategies.AbstractFilterStrategy.FPE_ENCRYPT_REPLACE;
+import static ai.philterd.phileas.model.policy.filters.strategies.AbstractFilterStrategy.CRYPTO_REPLACE;
+import static ai.philterd.phileas.model.policy.filters.strategies.AbstractFilterStrategy.FPE_ENCRYPT_REPLACE;
 
 public class FilterConfiguration {
 

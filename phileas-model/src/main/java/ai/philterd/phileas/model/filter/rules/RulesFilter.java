@@ -19,7 +19,7 @@ import ai.philterd.phileas.model.enums.FilterType;
 import ai.philterd.phileas.model.filter.Filter;
 import ai.philterd.phileas.model.filter.FilterConfiguration;
 import ai.philterd.phileas.model.objects.*;
-import ai.philterd.phileas.model.profile.FilterProfile;
+import ai.philterd.phileas.model.policy.Policy;
 
 import java.util.*;
 import java.util.regex.Matcher;
@@ -55,21 +55,21 @@ public abstract class RulesFilter extends Filter {
 
     /**
      * Find {@link Span spans} matching the {@link Pattern}.
-     * @param filterProfile The {@link FilterProfile} to use.
+     * @param policy The {@link Policy} to use.
      * @param analyzer A filter {@link Analyzer}.
      * @param input The text input.
      * @param context The context.
      * @param documentId The document ID.
      * @return A list of matching {@link Span spans}.
      */
-    protected List<Span> findSpans(FilterProfile filterProfile, Analyzer analyzer, String input, String context,
+    protected List<Span> findSpans(Policy policy, Analyzer analyzer, String input, String context,
                                    String documentId) throws Exception {
-        return findSpans(filterProfile, analyzer, input, context, documentId, Collections.emptyMap());
+        return findSpans(policy, analyzer, input, context, documentId, Collections.emptyMap());
     }
 
     /**
      * Find {@link Span spans} matching the {@link Pattern}.
-     * @param filterProfile The {@link FilterProfile} to use.
+     * @param policy The {@link Policy} to use.
      * @param analyzer A filter {@link Analyzer}.
      * @param input The text input.
      * @param context The context.
@@ -77,13 +77,13 @@ public abstract class RulesFilter extends Filter {
      * @param restrictions Restrictions placed on what is a span for the filter.
      * @return A list of matching {@link Span spans}.
      */
-    protected List<Span> findSpans(FilterProfile filterProfile, Analyzer analyzer, String input, String context,
+    protected List<Span> findSpans(Policy policy, Analyzer analyzer, String input, String context,
                                    String documentId, Map<Restriction, List<String>> restrictions) throws Exception {
 
         final List<Span> spans = new LinkedList<>();
 
-        // Is this filter enabled for this filter profile? If not just return empty list.
-        if(filterProfile.getIdentifiers().hasFilter(filterType)) {
+        // Is this filter enabled for this policy? If not just return empty list.
+        if(policy.getIdentifiers().hasFilter(filterType)) {
 
             for(final FilterPattern filterPattern : analyzer.getFilterPatterns()) {
 
@@ -112,7 +112,7 @@ public abstract class RulesFilter extends Filter {
                         final String[] window = getWindow(input, characterStart, characterEnd);
 
                         // Get the span's replacement.
-                        final Replacement replacement = getReplacement(filterProfile.getName(), context, documentId, token,
+                        final Replacement replacement = getReplacement(policy.getName(), context, documentId, token,
                                 window, initialConfidence, filterPattern.getClassification(), filterPattern);
 
                         final Span span = Span.make(characterStart, characterEnd, getFilterType(), context, documentId,
@@ -155,14 +155,14 @@ public abstract class RulesFilter extends Filter {
 
     /**
      * Gets the count of occurrences.
-     * @param filterProfile The {@link FilterProfile} to use.
+     * @param policy The {@link Policy} to use.
      * @param input The input text.
      * @return A count of occurrences in the text.
      */
     @Override
-    public int getOccurrences(FilterProfile filterProfile, String input) throws Exception {
+    public int getOccurrences(Policy policy, String input) throws Exception {
 
-        return filter(filterProfile, "none", "none", 0, input).getSpans().size();
+        return filter(policy, "none", "none", 0, input).getSpans().size();
 
     }
 

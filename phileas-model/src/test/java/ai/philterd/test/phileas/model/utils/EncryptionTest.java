@@ -15,8 +15,8 @@
  */
 package ai.philterd.test.phileas.model.utils;
 
-import ai.philterd.phileas.model.profile.Crypto;
-import ai.philterd.phileas.model.profile.FPE;
+import ai.philterd.phileas.model.policy.Crypto;
+import ai.philterd.phileas.model.policy.FPE;
 import ai.philterd.phileas.model.utils.Encryption;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

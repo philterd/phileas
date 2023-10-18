@@ -15,19 +15,19 @@
  */
 package ai.philterd.phileas.model.domain;
 
-import ai.philterd.phileas.model.profile.Ignored;
-import ai.philterd.phileas.model.profile.filters.AbstractFilter;
+import ai.philterd.phileas.model.policy.Ignored;
+import ai.philterd.phileas.model.policy.filters.AbstractFilter;
 
 import java.util.List;
 
 /**
  * Represents an industry domain in which Philter can be used.
- * A domain provides convenience filter profile configuration
+ * A domain provides convenience policy configuration
  * options.
  */
 public abstract class Domain {
 
-    // These are the domain names given in the filter profile
+    // These are the domain names given in the policy
     // used to trigger the activation of the respective domain.
     public static final String DOMAIN_LEGAL = "legal";
     public static final String DOMAIN_HEALTH = "health";
@@ -44,8 +44,8 @@ public abstract class Domain {
      * domain.
      *
      * These filters will only be applied if the same
-     * filter is not already defined in the filter profile. By enabling
-     * a domain and then still adding the filter to the filter profile
+     * filter is not already defined in the policy. By enabling
+     * a domain and then still adding the filter to the policy
      * the user can override this filter (can disable it, customize it, etc.)
      * @return A list of {@link AbstractFilter}.
      */

@@ -20,9 +20,9 @@ import com.google.gson.GsonBuilder;
 import ai.philterd.phileas.configuration.PhileasConfiguration;
 import ai.philterd.phileas.model.enums.MimeType;
 import ai.philterd.phileas.model.objects.Span;
-import ai.philterd.phileas.model.profile.FilterProfile;
-import ai.philterd.phileas.model.profile.filters.CustomDictionary;
-import ai.philterd.phileas.model.profile.filters.strategies.custom.CustomDictionaryFilterStrategy;
+import ai.philterd.phileas.model.policy.Policy;
+import ai.philterd.phileas.model.policy.filters.CustomDictionary;
+import ai.philterd.phileas.model.policy.filters.strategies.custom.CustomDictionaryFilterStrategy;
 import ai.philterd.phileas.model.responses.BinaryDocumentFilterResponse;
 import ai.philterd.phileas.model.responses.FilterResponse;
 import ai.philterd.phileas.model.serializers.PlaceholderDeserializer;
@@ -81,13 +81,13 @@ public class EndToEndTests {
         final Path temp = Files.createTempDirectory("philter");
 
         final File file1 = Paths.get(temp.toFile().getAbsolutePath(), "pdf.json").toFile();
-        LOGGER.info("Writing profile to {}", file1.getAbsolutePath());
-        FileUtils.writeStringToFile(file1, gson.toJson(getPdfFilterWithPersonProfile("pdf")), Charset.defaultCharset());
+        LOGGER.info("Writing policy to {}", file1.getAbsolutePath());
+        FileUtils.writeStringToFile(file1, gson.toJson(getPdfFilterWithPersonPolicy("pdf")), Charset.defaultCharset());
 
         Properties properties = new Properties();
         properties.setProperty("indexes.directory", INDEXES_DIRECTORY);
         properties.setProperty("store.enabled", "false");
-        properties.setProperty("filter.profiles.directory", temp.toFile().getAbsolutePath());
+        properties.setProperty("filter.policies.directory", temp.toFile().getAbsolutePath());
 
         final PhileasConfiguration phileasConfiguration = ConfigFactory.create(PhileasConfiguration.class, properties);
 
@@ -114,13 +114,13 @@ public class EndToEndTests {
 
         final Path temp = Files.createTempDirectory("philter");
         final File file = Paths.get(temp.toFile().getAbsolutePath(), "default.json").toFile();
-        LOGGER.info("Writing profile to {}", file.getAbsolutePath());
-        FileUtils.writeStringToFile(file, gson.toJson(getFilterProfile("default")), Charset.defaultCharset());
+        LOGGER.info("Writing policy to {}", file.getAbsolutePath());
+        FileUtils.writeStringToFile(file, gson.toJson(getPolicy("default")), Charset.defaultCharset());
 
         Properties properties = new Properties();
         properties.setProperty("indexes.directory", INDEXES_DIRECTORY);
         properties.setProperty("store.enabled", "false");
-        properties.setProperty("filter.profiles.directory", temp.toFile().getAbsolutePath());
+        properties.setProperty("filter.policies.directory", temp.toFile().getAbsolutePath());
 
         final PhileasConfiguration phileasConfiguration = ConfigFactory.create(PhileasConfiguration.class, properties);
 
@@ -139,13 +139,13 @@ public class EndToEndTests {
 
         final Path temp = Files.createTempDirectory("philter");
         final File file = Paths.get(temp.toFile().getAbsolutePath(), "default.json").toFile();
-        LOGGER.info("Writing profile to {}", file.getAbsolutePath());
-        FileUtils.writeStringToFile(file, gson.toJson(getFilterProfile("default")), Charset.defaultCharset());
+        LOGGER.info("Writing policy to {}", file.getAbsolutePath());
+        FileUtils.writeStringToFile(file, gson.toJson(getPolicy("default")), Charset.defaultCharset());
 
         Properties properties = new Properties();
         properties.setProperty("indexes.directory", INDEXES_DIRECTORY);
         properties.setProperty("store.enabled", "false");
-        properties.setProperty("filter.profiles.directory", temp.toFile().getAbsolutePath());
+        properties.setProperty("filter.policies.directory", temp.toFile().getAbsolutePath());
 
         final PhileasConfiguration phileasConfiguration = ConfigFactory.create(PhileasConfiguration.class, properties);
 
@@ -164,13 +164,13 @@ public class EndToEndTests {
 
         final Path temp = Files.createTempDirectory("philter");
         final File file = Paths.get(temp.toFile().getAbsolutePath(), "default.json").toFile();
-        LOGGER.info("Writing profile to {}", file.getAbsolutePath());
-        FileUtils.writeStringToFile(file, gson.toJson(getFilterProfile("default")), Charset.defaultCharset());
+        LOGGER.info("Writing policy to {}", file.getAbsolutePath());
+        FileUtils.writeStringToFile(file, gson.toJson(getPolicy("default")), Charset.defaultCharset());
 
         Properties properties = new Properties();
         properties.setProperty("indexes.directory", INDEXES_DIRECTORY);
         properties.setProperty("store.enabled", "false");
-        properties.setProperty("filter.profiles.directory", temp.toFile().getAbsolutePath());
+        properties.setProperty("filter.policies.directory", temp.toFile().getAbsolutePath());
 
         final PhileasConfiguration phileasConfiguration = ConfigFactory.create(PhileasConfiguration.class, properties);
 
@@ -189,13 +189,13 @@ public class EndToEndTests {
 
         final Path temp = Files.createTempDirectory("philter");
         final File file = Paths.get(temp.toFile().getAbsolutePath(), "default.json").toFile();
-        LOGGER.info("Writing profile to {}", file.getAbsolutePath());
-        FileUtils.writeStringToFile(file, gson.toJson(getFilterProfile("default")), Charset.defaultCharset());
+        LOGGER.info("Writing policy to {}", file.getAbsolutePath());
+        FileUtils.writeStringToFile(file, gson.toJson(getPolicy("default")), Charset.defaultCharset());
 
         Properties properties = new Properties();
         properties.setProperty("indexes.directory", INDEXES_DIRECTORY);
         properties.setProperty("store.enabled", "false");
-        properties.setProperty("filter.profiles.directory", temp.toFile().getAbsolutePath());
+        properties.setProperty("filter.policies.directory", temp.toFile().getAbsolutePath());
 
         final PhileasConfiguration phileasConfiguration = ConfigFactory.create(PhileasConfiguration.class, properties);
 
@@ -214,13 +214,13 @@ public class EndToEndTests {
 
         final Path temp = Files.createTempDirectory("philter");
         final File file = Paths.get(temp.toFile().getAbsolutePath(), "default.json").toFile();
-        LOGGER.info("Writing profile to {}", file.getAbsolutePath());
-        FileUtils.writeStringToFile(file, gson.toJson(getFilterProfile("default")), Charset.defaultCharset());
+        LOGGER.info("Writing policy to {}", file.getAbsolutePath());
+        FileUtils.writeStringToFile(file, gson.toJson(getPolicy("default")), Charset.defaultCharset());
 
         Properties properties = new Properties();
         properties.setProperty("indexes.directory", INDEXES_DIRECTORY);
         properties.setProperty("store.enabled", "false");
-        properties.setProperty("filter.profiles.directory", temp.toFile().getAbsolutePath());
+        properties.setProperty("filter.policies.directory", temp.toFile().getAbsolutePath());
 
         final PhileasConfiguration phileasConfiguration = ConfigFactory.create(PhileasConfiguration.class, properties);
 
@@ -239,13 +239,13 @@ public class EndToEndTests {
 
         final Path temp = Files.createTempDirectory("philter");
         final File file = Paths.get(temp.toFile().getAbsolutePath(), "default.json").toFile();
-        LOGGER.info("Writing profile to {}", file.getAbsolutePath());
-        FileUtils.writeStringToFile(file, gson.toJson(getFilterProfile("default")), Charset.defaultCharset());
+        LOGGER.info("Writing policy to {}", file.getAbsolutePath());
+        FileUtils.writeStringToFile(file, gson.toJson(getPolicy("default")), Charset.defaultCharset());
 
         Properties properties = new Properties();
         properties.setProperty("indexes.directory", INDEXES_DIRECTORY);
         properties.setProperty("store.enabled", "false");
-        properties.setProperty("filter.profiles.directory", temp.toFile().getAbsolutePath());
+        properties.setProperty("filter.policies.directory", temp.toFile().getAbsolutePath());
 
         final PhileasConfiguration phileasConfiguration = ConfigFactory.create(PhileasConfiguration.class, properties);
 
@@ -264,13 +264,13 @@ public class EndToEndTests {
 
         final Path temp = Files.createTempDirectory("philter");
         final File file = Paths.get(temp.toFile().getAbsolutePath(), "default.json").toFile();
-        LOGGER.info("Writing profile to {}", file.getAbsolutePath());
-        FileUtils.writeStringToFile(file, gson.toJson(getFilterProfile("default")), Charset.defaultCharset());
+        LOGGER.info("Writing policy to {}", file.getAbsolutePath());
+        FileUtils.writeStringToFile(file, gson.toJson(getPolicy("default")), Charset.defaultCharset());
 
         Properties properties = new Properties();
         properties.setProperty("indexes.directory", INDEXES_DIRECTORY);
         properties.setProperty("store.enabled", "false");
-        properties.setProperty("filter.profiles.directory", temp.toFile().getAbsolutePath());
+        properties.setProperty("filter.policies.directory", temp.toFile().getAbsolutePath());
 
         final PhileasConfiguration phileasConfiguration = ConfigFactory.create(PhileasConfiguration.class, properties);
 
@@ -289,13 +289,13 @@ public class EndToEndTests {
 
         final Path temp = Files.createTempDirectory("philter");
         final File file = Paths.get(temp.toFile().getAbsolutePath(), "default.json").toFile();
-        LOGGER.info("Writing profile to {}", file.getAbsolutePath());
-        FileUtils.writeStringToFile(file, gson.toJson(getFilterProfile("default")), Charset.defaultCharset());
+        LOGGER.info("Writing policy to {}", file.getAbsolutePath());
+        FileUtils.writeStringToFile(file, gson.toJson(getPolicy("default")), Charset.defaultCharset());
 
         Properties properties = new Properties();
         properties.setProperty("indexes.directory", INDEXES_DIRECTORY);
         properties.setProperty("store.enabled", "false");
-        properties.setProperty("filter.profiles.directory", temp.toFile().getAbsolutePath());
+        properties.setProperty("filter.policies.directory", temp.toFile().getAbsolutePath());
 
         final PhileasConfiguration phileasConfiguration = ConfigFactory.create(PhileasConfiguration.class, properties);
 
@@ -315,13 +315,13 @@ public class EndToEndTests {
 
         final Path temp = Files.createTempDirectory("philter");
         final File file = Paths.get(temp.toFile().getAbsolutePath(), "default.json").toFile();
-        LOGGER.info("Writing profile to {}", file.getAbsolutePath());
-        FileUtils.writeStringToFile(file, gson.toJson(getFilterProfile("default")), Charset.defaultCharset());
+        LOGGER.info("Writing policy to {}", file.getAbsolutePath());
+        FileUtils.writeStringToFile(file, gson.toJson(getPolicy("default")), Charset.defaultCharset());
 
         Properties properties = new Properties();
         properties.setProperty("indexes.directory", INDEXES_DIRECTORY);
         properties.setProperty("store.enabled", "false");
-        properties.setProperty("filter.profiles.directory", temp.toFile().getAbsolutePath());
+        properties.setProperty("filter.policies.directory", temp.toFile().getAbsolutePath());
 
         final PhileasConfiguration phileasConfiguration = ConfigFactory.create(PhileasConfiguration.class, properties);
 
@@ -340,13 +340,13 @@ public class EndToEndTests {
 
         final Path temp = Files.createTempDirectory("philter");
         final File file = Paths.get(temp.toFile().getAbsolutePath(), "default.json").toFile();
-        LOGGER.info("Writing profile to {}", file.getAbsolutePath());
-        FileUtils.writeStringToFile(file, gson.toJson(getFilterProfile("default")), Charset.defaultCharset());
+        LOGGER.info("Writing policy to {}", file.getAbsolutePath());
+        FileUtils.writeStringToFile(file, gson.toJson(getPolicy("default")), Charset.defaultCharset());
 
         Properties properties = new Properties();
         properties.setProperty("indexes.directory", INDEXES_DIRECTORY);
         properties.setProperty("store.enabled", "false");
-        properties.setProperty("filter.profiles.directory", temp.toFile().getAbsolutePath());
+        properties.setProperty("filter.policies.directory", temp.toFile().getAbsolutePath());
 
         final PhileasConfiguration phileasConfiguration = ConfigFactory.create(PhileasConfiguration.class, properties);
 
@@ -370,13 +370,13 @@ public class EndToEndTests {
 
         final Path temp = Files.createTempDirectory("philter");
         final File file = Paths.get(temp.toFile().getAbsolutePath(), "default.json").toFile();
-        LOGGER.info("Writing profile to {}", file.getAbsolutePath());
-        FileUtils.writeStringToFile(file, gson.toJson(getFilterProfile("default")), Charset.defaultCharset());
+        LOGGER.info("Writing policy to {}", file.getAbsolutePath());
+        FileUtils.writeStringToFile(file, gson.toJson(getPolicy("default")), Charset.defaultCharset());
 
         Properties properties = new Properties();
         properties.setProperty("indexes.directory", INDEXES_DIRECTORY);
         properties.setProperty("store.enabled", "false");
-        properties.setProperty("filter.profiles.directory", temp.toFile().getAbsolutePath());
+        properties.setProperty("filter.policies.directory", temp.toFile().getAbsolutePath());
 
         final PhileasConfiguration phileasConfiguration = ConfigFactory.create(PhileasConfiguration.class, properties);
 
@@ -397,13 +397,13 @@ public class EndToEndTests {
 
         final Path temp = Files.createTempDirectory("philter");
         final File file = Paths.get(temp.toFile().getAbsolutePath(), "default.json").toFile();
-        LOGGER.info("Writing profile to {}", file.getAbsolutePath());
-        FileUtils.writeStringToFile(file, gson.toJson(getFilterProfile("default")), Charset.defaultCharset());
+        LOGGER.info("Writing policy to {}", file.getAbsolutePath());
+        FileUtils.writeStringToFile(file, gson.toJson(getPolicy("default")), Charset.defaultCharset());
 
         Properties properties = new Properties();
         properties.setProperty("indexes.directory", INDEXES_DIRECTORY);
         properties.setProperty("store.enabled", "false");
-        properties.setProperty("filter.profiles.directory", temp.toFile().getAbsolutePath());
+        properties.setProperty("filter.policies.directory", temp.toFile().getAbsolutePath());
 
         final PhileasConfiguration phileasConfiguration = ConfigFactory.create(PhileasConfiguration.class, properties);
 
@@ -429,13 +429,13 @@ public class EndToEndTests {
 
         final Path temp = Files.createTempDirectory("philter");
         final File file = Paths.get(temp.toFile().getAbsolutePath(), "default.json").toFile();
-        LOGGER.info("Writing profile to {}", file.getAbsolutePath());
-        FileUtils.writeStringToFile(file, gson.toJson(getFilterProfile("default")), Charset.defaultCharset());
+        LOGGER.info("Writing policy to {}", file.getAbsolutePath());
+        FileUtils.writeStringToFile(file, gson.toJson(getPolicy("default")), Charset.defaultCharset());
 
         Properties properties = new Properties();
         properties.setProperty("indexes.directory", INDEXES_DIRECTORY);
         properties.setProperty("store.enabled", "false");
-        properties.setProperty("filter.profiles.directory", temp.toFile().getAbsolutePath());
+        properties.setProperty("filter.policies.directory", temp.toFile().getAbsolutePath());
 
         final PhileasConfiguration phileasConfiguration = ConfigFactory.create(PhileasConfiguration.class, properties);
 
@@ -459,13 +459,13 @@ public class EndToEndTests {
 
         final Path temp = Files.createTempDirectory("philter");
         final File file = Paths.get(temp.toFile().getAbsolutePath(), "default.json").toFile();
-        LOGGER.info("Writing profile to {}", file.getAbsolutePath());
-        FileUtils.writeStringToFile(file, gson.toJson(getFilterProfile("default")), Charset.defaultCharset());
+        LOGGER.info("Writing policy to {}", file.getAbsolutePath());
+        FileUtils.writeStringToFile(file, gson.toJson(getPolicy("default")), Charset.defaultCharset());
 
         Properties properties = new Properties();
         properties.setProperty("indexes.directory", INDEXES_DIRECTORY);
         properties.setProperty("store.enabled", "false");
-        properties.setProperty("filter.profiles.directory", temp.toFile().getAbsolutePath());
+        properties.setProperty("filter.policies.directory", temp.toFile().getAbsolutePath());
 
         final PhileasConfiguration phileasConfiguration = ConfigFactory.create(PhileasConfiguration.class, properties);
 
@@ -489,13 +489,13 @@ public class EndToEndTests {
 
         final Path temp = Files.createTempDirectory("philter");
         final File file = Paths.get(temp.toFile().getAbsolutePath(), "default.json").toFile();
-        LOGGER.info("Writing profile to {}", file.getAbsolutePath());
-        FileUtils.writeStringToFile(file, gson.toJson(getFilterProfile("default")), Charset.defaultCharset());
+        LOGGER.info("Writing policy to {}", file.getAbsolutePath());
+        FileUtils.writeStringToFile(file, gson.toJson(getPolicy("default")), Charset.defaultCharset());
 
         Properties properties = new Properties();
         properties.setProperty("indexes.directory", INDEXES_DIRECTORY);
         properties.setProperty("store.enabled", "false");
-        properties.setProperty("filter.profiles.directory", temp.toFile().getAbsolutePath());
+        properties.setProperty("filter.policies.directory", temp.toFile().getAbsolutePath());
 
         final PhileasConfiguration phileasConfiguration = ConfigFactory.create(PhileasConfiguration.class, properties);
 
@@ -519,15 +519,15 @@ public class EndToEndTests {
 
         final Path temp = Files.createTempDirectory("philter");
         final File file = Paths.get(temp.toFile().getAbsolutePath(), "default.json").toFile();
-        LOGGER.info("Writing profile to {}", file.getAbsolutePath());
-        final String profile = gson.toJson(getFilterProfileJustIdentifier("default"));
-        LOGGER.info(profile);
-        FileUtils.writeStringToFile(file, profile);
+        LOGGER.info("Writing policy to {}", file.getAbsolutePath());
+        final String policy = gson.toJson(getPolicyJustIdentifier("default"));
+        LOGGER.info(policy);
+        FileUtils.writeStringToFile(file, policy);
 
         Properties properties = new Properties();
         properties.setProperty("indexes.directory", INDEXES_DIRECTORY);
         properties.setProperty("store.enabled", "false");
-        properties.setProperty("filter.profiles.directory", temp.toFile().getAbsolutePath());
+        properties.setProperty("filter.policies.directory", temp.toFile().getAbsolutePath());
 
         final PhileasConfiguration phileasConfiguration = ConfigFactory.create(PhileasConfiguration.class, properties);
 
@@ -551,15 +551,15 @@ public class EndToEndTests {
 
         final Path temp = Files.createTempDirectory("philter");
         final File file = Paths.get(temp.toFile().getAbsolutePath(), "streetaddress.json").toFile();
-        LOGGER.info("Writing profile to {}", file.getAbsolutePath());
-        final String profile = gson.toJson(getFilterProfileJustStreetAddress("streetaddress"));
-        LOGGER.info(profile);
-        FileUtils.writeStringToFile(file, profile);
+        LOGGER.info("Writing policy to {}", file.getAbsolutePath());
+        final String policy = gson.toJson(getPolicyJustStreetAddress("streetaddress"));
+        LOGGER.info(policy);
+        FileUtils.writeStringToFile(file, policy);
 
         Properties properties = new Properties();
         properties.setProperty("indexes.directory", INDEXES_DIRECTORY);
         properties.setProperty("store.enabled", "false");
-        properties.setProperty("filter.profiles.directory", temp.toFile().getAbsolutePath());
+        properties.setProperty("filter.policies.directory", temp.toFile().getAbsolutePath());
 
         final PhileasConfiguration phileasConfiguration = ConfigFactory.create(PhileasConfiguration.class, properties);
 
@@ -586,19 +586,19 @@ public class EndToEndTests {
         customDictionary.setTerms(Arrays.asList("george", "samuel"));
         customDictionary.setFuzzy(false);
 
-        final FilterProfile filterProfile = new FilterProfile();
-        filterProfile.setName("custom-dictionary");
-        filterProfile.getIdentifiers().setCustomDictionaries(Arrays.asList(customDictionary));
+        final Policy policy = new Policy();
+        policy.setName("custom-dictionary");
+        policy.getIdentifiers().setCustomDictionaries(Arrays.asList(customDictionary));
 
         final Path temp = Files.createTempDirectory("philter");
         final File file = Paths.get(temp.toFile().getAbsolutePath(), "default.json").toFile();
-        FileUtils.writeStringToFile(file, gson.toJson(filterProfile), Charset.defaultCharset());
-        LOGGER.info("Filter profile written to {}", file.getAbsolutePath());
+        FileUtils.writeStringToFile(file, gson.toJson(policy), Charset.defaultCharset());
+        LOGGER.info("Policy written to {}", file.getAbsolutePath());
 
         final Properties properties = new Properties();
         properties.setProperty("indexes.directory", INDEXES_DIRECTORY);
         properties.setProperty("store.enabled", "false");
-        properties.setProperty("filter.profiles.directory", temp.toFile().getAbsolutePath());
+        properties.setProperty("filter.policies.directory", temp.toFile().getAbsolutePath());
 
         final PhileasConfiguration phileasConfiguration = ConfigFactory.create(PhileasConfiguration.class, properties);
 
@@ -630,18 +630,18 @@ public class EndToEndTests {
         customDictionary.setFuzzy(false);
         customDictionary.setSensitivity("low");
 
-        final FilterProfile filterProfile = new FilterProfile();
-        filterProfile.setName("custom-dictionary");
-        filterProfile.getIdentifiers().setCustomDictionaries(Arrays.asList(customDictionary));
+        final Policy policy = new Policy();
+        policy.setName("custom-dictionary");
+        policy.getIdentifiers().setCustomDictionaries(Arrays.asList(customDictionary));
 
         final File file = Paths.get(temp.toFile().getAbsolutePath(), "default.json").toFile();
-        FileUtils.writeStringToFile(file, gson.toJson(filterProfile), Charset.defaultCharset());
-        LOGGER.info("Filter profile written to {}", file.getAbsolutePath());
+        FileUtils.writeStringToFile(file, gson.toJson(policy), Charset.defaultCharset());
+        LOGGER.info("Policy written to {}", file.getAbsolutePath());
 
         final Properties properties = new Properties();
         properties.setProperty("indexes.directory", INDEXES_DIRECTORY);
         properties.setProperty("store.enabled", "false");
-        properties.setProperty("filter.profiles.directory", temp.toFile().getAbsolutePath());
+        properties.setProperty("filter.policies.directory", temp.toFile().getAbsolutePath());
 
         final PhileasConfiguration phileasConfiguration = ConfigFactory.create(PhileasConfiguration.class, properties);
 
@@ -671,18 +671,18 @@ public class EndToEndTests {
         customDictionary.setClassification("names");
         customDictionary.setFuzzy(false);
 
-        final FilterProfile filterProfile = new FilterProfile();
-        filterProfile.setName("custom-dictionary-bloom");
-        filterProfile.getIdentifiers().setCustomDictionaries(Arrays.asList(customDictionary));
+        final Policy policy = new Policy();
+        policy.setName("custom-dictionary-bloom");
+        policy.getIdentifiers().setCustomDictionaries(Arrays.asList(customDictionary));
 
         final File file = Paths.get(temp.toFile().getAbsolutePath(), "default.json").toFile();
-        FileUtils.writeStringToFile(file, gson.toJson(filterProfile), Charset.defaultCharset());
-        LOGGER.info("Filter profile written to {}", file.getAbsolutePath());
+        FileUtils.writeStringToFile(file, gson.toJson(policy), Charset.defaultCharset());
+        LOGGER.info("Policy written to {}", file.getAbsolutePath());
 
         final Properties properties = new Properties();
         properties.setProperty("indexes.directory", INDEXES_DIRECTORY);
         properties.setProperty("store.enabled", "false");
-        properties.setProperty("filter.profiles.directory", temp.toFile().getAbsolutePath());
+        properties.setProperty("filter.policies.directory", temp.toFile().getAbsolutePath());
 
         final PhileasConfiguration phileasConfiguration = ConfigFactory.create(PhileasConfiguration.class, properties);
 
@@ -701,13 +701,13 @@ public class EndToEndTests {
 
         final Path temp = Files.createTempDirectory("philter");
         final File file = Paths.get(temp.toFile().getAbsolutePath(), "default.json").toFile();
-        LOGGER.info("Writing profile to {}", file.getAbsolutePath());
-        FileUtils.writeStringToFile(file, gson.toJson(getFilterProfile("default")), Charset.defaultCharset());
+        LOGGER.info("Writing policy to {}", file.getAbsolutePath());
+        FileUtils.writeStringToFile(file, gson.toJson(getPolicy("default")), Charset.defaultCharset());
 
         Properties properties = new Properties();
         properties.setProperty("indexes.directory", INDEXES_DIRECTORY);
         properties.setProperty("store.enabled", "false");
-        properties.setProperty("filter.profiles.directory", temp.toFile().getAbsolutePath());
+        properties.setProperty("filter.policies.directory", temp.toFile().getAbsolutePath());
 
         final PhileasConfiguration phileasConfiguration = ConfigFactory.create(PhileasConfiguration.class, properties);
 
@@ -723,22 +723,22 @@ public class EndToEndTests {
     }
 
     @Test
-    public void endToEndMultipleFilterProfiles() throws Exception {
+    public void endToEndMultiplePolicys() throws Exception {
 
         final Path temp = Files.createTempDirectory("philter");
 
         final File file1 = Paths.get(temp.toFile().getAbsolutePath(), "default.json").toFile();
-        LOGGER.info("Writing profile to {}", file1.getAbsolutePath());
-        FileUtils.writeStringToFile(file1, gson.toJson(getFilterProfile("default")), Charset.defaultCharset());
+        LOGGER.info("Writing policy to {}", file1.getAbsolutePath());
+        FileUtils.writeStringToFile(file1, gson.toJson(getPolicy("default")), Charset.defaultCharset());
 
         final File file2 = Paths.get(temp.toFile().getAbsolutePath(), "justcreditcard.json").toFile();
-        LOGGER.info("Writing profile to {}", file2.getAbsolutePath());
-        FileUtils.writeStringToFile(file2, gson.toJson(getFilterProfileJustCreditCard("justcreditcard")), Charset.defaultCharset());
+        LOGGER.info("Writing policy to {}", file2.getAbsolutePath());
+        FileUtils.writeStringToFile(file2, gson.toJson(getPolicyJustCreditCard("justcreditcard")), Charset.defaultCharset());
 
         Properties properties = new Properties();
         properties.setProperty("indexes.directory", INDEXES_DIRECTORY);
         properties.setProperty("store.enabled", "false");
-        properties.setProperty("filter.profiles.directory", temp.toFile().getAbsolutePath());
+        properties.setProperty("filter.policies.directory", temp.toFile().getAbsolutePath());
 
         final PhileasConfiguration phileasConfiguration = ConfigFactory.create(PhileasConfiguration.class, properties);
 
@@ -757,13 +757,13 @@ public class EndToEndTests {
         final Path temp = Files.createTempDirectory("philter");
 
         final File file2 = Paths.get(temp.toFile().getAbsolutePath(), "justcreditcard.json").toFile();
-        LOGGER.info("Writing profile to {}", file2.getAbsolutePath());
-        FileUtils.writeStringToFile(file2, gson.toJson(getFilterProfileJustCreditCard("justcreditcard")), Charset.defaultCharset());
+        LOGGER.info("Writing policy to {}", file2.getAbsolutePath());
+        FileUtils.writeStringToFile(file2, gson.toJson(getPolicyJustCreditCard("justcreditcard")), Charset.defaultCharset());
 
         Properties properties = new Properties();
         properties.setProperty("indexes.directory", INDEXES_DIRECTORY);
         properties.setProperty("store.enabled", "false");
-        properties.setProperty("filter.profiles.directory", temp.toFile().getAbsolutePath());
+        properties.setProperty("filter.policies.directory", temp.toFile().getAbsolutePath());
 
         final PhileasConfiguration phileasConfiguration = ConfigFactory.create(PhileasConfiguration.class, properties);
 
@@ -782,13 +782,13 @@ public class EndToEndTests {
         final Path temp = Files.createTempDirectory("philter");
 
         final File file2 = Paths.get(temp.toFile().getAbsolutePath(), "justcreditcard.json").toFile();
-        LOGGER.info("Writing profile to {}", file2.getAbsolutePath());
-        FileUtils.writeStringToFile(file2, gson.toJson(getFilterProfileJustCreditCard("justcreditcard")), Charset.defaultCharset());
+        LOGGER.info("Writing policy to {}", file2.getAbsolutePath());
+        FileUtils.writeStringToFile(file2, gson.toJson(getPolicyJustCreditCard("justcreditcard")), Charset.defaultCharset());
 
         Properties properties = new Properties();
         properties.setProperty("indexes.directory", INDEXES_DIRECTORY);
         properties.setProperty("store.enabled", "false");
-        properties.setProperty("filter.profiles.directory", temp.toFile().getAbsolutePath());
+        properties.setProperty("filter.policies.directory", temp.toFile().getAbsolutePath());
 
         final PhileasConfiguration phileasConfiguration = ConfigFactory.create(PhileasConfiguration.class, properties);
 
@@ -806,13 +806,13 @@ public class EndToEndTests {
 
         final Path temp = Files.createTempDirectory("philter");
         final File file = Paths.get(temp.toFile().getAbsolutePath(), "default.json").toFile();
-        LOGGER.info("Writing profile to {}", file.getAbsolutePath());
-        FileUtils.writeStringToFile(file, gson.toJson(getFilterProfileZipCodeWithIgnored("default")), Charset.defaultCharset());
+        LOGGER.info("Writing policy to {}", file.getAbsolutePath());
+        FileUtils.writeStringToFile(file, gson.toJson(getPolicyZipCodeWithIgnored("default")), Charset.defaultCharset());
 
         Properties properties = new Properties();
         properties.setProperty("indexes.directory", INDEXES_DIRECTORY);
         properties.setProperty("store.enabled", "false");
-        properties.setProperty("filter.profiles.directory", temp.toFile().getAbsolutePath());
+        properties.setProperty("filter.policies.directory", temp.toFile().getAbsolutePath());
 
         final PhileasConfiguration phileasConfiguration = ConfigFactory.create(PhileasConfiguration.class, properties);
 
@@ -830,13 +830,13 @@ public class EndToEndTests {
 
         final Path temp = Files.createTempDirectory("philter");
         final File file = Paths.get(temp.toFile().getAbsolutePath(), "default.json").toFile();
-        LOGGER.info("Writing profile to {}", file.getAbsolutePath());
-        FileUtils.writeStringToFile(file, gson.toJson(getFilterProfileZipCodeWithIgnoredFromFile("default")), Charset.defaultCharset());
+        LOGGER.info("Writing policy to {}", file.getAbsolutePath());
+        FileUtils.writeStringToFile(file, gson.toJson(getPolicyZipCodeWithIgnoredFromFile("default")), Charset.defaultCharset());
 
         Properties properties = new Properties();
         properties.setProperty("indexes.directory", INDEXES_DIRECTORY);
         properties.setProperty("store.enabled", "false");
-        properties.setProperty("filter.profiles.directory", temp.toFile().getAbsolutePath());
+        properties.setProperty("filter.policies.directory", temp.toFile().getAbsolutePath());
 
         final PhileasConfiguration phileasConfiguration = ConfigFactory.create(PhileasConfiguration.class, properties);
 
@@ -850,18 +850,18 @@ public class EndToEndTests {
     }
 
     @Test
-    public void endToEndNonexistentFilterProfile() throws Exception {
+    public void endToEndNonexistentPolicy() throws Exception {
 
         final Path temp = Files.createTempDirectory("philter");
 
         final File file1 = Paths.get(temp.toFile().getAbsolutePath(), "default.json").toFile();
-        LOGGER.info("Writing profile to {}", file1.getAbsolutePath());
-        FileUtils.writeStringToFile(file1, gson.toJson(getFilterProfile("default")), Charset.defaultCharset());
+        LOGGER.info("Writing policy to {}", file1.getAbsolutePath());
+        FileUtils.writeStringToFile(file1, gson.toJson(getPolicy("default")), Charset.defaultCharset());
 
         Properties properties = new Properties();
         properties.setProperty("indexes.directory", INDEXES_DIRECTORY);
         properties.setProperty("store.enabled", "false");
-        properties.setProperty("filter.profiles.directory", temp.toFile().getAbsolutePath());
+        properties.setProperty("filter.policies.directory", temp.toFile().getAbsolutePath());
 
         final PhileasConfiguration phileasConfiguration = ConfigFactory.create(PhileasConfiguration.class, properties);
 

@@ -18,12 +18,12 @@ package ai.philterd.test.phileas.services.filters;
 import ai.philterd.phileas.model.enums.FilterType;
 import ai.philterd.phileas.model.enums.SensitivityLevel;
 import ai.philterd.phileas.model.objects.Span;
-import ai.philterd.phileas.model.profile.FilterProfile;
-import ai.philterd.phileas.model.profile.Identifiers;
-import ai.philterd.phileas.model.profile.filters.*;
-import ai.philterd.phileas.model.profile.filters.strategies.custom.CustomDictionaryFilterStrategy;
-import ai.philterd.phileas.model.profile.filters.strategies.dynamic.*;
-import ai.philterd.phileas.model.profile.filters.strategies.rules.*;
+import ai.philterd.phileas.model.policy.Policy;
+import ai.philterd.phileas.model.policy.Identifiers;
+import ai.philterd.phileas.model.policy.filters.*;
+import ai.philterd.phileas.model.policy.filters.strategies.custom.CustomDictionaryFilterStrategy;
+import ai.philterd.phileas.model.policy.filters.strategies.dynamic.*;
+import ai.philterd.phileas.model.policy.filters.strategies.rules.*;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -40,10 +40,10 @@ public abstract class AbstractFilterTest {
     protected final int windowSize = 3;
 
     /**
-     * Gets a {@link FilterProfile} where all non-deterministic filters use the given {@link SensitivityLevel}.
-     * @return A {@link FilterProfile} where all non-deterministic filters use the given {@link SensitivityLevel}.
+     * Gets a {@link Policy} where all non-deterministic filters use the given {@link SensitivityLevel}.
+     * @return A {@link Policy} where all non-deterministic filters use the given {@link SensitivityLevel}.
      */
-    public FilterProfile getFilterProfile() throws IOException {
+    public Policy getPolicy() throws IOException {
 
         CustomDictionary customDictionary = new CustomDictionary();
         customDictionary.setCustomDictionaryFilterStrategies(Arrays.asList(new CustomDictionaryFilterStrategy()));
@@ -189,11 +189,11 @@ public abstract class AbstractFilterTest {
         identifiers.setState(state);
         identifiers.setSurname(surname);
 
-        FilterProfile filterProfile = new FilterProfile();
-        filterProfile.setName("default");
-        filterProfile.setIdentifiers(identifiers);
+        Policy policy = new Policy();
+        policy.setName("default");
+        policy.setIdentifiers(identifiers);
 
-        return filterProfile;
+        return policy;
 
     }
 

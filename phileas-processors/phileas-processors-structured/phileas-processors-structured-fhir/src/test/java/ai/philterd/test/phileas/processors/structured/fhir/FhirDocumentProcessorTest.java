@@ -22,11 +22,11 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import ai.philterd.phileas.processors.structured.fhir.FhirDocumentProcessor;
-import ai.philterd.phileas.model.profile.Crypto;
-import ai.philterd.phileas.model.profile.FilterProfile;
-import ai.philterd.phileas.model.profile.Structured;
-import ai.philterd.phileas.model.profile.fhir4.FhirItem;
-import ai.philterd.phileas.model.profile.fhir4.FhirR4;
+import ai.philterd.phileas.model.policy.Crypto;
+import ai.philterd.phileas.model.policy.Policy;
+import ai.philterd.phileas.model.policy.Structured;
+import ai.philterd.phileas.model.policy.fhir4.FhirItem;
+import ai.philterd.phileas.model.policy.fhir4.FhirR4;
 import ai.philterd.phileas.model.responses.FilterResponse;
 import ai.philterd.phileas.model.services.DocumentProcessor;
 import ai.philterd.phileas.model.services.MetricsService;
@@ -54,9 +54,9 @@ public class FhirDocumentProcessorTest {
         final SpanDisambiguationService spanDisambiguationService = Mockito.mock(SpanDisambiguationService.class);
         final DocumentProcessor documentProcessor = new FhirDocumentProcessor(metricsService, spanDisambiguationService);
 
-        // FilterProfile filterProfile, String context, String documentId, String json
-        final FilterProfile filterProfile = new FilterProfile();
-        filterProfile.setCrypto(new Crypto("key", "iv"));
+        // Policy policy, String context, String documentId, String json
+        final Policy policy = new Policy();
+        policy.setCrypto(new Crypto("key", "iv"));
 
         final Structured structured = new Structured();
 
@@ -65,14 +65,14 @@ public class FhirDocumentProcessorTest {
         //fhirR4.setFhirItems(Arrays.asList(new FhirItem("patient.address.city", "DELETE")));
         structured.setFhirR4(fhirR4);
 
-        filterProfile.setStructured(structured);
+        policy.setStructured(structured);
 
-        prettyPrintJson(filterProfile);
+        prettyPrintJson(policy);
 
         final String json = IOUtils.toString(this.getClass().getResourceAsStream("/fhir4/bundle-example.json"), Charset.defaultCharset());
 
         // TODO: Set filters instead of empty list.
-        final FilterResponse filterResponse = documentProcessor.process(filterProfile, Collections.emptyList(), Collections.emptyList(), "context", "documentid", json);
+        final FilterResponse filterResponse = documentProcessor.process(policy, Collections.emptyList(), Collections.emptyList(), "context", "documentid", json);
 
         prettyPrintJson(filterResponse.getFilteredText());
 

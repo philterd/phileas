@@ -116,21 +116,21 @@ public interface PhileasConfiguration extends Config {
     @Key("cache.redis.keystore.password")
     String cacheRedisKeyStorePassword();
 
-    // Filter Profiles
-    @DefaultValue("./profiles/")
-    @Key("filter.profiles.directory")
-    String filterProfilesDirectory();
+    // Policies
+    @DefaultValue("./policies/")
+    @Key("filter.policies.directory")
+    String policiesDirectory();
 
-    @Key("filter.profiles.s3.bucket")
-    String filterProfilesS3Bucket();
+    @Key("filter.policies.s3.bucket")
+    String policiesS3Bucket();
 
     @DefaultValue("")
-    @Key("filter.profiles.s3.prefix")
-    String filterProfilesS3Prefix();
+    @Key("filter.policies.s3.prefix")
+    String policiesS3Prefix();
 
     @DefaultValue("us-east-1")
-    @Key("filter.profiles.s3.region")
-    String filterProfilesS3Region();
+    @Key("filter.policies.s3.region")
+    String policiesS3Region();
 
     // Metrics
     @DefaultValue("philter")

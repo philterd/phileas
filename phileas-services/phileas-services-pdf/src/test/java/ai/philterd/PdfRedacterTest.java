@@ -19,8 +19,8 @@ import ai.philterd.phileas.model.enums.FilterType;
 import ai.philterd.phileas.model.enums.MimeType;
 import ai.philterd.phileas.model.objects.PdfRedactionOptions;
 import ai.philterd.phileas.model.objects.Span;
-import ai.philterd.phileas.model.profile.FilterProfile;
-import ai.philterd.phileas.model.profile.graphical.BoundingBox;
+import ai.philterd.phileas.model.policy.Policy;
+import ai.philterd.phileas.model.policy.graphical.BoundingBox;
 import ai.philterd.phileas.model.services.Redacter;
 import ai.philterd.services.pdf.PdfRedacter;
 import org.apache.commons.io.FileUtils;
@@ -54,7 +54,7 @@ public class PdfRedacterTest {
         final InputStream is = getClass().getClassLoader().getResourceAsStream(filename);
         final byte[] document = IOUtils.toByteArray(is);
 
-        final FilterProfile filterProfile = new FilterProfile();
+        final Policy policy = new Policy();
 
         final PdfRedactionOptions pdfRedactionOptions = new PdfRedactionOptions();
         pdfRedactionOptions.setDpi(150);
@@ -62,7 +62,7 @@ public class PdfRedacterTest {
         pdfRedactionOptions.setCompressionQuality(1.0f);
 
         final List<BoundingBox> boundingBoxes = Collections.emptyList();
-        final Redacter pdfRedacter = new PdfRedacter(filterProfile, spans, pdfRedactionOptions, boundingBoxes);
+        final Redacter pdfRedacter = new PdfRedacter(policy, spans, pdfRedactionOptions, boundingBoxes);
 
         final byte[] redacted = pdfRedacter.process(document, MimeType.APPLICATION_PDF);
 
@@ -86,11 +86,11 @@ public class PdfRedacterTest {
         final InputStream is = getClass().getClassLoader().getResourceAsStream(filename);
         final byte[] document = IOUtils.toByteArray(is);
 
-        final FilterProfile filterProfile = new FilterProfile();
+        final Policy policy = new Policy();
         final PdfRedactionOptions pdfRedactionOptions = new PdfRedactionOptions();
 
         final List<BoundingBox> boundingBoxes = Collections.emptyList();
-        final Redacter pdfRedacter = new PdfRedacter(filterProfile, spans, pdfRedactionOptions, boundingBoxes);
+        final Redacter pdfRedacter = new PdfRedacter(policy, spans, pdfRedactionOptions, boundingBoxes);
 
         final byte[] redacted = pdfRedacter.process(document, MimeType.APPLICATION_PDF);
 
@@ -115,11 +115,11 @@ public class PdfRedacterTest {
         final InputStream is = getClass().getClassLoader().getResourceAsStream(filename);
         final byte[] document = IOUtils.toByteArray(is);
 
-        final FilterProfile filterProfile = new FilterProfile();
+        final Policy policy = new Policy();
         final PdfRedactionOptions pdfRedactionOptions = new PdfRedactionOptions();
 
         final List<BoundingBox> boundingBoxes = Collections.emptyList();
-        final Redacter pdfRedacter = new PdfRedacter(filterProfile, spans, pdfRedactionOptions, boundingBoxes);
+        final Redacter pdfRedacter = new PdfRedacter(policy, spans, pdfRedactionOptions, boundingBoxes);
         final byte[] redacted = pdfRedacter.process(document, MimeType.IMAGE_JPEG);
 
         final File outputFile = File.createTempFile("output", ".zip");
@@ -142,11 +142,11 @@ public class PdfRedacterTest {
         final InputStream is = getClass().getClassLoader().getResourceAsStream(filename);
         final byte[] document = IOUtils.toByteArray(is);
 
-        final FilterProfile filterProfile = new FilterProfile();
+        final Policy policy = new Policy();
         final PdfRedactionOptions pdfRedactionOptions = new PdfRedactionOptions();
 
         final List<BoundingBox> boundingBoxes = Collections.emptyList();
-        final Redacter pdfRedacter = new PdfRedacter(filterProfile, spans, pdfRedactionOptions, boundingBoxes);
+        final Redacter pdfRedacter = new PdfRedacter(policy, spans, pdfRedactionOptions, boundingBoxes);
         final byte[] redacted = pdfRedacter.process(document, MimeType.IMAGE_JPEG);
 
         final File outputFile = File.createTempFile("output", ".zip");
@@ -166,7 +166,7 @@ public class PdfRedacterTest {
         final InputStream is = getClass().getClassLoader().getResourceAsStream(filename);
         final byte[] document = IOUtils.toByteArray(is);
 
-        final FilterProfile filterProfile = new FilterProfile();
+        final Policy policy = new Policy();
         final PdfRedactionOptions pdfRedactionOptions = new PdfRedactionOptions();
 
         final BoundingBox boundingBox1 = new BoundingBox();
@@ -185,7 +185,7 @@ public class PdfRedacterTest {
 
         final List<BoundingBox> boundingBoxes = Arrays.asList(boundingBox1, boundingBox2);
 
-        final Redacter pdfRedacter = new PdfRedacter(filterProfile, Collections.emptySet(), pdfRedactionOptions, boundingBoxes);
+        final Redacter pdfRedacter = new PdfRedacter(policy, Collections.emptySet(), pdfRedactionOptions, boundingBoxes);
         final byte[] redacted = pdfRedacter.process(document, MimeType.APPLICATION_PDF);
 
         final File outputFile = File.createTempFile("output", ".pdf");
@@ -203,7 +203,7 @@ public class PdfRedacterTest {
         final InputStream is = getClass().getClassLoader().getResourceAsStream(filename);
         final byte[] document = IOUtils.toByteArray(is);
 
-        final FilterProfile filterProfile = new FilterProfile();
+        final Policy policy = new Policy();
         final PdfRedactionOptions pdfRedactionOptions = new PdfRedactionOptions();
 
         final BoundingBox boundingBox1 = new BoundingBox();
@@ -226,7 +226,7 @@ public class PdfRedacterTest {
 
         final List<BoundingBox> boundingBoxes = Arrays.asList(boundingBox1, boundingBox2);
 
-        final Redacter pdfRedacter = new PdfRedacter(filterProfile, Collections.emptySet(), pdfRedactionOptions, boundingBoxes);
+        final Redacter pdfRedacter = new PdfRedacter(policy, Collections.emptySet(), pdfRedactionOptions, boundingBoxes);
         final byte[] redacted = pdfRedacter.process(document, MimeType.APPLICATION_PDF);
 
         final File outputFile = File.createTempFile("output", ".pdf");
@@ -248,7 +248,7 @@ public class PdfRedacterTest {
         final InputStream is = getClass().getClassLoader().getResourceAsStream(filename);
         final byte[] document = IOUtils.toByteArray(is);
 
-        final FilterProfile filterProfile = new FilterProfile();
+        final Policy policy = new Policy();
         final PdfRedactionOptions pdfRedactionOptions = new PdfRedactionOptions();
 
         final BoundingBox boundingBox1 = new BoundingBox();
@@ -267,7 +267,7 @@ public class PdfRedacterTest {
 
         final List<BoundingBox> boundingBoxes = Arrays.asList(boundingBox1, boundingBox2);
 
-        final Redacter pdfRedacter = new PdfRedacter(filterProfile, spans, pdfRedactionOptions, boundingBoxes);
+        final Redacter pdfRedacter = new PdfRedacter(policy, spans, pdfRedactionOptions, boundingBoxes);
         final byte[] redacted = pdfRedacter.process(document, MimeType.APPLICATION_PDF);
 
         final File outputFile = File.createTempFile("output", ".pdf");

@@ -67,7 +67,7 @@
 		</dependency>
 		<dependency>
 			<groupId>ai.philterd</groupId>
-			<artifactId>phileas-services-profiles</artifactId>
+			<artifactId>phileas-services-policies</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>

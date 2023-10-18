@@ -20,7 +20,7 @@ import ai.philterd.phileas.model.enums.SensitivityLevel;
 import ai.philterd.phileas.model.filter.FilterConfiguration;
 import ai.philterd.phileas.model.filter.rules.dictionary.LuceneDictionaryFilter;
 import ai.philterd.phileas.model.objects.FilterResult;
-import ai.philterd.phileas.model.profile.filters.strategies.dynamic.SurnameFilterStrategy;
+import ai.philterd.phileas.model.policy.filters.strategies.dynamic.SurnameFilterStrategy;
 import ai.philterd.phileas.model.services.AlertService;
 import ai.philterd.phileas.services.anonymization.SurnameAnonymizationService;
 import ai.philterd.phileas.services.anonymization.cache.LocalAnonymizationCacheService;
@@ -59,7 +59,7 @@ public class SurnameFilterTest extends AbstractFilterTest {
 
         final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.SURNAME, filterConfiguration, INDEX_DIRECTORY, SensitivityLevel.LOW, false);
 
-        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", PIECE, "Lived in Wshington");
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "Lived in Wshington");
         showSpans(filterResult.getSpans());
         Assertions.assertEquals(0, filterResult.getSpans().size());
 
@@ -77,7 +77,7 @@ public class SurnameFilterTest extends AbstractFilterTest {
 
         final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.SURNAME, filterConfiguration, INDEX_DIRECTORY, SensitivityLevel.MEDIUM, false);
 
-        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", PIECE, "Lived in Wshington");
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "Lived in Wshington");
         showSpans(filterResult.getSpans());
         Assertions.assertEquals(2, filterResult.getSpans().size());
 
@@ -95,7 +95,7 @@ public class SurnameFilterTest extends AbstractFilterTest {
 
         final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.SURNAME, filterConfiguration, INDEX_DIRECTORY, SensitivityLevel.HIGH, false);
 
-        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", PIECE, "Jones");
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "Jones");
         showSpans(filterResult.getSpans());
         Assertions.assertEquals(1, filterResult.getSpans().size());
 
@@ -113,7 +113,7 @@ public class SurnameFilterTest extends AbstractFilterTest {
 
         final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.SURNAME, filterConfiguration, INDEX_DIRECTORY, SensitivityLevel.LOW, true);
 
-        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", PIECE, "date");
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "date");
         showSpans(filterResult.getSpans());
         Assertions.assertEquals(0, filterResult.getSpans().size());
 
@@ -131,7 +131,7 @@ public class SurnameFilterTest extends AbstractFilterTest {
 
         final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.SURNAME, filterConfiguration, INDEX_DIRECTORY, SensitivityLevel.LOW, false);
 
-        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", PIECE, "Jones");
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "Jones");
         showSpans(filterResult.getSpans());
         Assertions.assertEquals(1, filterResult.getSpans().size());
 
@@ -149,7 +149,7 @@ public class SurnameFilterTest extends AbstractFilterTest {
 
         final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.SURNAME, filterConfiguration, INDEX_DIRECTORY, SensitivityLevel.LOW, true);
 
-        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", PIECE, "from");
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "from");
         showSpans(filterResult.getSpans());
         Assertions.assertEquals(0, filterResult.getSpans().size());
 

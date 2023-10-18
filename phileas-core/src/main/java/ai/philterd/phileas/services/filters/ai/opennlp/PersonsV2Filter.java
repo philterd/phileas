@@ -22,7 +22,7 @@ import ai.philterd.phileas.model.objects.Entity;
 import ai.philterd.phileas.model.objects.FilterResult;
 import ai.philterd.phileas.model.objects.Replacement;
 import ai.philterd.phileas.model.objects.Span;
-import ai.philterd.phileas.model.profile.FilterProfile;
+import ai.philterd.phileas.model.policy.Policy;
 import ai.philterd.phileas.model.services.MetricsService;
 import ai.philterd.phileas.service.ai.onnx.OnnxNer;
 import opennlp.tools.sentdetect.SentenceDetector;
@@ -75,7 +75,7 @@ public class PersonsV2Filter extends NerFilter {
     }
 
     @Override
-    public FilterResult filter(FilterProfile filterProfile, String context, String documentId, int piece, String input) throws Exception {
+    public FilterResult filter(Policy policy, String context, String documentId, int piece, String input) throws Exception {
 
         // Remove line breaks.
         input = input.replaceAll("\n", " ");
@@ -91,7 +91,7 @@ public class PersonsV2Filter extends NerFilter {
         for(final Entity entity : entities) {
 
             final String[] window = getWindow(input, entity.getCharacterStart(), entity.getCharacterEnd());
-            final Replacement replacement = getReplacement(filterProfile.getName(), context, documentId, entity.getText(), window, entity.getConfidence(), classification, null);
+            final Replacement replacement = getReplacement(policy.getName(), context, documentId, entity.getText(), window, entity.getConfidence(), classification, null);
             final boolean isIgnored = ignored.contains(entity.getText());
 
             final Span span = Span.make(
@@ -120,7 +120,7 @@ public class PersonsV2Filter extends NerFilter {
     }
 
     @Override
-    public int getOccurrences(FilterProfile filterProfile, String input) throws Exception {
+    public int getOccurrences(Policy policy, String input) throws Exception {
         return 0;
     }
 

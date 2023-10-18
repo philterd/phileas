@@ -18,7 +18,7 @@ package ai.philterd.test.phileas.services.filters;
 import ai.philterd.phileas.model.enums.FilterType;
 import ai.philterd.phileas.model.filter.FilterConfiguration;
 import ai.philterd.phileas.model.objects.FilterResult;
-import ai.philterd.phileas.model.profile.filters.strategies.rules.MacAddressFilterStrategy;
+import ai.philterd.phileas.model.policy.filters.strategies.rules.MacAddressFilterStrategy;
 import ai.philterd.phileas.model.services.AlertService;
 import ai.philterd.phileas.services.anonymization.MacAddressAnonymizationService;
 import ai.philterd.phileas.services.anonymization.cache.LocalAnonymizationCacheService;
@@ -45,7 +45,7 @@ public class MacAddressFilterTest extends AbstractFilterTest {
 
         final MacAddressFilter filter = new MacAddressFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", PIECE, "the mac is 00-14-22-04-25-37.");
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "the mac is 00-14-22-04-25-37.");
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 11, 28, FilterType.MAC_ADDRESS));
@@ -65,7 +65,7 @@ public class MacAddressFilterTest extends AbstractFilterTest {
 
         final MacAddressFilter filter = new MacAddressFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", PIECE, "the mac is 00:14:22:04:25:37.");
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "the mac is 00:14:22:04:25:37.");
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 11, 28, FilterType.MAC_ADDRESS));

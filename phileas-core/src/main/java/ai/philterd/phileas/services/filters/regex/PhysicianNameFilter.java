@@ -22,17 +22,10 @@ import ai.philterd.phileas.model.objects.Analyzer;
 import ai.philterd.phileas.model.objects.FilterPattern;
 import ai.philterd.phileas.model.objects.FilterResult;
 import ai.philterd.phileas.model.objects.Span;
-import ai.philterd.phileas.model.profile.Crypto;
-import ai.philterd.phileas.model.profile.FilterProfile;
-import ai.philterd.phileas.model.profile.IgnoredPattern;
-import ai.philterd.phileas.model.profile.filters.strategies.AbstractFilterStrategy;
-import ai.philterd.phileas.model.services.AlertService;
-import ai.philterd.phileas.model.services.AnonymizationService;
+import ai.philterd.phileas.model.policy.Policy;
 import org.apache.lucene.analysis.TokenStream;
-import org.apache.lucene.analysis.core.SimpleAnalyzer;
 import org.apache.lucene.analysis.core.WhitespaceAnalyzer;
 import org.apache.lucene.analysis.shingle.ShingleFilter;
-import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 
 import java.io.IOException;
@@ -40,7 +33,6 @@ import java.io.StringReader;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -73,7 +65,7 @@ public class PhysicianNameFilter extends RegexFilter {
     }
 
     @Override
-    public FilterResult filter(FilterProfile filterProfile, String context, String documentId, int piece, String input) throws Exception {
+    public FilterResult filter(Policy policy, String context, String documentId, int piece, String input) throws Exception {
 
         // \b([A-Z][A-Za-z'\s+]+)(,|\s)?([A-Z][A-Za-z'\s+]+(,|\s))?([A-Z][A-Za-z'\s+]+(,|\s)?(MD|PhD))\b
 
@@ -101,7 +93,7 @@ public class PhysicianNameFilter extends RegexFilter {
                         final FilterPattern filterPattern = new FilterPattern.FilterPatternBuilder(candidatePattern, 0.90).build();
                         this.analyzer = new Analyzer(contextualTerms, filterPattern);
 
-                        final List<Span> patternSpans = findSpans(filterProfile, analyzer, input, context, documentId);
+                        final List<Span> patternSpans = findSpans(policy, analyzer, input, context, documentId);
 
                         spans.addAll(patternSpans);
 

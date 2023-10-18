@@ -15,8 +15,8 @@
  */
 package ai.philterd.phileas.model.domain;
 
-import ai.philterd.phileas.model.profile.Ignored;
-import ai.philterd.phileas.model.profile.filters.AbstractFilter;
+import ai.philterd.phileas.model.policy.Ignored;
+import ai.philterd.phileas.model.policy.filters.AbstractFilter;
 
 import java.util.Arrays;
 import java.util.LinkedList;

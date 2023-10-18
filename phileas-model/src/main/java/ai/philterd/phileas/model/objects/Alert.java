@@ -30,7 +30,7 @@ public class Alert implements Serializable {
     private final transient DateFormat utcDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 
     private String id;
-    private String filterProfile;
+    private String policy;
     private String strategyId;
     private String context;
     private String documentId;
@@ -41,10 +41,10 @@ public class Alert implements Serializable {
 
     }
 
-    public Alert(String filterProfile, String strategyId, String context, String documentId, String filterType) {
+    public Alert(String policy, String strategyId, String context, String documentId, String filterType) {
 
         this.id = UUID.randomUUID().toString();
-        this.filterProfile = filterProfile;
+        this.policy = policy;
         this.strategyId = strategyId;
         this.context = context;
         this.documentId = documentId;
@@ -70,7 +70,7 @@ public class Alert implements Serializable {
     public int hashCode() {
         return new HashCodeBuilder(17, 37).
                 append(id).
-                append(filterProfile).
+                append(policy).
                 append(strategyId).
                 append(context).
                 append(documentId).
@@ -127,12 +127,12 @@ public class Alert implements Serializable {
         this.id = id;
     }
 
-    public String getFilterProfile() {
-        return filterProfile;
+    public String getPolicy() {
+        return policy;
     }
 
-    public void setFilterProfile(String filterProfile) {
-        this.filterProfile = filterProfile;
+    public void setPolicy(String policy) {
+        this.policy = policy;
     }
 
 }

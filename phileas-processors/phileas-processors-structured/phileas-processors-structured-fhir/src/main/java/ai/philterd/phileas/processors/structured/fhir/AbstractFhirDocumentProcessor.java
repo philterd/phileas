@@ -15,7 +15,7 @@
  */
 package ai.philterd.phileas.processors.structured.fhir;
 
-import ai.philterd.phileas.model.profile.Crypto;
+import ai.philterd.phileas.model.policy.Crypto;
 import ai.philterd.phileas.model.utils.Encryption;
 import org.hl7.fhir.r4.model.StringType;
 

@@ -22,16 +22,10 @@ import ai.philterd.phileas.model.objects.Analyzer;
 import ai.philterd.phileas.model.objects.FilterPattern;
 import ai.philterd.phileas.model.objects.FilterResult;
 import ai.philterd.phileas.model.objects.Span;
-import ai.philterd.phileas.model.profile.Crypto;
-import ai.philterd.phileas.model.profile.FilterProfile;
-import ai.philterd.phileas.model.profile.IgnoredPattern;
-import ai.philterd.phileas.model.profile.filters.strategies.AbstractFilterStrategy;
-import ai.philterd.phileas.model.services.AlertService;
-import ai.philterd.phileas.model.services.AnonymizationService;
+import ai.philterd.phileas.model.policy.Policy;
 
 import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.regex.Pattern;
 
 public class BitcoinAddressFilter extends RegexFilter {
@@ -53,9 +47,9 @@ public class BitcoinAddressFilter extends RegexFilter {
     }
 
     @Override
-    public FilterResult filter(FilterProfile filterProfile, String context, String documentId, int piece, String input) throws Exception {
+    public FilterResult filter(Policy policy, String context, String documentId, int piece, String input) throws Exception {
 
-        final List<Span> spans = findSpans(filterProfile, analyzer, input, context, documentId);
+        final List<Span> spans = findSpans(policy, analyzer, input, context, documentId);
 
         return new FilterResult(context, documentId, spans);
 
