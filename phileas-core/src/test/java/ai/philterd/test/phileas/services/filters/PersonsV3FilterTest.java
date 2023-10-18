@@ -18,7 +18,7 @@ package ai.philterd.test.phileas.services.filters;
 import ai.philterd.phileas.model.enums.FilterType;
 import ai.philterd.phileas.model.filter.FilterConfiguration;
 import ai.philterd.phileas.model.objects.FilterResult;
-import ai.philterd.phileas.model.profile.filters.strategies.ai.PersonsFilterStrategy;
+import ai.philterd.phileas.model.policy.filters.strategies.ai.PersonsFilterStrategy;
 import ai.philterd.phileas.model.services.AlertService;
 import ai.philterd.phileas.model.services.MetricsService;
 import ai.philterd.phileas.services.anonymization.PersonsAnonymizationService;
@@ -65,7 +65,7 @@ public class PersonsV3FilterTest extends AbstractFilterTest {
                 metricsService,
                 thresholds);
 
-        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", PIECE, "George Washington and Abraham Lincoln were presidents.");
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "George Washington and Abraham Lincoln were presidents.");
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 22, 37, FilterType.PERSON));
@@ -96,7 +96,7 @@ public class PersonsV3FilterTest extends AbstractFilterTest {
                 metricsService,
                 thresholds);
 
-        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", PIECE, "George    Washington      and Abraham    Lincoln were presidents.");
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "George    Washington      and Abraham    Lincoln were presidents.");
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 22, 37, FilterType.PERSON));

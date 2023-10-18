@@ -18,7 +18,7 @@ package ai.philterd.test.phileas.services.filters;
 import ai.philterd.phileas.model.enums.FilterType;
 import ai.philterd.phileas.model.filter.FilterConfiguration;
 import ai.philterd.phileas.model.objects.FilterResult;
-import ai.philterd.phileas.model.profile.filters.strategies.rules.TrackingNumberFilterStrategy;
+import ai.philterd.phileas.model.policy.filters.strategies.rules.TrackingNumberFilterStrategy;
 import ai.philterd.phileas.model.services.AlertService;
 import ai.philterd.phileas.services.anonymization.AlphanumericAnonymizationService;
 import ai.philterd.phileas.services.anonymization.cache.LocalAnonymizationCacheService;
@@ -46,7 +46,7 @@ public class TrackingNumberFilterTest extends AbstractFilterTest {
 
         final TrackingNumberFilter filter = new TrackingNumberFilter(filterConfiguration, true, true, true);
 
-        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", PIECE, "the tracking number is 1Z9YF1280343418566");
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "the tracking number is 1Z9YF1280343418566");
 
         showSpans(filterResult.getSpans());
 
@@ -70,7 +70,7 @@ public class TrackingNumberFilterTest extends AbstractFilterTest {
 
         final TrackingNumberFilter filter = new TrackingNumberFilter(filterConfiguration, true, true, true);
 
-        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", PIECE, "the tracking number is 9400100000000000000000");
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "the tracking number is 9400100000000000000000");
 
         showSpans(filterResult.getSpans());
 
@@ -95,7 +95,7 @@ public class TrackingNumberFilterTest extends AbstractFilterTest {
 
         final TrackingNumberFilter filter = new TrackingNumberFilter(filterConfiguration, true, true, true);
 
-        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", PIECE, "the tracking number is 9400 1000 0000 0000 0000");
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "the tracking number is 9400 1000 0000 0000 0000");
 
         showSpans(filterResult.getSpans());
 
@@ -119,7 +119,7 @@ public class TrackingNumberFilterTest extends AbstractFilterTest {
 
         final TrackingNumberFilter filter = new TrackingNumberFilter(filterConfiguration, true, true, true);
 
-        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", PIECE, "the tracking number is 4204319935009201990138501144099814");
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "the tracking number is 4204319935009201990138501144099814");
 
         showSpans(filterResult.getSpans());
 
@@ -143,7 +143,7 @@ public class TrackingNumberFilterTest extends AbstractFilterTest {
 
         final TrackingNumberFilter filter = new TrackingNumberFilter(filterConfiguration, true, true, true);
 
-        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", PIECE, "the tracking number is 420431993500920199013850114409");
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "the tracking number is 420431993500920199013850114409");
 
         showSpans(filterResult.getSpans());
 
@@ -167,7 +167,7 @@ public class TrackingNumberFilterTest extends AbstractFilterTest {
 
         final TrackingNumberFilter filter = new TrackingNumberFilter(filterConfiguration, true, true, true);
 
-        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", PIECE, "the tracking number is 4204319935009201990138501144");
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "the tracking number is 4204319935009201990138501144");
 
         showSpans(filterResult.getSpans());
 
@@ -191,7 +191,7 @@ public class TrackingNumberFilterTest extends AbstractFilterTest {
 
         final TrackingNumberFilter filter = new TrackingNumberFilter(filterConfiguration, true, true, true);
 
-        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", PIECE, "the tracking number is 42043199350092019901385011");
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "the tracking number is 42043199350092019901385011");
 
         showSpans(filterResult.getSpans());
 
@@ -216,7 +216,7 @@ public class TrackingNumberFilterTest extends AbstractFilterTest {
 
         final TrackingNumberFilter filter = new TrackingNumberFilter(filterConfiguration, false, false, true);
 
-        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", PIECE, "the tracking number is 42043199350092019901385011");
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "the tracking number is 42043199350092019901385011");
 
         showSpans(filterResult.getSpans());
 
@@ -241,7 +241,7 @@ public class TrackingNumberFilterTest extends AbstractFilterTest {
 
         final TrackingNumberFilter filter = new TrackingNumberFilter(filterConfiguration, false, false, false);
 
-        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", PIECE, "the tracking number is 42043199350092019901385011");
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "the tracking number is 42043199350092019901385011");
 
         showSpans(filterResult.getSpans());
 
@@ -261,7 +261,7 @@ public class TrackingNumberFilterTest extends AbstractFilterTest {
 
         final TrackingNumberFilter filter = new TrackingNumberFilter(filterConfiguration, true, false, true);
 
-        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", PIECE, "the tracking number is 9400100000000000000000");
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "the tracking number is 9400100000000000000000");
 
         showSpans(filterResult.getSpans());
 
@@ -285,7 +285,7 @@ public class TrackingNumberFilterTest extends AbstractFilterTest {
 
         final TrackingNumberFilter filter = new TrackingNumberFilter(filterConfiguration, true, true, false);
 
-        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", PIECE, "the tracking number is 9400100000000000000000");
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "the tracking number is 9400100000000000000000");
 
         showSpans(filterResult.getSpans());
 
@@ -309,7 +309,7 @@ public class TrackingNumberFilterTest extends AbstractFilterTest {
 
         final TrackingNumberFilter filter = new TrackingNumberFilter(filterConfiguration, true, true, true);
 
-        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", PIECE, "the tracking number is 9400100000000000000000");
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "the tracking number is 9400100000000000000000");
 
         showSpans(filterResult.getSpans());
 

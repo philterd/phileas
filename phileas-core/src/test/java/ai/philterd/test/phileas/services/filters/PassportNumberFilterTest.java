@@ -18,7 +18,7 @@ package ai.philterd.test.phileas.services.filters;
 import ai.philterd.phileas.model.enums.FilterType;
 import ai.philterd.phileas.model.filter.FilterConfiguration;
 import ai.philterd.phileas.model.objects.FilterResult;
-import ai.philterd.phileas.model.profile.filters.strategies.rules.PassportNumberFilterStrategy;
+import ai.philterd.phileas.model.policy.filters.strategies.rules.PassportNumberFilterStrategy;
 import ai.philterd.phileas.model.services.AlertService;
 import ai.philterd.phileas.services.anonymization.AlphanumericAnonymizationService;
 import ai.philterd.phileas.services.anonymization.cache.LocalAnonymizationCacheService;
@@ -45,7 +45,7 @@ public class PassportNumberFilterTest extends AbstractFilterTest {
 
         final PassportNumberFilter filter = new PassportNumberFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", PIECE, "the passport number is 036001231.");
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "the passport number is 036001231.");
 
         showSpans(filterResult.getSpans());
 

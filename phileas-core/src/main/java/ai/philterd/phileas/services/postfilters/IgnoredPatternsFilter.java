@@ -17,12 +17,11 @@ package ai.philterd.phileas.services.postfilters;
 
 import ai.philterd.phileas.model.objects.PostFilterResult;
 import ai.philterd.phileas.model.objects.Span;
-import ai.philterd.phileas.model.profile.IgnoredPattern;
+import ai.philterd.phileas.model.policy.IgnoredPattern;
 import ai.philterd.phileas.model.services.PostFilter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.LinkedList;
 import java.util.List;
 
 /**

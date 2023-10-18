@@ -23,7 +23,7 @@ import ai.philterd.phileas.model.filter.rules.RulesFilter;
 import ai.philterd.phileas.model.objects.FilterResult;
 import ai.philterd.phileas.model.objects.Replacement;
 import ai.philterd.phileas.model.objects.Span;
-import ai.philterd.phileas.model.profile.FilterProfile;
+import ai.philterd.phileas.model.policy.Policy;
 
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -53,11 +53,11 @@ public class PhoneNumberRulesFilter extends RulesFilter {
     }
 
     @Override
-    public FilterResult filter(FilterProfile filterProfile, String context, String documentId, int piece, String input) throws Exception {
+    public FilterResult filter(Policy policy, String context, String documentId, int piece, String input) throws Exception {
 
         final List<Span> spans = new LinkedList<>();
 
-        if(filterProfile.getIdentifiers().hasFilter(filterType)) {
+        if(policy.getIdentifiers().hasFilter(filterType)) {
 
             final Iterable<PhoneNumberMatch> matches = phoneUtil.findNumbers(input, "US", PhoneNumberUtil.Leniency.POSSIBLE, 1);
 
@@ -79,7 +79,7 @@ public class PhoneNumberRulesFilter extends RulesFilter {
 
                 final String[] window = getWindow(input, match.start(), match.end());
                 final String classification = "";
-                final Replacement replacement = getReplacement(filterProfile.getName(), context, documentId, text, window, confidence, classification, null);
+                final Replacement replacement = getReplacement(policy.getName(), context, documentId, text, window, confidence, classification, null);
                 final boolean isIgnored = ignored.contains(text);
 
                 spans.add(Span.make(match.start(), match.end(), getFilterType(), context, documentId, confidence, text, replacement.getReplacement(), replacement.getSalt(), isIgnored, window));

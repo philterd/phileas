@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ai.philterd.test.phileas.model.profile;
+package ai.philterd.test.phileas.model.policy;
 
-import ai.philterd.phileas.model.profile.FPE;
+import ai.philterd.phileas.model.policy.FPE;
 import org.junit.jupiter.api.Test;
 import org.junitpioneer.jupiter.SetEnvironmentVariable;
 

@@ -19,7 +19,7 @@ import ai.philterd.phileas.model.enums.FilterType;
 import ai.philterd.phileas.model.filter.Filter;
 import ai.philterd.phileas.model.filter.FilterConfiguration;
 import ai.philterd.phileas.model.objects.FilterResult;
-import ai.philterd.phileas.model.profile.filters.strategies.rules.IbanCodeFilterStrategy;
+import ai.philterd.phileas.model.policy.filters.strategies.rules.IbanCodeFilterStrategy;
 import ai.philterd.phileas.model.services.AlertService;
 import ai.philterd.phileas.services.anonymization.IbanCodeAnonymizationService;
 import ai.philterd.phileas.services.anonymization.cache.LocalAnonymizationCacheService;
@@ -54,7 +54,7 @@ public class IbanCodeFilterTest extends AbstractFilterTest {
 
         final Filter filter = getFilter(true, false);
 
-        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", PIECE, "bank code of GB33BUKB20201555555555 ok?");
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "bank code of GB33BUKB20201555555555 ok?");
 
         showSpans(filterResult.getSpans());
 
@@ -70,7 +70,7 @@ public class IbanCodeFilterTest extends AbstractFilterTest {
 
         final Filter filter = getFilter(false, false);
 
-        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", PIECE, "bank code of GB15MIDL40051512345678 ok?");
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "bank code of GB15MIDL40051512345678 ok?");
 
         showSpans(filterResult.getSpans());
 
@@ -86,7 +86,7 @@ public class IbanCodeFilterTest extends AbstractFilterTest {
 
         final Filter filter = getFilter(true, true);
 
-        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", PIECE, "bank code of GB15 MIDL 4005 1512 3456 78 ok?");
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "bank code of GB15 MIDL 4005 1512 3456 78 ok?");
 
         showSpans(filterResult.getSpans());
 
@@ -102,7 +102,7 @@ public class IbanCodeFilterTest extends AbstractFilterTest {
 
         final Filter filter = getFilter(true, true);
 
-        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", PIECE, "bank code of GB15 MIDL 4005 1512 3456 zz ok?");
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "bank code of GB15 MIDL 4005 1512 3456 zz ok?");
 
         showSpans(filterResult.getSpans());
 

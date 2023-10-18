@@ -19,7 +19,7 @@ import ai.philterd.phileas.model.enums.FilterType;
 import ai.philterd.phileas.model.filter.FilterConfiguration;
 import ai.philterd.phileas.model.filter.rules.dictionary.BloomFilterDictionaryFilter;
 import ai.philterd.phileas.model.objects.FilterResult;
-import ai.philterd.phileas.model.profile.filters.strategies.custom.CustomDictionaryFilterStrategy;
+import ai.philterd.phileas.model.policy.filters.strategies.custom.CustomDictionaryFilterStrategy;
 import ai.philterd.phileas.model.services.AlertService;
 import ai.philterd.phileas.services.anonymization.AlphanumericAnonymizationService;
 import ai.philterd.phileas.services.anonymization.cache.LocalAnonymizationCacheService;
@@ -52,7 +52,7 @@ public class BloomFilterDictionaryFilterTest extends AbstractFilterTest {
         final Set<String> names = new HashSet<>(Arrays.asList("george", "ted", "Bill", "john"));
         final BloomFilterDictionaryFilter filter = new BloomFilterDictionaryFilter(FilterType.CUSTOM_DICTIONARY, filterConfiguration, names, "none", 0.05);
 
-         final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", PIECE, "He lived with Bill in California.");
+         final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "He lived with Bill in California.");
 
         showSpans(filterResult.getSpans());
 
@@ -75,7 +75,7 @@ public class BloomFilterDictionaryFilterTest extends AbstractFilterTest {
         final Set<String> names = new HashSet<>(Arrays.asList("george", "ted", "bill", "john"));
         final BloomFilterDictionaryFilter filter = new BloomFilterDictionaryFilter(FilterType.CUSTOM_DICTIONARY, filterConfiguration, names, "none", 0.05);
 
-        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", PIECE, "He lived with Bill in California.");
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "He lived with Bill in California.");
 
         showSpans(filterResult.getSpans());
 
@@ -98,7 +98,7 @@ public class BloomFilterDictionaryFilterTest extends AbstractFilterTest {
         final Set<String> names = new HashSet<>(Arrays.asList("george", "ted", "bill", "john"));
         final BloomFilterDictionaryFilter filter = new BloomFilterDictionaryFilter(FilterType.CUSTOM_DICTIONARY, filterConfiguration, names, "none", 0.05);
 
-        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", PIECE, "He lived with Sam in California.");
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "He lived with Sam in California.");
 
         showSpans(filterResult.getSpans());
 
@@ -119,7 +119,7 @@ public class BloomFilterDictionaryFilterTest extends AbstractFilterTest {
         final Set<String> names = new HashSet<>(Arrays.asList("george jones", "ted", "bill", "john"));
         final BloomFilterDictionaryFilter filter = new BloomFilterDictionaryFilter(FilterType.CUSTOM_DICTIONARY, filterConfiguration, names, "none", 0.05);
 
-        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", PIECE,"He lived with george jones in California.");
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE,"He lived with george jones in California.");
 
         showSpans(filterResult.getSpans());
 
@@ -142,7 +142,7 @@ public class BloomFilterDictionaryFilterTest extends AbstractFilterTest {
         final Set<String> names = new HashSet<>(Arrays.asList("george jones jr", "ted", "bill smith", "john"));
         final BloomFilterDictionaryFilter filter = new BloomFilterDictionaryFilter(FilterType.CUSTOM_DICTIONARY, filterConfiguration, names, "none", 0.05);
 
-        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", PIECE,"Bill Smith lived with george jones jr in California.");
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE,"Bill Smith lived with george jones jr in California.");
 
         showSpans(filterResult.getSpans());
 

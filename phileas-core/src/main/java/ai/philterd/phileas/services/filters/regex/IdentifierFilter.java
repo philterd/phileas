@@ -22,7 +22,7 @@ import ai.philterd.phileas.model.objects.Analyzer;
 import ai.philterd.phileas.model.objects.FilterPattern;
 import ai.philterd.phileas.model.objects.FilterResult;
 import ai.philterd.phileas.model.objects.Span;
-import ai.philterd.phileas.model.profile.FilterProfile;
+import ai.philterd.phileas.model.policy.Policy;
 
 import java.util.HashSet;
 import java.util.List;
@@ -41,8 +41,8 @@ public class IdentifierFilter extends RegexFilter {
             pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
         }
 
-        // TODO: Expose initialConfidence via the filter profile.
-        // TODO: Expose the contextual terms via the filter profile.
+        // TODO: Expose initialConfidence via the policy.
+        // TODO: Expose the contextual terms via the policy.
         final FilterPattern id1 = new FilterPattern.FilterPatternBuilder(pattern, 0.90)
                 .withClassification(classification)
                 .withGroupNumber(groupNumber)
@@ -56,9 +56,9 @@ public class IdentifierFilter extends RegexFilter {
     }
 
     @Override
-    public FilterResult filter(FilterProfile filterProfile, String context, String documentId, int piece, String input) throws Exception {
+    public FilterResult filter(Policy policy, String context, String documentId, int piece, String input) throws Exception {
 
-        final List<Span> spans = findSpans(filterProfile, analyzer, input, context, documentId);
+        final List<Span> spans = findSpans(policy, analyzer, input, context, documentId);
 
         return new FilterResult(context, documentId, spans);
 

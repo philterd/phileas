@@ -21,7 +21,7 @@ import ai.philterd.phileas.model.filter.dynamic.NerFilter;
 import ai.philterd.phileas.model.objects.FilterResult;
 import ai.philterd.phileas.model.objects.Replacement;
 import ai.philterd.phileas.model.objects.Span;
-import ai.philterd.phileas.model.profile.FilterProfile;
+import ai.philterd.phileas.model.policy.Policy;
 import ai.philterd.phileas.model.services.MetricsService;
 import opennlp.tools.namefind.NameFinderME;
 import opennlp.tools.namefind.TokenNameFinderModel;
@@ -56,7 +56,7 @@ public class PersonsV3Filter extends NerFilter {
     }
 
     @Override
-    public FilterResult filter(FilterProfile filterProfile, String context, String documentId, int piece, String input) throws Exception {
+    public FilterResult filter(Policy policy, String context, String documentId, int piece, String input) throws Exception {
 
         // The final list of spans identified in the text.
         final List<Span> spans = new LinkedList<>();
@@ -79,7 +79,7 @@ public class PersonsV3Filter extends NerFilter {
             final int end = start + text.length();
 
             final String[] window = getWindow(input, start, end);
-            final Replacement replacement = getReplacement(filterProfile.getName(), context, documentId, text, window, openNlpSpan.getProb(), classification, null);
+            final Replacement replacement = getReplacement(policy.getName(), context, documentId, text, window, openNlpSpan.getProb(), classification, null);
             final boolean isIgnored = ignored.contains(text);
 
             final Span span = Span.make(
@@ -108,7 +108,7 @@ public class PersonsV3Filter extends NerFilter {
     }
 
     @Override
-    public int getOccurrences(FilterProfile filterProfile, String input) throws Exception {
+    public int getOccurrences(Policy policy, String input) throws Exception {
         return 0;
     }
 

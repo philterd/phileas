@@ -17,12 +17,12 @@ package ai.philterd.phileas.model.filter;
 
 import ai.philterd.phileas.model.enums.FilterType;
 import ai.philterd.phileas.model.objects.*;
-import ai.philterd.phileas.model.profile.Crypto;
-import ai.philterd.phileas.model.profile.FPE;
-import ai.philterd.phileas.model.profile.FilterProfile;
-import ai.philterd.phileas.model.profile.IgnoredPattern;
-import ai.philterd.phileas.model.profile.filters.Identifier;
-import ai.philterd.phileas.model.profile.filters.strategies.AbstractFilterStrategy;
+import ai.philterd.phileas.model.policy.Crypto;
+import ai.philterd.phileas.model.policy.FPE;
+import ai.philterd.phileas.model.policy.Policy;
+import ai.philterd.phileas.model.policy.IgnoredPattern;
+import ai.philterd.phileas.model.policy.filters.Identifier;
+import ai.philterd.phileas.model.policy.filters.strategies.AbstractFilterStrategy;
 import ai.philterd.phileas.model.services.AlertService;
 import ai.philterd.phileas.model.services.AnonymizationService;
 import org.apache.commons.collections4.CollectionUtils;
@@ -98,22 +98,22 @@ public abstract class Filter {
 
     /**
      * Filters the input text.
-     * @param filterProfile The {@link FilterProfile} to use.
+     * @param policy The {@link Policy} to use.
      * @param context The context.
      * @param documentId An ID uniquely identifying the document.
      * @param piece A numbered piece of the document. Pass <code>0</code> if only piece of document.
      * @param input The input text.
      * @return A {@link FilterResult} containing the identified {@link Span spans}.
      */
-    public abstract FilterResult filter(FilterProfile filterProfile, String context, String documentId, int piece, String input) throws Exception;
+    public abstract FilterResult filter(Policy policy, String context, String documentId, int piece, String input) throws Exception;
 
     /**
      * Determines if the input text may contain sensitive information matching the filter type.
-     * @param filterProfile The {@link FilterProfile}.
+     * @param policy The {@link Policy}.
      * @param input The input text.
      * @return A count of possible occurrences of the filter type in the input text.
      */
-    public abstract int getOccurrences(FilterProfile filterProfile, String input) throws Exception;
+    public abstract int getOccurrences(Policy policy, String input) throws Exception;
 
     /**
      * Creates a new filter.
@@ -154,7 +154,7 @@ public abstract class Filter {
                         LOGGER.error("Unable to process file of ignored terms: {}", fileName, ex);
                     }
                 } else {
-                    LOGGER.error("Ignore list file specified in filter profile does not exist: {}", fileName);
+                    LOGGER.error("Ignore list file specified in policy does not exist: {}", fileName);
                 }
             }
         }
@@ -231,7 +231,7 @@ public abstract class Filter {
 
     /**
      * Gets the string to be used as a replacement.
-     * @param filterProfile The name of the filter profile.
+     * @param policy The name of the policy.
      * @param context The context.
      * @param documentId The document ID.
      * @param token The token to replace.
@@ -240,7 +240,7 @@ public abstract class Filter {
      * @param classification The classification of the item.
      * @return The replacement string.
      */
-    public Replacement getReplacement(String filterProfile, String context, String documentId, String token, String[] window,
+    public Replacement getReplacement(String policy, String context, String documentId, String token, String[] window,
                                       double confidence, String classification, FilterPattern filterPattern) throws Exception {
 
         if(strategies != null) {
@@ -278,7 +278,7 @@ public abstract class Filter {
                         if(strategy.isAlert()) {
 
                             LOGGER.info("Generating alert for strategy ID {}", strategy.getId());
-                            alertService.generateAlert(filterProfile, strategy.getId(), documentId, context, filterType);
+                            alertService.generateAlert(policy, strategy.getId(), documentId, context, filterType);
 
                         }
 
@@ -334,9 +334,9 @@ public abstract class Filter {
 
     }
 
-    public static List<? extends AbstractFilterStrategy> getIdentifierFilterStrategies(FilterProfile filterProfile, String name) {
+    public static List<? extends AbstractFilterStrategy> getIdentifierFilterStrategies(Policy policy, String name) {
 
-        final List<Identifier> identifiers = filterProfile.getIdentifiers().getIdentifiers();
+        final List<Identifier> identifiers = policy.getIdentifiers().getIdentifiers();
 
         final Identifier identifier = identifiers.stream().
                 filter(p -> p.getClassification().equalsIgnoreCase(name)).
@@ -346,66 +346,66 @@ public abstract class Filter {
 
     }
 
-    public static List<? extends AbstractFilterStrategy> getFilterStrategies(FilterProfile filterProfile, FilterType filterType, int index) {
+    public static List<? extends AbstractFilterStrategy> getFilterStrategies(Policy policy, FilterType filterType, int index) {
 
         LOGGER.debug("Getting filter strategies for filter type {}", filterType.getType());
 
         if(filterType == FilterType.AGE) {
-            return filterProfile.getIdentifiers().getAge().getAgeFilterStrategies();
+            return policy.getIdentifiers().getAge().getAgeFilterStrategies();
         } else if(filterType == FilterType.BITCOIN_ADDRESS) {
-            return filterProfile.getIdentifiers().getBitcoinAddress().getBitcoinFilterStrategies();
+            return policy.getIdentifiers().getBitcoinAddress().getBitcoinFilterStrategies();
         } else if(filterType == FilterType.CREDIT_CARD) {
-            return filterProfile.getIdentifiers().getCreditCard().getCreditCardFilterStrategies();
+            return policy.getIdentifiers().getCreditCard().getCreditCardFilterStrategies();
         } else if(filterType == FilterType.CUSTOM_DICTIONARY) {
-            // There can be multiple custom dictionaries in the filter profile.
+            // There can be multiple custom dictionaries in the policy.
             // The index is used to determine which one is the appropriate one.
-            return filterProfile.getIdentifiers().getCustomDictionaries().get(index).getCustomDictionaryFilterStrategies();
+            return policy.getIdentifiers().getCustomDictionaries().get(index).getCustomDictionaryFilterStrategies();
         } else if(filterType == FilterType.DATE) {
-            return filterProfile.getIdentifiers().getDate().getDateFilterStrategies();
+            return policy.getIdentifiers().getDate().getDateFilterStrategies();
         } else if(filterType == FilterType.DRIVERS_LICENSE_NUMBER) {
-            return filterProfile.getIdentifiers().getDriversLicense().getDriversLicenseFilterStrategies();
+            return policy.getIdentifiers().getDriversLicense().getDriversLicenseFilterStrategies();
         } else if(filterType == FilterType.EMAIL_ADDRESS) {
-            return filterProfile.getIdentifiers().getEmailAddress().getEmailAddressFilterStrategies();
+            return policy.getIdentifiers().getEmailAddress().getEmailAddressFilterStrategies();
         } else if(filterType == FilterType.IBAN_CODE) {
-            return filterProfile.getIdentifiers().getIbanCode().getIbanCodeFilterStrategies();
+            return policy.getIdentifiers().getIbanCode().getIbanCodeFilterStrategies();
         } else if(filterType == FilterType.IP_ADDRESS) {
-            return filterProfile.getIdentifiers().getIpAddress().getIpAddressFilterStrategies();
+            return policy.getIdentifiers().getIpAddress().getIpAddressFilterStrategies();
         } else if(filterType == FilterType.PERSON) {
-            return filterProfile.getIdentifiers().getPerson().getNerStrategies();
+            return policy.getIdentifiers().getPerson().getNerStrategies();
         } else if(filterType == FilterType.PASSPORT_NUMBER) {
-            return filterProfile.getIdentifiers().getPassportNumber().getPassportNumberFilterStrategies();
+            return policy.getIdentifiers().getPassportNumber().getPassportNumberFilterStrategies();
         } else if(filterType == FilterType.PHONE_NUMBER) {
-            return filterProfile.getIdentifiers().getPhoneNumber().getPhoneNumberFilterStrategies();
+            return policy.getIdentifiers().getPhoneNumber().getPhoneNumberFilterStrategies();
         } else if(filterType == FilterType.PHONE_NUMBER_EXTENSION) {
-            return filterProfile.getIdentifiers().getPhoneNumberExtension().getPhoneNumberExtensionFilterStrategies();
+            return policy.getIdentifiers().getPhoneNumberExtension().getPhoneNumberExtensionFilterStrategies();
         } else if(filterType == FilterType.PHYSICIAN_NAME) {
-            return filterProfile.getIdentifiers().getPhysicianName().getPhysicianNameFilterStrategies();
+            return policy.getIdentifiers().getPhysicianName().getPhysicianNameFilterStrategies();
         } else if(filterType == FilterType.SSN) {
-            return filterProfile.getIdentifiers().getSsn().getSsnFilterStrategies();
+            return policy.getIdentifiers().getSsn().getSsnFilterStrategies();
         } else if(filterType == FilterType.STATE_ABBREVIATION) {
-            return filterProfile.getIdentifiers().getStateAbbreviation().getStateAbbreviationsFilterStrategies();
+            return policy.getIdentifiers().getStateAbbreviation().getStateAbbreviationsFilterStrategies();
         } else if(filterType == FilterType.STREET_ADDRESS) {
-            return filterProfile.getIdentifiers().getStreetAddress().getStreetAddressFilterStrategies();
+            return policy.getIdentifiers().getStreetAddress().getStreetAddressFilterStrategies();
         } else if(filterType == FilterType.URL) {
-            return filterProfile.getIdentifiers().getUrl().getUrlFilterStrategies();
+            return policy.getIdentifiers().getUrl().getUrlFilterStrategies();
         } else if(filterType == FilterType.VIN) {
-            return filterProfile.getIdentifiers().getVin().getVinFilterStrategies();
+            return policy.getIdentifiers().getVin().getVinFilterStrategies();
         } else if(filterType == FilterType.ZIP_CODE) {
-            return filterProfile.getIdentifiers().getZipCode().getZipCodeFilterStrategies();
+            return policy.getIdentifiers().getZipCode().getZipCodeFilterStrategies();
         } else if(filterType == FilterType.LOCATION_CITY) {
-            return filterProfile.getIdentifiers().getCity().getCityFilterStrategies();
+            return policy.getIdentifiers().getCity().getCityFilterStrategies();
         }  else if(filterType == FilterType.LOCATION_COUNTY) {
-            return filterProfile.getIdentifiers().getCounty().getCountyFilterStrategies();
+            return policy.getIdentifiers().getCounty().getCountyFilterStrategies();
         } else if(filterType == FilterType.FIRST_NAME) {
-            return filterProfile.getIdentifiers().getFirstName().getFirstNameFilterStrategies();
+            return policy.getIdentifiers().getFirstName().getFirstNameFilterStrategies();
         } else if(filterType == FilterType.HOSPITAL_ABBREVIATION) {
-            return filterProfile.getIdentifiers().getHospitalAbbreviation().getHospitalAbbreviationFilterStrategies();
+            return policy.getIdentifiers().getHospitalAbbreviation().getHospitalAbbreviationFilterStrategies();
         } else if(filterType == FilterType.HOSPITAL) {
-            return filterProfile.getIdentifiers().getHospital().getHospitalFilterStrategies();
+            return policy.getIdentifiers().getHospital().getHospitalFilterStrategies();
         } else if(filterType == FilterType.LOCATION_STATE) {
-            return filterProfile.getIdentifiers().getState().getStateFilterStrategies();
+            return policy.getIdentifiers().getState().getStateFilterStrategies();
         } else if(filterType == FilterType.SURNAME) {
-            return filterProfile.getIdentifiers().getSurname().getSurnameFilterStrategies();
+            return policy.getIdentifiers().getSurname().getSurnameFilterStrategies();
         }
 
         // Should never happen.

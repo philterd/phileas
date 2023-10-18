@@ -18,7 +18,7 @@ package ai.philterd.test.phileas.services.filters;
 import ai.philterd.phileas.model.enums.FilterType;
 import ai.philterd.phileas.model.filter.FilterConfiguration;
 import ai.philterd.phileas.model.objects.FilterResult;
-import ai.philterd.phileas.model.profile.filters.strategies.rules.SectionFilterStrategy;
+import ai.philterd.phileas.model.policy.filters.strategies.rules.SectionFilterStrategy;
 import ai.philterd.phileas.model.services.AlertService;
 import ai.philterd.phileas.services.anonymization.AlphanumericAnonymizationService;
 import ai.philterd.phileas.services.anonymization.cache.LocalAnonymizationCacheService;
@@ -48,7 +48,7 @@ public class SectionFilterTest extends AbstractFilterTest {
 
         final SectionFilter filter = new SectionFilter(filterConfiguration, startPattern, endPattern);
 
-        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", PIECE, "This is some test. BEGIN-REDACT This text should be redacted. END-REDACT This is outside the text.");
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "This is some test. BEGIN-REDACT This text should be redacted. END-REDACT This is outside the text.");
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 19, 72, FilterType.SECTION));
@@ -71,7 +71,7 @@ public class SectionFilterTest extends AbstractFilterTest {
 
         final SectionFilter filter = new SectionFilter(filterConfiguration, startPattern, endPattern);
 
-        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", PIECE, "This is some test. BEGIN-REDACT This text should be redacted. This is outside the text.");
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "This is some test. BEGIN-REDACT This text should be redacted. This is outside the text.");
 
         Assertions.assertEquals(0, filterResult.getSpans().size());
 
@@ -92,7 +92,7 @@ public class SectionFilterTest extends AbstractFilterTest {
 
         final SectionFilter filter = new SectionFilter(filterConfiguration, startPattern, endPattern);
 
-        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", PIECE, "BEGIN-REDACT This text should be redacted. END-REDACT This is outside the text.");
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "BEGIN-REDACT This text should be redacted. END-REDACT This is outside the text.");
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 0, 53, FilterType.SECTION));

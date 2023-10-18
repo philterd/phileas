@@ -25,13 +25,13 @@ public interface AlertService {
     /**
      * Generate an alert.
      *
-     * @param filterProfile The name of the filter profile.
+     * @param policy The name of the policy.
      * @param strategyId The ID of the filter strategy that caused the alert.
      * @param context The context.
      * @param documentId The document ID.
      * @param filterType The {@link FilterType}.
      */
-    void generateAlert(String filterProfile, String strategyId, String context, String documentId, FilterType filterType);
+    void generateAlert(String policy, String strategyId, String context, String documentId, FilterType filterType);
 
     /**
      * Gets all of the alerts.

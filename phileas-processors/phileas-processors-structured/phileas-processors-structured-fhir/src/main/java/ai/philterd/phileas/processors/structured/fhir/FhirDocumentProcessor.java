@@ -18,10 +18,10 @@ package ai.philterd.phileas.processors.structured.fhir;
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.parser.IParser;
 import ai.philterd.phileas.model.filter.Filter;
-import ai.philterd.phileas.model.profile.Crypto;
-import ai.philterd.phileas.model.profile.FilterProfile;
-import ai.philterd.phileas.model.profile.fhir4.FhirItem;
-import ai.philterd.phileas.model.profile.fhir4.FhirR4;
+import ai.philterd.phileas.model.policy.Crypto;
+import ai.philterd.phileas.model.policy.Policy;
+import ai.philterd.phileas.model.policy.fhir4.FhirItem;
+import ai.philterd.phileas.model.policy.fhir4.FhirR4;
 import ai.philterd.phileas.model.responses.FilterResponse;
 import ai.philterd.phileas.model.services.DocumentProcessor;
 import ai.philterd.phileas.model.services.MetricsService;
@@ -56,16 +56,16 @@ public class FhirDocumentProcessor extends AbstractFhirDocumentProcessor impleme
     }
 
     @Override
-    public FilterResponse process(FilterProfile filterProfile, List<Filter> filters, List<PostFilter> postFilters,
+    public FilterResponse process(Policy policy, List<Filter> filters, List<PostFilter> postFilters,
                                   String context, String documentId, String json) throws Exception {
 
         // TODO: I'm getting FhirR4 here but that version is really unknown to the API.
         // All we know is that it is an application/fhir+json document.
         // Should the version be passed in as an API header or something?
 
-        LOGGER.debug("Doing FHIRv4 processing with filter profile [{}]", filterProfile.getName());
+        LOGGER.debug("Doing FHIRv4 processing with policy [{}]", policy.getName());
 
-        final FhirR4 fhirR4 = filterProfile.getStructured().getFhirR4();
+        final FhirR4 fhirR4 = policy.getStructured().getFhirR4();
         final List<FhirItem> fhirItems = fhirR4.getFhirItems();
 
         final FhirContext ctx = FhirContext.forR4();
@@ -74,7 +74,7 @@ public class FhirDocumentProcessor extends AbstractFhirDocumentProcessor impleme
         final Patient patient = parser.parseResource(Patient.class, json);
 
         // Used for value encryption. May not be needed.
-        final Crypto crypto = filterProfile.getCrypto();
+        final Crypto crypto = policy.getCrypto();
 
         // Make the changes in the Patient document.
 

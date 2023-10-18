@@ -17,8 +17,8 @@ package ai.philterd.test.phileas.services.postfilters;
 
 import ai.philterd.phileas.model.enums.FilterType;
 import ai.philterd.phileas.model.objects.Span;
-import ai.philterd.phileas.model.profile.FilterProfile;
-import ai.philterd.phileas.model.profile.Ignored;
+import ai.philterd.phileas.model.policy.Policy;
+import ai.philterd.phileas.model.policy.Ignored;
 import ai.philterd.phileas.services.postfilters.IgnoredTermsFilter;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -37,8 +37,8 @@ public class IgnoredTermsFilterTest {
         final Ignored ignored = new Ignored();
         ignored.setTerms(Arrays.asList("Washington", "California", "Virginia"));
 
-        final FilterProfile filterProfile = new FilterProfile();
-        filterProfile.setIgnored(Arrays.asList(ignored));
+        final Policy policy = new Policy();
+        policy.setIgnored(Arrays.asList(ignored));
 
         final List<Span> spans = new LinkedList<>();
         spans.add(Span.make(12, 22, FilterType.LOCATION_STATE, "context", "docid", 0.80, "test", "*****",  "", false, new String[0]));

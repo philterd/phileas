@@ -18,11 +18,10 @@ package ai.philterd.phileas.model.filter.rules.dictionary;
 import ai.philterd.phileas.model.enums.FilterType;
 import ai.philterd.phileas.model.enums.SensitivityLevel;
 import ai.philterd.phileas.model.filter.FilterConfiguration;
-import ai.philterd.phileas.model.objects.DocumentAnalysis;
 import ai.philterd.phileas.model.objects.FilterResult;
 import ai.philterd.phileas.model.objects.Replacement;
 import ai.philterd.phileas.model.objects.Span;
-import ai.philterd.phileas.model.profile.FilterProfile;
+import ai.philterd.phileas.model.policy.Policy;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.text.similarity.LevenshteinDistance;
@@ -65,7 +64,7 @@ public class LuceneDictionaryFilter extends DictionaryFilter implements Serializ
     private LevenshteinDistance distanceFunction;
     private SensitivityLevel sensitivityLevel;
     private boolean capitalized;
-    private int filterProfileIndex = 0;
+    private int policyIndex = 0;
 
     /**
      * Creates a new Lucene dictionary filter.
@@ -103,7 +102,7 @@ public class LuceneDictionaryFilter extends DictionaryFilter implements Serializ
      * @param terms
      * @param capitalized
      * @param type
-     * @param filterProfileIndex
+     * @param policyIndex
      * @throws IOException Thrown if the index cannot be opened or accessed.
      */
     public LuceneDictionaryFilter(FilterType filterType,
@@ -112,7 +111,7 @@ public class LuceneDictionaryFilter extends DictionaryFilter implements Serializ
                                   Set<String> terms,
                                   boolean capitalized,
                                   String type,
-                                  int filterProfileIndex) throws IOException {
+                                  int policyIndex) throws IOException {
 
         super(filterType, filterConfiguration);
 
@@ -121,7 +120,7 @@ public class LuceneDictionaryFilter extends DictionaryFilter implements Serializ
         this.distanceFunction = new LevenshteinDistance();
         this.sensitivityLevel = sensitivityLevel;
         this.capitalized = capitalized;
-        this.filterProfileIndex = filterProfileIndex;
+        this.policyIndex = policyIndex;
 
         // Find the max n-gram size. It is equal to the maximum
         // number of spaces in any single dictionary entry.
@@ -165,11 +164,11 @@ public class LuceneDictionaryFilter extends DictionaryFilter implements Serializ
     }
 
     @Override
-    public FilterResult filter(FilterProfile filterProfile, String context, String documentId, int piece, String text) throws Exception {
+    public FilterResult filter(Policy policy, String context, String documentId, int piece, String text) throws Exception {
 
         final List<Span> spans = new LinkedList<>();
 
-        if(filterProfile.getIdentifiers().hasFilter(filterType)) {
+        if(policy.getIdentifiers().hasFilter(filterType)) {
 
             try(final Analyzer analyzer = new StandardAnalyzer()) {
 
@@ -274,7 +273,7 @@ public class LuceneDictionaryFilter extends DictionaryFilter implements Serializ
                                     final String classification = "";
 
                                     // Get the replacement token or the original token if no filter strategy conditions are met.
-                                    final Replacement replacement = getReplacement(filterProfile.getName(), context, documentId, token, window, confidence, classification, null);
+                                    final Replacement replacement = getReplacement(policy.getName(), context, documentId, token, window, confidence, classification, null);
 
                                     // Add the span to the list.
                                     spans.add(Span.make(characterStart, characterEnd, getFilterType(), context, documentId, confidence, token, replacement.getReplacement(), replacement.getSalt(), ignored, window));
@@ -309,9 +308,9 @@ public class LuceneDictionaryFilter extends DictionaryFilter implements Serializ
     }
 
     @Override
-    public int getOccurrences(FilterProfile filterProfile, String input) throws Exception {
+    public int getOccurrences(Policy policy, String input) throws Exception {
 
-        return filter(filterProfile, "none", "none", 0, input).getSpans().size();
+        return filter(policy, "none", "none", 0, input).getSpans().size();
 
     }
 

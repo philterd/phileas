@@ -13,22 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ai.philterd.test.phileas.model.profile.filters.strategies.rules;
+package ai.philterd.test.phileas.model.policy.filters.strategies.rules;
 
-import ai.philterd.phileas.model.objects.FilterPattern;
 import ai.philterd.phileas.model.objects.Replacement;
-import ai.philterd.phileas.model.profile.Crypto;
-import ai.philterd.phileas.model.profile.FPE;
-import ai.philterd.phileas.model.profile.filters.strategies.AbstractFilterStrategy;
-import ai.philterd.phileas.model.profile.filters.strategies.rules.CreditCardFilterStrategy;
+import ai.philterd.phileas.model.policy.Crypto;
+import ai.philterd.phileas.model.policy.FPE;
+import ai.philterd.phileas.model.policy.filters.strategies.AbstractFilterStrategy;
+import ai.philterd.phileas.model.policy.filters.strategies.rules.CreditCardFilterStrategy;
 import ai.philterd.phileas.model.services.AnonymizationService;
-import ai.philterd.test.phileas.model.profile.filters.strategies.AbstractFilterStrategyTest;
+import ai.philterd.test.phileas.model.policy.filters.strategies.AbstractFilterStrategyTest;
 import org.apache.commons.validator.routines.checkdigit.LuhnCheckDigit;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-
-import java.util.regex.Pattern;
 
 public class CreditCardFilterStrategyTest extends AbstractFilterStrategyTest {
 

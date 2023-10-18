@@ -15,23 +15,22 @@
  */
 package ai.philterd.test.phileas.services;
 
-import ai.philterd.phileas.model.profile.FilterProfile;
-import ai.philterd.phileas.model.profile.Identifiers;
-import ai.philterd.phileas.model.profile.Ignored;
-import ai.philterd.phileas.model.profile.filters.*;
-import ai.philterd.phileas.model.profile.filters.strategies.AbstractFilterStrategy;
-import ai.philterd.phileas.model.profile.filters.strategies.ai.PersonsFilterStrategy;
-import ai.philterd.phileas.model.profile.filters.strategies.custom.CustomDictionaryFilterStrategy;
-import ai.philterd.phileas.model.profile.filters.strategies.dynamic.CityFilterStrategy;
-import ai.philterd.phileas.model.profile.filters.strategies.dynamic.CountyFilterStrategy;
-import ai.philterd.phileas.model.profile.filters.strategies.dynamic.FirstNameFilterStrategy;
-import ai.philterd.phileas.model.profile.filters.strategies.dynamic.HospitalAbbreviationFilterStrategy;
-import ai.philterd.phileas.model.profile.filters.strategies.dynamic.HospitalFilterStrategy;
-import ai.philterd.phileas.model.profile.filters.strategies.dynamic.StateFilterStrategy;
-import ai.philterd.phileas.model.profile.filters.strategies.dynamic.SurnameFilterStrategy;
-import ai.philterd.phileas.model.profile.filters.strategies.rules.*;
+import ai.philterd.phileas.model.policy.Policy;
+import ai.philterd.phileas.model.policy.Identifiers;
+import ai.philterd.phileas.model.policy.Ignored;
+import ai.philterd.phileas.model.policy.filters.*;
+import ai.philterd.phileas.model.policy.filters.strategies.AbstractFilterStrategy;
+import ai.philterd.phileas.model.policy.filters.strategies.ai.PersonsFilterStrategy;
+import ai.philterd.phileas.model.policy.filters.strategies.custom.CustomDictionaryFilterStrategy;
+import ai.philterd.phileas.model.policy.filters.strategies.dynamic.CityFilterStrategy;
+import ai.philterd.phileas.model.policy.filters.strategies.dynamic.CountyFilterStrategy;
+import ai.philterd.phileas.model.policy.filters.strategies.dynamic.FirstNameFilterStrategy;
+import ai.philterd.phileas.model.policy.filters.strategies.dynamic.HospitalAbbreviationFilterStrategy;
+import ai.philterd.phileas.model.policy.filters.strategies.dynamic.HospitalFilterStrategy;
+import ai.philterd.phileas.model.policy.filters.strategies.dynamic.StateFilterStrategy;
+import ai.philterd.phileas.model.policy.filters.strategies.dynamic.SurnameFilterStrategy;
+import ai.philterd.phileas.model.policy.filters.strategies.rules.*;
 import org.apache.commons.io.FileUtils;
-import org.jsoup.select.Evaluator;
 
 import java.io.File;
 import java.io.IOException;
@@ -44,7 +43,7 @@ import java.util.Set;
 public class EndToEndTestsHelper {
 
 
-    public static FilterProfile getFilterProfileZipCodeWithIgnored(String filterProfileName) throws IOException {
+    public static Policy getPolicyZipCodeWithIgnored(String policyName) throws IOException {
 
         Set<String> ignored = new HashSet<>();
         ignored.add("90210");
@@ -65,15 +64,15 @@ public class EndToEndTestsHelper {
         identifiers.setSsn(ssn);
         identifiers.setZipCode(zipCode);
 
-        FilterProfile filterProfile = new FilterProfile();
-        filterProfile.setName(filterProfileName);
-        filterProfile.setIdentifiers(identifiers);
+        Policy policy = new Policy();
+        policy.setName(policyName);
+        policy.setIdentifiers(identifiers);
 
-        return filterProfile;
+        return policy;
 
     }
 
-    public static FilterProfile getFilterProfileZipCodeWithIgnoredFromFile(String filterProfileName) throws IOException {
+    public static Policy getPolicyZipCodeWithIgnoredFromFile(String policyName) throws IOException {
 
         // Copy file to temp directory.
         final File file = File.createTempFile("philter", "ignore");
@@ -98,15 +97,15 @@ public class EndToEndTestsHelper {
         identifiers.setSsn(ssn);
         identifiers.setZipCode(zipCode);
 
-        FilterProfile filterProfile = new FilterProfile();
-        filterProfile.setName(filterProfileName);
-        filterProfile.setIdentifiers(identifiers);
+        Policy policy = new Policy();
+        policy.setName(policyName);
+        policy.setIdentifiers(identifiers);
 
-        return filterProfile;
+        return policy;
 
     }
 
-    public static FilterProfile getPdfFilterProfile(String filterProfileName) throws IOException {
+    public static Policy getPdfPolicy(String policyName) throws IOException {
 
         ZipCodeFilterStrategy zipCodeFilterStrategy = new ZipCodeFilterStrategy();
         zipCodeFilterStrategy.setTruncateDigits(2);
@@ -126,15 +125,15 @@ public class EndToEndTestsHelper {
         identifiers.setCustomDictionaries(Arrays.asList(customDictionary));
         identifiers.setZipCode(zipCode);
 
-        FilterProfile filterProfile = new FilterProfile();
-        filterProfile.setName(filterProfileName);
-        filterProfile.setIdentifiers(identifiers);
+        Policy policy = new Policy();
+        policy.setName(policyName);
+        policy.setIdentifiers(identifiers);
 
-        return filterProfile;
+        return policy;
 
     }
 
-    public static FilterProfile getPdfFilterWithPersonProfile(String filterProfileName) throws URISyntaxException {
+    public static Policy getPdfFilterWithPersonPolicy(String policyName) throws URISyntaxException {
 
         final File model = new File(EndToEndTestsHelper.class.getClassLoader().getResource("ner/model.onnx").toURI());
         final File vocab = new File(EndToEndTestsHelper.class.getClassLoader().getResource("ner/vocab.txt").toURI());
@@ -146,15 +145,15 @@ public class EndToEndTestsHelper {
         Identifiers identifiers = new Identifiers();
         identifiers.setPersonV2(personV2);
 
-        FilterProfile filterProfile = new FilterProfile();
-        filterProfile.setName(filterProfileName);
-        filterProfile.setIdentifiers(identifiers);
+        Policy policy = new Policy();
+        policy.setName(policyName);
+        policy.setIdentifiers(identifiers);
 
-        return filterProfile;
+        return policy;
 
     }
 
-    public static FilterProfile getFilterProfileJustCreditCard(String filterProfileName) throws IOException {
+    public static Policy getPolicyJustCreditCard(String policyName) throws IOException {
 
         CreditCardFilterStrategy creditCardFilterStrategy = new CreditCardFilterStrategy();
 
@@ -167,16 +166,16 @@ public class EndToEndTestsHelper {
         Ignored ignored = new Ignored();
         ignored.setTerms(Arrays.asList("4121742025464400", "12341341234", "2423543545"));
 
-        FilterProfile filterProfile = new FilterProfile();
-        filterProfile.setName(filterProfileName);
-        filterProfile.setIdentifiers(identifiers);
-        filterProfile.setIgnored(Arrays.asList(ignored));
+        Policy policy = new Policy();
+        policy.setName(policyName);
+        policy.setIdentifiers(identifiers);
+        policy.setIgnored(Arrays.asList(ignored));
 
-        return filterProfile;
+        return policy;
 
     }
 
-    public static FilterProfile getFilterProfile(String filterProfileName) throws IOException, URISyntaxException {
+    public static Policy getPolicy(String policyName) throws IOException, URISyntaxException {
 
         AgeFilterStrategy ageFilterStrategy = new AgeFilterStrategy();
 
@@ -324,15 +323,15 @@ public class EndToEndTestsHelper {
         identifiers.setState(state);
         identifiers.setSurname(surname);*/
 
-        FilterProfile filterProfile = new FilterProfile();
-        filterProfile.setName(filterProfileName);
-        filterProfile.setIdentifiers(identifiers);
+        Policy policy = new Policy();
+        policy.setName(policyName);
+        policy.setIdentifiers(identifiers);
 
-        return filterProfile;
+        return policy;
 
     }
 
-    public static FilterProfile getFilterProfileJustIdentifier(String filterProfileName) {
+    public static Policy getPolicyJustIdentifier(String policyName) {
 
         Identifier identifier1 = new Identifier();
         identifier1.setIdentifierFilterStrategies(Arrays.asList(new IdentifierFilterStrategy()));
@@ -343,15 +342,15 @@ public class EndToEndTestsHelper {
 
         identifiers.setIdentifiers(Arrays.asList(identifier1));
 
-        FilterProfile filterProfile = new FilterProfile();
-        filterProfile.setName(filterProfileName);
-        filterProfile.setIdentifiers(identifiers);
+        Policy policy = new Policy();
+        policy.setName(policyName);
+        policy.setIdentifiers(identifiers);
 
-        return filterProfile;
+        return policy;
 
     }
 
-    public static FilterProfile getFilterProfileJustStreetAddress(String filterProfileName) {
+    public static Policy getPolicyJustStreetAddress(String policyName) {
 
         StreetAddressFilterStrategy streetAddressFilterStrategy = new StreetAddressFilterStrategy();
 
@@ -361,11 +360,11 @@ public class EndToEndTestsHelper {
         Identifiers identifiers = new Identifiers();
         identifiers.setStreetAddress(streetAddress);
 
-        FilterProfile filterProfile = new FilterProfile();
-        filterProfile.setName(filterProfileName);
-        filterProfile.setIdentifiers(identifiers);
+        Policy policy = new Policy();
+        policy.setName(policyName);
+        policy.setIdentifiers(identifiers);
 
-        return filterProfile;
+        return policy;
 
     }
 

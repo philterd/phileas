@@ -18,8 +18,8 @@ package ai.philterd.test.phileas.services.filters;
 import ai.philterd.phileas.model.enums.FilterType;
 import ai.philterd.phileas.model.filter.FilterConfiguration;
 import ai.philterd.phileas.model.objects.FilterResult;
-import ai.philterd.phileas.model.profile.filters.strategies.AbstractFilterStrategy;
-import ai.philterd.phileas.model.profile.filters.strategies.rules.CurrencyFilterStrategy;
+import ai.philterd.phileas.model.policy.filters.strategies.AbstractFilterStrategy;
+import ai.philterd.phileas.model.policy.filters.strategies.rules.CurrencyFilterStrategy;
 import ai.philterd.phileas.model.services.AlertService;
 import ai.philterd.phileas.services.anonymization.CurrencyAnonymizationService;
 import ai.philterd.phileas.services.anonymization.cache.LocalAnonymizationCacheService;
@@ -46,7 +46,7 @@ public class CurrencyFilterTest extends AbstractFilterTest {
 
         final CurrencyFilter filter = new CurrencyFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", PIECE, "the drug cost is $35.53 .");
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "the drug cost is $35.53 .");
 
         showSpans(filterResult.getSpans());
 
@@ -68,7 +68,7 @@ public class CurrencyFilterTest extends AbstractFilterTest {
 
         final CurrencyFilter filter = new CurrencyFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", PIECE, "the drug cost is $35.53.");
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "the drug cost is $35.53.");
 
         showSpans(filterResult.getSpans());
 
@@ -90,7 +90,7 @@ public class CurrencyFilterTest extends AbstractFilterTest {
 
         final CurrencyFilter filter = new CurrencyFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", PIECE, "the drug cost is $35.00.");
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "the drug cost is $35.00.");
 
         showSpans(filterResult.getSpans());
 
@@ -112,7 +112,7 @@ public class CurrencyFilterTest extends AbstractFilterTest {
 
         final CurrencyFilter filter = new CurrencyFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", PIECE, "the drug cost is $3.00.");
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "the drug cost is $3.00.");
 
         showSpans(filterResult.getSpans());
 
@@ -134,7 +134,7 @@ public class CurrencyFilterTest extends AbstractFilterTest {
 
         final CurrencyFilter filter = new CurrencyFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", PIECE, "the drug cost is $.50.");
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "the drug cost is $.50.");
 
         showSpans(filterResult.getSpans());
 
@@ -159,7 +159,7 @@ public class CurrencyFilterTest extends AbstractFilterTest {
 
         final CurrencyFilter filter = new CurrencyFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", PIECE, "the drug cost is $50.");
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "the drug cost is $50.");
 
         showSpans(filterResult.getSpans());
 
@@ -184,7 +184,7 @@ public class CurrencyFilterTest extends AbstractFilterTest {
 
         final CurrencyFilter filter = new CurrencyFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getFilterProfile(), "context", "documentid", PIECE, "the drug cost is $.50.");
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "the drug cost is $.50.");
 
         showSpans(filterResult.getSpans());
 
