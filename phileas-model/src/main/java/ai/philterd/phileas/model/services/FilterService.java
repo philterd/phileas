@@ -45,7 +45,7 @@ public interface FilterService {
      * @param documentId A document ID. Provide <code>null</code> for a document ID to be generated.
      * @param input The input document as a byte array.
      * @param mimeType The input {@link MimeType}.
-     * @param mimeType The output {@link MimeType}.
+     * @param outputMimeType The output {@link MimeType}.
      * @return A {@link BinaryDocumentFilterResponse}.
      * @throws Exception Thrown if the text cannot be filtered.
      */
