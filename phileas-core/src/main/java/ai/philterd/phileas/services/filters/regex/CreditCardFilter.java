@@ -28,12 +28,13 @@ import org.apache.commons.validator.routines.checkdigit.LuhnCheckDigit;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 public class CreditCardFilter extends RegexFilter {
 
-    private boolean onlyValidCreditCardNumbers;
-    private LuhnCheckDigit luhnCheckDigit;
+    private final boolean onlyValidCreditCardNumbers;
+    private final LuhnCheckDigit luhnCheckDigit;
 
     public CreditCardFilter(FilterConfiguration filterConfiguration, boolean onlyValidCreditCardNumbers) {
         super(FilterType.CREDIT_CARD, filterConfiguration);
@@ -59,9 +60,9 @@ public class CreditCardFilter extends RegexFilter {
     }
 
     @Override
-    public FilterResult filter(Policy policy, String context, String documentId, int piece, String input) throws Exception {
+    public FilterResult filter(Policy policy, String context, String documentId, int piece, String input, Map<String, String> attributes) throws Exception {
 
-        final List<Span> spans = findSpans(policy, analyzer, input, context, documentId);
+        final List<Span> spans = findSpans(policy, analyzer, input, context, documentId, attributes);
 
         final List<Span> validSpans = new LinkedList<>();
 

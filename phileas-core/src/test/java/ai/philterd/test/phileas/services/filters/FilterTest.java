@@ -1,7 +1,7 @@
 /*
  *     Copyright 2023 Philterd, LLC @ https://www.philterd.ai
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * Licensed under the Apache License, Version 2.0 (the "License", attributes);
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
@@ -51,7 +51,7 @@ public class FilterTest extends AbstractFilterTest {
 
         final AgeFilter filter = new AgeFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "this is a first sentence. the patient is 3.5 years old and he's cool. this is a surrounding sentence.");
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "this is a first sentence. the patient is 3.5 years old and he's cool. this is a surrounding sentence.", attributes);
 
         showSpans(filterResult.getSpans());
 
@@ -82,7 +82,7 @@ public class FilterTest extends AbstractFilterTest {
 
         final AgeFilter filter = new AgeFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "this is a first sentence. the patient is 3.5 years old and he's cool. this is a surrounding sentence.");
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "this is a first sentence. the patient is 3.5 years old and he's cool. this is a surrounding sentence.", attributes);
 
         showSpans(filterResult.getSpans());
 
@@ -114,7 +114,7 @@ public class FilterTest extends AbstractFilterTest {
 
         final AgeFilter filter = new AgeFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "this is a first sentence. the patient is 3.5 years old and he's cool. this is a surrounding sentence.");
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "this is a first sentence. the patient is 3.5 years old and he's cool. this is a surrounding sentence.", attributes);
 
         showSpans(filterResult.getSpans());
 

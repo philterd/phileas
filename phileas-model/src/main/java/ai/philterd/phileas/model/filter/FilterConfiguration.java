@@ -15,7 +15,6 @@
  */
 package ai.philterd.phileas.model.filter;
 
-import ai.philterd.phileas.model.objects.DocumentAnalysis;
 import ai.philterd.phileas.model.policy.Crypto;
 import ai.philterd.phileas.model.policy.FPE;
 import ai.philterd.phileas.model.policy.IgnoredPattern;
@@ -32,28 +31,26 @@ import static ai.philterd.phileas.model.policy.filters.strategies.AbstractFilter
 
 public class FilterConfiguration {
 
-    private List<? extends AbstractFilterStrategy> strategies;
-    private AnonymizationService anonymizationService;
-    private AlertService alertService;
-    private Set<String> ignored;
-    private Set<String> ignoredFiles;
-    private List<IgnoredPattern> ignoredPatterns;
-    private Crypto crypto;
-    private FPE fpe;
+    private final List<? extends AbstractFilterStrategy> strategies;
+    private final AnonymizationService anonymizationService;
+    private final AlertService alertService;
+    private final Set<String> ignored;
+    private final Set<String> ignoredFiles;
+    private final List<IgnoredPattern> ignoredPatterns;
+    private final Crypto crypto;
+    private final FPE fpe;
     private int windowSize = 5;
-    private DocumentAnalysis documentAnalysis;
 
     private FilterConfiguration(
-            List<? extends AbstractFilterStrategy> strategies,
-            AnonymizationService anonymizationService,
-            AlertService alertService,
-            Set<String> ignored,
-            Set<String> ignoredFiles,
-            List<IgnoredPattern> ignoredPatterns,
-            Crypto crypto,
-            FPE fpe,
-            int windowSize,
-            DocumentAnalysis documentAnalysis
+            final List<? extends AbstractFilterStrategy> strategies,
+            final AnonymizationService anonymizationService,
+            final AlertService alertService,
+            final Set<String> ignored,
+            final Set<String> ignoredFiles,
+            final List<IgnoredPattern> ignoredPatterns,
+            final Crypto crypto,
+            final FPE fpe,
+            final int windowSize
     ) {
 
         this.strategies = strategies;
@@ -65,7 +62,6 @@ public class FilterConfiguration {
         this.crypto = crypto;
         this.fpe = fpe;
         this.windowSize = windowSize;
-        this.documentAnalysis = documentAnalysis;
 
     }
 
@@ -80,16 +76,8 @@ public class FilterConfiguration {
         private Crypto crypto;
         private FPE fpe;
         private int windowSize;
-        private DocumentAnalysis documentAnalysis;
 
         public FilterConfiguration build() {
-
-            // Always make sure there is a document analysis.
-            // This is needed for unit tests in which the text has not gone through the filter process
-            // and the input text was not first analyzed.
-            if(documentAnalysis == null) {
-                documentAnalysis = new DocumentAnalysis();
-            }
 
             // Validate the configuration. This throws an exception if it is invalid.
             validate();
@@ -103,8 +91,7 @@ public class FilterConfiguration {
                     ignoredPatterns,
                     crypto,
                     fpe,
-                    windowSize,
-                    documentAnalysis
+                    windowSize
             );
 
         }
@@ -204,11 +191,6 @@ public class FilterConfiguration {
             return this;
         }
 
-        public FilterConfigurationBuilder withDocumentAnalysis(DocumentAnalysis documentAnalysis) {
-            this.documentAnalysis = documentAnalysis;
-            return this;
-        }
-
     }
 
     public List<? extends AbstractFilterStrategy> getStrategies() {
@@ -245,10 +227,6 @@ public class FilterConfiguration {
 
     public int getWindowSize() {
         return windowSize;
-    }
-
-    public DocumentAnalysis getDocumentAnalysis() {
-        return documentAnalysis;
     }
 
 }

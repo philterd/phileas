@@ -61,10 +61,6 @@ public class Policy {
     @Expose
     private Graphical graphical = new Graphical();
 
-    @SerializedName("structured")
-    @Expose
-    private Structured structured;
-
     @Override
     public boolean equals(Object o) {
         return EqualsBuilder.reflectionEquals(this, o);
@@ -79,7 +75,6 @@ public class Policy {
                 append(identifiers).
                 append(ignored).
                 append(ignoredPatterns).
-                append(structured).
                 append(config).
                 toHashCode();
     }
@@ -114,14 +109,6 @@ public class Policy {
 
     public void setCrypto(Crypto crypto) {
         this.crypto = crypto;
-    }
-
-    public Structured getStructured() {
-        return structured;
-    }
-
-    public void setStructured(Structured structured) {
-        this.structured = structured;
     }
 
     public List<IgnoredPattern> getIgnoredPatterns() {

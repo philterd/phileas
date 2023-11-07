@@ -47,7 +47,7 @@ public class DateSpanValidator implements SpanValidator {
     }
 
     @Override
-    public boolean validate(Span span) {
+    public boolean validate(final Span span) {
 
         boolean valid;
 

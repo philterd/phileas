@@ -27,8 +27,6 @@ import java.util.UUID;
 
 public class Alert implements Serializable {
 
-    private final transient DateFormat utcDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-
     private String id;
     private String policy;
     private String strategyId;
@@ -49,6 +47,8 @@ public class Alert implements Serializable {
         this.context = context;
         this.documentId = documentId;
         this.filterType = filterType;
+
+        final DateFormat utcDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
         this.date = utcDateFormat.format(new Date());
 
     }

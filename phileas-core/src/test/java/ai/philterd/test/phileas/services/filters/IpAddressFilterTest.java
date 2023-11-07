@@ -1,7 +1,7 @@
 /*
  *     Copyright 2023 Philterd, LLC @ https://www.philterd.ai
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * Licensed under the Apache License, Version 2.0 (the "License", attributes);
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
@@ -27,17 +27,17 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import java.util.Arrays;
+import java.util.List;
 
 public class IpAddressFilterTest extends AbstractFilterTest {
 
-    private AlertService alertService = Mockito.mock(AlertService.class);
+    private final AlertService alertService = Mockito.mock(AlertService.class);
 
     @Test
     public void filterIpv41() throws Exception {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
-                .withStrategies(Arrays.asList(new IpAddressFilterStrategy()))
+                .withStrategies(List.of(new IpAddressFilterStrategy()))
                 .withAlertService(alertService)
                 .withAnonymizationService(new IpAddressAnonymizationService(new LocalAnonymizationCacheService()))
                 .withWindowSize(windowSize)
@@ -45,7 +45,7 @@ public class IpAddressFilterTest extends AbstractFilterTest {
 
         final IpAddressFilter filter = new IpAddressFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "the ip is 192.168.1.101.");
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "the ip is 192.168.1.101.", attributes);
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 10, 23, FilterType.IP_ADDRESS));
@@ -57,7 +57,7 @@ public class IpAddressFilterTest extends AbstractFilterTest {
     public void filterIpv61() throws Exception {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
-                .withStrategies(Arrays.asList(new IpAddressFilterStrategy()))
+                .withStrategies(List.of(new IpAddressFilterStrategy()))
                 .withAlertService(alertService)
                 .withAnonymizationService(new IpAddressAnonymizationService(new LocalAnonymizationCacheService()))
                 .withWindowSize(windowSize)
@@ -65,7 +65,7 @@ public class IpAddressFilterTest extends AbstractFilterTest {
 
         final IpAddressFilter filter = new IpAddressFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "the ip is 1::");
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "the ip is 1::", attributes);
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 10, 13, FilterType.IP_ADDRESS));
@@ -76,7 +76,7 @@ public class IpAddressFilterTest extends AbstractFilterTest {
     public void filterIpv62() throws Exception {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
-                .withStrategies(Arrays.asList(new IpAddressFilterStrategy()))
+                .withStrategies(List.of(new IpAddressFilterStrategy()))
                 .withAlertService(alertService)
                 .withAnonymizationService(new IpAddressAnonymizationService(new LocalAnonymizationCacheService()))
                 .withWindowSize(windowSize)
@@ -84,7 +84,7 @@ public class IpAddressFilterTest extends AbstractFilterTest {
 
         final IpAddressFilter filter = new IpAddressFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "the ip is 2001:0db8:85a3:0000:0000:8a2e:0370:7334");
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "the ip is 2001:0db8:85a3:0000:0000:8a2e:0370:7334", attributes);
 
         // Finds duplicate spans. Duplicates/overlapping will be removed by the service prior to returning.
         Assertions.assertEquals(2, filterResult.getSpans().size());
@@ -97,7 +97,7 @@ public class IpAddressFilterTest extends AbstractFilterTest {
     public void filterIpv63() throws Exception {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
-                .withStrategies(Arrays.asList(new IpAddressFilterStrategy()))
+                .withStrategies(List.of(new IpAddressFilterStrategy()))
                 .withAlertService(alertService)
                 .withAnonymizationService(new IpAddressAnonymizationService(new LocalAnonymizationCacheService()))
                 .withWindowSize(windowSize)
@@ -105,7 +105,7 @@ public class IpAddressFilterTest extends AbstractFilterTest {
 
         final IpAddressFilter filter = new IpAddressFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "the ip is fe80::0202:B3FF:FE1E:8329");
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "the ip is fe80::0202:B3FF:FE1E:8329", attributes);
 
         // Finds duplicate spans. Duplicates/overlapping will be removed by the service prior to returning.
         Assertions.assertEquals(2, filterResult.getSpans().size());

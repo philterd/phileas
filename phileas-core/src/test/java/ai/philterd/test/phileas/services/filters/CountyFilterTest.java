@@ -1,7 +1,7 @@
 /*
  *     Copyright 2023 Philterd, LLC @ https://www.philterd.ai
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * Licensed under the Apache License, Version 2.0 (the "License", attributes);
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
@@ -32,7 +32,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import java.util.Arrays;
+import java.util.List;
 
 public class CountyFilterTest extends AbstractFilterTest {
 
@@ -52,7 +52,7 @@ public class CountyFilterTest extends AbstractFilterTest {
     public void filterCountiesLow() throws Exception {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
-                .withStrategies(Arrays.asList(new CountyFilterStrategy()))
+                .withStrategies(List.of(new CountyFilterStrategy()))
                 .withAlertService(alertService)
                 .withAnonymizationService(new CountyAnonymizationService(new LocalAnonymizationCacheService()))
                 .withWindowSize(windowSize)
@@ -60,7 +60,7 @@ public class CountyFilterTest extends AbstractFilterTest {
 
         final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.LOCATION_COUNTY, filterConfiguration, INDEX_DIRECTORY, SensitivityLevel.LOW, false);
 
-        FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE,"Lived in Fyette");
+        FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE,"Lived in Fyette", attributes);
 
         showSpans(filterResult.getSpans());
 
@@ -72,7 +72,7 @@ public class CountyFilterTest extends AbstractFilterTest {
     public void filterCountiesMedium() throws Exception {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
-                .withStrategies(Arrays.asList(new CountyFilterStrategy()))
+                .withStrategies(List.of(new CountyFilterStrategy()))
                 .withAlertService(alertService)
                 .withAnonymizationService(new CountyAnonymizationService(new LocalAnonymizationCacheService()))
                 .withWindowSize(windowSize)
@@ -80,7 +80,7 @@ public class CountyFilterTest extends AbstractFilterTest {
 
         final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.LOCATION_COUNTY, filterConfiguration, INDEX_DIRECTORY, SensitivityLevel.MEDIUM, false);
 
-        FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "Lived in Fyette");
+        FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "Lived in Fyette", attributes);
 
         showSpans(filterResult.getSpans());
 
@@ -95,7 +95,7 @@ public class CountyFilterTest extends AbstractFilterTest {
         AnonymizationService anonymizationService = new CountyAnonymizationService(new LocalAnonymizationCacheService());
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
-                .withStrategies(Arrays.asList(new CountyFilterStrategy()))
+                .withStrategies(List.of(new CountyFilterStrategy()))
                 .withAlertService(alertService)
                 .withAnonymizationService(new CountyAnonymizationService(new LocalAnonymizationCacheService()))
                 .withWindowSize(windowSize)
@@ -103,7 +103,7 @@ public class CountyFilterTest extends AbstractFilterTest {
 
         final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.LOCATION_COUNTY, filterConfiguration, INDEX_DIRECTORY, SensitivityLevel.HIGH, false);
 
-        FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "Lived in Fyette");
+        FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "Lived in Fyette", attributes);
 
         showSpans(filterResult.getSpans());
 

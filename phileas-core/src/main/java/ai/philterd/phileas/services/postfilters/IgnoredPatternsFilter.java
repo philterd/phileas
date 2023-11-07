@@ -31,7 +31,7 @@ public class IgnoredPatternsFilter extends PostFilter {
 
     private static final Logger LOGGER = LogManager.getLogger(IgnoredPatternsFilter.class);
 
-    private List<IgnoredPattern> ignoredPatterns;
+    private final List<IgnoredPattern> ignoredPatterns;
 
     public IgnoredPatternsFilter(final List<IgnoredPattern> ignoredPatterns) {
 
@@ -40,7 +40,7 @@ public class IgnoredPatternsFilter extends PostFilter {
     }
 
     @Override
-    protected PostFilterResult process(String text, Span span) {
+    protected PostFilterResult process(final String text, final Span span) {
 
         final String spanText = span.getText(text);
 

@@ -92,35 +92,33 @@ public abstract class Filter {
     protected int windowSize;
 
     /**
-     * The document analysis results.
-     */
-    protected DocumentAnalysis documentAnalysis;
-
-    /**
      * Filters the input text.
      * @param policy The {@link Policy} to use.
      * @param context The context.
      * @param documentId An ID uniquely identifying the document.
      * @param piece A numbered piece of the document. Pass <code>0</code> if only piece of document.
      * @param input The input text.
+     * @param attributes Attributes about the text.
      * @return A {@link FilterResult} containing the identified {@link Span spans}.
      */
-    public abstract FilterResult filter(Policy policy, String context, String documentId, int piece, String input) throws Exception;
+    public abstract FilterResult filter(Policy policy, String context, String documentId, int piece, String input,
+                                        final Map<String, String> attributes) throws Exception;
 
     /**
      * Determines if the input text may contain sensitive information matching the filter type.
      * @param policy The {@link Policy}.
      * @param input The input text.
+     * @param attributes Attributes about the text.
      * @return A count of possible occurrences of the filter type in the input text.
      */
-    public abstract int getOccurrences(Policy policy, String input) throws Exception;
+    public abstract int getOccurrences(final Policy policy, final String input, Map<String, String> attributes) throws Exception;
 
     /**
      * Creates a new filter.
      *
      * @param filterConfiguration The {@link FilterConfiguration} for the filter.
      */
-    public Filter(FilterType filterType, FilterConfiguration filterConfiguration) {
+    public Filter(final FilterType filterType, final FilterConfiguration filterConfiguration) {
 
         this.filterType = filterType;
 
@@ -132,7 +130,6 @@ public abstract class Filter {
         this.crypto = filterConfiguration.getCrypto();
         this.fpe = filterConfiguration.getFPE();
         this.windowSize = filterConfiguration.getWindowSize();
-        this.documentAnalysis = filterConfiguration.getDocumentAnalysis();
 
         if(this.ignored == null) {
             this.ignored = new LinkedHashSet<>();
@@ -171,7 +168,7 @@ public abstract class Filter {
      * @param text The text containing the token.
      * @return The window of surrounding tokens, including the token itself.
      */
-    public String[] getWindow(String text, int characterStart, int characterEnd) {
+    public String[] getWindow(final String text, int characterStart, int characterEnd) {
 
         if(characterStart < 0) {
             characterStart = 0;
@@ -231,7 +228,7 @@ public abstract class Filter {
 
     /**
      * Gets the string to be used as a replacement.
-     * @param policy The name of the policy.
+     * @param policy The policy that's being applied.
      * @param context The context.
      * @param documentId The document ID.
      * @param token The token to replace.
@@ -240,26 +237,15 @@ public abstract class Filter {
      * @param classification The classification of the item.
      * @return The replacement string.
      */
-    public Replacement getReplacement(String policy, String context, String documentId, String token, String[] window,
-                                      double confidence, String classification, FilterPattern filterPattern) throws Exception {
+    public Replacement getReplacement(final Policy policy, final String context, final String documentId,
+                                      final String token, final String[] window, final double confidence,
+                                      final String classification, final Map<String, String> attributes,
+                                      final FilterPattern filterPattern) throws Exception {
 
         if(strategies != null) {
 
             // Loop through the strategies. The first strategy without a condition or a satisfied condition will provide the replacement.
             for (AbstractFilterStrategy strategy : strategies) {
-
-                // See if a document type was assigned to this document.
-                if(documentAnalysis.getDocumentType() != null) {
-
-                    // Check the documentAnalysis against the strategy to make sure we can redact in this document.
-                    if(strategy.getExcludeDocumentTypes().contains(documentAnalysis.getDocumentType())) {
-
-                        // We cannot redact in this document type so just return the original token.
-                        return new Replacement(token);
-
-                    }
-
-                }
 
                 // Get the condition. (There might not be one.)
                 final String condition = strategy.getCondition();
@@ -270,7 +256,7 @@ public abstract class Filter {
                 if(hasCondition) {
 
                     // If there is a condition, does it evaluate?
-                    final boolean evaluates = strategy.evaluateCondition(context, documentId, token, window, condition, confidence, classification);
+                    final boolean evaluates = strategy.evaluateCondition(policy, context, documentId, token, window, condition, confidence, attributes);
 
                     if(evaluates) {
 
@@ -278,7 +264,7 @@ public abstract class Filter {
                         if(strategy.isAlert()) {
 
                             LOGGER.info("Generating alert for strategy ID {}", strategy.getId());
-                            alertService.generateAlert(policy, strategy.getId(), documentId, context, filterType);
+                            alertService.generateAlert(policy.getName(), strategy.getId(), documentId, context, filterType);
 
                         }
 
@@ -346,7 +332,9 @@ public abstract class Filter {
 
     }
 
-    public static List<? extends AbstractFilterStrategy> getFilterStrategies(Policy policy, FilterType filterType, int index) {
+    public static List<? extends AbstractFilterStrategy> getFilterStrategies(final Policy policy,
+                                                                             final FilterType filterType,
+                                                                             final int index) {
 
         LOGGER.debug("Getting filter strategies for filter type {}", filterType.getType());
 

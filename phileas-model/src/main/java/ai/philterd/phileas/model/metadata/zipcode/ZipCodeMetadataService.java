@@ -28,14 +28,14 @@ import java.util.HashMap;
 
 public class ZipCodeMetadataService implements MetadataService<ZipCodeMetadataRequest, ZipCodeMetadataResponse> {
 
-    private HashMap<String, Integer> zipCodes2010Census;
+    private final HashMap<String, Integer> zipCodes2010Census;
 
     public ZipCodeMetadataService() throws IOException {
         zipCodes2010Census = loadZipCodes2010Census();
     }
 
     @Override
-    public ZipCodeMetadataResponse getMetadata(ZipCodeMetadataRequest request) {
+    public ZipCodeMetadataResponse getMetadata(final ZipCodeMetadataRequest request) {
 
         final int population = zipCodes2010Census.get(request.getZipCode());
 

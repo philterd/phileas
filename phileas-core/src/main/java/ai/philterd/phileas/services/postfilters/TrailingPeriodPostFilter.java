@@ -44,7 +44,7 @@ public class TrailingPeriodPostFilter extends PostFilter {
     }
 
     @Override
-    protected PostFilterResult process(String text, Span span) {
+    protected PostFilterResult process(final String text, Span span) {
 
         // A street filter can end with a period.
         if(span.getFilterType() != FilterType.STREET_ADDRESS) {
@@ -58,7 +58,7 @@ public class TrailingPeriodPostFilter extends PostFilter {
             }
 
             while (span.getText().endsWith(".")) {
-                span = process(text, span).getSpan();
+                span = process(text, span).span();
             }
 
         }

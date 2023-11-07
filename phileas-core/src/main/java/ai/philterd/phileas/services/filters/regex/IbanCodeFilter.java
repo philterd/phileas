@@ -28,16 +28,17 @@ import org.apache.commons.validator.routines.IBANValidator;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 public class IbanCodeFilter extends RegexFilter {
 
-    private boolean validate;
+    private final boolean validate;
 
     public IbanCodeFilter(FilterConfiguration filterConfiguration, boolean validate, boolean allowSpaces) {
         super(FilterType.IBAN_CODE, filterConfiguration);
 
-        // Whether or not to validate the found IBAN codes.
+        // Whether to validate the found IBAN codes.
         this.validate = validate;
 
         // PHL-139: Allow spaces in IBAN Codes.
@@ -65,9 +66,9 @@ public class IbanCodeFilter extends RegexFilter {
     }
 
     @Override
-    public FilterResult filter(Policy policy, String context, String documentId, int piece, String input) throws Exception {
+    public FilterResult filter(Policy policy, String context, String documentId, int piece, String input, Map<String, String> attributes) throws Exception {
 
-        final List<Span> spans = findSpans(policy, analyzer, input, context, documentId);
+        final List<Span> spans = findSpans(policy, analyzer, input, context, documentId, attributes);
 
         final List<Span> validSpans = new LinkedList<>();
 

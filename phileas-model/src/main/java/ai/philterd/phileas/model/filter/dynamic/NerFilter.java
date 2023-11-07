@@ -17,7 +17,6 @@ package ai.philterd.phileas.model.filter.dynamic;
 
 import ai.philterd.phileas.model.enums.FilterType;
 import ai.philterd.phileas.model.filter.FilterConfiguration;
-import ai.philterd.phileas.model.objects.DocumentAnalysis;
 import ai.philterd.phileas.model.services.MetricsService;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 
@@ -41,12 +40,13 @@ public abstract class NerFilter extends DynamicFilter {
      * @param stats A map of {@link DescriptiveStatistics}.
      * @param metricsService The {@link MetricsService}.
      * @param thresholds
+     * @param filterType
      */
-    public NerFilter(FilterConfiguration filterConfiguration,
-                     Map<String, DescriptiveStatistics> stats,
-                     MetricsService metricsService,
-                     Map<String, Double> thresholds,
-                     FilterType filterType) {
+    public NerFilter(final FilterConfiguration filterConfiguration,
+                     final Map<String, DescriptiveStatistics> stats,
+                     final MetricsService metricsService,
+                     final Map<String, Double> thresholds,
+                     final FilterType filterType) {
 
         super(filterType, filterConfiguration);
 

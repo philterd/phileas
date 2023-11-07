@@ -18,17 +18,23 @@ package ai.philterd.phileas.services.filters.regex;
 import ai.philterd.phileas.model.enums.FilterType;
 import ai.philterd.phileas.model.filter.FilterConfiguration;
 import ai.philterd.phileas.model.filter.rules.regex.RegexFilter;
-import ai.philterd.phileas.model.objects.*;
+import ai.philterd.phileas.model.objects.Analyzer;
+import ai.philterd.phileas.model.objects.FilterPattern;
+import ai.philterd.phileas.model.objects.FilterResult;
+import ai.philterd.phileas.model.objects.Span;
 import ai.philterd.phileas.model.policy.Policy;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 public class TrackingNumberFilter extends RegexFilter {
 
-    private boolean ups;
-    private boolean fedex;
-    private boolean usps;
+    private final boolean ups;
+    private final boolean fedex;
+    private final boolean usps;
 
     public TrackingNumberFilter(FilterConfiguration filterConfiguration, boolean ups, boolean fedex, boolean usps) {
         super(FilterType.TRACKING_NUMBER, filterConfiguration);
@@ -135,26 +141,9 @@ public class TrackingNumberFilter extends RegexFilter {
     }
 
     @Override
-    public FilterResult filter(Policy policy, String context, String documentId, int piece, String input) throws Exception {
+    public FilterResult filter(Policy policy, String context, String documentId, int piece, String input, Map<String, String> attributes) throws Exception {
 
-        final List<String> classifications = new LinkedList<>();
-
-        if(ups) {
-            classifications.add("ups");
-        }
-
-        if(fedex) {
-            classifications.add("fedex");
-        }
-
-        if(usps) {
-            classifications.add("usps");
-        }
-
-        final Map<Restriction, List<String>> restrictions = new HashMap<>();
-        restrictions.put(Restriction.CLASSIFICATION, classifications);
-
-        final List<Span> spans = findSpans(policy, analyzer, input, context, documentId, restrictions);
+        final List<Span> spans = findSpans(policy, analyzer, input, context, documentId, attributes);
 
         return new FilterResult(context, documentId, spans);
 

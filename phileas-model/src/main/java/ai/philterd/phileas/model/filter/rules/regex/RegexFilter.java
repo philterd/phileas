@@ -19,7 +19,6 @@ import ai.philterd.phileas.model.enums.FilterType;
 import ai.philterd.phileas.model.filter.FilterConfiguration;
 import ai.philterd.phileas.model.filter.rules.RulesFilter;
 import ai.philterd.phileas.model.objects.Analyzer;
-import ai.philterd.phileas.model.objects.DocumentAnalysis;
 
 /**
  * A filter that works by using one or more regular expressions.
@@ -33,7 +32,7 @@ public abstract class RegexFilter extends RulesFilter {
      * @param filterType
      * @param filterConfiguration The {@link FilterConfiguration} for the filter.
      */
-    public RegexFilter(FilterType filterType, FilterConfiguration filterConfiguration) {
+    public RegexFilter(final FilterType filterType, final FilterConfiguration filterConfiguration) {
         super(filterType, filterConfiguration);
     }
 

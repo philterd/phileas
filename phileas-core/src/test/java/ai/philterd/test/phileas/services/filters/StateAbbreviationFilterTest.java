@@ -1,7 +1,7 @@
 /*
  *     Copyright 2023 Philterd, LLC @ https://www.philterd.ai
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * Licensed under the Apache License, Version 2.0 (the "License", attributes);
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
@@ -29,7 +29,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import java.util.Arrays;
+import java.util.List;
 
 public class StateAbbreviationFilterTest extends AbstractFilterTest {
 
@@ -41,7 +41,7 @@ public class StateAbbreviationFilterTest extends AbstractFilterTest {
     public void filter1() throws Exception {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
-                .withStrategies(Arrays.asList(new StateAbbreviationFilterStrategy()))
+                .withStrategies(List.of(new StateAbbreviationFilterStrategy()))
                 .withAlertService(alertService)
                 .withAnonymizationService(new StateAbbreviationAnonymizationService(new LocalAnonymizationCacheService()))
                 .withWindowSize(windowSize)
@@ -50,7 +50,7 @@ public class StateAbbreviationFilterTest extends AbstractFilterTest {
         final StateAbbreviationFilter filter = new StateAbbreviationFilter(filterConfiguration);
 
         final String input = "The patient is from WV.";
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", "docid", PIECE, input);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", "docid", PIECE, input, attributes);
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertEquals(20, filterResult.getSpans().get(0).getCharacterStart());
@@ -64,7 +64,7 @@ public class StateAbbreviationFilterTest extends AbstractFilterTest {
     public void filter2() throws Exception {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
-                .withStrategies(Arrays.asList(new StateAbbreviationFilterStrategy()))
+                .withStrategies(List.of(new StateAbbreviationFilterStrategy()))
                 .withAlertService(alertService)
                 .withAnonymizationService(new StateAbbreviationAnonymizationService(new LocalAnonymizationCacheService()))
                 .withWindowSize(windowSize)
@@ -73,7 +73,7 @@ public class StateAbbreviationFilterTest extends AbstractFilterTest {
         final StateAbbreviationFilter filter = new StateAbbreviationFilter(filterConfiguration);
 
         final String input = "The patient is from wv.";
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", "docid", PIECE, input);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", "docid", PIECE, input, attributes);
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertEquals(20, filterResult.getSpans().get(0).getCharacterStart());
@@ -86,7 +86,7 @@ public class StateAbbreviationFilterTest extends AbstractFilterTest {
     public void filter3() throws Exception {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
-                .withStrategies(Arrays.asList(new StateAbbreviationFilterStrategy()))
+                .withStrategies(List.of(new StateAbbreviationFilterStrategy()))
                 .withAlertService(alertService)
                 .withAnonymizationService(new StateAbbreviationAnonymizationService(new LocalAnonymizationCacheService()))
                 .withWindowSize(windowSize)
@@ -95,7 +95,7 @@ public class StateAbbreviationFilterTest extends AbstractFilterTest {
         final StateAbbreviationFilter filter = new StateAbbreviationFilter(filterConfiguration);
 
         final String input = "Patients from WV and MD.";
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", "docid", PIECE, input);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", "docid", PIECE, input, attributes);
 
         showSpans(filterResult.getSpans());
 

@@ -43,7 +43,7 @@ public class TrailingSpacePostFilter extends PostFilter {
     }
 
     @Override
-    protected PostFilterResult process(String text, Span span) {
+    protected PostFilterResult process(final String text, Span span) {
 
         if(span.getText().endsWith(" ")) {
 
@@ -54,7 +54,7 @@ public class TrailingSpacePostFilter extends PostFilter {
         }
 
         while(span.getText().endsWith(" ")) {
-            span = process(text, span).getSpan();
+            span = process(text, span).span();
         }
 
         return new PostFilterResult(span, false);

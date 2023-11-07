@@ -27,17 +27,17 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import java.util.Arrays;
+import java.util.List;
 
 public class DriversLicenseFilterTest extends AbstractFilterTest {
 
-    private AlertService alertService = Mockito.mock(AlertService.class);
+    private final AlertService alertService = Mockito.mock(AlertService.class);
 
     @Test
     public void filter1() throws Exception {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
-                .withStrategies(Arrays.asList(new DriversLicenseFilterStrategy()))
+                .withStrategies(List.of(new DriversLicenseFilterStrategy()))
                 .withAlertService(alertService)
                 .withAnonymizationService(new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()))
                 .withWindowSize(windowSize)
@@ -45,7 +45,7 @@ public class DriversLicenseFilterTest extends AbstractFilterTest {
 
         final DriversLicenseFilter filter = new DriversLicenseFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "the number is 123456789.");
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "the number is 123456789.", attributes);
 
         showSpans(filterResult.getSpans());
 

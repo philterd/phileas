@@ -1,7 +1,7 @@
 /*
  *     Copyright 2023 Philterd, LLC @ https://www.philterd.ai
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * Licensed under the Apache License, Version 2.0 (the "License", attributes);
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
@@ -28,16 +28,17 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.util.Arrays;
+import java.util.List;
 
 public class EmailAddressFilterTest extends AbstractFilterTest {
 
-    private AlertService alertService = Mockito.mock(AlertService.class);
+    private final AlertService alertService = Mockito.mock(AlertService.class);
 
     @Test
     public void filterEmail() throws Exception {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
-                .withStrategies(Arrays.asList(new EmailAddressFilterStrategy()))
+                .withStrategies(List.of(new EmailAddressFilterStrategy()))
                 .withAlertService(alertService)
                 .withAnonymizationService(new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()))
                 .withWindowSize(windowSize)
@@ -45,7 +46,7 @@ public class EmailAddressFilterTest extends AbstractFilterTest {
 
         final EmailAddressFilter filter = new EmailAddressFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "my email is none@none.com.");
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "my email is none@none.com.", attributes);
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 12, 25, FilterType.EMAIL_ADDRESS));
         Assertions.assertEquals("none@none.com", filterResult.getSpans().get(0).getText());

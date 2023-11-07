@@ -19,23 +19,23 @@ import java.util.regex.Pattern;
 
 public class FilterPattern {
 
-    private Pattern pattern;
-    private String format;
-    private double initialConfidence;
-    private String classification;
-    private boolean alwaysValid;
+    private final Pattern pattern;
+    private final String format;
+    private final double initialConfidence;
+    private final String classification;
+    private final boolean alwaysValid;
     private int groupNumber = 0;
 
     public static class FilterPatternBuilder {
 
-        private Pattern pattern;
-        private double initialConfidence;
+        private final Pattern pattern;
+        private final double initialConfidence;
         private String format;
         private String classification;
         private boolean alwaysValid = false;
         private int groupNumber = 0;
 
-        public FilterPatternBuilder(Pattern pattern, double initialConfidence) {
+        public FilterPatternBuilder(final Pattern pattern, final double initialConfidence) {
             this.pattern = pattern;
             this.initialConfidence = initialConfidence;
         }
@@ -66,7 +66,8 @@ public class FilterPattern {
 
     }
 
-    private FilterPattern(Pattern pattern, double initialConfidence, String format, String classification, boolean alwaysValid, int groupNumber) {
+    private FilterPattern(final Pattern pattern, final double initialConfidence, final String format,
+                          final String classification, final boolean alwaysValid, final int groupNumber) {
 
         this.pattern = pattern;
         this.initialConfidence = initialConfidence;

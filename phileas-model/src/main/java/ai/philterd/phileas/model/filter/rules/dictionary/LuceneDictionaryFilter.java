@@ -51,6 +51,7 @@ import java.nio.file.attribute.PosixFilePermission;
 import java.nio.file.attribute.PosixFilePermissions;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -60,10 +61,10 @@ public class LuceneDictionaryFilter extends DictionaryFilter implements Serializ
 
     private static final Logger LOGGER = LogManager.getLogger(LuceneDictionaryFilter.class);
 
-    private SpellChecker spellChecker;
-    private LevenshteinDistance distanceFunction;
-    private SensitivityLevel sensitivityLevel;
-    private boolean capitalized;
+    private final SpellChecker spellChecker;
+    private final LevenshteinDistance distanceFunction;
+    private final SensitivityLevel sensitivityLevel;
+    private final boolean capitalized;
     private int policyIndex = 0;
 
     /**
@@ -74,11 +75,11 @@ public class LuceneDictionaryFilter extends DictionaryFilter implements Serializ
      * @param capitalized
      * @throws IOException Thrown if the index cannot be opened or accessed.
      */
-    public LuceneDictionaryFilter(FilterType filterType,
-                                  FilterConfiguration filterConfiguration,
-                                  String indexDirectory,
-                                  SensitivityLevel sensitivityLevel,
-                                  boolean capitalized) throws IOException {
+    public LuceneDictionaryFilter(final FilterType filterType,
+                                  final FilterConfiguration filterConfiguration,
+                                  final String indexDirectory,
+                                  final SensitivityLevel sensitivityLevel,
+                                  final boolean capitalized) throws IOException {
 
         super(filterType, filterConfiguration);
 
@@ -164,7 +165,8 @@ public class LuceneDictionaryFilter extends DictionaryFilter implements Serializ
     }
 
     @Override
-    public FilterResult filter(Policy policy, String context, String documentId, int piece, String text) throws Exception {
+    public FilterResult filter(Policy policy, String context, String documentId, int piece, String text,
+                               final Map<String, String> attributes) throws Exception {
 
         final List<Span> spans = new LinkedList<>();
 
@@ -270,10 +272,9 @@ public class LuceneDictionaryFilter extends DictionaryFilter implements Serializ
                                     final int characterEnd = offsetAttribute.endOffset();
                                     final String[] window = getWindow(text, characterStart, characterEnd);
                                     final double confidence = spellChecker.getAccuracy();
-                                    final String classification = "";
 
                                     // Get the replacement token or the original token if no filter strategy conditions are met.
-                                    final Replacement replacement = getReplacement(policy.getName(), context, documentId, token, window, confidence, classification, null);
+                                    final Replacement replacement = getReplacement(policy, context, documentId, token, window, confidence, classification, attributes, null);
 
                                     // Add the span to the list.
                                     spans.add(Span.make(characterStart, characterEnd, getFilterType(), context, documentId, confidence, token, replacement.getReplacement(), replacement.getSalt(), ignored, window));
@@ -308,9 +309,9 @@ public class LuceneDictionaryFilter extends DictionaryFilter implements Serializ
     }
 
     @Override
-    public int getOccurrences(Policy policy, String input) throws Exception {
+    public int getOccurrences(Policy policy, String input, Map<String, String> attributes) throws Exception {
 
-        return filter(policy, "none", "none", 0, input).getSpans().size();
+        return filter(policy, "none", "none", 0, input, attributes).getSpans().size();
 
     }
 

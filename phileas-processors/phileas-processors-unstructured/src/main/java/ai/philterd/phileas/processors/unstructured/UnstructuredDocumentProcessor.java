@@ -29,6 +29,7 @@ import ai.philterd.phileas.model.services.SpanDisambiguationService;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import static java.util.stream.Collectors.toList;
 
@@ -37,10 +38,11 @@ import static java.util.stream.Collectors.toList;
  */
 public class UnstructuredDocumentProcessor implements DocumentProcessor {
 
-    private MetricsService metricsService;
-    private SpanDisambiguationService spanDisambiguationService;
+    private final MetricsService metricsService;
+    private final SpanDisambiguationService spanDisambiguationService;
 
-    public UnstructuredDocumentProcessor(MetricsService metricsService, SpanDisambiguationService spanDisambiguationService) {
+    public UnstructuredDocumentProcessor(final MetricsService metricsService,
+                                         final SpanDisambiguationService spanDisambiguationService) {
 
         this.metricsService = metricsService;
         this.spanDisambiguationService = spanDisambiguationService;
@@ -48,8 +50,9 @@ public class UnstructuredDocumentProcessor implements DocumentProcessor {
     }
 
     @Override
-    public FilterResponse process(Policy policy, List<Filter> filters, List<PostFilter> postFilters,
-                                  String context, String documentId, int piece, String input) throws Exception {
+    public FilterResponse process(final Policy policy, final List<Filter> filters, final List<PostFilter> postFilters,
+                                  final String context, final String documentId, final int piece, final String input,
+                                  final Map<String, String> attributes) throws Exception {
 
         // The list that will contain the spans containing PHI/PII.
         List<Span> spans = new LinkedList<>();
@@ -58,7 +61,7 @@ public class UnstructuredDocumentProcessor implements DocumentProcessor {
         for(final Filter filter : filters) {
 
             final long startTimeMs = System.currentTimeMillis();
-            final FilterResult filterResult = filter.filter(policy, context, documentId, piece, input);
+            final FilterResult filterResult = filter.filter(policy, context, documentId, piece, input, attributes);
             final long elapsedTimeMs = System.currentTimeMillis() - startTimeMs;
 
             metricsService.logFilterTime(filter.getFilterType(), elapsedTimeMs);
@@ -124,7 +127,7 @@ public class UnstructuredDocumentProcessor implements DocumentProcessor {
 
         // The spans that will be persisted. Has to be a deep copy because the shift
         // below will change the indexes. Doing this to save the original locations of the spans.
-        final List<Span> appliedSpans = spans.stream().map(d -> d.copy()).collect(toList());
+        final List<Span> appliedSpans = spans.stream().map(Span::copy).collect(toList());
 
         // TODO: Set a flag on each "span" not in appliedSpans indicating it was not used.
 
@@ -135,9 +138,9 @@ public class UnstructuredDocumentProcessor implements DocumentProcessor {
         final Explanation explanation = new Explanation(appliedSpans, spans);
 
         // Used to manipulate the text.
-        final StringBuffer buffer = new StringBuffer(input);
+        final StringBuilder sb = new StringBuilder(input);
 
-        // Initialize this to the the input length but it may grow in length if redactions/replacements
+        // Initialize this to the input length, but it may grow in length if redactions/replacements
         // are longer than the original spans.
         int stringLength = input.length();
 
@@ -171,7 +174,7 @@ public class UnstructuredDocumentProcessor implements DocumentProcessor {
                 }
 
                 // We can now do the replacement.
-                buffer.replace(span.getCharacterStart(), span.getCharacterEnd(), replacement);
+                sb.replace(span.getCharacterStart(), span.getCharacterEnd(), replacement);
 
                 // Jump ahead outside of this span.
                 i = span.getCharacterEnd();
@@ -182,7 +185,7 @@ public class UnstructuredDocumentProcessor implements DocumentProcessor {
 
         metricsService.incrementProcessed();
 
-        return new FilterResponse(buffer.toString(), context, documentId, piece, explanation);
+        return new FilterResponse(sb.toString(), context, documentId, piece, explanation, attributes);
 
     }
 

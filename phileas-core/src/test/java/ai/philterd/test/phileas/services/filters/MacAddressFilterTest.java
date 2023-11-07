@@ -1,7 +1,7 @@
 /*
  *     Copyright 2023 Philterd, LLC @ https://www.philterd.ai
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * Licensed under the Apache License, Version 2.0 (the "License", attributes);
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
@@ -27,17 +27,17 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import java.util.Arrays;
+import java.util.List;
 
 public class MacAddressFilterTest extends AbstractFilterTest {
 
-    private AlertService alertService = Mockito.mock(AlertService.class);
+    private final AlertService alertService = Mockito.mock(AlertService.class);
 
     @Test
     public void filter1() throws Exception {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
-                .withStrategies(Arrays.asList(new MacAddressFilterStrategy()))
+                .withStrategies(List.of(new MacAddressFilterStrategy()))
                 .withAlertService(alertService)
                 .withAnonymizationService(new MacAddressAnonymizationService(new LocalAnonymizationCacheService()))
                 .withWindowSize(windowSize)
@@ -45,7 +45,7 @@ public class MacAddressFilterTest extends AbstractFilterTest {
 
         final MacAddressFilter filter = new MacAddressFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "the mac is 00-14-22-04-25-37.");
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "the mac is 00-14-22-04-25-37.", attributes);
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 11, 28, FilterType.MAC_ADDRESS));
@@ -57,7 +57,7 @@ public class MacAddressFilterTest extends AbstractFilterTest {
     public void filter2() throws Exception {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
-                .withStrategies(Arrays.asList(new MacAddressFilterStrategy()))
+                .withStrategies(List.of(new MacAddressFilterStrategy()))
                 .withAlertService(alertService)
                 .withAnonymizationService(new MacAddressAnonymizationService(new LocalAnonymizationCacheService()))
                 .withWindowSize(windowSize)
@@ -65,7 +65,7 @@ public class MacAddressFilterTest extends AbstractFilterTest {
 
         final MacAddressFilter filter = new MacAddressFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "the mac is 00:14:22:04:25:37.");
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "the mac is 00:14:22:04:25:37.", attributes);
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 11, 28, FilterType.MAC_ADDRESS));

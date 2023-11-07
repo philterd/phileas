@@ -1,7 +1,7 @@
 /*
  *     Copyright 2023 Philterd, LLC @ https://www.philterd.ai
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * Licensed under the Apache License, Version 2.0 (the "License", attributes);
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
@@ -31,7 +31,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import java.util.Arrays;
+import java.util.List;
 
 public class SurnameFilterTest extends AbstractFilterTest {
 
@@ -51,7 +51,7 @@ public class SurnameFilterTest extends AbstractFilterTest {
     public void filter1() throws Exception {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
-                .withStrategies(Arrays.asList(new SurnameFilterStrategy()))
+                .withStrategies(List.of(new SurnameFilterStrategy()))
                 .withAlertService(alertService)
                 .withAnonymizationService(new SurnameAnonymizationService(new LocalAnonymizationCacheService()))
                 .withWindowSize(windowSize)
@@ -59,7 +59,7 @@ public class SurnameFilterTest extends AbstractFilterTest {
 
         final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.SURNAME, filterConfiguration, INDEX_DIRECTORY, SensitivityLevel.LOW, false);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "Lived in Wshington");
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "Lived in Wshington", attributes);
         showSpans(filterResult.getSpans());
         Assertions.assertEquals(0, filterResult.getSpans().size());
 
@@ -69,7 +69,7 @@ public class SurnameFilterTest extends AbstractFilterTest {
     public void filter2() throws Exception {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
-                .withStrategies(Arrays.asList(new SurnameFilterStrategy()))
+                .withStrategies(List.of(new SurnameFilterStrategy()))
                 .withAlertService(alertService)
                 .withAnonymizationService(new SurnameAnonymizationService(new LocalAnonymizationCacheService()))
                 .withWindowSize(windowSize)
@@ -77,7 +77,7 @@ public class SurnameFilterTest extends AbstractFilterTest {
 
         final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.SURNAME, filterConfiguration, INDEX_DIRECTORY, SensitivityLevel.MEDIUM, false);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "Lived in Wshington");
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "Lived in Wshington", attributes);
         showSpans(filterResult.getSpans());
         Assertions.assertEquals(2, filterResult.getSpans().size());
 
@@ -87,7 +87,7 @@ public class SurnameFilterTest extends AbstractFilterTest {
     public void filter3() throws Exception {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
-                .withStrategies(Arrays.asList(new SurnameFilterStrategy()))
+                .withStrategies(List.of(new SurnameFilterStrategy()))
                 .withAlertService(alertService)
                 .withAnonymizationService(new SurnameAnonymizationService(new LocalAnonymizationCacheService()))
                 .withWindowSize(windowSize)
@@ -95,7 +95,7 @@ public class SurnameFilterTest extends AbstractFilterTest {
 
         final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.SURNAME, filterConfiguration, INDEX_DIRECTORY, SensitivityLevel.HIGH, false);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "Jones");
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "Jones", attributes);
         showSpans(filterResult.getSpans());
         Assertions.assertEquals(1, filterResult.getSpans().size());
 
@@ -105,7 +105,7 @@ public class SurnameFilterTest extends AbstractFilterTest {
     public void filter4() throws Exception {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
-                .withStrategies(Arrays.asList(new SurnameFilterStrategy()))
+                .withStrategies(List.of(new SurnameFilterStrategy()))
                 .withAlertService(alertService)
                 .withAnonymizationService(new SurnameAnonymizationService(new LocalAnonymizationCacheService()))
                 .withWindowSize(windowSize)
@@ -113,7 +113,7 @@ public class SurnameFilterTest extends AbstractFilterTest {
 
         final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.SURNAME, filterConfiguration, INDEX_DIRECTORY, SensitivityLevel.LOW, true);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "date");
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "date", attributes);
         showSpans(filterResult.getSpans());
         Assertions.assertEquals(0, filterResult.getSpans().size());
 
@@ -123,7 +123,7 @@ public class SurnameFilterTest extends AbstractFilterTest {
     public void filter5() throws Exception {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
-                .withStrategies(Arrays.asList(new SurnameFilterStrategy()))
+                .withStrategies(List.of(new SurnameFilterStrategy()))
                 .withAlertService(alertService)
                 .withAnonymizationService(new SurnameAnonymizationService(new LocalAnonymizationCacheService()))
                 .withWindowSize(windowSize)
@@ -131,7 +131,7 @@ public class SurnameFilterTest extends AbstractFilterTest {
 
         final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.SURNAME, filterConfiguration, INDEX_DIRECTORY, SensitivityLevel.LOW, false);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "Jones");
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "Jones", attributes);
         showSpans(filterResult.getSpans());
         Assertions.assertEquals(1, filterResult.getSpans().size());
 
@@ -141,7 +141,7 @@ public class SurnameFilterTest extends AbstractFilterTest {
     public void filter6() throws Exception {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
-                .withStrategies(Arrays.asList(new SurnameFilterStrategy()))
+                .withStrategies(List.of(new SurnameFilterStrategy()))
                 .withAlertService(alertService)
                 .withAnonymizationService(new SurnameAnonymizationService(new LocalAnonymizationCacheService()))
                 .withWindowSize(windowSize)
@@ -149,7 +149,7 @@ public class SurnameFilterTest extends AbstractFilterTest {
 
         final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.SURNAME, filterConfiguration, INDEX_DIRECTORY, SensitivityLevel.LOW, true);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "from");
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "from", attributes);
         showSpans(filterResult.getSpans());
         Assertions.assertEquals(0, filterResult.getSpans().size());
 

@@ -30,7 +30,9 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public abstract class AbstractFilterTest {
 
@@ -38,6 +40,7 @@ public abstract class AbstractFilterTest {
 
     protected static final int PIECE = 0;
     protected final int windowSize = 3;
+    protected final Map<String, String> attributes = new HashMap<>();
 
     /**
      * Gets a {@link Policy} where all non-deterministic filters use the given {@link SensitivityLevel}.

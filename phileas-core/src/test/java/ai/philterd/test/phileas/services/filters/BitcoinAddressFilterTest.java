@@ -1,7 +1,7 @@
 /*
  *     Copyright 2023 Philterd, LLC @ https://www.philterd.ai
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * Licensed under the Apache License, Version 2.0 (the "License", attributes);
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
@@ -27,7 +27,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import java.util.Arrays;
+import java.util.List;
 
 public class BitcoinAddressFilterTest extends AbstractFilterTest {
 
@@ -37,7 +37,7 @@ public class BitcoinAddressFilterTest extends AbstractFilterTest {
     public void filter1() throws Exception {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
-                .withStrategies(Arrays.asList(new BitcoinAddressFilterStrategy()))
+                .withStrategies(List.of(new BitcoinAddressFilterStrategy()))
                 .withAlertService(alertService)
                 .withAnonymizationService(new BitcoinAddressAnonymizationService(new LocalAnonymizationCacheService()))
                 .withWindowSize(windowSize)
@@ -45,7 +45,7 @@ public class BitcoinAddressFilterTest extends AbstractFilterTest {
 
         final BitcoinAddressFilter filter = new BitcoinAddressFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "the address is 127NVqnjf8gB9BFAW2dnQeM6wqmy1gbGtv.");
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "the address is 127NVqnjf8gB9BFAW2dnQeM6wqmy1gbGtv.", attributes);
 
         showSpans(filterResult.getSpans());
 
@@ -60,7 +60,7 @@ public class BitcoinAddressFilterTest extends AbstractFilterTest {
     public void filter2() throws Exception {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
-                .withStrategies(Arrays.asList(new BitcoinAddressFilterStrategy()))
+                .withStrategies(List.of(new BitcoinAddressFilterStrategy()))
                 .withAlertService(alertService)
                 .withAnonymizationService(new BitcoinAddressAnonymizationService(new LocalAnonymizationCacheService()))
                 .withWindowSize(windowSize)
@@ -68,7 +68,7 @@ public class BitcoinAddressFilterTest extends AbstractFilterTest {
 
         final BitcoinAddressFilter filter = new BitcoinAddressFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "the address is 12qnjf8FAW2dnQeM6wqmy1gbGtv.");
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "the address is 12qnjf8FAW2dnQeM6wqmy1gbGtv.", attributes);
 
         showSpans(filterResult.getSpans());
 
@@ -83,7 +83,7 @@ public class BitcoinAddressFilterTest extends AbstractFilterTest {
     public void filter3() throws Exception {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
-                .withStrategies(Arrays.asList(new BitcoinAddressFilterStrategy()))
+                .withStrategies(List.of(new BitcoinAddressFilterStrategy()))
                 .withAlertService(alertService)
                 .withAnonymizationService(new BitcoinAddressAnonymizationService(new LocalAnonymizationCacheService()))
                 .withWindowSize(windowSize)
@@ -91,7 +91,7 @@ public class BitcoinAddressFilterTest extends AbstractFilterTest {
 
         final BitcoinAddressFilter filter = new BitcoinAddressFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "the address is 126wqmy1gbGtv.");
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "the address is 126wqmy1gbGtv.", attributes);
 
         showSpans(filterResult.getSpans());
 

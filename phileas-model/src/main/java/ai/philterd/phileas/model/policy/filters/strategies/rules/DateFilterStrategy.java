@@ -15,6 +15,7 @@
  */
 package ai.philterd.phileas.model.policy.filters.strategies.rules;
 
+import ai.philterd.phileas.model.policy.Policy;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import ai.philterd.phileas.model.conditions.ParsedCondition;
@@ -44,12 +45,13 @@ import java.time.format.ResolverStyle;
 import java.time.temporal.ChronoField;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 public class DateFilterStrategy extends AbstractFilterStrategy {
 
     private static final Logger LOGGER = LogManager.getLogger(DateFilterStrategy.class);
 
-    private static FilterType filterType = FilterType.DATE;
+    private static final FilterType filterType = FilterType.DATE;
 
     @SerializedName("shiftRandom")
     @Expose
@@ -77,7 +79,7 @@ public class DateFilterStrategy extends AbstractFilterStrategy {
     }
 
     @Override
-    public boolean evaluateCondition(String context, String documentId, String token, String[] window, String condition, double confidence, String classification) {
+    public boolean evaluateCondition(Policy policy, String context, String documentId, String token, String[] window, String condition, double confidence, Map<String, String> attributes) {
 
         boolean conditionsSatisfied = false;
 
@@ -93,41 +95,39 @@ public class DateFilterStrategy extends AbstractFilterStrategy {
 
                 final String conditionContext = parsedCondition.getValue();
 
-                switch (parsedCondition.getOperator()) {
-                    case EQUALS:
-                        conditionsSatisfied = (StringUtils.equalsIgnoreCase("\"" + context + "\"", conditionContext));
-                        break;
-                    case NOT_EQUALS:
-                        conditionsSatisfied = !(StringUtils.equalsIgnoreCase("\"" + context + "\"", conditionContext));
-                        break;
-
-                }
+                conditionsSatisfied = switch (parsedCondition.getOperator()) {
+                    case EQUALS -> (StringUtils.equalsIgnoreCase("\"" + context + "\"", conditionContext));
+                    case NOT_EQUALS -> !(StringUtils.equalsIgnoreCase("\"" + context + "\"", conditionContext));
+                    default -> conditionsSatisfied;
+                };
 
             } else if(StringUtils.equalsIgnoreCase(CONFIDENCE, parsedCondition.getField())) {
 
                 final double threshold = Double.parseDouble(parsedCondition.getValue());
 
-                switch (parsedCondition.getOperator()) {
-                    case GREATER_THAN:
-                        conditionsSatisfied = (confidence > threshold);
-                        break;
-                    case LESS_THAN:
-                        conditionsSatisfied = (confidence < threshold);
-                        break;
-                    case GREATER_THAN_EQUALS:
-                        conditionsSatisfied = (confidence >= threshold);
-                        break;
-                    case LESS_THAN_EQUALS:
-                        conditionsSatisfied = (confidence <= threshold);
-                        break;
-                    case EQUALS:
-                        conditionsSatisfied = (confidence == threshold);
-                        break;
-                    case NOT_EQUALS:
-                        conditionsSatisfied = (confidence != threshold);
-                        break;
+                conditionsSatisfied = switch (parsedCondition.getOperator()) {
+                    case GREATER_THAN -> (confidence > threshold);
+                    case LESS_THAN -> (confidence < threshold);
+                    case GREATER_THAN_EQUALS -> (confidence >= threshold);
+                    case LESS_THAN_EQUALS -> (confidence <= threshold);
+                    case EQUALS -> (confidence == threshold);
+                    case NOT_EQUALS -> (confidence != threshold);
+                    default -> conditionsSatisfied;
+                };
 
-                }
+            } else if(StringUtils.equalsIgnoreCase(SENTIMENT, parsedCondition.getField())) {
+
+                final double sentimentThreshold = Double.parseDouble(parsedCondition.getValue());
+
+                conditionsSatisfied = switch (attributes.get("sentiment")) {
+                    case GREATER_THAN -> (confidence > sentimentThreshold);
+                    case LESS_THAN -> (confidence < sentimentThreshold);
+                    case GREATER_THAN_EQUALS -> (confidence >= sentimentThreshold);
+                    case LESS_THAN_EQUALS -> (confidence <= sentimentThreshold);
+                    case EQUALS -> (confidence == sentimentThreshold);
+                    case NOT_EQUALS -> (confidence != sentimentThreshold);
+                    default -> conditionsSatisfied;
+                };
 
             }
 

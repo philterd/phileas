@@ -1,7 +1,7 @@
 /*
  *     Copyright 2023 Philterd, LLC @ https://www.philterd.ai
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * Licensed under the Apache License, Version 2.0 (the "License", attributes);
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
@@ -31,7 +31,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import java.util.Arrays;
+import java.util.List;
 
 public class StateFilterTest extends AbstractFilterTest {
 
@@ -51,7 +51,7 @@ public class StateFilterTest extends AbstractFilterTest {
     public void filterStatesLow() throws Exception {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
-                .withStrategies(Arrays.asList(new StateFilterStrategy()))
+                .withStrategies(List.of(new StateFilterStrategy()))
                 .withAlertService(alertService)
                 .withAnonymizationService(new StateAnonymizationService(new LocalAnonymizationCacheService()))
                 .withWindowSize(windowSize)
@@ -59,7 +59,7 @@ public class StateFilterTest extends AbstractFilterTest {
 
         final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.LOCATION_STATE, filterConfiguration, INDEX_DIRECTORY, SensitivityLevel.LOW, false);
 
-        FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE,"Lived in Washington");
+        FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE,"Lived in Washington", attributes);
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertEquals("washington", filterResult.getSpans().get(0).getText());
 
@@ -69,7 +69,7 @@ public class StateFilterTest extends AbstractFilterTest {
     public void filterStatesMedium() throws Exception {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
-                .withStrategies(Arrays.asList(new StateFilterStrategy()))
+                .withStrategies(List.of(new StateFilterStrategy()))
                 .withAlertService(alertService)
                 .withAnonymizationService(new StateAnonymizationService(new LocalAnonymizationCacheService()))
                 .withWindowSize(windowSize)
@@ -77,7 +77,7 @@ public class StateFilterTest extends AbstractFilterTest {
 
         final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.LOCATION_STATE, filterConfiguration, INDEX_DIRECTORY, SensitivityLevel.MEDIUM, false);
 
-        FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "Lived in Wshington");
+        FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "Lived in Wshington", attributes);
         Assertions.assertEquals(1, filterResult.getSpans().size());
 
     }
@@ -86,7 +86,7 @@ public class StateFilterTest extends AbstractFilterTest {
     public void filterStatesHigh() throws Exception {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
-                .withStrategies(Arrays.asList(new StateFilterStrategy()))
+                .withStrategies(List.of(new StateFilterStrategy()))
                 .withAlertService(alertService)
                 .withAnonymizationService(new StateAnonymizationService(new LocalAnonymizationCacheService()))
                 .withWindowSize(windowSize)
@@ -94,7 +94,7 @@ public class StateFilterTest extends AbstractFilterTest {
 
         final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.LOCATION_STATE, filterConfiguration, INDEX_DIRECTORY, SensitivityLevel.HIGH, false);
 
-        FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "Lived in Wasinton");
+        FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "Lived in Wasinton", attributes);
         Assertions.assertEquals(1, filterResult.getSpans().size());
 
     }

@@ -25,16 +25,13 @@ import ai.philterd.phileas.model.objects.Span;
 import ai.philterd.phileas.model.policy.Policy;
 import ai.philterd.phileas.model.services.SpanValidator;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 import java.util.regex.Pattern;
 
 public class DateFilter extends RegexFilter {
 
-    private SpanValidator spanValidator;
-    private boolean onlyValidDates;
+    private final SpanValidator spanValidator;
+    private final boolean onlyValidDates;
 
     final private List<String> delimiters = Arrays.asList("-", "/", " ");
 
@@ -58,11 +55,11 @@ public class DateFilter extends RegexFilter {
     }
 
     @Override
-    public FilterResult filter(Policy policy, String context, String documentId, int piece, String input) throws Exception {
+    public FilterResult filter(Policy policy, String context, String documentId, int piece, String input, Map<String, String> attributes) throws Exception {
 
         final List<Span> spans = new LinkedList<>();
 
-        final List<Span> rawSpans = findSpans(policy, analyzer, input, context, documentId);
+        final List<Span> rawSpans = findSpans(policy, analyzer, input, context, documentId, attributes);
 
         if(onlyValidDates) {
 

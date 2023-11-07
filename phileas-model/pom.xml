@@ -52,7 +52,7 @@
 				<executions>
 					<execution>
 						<configuration>
-							<outputDirectory>src/main/java/ai.philterd/phileas/model/conditions/parser/</outputDirectory>
+							<outputDirectory>src/main/java/ai/philterd/phileas/model/conditions/parser/</outputDirectory>
 						</configuration>
 						<goals>
 							<goal>antlr4</goal>

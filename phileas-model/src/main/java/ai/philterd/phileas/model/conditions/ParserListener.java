@@ -37,8 +37,8 @@ public class ParserListener extends FilterConditionBaseListener {
 
     protected static final Logger LOGGER = LogManager.getLogger(ParserListener.class);
 
-    private List<ParsedCondition> conditions;
-    private Queue<String> terminals;
+    private final List<ParsedCondition> conditions;
+    private final Queue<String> terminals;
 
     public ParserListener() {
 
@@ -48,7 +48,7 @@ public class ParserListener extends FilterConditionBaseListener {
     }
 
     @Override
-    public void visitTerminal(TerminalNode node) {
+    public void visitTerminal(final TerminalNode node) {
 
         terminals.add(node.getText());
         LOGGER.debug("Processing terminal node: [{}]", node.getText());

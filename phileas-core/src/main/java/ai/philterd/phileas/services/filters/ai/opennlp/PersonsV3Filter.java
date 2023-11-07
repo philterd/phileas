@@ -38,11 +38,11 @@ public class PersonsV3Filter extends NerFilter {
 
     private final NameFinderME nameFinderME;
 
-    public PersonsV3Filter(FilterConfiguration filterConfiguration,
-                           String modelFile,
-                           Map<String, DescriptiveStatistics> stats,
-                           MetricsService metricsService,
-                           Map<String, Double> thresholds) throws Exception {
+    public PersonsV3Filter(final FilterConfiguration filterConfiguration,
+                           final String modelFile,
+                           final Map<String, DescriptiveStatistics> stats,
+                           final MetricsService metricsService,
+                           final Map<String, Double> thresholds) throws Exception {
 
         super(filterConfiguration, stats, metricsService, thresholds, FilterType.PERSON);
 
@@ -56,7 +56,8 @@ public class PersonsV3Filter extends NerFilter {
     }
 
     @Override
-    public FilterResult filter(Policy policy, String context, String documentId, int piece, String input) throws Exception {
+    public FilterResult filter(final Policy policy, final String context, final String documentId, final int piece,
+                               String input, Map<String, String> attributes) throws Exception {
 
         // The final list of spans identified in the text.
         final List<Span> spans = new LinkedList<>();
@@ -79,7 +80,7 @@ public class PersonsV3Filter extends NerFilter {
             final int end = start + text.length();
 
             final String[] window = getWindow(input, start, end);
-            final Replacement replacement = getReplacement(policy.getName(), context, documentId, text, window, openNlpSpan.getProb(), classification, null);
+            final Replacement replacement = getReplacement(policy, context, documentId, text, window, openNlpSpan.getProb(), classification, attributes, null);
             final boolean isIgnored = ignored.contains(text);
 
             final Span span = Span.make(
@@ -108,7 +109,7 @@ public class PersonsV3Filter extends NerFilter {
     }
 
     @Override
-    public int getOccurrences(Policy policy, String input) throws Exception {
+    public int getOccurrences(final Policy policy, final String input, Map<String, String> attributes) throws Exception {
         return 0;
     }
 

@@ -23,10 +23,10 @@ public abstract class DynamicFilter extends Filter {
 
     /**
      * Creates a new dynamic filter.
-     * @param filterType
+     * @param filterType The @{link FilterType} of the filter.
      * @param filterConfiguration The {@link FilterConfiguration} for the filter.
      */
-    public DynamicFilter(FilterType filterType, FilterConfiguration filterConfiguration) {
+    public DynamicFilter(final FilterType filterType, final FilterConfiguration filterConfiguration) {
         super(filterType, filterConfiguration);
     }
 

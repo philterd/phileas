@@ -1,7 +1,7 @@
 /*
  *     Copyright 2023 Philterd, LLC @ https://www.philterd.ai
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * Licensed under the Apache License, Version 2.0 (the "License", attributes);
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
@@ -27,11 +27,11 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import java.util.Arrays;
+import java.util.List;
 
 public class SectionFilterTest extends AbstractFilterTest {
 
-    private AlertService alertService = Mockito.mock(AlertService.class);
+    private final AlertService alertService = Mockito.mock(AlertService.class);
 
     @Test
     public void filterSection1() throws Exception {
@@ -40,7 +40,7 @@ public class SectionFilterTest extends AbstractFilterTest {
         final String endPattern = "END-REDACT";
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
-                .withStrategies(Arrays.asList(new SectionFilterStrategy()))
+                .withStrategies(List.of(new SectionFilterStrategy()))
                 .withAlertService(alertService)
                 .withAnonymizationService(new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()))
                 .withWindowSize(windowSize)
@@ -48,7 +48,7 @@ public class SectionFilterTest extends AbstractFilterTest {
 
         final SectionFilter filter = new SectionFilter(filterConfiguration, startPattern, endPattern);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "This is some test. BEGIN-REDACT This text should be redacted. END-REDACT This is outside the text.");
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "This is some test. BEGIN-REDACT This text should be redacted. END-REDACT This is outside the text.", attributes);
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 19, 72, FilterType.SECTION));
@@ -63,7 +63,7 @@ public class SectionFilterTest extends AbstractFilterTest {
         final String endPattern = "END-REDACT";
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
-                .withStrategies(Arrays.asList(new SectionFilterStrategy()))
+                .withStrategies(List.of(new SectionFilterStrategy()))
                 .withAlertService(alertService)
                 .withAnonymizationService(new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()))
                 .withWindowSize(windowSize)
@@ -71,7 +71,7 @@ public class SectionFilterTest extends AbstractFilterTest {
 
         final SectionFilter filter = new SectionFilter(filterConfiguration, startPattern, endPattern);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "This is some test. BEGIN-REDACT This text should be redacted. This is outside the text.");
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "This is some test. BEGIN-REDACT This text should be redacted. This is outside the text.", attributes);
 
         Assertions.assertEquals(0, filterResult.getSpans().size());
 
@@ -84,7 +84,7 @@ public class SectionFilterTest extends AbstractFilterTest {
         final String endPattern = "END-REDACT";
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
-                .withStrategies(Arrays.asList(new SectionFilterStrategy()))
+                .withStrategies(List.of(new SectionFilterStrategy()))
                 .withAlertService(alertService)
                 .withAnonymizationService(new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()))
                 .withWindowSize(windowSize)
@@ -92,7 +92,7 @@ public class SectionFilterTest extends AbstractFilterTest {
 
         final SectionFilter filter = new SectionFilter(filterConfiguration, startPattern, endPattern);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "BEGIN-REDACT This text should be redacted. END-REDACT This is outside the text.");
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "BEGIN-REDACT This text should be redacted. END-REDACT This is outside the text.", attributes);
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 0, 53, FilterType.SECTION));

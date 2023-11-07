@@ -78,7 +78,7 @@ public class HospitalAbbreviationFilterTest extends AbstractFilterTest {
     public void filter1() throws Exception {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
-                .withStrategies(Arrays.asList(new HospitalAbbreviationFilterStrategy()))
+                .withStrategies(List.of(new HospitalAbbreviationFilterStrategy()))
                 .withAlertService(alertService)
                 .withAnonymizationService(new HospitalAbbreviationAnonymizationService(new LocalAnonymizationCacheService()))
                 .withWindowSize(windowSize)
@@ -86,7 +86,7 @@ public class HospitalAbbreviationFilterTest extends AbstractFilterTest {
 
         final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.HOSPITAL_ABBREVIATION, filterConfiguration, INDEX_DIRECTORY, SensitivityLevel.HIGH, false);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "Went to WMC");
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "Went to WMC", attributes);
         showSpans(filterResult.getSpans());
         Assertions.assertEquals(4, filterResult.getSpans().size());
 

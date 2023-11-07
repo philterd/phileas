@@ -16,25 +16,24 @@
 package ai.philterd.test.phileas.model.policy.filters.strategies.rules;
 
 import ai.philterd.phileas.model.policy.filters.strategies.AbstractFilterStrategy;
-import ai.philterd.phileas.model.policy.filters.strategies.rules.PassportNumberFilterStrategy;
+import ai.philterd.phileas.model.policy.filters.strategies.rules.DriversLicenseFilterStrategy;
 import ai.philterd.test.phileas.model.policy.filters.strategies.AbstractFilterStrategyTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.io.IOException;
-
-public class PassportNumberFilterStrategyTest extends AbstractFilterStrategyTest {
+public class DriversLicenseFilterStrategyTest extends AbstractFilterStrategyTest {
 
     public AbstractFilterStrategy getFilterStrategy() {
-        return new PassportNumberFilterStrategy();
+        return new DriversLicenseFilterStrategy();
     }
 
     @Test
-    public void evaluateCondition1() throws IOException {
+    public void evaluateCondition1() {
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
 
-        final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentid", "986001231", WINDOW, "classification == \"US\"", 1.0, "US");
+        attributes.put("classification", "WV");
+        final boolean conditionSatisfied = strategy.evaluateCondition(getPolicy(), "context", "documentid", "90210", WINDOW, "classification == \"WV\"", 1.0, attributes);
 
         Assertions.assertTrue(conditionSatisfied);
 

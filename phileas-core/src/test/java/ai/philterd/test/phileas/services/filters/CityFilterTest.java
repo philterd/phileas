@@ -1,7 +1,7 @@
 /*
  *     Copyright 2023 Philterd, LLC @ https://www.philterd.ai
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * Licensed under the Apache License, Version 2.0 (the "License", attributes);
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
@@ -32,7 +32,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import java.util.Arrays;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
@@ -43,7 +43,7 @@ public class CityFilterTest extends AbstractFilterTest {
     private String INDEX_DIRECTORY = getIndexDirectory("cities");
 
     private static final AnonymizationService anonymizationService = new CityAnonymizationService(new LocalAnonymizationCacheService());
-    private AlertService alertService = Mockito.mock(AlertService.class);
+    private final AlertService alertService = Mockito.mock(AlertService.class);
 
     @BeforeEach
     public void before() {
@@ -55,7 +55,7 @@ public class CityFilterTest extends AbstractFilterTest {
     public void filterCitiesClose() throws Exception {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
-                .withStrategies(Arrays.asList(new CityFilterStrategy()))
+                .withStrategies(List.of(new CityFilterStrategy()))
                 .withAlertService(alertService)
                 .withAnonymizationService(new CityAnonymizationService(new LocalAnonymizationCacheService()))
                 .withWindowSize(windowSize)
@@ -63,7 +63,7 @@ public class CityFilterTest extends AbstractFilterTest {
 
         final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.LOCATION_CITY, filterConfiguration, INDEX_DIRECTORY, SensitivityLevel.LOW, false);
 
-        assertDoesNotThrow(() -> filter.close());
+        assertDoesNotThrow(filter::close);
 
     }
 
@@ -71,7 +71,7 @@ public class CityFilterTest extends AbstractFilterTest {
     public void filterCitiesExactMatch() throws Exception {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
-                .withStrategies(Arrays.asList(new CityFilterStrategy()))
+                .withStrategies(List.of(new CityFilterStrategy()))
                 .withAlertService(alertService)
                 .withAnonymizationService(new CityAnonymizationService(new LocalAnonymizationCacheService()))
                 .withWindowSize(windowSize)
@@ -79,7 +79,7 @@ public class CityFilterTest extends AbstractFilterTest {
 
         final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.LOCATION_CITY, filterConfiguration, INDEX_DIRECTORY, SensitivityLevel.MEDIUM, false);
 
-        FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "Lived in Washington.");
+        FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "Lived in Washington.", attributes);
 
         showSpans(filterResult.getSpans());
 
@@ -92,7 +92,7 @@ public class CityFilterTest extends AbstractFilterTest {
     public void filterCitiesExactMatch2() throws Exception {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
-                .withStrategies(Arrays.asList(new CityFilterStrategy()))
+                .withStrategies(List.of(new CityFilterStrategy()))
                 .withAlertService(alertService)
                 .withAnonymizationService(new CityAnonymizationService(new LocalAnonymizationCacheService()))
                 .withWindowSize(windowSize)
@@ -100,7 +100,7 @@ public class CityFilterTest extends AbstractFilterTest {
 
         final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.LOCATION_CITY, filterConfiguration, INDEX_DIRECTORY, SensitivityLevel.HIGH, false);
 
-        FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "Lived in New York.");
+        FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "Lived in New York.", attributes);
 
         showSpans(filterResult.getSpans());
 
@@ -115,7 +115,7 @@ public class CityFilterTest extends AbstractFilterTest {
     public void filterCitiesLow() throws Exception {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
-                .withStrategies(Arrays.asList(new CityFilterStrategy()))
+                .withStrategies(List.of(new CityFilterStrategy()))
                 .withAlertService(alertService)
                 .withAnonymizationService(new CityAnonymizationService(new LocalAnonymizationCacheService()))
                 .withWindowSize(windowSize)
@@ -123,7 +123,7 @@ public class CityFilterTest extends AbstractFilterTest {
 
         final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.LOCATION_CITY, filterConfiguration, INDEX_DIRECTORY, SensitivityLevel.LOW, false);
 
-        FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE,"Lived in Wshington");
+        FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE,"Lived in Wshington", attributes);
 
         showSpans(filterResult.getSpans());
 
@@ -135,7 +135,7 @@ public class CityFilterTest extends AbstractFilterTest {
     public void filterCitiesMedium() throws Exception {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
-                .withStrategies(Arrays.asList(new CityFilterStrategy()))
+                .withStrategies(List.of(new CityFilterStrategy()))
                 .withAlertService(alertService)
                 .withAnonymizationService(new CityAnonymizationService(new LocalAnonymizationCacheService()))
                 .withWindowSize(windowSize)
@@ -143,7 +143,7 @@ public class CityFilterTest extends AbstractFilterTest {
 
         final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.LOCATION_CITY, filterConfiguration, INDEX_DIRECTORY, SensitivityLevel.MEDIUM, false);
 
-        FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "Lived in Wshington");
+        FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "Lived in Wshington", attributes);
 
         showSpans(filterResult.getSpans());
 
@@ -156,7 +156,7 @@ public class CityFilterTest extends AbstractFilterTest {
     public void filterCitiesHigh() throws Exception {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
-                .withStrategies(Arrays.asList(new CityFilterStrategy()))
+                .withStrategies(List.of(new CityFilterStrategy()))
                 .withAlertService(alertService)
                 .withAnonymizationService(new CityAnonymizationService(new LocalAnonymizationCacheService()))
                 .withWindowSize(windowSize)
@@ -164,7 +164,7 @@ public class CityFilterTest extends AbstractFilterTest {
 
         final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.LOCATION_CITY, filterConfiguration, INDEX_DIRECTORY, SensitivityLevel.HIGH, false);
 
-        FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE,"Lived in Wasinton");
+        FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE,"Lived in Wasinton", attributes);
 
         showSpans(filterResult.getSpans());
 

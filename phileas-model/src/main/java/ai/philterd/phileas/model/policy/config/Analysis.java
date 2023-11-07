@@ -20,16 +20,28 @@ import com.google.gson.annotations.SerializedName;
 
 public class Analysis {
 
-    @SerializedName("enabled")
+    @SerializedName("identification")
     @Expose
-    private boolean enabled = true;
+    private boolean identification = true;
 
-    public boolean isEnabled() {
-        return enabled;
+    @SerializedName("sentiment")
+    @Expose
+    private Sentiment sentiment = new Sentiment();
+
+    public boolean isIdentification() {
+        return identification;
     }
 
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
+    public void setIdentification(boolean identification) {
+        this.identification = identification;
+    }
+
+    public Sentiment getSentiment() {
+        return sentiment;
+    }
+
+    public void setSentiment(Sentiment sentiment) {
+        this.sentiment = sentiment;
     }
 
 }

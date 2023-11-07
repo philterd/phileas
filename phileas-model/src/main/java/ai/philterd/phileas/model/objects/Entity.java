@@ -19,24 +19,23 @@ import ai.philterd.phileas.model.enums.FilterType;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 
 public class Entity {
 
-    private int characterStart;
-    private int characterEnd;
+    private final int characterStart;
+    private final int characterEnd;
     private int tokenStart;
     private int tokenEnd;
     private FilterType filterType = FilterType.PERSON;
-    private String context;
-    private String documentId;
-    private String text;
-    private double confidence;
+    private final String context;
+    private final String documentId;
+    private final String text;
+    private final double confidence;
 
-    public Entity(int characterStart, int characterEnd, FilterType filterType, String context, String documentId, String text, double confidence) {
+    public Entity(final int characterStart, final int characterEnd, final FilterType filterType, final String context,
+                  final String documentId, final String text, final double confidence) {
 
         this.characterStart = characterStart;
         this.characterEnd = characterEnd;
@@ -48,7 +47,9 @@ public class Entity {
 
     }
 
-    public Entity(int characterStart, int characterEnd, int tokenStart, int tokenEnd, FilterType filterType, String context, String documentId, String text, double confidence) {
+    public Entity(final int characterStart, final int characterEnd, final int tokenStart, final int tokenEnd,
+                  final FilterType filterType, final String context, final String documentId, final String text,
+                  final double confidence) {
 
         this.characterStart = characterStart;
         this.characterEnd = characterEnd;
@@ -138,13 +139,11 @@ public class Entity {
     @Override
     public boolean equals(Object obj) {
 
-        if (!(obj instanceof Entity)) {
+        if (!(obj instanceof Entity other)) {
             return false;
         }
 
-        Entity other = (Entity) obj;
-
-        EqualsBuilder builder = new EqualsBuilder();
+        final EqualsBuilder builder = new EqualsBuilder();
         builder.append(characterStart, other.characterStart);
         builder.append(characterEnd, other.characterEnd);
         builder.append(filterType, other.filterType);
@@ -172,16 +171,8 @@ public class Entity {
 
     }
 
-    private static String getSpaces(int numberOfSpaces) {
-
-        final StringBuilder sb = new StringBuilder();
-
-        for(int x = 1; x <= numberOfSpaces; x ++) {
-            sb.append(" ");
-        }
-
-        return sb.toString();
-
+    private static String getSpaces(final int numberOfSpaces) {
+        return " ".repeat(Math.max(0, numberOfSpaces));
     }
 
     public int getCharacterStart() {

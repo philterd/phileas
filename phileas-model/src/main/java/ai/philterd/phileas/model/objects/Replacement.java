@@ -17,14 +17,14 @@ package ai.philterd.phileas.model.objects;
 
 public class Replacement {
 
-    private String replacement;
+    private final String replacement;
     private String salt;
 
-    public Replacement(String replacement) {
+    public Replacement(final String replacement) {
         this.replacement = replacement;
     }
 
-    public Replacement(String replacement, String salt) {
+    public Replacement(final String replacement, final String salt) {
         this.replacement = replacement;
         this.salt = salt;
     }

@@ -24,10 +24,7 @@ import ai.philterd.phileas.model.objects.FilterResult;
 import ai.philterd.phileas.model.objects.Span;
 import ai.philterd.phileas.model.policy.Policy;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -58,9 +55,9 @@ public class AgeFilter extends RegexFilter {
     }
 
     @Override
-    public FilterResult filter(Policy policy, String context, String documentId, int piece, String input) throws Exception {
+    public FilterResult filter(Policy policy, String context, String documentId, int piece, String input, Map<String, String> attributes) throws Exception {
 
-        final List<Span> spans = findSpans(policy, analyzer, input, context, documentId);
+        final List<Span> spans = findSpans(policy, analyzer, input, context, documentId, attributes);
 
         final List<Span> nonOverlappingSpans = Span.dropOverlappingSpans(spans);
 
@@ -75,10 +72,7 @@ public class AgeFilter extends RegexFilter {
 
         for(final Span span : spans) {
 
-            final List<String> window = Arrays.asList(span.getWindow())
-                    .stream()
-                    .map(String::toLowerCase)
-                    .collect(Collectors.toList());
+            final List<String> window = Arrays.stream(span.getWindow()).map(String::toLowerCase).toList();
 
             // Determine between a date and an age.
             // Does it contain 'age' or 'old' or 'yo'? If not, drop it.
