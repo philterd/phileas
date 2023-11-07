@@ -2,13 +2,10 @@
 
 *Phileas is a PII and PHI redaction engine.*
 
-For a turnkey text redaction engine, see [Philter](https://philterd.ai/philter/), which is built on top of Phileas and provides a REST API interface for redacting text.
-
-**For optimal security, Philter runs entirely within your cloud and never transmits data outside of your cloud.** Custom AI models are available for domains like healthcare, legal, and news.
-
-Philter is available via:
+For a turnkey text redaction engine, see [Philter](https://philterd.ai/philter/), which is built on top of Phileas and provides a REST API interface for redacting text. Philter runs entirely within your cloud and never transmits data outside of your cloud. Custom AI models are available for domains like healthcare, legal, and news. Philter is available via:
 
 * [Philter on the AWS Marketplace](https://aws.amazon.com/marketplace/pp/B07YVB8FFT?ref=_ptnr_philterd)
+* [Philer on the Google Cloud Marketplace](https://console.cloud.google.com/marketplace/product/philterd-public/philter)
 * [Philter on the Azure Marketplace](https://azuremarketplace.microsoft.com/en-us/marketplace/apps/philterdllc1687189098111.philter?tab=Overview)
 * On-prem deployments by contacting us at [https://www.philterd.ai/](https://www.philterd.ai). 
 
