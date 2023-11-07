@@ -130,7 +130,7 @@ A policy is an instance of a `Policy` class that tells Phileas the types of sens
 
 For examples on creating a policy, look at [EndToEndTestsHelper](https://github.com/philterd/phileas/blob/main/phileas-core/src/test/java/io/philterd/test/phileas/services/EndToEndTestsHelper.java). The [PhileasFilterServiceTest](https://github.com/philterd/phileas/blob/main/phileas-core/src/test/java/io/philterd/test/phileas/services/PhileasFilterServiceTest.java) and [EndToEndTests](https://github.com/philterd/phileas/blob/main/phileas-core/src/test/java/io/philterd/test/phileas/services/EndToEndTests.java) test classes have examples of how to configure Phileas and filter text.
 
-Policys can be de/serialized to JSON. Here is a basic (but valid) policy that identifies and redacts ages:
+Policies can be de/serialized to JSON. Here is a basic (but valid) policy that identifies and redacts ages:
 
 ```
 {
