@@ -62,7 +62,7 @@ public class DateFilterStrategyTest extends AbstractFilterStrategyTest {
 
         final AbstractFilterStrategy strategy = new DateFilterStrategy();
 
-        final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentid", "test@test.com", window, "token is \"birthdate\"", 1.0, "");
+        final boolean conditionSatisfied = strategy.evaluateCondition(getPolicy(), "context", "documentid", "test@test.com", window, "token is \"birthdate\"", 1.0, attributes);
 
         Assertions.assertTrue(conditionSatisfied);
 
@@ -75,7 +75,7 @@ public class DateFilterStrategyTest extends AbstractFilterStrategyTest {
 
         final AbstractFilterStrategy strategy = new DateFilterStrategy();
 
-        final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentid", "test@test.com", window, "token is \"birthdate\"", 1.0, "");
+        final boolean conditionSatisfied = strategy.evaluateCondition(getPolicy(), "context", "documentid", "test@test.com", window, "token is \"birthdate\"", 1.0, attributes);
 
         Assertions.assertFalse(conditionSatisfied);
 

@@ -1,7 +1,7 @@
 /*
  *     Copyright 2023 Philterd, LLC @ https://www.philterd.ai
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * Licensed under the Apache License, Version 2.0 (the "License", attributes);
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
@@ -32,6 +32,7 @@ import org.mockito.Mockito;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class CustomDictionaryFilterTest extends AbstractFilterTest {
@@ -44,7 +45,7 @@ public class CustomDictionaryFilterTest extends AbstractFilterTest {
     public void filterDictionaryExactMatch() throws Exception {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
-                .withStrategies(Arrays.asList(new CustomDictionaryFilterStrategy()))
+                .withStrategies(List.of(new CustomDictionaryFilterStrategy()))
                 .withAlertService(alertService)
                 .withAnonymizationService(new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()))
                 .withWindowSize(windowSize)
@@ -53,7 +54,7 @@ public class CustomDictionaryFilterTest extends AbstractFilterTest {
         final Set<String> names = new HashSet<>(Arrays.asList("george", "ted", "bill", "john"));
         final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.CUSTOM_DICTIONARY, filterConfiguration, SensitivityLevel.LOW, names, false, "names", 0);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE,"He lived with Bill in California.");
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE,"He lived with Bill in California.", attributes);
         showSpans(filterResult.getSpans());
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
@@ -66,7 +67,7 @@ public class CustomDictionaryFilterTest extends AbstractFilterTest {
     public void filterDictionaryNoMatch() throws Exception {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
-                .withStrategies(Arrays.asList(new CustomDictionaryFilterStrategy()))
+                .withStrategies(List.of(new CustomDictionaryFilterStrategy()))
                 .withAlertService(alertService)
                 .withAnonymizationService(new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()))
                 .withWindowSize(windowSize)
@@ -75,7 +76,7 @@ public class CustomDictionaryFilterTest extends AbstractFilterTest {
         final Set<String> names = new HashSet<>(Arrays.asList("george", "ted", "bill", "john"));
         final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.CUSTOM_DICTIONARY, filterConfiguration, SensitivityLevel.LOW, names, false, "names", 0);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE,"He lived with Sam in California.");
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE,"He lived with Sam in California.", attributes);
         showSpans(filterResult.getSpans());
 
         Assertions.assertEquals(0, filterResult.getSpans().size());

@@ -17,10 +17,10 @@ package ai.philterd.phileas.model.objects;
 
 public class GetPolicyResult {
 
-    private String policyJson;
-    private boolean requiresReload;
+    private final String policyJson;
+    private final boolean requiresReload;
 
-    public GetPolicyResult(String policyJson, boolean requiresReload) {
+    public GetPolicyResult(final String policyJson, final boolean requiresReload) {
 
         this.policyJson = policyJson;
         this.requiresReload = requiresReload;

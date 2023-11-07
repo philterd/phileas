@@ -15,10 +15,6 @@
  */
 package ai.philterd.phileas.services;
 
-import ai.philterd.phileas.services.filters.ai.opennlp.PersonsV2Filter;
-import ai.philterd.phileas.services.filters.ai.opennlp.PersonsV3Filter;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import ai.philterd.phileas.configuration.PhileasConfiguration;
 import ai.philterd.phileas.metrics.PhileasMetricsService;
 import ai.philterd.phileas.model.domain.Domain;
@@ -31,9 +27,11 @@ import ai.philterd.phileas.model.filter.Filter;
 import ai.philterd.phileas.model.filter.FilterConfiguration;
 import ai.philterd.phileas.model.filter.rules.dictionary.BloomFilterDictionaryFilter;
 import ai.philterd.phileas.model.filter.rules.dictionary.LuceneDictionaryFilter;
-import ai.philterd.phileas.model.objects.*;
-import ai.philterd.phileas.model.policy.Policy;
+import ai.philterd.phileas.model.objects.Explanation;
+import ai.philterd.phileas.model.objects.PdfRedactionOptions;
+import ai.philterd.phileas.model.objects.Span;
 import ai.philterd.phileas.model.policy.Ignored;
+import ai.philterd.phileas.model.policy.Policy;
 import ai.philterd.phileas.model.policy.filters.CustomDictionary;
 import ai.philterd.phileas.model.policy.filters.Identifier;
 import ai.philterd.phileas.model.policy.filters.Section;
@@ -43,22 +41,28 @@ import ai.philterd.phileas.model.responses.FilterResponse;
 import ai.philterd.phileas.model.serializers.PlaceholderDeserializer;
 import ai.philterd.phileas.model.services.*;
 import ai.philterd.phileas.processors.unstructured.UnstructuredDocumentProcessor;
+import ai.philterd.phileas.service.ai.models.ModelCache;
 import ai.philterd.phileas.services.alerts.AlertServiceFactory;
-import ai.philterd.phileas.services.analyzers.DocumentAnalyzer;
 import ai.philterd.phileas.services.anonymization.*;
 import ai.philterd.phileas.services.anonymization.cache.AnonymizationCacheServiceFactory;
 import ai.philterd.phileas.services.disambiguation.VectorBasedSpanDisambiguationService;
+import ai.philterd.phileas.services.filters.ai.opennlp.PersonsV2Filter;
+import ai.philterd.phileas.services.filters.ai.opennlp.PersonsV3Filter;
 import ai.philterd.phileas.services.filters.ai.python.PersonsV1Filter;
 import ai.philterd.phileas.services.filters.custom.PhoneNumberRulesFilter;
 import ai.philterd.phileas.services.filters.regex.*;
-import ai.philterd.phileas.services.postfilters.*;
 import ai.philterd.phileas.services.policies.LocalPolicyService;
 import ai.philterd.phileas.services.policies.S3PolicyService;
 import ai.philterd.phileas.services.policies.utils.PolicyUtils;
+import ai.philterd.phileas.services.postfilters.*;
 import ai.philterd.phileas.services.split.SplitFactory;
 import ai.philterd.phileas.services.validators.DateSpanValidator;
 import ai.philterd.services.pdf.PdfRedacter;
 import ai.philterd.services.pdf.PdfTextExtractor;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import opennlp.tools.doccat.DoccatModel;
+import opennlp.tools.doccat.DocumentCategorizerME;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.FileUtils;
@@ -68,8 +72,12 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -84,7 +92,6 @@ public class PhileasFilterService implements FilterService {
     private final MetricsService metricsService;
 
     private final Map<String, DescriptiveStatistics> stats;
-    private final Gson gson;
 
     private final AnonymizationCacheService anonymizationCacheService;
     private final AlertService alertService;
@@ -93,7 +100,6 @@ public class PhileasFilterService implements FilterService {
     private final double bloomFilterFpp;
 
     private final DocumentProcessor unstructuredDocumentProcessor;
-    private final DocumentAnalyzer documentAnalyzer;
 
     private final Map<String, Map<FilterType, Filter>> filterCache;
 
@@ -102,7 +108,7 @@ public class PhileasFilterService implements FilterService {
 
     private final int windowSize;
 
-    public PhileasFilterService(PhileasConfiguration phileasConfiguration) throws IOException {
+    public PhileasFilterService(final PhileasConfiguration phileasConfiguration) throws IOException {
 
         LOGGER.info("Initializing Phileas engine.");
 
@@ -112,7 +118,7 @@ public class PhileasFilterService implements FilterService {
         // Configure the deserialization.
         final GsonBuilder gsonBuilder = new GsonBuilder();
         gsonBuilder.registerTypeAdapter(String.class, new PlaceholderDeserializer());
-        gson = gsonBuilder.create();
+        final Gson gson = gsonBuilder.create();
 
         // Configure metrics.
         this.metricsService = new PhileasMetricsService(phileasConfiguration);
@@ -139,9 +145,6 @@ public class PhileasFilterService implements FilterService {
         // Create a new unstructured document processor.
         this.unstructuredDocumentProcessor = new UnstructuredDocumentProcessor(metricsService, spanDisambiguationService);
 
-        // Create a new document analyzer.
-        this.documentAnalyzer = new DocumentAnalyzer();
-
         // Get the window size.
         this.windowSize = phileasConfiguration.spanWindowSize();
         LOGGER.info("Using window size {}", this.windowSize);
@@ -162,10 +165,14 @@ public class PhileasFilterService implements FilterService {
     }
 
     @Override
-    public FilterResponse filter(List<String> policyNames, String context, String documentId, String input, MimeType mimeType) throws Exception {
+    public FilterResponse filter(final List<String> policyNames, final String context, String documentId,
+                                 final String input, final MimeType mimeType) throws Exception {
 
         // Get the policy.
         final Policy policy = policyUtils.getCombinedPolicys(policyNames);
+
+        // Initialize potential attributes that are associated with the input text.
+        final Map<String, String> attributes = new HashMap<>();
 
         // Load default values based on the domain.
         if(StringUtils.equalsIgnoreCase(Domain.DOMAIN_LEGAL, policy.getDomain())) {
@@ -184,22 +191,49 @@ public class PhileasFilterService implements FilterService {
 
         }
 
-        // Analyze the document.
-        final DocumentAnalysis documentAnalysis;
-        if(policy.getConfig().getAnalysis().isEnabled()) {
-            documentAnalysis = documentAnalyzer.analyze(input);
-        } else {
-            documentAnalysis = new DocumentAnalysis();
-        }
-
-        final List<Filter> filters = getFiltersForPolicy(policy, documentAnalysis);
+        final List<Filter> filters = getFiltersForPolicy(policy);
         final List<PostFilter> postFilters = getPostFiltersForPolicy(policy);
+
+        // Run sentiment analysis on the text.
+        if(policy.getConfig().getAnalysis().getSentiment().isEnabled()) {
+
+            final String modelName = policy.getConfig().getAnalysis().getSentiment().getModel();
+
+            final DocumentCategorizerME documentCategorizerME;
+
+            // Is the model cached?
+            if(ModelCache.getInstance().get(modelName) != null) {
+                LOGGER.debug("Sentiment model retrieved from model cache.");
+                documentCategorizerME = ModelCache.getInstance().get(modelName);
+            } else {
+                // Load the model and cache it.
+                if(Files.exists(Paths.get(modelName))) {
+                    final InputStream is = new FileInputStream(modelName);
+                    final DoccatModel model = new DoccatModel(is);
+                    documentCategorizerME = new DocumentCategorizerME(model);
+                    is.close();
+                    ModelCache.getInstance().put(modelName, documentCategorizerME);
+                    LOGGER.debug("Sentiment model loaded from disk and cached.");
+                } else {
+                    LOGGER.error("The sentiment model file does not exist: " + modelName);
+                    documentCategorizerME = null;
+                }
+            }
+
+            if(documentCategorizerME != null) {
+                // Run sentiment analysis on the input text.
+                final double[] outcomes = documentCategorizerME.categorize(input.split(" "));
+                final String sentiment = documentCategorizerME.getBestCategory(outcomes);
+                attributes.put("sentiment", sentiment);
+            }
+
+        }
 
         // See if we need to generate a document ID.
         if(StringUtils.isEmpty(documentId)) {
 
             // PHL-58: Use a hash function to generate the document ID.
-            documentId = DigestUtils.md5Hex(UUID.randomUUID().toString() + "-" + context + "-" + policy.getName() + "-" + input);
+            documentId = DigestUtils.md5Hex(UUID.randomUUID() + "-" + context + "-" + policy.getName() + "-" + input);
             LOGGER.debug("Generated document ID {}", documentId);
 
         }
@@ -214,7 +248,7 @@ public class PhileasFilterService implements FilterService {
                 // Get the splitter to use from the policy.
                 final SplitService splitService = SplitFactory.getSplitService(policy.getConfig().getSplitting().getMethod());
 
-                // Holds all of the filter responses that will ultimately be combined into a single response.
+                // Holds all filter responses that will ultimately be combined into a single response.
                 final List<FilterResponse> filterResponses = new LinkedList<>();
 
                 // Split the string.
@@ -222,7 +256,8 @@ public class PhileasFilterService implements FilterService {
 
                 // Process each split.
                 for (int i = 0; i < splits.size(); i++) {
-                    filterResponses.add(unstructuredDocumentProcessor.process(policy, filters, postFilters, context, documentId, i, splits.get(i)));
+                    final FilterResponse fr = unstructuredDocumentProcessor.process(policy, filters, postFilters, context, documentId, i, splits.get(i), attributes);
+                    filterResponses.add(fr);
                 }
 
                 // Combine the results into a single filterResponse object.
@@ -231,7 +266,7 @@ public class PhileasFilterService implements FilterService {
             } else {
 
                 // Do not split. Process the entire string at once.
-                filterResponse = unstructuredDocumentProcessor.process(policy, filters, postFilters, context, documentId, 0, input);
+                filterResponse = unstructuredDocumentProcessor.process(policy, filters, postFilters, context, documentId, 0, input, attributes);
 
             }
 
@@ -245,16 +280,22 @@ public class PhileasFilterService implements FilterService {
     }
 
     @Override
-    public BinaryDocumentFilterResponse filter(List<String> policyNames, String context, String documentId, byte[] input, MimeType mimeType, MimeType outputMimeType) throws Exception {
+    public BinaryDocumentFilterResponse filter(final List<String> policyNames, final String context, String documentId,
+                                               final byte[] input, final MimeType mimeType,
+                                               final MimeType outputMimeType) throws Exception {
 
         // Get the policy.
         final Policy policy = policyUtils.getCombinedPolicys(policyNames);
+
+        // Initialize potential attributes that are associated with the input text.
+        // NOTE: Binary documents do not currently have any attributes.
+        final Map<String, String> attributes = new HashMap<>();
 
         // See if we need to generate a document ID.
         if(StringUtils.isEmpty(documentId)) {
 
             // PHL-58: Use a hash function to generate the document ID.
-            documentId = DigestUtils.md5Hex(UUID.randomUUID().toString() + "-" + context + "-" + policy.getName() + "-" + input);
+            documentId = DigestUtils.md5Hex(UUID.randomUUID() + "-" + context + "-" + policy.getName() + "-" + Arrays.toString(input));
             LOGGER.debug("Generated document ID {}", documentId);
 
         }
@@ -278,19 +319,10 @@ public class PhileasFilterService implements FilterService {
             // Track the document offset.
             int offset = 0;
 
-            // Analyze the lines to determine the type of document.
-            final DocumentAnalysis documentAnalysis;
-            if (policy.getConfig().getAnalysis().isEnabled()) {
-                documentAnalysis = documentAnalyzer.analyze(lines);
-            } else {
-                documentAnalysis = new DocumentAnalysis();
-            }
-
-            final List<Filter> filters = getFiltersForPolicy(policy, documentAnalysis);
+            final List<Filter> filters = getFiltersForPolicy(policy);
             final List<PostFilter> postFilters = getPostFiltersForPolicy(policy);
 
-            // TODO: The following code really only needs to be done if there is at least
-            // one filter defined in the policy.
+            // TODO: The following code really only needs to be done if there is at least one filter defined in the policy.
 
             // Process each line looking for sensitive information in each line.
             for (final String line : lines) {
@@ -298,12 +330,12 @@ public class PhileasFilterService implements FilterService {
                 final int piece = 0;
 
                 // Process the text.
-                final FilterResponse filterResponse = unstructuredDocumentProcessor.process(policy, filters, postFilters, context, documentId, piece, line);
+                final FilterResponse filterResponse = unstructuredDocumentProcessor.process(policy, filters, postFilters, context, documentId, piece, line, attributes);
 
                 // Add all the found spans to the list of spans.
-                spans.addAll(filterResponse.getExplanation().getAppliedSpans());
+                spans.addAll(filterResponse.explanation().appliedSpans());
 
-                for (final Span span : filterResponse.getExplanation().getAppliedSpans()) {
+                for (final Span span : filterResponse.explanation().appliedSpans()) {
                     span.setCharacterStart(span.getCharacterStart() + offset);
                     span.setCharacterEnd(span.getCharacterEnd() + offset);
                     nonRelativeSpans.add(span);
@@ -379,7 +411,7 @@ public class PhileasFilterService implements FilterService {
 
     }
 
-    private PolicyService buildPolicyService(PhileasConfiguration phileasConfiguration) throws IOException {
+    private PolicyService buildPolicyService(final PhileasConfiguration phileasConfiguration) throws IOException {
 
         final PolicyService policyService;
         final String s3Bucket = phileasConfiguration.policiesS3Bucket();
@@ -452,7 +484,7 @@ public class PhileasFilterService implements FilterService {
 
     }
 
-    private List<Filter> getFiltersForPolicy(final Policy policy, DocumentAnalysis documentAnalysis) throws Exception {
+    private List<Filter> getFiltersForPolicy(final Policy policy) throws Exception {
 
         LOGGER.debug("Getting filters for policy [{}]", policy.getName());
 
@@ -479,7 +511,6 @@ public class PhileasFilterService implements FilterService {
                         .withIgnoredPatterns(policy.getIdentifiers().getAge().getIgnoredPatterns())
                         .withCrypto(policy.getCrypto())
                         .withWindowSize(windowSize)
-                        .withDocumentAnalysis(documentAnalysis)
                         .build();
 
                 final Filter filter = new AgeFilter(filterConfiguration);
@@ -506,7 +537,6 @@ public class PhileasFilterService implements FilterService {
                         .withCrypto(policy.getCrypto())
                         .withFPE(policy.getFpe())
                         .withWindowSize(windowSize)
-                        .withDocumentAnalysis(documentAnalysis)
                         .build();
 
                 final Filter filter = new BankRoutingNumberFilter(filterConfiguration);
@@ -533,7 +563,6 @@ public class PhileasFilterService implements FilterService {
                         .withCrypto(policy.getCrypto())
                         .withFPE(policy.getFpe())
                         .withWindowSize(windowSize)
-                        .withDocumentAnalysis(documentAnalysis)
                         .build();
 
                 final Filter filter = new BitcoinAddressFilter(filterConfiguration);
@@ -560,7 +589,6 @@ public class PhileasFilterService implements FilterService {
                         .withCrypto(policy.getCrypto())
                         .withFPE(policy.getFpe())
                         .withWindowSize(windowSize)
-                        .withDocumentAnalysis(documentAnalysis)
                         .build();
 
                 final boolean onlyValidCreditCardNumbers = policy.getIdentifiers().getCreditCard().isOnlyValidCreditCardNumbers();
@@ -588,7 +616,6 @@ public class PhileasFilterService implements FilterService {
                         .withIgnoredPatterns(policy.getIdentifiers().getCurrency().getIgnoredPatterns())
                         .withCrypto(policy.getCrypto())
                         .withWindowSize(windowSize)
-                        .withDocumentAnalysis(documentAnalysis)
                         .build();
 
                 final Filter filter = new CurrencyFilter(filterConfiguration);
@@ -614,7 +641,6 @@ public class PhileasFilterService implements FilterService {
                         .withIgnoredPatterns(policy.getIdentifiers().getDate().getIgnoredPatterns())
                         .withCrypto(policy.getCrypto())
                         .withWindowSize(windowSize)
-                        .withDocumentAnalysis(documentAnalysis)
                         .build();
 
                 final boolean onlyValidDates = policy.getIdentifiers().getDate().isOnlyValidDates();
@@ -644,7 +670,6 @@ public class PhileasFilterService implements FilterService {
                         .withCrypto(policy.getCrypto())
                         .withFPE(policy.getFpe())
                         .withWindowSize(windowSize)
-                        .withDocumentAnalysis(documentAnalysis)
                         .build();
 
                 final Filter filter = new DriversLicenseFilter(filterConfiguration);
@@ -670,7 +695,6 @@ public class PhileasFilterService implements FilterService {
                         .withIgnoredPatterns(policy.getIdentifiers().getEmailAddress().getIgnoredPatterns())
                         .withCrypto(policy.getCrypto())
                         .withWindowSize(windowSize)
-                        .withDocumentAnalysis(documentAnalysis)
                         .build();
 
                 final Filter filter = new EmailAddressFilter(filterConfiguration);
@@ -697,7 +721,6 @@ public class PhileasFilterService implements FilterService {
                         .withCrypto(policy.getCrypto())
                         .withFPE(policy.getFpe())
                         .withWindowSize(windowSize)
-                        .withDocumentAnalysis(documentAnalysis)
                         .build();
 
                 final boolean onlyValidIBANCodes = policy.getIdentifiers().getIbanCode().isOnlyValidIBANCodes();
@@ -726,7 +749,6 @@ public class PhileasFilterService implements FilterService {
                         .withIgnoredPatterns(policy.getIdentifiers().getIpAddress().getIgnoredPatterns())
                         .withCrypto(policy.getCrypto())
                         .withWindowSize(windowSize)
-                        .withDocumentAnalysis(documentAnalysis)
                         .build();
 
                 final Filter filter = new IpAddressFilter(filterConfiguration);
@@ -752,7 +774,6 @@ public class PhileasFilterService implements FilterService {
                         .withIgnoredPatterns(policy.getIdentifiers().getMacAddress().getIgnoredPatterns())
                         .withCrypto(policy.getCrypto())
                         .withWindowSize(windowSize)
-                        .withDocumentAnalysis(documentAnalysis)
                         .build();
 
                 final Filter filter = new MacAddressFilter(filterConfiguration);
@@ -779,7 +800,6 @@ public class PhileasFilterService implements FilterService {
                         .withCrypto(policy.getCrypto())
                         .withFPE(policy.getFpe())
                         .withWindowSize(windowSize)
-                        .withDocumentAnalysis(documentAnalysis)
                         .build();
 
                 final Filter filter = new PassportNumberFilter(filterConfiguration);
@@ -805,7 +825,6 @@ public class PhileasFilterService implements FilterService {
                         .withIgnoredPatterns(policy.getIdentifiers().getPhoneNumberExtension().getIgnoredPatterns())
                         .withCrypto(policy.getCrypto())
                         .withWindowSize(windowSize)
-                        .withDocumentAnalysis(documentAnalysis)
                         .build();
 
                 final Filter filter = new PhoneNumberExtensionFilter(filterConfiguration);
@@ -831,7 +850,6 @@ public class PhileasFilterService implements FilterService {
                         .withIgnoredPatterns(policy.getIdentifiers().getPhoneNumber().getIgnoredPatterns())
                         .withCrypto(policy.getCrypto())
                         .withWindowSize(windowSize)
-                        .withDocumentAnalysis(documentAnalysis)
                         .build();
 
                 final Filter filter = new PhoneNumberRulesFilter(filterConfiguration);
@@ -857,7 +875,6 @@ public class PhileasFilterService implements FilterService {
                         .withIgnoredPatterns(policy.getIdentifiers().getPhysicianName().getIgnoredPatterns())
                         .withCrypto(policy.getCrypto())
                         .withWindowSize(windowSize)
-                        .withDocumentAnalysis(documentAnalysis)
                         .build();
 
                 final Filter filter = new PhysicianNameFilter(filterConfiguration);
@@ -885,7 +902,6 @@ public class PhileasFilterService implements FilterService {
                             .withIgnoredPatterns(section.getIgnoredPatterns())
                             .withCrypto(policy.getCrypto())
                             .withWindowSize(windowSize)
-                            .withDocumentAnalysis(documentAnalysis)
                             .build();
 
                     final String startPattern = section.getStartPattern();
@@ -915,7 +931,6 @@ public class PhileasFilterService implements FilterService {
                         .withCrypto(policy.getCrypto())
                         .withFPE(policy.getFpe())
                         .withWindowSize(windowSize)
-                        .withDocumentAnalysis(documentAnalysis)
                         .build();
 
                 final Filter filter = new SsnFilter(filterConfiguration);
@@ -941,7 +956,6 @@ public class PhileasFilterService implements FilterService {
                         .withIgnoredPatterns(policy.getIdentifiers().getStateAbbreviation().getIgnoredPatterns())
                         .withCrypto(policy.getCrypto())
                         .withWindowSize(windowSize)
-                        .withDocumentAnalysis(documentAnalysis)
                         .build();
 
                 final Filter filter = new StateAbbreviationFilter(filterConfiguration);
@@ -967,7 +981,6 @@ public class PhileasFilterService implements FilterService {
                         .withIgnoredPatterns(policy.getIdentifiers().getStreetAddress().getIgnoredPatterns())
                         .withCrypto(policy.getCrypto())
                         .withWindowSize(windowSize)
-                        .withDocumentAnalysis(documentAnalysis)
                         .build();
 
                 final Filter filter = new StreetAddressFilter(filterConfiguration);
@@ -994,7 +1007,6 @@ public class PhileasFilterService implements FilterService {
                         .withCrypto(policy.getCrypto())
                         .withFPE(policy.getFpe())
                         .withWindowSize(windowSize)
-                        .withDocumentAnalysis(documentAnalysis)
                         .build();
 
                 final boolean ups = policy.getIdentifiers().getTrackingNumber().isUps();
@@ -1024,7 +1036,6 @@ public class PhileasFilterService implements FilterService {
                         .withIgnoredPatterns(policy.getIdentifiers().getUrl().getIgnoredPatterns())
                         .withCrypto(policy.getCrypto())
                         .withWindowSize(windowSize)
-                        .withDocumentAnalysis(documentAnalysis)
                         .build();
 
                 final boolean requireHttpWwwPrefix = policy.getIdentifiers().getUrl().isRequireHttpWwwPrefix();
@@ -1053,7 +1064,6 @@ public class PhileasFilterService implements FilterService {
                         .withCrypto(policy.getCrypto())
                         .withFPE(policy.getFpe())
                         .withWindowSize(windowSize)
-                        .withDocumentAnalysis(documentAnalysis)
                         .build();
 
                 final Filter filter = new VinFilter(filterConfiguration);
@@ -1079,7 +1089,6 @@ public class PhileasFilterService implements FilterService {
                         .withIgnoredPatterns(policy.getIdentifiers().getZipCode().getIgnoredPatterns())
                         .withCrypto(policy.getCrypto())
                         .withWindowSize(windowSize)
-                        .withDocumentAnalysis(documentAnalysis)
                         .build();
 
                 final boolean requireDelimiter = policy.getIdentifiers().getZipCode().isRequireDelimiter();
@@ -1115,7 +1124,7 @@ public class PhileasFilterService implements FilterService {
                     // There is no anonymization service because we don't know what to replace custom dictionary items with.
                     final AnonymizationService anonymizationService = null;
 
-                    // All of the custom terms.
+                    // All the custom terms.
                     final Set<String> terms = new LinkedHashSet<>();
 
                     // First, read the terms from the policy.
@@ -1143,7 +1152,6 @@ public class PhileasFilterService implements FilterService {
                                 .withIgnoredPatterns(policy.getIdentifiers().getZipCode().getIgnoredPatterns())
                                 .withCrypto(policy.getCrypto())
                                 .withWindowSize(windowSize)
-                                .withDocumentAnalysis(documentAnalysis)
                                 .build();
 
                         final SensitivityLevel sensitivityLevel = SensitivityLevel.fromName(customDictionary.getSensitivity());
@@ -1159,7 +1167,7 @@ public class PhileasFilterService implements FilterService {
 
                         // Only enable the filter if there is at least one term.
                         // TODO: Should a bloom filter be used for small numbers of terms?
-                        if(terms.size() > 0) {
+                        if(!terms.isEmpty()) {
 
                             final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                                     .withStrategies(customDictionary.getCustomDictionaryFilterStrategies())
@@ -1170,7 +1178,6 @@ public class PhileasFilterService implements FilterService {
                                     .withIgnoredPatterns(customDictionary.getIgnoredPatterns())
                                     .withCrypto(policy.getCrypto())
                                     .withWindowSize(windowSize)
-                                    .withDocumentAnalysis(documentAnalysis)
                                     .build();
 
                             final String classification = customDictionary.getClassification();
@@ -1209,7 +1216,6 @@ public class PhileasFilterService implements FilterService {
                     .withIgnoredPatterns(policy.getIdentifiers().getCity().getIgnoredPatterns())
                     .withCrypto(policy.getCrypto())
                     .withWindowSize(windowSize)
-                    .withDocumentAnalysis(documentAnalysis)
                     .build();
 
             final SensitivityLevel sensitivityLevel = policy.getIdentifiers().getCity().getSensitivityLevel();
@@ -1232,7 +1238,6 @@ public class PhileasFilterService implements FilterService {
                     .withIgnoredPatterns(policy.getIdentifiers().getCounty().getIgnoredPatterns())
                     .withCrypto(policy.getCrypto())
                     .withWindowSize(windowSize)
-                    .withDocumentAnalysis(documentAnalysis)
                     .build();
 
             final SensitivityLevel sensitivityLevel = policy.getIdentifiers().getCounty().getSensitivityLevel();
@@ -1255,7 +1260,6 @@ public class PhileasFilterService implements FilterService {
                     .withIgnoredPatterns(policy.getIdentifiers().getState().getIgnoredPatterns())
                     .withCrypto(policy.getCrypto())
                     .withWindowSize(windowSize)
-                    .withDocumentAnalysis(documentAnalysis)
                     .build();
 
             final SensitivityLevel sensitivityLevel = policy.getIdentifiers().getState().getSensitivityLevel();
@@ -1278,7 +1282,6 @@ public class PhileasFilterService implements FilterService {
                     .withIgnoredPatterns(policy.getIdentifiers().getHospital().getIgnoredPatterns())
                     .withCrypto(policy.getCrypto())
                     .withWindowSize(windowSize)
-                    .withDocumentAnalysis(documentAnalysis)
                     .build();
 
             final SensitivityLevel sensitivityLevel = policy.getIdentifiers().getHospital().getSensitivityLevel();
@@ -1301,7 +1304,6 @@ public class PhileasFilterService implements FilterService {
                     .withIgnoredPatterns(policy.getIdentifiers().getHospitalAbbreviation().getIgnoredPatterns())
                     .withCrypto(policy.getCrypto())
                     .withWindowSize(windowSize)
-                    .withDocumentAnalysis(documentAnalysis)
                     .build();
 
             final SensitivityLevel sensitivityLevel = policy.getIdentifiers().getHospitalAbbreviation().getSensitivityLevel();
@@ -1324,7 +1326,6 @@ public class PhileasFilterService implements FilterService {
                     .withIgnoredPatterns(policy.getIdentifiers().getFirstName().getIgnoredPatterns())
                     .withCrypto(policy.getCrypto())
                     .withWindowSize(windowSize)
-                    .withDocumentAnalysis(documentAnalysis)
                     .build();
 
             final SensitivityLevel sensitivityLevel = policy.getIdentifiers().getFirstName().getSensitivityLevel();
@@ -1347,7 +1348,6 @@ public class PhileasFilterService implements FilterService {
                     .withIgnoredPatterns(policy.getIdentifiers().getSurname().getIgnoredPatterns())
                     .withCrypto(policy.getCrypto())
                     .withWindowSize(windowSize)
-                    .withDocumentAnalysis(documentAnalysis)
                     .build();
 
             final SensitivityLevel sensitivityLevel = policy.getIdentifiers().getSurname().getSensitivityLevel();
@@ -1378,7 +1378,6 @@ public class PhileasFilterService implements FilterService {
                             .withIgnoredPatterns(identifier.getIgnoredPatterns())
                             .withCrypto(policy.getCrypto())
                             .withWindowSize(windowSize)
-                            .withDocumentAnalysis(documentAnalysis)
                             .build();
 
                     final String classification = identifier.getClassification();
@@ -1409,7 +1408,6 @@ public class PhileasFilterService implements FilterService {
                         .withIgnoredPatterns(policy.getIdentifiers().getPerson().getIgnoredPatterns())
                         .withCrypto(policy.getCrypto())
                         .withWindowSize(windowSize)
-                        .withDocumentAnalysis(documentAnalysis)
                         .build();
 
                 final Filter filter = new PersonsV1Filter(
@@ -1444,7 +1442,6 @@ public class PhileasFilterService implements FilterService {
                         .withIgnoredPatterns(policy.getIdentifiers().getPersonV2().getIgnoredPatterns())
                         .withCrypto(policy.getCrypto())
                         .withWindowSize(windowSize)
-                        .withDocumentAnalysis(documentAnalysis)
                         .build();
 
                 final Filter filter = new PersonsV2Filter(
@@ -1477,7 +1474,6 @@ public class PhileasFilterService implements FilterService {
                         .withIgnoredPatterns(policy.getIdentifiers().getPersonV3().getIgnoredPatterns())
                         .withCrypto(policy.getCrypto())
                         .withWindowSize(windowSize)
-                        .withDocumentAnalysis(documentAnalysis)
                         .build();
 
                 final Filter filter = new PersonsV3Filter(

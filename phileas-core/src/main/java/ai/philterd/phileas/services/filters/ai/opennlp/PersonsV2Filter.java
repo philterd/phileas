@@ -39,14 +39,13 @@ import java.util.Map;
 public class PersonsV2Filter extends NerFilter {
 
     private final OnnxNer onnxNer;
-    private Map<Integer, String> id2Labels;
 
-    public PersonsV2Filter(FilterConfiguration filterConfiguration,
-                           String modelFile,
-                           String vocabFile,
-                           Map<String, DescriptiveStatistics> stats,
-                           MetricsService metricsService,
-                           Map<String, Double> thresholds) throws Exception {
+    public PersonsV2Filter(final FilterConfiguration filterConfiguration,
+                           final String modelFile,
+                           final String vocabFile,
+                           final Map<String, DescriptiveStatistics> stats,
+                           final MetricsService metricsService,
+                           final Map<String, Double> thresholds) throws Exception {
 
         super(filterConfiguration, stats, metricsService, thresholds, FilterType.PERSON);
 
@@ -54,7 +53,7 @@ public class PersonsV2Filter extends NerFilter {
         final File vocab = new File(vocabFile);
 
         // These values come from the config.json that was used to train the model.
-        this.id2Labels = new HashMap<>();
+        final Map<Integer, String> id2Labels = new HashMap<>();
         id2Labels.put(0, "O");
         id2Labels.put(1, "B-MISC");
         id2Labels.put(2, "I-MISC");
@@ -75,7 +74,8 @@ public class PersonsV2Filter extends NerFilter {
     }
 
     @Override
-    public FilterResult filter(Policy policy, String context, String documentId, int piece, String input) throws Exception {
+    public FilterResult filter(final Policy policy, final String context, final String documentId, final int piece,
+                               String input, Map<String, String> attributes) throws Exception {
 
         // Remove line breaks.
         input = input.replaceAll("\n", " ");
@@ -91,7 +91,7 @@ public class PersonsV2Filter extends NerFilter {
         for(final Entity entity : entities) {
 
             final String[] window = getWindow(input, entity.getCharacterStart(), entity.getCharacterEnd());
-            final Replacement replacement = getReplacement(policy.getName(), context, documentId, entity.getText(), window, entity.getConfidence(), classification, null);
+            final Replacement replacement = getReplacement(policy, context, documentId, entity.getText(), window, entity.getConfidence(), classification, attributes, null);
             final boolean isIgnored = ignored.contains(entity.getText());
 
             final Span span = Span.make(
@@ -120,7 +120,7 @@ public class PersonsV2Filter extends NerFilter {
     }
 
     @Override
-    public int getOccurrences(Policy policy, String input) throws Exception {
+    public int getOccurrences(final Policy policy, final String input, Map<String, String> attributes) throws Exception {
         return 0;
     }
 

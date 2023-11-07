@@ -160,7 +160,7 @@ public class PersonsFilterStrategyTest extends AbstractFilterStrategyTest {
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
 
-        final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentid", "John Smith", WINDOW,"confidence > 0.25",  0.5, "");
+        final boolean conditionSatisfied = strategy.evaluateCondition(getPolicy(), "context", "documentid", "John Smith", WINDOW,"confidence > 0.25",  0.5, attributes);
 
         Assertions.assertTrue(conditionSatisfied);
 
@@ -171,7 +171,8 @@ public class PersonsFilterStrategyTest extends AbstractFilterStrategyTest {
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
 
-        final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentid", "John Smith", WINDOW,"type == PER",  1.0, "PER");
+        attributes.put("classification", "PER");
+        final boolean conditionSatisfied = strategy.evaluateCondition(getPolicy(), "context", "documentid", "John Smith", WINDOW,"type == PER",  1.0, attributes);
 
         Assertions.assertTrue(conditionSatisfied);
 
@@ -182,7 +183,8 @@ public class PersonsFilterStrategyTest extends AbstractFilterStrategyTest {
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
 
-        final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentid", "John Smith", WINDOW,"type == PER",  1.0, "LOC");
+        attributes.put("classification", "LOC");
+        final boolean conditionSatisfied = strategy.evaluateCondition(getPolicy(), "context", "documentid", "John Smith", WINDOW,"type == PER",  1.0, attributes);
 
         Assertions.assertFalse(conditionSatisfied);
 
@@ -193,7 +195,7 @@ public class PersonsFilterStrategyTest extends AbstractFilterStrategyTest {
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
 
-        final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentid", "John Smith", WINDOW,"confidence == 0.5",  0.5, "");
+        final boolean conditionSatisfied = strategy.evaluateCondition(getPolicy(), "context", "documentid", "John Smith", WINDOW,"confidence == 0.5",  0.5, attributes);
 
         Assertions.assertTrue(conditionSatisfied);
 
@@ -204,7 +206,7 @@ public class PersonsFilterStrategyTest extends AbstractFilterStrategyTest {
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
 
-        final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentid", "John Smith", WINDOW,"confidence != 0.5",  0.6, "");
+        final boolean conditionSatisfied = strategy.evaluateCondition(getPolicy(), "context", "documentid", "John Smith", WINDOW,"confidence != 0.5",  0.6, attributes);
 
         Assertions.assertTrue(conditionSatisfied);
 
@@ -215,7 +217,7 @@ public class PersonsFilterStrategyTest extends AbstractFilterStrategyTest {
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
 
-        final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentid", "John Smith", WINDOW,"confidence != 0.5",  0.5, "");
+        final boolean conditionSatisfied = strategy.evaluateCondition(getPolicy(), "context", "documentid", "John Smith", WINDOW,"confidence != 0.5",  0.5, attributes);
 
         Assertions.assertFalse(conditionSatisfied);
 
@@ -226,7 +228,8 @@ public class PersonsFilterStrategyTest extends AbstractFilterStrategyTest {
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
 
-        final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentid", "John Smith", WINDOW,"confidence != 0.5 and type == PER",  0.5, "LOC");
+        attributes.put("classification", "LOC");
+        final boolean conditionSatisfied = strategy.evaluateCondition(getPolicy(), "context", "documentid", "John Smith", WINDOW,"confidence != 0.5 and type == PER",  0.5, attributes);
 
         Assertions.assertFalse(conditionSatisfied);
 
@@ -237,7 +240,8 @@ public class PersonsFilterStrategyTest extends AbstractFilterStrategyTest {
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
 
-        final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentid", "John Smith", WINDOW,"confidence != 0.5 and type != LOC",  0.5, "PER");
+        attributes.put("classification", "PER");
+        final boolean conditionSatisfied = strategy.evaluateCondition(getPolicy(), "context", "documentid", "John Smith", WINDOW,"confidence != 0.5 and type != LOC",  0.5, attributes);
 
         Assertions.assertFalse(conditionSatisfied);
 
@@ -248,7 +252,8 @@ public class PersonsFilterStrategyTest extends AbstractFilterStrategyTest {
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
 
-        final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentid", "John Smith", WINDOW,"confidence > 0.4 and type == PER",  0.5, "PER");
+        attributes.put("classification", "PER");
+        final boolean conditionSatisfied = strategy.evaluateCondition(getPolicy(), "context", "documentid", "John Smith", WINDOW,"confidence > 0.4 and type == PER",  0.5, attributes);
 
         Assertions.assertTrue(conditionSatisfied);
 
@@ -260,7 +265,8 @@ public class PersonsFilterStrategyTest extends AbstractFilterStrategyTest {
         final AbstractFilterStrategy strategy = getFilterStrategy();
 
 
-        final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentid", "John Smith", WINDOW,"confidence < 0.4 and type == PER",  0.5, "PER");
+        attributes.put("classification", "PER");
+        final boolean conditionSatisfied = strategy.evaluateCondition(getPolicy(), "context", "documentid", "John Smith", WINDOW,"confidence < 0.4 and type == PER",  0.5, attributes);
 
         Assertions.assertFalse(conditionSatisfied);
 
@@ -271,7 +277,7 @@ public class PersonsFilterStrategyTest extends AbstractFilterStrategyTest {
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
 
-        final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentid", "John Smith", WINDOW,"context == \"c1\"",  1.0, "");
+        final boolean conditionSatisfied = strategy.evaluateCondition(getPolicy(), "context", "documentid", "John Smith", WINDOW,"context == \"c1\"",  1.0, attributes);
 
         Assertions.assertFalse(conditionSatisfied);
 
@@ -282,7 +288,7 @@ public class PersonsFilterStrategyTest extends AbstractFilterStrategyTest {
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
 
-        final boolean conditionSatisfied = strategy.evaluateCondition("ctx", "documentId", "John Smith", WINDOW,"context == \"ctx\"",  1.0, "");
+        final boolean conditionSatisfied = strategy.evaluateCondition(getPolicy(), "ctx", "documentId", "John Smith", WINDOW,"context == \"ctx\"",  1.0, attributes);
 
         Assertions.assertTrue(conditionSatisfied);
 
@@ -293,7 +299,7 @@ public class PersonsFilterStrategyTest extends AbstractFilterStrategyTest {
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
 
-        final boolean conditionSatisfied = strategy.evaluateCondition("ctx", "documentId", "John Smith", WINDOW,"token == \"John Smith\"",  1.0, "");
+        final boolean conditionSatisfied = strategy.evaluateCondition(getPolicy(), "ctx", "documentId", "John Smith", WINDOW,"token == \"John Smith\"",  1.0, attributes);
 
         Assertions.assertTrue(conditionSatisfied);
 
@@ -304,7 +310,7 @@ public class PersonsFilterStrategyTest extends AbstractFilterStrategyTest {
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
 
-        final boolean conditionSatisfied = strategy.evaluateCondition("ctx", "documentId", "John Smith", WINDOW,"token != \"John Smith\"",  1.0, "");
+        final boolean conditionSatisfied = strategy.evaluateCondition(getPolicy(), "ctx", "documentId", "John Smith", WINDOW,"token != \"John Smith\"",  1.0, attributes);
 
         Assertions.assertFalse(conditionSatisfied);
 

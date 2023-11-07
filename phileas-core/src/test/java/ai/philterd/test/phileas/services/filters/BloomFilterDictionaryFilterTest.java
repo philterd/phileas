@@ -1,7 +1,7 @@
 /*
  *     Copyright 2023 Philterd, LLC @ https://www.philterd.ai
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * Licensed under the Apache License, Version 2.0 (the "License", attributes);
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
@@ -31,19 +31,20 @@ import org.mockito.Mockito;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class BloomFilterDictionaryFilterTest extends AbstractFilterTest {
 
     private static final Logger LOGGER = LogManager.getLogger(BloomFilterDictionaryFilterTest.class);
 
-    private AlertService alertService = Mockito.mock(AlertService.class);
+    private final AlertService alertService = Mockito.mock(AlertService.class);
 
     @Test
     public void filterDictionaryExactMatch() throws Exception {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
-                .withStrategies(Arrays.asList(new CustomDictionaryFilterStrategy()))
+                .withStrategies(List.of(new CustomDictionaryFilterStrategy()))
                 .withAlertService(alertService)
                 .withAnonymizationService(new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()))
                 .withWindowSize(windowSize)
@@ -52,7 +53,7 @@ public class BloomFilterDictionaryFilterTest extends AbstractFilterTest {
         final Set<String> names = new HashSet<>(Arrays.asList("george", "ted", "Bill", "john"));
         final BloomFilterDictionaryFilter filter = new BloomFilterDictionaryFilter(FilterType.CUSTOM_DICTIONARY, filterConfiguration, names, "none", 0.05);
 
-         final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "He lived with Bill in California.");
+         final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "He lived with Bill in California.", attributes);
 
         showSpans(filterResult.getSpans());
 
@@ -66,7 +67,7 @@ public class BloomFilterDictionaryFilterTest extends AbstractFilterTest {
     public void filterDictionaryCaseInsensitiveMatch() throws Exception {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
-                .withStrategies(Arrays.asList(new CustomDictionaryFilterStrategy()))
+                .withStrategies(List.of(new CustomDictionaryFilterStrategy()))
                 .withAlertService(alertService)
                 .withAnonymizationService(new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()))
                 .withWindowSize(windowSize)
@@ -75,7 +76,7 @@ public class BloomFilterDictionaryFilterTest extends AbstractFilterTest {
         final Set<String> names = new HashSet<>(Arrays.asList("george", "ted", "bill", "john"));
         final BloomFilterDictionaryFilter filter = new BloomFilterDictionaryFilter(FilterType.CUSTOM_DICTIONARY, filterConfiguration, names, "none", 0.05);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "He lived with Bill in California.");
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "He lived with Bill in California.", attributes);
 
         showSpans(filterResult.getSpans());
 
@@ -89,7 +90,7 @@ public class BloomFilterDictionaryFilterTest extends AbstractFilterTest {
     public void filterDictionaryNoMatch() throws Exception {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
-                .withStrategies(Arrays.asList(new CustomDictionaryFilterStrategy()))
+                .withStrategies(List.of(new CustomDictionaryFilterStrategy()))
                 .withAlertService(alertService)
                 .withAnonymizationService(new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()))
                 .withWindowSize(windowSize)
@@ -98,7 +99,7 @@ public class BloomFilterDictionaryFilterTest extends AbstractFilterTest {
         final Set<String> names = new HashSet<>(Arrays.asList("george", "ted", "bill", "john"));
         final BloomFilterDictionaryFilter filter = new BloomFilterDictionaryFilter(FilterType.CUSTOM_DICTIONARY, filterConfiguration, names, "none", 0.05);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "He lived with Sam in California.");
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "He lived with Sam in California.", attributes);
 
         showSpans(filterResult.getSpans());
 
@@ -110,7 +111,7 @@ public class BloomFilterDictionaryFilterTest extends AbstractFilterTest {
     public void filterDictionaryPhraseMatch1() throws Exception {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
-                .withStrategies(Arrays.asList(new CustomDictionaryFilterStrategy()))
+                .withStrategies(List.of(new CustomDictionaryFilterStrategy()))
                 .withAlertService(alertService)
                 .withAnonymizationService(new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()))
                 .withWindowSize(windowSize)
@@ -119,7 +120,7 @@ public class BloomFilterDictionaryFilterTest extends AbstractFilterTest {
         final Set<String> names = new HashSet<>(Arrays.asList("george jones", "ted", "bill", "john"));
         final BloomFilterDictionaryFilter filter = new BloomFilterDictionaryFilter(FilterType.CUSTOM_DICTIONARY, filterConfiguration, names, "none", 0.05);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE,"He lived with george jones in California.");
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE,"He lived with george jones in California.", attributes);
 
         showSpans(filterResult.getSpans());
 
@@ -133,7 +134,7 @@ public class BloomFilterDictionaryFilterTest extends AbstractFilterTest {
     public void filterDictionaryPhraseMatch2() throws Exception {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
-                .withStrategies(Arrays.asList(new CustomDictionaryFilterStrategy()))
+                .withStrategies(List.of(new CustomDictionaryFilterStrategy()))
                 .withAlertService(alertService)
                 .withAnonymizationService(new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()))
                 .withWindowSize(windowSize)
@@ -142,7 +143,7 @@ public class BloomFilterDictionaryFilterTest extends AbstractFilterTest {
         final Set<String> names = new HashSet<>(Arrays.asList("george jones jr", "ted", "bill smith", "john"));
         final BloomFilterDictionaryFilter filter = new BloomFilterDictionaryFilter(FilterType.CUSTOM_DICTIONARY, filterConfiguration, names, "none", 0.05);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE,"Bill Smith lived with george jones jr in California.");
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE,"Bill Smith lived with george jones jr in California.", attributes);
 
         showSpans(filterResult.getSpans());
 

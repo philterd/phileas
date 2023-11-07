@@ -15,11 +15,11 @@
  */
 package ai.philterd.phileas.model.policy.filters.strategies;
 
+import ai.philterd.phileas.model.policy.Policy;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import ai.philterd.phileas.model.conditions.ParsedCondition;
 import ai.philterd.phileas.model.enums.FilterType;
-import ai.philterd.phileas.model.objects.DocumentType;
 import ai.philterd.phileas.model.objects.FilterPattern;
 import ai.philterd.phileas.model.objects.Replacement;
 import ai.philterd.phileas.model.policy.Crypto;
@@ -30,6 +30,7 @@ import org.apache.commons.lang3.StringUtils;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 public abstract class AbstractFilterStrategy {
@@ -61,6 +62,7 @@ public abstract class AbstractFilterStrategy {
     public static final String CONTEXT = "context";
     public static final String TYPE = "type";
     public static final String CONFIDENCE = "confidence";
+    public static final String SENTIMENT = "sentiment";
     public static final String CLASSIFICATION = "classification";
     public static final String BIRTHDATE = "birthdate";
 
@@ -106,10 +108,6 @@ public abstract class AbstractFilterStrategy {
     @Expose
     protected boolean salt;
 
-    @SerializedName("excludeDocumentTypes")
-    @Expose
-    private List<DocumentType> excludeDocumentTypes = new LinkedList<>();
-
     /**
      * Gets the replacement for a token.
      * @param classification The filter type classification.
@@ -129,16 +127,19 @@ public abstract class AbstractFilterStrategy {
 
     /**
      * Evaluates the condition on the given token.
+     * @param policy The policy being applied.
      * @param context The context.
      * @param documentId The document ID.
      * @param token The token.
      * @param window The window containing the token.
      * @param condition The condition to evaluate.
      * @param confidence The span's confidence.
-     * @param classification The span's classification.
+     * @param attributes Attributes about hte document.
      * @return <code>true</code> if the condition matches; otherwise <code>false</code>.
      */
-    public abstract boolean evaluateCondition(String context, String documentId, String token, String[] window, String condition, double confidence, String classification);
+    public abstract boolean evaluateCondition(Policy policy, String context, String documentId, String token,
+                                              String[] window, String condition, double confidence,
+                                              Map<String, String> attributes);
 
     public abstract FilterType getFilterType();
 
@@ -324,14 +325,6 @@ public abstract class AbstractFilterStrategy {
 
     public void setSalt(boolean salt) {
         this.salt = salt;
-    }
-
-    public List<DocumentType> getExcludeDocumentTypes() {
-        return excludeDocumentTypes;
-    }
-
-    public void setExcludeDocumentTypes(List<DocumentType> excludeDocumentTypes) {
-        this.excludeDocumentTypes = excludeDocumentTypes;
     }
 
 }

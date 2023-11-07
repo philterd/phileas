@@ -29,7 +29,7 @@ public class PhileasSpan {
 
     }
 
-    public PhileasSpan(String text, String tag, double score, int start, int end) {
+    public PhileasSpan(final String text, final String tag, final double score, final int start, final int end) {
 
         this.text = text;
         this.tag = tag;

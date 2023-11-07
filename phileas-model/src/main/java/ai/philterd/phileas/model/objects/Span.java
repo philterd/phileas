@@ -15,12 +15,12 @@
  */
 package ai.philterd.phileas.model.objects;
 
-import com.google.gson.Gson;
-import com.google.gson.annotations.Expose;
 import ai.philterd.phileas.model.enums.FilterType;
 import ai.philterd.phileas.model.formats.lapps.Annotation;
 import ai.philterd.phileas.model.formats.lapps.Lapps;
 import ai.philterd.phileas.model.formats.lapps.View;
+import com.google.gson.Gson;
+import com.google.gson.annotations.Expose;
 import org.apache.commons.lang3.Range;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -28,10 +28,8 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.io.Serializable;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 /**
  * Represents a location in text identified as sensitive information.

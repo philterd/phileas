@@ -18,10 +18,16 @@ package ai.philterd.phileas.model.filter.rules;
 import ai.philterd.phileas.model.enums.FilterType;
 import ai.philterd.phileas.model.filter.Filter;
 import ai.philterd.phileas.model.filter.FilterConfiguration;
-import ai.philterd.phileas.model.objects.*;
+import ai.philterd.phileas.model.objects.Analyzer;
+import ai.philterd.phileas.model.objects.FilterPattern;
+import ai.philterd.phileas.model.objects.Replacement;
+import ai.philterd.phileas.model.objects.Span;
 import ai.philterd.phileas.model.policy.Policy;
 
-import java.util.*;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -34,10 +40,10 @@ public abstract class RulesFilter extends Filter {
 
     /**
      * Creates a new rule-based filter.
-     * @param filterType
+     * @param filterType The @{link FilterType} of the filter.
      * @param filterConfiguration The {@link FilterConfiguration} for the filter.
      */
-    public RulesFilter(FilterType filterType, FilterConfiguration filterConfiguration) {
+    public RulesFilter(final FilterType filterType, final FilterConfiguration filterConfiguration) {
         super(filterType, filterConfiguration);
     }
 
@@ -49,7 +55,7 @@ public abstract class RulesFilter extends Filter {
      * @param spans The identified spans.
      * @return A subset of the input spans.
      */
-    public List<Span> postFilter(List<Span> spans) {
+    public List<Span> postFilter(final List<Span> spans) {
         return spans;
     }
 
@@ -60,25 +66,11 @@ public abstract class RulesFilter extends Filter {
      * @param input The text input.
      * @param context The context.
      * @param documentId The document ID.
+     * @param attributes Attributes about the input text.
      * @return A list of matching {@link Span spans}.
      */
-    protected List<Span> findSpans(Policy policy, Analyzer analyzer, String input, String context,
-                                   String documentId) throws Exception {
-        return findSpans(policy, analyzer, input, context, documentId, Collections.emptyMap());
-    }
-
-    /**
-     * Find {@link Span spans} matching the {@link Pattern}.
-     * @param policy The {@link Policy} to use.
-     * @param analyzer A filter {@link Analyzer}.
-     * @param input The text input.
-     * @param context The context.
-     * @param documentId The document ID.
-     * @param restrictions Restrictions placed on what is a span for the filter.
-     * @return A list of matching {@link Span spans}.
-     */
-    protected List<Span> findSpans(Policy policy, Analyzer analyzer, String input, String context,
-                                   String documentId, Map<Restriction, List<String>> restrictions) throws Exception {
+    protected List<Span> findSpans(final Policy policy, final Analyzer analyzer, final String input, final String context,
+                                   final String documentId, final Map<String, String> attributes) throws Exception {
 
         final List<Span> spans = new LinkedList<>();
 
@@ -112,34 +104,23 @@ public abstract class RulesFilter extends Filter {
                         final String[] window = getWindow(input, characterStart, characterEnd);
 
                         // Get the span's replacement.
-                        final Replacement replacement = getReplacement(policy.getName(), context, documentId, token,
-                                window, initialConfidence, filterPattern.getClassification(), filterPattern);
+                        final Replacement replacement = getReplacement(policy, context, documentId, token,
+                                window, initialConfidence, classification, attributes, filterPattern);
 
+                        // Create the span.
                         final Span span = Span.make(characterStart, characterEnd, getFilterType(), context, documentId,
                                 initialConfidence, token, replacement.getReplacement(), replacement.getSalt(), ignored, window);
 
                         // TODO: Add "format" to Span.make() so we don't have to make a separate call here.
                         span.setPattern(filterPattern.getFormat());
 
-                        // TODO: Add "classification" to Span.make() so we don't have to make a separate call here.
-                        span.setClassification(filterPattern.getClassification());
-
                         // TODO: Add "alwaysValid" to Span.make() so we don't have to make a separate call here.
                         span.setAlwaysValid(filterPattern.isAlwaysValid());
 
-                        // Lastly, look at any restrictions before adding the span.
-                        boolean restricted = false;
-                        for(final Restriction restriction : restrictions.keySet()) {
-                            if(restriction == Restriction.CLASSIFICATION) {
-                                if(!restrictions.get(restriction).contains(filterPattern.getClassification())) {
-                                    restricted = true;
-                                }
-                            }
-                        }
+                        // TODO: Add "classification" to Span.make() so we don't have to make a separate call here.
+                        span.setClassification(filterPattern.getClassification());
 
-                        if(!restricted) {
-                            spans.add(span);
-                        }
+                        spans.add(span);
 
                     }
 
@@ -160,9 +141,9 @@ public abstract class RulesFilter extends Filter {
      * @return A count of occurrences in the text.
      */
     @Override
-    public int getOccurrences(Policy policy, String input) throws Exception {
+    public int getOccurrences(final Policy policy, final String input, final Map<String, String> attributes) throws Exception {
 
-        return filter(policy, "none", "none", 0, input).getSpans().size();
+        return filter(policy, "none", "none", 0, input, attributes).getSpans().size();
 
     }
 

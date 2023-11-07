@@ -28,6 +28,7 @@ import ai.philterd.phileas.model.policy.Policy;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 // TODO: This should not extend RulesFilter because it is not a rule-based filter.
@@ -37,7 +38,7 @@ public class PhoneNumberRulesFilter extends RulesFilter {
     private final PhoneNumberUtil phoneUtil;
     private final Pattern pattern = Pattern.compile("^(\\+\\d{1,2}\\s)?\\(?\\d{3}\\)?[\\s.-]\\d{3}[\\s.-]\\d{4}$");
 
-    public PhoneNumberRulesFilter(FilterConfiguration filterConfiguration) {
+    public PhoneNumberRulesFilter(final FilterConfiguration filterConfiguration) {
 
         super(FilterType.PHONE_NUMBER, filterConfiguration);
 
@@ -53,7 +54,8 @@ public class PhoneNumberRulesFilter extends RulesFilter {
     }
 
     @Override
-    public FilterResult filter(Policy policy, String context, String documentId, int piece, String input) throws Exception {
+    public FilterResult filter(final Policy policy, final String context, final String documentId, final int piece,
+                               final String input, final Map<String, String> attributes) throws Exception {
 
         final List<Span> spans = new LinkedList<>();
 
@@ -79,7 +81,7 @@ public class PhoneNumberRulesFilter extends RulesFilter {
 
                 final String[] window = getWindow(input, match.start(), match.end());
                 final String classification = "";
-                final Replacement replacement = getReplacement(policy.getName(), context, documentId, text, window, confidence, classification, null);
+                final Replacement replacement = getReplacement(policy, context, documentId, text, window, confidence, classification, attributes, null);
                 final boolean isIgnored = ignored.contains(text);
 
                 spans.add(Span.make(match.start(), match.end(), getFilterType(), context, documentId, confidence, text, replacement.getReplacement(), replacement.getSalt(), isIgnored, window));

@@ -31,10 +31,7 @@ import org.apache.lucene.analysis.tokenattributes.OffsetAttribute;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * A filter that operates on a bloom filter.
@@ -43,8 +40,8 @@ public class BloomFilterDictionaryFilter extends DictionaryFilter {
 
     private static final Logger LOGGER = LogManager.getLogger(BloomFilterDictionaryFilter.class);
 
-    private BloomFilter<String> bloomFilter;
-    private Set<String> lowerCaseTerms;
+    private final BloomFilter<String> bloomFilter;
+    private final Set<String> lowerCaseTerms;
 
     /**
      * Creates a new bloom filter-based filter.
@@ -83,7 +80,8 @@ public class BloomFilterDictionaryFilter extends DictionaryFilter {
     }
 
     @Override
-    public FilterResult filter(Policy policy, String context, String documentId, int piece, String text) throws Exception {
+    public FilterResult filter(Policy policy, String context, String documentId, int piece, String text,
+                               Map<String, String> attributes) throws Exception {
 
         final List<Span> spans = new LinkedList<>();
 
@@ -116,8 +114,8 @@ public class BloomFilterDictionaryFilter extends DictionaryFilter {
                         // Get the original token to get the right casing.
                         final String originalToken = text.substring(characterStart, characterEnd);
 
-                        final Replacement replacement = getReplacement(policy.getName(), context, documentId,
-                                originalToken, window, confidence, classification, null);
+                        final Replacement replacement = getReplacement(policy, context, documentId,
+                                originalToken, window, confidence, classification, attributes, null);
 
                         spans.add(Span.make(characterStart, characterEnd, getFilterType(), context, documentId,
                                 confidence, originalToken, replacement.getReplacement(), replacement.getSalt(), isIgnored, window));

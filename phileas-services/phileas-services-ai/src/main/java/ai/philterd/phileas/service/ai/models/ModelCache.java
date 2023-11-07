@@ -13,34 +13,39 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ai.philterd.phileas.model.objects;
+package ai.philterd.phileas.service.ai.models;
 
-import com.google.gson.Gson;
+import opennlp.tools.doccat.DocumentCategorizerME;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class SpanVector {
+public class ModelCache {
 
-    private Map<Double, Double> vectorIndexes;
-    private final transient Gson gson;
+    private static ModelCache instance;
 
-    public SpanVector() {
-        this.vectorIndexes = new HashMap<>();
-        this.gson = new Gson();
+    private final Map<String, DocumentCategorizerME> cache;
+
+    public static ModelCache getInstance() {
+
+        if(instance == null) {
+            instance = new ModelCache();
+        }
+
+        return instance;
+
     }
 
-    @Override
-    public String toString() {
-        return gson.toJson(this);
+    public DocumentCategorizerME get(final String name) {
+        return cache.get(name);
     }
 
-    public Map<Double, Double> getVectorIndexes() {
-        return vectorIndexes;
+    public void put(final String name, final DocumentCategorizerME model) {
+        this.cache.put(name, model);
     }
 
-    public void setVectorIndexes(Map<Double, Double> vectorIndexes) {
-        this.vectorIndexes = vectorIndexes;
+    private ModelCache() {
+        this.cache = new HashMap<>();
     }
 
 }

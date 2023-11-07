@@ -13,37 +13,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ai.philterd.phileas.model.objects;
+package ai.philterd.phileas.model.policy.config;
 
-public class DocumentAnalysis {
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 
-    private DocumentType documentType;
-    private String document;
+public class Sentiment {
 
-    public DocumentAnalysis() {
+    @SerializedName("model")
+    @Expose
+    private String model;
 
+    @SerializedName("enabled")
+    @Expose
+    private boolean enabled = false;
+
+    public String getModel() {
+        return model;
     }
 
-    public DocumentAnalysis(DocumentType documentType, String document) {
-        this.documentType = documentType;
-        this.document = document;
+    public void setModel(String model) {
+        this.model = model;
     }
 
-    public DocumentType getDocumentType() {
-        return documentType;
+    public boolean isEnabled() {
+        return enabled;
     }
 
-    public void setDocumentType(DocumentType documentType) {
-        this.documentType = documentType;
-
-    }
-
-    public String getDocument() {
-        return document;
-    }
-
-    public void setDocument(String document) {
-        this.document = document;
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
     }
 
 }

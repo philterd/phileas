@@ -130,8 +130,8 @@ public class PhileasFilterServiceTest {
         LOGGER.info("Writing redacted PDF to {}", output);
         FileUtils.writeByteArrayToFile(new File(output), response.getDocument());
 
-        LOGGER.info("Spans: {}", response.getExplanation().getAppliedSpans().size());
-        showSpans(response.getExplanation().getAppliedSpans());
+        LOGGER.info("Spans: {}", response.getExplanation().appliedSpans().size());
+        showSpans(response.getExplanation().appliedSpans());
 
         // TODO: How to assert? MD5 gives a different value each time.
 
@@ -167,8 +167,8 @@ public class PhileasFilterServiceTest {
         LOGGER.info("Writing redacted PDF to {}", output);
         FileUtils.writeByteArrayToFile(new File(output), response.getDocument());
 
-        LOGGER.info("Spans: {}", response.getExplanation().getAppliedSpans().size());
-        showSpans(response.getExplanation().getAppliedSpans());
+        LOGGER.info("Spans: {}", response.getExplanation().appliedSpans().size());
+        showSpans(response.getExplanation().appliedSpans());
 
         // output:
         // characterStart: 35;  characterEnd: 40;  filterType: zip-code;  context: context;  documentId: documentid;  confidence: 0.9;  text: 90210;  replacement: {{{REDACTED-zip-code}}};  salt: ;  ignored: false;  classification: null;

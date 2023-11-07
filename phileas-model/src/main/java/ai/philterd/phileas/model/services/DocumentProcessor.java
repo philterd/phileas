@@ -20,12 +20,15 @@ import ai.philterd.phileas.model.policy.Policy;
 import ai.philterd.phileas.model.responses.FilterResponse;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Processes a certain type of document.
  */
 public interface DocumentProcessor {
 
-    FilterResponse process(Policy policy, List<Filter> filters, List<PostFilter> postFilters, String context, String documentId, int piece, String input) throws Exception;
+    FilterResponse process(Policy policy, List<Filter> filters, List<PostFilter> postFilters,
+                           String context, String documentId, int piece, String input,
+                           Map<String, String> attributes) throws Exception;
 
 }

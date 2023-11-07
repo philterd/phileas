@@ -27,6 +27,7 @@ import org.apache.commons.collections.CollectionUtils;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 public class VinFilter extends RegexFilter {
@@ -49,9 +50,9 @@ public class VinFilter extends RegexFilter {
     }
 
     @Override
-    public FilterResult filter(Policy policy, String context, String documentId, int piece, String input) throws Exception {
+    public FilterResult filter(Policy policy, String context, String documentId, int piece, String input, Map<String, String> attributes) throws Exception {
 
-        final List<Span> spans = findSpans(policy, analyzer, input, context, documentId);
+        final List<Span> spans = findSpans(policy, analyzer, input, context, documentId, attributes);
 
         CollectionUtils.filter(spans, object -> {
             Span s = (Span) object;

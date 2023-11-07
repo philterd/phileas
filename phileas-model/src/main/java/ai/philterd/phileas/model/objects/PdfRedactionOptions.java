@@ -25,7 +25,7 @@ public class PdfRedactionOptions extends RedactionOptions {
 
     }
 
-    public PdfRedactionOptions(int dpi, float compressionQuality, float scale) {
+    public PdfRedactionOptions(final int dpi, final float compressionQuality, final float scale) {
         this.dpi = dpi;
         this.compressionQuality = compressionQuality;
         this.scale = scale;

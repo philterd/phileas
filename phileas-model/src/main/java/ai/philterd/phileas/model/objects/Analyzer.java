@@ -15,6 +15,7 @@
  */
 package ai.philterd.phileas.model.objects;
 
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -22,15 +23,13 @@ import java.util.Set;
 public class Analyzer {
 
     private Set<String> contextualTerms;
-    private List<FilterPattern> filterPatterns;
+    private final List<FilterPattern> filterPatterns;
 
     public Analyzer(FilterPattern ... p) {
 
         this.filterPatterns = new LinkedList<>();
 
-        for(final FilterPattern filterPattern : p) {
-            filterPatterns.add(filterPattern);
-        }
+        Collections.addAll(filterPatterns, p);
 
     }
 
@@ -39,9 +38,7 @@ public class Analyzer {
         this.contextualTerms = contextualTerms;
         this.filterPatterns = new LinkedList<>();
 
-        for(final FilterPattern filterPattern : p) {
-            filterPatterns.add(filterPattern);
-        }
+        Collections.addAll(filterPatterns, p);
 
     }
 

@@ -1,18 +1,3 @@
-/*
- *     Copyright 2023 Philterd, LLC @ https://www.philterd.ai
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *          http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 // Generated from FilterCondition.g4 by ANTLR 4.8
 package ai.philterd.phileas.model.conditions.parser;
 import org.antlr.v4.runtime.atn.*;
@@ -32,8 +17,8 @@ public class FilterConditionParser extends Parser {
 	protected static final PredictionContextCache _sharedContextCache =
 		new PredictionContextCache();
 	public static final int
-		T__0=1, T__1=2, T__2=3, T__3=4, T__4=5, T__5=6, TYPE=7, AND=8, COMPARATOR=9, 
-		NUMBER=10, WORD=11, WS=12;
+		T__0=1, T__1=2, T__2=3, T__3=4, T__4=5, T__5=6, T__6=7, TYPE=8, AND=9, 
+		COMPARATOR=10, NUMBER=11, WORD=12, WS=13;
 	public static final int
 		RULE_expression = 0;
 	private static String[] makeRuleNames() {
@@ -46,13 +31,13 @@ public class FilterConditionParser extends Parser {
 	private static String[] makeLiteralNames() {
 		return new String[] {
 			null, "'population'", "'token'", "'type'", "'confidence'", "'context'", 
-			"'classification'"
+			"'classification'", "'sentiment'"
 		};
 	}
 	private static final String[] _LITERAL_NAMES = makeLiteralNames();
 	private static String[] makeSymbolicNames() {
 		return new String[] {
-			null, null, null, null, null, null, null, "TYPE", "AND", "COMPARATOR", 
+			null, null, null, null, null, null, null, null, "TYPE", "AND", "COMPARATOR", 
 			"NUMBER", "WORD", "WS"
 		};
 	}
@@ -136,9 +121,9 @@ public class FilterConditionParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(45);
+			setState(52);
 			_errHandler.sync(this);
-			switch ( getInterpreter().adaptivePredict(_input,6,_ctx) ) {
+			switch ( getInterpreter().adaptivePredict(_input,7,_ctx) ) {
 			case 1:
 				{
 				}
@@ -275,6 +260,28 @@ public class FilterConditionParser extends Parser {
 				}
 				}
 				break;
+			case 8:
+				{
+				setState(45);
+				match(T__6);
+				setState(46);
+				match(COMPARATOR);
+				setState(47);
+				match(WORD);
+				setState(50);
+				_errHandler.sync(this);
+				switch ( getInterpreter().adaptivePredict(_input,6,_ctx) ) {
+				case 1:
+					{
+					setState(48);
+					match(AND);
+					setState(49);
+					expression();
+					}
+					break;
+				}
+				}
+				break;
 			}
 			}
 		}
@@ -290,21 +297,24 @@ public class FilterConditionParser extends Parser {
 	}
 
 	public static final String _serializedATN =
-		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\16\62\4\2\t\2\3\2"+
-		"\3\2\3\2\3\2\3\2\3\2\5\2\13\n\2\3\2\3\2\3\2\3\2\3\2\5\2\22\n\2\3\2\3\2"+
-		"\3\2\3\2\3\2\5\2\31\n\2\3\2\3\2\3\2\3\2\3\2\5\2 \n\2\3\2\3\2\3\2\3\2\3"+
-		"\2\5\2\'\n\2\3\2\3\2\3\2\3\2\3\2\5\2.\n\2\5\2\60\n\2\3\2\2\2\3\2\2\2\2"+
-		"<\2/\3\2\2\2\4\60\3\2\2\2\5\6\7\3\2\2\6\7\7\13\2\2\7\n\7\f\2\2\b\t\7\n"+
-		"\2\2\t\13\5\2\2\2\n\b\3\2\2\2\n\13\3\2\2\2\13\60\3\2\2\2\f\r\7\4\2\2\r"+
-		"\16\7\13\2\2\16\21\7\r\2\2\17\20\7\n\2\2\20\22\5\2\2\2\21\17\3\2\2\2\21"+
-		"\22\3\2\2\2\22\60\3\2\2\2\23\24\7\5\2\2\24\25\7\13\2\2\25\30\7\t\2\2\26"+
-		"\27\7\n\2\2\27\31\5\2\2\2\30\26\3\2\2\2\30\31\3\2\2\2\31\60\3\2\2\2\32"+
-		"\33\7\6\2\2\33\34\7\13\2\2\34\37\7\f\2\2\35\36\7\n\2\2\36 \5\2\2\2\37"+
-		"\35\3\2\2\2\37 \3\2\2\2 \60\3\2\2\2!\"\7\7\2\2\"#\7\13\2\2#&\7\r\2\2$"+
-		"%\7\n\2\2%\'\5\2\2\2&$\3\2\2\2&\'\3\2\2\2\'\60\3\2\2\2()\7\b\2\2)*\7\13"+
-		"\2\2*-\7\r\2\2+,\7\n\2\2,.\5\2\2\2-+\3\2\2\2-.\3\2\2\2.\60\3\2\2\2/\4"+
-		"\3\2\2\2/\5\3\2\2\2/\f\3\2\2\2/\23\3\2\2\2/\32\3\2\2\2/!\3\2\2\2/(\3\2"+
-		"\2\2\60\3\3\2\2\2\t\n\21\30\37&-/";
+		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\179\4\2\t\2\3\2\3"+
+		"\2\3\2\3\2\3\2\3\2\5\2\13\n\2\3\2\3\2\3\2\3\2\3\2\5\2\22\n\2\3\2\3\2\3"+
+		"\2\3\2\3\2\5\2\31\n\2\3\2\3\2\3\2\3\2\3\2\5\2 \n\2\3\2\3\2\3\2\3\2\3\2"+
+		"\5\2\'\n\2\3\2\3\2\3\2\3\2\3\2\5\2.\n\2\3\2\3\2\3\2\3\2\3\2\5\2\65\n\2"+
+		"\5\2\67\n\2\3\2\2\2\3\2\2\2\2E\2\66\3\2\2\2\4\67\3\2\2\2\5\6\7\3\2\2\6"+
+		"\7\7\f\2\2\7\n\7\r\2\2\b\t\7\13\2\2\t\13\5\2\2\2\n\b\3\2\2\2\n\13\3\2"+
+		"\2\2\13\67\3\2\2\2\f\r\7\4\2\2\r\16\7\f\2\2\16\21\7\16\2\2\17\20\7\13"+
+		"\2\2\20\22\5\2\2\2\21\17\3\2\2\2\21\22\3\2\2\2\22\67\3\2\2\2\23\24\7\5"+
+		"\2\2\24\25\7\f\2\2\25\30\7\n\2\2\26\27\7\13\2\2\27\31\5\2\2\2\30\26\3"+
+		"\2\2\2\30\31\3\2\2\2\31\67\3\2\2\2\32\33\7\6\2\2\33\34\7\f\2\2\34\37\7"+
+		"\r\2\2\35\36\7\13\2\2\36 \5\2\2\2\37\35\3\2\2\2\37 \3\2\2\2 \67\3\2\2"+
+		"\2!\"\7\7\2\2\"#\7\f\2\2#&\7\16\2\2$%\7\13\2\2%\'\5\2\2\2&$\3\2\2\2&\'"+
+		"\3\2\2\2\'\67\3\2\2\2()\7\b\2\2)*\7\f\2\2*-\7\16\2\2+,\7\13\2\2,.\5\2"+
+		"\2\2-+\3\2\2\2-.\3\2\2\2.\67\3\2\2\2/\60\7\t\2\2\60\61\7\f\2\2\61\64\7"+
+		"\16\2\2\62\63\7\13\2\2\63\65\5\2\2\2\64\62\3\2\2\2\64\65\3\2\2\2\65\67"+
+		"\3\2\2\2\66\4\3\2\2\2\66\5\3\2\2\2\66\f\3\2\2\2\66\23\3\2\2\2\66\32\3"+
+		"\2\2\2\66!\3\2\2\2\66(\3\2\2\2\66/\3\2\2\2\67\3\3\2\2\2\n\n\21\30\37&"+
+		"-\64\66";
 	public static final ATN _ATN =
 		new ATNDeserializer().deserialize(_serializedATN.toCharArray());
 	static {

@@ -38,8 +38,8 @@ public class IgnoredTermsFilter extends PostFilter {
 
     private static final Logger LOGGER = LogManager.getLogger(IgnoredTermsFilter.class);
 
-    private Set<String> ignoredTerms = new HashSet<>();
-    private Ignored ignored;
+    private final Set<String> ignoredTerms = new HashSet<>();
+    private final Ignored ignored;
 
     public IgnoredTermsFilter(final Ignored ignored) throws IOException {
 
@@ -63,11 +63,11 @@ public class IgnoredTermsFilter extends PostFilter {
             // Not case-sensitive. Lowercase everything before adding.
             ignoredTerms.addAll(ignored.getTerms().stream()
                     .map(String::toLowerCase)
-                    .collect(Collectors.toList()));
+                    .toList());
 
             ignoredTerms.addAll(ignoredTermsFromFiles.stream()
                     .map(String::toLowerCase)
-                    .collect(Collectors.toList()));
+                    .toList());
 
         }
 
@@ -76,7 +76,7 @@ public class IgnoredTermsFilter extends PostFilter {
     }
 
     @Override
-    protected PostFilterResult process(String text, Span span) {
+    protected PostFilterResult process(final String text, final Span span) {
 
         String spanText = span.getText(text);
 

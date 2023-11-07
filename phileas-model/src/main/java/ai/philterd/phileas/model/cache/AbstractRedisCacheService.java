@@ -36,7 +36,7 @@ public abstract class AbstractRedisCacheService {
 
     protected final RedissonClient redisson;
 
-    public AbstractRedisCacheService(PhileasConfiguration phileasConfiguration) throws IOException {
+    public AbstractRedisCacheService(final PhileasConfiguration phileasConfiguration) throws IOException {
 
         final boolean cluster = phileasConfiguration.cacheRedisCluster();
         final String redisEndpoint = phileasConfiguration.cacheRedisHost();

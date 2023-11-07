@@ -45,32 +45,29 @@ public class PersonsV1Filter extends NerFilter {
 
     private static final Logger LOGGER = LogManager.getLogger(PersonsV1Filter.class);
 
-    private final int timeoutSec;
-    private final int maxIdleConnections;
-    private final int keepAliveDurationMs;
     private final boolean removePunctuation;
 
-    private transient PyTorchRestService service;
-    private String tag;
+    private final transient PyTorchRestService service;
+    private final String tag;
 
     // Response will look like:
     // [{"text": "George Washington", "tag": "PER", "score": 0.2987019270658493, "start": 0, "end": 17}, {"text": "Virginia", "tag": "LOC", "score": 0.3510116934776306, "start": 95, "end": 103}]
 
-    public PersonsV1Filter(FilterConfiguration filterConfiguration,
-                           PhileasConfiguration phileasConfiguration,
-                           String tag,
-                           Map<String, DescriptiveStatistics> stats,
-                           MetricsService metricsService,
-                           boolean removePunctuation,
-                           Map<String, Double> thresholds) {
+    public PersonsV1Filter(final FilterConfiguration filterConfiguration,
+                           final PhileasConfiguration phileasConfiguration,
+                           final String tag,
+                           final Map<String, DescriptiveStatistics> stats,
+                           final MetricsService metricsService,
+                           final boolean removePunctuation,
+                           final Map<String, Double> thresholds) {
 
         super(filterConfiguration, stats, metricsService, thresholds, FilterType.PERSON);
 
         this.removePunctuation = removePunctuation;
         this.tag = tag;
-        this.timeoutSec = phileasConfiguration.nerTimeoutSec();
-        this.maxIdleConnections = phileasConfiguration.nerMaxIdleConnections();
-        this.keepAliveDurationMs = phileasConfiguration.nerKeepAliveDurationMs();
+        int timeoutSec = phileasConfiguration.nerTimeoutSec();
+        int maxIdleConnections = phileasConfiguration.nerMaxIdleConnections();
+        int keepAliveDurationMs = phileasConfiguration.nerKeepAliveDurationMs();
 
         final OkHttpClient okHttpClient = new OkHttpClient.Builder()
                 .retryOnConnectionFailure(true)
@@ -93,7 +90,8 @@ public class PersonsV1Filter extends NerFilter {
     }
 
     @Override
-    public FilterResult filter(Policy policy, String context, String documentId, int piece, String input) throws Exception {
+    public FilterResult filter(final Policy policy, final String context, final String documentId, final int piece,
+                               String input, Map<String, String> attributes) throws Exception {
 
         final List<Span> spans = new LinkedList<>();
 
@@ -124,8 +122,9 @@ public class PersonsV1Filter extends NerFilter {
                             // Get the window of text surrounding the token.
                             final String[] window = getWindow(input, phileasSpan.getStart(), phileasSpan.getEnd());
 
-                            final Span span = createSpan(policy.getName(), input, context, documentId, phileasSpan.getText(),
-                                    window, phileasSpan.getTag(), phileasSpan.getStart(), phileasSpan.getEnd(), phileasSpan.getScore());
+                            final Span span = createSpan(policy, context, documentId, phileasSpan.getText(),
+                                    window, phileasSpan.getTag(), phileasSpan.getStart(), phileasSpan.getEnd(),
+                                    phileasSpan.getScore(), attributes);
 
                             // Span will be null if no span was created due to it being excluded.
                             if (span != null) {
@@ -159,16 +158,17 @@ public class PersonsV1Filter extends NerFilter {
     }
 
     @Override
-    public int getOccurrences(Policy policy, String input) throws Exception {
+    public int getOccurrences(final Policy policy, final String input, Map<String, String> attributes) throws Exception {
 
-        return filter(policy, "none", "none", 0, input).getSpans().size();
+        return filter(policy, "none", "none", 0, input, attributes).getSpans().size();
 
     }
 
-    private Span createSpan(String policy, String input, String context, String documentId, String text,
-                            String[] window, String classification, int start, int end, double confidence) throws Exception {
+    private Span createSpan(final Policy policy, final String context, final String documentId,
+                            final String text, final  String[] window, final String classification, final int start,
+                            final int end, final double confidence, Map<String, String> attributes) throws Exception {
 
-        final Replacement replacement = getReplacement(policy, context, documentId, text, window, confidence, classification, null);
+        final Replacement replacement = getReplacement(policy, context, documentId, text, window, confidence, classification, attributes, null);
 
         if(StringUtils.equals(replacement.getReplacement(), text)) {
 

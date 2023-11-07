@@ -1,7 +1,7 @@
 /*
  *     Copyright 2023 Philterd, LLC @ https://www.philterd.ai
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * Licensed under the Apache License, Version 2.0 (the "License", attributes);
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
@@ -32,8 +32,8 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.io.File;
-import java.util.Arrays;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 public class PersonsV3FilterTest extends AbstractFilterTest {
@@ -47,7 +47,7 @@ public class PersonsV3FilterTest extends AbstractFilterTest {
     public void filter1() throws Exception {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
-                .withStrategies(Arrays.asList(new PersonsFilterStrategy()))
+                .withStrategies(List.of(new PersonsFilterStrategy()))
                 .withAlertService(alertService)
                 .withAnonymizationService(new PersonsAnonymizationService(new LocalAnonymizationCacheService()))
                 .withWindowSize(windowSize)
@@ -65,7 +65,7 @@ public class PersonsV3FilterTest extends AbstractFilterTest {
                 metricsService,
                 thresholds);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "George Washington and Abraham Lincoln were presidents.");
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "George Washington and Abraham Lincoln were presidents.", attributes);
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 22, 37, FilterType.PERSON));
@@ -78,7 +78,7 @@ public class PersonsV3FilterTest extends AbstractFilterTest {
     public void filter2() throws Exception {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
-                .withStrategies(Arrays.asList(new PersonsFilterStrategy()))
+                .withStrategies(List.of(new PersonsFilterStrategy()))
                 .withAlertService(alertService)
                 .withAnonymizationService(new PersonsAnonymizationService(new LocalAnonymizationCacheService()))
                 .withWindowSize(windowSize)
@@ -96,7 +96,7 @@ public class PersonsV3FilterTest extends AbstractFilterTest {
                 metricsService,
                 thresholds);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "George    Washington      and Abraham    Lincoln were presidents.");
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "George    Washington      and Abraham    Lincoln were presidents.", attributes);
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 22, 37, FilterType.PERSON));

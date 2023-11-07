@@ -15,6 +15,7 @@
  */
 package ai.philterd.phileas.model.policy.filters.strategies.rules;
 
+import ai.philterd.phileas.model.policy.Policy;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import ai.philterd.phileas.model.conditions.ParsedCondition;
@@ -38,6 +39,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 public class ZipCodeFilterStrategy extends AbstractFilterStrategy {
 
@@ -47,9 +49,9 @@ public class ZipCodeFilterStrategy extends AbstractFilterStrategy {
     public static final String POPULATION = "population";
     public static final String ZERO_LEADING = "zero_leading";
 
-    private static FilterType filterType = FilterType.ZIP_CODE;
+    private static final FilterType filterType = FilterType.ZIP_CODE;
 
-    private transient ZipCodeMetadataService zipCodeMetadataService;
+    private final transient ZipCodeMetadataService zipCodeMetadataService;
 
     public ZipCodeFilterStrategy() throws IOException {
         this.zipCodeMetadataService = new ZipCodeMetadataService();
@@ -65,7 +67,7 @@ public class ZipCodeFilterStrategy extends AbstractFilterStrategy {
     private Integer truncateDigits;
 
     @Override
-    public boolean evaluateCondition(String context, String documentId, String token, String[] window, String condition, double confidence, String classification) {
+    public boolean evaluateCondition(Policy policy, String context, String documentId, String token, String[] window, String condition, double confidence, Map<String, String> attributes) {
 
         boolean conditionsSatisfied = false;
 
@@ -82,27 +84,15 @@ public class ZipCodeFilterStrategy extends AbstractFilterStrategy {
 
                 if (StringUtils.equalsIgnoreCase(POPULATION, parsedCondition.getField())) {
 
-                    switch (parsedCondition.getOperator()) {
-                        case GREATER_THAN:
-                            conditionsSatisfied = (populationForZipCode > value);
-                            break;
-                        case LESS_THAN:
-                            conditionsSatisfied = (populationForZipCode < value);
-                            break;
-                        case GREATER_THAN_EQUALS:
-                            conditionsSatisfied = (populationForZipCode >= value);
-                            break;
-                        case LESS_THAN_EQUALS:
-                            conditionsSatisfied = (populationForZipCode <= value);
-                            break;
-                        case EQUALS:
-                            conditionsSatisfied = (populationForZipCode == value);
-                            break;
-                        case NOT_EQUALS:
-                            conditionsSatisfied = (populationForZipCode != value);
-                            break;
-
-                    }
+                    conditionsSatisfied = switch (parsedCondition.getOperator()) {
+                        case GREATER_THAN -> (populationForZipCode > value);
+                        case LESS_THAN -> (populationForZipCode < value);
+                        case GREATER_THAN_EQUALS -> (populationForZipCode >= value);
+                        case LESS_THAN_EQUALS -> (populationForZipCode <= value);
+                        case EQUALS -> (populationForZipCode == value);
+                        case NOT_EQUALS -> (populationForZipCode != value);
+                        default -> conditionsSatisfied;
+                    };
 
                 }
 
@@ -114,41 +104,39 @@ public class ZipCodeFilterStrategy extends AbstractFilterStrategy {
 
                 final String conditionContext = parsedCondition.getValue();
 
-                switch (parsedCondition.getOperator()) {
-                    case EQUALS:
-                        conditionsSatisfied = (StringUtils.equalsIgnoreCase("\"" + context + "\"", conditionContext));
-                        break;
-                    case NOT_EQUALS:
-                        conditionsSatisfied = !(StringUtils.equalsIgnoreCase("\"" + context + "\"", conditionContext));
-                        break;
-
-                }
+                conditionsSatisfied = switch (parsedCondition.getOperator()) {
+                    case EQUALS -> (StringUtils.equalsIgnoreCase("\"" + context + "\"", conditionContext));
+                    case NOT_EQUALS -> !(StringUtils.equalsIgnoreCase("\"" + context + "\"", conditionContext));
+                    default -> conditionsSatisfied;
+                };
 
             } else if(StringUtils.equalsIgnoreCase(CONFIDENCE, parsedCondition.getField())) {
 
                 final double threshold = Double.parseDouble(parsedCondition.getValue());
 
-                switch (parsedCondition.getOperator()) {
-                    case GREATER_THAN:
-                        conditionsSatisfied = (confidence > threshold);
-                        break;
-                    case LESS_THAN:
-                        conditionsSatisfied = (confidence < threshold);
-                        break;
-                    case GREATER_THAN_EQUALS:
-                        conditionsSatisfied = (confidence >= threshold);
-                        break;
-                    case LESS_THAN_EQUALS:
-                        conditionsSatisfied = (confidence <= threshold);
-                        break;
-                    case EQUALS:
-                        conditionsSatisfied = (confidence == threshold);
-                        break;
-                    case NOT_EQUALS:
-                        conditionsSatisfied = (confidence != threshold);
-                        break;
+                conditionsSatisfied = switch (parsedCondition.getOperator()) {
+                    case GREATER_THAN -> (confidence > threshold);
+                    case LESS_THAN -> (confidence < threshold);
+                    case GREATER_THAN_EQUALS -> (confidence >= threshold);
+                    case LESS_THAN_EQUALS -> (confidence <= threshold);
+                    case EQUALS -> (confidence == threshold);
+                    case NOT_EQUALS -> (confidence != threshold);
+                    default -> conditionsSatisfied;
+                };
 
-                }
+            } else if(StringUtils.equalsIgnoreCase(SENTIMENT, parsedCondition.getField())) {
+
+                final double sentimentThreshold = Double.parseDouble(parsedCondition.getValue());
+
+                conditionsSatisfied = switch (attributes.get("sentiment")) {
+                    case GREATER_THAN -> (confidence > sentimentThreshold);
+                    case LESS_THAN -> (confidence < sentimentThreshold);
+                    case GREATER_THAN_EQUALS -> (confidence >= sentimentThreshold);
+                    case LESS_THAN_EQUALS -> (confidence <= sentimentThreshold);
+                    case EQUALS -> (confidence == sentimentThreshold);
+                    case NOT_EQUALS -> (confidence != sentimentThreshold);
+                    default -> conditionsSatisfied;
+                };
 
             }
 

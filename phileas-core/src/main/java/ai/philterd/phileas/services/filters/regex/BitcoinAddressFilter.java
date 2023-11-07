@@ -26,6 +26,7 @@ import ai.philterd.phileas.model.policy.Policy;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 public class BitcoinAddressFilter extends RegexFilter {
@@ -47,9 +48,9 @@ public class BitcoinAddressFilter extends RegexFilter {
     }
 
     @Override
-    public FilterResult filter(Policy policy, String context, String documentId, int piece, String input) throws Exception {
+    public FilterResult filter(Policy policy, String context, String documentId, int piece, String input, Map<String, String> attributes) throws Exception {
 
-        final List<Span> spans = findSpans(policy, analyzer, input, context, documentId);
+        final List<Span> spans = findSpans(policy, analyzer, input, context, documentId, attributes);
 
         return new FilterResult(context, documentId, spans);
 

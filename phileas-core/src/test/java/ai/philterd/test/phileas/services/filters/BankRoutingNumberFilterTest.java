@@ -1,7 +1,7 @@
 /*
  *     Copyright 2023 Philterd, LLC @ https://www.philterd.ai
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * Licensed under the Apache License, Version 2.0 (the "License", attributes);
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
@@ -27,17 +27,17 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import java.util.Arrays;
+import java.util.List;
 
 public class BankRoutingNumberFilterTest extends AbstractFilterTest {
 
-    private AlertService alertService = Mockito.mock(AlertService.class);
+    private final AlertService alertService = Mockito.mock(AlertService.class);
 
     @Test
     public void filter1() throws Exception {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
-                .withStrategies(Arrays.asList(new BankRoutingNumberFilterStrategy()))
+                .withStrategies(List.of(new BankRoutingNumberFilterStrategy()))
                 .withAlertService(alertService)
                 .withAnonymizationService(new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()))
                 .withWindowSize(windowSize)
@@ -45,7 +45,7 @@ public class BankRoutingNumberFilterTest extends AbstractFilterTest {
 
         final BankRoutingNumberFilter filter = new BankRoutingNumberFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "the routing number is 111000025 patient is 3.5years old.");
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "the routing number is 111000025 patient is 3.5years old.", attributes);
 
         showSpans(filterResult.getSpans());
 
@@ -59,7 +59,7 @@ public class BankRoutingNumberFilterTest extends AbstractFilterTest {
     public void filter2() throws Exception {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
-                .withStrategies(Arrays.asList(new BankRoutingNumberFilterStrategy()))
+                .withStrategies(List.of(new BankRoutingNumberFilterStrategy()))
                 .withAlertService(alertService)
                 .withAnonymizationService(new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()))
                 .withWindowSize(windowSize)
@@ -67,7 +67,7 @@ public class BankRoutingNumberFilterTest extends AbstractFilterTest {
 
         final BankRoutingNumberFilter filter = new BankRoutingNumberFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "the routing number is 111007025 patient is 3.5years old.");
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "the routing number is 111007025 patient is 3.5years old.", attributes);
 
         showSpans(filterResult.getSpans());
 
@@ -79,7 +79,7 @@ public class BankRoutingNumberFilterTest extends AbstractFilterTest {
     public void filter3() throws Exception {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
-                .withStrategies(Arrays.asList(new BankRoutingNumberFilterStrategy()))
+                .withStrategies(List.of(new BankRoutingNumberFilterStrategy()))
                 .withAlertService(alertService)
                 .withAnonymizationService(new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()))
                 .withWindowSize(windowSize)
@@ -87,7 +87,7 @@ public class BankRoutingNumberFilterTest extends AbstractFilterTest {
 
         final BankRoutingNumberFilter filter = new BankRoutingNumberFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "the routing number is 1131007025 patient is 3.5years old.");
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "the routing number is 1131007025 patient is 3.5years old.", attributes);
 
         showSpans(filterResult.getSpans());
 

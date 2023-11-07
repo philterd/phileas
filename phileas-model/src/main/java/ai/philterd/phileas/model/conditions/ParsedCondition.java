@@ -25,7 +25,7 @@ public class ParsedCondition {
 
     }
 
-    public ParsedCondition(String field, String operator, String value) {
+    public ParsedCondition(final String field, final String operator, final String value) {
 
         this.field = field;
         this.operator = operator;

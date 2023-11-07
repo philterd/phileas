@@ -34,7 +34,7 @@ public class PhoneNumberExtensionFilterStrategyTest extends AbstractFilterStrate
 
         PhoneNumberExtensionFilterStrategy strategy = new PhoneNumberExtensionFilterStrategy();
 
-        final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentid", "90210", WINDOW,"token startswith \"902\"", 1.0, "");
+        final boolean conditionSatisfied = strategy.evaluateCondition(getPolicy(), "context", "documentid", "90210", WINDOW,"token startswith \"902\"", 1.0, attributes);
 
         Assertions.assertTrue(conditionSatisfied);
 
@@ -45,7 +45,7 @@ public class PhoneNumberExtensionFilterStrategyTest extends AbstractFilterStrate
 
         PhoneNumberExtensionFilterStrategy strategy = new PhoneNumberExtensionFilterStrategy();
 
-        final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentid", "90210", WINDOW,"token == \"90210\"", 1.0, "");
+        final boolean conditionSatisfied = strategy.evaluateCondition(getPolicy(), "context", "documentid", "90210", WINDOW,"token == \"90210\"", 1.0, attributes);
 
         Assertions.assertTrue(conditionSatisfied);
 
@@ -56,7 +56,7 @@ public class PhoneNumberExtensionFilterStrategyTest extends AbstractFilterStrate
 
         PhoneNumberExtensionFilterStrategy strategy = new PhoneNumberExtensionFilterStrategy();
 
-        final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentid", "12345", WINDOW, "token == \"90210\"", 1.0, "");
+        final boolean conditionSatisfied = strategy.evaluateCondition(getPolicy(), "context", "documentid", "12345", WINDOW, "token == \"90210\"", 1.0, attributes);
 
         Assertions.assertFalse(conditionSatisfied);
 
@@ -67,7 +67,7 @@ public class PhoneNumberExtensionFilterStrategyTest extends AbstractFilterStrate
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
 
-        final boolean conditionSatisfied = strategy.evaluateCondition("context", "documentid", "John Smith", WINDOW, "context == \"c1\"",  1.0, "");
+        final boolean conditionSatisfied = strategy.evaluateCondition(getPolicy(), "context", "documentid", "John Smith", WINDOW, "context == \"c1\"",  1.0, attributes);
 
         Assertions.assertFalse(conditionSatisfied);
 
@@ -78,7 +78,7 @@ public class PhoneNumberExtensionFilterStrategyTest extends AbstractFilterStrate
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
 
-        final boolean conditionSatisfied = strategy.evaluateCondition("ctx", "documentId", "John Smith", WINDOW, "context == \"ctx\"",  1.0, "");
+        final boolean conditionSatisfied = strategy.evaluateCondition(getPolicy(), "ctx", "documentId", "John Smith", WINDOW, "context == \"ctx\"",  1.0, attributes);
 
         Assertions.assertTrue(conditionSatisfied);
 
@@ -89,7 +89,7 @@ public class PhoneNumberExtensionFilterStrategyTest extends AbstractFilterStrate
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
 
-        final boolean conditionSatisfied = strategy.evaluateCondition("ctx", "documentId", "John Smith", WINDOW, "confidence > 0.5",  1.0, "");
+        final boolean conditionSatisfied = strategy.evaluateCondition(getPolicy(), "ctx", "documentId", "John Smith", WINDOW, "confidence > 0.5",  1.0, attributes);
 
         Assertions.assertTrue(conditionSatisfied);
 
@@ -100,7 +100,7 @@ public class PhoneNumberExtensionFilterStrategyTest extends AbstractFilterStrate
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
 
-        final boolean conditionSatisfied = strategy.evaluateCondition("ctx", "documentId", "John Smith", WINDOW,"confidence < 0.5",  1.0, "");
+        final boolean conditionSatisfied = strategy.evaluateCondition(getPolicy(), "ctx", "documentId", "John Smith", WINDOW,"confidence < 0.5",  1.0, attributes);
 
         Assertions.assertFalse(conditionSatisfied);
 

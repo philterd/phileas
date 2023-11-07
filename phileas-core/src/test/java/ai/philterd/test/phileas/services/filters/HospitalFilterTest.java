@@ -1,7 +1,7 @@
 /*
  *     Copyright 2023 Philterd, LLC @ https://www.philterd.ai
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * Licensed under the Apache License, Version 2.0 (the "License", attributes);
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
@@ -31,7 +31,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import java.util.Arrays;
+import java.util.List;
 
 public class HospitalFilterTest extends AbstractFilterTest {
 
@@ -39,7 +39,7 @@ public class HospitalFilterTest extends AbstractFilterTest {
 
     private String INDEX_DIRECTORY = getIndexDirectory("hospitals");
 
-    private AlertService alertService = Mockito.mock(AlertService.class);
+    private final AlertService alertService = Mockito.mock(AlertService.class);
 
     @BeforeEach
     public void before() {
@@ -51,7 +51,7 @@ public class HospitalFilterTest extends AbstractFilterTest {
     public void filter1() throws Exception {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
-                .withStrategies(Arrays.asList(new HospitalFilterStrategy()))
+                .withStrategies(List.of(new HospitalFilterStrategy()))
                 .withAlertService(alertService)
                 .withAnonymizationService(new HospitalAnonymizationService(new LocalAnonymizationCacheService()))
                 .withWindowSize(windowSize)
@@ -59,7 +59,7 @@ public class HospitalFilterTest extends AbstractFilterTest {
 
         final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.HOSPITAL, filterConfiguration, INDEX_DIRECTORY, SensitivityLevel.LOW, false);
 
-        FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE,"Wyoming Medical Center");
+        FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE,"Wyoming Medical Center", attributes);
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertEquals("wyoming medical center", filterResult.getSpans().get(0).getText());
 

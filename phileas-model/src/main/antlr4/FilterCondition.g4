@@ -1,6 +1,6 @@
 grammar FilterCondition;
 
-@header {package com.mtnfog.phileas.model.conditions.parser;}
+@header {package ai.philterd.phileas.model.conditions.parser;}
 
 expression: (
     | 'population' COMPARATOR NUMBER (AND expression)?
@@ -9,6 +9,7 @@ expression: (
     | 'confidence' COMPARATOR NUMBER (AND expression)?
     | 'context' COMPARATOR WORD (AND expression)?
     | 'classification' COMPARATOR WORD (AND expression)?
+    | 'sentiment' COMPARATOR WORD (AND expression)?
     );
 
 TYPE: (
