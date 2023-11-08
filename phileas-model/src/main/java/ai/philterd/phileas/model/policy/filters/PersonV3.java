@@ -35,7 +35,7 @@ public class PersonV3 extends AbstractFilter {
 
     @SerializedName("model")
     @Expose
-    private String model = "/opt/philter/en-ner-person.bin";
+    private String model = "models/en-ner-person.bin";
 
     public List<PersonsFilterStrategy> getNerStrategies() {
         return personFilterStrategies;

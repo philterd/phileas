@@ -38,7 +38,7 @@ public class OpenNLPSentimentDetectorTest {
     }
 
     @Test
-    public void sentimentPositive() throws IOException {
+    public void sentimentPositive() throws Exception {
 
         final Policy policy = new Policy();
         policy.getConfig().getAnalysis().getSentiment().setEnabled(true);
@@ -53,7 +53,7 @@ public class OpenNLPSentimentDetectorTest {
     }
 
     @Test
-    public void sentimentNegative() throws IOException {
+    public void sentimentNegative() throws Exception {
 
         final Policy policy = new Policy();
         policy.getConfig().getAnalysis().getSentiment().setEnabled(true);

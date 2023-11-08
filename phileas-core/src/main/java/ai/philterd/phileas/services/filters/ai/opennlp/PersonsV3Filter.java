@@ -28,6 +28,7 @@ import opennlp.tools.namefind.TokenNameFinderModel;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.LinkedList;
@@ -39,17 +40,26 @@ public class PersonsV3Filter extends NerFilter {
     private final NameFinderME nameFinderME;
 
     public PersonsV3Filter(final FilterConfiguration filterConfiguration,
-                           final String modelFile,
+                           String modelFileName,
                            final Map<String, DescriptiveStatistics> stats,
                            final MetricsService metricsService,
                            final Map<String, Double> thresholds) throws Exception {
 
         super(filterConfiguration, stats, metricsService, thresholds, FilterType.PERSON);
 
-        LOGGER.info("Initializing persons filter with model {}", modelFile);
+        LOGGER.info("Initializing persons filter with model {}", modelFileName);
 
         // Load the NER filter for the given modelFile.
-        final InputStream tokenNameFinderInputStream = new FileInputStream(modelFile);
+        // If the filename starts with "models/" it is in the jar's resources.
+        if(modelFileName.startsWith("models/")) {
+
+            final ClassLoader classLoader = getClass().getClassLoader();
+            final File file = new File(classLoader.getResource(modelFileName).getFile());
+            modelFileName = file.getAbsolutePath();
+
+        }
+
+        final InputStream tokenNameFinderInputStream = new FileInputStream(modelFileName);
         final TokenNameFinderModel tokenNameFinderModel = new TokenNameFinderModel(tokenNameFinderInputStream);
         nameFinderME = new NameFinderME(tokenNameFinderModel);
 

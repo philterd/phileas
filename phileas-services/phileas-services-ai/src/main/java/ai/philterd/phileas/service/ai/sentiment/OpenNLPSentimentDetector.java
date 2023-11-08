@@ -23,9 +23,9 @@ import opennlp.tools.doccat.DocumentCategorizerME;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
@@ -36,25 +36,34 @@ public class OpenNLPSentimentDetector implements SentimentDetector {
     @Override
     public String classify(final Policy policy, String input) throws IOException {
 
-        final String modelName = policy.getConfig().getAnalysis().getSentiment().getModel();
+        String modelFileName = policy.getConfig().getAnalysis().getSentiment().getModel();
+
+        // If the filename starts with "models/" it is in the jar's resources.
+        if(modelFileName.startsWith("models/")) {
+
+            final ClassLoader classLoader = getClass().getClassLoader();
+            final File file = new File(classLoader.getResource(modelFileName).getFile());
+            modelFileName = file.getAbsolutePath();
+
+        }
 
         final DocumentCategorizerME documentCategorizerME;
 
         // Is the model cached?
-        if(ModelCache.getInstance().get(modelName) != null) {
+        if(ModelCache.getInstance().get(modelFileName) != null) {
             LOGGER.debug("Sentiment model retrieved from model cache.");
-            documentCategorizerME = ModelCache.getInstance().get(modelName);
+            documentCategorizerME = ModelCache.getInstance().get(modelFileName);
         } else {
             // Load the model and cache it.
-            if(Files.exists(Paths.get(modelName))) {
-                final InputStream is = new FileInputStream(modelName);
+            if(Files.exists(Paths.get(modelFileName))) {
+                final InputStream is = new FileInputStream(modelFileName);
                 final DoccatModel model = new DoccatModel(is);
                 documentCategorizerME = new DocumentCategorizerME(model);
                 is.close();
-                ModelCache.getInstance().put(modelName, documentCategorizerME);
+                ModelCache.getInstance().put(modelFileName, documentCategorizerME);
                 LOGGER.debug("Sentiment model loaded from disk and cached.");
             } else {
-                LOGGER.error("The sentiment model file does not exist: " + modelName);
+                LOGGER.error("The sentiment model file does not exist: " + modelFileName);
                 documentCategorizerME = null;
             }
         }
