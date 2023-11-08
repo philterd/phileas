@@ -18,42 +18,30 @@ package ai.philterd.phileas.model.policy.config;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Analysis {
+public class Offensiveness {
 
-    @SerializedName("identification")
+    @SerializedName("model")
     @Expose
-    private boolean identification = true;
+    private String model;
 
-    @SerializedName("sentiment")
+    @SerializedName("enabled")
     @Expose
-    private Sentiment sentiment = new Sentiment();
+    private boolean enabled = false;
 
-    @SerializedName("offensiveness")
-    @Expose
-    private Offensiveness offensiveness = new Offensiveness();
-
-    public boolean isIdentification() {
-        return identification;
+    public String getModel() {
+        return model;
     }
 
-    public void setIdentification(boolean identification) {
-        this.identification = identification;
+    public void setModel(String model) {
+        this.model = model;
     }
 
-    public Sentiment getSentiment() {
-        return sentiment;
+    public boolean isEnabled() {
+        return enabled;
     }
 
-    public void setSentiment(Sentiment sentiment) {
-        this.sentiment = sentiment;
-    }
-
-    public Offensiveness getOffensiveness() {
-        return offensiveness;
-    }
-
-    public void setOffensiveness(Offensiveness offensiveness) {
-        this.offensiveness = offensiveness;
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
     }
 
 }
