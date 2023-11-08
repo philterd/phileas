@@ -41,7 +41,6 @@ import ai.philterd.phileas.model.responses.FilterResponse;
 import ai.philterd.phileas.model.serializers.PlaceholderDeserializer;
 import ai.philterd.phileas.model.services.*;
 import ai.philterd.phileas.processors.unstructured.UnstructuredDocumentProcessor;
-import ai.philterd.phileas.service.ai.models.ModelCache;
 import ai.philterd.phileas.service.ai.sentiment.OpenNLPSentimentDetector;
 import ai.philterd.phileas.services.alerts.AlertServiceFactory;
 import ai.philterd.phileas.services.anonymization.*;
@@ -62,8 +61,6 @@ import ai.philterd.services.pdf.PdfRedacter;
 import ai.philterd.services.pdf.PdfTextExtractor;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import opennlp.tools.doccat.DoccatModel;
-import opennlp.tools.doccat.DocumentCategorizerME;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.FileUtils;
@@ -73,12 +70,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -203,6 +196,18 @@ public class PhileasFilterService implements FilterService {
 
             if(sentiment != null) {
                 attributes.put("sentiment", sentiment);
+            }
+
+        }
+
+        // Run offensive analysis on the text.
+        if(policy.getConfig().getAnalysis().getOffensiveness().isEnabled()) {
+
+            final SentimentDetector sentimentDetector = new OpenNLPSentimentDetector();
+            final String sentiment = sentimentDetector.classify(policy, input);
+
+            if(sentiment != null) {
+                attributes.put("offensiveness", sentiment);
             }
 
         }
