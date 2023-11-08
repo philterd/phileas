@@ -22,7 +22,7 @@ public class Offensiveness {
 
     @SerializedName("model")
     @Expose
-    private String model;
+    private String model = "classpath:/en-offensiveness.bin";
 
     @SerializedName("enabled")
     @Expose

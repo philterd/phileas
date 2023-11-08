@@ -20,6 +20,8 @@ import ai.philterd.phileas.model.services.SentimentDetector;
 import ai.philterd.phileas.service.ai.models.ModelCache;
 import opennlp.tools.doccat.DoccatModel;
 import opennlp.tools.doccat.DocumentCategorizerME;
+import opennlp.tools.namefind.NameFinderME;
+import opennlp.tools.namefind.TokenNameFinderModel;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -34,18 +36,9 @@ public class OpenNLPSentimentDetector implements SentimentDetector {
     private static final Logger LOGGER = LogManager.getLogger(OpenNLPSentimentDetector.class);
 
     @Override
-    public String classify(final Policy policy, String input) throws IOException {
+    public String classify(final Policy policy, String input) throws Exception {
 
         String modelFileName = policy.getConfig().getAnalysis().getSentiment().getModel();
-
-        // If the filename starts with "models/" it is in the jar's resources.
-        if(modelFileName.startsWith("models/")) {
-
-            final ClassLoader classLoader = getClass().getClassLoader();
-            final File file = new File(classLoader.getResource(modelFileName).getFile());
-            modelFileName = file.getAbsolutePath();
-
-        }
 
         final DocumentCategorizerME documentCategorizerME;
 
@@ -54,18 +47,32 @@ public class OpenNLPSentimentDetector implements SentimentDetector {
             LOGGER.debug("Sentiment model retrieved from model cache.");
             documentCategorizerME = ModelCache.getInstance().get(modelFileName);
         } else {
+
             // Load the model and cache it.
-            if(Files.exists(Paths.get(modelFileName))) {
-                final InputStream is = new FileInputStream(modelFileName);
+            final InputStream is;
+
+            // Load the NER filter for the given modelFile.
+            // If the filename starts with "classpath:" it is in the jar's resources.
+            if(modelFileName.startsWith("classpath:")) {
+                final String classpathModelFileName = modelFileName.replace("classpath:", "");
+                is = OpenNLPSentimentDetector.this.getClass().getClassLoader().getResourceAsStream(classpathModelFileName);
                 final DoccatModel model = new DoccatModel(is);
                 documentCategorizerME = new DocumentCategorizerME(model);
-                is.close();
                 ModelCache.getInstance().put(modelFileName, documentCategorizerME);
-                LOGGER.debug("Sentiment model loaded from disk and cached.");
             } else {
-                LOGGER.error("The sentiment model file does not exist: " + modelFileName);
-                documentCategorizerME = null;
+                if(Files.exists(Paths.get(modelFileName))) {
+                    is = new FileInputStream(modelFileName);
+                    final DoccatModel model = new DoccatModel(is);
+                    documentCategorizerME = new DocumentCategorizerME(model);
+                    is.close();
+                    ModelCache.getInstance().put(modelFileName, documentCategorizerME);
+                    LOGGER.debug("Sentiment model loaded from disk and cached.");
+                } else {
+                    LOGGER.error("The sentiment model file does not exist: " + modelFileName);
+                    documentCategorizerME = null;
+                }
             }
+
         }
 
         if(documentCategorizerME != null) {
