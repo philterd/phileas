@@ -28,7 +28,6 @@ import opennlp.tools.namefind.TokenNameFinderModel;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.LinkedList;
@@ -50,18 +49,21 @@ public class PersonsV3Filter extends NerFilter {
         LOGGER.info("Initializing persons filter with model {}", modelFileName);
 
         // Load the NER filter for the given modelFile.
-        // If the filename starts with "models/" it is in the jar's resources.
-        if(modelFileName.startsWith("models/")) {
+        // If the filename starts with "classpath:" it is in the jar's resources.
+        if(modelFileName.startsWith("classpath:")) {
 
-            final ClassLoader classLoader = getClass().getClassLoader();
-            final File file = new File(classLoader.getResource(modelFileName).getFile());
-            modelFileName = file.getAbsolutePath();
+            modelFileName = modelFileName.replace("classpath:", "");
+            final InputStream tokenNameFinderInputStream = PersonsV3Filter.this.getClass().getClassLoader().getResourceAsStream(modelFileName);
+            final TokenNameFinderModel tokenNameFinderModel = new TokenNameFinderModel(tokenNameFinderInputStream);
+            nameFinderME = new NameFinderME(tokenNameFinderModel);
+
+        } else {
+
+            final InputStream tokenNameFinderInputStream = new FileInputStream(modelFileName);
+            final TokenNameFinderModel tokenNameFinderModel = new TokenNameFinderModel(tokenNameFinderInputStream);
+            nameFinderME = new NameFinderME(tokenNameFinderModel);
 
         }
-
-        final InputStream tokenNameFinderInputStream = new FileInputStream(modelFileName);
-        final TokenNameFinderModel tokenNameFinderModel = new TokenNameFinderModel(tokenNameFinderInputStream);
-        nameFinderME = new NameFinderME(tokenNameFinderModel);
 
     }
 
