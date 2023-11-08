@@ -57,11 +57,6 @@
 		</dependency>
 		<dependency>
 			<groupId>ai.philterd</groupId>
-			<artifactId>phileas-services-ai</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>ai.philterd</groupId>
 			<artifactId>phileas-services-disambiguation</artifactId>
 			<version>${project.version}</version>
 		</dependency>

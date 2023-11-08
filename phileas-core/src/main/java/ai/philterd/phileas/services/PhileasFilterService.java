@@ -42,6 +42,7 @@ import ai.philterd.phileas.model.serializers.PlaceholderDeserializer;
 import ai.philterd.phileas.model.services.*;
 import ai.philterd.phileas.processors.unstructured.UnstructuredDocumentProcessor;
 import ai.philterd.phileas.service.ai.models.ModelCache;
+import ai.philterd.phileas.service.ai.sentiment.OpenNLPSentimentDetector;
 import ai.philterd.phileas.services.alerts.AlertServiceFactory;
 import ai.philterd.phileas.services.anonymization.*;
 import ai.philterd.phileas.services.anonymization.cache.AnonymizationCacheServiceFactory;
@@ -197,33 +198,10 @@ public class PhileasFilterService implements FilterService {
         // Run sentiment analysis on the text.
         if(policy.getConfig().getAnalysis().getSentiment().isEnabled()) {
 
-            final String modelName = policy.getConfig().getAnalysis().getSentiment().getModel();
+            final SentimentDetector sentimentDetector = new OpenNLPSentimentDetector();
+            final String sentiment = sentimentDetector.classify(policy, input);
 
-            final DocumentCategorizerME documentCategorizerME;
-
-            // Is the model cached?
-            if(ModelCache.getInstance().get(modelName) != null) {
-                LOGGER.debug("Sentiment model retrieved from model cache.");
-                documentCategorizerME = ModelCache.getInstance().get(modelName);
-            } else {
-                // Load the model and cache it.
-                if(Files.exists(Paths.get(modelName))) {
-                    final InputStream is = new FileInputStream(modelName);
-                    final DoccatModel model = new DoccatModel(is);
-                    documentCategorizerME = new DocumentCategorizerME(model);
-                    is.close();
-                    ModelCache.getInstance().put(modelName, documentCategorizerME);
-                    LOGGER.debug("Sentiment model loaded from disk and cached.");
-                } else {
-                    LOGGER.error("The sentiment model file does not exist: " + modelName);
-                    documentCategorizerME = null;
-                }
-            }
-
-            if(documentCategorizerME != null) {
-                // Run sentiment analysis on the input text.
-                final double[] outcomes = documentCategorizerME.categorize(input.split(" "));
-                final String sentiment = documentCategorizerME.getBestCategory(outcomes);
+            if(sentiment != null) {
                 attributes.put("sentiment", sentiment);
             }
 
