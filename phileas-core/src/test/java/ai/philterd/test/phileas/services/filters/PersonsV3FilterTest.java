@@ -40,8 +40,8 @@ public class PersonsV3FilterTest extends AbstractFilterTest {
 
     private static final Logger LOGGER = LogManager.getLogger(PersonsV3FilterTest.class);
 
-    private AlertService alertService = Mockito.mock(AlertService.class);
-    private MetricsService metricsService = Mockito.mock(MetricsService.class);
+    private final AlertService alertService = Mockito.mock(AlertService.class);
+    private final MetricsService metricsService = Mockito.mock(MetricsService.class);
 
     @Test
     public void filter1() throws Exception {

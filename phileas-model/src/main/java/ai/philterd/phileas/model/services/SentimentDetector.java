@@ -18,9 +18,10 @@ package ai.philterd.phileas.model.services;
 import ai.philterd.phileas.model.policy.Policy;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 
 public interface SentimentDetector {
 
-    String classify(final Policy policy, String input) throws IOException;
+    String classify(final Policy policy, String input) throws IOException, URISyntaxException, Exception;
 
 }
