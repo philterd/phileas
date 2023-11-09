@@ -16,7 +16,8 @@ Phileas is the underlying core of [Philter](https://philterd.ai/philter/), a tur
 ## What Phileas Can Do
 
 * Phileas can identify and redact over 30 types of sensitive information (see list below).
-* Phileas can apply logic when redating (only zip codes with population less than some value, only ages > 30, phone numbers starting with specific digits, etc.).
+* Phileas can evaluate conditions when redating (only zip codes with population less than some value, only ages > 30, only when sentiment is a certain value, etc.).
+* Phileas can perform sentiment and offensiveness classification.
 * Phileas can redact, encrypt, and anonymize sensitive information.
 * Phileas can replace persons names with random names, dates with similar but random dates, etc.
 * Phileas can disambiguate types of sensitive information (i.e. SSN vs. phone number).
