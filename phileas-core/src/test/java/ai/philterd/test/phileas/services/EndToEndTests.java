@@ -579,6 +579,39 @@ public class EndToEndTests {
     }
 
     @Test
+    public void endToEndWithSentiment() throws Exception {
+
+        final Path temp = Files.createTempDirectory("philter");
+        final File file = Paths.get(temp.toFile().getAbsolutePath(), "sentiment.json").toFile();
+        LOGGER.info("Writing policy to {}", file.getAbsolutePath());
+        final String policy = gson.toJson(getPolicyWithSentiment("sentiment"));
+        LOGGER.info(policy);
+        FileUtils.writeStringToFile(file, policy);
+
+        Properties properties = new Properties();
+        properties.setProperty("indexes.directory", INDEXES_DIRECTORY);
+        properties.setProperty("store.enabled", "false");
+        properties.setProperty("filter.policies.directory", temp.toFile().getAbsolutePath());
+
+        final PhileasConfiguration phileasConfiguration = ConfigFactory.create(PhileasConfiguration.class, properties);
+
+        final String input = "his ssn was 123-45-6789";
+
+        final PhileasFilterService service = new PhileasFilterService(phileasConfiguration);
+        final FilterResponse response = service.filter(List.of("sentiment"), "context", "documentid", input, MimeType.TEXT_PLAIN);
+
+        LOGGER.info(response.filteredText());
+
+        showSpans(response.explanation().appliedSpans());
+
+        Assertions.assertEquals("documentid", response.documentId());
+        Assertions.assertEquals(1, response.explanation().appliedSpans().size());
+        Assertions.assertEquals("his ssn was {{{REDACTED-ssn}}}", response.filteredText().trim());
+        Assertions.assertEquals("1", response.attributes().get("sentiment"));
+
+    }
+
+    @Test
     public void endToEndUsingCustomDictionary() throws Exception {
 
         final CustomDictionary customDictionary = new CustomDictionary();

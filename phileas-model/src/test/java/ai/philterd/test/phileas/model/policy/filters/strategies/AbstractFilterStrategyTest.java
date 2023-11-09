@@ -307,6 +307,42 @@ public abstract class AbstractFilterStrategyTest {
 
     }
 
+    @Test
+    public void evaluateConditionWithSentimentTrue() throws IOException {
+
+        final AbstractFilterStrategy strategy = getFilterStrategy();
+
+        attributes.put("sentiment", "1");
+        final boolean conditionSatisfied = strategy.evaluateCondition(getPolicy(), "ctx", "documentId", "John Smith", WINDOW, "sentiment == 1",  1.0, attributes);
+
+        Assertions.assertTrue(conditionSatisfied);
+
+    }
+
+    @Test
+    public void evaluateConditionWithSentimentFalse() throws IOException {
+
+        final AbstractFilterStrategy strategy = getFilterStrategy();
+
+        attributes.put("sentiment", "0");
+        final boolean conditionSatisfied = strategy.evaluateCondition(getPolicy(), "ctx", "documentId", "John Smith", WINDOW, "sentiment == 1",  1.0, attributes);
+
+        Assertions.assertFalse(conditionSatisfied);
+
+    }
+
+    @Test
+    public void evaluateConditionWithoutSentimentAttribute() throws IOException {
+
+        final AbstractFilterStrategy strategy = getFilterStrategy();
+
+        attributes.clear();
+        final boolean conditionSatisfied = strategy.evaluateCondition(getPolicy(), "ctx", "documentId", "John Smith", WINDOW, "sentiment == 1",  1.0, attributes);
+
+        Assertions.assertFalse(conditionSatisfied);
+
+    }
+
     protected Policy getPolicy() {
         return new Policy();
     }

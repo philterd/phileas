@@ -85,17 +85,25 @@ public class PhoneNumberExtensionFilterStrategy extends AbstractFilterStrategy {
 
             } else if(StringUtils.equalsIgnoreCase(SENTIMENT, parsedCondition.getField())) {
 
-                final double sentimentThreshold = Double.parseDouble(parsedCondition.getValue());
+                // If there is no sentiment attribute, the condition is automatically not satisfied.
+                if(attributes.containsKey("sentiment")) {
 
-                conditionsSatisfied = switch (attributes.get("sentiment")) {
-                    case GREATER_THAN -> (confidence > sentimentThreshold);
-                    case LESS_THAN -> (confidence < sentimentThreshold);
-                    case GREATER_THAN_EQUALS -> (confidence >= sentimentThreshold);
-                    case LESS_THAN_EQUALS -> (confidence <= sentimentThreshold);
-                    case EQUALS -> (confidence == sentimentThreshold);
-                    case NOT_EQUALS -> (confidence != sentimentThreshold);
-                    default -> conditionsSatisfied;
-                };
+                    final int documentSentiment = Integer.parseInt(attributes.get("sentiment"));
+                    final int sentimentCondition = Integer.parseInt(parsedCondition.getValue());
+
+                    conditionsSatisfied = switch (parsedCondition.getOperator()) {
+                        case GREATER_THAN -> (documentSentiment > sentimentCondition);
+                        case LESS_THAN -> (documentSentiment < sentimentCondition);
+                        case GREATER_THAN_EQUALS -> (documentSentiment >= sentimentCondition);
+                        case LESS_THAN_EQUALS -> (documentSentiment <= sentimentCondition);
+                        case EQUALS -> (documentSentiment == sentimentCondition);
+                        case NOT_EQUALS -> (documentSentiment != sentimentCondition);
+                        default -> conditionsSatisfied;
+                    };
+
+                } else {
+                    conditionsSatisfied = false;
+                }
 
             }
 
