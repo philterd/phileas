@@ -22,7 +22,7 @@ public class Sentiment {
 
     @SerializedName("model")
     @Expose
-    private String model = "classpath:/en-sentiment.bin";
+    private String model = "classpath:en-sentiment.bin";
 
     @SerializedName("enabled")
     @Expose

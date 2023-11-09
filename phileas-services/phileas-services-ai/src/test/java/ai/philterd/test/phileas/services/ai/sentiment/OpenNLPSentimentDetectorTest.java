@@ -24,7 +24,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
-import java.io.IOException;
 
 public class OpenNLPSentimentDetectorTest {
 
@@ -33,7 +32,7 @@ public class OpenNLPSentimentDetectorTest {
     private String getModelFilePath() {
 
         final ClassLoader classLoader = getClass().getClassLoader();
-        return new File(classLoader.getResource("ner/en-sentiment.bin").getFile()).getAbsolutePath();
+        return new File(classLoader.getResource("models/en-sentiment.bin").getFile()).getAbsolutePath();
 
     }
 

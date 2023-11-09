@@ -9,7 +9,7 @@ expression: (
     | 'confidence' COMPARATOR NUMBER (AND expression)?
     | 'context' COMPARATOR WORD (AND expression)?
     | 'classification' COMPARATOR WORD (AND expression)?
-    | 'sentiment' COMPARATOR WORD (AND expression)?
+    | 'sentiment' COMPARATOR NUMBER (AND expression)?
     );
 
 TYPE: (

@@ -43,6 +43,25 @@ import java.util.Set;
 public class EndToEndTestsHelper {
 
 
+    public static Policy getPolicyWithSentiment(String policyName) throws IOException {
+
+        SsnFilterStrategy ssnFilterStrategy = new SsnFilterStrategy();
+
+        Ssn ssn = new Ssn();
+        ssn.setSsnFilterStrategies(List.of(ssnFilterStrategy));
+
+        Identifiers identifiers = new Identifiers();
+        identifiers.setSsn(ssn);
+
+        Policy policy = new Policy();
+        policy.getConfig().getAnalysis().getSentiment().setEnabled(true);
+        policy.setName(policyName);
+        policy.setIdentifiers(identifiers);
+
+        return policy;
+
+    }
+
     public static Policy getPolicyZipCodeWithIgnored(String policyName) throws IOException {
 
         Set<String> ignored = new HashSet<>();
@@ -51,13 +70,13 @@ public class EndToEndTestsHelper {
         SsnFilterStrategy ssnFilterStrategy = new SsnFilterStrategy();
 
         Ssn ssn = new Ssn();
-        ssn.setSsnFilterStrategies(Arrays.asList(ssnFilterStrategy));
+        ssn.setSsnFilterStrategies(List.of(ssnFilterStrategy));
 
         ZipCodeFilterStrategy zipCodeFilterStrategy = new ZipCodeFilterStrategy();
         zipCodeFilterStrategy.setTruncateDigits(2);
 
         ZipCode zipCode = new ZipCode();
-        zipCode.setZipCodeFilterStrategies(Arrays.asList(zipCodeFilterStrategy));
+        zipCode.setZipCodeFilterStrategies(List.of(zipCodeFilterStrategy));
         zipCode.setIgnored(ignored);
 
         Identifiers identifiers = new Identifiers();
@@ -84,13 +103,13 @@ public class EndToEndTestsHelper {
         SsnFilterStrategy ssnFilterStrategy = new SsnFilterStrategy();
 
         Ssn ssn = new Ssn();
-        ssn.setSsnFilterStrategies(Arrays.asList(ssnFilterStrategy));
+        ssn.setSsnFilterStrategies(List.of(ssnFilterStrategy));
 
         ZipCodeFilterStrategy zipCodeFilterStrategy = new ZipCodeFilterStrategy();
         zipCodeFilterStrategy.setTruncateDigits(2);
 
         ZipCode zipCode = new ZipCode();
-        zipCode.setZipCodeFilterStrategies(Arrays.asList(zipCodeFilterStrategy));
+        zipCode.setZipCodeFilterStrategies(List.of(zipCodeFilterStrategy));
         zipCode.setIgnoredFiles(ignoredFiles);
 
         Identifiers identifiers = new Identifiers();
@@ -135,8 +154,8 @@ public class EndToEndTestsHelper {
 
     public static Policy getPdfFilterWithPersonPolicy(String policyName) throws URISyntaxException {
 
-        final File model = new File(EndToEndTestsHelper.class.getClassLoader().getResource("ner/model.onnx").toURI());
-        final File vocab = new File(EndToEndTestsHelper.class.getClassLoader().getResource("ner/vocab.txt").toURI());
+        final File model = new File(EndToEndTestsHelper.class.getClassLoader().getResource("models/model.onnx").toURI());
+        final File vocab = new File(EndToEndTestsHelper.class.getClassLoader().getResource("models/vocab.txt").toURI());
 
         final PersonV2 personV2 = new PersonV2();
         personV2.setModel(model.getAbsolutePath());
@@ -222,80 +241,80 @@ public class EndToEndTestsHelper {
         PhoneNumberFilterStrategy phoneNumberFilterStrategy = new PhoneNumberFilterStrategy();
 
         PhoneNumber phoneNumber = new PhoneNumber();
-        phoneNumber.setPhoneNumberFilterStrategies(Arrays.asList(phoneNumberFilterStrategy));
+        phoneNumber.setPhoneNumberFilterStrategies(List.of(phoneNumberFilterStrategy));
 
         SsnFilterStrategy ssnFilterStrategy = new SsnFilterStrategy();
 
         Ssn ssn = new Ssn();
-        ssn.setSsnFilterStrategies(Arrays.asList(ssnFilterStrategy));
+        ssn.setSsnFilterStrategies(List.of(ssnFilterStrategy));
 
         StateAbbreviationFilterStrategy stateAbbreviationFilterStrategy = new StateAbbreviationFilterStrategy();
 
         StateAbbreviation stateAbbreviation = new StateAbbreviation();
-        stateAbbreviation.setStateAbbreviationsFilterStrategies(Arrays.asList(stateAbbreviationFilterStrategy));
+        stateAbbreviation.setStateAbbreviationsFilterStrategies(List.of(stateAbbreviationFilterStrategy));
 
         UrlFilterStrategy urlFilterStrategy = new UrlFilterStrategy();
 
         Url url = new Url();
-        url.setUrlFilterStrategies(Arrays.asList(urlFilterStrategy));
+        url.setUrlFilterStrategies(List.of(urlFilterStrategy));
 
         VinFilterStrategy vinFilterStrategy = new VinFilterStrategy();
 
         Vin vin = new Vin();
-        vin.setVinFilterStrategies(Arrays.asList(vinFilterStrategy));
+        vin.setVinFilterStrategies(List.of(vinFilterStrategy));
 
         ZipCodeFilterStrategy zipCodeFilterStrategy = new ZipCodeFilterStrategy();
         zipCodeFilterStrategy.setTruncateDigits(2);
 
         ZipCode zipCode = new ZipCode();
-        zipCode.setZipCodeFilterStrategies(Arrays.asList(zipCodeFilterStrategy));
+        zipCode.setZipCodeFilterStrategies(List.of(zipCodeFilterStrategy));
 
         PersonsFilterStrategy personsFilterStrategy = new PersonsFilterStrategy();
 
-        final File model = new File(EndToEndTestsHelper.class.getClassLoader().getResource("ner/model.onnx").toURI());
-        final File vocab = new File(EndToEndTestsHelper.class.getClassLoader().getResource("ner/vocab.txt").toURI());
+        final File model = new File(EndToEndTestsHelper.class.getClassLoader().getResource("models/model.onnx").toURI());
+        final File vocab = new File(EndToEndTestsHelper.class.getClassLoader().getResource("models/vocab.txt").toURI());
 
         PersonV2 personV2 = new PersonV2();
         personV2.setModel(model.getAbsolutePath());
         personV2.setVocab(vocab.getAbsolutePath());
-        personV2.setPersonFilterStrategies(Arrays.asList(personsFilterStrategy));
+        personV2.setPersonFilterStrategies(List.of(personsFilterStrategy));
 
         // ----------------------------------------------------------------------------------
 
         CityFilterStrategy cityFilterStrategy = new CityFilterStrategy();
 
         City city = new City();
-        city.setCityFilterStrategies(Arrays.asList(cityFilterStrategy));
+        city.setCityFilterStrategies(List.of(cityFilterStrategy));
 
         CountyFilterStrategy countyFilterStrategy = new CountyFilterStrategy();
 
         County county = new County();
-        county.setCountyFilterStrategies(Arrays.asList(countyFilterStrategy));
+        county.setCountyFilterStrategies(List.of(countyFilterStrategy));
 
         FirstNameFilterStrategy firstNameFilterStrategy = new FirstNameFilterStrategy();
 
         FirstName firstName = new FirstName();
-        firstName.setFirstNameFilterStrategies(Arrays.asList(firstNameFilterStrategy));
+        firstName.setFirstNameFilterStrategies(List.of(firstNameFilterStrategy));
 
         HospitalAbbreviationFilterStrategy hospitalAbbreviationFilterStrategy = new HospitalAbbreviationFilterStrategy();
 
         HospitalAbbreviation hospitalAbbreviation = new HospitalAbbreviation();
-        hospitalAbbreviation.setHospitalAbbreviationFilterStrategies(Arrays.asList(hospitalAbbreviationFilterStrategy));
+        hospitalAbbreviation.setHospitalAbbreviationFilterStrategies(List.of(hospitalAbbreviationFilterStrategy));
 
         HospitalFilterStrategy hospitalFilterStrategy = new HospitalFilterStrategy();
 
         Hospital hospital = new Hospital();
-        hospital.setHospitalFilterStrategies(Arrays.asList(hospitalFilterStrategy));
+        hospital.setHospitalFilterStrategies(List.of(hospitalFilterStrategy));
 
         StateFilterStrategy stateFilterStrategy = new StateFilterStrategy();
 
         State state = new State();
-        state.setStateFilterStrategies(Arrays.asList(stateFilterStrategy));
+        state.setStateFilterStrategies(List.of(stateFilterStrategy));
 
         SurnameFilterStrategy surnameFilterStrategy = new SurnameFilterStrategy();
 
         Surname surname = new Surname();
-        surname.setSurnameFilterStrategies(Arrays.asList(surnameFilterStrategy));
+        surname.setSurnameFilterStrategies(List.of(surnameFilterStrategy));
 
         // ----------------------------------------------------------------------------------
 

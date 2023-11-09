@@ -44,8 +44,8 @@ public class OnnxNerTest {
     @Test
     public void find1() throws Exception {
 
-        final File model = new File(getClass().getClassLoader().getResource("ner/model.onnx").toURI());
-        final File vocab = new File(getClass().getClassLoader().getResource("ner/vocab.txt").toURI());
+        final File model = new File(getClass().getClassLoader().getResource("models/model.onnx").toURI());
+        final File vocab = new File(getClass().getClassLoader().getResource("models/vocab.txt").toURI());
 
         final String tokens = "George Washington was president of the United States.";
 
@@ -64,8 +64,8 @@ public class OnnxNerTest {
     @Test
     public void find2() throws Exception {
 
-        final File model = new File(getClass().getClassLoader().getResource("ner/model.onnx").toURI());
-        final File vocab = new File(getClass().getClassLoader().getResource("ner/vocab.txt").toURI());
+        final File model = new File(getClass().getClassLoader().getResource("models/model.onnx").toURI());
+        final File vocab = new File(getClass().getClassLoader().getResource("models/vocab.txt").toURI());
 
         final String tokens = "George Washington lives in 90210 and his SSN was 123-45-6789.";
 
@@ -84,8 +84,8 @@ public class OnnxNerTest {
     @Test
     public void findMultipleInvocations() throws Exception {
 
-        final File model = new File(getClass().getClassLoader().getResource("ner/model.onnx").toURI());
-        final File vocab = new File(getClass().getClassLoader().getResource("ner/vocab.txt").toURI());
+        final File model = new File(getClass().getClassLoader().getResource("models/model.onnx").toURI());
+        final File vocab = new File(getClass().getClassLoader().getResource("models/vocab.txt").toURI());
 
         final String tokens1 = "George Washington lives in 90210 and his SSN was 123-45-6789.";
         final String tokens2 = "George Washington was president.";
@@ -122,8 +122,8 @@ public class OnnxNerTest {
         // Tests a long input that has been split. 512 is the max number of tokens.
         // BERT base (12 layers, 768 hidden, input max sequence 512)
 
-        final File model = new File(getClass().getClassLoader().getResource("ner/model.onnx").toURI());
-        final File vocab = new File(getClass().getClassLoader().getResource("ner/vocab.txt").toURI());
+        final File model = new File(getClass().getClassLoader().getResource("models/model.onnx").toURI());
+        final File vocab = new File(getClass().getClassLoader().getResource("models/vocab.txt").toURI());
 
         final String tokens = "The decision to pause came after there was a potentially unexplained illness " +
                 "in one of the trials. George Washington was president. Intra-Cellular Therapies, Inc. " +
@@ -171,8 +171,8 @@ public class OnnxNerTest {
     @Test
     public void findWithSpacesInEntity() throws Exception {
 
-        final File model = new File(getClass().getClassLoader().getResource("ner/model.onnx").toURI());
-        final File vocab = new File(getClass().getClassLoader().getResource("ner/vocab.txt").toURI());
+        final File model = new File(getClass().getClassLoader().getResource("models/model.onnx").toURI());
+        final File vocab = new File(getClass().getClassLoader().getResource("models/vocab.txt").toURI());
 
         final String tokens = "George  Washington lives in California.";
 
@@ -191,8 +191,8 @@ public class OnnxNerTest {
     @Test
     public void findWithTabsInEntity() throws Exception {
 
-        final File model = new File(getClass().getClassLoader().getResource("ner/model.onnx").toURI());
-        final File vocab = new File(getClass().getClassLoader().getResource("ner/vocab.txt").toURI());
+        final File model = new File(getClass().getClassLoader().getResource("models/model.onnx").toURI());
+        final File vocab = new File(getClass().getClassLoader().getResource("models/vocab.txt").toURI());
 
         final String tokens = "George   Washington lives in California.";
 
@@ -211,8 +211,8 @@ public class OnnxNerTest {
     @Test
     public void findWithPunctuation() throws Exception {
 
-        final File model = new File(getClass().getClassLoader().getResource("ner/model.onnx").toURI());
-        final File vocab = new File(getClass().getClassLoader().getResource("ner/vocab.txt").toURI());
+        final File model = new File(getClass().getClassLoader().getResource("models/model.onnx").toURI());
+        final File vocab = new File(getClass().getClassLoader().getResource("models/vocab.txt").toURI());
 
         final String tokens = "George Washington lives in George. Washington is a state.";
 
@@ -231,8 +231,8 @@ public class OnnxNerTest {
     @Test
     public void findEntityWithWordpieces() throws Exception {
 
-        final File model = new File(getClass().getClassLoader().getResource("ner/model.onnx").toURI());
-        final File vocab = new File(getClass().getClassLoader().getResource("ner/vocab.txt").toURI());
+        final File model = new File(getClass().getClassLoader().getResource("models/model.onnx").toURI());
+        final File vocab = new File(getClass().getClassLoader().getResource("models/vocab.txt").toURI());
 
         final String tokens = "123-45-6789 was George Washington ssn.";
 
@@ -251,8 +251,8 @@ public class OnnxNerTest {
     @Test
     public void findEntityWith3Words() throws Exception {
 
-        final File model = new File(getClass().getClassLoader().getResource("ner/model.onnx").toURI());
-        final File vocab = new File(getClass().getClassLoader().getResource("ner/vocab.txt").toURI());
+        final File model = new File(getClass().getClassLoader().getResource("models/model.onnx").toURI());
+        final File vocab = new File(getClass().getClassLoader().getResource("models/vocab.txt").toURI());
 
         final String tokens = "George Washington Carver lives in California.";
 
@@ -271,8 +271,8 @@ public class OnnxNerTest {
     @Test
     public void findWithMultipleEntities() throws Exception {
 
-        final File model = new File(getClass().getClassLoader().getResource("ner/model.onnx").toURI());
-        final File vocab = new File(getClass().getClassLoader().getResource("ner/vocab.txt").toURI());
+        final File model = new File(getClass().getClassLoader().getResource("models/model.onnx").toURI());
+        final File vocab = new File(getClass().getClassLoader().getResource("models/vocab.txt").toURI());
 
         final String tokens = "George Washington was friends with Bob Ross.";
 
@@ -294,8 +294,8 @@ public class OnnxNerTest {
     @Test
     public void findWithMultipleIdenticalEntities() throws Exception {
 
-        final File model = new File(getClass().getClassLoader().getResource("ner/model.onnx").toURI());
-        final File vocab = new File(getClass().getClassLoader().getResource("ner/vocab.txt").toURI());
+        final File model = new File(getClass().getClassLoader().getResource("models/model.onnx").toURI());
+        final File vocab = new File(getClass().getClassLoader().getResource("models/vocab.txt").toURI());
 
         final String tokens = "George Washington was friends with George Washington.";
 
@@ -317,8 +317,8 @@ public class OnnxNerTest {
     @Test
     public void findWithMultipleEntitiesOfSameText() throws Exception {
 
-        final File model = new File(getClass().getClassLoader().getResource("ner/model.onnx").toURI());
-        final File vocab = new File(getClass().getClassLoader().getResource("ner/vocab.txt").toURI());
+        final File model = new File(getClass().getClassLoader().getResource("models/model.onnx").toURI());
+        final File vocab = new File(getClass().getClassLoader().getResource("models/vocab.txt").toURI());
 
         final String tokens = "George Washington was friends with George Washington.";
 
@@ -344,8 +344,8 @@ public class OnnxNerTest {
         // Barbara Fe ##rrer
         // This test is to get that entity text correct.
 
-        final File model = new File(getClass().getClassLoader().getResource("ner/model.onnx").toURI());
-        final File vocab = new File(getClass().getClassLoader().getResource("ner/vocab.txt").toURI());
+        final File model = new File(getClass().getClassLoader().getResource("models/model.onnx").toURI());
+        final File vocab = new File(getClass().getClassLoader().getResource("models/vocab.txt").toURI());
 
         final String tokens = "In recent days, healthcare facilities across the nation have again begun to " +
                 "buckle under spiking infection rates. Last week, some local hospitals temporarily postponed " +
@@ -389,8 +389,8 @@ public class OnnxNerTest {
         // Barbara Fe ##rrer Smith
         // This test is to get that entity text correct.
 
-        final File model = new File(getClass().getClassLoader().getResource("ner/model.onnx").toURI());
-        final File vocab = new File(getClass().getClassLoader().getResource("ner/vocab.txt").toURI());
+        final File model = new File(getClass().getClassLoader().getResource("models/model.onnx").toURI());
+        final File vocab = new File(getClass().getClassLoader().getResource("models/vocab.txt").toURI());
 
         final String tokens = "In recent days, healthcare facilities across the nation have again begun to buckle " +
                 "under spiking infection rates. Last week, some local hospitals temporarily postponed scheduled " +
@@ -434,8 +434,8 @@ public class OnnxNerTest {
         // Barbara Fe ##rrer Smith
         // This test is to get that entity text correct.
 
-        final File model = new File(getClass().getClassLoader().getResource("ner/model.onnx").toURI());
-        final File vocab = new File(getClass().getClassLoader().getResource("ner/vocab.txt").toURI());
+        final File model = new File(getClass().getClassLoader().getResource("models/model.onnx").toURI());
+        final File vocab = new File(getClass().getClassLoader().getResource("models/vocab.txt").toURI());
 
         final String tokens = "In recent days, healthcare facilities across the nation have again begun to buckle under spiking infection rates. Last week, some local hospitals temporarily postponed scheduled surgeries that require an inpatient stay following an operation, and the trauma center at Harbor-UCLA Medical Center closed for hours because of a blood shortage - a step it hadn't taken in over three decades. A staff shortage at some local ambulance companies further complicated the situation.The virus has spread so fast since the arrival of the Omicron variant that it could take just about a week for California to tally a million new cases. It was only on Jan. 10 that California surpassed 6 million total reported coronavirus cases in the nearly two years since the start of the pandemic, according to data released by state health officials. Even during last winter's surge, it took three weeks to accumulate a million new cases, with the state peaking at 46,000 new infections a day. \"On this national holiday where we celebrate the life and legacy of Dr. Martin Luther King, we remember his deep commitment to health equity,\" said L.A. County Public Health Director Barbara Ferrer Ferrer. \"As Reverend King memorably said, \"Of all the forms of inequality, injustice in health is the most shocking and the most inhuman because it often results in physical death.\"";
 

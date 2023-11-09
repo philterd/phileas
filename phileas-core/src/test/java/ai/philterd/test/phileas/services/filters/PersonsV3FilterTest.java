@@ -53,7 +53,7 @@ public class PersonsV3FilterTest extends AbstractFilterTest {
                 .withWindowSize(windowSize)
                 .build();
 
-        final File model = new File(getClass().getClassLoader().getResource("ner/en-ner-person.bin").toURI());
+        final File model = new File(getClass().getClassLoader().getResource("models/en-ner-person.bin").toURI());
 
         final Map<String, DescriptiveStatistics> stats = new LinkedHashMap<>();
         final Map<String, Double> thresholds = new LinkedHashMap<>();
@@ -84,7 +84,7 @@ public class PersonsV3FilterTest extends AbstractFilterTest {
                 .withWindowSize(windowSize)
                 .build();
 
-        final File model = new File(getClass().getClassLoader().getResource("ner/en-ner-person.bin").toURI());
+        final File model = new File(getClass().getClassLoader().getResource("models/en-ner-person.bin").toURI());
 
         final Map<String, DescriptiveStatistics> stats = new LinkedHashMap<>();
         final Map<String, Double> thresholds = new LinkedHashMap<>();
