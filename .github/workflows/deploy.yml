@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
     inputs:
       phileas_tag:
-        description: Tag to build image from
+        description: Tag to build and deploy
         required: true
         default: main
 jobs:
