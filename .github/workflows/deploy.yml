@@ -1,8 +1,5 @@
-name: Build and Deploy Artifacts on commit to main
-on: 
-  push:
-    branches:
-      - main
+name: Build and Deploy
+on: workflow_dispatch
 jobs:
   deploy:
     runs-on: ubuntu-latest
