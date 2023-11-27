@@ -192,10 +192,11 @@ public class PhileasFilterService implements FilterService {
         if(policy.getConfig().getAnalysis().getSentiment().isEnabled()) {
 
             final SentimentDetector sentimentDetector = new OpenNLPSentimentDetector();
-            final String sentiment = sentimentDetector.classify(policy, input);
+            final Classification classification = sentimentDetector.classify(policy, input);
 
-            if(sentiment != null) {
-                attributes.put("sentiment", sentiment);
+            if(classification != null) {
+                attributes.put("sentiment", classification.label());
+                attributes.put("sentiment-confidence", String.valueOf(classification.confidence()));
             }
 
         }
@@ -204,10 +205,11 @@ public class PhileasFilterService implements FilterService {
         if(policy.getConfig().getAnalysis().getOffensiveness().isEnabled()) {
 
             final SentimentDetector sentimentDetector = new OpenNLPSentimentDetector();
-            final String sentiment = sentimentDetector.classify(policy, input);
+            final Classification classification = sentimentDetector.classify(policy, input);
 
-            if(sentiment != null) {
-                attributes.put("offensiveness", sentiment);
+            if(classification != null) {
+                attributes.put("offensiveness", classification.label());
+                attributes.put("offensiveness-confidence", String.valueOf(classification.confidence()));
             }
 
         }
