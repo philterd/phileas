@@ -1,8 +1,11 @@
-name: Build and Deploy Artifacts on commit to main
-on: 
-  push:
-    branches:
-      - main
+name: Build and Deploy
+on:
+  workflow_dispatch:
+    inputs:
+      phileas_tag:
+        description: Tag to build and deploy
+        required: true
+        default: main
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -13,6 +16,7 @@ jobs:
       - uses: actions/checkout@v3
         with:
           lfs: true
+          ref: ${{ github.event.inputs.phileas_tag }}
       - name: Cache Maven packages
         uses: actions/cache@v1
         with:
