@@ -15,13 +15,6 @@
  */
 package ai.philterd.phileas.model.services;
 
-import ai.philterd.phileas.model.policy.Policy;
-
-import java.io.IOException;
-import java.net.URISyntaxException;
-
-public interface SentimentDetector {
-
-    Classification classify(final Policy policy, String input) throws IOException, URISyntaxException, Exception;
+public record Classification(String label, double confidence) {
 
 }

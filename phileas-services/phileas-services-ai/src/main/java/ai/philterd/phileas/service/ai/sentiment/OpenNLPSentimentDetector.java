@@ -16,18 +16,17 @@
 package ai.philterd.phileas.service.ai.sentiment;
 
 import ai.philterd.phileas.model.policy.Policy;
+import ai.philterd.phileas.model.services.Classification;
 import ai.philterd.phileas.model.services.SentimentDetector;
 import ai.philterd.phileas.service.ai.models.ModelCache;
 import opennlp.tools.doccat.DoccatModel;
 import opennlp.tools.doccat.DocumentCategorizerME;
-import opennlp.tools.namefind.NameFinderME;
-import opennlp.tools.namefind.TokenNameFinderModel;
+import opennlp.tools.tokenize.WhitespaceTokenizer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.io.*;
-import java.net.URISyntaxException;
-import java.net.URL;
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
@@ -36,7 +35,7 @@ public class OpenNLPSentimentDetector implements SentimentDetector {
     private static final Logger LOGGER = LogManager.getLogger(OpenNLPSentimentDetector.class);
 
     @Override
-    public String classify(final Policy policy, String input) throws Exception {
+    public Classification classify(final Policy policy, String input) throws Exception {
 
         String modelFileName = policy.getConfig().getAnalysis().getSentiment().getModel();
 
@@ -77,8 +76,11 @@ public class OpenNLPSentimentDetector implements SentimentDetector {
 
         if(documentCategorizerME != null) {
             // Run sentiment analysis on the input text.
-            final double[] outcomes = documentCategorizerME.categorize(input.split(" "));
-            return documentCategorizerME.getBestCategory(outcomes);
+            final String[] inputSplit = WhitespaceTokenizer.INSTANCE.tokenize(input);
+            final double[] outcomes = documentCategorizerME.categorize(inputSplit);
+            final String label = documentCategorizerME.getBestCategory(outcomes);
+            final double confidence = outcomes[0];
+            return new Classification(label, confidence);
         }
 
         return null;

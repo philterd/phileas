@@ -16,6 +16,7 @@
 package ai.philterd.test.phileas.services.ai.sentiment;
 
 import ai.philterd.phileas.model.policy.Policy;
+import ai.philterd.phileas.model.services.Classification;
 import ai.philterd.phileas.model.services.SentimentDetector;
 import ai.philterd.phileas.service.ai.sentiment.OpenNLPSentimentDetector;
 import org.apache.logging.log4j.LogManager;
@@ -44,10 +45,11 @@ public class OpenNLPSentimentDetectorTest {
         policy.getConfig().getAnalysis().getSentiment().setModel(getModelFilePath());
 
         final SentimentDetector sentimentDetector = new OpenNLPSentimentDetector();
-        final String sentiment = sentimentDetector.classify(policy, "I had a great and wonderful day.");
+        final Classification sentiment = sentimentDetector.classify(policy, "I had a great and wonderful day.");
 
         LOGGER.info("Sentiment detected as: {}", sentiment);
-        Assertions.assertEquals("0", sentiment);
+        Assertions.assertEquals("0", sentiment.label());
+        Assertions.assertEquals(0.18613932333343786, sentiment.confidence());
 
     }
 
@@ -59,10 +61,11 @@ public class OpenNLPSentimentDetectorTest {
         policy.getConfig().getAnalysis().getSentiment().setModel(getModelFilePath());
 
         final SentimentDetector sentimentDetector = new OpenNLPSentimentDetector();
-        final String sentiment = sentimentDetector.classify(policy, "I had a bad and terrible day.");
+        final Classification sentiment = sentimentDetector.classify(policy, "I had a bad and terrible day.");
 
         LOGGER.info("Sentiment detected as: {}", sentiment);
-        Assertions.assertEquals("1", sentiment);
+        Assertions.assertEquals("1", sentiment.label());
+        Assertions.assertEquals(0.6533860162507512, sentiment.confidence());
 
     }
 
