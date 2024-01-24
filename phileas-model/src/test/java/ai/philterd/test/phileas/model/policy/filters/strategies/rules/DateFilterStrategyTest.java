@@ -82,6 +82,71 @@ public class DateFilterStrategyTest extends AbstractFilterStrategyTest {
     }
 
     @Test
+    public void evaluateCondition3() {
+
+        final String[] window = new String[]{"died", "on", "10-05-2005"};
+
+        final AbstractFilterStrategy strategy = new DateFilterStrategy();
+
+        final boolean conditionSatisfied = strategy.evaluateCondition(getPolicy(), "context", "documentid", "test@test.com", window, "token is \"deathdate\"", 1.0, attributes);
+
+        Assertions.assertTrue(conditionSatisfied);
+
+    }
+
+    @Test
+    public void evaluateCondition4() {
+
+        final String[] window = new String[]{"died", "on", "10-05-2005"};
+
+        final AbstractFilterStrategy strategy = new DateFilterStrategy();
+
+        final boolean conditionSatisfied = strategy.evaluateCondition(getPolicy(), "context", "documentid", "test@test.com", window, "token is not \"deathdate\"", 1.0, attributes);
+
+        Assertions.assertFalse(conditionSatisfied);
+
+    }
+
+    @Test
+    public void evaluateCondition5() {
+
+        final String[] window = new String[]{"born", "on", "10-05-2005"};
+
+        final AbstractFilterStrategy strategy = new DateFilterStrategy();
+
+        final boolean conditionSatisfied = strategy.evaluateCondition(getPolicy(), "context", "documentid", "test@test.com", window, "token is not \"birthdate\"", 1.0, attributes);
+
+        Assertions.assertFalse(conditionSatisfied);
+
+    }
+
+    @Test
+    public void evaluateCondition6() {
+
+        final String[] window = new String[]{"born", "on", "10-05-2005"};
+
+        final AbstractFilterStrategy strategy = new DateFilterStrategy();
+
+        final boolean conditionSatisfied = strategy.evaluateCondition(getPolicy(), "context", "documentid", "test@test.com", window, "token is not \"birthdate or deathdate\"", 1.0, attributes);
+
+        Assertions.assertFalse(conditionSatisfied);
+
+    }
+
+    @Test
+    public void evaluateCondition7() {
+
+        final String[] window = new String[]{"died", "on", "10-05-2005"};
+
+        final AbstractFilterStrategy strategy = new DateFilterStrategy();
+
+        final boolean conditionSatisfied = strategy.evaluateCondition(getPolicy(), "context", "documentid", "test@test.com", window, "token is not \"birthdate or deathdate\"", 1.0, attributes);
+
+        Assertions.assertFalse(conditionSatisfied);
+
+    }
+
+    @Test
     public void shiftReplacement1() throws Exception {
 
         final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);

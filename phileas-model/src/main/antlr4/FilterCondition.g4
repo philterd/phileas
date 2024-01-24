@@ -31,6 +31,7 @@ COMPARATOR: (
     | '!='
     | 'startswith'
     | 'is'
+    | 'is not'
     );
 
 NUMBER: (
