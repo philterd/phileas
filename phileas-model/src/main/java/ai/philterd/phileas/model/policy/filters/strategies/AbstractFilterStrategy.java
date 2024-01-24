@@ -65,6 +65,8 @@ public abstract class AbstractFilterStrategy {
     public static final String SENTIMENT = "sentiment";
     public static final String CLASSIFICATION = "classification";
     public static final String BIRTHDATE = "birthdate";
+    public static final String DEATHDATE = "deathdate";
+    public static final String BIRTHDATE_OR_DEATHDATE = "birthdate or deathdate";
 
     // Conditions comparators
     public static final String STARTSWITH = "startswith";
@@ -75,6 +77,7 @@ public abstract class AbstractFilterStrategy {
     public static final String GREATER_THAN_EQUALS = ">=";
     public static final String LESS_THAN_EQUALS = "<=";
     public static final String IS = "is";
+    public static final String IS_NOT = "is not";
 
     @SerializedName("id")
     @Expose
@@ -179,7 +182,22 @@ public abstract class AbstractFilterStrategy {
                 conditionSatisfied = (token.equalsIgnoreCase(value));
                 break;
             case IS:
-                conditionSatisfied = (value.equalsIgnoreCase(BIRTHDATE) && isBirthdate(window));
+                if(value.equalsIgnoreCase(BIRTHDATE)) {
+                    conditionSatisfied = isBirthdate(window);
+                } else if(value.equalsIgnoreCase(DEATHDATE)) {
+                    conditionSatisfied = isDeathdate(window);
+                } else if(value.equalsIgnoreCase(BIRTHDATE_OR_DEATHDATE)) {
+                    conditionSatisfied = isBirthdate(window) || isDeathdate(window);
+                }
+                break;
+            case IS_NOT:
+                if(value.equalsIgnoreCase(BIRTHDATE)) {
+                    conditionSatisfied = !isBirthdate(window);
+                } else if(value.equalsIgnoreCase(DEATHDATE)) {
+                    conditionSatisfied = !isDeathdate(window);
+                } else if(value.equalsIgnoreCase(BIRTHDATE_OR_DEATHDATE)) {
+                    conditionSatisfied = !(isBirthdate(window) || isDeathdate(window));
+                }
                 break;
 
         }
@@ -189,7 +207,7 @@ public abstract class AbstractFilterStrategy {
     }
 
     /**
-     * Determines whether or not a token (date) is a birthdate based on the context.
+     * Determines if a token (date) is a birthdate based on the context.
      * @param window The window surrounding the token.
      * @return <code>true</code> if the date is found to be a birthdate, otherwise <code>false</code>.
      */
@@ -198,16 +216,36 @@ public abstract class AbstractFilterStrategy {
         // PHL-165: Is this a birthday?
         final String joinedWindow = StringUtils.join(window, " ").replaceAll("[^a-zA-Z ]", "").toLowerCase();
 
-        final boolean isBirthdate =
+        return
                 joinedWindow.contains("dob") ||
                         joinedWindow.contains("birthday") ||
+                        joinedWindow.contains("birth day") ||
                         joinedWindow.contains("birthdate") ||
                         joinedWindow.contains("date of birth") ||
                         joinedWindow.contains("birth") ||
                         joinedWindow.contains("born") ||
                         joinedWindow.contains("born on");
 
-        return isBirthdate;
+    }
+
+    /**
+     * Determines if a token (date) is a death date based on the context.
+     * @param window The window surrounding the token.
+     * @return <code>true</code> if the date is found to be a birthdate, otherwise <code>false</code>.
+     */
+    protected boolean isDeathdate(String[] window) {
+
+        // PHL-165: Is this a birthday?
+        final String joinedWindow = StringUtils.join(window, " ").replaceAll("[^a-zA-Z ]", "").toLowerCase();
+
+        return
+                joinedWindow.contains("deathdate") ||
+                        joinedWindow.contains("death date") ||
+                        joinedWindow.contains("death anniversary") ||
+                        joinedWindow.contains("passed away") ||
+                        joinedWindow.contains("died on") ||
+                        joinedWindow.contains("died") ||
+                        joinedWindow.contains("death");
 
     }
 
