@@ -1,17 +1,26 @@
 # Phileas
 
-Phileas is a Java library to redact PII, PHI, and other sensitive information from text. Given text or documents (PDF), Phileas analyzes the text searching for sensitive information such as persons' names, ages, addresses, and many other types of information. Phileas is highly configurable through its settings and policies.s
+Phileas is a Java library to deidentify text and redact PII, PHI, and other sensitive information from text. Given text or documents (PDF), Phileas analyzes the text searching for sensitive information such as persons' names, ages, addresses, and many other types of information. Phileas is highly configurable through its settings and policies.
 
 When sensitive information is identified, Phileas can manipulate the sensitive information in a variety of ways. The information can be replaced, encrypted, anonymized, and more. The user chooses how to manipulate each type of sensitive information. We refer to each of these methods in whole as "redaction."
 
 Information can be redacted based on the content of the information and other attributes. For example, only certain persons' names, only zip codes meeting some qualification, or IP addresses that match a given pattern.
 
-Phileas is the underlying core of [Philter](https://philterd.ai/philter/), a turnkey text redaction engine which is built on top of Phileas and provides an API for redacting text. Philter runs entirely within your cloud and never transmits data outside of your cloud. Custom AI models are available for domains like healthcare, legal, and news.
+## Powered by Phileas
+
+Phileas is the underlying core of [Philter](https://www.philterd.io/philter/), a turnkey text redaction engine which is built on top of Phileas and provides an API for redacting text. Philter runs entirely within your cloud and never transmits data outside of your cloud. Custom AI models are available for domains like healthcare, legal, and news.
 
 * [Philter on the AWS Marketplace](https://aws.amazon.com/marketplace/pp/B07YVB8FFT?ref=_ptnr_philterd)
 * [Philer on the Google Cloud Marketplace](https://console.cloud.google.com/marketplace/product/philterd-public/philter)
 * [Philter on the Azure Marketplace](https://azuremarketplace.microsoft.com/en-us/marketplace/apps/philterdllc1687189098111.philter?tab=Overview)
-* On-prem deployments by contacting us at [https://www.philterd.ai/](https://www.philterd.ai). 
+* On-prem deployments by contacting us at [https://www.philterd.io/](https://www.philterd.io). 
+
+Phileas also powers [Airlock](https://www.philterd.io/airlock), an AI policy layer to prevent the disclosure of sensitive information, such as PII and PHI, in your AI applications.
+
+* [Airlock on the AWS Marketplace](https://aws.amazon.com/marketplace/pp/prodview-inkh5a3kbhtf2)
+* [Airlock on the Google Cloud Marketplace](https://console.cloud.google.com/marketplace/product/philterd-public/airlock)
+* [Airlock on the Azure Marketplace](https://azuremarketplace.microsoft.com/en-us/marketplace/apps/philterdllc1687189098111.airlock?tab=Overview)
+* On-prem deployments by contacting us at [https://www.philterd.io/](https://www.philterd.io). 
 
 ## What Phileas Can Do
 
