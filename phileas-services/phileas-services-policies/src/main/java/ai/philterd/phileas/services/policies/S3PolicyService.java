@@ -15,6 +15,7 @@
  */
 package ai.philterd.phileas.services.policies;
 
+import ai.philterd.phileas.model.configuration.PhileasConfiguration;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.AnonymousAWSCredentials;
 import com.amazonaws.auth.DefaultAWSCredentialsProviderChain;
@@ -22,7 +23,6 @@ import com.amazonaws.client.builder.AwsClientBuilder;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.*;
-import ai.philterd.phileas.configuration.PhileasConfiguration;
 import ai.philterd.phileas.model.exceptions.api.BadRequestException;
 import ai.philterd.phileas.model.exceptions.api.InternalServerErrorException;
 import ai.philterd.phileas.model.services.AbstractPolicyService;

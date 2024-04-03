@@ -15,11 +15,6 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>ai.philterd</groupId>
-      <artifactId>phileas-configuration</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
       <groupId>org.redisson</groupId>
       <artifactId>redisson</artifactId>
       <version>${redisson.version}</version>
@@ -38,7 +33,7 @@
     </dependency>
     <dependency>
       <groupId>org.junit.jupiter</groupId>
-      <artifactId>junit-jupiter-api</artifactId>
+      <artifactId>junit-jupiter-engine</artifactId>
       <version>${junit.version}</version>
       <scope>test</scope>
     </dependency>

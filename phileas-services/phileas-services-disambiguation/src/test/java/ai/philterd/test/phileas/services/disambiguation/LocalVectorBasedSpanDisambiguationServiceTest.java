@@ -15,11 +15,10 @@
  */
 package ai.philterd.test.phileas.services.disambiguation;
 
-import ai.philterd.phileas.configuration.PhileasConfiguration;
+import ai.philterd.phileas.model.configuration.PhileasConfiguration;
 import ai.philterd.phileas.model.enums.FilterType;
 import ai.philterd.phileas.model.objects.Span;
 import ai.philterd.phileas.services.disambiguation.VectorBasedSpanDisambiguationService;
-import org.aeonbits.owner.ConfigFactory;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Assertions;
@@ -44,7 +43,7 @@ public class LocalVectorBasedSpanDisambiguationServiceTest {
         properties.setProperty("span.disambiguation.vector.size", "32");
         properties.setProperty("cache.redis.enabled", "false");
 
-        final PhileasConfiguration phileasConfiguration = ConfigFactory.create(PhileasConfiguration.class, properties);
+        final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties, "phileas");
 
         final String context = "c";
 
@@ -78,7 +77,7 @@ public class LocalVectorBasedSpanDisambiguationServiceTest {
         properties.setProperty("span.disambiguation.vector.size", "32");
         properties.setProperty("cache.redis.enabled", "false");
 
-        final PhileasConfiguration phileasConfiguration = ConfigFactory.create(PhileasConfiguration.class, properties);
+        final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties, "phileas");
 
         final String context = "c";
 

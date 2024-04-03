@@ -14,11 +14,6 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>ai.philterd</groupId>
-      <artifactId>phileas-configuration</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
       <groupId>com.github.javafaker</groupId>
       <artifactId>javafaker</artifactId>
       <version>${javafaker.version}</version>
@@ -42,7 +37,7 @@
     </dependency>
     <dependency>
       <groupId>org.junit.jupiter</groupId>
-      <artifactId>junit-jupiter-api</artifactId>
+      <artifactId>junit-jupiter-engine</artifactId>
       <version>${junit.version}</version>
       <scope>test</scope>
     </dependency>

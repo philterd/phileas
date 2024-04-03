@@ -15,7 +15,7 @@
  */
 package ai.philterd.phileas.services.anonymization.cache;
 
-import ai.philterd.phileas.configuration.PhileasConfiguration;
+import ai.philterd.phileas.model.configuration.PhileasConfiguration;
 import ai.philterd.phileas.model.services.AnonymizationCacheService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

@@ -15,7 +15,7 @@
  */
 package ai.philterd.phileas.services.policies.cache;
 
-import ai.philterd.phileas.configuration.PhileasConfiguration;
+import ai.philterd.phileas.model.configuration.PhileasConfiguration;
 import ai.philterd.phileas.model.cache.AbstractRedisCacheService;
 import ai.philterd.phileas.model.services.PolicyCacheService;
 import org.apache.logging.log4j.LogManager;
