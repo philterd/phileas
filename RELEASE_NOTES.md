@@ -8,51 +8,48 @@ Issues whose identifiers start with `PHL-` were previously tracked in Jira befor
 * PHL-312 - Add death date detection similar to the birthdate detection
 * PHL-311 - Return the probabilities of sentiment and offensiveness in addition to the predicted categories
 
-## Version 2.5.0
+## Version 2.5.0 - November 19, 2023
 
 * PHL-309 - Load OpenNLP models from the classpath by default
 * PHL-308 - Add sentiment as a condition
 
-## Version 2.4.0
+## Version 2.4.0 - October 17, 2023
 
 * PHL-306 - Rename "filter profile" to "policy"
 * PHL-305 - Allow dates to be shifted by a random value
 * PHL-304 - Skip onnx runtime tests on OSX
 
-## Version 2.3.0
-No issues found  Refresh
-
-## Version 2.2.1
+## Version 2.3.0 - September 17, 2023
 
 * PHL-277 - Combine PDFs image into a new PDF
 * PHL-264 - Bring back Flair as PersonsV1 filter
 
-## Version 2.2.0
+## Version 2.2.0 - August 14, 2023
 
 * PHL-277 - Combine PDFs image into a new PDF - **05/Sep/23 12:27** - Today 1:37
 * PHL-264 - Bring back Flair as PersonsV1 filter
 
-## Version 2.1.0
+## Version 2.1.0 - May 16, 2023
 
 * PHL-261 - Incorporate a sentence detector into the NER
 * PHL-260 - Switch to Apache OpenNLP 2.0 instead of using ONNX Runtime directly
 * PHL-259 - Allow for reading encryption values from environment variables
 * PHL-258 - Implement format-preserving encryption
 
-## Version 2.0.0
+## Version 2.0.0 - February 5, 2022
 
 * PHL-254 - Remove splitting capability
 * PHL-251 - Replace phileas-ner with Java ONNX service
 
-## Version 1.12.2
+## Version 1.12.2 - December 20, 2021
 
 * PHL-249 - Upgrade log4j to 2.16.0
 
-## Version 1.12.1
+## Version 1.12.1 - December 14, 2021
 
 * PHL-249 - Upgrade log4j to 2.16.0
 
-## Version 1.12.0
+## Version 1.12.0 - December 14, 2021
 
 * PHL-248 - Upgrade log4j to 2.15.0
 * PHL-246 - Remove store from FilterService
@@ -66,17 +63,14 @@ No issues found  Refresh
 * PHL-227 - Support currency such as $.50
 * PHL-173 - 9 digit zip codes without a delimiter are not found - Improvement
 
-## Version 1.11.0
+## Version 1.11.0 - June 7, 2021
 
 * PHL-226 - Add currency filter
 * PHL-222 - Add bank routing number filter
 * PHL-218 - Add document analysis prior to filtering
 * PHL-211 - Encapsulate the constructor arguments to the filters
 
-## Version 1.10.1
-No issues found  Refresh
-
-## Version 1.10.0
+## Version 1.10.0 - March 23, 2021
 
 * PHL-217 - Change redisson delete to delete by index
 * PHL-216 - Update project dependencies
@@ -93,7 +87,7 @@ No issues found  Refresh
 * PHL-183 - Adjust phone number confidence based on pattern
 * PHL-162 - Fix RELATIVE date filter strategy for "October 2009" date
 
-## Version 1.9.0
+## Version 1.9.0 - January 19, 2021
 
 * PHL-188 - Add street address filter
 * PHL-184 - Remove new line characters from spans
@@ -115,12 +109,12 @@ No issues found  Refresh
 * PHL-157 - Resolve NPEs with dictionary filter
 * PHL-4 - Shift dates by some time period
 
-## Version 1.8.0
+## Version 1.8.0 - November 1, 2020
 
 * PHL-155 - Maintain metrics on individual filter performance times
 * PHL-148 - Read list of filter ignored terms from a file
 
-## Version 1.7.0
+## Version 1.7.0 - September 21, 2020
 
 * PHL-154 - Add Prometheus monitoring endpoint
 * PHL-152 - Add detect() method to filters
@@ -134,7 +128,7 @@ No issues found  Refresh
 * PHL-140 - Add classification condition to IdentifierFilterStrategy
 * PHL-139 - Allow spaces in IBAN codes
 
-## Version 1.6.0
+## Version 1.6.0 - June 8, 2020
 
 * PHL-143 - Fix spans not going to the store - Bug
 * PHL-142 - Add PhileasSystemLoader to OWNER
@@ -157,13 +151,13 @@ No issues found  Refresh
 * PHL-120 - Set contextual words for each regex filter
 * PHL-118 - Wrap regular expression patterns into an object
 
-## Version 1.5.0
+## Version 1.5.0 - April 30, 2020
 
 * PHL-98 - Make cache generic and use cache for filter profiles
 * PHL-97 - Incorporate the S3FilterProfileService into Phileas
 * PHL-69 - Create "Section" filter that removes between start and end tags
 
-## Version 1.4.0
+## Version 1.4.0 - April 9, 2020
 
 * PHL-96 - Upgrade libphonenumber to 8.12.1
 * PHL-95 - Add token condition to NerFilterStrategy
@@ -175,7 +169,7 @@ No issues found  Refresh
 * PHL-85 - StateAbbreviationFilter is making a span with the input and not the state
 * PHL-84 - Capture a span's window when creating a span
 
-## Version 1.3.1
+## Version 1.3.1 - February 23, 2020
 
 * PHL-82 - Allow client to set document ID
 * PHL-78 - Switch to Java 11
@@ -186,7 +180,7 @@ No issues found  Refresh
 * PHL-71 - Add replacement template value for the token
 * PHL-70 - Add filter condition based on context
 
-## Version 1.3.0
+## Version 1.3.0 - January 27, 2020
 
 * PHL-68 - When there are no strategies just redact
 * PHL-67 - Don't identify "may" as a date
@@ -198,7 +192,7 @@ No issues found  Refresh
 * PHL-58 - Generate document ID based on input hash
 * PHL-56 - Don't throw NPE when Philter-NER throws an error
 
-## Version 1.2.0
+## Version 1.2.0 - January 16, 2020
 
 * PHL-55 - Fix issue where NER conditions are not being applied to NER spans
 * PHL-54 - Add filter profile option to remove punctuation
@@ -211,7 +205,7 @@ No issues found  Refresh
 * PHL-35 - Add ignore lists specific to individual filters
 * PHL-33 - Test multiple identifiers in a filter profile
 
-## Version 1.1.0
+## Version 1.1.0 - December 14, 2019
 
 * PHL-41 - Fix replacement checks in strategies
 * PHL-39 - Allow for the filters to be reloaded at runtime
@@ -238,7 +232,7 @@ No issues found  Refresh
 * PHL-10 - Remove unneeded guava dependency
 * PHL-9 - Add license information to poms
 
-## Version 1.0.0
+## Version 1.0.0 - October 06, 2019
 
 Initial release.
 
