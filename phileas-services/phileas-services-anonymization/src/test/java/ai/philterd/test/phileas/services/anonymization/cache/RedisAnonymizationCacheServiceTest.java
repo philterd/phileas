@@ -15,15 +15,15 @@
  */
 package ai.philterd.test.phileas.services.anonymization.cache;
 
-import ai.philterd.phileas.configuration.PhileasConfiguration;
+import ai.philterd.phileas.model.configuration.PhileasConfiguration;
 import ai.philterd.phileas.services.anonymization.cache.RedisAnonymizationCacheService;
-import org.aeonbits.owner.ConfigFactory;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.*;
 import redis.embedded.RedisServer;
 
+import java.io.IOException;
 import java.util.Properties;
 
 import static org.junit.jupiter.api.Assumptions.assumeFalse;
@@ -35,7 +35,7 @@ public class RedisAnonymizationCacheServiceTest {
     private RedisServer redisServer;
     private static boolean isExternalRedis = false;
 
-    private PhileasConfiguration getConfiguration() {
+    private PhileasConfiguration getConfiguration() throws IOException {
 
         final Properties properties = new Properties();
 
@@ -73,9 +73,7 @@ public class RedisAnonymizationCacheServiceTest {
 
         }
 
-        final PhileasConfiguration phileasConfiguration = ConfigFactory.create(PhileasConfiguration.class, properties);
-
-        return phileasConfiguration;
+        return new PhileasConfiguration(properties, "phileas");
 
     }
 

@@ -9,14 +9,6 @@
 	<artifactId>phileas-services</artifactId>
 	<name>phileas-services</name>
 	<packaging>pom</packaging>
-	<licenses>
-		<license>
-			<name>Mountain Fog Commercial License</name>
-			<url>https://www.mtnfog.com</url>
-			<distribution>manual</distribution>
-			<comments>Phileas is proprietary closed-source software.</comments>
-		</license>
-	</licenses>
 	<modules>
 		<module>phileas-services-metrics</module>
 		<module>phileas-services-anonymization</module>

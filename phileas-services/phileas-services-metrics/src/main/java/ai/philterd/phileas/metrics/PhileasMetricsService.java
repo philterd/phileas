@@ -15,10 +15,10 @@
  */
 package ai.philterd.phileas.metrics;
 
+import ai.philterd.phileas.model.configuration.PhileasConfiguration;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.cloudwatch.AmazonCloudWatchAsync;
 import com.amazonaws.services.cloudwatch.AmazonCloudWatchAsyncClientBuilder;
-import ai.philterd.phileas.configuration.PhileasConfiguration;
 import ai.philterd.phileas.model.enums.FilterType;
 import ai.philterd.phileas.model.services.MetricsService;
 import com.sun.net.httpserver.HttpServer;

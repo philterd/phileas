@@ -15,7 +15,7 @@
  */
 package ai.philterd.phileas.services.anonymization.cache;
 
-import ai.philterd.phileas.configuration.PhileasConfiguration;
+import ai.philterd.phileas.model.configuration.PhileasConfiguration;
 import ai.philterd.phileas.model.cache.AbstractRedisCacheService;
 import ai.philterd.phileas.model.services.AnonymizationCacheService;
 import org.apache.commons.codec.digest.DigestUtils;

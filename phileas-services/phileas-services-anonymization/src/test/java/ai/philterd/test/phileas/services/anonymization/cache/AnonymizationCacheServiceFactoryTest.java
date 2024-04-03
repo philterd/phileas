@@ -15,14 +15,14 @@
  */
 package ai.philterd.test.phileas.services.anonymization.cache;
 
-import ai.philterd.phileas.configuration.PhileasConfiguration;
+import ai.philterd.phileas.model.configuration.PhileasConfiguration;
 import ai.philterd.phileas.model.services.AnonymizationCacheService;
 import ai.philterd.phileas.services.anonymization.cache.AnonymizationCacheServiceFactory;
 import ai.philterd.phileas.services.anonymization.cache.LocalAnonymizationCacheService;
-import org.aeonbits.owner.ConfigFactory;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
 import java.util.Properties;
 
 public class AnonymizationCacheServiceFactoryTest {
@@ -30,19 +30,17 @@ public class AnonymizationCacheServiceFactoryTest {
     @Test
     public void useLocalAsDefault() throws Exception {
 
-        final Properties properties = new Properties();
-
         final AnonymizationCacheService anonymizationCacheService = AnonymizationCacheServiceFactory.getAnonymizationCacheService(getConfiguration());
 
-        Assertions.assertTrue(anonymizationCacheService instanceof LocalAnonymizationCacheService);
+        Assertions.assertInstanceOf(LocalAnonymizationCacheService.class, anonymizationCacheService);
 
     }
 
-    private PhileasConfiguration getConfiguration() {
+    private PhileasConfiguration getConfiguration() throws IOException {
 
         final Properties properties = new Properties();
 
-        return ConfigFactory.create(PhileasConfiguration.class, properties);
+        return new PhileasConfiguration(properties, "phileas");
 
     }
 

@@ -2,8 +2,8 @@ package ai.philterd.test.phileas.services.ai.models;
 
 import ai.philterd.phileas.service.ai.models.ModelCache;
 import opennlp.tools.doccat.DocumentCategorizerME;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class ModelCacheTest {
 
@@ -13,7 +13,7 @@ public class ModelCacheTest {
         final ModelCache modelCache = ModelCache.getInstance();
         final DocumentCategorizerME documentCategorizerME = modelCache.get("doesnt-exist");
 
-        Assert.assertNull(documentCategorizerME);
+        Assertions.assertNull(documentCategorizerME);
 
     }
 

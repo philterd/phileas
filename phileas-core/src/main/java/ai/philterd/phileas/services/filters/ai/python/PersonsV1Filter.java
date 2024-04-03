@@ -15,7 +15,7 @@
  */
 package ai.philterd.phileas.services.filters.ai.python;
 
-import ai.philterd.phileas.configuration.PhileasConfiguration;
+import ai.philterd.phileas.model.configuration.PhileasConfiguration;
 import ai.philterd.phileas.model.enums.FilterType;
 import ai.philterd.phileas.model.filter.FilterConfiguration;
 import ai.philterd.phileas.model.filter.dynamic.NerFilter;
@@ -65,9 +65,9 @@ public class PersonsV1Filter extends NerFilter {
 
         this.removePunctuation = removePunctuation;
         this.tag = tag;
-        int timeoutSec = phileasConfiguration.nerTimeoutSec();
+        int timeoutSec = phileasConfiguration.nerTimeout();
         int maxIdleConnections = phileasConfiguration.nerMaxIdleConnections();
-        int keepAliveDurationMs = phileasConfiguration.nerKeepAliveDurationMs();
+        int keepAliveDurationMs = phileasConfiguration.nerKeepAliveDuration();
 
         final OkHttpClient okHttpClient = new OkHttpClient.Builder()
                 .retryOnConnectionFailure(true)
@@ -78,7 +78,7 @@ public class PersonsV1Filter extends NerFilter {
                 .build();
 
         final Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(phileasConfiguration.philterNerEndpoint())
+                .baseUrl(phileasConfiguration.nerEndpoint())
                 .client(okHttpClient)
                 .callFactory(okHttpClient)
                 .addConverterFactory(ScalarsConverterFactory.create())

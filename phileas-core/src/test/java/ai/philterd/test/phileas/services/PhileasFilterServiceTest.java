@@ -15,9 +15,9 @@
  */
 package ai.philterd.test.phileas.services;
 
+import ai.philterd.phileas.model.configuration.PhileasConfiguration;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import ai.philterd.phileas.configuration.PhileasConfiguration;
 import ai.philterd.phileas.model.enums.MimeType;
 import ai.philterd.phileas.model.objects.Span;
 import ai.philterd.phileas.model.policy.Policy;
@@ -25,7 +25,7 @@ import ai.philterd.phileas.model.policy.Ignored;
 import ai.philterd.phileas.model.responses.BinaryDocumentFilterResponse;
 import ai.philterd.phileas.model.serializers.PlaceholderDeserializer;
 import ai.philterd.phileas.services.PhileasFilterService;
-import org.aeonbits.owner.ConfigFactory;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -118,7 +118,7 @@ public class PhileasFilterServiceTest {
         properties.setProperty("store.enabled", "false");
         properties.setProperty("filter.policies.directory", temp.toFile().getAbsolutePath());
 
-        final PhileasConfiguration phileasConfiguration = ConfigFactory.create(PhileasConfiguration.class, properties);
+        final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties, "phileas");
 
         PhileasFilterService service = new PhileasFilterService(phileasConfiguration);
         final BinaryDocumentFilterResponse response = service.filter(Arrays.asList("pdf"), "context", "documentid", document, MimeType.APPLICATION_PDF, MimeType.APPLICATION_PDF);
@@ -155,7 +155,7 @@ public class PhileasFilterServiceTest {
         properties.setProperty("store.enabled", "false");
         properties.setProperty("filter.policies.directory", temp.toFile().getAbsolutePath());
 
-        final PhileasConfiguration phileasConfiguration = ConfigFactory.create(PhileasConfiguration.class, properties);
+        final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties, "phileas");
 
         PhileasFilterService service = new PhileasFilterService(phileasConfiguration);
         final BinaryDocumentFilterResponse response = service.filter(Arrays.asList("pdf"), "context", "documentid", document, MimeType.APPLICATION_PDF, MimeType.APPLICATION_PDF);
