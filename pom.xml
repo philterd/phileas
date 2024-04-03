@@ -89,13 +89,16 @@
 		<libphonenumber.version>8.13.4</libphonenumber.version>
 		<log4j.version>2.19.0</log4j.version>
 		<lucene.version>8.3.0</lucene.version>
+		<maven.compiler.version>3.8.1</maven.compiler.version>
+		<maven.failsafe.version>3.2.5</maven.failsafe.version>
+		<maven.surefire.version>3.2.5</maven.surefire.version>
 		<micrometer.version>1.10.2</micrometer.version>
 		<mockito.version>5.4.0</mockito.version>
 		<nv-i18n.version>1.27</nv-i18n.version>
 		<opennlp.version>2.1.0</opennlp.version>
 		<pdfbox.version>2.0.23</pdfbox.version>
 		<redis-mock.version>0.1.6</redis-mock.version>
-		<redisson.version>3.19.1</redisson.version>
+		<redisson.version>3.27.2</redisson.version>
 		<retrofit.version>2.9.0</retrofit.version>
 		<scala.major.version>2.12</scala.major.version>
 		<segment.version>2.0.1</segment.version>
@@ -107,7 +110,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-compiler-plugin</artifactId>
-					<version>3.8.1</version>
+					<version>${maven.compiler.version}</version>
 				</plugin>
 			</plugins>
 		</pluginManagement>
@@ -121,19 +124,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
-				<version>2.22.2</version>
-				<dependencies>
-					<dependency>
-						<groupId>org.junit.platform</groupId>
-						<artifactId>junit-platform-surefire-provider</artifactId>
-						<version>1.3.2</version>
-					</dependency>
-					<dependency>
-						<groupId>org.junit.jupiter</groupId>
-						<artifactId>junit-jupiter-engine</artifactId>
-						<version>${junit.version}</version>
-					</dependency>
-				</dependencies>
+				<version>${maven.surefire.version}</version>
 				<configuration>
 					<argLine>-Xmx8g --add-opens java.base/java.util=ALL-UNNAMED --add-opens java.base/java.lang=ALL-UNNAMED</argLine>
 					<excludes>
@@ -147,7 +138,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-failsafe-plugin</artifactId>
-				<version>2.22.2</version>
+				<version>${maven.failsafe.version}</version>
 				<configuration>
 					<includes>
 						<include>**/*IT.java</include>
