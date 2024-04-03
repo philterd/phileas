@@ -15,16 +15,19 @@
  */
 package ai.philterd.test.phileas.services.alerts;
 
-import ai.philterd.phileas.configuration.PhileasConfiguration;
+import ai.philterd.phileas.model.configuration.PhileasConfiguration;
 import ai.philterd.phileas.model.enums.FilterType;
 import ai.philterd.phileas.model.objects.Alert;
 import ai.philterd.phileas.model.services.AlertService;
 import ai.philterd.phileas.services.alerts.RedisAlertService;
-import org.aeonbits.owner.ConfigFactory;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import redis.embedded.RedisServer;
 
 import java.io.IOException;
@@ -40,7 +43,7 @@ public class RedisAlertServiceTest {
     private RedisServer redisServer;
     private static boolean isExternalRedis = false;
 
-    private PhileasConfiguration getConfiguration() {
+    private PhileasConfiguration getConfiguration() throws IOException {
 
         final Properties properties = new Properties();
 
@@ -78,7 +81,7 @@ public class RedisAlertServiceTest {
 
         }
 
-        return ConfigFactory.create(PhileasConfiguration.class, properties);
+        return new PhileasConfiguration(properties, "phileas");
 
     }
 

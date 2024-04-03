@@ -15,22 +15,25 @@
  */
 package ai.philterd.test.phileas.services.registry;
 
-import com.google.gson.Gson;
-import ai.philterd.phileas.configuration.PhileasConfiguration;
-import ai.philterd.phileas.model.policy.Policy;
+import ai.philterd.phileas.model.configuration.PhileasConfiguration;
 import ai.philterd.phileas.model.policy.Identifiers;
+import ai.philterd.phileas.model.policy.Policy;
 import ai.philterd.phileas.model.policy.filters.Age;
 import ai.philterd.phileas.model.policy.filters.CreditCard;
 import ai.philterd.phileas.model.policy.filters.strategies.rules.AgeFilterStrategy;
 import ai.philterd.phileas.model.policy.filters.strategies.rules.CreditCardFilterStrategy;
 import ai.philterd.phileas.model.services.PolicyService;
 import ai.philterd.phileas.services.policies.S3PolicyService;
+import com.google.gson.Gson;
 import io.findify.s3mock.S3Mock;
-import org.aeonbits.owner.ConfigFactory;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import redis.embedded.RedisServer;
 
 import java.io.IOException;
@@ -53,7 +56,7 @@ public class S3PolicyServiceTest {
 
     private static boolean isExternalRedis = false;
 
-    private PhileasConfiguration getConfiguration() {
+    private PhileasConfiguration getConfiguration() throws IOException {
 
         final Properties properties = new Properties();
 
@@ -91,7 +94,7 @@ public class S3PolicyServiceTest {
 
         }
 
-        return ConfigFactory.create(PhileasConfiguration.class, properties);
+        return new PhileasConfiguration(properties, "phileas");
 
     }
 

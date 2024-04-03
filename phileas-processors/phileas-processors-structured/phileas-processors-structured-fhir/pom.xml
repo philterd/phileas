@@ -8,14 +8,6 @@
   </parent>
   <artifactId>phileas-processors-structured-fhir</artifactId>
   <name>phileas-processors-structured-fhir</name>
-  <licenses>
-    <license>
-      <name>Mountain Fog Commercial License</name>
-      <url>https://www.mtnfog.com</url>
-      <distribution>manual</distribution>
-      <comments>Phileas is proprietary closed-source software.</comments>
-    </license>
-  </licenses>
   <dependencies>
     <dependency>
       <groupId>ai.philterd</groupId>
@@ -40,7 +32,7 @@
     </dependency>
     <dependency>
       <groupId>org.junit.jupiter</groupId>
-      <artifactId>junit-jupiter-api</artifactId>
+      <artifactId>junit-jupiter-engine</artifactId>
       <version>${junit.version}</version>
       <scope>test</scope>
     </dependency>
