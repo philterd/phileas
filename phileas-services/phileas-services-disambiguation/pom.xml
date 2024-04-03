@@ -15,11 +15,6 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>ai.philterd</groupId>
-      <artifactId>phileas-configuration</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
       <groupId>org.redisson</groupId>
       <artifactId>redisson</artifactId>
       <version>${redisson.version}</version>

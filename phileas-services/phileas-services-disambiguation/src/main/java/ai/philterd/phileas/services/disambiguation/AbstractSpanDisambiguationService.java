@@ -15,7 +15,7 @@
  */
 package ai.philterd.phileas.services.disambiguation;
 
-import ai.philterd.phileas.configuration.PhileasConfiguration;
+import ai.philterd.phileas.model.configuration.PhileasConfiguration;
 import ai.philterd.phileas.model.services.SpanDisambiguationCacheService;
 import ai.philterd.phileas.services.disambiguation.cache.SpanDisambiguationLocalCacheService;
 import ai.philterd.phileas.services.disambiguation.cache.SpanDisambiguationRedisCacheService;
@@ -38,7 +38,7 @@ public abstract class AbstractSpanDisambiguationService {
     // Changing the size would require starting all over because the values in it would
     // no longer be valid because the hash function would have changed.
 
-    private PhileasConfiguration phileasConfiguration;
+    private final PhileasConfiguration phileasConfiguration;
 
     protected boolean enabled;
     protected final int vectorSize;

@@ -15,7 +15,7 @@
  */
 package ai.philterd.phileas.services;
 
-import ai.philterd.phileas.configuration.PhileasConfiguration;
+import ai.philterd.phileas.model.configuration.PhileasConfiguration;
 import ai.philterd.phileas.metrics.PhileasMetricsService;
 import ai.philterd.phileas.model.domain.Domain;
 import ai.philterd.phileas.model.domain.HealthDomain;

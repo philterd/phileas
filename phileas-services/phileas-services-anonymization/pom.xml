@@ -14,11 +14,6 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>ai.philterd</groupId>
-      <artifactId>phileas-configuration</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
       <groupId>com.github.javafaker</groupId>
       <artifactId>javafaker</artifactId>
       <version>${javafaker.version}</version>
