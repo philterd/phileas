@@ -15,7 +15,7 @@
  */
 package ai.philterd.phileas.services.policies;
 
-import ai.philterd.phileas.configuration.PhileasConfiguration;
+import ai.philterd.phileas.model.configuration.PhileasConfiguration;
 import ai.philterd.phileas.model.exceptions.api.BadRequestException;
 import ai.philterd.phileas.model.services.AbstractPolicyService;
 import ai.philterd.phileas.model.services.PolicyCacheService;
@@ -39,8 +39,8 @@ public class LocalPolicyService extends AbstractPolicyService implements PolicyS
 
     private static final String JSON_EXTENSION = ".json";
 
-    private String policiesDirectory;
-    private PolicyCacheService policyCacheService;
+    private final String policiesDirectory;
+    private final PolicyCacheService policyCacheService;
 
     public LocalPolicyService(PhileasConfiguration phileasConfiguration) {
         

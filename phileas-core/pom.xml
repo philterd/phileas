@@ -11,14 +11,6 @@
 	</parent>
 	<artifactId>phileas-core</artifactId>
 	<name>phileas-core</name>
-	<licenses>
-		<license>
-			<name>Mountain Fog Commercial License</name>
-			<url>https://www.mtnfog.com</url>
-			<distribution>manual</distribution>
-			<comments>Phileas is proprietary closed-source software.</comments>
-		</license>
-	</licenses>
 	<dependencies>
 		<dependency>
 			<groupId>ai.philterd</groupId>
@@ -68,11 +60,6 @@
 		<dependency>
 			<groupId>ai.philterd</groupId>
 			<artifactId>phileas-services-alerts</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>ai.philterd</groupId>
-			<artifactId>phileas-configuration</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
@@ -148,7 +135,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.junit.jupiter</groupId>
-			<artifactId>junit-jupiter-api</artifactId>
+			<artifactId>junit-jupiter-engine</artifactId>
 			<version>${junit.version}</version>
 			<scope>test</scope>
 		</dependency>

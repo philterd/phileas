@@ -9,14 +9,6 @@
   <artifactId>phileas-processors</artifactId>
   <name>phileas-processors</name>
   <packaging>pom</packaging>
-  <licenses>
-    <license>
-      <name>Mountain Fog Commercial License</name>
-      <url>https://www.mtnfog.com</url>
-      <distribution>manual</distribution>
-      <comments>Phileas is proprietary closed-source software.</comments>
-    </license>
-  </licenses>
   <modules>
     <module>phileas-processors-unstructured</module>
     <!--<module>phileas-processors-structured</module>-->

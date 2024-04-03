@@ -15,7 +15,7 @@
  */
 package ai.philterd.phileas.services.alerts;
 
-import ai.philterd.phileas.configuration.PhileasConfiguration;
+import ai.philterd.phileas.model.configuration.PhileasConfiguration;
 import ai.philterd.phileas.model.cache.AbstractRedisCacheService;
 import ai.philterd.phileas.model.enums.FilterType;
 import ai.philterd.phileas.model.objects.Alert;
