@@ -6,6 +6,7 @@ Issues whose identifiers start with `PHL-` were previously tracked in Jira befor
 
 * PHL-313 - Remove OWNER project fork for managing application properties
 * PHL-312 - Add death date detection similar to the birthdate detection
+* PHL-312 - Add a new condition comparator for “IS NOT” so you can say date filter strategy "IS NOT birthdate" or "IS NOT deathdate"
 * PHL-311 - Return the probabilities of sentiment and offensiveness in addition to the predicted categories
 
 ## Version 2.5.0 - November 19, 2023
