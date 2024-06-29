@@ -35,7 +35,7 @@ public class PhileasConfiguration {
     }
 
     public String nerEndpoint() {
-        return getProperty("ner.endpoint", "http://localhost:8080/");
+        return getProperty("ner.endpoint", "http://localhost:18080/");
     }
 
     public int nerTimeout() {
