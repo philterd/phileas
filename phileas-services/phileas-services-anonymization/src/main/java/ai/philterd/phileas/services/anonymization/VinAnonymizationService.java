@@ -23,7 +23,7 @@ import java.util.LinkedList;
 
 public class VinAnonymizationService extends AbstractAnonymizationService {
 
-    private Collection<String> randomVins = new LinkedList<>();
+    private final Collection<String> randomVins = new LinkedList<>();
 
     public VinAnonymizationService(AnonymizationCacheService anonymizationCacheService) {
         super(anonymizationCacheService);

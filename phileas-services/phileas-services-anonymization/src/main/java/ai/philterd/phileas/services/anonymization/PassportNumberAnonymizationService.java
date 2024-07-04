@@ -21,7 +21,7 @@ import java.security.SecureRandom;
 
 public class PassportNumberAnonymizationService extends AbstractAnonymizationService {
 
-    private SecureRandom secureRandom;
+    private final SecureRandom secureRandom;
 
     public PassportNumberAnonymizationService(AnonymizationCacheService anonymizationCacheService) {
         super(anonymizationCacheService);

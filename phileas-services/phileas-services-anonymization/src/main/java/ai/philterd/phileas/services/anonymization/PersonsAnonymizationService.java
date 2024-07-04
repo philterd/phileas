@@ -20,7 +20,7 @@ import ai.philterd.phileas.model.services.AnonymizationCacheService;
 
 public class PersonsAnonymizationService extends AbstractAnonymizationService {
 
-    private transient Faker faker;
+    private final transient Faker faker;
 
     public PersonsAnonymizationService(AnonymizationCacheService anonymizationCacheService) {
         super(anonymizationCacheService);

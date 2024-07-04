@@ -15,15 +15,12 @@
  */
 package ai.philterd.phileas.services.anonymization;
 
-import ai.philterd.phileas.services.anonymization.faker.Faker;
 import ai.philterd.phileas.model.services.AnonymizationCacheService;
-import org.apache.commons.lang3.StringUtils;
-
-import java.util.Random;
+import ai.philterd.phileas.services.anonymization.faker.Faker;
 
 public class StreetAddressAnonymizationService extends AbstractAnonymizationService {
 
-    private transient Faker faker;
+    private final transient Faker faker;
 
     public StreetAddressAnonymizationService(AnonymizationCacheService anonymizationCacheService) {
         super(anonymizationCacheService);
