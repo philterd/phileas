@@ -22,7 +22,7 @@ import java.util.Random;
 
 public class AlphanumericAnonymizationService extends AbstractAnonymizationService {
 
-    private Random random;
+    private final Random random;
 
     public AlphanumericAnonymizationService(AnonymizationCacheService anonymizationCacheService) {
         super(anonymizationCacheService);

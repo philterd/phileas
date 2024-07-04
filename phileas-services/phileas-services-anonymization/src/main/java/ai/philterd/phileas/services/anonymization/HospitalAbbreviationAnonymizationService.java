@@ -21,7 +21,7 @@ import org.apache.commons.text.WordUtils;
 
 public class HospitalAbbreviationAnonymizationService extends AbstractAnonymizationService {
 
-    private transient Faker faker;
+    private final transient Faker faker;
 
     public HospitalAbbreviationAnonymizationService(AnonymizationCacheService anonymizationCacheService) {
         super(anonymizationCacheService);

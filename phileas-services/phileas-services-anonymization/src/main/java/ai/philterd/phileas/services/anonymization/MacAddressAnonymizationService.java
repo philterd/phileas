@@ -21,7 +21,7 @@ import java.security.SecureRandom;
 
 public class MacAddressAnonymizationService extends AbstractAnonymizationService {
 
-    private SecureRandom secureRandom;
+    private final SecureRandom secureRandom;
 
     public MacAddressAnonymizationService(AnonymizationCacheService anonymizationCacheService) {
         super(anonymizationCacheService);

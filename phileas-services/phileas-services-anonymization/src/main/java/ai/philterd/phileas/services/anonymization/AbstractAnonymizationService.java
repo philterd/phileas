@@ -20,7 +20,7 @@ import ai.philterd.phileas.model.services.AnonymizationService;
 
 public abstract class AbstractAnonymizationService implements AnonymizationService {
 
-    private AnonymizationCacheService anonymizationCacheService;
+    private final AnonymizationCacheService anonymizationCacheService;
 
     public AbstractAnonymizationService(AnonymizationCacheService anonymizationCacheService) {
         this.anonymizationCacheService = anonymizationCacheService;
