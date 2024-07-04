@@ -1,0 +1,20 @@
+test:
+  faker:
+    code:
+      isbn_gs1: ["333","444"]
+      isbn_group: ["9971"]
+      isbn_registrant: ["#{numerify '#-####'}"]
+    property:
+       dummy: [x, y, z]
+       simple: "hello"
+       simpleResolution: "#{hello}"
+       advancedResolution: "#{Superhero.name}"
+       regexify1: "#{regexify '[45]{2}'}"
+       regexify_cell: "#{regexify '4[57]9'}"
+       regexify_slash_format: /[45]{2}/
+       bothify_2: "#{bothify '??##','true'}"
+       sameResolution: "#{hello} #{hello}"
+       multipleResolution: "#{hello} #{Superhero.descriptor}"
+       resolutionWithList:
+           - "#{hello}"
+           - "#{hello2}"

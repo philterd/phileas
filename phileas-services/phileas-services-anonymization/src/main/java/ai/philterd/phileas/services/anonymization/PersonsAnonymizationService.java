@@ -1,5 +1,5 @@
 /*
- *     Copyright 2023 Philterd, LLC @ https://www.philterd.ai
+ *     Copyright 2024 Philterd, LLC @ https://www.philterd.ai
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +15,7 @@
  */
 package ai.philterd.phileas.services.anonymization;
 
-import com.github.javafaker.Faker;
+import ai.philterd.phileas.services.anonymization.faker.Faker;
 import ai.philterd.phileas.model.services.AnonymizationCacheService;
 
 public class PersonsAnonymizationService extends AbstractAnonymizationService {

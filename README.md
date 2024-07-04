@@ -165,5 +165,5 @@ There is a long list of `identifiers` that can be applied, and each identifier h
 
 As of Phileas 2.2.1, Phileas is licensed under the Apache License, version 2.0. Previous versions were under a proprietary license.
 
-Copyright 2023 Philterd, LLC.
+Copyright 2024 Philterd, LLC.
 Copyright 2018-2023 Mountain Fog, Inc.
