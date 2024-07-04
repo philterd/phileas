@@ -36,6 +36,8 @@ Phileas also powers [Airlock](https://www.philter.ai/airlock), an AI policy laye
 
 ## Supported PII, PHI, and Other Sensitive Information
 
+This list might be outdated. Please check the individual filter classes for details.
+
 ### Persons
 
 * Person's Names - Multiple methods, e.g. NER, dictionary, census data
@@ -50,7 +52,7 @@ Phileas also powers [Airlock](https://www.philter.ai/airlock), an AI policy laye
 * Bitcoin Addresses
 * Credit Cards
 * Currency (USD)
-* Dates
+* Dates (in addition to birthdates and deathdates)
 * (US) Driver's License Numbers
 * Email Addresses
 * IBAN Codes
