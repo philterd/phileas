@@ -36,7 +36,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - uses: actions/delete-package-versions@v5
         with: 
-          package-name: "ai.philterd.*"
+          package-name: "ai.philterd.owner"
           package-type: "maven"
           min-versions-to-keep: 2
-          delete-only-pre-release-versions: true
+          delete-only-pre-release-versions: false
+          
