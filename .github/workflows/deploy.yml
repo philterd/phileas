@@ -17,27 +17,26 @@ jobs:
         with:
           lfs: true
           ref: ${{ github.event.inputs.phileas_tag }}
-      - name: Cache Maven packages
-        uses: actions/cache@v1
-        with:
-          path: ~/.m2
-          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-          restore-keys: ${{ runner.os }}-m2
-      - name: Set up JDK 17
-        uses: actions/setup-java@v3
-        with:
-          java-version: 17
-          distribution: adopt
-          architecture: x64
-          cache: maven
-      - name: Build and Deploy
-        run: mvn --batch-mode --update-snapshots deploy
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      # - name: Cache Maven packages
+      #   uses: actions/cache@v1
+      #   with:
+      #     path: ~/.m2
+      #     key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+      #     restore-keys: ${{ runner.os }}-m2
+      # - name: Set up JDK 17
+      #   uses: actions/setup-java@v3
+      #   with:
+      #     java-version: 17
+      #     distribution: adopt
+      #     architecture: x64
+      #     cache: maven
+      # - name: Build and Deploy
+      #   run: mvn --batch-mode --update-snapshots deploy
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - uses: actions/delete-package-versions@v5
         with: 
-          package-name: "ai.philterd.owner"
+          package-name: "com.mtnfog"
           package-type: "maven"
           min-versions-to-keep: 2
           delete-only-pre-release-versions: false
-          
