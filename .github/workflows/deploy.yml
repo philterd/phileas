@@ -36,7 +36,13 @@ jobs:
       #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - uses: actions/delete-package-versions@v5
         with: 
-          package-name: "com.mtnfog"
+          package-name: "com.mtnfog.phileas"
+          package-type: "maven"
+          min-versions-to-keep: 2
+          delete-only-pre-release-versions: false
+      - uses: actions/delete-package-versions@v5
+        with: 
+          package-name: "com.mtnfog.owner"
           package-type: "maven"
           min-versions-to-keep: 2
           delete-only-pre-release-versions: false
