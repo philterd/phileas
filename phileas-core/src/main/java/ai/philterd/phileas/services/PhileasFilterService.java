@@ -15,8 +15,8 @@
  */
 package ai.philterd.phileas.services;
 
-import ai.philterd.phileas.model.configuration.PhileasConfiguration;
 import ai.philterd.phileas.metrics.PhileasMetricsService;
+import ai.philterd.phileas.model.configuration.PhileasConfiguration;
 import ai.philterd.phileas.model.domain.Domain;
 import ai.philterd.phileas.model.domain.HealthDomain;
 import ai.philterd.phileas.model.domain.LegalDomain;
@@ -89,7 +89,6 @@ public class PhileasFilterService implements FilterService {
 
     private final AnonymizationCacheService anonymizationCacheService;
     private final AlertService alertService;
-    private final SpanDisambiguationService spanDisambiguationService;
     private final String indexDirectory;
     private final double bloomFilterFpp;
 
@@ -133,11 +132,8 @@ public class PhileasFilterService implements FilterService {
         // Set the bloom filter FPP.
         this.bloomFilterFpp = phileasConfiguration.bloomFilterFpp();
 
-        // Configure span disambiguation.
-        this.spanDisambiguationService = new VectorBasedSpanDisambiguationService(phileasConfiguration);
-
         // Create a new unstructured document processor.
-        this.unstructuredDocumentProcessor = new UnstructuredDocumentProcessor(metricsService, spanDisambiguationService);
+        this.unstructuredDocumentProcessor = new UnstructuredDocumentProcessor(metricsService, new VectorBasedSpanDisambiguationService(phileasConfiguration));
 
         // Get the window size.
         this.windowSize = phileasConfiguration.spanWindowSize();
