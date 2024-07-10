@@ -762,7 +762,7 @@ public class EndToEndTests {
     }
 
     @Test
-    public void endToEndMultiplePolicys() throws Exception {
+    public void endToEndMultiplePolicies() throws Exception {
 
         final Path temp = Files.createTempDirectory("philter");
 

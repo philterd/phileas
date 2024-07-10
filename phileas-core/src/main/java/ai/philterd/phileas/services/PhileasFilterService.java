@@ -266,7 +266,7 @@ public class PhileasFilterService implements FilterService {
                                  final String input, final MimeType mimeType) throws Exception {
 
         // Get the combined policy.
-        final Policy policy = policyUtils.getCombinedPolicys(policyNames);
+        final Policy policy = policyUtils.getCombinedPolicies(policyNames);
 
         // Do the filtering.
         return filter(policy, context, documentId, input, mimeType);
@@ -279,7 +279,7 @@ public class PhileasFilterService implements FilterService {
                                                final MimeType outputMimeType) throws Exception {
 
         // Get the policy.
-        final Policy policy = policyUtils.getCombinedPolicys(policyNames);
+        final Policy policy = policyUtils.getCombinedPolicies(policyNames);
 
         // Initialize potential attributes that are associated with the input text.
         // NOTE: Binary documents do not currently have any attributes.
