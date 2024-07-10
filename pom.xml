@@ -36,13 +36,15 @@
     </licenses>
     <distributionManagement>
         <snapshotRepository>
-            <id>ossrh</id>
-            <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
-        </snapshotRepository>
-        <repository>
-            <id>ossrh</id>
-            <url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-        </repository>
+			  <id>philterd-repository-snapshots</id>
+			  <name>Philterd Snapshots Repository</name>
+			  <url>https://artifacts.philterd.ai/snapshots</url>
+		</snapshotRepository>
+		<repository>
+			  <id>philterd-repository-releases</id>
+			  <name>Philterd Repository</name>
+			  <url>https://artifacts.philterd.ai/releases</url>
+		</repository>
     </distributionManagement>
     <repositories>
         <repository>
@@ -50,8 +52,15 @@
             <url>https://repo1.maven.org/maven2</url>
         </repository>
         <repository>
-            <id>github</id>
-            <url>https://maven.pkg.github.com/philterd/phileas</url>
+            <id>philterd-repository-releases</id>
+            <url>https://artifacts.philterd.ai/releases</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>philterd-repository-snapshots</id>
+            <url>https://artifacts.philterd.ai/snapshots</url>
             <snapshots>
                 <enabled>true</enabled>
             </snapshots>
