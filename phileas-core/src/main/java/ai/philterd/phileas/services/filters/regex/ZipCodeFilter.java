@@ -41,7 +41,7 @@ public class ZipCodeFilter extends RegexFilter {
 
         if(requireDelimiter) {
 
-            // With delimeter
+            // With delimiter
             final Pattern zipCodePattern = Pattern.compile("\\b[0-9]{5}(?:-[0-9]{4})?\\b");
             final FilterPattern zipCode = new FilterPattern.FilterPatternBuilder(zipCodePattern, 0.90).build();
 
@@ -49,7 +49,7 @@ public class ZipCodeFilter extends RegexFilter {
 
         } else {
 
-            // Without delimeter.
+            // Without delimiter.
             final Pattern zipCodePattern = Pattern.compile("\\b[0-9]{5}(?:-?[0-9]{4})?\\b");
             final FilterPattern zipCode = new FilterPattern.FilterPatternBuilder(zipCodePattern, 0.50).build();
 

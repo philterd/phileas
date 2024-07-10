@@ -53,12 +53,10 @@ public class PhileasMetricsService implements MetricsService {
     private static final String TOTAL_DOCUMENTS_PROCESSED = "total.documents.processed";
     private static final String DOCUMENTS_PROCESSED = "documents.processed";
 
-    private transient CompositeMeterRegistry compositeMeterRegistry;
-
-    private transient Counter processed;
-    private transient Counter documents;
-    private transient Map<FilterType, Counter> filterTypes;
-    private transient Map<FilterType, Timer> filterTimers;
+    private final transient Counter processed;
+    private final transient Counter documents;
+    private final transient Map<FilterType, Counter> filterTypes;
+    private final transient Map<FilterType, Timer> filterTimers;
 
     /**
      * Creates a new metrics service.
@@ -66,7 +64,7 @@ public class PhileasMetricsService implements MetricsService {
      */
     public PhileasMetricsService(PhileasConfiguration phileasConfiguration) {
 
-        compositeMeterRegistry = new CompositeMeterRegistry();
+        final CompositeMeterRegistry compositeMeterRegistry = new CompositeMeterRegistry();
 
         compositeMeterRegistry.config().commonTags("application", "philter");
 

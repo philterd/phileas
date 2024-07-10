@@ -57,7 +57,7 @@ public class UnstructuredDocumentProcessor implements DocumentProcessor {
         // The list that will contain the spans containing PHI/PII.
         List<Span> spans = new LinkedList<>();
 
-        // Execute each filter.
+        // Apply each filter.
         for(final Filter filter : filters) {
 
             final long startTimeMs = System.currentTimeMillis();
