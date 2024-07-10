@@ -88,7 +88,7 @@ After cloning, run `git lfs pull` to download models needed for unit tests. Phil
 
 ## Using Phileas
 
-Phileas snapshots are available in our Maven repository so add the following to your Maven configuration:
+Phileas snapshots are available in our [Maven repositories](https://artifacts.philterd.ai/) so add the following to your Maven configuration:
 
 ```
 <repository>
@@ -118,7 +118,7 @@ Next, add the Phileas dependency to your project:
 
 ```
 
-### Finding and Redacting Sensitive Information in Text
+### Finding and Manipulating Sensitive Information in Text
 
 Create a `FilterService`, using a `PhileasConfiguration`, and call `filter()` on the service:
 
