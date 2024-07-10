@@ -46,7 +46,7 @@ public class PolicyUtilsTest {
 
         final Gson gson = new Gson();
         final PolicyUtils policyUtils = new PolicyUtils(policyService, gson);
-        final Policy policy = policyUtils.getCombinedPolicys(Arrays.asList("policy1"));
+        final Policy policy = policyUtils.getCombinedPolicies(Arrays.asList("policy1"));
 
         final Policy originalPolicy = gson.fromJson(json1, Policy.class);
 
@@ -73,7 +73,7 @@ public class PolicyUtilsTest {
 
         final Gson gson = new Gson();
         final PolicyUtils policyUtils = new PolicyUtils(policyService, gson);
-        final Policy policy = policyUtils.getCombinedPolicys(Arrays.asList("policy1", "policy2"));
+        final Policy policy = policyUtils.getCombinedPolicies(Arrays.asList("policy1", "policy2"));
 
         Assertions.assertNotNull(policy);
         Assertions.assertTrue(StringUtils.equals(policy.getName(), "combined"));
@@ -97,7 +97,7 @@ public class PolicyUtilsTest {
         final PolicyUtils policyUtils = new PolicyUtils(policyService, gson);
 
         Assertions.assertThrows(IllegalStateException.class, () -> {
-            final Policy policy = policyUtils.getCombinedPolicys(Arrays.asList("policy1", "policy2"));
+            final Policy policy = policyUtils.getCombinedPolicies(Arrays.asList("policy1", "policy2"));
         });
 
     }
@@ -114,7 +114,7 @@ public class PolicyUtilsTest {
 
         final Gson gson = new Gson();
         final PolicyUtils policyUtils = new PolicyUtils(policyService, gson);
-        final Policy policy = policyUtils.getCombinedPolicys(Arrays.asList("policy3", "policy4"));
+        final Policy policy = policyUtils.getCombinedPolicies(Arrays.asList("policy3", "policy4"));
 
         Assertions.assertNotNull(policy);
         Assertions.assertTrue(policy.getIdentifiers().hasFilter(FilterType.CUSTOM_DICTIONARY));
@@ -134,7 +134,7 @@ public class PolicyUtilsTest {
 
         final Gson gson = new Gson();
         final PolicyUtils policyUtils = new PolicyUtils(policyService, gson);
-        final Policy policy = policyUtils.getCombinedPolicys(Arrays.asList("policy5", "policy6"));
+        final Policy policy = policyUtils.getCombinedPolicies(Arrays.asList("policy5", "policy6"));
 
         Assertions.assertNotNull(policy);
         Assertions.assertNotNull(policy.getCrypto());
@@ -156,7 +156,7 @@ public class PolicyUtilsTest {
 
         final Gson gson = new Gson();
         final PolicyUtils policyUtils = new PolicyUtils(policyService, gson);
-        final Policy policy = policyUtils.getCombinedPolicys(Arrays.asList("policy6", "policy5"));
+        final Policy policy = policyUtils.getCombinedPolicies(Arrays.asList("policy6", "policy5"));
 
         Assertions.assertNotNull(policy);
         Assertions.assertNull(policy.getCrypto());
@@ -176,7 +176,7 @@ public class PolicyUtilsTest {
 
         final Gson gson = new Gson();
         final PolicyUtils policyUtils = new PolicyUtils(policyService, gson);
-        final Policy policy = policyUtils.getCombinedPolicys(Arrays.asList("policy7", "policy5"));
+        final Policy policy = policyUtils.getCombinedPolicies(Arrays.asList("policy7", "policy5"));
 
         Assertions.assertNotNull(policy);
         Assertions.assertNull(policy.getCrypto());
@@ -196,7 +196,7 @@ public class PolicyUtilsTest {
 
         final Gson gson = new Gson();
         final PolicyUtils policyUtils = new PolicyUtils(policyService, gson);
-        final Policy policy = policyUtils.getCombinedPolicys(Arrays.asList("policy8", "policy9"));
+        final Policy policy = policyUtils.getCombinedPolicies(Arrays.asList("policy8", "policy9"));
 
         Assertions.assertNotNull(policy);
         Assertions.assertNotNull(policy.getIgnored());
@@ -217,7 +217,7 @@ public class PolicyUtilsTest {
 
         final Gson gson = new Gson();
         final PolicyUtils policyUtils = new PolicyUtils(policyService, gson);
-        final Policy policy = policyUtils.getCombinedPolicys(Arrays.asList("policy10", "policy11"));
+        final Policy policy = policyUtils.getCombinedPolicies(Arrays.asList("policy10", "policy11"));
 
         Assertions.assertNotNull(policy);
         Assertions.assertNotNull(policy.getIgnored());
