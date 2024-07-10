@@ -88,14 +88,32 @@ After cloning, run `git lfs pull` to download models needed for unit tests. Phil
 
 ## Using Phileas
 
+Phileas snapshots are available in our Maven repository so add the following to your Maven configuration:
 
-First, add the Phileas dependency to your project:
+```
+<repository>
+    <id>philterd-repository-releases</id>
+    <url>https://artifacts.philterd.ai/releases</url>
+    <snapshots>
+        <enabled>false</enabled>
+    </snapshots>
+</repository>
+<repository>
+    <id>philterd-repository-snapshots</id>
+    <url>https://artifacts.philterd.ai/snapshots</url>
+    <snapshots>
+        <enabled>true</enabled>
+    </snapshots>
+</repository>
+```
+
+Next, add the Phileas dependency to your project:
 
 ```
 <dependency>
   <groupId>ai.philterd</groupId>
   <artifactId>phileas-core</artifactId>
-  <version>${phileas.version}</version>
+  <version>2.7.0-SNAPSHOT</version>
 </dependency>
 
 ```
