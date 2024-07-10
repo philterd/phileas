@@ -29,7 +29,7 @@ public class LocalAlertService implements AlertService {
 
     private static final Logger LOGGER = LogManager.getLogger(LocalAlertService.class);
 
-    private List<Alert> alerts;
+    private final List<Alert> alerts;
 
     public LocalAlertService() {
 

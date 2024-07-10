@@ -34,7 +34,7 @@ public interface AlertService {
     void generateAlert(String policy, String strategyId, String context, String documentId, FilterType filterType);
 
     /**
-     * Gets all of the alerts.
+     * Gets all alerts.
      * @return A list of all the alerts.
      */
     List<Alert> getAlerts();

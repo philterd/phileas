@@ -19,7 +19,7 @@ import ai.philterd.phileas.model.metadata.MetadataResponse;
 
 public class ZipCodeMetadataResponse extends MetadataResponse {
 
-    private int population;
+    private final int population;
 
     public ZipCodeMetadataResponse(int population) {
         this.population = population;

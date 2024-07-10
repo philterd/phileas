@@ -115,7 +115,6 @@ public class PhileasFilterServiceTest {
 
         Properties properties = new Properties();
         properties.setProperty("indexes.directory", INDEXES_DIRECTORY);
-        properties.setProperty("store.enabled", "false");
         properties.setProperty("filter.policies.directory", temp.toFile().getAbsolutePath());
 
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties, "phileas");
@@ -152,7 +151,6 @@ public class PhileasFilterServiceTest {
 
         Properties properties = new Properties();
         properties.setProperty("indexes.directory", INDEXES_DIRECTORY);
-        properties.setProperty("store.enabled", "false");
         properties.setProperty("filter.policies.directory", temp.toFile().getAbsolutePath());
 
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties, "phileas");

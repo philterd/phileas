@@ -32,16 +32,8 @@ import java.util.regex.Pattern;
 
 public class TrackingNumberFilter extends RegexFilter {
 
-    private final boolean ups;
-    private final boolean fedex;
-    private final boolean usps;
-
-    public TrackingNumberFilter(FilterConfiguration filterConfiguration, boolean ups, boolean fedex, boolean usps) {
+    public TrackingNumberFilter(FilterConfiguration filterConfiguration, final boolean ups, final boolean fedex, final boolean usps) {
         super(FilterType.TRACKING_NUMBER, filterConfiguration);
-
-        this.ups = ups;
-        this.fedex = fedex;
-        this.usps = usps;
 
         // https://andrewkurochkin.com/blog/code-for-recognizing-delivery-company-by-track
 

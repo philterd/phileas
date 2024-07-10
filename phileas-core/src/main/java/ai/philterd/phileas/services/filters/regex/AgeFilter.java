@@ -26,7 +26,6 @@ import ai.philterd.phileas.model.policy.Policy;
 
 import java.util.*;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 public class AgeFilter extends RegexFilter {
 

@@ -39,7 +39,7 @@ public class PassportNumberAnonymizationService extends AbstractAnonymizationSer
 
         for(byte b : macAddr){
 
-            if(sb.length() > 0) {
+            if(!sb.isEmpty()) {
                 sb.append(":");
             }
 

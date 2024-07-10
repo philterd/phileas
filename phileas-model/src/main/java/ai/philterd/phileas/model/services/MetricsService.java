@@ -17,8 +17,6 @@ package ai.philterd.phileas.model.services;
 
 import ai.philterd.phileas.model.enums.FilterType;
 
-import java.util.concurrent.TimeUnit;
-
 public interface MetricsService {
 
     void incrementProcessed();

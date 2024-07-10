@@ -22,7 +22,7 @@ import java.util.LinkedList;
 
 public class CountyAnonymizationService extends AbstractAnonymizationService {
 
-    private static final Collection<String> counties = new LinkedList<String>();
+    private static final Collection<String> counties = new LinkedList<>();
 
     public CountyAnonymizationService(AnonymizationCacheService anonymizationCacheService) {
         super(anonymizationCacheService);

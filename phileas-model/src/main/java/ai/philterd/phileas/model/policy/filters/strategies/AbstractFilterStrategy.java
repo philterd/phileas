@@ -15,21 +15,19 @@
  */
 package ai.philterd.phileas.model.policy.filters.strategies;
 
-import ai.philterd.phileas.model.policy.Policy;
-import com.google.gson.annotations.Expose;
-import com.google.gson.annotations.SerializedName;
 import ai.philterd.phileas.model.conditions.ParsedCondition;
 import ai.philterd.phileas.model.enums.FilterType;
 import ai.philterd.phileas.model.objects.FilterPattern;
 import ai.philterd.phileas.model.objects.Replacement;
 import ai.philterd.phileas.model.policy.Crypto;
 import ai.philterd.phileas.model.policy.FPE;
+import ai.philterd.phileas.model.policy.Policy;
 import ai.philterd.phileas.model.services.AnonymizationService;
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
