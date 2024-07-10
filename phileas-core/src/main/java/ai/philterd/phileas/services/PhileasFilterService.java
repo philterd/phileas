@@ -159,11 +159,8 @@ public class PhileasFilterService implements FilterService {
     }
 
     @Override
-    public FilterResponse filter(final List<String> policyNames, final String context, String documentId,
+    public FilterResponse filter(final Policy policy, final String context, String documentId,
                                  final String input, final MimeType mimeType) throws Exception {
-
-        // Get the policy.
-        final Policy policy = policyUtils.getCombinedPolicys(policyNames);
 
         // Initialize potential attributes that are associated with the input text.
         final Map<String, String> attributes = new HashMap<>();
@@ -261,6 +258,18 @@ public class PhileasFilterService implements FilterService {
         }
 
         return filterResponse;
+
+    }
+
+    @Override
+    public FilterResponse filter(final List<String> policyNames, final String context, String documentId,
+                                 final String input, final MimeType mimeType) throws Exception {
+
+        // Get the combined policy.
+        final Policy policy = policyUtils.getCombinedPolicys(policyNames);
+
+        // Do the filtering.
+        return filter(policy, context, documentId, input, mimeType);
 
     }
 

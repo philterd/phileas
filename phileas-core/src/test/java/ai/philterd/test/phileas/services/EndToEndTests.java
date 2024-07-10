@@ -92,7 +92,6 @@ public class EndToEndTests {
 
         Properties properties = new Properties();
         properties.setProperty("indexes.directory", INDEXES_DIRECTORY);
-        properties.setProperty("store.enabled", "false");
         properties.setProperty("filter.policies.directory", temp.toFile().getAbsolutePath());
 
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties, "phileas");
@@ -125,7 +124,6 @@ public class EndToEndTests {
 
         Properties properties = new Properties();
         properties.setProperty("indexes.directory", INDEXES_DIRECTORY);
-        properties.setProperty("store.enabled", "false");
         properties.setProperty("filter.policies.directory", temp.toFile().getAbsolutePath());
 
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties, "phileas");
@@ -150,7 +148,6 @@ public class EndToEndTests {
 
         Properties properties = new Properties();
         properties.setProperty("indexes.directory", INDEXES_DIRECTORY);
-        properties.setProperty("store.enabled", "false");
         properties.setProperty("filter.policies.directory", temp.toFile().getAbsolutePath());
 
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties, "phileas");
@@ -175,7 +172,6 @@ public class EndToEndTests {
 
         Properties properties = new Properties();
         properties.setProperty("indexes.directory", INDEXES_DIRECTORY);
-        properties.setProperty("store.enabled", "false");
         properties.setProperty("filter.policies.directory", temp.toFile().getAbsolutePath());
 
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties, "phileas");
@@ -200,7 +196,6 @@ public class EndToEndTests {
 
         Properties properties = new Properties();
         properties.setProperty("indexes.directory", INDEXES_DIRECTORY);
-        properties.setProperty("store.enabled", "false");
         properties.setProperty("filter.policies.directory", temp.toFile().getAbsolutePath());
 
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties, "phileas");
@@ -225,7 +220,6 @@ public class EndToEndTests {
 
         Properties properties = new Properties();
         properties.setProperty("indexes.directory", INDEXES_DIRECTORY);
-        properties.setProperty("store.enabled", "false");
         properties.setProperty("filter.policies.directory", temp.toFile().getAbsolutePath());
 
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties, "phileas");
@@ -250,7 +244,6 @@ public class EndToEndTests {
 
         Properties properties = new Properties();
         properties.setProperty("indexes.directory", INDEXES_DIRECTORY);
-        properties.setProperty("store.enabled", "false");
         properties.setProperty("filter.policies.directory", temp.toFile().getAbsolutePath());
 
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties, "phileas");
@@ -275,7 +268,6 @@ public class EndToEndTests {
 
         Properties properties = new Properties();
         properties.setProperty("indexes.directory", INDEXES_DIRECTORY);
-        properties.setProperty("store.enabled", "false");
         properties.setProperty("filter.policies.directory", temp.toFile().getAbsolutePath());
 
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties, "phileas");
@@ -300,7 +292,6 @@ public class EndToEndTests {
 
         Properties properties = new Properties();
         properties.setProperty("indexes.directory", INDEXES_DIRECTORY);
-        properties.setProperty("store.enabled", "false");
         properties.setProperty("filter.policies.directory", temp.toFile().getAbsolutePath());
 
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties, "phileas");
@@ -326,7 +317,6 @@ public class EndToEndTests {
 
         Properties properties = new Properties();
         properties.setProperty("indexes.directory", INDEXES_DIRECTORY);
-        properties.setProperty("store.enabled", "false");
         properties.setProperty("filter.policies.directory", temp.toFile().getAbsolutePath());
 
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties, "phileas");
@@ -351,7 +341,6 @@ public class EndToEndTests {
 
         Properties properties = new Properties();
         properties.setProperty("indexes.directory", INDEXES_DIRECTORY);
-        properties.setProperty("store.enabled", "false");
         properties.setProperty("filter.policies.directory", temp.toFile().getAbsolutePath());
 
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties, "phileas");
@@ -381,7 +370,6 @@ public class EndToEndTests {
 
         Properties properties = new Properties();
         properties.setProperty("indexes.directory", INDEXES_DIRECTORY);
-        properties.setProperty("store.enabled", "false");
         properties.setProperty("filter.policies.directory", temp.toFile().getAbsolutePath());
 
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties, "phileas");
@@ -408,7 +396,6 @@ public class EndToEndTests {
 
         Properties properties = new Properties();
         properties.setProperty("indexes.directory", INDEXES_DIRECTORY);
-        properties.setProperty("store.enabled", "false");
         properties.setProperty("filter.policies.directory", temp.toFile().getAbsolutePath());
 
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties, "phileas");
@@ -440,7 +427,6 @@ public class EndToEndTests {
 
         Properties properties = new Properties();
         properties.setProperty("indexes.directory", INDEXES_DIRECTORY);
-        properties.setProperty("store.enabled", "false");
         properties.setProperty("filter.policies.directory", temp.toFile().getAbsolutePath());
 
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties, "phileas");
@@ -470,7 +456,6 @@ public class EndToEndTests {
 
         Properties properties = new Properties();
         properties.setProperty("indexes.directory", INDEXES_DIRECTORY);
-        properties.setProperty("store.enabled", "false");
         properties.setProperty("filter.policies.directory", temp.toFile().getAbsolutePath());
 
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties, "phileas");
@@ -500,7 +485,6 @@ public class EndToEndTests {
 
         Properties properties = new Properties();
         properties.setProperty("indexes.directory", INDEXES_DIRECTORY);
-        properties.setProperty("store.enabled", "false");
         properties.setProperty("filter.policies.directory", temp.toFile().getAbsolutePath());
 
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties, "phileas");
@@ -532,7 +516,6 @@ public class EndToEndTests {
 
         Properties properties = new Properties();
         properties.setProperty("indexes.directory", INDEXES_DIRECTORY);
-        properties.setProperty("store.enabled", "false");
         properties.setProperty("filter.policies.directory", temp.toFile().getAbsolutePath());
 
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties, "phileas");
@@ -564,7 +547,6 @@ public class EndToEndTests {
 
         Properties properties = new Properties();
         properties.setProperty("indexes.directory", INDEXES_DIRECTORY);
-        properties.setProperty("store.enabled", "false");
         properties.setProperty("filter.policies.directory", temp.toFile().getAbsolutePath());
 
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties, "phileas");
@@ -573,6 +555,29 @@ public class EndToEndTests {
 
         final PhileasFilterService service = new PhileasFilterService(phileasConfiguration);
         final FilterResponse response = service.filter(Arrays.asList("streetaddress"), "context", "documentid", input, MimeType.TEXT_PLAIN);
+
+        LOGGER.info(response.filteredText());
+
+        showSpans(response.explanation().appliedSpans());
+
+        Assertions.assertEquals("documentid", response.documentId());
+        Assertions.assertEquals(1, response.explanation().appliedSpans().size());
+        Assertions.assertEquals("he lived at {{{REDACTED-street-address}}}", response.filteredText().trim());
+
+    }
+
+    @Test
+    public void endToEndWithPolicyAsObject() throws Exception {
+
+        final Policy policy = getPolicyJustStreetAddress("streetaddress");
+
+        Properties properties = new Properties();
+        final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties, "phileas");
+
+        final String input = "he lived at 100 main street";
+
+        final PhileasFilterService service = new PhileasFilterService(phileasConfiguration);
+        final FilterResponse response = service.filter(policy, "context", "documentid", input, MimeType.TEXT_PLAIN);
 
         LOGGER.info(response.filteredText());
 
@@ -596,7 +601,6 @@ public class EndToEndTests {
 
         Properties properties = new Properties();
         properties.setProperty("indexes.directory", INDEXES_DIRECTORY);
-        properties.setProperty("store.enabled", "false");
         properties.setProperty("filter.policies.directory", temp.toFile().getAbsolutePath());
 
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties, "phileas");
@@ -636,7 +640,6 @@ public class EndToEndTests {
 
         final Properties properties = new Properties();
         properties.setProperty("indexes.directory", INDEXES_DIRECTORY);
-        properties.setProperty("store.enabled", "false");
         properties.setProperty("filter.policies.directory", temp.toFile().getAbsolutePath());
 
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties, "phileas");
@@ -679,7 +682,6 @@ public class EndToEndTests {
 
         final Properties properties = new Properties();
         properties.setProperty("indexes.directory", INDEXES_DIRECTORY);
-        properties.setProperty("store.enabled", "false");
         properties.setProperty("filter.policies.directory", temp.toFile().getAbsolutePath());
 
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties, "phileas");
@@ -720,7 +722,6 @@ public class EndToEndTests {
 
         final Properties properties = new Properties();
         properties.setProperty("indexes.directory", INDEXES_DIRECTORY);
-        properties.setProperty("store.enabled", "false");
         properties.setProperty("filter.policies.directory", temp.toFile().getAbsolutePath());
 
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties, "phileas");
@@ -745,7 +746,6 @@ public class EndToEndTests {
 
         Properties properties = new Properties();
         properties.setProperty("indexes.directory", INDEXES_DIRECTORY);
-        properties.setProperty("store.enabled", "false");
         properties.setProperty("filter.policies.directory", temp.toFile().getAbsolutePath());
 
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties, "phileas");
@@ -776,7 +776,6 @@ public class EndToEndTests {
 
         Properties properties = new Properties();
         properties.setProperty("indexes.directory", INDEXES_DIRECTORY);
-        properties.setProperty("store.enabled", "false");
         properties.setProperty("filter.policies.directory", temp.toFile().getAbsolutePath());
 
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties, "phileas");
@@ -801,7 +800,6 @@ public class EndToEndTests {
 
         Properties properties = new Properties();
         properties.setProperty("indexes.directory", INDEXES_DIRECTORY);
-        properties.setProperty("store.enabled", "false");
         properties.setProperty("filter.policies.directory", temp.toFile().getAbsolutePath());
 
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties, "phileas");
@@ -826,7 +824,6 @@ public class EndToEndTests {
 
         Properties properties = new Properties();
         properties.setProperty("indexes.directory", INDEXES_DIRECTORY);
-        properties.setProperty("store.enabled", "false");
         properties.setProperty("filter.policies.directory", temp.toFile().getAbsolutePath());
 
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties, "phileas");
@@ -850,7 +847,6 @@ public class EndToEndTests {
 
         Properties properties = new Properties();
         properties.setProperty("indexes.directory", INDEXES_DIRECTORY);
-        properties.setProperty("store.enabled", "false");
         properties.setProperty("filter.policies.directory", temp.toFile().getAbsolutePath());
 
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties, "phileas");
@@ -874,7 +870,6 @@ public class EndToEndTests {
 
         Properties properties = new Properties();
         properties.setProperty("indexes.directory", INDEXES_DIRECTORY);
-        properties.setProperty("store.enabled", "false");
         properties.setProperty("filter.policies.directory", temp.toFile().getAbsolutePath());
 
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties, "phileas");
@@ -899,7 +894,6 @@ public class EndToEndTests {
 
         Properties properties = new Properties();
         properties.setProperty("indexes.directory", INDEXES_DIRECTORY);
-        properties.setProperty("store.enabled", "false");
         properties.setProperty("filter.policies.directory", temp.toFile().getAbsolutePath());
 
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties, "phileas");
