@@ -25,5 +25,3 @@ jobs:
           cache: maven
       - name: Build and Test
         run: mvn --batch-mode --update-snapshots package -Powasp -DnvdApiKey=${{ secrets.NVD_API_KEY }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
