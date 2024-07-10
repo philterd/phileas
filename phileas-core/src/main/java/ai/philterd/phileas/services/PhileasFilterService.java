@@ -15,8 +15,8 @@
  */
 package ai.philterd.phileas.services;
 
-import ai.philterd.phileas.model.configuration.PhileasConfiguration;
 import ai.philterd.phileas.metrics.PhileasMetricsService;
+import ai.philterd.phileas.model.configuration.PhileasConfiguration;
 import ai.philterd.phileas.model.domain.Domain;
 import ai.philterd.phileas.model.domain.HealthDomain;
 import ai.philterd.phileas.model.domain.LegalDomain;
@@ -89,7 +89,6 @@ public class PhileasFilterService implements FilterService {
 
     private final AnonymizationCacheService anonymizationCacheService;
     private final AlertService alertService;
-    private final SpanDisambiguationService spanDisambiguationService;
     private final String indexDirectory;
     private final double bloomFilterFpp;
 
@@ -133,11 +132,8 @@ public class PhileasFilterService implements FilterService {
         // Set the bloom filter FPP.
         this.bloomFilterFpp = phileasConfiguration.bloomFilterFpp();
 
-        // Configure span disambiguation.
-        this.spanDisambiguationService = new VectorBasedSpanDisambiguationService(phileasConfiguration);
-
         // Create a new unstructured document processor.
-        this.unstructuredDocumentProcessor = new UnstructuredDocumentProcessor(metricsService, spanDisambiguationService);
+        this.unstructuredDocumentProcessor = new UnstructuredDocumentProcessor(metricsService, new VectorBasedSpanDisambiguationService(phileasConfiguration));
 
         // Get the window size.
         this.windowSize = phileasConfiguration.spanWindowSize();
@@ -159,11 +155,8 @@ public class PhileasFilterService implements FilterService {
     }
 
     @Override
-    public FilterResponse filter(final List<String> policyNames, final String context, String documentId,
+    public FilterResponse filter(final Policy policy, final String context, String documentId,
                                  final String input, final MimeType mimeType) throws Exception {
-
-        // Get the policy.
-        final Policy policy = policyUtils.getCombinedPolicys(policyNames);
 
         // Initialize potential attributes that are associated with the input text.
         final Map<String, String> attributes = new HashMap<>();
@@ -265,12 +258,24 @@ public class PhileasFilterService implements FilterService {
     }
 
     @Override
+    public FilterResponse filter(final List<String> policyNames, final String context, String documentId,
+                                 final String input, final MimeType mimeType) throws Exception {
+
+        // Get the combined policy.
+        final Policy policy = policyUtils.getCombinedPolicies(policyNames);
+
+        // Do the filtering.
+        return filter(policy, context, documentId, input, mimeType);
+
+    }
+
+    @Override
     public BinaryDocumentFilterResponse filter(final List<String> policyNames, final String context, String documentId,
                                                final byte[] input, final MimeType mimeType,
                                                final MimeType outputMimeType) throws Exception {
 
         // Get the policy.
-        final Policy policy = policyUtils.getCombinedPolicys(policyNames);
+        final Policy policy = policyUtils.getCombinedPolicies(policyNames);
 
         // Initialize potential attributes that are associated with the input text.
         // NOTE: Binary documents do not currently have any attributes.

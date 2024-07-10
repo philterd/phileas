@@ -39,7 +39,7 @@ public class PolicyUtils {
 
     }
 
-    public Policy getCombinedPolicys(final List<String> policyNames) throws IOException, IllegalStateException {
+    public Policy getCombinedPolicies(final List<String> policyNames) throws IOException, IllegalStateException {
 
         // Get the deserialized policy of the first policy in the list.
         // By starting off with a full policy we don't have to worry about adding

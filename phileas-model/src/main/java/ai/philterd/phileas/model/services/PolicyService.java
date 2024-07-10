@@ -25,36 +25,36 @@ public interface PolicyService {
      * Gets the names of all policies from
      * the backend store directly by-passing the cache.
      * @return A list of policy names.
-     * @throws IOException
+     * @throws IOException Thrown if the policy names cannot be read.
      */
     List<String> get() throws IOException;
 
     /**
      * Gets the content of a policy.
-     * @param policyName
+     * @param policyName The name of the policy.
      * @return The policy.
-     * @throws IOException
+     * @throws IOException Thrown if a policy can not be read.
      */
     String get(String policyName) throws IOException;
 
     /**
      * Get the names and content of all policies.
      * @return A map of policy names to policy content.
-     * @throws IOException
+     * @throws IOException Thrown if the policies cannot be read.
      */
     Map<String, String> getAll() throws IOException;
 
     /**
      * Saves a policy.
      * @param policyJson The content of the policy as JSON.
-     * @throws IOException
+     * @throws IOException Thrown if the policy cannot be saved.
      */
     void save(String policyJson) throws IOException;
 
     /**
      * Deletes a policy.
      * @param policyName The name of the policy to delete.
-     * @throws IOException
+     * @throws IOException Thrown if the policy cannot be deleted.
      */
     void delete(String policyName) throws IOException;
 
