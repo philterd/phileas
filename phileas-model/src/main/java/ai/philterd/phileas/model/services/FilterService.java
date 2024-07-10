@@ -16,6 +16,7 @@
 package ai.philterd.phileas.model.services;
 
 import ai.philterd.phileas.model.enums.MimeType;
+import ai.philterd.phileas.model.policy.Policy;
 import ai.philterd.phileas.model.responses.BinaryDocumentFilterResponse;
 import ai.philterd.phileas.model.responses.FilterResponse;
 
@@ -37,6 +38,18 @@ public interface FilterService {
      * @throws Exception Thrown if the text cannot be filtered.
      */
     FilterResponse filter(List<String> policyNames, String context, String documentId, String input, MimeType mimeType) throws Exception;
+
+    /**
+     * Filter text from a string.
+     * @param policy The {@link Policy} to apply.
+     * @param context The context.
+     * @param documentId A document ID. Provide <code>null</code> for a document ID to be generated.
+     * @param input The input text.
+     * @param mimeType The {@link MimeType}.
+     * @return A {@link FilterResponse}.
+     * @throws Exception Thrown if the text cannot be filtered.
+     */
+    FilterResponse filter(final Policy policy, final String context, String documentId, final String input, final MimeType mimeType) throws Exception;
 
     /**
      * Filter text from a binary document.
