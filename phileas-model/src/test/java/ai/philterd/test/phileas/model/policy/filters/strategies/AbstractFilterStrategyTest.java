@@ -231,6 +231,25 @@ public abstract class AbstractFilterStrategyTest {
     }
 
     @Test
+    public void replacementWithMaskCharacter() throws Exception {
+
+        final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
+        final AnonymizationCacheService anonymizationCacheService = Mockito.mock(AnonymizationCacheService.class);
+
+        when(anonymizationService.getAnonymizationCacheService()).thenReturn(anonymizationCacheService);
+
+        final AbstractFilterStrategy strategy = getFilterStrategy();
+        strategy.setStrategy(AbstractFilterStrategy.MASK);
+
+        final String token = "token";
+        final Replacement replacement = strategy.getReplacement("name", "context", "docId", token, WINDOW, null, null, anonymizationService, null);
+
+        Assertions.assertEquals(replacement.getReplacement(), "*****");
+        Assertions.assertEquals(replacement.getReplacement().length(), token.length());
+
+    }
+
+    @Test
     public void evaluateCondition1() throws IOException {
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
