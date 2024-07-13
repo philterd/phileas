@@ -137,7 +137,7 @@ public class SurnameFilterStrategy extends AbstractFilterStrategy {
             }
 
             replacement = maskCharacter.repeat(characters);
-            
+
         } else if(StringUtils.equalsIgnoreCase(strategy, RANDOM_REPLACE)) {
 
             // Default to document scope.
