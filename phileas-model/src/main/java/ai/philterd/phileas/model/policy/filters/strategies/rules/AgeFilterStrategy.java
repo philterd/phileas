@@ -132,6 +132,16 @@ public class AgeFilterStrategy extends AbstractFilterStrategy {
 
             replacement = getRedactedToken(token, label, filterType);
 
+        } else if(StringUtils.equalsIgnoreCase(strategy, MASK)) {
+
+            int characters = token.length();
+
+            if(!StringUtils.equalsIgnoreCase(maskLength, "same")) {
+                characters = Integer.parseInt(maskLength);
+            }
+
+            replacement = maskCharacter.repeat(characters);
+
         } else if(StringUtils.equalsIgnoreCase(strategy, RANDOM_REPLACE)) {
 
             // Default to document scope.
