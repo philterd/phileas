@@ -8,7 +8,7 @@ Information can be redacted based on the content of the information and other at
 
 ## Powered by Phileas
 
-Phileas is the underlying core of [Philter](https://www.philterd.ai/philter/), a turnkey text redaction engine which is built on top of Phileas and provides an API for redacting text. Philter runs entirely within your cloud and never transmits data outside of your cloud. Custom AI models are available for domains like healthcare, legal, and news.
+Phileas is the underlying core of [Philter](https://www.philterd.ai/philter/), a turnkey text redaction engine which is built on top of Phileas and provides an API for redacting text. Philter runs entirely within your cloud and never transmits data outside of your cloud. Custom AI models are available for domains like healthcare, legal, and news. Philter is also [open source](https://github.com/philterd/philter).
 
 * [Philter on the AWS Marketplace](https://aws.amazon.com/marketplace/pp/B07YVB8FFT?ref=_ptnr_philterd)
 * [Philer on the Google Cloud Marketplace](https://console.cloud.google.com/marketplace/product/philterd-public/philter)
