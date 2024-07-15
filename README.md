@@ -1,6 +1,6 @@
 # Phileas
 
-![CodeFactor Quality](https://img.shields.io/codefactor/grade/github/philterd/phileas)
+[![CodeFactor Quality](https://img.shields.io/codefactor/grade/github/philterd/phileas)](https://www.codefactor.io/repository/github/philterd/phileas)
 
 Phileas is a Java library to deidentify text and redact PII, PHI, and other sensitive information from text. Given text or documents (PDF), Phileas analyzes the text searching for sensitive information such as persons' names, ages, addresses, and many other types of information. Phileas is highly configurable through its settings and policies.
 
