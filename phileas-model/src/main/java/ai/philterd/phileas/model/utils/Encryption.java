@@ -138,9 +138,8 @@ public class Encryption {
         try {
 
             final FF3Cipher c = new FF3Cipher(fpe.getKey(), fpe.getTweak());
-            final String ciphertext = c.encrypt(plainText);
 
-            return ciphertext;
+            return c.encrypt(plainText);
 
         } catch (IllegalBlockSizeException | BadPaddingException ex) {
             throw new RuntimeException("Unable to encrypt plain text value.", ex);
