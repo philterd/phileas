@@ -231,6 +231,68 @@ public abstract class AbstractFilterStrategyTest {
     }
 
     @Test
+    public void replacementWithMaskCharacterForSameLength() throws Exception {
+
+        final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
+        final AnonymizationCacheService anonymizationCacheService = Mockito.mock(AnonymizationCacheService.class);
+
+        when(anonymizationService.getAnonymizationCacheService()).thenReturn(anonymizationCacheService);
+
+        final AbstractFilterStrategy strategy = getFilterStrategy();
+        strategy.setStrategy(AbstractFilterStrategy.MASK);
+        strategy.setMaskLength("same");
+
+        final String token = "token";
+        final Replacement replacement = strategy.getReplacement("name", "context", "docId", token, WINDOW, null, null, anonymizationService, null);
+
+        Assertions.assertEquals(replacement.getReplacement(), "*****");
+        Assertions.assertEquals(replacement.getReplacement().length(), token.length());
+
+    }
+
+    @Test
+    public void replacementWithMaskCharacterForSetLength() throws Exception {
+
+        final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
+        final AnonymizationCacheService anonymizationCacheService = Mockito.mock(AnonymizationCacheService.class);
+
+        when(anonymizationService.getAnonymizationCacheService()).thenReturn(anonymizationCacheService);
+
+        final AbstractFilterStrategy strategy = getFilterStrategy();
+        strategy.setStrategy(AbstractFilterStrategy.MASK);
+        strategy.setMaskCharacter("#");
+        strategy.setMaskLength("10");
+
+        final String token = "token";
+        final Replacement replacement = strategy.getReplacement("name", "context", "docId", token, WINDOW, null, null, anonymizationService, null);
+
+        Assertions.assertEquals(replacement.getReplacement(), "##########");
+        Assertions.assertEquals(replacement.getReplacement().length(), 10);
+
+    }
+
+    @Test
+    public void replacementWithMaskCharacterForSetLengthWithNegativeLength() throws Exception {
+
+        final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
+        final AnonymizationCacheService anonymizationCacheService = Mockito.mock(AnonymizationCacheService.class);
+
+        when(anonymizationService.getAnonymizationCacheService()).thenReturn(anonymizationCacheService);
+
+        final AbstractFilterStrategy strategy = getFilterStrategy();
+        strategy.setStrategy(AbstractFilterStrategy.MASK);
+        strategy.setMaskCharacter("#");
+        strategy.setMaskLength("0");
+
+        final String token = "token";
+        final Replacement replacement = strategy.getReplacement("name", "context", "docId", token, WINDOW, null, null, anonymizationService, null);
+
+        Assertions.assertEquals(replacement.getReplacement(), "#####");
+        Assertions.assertEquals(replacement.getReplacement().length(), 5);
+
+    }
+
+    @Test
     public void evaluateCondition1() throws IOException {
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
