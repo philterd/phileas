@@ -85,7 +85,7 @@ public class IgnoredTermsFilter extends PostFilter {
         }
 
         // Look in the ignore lists to see if this token should be ignored.
-        // TODO: A bloom filter would provide better performance for long lists of ignored terms.
+        // TODO: #114 A bloom filter would provide better performance for long lists of ignored terms.
         final boolean ignored = ignoredTerms.contains(spanText);
 
         // Return false if allowed; true if ignored.

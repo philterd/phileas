@@ -58,8 +58,8 @@ public enum FilterType {
     ZIP_CODE("zip-code", true),
     CUSTOM_DICTIONARY("custom-dictionary", false);
 
-    private String type;
-    private boolean deterministic;
+    private final String type;
+    private final boolean deterministic;
 
     FilterType(String type, boolean deterministic) {
         this.type = type;
