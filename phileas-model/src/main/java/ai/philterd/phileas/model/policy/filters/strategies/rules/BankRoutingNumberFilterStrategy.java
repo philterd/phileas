@@ -136,6 +136,10 @@ public class BankRoutingNumberFilterStrategy extends AbstractFilterStrategy {
                 characters = Integer.parseInt(maskLength);
             }
 
+            if(characters < 1) {
+                characters = 5;
+            }
+
             replacement = maskCharacter.repeat(characters);
 
         } else if(StringUtils.equalsIgnoreCase(strategy, RANDOM_REPLACE)) {
