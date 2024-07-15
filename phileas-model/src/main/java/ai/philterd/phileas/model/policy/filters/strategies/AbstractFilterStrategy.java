@@ -42,6 +42,7 @@ public abstract class AbstractFilterStrategy {
     public static final String FPE_ENCRYPT_REPLACE = "FPE_ENCRYPT_REPLACE";
     public static final String HASH_SHA256_REPLACE = "HASH_SHA256_REPLACE";
     public static final String LAST_4 = "LAST_4";
+    public static final String MASK = "MASK";
 
     // NER Person's name strategies
     public static final String ABBREVIATE = "ABBREVIATE";
@@ -96,6 +97,14 @@ public abstract class AbstractFilterStrategy {
     @SerializedName("staticReplacement")
     @Expose
     protected String staticReplacement = "";
+
+    @SerializedName("maskCharacter")
+    @Expose
+    protected String maskCharacter = "*";
+
+    @SerializedName("maskLength")
+    @Expose
+    protected String maskLength = "same";
 
     @SerializedName("condition")
     @Expose
@@ -337,6 +346,22 @@ public abstract class AbstractFilterStrategy {
 
     public void setStaticReplacement(String staticReplacement) {
         this.staticReplacement = staticReplacement;
+    }
+
+    public void setMaskCharacter(String maskCharacter) {
+        this.maskCharacter = maskCharacter;
+    }
+
+    public String getMaskCharacter() {
+        return maskCharacter;
+    }
+
+    public void setMaskLength(String maskLength) {
+        this.maskLength = maskLength;
+    }
+
+    public String getMaskLength() {
+        return maskLength;
     }
 
     public void setConditions(String condition) {
