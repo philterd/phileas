@@ -23,11 +23,8 @@ import ai.philterd.phileas.model.objects.Replacement;
 import ai.philterd.phileas.model.policy.Crypto;
 import ai.philterd.phileas.model.policy.FPE;
 import ai.philterd.phileas.model.policy.Policy;
-import ai.philterd.phileas.model.policy.filters.strategies.AbstractFilterStrategy;
+import ai.philterd.phileas.model.policy.filters.strategies.StandardFilterStrategy;
 import ai.philterd.phileas.model.services.AnonymizationService;
-import ai.philterd.phileas.model.utils.Encryption;
-import org.apache.commons.codec.digest.DigestUtils;
-import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -35,7 +32,7 @@ import org.apache.logging.log4j.Logger;
 import java.util.List;
 import java.util.Map;
 
-public class VinFilterStrategy extends AbstractFilterStrategy {
+public class VinFilterStrategy extends StandardFilterStrategy {
 
     private static final Logger LOGGER = LogManager.getLogger(VinFilterStrategy.class);
 
@@ -121,70 +118,7 @@ public class VinFilterStrategy extends AbstractFilterStrategy {
     @Override
     public Replacement getReplacement(String label, String context, String documentId, String token, String[] window, Crypto crypto, FPE fpe, AnonymizationService anonymizationService, FilterPattern filterPattern) throws Exception {
 
-        String replacement = null;
-        String salt = "";
-
-        if(StringUtils.equalsIgnoreCase(strategy, REDACT)) {
-
-            replacement = getRedactedToken(token, label, filterType);
-
-        } else if(StringUtils.equalsIgnoreCase(strategy, MASK)) {
-
-            int characters = token.length();
-
-            if(!StringUtils.equalsIgnoreCase(maskLength, "same")) {
-                characters = Integer.parseInt(maskLength);
-            }
-
-            if(characters < 1) {
-                characters = 5;
-            }
-
-            replacement = maskCharacter.repeat(characters);
-
-        } else if(StringUtils.equalsIgnoreCase(strategy, RANDOM_REPLACE)) {
-
-            // Default to document scope.
-            String scope = REPLACEMENT_SCOPE_DOCUMENT;
-
-            if (StringUtils.equalsIgnoreCase(replacementScope, REPLACEMENT_SCOPE_CONTEXT)) {
-                scope = REPLACEMENT_SCOPE_CONTEXT;
-            }
-
-            replacement = getAnonymizedToken(scope, token, anonymizationService);
-
-        } else if(StringUtils.equalsIgnoreCase(strategy, STATIC_REPLACE)) {
-
-            replacement = staticReplacement;
-
-        } else if(StringUtils.equalsIgnoreCase(strategy, CRYPTO_REPLACE)) {
-
-            replacement = "{{" + Encryption.encrypt(token, crypto) + "}}";
-
-        } else if(StringUtils.equalsIgnoreCase(strategy, FPE_ENCRYPT_REPLACE)) {
-
-            replacement = Encryption.formatPreservingEncrypt(fpe, token);
-
-        } else if(StringUtils.equalsIgnoreCase(strategy, HASH_SHA256_REPLACE)) {
-
-            if(isSalt()) {
-                salt = RandomStringUtils.randomAlphanumeric(16);
-            }
-
-            replacement = DigestUtils.sha256Hex(token + salt);
-
-        } else if(StringUtils.equalsIgnoreCase(strategy, LAST_4)) {
-
-            replacement = token.substring(token.length() - 4);
-
-        } else {
-
-            // Default to redaction.
-            replacement = getRedactedToken(token, label, filterType);
-
-        }
-
-        return new Replacement(replacement, salt);
+        return getStandardReplacement(label, context, documentId, token, window, crypto, fpe, anonymizationService, filterPattern, filterType);
 
     }
 

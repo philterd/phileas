@@ -23,8 +23,11 @@ import ai.philterd.phileas.model.policy.Crypto;
 import ai.philterd.phileas.model.policy.FPE;
 import ai.philterd.phileas.model.policy.Policy;
 import ai.philterd.phileas.model.services.AnonymizationService;
+import ai.philterd.phileas.model.utils.Encryption;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
