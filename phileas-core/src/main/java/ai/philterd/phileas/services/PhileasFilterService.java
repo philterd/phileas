@@ -167,14 +167,14 @@ public class PhileasFilterService implements FilterService {
             // PHL-209: Implement legal domain.
             policy.getIgnored().add(LegalDomain.getInstance().getIgnored());
 
-            // TODO: Add filters.
+            // TODO: #109 Add filters.
 
         } else if(StringUtils.equalsIgnoreCase(Domain.DOMAIN_HEALTH, policy.getDomain())) {
 
             // PHL-210: Implement health domain.
             policy.getIgnored().add(HealthDomain.getInstance().getIgnored());
 
-            // TODO: Add filters.
+            // TODO: #110 Add filters.
 
         }
 
@@ -353,12 +353,6 @@ public class PhileasFilterService implements FilterService {
             // but we are setting the same here. Fix this at some point.
             final Explanation explanation = new Explanation(spansList, spansList);
             binaryDocumentFilterResponse = new BinaryDocumentFilterResponse(redacted, context, documentId, explanation);
-
-            // TODO: PHL-212: Persist the spans.
-            // Store the spans, if enabled.
-            /*if(phileasConfiguration.storeEnabled()) {
-                store.insert(binaryDocumentFilterResponse.getExplanation().getAppliedSpans());
-            }*/
 
         /*} else if(mimeType == MimeType.IMAGE_JPEG) {
             // PHL-223: Face recognition
@@ -1106,13 +1100,9 @@ public class PhileasFilterService implements FilterService {
             // There can be multiple custom dictionary filters because it is a list.
             for(final CustomDictionary customDictionary : policy.getIdentifiers().getCustomDictionaries()) {
 
-                // TODO: Add caching of the policy (see Age for example)
+                // TODO: #111 Add caching of the policy (see Age for example)
 
                 if(customDictionary.isEnabled()) {
-
-                    // TODO: Should there be an anonymization service?
-                    // There is no anonymization service because we don't know what to replace custom dictionary items with.
-                    final AnonymizationService anonymizationService = null;
 
                     // All the custom terms.
                     final Set<String> terms = new LinkedHashSet<>();
@@ -1156,7 +1146,7 @@ public class PhileasFilterService implements FilterService {
                         LOGGER.info("Custom dictionary contains {} terms.", terms.size());
 
                         // Only enable the filter if there is at least one term.
-                        // TODO: Should a bloom filter be used for small numbers of terms?
+                        // TODO: #112 Don't use a bloom filter for a small number of terms.
                         if(!terms.isEmpty()) {
 
                             final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
@@ -1195,7 +1185,7 @@ public class PhileasFilterService implements FilterService {
 
         if(policy.getIdentifiers().hasFilter(FilterType.LOCATION_CITY) && policy.getIdentifiers().getCity().isEnabled()) {
 
-            // TODO: Add caching of the policy (see Age for example)
+            // TODO: #115 Add caching of the policy (see Age for example)
 
             final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                     .withStrategies(policy.getIdentifiers().getCity().getCityFilterStrategies())
@@ -1217,7 +1207,7 @@ public class PhileasFilterService implements FilterService {
 
         if(policy.getIdentifiers().hasFilter(FilterType.LOCATION_COUNTY) && policy.getIdentifiers().getCounty().isEnabled()) {
 
-            // TODO: Add caching of the policy (see Age for example)
+            // TODO: #115 Add caching of the policy (see Age for example)
 
             final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                     .withStrategies(policy.getIdentifiers().getCounty().getCountyFilterStrategies())
@@ -1239,7 +1229,7 @@ public class PhileasFilterService implements FilterService {
 
         if(policy.getIdentifiers().hasFilter(FilterType.LOCATION_STATE) && policy.getIdentifiers().getState().isEnabled()) {
 
-            // TODO: Add caching of the policy (see Age for example)
+            // TODO: #115 Add caching of the policy (see Age for example)
 
             final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                     .withStrategies(policy.getIdentifiers().getState().getStateFilterStrategies())
@@ -1261,7 +1251,7 @@ public class PhileasFilterService implements FilterService {
 
         if(policy.getIdentifiers().hasFilter(FilterType.HOSPITAL) && policy.getIdentifiers().getHospital().isEnabled()) {
 
-            // TODO: Add caching of the policy (see Age for example)
+            // TODO: #115 Add caching of the policy (see Age for example)
 
             final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                     .withStrategies(policy.getIdentifiers().getHospital().getHospitalFilterStrategies())
@@ -1283,7 +1273,7 @@ public class PhileasFilterService implements FilterService {
 
         if(policy.getIdentifiers().hasFilter(FilterType.HOSPITAL_ABBREVIATION) && policy.getIdentifiers().getHospitalAbbreviation().isEnabled()) {
 
-            // TODO: Add caching of the policy (see Age for example)
+            // TODO: #115 Add caching of the policy (see Age for example)
 
             final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                     .withStrategies(policy.getIdentifiers().getHospitalAbbreviation().getHospitalAbbreviationFilterStrategies())
@@ -1305,7 +1295,7 @@ public class PhileasFilterService implements FilterService {
 
         if(policy.getIdentifiers().hasFilter(FilterType.FIRST_NAME) && policy.getIdentifiers().getFirstName().isEnabled()) {
 
-            // TODO: Add caching of the policy (see Age for example)
+            // TODO: #115 Add caching of the policy (see Age for example)
 
             final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                     .withStrategies(policy.getIdentifiers().getFirstName().getFirstNameFilterStrategies())
@@ -1327,7 +1317,7 @@ public class PhileasFilterService implements FilterService {
 
         if(policy.getIdentifiers().hasFilter(FilterType.SURNAME) && policy.getIdentifiers().getSurname().isEnabled()) {
 
-            // TODO: Add caching of the policy (see Age for example)
+            // TODO: #115 Add caching of the policy (see Age for example)
 
             final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                     .withStrategies(policy.getIdentifiers().getSurname().getSurnameFilterStrategies())
@@ -1355,7 +1345,7 @@ public class PhileasFilterService implements FilterService {
 
             for(final Identifier identifier : identifiers) {
 
-                // TODO: Add caching of the policy (see Age for example)
+                // TODO: #115 Add caching of the policy (see Age for example)
 
                 if(identifier.isEnabled()) {
 

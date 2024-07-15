@@ -42,15 +42,12 @@ public class IdentifierFilter extends RegexFilter {
             pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
         }
 
-        // TODO: Expose initialConfidence via the policy.
-        // TODO: Expose the contextual terms via the policy.
+        // TODO: #113 Expose the contextual terms and initialConfidence in the policy.
         final FilterPattern id1 = new FilterPattern.FilterPatternBuilder(pattern, 0.90)
                 .withClassification(classification)
                 .withGroupNumber(groupNumber)
                 .build();
 
-        // There are no contextual terms because we don't know what they would be.
-        // TODO: Let the user set a list of contextual terms?
         this.contextualTerms = new HashSet<>();
         this.analyzer = new Analyzer(contextualTerms, id1);
 
