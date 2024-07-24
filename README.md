@@ -8,22 +8,6 @@ When sensitive information is identified, Phileas can manipulate the sensitive i
 
 Information can be redacted based on the content of the information and other attributes. For example, only certain persons' names, only zip codes meeting some qualification, or IP addresses that match a given pattern.
 
-## Powered by Phileas
-
-Phileas is the underlying core of [Philter](https://www.philterd.ai/philter/), a turnkey text redaction engine which is built on top of Phileas and provides an API for redacting text. Philter runs entirely within your cloud and never transmits data outside of your cloud. Custom AI models are available for domains like healthcare, legal, and news. Philter is also [open source](https://github.com/philterd/philter).
-
-* [Philter on the AWS Marketplace](https://aws.amazon.com/marketplace/pp/B07YVB8FFT?ref=_ptnr_philterd)
-* [Philer on the Google Cloud Marketplace](https://console.cloud.google.com/marketplace/product/philterd-public/philter)
-* [Philter on the Azure Marketplace](https://azuremarketplace.microsoft.com/en-us/marketplace/apps/philterdllc1687189098111.philter?tab=Overview)
-* On-prem deployments by contacting us at [https://www.philterd.ai/](https://www.philterd.ai). 
-
-Phileas also powers [Airlock](https://www.philterd.ai/airlock), an AI policy layer to prevent the disclosure of sensitive information, such as PII and PHI, in your AI applications.
-
-* [Airlock on the AWS Marketplace](https://aws.amazon.com/marketplace/pp/prodview-inkh5a3kbhtf2)
-* [Airlock on the Google Cloud Marketplace](https://console.cloud.google.com/marketplace/product/philterd-public/airlock)
-* [Airlock on the Azure Marketplace](https://azuremarketplace.microsoft.com/en-us/marketplace/apps/philterdllc1687189098111.airlock?tab=Overview)
-* On-prem deployments by contacting us at [https://www.philterd.ai/](https://www.philterd.ai). 
-
 ## What Phileas Can Do
 
 * Phileas can identify and redact over 30 types of sensitive information (see list below).
@@ -180,6 +164,22 @@ Policies can be de/serialized to JSON. Here is a basic (but valid) policy that i
 ```
 
 There is a long list of `identifiers` that can be applied, and each identifier has several possible `strategy` values. In this case, when a age is found, it is redacted by being replaced with the text `{{{REDACTED-age}}}`. The `%t` is a placeholder for the type of filter. In this case, it is the literal text `age`.
+
+## Powered by Phileas
+
+Phileas is the underlying core of [Philter](https://www.philterd.ai/philter/), a turnkey text redaction engine which is built on top of Phileas and provides an API for redacting text. Philter runs entirely within your cloud and never transmits data outside of your cloud. Custom AI models are available for domains like healthcare, legal, and news. Philter is also [open source](https://github.com/philterd/philter).
+
+* [Philter on the AWS Marketplace](https://aws.amazon.com/marketplace/pp/B07YVB8FFT?ref=_ptnr_philterd)
+* [Philer on the Google Cloud Marketplace](https://console.cloud.google.com/marketplace/product/philterd-public/philter)
+* [Philter on the Azure Marketplace](https://azuremarketplace.microsoft.com/en-us/marketplace/apps/philterdllc1687189098111.philter?tab=Overview)
+* On-prem deployments by contacting us at [https://www.philterd.ai/](https://www.philterd.ai). 
+
+Phileas also powers [Airlock](https://www.philterd.ai/airlock), an AI policy layer to prevent the disclosure of sensitive information, such as PII and PHI, in your AI applications.
+
+* [Airlock on the AWS Marketplace](https://aws.amazon.com/marketplace/pp/prodview-inkh5a3kbhtf2)
+* [Airlock on the Google Cloud Marketplace](https://console.cloud.google.com/marketplace/product/philterd-public/airlock)
+* [Airlock on the Azure Marketplace](https://azuremarketplace.microsoft.com/en-us/marketplace/apps/philterdllc1687189098111.airlock?tab=Overview)
+* On-prem deployments by contacting us at [https://www.philterd.ai/](https://www.philterd.ai). 
 
 ## License
 
