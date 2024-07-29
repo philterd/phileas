@@ -33,6 +33,7 @@ import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.mockito.Mockito;
 
 import java.io.File;
+import java.net.URISyntaxException;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -44,12 +45,14 @@ public class PersonsV2FilterTest extends AbstractFilterTest {
 
     private static final Logger LOGGER = LogManager.getLogger(PersonsV2FilterTest.class);
 
-    private AlertService alertService = Mockito.mock(AlertService.class);
-    private MetricsService metricsService = Mockito.mock(MetricsService.class);
+    private final AlertService alertService = Mockito.mock(AlertService.class);
+    private final MetricsService metricsService = Mockito.mock(MetricsService.class);
 
     @Test
     @DisabledOnOs({WINDOWS, MAC})
     public void filter1() throws Exception {
+
+        Assertions.assertTrue(modelFilesExist());
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new PersonsFilterStrategy()))
@@ -83,6 +86,8 @@ public class PersonsV2FilterTest extends AbstractFilterTest {
     @Test
     @DisabledOnOs({WINDOWS, MAC})
     public void filter2() throws Exception {
+
+        Assertions.assertTrue(modelFilesExist());
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new PersonsFilterStrategy()))
@@ -124,6 +129,8 @@ public class PersonsV2FilterTest extends AbstractFilterTest {
     @DisabledOnOs({WINDOWS, MAC})
     public void filter3() throws Exception {
 
+        Assertions.assertTrue(modelFilesExist());
+
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new PersonsFilterStrategy()))
                 .withAlertService(alertService)
@@ -152,15 +159,13 @@ public class PersonsV2FilterTest extends AbstractFilterTest {
 
         Assertions.assertEquals(3, filterResult.getSpans().size());
 
-        //Assertions.assertTrue(checkSpanInSpans(filterResult.getSpans(), 1181, 1194, FilterType.PERSON, "Reverend King", "{{{REDACTED-person}}}"));
-        //Assertions.assertTrue(checkSpanInSpans(filterResult.getSpans(), 1154, 1175, FilterType.PERSON, "Barbara Ferrer Ferrer", "{{{REDACTED-person}}}"));
-        //Assertions.assertTrue(checkSpanInSpans(filterResult.getSpans(), 1043, 1061, FilterType.PERSON, "Martin Luther King", "{{{REDACTED-person}}}"));
-
     }
 
     @Test
     @DisabledOnOs({WINDOWS, MAC})
     public void filter4() throws Exception {
+
+        Assertions.assertTrue(modelFilesExist());
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new PersonsFilterStrategy()))
@@ -195,6 +200,8 @@ public class PersonsV2FilterTest extends AbstractFilterTest {
     @Test
     @DisabledOnOs({WINDOWS, MAC})
     public void filter5() throws Exception {
+
+        Assertions.assertTrue(modelFilesExist());
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new PersonsFilterStrategy()))
@@ -232,6 +239,8 @@ public class PersonsV2FilterTest extends AbstractFilterTest {
     @DisabledOnOs({WINDOWS, MAC})
     public void filter6() throws Exception {
 
+        Assertions.assertTrue(modelFilesExist());
+
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new PersonsFilterStrategy()))
                 .withAlertService(alertService)
@@ -261,6 +270,20 @@ public class PersonsV2FilterTest extends AbstractFilterTest {
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 11, 34, FilterType.PERSON));
         Assertions.assertEquals("Wendy J. Christophersen", filterResult.getSpans().get(0).getText());
+
+    }
+
+    private boolean modelFilesExist() throws URISyntaxException {
+
+        try {
+            new File(getClass().getClassLoader().getResource("models/model.onnx").toURI());
+            new File(getClass().getClassLoader().getResource("models/vocab.txt").toURI());
+        } catch (NullPointerException ex) {
+            LOGGER.warn("Unable to read the required models/model.onnx and/or models.vocab.txt for unit test. Ensure both files exist.");
+            return false;
+        }
+
+        return true;
 
     }
 

@@ -16,3 +16,5 @@ distribution/indexes
 distribution/documentation/
 manifest.json
 .attach_*
+*.onnx
+vocab.txt
