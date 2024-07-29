@@ -23,11 +23,8 @@ import ai.philterd.phileas.model.policy.Crypto;
 import ai.philterd.phileas.model.policy.FPE;
 import ai.philterd.phileas.model.policy.Policy;
 import ai.philterd.phileas.model.services.AnonymizationService;
-import ai.philterd.phileas.model.utils.Encryption;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
-import org.apache.commons.codec.digest.DigestUtils;
-import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
@@ -46,6 +43,7 @@ public abstract class AbstractFilterStrategy {
     public static final String HASH_SHA256_REPLACE = "HASH_SHA256_REPLACE";
     public static final String LAST_4 = "LAST_4";
     public static final String MASK = "MASK";
+    public static final String SAME = AbstractFilterStrategy.SAME;
 
     // NER Person's name strategies
     public static final String ABBREVIATE = "ABBREVIATE";
@@ -107,7 +105,7 @@ public abstract class AbstractFilterStrategy {
 
     @SerializedName("maskLength")
     @Expose
-    protected String maskLength = "same";
+    protected String maskLength = SAME;
 
     @SerializedName("condition")
     @Expose

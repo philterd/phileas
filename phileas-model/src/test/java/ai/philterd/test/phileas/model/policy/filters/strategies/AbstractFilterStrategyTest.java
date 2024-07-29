@@ -240,7 +240,7 @@ public abstract class AbstractFilterStrategyTest {
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
         strategy.setStrategy(AbstractFilterStrategy.MASK);
-        strategy.setMaskLength("same");
+        strategy.setMaskLength(AbstractFilterStrategy.SAME);
 
         final String token = "token";
         final Replacement replacement = strategy.getReplacement("name", "context", "docId", token, WINDOW, null, null, anonymizationService, null);
