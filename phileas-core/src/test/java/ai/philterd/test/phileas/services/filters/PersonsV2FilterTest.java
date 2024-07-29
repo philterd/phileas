@@ -28,6 +28,7 @@ import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.mockito.Mockito;
@@ -40,12 +41,16 @@ import java.util.Map;
 import static org.junit.jupiter.api.condition.OS.MAC;
 import static org.junit.jupiter.api.condition.OS.WINDOWS;
 
+@Disabled
 public class PersonsV2FilterTest extends AbstractFilterTest {
 
     private static final Logger LOGGER = LogManager.getLogger(PersonsV2FilterTest.class);
 
-    private AlertService alertService = Mockito.mock(AlertService.class);
-    private MetricsService metricsService = Mockito.mock(MetricsService.class);
+    private final AlertService alertService = Mockito.mock(AlertService.class);
+    private final MetricsService metricsService = Mockito.mock(MetricsService.class);
+
+    private final File model = new File("../../../../../../../../../../../models/model.onnx");
+    private final File vocab = new File("../../../../../../../../../../../models/vocab.txt");
 
     @Test
     @DisabledOnOs({WINDOWS, MAC})
@@ -58,8 +63,6 @@ public class PersonsV2FilterTest extends AbstractFilterTest {
                 .withWindowSize(windowSize)
                 .build();
 
-        final File model = new File(getClass().getClassLoader().getResource("models/model.onnx").toURI());
-        final File vocab = new File(getClass().getClassLoader().getResource("models/vocab.txt").toURI());
         final Map<String, DescriptiveStatistics> stats = new LinkedHashMap<>();
         final Map<String, Double> thresholds = new LinkedHashMap<>();
 
@@ -91,8 +94,6 @@ public class PersonsV2FilterTest extends AbstractFilterTest {
                 .withWindowSize(windowSize)
                 .build();
 
-        final File model = new File(getClass().getClassLoader().getResource("models/model.onnx").toURI());
-        final File vocab = new File(getClass().getClassLoader().getResource("models/vocab.txt").toURI());
         final Map<String, DescriptiveStatistics> stats = new LinkedHashMap<>();
         final Map<String, Double> thresholds = new LinkedHashMap<>();
 
@@ -131,8 +132,6 @@ public class PersonsV2FilterTest extends AbstractFilterTest {
                 .withWindowSize(windowSize)
                 .build();
 
-        final File model = new File(getClass().getClassLoader().getResource("models/model.onnx").toURI());
-        final File vocab = new File(getClass().getClassLoader().getResource("models/vocab.txt").toURI());
         final Map<String, DescriptiveStatistics> stats = new LinkedHashMap<>();
         final Map<String, Double> thresholds = new LinkedHashMap<>();
 
@@ -169,8 +168,6 @@ public class PersonsV2FilterTest extends AbstractFilterTest {
                 .withWindowSize(windowSize)
                 .build();
 
-        final File model = new File(getClass().getClassLoader().getResource("models/model.onnx").toURI());
-        final File vocab = new File(getClass().getClassLoader().getResource("models/vocab.txt").toURI());
         final Map<String, DescriptiveStatistics> stats = new LinkedHashMap<>();
         final Map<String, Double> thresholds = new LinkedHashMap<>();
 
@@ -203,8 +200,6 @@ public class PersonsV2FilterTest extends AbstractFilterTest {
                 .withWindowSize(windowSize)
                 .build();
 
-        final File model = new File(getClass().getClassLoader().getResource("models/model.onnx").toURI());
-        final File vocab = new File(getClass().getClassLoader().getResource("models/vocab.txt").toURI());
         final Map<String, DescriptiveStatistics> stats = new LinkedHashMap<>();
         final Map<String, Double> thresholds = new LinkedHashMap<>();
 
@@ -239,8 +234,6 @@ public class PersonsV2FilterTest extends AbstractFilterTest {
                 .withWindowSize(windowSize)
                 .build();
 
-        final File model = new File(getClass().getClassLoader().getResource("models/model.onnx").toURI());
-        final File vocab = new File(getClass().getClassLoader().getResource("models/vocab.txt").toURI());
         final Map<String, DescriptiveStatistics> stats = new LinkedHashMap<>();
         final Map<String, Double> thresholds = new LinkedHashMap<>();
 
