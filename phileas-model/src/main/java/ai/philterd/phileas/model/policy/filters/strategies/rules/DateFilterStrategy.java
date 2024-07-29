@@ -164,7 +164,7 @@ public class DateFilterStrategy extends AbstractFilterStrategy {
 
             int characters = token.length();
 
-            if(!StringUtils.equalsIgnoreCase(maskLength, "same")) {
+            if(!StringUtils.equalsIgnoreCase(maskLength, AbstractFilterStrategy.SAME)) {
                 characters = Integer.parseInt(maskLength);
             }
 
