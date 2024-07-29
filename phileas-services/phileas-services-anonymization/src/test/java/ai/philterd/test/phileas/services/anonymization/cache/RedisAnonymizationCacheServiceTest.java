@@ -73,7 +73,7 @@ public class RedisAnonymizationCacheServiceTest {
 
         }
 
-        return new PhileasConfiguration(properties, "phileas");
+        return new PhileasConfiguration(properties);
 
     }
 

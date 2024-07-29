@@ -43,7 +43,7 @@ public class LocalVectorBasedSpanDisambiguationServiceTest {
         properties.setProperty("span.disambiguation.vector.size", "32");
         properties.setProperty("cache.redis.enabled", "false");
 
-        final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties, "phileas");
+        final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties);
 
         final String context = "c";
 
@@ -77,7 +77,7 @@ public class LocalVectorBasedSpanDisambiguationServiceTest {
         properties.setProperty("span.disambiguation.vector.size", "32");
         properties.setProperty("cache.redis.enabled", "false");
 
-        final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties, "phileas");
+        final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties);
 
         final String context = "c";
 
