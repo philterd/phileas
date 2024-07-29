@@ -40,7 +40,7 @@ public class AnonymizationCacheServiceFactoryTest {
 
         final Properties properties = new Properties();
 
-        return new PhileasConfiguration(properties, "phileas");
+        return new PhileasConfiguration(properties);
 
     }
 

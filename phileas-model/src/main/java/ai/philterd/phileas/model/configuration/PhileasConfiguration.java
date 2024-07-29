@@ -30,6 +30,13 @@ public class PhileasConfiguration {
 
     }
 
+    public PhileasConfiguration(final Properties properties) throws IOException {
+
+        this.properties = properties;
+        this.applicationName = "phileas";
+
+    }
+
     public String indexesDirectory() {
         return getProperty("indexes.directory", "./indexes/");
     }

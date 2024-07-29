@@ -27,7 +27,7 @@ public class Policy {
 
     @SerializedName("name")
     @Expose
-    private String name;
+    private String name = "unnamed";
 
     @SerializedName("config")
     @Expose
@@ -51,11 +51,11 @@ public class Policy {
 
     @SerializedName("ignored")
     @Expose
-    private List<Ignored> ignored = Collections.EMPTY_LIST;
+    private List<Ignored> ignored = Collections.emptyList();
 
     @SerializedName("ignoredPatterns")
     @Expose
-    private List<IgnoredPattern> ignoredPatterns = Collections.EMPTY_LIST;
+    private List<IgnoredPattern> ignoredPatterns = Collections.emptyList();
 
     @SerializedName("graphical")
     @Expose

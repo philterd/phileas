@@ -81,7 +81,7 @@ public class RedisAlertServiceTest {
 
         }
 
-        return new PhileasConfiguration(properties, "phileas");
+        return new PhileasConfiguration(properties);
 
     }
 

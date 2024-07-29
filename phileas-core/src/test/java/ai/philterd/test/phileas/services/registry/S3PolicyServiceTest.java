@@ -94,7 +94,7 @@ public class S3PolicyServiceTest {
 
         }
 
-        return new PhileasConfiguration(properties, "phileas");
+        return new PhileasConfiguration(properties);
 
     }
 

@@ -16,16 +16,15 @@
 package ai.philterd.test.phileas.services;
 
 import ai.philterd.phileas.model.configuration.PhileasConfiguration;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import ai.philterd.phileas.model.enums.MimeType;
 import ai.philterd.phileas.model.objects.Span;
-import ai.philterd.phileas.model.policy.Policy;
 import ai.philterd.phileas.model.policy.Ignored;
+import ai.philterd.phileas.model.policy.Policy;
 import ai.philterd.phileas.model.responses.BinaryDocumentFilterResponse;
 import ai.philterd.phileas.model.serializers.PlaceholderDeserializer;
 import ai.philterd.phileas.services.PhileasFilterService;
-
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -47,8 +46,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
-import static ai.philterd.test.phileas.services.EndToEndTestsHelper.getPolicy;
 import static ai.philterd.test.phileas.services.EndToEndTestsHelper.getPdfPolicy;
+import static ai.philterd.test.phileas.services.EndToEndTestsHelper.getPolicy;
 
 public class PhileasFilterServiceTest {
 
@@ -117,7 +116,7 @@ public class PhileasFilterServiceTest {
         properties.setProperty("indexes.directory", INDEXES_DIRECTORY);
         properties.setProperty("filter.policies.directory", temp.toFile().getAbsolutePath());
 
-        final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties, "phileas");
+        final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties);
 
         PhileasFilterService service = new PhileasFilterService(phileasConfiguration);
         final BinaryDocumentFilterResponse response = service.filter(Arrays.asList("pdf"), "context", "documentid", document, MimeType.APPLICATION_PDF, MimeType.APPLICATION_PDF);
@@ -153,7 +152,7 @@ public class PhileasFilterServiceTest {
         properties.setProperty("indexes.directory", INDEXES_DIRECTORY);
         properties.setProperty("filter.policies.directory", temp.toFile().getAbsolutePath());
 
-        final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties, "phileas");
+        final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties);
 
         PhileasFilterService service = new PhileasFilterService(phileasConfiguration);
         final BinaryDocumentFilterResponse response = service.filter(Arrays.asList("pdf"), "context", "documentid", document, MimeType.APPLICATION_PDF, MimeType.APPLICATION_PDF);

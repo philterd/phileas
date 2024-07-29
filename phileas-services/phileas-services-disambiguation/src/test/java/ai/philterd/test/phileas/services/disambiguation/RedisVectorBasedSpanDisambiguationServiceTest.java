@@ -56,7 +56,7 @@ public class RedisVectorBasedSpanDisambiguationServiceTest {
     public void disambiguateWithRedis1() throws IOException {
 
         final Properties properties = getProperties();
-        final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties, "phileas");
+        final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties);
 
         final String context = "c";
 
