@@ -274,10 +274,13 @@ public class LuceneDictionaryFilter extends DictionaryFilter implements Serializ
                                     final double confidence = spellChecker.getAccuracy();
 
                                     // Get the replacement token or the original token if no filter strategy conditions are met.
-                                    final Replacement replacement = getReplacement(policy, context, documentId, token, window, confidence, classification, attributes, null);
+                                    final Replacement replacement = getReplacement(policy, context, documentId, token,
+                                            window, confidence, classification, attributes, null);
 
                                     // Add the span to the list.
-                                    spans.add(Span.make(characterStart, characterEnd, getFilterType(), context, documentId, confidence, token, replacement.getReplacement(), replacement.getSalt(), ignored, window));
+                                    spans.add(Span.make(characterStart, characterEnd, getFilterType(), context,
+                                            documentId, confidence, token, replacement.getReplacement(),
+                                            replacement.getSalt(), ignored, replacement.isApplied(), window));
 
                                 }
 

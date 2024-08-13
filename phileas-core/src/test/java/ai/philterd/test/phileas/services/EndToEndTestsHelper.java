@@ -390,7 +390,7 @@ public class EndToEndTestsHelper {
     public static Policy getPolicyJustPhoneNumber(String policyName) {
 
         PhoneNumberFilterStrategy phoneNumberFilterStrategy = new PhoneNumberFilterStrategy();
-        phoneNumberFilterStrategy.setConditions("confidence > 0.50");
+        phoneNumberFilterStrategy.setConditions("confidence > 0.70");
 
         PhoneNumber phoneNumber = new PhoneNumber();
         phoneNumber.setPhoneNumberFilterStrategies(List.of(phoneNumberFilterStrategy));

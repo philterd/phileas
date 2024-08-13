@@ -71,6 +71,9 @@ public final class Span {
     @Expose
     private boolean ignored;
 
+    @Expose
+    private boolean applied;
+
     // Encapsulates the characterStart and characterEnd for easy intersection functions.
     private transient Range<Integer> range;
 
@@ -81,7 +84,7 @@ public final class Span {
     // The window of tokens around the span.
     private transient String[] window;
 
-    // Whether or not the span should always pass validation.
+    // Whether the span should always pass validation.
     private transient boolean alwaysValid = false;
 
     /**
@@ -102,11 +105,13 @@ public final class Span {
      * @param confidence The confidence.
      * @param text The text identified by the span.
      * @param replacement The replacement (anonymized) value for the span.
-     * @param ignored Whether or not the span was ignored.
+     * @param ignored Whether the span was ignored.
+     * @param applied Whether the span was applied.
      * @param window The tokens surrounding the span.
      */
     private Span(int characterStart, int characterEnd, FilterType filterType, String context, String documentId,
-                 double confidence, String text, String replacement, String salt, boolean ignored, String[] window) {
+                 double confidence, String text, String replacement, String salt, boolean ignored, boolean applied,
+                 String[] window) {
 
         this.characterStart = characterStart;
         this.characterEnd = characterEnd;
@@ -118,6 +123,7 @@ public final class Span {
         this.replacement = replacement;
         this.salt = salt;
         this.ignored = ignored;
+        this.applied = applied;
         this.window = window;
 
     }
@@ -132,13 +138,15 @@ public final class Span {
      * @param confidence The confidence.
      * @param text The text identified by the span.
      * @param replacement The replacement (anonymized) value for the span.
-     * @param ignored Whether or not the found span is ultimately ignored.
+     * @param ignored Whether the found span is ultimately ignored.
      * @return A {@link Span} object with the given properties.
      */
     public static Span make(int characterStart, int characterEnd, FilterType filterType, String context,
-                            String documentId, double confidence, String text, String replacement, String salt, boolean ignored, String[] window) {
+                            String documentId, double confidence, String text, String replacement, String salt,
+                            boolean ignored, boolean applied, String[] window) {
 
-        final Span span = new Span(characterStart, characterEnd, filterType, context, documentId, confidence, text, replacement, salt, ignored, window);
+        final Span span = new Span(characterStart, characterEnd, filterType, context, documentId, confidence, text,
+                replacement, salt, ignored, applied, window);
 
         // This is made here and not passed into the constructor because that would be redundant
         // given the characterStart and characterEnd parameters in the constructor.
@@ -154,7 +162,8 @@ public final class Span {
      */
     public Span copy() {
 
-        final Span clone = Span.make(characterStart, characterEnd, filterType, context, documentId, confidence, text, replacement, salt, ignored, window);
+        final Span clone = Span.make(characterStart, characterEnd, filterType, context, documentId, confidence, text,
+                replacement, salt, ignored, applied, window);
 
         clone.range = range;
 
@@ -181,7 +190,7 @@ public final class Span {
                 final int end = span.getCharacterEnd() + shift;
 
                 shiftedSpans.add(Span.make(start, end, span.filterType, span.context, span.documentId, span.confidence,
-                        span.text, span.replacement, span.salt, span.ignored, span.window));
+                        span.text, span.replacement, span.salt, span.ignored, span.applied, span.window));
 
             }
 
@@ -207,7 +216,7 @@ public final class Span {
                 final int end = span.getCharacterEnd() + shift;
 
                 shiftedSpans.add(Span.make(start, end, span.filterType, span.context, span.documentId, span.confidence,
-                        span.text, span.replacement, span.salt, span.ignored, span.window));
+                        span.text, span.replacement, span.salt, span.ignored, span.applied, span.window));
 
         }
 
@@ -494,6 +503,7 @@ public final class Span {
                 append(replacement).
                 append(salt).
                 append(ignored).
+                append(applied).
                 append(classification).
                 toHashCode();
 
@@ -519,6 +529,7 @@ public final class Span {
                 + " replacement: " + replacement + "; "
                 + " salt: " + salt + "; "
                 + " ignored: " + ignored + "; "
+                + " applied: " + applied + "; "
                 + " classification: " + classification + "; "
                 ;
 
@@ -613,6 +624,14 @@ public final class Span {
         this.ignored = ignored;
     }
 
+    public boolean isApplied() {
+        return applied;
+    }
+
+    public void setApplied(boolean applied) {
+        this.applied = applied;
+    }
+
     public String getPattern() {
         return pattern;
     }
@@ -652,4 +671,5 @@ public final class Span {
     public void setAlwaysValid(boolean alwaysValid) {
         this.alwaysValid = alwaysValid;
     }
+
 }

@@ -107,24 +107,21 @@ public abstract class RulesFilter extends Filter {
                         final Replacement replacement = getReplacement(policy, context, documentId, token,
                                 window, initialConfidence, classification, attributes, filterPattern);
 
-                        if(replacement.isApplied()) {
+                        // Create the span.
+                        final Span span = Span.make(characterStart, characterEnd, getFilterType(), context, documentId,
+                                initialConfidence, token, replacement.getReplacement(), replacement.getSalt(),
+                                ignored, replacement.isApplied(), window);
 
-                            // Create the span.
-                            final Span span = Span.make(characterStart, characterEnd, getFilterType(), context, documentId,
-                                    initialConfidence, token, replacement.getReplacement(), replacement.getSalt(), ignored, window);
+                        // TODO: Add "format" to Span.make() so we don't have to make a separate call here.
+                        span.setPattern(filterPattern.getFormat());
 
-                            // TODO: Add "format" to Span.make() so we don't have to make a separate call here.
-                            span.setPattern(filterPattern.getFormat());
+                        // TODO: Add "alwaysValid" to Span.make() so we don't have to make a separate call here.
+                        span.setAlwaysValid(filterPattern.isAlwaysValid());
 
-                            // TODO: Add "alwaysValid" to Span.make() so we don't have to make a separate call here.
-                            span.setAlwaysValid(filterPattern.isAlwaysValid());
+                        // TODO: Add "classification" to Span.make() so we don't have to make a separate call here.
+                        span.setClassification(filterPattern.getClassification());
 
-                            // TODO: Add "classification" to Span.make() so we don't have to make a separate call here.
-                            span.setClassification(filterPattern.getClassification());
-
-                            spans.add(span);
-
-                        }
+                        spans.add(span);
 
                     }
 

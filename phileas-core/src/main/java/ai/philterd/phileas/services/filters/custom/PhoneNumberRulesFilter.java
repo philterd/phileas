@@ -81,14 +81,12 @@ public class PhoneNumberRulesFilter extends RulesFilter {
 
                 final String[] window = getWindow(input, match.start(), match.end());
                 final String classification = "";
-                final Replacement replacement = getReplacement(policy, context, documentId, text, window, confidence, classification, attributes, null);
+                final Replacement replacement = getReplacement(policy, context, documentId, text, window, confidence,
+                        classification, attributes, null);
                 final boolean isIgnored = ignored.contains(text);
 
-                if(replacement.isApplied()) {
-
-                    spans.add(Span.make(match.start(), match.end(), getFilterType(), context, documentId, confidence, text, replacement.getReplacement(), replacement.getSalt(), isIgnored, window));
-
-                }
+                spans.add(Span.make(match.start(), match.end(), getFilterType(), context, documentId, confidence,
+                        text, replacement.getReplacement(), replacement.getSalt(), isIgnored, replacement.isApplied(), window));
 
             }
 

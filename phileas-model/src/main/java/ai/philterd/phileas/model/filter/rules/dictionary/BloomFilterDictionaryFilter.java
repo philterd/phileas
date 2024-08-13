@@ -118,7 +118,8 @@ public class BloomFilterDictionaryFilter extends DictionaryFilter {
                                 originalToken, window, confidence, classification, attributes, null);
 
                         spans.add(Span.make(characterStart, characterEnd, getFilterType(), context, documentId,
-                                confidence, originalToken, replacement.getReplacement(), replacement.getSalt(), isIgnored, window));
+                                confidence, originalToken, replacement.getReplacement(), replacement.getSalt(),
+                                isIgnored, replacement.isApplied(), window));
 
                     }
 

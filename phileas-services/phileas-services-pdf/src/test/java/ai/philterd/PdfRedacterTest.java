@@ -46,8 +46,8 @@ public class PdfRedacterTest {
     @Test
     public void testPDF1() throws IOException {
 
-        final Span span1 = Span.make(0, 1, FilterType.PERSON, "ctx", "docid", 0.25, "Wendy", "repl", null, false, null);
-        final Span span2 = Span.make(0, 1, FilterType.PERSON, "ctx", "docid", 0.25, "Bankruptcy", "repl", null, false, null);
+        final Span span1 = Span.make(0, 1, FilterType.PERSON, "ctx", "docid", 0.25, "Wendy", "repl", null, false, true, null);
+        final Span span2 = Span.make(0, 1, FilterType.PERSON, "ctx", "docid", 0.25, "Bankruptcy", "repl", null, false, true, null);
         final Set<Span> spans = Set.copyOf(Arrays.asList(span1, span2));
 
         final String filename = "33011-pdf-118-pages.pdf"; //"12-12110 K.pdf";
@@ -79,7 +79,7 @@ public class PdfRedacterTest {
     @Test
     public void testPDF2() throws IOException {
 
-        final Span span1 = Span.make(0, 1, FilterType.DATE, "ctx", "docid", 0.25, "July 3, 2012", "||||", null, false, null);
+        final Span span1 = Span.make(0, 1, FilterType.DATE, "ctx", "docid", 0.25, "July 3, 2012", "||||", null, false, true, null);
         final Set<Span> spans = Set.copyOf(Arrays.asList(span1));
 
         final String filename = "12-12110 K.pdf";
@@ -107,8 +107,8 @@ public class PdfRedacterTest {
     @Test
     public void testJpeg1() throws IOException {
 
-        final Span span1 = Span.make(0, 1, FilterType.PERSON, "ctx", "docid", 0.25, "Wendy", "repl", null, false, null);
-        final Span span2 = Span.make(0, 1, FilterType.PERSON, "ctx", "docid", 0.25, "Bankruptcy", "repl", null, false, null);
+        final Span span1 = Span.make(0, 1, FilterType.PERSON, "ctx", "docid", 0.25, "Wendy", "repl", null, false, true, null);
+        final Span span2 = Span.make(0, 1, FilterType.PERSON, "ctx", "docid", 0.25, "Bankruptcy", "repl", null, false, true, null);
         final Set<Span> spans = Set.copyOf(Arrays.asList(span1, span2));
 
         final String filename = "12-12110 K.pdf";
@@ -135,7 +135,7 @@ public class PdfRedacterTest {
     @Test
     public void testJpeg2() throws IOException {
 
-        final Span span1 = Span.make(0, 1, FilterType.DATE, "ctx", "docid", 0.25, "July 3, 2012", "||||", null, false, null);
+        final Span span1 = Span.make(0, 1, FilterType.DATE, "ctx", "docid", 0.25, "July 3, 2012", "||||", null, false, true, null);
         final Set<Span> spans = Set.copyOf(Arrays.asList(span1));
 
         final String filename = "12-12110 K.pdf";
@@ -240,8 +240,8 @@ public class PdfRedacterTest {
     @Test
     public void testPdfSpansAndBoundingBoxes() throws IOException {
 
-        final Span span1 = Span.make(0, 1, FilterType.PERSON, "ctx", "docid", 0.25, "Wendy", "repl", null, false, null);
-        final Span span2 = Span.make(0, 1, FilterType.PERSON, "ctx", "docid", 0.25, "Bankruptcy", "repl", null, false, null);
+        final Span span1 = Span.make(0, 1, FilterType.PERSON, "ctx", "docid", 0.25, "Wendy", "repl", null, false, true, null);
+        final Span span2 = Span.make(0, 1, FilterType.PERSON, "ctx", "docid", 0.25, "Bankruptcy", "repl", null, false, true, null);
         final Set<Span> spans = Set.copyOf(Arrays.asList(span1, span2));
 
         final String filename = "12-12110 K.pdf";
