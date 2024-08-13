@@ -242,11 +242,6 @@ public abstract class Filter {
                                       final String classification, final Map<String, String> attributes,
                                       final FilterPattern filterPattern) throws Exception {
 
-        if(Objects.equals(token, "999-999-9999")) {
-            System.out.println("manual token set");
-            confidence = 0.4;
-        }
-
         if(strategies != null && !strategies.isEmpty()) {
 
             // Loop through the strategies. The first strategy without a condition or a satisfied condition will provide the replacement.
