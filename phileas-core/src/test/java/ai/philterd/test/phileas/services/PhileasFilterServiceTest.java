@@ -85,7 +85,7 @@ public class PhileasFilterServiceTest {
         ignored.setTerms(Arrays.asList("john", "jeff", "${USER}"));
 
         final Policy policy = getPolicy("placeholder");
-        policy.setIgnored(Arrays.asList(ignored));
+        policy.setIgnored(List.of(ignored));
         final String json = gson.toJson(policy);
         LOGGER.info(json);
 

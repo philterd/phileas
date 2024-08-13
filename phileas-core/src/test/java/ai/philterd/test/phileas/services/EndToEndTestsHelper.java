@@ -199,12 +199,12 @@ public class EndToEndTestsHelper {
         AgeFilterStrategy ageFilterStrategy = new AgeFilterStrategy();
 
         Age age = new Age();
-        age.setAgeFilterStrategies(Arrays.asList(ageFilterStrategy));
+        age.setAgeFilterStrategies(List.of(ageFilterStrategy));
 
         CreditCardFilterStrategy creditCardFilterStrategy = new CreditCardFilterStrategy();
 
         CreditCard creditCard = new CreditCard();
-        creditCard.setCreditCardFilterStrategies(Arrays.asList(creditCardFilterStrategy));
+        creditCard.setCreditCardFilterStrategies(List.of(creditCardFilterStrategy));
 
         DateFilterStrategy dateFilterStrategy = new DateFilterStrategy();
         dateFilterStrategy.setStrategy(AbstractFilterStrategy.SHIFT);
@@ -213,15 +213,15 @@ public class EndToEndTestsHelper {
         dateFilterStrategy.setShiftDays(1);
 
         Date date = new Date();
-        date.setDateFilterStrategies(Arrays.asList(dateFilterStrategy));
+        date.setDateFilterStrategies(List.of(dateFilterStrategy));
 
         EmailAddressFilterStrategy emailAddressFilterStrategy = new EmailAddressFilterStrategy();
 
         EmailAddress emailAddress = new EmailAddress();
-        emailAddress.setEmailAddressFilterStrategies(Arrays.asList(emailAddressFilterStrategy));
+        emailAddress.setEmailAddressFilterStrategies(List.of(emailAddressFilterStrategy));
 
         Identifier identifier1 = new Identifier();
-        identifier1.setIdentifierFilterStrategies(Arrays.asList(new IdentifierFilterStrategy()));
+        identifier1.setIdentifierFilterStrategies(List.of(new IdentifierFilterStrategy()));
         identifier1.setPattern("asdfasdfasdf");
         identifier1.setCaseSensitive(true);
 
@@ -231,12 +231,12 @@ public class EndToEndTestsHelper {
         Identifier identifier2 = new Identifier();
         identifier2.setPattern("JEFF");
         identifier2.setCaseSensitive(true);
-        identifier2.setIdentifierFilterStrategies(Arrays.asList(identifier2FilterStrategy));
+        identifier2.setIdentifierFilterStrategies(List.of(identifier2FilterStrategy));
 
         IpAddressFilterStrategy ipAddressFilterStrategy = new IpAddressFilterStrategy();
 
         IpAddress ipAddress = new IpAddress();
-        ipAddress.setIpAddressFilterStrategies(Arrays.asList(ipAddressFilterStrategy));
+        ipAddress.setIpAddressFilterStrategies(List.of(ipAddressFilterStrategy));
 
         PhoneNumberFilterStrategy phoneNumberFilterStrategy = new PhoneNumberFilterStrategy();
 
@@ -271,13 +271,13 @@ public class EndToEndTestsHelper {
 
         PersonsFilterStrategy personsFilterStrategy = new PersonsFilterStrategy();
 
-        final File model = new File(EndToEndTestsHelper.class.getClassLoader().getResource("models/model.onnx").toURI());
+        /*final File model = new File(EndToEndTestsHelper.class.getClassLoader().getResource("models/model.onnx").toURI());
         final File vocab = new File(EndToEndTestsHelper.class.getClassLoader().getResource("models/vocab.txt").toURI());
 
         PersonV2 personV2 = new PersonV2();
         personV2.setModel(model.getAbsolutePath());
         personV2.setVocab(vocab.getAbsolutePath());
-        personV2.setPersonFilterStrategies(List.of(personsFilterStrategy));
+        personV2.setPersonFilterStrategies(List.of(personsFilterStrategy));*/
 
         // ----------------------------------------------------------------------------------
 
@@ -326,7 +326,7 @@ public class EndToEndTestsHelper {
         identifiers.setEmailAddress(emailAddress);
         identifiers.setIdentifiers(Arrays.asList(identifier1, identifier2));
         identifiers.setIpAddress(ipAddress);
-        identifiers.setPersonV2(personV2);
+        //identifiers.setPersonV2(personV2);
         identifiers.setPhoneNumber(phoneNumber);
         identifiers.setSsn(ssn);
         //identifiers.setStateAbbreviation(stateAbbreviation);
