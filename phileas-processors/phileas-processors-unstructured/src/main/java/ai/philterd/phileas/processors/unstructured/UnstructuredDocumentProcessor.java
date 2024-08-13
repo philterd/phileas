@@ -71,9 +71,6 @@ public class UnstructuredDocumentProcessor implements DocumentProcessor {
 
         }
 
-        // Drop ignored spans.
-        //identifiedSpans = Span.dropIgnoredAndUnappliedSpans(identifiedSpans);
-
         // Perform span disambiguation.
         if(spanDisambiguationService.isEnabled()) {
             identifiedSpans = spanDisambiguationService.disambiguate(context, identifiedSpans);

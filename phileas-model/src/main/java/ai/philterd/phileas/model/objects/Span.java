@@ -312,27 +312,6 @@ public final class Span {
     }
 
     /**
-     * Drop unapplied spans and spans that were for text that was ignored.
-     * @param spans A list of {@link Span spans} that may or may not contain ignored spans.
-     * @return A list of {@link Span spans} without ignored spans.
-     */
-    public static List<Span> dropIgnoredAndUnappliedSpans(List<Span> spans) {
-
-        final List<Span> nonIgnoredSpans = new LinkedList<>();
-
-        for(final Span span : spans) {
-
-            if(!span.isIgnored()) {
-                nonIgnoredSpans.add(span);
-            }
-
-        }
-
-        return nonIgnoredSpans;
-
-    }
-
-    /**
      * Determines if two spans are immediately adjacent.
      * <code>span1</code> must occur in the test prior to <code>span2</code>.
      * @param span1 The first span.

@@ -126,54 +126,6 @@ public class SpanTest {
     }
 
     @Test
-    public void ignored1() {
-
-        List<Span> spans = new LinkedList<>();
-        spans.add(Span.make(1, 5, FilterType.PERSON, "context", "document", 1.0, "test", "***", "salt",  false, true, new String[0]));
-        spans.add(Span.make(2, 12, FilterType.PERSON, "context", "document", 1.0, "test", "***", "salt",  true, true, new String[0]));
-
-        List<Span> nonIgnoredSpans = Span.dropIgnoredAndUnappliedSpans(spans);
-
-        showSpans(nonIgnoredSpans);
-
-        Assertions.assertEquals(1, nonIgnoredSpans.size());
-        Assertions.assertEquals(1, nonIgnoredSpans.get(0).getCharacterStart());
-
-    }
-
-    @Test
-    public void ignored2() {
-
-        List<Span> spans = new LinkedList<>();
-        spans.add(Span.make(1, 5, FilterType.PERSON, "context", "document", 1.0, "test", "***", "salt",  false, true, new String[0]));
-        spans.add(Span.make(2, 12, FilterType.PERSON, "context", "document", 1.0, "test", "***", "salt",  false, true, new String[0]));
-
-        List<Span> nonIgnoredSpans = Span.dropIgnoredAndUnappliedSpans(spans);
-
-        showSpans(nonIgnoredSpans);
-
-        Assertions.assertEquals(2, nonIgnoredSpans.size());
-        Assertions.assertEquals(1, nonIgnoredSpans.get(0).getCharacterStart());
-        Assertions.assertEquals(2, nonIgnoredSpans.get(1).getCharacterStart());
-
-    }
-
-    @Test
-    public void ignored3() {
-
-        List<Span> spans = new LinkedList<>();
-        spans.add(Span.make(1, 5, FilterType.PERSON, "context", "document", 1.0, "test", "***", "salt",  true, true, new String[0]));
-        spans.add(Span.make(2, 12, FilterType.PERSON, "context", "document", 1.0, "test", "***", "salt",  true, true, new String[0]));
-
-        List<Span> nonIgnoredSpans = Span.dropIgnoredAndUnappliedSpans(spans);
-
-        showSpans(nonIgnoredSpans);
-
-        Assertions.assertEquals(0, nonIgnoredSpans.size());
-
-    }
-
-    @Test
     public void overlapping1() {
 
         List<Span> spans = new LinkedList<>();
