@@ -40,7 +40,7 @@ public class RedisVectorBasedSpanDisambiguationServiceTest {
     @BeforeEach
     public void before() {
 
-        redisServer = RedisServer.builder().port(31000).build();
+        redisServer = RedisServer.builder().setting("bind 127.0.0.1").port(31000).build();
         redisServer.start();
 
     }
