@@ -132,7 +132,7 @@ public class SpanTest {
         spans.add(Span.make(1, 5, FilterType.PERSON, "context", "document", 1.0, "test", "***", "salt",  false, true, new String[0]));
         spans.add(Span.make(2, 12, FilterType.PERSON, "context", "document", 1.0, "test", "***", "salt",  true, true, new String[0]));
 
-        List<Span> nonIgnoredSpans = Span.dropIgnoredSpans(spans);
+        List<Span> nonIgnoredSpans = Span.dropIgnoredAndUnappliedSpans(spans);
 
         showSpans(nonIgnoredSpans);
 
@@ -148,7 +148,7 @@ public class SpanTest {
         spans.add(Span.make(1, 5, FilterType.PERSON, "context", "document", 1.0, "test", "***", "salt",  false, true, new String[0]));
         spans.add(Span.make(2, 12, FilterType.PERSON, "context", "document", 1.0, "test", "***", "salt",  false, true, new String[0]));
 
-        List<Span> nonIgnoredSpans = Span.dropIgnoredSpans(spans);
+        List<Span> nonIgnoredSpans = Span.dropIgnoredAndUnappliedSpans(spans);
 
         showSpans(nonIgnoredSpans);
 
@@ -165,7 +165,7 @@ public class SpanTest {
         spans.add(Span.make(1, 5, FilterType.PERSON, "context", "document", 1.0, "test", "***", "salt",  true, true, new String[0]));
         spans.add(Span.make(2, 12, FilterType.PERSON, "context", "document", 1.0, "test", "***", "salt",  true, true, new String[0]));
 
-        List<Span> nonIgnoredSpans = Span.dropIgnoredSpans(spans);
+        List<Span> nonIgnoredSpans = Span.dropIgnoredAndUnappliedSpans(spans);
 
         showSpans(nonIgnoredSpans);
 

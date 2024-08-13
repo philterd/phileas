@@ -312,11 +312,11 @@ public final class Span {
     }
 
     /**
-     * Drop overlapping spans that were for text that was ignored.
+     * Drop unapplied spans and spans that were for text that was ignored.
      * @param spans A list of {@link Span spans} that may or may not contain ignored spans.
      * @return A list of {@link Span spans} without ignored spans.
      */
-    public static List<Span> dropIgnoredSpans(List<Span> spans) {
+    public static List<Span> dropIgnoredAndUnappliedSpans(List<Span> spans) {
 
         final List<Span> nonIgnoredSpans = new LinkedList<>();
 

@@ -394,6 +394,7 @@ public class EndToEndTestsHelper {
 
         PhoneNumber phoneNumber = new PhoneNumber();
         phoneNumber.setPhoneNumberFilterStrategies(List.of(phoneNumberFilterStrategy));
+        phoneNumber.setIgnored(Set.of("102-304-5678"));
 
         Identifiers identifiers = new Identifiers();
         identifiers.setPhoneNumber(phoneNumber);

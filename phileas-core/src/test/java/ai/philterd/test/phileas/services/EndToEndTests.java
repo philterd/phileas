@@ -575,19 +575,23 @@ public class EndToEndTests {
 
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties);
 
-        final String input = "his number is 123-456-7890. her number is 9999999999.";
+        final String input = "his number is 123-456-7890. her number is 9999999999. her number is 102-304-5678.";
 
         final PhileasFilterService service = new PhileasFilterService(phileasConfiguration);
         final FilterResponse response = service.filter(List.of("phonenumbers"), "context", "documentid", input, MimeType.TEXT_PLAIN);
 
         LOGGER.info(response.filteredText());
 
+        LOGGER.info("Identified spans:");
+        showSpans(response.explanation().identifiedSpans());
+
+        LOGGER.info("Applied spans:");
         showSpans(response.explanation().appliedSpans());
 
         Assertions.assertEquals("documentid", response.documentId());
-        Assertions.assertEquals(2, response.explanation().identifiedSpans().size());
         Assertions.assertEquals(1, response.explanation().appliedSpans().size());
-        Assertions.assertEquals("his number is {{{REDACTED-phone-number}}}. her number is {{{REDACTED-phone-number}}}.", response.filteredText().trim());
+        Assertions.assertEquals(3, response.explanation().identifiedSpans().size());
+        Assertions.assertEquals("his number is {{{REDACTED-phone-number}}}. her number is 9999999999. her number is 102-304-5678.", response.filteredText().trim());
 
     }
 
