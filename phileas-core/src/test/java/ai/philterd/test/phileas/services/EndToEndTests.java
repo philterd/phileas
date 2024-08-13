@@ -49,14 +49,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
-import static ai.philterd.test.phileas.services.EndToEndTestsHelper.getPdfFilterWithPersonPolicy;
-import static ai.philterd.test.phileas.services.EndToEndTestsHelper.getPolicy;
-import static ai.philterd.test.phileas.services.EndToEndTestsHelper.getPolicyJustCreditCard;
-import static ai.philterd.test.phileas.services.EndToEndTestsHelper.getPolicyJustIdentifier;
-import static ai.philterd.test.phileas.services.EndToEndTestsHelper.getPolicyJustStreetAddress;
-import static ai.philterd.test.phileas.services.EndToEndTestsHelper.getPolicyWithSentiment;
-import static ai.philterd.test.phileas.services.EndToEndTestsHelper.getPolicyZipCodeWithIgnored;
-import static ai.philterd.test.phileas.services.EndToEndTestsHelper.getPolicyZipCodeWithIgnoredFromFile;
+import static ai.philterd.test.phileas.services.EndToEndTestsHelper.*;
 
 @Disabled("Some of these tests require a running philter-ner service")
 public class EndToEndTests {
@@ -563,6 +556,38 @@ public class EndToEndTests {
         Assertions.assertEquals("documentid", response.documentId());
         Assertions.assertEquals(1, response.explanation().appliedSpans().size());
         Assertions.assertEquals("he lived at {{{REDACTED-street-address}}}", response.filteredText().trim());
+
+    }
+
+    @Test
+    public void endToEndJustPhoneNumbers() throws Exception {
+
+        final Path temp = Files.createTempDirectory("philter");
+        final File file = Paths.get(temp.toFile().getAbsolutePath(), "phonenumbers.json").toFile();
+        LOGGER.info("Writing policy to {}", file.getAbsolutePath());
+        final String policy = gson.toJson(getPolicyJustPhoneNumber("phonenumbers"));
+        LOGGER.info(policy);
+        FileUtils.writeStringToFile(file, policy, Charset.defaultCharset());
+
+        Properties properties = new Properties();
+        properties.setProperty("indexes.directory", INDEXES_DIRECTORY);
+        properties.setProperty("filter.policies.directory", temp.toFile().getAbsolutePath());
+
+        final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties);
+
+        final String input = "his number is 123-456-7890. her number is 999-999-9999.";
+
+        final PhileasFilterService service = new PhileasFilterService(phileasConfiguration);
+        final FilterResponse response = service.filter(List.of("phonenumbers"), "context", "documentid", input, MimeType.TEXT_PLAIN);
+
+        LOGGER.info(response.filteredText());
+
+        showSpans(response.explanation().appliedSpans());
+
+        Assertions.assertEquals("documentid", response.documentId());
+        Assertions.assertEquals(1, response.explanation().identifiedSpans().size());
+        Assertions.assertEquals(1, response.explanation().appliedSpans().size());
+        Assertions.assertEquals("his number is {{{REDACTED-phone-number}}}. her number is {{{REDACTED-phone-number}}}.", response.filteredText().trim());
 
     }
 

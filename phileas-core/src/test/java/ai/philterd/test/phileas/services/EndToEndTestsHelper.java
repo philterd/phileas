@@ -387,4 +387,23 @@ public class EndToEndTestsHelper {
 
     }
 
+    public static Policy getPolicyJustPhoneNumber(String policyName) {
+
+        PhoneNumberFilterStrategy phoneNumberFilterStrategy = new PhoneNumberFilterStrategy();
+        phoneNumberFilterStrategy.setConditions("confidence > 0.50");
+
+        PhoneNumber phoneNumber = new PhoneNumber();
+        phoneNumber.setPhoneNumberFilterStrategies(List.of(phoneNumberFilterStrategy));
+
+        Identifiers identifiers = new Identifiers();
+        identifiers.setPhoneNumber(phoneNumber);
+
+        Policy policy = new Policy();
+        policy.setName(policyName);
+        policy.setIdentifiers(identifiers);
+
+        return policy;
+
+    }
+
 }

@@ -84,7 +84,11 @@ public class PhoneNumberRulesFilter extends RulesFilter {
                 final Replacement replacement = getReplacement(policy, context, documentId, text, window, confidence, classification, attributes, null);
                 final boolean isIgnored = ignored.contains(text);
 
-                spans.add(Span.make(match.start(), match.end(), getFilterType(), context, documentId, confidence, text, replacement.getReplacement(), replacement.getSalt(), isIgnored, window));
+                if(replacement.isApplied()) {
+
+                    spans.add(Span.make(match.start(), match.end(), getFilterType(), context, documentId, confidence, text, replacement.getReplacement(), replacement.getSalt(), isIgnored, window));
+
+                }
 
             }
 
