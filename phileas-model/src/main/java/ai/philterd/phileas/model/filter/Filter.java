@@ -238,11 +238,11 @@ public abstract class Filter {
      * @return The replacement string.
      */
     public Replacement getReplacement(final Policy policy, final String context, final String documentId,
-                                      final String token, final String[] window, final double confidence,
+                                      final String token, final String[] window, double confidence,
                                       final String classification, final Map<String, String> attributes,
                                       final FilterPattern filterPattern) throws Exception {
 
-        if(strategies != null) {
+        if(strategies != null && !strategies.isEmpty()) {
 
             // Loop through the strategies. The first strategy without a condition or a satisfied condition will provide the replacement.
             for (AbstractFilterStrategy strategy : strategies) {
@@ -290,8 +290,8 @@ public abstract class Filter {
 
         }
 
-        // No conditions matched so there is no replacement. Just return the original token.
-        return new Replacement(token);
+        // This token didn't meet any condition so don't do anything with it.
+        return new Replacement(token, false);
 
     }
 

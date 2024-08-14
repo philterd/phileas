@@ -182,7 +182,8 @@ public class PersonsV1Filter extends NerFilter {
             // Is this term ignored?
             final boolean ignored = isIgnored(text);
 
-            return Span.make(start, end, FilterType.PERSON, context, documentId, confidence, text, replacement.getReplacement(), replacement.getSalt(), ignored, window);
+            return Span.make(start, end, FilterType.PERSON, context, documentId, confidence, text,
+                    replacement.getReplacement(), replacement.getSalt(), ignored, replacement.isApplied(), window);
 
         }
 

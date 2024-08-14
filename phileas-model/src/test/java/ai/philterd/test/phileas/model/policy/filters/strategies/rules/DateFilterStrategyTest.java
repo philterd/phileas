@@ -147,6 +147,19 @@ public class DateFilterStrategyTest extends AbstractFilterStrategyTest {
     }
 
     @Test
+    public void evaluateCondition8() {
+
+        final String[] window = new String[]{"died", "on", "10-05-2005"};
+
+        final AbstractFilterStrategy strategy = new DateFilterStrategy();
+
+        final boolean conditionSatisfied = strategy.evaluateCondition(getPolicy(), "context", "documentid", "test@test.com", window, "token == \"10-05-2005\"", 1.0, attributes);
+
+        Assertions.assertFalse(conditionSatisfied);
+
+    }
+
+    @Test
     public void shiftReplacement1() throws Exception {
 
         final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);

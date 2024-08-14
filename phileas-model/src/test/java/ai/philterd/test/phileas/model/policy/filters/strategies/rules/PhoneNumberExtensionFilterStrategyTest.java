@@ -30,7 +30,7 @@ public class PhoneNumberExtensionFilterStrategyTest extends AbstractFilterStrate
     }
 
     @Test
-    public void evaluateCondition1() throws IOException {
+    public void evaluateCondition1() {
 
         PhoneNumberExtensionFilterStrategy strategy = new PhoneNumberExtensionFilterStrategy();
 
@@ -41,7 +41,7 @@ public class PhoneNumberExtensionFilterStrategyTest extends AbstractFilterStrate
     }
 
     @Test
-    public void evaluateCondition2() throws IOException {
+    public void evaluateCondition2() {
 
         PhoneNumberExtensionFilterStrategy strategy = new PhoneNumberExtensionFilterStrategy();
 
@@ -52,7 +52,7 @@ public class PhoneNumberExtensionFilterStrategyTest extends AbstractFilterStrate
     }
 
     @Test
-    public void evaluateCondition3() throws IOException {
+    public void evaluateCondition3() {
 
         PhoneNumberExtensionFilterStrategy strategy = new PhoneNumberExtensionFilterStrategy();
 
@@ -106,5 +106,26 @@ public class PhoneNumberExtensionFilterStrategyTest extends AbstractFilterStrate
 
     }
 
+    @Test
+    public void evaluateCondition8() {
+
+        final AbstractFilterStrategy strategy = getFilterStrategy();
+
+        final boolean conditionSatisfied = strategy.evaluateCondition(getPolicy(), "ctx", "documentId", "John Smith", WINDOW,"confidence > 0.7",  0.6, attributes);
+
+        Assertions.assertFalse(conditionSatisfied);
+
+    }
+
+    @Test
+    public void evaluateCondition9() {
+
+        final AbstractFilterStrategy strategy = getFilterStrategy();
+
+        final boolean conditionSatisfied = strategy.evaluateCondition(getPolicy(), "ctx", "documentId", "John Smith", WINDOW,"confidence < 0.7",  0.6, attributes);
+
+        Assertions.assertTrue(conditionSatisfied);
+
+    }
 
 }

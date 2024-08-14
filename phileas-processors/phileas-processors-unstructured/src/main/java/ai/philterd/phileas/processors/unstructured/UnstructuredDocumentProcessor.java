@@ -30,6 +30,7 @@ import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
 
 import static java.util.stream.Collectors.toList;
 
@@ -55,7 +56,7 @@ public class UnstructuredDocumentProcessor implements DocumentProcessor {
                                   final Map<String, String> attributes) throws Exception {
 
         // The list that will contain the spans containing PHI/PII.
-        List<Span> spans = new LinkedList<>();
+        List<Span> identifiedSpans = new LinkedList<>();
 
         // Apply each filter.
         for(final Filter filter : filters) {
@@ -66,27 +67,24 @@ public class UnstructuredDocumentProcessor implements DocumentProcessor {
 
             metricsService.logFilterTime(filter.getFilterType(), elapsedTimeMs);
 
-            spans.addAll(filterResult.getSpans());
+            identifiedSpans.addAll(filterResult.getSpans());
 
         }
-
-        // Drop ignored spans.
-        spans = Span.dropIgnoredSpans(spans);
 
         // Perform span disambiguation.
         if(spanDisambiguationService.isEnabled()) {
-            spans = spanDisambiguationService.disambiguate(context, spans);
+            identifiedSpans = spanDisambiguationService.disambiguate(context, identifiedSpans);
         }
 
         // Drop overlapping spans.
-        spans = Span.dropOverlappingSpans(spans);
+        identifiedSpans = Span.dropOverlappingSpans(identifiedSpans);
 
         // Sort the spans based on the confidence.
-        spans.sort(Comparator.comparing(Span::getConfidence));
+        identifiedSpans.sort(Comparator.comparing(Span::getConfidence));
 
         // Perform post-filtering on the spans.
         for(final PostFilter postFilter : postFilters) {
-            spans = postFilter.filter(input, spans);
+            identifiedSpans = postFilter.filter(input, identifiedSpans);
         }
 
         // PHL-185: Remove non-adjacent firstname/surname spans.
@@ -127,7 +125,8 @@ public class UnstructuredDocumentProcessor implements DocumentProcessor {
 
         // The spans that will be persisted. Has to be a deep copy because the shift
         // below will change the indexes. Doing this to save the original locations of the spans.
-        final List<Span> appliedSpans = spans.stream().map(Span::copy).collect(toList());
+        final List<Span> appliedSpans = identifiedSpans.stream().filter(Span::isApplied)
+                .filter(Predicate.not(Span::isIgnored)).map(Span::copy).collect(toList());
 
         // TODO: Set a flag on each "span" not in appliedSpans indicating it was not used.
 
@@ -135,7 +134,7 @@ public class UnstructuredDocumentProcessor implements DocumentProcessor {
         appliedSpans.forEach(k -> metricsService.incrementFilterType(k.getFilterType()));
 
         // Define the explanation.
-        final Explanation explanation = new Explanation(appliedSpans, spans);
+        final Explanation explanation = new Explanation(appliedSpans, identifiedSpans);
 
         // Used to manipulate the text.
         final StringBuilder sb = new StringBuilder(input);
@@ -148,7 +147,7 @@ public class UnstructuredDocumentProcessor implements DocumentProcessor {
         for(int i = 0; i < stringLength; i++) {
 
             // Is index i the start of a span?
-            final Span span = Span.doesIndexStartSpan(i, spans);
+            final Span span = Span.doesIndexStartSpan(i, appliedSpans);
 
             if(span != null) {
 
@@ -166,7 +165,7 @@ public class UnstructuredDocumentProcessor implements DocumentProcessor {
                     final int shift = (spanLength - replacementLength) * -1;
 
                     // Shift the remaining spans by the shift value.
-                    spans = Span.shiftSpans(shift, span, spans);
+                    identifiedSpans = Span.shiftSpans(shift, span, identifiedSpans);
 
                     // Update the length of the string.
                     stringLength += shift;

@@ -20,7 +20,6 @@ import ai.philterd.phileas.model.objects.Span;
 import com.google.gson.Gson;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * Response to a filter operation.
