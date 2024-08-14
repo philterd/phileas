@@ -106,6 +106,7 @@ public class PersonsV3Filter extends NerFilter {
                     replacement.getReplacement(),
                     replacement.getSalt(),
                     isIgnored,
+                    replacement.isApplied(),
                     window
             );
 

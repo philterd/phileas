@@ -109,7 +109,8 @@ public abstract class RulesFilter extends Filter {
 
                         // Create the span.
                         final Span span = Span.make(characterStart, characterEnd, getFilterType(), context, documentId,
-                                initialConfidence, token, replacement.getReplacement(), replacement.getSalt(), ignored, window);
+                                initialConfidence, token, replacement.getReplacement(), replacement.getSalt(),
+                                ignored, replacement.isApplied(), window);
 
                         // TODO: Add "format" to Span.make() so we don't have to make a separate call here.
                         span.setPattern(filterPattern.getFormat());
