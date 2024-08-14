@@ -122,7 +122,7 @@ public class S3PolicyServiceTest {
         api.start();
 
         if(!isExternalRedis) {
-            redisServer = RedisServer.builder().port(31000).build();
+            redisServer = RedisServer.builder().setting("bind 127.0.0.1").port(31000).build();
             redisServer.start();
         }
 
