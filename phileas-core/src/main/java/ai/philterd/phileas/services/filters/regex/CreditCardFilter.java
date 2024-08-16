@@ -23,6 +23,7 @@ import ai.philterd.phileas.model.objects.FilterPattern;
 import ai.philterd.phileas.model.objects.FilterResult;
 import ai.philterd.phileas.model.objects.Span;
 import ai.philterd.phileas.model.policy.Policy;
+import ai.philterd.phileas.model.policy.filters.strategies.AbstractFilterStrategy;
 import org.apache.commons.validator.routines.checkdigit.LuhnCheckDigit;
 
 import java.util.HashSet;
@@ -67,6 +68,30 @@ public class CreditCardFilter extends RegexFilter {
         final List<Span> validSpans = new LinkedList<>();
 
         for(final Span span : spans) {
+
+            // reduce confidence if span preceded/trailed by dashes
+            final double originalConfidence = span.getConfidence();
+            boolean precedingDash = (span.getCharacterStart() > 1) && (input.charAt(span.getCharacterStart() - 1) == '-');
+            boolean trailingDash = (input.length() > span.getCharacterEnd()) && (input.charAt(span.getCharacterEnd()) == '-');
+            if (precedingDash && trailingDash) {
+                span.setConfidence(0.5);
+            } else if (precedingDash || trailingDash) {
+                span.setConfidence(0.6);
+            }
+
+            // reapply conditions if confidence was changed
+            if (span.getConfidence() != originalConfidence) {
+                for (AbstractFilterStrategy strategy : strategies) {
+                    if (!strategy.getCondition().isEmpty()) {
+                        if (!strategy.evaluateCondition(policy, context, documentId, input,
+                                getWindow(input, span.getCharacterStart(), span.getCharacterEnd()),
+                                strategy.getCondition(), span.getConfidence(), attributes)) {
+                            span.setApplied(false);
+                            break;
+                        }
+                    }
+                }
+            }
 
             final String creditCardNumber = input.substring(span.getCharacterStart(), span.getCharacterEnd())
                     .replaceAll(" ", "")

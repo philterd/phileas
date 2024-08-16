@@ -51,6 +51,7 @@ public class CreditCardFilterTest extends AbstractFilterTest {
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 22, 38, FilterType.CREDIT_CARD));
         Assertions.assertEquals("4532613702852251", filterResult.getSpans().get(0).getText());
+        Assertions.assertEquals(0.9, filterResult.getSpans().get(0).getConfidence());
 
         filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "the payment method is 4556662764258031", attributes);
         Assertions.assertEquals(1, filterResult.getSpans().size());
@@ -70,6 +71,7 @@ public class CreditCardFilterTest extends AbstractFilterTest {
         filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "the payment method is 376454057275914", attributes);
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 22, 37, FilterType.CREDIT_CARD));
+        Assertions.assertEquals(0.9, filterResult.getSpans().get(0).getConfidence());
 
         filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "the payment method is 346009657106278.", attributes);
         Assertions.assertEquals(1, filterResult.getSpans().size());
@@ -80,6 +82,7 @@ public class CreditCardFilterTest extends AbstractFilterTest {
         filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "the payment method is 5567408136464012", attributes);
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 22, 38, FilterType.CREDIT_CARD));
+        Assertions.assertEquals(0.9, filterResult.getSpans().get(0).getConfidence());
 
         filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "the payment method is 5100170632668801.", attributes);
         Assertions.assertEquals(1, filterResult.getSpans().size());
@@ -90,6 +93,7 @@ public class CreditCardFilterTest extends AbstractFilterTest {
         filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "the payment method is 6011485579364263", attributes);
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 22, 38, FilterType.CREDIT_CARD));
+        Assertions.assertEquals(0.9, filterResult.getSpans().get(0).getConfidence());
 
         filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "the payment method is 6011792597726344.", attributes);
         Assertions.assertEquals(1, filterResult.getSpans().size());
@@ -157,6 +161,56 @@ public class CreditCardFilterTest extends AbstractFilterTest {
         filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "the payment method is 6011792597726000.", attributes);
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 22, 38, FilterType.CREDIT_CARD));
+
+    }
+
+    @Test
+    public void filterCreditCardsWithinUUIDs() throws Exception {
+
+        final CreditCardFilterStrategy strategy = new CreditCardFilterStrategy();
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(strategy))
+                .withAlertService(alertService)
+                .withAnonymizationService(new CreditCardAnonymizationService(new LocalAnonymizationCacheService()))
+                .withWindowSize(windowSize)
+                .build();
+
+        final CreditCardFilter filter = new CreditCardFilter(filterConfiguration, true);
+        final String validCard = "47223179-9330-4259";
+
+        // match with preceding dash
+        FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "the UUID is b66c-" + validCard, attributes);
+        Assertions.assertEquals(1, filterResult.getSpans().size());
+        Assertions.assertEquals(FilterType.CREDIT_CARD, filterResult.getSpans().get(0).getFilterType());
+        Assertions.assertEquals(validCard, filterResult.getSpans().get(0).getText());
+        Assertions.assertEquals(0.6, filterResult.getSpans().get(0).getConfidence());  // reduced because of dash
+        Assertions.assertTrue(filterResult.getSpans().get(0).isApplied());
+
+        // match with trailing dash
+        filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, validCard + "-b66c is a UUID", attributes);
+        Assertions.assertEquals(1, filterResult.getSpans().size());
+        Assertions.assertEquals(FilterType.CREDIT_CARD, filterResult.getSpans().get(0).getFilterType());
+        Assertions.assertEquals(validCard, filterResult.getSpans().get(0).getText());
+        Assertions.assertEquals(0.6, filterResult.getSpans().get(0).getConfidence());  // reduced because of dash
+        Assertions.assertTrue(filterResult.getSpans().get(0).isApplied());
+
+        // match with preceding and trailing dash
+        filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "{ id: \"b66c-" + validCard + "-ab12\" }", attributes);
+        Assertions.assertEquals(1, filterResult.getSpans().size());
+        Assertions.assertEquals(FilterType.CREDIT_CARD, filterResult.getSpans().get(0).getFilterType());
+        Assertions.assertEquals(validCard, filterResult.getSpans().get(0).getText());
+        Assertions.assertEquals(0.5, filterResult.getSpans().get(0).getConfidence());  // reduced because of dashes
+        Assertions.assertTrue(filterResult.getSpans().get(0).isApplied());
+
+        // skip applying low-confidence spans
+        strategy.setConditions("confidence > 0.7");
+        filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "{ id: \"b66c-" + validCard + "-ab12\" }", attributes);
+        Assertions.assertEquals(1, filterResult.getSpans().size());
+        Assertions.assertEquals(FilterType.CREDIT_CARD, filterResult.getSpans().get(0).getFilterType());
+        Assertions.assertEquals(validCard, filterResult.getSpans().get(0).getText());
+        Assertions.assertEquals(0.5, filterResult.getSpans().get(0).getConfidence());  // reduced because of dashes
+        Assertions.assertFalse(filterResult.getSpans().get(0).isApplied());            // not applied because of condition
 
     }
 
