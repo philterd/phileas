@@ -19,6 +19,7 @@ import ai.philterd.phileas.model.enums.FilterType;
 import ai.philterd.phileas.model.filter.FilterConfiguration;
 import ai.philterd.phileas.model.filter.rules.regex.RegexFilter;
 import ai.philterd.phileas.model.objects.Analyzer;
+import ai.philterd.phileas.model.objects.ConfidenceModifier;
 import ai.philterd.phileas.model.objects.FilterPattern;
 import ai.philterd.phileas.model.objects.FilterResult;
 import ai.philterd.phileas.model.objects.Span;
@@ -42,9 +43,15 @@ public class CreditCardFilter extends RegexFilter {
         this.onlyValidCreditCardNumbers = onlyValidCreditCardNumbers;
         this.luhnCheckDigit = new LuhnCheckDigit();
 
+        // Modify the confidence based on the characters around the span.
+        final List<ConfidenceModifier> confidenceModifiers = List.of(
+                new ConfidenceModifier(0.6, ConfidenceModifier.ConfidenceCondition.CHARACTER_SEQUENCE_BEFORE, "-"),
+                new ConfidenceModifier(0.6, ConfidenceModifier.ConfidenceCondition.CHARACTER_SEQUENCE_AFTER, "-"),
+                new ConfidenceModifier(0.5, ConfidenceModifier.ConfidenceCondition.CHARACTER_SEQUENCE_SURROUNDING, "-"));
+
         // See http://regular-expressions.info/creditcard.html
         final Pattern creditCardPattern = Pattern.compile("\\b(?:\\d[ -]*?){13,16}\\b", Pattern.CASE_INSENSITIVE);
-        final FilterPattern creditcard1 = new FilterPattern.FilterPatternBuilder(creditCardPattern, 0.90).build();
+        final FilterPattern creditcard = new FilterPattern.FilterPatternBuilder(creditCardPattern, 0.90, confidenceModifiers).build();
 
         this.contextualTerms = new HashSet<>();
         this.contextualTerms.add("credit");
@@ -55,7 +62,7 @@ public class CreditCardFilter extends RegexFilter {
         this.contextualTerms.add("jcb");
         this.contextualTerms.add("diners");
 
-        this.analyzer = new Analyzer(contextualTerms, creditcard1);
+        this.analyzer = new Analyzer(contextualTerms, creditcard);
 
     }
 

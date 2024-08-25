@@ -19,11 +19,15 @@ import ai.philterd.phileas.model.enums.FilterType;
 import ai.philterd.phileas.model.filter.Filter;
 import ai.philterd.phileas.model.filter.FilterConfiguration;
 import ai.philterd.phileas.model.objects.Analyzer;
+import ai.philterd.phileas.model.objects.ConfidenceModifier;
 import ai.philterd.phileas.model.objects.FilterPattern;
 import ai.philterd.phileas.model.objects.Replacement;
 import ai.philterd.phileas.model.objects.Span;
 import ai.philterd.phileas.model.policy.Policy;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -98,7 +102,63 @@ public abstract class RulesFilter extends Filter {
 
                         // TODO: PHL-119: Adjust the confidence based on the initial confidence.
                         // TODO: Should this be an option? Use "simple" confidence values or "calculated"?
-                        final double initialConfidence = filterPattern.getInitialConfidence();
+                        double initialConfidence = filterPattern.getInitialConfidence();
+
+                        // Look at the ConfidenceModifiers (if there are any).
+                        if(CollectionUtils.isNotEmpty(filterPattern.getConfidenceModifiers())) {
+
+                            for(final ConfidenceModifier modifier : filterPattern.getConfidenceModifiers()) {
+
+                                if(modifier.getConfidenceCondition() == ConfidenceModifier.ConfidenceCondition.CHARACTER_SEQUENCE_BEFORE) {
+                                    if(characterStart > 0) {
+                                        if (StringUtils.equalsIgnoreCase(String.valueOf(input.charAt(characterStart - 1)), modifier.getCharacters())) {
+                                            if(modifier.getConfidenceDelta() != 0) {
+                                                initialConfidence += modifier.getConfidenceDelta();
+                                            } else {
+                                                initialConfidence = modifier.getConfidence();
+                                            }
+                                        }
+                                    }
+                                }
+
+                                if(modifier.getConfidenceCondition() == ConfidenceModifier.ConfidenceCondition.CHARACTER_SEQUENCE_AFTER) {
+                                    if(characterEnd < input.length()) {
+                                        if (StringUtils.equalsIgnoreCase(String.valueOf(input.charAt(characterEnd)), modifier.getCharacters())) {
+                                            if(modifier.getConfidenceDelta() != 0) {
+                                                initialConfidence += modifier.getConfidenceDelta();
+                                            } else {
+                                                initialConfidence = modifier.getConfidence();
+                                            }
+                                        }
+                                    }
+                                }
+
+                                if(modifier.getConfidenceCondition() == ConfidenceModifier.ConfidenceCondition.CHARACTER_SEQUENCE_SURROUNDING) {
+                                    if(characterStart > 0 && characterEnd < input.length()) {
+                                        if (StringUtils.equalsIgnoreCase(String.valueOf(input.charAt(characterStart - 1)), modifier.getCharacters())) {
+                                            if (StringUtils.equalsIgnoreCase(String.valueOf(input.charAt(characterEnd)), modifier.getCharacters())) {
+                                                if(modifier.getConfidenceDelta() != 0) {
+                                                    initialConfidence += modifier.getConfidenceDelta();
+                                                } else {
+                                                    initialConfidence = modifier.getConfidence();
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+
+                            }
+
+                            // Make sure the confidence is between 0 and 1.
+                            if(initialConfidence < 0) {
+                                initialConfidence = 0;
+                            }
+
+                            if(initialConfidence > 1) {
+                                initialConfidence = 1;
+                            }
+
+                        }
 
                         // Get the window of words around the token.
                         final String[] window = getWindow(input, characterStart, characterEnd);
