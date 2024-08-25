@@ -188,8 +188,9 @@ public class FilterPolicyLoader {
                         .build();
 
                 final boolean onlyValidCreditCardNumbers = policy.getIdentifiers().getCreditCard().isOnlyValidCreditCardNumbers();
+                final boolean ignoreWhenInUnixTimestamp = policy.getIdentifiers().getCreditCard().isIgnoreWhenInUnixTimestamp();
 
-                final Filter filter = new CreditCardFilter(filterConfiguration, onlyValidCreditCardNumbers);
+                final Filter filter = new CreditCardFilter(filterConfiguration, onlyValidCreditCardNumbers, ignoreWhenInUnixTimestamp);
                 enabledFilters.add(filter);
                 filterCache.get(policy.getName()).put(FilterType.CREDIT_CARD, filter);
 

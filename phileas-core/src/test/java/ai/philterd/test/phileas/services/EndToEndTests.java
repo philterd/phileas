@@ -843,6 +843,30 @@ public class EndToEndTests {
     }
 
     @Test
+    public void endToEndJustCreditCardInUnixTimstamp() throws Exception {
+
+        final Path temp = Files.createTempDirectory("philter");
+
+        final File file2 = Paths.get(temp.toFile().getAbsolutePath(), "justcreditcard.json").toFile();
+        LOGGER.info("Writing policy to {}", file2.getAbsolutePath());
+        FileUtils.writeStringToFile(file2, gson.toJson(getPolicyJustCreditCardNotInUnixTimestamps("justcreditcard")), Charset.defaultCharset());
+
+        Properties properties = new Properties();
+        properties.setProperty("indexes.directory", INDEXES_DIRECTORY);
+        properties.setProperty("filter.policies.directory", temp.toFile().getAbsolutePath());
+
+        final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties);
+
+        final PhileasFilterService service = new PhileasFilterService(phileasConfiguration);
+        final FilterResponse response = service.filter(Arrays.asList("justcreditcard"), "context", "documentid", "My cc is 1647725122227", MimeType.TEXT_PLAIN);
+
+        LOGGER.info(response.filteredText());
+
+        Assertions.assertEquals("My cc is 1647725122227", response.filteredText());
+
+    }
+
+    @Test
     public void endToEndJustCreditCardWithIgnoredTerms() throws Exception {
 
         final Path temp = Files.createTempDirectory("philter");
