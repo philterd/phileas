@@ -293,7 +293,10 @@ public class FilterPolicyLoader {
                         .withWindowSize(phileasConfiguration.spanWindowSize())
                         .build();
 
-                final Filter filter = new EmailAddressFilter(filterConfiguration);
+                final boolean isStrict = policy.getIdentifiers().getEmailAddress().isOnlyStrictMatches();
+                final boolean onlyValidTLDs = policy.getIdentifiers().getEmailAddress().isOnlyValidTLDs();
+
+                final Filter filter = new EmailAddressFilter(filterConfiguration, isStrict, onlyValidTLDs);
                 enabledFilters.add(filter);
                 filterCache.get(policy.getName()).put(FilterType.EMAIL_ADDRESS, filter);
 

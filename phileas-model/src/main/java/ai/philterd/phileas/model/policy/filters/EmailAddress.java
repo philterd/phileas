@@ -23,6 +23,14 @@ import java.util.List;
 
 public class EmailAddress extends AbstractFilter {
 
+    @SerializedName("onlyStrictMatches")
+    @Expose
+    protected boolean onlyStrictMatches = true;
+
+    @SerializedName("onlyValidTLDs")
+    @Expose
+    protected boolean onlyValidTLDs = false;
+
     @SerializedName("emailAddressFilterStrategies")
     @Expose
     private List<EmailAddressFilterStrategy> emailAddressFilterStrategies;
@@ -33,6 +41,22 @@ public class EmailAddress extends AbstractFilter {
 
     public void setEmailAddressFilterStrategies(List<EmailAddressFilterStrategy> emailAddressFilterStrategies) {
         this.emailAddressFilterStrategies = emailAddressFilterStrategies;
+    }
+
+    public boolean isOnlyStrictMatches() {
+        return onlyStrictMatches;
+    }
+
+    public void setOnlyStrictMatches(boolean value) {
+        onlyStrictMatches = value;
+    }
+
+    public boolean isOnlyValidTLDs() {
+        return onlyValidTLDs;
+    }
+
+    public void setOnlyValidTLDs(boolean onlyValidTLDs) {
+        this.onlyValidTLDs = onlyValidTLDs;
     }
 
 }
