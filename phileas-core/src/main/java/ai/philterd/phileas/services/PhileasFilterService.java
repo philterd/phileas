@@ -15,7 +15,6 @@
  */
 package ai.philterd.phileas.services;
 
-import ai.philterd.phileas.metrics.PhileasMetricsService;
 import ai.philterd.phileas.model.configuration.PhileasConfiguration;
 import ai.philterd.phileas.model.domain.Domain;
 import ai.philterd.phileas.model.domain.HealthDomain;
@@ -38,6 +37,7 @@ import ai.philterd.phileas.service.ai.sentiment.OpenNLPSentimentDetector;
 import ai.philterd.phileas.services.alerts.AlertServiceFactory;
 import ai.philterd.phileas.services.anonymization.cache.AnonymizationCacheServiceFactory;
 import ai.philterd.phileas.services.disambiguation.VectorBasedSpanDisambiguationService;
+import ai.philterd.phileas.services.metrics.LoggingMetricsService;
 import ai.philterd.phileas.services.policies.LocalPolicyService;
 import ai.philterd.phileas.services.policies.S3PolicyService;
 import ai.philterd.phileas.services.policies.utils.PolicyUtils;
@@ -76,6 +76,10 @@ public class PhileasFilterService implements FilterService {
     //private final ImageProcessor imageProcessor;
 
     public PhileasFilterService(final PhileasConfiguration phileasConfiguration) throws IOException {
+        this(phileasConfiguration, new LoggingMetricsService());
+    }
+
+    public PhileasFilterService(final PhileasConfiguration phileasConfiguration, final MetricsService metricsService) throws IOException {
 
         LOGGER.info("Initializing Phileas engine.");
 
@@ -85,9 +89,6 @@ public class PhileasFilterService implements FilterService {
         final GsonBuilder gsonBuilder = new GsonBuilder();
         gsonBuilder.registerTypeAdapter(String.class, new PlaceholderDeserializer());
         final Gson gson = gsonBuilder.create();
-
-        // Configure metrics.
-        MetricsService metricsService = new PhileasMetricsService(phileasConfiguration);
 
         // Set the policy services.
         this.policyService = buildPolicyService(phileasConfiguration);

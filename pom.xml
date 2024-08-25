@@ -87,10 +87,6 @@
         <commons.math.version>3.6.1</commons.math.version>
         <commons.text.version>1.10.0</commons.text.version>
         <commons.validator.version>1.9.0</commons.validator.version>
-        <dropwizard.metrics.version>4.1.7</dropwizard.metrics.version>
-        <dropwizard-metrics-cloudwatch.version>1.12.7</dropwizard-metrics-cloudwatch.version>
-        <dropwizard-metrics-datadog.version>1.1.14</dropwizard-metrics-datadog.version>
-        <dropwizard-metrics-prometheus.version>1.13.1</dropwizard-metrics-prometheus.version>
         <equals.verifier.version>3.16.1</equals.verifier.version>
         <ff3.version>1.0</ff3.version>
         <guava.version>33.2.1-jre</guava.version>
@@ -106,7 +102,6 @@
         <maven.compiler.version>3.8.1</maven.compiler.version>
         <maven.failsafe.version>3.2.5</maven.failsafe.version>
         <maven.surefire.version>3.2.5</maven.surefire.version>
-        <micrometer.version>1.13.1</micrometer.version>
         <mockito.version>5.12.0</mockito.version>
         <nv-i18n.version>1.27</nv-i18n.version>
         <opennlp.version>2.1.0</opennlp.version>
