@@ -25,6 +25,7 @@ import ai.philterd.phileas.model.objects.Span;
 import ai.philterd.phileas.model.policy.Policy;
 import org.apache.commons.validator.routines.checkdigit.LuhnCheckDigit;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -36,6 +37,8 @@ public class CreditCardFilter extends RegexFilter {
     private final boolean onlyValidCreditCardNumbers;
     private final LuhnCheckDigit luhnCheckDigit;
     private final boolean ignoreWhenInUnixTimestamp;
+
+    private final String UNIX_TIMESTAMP_REGEX = "1[5-8][0-9]{11}";
 
     public CreditCardFilter(FilterConfiguration filterConfiguration, boolean onlyValidCreditCardNumbers,
                             boolean ignoreWhenInUnixTimestamp) {
@@ -71,27 +74,25 @@ public class CreditCardFilter extends RegexFilter {
 
         if (ignoreWhenInUnixTimestamp) {
 
-            spans.removeAll(
+            final Collection<Span> spansInUnixTimestamps =
                     spans
                         .stream()
-                        .filter(s -> s.getText().matches("1[5-8][0-9]{11}"))
-                        .toList()
-            );
+                        .filter(s -> s.getText().matches(UNIX_TIMESTAMP_REGEX))
+                        .toList();
+
+            spans.removeAll(spansInUnixTimestamps);
 
         }
 
         if (onlyValidCreditCardNumbers) {
 
-            final Iterator<Span> i = spans.iterator();
-            while(i.hasNext()) {
-
-                final Span span = i.next();
+            for(final Span span : spans) {
 
                 final String creditCardNumber = input.substring(span.getCharacterStart(), span.getCharacterEnd())
                         .replaceAll(" ", "")
                         .replaceAll("-", "");
 
-                if(!luhnCheckDigit.isValid(creditCardNumber)) {
+                if (!luhnCheckDigit.isValid(creditCardNumber)) {
                     spans.remove(span);
                 }
 

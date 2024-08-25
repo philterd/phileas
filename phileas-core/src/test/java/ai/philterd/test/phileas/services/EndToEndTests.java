@@ -843,7 +843,7 @@ public class EndToEndTests {
     }
 
     @Test
-    public void endToEndJustCreditCardInUnixTimstamp() throws Exception {
+    public void endToEndJustCreditCardInUnixTimestamp() throws Exception {
 
         final Path temp = Files.createTempDirectory("philter");
 
@@ -858,10 +858,10 @@ public class EndToEndTests {
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties);
 
         final PhileasFilterService service = new PhileasFilterService(phileasConfiguration);
-        final FilterResponse response = service.filter(Arrays.asList("justcreditcard"), "context", "documentid", "My cc is 1647725122227", MimeType.TEXT_PLAIN);
+        final FilterResponse response = service.filter(List.of("justcreditcard"), "context", "documentid", "My cc is 1647725122227", MimeType.TEXT_PLAIN);
 
         LOGGER.info(response.filteredText());
-
+        showSpans(response.explanation().identifiedSpans());
         Assertions.assertEquals("My cc is 1647725122227", response.filteredText());
 
     }
