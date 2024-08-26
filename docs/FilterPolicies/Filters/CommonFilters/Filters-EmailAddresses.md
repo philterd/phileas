@@ -15,6 +15,7 @@ This filter has no required parameters.
 | `emailAddressFilterStrategies` | A list of filter strategies.                                   | None          |
 | `enabled`                      | When set to false, the filter will be disabled and not applied | `true`        |
 | `ignored`                      | A list of terms to be ignored by the filter.                   | None          |
+| `onlyValidTLDs` | When set to true, only email addresses that are for a top-level domain are filtered. | `false` |
 
 ### Filter Strategies
 
