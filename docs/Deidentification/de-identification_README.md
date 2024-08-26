@@ -1,0 +1,13 @@
+# De-identification Methods
+
+There are several ways data can be de-identified, and which you use depends on the types of data you want to de-identify and your use-case for de-identifying the data. The terminology around the different methods is often used interchangeably, but there are differences between each method.
+
+> In this User's Guide, we may use the terms `filter` and `redact` interchangeably.
+
+In Philter, de-identification methods vary for each type of sensitive information. For example, all types can be replaced or redacted, but only dates can be shifted and only zip codes can be truncated. How a de-identification method is applied by Philter is called a filter strategy. Each type of sensitive information can have one or more filter strategies, and the combination of the filter strategies you select is called a policy. A policy determines how a document will be de-identified.
+
+The following is a list of de-identification methods that describes how each method works and its applicability to our [Philter](https://philterd.ai/philter/) software. De-identifying a document is likely to require a combination of the following methods. For instance, you may want to redact names, encrypt credit card numbers, and shift appointment dates.
+
+<table><thead><tr><th width="268">De-identification Method</th><th>Description</th></tr></thead><tbody><tr><td><a href="replacement.md">Replacement</a></td><td>Replaces sensitive information with a defined value. For example, you might want to replace a credit card number with the literal value "CREDIT_CARD_NUMBER".</td></tr><tr><td><a href="redaction-and-masking.md">Redaction and Masking</a></td><td>Removes sensitive information. Our Philter software gives you a choice of how to remove the sensitive information, whether it is by replacing it with ***** (masking) or by some other set of characters.</td></tr><tr><td><a href="encryption.md">Encryption</a></td><td>Encrypts sensitive information.</td></tr><tr><td><a href="date-shifting.md">Date Shifting</a></td><td>Shifts dates either forward or backward by some interval.</td></tr><tr><td><a href="bucketing.md">Bucketing</a></td><td>Categorizes data into buckets based on the data. Examples of bucketing is Philter can bucket dates into years, and zip codes by population.</td></tr></tbody></table>
+
+> A difference between [Philter](https://philterd.ai/philter/) and other services is that Philter does not send your data to a third-party for de-identification. Philter runs in your cloud and your data stays in your cloud.

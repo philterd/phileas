@@ -1,8 +1,8 @@
 # Filter Strategies
 
-A filter strategy defines how sensitive information identified by Philter should be manipulated, whether it is redacted, replaced, encrypted, or manipulated in some other fashion.
+A filter strategy defines how sensitive information identified by Phileas should be manipulated, whether it is redacted, replaced, encrypted, or manipulated in some other fashion.
 
-In a policy, you list the types of sensitive information that should be filtered. How Philter replaces each type of sensitive information is specific to each type. For instance, zip codes can be truncated based on the leading digits or zip code population while phone numbers are redacted. These replacements are performed by "filter strategies."
+In a policy, you list the types of sensitive information that should be filtered. How Phileas replaces each type of sensitive information is specific to each type. For instance, zip codes can be truncated based on the leading digits or zip code population while phone numbers are redacted. These replacements are performed by "filter strategies."
 
 > Each filter can have one or more filter strategies and conditions can be used to determine when to apply each filter strategy.
 {style="tip"}
@@ -30,7 +30,7 @@ A sample policy containing a filter strategy is shown below. In this example, em
 
 ## Filter Strategies
 
-The filter strategies are described below. Each filter type can specify zero or more filter strategies. When no filter strategies are given, Philter will default to `REDACT` for that filter type. When multiple filter strategies are given for a single filter type, the filter strategies will be applied in order as they are listed in the policy, top to bottom.
+The filter strategies are described below. Each filter type can specify zero or more filter strategies. When no filter strategies are given, Phileas will default to `REDACT` for that filter type. When multiple filter strategies are given for a single filter type, the filter strategies will be applied in order as they are listed in the policy, top to bottom.
 
 * [`REDACT`](filter-strategies.md#the-redact-filter-strategy)
 * [`CRYPTO_REPLACE`](filter-strategies.md#crypto)(AES encryption)
@@ -43,7 +43,7 @@ The filter strategies are described below. Each filter type can specify zero or 
 
 ### The `REDACT` Filter Strategy
 
-The REDACT filter strategy replaces sensitive information with a given redaction format. You can put variables in the redaction format that Philter will replace when performing the redaction.
+The REDACT filter strategy replaces sensitive information with a given redaction format. You can put variables in the redaction format that Phileas will replace when performing the redaction.
 
 The available redaction variables are:
 
@@ -118,7 +118,7 @@ An example policy using the `CRYPTO_REPLACE` filter strategy:
 
 ### The `HASH_SHA256_REPLACE` Filter Strategy {id="hash"}
 
-The `HASH_SHA256_REPLACE` filter strategy replaces sensitive information with the SHA256 hash value of the sensitive information. To append a random salt value to each value prior to hashing, set the `salt` property to `true`. The salt value used will be returned in the `explain` response from Philter's API.
+The `HASH_SHA256_REPLACE` filter strategy replaces sensitive information with the SHA256 hash value of the sensitive information. To append a random salt value to each value prior to hashing, set the `salt` property to `true`. The salt value used will be returned in the `explain` response from Phileas's API.
 
 An example policy using the `HASH_SHA256_REPLACE` filter strategy:
 
@@ -139,7 +139,7 @@ An example policy using the `HASH_SHA256_REPLACE` filter strategy:
 
 ### The FPE\_ENCRYPT\_REPLACE Filter Strategy {id="fpe"}
 
-The `FPE_ENCRYPT_REPLACE` filter strategy uses format-preserving encryption (FPE) to encrypt the sensitive information. Philter uses the FF3-1 algorithm for format-preserving encryption. The FPE\_ENCRYPT\_REPLACE filter strategy requires a `key` and a `tweak` value. These values control the format-preserving encryption. For more information on these values and format-preserving encryption, refer to the resources below:
+The `FPE_ENCRYPT_REPLACE` filter strategy uses format-preserving encryption (FPE) to encrypt the sensitive information. Phileas uses the FF3-1 algorithm for format-preserving encryption. The FPE\_ENCRYPT\_REPLACE filter strategy requires a `key` and a `tweak` value. These values control the format-preserving encryption. For more information on these values and format-preserving encryption, refer to the resources below:
 
 * [https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-38Gr1-draft.pdf](https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-38Gr1-draft.pdf)
 * [https://nvlpubs.nist.gov/nistpubs/specialpublications/nist.sp.800-38g.pdf](https://nvlpubs.nist.gov/nistpubs/specialpublications/nist.sp.800-38g.pdf)
