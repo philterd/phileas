@@ -1,31 +1,29 @@
-# How to Evaluate Phileas's Performance
+# How to Evaluate Phileas' Performance
 
-A common question we receive is how well does Phileas perform? Our answer to this question is probably less than satisfactory because it simply depends. What does it depend on? Phileas's performance is heavily dependent upon your individual data. Sharing to compare metrics of Phileas's performance between different customer datasets is like comparing apples and oranges.
+A common question we receive is how well does Phileas perform? Our answer to this question is probably less than satisfactory because it simply depends. What does it depend on? Phileas' performance is heavily dependent upon your individual data. Sharing to compare metrics of Phileas' performance between different customer datasets is like comparing apples and oranges.
 
-If your data is not exactly like another customer's data then the metrics will not be applicable to your data. In terms of the classic information retrieval metrics precision and recall, comparing these values between customers can give false impressions about Phileas's performance, both good and bad.
+If your data is not exactly like another customer's data then the metrics will not be applicable to your data. In terms of the classic information retrieval metrics precision and recall, comparing these values between customers can give false impressions about Phileas' performance, both good and bad.
 
-> This guide walks you through how to evaluate Phileas's performance. If you are just getting started with Phileas please see the Quick Starts instead. Then you can come back here to learn how to evaluate Phileas's performance.
-{style="warning"}
+> This guide walks you through how to evaluate Phileas' performance. If you are just getting started with Phileas please see the Quick Starts instead. Then you can come back here to learn how to evaluate Phileas' performance.
 
 ## Guide to Evaluating Performance
 
-We have created this guide to help guide you in evaluating Phileas's performance on your data. The guide involves determining the types of sensitive information you want to redact, configuring those filters, optimizing the configuration, and then capturing the performance metrics.
+We have created this guide to help guide you in evaluating Phileas' performance on your data. The guide involves determining the types of sensitive information you want to redact, configuring those filters, optimizing the configuration, and then capturing the performance metrics.
 
-> We will gladly perform these steps for you and provide you a detailed Phileas performance report generated from your data. Please contact us to start the process.
-{style="note"}
+> If you are using Philter we will gladly perform these steps for you and provide you a detailed Phileas performance report generated from your data. Please contact us to start the process.
 
 #### What You Need
 
-To evaluate Phileas's performance you need:
+To evaluate Phileas' performance you need:
 
-* A running instance of Phileas. If you do not yet have a running instance of Phileas you can [launch one](https://www.philterd.ai/Phileas).
+* An application using Phileas.
 * A list of the types of sensitive information you want to redact.
 * A data set representative of the text you will be redacting using Phileas. It's important the data set be representative so the evaluation results will transfer to the actual data redaction.
 * The same data set but with annotated sensitive information. These annotations will be used to calculate the precision and recall metrics.
 
 #### Configuring Phileas
 
-Before we can begin our evaluation we need to create a policy. A [policy](policies_README.md) is a file that defines the types of sensitive information that will be redacted and how it will be redacted. The policies are stored on the Phileas instance under `/opt/Phileas/policies`. You can edit the policies directly there using a text editor or you can use Phileas's [API](policies-api.md) to upload a policy. In this case we recommend just using a text editor on the Phileas instance to create a policy.
+Before we can begin our evaluation we need to create a policy. A [policy](policies_README.md) is a file that defines the types of sensitive information that will be redacted and how it will be redacted. The policies are stored on the Phileas instance under `/opt/Phileas/policies`. You can edit the policies directly there using a text editor or you can use Phileas' [API](policies-api.md) to upload a policy. In this case we recommend just using a text editor on the Phileas instance to create a policy.
 
 When using a text editor to create and edit a policy, be sure to save the policy often. Frequent saving can make editing a policy easier.
 
@@ -33,7 +31,7 @@ We also recommend considering to place your policy directory under source contro
 
 #### Creating a Policy
 
-Make a copy of the default policy and we will modify the copy for our needs.
+Make a copy of the default policy, and we will modify the copy for our needs.
 
 `cp /opt/Phileas/policies/default.json /opt/Phileas/policies/evaluation.json`
 
@@ -75,7 +73,7 @@ If a filter is listed in the policy and you do not need the filter you have two 
 
 #### Enabling Filters Not in the Default Policy
 
-Let's say you want to redact bitcoin addresses. The bitcoin address filter is not in the default policy. To add the bitcoin address filter we will refer to Phileas's documentation on the bitcoin address filter, get the configuration, and copy it into the policy.
+Let's say you want to redact bitcoin addresses. The bitcoin address filter is not in the default policy. To add the bitcoin address filter we will refer to Phileas' documentation on the bitcoin address filter, get the configuration, and copy it into the policy.
 
 From the [bitcoin address filter documentation](bitcoin-addresses.md) we see the configuration for the bitcoin address filter is:
 
@@ -142,11 +140,11 @@ With our policy in place we can now send text to Phileas for redaction using tha
 curl -k -X POST "https://localhost:8080/api/filter?p=evaluation" -d @file.txt -H "Content-Type: text/plain"
 ```
 
-In the command above, we are sending the file `file.txt` to Phileas. The `?p=evaluation` tells Phileas to apply the `evaluation` policy that we have been editing. Phileas's response to this command will be the redacted contents of `file.txt` as defined in the policy.
+In the command above, we are sending the file `file.txt` to Phileas. The `?p=evaluation` tells Phileas to apply the `evaluation` policy that we have been editing. Phileas' response to this command will be the redacted contents of `file.txt` as defined in the policy.
 
 #### Comparing Documents
 
-With the original document `file.txt` and the redacted contents returned by Phileas, we can now compare those files to begin evaluating Phileas's performance. You can `diff` the text to find the redacted information or use some other method.
+With the original document `file.txt` and the redacted contents returned by Phileas, we can now compare those files to begin evaluating Phileas' performance. You can `diff` the text to find the redacted information or use some other method.
 
 A visual comparison provides a quick overview of how Phileas is performing on your text but does not give us precision and recall metrics. To calculate these metrics we must compare the redacted document with an annotated file instead of the original file. The annotated file should have the same contents of the original file but with the sensitive information denoted or somehow marked.
 

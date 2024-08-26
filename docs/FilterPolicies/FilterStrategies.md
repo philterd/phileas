@@ -5,7 +5,7 @@ A filter strategy defines how sensitive information identified by Phileas should
 In a policy, you list the types of sensitive information that should be filtered. How Phileas replaces each type of sensitive information is specific to each type. For instance, zip codes can be truncated based on the leading digits or zip code population while phone numbers are redacted. These replacements are performed by "filter strategies."
 
 > Each filter can have one or more filter strategies and conditions can be used to determine when to apply each filter strategy.
-{style="tip"}
+
 
 A sample policy containing a filter strategy is shown below. In this example, email addresses will be redacted.
 
@@ -26,7 +26,7 @@ A sample policy containing a filter strategy is shown below. In this example, em
 ```
 
 > Most of the filter strategies apply to all types of data, however, some filter strategies only apply to a few types. For example, the `TRUNCATE` filter strategy only applies to a zip code filter.
-{style="note"}
+
 
 ## Filter Strategies
 
@@ -118,7 +118,7 @@ An example policy using the `CRYPTO_REPLACE` filter strategy:
 
 ### The `HASH_SHA256_REPLACE` Filter Strategy {id="hash"}
 
-The `HASH_SHA256_REPLACE` filter strategy replaces sensitive information with the SHA256 hash value of the sensitive information. To append a random salt value to each value prior to hashing, set the `salt` property to `true`. The salt value used will be returned in the `explain` response from Phileas's API.
+The `HASH_SHA256_REPLACE` filter strategy replaces sensitive information with the SHA256 hash value of the sensitive information. To append a random salt value to each value prior to hashing, set the `salt` property to `true`. The salt value used will be returned in the `explain` response from Phileas' API.
 
 An example policy using the `HASH_SHA256_REPLACE` filter strategy:
 

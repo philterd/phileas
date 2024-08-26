@@ -3,7 +3,7 @@
 Phileas can optionally ignore a list of terms and prevent those terms from being redacted. For example, if the name `John Smith` is being redacted and you do not want it to be redacted, you can add `John Smith` to an ignore list. Each time Phileas identifies sensitive information it will check the ignore lists to see if the sensitive information is to be ignored.
 
 > Phileas can ignore terms and patterns per-policy, meaning each policy can have its own unique list of terms or patterns to ignore.
-{style="tip"}
+
 
 ## Ignore Lists
 
