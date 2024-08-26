@@ -1,8 +1,8 @@
-# Ages
+# Counties
 
 ## Filter
 
-This filter identifies ages such as `3.5 years old` in text.
+This filter identifies common US counties as determined by the US census in text.
 
 ### Required Parameters
 
@@ -10,15 +10,14 @@ This filter has no required parameters.
 
 ### Optional Parameters
 
-| Parameter             | Description                                                    | Default Value |
-| --------------------- | -------------------------------------------------------------- | ------------- |
-| `ageFilterStrategies` | A list of filter strategies.                                   | None          |
-| `enabled`             | When set to false, the filter will be disabled and not applied | `true`        |
-| `ignored`             | A list of terms to be ignored by the filter.                   | None          |
+| Parameter                | Description                                                                                                                           | Default Value |
+| ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------- | ------------- |
+| `countyFilterStrategies` | A list of filter strategies.                                                                                                          | None          |
+| `sensitivity`            | Controls the "fuzziness" of allowed values to account for misspellings and derivations. Valid values are `low`, `medium`, and `high`. | `medium`      |
 
-### Filter Strategies {id="filter-strategies"}
+### Filter Strategies
 
-The filter may have zero or more filter strategies. When no filter strategy is given the default strategy of `REDACT` is used. When multiple filter strategies are given the filter strategies will be applied in order as they are listed. See [Filter Strategies](#filter-strategies) for details.
+The filter may have zero or more filter strategies. When no filter strategy is given the default strategy of `REDACT` is used. When multiple filter strategies are given the filter strategies will be applied in as they are listed. See [Filter Strategies](#filter-strategies) for details.
 
 | Strategy              | Description                                              |
 | --------------------- | -------------------------------------------------------- |
@@ -28,9 +27,9 @@ The filter may have zero or more filter strategies. When no filter strategy is g
 | `CRYPTO_REPLACE`      | Replace the sensitive text with its encrypted value.     |
 | `HASH_SHA256_REPLACE` | Replace the sensitive text with its SHA256 hash value.   |
 
-### Conditions {id="conditions"}
+### Conditions
 
-Each filter strategy may have one condition. The filter will only be applied when the condition is satisfied. See [Conditions](#conditions) for details.
+Each filter strategy may have one condition. See [Conditions](#conditions) for details.
 
 | Conditional  | Description                                                              | Operators                          |
 | ------------ | ------------------------------------------------------------------------ | ---------------------------------- |
@@ -42,10 +41,11 @@ Each filter strategy may have one condition. The filter will only be applied whe
 
 ```
 {
-   "name": "ages-example",
+   "name": "counties-example",
    "identifiers": {
-      "age": {
-         "ageFilterStrategies": [
+      "county": {
+         "sensitivity": "medium",
+         "countyFilterStrategies": [
             {
                "strategy": "REDACT",
                "redactionFormat": "{{{REDACTED-%t}}}"
