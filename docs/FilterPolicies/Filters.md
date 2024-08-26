@@ -1,12 +1,12 @@
 # Filters
 
-A "filter" corresponds to a type of sensitive information. Philter has filters for sensitive information such as names, addresses, ages, and lots of others.
+A "filter" corresponds to a type of sensitive information. Phileas has filters for sensitive information such as names, addresses, ages, and lots of others.
 
-These are predefined filters that are ready to be used as well as custom filters that let you define your own Philter to identify sensitive information outside of what the predefined filters can identify. An example of a custom filter is a filter to identify your patient account numbers, where the structure of an account number is specific to your organization.
+These are predefined filters that are ready to be used as well as custom filters that let you define your own Phileas to identify sensitive information outside of what the predefined filters can identify. An example of a custom filter is a filter to identify your patient account numbers, where the structure of an account number is specific to your organization.
 
 Each filter is capable of identifying and redacting a specific type of sensitive information. For example, there is a filter for phone numbers, a filter for US social security numbers, and a filter for person's names. You can enable any combination of these filters based on the types of sensitive information you need to redact.
 
-This section of the documentation describes the filters available in Philter. The configuration options for each filter can vary due to the type of the sensitive information. For instance, only the zip code filter has a configuration to truncate the zip code.
+This section of the documentation describes the filters available in Phileas. The configuration options for each filter can vary due to the type of the sensitive information. For instance, only the zip code filter has a configuration to truncate the zip code.
 
 A selection of filters and their configurations is called a [policy](policies_README.md). A policy describes how to de-identify a document.
 
@@ -14,7 +14,7 @@ A selection of filters and their configurations is called a [policy](policies_RE
 
 ### Person's Names
 
-Philter uses several methods to identify person's names.
+Phileas uses several methods to identify person's names.
 
 | Type                                                         | Description                                                      |
 | ------------------------------------------------------------ | ---------------------------------------------------------------- |
@@ -50,9 +50,9 @@ Philter uses several methods to identify person's names.
 
 ## Custom Filter Types of Sensitive Information
 
-In addition to the predefined types of sensitive information listed in the table above, you can also define your own types of sensitive information. Through custom identifiers and dictionaries, Philter can identify many other types of information that may be sensitive in your use-case. For example, if you have patient identifiers that follow a pattern of `AA-00000` you can define a custom identifier for this sensitive information.
+In addition to the predefined types of sensitive information listed in the table above, you can also define your own types of sensitive information. Through custom identifiers and dictionaries, Phileas can identify many other types of information that may be sensitive in your use-case. For example, if you have patient identifiers that follow a pattern of `AA-00000` you can define a custom identifier for this sensitive information.
 
-Philter can be configured to look identify sensitive information based on custom dictionaries. When a term in the dictionary is found in the text, Philter will treat the term as sensitive information and apply the given filter strategy.
+Phileas can be configured to look identify sensitive information based on custom dictionaries. When a term in the dictionary is found in the text, Phileas will treat the term as sensitive information and apply the given filter strategy.
 
 Custom dictionaries support fuzziness to accommodate for misspellings. The replacement strategy for a custom dictionary has a `sensitivityLevel` that controls the amount of allowed fuzziness.
 

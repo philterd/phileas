@@ -1,8 +1,8 @@
 # Filter Policies
 
-The types of sensitive information identified by Philter and how that information is de-identified are controlled through policies. A policy is a file stored under Philter’s `policies` directory, which by default is located at `/opt/philter/policies/`. You can have an unlimited number of policies.
+The types of sensitive information identified by Phileas and how that information is de-identified are controlled through policies. A policy is a file stored under Phileas’s `policies` directory, which by default is located at `/opt/Phileas/policies/`. You can have an unlimited number of policies.
 
-Each policy has a `name` that is used by Philter to apply the appropriate de-identification methods. The `name` is passed to Philter’s [API](filtering-api.md) along with the text to be filtered when submitting text to Philter. This provides flexibility and allows you to de-identify different types of documents in differing manners with a single instance of Philter. For example, you may have a policy for bankruptcy documents and a separate policy for financial documents.
+Each policy has a `name` that is used by Phileas to apply the appropriate de-identification methods. The `name` is passed to Phileas’s [API](filtering-api.md) along with the text to be filtered when submitting text to Phileas. This provides flexibility and allows you to de-identify different types of documents in differing manners with a single instance of Phileas. For example, you may have a policy for bankruptcy documents and a separate policy for financial documents.
 
 > There are [sample policies](sample-filter-profiles.md) available for immediate use or customization to fit your use-cases.
 {style="tip"}
@@ -13,7 +13,7 @@ A policy:
 
 * Must have a `name` that uniquely identifies it.
 * Must have a list of `identifiers` that are filters for sensitive information.
-    * Each `identifier` , or filter, can have zero or more [filter strategies](filter-strategies.md). A filter strategy tells Philter how to manipulate that type of sensitive information when it is identified.
+    * Each `identifier` , or filter, can have zero or more [filter strategies](filter-strategies.md). A filter strategy tells Phileas how to manipulate that type of sensitive information when it is identified.
 * Can have an optional list of [terms](ignore-lists.md) or [patterns](ignoring-patterns.md).
 * Can have encryption keys to support [encryption](filter-strategies.md#fpe) of sensitive information.
 
@@ -51,15 +51,15 @@ The name of the policy is `email-and-phone-numbers`. Policies can be named anyth
 
 ### Applying a Policy to Text
 
-To use this policy we will save it as `/opt/philter/profiles/email-and-phone-numbers.json`. We must restart Philter for the new profile to be available for use. To apply the policy we will pass the policy's name to Philter when making a filter request, as shown in the example request below.
+To use this policy we will save it as `/opt/Phileas/profiles/email-and-phone-numbers.json`. We must restart Phileas for the new profile to be available for use. To apply the policy we will pass the policy's name to Phileas when making a filter request, as shown in the example request below.
 
 ```
 curl -k -X POST "https://localhost:8080/api/filter?c=context&p=email-and-phone-numbers" \
   -d @file.txt -H Content-Type "text/plain"
 ```
 
-In this command, we have provided the parameter `p` along with a value that is the name of the policy we want to use for this request. If we had multiple policies in Philter we could choose a different policy for this request simply by changing the name given to the parameter `p`. For more details see Philter’s [API](filtering-api.md).
+In this command, we have provided the parameter `p` along with a value that is the name of the policy we want to use for this request. If we had multiple policies in Phileas we could choose a different policy for this request simply by changing the name given to the parameter `p`. For more details see Phileas’s [API](filtering-api.md).
 
-Philter will process the contents of `file.txt` by applying the policy named `email-and-phone-numbers`. As we saw in the policy above, this policy redacts email addresses and phone numbers. Philter will return the redacted text in response to the API call.
+Phileas will process the contents of `file.txt` by applying the policy named `email-and-phone-numbers`. As we saw in the policy above, this policy redacts email addresses and phone numbers. Phileas will return the redacted text in response to the API call.
 
 To manipulate the sensitive information by methods other than redaction, see the [Filter Strategies](filter-strategies.md).
