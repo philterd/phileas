@@ -137,23 +137,11 @@ sudo systemctl restart Phileas
 With our policy in place we can now send text to Phileas for redaction using that policy:
 
 ```
-curl -k -X POST "https://localhost:8080/api/filter?p=evaluation" -d @file.txt -H "Content-Type: text/plain"
-```
+PhileasConfiguration phileasConfiguration = ConfigFactory.create(PhileasConfiguration.class);
 
-In the command above, we are sending the file `file.txt` to Phileas. The `?p=evaluation` tells Phileas to apply the `evaluation` policy that we have been editing. Phileas' response to this command will be the redacted contents of `file.txt` as defined in the policy.
+FilterService filterService = new PhileasFilterService(phileasConfiguration);
 
-#### Comparing Documents
-
-With the original document `file.txt` and the redacted contents returned by Phileas, we can now compare those files to begin evaluating Phileas' performance. You can `diff` the text to find the redacted information or use some other method.
-
-A visual comparison provides a quick overview of how Phileas is performing on your text but does not give us precision and recall metrics. To calculate these metrics we must compare the redacted document with an annotated file instead of the original file. The annotated file should have the same contents of the original file but with the sensitive information denoted or somehow marked.
-
-There are many industry-standard ways to annotate text and many tools to assist with text annotation. We recommend using a tool to help you annotate and compare instead of performing only a visual comparison which does not provide metric values.
-
-Let's resubmit the file to Phileas but instead this time use the explain API `endpoint`:
-
-```
-curl -k -X POST "https://localhost:8080/api/explain?p=evaluation" -d @file.txt -H "Content-Type: text/plain"
+FilterResponse response = filterService.filter(policies, context, documentId, body, MimeType.TEXT_PLAIN);
 ```
 
 The `explain` API [endpoint](filtering-api.md#explain) produces a detailed description of the redaction. The response will include a list of spans that contain the start and stop positions of redacted text and the type of sensitive information that was redacted. Using this information we can compare the redacted information to our annotated file to calculate precision and recall metrics.
@@ -165,8 +153,8 @@ Now we can calculate the precision and recall metrics.
 * Precision is the number of true positives divided by the number true positives plus false positives.
 * Recall is the number of true positives divided by the number of false negatives plus true positives.
 
-![Calculating the precision and recall](precision.png)
+![Calculating the precision and recall](Images/precision.png)
 
 * The F-1 score is the harmonic mean of precision and recall.
 
-![Calculating the F-1 score](f1.png)
+![Calculating the F-1 score](Images/f1.png)
