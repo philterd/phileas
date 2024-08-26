@@ -5,7 +5,7 @@ The types of sensitive information identified by Phileas and how that informatio
 Each policy has a `name` that is used by Phileas to apply the appropriate de-identification methods. The `name` is passed to Phileas’s [API](filtering-api.md) along with the text to be filtered when submitting text to Phileas. This provides flexibility and allows you to de-identify different types of documents in differing manners with a single instance of Phileas. For example, you may have a policy for bankruptcy documents and a separate policy for financial documents.
 
 > There are [sample policies](sample-filter-profiles.md) available for immediate use or customization to fit your use-cases.
-{style="tip"}
+
 
 ### The Structure of a Policy
 

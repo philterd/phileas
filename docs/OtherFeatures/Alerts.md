@@ -47,4 +47,4 @@ An alert contains the following information:
 
 ### Retrieving and Deleting Alerts
 
-The alerts that Phileas has generated are available through Phileas's [alerts API](alerts-api.md). This API allows for retrieving and deleting alerts. Using this API you can build sophisticated notification systems around Phileas's capabilities.
+The alerts that Phileas has generated are available through Phileas' [alerts API](alerts-api.md). This API allows for retrieving and deleting alerts. Using this API you can build sophisticated notification systems around Phileas' capabilities.
