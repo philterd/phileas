@@ -16,6 +16,7 @@ This filter has no required parameters.
 | `enabled`                    | When set to false, the filter will be disabled and not applied     | `true`        |
 | `ignored`                    | A list of terms to be ignored by the filter.                       | None          |
 | `onlyValidCreditCardNumbers` | When set to true, only valid credit card numbers will be filtered. | `true`        |
+| `ignoreWhenInUnixTimestamp` | When set to true, only credit card numbers that do not match the pattern for a Unix timestamp will be filtered. | `false` |
 
 ### Filter Strategies
 
