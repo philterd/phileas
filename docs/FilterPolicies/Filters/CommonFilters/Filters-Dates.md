@@ -25,7 +25,7 @@ This filter has no required parameters.
 | `ignored`              | A list of terms to be ignored by the filter.                   | None          |
 | `onlyValidDates`       | When set to true, only valid dates will be filtered.           | `false`       |
 
-### Filter Strategies {id="filter-strategies"}
+### Filter Strategies
 
 The filter may have zero or more filter strategies. When no filter strategy is given the default strategy of `REDACT` is used. When multiple filter strategies are given the filter strategies will be applied in order as they are listed. See [Filter Strategies](#filter-strategies) for details.
 
@@ -56,7 +56,7 @@ The following filter strategy options are available for the `SHIFT` filter strat
 | `shiftMinutes` | The number of minutes to shift the date. Can be a negative or positive integer. Defaults to `0` if not specified. | `0`           |
 | `shiftYears`   | The number of years to shift the date. Can be a negative or positive integer. Defaults to `0` if not specified.   | `0`           |
 
-### Conditions {id="conditions"}
+### Conditions
 
 Each filter strategy may have one condition. See [Conditions](#conditions) for details.
 
