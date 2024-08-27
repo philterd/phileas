@@ -10,7 +10,6 @@
 	<name>phileas-services</name>
 	<packaging>pom</packaging>
 	<modules>
-		<module>phileas-services-metrics</module>
 		<module>phileas-services-anonymization</module>
 		<module>phileas-services-disambiguation</module>
 		<module>phileas-services-ai</module>
