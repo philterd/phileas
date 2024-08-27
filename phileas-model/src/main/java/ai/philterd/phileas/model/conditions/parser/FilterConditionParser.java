@@ -93,6 +93,7 @@ public class FilterConditionParser extends Parser {
 	}
 
 	public static class ExpressionContext extends ParserRuleContext {
+		public TerminalNode EOF() { return getToken(FilterConditionParser.EOF, 0); }
 		public TerminalNode COMPARATOR() { return getToken(FilterConditionParser.COMPARATOR, 0); }
 		public TerminalNode NUMBER() { return getToken(FilterConditionParser.NUMBER, 0); }
 		public TerminalNode WORD() { return getToken(FilterConditionParser.WORD, 0); }
@@ -118,17 +119,18 @@ public class FilterConditionParser extends Parser {
 	public final ExpressionContext expression() throws RecognitionException {
 		ExpressionContext _localctx = new ExpressionContext(_ctx, getState());
 		enterRule(_localctx, 0, RULE_expression);
+		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
 			setState(52);
 			_errHandler.sync(this);
-			switch ( getInterpreter().adaptivePredict(_input,7,_ctx) ) {
-			case 1:
+			switch (_input.LA(1)) {
+			case EOF:
 				{
 				}
 				break;
-			case 2:
+			case T__0:
 				{
 				setState(3);
 				match(T__0);
@@ -138,19 +140,19 @@ public class FilterConditionParser extends Parser {
 				match(NUMBER);
 				setState(8);
 				_errHandler.sync(this);
-				switch ( getInterpreter().adaptivePredict(_input,0,_ctx) ) {
-				case 1:
+				_la = _input.LA(1);
+				if (_la==AND) {
 					{
 					setState(6);
 					match(AND);
 					setState(7);
 					expression();
 					}
-					break;
 				}
+
 				}
 				break;
-			case 3:
+			case T__1:
 				{
 				setState(10);
 				match(T__1);
@@ -160,19 +162,19 @@ public class FilterConditionParser extends Parser {
 				match(WORD);
 				setState(15);
 				_errHandler.sync(this);
-				switch ( getInterpreter().adaptivePredict(_input,1,_ctx) ) {
-				case 1:
+				_la = _input.LA(1);
+				if (_la==AND) {
 					{
 					setState(13);
 					match(AND);
 					setState(14);
 					expression();
 					}
-					break;
 				}
+
 				}
 				break;
-			case 4:
+			case T__2:
 				{
 				setState(17);
 				match(T__2);
@@ -182,19 +184,19 @@ public class FilterConditionParser extends Parser {
 				match(TYPE);
 				setState(22);
 				_errHandler.sync(this);
-				switch ( getInterpreter().adaptivePredict(_input,2,_ctx) ) {
-				case 1:
+				_la = _input.LA(1);
+				if (_la==AND) {
 					{
 					setState(20);
 					match(AND);
 					setState(21);
 					expression();
 					}
-					break;
 				}
+
 				}
 				break;
-			case 5:
+			case T__3:
 				{
 				setState(24);
 				match(T__3);
@@ -204,19 +206,19 @@ public class FilterConditionParser extends Parser {
 				match(NUMBER);
 				setState(29);
 				_errHandler.sync(this);
-				switch ( getInterpreter().adaptivePredict(_input,3,_ctx) ) {
-				case 1:
+				_la = _input.LA(1);
+				if (_la==AND) {
 					{
 					setState(27);
 					match(AND);
 					setState(28);
 					expression();
 					}
-					break;
 				}
+
 				}
 				break;
-			case 6:
+			case T__4:
 				{
 				setState(31);
 				match(T__4);
@@ -226,19 +228,19 @@ public class FilterConditionParser extends Parser {
 				match(WORD);
 				setState(36);
 				_errHandler.sync(this);
-				switch ( getInterpreter().adaptivePredict(_input,4,_ctx) ) {
-				case 1:
+				_la = _input.LA(1);
+				if (_la==AND) {
 					{
 					setState(34);
 					match(AND);
 					setState(35);
 					expression();
 					}
-					break;
 				}
+
 				}
 				break;
-			case 7:
+			case T__5:
 				{
 				setState(38);
 				match(T__5);
@@ -248,19 +250,19 @@ public class FilterConditionParser extends Parser {
 				match(WORD);
 				setState(43);
 				_errHandler.sync(this);
-				switch ( getInterpreter().adaptivePredict(_input,5,_ctx) ) {
-				case 1:
+				_la = _input.LA(1);
+				if (_la==AND) {
 					{
 					setState(41);
 					match(AND);
 					setState(42);
 					expression();
 					}
-					break;
 				}
+
 				}
 				break;
-			case 8:
+			case T__6:
 				{
 				setState(45);
 				match(T__6);
@@ -270,19 +272,23 @@ public class FilterConditionParser extends Parser {
 				match(NUMBER);
 				setState(50);
 				_errHandler.sync(this);
-				switch ( getInterpreter().adaptivePredict(_input,6,_ctx) ) {
-				case 1:
+				_la = _input.LA(1);
+				if (_la==AND) {
 					{
 					setState(48);
 					match(AND);
 					setState(49);
 					expression();
 					}
-					break;
 				}
+
 				}
 				break;
+			default:
+				throw new NoViableAltException(this);
 			}
+			setState(54);
+			match(EOF);
 			}
 		}
 		catch (RecognitionException re) {
@@ -297,24 +303,24 @@ public class FilterConditionParser extends Parser {
 	}
 
 	public static final String _serializedATN =
-		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\179\4\2\t\2\3\2\3"+
+		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\17;\4\2\t\2\3\2\3"+
 		"\2\3\2\3\2\3\2\3\2\5\2\13\n\2\3\2\3\2\3\2\3\2\3\2\5\2\22\n\2\3\2\3\2\3"+
 		"\2\3\2\3\2\5\2\31\n\2\3\2\3\2\3\2\3\2\3\2\5\2 \n\2\3\2\3\2\3\2\3\2\3\2"+
 		"\5\2\'\n\2\3\2\3\2\3\2\3\2\3\2\5\2.\n\2\3\2\3\2\3\2\3\2\3\2\5\2\65\n\2"+
-		"\5\2\67\n\2\3\2\2\2\3\2\2\2\2E\2\66\3\2\2\2\4\67\3\2\2\2\5\6\7\3\2\2\6"+
-		"\7\7\f\2\2\7\n\7\r\2\2\b\t\7\13\2\2\t\13\5\2\2\2\n\b\3\2\2\2\n\13\3\2"+
-		"\2\2\13\67\3\2\2\2\f\r\7\4\2\2\r\16\7\f\2\2\16\21\7\16\2\2\17\20\7\13"+
-		"\2\2\20\22\5\2\2\2\21\17\3\2\2\2\21\22\3\2\2\2\22\67\3\2\2\2\23\24\7\5"+
-		"\2\2\24\25\7\f\2\2\25\30\7\n\2\2\26\27\7\13\2\2\27\31\5\2\2\2\30\26\3"+
-		"\2\2\2\30\31\3\2\2\2\31\67\3\2\2\2\32\33\7\6\2\2\33\34\7\f\2\2\34\37\7"+
-		"\r\2\2\35\36\7\13\2\2\36 \5\2\2\2\37\35\3\2\2\2\37 \3\2\2\2 \67\3\2\2"+
-		"\2!\"\7\7\2\2\"#\7\f\2\2#&\7\16\2\2$%\7\13\2\2%\'\5\2\2\2&$\3\2\2\2&\'"+
-		"\3\2\2\2\'\67\3\2\2\2()\7\b\2\2)*\7\f\2\2*-\7\16\2\2+,\7\13\2\2,.\5\2"+
-		"\2\2-+\3\2\2\2-.\3\2\2\2.\67\3\2\2\2/\60\7\t\2\2\60\61\7\f\2\2\61\64\7"+
-		"\r\2\2\62\63\7\13\2\2\63\65\5\2\2\2\64\62\3\2\2\2\64\65\3\2\2\2\65\67"+
+		"\5\2\67\n\2\3\2\3\2\3\2\2\2\3\2\2\2\2G\2\66\3\2\2\2\4\67\3\2\2\2\5\6\7"+
+		"\3\2\2\6\7\7\f\2\2\7\n\7\r\2\2\b\t\7\13\2\2\t\13\5\2\2\2\n\b\3\2\2\2\n"+
+		"\13\3\2\2\2\13\67\3\2\2\2\f\r\7\4\2\2\r\16\7\f\2\2\16\21\7\16\2\2\17\20"+
+		"\7\13\2\2\20\22\5\2\2\2\21\17\3\2\2\2\21\22\3\2\2\2\22\67\3\2\2\2\23\24"+
+		"\7\5\2\2\24\25\7\f\2\2\25\30\7\n\2\2\26\27\7\13\2\2\27\31\5\2\2\2\30\26"+
+		"\3\2\2\2\30\31\3\2\2\2\31\67\3\2\2\2\32\33\7\6\2\2\33\34\7\f\2\2\34\37"+
+		"\7\r\2\2\35\36\7\13\2\2\36 \5\2\2\2\37\35\3\2\2\2\37 \3\2\2\2 \67\3\2"+
+		"\2\2!\"\7\7\2\2\"#\7\f\2\2#&\7\16\2\2$%\7\13\2\2%\'\5\2\2\2&$\3\2\2\2"+
+		"&\'\3\2\2\2\'\67\3\2\2\2()\7\b\2\2)*\7\f\2\2*-\7\16\2\2+,\7\13\2\2,.\5"+
+		"\2\2\2-+\3\2\2\2-.\3\2\2\2.\67\3\2\2\2/\60\7\t\2\2\60\61\7\f\2\2\61\64"+
+		"\7\r\2\2\62\63\7\13\2\2\63\65\5\2\2\2\64\62\3\2\2\2\64\65\3\2\2\2\65\67"+
 		"\3\2\2\2\66\4\3\2\2\2\66\5\3\2\2\2\66\f\3\2\2\2\66\23\3\2\2\2\66\32\3"+
-		"\2\2\2\66!\3\2\2\2\66(\3\2\2\2\66/\3\2\2\2\67\3\3\2\2\2\n\n\21\30\37&"+
-		"-\64\66";
+		"\2\2\2\66!\3\2\2\2\66(\3\2\2\2\66/\3\2\2\2\678\3\2\2\289\7\2\2\39\3\3"+
+		"\2\2\2\n\n\21\30\37&-\64\66";
 	public static final ATN _ATN =
 		new ATNDeserializer().deserialize(_serializedATN.toCharArray());
 	static {
