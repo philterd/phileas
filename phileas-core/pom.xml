@@ -44,11 +44,6 @@
 		</dependency>-->
 		<dependency>
 			<groupId>ai.philterd</groupId>
-			<artifactId>phileas-services-metrics</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>ai.philterd</groupId>
 			<artifactId>phileas-services-disambiguation</artifactId>
 			<version>${project.version}</version>
 		</dependency>

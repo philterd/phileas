@@ -293,7 +293,9 @@ public class FilterPolicyLoader {
                         .withWindowSize(phileasConfiguration.spanWindowSize())
                         .build();
 
-                final Filter filter = new EmailAddressFilter(filterConfiguration);
+                final boolean isStrict = policy.getIdentifiers().getEmailAddress().isOnlyStrictMatches();
+
+                final Filter filter = new EmailAddressFilter(filterConfiguration, isStrict);
                 enabledFilters.add(filter);
                 filterCache.get(policy.getName()).put(FilterType.EMAIL_ADDRESS, filter);
 
