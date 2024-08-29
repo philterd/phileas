@@ -160,4 +160,48 @@ public class CreditCardFilterTest extends AbstractFilterTest {
 
     }
 
+    @Test
+    public void filterCreditCardBorderedByDashes() throws Exception {
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(new CreditCardFilterStrategy()))
+                .withAlertService(alertService)
+                .withAnonymizationService(new CreditCardAnonymizationService(new LocalAnonymizationCacheService()))
+                .withWindowSize(windowSize)
+                .build();
+
+        final CreditCardFilter filter = new CreditCardFilter(filterConfiguration, false);
+
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "the payment method is 1234567812345678- visa.", attributes);
+        Assertions.assertEquals(1, filterResult.getSpans().size());
+        Assertions.assertEquals(0.6, filterResult.getSpans().get(0).getConfidence());
+        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 22, 38, FilterType.CREDIT_CARD));
+
+        final FilterResult filterResult2 = filter.filter(getPolicy(), "context", "documentid", PIECE, "the payment method is -1234567812345678 visa.", attributes);
+        Assertions.assertEquals(1, filterResult2.getSpans().size());
+        Assertions.assertEquals(0.6, filterResult2.getSpans().get(0).getConfidence());
+        Assertions.assertTrue(checkSpan(filterResult2.getSpans().get(0), 23, 39, FilterType.CREDIT_CARD));
+
+        final FilterResult filterResult3 = filter.filter(getPolicy(), "context", "documentid", PIECE, "the payment method is -1234567812345678- visa.", attributes);
+        Assertions.assertEquals(1, filterResult3.getSpans().size());
+        Assertions.assertEquals(0.5, filterResult3.getSpans().get(0).getConfidence());
+        Assertions.assertTrue(checkSpan(filterResult3.getSpans().get(0), 23, 39, FilterType.CREDIT_CARD));
+
+        final FilterResult filterResult4 = filter.filter(getPolicy(), "context", "documentid", PIECE, "1234567812345678- visa.", attributes);
+        Assertions.assertEquals(1, filterResult4.getSpans().size());
+        Assertions.assertEquals(0.6, filterResult4.getSpans().get(0).getConfidence());
+        Assertions.assertTrue(checkSpan(filterResult4.getSpans().get(0), 0, 16, FilterType.CREDIT_CARD));
+
+        final FilterResult filterResult5 = filter.filter(getPolicy(), "context", "documentid", PIECE, "-1234567812345678", attributes);
+        Assertions.assertEquals(1, filterResult5.getSpans().size());
+        Assertions.assertEquals(0.6, filterResult5.getSpans().get(0).getConfidence());
+        Assertions.assertTrue(checkSpan(filterResult5.getSpans().get(0), 1, 17, FilterType.CREDIT_CARD));
+
+        final FilterResult filterResult6 = filter.filter(getPolicy(), "context", "documentid", PIECE, "-1234567812345678-", attributes);
+        Assertions.assertEquals(1, filterResult6.getSpans().size());
+        Assertions.assertEquals(0.5, filterResult6.getSpans().get(0).getConfidence());
+        Assertions.assertTrue(checkSpan(filterResult6.getSpans().get(0), 1, 17, FilterType.CREDIT_CARD));
+
+    }
+
 }

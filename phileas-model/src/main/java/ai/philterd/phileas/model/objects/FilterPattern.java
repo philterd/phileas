@@ -15,6 +15,7 @@
  */
 package ai.philterd.phileas.model.objects;
 
+import java.util.List;
 import java.util.regex.Pattern;
 
 public class FilterPattern {
@@ -24,7 +25,8 @@ public class FilterPattern {
     private final double initialConfidence;
     private final String classification;
     private final boolean alwaysValid;
-    private int groupNumber = 0;
+    private final int groupNumber;
+    private final List<ConfidenceModifier> confidenceModifiers;
 
     public static class FilterPatternBuilder {
 
@@ -34,10 +36,22 @@ public class FilterPattern {
         private String classification;
         private boolean alwaysValid = false;
         private int groupNumber = 0;
+        private List<ConfidenceModifier> confidenceModifiers;
 
         public FilterPatternBuilder(final Pattern pattern, final double initialConfidence) {
             this.pattern = pattern;
             this.initialConfidence = initialConfidence;
+        }
+
+        public FilterPatternBuilder(final Pattern pattern, final double initialConfidence, List<ConfidenceModifier> confidenceModifiers) {
+            this.pattern = pattern;
+            this.initialConfidence = initialConfidence;
+            this.confidenceModifiers = confidenceModifiers;
+        }
+
+        public FilterPatternBuilder withConfidenceModifiers(List<ConfidenceModifier> confidenceModifiers) {
+            this.confidenceModifiers = confidenceModifiers;
+            return this;
         }
 
         public FilterPatternBuilder withFormat(String format) {
@@ -61,13 +75,14 @@ public class FilterPattern {
         }
 
         public FilterPattern build() {
-            return new FilterPattern(pattern, initialConfidence, format, classification, alwaysValid, groupNumber);
+            return new FilterPattern(pattern, initialConfidence, format, classification, alwaysValid, groupNumber, confidenceModifiers);
         }
 
     }
 
     private FilterPattern(final Pattern pattern, final double initialConfidence, final String format,
-                          final String classification, final boolean alwaysValid, final int groupNumber) {
+                          final String classification, final boolean alwaysValid, final int groupNumber,
+                          final List<ConfidenceModifier> confidenceModifiers) {
 
         this.pattern = pattern;
         this.initialConfidence = initialConfidence;
@@ -75,6 +90,7 @@ public class FilterPattern {
         this.classification = classification;
         this.alwaysValid = alwaysValid;
         this.groupNumber = groupNumber;
+        this.confidenceModifiers = confidenceModifiers;
 
     }
 
@@ -98,6 +114,12 @@ public class FilterPattern {
         return classification;
     }
 
-    public int getGroupNumber() { return groupNumber; }
+    public int getGroupNumber() {
+        return groupNumber;
+    }
+
+    public List<ConfidenceModifier> getConfidenceModifiers() {
+        return confidenceModifiers;
+    }
 
 }
