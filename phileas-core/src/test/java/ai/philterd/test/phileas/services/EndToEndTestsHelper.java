@@ -172,7 +172,30 @@ public class EndToEndTestsHelper {
 
     }
 
-    public static Policy getPolicyJustCreditCard(String policyName) throws IOException {
+    public static Policy getPolicyJustCreditCardNotInUnixTimestamps(String policyName) {
+
+        CreditCardFilterStrategy creditCardFilterStrategy = new CreditCardFilterStrategy();
+
+        CreditCard creditCard = new CreditCard();
+        creditCard.setIgnoreWhenInUnixTimestamp(true);
+        creditCard.setCreditCardFilterStrategies(Arrays.asList(creditCardFilterStrategy));
+
+        Identifiers identifiers = new Identifiers();
+        identifiers.setCreditCard(creditCard);
+
+        Ignored ignored = new Ignored();
+        ignored.setTerms(Arrays.asList("4121742025464400", "12341341234", "2423543545"));
+
+        Policy policy = new Policy();
+        policy.setName(policyName);
+        policy.setIdentifiers(identifiers);
+        policy.setIgnored(List.of(ignored));
+
+        return policy;
+
+    }
+
+    public static Policy getPolicyJustCreditCard(String policyName) {
 
         CreditCardFilterStrategy creditCardFilterStrategy = new CreditCardFilterStrategy();
 
@@ -188,7 +211,7 @@ public class EndToEndTestsHelper {
         Policy policy = new Policy();
         policy.setName(policyName);
         policy.setIdentifiers(identifiers);
-        policy.setIgnored(Arrays.asList(ignored));
+        policy.setIgnored(List.of(ignored));
 
         return policy;
 
