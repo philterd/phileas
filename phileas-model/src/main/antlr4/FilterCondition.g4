@@ -10,7 +10,7 @@ expression: (
     | 'context' COMPARATOR WORD (AND expression)?
     | 'classification' COMPARATOR WORD (AND expression)?
     | 'sentiment' COMPARATOR NUMBER (AND expression)?
-    );
+    ) EOF;
 
 TYPE: (
     | 'PER' | 'per'
@@ -41,5 +41,5 @@ NUMBER: (
 WORD: '"' (~('"' | '\\' | '\r' | '\n') | '\\' ('"' | '\\'))* '"';
 
 WS
-    :   [ \t\r\n]+ -> skip
+    :   [ ]+ -> skip
     ;

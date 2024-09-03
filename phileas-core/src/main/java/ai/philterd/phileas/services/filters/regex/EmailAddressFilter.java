@@ -24,6 +24,11 @@ import ai.philterd.phileas.model.objects.FilterResult;
 import ai.philterd.phileas.model.objects.Span;
 import ai.philterd.phileas.model.policy.Policy;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -31,7 +36,11 @@ import java.util.regex.Pattern;
 
 public class EmailAddressFilter extends RegexFilter {
 
-    public EmailAddressFilter(FilterConfiguration filterConfiguration, boolean onlyStrictMatches) {
+    private final boolean onlyValidTLDs;
+
+    private Collection<String> tlds = null;
+
+    public EmailAddressFilter(FilterConfiguration filterConfiguration, boolean onlyStrictMatches, boolean onlyValidTLDs) throws IOException {
         super(FilterType.EMAIL_ADDRESS, filterConfiguration);
 
         final Pattern emailAddressPattern = onlyStrictMatches
@@ -45,6 +54,13 @@ public class EmailAddressFilter extends RegexFilter {
         this.contextualTerms.add("e-mail");
 
         this.analyzer = new Analyzer(contextualTerms, email1);
+        this.onlyValidTLDs = onlyValidTLDs;
+
+        if(onlyValidTLDs) {
+            final File file = new File(getClass().getClassLoader().getResource("tlds-alpha-by-domain.txt").getFile());
+            final List<String> rawTlds = Files.readAllLines(file.toPath(), Charset.defaultCharset());
+            this.tlds = rawTlds.stream().filter(str->!str.startsWith("#")).map(String::toLowerCase).map(s -> "." + s).toList();
+        }
 
     }
 
@@ -52,6 +68,10 @@ public class EmailAddressFilter extends RegexFilter {
     public FilterResult filter(Policy policy, String context, String documentId, int piece, String input, Map<String, String> attributes) throws Exception {
 
         final List<Span> spans = findSpans(policy, analyzer, input, context, documentId, attributes);
+
+        if(onlyValidTLDs) {
+            spans.removeIf(str -> tlds.stream().noneMatch(str.getText()::endsWith));
+        }
 
         return new FilterResult(context, documentId, spans);
 

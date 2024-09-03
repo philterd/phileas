@@ -17,8 +17,6 @@ package ai.philterd.phileas.service.ai.onnx;
 
 import ai.philterd.phileas.model.enums.FilterType;
 import ai.philterd.phileas.model.objects.Entity;
-
-import opennlp.dl.InferenceOptions;
 import opennlp.dl.namefinder.NameFinderDL;
 import opennlp.tools.sentdetect.SentenceDetector;
 import opennlp.tools.util.Span;
@@ -40,10 +38,7 @@ public class Inference {
     public Inference(File model, File vocab, Map<Integer, String> id2Labels, SentenceDetector sentenceDetector) throws Exception {
 
         this.id2Labels = id2Labels;
-        this.nameFinderDL = new NameFinderDL(model, vocab, id2Labels, new InferenceOptions());
-
-        // TODO: Change to sentence detector once supported in OpenNLP's NameFinderDL.
-        //this.nameFinderDL = new NameFinderDL(model, vocab, id2Labels, sentenceDetector);
+        this.nameFinderDL = new NameFinderDL(model, vocab, id2Labels, sentenceDetector);
 
     }
 
