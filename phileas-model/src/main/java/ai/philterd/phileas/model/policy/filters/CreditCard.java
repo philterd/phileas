@@ -31,6 +31,9 @@ public class CreditCard extends AbstractFilter {
     @Expose
     private List<CreditCardFilterStrategy> creditCardFilterStrategies;
 
+    @SerializedName("ignoreWhenInUnixTimestamp")
+    @Expose private boolean ignoreWhenInUnixTimestamp = false;
+
     public List<CreditCardFilterStrategy> getCreditCardFilterStrategies() {
         return creditCardFilterStrategies;
     }
@@ -45,6 +48,14 @@ public class CreditCard extends AbstractFilter {
 
     public void setOnlyValidCreditCardNumbers(boolean onlyValidCreditCardNumbers) {
         this.onlyValidCreditCardNumbers = onlyValidCreditCardNumbers;
+    }
+
+    public boolean isIgnoreWhenInUnixTimestamp() {
+        return ignoreWhenInUnixTimestamp;
+    }
+
+    public void setIgnoreWhenInUnixTimestamp(boolean ignoreWhenInUnixTimestamp) {
+        this.ignoreWhenInUnixTimestamp = ignoreWhenInUnixTimestamp;
     }
 
 }

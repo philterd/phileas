@@ -26,8 +26,9 @@ import ai.philterd.phileas.model.objects.Span;
 import ai.philterd.phileas.model.policy.Policy;
 import org.apache.commons.validator.routines.checkdigit.LuhnCheckDigit;
 
+import java.util.Collection;
 import java.util.HashSet;
-import java.util.LinkedList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -36,12 +37,18 @@ public class CreditCardFilter extends RegexFilter {
 
     private final boolean onlyValidCreditCardNumbers;
     private final LuhnCheckDigit luhnCheckDigit;
+    private final boolean ignoreWhenInUnixTimestamp;
 
-    public CreditCardFilter(FilterConfiguration filterConfiguration, boolean onlyValidCreditCardNumbers) {
+    private final String UNIX_TIMESTAMP_REGEX = "1[5-8][0-9]{11}";
+
+    public CreditCardFilter(FilterConfiguration filterConfiguration, boolean onlyValidCreditCardNumbers,
+                            boolean ignoreWhenInUnixTimestamp) {
+
         super(FilterType.CREDIT_CARD, filterConfiguration);
 
         this.onlyValidCreditCardNumbers = onlyValidCreditCardNumbers;
         this.luhnCheckDigit = new LuhnCheckDigit();
+        this.ignoreWhenInUnixTimestamp = ignoreWhenInUnixTimestamp;
 
         // Modify the confidence based on the characters around the span.
         final List<ConfidenceModifier> confidenceModifiers = List.of(
@@ -50,8 +57,9 @@ public class CreditCardFilter extends RegexFilter {
                 new ConfidenceModifier(0.5, ConfidenceModifier.ConfidenceCondition.CHARACTER_SEQUENCE_SURROUNDING, "-"));
 
         // See http://regular-expressions.info/creditcard.html
-        final Pattern creditCardPattern = Pattern.compile("\\b(?:\\d[ -]*?){13,16}\\b", Pattern.CASE_INSENSITIVE);
-        final FilterPattern creditcard = new FilterPattern.FilterPatternBuilder(creditCardPattern, 0.90, confidenceModifiers).build();
+        final Pattern creditCard = Pattern.compile("\\b(?:\\d[ -]*?){13,16}\\b", Pattern.CASE_INSENSITIVE);
+        final FilterPattern creditCardPattern = new FilterPattern.FilterPatternBuilder(creditCard, 0.90)
+                .withConfidenceModifiers(confidenceModifiers).build();
 
         this.contextualTerms = new HashSet<>();
         this.contextualTerms.add("credit");
@@ -62,7 +70,7 @@ public class CreditCardFilter extends RegexFilter {
         this.contextualTerms.add("jcb");
         this.contextualTerms.add("diners");
 
-        this.analyzer = new Analyzer(contextualTerms, creditcard);
+        this.analyzer = new Analyzer(contextualTerms, creditCardPattern);
 
     }
 
@@ -71,27 +79,35 @@ public class CreditCardFilter extends RegexFilter {
 
         final List<Span> spans = findSpans(policy, analyzer, input, context, documentId, attributes);
 
-        final List<Span> validSpans = new LinkedList<>();
+        if (ignoreWhenInUnixTimestamp) {
 
-        for(final Span span : spans) {
+            final Collection<Span> spansInUnixTimestamps =
+                    spans
+                        .stream()
+                        .filter(s -> s.getText().matches(UNIX_TIMESTAMP_REGEX))
+                        .toList();
 
-            final String creditCardNumber = input.substring(span.getCharacterStart(), span.getCharacterEnd())
-                    .replaceAll(" ", "")
-                    .replaceAll("-", "");
+            spans.removeAll(spansInUnixTimestamps);
 
-            if(onlyValidCreditCardNumbers) {
+        }
 
-                if(luhnCheckDigit.isValid(creditCardNumber)) {
-                    validSpans.add(span);
+        if (onlyValidCreditCardNumbers) {
+
+            for(final Span span : spans) {
+
+                final String creditCardNumber = input.substring(span.getCharacterStart(), span.getCharacterEnd())
+                        .replaceAll(" ", "")
+                        .replaceAll("-", "");
+
+                if (!luhnCheckDigit.isValid(creditCardNumber)) {
+                    spans.remove(span);
                 }
 
-            } else {
-                validSpans.add(span);
             }
 
         }
 
-        return new FilterResult(context, documentId, validSpans);
+        return new FilterResult(context, documentId, spans);
 
     }
 

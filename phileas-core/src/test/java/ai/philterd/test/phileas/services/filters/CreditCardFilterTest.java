@@ -31,7 +31,7 @@ import java.util.List;
 
 public class CreditCardFilterTest extends AbstractFilterTest {
 
-    private AlertService alertService = Mockito.mock(AlertService.class);
+    private final AlertService alertService = Mockito.mock(AlertService.class);
 
     @Test
     public void filterCreditCardOnlyValid() throws Exception {
@@ -43,7 +43,7 @@ public class CreditCardFilterTest extends AbstractFilterTest {
                 .withWindowSize(windowSize)
                 .build();
 
-        final CreditCardFilter filter = new CreditCardFilter(filterConfiguration, true);
+        final CreditCardFilter filter = new CreditCardFilter(filterConfiguration, true, false);
 
         // VISA
 
@@ -107,7 +107,7 @@ public class CreditCardFilterTest extends AbstractFilterTest {
                 .withWindowSize(windowSize)
                 .build();
 
-        final CreditCardFilter filter = new CreditCardFilter(filterConfiguration, false);
+        final CreditCardFilter filter = new CreditCardFilter(filterConfiguration, false, false);
 
         // VISA
 
@@ -170,7 +170,7 @@ public class CreditCardFilterTest extends AbstractFilterTest {
                 .withWindowSize(windowSize)
                 .build();
 
-        final CreditCardFilter filter = new CreditCardFilter(filterConfiguration, false);
+        final CreditCardFilter filter = new CreditCardFilter(filterConfiguration, false, false);
 
         final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "the payment method is 1234567812345678- visa.", attributes);
         Assertions.assertEquals(1, filterResult.getSpans().size());
