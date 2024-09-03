@@ -28,7 +28,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import java.util.Arrays;
 import java.util.List;
 
 public class EmailAddressFilterTest extends AbstractFilterTest {
@@ -45,7 +44,7 @@ public class EmailAddressFilterTest extends AbstractFilterTest {
                 .withWindowSize(windowSize)
                 .build();
 
-        filterEmails(filterConfiguration, true);
+        filterEmails(filterConfiguration, true, false);
 
     }
 
@@ -59,15 +58,75 @@ public class EmailAddressFilterTest extends AbstractFilterTest {
                 .withWindowSize(windowSize)
                 .build();
 
-        filterEmails(filterConfiguration, false);
+        filterEmails(filterConfiguration, false, false);
 
     }
 
-    private void filterEmails(FilterConfiguration filterConfiguration, boolean onlyStrictMatches) throws Exception {
+    @Test
+    public void filterEmailOnlyValidTLDs() throws Exception {
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(new EmailAddressFilterStrategy()))
+                .withAlertService(alertService)
+                .withAnonymizationService(new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()))
+                .withWindowSize(windowSize)
+                .build();
+
+        final EmailAddressFilter filter = new EmailAddressFilter(filterConfiguration, true, true);
+
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "my email is none@none.com.", attributes);
+        Assertions.assertEquals(1, filterResult.getSpans().size());
+        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 12, 25, FilterType.EMAIL_ADDRESS));
+        Assertions.assertEquals("none@none.com", filterResult.getSpans().get(0).getText());
+
+    }
+
+    @Test
+    public void filterEmailOnlyInvalidTLDs() throws Exception {
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(new EmailAddressFilterStrategy()))
+                .withAlertService(alertService)
+                .withAnonymizationService(new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()))
+                .withWindowSize(windowSize)
+                .build();
+
+        final EmailAddressFilter filter = new EmailAddressFilter(filterConfiguration, true, true);
+
+        final FilterResult filterResult1 = filter.filter(getPolicy(), "context", "documentid", PIECE, "my email is none@none.codfm.", attributes);
+        Assertions.assertEquals(0, filterResult1.getSpans().size());
+
+        final FilterResult filterResult2 = filter.filter(getPolicy(), "context", "documentid", PIECE, "my email is none@none.com.dmf.", attributes);
+        Assertions.assertEquals(0, filterResult2.getSpans().size());
+
+        final FilterResult filterResult3 = filter.filter(getPolicy(), "context", "documentid", PIECE, "my email is none@none.cob", attributes);
+        Assertions.assertEquals(0, filterResult3.getSpans().size());
+
+    }
+
+    @Test
+    public void filterEmailOnlyInvalidTLDsWithNoStrictMatches() throws Exception {
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(new EmailAddressFilterStrategy()))
+                .withAlertService(alertService)
+                .withAnonymizationService(new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()))
+                .withWindowSize(windowSize)
+                .build();
+
+        final EmailAddressFilter filter = new EmailAddressFilter(filterConfiguration, false, true);
+
+        final FilterResult filterResult4 = filter.filter(getPolicy(), "context", "documentid", PIECE, "my email is none@lb.co_m", attributes);
+        showSpans(filterResult4.getSpans());
+        Assertions.assertEquals(0, filterResult4.getSpans().size());
+
+    }
+
+    private void filterEmails(FilterConfiguration filterConfiguration, boolean onlyStrictMatches, boolean onlyValidTLDs) throws Exception {
 
         final String cxt = "context";
         final String doc = "documentid";
-        final EmailAddressFilter filter = new EmailAddressFilter(filterConfiguration, onlyStrictMatches);
+        final EmailAddressFilter filter = new EmailAddressFilter(filterConfiguration, onlyStrictMatches, onlyValidTLDs);
         final Policy policy = getPolicy();
 
         final FilterResult filterResult = filter.filter(policy, cxt, doc, PIECE, "my email is none@none.com.", attributes);
