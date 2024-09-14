@@ -23,17 +23,17 @@ jobs:
           distribution: adopt
           architecture: x64
           cache: maven
-          server-id: philterd-repository-snapshots
-          server-username: MAVEN_USERNAME
-          server-password: MAVEN_PASSWORD
+#          server-id: philterd-repository-snapshots
+#          server-username: MAVEN_USERNAME
+#          server-password: MAVEN_PASSWORD
       - name: Build
-        run: mvn --batch-mode --update-snapshots test
-        env:
-          MAVEN_USERNAME: ${{ secrets.PHILTERD_ARTIFACTS_USER }}
-          MAVEN_PASSWORD: ${{ secrets.PHILTERD_ARTIFACTS_TOKEN }}
-      - name: Deploy
-        if: ${{ github.ref == 'refs/heads/main' }}
-        run: mvn --batch-mode --update-snapshots package deploy
-        env:
-          MAVEN_USERNAME: ${{ secrets.PHILTERD_ARTIFACTS_USER }}
-          MAVEN_PASSWORD: ${{ secrets.PHILTERD_ARTIFACTS_TOKEN }}
+        run: mvn --batch-mode test
+#       env:
+#          MAVEN_USERNAME: ${{ secrets.PHILTERD_ARTIFACTS_USER }}
+#          MAVEN_PASSWORD: ${{ secrets.PHILTERD_ARTIFACTS_TOKEN }}
+#      - name: Deploy
+#        if: ${{ github.ref == 'refs/heads/main' }}
+#        run: mvn --batch-mode --update-snapshots package deploy
+#        env:
+#          MAVEN_USERNAME: ${{ secrets.PHILTERD_ARTIFACTS_USER }}
+#          MAVEN_PASSWORD: ${{ secrets.PHILTERD_ARTIFACTS_TOKEN }}
