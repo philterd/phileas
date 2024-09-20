@@ -103,7 +103,7 @@ Next, add the Phileas dependency to your project:
 <dependency>
   <groupId>ai.philterd</groupId>
   <artifactId>phileas-core</artifactId>
-  <version>2.7.0-SNAPSHOT</version>
+  <version>2.7.0</version>
 </dependency>
 
 ```
@@ -113,7 +113,8 @@ Next, add the Phileas dependency to your project:
 Create a `FilterService`, using a `PhileasConfiguration`, and call `filter()` on the service:
 
 ```
-PhileasConfiguration phileasConfiguration = ConfigFactory.create(PhileasConfiguration.class);
+Properties properties = new Properties();
+PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties);
 
 FilterService filterService = new PhileasFilterService(phileasConfiguration);
 
