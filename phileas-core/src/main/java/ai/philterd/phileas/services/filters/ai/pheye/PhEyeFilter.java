@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ai.philterd.phileas.services.filters.ai.python;
+package ai.philterd.phileas.services.filters.ai.pheye;
 
 import ai.philterd.phileas.model.configuration.PhileasConfiguration;
 import ai.philterd.phileas.model.enums.FilterType;
@@ -24,8 +24,12 @@ import ai.philterd.phileas.model.objects.Replacement;
 import ai.philterd.phileas.model.objects.Span;
 import ai.philterd.phileas.model.policy.Policy;
 import ai.philterd.phileas.model.services.MetricsService;
+import com.amazonaws.services.s3.model.TagSet;
+import com.google.common.reflect.TypeToken;
+import com.google.gson.Gson;
 import okhttp3.ConnectionPool;
 import okhttp3.OkHttpClient;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.apache.logging.log4j.LogManager;
@@ -36,35 +40,31 @@ import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.converter.scalars.ScalarsConverterFactory;
 
 import java.io.IOException;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.lang.reflect.Type;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
-public class PersonsV1Filter extends NerFilter {
+public class PhEyeFilter extends NerFilter {
 
-    private static final Logger LOGGER = LogManager.getLogger(PersonsV1Filter.class);
+    private static final Logger LOGGER = LogManager.getLogger(PhEyeFilter.class);
 
     private final boolean removePunctuation;
 
-    private final transient PyTorchRestService service;
-    private final String tag;
-
-    // Response will look like:
-    // [{"text": "George Washington", "tag": "PER", "score": 0.2987019270658493, "start": 0, "end": 17}, {"text": "Virginia", "tag": "LOC", "score": 0.3510116934776306, "start": 95, "end": 103}]
-
-    public PersonsV1Filter(final FilterConfiguration filterConfiguration,
-                           final PhileasConfiguration phileasConfiguration,
-                           final String tag,
-                           final Map<String, DescriptiveStatistics> stats,
-                           final MetricsService metricsService,
-                           final boolean removePunctuation,
-                           final Map<String, Double> thresholds) {
+    private final transient PhEyeService service;
+    private final Collection<String> labels;
+    
+    public PhEyeFilter(final FilterConfiguration filterConfiguration,
+                       final PhileasConfiguration phileasConfiguration,
+                       final Collection<String> labels,
+                       final Map<String, DescriptiveStatistics> stats,
+                       final MetricsService metricsService,
+                       final boolean removePunctuation,
+                       final Map<String, Double> thresholds) {
 
         super(filterConfiguration, stats, metricsService, thresholds, FilterType.PERSON);
 
         this.removePunctuation = removePunctuation;
-        this.tag = tag;
+        this.labels = labels;
         int timeoutSec = phileasConfiguration.nerTimeout();
         int maxIdleConnections = phileasConfiguration.nerMaxIdleConnections();
         int keepAliveDurationMs = phileasConfiguration.nerKeepAliveDuration();
@@ -85,7 +85,7 @@ public class PersonsV1Filter extends NerFilter {
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
-        service = retrofit.create(PyTorchRestService.class);
+        service = retrofit.create(PhEyeService.class);
 
     }
 
@@ -102,29 +102,40 @@ public class PersonsV1Filter extends NerFilter {
         if(removePunctuation) {
             input = input.replaceAll("\\p{Punct}", " ");
         }
-
-        final Response<PyTorchResponse> response = service.process(context, documentId, piece, input).execute();
-
+        
+        final PhEyeRequest phEyeRequest = new PhEyeRequest();
+        phEyeRequest.setText(input);
+        phEyeRequest.setContext(context);
+        phEyeRequest.setDocumentId(documentId);
+        phEyeRequest.setPiece(piece);
+        phEyeRequest.setLabels(List.of("Person"));
+        
+        final Response<String> response = service.find(phEyeRequest).execute();
+        
+        System.out.println("spans");
+        System.out.println(response.body());
+        
         if(response.isSuccessful()) {
 
-            final List<PhileasSpan> phileasSpans = response.body().getSpans();
+            final Type listType = new TypeToken<ArrayList<PhEyeSpan>>(){}.getType();
+            List<PhEyeSpan> phEyeSpans = new Gson().fromJson(response.body(), listType);
+            
+            if (CollectionUtils.isNotEmpty(phEyeSpans)) {
 
-            if(phileasSpans != null) {
-
-                for (final PhileasSpan phileasSpan : phileasSpans) {
+                for (final PhEyeSpan phEyeSpan : phEyeSpans) {
 
                     // Only interested in spans matching the tag we are looking for, e.g. PER, LOC.
-                    if (StringUtils.equalsIgnoreCase(phileasSpan.getTag(), tag)) {
+                    if (labels.contains(phEyeSpan.getLabel())) {
 
                         // Check the confidence threshold.
-                        if(!thresholds.containsKey(tag.toUpperCase()) || phileasSpan.getScore() >= thresholds.get(tag.toUpperCase())) {
+                        if(!thresholds.containsKey(phEyeSpan.getLabel().toUpperCase()) || phEyeSpan.getScore() >= thresholds.get(phEyeSpan.getLabel().toUpperCase())) {
 
                             // Get the window of text surrounding the token.
-                            final String[] window = getWindow(input, phileasSpan.getStart(), phileasSpan.getEnd());
+                            final String[] window = getWindow(input, phEyeSpan.getStart(), phEyeSpan.getEnd());
 
-                            final Span span = createSpan(policy, context, documentId, phileasSpan.getText(),
-                                    window, phileasSpan.getTag(), phileasSpan.getStart(), phileasSpan.getEnd(),
-                                    phileasSpan.getScore(), attributes);
+                            final Span span = createSpan(policy, context, documentId, phEyeSpan.getText(),
+                                    window, phEyeSpan.getLabel(), phEyeSpan.getStart(), phEyeSpan.getEnd(),
+                                    phEyeSpan.getScore(), attributes);
 
                             // Span will be null if no span was created due to it being excluded.
                             if (span != null) {

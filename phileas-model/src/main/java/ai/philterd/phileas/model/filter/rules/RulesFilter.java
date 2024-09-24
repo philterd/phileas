@@ -92,7 +92,7 @@ public abstract class RulesFilter extends Filter {
                     // The token's position inside the text.
                     final int characterStart = matcher.start(filterPattern.getGroupNumber());
                     final int characterEnd = matcher.end(filterPattern.getGroupNumber());
-
+                    
                     // Is there already a span encompassing this location?
                     // If so just quit. This means the first match wins.
                     if(!Span.doesSpanExist(characterStart, characterEnd, spans)) {
