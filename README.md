@@ -81,20 +81,22 @@ After cloning, run `git lfs pull` to download models needed for unit tests. Phil
 Phileas snapshots and releases are available in our [Maven repositories](https://artifacts.philterd.ai/) so add the following to your Maven configuration:
 
 ```
-<repository>
-    <id>philterd-repository-releases</id>
-    <url>https://artifacts.philterd.ai/releases</url>
-    <snapshots>
-        <enabled>false</enabled>
-    </snapshots>
-</repository>
-<repository>
-    <id>philterd-repository-snapshots</id>
-    <url>https://artifacts.philterd.ai/snapshots</url>
-    <snapshots>
-        <enabled>true</enabled>
-    </snapshots>
-</repository>
+<repositories>
+    <repository>
+        <id>philterd-repository-releases</id>
+        <url>https://artifacts.philterd.ai/releases</url>
+        <snapshots>
+            <enabled>false</enabled>
+        </snapshots>
+    </repository>
+    <repository>
+        <id>philterd-repository-snapshots</id>
+        <url>https://artifacts.philterd.ai/snapshots</url>
+        <snapshots>
+            <enabled>true</enabled>
+        </snapshots>
+    </repository>
+</repositories>
 ```
 
 Next, add the Phileas dependency to your project:
@@ -103,7 +105,7 @@ Next, add the Phileas dependency to your project:
 <dependency>
   <groupId>ai.philterd</groupId>
   <artifactId>phileas-core</artifactId>
-  <version>2.7.0-SNAPSHOT</version>
+  <version>2.7.0</version>
 </dependency>
 
 ```
@@ -113,7 +115,8 @@ Next, add the Phileas dependency to your project:
 Create a `FilterService`, using a `PhileasConfiguration`, and call `filter()` on the service:
 
 ```
-PhileasConfiguration phileasConfiguration = ConfigFactory.create(PhileasConfiguration.class);
+Properties properties = new Properties();
+PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties);
 
 FilterService filterService = new PhileasFilterService(phileasConfiguration);
 
