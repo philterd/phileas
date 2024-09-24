@@ -91,7 +91,7 @@ public class PhEyeFilter extends NerFilter {
 
     @Override
     public FilterResult filter(final Policy policy, final String context, final String documentId, final int piece,
-                               String input, Map<String, String> attributes) throws Exception {
+                               String input, final Map<String, String> attributes) throws Exception {
 
         final List<Span> spans = new LinkedList<>();
 
@@ -108,17 +108,14 @@ public class PhEyeFilter extends NerFilter {
         phEyeRequest.setContext(context);
         phEyeRequest.setDocumentId(documentId);
         phEyeRequest.setPiece(piece);
-        phEyeRequest.setLabels(List.of("Person"));
+        phEyeRequest.setLabels(labels);
         
         final Response<String> response = service.find(phEyeRequest).execute();
-        
-        System.out.println("spans");
-        System.out.println(response.body());
         
         if(response.isSuccessful()) {
 
             final Type listType = new TypeToken<ArrayList<PhEyeSpan>>(){}.getType();
-            List<PhEyeSpan> phEyeSpans = new Gson().fromJson(response.body(), listType);
+            final List<PhEyeSpan> phEyeSpans = new Gson().fromJson(response.body(), listType);
             
             if (CollectionUtils.isNotEmpty(phEyeSpans)) {
 
