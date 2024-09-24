@@ -125,7 +125,7 @@ public class UnstructuredDocumentProcessor implements DocumentProcessor {
 
         // The spans that will be persisted. Has to be a deep copy because the shift
         // below will change the indexes. Doing this to save the original locations of the spans.
-        final List<Span> appliedSpans = identifiedSpans.stream().filter(Span::isApplied)
+        List<Span> appliedSpans = identifiedSpans.stream().filter(Span::isApplied)
                 .filter(Predicate.not(Span::isIgnored)).map(Span::copy).collect(toList());
 
         // TODO: Set a flag on each "span" not in appliedSpans indicating it was not used.
@@ -143,6 +143,7 @@ public class UnstructuredDocumentProcessor implements DocumentProcessor {
         // are longer than the original spans.
         int stringLength = input.length();
 
+        // Do the actual replacement of spans in the text.
         // Go character by character through the input.
         for(int i = 0; i < stringLength; i++) {
 
@@ -165,7 +166,7 @@ public class UnstructuredDocumentProcessor implements DocumentProcessor {
                     final int shift = (spanLength - replacementLength) * -1;
 
                     // Shift the remaining spans by the shift value.
-                    identifiedSpans = Span.shiftSpans(shift, span, identifiedSpans);
+                    appliedSpans = Span.shiftSpans(shift, span, appliedSpans);
 
                     // Update the length of the string.
                     stringLength += shift;
