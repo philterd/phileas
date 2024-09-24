@@ -178,7 +178,7 @@ public final class Span {
      * @param spans The list of {@link Span spans}.
      * @return A list of {@link Span spans} shifted per the input parameters.
      */
-    public static List<Span> shiftSpans(int shift, Span ignoreSpan, List<Span> spans) {
+    public static List<Span> shiftSpans(final int shift, final Span ignoreSpan, final List<Span> spans) {
 
         final List<Span> shiftedSpans = new LinkedList<>();
 

@@ -33,7 +33,7 @@ import ai.philterd.phileas.model.services.SpanValidator;
 import ai.philterd.phileas.services.anonymization.*;
 import ai.philterd.phileas.services.filters.ai.opennlp.PersonsV2Filter;
 import ai.philterd.phileas.services.filters.ai.opennlp.PersonsV3Filter;
-import ai.philterd.phileas.services.filters.ai.python.PersonsV1Filter;
+import ai.philterd.phileas.services.filters.ai.pheye.PhEyeFilter;
 import ai.philterd.phileas.services.filters.custom.PhoneNumberRulesFilter;
 import ai.philterd.phileas.services.filters.regex.*;
 import ai.philterd.phileas.services.validators.DateSpanValidator;
@@ -1052,10 +1052,10 @@ public class FilterPolicyLoader {
                         .withWindowSize(phileasConfiguration.spanWindowSize())
                         .build();
 
-                final Filter filter = new PersonsV1Filter(
+                final Filter filter = new PhEyeFilter(
                         filterConfiguration,
                         phileasConfiguration,
-                        "PER",
+                        List.of("Person"),
                         stats,
                         metricsService,
                         policy.getIdentifiers().getPerson().isRemovePunctuation(),
