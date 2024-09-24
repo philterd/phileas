@@ -91,6 +91,31 @@ public class EndToEndTestsHelper {
 
     }
 
+    public static Policy getPolicySSNAndZipCode(String policyName) throws IOException {
+
+        SsnFilterStrategy ssnFilterStrategy = new SsnFilterStrategy();
+
+        Ssn ssn = new Ssn();
+        ssn.setSsnFilterStrategies(List.of(ssnFilterStrategy));
+
+        ZipCodeFilterStrategy zipCodeFilterStrategy = new ZipCodeFilterStrategy();
+        zipCodeFilterStrategy.setTruncateDigits(2);
+
+        ZipCode zipCode = new ZipCode();
+        zipCode.setZipCodeFilterStrategies(List.of(zipCodeFilterStrategy));
+
+        Identifiers identifiers = new Identifiers();
+        identifiers.setSsn(ssn);
+        identifiers.setZipCode(zipCode);
+
+        Policy policy = new Policy();
+        policy.setName(policyName);
+        policy.setIdentifiers(identifiers);
+
+        return policy;
+
+    }
+
     public static Policy getPolicyZipCodeWithIgnoredFromFile(String policyName) throws IOException {
 
         // Copy file to temp directory.
