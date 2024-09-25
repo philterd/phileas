@@ -54,7 +54,6 @@ public class PhEyeFilter extends NerFilter {
     private final Collection<String> labels;
     
     public PhEyeFilter(final FilterConfiguration filterConfiguration,
-                       final PhileasConfiguration phileasConfiguration,
                        final PhEyeConfiguration phEyeConfiguration,
                        final Map<String, DescriptiveStatistics> stats,
                        final MetricsService metricsService,

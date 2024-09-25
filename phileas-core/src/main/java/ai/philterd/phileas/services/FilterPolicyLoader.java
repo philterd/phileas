@@ -1060,7 +1060,6 @@ public class FilterPolicyLoader {
 
                 final Filter filter = new PhEyeFilter(
                         filterConfiguration,
-                        phileasConfiguration,
                         phEyeConfiguration,
                         stats,
                         metricsService,

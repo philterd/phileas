@@ -75,7 +75,7 @@ public class PersonsV3Filter extends NerFilter {
         final List<Span> spans = new LinkedList<>();
 
         // Combine multiple spaces into a single space.
-        // This is to allow finding the identiifed span in the original text.
+        // This is to allow finding the identified span in the original text.
         input = input.trim().replaceAll(" +", " ");
 
         // Split the input into an array based on whitespace.
