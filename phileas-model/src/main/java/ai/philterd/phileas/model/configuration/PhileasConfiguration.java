@@ -41,22 +41,6 @@ public class PhileasConfiguration {
         return getProperty("indexes.directory", "./indexes/");
     }
 
-    public String nerEndpoint() {
-        return getProperty("ner.endpoint", "http://localhost:18080/");
-    }
-
-    public int nerTimeout() {
-        return Integer.parseInt(getProperty("ner.timeout.sec", "600"));
-    }
-
-    public int nerMaxIdleConnections() {
-        return Integer.parseInt(getProperty("ner.max.idle.connections", "30"));
-    }
-
-    public int nerKeepAliveDuration() {
-        return Integer.parseInt(getProperty("ner.keep.alive.duration.ms", "30"));
-    }
-
     public boolean spanDisambiguationEnabled() {
         return Boolean.parseBoolean(getProperty("span.disambiguation.enabled", "false"));
     }

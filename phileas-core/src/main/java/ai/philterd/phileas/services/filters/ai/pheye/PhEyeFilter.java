@@ -55,7 +55,7 @@ public class PhEyeFilter extends NerFilter {
     
     public PhEyeFilter(final FilterConfiguration filterConfiguration,
                        final PhileasConfiguration phileasConfiguration,
-                       final Collection<String> labels,
+                       final PhEyeConfiguration phEyeConfiguration,
                        final Map<String, DescriptiveStatistics> stats,
                        final MetricsService metricsService,
                        final boolean removePunctuation,
@@ -64,21 +64,18 @@ public class PhEyeFilter extends NerFilter {
         super(filterConfiguration, stats, metricsService, thresholds, FilterType.PERSON);
 
         this.removePunctuation = removePunctuation;
-        this.labels = labels;
-        int timeoutSec = phileasConfiguration.nerTimeout();
-        int maxIdleConnections = phileasConfiguration.nerMaxIdleConnections();
-        int keepAliveDurationMs = phileasConfiguration.nerKeepAliveDuration();
+        this.labels = phEyeConfiguration.getLabels();
 
         final OkHttpClient okHttpClient = new OkHttpClient.Builder()
                 .retryOnConnectionFailure(true)
-                .connectTimeout(timeoutSec, TimeUnit.SECONDS)
-                .writeTimeout(timeoutSec, TimeUnit.SECONDS)
-                .readTimeout(timeoutSec, TimeUnit.SECONDS)
-                .connectionPool(new ConnectionPool(maxIdleConnections, keepAliveDurationMs, TimeUnit.MILLISECONDS))
+                .connectTimeout(phEyeConfiguration.getTimeout(), TimeUnit.SECONDS)
+                .writeTimeout(phEyeConfiguration.getTimeout(), TimeUnit.SECONDS)
+                .readTimeout(phEyeConfiguration.getTimeout(), TimeUnit.SECONDS)
+                .connectionPool(new ConnectionPool(phEyeConfiguration.getMaxIdleConnections(), phEyeConfiguration.getKeepAliveDurationMs(), TimeUnit.MILLISECONDS))
                 .build();
 
         final Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(phileasConfiguration.nerEndpoint())
+                .baseUrl(phEyeConfiguration.getEndpoint())
                 .client(okHttpClient)
                 .callFactory(okHttpClient)
                 .addConverterFactory(ScalarsConverterFactory.create())
