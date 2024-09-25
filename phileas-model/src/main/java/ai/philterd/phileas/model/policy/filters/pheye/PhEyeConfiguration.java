@@ -12,6 +12,14 @@ public class PhEyeConfiguration {
     @Expose
     protected String endpoint = "http://localhost:18080/";
 
+    @SerializedName("username")
+    @Expose
+    protected String username;
+
+    @SerializedName("password")
+    @Expose
+    protected String password;
+
     @SerializedName("timeout")
     @Expose
     protected int timeout = 600;
@@ -67,5 +75,21 @@ public class PhEyeConfiguration {
     public void setLabels(Collection<String> labels) {
         this.labels = labels;
     }
-    
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
 }

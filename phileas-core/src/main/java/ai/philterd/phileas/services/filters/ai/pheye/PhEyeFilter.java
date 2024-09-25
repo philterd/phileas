@@ -15,7 +15,6 @@
  */
 package ai.philterd.phileas.services.filters.ai.pheye;
 
-import ai.philterd.phileas.model.configuration.PhileasConfiguration;
 import ai.philterd.phileas.model.enums.FilterType;
 import ai.philterd.phileas.model.filter.FilterConfiguration;
 import ai.philterd.phileas.model.filter.dynamic.NerFilter;
@@ -24,11 +23,9 @@ import ai.philterd.phileas.model.objects.Replacement;
 import ai.philterd.phileas.model.objects.Span;
 import ai.philterd.phileas.model.policy.Policy;
 import ai.philterd.phileas.model.services.MetricsService;
-import com.amazonaws.services.s3.model.TagSet;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
-import okhttp3.ConnectionPool;
-import okhttp3.OkHttpClient;
+import okhttp3.*;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
@@ -39,6 +36,7 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.converter.scalars.ScalarsConverterFactory;
 
+import javax.annotation.Nullable;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.*;
@@ -65,13 +63,25 @@ public class PhEyeFilter extends NerFilter {
         this.removePunctuation = removePunctuation;
         this.labels = phEyeConfiguration.getLabels();
 
-        final OkHttpClient okHttpClient = new OkHttpClient.Builder()
-                .retryOnConnectionFailure(true)
-                .connectTimeout(phEyeConfiguration.getTimeout(), TimeUnit.SECONDS)
-                .writeTimeout(phEyeConfiguration.getTimeout(), TimeUnit.SECONDS)
-                .readTimeout(phEyeConfiguration.getTimeout(), TimeUnit.SECONDS)
-                .connectionPool(new ConnectionPool(phEyeConfiguration.getMaxIdleConnections(), phEyeConfiguration.getKeepAliveDurationMs(), TimeUnit.MILLISECONDS))
-                .build();
+        final OkHttpClient.Builder builder = new OkHttpClient.Builder();
+
+        if(StringUtils.isNotEmpty(phEyeConfiguration.getUsername()) && StringUtils.isNotEmpty(phEyeConfiguration.getPassword())) {
+            builder.authenticator(new Authenticator() {
+                @Override
+                public Request authenticate(final Route route, final okhttp3.Response response) {
+                    final String credential = Credentials.basic(phEyeConfiguration.getUsername(), phEyeConfiguration.getPassword());
+                    return response.request().newBuilder().header("Authorization", credential).build();
+                }
+            });
+        }
+
+        builder.retryOnConnectionFailure(true);
+        builder.connectTimeout(phEyeConfiguration.getTimeout(), TimeUnit.SECONDS);
+        builder.writeTimeout(phEyeConfiguration.getTimeout(), TimeUnit.SECONDS);
+        builder.readTimeout(phEyeConfiguration.getTimeout(), TimeUnit.SECONDS);
+        builder.connectionPool(new ConnectionPool(phEyeConfiguration.getMaxIdleConnections(), phEyeConfiguration.getKeepAliveDurationMs(), TimeUnit.MILLISECONDS));
+
+        final OkHttpClient okHttpClient = builder.build();
 
         final Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(phEyeConfiguration.getEndpoint())

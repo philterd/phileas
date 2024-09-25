@@ -1057,6 +1057,8 @@ public class FilterPolicyLoader {
                 phEyeConfiguration.setTimeout(policy.getIdentifiers().getPerson().getPhEyeConfiguration().getTimeout());
                 phEyeConfiguration.setKeepAliveDurationMs(policy.getIdentifiers().getPerson().getPhEyeConfiguration().getKeepAliveDurationMs());
                 phEyeConfiguration.setMaxIdleConnections(policy.getIdentifiers().getPerson().getPhEyeConfiguration().getMaxIdleConnections());
+                phEyeConfiguration.setUsername(policy.getIdentifiers().getPerson().getPhEyeConfiguration().getUsername());
+                phEyeConfiguration.setPassword(policy.getIdentifiers().getPerson().getPhEyeConfiguration().getPassword());
 
                 final Filter filter = new PhEyeFilter(
                         filterConfiguration,
