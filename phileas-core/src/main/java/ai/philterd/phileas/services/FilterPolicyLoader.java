@@ -33,6 +33,7 @@ import ai.philterd.phileas.model.services.SpanValidator;
 import ai.philterd.phileas.services.anonymization.*;
 import ai.philterd.phileas.services.filters.ai.opennlp.PersonsV2Filter;
 import ai.philterd.phileas.services.filters.ai.opennlp.PersonsV3Filter;
+import ai.philterd.phileas.services.filters.ai.pheye.PhEyeConfiguration;
 import ai.philterd.phileas.services.filters.ai.pheye.PhEyeFilter;
 import ai.philterd.phileas.services.filters.custom.PhoneNumberRulesFilter;
 import ai.philterd.phileas.services.filters.regex.*;
@@ -1051,11 +1052,16 @@ public class FilterPolicyLoader {
                         .withCrypto(policy.getCrypto())
                         .withWindowSize(phileasConfiguration.spanWindowSize())
                         .build();
+                
+                final PhEyeConfiguration phEyeConfiguration = new PhEyeConfiguration(policy.getIdentifiers().getPerson().getPhEyeConfiguration().getEndpoint());
+                phEyeConfiguration.setTimeout(policy.getIdentifiers().getPerson().getPhEyeConfiguration().getTimeout());
+                phEyeConfiguration.setKeepAliveDurationMs(policy.getIdentifiers().getPerson().getPhEyeConfiguration().getKeepAliveDurationMs());
+                phEyeConfiguration.setMaxIdleConnections(policy.getIdentifiers().getPerson().getPhEyeConfiguration().getMaxIdleConnections());
 
                 final Filter filter = new PhEyeFilter(
                         filterConfiguration,
                         phileasConfiguration,
-                        List.of("Person"),
+                        phEyeConfiguration,
                         stats,
                         metricsService,
                         policy.getIdentifiers().getPerson().isRemovePunctuation(),
