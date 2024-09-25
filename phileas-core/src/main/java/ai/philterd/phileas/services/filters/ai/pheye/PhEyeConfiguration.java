@@ -8,6 +8,8 @@ import java.util.List;
 public class PhEyeConfiguration {
 
     private String endpoint;
+    private String username;
+    private String password;
     private int timeout;
     private int maxIdleConnections;
     private int keepAliveDurationMs;
@@ -60,5 +62,21 @@ public class PhEyeConfiguration {
     public void setLabels(Collection<String> labels) {
         this.labels = labels;
     }
-    
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
 }
