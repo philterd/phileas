@@ -62,6 +62,7 @@ public abstract class AbstractFilterTest {
 
         CreditCard creditCard = new CreditCard();
         creditCard.setCreditCardFilterStrategies(Arrays.asList(new CreditCardFilterStrategy()));
+        creditCard.setOnlyValidCreditCardNumbers(true);
 
         Currency currency = new Currency();
         currency.setCurrencyFilterStrategies(Arrays.asList(new CurrencyFilterStrategy()));

@@ -26,7 +26,6 @@ import ai.philterd.phileas.model.objects.Span;
 import ai.philterd.phileas.model.policy.Policy;
 import org.apache.commons.validator.routines.checkdigit.LuhnCheckDigit;
 
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -79,21 +78,15 @@ public class CreditCardFilter extends RegexFilter {
 
         final List<Span> spans = findSpans(policy, analyzer, input, context, documentId, attributes);
 
-        if (ignoreWhenInUnixTimestamp) {
+        for (final Iterator<Span> iterator = spans.iterator(); iterator.hasNext();) {
 
-            final Collection<Span> spansInUnixTimestamps =
-                    spans
-                        .stream()
-                        .filter(s -> s.getText().matches(UNIX_TIMESTAMP_REGEX))
-                        .toList();
+            final Span span = iterator.next();
 
-            spans.removeAll(spansInUnixTimestamps);
+            if (ignoreWhenInUnixTimestamp && span.getText().matches(UNIX_TIMESTAMP_REGEX)) {
+                spans.remove(span);
+            }
 
-        }
-
-        if (onlyValidCreditCardNumbers) {
-
-            for(final Span span : spans) {
+            if (onlyValidCreditCardNumbers) {
 
                 final String creditCardNumber = input.substring(span.getCharacterStart(), span.getCharacterEnd())
                         .replaceAll(" ", "")

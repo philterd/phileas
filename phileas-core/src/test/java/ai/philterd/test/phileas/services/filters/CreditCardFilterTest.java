@@ -32,7 +32,6 @@ import java.util.List;
 public class CreditCardFilterTest extends AbstractFilterTest {
 
     private final AlertService alertService = Mockito.mock(AlertService.class);
-
     @Test
     public void filterCreditCardOnlyValid() throws Exception {
 
@@ -96,6 +95,7 @@ public class CreditCardFilterTest extends AbstractFilterTest {
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 22, 38, FilterType.CREDIT_CARD));
 
     }
+
 
     @Test
     public void filterCreditCardValidAndInvalid() throws Exception {
@@ -201,6 +201,25 @@ public class CreditCardFilterTest extends AbstractFilterTest {
         Assertions.assertEquals(1, filterResult6.getSpans().size());
         Assertions.assertEquals(0.5, filterResult6.getSpans().get(0).getConfidence());
         Assertions.assertTrue(checkSpan(filterResult6.getSpans().get(0), 1, 17, FilterType.CREDIT_CARD));
+
+    }
+
+    @Test
+    public void filterCreditCardMultipleOnlyValid() throws Exception {
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(new CreditCardFilterStrategy()))
+                .withAlertService(alertService)
+                .withAnonymizationService(new CreditCardAnonymizationService(new LocalAnonymizationCacheService()))
+                .withWindowSize(windowSize)
+                .build();
+
+        final CreditCardFilter filter = new CreditCardFilter(filterConfiguration, true, false);
+
+        FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "the payment method is 4532613702852251 visa and 1532000000852251.", attributes);
+        Assertions.assertEquals(1, filterResult.getSpans().size());
+        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 22, 38, FilterType.CREDIT_CARD));
+        Assertions.assertEquals("4532613702852251", filterResult.getSpans().get(0).getText());
 
     }
 
