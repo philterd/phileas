@@ -41,6 +41,18 @@ public abstract class AbstractFilter {
     @Expose
     protected List<IgnoredPattern> ignoredPatterns = Collections.emptyList();
 
+    @SerializedName("alternativeName")
+    @Expose
+    protected String alternativeName;
+
+    public String getAlternativeName() {
+        return alternativeName;
+    }
+
+    public void setAlternativeName(String alternativeName) {
+        this.alternativeName = alternativeName;
+    }
+
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
     }
