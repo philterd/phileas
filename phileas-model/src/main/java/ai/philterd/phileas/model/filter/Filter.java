@@ -47,6 +47,11 @@ public abstract class Filter {
     protected final FilterType filterType;
 
     /**
+     * When given, an alternative name to use instead of the {@link FilterType}.
+     */
+    protected String alternativeName;
+
+    /**
      * The alert service.
      */
     protected final AlertService alertService;
@@ -130,6 +135,7 @@ public abstract class Filter {
         this.crypto = filterConfiguration.getCrypto();
         this.fpe = filterConfiguration.getFPE();
         this.windowSize = filterConfiguration.getWindowSize();
+        this.alternativeName = filterConfiguration.getAlternativeName();
 
         if(this.ignored == null) {
             this.ignored = new LinkedHashSet<>();

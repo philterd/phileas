@@ -37,6 +37,26 @@ public class AgeFilterTest extends AbstractFilterTest {
     private final AlertService alertService = Mockito.mock(AlertService.class);
 
     @Test
+    public void filterWithAlternateName() throws Exception {
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(new AgeFilterStrategy()))
+                .withAlertService(alertService)
+                .withAnonymizationService(new AgeAnonymizationService(new LocalAnonymizationCacheService()))
+                .withWindowSize(windowSize)
+                .build();
+
+        final AgeFilter filter = new AgeFilter(filterConfiguration);
+
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "patient is 4161 y/o and", attributes);
+
+        showSpans(filterResult.getSpans());
+
+        Assertions.assertEquals(0, filterResult.getSpans().size());
+
+    }
+
+    @Test
     public void filterIgnoredPattern1() throws Exception {
 
         final AlertService alertService = Mockito.mock(AlertService.class);

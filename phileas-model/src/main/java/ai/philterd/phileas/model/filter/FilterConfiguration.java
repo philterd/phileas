@@ -40,6 +40,7 @@ public class FilterConfiguration {
     private final Crypto crypto;
     private final FPE fpe;
     private int windowSize = 5;
+    private String alternativeName;
 
     private FilterConfiguration(
             final List<? extends AbstractFilterStrategy> strategies,
@@ -50,7 +51,8 @@ public class FilterConfiguration {
             final List<IgnoredPattern> ignoredPatterns,
             final Crypto crypto,
             final FPE fpe,
-            final int windowSize
+            final int windowSize,
+            final String alternativeName
     ) {
 
         this.strategies = strategies;
@@ -62,6 +64,7 @@ public class FilterConfiguration {
         this.crypto = crypto;
         this.fpe = fpe;
         this.windowSize = windowSize;
+        this.alternativeName = alternativeName;
 
     }
 
@@ -76,6 +79,7 @@ public class FilterConfiguration {
         private Crypto crypto;
         private FPE fpe;
         private int windowSize;
+        private String alternativeName;
 
         public FilterConfiguration build() {
 
@@ -91,7 +95,8 @@ public class FilterConfiguration {
                     ignoredPatterns,
                     crypto,
                     fpe,
-                    windowSize
+                    windowSize,
+                    alternativeName
             );
 
         }
@@ -227,6 +232,10 @@ public class FilterConfiguration {
 
     public int getWindowSize() {
         return windowSize;
+    }
+
+    public String getAlternativeName() {
+        return alternativeName;
     }
 
 }
