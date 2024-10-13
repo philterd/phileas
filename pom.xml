@@ -76,7 +76,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <!-- Project dependency versions -->
-        <antlr.version>4.8-1</antlr.version>
+        <antlr.version>4.13.2</antlr.version>
         <aws.version>1.12.770</aws.version>
         <commons.collections4.version>4.4</commons.collections4.version>
         <commons.lang3.version>3.16.0</commons.lang3.version>
