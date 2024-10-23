@@ -16,9 +16,6 @@ nav:
   - 'Filter Policies':
     - 'Filter Policies': 'filter_policies/filter_policies.md'
     - 'Filters': 'filter_policies/filters.md'
-    #- Filters:      
-    #  - 'Common Filters':
-    #    - 'Ages': 'Filter_Policies/Filters/CommonFilters/Filters-Ages.md'            
     - 'Filter Strategies': 'filter_policies/filter_strategies.md'
     - 'Ignoring Sensitive Information': 'filter_policies/ignoring_sensitive_information.md'
     - 'Sample Filter Policies': 'filter_policies/sample_filter_policies.md'

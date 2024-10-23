@@ -2,7 +2,7 @@
 
 This page lists some sample policies. You can use these policies either as-is or as starting points for customizing them to meet your specific de-identification needs.
 
-To use a policy, download the policy to Phileas' `policies` directory, which by default is `/opt/Phileas/policies`. Then restart Phileas with `sudo systemctl restart Phileas`. The new policy will now be available for use when submitting filter API requests to Phileas. (Specify the policy's name in the request. See the [API](filtering-api.md) for examples.)
+<!--To use a policy, download the policy to Phileas' `policies` directory, which by default is `/opt/Phileas/policies`. Then restart Phileas with `sudo systemctl restart Phileas`. The new policy will now be available for use when submitting filter API requests to Phileas. (Specify the policy's name in the request. See the [API](filtering-api.md) for examples.)-->
 
 > These policies are examples and not an exhaustive list of all the sensitive information Phileas can identify. Items from each of these policies can be combined to make policies to meet your use-cases.
 
