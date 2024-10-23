@@ -236,6 +236,17 @@
         
       
       
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Home
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
       <a href="." class="md-nav__link md-nav__link--active">
         
   
@@ -245,6 +256,34 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#using-phileas" class="md-nav__link">
+    <span class="md-ellipsis">
+      Using Phileas
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
       
     </li>
   
@@ -626,6 +665,23 @@
     
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#using-phileas" class="md-nav__link">
+    <span class="md-ellipsis">
+      Using Phileas
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -646,6 +702,33 @@
 <p>Phileas is a Java library to deidentify text and redact PII, PHI, and other sensitive information from text. Given text or documents (PDF), Phileas analyzes the text searching for sensitive information such as persons' names, ages, addresses, and many other types of information. Phileas is highly configurable through its settings and policies.</p>
 <p>When sensitive information is identified, Phileas can manipulate the sensitive information in a variety of ways. The information can be replaced, encrypted, anonymized, and more. The user chooses how to manipulate each type of sensitive information. We refer to each of these methods in whole as "redaction."</p>
 <p>Information can be redacted based on the content of the information and other attributes. For example, only certain persons' names, only zip codes meeting some qualification, or IP addresses that match a given pattern.</p>
+<h2 id="using-phileas">Using Phileas</h2>
+<p>Phileas snapshots and releases are available in our <a href="https://artifacts.philterd.ai/">Maven repositories</a> so add the following to your Maven configuration:</p>
+<pre><code>&lt;repositories&gt;
+    &lt;repository&gt;
+        &lt;id&gt;philterd-repository-releases&lt;/id&gt;
+        &lt;url&gt;https://artifacts.philterd.ai/releases&lt;/url&gt;
+        &lt;snapshots&gt;
+            &lt;enabled&gt;false&lt;/enabled&gt;
+        &lt;/snapshots&gt;
+    &lt;/repository&gt;
+    &lt;repository&gt;
+        &lt;id&gt;philterd-repository-snapshots&lt;/id&gt;
+        &lt;url&gt;https://artifacts.philterd.ai/snapshots&lt;/url&gt;
+        &lt;snapshots&gt;
+            &lt;enabled&gt;true&lt;/enabled&gt;
+        &lt;/snapshots&gt;
+    &lt;/repository&gt;
+&lt;/repositories&gt;
+</code></pre>
+<p>Next, add the Phileas dependency to your project:</p>
+<pre><code>&lt;dependency&gt;
+  &lt;groupId&gt;ai.philterd&lt;/groupId&gt;
+  &lt;artifactId&gt;phileas-core&lt;/artifactId&gt;
+  &lt;version&gt;2.7.1&lt;/version&gt;
+&lt;/dependency&gt;
+
+</code></pre>
 
 
 
