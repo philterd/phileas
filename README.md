@@ -8,6 +8,8 @@ When sensitive information is identified, Phileas can manipulate the sensitive i
 
 Information can be redacted based on the content of the information and other attributes. For example, only certain persons' names, only zip codes meeting some qualification, or IP addresses that match a given pattern.
 
+For Phileas' documentation please see https://philterd.github.io/phileas/.
+
 ## AI PII/PHI Models
 
 AI models for identifying PII and PHI in text are available at https://github.com/philterd/pii-models. These models can be used by both Phileas and [Philter](https://github.com/philterd/philter).

@@ -1,5 +1,7 @@
 site_name: Phileas
 repo_url: https://github.com/philterd/phileas
+site_url: https://philterd.github.io/phileas/
+edit_uri: '?query=docs/docs/'
 copyright: Copyright 2024 Philterd, LLC
 site_author: philterd
 site_description: User guide for Phileas, the open source PII/PHI redaction engine.
