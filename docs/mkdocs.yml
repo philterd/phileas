@@ -1,0 +1,29 @@
+site_name: Phileas
+repo_url: https://github.com/philterd/phileas
+copyright: Copyright 2024 Philterd, LLC
+site_author: philterd
+site_description: User guide for Phileas, the open source PII/PHI redaction engine.
+theme:
+  name: material
+  locale: en
+  palette:
+    primary: red
+nav:
+  - Home: index.md
+  - Deidentification:
+    - 'Bucketing': 'deidentification/bucketing.md'
+    - 'Date Shifting': 'deidentification/date-shifting.md'
+  - 'Filter Policies':
+    - 'Filter Policies': 'filter_policies/filter_policies.md'
+    - 'Filters': 'filter_policies/filters.md'
+    #- Filters:      
+    #  - 'Common Filters':
+    #    - 'Ages': 'Filter_Policies/Filters/CommonFilters/Filters-Ages.md'            
+    - 'Filter Strategies': 'filter_policies/filter_strategies.md'
+    - 'Ignoring Sensitive Information': 'filter_policies/ignoring_sensitive_information.md'
+    - 'Sample Filter Policies': 'filter_policies/sample_filter_policies.md'
+  - 'Other Features':
+    - 'Alerts': 'other_features/alerts.md'
+    - 'Anonymization': 'other_features/anonymization.md'
+    - 'Span Disambiguation': 'other_features/span_disambiguation.md'
+  - Settings: settings.md
