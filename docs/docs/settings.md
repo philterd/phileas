@@ -2,7 +2,7 @@
 
 Phileas has settings to control how it operates. The settings and how to configure each are described below.
 
-> The configuration for the types of sensitive information that Phileas identifies are defined in [policies](policies_README.md) outside of Phileas' configuration properties described on this page.
+> The configuration for the types of sensitive information that Phileas identifies are defined in [filter policies](filter_policies/filter_policies.md) outside of Phileas' configuration properties described on this page.
 
 ## Configuring Phileas
 

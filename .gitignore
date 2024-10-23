@@ -19,3 +19,4 @@ manifest.json
 .attach_*
 model.onnx
 vocab.txt
+venv/
