@@ -65,7 +65,7 @@ public class CreditCardFilter extends RegexFilter {
         this.ignoreWhenInUnixTimestamp = ignoreWhenInUnixTimestamp;
 
         // Modify the confidence based on the characters around the span.
-        List<ConfidenceModifier> confidenceModifiers = new ArrayList<>(List.of(
+        final List<ConfidenceModifier> confidenceModifiers = new ArrayList<>(List.of(
                 new ConfidenceModifier(0.6, ConfidenceModifier.ConfidenceCondition.CHARACTER_SEQUENCE_BEFORE, "-"),
                 new ConfidenceModifier(0.6, ConfidenceModifier.ConfidenceCondition.CHARACTER_SEQUENCE_AFTER, "-"),
                 new ConfidenceModifier(0.5, ConfidenceModifier.ConfidenceCondition.CHARACTER_SEQUENCE_SURROUNDING, "-")));
@@ -113,13 +113,13 @@ public class CreditCardFilter extends RegexFilter {
 
         final List<Span> spans = findSpans(policy, analyzer, input, context, documentId, attributes);
 
-        LOGGER.error("Found " + spans.size() + " spans");
+        LOGGER.debug("Found " + spans.size() + " spans");
         for (final Iterator<Span> iterator = spans.iterator(); iterator.hasNext(); ) {
 
             final Span span = iterator.next();
 
             if (ignoreWhenInUnixTimestamp && span.getText().matches(UNIX_TIMESTAMP_REGEX)) {
-                LOGGER.error("Ignoring unix timestamp: " + span.getText());
+                LOGGER.debug("Ignoring unix timestamp");
                 iterator.remove();
             }
 
@@ -129,7 +129,7 @@ public class CreditCardFilter extends RegexFilter {
                         .replaceAll("-", "");
 
                 if (!detailedSearch.matcher(creditCardNumber).matches() || !luhnCheckDigit.isValid(creditCardNumber)) {
-                    LOGGER.error("Ignoring a number that doesn't quite fit the credit card numbers");
+                    LOGGER.debug("Ignoring a number that doesn't quite fit the credit card number patterns or LUHN");
                     iterator.remove();
                 }
 
