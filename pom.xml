@@ -36,15 +36,15 @@
     </licenses>
     <distributionManagement>
         <snapshotRepository>
-			  <id>philterd-repository-snapshots</id>
-			  <name>Philterd Snapshots Repository</name>
-			  <url>https://artifacts.philterd.ai/snapshots</url>
-		</snapshotRepository>
-		<repository>
-			  <id>philterd-repository-releases</id>
-			  <name>Philterd Repository</name>
-			  <url>https://artifacts.philterd.ai/releases</url>
-		</repository>
+            <id>philterd-repository-snapshots</id>
+            <name>Philterd Snapshots Repository</name>
+            <url>https://artifacts.philterd.ai/snapshots</url>
+        </snapshotRepository>
+        <repository>
+            <id>philterd-repository-releases</id>
+            <name>Philterd Repository</name>
+            <url>https://artifacts.philterd.ai/releases</url>
+        </repository>
     </distributionManagement>
     <repositories>
         <repository>
