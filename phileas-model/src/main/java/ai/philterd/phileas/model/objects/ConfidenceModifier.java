@@ -15,6 +15,8 @@
  */
 package ai.philterd.phileas.model.objects;
 
+import java.util.regex.Pattern;
+
 /**
  * Allows for modifying the confidence of a span based on a given condition. The confidence can be either
  * overridden with a constant value, or can be modified by a delta value.
@@ -24,7 +26,8 @@ public class ConfidenceModifier {
     private double confidence;
     private double confidenceDelta;
     private final ConfidenceCondition confidenceCondition;
-    private final String characters;
+    private String characters;
+    private Pattern matchingPattern;
 
     /**
      * Modifies the confidence of a span.
@@ -40,6 +43,18 @@ public class ConfidenceModifier {
 
     /**
      * Modifies the confidence of a span.
+     * @param confidence The value to replace the span's confidence with.
+     * @param confidenceCondition The condition that must be met.
+     * @param matchingPattern The regex for the condition.
+     */
+    public ConfidenceModifier(final double confidence, final ConfidenceCondition confidenceCondition, final Pattern matchingPattern) {
+        this.confidence = confidence;
+        this.confidenceCondition = confidenceCondition;
+        this.matchingPattern = matchingPattern;
+    }
+
+    /**
+     * Modifies the confidence of a span.
      * @param confidenceCondition The condition that must be met.
      * @param confidenceDelta The span's confidence value will be summed with this value. Use a negative delta to reduce the confidence.
      * @param characters The characters for the condition.
@@ -48,6 +63,18 @@ public class ConfidenceModifier {
         this.confidenceCondition = confidenceCondition;
         this.confidenceDelta = confidenceDelta;
         this.characters = characters;
+    }
+
+    /**
+     * Modifies the confidence of a span.
+     * @param confidenceCondition The condition that must be met.
+     * @param confidenceDelta The span's confidence value will be summed with this value. Use a negative delta to reduce the confidence.
+     * @param matchingPattern The regex for the condition.
+     */
+    public ConfidenceModifier(final ConfidenceCondition confidenceCondition, final double confidenceDelta, final Pattern matchingPattern) {
+        this.confidenceCondition = confidenceCondition;
+        this.confidenceDelta = confidenceDelta;
+        this.matchingPattern = matchingPattern;
     }
 
     public double getConfidence() {
@@ -66,12 +93,13 @@ public class ConfidenceModifier {
         return confidenceCondition;
     }
 
-    public enum ConfidenceCondition {
+    public Pattern getMatchingPattern() { return matchingPattern; }
 
+    public enum ConfidenceCondition {
         CHARACTER_SEQUENCE_BEFORE,
         CHARACTER_SEQUENCE_AFTER,
-        CHARACTER_SEQUENCE_SURROUNDING;
-
+        CHARACTER_SEQUENCE_SURROUNDING,
+        CHARACTER_REGEX_SURROUNDING;
     }
 
 }
