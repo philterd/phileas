@@ -42,7 +42,7 @@ public class CreditCardFilterTest extends AbstractFilterTest {
                 .withWindowSize(windowSize)
                 .build();
 
-        final CreditCardFilter filter = new CreditCardFilter(filterConfiguration, true, false);
+        final CreditCardFilter filter = new CreditCardFilter(filterConfiguration, true, false, true);
 
         // VISA
 
@@ -107,7 +107,7 @@ public class CreditCardFilterTest extends AbstractFilterTest {
                 .withWindowSize(windowSize)
                 .build();
 
-        final CreditCardFilter filter = new CreditCardFilter(filterConfiguration, false, false);
+        final CreditCardFilter filter = new CreditCardFilter(filterConfiguration, false, false, true);
 
         // VISA
 
@@ -170,7 +170,7 @@ public class CreditCardFilterTest extends AbstractFilterTest {
                 .withWindowSize(windowSize)
                 .build();
 
-        final CreditCardFilter filter = new CreditCardFilter(filterConfiguration, false, false);
+        final CreditCardFilter filter = new CreditCardFilter(filterConfiguration, false, false, true);
 
         final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "the payment method is 1234567812345678- visa.", attributes);
         Assertions.assertEquals(1, filterResult.getSpans().size());
@@ -201,7 +201,34 @@ public class CreditCardFilterTest extends AbstractFilterTest {
         Assertions.assertEquals(1, filterResult6.getSpans().size());
         Assertions.assertEquals(0.5, filterResult6.getSpans().get(0).getConfidence());
         Assertions.assertTrue(checkSpan(filterResult6.getSpans().get(0), 1, 17, FilterType.CREDIT_CARD));
+    }
 
+    @Test
+    public void filterCreditCardPrecedingDigits() throws Exception {
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(new CreditCardFilterStrategy()))
+                .withAlertService(alertService)
+                .withAnonymizationService(new CreditCardAnonymizationService(new LocalAnonymizationCacheService()))
+                .withWindowSize(windowSize)
+                .build();
+
+        final CreditCardFilter filter = new CreditCardFilter(filterConfiguration, true, false, false);
+
+        FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "00752457000200000007230041111111111111116", attributes);
+        Assertions.assertEquals(1, filterResult.getSpans().size());
+        Assertions.assertEquals(0.7, filterResult.getSpans().get(0).getConfidence());
+        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 24, 40, FilterType.CREDIT_CARD));
+
+        filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "0075245700020000000133004111-1111-1111-11116", attributes);
+        Assertions.assertEquals(1, filterResult.getSpans().size());
+        Assertions.assertEquals(0.7, filterResult.getSpans().get(0).getConfidence(), 0.01);
+        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 24, 43, FilterType.CREDIT_CARD));
+
+        filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "the payment method is 4111111111111111 visa.", attributes);
+        Assertions.assertEquals(1, filterResult.getSpans().size());
+        Assertions.assertEquals(0.9, filterResult.getSpans().get(0).getConfidence(), 0.01);
+        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 22, 38, FilterType.CREDIT_CARD));
     }
 
     @Test
@@ -214,7 +241,7 @@ public class CreditCardFilterTest extends AbstractFilterTest {
                 .withWindowSize(windowSize)
                 .build();
 
-        final CreditCardFilter filter = new CreditCardFilter(filterConfiguration, true, false);
+        final CreditCardFilter filter = new CreditCardFilter(filterConfiguration, true, false, true);
 
         FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "the payment method is 4532613702852251 visa and 1532000000852251.", attributes);
         Assertions.assertEquals(1, filterResult.getSpans().size());

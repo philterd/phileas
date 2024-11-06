@@ -34,6 +34,9 @@ public class CreditCard extends AbstractFilter {
     @SerializedName("ignoreWhenInUnixTimestamp")
     @Expose private boolean ignoreWhenInUnixTimestamp = false;
 
+    @SerializedName("onlyWordBoundaries")
+    @Expose private boolean onlyWordBoundaries = true;
+
     public List<CreditCardFilterStrategy> getCreditCardFilterStrategies() {
         return creditCardFilterStrategies;
     }
@@ -56,6 +59,14 @@ public class CreditCard extends AbstractFilter {
 
     public void setIgnoreWhenInUnixTimestamp(boolean ignoreWhenInUnixTimestamp) {
         this.ignoreWhenInUnixTimestamp = ignoreWhenInUnixTimestamp;
+    }
+
+    public boolean isOnlyWordBoundaries() {
+        return onlyWordBoundaries;
+    }
+
+    public void setOnlyWordBoundaries(boolean onlyWordBoundaries) {
+        this.onlyWordBoundaries = onlyWordBoundaries;
     }
 
 }

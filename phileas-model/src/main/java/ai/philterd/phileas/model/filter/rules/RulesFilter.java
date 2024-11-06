@@ -18,6 +18,7 @@ package ai.philterd.phileas.model.filter.rules;
 import ai.philterd.phileas.model.enums.FilterType;
 import ai.philterd.phileas.model.filter.Filter;
 import ai.philterd.phileas.model.filter.FilterConfiguration;
+import ai.philterd.phileas.model.filter.rules.regex.RegexFilter;
 import ai.philterd.phileas.model.objects.Analyzer;
 import ai.philterd.phileas.model.objects.ConfidenceModifier;
 import ai.philterd.phileas.model.objects.FilterPattern;
@@ -147,6 +148,19 @@ public abstract class RulesFilter extends Filter {
                                     }
                                 }
 
+                                if(modifier.getConfidenceCondition() == ConfidenceModifier.ConfidenceCondition.CHARACTER_REGEX_SURROUNDING) {
+                                    if(characterStart > 0 && characterEnd < input.length()) {
+                                        if (modifier.getMatchingPattern().matcher(input.substring(characterStart - 1, characterStart)).matches()) {
+                                            if (modifier.getMatchingPattern().matcher(input.substring(characterEnd, characterEnd + 1)).matches()) {
+                                                if(modifier.getConfidenceDelta() != 0) {
+                                                    initialConfidence += modifier.getConfidenceDelta();
+                                                } else {
+                                                    initialConfidence = modifier.getConfidence();
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
                             }
 
                             // Make sure the confidence is between 0 and 1.
