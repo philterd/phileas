@@ -35,7 +35,7 @@ import ai.philterd.phileas.model.policy.filters.Identifier;
 import ai.philterd.phileas.model.policy.filters.IpAddress;
 import ai.philterd.phileas.model.policy.filters.MacAddress;
 import ai.philterd.phileas.model.policy.filters.PassportNumber;
-import ai.philterd.phileas.model.policy.filters.Person;
+import ai.philterd.phileas.model.policy.filters.PhEyeFilter;
 import ai.philterd.phileas.model.policy.filters.PhoneNumber;
 import ai.philterd.phileas.model.policy.filters.PhoneNumberExtension;
 import ai.philterd.phileas.model.policy.filters.PhysicianName;
@@ -63,7 +63,7 @@ public class Identifiers {
 
     @SerializedName("person")
     @Expose
-    private Person person;
+    private PhEyeFilter phEyeFilter;
 
     @SerializedName("dictionaries")
     @Expose
@@ -243,8 +243,8 @@ public class Identifiers {
                 if(this.getIpAddress() != null) { return true; } break;
             case MAC_ADDRESS:
                 if(this.getMacAddress() != null) { return true; } break;
-            case PERSON:
-                if(this.getPerson() != null) { return true; } break;
+            case PHEYE:
+                if(this.getPhEye() != null) { return true; } break;
             case PASSPORT_NUMBER:
                 if(this.getPassportNumber() != null) { return true; } break;
             case PHONE_NUMBER:
@@ -322,8 +322,8 @@ public class Identifiers {
                 return this.macAddress;
             case PASSPORT_NUMBER:
                 return this.passportNumber;
-            case PERSON:
-                return this.person;
+            case PHEYE:
+                return this.phEyeFilter;
             case PHONE_NUMBER:
                 return this.phoneNumber;
             case PHONE_NUMBER_EXTENSION:
@@ -419,8 +419,8 @@ public class Identifiers {
             case PASSPORT_NUMBER:
                 this.passportNumber = (PassportNumber) filter;
                 break;
-            case PERSON:
-                this.person = (Person) filter;
+            case PHEYE:
+                this.phEyeFilter = (PhEyeFilter) filter;
                 break;
             case PHONE_NUMBER:
                 this.phoneNumber = (PhoneNumber) filter;
@@ -626,12 +626,12 @@ public class Identifiers {
         this.phoneNumberExtension = phoneNumberExtension;
     }
 
-    public Person getPerson() {
-        return person;
+    public PhEyeFilter getPhEye() {
+        return phEyeFilter;
     }
 
-    public void setPerson(Person person) {
-        this.person = person;
+    public void setPerson(PhEyeFilter phEyeFilter) {
+        this.phEyeFilter = phEyeFilter;
     }
 
     public List<CustomDictionary> getCustomDictionaries() {

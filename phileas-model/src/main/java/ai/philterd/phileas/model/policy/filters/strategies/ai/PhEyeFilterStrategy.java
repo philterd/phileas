@@ -36,11 +36,11 @@ import org.apache.logging.log4j.Logger;
 import java.util.List;
 import java.util.Map;
 
-public class PersonsFilterStrategy extends AbstractFilterStrategy {
+public class PhEyeFilterStrategy extends AbstractFilterStrategy {
 
-    private static final Logger LOGGER = LogManager.getLogger(PersonsFilterStrategy.class);
+    private static final Logger LOGGER = LogManager.getLogger(PhEyeFilterStrategy.class);
 
-    private static final FilterType filterType = FilterType.PERSON;
+    private static final FilterType filterType = FilterType.PHEYE;
 
     @Override
     public FilterType getFilterType() {

@@ -4,7 +4,7 @@ A "filter" corresponds to a type of sensitive information. Phileas has filters f
 
 These are predefined filters that are ready to be used as well as custom filters that let you define your own Phileas to identify sensitive information outside of what the predefined filters can identify. An example of a custom filter is a filter to identify your patient account numbers, where the structure of an account number is specific to your organization.
 
-Each filter is capable of identifying and redacting a specific type of sensitive information. For example, there is a filter for phone numbers, a filter for US social security numbers, and a filter for person's names. You can enable any combination of these filters based on the types of sensitive information you need to redact.
+Each filter is capable of identifying and redacting a specific type of sensitive information. For example, there is a filter for phone numbers and a filter for US social security numbers. You can enable any combination of these filters based on the types of sensitive information you need to redact.
 
 This section of the documentation describes the filters available in Phileas. The configuration options for each filter can vary due to the type of the sensitive information. For instance, only the zip code filter has a configuration to truncate the zip code.
 
@@ -14,14 +14,14 @@ A selection of filters and their configurations is called a [policy](policies_RE
 
 ### Person's Names
 
-Phileas uses several methods to identify person's names.
+Phileas uses several methods to identify phEyeFilter's names.
 
-| Type                                                                    | Description                                                          |
-|-------------------------------------------------------------------------|----------------------------------------------------------------------|
-| [First Names](filters/persons_names/first-names.md)                     | Identifies common first names                                        |
-| [Surnames](filters/persons_names/surnames.md)                           | Identifies common surnames                                           |
-| [Person's Names (NER)](filters/persons_names/persons-names-ner.md)      | Identifies full names using natural language processing analysis     |
-| [Physician's Names (NER)](filters/persons_names/physician-names-ner.md) | Identifies physican names using natural language processing analysis |
+| Type                                                                    | Description                                                           |
+|-------------------------------------------------------------------------|-----------------------------------------------------------------------|
+| [First Names](filters/persons_names/first-names.md)                     | Identifies common first names                                         |
+| [Surnames](filters/persons_names/surnames.md)                           | Identifies common surnames                                            |
+| [Person's Names (NER)](filters/persons_names/ph-eye)      | Identifies full names using natural language processing analysis      |
+| [Physician's Names (NER)](filters/persons_names/physician-names-ner.md) | Identifies physician names using natural language processing analysis |
 
 ### Other Filters
 

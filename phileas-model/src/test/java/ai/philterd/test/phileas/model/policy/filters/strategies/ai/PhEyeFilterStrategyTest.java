@@ -19,7 +19,7 @@ import ai.philterd.phileas.model.objects.Replacement;
 import ai.philterd.phileas.model.policy.Crypto;
 import ai.philterd.phileas.model.policy.FPE;
 import ai.philterd.phileas.model.policy.filters.strategies.AbstractFilterStrategy;
-import ai.philterd.phileas.model.policy.filters.strategies.ai.PersonsFilterStrategy;
+import ai.philterd.phileas.model.policy.filters.strategies.ai.PhEyeFilterStrategy;
 import ai.philterd.phileas.model.services.AnonymizationCacheService;
 import ai.philterd.phileas.model.services.AnonymizationService;
 import ai.philterd.test.phileas.model.policy.filters.strategies.AbstractFilterStrategyTest;
@@ -29,10 +29,10 @@ import org.mockito.Mockito;
 
 import static org.mockito.Mockito.when;
 
-public class PersonsFilterStrategyTest extends AbstractFilterStrategyTest {
+public class PhEyeFilterStrategyTest extends AbstractFilterStrategyTest {
 
     public AbstractFilterStrategy getFilterStrategy() {
-        return new PersonsFilterStrategy();
+        return new PhEyeFilterStrategy();
     }
 
     @Test
@@ -61,7 +61,7 @@ public class PersonsFilterStrategyTest extends AbstractFilterStrategyTest {
 
         final Replacement replacement = strategy.getReplacement("PER", "context", "docId", "token", WINDOW, new Crypto(), new FPE(), anonymizationService, null);
 
-        Assertions.assertEquals("REDACTION-person", replacement.getReplacement());
+        Assertions.assertEquals("REDACTION-pheye", replacement.getReplacement());
 
     }
 
@@ -97,7 +97,7 @@ public class PersonsFilterStrategyTest extends AbstractFilterStrategyTest {
 
         final Replacement replacement = strategy.getReplacement("PER", "context", "docId", "token", WINDOW, new Crypto(), new FPE(), anonymizationService, null);
 
-        Assertions.assertEquals("{{{REDACTED-person}}}", replacement.getReplacement());
+        Assertions.assertEquals("{{{REDACTED-pheye}}}", replacement.getReplacement());
 
     }
 
@@ -109,13 +109,13 @@ public class PersonsFilterStrategyTest extends AbstractFilterStrategyTest {
 
         when(anonymizationService.getAnonymizationCacheService()).thenReturn(anonymizationCacheService);
 
-        final AbstractFilterStrategy strategy = new PersonsFilterStrategy();
+        final AbstractFilterStrategy strategy = new PhEyeFilterStrategy();
         strategy.setStrategy(AbstractFilterStrategy.REDACT);
         strategy.setRedactionFormat("<ENTITY:%t>%v</ENTITY>");
 
         final Replacement replacement = strategy.getReplacement("PER", "context", "docId", "token", WINDOW, new Crypto(), new FPE(), anonymizationService, null);
 
-        Assertions.assertEquals("<ENTITY:person>token</ENTITY>", replacement.getReplacement());
+        Assertions.assertEquals("<ENTITY:pheye>token</ENTITY>", replacement.getReplacement());
 
     }
 
@@ -127,7 +127,7 @@ public class PersonsFilterStrategyTest extends AbstractFilterStrategyTest {
 
         when(anonymizationService.getAnonymizationCacheService()).thenReturn(anonymizationCacheService);
 
-        final AbstractFilterStrategy strategy = new PersonsFilterStrategy();
+        final AbstractFilterStrategy strategy = new PhEyeFilterStrategy();
         strategy.setStrategy(AbstractFilterStrategy.ABBREVIATE);
 
         Replacement replacement;

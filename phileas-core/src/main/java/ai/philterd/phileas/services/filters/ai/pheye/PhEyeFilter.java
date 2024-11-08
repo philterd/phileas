@@ -25,7 +25,12 @@ import ai.philterd.phileas.model.policy.Policy;
 import ai.philterd.phileas.model.services.MetricsService;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
-import okhttp3.*;
+import okhttp3.Authenticator;
+import okhttp3.ConnectionPool;
+import okhttp3.Credentials;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Route;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
@@ -36,10 +41,13 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.converter.scalars.ScalarsConverterFactory;
 
-import javax.annotation.Nullable;
 import java.io.IOException;
 import java.lang.reflect.Type;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 public class PhEyeFilter extends NerFilter {
@@ -58,7 +66,7 @@ public class PhEyeFilter extends NerFilter {
                        final boolean removePunctuation,
                        final Map<String, Double> thresholds) {
 
-        super(filterConfiguration, stats, metricsService, thresholds, FilterType.PERSON);
+        super(filterConfiguration, stats, metricsService, thresholds, FilterType.AGE);
 
         this.removePunctuation = removePunctuation;
         this.labels = phEyeConfiguration.getLabels();
@@ -196,7 +204,7 @@ public class PhEyeFilter extends NerFilter {
             // Is this term ignored?
             final boolean ignored = isIgnored(text);
 
-            return Span.make(start, end, FilterType.PERSON, context, documentId, confidence, text,
+            return Span.make(start, end, FilterType.AGE, context, documentId, confidence, text,
                     replacement.getReplacement(), replacement.getSalt(), ignored, replacement.isApplied(), window);
 
         }

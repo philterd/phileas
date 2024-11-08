@@ -16,7 +16,7 @@
 package ai.philterd.phileas.model.policy.filters;
 
 import ai.philterd.phileas.model.policy.filters.pheye.AbstractPhEyeFilter;
-import ai.philterd.phileas.model.policy.filters.strategies.ai.PersonsFilterStrategy;
+import ai.philterd.phileas.model.policy.filters.strategies.ai.PhEyeFilterStrategy;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
@@ -24,11 +24,11 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-public class Person extends AbstractPhEyeFilter {
+public class PhEyeFilter extends AbstractPhEyeFilter {
 
-    @SerializedName("personFilterStrategies")
+    @SerializedName("phEyeFilterStrategies")
     @Expose
-    private List<PersonsFilterStrategy> personFilterStrategies;
+    private List<PhEyeFilterStrategy> phEyeFilterStrategies;
 
     @SerializedName("removePunctuation")
     @Expose
@@ -38,12 +38,12 @@ public class Person extends AbstractPhEyeFilter {
     @Expose
     private Map<String, Double> thresholds = new LinkedHashMap<>();
 
-    public List<PersonsFilterStrategy> getNerStrategies() {
-        return personFilterStrategies;
+    public List<PhEyeFilterStrategy> getPhEyeFilterStrategies() {
+        return phEyeFilterStrategies;
     }
 
-    public void setPersonFilterStrategies(List<PersonsFilterStrategy> personFilterStrategies) {
-        this.personFilterStrategies = personFilterStrategies;
+    public void setPhEyeFilterStrategies(List<PhEyeFilterStrategy> phEyeFilterStrategies) {
+        this.phEyeFilterStrategies = phEyeFilterStrategies;
     }
 
     public Map<String, Double> getThresholds() {
