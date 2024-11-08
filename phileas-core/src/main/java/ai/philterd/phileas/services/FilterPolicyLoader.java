@@ -30,13 +30,54 @@ import ai.philterd.phileas.model.services.AlertService;
 import ai.philterd.phileas.model.services.AnonymizationCacheService;
 import ai.philterd.phileas.model.services.MetricsService;
 import ai.philterd.phileas.model.services.SpanValidator;
-import ai.philterd.phileas.services.anonymization.*;
-import ai.philterd.phileas.services.filters.ai.opennlp.PersonsV2Filter;
-import ai.philterd.phileas.services.filters.ai.opennlp.PersonsV3Filter;
+import ai.philterd.phileas.services.anonymization.AgeAnonymizationService;
+import ai.philterd.phileas.services.anonymization.AlphanumericAnonymizationService;
+import ai.philterd.phileas.services.anonymization.BitcoinAddressAnonymizationService;
+import ai.philterd.phileas.services.anonymization.CityAnonymizationService;
+import ai.philterd.phileas.services.anonymization.CountyAnonymizationService;
+import ai.philterd.phileas.services.anonymization.CreditCardAnonymizationService;
+import ai.philterd.phileas.services.anonymization.CurrencyAnonymizationService;
+import ai.philterd.phileas.services.anonymization.DateAnonymizationService;
+import ai.philterd.phileas.services.anonymization.EmailAddressAnonymizationService;
+import ai.philterd.phileas.services.anonymization.HospitalAbbreviationAnonymizationService;
+import ai.philterd.phileas.services.anonymization.HospitalAnonymizationService;
+import ai.philterd.phileas.services.anonymization.IbanCodeAnonymizationService;
+import ai.philterd.phileas.services.anonymization.IpAddressAnonymizationService;
+import ai.philterd.phileas.services.anonymization.MacAddressAnonymizationService;
+import ai.philterd.phileas.services.anonymization.PassportNumberAnonymizationService;
+import ai.philterd.phileas.services.anonymization.PersonsAnonymizationService;
+import ai.philterd.phileas.services.anonymization.StateAbbreviationAnonymizationService;
+import ai.philterd.phileas.services.anonymization.StateAnonymizationService;
+import ai.philterd.phileas.services.anonymization.StreetAddressAnonymizationService;
+import ai.philterd.phileas.services.anonymization.SurnameAnonymizationService;
+import ai.philterd.phileas.services.anonymization.UrlAnonymizationService;
+import ai.philterd.phileas.services.anonymization.ZipCodeAnonymizationService;
 import ai.philterd.phileas.services.filters.ai.pheye.PhEyeConfiguration;
 import ai.philterd.phileas.services.filters.ai.pheye.PhEyeFilter;
 import ai.philterd.phileas.services.filters.custom.PhoneNumberRulesFilter;
-import ai.philterd.phileas.services.filters.regex.*;
+import ai.philterd.phileas.services.filters.regex.AgeFilter;
+import ai.philterd.phileas.services.filters.regex.BankRoutingNumberFilter;
+import ai.philterd.phileas.services.filters.regex.BitcoinAddressFilter;
+import ai.philterd.phileas.services.filters.regex.CreditCardFilter;
+import ai.philterd.phileas.services.filters.regex.CurrencyFilter;
+import ai.philterd.phileas.services.filters.regex.DateFilter;
+import ai.philterd.phileas.services.filters.regex.DriversLicenseFilter;
+import ai.philterd.phileas.services.filters.regex.EmailAddressFilter;
+import ai.philterd.phileas.services.filters.regex.IbanCodeFilter;
+import ai.philterd.phileas.services.filters.regex.IdentifierFilter;
+import ai.philterd.phileas.services.filters.regex.IpAddressFilter;
+import ai.philterd.phileas.services.filters.regex.MacAddressFilter;
+import ai.philterd.phileas.services.filters.regex.PassportNumberFilter;
+import ai.philterd.phileas.services.filters.regex.PhoneNumberExtensionFilter;
+import ai.philterd.phileas.services.filters.regex.PhysicianNameFilter;
+import ai.philterd.phileas.services.filters.regex.SectionFilter;
+import ai.philterd.phileas.services.filters.regex.SsnFilter;
+import ai.philterd.phileas.services.filters.regex.StateAbbreviationFilter;
+import ai.philterd.phileas.services.filters.regex.StreetAddressFilter;
+import ai.philterd.phileas.services.filters.regex.TrackingNumberFilter;
+import ai.philterd.phileas.services.filters.regex.UrlFilter;
+import ai.philterd.phileas.services.filters.regex.VinFilter;
+import ai.philterd.phileas.services.filters.regex.ZipCodeFilter;
 import ai.philterd.phileas.services.validators.DateSpanValidator;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.FileUtils;
@@ -46,7 +87,12 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 import java.nio.charset.Charset;
-import java.util.*;
+import java.util.HashMap;
+import java.util.LinkedHashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class FilterPolicyLoader {
@@ -1053,7 +1099,7 @@ public class FilterPolicyLoader {
                         .withCrypto(policy.getCrypto())
                         .withWindowSize(phileasConfiguration.spanWindowSize())
                         .build();
-                
+
                 final PhEyeConfiguration phEyeConfiguration = new PhEyeConfiguration(policy.getIdentifiers().getPerson().getPhEyeConfiguration().getEndpoint());
                 phEyeConfiguration.setTimeout(policy.getIdentifiers().getPerson().getPhEyeConfiguration().getTimeout());
                 phEyeConfiguration.setKeepAliveDurationMs(policy.getIdentifiers().getPerson().getPhEyeConfiguration().getKeepAliveDurationMs());
@@ -1072,69 +1118,6 @@ public class FilterPolicyLoader {
 
                 enabledFilters.add(filter);
                 filterCache.get(policy.getName()).put(FilterType.PERSON, filter);
-
-            }
-
-        }
-
-        if(policy.getIdentifiers().hasFilter(FilterType.PERSON_V2) && policy.getIdentifiers().getPersonV2().isEnabled()) {
-
-            if(cache.containsKey(FilterType.PERSON_V2)) {
-                enabledFilters.add(cache.get(FilterType.PERSON_V2));
-            } else {
-
-                final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
-                        .withStrategies(policy.getIdentifiers().getPersonV2().getNerStrategies())
-                        .withAnonymizationService(new PersonsAnonymizationService(anonymizationCacheService))
-                        .withAlertService(alertService)
-                        .withIgnored(policy.getIdentifiers().getPersonV2().getIgnored())
-                        .withIgnoredFiles(policy.getIdentifiers().getPersonV2().getIgnoredFiles())
-                        .withIgnoredPatterns(policy.getIdentifiers().getPersonV2().getIgnoredPatterns())
-                        .withCrypto(policy.getCrypto())
-                        .withWindowSize(phileasConfiguration.spanWindowSize())
-                        .build();
-
-                final Filter filter = new PersonsV2Filter(
-                        filterConfiguration,
-                        policy.getIdentifiers().getPersonV2().getModel(),
-                        policy.getIdentifiers().getPersonV2().getVocab(),
-                        stats,
-                        metricsService,
-                        policy.getIdentifiers().getPersonV2().getThresholds());
-
-                enabledFilters.add(filter);
-                filterCache.get(policy.getName()).put(FilterType.PERSON_V2, filter);
-
-            }
-
-        }
-
-        if(policy.getIdentifiers().hasFilter(FilterType.PERSON_V3) && policy.getIdentifiers().getPersonV3().isEnabled()) {
-
-            if(cache.containsKey(FilterType.PERSON_V3)) {
-                enabledFilters.add(cache.get(FilterType.PERSON_V3));
-            } else {
-
-                final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
-                        .withStrategies(policy.getIdentifiers().getPersonV3().getNerStrategies())
-                        .withAnonymizationService(new PersonsAnonymizationService(anonymizationCacheService))
-                        .withAlertService(alertService)
-                        .withIgnored(policy.getIdentifiers().getPersonV3().getIgnored())
-                        .withIgnoredFiles(policy.getIdentifiers().getPersonV3().getIgnoredFiles())
-                        .withIgnoredPatterns(policy.getIdentifiers().getPersonV3().getIgnoredPatterns())
-                        .withCrypto(policy.getCrypto())
-                        .withWindowSize(phileasConfiguration.spanWindowSize())
-                        .build();
-
-                final Filter filter = new PersonsV3Filter(
-                        filterConfiguration,
-                        policy.getIdentifiers().getPersonV3().getModel(),
-                        stats,
-                        metricsService,
-                        policy.getIdentifiers().getPersonV3().getThresholds());
-
-                enabledFilters.add(filter);
-                filterCache.get(policy.getName()).put(FilterType.PERSON_V3, filter);
 
             }
 

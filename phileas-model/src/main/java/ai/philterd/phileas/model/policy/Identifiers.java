@@ -16,7 +16,41 @@
 package ai.philterd.phileas.model.policy;
 
 import ai.philterd.phileas.model.enums.FilterType;
-import ai.philterd.phileas.model.policy.filters.*;
+import ai.philterd.phileas.model.policy.filters.Age;
+import ai.philterd.phileas.model.policy.filters.BankRoutingNumber;
+import ai.philterd.phileas.model.policy.filters.BitcoinAddress;
+import ai.philterd.phileas.model.policy.filters.City;
+import ai.philterd.phileas.model.policy.filters.County;
+import ai.philterd.phileas.model.policy.filters.CreditCard;
+import ai.philterd.phileas.model.policy.filters.Currency;
+import ai.philterd.phileas.model.policy.filters.CustomDictionary;
+import ai.philterd.phileas.model.policy.filters.Date;
+import ai.philterd.phileas.model.policy.filters.DriversLicense;
+import ai.philterd.phileas.model.policy.filters.EmailAddress;
+import ai.philterd.phileas.model.policy.filters.FirstName;
+import ai.philterd.phileas.model.policy.filters.Hospital;
+import ai.philterd.phileas.model.policy.filters.HospitalAbbreviation;
+import ai.philterd.phileas.model.policy.filters.IbanCode;
+import ai.philterd.phileas.model.policy.filters.Identifier;
+import ai.philterd.phileas.model.policy.filters.IpAddress;
+import ai.philterd.phileas.model.policy.filters.MacAddress;
+import ai.philterd.phileas.model.policy.filters.PassportNumber;
+import ai.philterd.phileas.model.policy.filters.Person;
+import ai.philterd.phileas.model.policy.filters.PersonV2;
+import ai.philterd.phileas.model.policy.filters.PersonV3;
+import ai.philterd.phileas.model.policy.filters.PhoneNumber;
+import ai.philterd.phileas.model.policy.filters.PhoneNumberExtension;
+import ai.philterd.phileas.model.policy.filters.PhysicianName;
+import ai.philterd.phileas.model.policy.filters.Section;
+import ai.philterd.phileas.model.policy.filters.Ssn;
+import ai.philterd.phileas.model.policy.filters.State;
+import ai.philterd.phileas.model.policy.filters.StateAbbreviation;
+import ai.philterd.phileas.model.policy.filters.StreetAddress;
+import ai.philterd.phileas.model.policy.filters.Surname;
+import ai.philterd.phileas.model.policy.filters.TrackingNumber;
+import ai.philterd.phileas.model.policy.filters.Url;
+import ai.philterd.phileas.model.policy.filters.Vin;
+import ai.philterd.phileas.model.policy.filters.ZipCode;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import org.apache.commons.collections4.CollectionUtils;
@@ -221,10 +255,6 @@ public class Identifiers {
                 if(this.getMacAddress() != null) { return true; } break;
             case PERSON:
                 if(this.getPerson() != null) { return true; } break;
-            case PERSON_V2:
-                if(this.getPersonV2() != null) { return true; } break;
-            case PERSON_V3:
-                if(this.getPersonV3() != null) { return true; } break;
             case PASSPORT_NUMBER:
                 if(this.getPassportNumber() != null) { return true; } break;
             case PHONE_NUMBER:
