@@ -21,13 +21,11 @@ import ai.philterd.phileas.model.objects.Span;
 import ai.philterd.phileas.model.policy.Policy;
 import ai.philterd.phileas.model.policy.filters.CustomDictionary;
 import ai.philterd.phileas.model.policy.filters.strategies.custom.CustomDictionaryFilterStrategy;
-import ai.philterd.phileas.model.responses.BinaryDocumentFilterResponse;
 import ai.philterd.phileas.model.responses.FilterResponse;
 import ai.philterd.phileas.model.serializers.PlaceholderDeserializer;
 import ai.philterd.phileas.services.PhileasFilterService;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
@@ -38,18 +36,23 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
-import static ai.philterd.test.phileas.services.EndToEndTestsHelper.*;
+import static ai.philterd.test.phileas.services.EndToEndTestsHelper.getPolicy;
+import static ai.philterd.test.phileas.services.EndToEndTestsHelper.getPolicyJustCreditCard;
+import static ai.philterd.test.phileas.services.EndToEndTestsHelper.getPolicyJustCreditCardNotInUnixTimestamps;
+import static ai.philterd.test.phileas.services.EndToEndTestsHelper.getPolicyJustIdentifier;
+import static ai.philterd.test.phileas.services.EndToEndTestsHelper.getPolicyJustPhoneNumber;
+import static ai.philterd.test.phileas.services.EndToEndTestsHelper.getPolicyJustStreetAddress;
+import static ai.philterd.test.phileas.services.EndToEndTestsHelper.getPolicySSNAndZipCode;
+import static ai.philterd.test.phileas.services.EndToEndTestsHelper.getPolicyWithSentiment;
+import static ai.philterd.test.phileas.services.EndToEndTestsHelper.getPolicyZipCodeWithIgnored;
 
 @Disabled("Some of these tests require a running philter-ner service")
 public class EndToEndTests {
@@ -66,45 +69,6 @@ public class EndToEndTests {
         final GsonBuilder gsonBuilder = new GsonBuilder();
         gsonBuilder.registerTypeAdapter(String.class, new PlaceholderDeserializer());
         gson = gsonBuilder.create();
-    }
-
-    @Test
-    public void pdf3() throws Exception {
-
-        final String filename = "12-12110 K.pdf";
-
-        final InputStream is = this.getClass().getResourceAsStream("/pdfs/" + filename);
-        final byte[] document = IOUtils.toByteArray(is);
-        is.close();
-
-        final Path temp = Files.createTempDirectory("philter");
-
-        final File file1 = Paths.get(temp.toFile().getAbsolutePath(), "pdf.json").toFile();
-        LOGGER.info("Writing policy to {}", file1.getAbsolutePath());
-        FileUtils.writeStringToFile(file1, gson.toJson(getPdfFilterWithPersonPolicy("pdf")), Charset.defaultCharset());
-
-        Properties properties = new Properties();
-        properties.setProperty("indexes.directory", INDEXES_DIRECTORY);
-        properties.setProperty("filter.policies.directory", temp.toFile().getAbsolutePath());
-
-        final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties);
-
-        PhileasFilterService service = new PhileasFilterService(phileasConfiguration);
-        final BinaryDocumentFilterResponse response = service.filter(List.of("pdf"), "context", "documentid", document, MimeType.APPLICATION_PDF, MimeType.APPLICATION_PDF);
-
-        // Write the byte array to a file.
-        final File outputFile = File.createTempFile("redact", ".pdf");
-        outputFile.deleteOnExit();
-        final String output = outputFile.getAbsolutePath();
-        LOGGER.info("Writing redacted PDF to {}", output);
-        FileUtils.writeByteArrayToFile(new File(output), response.getDocument());
-
-        LOGGER.info("Spans: {}", response.getExplanation().appliedSpans().size());
-        showSpans(response.getExplanation().appliedSpans());
-
-        final String md5 = DigestUtils.md5Hex(new FileInputStream(outputFile));
-        Assertions.assertEquals("954cef78994cc213de8adc5d8729680c", md5);
-
     }
 
     @Test
@@ -933,29 +897,6 @@ public class EndToEndTests {
         LOGGER.info(response.filteredText());
 
         Assertions.assertEquals("George Washington was president and his ssn was {{{REDACTED-ssn}}} and he lived at {{{REDACTED-zip-code}}}.", response.filteredText());
-
-    }
-    
-    @Test
-    public void endToEndWithFilterIgnoredTermsFromFile() throws Exception {
-
-        final Path temp = Files.createTempDirectory("philter");
-        final File file = Paths.get(temp.toFile().getAbsolutePath(), "default.json").toFile();
-        LOGGER.info("Writing policy to {}", file.getAbsolutePath());
-        FileUtils.writeStringToFile(file, gson.toJson(getPolicyZipCodeWithIgnoredFromFile("default")), Charset.defaultCharset());
-
-        Properties properties = new Properties();
-        properties.setProperty("indexes.directory", INDEXES_DIRECTORY);
-        properties.setProperty("filter.policies.directory", temp.toFile().getAbsolutePath());
-
-        final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties);
-
-        final PhileasFilterService service = new PhileasFilterService(phileasConfiguration);
-        final FilterResponse response = service.filter(List.of("default"), "context", "documentid", "George Washington was president and his ssn was 123-45-6789 and he lived at 90210.", MimeType.TEXT_PLAIN);
-
-        LOGGER.info(response.filteredText());
-
-        Assertions.assertEquals("George Washington was president and his ssn was {{{REDACTED-ssn}}} and he lived at 90210.", response.filteredText());
 
     }
 
