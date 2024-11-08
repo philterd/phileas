@@ -36,8 +36,6 @@ import ai.philterd.phileas.model.policy.filters.IpAddress;
 import ai.philterd.phileas.model.policy.filters.MacAddress;
 import ai.philterd.phileas.model.policy.filters.PassportNumber;
 import ai.philterd.phileas.model.policy.filters.Person;
-import ai.philterd.phileas.model.policy.filters.PersonV2;
-import ai.philterd.phileas.model.policy.filters.PersonV3;
 import ai.philterd.phileas.model.policy.filters.PhoneNumber;
 import ai.philterd.phileas.model.policy.filters.PhoneNumberExtension;
 import ai.philterd.phileas.model.policy.filters.PhysicianName;
@@ -66,14 +64,6 @@ public class Identifiers {
     @SerializedName("person")
     @Expose
     private Person person;
-
-    @SerializedName("person-v2")
-    @Expose
-    private PersonV2 personV2;
-
-    @SerializedName("person-v3")
-    @Expose
-    private PersonV3 personV3;
 
     @SerializedName("dictionaries")
     @Expose
@@ -642,22 +632,6 @@ public class Identifiers {
 
     public void setPerson(Person person) {
         this.person = person;
-    }
-
-    public PersonV2 getPersonV2() {
-        return personV2;
-    }
-
-    public void setPersonV2(PersonV2 personV2) {
-        this.personV2 = personV2;
-    }
-
-    public PersonV3 getPersonV3() {
-        return personV3;
-    }
-
-    public void setPersonV3(PersonV3 personV3) {
-        this.personV3 = personV3;
     }
 
     public List<CustomDictionary> getCustomDictionaries() {
