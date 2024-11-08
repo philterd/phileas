@@ -31,7 +31,7 @@ public class LocalAlertServiceTest {
 
         final AlertService alertService = new LocalAlertService();
 
-        alertService.generateAlert("fp", "id", "context", "docid", FilterType.PERSON);
+        alertService.generateAlert("fp", "id", "context", "docid", FilterType.AGE);
 
         final List<Alert> alerts = alertService.getAlerts();
 
@@ -44,9 +44,9 @@ public class LocalAlertServiceTest {
 
         final AlertService alertService = new LocalAlertService();
 
-        alertService.generateAlert("fp", "id", "context", "docid", FilterType.PERSON);
-        alertService.generateAlert("fp", "id", "context", "docid", FilterType.PERSON);
-        alertService.generateAlert("fp", "id", "context", "docid", FilterType.PERSON);
+        alertService.generateAlert("fp", "id", "context", "docid", FilterType.AGE);
+        alertService.generateAlert("fp", "id", "context", "docid", FilterType.AGE);
+        alertService.generateAlert("fp", "id", "context", "docid", FilterType.AGE);
 
         List<Alert> alerts = alertService.getAlerts();
 
@@ -65,7 +65,7 @@ public class LocalAlertServiceTest {
 
         final AlertService alertService = new LocalAlertService();
 
-        alertService.generateAlert("fp", "id", "context", "docid", FilterType.PERSON);
+        alertService.generateAlert("fp", "id", "context", "docid", FilterType.AGE);
 
         List<Alert> alerts = alertService.getAlerts();
 

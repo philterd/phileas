@@ -358,8 +358,8 @@ public abstract class Filter {
             return policy.getIdentifiers().getIbanCode().getIbanCodeFilterStrategies();
         } else if(filterType == FilterType.IP_ADDRESS) {
             return policy.getIdentifiers().getIpAddress().getIpAddressFilterStrategies();
-        } else if(filterType == FilterType.PERSON) {
-            return policy.getIdentifiers().getPerson().getNerStrategies();
+        } else if(filterType == FilterType.PHEYE) {
+            return policy.getIdentifiers().getPhEye().getPhEyeFilterStrategies();
         } else if(filterType == FilterType.PASSPORT_NUMBER) {
             return policy.getIdentifiers().getPassportNumber().getPassportNumberFilterStrategies();
         } else if(filterType == FilterType.PHONE_NUMBER) {

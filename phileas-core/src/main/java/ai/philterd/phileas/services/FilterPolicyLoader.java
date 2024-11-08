@@ -1083,41 +1083,41 @@ public class FilterPolicyLoader {
 
         }
 
-        if(policy.getIdentifiers().hasFilter(FilterType.PERSON) && policy.getIdentifiers().getPerson().isEnabled()) {
+        if(policy.getIdentifiers().hasFilter(FilterType.PHEYE) && policy.getIdentifiers().getPhEye().isEnabled()) {
 
-            if(cache.containsKey(FilterType.PERSON)) {
-                enabledFilters.add(cache.get(FilterType.PERSON));
+            if(cache.containsKey(FilterType.PHEYE)) {
+                enabledFilters.add(cache.get(FilterType.PHEYE));
             } else {
 
                 final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
-                        .withStrategies(policy.getIdentifiers().getPerson().getNerStrategies())
+                        .withStrategies(policy.getIdentifiers().getPhEye().getPhEyeFilterStrategies())
                         .withAnonymizationService(new PersonsAnonymizationService(anonymizationCacheService))
                         .withAlertService(alertService)
-                        .withIgnored(policy.getIdentifiers().getPerson().getIgnored())
-                        .withIgnoredFiles(policy.getIdentifiers().getPerson().getIgnoredFiles())
-                        .withIgnoredPatterns(policy.getIdentifiers().getPerson().getIgnoredPatterns())
+                        .withIgnored(policy.getIdentifiers().getPhEye().getIgnored())
+                        .withIgnoredFiles(policy.getIdentifiers().getPhEye().getIgnoredFiles())
+                        .withIgnoredPatterns(policy.getIdentifiers().getPhEye().getIgnoredPatterns())
                         .withCrypto(policy.getCrypto())
                         .withWindowSize(phileasConfiguration.spanWindowSize())
                         .build();
 
-                final PhEyeConfiguration phEyeConfiguration = new PhEyeConfiguration(policy.getIdentifiers().getPerson().getPhEyeConfiguration().getEndpoint());
-                phEyeConfiguration.setTimeout(policy.getIdentifiers().getPerson().getPhEyeConfiguration().getTimeout());
-                phEyeConfiguration.setKeepAliveDurationMs(policy.getIdentifiers().getPerson().getPhEyeConfiguration().getKeepAliveDurationMs());
-                phEyeConfiguration.setMaxIdleConnections(policy.getIdentifiers().getPerson().getPhEyeConfiguration().getMaxIdleConnections());
-                phEyeConfiguration.setUsername(policy.getIdentifiers().getPerson().getPhEyeConfiguration().getUsername());
-                phEyeConfiguration.setPassword(policy.getIdentifiers().getPerson().getPhEyeConfiguration().getPassword());
+                final PhEyeConfiguration phEyeConfiguration = new PhEyeConfiguration(policy.getIdentifiers().getPhEye().getPhEyeConfiguration().getEndpoint());
+                phEyeConfiguration.setTimeout(policy.getIdentifiers().getPhEye().getPhEyeConfiguration().getTimeout());
+                phEyeConfiguration.setKeepAliveDurationMs(policy.getIdentifiers().getPhEye().getPhEyeConfiguration().getKeepAliveDurationMs());
+                phEyeConfiguration.setMaxIdleConnections(policy.getIdentifiers().getPhEye().getPhEyeConfiguration().getMaxIdleConnections());
+                phEyeConfiguration.setUsername(policy.getIdentifiers().getPhEye().getPhEyeConfiguration().getUsername());
+                phEyeConfiguration.setPassword(policy.getIdentifiers().getPhEye().getPhEyeConfiguration().getPassword());
 
                 final Filter filter = new PhEyeFilter(
                         filterConfiguration,
                         phEyeConfiguration,
                         stats,
                         metricsService,
-                        policy.getIdentifiers().getPerson().isRemovePunctuation(),
-                        policy.getIdentifiers().getPerson().getThresholds()
+                        policy.getIdentifiers().getPhEye().isRemovePunctuation(),
+                        policy.getIdentifiers().getPhEye().getThresholds()
                 );
 
                 enabledFilters.add(filter);
-                filterCache.get(policy.getName()).put(FilterType.PERSON, filter);
+                filterCache.get(policy.getName()).put(FilterType.PHEYE, filter);
 
             }
 

@@ -23,7 +23,7 @@ import ai.philterd.phileas.model.policy.Policy;
 import ai.philterd.phileas.model.policy.Identifiers;
 import ai.philterd.phileas.model.policy.Ignored;
 import ai.philterd.phileas.model.policy.filters.*;
-import ai.philterd.phileas.model.policy.filters.strategies.ai.PersonsFilterStrategy;
+import ai.philterd.phileas.model.policy.filters.strategies.ai.PhEyeFilterStrategy;
 import ai.philterd.phileas.model.policy.filters.strategies.custom.CustomDictionaryFilterStrategy;
 import ai.philterd.phileas.model.policy.filters.strategies.dynamic.*;
 import ai.philterd.phileas.model.policy.filters.strategies.rules.*;
@@ -77,8 +77,8 @@ public class PolicyTest {
         IpAddress ipAddress = new IpAddress();
         ipAddress.setIpAddressFilterStrategies(Arrays.asList(new IpAddressFilterStrategy()));
 
-        Person person = new Person();
-        person.setPersonFilterStrategies(Arrays.asList(new PersonsFilterStrategy()));
+        PhEyeFilter phEyeFilter = new PhEyeFilter();
+        phEyeFilter.setPhEyeFilterStrategies(Arrays.asList(new PhEyeFilterStrategy()));
 
         PhoneNumber phoneNumber = new PhoneNumber();
         phoneNumber.setPhoneNumberFilterStrategies(Arrays.asList(new PhoneNumberFilterStrategy()));
@@ -125,7 +125,7 @@ public class PolicyTest {
         identifiers.setHospitalAbbreviation(hospitalAbbreviation);
         identifiers.setIdentifiers(Arrays.asList(identifier));
         identifiers.setIpAddress(ipAddress);
-        identifiers.setPerson(person);
+        identifiers.setPerson(phEyeFilter);
         identifiers.setPhoneNumber(phoneNumber);
         identifiers.setPhoneNumberExtension(phoneNumberExtension);
         identifiers.setSsn(ssn);
