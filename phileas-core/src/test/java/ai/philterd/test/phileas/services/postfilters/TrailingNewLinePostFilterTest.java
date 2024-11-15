@@ -31,7 +31,7 @@ public class TrailingNewLinePostFilterTest extends AbstractFilterTest {
     public void test1() {
 
         final List<Span> spans = new LinkedList<>();
-        spans.add(Span.make(12, 22, FilterType.URL, "context", "docid", 0.80, "ends with\n", "*****",  "", false, true, new String[0]));
+        spans.add(Span.make(12, 22, FilterType.URL, "context", "docid", 0.80, "ends with" + System.lineSeparator(), "*****",  "", false, true, new String[0]));
 
         final TrailingNewLinePostFilter postFilter = TrailingNewLinePostFilter.getInstance();
         final List<Span> filteredSpans = postFilter.filter("doesn't matter", spans);
@@ -39,7 +39,7 @@ public class TrailingNewLinePostFilterTest extends AbstractFilterTest {
         showSpans(filteredSpans);
         Assertions.assertEquals(1, filteredSpans.size());
         Assertions.assertEquals("ends with", filteredSpans.get(0).getText());
-        Assertions.assertEquals(21, filteredSpans.get(0).getCharacterEnd());
+        Assertions.assertEquals(22 - System.lineSeparator().length(), filteredSpans.get(0).getCharacterEnd());
 
     }
 
@@ -63,7 +63,7 @@ public class TrailingNewLinePostFilterTest extends AbstractFilterTest {
     public void test3() {
 
         final List<Span> spans = new LinkedList<>();
-        spans.add(Span.make(12, 22, FilterType.URL, "context", "docid", 0.80, "ends with\n\n", "*****",  "", false, true, new String[0]));
+        spans.add(Span.make(12, 22, FilterType.URL, "context", "docid", 0.80, "ends with" + System.lineSeparator() + System.lineSeparator(), "*****",  "", false, true, new String[0]));
 
         final TrailingNewLinePostFilter postFilter = TrailingNewLinePostFilter.getInstance();
         final List<Span> filteredSpans = postFilter.filter("doesn't matter", spans);
@@ -71,7 +71,7 @@ public class TrailingNewLinePostFilterTest extends AbstractFilterTest {
         showSpans(filteredSpans);
         Assertions.assertEquals(1, filteredSpans.size());
         Assertions.assertEquals("ends with", filteredSpans.get(0).getText());
-        Assertions.assertEquals(20, filteredSpans.get(0).getCharacterEnd());
+        Assertions.assertEquals(22 - System.lineSeparator().length() * 2, filteredSpans.get(0).getCharacterEnd());
 
     }
 
