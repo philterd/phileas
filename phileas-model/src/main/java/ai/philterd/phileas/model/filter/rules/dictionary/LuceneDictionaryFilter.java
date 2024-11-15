@@ -135,8 +135,15 @@ public class LuceneDictionaryFilter extends DictionaryFilter implements Serializ
 
         // Write the list of terms to a file in a temporary directory.
         final Path pathToIndex = Files.createTempDirectory("philter-name-index");
-        final FileAttribute<Set<PosixFilePermission>> fileAttributes = PosixFilePermissions.asFileAttribute(PosixFilePermissions.fromString("rw-------"));
-        final Path fileToIndex = Files.createTempFile(pathToIndex, "philter", type, fileAttributes);
+
+        final Path fileToIndex;
+        if(System.getProperty("os.name").startsWith("Windows")) {
+            fileToIndex = Files.createTempFile(pathToIndex, "philter", type);
+        } else {
+            final FileAttribute<Set<PosixFilePermission>> fileAttributes = PosixFilePermissions.asFileAttribute(PosixFilePermissions.fromString("rw-------"));
+            fileToIndex = Files.createTempFile(pathToIndex, "philter", type, fileAttributes);
+        }
+
         FileUtils.writeLines(fileToIndex.toFile(), terms);
 
         // Make a temp directory to hold the new index.
@@ -327,7 +334,7 @@ public class LuceneDictionaryFilter extends DictionaryFilter implements Serializ
     public static void main(String[] args) throws IOException {
 
         // The location of the file containing the lines to index.
-        final Path filetoIndex = Paths.get("/mtnfog/code/philter/phileas/data/index-data/surnames");
+        final Path filetoIndex = Paths.get("../data/index-data/surnames");
 
         // The name of the file minus the extension is the type of index.
         final String type = FilenameUtils.removeExtension(filetoIndex.toFile().getName());

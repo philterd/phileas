@@ -24,53 +24,25 @@ import ai.philterd.phileas.model.policy.filters.strategies.dynamic.HospitalAbbre
 import ai.philterd.phileas.model.services.AlertService;
 import ai.philterd.phileas.services.anonymization.HospitalAbbreviationAnonymizationService;
 import ai.philterd.phileas.services.anonymization.cache.LocalAnonymizationCacheService;
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.text.WordUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.nio.charset.Charset;
-import java.util.Arrays;
 import java.util.List;
 
 public class HospitalAbbreviationFilterTest extends AbstractFilterTest {
 
     private static final Logger LOGGER = LogManager.getLogger(HospitalAbbreviationFilterTest.class);
 
-    private String INDEX_DIRECTORY = getIndexDirectory("hospital-abbreviations");
+    private final String INDEX_DIRECTORY = getIndexDirectory("hospital-abbreviations");
 
-    private AlertService alertService = Mockito.mock(AlertService.class);
-
-    @Test
-    @Disabled
-    public void makeAbbreviations() throws Exception {
-
-        final String file = "/mtnfog/code/bitbucket/philter/philter/index-data/hospitals";
-        final InputStream is = new FileInputStream(file);
-        final List<String> lines = IOUtils.readLines(is, Charset.defaultCharset());
-
-        for(String line : lines) {
-
-            final String abbreviated = WordUtils.initials(line, null);
-
-            System.out.println(abbreviated);
-
-        }
-
-        is.close();
-
-    }
+    private final AlertService alertService = Mockito.mock(AlertService.class);
 
     @BeforeEach
     public void before() {
-        INDEX_DIRECTORY = System.getProperty( "os.name" ).contains( "indow" ) ? INDEX_DIRECTORY.substring(1) : INDEX_DIRECTORY;
         LOGGER.info("Using index directory {}", INDEX_DIRECTORY);
     }
 
