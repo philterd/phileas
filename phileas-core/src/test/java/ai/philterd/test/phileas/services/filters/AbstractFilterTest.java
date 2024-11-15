@@ -24,6 +24,7 @@ import ai.philterd.phileas.model.policy.filters.*;
 import ai.philterd.phileas.model.policy.filters.strategies.custom.CustomDictionaryFilterStrategy;
 import ai.philterd.phileas.model.policy.filters.strategies.dynamic.*;
 import ai.philterd.phileas.model.policy.filters.strategies.rules.*;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -217,7 +218,7 @@ public abstract class AbstractFilterTest {
 
             LOGGER.warn("Environment variable PHILEAS_BASE_DIR is not set for Lucene index test.");
 
-            final String indexDir = System.getProperty("user.dir") + "/../data/indexes/" + indexName;
+            final String indexDir = FilenameUtils.separatorsToSystem(System.getProperty("user.dir") + "/../data/indexes/" + indexName);
 
             LOGGER.info("Using index directory: {}", indexDir);
 
