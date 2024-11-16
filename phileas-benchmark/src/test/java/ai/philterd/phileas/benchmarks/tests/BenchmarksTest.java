@@ -2,14 +2,33 @@ package ai.philterd.phileas.benchmarks.tests;
 
 import ai.philterd.phileas.benchmarks.Documents;
 import ai.philterd.phileas.benchmarks.Redactor;
-import ai.philterd.phileas.benchmarks.Result;
+import org.apache.http.HttpHost;
+import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.client.CredentialsProvider;
+import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIf;
+import org.opensearch.action.bulk.BulkRequest;
+import org.opensearch.action.index.IndexRequest;
+import org.opensearch.client.RequestOptions;
+import org.opensearch.client.RestClient;
+import org.opensearch.client.RestClientBuilder;
+import org.opensearch.client.RestHighLevelClient;
 
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLEngine;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509ExtendedTrustManager;
+import java.net.Socket;
+import java.security.cert.X509Certificate;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 @Tag("benchmarks")
 @EnabledIf("benchmarksEnabled")
@@ -22,7 +41,9 @@ public class BenchmarksTest {
     @Test
     public void runBenchmarks() throws Exception {
 
-        // java -server -Xmx512M -XX:+AlwaysPreTouch -XX:PerBytecodeRecompilationCutoff=10000 -XX:PerMethodRecompilationCutoff=10000 -jar target/phileas-benchmark-cmd.jar all mask_all 1 15000
+        final String branch = getGitBranch();
+
+        final BulkRequest bulkRequest = new BulkRequest();
 
         // read arguments
         final String arg_document = "all";
@@ -49,7 +70,7 @@ public class BenchmarksTest {
                     System.out.println("\nstring_length,calls_per_sec");
                 //}
 
-                final Map<Integer, Long> calls = new HashMap<>();
+                final Map<String, Long> calls = new HashMap<>();
 
                 for (int value_length : value_lengths) {
 
@@ -59,7 +80,7 @@ public class BenchmarksTest {
                         final long calls_per_sec = run_workload(workload_millis, redactor, value);
                         System.out.println(value.length() + "," + calls_per_sec);
 
-                        calls.put(value_length, calls_per_sec);
+                        calls.put(String.valueOf(value_length), calls_per_sec);
 
                     } else {
                         break;
@@ -67,15 +88,47 @@ public class BenchmarksTest {
 
                 }
 
-                final Result result = new Result();
-                result.setWorkloadMillis(workload_millis);
-                result.setRedactor(arg_redactor);
-                result.setDocument(document);
-                result.setCallsPerSecond(calls);
+                final Map<String, Object> run = new HashMap<>();
+                run.put("document", document);
+                run.put("workload_mills", workload_millis);
+                run.put("redactor", arg_redactor);
+                run.put("timestamp", System.currentTimeMillis());
+                run.put("phileas_version", System.getProperty("phileasVersion"));
+                run.put("branch", branch);
+                run.put("calls_per_second", calls);
 
-                // TODO: Persist the result somewhere.
+                final IndexRequest indexRequest = new IndexRequest("phileas_benchmarks");
+                indexRequest.id(UUID.randomUUID().toString()).source(run);
+
+                bulkRequest.add(indexRequest);
 
             }
+
+        }
+
+        if(System.getenv("PHILEAS_BENCHMARKS_OPENSEARCH_URL") != null) {
+
+            System.out.println("Indexing results...");
+
+            final String phileasBenchMarksOpenSearchUrl = System.getenv("PHILEAS_BENCHMARKS_OPENSEARCH_URL");
+            final String phileasBenchmarksOpenSearchUser = System.getenv("PHILEAS_BENCHMARKS_OPENSEARCH_USER");
+            final String phileasBenchmarksOpenSearchPassword = System.getenv("PHILEAS_BENCHMARKS_OPENSEARCH_PASSWORD");
+
+            final CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
+            credentialsProvider.setCredentials(AuthScope.ANY, new UsernamePasswordCredentials(phileasBenchmarksOpenSearchUser, phileasBenchmarksOpenSearchPassword));
+
+            SSLContext sslContext = SSLContext.getInstance("TLS");
+            sslContext.init(null, new TrustManager[]{UnsafeX509ExtendedTrustManager.INSTANCE}, null);
+
+            final RestClientBuilder builder = RestClient.builder(new HttpHost(phileasBenchMarksOpenSearchUrl, 9200, "https"));
+            builder.setHttpClientConfigCallback(httpClientBuilder ->
+                    httpClientBuilder
+                            .setSSLHostnameVerifier((s, sslSession) -> true)
+                            .setSSLContext(sslContext)
+                            .setDefaultCredentialsProvider(credentialsProvider));
+
+            final RestHighLevelClient openSearchClient = new RestHighLevelClient(builder);
+            openSearchClient.bulk(bulkRequest, RequestOptions.DEFAULT);
 
         }
 
@@ -88,6 +141,61 @@ public class BenchmarksTest {
         while ((++calls % 100 != 0) || (System.currentTimeMillis() - start < millis)) redactor.filter(value);
 
         return calls * 1000 / (System.currentTimeMillis() - start);
+
+    }
+
+    private static String getGitBranch() throws Exception {
+
+        Process process = Runtime.getRuntime().exec("git rev-parse --abbrev-ref HEAD");
+        process.waitFor();
+
+        byte[] output = process.getInputStream().readAllBytes();
+
+        return new String(output).trim();
+
+    }
+
+    public static class UnsafeX509ExtendedTrustManager extends X509ExtendedTrustManager {
+
+        private static final X509ExtendedTrustManager INSTANCE = new UnsafeX509ExtendedTrustManager();
+        private static final X509Certificate[] EMPTY_CERTIFICATES = new X509Certificate[0];
+
+        private UnsafeX509ExtendedTrustManager() {}
+
+        @Override
+        public void checkClientTrusted(X509Certificate[] certificates, String authType) {
+
+        }
+
+        @Override
+        public void checkClientTrusted(X509Certificate[] certificates, String authType, Socket socket) {
+
+        }
+
+        @Override
+        public void checkClientTrusted(X509Certificate[] certificates, String authType, SSLEngine sslEngine) {
+
+        }
+
+        @Override
+        public void checkServerTrusted(X509Certificate[] certificates, String authType) {
+
+        }
+
+        @Override
+        public void checkServerTrusted(X509Certificate[] certificates, String authType, Socket socket) {
+
+        }
+
+        @Override
+        public void checkServerTrusted(X509Certificate[] certificates, String authType, SSLEngine sslEngine) {
+
+        }
+
+        @Override
+        public X509Certificate[] getAcceptedIssuers() {
+            return EMPTY_CERTIFICATES;
+        }
 
     }
 

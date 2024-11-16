@@ -7,7 +7,7 @@ These tests run a series of single-threaded workloads using to redact PII tokens
 ## To Run
 
 ```
-BENCHMARKS_ENABLED=true mvn test
+BENCHMARKS_ENABLED=true PHILEAS_BENCHMARKS_OPENSEARCH_URL="build.philterd.ai" PHILEAS_BENCHMARKS_OPENSEARCH_USER="*****" PHILEAS_BENCHMARKS_OPENSEARCH_PASSWORD="*****" mvn test
 ```
 
 ```

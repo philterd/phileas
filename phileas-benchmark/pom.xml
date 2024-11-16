@@ -37,6 +37,11 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>org.opensearch.client</groupId>
+            <artifactId>opensearch-rest-high-level-client</artifactId>
+            <version>2.18.0</version>
+        </dependency>
+        <dependency>
             <groupId>com.mscharhag.oleaster</groupId>
             <artifactId>oleaster-matcher</artifactId>
             <version>0.2.0</version>
@@ -46,6 +51,12 @@
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-engine</artifactId>
             <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpcore</artifactId>
+            <version>4.4.16</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
