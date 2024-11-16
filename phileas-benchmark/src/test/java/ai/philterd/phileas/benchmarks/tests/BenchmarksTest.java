@@ -2,6 +2,8 @@ package ai.philterd.phileas.benchmarks.tests;
 
 import ai.philterd.phileas.benchmarks.Documents;
 import ai.philterd.phileas.benchmarks.Redactor;
+import com.fasterxml.jackson.core.JsonParser;
+import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpHost;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
@@ -16,12 +18,17 @@ import org.opensearch.client.RequestOptions;
 import org.opensearch.client.RestClient;
 import org.opensearch.client.RestClientBuilder;
 import org.opensearch.client.RestHighLevelClient;
+import org.opensearch.client.indices.CreateIndexRequest;
+import org.opensearch.client.indices.GetIndexRequest;
+import org.opensearch.core.xcontent.MediaType;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLEngine;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509ExtendedTrustManager;
+import java.io.InputStream;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
 import java.security.cert.X509Certificate;
 import java.util.HashMap;
 import java.util.List;
@@ -128,6 +135,18 @@ public class BenchmarksTest {
                             .setDefaultCredentialsProvider(credentialsProvider));
 
             final RestHighLevelClient openSearchClient = new RestHighLevelClient(builder);
+
+            if(!openSearchClient.indices().exists(new GetIndexRequest("phileas_benchmarks"), RequestOptions.DEFAULT)) {
+
+                final InputStream inputStream = getClass().getClassLoader().getResourceAsStream("mapping.json");
+                final String mapping = IOUtils.toString(inputStream, StandardCharsets.UTF_8.name());
+
+                final CreateIndexRequest createIndexRequest = new CreateIndexRequest("phileas_benchmarks");
+                createIndexRequest.mapping(mapping, MediaType.fromMediaType("application/json; charset=UTF-8"));
+                openSearchClient.indices().create(createIndexRequest, RequestOptions.DEFAULT);
+
+            }
+
             openSearchClient.bulk(bulkRequest, RequestOptions.DEFAULT);
 
         }

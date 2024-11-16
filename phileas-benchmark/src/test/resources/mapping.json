@@ -1,0 +1,117 @@
+{
+    "properties": {
+      "branch": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword",
+            "ignore_above": 256
+          }
+        }
+      },
+      "calls_per_second": {
+        "properties": {
+          "0": {
+            "type": "long"
+          },
+          "1": {
+            "type": "long"
+          },
+          "1024": {
+            "type": "long"
+          },
+          "128": {
+            "type": "long"
+          },
+          "1280": {
+            "type": "long"
+          },
+          "1536": {
+            "type": "long"
+          },
+          "16": {
+            "type": "long"
+          },
+          "1792": {
+            "type": "long"
+          },
+          "2": {
+            "type": "long"
+          },
+          "2048": {
+            "type": "long"
+          },
+          "256": {
+            "type": "long"
+          },
+          "3072": {
+            "type": "long"
+          },
+          "32": {
+            "type": "long"
+          },
+          "4": {
+            "type": "long"
+          },
+          "4096": {
+            "type": "long"
+          },
+          "512": {
+            "type": "long"
+          },
+          "64": {
+            "type": "long"
+          },
+          "768": {
+            "type": "long"
+          },
+          "8": {
+            "type": "long"
+          }
+        }
+      },
+      "document": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword",
+            "ignore_above": 256
+          }
+        }
+      },
+      "phileas_version": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword",
+            "ignore_above": 256
+          }
+        }
+      },
+      "redactor": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword",
+            "ignore_above": 256
+          }
+        }
+      },
+      "run_id": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword",
+            "ignore_above": 256
+          }
+        }
+      },
+      "timestamp": {
+        "type": "date",
+        "format": "epoch_millis"
+      },
+      "workload_mills": {
+        "type": "long"
+      }
+    }
+}
