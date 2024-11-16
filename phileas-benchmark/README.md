@@ -7,8 +7,10 @@ These tests run a series of single-threaded workloads using to redact PII tokens
 ## To Run
 
 ```
-BENCHMARKS_ENABLED=true PHILEAS_BENCHMARKS_OPENSEARCH_URL="build.philterd.ai" PHILEAS_BENCHMARKS_OPENSEARCH_USER="*****" PHILEAS_BENCHMARKS_OPENSEARCH_PASSWORD="*****" mvn test
+BENCHMARKS_ENABLED=true BENCHMARKS_CONNECTION_STRING="jdbc:mariadb://build.philterd.ai:3306/phileas_benchmarks" BENCHMARKS_USER="*****" BENCHMARKS_PASSWORD="*****" mvn test
 ```
+
+
 
 ```
 # run workloads across all documents

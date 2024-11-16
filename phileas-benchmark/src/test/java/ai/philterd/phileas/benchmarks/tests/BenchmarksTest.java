@@ -2,35 +2,21 @@ package ai.philterd.phileas.benchmarks.tests;
 
 import ai.philterd.phileas.benchmarks.Documents;
 import ai.philterd.phileas.benchmarks.Redactor;
-import com.fasterxml.jackson.core.JsonParser;
-import org.apache.commons.io.IOUtils;
-import org.apache.http.HttpHost;
-import org.apache.http.auth.AuthScope;
-import org.apache.http.auth.UsernamePasswordCredentials;
-import org.apache.http.client.CredentialsProvider;
-import org.apache.http.impl.client.BasicCredentialsProvider;
+import ai.philterd.phileas.benchmarks.Result;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIf;
-import org.opensearch.action.bulk.BulkRequest;
-import org.opensearch.action.index.IndexRequest;
-import org.opensearch.client.RequestOptions;
-import org.opensearch.client.RestClient;
-import org.opensearch.client.RestClientBuilder;
-import org.opensearch.client.RestHighLevelClient;
-import org.opensearch.client.indices.CreateIndexRequest;
-import org.opensearch.client.indices.GetIndexRequest;
-import org.opensearch.core.xcontent.MediaType;
 
-import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLEngine;
-import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509ExtendedTrustManager;
-import java.io.InputStream;
 import java.net.Socket;
-import java.nio.charset.StandardCharsets;
 import java.security.cert.X509Certificate;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -49,7 +35,7 @@ public class BenchmarksTest {
         final String branch = getGitBranch();
         final String runId = UUID.randomUUID().toString();
 
-        final BulkRequest bulkRequest = new BulkRequest();
+        final Collection<Result> results = new LinkedList<>();
 
         // read arguments
         final String arg_document = "all";
@@ -76,7 +62,7 @@ public class BenchmarksTest {
                     System.out.println("\nstring_length,calls_per_sec");
                 //}
 
-                final Map<String, Long> calls = new HashMap<>();
+                final Map<Integer, Long> calls = new HashMap<>();
 
                 for (int value_length : value_lengths) {
 
@@ -86,7 +72,7 @@ public class BenchmarksTest {
                         final long calls_per_sec = run_workload(workload_millis, redactor, value);
                         System.out.println(value.length() + "," + calls_per_sec);
 
-                        calls.put(String.valueOf(value_length), calls_per_sec);
+                        calls.put(value_length, calls_per_sec);
 
                     } else {
                         break;
@@ -94,60 +80,52 @@ public class BenchmarksTest {
 
                 }
 
-                final Map<String, Object> run = new HashMap<>();
-                run.put("document", document);
-                run.put("workload_mills", workload_millis);
-                run.put("redactor", arg_redactor);
-                run.put("timestamp", System.currentTimeMillis());
-                run.put("phileas_version", System.getProperty("phileasVersion"));
-                run.put("branch", branch);
-                run.put("calls_per_second", calls);
-                run.put("run_id", runId);
+                // calls_per_second
+                final Result result = new Result();
+                result.setCallsPerSecond(calls);
+                result.setDocument(document);
+                result.setWorkloadMillis(workload_millis);
+                result.setBranch(branch);
+                result.setRedactor(arg_redactor);
+                result.setPhileasVersion(System.getProperty("phileasVersion"));
+                result.setTimestamp(System.currentTimeMillis());
 
-                final IndexRequest indexRequest = new IndexRequest("phileas_benchmarks");
-                indexRequest.id(UUID.randomUUID().toString()).source(run);
-
-                bulkRequest.add(indexRequest);
+                results.add(result);
 
             }
 
         }
 
-        if(System.getenv("PHILEAS_BENCHMARKS_OPENSEARCH_URL") != null) {
+        if(System.getenv("BENCHMARKS_ENABLED") != null) {
 
-            System.out.println("Indexing results...");
+            System.out.println("Writing results to the database...");
 
-            final String phileasBenchMarksOpenSearchUrl = System.getenv("PHILEAS_BENCHMARKS_OPENSEARCH_URL");
-            final String phileasBenchmarksOpenSearchUser = System.getenv("PHILEAS_BENCHMARKS_OPENSEARCH_USER");
-            final String phileasBenchmarksOpenSearchPassword = System.getenv("PHILEAS_BENCHMARKS_OPENSEARCH_PASSWORD");
+            final String connectionString = System.getenv("BENCHMARKS_CONNECTION_STRING");
+            final String user = System.getenv("BENCHMARKS_USER");
+            final String password = System.getenv("BENCHMARKS_PASSWORD");
 
-            final CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
-            credentialsProvider.setCredentials(AuthScope.ANY, new UsernamePasswordCredentials(phileasBenchmarksOpenSearchUser, phileasBenchmarksOpenSearchPassword));
+            Connection connection = DriverManager.getConnection(connectionString, user, password);
 
-            SSLContext sslContext = SSLContext.getInstance("TLS");
-            sslContext.init(null, new TrustManager[]{UnsafeX509ExtendedTrustManager.INSTANCE}, null);
+            for (final Result result : results) {
 
-            final RestClientBuilder builder = RestClient.builder(new HttpHost(phileasBenchMarksOpenSearchUrl, 9200, "https"));
-            builder.setHttpClientConfigCallback(httpClientBuilder ->
-                    httpClientBuilder
-                            .setSSLHostnameVerifier((s, sslSession) -> true)
-                            .setSSLContext(sslContext)
-                            .setDefaultCredentialsProvider(credentialsProvider));
+                try (PreparedStatement statement = connection.prepareStatement("""
+                    INSERT INTO benchmarks(document, workload_mills, redactor, timestamp, phileas_version, branch, run_id)
+                    VALUES (?, ?, ?, ?, ?, ?, ?)
+                  """)) {
+                    statement.setString(1, result.getDocument());
+                    statement.setLong(2, result.getWorkloadMillis());
+                    statement.setString(3, result.getRedactor());
+                    statement.setLong(4, result.getTimestamp());
+                    statement.setString(5, result.getPhileasVersion());
+                    statement.setString(6, result.getBranch());
+                    statement.setString(7, runId);
+                    statement.executeUpdate();
 
-            final RestHighLevelClient openSearchClient = new RestHighLevelClient(builder);
-
-            if(!openSearchClient.indices().exists(new GetIndexRequest("phileas_benchmarks"), RequestOptions.DEFAULT)) {
-
-                final InputStream inputStream = getClass().getClassLoader().getResourceAsStream("mapping.json");
-                final String mapping = IOUtils.toString(inputStream, StandardCharsets.UTF_8.name());
-
-                final CreateIndexRequest createIndexRequest = new CreateIndexRequest("phileas_benchmarks");
-                createIndexRequest.mapping(mapping, MediaType.fromMediaType("application/json; charset=UTF-8"));
-                openSearchClient.indices().create(createIndexRequest, RequestOptions.DEFAULT);
+                }
 
             }
 
-            openSearchClient.bulk(bulkRequest, RequestOptions.DEFAULT);
+            connection.close();
 
         }
 

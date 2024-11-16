@@ -37,9 +37,10 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.opensearch.client</groupId>
-            <artifactId>opensearch-rest-high-level-client</artifactId>
-            <version>2.18.0</version>
+            <groupId>org.mariadb.jdbc</groupId>
+            <artifactId>mariadb-java-client</artifactId>
+            <version>3.5.0</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.mscharhag.oleaster</groupId>
