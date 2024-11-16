@@ -125,4 +125,5 @@ public class Result {
     public void setBranch(String branch) {
         this.branch = branch;
     }
+
 }
