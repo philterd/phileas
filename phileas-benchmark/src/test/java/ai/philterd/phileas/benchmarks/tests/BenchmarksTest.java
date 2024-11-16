@@ -33,7 +33,6 @@ public class BenchmarksTest {
     public void runBenchmarks() throws Exception {
 
         final String branch = getGitBranch();
-        final String runId = UUID.randomUUID().toString();
 
         final Collection<Result> results = new LinkedList<>();
 
@@ -82,6 +81,7 @@ public class BenchmarksTest {
 
                 // calls_per_second
                 final Result result = new Result();
+                result.setRunId(UUID.randomUUID().toString());
                 result.setCallsPerSecond(calls);
                 result.setDocument(document);
                 result.setWorkloadMillis(workload_millis);
@@ -118,8 +118,21 @@ public class BenchmarksTest {
                     statement.setLong(4, result.getTimestamp());
                     statement.setString(5, result.getPhileasVersion());
                     statement.setString(6, result.getBranch());
-                    statement.setString(7, runId);
+                    statement.setString(7, result.getRunId());
                     statement.executeUpdate();
+                }
+
+                for(final Integer i : result.getCallsPerSecond().keySet()) {
+
+                    try (PreparedStatement statement = connection.prepareStatement("""
+                    INSERT INTO calls_per_second(length, calls_per_second, run_id)
+                    VALUES (?, ?, ?)
+                  """)) {
+                        statement.setInt(1, i);
+                        statement.setLong(2, result.getCallsPerSecond().get(i));
+                        statement.setString(3, result.getRunId());
+                        statement.executeUpdate();
+                    }
 
                 }
 
