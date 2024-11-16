@@ -15,11 +15,6 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.redisson</groupId>
-      <artifactId>redisson</artifactId>
-      <version>${redisson.version}</version>
-    </dependency>
-    <dependency>
       <groupId>ai.grakn</groupId>
       <artifactId>redis-mock</artifactId>
       <version>${redis-mock.version}</version>
