@@ -24,11 +24,6 @@
       <version>${commons.lang3.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.yaml</groupId>
-      <artifactId>snakeyaml</artifactId>
-      <version>${snakeyaml.version}</version>
-    </dependency>
-    <dependency>
       <groupId>com.github.mifmif</groupId>
       <artifactId>generex</artifactId>
       <version>1.0.2</version>
