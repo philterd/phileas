@@ -23,9 +23,7 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509ExtendedTrustManager;
 import java.net.Socket;
 import java.security.cert.X509Certificate;
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -42,6 +40,7 @@ public class BenchmarksTest {
     public void runBenchmarks() throws Exception {
 
         final String branch = getGitBranch();
+        final String runId = UUID.randomUUID().toString();
 
         final BulkRequest bulkRequest = new BulkRequest();
 
@@ -96,6 +95,7 @@ public class BenchmarksTest {
                 run.put("phileas_version", System.getProperty("phileasVersion"));
                 run.put("branch", branch);
                 run.put("calls_per_second", calls);
+                run.put("run_id", runId);
 
                 final IndexRequest indexRequest = new IndexRequest("phileas_benchmarks");
                 indexRequest.id(UUID.randomUUID().toString()).source(run);
