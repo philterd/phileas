@@ -38,13 +38,12 @@ public class CountyFilterTest extends AbstractFilterTest {
 
     private static final Logger LOGGER = LogManager.getLogger(CountyFilterTest.class);
 
-    private String INDEX_DIRECTORY = getIndexDirectory("counties");
+    private final String INDEX_DIRECTORY = getIndexDirectory("counties");
 
     private final AlertService alertService = Mockito.mock(AlertService.class);
 
     @BeforeEach
     public void before() {
-        INDEX_DIRECTORY = System.getProperty( "os.name" ).contains( "indow" ) ? INDEX_DIRECTORY.substring(1) : INDEX_DIRECTORY;
         LOGGER.info("Using index directory {}", INDEX_DIRECTORY);
     }
 

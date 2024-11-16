@@ -40,14 +40,13 @@ public class CityFilterTest extends AbstractFilterTest {
 
     private static final Logger LOGGER = LogManager.getLogger(CityFilterTest.class);
 
-    private String INDEX_DIRECTORY = getIndexDirectory("cities");
+    private final String INDEX_DIRECTORY = getIndexDirectory("cities");
 
     private static final AnonymizationService anonymizationService = new CityAnonymizationService(new LocalAnonymizationCacheService());
     private final AlertService alertService = Mockito.mock(AlertService.class);
 
     @BeforeEach
     public void before() {
-        INDEX_DIRECTORY = System.getProperty( "os.name" ).contains( "indow" ) ? INDEX_DIRECTORY.substring(1) : INDEX_DIRECTORY;
         LOGGER.info("Using index directory {}", INDEX_DIRECTORY);
     }
 

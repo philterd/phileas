@@ -47,13 +47,13 @@ public class TrailingNewLinePostFilter extends PostFilter {
 
         if(span.getText().endsWith(System.lineSeparator())) {
 
-            // Modify the span to remove the period from the span.
-            span.setText(StringUtils.substring(span.getText(), 0, span.getText().length() - 1));
-            span.setCharacterEnd(span.getCharacterEnd() - 1);
+            // Modify the span to remove the new line from the span.
+            span.setText(StringUtils.chomp(span.getText()));
+            span.setCharacterEnd(span.getCharacterEnd() - System.lineSeparator().length());
 
         }
 
-        while(span.getText().endsWith("\n")) {
+        while(span.getText().endsWith(System.lineSeparator())) {
             span = process(text, span).span();
         }
 
