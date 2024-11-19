@@ -1083,10 +1083,10 @@ public class FilterPolicyLoader {
 
         }
 
-        if(policy.getIdentifiers().hasFilter(FilterType.PHEYE) && policy.getIdentifiers().getPhEye().isEnabled()) {
+        if(policy.getIdentifiers().hasFilter(FilterType.PERSON) && policy.getIdentifiers().getPhEye().isEnabled()) {
 
-            if(cache.containsKey(FilterType.PHEYE)) {
-                enabledFilters.add(cache.get(FilterType.PHEYE));
+            if(cache.containsKey(FilterType.PERSON)) {
+                enabledFilters.add(cache.get(FilterType.PERSON));
             } else {
 
                 final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
@@ -1117,7 +1117,7 @@ public class FilterPolicyLoader {
                 );
 
                 enabledFilters.add(filter);
-                filterCache.get(policy.getName()).put(FilterType.PHEYE, filter);
+                filterCache.get(policy.getName()).put(FilterType.PERSON, filter);
 
             }
 

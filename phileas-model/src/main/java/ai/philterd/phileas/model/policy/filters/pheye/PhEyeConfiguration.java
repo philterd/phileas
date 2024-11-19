@@ -10,7 +10,7 @@ public class PhEyeConfiguration {
 
     @SerializedName("endpoint")
     @Expose
-    protected String endpoint = "http://localhost:18080/";
+    protected String endpoint = "http://philter-ph-eye-1:5000/";
 
     @SerializedName("username")
     @Expose
