@@ -358,7 +358,7 @@ public abstract class Filter {
             return policy.getIdentifiers().getIbanCode().getIbanCodeFilterStrategies();
         } else if(filterType == FilterType.IP_ADDRESS) {
             return policy.getIdentifiers().getIpAddress().getIpAddressFilterStrategies();
-        } else if(filterType == FilterType.PHEYE) {
+        } else if(filterType == FilterType.PERSON) {
             return policy.getIdentifiers().getPhEye().getPhEyeFilterStrategies();
         } else if(filterType == FilterType.PASSPORT_NUMBER) {
             return policy.getIdentifiers().getPassportNumber().getPassportNumberFilterStrategies();

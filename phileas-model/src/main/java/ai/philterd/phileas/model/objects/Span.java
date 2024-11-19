@@ -372,7 +372,7 @@ public final class Span {
 
                         if(StringUtils.equalsIgnoreCase("PER", annotation.getFeatures().getCategory())) {
 
-                            span.setFilterType(FilterType.PHEYE);
+                            span.setFilterType(FilterType.PERSON);
                             span.setClassification("PER");
 
                         } else {

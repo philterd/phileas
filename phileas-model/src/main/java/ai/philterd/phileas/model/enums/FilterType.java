@@ -41,7 +41,7 @@ public enum FilterType {
     IP_ADDRESS("ip-address", true),
     MAC_ADDRESS("mac-address", true),
     PASSPORT_NUMBER("passport-number", true),
-    PHEYE("pheye", false),
+    PERSON("person", false),
     PHONE_NUMBER("phone-number", true),
     PHONE_NUMBER_EXTENSION("phone-number-extension", true),
     PHYSICIAN_NAME("physician-name", true),

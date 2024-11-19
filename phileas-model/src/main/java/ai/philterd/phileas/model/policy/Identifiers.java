@@ -243,7 +243,7 @@ public class Identifiers {
                 if(this.getIpAddress() != null) { return true; } break;
             case MAC_ADDRESS:
                 if(this.getMacAddress() != null) { return true; } break;
-            case PHEYE:
+            case PERSON:
                 if(this.getPhEye() != null) { return true; } break;
             case PASSPORT_NUMBER:
                 if(this.getPassportNumber() != null) { return true; } break;
@@ -322,7 +322,7 @@ public class Identifiers {
                 return this.macAddress;
             case PASSPORT_NUMBER:
                 return this.passportNumber;
-            case PHEYE:
+            case PERSON:
                 return this.phEyeFilter;
             case PHONE_NUMBER:
                 return this.phoneNumber;
@@ -419,7 +419,7 @@ public class Identifiers {
             case PASSPORT_NUMBER:
                 this.passportNumber = (PassportNumber) filter;
                 break;
-            case PHEYE:
+            case PERSON:
                 this.phEyeFilter = (PhEyeFilter) filter;
                 break;
             case PHONE_NUMBER:
