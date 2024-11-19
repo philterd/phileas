@@ -37,19 +37,28 @@ public class LineWidthSplitServiceTest {
     @Test
     public void split0() throws IOException {
 
+        final int splitLength = 384;
+
         final File file = new File("src/test/resources/simple-test.txt");
         final String input = FileUtils.readFileToString(file, Charset.defaultCharset());
 
         Assertions.assertNotNull(input);
         LOGGER.info("Input text length = {}", input.length());
 
-        final SplitService splitService = new LineWidthSplitService(500);
+        final SplitService splitService = new LineWidthSplitService(splitLength);
         final List<String> splits = splitService.split(input);
 
         for(final String split : splits) {
             LOGGER.info("{} - {}", split.length(), split);
-            Assertions.assertTrue(split.length() < 500);
+            Assertions.assertTrue(split.length() <= splitLength);
         }
+
+        final StringBuilder sb = new StringBuilder();
+        for(final String split : splits) {
+            sb.append(split).append(splitService.getSeparator());
+        }
+
+        Assertions.assertEquals(input, sb.toString().trim());
 
     }
 

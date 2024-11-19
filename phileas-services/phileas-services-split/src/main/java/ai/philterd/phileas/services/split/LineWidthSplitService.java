@@ -27,7 +27,7 @@ public class LineWidthSplitService extends AbstractSplitService implements Split
 
     private static final Logger LOGGER = LogManager.getLogger(LineWidthSplitService.class);
 
-    private static final String SEPARATOR = System.lineSeparator();
+    private static final String SEPARATOR = " ";
 
     final int lineWidth;
 
