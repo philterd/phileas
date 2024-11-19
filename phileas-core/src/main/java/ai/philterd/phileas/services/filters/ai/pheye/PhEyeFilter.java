@@ -161,14 +161,9 @@ public class PhEyeFilter extends NerFilter {
 
                 LOGGER.debug("Returning {} NER spans.", spans.size());
 
-                return new FilterResult(context, documentId, piece, spans);
-
-            } else {
-
-                // We received a null list of spans from philter-ner. It means something went wrong.
-                throw new IOException("Unable to process document. Received error response from philter-ner.");
-
             }
+
+            return new FilterResult(context, documentId, piece, spans);
 
         } else {
 
