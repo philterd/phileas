@@ -1,7 +1,7 @@
 name: Benchmarks
 on: [workflow_dispatch]
 jobs:
-  build:
+  run_benchmarks:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -13,5 +13,5 @@ jobs:
           distribution: adopt
           java-version: 21
           cache: maven
-      - name: Build
+      - name: Run Benchmarks
         run: BENCHMARKS_ENABLED=true BENCHMARKS_CONNECTION_STRING="${{ secrets.BENCHMARKS_CONNECTION_STRING }}" BENCHMARKS_USER="${{ secrets.BENCHMARKS_USER }}" BENCHMARKS_PASSWORD="${{ secrets.BENCHMARKS_PASSWORD }}" mvn test

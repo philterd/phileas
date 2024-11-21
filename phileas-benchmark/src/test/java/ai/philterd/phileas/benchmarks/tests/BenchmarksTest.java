@@ -40,7 +40,7 @@ public class BenchmarksTest {
         final String arg_document = "all";
         final String arg_redactor = "mask_all";
         final int repetitions = 1;
-        final int workload_millis = 100;
+        final int workload_millis = 15000;
 
         // create redactor based on Phileas PII engine
         final Redactor redactor = new Redactor(arg_redactor);
