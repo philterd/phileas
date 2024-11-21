@@ -1,0 +1,29 @@
+name: Benchmarks
+on: [workflow_dispatch]
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    continue-on-error: ${{ matrix.experimental }}
+    strategy:
+      matrix:
+        os: ubuntu-latest
+        jdk: 21
+        experimental: [false]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          lfs: true
+      - name: Cache Maven packages
+        uses: actions/cache@v1
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2
+      - name: Set up JDK ${{ matrix.jdk }}
+        uses: actions/setup-java@v4
+        with:
+          distribution: adopt
+          java-version: ${{ matrix.jdk }}
+          cache: maven
+      - name: Build
+        run: BENCHMARKS_ENABLED=true BENCHMARKS_CONNECTION_STRING="${{ secrets.BENCHMARKS_CONNECTION_STRING }}" BENCHMARKS_USER="${{ secrets.BENCHMARKS_USER }}" BENCHMARKS_PASSWORD="${{ secrets.BENCHMARKS_PASSWORD }}" mvn test
