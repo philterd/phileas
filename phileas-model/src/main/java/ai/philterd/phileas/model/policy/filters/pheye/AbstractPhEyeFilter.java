@@ -26,7 +26,14 @@ public abstract class AbstractPhEyeFilter extends AbstractFilter {
     protected PhEyeConfiguration phEyeConfiguration;
 
     public PhEyeConfiguration getPhEyeConfiguration() {
+
+        // In case a configuration is not specified in the policy, use a default configuration.
+        if(phEyeConfiguration == null) {
+            phEyeConfiguration = new PhEyeConfiguration();
+        }
+
         return phEyeConfiguration;
+
     }
 
     public void setPhEyeConfiguration(PhEyeConfiguration phEyeConfiguration) {
