@@ -2,13 +2,7 @@ name: Benchmarks
 on: [workflow_dispatch]
 jobs:
   build:
-    runs-on: ${{ matrix.os }}
-    continue-on-error: ${{ matrix.experimental }}
-    strategy:
-      matrix:
-        os: ubuntu-latest
-        jdk: 21
-        experimental: [false]
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
