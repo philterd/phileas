@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ai.philterd.test.phileas.services.registry;
+package ai.philterd.test.phileas.services.policies;
 
 import ai.philterd.phileas.model.configuration.PhileasConfiguration;
 import ai.philterd.phileas.model.policy.Identifiers;
@@ -23,22 +23,16 @@ import ai.philterd.phileas.model.policy.filters.CreditCard;
 import ai.philterd.phileas.model.policy.filters.strategies.rules.AgeFilterStrategy;
 import ai.philterd.phileas.model.policy.filters.strategies.rules.CreditCardFilterStrategy;
 import ai.philterd.phileas.model.services.PolicyService;
-import ai.philterd.phileas.services.policies.S3PolicyService;
+import ai.philterd.phileas.services.policies.LocalPolicyService;
 import com.google.gson.Gson;
-import io.findify.s3mock.S3Mock;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import redis.embedded.RedisServer;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -46,106 +40,32 @@ import java.util.Properties;
 
 import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
-public class S3PolicyServiceTest {
+public class LocalPolicyServiceTest {
 
-    private static final Logger LOGGER = LogManager.getLogger(S3PolicyServiceTest.class);
+    private static final Logger LOGGER = LogManager.getLogger(LocalPolicyServiceTest.class);
 
-    private Gson gson = new Gson();
-    private RedisServer redisServer;
-    private S3Mock api;
-
-    private static boolean isExternalRedis = false;
+    private final Gson gson = new Gson();
 
     private PhileasConfiguration getConfiguration() throws IOException {
 
+        final String tempDirectory = Files.createTempDirectory("phileas-policies").toFile().getAbsolutePath();
+
         final Properties properties = new Properties();
-
-        final String redisHost = System.getenv("PHILTER_REDIS_HOST");
-        final String redisPort = System.getenv("PHILTER_REDIS_PORT");
-        final String redisSsl = System.getenv("PHILTER_REDIS_SSL");
-        final String redisToken = System.getenv("PHILTER_REDIS_AUTH_TOKEN");
-        final String redisClustered = System.getenv("PHILTER_REDIS_CLUSTERED");
-
-        properties.setProperty("filter.policies", "s3");
-        properties.setProperty("filter.policies.s3.bucket", "policies");
-        properties.setProperty("filter.policies.s3.prefix", "test/");
-        properties.setProperty("cache.redis.enabled", "true");
-
-        if(StringUtils.isNotEmpty(redisHost)) {
-
-            LOGGER.info("Using redis host: {}", redisHost);
-
-            properties.setProperty("cache.redis.host", redisHost);
-            properties.setProperty("cache.redis.port", redisPort);
-            properties.setProperty("cache.redis.ssl", redisSsl);
-            properties.setProperty("cache.redis.auth.token", redisToken);
-            properties.setProperty("cache.redis.cluster", "true");
-            properties.setProperty("cache.redis.cluster", redisClustered);
-
-        } else {
-
-            LOGGER.info("Using local redis host.");
-
-            properties.setProperty("cache.redis.host", "localhost");
-            properties.setProperty("cache.redis.port", "31000");
-            properties.setProperty("cache.redis.ssl", "false");
-            properties.setProperty("cache.redis.auth.token", "");
-            properties.setProperty("cache.redis.cluster", "false");
-
-        }
+        properties.setProperty("filter.policies.directory", tempDirectory);
+        properties.setProperty("cache.redis.enabled", "false");
 
         return new PhileasConfiguration(properties);
-
-    }
-
-    @BeforeAll
-    public static void beforeClass() {
-
-        assumeFalse(System.getProperty("os.name").toLowerCase().startsWith("win"));
-
-        final String redisHost = System.getenv("PHILTER_REDIS_HOST");
-
-        if(StringUtils.isNotEmpty(redisHost)) {
-            isExternalRedis = true;
-        }
-
-    }
-
-    @BeforeEach
-    public void before() throws IOException {
-
-        LOGGER.info("Starting S3 emulator.");
-
-        final Path temporaryDirectory = Files.createTempDirectory("s3mock");
-
-        api = new S3Mock.Builder().withPort(8001).withFileBackend(temporaryDirectory.toFile().getAbsolutePath()).build();
-        api.start();
-
-        if(!isExternalRedis) {
-            redisServer = RedisServer.builder().setting("bind 127.0.0.1").port(31000).build();
-            redisServer.start();
-        }
-
-    }
-
-    @AfterEach
-    public void after() {
-
-        api.shutdown();
-
-        if(!isExternalRedis) {
-            redisServer.stop();
-        }
 
     }
 
     @Test
     public void list() throws IOException {
 
-        final PolicyService policyService = new S3PolicyService(getConfiguration(), true);
+        final PolicyService policyService = new LocalPolicyService(getConfiguration());
 
         policyService.save(gson.toJson(getPolicy("name1")));
         policyService.save(gson.toJson(getPolicy("name2")));
+
         final List<String> names = policyService.get();
 
         LOGGER.info("Found {} policies", names.size());
@@ -159,7 +79,7 @@ public class S3PolicyServiceTest {
     @Test
     public void getAll() throws IOException {
 
-        final PolicyService policyService = new S3PolicyService(getConfiguration(), true);
+        final PolicyService policyService = new LocalPolicyService(getConfiguration());
 
         policyService.save(gson.toJson(getPolicy("name1")));
         policyService.save(gson.toJson(getPolicy("name2")));
@@ -181,7 +101,7 @@ public class S3PolicyServiceTest {
 
         final String policy = gson.toJson(getPolicy(name));
 
-        final PolicyService policyService = new S3PolicyService(getConfiguration(), true);
+        final PolicyService policyService = new LocalPolicyService(getConfiguration());
 
         policyService.save(policy);
 
@@ -199,7 +119,7 @@ public class S3PolicyServiceTest {
 
         final String policy = gson.toJson(getPolicy(name));
 
-        final PolicyService policyService = new S3PolicyService(getConfiguration(), true);
+        final PolicyService policyService = new LocalPolicyService(getConfiguration());
 
         policyService.save(policy);
 
@@ -215,13 +135,29 @@ public class S3PolicyServiceTest {
         final String name = "default";
         final String policy = gson.toJson(getPolicy(name));
 
-        final PolicyService policyService = new S3PolicyService(getConfiguration(), true);
+        final PolicyService policyService = new LocalPolicyService(getConfiguration());
 
         policyService.save(policy);
 
         policyService.delete(name);
 
         Assertions.assertFalse(policyService.getAll().containsKey(name));
+
+    }
+
+    @Test
+    public void deleteOutsidePath() throws IOException {
+
+        final File tempFile = File.createTempFile("phileas-", "-temp");
+        tempFile.deleteOnExit();
+
+        Assertions.assertTrue(Files.exists(tempFile.toPath()));
+
+        final String name = "../" + tempFile.getName();
+
+        final PolicyService policyService = new LocalPolicyService(getConfiguration());
+
+        Assertions.assertThrows(IOException.class, () -> policyService.delete(name));
 
     }
 

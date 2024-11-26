@@ -31,7 +31,17 @@ import ai.philterd.phileas.model.policy.graphical.BoundingBox;
 import ai.philterd.phileas.model.responses.BinaryDocumentFilterResponse;
 import ai.philterd.phileas.model.responses.FilterResponse;
 import ai.philterd.phileas.model.serializers.PlaceholderDeserializer;
-import ai.philterd.phileas.model.services.*;
+import ai.philterd.phileas.model.services.AlertService;
+import ai.philterd.phileas.model.services.AnonymizationCacheService;
+import ai.philterd.phileas.model.services.Classification;
+import ai.philterd.phileas.model.services.DocumentProcessor;
+import ai.philterd.phileas.model.services.FilterService;
+import ai.philterd.phileas.model.services.MetricsService;
+import ai.philterd.phileas.model.services.PolicyService;
+import ai.philterd.phileas.model.services.PostFilter;
+import ai.philterd.phileas.model.services.Redacter;
+import ai.philterd.phileas.model.services.SentimentDetector;
+import ai.philterd.phileas.model.services.SplitService;
 import ai.philterd.phileas.processors.unstructured.UnstructuredDocumentProcessor;
 import ai.philterd.phileas.service.ai.sentiment.OpenNLPSentimentDetector;
 import ai.philterd.phileas.services.alerts.AlertServiceFactory;
@@ -39,9 +49,12 @@ import ai.philterd.phileas.services.anonymization.cache.AnonymizationCacheServic
 import ai.philterd.phileas.services.disambiguation.VectorBasedSpanDisambiguationService;
 import ai.philterd.phileas.services.metrics.NoOpMetricsService;
 import ai.philterd.phileas.services.policies.LocalPolicyService;
-import ai.philterd.phileas.services.policies.S3PolicyService;
 import ai.philterd.phileas.services.policies.utils.PolicyUtils;
-import ai.philterd.phileas.services.postfilters.*;
+import ai.philterd.phileas.services.postfilters.IgnoredPatternsFilter;
+import ai.philterd.phileas.services.postfilters.IgnoredTermsFilter;
+import ai.philterd.phileas.services.postfilters.TrailingNewLinePostFilter;
+import ai.philterd.phileas.services.postfilters.TrailingPeriodPostFilter;
+import ai.philterd.phileas.services.postfilters.TrailingSpacePostFilter;
 import ai.philterd.phileas.services.split.SplitFactory;
 import ai.philterd.services.pdf.PdfRedacter;
 import ai.philterd.services.pdf.PdfTextExtractor;
@@ -55,7 +68,15 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.LinkedHashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class PhileasFilterService implements FilterService {
@@ -86,12 +107,10 @@ public class PhileasFilterService implements FilterService {
         this.filterCache = new ConcurrentHashMap<>();
 
         // Configure the deserialization.
-        final GsonBuilder gsonBuilder = new GsonBuilder();
-        gsonBuilder.registerTypeAdapter(String.class, new PlaceholderDeserializer());
-        final Gson gson = gsonBuilder.create();
+        final Gson gson = new GsonBuilder().registerTypeAdapter(String.class, new PlaceholderDeserializer()).create();
 
         // Set the policy services.
-        this.policyService = buildPolicyService(phileasConfiguration);
+        this.policyService = new LocalPolicyService(phileasConfiguration);
         this.policyUtils = new PolicyUtils(policyService, gson);
 
         // Set the anonymization cache service.
@@ -359,28 +378,6 @@ public class PhileasFilterService implements FilterService {
         }
 
         return boundingBoxes;
-
-    }
-
-    private PolicyService buildPolicyService(final PhileasConfiguration phileasConfiguration) throws IOException {
-
-        final PolicyService policyService;
-        final String s3Bucket = phileasConfiguration.policiesS3Bucket();
-
-        // If an S3 bucket is provided then instantiate an S3PolicyService.
-        if(StringUtils.isNotEmpty(s3Bucket)) {
-
-            LOGGER.info("Initializing configuration for policies S3 bucket.");
-            policyService = new S3PolicyService(phileasConfiguration, false);
-
-        } else {
-
-            LOGGER.info("Using local storage for policies.");
-            policyService = new LocalPolicyService(phileasConfiguration);
-
-        }
-
-        return policyService;
 
     }
 
