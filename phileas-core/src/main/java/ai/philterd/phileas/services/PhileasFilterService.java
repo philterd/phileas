@@ -111,7 +111,7 @@ public class PhileasFilterService implements FilterService {
         final Gson gson = new GsonBuilder().registerTypeAdapter(String.class, new PlaceholderDeserializer()).create();
 
         // Set the policy services.
-        this.policyService = buildPolicyService(phileasConfiguration);
+        this.policyService = new LocalPolicyService(phileasConfiguration);
         this.policyUtils = new PolicyUtils(policyService, gson);
 
         // Set the anonymization cache service.
