@@ -117,18 +117,6 @@ public class PhileasConfiguration {
         return getProperty("filter.policies.directory", "./policies/");
     }
 
-    public String policiesS3Bucket() {
-        return getProperty("filter.policies.s3.bucket", "");
-    }
-
-    public String policiesS3Prefix() {
-        return getProperty("filter.policies.s3.prefix", "");
-    }
-
-    public String policiesS3Region() {
-        return getProperty("filter.policies.s3.region", "us-east-1");
-    }
-
     private String getProperty(final String property, final String defaultValue) {
 
         final String environmentVariableValue = getEnvironmentVariable(property);

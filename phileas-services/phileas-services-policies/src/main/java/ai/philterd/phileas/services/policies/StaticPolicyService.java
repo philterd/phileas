@@ -35,7 +35,7 @@ public class StaticPolicyService implements PolicyService {
 
     private static final Logger LOGGER = LogManager.getLogger(StaticPolicyService.class);
 
-    private Policy policy;
+    private final Policy policy;
     private Gson gson;
 
     /**

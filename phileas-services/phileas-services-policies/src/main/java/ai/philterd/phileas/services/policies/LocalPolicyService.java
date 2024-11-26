@@ -160,6 +160,8 @@ public class LocalPolicyService extends AbstractPolicyService implements PolicyS
 
         final File file = new File(policiesDirectory, policyName + JSON_EXTENSION);
 
+        LOGGER.info("Deleting policy at: {}", file.getAbsolutePath());
+
         if(file.exists()) {
 
             if(!file.delete()) {
