@@ -48,6 +48,7 @@ import ai.philterd.phileas.services.alerts.AlertServiceFactory;
 import ai.philterd.phileas.services.anonymization.cache.AnonymizationCacheServiceFactory;
 import ai.philterd.phileas.services.disambiguation.VectorBasedSpanDisambiguationService;
 import ai.philterd.phileas.services.metrics.NoOpMetricsService;
+import ai.philterd.phileas.services.policies.InMemoryPolicyService;
 import ai.philterd.phileas.services.policies.LocalPolicyService;
 import ai.philterd.phileas.services.policies.utils.PolicyUtils;
 import ai.philterd.phileas.services.postfilters.IgnoredPatternsFilter;
@@ -110,7 +111,7 @@ public class PhileasFilterService implements FilterService {
         final Gson gson = new GsonBuilder().registerTypeAdapter(String.class, new PlaceholderDeserializer()).create();
 
         // Set the policy services.
-        this.policyService = new LocalPolicyService(phileasConfiguration);
+        this.policyService = buildPolicyService(phileasConfiguration);
         this.policyUtils = new PolicyUtils(policyService, gson);
 
         // Set the anonymization cache service.
@@ -358,6 +359,16 @@ public class PhileasFilterService implements FilterService {
         }
 
         return binaryDocumentFilterResponse;
+
+    }
+
+    private PolicyService buildPolicyService(final PhileasConfiguration phileasConfiguration) {
+
+        if(StringUtils.equalsIgnoreCase(phileasConfiguration.policyService(), "memory")) {
+            return new InMemoryPolicyService();
+        } else {
+            return new LocalPolicyService(phileasConfiguration);
+        }
 
     }
 

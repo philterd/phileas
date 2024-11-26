@@ -117,6 +117,10 @@ public class PhileasConfiguration {
         return getProperty("filter.policies.directory", "./policies/");
     }
 
+    public String policyService() {
+        return getProperty("filter.policies.service", "local");
+    }
+
     private String getProperty(final String property, final String defaultValue) {
 
         final String environmentVariableValue = getEnvironmentVariable(property);
