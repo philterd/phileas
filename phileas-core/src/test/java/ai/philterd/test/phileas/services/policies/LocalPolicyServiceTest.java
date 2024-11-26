@@ -149,18 +149,15 @@ public class LocalPolicyServiceTest {
     public void deleteOutsidePath() throws IOException {
 
         final File tempFile = File.createTempFile("phileas-", "-temp");
+        tempFile.deleteOnExit();
 
         Assertions.assertTrue(Files.exists(tempFile.toPath()));
-        LOGGER.info("Temp file: {}", tempFile.getAbsolutePath());
 
         final String name = "../" + tempFile.getName();
-        LOGGER.info("Policy name: {}", name);
 
         final PolicyService policyService = new LocalPolicyService(getConfiguration());
 
-        policyService.delete(name);
-
-        Assertions.assertTrue(Files.exists(tempFile.toPath()));
+        Assertions.assertThrows(IOException.class, () -> policyService.delete(name));
 
     }
 
