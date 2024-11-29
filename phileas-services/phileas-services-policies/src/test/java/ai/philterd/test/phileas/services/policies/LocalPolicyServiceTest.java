@@ -33,16 +33,11 @@ import org.junit.jupiter.api.Test;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import static org.junit.jupiter.api.Assumptions.assumeFalse;
-
 public class LocalPolicyServiceTest {
-
-    private static final Logger LOGGER = LogManager.getLogger(LocalPolicyServiceTest.class);
 
     private final Gson gson = new Gson();
 
@@ -68,9 +63,7 @@ public class LocalPolicyServiceTest {
 
         final List<String> names = policyService.get();
 
-        LOGGER.info("Found {} policies", names.size());
-
-        Assertions.assertTrue(names.size() == 2);
+        Assertions.assertEquals(2, names.size());
         Assertions.assertTrue(names.contains("name1"));
         Assertions.assertTrue(names.contains("name2"));
 
@@ -86,11 +79,9 @@ public class LocalPolicyServiceTest {
 
         final Map<String, String> all = policyService.getAll();
 
-        LOGGER.info("Found {} policies", all.size());
-
         Assertions.assertEquals(2, all.size());
-        Assertions.assertTrue(all.keySet().contains("name1"));
-        Assertions.assertTrue(all.keySet().contains("name2"));
+        Assertions.assertTrue(all.containsKey("name1"));
+        Assertions.assertTrue(all.containsKey("name2"));
 
     }
 
@@ -166,12 +157,12 @@ public class LocalPolicyServiceTest {
         AgeFilterStrategy ageFilterStrategy = new AgeFilterStrategy();
 
         Age age = new Age();
-        age.setAgeFilterStrategies(Arrays.asList(ageFilterStrategy));
+        age.setAgeFilterStrategies(List.of(ageFilterStrategy));
 
         CreditCardFilterStrategy creditCardFilterStrategy = new CreditCardFilterStrategy();
 
         CreditCard creditCard = new CreditCard();
-        creditCard.setCreditCardFilterStrategies(Arrays.asList(creditCardFilterStrategy));
+        creditCard.setCreditCardFilterStrategies(List.of(creditCardFilterStrategy));
 
         Identifiers identifiers = new Identifiers();
 
