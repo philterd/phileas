@@ -15,14 +15,11 @@
  */
 package ai.philterd.test.phileas.model.responses;
 
-import ai.philterd.phileas.model.objects.Span;
 import ai.philterd.phileas.model.responses.FilterResponse;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Test;
-
-import java.util.List;
 
 public class FilterResponseTest {
 
@@ -31,14 +28,6 @@ public class FilterResponseTest {
     @Test
     public void equalsContract() {
         EqualsVerifier.forClass(FilterResponse.class).verify();
-    }
-
-    private void showSpans(List<Span> spans) {
-
-        for(Span span : spans) {
-            LOGGER.info(span.toString());
-        }
-
     }
 
 }
