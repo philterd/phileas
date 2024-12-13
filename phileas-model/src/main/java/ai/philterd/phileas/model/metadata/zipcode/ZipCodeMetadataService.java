@@ -34,7 +34,7 @@ public class ZipCodeMetadataService implements MetadataService<ZipCodeMetadataRe
     @Override
     public ZipCodeMetadataResponse getMetadata(final ZipCodeMetadataRequest request) {
 
-        final int population = zipCodes2010Census.get(request.getZipCode());
+        final int population = zipCodes2010Census.getOrDefault(request.getZipCode(), -1);
 
         return new ZipCodeMetadataResponse(population);
 
