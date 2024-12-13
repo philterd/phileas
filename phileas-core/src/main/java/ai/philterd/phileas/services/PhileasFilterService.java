@@ -310,9 +310,9 @@ public class PhileasFilterService implements FilterService {
                 final FilterResponse filterResponse = unstructuredDocumentProcessor.process(policy, filters, postFilters, context, documentId, piece, line, attributes);
 
                 // Add all the found spans to the list of spans.
-                spans.addAll(filterResponse.explanation().appliedSpans());
+                spans.addAll(filterResponse.getExplanation().appliedSpans());
 
-                for (final Span span : filterResponse.explanation().appliedSpans()) {
+                for (final Span span : filterResponse.getExplanation().appliedSpans()) {
                     span.setCharacterStart(span.getCharacterStart() + offset);
                     span.setCharacterEnd(span.getCharacterEnd() + offset);
                     nonRelativeSpans.add(span);

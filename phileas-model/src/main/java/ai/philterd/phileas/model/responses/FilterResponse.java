@@ -18,14 +18,38 @@ package ai.philterd.phileas.model.responses;
 import ai.philterd.phileas.model.objects.Explanation;
 import ai.philterd.phileas.model.objects.Span;
 import com.google.gson.Gson;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
-import java.util.*;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Response to a filter operation.
  */
-public record FilterResponse(String filteredText, String context, String documentId, int piece,
-                             Explanation explanation, Map<String, String> attributes) {
+public class FilterResponse {
+
+    private final String filteredText;
+    private final String context;
+    private final String documentId;
+    private final int piece;
+    private final Explanation explanation;
+    private final Map<String, String> attributes;
+
+    public FilterResponse(String filteredText, String context, String documentId, int piece,
+                          Explanation explanation, Map<String, String> attributes) {
+
+        this.filteredText = filteredText;
+        this.context = context;
+        this.documentId = documentId;
+        this.piece = piece;
+        this.explanation = explanation;
+        this.attributes = attributes;
+
+    }
 
     /**
      * Combine multiple {@link FilterResponse} objects into a single {@link FilterResponse}.
@@ -46,7 +70,7 @@ public record FilterResponse(String filteredText, String context, String documen
 
         // Order the filter responses by piece number, lowest to greatest.
         final List<FilterResponse> sortedFilterResponses =
-                filterResponses.stream().sorted(Comparator.comparing(FilterResponse::piece)).toList();
+                filterResponses.stream().sorted(Comparator.comparing(FilterResponse::getPiece)).toList();
 
         // Tracks the document offset for each piece so the span locations can be adjusted.
         int documentOffset = 0;
@@ -58,20 +82,20 @@ public record FilterResponse(String filteredText, String context, String documen
         for (final FilterResponse filterResponse : sortedFilterResponses) {
 
             // The text is the filtered text plus the separator.
-            final String pieceFilteredText = filterResponse.filteredText() + separator;
+            final String pieceFilteredText = filterResponse.getFilteredText() + separator;
 
             // Append the filtered text.
             filteredText.append(pieceFilteredText);
 
             // Adjust the character offsets when combining.
-            appliedSpans.addAll(Span.shiftSpans(documentOffset, filterResponse.explanation().appliedSpans()));
-            identifiedSpans.addAll(Span.shiftSpans(documentOffset, filterResponse.explanation().identifiedSpans()));
+            appliedSpans.addAll(Span.shiftSpans(documentOffset, filterResponse.getExplanation().appliedSpans()));
+            identifiedSpans.addAll(Span.shiftSpans(documentOffset, filterResponse.getExplanation().identifiedSpans()));
 
             // Adjust the document offset.
             documentOffset += pieceFilteredText.length();
 
             // Combine the attributes (they should be the same anyway since attributes are on the document-level.
-            combinedAttributes.putAll(filterResponse.attributes());
+            combinedAttributes.putAll(filterResponse.getAttributes());
 
         }
 
@@ -87,6 +111,40 @@ public record FilterResponse(String filteredText, String context, String documen
         final Gson gson = new Gson();
         return gson.toJson(this);
 
+    }
+
+    @Override
+    public final boolean equals(Object o) {
+        return EqualsBuilder.reflectionEquals(this, o);
+    }
+
+    @Override
+    public final int hashCode() {
+        return HashCodeBuilder.reflectionHashCode(this);
+    }
+
+    public String getFilteredText() {
+        return filteredText;
+    }
+
+    public String getContext() {
+        return context;
+    }
+
+    public String getDocumentId() {
+        return documentId;
+    }
+
+    public int getPiece() {
+        return piece;
+    }
+
+    public Explanation getExplanation() {
+        return explanation;
+    }
+
+    public Map<String, String> getAttributes() {
+        return attributes;
     }
 
 }
