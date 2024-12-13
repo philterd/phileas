@@ -826,8 +826,7 @@ public class FilterPolicyLoader {
 
                             final String classification = customDictionary.getClassification();
 
-                            enabledFilters.add(new BloomFilterDictionaryFilter(FilterType.CUSTOM_DICTIONARY, filterConfiguration,
-                                    terms, classification, phileasConfiguration.bloomFilterFpp()));
+                            enabledFilters.add(new BloomFilterDictionaryFilter(FilterType.CUSTOM_DICTIONARY, filterConfiguration, terms, classification));
 
                         }
 

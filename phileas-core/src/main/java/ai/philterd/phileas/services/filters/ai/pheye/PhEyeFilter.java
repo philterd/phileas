@@ -23,8 +23,9 @@ import ai.philterd.phileas.model.objects.Replacement;
 import ai.philterd.phileas.model.objects.Span;
 import ai.philterd.phileas.model.policy.Policy;
 import ai.philterd.phileas.model.services.MetricsService;
-import com.google.common.reflect.TypeToken;
+
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import okhttp3.Authenticator;
 import okhttp3.ConnectionPool;
 import okhttp3.Credentials;
