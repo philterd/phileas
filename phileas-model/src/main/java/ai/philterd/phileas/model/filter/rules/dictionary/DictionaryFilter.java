@@ -23,6 +23,8 @@ import org.apache.lucene.analysis.shingle.ShingleFilter;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 
 import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A filter that operates on a preset list of dictionary words.
@@ -41,23 +43,22 @@ public abstract class DictionaryFilter extends RulesFilter {
         super(filterType, filterConfiguration);
     }
 
-    /**
-     * Gets the n-grams from text having length 2 to <code>maxNgramSize</code>.
-     * @param maxNgramSize The maximum size of the n-grams.
-     * @param text The text to split.
-     * @return The n-grams.
-     */
-    public ShingleFilter getNGrams(int maxNgramSize, String text) {
+    public List<String> getNgrams(String text, int n) {
+        List<String> ngrams = new ArrayList<>();
+        String[] words = text.split(" ");
 
-        // The standard analyzer lowercases the text.
-        final StandardAnalyzer analyzer = new StandardAnalyzer();
+        for (int i = 0; i <= words.length - n; i++) {
+            StringBuilder ngram = new StringBuilder();
+            for (int j = 0; j < n; j++) {
+                ngram.append(words[i + j]);
+                if (j < n - 1) {
+                    ngram.append(" ");
+                }
+            }
+            ngrams.add(ngram.toString());
+        }
 
-        // Tokenize the input text.
-        final TokenStream tokenStream = analyzer.tokenStream(null, new StringReader(text));
-
-        // Make n-grams from the tokens.
-        return new ShingleFilter(tokenStream, 2, maxNgramSize);
-
+        return ngrams;
     }
 
 }
