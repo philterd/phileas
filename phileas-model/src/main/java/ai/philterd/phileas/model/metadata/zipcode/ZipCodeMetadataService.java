@@ -16,14 +16,11 @@
 package ai.philterd.phileas.model.metadata.zipcode;
 
 import ai.philterd.phileas.model.metadata.MetadataService;
-import org.apache.commons.csv.CSVFormat;
-import org.apache.commons.csv.CSVParser;
-import org.apache.commons.csv.CSVRecord;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.Reader;
 import java.util.HashMap;
 
 public class ZipCodeMetadataService implements MetadataService<ZipCodeMetadataRequest, ZipCodeMetadataResponse> {
@@ -37,7 +34,7 @@ public class ZipCodeMetadataService implements MetadataService<ZipCodeMetadataRe
     @Override
     public ZipCodeMetadataResponse getMetadata(final ZipCodeMetadataRequest request) {
 
-        final int population = zipCodes2010Census.get(request.getZipCode());
+        final int population = zipCodes2010Census.getOrDefault(request.getZipCode(), -1);
 
         return new ZipCodeMetadataResponse(population);
 
@@ -47,21 +44,26 @@ public class ZipCodeMetadataService implements MetadataService<ZipCodeMetadataRe
 
         final HashMap<String, Integer> zipcodes = new HashMap<>();
 
-        final InputStream inputStream = getClass().getClassLoader().getResourceAsStream("2010+Census+Population+By+Zipcode.csv");
+        try (InputStream inputStream =  getClass().getClassLoader().getResourceAsStream("2010+Census+Population+By+Zipcode.csv");
+             InputStreamReader inputStreamReader = new InputStreamReader(inputStream)) {
 
-        final Reader reader = new InputStreamReader(inputStream);
-        final CSVParser csvParser = new CSVParser(reader, CSVFormat.DEFAULT);
+            final BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
 
-        for (final CSVRecord csvRecord : csvParser) {
+            String line;
+            while ((line = bufferedReader.readLine()) != null) {
 
-            final String zipCode = csvRecord.get(0);
-            final int population = Integer.parseInt(csvRecord.get(1));
+                if(!line.startsWith("#")) {
+                    final String[] zipCodePopulation = line.split(",");
 
-            zipcodes.put(zipCode, population);
+                    final String zipCode = zipCodePopulation[0];
+                    final int population = Integer.parseInt(zipCodePopulation[1]);
+
+                    zipcodes.put(zipCode, population);
+                }
+
+            }
 
         }
-
-        reader.close();
 
         return zipcodes;
 
