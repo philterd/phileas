@@ -23,13 +23,7 @@ import ai.philterd.phileas.model.objects.FilterPattern;
 import ai.philterd.phileas.model.objects.FilterResult;
 import ai.philterd.phileas.model.objects.Span;
 import ai.philterd.phileas.model.policy.Policy;
-import org.apache.lucene.analysis.TokenStream;
-import org.apache.lucene.analysis.core.WhitespaceAnalyzer;
-import org.apache.lucene.analysis.shingle.ShingleFilter;
-import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 
-import java.io.IOException;
-import java.io.StringReader;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -72,49 +66,29 @@ public class PhysicianNameFilter extends RegexFilter {
 
         final List<Span> spans = new LinkedList<>();
 
-        final ShingleFilter ngrams = getNGrams(5, input);
+        // TODO: Get ngrams from max to size 1.
+        final List<String> ngrams = getNgrams(input, 1);
 
-        final CharTermAttribute termAttribute = ngrams.getAttribute(CharTermAttribute.class);
+        for(final String candidate : ngrams) {
 
-        try {
+            if (endsWithPostNominal(candidate) || startsWithPreNominal(candidate)) {
 
-            ngrams.reset();
+                // The candidate has to be some percentage of ASCII letters.
+                if (letterPercentage(candidate) > LETTER_PERCENTAGE_THRESHOLD) {
 
-            while(ngrams.incrementToken()) {
+                    // Use this text as a literal regex pattern.
+                    final Pattern candidatePattern = Pattern.compile(Pattern.quote(candidate), Pattern.CASE_INSENSITIVE);
+                    final FilterPattern filterPattern = new FilterPattern.FilterPatternBuilder(candidatePattern, 0.90).build();
+                    this.analyzer = new Analyzer(contextualTerms, filterPattern);
 
-                final String candidate = termAttribute.toString();
+                    final List<Span> patternSpans = findSpans(policy, analyzer, input, context, documentId, attributes);
 
-                if(endsWithPostNominal(candidate) || startsWithPreNominal(candidate)) {
-
-                    // The candidate has to be some percentage of ASCII letters.
-                    if(letterPercentage(candidate) > LETTER_PERCENTAGE_THRESHOLD) {
-
-                        // Use this text as a literal regex pattern.
-                        final Pattern candidatePattern = Pattern.compile(Pattern.quote(candidate), Pattern.CASE_INSENSITIVE);
-                        final FilterPattern filterPattern = new FilterPattern.FilterPatternBuilder(candidatePattern, 0.90).build();
-                        this.analyzer = new Analyzer(contextualTerms, filterPattern);
-
-                        final List<Span> patternSpans = findSpans(policy, analyzer, input, context, documentId, attributes);
-
-                        spans.addAll(patternSpans);
-
-                    }
+                    spans.addAll(patternSpans);
 
                 }
 
             }
 
-        } catch (IOException ex) {
-
-            LOGGER.error("Error enumerating tokens.", ex);
-
-        } finally {
-            try {
-                ngrams.end();
-                ngrams.close();
-            } catch (IOException e) {
-                // Do nothing.
-            }
         }
 
         final List<Span> droppedOverlappingSpans = Span.dropOverlappingSpans(spans);
@@ -137,19 +111,6 @@ public class PhysicianNameFilter extends RegexFilter {
         }
 
         return Double.valueOf(count) / Double.valueOf(text.length());
-
-    }
-
-    private ShingleFilter getNGrams(int maxNgramSize, String text) {
-
-        // The standard analyzer lowercases the text.
-        final WhitespaceAnalyzer analyzer = new WhitespaceAnalyzer();
-
-        // Tokenize the input text.
-        final TokenStream tokenStream = analyzer.tokenStream(null, new StringReader(text));
-
-        // Make n-grams from the tokens.
-        return new ShingleFilter(tokenStream, 2, maxNgramSize);
 
     }
 

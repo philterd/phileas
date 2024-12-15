@@ -16,6 +16,7 @@
 package ai.philterd.phileas.model.filter.rules.dictionary;
 
 import ai.philterd.phileas.model.enums.FilterType;
+import ai.philterd.phileas.model.enums.SensitivityLevel;
 import ai.philterd.phileas.model.filter.FilterConfiguration;
 import ai.philterd.phileas.model.objects.FilterResult;
 import ai.philterd.phileas.model.objects.Replacement;
@@ -24,11 +25,7 @@ import ai.philterd.phileas.model.policy.Policy;
 import ai.philterd.phileas.model.utils.BloomFilter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.lucene.analysis.shingle.ShingleFilter;
-import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
-import org.apache.lucene.analysis.tokenattributes.OffsetAttribute;
 
-import java.io.IOException;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -47,6 +44,7 @@ public class BloomFilterDictionaryFilter extends DictionaryFilter {
 
     /**
      * Creates a new bloom filter-based filter.
+     * @param filterType
      * @param filterConfiguration The {@link FilterConfiguration} for the filter.
      * @param terms
      * @param classification
@@ -54,7 +52,8 @@ public class BloomFilterDictionaryFilter extends DictionaryFilter {
     public BloomFilterDictionaryFilter(FilterType filterType,
                                        FilterConfiguration filterConfiguration,
                                        Set<String> terms,
-                                       String classification) {
+                                       String classification,
+                                       SensitivityLevel sensitivityLevel) {
 
         super(filterType, filterConfiguration);
 
@@ -85,59 +84,38 @@ public class BloomFilterDictionaryFilter extends DictionaryFilter {
 
         final List<Span> spans = new LinkedList<>();
 
-        // PHL-150: Break the input text into n-grams of size max n-grams and smaller.
-        final ShingleFilter ngrams = getNGrams(maxNgramSize, text);
+        // TODO: Get ngrams from max to size 1.
+        final List<String> ngrams = getNgrams(text, maxNgramSize);
 
-        final OffsetAttribute offsetAttribute = ngrams.getAttribute(OffsetAttribute.class);
-        final CharTermAttribute termAttribute = ngrams.getAttribute(CharTermAttribute.class);
+        for(final String ngram : ngrams) {
 
-        try {
+            if (bloomFilter.mightContain(ngram)) {
 
-            ngrams.reset();
+                if (lowerCaseTerms.contains(ngram)) {
 
-            while (ngrams.incrementToken()) {
+                    // Set the meta values for the span.
+                    final boolean isIgnored = ignored.contains(ngram);
 
-                final String token = termAttribute.toString();
-                final String lowerCaseToken = token.toLowerCase();
+                    // TODO: Get the offsets.
+                    final int characterStart = 0;
+                    final int characterEnd = 0;
+                    final double confidence = 1.0;
+                    final String[] window = getWindow(text, characterStart, characterEnd);
 
-                if(bloomFilter.mightContain(lowerCaseToken)) {
+                    // Get the original token to get the right casing.
+                    final String originalToken = text.substring(characterStart, characterEnd);
 
-                    if(lowerCaseTerms.contains(lowerCaseToken)) {
+                    final Replacement replacement = getReplacement(policy, context, documentId,
+                            originalToken, window, confidence, classification, attributes, null);
 
-                        // Set the meta values for the span.
-                        final boolean isIgnored = ignored.contains(token);
-                        final int characterStart = offsetAttribute.startOffset();
-                        final int characterEnd = offsetAttribute.endOffset();
-                        final double confidence = 1.0;
-                        final String[] window = getWindow(text, characterStart, characterEnd);
-
-                        // Get the original token to get the right casing.
-                        final String originalToken = text.substring(characterStart, characterEnd);
-
-                        final Replacement replacement = getReplacement(policy, context, documentId,
-                                originalToken, window, confidence, classification, attributes, null);
-
-                        spans.add(Span.make(characterStart, characterEnd, getFilterType(), context, documentId,
-                                confidence, originalToken, replacement.getReplacement(), replacement.getSalt(),
-                                isIgnored, replacement.isApplied(), window));
-
-                    }
+                    spans.add(Span.make(characterStart, characterEnd, getFilterType(), context, documentId,
+                            confidence, originalToken, replacement.getReplacement(), replacement.getSalt(),
+                            isIgnored, replacement.isApplied(), window));
 
                 }
 
             }
 
-        } catch (IOException ex) {
-
-            LOGGER.error("Error enumerating tokens.", ex);
-
-        } finally {
-            try {
-                ngrams.end();
-                ngrams.close();
-            } catch (IOException e) {
-                // Do nothing.
-            }
         }
 
         return new FilterResult(context, documentId, spans);

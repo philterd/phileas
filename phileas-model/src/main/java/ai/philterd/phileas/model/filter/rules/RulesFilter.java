@@ -28,6 +28,7 @@ import ai.philterd.phileas.model.policy.Policy;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -219,6 +220,26 @@ public abstract class RulesFilter extends Filter {
     public int getOccurrences(final Policy policy, final String input, final Map<String, String> attributes) throws Exception {
 
         return filter(policy, "none", "none", 0, input, attributes).getSpans().size();
+
+    }
+
+    public List<String> getNgrams(String text, int n) {
+
+        final List<String> ngrams = new ArrayList<>();
+        final String[] words = text.split(" ");
+
+        for (int i = 0; i <= words.length - n; i++) {
+            final StringBuilder ngram = new StringBuilder();
+            for (int j = 0; j < n; j++) {
+                ngram.append(words[i + j]);
+                if (j < n - 1) {
+                    ngram.append(" ");
+                }
+            }
+            ngrams.add(ngram.toString());
+        }
+
+        return ngrams;
 
     }
 

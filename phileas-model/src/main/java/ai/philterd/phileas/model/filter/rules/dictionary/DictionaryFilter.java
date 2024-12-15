@@ -18,13 +18,6 @@ package ai.philterd.phileas.model.filter.rules.dictionary;
 import ai.philterd.phileas.model.enums.FilterType;
 import ai.philterd.phileas.model.filter.FilterConfiguration;
 import ai.philterd.phileas.model.filter.rules.RulesFilter;
-import org.apache.lucene.analysis.TokenStream;
-import org.apache.lucene.analysis.shingle.ShingleFilter;
-import org.apache.lucene.analysis.standard.StandardAnalyzer;
-
-import java.io.StringReader;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * A filter that operates on a preset list of dictionary words.
@@ -41,24 +34,6 @@ public abstract class DictionaryFilter extends RulesFilter {
      */
     public DictionaryFilter(FilterType filterType, FilterConfiguration filterConfiguration) {
         super(filterType, filterConfiguration);
-    }
-
-    public List<String> getNgrams(String text, int n) {
-        List<String> ngrams = new ArrayList<>();
-        String[] words = text.split(" ");
-
-        for (int i = 0; i <= words.length - n; i++) {
-            StringBuilder ngram = new StringBuilder();
-            for (int j = 0; j < n; j++) {
-                ngram.append(words[i + j]);
-                if (j < n - 1) {
-                    ngram.append(" ");
-                }
-            }
-            ngrams.add(ngram.toString());
-        }
-
-        return ngrams;
     }
 
 }

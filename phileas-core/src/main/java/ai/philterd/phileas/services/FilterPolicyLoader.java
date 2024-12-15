@@ -21,6 +21,7 @@ import ai.philterd.phileas.model.enums.SensitivityLevel;
 import ai.philterd.phileas.model.filter.Filter;
 import ai.philterd.phileas.model.filter.FilterConfiguration;
 import ai.philterd.phileas.model.filter.rules.dictionary.BloomFilterDictionaryFilter;
+import ai.philterd.phileas.model.filter.rules.dictionary.FuzzyDictionaryFilter;
 import ai.philterd.phileas.model.policy.Policy;
 import ai.philterd.phileas.model.policy.filters.CustomDictionary;
 import ai.philterd.phileas.model.policy.filters.Identifier;
@@ -801,8 +802,7 @@ public class FilterPolicyLoader {
                         final String classification = customDictionary.getClassification();
                         final boolean capitalized = false;
 
-                        enabledFilters.add(new LuceneDictionaryFilter(FilterType.CUSTOM_DICTIONARY, filterConfiguration, sensitivityLevel,
-                                terms, capitalized, classification, index));
+                        enabledFilters.add(new BloomFilterDictionaryFilter(FilterType.CUSTOM_DICTIONARY, filterConfiguration, terms, classification, sensitivityLevel));
 
                     } else {
 
@@ -825,7 +825,7 @@ public class FilterPolicyLoader {
 
                             final String classification = customDictionary.getClassification();
 
-                            enabledFilters.add(new BloomFilterDictionaryFilter(FilterType.CUSTOM_DICTIONARY, filterConfiguration, terms, classification));
+                            enabledFilters.add(new BloomFilterDictionaryFilter(FilterType.CUSTOM_DICTIONARY, filterConfiguration, terms, classification, SensitivityLevel.OFF));
 
                         }
 
@@ -865,7 +865,7 @@ public class FilterPolicyLoader {
                 final SensitivityLevel sensitivityLevel = policy.getIdentifiers().getCity().getSensitivityLevel();
                 final boolean capitalized = policy.getIdentifiers().getCity().isCapitalized();
 
-                final Filter filter = new LuceneDictionaryFilter(FilterType.LOCATION_CITY, filterConfiguration, phileasConfiguration.indexesDirectory() + "cities", sensitivityLevel, capitalized);
+                final Filter filter = new FuzzyDictionaryFilter(FilterType.LOCATION_CITY, filterConfiguration, sensitivityLevel);
                 enabledFilters.add(filter);
                 filterCache.get(policy.getName()).put(FilterType.LOCATION_CITY, filter);
 
@@ -893,7 +893,7 @@ public class FilterPolicyLoader {
                 final SensitivityLevel sensitivityLevel = policy.getIdentifiers().getCounty().getSensitivityLevel();
                 final boolean capitalized = policy.getIdentifiers().getCounty().isCapitalized();
 
-                final Filter filter = new LuceneDictionaryFilter(FilterType.LOCATION_COUNTY, filterConfiguration, phileasConfiguration.indexesDirectory() + "counties", sensitivityLevel, capitalized);
+                final Filter filter = new FuzzyDictionaryFilter(FilterType.LOCATION_COUNTY, filterConfiguration, sensitivityLevel);
                 enabledFilters.add(filter);
                 filterCache.get(policy.getName()).put(FilterType.LOCATION_COUNTY, filter);
 
@@ -921,7 +921,7 @@ public class FilterPolicyLoader {
                 final SensitivityLevel sensitivityLevel = policy.getIdentifiers().getState().getSensitivityLevel();
                 final boolean capitalized = policy.getIdentifiers().getState().isCapitalized();
 
-                final Filter filter = new LuceneDictionaryFilter(FilterType.LOCATION_STATE, filterConfiguration, phileasConfiguration.indexesDirectory() + "states", sensitivityLevel, capitalized);
+                final Filter filter = new FuzzyDictionaryFilter(FilterType.LOCATION_STATE, filterConfiguration, sensitivityLevel);
                 enabledFilters.add(filter);
                 filterCache.get(policy.getName()).put(FilterType.LOCATION_STATE, filter);
 
@@ -949,7 +949,7 @@ public class FilterPolicyLoader {
                 final SensitivityLevel sensitivityLevel = policy.getIdentifiers().getHospital().getSensitivityLevel();
                 final boolean capitalized = policy.getIdentifiers().getHospital().isCapitalized();
 
-                final Filter filter = new LuceneDictionaryFilter(FilterType.HOSPITAL, filterConfiguration, phileasConfiguration.indexesDirectory() + "hospitals", sensitivityLevel, capitalized);
+                final Filter filter = new FuzzyDictionaryFilter(FilterType.HOSPITAL, filterConfiguration, sensitivityLevel);
                 enabledFilters.add(filter);
                 filterCache.get(policy.getName()).put(FilterType.HOSPITAL, filter);
 
@@ -977,7 +977,7 @@ public class FilterPolicyLoader {
                 final SensitivityLevel sensitivityLevel = policy.getIdentifiers().getHospitalAbbreviation().getSensitivityLevel();
                 final boolean capitalized = policy.getIdentifiers().getHospitalAbbreviation().isCapitalized();
 
-                final Filter filter = new LuceneDictionaryFilter(FilterType.HOSPITAL_ABBREVIATION, filterConfiguration, phileasConfiguration.indexesDirectory() + "hospital-abbreviations", sensitivityLevel, capitalized);
+                final Filter filter = new FuzzyDictionaryFilter(FilterType.HOSPITAL_ABBREVIATION, filterConfiguration,  sensitivityLevel);
                 enabledFilters.add(filter);
                 filterCache.get(policy.getName()).put(FilterType.HOSPITAL_ABBREVIATION, filter);
 
@@ -1005,7 +1005,7 @@ public class FilterPolicyLoader {
                 final SensitivityLevel sensitivityLevel = policy.getIdentifiers().getFirstName().getSensitivityLevel();
                 final boolean capitalized = policy.getIdentifiers().getFirstName().isCapitalized();
 
-                final Filter filter = new LuceneDictionaryFilter(FilterType.FIRST_NAME, filterConfiguration, phileasConfiguration.indexesDirectory() + "names", sensitivityLevel, capitalized);
+                final Filter filter = new FuzzyDictionaryFilter(FilterType.FIRST_NAME, filterConfiguration, sensitivityLevel);
                 enabledFilters.add(filter);
                 filterCache.get(policy.getName()).put(FilterType.FIRST_NAME, filter);
 
@@ -1031,9 +1031,8 @@ public class FilterPolicyLoader {
                         .build();
 
                 final SensitivityLevel sensitivityLevel = policy.getIdentifiers().getSurname().getSensitivityLevel();
-                final boolean capitalized = policy.getIdentifiers().getSurname().isCapitalized();
 
-                final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.SURNAME, filterConfiguration, phileasConfiguration.indexesDirectory() + "surnames", sensitivityLevel, capitalized);
+                final Filter filter = new FuzzyDictionaryFilter(FilterType.SURNAME, filterConfiguration,sensitivityLevel);
                 enabledFilters.add(filter);
                 filterCache.get(policy.getName()).put(FilterType.SURNAME, filter);
 
