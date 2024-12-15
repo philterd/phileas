@@ -52,12 +52,14 @@ public class ZipCodeMetadataService implements MetadataService<ZipCodeMetadataRe
             String line;
             while ((line = bufferedReader.readLine()) != null) {
 
-                final String[] zipCodePopulation = line.split(",");
+                if(!line.startsWith("#")) {
+                    final String[] zipCodePopulation = line.split(",");
 
-                final String zipCode = zipCodePopulation[0];
-                final int population = Integer.parseInt(zipCodePopulation[1]);
+                    final String zipCode = zipCodePopulation[0];
+                    final int population = Integer.parseInt(zipCodePopulation[1]);
 
-                zipcodes.put(zipCode, population);
+                    zipcodes.put(zipCode, population);
+                }
 
             }
 
