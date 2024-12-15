@@ -52,8 +52,7 @@ public class BloomFilterDictionaryFilter extends DictionaryFilter {
     public BloomFilterDictionaryFilter(FilterType filterType,
                                        FilterConfiguration filterConfiguration,
                                        Set<String> terms,
-                                       String classification,
-                                       SensitivityLevel sensitivityLevel) {
+                                       String classification) {
 
         super(filterType, filterConfiguration);
 

@@ -18,6 +18,7 @@ package ai.philterd.test.phileas.services.filters;
 import ai.philterd.phileas.model.enums.FilterType;
 import ai.philterd.phileas.model.enums.SensitivityLevel;
 import ai.philterd.phileas.model.filter.FilterConfiguration;
+import ai.philterd.phileas.model.filter.rules.dictionary.FuzzyDictionaryFilter;
 import ai.philterd.phileas.model.objects.FilterResult;
 import ai.philterd.phileas.model.policy.filters.strategies.dynamic.HospitalFilterStrategy;
 import ai.philterd.phileas.model.services.AlertService;
@@ -26,7 +27,6 @@ import ai.philterd.phileas.services.anonymization.cache.LocalAnonymizationCacheS
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
@@ -36,14 +36,7 @@ public class HospitalFilterTest extends AbstractFilterTest {
 
     private static final Logger LOGGER = LogManager.getLogger(HospitalFilterTest.class);
 
-    private final String INDEX_DIRECTORY = getIndexDirectory("hospitals");
-
     private final AlertService alertService = Mockito.mock(AlertService.class);
-
-    @BeforeEach
-    public void before() {
-        LOGGER.info("Using index directory {}", INDEX_DIRECTORY);
-    }
 
     @Test
     public void filter1() throws Exception {
@@ -55,7 +48,7 @@ public class HospitalFilterTest extends AbstractFilterTest {
                 .withWindowSize(windowSize)
                 .build();
 
-        final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.HOSPITAL, filterConfiguration, INDEX_DIRECTORY, SensitivityLevel.LOW, false);
+        final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.HOSPITAL, filterConfiguration, SensitivityLevel.LOW);
 
         FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE,"Wyoming Medical Center", attributes);
         Assertions.assertEquals(1, filterResult.getSpans().size());

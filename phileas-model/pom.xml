@@ -13,30 +13,6 @@
 	<name>phileas-model</name>
 	<build>
 		<plugins>
-<!--			<plugin>-->
-<!--				<artifactId>maven-assembly-plugin</artifactId>-->
-<!--				<configuration>-->
-<!--					<appendAssemblyId>false</appendAssemblyId>-->
-<!--					<archive>-->
-<!--						<manifest>-->
-<!--							<mainClass>ai.philterd.phileas.model.filter.rules.dictionary.LuceneDictionaryFilter</mainClass>-->
-<!--						</manifest>-->
-<!--					</archive>-->
-<!--					<descriptorRefs>-->
-<!--						<descriptorRef>jar-with-dependencies</descriptorRef>-->
-<!--					</descriptorRefs>-->
-<!--					<finalName>phileas-model-make-index</finalName>-->
-<!--				</configuration>-->
-<!--				<executions>-->
-<!--					<execution>-->
-<!--						<id>make-assembly</id>-->
-<!--						<phase>package</phase>-->
-<!--						<goals>-->
-<!--							<goal>single</goal>-->
-<!--						</goals>-->
-<!--					</execution>-->
-<!--				</executions>-->
-<!--			</plugin>-->
 			<plugin>
 				<groupId>org.antlr</groupId>
 				<artifactId>antlr4-maven-plugin</artifactId>

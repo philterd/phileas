@@ -783,57 +783,32 @@ public class FilterPolicyLoader {
                         }
                     }
 
-                    if(customDictionary.isFuzzy()) {
+                    LOGGER.info("Custom dictionary contains {} terms.", terms.size());
 
-                        LOGGER.info("Custom fuzzy dictionary contains {} terms.", terms.size());
+                    // Only enable the filter if there is at least one term.
+                    // TODO: #112 Don't use a bloom filter for a small number of terms.
+                    if(!terms.isEmpty()) {
 
                         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                                 .withStrategies(customDictionary.getCustomDictionaryFilterStrategies())
                                 .withAnonymizationService(new ZipCodeAnonymizationService(anonymizationCacheService))
                                 .withAlertService(alertService)
-                                .withIgnored(policy.getIdentifiers().getZipCode().getIgnored())
-                                .withIgnoredFiles(policy.getIdentifiers().getZipCode().getIgnoredFiles())
-                                .withIgnoredPatterns(policy.getIdentifiers().getZipCode().getIgnoredPatterns())
+                                .withIgnored(customDictionary.getIgnored())
+                                .withIgnoredFiles(customDictionary.getIgnoredFiles())
+                                .withIgnoredPatterns(customDictionary.getIgnoredPatterns())
                                 .withCrypto(policy.getCrypto())
                                 .withWindowSize(phileasConfiguration.spanWindowSize())
                                 .build();
 
-                        final SensitivityLevel sensitivityLevel = SensitivityLevel.fromName(customDictionary.getSensitivity());
                         final String classification = customDictionary.getClassification();
-                        final boolean capitalized = false;
 
-                        enabledFilters.add(new BloomFilterDictionaryFilter(FilterType.CUSTOM_DICTIONARY, filterConfiguration, terms, classification, sensitivityLevel));
-
-                    } else {
-
-                        LOGGER.info("Custom dictionary contains {} terms.", terms.size());
-
-                        // Only enable the filter if there is at least one term.
-                        // TODO: #112 Don't use a bloom filter for a small number of terms.
-                        if(!terms.isEmpty()) {
-
-                            final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
-                                    .withStrategies(customDictionary.getCustomDictionaryFilterStrategies())
-                                    .withAnonymizationService(new ZipCodeAnonymizationService(anonymizationCacheService))
-                                    .withAlertService(alertService)
-                                    .withIgnored(customDictionary.getIgnored())
-                                    .withIgnoredFiles(customDictionary.getIgnoredFiles())
-                                    .withIgnoredPatterns(customDictionary.getIgnoredPatterns())
-                                    .withCrypto(policy.getCrypto())
-                                    .withWindowSize(phileasConfiguration.spanWindowSize())
-                                    .build();
-
-                            final String classification = customDictionary.getClassification();
-
-                            enabledFilters.add(new BloomFilterDictionaryFilter(FilterType.CUSTOM_DICTIONARY, filterConfiguration, terms, classification, SensitivityLevel.OFF));
-
-                        }
+                        enabledFilters.add(new BloomFilterDictionaryFilter(FilterType.CUSTOM_DICTIONARY, filterConfiguration, terms, classification));
 
                     }
 
-                    index++;
-
                 }
+
+                index++;
 
             }
 
@@ -843,7 +818,7 @@ public class FilterPolicyLoader {
 
         }
 
-        // Lucene dictionary filters.
+        // Fuzzy dictionary filters.
 
         if(policy.getIdentifiers().hasFilter(FilterType.LOCATION_CITY) && policy.getIdentifiers().getCity().isEnabled()) {
 

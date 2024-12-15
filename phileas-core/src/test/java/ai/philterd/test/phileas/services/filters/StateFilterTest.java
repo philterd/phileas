@@ -27,7 +27,6 @@ import ai.philterd.phileas.services.anonymization.cache.LocalAnonymizationCacheS
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
@@ -37,14 +36,7 @@ public class StateFilterTest extends AbstractFilterTest {
 
     private static final Logger LOGGER = LogManager.getLogger(StateFilterTest.class);
 
-    private final String INDEX_DIRECTORY = getIndexDirectory("states");
-
     private final AlertService alertService = Mockito.mock(AlertService.class);
-
-    @BeforeEach
-    public void before() {
-        LOGGER.info("Using index directory {}", INDEX_DIRECTORY);
-    }
 
     @Test
     public void filterStatesLow() throws Exception {
@@ -56,7 +48,7 @@ public class StateFilterTest extends AbstractFilterTest {
                 .withWindowSize(windowSize)
                 .build();
 
-        final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.LOCATION_STATE, filterConfiguration, INDEX_DIRECTORY, SensitivityLevel.LOW, false);
+        final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.LOCATION_STATE, filterConfiguration, SensitivityLevel.LOW);
 
         FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE,"Lived in Washington", attributes);
         Assertions.assertEquals(1, filterResult.getSpans().size());
@@ -74,7 +66,7 @@ public class StateFilterTest extends AbstractFilterTest {
                 .withWindowSize(windowSize)
                 .build();
 
-        final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.LOCATION_STATE, filterConfiguration, INDEX_DIRECTORY, SensitivityLevel.MEDIUM, false);
+        final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.LOCATION_STATE, filterConfiguration, SensitivityLevel.MEDIUM);
 
         FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "Lived in Wshington", attributes);
         Assertions.assertEquals(1, filterResult.getSpans().size());
@@ -91,7 +83,7 @@ public class StateFilterTest extends AbstractFilterTest {
                 .withWindowSize(windowSize)
                 .build();
 
-        final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.LOCATION_STATE, filterConfiguration, INDEX_DIRECTORY, SensitivityLevel.HIGH, false);
+        final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.LOCATION_STATE, filterConfiguration, SensitivityLevel.HIGH);
 
         FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "Lived in Wasinton", attributes);
         Assertions.assertEquals(1, filterResult.getSpans().size());

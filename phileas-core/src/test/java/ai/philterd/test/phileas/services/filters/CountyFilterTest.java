@@ -18,6 +18,7 @@ package ai.philterd.test.phileas.services.filters;
 import ai.philterd.phileas.model.enums.FilterType;
 import ai.philterd.phileas.model.enums.SensitivityLevel;
 import ai.philterd.phileas.model.filter.FilterConfiguration;
+import ai.philterd.phileas.model.filter.rules.dictionary.FuzzyDictionaryFilter;
 import ai.philterd.phileas.model.objects.FilterResult;
 import ai.philterd.phileas.model.policy.filters.strategies.dynamic.CountyFilterStrategy;
 import ai.philterd.phileas.model.services.AlertService;
@@ -27,7 +28,6 @@ import ai.philterd.phileas.services.anonymization.cache.LocalAnonymizationCacheS
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
@@ -37,14 +37,7 @@ public class CountyFilterTest extends AbstractFilterTest {
 
     private static final Logger LOGGER = LogManager.getLogger(CountyFilterTest.class);
 
-    private final String INDEX_DIRECTORY = getIndexDirectory("counties");
-
     private final AlertService alertService = Mockito.mock(AlertService.class);
-
-    @BeforeEach
-    public void before() {
-        LOGGER.info("Using index directory {}", INDEX_DIRECTORY);
-    }
 
     @Test
     public void filterCountiesLow() throws Exception {
@@ -56,7 +49,7 @@ public class CountyFilterTest extends AbstractFilterTest {
                 .withWindowSize(windowSize)
                 .build();
 
-        final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.LOCATION_COUNTY, filterConfiguration, INDEX_DIRECTORY, SensitivityLevel.LOW, false);
+        final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.LOCATION_COUNTY, filterConfiguration, SensitivityLevel.LOW);
 
         FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE,"Lived in Fyette", attributes);
 
@@ -76,7 +69,7 @@ public class CountyFilterTest extends AbstractFilterTest {
                 .withWindowSize(windowSize)
                 .build();
 
-        final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.LOCATION_COUNTY, filterConfiguration, INDEX_DIRECTORY, SensitivityLevel.MEDIUM, false);
+        final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.LOCATION_COUNTY, filterConfiguration, SensitivityLevel.MEDIUM);
 
         FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "Lived in Fyette", attributes);
 
@@ -99,7 +92,7 @@ public class CountyFilterTest extends AbstractFilterTest {
                 .withWindowSize(windowSize)
                 .build();
 
-        final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.LOCATION_COUNTY, filterConfiguration, INDEX_DIRECTORY, SensitivityLevel.HIGH, false);
+        final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.LOCATION_COUNTY, filterConfiguration, SensitivityLevel.HIGH);
 
         FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "Lived in Fyette", attributes);
 

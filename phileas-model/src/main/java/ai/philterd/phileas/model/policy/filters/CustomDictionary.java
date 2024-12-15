@@ -15,10 +15,9 @@
  */
 package ai.philterd.phileas.model.policy.filters;
 
+import ai.philterd.phileas.model.policy.filters.strategies.custom.CustomDictionaryFilterStrategy;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
-import ai.philterd.phileas.model.enums.SensitivityLevel;
-import ai.philterd.phileas.model.policy.filters.strategies.custom.CustomDictionaryFilterStrategy;
 
 import java.util.List;
 
@@ -35,14 +34,6 @@ public class CustomDictionary extends AbstractFilter {
     @SerializedName("files")
     @Expose
     private List<String> files;
-
-    @SerializedName("fuzzy")
-    @Expose
-    private boolean fuzzy = false;
-
-    @SerializedName("sensitivity")
-    @Expose
-    private String sensitivity = SensitivityLevel.MEDIUM.getName();
 
     @SerializedName("customFilterStrategies")
     @Expose
@@ -64,28 +55,12 @@ public class CustomDictionary extends AbstractFilter {
         this.customDictionaryFilterStrategies = customDictionaryFilterStrategies;
     }
 
-    public String getSensitivity() {
-        return sensitivity;
-    }
-
-    public void setSensitivity(String sensitivity) {
-        this.sensitivity = sensitivity;
-    }
-
     public List<String> getFiles() {
         return files;
     }
 
     public void setFiles(List<String> files) {
         this.files = files;
-    }
-
-    public boolean isFuzzy() {
-        return fuzzy;
-    }
-
-    public void setFuzzy(boolean fuzzy) {
-        this.fuzzy = fuzzy;
     }
 
     public String getClassification() {
