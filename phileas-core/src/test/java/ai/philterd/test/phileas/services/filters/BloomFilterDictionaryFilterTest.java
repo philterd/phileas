@@ -51,7 +51,7 @@ public class BloomFilterDictionaryFilterTest extends AbstractFilterTest {
                 .build();
 
         final Set<String> names = new HashSet<>(Arrays.asList("george", "ted", "Bill", "john"));
-        final BloomFilterDictionaryFilter filter = new BloomFilterDictionaryFilter(FilterType.CUSTOM_DICTIONARY, filterConfiguration, names, "none", 0.05);
+        final BloomFilterDictionaryFilter filter = new BloomFilterDictionaryFilter(FilterType.CUSTOM_DICTIONARY, filterConfiguration, names, "none");
 
          final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "He lived with Bill in California.", attributes);
 
@@ -74,7 +74,7 @@ public class BloomFilterDictionaryFilterTest extends AbstractFilterTest {
                 .build();
 
         final Set<String> names = new HashSet<>(Arrays.asList("george", "ted", "bill", "john"));
-        final BloomFilterDictionaryFilter filter = new BloomFilterDictionaryFilter(FilterType.CUSTOM_DICTIONARY, filterConfiguration, names, "none", 0.05);
+        final BloomFilterDictionaryFilter filter = new BloomFilterDictionaryFilter(FilterType.CUSTOM_DICTIONARY, filterConfiguration, names, "none");
 
         final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "He lived with Bill in California.", attributes);
 
@@ -97,7 +97,7 @@ public class BloomFilterDictionaryFilterTest extends AbstractFilterTest {
                 .build();
 
         final Set<String> names = new HashSet<>(Arrays.asList("george", "ted", "bill", "john"));
-        final BloomFilterDictionaryFilter filter = new BloomFilterDictionaryFilter(FilterType.CUSTOM_DICTIONARY, filterConfiguration, names, "none", 0.05);
+        final BloomFilterDictionaryFilter filter = new BloomFilterDictionaryFilter(FilterType.CUSTOM_DICTIONARY, filterConfiguration, names, "none");
 
         final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "He lived with Sam in California.", attributes);
 
@@ -118,7 +118,7 @@ public class BloomFilterDictionaryFilterTest extends AbstractFilterTest {
                 .build();
 
         final Set<String> names = new HashSet<>(Arrays.asList("george jones", "ted", "bill", "john"));
-        final BloomFilterDictionaryFilter filter = new BloomFilterDictionaryFilter(FilterType.CUSTOM_DICTIONARY, filterConfiguration, names, "none", 0.05);
+        final BloomFilterDictionaryFilter filter = new BloomFilterDictionaryFilter(FilterType.CUSTOM_DICTIONARY, filterConfiguration, names, "none");
 
         final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE,"He lived with george jones in California.", attributes);
 
@@ -141,7 +141,7 @@ public class BloomFilterDictionaryFilterTest extends AbstractFilterTest {
                 .build();
 
         final Set<String> names = new HashSet<>(Arrays.asList("george jones jr", "ted", "bill smith", "john"));
-        final BloomFilterDictionaryFilter filter = new BloomFilterDictionaryFilter(FilterType.CUSTOM_DICTIONARY, filterConfiguration, names, "none", 0.05);
+        final BloomFilterDictionaryFilter filter = new BloomFilterDictionaryFilter(FilterType.CUSTOM_DICTIONARY, filterConfiguration, names, "none");
 
         final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE,"Bill Smith lived with george jones jr in California.", attributes);
 

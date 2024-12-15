@@ -92,7 +92,6 @@
         <dropwizard-metrics-prometheus.version>1.13.1</dropwizard-metrics-prometheus.version>
         <equals.verifier.version>3.17.3</equals.verifier.version>
         <ff3.version>1.0.4</ff3.version>
-        <guava.version>33.3.1-jre</guava.version>
         <hapi.fhir.version>4.2.0</hapi.fhir.version>
         <gson.version>2.11.0</gson.version>
         <icu4j.version>67.1</icu4j.version>

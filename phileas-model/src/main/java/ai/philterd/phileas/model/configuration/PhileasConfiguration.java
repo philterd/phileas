@@ -65,10 +65,6 @@ public class PhileasConfiguration {
         return Integer.parseInt(getProperty("span.window.size", "5"));
     }
 
-    public double bloomFilterFpp() {
-        return Double.parseDouble(getProperty("filter.fpp", "0.05"));
-    }
-
     // Caching
 
     public boolean cacheRedisEnabled() {
