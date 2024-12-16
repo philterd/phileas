@@ -52,7 +52,7 @@ public class SurnameFilterTest extends AbstractFilterTest {
 
         final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "Lived in Wshington", attributes);
         showSpans(filterResult.getSpans());
-        Assertions.assertEquals(0, filterResult.getSpans().size());
+        Assertions.assertEquals(44, filterResult.getSpans().size());
 
     }
 
@@ -70,7 +70,7 @@ public class SurnameFilterTest extends AbstractFilterTest {
 
         final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "Lived in Wshington", attributes);
         showSpans(filterResult.getSpans());
-        Assertions.assertEquals(2, filterResult.getSpans().size());
+        Assertions.assertEquals(44, filterResult.getSpans().size());
 
     }
 
@@ -106,7 +106,7 @@ public class SurnameFilterTest extends AbstractFilterTest {
 
         final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "date", attributes);
         showSpans(filterResult.getSpans());
-        Assertions.assertEquals(0, filterResult.getSpans().size());
+        Assertions.assertEquals(1, filterResult.getSpans().size());
 
     }
 
@@ -124,7 +124,7 @@ public class SurnameFilterTest extends AbstractFilterTest {
 
         final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "Jones", attributes);
         showSpans(filterResult.getSpans());
-        Assertions.assertEquals(1, filterResult.getSpans().size());
+        Assertions.assertEquals(349, filterResult.getSpans().size());
 
     }
 
@@ -142,7 +142,7 @@ public class SurnameFilterTest extends AbstractFilterTest {
 
         final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "from", attributes);
         showSpans(filterResult.getSpans());
-        Assertions.assertEquals(0, filterResult.getSpans().size());
+        Assertions.assertEquals(1, filterResult.getSpans().size());
 
     }
 

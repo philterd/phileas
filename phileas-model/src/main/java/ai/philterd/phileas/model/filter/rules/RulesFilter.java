@@ -228,37 +228,31 @@ public abstract class RulesFilter extends Filter {
     public Map<String, Position> getNgrams(String text, int n) {
 
         final String delimiter = " ";
-        final Map<String, Position> ngrams = new HashMap<>();
 
+        final Map<String, Position> ngramsWithIndexes = new HashMap<>();
         final String[] words = text.split(delimiter);
 
-        final Map<String, Integer> splitsWithIndexes = new HashMap<>();
-        int index = 0;
-        for (String token : words) {
-            splitsWithIndexes.put(token, index);
-            index += token.length() + delimiter.length();
-        }
-
-        final String[] keys = splitsWithIndexes.keySet().toArray(String[]::new);
-
-        for (int i = 0; i < splitsWithIndexes.size() - n; i++) {
+        for (int i = 0; i <= words.length - n; i++) {
 
             final StringBuilder ngram = new StringBuilder();
 
             for (int j = 0; j < n; j++) {
-                ngram.append(keys[i + j]);
+
+                ngram.append(words[i + j]);
+
                 if (j < n - 1) {
-                    ngram.append(delimiter);
+                    ngram.append(" ");
                 }
+
             }
 
-            final int characterStart = splitsWithIndexes.get(keys[i]);
-            final int characterEnd = splitsWithIndexes.get(keys[i]) + ngram.length();
-            ngrams.put(ngram.toString(), new Position(characterStart, characterEnd));
+            int location = text.indexOf(ngram.toString());
+
+            ngramsWithIndexes.put(ngram.toString(), new Position(location, location + ngram.toString().length()));
 
         }
 
-        return ngrams;
+        return ngramsWithIndexes;
 
     }
 

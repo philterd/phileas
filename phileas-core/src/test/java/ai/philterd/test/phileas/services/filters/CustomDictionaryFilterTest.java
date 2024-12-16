@@ -58,7 +58,7 @@ public class CustomDictionaryFilterTest extends AbstractFilterTest {
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 14, 18, FilterType.CUSTOM_DICTIONARY));
-        Assertions.assertEquals("bill", filterResult.getSpans().get(0).getText());
+        Assertions.assertEquals("Bill", filterResult.getSpans().get(0).getText());
 
     }
 

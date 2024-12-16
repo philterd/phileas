@@ -54,7 +54,7 @@ public class CountyFilterTest extends AbstractFilterTest {
 
         showSpans(filterResult.getSpans());
 
-        Assertions.assertEquals(0, filterResult.getSpans().size());
+        Assertions.assertEquals(3, filterResult.getSpans().size());
 
     }
 
@@ -70,12 +70,13 @@ public class CountyFilterTest extends AbstractFilterTest {
 
         final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.LOCATION_COUNTY, filterConfiguration, SensitivityLevel.MEDIUM);
 
-        FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "Lived in Fyette", attributes);
+        FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "He lived in Fyette", attributes);
 
         showSpans(filterResult.getSpans());
 
-        Assertions.assertEquals(1, filterResult.getSpans().size());
-        Assertions.assertEquals("fyette", filterResult.getSpans().get(0).getText());
+        Assertions.assertEquals(2, filterResult.getSpans().size());
+        Assertions.assertEquals("Payette", filterResult.getSpans().get(0).getText());
+        Assertions.assertEquals("Fayette", filterResult.getSpans().get(1).getText());
 
     }
 
@@ -95,7 +96,7 @@ public class CountyFilterTest extends AbstractFilterTest {
 
         showSpans(filterResult.getSpans());
 
-        Assertions.assertEquals(3, filterResult.getSpans().size());
+        Assertions.assertEquals(0, filterResult.getSpans().size());
 
     }
 

@@ -100,9 +100,8 @@ public class BloomFilterDictionaryFilter extends DictionaryFilter {
                     // Set the meta values for the span.
                     final boolean isIgnored = ignored.contains(ngram);
 
-                    // TODO: Get the offsets.
-                    final int characterStart = 0;
-                    final int characterEnd = 0;
+                    final int characterStart = ngrams.get(ngram).getStart();
+                    final int characterEnd = ngrams.get(ngram).getEnd();
                     final double confidence = 1.0;
                     final String[] window = getWindow(text, characterStart, characterEnd);
 

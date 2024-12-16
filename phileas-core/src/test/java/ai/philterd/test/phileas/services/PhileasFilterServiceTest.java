@@ -119,7 +119,7 @@ public class PhileasFilterServiceTest {
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties);
 
         PhileasFilterService service = new PhileasFilterService(phileasConfiguration);
-        final BinaryDocumentFilterResponse response = service.filter(Arrays.asList("pdf"), "context", "documentid", document, MimeType.APPLICATION_PDF, MimeType.APPLICATION_PDF);
+        final BinaryDocumentFilterResponse response = service.filter(List.of("pdf"), "context", "documentid", document, MimeType.APPLICATION_PDF, MimeType.APPLICATION_PDF);
 
         // Write the byte array to a file.
         final File outputFile = File.createTempFile("redact", ".pdf");

@@ -28,6 +28,7 @@ public class FuzzyDictionaryFilter extends DictionaryFilter implements Serializa
 
     private final SensitivityLevel sensitivityLevel;
     private final Map<String, Pattern> dictionary;
+    private final boolean requireCapitalization = true;
 
     public FuzzyDictionaryFilter(final FilterType filterType, final FilterConfiguration filterConfiguration,
                                  final SensitivityLevel sensitivityLevel) throws IOException {
@@ -47,10 +48,10 @@ public class FuzzyDictionaryFilter extends DictionaryFilter implements Serializa
             // Build ngrams from the input text.
             final Map<Integer, Map<String, Position>> ngrams = new HashMap<>();
             ngrams.put(0, splitWithIndexes(input, " "));
-            ngrams.put(1, getNgrams(input, 1));
-            ngrams.put(2, getNgrams(input, 2));
-            ngrams.put(3, getNgrams(input, 3));
-            ngrams.put(4, getNgrams(input, 4));
+
+            for(int x = 1; x < 10; x++) {
+                ngrams.put(x, getNgrams(input, x));
+            }
 
             for(final String entry : dictionary.keySet()) {
 
@@ -68,15 +69,27 @@ public class FuzzyDictionaryFilter extends DictionaryFilter implements Serializa
                     // Compare string distance between word and ngrams.
                     for (final String ngram : ngrams.get(spacesInEntry).keySet()) {
 
-                        final LevenshteinDistance levenshteinDistance = LevenshteinDistance.getDefaultInstance();
-                        final int distance = levenshteinDistance.apply(entry, ngram);
-//LOGGER.info("{}, {}, {}", entry, ngram, distance);
-                        if (sensitivityLevel == SensitivityLevel.HIGH && distance <= 1) {
-                            spans.add(createSpan(input, 0, input.length(), 1.0, context, documentId, entry, policy, attributes));
-                        } else if (sensitivityLevel == SensitivityLevel.MEDIUM && distance <= 2) {
-                            spans.add(createSpan(input, 0, input.length(), 1.0, context, documentId, entry, policy, attributes));
-                        } else if (sensitivityLevel == SensitivityLevel.LOW && distance <= 3) {
-                            spans.add(createSpan(input, 0, input.length(), 1.0, context, documentId, entry, policy, attributes));
+                        if(ngram.length() > 2) {
+
+                            if (requireCapitalization && Character.isUpperCase(ngram.charAt(0))) {
+
+                                final int start = ngrams.get(spacesInEntry).get(ngram).getStart();
+                                final int end = ngrams.get(spacesInEntry).get(ngram).getEnd();
+
+                                final LevenshteinDistance levenshteinDistance = LevenshteinDistance.getDefaultInstance();
+                                final int distance = levenshteinDistance.apply(entry, ngram);
+
+                                if (sensitivityLevel == SensitivityLevel.HIGH && distance < 1) {
+                                    spans.add(createSpan(input, start, end, 1.0, context, documentId, entry, policy, attributes));
+                                } else if (sensitivityLevel == SensitivityLevel.MEDIUM && distance <= 2) {
+                                    spans.add(createSpan(input, start, end, 1.0, context, documentId, entry, policy, attributes));
+                                    //LOGGER.info("{}, {}, {}", entry, ngram, distance);
+                                } else if (sensitivityLevel == SensitivityLevel.LOW && distance < 3) {
+                                    spans.add(createSpan(input, start, end, 1.0, context, documentId, entry, policy, attributes));
+                                }
+
+                            }
+
                         }
 
                     }

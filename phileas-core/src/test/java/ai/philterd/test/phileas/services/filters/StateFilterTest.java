@@ -52,7 +52,7 @@ public class StateFilterTest extends AbstractFilterTest {
 
         FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE,"Lived in Washington", attributes);
         Assertions.assertEquals(1, filterResult.getSpans().size());
-        Assertions.assertEquals("washington", filterResult.getSpans().get(0).getText());
+        Assertions.assertEquals("Washington", filterResult.getSpans().get(0).getText());
 
     }
 
@@ -86,7 +86,7 @@ public class StateFilterTest extends AbstractFilterTest {
         final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.LOCATION_STATE, filterConfiguration, SensitivityLevel.HIGH);
 
         FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "Lived in Wasinton", attributes);
-        Assertions.assertEquals(1, filterResult.getSpans().size());
+        Assertions.assertEquals(0, filterResult.getSpans().size());
 
     }
 

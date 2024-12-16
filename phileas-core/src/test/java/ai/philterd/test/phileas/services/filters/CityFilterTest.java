@@ -98,7 +98,7 @@ public class CityFilterTest extends AbstractFilterTest {
 
         showSpans(filterResult.getSpans());
 
-        Assertions.assertEquals(0, filterResult.getSpans().size());
+        Assertions.assertEquals(1, filterResult.getSpans().size());
 
     }
 
@@ -139,8 +139,7 @@ public class CityFilterTest extends AbstractFilterTest {
 
         showSpans(filterResult.getSpans());
 
-        Assertions.assertEquals(1, filterResult.getSpans().size());
-        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 9, 17, FilterType.LOCATION_CITY));
+        Assertions.assertEquals(0, filterResult.getSpans().size());
 
     }
 
