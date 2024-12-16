@@ -21,6 +21,7 @@ import ai.philterd.phileas.model.filter.rules.regex.RegexFilter;
 import ai.philterd.phileas.model.objects.Analyzer;
 import ai.philterd.phileas.model.objects.FilterPattern;
 import ai.philterd.phileas.model.objects.FilterResult;
+import ai.philterd.phileas.model.objects.Position;
 import ai.philterd.phileas.model.objects.Span;
 import ai.philterd.phileas.model.policy.Policy;
 
@@ -67,9 +68,9 @@ public class PhysicianNameFilter extends RegexFilter {
         final List<Span> spans = new LinkedList<>();
 
         // TODO: Get ngrams from max to size 1.
-        final List<String> ngrams = getNgrams(input, 1);
+        final  Map<String, Position> ngrams = getNgrams(input, 1);
 
-        for(final String candidate : ngrams) {
+        for(final String candidate : ngrams.keySet()) {
 
             if (endsWithPostNominal(candidate) || startsWithPreNominal(candidate)) {
 

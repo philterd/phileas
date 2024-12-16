@@ -22,6 +22,7 @@ import ai.philterd.phileas.model.filter.rules.regex.RegexFilter;
 import ai.philterd.phileas.model.objects.Analyzer;
 import ai.philterd.phileas.model.objects.ConfidenceModifier;
 import ai.philterd.phileas.model.objects.FilterPattern;
+import ai.philterd.phileas.model.objects.Position;
 import ai.philterd.phileas.model.objects.Replacement;
 import ai.philterd.phileas.model.objects.Span;
 import ai.philterd.phileas.model.policy.Policy;
@@ -30,6 +31,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -223,20 +225,37 @@ public abstract class RulesFilter extends Filter {
 
     }
 
-    public List<String> getNgrams(String text, int n) {
+    public Map<String, Position> getNgrams(String text, int n) {
 
-        final List<String> ngrams = new ArrayList<>();
-        final String[] words = text.split(" ");
+        final String delimiter = " ";
+        final Map<String, Position> ngrams = new HashMap<>();
 
-        for (int i = 0; i <= words.length - n; i++) {
+        final String[] words = text.split(delimiter);
+
+        final Map<String, Integer> splitsWithIndexes = new HashMap<>();
+        int index = 0;
+        for (String token : words) {
+            splitsWithIndexes.put(token, index);
+            index += token.length() + delimiter.length();
+        }
+
+        final String[] keys = splitsWithIndexes.keySet().toArray(String[]::new);
+
+        for (int i = 0; i < splitsWithIndexes.size() - n; i++) {
+
             final StringBuilder ngram = new StringBuilder();
+
             for (int j = 0; j < n; j++) {
-                ngram.append(words[i + j]);
+                ngram.append(keys[i + j]);
                 if (j < n - 1) {
-                    ngram.append(" ");
+                    ngram.append(delimiter);
                 }
             }
-            ngrams.add(ngram.toString());
+
+            final int characterStart = splitsWithIndexes.get(keys[i]);
+            final int characterEnd = splitsWithIndexes.get(keys[i]) + ngram.length();
+            ngrams.put(ngram.toString(), new Position(characterStart, characterEnd));
+
         }
 
         return ngrams;

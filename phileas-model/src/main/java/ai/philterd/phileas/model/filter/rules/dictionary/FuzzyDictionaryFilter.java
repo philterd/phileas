@@ -4,6 +4,7 @@ import ai.philterd.phileas.model.enums.FilterType;
 import ai.philterd.phileas.model.enums.SensitivityLevel;
 import ai.philterd.phileas.model.filter.FilterConfiguration;
 import ai.philterd.phileas.model.objects.FilterResult;
+import ai.philterd.phileas.model.objects.Position;
 import ai.philterd.phileas.model.objects.Replacement;
 import ai.philterd.phileas.model.objects.Span;
 import ai.philterd.phileas.model.policy.Policy;
@@ -44,12 +45,12 @@ public class FuzzyDictionaryFilter extends DictionaryFilter implements Serializa
         if(policy.getIdentifiers().hasFilter(filterType)) {
 
             // Build ngrams from the input text.
-            final Map<Integer, List<String>> ngrams = new HashMap<>();
+            final Map<Integer, Map<String, Position>> ngrams = new HashMap<>();
+            ngrams.put(0, splitWithIndexes(input, " "));
             ngrams.put(1, getNgrams(input, 1));
             ngrams.put(2, getNgrams(input, 2));
             ngrams.put(3, getNgrams(input, 3));
-
-            ngrams.put(0, Arrays.stream(input.split(" ")).toList());
+            ngrams.put(4, getNgrams(input, 4));
 
             for(final String entry : dictionary.keySet()) {
 
@@ -65,16 +66,16 @@ public class FuzzyDictionaryFilter extends DictionaryFilter implements Serializa
                     final int spacesInEntry = StringUtils.countMatches(entry, " ");
 
                     // Compare string distance between word and ngrams.
-                    for (final String ngram : ngrams.get(spacesInEntry)) {
+                    for (final String ngram : ngrams.get(spacesInEntry).keySet()) {
 
                         final LevenshteinDistance levenshteinDistance = LevenshteinDistance.getDefaultInstance();
                         final int distance = levenshteinDistance.apply(entry, ngram);
-
-                        if (sensitivityLevel == SensitivityLevel.HIGH && distance < 1) {
+//LOGGER.info("{}, {}, {}", entry, ngram, distance);
+                        if (sensitivityLevel == SensitivityLevel.HIGH && distance <= 1) {
                             spans.add(createSpan(input, 0, input.length(), 1.0, context, documentId, entry, policy, attributes));
-                        } else if (sensitivityLevel == SensitivityLevel.MEDIUM && distance < 2) {
+                        } else if (sensitivityLevel == SensitivityLevel.MEDIUM && distance <= 2) {
                             spans.add(createSpan(input, 0, input.length(), 1.0, context, documentId, entry, policy, attributes));
-                        } else if (sensitivityLevel == SensitivityLevel.LOW && distance < 3) {
+                        } else if (sensitivityLevel == SensitivityLevel.LOW && distance <= 3) {
                             spans.add(createSpan(input, 0, input.length(), 1.0, context, documentId, entry, policy, attributes));
                         }
 

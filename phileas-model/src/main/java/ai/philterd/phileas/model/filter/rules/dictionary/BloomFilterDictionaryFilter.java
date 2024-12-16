@@ -16,9 +16,9 @@
 package ai.philterd.phileas.model.filter.rules.dictionary;
 
 import ai.philterd.phileas.model.enums.FilterType;
-import ai.philterd.phileas.model.enums.SensitivityLevel;
 import ai.philterd.phileas.model.filter.FilterConfiguration;
 import ai.philterd.phileas.model.objects.FilterResult;
+import ai.philterd.phileas.model.objects.Position;
 import ai.philterd.phileas.model.objects.Replacement;
 import ai.philterd.phileas.model.objects.Span;
 import ai.philterd.phileas.model.policy.Policy;
@@ -26,6 +26,7 @@ import ai.philterd.phileas.model.utils.BloomFilter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -68,12 +69,12 @@ public class BloomFilterDictionaryFilter extends DictionaryFilter {
                 maxNgramSize = split.length;
             }
         }
-        LOGGER.info("Max ngram size is {}", maxNgramSize);
 
         // Lowercase the terms and add each to the bloom filter.
-        LOGGER.info("Creating bloom filter from {} terms.", terms.size());
-        terms.forEach(t -> lowerCaseTerms.add(t.toLowerCase()));
-        lowerCaseTerms.forEach(t -> bloomFilter.put(t.toLowerCase()));
+         for(final String term : terms) {
+            lowerCaseTerms.add(term.toLowerCase());
+            bloomFilter.put(term.toLowerCase());
+        }
 
     }
 
@@ -83,14 +84,18 @@ public class BloomFilterDictionaryFilter extends DictionaryFilter {
 
         final List<Span> spans = new LinkedList<>();
 
-        // TODO: Get ngrams from max to size 1.
-        final List<String> ngrams = getNgrams(text, maxNgramSize);
+        final Map<String, Position> ngrams = new HashMap<>();
 
-        for(final String ngram : ngrams) {
+        // Get ngrams from max to size 1.
+        for(int i = 0; i <= maxNgramSize; i++) {
+            ngrams.putAll(getNgrams(text, i));
+        }
 
-            if (bloomFilter.mightContain(ngram)) {
+        for(final String ngram : ngrams.keySet()) {
 
-                if (lowerCaseTerms.contains(ngram)) {
+            if (bloomFilter.mightContain(ngram.toLowerCase())) {
+
+                if (lowerCaseTerms.contains(ngram.toLowerCase())) {
 
                     // Set the meta values for the span.
                     final boolean isIgnored = ignored.contains(ngram);
