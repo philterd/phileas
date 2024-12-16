@@ -49,7 +49,15 @@ public class FuzzyDictionaryFilter extends DictionaryFilter implements Serializa
             final Map<Integer, Map<String, Position>> ngrams = new HashMap<>();
             ngrams.put(0, splitWithIndexes(input, " "));
 
-            for(int x = 1; x < 10; x++) {
+            final int maxNgrams;
+
+            if(filterType == FilterType.HOSPITAL) {
+                maxNgrams = 20;
+            } else {
+                maxNgrams = 5;
+            }
+
+            for(int x = 1; x < maxNgrams; x++) {
                 ngrams.put(x, getNgrams(input, x));
             }
 

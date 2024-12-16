@@ -52,7 +52,7 @@ public class HospitalAbbreviationFilterTest extends AbstractFilterTest {
 
         final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "Went to WMC", attributes);
         showSpans(filterResult.getSpans());
-        Assertions.assertEquals(4, filterResult.getSpans().size());
+        Assertions.assertEquals(1, filterResult.getSpans().size());
 
     }
 
