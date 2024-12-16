@@ -84,14 +84,16 @@ public class BloomFilterDictionaryFilter extends DictionaryFilter {
 
         final List<Span> spans = new LinkedList<>();
 
-        final Map<String, Position> ngrams = new HashMap<>();
+        final Map<Position, String> ngrams = new HashMap<>();
 
         // Get ngrams from max to size 1.
-        for(int i = 0; i <= maxNgramSize; i++) {
+        for(int i = 1; i <= maxNgramSize; i++) {
             ngrams.putAll(getNgrams(text, i));
         }
 
-        for(final String ngram : ngrams.keySet()) {
+        for(final Position position : ngrams.keySet()) {
+
+            final String ngram = ngrams.get(position);
 
             if (bloomFilter.mightContain(ngram.toLowerCase())) {
 
@@ -100,8 +102,8 @@ public class BloomFilterDictionaryFilter extends DictionaryFilter {
                     // Set the meta values for the span.
                     final boolean isIgnored = ignored.contains(ngram);
 
-                    final int characterStart = ngrams.get(ngram).getStart();
-                    final int characterEnd = ngrams.get(ngram).getEnd();
+                    final int characterStart = position.getStart();
+                    final int characterEnd = position.getEnd();
                     final double confidence = 1.0;
                     final String[] window = getWindow(text, characterStart, characterEnd);
 

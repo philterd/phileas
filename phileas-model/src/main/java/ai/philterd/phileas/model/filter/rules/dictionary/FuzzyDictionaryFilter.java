@@ -16,7 +16,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Serializable;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -46,7 +45,7 @@ public class FuzzyDictionaryFilter extends DictionaryFilter implements Serializa
         if(policy.getIdentifiers().hasFilter(filterType)) {
 
             // Build ngrams from the input text.
-            final Map<Integer, Map<String, Position>> ngrams = new HashMap<>();
+            final Map<Integer, Map<Position, String>> ngrams = new HashMap<>();
             ngrams.put(0, splitWithIndexes(input, " "));
 
             final int maxNgrams;
@@ -74,15 +73,17 @@ public class FuzzyDictionaryFilter extends DictionaryFilter implements Serializa
                     // Fuzzy matches.
                     final int spacesInEntry = StringUtils.countMatches(entry, " ");
 
+                    for(final Position position : ngrams.get(spacesInEntry).keySet()) {
+
                     // Compare string distance between word and ngrams.
-                    for (final String ngram : ngrams.get(spacesInEntry).keySet()) {
+                    final String ngram = ngrams.get(spacesInEntry).get(position);
 
                         if(ngram.length() > 2) {
 
                             if (requireCapitalization && Character.isUpperCase(ngram.charAt(0))) {
 
-                                final int start = ngrams.get(spacesInEntry).get(ngram).getStart();
-                                final int end = ngrams.get(spacesInEntry).get(ngram).getEnd();
+                                final int start = position.getStart();
+                                final int end = position.getEnd();
 
                                 final LevenshteinDistance levenshteinDistance = LevenshteinDistance.getDefaultInstance();
                                 final int distance = levenshteinDistance.apply(entry, ngram);

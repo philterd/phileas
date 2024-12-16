@@ -68,9 +68,9 @@ public class PhysicianNameFilter extends RegexFilter {
         final List<Span> spans = new LinkedList<>();
 
         // TODO: Get ngrams from max to size 1.
-        final  Map<String, Position> ngrams = getNgrams(input, 1);
+        final  Map<Position, String> ngrams = getNgrams(input, 1);
 
-        for(final String candidate : ngrams.keySet()) {
+        for(final String candidate : ngrams.values()) {
 
             if (endsWithPostNominal(candidate) || startsWithPreNominal(candidate)) {
 

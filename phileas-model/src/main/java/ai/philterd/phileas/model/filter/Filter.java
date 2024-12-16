@@ -38,7 +38,6 @@ import org.apache.logging.log4j.Logger;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
@@ -342,15 +341,15 @@ public abstract class Filter {
 
     }
 
-    public Map<String, Position> splitWithIndexes(String text, String delimiter) {
+    public Map<Position, String> splitWithIndexes(String text, String delimiter) {
 
-        final Map<String, Position> splitsWithIndexes = new HashMap<>();
-        List<String> result = new ArrayList<>();
+        final Map<Position, String> splitsWithIndexes = new HashMap<>();
+
         String[] tokens = text.split(delimiter);
 
         int index = 0;
         for (String token : tokens) {
-            splitsWithIndexes.put(token, new Position(index, index + token.length()));
+            splitsWithIndexes.put(new Position(index, index + token.length()), token);
             index += token.length() + delimiter.length();
         }
 

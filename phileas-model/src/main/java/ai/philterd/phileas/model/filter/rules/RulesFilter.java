@@ -18,7 +18,6 @@ package ai.philterd.phileas.model.filter.rules;
 import ai.philterd.phileas.model.enums.FilterType;
 import ai.philterd.phileas.model.filter.Filter;
 import ai.philterd.phileas.model.filter.FilterConfiguration;
-import ai.philterd.phileas.model.filter.rules.regex.RegexFilter;
 import ai.philterd.phileas.model.objects.Analyzer;
 import ai.philterd.phileas.model.objects.ConfidenceModifier;
 import ai.philterd.phileas.model.objects.FilterPattern;
@@ -29,8 +28,6 @@ import ai.philterd.phileas.model.policy.Policy;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -225,12 +222,13 @@ public abstract class RulesFilter extends Filter {
 
     }
 
-    public Map<String, Position> getNgrams(String text, int n) {
+    public Map<Position, String> getNgrams(String text, int n) {
 
         final String delimiter = " ";
 
-        final Map<String, Position> ngramsWithIndexes = new HashMap<>();
+        final Map<Position, String> ngramsWithIndexes = new HashMap<>();
         final String[] words = text.split(delimiter);
+        int lastLocation = 0;
 
         for (int i = 0; i <= words.length - n; i++) {
 
@@ -246,9 +244,12 @@ public abstract class RulesFilter extends Filter {
 
             }
 
-            int location = text.indexOf(ngram.toString());
+            int newLocation = text.indexOf(ngram.toString(), lastLocation);
+            lastLocation = newLocation;
 
-            ngramsWithIndexes.put(ngram.toString(), new Position(location, location + ngram.toString().length()));
+            final Position position = new Position(newLocation, newLocation + ngram.toString().length());
+
+            ngramsWithIndexes.put(position, ngram.toString());
 
         }
 
