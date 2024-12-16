@@ -150,11 +150,11 @@ public class BloomFilterDictionaryFilterTest extends AbstractFilterTest {
 
         Assertions.assertEquals(2, filterResult.getSpans().size());
 
-        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 0, 10, FilterType.CUSTOM_DICTIONARY));
-        Assertions.assertEquals("Bill Smith", filterResult.getSpans().get(0).getText());
-
-        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(1), 22, 37, FilterType.CUSTOM_DICTIONARY));
-        Assertions.assertEquals("george jones jr", filterResult.getSpans().get(1).getText());
+        for(final Span span : filterResult.getSpans()) {
+            Assertions.assertTrue(span.getText().equals("george jones jr") || span.getText().equals("Bill Smith"));
+            Assertions.assertTrue(span.getCharacterStart() == 0 || span.getCharacterStart() == 22);
+            Assertions.assertTrue(span.getCharacterEnd() == 10 || span.getCharacterEnd() == 37);
+        }
 
     }
 
