@@ -24,6 +24,7 @@ import ai.philterd.phileas.model.services.Redacter;
 import ai.philterd.services.pdf.model.RedactedRectangle;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
@@ -83,8 +84,7 @@ public class PdfRedacter extends PDFTextStripper implements Redacter {
 
     @Override
     public byte[] process(byte[] document, MimeType outputMimeType) throws IOException {
-
-        final PDDocument pdDocument = PDDocument.load(document);
+        final PDDocument pdDocument = Loader.loadPDF(document);
 
         setSortByPosition(true);
         setStartPage(0);
@@ -209,7 +209,7 @@ public class PdfRedacter extends PDFTextStripper implements Redacter {
         for(int pageNumber : rectangles.keySet()) {
 
             final PDPage page = document.getPage(pageNumber);
-            final PDPageContentStream contentStream = new PDPageContentStream(doc, page, true, true, true);
+            final PDPageContentStream contentStream = new PDPageContentStream(doc, page, PDPageContentStream.AppendMode.APPEND, true, true);
 
             for(final RedactedRectangle rectangle : rectangles.get(pageNumber)) {
 
