@@ -44,6 +44,9 @@ public abstract class AbstractFilterStrategy {
     public static final String LAST_4 = "LAST_4";
     public static final String MASK = "MASK";
     public static final String SAME = AbstractFilterStrategy.SAME;
+    public static final String TRUNCATE = "TRUNCATE";
+    public static final String LEADING = "LEADING";
+    public static final String TRAILING = "TRAILING";
 
     // NER Person's name strategies
     public static final String ABBREVIATE = "ABBREVIATE";
@@ -106,6 +109,18 @@ public abstract class AbstractFilterStrategy {
     @SerializedName("maskLength")
     @Expose
     protected String maskLength = SAME;
+
+    @SerializedName("truncateDigits")
+    @Expose
+    protected Integer truncateDigits;
+
+    @SerializedName("truncateCharacter")
+    @Expose
+    protected String truncateCharacter = "*";
+
+    @SerializedName("truncateDirection")
+    @Expose
+    protected String truncateDirection = LEADING;
 
     @SerializedName("condition")
     @Expose
@@ -363,6 +378,37 @@ public abstract class AbstractFilterStrategy {
 
     public String getMaskLength() {
         return maskLength;
+    }
+
+    public Integer getTruncateDigits() {
+        return truncateDigits;
+    }
+
+    public void setTruncateDigits(Integer truncateDigits) {
+
+        // Make sure it is a valid value.
+        if(truncateDigits >= 1) {
+            this.truncateDigits = truncateDigits;
+        } else {
+            throw new IllegalArgumentException("Truncate length must be greater than 1");
+        }
+
+    }
+
+    public String getTruncateCharacter() {
+        return truncateCharacter;
+    }
+
+    public void setTruncateCharacter(String truncateCharacter) {
+        this.truncateCharacter = truncateCharacter;
+    }
+
+    public String getTruncateDirection() {
+        return truncateDirection;
+    }
+
+    public void setTruncateDirection(String truncateDirection) {
+        this.truncateDirection = truncateDirection;
     }
 
     public void setConditions(String condition) {

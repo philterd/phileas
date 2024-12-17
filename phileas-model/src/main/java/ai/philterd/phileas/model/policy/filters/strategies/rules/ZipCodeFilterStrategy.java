@@ -15,9 +15,6 @@
  */
 package ai.philterd.phileas.model.policy.filters.strategies.rules;
 
-import ai.philterd.phileas.model.policy.Policy;
-import com.google.gson.annotations.Expose;
-import com.google.gson.annotations.SerializedName;
 import ai.philterd.phileas.model.conditions.ParsedCondition;
 import ai.philterd.phileas.model.conditions.ParserListener;
 import ai.philterd.phileas.model.enums.FilterType;
@@ -28,6 +25,7 @@ import ai.philterd.phileas.model.objects.FilterPattern;
 import ai.philterd.phileas.model.objects.Replacement;
 import ai.philterd.phileas.model.policy.Crypto;
 import ai.philterd.phileas.model.policy.FPE;
+import ai.philterd.phileas.model.policy.Policy;
 import ai.philterd.phileas.model.policy.filters.strategies.AbstractFilterStrategy;
 import ai.philterd.phileas.model.services.AnonymizationService;
 import ai.philterd.phileas.model.utils.Encryption;
@@ -61,10 +59,6 @@ public class ZipCodeFilterStrategy extends AbstractFilterStrategy {
     public FilterType getFilterType() {
         return filterType;
     }
-
-    @SerializedName("truncateDigits")
-    @Expose
-    private Integer truncateDigits;
 
     @Override
     public boolean evaluateCondition(Policy policy, String context, String documentId, String token, String[] window, String condition, double confidence, Map<String, String> attributes) {
@@ -177,7 +171,7 @@ public class ZipCodeFilterStrategy extends AbstractFilterStrategy {
                 characters = Integer.parseInt(maskLength);
             }
 
-            if(characters < 1) {
+            if (characters < 1) {
                 characters = 5;
             }
 
@@ -200,8 +194,14 @@ public class ZipCodeFilterStrategy extends AbstractFilterStrategy {
 
         } else if(StringUtils.equalsIgnoreCase(strategy, TRUNCATE)) {
 
-            final int truncateLength = getValueOrDefault(truncateDigits, 2);
-            replacement = token.substring(0, truncateDigits) + StringUtils.repeat("*", Math.min(token.length() - truncateLength, 5 - truncateDigits));
+            if(StringUtils.equalsIgnoreCase(truncateDirection, LEADING)) {
+                final int truncateLength = getValueOrDefault(truncateDigits, 2);
+                replacement = token.substring(0, truncateDigits) + StringUtils.repeat(truncateCharacter, Math.min(token.length() - truncateLength, 5 - truncateDigits));
+            } else {
+                final int truncateLength = getValueOrDefault(truncateDigits, 2);
+                replacement = StringUtils.repeat(truncateCharacter, Math.min(token.length() - truncateLength, 5 - truncateDigits)) + token.substring(Math.min(token.length() - truncateLength, 5 - truncateDigits), 5);
+            }
+
 
         } else if(StringUtils.equalsIgnoreCase(strategy, ZERO_LEADING)) {
 

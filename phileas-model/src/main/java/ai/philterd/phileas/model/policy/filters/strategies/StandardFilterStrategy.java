@@ -54,6 +54,20 @@ public abstract class StandardFilterStrategy extends AbstractFilterStrategy {
 
             replacement = maskCharacter.repeat(characters);
 
+        } else if(StringUtils.equalsIgnoreCase(strategy, TRUNCATE)) {
+
+            int truncateLength = getValueOrDefault(truncateDigits, 4);
+
+            if (truncateLength < 1) {
+                truncateLength = 1;
+            }
+
+            if(StringUtils.equalsIgnoreCase(truncateDirection, LEADING)) {
+                replacement = token.substring(0, truncateLength) + StringUtils.repeat(truncateCharacter, token.length() - truncateLength);
+            } else {
+                replacement = StringUtils.repeat(truncateCharacter, token.length() - truncateLength) + token.substring(token.length() - truncateLength);
+            }
+
         } else if(StringUtils.equalsIgnoreCase(strategy, RANDOM_REPLACE)) {
 
             // Default to document scope.
