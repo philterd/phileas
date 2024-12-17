@@ -20,9 +20,21 @@ import com.google.gson.annotations.SerializedName;
 
 public class Pdf {
 
-    @SerializedName("enabled")
+    @SerializedName("redactionColor")
     @Expose
     private String redactionColor = "black";
+
+    @SerializedName("redactionFont")
+    @Expose
+    private String redactionFont = "Helvetica";
+
+    @SerializedName("redactionFontSize")
+    @Expose
+    private float redactionFontSize = 12;
+
+    @SerializedName("redactionFontColor")
+    @Expose
+    private String redactionFontColor;
 
     public String getRedactionColor() {
         return redactionColor;
@@ -32,4 +44,19 @@ public class Pdf {
         this.redactionColor = redactionColor;
     }
 
+    public String getRedactionFont() {
+        return redactionFont;
+    }
+
+    public void setRedactionFont(String redactionFont) {
+        this.redactionFont = redactionFont;
+    }
+
+    public float getRedactionFontSize() {
+        return redactionFontSize;
+    }
+
+    public String getRedactionFontColor() {
+        return redactionFontColor;
+    }
 }
