@@ -23,6 +23,8 @@ import ai.philterd.phileas.model.policy.Policy;
 import ai.philterd.phileas.model.responses.BinaryDocumentFilterResponse;
 import ai.philterd.phileas.model.serializers.PlaceholderDeserializer;
 import ai.philterd.phileas.services.PhileasFilterService;
+import ai.philterd.phileas.services.policies.InMemoryPolicyService;
+import ai.philterd.phileas.services.policies.LocalPolicyService;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.apache.commons.collections.CollectionUtils;
@@ -182,4 +184,23 @@ public class PhileasFilterServiceTest {
 
     }
 
+    @Test
+    void buildPolicyServiceMemory() throws IOException {
+        final var properties = new Properties();
+        properties.setProperty("filter.policies.service", "memory");
+        final var config = new PhileasConfiguration(properties);
+        final var service = new PhileasFilterService(config);
+
+        Assertions.assertInstanceOf(InMemoryPolicyService.class, service.getPolicyService());
+    }
+
+    @Test
+    void buildPolicyServiceLocal() throws IOException {
+        final var properties = new Properties();
+        properties.setProperty("filter.policies.service", "local");
+        final var config = new PhileasConfiguration(properties);
+        final var service = new PhileasFilterService(config);
+
+        Assertions.assertInstanceOf(LocalPolicyService.class, service.getPolicyService());
+    }
 }

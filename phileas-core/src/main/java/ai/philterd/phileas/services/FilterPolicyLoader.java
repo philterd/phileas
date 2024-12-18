@@ -783,20 +783,20 @@ public class FilterPolicyLoader {
                         }
                     }
 
+                    final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                            .withStrategies(customDictionary.getCustomDictionaryFilterStrategies())
+                            .withAnonymizationService(new ZipCodeAnonymizationService(anonymizationCacheService))
+                            .withAlertService(alertService)
+                            .withIgnored(customDictionary.getIgnored())
+                            .withIgnoredFiles(customDictionary.getIgnoredFiles())
+                            .withIgnoredPatterns(customDictionary.getIgnoredPatterns())
+                            .withCrypto(policy.getCrypto())
+                            .withWindowSize(phileasConfiguration.spanWindowSize())
+                            .build();
+
                     if(customDictionary.isFuzzy()) {
 
                         LOGGER.info("Custom fuzzy dictionary contains {} terms.", terms.size());
-
-                        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
-                                .withStrategies(customDictionary.getCustomDictionaryFilterStrategies())
-                                .withAnonymizationService(new ZipCodeAnonymizationService(anonymizationCacheService))
-                                .withAlertService(alertService)
-                                .withIgnored(policy.getIdentifiers().getZipCode().getIgnored())
-                                .withIgnoredFiles(policy.getIdentifiers().getZipCode().getIgnoredFiles())
-                                .withIgnoredPatterns(policy.getIdentifiers().getZipCode().getIgnoredPatterns())
-                                .withCrypto(policy.getCrypto())
-                                .withWindowSize(phileasConfiguration.spanWindowSize())
-                                .build();
 
                         final SensitivityLevel sensitivityLevel = SensitivityLevel.fromName(customDictionary.getSensitivity());
                         final String classification = customDictionary.getClassification();
@@ -812,17 +812,6 @@ public class FilterPolicyLoader {
                         // Only enable the filter if there is at least one term.
                         // TODO: #112 Don't use a bloom filter for a small number of terms.
                         if(!terms.isEmpty()) {
-
-                            final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
-                                    .withStrategies(customDictionary.getCustomDictionaryFilterStrategies())
-                                    .withAnonymizationService(new ZipCodeAnonymizationService(anonymizationCacheService))
-                                    .withAlertService(alertService)
-                                    .withIgnored(customDictionary.getIgnored())
-                                    .withIgnoredFiles(customDictionary.getIgnoredFiles())
-                                    .withIgnoredPatterns(customDictionary.getIgnoredPatterns())
-                                    .withCrypto(policy.getCrypto())
-                                    .withWindowSize(phileasConfiguration.spanWindowSize())
-                                    .build();
 
                             final String classification = customDictionary.getClassification();
 
