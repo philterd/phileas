@@ -178,6 +178,24 @@ public class ZipCodeFilterStrategyTest extends AbstractFilterStrategyTest {
     }
 
     @Test
+    public void truncateTo1Trailing() throws Exception {
+
+        ZipCodeFilterStrategy strategy = new ZipCodeFilterStrategy();
+        strategy.setStrategy(ZipCodeFilterStrategy.TRUNCATE);
+        strategy.setTruncateDigits(1);
+        strategy.setTruncateDirection(AbstractFilterStrategy.TRAILING);
+
+        AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
+
+        final Replacement replacement = strategy.getReplacement("name", "context", "documentid", "90210-0110", WINDOW, new Crypto(), new FPE(), anonymizationService, null);
+
+        LOGGER.info(replacement);
+
+        Assertions.assertEquals("****0", replacement.getReplacement());
+
+    }
+
+    @Test
     public void zeroLeading1() throws Exception {
 
         ZipCodeFilterStrategy strategy = new ZipCodeFilterStrategy();
@@ -192,5 +210,15 @@ public class ZipCodeFilterStrategyTest extends AbstractFilterStrategyTest {
         Assertions.assertEquals("00010", replacement.getReplacement());
 
     }
+
+    // Override the standard truncate tests since zip has a different truncate behavior
+    @Test
+    public void truncate1() throws Exception {}
+
+    @Test
+    public void truncate2() throws Exception {}
+
+    @Test
+    public void truncate3() throws Exception {}
 
 }

@@ -208,9 +208,15 @@ An example policy using the `STATIC_REPLACE` filter strategy:
 
 ### The `TRUNCATE` Filter Strategy {id="truncate"}
 
-Available only to zip codes, this strategy allows for truncating zip codes to only a select number of digits. Specify `truncateDigits` to set the desired number of leading digits to leave. For example, if `truncateDigits` is 2, the zip code 90210 will be truncated to `90***`.&#x20;
+This strategy allows for truncating tokens to only a select number of digits. Specify `truncateDigits`
+to set the desired number of digits to leave. For example, if `truncateDigits` is 4, the
+string `4111111111111111` will be truncated to `4111************`. `truncateDirection` can be set to
+`LEADING` (the default) which leaves N leading digits or `TRAILING` which leaves N trailing digits.
+`truncateCharacter` can be overwritten (defaults to `*`) to change the character that is used for the
+replacement.
 
-The TRUNCATE filter strategy is available only to the zip code filter. An example policy using the `TRUNCATE` filter strategy:
+The `TRUNCATE` filter has special behavior for the zip code filter. For zip codes the Zip will always be truncated
+to 5 digits long. For example, `truncateDigits=2` and a token of `90210-0110` will result in `90***`.
 
 ```
 {
