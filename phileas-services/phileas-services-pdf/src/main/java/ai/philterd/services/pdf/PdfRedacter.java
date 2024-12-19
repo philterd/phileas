@@ -91,6 +91,7 @@ public class PdfRedacter extends PDFTextStripper implements Redacter {
         FONTS.put("courier", new PDType1Font(Standard14Fonts.FontName.COURIER));
     }
 
+    private final boolean showReplacement;
     private final float replacementFontSize;
     private final PDFont replacementFont;
     private final PDColor replacementFontColor;
@@ -103,9 +104,10 @@ public class PdfRedacter extends PDFTextStripper implements Redacter {
         this.spans = spans;
         this.pdfRedactionOptions = pdfRedactionOptions;
         this.boundingBoxes = boundingBoxes;
-        replacementFont = FONTS.getOrDefault(policy.getConfig().getPdf().getRedactionFont(), FONTS.get("helvetica"));
-        replacementFontSize = policy.getConfig().getPdf().getRedactionFontSize();
-        replacementFontColor = COLORS.getOrDefault(policy.getConfig().getPdf().getRedactionFontColor(), COLORS.get("white"));
+        this.showReplacement = policy.getConfig().getPdf().getShowReplacement();
+        this.replacementFont = FONTS.getOrDefault(policy.getConfig().getPdf().getReplacementFont(), FONTS.get("helvetica"));
+        this.replacementFontSize = policy.getConfig().getPdf().getReplacementMaxFontSize();
+        this.replacementFontColor = COLORS.getOrDefault(policy.getConfig().getPdf().getReplacementFontColor(), COLORS.get("white"));
 
     }
 
@@ -247,30 +249,9 @@ public class PdfRedacter extends PDFTextStripper implements Redacter {
                         rectangle.getPdRectangle().getWidth(),
                         rectangle.getPdRectangle().getHeight() + buffer);
 
-                var replacementText = rectangle.getSpan().getReplacement();
-                var rectangleWidth = rectangle.getPdRectangle().getWidth();
-
-                var boxFontSize = replacementFontSize;
-                float textWidth = (replacementFont.getStringWidth(replacementText) / 1000.0f) * boxFontSize;
-                while(textWidth > rectangleWidth) {
-                    boxFontSize -= 1;
-                    textWidth = (replacementFont.getStringWidth(replacementText) / 1000.0f) * boxFontSize;
+                if(showReplacement) {
+                    addReplacementTextToRect(rectangle, textContentStream);
                 }
-
-                var textHeight = ( replacementFont.getFontDescriptor().getCapHeight()) / 1000 * boxFontSize;
-
-                var textXLocation = (rectangle.getPdRectangle().getLowerLeftX() +
-                        ((rectangle.getPdRectangle().getWidth() / 2.0f) - (textWidth / 2.0f)));
-
-                var textYLocation = (rectangle.getPdRectangle().getLowerLeftY() +
-                        ((rectangle.getPdRectangle().getHeight() / 2.0f) - (textHeight / 2.0f)));
-
-                textContentStream.beginText();
-                textContentStream.setNonStrokingColor(replacementFontColor);
-                textContentStream.setFont(replacementFont, boxFontSize);
-                textContentStream.newLineAtOffset(textXLocation, textYLocation);
-                textContentStream.showText(replacementText);
-                textContentStream.endText();
             }
 
             // Get the color based on the filter.
@@ -284,6 +265,36 @@ public class PdfRedacter extends PDFTextStripper implements Redacter {
 
         }
 
+    }
+
+    public void addReplacementTextToRect(RedactedRectangle rectangle, PDPageContentStream textContentStream) throws IOException {
+        var replacementText = rectangle.getSpan().getReplacement();
+        var rectangleWidth = rectangle.getPdRectangle().getWidth();
+        var rectangleHeight = rectangle.getPdRectangle().getHeight();
+
+        var boxFontSize = replacementFontSize;
+        float textWidth = (replacementFont.getStringWidth(replacementText) / 1000.0f) * boxFontSize;
+        while (textWidth > rectangleWidth) {
+            boxFontSize -= 1;
+            textWidth = (replacementFont.getStringWidth(replacementText) / 1000.0f) * boxFontSize;
+        }
+
+        // Y position is actually based on the font's "baseline", so we use the descent
+        // (how far the font goes under the baseline) for the height calculation
+        var textDescent = (replacementFont.getFontDescriptor().getDescent() / 1000.0f) * boxFontSize;
+
+        var textXLocation = (rectangle.getPdRectangle().getLowerLeftX() +
+                ((rectangleWidth / 2.0f) - (textWidth / 2.0f)));
+
+        var textYLocation = (rectangle.getPdRectangle().getLowerLeftY() +
+                ((rectangleHeight / 2.0f) + (textDescent / 2.0f)));
+
+        textContentStream.beginText();
+        textContentStream.setNonStrokingColor(replacementFontColor);
+        textContentStream.setFont(replacementFont, boxFontSize);
+        textContentStream.newLineAtOffset(textXLocation, textYLocation);
+        textContentStream.showText(replacementText);
+        textContentStream.endText();
     }
 
     @Override

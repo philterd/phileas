@@ -24,39 +24,51 @@ public class Pdf {
     @Expose
     private String redactionColor = "black";
 
-    @SerializedName("redactionFont")
+    @SerializedName("showReplacement")
     @Expose
-    private String redactionFont = "Helvetica";
+    private boolean showReplacement = false;
 
-    @SerializedName("redactionFontSize")
+    @SerializedName("replacementFont")
     @Expose
-    private float redactionFontSize = 12;
+    private String replacementFont = "helvetica";
 
-    @SerializedName("redactionFontColor")
+    @SerializedName("replacementMaxFontSize")
     @Expose
-    private String redactionFontColor;
+    private float replacementMaxFontSize = 12;
+
+    @SerializedName("replacementFontColor")
+    @Expose
+    private String replacementFontColor;
 
     public String getRedactionColor() {
         return redactionColor;
     }
 
-    public void setRedactionColor(String redactionColor) {
-        this.redactionColor = redactionColor;
+    public void setRedactionColor(String replacementColor) {
+        this.redactionColor = replacementColor;
     }
 
-    public String getRedactionFont() {
-        return redactionFont;
+    public String getReplacementFont() {
+        return replacementFont;
     }
 
-    public void setRedactionFont(String redactionFont) {
-        this.redactionFont = redactionFont;
+    public void setReplacementFont(String replacementFont) {
+        this.replacementFont = replacementFont;
     }
 
-    public float getRedactionFontSize() {
-        return redactionFontSize;
+    public float getReplacementMaxFontSize() {
+        return replacementMaxFontSize;
     }
 
-    public String getRedactionFontColor() {
-        return redactionFontColor;
+    public String getReplacementFontColor() {
+        return replacementFontColor;
+    }
+
+    public boolean getShowReplacement() {
+        return showReplacement;
+    }
+
+    public void setShowReplacement(boolean showReplacement) {
+        this.showReplacement = showReplacement;
     }
 }
