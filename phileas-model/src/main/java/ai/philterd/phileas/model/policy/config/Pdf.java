@@ -20,16 +20,55 @@ import com.google.gson.annotations.SerializedName;
 
 public class Pdf {
 
-    @SerializedName("enabled")
+    @SerializedName("redactionColor")
     @Expose
     private String redactionColor = "black";
+
+    @SerializedName("showReplacement")
+    @Expose
+    private boolean showReplacement = false;
+
+    @SerializedName("replacementFont")
+    @Expose
+    private String replacementFont = "helvetica";
+
+    @SerializedName("replacementMaxFontSize")
+    @Expose
+    private float replacementMaxFontSize = 12;
+
+    @SerializedName("replacementFontColor")
+    @Expose
+    private String replacementFontColor;
 
     public String getRedactionColor() {
         return redactionColor;
     }
 
-    public void setRedactionColor(String redactionColor) {
-        this.redactionColor = redactionColor;
+    public void setRedactionColor(String replacementColor) {
+        this.redactionColor = replacementColor;
     }
 
+    public String getReplacementFont() {
+        return replacementFont;
+    }
+
+    public void setReplacementFont(String replacementFont) {
+        this.replacementFont = replacementFont;
+    }
+
+    public float getReplacementMaxFontSize() {
+        return replacementMaxFontSize;
+    }
+
+    public String getReplacementFontColor() {
+        return replacementFontColor;
+    }
+
+    public boolean getShowReplacement() {
+        return showReplacement;
+    }
+
+    public void setShowReplacement(boolean showReplacement) {
+        this.showReplacement = showReplacement;
+    }
 }

@@ -48,6 +48,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
+import static ai.philterd.test.phileas.services.EndToEndTestsHelper.documentContainsText;
 import static ai.philterd.test.phileas.services.EndToEndTestsHelper.getPdfPolicy;
 import static ai.philterd.test.phileas.services.EndToEndTestsHelper.getPolicy;
 
@@ -108,6 +109,8 @@ public class PhileasFilterServiceTest {
         final byte[] document = IOUtils.toByteArray(is);
         is.close();
 
+        Assertions.assertTrue(documentContainsText(document, "Wendy"));
+
         final Path temp = Files.createTempDirectory("philter");
 
         final File file1 = Paths.get(temp.toFile().getAbsolutePath(), "pdf.json").toFile();
@@ -133,8 +136,10 @@ public class PhileasFilterServiceTest {
         LOGGER.info("Spans: {}", response.getExplanation().appliedSpans().size());
         showSpans(response.getExplanation().appliedSpans());
 
-        // TODO: How to assert? MD5 gives a different value each time.
-
+        // TODO: This is asserting that it doesn't contain anything as a text stream
+        // but it's possible that they're in the images, we would need to OCR
+        // the files for this assertion to be truly valuable
+        Assertions.assertFalse(documentContainsText(response.getDocument(), "Wendy"));
     }
 
     @Test
@@ -143,6 +148,8 @@ public class PhileasFilterServiceTest {
         final InputStream is = this.getClass().getResourceAsStream("/pdfs/new-lines.pdf");
         final byte[] document = IOUtils.toByteArray(is);
         is.close();
+
+        Assertions.assertTrue(documentContainsText(document, "90210"));
 
         final Path temp = Files.createTempDirectory("philter");
 
@@ -172,7 +179,10 @@ public class PhileasFilterServiceTest {
         // output:
         // characterStart: 35;  characterEnd: 40;  filterType: zip-code;  context: context;  documentId: documentid;  confidence: 0.9;  text: 90210;  replacement: {{{REDACTED-zip-code}}};  salt: ;  ignored: false;  classification: null;
 
-        // TODO: How to assert? MD5 gives a different value each time.
+        // TODO: This is asserting that it doesn't contain anything as a text stream
+        // but it's possible that they're in the images, we would need to OCR
+        // the files for this assertion to be truly valuable
+        Assertions.assertFalse(documentContainsText(response.getDocument(), "90210"));
 
     }
 

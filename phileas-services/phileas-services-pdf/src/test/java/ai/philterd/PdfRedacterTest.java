@@ -23,11 +23,19 @@ import ai.philterd.phileas.model.policy.Policy;
 import ai.philterd.phileas.model.policy.graphical.BoundingBox;
 import ai.philterd.phileas.model.services.Redacter;
 import ai.philterd.services.pdf.PdfRedacter;
+import ai.philterd.services.pdf.model.RedactedRectangle;
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.pdfbox.io.IOUtils;
+import org.apache.pdfbox.pdmodel.PDPageContentStream;
+import org.apache.pdfbox.pdmodel.common.PDRectangle;
+import org.apache.pdfbox.pdmodel.font.PDType1Font;
+import org.apache.pdfbox.pdmodel.font.Standard14Fonts;
+import org.apache.pdfbox.pdmodel.graphics.color.PDColor;
+import org.apache.pdfbox.pdmodel.graphics.color.PDDeviceRGB;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
 import java.io.File;
 import java.io.IOException;
@@ -38,6 +46,10 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
+
+import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.verify;
 
 public class PdfRedacterTest {
 
@@ -87,6 +99,7 @@ public class PdfRedacterTest {
         final byte[] document = IOUtils.toByteArray(is);
 
         final Policy policy = new Policy();
+        policy.getConfig().getPdf().setShowReplacement(true);
         final PdfRedactionOptions pdfRedactionOptions = new PdfRedactionOptions();
 
         final List<BoundingBox> boundingBoxes = Collections.emptyList();
@@ -275,6 +288,42 @@ public class PdfRedacterTest {
 
         LOGGER.info("Writing redacted PDF to {}", outputFile.getAbsolutePath());
         FileUtils.writeByteArrayToFile(outputFile, redacted);
+
+    }
+
+    @Test
+    public void testAddReplacementTextToRect() throws IOException {
+
+        var contentStream = Mockito.mock(PDPageContentStream.class);
+
+        final Span span1 = Span.make(0, 1, FilterType.AGE, "ctx", "docid", 0.25, "Wendy", "repl", null, false, true, null);
+        final Span span2 = Span.make(0, 1, FilterType.AGE, "ctx", "docid", 0.25, "Bankruptcy", "repl", null, false, true, null);
+        final Set<Span> spans = Set.copyOf(Arrays.asList(span1, span2));
+
+        final Policy policy = new Policy();
+        policy.getConfig().getPdf().setShowReplacement(true);
+        final PdfRedactionOptions pdfRedactionOptions = new PdfRedactionOptions();
+
+        final List<BoundingBox> boundingBoxes = Collections.emptyList();
+
+        final PdfRedacter pdfRedacter = new PdfRedacter(policy, spans, pdfRedactionOptions, boundingBoxes);
+
+        RedactedRectangle redactedRectangle = new RedactedRectangle(PDRectangle.LETTER, span1);
+        pdfRedacter.addReplacementTextToRect(redactedRectangle, contentStream);
+
+        verify(contentStream).beginText();
+        verify(contentStream).setNonStrokingColor(
+                argThat((PDColor color) -> {
+                    return (
+                            Arrays.equals(color.getComponents(), new float[]{255, 255, 255})
+                                    && color.getColorSpace() == PDDeviceRGB.INSTANCE
+                    );
+                })
+        );
+        verify(contentStream).setFont(argThat((PDType1Font font) -> font.getName().equals(Standard14Fonts.FontName.HELVETICA.getName())), eq(12.0f));
+        verify(contentStream).newLineAtOffset(295.998f, 394.758f);
+        verify(contentStream).showText("repl");
+        verify(contentStream).endText();
 
     }
 
