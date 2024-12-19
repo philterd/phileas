@@ -56,16 +56,16 @@ public abstract class StandardFilterStrategy extends AbstractFilterStrategy {
 
         } else if(StringUtils.equalsIgnoreCase(strategy, TRUNCATE)) {
 
-            int truncateLength = getValueOrDefault(truncateDigits, 4);
+            int leaveCharacters = getValueOrDefault(getValueOrDefault(truncateLeaveCharacters, truncateDigits), 4);
 
-            if (truncateLength < 1) {
-                truncateLength = 1;
+            if (leaveCharacters < 1) {
+                leaveCharacters = 1;
             }
 
             if(StringUtils.equalsIgnoreCase(truncateDirection, LEADING)) {
-                replacement = token.substring(0, truncateLength) + StringUtils.repeat(truncateCharacter, token.length() - truncateLength);
+                replacement = token.substring(0, leaveCharacters) + StringUtils.repeat(truncateCharacter, token.length() - leaveCharacters);
             } else {
-                replacement = StringUtils.repeat(truncateCharacter, token.length() - truncateLength) + token.substring(token.length() - truncateLength);
+                replacement = StringUtils.repeat(truncateCharacter, token.length() - leaveCharacters) + token.substring(token.length() - leaveCharacters);
             }
 
         } else if(StringUtils.equalsIgnoreCase(strategy, RANDOM_REPLACE)) {

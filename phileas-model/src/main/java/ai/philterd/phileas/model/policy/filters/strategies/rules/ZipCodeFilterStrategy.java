@@ -194,12 +194,16 @@ public class ZipCodeFilterStrategy extends AbstractFilterStrategy {
 
         } else if(StringUtils.equalsIgnoreCase(strategy, TRUNCATE)) {
 
+            int leaveCharacters = getValueOrDefault(getValueOrDefault(truncateDigits, truncateLeaveCharacters), 4);
+
+            if (leaveCharacters < 1) {
+                leaveCharacters = 1;
+            }
+
             if(StringUtils.equalsIgnoreCase(truncateDirection, LEADING)) {
-                final int truncateLength = getValueOrDefault(truncateDigits, 2);
-                replacement = token.substring(0, truncateDigits) + StringUtils.repeat(truncateCharacter, Math.min(token.length() - truncateLength, 5 - truncateDigits));
+                replacement = token.substring(0, leaveCharacters) + StringUtils.repeat(truncateCharacter, Math.min(token.length() - leaveCharacters, 5 - leaveCharacters));
             } else {
-                final int truncateLength = getValueOrDefault(truncateDigits, 2);
-                replacement = StringUtils.repeat(truncateCharacter, Math.min(token.length() - truncateLength, 5 - truncateDigits)) + token.substring(Math.min(token.length() - truncateLength, 5 - truncateDigits), 5);
+                replacement = StringUtils.repeat(truncateCharacter, Math.min(token.length() - leaveCharacters, 5 - leaveCharacters)) + token.substring(Math.min(token.length() - leaveCharacters, 5 - leaveCharacters), 5);
             }
 
 
@@ -230,15 +234,15 @@ public class ZipCodeFilterStrategy extends AbstractFilterStrategy {
 
     }
 
-    public Integer getTruncateDigits() {
-        return truncateDigits;
+    public void setTruncateDigits(Integer truncateDigits) {
+        setTruncateLeaveCharacters(truncateDigits);
     }
 
-    public void setTruncateDigits(Integer truncateDigits) {
+    public void setTruncateLeaveCharacters(Integer truncateLeaveCharacters) {
 
         // Make sure it is a valid value.
-        if(truncateDigits >= 1 && truncateDigits <= 4) {
-            this.truncateDigits = truncateDigits;
+        if(truncateLeaveCharacters >= 1 && truncateLeaveCharacters <= 4) {
+            this.truncateLeaveCharacters = truncateLeaveCharacters;
         } else {
             throw new IllegalArgumentException("Truncate length must be between 1 and 4, inclusive.");
         }

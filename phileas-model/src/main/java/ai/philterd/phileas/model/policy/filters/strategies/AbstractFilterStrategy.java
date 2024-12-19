@@ -112,7 +112,12 @@ public abstract class AbstractFilterStrategy {
 
     @SerializedName("truncateDigits")
     @Expose
+    @Deprecated
     protected Integer truncateDigits;
+
+    @SerializedName("truncateLeaveCharacters")
+    @Expose
+    protected Integer truncateLeaveCharacters;
 
     @SerializedName("truncateCharacter")
     @Expose
@@ -380,19 +385,24 @@ public abstract class AbstractFilterStrategy {
         return maskLength;
     }
 
-    public Integer getTruncateDigits() {
-        return truncateDigits;
+    @Deprecated
+    public void setTruncateDigits(Integer truncateDigits) {
+        setTruncateLeaveCharacters(truncateDigits);
     }
 
-    public void setTruncateDigits(Integer truncateDigits) {
+    public void setTruncateLeaveCharacters(Integer truncateLeaveCharacters) {
 
         // Make sure it is a valid value.
-        if(truncateDigits >= 1) {
-            this.truncateDigits = truncateDigits;
+        if(truncateLeaveCharacters >= 1) {
+            this.truncateLeaveCharacters = truncateLeaveCharacters;
         } else {
-            throw new IllegalArgumentException("Truncate length must be greater than 1");
+            throw new IllegalArgumentException("Truncate leave characters must be greater than or equal to 1");
         }
 
+    }
+
+    public Integer getTruncateLeaveCharacters() {
+        return truncateLeaveCharacters;
     }
 
     public String getTruncateCharacter() {

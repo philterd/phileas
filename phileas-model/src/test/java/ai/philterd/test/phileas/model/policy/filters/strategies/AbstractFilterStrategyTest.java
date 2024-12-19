@@ -302,12 +302,12 @@ public abstract class AbstractFilterStrategyTest {
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
         strategy.setStrategy(AbstractFilterStrategy.TRUNCATE);
-        strategy.setTruncateDigits(2);
+        strategy.setTruncateDigits(1);
 
         final String token = "12345";
         final Replacement replacement = strategy.getReplacement("name", "context", "docId", token, WINDOW, null, null, anonymizationService, null);
 
-        Assertions.assertEquals(replacement.getReplacement(), "12***");
+        Assertions.assertEquals(replacement.getReplacement(), "1****");
         Assertions.assertEquals(replacement.getReplacement().length(), 5);
 
     }
@@ -322,13 +322,12 @@ public abstract class AbstractFilterStrategyTest {
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
         strategy.setStrategy(AbstractFilterStrategy.TRUNCATE);
-        strategy.setTruncateDirection(AbstractFilterStrategy.LEADING);
-        strategy.setTruncateDigits(2);
+        strategy.setTruncateLeaveCharacters(4);
 
         final String token = "12345";
         final Replacement replacement = strategy.getReplacement("name", "context", "docId", token, WINDOW, null, null, anonymizationService, null);
 
-        Assertions.assertEquals(replacement.getReplacement(), "12***");
+        Assertions.assertEquals(replacement.getReplacement(), "1234*");
         Assertions.assertEquals(replacement.getReplacement().length(), 5);
 
     }
@@ -343,8 +342,29 @@ public abstract class AbstractFilterStrategyTest {
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
         strategy.setStrategy(AbstractFilterStrategy.TRUNCATE);
+        strategy.setTruncateDirection(AbstractFilterStrategy.LEADING);
+        strategy.setTruncateLeaveCharacters(2);
+
+        final String token = "12345";
+        final Replacement replacement = strategy.getReplacement("name", "context", "docId", token, WINDOW, null, null, anonymizationService, null);
+
+        Assertions.assertEquals(replacement.getReplacement(), "12***");
+        Assertions.assertEquals(replacement.getReplacement().length(), 5);
+
+    }
+
+    @Test
+    public void truncate4() throws Exception {
+
+        final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
+        final AnonymizationCacheService anonymizationCacheService = Mockito.mock(AnonymizationCacheService.class);
+
+        when(anonymizationService.getAnonymizationCacheService()).thenReturn(anonymizationCacheService);
+
+        final AbstractFilterStrategy strategy = getFilterStrategy();
+        strategy.setStrategy(AbstractFilterStrategy.TRUNCATE);
         strategy.setTruncateDirection(AbstractFilterStrategy.TRAILING);
-        strategy.setTruncateDigits(4);
+        strategy.setTruncateLeaveCharacters(4);
 
         final String token = "4111111111111111";
         final Replacement replacement = strategy.getReplacement("name", "context", "docId", token, WINDOW, null, null, anonymizationService, null);
