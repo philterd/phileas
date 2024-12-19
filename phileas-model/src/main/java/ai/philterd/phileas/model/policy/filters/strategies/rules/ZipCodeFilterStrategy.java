@@ -15,9 +15,6 @@
  */
 package ai.philterd.phileas.model.policy.filters.strategies.rules;
 
-import ai.philterd.phileas.model.policy.Policy;
-import com.google.gson.annotations.Expose;
-import com.google.gson.annotations.SerializedName;
 import ai.philterd.phileas.model.conditions.ParsedCondition;
 import ai.philterd.phileas.model.conditions.ParserListener;
 import ai.philterd.phileas.model.enums.FilterType;
@@ -28,6 +25,7 @@ import ai.philterd.phileas.model.objects.FilterPattern;
 import ai.philterd.phileas.model.objects.Replacement;
 import ai.philterd.phileas.model.policy.Crypto;
 import ai.philterd.phileas.model.policy.FPE;
+import ai.philterd.phileas.model.policy.Policy;
 import ai.philterd.phileas.model.policy.filters.strategies.AbstractFilterStrategy;
 import ai.philterd.phileas.model.services.AnonymizationService;
 import ai.philterd.phileas.model.utils.Encryption;
@@ -61,10 +59,6 @@ public class ZipCodeFilterStrategy extends AbstractFilterStrategy {
     public FilterType getFilterType() {
         return filterType;
     }
-
-    @SerializedName("truncateDigits")
-    @Expose
-    private Integer truncateDigits;
 
     @Override
     public boolean evaluateCondition(Policy policy, String context, String documentId, String token, String[] window, String condition, double confidence, Map<String, String> attributes) {
@@ -177,7 +171,7 @@ public class ZipCodeFilterStrategy extends AbstractFilterStrategy {
                 characters = Integer.parseInt(maskLength);
             }
 
-            if(characters < 1) {
+            if (characters < 1) {
                 characters = 5;
             }
 
@@ -200,8 +194,18 @@ public class ZipCodeFilterStrategy extends AbstractFilterStrategy {
 
         } else if(StringUtils.equalsIgnoreCase(strategy, TRUNCATE)) {
 
-            final int truncateLength = getValueOrDefault(truncateDigits, 2);
-            replacement = token.substring(0, truncateDigits) + StringUtils.repeat("*", Math.min(token.length() - truncateLength, 5 - truncateDigits));
+            int leaveCharacters = getValueOrDefault(getValueOrDefault(truncateDigits, truncateLeaveCharacters), 4);
+
+            if (leaveCharacters < 1) {
+                leaveCharacters = 1;
+            }
+
+            if(StringUtils.equalsIgnoreCase(truncateDirection, LEADING)) {
+                replacement = token.substring(0, leaveCharacters) + StringUtils.repeat(truncateCharacter, Math.min(token.length() - leaveCharacters, 5 - leaveCharacters));
+            } else {
+                replacement = StringUtils.repeat(truncateCharacter, Math.min(token.length() - leaveCharacters, 5 - leaveCharacters)) + token.substring(Math.min(token.length() - leaveCharacters, 5 - leaveCharacters), 5);
+            }
+
 
         } else if(StringUtils.equalsIgnoreCase(strategy, ZERO_LEADING)) {
 
@@ -230,15 +234,15 @@ public class ZipCodeFilterStrategy extends AbstractFilterStrategy {
 
     }
 
-    public Integer getTruncateDigits() {
-        return truncateDigits;
+    public void setTruncateDigits(Integer truncateDigits) {
+        setTruncateLeaveCharacters(truncateDigits);
     }
 
-    public void setTruncateDigits(Integer truncateDigits) {
+    public void setTruncateLeaveCharacters(Integer truncateLeaveCharacters) {
 
         // Make sure it is a valid value.
-        if(truncateDigits >= 1 && truncateDigits <= 4) {
-            this.truncateDigits = truncateDigits;
+        if(truncateLeaveCharacters >= 1 && truncateLeaveCharacters <= 4) {
+            this.truncateLeaveCharacters = truncateLeaveCharacters;
         } else {
             throw new IllegalArgumentException("Truncate length must be between 1 and 4, inclusive.");
         }

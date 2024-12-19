@@ -21,15 +21,15 @@ This filter has no required parameters.
 
 The filter may have zero or more filter strategies. When no filter strategy is given the default strategy of `REDACT` is used. When multiple filter strategies are given the filter strategies will be applied in order as they are listed. See [Filter Strategies](#filter-strategies) for details.
 
-| Strategy              | Description                                                                                                                                         |
-| --------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `REDACT`              | Replace the sensitive text with a placeholder.                                                                                                      |
-| `RANDOM_REPLACE`      | Replace the sensitive text with a similar, random value.                                                                                            |
-| `STATIC_REPLACE`      | Replace the sensitive text with a given value.                                                                                                      |
-| `CRYPTO_REPLACE`      | Replace the sensitive text with its encrypted value.                                                                                                |
-| `HASH_SHA256_REPLACE` | Replace the sensitive text with its SHA256 hash value.                                                                                              |
-| `TRUNCATE`            | Replace the sensitive text by removing the last `x` digits. (Set the number of digits using the `truncateDigits` parameter of the filter strategy.) |
-| `ZERO_LEADING`        | Replace the sensitive text by zeroing the first 3 digits.                                                                                           |
+| Strategy              | Description                                                                                                                                                                            |
+| --------------------- |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `REDACT`              | Replace the sensitive text with a placeholder.                                                                                                                                         |
+| `RANDOM_REPLACE`      | Replace the sensitive text with a similar, random value.                                                                                                                               |
+| `STATIC_REPLACE`      | Replace the sensitive text with a given value.                                                                                                                                         |
+| `CRYPTO_REPLACE`      | Replace the sensitive text with its encrypted value.                                                                                                                                   |
+| `HASH_SHA256_REPLACE` | Replace the sensitive text with its SHA256 hash value.                                                                                                                                 |
+| `TRUNCATE`            | Replace the sensitive text by removing everything except `x` characters. (Set the number of characters to leave using the `truncateLeaveCharacters` parameter of the filter strategy.) |
+| `ZERO_LEADING`        | Replace the sensitive text by zeroing the first 3 digits.                                                                                                                              |
 
 ### Conditions
 

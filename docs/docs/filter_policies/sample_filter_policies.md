@@ -129,7 +129,7 @@ This policy finds ZIP codes starting with `90` and truncates the zip code to jus
         {
           "condition": "token startswith \"90\"",
           "strategy": "TRUNCATE",
-          "truncateDigits": 2
+          "truncateLeaveCharacters": 2
         }
       ]
     }
