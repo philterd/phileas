@@ -76,7 +76,7 @@ After cloning, run `git lfs pull` to download models needed for unit tests. Phil
 
 ## Using Phileas
 
-Phileas snapshots and releases are available in our [Maven repositories](https://artifacts.philterd.ai/) so add the following to your Maven configuration:
+Phileas snapshots and releases are available in our [Maven repositories](https://artifacts.philterd.ai/). Snapshots are published nightly.
 
 ```
 <repositories>
