@@ -44,6 +44,9 @@ public abstract class AbstractFilterStrategy {
     public static final String LAST_4 = "LAST_4";
     public static final String MASK = "MASK";
     public static final String SAME = AbstractFilterStrategy.SAME;
+    public static final String TRUNCATE = "TRUNCATE";
+    public static final String LEADING = "LEADING";
+    public static final String TRAILING = "TRAILING";
 
     // NER Person's name strategies
     public static final String ABBREVIATE = "ABBREVIATE";
@@ -106,6 +109,23 @@ public abstract class AbstractFilterStrategy {
     @SerializedName("maskLength")
     @Expose
     protected String maskLength = SAME;
+
+    @SerializedName("truncateDigits")
+    @Expose
+    @Deprecated
+    protected Integer truncateDigits;
+
+    @SerializedName("truncateLeaveCharacters")
+    @Expose
+    protected Integer truncateLeaveCharacters;
+
+    @SerializedName("truncateCharacter")
+    @Expose
+    protected String truncateCharacter = "*";
+
+    @SerializedName("truncateDirection")
+    @Expose
+    protected String truncateDirection = LEADING;
 
     @SerializedName("condition")
     @Expose
@@ -363,6 +383,42 @@ public abstract class AbstractFilterStrategy {
 
     public String getMaskLength() {
         return maskLength;
+    }
+
+    @Deprecated
+    public void setTruncateDigits(Integer truncateDigits) {
+        setTruncateLeaveCharacters(truncateDigits);
+    }
+
+    public void setTruncateLeaveCharacters(Integer truncateLeaveCharacters) {
+
+        // Make sure it is a valid value.
+        if(truncateLeaveCharacters >= 1) {
+            this.truncateLeaveCharacters = truncateLeaveCharacters;
+        } else {
+            throw new IllegalArgumentException("Truncate leave characters must be greater than or equal to 1");
+        }
+
+    }
+
+    public Integer getTruncateLeaveCharacters() {
+        return truncateLeaveCharacters;
+    }
+
+    public String getTruncateCharacter() {
+        return truncateCharacter;
+    }
+
+    public void setTruncateCharacter(String truncateCharacter) {
+        this.truncateCharacter = truncateCharacter;
+    }
+
+    public String getTruncateDirection() {
+        return truncateDirection;
+    }
+
+    public void setTruncateDirection(String truncateDirection) {
+        this.truncateDirection = truncateDirection;
     }
 
     public void setConditions(String condition) {

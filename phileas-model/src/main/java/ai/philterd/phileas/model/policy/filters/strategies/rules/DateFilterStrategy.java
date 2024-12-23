@@ -174,6 +174,20 @@ public class DateFilterStrategy extends AbstractFilterStrategy {
 
             replacement = maskCharacter.repeat(characters);
 
+        } else if(StringUtils.equalsIgnoreCase(strategy, TRUNCATE)) {
+
+            int leaveCharacters = getValueOrDefault(getValueOrDefault(truncateDigits, truncateLeaveCharacters), 4);
+
+            if (leaveCharacters < 1) {
+                leaveCharacters = 1;
+            }
+
+            if(StringUtils.equalsIgnoreCase(truncateDirection, LEADING)) {
+                replacement = token.substring(0, leaveCharacters) + StringUtils.repeat(truncateCharacter, token.length() - leaveCharacters);
+            } else {
+                replacement = StringUtils.repeat(truncateCharacter, token.length() - leaveCharacters) + token.substring(token.length() - leaveCharacters);
+            }
+
         } else if(StringUtils.equalsIgnoreCase(strategy, RANDOM_REPLACE)) {
 
             // Default to document scope.

@@ -62,6 +62,11 @@ import ai.philterd.phileas.model.policy.filters.strategies.rules.UrlFilterStrate
 import ai.philterd.phileas.model.policy.filters.strategies.rules.VinFilterStrategy;
 import ai.philterd.phileas.model.policy.filters.strategies.rules.ZipCodeFilterStrategy;
 import org.apache.commons.io.FileUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.pdfbox.Loader;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.text.PDFTextStripper;
 
 import java.io.File;
 import java.io.IOException;
@@ -72,6 +77,7 @@ import java.util.List;
 import java.util.Set;
 
 public class EndToEndTestsHelper {
+    private static final Logger LOGGER = LogManager.getLogger(EndToEndTestsHelper.class);
 
 
     public static Policy getPolicyWithSentiment(String policyName) throws IOException {
@@ -454,4 +460,16 @@ public class EndToEndTestsHelper {
 
     }
 
+    public static boolean documentContainsText(byte[] doc, String needle) throws IOException {
+        try (PDDocument pdDocument = Loader.loadPDF(doc)) {
+            PDFTextStripper textStripper = new PDFTextStripper();
+            String pdfText = textStripper.getText(pdDocument);
+
+            if(pdfText.trim().isEmpty()) {
+                LOGGER.warn("documentContainsText called on a PDF with no text streams");
+            }
+
+            return pdfText.contains(needle);
+        }
+    }
 }

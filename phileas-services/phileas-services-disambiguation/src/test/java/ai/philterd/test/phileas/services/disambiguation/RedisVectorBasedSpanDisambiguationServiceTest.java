@@ -38,15 +38,15 @@ public class RedisVectorBasedSpanDisambiguationServiceTest {
     private RedisServer redisServer;
 
     @BeforeEach
-    public void before() {
+    public void before() throws IOException {
 
-        redisServer = RedisServer.builder().setting("bind 127.0.0.1").port(31000).build();
+        redisServer = new RedisServer(31000);
         redisServer.start();
 
     }
 
     @AfterEach
-    public void after() {
+    public void after() throws IOException {
 
         redisServer.stop();
 

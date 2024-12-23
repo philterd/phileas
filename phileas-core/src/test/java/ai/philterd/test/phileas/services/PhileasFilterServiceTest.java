@@ -23,6 +23,8 @@ import ai.philterd.phileas.model.policy.Policy;
 import ai.philterd.phileas.model.responses.BinaryDocumentFilterResponse;
 import ai.philterd.phileas.model.serializers.PlaceholderDeserializer;
 import ai.philterd.phileas.services.PhileasFilterService;
+import ai.philterd.phileas.services.policies.InMemoryPolicyService;
+import ai.philterd.phileas.services.policies.LocalPolicyService;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.apache.commons.collections.CollectionUtils;
@@ -46,6 +48,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
+import static ai.philterd.test.phileas.services.EndToEndTestsHelper.documentContainsText;
 import static ai.philterd.test.phileas.services.EndToEndTestsHelper.getPdfPolicy;
 import static ai.philterd.test.phileas.services.EndToEndTestsHelper.getPolicy;
 
@@ -106,6 +109,8 @@ public class PhileasFilterServiceTest {
         final byte[] document = IOUtils.toByteArray(is);
         is.close();
 
+        Assertions.assertTrue(documentContainsText(document, "Wendy"));
+
         final Path temp = Files.createTempDirectory("philter");
 
         final File file1 = Paths.get(temp.toFile().getAbsolutePath(), "pdf.json").toFile();
@@ -131,8 +136,10 @@ public class PhileasFilterServiceTest {
         LOGGER.info("Spans: {}", response.getExplanation().appliedSpans().size());
         showSpans(response.getExplanation().appliedSpans());
 
-        // TODO: How to assert? MD5 gives a different value each time.
-
+        // TODO: This is asserting that it doesn't contain anything as a text stream
+        // but it's possible that they're in the images, we would need to OCR
+        // the files for this assertion to be truly valuable
+        Assertions.assertFalse(documentContainsText(response.getDocument(), "Wendy"));
     }
 
     @Test
@@ -141,6 +148,8 @@ public class PhileasFilterServiceTest {
         final InputStream is = this.getClass().getResourceAsStream("/pdfs/new-lines.pdf");
         final byte[] document = IOUtils.toByteArray(is);
         is.close();
+
+        Assertions.assertTrue(documentContainsText(document, "90210"));
 
         final Path temp = Files.createTempDirectory("philter");
 
@@ -170,7 +179,10 @@ public class PhileasFilterServiceTest {
         // output:
         // characterStart: 35;  characterEnd: 40;  filterType: zip-code;  context: context;  documentId: documentid;  confidence: 0.9;  text: 90210;  replacement: {{{REDACTED-zip-code}}};  salt: ;  ignored: false;  classification: null;
 
-        // TODO: How to assert? MD5 gives a different value each time.
+        // TODO: This is asserting that it doesn't contain anything as a text stream
+        // but it's possible that they're in the images, we would need to OCR
+        // the files for this assertion to be truly valuable
+        Assertions.assertFalse(documentContainsText(response.getDocument(), "90210"));
 
     }
 
@@ -182,4 +194,23 @@ public class PhileasFilterServiceTest {
 
     }
 
+    @Test
+    void buildPolicyServiceMemory() throws IOException {
+        final var properties = new Properties();
+        properties.setProperty("filter.policies.service", "memory");
+        final var config = new PhileasConfiguration(properties);
+        final var service = new PhileasFilterService(config);
+
+        Assertions.assertInstanceOf(InMemoryPolicyService.class, service.getPolicyService());
+    }
+
+    @Test
+    void buildPolicyServiceLocal() throws IOException {
+        final var properties = new Properties();
+        properties.setProperty("filter.policies.service", "local");
+        final var config = new PhileasConfiguration(properties);
+        final var service = new PhileasFilterService(config);
+
+        Assertions.assertInstanceOf(LocalPolicyService.class, service.getPolicyService());
+    }
 }

@@ -783,26 +783,42 @@ public class FilterPolicyLoader {
                         }
                     }
 
-                    LOGGER.info("Custom dictionary contains {} terms.", terms.size());
+                    final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                            .withStrategies(customDictionary.getCustomDictionaryFilterStrategies())
+                            .withAnonymizationService(new ZipCodeAnonymizationService(anonymizationCacheService))
+                            .withAlertService(alertService)
+                            .withIgnored(customDictionary.getIgnored())
+                            .withIgnoredFiles(customDictionary.getIgnoredFiles())
+                            .withIgnoredPatterns(customDictionary.getIgnoredPatterns())
+                            .withCrypto(policy.getCrypto())
+                            .withWindowSize(phileasConfiguration.spanWindowSize())
+                            .build();
+
+                    if(customDictionary.isFuzzy()) {
 
                     // Only enable the filter if there is at least one term.
                     // TODO: #112 Don't use a bloom filter for a small number of terms.
                     if(!terms.isEmpty()) {
 
-                        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
-                                .withStrategies(customDictionary.getCustomDictionaryFilterStrategies())
-                                .withAnonymizationService(new ZipCodeAnonymizationService(anonymizationCacheService))
-                                .withAlertService(alertService)
-                                .withIgnored(customDictionary.getIgnored())
-                                .withIgnoredFiles(customDictionary.getIgnoredFiles())
-                                .withIgnoredPatterns(customDictionary.getIgnoredPatterns())
-                                .withCrypto(policy.getCrypto())
-                                .withWindowSize(phileasConfiguration.spanWindowSize())
-                                .build();
-
+                        final SensitivityLevel sensitivityLevel = SensitivityLevel.fromName(customDictionary.getSensitivity());
                         final String classification = customDictionary.getClassification();
 
-                        enabledFilters.add(new BloomFilterDictionaryFilter(FilterType.CUSTOM_DICTIONARY, filterConfiguration, terms, classification));
+                        enabledFilters.add(new LuceneDictionaryFilter(FilterType.CUSTOM_DICTIONARY, filterConfiguration, sensitivityLevel,
+                                terms, capitalized, classification, index));
+
+                    } else {
+
+                        LOGGER.info("Custom dictionary contains {} terms.", terms.size());
+
+                        // Only enable the filter if there is at least one term.
+                        // TODO: #112 Don't use a bloom filter for a small number of terms.
+                        if(!terms.isEmpty()) {
+
+                            final String classification = customDictionary.getClassification();
+
+                            enabledFilters.add(new BloomFilterDictionaryFilter(FilterType.CUSTOM_DICTIONARY, filterConfiguration, terms, classification));
+
+                        }
 
                     }
 

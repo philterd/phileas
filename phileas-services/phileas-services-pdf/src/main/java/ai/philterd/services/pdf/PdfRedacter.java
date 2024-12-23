@@ -24,10 +24,14 @@ import ai.philterd.phileas.model.services.Redacter;
 import ai.philterd.services.pdf.model.RedactedRectangle;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
+import org.apache.pdfbox.pdmodel.font.PDFont;
+import org.apache.pdfbox.pdmodel.font.PDType1Font;
+import org.apache.pdfbox.pdmodel.font.Standard14Fonts;
 import org.apache.pdfbox.pdmodel.graphics.color.PDColor;
 import org.apache.pdfbox.pdmodel.graphics.color.PDDeviceRGB;
 import org.apache.pdfbox.pdmodel.graphics.image.JPEGFactory;
@@ -74,12 +78,23 @@ public class PdfRedacter extends PDFTextStripper implements Redacter {
     private final List<BoundingBox> boundingBoxes;
 
     private static final Map<String, PDColor> COLORS = new LinkedHashMap<>();
+    private static final Map<String, PDFont> FONTS = new LinkedHashMap<>();
 
     static {
+        COLORS.put("white", new PDColor(new float[]{255, 255, 255}, PDDeviceRGB.INSTANCE));
         COLORS.put("black", new PDColor(new float[]{0, 0, 0}, PDDeviceRGB.INSTANCE));
         COLORS.put("red", new PDColor(new float[]{255, 0, 0}, PDDeviceRGB.INSTANCE));
         COLORS.put("yellow", new PDColor(new float[]{1, 1, 100 / 255F}, PDDeviceRGB.INSTANCE));
+
+        FONTS.put("helvetica", new PDType1Font(Standard14Fonts.FontName.HELVETICA));
+        FONTS.put("times", new PDType1Font(Standard14Fonts.FontName.TIMES_ROMAN));
+        FONTS.put("courier", new PDType1Font(Standard14Fonts.FontName.COURIER));
     }
+
+    private final boolean showReplacement;
+    private final float replacementFontSize;
+    private final PDFont replacementFont;
+    private final PDColor replacementFontColor;
 
     public PdfRedacter(Policy policy,
                        Set<Span> spans, PdfRedactionOptions pdfRedactionOptions,
@@ -89,13 +104,16 @@ public class PdfRedacter extends PDFTextStripper implements Redacter {
         this.spans = spans;
         this.pdfRedactionOptions = pdfRedactionOptions;
         this.boundingBoxes = boundingBoxes;
+        this.showReplacement = policy.getConfig().getPdf().getShowReplacement();
+        this.replacementFont = FONTS.getOrDefault(policy.getConfig().getPdf().getReplacementFont(), FONTS.get("helvetica"));
+        this.replacementFontSize = policy.getConfig().getPdf().getReplacementMaxFontSize();
+        this.replacementFontColor = COLORS.getOrDefault(policy.getConfig().getPdf().getReplacementFontColor(), COLORS.get("white"));
 
     }
 
     @Override
     public byte[] process(byte[] document, MimeType outputMimeType) throws IOException {
-
-        final PDDocument pdDocument = PDDocument.load(document);
+        final PDDocument pdDocument = Loader.loadPDF(document);
 
         setSortByPosition(true);
         setStartPage(0);
@@ -220,27 +238,63 @@ public class PdfRedacter extends PDFTextStripper implements Redacter {
         for(int pageNumber : rectangles.keySet()) {
 
             final PDPage page = document.getPage(pageNumber);
-            final PDPageContentStream contentStream = new PDPageContentStream(doc, page, true, true, true);
+            final PDPageContentStream rectContentStream = new PDPageContentStream(doc, page, PDPageContentStream.AppendMode.APPEND, true, true);
+            final PDPageContentStream textContentStream = new PDPageContentStream(doc, page, PDPageContentStream.AppendMode.APPEND, true, true);
 
             for(final RedactedRectangle rectangle : rectangles.get(pageNumber)) {
 
-                contentStream.addRect(
+                rectContentStream.addRect(
                         rectangle.getPdRectangle().getLowerLeftX(),
                         rectangle.getPdRectangle().getLowerLeftY() - 3,
                         rectangle.getPdRectangle().getWidth(),
                         rectangle.getPdRectangle().getHeight() + buffer);
 
+                if(showReplacement) {
+                    addReplacementTextToRect(rectangle, textContentStream);
+                }
             }
 
             // Get the color based on the filter.
             final PDColor pdColor = COLORS.getOrDefault(policy.getConfig().getPdf().getRedactionColor(), COLORS.get("black"));
-            contentStream.setNonStrokingColor(pdColor);
-            contentStream.setRenderingMode(RenderingMode.FILL);
-            contentStream.fill();
-            contentStream.close();
+            rectContentStream.setNonStrokingColor(pdColor);
+            rectContentStream.setRenderingMode(RenderingMode.FILL);
+            rectContentStream.fill();
+            rectContentStream.close();
+
+            textContentStream.close();
 
         }
 
+    }
+
+    public void addReplacementTextToRect(RedactedRectangle rectangle, PDPageContentStream textContentStream) throws IOException {
+        var replacementText = rectangle.getSpan().getReplacement();
+        var rectangleWidth = rectangle.getPdRectangle().getWidth();
+        var rectangleHeight = rectangle.getPdRectangle().getHeight();
+
+        var boxFontSize = replacementFontSize;
+        float textWidth = (replacementFont.getStringWidth(replacementText) / 1000.0f) * boxFontSize;
+        while (textWidth > rectangleWidth) {
+            boxFontSize -= 1;
+            textWidth = (replacementFont.getStringWidth(replacementText) / 1000.0f) * boxFontSize;
+        }
+
+        // Y position is actually based on the font's "baseline", so we use the descent
+        // (how far the font goes under the baseline) for the height calculation
+        var textDescent = (replacementFont.getFontDescriptor().getDescent() / 1000.0f) * boxFontSize;
+
+        var textXLocation = (rectangle.getPdRectangle().getLowerLeftX() +
+                ((rectangleWidth / 2.0f) - (textWidth / 2.0f)));
+
+        var textYLocation = (rectangle.getPdRectangle().getLowerLeftY() +
+                ((rectangleHeight / 2.0f) + (textDescent / 2.0f)));
+
+        textContentStream.beginText();
+        textContentStream.setNonStrokingColor(replacementFontColor);
+        textContentStream.setFont(replacementFont, boxFontSize);
+        textContentStream.newLineAtOffset(textXLocation, textYLocation);
+        textContentStream.showText(replacementText);
+        textContentStream.endText();
     }
 
     @Override
