@@ -89,34 +89,42 @@ public class FuzzyDictionaryFilter extends DictionaryFilter implements Serializa
 
                 // Exact matches.
                 if (matcher.find()) {
+
                     final int startPosition = matcher.start();
                     spans.add(createSpan(input, startPosition, startPosition + entry.length(), 1.0, context, documentId, entry, policy, attributes));
+
                 } else {
 
-                    // Fuzzy matches.
-                    final int spacesInEntry = StringUtils.countMatches(entry, " ");
+                    // Only when the sensitivity level is not "off".
+                    if(sensitivityLevel != SensitivityLevel.OFF) {
 
-                    for(final Position position : ngrams.get(spacesInEntry).keySet()) {
+                        // Fuzzy matches.
+                        final int spacesInEntry = StringUtils.countMatches(entry, " ");
 
-                    // Compare string distance between word and ngrams.
-                    final String ngram = ngrams.get(spacesInEntry).get(position);
+                        for (final Position position : ngrams.get(spacesInEntry).keySet()) {
 
-                        if(ngram.length() > 2) {
+                            // Compare string distance between word and ngrams.
+                            final String ngram = ngrams.get(spacesInEntry).get(position);
 
-                            if (requireCapitalization && Character.isUpperCase(ngram.charAt(0))) {
+                            if (ngram.length() > 2) {
 
-                                final int start = position.getStart();
-                                final int end = position.getEnd();
+                                if (requireCapitalization && Character.isUpperCase(ngram.charAt(0))) {
 
-                                final LevenshteinDistance levenshteinDistance = LevenshteinDistance.getDefaultInstance();
-                                final int distance = levenshteinDistance.apply(entry, ngram);
+                                    final int start = position.getStart();
+                                    final int end = position.getEnd();
 
-                                if (sensitivityLevel == SensitivityLevel.HIGH && distance < 1) {
-                                    spans.add(createSpan(input, start, end, 0.9, context, documentId, entry, policy, attributes));
-                                } else if (sensitivityLevel == SensitivityLevel.MEDIUM && distance <= 2) {
-                                    spans.add(createSpan(input, start, end, 0.7, context, documentId, entry, policy, attributes));
-                                } else if (sensitivityLevel == SensitivityLevel.LOW && distance < 3) {
-                                    spans.add(createSpan(input, start, end, 0.5, context, documentId, entry, policy, attributes));
+                                    // TODO: Should this be customizable in the dictionary's properties in the filter policy?
+                                    final LevenshteinDistance levenshteinDistance = LevenshteinDistance.getDefaultInstance();
+                                    final int distance = levenshteinDistance.apply(entry, ngram);
+
+                                    if (sensitivityLevel == SensitivityLevel.HIGH && distance < 1) {
+                                        spans.add(createSpan(input, start, end, 0.9, context, documentId, entry, policy, attributes));
+                                    } else if (sensitivityLevel == SensitivityLevel.MEDIUM && distance <= 2) {
+                                        spans.add(createSpan(input, start, end, 0.7, context, documentId, entry, policy, attributes));
+                                    } else if (sensitivityLevel == SensitivityLevel.LOW && distance < 3) {
+                                        spans.add(createSpan(input, start, end, 0.5, context, documentId, entry, policy, attributes));
+                                    }
+
                                 }
 
                             }

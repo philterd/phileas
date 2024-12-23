@@ -801,7 +801,7 @@ public class FilterPolicyLoader {
                         final boolean capitalized = customDictionary.isCapitalized();
                         LOGGER.info("Custom dictionary contains {} terms.", terms.size());
 
-                        if(!SensitivityLevel.OFF.getName().equalsIgnoreCase(customDictionary.getSensitivity())) {
+                        if(customDictionary.isFuzzy()) {
 
                             final SensitivityLevel sensitivityLevel = SensitivityLevel.fromName(customDictionary.getSensitivity());
                             enabledFilters.add(new FuzzyDictionaryFilter(FilterType.CUSTOM_DICTIONARY, filterConfiguration, sensitivityLevel, terms, capitalized));

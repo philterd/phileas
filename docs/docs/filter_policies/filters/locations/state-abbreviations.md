@@ -15,6 +15,7 @@ This filter has no required parameters.
 | `stateAbbreviationsFilterStrategies` | A list of filter strategies.                                   | None          |
 | `enabled`                            | When set to false, the filter will be disabled and not applied | `true`        |
 | `ignored`                            | A list of terms to be ignored by the filter.                   | None          |
+| `capitalized`            | Whether or not the first letter of the term must be capitalized to be redacted.                                                       | `false`        |
 
 ### Filter Strategies
 

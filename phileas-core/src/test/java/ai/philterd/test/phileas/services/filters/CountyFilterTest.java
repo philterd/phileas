@@ -100,4 +100,46 @@ public class CountyFilterTest extends AbstractFilterTest {
 
     }
 
+    @Test
+    public void filterCountiesOffWithExactMatch() throws Exception {
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(new CountyFilterStrategy()))
+                .withAlertService(alertService)
+                .withAnonymizationService(new CountyAnonymizationService(new LocalAnonymizationCacheService()))
+                .withWindowSize(windowSize)
+                .build();
+
+        final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.LOCATION_COUNTY, filterConfiguration, SensitivityLevel.OFF, true);
+
+        FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "Lived in Fayette", attributes);
+
+        showSpans(filterResult.getSpans());
+
+        Assertions.assertEquals(1, filterResult.getSpans().size());
+        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 9, 16, FilterType.LOCATION_COUNTY));
+        Assertions.assertEquals("Fayette", filterResult.getSpans().get(0).getText());
+
+    }
+
+    @Test
+    public void filterCountiesOffNoExactMatch() throws Exception {
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(new CountyFilterStrategy()))
+                .withAlertService(alertService)
+                .withAnonymizationService(new CountyAnonymizationService(new LocalAnonymizationCacheService()))
+                .withWindowSize(windowSize)
+                .build();
+
+        final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.LOCATION_COUNTY, filterConfiguration, SensitivityLevel.OFF, true);
+
+        FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "Lived in Fyette", attributes);
+
+        showSpans(filterResult.getSpans());
+
+        Assertions.assertEquals(0, filterResult.getSpans().size());
+
+    }
+
 }
