@@ -88,7 +88,7 @@ public class BloomFilterDictionaryFilter extends DictionaryFilter {
 
         // Get ngrams from max to size 1.
         for(int i = 1; i <= maxNgramSize; i++) {
-            ngrams.putAll(getNgrams(text, i));
+            ngrams.putAll(getNgramsOfLength(text, i));
         }
 
         for(final Position position : ngrams.keySet()) {

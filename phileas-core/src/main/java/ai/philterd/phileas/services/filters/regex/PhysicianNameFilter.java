@@ -67,8 +67,7 @@ public class PhysicianNameFilter extends RegexFilter {
 
         final List<Span> spans = new LinkedList<>();
 
-        // TODO: Get ngrams from max to size 1.
-        final  Map<Position, String> ngrams = getNgrams(input, 1);
+        final Map<Position, String> ngrams = getNgramsUpToLength(input, 5);
 
         for(final String candidate : ngrams.values()) {
 
@@ -111,7 +110,7 @@ public class PhysicianNameFilter extends RegexFilter {
 
         }
 
-        return Double.valueOf(count) / Double.valueOf(text.length());
+        return (double) count / (double) text.length();
 
     }
 

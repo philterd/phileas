@@ -222,7 +222,31 @@ public abstract class RulesFilter extends Filter {
 
     }
 
-    public Map<Position, String> getNgrams(String text, int n) {
+    /**
+     * Get n-grams from text up to a given length.
+     * @param text The text from which to extract n-grams.
+     * @param length The max length of n-grams to extract.
+     * @return N-grams as a map of {@link Position} to the n-gram itself.
+     */
+    public Map<Position, String> getNgramsUpToLength(String text, int length) {
+
+        final Map<Position, String> ngrams = new HashMap<>();
+
+        for(int n = 1; n <= length; n++) {
+            ngrams.putAll(getNgramsOfLength(text, n));
+        }
+
+        return ngrams;
+
+    }
+
+    /**
+     * Get n-grams from text having a given length.
+     * @param text The text from which to extract n-grams.
+     * @param length The length of n-grams to extract.
+     * @return N-grams as a map of {@link Position} to the n-gram itself.
+     */
+    public Map<Position, String> getNgramsOfLength(String text, int length) {
 
         final String delimiter = " ";
 
@@ -230,15 +254,15 @@ public abstract class RulesFilter extends Filter {
         final String[] words = text.split(delimiter);
         int lastLocation = 0;
 
-        for (int i = 0; i <= words.length - n; i++) {
+        for (int i = 0; i <= words.length - length; i++) {
 
             final StringBuilder ngram = new StringBuilder();
 
-            for (int j = 0; j < n; j++) {
+            for (int j = 0; j < length; j++) {
 
                 ngram.append(words[i + j]);
 
-                if (j < n - 1) {
+                if (j < length - 1) {
                     ngram.append(" ");
                 }
 

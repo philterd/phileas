@@ -66,7 +66,7 @@ public class FuzzyDictionaryFilter extends DictionaryFilter implements Serializa
             }
 
             for(int x = 1; x < maxNgrams; x++) {
-                ngrams.put(x, getNgrams(input, x));
+                ngrams.put(x, getNgramsOfLength(input, x));
             }
 
             for(final String entry : dictionary.keySet()) {
