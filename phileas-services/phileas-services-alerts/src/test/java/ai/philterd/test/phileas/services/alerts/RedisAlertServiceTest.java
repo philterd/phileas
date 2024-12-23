@@ -98,7 +98,7 @@ public class RedisAlertServiceTest {
     public void before() throws IOException {
 
         if(!isExternalRedis) {
-            redisServer = RedisServer.builder().setting("bind 127.0.0.1").port(31000).build();
+            redisServer = new RedisServer(31000);
             redisServer.start();
         } else {
             // Clear alerts from the cache.
