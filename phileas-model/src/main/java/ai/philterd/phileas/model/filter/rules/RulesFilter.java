@@ -232,7 +232,7 @@ public abstract class RulesFilter extends Filter {
 
         final Map<Position, String> ngrams = new HashMap<>();
 
-        for(int n = 1; n <= length; n++) {
+        for(int n = length; n > 0; n--) {
             ngrams.putAll(getNgramsOfLength(text, n));
         }
 
