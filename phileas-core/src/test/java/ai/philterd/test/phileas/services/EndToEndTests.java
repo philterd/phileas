@@ -647,7 +647,7 @@ public class EndToEndTests {
     }
 
     @Test
-    public void endToEndUsingCustomDictionaryFileFuzzyDictinonaryFilter() throws Exception {
+    public void endToEndUsingCustomDictionaryFileFuzzyDictionaryFilter() throws Exception {
 
         final Path temp = Files.createTempDirectory("philter");
 

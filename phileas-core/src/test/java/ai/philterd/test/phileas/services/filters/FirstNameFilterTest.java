@@ -48,7 +48,7 @@ public class FirstNameFilterTest extends AbstractFilterTest {
                 .withWindowSize(windowSize)
                 .build();
 
-        final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.FIRST_NAME, filterConfiguration, SensitivityLevel.LOW);
+        final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.FIRST_NAME, filterConfiguration, SensitivityLevel.LOW, true);
 
         final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE,"John", attributes);
         showSpans(filterResult.getSpans());
@@ -66,7 +66,7 @@ public class FirstNameFilterTest extends AbstractFilterTest {
                 .withWindowSize(windowSize)
                 .build();
 
-        final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.FIRST_NAME, filterConfiguration, SensitivityLevel.MEDIUM);
+        final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.FIRST_NAME, filterConfiguration, SensitivityLevel.MEDIUM, true);
 
         final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "Michel had eye cancer", attributes);
         showSpans(filterResult.getSpans());
@@ -84,7 +84,7 @@ public class FirstNameFilterTest extends AbstractFilterTest {
                 .withWindowSize(windowSize)
                 .build();
 
-        final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.FIRST_NAME, filterConfiguration, SensitivityLevel.LOW);
+        final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.FIRST_NAME, filterConfiguration, SensitivityLevel.LOW, true);
 
         final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "Jennifer had eye cancer", attributes);
         showSpans(filterResult.getSpans());
@@ -102,7 +102,7 @@ public class FirstNameFilterTest extends AbstractFilterTest {
                 .withWindowSize(windowSize)
                 .build();
 
-        final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.FIRST_NAME, filterConfiguration, SensitivityLevel.HIGH);
+        final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.FIRST_NAME, filterConfiguration, SensitivityLevel.HIGH, true);
 
         final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "Sandra in Washington", attributes);
         showSpans(filterResult.getSpans());
@@ -120,7 +120,7 @@ public class FirstNameFilterTest extends AbstractFilterTest {
                 .withWindowSize(windowSize)
                 .build();
 
-        final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.FIRST_NAME, filterConfiguration, SensitivityLevel.MEDIUM);
+        final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.FIRST_NAME, filterConfiguration, SensitivityLevel.MEDIUM, true);
 
         final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "Melissa", attributes);
 
@@ -139,7 +139,7 @@ public class FirstNameFilterTest extends AbstractFilterTest {
                 .withWindowSize(windowSize)
                 .build();
 
-        final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.FIRST_NAME, filterConfiguration, SensitivityLevel.LOW);
+        final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.FIRST_NAME, filterConfiguration, SensitivityLevel.LOW, true);
 
         final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE,"thomas", attributes);
         showSpans(filterResult.getSpans());
@@ -157,7 +157,7 @@ public class FirstNameFilterTest extends AbstractFilterTest {
                 .withWindowSize(windowSize)
                 .build();
 
-        final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.FIRST_NAME, filterConfiguration, SensitivityLevel.LOW);
+        final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.FIRST_NAME, filterConfiguration, SensitivityLevel.LOW, true);
 
         final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE,"dat", attributes);
         showSpans(filterResult.getSpans());
@@ -175,7 +175,7 @@ public class FirstNameFilterTest extends AbstractFilterTest {
                 .withWindowSize(windowSize)
                 .build();
 
-        final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.FIRST_NAME, filterConfiguration, SensitivityLevel.LOW);
+        final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.FIRST_NAME, filterConfiguration, SensitivityLevel.LOW, true);
 
         final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE,"joie", attributes);
         showSpans(filterResult.getSpans());
@@ -193,7 +193,7 @@ public class FirstNameFilterTest extends AbstractFilterTest {
                 .withWindowSize(windowSize)
                 .build();
 
-        final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.FIRST_NAME, filterConfiguration, SensitivityLevel.LOW);
+        final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.FIRST_NAME, filterConfiguration, SensitivityLevel.LOW, true);
 
         final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE,"John", attributes);
         showSpans(filterResult.getSpans());
@@ -211,7 +211,7 @@ public class FirstNameFilterTest extends AbstractFilterTest {
                 .withWindowSize(windowSize)
                 .build();
 
-        final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.FIRST_NAME, filterConfiguration, SensitivityLevel.LOW);
+        final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.FIRST_NAME, filterConfiguration, SensitivityLevel.LOW, true);
 
         final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE,"Smith,Melissa A,MD", attributes);
         showSpans(filterResult.getSpans());

@@ -1,3 +1,18 @@
+/*
+ *     Copyright 2024 Philterd, LLC @ https://www.philterd.ai
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *          http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package ai.philterd.phileas.model.filter.rules.dictionary;
 
 import ai.philterd.phileas.model.enums.FilterType;
@@ -28,22 +43,29 @@ public class FuzzyDictionaryFilter extends DictionaryFilter implements Serializa
 
     private final SensitivityLevel sensitivityLevel;
     private final Map<String, Pattern> dictionary;
-    private final boolean requireCapitalization = true;
+    private final int maxNgrams;
+    private final boolean requireCapitalization;
 
     public FuzzyDictionaryFilter(final FilterType filterType, final FilterConfiguration filterConfiguration,
-                                 final SensitivityLevel sensitivityLevel) throws IOException {
+                                 final SensitivityLevel sensitivityLevel, final boolean requireCapitalization) throws IOException {
         super(filterType, filterConfiguration);
 
         this.sensitivityLevel = sensitivityLevel;
         this.dictionary = loadData(filterType);
+        this.maxNgrams = getMaxNgrams();
+        this.requireCapitalization = requireCapitalization;
+
     }
 
     public FuzzyDictionaryFilter(final FilterType filterType, final FilterConfiguration filterConfiguration,
-                                 final SensitivityLevel sensitivityLevel, final Set<String> terms) throws IOException {
+                                 final SensitivityLevel sensitivityLevel, final Set<String> terms, final boolean requireCapitalization) {
         super(filterType, filterConfiguration);
 
         this.sensitivityLevel = sensitivityLevel;
         this.dictionary = loadData(terms);
+        this.maxNgrams = getMaxNgrams();
+        this.requireCapitalization = requireCapitalization;
+
     }
 
     @Override
@@ -56,14 +78,6 @@ public class FuzzyDictionaryFilter extends DictionaryFilter implements Serializa
             // Build ngrams from the input text.
             final Map<Integer, Map<Position, String>> ngrams = new HashMap<>();
             ngrams.put(0, splitWithIndexes(input, " "));
-
-            final int maxNgrams;
-
-            if(filterType == FilterType.HOSPITAL) {
-                maxNgrams = 20;
-            } else {
-                maxNgrams = 5;
-            }
 
             for(int x = 1; x < maxNgrams; x++) {
                 ngrams.put(x, getNgramsOfLength(input, x));
@@ -98,12 +112,11 @@ public class FuzzyDictionaryFilter extends DictionaryFilter implements Serializa
                                 final int distance = levenshteinDistance.apply(entry, ngram);
 
                                 if (sensitivityLevel == SensitivityLevel.HIGH && distance < 1) {
-                                    spans.add(createSpan(input, start, end, 1.0, context, documentId, entry, policy, attributes));
+                                    spans.add(createSpan(input, start, end, 0.9, context, documentId, entry, policy, attributes));
                                 } else if (sensitivityLevel == SensitivityLevel.MEDIUM && distance <= 2) {
-                                    spans.add(createSpan(input, start, end, 1.0, context, documentId, entry, policy, attributes));
-                                    //LOGGER.info("{}, {}, {}", entry, ngram, distance);
+                                    spans.add(createSpan(input, start, end, 0.7, context, documentId, entry, policy, attributes));
                                 } else if (sensitivityLevel == SensitivityLevel.LOW && distance < 3) {
-                                    spans.add(createSpan(input, start, end, 1.0, context, documentId, entry, policy, attributes));
+                                    spans.add(createSpan(input, start, end, 0.5, context, documentId, entry, policy, attributes));
                                 }
 
                             }
@@ -136,6 +149,30 @@ public class FuzzyDictionaryFilter extends DictionaryFilter implements Serializa
         return Span.make(characterStart, characterEnd, getFilterType(), context,
                 documentId, confidence, token, replacement.getReplacement(),
                 replacement.getSalt(), ignored, replacement.isApplied(), window);
+
+    }
+
+    private int getMaxNgrams() {
+
+        // Get the max number of n-grams to break the text up into based on the
+        // max number of spaces in any individual entry in the dictionary, up to
+        // a max of 20.
+        // TODO: Externalize the limit of 20.
+
+        int maxNgrams = 0;
+
+        for(final String key : dictionary.keySet()) {
+            final int n = key.split(" ").length;
+            if(n > maxNgrams) {
+                maxNgrams = n;
+            }
+
+            if(n >= 20) {
+                break;
+            }
+        }
+
+        return maxNgrams;
 
     }
 

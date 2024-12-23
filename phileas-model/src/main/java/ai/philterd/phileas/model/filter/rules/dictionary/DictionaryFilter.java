@@ -24,12 +24,9 @@ import ai.philterd.phileas.model.filter.rules.RulesFilter;
  */
 public abstract class DictionaryFilter extends RulesFilter {
 
-    // Lucene requires a min size of 2 for the ShingleFilter.
-    protected int maxNgramSize = 2;
-
     /**
      * Creates a new dictionary-based filter.
-     * @param filterType
+     * @param filterType The {@link FilterType type} of the filter.
      * @param filterConfiguration The {@link FilterConfiguration} for the filter.
      */
     public DictionaryFilter(FilterType filterType, FilterConfiguration filterConfiguration) {

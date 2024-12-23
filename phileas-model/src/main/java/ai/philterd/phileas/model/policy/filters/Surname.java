@@ -56,4 +56,12 @@ public class Surname extends AbstractFilter {
         this.sensitivity = sensitivity;
     }
 
+    public boolean isCapitalized() {
+        return capitalized;
+    }
+
+    public void setCapitalized(boolean capitalized) {
+        this.capitalized = capitalized;
+    }
+
 }

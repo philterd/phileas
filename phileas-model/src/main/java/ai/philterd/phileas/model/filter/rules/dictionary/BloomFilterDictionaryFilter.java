@@ -26,7 +26,6 @@ import ai.philterd.phileas.model.utils.BloomFilter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -42,13 +41,14 @@ public class BloomFilterDictionaryFilter extends DictionaryFilter {
 
     private final BloomFilter<String> bloomFilter;
     private final Set<String> lowerCaseTerms;
+    private int maxNgramSize = 0;
 
     /**
      * Creates a new bloom filter-based filter.
-     * @param filterType
+     * @param filterType The {@link FilterType type} of the filter.
      * @param filterConfiguration The {@link FilterConfiguration} for the filter.
-     * @param terms
-     * @param classification
+     * @param terms A set of terms that will be in the dictionary.
+     * @param classification A classification label for the type of information.
      */
     public BloomFilterDictionaryFilter(FilterType filterType,
                                        FilterConfiguration filterConfiguration,
@@ -61,8 +61,7 @@ public class BloomFilterDictionaryFilter extends DictionaryFilter {
         this.bloomFilter = new BloomFilter<>(terms.size());
         this.classification = classification;
 
-        // Find the max n-gram size. It is equal to the maximum
-        // number of spaces in any single dictionary entry.
+        // Find the max n-gram size. It is equal to the maximum number of spaces in any single dictionary entry.
         for(final String term : terms) {
             final String[] split = term.split("\\s");
             if(split.length > maxNgramSize) {
@@ -84,12 +83,7 @@ public class BloomFilterDictionaryFilter extends DictionaryFilter {
 
         final List<Span> spans = new LinkedList<>();
 
-        final Map<Position, String> ngrams = new HashMap<>();
-
-        // Get ngrams from max to size 1.
-        for(int i = 1; i <= maxNgramSize; i++) {
-            ngrams.putAll(getNgramsOfLength(text, i));
-        }
+        final Map<Position, String> ngrams = getNgramsUpToLength(text, maxNgramSize);
 
         for(final Position position : ngrams.keySet()) {
 

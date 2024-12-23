@@ -40,6 +40,10 @@ public class CustomDictionary extends AbstractFilter {
     @Expose
     private String sensitivity = SensitivityLevel.OFF.getName();
 
+    @SerializedName("capitalized")
+    @Expose
+    private boolean capitalized = false;
+
     @SerializedName("customFilterStrategies")
     @Expose
     private List<CustomDictionaryFilterStrategy> customDictionaryFilterStrategies;
@@ -83,4 +87,13 @@ public class CustomDictionary extends AbstractFilter {
     public void setSensitivity(String sensitivity) {
         this.sensitivity = sensitivity;
     }
+
+    public boolean isCapitalized() {
+        return capitalized;
+    }
+
+    public void setCapitalized(boolean capitalized) {
+        this.capitalized = capitalized;
+    }
+
 }
