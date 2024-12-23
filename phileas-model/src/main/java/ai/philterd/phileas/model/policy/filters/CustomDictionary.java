@@ -15,6 +15,7 @@
  */
 package ai.philterd.phileas.model.policy.filters;
 
+import ai.philterd.phileas.model.enums.SensitivityLevel;
 import ai.philterd.phileas.model.policy.filters.strategies.custom.CustomDictionaryFilterStrategy;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
@@ -34,6 +35,10 @@ public class CustomDictionary extends AbstractFilter {
     @SerializedName("files")
     @Expose
     private List<String> files;
+
+    @SerializedName("sensitivity")
+    @Expose
+    private String sensitivity = SensitivityLevel.OFF.getName();
 
     @SerializedName("customFilterStrategies")
     @Expose
@@ -71,4 +76,11 @@ public class CustomDictionary extends AbstractFilter {
         this.classification = classification;
     }
 
+    public String getSensitivity() {
+        return sensitivity;
+    }
+
+    public void setSensitivity(String sensitivity) {
+        this.sensitivity = sensitivity;
+    }
 }

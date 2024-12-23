@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -35,6 +36,14 @@ public class FuzzyDictionaryFilter extends DictionaryFilter implements Serializa
 
         this.sensitivityLevel = sensitivityLevel;
         this.dictionary = loadData(filterType);
+    }
+
+    public FuzzyDictionaryFilter(final FilterType filterType, final FilterConfiguration filterConfiguration,
+                                 final SensitivityLevel sensitivityLevel, final Set<String> terms) throws IOException {
+        super(filterType, filterConfiguration);
+
+        this.sensitivityLevel = sensitivityLevel;
+        this.dictionary = loadData(terms);
     }
 
     @Override
@@ -130,9 +139,22 @@ public class FuzzyDictionaryFilter extends DictionaryFilter implements Serializa
 
     }
 
+    private Map<String, Pattern> loadData(final Set<String> terms) {
+
+        final Map<String, Pattern> dictionary = new HashMap<>();
+
+        for(final String term : terms) {
+                final Pattern pattern = Pattern.compile("\\b" + term + "\\b", Pattern.CASE_INSENSITIVE);
+            dictionary.put(term, pattern);
+        }
+
+        return dictionary;
+
+    }
+
     private Map<String, Pattern> loadData(final FilterType filterType) throws IOException {
 
-        final Map<String, Pattern> lines = new HashMap<>();
+        final Map<String, Pattern> dictionary = new HashMap<>();
 
         final String fileName;
 
@@ -161,12 +183,12 @@ public class FuzzyDictionaryFilter extends DictionaryFilter implements Serializa
             while ((line = reader.readLine()) != null) {
 
                 final Pattern pattern = Pattern.compile("\\b" + line + "\\b", Pattern.CASE_INSENSITIVE);
-                lines.put(line, pattern);
+                dictionary.put(line, pattern);
 
             }
         }
 
-        return lines;
+        return dictionary;
 
     }
 

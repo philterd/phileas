@@ -794,32 +794,26 @@ public class FilterPolicyLoader {
                             .withWindowSize(phileasConfiguration.spanWindowSize())
                             .build();
 
-                    if(customDictionary.isFuzzy()) {
-
-                    // Only enable the filter if there is at least one term.
-                    // TODO: #112 Don't use a bloom filter for a small number of terms.
+                    // Only enable the filter if there is at least one term present.
                     if(!terms.isEmpty()) {
 
-                        final SensitivityLevel sensitivityLevel = SensitivityLevel.fromName(customDictionary.getSensitivity());
                         final String classification = customDictionary.getClassification();
-
-                        enabledFilters.add(new LuceneDictionaryFilter(FilterType.CUSTOM_DICTIONARY, filterConfiguration, sensitivityLevel,
-                                terms, capitalized, classification, index));
-
-                    } else {
-
                         LOGGER.info("Custom dictionary contains {} terms.", terms.size());
 
-                        // Only enable the filter if there is at least one term.
-                        // TODO: #112 Don't use a bloom filter for a small number of terms.
-                        if(!terms.isEmpty()) {
+                        if(!SensitivityLevel.OFF.getName().equalsIgnoreCase(customDictionary.getSensitivity())) {
 
-                            final String classification = customDictionary.getClassification();
+                            final SensitivityLevel sensitivityLevel = SensitivityLevel.fromName(customDictionary.getSensitivity());
+                            enabledFilters.add(new FuzzyDictionaryFilter(FilterType.CUSTOM_DICTIONARY, filterConfiguration, sensitivityLevel, terms));
 
+                        } else {
+
+                            // Use a bloom filter when the dictionary is not fuzzy.
                             enabledFilters.add(new BloomFilterDictionaryFilter(FilterType.CUSTOM_DICTIONARY, filterConfiguration, terms, classification));
 
                         }
 
+                    } else {
+                        LOGGER.warn("Custom dictionary contains no terms and will not be enabled.");
                     }
 
                 }
