@@ -20,8 +20,6 @@ package ai.philterd.phileas.model.enums;
  */
 public enum FilterType {
 
-    // TODO: Are Lucene dictionaries "deterministic"? Yes, if no fuzziness.
-
     AGE("age", true),
     BANK_ROUTING_NUMBER("bank-routing-number", true),
     BITCOIN_ADDRESS("bitcoin-address", true),

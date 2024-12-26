@@ -18,17 +18,15 @@ package ai.philterd.test.phileas.services.filters;
 import ai.philterd.phileas.model.enums.FilterType;
 import ai.philterd.phileas.model.enums.SensitivityLevel;
 import ai.philterd.phileas.model.filter.FilterConfiguration;
-import ai.philterd.phileas.model.filter.rules.dictionary.LuceneDictionaryFilter;
+import ai.philterd.phileas.model.filter.rules.dictionary.FuzzyDictionaryFilter;
 import ai.philterd.phileas.model.objects.FilterResult;
 import ai.philterd.phileas.model.policy.filters.strategies.dynamic.CountyFilterStrategy;
 import ai.philterd.phileas.model.services.AlertService;
-import ai.philterd.phileas.model.services.AnonymizationService;
 import ai.philterd.phileas.services.anonymization.CountyAnonymizationService;
 import ai.philterd.phileas.services.anonymization.cache.LocalAnonymizationCacheService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
@@ -38,14 +36,7 @@ public class CountyFilterTest extends AbstractFilterTest {
 
     private static final Logger LOGGER = LogManager.getLogger(CountyFilterTest.class);
 
-    private final String INDEX_DIRECTORY = getIndexDirectory("counties");
-
     private final AlertService alertService = Mockito.mock(AlertService.class);
-
-    @BeforeEach
-    public void before() {
-        LOGGER.info("Using index directory {}", INDEX_DIRECTORY);
-    }
 
     @Test
     public void filterCountiesLow() throws Exception {
@@ -57,13 +48,13 @@ public class CountyFilterTest extends AbstractFilterTest {
                 .withWindowSize(windowSize)
                 .build();
 
-        final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.LOCATION_COUNTY, filterConfiguration, INDEX_DIRECTORY, SensitivityLevel.LOW, false);
+        final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.LOCATION_COUNTY, filterConfiguration, SensitivityLevel.LOW, true);
 
         FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE,"Lived in Fyette", attributes);
 
         showSpans(filterResult.getSpans());
 
-        Assertions.assertEquals(0, filterResult.getSpans().size());
+        Assertions.assertEquals(3, filterResult.getSpans().size());
 
     }
 
@@ -77,21 +68,20 @@ public class CountyFilterTest extends AbstractFilterTest {
                 .withWindowSize(windowSize)
                 .build();
 
-        final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.LOCATION_COUNTY, filterConfiguration, INDEX_DIRECTORY, SensitivityLevel.MEDIUM, false);
+        final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.LOCATION_COUNTY, filterConfiguration, SensitivityLevel.MEDIUM, true);
 
-        FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "Lived in Fyette", attributes);
+        FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "He lived in Fyette", attributes);
 
         showSpans(filterResult.getSpans());
 
-        Assertions.assertEquals(1, filterResult.getSpans().size());
-        Assertions.assertEquals("fyette", filterResult.getSpans().get(0).getText());
+        Assertions.assertEquals(2, filterResult.getSpans().size());
+        Assertions.assertEquals("Payette", filterResult.getSpans().get(0).getText());
+        Assertions.assertEquals("Fayette", filterResult.getSpans().get(1).getText());
 
     }
 
     @Test
     public void filterCountiesHigh() throws Exception {
-
-        AnonymizationService anonymizationService = new CountyAnonymizationService(new LocalAnonymizationCacheService());
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new CountyFilterStrategy()))
@@ -100,13 +90,55 @@ public class CountyFilterTest extends AbstractFilterTest {
                 .withWindowSize(windowSize)
                 .build();
 
-        final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.LOCATION_COUNTY, filterConfiguration, INDEX_DIRECTORY, SensitivityLevel.HIGH, false);
+        final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.LOCATION_COUNTY, filterConfiguration, SensitivityLevel.HIGH, true);
 
         FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "Lived in Fyette", attributes);
 
         showSpans(filterResult.getSpans());
 
-        Assertions.assertEquals(3, filterResult.getSpans().size());
+        Assertions.assertEquals(0, filterResult.getSpans().size());
+
+    }
+
+    @Test
+    public void filterCountiesOffWithExactMatch() throws Exception {
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(new CountyFilterStrategy()))
+                .withAlertService(alertService)
+                .withAnonymizationService(new CountyAnonymizationService(new LocalAnonymizationCacheService()))
+                .withWindowSize(windowSize)
+                .build();
+
+        final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.LOCATION_COUNTY, filterConfiguration, SensitivityLevel.OFF, true);
+
+        FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "Lived in Fayette", attributes);
+
+        showSpans(filterResult.getSpans());
+
+        Assertions.assertEquals(1, filterResult.getSpans().size());
+        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 9, 16, FilterType.LOCATION_COUNTY));
+        Assertions.assertEquals("Fayette", filterResult.getSpans().get(0).getText());
+
+    }
+
+    @Test
+    public void filterCountiesOffNoExactMatch() throws Exception {
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(new CountyFilterStrategy()))
+                .withAlertService(alertService)
+                .withAnonymizationService(new CountyAnonymizationService(new LocalAnonymizationCacheService()))
+                .withWindowSize(windowSize)
+                .build();
+
+        final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.LOCATION_COUNTY, filterConfiguration, SensitivityLevel.OFF, true);
+
+        FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "Lived in Fyette", attributes);
+
+        showSpans(filterResult.getSpans());
+
+        Assertions.assertEquals(0, filterResult.getSpans().size());
 
     }
 

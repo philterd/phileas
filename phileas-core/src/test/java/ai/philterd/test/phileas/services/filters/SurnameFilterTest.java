@@ -18,7 +18,7 @@ package ai.philterd.test.phileas.services.filters;
 import ai.philterd.phileas.model.enums.FilterType;
 import ai.philterd.phileas.model.enums.SensitivityLevel;
 import ai.philterd.phileas.model.filter.FilterConfiguration;
-import ai.philterd.phileas.model.filter.rules.dictionary.LuceneDictionaryFilter;
+import ai.philterd.phileas.model.filter.rules.dictionary.FuzzyDictionaryFilter;
 import ai.philterd.phileas.model.objects.FilterResult;
 import ai.philterd.phileas.model.policy.filters.strategies.dynamic.SurnameFilterStrategy;
 import ai.philterd.phileas.model.services.AlertService;
@@ -27,7 +27,6 @@ import ai.philterd.phileas.services.anonymization.cache.LocalAnonymizationCacheS
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
@@ -37,14 +36,7 @@ public class SurnameFilterTest extends AbstractFilterTest {
 
     private static final Logger LOGGER = LogManager.getLogger(SurnameFilterTest.class);
 
-    private final String INDEX_DIRECTORY = getIndexDirectory("surnames");
-
     private final AlertService alertService = Mockito.mock(AlertService.class);
-
-    @BeforeEach
-    public void before() {
-        LOGGER.info("Using index directory {}", INDEX_DIRECTORY);
-    }
 
     @Test
     public void filter1() throws Exception {
@@ -56,11 +48,11 @@ public class SurnameFilterTest extends AbstractFilterTest {
                 .withWindowSize(windowSize)
                 .build();
 
-        final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.SURNAME, filterConfiguration, INDEX_DIRECTORY, SensitivityLevel.LOW, false);
+        final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.SURNAME, filterConfiguration, SensitivityLevel.LOW, true);
 
         final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "Lived in Wshington", attributes);
         showSpans(filterResult.getSpans());
-        Assertions.assertEquals(0, filterResult.getSpans().size());
+        Assertions.assertEquals(44, filterResult.getSpans().size());
 
     }
 
@@ -74,11 +66,11 @@ public class SurnameFilterTest extends AbstractFilterTest {
                 .withWindowSize(windowSize)
                 .build();
 
-        final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.SURNAME, filterConfiguration, INDEX_DIRECTORY, SensitivityLevel.MEDIUM, false);
+        final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.SURNAME, filterConfiguration, SensitivityLevel.MEDIUM, true);
 
         final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "Lived in Wshington", attributes);
         showSpans(filterResult.getSpans());
-        Assertions.assertEquals(2, filterResult.getSpans().size());
+        Assertions.assertEquals(44, filterResult.getSpans().size());
 
     }
 
@@ -92,7 +84,7 @@ public class SurnameFilterTest extends AbstractFilterTest {
                 .withWindowSize(windowSize)
                 .build();
 
-        final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.SURNAME, filterConfiguration, INDEX_DIRECTORY, SensitivityLevel.HIGH, false);
+        final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.SURNAME, filterConfiguration, SensitivityLevel.HIGH, true);
 
         final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "Jones", attributes);
         showSpans(filterResult.getSpans());
@@ -110,11 +102,11 @@ public class SurnameFilterTest extends AbstractFilterTest {
                 .withWindowSize(windowSize)
                 .build();
 
-        final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.SURNAME, filterConfiguration, INDEX_DIRECTORY, SensitivityLevel.LOW, true);
+        final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.SURNAME, filterConfiguration, SensitivityLevel.LOW, true);
 
         final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "date", attributes);
         showSpans(filterResult.getSpans());
-        Assertions.assertEquals(0, filterResult.getSpans().size());
+        Assertions.assertEquals(1, filterResult.getSpans().size());
 
     }
 
@@ -128,11 +120,11 @@ public class SurnameFilterTest extends AbstractFilterTest {
                 .withWindowSize(windowSize)
                 .build();
 
-        final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.SURNAME, filterConfiguration, INDEX_DIRECTORY, SensitivityLevel.LOW, false);
+        final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.SURNAME, filterConfiguration, SensitivityLevel.LOW, true);
 
         final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "Jones", attributes);
         showSpans(filterResult.getSpans());
-        Assertions.assertEquals(1, filterResult.getSpans().size());
+        Assertions.assertEquals(349, filterResult.getSpans().size());
 
     }
 
@@ -146,11 +138,11 @@ public class SurnameFilterTest extends AbstractFilterTest {
                 .withWindowSize(windowSize)
                 .build();
 
-        final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.SURNAME, filterConfiguration, INDEX_DIRECTORY, SensitivityLevel.LOW, true);
+        final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.SURNAME, filterConfiguration, SensitivityLevel.LOW, true);
 
         final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "from", attributes);
         showSpans(filterResult.getSpans());
-        Assertions.assertEquals(0, filterResult.getSpans().size());
+        Assertions.assertEquals(1, filterResult.getSpans().size());
 
     }
 

@@ -16,11 +16,15 @@
 package ai.philterd.phileas.model.filter;
 
 import ai.philterd.phileas.model.enums.FilterType;
-import ai.philterd.phileas.model.objects.*;
+import ai.philterd.phileas.model.objects.FilterPattern;
+import ai.philterd.phileas.model.objects.FilterResult;
+import ai.philterd.phileas.model.objects.Position;
+import ai.philterd.phileas.model.objects.Replacement;
+import ai.philterd.phileas.model.objects.Span;
 import ai.philterd.phileas.model.policy.Crypto;
 import ai.philterd.phileas.model.policy.FPE;
-import ai.philterd.phileas.model.policy.Policy;
 import ai.philterd.phileas.model.policy.IgnoredPattern;
+import ai.philterd.phileas.model.policy.Policy;
 import ai.philterd.phileas.model.policy.filters.Identifier;
 import ai.philterd.phileas.model.policy.filters.strategies.AbstractFilterStrategy;
 import ai.philterd.phileas.model.services.AlertService;
@@ -34,7 +38,12 @@ import org.apache.logging.log4j.Logger;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.util.*;
+import java.util.HashMap;
+import java.util.LinkedHashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public abstract class Filter {
@@ -332,72 +341,19 @@ public abstract class Filter {
 
     }
 
-    public static List<? extends AbstractFilterStrategy> getFilterStrategies(final Policy policy,
-                                                                             final FilterType filterType,
-                                                                             final int index) {
+    public Map<Position, String> splitWithIndexes(String text, String delimiter) {
 
-        LOGGER.debug("Getting filter strategies for filter type {}", filterType.getType());
+        final Map<Position, String> splitsWithIndexes = new HashMap<>();
 
-        if(filterType == FilterType.AGE) {
-            return policy.getIdentifiers().getAge().getAgeFilterStrategies();
-        } else if(filterType == FilterType.BITCOIN_ADDRESS) {
-            return policy.getIdentifiers().getBitcoinAddress().getBitcoinFilterStrategies();
-        } else if(filterType == FilterType.CREDIT_CARD) {
-            return policy.getIdentifiers().getCreditCard().getCreditCardFilterStrategies();
-        } else if(filterType == FilterType.CUSTOM_DICTIONARY) {
-            // There can be multiple custom dictionaries in the policy.
-            // The index is used to determine which one is the appropriate one.
-            return policy.getIdentifiers().getCustomDictionaries().get(index).getCustomDictionaryFilterStrategies();
-        } else if(filterType == FilterType.DATE) {
-            return policy.getIdentifiers().getDate().getDateFilterStrategies();
-        } else if(filterType == FilterType.DRIVERS_LICENSE_NUMBER) {
-            return policy.getIdentifiers().getDriversLicense().getDriversLicenseFilterStrategies();
-        } else if(filterType == FilterType.EMAIL_ADDRESS) {
-            return policy.getIdentifiers().getEmailAddress().getEmailAddressFilterStrategies();
-        } else if(filterType == FilterType.IBAN_CODE) {
-            return policy.getIdentifiers().getIbanCode().getIbanCodeFilterStrategies();
-        } else if(filterType == FilterType.IP_ADDRESS) {
-            return policy.getIdentifiers().getIpAddress().getIpAddressFilterStrategies();
-        } else if(filterType == FilterType.PERSON) {
-            return policy.getIdentifiers().getPhEye().getPhEyeFilterStrategies();
-        } else if(filterType == FilterType.PASSPORT_NUMBER) {
-            return policy.getIdentifiers().getPassportNumber().getPassportNumberFilterStrategies();
-        } else if(filterType == FilterType.PHONE_NUMBER) {
-            return policy.getIdentifiers().getPhoneNumber().getPhoneNumberFilterStrategies();
-        } else if(filterType == FilterType.PHONE_NUMBER_EXTENSION) {
-            return policy.getIdentifiers().getPhoneNumberExtension().getPhoneNumberExtensionFilterStrategies();
-        } else if(filterType == FilterType.PHYSICIAN_NAME) {
-            return policy.getIdentifiers().getPhysicianName().getPhysicianNameFilterStrategies();
-        } else if(filterType == FilterType.SSN) {
-            return policy.getIdentifiers().getSsn().getSsnFilterStrategies();
-        } else if(filterType == FilterType.STATE_ABBREVIATION) {
-            return policy.getIdentifiers().getStateAbbreviation().getStateAbbreviationsFilterStrategies();
-        } else if(filterType == FilterType.STREET_ADDRESS) {
-            return policy.getIdentifiers().getStreetAddress().getStreetAddressFilterStrategies();
-        } else if(filterType == FilterType.URL) {
-            return policy.getIdentifiers().getUrl().getUrlFilterStrategies();
-        } else if(filterType == FilterType.VIN) {
-            return policy.getIdentifiers().getVin().getVinFilterStrategies();
-        } else if(filterType == FilterType.ZIP_CODE) {
-            return policy.getIdentifiers().getZipCode().getZipCodeFilterStrategies();
-        } else if(filterType == FilterType.LOCATION_CITY) {
-            return policy.getIdentifiers().getCity().getCityFilterStrategies();
-        }  else if(filterType == FilterType.LOCATION_COUNTY) {
-            return policy.getIdentifiers().getCounty().getCountyFilterStrategies();
-        } else if(filterType == FilterType.FIRST_NAME) {
-            return policy.getIdentifiers().getFirstName().getFirstNameFilterStrategies();
-        } else if(filterType == FilterType.HOSPITAL_ABBREVIATION) {
-            return policy.getIdentifiers().getHospitalAbbreviation().getHospitalAbbreviationFilterStrategies();
-        } else if(filterType == FilterType.HOSPITAL) {
-            return policy.getIdentifiers().getHospital().getHospitalFilterStrategies();
-        } else if(filterType == FilterType.LOCATION_STATE) {
-            return policy.getIdentifiers().getState().getStateFilterStrategies();
-        } else if(filterType == FilterType.SURNAME) {
-            return policy.getIdentifiers().getSurname().getSurnameFilterStrategies();
+        String[] tokens = text.split(delimiter);
+
+        int index = 0;
+        for (String token : tokens) {
+            splitsWithIndexes.put(new Position(index, index + token.length()), token);
+            index += token.length() + delimiter.length();
         }
 
-        // Should never happen.
-        return null;
+        return splitsWithIndexes;
 
     }
 

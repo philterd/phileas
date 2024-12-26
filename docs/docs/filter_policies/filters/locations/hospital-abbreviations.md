@@ -14,6 +14,7 @@ This filter has no required parameters.
 | -------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- | ------------- |
 | `hospitalAbbreviationFilterStrategies` | A list of filter strategies.                                                                                                          | None          |
 | `sensitivity`                          | Controls the "fuzziness" of allowed values to account for misspellings and derivations. Valid values are `low`, `medium`, and `high`. | `medium`      |
+| `capitalized`            | Whether or not the first letter of the term must be capitalized to be redacted.                                                       | `false`        |
 
 ### Filter Strategies
 

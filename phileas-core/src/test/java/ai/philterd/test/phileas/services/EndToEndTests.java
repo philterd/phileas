@@ -620,7 +620,6 @@ public class EndToEndTests {
         final CustomDictionary customDictionary = new CustomDictionary();
         customDictionary.setCustomDictionaryFilterStrategies(List.of(new CustomDictionaryFilterStrategy()));
         customDictionary.setTerms(List.of("george", "samuel"));
-        customDictionary.setFuzzy(false);
 
         final Policy policy = new Policy();
         policy.setName("custom-dictionary");
@@ -648,7 +647,7 @@ public class EndToEndTests {
     }
 
     @Test
-    public void endToEndUsingCustomDictionaryFileLuceneFilter() throws Exception {
+    public void endToEndUsingCustomDictionaryFileFuzzyDictionaryFilter() throws Exception {
 
         final Path temp = Files.createTempDirectory("philter");
 
@@ -662,8 +661,6 @@ public class EndToEndTests {
         customDictionary.setCustomDictionaryFilterStrategies(List.of(new CustomDictionaryFilterStrategy()));
         customDictionary.setClassification("names");
         customDictionary.setTerms(List.of("george"));
-        customDictionary.setFuzzy(false);
-        customDictionary.setSensitivity("low");
 
         final Policy policy = new Policy();
         policy.setName("custom-dictionary");
@@ -703,7 +700,6 @@ public class EndToEndTests {
         customDictionary.setFiles(List.of(termsFile.getAbsolutePath()));
         customDictionary.setCustomDictionaryFilterStrategies(List.of(new CustomDictionaryFilterStrategy()));
         customDictionary.setClassification("names");
-        customDictionary.setFuzzy(false);
 
         final Policy policy = new Policy();
         policy.setName("custom-dictionary-bloom");

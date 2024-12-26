@@ -18,13 +18,72 @@ package ai.philterd.test.phileas.services.filters;
 import ai.philterd.phileas.model.enums.FilterType;
 import ai.philterd.phileas.model.enums.SensitivityLevel;
 import ai.philterd.phileas.model.objects.Span;
-import ai.philterd.phileas.model.policy.Policy;
 import ai.philterd.phileas.model.policy.Identifiers;
-import ai.philterd.phileas.model.policy.filters.*;
+import ai.philterd.phileas.model.policy.Policy;
+import ai.philterd.phileas.model.policy.filters.Age;
+import ai.philterd.phileas.model.policy.filters.BankRoutingNumber;
+import ai.philterd.phileas.model.policy.filters.BitcoinAddress;
+import ai.philterd.phileas.model.policy.filters.City;
+import ai.philterd.phileas.model.policy.filters.County;
+import ai.philterd.phileas.model.policy.filters.CreditCard;
+import ai.philterd.phileas.model.policy.filters.Currency;
+import ai.philterd.phileas.model.policy.filters.CustomDictionary;
+import ai.philterd.phileas.model.policy.filters.Date;
+import ai.philterd.phileas.model.policy.filters.DriversLicense;
+import ai.philterd.phileas.model.policy.filters.EmailAddress;
+import ai.philterd.phileas.model.policy.filters.FirstName;
+import ai.philterd.phileas.model.policy.filters.Hospital;
+import ai.philterd.phileas.model.policy.filters.HospitalAbbreviation;
+import ai.philterd.phileas.model.policy.filters.IbanCode;
+import ai.philterd.phileas.model.policy.filters.Identifier;
+import ai.philterd.phileas.model.policy.filters.IpAddress;
+import ai.philterd.phileas.model.policy.filters.MacAddress;
+import ai.philterd.phileas.model.policy.filters.PassportNumber;
+import ai.philterd.phileas.model.policy.filters.PhoneNumber;
+import ai.philterd.phileas.model.policy.filters.PhoneNumberExtension;
+import ai.philterd.phileas.model.policy.filters.PhysicianName;
+import ai.philterd.phileas.model.policy.filters.Section;
+import ai.philterd.phileas.model.policy.filters.Ssn;
+import ai.philterd.phileas.model.policy.filters.State;
+import ai.philterd.phileas.model.policy.filters.StateAbbreviation;
+import ai.philterd.phileas.model.policy.filters.StreetAddress;
+import ai.philterd.phileas.model.policy.filters.Surname;
+import ai.philterd.phileas.model.policy.filters.TrackingNumber;
+import ai.philterd.phileas.model.policy.filters.Url;
+import ai.philterd.phileas.model.policy.filters.Vin;
+import ai.philterd.phileas.model.policy.filters.ZipCode;
 import ai.philterd.phileas.model.policy.filters.strategies.custom.CustomDictionaryFilterStrategy;
-import ai.philterd.phileas.model.policy.filters.strategies.dynamic.*;
-import ai.philterd.phileas.model.policy.filters.strategies.rules.*;
-import org.apache.commons.io.FilenameUtils;
+import ai.philterd.phileas.model.policy.filters.strategies.dynamic.CityFilterStrategy;
+import ai.philterd.phileas.model.policy.filters.strategies.dynamic.CountyFilterStrategy;
+import ai.philterd.phileas.model.policy.filters.strategies.dynamic.FirstNameFilterStrategy;
+import ai.philterd.phileas.model.policy.filters.strategies.dynamic.HospitalAbbreviationFilterStrategy;
+import ai.philterd.phileas.model.policy.filters.strategies.dynamic.HospitalFilterStrategy;
+import ai.philterd.phileas.model.policy.filters.strategies.dynamic.StateFilterStrategy;
+import ai.philterd.phileas.model.policy.filters.strategies.dynamic.SurnameFilterStrategy;
+import ai.philterd.phileas.model.policy.filters.strategies.rules.AgeFilterStrategy;
+import ai.philterd.phileas.model.policy.filters.strategies.rules.BankRoutingNumberFilterStrategy;
+import ai.philterd.phileas.model.policy.filters.strategies.rules.BitcoinAddressFilterStrategy;
+import ai.philterd.phileas.model.policy.filters.strategies.rules.CreditCardFilterStrategy;
+import ai.philterd.phileas.model.policy.filters.strategies.rules.CurrencyFilterStrategy;
+import ai.philterd.phileas.model.policy.filters.strategies.rules.DateFilterStrategy;
+import ai.philterd.phileas.model.policy.filters.strategies.rules.DriversLicenseFilterStrategy;
+import ai.philterd.phileas.model.policy.filters.strategies.rules.EmailAddressFilterStrategy;
+import ai.philterd.phileas.model.policy.filters.strategies.rules.IbanCodeFilterStrategy;
+import ai.philterd.phileas.model.policy.filters.strategies.rules.IdentifierFilterStrategy;
+import ai.philterd.phileas.model.policy.filters.strategies.rules.IpAddressFilterStrategy;
+import ai.philterd.phileas.model.policy.filters.strategies.rules.MacAddressFilterStrategy;
+import ai.philterd.phileas.model.policy.filters.strategies.rules.PassportNumberFilterStrategy;
+import ai.philterd.phileas.model.policy.filters.strategies.rules.PhoneNumberExtensionFilterStrategy;
+import ai.philterd.phileas.model.policy.filters.strategies.rules.PhoneNumberFilterStrategy;
+import ai.philterd.phileas.model.policy.filters.strategies.rules.PhysicianNameFilterStrategy;
+import ai.philterd.phileas.model.policy.filters.strategies.rules.SectionFilterStrategy;
+import ai.philterd.phileas.model.policy.filters.strategies.rules.SsnFilterStrategy;
+import ai.philterd.phileas.model.policy.filters.strategies.rules.StateAbbreviationFilterStrategy;
+import ai.philterd.phileas.model.policy.filters.strategies.rules.StreetAddressFilterStrategy;
+import ai.philterd.phileas.model.policy.filters.strategies.rules.TrackingNumberFilterStrategy;
+import ai.philterd.phileas.model.policy.filters.strategies.rules.UrlFilterStrategy;
+import ai.philterd.phileas.model.policy.filters.strategies.rules.VinFilterStrategy;
+import ai.philterd.phileas.model.policy.filters.strategies.rules.ZipCodeFilterStrategy;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -199,32 +258,6 @@ public abstract class AbstractFilterTest {
         policy.setIdentifiers(identifiers);
 
         return policy;
-
-    }
-
-    public String getIndexDirectory(String indexName) {
-
-        final String baseDir = System.getenv("PHILEAS_BASE_DIR");
-
-        if(!StringUtils.isEmpty(baseDir)) {
-
-            final String indexDirectory = baseDir + "/data/indexes/" + indexName;
-
-            LOGGER.info("Using index directory: " + indexDirectory);
-
-            return indexDirectory;
-
-        } else {
-
-            LOGGER.warn("Environment variable PHILEAS_BASE_DIR is not set for Lucene index test.");
-
-            final String indexDir = FilenameUtils.separatorsToSystem(System.getProperty("user.dir") + "/../data/indexes/" + indexName);
-
-            LOGGER.info("Using index directory: {}", indexDir);
-
-            return indexDir;
-
-        }
 
     }
 

@@ -19,6 +19,7 @@ import ai.philterd.phileas.model.enums.FilterType;
 import ai.philterd.phileas.model.filter.FilterConfiguration;
 import ai.philterd.phileas.model.filter.rules.dictionary.BloomFilterDictionaryFilter;
 import ai.philterd.phileas.model.objects.FilterResult;
+import ai.philterd.phileas.model.objects.Span;
 import ai.philterd.phileas.model.policy.filters.strategies.custom.CustomDictionaryFilterStrategy;
 import ai.philterd.phileas.model.services.AlertService;
 import ai.philterd.phileas.services.anonymization.AlphanumericAnonymizationService;
@@ -149,11 +150,38 @@ public class BloomFilterDictionaryFilterTest extends AbstractFilterTest {
 
         Assertions.assertEquals(2, filterResult.getSpans().size());
 
-        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 0, 10, FilterType.CUSTOM_DICTIONARY));
-        Assertions.assertEquals("Bill Smith", filterResult.getSpans().get(0).getText());
+        for(final Span span : filterResult.getSpans()) {
+            Assertions.assertTrue(span.getText().equals("george jones jr") || span.getText().equals("Bill Smith"));
+            Assertions.assertTrue(span.getCharacterStart() == 0 || span.getCharacterStart() == 22);
+            Assertions.assertTrue(span.getCharacterEnd() == 10 || span.getCharacterEnd() == 37);
+        }
 
-        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(1), 22, 37, FilterType.CUSTOM_DICTIONARY));
-        Assertions.assertEquals("george jones jr", filterResult.getSpans().get(1).getText());
+    }
+
+    @Test
+    public void filterDictionaryPhraseMatchMultipleMatches() throws Exception {
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(new CustomDictionaryFilterStrategy()))
+                .withAlertService(alertService)
+                .withAnonymizationService(new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()))
+                .withWindowSize(windowSize)
+                .build();
+
+        final Set<String> names = new HashSet<>(Arrays.asList("george jones", "ted", "bill", "john"));
+        final BloomFilterDictionaryFilter filter = new BloomFilterDictionaryFilter(FilterType.CUSTOM_DICTIONARY, filterConfiguration, names, "none");
+
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE,"He lived with george jones and george jones in California.", attributes);
+
+        showSpans(filterResult.getSpans());
+
+        Assertions.assertEquals(2, filterResult.getSpans().size());
+
+        for(final Span span : filterResult.getSpans()) {
+            Assertions.assertEquals("george jones", span.getText());
+            Assertions.assertTrue(span.getCharacterStart() == 31 || span.getCharacterStart() == 14);
+            Assertions.assertTrue(span.getCharacterEnd() == 43 || span.getCharacterEnd() == 26);
+        }
 
     }
 

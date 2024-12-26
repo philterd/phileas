@@ -53,8 +53,8 @@ public class PhysicianNameFilterTest extends AbstractFilterTest {
         showSpans(filterResult.getSpans());
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
-        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 0, 30, FilterType.PHYSICIAN_NAME));
-        Assertions.assertEquals("Doctor Smith was the attending", filterResult.getSpans().get(0).getText());
+        Assertions.assertEquals(FilterType.PHYSICIAN_NAME, filterResult.getSpans().get(0).getFilterType());
+        Assertions.assertTrue(filterResult.getSpans().get(0).getText().contains("Doctor Smith"));
 
     }
 

@@ -16,9 +16,8 @@
 package ai.philterd.test.phileas.services.filters;
 
 import ai.philterd.phileas.model.enums.FilterType;
-import ai.philterd.phileas.model.enums.SensitivityLevel;
 import ai.philterd.phileas.model.filter.FilterConfiguration;
-import ai.philterd.phileas.model.filter.rules.dictionary.LuceneDictionaryFilter;
+import ai.philterd.phileas.model.filter.rules.dictionary.BloomFilterDictionaryFilter;
 import ai.philterd.phileas.model.objects.FilterResult;
 import ai.philterd.phileas.model.policy.filters.strategies.custom.CustomDictionaryFilterStrategy;
 import ai.philterd.phileas.model.services.AlertService;
@@ -52,14 +51,14 @@ public class CustomDictionaryFilterTest extends AbstractFilterTest {
                 .build();
 
         final Set<String> names = new HashSet<>(Arrays.asList("george", "ted", "bill", "john"));
-        final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.CUSTOM_DICTIONARY, filterConfiguration, SensitivityLevel.LOW, names, false, "names", 0);
+        final BloomFilterDictionaryFilter filter = new BloomFilterDictionaryFilter(FilterType.CUSTOM_DICTIONARY, filterConfiguration, names, "names");
 
         final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE,"He lived with Bill in California.", attributes);
         showSpans(filterResult.getSpans());
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 14, 18, FilterType.CUSTOM_DICTIONARY));
-        Assertions.assertEquals("bill", filterResult.getSpans().get(0).getText());
+        Assertions.assertEquals("Bill", filterResult.getSpans().get(0).getText());
 
     }
 
@@ -74,7 +73,7 @@ public class CustomDictionaryFilterTest extends AbstractFilterTest {
                 .build();
 
         final Set<String> names = new HashSet<>(Arrays.asList("george", "ted", "bill", "john"));
-        final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.CUSTOM_DICTIONARY, filterConfiguration, SensitivityLevel.LOW, names, false, "names", 0);
+        final BloomFilterDictionaryFilter filter = new BloomFilterDictionaryFilter(FilterType.CUSTOM_DICTIONARY, filterConfiguration, names, "names");
 
         final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE,"He lived with Sam in California.", attributes);
         showSpans(filterResult.getSpans());

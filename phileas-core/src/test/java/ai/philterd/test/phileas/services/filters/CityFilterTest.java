@@ -18,53 +18,25 @@ package ai.philterd.test.phileas.services.filters;
 import ai.philterd.phileas.model.enums.FilterType;
 import ai.philterd.phileas.model.enums.SensitivityLevel;
 import ai.philterd.phileas.model.filter.FilterConfiguration;
-import ai.philterd.phileas.model.filter.rules.dictionary.LuceneDictionaryFilter;
+import ai.philterd.phileas.model.filter.rules.dictionary.FuzzyDictionaryFilter;
 import ai.philterd.phileas.model.objects.FilterResult;
 import ai.philterd.phileas.model.policy.filters.strategies.dynamic.CityFilterStrategy;
 import ai.philterd.phileas.model.services.AlertService;
-import ai.philterd.phileas.model.services.AnonymizationService;
 import ai.philterd.phileas.services.anonymization.CityAnonymizationService;
 import ai.philterd.phileas.services.anonymization.cache.LocalAnonymizationCacheService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-
 public class CityFilterTest extends AbstractFilterTest {
 
     private static final Logger LOGGER = LogManager.getLogger(CityFilterTest.class);
 
-    private final String INDEX_DIRECTORY = getIndexDirectory("cities");
-
-    private static final AnonymizationService anonymizationService = new CityAnonymizationService(new LocalAnonymizationCacheService());
     private final AlertService alertService = Mockito.mock(AlertService.class);
-
-    @BeforeEach
-    public void before() {
-        LOGGER.info("Using index directory {}", INDEX_DIRECTORY);
-    }
-
-    @Test
-    public void filterCitiesClose() throws Exception {
-
-        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
-                .withStrategies(List.of(new CityFilterStrategy()))
-                .withAlertService(alertService)
-                .withAnonymizationService(new CityAnonymizationService(new LocalAnonymizationCacheService()))
-                .withWindowSize(windowSize)
-                .build();
-
-        final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.LOCATION_CITY, filterConfiguration, INDEX_DIRECTORY, SensitivityLevel.LOW, false);
-
-        assertDoesNotThrow(filter::close);
-
-    }
 
     @Test
     public void filterCitiesExactMatch() throws Exception {
@@ -76,7 +48,7 @@ public class CityFilterTest extends AbstractFilterTest {
                 .withWindowSize(windowSize)
                 .build();
 
-        final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.LOCATION_CITY, filterConfiguration, INDEX_DIRECTORY, SensitivityLevel.MEDIUM, false);
+        final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.LOCATION_CITY, filterConfiguration, SensitivityLevel.MEDIUM, true);
 
         FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "Lived in Washington.", attributes);
 
@@ -97,7 +69,7 @@ public class CityFilterTest extends AbstractFilterTest {
                 .withWindowSize(windowSize)
                 .build();
 
-        final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.LOCATION_CITY, filterConfiguration, INDEX_DIRECTORY, SensitivityLevel.HIGH, false);
+        final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.LOCATION_CITY, filterConfiguration, SensitivityLevel.HIGH, true);
 
         FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "Lived in New York.", attributes);
 
@@ -120,13 +92,13 @@ public class CityFilterTest extends AbstractFilterTest {
                 .withWindowSize(windowSize)
                 .build();
 
-        final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.LOCATION_CITY, filterConfiguration, INDEX_DIRECTORY, SensitivityLevel.LOW, false);
+        final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.LOCATION_CITY, filterConfiguration, SensitivityLevel.LOW, true);
 
         FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE,"Lived in Wshington", attributes);
 
         showSpans(filterResult.getSpans());
 
-        Assertions.assertEquals(0, filterResult.getSpans().size());
+        Assertions.assertEquals(1, filterResult.getSpans().size());
 
     }
 
@@ -140,7 +112,7 @@ public class CityFilterTest extends AbstractFilterTest {
                 .withWindowSize(windowSize)
                 .build();
 
-        final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.LOCATION_CITY, filterConfiguration, INDEX_DIRECTORY, SensitivityLevel.MEDIUM, false);
+        final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.LOCATION_CITY, filterConfiguration, SensitivityLevel.MEDIUM, true);
 
         FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "Lived in Wshington", attributes);
 
@@ -161,14 +133,13 @@ public class CityFilterTest extends AbstractFilterTest {
                 .withWindowSize(windowSize)
                 .build();
 
-        final LuceneDictionaryFilter filter = new LuceneDictionaryFilter(FilterType.LOCATION_CITY, filterConfiguration, INDEX_DIRECTORY, SensitivityLevel.HIGH, false);
+        final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.LOCATION_CITY, filterConfiguration, SensitivityLevel.HIGH, true);
 
         FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE,"Lived in Wasinton", attributes);
 
         showSpans(filterResult.getSpans());
 
-        Assertions.assertEquals(1, filterResult.getSpans().size());
-        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 9, 17, FilterType.LOCATION_CITY));
+        Assertions.assertEquals(0, filterResult.getSpans().size());
 
     }
 

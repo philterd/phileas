@@ -18,17 +18,17 @@ package ai.philterd.phileas.model.filter.rules;
 import ai.philterd.phileas.model.enums.FilterType;
 import ai.philterd.phileas.model.filter.Filter;
 import ai.philterd.phileas.model.filter.FilterConfiguration;
-import ai.philterd.phileas.model.filter.rules.regex.RegexFilter;
 import ai.philterd.phileas.model.objects.Analyzer;
 import ai.philterd.phileas.model.objects.ConfidenceModifier;
 import ai.philterd.phileas.model.objects.FilterPattern;
+import ai.philterd.phileas.model.objects.Position;
 import ai.philterd.phileas.model.objects.Replacement;
 import ai.philterd.phileas.model.objects.Span;
 import ai.philterd.phileas.model.policy.Policy;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -219,6 +219,65 @@ public abstract class RulesFilter extends Filter {
     public int getOccurrences(final Policy policy, final String input, final Map<String, String> attributes) throws Exception {
 
         return filter(policy, "none", "none", 0, input, attributes).getSpans().size();
+
+    }
+
+    /**
+     * Get n-grams from text up to a given length.
+     * @param text The text from which to extract n-grams.
+     * @param length The max length of n-grams to extract.
+     * @return N-grams as a map of {@link Position} to the n-gram itself.
+     */
+    public Map<Position, String> getNgramsUpToLength(String text, int length) {
+
+        final Map<Position, String> ngrams = new HashMap<>();
+
+        for(int n = length; n > 0; n--) {
+            ngrams.putAll(getNgramsOfLength(text, n));
+        }
+
+        return ngrams;
+
+    }
+
+    /**
+     * Get n-grams from text having a given length.
+     * @param text The text from which to extract n-grams.
+     * @param length The length of n-grams to extract.
+     * @return N-grams as a map of {@link Position} to the n-gram itself.
+     */
+    public Map<Position, String> getNgramsOfLength(String text, int length) {
+
+        final String delimiter = " ";
+
+        final Map<Position, String> ngramsWithIndexes = new HashMap<>();
+        final String[] words = text.split(delimiter);
+        int lastLocation = 0;
+
+        for (int i = 0; i <= words.length - length; i++) {
+
+            final StringBuilder ngram = new StringBuilder();
+
+            for (int j = 0; j < length; j++) {
+
+                ngram.append(words[i + j]);
+
+                if (j < length - 1) {
+                    ngram.append(" ");
+                }
+
+            }
+
+            int newLocation = text.indexOf(ngram.toString(), lastLocation);
+            lastLocation = newLocation;
+
+            final Position position = new Position(newLocation, newLocation + ngram.toString().length());
+
+            ngramsWithIndexes.put(position, ngram.toString());
+
+        }
+
+        return ngramsWithIndexes;
 
     }
 

@@ -198,12 +198,12 @@ public class EndToEndTestsHelper {
         customDictionaryFilterStrategy.setStrategy("REDACT");
 
         CustomDictionary customDictionary = new CustomDictionary();
-        customDictionary.setCustomDictionaryFilterStrategies(Arrays.asList(customDictionaryFilterStrategy));
-        customDictionary.setTerms(Arrays.asList("Wendy"));
+        customDictionary.setCustomDictionaryFilterStrategies(List.of(customDictionaryFilterStrategy));
+        customDictionary.setTerms(List.of("Wendy"));
 
         Identifiers identifiers = new Identifiers();
 
-        identifiers.setCustomDictionaries(Arrays.asList(customDictionary));
+        identifiers.setCustomDictionaries(List.of(customDictionary));
         identifiers.setZipCode(zipCode);
 
         Policy policy = new Policy();

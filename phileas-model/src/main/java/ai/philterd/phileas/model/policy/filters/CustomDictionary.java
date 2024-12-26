@@ -15,10 +15,10 @@
  */
 package ai.philterd.phileas.model.policy.filters;
 
-import com.google.gson.annotations.Expose;
-import com.google.gson.annotations.SerializedName;
 import ai.philterd.phileas.model.enums.SensitivityLevel;
 import ai.philterd.phileas.model.policy.filters.strategies.custom.CustomDictionaryFilterStrategy;
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
@@ -42,7 +42,11 @@ public class CustomDictionary extends AbstractFilter {
 
     @SerializedName("sensitivity")
     @Expose
-    private String sensitivity = SensitivityLevel.MEDIUM.getName();
+    private String sensitivity = SensitivityLevel.OFF.getName();
+
+    @SerializedName("capitalized")
+    @Expose
+    private boolean capitalized = false;
 
     @SerializedName("customFilterStrategies")
     @Expose
@@ -64,14 +68,6 @@ public class CustomDictionary extends AbstractFilter {
         this.customDictionaryFilterStrategies = customDictionaryFilterStrategies;
     }
 
-    public String getSensitivity() {
-        return sensitivity;
-    }
-
-    public void setSensitivity(String sensitivity) {
-        this.sensitivity = sensitivity;
-    }
-
     public List<String> getFiles() {
         return files;
     }
@@ -80,20 +76,36 @@ public class CustomDictionary extends AbstractFilter {
         this.files = files;
     }
 
-    public boolean isFuzzy() {
-        return fuzzy;
-    }
-
-    public void setFuzzy(boolean fuzzy) {
-        this.fuzzy = fuzzy;
-    }
-
     public String getClassification() {
         return classification;
     }
 
     public void setClassification(String classification) {
         this.classification = classification;
+    }
+
+    public String getSensitivity() {
+        return sensitivity;
+    }
+
+    public void setSensitivity(String sensitivity) {
+        this.sensitivity = sensitivity;
+    }
+
+    public boolean isCapitalized() {
+        return capitalized;
+    }
+
+    public void setCapitalized(boolean capitalized) {
+        this.capitalized = capitalized;
+    }
+
+    public boolean isFuzzy() {
+        return fuzzy;
+    }
+
+    public void setFuzzy(boolean fuzzy) {
+        this.fuzzy = fuzzy;
     }
 
 }

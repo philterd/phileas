@@ -150,7 +150,7 @@ public final class Span {
 
         // This is made here and not passed into the constructor because that would be redundant
         // given the characterStart and characterEnd parameters in the constructor.
-        span.range = Range.between(characterStart, characterEnd);
+        span.range = Range.of(characterStart, characterEnd);
 
         return span;
 

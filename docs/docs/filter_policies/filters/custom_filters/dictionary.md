@@ -16,12 +16,12 @@ At least one of `terms` or `files` must be provided.
 ### Optional Parameters
 
 | Parameter        | Description                                                                                                                                                                                                                      | Default Value         |
-| ---------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------- |
+| ---------------- |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------| --------------------- |
 | `enabled`        | When set to false, the filter will be disabled and not applied                                                                                                                                                                   | `true`                |
 | `ignored`        | A list of terms to be ignored by the filter.                                                                                                                                                                                     | None                  |
 | `fuzzy`          | When set to true, the dictionary will employ fuzzy comparisons. Use the `sensitivity` parameter to control the level of fuzziness. Setting this value to false will disable fuzziness and provide a higher level of performance. | `false`               |
+| `sensitivity`    | Controls the "fuzziness" of allowed values to account for misspellings and derivations. Valid values are `off` meaning only exact matches, `low`, `medium`, and `high`. Only applies when `fuzzy` is set to `true`.               | `medium`              |
 | `classification` | Used to apply an arbitrary label to the identifier, such as "patient-id", or "account-number."                                                                                                                                   | `"custom-identifier"` |
-| `sensitivity`    | Controls the "fuzziness" of allowed values to account for misspellings and derivations. Valid values are `low`, `medium`, and `high`. Only applies when `fuzzy` is set to `true`.                                                | `medium`              |
 
 ### Filter Strategies
 

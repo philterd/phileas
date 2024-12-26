@@ -18,17 +18,14 @@ package ai.philterd.phileas.model.filter.rules.dictionary;
 import ai.philterd.phileas.model.enums.FilterType;
 import ai.philterd.phileas.model.filter.FilterConfiguration;
 import ai.philterd.phileas.model.objects.FilterResult;
+import ai.philterd.phileas.model.objects.Position;
 import ai.philterd.phileas.model.objects.Replacement;
 import ai.philterd.phileas.model.objects.Span;
 import ai.philterd.phileas.model.policy.Policy;
 import ai.philterd.phileas.model.utils.BloomFilter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.lucene.analysis.shingle.ShingleFilter;
-import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
-import org.apache.lucene.analysis.tokenattributes.OffsetAttribute;
 
-import java.io.IOException;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -44,12 +41,14 @@ public class BloomFilterDictionaryFilter extends DictionaryFilter {
 
     private final BloomFilter<String> bloomFilter;
     private final Set<String> lowerCaseTerms;
+    private int maxNgramSize = 0;
 
     /**
      * Creates a new bloom filter-based filter.
+     * @param filterType The {@link FilterType type} of the filter.
      * @param filterConfiguration The {@link FilterConfiguration} for the filter.
-     * @param terms
-     * @param classification
+     * @param terms A set of terms that will be in the dictionary.
+     * @param classification A classification label for the type of information.
      */
     public BloomFilterDictionaryFilter(FilterType filterType,
                                        FilterConfiguration filterConfiguration,
@@ -62,20 +61,19 @@ public class BloomFilterDictionaryFilter extends DictionaryFilter {
         this.bloomFilter = new BloomFilter<>(terms.size());
         this.classification = classification;
 
-        // Find the max n-gram size. It is equal to the maximum
-        // number of spaces in any single dictionary entry.
+        // Find the max n-gram size. It is equal to the maximum number of spaces in any single dictionary entry.
         for(final String term : terms) {
             final String[] split = term.split("\\s");
             if(split.length > maxNgramSize) {
                 maxNgramSize = split.length;
             }
         }
-        LOGGER.info("Max ngram size is {}", maxNgramSize);
 
         // Lowercase the terms and add each to the bloom filter.
-        LOGGER.info("Creating bloom filter from {} terms.", terms.size());
-        terms.forEach(t -> lowerCaseTerms.add(t.toLowerCase()));
-        lowerCaseTerms.forEach(t -> bloomFilter.put(t.toLowerCase()));
+         for(final String term : terms) {
+            lowerCaseTerms.add(term.toLowerCase());
+            bloomFilter.put(term.toLowerCase());
+        }
 
     }
 
@@ -85,59 +83,38 @@ public class BloomFilterDictionaryFilter extends DictionaryFilter {
 
         final List<Span> spans = new LinkedList<>();
 
-        // PHL-150: Break the input text into n-grams of size max n-grams and smaller.
-        final ShingleFilter ngrams = getNGrams(maxNgramSize, text);
+        final Map<Position, String> ngrams = getNgramsUpToLength(text, maxNgramSize);
 
-        final OffsetAttribute offsetAttribute = ngrams.getAttribute(OffsetAttribute.class);
-        final CharTermAttribute termAttribute = ngrams.getAttribute(CharTermAttribute.class);
+        for(final Position position : ngrams.keySet()) {
 
-        try {
+            final String ngram = ngrams.get(position);
 
-            ngrams.reset();
+            if (bloomFilter.mightContain(ngram.toLowerCase())) {
 
-            while (ngrams.incrementToken()) {
+                if (lowerCaseTerms.contains(ngram.toLowerCase())) {
 
-                final String token = termAttribute.toString();
-                final String lowerCaseToken = token.toLowerCase();
+                    // Set the meta values for the span.
+                    final boolean isIgnored = ignored.contains(ngram);
 
-                if(bloomFilter.mightContain(lowerCaseToken)) {
+                    final int characterStart = position.getStart();
+                    final int characterEnd = position.getEnd();
+                    final double confidence = 1.0;
+                    final String[] window = getWindow(text, characterStart, characterEnd);
 
-                    if(lowerCaseTerms.contains(lowerCaseToken)) {
+                    // Get the original token to get the right casing.
+                    final String originalToken = text.substring(characterStart, characterEnd);
 
-                        // Set the meta values for the span.
-                        final boolean isIgnored = ignored.contains(token);
-                        final int characterStart = offsetAttribute.startOffset();
-                        final int characterEnd = offsetAttribute.endOffset();
-                        final double confidence = 1.0;
-                        final String[] window = getWindow(text, characterStart, characterEnd);
+                    final Replacement replacement = getReplacement(policy, context, documentId,
+                            originalToken, window, confidence, classification, attributes, null);
 
-                        // Get the original token to get the right casing.
-                        final String originalToken = text.substring(characterStart, characterEnd);
-
-                        final Replacement replacement = getReplacement(policy, context, documentId,
-                                originalToken, window, confidence, classification, attributes, null);
-
-                        spans.add(Span.make(characterStart, characterEnd, getFilterType(), context, documentId,
-                                confidence, originalToken, replacement.getReplacement(), replacement.getSalt(),
-                                isIgnored, replacement.isApplied(), window));
-
-                    }
+                    spans.add(Span.make(characterStart, characterEnd, getFilterType(), context, documentId,
+                            confidence, originalToken, replacement.getReplacement(), replacement.getSalt(),
+                            isIgnored, replacement.isApplied(), window));
 
                 }
 
             }
 
-        } catch (IOException ex) {
-
-            LOGGER.error("Error enumerating tokens.", ex);
-
-        } finally {
-            try {
-                ngrams.end();
-                ngrams.close();
-            } catch (IOException e) {
-                // Do nothing.
-            }
         }
 
         return new FilterResult(context, documentId, spans);
