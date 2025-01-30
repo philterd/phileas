@@ -329,7 +329,8 @@ public class PhileasFilterService implements FilterService {
             final PdfRedactionOptions pdfRedactionOptions = new PdfRedactionOptions(
                     policyPdfConfig.getDpi(),
                     policyPdfConfig.getCompressionQuality(),
-                    policyPdfConfig.getScale()
+                    policyPdfConfig.getScale(),
+                    policyPdfConfig.getPreserveUnredactedPages()
             );
 
             // Redact those terms in the document along with any bounding boxes identified in the policy.

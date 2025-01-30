@@ -52,6 +52,10 @@ public class Pdf {
     @Expose
     private float compressionQuality = 1.0f;
 
+    @SerializedName("preserveUnredactedPages")
+    @Expose
+    private boolean preserveUnredactedPages = false;
+
     public String getRedactionColor() {
         return redactionColor;
     }
@@ -106,5 +110,13 @@ public class Pdf {
 
     public void setCompressionQuality(float compressionQuality) {
         this.compressionQuality = compressionQuality;
+    }
+
+    public boolean getPreserveUnredactedPages() {
+        return preserveUnredactedPages;
+    }
+
+    public void setPreserveUnredactedPages(boolean preserveUnredactedPages) {
+        this.preserveUnredactedPages = preserveUnredactedPages;
     }
 }

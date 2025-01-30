@@ -20,15 +20,17 @@ public class PdfRedactionOptions extends RedactionOptions {
     private int dpi = 150;
     private float compressionQuality = 1.0F;
     private float scale = 1.0F;
+    private boolean preserveUnredactedPages = false;
 
     public PdfRedactionOptions() {
 
     }
 
-    public PdfRedactionOptions(final int dpi, final float compressionQuality, final float scale) {
+    public PdfRedactionOptions(final int dpi, final float compressionQuality, final float scale, final boolean preserveUnredactedPages) {
         this.dpi = dpi;
         this.compressionQuality = compressionQuality;
         this.scale = scale;
+        this.preserveUnredactedPages = preserveUnredactedPages;
     }
 
     public int getDpi() {
@@ -53,6 +55,12 @@ public class PdfRedactionOptions extends RedactionOptions {
 
     public void setScale(float scale) {
         this.scale = scale;
+    }
+
+    public boolean getPreserveUnredactedPages() { return preserveUnredactedPages; }
+
+    public void setPreserveUnredactedPages(boolean preserveUnredactedPages) {
+        this.preserveUnredactedPages = preserveUnredactedPages;
     }
 
 }

@@ -185,8 +185,14 @@ public class PdfRedacter extends PDFTextStripper implements Redacter {
             // Loop over input pdf pages, rendering an image of each that requires redaction.
             // If there are no hits for redaction on the page, then the input PDPage is copied directly to the output pdf.
             // Scaling, DPI and Compression can be tuned to control output quality and size of the resulting pdf.
+            boolean preserveUnredactedPages = pdfRedactionOptions.getPreserveUnredactedPages();
             for (int x = 0; x < pdDocument.getNumberOfPages(); x++) {
-                if (rectangles.containsKey(x)) {
+                // We want to preserve unredacted pages and we don't have a redaction rectangle for this page, transpose
+                if (preserveUnredactedPages && !rectangles.containsKey(x)) {
+                    LOGGER.debug("Copying page " + x + " from input to output document as no redaction needed on page");
+                    PDPage inputPage = pdDocument.getPage(x);
+                    outputPdfDocument.importPage(inputPage);
+                } else {
                     LOGGER.debug("Creating image from redacted PDF page " + x);
 
                     // Create an output image with the specified DPI, this will be used to write the PDF page to prior
@@ -218,10 +224,6 @@ public class PdfRedacter extends PDFTextStripper implements Redacter {
                     try (PDPageContentStream contentStream = new PDPageContentStream(outputPdfDocument, page, PDPageContentStream.AppendMode.APPEND, true, true)) {
                         contentStream.drawImage(pdImage, 0, 0, outputWidthPixels * scale, outputHeightPixels * scale);
                     }
-                } else {
-                    LOGGER.debug("Copying page " + x + " from input to output document as no redaction needed on page");
-                    PDPage inputPage = pdDocument.getPage(x);
-                    outputPdfDocument.importPage(inputPage);
                 }
 
             }
