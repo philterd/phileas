@@ -42,7 +42,7 @@ public class Pdf {
 
     @SerializedName("scale")
     @Expose
-    private float scale = 1.0f;
+    private float scale = 0.25f;
 
     @SerializedName("dpi")
     @Expose
