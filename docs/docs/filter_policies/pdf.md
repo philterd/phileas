@@ -11,6 +11,9 @@ The available options are:
 | `replacementFont`        | `string`  | `helvetica` | The font to use for the replacement output. Available options are `helvetica`, `times`, and `courier`                             |
 | `replacementMaxFontSize` | `float`   | `12`        | The maximum font size for the replacement text. Best efforts will be made to fit the replacement text within the redaction box    |
 | `replacementFontColor`   | `string`  | `white`     | The font color for the replacement. Available options match the `redactionColor` options                                          |
+| `scaling`                | `float`   | `1`         | The scaling factor to use when generating pdf image pages                                                                         |
+| `dpi`                    | `int`     | `150`       | The DPI resolution for the  output pdf image page                                                                                 |
+| `compressionQuality`     | `float`   | `1`         | Sets the compression quality to a value between 0 and 1. See javax.imageio.ImageWriteParam for more details                       |
 
 ### An Example PDF Configuration Policy
 

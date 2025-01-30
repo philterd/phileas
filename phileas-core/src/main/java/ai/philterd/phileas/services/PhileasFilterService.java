@@ -27,6 +27,7 @@ import ai.philterd.phileas.model.objects.PdfRedactionOptions;
 import ai.philterd.phileas.model.objects.Span;
 import ai.philterd.phileas.model.policy.Ignored;
 import ai.philterd.phileas.model.policy.Policy;
+import ai.philterd.phileas.model.policy.config.Pdf;
 import ai.philterd.phileas.model.policy.graphical.BoundingBox;
 import ai.philterd.phileas.model.responses.BinaryDocumentFilterResponse;
 import ai.philterd.phileas.model.responses.FilterResponse;
@@ -322,11 +323,14 @@ public class PhileasFilterService implements FilterService {
 
             }
 
-            // TODO: Build this from the config in the policy.
-            final PdfRedactionOptions pdfRedactionOptions = new PdfRedactionOptions();
-            pdfRedactionOptions.setDpi(150);
-            pdfRedactionOptions.setScale(0.25f);
-            pdfRedactionOptions.setCompressionQuality(1.0f);
+            // Load the Pdf config from the policy and apply to the PdfRedactionOptions that are used when
+            // generating the new PDF document from the result of the redaction
+            final Pdf policyPdfConfig = policy.getConfig().getPdf();
+            final PdfRedactionOptions pdfRedactionOptions = new PdfRedactionOptions(
+                    policyPdfConfig.getDpi(),
+                    policyPdfConfig.getCompressionQuality(),
+                    policyPdfConfig.getScale()
+            );
 
             // Redact those terms in the document along with any bounding boxes identified in the policy.
             final List<BoundingBox> boundingBoxes = getBoundingBoxes(policy, mimeType);

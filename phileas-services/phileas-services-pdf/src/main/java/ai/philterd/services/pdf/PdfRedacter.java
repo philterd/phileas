@@ -182,37 +182,46 @@ public class PdfRedacter extends PDFTextStripper implements Redacter {
 
             final PDDocument outputPdfDocument = new PDDocument();
 
+            // Loop over input pdf pages, rendering an image of each that requires redaction.
+            // If there are no hits for redaction on the page, then the input PDPage is copied directly to the output pdf.
+            // Scaling, DPI and Compression can be tuned to control output quality and size of the resulting pdf.
             for (int x = 0; x < pdDocument.getNumberOfPages(); x++) {
+                if (rectangles.containsKey(x)) {
+                    LOGGER.debug("Creating image from redacted PDF page " + x);
 
-                final float scale = pdfRedactionOptions.getScale();
+                    // Create an output image with the specified DPI, this will be used to write the PDF page to prior
+                    // to drawing in the new PDPage
+                    final BufferedImage bufferedImage = pdfRenderer.renderImageWithDPI(x, pdfRedactionOptions.getDpi(), ImageType.RGB);
+                    final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+                    final ImageWriter writer = ImageIO.getImageWritersByFormatName("JPEG").next();
+                    final ImageWriteParam imageWriteParam = writer.getDefaultWriteParam();
+                    imageWriteParam.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
+                    imageWriteParam.setCompressionQuality(pdfRedactionOptions.getCompressionQuality());
+                    writer.setOutput(ImageIO.createImageOutputStream(byteArrayOutputStream));
+                    writer.write(null, new IIOImage(bufferedImage, null, null), imageWriteParam);
+                    writer.dispose();
 
-                LOGGER.debug("Creating image from redacted PDF page " + x);
+                    final byte[] bytes = byteArrayOutputStream.toByteArray();
+                    final InputStream is = new ByteArrayInputStream(bytes);
+                    final BufferedImage newBi = ImageIO.read(is);
+                    is.close();
 
-                final BufferedImage bufferedImage = pdfRenderer.renderImageWithDPI(x, pdfRedactionOptions.getDpi(), ImageType.RGB);
+                    final PDImageXObject pdImage = JPEGFactory.createFromImage(outputPdfDocument, newBi);
+                    final int outputWidthPixels = Math.round(pdDocument.getPage(x).getMediaBox().getWidth());
+                    final int outputHeightPixels = Math.round(pdDocument.getPage(x).getMediaBox().getHeight());
 
-                final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+                    final float scale = pdfRedactionOptions.getScale();
+                    final PDRectangle pdRectangle = new PDRectangle(outputWidthPixels * scale, outputHeightPixels * scale);
+                    final PDPage page = new PDPage(pdRectangle);
+                    outputPdfDocument.addPage(page);
 
-                final ImageWriter writer = ImageIO.getImageWritersByFormatName("JPEG").next();
-                final ImageWriteParam imageWriteParam = writer.getDefaultWriteParam();
-                imageWriteParam.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
-                imageWriteParam.setCompressionQuality(pdfRedactionOptions.getCompressionQuality());
-                writer.setOutput(ImageIO.createImageOutputStream(byteArrayOutputStream));
-                writer.write(null, new IIOImage(bufferedImage, null, null), imageWriteParam);
-                writer.dispose();
-
-                final byte[] bytes = byteArrayOutputStream.toByteArray();
-                final InputStream is = new ByteArrayInputStream(bytes);
-                final BufferedImage newBi = ImageIO.read(is);
-                is.close();
-
-                final PDImageXObject pdImage = JPEGFactory.createFromImage(outputPdfDocument, newBi);
-
-                final PDRectangle pdRectangle = new PDRectangle(pdImage.getWidth() * scale, pdImage.getHeight() * scale);
-                final PDPage page = new PDPage(pdRectangle);
-                outputPdfDocument.addPage(page);
-
-                try (PDPageContentStream contentStream = new PDPageContentStream(outputPdfDocument, page, PDPageContentStream.AppendMode.APPEND, true, true)) {
-                    contentStream.drawImage(pdImage, 0, 0, pdImage.getWidth() * scale, pdImage.getHeight() * scale);
+                    try (PDPageContentStream contentStream = new PDPageContentStream(outputPdfDocument, page, PDPageContentStream.AppendMode.APPEND, true, true)) {
+                        contentStream.drawImage(pdImage, 0, 0, outputWidthPixels * scale, outputHeightPixels * scale);
+                    }
+                } else {
+                    LOGGER.debug("Copying page " + x + " from input to output document as no redaction needed on page");
+                    PDPage inputPage = pdDocument.getPage(x);
+                    outputPdfDocument.importPage(inputPage);
                 }
 
             }
