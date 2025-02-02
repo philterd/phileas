@@ -40,6 +40,22 @@ public class Pdf {
     @Expose
     private String replacementFontColor;
 
+    @SerializedName("scale")
+    @Expose
+    private float scale = 0.25f;
+
+    @SerializedName("dpi")
+    @Expose
+    private int dpi = 150;
+
+    @SerializedName("compressionQuality")
+    @Expose
+    private float compressionQuality = 1.0f;
+
+    @SerializedName("preserveUnredactedPages")
+    @Expose
+    private boolean preserveUnredactedPages = false;
+
     public String getRedactionColor() {
         return redactionColor;
     }
@@ -70,5 +86,37 @@ public class Pdf {
 
     public void setShowReplacement(boolean showReplacement) {
         this.showReplacement = showReplacement;
+    }
+
+    public float getScale() {
+        return scale;
+    }
+
+    public void setScale(float scaling) {
+        this.scale = scaling;
+    }
+
+    public int getDpi() {
+        return dpi;
+    }
+
+    public void setDpi(int dpi) {
+        this.dpi = dpi;
+    }
+
+    public float getCompressionQuality() {
+        return compressionQuality;
+    }
+
+    public void setCompressionQuality(float compressionQuality) {
+        this.compressionQuality = compressionQuality;
+    }
+
+    public boolean getPreserveUnredactedPages() {
+        return preserveUnredactedPages;
+    }
+
+    public void setPreserveUnredactedPages(boolean preserveUnredactedPages) {
+        this.preserveUnredactedPages = preserveUnredactedPages;
     }
 }

@@ -38,6 +38,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -57,9 +58,8 @@ public class PdfRedacterTest {
 
     @Test
     public void testPDF1() throws IOException {
-
-        final Span span1 = Span.make(0, 1, FilterType.AGE, "ctx", "docid", 0.25, "Wendy", "repl", null, false, true, null);
-        final Span span2 = Span.make(0, 1, FilterType.AGE, "ctx", "docid", 0.25, "Bankruptcy", "repl", null, false, true, null);
+        final Span span1 = Span.make(0, 1, FilterType.AGE, "ctx", "docid", 0.25, "Bankruptcy", "repl", null, false, true, null);
+        final Span span2 = Span.make(0, 1, FilterType.AGE, "ctx", "docid", 0.25, "William", "repl", null, false, true, null);
         final Set<Span> spans = Set.copyOf(Arrays.asList(span1, span2));
 
         final String filename = "33011-pdf-118-pages.pdf"; //"12-12110 K.pdf";
@@ -92,7 +92,8 @@ public class PdfRedacterTest {
     public void testPDF2() throws IOException {
 
         final Span span1 = Span.make(0, 1, FilterType.DATE, "ctx", "docid", 0.25, "July 3, 2012", "||||", null, false, true, null);
-        final Set<Span> spans = Set.copyOf(Arrays.asList(span1));
+        final Span span2 = Span.make(0, 1, FilterType.AGE, "ctx", "docid", 0.25, "Wendy", "repl", null, false, true, null);
+        final Set<Span> spans = Set.copyOf(Arrays.asList(span1, span2));
 
         final String filename = "12-12110 K.pdf";
         final InputStream is = getClass().getClassLoader().getResourceAsStream(filename);
