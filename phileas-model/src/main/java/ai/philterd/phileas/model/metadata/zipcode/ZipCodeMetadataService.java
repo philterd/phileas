@@ -36,7 +36,12 @@ public class ZipCodeMetadataService implements MetadataService<ZipCodeMetadataRe
 
         final int population = zipCodes2010Census.getOrDefault(request.getZipCode(), -1);
 
-        return new ZipCodeMetadataResponse(population);
+        if(population == -1) {
+            // The zip code was not found.
+            return new ZipCodeMetadataResponse(-1, false);
+        } else {
+            return new ZipCodeMetadataResponse(population);
+        }
 
     }
 
