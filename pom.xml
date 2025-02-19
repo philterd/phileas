@@ -80,9 +80,9 @@
         <commons.collections4.version>4.4</commons.collections4.version>
         <commons.lang3.version>3.17.0</commons.lang3.version>
         <commons.logging.version>1.2</commons.logging.version>
-        <commons.codec.version>1.17.1</commons.codec.version>
+        <commons.codec.version>1.18.0</commons.codec.version>
         <commons.csv.version>1.12.0</commons.csv.version>
-        <commons.io.version>2.17.0</commons.io.version>
+        <commons.io.version>2.18.0</commons.io.version>
         <commons.math.version>3.6.1</commons.math.version>
         <commons.text.version>1.12.0</commons.text.version>
         <commons.validator.version>1.9.0</commons.validator.version>
@@ -91,24 +91,24 @@
         <dropwizard-metrics-datadog.version>1.1.14</dropwizard-metrics-datadog.version>
         <dropwizard-metrics-prometheus.version>1.13.1</dropwizard-metrics-prometheus.version>
         <embedded.redis.version>1.4.3</embedded.redis.version>
-        <equals.verifier.version>3.17.3</equals.verifier.version>
-        <ff3.version>1.0.4</ff3.version>
+        <equals.verifier.version>3.19.1</equals.verifier.version>
+        <ff3.version>1.2.0</ff3.version>
         <hapi.fhir.version>4.2.0</hapi.fhir.version>
-        <gson.version>2.11.0</gson.version>
+        <gson.version>2.12.1</gson.version>
         <icu4j.version>67.1</icu4j.version>
-        <json.version>20240303</json.version>
+        <json.version>20250107</json.version>
         <jsoup.version>1.18.1</jsoup.version>
         <junit.version>5.11.3</junit.version>
-        <libphonenumber.version>8.13.50</libphonenumber.version>
+        <libphonenumber.version>8.13.55</libphonenumber.version>
         <log4j.version>2.23.1</log4j.version>
         <maven.compiler.version>3.13.0</maven.compiler.version>
         <maven.failsafe.version>3.2.5</maven.failsafe.version>
         <maven.surefire.version>3.2.5</maven.surefire.version>
         <micrometer.version>1.13.1</micrometer.version>
-        <mockito.version>5.14.2</mockito.version>
+        <mockito.version>5.15.2</mockito.version>
         <nv-i18n.version>1.27</nv-i18n.version>
-        <opennlp.version>2.5.0</opennlp.version>
-        <pdfbox.version>3.0.3</pdfbox.version>
+        <opennlp.version>2.5.3</opennlp.version>
+        <pdfbox.version>3.0.4</pdfbox.version>
         <redisson.version>3.39.0</redisson.version>
         <retrofit.version>2.11.0</retrofit.version>
         <scala.major.version>2.12</scala.major.version>
