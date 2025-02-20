@@ -19,6 +19,7 @@ import ai.philterd.phileas.model.objects.PostFilterResult;
 import ai.philterd.phileas.model.objects.Span;
 import ai.philterd.phileas.model.policy.Ignored;
 import ai.philterd.phileas.model.services.PostFilter;
+import ai.philterd.phileas.model.utils.BloomFilter;
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -28,7 +29,6 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * Implementation of {@link PostFilter} that removes identified
@@ -38,6 +38,7 @@ public class IgnoredTermsFilter extends PostFilter {
 
     private static final Logger LOGGER = LogManager.getLogger(IgnoredTermsFilter.class);
 
+    private final BloomFilter<String> bloomFilter;
     private final Set<String> ignoredTerms = new HashSet<>();
     private final Ignored ignored;
 
@@ -47,6 +48,7 @@ public class IgnoredTermsFilter extends PostFilter {
 
         // Read the ignored terms from the files.
         final Set<String> ignoredTermsFromFiles = new HashSet<>();
+
         for(final String file : ignored.getFiles()) {
             ignoredTermsFromFiles.addAll(FileUtils.readLines(new File(file), Charset.defaultCharset()));
         }
@@ -71,6 +73,8 @@ public class IgnoredTermsFilter extends PostFilter {
 
         }
 
+        this.bloomFilter = new BloomFilter<>(ignoredTerms);
+
         LOGGER.info("Added {} terms to ignore.", ignoredTerms.size());
 
     }
@@ -84,9 +88,15 @@ public class IgnoredTermsFilter extends PostFilter {
             spanText = spanText.toLowerCase();
         }
 
-        // Look in the ignore lists to see if this token should be ignored.
-        // TODO: #114 A bloom filter would provide better performance for long lists of ignored terms.
-        final boolean ignored = ignoredTerms.contains(spanText);
+        final boolean mightContain = bloomFilter.mightContain(spanText);
+
+        final boolean ignored;
+
+        if(mightContain) {
+            ignored = ignoredTerms.contains(spanText);
+        } else {
+            ignored = false;
+        }
 
         // Return false if allowed; true if ignored.
         return new PostFilterResult(span, ignored);
