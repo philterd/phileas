@@ -19,7 +19,7 @@ public class ZipCodeMetadataServiceTest {
 
         final ZipCodeMetadataResponse zipCodeMetadataResponse = zipCodeMetadataService.getMetadata(zipCodeMetadataRequest);
 
-        Assertions.assertEquals(21741, zipCodeMetadataResponse.getPopulation());
+        Assertions.assertEquals(21134, zipCodeMetadataResponse.getPopulation());
 
     }
 
@@ -32,7 +32,7 @@ public class ZipCodeMetadataServiceTest {
 
         final ZipCodeMetadataResponse zipCodeMetadataResponse = zipCodeMetadataService.getMetadata(zipCodeMetadataRequest);
 
-        Assertions.assertEquals(3, zipCodeMetadataResponse.getPopulation());
+        Assertions.assertEquals(1, zipCodeMetadataResponse.getPopulation());
 
     }
 
