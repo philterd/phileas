@@ -61,6 +61,8 @@ public class Policy {
     @Expose
     private Graphical graphical = new Graphical();
 
+    public Policy() {}
+
     @Override
     public boolean equals(Object o) {
         return EqualsBuilder.reflectionEquals(this, o);

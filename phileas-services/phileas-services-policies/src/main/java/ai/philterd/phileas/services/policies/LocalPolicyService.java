@@ -17,6 +17,7 @@ package ai.philterd.phileas.services.policies;
 
 import ai.philterd.phileas.model.configuration.PhileasConfiguration;
 import ai.philterd.phileas.model.exceptions.api.BadRequestException;
+import ai.philterd.phileas.model.policy.Policy;
 import ai.philterd.phileas.model.services.AbstractPolicyService;
 import ai.philterd.phileas.model.services.PolicyCacheService;
 import ai.philterd.phileas.model.services.PolicyService;
@@ -26,18 +27,27 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.snakeyaml.engine.v2.api.Load;
+import org.snakeyaml.engine.v2.api.LoadSettings;
+import org.snakeyaml.engine.v2.exceptions.YamlEngineException;
+import org.yaml.snakeyaml.Yaml;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 public class LocalPolicyService extends AbstractPolicyService implements PolicyService {
 
     private static final Logger LOGGER = LogManager.getLogger(LocalPolicyService.class);
 
     private static final String JSON_EXTENSION = ".json";
+    private static final String YAML_EXTENSION = ".yaml";
 
     private final String policiesDirectory;
     private final PolicyCacheService policyCacheService;
@@ -60,14 +70,26 @@ public class LocalPolicyService extends AbstractPolicyService implements PolicyS
         final List<String> names = new LinkedList<>();
 
         // Read the policies from the file system.
-        final Collection<File> files = FileUtils.listFiles(new File(policiesDirectory), new String[]{"json"}, false);
+        final Collection<File> files = FileUtils.listFiles(new File(policiesDirectory), new String[]{"json", "yaml"}, false);
 
         for(final File file : files) {
 
             final String json = FileUtils.readFileToString(file, Charset.defaultCharset());
 
-            final JSONObject object = new JSONObject(json);
-            final String name = object.getString("name");
+            final String name;
+
+            if(file.getName().endsWith(JSON_EXTENSION)) {
+
+                final JSONObject object = new JSONObject(json);
+                name = object.getString("name");
+
+            } else {
+
+                final Yaml yaml = new Yaml();
+                final Policy policy = yaml.loadAs(json, Policy.class);
+                name = policy.getName();
+
+            }
 
             names.add(name);
 
@@ -80,9 +102,9 @@ public class LocalPolicyService extends AbstractPolicyService implements PolicyS
     @Override
     public String get(String policyName) throws IOException {
 
-        String policyJson = policyCacheService.get(policyName);
+        String policyContent = policyCacheService.get(policyName);
 
-        if(policyJson == null) {
+        if(policyContent == null) {
 
             // The policy wasn't found in the cache so look on the file system.
 
@@ -90,18 +112,35 @@ public class LocalPolicyService extends AbstractPolicyService implements PolicyS
 
             if (file.exists()) {
 
-                policyJson = FileUtils.readFileToString(file, Charset.defaultCharset());
+                policyContent = FileUtils.readFileToString(file, Charset.defaultCharset());
 
                 // Put it in the cache.
-                policyCacheService.insert(policyName, policyJson);
+                policyCacheService.insert(policyName, policyContent);
 
             } else {
-                throw new FileNotFoundException("Policy [" + policyName + "] does not exist.");
+
+                // Look for a yaml file.
+
+                final File yamlFile = new File(policiesDirectory, policyName + YAML_EXTENSION);
+
+                if (yamlFile.exists()) {
+
+                    policyContent = FileUtils.readFileToString(yamlFile, Charset.defaultCharset());
+
+                    // Put it in the cache.
+                    policyCacheService.insert(policyName, policyContent);
+
+                } else {
+
+                    throw new FileNotFoundException("Policy [" + policyName + "] does not exist.");
+
+                }
+
             }
 
         }
 
-        return policyJson;
+        return policyContent;
 
     }
 
@@ -111,18 +150,30 @@ public class LocalPolicyService extends AbstractPolicyService implements PolicyS
         final Map<String, String> policies = new HashMap<>();
 
         // Read the policies from the file system.
-        final Collection<File> files = FileUtils.listFiles(new File(policiesDirectory), new String[]{"json"}, false);
+        final Collection<File> files = FileUtils.listFiles(new File(policiesDirectory), new String[]{"json", "yaml"}, false);
         LOGGER.info("Found {} policies", files.size());
 
         for (final File file : files) {
 
             LOGGER.info("Loading policy {}", file.getAbsolutePath());
-            final String json = FileUtils.readFileToString(file, Charset.defaultCharset());
+            final String policyContents = FileUtils.readFileToString(file, Charset.defaultCharset());
 
-            final JSONObject object = new JSONObject(json);
-            final String name = object.getString("name");
+            final String name;
 
-            policies.put(name, json);
+            if(file.getName().endsWith(JSON_EXTENSION)) {
+
+                final JSONObject object = new JSONObject(policyContents);
+                name = object.getString("name");
+
+            } else {
+
+                final Yaml yaml = new Yaml();
+                final Policy policy = yaml.loadAs(policyContents, Policy.class);
+                name = policy.getName();
+
+            }
+
+            policies.put(name, policyContents);
             LOGGER.info("Added policy named [{}]", name);
 
         }
@@ -136,15 +187,33 @@ public class LocalPolicyService extends AbstractPolicyService implements PolicyS
 
         try {
 
-            final JSONObject object = new JSONObject(policyJson);
-            final String policyName = object.getString("name");
+            if(isYaml(policyJson)) {
 
-            final File file = new File(policiesDirectory, policyName + JSON_EXTENSION);
+                final Yaml yaml = new Yaml();
+                System.out.println(policyJson);
+                final Policy policy = yaml.loadAs(policyJson, Policy.class);
+                final String name = policy.getName();
 
-            FileUtils.writeStringToFile(file, policyJson, Charset.defaultCharset());
+                final File file = new File(policiesDirectory, name + YAML_EXTENSION);
 
-            // Put this policy into the cache.
-            policyCacheService.insert(policyName, policyJson);
+                FileUtils.writeStringToFile(file, policyJson, Charset.defaultCharset());
+
+                // Put this policy into the cache.
+                policyCacheService.insert(name, policyJson);
+
+            } else {
+
+                final JSONObject object = new JSONObject(policyJson);
+                final String policyName = object.getString("name");
+
+                final File file = new File(policiesDirectory, policyName + JSON_EXTENSION);
+
+                FileUtils.writeStringToFile(file, policyJson, Charset.defaultCharset());
+
+                // Put this policy into the cache.
+                policyCacheService.insert(policyName, policyJson);
+
+            }
 
         } catch (JSONException ex) {
 
@@ -173,6 +242,21 @@ public class LocalPolicyService extends AbstractPolicyService implements PolicyS
 
         } else {
             throw new FileNotFoundException("Policy with name " + policyName + " does not exist.");
+        }
+
+    }
+
+    private boolean isYaml(String str) {
+System.out.println(str);
+        final LoadSettings settings = LoadSettings.builder().build();
+        final Load load = new Load(settings);
+
+        try {
+            load.loadFromString(str);
+            return true;
+        } catch (YamlEngineException e) {
+            System.out.println(e.getMessage());
+            return false;
         }
 
     }

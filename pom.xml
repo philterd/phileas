@@ -113,7 +113,7 @@
         <retrofit.version>2.11.0</retrofit.version>
         <scala.major.version>2.12</scala.major.version>
         <segment.version>2.0.1</segment.version>
-        <snakeyaml.version>2.3</snakeyaml.version>
+        <snakeyaml.version>2.9</snakeyaml.version>
         <spring.boot.version>2.1.8.RELEASE</spring.boot.version>
     </properties>
 

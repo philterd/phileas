@@ -29,6 +29,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.snakeyaml.engine.v2.api.Dump;
+import org.snakeyaml.engine.v2.api.DumpSettings;
+import org.snakeyaml.engine.v2.common.ScalarStyle;
+import org.yaml.snakeyaml.Yaml;
 
 import java.io.File;
 import java.io.IOException;
@@ -150,6 +154,30 @@ public class LocalPolicyServiceTest {
 
         Assertions.assertThrows(IOException.class, () -> policyService.delete(name));
 
+    }
+
+    @Test
+    public void getAllYaml() throws IOException {
+
+        final PolicyService policyService = new LocalPolicyService(getConfiguration());
+
+        policyService.save(toYaml(getPolicy("name1")));
+        policyService.save(toYaml(getPolicy("name2")));
+
+        final Map<String, String> all = policyService.getAll();
+
+        Assertions.assertEquals(2, all.size());
+        Assertions.assertTrue(all.containsKey("name1"));
+        Assertions.assertTrue(all.containsKey("name2"));
+
+    }
+
+    private String toYaml(Object object) {
+        DumpSettings settings = DumpSettings.builder()
+                .setDefaultScalarStyle(ScalarStyle.PLAIN)
+                .build();
+        Dump dump = new Dump(settings);
+        return dump.dumpToString(object);
     }
 
     private Policy getPolicy(String name) {

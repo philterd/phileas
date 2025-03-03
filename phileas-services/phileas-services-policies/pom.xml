@@ -20,6 +20,11 @@
       <version>${json.version}</version>
     </dependency>
     <dependency>
+      <groupId>org.snakeyaml</groupId>
+      <artifactId>snakeyaml-engine</artifactId>
+      <version>${snakeyaml.version}</version>
+    </dependency>
+    <dependency>
       <groupId>org.mockito</groupId>
       <artifactId>mockito-core</artifactId>
       <version>2.23.4</version>
