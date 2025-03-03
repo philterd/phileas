@@ -4,6 +4,8 @@
 
 This filter identifies zip codes in text.
 
+Please note that the information used to map a zip code to a population is derived from publicly available USA census data. While population mapping to zip code may be near the actual numbers it will most likely not be exact. Please use the `POPULATION` conditional with this in mind.
+
 ### Required Parameters
 
 This filter has no required parameters.
@@ -34,6 +36,8 @@ The filter may have zero or more filter strategies. When no filter strategy is g
 ### Conditions
 
 Each filter strategy may have one condition. See [Conditions](#conditions) for details.
+
+Please note that the information used to map a zip code to a population is derived from publicly available USA census data. While population mapping to zip code may be near the actual numbers it will most likely not be exact. Please use the `POPULATION` conditional with this in mind.
 
 | Conditional  | Description                                                              | Operators                          |
 | ------------ | ------------------------------------------------------------------------ | ---------------------------------- |
