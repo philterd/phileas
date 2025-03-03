@@ -74,19 +74,29 @@ public class ZipCodeFilterStrategy extends AbstractFilterStrategy {
                 final int value = Integer.parseInt(parsedCondition.getValue());
 
                 final ZipCodeMetadataResponse response = zipCodeMetadataService.getMetadata(new ZipCodeMetadataRequest(token));
-                final long populationForZipCode = response.getPopulation();
 
-                if (StringUtils.equalsIgnoreCase(POPULATION, parsedCondition.getField())) {
+                if(response.isExists()) {
 
-                    conditionsSatisfied = switch (parsedCondition.getOperator()) {
-                        case GREATER_THAN -> (populationForZipCode > value);
-                        case LESS_THAN -> (populationForZipCode < value);
-                        case GREATER_THAN_EQUALS -> (populationForZipCode >= value);
-                        case LESS_THAN_EQUALS -> (populationForZipCode <= value);
-                        case EQUALS -> (populationForZipCode == value);
-                        case NOT_EQUALS -> (populationForZipCode != value);
-                        default -> conditionsSatisfied;
-                    };
+                    final long populationForZipCode = response.getPopulation();
+
+                    if (StringUtils.equalsIgnoreCase(POPULATION, parsedCondition.getField())) {
+
+                        conditionsSatisfied = switch (parsedCondition.getOperator()) {
+                            case GREATER_THAN -> (populationForZipCode > value);
+                            case LESS_THAN -> (populationForZipCode < value);
+                            case GREATER_THAN_EQUALS -> (populationForZipCode >= value);
+                            case LESS_THAN_EQUALS -> (populationForZipCode <= value);
+                            case EQUALS -> (populationForZipCode == value);
+                            case NOT_EQUALS -> (populationForZipCode != value);
+                            default -> conditionsSatisfied;
+                        };
+
+                    }
+
+                } else {
+
+                    // The zip code did not exist.
+                    conditionsSatisfied = false;
 
                 }
 

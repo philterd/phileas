@@ -112,6 +112,17 @@ public class ZipCodeFilterStrategyTest extends AbstractFilterStrategyTest {
     }
 
     @Test
+    public void evaluateConditionInvalidZipCode() throws IOException {
+
+        ZipCodeFilterStrategy strategy = new ZipCodeFilterStrategy();
+
+        final boolean conditionSatisfied = strategy.evaluateCondition(getPolicy(), "context", "documentid", "12345", WINDOW,"population > 1", 1.0, attributes);
+
+        Assertions.assertFalse(conditionSatisfied);
+
+    }
+
+    @Test
     public void staticReplacement1() throws Exception {
 
         ZipCodeFilterStrategy strategy = new ZipCodeFilterStrategy();

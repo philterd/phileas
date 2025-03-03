@@ -20,13 +20,24 @@ import ai.philterd.phileas.model.metadata.MetadataResponse;
 public class ZipCodeMetadataResponse extends MetadataResponse {
 
     private final int population;
+    private final boolean exists;
 
     public ZipCodeMetadataResponse(int population) {
         this.population = population;
+        this.exists = true;
+    }
+
+    public ZipCodeMetadataResponse(int population, boolean exists) {
+        this.population = population;
+        this.exists = exists;
     }
 
     public int getPopulation() {
         return population;
+    }
+
+    public boolean isExists() {
+        return exists;
     }
 
 }
