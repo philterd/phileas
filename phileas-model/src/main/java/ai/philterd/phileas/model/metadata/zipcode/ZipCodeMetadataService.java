@@ -49,7 +49,7 @@ public class ZipCodeMetadataService implements MetadataService<ZipCodeMetadataRe
 
         final HashMap<String, Integer> zipcodes = new HashMap<>();
 
-        try (InputStream inputStream =  getClass().getClassLoader().getResourceAsStream("2010+Census+Population+By+Zipcode.csv");
+        try (InputStream inputStream =  getClass().getClassLoader().getResourceAsStream("zip-code-population.csv");
              InputStreamReader inputStreamReader = new InputStreamReader(inputStream)) {
 
             final BufferedReader bufferedReader = new BufferedReader(inputStreamReader);

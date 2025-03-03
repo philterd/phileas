@@ -83,7 +83,7 @@ public class ZipCodeFilterStrategyTest extends AbstractFilterStrategyTest {
 
         ZipCodeFilterStrategy strategy = new ZipCodeFilterStrategy();
 
-        final boolean conditionSatisfied = strategy.evaluateCondition(getPolicy(), "context", "documentid", "90210", WINDOW,"population == 21741", 1.0, attributes);
+        final boolean conditionSatisfied = strategy.evaluateCondition(getPolicy(), "context", "documentid", "90210", WINDOW,"population == 21134", 1.0, attributes);
 
         Assertions.assertTrue(conditionSatisfied);
 
