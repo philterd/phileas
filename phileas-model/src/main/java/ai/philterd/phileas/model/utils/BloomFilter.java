@@ -6,6 +6,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.BitSet;
+import java.util.Collection;
 import java.util.function.Function;
 
 import static org.apache.commons.codec.digest.MurmurHash3.DEFAULT_SEED;
@@ -20,16 +21,32 @@ public class BloomFilter<T> {
         this.hashFunctions = createHashFunctions();
     }
 
+    public BloomFilter(Collection<T> elements) {
+        this.bitSet = new BitSet(elements.size());
+        this.hashFunctions = createHashFunctions();
+        putAll(elements);
+    }
+
     public void put(T element) {
         for (final Function<T, Integer> hashFunction : hashFunctions) {
-            int hash = hashFunction.apply(element);
+            final int hash = hashFunction.apply(element);
             bitSet.set(Math.abs(hash) % bitSet.size(), true);
+        }
+    }
+
+    public void putAll(Collection<T> elements) {
+        for(T element : elements) {
+
+            for (final Function<T, Integer> hashFunction : hashFunctions) {
+                final int hash = hashFunction.apply(element);
+                bitSet.set(Math.abs(hash) % bitSet.size(), true);
+            }
         }
     }
 
     public boolean mightContain(T element) {
         for (final Function<T, Integer> hashFunction : hashFunctions) {
-            int hash = hashFunction.apply(element);
+            final int hash = hashFunction.apply(element);
             if (!bitSet.get(Math.abs(hash) % bitSet.size())) {
                 return false;
             }

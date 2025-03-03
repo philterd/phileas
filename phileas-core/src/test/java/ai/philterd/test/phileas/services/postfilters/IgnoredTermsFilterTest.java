@@ -38,7 +38,7 @@ public class IgnoredTermsFilterTest {
         ignored.setTerms(Arrays.asList("Washington", "California", "Virginia"));
 
         final Policy policy = new Policy();
-        policy.setIgnored(Arrays.asList(ignored));
+        policy.setIgnored(List.of(ignored));
 
         final List<Span> spans = new LinkedList<>();
         spans.add(Span.make(12, 22, FilterType.LOCATION_STATE, "context", "docid", 0.80, "test", "*****",  "", false, true, new String[0]));
@@ -55,7 +55,7 @@ public class IgnoredTermsFilterTest {
 
         final Ignored ignored = new Ignored();
         ignored.setTerms(Arrays.asList("Seattle", "California", "Virginia"));
-        ignored.setFiles(Arrays.asList(new File("src/test/resources/ignored-terms.txt").getAbsolutePath()));
+        ignored.setFiles(List.of(new File("src/test/resources/ignored-terms.txt").getAbsolutePath()));
 
         final List<Span> spans = new LinkedList<>();
         spans.add(Span.make(12, 18, FilterType.IDENTIFIER, "context", "docid", 0.80, "test", "*****",  "", false, true, new String[0]));
@@ -71,7 +71,7 @@ public class IgnoredTermsFilterTest {
     public void ignoredFile2() throws IOException {
 
         final Ignored ignored = new Ignored();
-        ignored.setFiles(Arrays.asList(new File("src/test/resources/ignored-terms.txt").getAbsolutePath()));
+        ignored.setFiles(List.of(new File("src/test/resources/ignored-terms.txt").getAbsolutePath()));
 
         final List<Span> spans = new LinkedList<>();
         spans.add(Span.make(12, 18, FilterType.IDENTIFIER, "context", "docid", 0.80, "test", "*****",  "", false, true, new String[0]));
@@ -87,7 +87,7 @@ public class IgnoredTermsFilterTest {
     public void ignoredFile3() {
 
         final Ignored ignored = new Ignored();
-        ignored.setFiles(Arrays.asList(new File("src/test/resources/does-not-exist.txt").getAbsolutePath()));
+        ignored.setFiles(List.of(new File("src/test/resources/does-not-exist.txt").getAbsolutePath()));
 
         Assertions.assertThrows(IOException.class, () -> {
             final IgnoredTermsFilter ignoredTermsFilter = new IgnoredTermsFilter(ignored);
