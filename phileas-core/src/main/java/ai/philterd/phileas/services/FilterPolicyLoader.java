@@ -740,8 +740,9 @@ public class FilterPolicyLoader {
                         .build();
 
                 final boolean requireDelimiter = policy.getIdentifiers().getZipCode().isRequireDelimiter();
+                final boolean validate = policy.getIdentifiers().getZipCode().isValidate();
 
-                final Filter filter = new ZipCodeFilter(filterConfiguration, requireDelimiter);
+                final Filter filter = new ZipCodeFilter(filterConfiguration, requireDelimiter, validate);
                 enabledFilters.add(filter);
                 filterCache.get(policy.getName()).put(FilterType.ZIP_CODE, filter);
 
