@@ -101,6 +101,11 @@ public abstract class Filter {
     protected int windowSize;
 
     /**
+     * The priority of the filter.
+     */
+    protected int priority;
+
+    /**
      * Filters the input text.
      * @param policy The {@link Policy} to use.
      * @param context The context.
@@ -139,6 +144,7 @@ public abstract class Filter {
         this.crypto = filterConfiguration.getCrypto();
         this.fpe = filterConfiguration.getFPE();
         this.windowSize = filterConfiguration.getWindowSize();
+        this.priority = filterConfiguration.getPriority();
 
         if(this.ignored == null) {
             this.ignored = new LinkedHashSet<>();
@@ -371,6 +377,10 @@ public abstract class Filter {
 
     public List<IgnoredPattern> getIgnoredPatterns() {
         return ignoredPatterns;
+    }
+
+    public int getPriority() {
+        return priority;
     }
 
 }
