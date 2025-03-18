@@ -31,7 +31,7 @@ public class TrailingPeriodPostFilterTest extends AbstractFilterTest {
     public void test1() {
 
         final List<Span> spans = new LinkedList<>();
-        spans.add(Span.make(12, 22, FilterType.URL, "context", "docid", 0.80, "link.test.", "*****",  "", false, true, new String[0]));
+        spans.add(Span.make(12, 22, FilterType.URL, "context", "docid", 0.80, "link.test.", "*****",  "", false, true, new String[0], 0));
 
         final TrailingPeriodPostFilter postFilter = TrailingPeriodPostFilter.getInstance();
         final List<Span> filteredSpans = postFilter.filter("doesn't matter", spans);
@@ -47,7 +47,7 @@ public class TrailingPeriodPostFilterTest extends AbstractFilterTest {
     public void test2() {
 
         final List<Span> spans = new LinkedList<>();
-        spans.add(Span.make(12, 22, FilterType.URL, "context", "docid", 0.80, "link.test....", "*****",  "", false, true, new String[0]));
+        spans.add(Span.make(12, 22, FilterType.URL, "context", "docid", 0.80, "link.test....", "*****",  "", false, true, new String[0], 0));
 
         final TrailingPeriodPostFilter postFilter = TrailingPeriodPostFilter.getInstance();
         final List<Span> filteredSpans = postFilter.filter("doesn't matter", spans);
@@ -65,7 +65,7 @@ public class TrailingPeriodPostFilterTest extends AbstractFilterTest {
         // A street address can end with a period.
 
         final List<Span> spans = new LinkedList<>();
-        spans.add(Span.make(12, 22, FilterType.STREET_ADDRESS, "context", "docid", 0.80, "4 Devonshire Ct.", "*****",  "", false, true, new String[0]));
+        spans.add(Span.make(12, 22, FilterType.STREET_ADDRESS, "context", "docid", 0.80, "4 Devonshire Ct.", "*****",  "", false, true, new String[0], 0));
 
         final TrailingPeriodPostFilter postFilter = TrailingPeriodPostFilter.getInstance();
         final List<Span> filteredSpans = postFilter.filter("doesn't matter", spans);
