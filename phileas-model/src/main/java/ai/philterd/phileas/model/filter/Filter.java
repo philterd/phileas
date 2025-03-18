@@ -373,4 +373,8 @@ public abstract class Filter {
         return ignoredPatterns;
     }
 
+    public int getWindowSize() {
+        return windowSize;
+    }
+
 }

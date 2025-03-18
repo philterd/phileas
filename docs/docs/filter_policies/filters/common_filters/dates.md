@@ -24,6 +24,7 @@ This filter has no required parameters.
 | `enabled`              | When set to false, the filter will be disabled and not applied | `true`        |
 | `ignored`              | A list of terms to be ignored by the filter.                   | None          |
 | `onlyValidDates`       | When set to true, only valid dates will be filtered.           | `false`       |
+| `windowSize`          | Sets the size of the window (in terms) surrounding a span to look for contextual terms. If set, this value overrides the value of `span.window.size` in the configuration. | The value of `span.window.size` which is by default `5`. |
 
 ### Filter Strategies
 

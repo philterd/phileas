@@ -17,6 +17,7 @@ This filter has no required parameters.
 | `ignored`                      | A list of terms to be ignored by the filter.                                                                                                                                 | None          |
 | `onlyStrictMatches`            | When set to false, the pattern for identifying email addresses will be relaxed. Filtered email addresses will have a lower confidence, but filter performance will increase. | `true`        |
 | `onlyValidTLDs`                | When set to true, only email addresses that are for a top-level domain are filtered.                                                                                         | `false`       |
+| `windowSize`          | Sets the size of the window (in terms) surrounding a span to look for contextual terms. If set, this value overrides the value of `span.window.size` in the configuration. | The value of `span.window.size` which is by default `5`. |
 
 ### Filter Strategies
 

@@ -33,8 +33,6 @@ import java.util.List;
 
 public class VinFilterTest extends AbstractFilterTest {
 
-    private final AnonymizationService anonymizationService = new VinAnonymizationService(new LocalAnonymizationCacheService());
-
     private final AlertService alertService = Mockito.mock(AlertService.class);
 
     @Test
