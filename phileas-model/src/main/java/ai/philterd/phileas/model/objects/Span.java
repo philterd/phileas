@@ -74,10 +74,14 @@ public final class Span {
     @Expose
     private boolean applied;
 
+    // The priority of the filter that identified this span.
+    @Expose
+    private int priority;
+
     // Encapsulates the characterStart and characterEnd for easy intersection functions.
     private transient Range<Integer> range;
 
-    // The textual (nonn-compiled) regex expression, if any, used to identify the span.
+    // The textual (non-compiled) regex expression, if any, used to identify the span.
     // This is used to validate a regex after finding.
     private transient String pattern;
 
@@ -111,7 +115,7 @@ public final class Span {
      */
     private Span(int characterStart, int characterEnd, FilterType filterType, String context, String documentId,
                  double confidence, String text, String replacement, String salt, boolean ignored, boolean applied,
-                 String[] window) {
+                 String[] window, int priority) {
 
         this.characterStart = characterStart;
         this.characterEnd = characterEnd;
@@ -125,6 +129,7 @@ public final class Span {
         this.ignored = ignored;
         this.applied = applied;
         this.window = window;
+        this.priority = priority;
 
     }
 
@@ -139,14 +144,15 @@ public final class Span {
      * @param text The text identified by the span.
      * @param replacement The replacement (anonymized) value for the span.
      * @param ignored Whether the found span is ultimately ignored.
+     * @param priority The priority of the filter that identified this span.
      * @return A {@link Span} object with the given properties.
      */
     public static Span make(int characterStart, int characterEnd, FilterType filterType, String context,
                             String documentId, double confidence, String text, String replacement, String salt,
-                            boolean ignored, boolean applied, String[] window) {
+                            boolean ignored, boolean applied, String[] window, int priority) {
 
         final Span span = new Span(characterStart, characterEnd, filterType, context, documentId, confidence, text,
-                replacement, salt, ignored, applied, window);
+                replacement, salt, ignored, applied, window, priority);
 
         // This is made here and not passed into the constructor because that would be redundant
         // given the characterStart and characterEnd parameters in the constructor.
@@ -163,7 +169,7 @@ public final class Span {
     public Span copy() {
 
         final Span clone = Span.make(characterStart, characterEnd, filterType, context, documentId, confidence, text,
-                replacement, salt, ignored, applied, window);
+                replacement, salt, ignored, applied, window, priority);
 
         clone.range = range;
 
@@ -190,7 +196,7 @@ public final class Span {
                 final int end = span.getCharacterEnd() + shift;
 
                 shiftedSpans.add(Span.make(start, end, span.filterType, span.context, span.documentId, span.confidence,
-                        span.text, span.replacement, span.salt, span.ignored, span.applied, span.window));
+                        span.text, span.replacement, span.salt, span.ignored, span.applied, span.window, span.priority));
 
             }
 
@@ -216,7 +222,7 @@ public final class Span {
                 final int end = span.getCharacterEnd() + shift;
 
                 shiftedSpans.add(Span.make(start, end, span.filterType, span.context, span.documentId, span.confidence,
-                        span.text, span.replacement, span.salt, span.ignored, span.applied, span.window));
+                        span.text, span.replacement, span.salt, span.ignored, span.applied, span.window, span.priority));
 
         }
 
@@ -266,18 +272,6 @@ public final class Span {
     public String getText(String text) {
 
         return text.substring(characterStart, characterEnd);
-
-    }
-
-    /**
-     * Get all spans having the given {@link FilterType}.
-     * @param spans A list of spans.
-     * @param filterType The {@link FilterType}.
-     * @return A list of spans having the given {@link FilterType}.
-     */
-    public static List<Span> getSpansOfFilterType(List<Span> spans, FilterType filterType) {
-
-        return spans.stream().filter(c -> filterType == filterType).collect(Collectors.toList());
 
     }
 
@@ -423,14 +417,7 @@ public final class Span {
                 // Ignore if the span is the same.
                 if (!span.equals(span2)) {
 
-                    //LOGGER.info("{} - {}", span.getCharacterStart(), span2.getCharacterStart());
-                    //LOGGER.info("{} - {}", span2.getCharacterStart(), span2.getCharacterStart());
-
-                    if (span.range.isOverlappedBy(span2.range)) {
-
-                        //System.out.println("span is overlapped by span2");
-
-                        // Get the span with the longest length.
+                  if (span.range.isOverlappedBy(span2.range)) {
 
                         final int spanLength = span.getCharacterEnd() - span.getCharacterStart();
                         final int span2Length = span2.getCharacterEnd() - span2.getCharacterStart();
@@ -439,6 +426,17 @@ public final class Span {
 
                             overlapping = true;
                             nonOverlappingSpans.add(span2);
+
+                        } else if (span2Length == spanLength && span2.confidence == span.confidence) {
+
+                            // Drop the span with the lowest priority.
+                            overlapping = true;
+
+                            if(span.getPriority() > span2.getPriority()) {
+                                nonOverlappingSpans.add(span);
+                            } else {
+                                nonOverlappingSpans.add(span2);
+                            }
 
                         }
 
@@ -485,6 +483,7 @@ public final class Span {
                 append(ignored).
                 append(applied).
                 append(classification).
+                append(priority).
                 toHashCode();
 
     }
@@ -511,20 +510,8 @@ public final class Span {
                 + " ignored: " + ignored + "; "
                 + " applied: " + applied + "; "
                 + " classification: " + classification + "; "
+                + " priority: " + priority + "; "
                 ;
-
-    }
-
-    public String toCSV() {
-
-        return
-                characterStart + "," +
-                characterEnd + "," +
-                filterType + "," +
-                context + "," +
-                documentId + "," +
-                confidence + "," +
-                "\"" + text + "\"";
 
     }
 
@@ -650,6 +637,14 @@ public final class Span {
 
     public void setAlwaysValid(boolean alwaysValid) {
         this.alwaysValid = alwaysValid;
+    }
+
+    public void setPriority(int priority) {
+        this.priority = priority;
+    }
+
+    public int getPriority() {
+        return priority;
     }
 
 }

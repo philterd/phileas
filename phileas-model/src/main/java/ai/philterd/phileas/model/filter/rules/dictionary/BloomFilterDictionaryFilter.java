@@ -109,7 +109,7 @@ public class BloomFilterDictionaryFilter extends DictionaryFilter {
 
                     spans.add(Span.make(characterStart, characterEnd, getFilterType(), context, documentId,
                             confidence, originalToken, replacement.getReplacement(), replacement.getSalt(),
-                            isIgnored, replacement.isApplied(), window));
+                            isIgnored, replacement.isApplied(), window, priority));
 
                 }
 
