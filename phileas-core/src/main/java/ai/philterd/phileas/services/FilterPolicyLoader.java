@@ -154,6 +154,7 @@ public class FilterPolicyLoader {
                         .withIgnoredPatterns(policy.getIdentifiers().getAge().getIgnoredPatterns())
                         .withCrypto(policy.getCrypto())
                         .withWindowSize(phileasConfiguration.spanWindowSize())
+                        .withPriority(policy.getIdentifiers().getAge().getPriority())
                         .build();
 
                 final Filter filter = new AgeFilter(filterConfiguration);
@@ -180,6 +181,7 @@ public class FilterPolicyLoader {
                         .withCrypto(policy.getCrypto())
                         .withFPE(policy.getFpe())
                         .withWindowSize(phileasConfiguration.spanWindowSize())
+                        .withPriority(policy.getIdentifiers().getBankRoutingNumber().getPriority())
                         .build();
 
                 final Filter filter = new BankRoutingNumberFilter(filterConfiguration);
@@ -206,6 +208,7 @@ public class FilterPolicyLoader {
                         .withCrypto(policy.getCrypto())
                         .withFPE(policy.getFpe())
                         .withWindowSize(phileasConfiguration.spanWindowSize())
+                        .withPriority(policy.getIdentifiers().getBitcoinAddress().getPriority())
                         .build();
 
                 final Filter filter = new BitcoinAddressFilter(filterConfiguration);
@@ -232,6 +235,7 @@ public class FilterPolicyLoader {
                         .withCrypto(policy.getCrypto())
                         .withFPE(policy.getFpe())
                         .withWindowSize(phileasConfiguration.spanWindowSize())
+                        .withPriority(policy.getIdentifiers().getCreditCard().getPriority())
                         .build();
 
                 final boolean onlyValidCreditCardNumbers = policy.getIdentifiers().getCreditCard().isOnlyValidCreditCardNumbers();
@@ -261,6 +265,7 @@ public class FilterPolicyLoader {
                         .withIgnoredPatterns(policy.getIdentifiers().getCurrency().getIgnoredPatterns())
                         .withCrypto(policy.getCrypto())
                         .withWindowSize(phileasConfiguration.spanWindowSize())
+                        .withPriority(policy.getIdentifiers().getCurrency().getPriority())
                         .build();
 
                 final Filter filter = new CurrencyFilter(filterConfiguration);
@@ -286,6 +291,7 @@ public class FilterPolicyLoader {
                         .withIgnoredPatterns(policy.getIdentifiers().getDate().getIgnoredPatterns())
                         .withCrypto(policy.getCrypto())
                         .withWindowSize(phileasConfiguration.spanWindowSize())
+                        .withPriority(policy.getIdentifiers().getDate().getPriority())
                         .build();
 
                 final boolean onlyValidDates = policy.getIdentifiers().getDate().isOnlyValidDates();
@@ -315,6 +321,7 @@ public class FilterPolicyLoader {
                         .withCrypto(policy.getCrypto())
                         .withFPE(policy.getFpe())
                         .withWindowSize(phileasConfiguration.spanWindowSize())
+                        .withPriority(policy.getIdentifiers().getDriversLicense().getPriority())
                         .build();
 
                 final Filter filter = new DriversLicenseFilter(filterConfiguration);
@@ -340,6 +347,7 @@ public class FilterPolicyLoader {
                         .withIgnoredPatterns(policy.getIdentifiers().getEmailAddress().getIgnoredPatterns())
                         .withCrypto(policy.getCrypto())
                         .withWindowSize(phileasConfiguration.spanWindowSize())
+                        .withPriority(policy.getIdentifiers().getEmailAddress().getPriority())
                         .build();
 
                 final boolean isStrict = policy.getIdentifiers().getEmailAddress().isOnlyStrictMatches();
@@ -369,6 +377,7 @@ public class FilterPolicyLoader {
                         .withCrypto(policy.getCrypto())
                         .withFPE(policy.getFpe())
                         .withWindowSize(phileasConfiguration.spanWindowSize())
+                        .withPriority(policy.getIdentifiers().getIbanCode().getPriority())
                         .build();
 
                 final boolean onlyValidIBANCodes = policy.getIdentifiers().getIbanCode().isOnlyValidIBANCodes();
@@ -397,6 +406,7 @@ public class FilterPolicyLoader {
                         .withIgnoredPatterns(policy.getIdentifiers().getIpAddress().getIgnoredPatterns())
                         .withCrypto(policy.getCrypto())
                         .withWindowSize(phileasConfiguration.spanWindowSize())
+                        .withPriority(policy.getIdentifiers().getIpAddress().getPriority())
                         .build();
 
                 final Filter filter = new IpAddressFilter(filterConfiguration);
@@ -422,6 +432,7 @@ public class FilterPolicyLoader {
                         .withIgnoredPatterns(policy.getIdentifiers().getMacAddress().getIgnoredPatterns())
                         .withCrypto(policy.getCrypto())
                         .withWindowSize(phileasConfiguration.spanWindowSize())
+                        .withPriority(policy.getIdentifiers().getMacAddress().getPriority())
                         .build();
 
                 final Filter filter = new MacAddressFilter(filterConfiguration);
@@ -448,6 +459,7 @@ public class FilterPolicyLoader {
                         .withCrypto(policy.getCrypto())
                         .withFPE(policy.getFpe())
                         .withWindowSize(phileasConfiguration.spanWindowSize())
+                        .withPriority(policy.getIdentifiers().getPassportNumber().getPriority())
                         .build();
 
                 final Filter filter = new PassportNumberFilter(filterConfiguration);
@@ -473,6 +485,7 @@ public class FilterPolicyLoader {
                         .withIgnoredPatterns(policy.getIdentifiers().getPhoneNumberExtension().getIgnoredPatterns())
                         .withCrypto(policy.getCrypto())
                         .withWindowSize(phileasConfiguration.spanWindowSize())
+                        .withPriority(policy.getIdentifiers().getPhoneNumberExtension().getPriority())
                         .build();
 
                 final Filter filter = new PhoneNumberExtensionFilter(filterConfiguration);
@@ -498,6 +511,7 @@ public class FilterPolicyLoader {
                         .withIgnoredPatterns(policy.getIdentifiers().getPhoneNumber().getIgnoredPatterns())
                         .withCrypto(policy.getCrypto())
                         .withWindowSize(phileasConfiguration.spanWindowSize())
+                        .withPriority(policy.getIdentifiers().getPhoneNumber().getPriority())
                         .build();
 
                 final Filter filter = new PhoneNumberRulesFilter(filterConfiguration);
@@ -523,6 +537,7 @@ public class FilterPolicyLoader {
                         .withIgnoredPatterns(policy.getIdentifiers().getPhysicianName().getIgnoredPatterns())
                         .withCrypto(policy.getCrypto())
                         .withWindowSize(phileasConfiguration.spanWindowSize())
+                        .withPriority(policy.getIdentifiers().getPhysicianName().getPriority())
                         .build();
 
                 final Filter filter = new PhysicianNameFilter(filterConfiguration);
@@ -550,6 +565,7 @@ public class FilterPolicyLoader {
                             .withIgnoredPatterns(section.getIgnoredPatterns())
                             .withCrypto(policy.getCrypto())
                             .withWindowSize(phileasConfiguration.spanWindowSize())
+                            .withPriority(section.getPriority())
                             .build();
 
                     final String startPattern = section.getStartPattern();
@@ -579,6 +595,7 @@ public class FilterPolicyLoader {
                         .withCrypto(policy.getCrypto())
                         .withFPE(policy.getFpe())
                         .withWindowSize(phileasConfiguration.spanWindowSize())
+                        .withPriority(policy.getIdentifiers().getSsn().getPriority())
                         .build();
 
                 final Filter filter = new SsnFilter(filterConfiguration);
@@ -604,6 +621,7 @@ public class FilterPolicyLoader {
                         .withIgnoredPatterns(policy.getIdentifiers().getStateAbbreviation().getIgnoredPatterns())
                         .withCrypto(policy.getCrypto())
                         .withWindowSize(phileasConfiguration.spanWindowSize())
+                        .withPriority(policy.getIdentifiers().getStateAbbreviation().getPriority())
                         .build();
 
                 final Filter filter = new StateAbbreviationFilter(filterConfiguration);
@@ -629,6 +647,7 @@ public class FilterPolicyLoader {
                         .withIgnoredPatterns(policy.getIdentifiers().getStreetAddress().getIgnoredPatterns())
                         .withCrypto(policy.getCrypto())
                         .withWindowSize(phileasConfiguration.spanWindowSize())
+                        .withPriority(policy.getIdentifiers().getStreetAddress().getPriority())
                         .build();
 
                 final Filter filter = new StreetAddressFilter(filterConfiguration);
@@ -655,6 +674,7 @@ public class FilterPolicyLoader {
                         .withCrypto(policy.getCrypto())
                         .withFPE(policy.getFpe())
                         .withWindowSize(phileasConfiguration.spanWindowSize())
+                        .withPriority(policy.getIdentifiers().getTrackingNumber().getPriority())
                         .build();
 
                 final boolean ups = policy.getIdentifiers().getTrackingNumber().isUps();
@@ -684,6 +704,7 @@ public class FilterPolicyLoader {
                         .withIgnoredPatterns(policy.getIdentifiers().getUrl().getIgnoredPatterns())
                         .withCrypto(policy.getCrypto())
                         .withWindowSize(phileasConfiguration.spanWindowSize())
+                        .withPriority(policy.getIdentifiers().getUrl().getPriority())
                         .build();
 
                 final boolean requireHttpWwwPrefix = policy.getIdentifiers().getUrl().isRequireHttpWwwPrefix();
@@ -712,6 +733,7 @@ public class FilterPolicyLoader {
                         .withCrypto(policy.getCrypto())
                         .withFPE(policy.getFpe())
                         .withWindowSize(phileasConfiguration.spanWindowSize())
+                        .withPriority(policy.getIdentifiers().getVin().getPriority())
                         .build();
 
                 final Filter filter = new VinFilter(filterConfiguration);
@@ -737,6 +759,7 @@ public class FilterPolicyLoader {
                         .withIgnoredPatterns(policy.getIdentifiers().getZipCode().getIgnoredPatterns())
                         .withCrypto(policy.getCrypto())
                         .withWindowSize(phileasConfiguration.spanWindowSize())
+                        .withPriority(policy.getIdentifiers().getZipCode().getPriority())
                         .build();
 
                 final boolean requireDelimiter = policy.getIdentifiers().getZipCode().isRequireDelimiter();
@@ -793,6 +816,7 @@ public class FilterPolicyLoader {
                             .withIgnoredPatterns(customDictionary.getIgnoredPatterns())
                             .withCrypto(policy.getCrypto())
                             .withWindowSize(phileasConfiguration.spanWindowSize())
+                            .withPriority(customDictionary.getPriority())
                             .build();
 
                     // Only enable the filter if there is at least one term present.
@@ -847,6 +871,7 @@ public class FilterPolicyLoader {
                         .withIgnoredPatterns(policy.getIdentifiers().getCity().getIgnoredPatterns())
                         .withCrypto(policy.getCrypto())
                         .withWindowSize(phileasConfiguration.spanWindowSize())
+                        .withPriority(policy.getIdentifiers().getCity().getPriority())
                         .build();
 
                 final SensitivityLevel sensitivityLevel = policy.getIdentifiers().getCity().getSensitivityLevel();
@@ -875,6 +900,7 @@ public class FilterPolicyLoader {
                         .withIgnoredPatterns(policy.getIdentifiers().getCounty().getIgnoredPatterns())
                         .withCrypto(policy.getCrypto())
                         .withWindowSize(phileasConfiguration.spanWindowSize())
+                        .withPriority(policy.getIdentifiers().getCounty().getPriority())
                         .build();
 
                 final SensitivityLevel sensitivityLevel = policy.getIdentifiers().getCounty().getSensitivityLevel();
@@ -903,6 +929,7 @@ public class FilterPolicyLoader {
                         .withIgnoredPatterns(policy.getIdentifiers().getState().getIgnoredPatterns())
                         .withCrypto(policy.getCrypto())
                         .withWindowSize(phileasConfiguration.spanWindowSize())
+                        .withPriority(policy.getIdentifiers().getState().getPriority())
                         .build();
 
                 final SensitivityLevel sensitivityLevel = policy.getIdentifiers().getState().getSensitivityLevel();
@@ -931,6 +958,7 @@ public class FilterPolicyLoader {
                         .withIgnoredPatterns(policy.getIdentifiers().getHospital().getIgnoredPatterns())
                         .withCrypto(policy.getCrypto())
                         .withWindowSize(phileasConfiguration.spanWindowSize())
+                        .withPriority(policy.getIdentifiers().getHospital().getPriority())
                         .build();
 
                 final SensitivityLevel sensitivityLevel = policy.getIdentifiers().getHospital().getSensitivityLevel();
@@ -959,6 +987,7 @@ public class FilterPolicyLoader {
                         .withIgnoredPatterns(policy.getIdentifiers().getHospitalAbbreviation().getIgnoredPatterns())
                         .withCrypto(policy.getCrypto())
                         .withWindowSize(phileasConfiguration.spanWindowSize())
+                        .withPriority(policy.getIdentifiers().getHospitalAbbreviation().getPriority())
                         .build();
 
                 final SensitivityLevel sensitivityLevel = policy.getIdentifiers().getHospitalAbbreviation().getSensitivityLevel();
@@ -987,6 +1016,7 @@ public class FilterPolicyLoader {
                         .withIgnoredPatterns(policy.getIdentifiers().getFirstName().getIgnoredPatterns())
                         .withCrypto(policy.getCrypto())
                         .withWindowSize(phileasConfiguration.spanWindowSize())
+                        .withPriority(policy.getIdentifiers().getFirstName().getPriority())
                         .build();
 
                 final SensitivityLevel sensitivityLevel = policy.getIdentifiers().getFirstName().getSensitivityLevel();
@@ -1015,6 +1045,7 @@ public class FilterPolicyLoader {
                         .withIgnoredPatterns(policy.getIdentifiers().getSurname().getIgnoredPatterns())
                         .withCrypto(policy.getCrypto())
                         .withWindowSize(phileasConfiguration.spanWindowSize())
+                        .withPriority(policy.getIdentifiers().getSurname().getPriority())
                         .build();
 
                 final SensitivityLevel sensitivityLevel = policy.getIdentifiers().getSurname().getSensitivityLevel();
@@ -1049,6 +1080,7 @@ public class FilterPolicyLoader {
                             .withIgnoredPatterns(identifier.getIgnoredPatterns())
                             .withCrypto(policy.getCrypto())
                             .withWindowSize(phileasConfiguration.spanWindowSize())
+                            .withPriority(identifier.getPriority())
                             .build();
 
                     final String classification = identifier.getClassification();
@@ -1083,6 +1115,7 @@ public class FilterPolicyLoader {
                         .withIgnoredPatterns(policy.getIdentifiers().getPhEye().getIgnoredPatterns())
                         .withCrypto(policy.getCrypto())
                         .withWindowSize(phileasConfiguration.spanWindowSize())
+                        .withPriority(policy.getIdentifiers().getPhEye().getPriority())
                         .build();
 
                 final PhEyeConfiguration phEyeConfiguration = new PhEyeConfiguration(policy.getIdentifiers().getPhEye().getPhEyeConfiguration().getEndpoint());

@@ -41,6 +41,10 @@ public abstract class AbstractFilter {
     @Expose
     protected List<IgnoredPattern> ignoredPatterns = Collections.emptyList();
 
+    @SerializedName("priority")
+    @Expose
+    protected int priority;
+
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
     }
@@ -71,6 +75,14 @@ public abstract class AbstractFilter {
 
     public Set<String> getIgnoredFiles() {
         return ignoredFiles;
+    }
+
+    public int getPriority() {
+        return priority;
+    }
+
+    public void setPriority(int priority) {
+        this.priority = priority;
     }
 
 }

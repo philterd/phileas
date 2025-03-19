@@ -399,19 +399,7 @@ public class PhileasFilterService implements FilterService {
 
     private List<PostFilter> getPostFiltersForPolicy(final Policy policy) throws IOException {
 
-        LOGGER.debug("Reloading policies.");
-
         final List<PostFilter> postFilters = new LinkedList<>();
-
-        // Post filters.
-
-        // Configure post filters.
-        // PHL-1: Allow for multi-word tokens.
-        /*final boolean posTagPostFilterEnabled = StringUtils.equalsIgnoreCase(applicationProperties.getProperty("post.filter.pos.enabled", "true"), "true");
-        if(posTagPostFilterEnabled) {
-            final InputStream is = PhileasFilterService.class.getClassLoader().getResourceAsStream("en-pos-perceptron.bin");
-            postFilters.add(new PartOfSpeechFalsePositiveFilter(is));
-        }*/
 
         // Ignored terms filter. Looks for ignored terms in the scope of the whole document (and not just a particular filter).
         // No matter what filter found the span, it is subject to this ignore list.

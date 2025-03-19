@@ -10,13 +10,14 @@ This filter has no required parameters.
 
 ### Optional Parameters
 
-| Parameter                      | Description                                                                                                                                                                  | Default Value |
-|--------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------|
-| `emailAddressFilterStrategies` | A list of filter strategies.                                                                                                                                                 | None          |
-| `enabled`                      | When set to false, the filter will be disabled and not applied                                                                                                               | `true`        |
-| `ignored`                      | A list of terms to be ignored by the filter.                                                                                                                                 | None          |
-| `onlyStrictMatches`            | When set to false, the pattern for identifying email addresses will be relaxed. Filtered email addresses will have a lower confidence, but filter performance will increase. | `true`        |
-| `onlyValidTLDs`                | When set to true, only email addresses that are for a top-level domain are filtered.                                                                                         | `false`       |
+| Parameter                      | Description                                                                                                                                                                                                  | Default Value |
+|--------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------|
+| `emailAddressFilterStrategies` | A list of filter strategies.                                                                                                                                                                                 | None          |
+| `enabled`                      | When set to false, the filter will be disabled and not applied                                                                                                                                               | `true`        |
+| `ignored`                      | A list of terms to be ignored by the filter.                                                                                                                                                                 | None          |
+| `onlyStrictMatches`            | When set to false, the pattern for identifying email addresses will be relaxed. Filtered email addresses will have a lower confidence, but filter performance will increase.                                 | `true`        |
+| `onlyValidTLDs`                | When set to true, only email addresses that are for a top-level domain are filtered.                                                                                                                         | `false`       |
+| `priority`                     | The priority (integer) of this filter. Valid values are any positive integer, where a higher value indicates a higher priority. Priority is used for tie-breaking when two spans may be otherwise identical. | `0`           |
 
 ### Filter Strategies
 

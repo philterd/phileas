@@ -82,6 +82,9 @@ public class UnstructuredDocumentProcessor implements DocumentProcessor {
         // Sort the spans based on the confidence.
         identifiedSpans.sort(Comparator.comparing(Span::getConfidence));
 
+        // Remove equal spans having lower priorities.
+
+
         // Perform post-filtering on the spans.
         for(final PostFilter postFilter : postFilters) {
             identifiedSpans = postFilter.filter(input, identifiedSpans);
