@@ -215,7 +215,7 @@ public class ZipCodeFilterTest extends AbstractFilterTest {
     }
 
     @Test
-    public void filterZipCodeAndValidate10() throws Exception {
+    public void filterZipCodeAndValidate1() throws Exception {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new ZipCodeFilterStrategy()))
@@ -245,7 +245,7 @@ public class ZipCodeFilterTest extends AbstractFilterTest {
     }
 
     @Test
-    public void filterZipCodeAndValidate11() throws Exception {
+    public void filterZipCodeAndValidate2() throws Exception {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new ZipCodeFilterStrategy()))
@@ -275,7 +275,7 @@ public class ZipCodeFilterTest extends AbstractFilterTest {
     }
 
     @Test
-    public void filterZipCodeAndValidate12() throws Exception {
+    public void filterZipCodeAndValidate3() throws Exception {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new ZipCodeFilterStrategy()))
@@ -305,7 +305,7 @@ public class ZipCodeFilterTest extends AbstractFilterTest {
     }
 
     @Test
-    public void filterZipCodeAndValidate13() throws Exception {
+    public void filterZipCodeAndValidate4() throws Exception {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new ZipCodeFilterStrategy()))
@@ -335,7 +335,7 @@ public class ZipCodeFilterTest extends AbstractFilterTest {
     }
 
     @Test
-    public void filterZipCodeAndValidate14() throws Exception {
+    public void filterZipCodeAndValidate5() throws Exception {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new ZipCodeFilterStrategy()))
