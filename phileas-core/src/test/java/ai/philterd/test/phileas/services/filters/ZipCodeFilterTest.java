@@ -18,6 +18,7 @@ package ai.philterd.test.phileas.services.filters;
 import ai.philterd.phileas.model.enums.FilterType;
 import ai.philterd.phileas.model.filter.FilterConfiguration;
 import ai.philterd.phileas.model.objects.FilterResult;
+import ai.philterd.phileas.model.objects.Span;
 import ai.philterd.phileas.model.policy.filters.strategies.rules.ZipCodeFilterStrategy;
 import ai.philterd.phileas.model.services.AlertService;
 import ai.philterd.phileas.services.anonymization.ZipCodeAnonymizationService;
@@ -43,7 +44,7 @@ public class ZipCodeFilterTest extends AbstractFilterTest {
                 .withWindowSize(windowSize)
                 .build();
 
-        final ZipCodeFilter filter = new ZipCodeFilter(filterConfiguration, true);
+        final ZipCodeFilter filter = new ZipCodeFilter(filterConfiguration, true, false);
 
         final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "the zip is 90210.", attributes);
         Assertions.assertEquals(1, filterResult.getSpans().size());
@@ -62,7 +63,7 @@ public class ZipCodeFilterTest extends AbstractFilterTest {
                 .withWindowSize(windowSize)
                 .build();
 
-        final ZipCodeFilter filter = new ZipCodeFilter(filterConfiguration, true);
+        final ZipCodeFilter filter = new ZipCodeFilter(filterConfiguration, true, false);
 
         final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "the zip is 90210abd.", attributes);
         Assertions.assertEquals(0, filterResult.getSpans().size());
@@ -79,7 +80,7 @@ public class ZipCodeFilterTest extends AbstractFilterTest {
                 .withWindowSize(windowSize)
                 .build();
 
-        final ZipCodeFilter filter = new ZipCodeFilter(filterConfiguration, true);
+        final ZipCodeFilter filter = new ZipCodeFilter(filterConfiguration, true, false);
 
         final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "the zip is 90210 in california.", attributes);
         Assertions.assertEquals(1, filterResult.getSpans().size());
@@ -97,7 +98,7 @@ public class ZipCodeFilterTest extends AbstractFilterTest {
                 .withWindowSize(windowSize)
                 .build();
 
-        final ZipCodeFilter filter = new ZipCodeFilter(filterConfiguration, true);
+        final ZipCodeFilter filter = new ZipCodeFilter(filterConfiguration, true, false);
 
         final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "the zip is 85055 in california.", attributes);
         Assertions.assertEquals(1, filterResult.getSpans().size());
@@ -115,7 +116,7 @@ public class ZipCodeFilterTest extends AbstractFilterTest {
                 .withWindowSize(windowSize)
                 .build();
 
-        final ZipCodeFilter filter = new ZipCodeFilter(filterConfiguration, true);
+        final ZipCodeFilter filter = new ZipCodeFilter(filterConfiguration, true, false);
 
         final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "the zip is 90213-1544 in california.", attributes);
         Assertions.assertEquals(1, filterResult.getSpans().size());
@@ -133,7 +134,7 @@ public class ZipCodeFilterTest extends AbstractFilterTest {
                 .withWindowSize(windowSize)
                 .build();
 
-        final ZipCodeFilter filter = new ZipCodeFilter(filterConfiguration, true);
+        final ZipCodeFilter filter = new ZipCodeFilter(filterConfiguration, true, false);
 
         final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "George Washington was president and his ssn was 123-45-6789 and he lived in 90210.", attributes);
         Assertions.assertEquals(1, filterResult.getSpans().size());
@@ -151,7 +152,7 @@ public class ZipCodeFilterTest extends AbstractFilterTest {
                 .withWindowSize(windowSize)
                 .build();
 
-        final ZipCodeFilter filter = new ZipCodeFilter(filterConfiguration, true);
+        final ZipCodeFilter filter = new ZipCodeFilter(filterConfiguration, true, false);
 
         // Tests whole word only.
         final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "George Washington was president and his ssn was 123-45-6789 and he lived in 9021032.", attributes);
@@ -169,7 +170,7 @@ public class ZipCodeFilterTest extends AbstractFilterTest {
                 .withWindowSize(windowSize)
                 .build();
 
-        final ZipCodeFilter filter = new ZipCodeFilter(filterConfiguration, true);
+        final ZipCodeFilter filter = new ZipCodeFilter(filterConfiguration, true, false);
 
         // Tests whole word only.
         final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "George Washington was president and his ssn was 123-45-6789 and he lived in 90210-1234.", attributes);
@@ -187,7 +188,7 @@ public class ZipCodeFilterTest extends AbstractFilterTest {
                 .withWindowSize(windowSize)
                 .build();
 
-        final ZipCodeFilter filter = new ZipCodeFilter(filterConfiguration, false);
+        final ZipCodeFilter filter = new ZipCodeFilter(filterConfiguration, false, false);
 
         // Tests without delimiter.
         final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "George Washington was president and his ssn was 123-45-6789 and he lived in 902101234.", attributes);
@@ -205,11 +206,161 @@ public class ZipCodeFilterTest extends AbstractFilterTest {
                 .withWindowSize(windowSize)
                 .build();
 
-        final ZipCodeFilter filter = new ZipCodeFilter(filterConfiguration, true);
+        final ZipCodeFilter filter = new ZipCodeFilter(filterConfiguration, true, false);
 
         // Tests without delimiter.
         final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "George Washington was president and his ssn was 123-45-6789 and he lived in 902101234.", attributes);
         Assertions.assertEquals(0, filterResult.getSpans().size());
+
+    }
+
+    @Test
+    public void filterZipCodeAndValidate1() throws Exception {
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(new ZipCodeFilterStrategy()))
+                .withAlertService(alertService)
+                .withAnonymizationService(new ZipCodeAnonymizationService(new LocalAnonymizationCacheService()))
+                .withWindowSize(windowSize)
+                .build();
+
+        final ZipCodeFilter filter = new ZipCodeFilter(filterConfiguration, true, true);
+
+        // 09865 is an invalid zip code.
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "George Washington lived in 90210 and 09865.", attributes);
+        Assertions.assertEquals(2, filterResult.getSpans().size());
+
+        for(final Span span : filterResult.getSpans()) {
+
+            Assertions.assertTrue(span.getText().equals("90210") || span.getText().equals("09865"));
+
+            if(span.getText().equals("90210")) {
+                Assertions.assertTrue(span.isApplied());
+            } else {
+                Assertions.assertFalse(span.isApplied());
+            }
+
+        }
+
+    }
+
+    @Test
+    public void filterZipCodeAndValidate2() throws Exception {
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(new ZipCodeFilterStrategy()))
+                .withAlertService(alertService)
+                .withAnonymizationService(new ZipCodeAnonymizationService(new LocalAnonymizationCacheService()))
+                .withWindowSize(windowSize)
+                .build();
+
+        final ZipCodeFilter filter = new ZipCodeFilter(filterConfiguration, true, true);
+
+        // 09865 is an invalid zip code.
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "George Washington lived in 90210-1234 and 09865.", attributes);
+        Assertions.assertEquals(2, filterResult.getSpans().size());
+
+        for(final Span span : filterResult.getSpans()) {
+
+            Assertions.assertTrue(span.getText().equals("90210-1234") || span.getText().equals("09865"));
+
+            if(span.getText().equals("90210-1234")) {
+                Assertions.assertTrue(span.isApplied());
+            } else {
+                Assertions.assertFalse(span.isApplied());
+            }
+
+        }
+
+    }
+
+    @Test
+    public void filterZipCodeAndValidate3() throws Exception {
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(new ZipCodeFilterStrategy()))
+                .withAlertService(alertService)
+                .withAnonymizationService(new ZipCodeAnonymizationService(new LocalAnonymizationCacheService()))
+                .withWindowSize(windowSize)
+                .build();
+
+        final ZipCodeFilter filter = new ZipCodeFilter(filterConfiguration, false, true);
+
+        // 09865 is an invalid zip code.
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "George Washington lived in 902101234 and 09865.", attributes);
+        Assertions.assertEquals(2, filterResult.getSpans().size());
+
+        for(final Span span : filterResult.getSpans()) {
+
+            Assertions.assertTrue(span.getText().equals("902101234") || span.getText().equals("09865"));
+
+            if(span.getText().equals("902101234")) {
+                Assertions.assertTrue(span.isApplied());
+            } else {
+                Assertions.assertFalse(span.isApplied());
+            }
+
+        }
+
+    }
+
+    @Test
+    public void filterZipCodeAndValidate4() throws Exception {
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(new ZipCodeFilterStrategy()))
+                .withAlertService(alertService)
+                .withAnonymizationService(new ZipCodeAnonymizationService(new LocalAnonymizationCacheService()))
+                .withWindowSize(windowSize)
+                .build();
+
+        final ZipCodeFilter filter = new ZipCodeFilter(filterConfiguration, true, true);
+
+        // 09865 is an invalid zip code.
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "George Washington lived in 90210-1234 and 09865-1234.", attributes);
+        Assertions.assertEquals(2, filterResult.getSpans().size());
+
+        for(final Span span : filterResult.getSpans()) {
+
+            Assertions.assertTrue(span.getText().equals("90210-1234") || span.getText().equals("09865-1234"));
+
+            if(span.getText().equals("90210-1234")) {
+                Assertions.assertTrue(span.isApplied());
+            } else {
+                Assertions.assertFalse(span.isApplied());
+            }
+
+        }
+
+    }
+
+    @Test
+    public void filterZipCodeAndValidate5() throws Exception {
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(new ZipCodeFilterStrategy()))
+                .withAlertService(alertService)
+                .withAnonymizationService(new ZipCodeAnonymizationService(new LocalAnonymizationCacheService()))
+                .withWindowSize(windowSize)
+                .build();
+
+        final ZipCodeFilter filter = new ZipCodeFilter(filterConfiguration, false, true);
+
+        // 09865 is an invalid zip code.
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "George Washington lived in 902101234 and 098651234.", attributes);
+        Assertions.assertEquals(2, filterResult.getSpans().size());
+
+        for(final Span span : filterResult.getSpans()) {
+
+            Assertions.assertTrue(span.getText().equals("902101234") || span.getText().equals("098651234"));
+
+            if(span.getText().equals("902101234")) {
+                Assertions.assertTrue(span.isApplied());
+            } else {
+                Assertions.assertFalse(span.isApplied());
+            }
+
+        }
 
     }
 

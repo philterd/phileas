@@ -31,6 +31,10 @@ public class ZipCode extends AbstractFilter {
     @Expose
     private boolean requireDelimiter = false;
 
+    @SerializedName("validate")
+    @Expose
+    private boolean validate = false;
+
     public List<ZipCodeFilterStrategy> getZipCodeFilterStrategies() {
         return zipCodeFilterStrategies;
     }
@@ -45,6 +49,14 @@ public class ZipCode extends AbstractFilter {
 
     public void setRequireDelimiter(boolean requireDelimiter) {
         this.requireDelimiter = requireDelimiter;
+    }
+
+    public boolean isValidate() {
+        return validate;
+    }
+
+    public void setValidate(boolean validate) {
+        this.validate = validate;
     }
 
 }

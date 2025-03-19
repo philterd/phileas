@@ -12,12 +12,13 @@ This filter has no required parameters.
 
 ### Optional Parameters
 
-| Parameter                 | Description                                                                                                                                                        | Default Value |
-| ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------- |
-| `zipCodeFilterStrategies` | A list of filter strategies.                                                                                                                                       | None          |
-| `enabled`                 | When set to false, the filter will be disabled and not applied                                                                                                     | `true`        |
-| `ignored`                 | A list of terms to be ignored by the filter.                                                                                                                       | None          |
-| `requireDelimiter`        | When set to false, the filter will not require a dash in 9 digit zip codes, e.g. 12345-6789. Setting to false may increase the number of zip code false positives. | `true`        |
+| Parameter                 | Description                                                                                                                                                                                                                                                                                  | Default Value |
+|---------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------|
+| `zipCodeFilterStrategies` | A list of filter strategies.                                                                                                                                                                                                                                                                 | None          |
+| `enabled`                 | When set to false, the filter will be disabled and not applied                                                                                                                                                                                                                               | `true`        |
+| `ignored`                 | A list of terms to be ignored by the filter.                                                                                                                                                                                                                                                 | None          |
+| `requireDelimiter`        | When set to false, the filter will not require a dash in 9 digit zip codes, e.g. 12345-6789. Setting to false may increase the number of zip code false positives.                                                                                                                           | `true`        |
+| `validate`                | When set to true, the database of zip codes from the US census will be checked for the first 5 digits of the zip code. If not found, the span will be marked as not applied. Use this with caution as US zip codes can change frequently and the database included may not be comprehensive. | `false`       |
 
 ### Filter Strategies
 
