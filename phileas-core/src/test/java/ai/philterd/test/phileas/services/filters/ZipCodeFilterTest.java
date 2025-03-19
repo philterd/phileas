@@ -304,4 +304,64 @@ public class ZipCodeFilterTest extends AbstractFilterTest {
 
     }
 
+    @Test
+    public void filterZipCodeAndValidate13() throws Exception {
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(new ZipCodeFilterStrategy()))
+                .withAlertService(alertService)
+                .withAnonymizationService(new ZipCodeAnonymizationService(new LocalAnonymizationCacheService()))
+                .withWindowSize(windowSize)
+                .build();
+
+        final ZipCodeFilter filter = new ZipCodeFilter(filterConfiguration, true, true);
+
+        // 09865 is an invalid zip code.
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "George Washington lived in 90210-1234 and 09865-1234.", attributes);
+        Assertions.assertEquals(2, filterResult.getSpans().size());
+
+        for(final Span span : filterResult.getSpans()) {
+
+            Assertions.assertTrue(span.getText().equals("90210-1234") || span.getText().equals("09865-1234"));
+
+            if(span.getText().equals("90210-1234")) {
+                Assertions.assertTrue(span.isApplied());
+            } else {
+                Assertions.assertFalse(span.isApplied());
+            }
+
+        }
+
+    }
+
+    @Test
+    public void filterZipCodeAndValidate14() throws Exception {
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(new ZipCodeFilterStrategy()))
+                .withAlertService(alertService)
+                .withAnonymizationService(new ZipCodeAnonymizationService(new LocalAnonymizationCacheService()))
+                .withWindowSize(windowSize)
+                .build();
+
+        final ZipCodeFilter filter = new ZipCodeFilter(filterConfiguration, false, true);
+
+        // 09865 is an invalid zip code.
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "George Washington lived in 902101234 and 098651234.", attributes);
+        Assertions.assertEquals(2, filterResult.getSpans().size());
+
+        for(final Span span : filterResult.getSpans()) {
+
+            Assertions.assertTrue(span.getText().equals("902101234") || span.getText().equals("098651234"));
+
+            if(span.getText().equals("902101234")) {
+                Assertions.assertTrue(span.isApplied());
+            } else {
+                Assertions.assertFalse(span.isApplied());
+            }
+
+        }
+
+    }
+
 }
