@@ -37,11 +37,6 @@
 			<artifactId>phileas-processors-unstructured</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-		<!--<dependency>
-			<groupId>ai.philterd</groupId>
-			<artifactId>phileas-processors-images</artifactId>
-			<version>${project.version}</version>
-		</dependency>-->
 		<dependency>
 			<groupId>ai.philterd</groupId>
 			<artifactId>phileas-services-disambiguation</artifactId>
@@ -63,14 +58,14 @@
 			<version>${libphonenumber.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>com.squareup.retrofit2</groupId>
-			<artifactId>retrofit</artifactId>
-			<version>${retrofit.version}</version>
-		</dependency>
-		<dependency>
 			<groupId>com.google.code.gson</groupId>
 			<artifactId>gson</artifactId>
 			<version>${gson.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.squareup.okhttp3</groupId>
+			<artifactId>okhttp</artifactId>
+			<version>${okhttp.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.squareup.retrofit2</groupId>
