@@ -42,19 +42,19 @@ public class TrackingNumberFilter extends RegexFilter {
         if(fedex) {
 
             // FedEx
-            final Pattern fedex1 = Pattern.compile("\\b[0-9]{20}\\b", Pattern.CASE_INSENSITIVE);
+            final Pattern fedex1 = Pattern.compile("\\b\\d{20}\\b", Pattern.CASE_INSENSITIVE);
             final FilterPattern fedex1FilterPattern = new FilterPattern.FilterPatternBuilder(fedex1, 0.75).withClassification("fedex").build();
             filterPatterns.add(fedex1FilterPattern);
 
-            final Pattern fedex2 = Pattern.compile("\\b[0-9]{15}\\b", Pattern.CASE_INSENSITIVE);
+            final Pattern fedex2 = Pattern.compile("\\b\\d{15}\\b", Pattern.CASE_INSENSITIVE);
             final FilterPattern fedex2FilterPattern = new FilterPattern.FilterPatternBuilder(fedex2, 0.75).withClassification("fedex").build();
             filterPatterns.add(fedex2FilterPattern);
 
-            final Pattern fedex3 = Pattern.compile("\\b[0-9]{12}\\b", Pattern.CASE_INSENSITIVE);
+            final Pattern fedex3 = Pattern.compile("\\b\\d{12}\\b", Pattern.CASE_INSENSITIVE);
             final FilterPattern fedex3FilterPattern = new FilterPattern.FilterPatternBuilder(fedex3, 0.75).withClassification("fedex").build();
             filterPatterns.add(fedex3FilterPattern);
 
-            final Pattern fedex4 = Pattern.compile("\\b[0-9]{22}\\b", Pattern.CASE_INSENSITIVE);
+            final Pattern fedex4 = Pattern.compile("\\b\\d{22}\\b", Pattern.CASE_INSENSITIVE);
             final FilterPattern fedex4FilterPattern = new FilterPattern.FilterPatternBuilder(fedex4, 0.75).withClassification("fedex").build();
             filterPatterns.add(fedex4FilterPattern);
 
@@ -64,19 +64,19 @@ public class TrackingNumberFilter extends RegexFilter {
 
             // UPS
 
-            final Pattern ups1 = Pattern.compile("\\b(1Z)[0-9A-Z]{16}\\b", Pattern.CASE_INSENSITIVE);
+            final Pattern ups1 = Pattern.compile("\\b(1Z)[\\dA-Z]{16}\\b", Pattern.CASE_INSENSITIVE);
             final FilterPattern ups1FilterPattern = new FilterPattern.FilterPatternBuilder(ups1, 0.90).withClassification("ups").build();
             filterPatterns.add(ups1FilterPattern);
 
-            final Pattern ups2 = Pattern.compile("\\b(T)+[0-9A-Z]{10}\\b", Pattern.CASE_INSENSITIVE);
+            final Pattern ups2 = Pattern.compile("\\b(T)+[\\dA-Z]{10}\\b", Pattern.CASE_INSENSITIVE);
             final FilterPattern ups2FilterPattern = new FilterPattern.FilterPatternBuilder(ups2, 0.90).withClassification("ups").build();
             filterPatterns.add(ups2FilterPattern);
 
-            final Pattern ups3 = Pattern.compile("\\b[0-9]{9}\\b", Pattern.CASE_INSENSITIVE);
+            final Pattern ups3 = Pattern.compile("\\b\\d{9}\\b", Pattern.CASE_INSENSITIVE);
             final FilterPattern ups3FilterPattern = new FilterPattern.FilterPatternBuilder(ups3, 0.75).withClassification("ups").build();
             filterPatterns.add(ups3FilterPattern);
 
-            final Pattern ups4 = Pattern.compile("\\b[0-9]{26}\\b", Pattern.CASE_INSENSITIVE);
+            final Pattern ups4 = Pattern.compile("\\b\\d{26}\\b", Pattern.CASE_INSENSITIVE);
             final FilterPattern ups4FilterPattern = new FilterPattern.FilterPatternBuilder(ups4, 0.75).withClassification("ups").build();
             filterPatterns.add(ups4FilterPattern);
 
@@ -86,35 +86,35 @@ public class TrackingNumberFilter extends RegexFilter {
 
             // USPS
 
-            final Pattern usps1 = Pattern.compile("\\b(94|93|92|94|95)[0-9]{20}\\b", Pattern.CASE_INSENSITIVE);
+            final Pattern usps1 = Pattern.compile("\\b(94|93|92|94|95)\\d{20}\\b", Pattern.CASE_INSENSITIVE);
             final FilterPattern usps1FilterPattern = new FilterPattern.FilterPatternBuilder(usps1, 0.90).withClassification("usps").build();
             filterPatterns.add(usps1FilterPattern);
 
-            final Pattern usps2 = Pattern.compile("\\b(94|93|92|94|95)[0-9]{22}\\b", Pattern.CASE_INSENSITIVE);
+            final Pattern usps2 = Pattern.compile("\\b(94|93|92|94|95)\\d{22}\\b", Pattern.CASE_INSENSITIVE);
             final FilterPattern usps2FilterPattern = new FilterPattern.FilterPatternBuilder(usps2, 0.90).withClassification("usps").build();
             filterPatterns.add(usps2FilterPattern);
 
-            final Pattern usps3 = Pattern.compile("\\b(70|14|23|03)[0-9]{14}\\b", Pattern.CASE_INSENSITIVE);
+            final Pattern usps3 = Pattern.compile("\\b(70|14|23|03)\\d{14}\\b", Pattern.CASE_INSENSITIVE);
             final FilterPattern usps3FilterPattern = new FilterPattern.FilterPatternBuilder(usps3, 0.90).withClassification("usps").build();
             filterPatterns.add(usps3FilterPattern);
 
-            final Pattern usps4 = Pattern.compile("\\b([A-Z]{2})[0-9]{9}([A-Z]{2})\\b", Pattern.CASE_INSENSITIVE);
+            final Pattern usps4 = Pattern.compile("\\b([A-Z]{2})\\d{9}([A-Z]{2})\\b", Pattern.CASE_INSENSITIVE);
             final FilterPattern usps4FilterPattern = new FilterPattern.FilterPatternBuilder(usps4, 0.90).withClassification("usps").build();
             filterPatterns.add(usps4FilterPattern);
 
-            final Pattern usps5 = Pattern.compile("\\b[0-9]{34}\\b", Pattern.CASE_INSENSITIVE);
+            final Pattern usps5 = Pattern.compile("\\b\\d{34}\\b", Pattern.CASE_INSENSITIVE);
             final FilterPattern usps5FilterPattern = new FilterPattern.FilterPatternBuilder(usps5, 0.75).withClassification("usps").build();
             filterPatterns.add(usps5FilterPattern);
 
-            final Pattern usps6 = Pattern.compile("\\b[0-9]{30}\\b", Pattern.CASE_INSENSITIVE);
+            final Pattern usps6 = Pattern.compile("\\b\\d{30}\\b", Pattern.CASE_INSENSITIVE);
             final FilterPattern usps6FilterPattern = new FilterPattern.FilterPatternBuilder(usps6, 0.75).withClassification("usps").build();
             filterPatterns.add(usps6FilterPattern);
 
-            final Pattern usps7 = Pattern.compile("\\b[0-9]{28}\\b", Pattern.CASE_INSENSITIVE);
+            final Pattern usps7 = Pattern.compile("\\b\\d{28}\\b", Pattern.CASE_INSENSITIVE);
             final FilterPattern usps7FilterPattern = new FilterPattern.FilterPatternBuilder(usps7, 0.75).withClassification("usps").build();
             filterPatterns.add(usps7FilterPattern);
 
-            final Pattern usps8 = Pattern.compile("\\b[0-9]{26}\\b", Pattern.CASE_INSENSITIVE);
+            final Pattern usps8 = Pattern.compile("\\b\\d{26}\\b", Pattern.CASE_INSENSITIVE);
             final FilterPattern usps8FilterPattern = new FilterPattern.FilterPatternBuilder(usps8, 0.75).withClassification("usps").build();
             filterPatterns.add(usps8FilterPattern);
 

@@ -18,6 +18,9 @@ package ai.philterd.phileas.services.filters.regex;
 import ai.philterd.phileas.model.enums.FilterType;
 import ai.philterd.phileas.model.filter.FilterConfiguration;
 import ai.philterd.phileas.model.filter.rules.regex.RegexFilter;
+import ai.philterd.phileas.model.metadata.zipcode.ZipCodeMetadataRequest;
+import ai.philterd.phileas.model.metadata.zipcode.ZipCodeMetadataResponse;
+import ai.philterd.phileas.model.metadata.zipcode.ZipCodeMetadataService;
 import ai.philterd.phileas.model.objects.Analyzer;
 import ai.philterd.phileas.model.objects.FilterPattern;
 import ai.philterd.phileas.model.objects.FilterResult;
@@ -31,8 +34,12 @@ import java.util.regex.Pattern;
 
 public class ZipCodeFilter extends RegexFilter {
 
-    public ZipCodeFilter(FilterConfiguration filterConfiguration, boolean requireDelimiter) {
+    private final boolean validate;
+
+    public ZipCodeFilter(FilterConfiguration filterConfiguration, boolean requireDelimiter, boolean validate) {
         super(FilterType.ZIP_CODE, filterConfiguration);
+
+        this.validate = validate;
 
         this.contextualTerms = new HashSet<>();
         this.contextualTerms.add("zip");
@@ -63,6 +70,25 @@ public class ZipCodeFilter extends RegexFilter {
     public FilterResult filter(Policy policy, String context, String documentId, int piece, String input, Map<String, String> attributes) throws Exception {
 
         final List<Span> spans = findSpans(policy, analyzer, input, context, documentId, attributes);
+
+        if(validate) {
+
+            final ZipCodeMetadataService zipCodeMetadataService = new ZipCodeMetadataService();
+
+            for (final Span span : spans) {
+
+                // Zip code database only has first 5 digits.
+                final String zipCode = span.getText().substring(0, 5);
+
+                final ZipCodeMetadataResponse zipCodeMetadataResponse = zipCodeMetadataService.getMetadata(new ZipCodeMetadataRequest(zipCode));
+
+                if (!zipCodeMetadataResponse.isExists()) {
+                    span.setApplied(false);
+                }
+
+            }
+
+        }
 
         return new FilterResult(context, documentId, spans);
 

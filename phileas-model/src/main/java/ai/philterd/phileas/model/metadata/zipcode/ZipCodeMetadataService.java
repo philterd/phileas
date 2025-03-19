@@ -25,16 +25,17 @@ import java.util.HashMap;
 
 public class ZipCodeMetadataService implements MetadataService<ZipCodeMetadataRequest, ZipCodeMetadataResponse> {
 
-    private final HashMap<String, Integer> zipCodes2010Census;
+    private final HashMap<String, Integer> zipCodesFromCensus;
+    private final String zipCodeCensusFileName = "zip-code-population.csv";
 
     public ZipCodeMetadataService() throws IOException {
-        zipCodes2010Census = loadZipCodes2010Census();
+        zipCodesFromCensus = loadZipCodesFromCensus();
     }
 
     @Override
     public ZipCodeMetadataResponse getMetadata(final ZipCodeMetadataRequest request) {
 
-        final int population = zipCodes2010Census.getOrDefault(request.getZipCode(), -1);
+        final int population = zipCodesFromCensus.getOrDefault(request.getZipCode(), -1);
 
         if(population == -1) {
             // The zip code was not found.
@@ -45,11 +46,11 @@ public class ZipCodeMetadataService implements MetadataService<ZipCodeMetadataRe
 
     }
 
-    private HashMap<String, Integer> loadZipCodes2010Census() throws IOException {
+    private HashMap<String, Integer> loadZipCodesFromCensus() throws IOException {
 
         final HashMap<String, Integer> zipcodes = new HashMap<>();
 
-        try (InputStream inputStream =  getClass().getClassLoader().getResourceAsStream("zip-code-population.csv");
+        try (InputStream inputStream =  getClass().getClassLoader().getResourceAsStream(zipCodeCensusFileName);
              InputStreamReader inputStreamReader = new InputStreamReader(inputStream)) {
 
             final BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
