@@ -41,6 +41,10 @@ public abstract class AbstractFilter {
     @Expose
     protected List<IgnoredPattern> ignoredPatterns = Collections.emptyList();
 
+    @SerializedName("windowSize")
+    @Expose
+    protected int windowSize;
+
     @SerializedName("priority")
     @Expose
     protected int priority;
@@ -77,12 +81,28 @@ public abstract class AbstractFilter {
         return ignoredFiles;
     }
 
+    public void setWindowSize(int windowSize) {
+        this.windowSize = windowSize;
+    }
+
+    public int getWindowSize() {
+        return windowSize;
+    }
+
+    public int getWindowSizeOrDefault(final int defaultWindowSize) {
+        if (windowSize == 0) {
+            return defaultWindowSize;
+        }
+        return windowSize;
+    }
+
     public int getPriority() {
         return priority;
     }
 
     public void setPriority(int priority) {
         this.priority = priority;
+
     }
 
 }

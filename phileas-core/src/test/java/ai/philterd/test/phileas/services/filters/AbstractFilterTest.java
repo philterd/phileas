@@ -89,7 +89,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -109,116 +108,116 @@ public abstract class AbstractFilterTest {
     public Policy getPolicy() throws IOException {
 
         CustomDictionary customDictionary = new CustomDictionary();
-        customDictionary.setCustomDictionaryFilterStrategies(Arrays.asList(new CustomDictionaryFilterStrategy()));
+        customDictionary.setCustomDictionaryFilterStrategies(List.of(new CustomDictionaryFilterStrategy()));
 
         Age age = new Age();
-        age.setAgeFilterStrategies(Arrays.asList(new AgeFilterStrategy()));
+        age.setAgeFilterStrategies(List.of(new AgeFilterStrategy()));
 
         BankRoutingNumber bankRoutingNumber = new BankRoutingNumber();
-        bankRoutingNumber.setBankRoutingNumberFilterStrategies(Arrays.asList(new BankRoutingNumberFilterStrategy()));
+        bankRoutingNumber.setBankRoutingNumberFilterStrategies(List.of(new BankRoutingNumberFilterStrategy()));
 
         BitcoinAddress bitcoinAddress = new BitcoinAddress();
-        bitcoinAddress.setBitcoinFilterStrategies(Arrays.asList(new BitcoinAddressFilterStrategy()));
+        bitcoinAddress.setBitcoinFilterStrategies(List.of(new BitcoinAddressFilterStrategy()));
 
         CreditCard creditCard = new CreditCard();
-        creditCard.setCreditCardFilterStrategies(Arrays.asList(new CreditCardFilterStrategy()));
+        creditCard.setCreditCardFilterStrategies(List.of(new CreditCardFilterStrategy()));
         creditCard.setOnlyValidCreditCardNumbers(true);
 
         Currency currency = new Currency();
-        currency.setCurrencyFilterStrategies(Arrays.asList(new CurrencyFilterStrategy()));
+        currency.setCurrencyFilterStrategies(List.of(new CurrencyFilterStrategy()));
 
         Date date = new Date();
-        date.setDateFilterStrategies(Arrays.asList(new DateFilterStrategy()));
+        date.setDateFilterStrategies(List.of(new DateFilterStrategy()));
 
         DriversLicense driversLicense = new DriversLicense();
-        driversLicense.setDriversLicenseFilterStrategies(Arrays.asList(new DriversLicenseFilterStrategy()));
+        driversLicense.setDriversLicenseFilterStrategies(List.of(new DriversLicenseFilterStrategy()));
 
         EmailAddress emailAddress = new EmailAddress();
-        emailAddress.setEmailAddressFilterStrategies(Arrays.asList(new EmailAddressFilterStrategy()));
+        emailAddress.setEmailAddressFilterStrategies(List.of(new EmailAddressFilterStrategy()));
 
         IbanCode ibanCode = new IbanCode();
-        ibanCode.setIbanCodeFilterStrategies(Arrays.asList(new IbanCodeFilterStrategy()));
+        ibanCode.setIbanCodeFilterStrategies(List.of(new IbanCodeFilterStrategy()));
 
         Identifier identifier = new Identifier();
-        identifier.setIdentifierFilterStrategies(Arrays.asList(new IdentifierFilterStrategy()));
+        identifier.setIdentifierFilterStrategies(List.of(new IdentifierFilterStrategy()));
 
         IpAddress ipAddress = new IpAddress();
-        ipAddress.setIpAddressFilterStrategies(Arrays.asList(new IpAddressFilterStrategy()));
+        ipAddress.setIpAddressFilterStrategies(List.of(new IpAddressFilterStrategy()));
 
         MacAddress macAddress = new MacAddress();
-        macAddress.setMacAddressFilterStrategies(Arrays.asList(new MacAddressFilterStrategy()));
+        macAddress.setMacAddressFilterStrategies(List.of(new MacAddressFilterStrategy()));
 
         PassportNumber passportNumber = new PassportNumber();
-        passportNumber.setPassportNumberFilterStrategies(Arrays.asList(new PassportNumberFilterStrategy()));
+        passportNumber.setPassportNumberFilterStrategies(List.of(new PassportNumberFilterStrategy()));
 
         PhoneNumber phoneNumber = new PhoneNumber();
-        phoneNumber.setPhoneNumberFilterStrategies(Arrays.asList(new PhoneNumberFilterStrategy()));
+        phoneNumber.setPhoneNumberFilterStrategies(List.of(new PhoneNumberFilterStrategy()));
 
         PhoneNumberExtension phoneNumberExtension = new PhoneNumberExtension();
-        phoneNumberExtension.setPhoneNumberExtensionFilterStrategies(Arrays.asList(new PhoneNumberExtensionFilterStrategy()));
+        phoneNumberExtension.setPhoneNumberExtensionFilterStrategies(List.of(new PhoneNumberExtensionFilterStrategy()));
 
         PhysicianName physicianName = new PhysicianName();
-        physicianName.setPhysicianNameFilterStrategies(Arrays.asList(new PhysicianNameFilterStrategy()));
+        physicianName.setPhysicianNameFilterStrategies(List.of(new PhysicianNameFilterStrategy()));
 
         Section section = new Section();
-        section.setSectionFilterStrategies(Arrays.asList(new SectionFilterStrategy()));
+        section.setSectionFilterStrategies(List.of(new SectionFilterStrategy()));
 
         Ssn ssn = new Ssn();
-        ssn.setSsnFilterStrategies(Arrays.asList(new SsnFilterStrategy()));
+        ssn.setSsnFilterStrategies(List.of(new SsnFilterStrategy()));
 
         StateAbbreviation stateAbbreviation = new StateAbbreviation();
-        stateAbbreviation.setStateAbbreviationsFilterStrategies(Arrays.asList(new StateAbbreviationFilterStrategy()));
+        stateAbbreviation.setStateAbbreviationsFilterStrategies(List.of(new StateAbbreviationFilterStrategy()));
 
         StreetAddress streetAddress = new StreetAddress();
-        streetAddress.setStreetAddressFilterStrategies(Arrays.asList(new StreetAddressFilterStrategy()));
+        streetAddress.setStreetAddressFilterStrategies(List.of(new StreetAddressFilterStrategy()));
 
         TrackingNumber trackingNumber = new TrackingNumber();
-        trackingNumber.setTrackingNumberFilterStrategies(Arrays.asList(new TrackingNumberFilterStrategy()));
+        trackingNumber.setTrackingNumberFilterStrategies(List.of(new TrackingNumberFilterStrategy()));
 
         Url url = new Url();
-        url.setUrlFilterStrategies(Arrays.asList(new UrlFilterStrategy()));
+        url.setUrlFilterStrategies(List.of(new UrlFilterStrategy()));
 
         Vin vin = new Vin();
-        vin.setVinFilterStrategies(Arrays.asList(new VinFilterStrategy()));
+        vin.setVinFilterStrategies(List.of(new VinFilterStrategy()));
 
         ZipCodeFilterStrategy zipCodeFilterStrategy = new ZipCodeFilterStrategy();
         zipCodeFilterStrategy.setTruncateDigits(2);
 
         ZipCode zipCode = new ZipCode();
-        zipCode.setZipCodeFilterStrategies(Arrays.asList(zipCodeFilterStrategy));
+        zipCode.setZipCodeFilterStrategies(List.of(zipCodeFilterStrategy));
 
         // ----------------------------------------------------------------------------------
 
         City city = new City();
-        city.setCityFilterStrategies(Arrays.asList(new CityFilterStrategy()));
+        city.setCityFilterStrategies(List.of(new CityFilterStrategy()));
 
         County county = new County();
-        county.setCountyFilterStrategies(Arrays.asList(new CountyFilterStrategy()));
+        county.setCountyFilterStrategies(List.of(new CountyFilterStrategy()));
 
         FirstNameFilterStrategy firstNameFilterStrategy = new FirstNameFilterStrategy();
 
         FirstName firstName = new FirstName();
-        firstName.setFirstNameFilterStrategies(Arrays.asList(firstNameFilterStrategy));
+        firstName.setFirstNameFilterStrategies(List.of(firstNameFilterStrategy));
 
         HospitalAbbreviation hospitalAbbreviation = new HospitalAbbreviation();
-        hospitalAbbreviation.setHospitalAbbreviationFilterStrategies(Arrays.asList(new HospitalAbbreviationFilterStrategy()));
+        hospitalAbbreviation.setHospitalAbbreviationFilterStrategies(List.of(new HospitalAbbreviationFilterStrategy()));
 
         HospitalFilterStrategy hospitalFilterStrategy = new HospitalFilterStrategy();
 
         Hospital hospital = new Hospital();
-        hospital.setHospitalFilterStrategies(Arrays.asList(hospitalFilterStrategy));
+        hospital.setHospitalFilterStrategies(List.of(hospitalFilterStrategy));
 
         State state = new State();
-        state.setStateFilterStrategies(Arrays.asList(new StateFilterStrategy()));
+        state.setStateFilterStrategies(List.of(new StateFilterStrategy()));
 
         Surname surname = new Surname();
-        surname.setSurnameFilterStrategies(Arrays.asList(new SurnameFilterStrategy()));
+        surname.setSurnameFilterStrategies(List.of(new SurnameFilterStrategy()));
 
         // ----------------------------------------------------------------------------------
 
         Identifiers identifiers = new Identifiers();
 
-        identifiers.setCustomDictionaries(Arrays.asList(customDictionary));
+        identifiers.setCustomDictionaries(List.of(customDictionary));
 
         identifiers.setAge(age);
         identifiers.setBankRoutingNumber(bankRoutingNumber);
@@ -228,7 +227,7 @@ public abstract class AbstractFilterTest {
         identifiers.setDate(date);
         identifiers.setDriversLicense(driversLicense);
         identifiers.setEmailAddress(emailAddress);
-        identifiers.setIdentifiers(Arrays.asList(identifier));
+        identifiers.setIdentifiers(List.of(identifier));
         identifiers.setIbanCode(ibanCode);
         identifiers.setIpAddress(ipAddress);
         identifiers.setMacAddress(macAddress);
@@ -236,7 +235,7 @@ public abstract class AbstractFilterTest {
         identifiers.setPhoneNumber(phoneNumber);
         identifiers.setPhoneNumberExtension(phoneNumberExtension);
         identifiers.setPhysicianName(physicianName);
-        identifiers.setSections(Arrays.asList(section));
+        identifiers.setSections(List.of(section));
         identifiers.setSsn(ssn);
         identifiers.setStateAbbreviation(stateAbbreviation);
         identifiers.setStreetAddress(streetAddress);
