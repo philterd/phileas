@@ -379,13 +379,13 @@ public abstract class Filter {
         return ignoredPatterns;
     }
 
-<<<<<<< HEAD
     public int getWindowSize() {
         return windowSize;
-=======
+    }
+
     public int getPriority() {
         return priority;
->>>>>>> main
+
     }
 
 }
