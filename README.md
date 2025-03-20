@@ -104,7 +104,7 @@ Next, add the Phileas dependency to your project:
 <dependency>
   <groupId>ai.philterd</groupId>
   <artifactId>phileas-core</artifactId>
-  <version>2.9.0</version>
+  <version>2.12.0</version>
 </dependency>
 
 ```
