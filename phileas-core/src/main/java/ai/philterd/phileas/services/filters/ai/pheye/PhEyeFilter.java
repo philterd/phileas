@@ -201,7 +201,7 @@ public class PhEyeFilter extends NerFilter {
             final boolean ignored = isIgnored(text);
 
             return Span.make(start, end, FilterType.AGE, context, documentId, confidence, text,
-                    replacement.getReplacement(), replacement.getSalt(), ignored, replacement.isApplied(), window);
+                    replacement.getReplacement(), replacement.getSalt(), ignored, replacement.isApplied(), window, priority);
 
         }
 

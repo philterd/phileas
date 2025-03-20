@@ -156,7 +156,7 @@ public class FuzzyDictionaryFilter extends DictionaryFilter implements Serializa
         // Add the span to the list.
         return Span.make(characterStart, characterEnd, getFilterType(), context,
                 documentId, confidence, token, replacement.getReplacement(),
-                replacement.getSalt(), ignored, replacement.isApplied(), window);
+                replacement.getSalt(), ignored, replacement.isApplied(), window, priority);
 
     }
 

@@ -46,8 +46,8 @@ public class IpAddressFilter extends RegexFilter {
         final Pattern ipv6StdPattern =
                 Pattern.compile(
                         ""                           // start of string
-                                + "(?:[0-9a-fA-F]{1,4}:){7}"    // 7 blocks of a 1 to 4 digit hex number followed by double colon ':'
-                                + "[0-9a-fA-F]{1,4}"            // one more block of a 1 to 4 digit hex number
+                                + "(?:[\\da-fA-F]{1,4}:){7}"    // 7 blocks of a 1 to 4 digit hex number followed by double colon ':'
+                                + "[\\da-fA-F]{1,4}"            // one more block of a 1 to 4 digit hex number
                                 + "");                          // end of string
 
         final FilterPattern ipv61 = new FilterPattern.FilterPatternBuilder(ipv6StdPattern, 0.90).build();
@@ -56,13 +56,13 @@ public class IpAddressFilter extends RegexFilter {
                 Pattern.compile(
                         ""                             // start of string
                                 + "("                             // 1st group
-                                + "(?:[0-9A-Fa-f]{1,4}"           // at least one block of a 1 to 4 digit hex number
-                                + "(?::[0-9A-Fa-f]{1,4})*)?"      // optional further blocks, any number
+                                + "(?:[\\dA-Fa-f]{1,4}"           // at least one block of a 1 to 4 digit hex number
+                                + "(?::[\\dA-Fa-f]{1,4})*)?"      // optional further blocks, any number
                                 + ")"
                                 + "::"                            // in the middle of the expression the two occurences of ':' are neccessary
                                 + "("                             // 2nd group
-                                + "(?:[0-9A-Fa-f]{1,4}"           // at least one block of a 1 to 4 digit hex number
-                                + "(?::[0-9A-Fa-f]{1,4})*)?"      // optional further blocks, any number
+                                + "(?:[\\dA-Fa-f]{1,4}"           // at least one block of a 1 to 4 digit hex number
+                                + "(?::[\\dA-Fa-f]{1,4})*)?"      // optional further blocks, any number
                                 + ")"
                                 + "");                           // end of string
 
@@ -72,13 +72,13 @@ public class IpAddressFilter extends RegexFilter {
         final Pattern ipv6MixedCompressedPattern =
                 Pattern.compile(""                                               // start of string
                         + "("                                               // 1st group
-                        + "(?:[0-9A-Fa-f]{1,4}"                             // at least one block of a 1 to 4 digit hex number
-                        + "(?::[0-9A-Fa-f]{1,4})*)?"                        // optional further blocks, any number
+                        + "(?:[\\dA-Fa-f]{1,4}"                             // at least one block of a 1 to 4 digit hex number
+                        + "(?::[\\dA-Fa-f]{1,4})*)?"                        // optional further blocks, any number
                         + ")"
                         + "::"                                              // in the middle of the expression the two occurences of ':' are neccessary
                         + "("                                               // 2nd group
-                        + "(?:[0-9A-Fa-f]{1,4}:"                            // at least one block of a 1 to 4 digit hex number followed by a ':' character
-                        + "(?:[0-9A-Fa-f]{1,4}:)*)?"                        // optional further blocks, any number, all succeeded by ':' character
+                        + "(?:[\\dA-Fa-f]{1,4}:"                            // at least one block of a 1 to 4 digit hex number followed by a ':' character
+                        + "(?:[\\dA-Fa-f]{1,4}:)*)?"                        // optional further blocks, any number, all succeeded by ':' character
                         + ")"
                         + "");                                             // end of string
 
@@ -87,7 +87,7 @@ public class IpAddressFilter extends RegexFilter {
         //this regex checks the ipv6 uncompressed part of a ipv6 mixed address
         final Pattern IPV6_MIXED_UNCOMPRESSED_REGEX =
                 Pattern.compile(""  // start of string
-                        + "(?:[0-9a-fA-F]{1,4}:){6}"                             // 6 blocks of a 1 to 4 digit hex number followed by double colon ':'
+                        + "(?:[\\da-fA-F]{1,4}:){6}"                             // 6 blocks of a 1 to 4 digit hex number followed by double colon ':'
                         + "" );                                                 // end of string
 
         final FilterPattern ipv64 = new FilterPattern.FilterPatternBuilder(IPV6_MIXED_UNCOMPRESSED_REGEX, 0.90).build();

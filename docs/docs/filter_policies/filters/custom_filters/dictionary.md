@@ -23,6 +23,7 @@ At least one of `terms` or `files` must be provided.
 | `sensitivity`    | Controls the "fuzziness" of allowed values to account for misspellings and derivations. Valid values are `off` meaning only exact matches, `low`, `medium`, and `high`. Only applies when `fuzzy` is set to `true`.              | `medium`                                                 |
 | `classification` | Used to apply an arbitrary label to the identifier, such as "patient-id", or "account-number."                                                                                                                                   | `"custom-identifier"`                                    |
 | `windowSize`     | Sets the size of the window (in terms) surrounding a span to look for contextual terms. If set, this value overrides the value of `span.window.size` in the configuration.                                                       | The value of `span.window.size` which is by default `5`. |
+| `priority`       | The priority (integer) of this filter. Valid values are any positive integer, where a higher value indicates a higher priority. Priority is used for tie-breaking when two spans may be otherwise identical.                     | `0`                                                      |
 
 ### Filter Strategies
 

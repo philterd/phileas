@@ -21,7 +21,7 @@ public class ZipCodeMetadataRequest extends MetadataRequest {
 
     private String zipCode;
 
-    public ZipCodeMetadataRequest(String zipCode) {
+    public ZipCodeMetadataRequest(final String zipCode) {
         this.zipCode = zipCode;
     }
 
@@ -29,7 +29,7 @@ public class ZipCodeMetadataRequest extends MetadataRequest {
         return zipCode;
     }
 
-    public void setZipCode(String zipCode) {
+    public void setZipCode(final String zipCode) {
         this.zipCode = zipCode;
     }
 

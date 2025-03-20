@@ -41,9 +41,15 @@ public abstract class AbstractFilter {
     @Expose
     protected List<IgnoredPattern> ignoredPatterns = Collections.emptyList();
 
+<<<<<<< HEAD
     @SerializedName("windowSize")
     @Expose
     protected int windowSize;
+=======
+    @SerializedName("priority")
+    @Expose
+    protected int priority;
+>>>>>>> main
 
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
@@ -77,6 +83,7 @@ public abstract class AbstractFilter {
         return ignoredFiles;
     }
 
+<<<<<<< HEAD
     public void setWindowSize(int windowSize) {
         this.windowSize = windowSize;
     }
@@ -90,6 +97,14 @@ public abstract class AbstractFilter {
             return defaultWindowSize;
         }
         return windowSize;
+=======
+    public int getPriority() {
+        return priority;
+    }
+
+    public void setPriority(int priority) {
+        this.priority = priority;
+>>>>>>> main
     }
 
 }
