@@ -270,7 +270,7 @@ public abstract class AbstractFilterStrategyTest {
         System.out.println(replacement.getReplacement());
 
         Assertions.assertEquals("****", replacement.getReplacement());
-        Assertions.assertEquals(replacement.getReplacement().length(), 4);
+        Assertions.assertEquals(4, replacement.getReplacement().length());
 
     }
 

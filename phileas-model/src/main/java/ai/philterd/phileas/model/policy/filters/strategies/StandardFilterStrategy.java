@@ -48,8 +48,6 @@ public abstract class StandardFilterStrategy extends AbstractFilterStrategy {
                 characters = Integer.parseInt(maskLength);
             }
 
-            System.out.println("characters: " + characters);
-
             if(characters < 1) {
                 characters = 5;
             }
