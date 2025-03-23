@@ -15,6 +15,7 @@
  */
 package ai.philterd.test.phileas.services.filters;
 
+import ai.philterd.phileas.model.cache.InMemoryCache;
 import ai.philterd.phileas.model.enums.FilterType;
 import ai.philterd.phileas.model.filter.FilterConfiguration;
 import ai.philterd.phileas.model.objects.FilterResult;
@@ -22,7 +23,6 @@ import ai.philterd.phileas.model.policy.filters.strategies.AbstractFilterStrateg
 import ai.philterd.phileas.model.policy.filters.strategies.rules.DateFilterStrategy;
 import ai.philterd.phileas.model.services.AlertService;
 import ai.philterd.phileas.services.anonymization.DateAnonymizationService;
-import ai.philterd.phileas.services.anonymization.cache.LocalAnonymizationCacheService;
 import ai.philterd.phileas.services.filters.regex.DateFilter;
 import ai.philterd.phileas.services.validators.DateSpanValidator;
 import org.junit.jupiter.api.Assertions;
@@ -40,7 +40,7 @@ public class DateFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new DateFilterStrategy()))
-                .withAnonymizationService(new DateAnonymizationService(new LocalAnonymizationCacheService()))
+                .withAnonymizationService(new DateAnonymizationService(new InMemoryCache()))
                 .withAlertService(alertService)
                 .build();
 
@@ -417,7 +417,7 @@ public class DateFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(Arrays.asList(dateFilterStrategy))
-                .withAnonymizationService(new DateAnonymizationService(new LocalAnonymizationCacheService()))
+                .withAnonymizationService(new DateAnonymizationService(new InMemoryCache()))
                 .withAlertService(alertService)
                 .build();
 

@@ -15,6 +15,7 @@
  */
 package ai.philterd.test.phileas.services.filters;
 
+import ai.philterd.phileas.model.cache.InMemoryCache;
 import ai.philterd.phileas.model.enums.FilterType;
 import ai.philterd.phileas.model.enums.SensitivityLevel;
 import ai.philterd.phileas.model.filter.FilterConfiguration;
@@ -23,7 +24,6 @@ import ai.philterd.phileas.model.objects.FilterResult;
 import ai.philterd.phileas.model.policy.filters.strategies.dynamic.FirstNameFilterStrategy;
 import ai.philterd.phileas.model.services.AlertService;
 import ai.philterd.phileas.services.anonymization.PersonsAnonymizationService;
-import ai.philterd.phileas.services.anonymization.cache.LocalAnonymizationCacheService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Assertions;
@@ -44,7 +44,7 @@ public class FirstNameFilterTest extends AbstractFilterTest {
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new FirstNameFilterStrategy()))
                 .withAlertService(alertService)
-                .withAnonymizationService(new PersonsAnonymizationService(new LocalAnonymizationCacheService()))
+                .withAnonymizationService(new PersonsAnonymizationService(new InMemoryCache()))
                 .withWindowSize(windowSize)
                 .build();
 
@@ -62,7 +62,7 @@ public class FirstNameFilterTest extends AbstractFilterTest {
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new FirstNameFilterStrategy()))
                 .withAlertService(alertService)
-                .withAnonymizationService(new PersonsAnonymizationService(new LocalAnonymizationCacheService()))
+                .withAnonymizationService(new PersonsAnonymizationService(new InMemoryCache()))
                 .withWindowSize(windowSize)
                 .build();
 
@@ -80,7 +80,7 @@ public class FirstNameFilterTest extends AbstractFilterTest {
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new FirstNameFilterStrategy()))
                 .withAlertService(alertService)
-                .withAnonymizationService(new PersonsAnonymizationService(new LocalAnonymizationCacheService()))
+                .withAnonymizationService(new PersonsAnonymizationService(new InMemoryCache()))
                 .withWindowSize(windowSize)
                 .build();
 
@@ -98,7 +98,7 @@ public class FirstNameFilterTest extends AbstractFilterTest {
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new FirstNameFilterStrategy()))
                 .withAlertService(alertService)
-                .withAnonymizationService(new PersonsAnonymizationService(new LocalAnonymizationCacheService()))
+                .withAnonymizationService(new PersonsAnonymizationService(new InMemoryCache()))
                 .withWindowSize(windowSize)
                 .build();
 
@@ -116,7 +116,7 @@ public class FirstNameFilterTest extends AbstractFilterTest {
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new FirstNameFilterStrategy()))
                 .withAlertService(alertService)
-                .withAnonymizationService(new PersonsAnonymizationService(new LocalAnonymizationCacheService()))
+                .withAnonymizationService(new PersonsAnonymizationService(new InMemoryCache()))
                 .withWindowSize(windowSize)
                 .build();
 
@@ -135,7 +135,7 @@ public class FirstNameFilterTest extends AbstractFilterTest {
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new FirstNameFilterStrategy()))
                 .withAlertService(alertService)
-                .withAnonymizationService(new PersonsAnonymizationService(new LocalAnonymizationCacheService()))
+                .withAnonymizationService(new PersonsAnonymizationService(new InMemoryCache()))
                 .withWindowSize(windowSize)
                 .build();
 
@@ -153,7 +153,7 @@ public class FirstNameFilterTest extends AbstractFilterTest {
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new FirstNameFilterStrategy()))
                 .withAlertService(alertService)
-                .withAnonymizationService(new PersonsAnonymizationService(new LocalAnonymizationCacheService()))
+                .withAnonymizationService(new PersonsAnonymizationService(new InMemoryCache()))
                 .withWindowSize(windowSize)
                 .build();
 
@@ -171,7 +171,7 @@ public class FirstNameFilterTest extends AbstractFilterTest {
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new FirstNameFilterStrategy()))
                 .withAlertService(alertService)
-                .withAnonymizationService(new PersonsAnonymizationService(new LocalAnonymizationCacheService()))
+                .withAnonymizationService(new PersonsAnonymizationService(new InMemoryCache()))
                 .withWindowSize(windowSize)
                 .build();
 
@@ -189,7 +189,7 @@ public class FirstNameFilterTest extends AbstractFilterTest {
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new FirstNameFilterStrategy()))
                 .withAlertService(alertService)
-                .withAnonymizationService(new PersonsAnonymizationService(new LocalAnonymizationCacheService()))
+                .withAnonymizationService(new PersonsAnonymizationService(new InMemoryCache()))
                 .withWindowSize(windowSize)
                 .build();
 
@@ -207,7 +207,7 @@ public class FirstNameFilterTest extends AbstractFilterTest {
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new FirstNameFilterStrategy()))
                 .withAlertService(alertService)
-                .withAnonymizationService(new PersonsAnonymizationService(new LocalAnonymizationCacheService()))
+                .withAnonymizationService(new PersonsAnonymizationService(new InMemoryCache()))
                 .withWindowSize(windowSize)
                 .build();
 

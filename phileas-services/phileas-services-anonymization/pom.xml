@@ -14,25 +14,19 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.redisson</groupId>
-      <artifactId>redisson</artifactId>
-      <version>${redisson.version}</version>
-    </dependency>
-    <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-lang3</artifactId>
       <version>${commons.lang3.version}</version>
     </dependency>
     <dependency>
+      <groupId>org.yaml</groupId>
+      <artifactId>snakeyaml</artifactId>
+      <version>${snakeyaml.version}</version>
+    </dependency>
+    <dependency>
       <groupId>com.github.mifmif</groupId>
       <artifactId>generex</artifactId>
       <version>1.0.2</version>
-    </dependency>
-    <dependency>
-      <groupId>com.github.codemonstur</groupId>
-      <artifactId>embedded-redis</artifactId>
-      <version>${embedded.redis.version}</version>
-      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.junit.jupiter</groupId>

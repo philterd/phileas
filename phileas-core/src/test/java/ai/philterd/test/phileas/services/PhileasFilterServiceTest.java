@@ -22,6 +22,7 @@ import ai.philterd.phileas.model.policy.Ignored;
 import ai.philterd.phileas.model.policy.Policy;
 import ai.philterd.phileas.model.responses.BinaryDocumentFilterResponse;
 import ai.philterd.phileas.model.serializers.PlaceholderDeserializer;
+import ai.philterd.phileas.model.services.CacheService;
 import ai.philterd.phileas.services.PhileasFilterService;
 import ai.philterd.phileas.services.policies.InMemoryPolicyService;
 import ai.philterd.phileas.services.policies.LocalPolicyService;
@@ -35,6 +36,7 @@ import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
 import java.io.File;
 import java.io.IOException;
@@ -58,6 +60,7 @@ public class PhileasFilterServiceTest {
 
     private String INDEXES_DIRECTORY = "/not/set/indexes/";
     private Gson gson;
+    private final CacheService cacheService = Mockito.mock(CacheService.class);
 
     @BeforeEach
     public void before() {
@@ -123,7 +126,7 @@ public class PhileasFilterServiceTest {
 
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties);
 
-        PhileasFilterService service = new PhileasFilterService(phileasConfiguration);
+        PhileasFilterService service = new PhileasFilterService(phileasConfiguration, cacheService);
         final BinaryDocumentFilterResponse response = service.filter(List.of("pdf"), "context", "documentid", document, MimeType.APPLICATION_PDF, MimeType.APPLICATION_PDF);
 
         // Write the byte array to a file.
@@ -163,7 +166,7 @@ public class PhileasFilterServiceTest {
 
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties);
 
-        PhileasFilterService service = new PhileasFilterService(phileasConfiguration);
+        PhileasFilterService service = new PhileasFilterService(phileasConfiguration, cacheService);
         final BinaryDocumentFilterResponse response = service.filter(Arrays.asList("pdf"), "context", "documentid", document, MimeType.APPLICATION_PDF, MimeType.APPLICATION_PDF);
 
         // Write the byte array to a file.
@@ -199,7 +202,7 @@ public class PhileasFilterServiceTest {
         final var properties = new Properties();
         properties.setProperty("filter.policies.service", "memory");
         final var config = new PhileasConfiguration(properties);
-        final var service = new PhileasFilterService(config);
+        final var service = new PhileasFilterService(config, cacheService);
 
         Assertions.assertInstanceOf(InMemoryPolicyService.class, service.getPolicyService());
     }
@@ -209,7 +212,7 @@ public class PhileasFilterServiceTest {
         final var properties = new Properties();
         properties.setProperty("filter.policies.service", "local");
         final var config = new PhileasConfiguration(properties);
-        final var service = new PhileasFilterService(config);
+        final var service = new PhileasFilterService(config, cacheService);
 
         Assertions.assertInstanceOf(LocalPolicyService.class, service.getPolicyService());
     }

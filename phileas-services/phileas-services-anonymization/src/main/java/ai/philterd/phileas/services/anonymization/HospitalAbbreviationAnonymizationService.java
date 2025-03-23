@@ -15,15 +15,15 @@
  */
 package ai.philterd.phileas.services.anonymization;
 
+import ai.philterd.phileas.model.services.CacheService;
 import ai.philterd.phileas.services.anonymization.faker.Faker;
-import ai.philterd.phileas.model.services.AnonymizationCacheService;
 import org.apache.commons.text.WordUtils;
 
 public class HospitalAbbreviationAnonymizationService extends AbstractAnonymizationService {
 
     private final transient Faker faker;
 
-    public HospitalAbbreviationAnonymizationService(AnonymizationCacheService anonymizationCacheService) {
+    public HospitalAbbreviationAnonymizationService(CacheService anonymizationCacheService) {
         super(anonymizationCacheService);
         this.faker = new Faker();
     }

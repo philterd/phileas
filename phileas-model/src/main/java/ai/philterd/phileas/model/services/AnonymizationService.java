@@ -29,8 +29,8 @@ public interface AnonymizationService {
 
     /**
      * Gets the anonymization cache service used for this anonymization service.
-     * @return A {@link AnonymizationCacheService}.
+     * @return A {@link CacheService}.
      */
-    AnonymizationCacheService getAnonymizationCacheService();
+    CacheService getCacheService();
 
 }

@@ -15,6 +15,7 @@
  */
 package ai.philterd.test.phileas.services.filters;
 
+import ai.philterd.phileas.model.cache.InMemoryCache;
 import ai.philterd.phileas.model.enums.FilterType;
 import ai.philterd.phileas.model.filter.FilterConfiguration;
 import ai.philterd.phileas.model.objects.FilterResult;
@@ -22,7 +23,6 @@ import ai.philterd.phileas.model.objects.Span;
 import ai.philterd.phileas.model.policy.filters.strategies.rules.ZipCodeFilterStrategy;
 import ai.philterd.phileas.model.services.AlertService;
 import ai.philterd.phileas.services.anonymization.ZipCodeAnonymizationService;
-import ai.philterd.phileas.services.anonymization.cache.LocalAnonymizationCacheService;
 import ai.philterd.phileas.services.filters.regex.ZipCodeFilter;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -40,7 +40,7 @@ public class ZipCodeFilterTest extends AbstractFilterTest {
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new ZipCodeFilterStrategy()))
                 .withAlertService(alertService)
-                .withAnonymizationService(new ZipCodeAnonymizationService(new LocalAnonymizationCacheService()))
+                .withAnonymizationService(new ZipCodeAnonymizationService(new InMemoryCache()))
                 .withWindowSize(windowSize)
                 .build();
 
@@ -59,7 +59,7 @@ public class ZipCodeFilterTest extends AbstractFilterTest {
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new ZipCodeFilterStrategy()))
                 .withAlertService(alertService)
-                .withAnonymizationService(new ZipCodeAnonymizationService(new LocalAnonymizationCacheService()))
+                .withAnonymizationService(new ZipCodeAnonymizationService(new InMemoryCache()))
                 .withWindowSize(windowSize)
                 .build();
 
@@ -76,7 +76,7 @@ public class ZipCodeFilterTest extends AbstractFilterTest {
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new ZipCodeFilterStrategy()))
                 .withAlertService(alertService)
-                .withAnonymizationService(new ZipCodeAnonymizationService(new LocalAnonymizationCacheService()))
+                .withAnonymizationService(new ZipCodeAnonymizationService(new InMemoryCache()))
                 .withWindowSize(windowSize)
                 .build();
 
@@ -94,7 +94,7 @@ public class ZipCodeFilterTest extends AbstractFilterTest {
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new ZipCodeFilterStrategy()))
                 .withAlertService(alertService)
-                .withAnonymizationService(new ZipCodeAnonymizationService(new LocalAnonymizationCacheService()))
+                .withAnonymizationService(new ZipCodeAnonymizationService(new InMemoryCache()))
                 .withWindowSize(windowSize)
                 .build();
 
@@ -112,7 +112,7 @@ public class ZipCodeFilterTest extends AbstractFilterTest {
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new ZipCodeFilterStrategy()))
                 .withAlertService(alertService)
-                .withAnonymizationService(new ZipCodeAnonymizationService(new LocalAnonymizationCacheService()))
+                .withAnonymizationService(new ZipCodeAnonymizationService(new InMemoryCache()))
                 .withWindowSize(windowSize)
                 .build();
 
@@ -130,7 +130,7 @@ public class ZipCodeFilterTest extends AbstractFilterTest {
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new ZipCodeFilterStrategy()))
                 .withAlertService(alertService)
-                .withAnonymizationService(new ZipCodeAnonymizationService(new LocalAnonymizationCacheService()))
+                .withAnonymizationService(new ZipCodeAnonymizationService(new InMemoryCache()))
                 .withWindowSize(windowSize)
                 .build();
 
@@ -148,7 +148,7 @@ public class ZipCodeFilterTest extends AbstractFilterTest {
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new ZipCodeFilterStrategy()))
                 .withAlertService(alertService)
-                .withAnonymizationService(new ZipCodeAnonymizationService(new LocalAnonymizationCacheService()))
+                .withAnonymizationService(new ZipCodeAnonymizationService(new InMemoryCache()))
                 .withWindowSize(windowSize)
                 .build();
 
@@ -166,7 +166,7 @@ public class ZipCodeFilterTest extends AbstractFilterTest {
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new ZipCodeFilterStrategy()))
                 .withAlertService(alertService)
-                .withAnonymizationService(new ZipCodeAnonymizationService(new LocalAnonymizationCacheService()))
+                .withAnonymizationService(new ZipCodeAnonymizationService(new InMemoryCache()))
                 .withWindowSize(windowSize)
                 .build();
 
@@ -184,7 +184,7 @@ public class ZipCodeFilterTest extends AbstractFilterTest {
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new ZipCodeFilterStrategy()))
                 .withAlertService(alertService)
-                .withAnonymizationService(new ZipCodeAnonymizationService(new LocalAnonymizationCacheService()))
+                .withAnonymizationService(new ZipCodeAnonymizationService(new InMemoryCache()))
                 .withWindowSize(windowSize)
                 .build();
 
@@ -202,7 +202,7 @@ public class ZipCodeFilterTest extends AbstractFilterTest {
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new ZipCodeFilterStrategy()))
                 .withAlertService(alertService)
-                .withAnonymizationService(new ZipCodeAnonymizationService(new LocalAnonymizationCacheService()))
+                .withAnonymizationService(new ZipCodeAnonymizationService(new InMemoryCache()))
                 .withWindowSize(windowSize)
                 .build();
 
@@ -220,7 +220,7 @@ public class ZipCodeFilterTest extends AbstractFilterTest {
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new ZipCodeFilterStrategy()))
                 .withAlertService(alertService)
-                .withAnonymizationService(new ZipCodeAnonymizationService(new LocalAnonymizationCacheService()))
+                .withAnonymizationService(new ZipCodeAnonymizationService(new InMemoryCache()))
                 .withWindowSize(windowSize)
                 .build();
 
@@ -250,7 +250,7 @@ public class ZipCodeFilterTest extends AbstractFilterTest {
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new ZipCodeFilterStrategy()))
                 .withAlertService(alertService)
-                .withAnonymizationService(new ZipCodeAnonymizationService(new LocalAnonymizationCacheService()))
+                .withAnonymizationService(new ZipCodeAnonymizationService(new InMemoryCache()))
                 .withWindowSize(windowSize)
                 .build();
 
@@ -280,7 +280,7 @@ public class ZipCodeFilterTest extends AbstractFilterTest {
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new ZipCodeFilterStrategy()))
                 .withAlertService(alertService)
-                .withAnonymizationService(new ZipCodeAnonymizationService(new LocalAnonymizationCacheService()))
+                .withAnonymizationService(new ZipCodeAnonymizationService(new InMemoryCache()))
                 .withWindowSize(windowSize)
                 .build();
 
@@ -310,7 +310,7 @@ public class ZipCodeFilterTest extends AbstractFilterTest {
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new ZipCodeFilterStrategy()))
                 .withAlertService(alertService)
-                .withAnonymizationService(new ZipCodeAnonymizationService(new LocalAnonymizationCacheService()))
+                .withAnonymizationService(new ZipCodeAnonymizationService(new InMemoryCache()))
                 .withWindowSize(windowSize)
                 .build();
 
@@ -340,7 +340,7 @@ public class ZipCodeFilterTest extends AbstractFilterTest {
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new ZipCodeFilterStrategy()))
                 .withAlertService(alertService)
-                .withAnonymizationService(new ZipCodeAnonymizationService(new LocalAnonymizationCacheService()))
+                .withAnonymizationService(new ZipCodeAnonymizationService(new InMemoryCache()))
                 .withWindowSize(windowSize)
                 .build();
 

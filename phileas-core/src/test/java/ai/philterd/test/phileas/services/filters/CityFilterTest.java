@@ -15,6 +15,7 @@
  */
 package ai.philterd.test.phileas.services.filters;
 
+import ai.philterd.phileas.model.cache.InMemoryCache;
 import ai.philterd.phileas.model.enums.FilterType;
 import ai.philterd.phileas.model.enums.SensitivityLevel;
 import ai.philterd.phileas.model.filter.FilterConfiguration;
@@ -23,7 +24,6 @@ import ai.philterd.phileas.model.objects.FilterResult;
 import ai.philterd.phileas.model.policy.filters.strategies.dynamic.CityFilterStrategy;
 import ai.philterd.phileas.model.services.AlertService;
 import ai.philterd.phileas.services.anonymization.CityAnonymizationService;
-import ai.philterd.phileas.services.anonymization.cache.LocalAnonymizationCacheService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Assertions;
@@ -44,7 +44,7 @@ public class CityFilterTest extends AbstractFilterTest {
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new CityFilterStrategy()))
                 .withAlertService(alertService)
-                .withAnonymizationService(new CityAnonymizationService(new LocalAnonymizationCacheService()))
+                .withAnonymizationService(new CityAnonymizationService(new InMemoryCache()))
                 .withWindowSize(windowSize)
                 .build();
 
@@ -65,7 +65,7 @@ public class CityFilterTest extends AbstractFilterTest {
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new CityFilterStrategy()))
                 .withAlertService(alertService)
-                .withAnonymizationService(new CityAnonymizationService(new LocalAnonymizationCacheService()))
+                .withAnonymizationService(new CityAnonymizationService(new InMemoryCache()))
                 .withWindowSize(windowSize)
                 .build();
 
@@ -88,7 +88,7 @@ public class CityFilterTest extends AbstractFilterTest {
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new CityFilterStrategy()))
                 .withAlertService(alertService)
-                .withAnonymizationService(new CityAnonymizationService(new LocalAnonymizationCacheService()))
+                .withAnonymizationService(new CityAnonymizationService(new InMemoryCache()))
                 .withWindowSize(windowSize)
                 .build();
 
@@ -108,7 +108,7 @@ public class CityFilterTest extends AbstractFilterTest {
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new CityFilterStrategy()))
                 .withAlertService(alertService)
-                .withAnonymizationService(new CityAnonymizationService(new LocalAnonymizationCacheService()))
+                .withAnonymizationService(new CityAnonymizationService(new InMemoryCache()))
                 .withWindowSize(windowSize)
                 .build();
 
@@ -129,7 +129,7 @@ public class CityFilterTest extends AbstractFilterTest {
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new CityFilterStrategy()))
                 .withAlertService(alertService)
-                .withAnonymizationService(new CityAnonymizationService(new LocalAnonymizationCacheService()))
+                .withAnonymizationService(new CityAnonymizationService(new InMemoryCache()))
                 .withWindowSize(windowSize)
                 .build();
 

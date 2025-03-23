@@ -15,21 +15,25 @@
  */
 package ai.philterd.test.phileas.services.alerts;
 
+import ai.philterd.phileas.model.cache.InMemoryCache;
 import ai.philterd.phileas.model.enums.FilterType;
 import ai.philterd.phileas.model.objects.Alert;
 import ai.philterd.phileas.model.services.AlertService;
-import ai.philterd.phileas.services.alerts.LocalAlertService;
+import ai.philterd.phileas.model.services.CacheService;
+import ai.philterd.phileas.services.alerts.DefaultAlertService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-public class LocalAlertServiceTest {
+public class DefaultAlertServiceTest {
 
     @Test
     public void generate1() {
 
-        final AlertService alertService = new LocalAlertService();
+        final CacheService cacheService = new InMemoryCache();
+
+        final AlertService alertService = new DefaultAlertService(cacheService);
 
         alertService.generateAlert("fp", "id", "context", "docid", FilterType.AGE);
 
@@ -42,7 +46,9 @@ public class LocalAlertServiceTest {
     @Test
     public void delete1() {
 
-        final AlertService alertService = new LocalAlertService();
+        final CacheService cacheService = new InMemoryCache();
+
+        final AlertService alertService = new DefaultAlertService(cacheService);
 
         alertService.generateAlert("fp", "id", "context", "docid", FilterType.AGE);
         alertService.generateAlert("fp", "id", "context", "docid", FilterType.AGE);
@@ -63,7 +69,9 @@ public class LocalAlertServiceTest {
     @Test
     public void clear1() {
 
-        final AlertService alertService = new LocalAlertService();
+        final CacheService cacheService = new InMemoryCache();
+
+        final AlertService alertService = new DefaultAlertService(cacheService);
 
         alertService.generateAlert("fp", "id", "context", "docid", FilterType.AGE);
 

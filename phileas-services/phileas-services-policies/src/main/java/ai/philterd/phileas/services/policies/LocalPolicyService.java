@@ -18,9 +18,8 @@ package ai.philterd.phileas.services.policies;
 import ai.philterd.phileas.model.configuration.PhileasConfiguration;
 import ai.philterd.phileas.model.exceptions.api.BadRequestException;
 import ai.philterd.phileas.model.services.AbstractPolicyService;
-import ai.philterd.phileas.model.services.PolicyCacheService;
+import ai.philterd.phileas.model.services.CacheService;
 import ai.philterd.phileas.model.services.PolicyService;
-import ai.philterd.phileas.services.policies.cache.InMemoryPolicyCacheService;
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -40,15 +39,14 @@ public class LocalPolicyService extends AbstractPolicyService implements PolicyS
     private static final String JSON_EXTENSION = ".json";
 
     private final String policiesDirectory;
-    private final PolicyCacheService policyCacheService;
+    private final CacheService cacheService;
 
-    public LocalPolicyService(PhileasConfiguration phileasConfiguration) {
+    public LocalPolicyService(PhileasConfiguration phileasConfiguration, final CacheService cacheService) {
         
         this.policiesDirectory = phileasConfiguration.policiesDirectory();
         LOGGER.info("Looking for policies in {}", policiesDirectory);
 
-        // Always use an in-memory cache when using a local policy service.
-        this.policyCacheService = new InMemoryPolicyCacheService();
+        this.cacheService = cacheService;
 
     }
 
@@ -80,7 +78,7 @@ public class LocalPolicyService extends AbstractPolicyService implements PolicyS
     @Override
     public String get(String policyName) throws IOException {
 
-        String policyJson = policyCacheService.get(policyName);
+        String policyJson = cacheService.getPolicy(policyName);
 
         if(policyJson == null) {
 
@@ -93,7 +91,7 @@ public class LocalPolicyService extends AbstractPolicyService implements PolicyS
                 policyJson = FileUtils.readFileToString(file, Charset.defaultCharset());
 
                 // Put it in the cache.
-                policyCacheService.insert(policyName, policyJson);
+                cacheService.insertPolicy(policyName, policyJson);
 
             } else {
                 throw new FileNotFoundException("Policy [" + policyName + "] does not exist.");
@@ -144,7 +142,7 @@ public class LocalPolicyService extends AbstractPolicyService implements PolicyS
             FileUtils.writeStringToFile(file, policyJson, Charset.defaultCharset());
 
             // Put this policy into the cache.
-            policyCacheService.insert(policyName, policyJson);
+            cacheService.insertPolicy(policyName, policyJson);
 
         } catch (JSONException ex) {
 
@@ -169,7 +167,7 @@ public class LocalPolicyService extends AbstractPolicyService implements PolicyS
             }
 
             // Remove it from the cache.
-            policyCacheService.remove(policyName);
+            cacheService.removePolicy(policyName);
 
         } else {
             throw new FileNotFoundException("Policy with name " + policyName + " does not exist.");

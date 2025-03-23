@@ -15,12 +15,12 @@
  */
 package ai.philterd.phileas.services.anonymization;
 
-import ai.philterd.phileas.model.services.AnonymizationCacheService;
+import ai.philterd.phileas.model.services.CacheService;
 import org.apache.commons.lang3.RandomStringUtils;
 
 public class UrlAnonymizationService extends AbstractAnonymizationService {
 
-    public UrlAnonymizationService(AnonymizationCacheService anonymizationCacheService) {
+    public UrlAnonymizationService(CacheService anonymizationCacheService) {
         super(anonymizationCacheService);
     }
 

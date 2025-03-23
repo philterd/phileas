@@ -15,15 +15,15 @@
  */
 package ai.philterd.phileas.services.anonymization;
 
+import ai.philterd.phileas.model.services.CacheService;
 import ai.philterd.phileas.services.anonymization.faker.Faker;
-import ai.philterd.phileas.model.services.AnonymizationCacheService;
 
 public class StateAnonymizationService extends AbstractAnonymizationService {
 
     private final transient Faker faker;
 
-    public StateAnonymizationService(AnonymizationCacheService anonymizationCacheService) {
-        super(anonymizationCacheService);
+    public StateAnonymizationService(CacheService cacheService) {
+        super(cacheService);
         this.faker = new Faker();
     }
 

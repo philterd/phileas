@@ -15,12 +15,12 @@
  */
 package ai.philterd.phileas.services.anonymization;
 
-import ai.philterd.phileas.model.services.AnonymizationCacheService;
+import ai.philterd.phileas.model.services.CacheService;
 import org.apache.commons.lang3.RandomStringUtils;
 
 public class BitcoinAddressAnonymizationService extends AbstractAnonymizationService {
 
-    public BitcoinAddressAnonymizationService(AnonymizationCacheService anonymizationCacheService) {
+    public BitcoinAddressAnonymizationService(CacheService anonymizationCacheService) {
         super(anonymizationCacheService);
     }
 

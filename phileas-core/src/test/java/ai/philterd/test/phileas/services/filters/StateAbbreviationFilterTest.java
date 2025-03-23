@@ -15,13 +15,13 @@
  */
 package ai.philterd.test.phileas.services.filters;
 
+import ai.philterd.phileas.model.cache.InMemoryCache;
 import ai.philterd.phileas.model.enums.FilterType;
 import ai.philterd.phileas.model.filter.FilterConfiguration;
 import ai.philterd.phileas.model.objects.FilterResult;
 import ai.philterd.phileas.model.policy.filters.strategies.rules.StateAbbreviationFilterStrategy;
 import ai.philterd.phileas.model.services.AlertService;
 import ai.philterd.phileas.services.anonymization.StateAbbreviationAnonymizationService;
-import ai.philterd.phileas.services.anonymization.cache.LocalAnonymizationCacheService;
 import ai.philterd.phileas.services.filters.regex.StateAbbreviationFilter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -43,7 +43,7 @@ public class StateAbbreviationFilterTest extends AbstractFilterTest {
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new StateAbbreviationFilterStrategy()))
                 .withAlertService(alertService)
-                .withAnonymizationService(new StateAbbreviationAnonymizationService(new LocalAnonymizationCacheService()))
+                .withAnonymizationService(new StateAbbreviationAnonymizationService(new InMemoryCache()))
                 .withWindowSize(windowSize)
                 .build();
 
@@ -66,7 +66,7 @@ public class StateAbbreviationFilterTest extends AbstractFilterTest {
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new StateAbbreviationFilterStrategy()))
                 .withAlertService(alertService)
-                .withAnonymizationService(new StateAbbreviationAnonymizationService(new LocalAnonymizationCacheService()))
+                .withAnonymizationService(new StateAbbreviationAnonymizationService(new InMemoryCache()))
                 .withWindowSize(windowSize)
                 .build();
 
@@ -88,7 +88,7 @@ public class StateAbbreviationFilterTest extends AbstractFilterTest {
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new StateAbbreviationFilterStrategy()))
                 .withAlertService(alertService)
-                .withAnonymizationService(new StateAbbreviationAnonymizationService(new LocalAnonymizationCacheService()))
+                .withAnonymizationService(new StateAbbreviationAnonymizationService(new InMemoryCache()))
                 .withWindowSize(windowSize)
                 .build();
 
