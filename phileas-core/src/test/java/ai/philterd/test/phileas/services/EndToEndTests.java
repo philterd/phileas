@@ -84,7 +84,7 @@ public class EndToEndTests {
         FileUtils.writeStringToFile(file, gson.toJson(getPolicy("default")), Charset.defaultCharset());
 
         Properties properties = new Properties();
-        properties.setProperty("indexes.directory", INDEXES_DIRECTORY);
+        
         properties.setProperty("filter.policies.directory", temp.toFile().getAbsolutePath());
 
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties);
@@ -108,7 +108,7 @@ public class EndToEndTests {
         FileUtils.writeStringToFile(file, gson.toJson(getPolicy("default")), Charset.defaultCharset());
 
         Properties properties = new Properties();
-        properties.setProperty("indexes.directory", INDEXES_DIRECTORY);
+        
         properties.setProperty("filter.policies.directory", temp.toFile().getAbsolutePath());
 
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties);
@@ -132,7 +132,7 @@ public class EndToEndTests {
         FileUtils.writeStringToFile(file, gson.toJson(getPolicy("default")), Charset.defaultCharset());
 
         Properties properties = new Properties();
-        properties.setProperty("indexes.directory", INDEXES_DIRECTORY);
+        
         properties.setProperty("filter.policies.directory", temp.toFile().getAbsolutePath());
 
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties);
@@ -156,7 +156,7 @@ public class EndToEndTests {
         FileUtils.writeStringToFile(file, gson.toJson(getPolicy("default")), Charset.defaultCharset());
 
         Properties properties = new Properties();
-        properties.setProperty("indexes.directory", INDEXES_DIRECTORY);
+        
         properties.setProperty("filter.policies.directory", temp.toFile().getAbsolutePath());
 
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties);
@@ -180,7 +180,7 @@ public class EndToEndTests {
         FileUtils.writeStringToFile(file, gson.toJson(getPolicy("default")), Charset.defaultCharset());
 
         Properties properties = new Properties();
-        properties.setProperty("indexes.directory", INDEXES_DIRECTORY);
+        
         properties.setProperty("filter.policies.directory", temp.toFile().getAbsolutePath());
 
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties);
@@ -204,7 +204,7 @@ public class EndToEndTests {
         FileUtils.writeStringToFile(file, gson.toJson(getPolicy("default")), Charset.defaultCharset());
 
         Properties properties = new Properties();
-        properties.setProperty("indexes.directory", INDEXES_DIRECTORY);
+        
         properties.setProperty("filter.policies.directory", temp.toFile().getAbsolutePath());
 
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties);
@@ -228,7 +228,7 @@ public class EndToEndTests {
         FileUtils.writeStringToFile(file, gson.toJson(getPolicy("default")), Charset.defaultCharset());
 
         Properties properties = new Properties();
-        properties.setProperty("indexes.directory", INDEXES_DIRECTORY);
+        
         properties.setProperty("filter.policies.directory", temp.toFile().getAbsolutePath());
 
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties);
@@ -252,7 +252,7 @@ public class EndToEndTests {
         FileUtils.writeStringToFile(file, gson.toJson(getPolicy("default")), Charset.defaultCharset());
 
         Properties properties = new Properties();
-        properties.setProperty("indexes.directory", INDEXES_DIRECTORY);
+        
         properties.setProperty("filter.policies.directory", temp.toFile().getAbsolutePath());
 
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties);
@@ -277,7 +277,7 @@ public class EndToEndTests {
         FileUtils.writeStringToFile(file, gson.toJson(getPolicy("default")), Charset.defaultCharset());
 
         Properties properties = new Properties();
-        properties.setProperty("indexes.directory", INDEXES_DIRECTORY);
+        
         properties.setProperty("filter.policies.directory", temp.toFile().getAbsolutePath());
 
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties);
@@ -301,7 +301,7 @@ public class EndToEndTests {
         FileUtils.writeStringToFile(file, gson.toJson(getPolicy("default")), Charset.defaultCharset());
 
         Properties properties = new Properties();
-        properties.setProperty("indexes.directory", INDEXES_DIRECTORY);
+        
         properties.setProperty("filter.policies.directory", temp.toFile().getAbsolutePath());
 
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties);
@@ -330,7 +330,7 @@ public class EndToEndTests {
         FileUtils.writeStringToFile(file, gson.toJson(getPolicy("default")), Charset.defaultCharset());
 
         Properties properties = new Properties();
-        properties.setProperty("indexes.directory", INDEXES_DIRECTORY);
+        
         properties.setProperty("filter.policies.directory", temp.toFile().getAbsolutePath());
 
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties);
@@ -356,7 +356,7 @@ public class EndToEndTests {
         FileUtils.writeStringToFile(file, gson.toJson(getPolicy("default")), Charset.defaultCharset());
 
         Properties properties = new Properties();
-        properties.setProperty("indexes.directory", INDEXES_DIRECTORY);
+        
         properties.setProperty("filter.policies.directory", temp.toFile().getAbsolutePath());
 
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties);
@@ -387,7 +387,7 @@ public class EndToEndTests {
         FileUtils.writeStringToFile(file, gson.toJson(getPolicy("default")), Charset.defaultCharset());
 
         Properties properties = new Properties();
-        properties.setProperty("indexes.directory", INDEXES_DIRECTORY);
+        
         properties.setProperty("filter.policies.directory", temp.toFile().getAbsolutePath());
 
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties);
@@ -416,7 +416,7 @@ public class EndToEndTests {
         FileUtils.writeStringToFile(file, gson.toJson(getPolicy("default")), Charset.defaultCharset());
 
         Properties properties = new Properties();
-        properties.setProperty("indexes.directory", INDEXES_DIRECTORY);
+        
         properties.setProperty("filter.policies.directory", temp.toFile().getAbsolutePath());
 
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties);
@@ -445,7 +445,7 @@ public class EndToEndTests {
         FileUtils.writeStringToFile(file, gson.toJson(getPolicy("default")), Charset.defaultCharset());
 
         Properties properties = new Properties();
-        properties.setProperty("indexes.directory", INDEXES_DIRECTORY);
+        
         properties.setProperty("filter.policies.directory", temp.toFile().getAbsolutePath());
 
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties);
@@ -476,7 +476,7 @@ public class EndToEndTests {
         FileUtils.writeStringToFile(file, policy);
 
         Properties properties = new Properties();
-        properties.setProperty("indexes.directory", INDEXES_DIRECTORY);
+        
         properties.setProperty("filter.policies.directory", temp.toFile().getAbsolutePath());
 
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties);
@@ -507,7 +507,7 @@ public class EndToEndTests {
         FileUtils.writeStringToFile(file, policy);
 
         Properties properties = new Properties();
-        properties.setProperty("indexes.directory", INDEXES_DIRECTORY);
+        
         properties.setProperty("filter.policies.directory", temp.toFile().getAbsolutePath());
 
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties);
@@ -538,7 +538,7 @@ public class EndToEndTests {
         FileUtils.writeStringToFile(file, policy, Charset.defaultCharset());
 
         Properties properties = new Properties();
-        properties.setProperty("indexes.directory", INDEXES_DIRECTORY);
+        
         properties.setProperty("filter.policies.directory", temp.toFile().getAbsolutePath());
 
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties);
@@ -597,7 +597,7 @@ public class EndToEndTests {
         FileUtils.writeStringToFile(file, policy);
 
         Properties properties = new Properties();
-        properties.setProperty("indexes.directory", INDEXES_DIRECTORY);
+        
         properties.setProperty("filter.policies.directory", temp.toFile().getAbsolutePath());
 
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties);
@@ -635,7 +635,7 @@ public class EndToEndTests {
         LOGGER.info("Policy written to {}", file.getAbsolutePath());
 
         final Properties properties = new Properties();
-        properties.setProperty("indexes.directory", INDEXES_DIRECTORY);
+        
         properties.setProperty("filter.policies.directory", temp.toFile().getAbsolutePath());
 
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties);
@@ -675,7 +675,7 @@ public class EndToEndTests {
         LOGGER.info("Policy written to {}", file.getAbsolutePath());
 
         final Properties properties = new Properties();
-        properties.setProperty("indexes.directory", INDEXES_DIRECTORY);
+        
         properties.setProperty("filter.policies.directory", temp.toFile().getAbsolutePath());
 
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties);
@@ -714,7 +714,7 @@ public class EndToEndTests {
         LOGGER.info("Policy written to {}", file.getAbsolutePath());
 
         final Properties properties = new Properties();
-        properties.setProperty("indexes.directory", INDEXES_DIRECTORY);
+        
         properties.setProperty("filter.policies.directory", temp.toFile().getAbsolutePath());
 
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties);
@@ -738,7 +738,7 @@ public class EndToEndTests {
         FileUtils.writeStringToFile(file, gson.toJson(getPolicy("default")), Charset.defaultCharset());
 
         Properties properties = new Properties();
-        properties.setProperty("indexes.directory", INDEXES_DIRECTORY);
+        
         properties.setProperty("filter.policies.directory", temp.toFile().getAbsolutePath());
 
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties);
@@ -768,7 +768,7 @@ public class EndToEndTests {
         FileUtils.writeStringToFile(file2, gson.toJson(getPolicyJustCreditCard("justcreditcard")), Charset.defaultCharset());
 
         Properties properties = new Properties();
-        properties.setProperty("indexes.directory", INDEXES_DIRECTORY);
+        
         properties.setProperty("filter.policies.directory", temp.toFile().getAbsolutePath());
 
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties);
@@ -792,7 +792,7 @@ public class EndToEndTests {
         FileUtils.writeStringToFile(file2, gson.toJson(getPolicyJustCreditCard("justcreditcard")), Charset.defaultCharset());
 
         Properties properties = new Properties();
-        properties.setProperty("indexes.directory", INDEXES_DIRECTORY);
+        
         properties.setProperty("filter.policies.directory", temp.toFile().getAbsolutePath());
 
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties);
@@ -816,7 +816,7 @@ public class EndToEndTests {
         FileUtils.writeStringToFile(file2, gson.toJson(getPolicyJustCreditCardNotInUnixTimestamps("justcreditcard")), Charset.defaultCharset());
 
         Properties properties = new Properties();
-        properties.setProperty("indexes.directory", INDEXES_DIRECTORY);
+        
         properties.setProperty("filter.policies.directory", temp.toFile().getAbsolutePath());
 
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties);
@@ -840,7 +840,7 @@ public class EndToEndTests {
         FileUtils.writeStringToFile(file2, gson.toJson(getPolicyJustCreditCard("justcreditcard")), Charset.defaultCharset());
 
         Properties properties = new Properties();
-        properties.setProperty("indexes.directory", INDEXES_DIRECTORY);
+        
         properties.setProperty("filter.policies.directory", temp.toFile().getAbsolutePath());
 
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties);
@@ -863,7 +863,7 @@ public class EndToEndTests {
         FileUtils.writeStringToFile(file, gson.toJson(getPolicyZipCodeWithIgnored("default")), Charset.defaultCharset());
 
         Properties properties = new Properties();
-        properties.setProperty("indexes.directory", INDEXES_DIRECTORY);
+        
         properties.setProperty("filter.policies.directory", temp.toFile().getAbsolutePath());
 
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties);
@@ -886,7 +886,7 @@ public class EndToEndTests {
         FileUtils.writeStringToFile(file, gson.toJson(getPolicySSNAndZipCode("default")), Charset.defaultCharset());
 
         Properties properties = new Properties();
-        properties.setProperty("indexes.directory", INDEXES_DIRECTORY);
+        
         properties.setProperty("filter.policies.directory", temp.toFile().getAbsolutePath());
 
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties);
@@ -910,7 +910,7 @@ public class EndToEndTests {
         FileUtils.writeStringToFile(file1, gson.toJson(getPolicy("default")), Charset.defaultCharset());
 
         Properties properties = new Properties();
-        properties.setProperty("indexes.directory", INDEXES_DIRECTORY);
+        
         properties.setProperty("filter.policies.directory", temp.toFile().getAbsolutePath());
 
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties);

@@ -121,7 +121,7 @@ public class PhileasFilterServiceTest {
         FileUtils.writeStringToFile(file1, gson.toJson(getPdfPolicy("pdf")), Charset.defaultCharset());
 
         Properties properties = new Properties();
-        properties.setProperty("indexes.directory", INDEXES_DIRECTORY);
+        
         properties.setProperty("filter.policies.directory", temp.toFile().getAbsolutePath());
 
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties);
@@ -161,7 +161,7 @@ public class PhileasFilterServiceTest {
         FileUtils.writeStringToFile(file1, gson.toJson(getPdfPolicy("pdf")), Charset.defaultCharset());
 
         Properties properties = new Properties();
-        properties.setProperty("indexes.directory", INDEXES_DIRECTORY);
+        
         properties.setProperty("filter.policies.directory", temp.toFile().getAbsolutePath());
 
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties);
