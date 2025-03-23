@@ -47,7 +47,6 @@ public class LocalPolicyServiceTest {
 
         final Properties properties = new Properties();
         properties.setProperty("filter.policies.directory", tempDirectory);
-        properties.setProperty("cache.redis.enabled", "false");
 
         return new PhileasConfiguration(properties);
 

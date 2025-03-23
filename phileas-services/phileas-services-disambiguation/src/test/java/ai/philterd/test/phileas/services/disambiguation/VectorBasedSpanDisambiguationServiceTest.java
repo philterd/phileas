@@ -45,7 +45,6 @@ public class VectorBasedSpanDisambiguationServiceTest {
         properties.setProperty("span.disambiguation.enabled", "true");
         properties.setProperty("span.disambiguation.ignore.stopwords", "false");
         properties.setProperty("span.disambiguation.vector.size", "32");
-        properties.setProperty("cache.redis.enabled", "false");
 
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties);
 
@@ -81,7 +80,6 @@ public class VectorBasedSpanDisambiguationServiceTest {
         properties.setProperty("span.disambiguation.enabled", "true");
         properties.setProperty("span.disambiguation.ignore.stopwords", "false");
         properties.setProperty("span.disambiguation.vector.size", "32");
-        properties.setProperty("cache.redis.enabled", "false");
 
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties);
 
