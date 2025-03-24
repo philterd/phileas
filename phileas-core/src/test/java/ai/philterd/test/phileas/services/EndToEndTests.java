@@ -15,6 +15,7 @@
  */
 package ai.philterd.test.phileas.services;
 
+import ai.philterd.phileas.model.cache.InMemoryCache;
 import ai.philterd.phileas.model.configuration.PhileasConfiguration;
 import ai.philterd.phileas.model.enums.MimeType;
 import ai.philterd.phileas.model.objects.Span;
@@ -569,9 +570,11 @@ public class EndToEndTests {
         Properties properties = new Properties();
         PhileasConfiguration configuration = new PhileasConfiguration(properties, "phileas");
 
+        final CacheService inMemoryCache = new InMemoryCache();
+
         final String input = "the payment method is 4532613702852251 visa or 1Lbcfr7sAHTD9CgdQo3HTMTkV8LK4ZnX71 BTC from user.";
 
-        final PhileasFilterService service = new PhileasFilterService(configuration);
+        final PhileasFilterService service = new PhileasFilterService(configuration, inMemoryCache);
         final FilterResponse response = service.filter(policy, "context", "documentid", input, MimeType.TEXT_PLAIN);
 
         LOGGER.info(response.getFilteredText());
