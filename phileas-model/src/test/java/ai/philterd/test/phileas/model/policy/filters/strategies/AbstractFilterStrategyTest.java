@@ -290,8 +290,8 @@ public abstract class AbstractFilterStrategyTest {
         final String token = "token";
         final Replacement replacement = strategy.getReplacement("name", "context", "docId", token, WINDOW, null, null, anonymizationService, null);
 
-        Assertions.assertEquals(replacement.getReplacement(), "##########");
-        Assertions.assertEquals(replacement.getReplacement().length(), 10);
+        Assertions.assertEquals("##########", replacement.getReplacement());
+        Assertions.assertEquals(10, replacement.getReplacement().length());
 
     }
 
@@ -311,8 +311,8 @@ public abstract class AbstractFilterStrategyTest {
         final String token = "token";
         final Replacement replacement = strategy.getReplacement("name", "context", "docId", token, WINDOW, null, null, anonymizationService, null);
 
-        Assertions.assertEquals(replacement.getReplacement(), "#####");
-        Assertions.assertEquals(replacement.getReplacement().length(), 5);
+        Assertions.assertEquals("#####", replacement.getReplacement());
+        Assertions.assertEquals(5, replacement.getReplacement().length());
 
     }
 
@@ -331,8 +331,8 @@ public abstract class AbstractFilterStrategyTest {
         final String token = "12345";
         final Replacement replacement = strategy.getReplacement("name", "context", "docId", token, WINDOW, null, null, anonymizationService, null);
 
-        Assertions.assertEquals(replacement.getReplacement(), "1****");
-        Assertions.assertEquals(replacement.getReplacement().length(), 5);
+        Assertions.assertEquals("1****", replacement.getReplacement());
+        Assertions.assertEquals(5, replacement.getReplacement().length());
 
     }
 
@@ -351,8 +351,8 @@ public abstract class AbstractFilterStrategyTest {
         final String token = "12345";
         final Replacement replacement = strategy.getReplacement("name", "context", "docId", token, WINDOW, null, null, anonymizationService, null);
 
-        Assertions.assertEquals(replacement.getReplacement(), "1234*");
-        Assertions.assertEquals(replacement.getReplacement().length(), 5);
+        Assertions.assertEquals("1234*", replacement.getReplacement());
+        Assertions.assertEquals(5, replacement.getReplacement().length());
 
     }
 
@@ -372,8 +372,8 @@ public abstract class AbstractFilterStrategyTest {
         final String token = "12345";
         final Replacement replacement = strategy.getReplacement("name", "context", "docId", token, WINDOW, null, null, anonymizationService, null);
 
-        Assertions.assertEquals(replacement.getReplacement(), "12***");
-        Assertions.assertEquals(replacement.getReplacement().length(), 5);
+        Assertions.assertEquals("12***", replacement.getReplacement());
+        Assertions.assertEquals(5, replacement.getReplacement().length());
 
     }
 
@@ -393,8 +393,8 @@ public abstract class AbstractFilterStrategyTest {
         final String token = "4111111111111111";
         final Replacement replacement = strategy.getReplacement("name", "context", "docId", token, WINDOW, null, null, anonymizationService, null);
 
-        Assertions.assertEquals(replacement.getReplacement(), "************1111");
-        Assertions.assertEquals(replacement.getReplacement().length(), 16);
+        Assertions.assertEquals("************1111", replacement.getReplacement());
+        Assertions.assertEquals(16, replacement.getReplacement().length());
 
     }
 

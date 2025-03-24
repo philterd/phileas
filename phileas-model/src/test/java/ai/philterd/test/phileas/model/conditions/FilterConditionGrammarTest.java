@@ -31,9 +31,7 @@ public class FilterConditionGrammarTest {
     @Test
     public void testPopulationWithAND() {
 
-        final ParserListener parserListener = new ParserListener();
-
-        final List<ParsedCondition> conditions = parserListener.getTerminals("population < 2500 and population > 10000");
+        final List<ParsedCondition> conditions = ParserListener.getTerminals("population < 2500 and population > 10000");
 
         Assertions.assertEquals(2, conditions.size());
 
@@ -54,9 +52,7 @@ public class FilterConditionGrammarTest {
     @Test
     public void testPopulation() {
 
-        final ParserListener parserListener = new ParserListener();
-
-        final List<ParsedCondition> conditions = parserListener.getTerminals("population < 2500");
+        final List<ParsedCondition> conditions = ParserListener.getTerminals("population < 2500");
 
         final ParsedCondition parsedCondition = conditions.get(0);
 
@@ -69,9 +65,7 @@ public class FilterConditionGrammarTest {
     @Test
     public void testToken() {
 
-        final ParserListener parserListener = new ParserListener();
-
-        final List<ParsedCondition> conditions = parserListener.getTerminals("token == \"test\"");
+        final List<ParsedCondition> conditions = ParserListener.getTerminals("token == \"test\"");
 
         ParsedCondition parsedCondition = conditions.get(0);
 
@@ -84,9 +78,7 @@ public class FilterConditionGrammarTest {
     @Test
     public void testNerConditions1() {
 
-        final ParserListener parserListener = new ParserListener();
-
-        final List<ParsedCondition> conditions = parserListener.getTerminals("confidence != 0.5 and type != LOC");
+        final List<ParsedCondition> conditions = ParserListener.getTerminals("confidence != 0.5 and type != LOC");
 
         Assertions.assertEquals(2, conditions.size());
 
@@ -107,9 +99,7 @@ public class FilterConditionGrammarTest {
     @Test
     public void testNerConditions2() {
 
-        final ParserListener parserListener = new ParserListener();
-
-        final List<ParsedCondition> conditions = parserListener.getTerminals("confidence < 0.4 and type == PER");
+        final List<ParsedCondition> conditions = ParserListener.getTerminals("confidence < 0.4 and type == PER");
 
         Assertions.assertEquals(2, conditions.size());
 

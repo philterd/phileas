@@ -38,13 +38,12 @@ public class DateFilterTest extends AbstractFilterTest {
 
     private FilterConfiguration buildFilterConfiguration() {
 
-        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+        return new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new DateFilterStrategy()))
                 .withAnonymizationService(new DateAnonymizationService(new InMemoryCache()))
                 .withAlertService(alertService)
                 .build();
 
-        return filterConfiguration;
     }
 
     @Test
@@ -416,7 +415,7 @@ public class DateFilterTest extends AbstractFilterTest {
         dateFilterStrategy.setShiftYears(3);
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
-                .withStrategies(Arrays.asList(dateFilterStrategy))
+                .withStrategies(List.of(dateFilterStrategy))
                 .withAnonymizationService(new DateAnonymizationService(new InMemoryCache()))
                 .withAlertService(alertService)
                 .build();
