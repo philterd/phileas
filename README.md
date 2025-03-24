@@ -9,12 +9,12 @@ When sensitive information is identified, Phileas can manipulate the sensitive i
 
 Information can be redacted based on the content of the information and other attributes. For example, only certain persons' names, only zip codes meeting some qualification, or IP addresses that match a given pattern.
 
-For Phileas' documentation please see https://philterd.github.io/phileas/.
+For Phileas' documentation, please see https://philterd.github.io/phileas/.
 
 ## What Phileas Can Do
 
 * Phileas can identify and redact over 30 types of sensitive information (see list below).
-* Phileas can evaluate conditions when redating (only zip codes with population less than some value, only ages > 30, only when sentiment is a certain value, etc.).
+* Phileas can evaluate conditions when redacting (only zip codes with population less than some value, only ages > 30, only when sentiment is a certain value, etc.).
 * Phileas can perform sentiment and offensiveness classification.
 * Phileas can redact, encrypt, and anonymize sensitive information.
 * Phileas can replace persons names with random names, dates with similar but random dates, etc.
@@ -176,7 +176,7 @@ There is a long list of `identifiers` that can be applied, and each identifier h
 Phileas is the underlying core of [Philter](https://www.philterd.ai/philter/), a turnkey text redaction engine which is built on top of Phileas and provides an API for redacting text. Philter runs entirely within your cloud and never transmits data outside of your cloud. Custom AI models are available for domains like healthcare, legal, and news. Philter is also [open source](https://github.com/philterd/philter).
 
 * [Philter on the AWS Marketplace](https://aws.amazon.com/marketplace/pp/B07YVB8FFT?ref=_ptnr_philterd)
-* [Philer on the Google Cloud Marketplace](https://console.cloud.google.com/marketplace/product/philterd-public/philter)
+* [Philter on the Google Cloud Marketplace](https://console.cloud.google.com/marketplace/product/philterd-public/philter)
 * [Philter on the Azure Marketplace](https://azuremarketplace.microsoft.com/en-us/marketplace/apps/philterdllc1687189098111.philter?tab=Overview)
 * On-prem deployments by contacting us at [https://www.philterd.ai/](https://www.philterd.ai). 
 
