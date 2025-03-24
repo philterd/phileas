@@ -23,27 +23,28 @@ import ai.philterd.phileas.model.objects.Replacement;
 import ai.philterd.phileas.model.objects.Span;
 import ai.philterd.phileas.model.policy.Policy;
 import ai.philterd.phileas.model.services.MetricsService;
-
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import okhttp3.Authenticator;
-import okhttp3.ConnectionPool;
-import okhttp3.Credentials;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Route;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
+import org.apache.hc.client5.http.classic.methods.HttpPost;
+import org.apache.hc.client5.http.config.RequestConfig;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
+import org.apache.hc.client5.http.impl.classic.HttpClients;
+import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManager;
+import org.apache.hc.core5.http.HttpEntity;
+import org.apache.hc.core5.http.io.HttpClientResponseHandler;
+import org.apache.hc.core5.http.io.entity.EntityUtils;
+import org.apache.hc.core5.http.io.entity.StringEntity;
+import org.apache.hc.core5.net.URIBuilder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
-import retrofit2.converter.scalars.ScalarsConverterFactory;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
@@ -57,9 +58,11 @@ public class PhEyeFilter extends NerFilter {
 
     private final boolean removePunctuation;
 
-    private final transient PhEyeService service;
+    private final PhEyeConfiguration phEyeConfiguration;
     private final Collection<String> labels;
-    
+    private final Gson gson;
+    final PoolingHttpClientConnectionManager connectionManager;
+
     public PhEyeFilter(final FilterConfiguration filterConfiguration,
                        final PhEyeConfiguration phEyeConfiguration,
                        final Map<String, DescriptiveStatistics> stats,
@@ -69,44 +72,23 @@ public class PhEyeFilter extends NerFilter {
 
         super(filterConfiguration, stats, metricsService, thresholds, FilterType.AGE);
 
+        this.phEyeConfiguration = phEyeConfiguration;
         this.removePunctuation = removePunctuation;
         this.labels = phEyeConfiguration.getLabels();
+        this.gson = new Gson();
 
-        final OkHttpClient.Builder builder = new OkHttpClient.Builder();
+        this.connectionManager = new PoolingHttpClientConnectionManager();
 
-        if(StringUtils.isNotEmpty(phEyeConfiguration.getUsername()) && StringUtils.isNotEmpty(phEyeConfiguration.getPassword())) {
-            builder.authenticator(new Authenticator() {
-                @Override
-                public Request authenticate(final Route route, final okhttp3.Response response) {
-                    final String credential = Credentials.basic(phEyeConfiguration.getUsername(), phEyeConfiguration.getPassword());
-                    return response.request().newBuilder().header("Authorization", credential).build();
-                }
-            });
+        if(phEyeConfiguration.getMaxIdleConnections() > 0) {
+            connectionManager.setMaxTotal(phEyeConfiguration.getMaxIdleConnections());
+            connectionManager.setDefaultMaxPerRoute(phEyeConfiguration.getMaxIdleConnections());
         }
-
-        builder.retryOnConnectionFailure(true);
-        builder.connectTimeout(phEyeConfiguration.getTimeout(), TimeUnit.SECONDS);
-        builder.writeTimeout(phEyeConfiguration.getTimeout(), TimeUnit.SECONDS);
-        builder.readTimeout(phEyeConfiguration.getTimeout(), TimeUnit.SECONDS);
-        builder.connectionPool(new ConnectionPool(phEyeConfiguration.getMaxIdleConnections(), phEyeConfiguration.getKeepAliveDurationMs(), TimeUnit.MILLISECONDS));
-
-        final OkHttpClient okHttpClient = builder.build();
-
-        final Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(phEyeConfiguration.getEndpoint())
-                .client(okHttpClient)
-                .callFactory(okHttpClient)
-                .addConverterFactory(ScalarsConverterFactory.create())
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-
-        service = retrofit.create(PhEyeService.class);
 
     }
 
     @Override
     public FilterResult filter(final Policy policy, final String context, final String documentId, final int piece,
-                               String input, final Map<String, String> attributes) throws Exception {
+                               final String input, final Map<String, String> attributes) throws Exception {
 
         final List<Span> spans = new LinkedList<>();
 
@@ -114,8 +96,11 @@ public class PhEyeFilter extends NerFilter {
         // It is replacing each punctuation mark with an empty space. This will allow span indexes
         // to remain constant as opposed to removing the punctuation and causing the string to then
         // have a shorter length.
+        final String formattedInput;
         if(removePunctuation) {
-            input = input.replaceAll("\\p{Punct}", " ");
+            formattedInput = input.replaceAll("\\p{Punct}", " ");
+        } else {
+            formattedInput = input;
         }
         
         final PhEyeRequest phEyeRequest = new PhEyeRequest();
@@ -124,34 +109,77 @@ public class PhEyeFilter extends NerFilter {
         phEyeRequest.setDocumentId(documentId);
         phEyeRequest.setPiece(piece);
         phEyeRequest.setLabels(labels);
-        
-        final Response<String> response = service.find(phEyeRequest).execute();
-        
-        if(response.isSuccessful()) {
 
-            final Type listType = new TypeToken<ArrayList<PhEyeSpan>>(){}.getType();
-            final List<PhEyeSpan> phEyeSpans = new Gson().fromJson(response.body(), listType);
-            
-            if (CollectionUtils.isNotEmpty(phEyeSpans)) {
+        final String json = gson.toJson(phEyeRequest);
 
-                for (final PhEyeSpan phEyeSpan : phEyeSpans) {
+        final URI uri = new URIBuilder(phEyeConfiguration.getEndpoint() + "/find")
+                .build();
 
-                    // Only interested in spans matching the tag we are looking for, e.g. PER, LOC.
-                    if (labels.contains(phEyeSpan.getLabel())) {
+        final RequestConfig requestConfig = RequestConfig.custom()
+                .setConnectionRequestTimeout(phEyeConfiguration.getTimeout(), TimeUnit.SECONDS)
+                .setResponseTimeout(phEyeConfiguration.getTimeout(), TimeUnit.SECONDS)
+                .build();
 
-                        // Check the confidence threshold.
-                        if(!thresholds.containsKey(phEyeSpan.getLabel().toUpperCase()) || phEyeSpan.getScore() >= thresholds.get(phEyeSpan.getLabel().toUpperCase())) {
+        final HttpPost httpPost = new HttpPost(uri);
+        httpPost.setConfig(requestConfig);
+        httpPost.setEntity(new StringEntity(json));
+        httpPost.setHeader("Content-Type", "application/json");
+        httpPost.setHeader("Accept", "application/json");
 
-                            // Get the window of text surrounding the token.
-                            final String[] window = getWindow(input, phEyeSpan.getStart(), phEyeSpan.getEnd());
+        if(StringUtils.isNotEmpty(phEyeConfiguration.getBearerToken())) {
+            httpPost.setHeader("Authorization", "Bearer " + phEyeConfiguration.getBearerToken());
+        }
 
-                            final Span span = createSpan(policy, context, documentId, phEyeSpan.getText(),
-                                    window, phEyeSpan.getLabel(), phEyeSpan.getStart(), phEyeSpan.getEnd(),
-                                    phEyeSpan.getScore(), attributes);
+        final HttpClientBuilder httpClientBuilder = HttpClients.custom().setConnectionManager(connectionManager);
 
-                            // Span will be null if no span was created due to it being excluded.
-                            if (span != null) {
-                                spans.add(span);
+        try(CloseableHttpClient httpClient = httpClientBuilder.build()) {
+
+            final HttpClientResponseHandler<String> responseHandler = response -> {
+
+                if (response.getCode() == 200) {
+
+                    final HttpEntity responseEntity = response.getEntity();
+                    return responseEntity != null ? EntityUtils.toString(responseEntity) : null;
+
+                } else {
+
+                    // The request to philter-ner was not successful.
+                    LOGGER.error("PhEyeFilter failed with code {}", response.getCode());
+                    throw new IOException("Unable to process document. Received error response from philter-ner.");
+
+                }
+
+            };
+
+            final String responseBody = httpClient.execute(httpPost, responseHandler);
+
+            if (responseBody != null) {
+
+                final Type listType = new TypeToken<ArrayList<PhEyeSpan>>() {}.getType();
+                final List<PhEyeSpan> phEyeSpans = new Gson().fromJson(responseBody, listType);
+
+                if (CollectionUtils.isNotEmpty(phEyeSpans)) {
+
+                    for (final PhEyeSpan phEyeSpan : phEyeSpans) {
+
+                        // Only interested in spans matching the tag we are looking for, e.g. PER, LOC.
+                        if (labels.contains(phEyeSpan.getLabel())) {
+
+                            // Check the confidence threshold.
+                            if (!thresholds.containsKey(phEyeSpan.getLabel().toUpperCase()) || phEyeSpan.getScore() >= thresholds.get(phEyeSpan.getLabel().toUpperCase())) {
+
+                                // Get the window of text surrounding the token.
+                                final String[] window = getWindow(formattedInput, phEyeSpan.getStart(), phEyeSpan.getEnd());
+
+                                final Span span = createSpan(policy, context, documentId, phEyeSpan.getText(),
+                                        window, phEyeSpan.getLabel(), phEyeSpan.getStart(), phEyeSpan.getEnd(),
+                                        phEyeSpan.getScore(), attributes);
+
+                                // Span will be null if no span was created due to it being excluded.
+                                if (span != null) {
+                                    spans.add(span);
+                                }
+
                             }
 
                         }
@@ -160,16 +188,15 @@ public class PhEyeFilter extends NerFilter {
 
                 }
 
-                LOGGER.debug("Returning {} NER spans.", spans.size());
+                LOGGER.debug("Returning {} NER spans from ph-eye.", spans.size());
+                return new FilterResult(context, documentId, piece, spans);
+
+            } else {
+
+                // We received null back which is not expected.
+                throw new IOException("Unable to process document. Received error response from philter-ner.");
 
             }
-
-            return new FilterResult(context, documentId, piece, spans);
-
-        } else {
-
-            // The request to philter-ner was not successful.
-            throw new IOException("Unable to process document. Received error response from philter-ner.");
 
         }
 

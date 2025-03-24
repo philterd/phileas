@@ -11,9 +11,7 @@ This filter requires the connection properties for the ph-eye service in a `phEy
 
 | Parameter  | Description                                                       | Default Value             |
 |------------|-------------------------------------------------------------------|---------------------------|
-| `endpoint` | The ph-eye service endpoint.                                      | `http://localhost:18080/` |
-| `username` | The ph-eye service username.                                      | None                      |
-| `password` | The ph-eye service endpoint.                                      | None                      |
+| `endpoint` | The ph-eye service endpoint.                                      | `http://localhost:18080` |
 | `timeout`  | The ph-eye service connection timeout in seconds.                 | `600`                     |
 | `labels`   | A comma-separated list of labels supported by the ph-eye service. | `Person`                  |
 
@@ -23,6 +21,7 @@ This filter requires the connection properties for the ph-eye service in a `phEy
 |-------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------|
 | `removePunctuation`     | When set to true, punctuation will be removed prior to analysis.                                                                                                                                             | `false`                                                  |
 | `phEyeFilterStrategies` | A list of filter strategies.                                                                                                                                                                                 | None                                                     |
+| `bearerToken`           | A bearer token for the Ph-Eye service.                                                                                                                                                                       | None                                                     |
 | `enabled`               | When set to false, the filter will be disabled and not applied                                                                                                                                               | `true`                                                   |
 | `ignored`               | A list of terms to be ignored by the filter.                                                                                                                                                                 | None                                                     |
 | `windowSize`            | Sets the size of the window (in terms) surrounding a span to look for contextual terms. If set, this value overrides the value of `span.window.size` in the configuration.                                   | The value of `span.window.size` which is by default `5`. |
@@ -61,7 +60,7 @@ Each filter strategy may have one condition. See [Conditions](#conditions) for d
    "identifiers": {
       "pheye": {
         "phEyeConfiguration": {
-            "endpoint": "http://localhost:18080/"
+            "endpoint": "http://localhost:18080"
         },
         "pheyeFilterStrategies": [
            {

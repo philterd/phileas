@@ -12,13 +12,9 @@ public class PhEyeConfiguration {
     @Expose
     protected String endpoint = "http://philter-ph-eye-1:5000/";
 
-    @SerializedName("username")
+    @SerializedName("bearerToken")
     @Expose
-    protected String username;
-
-    @SerializedName("password")
-    @Expose
-    protected String password;
+    protected String bearerToken;
 
     @SerializedName("timeout")
     @Expose
@@ -76,20 +72,12 @@ public class PhEyeConfiguration {
         this.labels = labels;
     }
 
-    public String getUsername() {
-        return username;
+    public String getBearerToken() {
+        return bearerToken;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getPassword() {
-        return password;
+    public void setBearerToken(String bearerToken) {
+        this.bearerToken = bearerToken;
     }
 
 }
