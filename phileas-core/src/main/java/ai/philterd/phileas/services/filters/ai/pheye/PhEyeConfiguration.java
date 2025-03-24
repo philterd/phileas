@@ -23,8 +23,7 @@ import java.util.List;
 public class PhEyeConfiguration {
 
     private String endpoint;
-    private String username;
-    private String password;
+    private String bearerToken;
     private int timeout;
     private int maxIdleConnections;
     private int keepAliveDurationMs;
@@ -78,20 +77,12 @@ public class PhEyeConfiguration {
         this.labels = labels;
     }
 
-    public String getUsername() {
-        return username;
+    public String getBearerToken() {
+        return bearerToken;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
+    public void setBearerToken(String bearerToken) {
+        this.bearerToken = bearerToken;
     }
 
 }
