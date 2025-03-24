@@ -256,9 +256,9 @@ public abstract class AbstractFilterStrategyTest {
     public void replacementWithMaskCharacterForDifferentLength() throws Exception {
 
         final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
-        final AnonymizationCacheService anonymizationCacheService = Mockito.mock(AnonymizationCacheService.class);
+        final CacheService anonymizationCacheService = Mockito.mock(CacheService.class);
 
-        when(anonymizationService.getAnonymizationCacheService()).thenReturn(anonymizationCacheService);
+        when(anonymizationService.getCacheService()).thenReturn(anonymizationCacheService);
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
         strategy.setStrategy(AbstractFilterStrategy.MASK);
