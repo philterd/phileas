@@ -192,7 +192,7 @@ public class EndToEndTestsHelper {
         zipCodeFilterStrategy.setTruncateDigits(2);
 
         ZipCode zipCode = new ZipCode();
-        zipCode.setZipCodeFilterStrategies(Arrays.asList(zipCodeFilterStrategy));
+        zipCode.setZipCodeFilterStrategies(List.of(zipCodeFilterStrategy));
 
         CustomDictionaryFilterStrategy customDictionaryFilterStrategy = new CustomDictionaryFilterStrategy();
         customDictionaryFilterStrategy.setStrategy("REDACT");
@@ -220,7 +220,7 @@ public class EndToEndTestsHelper {
 
         CreditCard creditCard = new CreditCard();
         creditCard.setIgnoreWhenInUnixTimestamp(true);
-        creditCard.setCreditCardFilterStrategies(Arrays.asList(creditCardFilterStrategy));
+        creditCard.setCreditCardFilterStrategies(List.of(creditCardFilterStrategy));
 
         Identifiers identifiers = new Identifiers();
         identifiers.setCreditCard(creditCard);
@@ -242,7 +242,7 @@ public class EndToEndTestsHelper {
         CreditCardFilterStrategy creditCardFilterStrategy = new CreditCardFilterStrategy();
 
         CreditCard creditCard = new CreditCard();
-        creditCard.setCreditCardFilterStrategies(Arrays.asList(creditCardFilterStrategy));
+        creditCard.setCreditCardFilterStrategies(List.of(creditCardFilterStrategy));
 
         Identifiers identifiers = new Identifiers();
         identifiers.setCreditCard(creditCard);
@@ -406,13 +406,13 @@ public class EndToEndTestsHelper {
     public static Policy getPolicyJustIdentifier(String policyName) {
 
         Identifier identifier1 = new Identifier();
-        identifier1.setIdentifierFilterStrategies(Arrays.asList(new IdentifierFilterStrategy()));
+        identifier1.setIdentifierFilterStrategies(List.of(new IdentifierFilterStrategy()));
         identifier1.setPattern("\\b\\d{3,8}\\b");
         identifier1.setCaseSensitive(false);
 
         Identifiers identifiers = new Identifiers();
 
-        identifiers.setIdentifiers(Arrays.asList(identifier1));
+        identifiers.setIdentifiers(List.of(identifier1));
 
         Policy policy = new Policy();
         policy.setName(policyName);

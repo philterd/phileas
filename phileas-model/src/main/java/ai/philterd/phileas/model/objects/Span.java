@@ -414,27 +414,28 @@ public final class Span {
             // Loop over each span.
             for (final Span span2 : spans) {
 
-                // Ignore if the span is the same.
+                // Ignore if the span is not the same.
                 if (!span.equals(span2)) {
 
-                  if (span.range.isOverlappedBy(span2.range)) {
+                    if (span.range.isOverlappedBy(span2.range)) {
 
                         final int spanLength = span.getCharacterEnd() - span.getCharacterStart();
                         final int span2Length = span2.getCharacterEnd() - span2.getCharacterStart();
 
-                        if ((span2Length > spanLength) || (span2Length == spanLength && span2.confidence > span.confidence)) {
+                        if ((span2Length > spanLength)) {
 
                             overlapping = true;
                             nonOverlappingSpans.add(span2);
 
-                        } else if (span2Length == spanLength && span2.confidence == span.confidence) {
+                        } else if (span2Length == spanLength && span2.confidence > span.confidence) {
 
-                            // Drop the span with the lowest priority.
                             overlapping = true;
 
-                            if(span.getPriority() > span2.getPriority()) {
-                                nonOverlappingSpans.add(span);
-                            } else {
+                        } else if(span2Length == spanLength && span2.confidence == span.confidence) {
+
+                            // Use the span from the filter with the highest priority.
+                            if(span2.getPriority() > span.getPriority()) {
+                                overlapping = true;
                                 nonOverlappingSpans.add(span2);
                             }
 

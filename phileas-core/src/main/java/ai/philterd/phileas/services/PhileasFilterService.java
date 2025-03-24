@@ -21,6 +21,7 @@ import ai.philterd.phileas.model.domain.HealthDomain;
 import ai.philterd.phileas.model.domain.LegalDomain;
 import ai.philterd.phileas.model.enums.FilterType;
 import ai.philterd.phileas.model.enums.MimeType;
+import ai.philterd.phileas.model.services.Classification;
 import ai.philterd.phileas.model.filter.Filter;
 import ai.philterd.phileas.model.objects.Explanation;
 import ai.philterd.phileas.model.objects.PdfRedactionOptions;
@@ -33,8 +34,7 @@ import ai.philterd.phileas.model.responses.BinaryDocumentFilterResponse;
 import ai.philterd.phileas.model.responses.FilterResponse;
 import ai.philterd.phileas.model.serializers.PlaceholderDeserializer;
 import ai.philterd.phileas.model.services.AlertService;
-import ai.philterd.phileas.model.services.AnonymizationCacheService;
-import ai.philterd.phileas.model.services.Classification;
+import ai.philterd.phileas.model.services.CacheService;
 import ai.philterd.phileas.model.services.DocumentProcessor;
 import ai.philterd.phileas.model.services.FilterService;
 import ai.philterd.phileas.model.services.MetricsService;
@@ -45,8 +45,7 @@ import ai.philterd.phileas.model.services.SentimentDetector;
 import ai.philterd.phileas.model.services.SplitService;
 import ai.philterd.phileas.processors.unstructured.UnstructuredDocumentProcessor;
 import ai.philterd.phileas.service.ai.sentiment.OpenNLPSentimentDetector;
-import ai.philterd.phileas.services.alerts.AlertServiceFactory;
-import ai.philterd.phileas.services.anonymization.cache.AnonymizationCacheServiceFactory;
+import ai.philterd.phileas.services.alerts.DefaultAlertService;
 import ai.philterd.phileas.services.disambiguation.VectorBasedSpanDisambiguationService;
 import ai.philterd.phileas.services.metrics.NoOpMetricsService;
 import ai.philterd.phileas.services.policies.InMemoryPolicyService;
@@ -98,11 +97,11 @@ public class PhileasFilterService implements FilterService {
     // PHL-223: Face recognition
     //private final ImageProcessor imageProcessor;
 
-    public PhileasFilterService(final PhileasConfiguration phileasConfiguration) throws IOException {
-        this(phileasConfiguration, new NoOpMetricsService());
+    public PhileasFilterService(final PhileasConfiguration phileasConfiguration, final CacheService cacheService) throws IOException {
+        this(phileasConfiguration, new NoOpMetricsService(), cacheService);
     }
 
-    public PhileasFilterService(final PhileasConfiguration phileasConfiguration, final MetricsService metricsService) throws IOException {
+    public PhileasFilterService(final PhileasConfiguration phileasConfiguration, final MetricsService metricsService, final CacheService cacheService) throws IOException {
 
         LOGGER.info("Initializing Phileas engine.");
 
@@ -112,23 +111,20 @@ public class PhileasFilterService implements FilterService {
         final Gson gson = new GsonBuilder().registerTypeAdapter(String.class, new PlaceholderDeserializer()).create();
 
         // Set the policy services.
-        this.policyService = buildPolicyService(phileasConfiguration);
+        this.policyService = buildPolicyService(phileasConfiguration, cacheService);
         this.policyUtils = new PolicyUtils(policyService, gson);
 
-        // Set the anonymization cache service.
-        final AnonymizationCacheService anonymizationCacheService = AnonymizationCacheServiceFactory.getAnonymizationCacheService(phileasConfiguration);
-
         // Set the alert service.
-        this.alertService = AlertServiceFactory.getAlertService(phileasConfiguration);
+        this.alertService = new DefaultAlertService(cacheService);
 
         // Instantiate the stats.
-        Map<String, DescriptiveStatistics> stats = new HashMap<>();
+        final Map<String, DescriptiveStatistics> stats = new HashMap<>();
 
         // The filter loader for policies.
-        this.filterPolicyLoader = new FilterPolicyLoader(alertService, anonymizationCacheService, metricsService, stats, phileasConfiguration);
+        this.filterPolicyLoader = new FilterPolicyLoader(alertService, cacheService, metricsService, stats, phileasConfiguration);
 
         // Create a new unstructured document processor.
-        this.unstructuredDocumentProcessor = new UnstructuredDocumentProcessor(metricsService, new VectorBasedSpanDisambiguationService(phileasConfiguration));
+        this.unstructuredDocumentProcessor = new UnstructuredDocumentProcessor(metricsService, new VectorBasedSpanDisambiguationService(phileasConfiguration, cacheService));
 
     }
 
@@ -367,12 +363,12 @@ public class PhileasFilterService implements FilterService {
 
     }
 
-    private PolicyService buildPolicyService(final PhileasConfiguration phileasConfiguration) {
+    private PolicyService buildPolicyService(final PhileasConfiguration phileasConfiguration, final CacheService cacheService) {
 
         if(StringUtils.equalsIgnoreCase(phileasConfiguration.policyService(), "memory")) {
             return new InMemoryPolicyService();
         } else {
-            return new LocalPolicyService(phileasConfiguration);
+            return new LocalPolicyService(phileasConfiguration, cacheService);
         }
 
     }

@@ -15,6 +15,7 @@
  */
 package ai.philterd.test.phileas.services.filters;
 
+import ai.philterd.phileas.model.cache.InMemoryCache;
 import ai.philterd.phileas.model.enums.FilterType;
 import ai.philterd.phileas.model.filter.FilterConfiguration;
 import ai.philterd.phileas.model.objects.FilterResult;
@@ -22,7 +23,6 @@ import ai.philterd.phileas.model.policy.Policy;
 import ai.philterd.phileas.model.policy.filters.strategies.rules.EmailAddressFilterStrategy;
 import ai.philterd.phileas.model.services.AlertService;
 import ai.philterd.phileas.services.anonymization.AlphanumericAnonymizationService;
-import ai.philterd.phileas.services.anonymization.cache.LocalAnonymizationCacheService;
 import ai.philterd.phileas.services.filters.regex.EmailAddressFilter;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -40,7 +40,7 @@ public class EmailAddressFilterTest extends AbstractFilterTest {
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new EmailAddressFilterStrategy()))
                 .withAlertService(alertService)
-                .withAnonymizationService(new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()))
+                .withAnonymizationService(new AlphanumericAnonymizationService(new InMemoryCache()))
                 .withWindowSize(windowSize)
                 .build();
 
@@ -54,7 +54,7 @@ public class EmailAddressFilterTest extends AbstractFilterTest {
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new EmailAddressFilterStrategy()))
                 .withAlertService(alertService)
-                .withAnonymizationService(new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()))
+                .withAnonymizationService(new AlphanumericAnonymizationService(new InMemoryCache()))
                 .withWindowSize(windowSize)
                 .build();
 
@@ -68,7 +68,7 @@ public class EmailAddressFilterTest extends AbstractFilterTest {
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new EmailAddressFilterStrategy()))
                 .withAlertService(alertService)
-                .withAnonymizationService(new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()))
+                .withAnonymizationService(new AlphanumericAnonymizationService(new InMemoryCache()))
                 .withWindowSize(windowSize)
                 .build();
 
@@ -87,7 +87,7 @@ public class EmailAddressFilterTest extends AbstractFilterTest {
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new EmailAddressFilterStrategy()))
                 .withAlertService(alertService)
-                .withAnonymizationService(new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()))
+                .withAnonymizationService(new AlphanumericAnonymizationService(new InMemoryCache()))
                 .withWindowSize(windowSize)
                 .build();
 
@@ -110,7 +110,7 @@ public class EmailAddressFilterTest extends AbstractFilterTest {
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new EmailAddressFilterStrategy()))
                 .withAlertService(alertService)
-                .withAnonymizationService(new AlphanumericAnonymizationService(new LocalAnonymizationCacheService()))
+                .withAnonymizationService(new AlphanumericAnonymizationService(new InMemoryCache()))
                 .withWindowSize(windowSize)
                 .build();
 

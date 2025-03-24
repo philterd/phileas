@@ -15,7 +15,7 @@
  */
 package ai.philterd.phileas.services.anonymization;
 
-import ai.philterd.phileas.model.services.AnonymizationCacheService;
+import ai.philterd.phileas.model.services.CacheService;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.LinkedList;
@@ -25,7 +25,7 @@ public class StateAbbreviationAnonymizationService extends AbstractAnonymization
 
     private final List<String> STATES;
 
-    public StateAbbreviationAnonymizationService(AnonymizationCacheService anonymizationCacheService) {
+    public StateAbbreviationAnonymizationService(CacheService anonymizationCacheService) {
         super(anonymizationCacheService);
 
         this.STATES = new LinkedList<>();

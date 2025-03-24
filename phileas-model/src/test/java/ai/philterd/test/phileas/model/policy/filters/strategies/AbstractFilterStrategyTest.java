@@ -20,8 +20,8 @@ import ai.philterd.phileas.model.policy.Crypto;
 import ai.philterd.phileas.model.policy.FPE;
 import ai.philterd.phileas.model.policy.Policy;
 import ai.philterd.phileas.model.policy.filters.strategies.AbstractFilterStrategy;
-import ai.philterd.phileas.model.services.AnonymizationCacheService;
 import ai.philterd.phileas.model.services.AnonymizationService;
+import ai.philterd.phileas.model.services.CacheService;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -79,10 +79,10 @@ public abstract class AbstractFilterStrategyTest {
     public void replacement3() throws Exception {
 
         final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
-        final AnonymizationCacheService anonymizationCacheService = Mockito.mock(AnonymizationCacheService.class);
+        final CacheService anonymizationCacheService = Mockito.mock(CacheService.class);
 
-        when(anonymizationCacheService.get("context", "token")).thenReturn("random");
-        when(anonymizationService.getAnonymizationCacheService()).thenReturn(anonymizationCacheService);
+        when(anonymizationCacheService.getAnonymizedToken("context", "token")).thenReturn("random");
+        when(anonymizationService.getCacheService()).thenReturn(anonymizationCacheService);
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
         strategy.setStrategy(AbstractFilterStrategy.RANDOM_REPLACE);
@@ -97,10 +97,10 @@ public abstract class AbstractFilterStrategyTest {
     public void replacement4() throws Exception {
 
         final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
-        final AnonymizationCacheService anonymizationCacheService = Mockito.mock(AnonymizationCacheService.class);
+        final CacheService anonymizationCacheService = Mockito.mock(CacheService.class);
 
-        when(anonymizationCacheService.get("context", "token")).thenReturn("random");
-        when(anonymizationService.getAnonymizationCacheService()).thenReturn(anonymizationCacheService);
+        when(anonymizationCacheService.getAnonymizedToken("context", "token")).thenReturn("random");
+        when(anonymizationService.getCacheService()).thenReturn(anonymizationCacheService);
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
         strategy.setStrategy("something-wrong");
@@ -115,9 +115,9 @@ public abstract class AbstractFilterStrategyTest {
     public void replacement5() throws Exception {
 
         final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
-        final AnonymizationCacheService anonymizationCacheService = Mockito.mock(AnonymizationCacheService.class);
+        final CacheService anonymizationCacheService = Mockito.mock(CacheService.class);
 
-        when(anonymizationService.getAnonymizationCacheService()).thenReturn(anonymizationCacheService);
+        when(anonymizationService.getCacheService()).thenReturn(anonymizationCacheService);
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
         strategy.setStrategy(AbstractFilterStrategy.REDACT);
@@ -133,9 +133,9 @@ public abstract class AbstractFilterStrategyTest {
     public void replacement6() throws Exception {
 
         final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
-        final AnonymizationCacheService anonymizationCacheService = Mockito.mock(AnonymizationCacheService.class);
+        final CacheService anonymizationCacheService = Mockito.mock(CacheService.class);
 
-        when(anonymizationService.getAnonymizationCacheService()).thenReturn(anonymizationCacheService);
+        when(anonymizationService.getCacheService()).thenReturn(anonymizationCacheService);
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
         strategy.setStrategy(AbstractFilterStrategy.CRYPTO_REPLACE);
@@ -155,9 +155,9 @@ public abstract class AbstractFilterStrategyTest {
         final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
         when(anonymizationService.anonymize("token")).thenReturn("randomtoken");
 
-        final AnonymizationCacheService anonymizationCacheService = Mockito.mock(AnonymizationCacheService.class);
+        final CacheService anonymizationCacheService = Mockito.mock(CacheService.class);
 
-        when(anonymizationService.getAnonymizationCacheService()).thenReturn(anonymizationCacheService);
+        when(anonymizationService.getCacheService()).thenReturn(anonymizationCacheService);
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
         strategy.setStrategy(AbstractFilterStrategy.RANDOM_REPLACE);
@@ -172,9 +172,9 @@ public abstract class AbstractFilterStrategyTest {
     public void replacement8() throws Exception {
 
         final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
-        final AnonymizationCacheService anonymizationCacheService = Mockito.mock(AnonymizationCacheService.class);
+        final CacheService anonymizationCacheService = Mockito.mock(CacheService.class);
 
-        when(anonymizationService.getAnonymizationCacheService()).thenReturn(anonymizationCacheService);
+        when(anonymizationService.getCacheService()).thenReturn(anonymizationCacheService);
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
         strategy.setStrategy(AbstractFilterStrategy.STATIC_REPLACE);
@@ -190,9 +190,9 @@ public abstract class AbstractFilterStrategyTest {
     public void replacement9() throws IOException {
 
         final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
-        final AnonymizationCacheService anonymizationCacheService = Mockito.mock(AnonymizationCacheService.class);
+        final CacheService anonymizationCacheService = Mockito.mock(CacheService.class);
 
-        when(anonymizationService.getAnonymizationCacheService()).thenReturn(anonymizationCacheService);
+        when(anonymizationService.getCacheService()).thenReturn(anonymizationCacheService);
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
         strategy.setStrategy(AbstractFilterStrategy.CRYPTO_REPLACE);
@@ -213,9 +213,9 @@ public abstract class AbstractFilterStrategyTest {
     public void replacement10() throws Exception {
 
         final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
-        final AnonymizationCacheService anonymizationCacheService = Mockito.mock(AnonymizationCacheService.class);
+        final CacheService anonymizationCacheService = Mockito.mock(CacheService.class);
 
-        when(anonymizationService.getAnonymizationCacheService()).thenReturn(anonymizationCacheService);
+        when(anonymizationService.getCacheService()).thenReturn(anonymizationCacheService);
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
         strategy.setStrategy(AbstractFilterStrategy.HASH_SHA256_REPLACE);
@@ -234,19 +234,43 @@ public abstract class AbstractFilterStrategyTest {
     public void replacementWithMaskCharacterForSameLength() throws Exception {
 
         final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
-        final AnonymizationCacheService anonymizationCacheService = Mockito.mock(AnonymizationCacheService.class);
+        final CacheService anonymizationCacheService = Mockito.mock(CacheService.class);
 
-        when(anonymizationService.getAnonymizationCacheService()).thenReturn(anonymizationCacheService);
+        when(anonymizationService.getCacheService()).thenReturn(anonymizationCacheService);
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
         strategy.setStrategy(AbstractFilterStrategy.MASK);
         strategy.setMaskLength(AbstractFilterStrategy.SAME);
 
-        final String token = "token";
+        final String token = "token1234";
         final Replacement replacement = strategy.getReplacement("name", "context", "docId", token, WINDOW, null, null, anonymizationService, null);
 
-        Assertions.assertEquals(replacement.getReplacement(), "*****");
+        System.out.println(replacement.getReplacement());
+
+        Assertions.assertEquals("*********", replacement.getReplacement());
         Assertions.assertEquals(replacement.getReplacement().length(), token.length());
+
+    }
+
+    @Test
+    public void replacementWithMaskCharacterForDifferentLength() throws Exception {
+
+        final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
+        final CacheService anonymizationCacheService = Mockito.mock(CacheService.class);
+
+        when(anonymizationService.getCacheService()).thenReturn(anonymizationCacheService);
+
+        final AbstractFilterStrategy strategy = getFilterStrategy();
+        strategy.setStrategy(AbstractFilterStrategy.MASK);
+        strategy.setMaskLength("4");
+
+        final String token = "token1234";
+        final Replacement replacement = strategy.getReplacement("name", "context", "docId", token, WINDOW, null, null, anonymizationService, null);
+
+        System.out.println(replacement.getReplacement());
+
+        Assertions.assertEquals("****", replacement.getReplacement());
+        Assertions.assertEquals(4, replacement.getReplacement().length());
 
     }
 
@@ -254,9 +278,9 @@ public abstract class AbstractFilterStrategyTest {
     public void replacementWithMaskCharacterForSetLength() throws Exception {
 
         final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
-        final AnonymizationCacheService anonymizationCacheService = Mockito.mock(AnonymizationCacheService.class);
+        final CacheService anonymizationCacheService = Mockito.mock(CacheService.class);
 
-        when(anonymizationService.getAnonymizationCacheService()).thenReturn(anonymizationCacheService);
+        when(anonymizationService.getCacheService()).thenReturn(anonymizationCacheService);
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
         strategy.setStrategy(AbstractFilterStrategy.MASK);
@@ -266,8 +290,8 @@ public abstract class AbstractFilterStrategyTest {
         final String token = "token";
         final Replacement replacement = strategy.getReplacement("name", "context", "docId", token, WINDOW, null, null, anonymizationService, null);
 
-        Assertions.assertEquals(replacement.getReplacement(), "##########");
-        Assertions.assertEquals(replacement.getReplacement().length(), 10);
+        Assertions.assertEquals("##########", replacement.getReplacement());
+        Assertions.assertEquals(10, replacement.getReplacement().length());
 
     }
 
@@ -275,9 +299,9 @@ public abstract class AbstractFilterStrategyTest {
     public void replacementWithMaskCharacterForSetLengthWithNegativeLength() throws Exception {
 
         final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
-        final AnonymizationCacheService anonymizationCacheService = Mockito.mock(AnonymizationCacheService.class);
+        final CacheService anonymizationCacheService = Mockito.mock(CacheService.class);
 
-        when(anonymizationService.getAnonymizationCacheService()).thenReturn(anonymizationCacheService);
+        when(anonymizationService.getCacheService()).thenReturn(anonymizationCacheService);
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
         strategy.setStrategy(AbstractFilterStrategy.MASK);
@@ -287,8 +311,8 @@ public abstract class AbstractFilterStrategyTest {
         final String token = "token";
         final Replacement replacement = strategy.getReplacement("name", "context", "docId", token, WINDOW, null, null, anonymizationService, null);
 
-        Assertions.assertEquals(replacement.getReplacement(), "#####");
-        Assertions.assertEquals(replacement.getReplacement().length(), 5);
+        Assertions.assertEquals("#####", replacement.getReplacement());
+        Assertions.assertEquals(5, replacement.getReplacement().length());
 
     }
 
@@ -296,9 +320,9 @@ public abstract class AbstractFilterStrategyTest {
     public void truncate1() throws Exception {
 
         final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
-        final AnonymizationCacheService anonymizationCacheService = Mockito.mock(AnonymizationCacheService.class);
+        final CacheService anonymizationCacheService = Mockito.mock(CacheService.class);
 
-        when(anonymizationService.getAnonymizationCacheService()).thenReturn(anonymizationCacheService);
+        when(anonymizationService.getCacheService()).thenReturn(anonymizationCacheService);
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
         strategy.setStrategy(AbstractFilterStrategy.TRUNCATE);
@@ -307,8 +331,8 @@ public abstract class AbstractFilterStrategyTest {
         final String token = "12345";
         final Replacement replacement = strategy.getReplacement("name", "context", "docId", token, WINDOW, null, null, anonymizationService, null);
 
-        Assertions.assertEquals(replacement.getReplacement(), "1****");
-        Assertions.assertEquals(replacement.getReplacement().length(), 5);
+        Assertions.assertEquals("1****", replacement.getReplacement());
+        Assertions.assertEquals(5, replacement.getReplacement().length());
 
     }
 
@@ -316,9 +340,9 @@ public abstract class AbstractFilterStrategyTest {
     public void truncate2() throws Exception {
 
         final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
-        final AnonymizationCacheService anonymizationCacheService = Mockito.mock(AnonymizationCacheService.class);
+        final CacheService anonymizationCacheService = Mockito.mock(CacheService.class);
 
-        when(anonymizationService.getAnonymizationCacheService()).thenReturn(anonymizationCacheService);
+        when(anonymizationService.getCacheService()).thenReturn(anonymizationCacheService);
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
         strategy.setStrategy(AbstractFilterStrategy.TRUNCATE);
@@ -327,8 +351,8 @@ public abstract class AbstractFilterStrategyTest {
         final String token = "12345";
         final Replacement replacement = strategy.getReplacement("name", "context", "docId", token, WINDOW, null, null, anonymizationService, null);
 
-        Assertions.assertEquals(replacement.getReplacement(), "1234*");
-        Assertions.assertEquals(replacement.getReplacement().length(), 5);
+        Assertions.assertEquals("1234*", replacement.getReplacement());
+        Assertions.assertEquals(5, replacement.getReplacement().length());
 
     }
 
@@ -336,9 +360,9 @@ public abstract class AbstractFilterStrategyTest {
     public void truncate3() throws Exception {
 
         final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
-        final AnonymizationCacheService anonymizationCacheService = Mockito.mock(AnonymizationCacheService.class);
+        final CacheService anonymizationCacheService = Mockito.mock(CacheService.class);
 
-        when(anonymizationService.getAnonymizationCacheService()).thenReturn(anonymizationCacheService);
+        when(anonymizationService.getCacheService()).thenReturn(anonymizationCacheService);
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
         strategy.setStrategy(AbstractFilterStrategy.TRUNCATE);
@@ -348,8 +372,8 @@ public abstract class AbstractFilterStrategyTest {
         final String token = "12345";
         final Replacement replacement = strategy.getReplacement("name", "context", "docId", token, WINDOW, null, null, anonymizationService, null);
 
-        Assertions.assertEquals(replacement.getReplacement(), "12***");
-        Assertions.assertEquals(replacement.getReplacement().length(), 5);
+        Assertions.assertEquals("12***", replacement.getReplacement());
+        Assertions.assertEquals(5, replacement.getReplacement().length());
 
     }
 
@@ -357,9 +381,9 @@ public abstract class AbstractFilterStrategyTest {
     public void truncate4() throws Exception {
 
         final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
-        final AnonymizationCacheService anonymizationCacheService = Mockito.mock(AnonymizationCacheService.class);
+        final CacheService anonymizationCacheService = Mockito.mock(CacheService.class);
 
-        when(anonymizationService.getAnonymizationCacheService()).thenReturn(anonymizationCacheService);
+        when(anonymizationService.getCacheService()).thenReturn(anonymizationCacheService);
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
         strategy.setStrategy(AbstractFilterStrategy.TRUNCATE);
@@ -369,8 +393,8 @@ public abstract class AbstractFilterStrategyTest {
         final String token = "4111111111111111";
         final Replacement replacement = strategy.getReplacement("name", "context", "docId", token, WINDOW, null, null, anonymizationService, null);
 
-        Assertions.assertEquals(replacement.getReplacement(), "************1111");
-        Assertions.assertEquals(replacement.getReplacement().length(), 16);
+        Assertions.assertEquals("************1111", replacement.getReplacement());
+        Assertions.assertEquals(16, replacement.getReplacement().length());
 
     }
 

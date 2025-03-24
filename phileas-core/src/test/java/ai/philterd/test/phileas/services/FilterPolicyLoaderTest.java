@@ -22,7 +22,7 @@ import ai.philterd.phileas.model.policy.Identifiers;
 import ai.philterd.phileas.model.policy.Policy;
 import ai.philterd.phileas.model.policy.filters.ZipCode;
 import ai.philterd.phileas.model.services.AlertService;
-import ai.philterd.phileas.model.services.AnonymizationCacheService;
+import ai.philterd.phileas.model.services.CacheService;
 import ai.philterd.phileas.model.services.MetricsService;
 import ai.philterd.phileas.services.FilterPolicyLoader;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
@@ -44,13 +44,13 @@ public class FilterPolicyLoaderTest {
     @Test
     public void checkDefaultWindowSize() throws Exception {
 
-        final AnonymizationCacheService anonymizationCacheService = Mockito.mock(AnonymizationCacheService.class);
+        final CacheService cacheService = Mockito.mock(CacheService.class);
         final AlertService alertService = Mockito.mock(AlertService.class);
         final MetricsService metricsService = Mockito.mock(MetricsService.class);
         final Map<String, DescriptiveStatistics> stats = new HashMap<>();
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(new Properties());
 
-        final FilterPolicyLoader filterPolicyLoader = new FilterPolicyLoader(alertService, anonymizationCacheService, metricsService, stats, phileasConfiguration);
+        final FilterPolicyLoader filterPolicyLoader = new FilterPolicyLoader(alertService, cacheService, metricsService, stats, phileasConfiguration);
 
         final Identifiers identifiers = new Identifiers();
         identifiers.setZipCode(new ZipCode());
@@ -71,7 +71,7 @@ public class FilterPolicyLoaderTest {
     @Test
     public void checkCustomWindowSize() throws Exception {
 
-        final AnonymizationCacheService anonymizationCacheService = Mockito.mock(AnonymizationCacheService.class);
+        final CacheService cacheService = Mockito.mock(CacheService.class);
         final AlertService alertService = Mockito.mock(AlertService.class);
         final MetricsService metricsService = Mockito.mock(MetricsService.class);
         final Map<String, DescriptiveStatistics> stats = new HashMap<>();
@@ -80,7 +80,7 @@ public class FilterPolicyLoaderTest {
         properties.put("span.window.size", "3");
 
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties);
-        final FilterPolicyLoader filterPolicyLoader = new FilterPolicyLoader(alertService, anonymizationCacheService, metricsService, stats, phileasConfiguration);
+        final FilterPolicyLoader filterPolicyLoader = new FilterPolicyLoader(alertService, cacheService, metricsService, stats, phileasConfiguration);
 
         final Identifiers identifiers = new Identifiers();
         identifiers.setZipCode(new ZipCode());
@@ -101,13 +101,13 @@ public class FilterPolicyLoaderTest {
     @Test
     public void getFiltersForPolicy() throws Exception {
 
-        final AnonymizationCacheService anonymizationCacheService = Mockito.mock(AnonymizationCacheService.class);
+        final CacheService cacheService = Mockito.mock(CacheService.class);
         final AlertService alertService = Mockito.mock(AlertService.class);
         final MetricsService metricsService = Mockito.mock(MetricsService.class);
         final Map<String, DescriptiveStatistics> stats = new HashMap<>();
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(new Properties());
 
-        final FilterPolicyLoader filterPolicyLoader = new FilterPolicyLoader(alertService, anonymizationCacheService, metricsService, stats, phileasConfiguration);
+        final FilterPolicyLoader filterPolicyLoader = new FilterPolicyLoader(alertService, cacheService, metricsService, stats, phileasConfiguration);
 
         final Identifiers identifiers = new Identifiers();
         identifiers.setZipCode(new ZipCode());
@@ -129,13 +129,13 @@ public class FilterPolicyLoaderTest {
     @Test
     public void getFiltersForPolicyWithNoFilters() throws Exception {
 
-        final AnonymizationCacheService anonymizationCacheService = Mockito.mock(AnonymizationCacheService.class);
+        final CacheService cacheService = Mockito.mock(CacheService.class);
         final AlertService alertService = Mockito.mock(AlertService.class);
         final MetricsService metricsService = Mockito.mock(MetricsService.class);
         final Map<String, DescriptiveStatistics> stats = new HashMap<>();
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(new Properties());
 
-        final FilterPolicyLoader filterPolicyLoader = new FilterPolicyLoader(alertService, anonymizationCacheService, metricsService, stats, phileasConfiguration);
+        final FilterPolicyLoader filterPolicyLoader = new FilterPolicyLoader(alertService, cacheService, metricsService, stats, phileasConfiguration);
 
         final Policy policy = new Policy();
         policy.setName("unnamed");

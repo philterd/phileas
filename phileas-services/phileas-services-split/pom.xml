@@ -6,7 +6,6 @@
     <groupId>ai.philterd</groupId>
     <version>2.13.0-SNAPSHOT</version>
   </parent>
-  <groupId>ai.philterd</groupId>
   <artifactId>phileas-services-split</artifactId>
   <name>phileas-services-split</name>
   <dependencies>

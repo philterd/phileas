@@ -71,6 +71,7 @@ import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.List;
 
 public class PolicyTest {
 
@@ -79,67 +80,67 @@ public class PolicyTest {
 
         CustomDictionary customDictionary = new CustomDictionary();
         customDictionary.setTerms(Arrays.asList("123", "456", "jeff", "john"));
-        customDictionary.setCustomDictionaryFilterStrategies(Arrays.asList(new CustomDictionaryFilterStrategy()));
+        customDictionary.setCustomDictionaryFilterStrategies(List.of(new CustomDictionaryFilterStrategy()));
 
         Age age = new Age();
-        age.setAgeFilterStrategies(Arrays.asList(new AgeFilterStrategy()));
+        age.setAgeFilterStrategies(List.of(new AgeFilterStrategy()));
 
         City city = new City();
-        city.setCityFilterStrategies(Arrays.asList(new CityFilterStrategy()));
+        city.setCityFilterStrategies(List.of(new CityFilterStrategy()));
 
         County county = new County();
-        county.setCountyFilterStrategies(Arrays.asList(new CountyFilterStrategy()));
+        county.setCountyFilterStrategies(List.of(new CountyFilterStrategy()));
 
         CreditCard creditCard = new CreditCard();
-        creditCard.setCreditCardFilterStrategies(Arrays.asList(new CreditCardFilterStrategy()));
+        creditCard.setCreditCardFilterStrategies(List.of(new CreditCardFilterStrategy()));
 
         Date date = new Date();
-        date.setDateFilterStrategies(Arrays.asList(new DateFilterStrategy()));
+        date.setDateFilterStrategies(List.of(new DateFilterStrategy()));
 
         EmailAddress emailAddress = new EmailAddress();
-        emailAddress.setEmailAddressFilterStrategies(Arrays.asList(new EmailAddressFilterStrategy()));
+        emailAddress.setEmailAddressFilterStrategies(List.of(new EmailAddressFilterStrategy()));
 
         FirstName firstName = new FirstName();
-        firstName.setFirstNameFilterStrategies(Arrays.asList(new FirstNameFilterStrategy()));
+        firstName.setFirstNameFilterStrategies(List.of(new FirstNameFilterStrategy()));
 
         Hospital hospital = new Hospital();
-        hospital.setHospitalFilterStrategies(Arrays.asList(new HospitalFilterStrategy()));
+        hospital.setHospitalFilterStrategies(List.of(new HospitalFilterStrategy()));
 
         HospitalAbbreviation hospitalAbbreviation = new HospitalAbbreviation();
-        hospitalAbbreviation.setHospitalAbbreviationFilterStrategies(Arrays.asList(new HospitalAbbreviationFilterStrategy()));
+        hospitalAbbreviation.setHospitalAbbreviationFilterStrategies(List.of(new HospitalAbbreviationFilterStrategy()));
 
         Identifier identifier = new Identifier();
-        identifier.setIdentifierFilterStrategies(Arrays.asList(new IdentifierFilterStrategy()));
+        identifier.setIdentifierFilterStrategies(List.of(new IdentifierFilterStrategy()));
 
         IpAddress ipAddress = new IpAddress();
-        ipAddress.setIpAddressFilterStrategies(Arrays.asList(new IpAddressFilterStrategy()));
+        ipAddress.setIpAddressFilterStrategies(List.of(new IpAddressFilterStrategy()));
 
         PhEyeFilter phEyeFilter = new PhEyeFilter();
-        phEyeFilter.setPhEyeFilterStrategies(Arrays.asList(new PhEyeFilterStrategy()));
+        phEyeFilter.setPhEyeFilterStrategies(List.of(new PhEyeFilterStrategy()));
 
         PhoneNumber phoneNumber = new PhoneNumber();
-        phoneNumber.setPhoneNumberFilterStrategies(Arrays.asList(new PhoneNumberFilterStrategy()));
+        phoneNumber.setPhoneNumberFilterStrategies(List.of(new PhoneNumberFilterStrategy()));
 
         PhoneNumberExtension phoneNumberExtension = new PhoneNumberExtension();
-        phoneNumberExtension.setPhoneNumberExtensionFilterStrategies(Arrays.asList(new PhoneNumberExtensionFilterStrategy()));
+        phoneNumberExtension.setPhoneNumberExtensionFilterStrategies(List.of(new PhoneNumberExtensionFilterStrategy()));
 
         Ssn ssn = new Ssn();
-        ssn.setSsnFilterStrategies(Arrays.asList(new SsnFilterStrategy()));
+        ssn.setSsnFilterStrategies(List.of(new SsnFilterStrategy()));
 
         State state = new State();
-        state.setStateFilterStrategies(Arrays.asList(new StateFilterStrategy()));
+        state.setStateFilterStrategies(List.of(new StateFilterStrategy()));
 
         StateAbbreviation stateAbbreviation = new StateAbbreviation();
-        stateAbbreviation.setStateAbbreviationsFilterStrategies(Arrays.asList(new StateAbbreviationFilterStrategy()));
+        stateAbbreviation.setStateAbbreviationsFilterStrategies(List.of(new StateAbbreviationFilterStrategy()));
 
         Surname surname = new Surname();
-        surname.setSurnameFilterStrategies(Arrays.asList(new SurnameFilterStrategy()));
+        surname.setSurnameFilterStrategies(List.of(new SurnameFilterStrategy()));
 
         Url url = new Url();
-        url.setUrlFilterStrategies(Arrays.asList(new UrlFilterStrategy()));
+        url.setUrlFilterStrategies(List.of(new UrlFilterStrategy()));
 
         Vin vin = new Vin();
-        vin.setVinFilterStrategies(Arrays.asList(new VinFilterStrategy()));
+        vin.setVinFilterStrategies(List.of(new VinFilterStrategy()));
 
         ZipCodeFilterStrategy zipCodeFilterStrategy = new ZipCodeFilterStrategy();
         zipCodeFilterStrategy.setStrategy("TRUNCATE");
@@ -147,10 +148,10 @@ public class PolicyTest {
         zipCodeFilterStrategy.setConditions("population < 4500");
 
         ZipCode zipCode = new ZipCode();
-        zipCode.setZipCodeFilterStrategies(Arrays.asList(zipCodeFilterStrategy));
+        zipCode.setZipCodeFilterStrategies(List.of(zipCodeFilterStrategy));
 
         Identifiers identifiers = new Identifiers();
-        identifiers.setCustomDictionaries(Arrays.asList(customDictionary));
+        identifiers.setCustomDictionaries(List.of(customDictionary));
         identifiers.setAge(age);
         identifiers.setCity(city);
         identifiers.setCounty(county);
@@ -160,7 +161,7 @@ public class PolicyTest {
         identifiers.setFirstName(firstName);
         identifiers.setHospital(hospital);
         identifiers.setHospitalAbbreviation(hospitalAbbreviation);
-        identifiers.setIdentifiers(Arrays.asList(identifier));
+        identifiers.setIdentifiers(List.of(identifier));
         identifiers.setIpAddress(ipAddress);
         identifiers.setPerson(phEyeFilter);
         identifiers.setPhoneNumber(phoneNumber);
@@ -180,7 +181,7 @@ public class PolicyTest {
         Policy policy = new Policy();
         policy.setName("default");
         policy.setIdentifiers(identifiers);
-        policy.setIgnored(Arrays.asList(ignored));
+        policy.setIgnored(List.of(ignored));
 
         Gson gson = new GsonBuilder().serializeNulls().setPrettyPrinting().create();
         String json = gson.toJson(policy);
@@ -194,136 +195,138 @@ public class PolicyTest {
     @Test
     public void deserialize1() {
 
-        final String json = "{\n" +
-                "  \"name\": \"default\",\n" +
-                "  \"ignored\": [\n" +
-                "    {\n" +
-                "      \"name\": \"ignored-terms\",\n" +
-                "      \"terms\": [\n" +
-                "        \"term1\",\n" +
-                "        \"term2\",\n" +
-                "        \"Jeff Smith\"\n" +
-                "      ]\n" +
-                "    }\n" +
-                "  ],\n" +
-                "  \"identifiers\": {\n" +
-                "    \"dictionaries\": [\n" +
-                "      {\n" +
-                "        \"type\": \"mylist\",\n" +
-                "        \"terms\": [\n" +
-                "          \"123\",\n" +
-                "          \"456\",\n" +
-                "          \"jeff\",\n" +
-                "          \"john\"\n" +
-                "        ],\n" +
-                "        \"sensitivity\": \"auto\",\n" +
-                "        \"customFilterStrategies\": [\n" +
-                "          {\n" +
-                "            \"strategy\": \"REDACT\",\n" +
-                "            \"redactionFormat\": \"{{{REDACTED-%t}}}\",\n" +
-                "            \"replacementScope\": \"DOCUMENT\"\n" +
-                "          }\n" +
-                "        ]\n" +
-                "      }\n" +
-                "    ],\n" +
-                "    \"ner\": {\n" +
-                "      \"nerFilterStrategies\": [\n" +
-                "        {\n" +
-                "          \"strategy\": \"REDACT\",\n" +
-                "          \"redactionFormat\": \"{{{REDACTED-%t}}}\"\n" +
-                "        }\n" +
-                "      ]\n" +
-                "    },\n" +
-                "    \"age\": {\n" +
-                "      \"ageFilterStrategies\": [\n" +
-                "        {\n" +
-                "          \"strategy\": \"REDACT\",\n" +
-                "          \"redactionFormat\": \"{{{REDACTED-%t}}}\"\n" +
-                "        }\n" +
-                "      ]\n" +
-                "    },\n" +
-                "    \"creditCard\": {\n" +
-                "      \"creditCardFilterStrategies\": [\n" +
-                "        {\n" +
-                "          \"strategy\": \"REDACT\",\n" +
-                "          \"redactionFormat\": \"{{{REDACTED-%t}}}\"\n" +
-                "        }\n" +
-                "      ]\n" +
-                "    },\n" +
-                "    \"date\": {\n" +
-                "      \"dateFilterStrategies\": [\n" +
-                "        {\n" +
-                "          \"strategy\": \"REDACT\",\n" +
-                "          \"redactionFormat\": \"{{{REDACTED-%t}}}\"\n" +
-                "        }\n" +
-                "      ]\n" +
-                "    },\n" +
-                "    \"emailAddress\": {\n" +
-                "      \"emailAddressFilterStrategies\": [\n" +
-                "        {\n" +
-                "          \"strategy\": \"REDACT\",\n" +
-                "          \"redactionFormat\": \"{{{REDACTED-%t}}}\"\n" +
-                "        }\n" +
-                "      ]\n" +
-                "    },\n" +
-                "    \"identifier\": {\n" +
-                "      \"identifierFilterStrategies\": [\n" +
-                "        {\n" +
-                "          \"strategy\": \"REDACT\",\n" +
-                "          \"redactionFormat\": \"{{{REDACTED-%t}}}\"\n" +
-                "        }\n" +
-                "      ]\n" +
-                "    },\n" +
-                "    \"ipAddress\": {\n" +
-                "      \"ipAddressFilterStrategies\": [\n" +
-                "        {\n" +
-                "          \"strategy\": \"REDACT\",\n" +
-                "          \"redactionFormat\": \"{{{REDACTED-%t}}}\"\n" +
-                "        }\n" +
-                "      ]\n" +
-                "    },\n" +
-                "    \"phoneNumber\": {\n" +
-                "      \"phoneNumberFilterStrategies\": [\n" +
-                "        {\n" +
-                "          \"strategy\": \"REDACT\",\n" +
-                "          \"redactionFormat\": \"{{{REDACTED-%t}}}\"\n" +
-                "        }\n" +
-                "      ]\n" +
-                "    },\n" +
-                "    \"ssn\": {\n" +
-                "      \"ssnFilterStrategies\": [\n" +
-                "        {\n" +
-                "          \"strategy\": \"REDACT\",\n" +
-                "          \"redactionFormat\": \"{{{REDACTED-%t}}}\"\n" +
-                "        }\n" +
-                "      ]\n" +
-                "    },\n" +
-                "    \"url\": {\n" +
-                "      \"urlFilterStrategies\": [\n" +
-                "        {\n" +
-                "          \"strategy\": \"REDACT\",\n" +
-                "          \"redactionFormat\": \"{{{REDACTED-%t}}}\"\n" +
-                "        }\n" +
-                "      ]\n" +
-                "    },\n" +
-                "    \"vin\": {\n" +
-                "      \"vinFilterStrategies\": [\n" +
-                "        {\n" +
-                "          \"strategy\": \"REDACT\",\n" +
-                "          \"redactionFormat\": \"{{{REDACTED-%t}}}\"\n" +
-                "        }\n" +
-                "      ]\n" +
-                "    },\n" +
-                "    \"zipCode\": {\n" +
-                "      \"zipCodeFilterStrategy\": [\n" +
-                "        {\n" +
-                "          \"strategy\": \"REDACT\",\n" +
-                "          \"redactionFormat\": \"{{{REDACTED-%t}}}\"\n" +
-                "        }\n" +
-                "      ]\n" +
-                "    }\n" +
-                "  }\n" +
-                "}\n";
+        final String json = """
+                {
+                  "name": "default",
+                  "ignored": [
+                    {
+                      "name": "ignored-terms",
+                      "terms": [
+                        "term1",
+                        "term2",
+                        "Jeff Smith"
+                      ]
+                    }
+                  ],
+                  "identifiers": {
+                    "dictionaries": [
+                      {
+                        "type": "mylist",
+                        "terms": [
+                          "123",
+                          "456",
+                          "jeff",
+                          "john"
+                        ],
+                        "sensitivity": "auto",
+                        "customFilterStrategies": [
+                          {
+                            "strategy": "REDACT",
+                            "redactionFormat": "{{{REDACTED-%t}}}",
+                            "replacementScope": "DOCUMENT"
+                          }
+                        ]
+                      }
+                    ],
+                    "ner": {
+                      "nerFilterStrategies": [
+                        {
+                          "strategy": "REDACT",
+                          "redactionFormat": "{{{REDACTED-%t}}}"
+                        }
+                      ]
+                    },
+                    "age": {
+                      "ageFilterStrategies": [
+                        {
+                          "strategy": "REDACT",
+                          "redactionFormat": "{{{REDACTED-%t}}}"
+                        }
+                      ]
+                    },
+                    "creditCard": {
+                      "creditCardFilterStrategies": [
+                        {
+                          "strategy": "REDACT",
+                          "redactionFormat": "{{{REDACTED-%t}}}"
+                        }
+                      ]
+                    },
+                    "date": {
+                      "dateFilterStrategies": [
+                        {
+                          "strategy": "REDACT",
+                          "redactionFormat": "{{{REDACTED-%t}}}"
+                        }
+                      ]
+                    },
+                    "emailAddress": {
+                      "emailAddressFilterStrategies": [
+                        {
+                          "strategy": "REDACT",
+                          "redactionFormat": "{{{REDACTED-%t}}}"
+                        }
+                      ]
+                    },
+                    "identifier": {
+                      "identifierFilterStrategies": [
+                        {
+                          "strategy": "REDACT",
+                          "redactionFormat": "{{{REDACTED-%t}}}"
+                        }
+                      ]
+                    },
+                    "ipAddress": {
+                      "ipAddressFilterStrategies": [
+                        {
+                          "strategy": "REDACT",
+                          "redactionFormat": "{{{REDACTED-%t}}}"
+                        }
+                      ]
+                    },
+                    "phoneNumber": {
+                      "phoneNumberFilterStrategies": [
+                        {
+                          "strategy": "REDACT",
+                          "redactionFormat": "{{{REDACTED-%t}}}"
+                        }
+                      ]
+                    },
+                    "ssn": {
+                      "ssnFilterStrategies": [
+                        {
+                          "strategy": "REDACT",
+                          "redactionFormat": "{{{REDACTED-%t}}}"
+                        }
+                      ]
+                    },
+                    "url": {
+                      "urlFilterStrategies": [
+                        {
+                          "strategy": "REDACT",
+                          "redactionFormat": "{{{REDACTED-%t}}}"
+                        }
+                      ]
+                    },
+                    "vin": {
+                      "vinFilterStrategies": [
+                        {
+                          "strategy": "REDACT",
+                          "redactionFormat": "{{{REDACTED-%t}}}"
+                        }
+                      ]
+                    },
+                    "zipCode": {
+                      "zipCodeFilterStrategy": [
+                        {
+                          "strategy": "REDACT",
+                          "redactionFormat": "{{{REDACTED-%t}}}"
+                        }
+                      ]
+                    }
+                  }
+                }
+                """;
 
         Gson gson = new Gson();
         Policy policy = gson.fromJson(json, Policy.class);
@@ -337,107 +340,109 @@ public class PolicyTest {
     @Test
     public void deserialize2() {
 
-        final String json = "{\n" +
-                "  \"name\": \"default\",\n" +
-                "  \"identifiers\": {\n" +
-                "    \"ner\": {\n" +
-                "      \"nerFilterStrategies\": [\n" +
-                "        {\n" +
-                "          \"strategy\": \"REDACT\",\n" +
-                "          \"redactionFormat\": \"{{{REDACTED-%t}}}\"\n" +
-                "        }\n" +
-                "      ]\n" +
-                "    },\n" +
-                "    \"age\": {\n" +
-                "      \"ageFilterStrategies\": [\n" +
-                "        {\n" +
-                "          \"strategy\": \"REDACT\",\n" +
-                "          \"redactionFormat\": \"{{{REDACTED-%t}}}\"\n" +
-                "        }\n" +
-                "      ]\n" +
-                "    },\n" +
-                "    \"creditCard\": {\n" +
-                "      \"creditCardFilterStrategies\": [\n" +
-                "        {\n" +
-                "          \"strategy\": \"REDACT\",\n" +
-                "          \"redactionFormat\": \"{{{REDACTED-%t}}}\"\n" +
-                "        }\n" +
-                "      ]\n" +
-                "    },\n" +
-                "    \"date\": {\n" +
-                "      \"dateFilterStrategies\": [\n" +
-                "        {\n" +
-                "          \"strategy\": \"REDACT\",\n" +
-                "          \"redactionFormat\": \"{{{REDACTED-%t}}}\"\n" +
-                "        }\n" +
-                "      ]\n" +
-                "    },\n" +
-                "    \"emailAddress\": {\n" +
-                "      \"emailAddressFilterStrategies\": [\n" +
-                "        {\n" +
-                "          \"strategy\": \"REDACT\",\n" +
-                "          \"redactionFormat\": \"{{{REDACTED-%t}}}\"\n" +
-                "        }\n" +
-                "      ]\n" +
-                "    },\n" +
-                "    \"identifier\": {\n" +
-                "      \"identifierFilterStrategies\": [\n" +
-                "        {\n" +
-                "          \"strategy\": \"REDACT\",\n" +
-                "          \"redactionFormat\": \"{{{REDACTED-%t}}}\"\n" +
-                "        }\n" +
-                "      ]\n" +
-                "    },\n" +
-                "    \"ipAddress\": {\n" +
-                "      \"ipAddressFilterStrategies\": [\n" +
-                "        {\n" +
-                "          \"strategy\": \"REDACT\",\n" +
-                "          \"redactionFormat\": \"{{{REDACTED-%t}}}\"\n" +
-                "        }\n" +
-                "      ]\n" +
-                "    },\n" +
-                "    \"phoneNumber\": {\n" +
-                "      \"phoneNumberFilterStrategies\": [\n" +
-                "        {\n" +
-                "          \"strategy\": \"REDACT\",\n" +
-                "          \"redactionFormat\": \"{{{REDACTED-%t}}}\"\n" +
-                "        }\n" +
-                "      ]\n" +
-                "    },\n" +
-                "    \"ssn\": {\n" +
-                "      \"ssnFilterStrategies\": [\n" +
-                "        {\n" +
-                "          \"strategy\": \"REDACT\",\n" +
-                "          \"redactionFormat\": \"{{{REDACTED-%t}}}\"\n" +
-                "        }\n" +
-                "      ]\n" +
-                "    },\n" +
-                "    \"url\": {\n" +
-                "      \"urlFilterStrategies\": [\n" +
-                "        {\n" +
-                "          \"strategy\": \"REDACT\",\n" +
-                "          \"redactionFormat\": \"{{{REDACTED-%t}}}\"\n" +
-                "        }\n" +
-                "      ]\n" +
-                "    },\n" +
-                "    \"vin\": {\n" +
-                "      \"vinFilterStrategies\": [\n" +
-                "        {\n" +
-                "          \"strategy\": \"REDACT\",\n" +
-                "          \"redactionFormat\": \"{{{REDACTED-%t}}}\"\n" +
-                "        }\n" +
-                "      ]\n" +
-                "    },\n" +
-                "    \"zipCode\": {\n" +
-                "      \"zipCodeFilterStrategy\": [\n" +
-                "        {\n" +
-                "          \"strategy\": \"REDACT\",\n" +
-                "          \"redactionFormat\": \"{{{REDACTED-%t}}}\"\n" +
-                "        }\n" +
-                "      ]\n" +
-                "    }\n" +
-                "  }\n" +
-                "}\n";
+        final String json = """
+                {
+                  "name": "default",
+                  "identifiers": {
+                    "ner": {
+                      "nerFilterStrategies": [
+                        {
+                          "strategy": "REDACT",
+                          "redactionFormat": "{{{REDACTED-%t}}}"
+                        }
+                      ]
+                    },
+                    "age": {
+                      "ageFilterStrategies": [
+                        {
+                          "strategy": "REDACT",
+                          "redactionFormat": "{{{REDACTED-%t}}}"
+                        }
+                      ]
+                    },
+                    "creditCard": {
+                      "creditCardFilterStrategies": [
+                        {
+                          "strategy": "REDACT",
+                          "redactionFormat": "{{{REDACTED-%t}}}"
+                        }
+                      ]
+                    },
+                    "date": {
+                      "dateFilterStrategies": [
+                        {
+                          "strategy": "REDACT",
+                          "redactionFormat": "{{{REDACTED-%t}}}"
+                        }
+                      ]
+                    },
+                    "emailAddress": {
+                      "emailAddressFilterStrategies": [
+                        {
+                          "strategy": "REDACT",
+                          "redactionFormat": "{{{REDACTED-%t}}}"
+                        }
+                      ]
+                    },
+                    "identifier": {
+                      "identifierFilterStrategies": [
+                        {
+                          "strategy": "REDACT",
+                          "redactionFormat": "{{{REDACTED-%t}}}"
+                        }
+                      ]
+                    },
+                    "ipAddress": {
+                      "ipAddressFilterStrategies": [
+                        {
+                          "strategy": "REDACT",
+                          "redactionFormat": "{{{REDACTED-%t}}}"
+                        }
+                      ]
+                    },
+                    "phoneNumber": {
+                      "phoneNumberFilterStrategies": [
+                        {
+                          "strategy": "REDACT",
+                          "redactionFormat": "{{{REDACTED-%t}}}"
+                        }
+                      ]
+                    },
+                    "ssn": {
+                      "ssnFilterStrategies": [
+                        {
+                          "strategy": "REDACT",
+                          "redactionFormat": "{{{REDACTED-%t}}}"
+                        }
+                      ]
+                    },
+                    "url": {
+                      "urlFilterStrategies": [
+                        {
+                          "strategy": "REDACT",
+                          "redactionFormat": "{{{REDACTED-%t}}}"
+                        }
+                      ]
+                    },
+                    "vin": {
+                      "vinFilterStrategies": [
+                        {
+                          "strategy": "REDACT",
+                          "redactionFormat": "{{{REDACTED-%t}}}"
+                        }
+                      ]
+                    },
+                    "zipCode": {
+                      "zipCodeFilterStrategy": [
+                        {
+                          "strategy": "REDACT",
+                          "redactionFormat": "{{{REDACTED-%t}}}"
+                        }
+                      ]
+                    }
+                  }
+                }
+                """;
 
         Gson gson = new Gson();
         Policy policy = gson.fromJson(json, Policy.class);
@@ -451,13 +456,16 @@ public class PolicyTest {
     @Test
     public void deserializeEmpty() {
 
-        final String json = "{\n" +
-                "  \"identifiers\": {\n" +
-                "  }\n" +
-                "}";
+        final String json = """
+                {
+                  "identifiers": {
+                  }
+                }""";
 
         Gson gson = new Gson();
         Policy policy = gson.fromJson(json, Policy.class);
+
+        Assertions.assertEquals("unnamed", policy.getName());
 
     }
 

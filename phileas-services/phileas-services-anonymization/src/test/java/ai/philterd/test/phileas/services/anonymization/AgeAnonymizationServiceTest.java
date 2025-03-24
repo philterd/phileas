@@ -15,9 +15,10 @@
  */
 package ai.philterd.test.phileas.services.anonymization;
 
+import ai.philterd.phileas.model.cache.InMemoryCache;
 import ai.philterd.phileas.model.services.AnonymizationService;
 import ai.philterd.phileas.services.anonymization.AgeAnonymizationService;
-import ai.philterd.phileas.services.anonymization.cache.LocalAnonymizationCacheService;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Assertions;
@@ -30,7 +31,7 @@ public class AgeAnonymizationServiceTest {
     @Test
     public void anonymize1() {
 
-        AnonymizationService anonymizationService = new AgeAnonymizationService(new LocalAnonymizationCacheService());
+        AnonymizationService anonymizationService = new AgeAnonymizationService(new InMemoryCache());
 
         final String token = "3.5yrs";
         final String replacement = anonymizationService.anonymize(token);
@@ -43,7 +44,7 @@ public class AgeAnonymizationServiceTest {
     @Test
     public void anonymize2() {
 
-        AnonymizationService anonymizationService = new AgeAnonymizationService(new LocalAnonymizationCacheService());
+        AnonymizationService anonymizationService = new AgeAnonymizationService(new InMemoryCache());
 
         final String token = "18 years old";
         final String replacement = anonymizationService.anonymize(token);

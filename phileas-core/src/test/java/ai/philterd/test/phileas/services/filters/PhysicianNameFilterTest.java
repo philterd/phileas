@@ -15,13 +15,13 @@
  */
 package ai.philterd.test.phileas.services.filters;
 
+import ai.philterd.phileas.model.cache.InMemoryCache;
 import ai.philterd.phileas.model.enums.FilterType;
 import ai.philterd.phileas.model.filter.FilterConfiguration;
 import ai.philterd.phileas.model.objects.FilterResult;
 import ai.philterd.phileas.model.policy.filters.strategies.rules.PhysicianNameFilterStrategy;
 import ai.philterd.phileas.model.services.AlertService;
 import ai.philterd.phileas.services.anonymization.PersonsAnonymizationService;
-import ai.philterd.phileas.services.anonymization.cache.LocalAnonymizationCacheService;
 import ai.philterd.phileas.services.filters.regex.PhysicianNameFilter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -43,7 +43,7 @@ public class PhysicianNameFilterTest extends AbstractFilterTest {
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new PhysicianNameFilterStrategy()))
                 .withAlertService(alertService)
-                .withAnonymizationService(new PersonsAnonymizationService(new LocalAnonymizationCacheService()))
+                .withAnonymizationService(new PersonsAnonymizationService(new InMemoryCache()))
                 .withWindowSize(windowSize)
                 .build();
 
@@ -64,7 +64,7 @@ public class PhysicianNameFilterTest extends AbstractFilterTest {
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new PhysicianNameFilterStrategy()))
                 .withAlertService(alertService)
-                .withAnonymizationService(new PersonsAnonymizationService(new LocalAnonymizationCacheService()))
+                .withAnonymizationService(new PersonsAnonymizationService(new InMemoryCache()))
                 .withWindowSize(windowSize)
                 .build();
 
@@ -85,7 +85,7 @@ public class PhysicianNameFilterTest extends AbstractFilterTest {
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new PhysicianNameFilterStrategy()))
                 .withAlertService(alertService)
-                .withAnonymizationService(new PersonsAnonymizationService(new LocalAnonymizationCacheService()))
+                .withAnonymizationService(new PersonsAnonymizationService(new InMemoryCache()))
                 .withWindowSize(windowSize)
                 .build();
 
@@ -106,7 +106,7 @@ public class PhysicianNameFilterTest extends AbstractFilterTest {
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new PhysicianNameFilterStrategy()))
                 .withAlertService(alertService)
-                .withAnonymizationService(new PersonsAnonymizationService(new LocalAnonymizationCacheService()))
+                .withAnonymizationService(new PersonsAnonymizationService(new InMemoryCache()))
                 .withWindowSize(windowSize)
                 .build();
 
@@ -127,7 +127,7 @@ public class PhysicianNameFilterTest extends AbstractFilterTest {
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new PhysicianNameFilterStrategy()))
                 .withAlertService(alertService)
-                .withAnonymizationService(new PersonsAnonymizationService(new LocalAnonymizationCacheService()))
+                .withAnonymizationService(new PersonsAnonymizationService(new InMemoryCache()))
                 .withWindowSize(windowSize)
                 .build();
 
@@ -148,7 +148,7 @@ public class PhysicianNameFilterTest extends AbstractFilterTest {
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new PhysicianNameFilterStrategy()))
                 .withAlertService(alertService)
-                .withAnonymizationService(new PersonsAnonymizationService(new LocalAnonymizationCacheService()))
+                .withAnonymizationService(new PersonsAnonymizationService(new InMemoryCache()))
                 .withWindowSize(windowSize)
                 .build();
 
@@ -169,7 +169,7 @@ public class PhysicianNameFilterTest extends AbstractFilterTest {
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new PhysicianNameFilterStrategy()))
                 .withAlertService(alertService)
-                .withAnonymizationService(new PersonsAnonymizationService(new LocalAnonymizationCacheService()))
+                .withAnonymizationService(new PersonsAnonymizationService(new InMemoryCache()))
                 .withWindowSize(windowSize)
                 .build();
 
@@ -190,7 +190,7 @@ public class PhysicianNameFilterTest extends AbstractFilterTest {
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new PhysicianNameFilterStrategy()))
                 .withAlertService(alertService)
-                .withAnonymizationService(new PersonsAnonymizationService(new LocalAnonymizationCacheService()))
+                .withAnonymizationService(new PersonsAnonymizationService(new InMemoryCache()))
                 .withWindowSize(windowSize)
                 .build();
 
@@ -209,7 +209,7 @@ public class PhysicianNameFilterTest extends AbstractFilterTest {
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new PhysicianNameFilterStrategy()))
                 .withAlertService(alertService)
-                .withAnonymizationService(new PersonsAnonymizationService(new LocalAnonymizationCacheService()))
+                .withAnonymizationService(new PersonsAnonymizationService(new InMemoryCache()))
                 .withWindowSize(windowSize)
                 .build();
 
@@ -228,7 +228,7 @@ public class PhysicianNameFilterTest extends AbstractFilterTest {
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new PhysicianNameFilterStrategy()))
                 .withAlertService(alertService)
-                .withAnonymizationService(new PersonsAnonymizationService(new LocalAnonymizationCacheService()))
+                .withAnonymizationService(new PersonsAnonymizationService(new InMemoryCache()))
                 .withWindowSize(windowSize)
                 .build();
 
@@ -249,7 +249,7 @@ public class PhysicianNameFilterTest extends AbstractFilterTest {
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new PhysicianNameFilterStrategy()))
                 .withAlertService(alertService)
-                .withAnonymizationService(new PersonsAnonymizationService(new LocalAnonymizationCacheService()))
+                .withAnonymizationService(new PersonsAnonymizationService(new InMemoryCache()))
                 .withWindowSize(windowSize)
                 .build();
 

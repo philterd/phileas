@@ -15,9 +15,10 @@
  */
 package ai.philterd.test.phileas.services.anonymization;
 
+import ai.philterd.phileas.model.cache.InMemoryCache;
 import ai.philterd.phileas.model.services.AnonymizationService;
 import ai.philterd.phileas.services.anonymization.IpAddressAnonymizationService;
-import ai.philterd.phileas.services.anonymization.cache.LocalAnonymizationCacheService;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Test;
@@ -29,7 +30,7 @@ public class IpAddressAnonymizationServiceTest {
     @Test
     public void anonymizeIPv4() {
 
-        AnonymizationService anonymizationService = new IpAddressAnonymizationService(new LocalAnonymizationCacheService());
+        AnonymizationService anonymizationService = new IpAddressAnonymizationService(new InMemoryCache());
 
         final String token = "192.168.1.1";
         final String replacement = anonymizationService.anonymize(token);
@@ -41,7 +42,7 @@ public class IpAddressAnonymizationServiceTest {
     @Test
     public void anonymizeIPv6() {
 
-        AnonymizationService anonymizationService = new IpAddressAnonymizationService(new LocalAnonymizationCacheService());
+        AnonymizationService anonymizationService = new IpAddressAnonymizationService(new InMemoryCache());
 
         final String token = "2001:0db8:85a3:08d3:1319:8a2e:0370:7344";
         final String replacement = anonymizationService.anonymize(token);

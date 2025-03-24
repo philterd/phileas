@@ -15,13 +15,13 @@
  */
 package ai.philterd.test.phileas.services.filters;
 
+import ai.philterd.phileas.model.cache.InMemoryCache;
 import ai.philterd.phileas.model.enums.FilterType;
 import ai.philterd.phileas.model.filter.FilterConfiguration;
 import ai.philterd.phileas.model.objects.FilterResult;
 import ai.philterd.phileas.model.policy.filters.strategies.rules.PhoneNumberExtensionFilterStrategy;
 import ai.philterd.phileas.model.services.AlertService;
 import ai.philterd.phileas.services.anonymization.MacAddressAnonymizationService;
-import ai.philterd.phileas.services.anonymization.cache.LocalAnonymizationCacheService;
 import ai.philterd.phileas.services.filters.regex.PhoneNumberExtensionFilter;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -40,7 +40,7 @@ public class PhoneNumberExtensionFilterTest extends AbstractFilterTest {
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new PhoneNumberExtensionFilterStrategy()))
                 .withAlertService(alertService)
-                .withAnonymizationService(new MacAddressAnonymizationService(new LocalAnonymizationCacheService()))
+                .withAnonymizationService(new MacAddressAnonymizationService(new InMemoryCache()))
                 .withWindowSize(windowSize)
                 .build();
 
@@ -61,7 +61,7 @@ public class PhoneNumberExtensionFilterTest extends AbstractFilterTest {
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new PhoneNumberExtensionFilterStrategy()))
                 .withAlertService(alertService)
-                .withAnonymizationService(new MacAddressAnonymizationService(new LocalAnonymizationCacheService()))
+                .withAnonymizationService(new MacAddressAnonymizationService(new InMemoryCache()))
                 .withWindowSize(windowSize)
                 .build();
 

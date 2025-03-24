@@ -86,7 +86,6 @@
         <commons.math.version>3.6.1</commons.math.version>
         <commons.text.version>1.12.0</commons.text.version>
         <commons.validator.version>1.9.0</commons.validator.version>
-        <embedded.redis.version>1.4.3</embedded.redis.version>
         <equals.verifier.version>3.19.1</equals.verifier.version>
         <ff3.version>1.2.0</ff3.version>
         <gson.version>2.12.1</gson.version>
@@ -102,7 +101,6 @@
         <mockito.version>5.15.2</mockito.version>
         <opennlp.version>2.5.3</opennlp.version>
         <pdfbox.version>3.0.4</pdfbox.version>
-        <redisson.version>3.45.1</redisson.version>
         <snakeyaml.version>2.3</snakeyaml.version>
     </properties>
     <build>

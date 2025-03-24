@@ -15,7 +15,7 @@
  */
 package ai.philterd.phileas.services.anonymization;
 
-import ai.philterd.phileas.model.services.AnonymizationCacheService;
+import ai.philterd.phileas.model.services.CacheService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -37,7 +37,7 @@ public class DateAnonymizationService extends AbstractAnonymizationService {
 
     private final Random random;
 
-    public DateAnonymizationService(AnonymizationCacheService anonymizationCacheService) {
+    public DateAnonymizationService(CacheService anonymizationCacheService) {
         super(anonymizationCacheService);
         this.random = new Random();
     }

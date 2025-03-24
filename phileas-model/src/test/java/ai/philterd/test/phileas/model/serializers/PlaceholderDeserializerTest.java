@@ -30,7 +30,7 @@ public class PlaceholderDeserializerTest {
 
         final GsonBuilder gsonBuilder = new GsonBuilder();
         gsonBuilder.registerTypeAdapter(String.class, new PlaceholderDeserializer());
-        gson = gsonBuilder.create();
+        this.gson = gsonBuilder.create();
 
     }
 

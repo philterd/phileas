@@ -44,7 +44,7 @@ public abstract class StandardFilterStrategy extends AbstractFilterStrategy {
 
             int characters = token.length();
 
-            if(!StringUtils.equalsIgnoreCase(maskLength, AbstractFilterStrategy.SAME)) {
+            if(maskLength != null && !maskLength.equals("null") && !StringUtils.equalsIgnoreCase(maskLength, AbstractFilterStrategy.SAME)) {
                 characters = Integer.parseInt(maskLength);
             }
 

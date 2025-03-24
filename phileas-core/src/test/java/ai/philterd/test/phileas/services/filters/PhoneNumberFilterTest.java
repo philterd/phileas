@@ -15,13 +15,13 @@
  */
 package ai.philterd.test.phileas.services.filters;
 
+import ai.philterd.phileas.model.cache.InMemoryCache;
 import ai.philterd.phileas.model.enums.FilterType;
 import ai.philterd.phileas.model.filter.FilterConfiguration;
 import ai.philterd.phileas.model.objects.FilterResult;
 import ai.philterd.phileas.model.policy.filters.strategies.rules.PhoneNumberFilterStrategy;
 import ai.philterd.phileas.model.services.AlertService;
 import ai.philterd.phileas.services.anonymization.MacAddressAnonymizationService;
-import ai.philterd.phileas.services.anonymization.cache.LocalAnonymizationCacheService;
 import ai.philterd.phileas.services.filters.custom.PhoneNumberRulesFilter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -43,7 +43,7 @@ public class PhoneNumberFilterTest extends AbstractFilterTest {
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new PhoneNumberFilterStrategy()))
                 .withAlertService(alertService)
-                .withAnonymizationService(new MacAddressAnonymizationService(new LocalAnonymizationCacheService()))
+                .withAnonymizationService(new MacAddressAnonymizationService(new InMemoryCache()))
                 .withWindowSize(windowSize)
                 .build();
 
@@ -63,7 +63,7 @@ public class PhoneNumberFilterTest extends AbstractFilterTest {
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new PhoneNumberFilterStrategy()))
                 .withAlertService(alertService)
-                .withAnonymizationService(new MacAddressAnonymizationService(new LocalAnonymizationCacheService()))
+                .withAnonymizationService(new MacAddressAnonymizationService(new InMemoryCache()))
                 .withWindowSize(windowSize)
                 .build();
 
@@ -84,7 +84,7 @@ public class PhoneNumberFilterTest extends AbstractFilterTest {
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new PhoneNumberFilterStrategy()))
                 .withAlertService(alertService)
-                .withAnonymizationService(new MacAddressAnonymizationService(new LocalAnonymizationCacheService()))
+                .withAnonymizationService(new MacAddressAnonymizationService(new InMemoryCache()))
                 .withWindowSize(windowSize)
                 .build();
 
@@ -103,7 +103,7 @@ public class PhoneNumberFilterTest extends AbstractFilterTest {
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new PhoneNumberFilterStrategy()))
                 .withAlertService(alertService)
-                .withAnonymizationService(new MacAddressAnonymizationService(new LocalAnonymizationCacheService()))
+                .withAnonymizationService(new MacAddressAnonymizationService(new InMemoryCache()))
                 .withWindowSize(windowSize)
                 .build();
 
@@ -121,7 +121,7 @@ public class PhoneNumberFilterTest extends AbstractFilterTest {
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new PhoneNumberFilterStrategy()))
                 .withAlertService(alertService)
-                .withAnonymizationService(new MacAddressAnonymizationService(new LocalAnonymizationCacheService()))
+                .withAnonymizationService(new MacAddressAnonymizationService(new InMemoryCache()))
                 .withWindowSize(windowSize)
                 .build();
 
@@ -140,7 +140,7 @@ public class PhoneNumberFilterTest extends AbstractFilterTest {
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new PhoneNumberFilterStrategy()))
                 .withAlertService(alertService)
-                .withAnonymizationService(new MacAddressAnonymizationService(new LocalAnonymizationCacheService()))
+                .withAnonymizationService(new MacAddressAnonymizationService(new InMemoryCache()))
                 .withWindowSize(windowSize)
                 .build();
 
@@ -161,7 +161,7 @@ public class PhoneNumberFilterTest extends AbstractFilterTest {
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new PhoneNumberFilterStrategy()))
                 .withAlertService(alertService)
-                .withAnonymizationService(new MacAddressAnonymizationService(new LocalAnonymizationCacheService()))
+                .withAnonymizationService(new MacAddressAnonymizationService(new InMemoryCache()))
                 .withWindowSize(windowSize)
                 .build();
 
@@ -182,7 +182,7 @@ public class PhoneNumberFilterTest extends AbstractFilterTest {
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new PhoneNumberFilterStrategy()))
                 .withAlertService(alertService)
-                .withAnonymizationService(new MacAddressAnonymizationService(new LocalAnonymizationCacheService()))
+                .withAnonymizationService(new MacAddressAnonymizationService(new InMemoryCache()))
                 .withWindowSize(windowSize)
                 .build();
 

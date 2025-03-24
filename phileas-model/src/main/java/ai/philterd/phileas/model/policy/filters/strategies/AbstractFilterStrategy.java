@@ -43,7 +43,7 @@ public abstract class AbstractFilterStrategy {
     public static final String HASH_SHA256_REPLACE = "HASH_SHA256_REPLACE";
     public static final String LAST_4 = "LAST_4";
     public static final String MASK = "MASK";
-    public static final String SAME = AbstractFilterStrategy.SAME;
+    public static final String SAME = "SAME";
     public static final String TRUNCATE = "TRUNCATE";
     public static final String LEADING = "LEADING";
     public static final String TRAILING = "TRAILING";
@@ -301,15 +301,15 @@ public abstract class AbstractFilterStrategy {
         String replacement = null;
 
         // Have we seen this token in this context before?
-        if (anonymizationService.getAnonymizationCacheService().contains(context, token)) {
+        if (anonymizationService.getCacheService().containsAnonymizedToken(context, token)) {
 
             // Yes, we have previously seen this token in this context.
-            replacement = anonymizationService.getAnonymizationCacheService().get(context, token);
+            replacement = anonymizationService.getCacheService().getAnonymizedToken(context, token);
 
         } else {
 
             // Make sure we aren't trying to anonymize a token we have already anonymized.
-            if (anonymizationService.getAnonymizationCacheService().containsValue(context, token)) {
+            if (anonymizationService.getCacheService().containsAnonymizedTokenValue(context, token)) {
 
                 // This token is the result of an already replaced value.
                 // So the "replacement" is null. The filter won't replace the token when the replacement value is null.
@@ -319,7 +319,7 @@ public abstract class AbstractFilterStrategy {
 
                 // This is not an already anonymized token.
                 replacement = anonymizationService.anonymize(token);
-                anonymizationService.getAnonymizationCacheService().put(context, token, replacement);
+                anonymizationService.getCacheService().putAnonymizedToken(context, token, replacement);
 
             }
 

@@ -15,7 +15,7 @@
  */
 package ai.philterd.phileas.services.anonymization;
 
-import ai.philterd.phileas.model.services.AnonymizationCacheService;
+import ai.philterd.phileas.model.services.CacheService;
 import org.apache.commons.lang3.RandomStringUtils;
 
 import java.util.Collection;
@@ -25,7 +25,7 @@ public class VinAnonymizationService extends AbstractAnonymizationService {
 
     private final Collection<String> randomVins = new LinkedList<>();
 
-    public VinAnonymizationService(AnonymizationCacheService anonymizationCacheService) {
+    public VinAnonymizationService(CacheService anonymizationCacheService) {
         super(anonymizationCacheService);
 
         randomVins.add("1GTEC19V95Z351087");

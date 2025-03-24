@@ -20,8 +20,8 @@ import ai.philterd.phileas.model.policy.Crypto;
 import ai.philterd.phileas.model.policy.FPE;
 import ai.philterd.phileas.model.policy.filters.strategies.AbstractFilterStrategy;
 import ai.philterd.phileas.model.policy.filters.strategies.ai.PhEyeFilterStrategy;
-import ai.philterd.phileas.model.services.AnonymizationCacheService;
 import ai.philterd.phileas.model.services.AnonymizationService;
+import ai.philterd.phileas.model.services.CacheService;
 import ai.philterd.test.phileas.model.policy.filters.strategies.AbstractFilterStrategyTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -69,10 +69,10 @@ public class PhEyeFilterStrategyTest extends AbstractFilterStrategyTest {
     public void replacement3() throws Exception {
 
         final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
-        final AnonymizationCacheService anonymizationCacheService = Mockito.mock(AnonymizationCacheService.class);
+        final CacheService anonymizationCacheService = Mockito.mock(CacheService.class);
 
-        when(anonymizationCacheService.get("context", "token")).thenReturn("random");
-        when(anonymizationService.getAnonymizationCacheService()).thenReturn(anonymizationCacheService);
+        when(anonymizationCacheService.getAnonymizedToken("context", "token")).thenReturn("random");
+        when(anonymizationService.getCacheService()).thenReturn(anonymizationCacheService);
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
         strategy.setStrategy(AbstractFilterStrategy.RANDOM_REPLACE);
@@ -87,10 +87,10 @@ public class PhEyeFilterStrategyTest extends AbstractFilterStrategyTest {
     public void replacement4() throws Exception {
 
         final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
-        final AnonymizationCacheService anonymizationCacheService = Mockito.mock(AnonymizationCacheService.class);
+        final CacheService anonymizationCacheService = Mockito.mock(CacheService.class);
 
-        when(anonymizationCacheService.get("context", "token")).thenReturn("random");
-        when(anonymizationService.getAnonymizationCacheService()).thenReturn(anonymizationCacheService);
+        when(anonymizationCacheService.getAnonymizedToken("context", "token")).thenReturn("random");
+        when(anonymizationService.getCacheService()).thenReturn(anonymizationCacheService);
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
         strategy.setStrategy("something-wrong");
@@ -105,9 +105,9 @@ public class PhEyeFilterStrategyTest extends AbstractFilterStrategyTest {
     public void replacement5() throws Exception {
 
         final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
-        final AnonymizationCacheService anonymizationCacheService = Mockito.mock(AnonymizationCacheService.class);
+        final CacheService anonymizationCacheService = Mockito.mock(CacheService.class);
 
-        when(anonymizationService.getAnonymizationCacheService()).thenReturn(anonymizationCacheService);
+        when(anonymizationService.getCacheService()).thenReturn(anonymizationCacheService);
 
         final AbstractFilterStrategy strategy = new PhEyeFilterStrategy();
         strategy.setStrategy(AbstractFilterStrategy.REDACT);
@@ -123,9 +123,9 @@ public class PhEyeFilterStrategyTest extends AbstractFilterStrategyTest {
     public void replacement6() throws Exception {
 
         final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
-        final AnonymizationCacheService anonymizationCacheService = Mockito.mock(AnonymizationCacheService.class);
+        final CacheService anonymizationCacheService = Mockito.mock(CacheService.class);
 
-        when(anonymizationService.getAnonymizationCacheService()).thenReturn(anonymizationCacheService);
+        when(anonymizationService.getCacheService()).thenReturn(anonymizationCacheService);
 
         final AbstractFilterStrategy strategy = new PhEyeFilterStrategy();
         strategy.setStrategy(AbstractFilterStrategy.ABBREVIATE);

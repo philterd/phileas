@@ -18,6 +18,7 @@ package ai.philterd.phileas.services.disambiguation;
 import ai.philterd.phileas.model.configuration.PhileasConfiguration;
 import ai.philterd.phileas.model.enums.FilterType;
 import ai.philterd.phileas.model.objects.Span;
+import ai.philterd.phileas.model.services.CacheService;
 import ai.philterd.phileas.model.services.SpanDisambiguationService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -40,8 +41,8 @@ public class VectorBasedSpanDisambiguationService extends AbstractSpanDisambigua
      * Initializes the service.
      * @param phileasConfiguration The {@link PhileasConfiguration} used to configure the service.
      */
-    public VectorBasedSpanDisambiguationService(PhileasConfiguration phileasConfiguration) throws IOException {
-        super(phileasConfiguration);
+    public VectorBasedSpanDisambiguationService(final PhileasConfiguration phileasConfiguration, final CacheService cacheService) throws IOException {
+        super(phileasConfiguration, cacheService);
     }
 
     @Override
@@ -49,7 +50,7 @@ public class VectorBasedSpanDisambiguationService extends AbstractSpanDisambigua
 
         final double[] hashes = hash(span);
 
-        spanDisambiguationCacheService.hashAndInsert(context, hashes, span, vectorSize);
+        cacheService.hashAndInsert(context, hashes, span, vectorSize);
 
     }
 
@@ -104,7 +105,7 @@ public class VectorBasedSpanDisambiguationService extends AbstractSpanDisambigua
             LOGGER.debug("Getting vector representation for filter type {}", filterType.name());
 
             // Get the vector representations for each potential filter type.
-            final Map<Double, Double> vectorRepresentation = spanDisambiguationCacheService.getVectorRepresentation(context, filterType);
+            final Map<Double, Double> vectorRepresentation = cacheService.getVectorRepresentation(context, filterType);
 
             // Create vectors for the representations.
             final double[] spanVector = new double[vectorSize];

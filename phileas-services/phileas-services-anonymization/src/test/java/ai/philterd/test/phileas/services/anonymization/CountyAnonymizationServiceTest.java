@@ -15,9 +15,10 @@
  */
 package ai.philterd.test.phileas.services.anonymization;
 
+import ai.philterd.phileas.model.cache.InMemoryCache;
 import ai.philterd.phileas.model.services.AnonymizationService;
 import ai.philterd.phileas.services.anonymization.CountyAnonymizationService;
-import ai.philterd.phileas.services.anonymization.cache.LocalAnonymizationCacheService;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Assertions;
@@ -30,12 +31,12 @@ public class CountyAnonymizationServiceTest {
     @Test
     public void anonymize1() {
 
-        AnonymizationService anonymizationService = new CountyAnonymizationService(new LocalAnonymizationCacheService());
+        AnonymizationService anonymizationService = new CountyAnonymizationService(new InMemoryCache());
 
         final String token = "abcd1234";
         final String replacement = anonymizationService.anonymize(token);
 
-        LOGGER.info("County: " + replacement);
+        LOGGER.info("County: {}", replacement);
         Assertions.assertNotNull(replacement);
 
     }
@@ -43,12 +44,12 @@ public class CountyAnonymizationServiceTest {
     @Test
     public void anonymize2() {
 
-        AnonymizationService anonymizationService = new CountyAnonymizationService(new LocalAnonymizationCacheService());
+        AnonymizationService anonymizationService = new CountyAnonymizationService(new InMemoryCache());
 
         final String token = "April 1, 2019";
         final String replacement = anonymizationService.anonymize(token);
 
-        LOGGER.info("County: " + replacement);
+        LOGGER.info("County: {}", replacement);
         Assertions.assertNotNull(replacement);
 
     }
