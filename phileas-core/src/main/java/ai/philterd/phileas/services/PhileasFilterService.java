@@ -16,12 +16,8 @@
 package ai.philterd.phileas.services;
 
 import ai.philterd.phileas.model.configuration.PhileasConfiguration;
-import ai.philterd.phileas.model.domain.Domain;
-import ai.philterd.phileas.model.domain.HealthDomain;
-import ai.philterd.phileas.model.domain.LegalDomain;
 import ai.philterd.phileas.model.enums.FilterType;
 import ai.philterd.phileas.model.enums.MimeType;
-import ai.philterd.phileas.model.services.Classification;
 import ai.philterd.phileas.model.filter.Filter;
 import ai.philterd.phileas.model.objects.Explanation;
 import ai.philterd.phileas.model.objects.PdfRedactionOptions;
@@ -35,6 +31,7 @@ import ai.philterd.phileas.model.responses.FilterResponse;
 import ai.philterd.phileas.model.serializers.PlaceholderDeserializer;
 import ai.philterd.phileas.model.services.AlertService;
 import ai.philterd.phileas.model.services.CacheService;
+import ai.philterd.phileas.model.services.Classification;
 import ai.philterd.phileas.model.services.DocumentProcessor;
 import ai.philterd.phileas.model.services.FilterService;
 import ai.philterd.phileas.model.services.MetricsService;
@@ -144,23 +141,6 @@ public class PhileasFilterService implements FilterService {
 
         // Initialize potential attributes that are associated with the input text.
         final Map<String, String> attributes = new HashMap<>();
-
-        // Load default values based on the domain.
-        if(StringUtils.equalsIgnoreCase(Domain.DOMAIN_LEGAL, policy.getDomain())) {
-
-            // PHL-209: Implement legal domain.
-            policy.getIgnored().add(LegalDomain.getInstance().getIgnored());
-
-            // TODO: #109 Add filters.
-
-        } else if(StringUtils.equalsIgnoreCase(Domain.DOMAIN_HEALTH, policy.getDomain())) {
-
-            // PHL-210: Implement health domain.
-            policy.getIgnored().add(HealthDomain.getInstance().getIgnored());
-
-            // TODO: #110 Add filters.
-
-        }
 
         final List<Filter> filters = filterPolicyLoader.getFiltersForPolicy(policy, filterCache);
         final List<PostFilter> postFilters = getPostFiltersForPolicy(policy);
