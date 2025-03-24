@@ -15,6 +15,7 @@
  */
 package ai.philterd.test.phileas.services.filters;
 
+import ai.philterd.phileas.model.cache.InMemoryCache;
 import ai.philterd.phileas.model.enums.FilterType;
 import ai.philterd.phileas.model.filter.FilterConfiguration;
 import ai.philterd.phileas.model.objects.FilterResult;
@@ -22,7 +23,6 @@ import ai.philterd.phileas.model.policy.IgnoredPattern;
 import ai.philterd.phileas.model.policy.filters.strategies.rules.AgeFilterStrategy;
 import ai.philterd.phileas.model.services.AlertService;
 import ai.philterd.phileas.services.anonymization.AgeAnonymizationService;
-import ai.philterd.phileas.services.anonymization.cache.LocalAnonymizationCacheService;
 import ai.philterd.phileas.services.filters.regex.AgeFilter;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -46,7 +46,7 @@ public class AgeFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withAlertService(alertService)
-                .withAnonymizationService(new AgeAnonymizationService(new LocalAnonymizationCacheService()))
+                .withAnonymizationService(new AgeAnonymizationService(new InMemoryCache()))
                 .withIgnoredPatterns(ignoredPatterns)
                 .withWindowSize(windowSize)
                 .build();
@@ -71,7 +71,7 @@ public class AgeFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withAlertService(alertService)
-                .withAnonymizationService(new AgeAnonymizationService(new LocalAnonymizationCacheService()))
+                .withAnonymizationService(new AgeAnonymizationService(new InMemoryCache()))
                 .withIgnored(ignore)
                 .withWindowSize(windowSize)
                 .build();
@@ -93,7 +93,7 @@ public class AgeFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withAlertService(alertService)
-                .withAnonymizationService(new AgeAnonymizationService(new LocalAnonymizationCacheService()))
+                .withAnonymizationService(new AgeAnonymizationService(new InMemoryCache()))
                 .withWindowSize(windowSize)
                 .build();
 
@@ -117,7 +117,7 @@ public class AgeFilterTest extends AbstractFilterTest {
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new AgeFilterStrategy()))
                 .withAlertService(alertService)
-                .withAnonymizationService(new AgeAnonymizationService(new LocalAnonymizationCacheService()))
+                .withAnonymizationService(new AgeAnonymizationService(new InMemoryCache()))
                 .withWindowSize(windowSize)
                 .build();
 
@@ -139,7 +139,7 @@ public class AgeFilterTest extends AbstractFilterTest {
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new AgeFilterStrategy()))
                 .withAlertService(alertService)
-                .withAnonymizationService(new AgeAnonymizationService(new LocalAnonymizationCacheService()))
+                .withAnonymizationService(new AgeAnonymizationService(new InMemoryCache()))
                 .withWindowSize(windowSize)
                 .build();
 
@@ -161,7 +161,7 @@ public class AgeFilterTest extends AbstractFilterTest {
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new AgeFilterStrategy()))
                 .withAlertService(alertService)
-                .withAnonymizationService(new AgeAnonymizationService(new LocalAnonymizationCacheService()))
+                .withAnonymizationService(new AgeAnonymizationService(new InMemoryCache()))
                 .withWindowSize(windowSize)
                 .build();
 
@@ -183,7 +183,7 @@ public class AgeFilterTest extends AbstractFilterTest {
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new AgeFilterStrategy()))
                 .withAlertService(alertService)
-                .withAnonymizationService(new AgeAnonymizationService(new LocalAnonymizationCacheService()))
+                .withAnonymizationService(new AgeAnonymizationService(new InMemoryCache()))
                 .withWindowSize(windowSize)
                 .build();
 
@@ -205,7 +205,7 @@ public class AgeFilterTest extends AbstractFilterTest {
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new AgeFilterStrategy()))
                 .withAlertService(alertService)
-                .withAnonymizationService(new AgeAnonymizationService(new LocalAnonymizationCacheService()))
+                .withAnonymizationService(new AgeAnonymizationService(new InMemoryCache()))
                 .withWindowSize(windowSize)
                 .build();
 
@@ -227,7 +227,7 @@ public class AgeFilterTest extends AbstractFilterTest {
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new AgeFilterStrategy()))
                 .withAlertService(alertService)
-                .withAnonymizationService(new AgeAnonymizationService(new LocalAnonymizationCacheService()))
+                .withAnonymizationService(new AgeAnonymizationService(new InMemoryCache()))
                 .withWindowSize(windowSize)
                 .build();
 
@@ -249,7 +249,7 @@ public class AgeFilterTest extends AbstractFilterTest {
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new AgeFilterStrategy()))
                 .withAlertService(alertService)
-                .withAnonymizationService(new AgeAnonymizationService(new LocalAnonymizationCacheService()))
+                .withAnonymizationService(new AgeAnonymizationService(new InMemoryCache()))
                 .withWindowSize(windowSize)
                 .build();
 
@@ -271,7 +271,7 @@ public class AgeFilterTest extends AbstractFilterTest {
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new AgeFilterStrategy()))
                 .withAlertService(alertService)
-                .withAnonymizationService(new AgeAnonymizationService(new LocalAnonymizationCacheService()))
+                .withAnonymizationService(new AgeAnonymizationService(new InMemoryCache()))
                 .withWindowSize(windowSize)
                 .build();
 
@@ -293,7 +293,7 @@ public class AgeFilterTest extends AbstractFilterTest {
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new AgeFilterStrategy()))
                 .withAlertService(alertService)
-                .withAnonymizationService(new AgeAnonymizationService(new LocalAnonymizationCacheService()))
+                .withAnonymizationService(new AgeAnonymizationService(new InMemoryCache()))
                 .withWindowSize(windowSize)
                 .build();
 
@@ -317,7 +317,7 @@ public class AgeFilterTest extends AbstractFilterTest {
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new AgeFilterStrategy()))
                 .withAlertService(alertService)
-                .withAnonymizationService(new AgeAnonymizationService(new LocalAnonymizationCacheService()))
+                .withAnonymizationService(new AgeAnonymizationService(new InMemoryCache()))
                 .withWindowSize(windowSize)
                 .build();
 
@@ -341,7 +341,7 @@ public class AgeFilterTest extends AbstractFilterTest {
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new AgeFilterStrategy()))
                 .withAlertService(alertService)
-                .withAnonymizationService(new AgeAnonymizationService(new LocalAnonymizationCacheService()))
+                .withAnonymizationService(new AgeAnonymizationService(new InMemoryCache()))
                 .withWindowSize(windowSize)
                 .build();
 
@@ -363,7 +363,7 @@ public class AgeFilterTest extends AbstractFilterTest {
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new AgeFilterStrategy()))
                 .withAlertService(alertService)
-                .withAnonymizationService(new AgeAnonymizationService(new LocalAnonymizationCacheService()))
+                .withAnonymizationService(new AgeAnonymizationService(new InMemoryCache()))
                 .withWindowSize(windowSize)
                 .build();
 
@@ -387,7 +387,7 @@ public class AgeFilterTest extends AbstractFilterTest {
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new AgeFilterStrategy()))
                 .withAlertService(alertService)
-                .withAnonymizationService(new AgeAnonymizationService(new LocalAnonymizationCacheService()))
+                .withAnonymizationService(new AgeAnonymizationService(new InMemoryCache()))
                 .withWindowSize(windowSize)
                 .build();
 
@@ -411,7 +411,7 @@ public class AgeFilterTest extends AbstractFilterTest {
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new AgeFilterStrategy()))
                 .withAlertService(alertService)
-                .withAnonymizationService(new AgeAnonymizationService(new LocalAnonymizationCacheService()))
+                .withAnonymizationService(new AgeAnonymizationService(new InMemoryCache()))
                 .withWindowSize(windowSize)
                 .build();
 
@@ -435,7 +435,7 @@ public class AgeFilterTest extends AbstractFilterTest {
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new AgeFilterStrategy()))
                 .withAlertService(alertService)
-                .withAnonymizationService(new AgeAnonymizationService(new LocalAnonymizationCacheService()))
+                .withAnonymizationService(new AgeAnonymizationService(new InMemoryCache()))
                 .withWindowSize(windowSize)
                 .build();
 
@@ -459,7 +459,7 @@ public class AgeFilterTest extends AbstractFilterTest {
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new AgeFilterStrategy()))
                 .withAlertService(alertService)
-                .withAnonymizationService(new AgeAnonymizationService(new LocalAnonymizationCacheService()))
+                .withAnonymizationService(new AgeAnonymizationService(new InMemoryCache()))
                 .withWindowSize(windowSize)
                 .build();
 
@@ -483,7 +483,7 @@ public class AgeFilterTest extends AbstractFilterTest {
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new AgeFilterStrategy()))
                 .withAlertService(alertService)
-                .withAnonymizationService(new AgeAnonymizationService(new LocalAnonymizationCacheService()))
+                .withAnonymizationService(new AgeAnonymizationService(new InMemoryCache()))
                 .withWindowSize(windowSize)
                 .build();
 
@@ -507,7 +507,7 @@ public class AgeFilterTest extends AbstractFilterTest {
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new AgeFilterStrategy()))
                 .withAlertService(alertService)
-                .withAnonymizationService(new AgeAnonymizationService(new LocalAnonymizationCacheService()))
+                .withAnonymizationService(new AgeAnonymizationService(new InMemoryCache()))
                 .withWindowSize(windowSize)
                 .build();
 

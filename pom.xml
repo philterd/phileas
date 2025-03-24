@@ -86,7 +86,6 @@
         <commons.math.version>3.6.1</commons.math.version>
         <commons.text.version>1.12.0</commons.text.version>
         <commons.validator.version>1.9.0</commons.validator.version>
-        <embedded.redis.version>1.4.3</embedded.redis.version>
         <equals.verifier.version>3.19.1</equals.verifier.version>
         <ff3.version>1.2.0</ff3.version>
         <hapi.fhir.version>4.2.0</hapi.fhir.version>
@@ -101,7 +100,6 @@
         <mockito.version>5.15.2</mockito.version>
         <opennlp.version>2.5.3</opennlp.version>
         <pdfbox.version>3.0.4</pdfbox.version>
-        <redisson.version>3.45.1</redisson.version>
         <okhttp.version>4.12.0</okhttp.version>
         <retrofit.version>2.11.0</retrofit.version>
         <snakeyaml.version>2.3</snakeyaml.version>

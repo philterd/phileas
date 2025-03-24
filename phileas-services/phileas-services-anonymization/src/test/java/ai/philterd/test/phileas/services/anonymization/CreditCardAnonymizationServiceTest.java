@@ -15,9 +15,10 @@
  */
 package ai.philterd.test.phileas.services.anonymization;
 
+import ai.philterd.phileas.model.cache.InMemoryCache;
 import ai.philterd.phileas.model.services.AnonymizationService;
 import ai.philterd.phileas.services.anonymization.CreditCardAnonymizationService;
-import ai.philterd.phileas.services.anonymization.cache.LocalAnonymizationCacheService;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Assertions;
@@ -30,7 +31,7 @@ public class CreditCardAnonymizationServiceTest {
     @Test
     public void anonymize1() {
 
-        AnonymizationService anonymizationService = new CreditCardAnonymizationService(new LocalAnonymizationCacheService());
+        AnonymizationService anonymizationService = new CreditCardAnonymizationService(new InMemoryCache());
 
         final String token = "abcd1234";
         final String replacement = anonymizationService.anonymize(token);
@@ -44,7 +45,7 @@ public class CreditCardAnonymizationServiceTest {
     @Test
     public void anonymize2() {
 
-        AnonymizationService anonymizationService = new CreditCardAnonymizationService(new LocalAnonymizationCacheService());
+        AnonymizationService anonymizationService = new CreditCardAnonymizationService(new InMemoryCache());
 
         final String token = "April 1, 2019";
         final String replacement = anonymizationService.anonymize(token);

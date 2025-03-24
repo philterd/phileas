@@ -18,55 +18,42 @@ package ai.philterd.phileas.services.alerts;
 import ai.philterd.phileas.model.enums.FilterType;
 import ai.philterd.phileas.model.objects.Alert;
 import ai.philterd.phileas.model.services.AlertService;
-import org.apache.commons.lang3.StringUtils;
+import ai.philterd.phileas.model.services.CacheService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.LinkedList;
 import java.util.List;
 
-public class LocalAlertService implements AlertService {
+public class DefaultAlertService implements AlertService {
 
-    private static final Logger LOGGER = LogManager.getLogger(LocalAlertService.class);
+    private static final Logger LOGGER = LogManager.getLogger(DefaultAlertService.class);
 
-    private final List<Alert> alerts;
+    private final CacheService cacheService;
 
-    public LocalAlertService() {
-
+    public DefaultAlertService(final CacheService cacheService) {
         LOGGER.info("Initializing local alert service.");
-        this.alerts = new LinkedList<>();
-
+        this.cacheService = cacheService;
     }
 
     @Override
     public void generateAlert(String policy, String strategyId, String context, String documentId, FilterType filterType) {
-
-        final Alert alert = new Alert(policy, strategyId, context, documentId, filterType.getType());
-
-        alerts.add(alert);
+        cacheService.generateAlert(policy, strategyId, context, documentId, filterType);
 
     }
 
     @Override
     public List<Alert> getAlerts() {
-
-        return alerts;
-
+        return cacheService.getAlerts();
     }
 
     @Override
     public void delete(String alertId) {
-
-        LOGGER.info("Deleting alert {}", alertId);
-        alerts.removeIf(alert -> StringUtils.equalsIgnoreCase(alert.getId(), alertId));
-
+        cacheService.deleteAlert(alertId);
     }
 
     @Override
     public void clear() {
-
-        alerts.clear();
-
+        cacheService.clearAlerts();
     }
 
 }

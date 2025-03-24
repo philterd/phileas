@@ -15,9 +15,10 @@
  */
 package ai.philterd.test.phileas.services.anonymization;
 
+import ai.philterd.phileas.model.cache.InMemoryCache;
 import ai.philterd.phileas.model.services.AnonymizationService;
 import ai.philterd.phileas.services.anonymization.VinAnonymizationService;
-import ai.philterd.phileas.services.anonymization.cache.LocalAnonymizationCacheService;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Assertions;
@@ -30,7 +31,7 @@ public class VinAnonymizationServiceTest {
     @Test
     public void anonymize() {
 
-        AnonymizationService anonymizationService = new VinAnonymizationService(new LocalAnonymizationCacheService());
+        AnonymizationService anonymizationService = new VinAnonymizationService(new InMemoryCache());
 
         final String token = "11111111111111111";
         final String replacement = anonymizationService.anonymize(token);

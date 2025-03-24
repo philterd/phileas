@@ -15,13 +15,13 @@
  */
 package ai.philterd.test.phileas.services.filters;
 
+import ai.philterd.phileas.model.cache.InMemoryCache;
 import ai.philterd.phileas.model.enums.FilterType;
 import ai.philterd.phileas.model.filter.FilterConfiguration;
 import ai.philterd.phileas.model.objects.FilterResult;
 import ai.philterd.phileas.model.policy.filters.strategies.rules.StreetAddressFilterStrategy;
 import ai.philterd.phileas.model.services.AlertService;
 import ai.philterd.phileas.services.anonymization.StreetAddressAnonymizationService;
-import ai.philterd.phileas.services.anonymization.cache.LocalAnonymizationCacheService;
 import ai.philterd.phileas.services.filters.regex.StreetAddressFilter;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -39,7 +39,7 @@ public class StreetAddressFilterTest extends AbstractFilterTest {
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new StreetAddressFilterStrategy()))
                 .withAlertService(alertService)
-                .withAnonymizationService(new StreetAddressAnonymizationService(new LocalAnonymizationCacheService()))
+                .withAnonymizationService(new StreetAddressAnonymizationService(new InMemoryCache()))
                 .withWindowSize(windowSize)
                 .build();
 
@@ -58,7 +58,7 @@ public class StreetAddressFilterTest extends AbstractFilterTest {
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new StreetAddressFilterStrategy()))
                 .withAlertService(alertService)
-                .withAnonymizationService(new StreetAddressAnonymizationService(new LocalAnonymizationCacheService()))
+                .withAnonymizationService(new StreetAddressAnonymizationService(new InMemoryCache()))
                 .withWindowSize(windowSize)
                 .build();
 
@@ -77,7 +77,7 @@ public class StreetAddressFilterTest extends AbstractFilterTest {
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new StreetAddressFilterStrategy()))
                 .withAlertService(alertService)
-                .withAnonymizationService(new StreetAddressAnonymizationService(new LocalAnonymizationCacheService()))
+                .withAnonymizationService(new StreetAddressAnonymizationService(new InMemoryCache()))
                 .withWindowSize(windowSize)
                 .build();
 
@@ -96,7 +96,7 @@ public class StreetAddressFilterTest extends AbstractFilterTest {
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new StreetAddressFilterStrategy()))
                 .withAlertService(alertService)
-                .withAnonymizationService(new StreetAddressAnonymizationService(new LocalAnonymizationCacheService()))
+                .withAnonymizationService(new StreetAddressAnonymizationService(new InMemoryCache()))
                 .withWindowSize(windowSize)
                 .build();
 
@@ -115,7 +115,7 @@ public class StreetAddressFilterTest extends AbstractFilterTest {
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new StreetAddressFilterStrategy()))
                 .withAlertService(alertService)
-                .withAnonymizationService(new StreetAddressAnonymizationService(new LocalAnonymizationCacheService()))
+                .withAnonymizationService(new StreetAddressAnonymizationService(new InMemoryCache()))
                 .withWindowSize(windowSize)
                 .build();
 
@@ -134,7 +134,7 @@ public class StreetAddressFilterTest extends AbstractFilterTest {
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new StreetAddressFilterStrategy()))
                 .withAlertService(alertService)
-                .withAnonymizationService(new StreetAddressAnonymizationService(new LocalAnonymizationCacheService()))
+                .withAnonymizationService(new StreetAddressAnonymizationService(new InMemoryCache()))
                 .withWindowSize(windowSize)
                 .build();
 
@@ -153,7 +153,7 @@ public class StreetAddressFilterTest extends AbstractFilterTest {
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new StreetAddressFilterStrategy()))
                 .withAlertService(alertService)
-                .withAnonymizationService(new StreetAddressAnonymizationService(new LocalAnonymizationCacheService()))
+                .withAnonymizationService(new StreetAddressAnonymizationService(new InMemoryCache()))
                 .withWindowSize(windowSize)
                 .build();
 
@@ -172,7 +172,7 @@ public class StreetAddressFilterTest extends AbstractFilterTest {
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new StreetAddressFilterStrategy()))
                 .withAlertService(alertService)
-                .withAnonymizationService(new StreetAddressAnonymizationService(new LocalAnonymizationCacheService()))
+                .withAnonymizationService(new StreetAddressAnonymizationService(new InMemoryCache()))
                 .withWindowSize(windowSize)
                 .build();
 
@@ -191,7 +191,7 @@ public class StreetAddressFilterTest extends AbstractFilterTest {
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new StreetAddressFilterStrategy()))
                 .withAlertService(alertService)
-                .withAnonymizationService(new StreetAddressAnonymizationService(new LocalAnonymizationCacheService()))
+                .withAnonymizationService(new StreetAddressAnonymizationService(new InMemoryCache()))
                 .withWindowSize(windowSize)
                 .build();
 
@@ -210,7 +210,7 @@ public class StreetAddressFilterTest extends AbstractFilterTest {
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new StreetAddressFilterStrategy()))
                 .withAlertService(alertService)
-                .withAnonymizationService(new StreetAddressAnonymizationService(new LocalAnonymizationCacheService()))
+                .withAnonymizationService(new StreetAddressAnonymizationService(new InMemoryCache()))
                 .withWindowSize(windowSize)
                 .build();
 
@@ -229,7 +229,7 @@ public class StreetAddressFilterTest extends AbstractFilterTest {
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new StreetAddressFilterStrategy()))
                 .withAlertService(alertService)
-                .withAnonymizationService(new StreetAddressAnonymizationService(new LocalAnonymizationCacheService()))
+                .withAnonymizationService(new StreetAddressAnonymizationService(new InMemoryCache()))
                 .withWindowSize(windowSize)
                 .build();
 
@@ -248,7 +248,7 @@ public class StreetAddressFilterTest extends AbstractFilterTest {
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new StreetAddressFilterStrategy()))
                 .withAlertService(alertService)
-                .withAnonymizationService(new StreetAddressAnonymizationService(new LocalAnonymizationCacheService()))
+                .withAnonymizationService(new StreetAddressAnonymizationService(new InMemoryCache()))
                 .withWindowSize(windowSize)
                 .build();
 
@@ -267,7 +267,7 @@ public class StreetAddressFilterTest extends AbstractFilterTest {
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new StreetAddressFilterStrategy()))
                 .withAlertService(alertService)
-                .withAnonymizationService(new StreetAddressAnonymizationService(new LocalAnonymizationCacheService()))
+                .withAnonymizationService(new StreetAddressAnonymizationService(new InMemoryCache()))
                 .withWindowSize(windowSize)
                 .build();
 
@@ -286,7 +286,7 @@ public class StreetAddressFilterTest extends AbstractFilterTest {
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new StreetAddressFilterStrategy()))
                 .withAlertService(alertService)
-                .withAnonymizationService(new StreetAddressAnonymizationService(new LocalAnonymizationCacheService()))
+                .withAnonymizationService(new StreetAddressAnonymizationService(new InMemoryCache()))
                 .withWindowSize(windowSize)
                 .build();
 
@@ -305,7 +305,7 @@ public class StreetAddressFilterTest extends AbstractFilterTest {
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new StreetAddressFilterStrategy()))
                 .withAlertService(alertService)
-                .withAnonymizationService(new StreetAddressAnonymizationService(new LocalAnonymizationCacheService()))
+                .withAnonymizationService(new StreetAddressAnonymizationService(new InMemoryCache()))
                 .withWindowSize(windowSize)
                 .build();
 
@@ -324,7 +324,7 @@ public class StreetAddressFilterTest extends AbstractFilterTest {
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new StreetAddressFilterStrategy()))
                 .withAlertService(alertService)
-                .withAnonymizationService(new StreetAddressAnonymizationService(new LocalAnonymizationCacheService()))
+                .withAnonymizationService(new StreetAddressAnonymizationService(new InMemoryCache()))
                 .withWindowSize(windowSize)
                 .build();
 
@@ -343,7 +343,7 @@ public class StreetAddressFilterTest extends AbstractFilterTest {
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new StreetAddressFilterStrategy()))
                 .withAlertService(alertService)
-                .withAnonymizationService(new StreetAddressAnonymizationService(new LocalAnonymizationCacheService()))
+                .withAnonymizationService(new StreetAddressAnonymizationService(new InMemoryCache()))
                 .withWindowSize(windowSize)
                 .build();
 
@@ -362,7 +362,7 @@ public class StreetAddressFilterTest extends AbstractFilterTest {
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new StreetAddressFilterStrategy()))
                 .withAlertService(alertService)
-                .withAnonymizationService(new StreetAddressAnonymizationService(new LocalAnonymizationCacheService()))
+                .withAnonymizationService(new StreetAddressAnonymizationService(new InMemoryCache()))
                 .withWindowSize(windowSize)
                 .build();
 
@@ -381,7 +381,7 @@ public class StreetAddressFilterTest extends AbstractFilterTest {
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new StreetAddressFilterStrategy()))
                 .withAlertService(alertService)
-                .withAnonymizationService(new StreetAddressAnonymizationService(new LocalAnonymizationCacheService()))
+                .withAnonymizationService(new StreetAddressAnonymizationService(new InMemoryCache()))
                 .withWindowSize(windowSize)
                 .build();
 
@@ -400,7 +400,7 @@ public class StreetAddressFilterTest extends AbstractFilterTest {
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new StreetAddressFilterStrategy()))
                 .withAlertService(alertService)
-                .withAnonymizationService(new StreetAddressAnonymizationService(new LocalAnonymizationCacheService()))
+                .withAnonymizationService(new StreetAddressAnonymizationService(new InMemoryCache()))
                 .withWindowSize(windowSize)
                 .build();
 
@@ -419,7 +419,7 @@ public class StreetAddressFilterTest extends AbstractFilterTest {
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new StreetAddressFilterStrategy()))
                 .withAlertService(alertService)
-                .withAnonymizationService(new StreetAddressAnonymizationService(new LocalAnonymizationCacheService()))
+                .withAnonymizationService(new StreetAddressAnonymizationService(new InMemoryCache()))
                 .withWindowSize(windowSize)
                 .build();
 
@@ -438,7 +438,7 @@ public class StreetAddressFilterTest extends AbstractFilterTest {
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new StreetAddressFilterStrategy()))
                 .withAlertService(alertService)
-                .withAnonymizationService(new StreetAddressAnonymizationService(new LocalAnonymizationCacheService()))
+                .withAnonymizationService(new StreetAddressAnonymizationService(new InMemoryCache()))
                 .withWindowSize(windowSize)
                 .build();
 
@@ -457,7 +457,7 @@ public class StreetAddressFilterTest extends AbstractFilterTest {
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new StreetAddressFilterStrategy()))
                 .withAlertService(alertService)
-                .withAnonymizationService(new StreetAddressAnonymizationService(new LocalAnonymizationCacheService()))
+                .withAnonymizationService(new StreetAddressAnonymizationService(new InMemoryCache()))
                 .withWindowSize(windowSize)
                 .build();
 
@@ -476,7 +476,7 @@ public class StreetAddressFilterTest extends AbstractFilterTest {
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new StreetAddressFilterStrategy()))
                 .withAlertService(alertService)
-                .withAnonymizationService(new StreetAddressAnonymizationService(new LocalAnonymizationCacheService()))
+                .withAnonymizationService(new StreetAddressAnonymizationService(new InMemoryCache()))
                 .withWindowSize(windowSize)
                 .build();
 

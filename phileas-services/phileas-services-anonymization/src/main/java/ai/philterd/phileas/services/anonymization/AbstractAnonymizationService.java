@@ -15,19 +15,19 @@
  */
 package ai.philterd.phileas.services.anonymization;
 
-import ai.philterd.phileas.model.services.AnonymizationCacheService;
 import ai.philterd.phileas.model.services.AnonymizationService;
+import ai.philterd.phileas.model.services.CacheService;
 
 public abstract class AbstractAnonymizationService implements AnonymizationService {
 
-    private final AnonymizationCacheService anonymizationCacheService;
+    private final CacheService anonymizationCacheService;
 
-    public AbstractAnonymizationService(AnonymizationCacheService anonymizationCacheService) {
+    public AbstractAnonymizationService(CacheService anonymizationCacheService) {
         this.anonymizationCacheService = anonymizationCacheService;
     }
 
     @Override
-    public AnonymizationCacheService getAnonymizationCacheService() {
+    public CacheService getCacheService() {
         return anonymizationCacheService;
     }
 

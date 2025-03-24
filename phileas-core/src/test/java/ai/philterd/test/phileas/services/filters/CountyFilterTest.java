@@ -15,6 +15,7 @@
  */
 package ai.philterd.test.phileas.services.filters;
 
+import ai.philterd.phileas.model.cache.InMemoryCache;
 import ai.philterd.phileas.model.enums.FilterType;
 import ai.philterd.phileas.model.enums.SensitivityLevel;
 import ai.philterd.phileas.model.filter.FilterConfiguration;
@@ -23,7 +24,6 @@ import ai.philterd.phileas.model.objects.FilterResult;
 import ai.philterd.phileas.model.policy.filters.strategies.dynamic.CountyFilterStrategy;
 import ai.philterd.phileas.model.services.AlertService;
 import ai.philterd.phileas.services.anonymization.CountyAnonymizationService;
-import ai.philterd.phileas.services.anonymization.cache.LocalAnonymizationCacheService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Assertions;
@@ -44,7 +44,7 @@ public class CountyFilterTest extends AbstractFilterTest {
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new CountyFilterStrategy()))
                 .withAlertService(alertService)
-                .withAnonymizationService(new CountyAnonymizationService(new LocalAnonymizationCacheService()))
+                .withAnonymizationService(new CountyAnonymizationService(new InMemoryCache()))
                 .withWindowSize(windowSize)
                 .build();
 
@@ -64,7 +64,7 @@ public class CountyFilterTest extends AbstractFilterTest {
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new CountyFilterStrategy()))
                 .withAlertService(alertService)
-                .withAnonymizationService(new CountyAnonymizationService(new LocalAnonymizationCacheService()))
+                .withAnonymizationService(new CountyAnonymizationService(new InMemoryCache()))
                 .withWindowSize(windowSize)
                 .build();
 
@@ -86,7 +86,7 @@ public class CountyFilterTest extends AbstractFilterTest {
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new CountyFilterStrategy()))
                 .withAlertService(alertService)
-                .withAnonymizationService(new CountyAnonymizationService(new LocalAnonymizationCacheService()))
+                .withAnonymizationService(new CountyAnonymizationService(new InMemoryCache()))
                 .withWindowSize(windowSize)
                 .build();
 
@@ -106,7 +106,7 @@ public class CountyFilterTest extends AbstractFilterTest {
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new CountyFilterStrategy()))
                 .withAlertService(alertService)
-                .withAnonymizationService(new CountyAnonymizationService(new LocalAnonymizationCacheService()))
+                .withAnonymizationService(new CountyAnonymizationService(new InMemoryCache()))
                 .withWindowSize(windowSize)
                 .build();
 
@@ -128,7 +128,7 @@ public class CountyFilterTest extends AbstractFilterTest {
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new CountyFilterStrategy()))
                 .withAlertService(alertService)
-                .withAnonymizationService(new CountyAnonymizationService(new LocalAnonymizationCacheService()))
+                .withAnonymizationService(new CountyAnonymizationService(new InMemoryCache()))
                 .withWindowSize(windowSize)
                 .build();
 

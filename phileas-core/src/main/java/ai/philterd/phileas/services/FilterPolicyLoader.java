@@ -27,7 +27,7 @@ import ai.philterd.phileas.model.policy.filters.CustomDictionary;
 import ai.philterd.phileas.model.policy.filters.Identifier;
 import ai.philterd.phileas.model.policy.filters.Section;
 import ai.philterd.phileas.model.services.AlertService;
-import ai.philterd.phileas.model.services.AnonymizationCacheService;
+import ai.philterd.phileas.model.services.CacheService;
 import ai.philterd.phileas.model.services.MetricsService;
 import ai.philterd.phileas.model.services.SpanValidator;
 import ai.philterd.phileas.services.anonymization.AgeAnonymizationService;
@@ -99,13 +99,13 @@ public class FilterPolicyLoader {
 
     private static final Logger LOGGER = LogManager.getLogger(FilterPolicyLoader.class);
 
-    private final AnonymizationCacheService anonymizationCacheService;
+    private final CacheService anonymizationCacheService;
     private final AlertService alertService;
     private final MetricsService metricsService;
     private final Map<String, DescriptiveStatistics> stats;
     private final PhileasConfiguration phileasConfiguration;
 
-    public FilterPolicyLoader(final AlertService alertService, final AnonymizationCacheService anonymizationCacheService,
+    public FilterPolicyLoader(final AlertService alertService, final CacheService anonymizationCacheService,
                               final MetricsService metricsService, final Map<String, DescriptiveStatistics> stats,
                               final PhileasConfiguration phileasConfiguration) {
 

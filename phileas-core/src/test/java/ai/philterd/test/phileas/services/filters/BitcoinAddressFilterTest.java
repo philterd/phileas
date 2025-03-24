@@ -15,13 +15,13 @@
  */
 package ai.philterd.test.phileas.services.filters;
 
+import ai.philterd.phileas.model.cache.InMemoryCache;
 import ai.philterd.phileas.model.enums.FilterType;
 import ai.philterd.phileas.model.filter.FilterConfiguration;
 import ai.philterd.phileas.model.objects.FilterResult;
 import ai.philterd.phileas.model.policy.filters.strategies.rules.BitcoinAddressFilterStrategy;
 import ai.philterd.phileas.model.services.AlertService;
 import ai.philterd.phileas.services.anonymization.BitcoinAddressAnonymizationService;
-import ai.philterd.phileas.services.anonymization.cache.LocalAnonymizationCacheService;
 import ai.philterd.phileas.services.filters.regex.BitcoinAddressFilter;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -39,7 +39,7 @@ public class BitcoinAddressFilterTest extends AbstractFilterTest {
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new BitcoinAddressFilterStrategy()))
                 .withAlertService(alertService)
-                .withAnonymizationService(new BitcoinAddressAnonymizationService(new LocalAnonymizationCacheService()))
+                .withAnonymizationService(new BitcoinAddressAnonymizationService(new InMemoryCache()))
                 .withWindowSize(windowSize)
                 .build();
 
@@ -62,7 +62,7 @@ public class BitcoinAddressFilterTest extends AbstractFilterTest {
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new BitcoinAddressFilterStrategy()))
                 .withAlertService(alertService)
-                .withAnonymizationService(new BitcoinAddressAnonymizationService(new LocalAnonymizationCacheService()))
+                .withAnonymizationService(new BitcoinAddressAnonymizationService(new InMemoryCache()))
                 .withWindowSize(windowSize)
                 .build();
 
@@ -85,7 +85,7 @@ public class BitcoinAddressFilterTest extends AbstractFilterTest {
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new BitcoinAddressFilterStrategy()))
                 .withAlertService(alertService)
-                .withAnonymizationService(new BitcoinAddressAnonymizationService(new LocalAnonymizationCacheService()))
+                .withAnonymizationService(new BitcoinAddressAnonymizationService(new InMemoryCache()))
                 .withWindowSize(windowSize)
                 .build();
 

@@ -15,13 +15,13 @@
  */
 package ai.philterd.test.phileas.services.filters;
 
+import ai.philterd.phileas.model.cache.InMemoryCache;
 import ai.philterd.phileas.model.enums.FilterType;
 import ai.philterd.phileas.model.filter.FilterConfiguration;
 import ai.philterd.phileas.model.objects.FilterResult;
 import ai.philterd.phileas.model.policy.filters.strategies.rules.IpAddressFilterStrategy;
 import ai.philterd.phileas.model.services.AlertService;
 import ai.philterd.phileas.services.anonymization.IpAddressAnonymizationService;
-import ai.philterd.phileas.services.anonymization.cache.LocalAnonymizationCacheService;
 import ai.philterd.phileas.services.filters.regex.IpAddressFilter;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -39,7 +39,7 @@ public class IpAddressFilterTest extends AbstractFilterTest {
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new IpAddressFilterStrategy()))
                 .withAlertService(alertService)
-                .withAnonymizationService(new IpAddressAnonymizationService(new LocalAnonymizationCacheService()))
+                .withAnonymizationService(new IpAddressAnonymizationService(new InMemoryCache()))
                 .withWindowSize(windowSize)
                 .build();
 
@@ -59,7 +59,7 @@ public class IpAddressFilterTest extends AbstractFilterTest {
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new IpAddressFilterStrategy()))
                 .withAlertService(alertService)
-                .withAnonymizationService(new IpAddressAnonymizationService(new LocalAnonymizationCacheService()))
+                .withAnonymizationService(new IpAddressAnonymizationService(new InMemoryCache()))
                 .withWindowSize(windowSize)
                 .build();
 
@@ -78,7 +78,7 @@ public class IpAddressFilterTest extends AbstractFilterTest {
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new IpAddressFilterStrategy()))
                 .withAlertService(alertService)
-                .withAnonymizationService(new IpAddressAnonymizationService(new LocalAnonymizationCacheService()))
+                .withAnonymizationService(new IpAddressAnonymizationService(new InMemoryCache()))
                 .withWindowSize(windowSize)
                 .build();
 
@@ -99,7 +99,7 @@ public class IpAddressFilterTest extends AbstractFilterTest {
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new IpAddressFilterStrategy()))
                 .withAlertService(alertService)
-                .withAnonymizationService(new IpAddressAnonymizationService(new LocalAnonymizationCacheService()))
+                .withAnonymizationService(new IpAddressAnonymizationService(new InMemoryCache()))
                 .withWindowSize(windowSize)
                 .build();
 

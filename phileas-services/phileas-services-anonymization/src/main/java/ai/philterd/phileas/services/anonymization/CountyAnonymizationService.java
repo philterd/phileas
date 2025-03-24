@@ -15,7 +15,7 @@
  */
 package ai.philterd.phileas.services.anonymization;
 
-import ai.philterd.phileas.model.services.AnonymizationCacheService;
+import ai.philterd.phileas.model.services.CacheService;
 
 import java.util.Collection;
 import java.util.LinkedList;
@@ -24,7 +24,7 @@ public class CountyAnonymizationService extends AbstractAnonymizationService {
 
     private static final Collection<String> counties = new LinkedList<>();
 
-    public CountyAnonymizationService(AnonymizationCacheService anonymizationCacheService) {
+    public CountyAnonymizationService(CacheService anonymizationCacheService) {
         super(anonymizationCacheService);
 
         counties.add("Beaver");

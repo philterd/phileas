@@ -15,6 +15,7 @@
  */
 package ai.philterd.test.phileas.services.filters;
 
+import ai.philterd.phileas.model.cache.InMemoryCache;
 import ai.philterd.phileas.model.enums.FilterType;
 import ai.philterd.phileas.model.filter.FilterConfiguration;
 import ai.philterd.phileas.model.objects.FilterResult;
@@ -22,7 +23,6 @@ import ai.philterd.phileas.model.policy.filters.strategies.AbstractFilterStrateg
 import ai.philterd.phileas.model.policy.filters.strategies.rules.CurrencyFilterStrategy;
 import ai.philterd.phileas.model.services.AlertService;
 import ai.philterd.phileas.services.anonymization.CurrencyAnonymizationService;
-import ai.philterd.phileas.services.anonymization.cache.LocalAnonymizationCacheService;
 import ai.philterd.phileas.services.filters.regex.CurrencyFilter;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -41,7 +41,7 @@ public class CurrencyFilterTest extends AbstractFilterTest {
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new CurrencyFilterStrategy()))
                 .withAlertService(alertService)
-                .withAnonymizationService(new CurrencyAnonymizationService(new LocalAnonymizationCacheService()))
+                .withAnonymizationService(new CurrencyAnonymizationService(new InMemoryCache()))
                 .withWindowSize(windowSize)
                 .build();
 
@@ -63,7 +63,7 @@ public class CurrencyFilterTest extends AbstractFilterTest {
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new CurrencyFilterStrategy()))
                 .withAlertService(alertService)
-                .withAnonymizationService(new CurrencyAnonymizationService(new LocalAnonymizationCacheService()))
+                .withAnonymizationService(new CurrencyAnonymizationService(new InMemoryCache()))
                 .withWindowSize(windowSize)
                 .build();
 
@@ -85,7 +85,7 @@ public class CurrencyFilterTest extends AbstractFilterTest {
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new CurrencyFilterStrategy()))
                 .withAlertService(alertService)
-                .withAnonymizationService(new CurrencyAnonymizationService(new LocalAnonymizationCacheService()))
+                .withAnonymizationService(new CurrencyAnonymizationService(new InMemoryCache()))
                 .withWindowSize(windowSize)
                 .build();
 
@@ -107,7 +107,7 @@ public class CurrencyFilterTest extends AbstractFilterTest {
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new CurrencyFilterStrategy()))
                 .withAlertService(alertService)
-                .withAnonymizationService(new CurrencyAnonymizationService(new LocalAnonymizationCacheService()))
+                .withAnonymizationService(new CurrencyAnonymizationService(new InMemoryCache()))
                 .withWindowSize(windowSize)
                 .build();
 
@@ -129,7 +129,7 @@ public class CurrencyFilterTest extends AbstractFilterTest {
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new CurrencyFilterStrategy()))
                 .withAlertService(alertService)
-                .withAnonymizationService(new CurrencyAnonymizationService(new LocalAnonymizationCacheService()))
+                .withAnonymizationService(new CurrencyAnonymizationService(new InMemoryCache()))
                 .withWindowSize(windowSize)
                 .build();
 
@@ -154,7 +154,7 @@ public class CurrencyFilterTest extends AbstractFilterTest {
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(Arrays.asList(currencyFilterStrategy))
                 .withAlertService(alertService)
-                .withAnonymizationService(new CurrencyAnonymizationService(new LocalAnonymizationCacheService()))
+                .withAnonymizationService(new CurrencyAnonymizationService(new InMemoryCache()))
                 .withWindowSize(windowSize)
                 .build();
 
@@ -179,7 +179,7 @@ public class CurrencyFilterTest extends AbstractFilterTest {
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(Arrays.asList(currencyFilterStrategy))
                 .withAlertService(alertService)
-                .withAnonymizationService(new CurrencyAnonymizationService(new LocalAnonymizationCacheService()))
+                .withAnonymizationService(new CurrencyAnonymizationService(new InMemoryCache()))
                 .withWindowSize(windowSize)
                 .build();
 

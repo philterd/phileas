@@ -15,12 +15,12 @@
  */
 package ai.philterd.phileas.services.anonymization;
 
-import ai.philterd.phileas.model.services.AnonymizationCacheService;
+import ai.philterd.phileas.model.services.CacheService;
 import org.apache.commons.lang3.RandomStringUtils;
 
 public class EmailAddressAnonymizationService extends AbstractAnonymizationService {
 
-    public EmailAddressAnonymizationService(AnonymizationCacheService anonymizationCacheService) {
+    public EmailAddressAnonymizationService(CacheService anonymizationCacheService) {
         super(anonymizationCacheService);
     }
 

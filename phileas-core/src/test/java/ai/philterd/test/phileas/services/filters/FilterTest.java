@@ -15,12 +15,12 @@
  */
 package ai.philterd.test.phileas.services.filters;
 
+import ai.philterd.phileas.model.cache.InMemoryCache;
 import ai.philterd.phileas.model.enums.FilterType;
 import ai.philterd.phileas.model.filter.FilterConfiguration;
 import ai.philterd.phileas.model.objects.FilterResult;
 import ai.philterd.phileas.model.services.AlertService;
 import ai.philterd.phileas.services.anonymization.AgeAnonymizationService;
-import ai.philterd.phileas.services.anonymization.cache.LocalAnonymizationCacheService;
 import ai.philterd.phileas.services.filters.regex.AgeFilter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -45,7 +45,7 @@ public class FilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withAlertService(alertService)
-                .withAnonymizationService(new AgeAnonymizationService(new LocalAnonymizationCacheService()))
+                .withAnonymizationService(new AgeAnonymizationService(new InMemoryCache()))
                 .withWindowSize(windowSize)
                 .build();
 
@@ -76,7 +76,7 @@ public class FilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withAlertService(alertService)
-                .withAnonymizationService(new AgeAnonymizationService(new LocalAnonymizationCacheService()))
+                .withAnonymizationService(new AgeAnonymizationService(new InMemoryCache()))
                 .withWindowSize(windowSize)
                 .build();
 
@@ -108,7 +108,7 @@ public class FilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withAlertService(alertService)
-                .withAnonymizationService(new AgeAnonymizationService(new LocalAnonymizationCacheService()))
+                .withAnonymizationService(new AgeAnonymizationService(new InMemoryCache()))
                 .withWindowSize(windowSize)
                 .build();
 

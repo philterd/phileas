@@ -37,10 +37,6 @@ public class PhileasConfiguration {
 
     }
 
-    public String indexesDirectory() {
-        return getProperty("indexes.directory", "./indexes/");
-    }
-
     public boolean spanDisambiguationEnabled() {
         return Boolean.parseBoolean(getProperty("span.disambiguation.enabled", "false"));
     }
@@ -63,48 +59,6 @@ public class PhileasConfiguration {
 
     public int spanWindowSize() {
         return Integer.parseInt(getProperty("span.window.size", "5"));
-    }
-
-    // Caching
-
-    public boolean cacheRedisEnabled() {
-        return Boolean.parseBoolean(getProperty("cache.redis.enabled", "false"));
-    }
-
-    public boolean cacheRedisCluster() {
-        return Boolean.parseBoolean(getProperty("cache.redis.cluster", "false"));
-    }
-
-    public String cacheRedisHost() {
-        return getProperty("cache.redis.host", "localhost");
-    }
-
-    public int cacheRedisPort() {
-        return Integer.parseInt(getProperty("cache.redis.port", "6379"));
-    }
-
-    public String cacheRedisAuthToken() {
-        return getProperty("cache.redis.auth.token", "");
-    }
-
-    public boolean cacheRedisSsl() {
-        return Boolean.parseBoolean(getProperty("cache.redis.ssl", "false"));
-    }
-
-    public String cacheRedisTrustStore() {
-        return getProperty("cache.redis.truststore", "");
-    }
-
-    public String cacheRedisTrustStorePassword() {
-        return getProperty("cache.redis.truststore.password", "");
-    }
-
-    public String cacheRedisKeyStore() {
-        return getProperty("cache.redis.keystore", "");
-    }
-
-    public String cacheRedisKeyStorePassword() {
-        return getProperty("cache.redis.keystore.password", "");
     }
 
     // Policies

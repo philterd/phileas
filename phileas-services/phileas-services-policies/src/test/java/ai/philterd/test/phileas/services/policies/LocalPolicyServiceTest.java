@@ -22,13 +22,13 @@ import ai.philterd.phileas.model.policy.filters.Age;
 import ai.philterd.phileas.model.policy.filters.CreditCard;
 import ai.philterd.phileas.model.policy.filters.strategies.rules.AgeFilterStrategy;
 import ai.philterd.phileas.model.policy.filters.strategies.rules.CreditCardFilterStrategy;
+import ai.philterd.phileas.model.services.CacheService;
 import ai.philterd.phileas.model.services.PolicyService;
 import ai.philterd.phileas.services.policies.LocalPolicyService;
 import com.google.gson.Gson;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
 import java.io.File;
 import java.io.IOException;
@@ -47,7 +47,6 @@ public class LocalPolicyServiceTest {
 
         final Properties properties = new Properties();
         properties.setProperty("filter.policies.directory", tempDirectory);
-        properties.setProperty("cache.redis.enabled", "false");
 
         return new PhileasConfiguration(properties);
 
@@ -56,7 +55,9 @@ public class LocalPolicyServiceTest {
     @Test
     public void list() throws IOException {
 
-        final PolicyService policyService = new LocalPolicyService(getConfiguration());
+        final CacheService cacheService = Mockito.mock(CacheService.class);
+
+        final PolicyService policyService = new LocalPolicyService(getConfiguration(), cacheService);
 
         policyService.save(gson.toJson(getPolicy("name1")));
         policyService.save(gson.toJson(getPolicy("name2")));
@@ -72,7 +73,9 @@ public class LocalPolicyServiceTest {
     @Test
     public void getAll() throws IOException {
 
-        final PolicyService policyService = new LocalPolicyService(getConfiguration());
+        final CacheService cacheService = Mockito.mock(CacheService.class);
+
+        final PolicyService policyService = new LocalPolicyService(getConfiguration(), cacheService);
 
         policyService.save(gson.toJson(getPolicy("name1")));
         policyService.save(gson.toJson(getPolicy("name2")));
@@ -88,11 +91,13 @@ public class LocalPolicyServiceTest {
     @Test
     public void save() throws IOException {
 
+        final CacheService cacheService = Mockito.mock(CacheService.class);
+
         final String name = "default";
 
         final String policy = gson.toJson(getPolicy(name));
 
-        final PolicyService policyService = new LocalPolicyService(getConfiguration());
+        final PolicyService policyService = new LocalPolicyService(getConfiguration(), cacheService);
 
         policyService.save(policy);
 
@@ -106,11 +111,13 @@ public class LocalPolicyServiceTest {
     @Test
     public void get() throws IOException {
 
+        final CacheService cacheService = Mockito.mock(CacheService.class);
+
         final String name = "default";
 
         final String policy = gson.toJson(getPolicy(name));
 
-        final PolicyService policyService = new LocalPolicyService(getConfiguration());
+        final PolicyService policyService = new LocalPolicyService(getConfiguration(), cacheService);
 
         policyService.save(policy);
 
@@ -123,10 +130,12 @@ public class LocalPolicyServiceTest {
     @Test
     public void delete() throws IOException {
 
+        final CacheService cacheService = Mockito.mock(CacheService.class);
+
         final String name = "default";
         final String policy = gson.toJson(getPolicy(name));
 
-        final PolicyService policyService = new LocalPolicyService(getConfiguration());
+        final PolicyService policyService = new LocalPolicyService(getConfiguration(), cacheService);
 
         policyService.save(policy);
 
@@ -139,6 +148,8 @@ public class LocalPolicyServiceTest {
     @Test
     public void deleteOutsidePath() throws IOException {
 
+        final CacheService cacheService = Mockito.mock(CacheService.class);
+
         final File tempFile = File.createTempFile("phileas-", "-temp");
         tempFile.deleteOnExit();
 
@@ -146,13 +157,15 @@ public class LocalPolicyServiceTest {
 
         final String name = "../" + tempFile.getName();
 
-        final PolicyService policyService = new LocalPolicyService(getConfiguration());
+        final PolicyService policyService = new LocalPolicyService(getConfiguration(), cacheService);
 
         Assertions.assertThrows(IOException.class, () -> policyService.delete(name));
 
     }
 
     private Policy getPolicy(String name) {
+
+        final CacheService cacheService = Mockito.mock(CacheService.class);
 
         AgeFilterStrategy ageFilterStrategy = new AgeFilterStrategy();
 

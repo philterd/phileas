@@ -16,9 +16,8 @@
 package ai.philterd.phileas.services.disambiguation;
 
 import ai.philterd.phileas.model.configuration.PhileasConfiguration;
-import ai.philterd.phileas.model.services.SpanDisambiguationCacheService;
-import ai.philterd.phileas.services.disambiguation.cache.SpanDisambiguationLocalCacheService;
-import ai.philterd.phileas.services.disambiguation.cache.SpanDisambiguationRedisCacheService;
+
+import ai.philterd.phileas.model.services.CacheService;
 import org.apache.commons.codec.digest.MurmurHash3;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -43,24 +42,16 @@ public abstract class AbstractSpanDisambiguationService {
     protected boolean enabled;
     protected final int vectorSize;
     protected final boolean ignoreStopWords;
-    protected SpanDisambiguationCacheService spanDisambiguationCacheService;
+    protected CacheService cacheService;
     protected Set<String> stopwords;
 
-    public AbstractSpanDisambiguationService(final PhileasConfiguration phileasConfiguration) throws IOException {
+    public AbstractSpanDisambiguationService(final PhileasConfiguration phileasConfiguration, final CacheService cacheService) throws IOException {
 
         this.phileasConfiguration = phileasConfiguration;
         this.vectorSize = phileasConfiguration.spanDisambiguationVectorSize();
         this.ignoreStopWords = phileasConfiguration.spanDisambiguationIgnoreStopWords();
         this.stopwords = new HashSet<>(Arrays.asList(phileasConfiguration.spanDisambiguationStopWords().split("")));
-
-        if(phileasConfiguration.cacheRedisEnabled()) {
-            LOGGER.info("Using Redis disambiguation cache.");
-            this.spanDisambiguationCacheService = new SpanDisambiguationRedisCacheService(phileasConfiguration);
-        } else {
-            LOGGER.info("Using local in-memory disambiguation cache.");
-            this.spanDisambiguationCacheService = new SpanDisambiguationLocalCacheService();
-        }
-
+        this.cacheService = cacheService;
         this.enabled = phileasConfiguration.spanDisambiguationEnabled();
 
     }
