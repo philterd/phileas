@@ -15,12 +15,13 @@
  */
 package ai.philterd.test.phileas.services.filters;
 
+import ai.philterd.phileas.model.cache.InMemoryCache;
 import ai.philterd.phileas.model.filter.FilterConfiguration;
 import ai.philterd.phileas.model.objects.FilterResult;
 import ai.philterd.phileas.model.services.AlertService;
+import ai.philterd.phileas.model.services.CacheService;
 import ai.philterd.phileas.model.services.MetricsService;
 import ai.philterd.phileas.services.anonymization.AgeAnonymizationService;
-import ai.philterd.phileas.services.anonymization.cache.LocalAnonymizationCacheService;
 import ai.philterd.phileas.services.filters.ai.pheye.PhEyeConfiguration;
 import ai.philterd.phileas.services.filters.ai.pheye.PhEyeFilter;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
@@ -39,6 +40,7 @@ public class PhEyeFilterTest extends AbstractFilterTest {
     public void filter1() throws Exception {
 
         final AlertService alertService = Mockito.mock(AlertService.class);
+        final CacheService cacheService = new InMemoryCache();
 
         final PhEyeConfiguration phEyeConfiguration = new PhEyeConfiguration("http://localhost:5000");
         final Map<String, DescriptiveStatistics> stats = new HashMap<>();
@@ -48,7 +50,7 @@ public class PhEyeFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withAlertService(alertService)
-                .withAnonymizationService(new AgeAnonymizationService(new LocalAnonymizationCacheService()))
+                .withAnonymizationService(new AgeAnonymizationService(cacheService))
                 .withWindowSize(windowSize)
                 .build();
 
@@ -65,6 +67,7 @@ public class PhEyeFilterTest extends AbstractFilterTest {
     public void filter2() throws Exception {
 
         final AlertService alertService = Mockito.mock(AlertService.class);
+        final CacheService cacheService = new InMemoryCache();
 
         final PhEyeConfiguration phEyeConfiguration = new PhEyeConfiguration("http://localhost:5000");
         final Map<String, DescriptiveStatistics> stats = new HashMap<>();
@@ -74,7 +77,7 @@ public class PhEyeFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withAlertService(alertService)
-                .withAnonymizationService(new AgeAnonymizationService(new LocalAnonymizationCacheService()))
+                .withAnonymizationService(new AgeAnonymizationService(cacheService))
                 .withWindowSize(windowSize)
                 .build();
 
