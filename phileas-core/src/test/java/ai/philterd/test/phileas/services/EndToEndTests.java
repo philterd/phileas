@@ -18,9 +18,17 @@ package ai.philterd.test.phileas.services;
 import ai.philterd.phileas.model.configuration.PhileasConfiguration;
 import ai.philterd.phileas.model.enums.MimeType;
 import ai.philterd.phileas.model.objects.Span;
+import ai.philterd.phileas.model.policy.Identifiers;
 import ai.philterd.phileas.model.policy.Policy;
+import ai.philterd.phileas.model.policy.filters.BitcoinAddress;
+import ai.philterd.phileas.model.policy.filters.CreditCard;
 import ai.philterd.phileas.model.policy.filters.CustomDictionary;
+import ai.philterd.phileas.model.policy.filters.DriversLicense;
+import ai.philterd.phileas.model.policy.filters.strategies.AbstractFilterStrategy;
 import ai.philterd.phileas.model.policy.filters.strategies.custom.CustomDictionaryFilterStrategy;
+import ai.philterd.phileas.model.policy.filters.strategies.rules.BitcoinAddressFilterStrategy;
+import ai.philterd.phileas.model.policy.filters.strategies.rules.CreditCardFilterStrategy;
+import ai.philterd.phileas.model.policy.filters.strategies.rules.DriversLicenseFilterStrategy;
 import ai.philterd.phileas.model.responses.FilterResponse;
 import ai.philterd.phileas.model.serializers.PlaceholderDeserializer;
 import ai.philterd.phileas.model.services.CacheService;
@@ -69,7 +77,6 @@ public class EndToEndTests {
     @BeforeEach
     public void before() {
         INDEXES_DIRECTORY = System.getProperty( "os.name" ).contains( "indow" ) ? INDEXES_DIRECTORY.substring(1) : INDEXES_DIRECTORY;
-
         final GsonBuilder gsonBuilder = new GsonBuilder();
         gsonBuilder.registerTypeAdapter(String.class, new PlaceholderDeserializer());
         gson = gsonBuilder.create();
@@ -524,6 +531,60 @@ public class EndToEndTests {
         Assertions.assertEquals("documentid", response.getDocumentId());
         Assertions.assertEquals(1, response.getExplanation().appliedSpans().size());
         Assertions.assertEquals("he lived at {{{REDACTED-street-address}}}", response.getFilteredText().trim());
+
+    }
+
+    @Test
+    public void endToEndWithOverlappingSpans() throws Exception {
+
+        BitcoinAddressFilterStrategy bitcoinAddressFilterStrategy = new BitcoinAddressFilterStrategy();
+        bitcoinAddressFilterStrategy.setStrategy(AbstractFilterStrategy.MASK);
+        bitcoinAddressFilterStrategy.setMaskCharacter("*");
+        bitcoinAddressFilterStrategy.setMaskLength("same");
+        BitcoinAddress bitcoinAddress = new BitcoinAddress();
+        bitcoinAddress.setBitcoinFilterStrategies(List.of(bitcoinAddressFilterStrategy));
+
+        CreditCardFilterStrategy creditCardFilterStrategy = new CreditCardFilterStrategy();
+        creditCardFilterStrategy.setStrategy(AbstractFilterStrategy.MASK);
+        creditCardFilterStrategy.setMaskCharacter("*");
+        creditCardFilterStrategy.setMaskLength("same");
+        CreditCard creditCard = new CreditCard();
+        creditCard.setCreditCardFilterStrategies(List.of(creditCardFilterStrategy));
+
+        DriversLicenseFilterStrategy driversLicenseFilterStrategy = new DriversLicenseFilterStrategy();
+        driversLicenseFilterStrategy.setStrategy(AbstractFilterStrategy.MASK);
+        driversLicenseFilterStrategy.setMaskCharacter("*");
+        driversLicenseFilterStrategy.setMaskLength("same");
+        DriversLicense driversLicense = new DriversLicense();
+        driversLicense.setDriversLicenseFilterStrategies(List.of(driversLicenseFilterStrategy));
+
+        Identifiers identifiers = new Identifiers();
+        identifiers.setBitcoinAddress(bitcoinAddress);
+        identifiers.setCreditCard(creditCard);
+        identifiers.setDriversLicense(driversLicense);
+
+        final Policy policy = new Policy();
+        policy.setName("default");
+        policy.setIdentifiers(identifiers);
+        Properties properties = new Properties();
+        PhileasConfiguration configuration = new PhileasConfiguration(properties, "phileas");
+
+        final String input = "the payment method is 4532613702852251 visa or 1Lbcfr7sAHTD9CgdQo3HTMTkV8LK4ZnX71 BTC from user.";
+
+        final PhileasFilterService service = new PhileasFilterService(configuration);
+        final FilterResponse response = service.filter(policy, "context", "documentid", input, MimeType.TEXT_PLAIN);
+
+        LOGGER.info(response.getFilteredText());
+
+        showSpans(response.getExplanation().appliedSpans());
+
+        Assertions.assertEquals(2, response.getExplanation().appliedSpans().size());
+        Assertions.assertEquals("the payment method is **************** visa or ********************************** BTC from user.", response.getFilteredText());
+
+        // We do NOT want driver's license to show up as a span.
+        for(final Span span : response.getExplanation().appliedSpans()) {
+            Assertions.assertTrue(span.getFilterType().getType().equals("bitcoin-address") || span.getFilterType().getType().equals("credit-card"));
+        }
 
     }
 

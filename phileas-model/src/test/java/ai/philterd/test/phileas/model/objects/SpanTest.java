@@ -462,9 +462,9 @@ public class SpanTest {
     @Test
     public void priorityWithEqualPriorities() {
 
-        final Span span1 = Span.make(0, 5, FilterType.CREDIT_CARD, "context", "document", 1.0, "Smith", "***", "salt",  false, true, new String[0], 1);
-        final Span span2 = Span.make(7, 11, FilterType.ZIP_CODE, "context", "document", 1.0, "John", "***", "salt",  false, true, new String[0], 5);
-        final Span span3 = Span.make(7, 11, FilterType.AGE, "context", "document", 1.0, "John", "***", "salt",  false, true, new String[0], 5);
+        final Span span1 = Span.make(0, 5, FilterType.CREDIT_CARD, "context", "document", 1.0, "Smith", "***", "salt",  false, true, new String[0], 5);
+        final Span span2 = Span.make(7, 11, FilterType.ZIP_CODE, "context", "document", 1.0, "John", "***", "salt",  false, true, new String[0], 7);
+        final Span span3 = Span.make(7, 11, FilterType.AGE, "context", "document", 1.0, "John", "***", "salt",  false, true, new String[0], 1);
 
         List<Span> spans = Arrays.asList(span1, span2, span3);
 
