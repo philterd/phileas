@@ -23,7 +23,7 @@ This filter has no required parameters.
 ### Filter Strategies
 
 The filter may have zero or more filter strategies. When no filter strategy is given the default strategy of `REDACT` is
-used. When multiple filter strategies are given the filter strategies will be applied in order as they are listed.
+used. When multiple filter strategies are given, the filter strategies will be applied in order as they are listed.
 See [Filter Strategies](#filter-strategies) for details.
 
 | Strategy              | Description                                              |

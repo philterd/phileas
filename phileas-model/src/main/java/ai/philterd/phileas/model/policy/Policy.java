@@ -135,7 +135,6 @@ public class Policy {
         this.domain = domain;
     }
 
-
     public Graphical getGraphical() {
         return graphical;
     }
