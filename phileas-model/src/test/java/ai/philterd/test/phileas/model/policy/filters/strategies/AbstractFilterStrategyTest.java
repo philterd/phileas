@@ -242,11 +242,35 @@ public abstract class AbstractFilterStrategyTest {
         strategy.setStrategy(AbstractFilterStrategy.MASK);
         strategy.setMaskLength(AbstractFilterStrategy.SAME);
 
-        final String token = "token";
+        final String token = "token1234";
         final Replacement replacement = strategy.getReplacement("name", "context", "docId", token, WINDOW, null, null, anonymizationService, null);
 
-        Assertions.assertEquals(replacement.getReplacement(), "*****");
+        System.out.println(replacement.getReplacement());
+
+        Assertions.assertEquals("*********", replacement.getReplacement());
         Assertions.assertEquals(replacement.getReplacement().length(), token.length());
+
+    }
+
+    @Test
+    public void replacementWithMaskCharacterForDifferentLength() throws Exception {
+
+        final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
+        final AnonymizationCacheService anonymizationCacheService = Mockito.mock(AnonymizationCacheService.class);
+
+        when(anonymizationService.getAnonymizationCacheService()).thenReturn(anonymizationCacheService);
+
+        final AbstractFilterStrategy strategy = getFilterStrategy();
+        strategy.setStrategy(AbstractFilterStrategy.MASK);
+        strategy.setMaskLength("4");
+
+        final String token = "token1234";
+        final Replacement replacement = strategy.getReplacement("name", "context", "docId", token, WINDOW, null, null, anonymizationService, null);
+
+        System.out.println(replacement.getReplacement());
+
+        Assertions.assertEquals("****", replacement.getReplacement());
+        Assertions.assertEquals(4, replacement.getReplacement().length());
 
     }
 

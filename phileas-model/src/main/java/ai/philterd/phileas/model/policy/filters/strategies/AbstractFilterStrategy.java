@@ -43,7 +43,7 @@ public abstract class AbstractFilterStrategy {
     public static final String HASH_SHA256_REPLACE = "HASH_SHA256_REPLACE";
     public static final String LAST_4 = "LAST_4";
     public static final String MASK = "MASK";
-    public static final String SAME = AbstractFilterStrategy.SAME;
+    public static final String SAME = "SAME";
     public static final String TRUNCATE = "TRUNCATE";
     public static final String LEADING = "LEADING";
     public static final String TRAILING = "TRAILING";
