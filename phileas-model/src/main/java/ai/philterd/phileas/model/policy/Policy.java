@@ -41,10 +41,6 @@ public class Policy {
     @Expose
     private FPE fpe;
 
-    @SerializedName("domain")
-    @Expose
-    private String domain;
-
     @SerializedName("identifiers")
     @Expose
     private Identifiers identifiers = new Identifiers();
@@ -70,7 +66,6 @@ public class Policy {
     public int hashCode() {
         return new HashCodeBuilder(17, 37).
                 append(name).
-                append(domain).
                 append(crypto).
                 append(identifiers).
                 append(ignored).
@@ -125,14 +120,6 @@ public class Policy {
 
     public void setConfig(Config config) {
         this.config = config;
-    }
-
-    public String getDomain() {
-        return domain;
-    }
-
-    public void setDomain(String domain) {
-        this.domain = domain;
     }
 
     public Graphical getGraphical() {
