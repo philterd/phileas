@@ -34,38 +34,6 @@
             <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
         </license>
     </licenses>
-    <distributionManagement>
-        <snapshotRepository>
-            <id>philterd-repository-snapshots</id>
-            <name>Philterd Snapshots Repository</name>
-            <url>https://artifacts.philterd.ai/snapshots</url>
-        </snapshotRepository>
-        <repository>
-            <id>philterd-repository-releases</id>
-            <name>Philterd Repository</name>
-            <url>https://artifacts.philterd.ai/releases</url>
-        </repository>
-    </distributionManagement>
-    <repositories>
-        <repository>
-            <id>central</id>
-            <url>https://repo1.maven.org/maven2</url>
-        </repository>
-        <repository>
-            <id>philterd-repository-releases</id>
-            <url>https://artifacts.philterd.ai/releases</url>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
-        <repository>
-            <id>philterd-repository-snapshots</id>
-            <url>https://artifacts.philterd.ai/snapshots</url>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
-    </repositories>
     <modules>
         <module>phileas-core</module>
         <module>phileas-model</module>
@@ -114,6 +82,15 @@
             </plugins>
         </pluginManagement>
         <plugins>
+            <plugin>
+                <groupId>org.sonatype.central</groupId>
+                <artifactId>central-publishing-maven-plugin</artifactId>
+                <version>0.7.0</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <publishingServerId>central</publishingServerId>
+                </configuration>
+            </plugin>
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
