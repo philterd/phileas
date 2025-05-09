@@ -1,4 +1,4 @@
-name: Benchmarks
+name: benchmarks
 on: [workflow_dispatch]
 jobs:
   build:
