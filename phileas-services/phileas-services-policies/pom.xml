@@ -4,7 +4,7 @@
   <parent>
     <artifactId>phileas-services</artifactId>
     <groupId>ai.philterd</groupId>
-    <version>2.12.2-SNAPSHOT</version>
+    <version>2.12.2</version>
   </parent>
   <artifactId>phileas-services-policies</artifactId>
   <name>phileas-services-profiles</name>
