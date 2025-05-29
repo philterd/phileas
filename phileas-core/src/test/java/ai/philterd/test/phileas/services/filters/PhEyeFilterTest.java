@@ -42,7 +42,7 @@ public class PhEyeFilterTest extends AbstractFilterTest {
         final AlertService alertService = Mockito.mock(AlertService.class);
         final CacheService cacheService = new InMemoryCache();
 
-        final PhEyeConfiguration phEyeConfiguration = new PhEyeConfiguration("http://localhost:5000");
+        final PhEyeConfiguration phEyeConfiguration = new PhEyeConfiguration("http://localhost:18080");
         final Map<String, DescriptiveStatistics> stats = new HashMap<>();
         final MetricsService metricsService = Mockito.mock(MetricsService.class);
         final boolean removePunctuation = false;
@@ -69,7 +69,7 @@ public class PhEyeFilterTest extends AbstractFilterTest {
         final AlertService alertService = Mockito.mock(AlertService.class);
         final CacheService cacheService = new InMemoryCache();
 
-        final PhEyeConfiguration phEyeConfiguration = new PhEyeConfiguration("http://localhost:5000");
+        final PhEyeConfiguration phEyeConfiguration = new PhEyeConfiguration("http://localhost:18080");
         final Map<String, DescriptiveStatistics> stats = new HashMap<>();
         final MetricsService metricsService = Mockito.mock(MetricsService.class);
         final boolean removePunctuation = false;
@@ -86,6 +86,40 @@ public class PhEyeFilterTest extends AbstractFilterTest {
         final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "No name here was the first president.", attributes);
 
         Assertions.assertEquals(0, filterResult.getSpans().size());
+
+    }
+
+    @Test
+    public void multipleFilterCalls() throws Exception {
+
+        final AlertService alertService = Mockito.mock(AlertService.class);
+        final CacheService cacheService = new InMemoryCache();
+
+        final PhEyeConfiguration phEyeConfiguration = new PhEyeConfiguration("http://localhost:18080");
+        final Map<String, DescriptiveStatistics> stats = new HashMap<>();
+        final MetricsService metricsService = Mockito.mock(MetricsService.class);
+        final boolean removePunctuation = false;
+        final Map<String, Double> thresholds = new HashMap<>();
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withAlertService(alertService)
+                .withAnonymizationService(new AgeAnonymizationService(cacheService))
+                .withWindowSize(windowSize)
+                .build();
+
+        final PhEyeFilter filter = new PhEyeFilter(filterConfiguration, phEyeConfiguration, stats, metricsService, removePunctuation, thresholds);
+
+        // This is to test the http connection pooling for connections to ph-eye.
+        for(int x = 0; x < 10; x++) {
+
+            final FilterResult filterResult1 = filter.filter(getPolicy(), "context", "documentid", PIECE, "George Washington was the first president.", attributes);
+            Assertions.assertEquals(1, filterResult1.getSpans().size());
+            Assertions.assertEquals("George Washington", filterResult1.getSpans().iterator().next().getText());
+
+            final FilterResult filterResult2 = filter.filter(getPolicy(), "context", "documentid", PIECE, "No name here was the first president.", attributes);
+            Assertions.assertEquals(0, filterResult2.getSpans().size());
+
+        }
 
     }
 

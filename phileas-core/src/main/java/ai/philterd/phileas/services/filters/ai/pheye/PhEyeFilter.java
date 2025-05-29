@@ -132,54 +132,52 @@ public class PhEyeFilter extends NerFilter {
 
         final HttpClientBuilder httpClientBuilder = HttpClients.custom().setConnectionManager(connectionManager);
 
-        try(CloseableHttpClient httpClient = httpClientBuilder.build()) {
+        final CloseableHttpClient httpClient = httpClientBuilder.build();
 
-            final HttpClientResponseHandler<String> responseHandler = response -> {
+        final HttpClientResponseHandler<String> responseHandler = response -> {
 
-                if (response.getCode() == 200) {
+            if (response.getCode() == 200) {
 
-                    final HttpEntity responseEntity = response.getEntity();
-                    return responseEntity != null ? EntityUtils.toString(responseEntity) : null;
+                final HttpEntity responseEntity = response.getEntity();
+                return responseEntity != null ? EntityUtils.toString(responseEntity) : null;
 
-                } else {
+            } else {
 
-                    // The request to philter-ner was not successful.
-                    LOGGER.error("PhEyeFilter failed with code {}", response.getCode());
-                    throw new IOException("Unable to process document. Received error response from philter-ner.");
+                // The request to philter-ner was not successful.
+                LOGGER.error("PhEyeFilter failed with code {}", response.getCode());
+                throw new IOException("Unable to process document. Received error response from philter-ner.");
 
-                }
+            }
 
-            };
+        };
 
-            final String responseBody = httpClient.execute(httpPost, responseHandler);
+        final String responseBody = httpClient.execute(httpPost, responseHandler);
 
-            if (responseBody != null) {
+        if (responseBody != null) {
 
-                final Type listType = new TypeToken<ArrayList<PhEyeSpan>>() {}.getType();
-                final List<PhEyeSpan> phEyeSpans = new Gson().fromJson(responseBody, listType);
+            final Type listType = new TypeToken<ArrayList<PhEyeSpan>>() {}.getType();
+            final List<PhEyeSpan> phEyeSpans = new Gson().fromJson(responseBody, listType);
 
-                if (CollectionUtils.isNotEmpty(phEyeSpans)) {
+            if (CollectionUtils.isNotEmpty(phEyeSpans)) {
 
-                    for (final PhEyeSpan phEyeSpan : phEyeSpans) {
+                for (final PhEyeSpan phEyeSpan : phEyeSpans) {
 
-                        // Only interested in spans matching the tag we are looking for, e.g. PER, LOC.
-                        if (labels.contains(phEyeSpan.getLabel())) {
+                    // Only interested in spans matching the tag we are looking for, e.g. PER, LOC.
+                    if (labels.contains(phEyeSpan.getLabel())) {
 
-                            // Check the confidence threshold.
-                            if (!thresholds.containsKey(phEyeSpan.getLabel().toUpperCase()) || phEyeSpan.getScore() >= thresholds.get(phEyeSpan.getLabel().toUpperCase())) {
+                        // Check the confidence threshold.
+                        if (!thresholds.containsKey(phEyeSpan.getLabel().toUpperCase()) || phEyeSpan.getScore() >= thresholds.get(phEyeSpan.getLabel().toUpperCase())) {
 
-                                // Get the window of text surrounding the token.
-                                final String[] window = getWindow(formattedInput, phEyeSpan.getStart(), phEyeSpan.getEnd());
+                            // Get the window of text surrounding the token.
+                            final String[] window = getWindow(formattedInput, phEyeSpan.getStart(), phEyeSpan.getEnd());
 
-                                final Span span = createSpan(policy, context, documentId, phEyeSpan.getText(),
-                                        window, phEyeSpan.getLabel(), phEyeSpan.getStart(), phEyeSpan.getEnd(),
-                                        phEyeSpan.getScore(), attributes);
+                            final Span span = createSpan(policy, context, documentId, phEyeSpan.getText(),
+                                    window, phEyeSpan.getLabel(), phEyeSpan.getStart(), phEyeSpan.getEnd(),
+                                    phEyeSpan.getScore(), attributes);
 
-                                // Span will be null if no span was created due to it being excluded.
-                                if (span != null) {
-                                    spans.add(span);
-                                }
-
+                            // Span will be null if no span was created due to it being excluded.
+                            if (span != null) {
+                                spans.add(span);
                             }
 
                         }
@@ -188,15 +186,15 @@ public class PhEyeFilter extends NerFilter {
 
                 }
 
-                LOGGER.debug("Returning {} NER spans from ph-eye.", spans.size());
-                return new FilterResult(context, documentId, piece, spans);
-
-            } else {
-
-                // We received null back which is not expected.
-                throw new IOException("Unable to process document. Received error response from philter-ner.");
-
             }
+
+            LOGGER.debug("Returning {} NER spans from ph-eye.", spans.size());
+            return new FilterResult(context, documentId, piece, spans);
+
+        } else {
+
+            // We received null back which is not expected.
+            throw new IOException("Unable to process document. Received error response from philter-ner.");
 
         }
 
