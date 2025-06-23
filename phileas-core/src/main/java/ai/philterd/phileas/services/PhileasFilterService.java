@@ -94,11 +94,7 @@ public class PhileasFilterService implements FilterService {
     // PHL-223: Face recognition
     //private final ImageProcessor imageProcessor;
 
-    public PhileasFilterService(final PhileasConfiguration phileasConfiguration, final CacheService cacheService) throws IOException {
-        this(phileasConfiguration, new NoOpMetricsService(), cacheService);
-    }
-
-    public PhileasFilterService(final PhileasConfiguration phileasConfiguration, final MetricsService metricsService, final CacheService cacheService) throws IOException {
+    public PhileasFilterService(final PhileasConfiguration phileasConfiguration, final MetricsService metricsService, final CacheService cacheService, final PolicyService policyService) throws IOException {
 
         LOGGER.info("Initializing Phileas engine.");
 
@@ -107,9 +103,21 @@ public class PhileasFilterService implements FilterService {
         // Configure the deserialization.
         final Gson gson = new GsonBuilder().registerTypeAdapter(String.class, new PlaceholderDeserializer()).create();
 
-        // Set the policy services.
-        this.policyService = buildPolicyService(phileasConfiguration, cacheService);
-        this.policyUtils = new PolicyUtils(policyService, gson);
+        // The policy service can either be passed in, or it can be null. If null, defer to what is in Phileas' configuration.
+        // This is to allow users of Phileas to provide any custom implementation of PolicyService they want, but
+        // be able to default to what's in Phileas' configurations.
+        if(policyService == null) {
+            if(StringUtils.equalsIgnoreCase(phileasConfiguration.policyService(), "memory")) {
+                this.policyService = new InMemoryPolicyService();
+            } else {
+                this.policyService = new LocalPolicyService(phileasConfiguration, cacheService);
+            }
+        } else {
+            // Use the provided implementation of PolicyService.
+            this.policyService = policyService;
+        }
+
+        this.policyUtils = new PolicyUtils(this.policyService, gson);
 
         // Set the alert service.
         this.alertService = new DefaultAlertService(cacheService);
@@ -123,6 +131,10 @@ public class PhileasFilterService implements FilterService {
         // Create a new unstructured document processor.
         this.unstructuredDocumentProcessor = new UnstructuredDocumentProcessor(metricsService, new VectorBasedSpanDisambiguationService(phileasConfiguration, cacheService));
 
+    }
+
+    public PhileasFilterService(final PhileasConfiguration phileasConfiguration, final CacheService cacheService) throws IOException {
+        this(phileasConfiguration, new NoOpMetricsService(), cacheService, null);
     }
 
     @Override
@@ -340,16 +352,6 @@ public class PhileasFilterService implements FilterService {
         }
 
         return binaryDocumentFilterResponse;
-
-    }
-
-    private PolicyService buildPolicyService(final PhileasConfiguration phileasConfiguration, final CacheService cacheService) {
-
-        if(StringUtils.equalsIgnoreCase(phileasConfiguration.policyService(), "memory")) {
-            return new InMemoryPolicyService();
-        } else {
-            return new LocalPolicyService(phileasConfiguration, cacheService);
-        }
 
     }
 
