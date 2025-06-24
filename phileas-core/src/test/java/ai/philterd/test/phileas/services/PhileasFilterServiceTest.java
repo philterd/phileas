@@ -23,9 +23,9 @@ import ai.philterd.phileas.model.policy.Policy;
 import ai.philterd.phileas.model.responses.BinaryDocumentFilterResponse;
 import ai.philterd.phileas.model.serializers.PlaceholderDeserializer;
 import ai.philterd.phileas.model.services.CacheService;
+import ai.philterd.phileas.model.services.PolicyService;
 import ai.philterd.phileas.services.PhileasFilterService;
 import ai.philterd.phileas.services.policies.InMemoryPolicyService;
-import ai.philterd.phileas.services.policies.LocalPolicyService;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.apache.commons.collections.CollectionUtils;
@@ -42,10 +42,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
-import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
@@ -114,19 +110,14 @@ public class PhileasFilterServiceTest {
 
         Assertions.assertTrue(documentContainsText(document, "Wendy"));
 
-        final Path temp = Files.createTempDirectory("philter");
-
-        final File file1 = Paths.get(temp.toFile().getAbsolutePath(), "pdf.json").toFile();
-        LOGGER.info("Writing policy to {}", file1.getAbsolutePath());
-        FileUtils.writeStringToFile(file1, gson.toJson(getPdfPolicy("pdf")), Charset.defaultCharset());
-
         Properties properties = new Properties();
-        
-        properties.setProperty("filter.policies.directory", temp.toFile().getAbsolutePath());
 
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties);
 
-        PhileasFilterService service = new PhileasFilterService(phileasConfiguration, cacheService);
+        final PolicyService policyService = new InMemoryPolicyService();
+        policyService.save(gson.toJson(getPdfPolicy("pdf")));
+
+        final PhileasFilterService service = new PhileasFilterService(phileasConfiguration, cacheService, policyService);
         final BinaryDocumentFilterResponse response = service.filter(List.of("pdf"), "context", "documentid", document, MimeType.APPLICATION_PDF, MimeType.APPLICATION_PDF);
 
         // Write the byte array to a file.
@@ -154,19 +145,13 @@ public class PhileasFilterServiceTest {
 
         Assertions.assertTrue(documentContainsText(document, "90210"));
 
-        final Path temp = Files.createTempDirectory("philter");
-
-        final File file1 = Paths.get(temp.toFile().getAbsolutePath(), "pdf.json").toFile();
-        LOGGER.info("Writing policy to {}", file1.getAbsolutePath());
-        FileUtils.writeStringToFile(file1, gson.toJson(getPdfPolicy("pdf")), Charset.defaultCharset());
-
-        Properties properties = new Properties();
-        
-        properties.setProperty("filter.policies.directory", temp.toFile().getAbsolutePath());
-
+        final Properties properties = new Properties();
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties);
 
-        PhileasFilterService service = new PhileasFilterService(phileasConfiguration, cacheService);
+        final PolicyService policyService = new InMemoryPolicyService();
+        policyService.save(gson.toJson(getPdfPolicy("pdf")));
+
+        PhileasFilterService service = new PhileasFilterService(phileasConfiguration, cacheService, policyService);
         final BinaryDocumentFilterResponse response = service.filter(Arrays.asList("pdf"), "context", "documentid", document, MimeType.APPLICATION_PDF, MimeType.APPLICATION_PDF);
 
         // Write the byte array to a file.
@@ -201,8 +186,9 @@ public class PhileasFilterServiceTest {
     void buildPolicyServiceMemory() throws IOException {
         final var properties = new Properties();
         properties.setProperty("filter.policies.service", "memory");
+        final PolicyService policyService = new InMemoryPolicyService();
         final var config = new PhileasConfiguration(properties);
-        final var service = new PhileasFilterService(config, cacheService);
+        final var service = new PhileasFilterService(config, cacheService, policyService);
 
         Assertions.assertInstanceOf(InMemoryPolicyService.class, service.getPolicyService());
     }
@@ -211,9 +197,10 @@ public class PhileasFilterServiceTest {
     void buildPolicyServiceLocal() throws IOException {
         final var properties = new Properties();
         properties.setProperty("filter.policies.service", "local");
+        final PolicyService policyService = new InMemoryPolicyService();
         final var config = new PhileasConfiguration(properties);
-        final var service = new PhileasFilterService(config, cacheService);
+        final var service = new PhileasFilterService(config, cacheService, policyService);
 
-        Assertions.assertInstanceOf(LocalPolicyService.class, service.getPolicyService());
+        Assertions.assertInstanceOf(InMemoryPolicyService.class, service.getPolicyService());
     }
 }
