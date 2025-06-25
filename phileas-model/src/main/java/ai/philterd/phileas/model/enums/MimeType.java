@@ -38,12 +38,7 @@ public enum MimeType {
     /**
      * image/jpeg
      */
-    IMAGE_JPEG("image/jpeg"),
-
-    /**
-     * application/fhir+json
-     */
-    APPLICATION_FHIRJSON("application/fhir+json");
+    IMAGE_JPEG("image/jpeg");
 
     private String value;
 

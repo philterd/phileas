@@ -93,25 +93,6 @@ public class Encryption {
 
     }
 
-    // This is for FHIR values.
-    /*public static List<StringType> encrypt(List<StringType> tokens, Crypto crypto) throws Exception {
-
-        final Cipher cipher = getCipher(crypto);
-
-        final List<StringType> encryptedTokens = new LinkedList<>();
-
-        for(StringType token : tokens) {
-
-            final byte[] encrypted = cipher.doFinal(token.asStringValue().getBytes(Charset.defaultCharset()));
-            final String output = Base64.encodeBase64String(encrypted);
-
-            encryptedTokens.add(new StringType(output));
-
-        }
-
-        return encryptedTokens;
-
-    }*/
     private static Cipher getCipher(final Crypto crypto) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidAlgorithmParameterException, InvalidKeyException, DecoderException {
 
         final byte[] secretKey = Hex.decodeHex(crypto.getKey());
