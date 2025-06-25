@@ -36,7 +36,7 @@ public class StateAbbreviationFilterStrategy extends StandardFilterStrategy {
 
     private static final Logger LOGGER = LogManager.getLogger(StateAbbreviationFilterStrategy.class);
 
-    private static final FilterType filterType = FilterType.STATE_ABBREVIATION;
+    private final FilterType filterType = FilterType.STATE_ABBREVIATION;
 
     @Override
     public FilterType getFilterType() {

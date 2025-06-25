@@ -47,7 +47,7 @@ public class ZipCodeFilterStrategy extends AbstractFilterStrategy {
     public static final String POPULATION = "population";
     public static final String ZERO_LEADING = "zero_leading";
 
-    private static final FilterType filterType = FilterType.ZIP_CODE;
+    private final FilterType filterType = FilterType.ZIP_CODE;
 
     private final transient ZipCodeMetadataService zipCodeMetadataService;
 

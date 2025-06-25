@@ -23,7 +23,7 @@ de-identify a document.
 
 ### Person's Names
 
-Phileas uses several methods to identify phEyeFilter's names.
+Phileas uses several methods to identify person's names.
 
 | Type                                                             | Description                                                           |
 |------------------------------------------------------------------|-----------------------------------------------------------------------|

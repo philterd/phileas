@@ -40,7 +40,7 @@ public class CurrencyFilterStrategy extends StandardFilterStrategy {
 
     private static final Logger LOGGER = LogManager.getLogger(CurrencyFilterStrategy.class);
 
-    private static final FilterType filterType = FilterType.CURRENCY;
+    private final FilterType filterType = FilterType.CURRENCY;
 
     @Override
     public FilterType getFilterType() {

@@ -34,7 +34,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Disabled("Disabled until this is an integration tests and there can be a ph-eye service running to test against.")
-public class PhEyeFilterTest extends AbstractFilterTest {
+public class PhEyeTest extends AbstractFilterTest {
 
     @Test
     public void filter1() throws Exception {

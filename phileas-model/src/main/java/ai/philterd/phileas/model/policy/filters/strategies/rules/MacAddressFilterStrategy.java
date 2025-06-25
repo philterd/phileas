@@ -36,7 +36,7 @@ public class MacAddressFilterStrategy extends StandardFilterStrategy {
 
     private static final Logger LOGGER = LogManager.getLogger(MacAddressFilterStrategy.class);
 
-    private static final FilterType filterType = FilterType.MAC_ADDRESS;
+    private final FilterType filterType = FilterType.MAC_ADDRESS;
 
     @Override
     public FilterType getFilterType() {

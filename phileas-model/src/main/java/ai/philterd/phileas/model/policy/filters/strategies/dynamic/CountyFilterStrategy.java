@@ -40,7 +40,7 @@ public class CountyFilterStrategy extends StandardFilterStrategy {
 
     private static final Logger LOGGER = LogManager.getLogger(CountyFilterStrategy.class);
 
-    private static final FilterType filterType = FilterType.LOCATION_COUNTY;
+    private final FilterType filterType = FilterType.LOCATION_COUNTY;
 
     @Override
     public FilterType getFilterType() {

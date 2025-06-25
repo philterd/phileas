@@ -36,7 +36,7 @@ public class HospitalFilterStrategy extends StandardFilterStrategy {
 
     private static final Logger LOGGER = LogManager.getLogger(HospitalFilterStrategy.class);
 
-    private static final FilterType filterType = FilterType.HOSPITAL;
+    private final FilterType filterType = FilterType.HOSPITAL;
 
     @Override
     public FilterType getFilterType() {

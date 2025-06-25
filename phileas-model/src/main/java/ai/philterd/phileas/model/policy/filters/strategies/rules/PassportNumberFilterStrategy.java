@@ -37,7 +37,7 @@ public class PassportNumberFilterStrategy extends StandardFilterStrategy {
 
     private static final Logger LOGGER = LogManager.getLogger(PassportNumberFilterStrategy.class);
 
-    private static final FilterType filterType = FilterType.PASSPORT_NUMBER;
+    private final FilterType filterType = FilterType.PASSPORT_NUMBER;
 
     @Override
     public FilterType getFilterType() {

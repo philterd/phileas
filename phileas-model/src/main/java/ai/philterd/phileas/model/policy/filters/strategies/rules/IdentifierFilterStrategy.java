@@ -36,7 +36,7 @@ public class IdentifierFilterStrategy extends StandardFilterStrategy {
 
     private static final Logger LOGGER = LogManager.getLogger(IdentifierFilterStrategy.class);
 
-    private static final FilterType filterType = FilterType.IDENTIFIER;
+    private final FilterType filterType = FilterType.IDENTIFIER;
 
     @Override
     public FilterType getFilterType() {

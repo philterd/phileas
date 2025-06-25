@@ -19,7 +19,7 @@ import ai.philterd.phileas.model.policy.filters.AbstractFilter;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public abstract class AbstractPhEyeFilter extends AbstractFilter {
+public abstract class AbstractPhEye extends AbstractFilter {
 
     @SerializedName("phEyeConfiguration")
     @Expose

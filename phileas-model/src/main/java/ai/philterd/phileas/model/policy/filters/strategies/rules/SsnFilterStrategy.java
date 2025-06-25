@@ -36,7 +36,7 @@ public class SsnFilterStrategy extends StandardFilterStrategy {
 
     private static final Logger LOGGER = LogManager.getLogger(SsnFilterStrategy.class);
 
-    private static final FilterType filterType = FilterType.SSN;
+    private final FilterType filterType = FilterType.SSN;
 
     @Override
     public FilterType getFilterType() {

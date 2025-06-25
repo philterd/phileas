@@ -29,7 +29,7 @@ import org.mockito.Mockito;
 
 import static org.mockito.Mockito.when;
 
-public class PhEyeFilterStrategyTest extends AbstractFilterStrategyTest {
+public class PhEyeStrategyTest extends AbstractFilterStrategyTest {
 
     public AbstractFilterStrategy getFilterStrategy() {
         return new PhEyeFilterStrategy();

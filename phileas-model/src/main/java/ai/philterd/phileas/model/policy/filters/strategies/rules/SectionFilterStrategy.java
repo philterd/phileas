@@ -36,7 +36,7 @@ public class SectionFilterStrategy extends StandardFilterStrategy {
 
     private static final Logger LOGGER = LogManager.getLogger(SectionFilterStrategy.class);
 
-    private static final FilterType filterType = FilterType.SECTION;
+    private final FilterType filterType = FilterType.SECTION;
 
     @Override
     public FilterType getFilterType() {

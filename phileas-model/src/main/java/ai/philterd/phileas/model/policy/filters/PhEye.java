@@ -15,7 +15,7 @@
  */
 package ai.philterd.phileas.model.policy.filters;
 
-import ai.philterd.phileas.model.policy.filters.pheye.AbstractPhEyeFilter;
+import ai.philterd.phileas.model.policy.filters.pheye.AbstractPhEye;
 import ai.philterd.phileas.model.policy.filters.strategies.ai.PhEyeFilterStrategy;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
@@ -24,7 +24,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-public class PhEyeFilter extends AbstractPhEyeFilter {
+public class PhEye extends AbstractPhEye {
 
     @SerializedName("phEyeFilterStrategies")
     @Expose

@@ -39,7 +39,7 @@ public class HospitalAbbreviationFilterStrategy extends StandardFilterStrategy {
 
     private static final Logger LOGGER = LogManager.getLogger(HospitalAbbreviationFilterStrategy.class);
 
-    private static final FilterType filterType = FilterType.HOSPITAL_ABBREVIATION;
+    private final FilterType filterType = FilterType.HOSPITAL_ABBREVIATION;
 
     @Override
     public FilterType getFilterType() {

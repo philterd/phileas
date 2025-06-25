@@ -36,7 +36,7 @@ public class AgeFilterStrategy extends StandardFilterStrategy {
 
     private static final Logger LOGGER = LogManager.getLogger(AgeFilterStrategy.class);
 
-    private static final FilterType filterType = FilterType.AGE;
+    private final FilterType filterType = FilterType.AGE;
 
     @Override
     public FilterType getFilterType() {
