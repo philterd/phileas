@@ -33,7 +33,9 @@ import ai.philterd.phileas.model.policy.filters.strategies.rules.DriversLicenseF
 import ai.philterd.phileas.model.responses.FilterResponse;
 import ai.philterd.phileas.model.serializers.PlaceholderDeserializer;
 import ai.philterd.phileas.model.services.CacheService;
+import ai.philterd.phileas.model.services.PolicyService;
 import ai.philterd.phileas.services.PhileasFilterService;
+import ai.philterd.phileas.services.policies.InMemoryPolicyService;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.apache.commons.io.FileUtils;
@@ -58,10 +60,8 @@ import java.util.Properties;
 import static ai.philterd.test.phileas.services.EndToEndTestsHelper.getPolicy;
 import static ai.philterd.test.phileas.services.EndToEndTestsHelper.getPolicyJustCreditCard;
 import static ai.philterd.test.phileas.services.EndToEndTestsHelper.getPolicyJustCreditCardNotInUnixTimestamps;
-import static ai.philterd.test.phileas.services.EndToEndTestsHelper.getPolicyJustIdentifier;
 import static ai.philterd.test.phileas.services.EndToEndTestsHelper.getPolicyJustPhoneNumber;
 import static ai.philterd.test.phileas.services.EndToEndTestsHelper.getPolicyJustStreetAddress;
-import static ai.philterd.test.phileas.services.EndToEndTestsHelper.getPolicySSNAndZipCode;
 import static ai.philterd.test.phileas.services.EndToEndTestsHelper.getPolicyWithSentiment;
 import static ai.philterd.test.phileas.services.EndToEndTestsHelper.getPolicyZipCodeWithIgnored;
 
@@ -86,18 +86,13 @@ public class EndToEndTests {
     @Test
     public void endToEnd1() throws Exception {
 
-        final Path temp = Files.createTempDirectory("philter");
-        final File file = Paths.get(temp.toFile().getAbsolutePath(), "default.json").toFile();
-        LOGGER.info("Writing policy to {}", file.getAbsolutePath());
-        FileUtils.writeStringToFile(file, gson.toJson(getPolicy("default")), Charset.defaultCharset());
-
-        Properties properties = new Properties();
-        
-        properties.setProperty("filter.policies.directory", temp.toFile().getAbsolutePath());
-
+        final Properties properties = new Properties();
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties);
 
-        final PhileasFilterService service = new PhileasFilterService(phileasConfiguration, cacheService);
+        final PolicyService policyService = new InMemoryPolicyService();
+        policyService.save(gson.toJson(getPolicy("default")));
+
+        final PhileasFilterService service = new PhileasFilterService(phileasConfiguration, cacheService, policyService);
         final FilterResponse response = service.filter(List.of("default"), "context", "documentid", "George Washington was president and his ssn was 123-45-6789 and he lived at 90210.", MimeType.TEXT_PLAIN);
 
         LOGGER.info(response.getFilteredText());
@@ -110,18 +105,13 @@ public class EndToEndTests {
     @Test
     public void endToEnd2() throws Exception {
 
-        final Path temp = Files.createTempDirectory("philter");
-        final File file = Paths.get(temp.toFile().getAbsolutePath(), "default.json").toFile();
-        LOGGER.info("Writing policy to {}", file.getAbsolutePath());
-        FileUtils.writeStringToFile(file, gson.toJson(getPolicy("default")), Charset.defaultCharset());
-
-        Properties properties = new Properties();
-        
-        properties.setProperty("filter.policies.directory", temp.toFile().getAbsolutePath());
-
+        final Properties properties = new Properties();
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties);
 
-        PhileasFilterService service = new PhileasFilterService(phileasConfiguration, cacheService);
+        final PolicyService policyService = new InMemoryPolicyService();
+        policyService.save(gson.toJson(getPolicy("default")));
+
+        final PhileasFilterService service = new PhileasFilterService(phileasConfiguration, cacheService, policyService);
         final FilterResponse response = service.filter(List.of("default"), "context", "documentid", "My email is test@something.com and cc is 4121742025464465", MimeType.TEXT_PLAIN);
 
         LOGGER.info(response.getFilteredText());
@@ -134,18 +124,13 @@ public class EndToEndTests {
     @Test
     public void endToEnd3() throws Exception {
 
-        final Path temp = Files.createTempDirectory("philter");
-        final File file = Paths.get(temp.toFile().getAbsolutePath(), "default.json").toFile();
-        LOGGER.info("Writing policy to {}", file.getAbsolutePath());
-        FileUtils.writeStringToFile(file, gson.toJson(getPolicy("default")), Charset.defaultCharset());
-
-        Properties properties = new Properties();
-        
-        properties.setProperty("filter.policies.directory", temp.toFile().getAbsolutePath());
-
+        final Properties properties = new Properties();
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties);
 
-        PhileasFilterService service = new PhileasFilterService(phileasConfiguration, cacheService);
+        final PolicyService policyService = new InMemoryPolicyService();
+        policyService.save(gson.toJson(getPolicy("default")));
+
+        final PhileasFilterService service = new PhileasFilterService(phileasConfiguration, cacheService, policyService);
         final FilterResponse response = service.filter(List.of("default"), "context", "documentid", "test@something.com is email and cc is 4121742025464465", MimeType.TEXT_PLAIN);
 
         LOGGER.info(response.getFilteredText());
@@ -158,18 +143,13 @@ public class EndToEndTests {
     @Test
     public void endToEnd4() throws Exception {
 
-        final Path temp = Files.createTempDirectory("philter");
-        final File file = Paths.get(temp.toFile().getAbsolutePath(), "default.json").toFile();
-        LOGGER.info("Writing policy to {}", file.getAbsolutePath());
-        FileUtils.writeStringToFile(file, gson.toJson(getPolicy("default")), Charset.defaultCharset());
-
-        Properties properties = new Properties();
-        
-        properties.setProperty("filter.policies.directory", temp.toFile().getAbsolutePath());
-
+        final Properties properties = new Properties();
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties);
 
-        PhileasFilterService service = new PhileasFilterService(phileasConfiguration, cacheService);
+        final PolicyService policyService = new InMemoryPolicyService();
+        policyService.save(gson.toJson(getPolicy("default")));
+
+        final PhileasFilterService service = new PhileasFilterService(phileasConfiguration, cacheService, policyService);
         final FilterResponse response = service.filter(List.of("default"), "context", "documentid", "test@something.com", MimeType.TEXT_PLAIN);
 
         LOGGER.info(response.getFilteredText());
@@ -182,18 +162,13 @@ public class EndToEndTests {
     @Test
     public void endToEnd5() throws Exception {
 
-        final Path temp = Files.createTempDirectory("philter");
-        final File file = Paths.get(temp.toFile().getAbsolutePath(), "default.json").toFile();
-        LOGGER.info("Writing policy to {}", file.getAbsolutePath());
-        FileUtils.writeStringToFile(file, gson.toJson(getPolicy("default")), Charset.defaultCharset());
-
-        Properties properties = new Properties();
-        
-        properties.setProperty("filter.policies.directory", temp.toFile().getAbsolutePath());
-
+        final Properties properties = new Properties();
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties);
 
-        PhileasFilterService service = new PhileasFilterService(phileasConfiguration, cacheService);
+        final PolicyService policyService = new InMemoryPolicyService();
+        policyService.save(gson.toJson(getPolicy("default")));
+
+        final PhileasFilterService service = new PhileasFilterService(phileasConfiguration, cacheService, policyService);
         final FilterResponse response = service.filter(List.of("default"), "context", "documentid", "90210", MimeType.TEXT_PLAIN);
 
         LOGGER.info(response.getFilteredText());
@@ -206,18 +181,13 @@ public class EndToEndTests {
     @Test
     public void endToEnd6() throws Exception {
 
-        final Path temp = Files.createTempDirectory("philter");
-        final File file = Paths.get(temp.toFile().getAbsolutePath(), "default.json").toFile();
-        LOGGER.info("Writing policy to {}", file.getAbsolutePath());
-        FileUtils.writeStringToFile(file, gson.toJson(getPolicy("default")), Charset.defaultCharset());
-
-        Properties properties = new Properties();
-        
-        properties.setProperty("filter.policies.directory", temp.toFile().getAbsolutePath());
-
+        final Properties properties = new Properties();
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties);
 
-        PhileasFilterService service = new PhileasFilterService(phileasConfiguration, cacheService);
+        final PolicyService policyService = new InMemoryPolicyService();
+        policyService.save(gson.toJson(getPolicy("default")));
+
+        final PhileasFilterService service = new PhileasFilterService(phileasConfiguration, cacheService, policyService);
         final FilterResponse response = service.filter(List.of("default"), "context", "documentid", "his name was JEFF.", MimeType.TEXT_PLAIN);
 
         LOGGER.info(response.getFilteredText());
@@ -230,18 +200,13 @@ public class EndToEndTests {
     @Test
     public void endToEnd7() throws Exception {
 
-        final Path temp = Files.createTempDirectory("philter");
-        final File file = Paths.get(temp.toFile().getAbsolutePath(), "default.json").toFile();
-        LOGGER.info("Writing policy to {}", file.getAbsolutePath());
-        FileUtils.writeStringToFile(file, gson.toJson(getPolicy("default")), Charset.defaultCharset());
-
-        Properties properties = new Properties();
-        
-        properties.setProperty("filter.policies.directory", temp.toFile().getAbsolutePath());
-
+        final Properties properties = new Properties();
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties);
 
-        PhileasFilterService service = new PhileasFilterService(phileasConfiguration, cacheService);
+        final PolicyService policyService = new InMemoryPolicyService();
+        policyService.save(gson.toJson(getPolicy("default")));
+
+        final PhileasFilterService service = new PhileasFilterService(phileasConfiguration, cacheService, policyService);
         final FilterResponse response = service.filter(List.of("default"), "context", "documentid", "he was seen on 10-19-2020.", MimeType.TEXT_PLAIN);
 
         LOGGER.info(response.getFilteredText());
@@ -254,18 +219,13 @@ public class EndToEndTests {
     @Test
     public void endToEnd8() throws Exception {
 
-        final Path temp = Files.createTempDirectory("philter");
-        final File file = Paths.get(temp.toFile().getAbsolutePath(), "default.json").toFile();
-        LOGGER.info("Writing policy to {}", file.getAbsolutePath());
-        FileUtils.writeStringToFile(file, gson.toJson(getPolicy("default")), Charset.defaultCharset());
-
-        Properties properties = new Properties();
-        
-        properties.setProperty("filter.policies.directory", temp.toFile().getAbsolutePath());
-
+        final Properties properties = new Properties();
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties);
 
-        PhileasFilterService service = new PhileasFilterService(phileasConfiguration, cacheService);
+        final PolicyService policyService = new InMemoryPolicyService();
+        policyService.save(gson.toJson(getPolicy("default")));
+
+        final PhileasFilterService service = new PhileasFilterService(phileasConfiguration, cacheService, policyService);
         final FilterResponse response = service.filter(List.of("default"), "context", "documentid",
                 "George Washington was president." + System.lineSeparator() + "Abraham Lincoln was president.", MimeType.TEXT_PLAIN);
 
@@ -279,18 +239,13 @@ public class EndToEndTests {
     @Test
     public void endToEnd9() throws Exception {
 
-        final Path temp = Files.createTempDirectory("philter");
-        final File file = Paths.get(temp.toFile().getAbsolutePath(), "default.json").toFile();
-        LOGGER.info("Writing policy to {}", file.getAbsolutePath());
-        FileUtils.writeStringToFile(file, gson.toJson(getPolicy("default")), Charset.defaultCharset());
-
-        Properties properties = new Properties();
-        
-        properties.setProperty("filter.policies.directory", temp.toFile().getAbsolutePath());
-
+        final Properties properties = new Properties();
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties);
 
-        final PhileasFilterService service = new PhileasFilterService(phileasConfiguration, cacheService);
+        final PolicyService policyService = new InMemoryPolicyService();
+        policyService.save(gson.toJson(getPolicy("default")));
+
+        final PhileasFilterService service = new PhileasFilterService(phileasConfiguration, cacheService, policyService);
         final FilterResponse response = service.filter(List.of("default"), "context", "documentid", "George Washington was president and his ssn was 123-45-6789 and he lived at 90210. The name 456 should be filtered. Jeff Smith should be ignored.", MimeType.TEXT_PLAIN);
 
         LOGGER.info(response.getFilteredText());
@@ -303,20 +258,15 @@ public class EndToEndTests {
     @Test
     public void endToEnd10() throws Exception {
 
-        final Path temp = Files.createTempDirectory("philter");
-        final File file = Paths.get(temp.toFile().getAbsolutePath(), "default.json").toFile();
-        LOGGER.info("Writing policy to {}", file.getAbsolutePath());
-        FileUtils.writeStringToFile(file, gson.toJson(getPolicy("default")), Charset.defaultCharset());
-
-        Properties properties = new Properties();
-        
-        properties.setProperty("filter.policies.directory", temp.toFile().getAbsolutePath());
-
+        final Properties properties = new Properties();
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties);
+
+        final PolicyService policyService = new InMemoryPolicyService();
+        policyService.save(gson.toJson(getPolicy("default")));
 
         final String input = IOUtils.toString(this.getClass().getResourceAsStream("/inputs/1.txt"), Charset.defaultCharset());
 
-        final PhileasFilterService service = new PhileasFilterService(phileasConfiguration, cacheService);
+        final PhileasFilterService service = new PhileasFilterService(phileasConfiguration, cacheService, policyService);
         final FilterResponse response = service.filter(List.of("default"), "context", "documentid", input, MimeType.TEXT_PLAIN);
 
         LOGGER.info(response.getFilteredText());
@@ -332,20 +282,15 @@ public class EndToEndTests {
     @Test
     public void endToEnd11() throws Exception {
 
-        final Path temp = Files.createTempDirectory("philter");
-        final File file = Paths.get(temp.toFile().getAbsolutePath(), "default.json").toFile();
-        LOGGER.info("Writing policy to {}", file.getAbsolutePath());
-        FileUtils.writeStringToFile(file, gson.toJson(getPolicy("default")), Charset.defaultCharset());
-
-        Properties properties = new Properties();
-        
-        properties.setProperty("filter.policies.directory", temp.toFile().getAbsolutePath());
-
+        final Properties properties = new Properties();
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties);
+
+        final PolicyService policyService = new InMemoryPolicyService();
+        policyService.save(gson.toJson(getPolicy("default")));
 
         final String input = "IN THE UNITED STATES DISTRICT COURT \nEASTERN DISTRICT OF ARKANSAS \nWESTERN DIVISION \nJAMES EDWARD SMITH, \nafk/a James Edward Bridges, \nADC#103093 \nv. No. 4:14-cv-455-DPM \nPLAINTIFF \nCHARLES A. SMITH; \nMARY ANN CONLEY, \nafk/a Mary Ann Smith; and \nROBERT CASTILLOW DEFENDANTS \nORDER \nJames Smith's prose complaint must be dismissed without prejudice. \nHe hasn't paid the filing fee, moved to proceed in forma pauperis, or provided \nproof of service on any defendant. FED. R. CIV. P. 4(I); Local Rule 5.5(c)(2). \nSo Ordered. \nD.P. Marshall Jr. \nUnited States District Judge \nCase 4:14-cv-00455-DPM   Document 2   Filed 12/09/14   Page 1 of 1\n";
 
-        final PhileasFilterService service = new PhileasFilterService(phileasConfiguration, cacheService);
+        final PhileasFilterService service = new PhileasFilterService(phileasConfiguration, cacheService, policyService);
         final FilterResponse response = service.filter(List.of("default"), "context", "documentid", input, MimeType.TEXT_PLAIN);
 
         LOGGER.info(response.getFilteredText());
@@ -358,20 +303,15 @@ public class EndToEndTests {
     @Test
     public void endToEnd12() throws Exception {
 
-        final Path temp = Files.createTempDirectory("philter");
-        final File file = Paths.get(temp.toFile().getAbsolutePath(), "default.json").toFile();
-        LOGGER.info("Writing policy to {}", file.getAbsolutePath());
-        FileUtils.writeStringToFile(file, gson.toJson(getPolicy("default")), Charset.defaultCharset());
-
-        Properties properties = new Properties();
-        
-        properties.setProperty("filter.policies.directory", temp.toFile().getAbsolutePath());
-
+        final Properties properties = new Properties();
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties);
+
+        final PolicyService policyService = new InMemoryPolicyService();
+        policyService.save(gson.toJson(getPolicy("default")));
 
         final String input = IOUtils.toString(this.getClass().getResourceAsStream("/inputs/Oxford_City_unveil_merger_to_expand_their_youth_system.json.txt"), Charset.defaultCharset());
 
-        final PhileasFilterService service = new PhileasFilterService(phileasConfiguration, cacheService);
+        final PhileasFilterService service = new PhileasFilterService(phileasConfiguration, cacheService, policyService);
         final FilterResponse response = service.filter(List.of("default"), "context", "documentid", input, MimeType.TEXT_PLAIN);
 
         LOGGER.info(response.getFilteredText());
@@ -387,22 +327,15 @@ public class EndToEndTests {
     @Test
     public void endToEnd13() throws Exception {
 
-        // This test was written for PHL-261.
-
-        final Path temp = Files.createTempDirectory("philter");
-        final File file = Paths.get(temp.toFile().getAbsolutePath(), "default.json").toFile();
-        LOGGER.info("Writing policy to {}", file.getAbsolutePath());
-        FileUtils.writeStringToFile(file, gson.toJson(getPolicy("default")), Charset.defaultCharset());
-
-        Properties properties = new Properties();
-        
-        properties.setProperty("filter.policies.directory", temp.toFile().getAbsolutePath());
-
+        final Properties properties = new Properties();
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties);
+
+        final PolicyService policyService = new InMemoryPolicyService();
+        policyService.save(gson.toJson(getPolicy("default")));
 
         final String input = IOUtils.toString(this.getClass().getResourceAsStream("/inputs/Kinross_reports_strong_2020_secondquarter_results.json.txt"), Charset.defaultCharset());
 
-        final PhileasFilterService service = new PhileasFilterService(phileasConfiguration, cacheService);
+        final PhileasFilterService service = new PhileasFilterService(phileasConfiguration, cacheService, policyService);
         final FilterResponse response = service.filter(List.of("default"), "context", "documentid", input, MimeType.TEXT_PLAIN);
 
         LOGGER.info(response.getFilteredText());
@@ -418,20 +351,15 @@ public class EndToEndTests {
     @Test
     public void endToEnd14() throws Exception {
 
-        final Path temp = Files.createTempDirectory("philter");
-        final File file = Paths.get(temp.toFile().getAbsolutePath(), "default.json").toFile();
-        LOGGER.info("Writing policy to {}", file.getAbsolutePath());
-        FileUtils.writeStringToFile(file, gson.toJson(getPolicy("default")), Charset.defaultCharset());
-
-        Properties properties = new Properties();
-        
-        properties.setProperty("filter.policies.directory", temp.toFile().getAbsolutePath());
-
+        final Properties properties = new Properties();
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties);
+
+        final PolicyService policyService = new InMemoryPolicyService();
+        policyService.save(gson.toJson(getPolicy("default")));
 
         final String input = IOUtils.toString(this.getClass().getResourceAsStream("/inputs/Donations_to_Black_Lives_Matter_Group_Dont_Go_to_DNC.json.txt"), Charset.defaultCharset());
 
-        final PhileasFilterService service = new PhileasFilterService(phileasConfiguration, cacheService);
+        final PhileasFilterService service = new PhileasFilterService(phileasConfiguration, cacheService, policyService);
         final FilterResponse response = service.filter(List.of("default"), "context", "documentid", input, MimeType.TEXT_PLAIN);
 
         LOGGER.info(response.getFilteredText());
@@ -447,20 +375,15 @@ public class EndToEndTests {
     @Test
     public void endToEnd15() throws Exception {
 
-        final Path temp = Files.createTempDirectory("philter");
-        final File file = Paths.get(temp.toFile().getAbsolutePath(), "default.json").toFile();
-        LOGGER.info("Writing policy to {}", file.getAbsolutePath());
-        FileUtils.writeStringToFile(file, gson.toJson(getPolicy("default")), Charset.defaultCharset());
-
-        Properties properties = new Properties();
-        
-        properties.setProperty("filter.policies.directory", temp.toFile().getAbsolutePath());
-
+        final Properties properties = new Properties();
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties);
+
+        final PolicyService policyService = new InMemoryPolicyService();
+        policyService.save(gson.toJson(getPolicy("default")));
 
         final String input = IOUtils.toString(this.getClass().getResourceAsStream("/inputs/Fantasy_Baseball_Winners__Losers_Sixto_Sanchez_and_Jeff_McNeil_stay_hot.json.txt"), Charset.defaultCharset());
 
-        final PhileasFilterService service = new PhileasFilterService(phileasConfiguration, cacheService);
+        final PhileasFilterService service = new PhileasFilterService(phileasConfiguration, cacheService, policyService);
         final FilterResponse response = service.filter(List.of("default"), "context", "documentid", input, MimeType.TEXT_PLAIN);
 
         LOGGER.info(response.getFilteredText());
@@ -476,22 +399,15 @@ public class EndToEndTests {
     @Test
     public void endToEnd16() throws Exception {
 
-        final Path temp = Files.createTempDirectory("philter");
-        final File file = Paths.get(temp.toFile().getAbsolutePath(), "default.json").toFile();
-        LOGGER.info("Writing policy to {}", file.getAbsolutePath());
-        final String policy = gson.toJson(getPolicyJustIdentifier("default"));
-        LOGGER.info(policy);
-        FileUtils.writeStringToFile(file, policy);
-
-        Properties properties = new Properties();
-        
-        properties.setProperty("filter.policies.directory", temp.toFile().getAbsolutePath());
-
+        final Properties properties = new Properties();
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties);
+
+        final PolicyService policyService = new InMemoryPolicyService();
+        policyService.save(gson.toJson(getPolicy("default")));
 
         final String input = "the id is 123456.";
 
-        final PhileasFilterService service = new PhileasFilterService(phileasConfiguration, cacheService);
+        final PhileasFilterService service = new PhileasFilterService(phileasConfiguration, cacheService, policyService);
         final FilterResponse response = service.filter(List.of("default"), "context", "documentid", input, MimeType.TEXT_PLAIN);
 
         LOGGER.info(response.getFilteredText());
@@ -507,22 +423,15 @@ public class EndToEndTests {
     @Test
     public void endToEnd17() throws Exception {
 
-        final Path temp = Files.createTempDirectory("philter");
-        final File file = Paths.get(temp.toFile().getAbsolutePath(), "streetaddress.json").toFile();
-        LOGGER.info("Writing policy to {}", file.getAbsolutePath());
-        final String policy = gson.toJson(getPolicyJustStreetAddress("streetaddress"));
-        LOGGER.info(policy);
-        FileUtils.writeStringToFile(file, policy);
-
-        Properties properties = new Properties();
-        
-        properties.setProperty("filter.policies.directory", temp.toFile().getAbsolutePath());
-
+        final Properties properties = new Properties();
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties);
+
+        final PolicyService policyService = new InMemoryPolicyService();
+        policyService.save(gson.toJson(getPolicyJustStreetAddress("streetaddress")));
 
         final String input = "he lived at 100 main street";
 
-        final PhileasFilterService service = new PhileasFilterService(phileasConfiguration, cacheService);
+        final PhileasFilterService service = new PhileasFilterService(phileasConfiguration, cacheService, policyService);
         final FilterResponse response = service.filter(List.of("streetaddress"), "context", "documentid", input, MimeType.TEXT_PLAIN);
 
         LOGGER.info(response.getFilteredText());
@@ -571,10 +480,13 @@ public class EndToEndTests {
         PhileasConfiguration configuration = new PhileasConfiguration(properties, "phileas");
 
         final CacheService inMemoryCache = new InMemoryCache();
-
+        
+        final PolicyService policyService = new InMemoryPolicyService();
+        policyService.save(gson.toJson(policy));
+        
         final String input = "the payment method is 4532613702852251 visa or 1Lbcfr7sAHTD9CgdQo3HTMTkV8LK4ZnX71 BTC from user.";
 
-        final PhileasFilterService service = new PhileasFilterService(configuration, inMemoryCache);
+        final PhileasFilterService service = new PhileasFilterService(configuration, inMemoryCache, policyService);
         final FilterResponse response = service.filter(policy, "context", "documentid", input, MimeType.TEXT_PLAIN);
 
         LOGGER.info(response.getFilteredText());
@@ -594,22 +506,15 @@ public class EndToEndTests {
     @Test
     public void endToEndJustPhoneNumbers() throws Exception {
 
-        final Path temp = Files.createTempDirectory("philter");
-        final File file = Paths.get(temp.toFile().getAbsolutePath(), "phonenumbers.json").toFile();
-        LOGGER.info("Writing policy to {}", file.getAbsolutePath());
-        final String policy = gson.toJson(getPolicyJustPhoneNumber("phonenumbers"));
-        LOGGER.info(policy);
-        FileUtils.writeStringToFile(file, policy, Charset.defaultCharset());
-
-        Properties properties = new Properties();
-        
-        properties.setProperty("filter.policies.directory", temp.toFile().getAbsolutePath());
-
+        final Properties properties = new Properties();
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties);
+
+        final PolicyService policyService = new InMemoryPolicyService();
+        policyService.save(gson.toJson(getPolicyJustPhoneNumber("phonenumbers")));
 
         final String input = "his number is 123-456-7890. her number is 9999999999. her number is 102-304-5678.";
 
-        final PhileasFilterService service = new PhileasFilterService(phileasConfiguration, cacheService);
+        final PhileasFilterService service = new PhileasFilterService(phileasConfiguration, cacheService, policyService);
         final FilterResponse response = service.filter(List.of("phonenumbers"), "context", "documentid", input, MimeType.TEXT_PLAIN);
 
         LOGGER.info(response.getFilteredText());
@@ -632,12 +537,15 @@ public class EndToEndTests {
 
         final Policy policy = getPolicyJustStreetAddress("streetaddress");
 
-        Properties properties = new Properties();
+        final Properties properties = new Properties();
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties);
+
+        final PolicyService policyService = new InMemoryPolicyService();
+        policyService.save(gson.toJson(policy));
 
         final String input = "he lived at 100 main street";
 
-        final PhileasFilterService service = new PhileasFilterService(phileasConfiguration, cacheService);
+        final PhileasFilterService service = new PhileasFilterService(phileasConfiguration, cacheService, policyService);
         final FilterResponse response = service.filter(policy, "context", "documentid", input, MimeType.TEXT_PLAIN);
 
         LOGGER.info(response.getFilteredText());
@@ -653,22 +561,15 @@ public class EndToEndTests {
     @Test
     public void endToEndWithSentiment() throws Exception {
 
-        final Path temp = Files.createTempDirectory("philter");
-        final File file = Paths.get(temp.toFile().getAbsolutePath(), "sentiment.json").toFile();
-        LOGGER.info("Writing policy to {}", file.getAbsolutePath());
-        final String policy = gson.toJson(getPolicyWithSentiment("sentiment"));
-        LOGGER.info(policy);
-        FileUtils.writeStringToFile(file, policy);
-
-        Properties properties = new Properties();
-        
-        properties.setProperty("filter.policies.directory", temp.toFile().getAbsolutePath());
-
+        final Properties properties = new Properties();
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties);
+
+        final PolicyService policyService = new InMemoryPolicyService();
+        policyService.save(gson.toJson(getPolicyWithSentiment("sentiment")));
 
         final String input = "his ssn was 123-45-6789";
 
-        final PhileasFilterService service = new PhileasFilterService(phileasConfiguration, cacheService);
+        final PhileasFilterService service = new PhileasFilterService(phileasConfiguration, cacheService, policyService);
         final FilterResponse response = service.filter(List.of("sentiment"), "context", "documentid", input, MimeType.TEXT_PLAIN);
 
         LOGGER.info(response.getFilteredText());
@@ -693,18 +594,13 @@ public class EndToEndTests {
         policy.setName("custom-dictionary");
         policy.getIdentifiers().setCustomDictionaries(List.of(customDictionary));
 
-        final Path temp = Files.createTempDirectory("philter");
-        final File file = Paths.get(temp.toFile().getAbsolutePath(), "default.json").toFile();
-        FileUtils.writeStringToFile(file, gson.toJson(policy), Charset.defaultCharset());
-        LOGGER.info("Policy written to {}", file.getAbsolutePath());
-
         final Properties properties = new Properties();
-        
-        properties.setProperty("filter.policies.directory", temp.toFile().getAbsolutePath());
-
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties);
 
-        final PhileasFilterService service = new PhileasFilterService(phileasConfiguration, cacheService);
+        final PolicyService policyService = new InMemoryPolicyService();
+        policyService.save(gson.toJson(policy));
+
+        final PhileasFilterService service = new PhileasFilterService(phileasConfiguration, cacheService, policyService);
         final FilterResponse response = service.filter(List.of("default"), "context", "documentid", "his name was samuel and george.", MimeType.TEXT_PLAIN);
 
         LOGGER.info(response.getFilteredText());
@@ -734,17 +630,13 @@ public class EndToEndTests {
         policy.setName("custom-dictionary");
         policy.getIdentifiers().setCustomDictionaries(List.of(customDictionary));
 
-        final File file = Paths.get(temp.toFile().getAbsolutePath(), "default.json").toFile();
-        FileUtils.writeStringToFile(file, gson.toJson(policy), Charset.defaultCharset());
-        LOGGER.info("Policy written to {}", file.getAbsolutePath());
-
         final Properties properties = new Properties();
-        
-        properties.setProperty("filter.policies.directory", temp.toFile().getAbsolutePath());
-
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties);
 
-        final PhileasFilterService service = new PhileasFilterService(phileasConfiguration, cacheService);
+        final PolicyService policyService = new InMemoryPolicyService();
+        policyService.save(gson.toJson(policy));
+
+        final PhileasFilterService service = new PhileasFilterService(phileasConfiguration, cacheService, policyService);
         final FilterResponse response = service.filter(List.of("default"), "context", "documentid", "his name was samuel and george.", MimeType.TEXT_PLAIN);
 
         LOGGER.info(response.getFilteredText());
@@ -773,17 +665,13 @@ public class EndToEndTests {
         policy.setName("custom-dictionary-bloom");
         policy.getIdentifiers().setCustomDictionaries(List.of(customDictionary));
 
-        final File file = Paths.get(temp.toFile().getAbsolutePath(), "default.json").toFile();
-        FileUtils.writeStringToFile(file, gson.toJson(policy), Charset.defaultCharset());
-        LOGGER.info("Policy written to {}", file.getAbsolutePath());
-
         final Properties properties = new Properties();
-        
-        properties.setProperty("filter.policies.directory", temp.toFile().getAbsolutePath());
-
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties);
 
-        final PhileasFilterService service = new PhileasFilterService(phileasConfiguration, cacheService);
+        final PolicyService policyService = new InMemoryPolicyService();
+        policyService.save(gson.toJson(policy));
+
+        final PhileasFilterService service = new PhileasFilterService(phileasConfiguration, cacheService, policyService);
         final FilterResponse response = service.filter(List.of("default"), "context", "documentid", "his name was samuel.", MimeType.TEXT_PLAIN);
 
         LOGGER.info(response.getFilteredText());
@@ -796,18 +684,13 @@ public class EndToEndTests {
     @Test
     public void endToEndWithoutDocumentId() throws Exception {
 
-        final Path temp = Files.createTempDirectory("philter");
-        final File file = Paths.get(temp.toFile().getAbsolutePath(), "default.json").toFile();
-        LOGGER.info("Writing policy to {}", file.getAbsolutePath());
-        FileUtils.writeStringToFile(file, gson.toJson(getPolicy("default")), Charset.defaultCharset());
-
-        Properties properties = new Properties();
-        
-        properties.setProperty("filter.policies.directory", temp.toFile().getAbsolutePath());
-
+        final Properties properties = new Properties();
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties);
 
-        final PhileasFilterService service = new PhileasFilterService(phileasConfiguration, cacheService);
+        final PolicyService policyService = new InMemoryPolicyService();
+        policyService.save(gson.toJson(getPolicy("default")));
+
+        final PhileasFilterService service = new PhileasFilterService(phileasConfiguration, cacheService, policyService);
         final FilterResponse response = service.filter(List.of("default"), "context", null, "his name was JEFF.", MimeType.TEXT_PLAIN);
 
         LOGGER.info("Generated document ID: " + response.getDocumentId());
@@ -821,23 +704,14 @@ public class EndToEndTests {
     @Test
     public void endToEndMultiplePolicies() throws Exception {
 
-        final Path temp = Files.createTempDirectory("philter");
-
-        final File file1 = Paths.get(temp.toFile().getAbsolutePath(), "default.json").toFile();
-        LOGGER.info("Writing policy to {}", file1.getAbsolutePath());
-        FileUtils.writeStringToFile(file1, gson.toJson(getPolicy("default")), Charset.defaultCharset());
-
-        final File file2 = Paths.get(temp.toFile().getAbsolutePath(), "justcreditcard.json").toFile();
-        LOGGER.info("Writing policy to {}", file2.getAbsolutePath());
-        FileUtils.writeStringToFile(file2, gson.toJson(getPolicyJustCreditCard("justcreditcard")), Charset.defaultCharset());
-
-        Properties properties = new Properties();
-        
-        properties.setProperty("filter.policies.directory", temp.toFile().getAbsolutePath());
-
+        final Properties properties = new Properties();
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties);
 
-        final PhileasFilterService service = new PhileasFilterService(phileasConfiguration, cacheService);
+        final PolicyService policyService = new InMemoryPolicyService();
+        policyService.save(gson.toJson(getPolicy("default")));
+        policyService.save(gson.toJson(getPolicyJustCreditCard("justcreditcard")));
+
+        final PhileasFilterService service = new PhileasFilterService(phileasConfiguration, cacheService, policyService);
         final FilterResponse response = service.filter(List.of("justcreditcard"), "context", "documentid", "My email is test@something.com", MimeType.TEXT_PLAIN);
 
         LOGGER.info(response.getFilteredText());
@@ -849,19 +723,13 @@ public class EndToEndTests {
     @Test
     public void endToEndJustCreditCard() throws Exception {
 
-        final Path temp = Files.createTempDirectory("philter");
-
-        final File file2 = Paths.get(temp.toFile().getAbsolutePath(), "justcreditcard.json").toFile();
-        LOGGER.info("Writing policy to {}", file2.getAbsolutePath());
-        FileUtils.writeStringToFile(file2, gson.toJson(getPolicyJustCreditCard("justcreditcard")), Charset.defaultCharset());
-
-        Properties properties = new Properties();
-        
-        properties.setProperty("filter.policies.directory", temp.toFile().getAbsolutePath());
-
+        final Properties properties = new Properties();
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties);
 
-        final PhileasFilterService service = new PhileasFilterService(phileasConfiguration, cacheService);
+        final PolicyService policyService = new InMemoryPolicyService();
+        policyService.save(gson.toJson(getPolicyJustCreditCard("justcreditcard")));
+
+        final PhileasFilterService service = new PhileasFilterService(phileasConfiguration, cacheService, policyService);
         final FilterResponse response = service.filter(List.of("justcreditcard"), "context", "documentid", "My cc is 4121742025464465", MimeType.TEXT_PLAIN);
 
         LOGGER.info(response.getFilteredText());
@@ -873,19 +741,13 @@ public class EndToEndTests {
     @Test
     public void endToEndJustCreditCardInUnixTimestamp() throws Exception {
 
-        final Path temp = Files.createTempDirectory("philter");
-
-        final File file2 = Paths.get(temp.toFile().getAbsolutePath(), "justcreditcard.json").toFile();
-        LOGGER.info("Writing policy to {}", file2.getAbsolutePath());
-        FileUtils.writeStringToFile(file2, gson.toJson(getPolicyJustCreditCardNotInUnixTimestamps("justcreditcard")), Charset.defaultCharset());
-
-        Properties properties = new Properties();
-        
-        properties.setProperty("filter.policies.directory", temp.toFile().getAbsolutePath());
-
+        final Properties properties = new Properties();
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties);
 
-        final PhileasFilterService service = new PhileasFilterService(phileasConfiguration, cacheService);
+        final PolicyService policyService = new InMemoryPolicyService();
+        policyService.save(gson.toJson(getPolicyJustCreditCardNotInUnixTimestamps("justcreditcard")));
+
+        final PhileasFilterService service = new PhileasFilterService(phileasConfiguration, cacheService, policyService);
         final FilterResponse response = service.filter(List.of("justcreditcard"), "context", "documentid", "My cc is 1647725122227", MimeType.TEXT_PLAIN);
 
         LOGGER.info(response.getFilteredText());
@@ -897,19 +759,13 @@ public class EndToEndTests {
     @Test
     public void endToEndJustCreditCardWithIgnoredTerms() throws Exception {
 
-        final Path temp = Files.createTempDirectory("philter");
-
-        final File file2 = Paths.get(temp.toFile().getAbsolutePath(), "justcreditcard.json").toFile();
-        LOGGER.info("Writing policy to {}", file2.getAbsolutePath());
-        FileUtils.writeStringToFile(file2, gson.toJson(getPolicyJustCreditCard("justcreditcard")), Charset.defaultCharset());
-
-        Properties properties = new Properties();
-        
-        properties.setProperty("filter.policies.directory", temp.toFile().getAbsolutePath());
-
+        final Properties properties = new Properties();
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties);
 
-        final PhileasFilterService service = new PhileasFilterService(phileasConfiguration, cacheService);
+        final PolicyService policyService = new InMemoryPolicyService();
+        policyService.save(gson.toJson(getPolicyJustCreditCard("justcreditcard")));
+
+        final PhileasFilterService service = new PhileasFilterService(phileasConfiguration, cacheService, policyService);
         final FilterResponse response = service.filter(List.of("justcreditcard"), "context", "documentid", "My cc is 4121742025464400", MimeType.TEXT_PLAIN);
 
         LOGGER.info(response.getFilteredText());
@@ -921,18 +777,13 @@ public class EndToEndTests {
     @Test
     public void endToEndWithFilterSpecificIgnoredTerms() throws Exception {
 
-        final Path temp = Files.createTempDirectory("philter");
-        final File file = Paths.get(temp.toFile().getAbsolutePath(), "default.json").toFile();
-        LOGGER.info("Writing policy to {}", file.getAbsolutePath());
-        FileUtils.writeStringToFile(file, gson.toJson(getPolicyZipCodeWithIgnored("default")), Charset.defaultCharset());
-
-        Properties properties = new Properties();
-        
-        properties.setProperty("filter.policies.directory", temp.toFile().getAbsolutePath());
-
+        final Properties properties = new Properties();
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties);
 
-        final PhileasFilterService service = new PhileasFilterService(phileasConfiguration, cacheService);
+        final PolicyService policyService = new InMemoryPolicyService();
+        policyService.save(gson.toJson(getPolicyZipCodeWithIgnored("default")));
+
+        final PhileasFilterService service = new PhileasFilterService(phileasConfiguration, cacheService, policyService);
         final FilterResponse response = service.filter(List.of("default"), "context", "documentid", "George Washington was president and his ssn was 123-45-6789 and he lived at 90210.", MimeType.TEXT_PLAIN);
 
         LOGGER.info(response.getFilteredText());
@@ -944,18 +795,13 @@ public class EndToEndTests {
     @Test
     public void endToEndWithSSNAndZipCode() throws Exception {
 
-        final Path temp = Files.createTempDirectory("philter");
-        final File file = Paths.get(temp.toFile().getAbsolutePath(), "default.json").toFile();
-        LOGGER.info("Writing policy to {}", file.getAbsolutePath());
-        FileUtils.writeStringToFile(file, gson.toJson(getPolicySSNAndZipCode("default")), Charset.defaultCharset());
-
-        Properties properties = new Properties();
-        
-        properties.setProperty("filter.policies.directory", temp.toFile().getAbsolutePath());
-
+        final Properties properties = new Properties();
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties);
 
-        final PhileasFilterService service = new PhileasFilterService(phileasConfiguration, cacheService);
+        final PolicyService policyService = new InMemoryPolicyService();
+        policyService.save(gson.toJson(getPolicy("default")));
+
+        final PhileasFilterService service = new PhileasFilterService(phileasConfiguration, cacheService, policyService);
         final FilterResponse response = service.filter(List.of("default"), "context", "documentid", "George Washington was president and his ssn was 123-45-6789 and he lived at 90210.", MimeType.TEXT_PLAIN);
 
         LOGGER.info(response.getFilteredText());
@@ -967,21 +813,15 @@ public class EndToEndTests {
     @Test
     public void endToEndNonexistentPolicy() throws Exception {
 
-        final Path temp = Files.createTempDirectory("philter");
-
-        final File file1 = Paths.get(temp.toFile().getAbsolutePath(), "default.json").toFile();
-        LOGGER.info("Writing policy to {}", file1.getAbsolutePath());
-        FileUtils.writeStringToFile(file1, gson.toJson(getPolicy("default")), Charset.defaultCharset());
-
-        Properties properties = new Properties();
-        
-        properties.setProperty("filter.policies.directory", temp.toFile().getAbsolutePath());
-
+        final Properties properties = new Properties();
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties);
+
+        final PolicyService policyService = new InMemoryPolicyService();
+        policyService.save(gson.toJson(getPolicy("default")));
 
         Assertions.assertThrows(FileNotFoundException.class, () -> {
 
-            PhileasFilterService service = new PhileasFilterService(phileasConfiguration, cacheService);
+            final PhileasFilterService service = new PhileasFilterService(phileasConfiguration, cacheService, policyService);
             final FilterResponse response = service.filter(List.of("custom1"), "context", "documentid", "My email is test@something.com", MimeType.TEXT_PLAIN);
 
         });

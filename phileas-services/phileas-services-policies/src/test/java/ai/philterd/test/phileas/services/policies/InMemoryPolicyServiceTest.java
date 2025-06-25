@@ -23,17 +23,11 @@ import ai.philterd.phileas.model.policy.filters.strategies.rules.AgeFilterStrate
 import ai.philterd.phileas.model.policy.filters.strategies.rules.CreditCardFilterStrategy;
 import ai.philterd.phileas.model.services.PolicyService;
 import ai.philterd.phileas.services.policies.InMemoryPolicyService;
-import ai.philterd.phileas.services.policies.LocalPolicyService;
 import com.google.gson.Gson;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 

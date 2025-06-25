@@ -16,7 +16,6 @@
 package ai.philterd.phileas.services.policies;
 
 import ai.philterd.phileas.model.exceptions.api.BadRequestException;
-import ai.philterd.phileas.model.services.AbstractPolicyService;
 import ai.philterd.phileas.model.services.PolicyService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -28,7 +27,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class InMemoryPolicyService extends AbstractPolicyService implements PolicyService {
+public class InMemoryPolicyService implements PolicyService {
 
     private static final Logger LOGGER = LogManager.getLogger(InMemoryPolicyService.class);
 

@@ -61,16 +61,6 @@ public class PhileasConfiguration {
         return Integer.parseInt(getProperty("span.window.size", "5"));
     }
 
-    // Policies
-
-    public String policiesDirectory() {
-        return getProperty("filter.policies.directory", "./policies/");
-    }
-
-    public String policyService() {
-        return getProperty("filter.policies.service", "local");
-    }
-
     private String getProperty(final String property, final String defaultValue) {
 
         final String environmentVariableValue = getEnvironmentVariable(property);

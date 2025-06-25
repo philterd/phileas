@@ -45,8 +45,6 @@ import ai.philterd.phileas.service.ai.sentiment.OpenNLPSentimentDetector;
 import ai.philterd.phileas.services.alerts.DefaultAlertService;
 import ai.philterd.phileas.services.disambiguation.VectorBasedSpanDisambiguationService;
 import ai.philterd.phileas.services.metrics.NoOpMetricsService;
-import ai.philterd.phileas.services.policies.InMemoryPolicyService;
-import ai.philterd.phileas.services.policies.LocalPolicyService;
 import ai.philterd.phileas.services.policies.utils.PolicyUtils;
 import ai.philterd.phileas.services.postfilters.IgnoredPatternsFilter;
 import ai.philterd.phileas.services.postfilters.IgnoredTermsFilter;
@@ -103,21 +101,8 @@ public class PhileasFilterService implements FilterService {
         // Configure the deserialization.
         final Gson gson = new GsonBuilder().registerTypeAdapter(String.class, new PlaceholderDeserializer()).create();
 
-        // The policy service can either be passed in, or it can be null. If null, defer to what is in Phileas' configuration.
-        // This is to allow users of Phileas to provide any custom implementation of PolicyService they want, but
-        // be able to default to what's in Phileas' configurations.
-        if(policyService == null) {
-            if(StringUtils.equalsIgnoreCase(phileasConfiguration.policyService(), "memory")) {
-                this.policyService = new InMemoryPolicyService();
-            } else {
-                this.policyService = new LocalPolicyService(phileasConfiguration, cacheService);
-            }
-        } else {
-            // Use the provided implementation of PolicyService.
-            this.policyService = policyService;
-        }
-
-        this.policyUtils = new PolicyUtils(this.policyService, gson);
+        this.policyService = policyService;
+        this.policyUtils = new PolicyUtils(policyService, gson);
 
         // Set the alert service.
         this.alertService = new DefaultAlertService(cacheService);
@@ -133,8 +118,8 @@ public class PhileasFilterService implements FilterService {
 
     }
 
-    public PhileasFilterService(final PhileasConfiguration phileasConfiguration, final CacheService cacheService) throws IOException {
-        this(phileasConfiguration, new NoOpMetricsService(), cacheService, null);
+    public PhileasFilterService(final PhileasConfiguration phileasConfiguration, final CacheService cacheService, final PolicyService policyService) throws IOException {
+        this(phileasConfiguration, new NoOpMetricsService(), cacheService, policyService);
     }
 
     @Override
