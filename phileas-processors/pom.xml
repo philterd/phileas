@@ -11,6 +11,5 @@
   <packaging>pom</packaging>
   <modules>
     <module>phileas-processors-unstructured</module>
-    <!--<module>phileas-processors-structured</module>-->
   </modules>
 </project>
