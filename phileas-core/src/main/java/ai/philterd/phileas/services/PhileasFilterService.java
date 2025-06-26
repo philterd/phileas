@@ -42,7 +42,7 @@ import ai.philterd.phileas.model.services.SplitService;
 import ai.philterd.phileas.processors.unstructured.UnstructuredDocumentProcessor;
 import ai.philterd.phileas.service.ai.sentiment.OpenNLPSentimentDetector;
 import ai.philterd.phileas.services.alerts.DefaultAlertService;
-import ai.philterd.phileas.services.alerts.NoOpMetricsService;
+import ai.philterd.phileas.services.metrics.NoOpMetricsService;
 import ai.philterd.phileas.services.disambiguation.VectorBasedSpanDisambiguationService;
 import ai.philterd.phileas.services.policies.utils.PolicyUtils;
 import ai.philterd.phileas.services.postfilters.IgnoredPatternsFilter;

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ai.philterd.phileas.services.alerts;
+package ai.philterd.phileas.services.metrics;
 
 import ai.philterd.phileas.model.enums.FilterType;
 import ai.philterd.phileas.model.services.MetricsService;
