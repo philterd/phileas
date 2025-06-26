@@ -19,6 +19,7 @@ import ai.philterd.phileas.model.enums.FilterType;
 import ai.philterd.phileas.model.objects.Alert;
 import ai.philterd.phileas.model.objects.Span;
 import ai.philterd.phileas.model.objects.SpanVector;
+import ai.philterd.phileas.model.policy.Policy;
 import ai.philterd.phileas.model.services.CacheService;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -37,7 +38,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class InMemoryCache implements CacheService {
 
     private final Map<String, Map<FilterType, SpanVector>> vectorCache;
-    private final Map<String, String> policyCache;
+    private final Map<String, Policy> policyCache;
     private final Map<String, String> anonymizationCache;
     private final List<Alert> alerts;
 
@@ -110,17 +111,17 @@ public class InMemoryCache implements CacheService {
     }
 
     @Override
-    public String getPolicy(String policyName) throws IOException {
+    public Policy getPolicy(String policyName) throws IOException {
         return policyCache.get(policyName);
     }
 
     @Override
-    public Map<String, String> getAllPolicies() {
+    public Map<String, Policy> getAllPolicies() {
         return policyCache;
     }
 
     @Override
-    public void insertPolicy(String policyName, String policy) {
+    public void insertPolicy(String policyName, Policy policy) {
         policyCache.put(policyName, policy);
     }
 

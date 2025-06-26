@@ -18,6 +18,7 @@ package ai.philterd.phileas.model.services;
 import ai.philterd.phileas.model.enums.FilterType;
 import ai.philterd.phileas.model.objects.Alert;
 import ai.philterd.phileas.model.objects.Span;
+import ai.philterd.phileas.model.policy.Policy;
 
 import java.io.IOException;
 import java.util.List;
@@ -113,11 +114,11 @@ public interface CacheService {
 
     List<String> getPolicies() throws IOException;
 
-    String getPolicy(String policyName) throws IOException;
+    Policy getPolicy(String policyName) throws IOException;
 
-    Map<String, String> getAllPolicies() throws IOException;
+    Map<String, Policy> getAllPolicies() throws IOException;
 
-    void insertPolicy(String policyName, String policy);
+    void insertPolicy(String policyName, Policy policy);
 
     void removePolicy(String policyName);
 
