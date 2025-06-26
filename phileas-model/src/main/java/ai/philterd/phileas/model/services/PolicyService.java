@@ -15,6 +15,8 @@
  */
 package ai.philterd.phileas.model.services;
 
+import ai.philterd.phileas.model.policy.Policy;
+
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
@@ -33,23 +35,23 @@ public interface PolicyService {
      * Gets the content of a policy.
      * @param policyName The name of the policy.
      * @return The policy.
-     * @throws IOException Thrown if a policy can not be read.
+     * @throws IOException Thrown if a policy cannot be read.
      */
-    String get(String policyName) throws IOException;
+    Policy get(String policyName) throws IOException;
 
     /**
      * Get the names and content of all policies.
      * @return A map of policy names to policy content.
      * @throws IOException Thrown if the policies cannot be read.
      */
-    Map<String, String> getAll() throws IOException;
+    Map<String, Policy> getAll() throws IOException;
 
     /**
      * Saves a policy.
-     * @param policyJson The content of the policy as JSON.
+     * @param policy The content of the policy as JSON.
      * @throws IOException Thrown if the policy cannot be saved.
      */
-    void save(String policyJson) throws IOException;
+    void save(Policy policy) throws IOException;
 
     /**
      * Deletes a policy.

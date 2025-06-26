@@ -115,7 +115,7 @@ public class PhileasFilterServiceTest {
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties);
 
         final PolicyService policyService = new InMemoryPolicyService();
-        policyService.save(gson.toJson(getPdfPolicy("pdf")));
+        policyService.save(getPdfPolicy("pdf"));
 
         final PhileasFilterService service = new PhileasFilterService(phileasConfiguration, cacheService, policyService);
         final BinaryDocumentFilterResponse response = service.filter(List.of("pdf"), "context", "documentid", document, MimeType.APPLICATION_PDF, MimeType.APPLICATION_PDF);
@@ -149,7 +149,7 @@ public class PhileasFilterServiceTest {
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties);
 
         final PolicyService policyService = new InMemoryPolicyService();
-        policyService.save(gson.toJson(getPdfPolicy("pdf")));
+        policyService.save(getPdfPolicy("pdf"));
 
         PhileasFilterService service = new PhileasFilterService(phileasConfiguration, cacheService, policyService);
         final BinaryDocumentFilterResponse response = service.filter(Arrays.asList("pdf"), "context", "documentid", document, MimeType.APPLICATION_PDF, MimeType.APPLICATION_PDF);

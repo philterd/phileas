@@ -15,11 +15,11 @@
  */
 package ai.philterd.test.phileas.services.policies.utils;
 
-import com.google.gson.Gson;
 import ai.philterd.phileas.model.enums.FilterType;
 import ai.philterd.phileas.model.policy.Policy;
 import ai.philterd.phileas.model.services.PolicyService;
 import ai.philterd.phileas.services.policies.utils.PolicyUtils;
+import com.google.gson.Gson;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Assertions;
@@ -35,6 +35,8 @@ import static org.mockito.Mockito.when;
 
 public class PolicyUtilsTest {
 
+    private final Gson gson = new Gson();
+
     @Disabled
     @Test
     public void onlyOne() throws IOException {
@@ -42,10 +44,9 @@ public class PolicyUtilsTest {
         final String json1 = IOUtils.toString(this.getClass().getResourceAsStream("/policies/policy1.json"), Charset.defaultCharset());
 
         final PolicyService policyService = Mockito.mock(PolicyService.class);
-        when(policyService.get("policy1")).thenReturn(json1);
+        when(policyService.get("policy1")).thenReturn(gson.fromJson(json1, Policy.class));
 
-        final Gson gson = new Gson();
-        final PolicyUtils policyUtils = new PolicyUtils(policyService, gson);
+        final PolicyUtils policyUtils = new PolicyUtils(policyService);
         final Policy policy = policyUtils.getCombinedPolicies(Arrays.asList("policy1"));
 
         final Policy originalPolicy = gson.fromJson(json1, Policy.class);
@@ -68,11 +69,10 @@ public class PolicyUtilsTest {
         final String json2 = IOUtils.toString(this.getClass().getResourceAsStream("/policies/policy2.json"), Charset.defaultCharset());
 
         final PolicyService policyService = Mockito.mock(PolicyService.class);
-        when(policyService.get("policy1")).thenReturn(json1);
-        when(policyService.get("policy2")).thenReturn(json2);
+        when(policyService.get("policy1")).thenReturn(gson.fromJson(json1, Policy.class));
+        when(policyService.get("policy2")).thenReturn(gson.fromJson(json2, Policy.class));
 
-        final Gson gson = new Gson();
-        final PolicyUtils policyUtils = new PolicyUtils(policyService, gson);
+        final PolicyUtils policyUtils = new PolicyUtils(policyService);
         final Policy policy = policyUtils.getCombinedPolicies(Arrays.asList("policy1", "policy2"));
 
         Assertions.assertNotNull(policy);
@@ -90,11 +90,10 @@ public class PolicyUtilsTest {
         final String json2 = IOUtils.toString(this.getClass().getResourceAsStream("/policies/policy1.json"), Charset.defaultCharset());
 
         final PolicyService policyService = Mockito.mock(PolicyService.class);
-        when(policyService.get("policy1")).thenReturn(json1);
-        when(policyService.get("policy2")).thenReturn(json2);
+        when(policyService.get("policy1")).thenReturn(gson.fromJson(json1, Policy.class));
+        when(policyService.get("policy2")).thenReturn(gson.fromJson(json2, Policy.class));
 
-        final Gson gson = new Gson();
-        final PolicyUtils policyUtils = new PolicyUtils(policyService, gson);
+        final PolicyUtils policyUtils = new PolicyUtils(policyService);
 
         Assertions.assertThrows(IllegalStateException.class, () -> {
             final Policy policy = policyUtils.getCombinedPolicies(Arrays.asList("policy1", "policy2"));
@@ -109,11 +108,10 @@ public class PolicyUtilsTest {
         final String json2 = IOUtils.toString(this.getClass().getResourceAsStream("/policies/policy4.json"), Charset.defaultCharset());
 
         final PolicyService policyService = Mockito.mock(PolicyService.class);
-        when(policyService.get("policy3")).thenReturn(json1);
-        when(policyService.get("policy4")).thenReturn(json2);
+        when(policyService.get("policy3")).thenReturn(gson.fromJson(json1, Policy.class));
+        when(policyService.get("policy4")).thenReturn(gson.fromJson(json2, Policy.class));
 
-        final Gson gson = new Gson();
-        final PolicyUtils policyUtils = new PolicyUtils(policyService, gson);
+        final PolicyUtils policyUtils = new PolicyUtils(policyService);
         final Policy policy = policyUtils.getCombinedPolicies(Arrays.asList("policy3", "policy4"));
 
         Assertions.assertNotNull(policy);
@@ -129,11 +127,10 @@ public class PolicyUtilsTest {
         final String json2 = IOUtils.toString(this.getClass().getResourceAsStream("/policies/policy6.json"), Charset.defaultCharset());
 
         final PolicyService policyService = Mockito.mock(PolicyService.class);
-        when(policyService.get("policy5")).thenReturn(json1);
-        when(policyService.get("policy6")).thenReturn(json2);
+        when(policyService.get("policy5")).thenReturn(gson.fromJson(json1, Policy.class));
+        when(policyService.get("policy6")).thenReturn(gson.fromJson(json2, Policy.class));
 
-        final Gson gson = new Gson();
-        final PolicyUtils policyUtils = new PolicyUtils(policyService, gson);
+        final PolicyUtils policyUtils = new PolicyUtils(policyService);
         final Policy policy = policyUtils.getCombinedPolicies(Arrays.asList("policy5", "policy6"));
 
         Assertions.assertNotNull(policy);
@@ -151,11 +148,10 @@ public class PolicyUtilsTest {
         final String json2 = IOUtils.toString(this.getClass().getResourceAsStream("/policies/policy5.json"), Charset.defaultCharset());
 
         final PolicyService policyService = Mockito.mock(PolicyService.class);
-        when(policyService.get("policy6")).thenReturn(json1);
-        when(policyService.get("policy5")).thenReturn(json2);
+        when(policyService.get("policy6")).thenReturn(gson.fromJson(json1, Policy.class));
+        when(policyService.get("policy5")).thenReturn(gson.fromJson(json2, Policy.class));
 
-        final Gson gson = new Gson();
-        final PolicyUtils policyUtils = new PolicyUtils(policyService, gson);
+        final PolicyUtils policyUtils = new PolicyUtils(policyService);
         final Policy policy = policyUtils.getCombinedPolicies(Arrays.asList("policy6", "policy5"));
 
         Assertions.assertNotNull(policy);
@@ -171,11 +167,10 @@ public class PolicyUtilsTest {
         final String json2 = IOUtils.toString(this.getClass().getResourceAsStream("/policies/policy5.json"), Charset.defaultCharset());
 
         final PolicyService policyService = Mockito.mock(PolicyService.class);
-        when(policyService.get("policy7")).thenReturn(json1);
-        when(policyService.get("policy5")).thenReturn(json2);
+        when(policyService.get("policy7")).thenReturn(gson.fromJson(json1, Policy.class));
+        when(policyService.get("policy5")).thenReturn(gson.fromJson(json2, Policy.class));
 
-        final Gson gson = new Gson();
-        final PolicyUtils policyUtils = new PolicyUtils(policyService, gson);
+        final PolicyUtils policyUtils = new PolicyUtils(policyService);
         final Policy policy = policyUtils.getCombinedPolicies(Arrays.asList("policy7", "policy5"));
 
         Assertions.assertNotNull(policy);
@@ -191,11 +186,10 @@ public class PolicyUtilsTest {
         final String json2 = IOUtils.toString(this.getClass().getResourceAsStream("/policies/policy9.json"), Charset.defaultCharset());
 
         final PolicyService policyService = Mockito.mock(PolicyService.class);
-        when(policyService.get("policy8")).thenReturn(json1);
-        when(policyService.get("policy9")).thenReturn(json2);
+        when(policyService.get("policy8")).thenReturn(gson.fromJson(json1, Policy.class));
+        when(policyService.get("policy9")).thenReturn(gson.fromJson(json2, Policy.class));
 
-        final Gson gson = new Gson();
-        final PolicyUtils policyUtils = new PolicyUtils(policyService, gson);
+        final PolicyUtils policyUtils = new PolicyUtils(policyService);
         final Policy policy = policyUtils.getCombinedPolicies(Arrays.asList("policy8", "policy9"));
 
         Assertions.assertNotNull(policy);
@@ -212,11 +206,10 @@ public class PolicyUtilsTest {
         final String json2 = IOUtils.toString(this.getClass().getResourceAsStream("/policies/policy11.json"), Charset.defaultCharset());
 
         final PolicyService policyService = Mockito.mock(PolicyService.class);
-        when(policyService.get("policy10")).thenReturn(json1);
-        when(policyService.get("policy11")).thenReturn(json2);
+        when(policyService.get("policy10")).thenReturn(gson.fromJson(json1, Policy.class));
+        when(policyService.get("policy11")).thenReturn(gson.fromJson(json2, Policy.class));
 
-        final Gson gson = new Gson();
-        final PolicyUtils policyUtils = new PolicyUtils(policyService, gson);
+        final PolicyUtils policyUtils = new PolicyUtils(policyService);
         final Policy policy = policyUtils.getCombinedPolicies(Arrays.asList("policy10", "policy11"));
 
         Assertions.assertNotNull(policy);

@@ -28,7 +28,6 @@ import ai.philterd.phileas.model.policy.config.Pdf;
 import ai.philterd.phileas.model.policy.graphical.BoundingBox;
 import ai.philterd.phileas.model.responses.BinaryDocumentFilterResponse;
 import ai.philterd.phileas.model.responses.FilterResponse;
-import ai.philterd.phileas.model.serializers.PlaceholderDeserializer;
 import ai.philterd.phileas.model.services.AlertService;
 import ai.philterd.phileas.model.services.CacheService;
 import ai.philterd.phileas.model.services.Classification;
@@ -54,8 +53,6 @@ import ai.philterd.phileas.services.postfilters.TrailingSpacePostFilter;
 import ai.philterd.phileas.services.split.SplitFactory;
 import ai.philterd.services.pdf.PdfRedacter;
 import ai.philterd.services.pdf.PdfTextExtractor;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -98,11 +95,8 @@ public class PhileasFilterService implements FilterService {
 
         this.filterCache = new ConcurrentHashMap<>();
 
-        // Configure the deserialization.
-        final Gson gson = new GsonBuilder().registerTypeAdapter(String.class, new PlaceholderDeserializer()).create();
-
         this.policyService = policyService;
-        this.policyUtils = new PolicyUtils(policyService, gson);
+        this.policyUtils = new PolicyUtils(policyService);
 
         // Set the alert service.
         this.alertService = new DefaultAlertService(cacheService);

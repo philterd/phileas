@@ -40,8 +40,8 @@ public class InMemoryPolicyServiceTest {
 
         final PolicyService policyService = new InMemoryPolicyService();
 
-        policyService.save(gson.toJson(getPolicy("name1")));
-        policyService.save(gson.toJson(getPolicy("name2")));
+        policyService.save(getPolicy("name1"));
+        policyService.save(getPolicy("name2"));
 
         final List<String> names = policyService.get();
 
@@ -56,10 +56,10 @@ public class InMemoryPolicyServiceTest {
 
         final PolicyService policyService = new InMemoryPolicyService();
 
-        policyService.save(gson.toJson(getPolicy("name1")));
-        policyService.save(gson.toJson(getPolicy("name2")));
+        policyService.save(getPolicy("name1"));
+        policyService.save(getPolicy("name2"));
 
-        final Map<String, String> all = policyService.getAll();
+        final Map<String, Policy> all = policyService.getAll();
 
         Assertions.assertEquals(2, all.size());
         Assertions.assertTrue(all.containsKey("name1"));
@@ -72,13 +72,13 @@ public class InMemoryPolicyServiceTest {
 
         final String name = "default";
 
-        final String policy = gson.toJson(getPolicy(name));
+        final Policy policy = getPolicy(name);
 
         final PolicyService policyService = new InMemoryPolicyService();
 
         policyService.save(policy);
 
-        final String saved = policyService.get("default");
+        final Policy saved = policyService.get("default");
 
         Assertions.assertNotNull(saved);
         Assertions.assertEquals(policy, saved);
@@ -90,13 +90,13 @@ public class InMemoryPolicyServiceTest {
 
         final String name = "default";
 
-        final String policy = gson.toJson(getPolicy(name));
+        final Policy policy = getPolicy(name);
 
         final PolicyService policyService = new InMemoryPolicyService();
 
         policyService.save(policy);
 
-        final String policyJson = policyService.get(name);
+        final Policy policyJson = policyService.get(name);
 
         Assertions.assertEquals(policy, policyJson);
 
@@ -106,7 +106,7 @@ public class InMemoryPolicyServiceTest {
     public void delete() throws IOException {
 
         final String name = "default";
-        final String policy = gson.toJson(getPolicy(name));
+        final Policy policy = getPolicy(name);
 
         final PolicyService policyService = new InMemoryPolicyService();
 
