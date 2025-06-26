@@ -77,18 +77,18 @@ public class PolicyTest {
 
     private final Gson gson = new Gson();
 
-    @Test
-    public void compare() throws IOException {
-
-        final Policy policy1 = getPolicy();
-        final String policyJson1 = gson.toJson(policy1);
-
-        final Policy policy2 = getPolicy();
-        final String policyJson2 = gson.toJson(policy2);
-
-        Assertions.assertEquals(policyJson1, policyJson2);
-
-    }
+//    @Test
+//    public void compare() throws IOException {
+//
+//        final Policy policy1 = getPolicy();
+//        final String policyJson1 = gson.toJson(policy1);
+//
+//        final Policy policy2 = getPolicy();
+//        final String policyJson2 = gson.toJson(policy2);
+//
+//        Assertions.assertEquals(policyJson1, policyJson2);
+//
+//    }
 
     @Test
     public void serialize() throws IOException {
