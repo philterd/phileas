@@ -15,7 +15,6 @@
  */
 package ai.philterd.phileas.services.policies.utils;
 
-import com.google.gson.Gson;
 import ai.philterd.phileas.model.enums.FilterType;
 import ai.philterd.phileas.model.policy.Policy;
 import ai.philterd.phileas.model.services.PolicyService;
@@ -29,14 +28,10 @@ public class PolicyUtils {
 
     private static final Logger LOGGER = LogManager.getLogger(PolicyUtils.class);
 
-    private PolicyService policyService;
-    private Gson gson;
+    private final PolicyService policyService;
 
-    public PolicyUtils(PolicyService policyService, Gson gson) {
-
+    public PolicyUtils(final PolicyService policyService) {
         this.policyService = policyService;
-        this.gson = gson;
-
     }
 
     public Policy getCombinedPolicies(final List<String> policyNames) throws IOException, IllegalStateException {
@@ -45,7 +40,7 @@ public class PolicyUtils {
         // By starting off with a full policy we don't have to worry about adding
         // Config and Crypto (and other sections) since those will always be
         // taken from the first policy.
-        final Policy combinedPolicy = getPolicy(policyNames.get(0));
+        final Policy combinedPolicy = policyService.get(policyNames.get(0));
 
         // In some chases there may be only one policy.
         if(policyNames.size() > 1) {
@@ -58,7 +53,7 @@ public class PolicyUtils {
             for (final String policyName : policyNames.subList(1, policyNames.size())) {
 
                 // Get the policy.
-                final Policy policy = getPolicy(policyName);
+                final Policy policy = policyService.get(policyName);
 
                 // For each of the filter types, copy the filter (if it exists) from the source policy
                 // to the destination (combined) policy. If a filter already exists in the destination (combined)
@@ -88,17 +83,6 @@ public class PolicyUtils {
         }
 
         return combinedPolicy;
-
-    }
-
-    private Policy getPolicy(String policyName) throws IOException {
-
-        // This will ALWAYS return a policy because if it is not in the cache it will be retrieved from the cache.
-        // TODO: How to trigger a reload if the policy had to be retrieved from disk?
-        final String policyJson = policyService.get(policyName);
-
-        LOGGER.debug("Deserializing policy [{}]", policyName);
-        return gson.fromJson(policyJson, Policy.class);
 
     }
 

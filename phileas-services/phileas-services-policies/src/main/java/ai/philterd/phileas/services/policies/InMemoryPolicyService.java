@@ -16,11 +16,11 @@
 package ai.philterd.phileas.services.policies;
 
 import ai.philterd.phileas.model.exceptions.api.BadRequestException;
+import ai.philterd.phileas.model.policy.Policy;
 import ai.philterd.phileas.model.services.PolicyService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -31,7 +31,7 @@ public class InMemoryPolicyService implements PolicyService {
 
     private static final Logger LOGGER = LogManager.getLogger(InMemoryPolicyService.class);
 
-    private final Map<String, String> policies;
+    private final Map<String, Policy> policies;
 
     public InMemoryPolicyService() {
         this.policies = new HashMap<>();
@@ -45,28 +45,25 @@ public class InMemoryPolicyService implements PolicyService {
     }
 
     @Override
-    public String get(String policyName) throws IOException {
+    public Policy get(String policyName) throws IOException {
 
         return policies.get(policyName);
 
     }
 
     @Override
-    public Map<String, String> getAll() throws IOException {
+    public Map<String, Policy> getAll() {
 
         return policies;
 
     }
 
     @Override
-    public void save(String policyJson) {
+    public void save(Policy policy) {
 
         try {
 
-            final JSONObject object = new JSONObject(policyJson);
-            final String policyName = object.getString("name");
-
-            policies.put(policyName, policyJson);
+            policies.put(policy.getName(), policy);
 
         } catch (JSONException ex) {
 

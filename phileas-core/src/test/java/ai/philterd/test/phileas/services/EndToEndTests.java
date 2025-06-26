@@ -90,7 +90,7 @@ public class EndToEndTests {
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties);
 
         final PolicyService policyService = new InMemoryPolicyService();
-        policyService.save(gson.toJson(getPolicy("default")));
+        policyService.save(getPolicy("default"));
 
         final PhileasFilterService service = new PhileasFilterService(phileasConfiguration, cacheService, policyService);
         final FilterResponse response = service.filter(List.of("default"), "context", "documentid", "George Washington was president and his ssn was 123-45-6789 and he lived at 90210.", MimeType.TEXT_PLAIN);
@@ -109,7 +109,7 @@ public class EndToEndTests {
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties);
 
         final PolicyService policyService = new InMemoryPolicyService();
-        policyService.save(gson.toJson(getPolicy("default")));
+        policyService.save(getPolicy("default"));
 
         final PhileasFilterService service = new PhileasFilterService(phileasConfiguration, cacheService, policyService);
         final FilterResponse response = service.filter(List.of("default"), "context", "documentid", "My email is test@something.com and cc is 4121742025464465", MimeType.TEXT_PLAIN);
@@ -128,7 +128,7 @@ public class EndToEndTests {
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties);
 
         final PolicyService policyService = new InMemoryPolicyService();
-        policyService.save(gson.toJson(getPolicy("default")));
+        policyService.save(getPolicy("default"));
 
         final PhileasFilterService service = new PhileasFilterService(phileasConfiguration, cacheService, policyService);
         final FilterResponse response = service.filter(List.of("default"), "context", "documentid", "test@something.com is email and cc is 4121742025464465", MimeType.TEXT_PLAIN);
@@ -147,7 +147,7 @@ public class EndToEndTests {
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties);
 
         final PolicyService policyService = new InMemoryPolicyService();
-        policyService.save(gson.toJson(getPolicy("default")));
+        policyService.save(getPolicy("default"));
 
         final PhileasFilterService service = new PhileasFilterService(phileasConfiguration, cacheService, policyService);
         final FilterResponse response = service.filter(List.of("default"), "context", "documentid", "test@something.com", MimeType.TEXT_PLAIN);
@@ -166,7 +166,7 @@ public class EndToEndTests {
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties);
 
         final PolicyService policyService = new InMemoryPolicyService();
-        policyService.save(gson.toJson(getPolicy("default")));
+        policyService.save(getPolicy("default"));
 
         final PhileasFilterService service = new PhileasFilterService(phileasConfiguration, cacheService, policyService);
         final FilterResponse response = service.filter(List.of("default"), "context", "documentid", "90210", MimeType.TEXT_PLAIN);
@@ -185,7 +185,7 @@ public class EndToEndTests {
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties);
 
         final PolicyService policyService = new InMemoryPolicyService();
-        policyService.save(gson.toJson(getPolicy("default")));
+        policyService.save(getPolicy("default"));
 
         final PhileasFilterService service = new PhileasFilterService(phileasConfiguration, cacheService, policyService);
         final FilterResponse response = service.filter(List.of("default"), "context", "documentid", "his name was JEFF.", MimeType.TEXT_PLAIN);
@@ -204,7 +204,7 @@ public class EndToEndTests {
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties);
 
         final PolicyService policyService = new InMemoryPolicyService();
-        policyService.save(gson.toJson(getPolicy("default")));
+        policyService.save(getPolicy("default"));
 
         final PhileasFilterService service = new PhileasFilterService(phileasConfiguration, cacheService, policyService);
         final FilterResponse response = service.filter(List.of("default"), "context", "documentid", "he was seen on 10-19-2020.", MimeType.TEXT_PLAIN);
@@ -223,7 +223,7 @@ public class EndToEndTests {
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties);
 
         final PolicyService policyService = new InMemoryPolicyService();
-        policyService.save(gson.toJson(getPolicy("default")));
+        policyService.save(getPolicy("default"));
 
         final PhileasFilterService service = new PhileasFilterService(phileasConfiguration, cacheService, policyService);
         final FilterResponse response = service.filter(List.of("default"), "context", "documentid",
@@ -243,7 +243,7 @@ public class EndToEndTests {
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties);
 
         final PolicyService policyService = new InMemoryPolicyService();
-        policyService.save(gson.toJson(getPolicy("default")));
+        policyService.save(getPolicy("default"));
 
         final PhileasFilterService service = new PhileasFilterService(phileasConfiguration, cacheService, policyService);
         final FilterResponse response = service.filter(List.of("default"), "context", "documentid", "George Washington was president and his ssn was 123-45-6789 and he lived at 90210. The name 456 should be filtered. Jeff Smith should be ignored.", MimeType.TEXT_PLAIN);
@@ -262,7 +262,7 @@ public class EndToEndTests {
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties);
 
         final PolicyService policyService = new InMemoryPolicyService();
-        policyService.save(gson.toJson(getPolicy("default")));
+        policyService.save(getPolicy("default"));
 
         final String input = IOUtils.toString(this.getClass().getResourceAsStream("/inputs/1.txt"), Charset.defaultCharset());
 
@@ -286,7 +286,7 @@ public class EndToEndTests {
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties);
 
         final PolicyService policyService = new InMemoryPolicyService();
-        policyService.save(gson.toJson(getPolicy("default")));
+        policyService.save(getPolicy("default"));
 
         final String input = "IN THE UNITED STATES DISTRICT COURT \nEASTERN DISTRICT OF ARKANSAS \nWESTERN DIVISION \nJAMES EDWARD SMITH, \nafk/a James Edward Bridges, \nADC#103093 \nv. No. 4:14-cv-455-DPM \nPLAINTIFF \nCHARLES A. SMITH; \nMARY ANN CONLEY, \nafk/a Mary Ann Smith; and \nROBERT CASTILLOW DEFENDANTS \nORDER \nJames Smith's prose complaint must be dismissed without prejudice. \nHe hasn't paid the filing fee, moved to proceed in forma pauperis, or provided \nproof of service on any defendant. FED. R. CIV. P. 4(I); Local Rule 5.5(c)(2). \nSo Ordered. \nD.P. Marshall Jr. \nUnited States District Judge \nCase 4:14-cv-00455-DPM   Document 2   Filed 12/09/14   Page 1 of 1\n";
 
@@ -307,7 +307,7 @@ public class EndToEndTests {
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties);
 
         final PolicyService policyService = new InMemoryPolicyService();
-        policyService.save(gson.toJson(getPolicy("default")));
+        policyService.save(getPolicy("default"));
 
         final String input = IOUtils.toString(this.getClass().getResourceAsStream("/inputs/Oxford_City_unveil_merger_to_expand_their_youth_system.json.txt"), Charset.defaultCharset());
 
@@ -331,7 +331,7 @@ public class EndToEndTests {
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties);
 
         final PolicyService policyService = new InMemoryPolicyService();
-        policyService.save(gson.toJson(getPolicy("default")));
+        policyService.save(getPolicy("default"));
 
         final String input = IOUtils.toString(this.getClass().getResourceAsStream("/inputs/Kinross_reports_strong_2020_secondquarter_results.json.txt"), Charset.defaultCharset());
 
@@ -355,7 +355,7 @@ public class EndToEndTests {
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties);
 
         final PolicyService policyService = new InMemoryPolicyService();
-        policyService.save(gson.toJson(getPolicy("default")));
+        policyService.save(getPolicy("default"));
 
         final String input = IOUtils.toString(this.getClass().getResourceAsStream("/inputs/Donations_to_Black_Lives_Matter_Group_Dont_Go_to_DNC.json.txt"), Charset.defaultCharset());
 
@@ -379,7 +379,7 @@ public class EndToEndTests {
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties);
 
         final PolicyService policyService = new InMemoryPolicyService();
-        policyService.save(gson.toJson(getPolicy("default")));
+        policyService.save(getPolicy("default"));
 
         final String input = IOUtils.toString(this.getClass().getResourceAsStream("/inputs/Fantasy_Baseball_Winners__Losers_Sixto_Sanchez_and_Jeff_McNeil_stay_hot.json.txt"), Charset.defaultCharset());
 
@@ -403,7 +403,7 @@ public class EndToEndTests {
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties);
 
         final PolicyService policyService = new InMemoryPolicyService();
-        policyService.save(gson.toJson(getPolicy("default")));
+        policyService.save(getPolicy("default"));
 
         final String input = "the id is 123456.";
 
@@ -427,7 +427,7 @@ public class EndToEndTests {
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties);
 
         final PolicyService policyService = new InMemoryPolicyService();
-        policyService.save(gson.toJson(getPolicyJustStreetAddress("streetaddress")));
+        policyService.save(getPolicyJustStreetAddress("streetaddress"));
 
         final String input = "he lived at 100 main street";
 
@@ -482,7 +482,7 @@ public class EndToEndTests {
         final CacheService inMemoryCache = new InMemoryCache();
         
         final PolicyService policyService = new InMemoryPolicyService();
-        policyService.save(gson.toJson(policy));
+        policyService.save(policy);
         
         final String input = "the payment method is 4532613702852251 visa or 1Lbcfr7sAHTD9CgdQo3HTMTkV8LK4ZnX71 BTC from user.";
 
@@ -510,7 +510,7 @@ public class EndToEndTests {
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties);
 
         final PolicyService policyService = new InMemoryPolicyService();
-        policyService.save(gson.toJson(getPolicyJustPhoneNumber("phonenumbers")));
+        policyService.save(getPolicyJustPhoneNumber("phonenumbers"));
 
         final String input = "his number is 123-456-7890. her number is 9999999999. her number is 102-304-5678.";
 
@@ -541,7 +541,7 @@ public class EndToEndTests {
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties);
 
         final PolicyService policyService = new InMemoryPolicyService();
-        policyService.save(gson.toJson(policy));
+        policyService.save(policy);
 
         final String input = "he lived at 100 main street";
 
@@ -565,7 +565,7 @@ public class EndToEndTests {
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties);
 
         final PolicyService policyService = new InMemoryPolicyService();
-        policyService.save(gson.toJson(getPolicyWithSentiment("sentiment")));
+        policyService.save(getPolicyWithSentiment("sentiment"));
 
         final String input = "his ssn was 123-45-6789";
 
@@ -598,7 +598,7 @@ public class EndToEndTests {
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties);
 
         final PolicyService policyService = new InMemoryPolicyService();
-        policyService.save(gson.toJson(policy));
+        policyService.save(policy);
 
         final PhileasFilterService service = new PhileasFilterService(phileasConfiguration, cacheService, policyService);
         final FilterResponse response = service.filter(List.of("default"), "context", "documentid", "his name was samuel and george.", MimeType.TEXT_PLAIN);
@@ -634,7 +634,7 @@ public class EndToEndTests {
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties);
 
         final PolicyService policyService = new InMemoryPolicyService();
-        policyService.save(gson.toJson(policy));
+        policyService.save(policy);
 
         final PhileasFilterService service = new PhileasFilterService(phileasConfiguration, cacheService, policyService);
         final FilterResponse response = service.filter(List.of("default"), "context", "documentid", "his name was samuel and george.", MimeType.TEXT_PLAIN);
@@ -669,7 +669,7 @@ public class EndToEndTests {
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties);
 
         final PolicyService policyService = new InMemoryPolicyService();
-        policyService.save(gson.toJson(policy));
+        policyService.save(policy);
 
         final PhileasFilterService service = new PhileasFilterService(phileasConfiguration, cacheService, policyService);
         final FilterResponse response = service.filter(List.of("default"), "context", "documentid", "his name was samuel.", MimeType.TEXT_PLAIN);
@@ -688,7 +688,7 @@ public class EndToEndTests {
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties);
 
         final PolicyService policyService = new InMemoryPolicyService();
-        policyService.save(gson.toJson(getPolicy("default")));
+        policyService.save(getPolicy("default"));
 
         final PhileasFilterService service = new PhileasFilterService(phileasConfiguration, cacheService, policyService);
         final FilterResponse response = service.filter(List.of("default"), "context", null, "his name was JEFF.", MimeType.TEXT_PLAIN);
@@ -708,8 +708,8 @@ public class EndToEndTests {
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties);
 
         final PolicyService policyService = new InMemoryPolicyService();
-        policyService.save(gson.toJson(getPolicy("default")));
-        policyService.save(gson.toJson(getPolicyJustCreditCard("justcreditcard")));
+        policyService.save(getPolicy("default"));
+        policyService.save(getPolicyJustCreditCard("justcreditcard"));
 
         final PhileasFilterService service = new PhileasFilterService(phileasConfiguration, cacheService, policyService);
         final FilterResponse response = service.filter(List.of("justcreditcard"), "context", "documentid", "My email is test@something.com", MimeType.TEXT_PLAIN);
@@ -727,7 +727,7 @@ public class EndToEndTests {
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties);
 
         final PolicyService policyService = new InMemoryPolicyService();
-        policyService.save(gson.toJson(getPolicyJustCreditCard("justcreditcard")));
+        policyService.save(getPolicyJustCreditCard("justcreditcard"));
 
         final PhileasFilterService service = new PhileasFilterService(phileasConfiguration, cacheService, policyService);
         final FilterResponse response = service.filter(List.of("justcreditcard"), "context", "documentid", "My cc is 4121742025464465", MimeType.TEXT_PLAIN);
@@ -745,7 +745,7 @@ public class EndToEndTests {
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties);
 
         final PolicyService policyService = new InMemoryPolicyService();
-        policyService.save(gson.toJson(getPolicyJustCreditCardNotInUnixTimestamps("justcreditcard")));
+        policyService.save(getPolicyJustCreditCardNotInUnixTimestamps("justcreditcard"));
 
         final PhileasFilterService service = new PhileasFilterService(phileasConfiguration, cacheService, policyService);
         final FilterResponse response = service.filter(List.of("justcreditcard"), "context", "documentid", "My cc is 1647725122227", MimeType.TEXT_PLAIN);
@@ -763,7 +763,7 @@ public class EndToEndTests {
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties);
 
         final PolicyService policyService = new InMemoryPolicyService();
-        policyService.save(gson.toJson(getPolicyJustCreditCard("justcreditcard")));
+        policyService.save(getPolicyJustCreditCard("justcreditcard"));
 
         final PhileasFilterService service = new PhileasFilterService(phileasConfiguration, cacheService, policyService);
         final FilterResponse response = service.filter(List.of("justcreditcard"), "context", "documentid", "My cc is 4121742025464400", MimeType.TEXT_PLAIN);
@@ -781,7 +781,7 @@ public class EndToEndTests {
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties);
 
         final PolicyService policyService = new InMemoryPolicyService();
-        policyService.save(gson.toJson(getPolicyZipCodeWithIgnored("default")));
+        policyService.save(getPolicyZipCodeWithIgnored("default"));
 
         final PhileasFilterService service = new PhileasFilterService(phileasConfiguration, cacheService, policyService);
         final FilterResponse response = service.filter(List.of("default"), "context", "documentid", "George Washington was president and his ssn was 123-45-6789 and he lived at 90210.", MimeType.TEXT_PLAIN);
@@ -799,7 +799,7 @@ public class EndToEndTests {
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties);
 
         final PolicyService policyService = new InMemoryPolicyService();
-        policyService.save(gson.toJson(getPolicy("default")));
+        policyService.save(getPolicy("default"));
 
         final PhileasFilterService service = new PhileasFilterService(phileasConfiguration, cacheService, policyService);
         final FilterResponse response = service.filter(List.of("default"), "context", "documentid", "George Washington was president and his ssn was 123-45-6789 and he lived at 90210.", MimeType.TEXT_PLAIN);
@@ -817,7 +817,7 @@ public class EndToEndTests {
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties);
 
         final PolicyService policyService = new InMemoryPolicyService();
-        policyService.save(gson.toJson(getPolicy("default")));
+        policyService.save(getPolicy("default"));
 
         Assertions.assertThrows(FileNotFoundException.class, () -> {
 
