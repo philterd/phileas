@@ -133,9 +133,6 @@ public class UnstructuredDocumentProcessor implements DocumentProcessor {
 
         // TODO: Set a flag on each "span" not in appliedSpans indicating it was not used.
 
-        // Log a metric for each filter type.
-        appliedSpans.forEach(k -> metricsService.incrementFilterType(k.getFilterType()));
-
         // Define the explanation.
         final Explanation explanation = new Explanation(appliedSpans, identifiedSpans);
 
@@ -185,8 +182,6 @@ public class UnstructuredDocumentProcessor implements DocumentProcessor {
             }
 
         }
-
-        metricsService.incrementProcessed();
 
         return new FilterResponse(sb.toString(), context, documentId, piece, explanation, attributes);
 

@@ -17,11 +17,12 @@ package ai.philterd.phileas.model.services;
 
 import ai.philterd.phileas.model.enums.FilterType;
 
+/**
+ * The metrics service is intended to track _only_ things that an implementer
+ * of the Phileas library does _not_ have access to. Things like filter type counts
+ * can be tracked by the implementer so they should not be captured by this service.
+ */
 public interface MetricsService {
-
-    void incrementProcessed();
-    void incrementProcessed(long count);
-    void incrementFilterType(FilterType filterType);
 
     /**
      * The elapsed time for each filter.
