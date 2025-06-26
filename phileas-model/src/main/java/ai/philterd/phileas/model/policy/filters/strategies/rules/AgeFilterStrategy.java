@@ -26,6 +26,7 @@ import ai.philterd.phileas.model.policy.Policy;
 import ai.philterd.phileas.model.policy.filters.strategies.StandardFilterStrategy;
 import ai.philterd.phileas.model.services.AnonymizationService;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -42,7 +43,7 @@ public class AgeFilterStrategy extends StandardFilterStrategy {
     public FilterType getFilterType() {
         return filterType;
     }
-
+    
     @Override
     public boolean evaluateCondition(Policy policy, String context, String documentId, String token, String[] window,
                                      String condition, double confidence, Map<String, String> attributes) {
@@ -122,7 +123,7 @@ public class AgeFilterStrategy extends StandardFilterStrategy {
                                       AnonymizationService anonymizationService,
                                       FilterPattern filterPattern) throws Exception {
 
-        return getStandardReplacement(label, context, documentId, token, window, crypto, fpe, anonymizationService, filterPattern, filterType);
+        return getStandardReplacement(label, token, crypto, fpe, anonymizationService, filterType);
 
     }
 

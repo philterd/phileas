@@ -75,116 +75,26 @@ import java.util.List;
 
 public class PolicyTest {
 
+    private final Gson gson = new Gson();
+
+    @Test
+    public void compare() throws IOException {
+
+        final Policy policy1 = getPolicy();
+        final String policyJson1 = gson.toJson(policy1);
+
+        final Policy policy2 = getPolicy();
+        final String policyJson2 = gson.toJson(policy2);
+
+        Assertions.assertEquals(policyJson1, policyJson2);
+
+    }
+
     @Test
     public void serialize() throws IOException {
 
-        CustomDictionary customDictionary = new CustomDictionary();
-        customDictionary.setTerms(Arrays.asList("123", "456", "jeff", "john"));
-        customDictionary.setCustomDictionaryFilterStrategies(List.of(new CustomDictionaryFilterStrategy()));
-
-        Age age = new Age();
-        age.setAgeFilterStrategies(List.of(new AgeFilterStrategy()));
-
-        City city = new City();
-        city.setCityFilterStrategies(List.of(new CityFilterStrategy()));
-
-        County county = new County();
-        county.setCountyFilterStrategies(List.of(new CountyFilterStrategy()));
-
-        CreditCard creditCard = new CreditCard();
-        creditCard.setCreditCardFilterStrategies(List.of(new CreditCardFilterStrategy()));
-
-        Date date = new Date();
-        date.setDateFilterStrategies(List.of(new DateFilterStrategy()));
-
-        EmailAddress emailAddress = new EmailAddress();
-        emailAddress.setEmailAddressFilterStrategies(List.of(new EmailAddressFilterStrategy()));
-
-        FirstName firstName = new FirstName();
-        firstName.setFirstNameFilterStrategies(List.of(new FirstNameFilterStrategy()));
-
-        Hospital hospital = new Hospital();
-        hospital.setHospitalFilterStrategies(List.of(new HospitalFilterStrategy()));
-
-        HospitalAbbreviation hospitalAbbreviation = new HospitalAbbreviation();
-        hospitalAbbreviation.setHospitalAbbreviationFilterStrategies(List.of(new HospitalAbbreviationFilterStrategy()));
-
-        Identifier identifier = new Identifier();
-        identifier.setIdentifierFilterStrategies(List.of(new IdentifierFilterStrategy()));
-
-        IpAddress ipAddress = new IpAddress();
-        ipAddress.setIpAddressFilterStrategies(List.of(new IpAddressFilterStrategy()));
-
-        PhEye phEye = new PhEye();
-        phEye.setPhEyeFilterStrategies(List.of(new PhEyeFilterStrategy()));
-
-        PhoneNumber phoneNumber = new PhoneNumber();
-        phoneNumber.setPhoneNumberFilterStrategies(List.of(new PhoneNumberFilterStrategy()));
-
-        PhoneNumberExtension phoneNumberExtension = new PhoneNumberExtension();
-        phoneNumberExtension.setPhoneNumberExtensionFilterStrategies(List.of(new PhoneNumberExtensionFilterStrategy()));
-
-        Ssn ssn = new Ssn();
-        ssn.setSsnFilterStrategies(List.of(new SsnFilterStrategy()));
-
-        State state = new State();
-        state.setStateFilterStrategies(List.of(new StateFilterStrategy()));
-
-        StateAbbreviation stateAbbreviation = new StateAbbreviation();
-        stateAbbreviation.setStateAbbreviationsFilterStrategies(List.of(new StateAbbreviationFilterStrategy()));
-
-        Surname surname = new Surname();
-        surname.setSurnameFilterStrategies(List.of(new SurnameFilterStrategy()));
-
-        Url url = new Url();
-        url.setUrlFilterStrategies(List.of(new UrlFilterStrategy()));
-
-        Vin vin = new Vin();
-        vin.setVinFilterStrategies(List.of(new VinFilterStrategy()));
-
-        ZipCodeFilterStrategy zipCodeFilterStrategy = new ZipCodeFilterStrategy();
-        zipCodeFilterStrategy.setStrategy("TRUNCATE");
-        zipCodeFilterStrategy.setTruncateDigits(2);
-        zipCodeFilterStrategy.setConditions("population < 4500");
-
-        ZipCode zipCode = new ZipCode();
-        zipCode.setZipCodeFilterStrategies(List.of(zipCodeFilterStrategy));
-
-        Identifiers identifiers = new Identifiers();
-        identifiers.setCustomDictionaries(List.of(customDictionary));
-        identifiers.setAge(age);
-        identifiers.setCity(city);
-        identifiers.setCounty(county);
-        identifiers.setCreditCard(creditCard);
-        identifiers.setDate(date);
-        identifiers.setEmailAddress(emailAddress);
-        identifiers.setFirstName(firstName);
-        identifiers.setHospital(hospital);
-        identifiers.setHospitalAbbreviation(hospitalAbbreviation);
-        identifiers.setIdentifiers(List.of(identifier));
-        identifiers.setIpAddress(ipAddress);
-        identifiers.setPerson(phEye);
-        identifiers.setPhoneNumber(phoneNumber);
-        identifiers.setPhoneNumberExtension(phoneNumberExtension);
-        identifiers.setSsn(ssn);
-        identifiers.setState(state);
-        identifiers.setStateAbbreviation(stateAbbreviation);
-        identifiers.setSurname(surname);
-        identifiers.setUrl(url);
-        identifiers.setVin(vin);
-        identifiers.setZipCode(zipCode);
-
-        Ignored ignored = new Ignored();
-        ignored.setName("ignored-terms");
-        ignored.setTerms(Arrays.asList("term1", "term2"));
-
-        Policy policy = new Policy();
-        policy.setName("default");
-        policy.setIdentifiers(identifiers);
-        policy.setIgnored(List.of(ignored));
-
         Gson gson = new GsonBuilder().serializeNulls().setPrettyPrinting().create();
-        String json = gson.toJson(policy);
+        String json = gson.toJson(getPolicy());
 
         System.out.println(json);
 
@@ -466,6 +376,117 @@ public class PolicyTest {
         Policy policy = gson.fromJson(json, Policy.class);
 
         Assertions.assertEquals("unnamed", policy.getName());
+
+    }
+
+    private Policy getPolicy() throws IOException {
+
+        CustomDictionary customDictionary = new CustomDictionary();
+        customDictionary.setTerms(Arrays.asList("123", "456", "jeff", "john"));
+        customDictionary.setCustomDictionaryFilterStrategies(List.of(new CustomDictionaryFilterStrategy()));
+
+        Age age = new Age();
+        age.setAgeFilterStrategies(List.of(new AgeFilterStrategy()));
+
+        City city = new City();
+        city.setCityFilterStrategies(List.of(new CityFilterStrategy()));
+
+        County county = new County();
+        county.setCountyFilterStrategies(List.of(new CountyFilterStrategy()));
+
+        CreditCard creditCard = new CreditCard();
+        creditCard.setCreditCardFilterStrategies(List.of(new CreditCardFilterStrategy()));
+
+        Date date = new Date();
+        date.setDateFilterStrategies(List.of(new DateFilterStrategy()));
+
+        EmailAddress emailAddress = new EmailAddress();
+        emailAddress.setEmailAddressFilterStrategies(List.of(new EmailAddressFilterStrategy()));
+
+        FirstName firstName = new FirstName();
+        firstName.setFirstNameFilterStrategies(List.of(new FirstNameFilterStrategy()));
+
+        Hospital hospital = new Hospital();
+        hospital.setHospitalFilterStrategies(List.of(new HospitalFilterStrategy()));
+
+        HospitalAbbreviation hospitalAbbreviation = new HospitalAbbreviation();
+        hospitalAbbreviation.setHospitalAbbreviationFilterStrategies(List.of(new HospitalAbbreviationFilterStrategy()));
+
+        Identifier identifier = new Identifier();
+        identifier.setIdentifierFilterStrategies(List.of(new IdentifierFilterStrategy()));
+
+        IpAddress ipAddress = new IpAddress();
+        ipAddress.setIpAddressFilterStrategies(List.of(new IpAddressFilterStrategy()));
+
+        PhEye phEye = new PhEye();
+        phEye.setPhEyeFilterStrategies(List.of(new PhEyeFilterStrategy()));
+
+        PhoneNumber phoneNumber = new PhoneNumber();
+        phoneNumber.setPhoneNumberFilterStrategies(List.of(new PhoneNumberFilterStrategy()));
+
+        PhoneNumberExtension phoneNumberExtension = new PhoneNumberExtension();
+        phoneNumberExtension.setPhoneNumberExtensionFilterStrategies(List.of(new PhoneNumberExtensionFilterStrategy()));
+
+        Ssn ssn = new Ssn();
+        ssn.setSsnFilterStrategies(List.of(new SsnFilterStrategy()));
+
+        State state = new State();
+        state.setStateFilterStrategies(List.of(new StateFilterStrategy()));
+
+        StateAbbreviation stateAbbreviation = new StateAbbreviation();
+        stateAbbreviation.setStateAbbreviationsFilterStrategies(List.of(new StateAbbreviationFilterStrategy()));
+
+        Surname surname = new Surname();
+        surname.setSurnameFilterStrategies(List.of(new SurnameFilterStrategy()));
+
+        Url url = new Url();
+        url.setUrlFilterStrategies(List.of(new UrlFilterStrategy()));
+
+        Vin vin = new Vin();
+        vin.setVinFilterStrategies(List.of(new VinFilterStrategy()));
+
+        ZipCodeFilterStrategy zipCodeFilterStrategy = new ZipCodeFilterStrategy();
+        zipCodeFilterStrategy.setStrategy("TRUNCATE");
+        zipCodeFilterStrategy.setTruncateDigits(2);
+        zipCodeFilterStrategy.setConditions("population < 4500");
+
+        ZipCode zipCode = new ZipCode();
+        zipCode.setZipCodeFilterStrategies(List.of(zipCodeFilterStrategy));
+
+        Identifiers identifiers = new Identifiers();
+        identifiers.setCustomDictionaries(List.of(customDictionary));
+        identifiers.setAge(age);
+        identifiers.setCity(city);
+        identifiers.setCounty(county);
+        identifiers.setCreditCard(creditCard);
+        identifiers.setDate(date);
+        identifiers.setEmailAddress(emailAddress);
+        identifiers.setFirstName(firstName);
+        identifiers.setHospital(hospital);
+        identifiers.setHospitalAbbreviation(hospitalAbbreviation);
+        identifiers.setIdentifiers(List.of(identifier));
+        identifiers.setIpAddress(ipAddress);
+        identifiers.setPerson(phEye);
+        identifiers.setPhoneNumber(phoneNumber);
+        identifiers.setPhoneNumberExtension(phoneNumberExtension);
+        identifiers.setSsn(ssn);
+        identifiers.setState(state);
+        identifiers.setStateAbbreviation(stateAbbreviation);
+        identifiers.setSurname(surname);
+        identifiers.setUrl(url);
+        identifiers.setVin(vin);
+        identifiers.setZipCode(zipCode);
+
+        Ignored ignored = new Ignored();
+        ignored.setName("ignored-terms");
+        ignored.setTerms(Arrays.asList("term1", "term2"));
+
+        Policy policy = new Policy();
+        policy.setName("default");
+        policy.setIdentifiers(identifiers);
+        policy.setIgnored(List.of(ignored));
+
+        return policy;
 
     }
 

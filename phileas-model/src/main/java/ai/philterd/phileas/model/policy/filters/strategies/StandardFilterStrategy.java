@@ -16,7 +16,6 @@
 package ai.philterd.phileas.model.policy.filters.strategies;
 
 import ai.philterd.phileas.model.enums.FilterType;
-import ai.philterd.phileas.model.objects.FilterPattern;
 import ai.philterd.phileas.model.objects.Replacement;
 import ai.philterd.phileas.model.policy.Crypto;
 import ai.philterd.phileas.model.policy.FPE;
@@ -28,10 +27,10 @@ import org.apache.commons.lang3.StringUtils;
 
 public abstract class StandardFilterStrategy extends AbstractFilterStrategy {
 
-    public Replacement getStandardReplacement(String label, String context, String documentId, String token,
-                                      String[] window, Crypto crypto, FPE fpe,
+    public Replacement getStandardReplacement(String label, String token,
+                                      Crypto crypto, FPE fpe,
                                       AnonymizationService anonymizationService,
-                                      FilterPattern filterPattern, FilterType filterType) throws Exception {
+                                      FilterType filterType) throws Exception {
 
         String replacement;
         String salt = "";
