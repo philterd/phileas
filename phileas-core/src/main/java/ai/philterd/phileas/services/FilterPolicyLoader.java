@@ -81,13 +81,11 @@ import ai.philterd.phileas.services.filters.regex.ZipCodeFilter;
 import ai.philterd.phileas.services.validators.DateSpanValidator;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 import java.nio.charset.Charset;
-import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -102,17 +100,14 @@ public class FilterPolicyLoader {
     private final CacheService anonymizationCacheService;
     private final AlertService alertService;
     private final MetricsService metricsService;
-    private final Map<String, DescriptiveStatistics> stats;
     private final PhileasConfiguration phileasConfiguration;
 
     public FilterPolicyLoader(final AlertService alertService, final CacheService anonymizationCacheService,
-                              final MetricsService metricsService, final Map<String, DescriptiveStatistics> stats,
-                              final PhileasConfiguration phileasConfiguration) {
+                              final MetricsService metricsService, final PhileasConfiguration phileasConfiguration) {
 
         this.alertService = alertService;
         this.anonymizationCacheService = anonymizationCacheService;
         this.metricsService = metricsService;
-        this.stats = new HashMap<>();
         
         this.phileasConfiguration = phileasConfiguration;
 
@@ -1193,7 +1188,6 @@ public class FilterPolicyLoader {
                 final Filter filter = new PhEyeFilter(
                         filterConfiguration,
                         phEyeConfiguration,
-                        stats,
                         metricsService,
                         policy.getIdentifiers().getPhEye().isRemovePunctuation(),
                         policy.getIdentifiers().getPhEye().getThresholds()

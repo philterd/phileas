@@ -56,7 +56,6 @@ import ai.philterd.services.pdf.PdfTextExtractor;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -101,11 +100,8 @@ public class PhileasFilterService implements FilterService {
         // Set the alert service.
         this.alertService = new DefaultAlertService(cacheService);
 
-        // Instantiate the stats.
-        final Map<String, DescriptiveStatistics> stats = new HashMap<>();
-
         // The filter loader for policies.
-        this.filterPolicyLoader = new FilterPolicyLoader(alertService, cacheService, metricsService, stats, phileasConfiguration);
+        this.filterPolicyLoader = new FilterPolicyLoader(alertService, cacheService, metricsService, phileasConfiguration);
 
         // Create a new unstructured document processor.
         this.unstructuredDocumentProcessor = new UnstructuredDocumentProcessor(metricsService, new VectorBasedSpanDisambiguationService(phileasConfiguration, cacheService));
