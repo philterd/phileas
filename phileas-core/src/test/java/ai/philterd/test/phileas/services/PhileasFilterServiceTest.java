@@ -54,14 +54,11 @@ public class PhileasFilterServiceTest {
 
     private static final Logger LOGGER = LogManager.getLogger(PhileasFilterServiceTest.class);
 
-    private String INDEXES_DIRECTORY = "/not/set/indexes/";
     private Gson gson;
     private final CacheService cacheService = Mockito.mock(CacheService.class);
 
     @BeforeEach
     public void before() {
-        INDEXES_DIRECTORY = System.getProperty( "os.name" ).contains( "indow" ) ? INDEXES_DIRECTORY.substring(1) : INDEXES_DIRECTORY;
-
         final GsonBuilder gsonBuilder = new GsonBuilder();
         gsonBuilder.registerTypeAdapter(String.class, new PlaceholderDeserializer());
         gson = gsonBuilder.create();

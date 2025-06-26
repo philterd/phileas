@@ -13,21 +13,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ai.philterd.test.phileas.model.exceptions;
+package ai.philterd.phileas.services.alerts;
 
-import ai.philterd.phileas.model.exceptions.api.BadRequestException;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
+import ai.philterd.phileas.model.enums.FilterType;
+import ai.philterd.phileas.model.services.MetricsService;
 
-public class BadRequestExceptionTest {
+/**
+ * An implementation of {@link MetricsService} that does nothing with the metrics.
+ */
+public class NoOpMetricsService implements MetricsService {
 
-    @Test
-    public void test() {
+    @Override
+    public void incrementProcessed() {
 
-        final String message = "This is a test exceptinon.";
+    }
 
-        BadRequestException ex = new BadRequestException(message);
-        Assertions.assertEquals(message, ex.getMessage());
+    @Override
+    public void incrementProcessed(long count) {
+
+    }
+
+    @Override
+    public void incrementFilterType(FilterType filterType) {
+
+    }
+
+    @Override
+    public void logFilterTime(FilterType filterType, long timeMs) {
 
     }
 

@@ -36,7 +36,6 @@ import ai.philterd.phileas.model.services.CacheService;
 import ai.philterd.phileas.model.services.PolicyService;
 import ai.philterd.phileas.services.PhileasFilterService;
 import ai.philterd.phileas.services.policies.InMemoryPolicyService;
-import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -70,17 +69,12 @@ public class EndToEndTests {
 
     private static final Logger LOGGER = LogManager.getLogger(EndToEndTests.class);
 
-    private String INDEXES_DIRECTORY = "/not/set/";
-    private Gson gson;
-
     private final CacheService cacheService = Mockito.mock(CacheService.class);
     
     @BeforeEach
     public void before() {
-        INDEXES_DIRECTORY = System.getProperty( "os.name" ).contains( "indow" ) ? INDEXES_DIRECTORY.substring(1) : INDEXES_DIRECTORY;
         final GsonBuilder gsonBuilder = new GsonBuilder();
         gsonBuilder.registerTypeAdapter(String.class, new PlaceholderDeserializer());
-        gson = gsonBuilder.create();
     }
 
     @Test
@@ -477,7 +471,7 @@ public class EndToEndTests {
         policy.setName("default");
         policy.setIdentifiers(identifiers);
         Properties properties = new Properties();
-        PhileasConfiguration configuration = new PhileasConfiguration(properties, "phileas");
+        PhileasConfiguration configuration = new PhileasConfiguration(properties);
 
         final CacheService inMemoryCache = new InMemoryCache();
         

@@ -15,12 +15,8 @@
  */
 package ai.philterd.phileas.services.policies;
 
-import ai.philterd.phileas.model.exceptions.api.BadRequestException;
 import ai.philterd.phileas.model.policy.Policy;
 import ai.philterd.phileas.model.services.PolicyService;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.json.JSONException;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -28,8 +24,6 @@ import java.util.List;
 import java.util.Map;
 
 public class InMemoryPolicyService implements PolicyService {
-
-    private static final Logger LOGGER = LogManager.getLogger(InMemoryPolicyService.class);
 
     private final Map<String, Policy> policies;
 
@@ -61,16 +55,7 @@ public class InMemoryPolicyService implements PolicyService {
     @Override
     public void save(Policy policy) {
 
-        try {
-
-            policies.put(policy.getName(), policy);
-
-        } catch (JSONException ex) {
-
-            LOGGER.error("The provided policy is not valid.", ex);
-            throw new BadRequestException("The provided policy is not valid.");
-
-        }
+        policies.put(policy.getName(), policy);
 
     }
 
