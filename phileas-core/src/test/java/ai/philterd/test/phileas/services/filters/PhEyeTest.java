@@ -24,7 +24,6 @@ import ai.philterd.phileas.model.services.MetricsService;
 import ai.philterd.phileas.services.anonymization.AgeAnonymizationService;
 import ai.philterd.phileas.services.filters.ai.pheye.PhEyeConfiguration;
 import ai.philterd.phileas.services.filters.ai.pheye.PhEyeFilter;
-import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -43,7 +42,6 @@ public class PhEyeTest extends AbstractFilterTest {
         final CacheService cacheService = new InMemoryCache();
 
         final PhEyeConfiguration phEyeConfiguration = new PhEyeConfiguration("http://localhost:18080");
-        final Map<String, DescriptiveStatistics> stats = new HashMap<>();
         final MetricsService metricsService = Mockito.mock(MetricsService.class);
         final boolean removePunctuation = false;
         final Map<String, Double> thresholds = new HashMap<>();
@@ -54,7 +52,7 @@ public class PhEyeTest extends AbstractFilterTest {
                 .withWindowSize(windowSize)
                 .build();
 
-        final PhEyeFilter filter = new PhEyeFilter(filterConfiguration, phEyeConfiguration, stats, metricsService, removePunctuation, thresholds);
+        final PhEyeFilter filter = new PhEyeFilter(filterConfiguration, phEyeConfiguration, metricsService, removePunctuation, thresholds);
 
         final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "George Washington was the first president.", attributes);
 
@@ -70,7 +68,6 @@ public class PhEyeTest extends AbstractFilterTest {
         final CacheService cacheService = new InMemoryCache();
 
         final PhEyeConfiguration phEyeConfiguration = new PhEyeConfiguration("http://localhost:18080");
-        final Map<String, DescriptiveStatistics> stats = new HashMap<>();
         final MetricsService metricsService = Mockito.mock(MetricsService.class);
         final boolean removePunctuation = false;
         final Map<String, Double> thresholds = new HashMap<>();
@@ -81,7 +78,7 @@ public class PhEyeTest extends AbstractFilterTest {
                 .withWindowSize(windowSize)
                 .build();
 
-        final PhEyeFilter filter = new PhEyeFilter(filterConfiguration, phEyeConfiguration, stats, metricsService, removePunctuation, thresholds);
+        final PhEyeFilter filter = new PhEyeFilter(filterConfiguration, phEyeConfiguration, metricsService, removePunctuation, thresholds);
 
         final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "No name here was the first president.", attributes);
 
@@ -96,7 +93,6 @@ public class PhEyeTest extends AbstractFilterTest {
         final CacheService cacheService = new InMemoryCache();
 
         final PhEyeConfiguration phEyeConfiguration = new PhEyeConfiguration("http://localhost:18080");
-        final Map<String, DescriptiveStatistics> stats = new HashMap<>();
         final MetricsService metricsService = Mockito.mock(MetricsService.class);
         final boolean removePunctuation = false;
         final Map<String, Double> thresholds = new HashMap<>();
@@ -107,7 +103,7 @@ public class PhEyeTest extends AbstractFilterTest {
                 .withWindowSize(windowSize)
                 .build();
 
-        final PhEyeFilter filter = new PhEyeFilter(filterConfiguration, phEyeConfiguration, stats, metricsService, removePunctuation, thresholds);
+        final PhEyeFilter filter = new PhEyeFilter(filterConfiguration, phEyeConfiguration, metricsService, removePunctuation, thresholds);
 
         // This is to test the http connection pooling for connections to ph-eye.
         for(int x = 0; x < 10; x++) {

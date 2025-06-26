@@ -27,7 +27,6 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.apache.hc.client5.http.classic.methods.HttpPost;
 import org.apache.hc.client5.http.config.RequestConfig;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
@@ -65,12 +64,11 @@ public class PhEyeFilter extends NerFilter {
 
     public PhEyeFilter(final FilterConfiguration filterConfiguration,
                        final PhEyeConfiguration phEyeConfiguration,
-                       final Map<String, DescriptiveStatistics> stats,
                        final MetricsService metricsService,
                        final boolean removePunctuation,
                        final Map<String, Double> thresholds) {
 
-        super(filterConfiguration, stats, metricsService, thresholds, FilterType.AGE);
+        super(filterConfiguration, metricsService, thresholds, FilterType.AGE);
 
         this.phEyeConfiguration = phEyeConfiguration;
         this.removePunctuation = removePunctuation;
