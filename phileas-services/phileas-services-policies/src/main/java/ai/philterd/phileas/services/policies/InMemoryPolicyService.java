@@ -18,7 +18,6 @@ package ai.philterd.phileas.services.policies;
 import ai.philterd.phileas.model.exceptions.api.BadRequestException;
 import ai.philterd.phileas.model.policy.Policy;
 import ai.philterd.phileas.model.services.PolicyService;
-import com.google.gson.Gson;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.JSONException;
@@ -33,11 +32,9 @@ public class InMemoryPolicyService implements PolicyService {
     private static final Logger LOGGER = LogManager.getLogger(InMemoryPolicyService.class);
 
     private final Map<String, Policy> policies;
-    private final Gson gson;
 
     public InMemoryPolicyService() {
         this.policies = new HashMap<>();
-        this.gson = new Gson();
     }
 
     @Override
@@ -55,7 +52,7 @@ public class InMemoryPolicyService implements PolicyService {
     }
 
     @Override
-    public Map<String, Policy> getAll() throws IOException {
+    public Map<String, Policy> getAll() {
 
         return policies;
 
@@ -63,8 +60,6 @@ public class InMemoryPolicyService implements PolicyService {
 
     @Override
     public void save(Policy policy) {
-
-        final String policyJson = gson.toJson(policy);
 
         try {
 
