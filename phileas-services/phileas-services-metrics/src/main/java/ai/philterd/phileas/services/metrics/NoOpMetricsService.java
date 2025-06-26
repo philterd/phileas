@@ -20,27 +20,13 @@ import ai.philterd.phileas.model.services.MetricsService;
 
 /**
  * An implementation of {@link MetricsService} that does nothing with the metrics.
+ * It is a placeholder and example implementation.
  */
 public class NoOpMetricsService implements MetricsService {
 
     @Override
-    public void incrementProcessed() {
-
-    }
-
-    @Override
-    public void incrementProcessed(long count) {
-
-    }
-
-    @Override
-    public void incrementFilterType(FilterType filterType) {
-
-    }
-
-    @Override
     public void logFilterTime(FilterType filterType, long timeMs) {
-
+        // Do nothing. This is a placeholder.
     }
 
 }
