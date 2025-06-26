@@ -36,7 +36,7 @@ public class CustomDictionaryFilterStrategy extends StandardFilterStrategy {
 
     private static final Logger LOGGER = LogManager.getLogger(ai.philterd.phileas.model.policy.filters.strategies.custom.CustomDictionaryFilterStrategy.class);
 
-    private static final FilterType filterType = FilterType.CUSTOM_DICTIONARY;
+    private final FilterType filterType = FilterType.CUSTOM_DICTIONARY;
 
     @Override
     public FilterType getFilterType() {

@@ -36,7 +36,7 @@ public class VinFilterStrategy extends StandardFilterStrategy {
 
     private static final Logger LOGGER = LogManager.getLogger(VinFilterStrategy.class);
 
-    private static final FilterType filterType = FilterType.VIN;
+    private final FilterType filterType = FilterType.VIN;
 
     @Override
     public FilterType getFilterType() {

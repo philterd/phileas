@@ -36,7 +36,7 @@ public class UrlFilterStrategy extends StandardFilterStrategy {
 
     private static final Logger LOGGER = LogManager.getLogger(UrlFilterStrategy.class);
 
-    private static final FilterType filterType = FilterType.URL;
+    private final FilterType filterType = FilterType.URL;
 
     @Override
     public FilterType getFilterType() {

@@ -36,7 +36,7 @@ public class BankRoutingNumberFilterStrategy extends StandardFilterStrategy {
 
     private static final Logger LOGGER = LogManager.getLogger(BankRoutingNumberFilterStrategy.class);
 
-    private static final FilterType filterType = FilterType.BANK_ROUTING_NUMBER;
+    private final FilterType filterType = FilterType.BANK_ROUTING_NUMBER;
 
     @Override
     public FilterType getFilterType() {

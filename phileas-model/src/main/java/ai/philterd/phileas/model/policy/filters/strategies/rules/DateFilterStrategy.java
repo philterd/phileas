@@ -51,7 +51,7 @@ public class DateFilterStrategy extends AbstractFilterStrategy {
 
     private static final Logger LOGGER = LogManager.getLogger(DateFilterStrategy.class);
 
-    private static final FilterType filterType = FilterType.DATE;
+    private final FilterType filterType = FilterType.DATE;
 
     @SerializedName("shiftRandom")
     @Expose

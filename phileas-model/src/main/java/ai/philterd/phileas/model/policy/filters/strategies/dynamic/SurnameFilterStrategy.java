@@ -36,7 +36,7 @@ public class SurnameFilterStrategy extends StandardFilterStrategy {
 
     private static final Logger LOGGER = LogManager.getLogger(SurnameFilterStrategy.class);
 
-    private static final FilterType filterType = FilterType.SURNAME;
+    private final FilterType filterType = FilterType.SURNAME;
 
     @Override
     public FilterType getFilterType() {

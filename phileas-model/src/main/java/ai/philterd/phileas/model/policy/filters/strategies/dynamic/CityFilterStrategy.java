@@ -36,7 +36,7 @@ public class CityFilterStrategy extends StandardFilterStrategy {
 
     private static final Logger LOGGER = LogManager.getLogger(CityFilterStrategy.class);
 
-    private static final FilterType filterType = FilterType.LOCATION_CITY;
+    private final FilterType filterType = FilterType.LOCATION_CITY;
 
     @Override
     public FilterType getFilterType() {

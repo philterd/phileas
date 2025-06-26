@@ -40,7 +40,7 @@ public class PhEyeFilterStrategy extends AbstractFilterStrategy {
 
     private static final Logger LOGGER = LogManager.getLogger(PhEyeFilterStrategy.class);
 
-    private static final FilterType filterType = FilterType.PERSON;
+    private final FilterType filterType = FilterType.PERSON;
 
     @Override
     public FilterType getFilterType() {

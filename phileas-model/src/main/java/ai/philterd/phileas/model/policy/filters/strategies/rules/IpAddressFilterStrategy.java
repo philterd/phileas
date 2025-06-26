@@ -36,7 +36,7 @@ public class IpAddressFilterStrategy extends StandardFilterStrategy {
 
     private static final Logger LOGGER = LogManager.getLogger(IpAddressFilterStrategy.class);
 
-    private static final FilterType filterType = FilterType.IP_ADDRESS;
+    private final FilterType filterType = FilterType.IP_ADDRESS;
 
     @Override
     public FilterType getFilterType() {

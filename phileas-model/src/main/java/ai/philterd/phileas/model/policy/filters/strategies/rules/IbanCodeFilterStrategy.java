@@ -36,7 +36,7 @@ public class IbanCodeFilterStrategy extends StandardFilterStrategy {
 
     private static final Logger LOGGER = LogManager.getLogger(IbanCodeFilterStrategy.class);
 
-    private static final FilterType filterType = FilterType.IBAN_CODE;
+    private final FilterType filterType = FilterType.IBAN_CODE;
 
     @Override
     public FilterType getFilterType() {

@@ -36,7 +36,7 @@ public class PhysicianNameFilterStrategy extends StandardFilterStrategy {
 
     private static final Logger LOGGER = LogManager.getLogger(PhysicianNameFilterStrategy.class);
 
-    private static final FilterType filterType = FilterType.PHYSICIAN_NAME;
+    private final FilterType filterType = FilterType.PHYSICIAN_NAME;
 
     @Override
     public FilterType getFilterType() {

@@ -36,7 +36,7 @@ public class FirstNameFilterStrategy extends StandardFilterStrategy {
 
     private static final Logger LOGGER = LogManager.getLogger(FirstNameFilterStrategy.class);
 
-    private static final FilterType filterType = FilterType.FIRST_NAME;
+    private final FilterType filterType = FilterType.FIRST_NAME;
 
     @Override
     public FilterType getFilterType() {

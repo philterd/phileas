@@ -35,7 +35,7 @@ import ai.philterd.phileas.model.policy.filters.Identifier;
 import ai.philterd.phileas.model.policy.filters.IpAddress;
 import ai.philterd.phileas.model.policy.filters.MacAddress;
 import ai.philterd.phileas.model.policy.filters.PassportNumber;
-import ai.philterd.phileas.model.policy.filters.PhEyeFilter;
+import ai.philterd.phileas.model.policy.filters.PhEye;
 import ai.philterd.phileas.model.policy.filters.PhoneNumber;
 import ai.philterd.phileas.model.policy.filters.PhoneNumberExtension;
 import ai.philterd.phileas.model.policy.filters.PhysicianName;
@@ -63,7 +63,7 @@ public class Identifiers {
 
     @SerializedName("person")
     @Expose
-    private PhEyeFilter phEyeFilter;
+    private PhEye phEye;
 
     @SerializedName("dictionaries")
     @Expose
@@ -323,7 +323,7 @@ public class Identifiers {
             case PASSPORT_NUMBER:
                 return this.passportNumber;
             case PERSON:
-                return this.phEyeFilter;
+                return this.phEye;
             case PHONE_NUMBER:
                 return this.phoneNumber;
             case PHONE_NUMBER_EXTENSION:
@@ -420,7 +420,7 @@ public class Identifiers {
                 this.passportNumber = (PassportNumber) filter;
                 break;
             case PERSON:
-                this.phEyeFilter = (PhEyeFilter) filter;
+                this.phEye = (PhEye) filter;
                 break;
             case PHONE_NUMBER:
                 this.phoneNumber = (PhoneNumber) filter;
@@ -626,12 +626,12 @@ public class Identifiers {
         this.phoneNumberExtension = phoneNumberExtension;
     }
 
-    public PhEyeFilter getPhEye() {
-        return phEyeFilter;
+    public PhEye getPhEye() {
+        return phEye;
     }
 
-    public void setPerson(PhEyeFilter phEyeFilter) {
-        this.phEyeFilter = phEyeFilter;
+    public void setPerson(PhEye phEye) {
+        this.phEye = phEye;
     }
 
     public List<CustomDictionary> getCustomDictionaries() {

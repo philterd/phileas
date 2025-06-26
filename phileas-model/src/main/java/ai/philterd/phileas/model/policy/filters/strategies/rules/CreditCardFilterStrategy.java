@@ -23,15 +23,9 @@ import ai.philterd.phileas.model.objects.Replacement;
 import ai.philterd.phileas.model.policy.Crypto;
 import ai.philterd.phileas.model.policy.FPE;
 import ai.philterd.phileas.model.policy.Policy;
-import ai.philterd.phileas.model.policy.filters.strategies.AbstractFilterStrategy;
 import ai.philterd.phileas.model.policy.filters.strategies.StandardFilterStrategy;
 import ai.philterd.phileas.model.services.AnonymizationService;
-import ai.philterd.phileas.model.utils.Encryption;
-import org.apache.commons.codec.digest.DigestUtils;
-import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.validator.routines.checkdigit.LuhnCheckDigit;
-import org.apache.commons.validator.routines.checkdigit.ModulusCheckDigit;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -42,7 +36,7 @@ public class CreditCardFilterStrategy extends StandardFilterStrategy {
 
     private static final Logger LOGGER = LogManager.getLogger(CreditCardFilterStrategy.class);
 
-    private static final FilterType filterType = FilterType.CREDIT_CARD;
+    private final FilterType filterType = FilterType.CREDIT_CARD;
 
     @Override
     public FilterType getFilterType() {

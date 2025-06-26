@@ -36,7 +36,7 @@ public class PhoneNumberExtensionFilterStrategy extends StandardFilterStrategy {
 
     private static final Logger LOGGER = LogManager.getLogger(PhoneNumberExtensionFilterStrategy.class);
 
-    private static final FilterType filterType = FilterType.PHONE_NUMBER_EXTENSION;
+    private final FilterType filterType = FilterType.PHONE_NUMBER_EXTENSION;
 
     @Override
     public FilterType getFilterType() {

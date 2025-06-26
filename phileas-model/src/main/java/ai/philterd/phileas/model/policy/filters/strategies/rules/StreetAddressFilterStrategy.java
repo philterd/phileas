@@ -36,7 +36,7 @@ public class StreetAddressFilterStrategy extends StandardFilterStrategy {
 
     private static final Logger LOGGER = LogManager.getLogger(StreetAddressFilterStrategy.class);
 
-    private static final FilterType filterType = FilterType.STREET_ADDRESS;
+    private final FilterType filterType = FilterType.STREET_ADDRESS;
 
     @Override
     public FilterType getFilterType() {

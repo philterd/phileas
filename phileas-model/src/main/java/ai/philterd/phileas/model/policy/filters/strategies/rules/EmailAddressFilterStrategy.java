@@ -40,7 +40,7 @@ public class EmailAddressFilterStrategy extends StandardFilterStrategy {
 
     private static final Logger LOGGER = LogManager.getLogger(EmailAddressFilterStrategy.class);
 
-    private static final FilterType filterType = FilterType.EMAIL_ADDRESS;
+    private final FilterType filterType = FilterType.EMAIL_ADDRESS;
 
     @Override
     public FilterType getFilterType() {

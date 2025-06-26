@@ -36,7 +36,7 @@ public class TrackingNumberFilterStrategy extends StandardFilterStrategy {
 
     private static final Logger LOGGER = LogManager.getLogger(TrackingNumberFilterStrategy.class);
 
-    private static final FilterType filterType = FilterType.TRACKING_NUMBER;
+    private final FilterType filterType = FilterType.TRACKING_NUMBER;
 
     @Override
     public FilterType getFilterType() {

@@ -36,7 +36,7 @@ public class DriversLicenseFilterStrategy extends StandardFilterStrategy {
 
     private static final Logger LOGGER = LogManager.getLogger(DriversLicenseFilterStrategy.class);
 
-    private static final FilterType filterType = FilterType.DRIVERS_LICENSE_NUMBER;
+    private final FilterType filterType = FilterType.DRIVERS_LICENSE_NUMBER;
 
     @Override
     public FilterType getFilterType() {
