@@ -17,8 +17,8 @@ package ai.philterd.phileas.model.objects;
 
 import com.google.gson.Gson;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class SpanVector {
 
@@ -26,7 +26,7 @@ public class SpanVector {
     private final transient Gson gson;
 
     public SpanVector() {
-        this.vectorIndexes = new HashMap<>();
+        this.vectorIndexes = new ConcurrentHashMap<>();
         this.gson = new Gson();
     }
 
