@@ -66,7 +66,6 @@
         <maven.failsafe.version>3.2.5</maven.failsafe.version>
         <maven.surefire.version>3.2.5</maven.surefire.version>
         <mockito.version>5.18.0</mockito.version>
-        <opennlp.version>2.5.4</opennlp.version>
         <pdfbox.version>3.0.5</pdfbox.version>
         <snakeyaml.version>2.3</snakeyaml.version>
     </properties>
