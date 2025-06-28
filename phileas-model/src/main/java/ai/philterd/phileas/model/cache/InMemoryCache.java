@@ -27,10 +27,10 @@ import org.apache.commons.lang3.StringUtils;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Implementation of {@link CacheService} that stores everything in memory.
@@ -43,10 +43,10 @@ public class InMemoryCache implements CacheService {
     private final List<Alert> alerts;
 
     public InMemoryCache() {
-        this.vectorCache = new HashMap<>();
-        this.policyCache = new HashMap<>();
+        this.vectorCache = new ConcurrentHashMap<>();
+        this.policyCache = new ConcurrentHashMap<>();
         this.anonymizationCache = new ConcurrentHashMap<>();
-        this.alerts = new LinkedList<>();
+        this.alerts = new CopyOnWriteArrayList<>();
     }
 
     // For alerts
