@@ -80,28 +80,6 @@ public class StateAbbreviationFilterStrategy extends StandardFilterStrategy {
                     default -> conditionsSatisfied;
                 };
 
-            } else if(StringUtils.equalsIgnoreCase(SENTIMENT, parsedCondition.getField())) {
-
-                // If there is no sentiment attribute, the condition is automatically not satisfied.
-                if(attributes.containsKey("sentiment")) {
-
-                    final int documentSentiment = Integer.parseInt(attributes.get("sentiment"));
-                    final int sentimentCondition = Integer.parseInt(parsedCondition.getValue());
-
-                    conditionsSatisfied = switch (parsedCondition.getOperator()) {
-                        case GREATER_THAN -> (documentSentiment > sentimentCondition);
-                        case LESS_THAN -> (documentSentiment < sentimentCondition);
-                        case GREATER_THAN_EQUALS -> (documentSentiment >= sentimentCondition);
-                        case LESS_THAN_EQUALS -> (documentSentiment <= sentimentCondition);
-                        case EQUALS -> (documentSentiment == sentimentCondition);
-                        case NOT_EQUALS -> (documentSentiment != sentimentCondition);
-                        default -> conditionsSatisfied;
-                    };
-
-                } else {
-                    conditionsSatisfied = false;
-                }
-
             }
 
             LOGGER.debug("Condition for [{}] satisfied: {}", condition, conditionsSatisfied);

@@ -65,7 +65,6 @@ public abstract class AbstractFilterStrategy {
     public static final String CONTEXT = "context";
     public static final String TYPE = "type";
     public static final String CONFIDENCE = "confidence";
-    public static final String SENTIMENT = "sentiment";
     public static final String CLASSIFICATION = "classification";
     public static final String BIRTHDATE = "birthdate";
     public static final String DEATHDATE = "deathdate";

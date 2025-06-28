@@ -24,36 +24,12 @@ public class Analysis {
     @Expose
     private boolean identification = true;
 
-    @SerializedName("sentiment")
-    @Expose
-    private Sentiment sentiment = new Sentiment();
-
-    @SerializedName("offensiveness")
-    @Expose
-    private Offensiveness offensiveness = new Offensiveness();
-
     public boolean isIdentification() {
         return identification;
     }
 
     public void setIdentification(boolean identification) {
         this.identification = identification;
-    }
-
-    public Sentiment getSentiment() {
-        return sentiment;
-    }
-
-    public void setSentiment(Sentiment sentiment) {
-        this.sentiment = sentiment;
-    }
-
-    public Offensiveness getOffensiveness() {
-        return offensiveness;
-    }
-
-    public void setOffensiveness(Offensiveness offensiveness) {
-        this.offensiveness = offensiveness;
     }
 
 }

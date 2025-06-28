@@ -19,11 +19,6 @@
 		</dependency>
 		<dependency>
 			<groupId>ai.philterd</groupId>
-			<artifactId>phileas-services-ai</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>ai.philterd</groupId>
 			<artifactId>phileas-services-split</artifactId>
 			<version>${project.version}</version>
 		</dependency>

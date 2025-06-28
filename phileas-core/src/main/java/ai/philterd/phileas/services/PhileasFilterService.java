@@ -30,20 +30,17 @@ import ai.philterd.phileas.model.responses.BinaryDocumentFilterResponse;
 import ai.philterd.phileas.model.responses.FilterResponse;
 import ai.philterd.phileas.model.services.AlertService;
 import ai.philterd.phileas.model.services.CacheService;
-import ai.philterd.phileas.model.services.Classification;
 import ai.philterd.phileas.model.services.DocumentProcessor;
 import ai.philterd.phileas.model.services.FilterService;
 import ai.philterd.phileas.model.services.MetricsService;
 import ai.philterd.phileas.model.services.PolicyService;
 import ai.philterd.phileas.model.services.PostFilter;
 import ai.philterd.phileas.model.services.Redacter;
-import ai.philterd.phileas.model.services.SentimentDetector;
 import ai.philterd.phileas.model.services.SplitService;
 import ai.philterd.phileas.processors.unstructured.UnstructuredDocumentProcessor;
-import ai.philterd.phileas.service.ai.sentiment.OpenNLPSentimentDetector;
 import ai.philterd.phileas.services.alerts.DefaultAlertService;
-import ai.philterd.phileas.services.metrics.NoOpMetricsService;
 import ai.philterd.phileas.services.disambiguation.VectorBasedSpanDisambiguationService;
+import ai.philterd.phileas.services.metrics.NoOpMetricsService;
 import ai.philterd.phileas.services.policies.utils.PolicyUtils;
 import ai.philterd.phileas.services.postfilters.IgnoredPatternsFilter;
 import ai.philterd.phileas.services.postfilters.IgnoredTermsFilter;
@@ -131,32 +128,6 @@ public class PhileasFilterService implements FilterService {
 
         final List<Filter> filters = filterPolicyLoader.getFiltersForPolicy(policy, filterCache);
         final List<PostFilter> postFilters = getPostFiltersForPolicy(policy);
-
-        // Run sentiment analysis on the text.
-        if(policy.getConfig().getAnalysis().getSentiment().isEnabled()) {
-
-            final SentimentDetector sentimentDetector = new OpenNLPSentimentDetector();
-            final Classification classification = sentimentDetector.classify(policy, input);
-
-            if(classification != null) {
-                attributes.put("sentiment", classification.label());
-                attributes.put("sentiment-confidence", String.valueOf(classification.confidence()));
-            }
-
-        }
-
-        // Run offensive analysis on the text.
-        if(policy.getConfig().getAnalysis().getOffensiveness().isEnabled()) {
-
-            final SentimentDetector sentimentDetector = new OpenNLPSentimentDetector();
-            final Classification classification = sentimentDetector.classify(policy, input);
-
-            if(classification != null) {
-                attributes.put("offensiveness", classification.label());
-                attributes.put("offensiveness-confidence", String.valueOf(classification.confidence()));
-            }
-
-        }
 
         // See if we need to generate a document ID.
         if(StringUtils.isEmpty(documentId)) {
