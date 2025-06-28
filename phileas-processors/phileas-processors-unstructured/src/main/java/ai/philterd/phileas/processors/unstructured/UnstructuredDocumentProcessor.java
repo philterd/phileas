@@ -53,7 +53,7 @@ public class UnstructuredDocumentProcessor implements DocumentProcessor {
     @Override
     public FilterResponse process(final Policy policy, final List<Filter> filters, final List<PostFilter> postFilters,
                                   final String context, final String documentId, final int piece, final String input,
-                                  final Map<String, String> attributes) throws Exception {
+                                  final Map<String, String> attributes, final String requestId) throws Exception {
 
         // The list that will contain the spans containing PHI/PII.
         List<Span> identifiedSpans = new LinkedList<>();
@@ -183,7 +183,7 @@ public class UnstructuredDocumentProcessor implements DocumentProcessor {
 
         }
 
-        return new FilterResponse(sb.toString(), context, documentId, piece, explanation, attributes);
+        return new FilterResponse(sb.toString(), context, documentId, piece, explanation, attributes, requestId);
 
     }
 

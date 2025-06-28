@@ -126,6 +126,14 @@ public class PhileasFilterService implements FilterService {
     public FilterResponse filter(final Policy policy, final String context, String documentId,
                                  final String input, final MimeType mimeType) throws Exception {
 
+        return filter(policy, context, documentId, input, mimeType, UUID.randomUUID().toString());
+
+    }
+
+    @Override
+    public FilterResponse filter(final Policy policy, final String context, String documentId,
+                                 final String input, final MimeType mimeType, final String requestId) throws Exception {
+
         // Initialize potential attributes that are associated with the input text.
         final Map<String, String> attributes = new HashMap<>();
 
@@ -185,17 +193,17 @@ public class PhileasFilterService implements FilterService {
 
                 // Process each split.
                 for (int i = 0; i < splits.size(); i++) {
-                    final FilterResponse fr = unstructuredDocumentProcessor.process(policy, filters, postFilters, context, documentId, i, splits.get(i), attributes);
+                    final FilterResponse fr = unstructuredDocumentProcessor.process(policy, filters, postFilters, context, documentId, i, splits.get(i), attributes, requestId);
                     filterResponses.add(fr);
                 }
 
                 // Combine the results into a single filterResponse object.
-                filterResponse = FilterResponse.combine(filterResponses, context, documentId, splitService.getSeparator());
+                filterResponse = FilterResponse.combine(filterResponses, context, documentId, splitService.getSeparator(), requestId);
 
             } else {
 
                 // Do not split. Process the entire string at once.
-                filterResponse = unstructuredDocumentProcessor.process(policy, filters, postFilters, context, documentId, 0, input, attributes);
+                filterResponse = unstructuredDocumentProcessor.process(policy, filters, postFilters, context, documentId, 0, input, attributes, requestId);
 
             }
 
@@ -212,6 +220,14 @@ public class PhileasFilterService implements FilterService {
     public FilterResponse filter(final List<String> policyNames, final String context, String documentId,
                                  final String input, final MimeType mimeType) throws Exception {
 
+        return filter(policyNames, context, documentId, input, mimeType, UUID.randomUUID().toString());
+
+    }
+
+    @Override
+    public FilterResponse filter(final List<String> policyNames, final String context, String documentId,
+                                 final String input, final MimeType mimeType, final String requestId) throws Exception {
+
         // Get the combined policy.
         final Policy policy = policyUtils.getCombinedPolicies(policyNames);
 
@@ -224,6 +240,14 @@ public class PhileasFilterService implements FilterService {
     public BinaryDocumentFilterResponse filter(final List<String> policyNames, final String context, String documentId,
                                                final byte[] input, final MimeType mimeType,
                                                final MimeType outputMimeType) throws Exception {
+
+        return filter(policyNames, context, documentId, input, mimeType, outputMimeType, UUID.randomUUID().toString());
+    }
+
+    @Override
+    public BinaryDocumentFilterResponse filter(final List<String> policyNames, final String context, String documentId,
+                                               final byte[] input, final MimeType mimeType,
+                                               final MimeType outputMimeType, String requestId) throws Exception {
 
         // Get the policy.
         final Policy policy = policyUtils.getCombinedPolicies(policyNames);
@@ -271,7 +295,7 @@ public class PhileasFilterService implements FilterService {
                 final int piece = 0;
 
                 // Process the text.
-                final FilterResponse filterResponse = unstructuredDocumentProcessor.process(policy, filters, postFilters, context, documentId, piece, line, attributes);
+                final FilterResponse filterResponse = unstructuredDocumentProcessor.process(policy, filters, postFilters, context, documentId, piece, line, attributes, requestId);
 
                 // Add all the found spans to the list of spans.
                 spans.addAll(filterResponse.getExplanation().appliedSpans());

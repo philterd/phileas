@@ -38,9 +38,10 @@ public class FilterResponse {
     private final int piece;
     private final Explanation explanation;
     private final Map<String, String> attributes;
+    private final String requestId;
 
     public FilterResponse(String filteredText, String context, String documentId, int piece,
-                          Explanation explanation, Map<String, String> attributes) {
+                          Explanation explanation, Map<String, String> attributes, String requestId) {
 
         this.filteredText = filteredText;
         this.context = context;
@@ -48,6 +49,7 @@ public class FilterResponse {
         this.piece = piece;
         this.explanation = explanation;
         this.attributes = attributes;
+        this.requestId = requestId;
 
     }
 
@@ -61,7 +63,8 @@ public class FilterResponse {
      * @param documentId      The document ID for the returned {@link FilterResponse}.
      * @return A single, combined {@link FilterResponse}.
      */
-    public static FilterResponse combine(List<FilterResponse> filterResponses, String context, String documentId, String separator) {
+    public static FilterResponse combine(List<FilterResponse> filterResponses, String context, String documentId,
+                                         String separator, String requestId) {
 
         // Combine the results into a single filterResponse object.
         final StringBuilder filteredText = new StringBuilder();
@@ -81,27 +84,32 @@ public class FilterResponse {
         // Loop over each filter response and build the combined filter response.
         for (final FilterResponse filterResponse : sortedFilterResponses) {
 
-            // The text is the filtered text plus the separator.
-            final String pieceFilteredText = filterResponse.getFilteredText() + separator;
+            // Ensure each filterResponse has the same requestId.
+            if(filterResponse.getRequestId().equals(requestId)) {
 
-            // Append the filtered text.
-            filteredText.append(pieceFilteredText);
+                // The text is the filtered text plus the separator.
+                final String pieceFilteredText = filterResponse.getFilteredText() + separator;
 
-            // Adjust the character offsets when combining.
-            appliedSpans.addAll(Span.shiftSpans(documentOffset, filterResponse.getExplanation().appliedSpans()));
-            identifiedSpans.addAll(Span.shiftSpans(documentOffset, filterResponse.getExplanation().identifiedSpans()));
+                // Append the filtered text.
+                filteredText.append(pieceFilteredText);
 
-            // Adjust the document offset.
-            documentOffset += pieceFilteredText.length();
+                // Adjust the character offsets when combining.
+                appliedSpans.addAll(Span.shiftSpans(documentOffset, filterResponse.getExplanation().appliedSpans()));
+                identifiedSpans.addAll(Span.shiftSpans(documentOffset, filterResponse.getExplanation().identifiedSpans()));
 
-            // Combine the attributes (they should be the same anyway since attributes are on the document-level.
-            combinedAttributes.putAll(filterResponse.getAttributes());
+                // Adjust the document offset.
+                documentOffset += pieceFilteredText.length();
+
+                // Combine the attributes (they should be the same anyway since attributes are on the document-level.
+                combinedAttributes.putAll(filterResponse.getAttributes());
+
+            }
 
         }
 
         // Return the newly built FilterResponse.
         return new FilterResponse(filteredText.toString().trim(), context, documentId, 0,
-                new Explanation(appliedSpans, identifiedSpans), combinedAttributes);
+                new Explanation(appliedSpans, identifiedSpans), combinedAttributes, requestId);
 
     }
 
@@ -145,6 +153,10 @@ public class FilterResponse {
 
     public Map<String, String> getAttributes() {
         return attributes;
+    }
+
+    public String getRequestId() {
+        return requestId;
     }
 
 }

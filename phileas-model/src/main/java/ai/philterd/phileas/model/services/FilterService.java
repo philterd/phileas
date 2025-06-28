@@ -28,7 +28,7 @@ import java.util.List;
 public interface FilterService {
 
     /**
-     * Filter text from a string.
+     * Filter text from a string. A {code}requestId{/code} will be generated for the request.
      * @param policyNames The list of the policies to use.
      * @param context The context.
      * @param documentId A document ID. Provide <code>null</code> for a document ID to be generated.
@@ -41,6 +41,20 @@ public interface FilterService {
 
     /**
      * Filter text from a string.
+     * @param policyNames The list of the policies to use.
+     * @param context The context.
+     * @param documentId A document ID. Provide <code>null</code> for a document ID to be generated.
+     * @param input The input text.
+     * @param mimeType The {@link MimeType}.
+     * @param requestId A unique identifier for the request.
+     * @return A {@link FilterResponse}.
+     * @throws Exception Thrown if the text cannot be filtered.
+     */
+    FilterResponse filter(List<String> policyNames, String context, String documentId, String input,
+                          MimeType mimeType, String requestId) throws Exception;
+
+    /**
+     * Filter text from a string. A {code}requestId{/code} will be generated for the request.
      * @param policy The {@link Policy} to apply.
      * @param context The context.
      * @param documentId A document ID. Provide <code>null</code> for a document ID to be generated.
@@ -49,10 +63,25 @@ public interface FilterService {
      * @return A {@link FilterResponse}.
      * @throws Exception Thrown if the text cannot be filtered.
      */
-    FilterResponse filter(final Policy policy, final String context, String documentId, final String input, final MimeType mimeType) throws Exception;
+    FilterResponse filter(final Policy policy, final String context, String documentId, final String input,
+                          final MimeType mimeType) throws Exception;
 
     /**
-     * Filter text from a binary document.
+     * Filter text from a string.
+     * @param policy The {@link Policy} to apply.
+     * @param context The context.
+     * @param documentId A document ID. Provide <code>null</code> for a document ID to be generated.
+     * @param input The input text.
+     * @param mimeType The {@link MimeType}.
+     * @param requestId A unique identifier for the request.
+     * @return A {@link FilterResponse}.
+     * @throws Exception Thrown if the text cannot be filtered.
+     */
+    FilterResponse filter(final Policy policy, final String context, String documentId, final String input,
+                          final MimeType mimeType, final String requestId) throws Exception;
+
+    /**
+     * Filter text from a binary document. A {code}requestId{/code} will be generated for the request.
      * @param policyNames The list of the policies to use.
      * @param context The context.
      * @param documentId A document ID. Provide <code>null</code> for a document ID to be generated.
@@ -62,7 +91,23 @@ public interface FilterService {
      * @return A {@link BinaryDocumentFilterResponse}.
      * @throws Exception Thrown if the text cannot be filtered.
      */
-    BinaryDocumentFilterResponse filter(List<String> policyNames, String context, String documentId, byte[] input, MimeType mimeType, MimeType outputMimeType) throws Exception;
+    BinaryDocumentFilterResponse filter(List<String> policyNames, String context, String documentId, byte[] input,
+                                        MimeType mimeType, MimeType outputMimeType) throws Exception;
+
+    /**
+     * Filter text from a binary document.
+     * @param policyNames The list of the policies to use.
+     * @param context The context.
+     * @param documentId A document ID. Provide <code>null</code> for a document ID to be generated.
+     * @param input The input document as a byte array.
+     * @param mimeType The input {@link MimeType}.
+     * @param outputMimeType The output {@link MimeType}.
+     * @param requestId A unique identifier for the request.
+     * @return A {@link BinaryDocumentFilterResponse}.
+     * @throws Exception Thrown if the text cannot be filtered.
+     */
+    BinaryDocumentFilterResponse filter(List<String> policyNames, String context, String documentId, byte[] input,
+                                        MimeType mimeType, MimeType outputMimeType, String requestId) throws Exception;
 
     /**
      * Gets the policy service being used.
