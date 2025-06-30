@@ -44,11 +44,6 @@
 		</dependency>
 		<dependency>
 			<groupId>ai.philterd</groupId>
-			<artifactId>phileas-services-policies</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>ai.philterd</groupId>
 			<artifactId>phileas-services-alerts</artifactId>
 			<version>${project.version}</version>
 		</dependency>
