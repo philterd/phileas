@@ -12,7 +12,6 @@
 	<modules>
 		<module>phileas-services-anonymization</module>
 		<module>phileas-services-disambiguation</module>
-		<module>phileas-services-ai</module>
 		<module>phileas-services-alerts</module>
 		<module>phileas-services-metrics</module>
     	<module>phileas-services-pdf</module>

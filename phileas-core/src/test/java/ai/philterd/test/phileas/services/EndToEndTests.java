@@ -59,7 +59,6 @@ import static ai.philterd.test.phileas.services.EndToEndTestsHelper.getPolicyJus
 import static ai.philterd.test.phileas.services.EndToEndTestsHelper.getPolicyJustCreditCardNotInUnixTimestamps;
 import static ai.philterd.test.phileas.services.EndToEndTestsHelper.getPolicyJustPhoneNumber;
 import static ai.philterd.test.phileas.services.EndToEndTestsHelper.getPolicyJustStreetAddress;
-import static ai.philterd.test.phileas.services.EndToEndTestsHelper.getPolicyWithSentiment;
 import static ai.philterd.test.phileas.services.EndToEndTestsHelper.getPolicyZipCodeWithIgnored;
 
 @Disabled("Some of these tests require a running philter-ner service")
@@ -525,31 +524,6 @@ public class EndToEndTests {
         Assertions.assertEquals("he lived at {{{REDACTED-street-address}}}", response.getFilteredText().trim());
 
     }
-
-    @Test
-    public void endToEndWithSentiment() throws Exception {
-
-        final Properties properties = new Properties();
-        final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties);
-
-        final Policy policy = getPolicyWithSentiment("sentiment");
-
-        final String input = "his ssn was 123-45-6789";
-
-        final PhileasFilterService service = new PhileasFilterService(phileasConfiguration, cacheService);
-        final FilterResponse response = service.filter(policy, "context", "documentid", input, MimeType.TEXT_PLAIN);
-
-        LOGGER.info(response.getFilteredText());
-
-        showSpans(response.getExplanation().appliedSpans());
-
-        Assertions.assertEquals("documentid", response.getDocumentId());
-        Assertions.assertEquals(1, response.getExplanation().appliedSpans().size());
-        Assertions.assertEquals("his ssn was {{{REDACTED-ssn}}}", response.getFilteredText().trim());
-        Assertions.assertEquals("1", response.getAttributes().get("sentiment"));
-
-    }
-
     @Test
     public void endToEndUsingCustomDictionary() throws Exception {
 

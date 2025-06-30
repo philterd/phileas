@@ -77,27 +77,8 @@ import java.util.List;
 import java.util.Set;
 
 public class EndToEndTestsHelper {
+
     private static final Logger LOGGER = LogManager.getLogger(EndToEndTestsHelper.class);
-
-
-    public static Policy getPolicyWithSentiment(String policyName) throws IOException {
-
-        SsnFilterStrategy ssnFilterStrategy = new SsnFilterStrategy();
-
-        Ssn ssn = new Ssn();
-        ssn.setSsnFilterStrategies(List.of(ssnFilterStrategy));
-
-        Identifiers identifiers = new Identifiers();
-        identifiers.setSsn(ssn);
-
-        Policy policy = new Policy();
-        policy.getConfig().getAnalysis().getSentiment().setEnabled(true);
-        policy.setName(policyName);
-        policy.setIdentifiers(identifiers);
-
-        return policy;
-
-    }
 
     public static Policy getPolicyZipCodeWithIgnored(String policyName) throws IOException {
 
