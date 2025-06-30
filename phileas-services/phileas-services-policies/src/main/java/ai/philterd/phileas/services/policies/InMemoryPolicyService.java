@@ -19,16 +19,16 @@ import ai.philterd.phileas.model.policy.Policy;
 import ai.philterd.phileas.model.services.PolicyService;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class InMemoryPolicyService implements PolicyService {
 
     private final Map<String, Policy> policies;
 
     public InMemoryPolicyService() {
-        this.policies = new HashMap<>();
+        this.policies = new ConcurrentHashMap<>();
     }
 
     @Override
