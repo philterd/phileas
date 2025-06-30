@@ -23,9 +23,7 @@ import ai.philterd.phileas.model.policy.Policy;
 import ai.philterd.phileas.model.responses.BinaryDocumentFilterResponse;
 import ai.philterd.phileas.model.serializers.PlaceholderDeserializer;
 import ai.philterd.phileas.model.services.CacheService;
-import ai.philterd.phileas.model.services.PolicyService;
 import ai.philterd.phileas.services.PhileasFilterService;
-import ai.philterd.phileas.services.policies.InMemoryPolicyService;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.apache.commons.collections.CollectionUtils;
@@ -111,11 +109,10 @@ public class PhileasFilterServiceTest {
 
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties);
 
-        final PolicyService policyService = new InMemoryPolicyService();
-        policyService.save(getPdfPolicy("pdf"));
+        final Policy policy = getPdfPolicy("pdf");
 
-        final PhileasFilterService service = new PhileasFilterService(phileasConfiguration, cacheService, policyService);
-        final BinaryDocumentFilterResponse response = service.filter(List.of("pdf"), "context", "documentid", document, MimeType.APPLICATION_PDF, MimeType.APPLICATION_PDF);
+        final PhileasFilterService service = new PhileasFilterService(phileasConfiguration, cacheService);
+        final BinaryDocumentFilterResponse response = service.filter(policy, "context", "documentid", document, MimeType.APPLICATION_PDF, MimeType.APPLICATION_PDF);
 
         // Write the byte array to a file.
         final File outputFile = File.createTempFile("redact", ".pdf");
@@ -145,11 +142,10 @@ public class PhileasFilterServiceTest {
         final Properties properties = new Properties();
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties);
 
-        final PolicyService policyService = new InMemoryPolicyService();
-        policyService.save(getPdfPolicy("pdf"));
+        final Policy policy = getPdfPolicy("pdf");
 
-        PhileasFilterService service = new PhileasFilterService(phileasConfiguration, cacheService, policyService);
-        final BinaryDocumentFilterResponse response = service.filter(Arrays.asList("pdf"), "context", "documentid", document, MimeType.APPLICATION_PDF, MimeType.APPLICATION_PDF);
+        PhileasFilterService service = new PhileasFilterService(phileasConfiguration, cacheService);
+        final BinaryDocumentFilterResponse response = service.filter(policy, "context", "documentid", document, MimeType.APPLICATION_PDF, MimeType.APPLICATION_PDF);
 
         // Write the byte array to a file.
         final File outputFile = File.createTempFile("redact", ".pdf");
@@ -179,25 +175,4 @@ public class PhileasFilterServiceTest {
 
     }
 
-    @Test
-    void buildPolicyServiceMemory() throws IOException {
-        final var properties = new Properties();
-        properties.setProperty("filter.policies.service", "memory");
-        final PolicyService policyService = new InMemoryPolicyService();
-        final var config = new PhileasConfiguration(properties);
-        final var service = new PhileasFilterService(config, cacheService, policyService);
-
-        Assertions.assertInstanceOf(InMemoryPolicyService.class, service.getPolicyService());
-    }
-
-    @Test
-    void buildPolicyServiceLocal() throws IOException {
-        final var properties = new Properties();
-        properties.setProperty("filter.policies.service", "local");
-        final PolicyService policyService = new InMemoryPolicyService();
-        final var config = new PhileasConfiguration(properties);
-        final var service = new PhileasFilterService(config, cacheService, policyService);
-
-        Assertions.assertInstanceOf(InMemoryPolicyService.class, service.getPolicyService());
-    }
 }

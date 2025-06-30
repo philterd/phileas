@@ -34,7 +34,6 @@ import ai.philterd.phileas.model.services.Classification;
 import ai.philterd.phileas.model.services.DocumentProcessor;
 import ai.philterd.phileas.model.services.FilterService;
 import ai.philterd.phileas.model.services.MetricsService;
-import ai.philterd.phileas.model.services.PolicyService;
 import ai.philterd.phileas.model.services.PostFilter;
 import ai.philterd.phileas.model.services.Redacter;
 import ai.philterd.phileas.model.services.SentimentDetector;
@@ -42,9 +41,8 @@ import ai.philterd.phileas.model.services.SplitService;
 import ai.philterd.phileas.processors.unstructured.UnstructuredDocumentProcessor;
 import ai.philterd.phileas.service.ai.sentiment.OpenNLPSentimentDetector;
 import ai.philterd.phileas.services.alerts.DefaultAlertService;
-import ai.philterd.phileas.services.metrics.NoOpMetricsService;
 import ai.philterd.phileas.services.disambiguation.VectorBasedSpanDisambiguationService;
-import ai.philterd.phileas.services.policies.utils.PolicyUtils;
+import ai.philterd.phileas.services.metrics.NoOpMetricsService;
 import ai.philterd.phileas.services.postfilters.IgnoredPatternsFilter;
 import ai.philterd.phileas.services.postfilters.IgnoredTermsFilter;
 import ai.philterd.phileas.services.postfilters.TrailingNewLinePostFilter;
@@ -75,8 +73,6 @@ public class PhileasFilterService implements FilterService {
 
 	private static final Logger LOGGER = LogManager.getLogger(PhileasFilterService.class);
 
-    private final PolicyService policyService;
-    private final PolicyUtils policyUtils;
     private final AlertService alertService;
 
     private final DocumentProcessor unstructuredDocumentProcessor;
@@ -88,14 +84,11 @@ public class PhileasFilterService implements FilterService {
     // PHL-223: Face recognition
     //private final ImageProcessor imageProcessor;
 
-    public PhileasFilterService(final PhileasConfiguration phileasConfiguration, final MetricsService metricsService, final CacheService cacheService, final PolicyService policyService) throws IOException {
+    public PhileasFilterService(final PhileasConfiguration phileasConfiguration, final MetricsService metricsService, final CacheService cacheService) throws IOException {
 
         LOGGER.info("Initializing Phileas engine.");
 
         this.filterCache = new ConcurrentHashMap<>();
-
-        this.policyService = policyService;
-        this.policyUtils = new PolicyUtils(policyService);
 
         // Set the alert service.
         this.alertService = new DefaultAlertService(cacheService);
@@ -108,13 +101,8 @@ public class PhileasFilterService implements FilterService {
 
     }
 
-    public PhileasFilterService(final PhileasConfiguration phileasConfiguration, final CacheService cacheService, final PolicyService policyService) throws IOException {
-        this(phileasConfiguration, new NoOpMetricsService(), cacheService, policyService);
-    }
-
-    @Override
-    public PolicyService getPolicyService() {
-        return policyService;
+    public PhileasFilterService(final PhileasConfiguration phileasConfiguration, final CacheService cacheService) throws IOException {
+        this(phileasConfiguration, new NoOpMetricsService(), cacheService);
     }
 
     @Override
@@ -209,24 +197,9 @@ public class PhileasFilterService implements FilterService {
     }
 
     @Override
-    public FilterResponse filter(final List<String> policyNames, final String context, String documentId,
-                                 final String input, final MimeType mimeType) throws Exception {
-
-        // Get the combined policy.
-        final Policy policy = policyUtils.getCombinedPolicies(policyNames);
-
-        // Do the filtering.
-        return filter(policy, context, documentId, input, mimeType);
-
-    }
-
-    @Override
-    public BinaryDocumentFilterResponse filter(final List<String> policyNames, final String context, String documentId,
+    public BinaryDocumentFilterResponse filter(final Policy policy, final String context, String documentId,
                                                final byte[] input, final MimeType mimeType,
                                                final MimeType outputMimeType) throws Exception {
-
-        // Get the policy.
-        final Policy policy = policyUtils.getCombinedPolicies(policyNames);
 
         // Initialize potential attributes that are associated with the input text.
         // NOTE: Binary documents do not currently have any attributes.
