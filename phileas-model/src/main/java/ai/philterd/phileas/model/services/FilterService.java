@@ -20,8 +20,6 @@ import ai.philterd.phileas.model.policy.Policy;
 import ai.philterd.phileas.model.responses.BinaryDocumentFilterResponse;
 import ai.philterd.phileas.model.responses.FilterResponse;
 
-import java.util.List;
-
 /**
  * Interface for implementing filter services.
  */

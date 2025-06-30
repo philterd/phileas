@@ -771,7 +771,7 @@ public class EndToEndTests {
         Assertions.assertThrows(FileNotFoundException.class, () -> {
 
             final PhileasFilterService service = new PhileasFilterService(phileasConfiguration, cacheService);
-            final FilterResponse response = service.filter(policy, "context", "documentid", "My email is test@something.com", MimeType.TEXT_PLAIN);
+            service.filter(policy, "context", "documentid", "My email is test@something.com", MimeType.TEXT_PLAIN);
 
         });
 
