@@ -14,6 +14,10 @@ public class PhileasConfiguration {
         this.properties = properties;
     }
 
+    public boolean incrementalRedactionsEnabled() {
+        return Boolean.parseBoolean(getProperty("incremental.redactions.enabled", "false"));
+    }
+
     public boolean spanDisambiguationEnabled() {
         return Boolean.parseBoolean(getProperty("span.disambiguation.enabled", "false"));
     }

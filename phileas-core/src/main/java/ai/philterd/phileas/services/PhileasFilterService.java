@@ -94,7 +94,11 @@ public class PhileasFilterService implements FilterService {
         this.filterPolicyLoader = new FilterPolicyLoader(alertService, cacheService, metricsService, phileasConfiguration);
 
         // Create a new unstructured document processor.
-        this.unstructuredDocumentProcessor = new UnstructuredDocumentProcessor(metricsService, new VectorBasedSpanDisambiguationService(phileasConfiguration, cacheService));
+        this.unstructuredDocumentProcessor = new UnstructuredDocumentProcessor(
+                metricsService,
+                new VectorBasedSpanDisambiguationService(phileasConfiguration, cacheService),
+                phileasConfiguration.incrementalRedactionsEnabled()
+        );
 
     }
 

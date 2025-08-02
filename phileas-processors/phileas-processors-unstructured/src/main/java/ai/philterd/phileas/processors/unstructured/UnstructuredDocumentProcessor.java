@@ -18,6 +18,7 @@ package ai.philterd.phileas.processors.unstructured;
 import ai.philterd.phileas.model.filter.Filter;
 import ai.philterd.phileas.model.objects.Explanation;
 import ai.philterd.phileas.model.objects.FilterResult;
+import ai.philterd.phileas.model.objects.IncrementalRedaction;
 import ai.philterd.phileas.model.objects.Span;
 import ai.philterd.phileas.model.policy.Policy;
 import ai.philterd.phileas.model.responses.FilterResponse;
@@ -25,7 +26,9 @@ import ai.philterd.phileas.model.services.DocumentProcessor;
 import ai.philterd.phileas.model.services.MetricsService;
 import ai.philterd.phileas.model.services.PostFilter;
 import ai.philterd.phileas.model.services.SpanDisambiguationService;
+import org.apache.commons.codec.digest.DigestUtils;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
@@ -41,12 +44,15 @@ public class UnstructuredDocumentProcessor implements DocumentProcessor {
 
     private final MetricsService metricsService;
     private final SpanDisambiguationService spanDisambiguationService;
+    private final boolean incrementalRedactionsEnabled;
 
     public UnstructuredDocumentProcessor(final MetricsService metricsService,
-                                         final SpanDisambiguationService spanDisambiguationService) {
+                                         final SpanDisambiguationService spanDisambiguationService,
+                                         final boolean incrementalRedactionsEnabled) {
 
         this.metricsService = metricsService;
         this.spanDisambiguationService = spanDisambiguationService;
+        this.incrementalRedactionsEnabled = incrementalRedactionsEnabled;
 
     }
 
@@ -82,49 +88,10 @@ public class UnstructuredDocumentProcessor implements DocumentProcessor {
         // Sort the spans based on the confidence.
         identifiedSpans.sort(Comparator.comparing(Span::getConfidence));
 
-        // Remove equal spans having lower priorities.
-
-
         // Perform post-filtering on the spans.
         for(final PostFilter postFilter : postFilters) {
             identifiedSpans = postFilter.filter(input, identifiedSpans);
         }
-
-        // PHL-185: Remove non-adjacent firstname/surname spans.
-        /*// A first name filter must be adjacent to a surname filter.
-        final List<Span> dontRemove = new LinkedList<>();
-        for(final Span span1 : spans) {
-
-            for(final Span span2 : spans) {
-
-                if(span1.getFilterType() == FilterType.FIRST_NAME && span2.getFilterType() == FilterType.SURNAME) {
-
-                    // Are they adjacent?
-                    if(Span.areSpansAdjacent(span1, span2, input)) {
-
-                        // Yes, don't remove them.
-                        dontRemove.add(span1);
-                        dontRemove.add(span2);
-
-                    }
-
-                }
-
-            }
-
-        }
-
-        // Remove all first name / surname spans.
-        final List<Span> doRemove = new LinkedList<>();
-        for(final Span span : spans) {
-            if(span.getFilterType() == FilterType.FIRST_NAME || span.getFilterType() == FilterType.SURNAME) {
-                doRemove.add(span);
-            }
-        }
-        spans.removeAll(doRemove);
-
-        // Add back adjacent spans.
-        spans.addAll(dontRemove);*/
 
         // The spans that will be persisted. Has to be a deep copy because the shift
         // below will change the indexes. Doing this to save the original locations of the spans.
@@ -143,8 +110,9 @@ public class UnstructuredDocumentProcessor implements DocumentProcessor {
         // are longer than the original spans.
         int stringLength = input.length();
 
-        // Do the actual replacement of spans in the text.
-        // Go character by character through the input.
+        final List<IncrementalRedaction> incrementalRedactions = new ArrayList<>();
+
+        // Do the actual replacement of spans in the text by going character by character through the input.
         for(int i = 0; i < stringLength; i++) {
 
             // Is index i the start of a span?
@@ -176,6 +144,12 @@ public class UnstructuredDocumentProcessor implements DocumentProcessor {
                 // We can now do the replacement.
                 sb.replace(span.getCharacterStart(), span.getCharacterEnd(), replacement);
 
+                if(incrementalRedactionsEnabled) {
+                    // Hash the text at this point.
+                    final String hash = DigestUtils.sha256Hex(sb.toString());
+                    incrementalRedactions.add(new IncrementalRedaction(hash, span, sb.toString()));
+                }
+
                 // Jump ahead outside of this span.
                 i = span.getCharacterEnd();
 
@@ -183,7 +157,7 @@ public class UnstructuredDocumentProcessor implements DocumentProcessor {
 
         }
 
-        return new FilterResponse(sb.toString(), context, documentId, piece, explanation, attributes);
+        return new FilterResponse(sb.toString(), context, documentId, piece, explanation, attributes, incrementalRedactions);
 
     }
 
