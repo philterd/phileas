@@ -386,7 +386,7 @@ public class EndToEndTestsHelper {
 
     }
 
-    public static Policy getPolicyWithSplits(String policyName) throws IOException, URISyntaxException {
+    public static Policy getPolicyWithSplits(String policyName) throws IOException {
 
         SsnFilterStrategy ssnFilterStrategy = new SsnFilterStrategy();
 

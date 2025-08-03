@@ -61,7 +61,7 @@ public class EndToEndWithIncrementalRedactionsTest {
         Assertions.assertTrue(CollectionUtils.isNotEmpty(response.getIncrementalRedactions()));
 
         for(final IncrementalRedaction incrementalRedaction : response.getIncrementalRedactions()) {
-            LOGGER.info("Incremental Redaction: {}", incrementalRedaction.toString());
+            LOGGER.info("Incremental Redaction: {}", incrementalRedaction);
             Assertions.assertEquals(DigestUtils.sha256Hex(incrementalRedaction.getIncrementallyRedactedText()), incrementalRedaction.getHash());
         }
 
@@ -107,7 +107,7 @@ public class EndToEndWithIncrementalRedactionsTest {
         Assertions.assertEquals("documentid", response.getDocumentId());
 
         for(final IncrementalRedaction incrementalRedaction : response.getIncrementalRedactions()) {
-            LOGGER.info("Incremental Redaction: {}", incrementalRedaction.toString());
+            LOGGER.info("Incremental Redaction: {}", incrementalRedaction);
             Assertions.assertEquals(DigestUtils.sha256Hex(incrementalRedaction.getIncrementallyRedactedText()), incrementalRedaction.getHash());
         }
 
