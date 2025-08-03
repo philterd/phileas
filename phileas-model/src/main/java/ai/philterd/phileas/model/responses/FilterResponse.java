@@ -44,7 +44,7 @@ public class FilterResponse {
     private final int piece;
     private final Explanation explanation;
     private final Map<String, String> attributes;
-    private final List<IncrementalRedaction> incrementalRedactions;
+    private transient final List<IncrementalRedaction> incrementalRedactions;
 
     public FilterResponse(String filteredText, String context, String documentId, int piece,
                           Explanation explanation, Map<String, String> attributes, List<IncrementalRedaction> incrementalRedactions) {

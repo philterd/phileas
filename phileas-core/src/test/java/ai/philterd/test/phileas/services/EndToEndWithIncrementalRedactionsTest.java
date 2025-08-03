@@ -22,6 +22,7 @@ import ai.philterd.phileas.model.policy.Policy;
 import ai.philterd.phileas.model.responses.FilterResponse;
 import ai.philterd.phileas.model.services.CacheService;
 import ai.philterd.phileas.services.PhileasFilterService;
+import com.google.gson.Gson;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.logging.log4j.LogManager;
@@ -110,6 +111,9 @@ public class EndToEndWithIncrementalRedactionsTest {
             LOGGER.info("Incremental Redaction: {}", incrementalRedaction);
             Assertions.assertEquals(DigestUtils.sha256Hex(incrementalRedaction.getIncrementallyRedactedText()), incrementalRedaction.getHash());
         }
+
+        final Gson gson = new Gson();
+        LOGGER.info(gson.toJson(response));
 
     }
 
