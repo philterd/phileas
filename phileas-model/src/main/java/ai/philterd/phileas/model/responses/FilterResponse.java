@@ -21,6 +21,8 @@ import ai.philterd.phileas.model.objects.Span;
 import com.google.gson.Gson;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -33,6 +35,8 @@ import java.util.Map;
  * Response to a filter operation.
  */
 public class FilterResponse {
+
+    private static final Logger LOGGER = LogManager.getLogger(FilterResponse.class);
 
     private final String filteredText;
     private final String context;
@@ -66,6 +70,8 @@ public class FilterResponse {
      * @return A single, combined {@link FilterResponse}.
      */
     public static FilterResponse combine(List<FilterResponse> filterResponses, String context, String documentId, String separator) {
+
+        LOGGER.info("Combining {} filter responses for document ID: {}", filterResponses.size(), documentId);
 
         // Combine the results into a single filterResponse object.
         final StringBuilder filteredText = new StringBuilder();
