@@ -71,7 +71,7 @@ public class FilterResponse {
      */
     public static FilterResponse combine(List<FilterResponse> filterResponses, String context, String documentId, String separator) {
 
-        LOGGER.info("Combining {} filter responses for document ID: {}", filterResponses.size(), documentId);
+        LOGGER.debug("Combining {} filter responses for document ID: {}", filterResponses.size(), documentId);
 
         // Combine the results into a single filterResponse object.
         final StringBuilder filteredText = new StringBuilder();
