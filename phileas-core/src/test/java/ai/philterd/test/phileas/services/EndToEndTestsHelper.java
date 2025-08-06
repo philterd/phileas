@@ -15,9 +15,11 @@
  */
 package ai.philterd.test.phileas.services;
 
+import ai.philterd.phileas.model.policy.Config;
 import ai.philterd.phileas.model.policy.Identifiers;
 import ai.philterd.phileas.model.policy.Ignored;
 import ai.philterd.phileas.model.policy.Policy;
+import ai.philterd.phileas.model.policy.config.Splitting;
 import ai.philterd.phileas.model.policy.filters.Age;
 import ai.philterd.phileas.model.policy.filters.City;
 import ai.philterd.phileas.model.policy.filters.County;
@@ -384,20 +386,35 @@ public class EndToEndTestsHelper {
 
     }
 
-    public static Policy getPolicyJustIdentifier(String policyName) {
+    public static Policy getPolicyWithSplits(String policyName) throws IOException {
 
-        Identifier identifier1 = new Identifier();
-        identifier1.setIdentifierFilterStrategies(List.of(new IdentifierFilterStrategy()));
-        identifier1.setPattern("\\b\\d{3,8}\\b");
-        identifier1.setCaseSensitive(false);
+        SsnFilterStrategy ssnFilterStrategy = new SsnFilterStrategy();
+
+        Ssn ssn = new Ssn();
+        ssn.setSsnFilterStrategies(List.of(ssnFilterStrategy));
+
+        ZipCodeFilterStrategy zipCodeFilterStrategy = new ZipCodeFilterStrategy();
+        zipCodeFilterStrategy.setTruncateDigits(2);
+
+        ZipCode zipCode = new ZipCode();
+        zipCode.setZipCodeFilterStrategies(List.of(zipCodeFilterStrategy));
 
         Identifiers identifiers = new Identifiers();
 
-        identifiers.setIdentifiers(List.of(identifier1));
+        identifiers.setSsn(ssn);
+        identifiers.setZipCode(zipCode);
+
+        Splitting splitting = new Splitting();
+        splitting.setThreshold(15);
+        splitting.setEnabled(true);
+
+        Config config = new Config();
+        config.setSplitting(splitting);
 
         Policy policy = new Policy();
         policy.setName(policyName);
         policy.setIdentifiers(identifiers);
+        policy.setConfig(config);
 
         return policy;
 

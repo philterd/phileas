@@ -16,11 +16,15 @@
 package ai.philterd.phileas.model.responses;
 
 import ai.philterd.phileas.model.objects.Explanation;
+import ai.philterd.phileas.model.objects.IncrementalRedaction;
 import ai.philterd.phileas.model.objects.Span;
 import com.google.gson.Gson;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -32,15 +36,18 @@ import java.util.Map;
  */
 public class FilterResponse {
 
+    private static final Logger LOGGER = LogManager.getLogger(FilterResponse.class);
+
     private final String filteredText;
     private final String context;
     private final String documentId;
     private final int piece;
     private final Explanation explanation;
     private final Map<String, String> attributes;
+    private transient final List<IncrementalRedaction> incrementalRedactions;
 
     public FilterResponse(String filteredText, String context, String documentId, int piece,
-                          Explanation explanation, Map<String, String> attributes) {
+                          Explanation explanation, Map<String, String> attributes, List<IncrementalRedaction> incrementalRedactions) {
 
         this.filteredText = filteredText;
         this.context = context;
@@ -48,6 +55,7 @@ public class FilterResponse {
         this.piece = piece;
         this.explanation = explanation;
         this.attributes = attributes;
+        this.incrementalRedactions = incrementalRedactions;
 
     }
 
@@ -63,6 +71,8 @@ public class FilterResponse {
      */
     public static FilterResponse combine(List<FilterResponse> filterResponses, String context, String documentId, String separator) {
 
+        LOGGER.debug("Combining {} filter responses for document ID: {}", filterResponses.size(), documentId);
+
         // Combine the results into a single filterResponse object.
         final StringBuilder filteredText = new StringBuilder();
         final List<Span> appliedSpans = new LinkedList<>();
@@ -77,6 +87,8 @@ public class FilterResponse {
 
         // The attributes for each filterResponse should actually be identical.
         final Map<String, String> combinedAttributes = new HashMap<>();
+
+        final List<IncrementalRedaction> combinedIncrementalRedactions = new ArrayList<>();
 
         // Loop over each filter response and build the combined filter response.
         for (final FilterResponse filterResponse : sortedFilterResponses) {
@@ -97,11 +109,14 @@ public class FilterResponse {
             // Combine the attributes (they should be the same anyway since attributes are on the document-level.
             combinedAttributes.putAll(filterResponse.getAttributes());
 
+            // Combine the incremental redactions.
+            combinedIncrementalRedactions.addAll(filterResponse.getIncrementalRedactions());
+
         }
 
         // Return the newly built FilterResponse.
         return new FilterResponse(filteredText.toString().trim(), context, documentId, 0,
-                new Explanation(appliedSpans, identifiedSpans), combinedAttributes);
+                new Explanation(appliedSpans, identifiedSpans), combinedAttributes, combinedIncrementalRedactions);
 
     }
 
@@ -145,6 +160,10 @@ public class FilterResponse {
 
     public Map<String, String> getAttributes() {
         return attributes;
+    }
+
+    public List<IncrementalRedaction> getIncrementalRedactions() {
+        return incrementalRedactions;
     }
 
 }
