@@ -5,20 +5,21 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 public class PhEyeConfiguration {
 
     @SerializedName("endpoint")
     @Expose
-    protected String endpoint = "http://philter-ph-eye-1:5000/";
+    protected String endpoint = Optional.ofNullable(System.getenv("PHEYE_ENDPOINT")).orElse("http://philter-ph-eye-1:5000/");
 
     @SerializedName("bearerToken")
     @Expose
-    protected String bearerToken;
+    protected String bearerToken = System.getenv("PHEYE_BEARER_TOKEN");
 
     @SerializedName("timeout")
     @Expose
-    protected int timeout = 600;
+    protected int timeout = Integer.parseInt(Optional.ofNullable(System.getenv("PHEYE_TIMEOUT")).orElse("600"));
 
     @SerializedName("maxIdleConnections")
     @Expose
