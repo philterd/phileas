@@ -23,7 +23,7 @@ public abstract class AbstractSplitService {
 
     protected List<String> clean(List<String> lines) {
 
-        final List<String> trimmedLines = lines.stream().map(String :: trim).collect(Collectors.toList());
+        final List<String> trimmedLines = lines.stream().map(String::trim).collect(Collectors.toList());
 
         // Remove empty strings.
         trimmedLines.removeAll(Arrays.asList("", null));
