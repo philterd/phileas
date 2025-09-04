@@ -18,9 +18,6 @@ package ai.philterd.phileas.model.policy.config;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-import java.util.LinkedList;
-import java.util.List;
-
 public class Splitting {
 
     @SerializedName("enabled")

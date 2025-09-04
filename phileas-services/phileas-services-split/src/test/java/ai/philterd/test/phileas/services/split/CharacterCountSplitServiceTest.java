@@ -28,12 +28,12 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.List;
 
-public class CharacterCountSplitServiceTest {
+class CharacterCountSplitServiceTest {
 
     private static final Logger LOGGER = LogManager.getLogger(CharacterCountSplitServiceTest.class);
 
     @Test
-    public void split0() throws IOException {
+    void split0() throws IOException {
 
         final int splitLength = 250;
 
