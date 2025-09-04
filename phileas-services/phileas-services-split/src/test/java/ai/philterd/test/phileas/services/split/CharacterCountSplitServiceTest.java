@@ -16,7 +16,7 @@
 package ai.philterd.test.phileas.services.split;
 
 import ai.philterd.phileas.model.services.SplitService;
-import ai.philterd.phileas.services.split.LineWidthSplitService;
+import ai.philterd.phileas.services.split.CharacterCountSplitService;
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -28,14 +28,14 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.List;
 
-public class LineWidthSplitServiceTest {
+public class CharacterCountSplitServiceTest {
 
-    private static final Logger LOGGER = LogManager.getLogger(LineWidthSplitServiceTest.class);
+    private static final Logger LOGGER = LogManager.getLogger(CharacterCountSplitServiceTest.class);
 
     @Test
     public void split0() throws IOException {
 
-        final int splitLength = 384;
+        final int splitLength = 250;
 
         final File file = new File("src/test/resources/simple-test.txt");
         final String input = FileUtils.readFileToString(file, Charset.defaultCharset());
@@ -43,7 +43,7 @@ public class LineWidthSplitServiceTest {
         Assertions.assertNotNull(input);
         LOGGER.info("Input text length = {}", input.length());
 
-        final SplitService splitService = new LineWidthSplitService(splitLength);
+        final SplitService splitService = new CharacterCountSplitService(splitLength);
         final List<String> splits = splitService.split(input);
 
         for(final String split : splits) {
