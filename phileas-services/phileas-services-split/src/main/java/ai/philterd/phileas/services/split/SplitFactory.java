@@ -37,7 +37,7 @@ public class SplitFactory {
             LOGGER.debug("Instantiating a line width split service.");
             return new LineWidthSplitService(value);
 
-        } else if(StringUtils.equalsIgnoreCase("height", method)) {
+        } else if(StringUtils.equalsIgnoreCase("characters", method)) {
 
             LOGGER.debug("Instantiating a character count split service.");
             return new CharacterCountSplitService(value);
