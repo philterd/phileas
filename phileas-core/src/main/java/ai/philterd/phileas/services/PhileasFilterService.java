@@ -141,7 +141,7 @@ public class PhileasFilterService implements FilterService {
                     // Get the splitter to use from the policy.
                     final SplitService splitService = SplitFactory.getSplitService(
                             policy.getConfig().getSplitting().getMethod(),
-                            policy.getConfig().getSplitting().getValue()
+                            policy.getConfig().getSplitting().getThreshold()
                     );
 
                     // Holds all filter responses that will ultimately be combined into a single response.

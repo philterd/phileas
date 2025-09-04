@@ -28,10 +28,6 @@ public class Splitting {
     @Expose
     private int threshold = 10000;
 
-    @SerializedName("value")
-    @Expose
-    private int value = 500;
-
     @SerializedName("method")
     @Expose
     private String method = "newline";
@@ -58,14 +54,6 @@ public class Splitting {
 
     public void setThreshold(int threshold) {
         this.threshold = threshold;
-    }
-
-    public int getValue() {
-        return value;
-    }
-
-    public void setValue(int value) {
-        this.value = value;
     }
 
 }
