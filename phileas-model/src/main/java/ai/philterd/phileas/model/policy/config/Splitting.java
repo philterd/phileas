@@ -18,6 +18,9 @@ package ai.philterd.phileas.model.policy.config;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.util.LinkedList;
+import java.util.List;
+
 public class Splitting {
 
     @SerializedName("enabled")
@@ -27,6 +30,10 @@ public class Splitting {
     @SerializedName("threshold")
     @Expose
     private int threshold = 10000;
+
+    @SerializedName("value")
+    @Expose
+    private int value = 500;
 
     @SerializedName("method")
     @Expose
@@ -54,6 +61,14 @@ public class Splitting {
 
     public void setThreshold(int threshold) {
         this.threshold = threshold;
+    }
+
+    public int getValue() {
+        return value;
+    }
+
+    public void setValue(int value) {
+        this.value = value;
     }
 
 }

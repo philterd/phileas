@@ -24,7 +24,7 @@ public class SplitFactory {
 
     private static final Logger LOGGER = LogManager.getLogger(SplitFactory.class);
 
-    public static SplitService getSplitService(String method) {
+    public static SplitService getSplitService(final String method, final int value) {
 
         if(StringUtils.equalsIgnoreCase("newline", method)) {
 
@@ -35,7 +35,12 @@ public class SplitFactory {
 
             // TODO: Make line width configurable.
             LOGGER.debug("Instantiating a line width split service.");
-            return new LineWidthSplitService(500);
+            return new LineWidthSplitService(value);
+
+        } else if(StringUtils.equalsIgnoreCase("height", method)) {
+
+            LOGGER.debug("Instantiating a character count split service.");
+            return new CharacterCountSplitService(value);
 
         }
 
