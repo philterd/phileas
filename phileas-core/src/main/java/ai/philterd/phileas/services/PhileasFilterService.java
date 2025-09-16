@@ -134,26 +134,30 @@ public class PhileasFilterService implements FilterService {
 
         if(mimeType == MimeType.TEXT_PLAIN) {
 
-            // PHL-145: Do we need to split the input text due to its size?
+            // Do we need to split the input text due to its size?
+            // Is the appliesToFilter = "*" or is at least one of the filters in the policy in the appliesToFilter list?
             if (policy.getConfig().getSplitting().isEnabled() && input.length() >= policy.getConfig().getSplitting().getThreshold()) {
 
-                // Get the splitter to use from the policy.
-                final SplitService splitService = SplitFactory.getSplitService(policy.getConfig().getSplitting().getMethod());
+                    // Get the splitter to use from the policy.
+                    final SplitService splitService = SplitFactory.getSplitService(
+                            policy.getConfig().getSplitting().getMethod(),
+                            policy.getConfig().getSplitting().getThreshold()
+                    );
 
-                // Holds all filter responses that will ultimately be combined into a single response.
-                final List<FilterResponse> filterResponses = new LinkedList<>();
+                    // Holds all filter responses that will ultimately be combined into a single response.
+                    final List<FilterResponse> filterResponses = new LinkedList<>();
 
-                // Split the string.
-                final List<String> splits = splitService.split(input);
+                    // Split the string.
+                    final List<String> splits = splitService.split(input);
 
-                // Process each split.
-                for (int i = 0; i < splits.size(); i++) {
-                    final FilterResponse fr = unstructuredDocumentProcessor.process(policy, filters, postFilters, context, documentId, i, splits.get(i), attributes);
-                    filterResponses.add(fr);
-                }
+                    // Process each split.
+                    for (int i = 0; i < splits.size(); i++) {
+                        final FilterResponse fr = unstructuredDocumentProcessor.process(policy, filters, postFilters, context, documentId, i, splits.get(i), attributes);
+                        filterResponses.add(fr);
+                    }
 
-                // Combine the results into a single filterResponse object.
-                filterResponse = FilterResponse.combine(filterResponses, context, documentId, splitService.getSeparator());
+                    // Combine the results into a single filterResponse object.
+                    filterResponse = FilterResponse.combine(filterResponses, context, documentId, splitService.getSeparator());
 
             } else {
 
