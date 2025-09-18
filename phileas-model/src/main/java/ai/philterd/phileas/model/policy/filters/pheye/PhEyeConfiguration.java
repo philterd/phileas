@@ -25,10 +25,6 @@ public class PhEyeConfiguration {
     @Expose
     protected int maxIdleConnections = 30;
 
-    @SerializedName("keepAliveDurationMs")
-    @Expose
-    protected int keepAliveDurationMs = 30000;
-
     @SerializedName("labels")
     @Expose
     protected Collection<String> labels = List.of("Person");
@@ -55,14 +51,6 @@ public class PhEyeConfiguration {
 
     public void setMaxIdleConnections(int maxIdleConnections) {
         this.maxIdleConnections = maxIdleConnections;
-    }
-
-    public int getKeepAliveDurationMs() {
-        return keepAliveDurationMs;
-    }
-
-    public void setKeepAliveDurationMs(int keepAliveDurationMs) {
-        this.keepAliveDurationMs = keepAliveDurationMs;
     }
 
     public Collection<String> getLabels() {
