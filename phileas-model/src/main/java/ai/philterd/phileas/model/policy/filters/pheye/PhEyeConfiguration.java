@@ -27,7 +27,7 @@ public class PhEyeConfiguration {
 
     @SerializedName("keepAliveDurationMs")
     @Expose
-    protected int keepAliveDurationMs = 30;
+    protected int keepAliveDurationMs = 30000;
 
     @SerializedName("labels")
     @Expose
