@@ -20,10 +20,10 @@ import ai.philterd.phileas.model.tokens.WhitespaceTokenCounter;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class WhitespaceTokenCounterTest {
+class WhitespaceTokenCounterTest {
 
     @Test
-    public void testWhitespaceTokenCounter() {
+    void testWhitespaceTokenCounter() {
 
         final String input = "This is some sample text. It is here to test the token counter.";
 
@@ -35,7 +35,7 @@ public class WhitespaceTokenCounterTest {
     }
 
     @Test
-    public void testNoTokens() {
+    void testNoTokens() {
 
         final String input = "";
 
@@ -47,7 +47,7 @@ public class WhitespaceTokenCounterTest {
     }
 
     @Test
-    public void testOneTokens() {
+    void testOneTokens() {
 
         final String input = "word";
 
