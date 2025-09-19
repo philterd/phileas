@@ -46,6 +46,8 @@ import ai.philterd.phileas.services.postfilters.TrailingNewLinePostFilter;
 import ai.philterd.phileas.services.postfilters.TrailingPeriodPostFilter;
 import ai.philterd.phileas.services.postfilters.TrailingSpacePostFilter;
 import ai.philterd.phileas.services.split.SplitFactory;
+import ai.philterd.phileas.model.tokens.TokenCounter;
+import ai.philterd.phileas.model.tokens.WhitespaceTokenCounter;
 import ai.philterd.services.pdf.PdfRedacter;
 import ai.philterd.services.pdf.PdfTextExtractor;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -74,6 +76,7 @@ public class PhileasFilterService implements FilterService {
 
     private final DocumentProcessor unstructuredDocumentProcessor;
     private final FilterPolicyLoader filterPolicyLoader;
+    private final TokenCounter tokenCounter;
 
     // A map that gives each filter profile its own cache of filters.
     private final Map<String, Map<FilterType, Filter>> filterCache;
@@ -86,6 +89,9 @@ public class PhileasFilterService implements FilterService {
         LOGGER.info("Initializing Phileas engine.");
 
         this.filterCache = new ConcurrentHashMap<>();
+
+        // Set the token counter.
+        this.tokenCounter = new WhitespaceTokenCounter();
 
         // Set the alert service.
         this.alertService = new DefaultAlertService(cacheService);
@@ -215,12 +221,15 @@ public class PhileasFilterService implements FilterService {
             final List<Filter> filters = filterPolicyLoader.getFiltersForPolicy(policy, filterCache);
             final List<PostFilter> postFilters = getPostFiltersForPolicy(policy);
 
+            long tokens = 0;
+
             // TODO: The following code really only needs to be done if there is at least one filter defined in the policy.
 
             // Process each line looking for sensitive information in each line.
             for (final String line : lines) {
 
                 final int piece = 0;
+                tokens += tokenCounter.countTokens(line);
 
                 // Process the text.
                 final FilterResponse filterResponse = unstructuredDocumentProcessor.process(policy, filters, postFilters, context, documentId, piece, line, attributes);
@@ -259,7 +268,7 @@ public class PhileasFilterService implements FilterService {
             // TODO: The identified vs the applied will actually be different
             // but we are setting the same here. Fix this at some point.
             final Explanation explanation = new Explanation(spansList, spansList);
-            binaryDocumentFilterResponse = new BinaryDocumentFilterResponse(redacted, context, documentId, explanation);
+            binaryDocumentFilterResponse = new BinaryDocumentFilterResponse(redacted, context, documentId, explanation, tokens);
 
         /*} else if(mimeType == MimeType.IMAGE_JPEG) {
             // PHL-223: Face recognition

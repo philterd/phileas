@@ -26,13 +26,15 @@ public final class BinaryDocumentFilterResponse {
 	private final String context;
     private final String documentId;
     private final Explanation explanation;
+    private final long tokens;
 
-    public BinaryDocumentFilterResponse(byte[] document, String context, String documentId, Explanation explanation) {
+    public BinaryDocumentFilterResponse(byte[] document, String context, String documentId, Explanation explanation, long tokens) {
 
         this.document = document;
         this.context = context;
         this.documentId = documentId;
         this.explanation = explanation;
+        this.tokens = tokens;
 
     }
 
@@ -44,6 +46,7 @@ public final class BinaryDocumentFilterResponse {
                 append(context).
                 append(documentId).
                 append(explanation).
+                append(tokens).
                 toHashCode();
 
     }
@@ -77,6 +80,10 @@ public final class BinaryDocumentFilterResponse {
 
     public Explanation getExplanation() {
         return explanation;
+    }
+
+    public long getTokens() {
+        return tokens;
     }
 
 }

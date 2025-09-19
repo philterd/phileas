@@ -26,6 +26,8 @@ import ai.philterd.phileas.model.services.DocumentProcessor;
 import ai.philterd.phileas.model.services.MetricsService;
 import ai.philterd.phileas.model.services.PostFilter;
 import ai.philterd.phileas.model.services.SpanDisambiguationService;
+import ai.philterd.phileas.model.tokens.TokenCounter;
+import ai.philterd.phileas.model.tokens.WhitespaceTokenCounter;
 import org.apache.commons.codec.digest.DigestUtils;
 
 import java.util.ArrayList;
@@ -45,6 +47,7 @@ public class UnstructuredDocumentProcessor implements DocumentProcessor {
     private final MetricsService metricsService;
     private final SpanDisambiguationService spanDisambiguationService;
     private final boolean incrementalRedactionsEnabled;
+    private final TokenCounter tokenCounter;
 
     public UnstructuredDocumentProcessor(final MetricsService metricsService,
                                          final SpanDisambiguationService spanDisambiguationService,
@@ -53,6 +56,7 @@ public class UnstructuredDocumentProcessor implements DocumentProcessor {
         this.metricsService = metricsService;
         this.spanDisambiguationService = spanDisambiguationService;
         this.incrementalRedactionsEnabled = incrementalRedactionsEnabled;
+        this.tokenCounter = new WhitespaceTokenCounter();
 
     }
 
@@ -111,6 +115,7 @@ public class UnstructuredDocumentProcessor implements DocumentProcessor {
         int stringLength = input.length();
 
         final List<IncrementalRedaction> incrementalRedactions = new ArrayList<>();
+        final long tokens = tokenCounter.countTokens(input);
 
         // Do the actual replacement of spans in the text by going character by character through the input.
         for(int i = 0; i < stringLength; i++) {
@@ -157,7 +162,7 @@ public class UnstructuredDocumentProcessor implements DocumentProcessor {
 
         }
 
-        return new FilterResponse(sb.toString(), context, documentId, piece, explanation, attributes, incrementalRedactions);
+        return new FilterResponse(sb.toString(), context, documentId, piece, explanation, attributes, incrementalRedactions, tokens);
 
     }
 

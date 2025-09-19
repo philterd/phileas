@@ -44,10 +44,12 @@ public class FilterResponse {
     private final int piece;
     private final Explanation explanation;
     private final Map<String, String> attributes;
+    private final long tokens;
     private transient final List<IncrementalRedaction> incrementalRedactions;
 
     public FilterResponse(String filteredText, String context, String documentId, int piece,
-                          Explanation explanation, Map<String, String> attributes, List<IncrementalRedaction> incrementalRedactions) {
+                          Explanation explanation, Map<String, String> attributes, List<IncrementalRedaction> incrementalRedactions,
+                          long tokens) {
 
         this.filteredText = filteredText;
         this.context = context;
@@ -56,6 +58,7 @@ public class FilterResponse {
         this.explanation = explanation;
         this.attributes = attributes;
         this.incrementalRedactions = incrementalRedactions;
+        this.tokens = tokens;
 
     }
 
@@ -89,6 +92,7 @@ public class FilterResponse {
         final Map<String, String> combinedAttributes = new HashMap<>();
 
         final List<IncrementalRedaction> combinedIncrementalRedactions = new ArrayList<>();
+        long tokens = 0;
 
         // Loop over each filter response and build the combined filter response.
         for (final FilterResponse filterResponse : sortedFilterResponses) {
@@ -112,11 +116,15 @@ public class FilterResponse {
             // Combine the incremental redactions.
             combinedIncrementalRedactions.addAll(filterResponse.getIncrementalRedactions());
 
+            // Sum the tokens.
+            tokens += filterResponse.getTokens();
+
         }
 
         // Return the newly built FilterResponse.
         return new FilterResponse(filteredText.toString().trim(), context, documentId, 0,
-                new Explanation(appliedSpans, identifiedSpans), combinedAttributes, combinedIncrementalRedactions);
+                new Explanation(appliedSpans, identifiedSpans), combinedAttributes, combinedIncrementalRedactions,
+                tokens);
 
     }
 
@@ -164,6 +172,10 @@ public class FilterResponse {
 
     public List<IncrementalRedaction> getIncrementalRedactions() {
         return incrementalRedactions;
+    }
+
+    public long getTokens() {
+        return tokens;
     }
 
 }
