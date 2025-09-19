@@ -38,7 +38,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -71,7 +70,7 @@ public class PdfRedacterTest {
 
         final PdfRedactionOptions pdfRedactionOptions = new PdfRedactionOptions();
         pdfRedactionOptions.setDpi(150);
-        pdfRedactionOptions.setScale(0.25f);
+        pdfRedactionOptions.setScale(1.0f);
         pdfRedactionOptions.setCompressionQuality(1.0f);
 
         final List<BoundingBox> boundingBoxes = Collections.emptyList();

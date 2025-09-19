@@ -70,9 +70,9 @@ public class PdfRedacter extends PDFTextStripper implements Redacter {
 
     private static final Logger LOGGER = LogManager.getLogger(PdfRedacter.class);
 
-    private Map<Integer, List<RedactedRectangle>> rectangles = new HashMap<>();
+    private final Map<Integer, List<RedactedRectangle>> rectangles = new HashMap<>();
 
-    private Policy policy;
+    private final Policy policy;
     private final Set<Span> spans;
     private final PdfRedactionOptions pdfRedactionOptions;
     private final List<BoundingBox> boundingBoxes;
@@ -151,7 +151,7 @@ public class PdfRedacter extends PDFTextStripper implements Redacter {
 
             for (int x = 0; x < pdDocument.getNumberOfPages(); x++) {
 
-                LOGGER.debug("Creating image from PDF page " + x);
+                LOGGER.debug("Creating image from PDF page {}", x);
                 final BufferedImage bufferedImage = pdfRenderer.renderImageWithDPI(x, pdfRedactionOptions.getDpi());
 
                 final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
@@ -189,11 +189,11 @@ public class PdfRedacter extends PDFTextStripper implements Redacter {
             for (int x = 0; x < pdDocument.getNumberOfPages(); x++) {
                 // We want to preserve unredacted pages and we don't have a redaction rectangle for this page, transpose
                 if (preserveUnredactedPages && !rectangles.containsKey(x)) {
-                    LOGGER.debug("Copying page " + x + " from input to output document as no redaction needed on page");
+                    LOGGER.debug("Copying page {} from input to output document as no redaction needed on page", x);
                     PDPage inputPage = pdDocument.getPage(x);
                     outputPdfDocument.importPage(inputPage);
                 } else {
-                    LOGGER.debug("Creating image from redacted PDF page " + x);
+                    LOGGER.debug("Creating image from redacted PDF page {}", x);
 
                     // Create an output image with the specified DPI, this will be used to write the PDF page to prior
                     // to drawing in the new PDPage
@@ -399,7 +399,7 @@ public class PdfRedacter extends PDFTextStripper implements Redacter {
     /**
      * Find all indexes of a span in a string.
      */
-    private List<Integer> findIndexes(String text, Span span) {
+    private List<Integer> findIndexes(final String text, final Span span) {
 
         final List<Integer> indexes = new ArrayList<>();
 

@@ -65,6 +65,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class PhileasFilterService implements FilterService {
 
@@ -217,24 +219,34 @@ public class PhileasFilterService implements FilterService {
 
             // TODO: The following code really only needs to be done if there is at least one filter defined in the policy.
 
-            // Process each line looking for sensitive information in each line.
-            for (final String line : lines) {
+            // Partition the lines into groups.
+            final List<List<String>> partitionedLists = partitionList(lines, 20);
 
-                final int piece = 0;
+            for(final List<String> partitionedList : partitionedLists) {
 
-                // Process the text.
-                final FilterResponse filterResponse = unstructuredDocumentProcessor.process(policy, filters, postFilters, context, documentId, piece, line, attributes);
+                final String partitionedLines = String.join("\n", partitionedList);
+                System.out.println("partitioned lines: " + partitionedLines);
 
-                // Add all the found spans to the list of spans.
-                spans.addAll(filterResponse.getExplanation().appliedSpans());
+                // Process each line looking for sensitive information in each line.
+                //for (final String line : partitionedLines) {
 
-                for (final Span span : filterResponse.getExplanation().appliedSpans()) {
-                    span.setCharacterStart(span.getCharacterStart() + offset);
-                    span.setCharacterEnd(span.getCharacterEnd() + offset);
-                    nonRelativeSpans.add(span);
-                }
+                    final int piece = 0;
 
-                offset += line.length();
+                    // Process the text.
+                    final FilterResponse filterResponse = unstructuredDocumentProcessor.process(policy, filters, postFilters, context, documentId, piece, partitionedLines, attributes);
+
+                    // Add all the found spans to the list of spans.
+                    spans.addAll(filterResponse.getExplanation().appliedSpans());
+
+                    for (final Span span : filterResponse.getExplanation().appliedSpans()) {
+                        span.setCharacterStart(span.getCharacterStart() + offset);
+                        span.setCharacterEnd(span.getCharacterEnd() + offset);
+                        nonRelativeSpans.add(span);
+                    }
+
+                    offset += partitionedLines.length();
+
+               // }
 
             }
 
@@ -279,6 +291,21 @@ public class PhileasFilterService implements FilterService {
         }
 
         return binaryDocumentFilterResponse;
+
+    }
+
+    private List<List<String>> partitionList(final List<String> originalList, final int groupSize) {
+
+        // Calculate the number of sublists needed
+        int numGroups = (int) Math.ceil((double) originalList.size() / groupSize);
+
+        return IntStream.range(0, numGroups)
+                .mapToObj(i -> {
+                    int start = i * groupSize;
+                    int end = Math.min(start + groupSize, originalList.size());
+                    return originalList.subList(start, end);
+                })
+                .collect(Collectors.toList());
 
     }
 
