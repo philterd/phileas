@@ -1181,7 +1181,6 @@ public class FilterPolicyLoader {
 
                 final PhEyeConfiguration phEyeConfiguration = new PhEyeConfiguration(policy.getIdentifiers().getPhEye().getPhEyeConfiguration().getEndpoint());
                 phEyeConfiguration.setTimeout(policy.getIdentifiers().getPhEye().getPhEyeConfiguration().getTimeout());
-                phEyeConfiguration.setKeepAliveDurationMs(policy.getIdentifiers().getPhEye().getPhEyeConfiguration().getKeepAliveDurationMs());
                 phEyeConfiguration.setMaxIdleConnections(policy.getIdentifiers().getPhEye().getPhEyeConfiguration().getMaxIdleConnections());
                 phEyeConfiguration.setBearerToken(policy.getIdentifiers().getPhEye().getPhEyeConfiguration().getBearerToken());
 
