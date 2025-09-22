@@ -475,6 +475,17 @@ public abstract class AbstractFilterStrategyTest {
 
     }
 
+    @Test
+    public void evaluateCondition8() throws IOException {
+
+        final AbstractFilterStrategy strategy = getFilterStrategy();
+
+        final boolean conditionSatisfied = strategy.evaluateCondition(getPolicy(), "ctx", "documentId", "John Smith", WINDOW, "confidence >= 0.5",  1.0, attributes);
+
+        Assertions.assertTrue(conditionSatisfied);
+
+    }
+
     protected Policy getPolicy() {
         return new Policy();
     }
