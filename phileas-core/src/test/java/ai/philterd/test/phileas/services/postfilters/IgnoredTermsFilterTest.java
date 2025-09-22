@@ -29,10 +29,10 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
-public class IgnoredTermsFilterTest {
+class IgnoredTermsFilterTest {
 
     @Test
-    public void ignored() throws IOException {
+    void ignored() throws IOException {
 
         final Ignored ignored = new Ignored();
         ignored.setTerms(Arrays.asList("Washington", "California", "Virginia"));
@@ -52,7 +52,7 @@ public class IgnoredTermsFilterTest {
     }
 
     @Test
-    public void ignoredFile1() throws IOException {
+    void ignoredFile1() throws IOException {
 
         final Ignored ignored = new Ignored();
         ignored.setTerms(Arrays.asList("Seattle", "California", "Virginia"));
@@ -70,7 +70,7 @@ public class IgnoredTermsFilterTest {
     }
 
     @Test
-    public void ignoredFile2() throws IOException {
+    void ignoredFile2() throws IOException {
 
         final Ignored ignored = new Ignored();
         ignored.setFiles(List.of(new File("src/test/resources/ignored-terms.txt").getAbsolutePath()));
@@ -87,7 +87,7 @@ public class IgnoredTermsFilterTest {
     }
 
     @Test()
-    public void ignoredFile3() {
+    void ignoredFile3() {
 
         final Ignored ignored = new Ignored();
         ignored.setFiles(List.of(new File("src/test/resources/does-not-exist.txt").getAbsolutePath()));
@@ -99,7 +99,7 @@ public class IgnoredTermsFilterTest {
     }
 
     @Test
-    public void notIgnored() throws IOException {
+    void notIgnored() throws IOException {
 
         final Ignored ignored = new Ignored();
         ignored.setTerms(Arrays.asList("Seattle", "California", "Virginia"));
@@ -116,7 +116,7 @@ public class IgnoredTermsFilterTest {
     }
 
     @Test
-    public void caseSensitive1Test() throws IOException {
+    void caseSensitive1Test() throws IOException {
 
         final Ignored ignored = new Ignored();
         ignored.setTerms(Arrays.asList("washington", "California", "Virginia"));
@@ -133,7 +133,7 @@ public class IgnoredTermsFilterTest {
     }
 
     @Test
-    public void caseSensitive2Test() throws IOException {
+    void caseSensitive2Test() throws IOException {
 
         final Ignored ignored = new Ignored();
         ignored.setTerms(Arrays.asList("Washington", "California", "Virginia"));
@@ -150,7 +150,7 @@ public class IgnoredTermsFilterTest {
     }
 
     @Test
-    public void ignoredEmptyList() throws IOException {
+    void ignoredEmptyList() throws IOException {
 
         final Ignored ignored = new Ignored();
         ignored.setTerms(List.of());
