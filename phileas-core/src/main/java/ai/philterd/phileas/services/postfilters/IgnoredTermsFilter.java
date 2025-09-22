@@ -73,6 +73,7 @@ public class IgnoredTermsFilter extends PostFilter {
 
         }
 
+        skipped = ignoredTerms.isEmpty();
         this.bloomFilter = new BloomFilter<>(ignoredTerms);
 
         LOGGER.info("Added {} terms to ignore.", ignoredTerms.size());

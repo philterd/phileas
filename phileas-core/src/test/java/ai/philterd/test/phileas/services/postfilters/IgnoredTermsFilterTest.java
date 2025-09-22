@@ -46,6 +46,7 @@ public class IgnoredTermsFilterTest {
         final IgnoredTermsFilter ignoredTermsFilter = new IgnoredTermsFilter(ignored);
         final List<Span> filteredSpans = ignoredTermsFilter.filter("He lived in Washington.", spans);
 
+        Assertions.assertFalse(ignoredTermsFilter.skipped());
         Assertions.assertEquals(0, filteredSpans.size());
 
     }
@@ -63,6 +64,7 @@ public class IgnoredTermsFilterTest {
         final IgnoredTermsFilter ignoredTermsFilter = new IgnoredTermsFilter(ignored);
         final List<Span> filteredSpans = ignoredTermsFilter.filter("He lived in samuel.", spans);
 
+        Assertions.assertFalse(ignoredTermsFilter.skipped());
         Assertions.assertEquals(0, filteredSpans.size());
 
     }
@@ -79,6 +81,7 @@ public class IgnoredTermsFilterTest {
         final IgnoredTermsFilter ignoredTermsFilter = new IgnoredTermsFilter(ignored);
         final List<Span> filteredSpans = ignoredTermsFilter.filter("He lived in samuel.", spans);
 
+        Assertions.assertFalse(ignoredTermsFilter.skipped());
         Assertions.assertEquals(0, filteredSpans.size());
 
     }
@@ -107,6 +110,7 @@ public class IgnoredTermsFilterTest {
         final IgnoredTermsFilter ignoredTermsFilter = new IgnoredTermsFilter(ignored);
         final List<Span> filteredSpans = ignoredTermsFilter.filter("He lived in Washington.", spans);
 
+        Assertions.assertFalse(ignoredTermsFilter.skipped());
         Assertions.assertEquals(1, filteredSpans.size());
 
     }
@@ -123,6 +127,7 @@ public class IgnoredTermsFilterTest {
         final IgnoredTermsFilter ignoredTermsFilter = new IgnoredTermsFilter(ignored);
         final List<Span> filteredSpans = ignoredTermsFilter.filter("He lived in Washington.", spans);
 
+        Assertions.assertFalse(ignoredTermsFilter.skipped());
         Assertions.assertEquals(0, filteredSpans.size());
 
     }
@@ -139,7 +144,22 @@ public class IgnoredTermsFilterTest {
         final IgnoredTermsFilter ignoredTermsFilter = new IgnoredTermsFilter(ignored);
         final List<Span> filteredSpans = ignoredTermsFilter.filter("He lived in Washington.", spans);
 
+        Assertions.assertFalse(ignoredTermsFilter.skipped());
         Assertions.assertEquals(0, filteredSpans.size());
+
+    }
+
+    @Test
+    public void ignoredEmptyList() throws IOException {
+
+        final Ignored ignored = new Ignored();
+        ignored.setTerms(List.of());
+
+        final Policy policy = new Policy();
+        policy.setIgnored(List.of(ignored));
+
+        final IgnoredTermsFilter ignoredTermsFilter = new IgnoredTermsFilter(ignored);
+        Assertions.assertTrue(ignoredTermsFilter.skipped());
 
     }
 
