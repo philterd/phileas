@@ -169,7 +169,10 @@ public class PhEyeFilter extends NerFilter {
                             // Get the window of text surrounding the token.
                             final String[] window = getWindow(formattedInput, phEyeSpan.getStart(), phEyeSpan.getEnd());
 
-                            final Span span = createSpan(policy, context, documentId, phEyeSpan.getText(),
+                            // Currently only PERSON type is supported.
+                            final FilterType filterType = FilterType.PERSON;
+
+                            final Span span = createSpan(policy, context, documentId, filterType, phEyeSpan.getText(),
                                     window, phEyeSpan.getLabel(), phEyeSpan.getStart(), phEyeSpan.getEnd(),
                                     phEyeSpan.getScore(), attributes);
 
@@ -206,8 +209,9 @@ public class PhEyeFilter extends NerFilter {
     }
 
     private Span createSpan(final Policy policy, final String context, final String documentId,
-                            final String text, final  String[] window, final String classification, final int start,
-                            final int end, final double confidence, Map<String, String> attributes) throws Exception {
+                            final FilterType filterType, final String text, final  String[] window,
+                            final String classification, final int start, final int end, final double confidence,
+                            final Map<String, String> attributes) throws Exception {
 
         final Replacement replacement = getReplacement(policy, context, documentId, text, window, confidence, classification, attributes, null);
 
@@ -223,7 +227,7 @@ public class PhEyeFilter extends NerFilter {
             // Is this term ignored?
             final boolean ignored = isIgnored(text);
 
-            return Span.make(start, end, FilterType.AGE, context, documentId, confidence, text,
+            return Span.make(start, end, filterType, context, documentId, confidence, text,
                     replacement.getReplacement(), replacement.getSalt(), ignored, replacement.isApplied(), window, priority);
 
         }
