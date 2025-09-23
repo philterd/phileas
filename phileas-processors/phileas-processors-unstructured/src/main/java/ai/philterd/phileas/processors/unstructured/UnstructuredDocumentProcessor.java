@@ -94,7 +94,9 @@ public class UnstructuredDocumentProcessor implements DocumentProcessor {
 
         // Perform post-filtering on the spans.
         for(final PostFilter postFilter : postFilters) {
-            identifiedSpans = postFilter.filter(input, identifiedSpans);
+            if(!postFilter.skipped()) {
+                identifiedSpans = postFilter.filter(input, identifiedSpans);
+            }
         }
 
         // The spans that will be persisted. Has to be a deep copy because the shift

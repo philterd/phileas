@@ -30,6 +30,8 @@ public abstract class PostFilter {
 
     protected static final Logger LOGGER = LogManager.getLogger(PostFilter.class);
 
+    protected boolean skipped = false;
+
     /**
      * Performs post-filtering on a list of spans.
      * @param text The input text.
@@ -38,6 +40,10 @@ public abstract class PostFilter {
      * <code>false</code> if the span should be filtered.
      */
     protected abstract PostFilterResult process(String text, Span span);
+
+    public boolean skipped() {
+        return skipped;
+    }
 
     /**
      * Filters a list of spans per the implementation of <code>process</code>.
