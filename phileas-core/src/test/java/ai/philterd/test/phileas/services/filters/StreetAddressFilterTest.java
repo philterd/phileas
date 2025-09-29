@@ -19,11 +19,10 @@ import ai.philterd.phileas.model.enums.FilterType;
 import ai.philterd.phileas.model.filter.FilterConfiguration;
 import ai.philterd.phileas.model.objects.FilterResult;
 import ai.philterd.phileas.model.policy.filters.strategies.rules.StreetAddressFilterStrategy;
-import ai.philterd.phileas.services.anonymization.StreetAddressAnonymizationService;
+import ai.philterd.phileas.model.anonymization.StreetAddressAnonymizationService;
 import ai.philterd.phileas.services.filters.regex.StreetAddressFilter;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
 import java.util.Collections;
 import java.util.List;

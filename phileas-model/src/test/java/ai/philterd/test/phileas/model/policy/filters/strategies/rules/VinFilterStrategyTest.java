@@ -21,6 +21,8 @@ import ai.philterd.phileas.model.policy.FPE;
 import ai.philterd.phileas.model.policy.filters.strategies.AbstractFilterStrategy;
 import ai.philterd.phileas.model.policy.filters.strategies.rules.VinFilterStrategy;
 import ai.philterd.phileas.model.services.AnonymizationService;
+import ai.philterd.phileas.model.anonymization.AbstractAnonymizationService;
+import ai.philterd.phileas.model.anonymization.VinAnonymizationService;
 import ai.philterd.test.phileas.model.policy.filters.strategies.AbstractFilterStrategyTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -34,10 +36,14 @@ public class VinFilterStrategyTest extends AbstractFilterStrategyTest {
         return new VinFilterStrategy();
     }
 
+    public AbstractAnonymizationService getAnonymizationService() {
+        return new VinAnonymizationService();
+    }
+
     @Test
     public void lastFour1() throws Exception {
 
-        final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
+        final AnonymizationService anonymizationService = getAnonymizationService();
 
         final AbstractFilterStrategy strategy = new VinFilterStrategy();
         strategy.setStrategy(AbstractFilterStrategy.LAST_4);

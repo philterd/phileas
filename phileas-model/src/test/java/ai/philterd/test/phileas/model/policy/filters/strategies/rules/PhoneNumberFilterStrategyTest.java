@@ -17,12 +17,18 @@ package ai.philterd.test.phileas.model.policy.filters.strategies.rules;
 
 import ai.philterd.phileas.model.policy.filters.strategies.AbstractFilterStrategy;
 import ai.philterd.phileas.model.policy.filters.strategies.rules.PhoneNumberFilterStrategy;
+import ai.philterd.phileas.model.anonymization.AbstractAnonymizationService;
+import ai.philterd.phileas.model.anonymization.NumericAnonymizationService;
 import ai.philterd.test.phileas.model.policy.filters.strategies.AbstractFilterStrategyTest;
 
 public class PhoneNumberFilterStrategyTest extends AbstractFilterStrategyTest {
 
     public AbstractFilterStrategy getFilterStrategy() {
         return new PhoneNumberFilterStrategy();
+    }
+
+    public AbstractAnonymizationService getAnonymizationService() {
+        return new NumericAnonymizationService();
     }
 
 }

@@ -19,7 +19,7 @@ import ai.philterd.phileas.model.enums.FilterType;
 import ai.philterd.phileas.model.filter.FilterConfiguration;
 import ai.philterd.phileas.model.objects.FilterResult;
 import ai.philterd.phileas.model.policy.filters.strategies.rules.BitcoinAddressFilterStrategy;
-import ai.philterd.phileas.services.anonymization.BitcoinAddressAnonymizationService;
+import ai.philterd.phileas.model.anonymization.BitcoinAddressAnonymizationService;
 import ai.philterd.phileas.services.filters.regex.BitcoinAddressFilter;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

@@ -20,7 +20,7 @@ import ai.philterd.phileas.model.filter.FilterConfiguration;
 import ai.philterd.phileas.model.objects.FilterResult;
 import ai.philterd.phileas.model.policy.filters.strategies.AbstractFilterStrategy;
 import ai.philterd.phileas.model.policy.filters.strategies.rules.CurrencyFilterStrategy;
-import ai.philterd.phileas.services.anonymization.CurrencyAnonymizationService;
+import ai.philterd.phileas.model.anonymization.CurrencyAnonymizationService;
 import ai.philterd.phileas.services.filters.regex.CurrencyFilter;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

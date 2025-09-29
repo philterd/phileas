@@ -21,7 +21,7 @@ import ai.philterd.phileas.model.filter.rules.dictionary.BloomFilterDictionaryFi
 import ai.philterd.phileas.model.objects.FilterResult;
 import ai.philterd.phileas.model.objects.Span;
 import ai.philterd.phileas.model.policy.filters.strategies.custom.CustomDictionaryFilterStrategy;
-import ai.philterd.phileas.services.anonymization.AlphanumericAnonymizationService;
+import ai.philterd.phileas.model.anonymization.AlphanumericAnonymizationService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Assertions;

@@ -17,12 +17,18 @@ package ai.philterd.test.phileas.model.policy.filters.strategies.dynamic;
 
 import ai.philterd.phileas.model.policy.filters.strategies.AbstractFilterStrategy;
 import ai.philterd.phileas.model.policy.filters.strategies.dynamic.CountyFilterStrategy;
+import ai.philterd.phileas.model.anonymization.AbstractAnonymizationService;
+import ai.philterd.phileas.model.anonymization.CountyAnonymizationService;
 import ai.philterd.test.phileas.model.policy.filters.strategies.AbstractFilterStrategyTest;
 
 public class CountyFilterStrategyTest extends AbstractFilterStrategyTest {
 
     public AbstractFilterStrategy getFilterStrategy() {
         return new CountyFilterStrategy();
+    }
+
+    public AbstractAnonymizationService getAnonymizationService() {
+        return new CountyAnonymizationService();
     }
 
 }

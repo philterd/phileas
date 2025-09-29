@@ -21,7 +21,7 @@ import ai.philterd.phileas.model.filter.FilterConfiguration;
 import ai.philterd.phileas.model.filter.rules.dictionary.FuzzyDictionaryFilter;
 import ai.philterd.phileas.model.objects.FilterResult;
 import ai.philterd.phileas.model.policy.filters.strategies.dynamic.SurnameFilterStrategy;
-import ai.philterd.phileas.services.anonymization.SurnameAnonymizationService;
+import ai.philterd.phileas.model.anonymization.SurnameAnonymizationService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Assertions;

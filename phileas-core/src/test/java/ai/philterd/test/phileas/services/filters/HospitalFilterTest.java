@@ -21,7 +21,7 @@ import ai.philterd.phileas.model.filter.FilterConfiguration;
 import ai.philterd.phileas.model.filter.rules.dictionary.FuzzyDictionaryFilter;
 import ai.philterd.phileas.model.objects.FilterResult;
 import ai.philterd.phileas.model.policy.filters.strategies.dynamic.HospitalFilterStrategy;
-import ai.philterd.phileas.services.anonymization.HospitalAnonymizationService;
+import ai.philterd.phileas.model.anonymization.HospitalAnonymizationService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Assertions;

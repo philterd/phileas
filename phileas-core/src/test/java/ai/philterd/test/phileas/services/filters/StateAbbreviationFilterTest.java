@@ -19,7 +19,7 @@ import ai.philterd.phileas.model.enums.FilterType;
 import ai.philterd.phileas.model.filter.FilterConfiguration;
 import ai.philterd.phileas.model.objects.FilterResult;
 import ai.philterd.phileas.model.policy.filters.strategies.rules.StateAbbreviationFilterStrategy;
-import ai.philterd.phileas.services.anonymization.StateAbbreviationAnonymizationService;
+import ai.philterd.phileas.model.anonymization.StateAbbreviationAnonymizationService;
 import ai.philterd.phileas.services.filters.regex.StateAbbreviationFilter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

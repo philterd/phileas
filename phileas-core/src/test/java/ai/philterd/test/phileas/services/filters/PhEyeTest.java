@@ -18,7 +18,7 @@ package ai.philterd.test.phileas.services.filters;
 import ai.philterd.phileas.model.filter.FilterConfiguration;
 import ai.philterd.phileas.model.objects.FilterResult;
 import ai.philterd.phileas.model.services.MetricsService;
-import ai.philterd.phileas.services.anonymization.AgeAnonymizationService;
+import ai.philterd.phileas.model.anonymization.AgeAnonymizationService;
 import ai.philterd.phileas.services.filters.ai.pheye.PhEyeConfiguration;
 import ai.philterd.phileas.services.filters.ai.pheye.PhEyeFilter;
 import org.junit.jupiter.api.Assertions;

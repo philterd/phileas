@@ -17,12 +17,18 @@ package ai.philterd.test.phileas.model.policy.filters.strategies.rules;
 
 import ai.philterd.phileas.model.policy.filters.strategies.AbstractFilterStrategy;
 import ai.philterd.phileas.model.policy.filters.strategies.rules.UrlFilterStrategy;
+import ai.philterd.phileas.model.anonymization.AbstractAnonymizationService;
+import ai.philterd.phileas.model.anonymization.UrlAnonymizationService;
 import ai.philterd.test.phileas.model.policy.filters.strategies.AbstractFilterStrategyTest;
 
 public class UrlFilterStrategyTest extends AbstractFilterStrategyTest {
 
     public AbstractFilterStrategy getFilterStrategy() {
         return new UrlFilterStrategy();
+    }
+
+    public AbstractAnonymizationService getAnonymizationService() {
+        return new UrlAnonymizationService();
     }
 
 }

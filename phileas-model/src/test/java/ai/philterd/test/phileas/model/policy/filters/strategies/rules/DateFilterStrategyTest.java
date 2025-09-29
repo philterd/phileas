@@ -23,6 +23,8 @@ import ai.philterd.phileas.model.policy.FPE;
 import ai.philterd.phileas.model.policy.filters.strategies.AbstractFilterStrategy;
 import ai.philterd.phileas.model.policy.filters.strategies.rules.DateFilterStrategy;
 import ai.philterd.phileas.model.services.AnonymizationService;
+import ai.philterd.phileas.model.anonymization.AbstractAnonymizationService;
+import ai.philterd.phileas.model.anonymization.DateAnonymizationService;
 import ai.philterd.test.phileas.model.policy.filters.strategies.AbstractFilterStrategyTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -43,6 +45,10 @@ public class DateFilterStrategyTest extends AbstractFilterStrategyTest {
     @Override
     public DateFilterStrategy getFilterStrategy() {
         return new DateFilterStrategy();
+    }
+
+    public AbstractAnonymizationService getAnonymizationService() {
+        return new DateAnonymizationService();
     }
 
     public DateFilterStrategy getShiftedFilterStrategy(int days, int months, int years) {
@@ -163,7 +169,7 @@ public class DateFilterStrategyTest extends AbstractFilterStrategyTest {
     @Test
     public void shiftReplacement1() throws Exception {
 
-        final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
+        final AnonymizationService anonymizationService = getAnonymizationService();
 
         final AbstractFilterStrategy strategy = getShiftedFilterStrategy(2, 0, 0);
         strategy.setStrategy(AbstractFilterStrategy.SHIFT);
@@ -178,7 +184,7 @@ public class DateFilterStrategyTest extends AbstractFilterStrategyTest {
     @Test
     public void shiftReplacement2() throws Exception {
 
-        final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
+        final AnonymizationService anonymizationService = getAnonymizationService();
 
         final AbstractFilterStrategy strategy = getShiftedFilterStrategy(2, 2, 0);
         strategy.setStrategy(AbstractFilterStrategy.SHIFT);
@@ -193,7 +199,7 @@ public class DateFilterStrategyTest extends AbstractFilterStrategyTest {
     @Test
     public void shiftReplacement3() throws Exception {
 
-        final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
+        final AnonymizationService anonymizationService = getAnonymizationService();
 
         final AbstractFilterStrategy strategy = getShiftedFilterStrategy(-2, 2, 0);
         strategy.setStrategy(AbstractFilterStrategy.SHIFT);
@@ -208,7 +214,7 @@ public class DateFilterStrategyTest extends AbstractFilterStrategyTest {
     @Test
     public void shiftReplacement4() throws Exception {
 
-        final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
+        final AnonymizationService anonymizationService = getAnonymizationService();
 
         final AbstractFilterStrategy strategy = getShiftedFilterStrategy(0, 0, 0);
         strategy.setStrategy(AbstractFilterStrategy.SHIFT);
@@ -223,7 +229,7 @@ public class DateFilterStrategyTest extends AbstractFilterStrategyTest {
     @Test
     public void shiftReplacement5() throws Exception {
 
-        final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
+        final AnonymizationService anonymizationService = getAnonymizationService();
 
         final AbstractFilterStrategy strategy = getShiftedFilterStrategy(1, 1, 1);
         strategy.setStrategy(AbstractFilterStrategy.SHIFT);
@@ -238,7 +244,7 @@ public class DateFilterStrategyTest extends AbstractFilterStrategyTest {
     @Test
     public void shiftReplacement6() throws Exception {
 
-        final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
+        final AnonymizationService anonymizationService = getAnonymizationService();
 
         final AbstractFilterStrategy strategy = getShiftedFilterStrategy(1, 1, 1);
         strategy.setStrategy(AbstractFilterStrategy.SHIFT);
@@ -253,7 +259,7 @@ public class DateFilterStrategyTest extends AbstractFilterStrategyTest {
     @Test
     public void shiftReplacementInvalidDate() throws Exception {
 
-        final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
+        final AnonymizationService anonymizationService = getAnonymizationService();
 
         final AbstractFilterStrategy strategy = getShiftedFilterStrategy(1, 1, 1);
         strategy.setStrategy(AbstractFilterStrategy.SHIFT);
@@ -294,7 +300,7 @@ public class DateFilterStrategyTest extends AbstractFilterStrategyTest {
     @Test
     public void relativeReplacement1() throws Exception {
 
-        final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
+        final AnonymizationService anonymizationService = getAnonymizationService();
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
         strategy.setStrategy(AbstractFilterStrategy.RELATIVE);
@@ -309,7 +315,7 @@ public class DateFilterStrategyTest extends AbstractFilterStrategyTest {
     @Test
     public void relativeReplacement2() throws Exception {
 
-        final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
+        final AnonymizationService anonymizationService = getAnonymizationService();
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
         strategy.setStrategy(AbstractFilterStrategy.RELATIVE);
@@ -324,7 +330,7 @@ public class DateFilterStrategyTest extends AbstractFilterStrategyTest {
     @Test
     public void relativeReplacement3() throws Exception {
 
-        final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
+        final AnonymizationService anonymizationService = getAnonymizationService();
 
         final DateTimeFormatter formatter = new DateTimeFormatterBuilder()
                 .appendOptional(DateTimeFormatter.ofPattern(("MM-dd-yyyy")))
@@ -348,7 +354,7 @@ public class DateFilterStrategyTest extends AbstractFilterStrategyTest {
     @Test
     public void relativeReplacement4() throws Exception {
 
-        final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
+        final AnonymizationService anonymizationService = getAnonymizationService();
 
         // Minus days is to prevent test failures based on how late in the month we currently are.
         final LocalDateTime parsedDate = LocalDateTime.now().plusYears(5).plusMonths(3);
@@ -374,7 +380,7 @@ public class DateFilterStrategyTest extends AbstractFilterStrategyTest {
     @Test
     public void relativeReplacement5() throws Exception {
 
-        final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
+        final AnonymizationService anonymizationService = getAnonymizationService();
 
         final DateTimeFormatter formatter = new DateTimeFormatterBuilder()
                 .appendOptional(DateTimeFormatter.ofPattern(("MM-dd-yyyy")))
@@ -396,7 +402,7 @@ public class DateFilterStrategyTest extends AbstractFilterStrategyTest {
     @Test
     public void relativeReplacement6() throws Exception {
 
-        final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
+        final AnonymizationService anonymizationService = getAnonymizationService();
 
         final DateTimeFormatter formatter = new DateTimeFormatterBuilder()
                 .appendOptional(DateTimeFormatter.ofPattern("MMM yyyy"))
@@ -421,7 +427,7 @@ public class DateFilterStrategyTest extends AbstractFilterStrategyTest {
     @Test
     public void relativeReplacement7() throws Exception {
 
-        final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
+        final AnonymizationService anonymizationService = getAnonymizationService();
 
         final DateTimeFormatter formatter = new DateTimeFormatterBuilder()
                 .appendOptional(DateTimeFormatter.ofPattern("MMM yyyy"))
@@ -447,7 +453,7 @@ public class DateFilterStrategyTest extends AbstractFilterStrategyTest {
     @Test
     public void truncateToYear1() throws Exception {
 
-        final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
+        final AnonymizationService anonymizationService = getAnonymizationService();
 
         final DateTimeFormatter formatter = new DateTimeFormatterBuilder()
                 .appendOptional(DateTimeFormatter.ofPattern(("MM-dd-yyyy")))
@@ -471,7 +477,7 @@ public class DateFilterStrategyTest extends AbstractFilterStrategyTest {
 
         final String[] window = new String[]{"born", "on", "10-05-2005"};
 
-        final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
+        final AnonymizationService anonymizationService = getAnonymizationService();
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
         strategy.setStrategy(AbstractFilterStrategy.TRUNCATE_TO_YEAR);
@@ -506,7 +512,7 @@ public class DateFilterStrategyTest extends AbstractFilterStrategyTest {
     @Test
     public void randomShift1() throws Exception {
 
-        final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
+        final AnonymizationService anonymizationService = getAnonymizationService();
 
         final DateTimeFormatter formatter = new DateTimeFormatterBuilder()
                 .appendOptional(DateTimeFormatter.ofPattern(("MM-dd-yyyy")))

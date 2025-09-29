@@ -19,7 +19,7 @@ import ai.philterd.phileas.model.enums.FilterType;
 import ai.philterd.phileas.model.filter.FilterConfiguration;
 import ai.philterd.phileas.model.objects.FilterResult;
 import ai.philterd.phileas.model.policy.filters.strategies.rules.BankRoutingNumberFilterStrategy;
-import ai.philterd.phileas.services.anonymization.AlphanumericAnonymizationService;
+import ai.philterd.phileas.model.anonymization.AlphanumericAnonymizationService;
 import ai.philterd.phileas.services.filters.regex.BankRoutingNumberFilter;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

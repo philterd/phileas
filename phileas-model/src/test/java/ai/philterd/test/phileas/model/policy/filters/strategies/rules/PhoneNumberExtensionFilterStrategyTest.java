@@ -17,17 +17,22 @@ package ai.philterd.test.phileas.model.policy.filters.strategies.rules;
 
 import ai.philterd.phileas.model.policy.filters.strategies.AbstractFilterStrategy;
 import ai.philterd.phileas.model.policy.filters.strategies.rules.PhoneNumberExtensionFilterStrategy;
+import ai.philterd.phileas.model.anonymization.AbstractAnonymizationService;
+import ai.philterd.phileas.model.anonymization.NumericAnonymizationService;
 import ai.philterd.test.phileas.model.policy.filters.strategies.AbstractFilterStrategyTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.io.IOException;
 import java.util.Collections;
 
 public class PhoneNumberExtensionFilterStrategyTest extends AbstractFilterStrategyTest {
 
     public AbstractFilterStrategy getFilterStrategy() {
         return new PhoneNumberExtensionFilterStrategy();
+    }
+
+    public AbstractAnonymizationService getAnonymizationService() {
+        return new NumericAnonymizationService();
     }
 
     @Test

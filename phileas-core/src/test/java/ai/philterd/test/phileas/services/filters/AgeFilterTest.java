@@ -20,7 +20,7 @@ import ai.philterd.phileas.model.filter.FilterConfiguration;
 import ai.philterd.phileas.model.objects.FilterResult;
 import ai.philterd.phileas.model.policy.IgnoredPattern;
 import ai.philterd.phileas.model.policy.filters.strategies.rules.AgeFilterStrategy;
-import ai.philterd.phileas.services.anonymization.AgeAnonymizationService;
+import ai.philterd.phileas.model.anonymization.AgeAnonymizationService;
 import ai.philterd.phileas.services.filters.regex.AgeFilter;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

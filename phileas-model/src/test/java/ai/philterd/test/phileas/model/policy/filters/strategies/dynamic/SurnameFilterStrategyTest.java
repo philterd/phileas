@@ -17,12 +17,18 @@ package ai.philterd.test.phileas.model.policy.filters.strategies.dynamic;
 
 import ai.philterd.phileas.model.policy.filters.strategies.AbstractFilterStrategy;
 import ai.philterd.phileas.model.policy.filters.strategies.dynamic.SurnameFilterStrategy;
+import ai.philterd.phileas.model.anonymization.AbstractAnonymizationService;
+import ai.philterd.phileas.model.anonymization.SurnameAnonymizationService;
 import ai.philterd.test.phileas.model.policy.filters.strategies.AbstractFilterStrategyTest;
 
 public class SurnameFilterStrategyTest extends AbstractFilterStrategyTest {
 
     public AbstractFilterStrategy getFilterStrategy() {
         return new SurnameFilterStrategy();
+    }
+
+    public AbstractAnonymizationService getAnonymizationService() {
+        return new SurnameAnonymizationService();
     }
 
 }

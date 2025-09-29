@@ -291,36 +291,46 @@ public abstract class AbstractFilterStrategy {
 
     /**
      * Gets an anonymized token for a token. This function is called by <code>getReplacement</code>.
-     * @param context The context.
-     * @param token The token.
+     * @param replacementScope The replacement scope.
      * @param anonymizationService The {@link AnonymizationService} for the token.
      * @return An anonymized version of the token, or <code>null</code> if the token has already been anonymized.
      * @throws IOException Thrown if the cache service is not accessible.
      */
-    protected String getAnonymizedToken(String context, String token, AnonymizationService anonymizationService) throws IOException {
+    protected String getAnonymizedToken(final String replacementScope, final String token, final AnonymizationService anonymizationService) throws IOException {
 
         String replacement = null;
 
-        // Have we seen this token in this context before?
-        if (anonymizationService.getContext().containsKey(token)) {
+        if(replacementScope.equalsIgnoreCase(REPLACEMENT_SCOPE_DOCUMENT)) {
 
-            // Yes, we have previously seen this token in this context.
-            replacement = anonymizationService.getContext().get(token);
+            // Don't look at the context for this replacement.
+            replacement = anonymizationService.anonymize(token);
 
-        } else {
+        } else if(replacementScope.equalsIgnoreCase(REPLACEMENT_SCOPE_CONTEXT)) {
 
-            // Make sure we aren't trying to anonymize a token we have already anonymized.
-            if (anonymizationService.getContext().containsValue(token)) {
+            // Do look at the context.
 
-                // This token is the result of an already replaced value.
-                // So the "replacement" is null. The filter won't replace the token when the replacement value is null.
-                replacement = null;
+            // Have we seen this token in this context before?
+            if (anonymizationService.getContext().containsKey(token)) {
+
+                // Yes, we have previously seen this token in this context.
+                replacement = anonymizationService.getContext().get(token);
 
             } else {
 
-                // This is not an already anonymized token.
-                replacement = anonymizationService.anonymize(token);
-                anonymizationService.getContext().put(token, replacement);
+                // Make sure we aren't trying to anonymize a token we have already anonymized.
+                if (anonymizationService.getContext().containsValue(token)) {
+
+                    // This token is the result of an already replaced value.
+                    // So the "replacement" is null. The filter won't replace the token when the replacement value is null.
+                    replacement = null;
+
+                } else {
+
+                    // This is not an already anonymized token.
+                    replacement = anonymizationService.anonymize(token);
+                    anonymizationService.getContext().put(token, replacement);
+
+                }
 
             }
 

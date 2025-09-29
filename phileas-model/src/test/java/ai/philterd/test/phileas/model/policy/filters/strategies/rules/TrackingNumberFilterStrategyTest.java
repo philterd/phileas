@@ -21,6 +21,8 @@ import ai.philterd.phileas.model.policy.FPE;
 import ai.philterd.phileas.model.policy.filters.strategies.AbstractFilterStrategy;
 import ai.philterd.phileas.model.policy.filters.strategies.rules.TrackingNumberFilterStrategy;
 import ai.philterd.phileas.model.services.AnonymizationService;
+import ai.philterd.phileas.model.anonymization.AbstractAnonymizationService;
+import ai.philterd.phileas.model.anonymization.AlphanumericAnonymizationService;
 import ai.philterd.test.phileas.model.policy.filters.strategies.AbstractFilterStrategyTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -34,10 +36,14 @@ public class TrackingNumberFilterStrategyTest extends AbstractFilterStrategyTest
         return new TrackingNumberFilterStrategy();
     }
 
+    public AbstractAnonymizationService getAnonymizationService() {
+        return new AlphanumericAnonymizationService();
+    }
+
     @Test
     public void lastFour1() throws Exception {
 
-        final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
+        final AnonymizationService anonymizationService = getAnonymizationService();
 
         final AbstractFilterStrategy strategy = new TrackingNumberFilterStrategy();
         strategy.setStrategy(AbstractFilterStrategy.LAST_4);

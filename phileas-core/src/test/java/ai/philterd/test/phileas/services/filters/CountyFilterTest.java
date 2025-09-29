@@ -21,7 +21,7 @@ import ai.philterd.phileas.model.filter.FilterConfiguration;
 import ai.philterd.phileas.model.filter.rules.dictionary.FuzzyDictionaryFilter;
 import ai.philterd.phileas.model.objects.FilterResult;
 import ai.philterd.phileas.model.policy.filters.strategies.dynamic.CountyFilterStrategy;
-import ai.philterd.phileas.services.anonymization.CountyAnonymizationService;
+import ai.philterd.phileas.model.anonymization.CountyAnonymizationService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Assertions;

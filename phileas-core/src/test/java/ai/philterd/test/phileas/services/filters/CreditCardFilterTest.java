@@ -19,7 +19,7 @@ import ai.philterd.phileas.model.enums.FilterType;
 import ai.philterd.phileas.model.filter.FilterConfiguration;
 import ai.philterd.phileas.model.objects.FilterResult;
 import ai.philterd.phileas.model.policy.filters.strategies.rules.CreditCardFilterStrategy;
-import ai.philterd.phileas.services.anonymization.CreditCardAnonymizationService;
+import ai.philterd.phileas.model.anonymization.CreditCardAnonymizationService;
 import ai.philterd.phileas.services.filters.regex.CreditCardFilter;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

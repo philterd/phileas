@@ -21,6 +21,8 @@ import ai.philterd.phileas.model.policy.FPE;
 import ai.philterd.phileas.model.policy.filters.strategies.AbstractFilterStrategy;
 import ai.philterd.phileas.model.policy.filters.strategies.rules.ZipCodeFilterStrategy;
 import ai.philterd.phileas.model.services.AnonymizationService;
+import ai.philterd.phileas.model.anonymization.AbstractAnonymizationService;
+import ai.philterd.phileas.model.anonymization.ZipCodeAnonymizationService;
 import ai.philterd.test.phileas.model.policy.filters.strategies.AbstractFilterStrategyTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -33,6 +35,10 @@ public class ZipCodeFilterStrategyTest extends AbstractFilterStrategyTest {
 
     public AbstractFilterStrategy getFilterStrategy() throws IOException {
         return new ZipCodeFilterStrategy();
+    }
+
+    public AbstractAnonymizationService getAnonymizationService() {
+        return new ZipCodeAnonymizationService();
     }
 
     @Test
@@ -130,7 +136,7 @@ public class ZipCodeFilterStrategyTest extends AbstractFilterStrategyTest {
         strategy.setStrategy(AbstractFilterStrategy.STATIC_REPLACE);
         strategy.setStaticReplacement("whoa");
 
-        final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
+        final AnonymizationService anonymizationService = getAnonymizationService();
 
         final Replacement replacement = strategy.getReplacement("name", "context", Collections.emptyMap(), "docid", "90210", WINDOW, new Crypto(), new FPE(), anonymizationService, null);
 

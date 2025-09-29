@@ -15,6 +15,8 @@
  */
 package ai.philterd.test.phileas.model.policy.filters.strategies;
 
+import ai.philterd.phileas.model.anonymization.AbstractAnonymizationService;
+import ai.philterd.phileas.model.anonymization.AgeAnonymizationService;
 import ai.philterd.phileas.model.objects.Replacement;
 import ai.philterd.phileas.model.policy.Crypto;
 import ai.philterd.phileas.model.policy.FPE;
@@ -26,20 +28,18 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
 import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.mockito.Mockito.when;
-
 public abstract class AbstractFilterStrategyTest {
 
     protected static final Logger LOGGER = LogManager.getLogger(AbstractFilterStrategyTest.class);
 
     public abstract AbstractFilterStrategy getFilterStrategy() throws IOException;
+    public abstract AbstractAnonymizationService getAnonymizationService() throws IOException;
 
     public static final String[] WINDOW = new String[3];
     
@@ -48,7 +48,7 @@ public abstract class AbstractFilterStrategyTest {
     @Test
     public void replacement1() throws Exception {
 
-        final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
+        final AnonymizationService anonymizationService = getAnonymizationService();
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
         strategy.setStrategy(AbstractFilterStrategy.STATIC_REPLACE);
@@ -63,7 +63,7 @@ public abstract class AbstractFilterStrategyTest {
     @Test
     public void replacement2() throws Exception {
 
-        final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
+        final AnonymizationService anonymizationService = getAnonymizationService();
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
         strategy.setStrategy(AbstractFilterStrategy.REDACT);
@@ -78,11 +78,8 @@ public abstract class AbstractFilterStrategyTest {
     @Test
     public void replacement3() throws Exception {
 
-        final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
-
-        final Map<String, String> context = new HashMap<>();
-        context.put("token", "random");
-        when(anonymizationService.getContext()).thenReturn(context);
+        final AnonymizationService anonymizationService = getAnonymizationService();
+        anonymizationService.getContext().put("token", "random");
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
         strategy.setStrategy(AbstractFilterStrategy.RANDOM_REPLACE);
@@ -96,11 +93,8 @@ public abstract class AbstractFilterStrategyTest {
     @Test
     public void replacement4() throws Exception {
 
-        final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
-
-        final Map<String, String> context = new HashMap<>();
-        context.put("token", "random");
-        when(anonymizationService.getContext()).thenReturn(context);
+        final AnonymizationService anonymizationService = getAnonymizationService();
+        anonymizationService.getContext().put("token", "random");
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
         strategy.setStrategy("something-wrong");
@@ -114,10 +108,7 @@ public abstract class AbstractFilterStrategyTest {
     @Test
     public void replacement5() throws Exception {
 
-        final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
-
-        final Map<String, String> context = new HashMap<>();
-        when(anonymizationService.getContext()).thenReturn(context);
+        final AnonymizationService anonymizationService = getAnonymizationService();
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
         strategy.setStrategy(AbstractFilterStrategy.REDACT);
@@ -132,11 +123,8 @@ public abstract class AbstractFilterStrategyTest {
     @Test
     public void replacement6() throws Exception {
 
-        final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
-
-        final Map<String, String> context = new HashMap<>();
-        context.put("token", "random");
-        when(anonymizationService.getContext()).thenReturn(context);
+        final AnonymizationService anonymizationService = getAnonymizationService();
+        anonymizationService.getContext().put("token", "random");
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
         strategy.setStrategy(AbstractFilterStrategy.CRYPTO_REPLACE);
@@ -153,28 +141,26 @@ public abstract class AbstractFilterStrategyTest {
     @Test
     public void replacement7() throws Exception {
 
-        final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
-
-        final Map<String, String> context = new HashMap<>();
-        context.put("token", "randomtoken");
-        when(anonymizationService.getContext()).thenReturn(context);
+        final AnonymizationService anonymizationService = getAnonymizationService();
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
         strategy.setStrategy(AbstractFilterStrategy.RANDOM_REPLACE);
 
         final Replacement replacement = strategy.getReplacement("name", "context", Collections.emptyMap(), "docId", "token", WINDOW, new Crypto(), new FPE(), anonymizationService, null);
 
-        Assertions.assertEquals("randomtoken", replacement.getReplacement());
+        // If this is a test for the age filter, the replacement will be "token" because there are no digits in "token".
+        if(anonymizationService instanceof AgeAnonymizationService) {
+            Assertions.assertEquals("token", replacement.getReplacement());
+        } else {
+            Assertions.assertNotEquals("token", replacement.getReplacement());
+        }
 
     }
 
     @Test
     public void replacement8() throws Exception {
 
-        final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
-
-        final Map<String, String> context = new HashMap<>();
-        when(anonymizationService.getContext()).thenReturn(context);
+        final AnonymizationService anonymizationService = getAnonymizationService();
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
         strategy.setStrategy(AbstractFilterStrategy.STATIC_REPLACE);
@@ -189,10 +175,7 @@ public abstract class AbstractFilterStrategyTest {
     @Test
     public void replacement9() throws IOException {
 
-        final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
-
-        final Map<String, String> context = new HashMap<>();
-        when(anonymizationService.getContext()).thenReturn(context);
+        final AnonymizationService anonymizationService = getAnonymizationService();
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
         strategy.setStrategy(AbstractFilterStrategy.CRYPTO_REPLACE);
@@ -212,10 +195,7 @@ public abstract class AbstractFilterStrategyTest {
     @Test
     public void replacement10() throws Exception {
 
-        final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
-
-        final Map<String, String> context = new HashMap<>();
-        when(anonymizationService.getContext()).thenReturn(context);
+        final AnonymizationService anonymizationService = getAnonymizationService();
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
         strategy.setStrategy(AbstractFilterStrategy.HASH_SHA256_REPLACE);
@@ -233,10 +213,7 @@ public abstract class AbstractFilterStrategyTest {
     @Test
     public void replacementWithMaskCharacterForSameLength() throws Exception {
 
-        final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
-
-        final Map<String, String> context = new HashMap<>();
-        when(anonymizationService.getContext()).thenReturn(context);
+        final AnonymizationService anonymizationService = getAnonymizationService();
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
         strategy.setStrategy(AbstractFilterStrategy.MASK);
@@ -255,10 +232,7 @@ public abstract class AbstractFilterStrategyTest {
     @Test
     public void replacementWithMaskCharacterForDifferentLength() throws Exception {
 
-        final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
-
-        final Map<String, String> context = new HashMap<>();
-        when(anonymizationService.getContext()).thenReturn(context);
+        final AnonymizationService anonymizationService = getAnonymizationService();
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
         strategy.setStrategy(AbstractFilterStrategy.MASK);
@@ -277,10 +251,7 @@ public abstract class AbstractFilterStrategyTest {
     @Test
     public void replacementWithMaskCharacterForSetLength() throws Exception {
 
-        final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
-
-        final Map<String, String> context = new HashMap<>();
-        when(anonymizationService.getContext()).thenReturn(context);
+        final AnonymizationService anonymizationService = getAnonymizationService();
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
         strategy.setStrategy(AbstractFilterStrategy.MASK);
@@ -298,10 +269,7 @@ public abstract class AbstractFilterStrategyTest {
     @Test
     public void replacementWithMaskCharacterForSetLengthWithNegativeLength() throws Exception {
 
-        final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
-
-        final Map<String, String> context = new HashMap<>();
-        when(anonymizationService.getContext()).thenReturn(context);
+        final AnonymizationService anonymizationService = getAnonymizationService();
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
         strategy.setStrategy(AbstractFilterStrategy.MASK);
@@ -319,10 +287,7 @@ public abstract class AbstractFilterStrategyTest {
     @Test
     public void truncate1() throws Exception {
 
-        final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
-
-        final Map<String, String> context = new HashMap<>();
-        when(anonymizationService.getContext()).thenReturn(context);
+        final AnonymizationService anonymizationService = getAnonymizationService();
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
         strategy.setStrategy(AbstractFilterStrategy.TRUNCATE);
@@ -339,10 +304,7 @@ public abstract class AbstractFilterStrategyTest {
     @Test
     public void truncate2() throws Exception {
 
-        final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
-
-        final Map<String, String> context = new HashMap<>();
-        when(anonymizationService.getContext()).thenReturn(context);
+        final AnonymizationService anonymizationService = getAnonymizationService();
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
         strategy.setStrategy(AbstractFilterStrategy.TRUNCATE);
@@ -359,10 +321,7 @@ public abstract class AbstractFilterStrategyTest {
     @Test
     public void truncate3() throws Exception {
 
-        final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
-
-        final Map<String, String> context = new HashMap<>();
-        when(anonymizationService.getContext()).thenReturn(context);
+        final AnonymizationService anonymizationService = getAnonymizationService();
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
         strategy.setStrategy(AbstractFilterStrategy.TRUNCATE);
@@ -380,10 +339,7 @@ public abstract class AbstractFilterStrategyTest {
     @Test
     public void truncate4() throws Exception {
 
-        final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
-
-        final Map<String, String> context = new HashMap<>();
-        when(anonymizationService.getContext()).thenReturn(context);
+        final AnonymizationService anonymizationService = getAnonymizationService();
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
         strategy.setStrategy(AbstractFilterStrategy.TRUNCATE);

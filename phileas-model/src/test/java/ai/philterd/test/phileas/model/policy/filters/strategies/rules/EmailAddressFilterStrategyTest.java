@@ -17,6 +17,8 @@ package ai.philterd.test.phileas.model.policy.filters.strategies.rules;
 
 import ai.philterd.phileas.model.policy.filters.strategies.AbstractFilterStrategy;
 import ai.philterd.phileas.model.policy.filters.strategies.rules.EmailAddressFilterStrategy;
+import ai.philterd.phileas.model.anonymization.AbstractAnonymizationService;
+import ai.philterd.phileas.model.anonymization.EmailAddressAnonymizationService;
 import ai.philterd.test.phileas.model.policy.filters.strategies.AbstractFilterStrategyTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -27,6 +29,10 @@ public class EmailAddressFilterStrategyTest extends AbstractFilterStrategyTest {
 
     public AbstractFilterStrategy getFilterStrategy() {
         return new EmailAddressFilterStrategy();
+    }
+
+    public AbstractAnonymizationService getAnonymizationService() {
+        return new EmailAddressAnonymizationService();
     }
 
     @Test

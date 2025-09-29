@@ -15,6 +15,8 @@
  */
 package ai.philterd.test.phileas.model.policy.filters.strategies.ai;
 
+import ai.philterd.phileas.model.anonymization.AbstractAnonymizationService;
+import ai.philterd.phileas.model.anonymization.PersonsAnonymizationService;
 import ai.philterd.phileas.model.objects.Replacement;
 import ai.philterd.phileas.model.policy.Crypto;
 import ai.philterd.phileas.model.policy.FPE;
@@ -24,13 +26,8 @@ import ai.philterd.phileas.model.services.AnonymizationService;
 import ai.philterd.test.phileas.model.policy.filters.strategies.AbstractFilterStrategyTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-
-import static org.mockito.Mockito.when;
 
 public class PhEyeStrategyTest extends AbstractFilterStrategyTest {
 
@@ -38,10 +35,14 @@ public class PhEyeStrategyTest extends AbstractFilterStrategyTest {
         return new PhEyeFilterStrategy();
     }
 
+    public AbstractAnonymizationService getAnonymizationService() {
+        return new PersonsAnonymizationService();
+    }
+
     @Test
     public void replacement1() throws Exception {
 
-        final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
+        final AnonymizationService anonymizationService = getAnonymizationService();
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
         strategy.setStrategy(AbstractFilterStrategy.STATIC_REPLACE);
@@ -56,7 +57,7 @@ public class PhEyeStrategyTest extends AbstractFilterStrategyTest {
     @Test
     public void replacement2() throws Exception {
 
-        final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
+        final AnonymizationService anonymizationService = getAnonymizationService();
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
         strategy.setStrategy(AbstractFilterStrategy.REDACT);
@@ -71,11 +72,8 @@ public class PhEyeStrategyTest extends AbstractFilterStrategyTest {
     @Test
     public void replacement3() throws Exception {
 
-        final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
-
-        final Map<String, String> context = new HashMap<>();
-        context.put("token", "random");
-        when(anonymizationService.getContext()).thenReturn(context);
+        final AnonymizationService anonymizationService = getAnonymizationService();
+        anonymizationService.getContext().put("token", "random");
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
         strategy.setStrategy(AbstractFilterStrategy.RANDOM_REPLACE);
@@ -89,11 +87,8 @@ public class PhEyeStrategyTest extends AbstractFilterStrategyTest {
     @Test
     public void replacement4() throws Exception {
 
-        final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
-
-        final Map<String, String> context = new HashMap<>();
-        context.put("token", "random");
-        when(anonymizationService.getContext()).thenReturn(context);
+        final AnonymizationService anonymizationService = getAnonymizationService();
+        anonymizationService.getContext().put("token", "random");
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
         strategy.setStrategy("something-wrong");
@@ -107,10 +102,7 @@ public class PhEyeStrategyTest extends AbstractFilterStrategyTest {
     @Test
     public void replacement5() throws Exception {
 
-        final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
-
-        final Map<String, String> context = new HashMap<>();
-        when(anonymizationService.getContext()).thenReturn(context);
+        final AnonymizationService anonymizationService = getAnonymizationService();
 
         final AbstractFilterStrategy strategy = new PhEyeFilterStrategy();
         strategy.setStrategy(AbstractFilterStrategy.REDACT);
@@ -125,10 +117,7 @@ public class PhEyeStrategyTest extends AbstractFilterStrategyTest {
     @Test
     public void replacement6() throws Exception {
 
-        final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
-
-        final Map<String, String> context = new HashMap<>();
-        when(anonymizationService.getContext()).thenReturn(context);
+        final AnonymizationService anonymizationService = getAnonymizationService();
 
         final AbstractFilterStrategy strategy = new PhEyeFilterStrategy();
         strategy.setStrategy(AbstractFilterStrategy.ABBREVIATE);

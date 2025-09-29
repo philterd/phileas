@@ -21,6 +21,8 @@ import ai.philterd.phileas.model.policy.FPE;
 import ai.philterd.phileas.model.policy.filters.strategies.AbstractFilterStrategy;
 import ai.philterd.phileas.model.policy.filters.strategies.rules.SsnFilterStrategy;
 import ai.philterd.phileas.model.services.AnonymizationService;
+import ai.philterd.phileas.model.anonymization.AbstractAnonymizationService;
+import ai.philterd.phileas.model.anonymization.NumericAnonymizationService;
 import ai.philterd.test.phileas.model.policy.filters.strategies.AbstractFilterStrategyTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -34,12 +36,16 @@ public class SsnFilterStrategyTest extends AbstractFilterStrategyTest {
         return new SsnFilterStrategy();
     }
 
+    public AbstractAnonymizationService getAnonymizationService() {
+        return new NumericAnonymizationService();
+    }
+
     @Test
     public void formatPreservingEncryption1() throws Exception {
 
         final FPE fpe = new FPE("2DE79D232DF5585D68CE47882AE256D6", "CBD09280979564");
 
-        final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
+        final AnonymizationService anonymizationService = getAnonymizationService();
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
         strategy.setStrategy(AbstractFilterStrategy.FPE_ENCRYPT_REPLACE);
@@ -56,7 +62,7 @@ public class SsnFilterStrategyTest extends AbstractFilterStrategyTest {
 
         final FPE fpe = new FPE("2DE79D232DF5585D68CE47882AE256D6", "CBD09280979564");
 
-        final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
+        final AnonymizationService anonymizationService = getAnonymizationService();
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
         strategy.setStrategy(AbstractFilterStrategy.FPE_ENCRYPT_REPLACE);
@@ -73,7 +79,7 @@ public class SsnFilterStrategyTest extends AbstractFilterStrategyTest {
 
         final FPE fpe = new FPE("2DE79D232DF5585D68CE47882AE256D6", "CBD09280979564");
 
-        final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
+        final AnonymizationService anonymizationService = getAnonymizationService();
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
         strategy.setStrategy(AbstractFilterStrategy.FPE_ENCRYPT_REPLACE);
@@ -88,7 +94,7 @@ public class SsnFilterStrategyTest extends AbstractFilterStrategyTest {
     @Test
     public void lastFour1() throws Exception {
 
-        final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
+        final AnonymizationService anonymizationService = getAnonymizationService();
 
         final AbstractFilterStrategy strategy = new SsnFilterStrategy();
         strategy.setStrategy(AbstractFilterStrategy.LAST_4);
@@ -102,7 +108,7 @@ public class SsnFilterStrategyTest extends AbstractFilterStrategyTest {
     @Test
     public void lastFour2() throws Exception {
 
-        final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
+        final AnonymizationService anonymizationService = getAnonymizationService();
 
         final AbstractFilterStrategy strategy = new SsnFilterStrategy();
         strategy.setStrategy(AbstractFilterStrategy.LAST_4);

@@ -17,6 +17,8 @@ package ai.philterd.test.phileas.model.policy.filters.strategies.rules;
 
 import ai.philterd.phileas.model.policy.filters.strategies.AbstractFilterStrategy;
 import ai.philterd.phileas.model.policy.filters.strategies.rules.BitcoinAddressFilterStrategy;
+import ai.philterd.phileas.model.anonymization.AbstractAnonymizationService;
+import ai.philterd.phileas.model.anonymization.BitcoinAddressAnonymizationService;
 import ai.philterd.test.phileas.model.policy.filters.strategies.AbstractFilterStrategyTest;
 
 public class BitcoinAddressFilterStrategyTest extends AbstractFilterStrategyTest {
@@ -24,6 +26,10 @@ public class BitcoinAddressFilterStrategyTest extends AbstractFilterStrategyTest
     @Override
     public AbstractFilterStrategy getFilterStrategy() {
         return new BitcoinAddressFilterStrategy();
+    }
+
+    public AbstractAnonymizationService getAnonymizationService() {
+        return new BitcoinAddressAnonymizationService();
     }
 
 }

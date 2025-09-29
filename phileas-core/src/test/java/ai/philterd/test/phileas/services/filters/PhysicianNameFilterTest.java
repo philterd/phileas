@@ -19,7 +19,7 @@ import ai.philterd.phileas.model.enums.FilterType;
 import ai.philterd.phileas.model.filter.FilterConfiguration;
 import ai.philterd.phileas.model.objects.FilterResult;
 import ai.philterd.phileas.model.policy.filters.strategies.rules.PhysicianNameFilterStrategy;
-import ai.philterd.phileas.services.anonymization.PersonsAnonymizationService;
+import ai.philterd.phileas.model.anonymization.PersonsAnonymizationService;
 import ai.philterd.phileas.services.filters.regex.PhysicianNameFilter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

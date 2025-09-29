@@ -19,7 +19,7 @@ import ai.philterd.phileas.model.enums.FilterType;
 import ai.philterd.phileas.model.filter.FilterConfiguration;
 import ai.philterd.phileas.model.objects.FilterResult;
 import ai.philterd.phileas.model.policy.filters.strategies.rules.PhoneNumberExtensionFilterStrategy;
-import ai.philterd.phileas.services.anonymization.MacAddressAnonymizationService;
+import ai.philterd.phileas.model.anonymization.MacAddressAnonymizationService;
 import ai.philterd.phileas.services.filters.regex.PhoneNumberExtensionFilter;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

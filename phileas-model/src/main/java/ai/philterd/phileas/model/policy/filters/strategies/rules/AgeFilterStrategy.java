@@ -26,7 +26,6 @@ import ai.philterd.phileas.model.policy.Policy;
 import ai.philterd.phileas.model.policy.filters.strategies.StandardFilterStrategy;
 import ai.philterd.phileas.model.services.AnonymizationService;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

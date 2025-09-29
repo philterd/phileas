@@ -20,7 +20,7 @@ import ai.philterd.phileas.model.filter.FilterConfiguration;
 import ai.philterd.phileas.model.objects.FilterResult;
 import ai.philterd.phileas.model.policy.filters.strategies.AbstractFilterStrategy;
 import ai.philterd.phileas.model.policy.filters.strategies.rules.DateFilterStrategy;
-import ai.philterd.phileas.services.anonymization.DateAnonymizationService;
+import ai.philterd.phileas.model.anonymization.DateAnonymizationService;
 import ai.philterd.phileas.services.filters.regex.DateFilter;
 import ai.philterd.phileas.services.validators.DateSpanValidator;
 import org.junit.jupiter.api.Assertions;
