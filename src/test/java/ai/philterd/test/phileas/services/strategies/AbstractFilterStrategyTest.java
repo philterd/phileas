@@ -291,7 +291,8 @@ public abstract class AbstractFilterStrategyTest {
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
         strategy.setStrategy(AbstractFilterStrategy.TRUNCATE);
-        strategy.setTruncateDigits(1);
+        strategy.setTruncateDirection(AbstractFilterStrategy.LEADING);
+        strategy.setTruncateLeaveCharacters(1);
 
         final String token = "12345";
         final Replacement replacement = strategy.getReplacement("name", "context", Collections.emptyMap(), "docId", token, WINDOW, null, null, anonymizationService, null);

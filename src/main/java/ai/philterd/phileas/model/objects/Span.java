@@ -326,14 +326,8 @@ public final class Span {
 
         final String separators = text.substring(span1.getCharacterEnd(), span2.getCharacterStart() - 1);
 
-        if(StringUtils.isWhitespace(separators) || StringUtils.equals(",", separators.trim())) {
-
-            // The two spans are only separated by whitespace.
-            return true;
-
-        }
-
-        return false;
+        // The two spans are only separated by whitespace.
+        return StringUtils.isWhitespace(separators) || StringUtils.equals(",", separators.trim());
 
     }
 

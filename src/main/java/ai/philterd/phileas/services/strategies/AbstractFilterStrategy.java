@@ -109,11 +109,6 @@ public abstract class AbstractFilterStrategy {
     @Expose
     protected String maskLength = SAME;
 
-    @SerializedName("truncateDigits")
-    @Expose
-    @Deprecated
-    protected Integer truncateDigits;
-
     @SerializedName("truncateLeaveCharacters")
     @Expose
     protected Integer truncateLeaveCharacters;
@@ -318,15 +313,9 @@ public abstract class AbstractFilterStrategy {
             } else {
 
                 // Make sure we aren't trying to anonymize a token we have already anonymized.
-                if (anonymizationService.getContext().containsValue(token)) {
+                if (!anonymizationService.getContext().containsValue(token)) {
 
-                    // This token is the result of an already replaced value.
-                    // So the "replacement" is null. The filter won't replace the token when the replacement value is null.
-                    replacement = null;
-
-                } else {
-
-                    // This is not an already anonymized token.
+                    // This is not a token we have already anonymized.
                     replacement = anonymizationService.anonymize(token);
                     anonymizationService.getContext().put(token, replacement);
 
@@ -394,11 +383,6 @@ public abstract class AbstractFilterStrategy {
 
     public String getMaskLength() {
         return maskLength;
-    }
-
-    @Deprecated
-    public void setTruncateDigits(Integer truncateDigits) {
-        setTruncateLeaveCharacters(truncateDigits);
     }
 
     public void setTruncateLeaveCharacters(Integer truncateLeaveCharacters) {

@@ -30,7 +30,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.Serializable;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -39,7 +38,7 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class FuzzyDictionaryFilter extends DictionaryFilter implements Serializable {
+public class FuzzyDictionaryFilter extends DictionaryFilter {
 
     private final SensitivityLevel sensitivityLevel;
     private final Map<String, Pattern> dictionary;

@@ -15,6 +15,6 @@
  */
 package ai.philterd.phileas.model.objects;
 
-public class RedactionOptions {
+public abstract class RedactionOptions {
 
 }

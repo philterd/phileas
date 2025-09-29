@@ -50,15 +50,15 @@ public enum SensitivityLevel {
 
         final Logger logger = LogManager.getLogger(SensitivityLevel.class);
 
-        if(StringUtils.equalsIgnoreCase(name, AUTO.getName())) {
+        if(name.equalsIgnoreCase(AUTO.getName())) {
             return AUTO;
-        } else if(StringUtils.equalsIgnoreCase(name, OFF.getName())) {
+        } else if(name.equalsIgnoreCase(OFF.getName())) {
             return OFF;
-        } else if(StringUtils.equalsIgnoreCase(name, LOW.getName())) {
+        } else if(name.equalsIgnoreCase(LOW.getName())) {
             return LOW;
-        } else if(StringUtils.equalsIgnoreCase(name, MEDIUM.getName())) {
+        } else if(name.equalsIgnoreCase(MEDIUM.getName())) {
             return MEDIUM;
-        } if(StringUtils.equalsIgnoreCase(name, HIGH.getName())) {
+        } else if(name.equalsIgnoreCase(HIGH.getName())) {
             return HIGH;
         } else {
             logger.warn("Invalid sensitivity level. Valid are off, low, medium, high. Defaulting to high.");

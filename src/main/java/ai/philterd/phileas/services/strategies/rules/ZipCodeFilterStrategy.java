@@ -181,7 +181,7 @@ public class ZipCodeFilterStrategy extends AbstractFilterStrategy {
 
         } else if(StringUtils.equalsIgnoreCase(strategy, TRUNCATE)) {
 
-            int leaveCharacters = getValueOrDefault(getValueOrDefault(truncateDigits, truncateLeaveCharacters), 4);
+            int leaveCharacters = getValueOrDefault(truncateLeaveCharacters, 4);
 
             if (leaveCharacters < 1) {
                 leaveCharacters = 1;

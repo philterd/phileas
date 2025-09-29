@@ -25,8 +25,9 @@ import java.util.HashMap;
 
 public class ZipCodeMetadataService implements MetadataService<ZipCodeMetadataRequest, ZipCodeMetadataResponse> {
 
+    private final static String zipCodeCensusFileName = "zip-code-population.csv";
+
     private final HashMap<String, Integer> zipCodesFromCensus;
-    private final String zipCodeCensusFileName = "zip-code-population.csv";
 
     public ZipCodeMetadataService() throws IOException {
         zipCodesFromCensus = loadZipCodesFromCensus();
