@@ -94,7 +94,7 @@ public class IbanCodeFilter extends RegexFilter {
 
         }
 
-        return new FilterResult(contextName, documentId, spans);
+        return new FilterResult(contextName, documentId, validSpans);
 
     }
 
