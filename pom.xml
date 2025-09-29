@@ -5,7 +5,7 @@
     <artifactId>phileas</artifactId>
     <groupId>ai.philterd</groupId>
     <packaging>pom</packaging>
-    <version>2.13.0-SNAPSHOT</version>
+    <version>3.0.0-SNAPSHOT</version>
     <name>phileas</name>
     <url>https://www.philterd.ai</url>
     <description>Phileas is a library for identifying and redacting sensitive information from natural language text.
@@ -36,9 +36,6 @@
     </licenses>
     <modules>
         <module>phileas-core</module>
-        <module>phileas-model</module>
-        <module>phileas-services</module>
-        <module>phileas-processors</module>
     </modules>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -46,7 +43,7 @@
         <!-- Project dependency versions -->
         <antlr.version>4.13.2</antlr.version>
         <commons.collections4.version>4.5.0</commons.collections4.version>
-        <commons.lang3.version>3.17.0</commons.lang3.version>
+        <commons.lang3.version>3.19.0</commons.lang3.version>
         <commons.logging.version>1.3.5</commons.logging.version>
         <commons.codec.version>1.18.0</commons.codec.version>
         <commons.csv.version>1.14.0</commons.csv.version>

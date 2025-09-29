@@ -18,14 +18,13 @@ package ai.philterd.test.phileas.services.filters;
 import ai.philterd.phileas.model.enums.FilterType;
 import ai.philterd.phileas.model.filter.FilterConfiguration;
 import ai.philterd.phileas.model.objects.FilterResult;
-import ai.philterd.phileas.model.policy.filters.strategies.AbstractFilterStrategy;
-import ai.philterd.phileas.model.policy.filters.strategies.rules.DateFilterStrategy;
-import ai.philterd.phileas.model.anonymization.DateAnonymizationService;
+import ai.philterd.phileas.services.strategies.AbstractFilterStrategy;
+import ai.philterd.phileas.services.strategies.rules.DateFilterStrategy;
+import ai.philterd.phileas.services.anonymization.DateAnonymizationService;
 import ai.philterd.phileas.services.filters.regex.DateFilter;
 import ai.philterd.phileas.services.validators.DateSpanValidator;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
 import java.util.Collections;
 import java.util.List;

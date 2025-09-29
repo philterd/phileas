@@ -18,12 +18,11 @@ package ai.philterd.test.phileas.services.filters;
 import ai.philterd.phileas.model.enums.FilterType;
 import ai.philterd.phileas.model.filter.FilterConfiguration;
 import ai.philterd.phileas.model.objects.FilterResult;
-import ai.philterd.phileas.model.policy.filters.strategies.rules.SectionFilterStrategy;
-import ai.philterd.phileas.model.anonymization.AlphanumericAnonymizationService;
+import ai.philterd.phileas.services.strategies.rules.SectionFilterStrategy;
+import ai.philterd.phileas.services.anonymization.AlphanumericAnonymizationService;
 import ai.philterd.phileas.services.filters.regex.SectionFilter;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
 import java.util.Collections;
 import java.util.List;

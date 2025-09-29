@@ -18,7 +18,10 @@ package ai.philterd.phileas.services.filters.regex;
 import ai.philterd.phileas.model.enums.FilterType;
 import ai.philterd.phileas.model.filter.FilterConfiguration;
 import ai.philterd.phileas.model.filter.rules.regex.RegexFilter;
-import ai.philterd.phileas.model.objects.*;
+import ai.philterd.phileas.model.objects.Analyzer;
+import ai.philterd.phileas.model.objects.FilterPattern;
+import ai.philterd.phileas.model.objects.FilterResult;
+import ai.philterd.phileas.model.objects.Span;
 import ai.philterd.phileas.model.policy.Policy;
 
 import java.util.*;
