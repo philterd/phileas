@@ -15,17 +15,17 @@
  */
 package ai.philterd.test.phileas.services.filters;
 
+import ai.philterd.phileas.filters.FilterConfiguration;
 import ai.philterd.phileas.model.enums.FilterType;
-import ai.philterd.phileas.model.filter.FilterConfiguration;
 import ai.philterd.phileas.model.objects.FilterResult;
-import ai.philterd.phileas.model.policy.IgnoredPattern;
-import ai.philterd.phileas.services.strategies.rules.AgeFilterStrategy;
+import ai.philterd.phileas.model.services.DefaultContextService;
+import ai.philterd.phileas.policy.IgnoredPattern;
 import ai.philterd.phileas.services.anonymization.AgeAnonymizationService;
 import ai.philterd.phileas.services.filters.regex.AgeFilter;
+import ai.philterd.phileas.services.strategies.rules.AgeFilterStrategy;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -39,14 +39,14 @@ public class AgeFilterTest extends AbstractFilterTest {
         final List<IgnoredPattern> ignoredPatterns = List.of(ignoredPattern);
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
-                .withAnonymizationService(new AgeAnonymizationService())
+                .withAnonymizationService(new AgeAnonymizationService(new DefaultContextService()))
                 .withIgnoredPatterns(ignoredPatterns)
                 .withWindowSize(windowSize)
                 .build();
 
         final AgeFilter filter = new AgeFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", Collections.emptyMap(), "documentid", PIECE, "the patient is 35years old.", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context",  "documentid", PIECE, "the patient is 35years old.", attributes);
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertTrue(filterResult.getSpans().get(0).isIgnored());
@@ -61,14 +61,14 @@ public class AgeFilterTest extends AbstractFilterTest {
         ignore.add("35yEaRs old");
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
-                .withAnonymizationService(new AgeAnonymizationService())
+                .withAnonymizationService(new AgeAnonymizationService(new DefaultContextService()))
                 .withIgnored(ignore)
                 .withWindowSize(windowSize)
                 .build();
 
         final AgeFilter filter = new AgeFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", Collections.emptyMap(), "documentid", PIECE, "the patient is 35yEaRs old.", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context",  "documentid", PIECE, "the patient is 35yEaRs old.", attributes);
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertTrue(filterResult.getSpans().get(0).isIgnored());
@@ -82,13 +82,13 @@ public class AgeFilterTest extends AbstractFilterTest {
         // This tests PHL-68. When there are no filter strategies just redact.
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
-                .withAnonymizationService(new AgeAnonymizationService())
+                .withAnonymizationService(new AgeAnonymizationService(new DefaultContextService()))
                 .withWindowSize(windowSize)
                 .build();
 
         final AgeFilter filter = new AgeFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", Collections.emptyMap(), "documentid", PIECE, "the patient is 3.5years old.", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context",  "documentid", PIECE, "the patient is 3.5years old.", attributes);
 
         showSpans(filterResult.getSpans());
 
@@ -105,13 +105,13 @@ public class AgeFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new AgeFilterStrategy()))
-                .withAnonymizationService(new AgeAnonymizationService())
+                .withAnonymizationService(new AgeAnonymizationService(new DefaultContextService()))
                 .withWindowSize(windowSize)
                 .build();
 
         final AgeFilter filter = new AgeFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", Collections.emptyMap(), "documentid", PIECE, "the patient is 3.5years old.", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context",  "documentid", PIECE, "the patient is 3.5years old.", attributes);
 
         showSpans(filterResult.getSpans());
 
@@ -126,13 +126,13 @@ public class AgeFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new AgeFilterStrategy()))
-                .withAnonymizationService(new AgeAnonymizationService())
+                .withAnonymizationService(new AgeAnonymizationService(new DefaultContextService()))
                 .withWindowSize(windowSize)
                 .build();
 
         final AgeFilter filter = new AgeFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", Collections.emptyMap(), "documentid", PIECE, "the patient age is 3.yrs.", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context",  "documentid", PIECE, "the patient age is 3.yrs.", attributes);
 
         showSpans(filterResult.getSpans());
 
@@ -147,13 +147,13 @@ public class AgeFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new AgeFilterStrategy()))
-                .withAnonymizationService(new AgeAnonymizationService())
+                .withAnonymizationService(new AgeAnonymizationService(new DefaultContextService()))
                 .withWindowSize(windowSize)
                 .build();
 
         final AgeFilter filter = new AgeFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", Collections.emptyMap(), "documentid", PIECE, "the patient age is 3yrs.", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context",  "documentid", PIECE, "the patient age is 3yrs.", attributes);
 
         showSpans(filterResult.getSpans());
 
@@ -168,13 +168,13 @@ public class AgeFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new AgeFilterStrategy()))
-                .withAnonymizationService(new AgeAnonymizationService())
+                .withAnonymizationService(new AgeAnonymizationService(new DefaultContextService()))
                 .withWindowSize(windowSize)
                 .build();
 
         final AgeFilter filter = new AgeFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", Collections.emptyMap(), "documentid", PIECE, "the patient is 3.5yrs old.", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context",  "documentid", PIECE, "the patient is 3.5yrs old.", attributes);
 
         showSpans(filterResult.getSpans());
 
@@ -189,13 +189,13 @@ public class AgeFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new AgeFilterStrategy()))
-                .withAnonymizationService(new AgeAnonymizationService())
+                .withAnonymizationService(new AgeAnonymizationService(new DefaultContextService()))
                 .withWindowSize(windowSize)
                 .build();
 
         final AgeFilter filter = new AgeFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", Collections.emptyMap(), "documentid", PIECE, "the patient is 39yrs. old", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context",  "documentid", PIECE, "the patient is 39yrs. old", attributes);
 
         showSpans(filterResult.getSpans());
 
@@ -210,13 +210,13 @@ public class AgeFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new AgeFilterStrategy()))
-                .withAnonymizationService(new AgeAnonymizationService())
+                .withAnonymizationService(new AgeAnonymizationService(new DefaultContextService()))
                 .withWindowSize(windowSize)
                 .build();
 
         final AgeFilter filter = new AgeFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", Collections.emptyMap(), "documentid", PIECE, "she is aged 39", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context",  "documentid", PIECE, "she is aged 39", attributes);
 
         showSpans(filterResult.getSpans());
 
@@ -231,13 +231,13 @@ public class AgeFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new AgeFilterStrategy()))
-                .withAnonymizationService(new AgeAnonymizationService())
+                .withAnonymizationService(new AgeAnonymizationService(new DefaultContextService()))
                 .withWindowSize(windowSize)
                 .build();
 
         final AgeFilter filter = new AgeFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", Collections.emptyMap(), "documentid", PIECE, "she is age 39", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context",  "documentid", PIECE, "she is age 39", attributes);
 
         showSpans(filterResult.getSpans());
 
@@ -252,13 +252,13 @@ public class AgeFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new AgeFilterStrategy()))
-                .withAnonymizationService(new AgeAnonymizationService())
+                .withAnonymizationService(new AgeAnonymizationService(new DefaultContextService()))
                 .withWindowSize(windowSize)
                 .build();
 
         final AgeFilter filter = new AgeFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", Collections.emptyMap(), "documentid", PIECE, "she is age 39.5", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context",  "documentid", PIECE, "she is age 39.5", attributes);
 
         showSpans(filterResult.getSpans());
 
@@ -273,13 +273,13 @@ public class AgeFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new AgeFilterStrategy()))
-                .withAnonymizationService(new AgeAnonymizationService())
+                .withAnonymizationService(new AgeAnonymizationService(new DefaultContextService()))
                 .withWindowSize(windowSize)
                 .build();
 
         final AgeFilter filter = new AgeFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", Collections.emptyMap(), "documentid", PIECE, "Patient Timothy Hook is 72 Yr. old male lives alone.", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context",  "documentid", PIECE, "Patient Timothy Hook is 72 Yr. old male lives alone.", attributes);
 
         showSpans(filterResult.getSpans());
 
@@ -296,13 +296,13 @@ public class AgeFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new AgeFilterStrategy()))
-                .withAnonymizationService(new AgeAnonymizationService())
+                .withAnonymizationService(new AgeAnonymizationService(new DefaultContextService()))
                 .withWindowSize(windowSize)
                 .build();
 
         final AgeFilter filter = new AgeFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", Collections.emptyMap(), "documentid", PIECE, "Cari Morris is 75 yo female alert and oriented x’s3 with some mild memory loss.", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context",  "documentid", PIECE, "Cari Morris is 75 yo female alert and oriented x’s3 with some mild memory loss.", attributes);
 
         showSpans(filterResult.getSpans());
 
@@ -319,13 +319,13 @@ public class AgeFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new AgeFilterStrategy()))
-                .withAnonymizationService(new AgeAnonymizationService())
+                .withAnonymizationService(new AgeAnonymizationService(new DefaultContextService()))
                 .withWindowSize(windowSize)
                 .build();
 
         final AgeFilter filter = new AgeFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", Collections.emptyMap(), "documentid", PIECE, "Had symptoms for the past 10 years", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context",  "documentid", PIECE, "Had symptoms for the past 10 years", attributes);
 
         showSpans(filterResult.getSpans());
 
@@ -340,13 +340,13 @@ public class AgeFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new AgeFilterStrategy()))
-                .withAnonymizationService(new AgeAnonymizationService())
+                .withAnonymizationService(new AgeAnonymizationService(new DefaultContextService()))
                 .withWindowSize(windowSize)
                 .build();
 
         final AgeFilter filter = new AgeFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", Collections.emptyMap(), "documentid", PIECE, "She is a 22-year-old female", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context",  "documentid", PIECE, "She is a 22-year-old female", attributes);
 
         showSpans(filterResult.getSpans());
 
@@ -363,13 +363,13 @@ public class AgeFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new AgeFilterStrategy()))
-                .withAnonymizationService(new AgeAnonymizationService())
+                .withAnonymizationService(new AgeAnonymizationService(new DefaultContextService()))
                 .withWindowSize(windowSize)
                 .build();
 
         final AgeFilter filter = new AgeFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", Collections.emptyMap(), "documentid", PIECE, "Admit age: 69 years", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context",  "documentid", PIECE, "Admit age: 69 years", attributes);
 
         showSpans(filterResult.getSpans());
 
@@ -386,13 +386,13 @@ public class AgeFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new AgeFilterStrategy()))
-                .withAnonymizationService(new AgeAnonymizationService())
+                .withAnonymizationService(new AgeAnonymizationService(new DefaultContextService()))
                 .withWindowSize(windowSize)
                 .build();
 
         final AgeFilter filter = new AgeFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", Collections.emptyMap(), "documentid", PIECE, "Female Admit Age: 69 years", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context",  "documentid", PIECE, "Female Admit Age: 69 years", attributes);
 
         showSpans(filterResult.getSpans());
 
@@ -409,13 +409,13 @@ public class AgeFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new AgeFilterStrategy()))
-                .withAnonymizationService(new AgeAnonymizationService())
+                .withAnonymizationService(new AgeAnonymizationService(new DefaultContextService()))
                 .withWindowSize(windowSize)
                 .build();
 
         final AgeFilter filter = new AgeFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", Collections.emptyMap(), "documentid", PIECE, "Female Admit Age: 69 years\n", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context",  "documentid", PIECE, "Female Admit Age: 69 years\n", attributes);
 
         showSpans(filterResult.getSpans());
 
@@ -432,13 +432,13 @@ public class AgeFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new AgeFilterStrategy()))
-                .withAnonymizationService(new AgeAnonymizationService())
+                .withAnonymizationService(new AgeAnonymizationService(new DefaultContextService()))
                 .withWindowSize(windowSize)
                 .build();
 
         final AgeFilter filter = new AgeFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", Collections.emptyMap(), "documentid", PIECE, "patient is 61 y/o and", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context",  "documentid", PIECE, "patient is 61 y/o and", attributes);
 
         showSpans(filterResult.getSpans());
 
@@ -455,13 +455,13 @@ public class AgeFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new AgeFilterStrategy()))
-                .withAnonymizationService(new AgeAnonymizationService())
+                .withAnonymizationService(new AgeAnonymizationService(new DefaultContextService()))
                 .withWindowSize(windowSize)
                 .build();
 
         final AgeFilter filter = new AgeFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", Collections.emptyMap(), "documentid", PIECE, "patient is 161 y/o and", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context",  "documentid", PIECE, "patient is 161 y/o and", attributes);
 
         showSpans(filterResult.getSpans());
 
@@ -478,13 +478,13 @@ public class AgeFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new AgeFilterStrategy()))
-                .withAnonymizationService(new AgeAnonymizationService())
+                .withAnonymizationService(new AgeAnonymizationService(new DefaultContextService()))
                 .withWindowSize(windowSize)
                 .build();
 
         final AgeFilter filter = new AgeFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", Collections.emptyMap(), "documentid", PIECE, "patient is 4161 y/o and", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context",  "documentid", PIECE, "patient is 4161 y/o and", attributes);
 
         showSpans(filterResult.getSpans());
 

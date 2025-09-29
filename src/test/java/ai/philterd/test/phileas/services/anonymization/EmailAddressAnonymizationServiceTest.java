@@ -16,6 +16,7 @@
 package ai.philterd.test.phileas.services.anonymization;
 
 import ai.philterd.phileas.model.services.AnonymizationService;
+import ai.philterd.phileas.model.services.DefaultContextService;
 import ai.philterd.phileas.services.anonymization.EmailAddressAnonymizationService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -28,7 +29,7 @@ public class EmailAddressAnonymizationServiceTest {
     @Test
     public void anonymize() {
 
-        AnonymizationService anonymizationService = new EmailAddressAnonymizationService();
+        AnonymizationService anonymizationService = new EmailAddressAnonymizationService(new DefaultContextService());
 
         final String token = "me@testemail.com";
         final String replacement = anonymizationService.anonymize(token);

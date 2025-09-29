@@ -15,6 +15,7 @@
  */
 package ai.philterd.test.phileas.services.strategies.custom;
 
+import ai.philterd.phileas.model.services.DefaultContextService;
 import ai.philterd.phileas.services.strategies.AbstractFilterStrategy;
 import ai.philterd.phileas.services.strategies.custom.CustomDictionaryFilterStrategy;
 import ai.philterd.phileas.services.anonymization.AbstractAnonymizationService;
@@ -28,7 +29,7 @@ public class CustomDictionaryFilterStrategyTest extends AbstractFilterStrategyTe
     }
 
     public AbstractAnonymizationService getAnonymizationService() {
-        return new AlphanumericAnonymizationService();
+        return new AlphanumericAnonymizationService(new DefaultContextService());
     }
 
 }

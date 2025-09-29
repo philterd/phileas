@@ -17,9 +17,11 @@ package ai.philterd.test.phileas.services.filters;
 
 import ai.philterd.phileas.model.enums.FilterType;
 import ai.philterd.phileas.model.enums.SensitivityLevel;
-import ai.philterd.phileas.model.filter.FilterConfiguration;
-import ai.philterd.phileas.model.filter.rules.dictionary.FuzzyDictionaryFilter;
+import ai.philterd.phileas.filters.FilterConfiguration;
+import ai.philterd.phileas.filters.rules.dictionary.FuzzyDictionaryFilter;
 import ai.philterd.phileas.model.objects.FilterResult;
+import ai.philterd.phileas.model.services.ContextService;
+import ai.philterd.phileas.model.services.DefaultContextService;
 import ai.philterd.phileas.services.strategies.dynamic.HospitalAbbreviationFilterStrategy;
 import ai.philterd.phileas.services.anonymization.HospitalAbbreviationAnonymizationService;
 
@@ -38,15 +40,17 @@ public class HospitalAbbreviationFilterTest extends AbstractFilterTest {
     @Test
     public void filter1() throws Exception {
 
+        final ContextService contextService = new DefaultContextService();
+
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new HospitalAbbreviationFilterStrategy()))
-                .withAnonymizationService(new HospitalAbbreviationAnonymizationService())
+                .withAnonymizationService(new HospitalAbbreviationAnonymizationService(contextService))
                 .withWindowSize(windowSize)
                 .build();
 
         final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.HOSPITAL_ABBREVIATION, filterConfiguration, SensitivityLevel.HIGH, true);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", Collections.emptyMap(), "documentid", PIECE, "Went to WMC", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context",  "documentid", PIECE, "Went to WMC", attributes);
         showSpans(filterResult.getSpans());
         Assertions.assertEquals(1, filterResult.getSpans().size());
 

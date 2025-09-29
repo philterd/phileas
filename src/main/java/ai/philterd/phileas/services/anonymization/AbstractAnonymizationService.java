@@ -16,25 +16,14 @@
 package ai.philterd.phileas.services.anonymization;
 
 import ai.philterd.phileas.model.services.AnonymizationService;
-
-import java.util.HashMap;
-import java.util.Map;
+import ai.philterd.phileas.model.services.ContextService;
 
 public abstract class AbstractAnonymizationService implements AnonymizationService {
 
-    private final Map<String, String> context;
+    protected final ContextService contextService;
 
-    public AbstractAnonymizationService() {
-        this.context = new HashMap<>();
-    }
-
-    public AbstractAnonymizationService(final Map<String, String> context) {
-        this.context = context;
-    }
-
-    @Override
-    public Map<String, String> getContext() {
-        return context;
+    public AbstractAnonymizationService(final ContextService contextService) {
+        this.contextService = contextService;
     }
 
 }

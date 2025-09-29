@@ -16,18 +16,17 @@
 package ai.philterd.test.phileas.services.strategies.rules;
 
 import ai.philterd.phileas.model.objects.Replacement;
-import ai.philterd.phileas.model.policy.Crypto;
-import ai.philterd.phileas.model.policy.FPE;
-import ai.philterd.phileas.services.strategies.AbstractFilterStrategy;
-import ai.philterd.phileas.services.strategies.rules.BankRoutingNumberFilterStrategy;
 import ai.philterd.phileas.model.services.AnonymizationService;
+import ai.philterd.phileas.model.services.DefaultContextService;
+import ai.philterd.phileas.policy.Crypto;
+import ai.philterd.phileas.policy.FPE;
 import ai.philterd.phileas.services.anonymization.AbstractAnonymizationService;
 import ai.philterd.phileas.services.anonymization.NumericAnonymizationService;
+import ai.philterd.phileas.services.strategies.AbstractFilterStrategy;
+import ai.philterd.phileas.services.strategies.rules.BankRoutingNumberFilterStrategy;
 import ai.philterd.test.phileas.services.strategies.AbstractFilterStrategyTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import java.util.Collections;
 
 public class BankRoutingNumberFilterStrategyTest extends AbstractFilterStrategyTest {
 
@@ -37,7 +36,7 @@ public class BankRoutingNumberFilterStrategyTest extends AbstractFilterStrategyT
     }
 
     public AbstractAnonymizationService getAnonymizationService() {
-        return new NumericAnonymizationService();
+        return new NumericAnonymizationService(new DefaultContextService());
     }
 
     @Test
@@ -50,7 +49,7 @@ public class BankRoutingNumberFilterStrategyTest extends AbstractFilterStrategyT
         final AbstractFilterStrategy strategy = getFilterStrategy();
         strategy.setStrategy(AbstractFilterStrategy.FPE_ENCRYPT_REPLACE);
 
-        final Replacement replacement = strategy.getReplacement("name", "context", Collections.emptyMap(), "docId", "091000022", WINDOW, new Crypto(), fpe, anonymizationService, null);
+        final Replacement replacement = strategy.getReplacement("name", "context",  "docId", "091000022", WINDOW, new Crypto(), fpe, anonymizationService, null);
 
         Assertions.assertEquals(9, replacement.getReplacement().length());
         Assertions.assertEquals("970881062", replacement.getReplacement());

@@ -1,6 +1,6 @@
 package ai.philterd.phileas.model.policy.config;
 
-import ai.philterd.phileas.model.policy.config.Pdf;
+import ai.philterd.phileas.policy.config.Pdf;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

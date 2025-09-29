@@ -15,7 +15,7 @@
  */
 package ai.philterd.phileas.model.policy;
 
-import ai.philterd.phileas.model.policy.Crypto;
+import ai.philterd.phileas.policy.Crypto;
 import org.junit.jupiter.api.Test;
 import org.junitpioneer.jupiter.SetEnvironmentVariable;
 

@@ -15,18 +15,16 @@
  */
 package ai.philterd.test.phileas.services.filters;
 
-import ai.philterd.phileas.model.filter.FilterConfiguration;
+import ai.philterd.phileas.filters.FilterConfiguration;
 import ai.philterd.phileas.model.objects.FilterResult;
-import ai.philterd.phileas.model.services.MetricsService;
+import ai.philterd.phileas.model.services.DefaultContextService;
 import ai.philterd.phileas.services.anonymization.AgeAnonymizationService;
 import ai.philterd.phileas.services.filters.ai.pheye.PhEyeConfiguration;
 import ai.philterd.phileas.services.filters.ai.pheye.PhEyeFilter;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -37,18 +35,17 @@ public class PhEyeTest extends AbstractFilterTest {
     public void filter1() throws Exception {
 
         final PhEyeConfiguration phEyeConfiguration = new PhEyeConfiguration("http://localhost:18080");
-        final MetricsService metricsService = Mockito.mock(MetricsService.class);
         final boolean removePunctuation = false;
         final Map<String, Double> thresholds = new HashMap<>();
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
-                .withAnonymizationService(new AgeAnonymizationService())
+                .withAnonymizationService(new AgeAnonymizationService(new DefaultContextService()))
                 .withWindowSize(windowSize)
                 .build();
 
-        final PhEyeFilter filter = new PhEyeFilter(filterConfiguration, phEyeConfiguration, metricsService, removePunctuation, thresholds);
+        final PhEyeFilter filter = new PhEyeFilter(filterConfiguration, phEyeConfiguration, removePunctuation, thresholds);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", Collections.emptyMap(), "documentid", PIECE, "George Washington was the first president.", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context",  "documentid", PIECE, "George Washington was the first president.", attributes);
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertEquals("George Washington", filterResult.getSpans().iterator().next().getText());
@@ -59,18 +56,17 @@ public class PhEyeTest extends AbstractFilterTest {
     public void filter2() throws Exception {
 
         final PhEyeConfiguration phEyeConfiguration = new PhEyeConfiguration("http://localhost:18080");
-        final MetricsService metricsService = Mockito.mock(MetricsService.class);
         final boolean removePunctuation = false;
         final Map<String, Double> thresholds = new HashMap<>();
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
-                .withAnonymizationService(new AgeAnonymizationService())
+                .withAnonymizationService(new AgeAnonymizationService(new DefaultContextService()))
                 .withWindowSize(windowSize)
                 .build();
 
-        final PhEyeFilter filter = new PhEyeFilter(filterConfiguration, phEyeConfiguration, metricsService, removePunctuation, thresholds);
+        final PhEyeFilter filter = new PhEyeFilter(filterConfiguration, phEyeConfiguration, removePunctuation, thresholds);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", Collections.emptyMap(), "documentid", PIECE, "No name here was the first president.", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context",  "documentid", PIECE, "No name here was the first president.", attributes);
 
         Assertions.assertEquals(0, filterResult.getSpans().size());
 
@@ -80,25 +76,24 @@ public class PhEyeTest extends AbstractFilterTest {
     public void multipleFilterCalls() throws Exception {
 
         final PhEyeConfiguration phEyeConfiguration = new PhEyeConfiguration("http://localhost:18080");
-        final MetricsService metricsService = Mockito.mock(MetricsService.class);
         final boolean removePunctuation = false;
         final Map<String, Double> thresholds = new HashMap<>();
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
-                .withAnonymizationService(new AgeAnonymizationService())
+                .withAnonymizationService(new AgeAnonymizationService(new DefaultContextService()))
                 .withWindowSize(windowSize)
                 .build();
 
-        final PhEyeFilter filter = new PhEyeFilter(filterConfiguration, phEyeConfiguration, metricsService, removePunctuation, thresholds);
+        final PhEyeFilter filter = new PhEyeFilter(filterConfiguration, phEyeConfiguration, removePunctuation, thresholds);
 
         // This is to test the http connection pooling for connections to ph-eye.
         for(int x = 0; x < 10; x++) {
 
-            final FilterResult filterResult1 = filter.filter(getPolicy(), "context", Collections.emptyMap(), "documentid", PIECE, "George Washington was the first president.", attributes);
+            final FilterResult filterResult1 = filter.filter(getPolicy(), "context",  "documentid", PIECE, "George Washington was the first president.", attributes);
             Assertions.assertEquals(1, filterResult1.getSpans().size());
             Assertions.assertEquals("George Washington", filterResult1.getSpans().iterator().next().getText());
 
-            final FilterResult filterResult2 = filter.filter(getPolicy(), "context", Collections.emptyMap(), "documentid", PIECE, "No name here was the first president.", attributes);
+            final FilterResult filterResult2 = filter.filter(getPolicy(), "context",  "documentid", PIECE, "No name here was the first president.", attributes);
             Assertions.assertEquals(0, filterResult2.getSpans().size());
 
         }

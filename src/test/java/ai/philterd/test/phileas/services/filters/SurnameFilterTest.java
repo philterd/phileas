@@ -17,9 +17,10 @@ package ai.philterd.test.phileas.services.filters;
 
 import ai.philterd.phileas.model.enums.FilterType;
 import ai.philterd.phileas.model.enums.SensitivityLevel;
-import ai.philterd.phileas.model.filter.FilterConfiguration;
-import ai.philterd.phileas.model.filter.rules.dictionary.FuzzyDictionaryFilter;
+import ai.philterd.phileas.filters.FilterConfiguration;
+import ai.philterd.phileas.filters.rules.dictionary.FuzzyDictionaryFilter;
 import ai.philterd.phileas.model.objects.FilterResult;
+import ai.philterd.phileas.model.services.DefaultContextService;
 import ai.philterd.phileas.services.strategies.dynamic.SurnameFilterStrategy;
 import ai.philterd.phileas.services.anonymization.SurnameAnonymizationService;
 import org.apache.logging.log4j.LogManager;
@@ -39,13 +40,13 @@ public class SurnameFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new SurnameFilterStrategy()))
-                .withAnonymizationService(new SurnameAnonymizationService())
+                .withAnonymizationService(new SurnameAnonymizationService(new DefaultContextService()))
                 .withWindowSize(windowSize)
                 .build();
 
         final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.SURNAME, filterConfiguration, SensitivityLevel.LOW, true);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", Collections.emptyMap(), "documentid", PIECE, "Lived in Wshington", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context",  "documentid", PIECE, "Lived in Wshington", attributes);
         showSpans(filterResult.getSpans());
         Assertions.assertEquals(44, filterResult.getSpans().size());
 
@@ -56,13 +57,13 @@ public class SurnameFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new SurnameFilterStrategy()))
-                .withAnonymizationService(new SurnameAnonymizationService())
+                .withAnonymizationService(new SurnameAnonymizationService(new DefaultContextService()))
                 .withWindowSize(windowSize)
                 .build();
 
         final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.SURNAME, filterConfiguration, SensitivityLevel.MEDIUM, true);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context",  Collections.emptyMap(), "documentid", PIECE, "Lived in Wshington", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "Lived in Wshington", attributes);
         showSpans(filterResult.getSpans());
         Assertions.assertEquals(44, filterResult.getSpans().size());
 
@@ -73,13 +74,13 @@ public class SurnameFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new SurnameFilterStrategy()))
-                .withAnonymizationService(new SurnameAnonymizationService())
+                .withAnonymizationService(new SurnameAnonymizationService(new DefaultContextService()))
                 .withWindowSize(windowSize)
                 .build();
 
         final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.SURNAME, filterConfiguration, SensitivityLevel.HIGH, true);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", Collections.emptyMap(), "documentid", PIECE, "Jones", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context",  "documentid", PIECE, "Jones", attributes);
         showSpans(filterResult.getSpans());
         Assertions.assertEquals(1, filterResult.getSpans().size());
 
@@ -90,13 +91,13 @@ public class SurnameFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new SurnameFilterStrategy()))
-                .withAnonymizationService(new SurnameAnonymizationService())
+                .withAnonymizationService(new SurnameAnonymizationService(new DefaultContextService()))
                 .withWindowSize(windowSize)
                 .build();
 
         final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.SURNAME, filterConfiguration, SensitivityLevel.LOW, true);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", Collections.emptyMap(), "documentid", PIECE, "date", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context",  "documentid", PIECE, "date", attributes);
         showSpans(filterResult.getSpans());
         Assertions.assertEquals(1, filterResult.getSpans().size());
 
@@ -107,13 +108,13 @@ public class SurnameFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new SurnameFilterStrategy()))
-                .withAnonymizationService(new SurnameAnonymizationService())
+                .withAnonymizationService(new SurnameAnonymizationService(new DefaultContextService()))
                 .withWindowSize(windowSize)
                 .build();
 
         final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.SURNAME, filterConfiguration, SensitivityLevel.LOW, true);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", Collections.emptyMap(), "documentid", PIECE, "Jones", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context",  "documentid", PIECE, "Jones", attributes);
         showSpans(filterResult.getSpans());
         Assertions.assertEquals(349, filterResult.getSpans().size());
 
@@ -124,13 +125,13 @@ public class SurnameFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new SurnameFilterStrategy()))
-                .withAnonymizationService(new SurnameAnonymizationService())
+                .withAnonymizationService(new SurnameAnonymizationService(new DefaultContextService()))
                 .withWindowSize(windowSize)
                 .build();
 
         final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.SURNAME, filterConfiguration, SensitivityLevel.LOW, true);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", Collections.emptyMap(), "documentid", PIECE, "from", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context",  "documentid", PIECE, "from", attributes);
         showSpans(filterResult.getSpans());
         Assertions.assertEquals(1, filterResult.getSpans().size());
 

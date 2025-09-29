@@ -16,6 +16,7 @@
 package ai.philterd.test.phileas.services.anonymization;
 
 import ai.philterd.phileas.model.services.AnonymizationService;
+import ai.philterd.phileas.model.services.DefaultContextService;
 import ai.philterd.phileas.services.anonymization.StreetAddressAnonymizationService;
 
 import org.apache.logging.log4j.LogManager;
@@ -30,7 +31,7 @@ public class StreetAddressAnonymizationServiceTest {
     @Test
     public void anonymize1() {
 
-        AnonymizationService anonymizationService = new StreetAddressAnonymizationService();
+        AnonymizationService anonymizationService = new StreetAddressAnonymizationService(new DefaultContextService());
 
         final String token = "100 Main St";
         final String replacement = anonymizationService.anonymize(token);
@@ -43,7 +44,7 @@ public class StreetAddressAnonymizationServiceTest {
     @Test
     public void anonymize2() {
 
-        AnonymizationService anonymizationService = new StreetAddressAnonymizationService();
+        AnonymizationService anonymizationService = new StreetAddressAnonymizationService(new DefaultContextService());
 
         final String token = "1000 Main St";
         final String replacement = anonymizationService.anonymize(token);

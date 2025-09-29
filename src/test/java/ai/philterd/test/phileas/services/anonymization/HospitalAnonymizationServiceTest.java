@@ -16,6 +16,7 @@
 package ai.philterd.test.phileas.services.anonymization;
 
 import ai.philterd.phileas.model.services.AnonymizationService;
+import ai.philterd.phileas.model.services.DefaultContextService;
 import ai.philterd.phileas.services.anonymization.HospitalAnonymizationService;
 
 import org.apache.logging.log4j.LogManager;
@@ -29,12 +30,12 @@ public class HospitalAnonymizationServiceTest {
     @Test
     public void anonymize() {
 
-        AnonymizationService anonymizationService = new HospitalAnonymizationService();
+        AnonymizationService anonymizationService = new HospitalAnonymizationService(new DefaultContextService());
 
         final String token = "Plateau Medical Center";
         final String replacement = anonymizationService.anonymize(token);
 
-        LOGGER.info("Hospital: " + replacement);
+        LOGGER.info("Hospital: {}", replacement);
         
     }
 

@@ -18,7 +18,7 @@ package ai.philterd.phileas.model.cache;
 import ai.philterd.phileas.model.enums.FilterType;
 import ai.philterd.phileas.model.objects.Span;
 import ai.philterd.phileas.model.objects.SpanVector;
-import ai.philterd.phileas.model.policy.Policy;
+import ai.philterd.phileas.policy.Policy;
 import ai.philterd.phileas.model.services.VectorService;
 
 import java.util.HashMap;

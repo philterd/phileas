@@ -20,12 +20,12 @@ import ai.philterd.phileas.model.conditions.ParserListener;
 import ai.philterd.phileas.model.enums.FilterType;
 import ai.philterd.phileas.model.objects.FilterPattern;
 import ai.philterd.phileas.model.objects.Replacement;
-import ai.philterd.phileas.model.policy.Crypto;
-import ai.philterd.phileas.model.policy.FPE;
-import ai.philterd.phileas.model.policy.Policy;
+import ai.philterd.phileas.policy.Crypto;
+import ai.philterd.phileas.policy.FPE;
+import ai.philterd.phileas.policy.Policy;
 import ai.philterd.phileas.services.strategies.AbstractFilterStrategy;
 import ai.philterd.phileas.model.services.AnonymizationService;
-import ai.philterd.phileas.model.utils.Encryption;
+import ai.philterd.phileas.utils.Encryption;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -48,7 +48,7 @@ public class PhEyeFilterStrategy extends AbstractFilterStrategy {
     }
 
     @Override
-    public boolean evaluateCondition(Policy policy, String contextName, Map<String, String> context, String documentId, String token, String[] window, String condition, double confidence, Map<String, String> attributes) {
+    public boolean evaluateCondition(Policy policy, String contextName, String documentId, String token, String[] window, String condition, double confidence, Map<String, String> attributes) {
 
         final List<ParsedCondition> parsedConditions = ParserListener.getTerminals(condition);
 
@@ -111,7 +111,7 @@ public class PhEyeFilterStrategy extends AbstractFilterStrategy {
     }
 
     @Override
-    public Replacement getReplacement(String label, String contextName, Map<String, String> context, String documentId, String token, String[] window, Crypto crypto, FPE fpe, AnonymizationService anonymizationService, FilterPattern filterPattern) throws Exception {
+    public Replacement getReplacement(String label, String contextName, String documentId, String token, String[] window, Crypto crypto, FPE fpe, AnonymizationService anonymizationService, FilterPattern filterPattern) throws Exception {
 
         String replacement = null;
         String salt = "";

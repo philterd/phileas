@@ -15,19 +15,19 @@
  */
 package ai.philterd.test.phileas.services.filters;
 
+import ai.philterd.phileas.filters.FilterConfiguration;
+import ai.philterd.phileas.filters.rules.dictionary.FuzzyDictionaryFilter;
 import ai.philterd.phileas.model.enums.FilterType;
 import ai.philterd.phileas.model.enums.SensitivityLevel;
-import ai.philterd.phileas.model.filter.FilterConfiguration;
-import ai.philterd.phileas.model.filter.rules.dictionary.FuzzyDictionaryFilter;
 import ai.philterd.phileas.model.objects.FilterResult;
-import ai.philterd.phileas.services.strategies.dynamic.CityFilterStrategy;
+import ai.philterd.phileas.model.services.DefaultContextService;
 import ai.philterd.phileas.services.anonymization.CityAnonymizationService;
+import ai.philterd.phileas.services.strategies.dynamic.CityFilterStrategy;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.util.Collections;
 import java.util.List;
 
 public class CityFilterTest extends AbstractFilterTest {
@@ -39,13 +39,13 @@ public class CityFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new CityFilterStrategy()))
-                .withAnonymizationService(new CityAnonymizationService())
+                .withAnonymizationService(new CityAnonymizationService(new DefaultContextService()))
                 .withWindowSize(windowSize)
                 .build();
 
         final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.LOCATION_CITY, filterConfiguration, SensitivityLevel.MEDIUM, true);
 
-        FilterResult filterResult = filter.filter(getPolicy(), "context", Collections.emptyMap(), "documentid", PIECE, "Lived in Washington.", attributes);
+        FilterResult filterResult = filter.filter(getPolicy(), "context",  "documentid", PIECE, "Lived in Washington.", attributes);
 
         showSpans(filterResult.getSpans());
 
@@ -59,13 +59,13 @@ public class CityFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new CityFilterStrategy()))
-                .withAnonymizationService(new CityAnonymizationService())
+                .withAnonymizationService(new CityAnonymizationService(new DefaultContextService()))
                 .withWindowSize(windowSize)
                 .build();
 
         final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.LOCATION_CITY, filterConfiguration, SensitivityLevel.HIGH, true);
 
-        FilterResult filterResult = filter.filter(getPolicy(), "context", Collections.emptyMap(), "documentid", PIECE, "Lived in New York.", attributes);
+        FilterResult filterResult = filter.filter(getPolicy(), "context",  "documentid", PIECE, "Lived in New York.", attributes);
 
         showSpans(filterResult.getSpans());
 
@@ -81,13 +81,13 @@ public class CityFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new CityFilterStrategy()))
-                .withAnonymizationService(new CityAnonymizationService())
+                .withAnonymizationService(new CityAnonymizationService(new DefaultContextService()))
                 .withWindowSize(windowSize)
                 .build();
 
         final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.LOCATION_CITY, filterConfiguration, SensitivityLevel.LOW, true);
 
-        FilterResult filterResult = filter.filter(getPolicy(), "context", Collections.emptyMap(), "documentid", PIECE,"Lived in Wshington", attributes);
+        FilterResult filterResult = filter.filter(getPolicy(), "context",  "documentid", PIECE,"Lived in Wshington", attributes);
 
         showSpans(filterResult.getSpans());
 
@@ -100,13 +100,13 @@ public class CityFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new CityFilterStrategy()))
-                .withAnonymizationService(new CityAnonymizationService())
+                .withAnonymizationService(new CityAnonymizationService(new DefaultContextService()))
                 .withWindowSize(windowSize)
                 .build();
 
         final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.LOCATION_CITY, filterConfiguration, SensitivityLevel.MEDIUM, true);
 
-        FilterResult filterResult = filter.filter(getPolicy(), "context", Collections.emptyMap(), "documentid", PIECE, "Lived in Wshington", attributes);
+        FilterResult filterResult = filter.filter(getPolicy(), "context",  "documentid", PIECE, "Lived in Wshington", attributes);
 
         showSpans(filterResult.getSpans());
 
@@ -120,13 +120,13 @@ public class CityFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new CityFilterStrategy()))
-                .withAnonymizationService(new CityAnonymizationService())
+                .withAnonymizationService(new CityAnonymizationService(new DefaultContextService()))
                 .withWindowSize(windowSize)
                 .build();
 
         final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.LOCATION_CITY, filterConfiguration, SensitivityLevel.HIGH, true);
 
-        FilterResult filterResult = filter.filter(getPolicy(), "context", Collections.emptyMap(), "documentid", PIECE,"Lived in Wasinton", attributes);
+        FilterResult filterResult = filter.filter(getPolicy(), "context",  "documentid", PIECE,"Lived in Wasinton", attributes);
 
         showSpans(filterResult.getSpans());
 

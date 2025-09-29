@@ -15,16 +15,16 @@
  */
 package ai.philterd.test.phileas.services.filters;
 
+import ai.philterd.phileas.filters.FilterConfiguration;
 import ai.philterd.phileas.model.enums.FilterType;
-import ai.philterd.phileas.model.filter.FilterConfiguration;
 import ai.philterd.phileas.model.objects.FilterResult;
-import ai.philterd.phileas.services.strategies.rules.IpAddressFilterStrategy;
+import ai.philterd.phileas.model.services.DefaultContextService;
 import ai.philterd.phileas.services.anonymization.IpAddressAnonymizationService;
 import ai.philterd.phileas.services.filters.regex.IpAddressFilter;
+import ai.philterd.phileas.services.strategies.rules.IpAddressFilterStrategy;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.util.Collections;
 import java.util.List;
 
 public class IpAddressFilterTest extends AbstractFilterTest {
@@ -34,13 +34,13 @@ public class IpAddressFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new IpAddressFilterStrategy()))
-                .withAnonymizationService(new IpAddressAnonymizationService())
+                .withAnonymizationService(new IpAddressAnonymizationService(new DefaultContextService()))
                 .withWindowSize(windowSize)
                 .build();
 
         final IpAddressFilter filter = new IpAddressFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", Collections.emptyMap(), "documentid", PIECE, "the ip is 192.168.1.101.", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context",  "documentid", PIECE, "the ip is 192.168.1.101.", attributes);
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 10, 23, FilterType.IP_ADDRESS));
@@ -53,13 +53,13 @@ public class IpAddressFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new IpAddressFilterStrategy()))
-                .withAnonymizationService(new IpAddressAnonymizationService())
+                .withAnonymizationService(new IpAddressAnonymizationService(new DefaultContextService()))
                 .withWindowSize(windowSize)
                 .build();
 
         final IpAddressFilter filter = new IpAddressFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", Collections.emptyMap(), "documentid", PIECE, "the ip is 1::", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context",  "documentid", PIECE, "the ip is 1::", attributes);
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 10, 13, FilterType.IP_ADDRESS));
@@ -71,13 +71,13 @@ public class IpAddressFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new IpAddressFilterStrategy()))
-                .withAnonymizationService(new IpAddressAnonymizationService())
+                .withAnonymizationService(new IpAddressAnonymizationService(new DefaultContextService()))
                 .withWindowSize(windowSize)
                 .build();
 
         final IpAddressFilter filter = new IpAddressFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", Collections.emptyMap(), "documentid", PIECE, "the ip is 2001:0db8:85a3:0000:0000:8a2e:0370:7334", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context",  "documentid", PIECE, "the ip is 2001:0db8:85a3:0000:0000:8a2e:0370:7334", attributes);
 
         // Finds duplicate spans. Duplicates/overlapping will be removed by the service prior to returning.
         Assertions.assertEquals(2, filterResult.getSpans().size());
@@ -91,13 +91,13 @@ public class IpAddressFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new IpAddressFilterStrategy()))
-                .withAnonymizationService(new IpAddressAnonymizationService())
+                .withAnonymizationService(new IpAddressAnonymizationService(new DefaultContextService()))
                 .withWindowSize(windowSize)
                 .build();
 
         final IpAddressFilter filter = new IpAddressFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", Collections.emptyMap(), "documentid", PIECE, "the ip is fe80::0202:B3FF:FE1E:8329", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context",  "documentid", PIECE, "the ip is fe80::0202:B3FF:FE1E:8329", attributes);
 
         // Finds duplicate spans. Duplicates/overlapping will be removed by the service prior to returning.
         Assertions.assertEquals(2, filterResult.getSpans().size());

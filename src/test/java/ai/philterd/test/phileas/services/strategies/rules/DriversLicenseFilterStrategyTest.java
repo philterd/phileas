@@ -15,15 +15,14 @@
  */
 package ai.philterd.test.phileas.services.strategies.rules;
 
-import ai.philterd.phileas.services.strategies.AbstractFilterStrategy;
-import ai.philterd.phileas.services.strategies.rules.DriversLicenseFilterStrategy;
+import ai.philterd.phileas.model.services.DefaultContextService;
 import ai.philterd.phileas.services.anonymization.AbstractAnonymizationService;
 import ai.philterd.phileas.services.anonymization.AlphanumericAnonymizationService;
+import ai.philterd.phileas.services.strategies.AbstractFilterStrategy;
+import ai.philterd.phileas.services.strategies.rules.DriversLicenseFilterStrategy;
 import ai.philterd.test.phileas.services.strategies.AbstractFilterStrategyTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import java.util.Collections;
 
 public class DriversLicenseFilterStrategyTest extends AbstractFilterStrategyTest {
 
@@ -32,7 +31,7 @@ public class DriversLicenseFilterStrategyTest extends AbstractFilterStrategyTest
     }
 
     public AbstractAnonymizationService getAnonymizationService() {
-        return new AlphanumericAnonymizationService();
+        return new AlphanumericAnonymizationService(new DefaultContextService());
     }
 
     @Test
@@ -41,7 +40,7 @@ public class DriversLicenseFilterStrategyTest extends AbstractFilterStrategyTest
         final AbstractFilterStrategy strategy = getFilterStrategy();
 
         attributes.put("classification", "WV");
-        final boolean conditionSatisfied = strategy.evaluateCondition(getPolicy(), "context", Collections.emptyMap(), "documentid", "90210", WINDOW, "classification == \"WV\"", 1.0, attributes);
+        final boolean conditionSatisfied = strategy.evaluateCondition(getPolicy(), "context",  "documentid", "90210", WINDOW, "classification == \"WV\"", 1.0, attributes);
 
         Assertions.assertTrue(conditionSatisfied);
 

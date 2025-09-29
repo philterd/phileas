@@ -15,19 +15,18 @@
  */
 package ai.philterd.phileas.services.unstructured;
 
-import ai.philterd.phileas.model.filter.Filter;
+import ai.philterd.phileas.filters.Filter;
 import ai.philterd.phileas.model.objects.Explanation;
 import ai.philterd.phileas.model.objects.FilterResult;
 import ai.philterd.phileas.model.objects.IncrementalRedaction;
 import ai.philterd.phileas.model.objects.Span;
-import ai.philterd.phileas.model.policy.Policy;
 import ai.philterd.phileas.model.responses.FilterResponse;
 import ai.philterd.phileas.model.services.DocumentProcessor;
-import ai.philterd.phileas.model.services.MetricsService;
 import ai.philterd.phileas.model.services.PostFilter;
 import ai.philterd.phileas.model.services.SpanDisambiguationService;
 import ai.philterd.phileas.model.tokens.TokenCounter;
 import ai.philterd.phileas.model.tokens.WhitespaceTokenCounter;
+import ai.philterd.phileas.policy.Policy;
 import org.apache.commons.codec.digest.DigestUtils;
 
 import java.util.ArrayList;
@@ -44,16 +43,13 @@ import static java.util.stream.Collectors.toList;
  */
 public class UnstructuredDocumentProcessor implements DocumentProcessor {
 
-    private final MetricsService metricsService;
     private final SpanDisambiguationService spanDisambiguationService;
     private final boolean incrementalRedactionsEnabled;
     private final TokenCounter tokenCounter;
 
-    public UnstructuredDocumentProcessor(final MetricsService metricsService,
-                                         final SpanDisambiguationService spanDisambiguationService,
+    public UnstructuredDocumentProcessor(final SpanDisambiguationService spanDisambiguationService,
                                          final boolean incrementalRedactionsEnabled) {
 
-        this.metricsService = metricsService;
         this.spanDisambiguationService = spanDisambiguationService;
         this.incrementalRedactionsEnabled = incrementalRedactionsEnabled;
         this.tokenCounter = new WhitespaceTokenCounter();
@@ -62,8 +58,7 @@ public class UnstructuredDocumentProcessor implements DocumentProcessor {
 
     @Override
     public FilterResponse process(final Policy policy, final List<Filter> filters, final List<PostFilter> postFilters,
-                                  final String contextName,
-                                  final Map<String, String> context, final String documentId, final int piece, final String input,
+                                  final String contextName, final String documentId, final int piece, final String input,
                                   final Map<String, String> attributes) throws Exception {
 
         // The list that will contain the spans containing PHI/PII.
@@ -73,10 +68,8 @@ public class UnstructuredDocumentProcessor implements DocumentProcessor {
         for(final Filter filter : filters) {
 
             final long startTimeMs = System.currentTimeMillis();
-            final FilterResult filterResult = filter.filter(policy, contextName, context, documentId, piece, input, attributes);
+            final FilterResult filterResult = filter.filter(policy, contextName, documentId, piece, input, attributes);
             final long elapsedTimeMs = System.currentTimeMillis() - startTimeMs;
-
-            metricsService.logFilterTime(filter.getFilterType(), elapsedTimeMs);
 
             identifiedSpans.addAll(filterResult.getSpans());
 
@@ -84,7 +77,7 @@ public class UnstructuredDocumentProcessor implements DocumentProcessor {
 
         // Perform span disambiguation.
         if(spanDisambiguationService.isEnabled()) {
-            identifiedSpans = spanDisambiguationService.disambiguate(contextName, context, identifiedSpans);
+            identifiedSpans = spanDisambiguationService.disambiguate(contextName, identifiedSpans);
         }
 
         // Drop overlapping spans.
@@ -165,7 +158,7 @@ public class UnstructuredDocumentProcessor implements DocumentProcessor {
 
         }
 
-        return new FilterResponse(sb.toString(), documentId, piece, explanation, attributes, incrementalRedactions, tokens);
+        return new FilterResponse(sb.toString(), contextName, documentId, piece, explanation, attributes, incrementalRedactions, tokens);
 
     }
 

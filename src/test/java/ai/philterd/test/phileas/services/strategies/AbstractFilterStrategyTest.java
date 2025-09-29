@@ -19,9 +19,9 @@ import ai.philterd.phileas.services.anonymization.AbstractAnonymizationService;
 import ai.philterd.phileas.services.anonymization.AgeAnonymizationService;
 import ai.philterd.phileas.services.strategies.AbstractFilterStrategy;
 import ai.philterd.phileas.model.objects.Replacement;
-import ai.philterd.phileas.model.policy.Crypto;
-import ai.philterd.phileas.model.policy.FPE;
-import ai.philterd.phileas.model.policy.Policy;
+import ai.philterd.phileas.policy.Crypto;
+import ai.philterd.phileas.policy.FPE;
+import ai.philterd.phileas.policy.Policy;
 import ai.philterd.phileas.model.services.AnonymizationService;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.logging.log4j.LogManager;
@@ -54,7 +54,7 @@ public abstract class AbstractFilterStrategyTest {
         strategy.setStrategy(AbstractFilterStrategy.STATIC_REPLACE);
         strategy.setStaticReplacement("static-value");
 
-        final Replacement replacement = strategy.getReplacement("name", "context", Collections.emptyMap(), "docId", "token", WINDOW, new Crypto(), new FPE(), anonymizationService, null);
+        final Replacement replacement = strategy.getReplacement("name", "context",  "docId", "token", WINDOW, new Crypto(), new FPE(), anonymizationService, null);
 
         Assertions.assertEquals("static-value", replacement.getReplacement());
 
@@ -69,7 +69,7 @@ public abstract class AbstractFilterStrategyTest {
         strategy.setStrategy(AbstractFilterStrategy.REDACT);
         strategy.setRedactionFormat("REDACTION-%t");
 
-        final Replacement replacement = strategy.getReplacement("name", "context", Collections.emptyMap(), "docId", "token", WINDOW, new Crypto(), new FPE(), anonymizationService, null);
+        final Replacement replacement = strategy.getReplacement("name", "context",  "docId", "token", WINDOW, new Crypto(), new FPE(), anonymizationService, null);
 
         Assertions.assertEquals("REDACTION-" + strategy.getFilterType().getType(), replacement.getReplacement());
 
@@ -79,12 +79,12 @@ public abstract class AbstractFilterStrategyTest {
     public void replacement3() throws Exception {
 
         final AnonymizationService anonymizationService = getAnonymizationService();
-        anonymizationService.getContext().put("token", "random");
+        anonymizationService.getContextService().putReplacement("token", "random");
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
         strategy.setStrategy(AbstractFilterStrategy.RANDOM_REPLACE);
 
-        final Replacement replacement = strategy.getReplacement("name", "context", Collections.emptyMap(), "docId", "token", WINDOW, new Crypto(), new FPE(), anonymizationService, null);
+        final Replacement replacement = strategy.getReplacement("name", "context",  "docId", "token", WINDOW, new Crypto(), new FPE(), anonymizationService, null);
 
         Assertions.assertNotEquals("random", replacement.getReplacement());
 
@@ -94,12 +94,12 @@ public abstract class AbstractFilterStrategyTest {
     public void replacement4() throws Exception {
 
         final AnonymizationService anonymizationService = getAnonymizationService();
-        anonymizationService.getContext().put("token", "random");
+        anonymizationService.getContextService().putReplacement("token", "random");
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
         strategy.setStrategy("something-wrong");
 
-        final Replacement replacement = strategy.getReplacement("name", "context", Collections.emptyMap(), "docId", "token", WINDOW, new Crypto(), new FPE(), anonymizationService, null);
+        final Replacement replacement = strategy.getReplacement("name", "context",  "docId", "token", WINDOW, new Crypto(), new FPE(), anonymizationService, null);
 
         Assertions.assertEquals("{{{REDACTED-" + strategy.getFilterType().getType() + "}}}", replacement.getReplacement());
 
@@ -114,7 +114,7 @@ public abstract class AbstractFilterStrategyTest {
         strategy.setStrategy(AbstractFilterStrategy.REDACT);
         strategy.setRedactionFormat("<ENTITY:%t>%v</ENTITY>");
 
-        final Replacement replacement = strategy.getReplacement("name", "context", Collections.emptyMap(), "docId", "token", WINDOW, new Crypto(), new FPE(), anonymizationService, null);
+        final Replacement replacement = strategy.getReplacement("name", "context",  "docId", "token", WINDOW, new Crypto(), new FPE(), anonymizationService, null);
 
         Assertions.assertEquals("<ENTITY:" + strategy.getFilterType().getType() + ">token</ENTITY>", replacement.getReplacement());
 
@@ -124,7 +124,7 @@ public abstract class AbstractFilterStrategyTest {
     public void replacement6() throws Exception {
 
         final AnonymizationService anonymizationService = getAnonymizationService();
-        anonymizationService.getContext().put("token", "random");
+        anonymizationService.getContextService().putReplacement("token", "random");
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
         strategy.setStrategy(AbstractFilterStrategy.CRYPTO_REPLACE);
@@ -132,7 +132,7 @@ public abstract class AbstractFilterStrategyTest {
 
         final Crypto crypto = new Crypto("9EE7A356FDFE43F069500B0086758346E66D8583E0CE1CFCA04E50F67ECCE5D1", "B674D3B8F1C025AEFF8F6D5FA1AEAD3A");
 
-        final Replacement replacement = strategy.getReplacement("name", "context", Collections.emptyMap(), "docId", "token", WINDOW, crypto, new FPE(), anonymizationService, null);
+        final Replacement replacement = strategy.getReplacement("name", "context",  "docId", "token", WINDOW, crypto, new FPE(), anonymizationService, null);
 
         Assertions.assertEquals("{{j6HcaY8m7hPACVVyQtj4PQ==}}", replacement.getReplacement());
 
@@ -146,7 +146,7 @@ public abstract class AbstractFilterStrategyTest {
         final AbstractFilterStrategy strategy = getFilterStrategy();
         strategy.setStrategy(AbstractFilterStrategy.RANDOM_REPLACE);
 
-        final Replacement replacement = strategy.getReplacement("name", "context", Collections.emptyMap(), "docId", "token", WINDOW, new Crypto(), new FPE(), anonymizationService, null);
+        final Replacement replacement = strategy.getReplacement("name", "context",  "docId", "token", WINDOW, new Crypto(), new FPE(), anonymizationService, null);
 
         // If this is a test for the age filter, the replacement will be "token" because there are no digits in "token".
         if(anonymizationService instanceof AgeAnonymizationService) {
@@ -166,7 +166,7 @@ public abstract class AbstractFilterStrategyTest {
         strategy.setStrategy(AbstractFilterStrategy.STATIC_REPLACE);
         strategy.setStaticReplacement("staticreplacement");
 
-        final Replacement replacement = strategy.getReplacement("name", "context", Collections.emptyMap(), "docId", "token", WINDOW, new Crypto(), new FPE(), anonymizationService, null);
+        final Replacement replacement = strategy.getReplacement("name", "context",  "docId", "token", WINDOW, new Crypto(), new FPE(), anonymizationService, null);
 
         Assertions.assertEquals("staticreplacement", replacement.getReplacement());
 
@@ -186,7 +186,7 @@ public abstract class AbstractFilterStrategyTest {
         Assertions.assertThrows(Exception.class, () -> {
 
             // Throws an exception because we tried to use CRYPTO_REPLACE without any keys.
-            strategy.getReplacement("name", "context", Collections.emptyMap(), "docId", "token", WINDOW, crypto, new FPE(), anonymizationService, null);
+            strategy.getReplacement("name", "context",  "docId", "token", WINDOW, crypto, new FPE(), anonymizationService, null);
 
         });
 
@@ -200,7 +200,7 @@ public abstract class AbstractFilterStrategyTest {
         final AbstractFilterStrategy strategy = getFilterStrategy();
         strategy.setStrategy(AbstractFilterStrategy.HASH_SHA256_REPLACE);
 
-        final Replacement replacement = strategy.getReplacement("name", "context", Collections.emptyMap(), "docId", "token", WINDOW, null, new FPE(), anonymizationService, null);
+        final Replacement replacement = strategy.getReplacement("name", "context",  "docId", "token", WINDOW, null, new FPE(), anonymizationService, null);
 
         Assertions.assertNotNull(replacement.getSalt());
         final String expected = DigestUtils.sha256Hex("token" + replacement.getSalt());
@@ -220,7 +220,7 @@ public abstract class AbstractFilterStrategyTest {
         strategy.setMaskLength(AbstractFilterStrategy.SAME);
 
         final String token = "token1234";
-        final Replacement replacement = strategy.getReplacement("name", "context", Collections.emptyMap(), "docId", token, WINDOW, null, null, anonymizationService, null);
+        final Replacement replacement = strategy.getReplacement("name", "context",  "docId", token, WINDOW, null, null, anonymizationService, null);
 
         System.out.println(replacement.getReplacement());
 
@@ -239,7 +239,7 @@ public abstract class AbstractFilterStrategyTest {
         strategy.setMaskLength("4");
 
         final String token = "token1234";
-        final Replacement replacement = strategy.getReplacement("name", "context", Collections.emptyMap(), "docId", token, WINDOW, null, null, anonymizationService, null);
+        final Replacement replacement = strategy.getReplacement("name", "context",  "docId", token, WINDOW, null, null, anonymizationService, null);
 
         System.out.println(replacement.getReplacement());
 
@@ -259,7 +259,7 @@ public abstract class AbstractFilterStrategyTest {
         strategy.setMaskLength("10");
 
         final String token = "token";
-        final Replacement replacement = strategy.getReplacement("name", "context", Collections.emptyMap(), "docId", token, WINDOW, null, null, anonymizationService, null);
+        final Replacement replacement = strategy.getReplacement("name", "context",  "docId", token, WINDOW, null, null, anonymizationService, null);
 
         Assertions.assertEquals("##########", replacement.getReplacement());
         Assertions.assertEquals(10, replacement.getReplacement().length());
@@ -277,7 +277,7 @@ public abstract class AbstractFilterStrategyTest {
         strategy.setMaskLength("0");
 
         final String token = "token";
-        final Replacement replacement = strategy.getReplacement("name", "context", Collections.emptyMap(), "docId", token, WINDOW, null, null, anonymizationService, null);
+        final Replacement replacement = strategy.getReplacement("name", "context",  "docId", token, WINDOW, null, null, anonymizationService, null);
 
         Assertions.assertEquals("#####", replacement.getReplacement());
         Assertions.assertEquals(5, replacement.getReplacement().length());
@@ -295,7 +295,7 @@ public abstract class AbstractFilterStrategyTest {
         strategy.setTruncateLeaveCharacters(1);
 
         final String token = "12345";
-        final Replacement replacement = strategy.getReplacement("name", "context", Collections.emptyMap(), "docId", token, WINDOW, null, null, anonymizationService, null);
+        final Replacement replacement = strategy.getReplacement("name", "context",  "docId", token, WINDOW, null, null, anonymizationService, null);
 
         Assertions.assertEquals("1****", replacement.getReplacement());
         Assertions.assertEquals(5, replacement.getReplacement().length());
@@ -312,7 +312,7 @@ public abstract class AbstractFilterStrategyTest {
         strategy.setTruncateLeaveCharacters(4);
 
         final String token = "12345";
-        final Replacement replacement = strategy.getReplacement("name", "context", Collections.emptyMap(), "docId", token, WINDOW, null, null, anonymizationService, null);
+        final Replacement replacement = strategy.getReplacement("name", "context",  "docId", token, WINDOW, null, null, anonymizationService, null);
 
         Assertions.assertEquals("1234*", replacement.getReplacement());
         Assertions.assertEquals(5, replacement.getReplacement().length());
@@ -330,7 +330,7 @@ public abstract class AbstractFilterStrategyTest {
         strategy.setTruncateLeaveCharacters(2);
 
         final String token = "12345";
-        final Replacement replacement = strategy.getReplacement("name", "context", Collections.emptyMap(), "docId", token, WINDOW, null, null, anonymizationService, null);
+        final Replacement replacement = strategy.getReplacement("name", "context",  "docId", token, WINDOW, null, null, anonymizationService, null);
 
         Assertions.assertEquals("12***", replacement.getReplacement());
         Assertions.assertEquals(5, replacement.getReplacement().length());
@@ -348,7 +348,7 @@ public abstract class AbstractFilterStrategyTest {
         strategy.setTruncateLeaveCharacters(4);
 
         final String token = "4111111111111111";
-        final Replacement replacement = strategy.getReplacement("name", "context", Collections.emptyMap(), "docId", token, WINDOW, null, null, anonymizationService, null);
+        final Replacement replacement = strategy.getReplacement("name", "context",  "docId", token, WINDOW, null, null, anonymizationService, null);
 
         Assertions.assertEquals("************1111", replacement.getReplacement());
         Assertions.assertEquals(16, replacement.getReplacement().length());
@@ -360,7 +360,7 @@ public abstract class AbstractFilterStrategyTest {
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
 
-        final boolean conditionSatisfied = strategy.evaluateCondition(getPolicy(), "context", Collections.emptyMap(), "documentid", "90210", WINDOW, "token startswith \"902\"", 1.0, attributes);
+        final boolean conditionSatisfied = strategy.evaluateCondition(getPolicy(), "context",  "documentid", "90210", WINDOW, "token startswith \"902\"", 1.0, attributes);
 
         Assertions.assertTrue(conditionSatisfied);
 
@@ -371,7 +371,7 @@ public abstract class AbstractFilterStrategyTest {
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
 
-        final boolean conditionSatisfied = strategy.evaluateCondition(getPolicy(), "context", Collections.emptyMap(), "documentid", "90210", WINDOW, "token == \"90210\"", 1.0, attributes);
+        final boolean conditionSatisfied = strategy.evaluateCondition(getPolicy(), "context",  "documentid", "90210", WINDOW, "token == \"90210\"", 1.0, attributes);
 
         Assertions.assertTrue(conditionSatisfied);
 
@@ -382,7 +382,7 @@ public abstract class AbstractFilterStrategyTest {
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
 
-        final boolean conditionSatisfied = strategy.evaluateCondition(getPolicy(), "context", Collections.emptyMap(), "documentid",  "12345", WINDOW, "token == \"90210\"", 1.0, attributes);
+        final boolean conditionSatisfied = strategy.evaluateCondition(getPolicy(), "context",  "documentid",  "12345", WINDOW, "token == \"90210\"", 1.0, attributes);
 
         Assertions.assertFalse(conditionSatisfied);
 
@@ -393,7 +393,7 @@ public abstract class AbstractFilterStrategyTest {
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
 
-        final boolean conditionSatisfied = strategy.evaluateCondition(getPolicy(), "context", Collections.emptyMap(), "documentid", "John Smith", WINDOW, "context == \"c1\"",  1.0, attributes);
+        final boolean conditionSatisfied = strategy.evaluateCondition(getPolicy(), "context",  "documentid", "John Smith", WINDOW, "context == \"c1\"",  1.0, attributes);
 
         Assertions.assertFalse(conditionSatisfied);
 
@@ -404,7 +404,7 @@ public abstract class AbstractFilterStrategyTest {
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
 
-        final boolean conditionSatisfied = strategy.evaluateCondition(getPolicy(), "ctx", Collections.emptyMap(), "documentId", "John Smith", WINDOW, "context == \"ctx\"",  1.0, attributes);
+        final boolean conditionSatisfied = strategy.evaluateCondition(getPolicy(), "ctx", "documentId", "John Smith", WINDOW, "context == \"ctx\"",  1.0, attributes);
 
         Assertions.assertTrue(conditionSatisfied);
 
@@ -415,7 +415,7 @@ public abstract class AbstractFilterStrategyTest {
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
 
-        final boolean conditionSatisfied = strategy.evaluateCondition(getPolicy(), "ctx", Collections.emptyMap(), "documentId", "John Smith", WINDOW, "confidence > 0.5",  1.0, attributes);
+        final boolean conditionSatisfied = strategy.evaluateCondition(getPolicy(), "ctx", "documentId", "John Smith", WINDOW, "confidence > 0.5",  1.0, attributes);
 
         Assertions.assertTrue(conditionSatisfied);
 
@@ -426,7 +426,7 @@ public abstract class AbstractFilterStrategyTest {
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
 
-        final boolean conditionSatisfied = strategy.evaluateCondition(getPolicy(), "ctx", Collections.emptyMap(), "documentId", "John Smith", WINDOW, "confidence < 0.5",  1.0, attributes);
+        final boolean conditionSatisfied = strategy.evaluateCondition(getPolicy(), "ctx", "documentId", "John Smith", WINDOW, "confidence < 0.5",  1.0, attributes);
 
         Assertions.assertFalse(conditionSatisfied);
 
@@ -437,7 +437,7 @@ public abstract class AbstractFilterStrategyTest {
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
 
-        final boolean conditionSatisfied = strategy.evaluateCondition(getPolicy(), "ctx", Collections.emptyMap(), "documentId", "John Smith", WINDOW, "confidence >= 0.5",  1.0, attributes);
+        final boolean conditionSatisfied = strategy.evaluateCondition(getPolicy(), "ctx", "documentId", "John Smith", WINDOW, "confidence >= 0.5",  1.0, attributes);
 
         Assertions.assertTrue(conditionSatisfied);
 

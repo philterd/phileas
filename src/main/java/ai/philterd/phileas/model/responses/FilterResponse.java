@@ -39,6 +39,7 @@ public class FilterResponse {
     private static final Logger LOGGER = LogManager.getLogger(FilterResponse.class);
 
     private final String filteredText;
+    private final String context;
     private final String documentId;
     private final int piece;
     private final Explanation explanation;
@@ -46,11 +47,12 @@ public class FilterResponse {
     private final long tokens;
     private final transient List<IncrementalRedaction> incrementalRedactions;
 
-    public FilterResponse(String filteredText, String documentId, int piece,
+    public FilterResponse(String filteredText, String context, String documentId, int piece,
                           Explanation explanation, Map<String, String> attributes, List<IncrementalRedaction> incrementalRedactions,
                           long tokens) {
 
         this.filteredText = filteredText;
+        this.context = context;
         this.documentId = documentId;
         this.piece = piece;
         this.explanation = explanation;
@@ -70,7 +72,7 @@ public class FilterResponse {
      * @param documentId      The document ID for the returned {@link FilterResponse}.
      * @return A single, combined {@link FilterResponse}.
      */
-    public static FilterResponse combine(List<FilterResponse> filterResponses, Map<String, String> context, String documentId, String separator) {
+    public static FilterResponse combine(List<FilterResponse> filterResponses, final String context, String documentId, String separator) {
 
         LOGGER.debug("Combining {} filter responses for document ID: {}", filterResponses.size(), documentId);
 
@@ -120,7 +122,7 @@ public class FilterResponse {
         }
 
         // Return the newly built FilterResponse.
-        return new FilterResponse(filteredText.toString().trim(), documentId, 0,
+        return new FilterResponse(filteredText.toString().trim(), context, documentId, 0,
                 new Explanation(appliedSpans, identifiedSpans), combinedAttributes, combinedIncrementalRedactions,
                 tokens);
 
@@ -146,6 +148,10 @@ public class FilterResponse {
 
     public String getFilteredText() {
         return filteredText;
+    }
+
+    public String getContext() {
+        return context;
     }
 
     public String getDocumentId() {

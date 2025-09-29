@@ -15,16 +15,16 @@
  */
 package ai.philterd.test.phileas.services.filters;
 
+import ai.philterd.phileas.filters.FilterConfiguration;
 import ai.philterd.phileas.model.enums.FilterType;
-import ai.philterd.phileas.model.filter.FilterConfiguration;
 import ai.philterd.phileas.model.objects.FilterResult;
-import ai.philterd.phileas.services.strategies.rules.StreetAddressFilterStrategy;
+import ai.philterd.phileas.model.services.DefaultContextService;
 import ai.philterd.phileas.services.anonymization.StreetAddressAnonymizationService;
 import ai.philterd.phileas.services.filters.regex.StreetAddressFilter;
+import ai.philterd.phileas.services.strategies.rules.StreetAddressFilterStrategy;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.util.Collections;
 import java.util.List;
 
 public class StreetAddressFilterTest extends AbstractFilterTest {
@@ -34,13 +34,13 @@ public class StreetAddressFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new StreetAddressFilterStrategy()))
-                .withAnonymizationService(new StreetAddressAnonymizationService())
+                .withAnonymizationService(new StreetAddressAnonymizationService(new DefaultContextService()))
                 .withWindowSize(windowSize)
                 .build();
 
         final StreetAddressFilter filter = new StreetAddressFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", Collections.emptyMap(), "documentid", PIECE, "lived at 100 Main St", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context",  "documentid", PIECE, "lived at 100 Main St", attributes);
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 9, 20, FilterType.STREET_ADDRESS));
@@ -52,13 +52,13 @@ public class StreetAddressFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new StreetAddressFilterStrategy()))
-                .withAnonymizationService(new StreetAddressAnonymizationService())
+                .withAnonymizationService(new StreetAddressAnonymizationService(new DefaultContextService()))
                 .withWindowSize(windowSize)
                 .build();
 
         final StreetAddressFilter filter = new StreetAddressFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", Collections.emptyMap(), "documentid", PIECE, "lived at 100 S Main St", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context",  "documentid", PIECE, "lived at 100 S Main St", attributes);
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 9, 22, FilterType.STREET_ADDRESS));
@@ -70,13 +70,13 @@ public class StreetAddressFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new StreetAddressFilterStrategy()))
-                .withAnonymizationService(new StreetAddressAnonymizationService())
+                .withAnonymizationService(new StreetAddressAnonymizationService(new DefaultContextService()))
                 .withWindowSize(windowSize)
                 .build();
 
         final StreetAddressFilter filter = new StreetAddressFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", Collections.emptyMap(), "documentid", PIECE, "lived at 100 South Main St", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context",  "documentid", PIECE, "lived at 100 South Main St", attributes);
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 9, 26, FilterType.STREET_ADDRESS));
@@ -88,13 +88,13 @@ public class StreetAddressFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new StreetAddressFilterStrategy()))
-                .withAnonymizationService(new StreetAddressAnonymizationService())
+                .withAnonymizationService(new StreetAddressAnonymizationService(new DefaultContextService()))
                 .withWindowSize(windowSize)
                 .build();
 
         final StreetAddressFilter filter = new StreetAddressFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", Collections.emptyMap(), "documentid", PIECE, "lived at 1000 Main Street", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context",  "documentid", PIECE, "lived at 1000 Main Street", attributes);
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 9, 25, FilterType.STREET_ADDRESS));
@@ -106,13 +106,13 @@ public class StreetAddressFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new StreetAddressFilterStrategy()))
-                .withAnonymizationService(new StreetAddressAnonymizationService())
+                .withAnonymizationService(new StreetAddressAnonymizationService(new DefaultContextService()))
                 .withWindowSize(windowSize)
                 .build();
 
         final StreetAddressFilter filter = new StreetAddressFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", Collections.emptyMap(), "documentid", PIECE, "North 2800 Clay Edwards Drive", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context",  "documentid", PIECE, "North 2800 Clay Edwards Drive", attributes);
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 6, 29, FilterType.STREET_ADDRESS));
@@ -124,13 +124,13 @@ public class StreetAddressFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new StreetAddressFilterStrategy()))
-                .withAnonymizationService(new StreetAddressAnonymizationService())
+                .withAnonymizationService(new StreetAddressAnonymizationService(new DefaultContextService()))
                 .withWindowSize(windowSize)
                 .build();
 
         final StreetAddressFilter filter = new StreetAddressFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", Collections.emptyMap(), "documentid", PIECE, "14 Southampton St.", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context",  "documentid", PIECE, "14 Southampton St.", attributes);
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 0, 18, FilterType.STREET_ADDRESS));
@@ -142,13 +142,13 @@ public class StreetAddressFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new StreetAddressFilterStrategy()))
-                .withAnonymizationService(new StreetAddressAnonymizationService())
+                .withAnonymizationService(new StreetAddressAnonymizationService(new DefaultContextService()))
                 .withWindowSize(windowSize)
                 .build();
 
         final StreetAddressFilter filter = new StreetAddressFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", Collections.emptyMap(), "documentid", PIECE, "22 Newport Drive", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context",  "documentid", PIECE, "22 Newport Drive", attributes);
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 0, 16, FilterType.STREET_ADDRESS));
@@ -160,13 +160,13 @@ public class StreetAddressFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new StreetAddressFilterStrategy()))
-                .withAnonymizationService(new StreetAddressAnonymizationService())
+                .withAnonymizationService(new StreetAddressAnonymizationService(new DefaultContextService()))
                 .withWindowSize(windowSize)
                 .build();
 
         final StreetAddressFilter filter = new StreetAddressFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", Collections.emptyMap(), "documentid", PIECE, "78 Glendale Street", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context",  "documentid", PIECE, "78 Glendale Street", attributes);
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 0, 18, FilterType.STREET_ADDRESS));
@@ -178,13 +178,13 @@ public class StreetAddressFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new StreetAddressFilterStrategy()))
-                .withAnonymizationService(new StreetAddressAnonymizationService())
+                .withAnonymizationService(new StreetAddressAnonymizationService(new DefaultContextService()))
                 .withWindowSize(windowSize)
                 .build();
 
         final StreetAddressFilter filter = new StreetAddressFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", Collections.emptyMap(), "documentid", PIECE, "6 Berkshire Court", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context",  "documentid", PIECE, "6 Berkshire Court", attributes);
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 0, 17, FilterType.STREET_ADDRESS));
@@ -196,13 +196,13 @@ public class StreetAddressFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new StreetAddressFilterStrategy()))
-                .withAnonymizationService(new StreetAddressAnonymizationService())
+                .withAnonymizationService(new StreetAddressAnonymizationService(new DefaultContextService()))
                 .withWindowSize(windowSize)
                 .build();
 
         final StreetAddressFilter filter = new StreetAddressFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", Collections.emptyMap(), "documentid", PIECE, "291 North Pawnee Ave.", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context",  "documentid", PIECE, "291 North Pawnee Ave.", attributes);
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 0, 21, FilterType.STREET_ADDRESS));
@@ -214,13 +214,13 @@ public class StreetAddressFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new StreetAddressFilterStrategy()))
-                .withAnonymizationService(new StreetAddressAnonymizationService())
+                .withAnonymizationService(new StreetAddressAnonymizationService(new DefaultContextService()))
                 .withWindowSize(windowSize)
                 .build();
 
         final StreetAddressFilter filter = new StreetAddressFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", Collections.emptyMap(), "documentid", PIECE, "468 William Street", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context",  "documentid", PIECE, "468 William Street", attributes);
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 0, 18, FilterType.STREET_ADDRESS));
@@ -232,13 +232,13 @@ public class StreetAddressFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new StreetAddressFilterStrategy()))
-                .withAnonymizationService(new StreetAddressAnonymizationService())
+                .withAnonymizationService(new StreetAddressAnonymizationService(new DefaultContextService()))
                 .withWindowSize(windowSize)
                 .build();
 
         final StreetAddressFilter filter = new StreetAddressFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", Collections.emptyMap(), "documentid", PIECE, "291 6th Dr.", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context",  "documentid", PIECE, "291 6th Dr.", attributes);
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 0, 11, FilterType.STREET_ADDRESS));
@@ -250,13 +250,13 @@ public class StreetAddressFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new StreetAddressFilterStrategy()))
-                .withAnonymizationService(new StreetAddressAnonymizationService())
+                .withAnonymizationService(new StreetAddressAnonymizationService(new DefaultContextService()))
                 .withWindowSize(windowSize)
                 .build();
 
         final StreetAddressFilter filter = new StreetAddressFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", Collections.emptyMap(), "documentid", PIECE, "9444 Heritage St.", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context",  "documentid", PIECE, "9444 Heritage St.", attributes);
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 0, 17, FilterType.STREET_ADDRESS));
@@ -268,13 +268,13 @@ public class StreetAddressFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new StreetAddressFilterStrategy()))
-                .withAnonymizationService(new StreetAddressAnonymizationService())
+                .withAnonymizationService(new StreetAddressAnonymizationService(new DefaultContextService()))
                 .withWindowSize(windowSize)
                 .build();
 
         final StreetAddressFilter filter = new StreetAddressFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", Collections.emptyMap(), "documentid", PIECE, "70 Birchpond Street", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context",  "documentid", PIECE, "70 Birchpond Street", attributes);
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 0, 19, FilterType.STREET_ADDRESS));
@@ -286,13 +286,13 @@ public class StreetAddressFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new StreetAddressFilterStrategy()))
-                .withAnonymizationService(new StreetAddressAnonymizationService())
+                .withAnonymizationService(new StreetAddressAnonymizationService(new DefaultContextService()))
                 .withWindowSize(windowSize)
                 .build();
 
         final StreetAddressFilter filter = new StreetAddressFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", Collections.emptyMap(), "documentid", PIECE, "656 S. Inverness St.", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context",  "documentid", PIECE, "656 S. Inverness St.", attributes);
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 0, 20, FilterType.STREET_ADDRESS));
@@ -304,13 +304,13 @@ public class StreetAddressFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new StreetAddressFilterStrategy()))
-                .withAnonymizationService(new StreetAddressAnonymizationService())
+                .withAnonymizationService(new StreetAddressAnonymizationService(new DefaultContextService()))
                 .withWindowSize(windowSize)
                 .build();
 
         final StreetAddressFilter filter = new StreetAddressFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", Collections.emptyMap(), "documentid", PIECE, "9142 Arlington Court", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context",  "documentid", PIECE, "9142 Arlington Court", attributes);
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 0, 20, FilterType.STREET_ADDRESS));
@@ -322,13 +322,13 @@ public class StreetAddressFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new StreetAddressFilterStrategy()))
-                .withAnonymizationService(new StreetAddressAnonymizationService())
+                .withAnonymizationService(new StreetAddressAnonymizationService(new DefaultContextService()))
                 .withWindowSize(windowSize)
                 .build();
 
         final StreetAddressFilter filter = new StreetAddressFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", Collections.emptyMap(), "documentid", PIECE, "4 Devonshire Ct.", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context",  "documentid", PIECE, "4 Devonshire Ct.", attributes);
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 0, 16, FilterType.STREET_ADDRESS));
@@ -340,13 +340,13 @@ public class StreetAddressFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new StreetAddressFilterStrategy()))
-                .withAnonymizationService(new StreetAddressAnonymizationService())
+                .withAnonymizationService(new StreetAddressAnonymizationService(new DefaultContextService()))
                 .withWindowSize(windowSize)
                 .build();
 
         final StreetAddressFilter filter = new StreetAddressFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", Collections.emptyMap(), "documentid", PIECE, "4 Devonshire Ct", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context",  "documentid", PIECE, "4 Devonshire Ct", attributes);
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 0, 15, FilterType.STREET_ADDRESS));
@@ -358,13 +358,13 @@ public class StreetAddressFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new StreetAddressFilterStrategy()))
-                .withAnonymizationService(new StreetAddressAnonymizationService())
+                .withAnonymizationService(new StreetAddressAnonymizationService(new DefaultContextService()))
                 .withWindowSize(windowSize)
                 .build();
 
         final StreetAddressFilter filter = new StreetAddressFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", Collections.emptyMap(), "documentid", PIECE, "4 Devonshire Ct ste 2", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context",  "documentid", PIECE, "4 Devonshire Ct ste 2", attributes);
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 0, 21, FilterType.STREET_ADDRESS));
@@ -376,13 +376,13 @@ public class StreetAddressFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new StreetAddressFilterStrategy()))
-                .withAnonymizationService(new StreetAddressAnonymizationService())
+                .withAnonymizationService(new StreetAddressAnonymizationService(new DefaultContextService()))
                 .withWindowSize(windowSize)
                 .build();
 
         final StreetAddressFilter filter = new StreetAddressFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", Collections.emptyMap(), "documentid", PIECE, "4 Devonshire Ct apartment 222", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context",  "documentid", PIECE, "4 Devonshire Ct apartment 222", attributes);
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 0, 29, FilterType.STREET_ADDRESS));
@@ -394,13 +394,13 @@ public class StreetAddressFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new StreetAddressFilterStrategy()))
-                .withAnonymizationService(new StreetAddressAnonymizationService())
+                .withAnonymizationService(new StreetAddressAnonymizationService(new DefaultContextService()))
                 .withWindowSize(windowSize)
                 .build();
 
         final StreetAddressFilter filter = new StreetAddressFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", Collections.emptyMap(), "documentid", PIECE, "4 Devonshire Ct apt 222", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context",  "documentid", PIECE, "4 Devonshire Ct apt 222", attributes);
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 0, 23, FilterType.STREET_ADDRESS));
@@ -412,13 +412,13 @@ public class StreetAddressFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new StreetAddressFilterStrategy()))
-                .withAnonymizationService(new StreetAddressAnonymizationService())
+                .withAnonymizationService(new StreetAddressAnonymizationService(new DefaultContextService()))
                 .withWindowSize(windowSize)
                 .build();
 
         final StreetAddressFilter filter = new StreetAddressFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", Collections.emptyMap(), "documentid", PIECE, "4 Devonshire Ct apt 222 anywhere", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context",  "documentid", PIECE, "4 Devonshire Ct apt 222 anywhere", attributes);
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 0, 23, FilterType.STREET_ADDRESS));
@@ -430,13 +430,13 @@ public class StreetAddressFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new StreetAddressFilterStrategy()))
-                .withAnonymizationService(new StreetAddressAnonymizationService())
+                .withAnonymizationService(new StreetAddressAnonymizationService(new DefaultContextService()))
                 .withWindowSize(windowSize)
                 .build();
 
         final StreetAddressFilter filter = new StreetAddressFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", Collections.emptyMap(), "documentid", PIECE, "address is 9444 Heritage St. over there", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context",  "documentid", PIECE, "address is 9444 Heritage St. over there", attributes);
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 11, 28, FilterType.STREET_ADDRESS));
@@ -448,13 +448,13 @@ public class StreetAddressFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new StreetAddressFilterStrategy()))
-                .withAnonymizationService(new StreetAddressAnonymizationService())
+                .withAnonymizationService(new StreetAddressAnonymizationService(new DefaultContextService()))
                 .withWindowSize(windowSize)
                 .build();
 
         final StreetAddressFilter filter = new StreetAddressFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", Collections.emptyMap(), "documentid", PIECE, "address is 9444 Heritage St. apt 2 over there", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context",  "documentid", PIECE, "address is 9444 Heritage St. apt 2 over there", attributes);
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 11, 34, FilterType.STREET_ADDRESS));

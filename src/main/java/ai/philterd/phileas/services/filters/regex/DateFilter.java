@@ -16,13 +16,13 @@
 package ai.philterd.phileas.services.filters.regex;
 
 import ai.philterd.phileas.model.enums.FilterType;
-import ai.philterd.phileas.model.filter.FilterConfiguration;
-import ai.philterd.phileas.model.filter.rules.regex.RegexFilter;
+import ai.philterd.phileas.filters.FilterConfiguration;
+import ai.philterd.phileas.filters.rules.regex.RegexFilter;
 import ai.philterd.phileas.model.objects.Analyzer;
 import ai.philterd.phileas.model.objects.FilterPattern;
 import ai.philterd.phileas.model.objects.FilterResult;
 import ai.philterd.phileas.model.objects.Span;
-import ai.philterd.phileas.model.policy.Policy;
+import ai.philterd.phileas.policy.Policy;
 import ai.philterd.phileas.model.services.SpanValidator;
 
 import java.util.*;
@@ -55,11 +55,11 @@ public class DateFilter extends RegexFilter {
     }
 
     @Override
-    public FilterResult filter(Policy policy, String contextName, Map<String, String> context, String documentId, int piece, String input, Map<String, String> attributes) throws Exception {
+    public FilterResult filter(Policy policy, String contextName, String documentId, int piece, String input, Map<String, String> attributes) throws Exception {
 
         final List<Span> spans = new LinkedList<>();
 
-        final List<Span> rawSpans = findSpans(policy, analyzer, input, contextName, context, documentId, attributes);
+        final List<Span> rawSpans = findSpans(policy, analyzer, input, contextName, documentId, attributes);
 
         if(onlyValidDates) {
 

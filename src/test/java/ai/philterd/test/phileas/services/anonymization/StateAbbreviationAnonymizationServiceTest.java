@@ -16,6 +16,7 @@
 package ai.philterd.test.phileas.services.anonymization;
 
 import ai.philterd.phileas.model.services.AnonymizationService;
+import ai.philterd.phileas.model.services.DefaultContextService;
 import ai.philterd.phileas.services.anonymization.StateAbbreviationAnonymizationService;
 
 import org.apache.logging.log4j.LogManager;
@@ -30,7 +31,7 @@ public class StateAbbreviationAnonymizationServiceTest {
     @Test
     public void anonymize1() {
 
-        AnonymizationService anonymizationService = new StateAbbreviationAnonymizationService();
+        AnonymizationService anonymizationService = new StateAbbreviationAnonymizationService(new DefaultContextService());
 
         final String token = "AK";
         final String replacement = anonymizationService.anonymize(token);

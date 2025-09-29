@@ -16,8 +16,9 @@
 package ai.philterd.test.phileas.services.filters;
 
 import ai.philterd.phileas.model.enums.FilterType;
-import ai.philterd.phileas.model.filter.FilterConfiguration;
+import ai.philterd.phileas.filters.FilterConfiguration;
 import ai.philterd.phileas.model.objects.FilterResult;
+import ai.philterd.phileas.model.services.DefaultContextService;
 import ai.philterd.phileas.services.strategies.rules.PassportNumberFilterStrategy;
 import ai.philterd.phileas.services.anonymization.AlphanumericAnonymizationService;
 import ai.philterd.phileas.services.filters.regex.PassportNumberFilter;
@@ -34,13 +35,13 @@ public class PassportNumberFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new PassportNumberFilterStrategy()))
-                .withAnonymizationService(new AlphanumericAnonymizationService())
+                .withAnonymizationService(new AlphanumericAnonymizationService(new DefaultContextService()))
                 .withWindowSize(windowSize)
                 .build();
 
         final PassportNumberFilter filter = new PassportNumberFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", Collections.emptyMap(), "documentid", PIECE, "the passport number is 036001231.", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context",  "documentid", PIECE, "the passport number is 036001231.", attributes);
 
         showSpans(filterResult.getSpans());
 

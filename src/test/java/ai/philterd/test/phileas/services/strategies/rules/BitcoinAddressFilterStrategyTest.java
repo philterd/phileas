@@ -15,10 +15,11 @@
  */
 package ai.philterd.test.phileas.services.strategies.rules;
 
-import ai.philterd.phileas.services.strategies.AbstractFilterStrategy;
-import ai.philterd.phileas.services.strategies.rules.BitcoinAddressFilterStrategy;
+import ai.philterd.phileas.model.services.DefaultContextService;
 import ai.philterd.phileas.services.anonymization.AbstractAnonymizationService;
 import ai.philterd.phileas.services.anonymization.BitcoinAddressAnonymizationService;
+import ai.philterd.phileas.services.strategies.AbstractFilterStrategy;
+import ai.philterd.phileas.services.strategies.rules.BitcoinAddressFilterStrategy;
 import ai.philterd.test.phileas.services.strategies.AbstractFilterStrategyTest;
 
 public class BitcoinAddressFilterStrategyTest extends AbstractFilterStrategyTest {
@@ -29,7 +30,7 @@ public class BitcoinAddressFilterStrategyTest extends AbstractFilterStrategyTest
     }
 
     public AbstractAnonymizationService getAnonymizationService() {
-        return new BitcoinAddressAnonymizationService();
+        return new BitcoinAddressAnonymizationService(new DefaultContextService());
     }
 
 }

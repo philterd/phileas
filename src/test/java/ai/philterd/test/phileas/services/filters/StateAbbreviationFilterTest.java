@@ -16,8 +16,9 @@
 package ai.philterd.test.phileas.services.filters;
 
 import ai.philterd.phileas.model.enums.FilterType;
-import ai.philterd.phileas.model.filter.FilterConfiguration;
+import ai.philterd.phileas.filters.FilterConfiguration;
 import ai.philterd.phileas.model.objects.FilterResult;
+import ai.philterd.phileas.model.services.DefaultContextService;
 import ai.philterd.phileas.services.strategies.rules.StateAbbreviationFilterStrategy;
 import ai.philterd.phileas.services.anonymization.StateAbbreviationAnonymizationService;
 import ai.philterd.phileas.services.filters.regex.StateAbbreviationFilter;
@@ -38,14 +39,14 @@ public class StateAbbreviationFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new StateAbbreviationFilterStrategy()))
-                .withAnonymizationService(new StateAbbreviationAnonymizationService())
+                .withAnonymizationService(new StateAbbreviationAnonymizationService(new DefaultContextService()))
                 .withWindowSize(windowSize)
                 .build();
 
         final StateAbbreviationFilter filter = new StateAbbreviationFilter(filterConfiguration);
 
         final String input = "The patient is from WV.";
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", Collections.emptyMap(), "documentid", PIECE, input, attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context",  "documentid", PIECE, input, attributes);
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertEquals(20, filterResult.getSpans().get(0).getCharacterStart());
@@ -60,14 +61,14 @@ public class StateAbbreviationFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new StateAbbreviationFilterStrategy()))
-                .withAnonymizationService(new StateAbbreviationAnonymizationService())
+                .withAnonymizationService(new StateAbbreviationAnonymizationService(new DefaultContextService()))
                 .withWindowSize(windowSize)
                 .build();
 
         final StateAbbreviationFilter filter = new StateAbbreviationFilter(filterConfiguration);
 
         final String input = "The patient is from wv.";
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", Collections.emptyMap(),"docid", PIECE, input, attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", "docid", PIECE, input, attributes);
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertEquals(20, filterResult.getSpans().get(0).getCharacterStart());
@@ -81,14 +82,14 @@ public class StateAbbreviationFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new StateAbbreviationFilterStrategy()))
-                .withAnonymizationService(new StateAbbreviationAnonymizationService())
+                .withAnonymizationService(new StateAbbreviationAnonymizationService(new DefaultContextService()))
                 .withWindowSize(windowSize)
                 .build();
 
         final StateAbbreviationFilter filter = new StateAbbreviationFilter(filterConfiguration);
 
         final String input = "Patients from WV and MD.";
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", Collections.emptyMap(),"docid", PIECE, input, attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", "docid", PIECE, input, attributes);
 
         showSpans(filterResult.getSpans());
 

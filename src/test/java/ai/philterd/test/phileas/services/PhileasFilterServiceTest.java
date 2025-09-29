@@ -15,14 +15,16 @@
  */
 package ai.philterd.test.phileas.services;
 
-import ai.philterd.phileas.model.configuration.PhileasConfiguration;
+import ai.philterd.phileas.PhileasConfiguration;
 import ai.philterd.phileas.model.enums.MimeType;
 import ai.philterd.phileas.model.objects.Span;
-import ai.philterd.phileas.model.policy.Ignored;
-import ai.philterd.phileas.model.policy.Policy;
 import ai.philterd.phileas.model.responses.BinaryDocumentFilterResponse;
 import ai.philterd.phileas.model.serializers.PlaceholderDeserializer;
+import ai.philterd.phileas.model.services.ContextService;
+import ai.philterd.phileas.model.services.DefaultContextService;
 import ai.philterd.phileas.model.services.VectorService;
+import ai.philterd.phileas.policy.Ignored;
+import ai.philterd.phileas.policy.Policy;
 import ai.philterd.phileas.services.PhileasFilterService;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -41,7 +43,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 
@@ -55,6 +56,7 @@ public class PhileasFilterServiceTest {
 
     private Gson gson;
     private final VectorService vectorService = Mockito.mock(VectorService.class);
+    private final ContextService contextService = new DefaultContextService();
 
     @BeforeEach
     public void before() {
@@ -112,8 +114,8 @@ public class PhileasFilterServiceTest {
 
         final Policy policy = getPdfPolicy("pdf");
 
-        final PhileasFilterService service = new PhileasFilterService(phileasConfiguration, vectorService);
-        final BinaryDocumentFilterResponse response = service.filter(policy, "context", Collections.emptyMap(), "documentid", document, MimeType.APPLICATION_PDF, MimeType.APPLICATION_PDF);
+        final PhileasFilterService service = new PhileasFilterService(phileasConfiguration, contextService, vectorService);
+        final BinaryDocumentFilterResponse response = service.filter(policy, "context",  "documentid", document, MimeType.APPLICATION_PDF, MimeType.APPLICATION_PDF);
 
         // Write the byte array to a file.
         final File outputFile = File.createTempFile("redact", ".pdf");
@@ -145,8 +147,8 @@ public class PhileasFilterServiceTest {
 
         final Policy policy = getPdfPolicy("pdf");
 
-        PhileasFilterService service = new PhileasFilterService(phileasConfiguration, vectorService);
-        final BinaryDocumentFilterResponse response = service.filter(policy, "context", Collections.emptyMap(), "documentid", document, MimeType.APPLICATION_PDF, MimeType.APPLICATION_PDF);
+        PhileasFilterService service = new PhileasFilterService(phileasConfiguration, contextService, vectorService);
+        final BinaryDocumentFilterResponse response = service.filter(policy, "context",  "documentid", document, MimeType.APPLICATION_PDF, MimeType.APPLICATION_PDF);
 
         // Write the byte array to a file.
         final File outputFile = File.createTempFile("redact", ".pdf");

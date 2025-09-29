@@ -15,10 +15,11 @@
  */
 package ai.philterd.test.phileas.services.strategies.rules;
 
-import ai.philterd.phileas.services.strategies.AbstractFilterStrategy;
-import ai.philterd.phileas.services.strategies.rules.PhoneNumberFilterStrategy;
+import ai.philterd.phileas.model.services.DefaultContextService;
 import ai.philterd.phileas.services.anonymization.AbstractAnonymizationService;
 import ai.philterd.phileas.services.anonymization.NumericAnonymizationService;
+import ai.philterd.phileas.services.strategies.AbstractFilterStrategy;
+import ai.philterd.phileas.services.strategies.rules.PhoneNumberFilterStrategy;
 import ai.philterd.test.phileas.services.strategies.AbstractFilterStrategyTest;
 
 public class PhoneNumberFilterStrategyTest extends AbstractFilterStrategyTest {
@@ -28,7 +29,7 @@ public class PhoneNumberFilterStrategyTest extends AbstractFilterStrategyTest {
     }
 
     public AbstractAnonymizationService getAnonymizationService() {
-        return new NumericAnonymizationService();
+        return new NumericAnonymizationService(new DefaultContextService());
     }
 
 }

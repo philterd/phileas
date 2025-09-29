@@ -16,18 +16,17 @@
 package ai.philterd.test.phileas.services.strategies.rules;
 
 import ai.philterd.phileas.model.objects.Replacement;
-import ai.philterd.phileas.model.policy.Crypto;
-import ai.philterd.phileas.model.policy.FPE;
-import ai.philterd.phileas.services.strategies.AbstractFilterStrategy;
-import ai.philterd.phileas.services.strategies.rules.IdentifierFilterStrategy;
 import ai.philterd.phileas.model.services.AnonymizationService;
+import ai.philterd.phileas.model.services.DefaultContextService;
+import ai.philterd.phileas.policy.Crypto;
+import ai.philterd.phileas.policy.FPE;
 import ai.philterd.phileas.services.anonymization.AbstractAnonymizationService;
 import ai.philterd.phileas.services.anonymization.AlphanumericAnonymizationService;
+import ai.philterd.phileas.services.strategies.AbstractFilterStrategy;
+import ai.philterd.phileas.services.strategies.rules.IdentifierFilterStrategy;
 import ai.philterd.test.phileas.services.strategies.AbstractFilterStrategyTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import java.util.Collections;
 
 public class IdentifierFilterStrategyTest extends AbstractFilterStrategyTest {
 
@@ -36,7 +35,7 @@ public class IdentifierFilterStrategyTest extends AbstractFilterStrategyTest {
     }
 
     public AbstractAnonymizationService getAnonymizationService() {
-        return new AlphanumericAnonymizationService();
+        return new AlphanumericAnonymizationService(new DefaultContextService());
     }
 
     @Test
@@ -45,7 +44,7 @@ public class IdentifierFilterStrategyTest extends AbstractFilterStrategyTest {
         final AbstractFilterStrategy strategy = getFilterStrategy();
 
         attributes.put("classification", "WV");
-        final boolean conditionSatisfied = strategy.evaluateCondition(getPolicy(), "context", Collections.emptyMap(), "documentid", "90210", WINDOW, "classification == \"WV\"", 1.0, attributes);
+        final boolean conditionSatisfied = strategy.evaluateCondition(getPolicy(), "context",  "documentid", "90210", WINDOW, "classification == \"WV\"", 1.0, attributes);
 
         Assertions.assertTrue(conditionSatisfied);
 
@@ -59,7 +58,7 @@ public class IdentifierFilterStrategyTest extends AbstractFilterStrategyTest {
         final AbstractFilterStrategy strategy = new IdentifierFilterStrategy();
         strategy.setStrategy(AbstractFilterStrategy.LAST_4);
 
-        final Replacement replacement = strategy.getReplacement("name", "context", Collections.emptyMap(),"docId",  "4111111111111111", WINDOW, new Crypto(), new FPE(), anonymizationService, null);
+        final Replacement replacement = strategy.getReplacement("name", "context", "docId",  "4111111111111111", WINDOW, new Crypto(), new FPE(), anonymizationService, null);
 
         Assertions.assertEquals("1111", replacement.getReplacement());
 

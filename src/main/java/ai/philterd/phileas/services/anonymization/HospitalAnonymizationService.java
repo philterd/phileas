@@ -15,21 +15,21 @@
  */
 package ai.philterd.phileas.services.anonymization;
 
+import ai.philterd.phileas.model.services.ContextService;
 import ai.philterd.phileas.services.anonymization.faker.Faker;
-
-import java.util.Map;
 
 public class HospitalAnonymizationService extends AbstractAnonymizationService {
 
     private final transient Faker faker;
 
-    public HospitalAnonymizationService() {
+    public HospitalAnonymizationService(final ContextService contextService) {
+        super(contextService);
         this.faker = new Faker();
     }
 
-    public HospitalAnonymizationService(final Map<String, String> context) {
-        super(context);
-        this.faker = new Faker();
+    @Override
+    public ContextService getContextService() {
+        return contextService;
     }
 
     @Override

@@ -16,6 +16,7 @@
 package ai.philterd.test.phileas.services.anonymization;
 
 import ai.philterd.phileas.model.services.AnonymizationService;
+import ai.philterd.phileas.model.services.DefaultContextService;
 import ai.philterd.phileas.services.anonymization.StateAnonymizationService;
 
 import org.apache.logging.log4j.LogManager;
@@ -30,14 +31,14 @@ public class StateAnonymizationServiceTest {
     @Test
     public void anonymize1() {
 
-        AnonymizationService anonymizationService = new StateAnonymizationService();
+        AnonymizationService anonymizationService = new StateAnonymizationService(new DefaultContextService());
 
         final String token = "abcd1234";
         final String replacement = anonymizationService.anonymize(token);
 
-        LOGGER.info("State: " + replacement);
+        LOGGER.info("State: {}", replacement);
         Assertions.assertNotNull(replacement);
-        Assertions.assertTrue(replacement.length() > 0);
+        Assertions.assertFalse(replacement.isEmpty());
 
     }
 

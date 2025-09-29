@@ -15,10 +15,11 @@
  */
 package ai.philterd.test.phileas.services.strategies.rules;
 
-import ai.philterd.phileas.services.strategies.AbstractFilterStrategy;
-import ai.philterd.phileas.services.strategies.rules.StateAbbreviationFilterStrategy;
+import ai.philterd.phileas.model.services.DefaultContextService;
 import ai.philterd.phileas.services.anonymization.AbstractAnonymizationService;
 import ai.philterd.phileas.services.anonymization.StateAbbreviationAnonymizationService;
+import ai.philterd.phileas.services.strategies.AbstractFilterStrategy;
+import ai.philterd.phileas.services.strategies.rules.StateAbbreviationFilterStrategy;
 import ai.philterd.test.phileas.services.strategies.AbstractFilterStrategyTest;
 
 public class StateAbbreviationFilterStrategyTest extends AbstractFilterStrategyTest {
@@ -28,7 +29,7 @@ public class StateAbbreviationFilterStrategyTest extends AbstractFilterStrategyT
     }
 
     public AbstractAnonymizationService getAnonymizationService() {
-        return new StateAbbreviationAnonymizationService();
+        return new StateAbbreviationAnonymizationService(new DefaultContextService());
     }
 
 }

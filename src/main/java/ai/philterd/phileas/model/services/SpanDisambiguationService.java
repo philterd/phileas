@@ -49,7 +49,7 @@ public interface SpanDisambiguationService {
      * @param spans A list of ambiguous spans.
      * @return A list of disambiguated spans.
      */
-    List<Span> disambiguate(String contextName, Map<String, String> context, List<Span> spans);
+    List<Span> disambiguate(String contextName, List<Span> spans);
 
     /**
      * Gets a boolean indicating if the disambiguation service is enabled.

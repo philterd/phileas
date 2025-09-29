@@ -15,7 +15,7 @@
  */
 package ai.philterd.phileas.model.policy;
 
-import ai.philterd.phileas.model.policy.FPE;
+import ai.philterd.phileas.policy.FPE;
 import org.junit.jupiter.api.Test;
 import org.junitpioneer.jupiter.SetEnvironmentVariable;
 

@@ -16,13 +16,12 @@
 package ai.philterd.phileas.services.filters.ai.pheye;
 
 import ai.philterd.phileas.model.enums.FilterType;
-import ai.philterd.phileas.model.filter.FilterConfiguration;
-import ai.philterd.phileas.model.filter.dynamic.NerFilter;
+import ai.philterd.phileas.filters.FilterConfiguration;
+import ai.philterd.phileas.filters.dynamic.NerFilter;
 import ai.philterd.phileas.model.objects.FilterResult;
 import ai.philterd.phileas.model.objects.Replacement;
 import ai.philterd.phileas.model.objects.Span;
-import ai.philterd.phileas.model.policy.Policy;
-import ai.philterd.phileas.model.services.MetricsService;
+import ai.philterd.phileas.policy.Policy;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import org.apache.commons.collections4.CollectionUtils;
@@ -65,11 +64,10 @@ public class PhEyeFilter extends NerFilter {
 
     public PhEyeFilter(final FilterConfiguration filterConfiguration,
                        final PhEyeConfiguration phEyeConfiguration,
-                       final MetricsService metricsService,
                        final boolean removePunctuation,
                        final Map<String, Double> thresholds) {
 
-        super(filterConfiguration, metricsService, thresholds, FilterType.AGE);
+        super(filterConfiguration, thresholds, FilterType.AGE);
 
         this.phEyeConfiguration = phEyeConfiguration;
         this.removePunctuation = removePunctuation;
@@ -86,7 +84,7 @@ public class PhEyeFilter extends NerFilter {
     }
 
     @Override
-    public FilterResult filter(final Policy policy, final String contextName, final Map<String, String> context, final String documentId, final int piece,
+    public FilterResult filter(final Policy policy, final String contextName, final String documentId, final int piece,
                                final String input, final Map<String, String> attributes) throws Exception {
 
         final List<Span> spans = new LinkedList<>();
@@ -173,7 +171,7 @@ public class PhEyeFilter extends NerFilter {
                             // Currently only PERSON type is supported.
                             final FilterType filterType = FilterType.PERSON;
 
-                            final Span span = createSpan(policy, contextName, context, documentId, filterType, phEyeSpan.getText(),
+                            final Span span = createSpan(policy, contextName, documentId, filterType, phEyeSpan.getText(),
                                     window, phEyeSpan.getLabel(), phEyeSpan.getStart(), phEyeSpan.getEnd(),
                                     phEyeSpan.getScore(), attributes);
 
@@ -205,16 +203,16 @@ public class PhEyeFilter extends NerFilter {
     @Override
     public int getOccurrences(final Policy policy, final String input, Map<String, String> attributes) throws Exception {
 
-        return filter(policy, "none", Collections.emptyMap(), "", 0, input, attributes).getSpans().size();
+        return filter(policy, "none",  "", 0, input, attributes).getSpans().size();
 
     }
 
-    private Span createSpan(final Policy policy, final String contextName, final Map<String, String> context, final String documentId,
+    private Span createSpan(final Policy policy, final String contextName, final String documentId,
                             final FilterType filterType, final String text, final  String[] window,
                             final String classification, final int start, final int end, final double confidence,
                             final Map<String, String> attributes) throws Exception {
 
-        final Replacement replacement = getReplacement(policy, contextName, context, documentId, text, window, confidence, classification, attributes, null);
+        final Replacement replacement = getReplacement(policy, contextName, documentId, text, window, confidence, classification, attributes, null);
 
         if(StringUtils.equals(replacement.getReplacement(), text)) {
 

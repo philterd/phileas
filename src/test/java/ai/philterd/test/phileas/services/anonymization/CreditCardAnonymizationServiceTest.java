@@ -16,6 +16,7 @@
 package ai.philterd.test.phileas.services.anonymization;
 
 import ai.philterd.phileas.model.services.AnonymizationService;
+import ai.philterd.phileas.model.services.DefaultContextService;
 import ai.philterd.phileas.services.anonymization.CreditCardAnonymizationService;
 
 import org.apache.logging.log4j.LogManager;
@@ -30,28 +31,28 @@ public class CreditCardAnonymizationServiceTest {
     @Test
     public void anonymize1() {
 
-        AnonymizationService anonymizationService = new CreditCardAnonymizationService();
+        AnonymizationService anonymizationService = new CreditCardAnonymizationService(new DefaultContextService());
 
         final String token = "abcd1234";
         final String replacement = anonymizationService.anonymize(token);
 
         LOGGER.info("Credit Card: " + replacement);
         Assertions.assertNotNull(replacement);
-        Assertions.assertTrue(replacement.length() == 16);
+        Assertions.assertEquals(16, replacement.length());
 
     }
 
     @Test
     public void anonymize2() {
 
-        AnonymizationService anonymizationService = new CreditCardAnonymizationService();
+        AnonymizationService anonymizationService = new CreditCardAnonymizationService(new DefaultContextService());
 
         final String token = "April 1, 2019";
         final String replacement = anonymizationService.anonymize(token);
 
         LOGGER.info("Credit Card: " + replacement);
         Assertions.assertNotNull(replacement);
-        Assertions.assertTrue(replacement.length() == 16);
+        Assertions.assertEquals(16, replacement.length());
 
     }
 

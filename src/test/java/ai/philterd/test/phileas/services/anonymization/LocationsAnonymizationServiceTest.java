@@ -15,6 +15,7 @@
  */
 package ai.philterd.test.phileas.services.anonymization;
 
+import ai.philterd.phileas.model.services.DefaultContextService;
 import ai.philterd.phileas.services.anonymization.LocationsAnonymizationService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -22,12 +23,12 @@ import org.junit.jupiter.api.Test;
 
 public class LocationsAnonymizationServiceTest {
 
-    private static final Logger LOGGER = LogManager.getLogger(IpAddressAnonymizationServiceTest.class);
+    private static final Logger LOGGER = LogManager.getLogger(LocationsAnonymizationServiceTest.class);
 
     @Test
     public void anonymizeLocation1() {
 
-        LocationsAnonymizationService anonymizationService = new LocationsAnonymizationService();
+        LocationsAnonymizationService anonymizationService = new LocationsAnonymizationService(new DefaultContextService());
 
         final String token = "Morgantown";
         final String replacement = anonymizationService.anonymize(token);

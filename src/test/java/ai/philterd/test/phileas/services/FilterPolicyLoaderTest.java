@@ -15,13 +15,14 @@
  */
 package ai.philterd.test.phileas.services;
 
-import ai.philterd.phileas.model.configuration.PhileasConfiguration;
+import ai.philterd.phileas.PhileasConfiguration;
 import ai.philterd.phileas.model.enums.FilterType;
-import ai.philterd.phileas.model.filter.Filter;
-import ai.philterd.phileas.model.policy.Identifiers;
-import ai.philterd.phileas.model.policy.Policy;
-import ai.philterd.phileas.model.policy.filters.ZipCode;
-import ai.philterd.phileas.model.services.MetricsService;
+import ai.philterd.phileas.filters.Filter;
+import ai.philterd.phileas.model.services.ContextService;
+import ai.philterd.phileas.model.services.DefaultContextService;
+import ai.philterd.phileas.policy.Identifiers;
+import ai.philterd.phileas.policy.Policy;
+import ai.philterd.phileas.policy.filters.ZipCode;
 import ai.philterd.phileas.services.FilterPolicyLoader;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -42,11 +43,12 @@ public class FilterPolicyLoaderTest {
     @Test
     public void checkDefaultWindowSize() throws Exception {
 
-        final MetricsService metricsService = Mockito.mock(MetricsService.class);
+        final ContextService contextService = new DefaultContextService();
+
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(new Properties());
         final Map<String, String> context = Collections.emptyMap();
 
-        final FilterPolicyLoader filterPolicyLoader = new FilterPolicyLoader(metricsService, phileasConfiguration);
+        final FilterPolicyLoader filterPolicyLoader = new FilterPolicyLoader(contextService, phileasConfiguration);
 
         final Identifiers identifiers = new Identifiers();
         identifiers.setZipCode(new ZipCode());
@@ -57,7 +59,7 @@ public class FilterPolicyLoaderTest {
 
         final Map<String, Map<FilterType, Filter>> filterCache = new HashMap<>();
 
-        final List<Filter> filters = filterPolicyLoader.getFiltersForPolicy(policy, filterCache, context);
+        final List<Filter> filters = filterPolicyLoader.getFiltersForPolicy(policy, filterCache);
 
         Assertions.assertEquals(1, filters.size());
         Assertions.assertEquals(5, filters.get(0).getWindowSize());
@@ -67,13 +69,13 @@ public class FilterPolicyLoaderTest {
     @Test
     public void checkCustomWindowSize() throws Exception {
 
-        final MetricsService metricsService = Mockito.mock(MetricsService.class);
+        final ContextService contextService = new DefaultContextService();
 
         final Properties properties = new Properties();
         properties.put("span.window.size", "3");
 
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties);
-        final FilterPolicyLoader filterPolicyLoader = new FilterPolicyLoader(metricsService, phileasConfiguration);
+        final FilterPolicyLoader filterPolicyLoader = new FilterPolicyLoader(contextService, phileasConfiguration);
         final Map<String, String> context = Collections.emptyMap();
 
         final Identifiers identifiers = new Identifiers();
@@ -85,7 +87,7 @@ public class FilterPolicyLoaderTest {
 
         final Map<String, Map<FilterType, Filter>> filterCache = new HashMap<>();
 
-        final List<Filter> filters = filterPolicyLoader.getFiltersForPolicy(policy, filterCache, context);
+        final List<Filter> filters = filterPolicyLoader.getFiltersForPolicy(policy, filterCache);
 
         Assertions.assertEquals(1, filters.size());
         Assertions.assertEquals(3, filters.get(0).getWindowSize());
@@ -95,11 +97,12 @@ public class FilterPolicyLoaderTest {
     @Test
     public void getFiltersForPolicy() throws Exception {
 
-        final MetricsService metricsService = Mockito.mock(MetricsService.class);
+        final ContextService contextService = new DefaultContextService();
+
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(new Properties());
         final Map<String, String> context = Collections.emptyMap();
 
-        final FilterPolicyLoader filterPolicyLoader = new FilterPolicyLoader(metricsService, phileasConfiguration);
+        final FilterPolicyLoader filterPolicyLoader = new FilterPolicyLoader(contextService, phileasConfiguration);
 
         final Identifiers identifiers = new Identifiers();
         identifiers.setZipCode(new ZipCode());
@@ -110,7 +113,7 @@ public class FilterPolicyLoaderTest {
 
         final Map<String, Map<FilterType, Filter>> filterCache = new HashMap<>();
 
-        final List<Filter> filters = filterPolicyLoader.getFiltersForPolicy(policy, filterCache, context);
+        final List<Filter> filters = filterPolicyLoader.getFiltersForPolicy(policy, filterCache);
 
         Assertions.assertEquals(1, filters.size());
         Assertions.assertEquals(1, filterCache.size());
@@ -121,18 +124,18 @@ public class FilterPolicyLoaderTest {
     @Test
     public void getFiltersForPolicyWithNoFilters() throws Exception {
 
-        final MetricsService metricsService = Mockito.mock(MetricsService.class);
+        final ContextService contextService = new DefaultContextService();
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(new Properties());
         final Map<String, String> context = Collections.emptyMap();
 
-        final FilterPolicyLoader filterPolicyLoader = new FilterPolicyLoader(metricsService, phileasConfiguration);
+        final FilterPolicyLoader filterPolicyLoader = new FilterPolicyLoader(contextService, phileasConfiguration);
 
         final Policy policy = new Policy();
         policy.setName("unnamed");
 
         final Map<String, Map<FilterType, Filter>> filterCache = new HashMap<>();
 
-        final List<Filter> filters = filterPolicyLoader.getFiltersForPolicy(policy, filterCache, context);
+        final List<Filter> filters = filterPolicyLoader.getFiltersForPolicy(policy, filterCache);
 
         Assertions.assertEquals(0, filters.size());
         Assertions.assertEquals(1, filterCache.size());

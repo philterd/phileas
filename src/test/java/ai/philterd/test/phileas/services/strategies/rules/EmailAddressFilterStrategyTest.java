@@ -15,15 +15,14 @@
  */
 package ai.philterd.test.phileas.services.strategies.rules;
 
-import ai.philterd.phileas.services.strategies.AbstractFilterStrategy;
-import ai.philterd.phileas.services.strategies.rules.EmailAddressFilterStrategy;
+import ai.philterd.phileas.model.services.DefaultContextService;
 import ai.philterd.phileas.services.anonymization.AbstractAnonymizationService;
 import ai.philterd.phileas.services.anonymization.EmailAddressAnonymizationService;
+import ai.philterd.phileas.services.strategies.AbstractFilterStrategy;
+import ai.philterd.phileas.services.strategies.rules.EmailAddressFilterStrategy;
 import ai.philterd.test.phileas.services.strategies.AbstractFilterStrategyTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import java.util.Collections;
 
 public class EmailAddressFilterStrategyTest extends AbstractFilterStrategyTest {
 
@@ -32,7 +31,7 @@ public class EmailAddressFilterStrategyTest extends AbstractFilterStrategyTest {
     }
 
     public AbstractAnonymizationService getAnonymizationService() {
-        return new EmailAddressAnonymizationService();
+        return new EmailAddressAnonymizationService(new DefaultContextService());
     }
 
     @Test
@@ -40,7 +39,7 @@ public class EmailAddressFilterStrategyTest extends AbstractFilterStrategyTest {
 
         final AbstractFilterStrategy strategy = new EmailAddressFilterStrategy();
 
-        final boolean conditionSatisfied = strategy.evaluateCondition(getPolicy(), "context", Collections.emptyMap(), "documentid",  "test@test.com", WINDOW, "token == \"test@test.com\"", 1.0, attributes);
+        final boolean conditionSatisfied = strategy.evaluateCondition(getPolicy(), "context",  "documentid",  "test@test.com", WINDOW, "token == \"test@test.com\"", 1.0, attributes);
 
         Assertions.assertTrue(conditionSatisfied);
 

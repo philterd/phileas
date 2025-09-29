@@ -15,6 +15,7 @@
  */
 package ai.philterd.test.phileas.services.strategies.dynamic;
 
+import ai.philterd.phileas.model.services.DefaultContextService;
 import ai.philterd.phileas.services.strategies.AbstractFilterStrategy;
 import ai.philterd.phileas.services.strategies.dynamic.HospitalAbbreviationFilterStrategy;
 import ai.philterd.phileas.services.anonymization.AbstractAnonymizationService;
@@ -28,7 +29,7 @@ public class HospitalAbbreviationFilterStrategyTest extends AbstractFilterStrate
     }
 
     public AbstractAnonymizationService getAnonymizationService() {
-        return new HospitalAbbreviationAnonymizationService();
+        return new HospitalAbbreviationAnonymizationService(new DefaultContextService());
     }
 
 }

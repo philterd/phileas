@@ -15,7 +15,7 @@
  */
 package ai.philterd.phileas.services.disambiguation;
 
-import ai.philterd.phileas.model.configuration.PhileasConfiguration;
+import ai.philterd.phileas.PhileasConfiguration;
 import ai.philterd.phileas.model.enums.FilterType;
 import ai.philterd.phileas.model.objects.Span;
 import ai.philterd.phileas.model.services.SpanDisambiguationService;
@@ -61,7 +61,7 @@ public class VectorBasedSpanDisambiguationService extends AbstractSpanDisambigua
     }
 
     @Override
-    public List<Span> disambiguate(final String contextName, final Map<String, String> context, final List<Span> spans) {
+    public List<Span> disambiguate(final String contextName, final List<Span> spans) {
 
         final Set<Span> disambiguatedSpans = new LinkedHashSet<>();
 

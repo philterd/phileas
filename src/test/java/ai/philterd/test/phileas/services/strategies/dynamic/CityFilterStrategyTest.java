@@ -15,6 +15,7 @@
  */
 package ai.philterd.test.phileas.services.strategies.dynamic;
 
+import ai.philterd.phileas.model.services.DefaultContextService;
 import ai.philterd.phileas.services.strategies.AbstractFilterStrategy;
 import ai.philterd.phileas.services.strategies.dynamic.CityFilterStrategy;
 import ai.philterd.phileas.services.anonymization.AbstractAnonymizationService;
@@ -28,7 +29,7 @@ public class CityFilterStrategyTest extends AbstractFilterStrategyTest {
     }
 
     public AbstractAnonymizationService getAnonymizationService() {
-        return new CityAnonymizationService();
+        return new CityAnonymizationService(new DefaultContextService());
     }
 
 }

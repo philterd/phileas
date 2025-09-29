@@ -16,6 +16,7 @@
 package ai.philterd.test.phileas.services.anonymization;
 
 import ai.philterd.phileas.model.services.AnonymizationService;
+import ai.philterd.phileas.model.services.DefaultContextService;
 import ai.philterd.phileas.services.anonymization.UrlAnonymizationService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -28,12 +29,12 @@ public class UrlAnonymizationServiceTest {
     @Test
     public void anonymize() {
 
-        AnonymizationService anonymizationService = new UrlAnonymizationService();
+        AnonymizationService anonymizationService = new UrlAnonymizationService(new DefaultContextService());
 
         final String token = "http://www.cnn.com";
         final String replacement = anonymizationService.anonymize(token);
 
-        LOGGER.info("URL replacement: " + replacement);
+        LOGGER.info("URL replacement: {}", replacement);
 
     }
 

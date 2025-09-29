@@ -16,7 +16,7 @@
 package disambiguation;
 
 import ai.philterd.phileas.model.cache.InMemoryVector;
-import ai.philterd.phileas.model.configuration.PhileasConfiguration;
+import ai.philterd.phileas.PhileasConfiguration;
 import ai.philterd.phileas.model.enums.FilterType;
 import ai.philterd.phileas.model.objects.Span;
 import ai.philterd.phileas.model.services.VectorService;
@@ -101,7 +101,7 @@ public class VectorBasedSpanDisambiguationServiceTest {
 
         final List<Span> spans = Arrays.asList(span, span1, span2, ambiguousSpan);
 
-        final List<Span> disambiguatedSpans = vectorBasedSpanDisambiguationService.disambiguate(context, Collections.emptyMap(), spans);
+        final List<Span> disambiguatedSpans = vectorBasedSpanDisambiguationService.disambiguate(context, spans);
 
         showSpans(disambiguatedSpans);
 

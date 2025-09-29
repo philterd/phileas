@@ -16,6 +16,7 @@
 package ai.philterd.test.phileas.services.anonymization;
 
 import ai.philterd.phileas.model.services.AnonymizationService;
+import ai.philterd.phileas.model.services.DefaultContextService;
 import ai.philterd.phileas.services.anonymization.HospitalAbbreviationAnonymizationService;
 
 import org.apache.commons.lang3.StringUtils;
@@ -31,7 +32,7 @@ public class HospitalAbbreviationAnonymizationServiceTest {
     @Test
     public void anonymize() {
 
-        AnonymizationService anonymizationService = new HospitalAbbreviationAnonymizationService();
+        AnonymizationService anonymizationService = new HospitalAbbreviationAnonymizationService(new DefaultContextService());
 
         final String token = "Plateau Medical Center";
         final String replacement = anonymizationService.anonymize(token);

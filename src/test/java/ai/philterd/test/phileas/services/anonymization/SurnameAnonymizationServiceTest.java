@@ -16,6 +16,8 @@
 package ai.philterd.test.phileas.services.anonymization;
 
 import ai.philterd.phileas.model.services.AnonymizationService;
+import ai.philterd.phileas.model.services.ContextService;
+import ai.philterd.phileas.model.services.DefaultContextService;
 import ai.philterd.phileas.services.anonymization.SurnameAnonymizationService;
 
 import org.apache.logging.log4j.LogManager;
@@ -30,28 +32,32 @@ public class SurnameAnonymizationServiceTest {
     @Test
     public void anonymize1() {
 
-        AnonymizationService anonymizationService = new SurnameAnonymizationService();
+        final ContextService contextService = new DefaultContextService();
+
+        AnonymizationService anonymizationService = new SurnameAnonymizationService(contextService);
 
         final String token = "abcd1234";
         final String replacement = anonymizationService.anonymize(token);
 
-        LOGGER.info("Surname: " + replacement);
+        LOGGER.info("Surname: {}", replacement);
         Assertions.assertNotNull(replacement);
-        Assertions.assertTrue(replacement.length() > 0);
+        Assertions.assertFalse(replacement.isEmpty());
 
     }
 
     @Test
     public void anonymize2() {
 
-        AnonymizationService anonymizationService = new SurnameAnonymizationService();
+        final ContextService contextService = new DefaultContextService();
+
+        AnonymizationService anonymizationService = new SurnameAnonymizationService(contextService);
 
         final String token = "April 1, 2019";
         final String replacement = anonymizationService.anonymize(token);
 
-        LOGGER.info("Surname: " + replacement);
+        LOGGER.info("Surname: {}", replacement);
         Assertions.assertNotNull(replacement);
-        Assertions.assertTrue(replacement.length() > 0);
+        Assertions.assertFalse(replacement.isEmpty());
 
     }
 

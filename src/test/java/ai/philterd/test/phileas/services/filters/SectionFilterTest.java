@@ -15,16 +15,16 @@
  */
 package ai.philterd.test.phileas.services.filters;
 
+import ai.philterd.phileas.filters.FilterConfiguration;
 import ai.philterd.phileas.model.enums.FilterType;
-import ai.philterd.phileas.model.filter.FilterConfiguration;
 import ai.philterd.phileas.model.objects.FilterResult;
-import ai.philterd.phileas.services.strategies.rules.SectionFilterStrategy;
+import ai.philterd.phileas.model.services.DefaultContextService;
 import ai.philterd.phileas.services.anonymization.AlphanumericAnonymizationService;
 import ai.philterd.phileas.services.filters.regex.SectionFilter;
+import ai.philterd.phileas.services.strategies.rules.SectionFilterStrategy;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.util.Collections;
 import java.util.List;
 
 public class SectionFilterTest extends AbstractFilterTest {
@@ -37,13 +37,13 @@ public class SectionFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new SectionFilterStrategy()))
-                .withAnonymizationService(new AlphanumericAnonymizationService())
+                .withAnonymizationService(new AlphanumericAnonymizationService(new DefaultContextService()))
                 .withWindowSize(windowSize)
                 .build();
 
         final SectionFilter filter = new SectionFilter(filterConfiguration, startPattern, endPattern);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", Collections.emptyMap(), "documentid", PIECE, "This is some test. BEGIN-REDACT This text should be redacted. END-REDACT This is outside the text.", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context",  "documentid", PIECE, "This is some test. BEGIN-REDACT This text should be redacted. END-REDACT This is outside the text.", attributes);
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 19, 72, FilterType.SECTION));
@@ -59,13 +59,13 @@ public class SectionFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new SectionFilterStrategy()))
-                .withAnonymizationService(new AlphanumericAnonymizationService())
+                .withAnonymizationService(new AlphanumericAnonymizationService(new DefaultContextService()))
                 .withWindowSize(windowSize)
                 .build();
 
         final SectionFilter filter = new SectionFilter(filterConfiguration, startPattern, endPattern);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", Collections.emptyMap(), "documentid", PIECE, "This is some test. BEGIN-REDACT This text should be redacted. This is outside the text.", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context",  "documentid", PIECE, "This is some test. BEGIN-REDACT This text should be redacted. This is outside the text.", attributes);
 
         Assertions.assertEquals(0, filterResult.getSpans().size());
 
@@ -79,13 +79,13 @@ public class SectionFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new SectionFilterStrategy()))
-                .withAnonymizationService(new AlphanumericAnonymizationService())
+                .withAnonymizationService(new AlphanumericAnonymizationService(new DefaultContextService()))
                 .withWindowSize(windowSize)
                 .build();
 
         final SectionFilter filter = new SectionFilter(filterConfiguration, startPattern, endPattern);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", Collections.emptyMap(), "documentid", PIECE, "BEGIN-REDACT This text should be redacted. END-REDACT This is outside the text.", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context",  "documentid", PIECE, "BEGIN-REDACT This text should be redacted. END-REDACT This is outside the text.", attributes);
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 0, 53, FilterType.SECTION));

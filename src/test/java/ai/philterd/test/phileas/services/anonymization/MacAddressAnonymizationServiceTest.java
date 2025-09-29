@@ -16,6 +16,7 @@
 package ai.philterd.test.phileas.services.anonymization;
 
 import ai.philterd.phileas.model.services.AnonymizationService;
+import ai.philterd.phileas.model.services.DefaultContextService;
 import ai.philterd.phileas.services.anonymization.MacAddressAnonymizationService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -28,7 +29,7 @@ public class MacAddressAnonymizationServiceTest {
     @Test
     public void anonymize1() {
 
-        final AnonymizationService anonymizationService = new MacAddressAnonymizationService();
+        final AnonymizationService anonymizationService = new MacAddressAnonymizationService(new DefaultContextService());
 
         final String token = "00-14-22-04-25-37";
         final String replacement = anonymizationService.anonymize(token);

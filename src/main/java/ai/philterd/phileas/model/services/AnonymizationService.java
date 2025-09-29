@@ -15,8 +15,6 @@
  */
 package ai.philterd.phileas.model.services;
 
-import java.util.Map;
-
 /**
  * An anonymization service.
  */
@@ -29,6 +27,6 @@ public interface AnonymizationService {
      */
     String anonymize(String token);
 
-    Map<String, String> getContext();
+    ContextService getContextService();
 
 }

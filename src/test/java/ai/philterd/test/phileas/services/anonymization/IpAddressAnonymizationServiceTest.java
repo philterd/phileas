@@ -16,6 +16,7 @@
 package ai.philterd.test.phileas.services.anonymization;
 
 import ai.philterd.phileas.model.services.AnonymizationService;
+import ai.philterd.phileas.model.services.DefaultContextService;
 import ai.philterd.phileas.services.anonymization.IpAddressAnonymizationService;
 
 import org.apache.logging.log4j.LogManager;
@@ -29,7 +30,7 @@ public class IpAddressAnonymizationServiceTest {
     @Test
     public void anonymizeIPv4() {
 
-        AnonymizationService anonymizationService = new IpAddressAnonymizationService();
+        AnonymizationService anonymizationService = new IpAddressAnonymizationService(new DefaultContextService());
 
         final String token = "192.168.1.1";
         final String replacement = anonymizationService.anonymize(token);
@@ -41,7 +42,7 @@ public class IpAddressAnonymizationServiceTest {
     @Test
     public void anonymizeIPv6() {
 
-        AnonymizationService anonymizationService = new IpAddressAnonymizationService();
+        AnonymizationService anonymizationService = new IpAddressAnonymizationService(new DefaultContextService());
 
         final String token = "2001:0db8:85a3:08d3:1319:8a2e:0370:7344";
         final String replacement = anonymizationService.anonymize(token);

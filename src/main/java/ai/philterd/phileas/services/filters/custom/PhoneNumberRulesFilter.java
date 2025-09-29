@@ -18,12 +18,12 @@ package ai.philterd.phileas.services.filters.custom;
 import com.google.i18n.phonenumbers.PhoneNumberMatch;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
 import ai.philterd.phileas.model.enums.FilterType;
-import ai.philterd.phileas.model.filter.FilterConfiguration;
-import ai.philterd.phileas.model.filter.rules.RulesFilter;
+import ai.philterd.phileas.filters.FilterConfiguration;
+import ai.philterd.phileas.filters.rules.RulesFilter;
 import ai.philterd.phileas.model.objects.FilterResult;
 import ai.philterd.phileas.model.objects.Replacement;
 import ai.philterd.phileas.model.objects.Span;
-import ai.philterd.phileas.model.policy.Policy;
+import ai.philterd.phileas.policy.Policy;
 
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -54,7 +54,7 @@ public class PhoneNumberRulesFilter extends RulesFilter {
     }
 
     @Override
-    public FilterResult filter(final Policy policy, final String contextName, final Map<String, String> context, final String documentId, final int piece,
+    public FilterResult filter(final Policy policy, final String contextName, final String documentId, final int piece,
                                final String input, final Map<String, String> attributes) throws Exception {
 
         final List<Span> spans = new LinkedList<>();
@@ -81,7 +81,7 @@ public class PhoneNumberRulesFilter extends RulesFilter {
 
                 final String[] window = getWindow(input, match.start(), match.end());
                 final String classification = "";
-                final Replacement replacement = getReplacement(policy, contextName, context, documentId, text, window, confidence,
+                final Replacement replacement = getReplacement(policy, contextName, documentId, text, window, confidence,
                         classification, attributes, null);
                 final boolean isIgnored = ignored.contains(text);
 

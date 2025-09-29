@@ -16,8 +16,9 @@
 package ai.philterd.test.phileas.services.filters;
 
 import ai.philterd.phileas.model.enums.FilterType;
-import ai.philterd.phileas.model.filter.FilterConfiguration;
+import ai.philterd.phileas.filters.FilterConfiguration;
 import ai.philterd.phileas.model.objects.FilterResult;
+import ai.philterd.phileas.model.services.DefaultContextService;
 import ai.philterd.phileas.services.strategies.rules.BitcoinAddressFilterStrategy;
 import ai.philterd.phileas.services.anonymization.BitcoinAddressAnonymizationService;
 import ai.philterd.phileas.services.filters.regex.BitcoinAddressFilter;
@@ -34,13 +35,13 @@ public class BitcoinAddressFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new BitcoinAddressFilterStrategy()))
-                .withAnonymizationService(new BitcoinAddressAnonymizationService())
+                .withAnonymizationService(new BitcoinAddressAnonymizationService(new DefaultContextService()))
                 .withWindowSize(windowSize)
                 .build();
 
         final BitcoinAddressFilter filter = new BitcoinAddressFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", Collections.emptyMap(), "documentid", PIECE, "the address is 127NVqnjf8gB9BFAW2dnQeM6wqmy1gbGtv.", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context",  "documentid", PIECE, "the address is 127NVqnjf8gB9BFAW2dnQeM6wqmy1gbGtv.", attributes);
 
         showSpans(filterResult.getSpans());
 
@@ -56,13 +57,13 @@ public class BitcoinAddressFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new BitcoinAddressFilterStrategy()))
-                .withAnonymizationService(new BitcoinAddressAnonymizationService())
+                .withAnonymizationService(new BitcoinAddressAnonymizationService(new DefaultContextService()))
                 .withWindowSize(windowSize)
                 .build();
 
         final BitcoinAddressFilter filter = new BitcoinAddressFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", Collections.emptyMap(), "documentid", PIECE, "the address is 12qnjf8FAW2dnQeM6wqmy1gbGtv.", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context",  "documentid", PIECE, "the address is 12qnjf8FAW2dnQeM6wqmy1gbGtv.", attributes);
 
         showSpans(filterResult.getSpans());
 
@@ -78,13 +79,13 @@ public class BitcoinAddressFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new BitcoinAddressFilterStrategy()))
-                .withAnonymizationService(new BitcoinAddressAnonymizationService())
+                .withAnonymizationService(new BitcoinAddressAnonymizationService(new DefaultContextService()))
                 .withWindowSize(windowSize)
                 .build();
 
         final BitcoinAddressFilter filter = new BitcoinAddressFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", Collections.emptyMap(), "documentid", PIECE, "the address is 126wqmy1gbGtv.", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context",  "documentid", PIECE, "the address is 126wqmy1gbGtv.", attributes);
 
         showSpans(filterResult.getSpans());
 

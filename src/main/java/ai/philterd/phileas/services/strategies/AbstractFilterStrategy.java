@@ -19,9 +19,9 @@ import ai.philterd.phileas.model.conditions.ParsedCondition;
 import ai.philterd.phileas.model.enums.FilterType;
 import ai.philterd.phileas.model.objects.FilterPattern;
 import ai.philterd.phileas.model.objects.Replacement;
-import ai.philterd.phileas.model.policy.Crypto;
-import ai.philterd.phileas.model.policy.FPE;
-import ai.philterd.phileas.model.policy.Policy;
+import ai.philterd.phileas.policy.Crypto;
+import ai.philterd.phileas.policy.FPE;
+import ai.philterd.phileas.policy.Policy;
 import ai.philterd.phileas.model.services.AnonymizationService;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
@@ -147,7 +147,7 @@ public abstract class AbstractFilterStrategy {
      * @param filterPattern The filter pattern that identified the filter, or <code>null</code> if no pattern was used.
      * @return A replacement value for a token.
      */
-    public abstract Replacement getReplacement(String classification, String contextName, Map<String, String> context, String documentId, String token,
+    public abstract Replacement getReplacement(String classification, String contextName, String documentId, String token,
                                                String[] window, Crypto crypto, FPE fpe,
                                                AnonymizationService anonymizationService, FilterPattern filterPattern) throws Exception;
 
@@ -164,7 +164,7 @@ public abstract class AbstractFilterStrategy {
      * @param attributes Attributes about hte document.
      * @return <code>true</code> if the condition matches; otherwise <code>false</code>.
      */
-    public abstract boolean evaluateCondition(Policy policy, String contextName, Map<String, String> context, String documentId, String token,
+    public abstract boolean evaluateCondition(Policy policy, String contextName, String documentId, String token,
                                               String[] window, String condition, double confidence,
                                               Map<String, String> attributes);
 
@@ -305,19 +305,19 @@ public abstract class AbstractFilterStrategy {
             // Do look at the context.
 
             // Have we seen this token in this context before?
-            if (anonymizationService.getContext().containsKey(token)) {
+            if (anonymizationService.getContextService().containsToken(token)) {
 
                 // Yes, we have previously seen this token in this context.
-                replacement = anonymizationService.getContext().get(token);
+                replacement = anonymizationService.getContextService().getReplacement(token);
 
             } else {
 
                 // Make sure we aren't trying to anonymize a token we have already anonymized.
-                if (!anonymizationService.getContext().containsValue(token)) {
+                if (!anonymizationService.getContextService().containsReplacement(token)) {
 
                     // This is not a token we have already anonymized.
                     replacement = anonymizationService.anonymize(token);
-                    anonymizationService.getContext().put(token, replacement);
+                    anonymizationService.getContextService().putReplacement(token, replacement);
 
                 }
 

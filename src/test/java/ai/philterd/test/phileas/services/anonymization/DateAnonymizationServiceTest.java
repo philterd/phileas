@@ -16,6 +16,7 @@
 package ai.philterd.test.phileas.services.anonymization;
 
 import ai.philterd.phileas.model.services.AnonymizationService;
+import ai.philterd.phileas.model.services.DefaultContextService;
 import ai.philterd.phileas.services.anonymization.DateAnonymizationService;
 
 import org.apache.logging.log4j.LogManager;
@@ -29,7 +30,7 @@ public class DateAnonymizationServiceTest {
     @Test
     public void anonymize1() {
 
-        AnonymizationService anonymizationService = new DateAnonymizationService();
+        AnonymizationService anonymizationService = new DateAnonymizationService(new DefaultContextService());
 
         final String token = "11-18-2018";
         final String replacement = anonymizationService.anonymize(token);
@@ -41,7 +42,7 @@ public class DateAnonymizationServiceTest {
     @Test
     public void anonymize2() {
 
-        AnonymizationService anonymizationService = new DateAnonymizationService();
+        AnonymizationService anonymizationService = new DateAnonymizationService(new DefaultContextService());
 
         final String token = "April 1, 2019";
         final String replacement = anonymizationService.anonymize(token);

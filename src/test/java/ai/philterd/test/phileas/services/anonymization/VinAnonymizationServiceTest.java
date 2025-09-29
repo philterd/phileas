@@ -16,6 +16,7 @@
 package ai.philterd.test.phileas.services.anonymization;
 
 import ai.philterd.phileas.model.services.AnonymizationService;
+import ai.philterd.phileas.model.services.DefaultContextService;
 import ai.philterd.phileas.services.anonymization.VinAnonymizationService;
 
 import org.apache.logging.log4j.LogManager;
@@ -30,12 +31,12 @@ public class VinAnonymizationServiceTest {
     @Test
     public void anonymize() {
 
-        AnonymizationService anonymizationService = new VinAnonymizationService();
+        AnonymizationService anonymizationService = new VinAnonymizationService(new DefaultContextService());
 
         final String token = "11111111111111111";
         final String replacement = anonymizationService.anonymize(token);
 
-        LOGGER.info("VIN replacement: " + replacement);
+        LOGGER.info("VIN replacement: {}", replacement);
 
         Assertions.assertNotNull(replacement);
         Assertions.assertEquals(17, replacement.length());
