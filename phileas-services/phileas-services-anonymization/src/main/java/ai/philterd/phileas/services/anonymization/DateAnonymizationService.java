@@ -15,13 +15,13 @@
  */
 package ai.philterd.phileas.services.anonymization;
 
-import ai.philterd.phileas.model.services.CacheService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
+import java.util.Map;
 import java.util.Random;
 import java.util.regex.Pattern;
 
@@ -37,8 +37,12 @@ public class DateAnonymizationService extends AbstractAnonymizationService {
 
     private final Random random;
 
-    public DateAnonymizationService(CacheService anonymizationCacheService) {
-        super(anonymizationCacheService);
+    public DateAnonymizationService() {
+        this.random = new Random();
+    }
+
+    public DateAnonymizationService(final Map<String, String> context) {
+        super(context);
         this.random = new Random();
     }
 

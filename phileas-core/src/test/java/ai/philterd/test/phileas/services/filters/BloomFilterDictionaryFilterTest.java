@@ -15,14 +15,12 @@
  */
 package ai.philterd.test.phileas.services.filters;
 
-import ai.philterd.phileas.model.cache.InMemoryCache;
 import ai.philterd.phileas.model.enums.FilterType;
 import ai.philterd.phileas.model.filter.FilterConfiguration;
 import ai.philterd.phileas.model.filter.rules.dictionary.BloomFilterDictionaryFilter;
 import ai.philterd.phileas.model.objects.FilterResult;
 import ai.philterd.phileas.model.objects.Span;
 import ai.philterd.phileas.model.policy.filters.strategies.custom.CustomDictionaryFilterStrategy;
-import ai.philterd.phileas.model.services.AlertService;
 import ai.philterd.phileas.services.anonymization.AlphanumericAnonymizationService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -31,6 +29,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -39,22 +38,19 @@ public class BloomFilterDictionaryFilterTest extends AbstractFilterTest {
 
     private static final Logger LOGGER = LogManager.getLogger(BloomFilterDictionaryFilterTest.class);
 
-    private final AlertService alertService = Mockito.mock(AlertService.class);
-
     @Test
     public void filterDictionaryExactMatch() throws Exception {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new CustomDictionaryFilterStrategy()))
-                .withAlertService(alertService)
-                .withAnonymizationService(new AlphanumericAnonymizationService(new InMemoryCache()))
+                .withAnonymizationService(new AlphanumericAnonymizationService())
                 .withWindowSize(windowSize)
                 .build();
 
         final Set<String> names = new HashSet<>(Arrays.asList("george", "ted", "Bill", "john"));
         final BloomFilterDictionaryFilter filter = new BloomFilterDictionaryFilter(FilterType.CUSTOM_DICTIONARY, filterConfiguration, names, "none");
 
-         final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "He lived with Bill in California.", attributes);
+         final FilterResult filterResult = filter.filter(getPolicy(), "context", Collections.emptyMap(), "documentid", PIECE, "He lived with Bill in California.", attributes);
 
         showSpans(filterResult.getSpans());
 
@@ -69,15 +65,14 @@ public class BloomFilterDictionaryFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new CustomDictionaryFilterStrategy()))
-                .withAlertService(alertService)
-                .withAnonymizationService(new AlphanumericAnonymizationService(new InMemoryCache()))
+                .withAnonymizationService(new AlphanumericAnonymizationService())
                 .withWindowSize(windowSize)
                 .build();
 
         final Set<String> names = new HashSet<>(Arrays.asList("george", "ted", "bill", "john"));
         final BloomFilterDictionaryFilter filter = new BloomFilterDictionaryFilter(FilterType.CUSTOM_DICTIONARY, filterConfiguration, names, "none");
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "He lived with Bill in California.", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", Collections.emptyMap(), "documentid", PIECE, "He lived with Bill in California.", attributes);
 
         showSpans(filterResult.getSpans());
 
@@ -92,15 +87,14 @@ public class BloomFilterDictionaryFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new CustomDictionaryFilterStrategy()))
-                .withAlertService(alertService)
-                .withAnonymizationService(new AlphanumericAnonymizationService(new InMemoryCache()))
+                .withAnonymizationService(new AlphanumericAnonymizationService())
                 .withWindowSize(windowSize)
                 .build();
 
         final Set<String> names = new HashSet<>(Arrays.asList("george", "ted", "bill", "john"));
         final BloomFilterDictionaryFilter filter = new BloomFilterDictionaryFilter(FilterType.CUSTOM_DICTIONARY, filterConfiguration, names, "none");
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "He lived with Sam in California.", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", Collections.emptyMap(), "documentid", PIECE, "He lived with Sam in California.", attributes);
 
         showSpans(filterResult.getSpans());
 
@@ -113,15 +107,14 @@ public class BloomFilterDictionaryFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new CustomDictionaryFilterStrategy()))
-                .withAlertService(alertService)
-                .withAnonymizationService(new AlphanumericAnonymizationService(new InMemoryCache()))
+                .withAnonymizationService(new AlphanumericAnonymizationService())
                 .withWindowSize(windowSize)
                 .build();
 
         final Set<String> names = new HashSet<>(Arrays.asList("george jones", "ted", "bill", "john"));
         final BloomFilterDictionaryFilter filter = new BloomFilterDictionaryFilter(FilterType.CUSTOM_DICTIONARY, filterConfiguration, names, "none");
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE,"He lived with george jones in California.", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", Collections.emptyMap(), "documentid", PIECE,"He lived with george jones in California.", attributes);
 
         showSpans(filterResult.getSpans());
 
@@ -136,15 +129,14 @@ public class BloomFilterDictionaryFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new CustomDictionaryFilterStrategy()))
-                .withAlertService(alertService)
-                .withAnonymizationService(new AlphanumericAnonymizationService(new InMemoryCache()))
+                .withAnonymizationService(new AlphanumericAnonymizationService())
                 .withWindowSize(windowSize)
                 .build();
 
         final Set<String> names = new HashSet<>(Arrays.asList("george jones jr", "ted", "bill smith", "john"));
         final BloomFilterDictionaryFilter filter = new BloomFilterDictionaryFilter(FilterType.CUSTOM_DICTIONARY, filterConfiguration, names, "none");
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE,"Bill Smith lived with george jones jr in California.", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", Collections.emptyMap(), "documentid", PIECE,"Bill Smith lived with george jones jr in California.", attributes);
 
         showSpans(filterResult.getSpans());
 
@@ -163,15 +155,14 @@ public class BloomFilterDictionaryFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new CustomDictionaryFilterStrategy()))
-                .withAlertService(alertService)
-                .withAnonymizationService(new AlphanumericAnonymizationService(new InMemoryCache()))
+                .withAnonymizationService(new AlphanumericAnonymizationService())
                 .withWindowSize(windowSize)
                 .build();
 
         final Set<String> names = new HashSet<>(Arrays.asList("george jones", "ted", "bill", "john"));
         final BloomFilterDictionaryFilter filter = new BloomFilterDictionaryFilter(FilterType.CUSTOM_DICTIONARY, filterConfiguration, names, "none");
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE,"He lived with george jones and george jones in California.", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", Collections.emptyMap(), "documentid", PIECE,"He lived with george jones and george jones in California.", attributes);
 
         showSpans(filterResult.getSpans());
 

@@ -15,7 +15,6 @@
  */
 package ai.philterd.test.phileas.services.anonymization;
 
-import ai.philterd.phileas.model.cache.InMemoryCache;
 import ai.philterd.phileas.model.services.AnonymizationService;
 import ai.philterd.phileas.services.anonymization.HospitalAnonymizationService;
 
@@ -30,7 +29,7 @@ public class HospitalAnonymizationServiceTest {
     @Test
     public void anonymize() {
 
-        AnonymizationService anonymizationService = new HospitalAnonymizationService(new InMemoryCache());
+        AnonymizationService anonymizationService = new HospitalAnonymizationService();
 
         final String token = "Plateau Medical Center";
         final String replacement = anonymizationService.anonymize(token);

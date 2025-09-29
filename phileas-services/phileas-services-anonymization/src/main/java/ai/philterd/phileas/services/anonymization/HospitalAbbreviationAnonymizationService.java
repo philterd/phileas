@@ -15,25 +15,30 @@
  */
 package ai.philterd.phileas.services.anonymization;
 
-import ai.philterd.phileas.model.services.CacheService;
 import ai.philterd.phileas.services.anonymization.faker.Faker;
 import org.apache.commons.text.WordUtils;
+
+import java.util.Map;
 
 public class HospitalAbbreviationAnonymizationService extends AbstractAnonymizationService {
 
     private final transient Faker faker;
 
-    public HospitalAbbreviationAnonymizationService(CacheService anonymizationCacheService) {
-        super(anonymizationCacheService);
+    public HospitalAbbreviationAnonymizationService() {
+        this.faker = new Faker();
+    }
+
+    public HospitalAbbreviationAnonymizationService(final Map<String, String> context) {
+        super(context);
         this.faker = new Faker();
     }
 
     @Override
     public String anonymize(String token) {
 
-        final String hopspitalName = faker.address().cityName() + " General Hospital";
+        final String hospitalName = faker.address().cityName() + " General Hospital";
 
-        return WordUtils.initials(hopspitalName);
+        return WordUtils.initials(hospitalName);
 
     }
 

@@ -15,41 +15,36 @@
  */
 package ai.philterd.test.phileas.services.filters;
 
-import ai.philterd.phileas.model.cache.InMemoryCache;
 import ai.philterd.phileas.model.enums.FilterType;
 import ai.philterd.phileas.model.filter.FilterConfiguration;
 import ai.philterd.phileas.model.objects.FilterResult;
 import ai.philterd.phileas.model.policy.filters.strategies.rules.PhysicianNameFilterStrategy;
-import ai.philterd.phileas.model.services.AlertService;
 import ai.philterd.phileas.services.anonymization.PersonsAnonymizationService;
 import ai.philterd.phileas.services.filters.regex.PhysicianNameFilter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
+import java.util.Collections;
 import java.util.List;
 
 public class PhysicianNameFilterTest extends AbstractFilterTest {
 
     private static final Logger LOGGER = LogManager.getLogger(PhysicianNameFilterTest.class);
 
-    private final AlertService alertService = Mockito.mock(AlertService.class);
-
     @Test
     public void physicianNameTestPreNominal1() throws Exception {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new PhysicianNameFilterStrategy()))
-                .withAlertService(alertService)
-                .withAnonymizationService(new PersonsAnonymizationService(new InMemoryCache()))
+                .withAnonymizationService(new PersonsAnonymizationService())
                 .withWindowSize(windowSize)
                 .build();
 
         final PhysicianNameFilter filter = new PhysicianNameFilter(filterConfiguration);
 
-          final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "Doctor Smith was the attending physician.", attributes);
+          final FilterResult filterResult = filter.filter(getPolicy(), "context", Collections.emptyMap(), "documentid", PIECE, "Doctor Smith was the attending physician.", attributes);
         showSpans(filterResult.getSpans());
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
@@ -63,14 +58,13 @@ public class PhysicianNameFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new PhysicianNameFilterStrategy()))
-                .withAlertService(alertService)
-                .withAnonymizationService(new PersonsAnonymizationService(new InMemoryCache()))
+                .withAnonymizationService(new PersonsAnonymizationService())
                 .withWindowSize(windowSize)
                 .build();
 
         final PhysicianNameFilter filter = new PhysicianNameFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "Doctor James Smith", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", Collections.emptyMap(), "documentid", PIECE, "Doctor James Smith", attributes);
         showSpans(filterResult.getSpans());
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
@@ -84,14 +78,13 @@ public class PhysicianNameFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new PhysicianNameFilterStrategy()))
-                .withAlertService(alertService)
-                .withAnonymizationService(new PersonsAnonymizationService(new InMemoryCache()))
+                .withAnonymizationService(new PersonsAnonymizationService())
                 .withWindowSize(windowSize)
                 .build();
 
         final PhysicianNameFilter filter = new PhysicianNameFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "John Smith, MD", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", Collections.emptyMap(), "documentid", PIECE, "John Smith, MD", attributes);
         showSpans(filterResult.getSpans());
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
@@ -105,14 +98,13 @@ public class PhysicianNameFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new PhysicianNameFilterStrategy()))
-                .withAlertService(alertService)
-                .withAnonymizationService(new PersonsAnonymizationService(new InMemoryCache()))
+                .withAnonymizationService(new PersonsAnonymizationService())
                 .withWindowSize(windowSize)
                 .build();
 
         final PhysicianNameFilter filter = new PhysicianNameFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "attending physician was John Smith, MD", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", Collections.emptyMap(), "documentid", PIECE, "attending physician was John Smith, MD", attributes);
         showSpans(filterResult.getSpans());
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
@@ -126,14 +118,13 @@ public class PhysicianNameFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new PhysicianNameFilterStrategy()))
-                .withAlertService(alertService)
-                .withAnonymizationService(new PersonsAnonymizationService(new InMemoryCache()))
+                .withAnonymizationService(new PersonsAnonymizationService())
                 .withWindowSize(windowSize)
                 .build();
 
         final PhysicianNameFilter filter = new PhysicianNameFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "was John J. van Smith, MD", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", Collections.emptyMap(), "documentid", PIECE, "was John J. van Smith, MD", attributes);
         showSpans(filterResult.getSpans());
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
@@ -147,14 +138,13 @@ public class PhysicianNameFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new PhysicianNameFilterStrategy()))
-                .withAlertService(alertService)
-                .withAnonymizationService(new PersonsAnonymizationService(new InMemoryCache()))
+                .withAnonymizationService(new PersonsAnonymizationService())
                 .withWindowSize(windowSize)
                 .build();
 
         final PhysicianNameFilter filter = new PhysicianNameFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "Smith,James D,MD -General Surgery", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", Collections.emptyMap(), "documentid", PIECE, "Smith,James D,MD -General Surgery", attributes);
         showSpans(filterResult.getSpans());
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
@@ -168,14 +158,13 @@ public class PhysicianNameFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new PhysicianNameFilterStrategy()))
-                .withAlertService(alertService)
-                .withAnonymizationService(new PersonsAnonymizationService(new InMemoryCache()))
+                .withAnonymizationService(new PersonsAnonymizationService())
                 .withWindowSize(windowSize)
                 .build();
 
         final PhysicianNameFilter filter = new PhysicianNameFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "Smith,James )D,MD -General Surgery", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", Collections.emptyMap(), "documentid", PIECE, "Smith,James )D,MD -General Surgery", attributes);
         showSpans(filterResult.getSpans());
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
@@ -189,14 +178,13 @@ public class PhysicianNameFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new PhysicianNameFilterStrategy()))
-                .withAlertService(alertService)
-                .withAnonymizationService(new PersonsAnonymizationService(new InMemoryCache()))
+                .withAnonymizationService(new PersonsAnonymizationService())
                 .withWindowSize(windowSize)
                 .build();
 
         final PhysicianNameFilter filter = new PhysicianNameFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "1.0 cm in outside diameter pink tan everted", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", Collections.emptyMap(), "documentid", PIECE, "1.0 cm in outside diameter pink tan everted", attributes);
         showSpans(filterResult.getSpans());
 
         Assertions.assertEquals(0, filterResult.getSpans().size());
@@ -208,14 +196,13 @@ public class PhysicianNameFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new PhysicianNameFilterStrategy()))
-                .withAlertService(alertService)
-                .withAnonymizationService(new PersonsAnonymizationService(new InMemoryCache()))
+                .withAnonymizationService(new PersonsAnonymizationService())
                 .withWindowSize(windowSize)
                 .build();
 
         final PhysicianNameFilter filter = new PhysicianNameFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "1.0 cm", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", Collections.emptyMap(), "documentid", PIECE, "1.0 cm", attributes);
         showSpans(filterResult.getSpans());
 
         Assertions.assertEquals(0, filterResult.getSpans().size());
@@ -227,14 +214,13 @@ public class PhysicianNameFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new PhysicianNameFilterStrategy()))
-                .withAlertService(alertService)
-                .withAnonymizationService(new PersonsAnonymizationService(new InMemoryCache()))
+                .withAnonymizationService(new PersonsAnonymizationService())
                 .withWindowSize(windowSize)
                 .build();
 
         final PhysicianNameFilter filter = new PhysicianNameFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "Ahu,Amanda D,MD -General Surgery", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", Collections.emptyMap(), "documentid", PIECE, "Ahu,Amanda D,MD -General Surgery", attributes);
         showSpans(filterResult.getSpans());
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
@@ -248,14 +234,13 @@ public class PhysicianNameFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new PhysicianNameFilterStrategy()))
-                .withAlertService(alertService)
-                .withAnonymizationService(new PersonsAnonymizationService(new InMemoryCache()))
+                .withAnonymizationService(new PersonsAnonymizationService())
                 .withWindowSize(windowSize)
                 .build();
 
         final PhysicianNameFilter filter = new PhysicianNameFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "Johnns,Melinda S,MD - 1/2/2018 11:54 CST 1/2/2018 12:46 CST", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", Collections.emptyMap(), "documentid", PIECE, "Johnns,Melinda S,MD - 1/2/2018 11:54 CST 1/2/2018 12:46 CST", attributes);
         showSpans(filterResult.getSpans());
 
         Assertions.assertEquals(1, filterResult.getSpans().size());

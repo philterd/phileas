@@ -15,20 +15,23 @@
  */
 package ai.philterd.phileas.services.anonymization;
 
-import ai.philterd.phileas.model.services.CacheService;
 import org.apache.commons.lang3.RandomStringUtils;
+
+import java.util.Map;
 
 public class UrlAnonymizationService extends AbstractAnonymizationService {
 
-    public UrlAnonymizationService(CacheService anonymizationCacheService) {
-        super(anonymizationCacheService);
+    public UrlAnonymizationService() {
+
+    }
+
+    public UrlAnonymizationService(final Map<String, String> context) {
+        super(context);
     }
 
     @Override
     public String anonymize(String token) {
-
         return "http://" + RandomStringUtils.randomAlphanumeric(10).toLowerCase() + ".com";
-
     }
 
 }

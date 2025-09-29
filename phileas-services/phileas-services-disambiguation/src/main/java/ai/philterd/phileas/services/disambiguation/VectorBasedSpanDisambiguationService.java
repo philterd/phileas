@@ -18,15 +18,21 @@ package ai.philterd.phileas.services.disambiguation;
 import ai.philterd.phileas.model.configuration.PhileasConfiguration;
 import ai.philterd.phileas.model.enums.FilterType;
 import ai.philterd.phileas.model.objects.Span;
-import ai.philterd.phileas.model.services.CacheService;
 import ai.philterd.phileas.model.services.SpanDisambiguationService;
+import ai.philterd.phileas.model.services.VectorService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.io.IOException;
 import java.text.DecimalFormat;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedHashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -40,22 +46,22 @@ public class VectorBasedSpanDisambiguationService extends AbstractSpanDisambigua
     /**
      * Initializes the service.
      * @param phileasConfiguration The {@link PhileasConfiguration} used to configure the service.
+     * @param vectorService A {@link VectorService}.
      */
-    public VectorBasedSpanDisambiguationService(final PhileasConfiguration phileasConfiguration, final CacheService cacheService) throws IOException {
-        super(phileasConfiguration, cacheService);
+    public VectorBasedSpanDisambiguationService(final PhileasConfiguration phileasConfiguration, final VectorService vectorService) {
+        super(phileasConfiguration, vectorService);
     }
 
     @Override
     public void hashAndInsert(String context, Span span) {
 
         final double[] hashes = hash(span);
-
-        cacheService.hashAndInsert(context, hashes, span, vectorSize);
+        vectorService.hashAndInsert(context, hashes, span, vectorSize);
 
     }
 
     @Override
-    public List<Span> disambiguate(String context, List<Span> spans) {
+    public List<Span> disambiguate(final String contextName, final Map<String, String> context, final List<Span> spans) {
 
         final Set<Span> disambiguatedSpans = new LinkedHashSet<>();
 
@@ -72,7 +78,7 @@ public class VectorBasedSpanDisambiguationService extends AbstractSpanDisambigua
 
                 // Get the filter type of the disambiguated span.
                 // The "ambiguous span" is any of the spans in the list since they only differ by filter type.
-                final FilterType disambiguatedFilterType = disambiguate(context, filterTypes, span);
+                final FilterType disambiguatedFilterType = disambiguate(contextName, filterTypes, span);
 
                 // Update the filter type on the span.
                 span.setFilterType(disambiguatedFilterType);
@@ -105,7 +111,7 @@ public class VectorBasedSpanDisambiguationService extends AbstractSpanDisambigua
             LOGGER.debug("Getting vector representation for filter type {}", filterType.name());
 
             // Get the vector representations for each potential filter type.
-            final Map<Double, Double> vectorRepresentation = cacheService.getVectorRepresentation(context, filterType);
+            final Map<Double, Double> vectorRepresentation = vectorService.getVectorRepresentation(context, filterType);
 
             // Create vectors for the representations.
             final double[] spanVector = new double[vectorSize];

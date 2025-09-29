@@ -65,15 +65,15 @@ public class EmailAddressFilter extends RegexFilter {
     }
 
     @Override
-    public FilterResult filter(Policy policy, String context, String documentId, int piece, String input, Map<String, String> attributes) throws Exception {
+    public FilterResult filter(Policy policy, String contextName, Map<String, String> context, String documentId, int piece, String input, Map<String, String> attributes) throws Exception {
 
-        final List<Span> spans = findSpans(policy, analyzer, input, context, documentId, attributes);
+        final List<Span> spans = findSpans(policy, analyzer, input, contextName, context, documentId, attributes);
 
         if(onlyValidTLDs) {
             spans.removeIf(str -> tlds.stream().noneMatch(str.getText()::endsWith));
         }
 
-        return new FilterResult(context, documentId, spans);
+        return new FilterResult(contextName, documentId, spans);
 
     }
 

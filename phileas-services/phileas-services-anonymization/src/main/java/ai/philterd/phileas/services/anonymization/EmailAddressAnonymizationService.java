@@ -15,20 +15,23 @@
  */
 package ai.philterd.phileas.services.anonymization;
 
-import ai.philterd.phileas.model.services.CacheService;
 import org.apache.commons.lang3.RandomStringUtils;
+
+import java.util.Map;
 
 public class EmailAddressAnonymizationService extends AbstractAnonymizationService {
 
-    public EmailAddressAnonymizationService(CacheService anonymizationCacheService) {
-        super(anonymizationCacheService);
+    public EmailAddressAnonymizationService() {
+
+    }
+
+    public EmailAddressAnonymizationService(final Map<String, String> context) {
+        super(context);
     }
 
     @Override
     public String anonymize(String token) {
-
         return RandomStringUtils.randomAlphanumeric(10) + "@fake.com";
-
     }
 
 }

@@ -15,7 +15,6 @@
  */
 package ai.philterd.test.phileas.services.anonymization;
 
-import ai.philterd.phileas.model.cache.InMemoryCache;
 import ai.philterd.phileas.model.services.AnonymizationService;
 import ai.philterd.phileas.services.anonymization.StateAbbreviationAnonymizationService;
 
@@ -31,7 +30,7 @@ public class StateAbbreviationAnonymizationServiceTest {
     @Test
     public void anonymize1() {
 
-        AnonymizationService anonymizationService = new StateAbbreviationAnonymizationService(new InMemoryCache());
+        AnonymizationService anonymizationService = new StateAbbreviationAnonymizationService();
 
         final String token = "AK";
         final String replacement = anonymizationService.anonymize(token);

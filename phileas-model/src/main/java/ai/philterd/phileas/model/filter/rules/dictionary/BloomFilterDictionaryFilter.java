@@ -78,7 +78,7 @@ public class BloomFilterDictionaryFilter extends DictionaryFilter {
     }
 
     @Override
-    public FilterResult filter(Policy policy, String context, String documentId, int piece, String text,
+    public FilterResult filter(Policy policy, String contextName, Map<String, String> context, String documentId, int piece, String text,
                                Map<String, String> attributes) throws Exception {
 
         final List<Span> spans = new LinkedList<>();
@@ -104,10 +104,10 @@ public class BloomFilterDictionaryFilter extends DictionaryFilter {
                     // Get the original token to get the right casing.
                     final String originalToken = text.substring(characterStart, characterEnd);
 
-                    final Replacement replacement = getReplacement(policy, context, documentId,
+                    final Replacement replacement = getReplacement(policy, contextName, context, documentId,
                             originalToken, window, confidence, classification, attributes, null);
 
-                    spans.add(Span.make(characterStart, characterEnd, getFilterType(), context, documentId,
+                    spans.add(Span.make(characterStart, characterEnd, getFilterType(), contextName, documentId,
                             confidence, originalToken, replacement.getReplacement(), replacement.getSalt(),
                             isIgnored, replacement.isApplied(), window, priority));
 
@@ -117,7 +117,7 @@ public class BloomFilterDictionaryFilter extends DictionaryFilter {
 
         }
 
-        return new FilterResult(context, documentId, spans);
+        return new FilterResult(contextName, documentId, spans);
 
     }
 

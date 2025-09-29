@@ -15,23 +15,26 @@
  */
 package ai.philterd.phileas.services.anonymization;
 
-import ai.philterd.phileas.model.services.CacheService;
 import ai.philterd.phileas.services.anonymization.faker.Faker;
+
+import java.util.Map;
 
 public class StateAnonymizationService extends AbstractAnonymizationService {
 
     private final transient Faker faker;
 
-    public StateAnonymizationService(CacheService cacheService) {
-        super(cacheService);
+    public StateAnonymizationService() {
+        this.faker = new Faker();
+    }
+
+    public StateAnonymizationService(final Map<String, String> context) {
+        super(context);
         this.faker = new Faker();
     }
 
     @Override
     public String anonymize(String token) {
-
         return faker.address().state();
-
     }
 
 }

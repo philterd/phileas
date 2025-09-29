@@ -15,10 +15,8 @@
  */
 package ai.philterd.test.phileas.services.anonymization;
 
-import ai.philterd.phileas.model.cache.InMemoryCache;
 import ai.philterd.phileas.model.services.AnonymizationService;
 import ai.philterd.phileas.services.anonymization.CityAnonymizationService;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Assertions;
@@ -31,7 +29,7 @@ public class CityAnonymizationServiceTest {
     @Test
     public void anonymize1() {
 
-        AnonymizationService anonymizationService = new CityAnonymizationService(new InMemoryCache());
+        AnonymizationService anonymizationService = new CityAnonymizationService();
 
         final String token = "abcd1234";
         final String replacement = anonymizationService.anonymize(token);
@@ -45,7 +43,7 @@ public class CityAnonymizationServiceTest {
     @Test
     public void anonymize2() {
 
-        AnonymizationService anonymizationService = new CityAnonymizationService(new InMemoryCache());
+        AnonymizationService anonymizationService = new CityAnonymizationService();
 
         final String token = "April 1, 2019";
         final String replacement = anonymizationService.anonymize(token);

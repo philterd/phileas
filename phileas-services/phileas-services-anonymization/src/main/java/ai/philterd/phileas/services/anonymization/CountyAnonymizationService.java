@@ -15,17 +15,21 @@
  */
 package ai.philterd.phileas.services.anonymization;
 
-import ai.philterd.phileas.model.services.CacheService;
-
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Map;
 
 public class CountyAnonymizationService extends AbstractAnonymizationService {
 
     private static final Collection<String> counties = new LinkedList<>();
 
-    public CountyAnonymizationService(CacheService anonymizationCacheService) {
-        super(anonymizationCacheService);
+    public CountyAnonymizationService() {
+        this(new HashMap<>());
+    }
+
+    public CountyAnonymizationService(final Map<String, String> context) {
+        super(context);
 
         counties.add("Beaver");
         counties.add("Ohio");

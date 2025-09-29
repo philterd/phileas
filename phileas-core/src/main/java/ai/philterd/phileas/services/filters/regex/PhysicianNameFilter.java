@@ -61,7 +61,7 @@ public class PhysicianNameFilter extends RegexFilter {
     }
 
     @Override
-    public FilterResult filter(Policy policy, String context, String documentId, int piece, String input, Map<String, String> attributes) throws Exception {
+    public FilterResult filter(Policy policy, String contextName, Map<String, String> context, String documentId, int piece, String input, Map<String, String> attributes) throws Exception {
 
         // \b([A-Z][A-Za-z'\s+]+)(,|\s)?([A-Z][A-Za-z'\s+]+(,|\s))?([A-Z][A-Za-z'\s+]+(,|\s)?(MD|PhD))\b
 
@@ -81,7 +81,7 @@ public class PhysicianNameFilter extends RegexFilter {
                     final FilterPattern filterPattern = new FilterPattern.FilterPatternBuilder(candidatePattern, 0.90).build();
                     this.analyzer = new Analyzer(contextualTerms, filterPattern);
 
-                    final List<Span> patternSpans = findSpans(policy, analyzer, input, context, documentId, attributes);
+                    final List<Span> patternSpans = findSpans(policy, analyzer, input, contextName, context, documentId, attributes);
 
                     spans.addAll(patternSpans);
 
@@ -93,7 +93,7 @@ public class PhysicianNameFilter extends RegexFilter {
 
         final List<Span> droppedOverlappingSpans = Span.dropOverlappingSpans(spans);
 
-        return new FilterResult(context, documentId, droppedOverlappingSpans);
+        return new FilterResult(contextName, documentId, droppedOverlappingSpans);
 
     }
 

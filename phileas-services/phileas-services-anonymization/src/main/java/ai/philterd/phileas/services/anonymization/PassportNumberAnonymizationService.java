@@ -15,16 +15,15 @@
  */
 package ai.philterd.phileas.services.anonymization;
 
-import ai.philterd.phileas.model.services.CacheService;
-
 import java.security.SecureRandom;
+import java.util.Map;
 
 public class PassportNumberAnonymizationService extends AbstractAnonymizationService {
 
     private final SecureRandom secureRandom;
 
-    public PassportNumberAnonymizationService(CacheService anonymizationCacheService) {
-        super(anonymizationCacheService);
+    public PassportNumberAnonymizationService(final Map<String, String> context) {
+        super(context);
 
         this.secureRandom = new SecureRandom();
     }

@@ -16,14 +16,12 @@
 package ai.philterd.phileas.services.disambiguation;
 
 import ai.philterd.phileas.model.configuration.PhileasConfiguration;
-
-import ai.philterd.phileas.model.services.CacheService;
+import ai.philterd.phileas.model.services.VectorService;
 import org.apache.commons.codec.digest.MurmurHash3;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
@@ -42,17 +40,17 @@ public abstract class AbstractSpanDisambiguationService {
     protected boolean enabled;
     protected final int vectorSize;
     protected final boolean ignoreStopWords;
-    protected CacheService cacheService;
     protected Set<String> stopwords;
+    protected final VectorService vectorService;
 
-    public AbstractSpanDisambiguationService(final PhileasConfiguration phileasConfiguration, final CacheService cacheService) throws IOException {
+    public AbstractSpanDisambiguationService(final PhileasConfiguration phileasConfiguration, final VectorService vectorService) {
 
         this.phileasConfiguration = phileasConfiguration;
         this.vectorSize = phileasConfiguration.spanDisambiguationVectorSize();
         this.ignoreStopWords = phileasConfiguration.spanDisambiguationIgnoreStopWords();
         this.stopwords = new HashSet<>(Arrays.asList(phileasConfiguration.spanDisambiguationStopWords().split("")));
-        this.cacheService = cacheService;
         this.enabled = phileasConfiguration.spanDisambiguationEnabled();
+        this.vectorService = vectorService;
 
     }
 

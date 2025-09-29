@@ -15,7 +15,6 @@
  */
 package ai.philterd.test.phileas.services.anonymization;
 
-import ai.philterd.phileas.model.cache.InMemoryCache;
 import ai.philterd.phileas.model.services.AnonymizationService;
 import ai.philterd.phileas.services.anonymization.StreetAddressAnonymizationService;
 
@@ -31,7 +30,7 @@ public class StreetAddressAnonymizationServiceTest {
     @Test
     public void anonymize1() {
 
-        AnonymizationService anonymizationService = new StreetAddressAnonymizationService(new InMemoryCache());
+        AnonymizationService anonymizationService = new StreetAddressAnonymizationService();
 
         final String token = "100 Main St";
         final String replacement = anonymizationService.anonymize(token);
@@ -44,7 +43,7 @@ public class StreetAddressAnonymizationServiceTest {
     @Test
     public void anonymize2() {
 
-        AnonymizationService anonymizationService = new StreetAddressAnonymizationService(new InMemoryCache());
+        AnonymizationService anonymizationService = new StreetAddressAnonymizationService();
 
         final String token = "1000 Main St";
         final String replacement = anonymizationService.anonymize(token);

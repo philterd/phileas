@@ -69,7 +69,7 @@ public class FuzzyDictionaryFilter extends DictionaryFilter implements Serializa
     }
 
     @Override
-    public FilterResult filter(Policy policy, String context, String documentId, int piece, String input, Map<String, String> attributes) throws Exception {
+    public FilterResult filter(Policy policy, final String contextName, Map<String, String> context, String documentId, int piece, String input, Map<String, String> attributes) throws Exception {
 
         final List<Span> spans = new LinkedList<>();
 
@@ -91,7 +91,7 @@ public class FuzzyDictionaryFilter extends DictionaryFilter implements Serializa
                 if (matcher.find()) {
 
                     final int startPosition = matcher.start();
-                    spans.add(createSpan(input, startPosition, startPosition + entry.length(), 1.0, context, documentId, entry, policy, attributes));
+                    spans.add(createSpan(input, startPosition, startPosition + entry.length(), 1.0, contextName, context, documentId, entry, policy, attributes));
 
                 } else {
 
@@ -118,11 +118,11 @@ public class FuzzyDictionaryFilter extends DictionaryFilter implements Serializa
                                     final int distance = levenshteinDistance.apply(entry, ngram);
 
                                     if (sensitivityLevel == SensitivityLevel.HIGH && distance < 1) {
-                                        spans.add(createSpan(input, start, end, 0.9, context, documentId, entry, policy, attributes));
+                                        spans.add(createSpan(input, start, end, 0.9, contextName, context, documentId, entry, policy, attributes));
                                     } else if (sensitivityLevel == SensitivityLevel.MEDIUM && distance <= 2) {
-                                        spans.add(createSpan(input, start, end, 0.7, context, documentId, entry, policy, attributes));
+                                        spans.add(createSpan(input, start, end, 0.7, contextName, context, documentId, entry, policy, attributes));
                                     } else if (sensitivityLevel == SensitivityLevel.LOW && distance < 3) {
-                                        spans.add(createSpan(input, start, end, 0.5, context, documentId, entry, policy, attributes));
+                                        spans.add(createSpan(input, start, end, 0.5, contextName, context, documentId, entry, policy, attributes));
                                     }
 
                                 }
@@ -139,22 +139,22 @@ public class FuzzyDictionaryFilter extends DictionaryFilter implements Serializa
 
         }
 
-        return new FilterResult(context, documentId, spans);
+        return new FilterResult(contextName, documentId, spans);
 
     }
 
-    private Span createSpan(String text, int characterStart, int characterEnd, double confidence, String context,
+    private Span createSpan(String text, int characterStart, int characterEnd, double confidence, String contextName, Map<String, String> context,
                             String documentId, String token, Policy policy, Map<String, String> attributes) throws Exception {
 
         final boolean ignored = isIgnored(text);
         final String[] window = getWindow(text, characterStart, characterEnd);
 
         // Get the replacement token or the original token if no filter strategy conditions are met.
-        final Replacement replacement = getReplacement(policy, context, documentId, token,
+        final Replacement replacement = getReplacement(policy, contextName, context, documentId, token,
                 window, confidence, classification, attributes, null);
 
         // Add the span to the list.
-        return Span.make(characterStart, characterEnd, getFilterType(), context,
+        return Span.make(characterStart, characterEnd, getFilterType(), contextName,
                 documentId, confidence, token, replacement.getReplacement(),
                 replacement.getSalt(), ignored, replacement.isApplied(), window, priority);
 

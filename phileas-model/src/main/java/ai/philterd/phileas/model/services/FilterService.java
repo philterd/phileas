@@ -20,6 +20,8 @@ import ai.philterd.phileas.model.policy.Policy;
 import ai.philterd.phileas.model.responses.BinaryDocumentFilterResponse;
 import ai.philterd.phileas.model.responses.FilterResponse;
 
+import java.util.Map;
+
 /**
  * Interface for implementing filter services.
  */
@@ -35,7 +37,7 @@ public interface FilterService {
      * @return A {@link FilterResponse}.
      * @throws Exception Thrown if the text cannot be filtered.
      */
-    FilterResponse filter(final Policy policy, final String context, String documentId, final String input, final MimeType mimeType) throws Exception;
+    FilterResponse filter(final Policy policy, final String contextName, final Map<String, String> context, String documentId, final String input, final MimeType mimeType) throws Exception;
 
     /**
      * Filter text from a binary document.
@@ -48,12 +50,6 @@ public interface FilterService {
      * @return A {@link BinaryDocumentFilterResponse}.
      * @throws Exception Thrown if the text cannot be filtered.
      */
-    BinaryDocumentFilterResponse filter(final Policy policy, String context, String documentId, byte[] input, MimeType mimeType, MimeType outputMimeType) throws Exception;
-
-    /**
-     * Returns the alert service being used.
-     * @return An {@link AlertService}.
-     */
-    AlertService getAlertService();
+    BinaryDocumentFilterResponse filter(final Policy policy, final String contextName, final Map<String, String> context, String documentId, byte[] input, MimeType mimeType, MimeType outputMimeType) throws Exception;
 
 }

@@ -20,7 +20,7 @@ import ai.philterd.phileas.model.enums.MimeType;
 import ai.philterd.phileas.model.objects.IncrementalRedaction;
 import ai.philterd.phileas.model.policy.Policy;
 import ai.philterd.phileas.model.responses.FilterResponse;
-import ai.philterd.phileas.model.services.CacheService;
+import ai.philterd.phileas.model.services.VectorService;
 import ai.philterd.phileas.services.PhileasFilterService;
 import com.google.gson.Gson;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -31,6 +31,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
+import java.util.Collections;
 import java.util.Properties;
 
 import static ai.philterd.test.phileas.services.EndToEndTestsHelper.getPolicy;
@@ -40,7 +41,7 @@ public class EndToEndWithIncrementalRedactionsTest {
 
     private static final Logger LOGGER = LogManager.getLogger(EndToEndWithIncrementalRedactionsTest.class);
 
-    private final CacheService cacheService = Mockito.mock(CacheService.class);
+    private final VectorService vectorService = Mockito.mock(VectorService.class);
 
     @Test
     public void endToEndWithRedactionIncrements() throws Exception {
@@ -52,8 +53,8 @@ public class EndToEndWithIncrementalRedactionsTest {
 
         final Policy policy = getPolicy("default");
 
-        final PhileasFilterService service = new PhileasFilterService(phileasConfiguration, cacheService);
-        final FilterResponse response = service.filter(policy, "context", "documentid", "George Washington whose SSN was 123-45-6789 was the first president of the United States and he lived at 90210.", MimeType.TEXT_PLAIN);
+        final PhileasFilterService service = new PhileasFilterService(phileasConfiguration, vectorService);
+        final FilterResponse response = service.filter(policy, "context", Collections.emptyMap(), "documentid", "George Washington whose SSN was 123-45-6789 was the first president of the United States and he lived at 90210.", MimeType.TEXT_PLAIN);
 
         LOGGER.info(response.getFilteredText());
 
@@ -78,8 +79,8 @@ public class EndToEndWithIncrementalRedactionsTest {
 
         final Policy policy = getPolicy("default");
 
-        final PhileasFilterService service = new PhileasFilterService(phileasConfiguration, cacheService);
-        final FilterResponse response = service.filter(policy, "context", "documentid", "George Washington was president.", MimeType.TEXT_PLAIN);
+        final PhileasFilterService service = new PhileasFilterService(phileasConfiguration, vectorService);
+        final FilterResponse response = service.filter(policy, "context", Collections.emptyMap(), "documentid", "George Washington was president.", MimeType.TEXT_PLAIN);
 
         LOGGER.info(response.getFilteredText());
 
@@ -99,8 +100,8 @@ public class EndToEndWithIncrementalRedactionsTest {
 
         final Policy policy = getPolicyWithSplits("default");
 
-        final PhileasFilterService service = new PhileasFilterService(phileasConfiguration, cacheService);
-        final FilterResponse response = service.filter(policy, "context", "documentid", "George Washington whose SSN was 123-45-6789 was\n the first president of the United States and he lived at 90210.\nThe second president was John Adams. Abraham Lincoln was later on. His SSN was 123-45-6789.", MimeType.TEXT_PLAIN);
+        final PhileasFilterService service = new PhileasFilterService(phileasConfiguration, vectorService);
+        final FilterResponse response = service.filter(policy, "context", Collections.emptyMap(), "documentid", "George Washington whose SSN was 123-45-6789 was\n the first president of the United States and he lived at 90210.\nThe second president was John Adams. Abraham Lincoln was later on. His SSN was 123-45-6789.", MimeType.TEXT_PLAIN);
 
         LOGGER.info(response.getFilteredText());
 

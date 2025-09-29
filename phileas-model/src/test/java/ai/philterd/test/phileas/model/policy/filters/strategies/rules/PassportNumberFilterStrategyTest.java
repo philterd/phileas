@@ -22,6 +22,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.util.Collections;
 
 public class PassportNumberFilterStrategyTest extends AbstractFilterStrategyTest {
 
@@ -35,7 +36,7 @@ public class PassportNumberFilterStrategyTest extends AbstractFilterStrategyTest
         final AbstractFilterStrategy strategy = getFilterStrategy();
 
         attributes.put("classification", "US");
-        final boolean conditionSatisfied = strategy.evaluateCondition(getPolicy(), "context", "documentid", "986001231", WINDOW, "classification == \"US\"", 1.0, attributes);
+        final boolean conditionSatisfied = strategy.evaluateCondition(getPolicy(), "context", Collections.emptyMap(), "documentid", "986001231", WINDOW, "classification == \"US\"", 1.0, attributes);
 
         Assertions.assertTrue(conditionSatisfied);
 

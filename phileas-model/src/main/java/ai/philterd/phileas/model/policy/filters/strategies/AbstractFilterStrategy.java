@@ -141,6 +141,7 @@ public abstract class AbstractFilterStrategy {
     /**
      * Gets the replacement for a token.
      * @param classification The filter type classification.
+     * @param contextName The name of the context.
      * @param context The context.
      * @param documentId The document ID.
      * @param token The token.
@@ -151,13 +152,14 @@ public abstract class AbstractFilterStrategy {
      * @param filterPattern The filter pattern that identified the filter, or <code>null</code> if no pattern was used.
      * @return A replacement value for a token.
      */
-    public abstract Replacement getReplacement(String classification, String context, String documentId, String token,
+    public abstract Replacement getReplacement(String classification, String contextName, Map<String, String> context, String documentId, String token,
                                                String[] window, Crypto crypto, FPE fpe,
                                                AnonymizationService anonymizationService, FilterPattern filterPattern) throws Exception;
 
     /**
      * Evaluates the condition on the given token.
      * @param policy The policy being applied.
+     * @param contextName The context name.
      * @param context The context.
      * @param documentId The document ID.
      * @param token The token.
@@ -167,7 +169,7 @@ public abstract class AbstractFilterStrategy {
      * @param attributes Attributes about hte document.
      * @return <code>true</code> if the condition matches; otherwise <code>false</code>.
      */
-    public abstract boolean evaluateCondition(Policy policy, String context, String documentId, String token,
+    public abstract boolean evaluateCondition(Policy policy, String contextName, Map<String, String> context, String documentId, String token,
                                               String[] window, String condition, double confidence,
                                               Map<String, String> attributes);
 
@@ -300,15 +302,15 @@ public abstract class AbstractFilterStrategy {
         String replacement = null;
 
         // Have we seen this token in this context before?
-        if (anonymizationService.getCacheService().containsAnonymizedToken(context, token)) {
+        if (anonymizationService.getContext().containsKey(token)) {
 
             // Yes, we have previously seen this token in this context.
-            replacement = anonymizationService.getCacheService().getAnonymizedToken(context, token);
+            replacement = anonymizationService.getContext().get(token);
 
         } else {
 
             // Make sure we aren't trying to anonymize a token we have already anonymized.
-            if (anonymizationService.getCacheService().containsAnonymizedTokenValue(context, token)) {
+            if (anonymizationService.getContext().containsValue(token)) {
 
                 // This token is the result of an already replaced value.
                 // So the "replacement" is null. The filter won't replace the token when the replacement value is null.
@@ -318,7 +320,7 @@ public abstract class AbstractFilterStrategy {
 
                 // This is not an already anonymized token.
                 replacement = anonymizationService.anonymize(token);
-                anonymizationService.getCacheService().putAnonymizedToken(context, token, replacement);
+                anonymizationService.getContext().put(token, replacement);
 
             }
 

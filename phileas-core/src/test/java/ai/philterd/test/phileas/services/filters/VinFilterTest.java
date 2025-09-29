@@ -15,37 +15,32 @@
  */
 package ai.philterd.test.phileas.services.filters;
 
-import ai.philterd.phileas.model.cache.InMemoryCache;
 import ai.philterd.phileas.model.enums.FilterType;
 import ai.philterd.phileas.model.filter.FilterConfiguration;
 import ai.philterd.phileas.model.objects.FilterResult;
 import ai.philterd.phileas.model.policy.filters.strategies.rules.VinFilterStrategy;
-import ai.philterd.phileas.model.services.AlertService;
 import ai.philterd.phileas.services.anonymization.AlphanumericAnonymizationService;
 import ai.philterd.phileas.services.filters.regex.VinFilter;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
+import java.util.Collections;
 import java.util.List;
 
 public class VinFilterTest extends AbstractFilterTest {
-
-    private final AlertService alertService = Mockito.mock(AlertService.class);
 
     @Test
     public void filterVin1() throws Exception {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new VinFilterStrategy()))
-                .withAlertService(alertService)
-                .withAnonymizationService(new AlphanumericAnonymizationService(new InMemoryCache()))
+                .withAnonymizationService(new AlphanumericAnonymizationService())
                 .withWindowSize(windowSize)
                 .build();
 
         final VinFilter filter = new VinFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "the vin is JB3BA36KXHU036784.", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", Collections.emptyMap(), "documentid", PIECE, "the vin is JB3BA36KXHU036784.", attributes);
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 11, 28, FilterType.VIN));
         Assertions.assertEquals("JB3BA36KXHU036784", filterResult.getSpans().get(0).getText());
@@ -57,14 +52,13 @@ public class VinFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new VinFilterStrategy()))
-                .withAlertService(alertService)
-                .withAnonymizationService(new AlphanumericAnonymizationService(new InMemoryCache()))
+                .withAnonymizationService(new AlphanumericAnonymizationService())
                 .withWindowSize(windowSize)
                 .build();
 
         final VinFilter filter = new VinFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "the vin is 2T2HK31U38C057399.", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", Collections.emptyMap(), "documentid", PIECE, "the vin is 2T2HK31U38C057399.", attributes);
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 11, 28, FilterType.VIN));
 
@@ -75,14 +69,13 @@ public class VinFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new VinFilterStrategy()))
-                .withAlertService(alertService)
-                .withAnonymizationService(new AlphanumericAnonymizationService(new InMemoryCache()))
+                .withAnonymizationService(new AlphanumericAnonymizationService())
                 .withWindowSize(windowSize)
                 .build();
 
         final VinFilter filter = new VinFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "the vin is 11131517191011111.", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", Collections.emptyMap(), "documentid", PIECE, "the vin is 11131517191011111.", attributes);
         Assertions.assertEquals(0, filterResult.getSpans().size());
 
     }
@@ -92,14 +85,13 @@ public class VinFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new VinFilterStrategy()))
-                .withAlertService(alertService)
-                .withAnonymizationService(new AlphanumericAnonymizationService(new InMemoryCache()))
+                .withAnonymizationService(new AlphanumericAnonymizationService())
                 .withWindowSize(windowSize)
                 .build();
 
         final VinFilter filter = new VinFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "the vin is 11131517191X11111.", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", Collections.emptyMap(), "documentid", PIECE, "the vin is 11131517191X11111.", attributes);
         Assertions.assertEquals(0, filterResult.getSpans().size());
 
     }
@@ -109,14 +101,13 @@ public class VinFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new VinFilterStrategy()))
-                .withAlertService(alertService)
-                .withAnonymizationService(new AlphanumericAnonymizationService(new InMemoryCache()))
+                .withAnonymizationService(new AlphanumericAnonymizationService())
                 .withWindowSize(windowSize)
                 .build();
 
         final VinFilter filter = new VinFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "the vin is 2t2hk31u38c057399.", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", Collections.emptyMap(), "documentid", PIECE, "the vin is 2t2hk31u38c057399.", attributes);
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 11, 28, FilterType.VIN));
 

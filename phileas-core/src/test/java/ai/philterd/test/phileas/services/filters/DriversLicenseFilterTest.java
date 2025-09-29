@@ -15,37 +15,32 @@
  */
 package ai.philterd.test.phileas.services.filters;
 
-import ai.philterd.phileas.model.cache.InMemoryCache;
 import ai.philterd.phileas.model.enums.FilterType;
 import ai.philterd.phileas.model.filter.FilterConfiguration;
 import ai.philterd.phileas.model.objects.FilterResult;
 import ai.philterd.phileas.model.policy.filters.strategies.rules.DriversLicenseFilterStrategy;
-import ai.philterd.phileas.model.services.AlertService;
 import ai.philterd.phileas.services.anonymization.AlphanumericAnonymizationService;
 import ai.philterd.phileas.services.filters.regex.DriversLicenseFilter;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
+import java.util.Collections;
 import java.util.List;
 
 public class DriversLicenseFilterTest extends AbstractFilterTest {
-
-    private final AlertService alertService = Mockito.mock(AlertService.class);
 
     @Test
     public void filter1() throws Exception {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new DriversLicenseFilterStrategy()))
-                .withAlertService(alertService)
-                .withAnonymizationService(new AlphanumericAnonymizationService(new InMemoryCache()))
+                .withAnonymizationService(new AlphanumericAnonymizationService())
                 .withWindowSize(windowSize)
                 .build();
 
         final DriversLicenseFilter filter = new DriversLicenseFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "the number is 123456789.", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", Collections.emptyMap(), "documentid", PIECE, "the number is 123456789.", attributes);
 
         showSpans(filterResult.getSpans());
 

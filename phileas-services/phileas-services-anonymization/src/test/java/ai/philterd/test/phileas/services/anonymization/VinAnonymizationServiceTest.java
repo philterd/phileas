@@ -15,7 +15,6 @@
  */
 package ai.philterd.test.phileas.services.anonymization;
 
-import ai.philterd.phileas.model.cache.InMemoryCache;
 import ai.philterd.phileas.model.services.AnonymizationService;
 import ai.philterd.phileas.services.anonymization.VinAnonymizationService;
 
@@ -31,7 +30,7 @@ public class VinAnonymizationServiceTest {
     @Test
     public void anonymize() {
 
-        AnonymizationService anonymizationService = new VinAnonymizationService(new InMemoryCache());
+        AnonymizationService anonymizationService = new VinAnonymizationService();
 
         final String token = "11111111111111111";
         final String replacement = anonymizationService.anonymize(token);

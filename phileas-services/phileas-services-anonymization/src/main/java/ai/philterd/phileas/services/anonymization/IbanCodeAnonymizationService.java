@@ -15,13 +15,18 @@
  */
 package ai.philterd.phileas.services.anonymization;
 
-import ai.philterd.phileas.model.services.CacheService;
 import org.apache.commons.lang3.RandomStringUtils;
+
+import java.util.Map;
 
 public class IbanCodeAnonymizationService extends AbstractAnonymizationService {
 
-    public IbanCodeAnonymizationService(CacheService anonymizationCacheService) {
-        super(anonymizationCacheService);
+    public IbanCodeAnonymizationService() {
+
+    }
+
+    public IbanCodeAnonymizationService(final Map<String, String> context) {
+        super(context);
     }
 
     @Override

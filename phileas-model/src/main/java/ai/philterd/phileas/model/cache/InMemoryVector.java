@@ -16,16 +16,11 @@
 package ai.philterd.phileas.model.cache;
 
 import ai.philterd.phileas.model.enums.FilterType;
-import ai.philterd.phileas.model.objects.Alert;
 import ai.philterd.phileas.model.objects.Span;
 import ai.philterd.phileas.model.objects.SpanVector;
 import ai.philterd.phileas.model.policy.Policy;
-import ai.philterd.phileas.model.services.CacheService;
-import org.apache.commons.codec.digest.DigestUtils;
-import org.apache.commons.lang3.StringUtils;
+import ai.philterd.phileas.model.services.VectorService;
 
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,106 +28,18 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
- * Implementation of {@link CacheService} that stores everything in memory.
+ * Implementation of {@link VectorService} that stores everything in memory.
  */
-public class InMemoryCache implements CacheService {
+public class InMemoryVector implements VectorService {
 
     private final Map<String, Map<FilterType, SpanVector>> vectorCache;
     private final Map<String, Policy> policyCache;
     private final Map<String, String> anonymizationCache;
-    private final List<Alert> alerts;
 
-    public InMemoryCache() {
+    public InMemoryVector() {
         this.vectorCache = new ConcurrentHashMap<>();
         this.policyCache = new ConcurrentHashMap<>();
         this.anonymizationCache = new ConcurrentHashMap<>();
-        this.alerts = new CopyOnWriteArrayList<>();
-    }
-
-    // For alerts
-
-    @Override
-    public void generateAlert(String policy, String strategyId, String context, String documentId, FilterType filterType) {
-        alerts.add(new Alert(policy, strategyId, context, documentId, filterType.getType()));
-    }
-
-    @Override
-    public List<Alert> getAlerts() {
-        return alerts;
-    }
-
-    @Override
-    public void deleteAlert(String alertId) {
-        alerts.removeIf(alert -> StringUtils.equalsIgnoreCase(alert.getId(), alertId));
-    }
-
-    @Override
-    public void clearAlerts() {
-        alerts.clear();
-    }
-
-    // For anonymization
-
-    @Override
-    public String generateAnonymizationCacheKey(String context, String token) {
-        return DigestUtils.md5Hex(context + "|" + token);
-    }
-
-    @Override
-    public void putAnonymizedToken(String context, String token, String replacement) {
-        anonymizationCache.put(generateAnonymizationCacheKey(context, token), replacement);
-    }
-
-    @Override
-    public String getAnonymizedToken(String context, String token) {
-        return anonymizationCache.get(generateAnonymizationCacheKey(context, token));
-    }
-
-    @Override
-    public void removeAnonymizedToken(String context, String token) {
-        anonymizationCache.remove(generateAnonymizationCacheKey(context, token));
-    }
-
-    @Override
-    public boolean containsAnonymizedToken(String context, String token) {
-        return anonymizationCache.containsKey(generateAnonymizationCacheKey(context, token));
-    }
-
-    @Override
-    public boolean containsAnonymizedTokenValue(String context, String replacement) {
-        return anonymizationCache.containsValue(replacement);
-    }
-
-    // For policies
-
-    @Override
-    public List<String> getPolicies() {
-        return new ArrayList<>(policyCache.keySet());
-    }
-
-    @Override
-    public Policy getPolicy(String policyName) throws IOException {
-        return policyCache.get(policyName);
-    }
-
-    @Override
-    public Map<String, Policy> getAllPolicies() {
-        return policyCache;
-    }
-
-    @Override
-    public void insertPolicy(String policyName, Policy policy) {
-        policyCache.put(policyName, policy);
-    }
-
-    @Override
-    public void removePolicy(String policyName) {
-        policyCache.remove(policyName);
-    }
-
-    @Override
-    public void clearPolicyCache() {
-        policyCache.clear();
     }
 
     // For disambiguation

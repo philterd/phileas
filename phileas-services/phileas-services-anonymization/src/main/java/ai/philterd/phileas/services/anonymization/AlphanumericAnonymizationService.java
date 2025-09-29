@@ -15,17 +15,21 @@
  */
 package ai.philterd.phileas.services.anonymization;
 
-import ai.philterd.phileas.model.services.CacheService;
 import org.apache.commons.lang3.RandomStringUtils;
 
+import java.util.Map;
 import java.util.Random;
 
 public class AlphanumericAnonymizationService extends AbstractAnonymizationService {
 
     private final Random random;
 
-    public AlphanumericAnonymizationService(CacheService anonymizationCacheService) {
-        super(anonymizationCacheService);
+    public AlphanumericAnonymizationService() {
+        this.random = new Random();
+    }
+
+    public AlphanumericAnonymizationService(final Map<String, String> context) {
+        super(context);
         this.random = new Random();
     }
 

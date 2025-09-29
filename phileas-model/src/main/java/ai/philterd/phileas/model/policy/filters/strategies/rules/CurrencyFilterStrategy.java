@@ -48,7 +48,7 @@ public class CurrencyFilterStrategy extends StandardFilterStrategy {
     }
 
     @Override
-    public boolean evaluateCondition(Policy policy, String context, String documentId, String token, String[] window, String condition, double confidence, Map<String, String> attributes) {
+    public boolean evaluateCondition(Policy policy, String contextName, Map<String, String> context, String documentId, String token, String[] window, String condition, double confidence, Map<String, String> attributes) {
 
         boolean conditionsSatisfied = false;
 
@@ -65,8 +65,8 @@ public class CurrencyFilterStrategy extends StandardFilterStrategy {
                 final String conditionContext = parsedCondition.getValue();
 
                 conditionsSatisfied = switch (parsedCondition.getOperator()) {
-                    case EQUALS -> (StringUtils.equalsIgnoreCase("\"" + context + "\"", conditionContext));
-                    case NOT_EQUALS -> !(StringUtils.equalsIgnoreCase("\"" + context + "\"", conditionContext));
+                    case EQUALS -> (StringUtils.equalsIgnoreCase("\"" + contextName + "\"", conditionContext));
+                    case NOT_EQUALS -> !(StringUtils.equalsIgnoreCase("\"" + contextName + "\"", conditionContext));
                     default -> conditionsSatisfied;
                 };
 
@@ -97,7 +97,7 @@ public class CurrencyFilterStrategy extends StandardFilterStrategy {
     }
 
     @Override
-    public Replacement getReplacement(String label, String context, String documentId, String token, String[] window, Crypto crypto, FPE fpe, AnonymizationService anonymizationService, FilterPattern filterPattern) throws Exception {
+    public Replacement getReplacement(String label, String contextName, Map<String, String> context,String documentId, String token, String[] window, Crypto crypto, FPE fpe, AnonymizationService anonymizationService, FilterPattern filterPattern) throws Exception {
 
         return getStandardReplacement(label, token, crypto, fpe, anonymizationService, filterType);
 

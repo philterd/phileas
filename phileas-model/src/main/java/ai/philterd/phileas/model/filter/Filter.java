@@ -27,7 +27,6 @@ import ai.philterd.phileas.model.policy.IgnoredPattern;
 import ai.philterd.phileas.model.policy.Policy;
 import ai.philterd.phileas.model.policy.filters.Identifier;
 import ai.philterd.phileas.model.policy.filters.strategies.AbstractFilterStrategy;
-import ai.philterd.phileas.model.services.AlertService;
 import ai.philterd.phileas.model.services.AnonymizationService;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.FileUtils;
@@ -54,11 +53,6 @@ public abstract class Filter {
      * The {@link FilterType type} of identifiers handled by this filter.
      */
     protected final FilterType filterType;
-
-    /**
-     * The alert service.
-     */
-    protected final AlertService alertService;
 
     /**
      * The {@link AnonymizationService} to use when replacing values if enabled.
@@ -108,6 +102,7 @@ public abstract class Filter {
     /**
      * Filters the input text.
      * @param policy The {@link Policy} to use.
+     * @param contextName The name of the context.
      * @param context The context.
      * @param documentId An ID uniquely identifying the document.
      * @param piece A numbered piece of the document. Pass <code>0</code> if only piece of document.
@@ -115,7 +110,7 @@ public abstract class Filter {
      * @param attributes Attributes about the text.
      * @return A {@link FilterResult} containing the identified {@link Span spans}.
      */
-    public abstract FilterResult filter(Policy policy, String context, String documentId, int piece, String input,
+    public abstract FilterResult filter(Policy policy, String contextName, Map<String, String> context, String documentId, int piece, String input,
                                         final Map<String, String> attributes) throws Exception;
 
     /**
@@ -138,7 +133,6 @@ public abstract class Filter {
 
         this.strategies = filterConfiguration.getStrategies();
         this.anonymizationService = filterConfiguration.getAnonymizationService();
-        this.alertService = filterConfiguration.getAlertService();
         this.ignoredPatterns = filterConfiguration.getIgnoredPatterns();
         this.ignored = filterConfiguration.getIgnored();
         this.crypto = filterConfiguration.getCrypto();
@@ -252,7 +246,7 @@ public abstract class Filter {
      * @param classification The classification of the item.
      * @return The replacement string.
      */
-    public Replacement getReplacement(final Policy policy, final String context, final String documentId,
+    public Replacement getReplacement(final Policy policy, final String contextName, final Map<String, String> context, final String documentId,
                                       final String token, final String[] window, double confidence,
                                       final String classification, final Map<String, String> attributes,
                                       final FilterPattern filterPattern) throws Exception {
@@ -271,27 +265,19 @@ public abstract class Filter {
                 if(hasCondition) {
 
                     // If there is a condition, does it evaluate?
-                    final boolean evaluates = strategy.evaluateCondition(policy, context, documentId, token, window, condition, confidence, attributes);
+                    final boolean evaluates = strategy.evaluateCondition(policy, contextName, context, documentId, token, window, condition, confidence, attributes);
 
                     if(evaluates) {
 
-                        // Generate an alert for this strategy?
-                        if(strategy.isAlert()) {
-
-                            LOGGER.info("Generating alert for strategy ID {}", strategy.getId());
-                            alertService.generateAlert(policy.getName(), strategy.getId(), documentId, context, filterType);
-
-                        }
-
                         // Break early since we met the strategy's condition.
-                        return strategy.getReplacement(classification, context, documentId, token, window, crypto, fpe, anonymizationService, filterPattern);
+                        return strategy.getReplacement(classification, contextName, context, documentId, token, window, crypto, fpe, anonymizationService, filterPattern);
 
                     }
 
                 } else {
 
                     // Break early since there is no condition.
-                    return strategy.getReplacement(classification, context, documentId, token, window, crypto, fpe, anonymizationService, filterPattern);
+                    return strategy.getReplacement(classification, contextName, context, documentId, token, window, crypto, fpe, anonymizationService, filterPattern);
 
                 }
 

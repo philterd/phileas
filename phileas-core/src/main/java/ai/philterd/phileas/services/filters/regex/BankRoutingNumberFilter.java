@@ -47,9 +47,9 @@ public class BankRoutingNumberFilter extends RegexFilter {
     }
 
     @Override
-    public FilterResult filter(Policy policy, String context, String documentId, int piece, String input, Map<String, String> attributes) throws Exception {
+    public FilterResult filter(Policy policy, String contextName, Map<String, String> context, String documentId, int piece, String input, Map<String, String> attributes) throws Exception {
 
-        final List<Span> spans = findSpans(policy, analyzer, input, context, documentId, attributes);
+        final List<Span> spans = findSpans(policy, analyzer, input, contextName, context, documentId, attributes);
 
         final List<Span> nonOverlappingSpans = Span.dropOverlappingSpans(spans);
 
@@ -70,7 +70,7 @@ public class BankRoutingNumberFilter extends RegexFilter {
 
         }
 
-        return new FilterResult(context, documentId, validSpans);
+        return new FilterResult(contextName, documentId, validSpans);
 
     }
 

@@ -15,7 +15,6 @@
  */
 package ai.philterd.test.phileas.services.anonymization;
 
-import ai.philterd.phileas.model.cache.InMemoryCache;
 import ai.philterd.phileas.model.services.AnonymizationService;
 import ai.philterd.phileas.services.anonymization.DateAnonymizationService;
 
@@ -30,7 +29,7 @@ public class DateAnonymizationServiceTest {
     @Test
     public void anonymize1() {
 
-        AnonymizationService anonymizationService = new DateAnonymizationService(new InMemoryCache());
+        AnonymizationService anonymizationService = new DateAnonymizationService();
 
         final String token = "11-18-2018";
         final String replacement = anonymizationService.anonymize(token);
@@ -42,7 +41,7 @@ public class DateAnonymizationServiceTest {
     @Test
     public void anonymize2() {
 
-        AnonymizationService anonymizationService = new DateAnonymizationService(new InMemoryCache());
+        AnonymizationService anonymizationService = new DateAnonymizationService();
 
         final String token = "April 1, 2019";
         final String replacement = anonymizationService.anonymize(token);

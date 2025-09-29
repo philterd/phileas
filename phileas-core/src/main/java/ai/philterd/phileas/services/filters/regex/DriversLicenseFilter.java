@@ -102,11 +102,11 @@ public class DriversLicenseFilter extends RegexFilter {
     }
 
     @Override
-    public FilterResult filter(Policy policy, String context, String documentId, int piece, String input, Map<String, String> attributes) throws Exception {
+    public FilterResult filter(Policy policy, String contextName, Map<String, String> context, String documentId, int piece, String input, Map<String, String> attributes) throws Exception {
 
-        final List<Span> spans = findSpans(policy, analyzer, input, context, documentId, attributes);
+        final List<Span> spans = findSpans(policy, analyzer, input, contextName, context, documentId, attributes);
 
-        return new FilterResult(context, documentId, Span.dropOverlappingSpans(spans));
+        return new FilterResult(contextName, documentId, Span.dropOverlappingSpans(spans));
 
     }
 

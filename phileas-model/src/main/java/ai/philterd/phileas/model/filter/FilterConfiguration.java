@@ -19,7 +19,6 @@ import ai.philterd.phileas.model.policy.Crypto;
 import ai.philterd.phileas.model.policy.FPE;
 import ai.philterd.phileas.model.policy.IgnoredPattern;
 import ai.philterd.phileas.model.policy.filters.strategies.AbstractFilterStrategy;
-import ai.philterd.phileas.model.services.AlertService;
 import ai.philterd.phileas.model.services.AnonymizationService;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -33,19 +32,17 @@ public class FilterConfiguration {
 
     private final List<? extends AbstractFilterStrategy> strategies;
     private final AnonymizationService anonymizationService;
-    private final AlertService alertService;
     private final Set<String> ignored;
     private final Set<String> ignoredFiles;
     private final List<IgnoredPattern> ignoredPatterns;
     private final Crypto crypto;
     private final FPE fpe;
     private int windowSize = 5;
-    private int priority;
+    private final int priority;
 
     private FilterConfiguration(
             final List<? extends AbstractFilterStrategy> strategies,
             final AnonymizationService anonymizationService,
-            final AlertService alertService,
             final Set<String> ignored,
             final Set<String> ignoredFiles,
             final List<IgnoredPattern> ignoredPatterns,
@@ -57,7 +54,6 @@ public class FilterConfiguration {
 
         this.strategies = strategies;
         this.anonymizationService = anonymizationService;
-        this.alertService = alertService;
         this.ignored = ignored;
         this.ignoredFiles = ignoredFiles;
         this.ignoredPatterns = ignoredPatterns;
@@ -72,7 +68,6 @@ public class FilterConfiguration {
 
         private List<? extends AbstractFilterStrategy> strategies;
         private AnonymizationService anonymizationService;
-        private AlertService alertService;
         private Set<String> ignored;
         private Set<String> ignoredFiles;
         private List<IgnoredPattern> ignoredPatterns;
@@ -89,7 +84,6 @@ public class FilterConfiguration {
             return new FilterConfiguration(
                     strategies,
                     anonymizationService,
-                    alertService,
                     ignored,
                     ignoredFiles,
                     ignoredPatterns,
@@ -161,11 +155,6 @@ public class FilterConfiguration {
             return this;
         }
 
-        public FilterConfigurationBuilder withAlertService(AlertService alertService) {
-            this.alertService = alertService;
-            return this;
-        }
-
         public FilterConfigurationBuilder withIgnored(Set<String> ignored) {
             this.ignored = ignored;
             return this;
@@ -209,10 +198,6 @@ public class FilterConfiguration {
 
     public AnonymizationService getAnonymizationService() {
         return anonymizationService;
-    }
-
-    public AlertService getAlertService() {
-        return alertService;
     }
 
     public Set<String> getIgnored() {

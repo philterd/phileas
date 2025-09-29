@@ -15,13 +15,11 @@
  */
 package ai.philterd.test.phileas.services.filters;
 
-import ai.philterd.phileas.model.cache.InMemoryCache;
 import ai.philterd.phileas.model.enums.FilterType;
 import ai.philterd.phileas.model.filter.FilterConfiguration;
 import ai.philterd.phileas.model.objects.FilterResult;
 import ai.philterd.phileas.model.policy.filters.strategies.AbstractFilterStrategy;
 import ai.philterd.phileas.model.policy.filters.strategies.rules.CurrencyFilterStrategy;
-import ai.philterd.phileas.model.services.AlertService;
 import ai.philterd.phileas.services.anonymization.CurrencyAnonymizationService;
 import ai.philterd.phileas.services.filters.regex.CurrencyFilter;
 import org.junit.jupiter.api.Assertions;
@@ -29,25 +27,23 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class CurrencyFilterTest extends AbstractFilterTest {
-
-    private final AlertService alertService = Mockito.mock(AlertService.class);
 
     @Test
     public void filter1() throws Exception {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new CurrencyFilterStrategy()))
-                .withAlertService(alertService)
-                .withAnonymizationService(new CurrencyAnonymizationService(new InMemoryCache()))
+                .withAnonymizationService(new CurrencyAnonymizationService())
                 .withWindowSize(windowSize)
                 .build();
 
         final CurrencyFilter filter = new CurrencyFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "the drug cost is $35.53 .", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", Collections.emptyMap(),"documentid", PIECE, "the drug cost is $35.53 .", attributes);
 
         showSpans(filterResult.getSpans());
 
@@ -62,14 +58,13 @@ public class CurrencyFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new CurrencyFilterStrategy()))
-                .withAlertService(alertService)
-                .withAnonymizationService(new CurrencyAnonymizationService(new InMemoryCache()))
+                .withAnonymizationService(new CurrencyAnonymizationService())
                 .withWindowSize(windowSize)
                 .build();
 
         final CurrencyFilter filter = new CurrencyFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "the drug cost is $35.53.", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", Collections.emptyMap(),"documentid", PIECE, "the drug cost is $35.53.", attributes);
 
         showSpans(filterResult.getSpans());
 
@@ -84,14 +79,13 @@ public class CurrencyFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new CurrencyFilterStrategy()))
-                .withAlertService(alertService)
-                .withAnonymizationService(new CurrencyAnonymizationService(new InMemoryCache()))
+                .withAnonymizationService(new CurrencyAnonymizationService())
                 .withWindowSize(windowSize)
                 .build();
 
         final CurrencyFilter filter = new CurrencyFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "the drug cost is $35.00.", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context",Collections.emptyMap(), "documentid", PIECE, "the drug cost is $35.00.", attributes);
 
         showSpans(filterResult.getSpans());
 
@@ -106,14 +100,13 @@ public class CurrencyFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new CurrencyFilterStrategy()))
-                .withAlertService(alertService)
-                .withAnonymizationService(new CurrencyAnonymizationService(new InMemoryCache()))
+                .withAnonymizationService(new CurrencyAnonymizationService())
                 .withWindowSize(windowSize)
                 .build();
 
         final CurrencyFilter filter = new CurrencyFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "the drug cost is $3.00.", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", Collections.emptyMap(),"documentid", PIECE, "the drug cost is $3.00.", attributes);
 
         showSpans(filterResult.getSpans());
 
@@ -128,14 +121,13 @@ public class CurrencyFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new CurrencyFilterStrategy()))
-                .withAlertService(alertService)
-                .withAnonymizationService(new CurrencyAnonymizationService(new InMemoryCache()))
+                .withAnonymizationService(new CurrencyAnonymizationService())
                 .withWindowSize(windowSize)
                 .build();
 
         final CurrencyFilter filter = new CurrencyFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "the drug cost is $.50.", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", Collections.emptyMap(),"documentid", PIECE, "the drug cost is $.50.", attributes);
 
         showSpans(filterResult.getSpans());
 
@@ -153,14 +145,13 @@ public class CurrencyFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(Arrays.asList(currencyFilterStrategy))
-                .withAlertService(alertService)
-                .withAnonymizationService(new CurrencyAnonymizationService(new InMemoryCache()))
+                .withAnonymizationService(new CurrencyAnonymizationService())
                 .withWindowSize(windowSize)
                 .build();
 
         final CurrencyFilter filter = new CurrencyFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "the drug cost is $50.", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", Collections.emptyMap(), "documentid", PIECE, "the drug cost is $50.", attributes);
 
         showSpans(filterResult.getSpans());
 
@@ -177,15 +168,14 @@ public class CurrencyFilterTest extends AbstractFilterTest {
         currencyFilterStrategy.setStrategy(AbstractFilterStrategy.RANDOM_REPLACE);
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
-                .withStrategies(Arrays.asList(currencyFilterStrategy))
-                .withAlertService(alertService)
-                .withAnonymizationService(new CurrencyAnonymizationService(new InMemoryCache()))
+                .withStrategies(List.of(currencyFilterStrategy))
+                .withAnonymizationService(new CurrencyAnonymizationService())
                 .withWindowSize(windowSize)
                 .build();
 
         final CurrencyFilter filter = new CurrencyFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "the drug cost is $.50.", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", Collections.emptyMap(), "documentid", PIECE, "the drug cost is $.50.", attributes);
 
         showSpans(filterResult.getSpans());
 

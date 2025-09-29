@@ -50,16 +50,16 @@ public class VinFilter extends RegexFilter {
     }
 
     @Override
-    public FilterResult filter(Policy policy, String context, String documentId, int piece, String input, Map<String, String> attributes) throws Exception {
+    public FilterResult filter(Policy policy, String contextName, Map<String, String> context, String documentId, int piece, String input, Map<String, String> attributes) throws Exception {
 
-        final List<Span> spans = findSpans(policy, analyzer, input, context, documentId, attributes);
+        final List<Span> spans = findSpans(policy, analyzer, input, contextName, context, documentId, attributes);
 
         CollectionUtils.filter(spans, object -> {
             Span s = (Span) object;
             return isVinValid(input.substring(s.getCharacterStart(), s.getCharacterEnd()));
         });
 
-        return new FilterResult(context, documentId, spans);
+        return new FilterResult(contextName, documentId, spans);
 
     }
 

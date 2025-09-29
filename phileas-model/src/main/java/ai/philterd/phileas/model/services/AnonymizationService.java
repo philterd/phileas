@@ -15,6 +15,8 @@
  */
 package ai.philterd.phileas.model.services;
 
+import java.util.Map;
+
 /**
  * An anonymization service.
  */
@@ -27,10 +29,6 @@ public interface AnonymizationService {
      */
     String anonymize(String token);
 
-    /**
-     * Gets the anonymization cache service used for this anonymization service.
-     * @return A {@link CacheService}.
-     */
-    CacheService getCacheService();
+    Map<String, String> getContext();
 
 }

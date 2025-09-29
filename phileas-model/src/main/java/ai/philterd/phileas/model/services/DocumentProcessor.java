@@ -28,7 +28,8 @@ import java.util.Map;
 public interface DocumentProcessor {
 
     FilterResponse process(Policy policy, List<Filter> filters, List<PostFilter> postFilters,
-                           String context, String documentId, int piece, String input,
+                           String contextName,
+                           Map<String, String> context, String documentId, int piece, String input,
                            Map<String, String> attributes) throws Exception;
 
 }

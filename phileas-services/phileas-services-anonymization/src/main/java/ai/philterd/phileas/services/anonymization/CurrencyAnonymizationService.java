@@ -15,17 +15,21 @@
  */
 package ai.philterd.phileas.services.anonymization;
 
-import ai.philterd.phileas.model.services.CacheService;
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.Map;
 import java.util.Random;
 
 public class CurrencyAnonymizationService extends AbstractAnonymizationService {
 
-    private Random random;
+    private final Random random;
 
-    public CurrencyAnonymizationService(CacheService anonymizationCacheService) {
-        super(anonymizationCacheService);
+    public CurrencyAnonymizationService() {
+        this.random = new Random();
+    }
+
+    public CurrencyAnonymizationService(final Map<String, String> context) {
+        super(context);
         this.random = new Random();
     }
 

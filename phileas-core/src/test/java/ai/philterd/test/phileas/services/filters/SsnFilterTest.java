@@ -15,37 +15,32 @@
  */
 package ai.philterd.test.phileas.services.filters;
 
-import ai.philterd.phileas.model.cache.InMemoryCache;
 import ai.philterd.phileas.model.enums.FilterType;
 import ai.philterd.phileas.model.filter.FilterConfiguration;
 import ai.philterd.phileas.model.objects.FilterResult;
 import ai.philterd.phileas.model.policy.filters.strategies.rules.SsnFilterStrategy;
-import ai.philterd.phileas.model.services.AlertService;
 import ai.philterd.phileas.services.anonymization.AlphanumericAnonymizationService;
 import ai.philterd.phileas.services.filters.regex.SsnFilter;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
+import java.util.Collections;
 import java.util.List;
 
 public class SsnFilterTest extends AbstractFilterTest {
-
-    private final AlertService alertService = Mockito.mock(AlertService.class);
 
     @Test
     public void filterSsn1() throws Exception {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new SsnFilterStrategy()))
-                .withAlertService(alertService)
-                .withAnonymizationService(new AlphanumericAnonymizationService(new InMemoryCache()))
+                .withAnonymizationService(new AlphanumericAnonymizationService())
                 .withWindowSize(windowSize)
                 .build();
 
         final SsnFilter filter = new SsnFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "the ssn is 123-45-6789.", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", Collections.emptyMap(), "documentid", PIECE, "the ssn is 123-45-6789.", attributes);
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 11, 22, FilterType.SSN));
         Assertions.assertEquals("123-45-6789", filterResult.getSpans().get(0).getText());
@@ -57,14 +52,13 @@ public class SsnFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new SsnFilterStrategy()))
-                .withAlertService(alertService)
-                .withAnonymizationService(new AlphanumericAnonymizationService(new InMemoryCache()))
+                .withAnonymizationService(new AlphanumericAnonymizationService())
                 .withWindowSize(windowSize)
                 .build();
 
         final SsnFilter filter = new SsnFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "the ssn is 123456789.", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", Collections.emptyMap(), "documentid", PIECE, "the ssn is 123456789.", attributes);
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 11, 20, FilterType.SSN));
 
@@ -75,14 +69,13 @@ public class SsnFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new SsnFilterStrategy()))
-                .withAlertService(alertService)
-                .withAnonymizationService(new AlphanumericAnonymizationService(new InMemoryCache()))
+                .withAnonymizationService(new AlphanumericAnonymizationService())
                 .withWindowSize(windowSize)
                 .build();
 
         final SsnFilter filter = new SsnFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "the ssn is 123 45 6789.", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", Collections.emptyMap(), "documentid", PIECE, "the ssn is 123 45 6789.", attributes);
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 11, 22, FilterType.SSN));
 
@@ -93,14 +86,13 @@ public class SsnFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new SsnFilterStrategy()))
-                .withAlertService(alertService)
-                .withAnonymizationService(new AlphanumericAnonymizationService(new InMemoryCache()))
+                .withAnonymizationService(new AlphanumericAnonymizationService())
                 .withWindowSize(windowSize)
                 .build();
 
         final SsnFilter filter = new SsnFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "the ssn is 123 45 6789.", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", Collections.emptyMap(), "documentid", PIECE, "the ssn is 123 45 6789.", attributes);
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 11, 22, FilterType.SSN));
 
@@ -111,14 +103,13 @@ public class SsnFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new SsnFilterStrategy()))
-                .withAlertService(alertService)
-                .withAnonymizationService(new AlphanumericAnonymizationService(new InMemoryCache()))
+                .withAnonymizationService(new AlphanumericAnonymizationService())
                 .withWindowSize(windowSize)
                 .build();
 
         final SsnFilter filter = new SsnFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "the ssn is 123 454 6789.", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", Collections.emptyMap(), "documentid", PIECE, "the ssn is 123 454 6789.", attributes);
         Assertions.assertEquals(0, filterResult.getSpans().size());
 
     }
@@ -128,14 +119,13 @@ public class SsnFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new SsnFilterStrategy()))
-                .withAlertService(alertService)
-                .withAnonymizationService(new AlphanumericAnonymizationService(new InMemoryCache()))
+                .withAnonymizationService(new AlphanumericAnonymizationService())
                 .withWindowSize(windowSize)
                 .build();
 
         final SsnFilter filter = new SsnFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "the ssn is 123 4f 6789.", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", Collections.emptyMap(), "documentid", PIECE, "the ssn is 123 4f 6789.", attributes);
         Assertions.assertEquals(0, filterResult.getSpans().size());
 
     }
@@ -145,14 +135,13 @@ public class SsnFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new SsnFilterStrategy()))
-                .withAlertService(alertService)
-                .withAnonymizationService(new AlphanumericAnonymizationService(new InMemoryCache()))
+                .withAnonymizationService(new AlphanumericAnonymizationService())
                 .withWindowSize(windowSize)
                 .build();
 
         final SsnFilter filter = new SsnFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "the ssn is 11-1234567.", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", Collections.emptyMap(), "documentid", PIECE, "the ssn is 11-1234567.", attributes);
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 11, 21, FilterType.SSN));
 

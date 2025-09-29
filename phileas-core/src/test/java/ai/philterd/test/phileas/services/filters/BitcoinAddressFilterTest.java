@@ -15,37 +15,32 @@
  */
 package ai.philterd.test.phileas.services.filters;
 
-import ai.philterd.phileas.model.cache.InMemoryCache;
 import ai.philterd.phileas.model.enums.FilterType;
 import ai.philterd.phileas.model.filter.FilterConfiguration;
 import ai.philterd.phileas.model.objects.FilterResult;
 import ai.philterd.phileas.model.policy.filters.strategies.rules.BitcoinAddressFilterStrategy;
-import ai.philterd.phileas.model.services.AlertService;
 import ai.philterd.phileas.services.anonymization.BitcoinAddressAnonymizationService;
 import ai.philterd.phileas.services.filters.regex.BitcoinAddressFilter;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
+import java.util.Collections;
 import java.util.List;
 
 public class BitcoinAddressFilterTest extends AbstractFilterTest {
-
-    private final AlertService alertService = Mockito.mock(AlertService.class);
 
     @Test
     public void filter1() throws Exception {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new BitcoinAddressFilterStrategy()))
-                .withAlertService(alertService)
-                .withAnonymizationService(new BitcoinAddressAnonymizationService(new InMemoryCache()))
+                .withAnonymizationService(new BitcoinAddressAnonymizationService())
                 .withWindowSize(windowSize)
                 .build();
 
         final BitcoinAddressFilter filter = new BitcoinAddressFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "the address is 127NVqnjf8gB9BFAW2dnQeM6wqmy1gbGtv.", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", Collections.emptyMap(), "documentid", PIECE, "the address is 127NVqnjf8gB9BFAW2dnQeM6wqmy1gbGtv.", attributes);
 
         showSpans(filterResult.getSpans());
 
@@ -61,14 +56,13 @@ public class BitcoinAddressFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new BitcoinAddressFilterStrategy()))
-                .withAlertService(alertService)
-                .withAnonymizationService(new BitcoinAddressAnonymizationService(new InMemoryCache()))
+                .withAnonymizationService(new BitcoinAddressAnonymizationService())
                 .withWindowSize(windowSize)
                 .build();
 
         final BitcoinAddressFilter filter = new BitcoinAddressFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "the address is 12qnjf8FAW2dnQeM6wqmy1gbGtv.", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", Collections.emptyMap(), "documentid", PIECE, "the address is 12qnjf8FAW2dnQeM6wqmy1gbGtv.", attributes);
 
         showSpans(filterResult.getSpans());
 
@@ -84,14 +78,13 @@ public class BitcoinAddressFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new BitcoinAddressFilterStrategy()))
-                .withAlertService(alertService)
-                .withAnonymizationService(new BitcoinAddressAnonymizationService(new InMemoryCache()))
+                .withAnonymizationService(new BitcoinAddressAnonymizationService())
                 .withWindowSize(windowSize)
                 .build();
 
         final BitcoinAddressFilter filter = new BitcoinAddressFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "the address is 126wqmy1gbGtv.", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", Collections.emptyMap(), "documentid", PIECE, "the address is 126wqmy1gbGtv.", attributes);
 
         showSpans(filterResult.getSpans());
 

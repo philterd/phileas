@@ -15,17 +15,21 @@
  */
 package ai.philterd.phileas.services.anonymization;
 
-import ai.philterd.phileas.model.services.CacheService;
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.Map;
 import java.util.Random;
 
 public class AgeAnonymizationService extends AbstractAnonymizationService {
 
     private final Random random;
 
-    public AgeAnonymizationService(CacheService anonymizationCacheService) {
-        super(anonymizationCacheService);
+    public AgeAnonymizationService() {
+        this.random = new Random();
+    }
+
+    public AgeAnonymizationService(final Map<String, String> context) {
+        super(context);
         this.random = new Random();
     }
 

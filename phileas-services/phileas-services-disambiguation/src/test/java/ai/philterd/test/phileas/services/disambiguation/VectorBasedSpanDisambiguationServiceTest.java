@@ -15,11 +15,11 @@
  */
 package ai.philterd.test.phileas.services.disambiguation;
 
-import ai.philterd.phileas.model.cache.InMemoryCache;
+import ai.philterd.phileas.model.cache.InMemoryVector;
 import ai.philterd.phileas.model.configuration.PhileasConfiguration;
 import ai.philterd.phileas.model.enums.FilterType;
 import ai.philterd.phileas.model.objects.Span;
-import ai.philterd.phileas.model.services.CacheService;
+import ai.philterd.phileas.model.services.VectorService;
 import ai.philterd.phileas.services.disambiguation.VectorBasedSpanDisambiguationService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -28,6 +28,7 @@ import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 
@@ -38,7 +39,7 @@ public class VectorBasedSpanDisambiguationServiceTest {
     @Test
     public void disambiguateLocal1() throws IOException {
 
-        final CacheService cacheService = new InMemoryCache();
+        final VectorService vectorService = new InMemoryVector();
 
         final Properties properties = new Properties();
 
@@ -50,7 +51,7 @@ public class VectorBasedSpanDisambiguationServiceTest {
 
         final String context = "c";
 
-        final VectorBasedSpanDisambiguationService vectorBasedSpanDisambiguationService = new VectorBasedSpanDisambiguationService(phileasConfiguration, cacheService);
+        final VectorBasedSpanDisambiguationService vectorBasedSpanDisambiguationService = new VectorBasedSpanDisambiguationService(phileasConfiguration, vectorService);
 
         final Span span1 = Span.make(0, 4, FilterType.SSN, context, "d", 0.00, "123-45-6789", "000-00-0000", "", false, true, new String[]{"ssn", "was", "he", "id"}, 0);
         vectorBasedSpanDisambiguationService.hashAndInsert(context, span1);
@@ -73,7 +74,7 @@ public class VectorBasedSpanDisambiguationServiceTest {
     @Test
     public void disambiguateLocal2() throws IOException {
 
-        final CacheService cacheService = new InMemoryCache();
+        final VectorService vectorService = new InMemoryVector();
 
         final Properties properties = new Properties();
 
@@ -85,7 +86,7 @@ public class VectorBasedSpanDisambiguationServiceTest {
 
         final String context = "c";
 
-        final VectorBasedSpanDisambiguationService vectorBasedSpanDisambiguationService = new VectorBasedSpanDisambiguationService(phileasConfiguration, cacheService);
+        final VectorBasedSpanDisambiguationService vectorBasedSpanDisambiguationService = new VectorBasedSpanDisambiguationService(phileasConfiguration, vectorService);
 
         final Span span1 = Span.make(0, 4, FilterType.SSN, context, "d", 0.00, "123-45-6789", "000-00-0000",  "", false, true, new String[]{"ssn", "was", "he", "id"}, 0);
         vectorBasedSpanDisambiguationService.hashAndInsert(context, span1);
@@ -100,7 +101,7 @@ public class VectorBasedSpanDisambiguationServiceTest {
 
         final List<Span> spans = Arrays.asList(span, span1, span2, ambiguousSpan);
 
-        final List<Span> disambiguatedSpans = vectorBasedSpanDisambiguationService.disambiguate(context, spans);
+        final List<Span> disambiguatedSpans = vectorBasedSpanDisambiguationService.disambiguate(context, Collections.emptyMap(), spans);
 
         showSpans(disambiguatedSpans);
 

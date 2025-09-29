@@ -21,6 +21,8 @@ import ai.philterd.test.phileas.model.policy.filters.strategies.AbstractFilterSt
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.util.Collections;
+
 public class EmailAddressFilterStrategyTest extends AbstractFilterStrategyTest {
 
     public AbstractFilterStrategy getFilterStrategy() {
@@ -32,7 +34,7 @@ public class EmailAddressFilterStrategyTest extends AbstractFilterStrategyTest {
 
         final AbstractFilterStrategy strategy = new EmailAddressFilterStrategy();
 
-        final boolean conditionSatisfied = strategy.evaluateCondition(getPolicy(), "context", "documentid",  "test@test.com", WINDOW, "token == \"test@test.com\"", 1.0, attributes);
+        final boolean conditionSatisfied = strategy.evaluateCondition(getPolicy(), "context", Collections.emptyMap(), "documentid",  "test@test.com", WINDOW, "token == \"test@test.com\"", 1.0, attributes);
 
         Assertions.assertTrue(conditionSatisfied);
 

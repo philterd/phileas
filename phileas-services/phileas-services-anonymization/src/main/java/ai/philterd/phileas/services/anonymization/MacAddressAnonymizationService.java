@@ -15,19 +15,20 @@
  */
 package ai.philterd.phileas.services.anonymization;
 
-import ai.philterd.phileas.model.services.CacheService;
-
 import java.security.SecureRandom;
+import java.util.Map;
 
 public class MacAddressAnonymizationService extends AbstractAnonymizationService {
 
     private final SecureRandom secureRandom;
 
-    public MacAddressAnonymizationService(CacheService anonymizationCacheService) {
-        super(anonymizationCacheService);
-
+    public MacAddressAnonymizationService() {
         this.secureRandom = new SecureRandom();
+    }
 
+    public MacAddressAnonymizationService(final Map<String, String> context) {
+        super(context);
+        this.secureRandom = new SecureRandom();
     }
 
     @Override

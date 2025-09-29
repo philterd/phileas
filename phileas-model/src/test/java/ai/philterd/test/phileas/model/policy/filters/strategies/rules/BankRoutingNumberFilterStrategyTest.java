@@ -26,6 +26,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
+import java.util.Collections;
+
 public class BankRoutingNumberFilterStrategyTest extends AbstractFilterStrategyTest {
 
     @Override
@@ -43,7 +45,7 @@ public class BankRoutingNumberFilterStrategyTest extends AbstractFilterStrategyT
         final AbstractFilterStrategy strategy = getFilterStrategy();
         strategy.setStrategy(AbstractFilterStrategy.FPE_ENCRYPT_REPLACE);
 
-        final Replacement replacement = strategy.getReplacement("name", "context", "docId", "091000022", WINDOW, new Crypto(), fpe, anonymizationService, null);
+        final Replacement replacement = strategy.getReplacement("name", "context", Collections.emptyMap(), "docId", "091000022", WINDOW, new Crypto(), fpe, anonymizationService, null);
 
         Assertions.assertEquals(9, replacement.getReplacement().length());
         Assertions.assertEquals("970881062", replacement.getReplacement());

@@ -22,7 +22,7 @@ import ai.philterd.phileas.model.policy.Ignored;
 import ai.philterd.phileas.model.policy.Policy;
 import ai.philterd.phileas.model.responses.BinaryDocumentFilterResponse;
 import ai.philterd.phileas.model.serializers.PlaceholderDeserializer;
-import ai.philterd.phileas.model.services.CacheService;
+import ai.philterd.phileas.model.services.VectorService;
 import ai.philterd.phileas.services.PhileasFilterService;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -41,6 +41,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 
@@ -53,7 +54,7 @@ public class PhileasFilterServiceTest {
     private static final Logger LOGGER = LogManager.getLogger(PhileasFilterServiceTest.class);
 
     private Gson gson;
-    private final CacheService cacheService = Mockito.mock(CacheService.class);
+    private final VectorService vectorService = Mockito.mock(VectorService.class);
 
     @BeforeEach
     public void before() {
@@ -111,8 +112,8 @@ public class PhileasFilterServiceTest {
 
         final Policy policy = getPdfPolicy("pdf");
 
-        final PhileasFilterService service = new PhileasFilterService(phileasConfiguration, cacheService);
-        final BinaryDocumentFilterResponse response = service.filter(policy, "context", "documentid", document, MimeType.APPLICATION_PDF, MimeType.APPLICATION_PDF);
+        final PhileasFilterService service = new PhileasFilterService(phileasConfiguration, vectorService);
+        final BinaryDocumentFilterResponse response = service.filter(policy, "context", Collections.emptyMap(), "documentid", document, MimeType.APPLICATION_PDF, MimeType.APPLICATION_PDF);
 
         // Write the byte array to a file.
         final File outputFile = File.createTempFile("redact", ".pdf");
@@ -144,8 +145,8 @@ public class PhileasFilterServiceTest {
 
         final Policy policy = getPdfPolicy("pdf");
 
-        PhileasFilterService service = new PhileasFilterService(phileasConfiguration, cacheService);
-        final BinaryDocumentFilterResponse response = service.filter(policy, "context", "documentid", document, MimeType.APPLICATION_PDF, MimeType.APPLICATION_PDF);
+        PhileasFilterService service = new PhileasFilterService(phileasConfiguration, vectorService);
+        final BinaryDocumentFilterResponse response = service.filter(policy, "context", Collections.emptyMap(), "documentid", document, MimeType.APPLICATION_PDF, MimeType.APPLICATION_PDF);
 
         // Write the byte array to a file.
         final File outputFile = File.createTempFile("redact", ".pdf");

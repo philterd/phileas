@@ -28,8 +28,7 @@ import ai.philterd.phileas.model.policy.config.Pdf;
 import ai.philterd.phileas.model.policy.graphical.BoundingBox;
 import ai.philterd.phileas.model.responses.BinaryDocumentFilterResponse;
 import ai.philterd.phileas.model.responses.FilterResponse;
-import ai.philterd.phileas.model.services.AlertService;
-import ai.philterd.phileas.model.services.CacheService;
+import ai.philterd.phileas.model.services.VectorService;
 import ai.philterd.phileas.model.services.DocumentProcessor;
 import ai.philterd.phileas.model.services.FilterService;
 import ai.philterd.phileas.model.services.MetricsService;
@@ -37,7 +36,6 @@ import ai.philterd.phileas.model.services.PostFilter;
 import ai.philterd.phileas.model.services.Redacter;
 import ai.philterd.phileas.model.services.SplitService;
 import ai.philterd.phileas.processors.unstructured.UnstructuredDocumentProcessor;
-import ai.philterd.phileas.services.alerts.DefaultAlertService;
 import ai.philterd.phileas.services.disambiguation.VectorBasedSpanDisambiguationService;
 import ai.philterd.phileas.services.metrics.NoOpMetricsService;
 import ai.philterd.phileas.services.postfilters.IgnoredPatternsFilter;
@@ -72,8 +70,6 @@ public class PhileasFilterService implements FilterService {
 
 	private static final Logger LOGGER = LogManager.getLogger(PhileasFilterService.class);
 
-    private final AlertService alertService;
-
     private final DocumentProcessor unstructuredDocumentProcessor;
     private final FilterPolicyLoader filterPolicyLoader;
     private final TokenCounter tokenCounter;
@@ -84,7 +80,7 @@ public class PhileasFilterService implements FilterService {
     // PHL-223: Face recognition
     //private final ImageProcessor imageProcessor;
 
-    public PhileasFilterService(final PhileasConfiguration phileasConfiguration, final MetricsService metricsService, final CacheService cacheService) throws IOException {
+    public PhileasFilterService(final PhileasConfiguration phileasConfiguration, final MetricsService metricsService, final VectorService vectorService) {
 
         LOGGER.info("Initializing Phileas engine.");
 
@@ -93,38 +89,30 @@ public class PhileasFilterService implements FilterService {
         // Set the token counter.
         this.tokenCounter = new WhitespaceTokenCounter();
 
-        // Set the alert service.
-        this.alertService = new DefaultAlertService(cacheService);
-
         // The filter loader for policies.
-        this.filterPolicyLoader = new FilterPolicyLoader(alertService, cacheService, metricsService, phileasConfiguration);
+        this.filterPolicyLoader = new FilterPolicyLoader(metricsService, phileasConfiguration);
 
         // Create a new unstructured document processor.
         this.unstructuredDocumentProcessor = new UnstructuredDocumentProcessor(
                 metricsService,
-                new VectorBasedSpanDisambiguationService(phileasConfiguration, cacheService),
+                new VectorBasedSpanDisambiguationService(phileasConfiguration, vectorService),
                 phileasConfiguration.incrementalRedactionsEnabled()
         );
 
     }
 
-    public PhileasFilterService(final PhileasConfiguration phileasConfiguration, final CacheService cacheService) throws IOException {
-        this(phileasConfiguration, new NoOpMetricsService(), cacheService);
+    public PhileasFilterService(final PhileasConfiguration phileasConfiguration, final VectorService vectorService) throws IOException {
+        this(phileasConfiguration, new NoOpMetricsService(), vectorService);
     }
 
     @Override
-    public AlertService getAlertService() {
-        return alertService;
-    }
-
-    @Override
-    public FilterResponse filter(final Policy policy, final String context, String documentId,
+    public FilterResponse filter(final Policy policy, final String contextName, final Map<String, String> context, String documentId,
                                  final String input, final MimeType mimeType) throws Exception {
 
         // Initialize potential attributes that are associated with the input text.
         final Map<String, String> attributes = new HashMap<>();
 
-        final List<Filter> filters = filterPolicyLoader.getFiltersForPolicy(policy, filterCache);
+        final List<Filter> filters = filterPolicyLoader.getFiltersForPolicy(policy, filterCache, context);
         final List<PostFilter> postFilters = getPostFiltersForPolicy(policy);
 
         // See if we need to generate a document ID.
@@ -158,7 +146,7 @@ public class PhileasFilterService implements FilterService {
 
                     // Process each split.
                     for (int i = 0; i < splits.size(); i++) {
-                        final FilterResponse fr = unstructuredDocumentProcessor.process(policy, filters, postFilters, context, documentId, i, splits.get(i), attributes);
+                        final FilterResponse fr = unstructuredDocumentProcessor.process(policy, filters, postFilters, contextName, context, documentId, i, splits.get(i), attributes);
                         filterResponses.add(fr);
                     }
 
@@ -168,7 +156,7 @@ public class PhileasFilterService implements FilterService {
             } else {
 
                 // Do not split. Process the entire string at once.
-                filterResponse = unstructuredDocumentProcessor.process(policy, filters, postFilters, context, documentId, 0, input, attributes);
+                filterResponse = unstructuredDocumentProcessor.process(policy, filters, postFilters, contextName, context, documentId, 0, input, attributes);
 
             }
 
@@ -182,7 +170,7 @@ public class PhileasFilterService implements FilterService {
     }
 
     @Override
-    public BinaryDocumentFilterResponse filter(final Policy policy, final String context, String documentId,
+    public BinaryDocumentFilterResponse filter(final Policy policy, final String contextName, final Map<String, String> context, String documentId,
                                                final byte[] input, final MimeType mimeType,
                                                final MimeType outputMimeType) throws Exception {
 
@@ -218,7 +206,7 @@ public class PhileasFilterService implements FilterService {
             // Track the document offset.
             int offset = 0;
 
-            final List<Filter> filters = filterPolicyLoader.getFiltersForPolicy(policy, filterCache);
+            final List<Filter> filters = filterPolicyLoader.getFiltersForPolicy(policy, filterCache, context);
             final List<PostFilter> postFilters = getPostFiltersForPolicy(policy);
 
             long tokens = 0;
@@ -232,7 +220,7 @@ public class PhileasFilterService implements FilterService {
                 tokens += tokenCounter.countTokens(line);
 
                 // Process the text.
-                final FilterResponse filterResponse = unstructuredDocumentProcessor.process(policy, filters, postFilters, context, documentId, piece, line, attributes);
+                final FilterResponse filterResponse = unstructuredDocumentProcessor.process(policy, filters, postFilters, contextName, context, documentId, piece, line, attributes);
 
                 // Add all the found spans to the list of spans.
                 spans.addAll(filterResponse.getExplanation().appliedSpans());
@@ -268,7 +256,7 @@ public class PhileasFilterService implements FilterService {
             // TODO: The identified vs the applied will actually be different
             // but we are setting the same here. Fix this at some point.
             final Explanation explanation = new Explanation(spansList, spansList);
-            binaryDocumentFilterResponse = new BinaryDocumentFilterResponse(redacted, context, documentId, explanation, tokens);
+            binaryDocumentFilterResponse = new BinaryDocumentFilterResponse(redacted, contextName, documentId, explanation, tokens);
 
         /*} else if(mimeType == MimeType.IMAGE_JPEG) {
             // PHL-223: Face recognition

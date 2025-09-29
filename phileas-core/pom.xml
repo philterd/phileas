@@ -43,11 +43,6 @@
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>ai.philterd</groupId>
-			<artifactId>phileas-services-alerts</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
 			<groupId>com.googlecode.libphonenumber</groupId>
 			<artifactId>libphonenumber</artifactId>
 			<version>${libphonenumber.version}</version>

@@ -15,10 +15,8 @@
  */
 package ai.philterd.test.phileas.services.anonymization;
 
-import ai.philterd.phileas.model.cache.InMemoryCache;
 import ai.philterd.phileas.model.services.AnonymizationService;
 import ai.philterd.phileas.services.anonymization.ZipCodeAnonymizationService;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Test;
@@ -30,12 +28,12 @@ public class ZipCodeAnonymizationServiceTest {
     @Test
     public void anonymize() {
 
-        AnonymizationService anonymizationService = new ZipCodeAnonymizationService(new InMemoryCache());
+        AnonymizationService anonymizationService = new ZipCodeAnonymizationService();
 
         final String token = "90210";
         final String replacement = anonymizationService.anonymize(token);
 
-        LOGGER.info("Zip code replacement: " + replacement);
+        LOGGER.info("Zip code replacement: {}", replacement);
 
     }
 

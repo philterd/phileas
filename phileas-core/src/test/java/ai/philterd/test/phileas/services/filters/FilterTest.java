@@ -15,26 +15,22 @@
  */
 package ai.philterd.test.phileas.services.filters;
 
-import ai.philterd.phileas.model.cache.InMemoryCache;
 import ai.philterd.phileas.model.enums.FilterType;
 import ai.philterd.phileas.model.filter.FilterConfiguration;
 import ai.philterd.phileas.model.objects.FilterResult;
-import ai.philterd.phileas.model.services.AlertService;
 import ai.philterd.phileas.services.anonymization.AgeAnonymizationService;
 import ai.philterd.phileas.services.filters.regex.AgeFilter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
 import java.util.Arrays;
+import java.util.Collections;
 
 public class FilterTest extends AbstractFilterTest {
 
     protected static final Logger LOGGER = LogManager.getLogger(FilterTest.class);
-
-    private final AlertService alertService = Mockito.mock(AlertService.class);
 
     @Test
     public void window0() throws Exception {
@@ -44,14 +40,13 @@ public class FilterTest extends AbstractFilterTest {
 
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
-                .withAlertService(alertService)
-                .withAnonymizationService(new AgeAnonymizationService(new InMemoryCache()))
+                .withAnonymizationService(new AgeAnonymizationService())
                 .withWindowSize(windowSize)
                 .build();
 
         final AgeFilter filter = new AgeFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "this is a first sentence. the patient is 3.5 years old and he's cool. this is a surrounding sentence.", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", Collections.emptyMap(), "documentid", PIECE, "this is a first sentence. the patient is 3.5 years old and he's cool. this is a surrounding sentence.", attributes);
 
         showSpans(filterResult.getSpans());
 
@@ -75,14 +70,13 @@ public class FilterTest extends AbstractFilterTest {
         int windowSize = 5;
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
-                .withAlertService(alertService)
-                .withAnonymizationService(new AgeAnonymizationService(new InMemoryCache()))
+                .withAnonymizationService(new AgeAnonymizationService())
                 .withWindowSize(windowSize)
                 .build();
 
         final AgeFilter filter = new AgeFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "this is a first sentence. the patient is 3.5 years old and he's cool. this is a surrounding sentence.", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", Collections.emptyMap(), "documentid", PIECE, "this is a first sentence. the patient is 3.5 years old and he's cool. this is a surrounding sentence.", attributes);
 
         showSpans(filterResult.getSpans());
 
@@ -107,14 +101,13 @@ public class FilterTest extends AbstractFilterTest {
         int windowSize = 5;
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
-                .withAlertService(alertService)
-                .withAnonymizationService(new AgeAnonymizationService(new InMemoryCache()))
+                .withAnonymizationService(new AgeAnonymizationService())
                 .withWindowSize(windowSize)
                 .build();
 
         final AgeFilter filter = new AgeFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "this is a first sentence. the patient is 3.5 years old and he's cool. this is a surrounding sentence.", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", Collections.emptyMap(), "documentid", PIECE, "this is a first sentence. the patient is 3.5 years old and he's cool. this is a surrounding sentence.", attributes);
 
         showSpans(filterResult.getSpans());
 

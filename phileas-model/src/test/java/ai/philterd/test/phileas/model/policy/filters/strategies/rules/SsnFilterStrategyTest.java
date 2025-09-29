@@ -26,6 +26,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
+import java.util.Collections;
+
 public class SsnFilterStrategyTest extends AbstractFilterStrategyTest {
 
     public AbstractFilterStrategy getFilterStrategy() {
@@ -42,7 +44,7 @@ public class SsnFilterStrategyTest extends AbstractFilterStrategyTest {
         final AbstractFilterStrategy strategy = getFilterStrategy();
         strategy.setStrategy(AbstractFilterStrategy.FPE_ENCRYPT_REPLACE);
 
-        final Replacement replacement = strategy.getReplacement("name", "context", "docId", "123-45-6789", WINDOW, new Crypto(), fpe, anonymizationService, null);
+        final Replacement replacement = strategy.getReplacement("name", "context", Collections.emptyMap(), "docId", "123-45-6789", WINDOW, new Crypto(), fpe, anonymizationService, null);
 
         Assertions.assertEquals(11, replacement.getReplacement().length());
         Assertions.assertEquals("609-59-7486", replacement.getReplacement());
@@ -59,7 +61,7 @@ public class SsnFilterStrategyTest extends AbstractFilterStrategyTest {
         final AbstractFilterStrategy strategy = getFilterStrategy();
         strategy.setStrategy(AbstractFilterStrategy.FPE_ENCRYPT_REPLACE);
 
-        final Replacement replacement = strategy.getReplacement("name", "context", "docId", "987 65 4321", WINDOW, new Crypto(), fpe, anonymizationService, null);
+        final Replacement replacement = strategy.getReplacement("name", "context", Collections.emptyMap(), "docId", "987 65 4321", WINDOW, new Crypto(), fpe, anonymizationService, null);
 
         Assertions.assertEquals(11, replacement.getReplacement().length());
         Assertions.assertEquals("195 55 5147", replacement.getReplacement());
@@ -76,7 +78,7 @@ public class SsnFilterStrategyTest extends AbstractFilterStrategyTest {
         final AbstractFilterStrategy strategy = getFilterStrategy();
         strategy.setStrategy(AbstractFilterStrategy.FPE_ENCRYPT_REPLACE);
 
-        final Replacement replacement = strategy.getReplacement("name", "context", "docId", "987654321", WINDOW, new Crypto(), fpe, anonymizationService, null);
+        final Replacement replacement = strategy.getReplacement("name", "context", Collections.emptyMap(), "docId", "987654321", WINDOW, new Crypto(), fpe, anonymizationService, null);
 
         Assertions.assertEquals(9, replacement.getReplacement().length());
         Assertions.assertEquals("195555147", replacement.getReplacement());
@@ -91,7 +93,7 @@ public class SsnFilterStrategyTest extends AbstractFilterStrategyTest {
         final AbstractFilterStrategy strategy = new SsnFilterStrategy();
         strategy.setStrategy(AbstractFilterStrategy.LAST_4);
 
-        final Replacement replacement = strategy.getReplacement("name", "context", "docId", "4111111111111111", WINDOW, new Crypto(), new FPE(), anonymizationService, null);
+        final Replacement replacement = strategy.getReplacement("name", "context", Collections.emptyMap(), "docId", "4111111111111111", WINDOW, new Crypto(), new FPE(), anonymizationService, null);
 
         Assertions.assertEquals("1111", replacement.getReplacement());
 
@@ -105,7 +107,7 @@ public class SsnFilterStrategyTest extends AbstractFilterStrategyTest {
         final AbstractFilterStrategy strategy = new SsnFilterStrategy();
         strategy.setStrategy(AbstractFilterStrategy.LAST_4);
 
-        final Replacement replacement = strategy.getReplacement("name", "context", "docId", "123-456-7890", WINDOW, new Crypto(), new FPE(), anonymizationService, null);
+        final Replacement replacement = strategy.getReplacement("name", "context", Collections.emptyMap(), "docId", "123-456-7890", WINDOW, new Crypto(), new FPE(), anonymizationService, null);
 
         Assertions.assertEquals("7890", replacement.getReplacement());
 

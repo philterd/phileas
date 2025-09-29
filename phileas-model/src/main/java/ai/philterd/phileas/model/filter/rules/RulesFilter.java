@@ -28,6 +28,7 @@ import ai.philterd.phileas.model.policy.Policy;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -74,8 +75,8 @@ public abstract class RulesFilter extends Filter {
      * @param attributes Attributes about the input text.
      * @return A list of matching {@link Span spans}.
      */
-    protected List<Span> findSpans(final Policy policy, final Analyzer analyzer, final String input, final String context,
-                                   final String documentId, final Map<String, String> attributes) throws Exception {
+    protected List<Span> findSpans(final Policy policy, final Analyzer analyzer, final String input, final String contextName,
+                                   final Map<String, String> context, final String documentId, final Map<String, String> attributes) throws Exception {
 
         final List<Span> spans = new LinkedList<>();
 
@@ -178,11 +179,11 @@ public abstract class RulesFilter extends Filter {
                         final String[] window = getWindow(input, characterStart, characterEnd);
 
                         // Get the span's replacement.
-                        final Replacement replacement = getReplacement(policy, context, documentId, token,
+                        final Replacement replacement = getReplacement(policy, contextName, context, documentId, token,
                                 window, initialConfidence, classification, attributes, filterPattern);
 
                         // Create the span.
-                        final Span span = Span.make(characterStart, characterEnd, getFilterType(), context, documentId,
+                        final Span span = Span.make(characterStart, characterEnd, getFilterType(), contextName, documentId,
                                 initialConfidence, token, replacement.getReplacement(), replacement.getSalt(),
                                 ignored, replacement.isApplied(), window, priority);
 
@@ -218,7 +219,7 @@ public abstract class RulesFilter extends Filter {
     @Override
     public int getOccurrences(final Policy policy, final String input, final Map<String, String> attributes) throws Exception {
 
-        return filter(policy, "none", "none", 0, input, attributes).getSpans().size();
+        return filter(policy, "none", Collections.emptyMap(), "none", 0, input, attributes).getSpans().size();
 
     }
 

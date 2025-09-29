@@ -15,18 +15,23 @@
  */
 package ai.philterd.phileas.services.anonymization;
 
-import ai.philterd.phileas.model.services.CacheService;
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 public class StateAbbreviationAnonymizationService extends AbstractAnonymizationService {
 
     private final List<String> STATES;
 
-    public StateAbbreviationAnonymizationService(CacheService anonymizationCacheService) {
-        super(anonymizationCacheService);
+    public StateAbbreviationAnonymizationService() {
+        this(new HashMap<>());
+    }
+
+    public StateAbbreviationAnonymizationService(final Map<String, String> context) {
+        super(context);
 
         this.STATES = new LinkedList<>();
 

@@ -15,23 +15,26 @@
  */
 package ai.philterd.phileas.services.anonymization;
 
-import ai.philterd.phileas.model.services.CacheService;
 import ai.philterd.phileas.services.anonymization.faker.Faker;
+
+import java.util.Map;
 
 public class ZipCodeAnonymizationService extends AbstractAnonymizationService {
 
     private final transient Faker faker;
 
-    public ZipCodeAnonymizationService(CacheService anonymizationCacheService) {
-        super(anonymizationCacheService);
+    public ZipCodeAnonymizationService() {
+        this.faker = new Faker();
+    }
+
+    public ZipCodeAnonymizationService(final Map<String, String> context) {
+        super(context);
         this.faker = new Faker();
     }
 
     @Override
     public String anonymize(String token) {
-
         return faker.address().zipCode();
-
     }
 
 }

@@ -21,11 +21,14 @@ import ai.philterd.phileas.model.policy.FPE;
 import ai.philterd.phileas.model.policy.filters.strategies.AbstractFilterStrategy;
 import ai.philterd.phileas.model.policy.filters.strategies.ai.PhEyeFilterStrategy;
 import ai.philterd.phileas.model.services.AnonymizationService;
-import ai.philterd.phileas.model.services.CacheService;
 import ai.philterd.test.phileas.model.policy.filters.strategies.AbstractFilterStrategyTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.mockito.Mockito.when;
 
@@ -44,7 +47,7 @@ public class PhEyeStrategyTest extends AbstractFilterStrategyTest {
         strategy.setStrategy(AbstractFilterStrategy.STATIC_REPLACE);
         strategy.setStaticReplacement("static-value");
 
-        final Replacement replacement = strategy.getReplacement("PER", "context", "docId", "token", WINDOW, new Crypto(), new FPE(), anonymizationService, null);
+        final Replacement replacement = strategy.getReplacement("PER", "context", Collections.emptyMap(), "docId", "token", WINDOW, new Crypto(), new FPE(), anonymizationService, null);
 
         Assertions.assertEquals("static-value", replacement.getReplacement());
 
@@ -59,7 +62,7 @@ public class PhEyeStrategyTest extends AbstractFilterStrategyTest {
         strategy.setStrategy(AbstractFilterStrategy.REDACT);
         strategy.setRedactionFormat("REDACTION-%t");
 
-        final Replacement replacement = strategy.getReplacement("PER", "context", "docId", "token", WINDOW, new Crypto(), new FPE(), anonymizationService, null);
+        final Replacement replacement = strategy.getReplacement("PER", "context", Collections.emptyMap(), "docId", "token", WINDOW, new Crypto(), new FPE(), anonymizationService, null);
 
         Assertions.assertEquals("REDACTION-person", replacement.getReplacement());
 
@@ -69,15 +72,15 @@ public class PhEyeStrategyTest extends AbstractFilterStrategyTest {
     public void replacement3() throws Exception {
 
         final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
-        final CacheService anonymizationCacheService = Mockito.mock(CacheService.class);
 
-        when(anonymizationCacheService.getAnonymizedToken("context", "token")).thenReturn("random");
-        when(anonymizationService.getCacheService()).thenReturn(anonymizationCacheService);
+        final Map<String, String> context = new HashMap<>();
+        context.put("token", "random");
+        when(anonymizationService.getContext()).thenReturn(context);
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
         strategy.setStrategy(AbstractFilterStrategy.RANDOM_REPLACE);
 
-        final Replacement replacement = strategy.getReplacement("PER", "context", "docId", "token", WINDOW, new Crypto(), new FPE(), anonymizationService, null);
+        final Replacement replacement = strategy.getReplacement("PER", "context", Collections.emptyMap(), "docId", "token", WINDOW, new Crypto(), new FPE(), anonymizationService, null);
 
         Assertions.assertNotEquals("random", replacement.getReplacement());
 
@@ -87,15 +90,15 @@ public class PhEyeStrategyTest extends AbstractFilterStrategyTest {
     public void replacement4() throws Exception {
 
         final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
-        final CacheService anonymizationCacheService = Mockito.mock(CacheService.class);
 
-        when(anonymizationCacheService.getAnonymizedToken("context", "token")).thenReturn("random");
-        when(anonymizationService.getCacheService()).thenReturn(anonymizationCacheService);
+        final Map<String, String> context = new HashMap<>();
+        context.put("token", "random");
+        when(anonymizationService.getContext()).thenReturn(context);
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
         strategy.setStrategy("something-wrong");
 
-        final Replacement replacement = strategy.getReplacement("PER", "context", "docId", "token", WINDOW, new Crypto(), new FPE(), anonymizationService, null);
+        final Replacement replacement = strategy.getReplacement("PER", "context", Collections.emptyMap(), "docId", "token", WINDOW, new Crypto(), new FPE(), anonymizationService, null);
 
         Assertions.assertEquals("{{{REDACTED-person}}}", replacement.getReplacement());
 
@@ -105,15 +108,15 @@ public class PhEyeStrategyTest extends AbstractFilterStrategyTest {
     public void replacement5() throws Exception {
 
         final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
-        final CacheService anonymizationCacheService = Mockito.mock(CacheService.class);
 
-        when(anonymizationService.getCacheService()).thenReturn(anonymizationCacheService);
+        final Map<String, String> context = new HashMap<>();
+        when(anonymizationService.getContext()).thenReturn(context);
 
         final AbstractFilterStrategy strategy = new PhEyeFilterStrategy();
         strategy.setStrategy(AbstractFilterStrategy.REDACT);
         strategy.setRedactionFormat("<ENTITY:%t>%v</ENTITY>");
 
-        final Replacement replacement = strategy.getReplacement("PER", "context", "docId", "token", WINDOW, new Crypto(), new FPE(), anonymizationService, null);
+        final Replacement replacement = strategy.getReplacement("PER", "context", Collections.emptyMap(), "docId", "token", WINDOW, new Crypto(), new FPE(), anonymizationService, null);
 
         Assertions.assertEquals("<ENTITY:person>token</ENTITY>", replacement.getReplacement());
 
@@ -123,34 +126,34 @@ public class PhEyeStrategyTest extends AbstractFilterStrategyTest {
     public void replacement6() throws Exception {
 
         final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
-        final CacheService anonymizationCacheService = Mockito.mock(CacheService.class);
 
-        when(anonymizationService.getCacheService()).thenReturn(anonymizationCacheService);
+        final Map<String, String> context = new HashMap<>();
+        when(anonymizationService.getContext()).thenReturn(context);
 
         final AbstractFilterStrategy strategy = new PhEyeFilterStrategy();
         strategy.setStrategy(AbstractFilterStrategy.ABBREVIATE);
 
         Replacement replacement;
 
-        replacement = strategy.getReplacement("PER", "context", "docId", "John Smith", WINDOW, new Crypto(), new FPE(), anonymizationService, null);
+        replacement = strategy.getReplacement("PER", "context", Collections.emptyMap(), "docId", "John Smith", WINDOW, new Crypto(), new FPE(), anonymizationService, null);
         Assertions.assertEquals("JS", replacement.getReplacement());
 
-        replacement = strategy.getReplacement("PER", "context", "docId", "John P. Smith", WINDOW, new Crypto(), new FPE(), anonymizationService, null);
+        replacement = strategy.getReplacement("PER", "context", Collections.emptyMap(), "docId", "John P. Smith", WINDOW, new Crypto(), new FPE(), anonymizationService, null);
         Assertions.assertEquals("JPS", replacement.getReplacement());
 
-        replacement = strategy.getReplacement("PER", "context", "docId", "John P Smith", WINDOW, new Crypto(), new FPE(), anonymizationService, null);
+        replacement = strategy.getReplacement("PER", "context", Collections.emptyMap(), "docId", "John P Smith", WINDOW, new Crypto(), new FPE(), anonymizationService, null);
         Assertions.assertEquals("JPS", replacement.getReplacement());
 
-        replacement = strategy.getReplacement("PER", "context", "docId", "John P.", WINDOW, new Crypto(), new FPE(), anonymizationService, null);
+        replacement = strategy.getReplacement("PER", "context", Collections.emptyMap(), "docId", "John P.", WINDOW, new Crypto(), new FPE(), anonymizationService, null);
         Assertions.assertEquals("JP", replacement.getReplacement());
 
-        replacement = strategy.getReplacement("PER", "context", "docId", "John", WINDOW, new Crypto(), new FPE(), anonymizationService, null);
+        replacement = strategy.getReplacement("PER", "context", Collections.emptyMap(), "docId", "John", WINDOW, new Crypto(), new FPE(), anonymizationService, null);
         Assertions.assertEquals("J", replacement.getReplacement());
 
-        replacement = strategy.getReplacement("PER", "context", "docId", "J Smith", WINDOW, new Crypto(), new FPE(), anonymizationService, null);
+        replacement = strategy.getReplacement("PER", "context", Collections.emptyMap(), "docId", "J Smith", WINDOW, new Crypto(), new FPE(), anonymizationService, null);
         Assertions.assertEquals("JS", replacement.getReplacement());
 
-        replacement = strategy.getReplacement("PER", "context", "docId", "J. Peter Smith", WINDOW, new Crypto(), new FPE(), anonymizationService, null);
+        replacement = strategy.getReplacement("PER", "context", Collections.emptyMap(), "docId", "J. Peter Smith", WINDOW, new Crypto(), new FPE(), anonymizationService, null);
         Assertions.assertEquals("JPS", replacement.getReplacement());
 
     }
@@ -160,7 +163,7 @@ public class PhEyeStrategyTest extends AbstractFilterStrategyTest {
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
 
-        final boolean conditionSatisfied = strategy.evaluateCondition(getPolicy(), "context", "documentid", "John Smith", WINDOW,"confidence > 0.25",  0.5, attributes);
+        final boolean conditionSatisfied = strategy.evaluateCondition(getPolicy(), "context", Collections.emptyMap(), "documentid", "John Smith", WINDOW,"confidence > 0.25",  0.5, attributes);
 
         Assertions.assertTrue(conditionSatisfied);
 
@@ -172,7 +175,7 @@ public class PhEyeStrategyTest extends AbstractFilterStrategyTest {
         final AbstractFilterStrategy strategy = getFilterStrategy();
 
         attributes.put("classification", "PER");
-        final boolean conditionSatisfied = strategy.evaluateCondition(getPolicy(), "context", "documentid", "John Smith", WINDOW,"type == PER",  1.0, attributes);
+        final boolean conditionSatisfied = strategy.evaluateCondition(getPolicy(), "context", Collections.emptyMap(), "documentid", "John Smith", WINDOW,"type == PER",  1.0, attributes);
 
         Assertions.assertTrue(conditionSatisfied);
 
@@ -184,7 +187,7 @@ public class PhEyeStrategyTest extends AbstractFilterStrategyTest {
         final AbstractFilterStrategy strategy = getFilterStrategy();
 
         attributes.put("classification", "LOC");
-        final boolean conditionSatisfied = strategy.evaluateCondition(getPolicy(), "context", "documentid", "John Smith", WINDOW,"type == PER",  1.0, attributes);
+        final boolean conditionSatisfied = strategy.evaluateCondition(getPolicy(), "context", Collections.emptyMap(), "documentid", "John Smith", WINDOW,"type == PER",  1.0, attributes);
 
         Assertions.assertFalse(conditionSatisfied);
 
@@ -195,7 +198,7 @@ public class PhEyeStrategyTest extends AbstractFilterStrategyTest {
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
 
-        final boolean conditionSatisfied = strategy.evaluateCondition(getPolicy(), "context", "documentid", "John Smith", WINDOW,"confidence == 0.5",  0.5, attributes);
+        final boolean conditionSatisfied = strategy.evaluateCondition(getPolicy(), "context", Collections.emptyMap(), "documentid", "John Smith", WINDOW,"confidence == 0.5",  0.5, attributes);
 
         Assertions.assertTrue(conditionSatisfied);
 
@@ -206,7 +209,7 @@ public class PhEyeStrategyTest extends AbstractFilterStrategyTest {
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
 
-        final boolean conditionSatisfied = strategy.evaluateCondition(getPolicy(), "context", "documentid", "John Smith", WINDOW,"confidence != 0.5",  0.6, attributes);
+        final boolean conditionSatisfied = strategy.evaluateCondition(getPolicy(), "context", Collections.emptyMap(), "documentid", "John Smith", WINDOW,"confidence != 0.5",  0.6, attributes);
 
         Assertions.assertTrue(conditionSatisfied);
 
@@ -217,7 +220,7 @@ public class PhEyeStrategyTest extends AbstractFilterStrategyTest {
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
 
-        final boolean conditionSatisfied = strategy.evaluateCondition(getPolicy(), "context", "documentid", "John Smith", WINDOW,"confidence != 0.5",  0.5, attributes);
+        final boolean conditionSatisfied = strategy.evaluateCondition(getPolicy(), "context", Collections.emptyMap(), "documentid", "John Smith", WINDOW,"confidence != 0.5",  0.5, attributes);
 
         Assertions.assertFalse(conditionSatisfied);
 
@@ -229,7 +232,7 @@ public class PhEyeStrategyTest extends AbstractFilterStrategyTest {
         final AbstractFilterStrategy strategy = getFilterStrategy();
 
         attributes.put("classification", "LOC");
-        final boolean conditionSatisfied = strategy.evaluateCondition(getPolicy(), "context", "documentid", "John Smith", WINDOW,"confidence != 0.5 and type == PER",  0.5, attributes);
+        final boolean conditionSatisfied = strategy.evaluateCondition(getPolicy(), "context", Collections.emptyMap(), "documentid", "John Smith", WINDOW,"confidence != 0.5 and type == PER",  0.5, attributes);
 
         Assertions.assertFalse(conditionSatisfied);
 
@@ -241,7 +244,7 @@ public class PhEyeStrategyTest extends AbstractFilterStrategyTest {
         final AbstractFilterStrategy strategy = getFilterStrategy();
 
         attributes.put("classification", "PER");
-        final boolean conditionSatisfied = strategy.evaluateCondition(getPolicy(), "context", "documentid", "John Smith", WINDOW,"confidence != 0.5 and type != LOC",  0.5, attributes);
+        final boolean conditionSatisfied = strategy.evaluateCondition(getPolicy(), "context", Collections.emptyMap(), "documentid", "John Smith", WINDOW,"confidence != 0.5 and type != LOC",  0.5, attributes);
 
         Assertions.assertFalse(conditionSatisfied);
 
@@ -253,7 +256,7 @@ public class PhEyeStrategyTest extends AbstractFilterStrategyTest {
         final AbstractFilterStrategy strategy = getFilterStrategy();
 
         attributes.put("classification", "PER");
-        final boolean conditionSatisfied = strategy.evaluateCondition(getPolicy(), "context", "documentid", "John Smith", WINDOW,"confidence > 0.4 and type == PER",  0.5, attributes);
+        final boolean conditionSatisfied = strategy.evaluateCondition(getPolicy(), "context", Collections.emptyMap(), "documentid", "John Smith", WINDOW,"confidence > 0.4 and type == PER",  0.5, attributes);
 
         Assertions.assertTrue(conditionSatisfied);
 
@@ -266,7 +269,7 @@ public class PhEyeStrategyTest extends AbstractFilterStrategyTest {
 
 
         attributes.put("classification", "PER");
-        final boolean conditionSatisfied = strategy.evaluateCondition(getPolicy(), "context", "documentid", "John Smith", WINDOW,"confidence < 0.4 and type == PER",  0.5, attributes);
+        final boolean conditionSatisfied = strategy.evaluateCondition(getPolicy(), "context", Collections.emptyMap(), "documentid", "John Smith", WINDOW,"confidence < 0.4 and type == PER",  0.5, attributes);
 
         Assertions.assertFalse(conditionSatisfied);
 
@@ -277,7 +280,7 @@ public class PhEyeStrategyTest extends AbstractFilterStrategyTest {
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
 
-        final boolean conditionSatisfied = strategy.evaluateCondition(getPolicy(), "context", "documentid", "John Smith", WINDOW,"context == \"c1\"",  1.0, attributes);
+        final boolean conditionSatisfied = strategy.evaluateCondition(getPolicy(), "context", Collections.emptyMap(), "documentid", "John Smith", WINDOW,"context == \"c1\"",  1.0, attributes);
 
         Assertions.assertFalse(conditionSatisfied);
 
@@ -288,7 +291,7 @@ public class PhEyeStrategyTest extends AbstractFilterStrategyTest {
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
 
-        final boolean conditionSatisfied = strategy.evaluateCondition(getPolicy(), "ctx", "documentId", "John Smith", WINDOW,"context == \"ctx\"",  1.0, attributes);
+        final boolean conditionSatisfied = strategy.evaluateCondition(getPolicy(), "ctx", Collections.emptyMap(), "documentId", "John Smith", WINDOW,"context == \"ctx\"",  1.0, attributes);
 
         Assertions.assertTrue(conditionSatisfied);
 
@@ -299,7 +302,7 @@ public class PhEyeStrategyTest extends AbstractFilterStrategyTest {
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
 
-        final boolean conditionSatisfied = strategy.evaluateCondition(getPolicy(), "ctx", "documentId", "John Smith", WINDOW,"token == \"John Smith\"",  1.0, attributes);
+        final boolean conditionSatisfied = strategy.evaluateCondition(getPolicy(), "ctx", Collections.emptyMap(), "documentId", "John Smith", WINDOW,"token == \"John Smith\"",  1.0, attributes);
 
         Assertions.assertTrue(conditionSatisfied);
 
@@ -310,7 +313,7 @@ public class PhEyeStrategyTest extends AbstractFilterStrategyTest {
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
 
-        final boolean conditionSatisfied = strategy.evaluateCondition(getPolicy(), "ctx", "documentId", "John Smith", WINDOW,"token != \"John Smith\"",  1.0, attributes);
+        final boolean conditionSatisfied = strategy.evaluateCondition(getPolicy(), "ctx", Collections.emptyMap(), "documentId", "John Smith", WINDOW,"token != \"John Smith\"",  1.0, attributes);
 
         Assertions.assertFalse(conditionSatisfied);
 

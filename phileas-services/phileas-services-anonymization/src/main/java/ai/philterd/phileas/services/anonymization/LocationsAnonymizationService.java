@@ -15,15 +15,20 @@
  */
 package ai.philterd.phileas.services.anonymization;
 
-import ai.philterd.phileas.model.services.CacheService;
 import ai.philterd.phileas.services.anonymization.faker.Faker;
+
+import java.util.Map;
 
 public class LocationsAnonymizationService extends AbstractAnonymizationService {
 
     private final transient Faker faker;
 
-    public LocationsAnonymizationService(CacheService anonymizationCacheService) {
-        super(anonymizationCacheService);
+    public LocationsAnonymizationService() {
+        this.faker = new Faker();
+    }
+
+    public LocationsAnonymizationService(final Map<String, String> context) {
+        super(context);
         this.faker = new Faker();
     }
 

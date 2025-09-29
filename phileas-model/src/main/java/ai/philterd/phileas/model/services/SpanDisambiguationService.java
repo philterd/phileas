@@ -19,6 +19,7 @@ import ai.philterd.phileas.model.enums.FilterType;
 import ai.philterd.phileas.model.objects.Span;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Disambiguates the types of spans having duplicate start and end indexes.
@@ -43,11 +44,12 @@ public interface SpanDisambiguationService {
 
     /**
      * Disambiguates two identical spans differing only by their filter types.
+     * @param contextName The name of the context.
      * @param context The context.
      * @param spans A list of ambiguous spans.
      * @return A list of disambiguated spans.
      */
-    List<Span> disambiguate(String context, List<Span> spans);
+    List<Span> disambiguate(String contextName, Map<String, String> context, List<Span> spans);
 
     /**
      * Gets a boolean indicating if the disambiguation service is enabled.
