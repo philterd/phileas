@@ -21,7 +21,7 @@ import ai.philterd.phileas.model.objects.Span;
 import ai.philterd.phileas.model.responses.BinaryDocumentFilterResponse;
 import ai.philterd.phileas.model.serializers.PlaceholderDeserializer;
 import ai.philterd.phileas.model.services.ContextService;
-import ai.philterd.phileas.model.services.DefaultContextService;
+import ai.philterd.phileas.model.services.defaults.DefaultContextService;
 import ai.philterd.phileas.model.services.VectorService;
 import ai.philterd.phileas.policy.Ignored;
 import ai.philterd.phileas.policy.Policy;

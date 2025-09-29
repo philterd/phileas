@@ -17,7 +17,7 @@ package ai.philterd.phileas.filters;
 
 import ai.philterd.phileas.model.enums.FilterType;
 import ai.philterd.phileas.model.objects.FilterResult;
-import ai.philterd.phileas.model.services.DefaultContextService;
+import ai.philterd.phileas.model.services.defaults.DefaultContextService;
 import ai.philterd.phileas.services.strategies.rules.StateAbbreviationFilterStrategy;
 import ai.philterd.phileas.services.anonymization.StateAbbreviationAnonymizationService;
 import ai.philterd.phileas.services.filters.regex.StateAbbreviationFilter;

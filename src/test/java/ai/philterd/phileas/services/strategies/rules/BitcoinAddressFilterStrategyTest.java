@@ -15,7 +15,7 @@
  */
 package ai.philterd.phileas.services.strategies.rules;
 
-import ai.philterd.phileas.model.services.DefaultContextService;
+import ai.philterd.phileas.model.services.defaults.DefaultContextService;
 import ai.philterd.phileas.services.anonymization.AbstractAnonymizationService;
 import ai.philterd.phileas.services.anonymization.BitcoinAddressAnonymizationService;
 import ai.philterd.phileas.services.strategies.AbstractFilterStrategy;

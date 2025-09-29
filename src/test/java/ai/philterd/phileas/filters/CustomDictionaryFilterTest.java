@@ -18,7 +18,7 @@ package ai.philterd.phileas.filters;
 import ai.philterd.phileas.model.enums.FilterType;
 import ai.philterd.phileas.filters.rules.dictionary.BloomFilterDictionaryFilter;
 import ai.philterd.phileas.model.objects.FilterResult;
-import ai.philterd.phileas.model.services.DefaultContextService;
+import ai.philterd.phileas.model.services.defaults.DefaultContextService;
 import ai.philterd.phileas.services.strategies.custom.CustomDictionaryFilterStrategy;
 import ai.philterd.phileas.services.anonymization.AlphanumericAnonymizationService;
 import org.apache.logging.log4j.LogManager;

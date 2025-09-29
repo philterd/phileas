@@ -13,12 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ai.philterd.phileas.model.cache;
+package ai.philterd.phileas.model.services.defaults;
 
 import ai.philterd.phileas.model.enums.FilterType;
 import ai.philterd.phileas.model.objects.Span;
 import ai.philterd.phileas.model.objects.SpanVector;
-import ai.philterd.phileas.policy.Policy;
 import ai.philterd.phileas.model.services.VectorService;
 
 import java.util.HashMap;
@@ -28,16 +27,12 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * Implementation of {@link VectorService} that stores everything in memory.
  */
-public class InMemoryVector implements VectorService {
+public class InMemoryVectorService implements VectorService {
 
     private final Map<String, Map<FilterType, SpanVector>> vectorCache;
-    private final Map<String, Policy> policyCache;
-    private final Map<String, String> anonymizationCache;
 
-    public InMemoryVector() {
+    public InMemoryVectorService() {
         this.vectorCache = new ConcurrentHashMap<>();
-        this.policyCache = new ConcurrentHashMap<>();
-        this.anonymizationCache = new ConcurrentHashMap<>();
     }
 
     // For disambiguation

@@ -45,7 +45,7 @@ public interface SpanDisambiguationService {
     /**
      * Disambiguates two identical spans differing only by their filter types.
      * @param contextName The name of the context.
-     * @param context The context.
+     * @param contextName The context.
      * @param spans A list of ambiguous spans.
      * @return A list of disambiguated spans.
      */

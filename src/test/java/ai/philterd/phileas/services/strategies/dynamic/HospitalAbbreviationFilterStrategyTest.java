@@ -15,7 +15,7 @@
  */
 package ai.philterd.phileas.services.strategies.dynamic;
 
-import ai.philterd.phileas.model.services.DefaultContextService;
+import ai.philterd.phileas.model.services.defaults.DefaultContextService;
 import ai.philterd.phileas.services.strategies.AbstractFilterStrategy;
 import ai.philterd.phileas.services.anonymization.AbstractAnonymizationService;
 import ai.philterd.phileas.services.anonymization.HospitalAbbreviationAnonymizationService;

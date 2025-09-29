@@ -19,7 +19,7 @@ import ai.philterd.phileas.model.enums.FilterType;
 import ai.philterd.phileas.model.enums.SensitivityLevel;
 import ai.philterd.phileas.filters.rules.dictionary.FuzzyDictionaryFilter;
 import ai.philterd.phileas.model.objects.FilterResult;
-import ai.philterd.phileas.model.services.DefaultContextService;
+import ai.philterd.phileas.model.services.defaults.DefaultContextService;
 import ai.philterd.phileas.services.strategies.dynamic.CountyFilterStrategy;
 import ai.philterd.phileas.services.anonymization.CountyAnonymizationService;
 import org.apache.logging.log4j.LogManager;

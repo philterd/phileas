@@ -15,7 +15,7 @@
  */
 package ai.philterd.phileas.services.disambiguation;
 
-import ai.philterd.phileas.model.cache.InMemoryVector;
+import ai.philterd.phileas.model.services.defaults.InMemoryVectorService;
 import ai.philterd.phileas.PhileasConfiguration;
 import ai.philterd.phileas.model.enums.FilterType;
 import ai.philterd.phileas.model.objects.Span;
@@ -37,7 +37,7 @@ public class VectorBasedSpanDisambiguationServiceTest {
     @Test
     public void disambiguateLocal1() throws IOException {
 
-        final VectorService vectorService = new InMemoryVector();
+        final VectorService vectorService = new InMemoryVectorService();
 
         final Properties properties = new Properties();
 
@@ -72,7 +72,7 @@ public class VectorBasedSpanDisambiguationServiceTest {
     @Test
     public void disambiguateLocal2() throws IOException {
 
-        final VectorService vectorService = new InMemoryVector();
+        final VectorService vectorService = new InMemoryVectorService();
 
         final Properties properties = new Properties();
 
