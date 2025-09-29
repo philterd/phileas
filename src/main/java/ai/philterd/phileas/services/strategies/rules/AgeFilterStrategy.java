@@ -95,7 +95,7 @@ public class AgeFilterStrategy extends StandardFilterStrategy {
     }
 
     @Override
-    public Replacement getReplacement(String label, String contextName, Map<String, String> context,String documentId, String token,
+    public Replacement getReplacement(String label, String contextName, Map<String, String> context, String documentId, String token,
                                       String[] window, Crypto crypto, FPE fpe,
                                       AnonymizationService anonymizationService,
                                       FilterPattern filterPattern) throws Exception {
