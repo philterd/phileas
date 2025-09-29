@@ -131,7 +131,7 @@ public class DateFilterStrategy extends AbstractFilterStrategy {
     @Override
     public Replacement getReplacement(String label, String contextName, Map<String, String> context, String documentId, String token, String[] window, Crypto crypto, FPE fpe, AnonymizationService anonymizationService, FilterPattern filterPattern) throws Exception {
 
-        String replacement = null;
+        String replacement;
         String salt = "";
 
         if(StringUtils.equalsIgnoreCase(strategy, REDACT)) {
@@ -204,7 +204,7 @@ public class DateFilterStrategy extends AbstractFilterStrategy {
 
             } catch (DateTimeParseException ex) {
 
-                LOGGER.error("Unable to parse date with format " + filterPattern.getFormat() + ". Falling back to redaction.", ex);
+                LOGGER.error("Unable to parse date with format {}. Falling back to redaction.", filterPattern.getFormat(), ex);
 
                 // This will be thrown if the input date is not a valid date.
                 // Default back to redaction.
@@ -222,11 +222,11 @@ public class DateFilterStrategy extends AbstractFilterStrategy {
                 final LocalDateTime parsedDate = LocalDate.parse(token, dtf).atStartOfDay();
 
                 // Shift the date. Only valid dates can be shifted.
-                if(shiftRandom == true) {
+                if(shiftRandom) {
                     // Shifting based on a random days, months, years.
                     final int randomShiftDays = RandomUtils.nextInt(1, 30);
                     final int randomShiftMonths = RandomUtils.nextInt(1, 12);
-                    final int randomShiftYears = 0 - RandomUtils.nextInt(1, 3);
+                    final int randomShiftYears = -RandomUtils.nextInt(1, 3);
                     final LocalDateTime shiftedDate = parsedDate.plusDays(randomShiftDays).plusMonths(randomShiftMonths).plusYears(randomShiftYears);
                     replacement = shiftedDate.format(dtf);
                 } else {
@@ -237,7 +237,7 @@ public class DateFilterStrategy extends AbstractFilterStrategy {
 
             } catch (DateTimeParseException ex) {
 
-                LOGGER.error("Unable to parse date with format " + filterPattern.getFormat() + ". Falling back to redaction.", ex);
+                LOGGER.error("Unable to parse date with format {}. Falling back to redaction.", filterPattern.getFormat(), ex);
 
                 // This will be thrown if the input date is not a valid date.
                 // Default back to redaction.

@@ -120,7 +120,6 @@ public class PhileasFilterService implements FilterService {
 
             // PHL-58: Use a hash function to generate the document ID.
             documentId = DigestUtils.md5Hex(UUID.randomUUID() + "-" + context + "-" + policy.getName() + "-" + input);
-            LOGGER.debug("Generated document ID {}", documentId);
 
         }
 
@@ -183,7 +182,6 @@ public class PhileasFilterService implements FilterService {
 
             // PHL-58: Use a hash function to generate the document ID.
             documentId = DigestUtils.md5Hex(UUID.randomUUID() + "-" + context + "-" + policy.getName() + "-" + Arrays.toString(input));
-            LOGGER.debug("Generated document ID {}", documentId);
 
         }
 

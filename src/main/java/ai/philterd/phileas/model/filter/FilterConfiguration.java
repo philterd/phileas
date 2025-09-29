@@ -37,7 +37,7 @@ public class FilterConfiguration {
     private final List<IgnoredPattern> ignoredPatterns;
     private final Crypto crypto;
     private final FPE fpe;
-    private int windowSize = 5;
+    private final int windowSize;
     private final int priority;
 
     private FilterConfiguration(

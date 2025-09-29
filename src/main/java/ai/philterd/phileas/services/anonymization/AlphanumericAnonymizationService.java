@@ -69,7 +69,7 @@ public class AlphanumericAnonymizationService extends AbstractAnonymizationServi
             } else {
 
                 // For everything else return a number.
-                sb.append(random.nextInt((9 - 0) + 1) + 0);
+                sb.append(random.nextInt((9) + 1));
 
             }
 

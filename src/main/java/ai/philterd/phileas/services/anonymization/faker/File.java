@@ -30,6 +30,8 @@
  */
 package ai.philterd.phileas.services.anonymization.faker;
 
+import java.nio.file.FileSystems;
+
 public class File {
     private final Faker faker;
 
@@ -50,7 +52,7 @@ public class File {
     }
 
     public String fileName(String dirOrNull, String nameOrNull, String extensionOrNull, String separatorOrNull) {
-        final String sep = separatorOrNull == null ? System.getProperty("file.separator") : separatorOrNull;
+        final String sep = separatorOrNull == null ? FileSystems.getDefault().getSeparator() : separatorOrNull;
         final String dir = dirOrNull == null ? faker.internet().slug() : dirOrNull;
         final String name = nameOrNull == null ? faker.lorem().word().toLowerCase() : nameOrNull;
         final String ext = extensionOrNull == null ? extension() : extensionOrNull;

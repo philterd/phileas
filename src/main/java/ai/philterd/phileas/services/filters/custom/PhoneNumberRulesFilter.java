@@ -68,7 +68,7 @@ public class PhoneNumberRulesFilter extends RulesFilter {
                 final String text = match.rawString();
 
                 // Is it formatted like a phone number?
-                double confidence = 0.0;
+                double confidence;
                 if(text.matches(pattern.pattern())) {
                     confidence = 0.95;
                 } else{

@@ -46,7 +46,7 @@ public class CurrencyAnonymizationService extends AbstractAnonymizationService {
 
             if (Character.isDigit(c)) {
 
-                sb.append(random.nextInt((9 - 0) + 1) + 0);
+                sb.append(random.nextInt((9) + 1));
 
             } else {
 

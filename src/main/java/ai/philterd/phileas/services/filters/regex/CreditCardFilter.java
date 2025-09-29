@@ -113,7 +113,7 @@ public class CreditCardFilter extends RegexFilter {
 
         final List<Span> spans = findSpans(policy, analyzer, input, contextName, context, documentId, attributes);
 
-        LOGGER.debug("Found " + spans.size() + " spans");
+        LOGGER.debug("Found {} spans", spans.size());
         for (final Iterator<Span> iterator = spans.iterator(); iterator.hasNext(); ) {
 
             final Span span = iterator.next();
