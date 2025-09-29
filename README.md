@@ -84,8 +84,8 @@ Add the Phileas dependency to your project:
 ```
 <dependency>
   <groupId>ai.philterd</groupId>
-  <artifactId>phileas-core</artifactId>
-  <version>2.12.1</version>
+  <artifactId>phileas</artifactId>
+  <version>3.0.0-SNAPSHOT</version>
 </dependency>
 
 ```
@@ -172,5 +172,5 @@ Phileas also powers [Airlock](https://www.philterd.ai/airlock), an AI policy lay
 
 As of Phileas 2.2.1, Phileas is licensed under the Apache License, version 2.0. Previous versions were under a proprietary license.
 
-Copyright 2024 Philterd, LLC.
+Copyright 2024-2025 Philterd, LLC.
 Copyright 2018-2023 Mountain Fog, Inc.
