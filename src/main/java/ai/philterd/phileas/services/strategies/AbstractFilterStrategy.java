@@ -136,7 +136,7 @@ public abstract class AbstractFilterStrategy {
     /**
      * Gets the replacement for a token.
      * @param classification The filter type classification.
-     * @param contextName The name of the context.
+     * @param context The name of the context.
      * @param context The context.
      * @param documentId The document ID.
      * @param token The token.
@@ -147,14 +147,14 @@ public abstract class AbstractFilterStrategy {
      * @param filterPattern The filter pattern that identified the filter, or <code>null</code> if no pattern was used.
      * @return A replacement value for a token.
      */
-    public abstract Replacement getReplacement(String classification, String contextName, String documentId, String token,
+    public abstract Replacement getReplacement(String classification, String context, String documentId, String token,
                                                String[] window, Crypto crypto, FPE fpe,
                                                AnonymizationService anonymizationService, FilterPattern filterPattern) throws Exception;
 
     /**
      * Evaluates the condition on the given token.
      * @param policy The policy being applied.
-     * @param contextName The context name.
+     * @param context The context name.
      * @param context The context.
      * @param documentId The document ID.
      * @param token The token.
@@ -164,7 +164,7 @@ public abstract class AbstractFilterStrategy {
      * @param attributes Attributes about hte document.
      * @return <code>true</code> if the condition matches; otherwise <code>false</code>.
      */
-    public abstract boolean evaluateCondition(Policy policy, String contextName, String documentId, String token,
+    public abstract boolean evaluateCondition(Policy policy, String context, String documentId, String token,
                                               String[] window, String condition, double confidence,
                                               Map<String, String> attributes);
 

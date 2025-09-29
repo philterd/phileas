@@ -54,7 +54,7 @@ public class PhoneNumberRulesFilter extends RulesFilter {
     }
 
     @Override
-    public FilterResult filter(final Policy policy, final String contextName, final String documentId, final int piece,
+    public FilterResult filter(final Policy policy, final String context, final String documentId, final int piece,
                                final String input, final Map<String, String> attributes) throws Exception {
 
         final List<Span> spans = new LinkedList<>();
@@ -81,18 +81,18 @@ public class PhoneNumberRulesFilter extends RulesFilter {
 
                 final String[] window = getWindow(input, match.start(), match.end());
                 final String classification = "";
-                final Replacement replacement = getReplacement(policy, contextName, documentId, text, window, confidence,
+                final Replacement replacement = getReplacement(policy, context, documentId, text, window, confidence,
                         classification, attributes, null);
                 final boolean isIgnored = ignored.contains(text);
 
-                spans.add(Span.make(match.start(), match.end(), getFilterType(), contextName, documentId, confidence,
+                spans.add(Span.make(match.start(), match.end(), getFilterType(), context, documentId, confidence,
                         text, replacement.getReplacement(), replacement.getSalt(), isIgnored, replacement.isApplied(), window, priority));
 
             }
 
         }
 
-        return new FilterResult(contextName, documentId, spans);
+        return new FilterResult(context, documentId, spans);
 
     }
 

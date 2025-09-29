@@ -58,7 +58,7 @@ public class UnstructuredDocumentProcessor implements DocumentProcessor {
 
     @Override
     public FilterResponse process(final Policy policy, final List<Filter> filters, final List<PostFilter> postFilters,
-                                  final String contextName, final String documentId, final int piece, final String input,
+                                  final String context, final String documentId, final int piece, final String input,
                                   final Map<String, String> attributes) throws Exception {
 
         // The list that will contain the spans containing PHI/PII.
@@ -68,7 +68,7 @@ public class UnstructuredDocumentProcessor implements DocumentProcessor {
         for(final Filter filter : filters) {
 
             final long startTimeMs = System.currentTimeMillis();
-            final FilterResult filterResult = filter.filter(policy, contextName, documentId, piece, input, attributes);
+            final FilterResult filterResult = filter.filter(policy, context, documentId, piece, input, attributes);
             final long elapsedTimeMs = System.currentTimeMillis() - startTimeMs;
 
             identifiedSpans.addAll(filterResult.getSpans());
@@ -77,7 +77,7 @@ public class UnstructuredDocumentProcessor implements DocumentProcessor {
 
         // Perform span disambiguation.
         if(spanDisambiguationService.isEnabled()) {
-            identifiedSpans = spanDisambiguationService.disambiguate(contextName, identifiedSpans);
+            identifiedSpans = spanDisambiguationService.disambiguate(context, identifiedSpans);
         }
 
         // Drop overlapping spans.
@@ -158,7 +158,7 @@ public class UnstructuredDocumentProcessor implements DocumentProcessor {
 
         }
 
-        return new FilterResponse(sb.toString(), contextName, documentId, piece, explanation, attributes, incrementalRedactions, tokens);
+        return new FilterResponse(sb.toString(), context, documentId, piece, explanation, attributes, incrementalRedactions, tokens);
 
     }
 

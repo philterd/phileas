@@ -36,7 +36,7 @@ public interface FilterService {
      * @return A {@link FilterResponse}.
      * @throws Exception Thrown if the text cannot be filtered.
      */
-    FilterResponse filter(final Policy policy, final String contextName, String documentId, final String input, final MimeType mimeType) throws Exception;
+    FilterResponse filter(final Policy policy, final String context, String documentId, final String input, final MimeType mimeType) throws Exception;
 
     /**
      * Filter text from a binary document.
@@ -48,6 +48,6 @@ public interface FilterService {
      * @return A {@link BinaryDocumentFilterResponse}.
      * @throws Exception Thrown if the text cannot be filtered.
      */
-    BinaryDocumentFilterResponse filter(final Policy policy, final String contextName, String documentId, byte[] input, MimeType mimeType, MimeType outputMimeType) throws Exception;
+    BinaryDocumentFilterResponse filter(final Policy policy, final String context, String documentId, byte[] input, MimeType mimeType, MimeType outputMimeType) throws Exception;
 
 }

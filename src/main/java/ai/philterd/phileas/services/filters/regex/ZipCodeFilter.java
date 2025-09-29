@@ -67,9 +67,9 @@ public class ZipCodeFilter extends RegexFilter {
     }
 
     @Override
-    public FilterResult filter(Policy policy, String contextName, String documentId, int piece, String input, Map<String, String> attributes) throws Exception {
+    public FilterResult filter(Policy policy, String context, String documentId, int piece, String input, Map<String, String> attributes) throws Exception {
 
-        final List<Span> spans = findSpans(policy, analyzer, input, contextName, documentId, attributes);
+        final List<Span> spans = findSpans(policy, analyzer, input, context, documentId, attributes);
 
         if(validate) {
 
@@ -90,7 +90,7 @@ public class ZipCodeFilter extends RegexFilter {
 
         }
 
-        return new FilterResult(contextName, documentId, spans);
+        return new FilterResult(context, documentId, spans);
 
     }
 

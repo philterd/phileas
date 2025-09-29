@@ -44,7 +44,7 @@ public class AgeFilterStrategy extends StandardFilterStrategy {
     }
     
     @Override
-    public boolean evaluateCondition(Policy policy, String contextName, String documentId, String token, String[] window,
+    public boolean evaluateCondition(Policy policy, String context, String documentId, String token, String[] window,
                                      String condition, double confidence, Map<String, String> attributes) {
 
         boolean conditionsSatisfied = false;
@@ -62,8 +62,8 @@ public class AgeFilterStrategy extends StandardFilterStrategy {
                 final String conditionContext = parsedCondition.getValue();
 
                 conditionsSatisfied = switch (parsedCondition.getOperator()) {
-                    case EQUALS -> (StringUtils.equalsIgnoreCase("\"" + contextName + "\"", conditionContext));
-                    case NOT_EQUALS -> !(StringUtils.equalsIgnoreCase("\"" + contextName + "\"", conditionContext));
+                    case EQUALS -> (StringUtils.equalsIgnoreCase("\"" + context + "\"", conditionContext));
+                    case NOT_EQUALS -> !(StringUtils.equalsIgnoreCase("\"" + context + "\"", conditionContext));
                     default -> conditionsSatisfied;
                 };
 
@@ -95,7 +95,7 @@ public class AgeFilterStrategy extends StandardFilterStrategy {
     }
 
     @Override
-    public Replacement getReplacement(String label, String contextName, String documentId, String token,
+    public Replacement getReplacement(String label, String context, String documentId, String token,
                                       String[] window, Crypto crypto, FPE fpe,
                                       AnonymizationService anonymizationService,
                                       FilterPattern filterPattern) throws Exception {
