@@ -36,9 +36,7 @@ public class IbanCodeFilterTest extends AbstractFilterTest {
                 .withWindowSize(windowSize)
                 .build();
 
-        final IbanCodeFilter filter = new IbanCodeFilter(filterConfiguration, validate, allowSpaces);
-
-        return filter;
+        return new IbanCodeFilter(filterConfiguration, validate, allowSpaces);
 
     }
 
@@ -93,9 +91,35 @@ public class IbanCodeFilterTest extends AbstractFilterTest {
     @Test
     public void filter4() throws Exception {
 
-        final Filter filter = getFilter(true, true);
+        final Filter filter = getFilter(false, true);
 
         final FilterResult filterResult = filter.filter(getPolicy(), "context",  "documentid", PIECE, "bank code of GB15 MIDL 4005 1512 3456 zz ok?", attributes);
+
+        showSpans(filterResult.getSpans());
+
+        Assertions.assertEquals(1, filterResult.getSpans().size());
+
+    }
+
+    @Test
+    public void invalidIbanCode() throws Exception {
+
+        final Filter filter = getFilter(true, false);
+
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "bank code of AV01AZ ok?", attributes);
+
+        showSpans(filterResult.getSpans());
+
+        Assertions.assertEquals(0, filterResult.getSpans().size());
+
+    }
+
+    @Test
+    public void invalidButNoValidation() throws Exception {
+
+        final Filter filter = getFilter(false, false);
+
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "bank code of AV01AZ ok?", attributes);
 
         showSpans(filterResult.getSpans());
 
