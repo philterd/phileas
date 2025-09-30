@@ -16,7 +16,7 @@
 package ai.philterd.phileas.services.disambiguation;
 
 import ai.philterd.phileas.PhileasConfiguration;
-import ai.philterd.phileas.model.services.VectorService;
+import ai.philterd.phileas.services.disambiguation.vector.VectorService;
 import org.apache.commons.codec.digest.MurmurHash3;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -30,7 +30,7 @@ public abstract class AbstractSpanDisambiguationService {
 
     private static final Logger LOGGER = LogManager.getLogger(AbstractSpanDisambiguationService.class);
 
-    // Can this vector size be increased over time as the number of documents process grows?
+    // Can this vector size be increased over time as the number of documents processed grows?
     // No, because it factors into the hash function.
     // Changing the size would require starting all over because the values in it would
     // no longer be valid because the hash function would have changed.
@@ -56,7 +56,7 @@ public abstract class AbstractSpanDisambiguationService {
 
     public int hashToken(String token) {
 
-        if(StringUtils.equalsIgnoreCase(phileasConfiguration.spanDisambiguationHashAlgorithm(), "murmu3")) {
+        if(phileasConfiguration.spanDisambiguationHashAlgorithm().equalsIgnoreCase("murmu3")) {
             return Math.abs(MurmurHash3.hash32x86(token.getBytes()) % vectorSize);
         } else {
             return Math.abs(token.hashCode() % vectorSize);

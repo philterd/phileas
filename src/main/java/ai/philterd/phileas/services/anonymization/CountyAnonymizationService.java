@@ -15,10 +15,9 @@
  */
 package ai.philterd.phileas.services.anonymization;
 
-import ai.philterd.phileas.model.services.ContextService;
+import ai.philterd.phileas.services.context.ContextService;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.LinkedList;
 
 public class CountyAnonymizationService extends AbstractAnonymizationService {

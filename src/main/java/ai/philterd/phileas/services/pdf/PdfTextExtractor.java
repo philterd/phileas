@@ -15,7 +15,6 @@
  */
 package ai.philterd.phileas.services.pdf;
 
-import ai.philterd.phileas.model.services.TextExtractor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.pdfbox.pdmodel.PDDocument;

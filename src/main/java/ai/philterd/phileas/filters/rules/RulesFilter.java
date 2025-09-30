@@ -18,7 +18,7 @@ package ai.philterd.phileas.filters.rules;
 import ai.philterd.phileas.model.enums.FilterType;
 import ai.philterd.phileas.filters.Filter;
 import ai.philterd.phileas.filters.FilterConfiguration;
-import ai.philterd.phileas.model.objects.Analyzer;
+import ai.philterd.phileas.services.Analyzer;
 import ai.philterd.phileas.model.objects.ConfidenceModifier;
 import ai.philterd.phileas.model.objects.FilterPattern;
 import ai.philterd.phileas.model.objects.Position;
@@ -28,7 +28,6 @@ import ai.philterd.phileas.policy.Policy;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;

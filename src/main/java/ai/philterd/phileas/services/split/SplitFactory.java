@@ -15,7 +15,6 @@
  */
 package ai.philterd.phileas.services.split;
 
-import ai.philterd.phileas.model.services.SplitService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

@@ -18,12 +18,12 @@ package ai.philterd.phileas.services.filters.regex;
 import ai.philterd.phileas.model.enums.FilterType;
 import ai.philterd.phileas.filters.FilterConfiguration;
 import ai.philterd.phileas.filters.rules.regex.RegexFilter;
-import ai.philterd.phileas.model.objects.Analyzer;
+import ai.philterd.phileas.services.Analyzer;
 import ai.philterd.phileas.model.objects.FilterPattern;
 import ai.philterd.phileas.model.objects.FilterResult;
 import ai.philterd.phileas.model.objects.Span;
 import ai.philterd.phileas.policy.Policy;
-import ai.philterd.phileas.model.services.SpanValidator;
+import ai.philterd.phileas.services.validators.SpanValidator;
 
 import java.util.*;
 import java.util.regex.Pattern;

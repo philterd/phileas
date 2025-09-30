@@ -21,7 +21,7 @@ import ai.philterd.phileas.model.objects.FilterResult;
 import ai.philterd.phileas.model.objects.Position;
 import ai.philterd.phileas.model.objects.Replacement;
 import ai.philterd.phileas.model.objects.Span;
-import ai.philterd.phileas.model.services.AnonymizationService;
+import ai.philterd.phileas.services.anonymization.AnonymizationService;
 import ai.philterd.phileas.policy.Crypto;
 import ai.philterd.phileas.policy.FPE;
 import ai.philterd.phileas.policy.IgnoredPattern;

@@ -16,8 +16,8 @@
 package ai.philterd.phileas.services.strategies.dynamic;
 
 import ai.philterd.phileas.model.objects.Replacement;
-import ai.philterd.phileas.model.services.AnonymizationService;
-import ai.philterd.phileas.model.services.defaults.DefaultContextService;
+import ai.philterd.phileas.services.anonymization.AnonymizationService;
+import ai.philterd.phileas.services.context.DefaultContextService;
 import ai.philterd.phileas.policy.Crypto;
 import ai.philterd.phileas.policy.FPE;
 import ai.philterd.phileas.services.anonymization.AbstractAnonymizationService;

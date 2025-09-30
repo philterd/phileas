@@ -19,7 +19,7 @@ import ai.philterd.phileas.model.enums.FilterType;
 import ai.philterd.phileas.model.objects.Span;
 import ai.philterd.phileas.policy.Policy;
 import ai.philterd.phileas.policy.IgnoredPattern;
-import ai.philterd.phileas.services.postfilters.IgnoredPatternsFilter;
+import ai.philterd.phileas.services.filters.postfilters.IgnoredPatternsFilter;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

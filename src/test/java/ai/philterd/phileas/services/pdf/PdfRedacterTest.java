@@ -17,12 +17,9 @@ package ai.philterd.phileas.services.pdf;
 
 import ai.philterd.phileas.model.enums.FilterType;
 import ai.philterd.phileas.model.enums.MimeType;
-import ai.philterd.phileas.model.objects.PdfRedactionOptions;
 import ai.philterd.phileas.model.objects.Span;
 import ai.philterd.phileas.policy.Policy;
 import ai.philterd.phileas.policy.graphical.BoundingBox;
-import ai.philterd.phileas.model.services.Redacter;
-import ai.philterd.phileas.services.pdf.model.RedactedRectangle;
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

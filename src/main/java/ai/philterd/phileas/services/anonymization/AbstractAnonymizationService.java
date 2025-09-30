@@ -15,8 +15,7 @@
  */
 package ai.philterd.phileas.services.anonymization;
 
-import ai.philterd.phileas.model.services.AnonymizationService;
-import ai.philterd.phileas.model.services.ContextService;
+import ai.philterd.phileas.services.context.ContextService;
 
 public abstract class AbstractAnonymizationService implements AnonymizationService {
 

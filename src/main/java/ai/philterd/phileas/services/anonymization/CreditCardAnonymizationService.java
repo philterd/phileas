@@ -15,7 +15,7 @@
  */
 package ai.philterd.phileas.services.anonymization;
 
-import ai.philterd.phileas.model.services.ContextService;
+import ai.philterd.phileas.services.context.ContextService;
 import org.apache.commons.lang3.RandomStringUtils;
 
 public class CreditCardAnonymizationService extends AbstractAnonymizationService {

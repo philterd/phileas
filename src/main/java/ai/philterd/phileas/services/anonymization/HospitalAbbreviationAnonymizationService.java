@@ -15,7 +15,7 @@
  */
 package ai.philterd.phileas.services.anonymization;
 
-import ai.philterd.phileas.model.services.ContextService;
+import ai.philterd.phileas.services.context.ContextService;
 import ai.philterd.phileas.services.anonymization.faker.Faker;
 import org.apache.commons.text.WordUtils;
 

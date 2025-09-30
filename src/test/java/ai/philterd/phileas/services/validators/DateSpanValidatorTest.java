@@ -16,8 +16,6 @@
 package ai.philterd.phileas.services.validators;
 
 import ai.philterd.phileas.model.objects.Span;
-import ai.philterd.phileas.model.services.SpanValidator;
-import ai.philterd.phileas.services.validators.DateSpanValidator;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

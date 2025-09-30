@@ -18,7 +18,7 @@ package ai.philterd.phileas.filters.rules.regex;
 import ai.philterd.phileas.model.enums.FilterType;
 import ai.philterd.phileas.filters.FilterConfiguration;
 import ai.philterd.phileas.filters.rules.RulesFilter;
-import ai.philterd.phileas.model.objects.Analyzer;
+import ai.philterd.phileas.services.Analyzer;
 
 /**
  * A filter that works by using one or more regular expressions.

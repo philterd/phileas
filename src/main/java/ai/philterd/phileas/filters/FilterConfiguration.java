@@ -19,7 +19,7 @@ import ai.philterd.phileas.policy.Crypto;
 import ai.philterd.phileas.policy.FPE;
 import ai.philterd.phileas.policy.IgnoredPattern;
 import ai.philterd.phileas.services.strategies.AbstractFilterStrategy;
-import ai.philterd.phileas.model.services.AnonymizationService;
+import ai.philterd.phileas.services.anonymization.AnonymizationService;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 

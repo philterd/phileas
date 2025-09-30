@@ -22,7 +22,7 @@ import ai.philterd.phileas.model.objects.Replacement;
 import ai.philterd.phileas.policy.Crypto;
 import ai.philterd.phileas.policy.FPE;
 import ai.philterd.phileas.policy.Policy;
-import ai.philterd.phileas.model.services.AnonymizationService;
+import ai.philterd.phileas.services.anonymization.AnonymizationService;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import org.apache.commons.lang3.StringUtils;

@@ -21,7 +21,7 @@ import ai.philterd.phileas.filters.rules.regex.RegexFilter;
 import ai.philterd.phileas.model.metadata.zipcode.ZipCodeMetadataRequest;
 import ai.philterd.phileas.model.metadata.zipcode.ZipCodeMetadataResponse;
 import ai.philterd.phileas.model.metadata.zipcode.ZipCodeMetadataService;
-import ai.philterd.phileas.model.objects.Analyzer;
+import ai.philterd.phileas.services.Analyzer;
 import ai.philterd.phileas.model.objects.FilterPattern;
 import ai.philterd.phileas.model.objects.FilterResult;
 import ai.philterd.phileas.model.objects.Span;

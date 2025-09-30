@@ -15,11 +15,12 @@
  */
 package ai.philterd.phileas.services.disambiguation;
 
-import ai.philterd.phileas.model.services.defaults.InMemoryVectorService;
 import ai.philterd.phileas.PhileasConfiguration;
 import ai.philterd.phileas.model.enums.FilterType;
 import ai.philterd.phileas.model.objects.Span;
-import ai.philterd.phileas.model.services.VectorService;
+import ai.philterd.phileas.services.disambiguation.vector.InMemoryVectorService;
+import ai.philterd.phileas.services.disambiguation.vector.VectorBasedSpanDisambiguationService;
+import ai.philterd.phileas.services.disambiguation.vector.VectorService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Assertions;

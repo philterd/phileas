@@ -24,7 +24,7 @@ import ai.philterd.phileas.policy.Crypto;
 import ai.philterd.phileas.policy.FPE;
 import ai.philterd.phileas.policy.Policy;
 import ai.philterd.phileas.services.strategies.AbstractFilterStrategy;
-import ai.philterd.phileas.model.services.AnonymizationService;
+import ai.philterd.phileas.services.anonymization.AnonymizationService;
 import ai.philterd.phileas.utils.Encryption;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.RandomStringUtils;
