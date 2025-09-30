@@ -17,7 +17,9 @@ package ai.philterd.phileas.services;
 
 import ai.philterd.phileas.PhileasConfiguration;
 import ai.philterd.phileas.model.enums.MimeType;
+import ai.philterd.phileas.model.objects.IncrementalRedaction;
 import ai.philterd.phileas.model.objects.Span;
+import ai.philterd.phileas.model.responses.BinaryDocumentFilterResponse;
 import ai.philterd.phileas.model.responses.FilterResponse;
 import ai.philterd.phileas.model.serializers.PlaceholderDeserializer;
 import ai.philterd.phileas.model.services.ContextService;
@@ -72,6 +74,29 @@ public class EndToEndTests {
     public void before() {
         final GsonBuilder gsonBuilder = new GsonBuilder();
         gsonBuilder.registerTypeAdapter(String.class, new PlaceholderDeserializer());
+    }
+
+    @Test
+    public void endToEndPdf1() throws Exception {
+
+        final Properties properties = new Properties();
+        properties.setProperty("incremental.redactions.enabled", "true");
+
+        final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties);
+
+        final Policy policy = getPolicy("default");
+
+        final byte[] document = Files.readAllBytes(Paths.get(this.getClass().getResource("/pdfs/12-12110 K.pdf").toURI()));
+
+        final PhileasFilterService service = new PhileasFilterService(phileasConfiguration, contextService, vectorService);
+        final BinaryDocumentFilterResponse response = service.filter(policy, "context",  "documentid", document, MimeType.APPLICATION_PDF, MimeType.APPLICATION_PDF);
+
+        Assertions.assertFalse(response.getIncrementalRedactions().isEmpty());
+
+        for(final IncrementalRedaction incrementalRedaction : response.getIncrementalRedactions()) {
+            LOGGER.info(incrementalRedaction.toString());
+        }
+
     }
 
     @Test
