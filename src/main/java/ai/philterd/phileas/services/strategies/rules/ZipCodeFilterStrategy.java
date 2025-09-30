@@ -23,12 +23,12 @@ import ai.philterd.phileas.model.metadata.zipcode.ZipCodeMetadataResponse;
 import ai.philterd.phileas.model.metadata.zipcode.ZipCodeMetadataService;
 import ai.philterd.phileas.model.objects.FilterPattern;
 import ai.philterd.phileas.model.objects.Replacement;
-import ai.philterd.phileas.model.policy.Crypto;
-import ai.philterd.phileas.model.policy.FPE;
-import ai.philterd.phileas.model.policy.Policy;
+import ai.philterd.phileas.policy.Crypto;
+import ai.philterd.phileas.policy.FPE;
+import ai.philterd.phileas.policy.Policy;
 import ai.philterd.phileas.services.strategies.AbstractFilterStrategy;
 import ai.philterd.phileas.model.services.AnonymizationService;
-import ai.philterd.phileas.model.utils.Encryption;
+import ai.philterd.phileas.utils.Encryption;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -61,7 +61,7 @@ public class ZipCodeFilterStrategy extends AbstractFilterStrategy {
     }
 
     @Override
-    public boolean evaluateCondition(Policy policy, String contextName, Map<String, String> context, String documentId, String token, String[] window, String condition, double confidence, Map<String, String> attributes) {
+    public boolean evaluateCondition(Policy policy, String context, String documentId, String token, String[] window, String condition, double confidence, Map<String, String> attributes) {
 
         boolean conditionsSatisfied = false;
 
@@ -109,8 +109,8 @@ public class ZipCodeFilterStrategy extends AbstractFilterStrategy {
                 final String conditionContext = parsedCondition.getValue();
 
                 conditionsSatisfied = switch (parsedCondition.getOperator()) {
-                    case EQUALS -> (StringUtils.equalsIgnoreCase("\"" + contextName + "\"", conditionContext));
-                    case NOT_EQUALS -> !(StringUtils.equalsIgnoreCase("\"" + contextName + "\"", conditionContext));
+                    case EQUALS -> (StringUtils.equalsIgnoreCase("\"" + context + "\"", conditionContext));
+                    case NOT_EQUALS -> !(StringUtils.equalsIgnoreCase("\"" + context + "\"", conditionContext));
                     default -> conditionsSatisfied;
                 };
 
@@ -141,9 +141,9 @@ public class ZipCodeFilterStrategy extends AbstractFilterStrategy {
     }
 
     @Override
-    public Replacement getReplacement(String label, String contextName, Map<String, String> context, String documentId, String token, String[] window, Crypto crypto, FPE fpe, AnonymizationService anonymizationService, FilterPattern filterPattern) throws Exception {
+    public Replacement getReplacement(String label, String context, String documentId, String token, String[] window, Crypto crypto, FPE fpe, AnonymizationService anonymizationService, FilterPattern filterPattern) throws Exception {
 
-        String replacement = null;
+        String replacement;
         String salt = "";
 
         if(StringUtils.equalsIgnoreCase(strategy, REDACT)) {

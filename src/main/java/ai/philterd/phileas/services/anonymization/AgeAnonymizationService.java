@@ -15,20 +15,22 @@
  */
 package ai.philterd.phileas.services.anonymization;
 
-import java.util.Map;
+import ai.philterd.phileas.model.services.ContextService;
+
 import java.util.Random;
 
 public class AgeAnonymizationService extends AbstractAnonymizationService {
 
     private final Random random;
 
-    public AgeAnonymizationService() {
+    public AgeAnonymizationService(final ContextService contextService) {
+        super(contextService);
         this.random = new Random();
     }
 
-    public AgeAnonymizationService(final Map<String, String> context) {
-        super(context);
-        this.random = new Random();
+    @Override
+    public ContextService getContextService() {
+        return contextService;
     }
 
     @Override
@@ -45,7 +47,7 @@ public class AgeAnonymizationService extends AbstractAnonymizationService {
 
             if (Character.isDigit(c)) {
 
-                sb.append(random.nextInt((9 - 0) + 1) + 0);
+                sb.append(random.nextInt((9) + 1));
                 numberOfDigits++;
 
             } else {

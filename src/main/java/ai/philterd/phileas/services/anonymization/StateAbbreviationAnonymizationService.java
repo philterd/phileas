@@ -15,23 +15,19 @@
  */
 package ai.philterd.phileas.services.anonymization;
 
+import ai.philterd.phileas.model.services.ContextService;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 public class StateAbbreviationAnonymizationService extends AbstractAnonymizationService {
 
     private final List<String> STATES;
 
-    public StateAbbreviationAnonymizationService() {
-        this(new HashMap<>());
-    }
-
-    public StateAbbreviationAnonymizationService(final Map<String, String> context) {
-        super(context);
+    public StateAbbreviationAnonymizationService(final ContextService contextService) {
+        super(contextService);
 
         this.STATES = new LinkedList<>();
 
@@ -87,6 +83,11 @@ public class StateAbbreviationAnonymizationService extends AbstractAnonymization
         STATES.add("WI");
         STATES.add("WY");
 
+    }
+
+    @Override
+    public ContextService getContextService() {
+        return contextService;
     }
 
     @Override

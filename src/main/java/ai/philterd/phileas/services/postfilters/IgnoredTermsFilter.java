@@ -17,9 +17,9 @@ package ai.philterd.phileas.services.postfilters;
 
 import ai.philterd.phileas.model.objects.PostFilterResult;
 import ai.philterd.phileas.model.objects.Span;
-import ai.philterd.phileas.model.policy.Ignored;
+import ai.philterd.phileas.policy.Ignored;
 import ai.philterd.phileas.model.services.PostFilter;
-import ai.philterd.phileas.model.utils.BloomFilter;
+import ai.philterd.phileas.utils.BloomFilter;
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

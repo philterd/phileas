@@ -15,7 +15,7 @@
  */
 package ai.philterd.phileas.services.disambiguation;
 
-import ai.philterd.phileas.model.configuration.PhileasConfiguration;
+import ai.philterd.phileas.PhileasConfiguration;
 import ai.philterd.phileas.model.enums.FilterType;
 import ai.philterd.phileas.model.objects.Span;
 import ai.philterd.phileas.model.services.SpanDisambiguationService;
@@ -61,7 +61,7 @@ public class VectorBasedSpanDisambiguationService extends AbstractSpanDisambigua
     }
 
     @Override
-    public List<Span> disambiguate(final String contextName, final Map<String, String> context, final List<Span> spans) {
+    public List<Span> disambiguate(final String context, final List<Span> spans) {
 
         final Set<Span> disambiguatedSpans = new LinkedHashSet<>();
 
@@ -78,7 +78,7 @@ public class VectorBasedSpanDisambiguationService extends AbstractSpanDisambigua
 
                 // Get the filter type of the disambiguated span.
                 // The "ambiguous span" is any of the spans in the list since they only differ by filter type.
-                final FilterType disambiguatedFilterType = disambiguate(contextName, filterTypes, span);
+                final FilterType disambiguatedFilterType = disambiguate(context, filterTypes, span);
 
                 // Update the filter type on the span.
                 span.setFilterType(disambiguatedFilterType);

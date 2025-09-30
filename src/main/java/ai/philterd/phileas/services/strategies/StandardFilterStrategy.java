@@ -17,10 +17,10 @@ package ai.philterd.phileas.services.strategies;
 
 import ai.philterd.phileas.model.enums.FilterType;
 import ai.philterd.phileas.model.objects.Replacement;
-import ai.philterd.phileas.model.policy.Crypto;
-import ai.philterd.phileas.model.policy.FPE;
+import ai.philterd.phileas.policy.Crypto;
+import ai.philterd.phileas.policy.FPE;
 import ai.philterd.phileas.model.services.AnonymizationService;
-import ai.philterd.phileas.model.utils.Encryption;
+import ai.philterd.phileas.utils.Encryption;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;

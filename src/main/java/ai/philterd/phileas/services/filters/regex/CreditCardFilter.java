@@ -16,14 +16,14 @@
 package ai.philterd.phileas.services.filters.regex;
 
 import ai.philterd.phileas.model.enums.FilterType;
-import ai.philterd.phileas.model.filter.FilterConfiguration;
-import ai.philterd.phileas.model.filter.rules.regex.RegexFilter;
+import ai.philterd.phileas.filters.FilterConfiguration;
+import ai.philterd.phileas.filters.rules.regex.RegexFilter;
 import ai.philterd.phileas.model.objects.Analyzer;
 import ai.philterd.phileas.model.objects.ConfidenceModifier;
 import ai.philterd.phileas.model.objects.FilterPattern;
 import ai.philterd.phileas.model.objects.FilterResult;
 import ai.philterd.phileas.model.objects.Span;
-import ai.philterd.phileas.model.policy.Policy;
+import ai.philterd.phileas.policy.Policy;
 import org.apache.commons.validator.routines.checkdigit.LuhnCheckDigit;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -109,11 +109,11 @@ public class CreditCardFilter extends RegexFilter {
     }
 
     @Override
-    public FilterResult filter(Policy policy, String contextName, Map<String, String> context, String documentId, int piece, String input, Map<String, String> attributes) throws Exception {
+    public FilterResult filter(Policy policy, String context, String documentId, int piece, String input, Map<String, String> attributes) throws Exception {
 
-        final List<Span> spans = findSpans(policy, analyzer, input, contextName, context, documentId, attributes);
+        final List<Span> spans = findSpans(policy, analyzer, input, context, documentId, attributes);
 
-        LOGGER.debug("Found " + spans.size() + " spans");
+        LOGGER.debug("Found {} spans", spans.size());
         for (final Iterator<Span> iterator = spans.iterator(); iterator.hasNext(); ) {
 
             final Span span = iterator.next();
@@ -137,7 +137,7 @@ public class CreditCardFilter extends RegexFilter {
 
         }
 
-        return new FilterResult(contextName, documentId, spans);
+        return new FilterResult(context, documentId, spans);
 
     }
 

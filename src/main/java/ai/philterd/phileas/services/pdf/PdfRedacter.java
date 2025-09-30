@@ -18,8 +18,8 @@ package ai.philterd.phileas.services.pdf;
 import ai.philterd.phileas.model.enums.MimeType;
 import ai.philterd.phileas.model.objects.PdfRedactionOptions;
 import ai.philterd.phileas.model.objects.Span;
-import ai.philterd.phileas.model.policy.Policy;
-import ai.philterd.phileas.model.policy.graphical.BoundingBox;
+import ai.philterd.phileas.policy.Policy;
+import ai.philterd.phileas.policy.graphical.BoundingBox;
 import ai.philterd.phileas.model.services.Redacter;
 import ai.philterd.phileas.services.pdf.model.RedactedRectangle;
 import org.apache.logging.log4j.LogManager;
@@ -151,7 +151,7 @@ public class PdfRedacter extends PDFTextStripper implements Redacter {
 
             for (int x = 0; x < pdDocument.getNumberOfPages(); x++) {
 
-                LOGGER.debug("Creating image from PDF page " + x);
+                LOGGER.debug("Creating image from PDF page {}", x);
                 final BufferedImage bufferedImage = pdfRenderer.renderImageWithDPI(x, pdfRedactionOptions.getDpi());
 
                 final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
@@ -189,11 +189,11 @@ public class PdfRedacter extends PDFTextStripper implements Redacter {
             for (int x = 0; x < pdDocument.getNumberOfPages(); x++) {
                 // We want to preserve unredacted pages and we don't have a redaction rectangle for this page, transpose
                 if (preserveUnredactedPages && !rectangles.containsKey(x)) {
-                    LOGGER.debug("Copying page " + x + " from input to output document as no redaction needed on page");
+                    LOGGER.debug("Copying page {} from input to output document as no redaction needed on page", x);
                     PDPage inputPage = pdDocument.getPage(x);
                     outputPdfDocument.importPage(inputPage);
                 } else {
-                    LOGGER.debug("Creating image from redacted PDF page " + x);
+                    LOGGER.debug("Creating image from redacted PDF page {}", x);
 
                     // Create an output image with the specified DPI, this will be used to write the PDF page to prior
                     // to drawing in the new PDPage

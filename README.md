@@ -3,6 +3,8 @@
 [![CodeFactor Quality](https://img.shields.io/codefactor/grade/github/philterd/phileas)](https://www.codefactor.io/repository/github/philterd/phileas)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=philterd_phileas&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=philterd_phileas)
 
+**For a hosted document redaction service, please visit [Philterd Data Services](https://www.philterd.ai/data-services).**
+
 Phileas is a Java library to deidentify and redact PII, PHI, and other sensitive information from text. Given text or documents (PDF), Phileas analyzes the text searching for sensitive information such as persons' names, ages, addresses, and many other types of information. Phileas is highly configurable through its settings and policies.
 
 When sensitive information is identified, Phileas can manipulate the sensitive information in a variety of ways. The information can be replaced, encrypted, anonymized, and more. The user chooses how to manipulate each type of sensitive information. We refer to each of these methods in whole as "redaction."
@@ -173,4 +175,5 @@ Phileas also powers [Airlock](https://www.philterd.ai/airlock), an AI policy lay
 As of Phileas 2.2.1, Phileas is licensed under the Apache License, version 2.0. Previous versions were under a proprietary license.
 
 Copyright 2024-2025 Philterd, LLC.
+
 Copyright 2018-2023 Mountain Fog, Inc.

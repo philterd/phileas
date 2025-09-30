@@ -15,7 +15,7 @@
  */
 package ai.philterd.phileas.services.strategies.rules;
 
-import ai.philterd.phileas.model.policy.Policy;
+import ai.philterd.phileas.policy.Policy;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import ai.philterd.phileas.model.conditions.ParsedCondition;
@@ -23,11 +23,11 @@ import ai.philterd.phileas.model.conditions.ParserListener;
 import ai.philterd.phileas.model.enums.FilterType;
 import ai.philterd.phileas.model.objects.FilterPattern;
 import ai.philterd.phileas.model.objects.Replacement;
-import ai.philterd.phileas.model.policy.Crypto;
-import ai.philterd.phileas.model.policy.FPE;
+import ai.philterd.phileas.policy.Crypto;
+import ai.philterd.phileas.policy.FPE;
 import ai.philterd.phileas.services.strategies.AbstractFilterStrategy;
 import ai.philterd.phileas.model.services.AnonymizationService;
-import ai.philterd.phileas.model.utils.Encryption;
+import ai.philterd.phileas.utils.Encryption;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.RandomUtils;
@@ -79,7 +79,7 @@ public class DateFilterStrategy extends AbstractFilterStrategy {
     }
 
     @Override
-    public boolean evaluateCondition(Policy policy, String contextName, Map<String, String> context, String documentId, String token, String[] window, String condition, double confidence, Map<String, String> attributes) {
+    public boolean evaluateCondition(Policy policy, String context, String documentId, String token, String[] window, String condition, double confidence, Map<String, String> attributes) {
 
         boolean conditionsSatisfied = false;
 
@@ -96,8 +96,8 @@ public class DateFilterStrategy extends AbstractFilterStrategy {
                 final String conditionContext = parsedCondition.getValue();
 
                 conditionsSatisfied = switch (parsedCondition.getOperator()) {
-                    case EQUALS -> (StringUtils.equalsIgnoreCase("\"" + contextName + "\"", conditionContext));
-                    case NOT_EQUALS -> !(StringUtils.equalsIgnoreCase("\"" + contextName + "\"", conditionContext));
+                    case EQUALS -> (StringUtils.equalsIgnoreCase("\"" + context + "\"", conditionContext));
+                    case NOT_EQUALS -> !(StringUtils.equalsIgnoreCase("\"" + context + "\"", conditionContext));
                     default -> conditionsSatisfied;
                 };
 
@@ -129,9 +129,9 @@ public class DateFilterStrategy extends AbstractFilterStrategy {
     }
 
     @Override
-    public Replacement getReplacement(String label, String contextName, Map<String, String> context, String documentId, String token, String[] window, Crypto crypto, FPE fpe, AnonymizationService anonymizationService, FilterPattern filterPattern) throws Exception {
+    public Replacement getReplacement(String label, String context, String documentId, String token, String[] window, Crypto crypto, FPE fpe, AnonymizationService anonymizationService, FilterPattern filterPattern) throws Exception {
 
-        String replacement = null;
+        String replacement;
         String salt = "";
 
         if(StringUtils.equalsIgnoreCase(strategy, REDACT)) {
@@ -204,7 +204,7 @@ public class DateFilterStrategy extends AbstractFilterStrategy {
 
             } catch (DateTimeParseException ex) {
 
-                LOGGER.error("Unable to parse date with format " + filterPattern.getFormat() + ". Falling back to redaction.", ex);
+                LOGGER.error("Unable to parse date with format {}. Falling back to redaction.", filterPattern.getFormat(), ex);
 
                 // This will be thrown if the input date is not a valid date.
                 // Default back to redaction.
@@ -222,11 +222,11 @@ public class DateFilterStrategy extends AbstractFilterStrategy {
                 final LocalDateTime parsedDate = LocalDate.parse(token, dtf).atStartOfDay();
 
                 // Shift the date. Only valid dates can be shifted.
-                if(shiftRandom == true) {
+                if(shiftRandom) {
                     // Shifting based on a random days, months, years.
                     final int randomShiftDays = RandomUtils.nextInt(1, 30);
                     final int randomShiftMonths = RandomUtils.nextInt(1, 12);
-                    final int randomShiftYears = 0 - RandomUtils.nextInt(1, 3);
+                    final int randomShiftYears = -RandomUtils.nextInt(1, 3);
                     final LocalDateTime shiftedDate = parsedDate.plusDays(randomShiftDays).plusMonths(randomShiftMonths).plusYears(randomShiftYears);
                     replacement = shiftedDate.format(dtf);
                 } else {
@@ -237,7 +237,7 @@ public class DateFilterStrategy extends AbstractFilterStrategy {
 
             } catch (DateTimeParseException ex) {
 
-                LOGGER.error("Unable to parse date with format " + filterPattern.getFormat() + ". Falling back to redaction.", ex);
+                LOGGER.error("Unable to parse date with format {}. Falling back to redaction.", filterPattern.getFormat(), ex);
 
                 // This will be thrown if the input date is not a valid date.
                 // Default back to redaction.

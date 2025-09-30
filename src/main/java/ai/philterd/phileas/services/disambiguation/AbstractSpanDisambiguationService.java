@@ -15,7 +15,7 @@
  */
 package ai.philterd.phileas.services.disambiguation;
 
-import ai.philterd.phileas.model.configuration.PhileasConfiguration;
+import ai.philterd.phileas.PhileasConfiguration;
 import ai.philterd.phileas.model.services.VectorService;
 import org.apache.commons.codec.digest.MurmurHash3;
 import org.apache.commons.lang3.StringUtils;

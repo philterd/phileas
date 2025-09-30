@@ -15,18 +15,18 @@
  */
 package ai.philterd.phileas.services.anonymization;
 
+import ai.philterd.phileas.model.services.ContextService;
 import org.apache.commons.lang3.RandomStringUtils;
-
-import java.util.Map;
 
 public class IpAddressAnonymizationService extends AbstractAnonymizationService {
 
-    public IpAddressAnonymizationService() {
-
+    public IpAddressAnonymizationService(final ContextService contextService) {
+        super(contextService);
     }
 
-    public IpAddressAnonymizationService(final Map<String, String> context) {
-        super(context);
+    @Override
+    public ContextService getContextService() {
+        return contextService;
     }
 
     @Override

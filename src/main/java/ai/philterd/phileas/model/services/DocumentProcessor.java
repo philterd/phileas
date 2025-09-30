@@ -15,8 +15,8 @@
  */
 package ai.philterd.phileas.model.services;
 
-import ai.philterd.phileas.model.filter.Filter;
-import ai.philterd.phileas.model.policy.Policy;
+import ai.philterd.phileas.filters.Filter;
+import ai.philterd.phileas.policy.Policy;
 import ai.philterd.phileas.model.responses.FilterResponse;
 
 import java.util.List;
@@ -28,8 +28,7 @@ import java.util.Map;
 public interface DocumentProcessor {
 
     FilterResponse process(Policy policy, List<Filter> filters, List<PostFilter> postFilters,
-                           String contextName,
-                           Map<String, String> context, String documentId, int piece, String input,
+                           String context, String documentId, int piece, String input,
                            Map<String, String> attributes) throws Exception;
 
 }

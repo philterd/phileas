@@ -15,21 +15,18 @@
  */
 package ai.philterd.phileas.services.anonymization;
 
+import ai.philterd.phileas.model.services.ContextService;
+
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.Map;
 
 public class CountyAnonymizationService extends AbstractAnonymizationService {
 
     private static final Collection<String> counties = new LinkedList<>();
 
-    public CountyAnonymizationService() {
-        this(new HashMap<>());
-    }
-
-    public CountyAnonymizationService(final Map<String, String> context) {
-        super(context);
+    public CountyAnonymizationService(final ContextService contextService) {
+        super(contextService);
 
         counties.add("Beaver");
         counties.add("Ohio");
@@ -132,6 +129,11 @@ public class CountyAnonymizationService extends AbstractAnonymizationService {
         counties.add("Bingham");
         counties.add("Borden");
 
+    }
+
+    @Override
+    public ContextService getContextService() {
+        return contextService;
     }
 
     @Override
