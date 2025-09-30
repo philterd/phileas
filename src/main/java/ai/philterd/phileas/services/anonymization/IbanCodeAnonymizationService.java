@@ -15,13 +15,16 @@
  */
 package ai.philterd.phileas.services.anonymization;
 
+import ai.philterd.phileas.services.anonymization.faker.Faker;
 import ai.philterd.phileas.services.context.ContextService;
-import org.apache.commons.lang3.RandomStringUtils;
 
 public class IbanCodeAnonymizationService extends AbstractAnonymizationService {
 
+    private final Faker faker;
+
     public IbanCodeAnonymizationService(final ContextService contextService) {
         super(contextService);
+        this.faker = new Faker();
     }
 
     @Override
@@ -31,7 +34,7 @@ public class IbanCodeAnonymizationService extends AbstractAnonymizationService {
 
     @Override
     public String anonymize(String token) {
-        return RandomStringUtils.randomAlphanumeric(34);
+        return faker.finance().iban();
     }
 
 }

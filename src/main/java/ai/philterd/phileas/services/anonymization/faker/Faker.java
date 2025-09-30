@@ -52,26 +52,15 @@ public class Faker {
     private final Internet internet;
     private final PhoneNumber phoneNumber;
     private final Address address;
-    private final Business business;
     private final Commerce commerce;
-    private final Country country;
     private final Currency currency;
-    private final Company company;
-    private final Crypto crypto;
     private final IdNumber idNumber;
     private final Options options;
     private final Code code;
     private final Finance finance;
     private final DateAndTime dateAndTime;
-    private final Demographic demographic;
-    private final Educator educator;
     private final Bool bool;
     private final File file;
-    private final Job job;
-    private final Medical medical;
-    private final Nation nation;
-    private final Disease disease;
-    private final Barcode barcode;
 
     public Faker() {
         this(Locale.ENGLISH);
@@ -103,10 +92,7 @@ public class Faker {
         this.internet = new Internet(this);
         this.phoneNumber = new PhoneNumber(this);
         this.address = new Address(this);
-        this.business = new Business(this);
         this.idNumber = new IdNumber(this);
-        this.company = new Company(this);
-        this.crypto = new Crypto(this);
         this.commerce = new Commerce(this);
         this.currency = new Currency(this);
         this.options = new Options(this);
@@ -114,15 +100,7 @@ public class Faker {
         this.file = new File(this);
         this.finance = new Finance(this);
         this.dateAndTime = new DateAndTime(this);
-        this.demographic = new Demographic(this);
-        this.educator = new Educator(this);
         this.bool = new Bool(this);
-        this.job = new Job(this);
-        this.medical = new Medical(this);
-        this.country = new Country(this);
-        this.nation = new Nation(this);
-        this.disease = new Disease(this);
-        this.barcode = new Barcode(this);
     }
 
     /**
@@ -271,20 +249,8 @@ public class Faker {
         return address;
     }
 
-    public Business business() {
-        return business;
-    }
-
     public Commerce commerce() {
         return commerce;
-    }
-
-    public Company company() {
-        return company;
-    }
-
-    public Crypto crypto() {
-        return crypto;
     }
 
     public IdNumber idNumber() {
@@ -311,37 +277,9 @@ public class Faker {
         return dateAndTime;
     }
 
-    public Demographic demographic() {
-        return demographic;
-    }
-
-    public Educator educator() {
-        return educator;
-    }
-
     public Bool bool() {
         return bool;
     }
-
-    public Job job() {
-        return job;
-    }
-
-    public Medical medical() {
-        return medical;
-    }
-
-    public Country country() {
-        return country;
-    }
-
-    public Nation nation() {
-        return nation;
-    }
-
-    public Disease disease() {return disease; }
-
-    public Barcode barcode() { return barcode; }
 
     public String resolve(String key) {
         return this.fakeValuesService.resolve(key, this, this);
