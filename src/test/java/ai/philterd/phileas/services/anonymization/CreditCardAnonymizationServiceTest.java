@@ -34,9 +34,9 @@ public class CreditCardAnonymizationServiceTest {
         final String token = "abcd1234";
         final String replacement = anonymizationService.anonymize(token);
 
-        LOGGER.info("Credit Card: " + replacement);
+        LOGGER.info("Credit Card: {}", replacement);
         Assertions.assertNotNull(replacement);
-        Assertions.assertEquals(16, replacement.length());
+        Assertions.assertTrue(replacement.length() >= 13 && replacement.length() <= 23);
 
     }
 
@@ -48,9 +48,9 @@ public class CreditCardAnonymizationServiceTest {
         final String token = "April 1, 2019";
         final String replacement = anonymizationService.anonymize(token);
 
-        LOGGER.info("Credit Card: " + replacement);
+        LOGGER.info("Credit Card: {}", replacement);
         Assertions.assertNotNull(replacement);
-        Assertions.assertEquals(16, replacement.length());
+        Assertions.assertTrue(replacement.length() >= 13 && replacement.length() <= 23);
 
     }
 
