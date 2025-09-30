@@ -20,6 +20,7 @@ import ai.philterd.phileas.model.enums.FilterType;
 import ai.philterd.phileas.model.enums.MimeType;
 import ai.philterd.phileas.filters.Filter;
 import ai.philterd.phileas.model.objects.Explanation;
+import ai.philterd.phileas.model.objects.IncrementalRedaction;
 import ai.philterd.phileas.model.objects.PdfRedactionOptions;
 import ai.philterd.phileas.model.objects.Span;
 import ai.philterd.phileas.model.services.ContextService;
@@ -72,7 +73,6 @@ public class PhileasFilterService implements FilterService {
     private final DocumentProcessor unstructuredDocumentProcessor;
     private final FilterPolicyLoader filterPolicyLoader;
     private final TokenCounter tokenCounter;
-    private final ContextService contextService;
 
     // A map that gives each filter profile its own cache of filters.
     private final Map<String, Map<FilterType, Filter>> filterCache;
@@ -80,12 +80,13 @@ public class PhileasFilterService implements FilterService {
     // PHL-223: Face recognition
     //private final ImageProcessor imageProcessor;
 
-    public PhileasFilterService(final PhileasConfiguration phileasConfiguration, final ContextService contextService, final VectorService vectorService) {
+    public PhileasFilterService(final PhileasConfiguration phileasConfiguration,
+                                final ContextService contextService,
+                                final VectorService vectorService) {
 
         LOGGER.info("Initializing Phileas engine.");
 
         this.filterCache = new ConcurrentHashMap<>();
-        this.contextService = contextService;
 
         // Set the token counter.
         this.tokenCounter = new WhitespaceTokenCounter();
@@ -183,6 +184,8 @@ public class PhileasFilterService implements FilterService {
 
         final BinaryDocumentFilterResponse binaryDocumentFilterResponse;
 
+        final List<IncrementalRedaction> incrementalRedactions = new ArrayList<>();
+
         if(mimeType == MimeType.APPLICATION_PDF) {
 
             // Get the lines of text from the PDF file.
@@ -219,6 +222,9 @@ public class PhileasFilterService implements FilterService {
                 // Add all the found spans to the list of spans.
                 spans.addAll(filterResponse.getExplanation().appliedSpans());
 
+                // Add the incremental redactions to the list.
+                incrementalRedactions.addAll(filterResponse.getIncrementalRedactions());
+
                 for (final Span span : filterResponse.getExplanation().appliedSpans()) {
                     span.setCharacterStart(span.getCharacterStart() + offset);
                     span.setCharacterEnd(span.getCharacterEnd() + offset);
@@ -229,7 +235,7 @@ public class PhileasFilterService implements FilterService {
 
             }
 
-            // Load the Pdf config from the policy and apply to the PdfRedactionOptions that are used when
+            // Load the PDF config from the policy and apply to the PdfRedactionOptions that are used when
             // generating the new PDF document from the result of the redaction
             final Pdf policyPdfConfig = policy.getConfig().getPdf();
             final PdfRedactionOptions pdfRedactionOptions = new PdfRedactionOptions(
@@ -250,7 +256,7 @@ public class PhileasFilterService implements FilterService {
             // TODO: The identified vs the applied will actually be different
             // but we are setting the same here. Fix this at some point.
             final Explanation explanation = new Explanation(spansList, spansList);
-            binaryDocumentFilterResponse = new BinaryDocumentFilterResponse(redacted, context, documentId, explanation, tokens);
+            binaryDocumentFilterResponse = new BinaryDocumentFilterResponse(redacted, context, documentId, explanation, tokens, incrementalRedactions);
 
         /*} else if(mimeType == MimeType.IMAGE_JPEG) {
             // PHL-223: Face recognition

@@ -15,10 +15,13 @@
  */
 package ai.philterd.phileas.model.responses;
 
+import ai.philterd.phileas.model.objects.IncrementalRedaction;
 import com.google.gson.Gson;
 import ai.philterd.phileas.model.objects.Explanation;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+
+import java.util.List;
 
 public final class BinaryDocumentFilterResponse {
 
@@ -27,14 +30,16 @@ public final class BinaryDocumentFilterResponse {
     private final String documentId;
     private final Explanation explanation;
     private final long tokens;
+    private final transient List<IncrementalRedaction> incrementalRedactions;
 
-    public BinaryDocumentFilterResponse(byte[] document, String context, String documentId, Explanation explanation, long tokens) {
+    public BinaryDocumentFilterResponse(byte[] document, String context, String documentId, Explanation explanation, long tokens, List<IncrementalRedaction> incrementalRedactions) {
 
         this.document = document;
         this.context = context;
         this.documentId = documentId;
         this.explanation = explanation;
         this.tokens = tokens;
+        this.incrementalRedactions = incrementalRedactions;
 
     }
 
@@ -84,6 +89,10 @@ public final class BinaryDocumentFilterResponse {
 
     public long getTokens() {
         return tokens;
+    }
+
+    public List<IncrementalRedaction> getIncrementalRedactions() {
+        return incrementalRedactions;
     }
 
 }
