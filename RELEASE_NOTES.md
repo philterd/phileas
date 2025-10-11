@@ -1,8 +1,10 @@
 # Phileas Release Notes
 
+These release notes are for versions prior to being open source on GitHub. For newer versions, see the [releases](https://github.com/philterd/phileas/releases) on GitHub.
+
 Issues whose identifiers start with `PHL-` were previously tracked in Jira before the project's issues were managed in GitHub.
 
-## Version 2.6.0 (not yet released)
+## Version 2.6.0
 
 * PHL-313 - Remove OWNER project fork for managing application properties
 * PHL-312 - Add death date detection similar to the birthdate detection
