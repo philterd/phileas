@@ -28,24 +28,22 @@ public interface FilterService {
     /**
      * Filter text from a string.
      * @param policy The {@link Policy} to apply.
-     * @param documentId A document ID. Provide <code>null</code> for a document ID to be generated.
      * @param input The input text.
      * @param mimeType The {@link MimeType}.
      * @return A {@link FilterResponse}.
      * @throws Exception Thrown if the text cannot be filtered.
      */
-    FilterResponse filter(final Policy policy, final String context, String documentId, final String input, final MimeType mimeType) throws Exception;
+    FilterResponse filter(final Policy policy, final String context, final String input, final MimeType mimeType) throws Exception;
 
     /**
      * Filter text from a binary document.
      * @param policy The {@link Policy} to apply.s
-     * @param documentId A document ID. Provide <code>null</code> for a document ID to be generated.
      * @param input The input document as a byte array.
      * @param mimeType The input {@link MimeType}.
      * @param outputMimeType The output {@link MimeType}.
      * @return A {@link BinaryDocumentFilterResponse}.
      * @throws Exception Thrown if the text cannot be filtered.
      */
-    BinaryDocumentFilterResponse filter(final Policy policy, final String context, String documentId, byte[] input, MimeType mimeType, MimeType outputMimeType) throws Exception;
+    BinaryDocumentFilterResponse filter(final Policy policy, final String context, byte[] input, MimeType mimeType, MimeType outputMimeType) throws Exception;
 
 }

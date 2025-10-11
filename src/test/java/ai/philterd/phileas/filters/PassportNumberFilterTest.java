@@ -39,7 +39,7 @@ public class PassportNumberFilterTest extends AbstractFilterTest {
 
         final PassportNumberFilter filter = new PassportNumberFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context",  "documentid", PIECE, "the passport number is 036001231.", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "the passport number is 036001231.", attributes);
 
         showSpans(filterResult.getSpans());
 

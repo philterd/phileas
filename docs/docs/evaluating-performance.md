@@ -141,7 +141,7 @@ PhileasConfiguration phileasConfiguration = ConfigFactory.create(PhileasConfigur
 
 FilterService filterService = new PhileasFilterService(phileasConfiguration);
 
-FilterResponse response = filterService.filter(policies, context, documentId, body, MimeType.TEXT_PLAIN);
+FilterResponse response = filterService.filter(policies, context, body, MimeType.TEXT_PLAIN);
 ```
 
 The `explain` API [endpoint](filtering-api.md#explain) produces a detailed description of the redaction. The response will include a list of spans that contain the start and stop positions of redacted text and the type of sensitive information that was redacted. Using this information we can compare the redacted information to our annotated file to calculate precision and recall metrics.

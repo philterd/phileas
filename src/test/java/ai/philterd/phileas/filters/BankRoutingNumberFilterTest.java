@@ -39,7 +39,7 @@ public class BankRoutingNumberFilterTest extends AbstractFilterTest {
 
         final BankRoutingNumberFilter filter = new BankRoutingNumberFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context",  "documentid", PIECE, "the routing number is 111000025 patient is 3.5years old.", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "the routing number is 111000025 patient is 3.5years old.", attributes);
 
         showSpans(filterResult.getSpans());
 
@@ -60,7 +60,7 @@ public class BankRoutingNumberFilterTest extends AbstractFilterTest {
 
         final BankRoutingNumberFilter filter = new BankRoutingNumberFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context",  "documentid", PIECE, "the routing number is 111007025 patient is 3.5years old.", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "the routing number is 111007025 patient is 3.5years old.", attributes);
 
         showSpans(filterResult.getSpans());
 
@@ -79,7 +79,7 @@ public class BankRoutingNumberFilterTest extends AbstractFilterTest {
 
         final BankRoutingNumberFilter filter = new BankRoutingNumberFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context",  "documentid", PIECE, "the routing number is 1131007025 patient is 3.5years old.", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "the routing number is 1131007025 patient is 3.5years old.", attributes);
 
         showSpans(filterResult.getSpans());
 

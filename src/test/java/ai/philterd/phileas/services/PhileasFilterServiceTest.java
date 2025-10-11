@@ -113,7 +113,7 @@ public class PhileasFilterServiceTest {
         final Policy policy = getPdfPolicy("pdf");
 
         final PhileasFilterService service = new PhileasFilterService(phileasConfiguration, contextService, vectorService);
-        final BinaryDocumentFilterResponse response = service.filter(policy, "context",  "documentid", document, MimeType.APPLICATION_PDF, MimeType.APPLICATION_PDF);
+        final BinaryDocumentFilterResponse response = service.filter(policy, "context", document, MimeType.APPLICATION_PDF, MimeType.APPLICATION_PDF);
 
         // Write the byte array to a file.
         final File outputFile = File.createTempFile("redact", ".pdf");
@@ -146,7 +146,7 @@ public class PhileasFilterServiceTest {
         final Policy policy = getPdfPolicy("pdf");
 
         PhileasFilterService service = new PhileasFilterService(phileasConfiguration, contextService, vectorService);
-        final BinaryDocumentFilterResponse response = service.filter(policy, "context",  "documentid", document, MimeType.APPLICATION_PDF, MimeType.APPLICATION_PDF);
+        final BinaryDocumentFilterResponse response = service.filter(policy, "context", document, MimeType.APPLICATION_PDF, MimeType.APPLICATION_PDF);
 
         // Write the byte array to a file.
         final File outputFile = File.createTempFile("redact", ".pdf");
@@ -159,7 +159,7 @@ public class PhileasFilterServiceTest {
         showSpans(response.getExplanation().appliedSpans());
 
         // output:
-        // characterStart: 35;  characterEnd: 40;  filterType: zip-code;  context: context;  documentId: documentid;  confidence: 0.9;  text: 90210;  replacement: {{{REDACTED-zip-code}}};  salt: ;  ignored: false;  classification: null;
+        // characterStart: 35;  characterEnd: 40;  filterType: zip-code;  context: context;  confidence: 0.9;  text: 90210;  replacement: {{{REDACTED-zip-code}}};  salt: ;  ignored: false;  classification: null;
 
         // TODO: This is asserting that it doesn't contain anything as a text stream
         // but it's possible that they're in the images, we would need to OCR

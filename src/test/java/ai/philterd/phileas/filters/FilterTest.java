@@ -45,7 +45,7 @@ public class FilterTest extends AbstractFilterTest {
 
         final AgeFilter filter = new AgeFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context",  "documentid", PIECE, "this is a first sentence. the patient is 3.5 years old and he's cool. this is a surrounding sentence.", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "this is a first sentence. the patient is 3.5 years old and he's cool. this is a surrounding sentence.", attributes);
 
         showSpans(filterResult.getSpans());
 
@@ -75,7 +75,7 @@ public class FilterTest extends AbstractFilterTest {
 
         final AgeFilter filter = new AgeFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context",  "documentid", PIECE, "this is a first sentence. the patient is 3.5 years old and he's cool. this is a surrounding sentence.", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "this is a first sentence. the patient is 3.5 years old and he's cool. this is a surrounding sentence.", attributes);
 
         showSpans(filterResult.getSpans());
 
@@ -106,7 +106,7 @@ public class FilterTest extends AbstractFilterTest {
 
         final AgeFilter filter = new AgeFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context",  "documentid", PIECE, "this is a first sentence. the patient is 3.5 years old and he's cool. this is a surrounding sentence.", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "this is a first sentence. the patient is 3.5 years old and he's cool. this is a surrounding sentence.", attributes);
 
         showSpans(filterResult.getSpans());
 

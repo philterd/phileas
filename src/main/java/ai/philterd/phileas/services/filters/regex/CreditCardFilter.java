@@ -109,9 +109,9 @@ public class CreditCardFilter extends RegexFilter {
     }
 
     @Override
-    public FilterResult filter(Policy policy, String context, String documentId, int piece, String input, Map<String, String> attributes) throws Exception {
+    public FilterResult filter(Policy policy, String context, int piece, String input, Map<String, String> attributes) throws Exception {
 
-        final List<Span> spans = findSpans(policy, analyzer, input, context, documentId, attributes);
+        final List<Span> spans = findSpans(policy, analyzer, input, context, attributes);
 
         LOGGER.debug("Found {} spans", spans.size());
         for (final Iterator<Span> iterator = spans.iterator(); iterator.hasNext(); ) {
@@ -137,7 +137,7 @@ public class CreditCardFilter extends RegexFilter {
 
         }
 
-        return new FilterResult(context, documentId, spans);
+        return new FilterResult(context, spans);
 
     }
 

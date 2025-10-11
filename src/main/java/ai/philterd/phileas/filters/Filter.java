@@ -103,13 +103,12 @@ public abstract class Filter {
      * Filters the input text.
      * @param policy The {@link Policy} to use.
      * @param context The name of the context.
-     * @param documentId An ID uniquely identifying the document.
      * @param piece A numbered piece of the document. Pass <code>0</code> if only piece of document.
      * @param input The input text.
      * @param attributes Attributes about the text.
      * @return A {@link FilterResult} containing the identified {@link Span spans}.
      */
-    public abstract FilterResult filter(Policy policy, String context, String documentId, int piece, String input,
+    public abstract FilterResult filter(Policy policy, String context, int piece, String input,
                                         final Map<String, String> attributes) throws Exception;
 
     /**
@@ -238,14 +237,13 @@ public abstract class Filter {
      * Gets the string to be used as a replacement.
      * @param policy The policy that's being applied.
      * @param context The context.
-     * @param documentId The document ID.
      * @param token The token to replace.
      * @param window The window surrounding the token.
      * @param confidence The confidence of the item.
      * @param classification The classification of the item.
      * @return The replacement string.
      */
-    public Replacement getReplacement(final Policy policy, final String context, final String documentId,
+    public Replacement getReplacement(final Policy policy, final String context,
                                       final String token, final String[] window, double confidence,
                                       final String classification, final Map<String, String> attributes,
                                       final FilterPattern filterPattern) throws Exception {
@@ -264,19 +262,19 @@ public abstract class Filter {
                 if(hasCondition) {
 
                     // If there is a condition, does it evaluate?
-                    final boolean evaluates = strategy.evaluateCondition(policy, context, documentId, token, window, condition, confidence, attributes);
+                    final boolean evaluates = strategy.evaluateCondition(policy, context, token, window, condition, confidence, attributes);
 
                     if(evaluates) {
 
                         // Break early since we met the strategy's condition.
-                        return strategy.getReplacement(classification, context, documentId, token, window, crypto, fpe, anonymizationService, filterPattern);
+                        return strategy.getReplacement(classification, context, token, window, crypto, fpe, anonymizationService, filterPattern);
 
                     }
 
                 } else {
 
                     // Break early since there is no condition.
-                    return strategy.getReplacement(classification, context, documentId, token, window, crypto, fpe, anonymizationService, filterPattern);
+                    return strategy.getReplacement(classification, context, token, window, crypto, fpe, anonymizationService, filterPattern);
 
                 }
 

@@ -47,7 +47,7 @@ public class CustomDictionaryFilterTest extends AbstractFilterTest {
         final Set<String> names = new HashSet<>(Arrays.asList("george", "ted", "bill", "john"));
         final BloomFilterDictionaryFilter filter = new BloomFilterDictionaryFilter(FilterType.CUSTOM_DICTIONARY, filterConfiguration, names, "names");
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context",  "documentid", PIECE,"He lived with Bill in California.", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE,"He lived with Bill in California.", attributes);
         showSpans(filterResult.getSpans());
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
@@ -68,7 +68,7 @@ public class CustomDictionaryFilterTest extends AbstractFilterTest {
         final Set<String> names = new HashSet<>(Arrays.asList("george", "ted", "bill", "john"));
         final BloomFilterDictionaryFilter filter = new BloomFilterDictionaryFilter(FilterType.CUSTOM_DICTIONARY, filterConfiguration, names, "names");
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context",  "documentid", PIECE,"He lived with Sam in California.", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE,"He lived with Sam in California.", attributes);
         showSpans(filterResult.getSpans());
 
         Assertions.assertEquals(0, filterResult.getSpans().size());

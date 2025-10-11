@@ -39,7 +39,7 @@ public class DriversLicenseFilterStrategyTest extends AbstractFilterStrategyTest
         final AbstractFilterStrategy strategy = getFilterStrategy();
 
         attributes.put("classification", "WV");
-        final boolean conditionSatisfied = strategy.evaluateCondition(getPolicy(), "context",  "documentid", "90210", WINDOW, "classification == \"WV\"", 1.0, attributes);
+        final boolean conditionSatisfied = strategy.evaluateCondition(getPolicy(), "context", "90210", WINDOW, "classification == \"WV\"", 1.0, attributes);
 
         Assertions.assertTrue(conditionSatisfied);
 

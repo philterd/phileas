@@ -25,16 +25,14 @@ public final class BinaryDocumentFilterResponse {
 
     private transient final byte[] document;
 	private final String context;
-    private final String documentId;
     private final Explanation explanation;
     private final long tokens;
     private final transient List<IncrementalRedaction> incrementalRedactions;
 
-    public BinaryDocumentFilterResponse(byte[] document, String context, String documentId, Explanation explanation, long tokens, List<IncrementalRedaction> incrementalRedactions) {
+    public BinaryDocumentFilterResponse(byte[] document, String context, Explanation explanation, long tokens, List<IncrementalRedaction> incrementalRedactions) {
 
         this.document = document;
         this.context = context;
-        this.documentId = documentId;
         this.explanation = explanation;
         this.tokens = tokens;
         this.incrementalRedactions = incrementalRedactions;
@@ -47,7 +45,6 @@ public final class BinaryDocumentFilterResponse {
         return new HashCodeBuilder(17, 37).
                 append(document).
                 append(context).
-                append(documentId).
                 append(explanation).
                 append(tokens).
                 toHashCode();
@@ -71,10 +68,6 @@ public final class BinaryDocumentFilterResponse {
 
     public byte[] getDocument() {
         return document;
-    }
-
-    public String getDocumentId() {
-        return documentId;
     }
 
     public String getContext() {

@@ -39,7 +39,7 @@ public class PhoneNumberExtensionFilterTest extends AbstractFilterTest {
 
         final PhoneNumberExtensionFilter filter = new PhoneNumberExtensionFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context",  "documentid", PIECE, "he is at x123", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "he is at x123", attributes);
         showSpans(filterResult.getSpans());
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
@@ -59,7 +59,7 @@ public class PhoneNumberExtensionFilterTest extends AbstractFilterTest {
 
         final PhoneNumberExtensionFilter filter = new PhoneNumberExtensionFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "his phone number was +1 151-841-2829 x416.", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "his phone number was +1 151-841-2829 x416.", attributes);
         showSpans(filterResult.getSpans());
 
         Assertions.assertEquals(1, filterResult.getSpans().size());

@@ -138,7 +138,6 @@ public abstract class AbstractFilterStrategy {
      * @param classification The filter type classification.
      * @param context The name of the context.
      * @param context The context.
-     * @param documentId The document ID.
      * @param token The token.
      * @param window The window containing the token.
      * @param crypto The encryption key used to encrypt values when enabled, otherwise <code>null</code>.
@@ -147,7 +146,7 @@ public abstract class AbstractFilterStrategy {
      * @param filterPattern The filter pattern that identified the filter, or <code>null</code> if no pattern was used.
      * @return A replacement value for a token.
      */
-    public abstract Replacement getReplacement(String classification, String context, String documentId, String token,
+    public abstract Replacement getReplacement(String classification, String context, String token,
                                                String[] window, Crypto crypto, FPE fpe,
                                                AnonymizationService anonymizationService, FilterPattern filterPattern) throws Exception;
 
@@ -156,7 +155,6 @@ public abstract class AbstractFilterStrategy {
      * @param policy The policy being applied.
      * @param context The context name.
      * @param context The context.
-     * @param documentId The document ID.
      * @param token The token.
      * @param window The window containing the token.
      * @param condition The condition to evaluate.
@@ -164,7 +162,7 @@ public abstract class AbstractFilterStrategy {
      * @param attributes Attributes about hte document.
      * @return <code>true</code> if the condition matches; otherwise <code>false</code>.
      */
-    public abstract boolean evaluateCondition(Policy policy, String context, String documentId, String token,
+    public abstract boolean evaluateCondition(Policy policy, String context, String token,
                                               String[] window, String condition, double confidence,
                                               Map<String, String> attributes);
 

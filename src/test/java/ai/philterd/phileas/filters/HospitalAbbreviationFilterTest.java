@@ -48,7 +48,7 @@ public class HospitalAbbreviationFilterTest extends AbstractFilterTest {
 
         final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.HOSPITAL_ABBREVIATION, filterConfiguration, SensitivityLevel.HIGH, true);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context",  "documentid", PIECE, "Went to WMC", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "Went to WMC", attributes);
         showSpans(filterResult.getSpans());
         Assertions.assertEquals(1, filterResult.getSpans().size());
 

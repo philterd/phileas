@@ -44,7 +44,7 @@ public class CityFilterTest extends AbstractFilterTest {
 
         final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.LOCATION_CITY, filterConfiguration, SensitivityLevel.MEDIUM, true);
 
-        FilterResult filterResult = filter.filter(getPolicy(), "context",  "documentid", PIECE, "Lived in Washington.", attributes);
+        FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "Lived in Washington.", attributes);
 
         showSpans(filterResult.getSpans());
 
@@ -64,7 +64,7 @@ public class CityFilterTest extends AbstractFilterTest {
 
         final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.LOCATION_CITY, filterConfiguration, SensitivityLevel.HIGH, true);
 
-        FilterResult filterResult = filter.filter(getPolicy(), "context",  "documentid", PIECE, "Lived in New York.", attributes);
+        FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "Lived in New York.", attributes);
 
         showSpans(filterResult.getSpans());
 
@@ -86,7 +86,7 @@ public class CityFilterTest extends AbstractFilterTest {
 
         final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.LOCATION_CITY, filterConfiguration, SensitivityLevel.LOW, true);
 
-        FilterResult filterResult = filter.filter(getPolicy(), "context",  "documentid", PIECE,"Lived in Wshington", attributes);
+        FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE,"Lived in Wshington", attributes);
 
         showSpans(filterResult.getSpans());
 
@@ -105,7 +105,7 @@ public class CityFilterTest extends AbstractFilterTest {
 
         final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.LOCATION_CITY, filterConfiguration, SensitivityLevel.MEDIUM, true);
 
-        FilterResult filterResult = filter.filter(getPolicy(), "context",  "documentid", PIECE, "Lived in Wshington", attributes);
+        FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "Lived in Wshington", attributes);
 
         showSpans(filterResult.getSpans());
 
@@ -125,7 +125,7 @@ public class CityFilterTest extends AbstractFilterTest {
 
         final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.LOCATION_CITY, filterConfiguration, SensitivityLevel.HIGH, true);
 
-        FilterResult filterResult = filter.filter(getPolicy(), "context",  "documentid", PIECE,"Lived in Wasinton", attributes);
+        FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE,"Lived in Wasinton", attributes);
 
         showSpans(filterResult.getSpans());
 

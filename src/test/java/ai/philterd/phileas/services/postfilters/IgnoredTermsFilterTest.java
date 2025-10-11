@@ -41,7 +41,7 @@ class IgnoredTermsFilterTest {
         policy.setIgnored(List.of(ignored));
 
         final List<Span> spans = new LinkedList<>();
-        spans.add(Span.make(12, 22, FilterType.LOCATION_STATE, "context", "docid", 0.80, "test", "*****",  "", false, true, new String[0], 0));
+        spans.add(Span.make(12, 22, FilterType.LOCATION_STATE, "context", 0.80, "test", "*****",  "", false, true, new String[0], 0));
 
         final IgnoredTermsFilter ignoredTermsFilter = new IgnoredTermsFilter(ignored);
         final List<Span> filteredSpans = ignoredTermsFilter.filter("He lived in Washington.", spans);
@@ -59,7 +59,7 @@ class IgnoredTermsFilterTest {
         ignored.setFiles(List.of(new File("src/test/resources/ignored-terms.txt").getAbsolutePath()));
 
         final List<Span> spans = new LinkedList<>();
-        spans.add(Span.make(12, 18, FilterType.IDENTIFIER, "context", "docid", 0.80, "test", "*****",  "", false, true, new String[0], 0));
+        spans.add(Span.make(12, 18, FilterType.IDENTIFIER, "context", 0.80, "test", "*****",  "", false, true, new String[0], 0));
 
         final IgnoredTermsFilter ignoredTermsFilter = new IgnoredTermsFilter(ignored);
         final List<Span> filteredSpans = ignoredTermsFilter.filter("He lived in samuel.", spans);
@@ -76,7 +76,7 @@ class IgnoredTermsFilterTest {
         ignored.setFiles(List.of(new File("src/test/resources/ignored-terms.txt").getAbsolutePath()));
 
         final List<Span> spans = new LinkedList<>();
-        spans.add(Span.make(12, 18, FilterType.IDENTIFIER, "context", "docid", 0.80, "test", "*****",  "", false, true, new String[0], 0));
+        spans.add(Span.make(12, 18, FilterType.IDENTIFIER, "context", 0.80, "test", "*****",  "", false, true, new String[0], 0));
 
         final IgnoredTermsFilter ignoredTermsFilter = new IgnoredTermsFilter(ignored);
         final List<Span> filteredSpans = ignoredTermsFilter.filter("He lived in samuel.", spans);
@@ -105,7 +105,7 @@ class IgnoredTermsFilterTest {
         ignored.setTerms(Arrays.asList("Seattle", "California", "Virginia"));
 
         final List<Span> spans = new LinkedList<>();
-        spans.add(Span.make(12, 22, FilterType.LOCATION_STATE, "context", "docid", 0.80, "test", "*****",  "", false, true, new String[0], 0));
+        spans.add(Span.make(12, 22, FilterType.LOCATION_STATE, "context", 0.80, "test", "*****",  "", false, true, new String[0], 0));
 
         final IgnoredTermsFilter ignoredTermsFilter = new IgnoredTermsFilter(ignored);
         final List<Span> filteredSpans = ignoredTermsFilter.filter("He lived in Washington.", spans);
@@ -122,7 +122,7 @@ class IgnoredTermsFilterTest {
         ignored.setTerms(Arrays.asList("washington", "California", "Virginia"));
 
         final List<Span> spans = new LinkedList<>();
-        spans.add(Span.make(12, 22, FilterType.LOCATION_STATE, "context", "docid", 0.80, "test", "*****",  "", false, true, new String[0], 0));
+        spans.add(Span.make(12, 22, FilterType.LOCATION_STATE, "context", 0.80, "test", "*****",  "", false, true, new String[0], 0));
 
         final IgnoredTermsFilter ignoredTermsFilter = new IgnoredTermsFilter(ignored);
         final List<Span> filteredSpans = ignoredTermsFilter.filter("He lived in Washington.", spans);
@@ -139,7 +139,7 @@ class IgnoredTermsFilterTest {
         ignored.setTerms(Arrays.asList("Washington", "California", "Virginia"));
 
         final List<Span> spans = new LinkedList<>();
-        spans.add(Span.make(12, 22, FilterType.LOCATION_STATE, "context", "docid", 0.80, "test", "*****",  "", false, true, new String[0], 0));
+        spans.add(Span.make(12, 22, FilterType.LOCATION_STATE, "context", 0.80, "test", "*****",  "", false, true, new String[0], 0));
 
         final IgnoredTermsFilter ignoredTermsFilter = new IgnoredTermsFilter(ignored);
         final List<Span> filteredSpans = ignoredTermsFilter.filter("He lived in Washington.", spans);

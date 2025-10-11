@@ -103,7 +103,7 @@ public class PhileasFilterService implements FilterService {
     }
 
     @Override
-    public FilterResponse filter(final Policy policy, final String context, String documentId,
+    public FilterResponse filter(final Policy policy, final String context,
                                  final String input, final MimeType mimeType) throws Exception {
 
         // Initialize potential attributes that are associated with the input text.
@@ -111,14 +111,6 @@ public class PhileasFilterService implements FilterService {
 
         final List<Filter> filters = filterPolicyLoader.getFiltersForPolicy(policy, filterCache);
         final List<PostFilter> postFilters = getPostFiltersForPolicy(policy);
-
-        // See if we need to generate a document ID.
-        if(StringUtils.isEmpty(documentId)) {
-
-            // PHL-58: Use a hash function to generate the document ID.
-            documentId = DigestUtils.md5Hex(UUID.randomUUID() + "-" + context + "-" + policy.getName() + "-" + input);
-
-        }
 
         final FilterResponse filterResponse;
 
@@ -142,17 +134,17 @@ public class PhileasFilterService implements FilterService {
 
                     // Process each split.
                     for (int i = 0; i < splits.size(); i++) {
-                        final FilterResponse fr = unstructuredDocumentProcessor.process(policy, filters, postFilters, context, documentId, i, splits.get(i), attributes);
+                        final FilterResponse fr = unstructuredDocumentProcessor.process(policy, filters, postFilters, context, i, splits.get(i), attributes);
                         filterResponses.add(fr);
                     }
 
                     // Combine the results into a single filterResponse object.
-                    filterResponse = FilterResponse.combine(filterResponses, context, documentId, splitService.getSeparator());
+                    filterResponse = FilterResponse.combine(filterResponses, context, splitService.getSeparator());
 
             } else {
 
                 // Do not split. Process the entire string at once.
-                filterResponse = unstructuredDocumentProcessor.process(policy, filters, postFilters, context, documentId, 0, input, attributes);
+                filterResponse = unstructuredDocumentProcessor.process(policy, filters, postFilters, context, 0, input, attributes);
 
             }
 
@@ -166,21 +158,13 @@ public class PhileasFilterService implements FilterService {
     }
 
     @Override
-    public BinaryDocumentFilterResponse filter(final Policy policy, final String context, String documentId,
+    public BinaryDocumentFilterResponse filter(final Policy policy, final String context,
                                                final byte[] input, final MimeType mimeType,
                                                final MimeType outputMimeType) throws Exception {
 
         // Initialize potential attributes that are associated with the input text.
         // NOTE: Binary documents do not currently have any attributes.
         final Map<String, String> attributes = new HashMap<>();
-
-        // See if we need to generate a document ID.
-        if(StringUtils.isEmpty(documentId)) {
-
-            // PHL-58: Use a hash function to generate the document ID.
-            documentId = DigestUtils.md5Hex(UUID.randomUUID() + "-" + context + "-" + policy.getName() + "-" + Arrays.toString(input));
-
-        }
 
         final BinaryDocumentFilterResponse binaryDocumentFilterResponse;
 
@@ -217,7 +201,7 @@ public class PhileasFilterService implements FilterService {
                 tokens += tokenCounter.countTokens(line);
 
                 // Process the text.
-                final FilterResponse filterResponse = unstructuredDocumentProcessor.process(policy, filters, postFilters, context, documentId, piece, line, attributes);
+                final FilterResponse filterResponse = unstructuredDocumentProcessor.process(policy, filters, postFilters, context, piece, line, attributes);
 
                 // Add all the found spans to the list of spans.
                 spans.addAll(filterResponse.getExplanation().appliedSpans());
@@ -256,7 +240,7 @@ public class PhileasFilterService implements FilterService {
             // TODO: The identified vs the applied will actually be different
             // but we are setting the same here. Fix this at some point.
             final Explanation explanation = new Explanation(spansList, spansList);
-            binaryDocumentFilterResponse = new BinaryDocumentFilterResponse(redacted, context, documentId, explanation, tokens, incrementalRedactions);
+            binaryDocumentFilterResponse = new BinaryDocumentFilterResponse(redacted, context, explanation, tokens, incrementalRedactions);
 
         /*} else if(mimeType == MimeType.IMAGE_JPEG) {
             // PHL-223: Face recognition
@@ -268,7 +252,7 @@ public class PhileasFilterService implements FilterService {
             final Explanation explanation = new Explanation(Collections.emptyList(), Collections.emptyList());
 
             binaryDocumentFilterResponse = new BinaryDocumentFilterResponse(imageFilterResponse.getImage(),
-                    context, documentId, explanation);*/
+                    context, explanation);*/
 
         } else {
             // Should never happen but just in case.
