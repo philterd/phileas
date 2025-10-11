@@ -16,39 +16,39 @@
 package ai.philterd.phileas.services;
 
 import ai.philterd.phileas.PhileasConfiguration;
+import ai.philterd.phileas.filters.Filter;
 import ai.philterd.phileas.model.enums.FilterType;
 import ai.philterd.phileas.model.enums.MimeType;
-import ai.philterd.phileas.filters.Filter;
+import ai.philterd.phileas.model.objects.ApplyResponse;
+import ai.philterd.phileas.model.objects.BinaryDocumentFilterResponse;
 import ai.philterd.phileas.model.objects.Explanation;
+import ai.philterd.phileas.model.objects.FilterResponse;
 import ai.philterd.phileas.model.objects.IncrementalRedaction;
-import ai.philterd.phileas.services.pdf.PdfRedactionOptions;
 import ai.philterd.phileas.model.objects.Span;
-import ai.philterd.phileas.services.context.ContextService;
 import ai.philterd.phileas.policy.Ignored;
 import ai.philterd.phileas.policy.Policy;
 import ai.philterd.phileas.policy.config.Pdf;
 import ai.philterd.phileas.policy.graphical.BoundingBox;
-import ai.philterd.phileas.model.objects.BinaryDocumentFilterResponse;
-import ai.philterd.phileas.model.objects.FilterResponse;
+import ai.philterd.phileas.services.context.ContextService;
+import ai.philterd.phileas.services.disambiguation.vector.VectorBasedSpanDisambiguationService;
 import ai.philterd.phileas.services.disambiguation.vector.VectorService;
 import ai.philterd.phileas.services.documentprocessors.DocumentProcessor;
-import ai.philterd.phileas.services.filters.FilterService;
-import ai.philterd.phileas.services.filters.postfilters.PostFilter;
-import ai.philterd.phileas.services.pdf.Redacter;
-import ai.philterd.phileas.services.split.SplitService;
 import ai.philterd.phileas.services.documentprocessors.UnstructuredDocumentProcessor;
-import ai.philterd.phileas.services.disambiguation.vector.VectorBasedSpanDisambiguationService;
+import ai.philterd.phileas.services.filters.FilterService;
 import ai.philterd.phileas.services.filters.postfilters.IgnoredPatternsFilter;
 import ai.philterd.phileas.services.filters.postfilters.IgnoredTermsFilter;
+import ai.philterd.phileas.services.filters.postfilters.PostFilter;
 import ai.philterd.phileas.services.filters.postfilters.TrailingNewLinePostFilter;
 import ai.philterd.phileas.services.filters.postfilters.TrailingPeriodPostFilter;
 import ai.philterd.phileas.services.filters.postfilters.TrailingSpacePostFilter;
+import ai.philterd.phileas.services.pdf.PdfRedacter;
+import ai.philterd.phileas.services.pdf.PdfRedactionOptions;
+import ai.philterd.phileas.services.pdf.PdfTextExtractor;
+import ai.philterd.phileas.services.pdf.Redacter;
 import ai.philterd.phileas.services.split.SplitFactory;
+import ai.philterd.phileas.services.split.SplitService;
 import ai.philterd.phileas.services.tokens.TokenCounter;
 import ai.philterd.phileas.services.tokens.WhitespaceTokenCounter;
-import ai.philterd.phileas.services.pdf.PdfRedacter;
-import ai.philterd.phileas.services.pdf.PdfTextExtractor;
-import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -56,14 +56,12 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class PhileasFilterService implements FilterService {
@@ -103,8 +101,26 @@ public class PhileasFilterService implements FilterService {
     }
 
     @Override
-    public FilterResponse filter(final Policy policy, final String context,
-                                 final String input, final MimeType mimeType) throws Exception {
+    public ApplyResponse apply(final List<Span> spans, final String input, final MimeType mimeType) {
+
+        String filteredText = input;
+        final List<IncrementalRedaction> incrementalRedactions = new ArrayList<>();
+        final long tokens = tokenCounter.countTokens(input);
+
+        for(final Span span : spans) {
+
+
+
+        }
+
+        return new ApplyResponse(filteredText, incrementalRedactions, tokens);
+
+    // public ApplyResponse(String filteredText, List<IncrementalRedaction> incrementalRedactions, long tokens) {
+
+    }
+
+    @Override
+    public FilterResponse filter(final Policy policy, final String context, final String input) throws Exception {
 
         // Initialize potential attributes that are associated with the input text.
         final Map<String, String> attributes = new HashMap<>();
