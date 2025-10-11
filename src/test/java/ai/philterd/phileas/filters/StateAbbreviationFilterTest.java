@@ -44,7 +44,7 @@ public class StateAbbreviationFilterTest extends AbstractFilterTest {
         final StateAbbreviationFilter filter = new StateAbbreviationFilter(filterConfiguration);
 
         final String input = "The patient is from WV.";
-        final FilterResult filterResult = filter.filter(getPolicy(), "context",  "documentid", PIECE, input, attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, input, attributes);
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertEquals(20, filterResult.getSpans().get(0).getCharacterStart());
@@ -66,7 +66,7 @@ public class StateAbbreviationFilterTest extends AbstractFilterTest {
         final StateAbbreviationFilter filter = new StateAbbreviationFilter(filterConfiguration);
 
         final String input = "The patient is from wv.";
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", "docid", PIECE, input, attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, input, attributes);
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertEquals(20, filterResult.getSpans().get(0).getCharacterStart());
@@ -87,7 +87,7 @@ public class StateAbbreviationFilterTest extends AbstractFilterTest {
         final StateAbbreviationFilter filter = new StateAbbreviationFilter(filterConfiguration);
 
         final String input = "Patients from WV and MD.";
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", "docid", PIECE, input, attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, input, attributes);
 
         showSpans(filterResult.getSpans());
 

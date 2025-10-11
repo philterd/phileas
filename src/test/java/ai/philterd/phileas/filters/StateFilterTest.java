@@ -44,7 +44,7 @@ public class StateFilterTest extends AbstractFilterTest {
 
         final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.LOCATION_STATE, filterConfiguration, SensitivityLevel.LOW, true);
 
-        FilterResult filterResult = filter.filter(getPolicy(), "context",  "documentid", PIECE,"Lived in Washington", attributes);
+        FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE,"Lived in Washington", attributes);
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertEquals("Washington", filterResult.getSpans().get(0).getText());
 
@@ -61,7 +61,7 @@ public class StateFilterTest extends AbstractFilterTest {
 
         final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.LOCATION_STATE, filterConfiguration, SensitivityLevel.MEDIUM, true);
 
-        FilterResult filterResult = filter.filter(getPolicy(), "context",  "documentid", PIECE, "Lived in Wshington", attributes);
+        FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "Lived in Wshington", attributes);
         Assertions.assertEquals(1, filterResult.getSpans().size());
 
     }
@@ -77,7 +77,7 @@ public class StateFilterTest extends AbstractFilterTest {
 
         final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.LOCATION_STATE, filterConfiguration, SensitivityLevel.HIGH, true);
 
-        FilterResult filterResult = filter.filter(getPolicy(), "context",  "documentid", PIECE, "Lived in Wasinton", attributes);
+        FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "Lived in Wasinton", attributes);
         Assertions.assertEquals(0, filterResult.getSpans().size());
 
     }

@@ -19,30 +19,23 @@ import java.util.List;
 
 public class FilterResult {
 
-    private final String documentId;
     private final String context;
     private int piece;
     private final List<Span> spans;
 
-    public FilterResult(final String context, final String documentId, final List<Span> spans) {
+    public FilterResult(final String context, final List<Span> spans) {
 
-        this.documentId = documentId;
         this.context = context;
         this.piece = 0;
         this.spans = spans;
 
     }
 
-    public FilterResult(String context, String documentId, int piece, List<Span> spans) {
+    public FilterResult(String context, int piece, List<Span> spans) {
 
-        this.documentId = documentId;
         this.context = context;
         this.spans = spans;
 
-    }
-
-    public String getDocumentId() {
-        return documentId;
     }
 
     public String getContext() {

@@ -50,9 +50,6 @@ public final class Span {
     private String context;
 
     @Expose
-    private String documentId;
-
-    @Expose
     private String classification;
 
     @Expose
@@ -104,7 +101,6 @@ public final class Span {
      * @param characterEnd The character-based index of the end of the span.
      * @param filterType The {@link FilterType type} of the span.
      * @param context The context.
-     * @param documentId The document ID.
      * @param confidence The confidence.
      * @param text The text identified by the span.
      * @param replacement The replacement (anonymized) value for the span.
@@ -112,7 +108,7 @@ public final class Span {
      * @param applied Whether the span was applied.
      * @param window The tokens surrounding the span.
      */
-    private Span(int characterStart, int characterEnd, FilterType filterType, String context, String documentId,
+    private Span(int characterStart, int characterEnd, FilterType filterType, String context,
                  double confidence, String text, String replacement, String salt, boolean ignored, boolean applied,
                  String[] window, int priority) {
 
@@ -120,7 +116,6 @@ public final class Span {
         this.characterEnd = characterEnd;
         this.filterType = filterType;
         this.context = context;
-        this.documentId = documentId;
         this.confidence = confidence;
         this.text = text;
         this.replacement = replacement;
@@ -138,7 +133,6 @@ public final class Span {
      * @param characterEnd The character-based index of the end of the span.
      * @param filterType The {@link FilterType type} of the span.
      * @param context The context.
-     * @param documentId The document ID.
      * @param confidence The confidence.
      * @param text The text identified by the span.
      * @param replacement The replacement (anonymized) value for the span.
@@ -147,10 +141,10 @@ public final class Span {
      * @return A {@link Span} object with the given properties.
      */
     public static Span make(int characterStart, int characterEnd, FilterType filterType, String context,
-                            String documentId, double confidence, String text, String replacement, String salt,
+                            double confidence, String text, String replacement, String salt,
                             boolean ignored, boolean applied, String[] window, int priority) {
 
-        final Span span = new Span(characterStart, characterEnd, filterType, context, documentId, confidence, text,
+        final Span span = new Span(characterStart, characterEnd, filterType, context, confidence, text,
                 replacement, salt, ignored, applied, window, priority);
 
         // This is made here and not passed into the constructor because that would be redundant
@@ -167,7 +161,7 @@ public final class Span {
      */
     public Span copy() {
 
-        final Span clone = Span.make(characterStart, characterEnd, filterType, context, documentId, confidence, text,
+        final Span clone = Span.make(characterStart, characterEnd, filterType, context, confidence, text,
                 replacement, salt, ignored, applied, window, priority);
 
         clone.range = range;
@@ -194,7 +188,7 @@ public final class Span {
                 final int start = span.getCharacterStart() + shift;
                 final int end = span.getCharacterEnd() + shift;
 
-                shiftedSpans.add(Span.make(start, end, span.filterType, span.context, span.documentId, span.confidence,
+                shiftedSpans.add(Span.make(start, end, span.filterType, span.context, span.confidence,
                         span.text, span.replacement, span.salt, span.ignored, span.applied, span.window, span.priority));
 
             }
@@ -220,7 +214,7 @@ public final class Span {
                 final int start = span.getCharacterStart() + shift;
                 final int end = span.getCharacterEnd() + shift;
 
-                shiftedSpans.add(Span.make(start, end, span.filterType, span.context, span.documentId, span.confidence,
+                shiftedSpans.add(Span.make(start, end, span.filterType, span.context, span.confidence,
                         span.text, span.replacement, span.salt, span.ignored, span.applied, span.window, span.priority));
 
         }
@@ -470,7 +464,6 @@ public final class Span {
                 append(filterType).
                 append(confidence).
                 append(context).
-                append(documentId).
                 append(text).
                 append(replacement).
                 append(salt).
@@ -496,7 +489,6 @@ public final class Span {
                 + " characterEnd: " + characterEnd + "; "
                 + " filterType: " + filterType.getType() + "; "
                 + " context: " + context + "; "
-                + " documentId: " + documentId + "; "
                 + " confidence: " + confidence + "; "
                 + " text: " + text + "; "
                 + " replacement: " + replacement + "; "
@@ -543,14 +535,6 @@ public final class Span {
 
     public void setContext(String context) {
         this.context = context;
-    }
-
-    public String getDocumentId() {
-        return documentId;
-    }
-
-    public void setDocumentId(String documentId) {
-        this.documentId = documentId;
     }
 
     public double getConfidence() {

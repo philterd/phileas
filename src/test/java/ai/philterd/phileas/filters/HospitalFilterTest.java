@@ -44,7 +44,7 @@ public class HospitalFilterTest extends AbstractFilterTest {
 
         final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.HOSPITAL, filterConfiguration, SensitivityLevel.LOW, true);
 
-        FilterResult filterResult = filter.filter(getPolicy(), "context",  "documentid", PIECE,"Wyoming Medical Center", attributes);
+        FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE,"Wyoming Medical Center", attributes);
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertEquals("wyoming medical center", filterResult.getSpans().get(0).getText());
 

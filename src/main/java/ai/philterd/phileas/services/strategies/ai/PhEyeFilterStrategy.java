@@ -48,7 +48,7 @@ public class PhEyeFilterStrategy extends AbstractFilterStrategy {
     }
 
     @Override
-    public boolean evaluateCondition(Policy policy, String context, String documentId, String token, String[] window, String condition, double confidence, Map<String, String> attributes) {
+    public boolean evaluateCondition(Policy policy, String context, String token, String[] window, String condition, double confidence, Map<String, String> attributes) {
 
         final List<ParsedCondition> parsedConditions = ParserListener.getTerminals(condition);
 
@@ -111,7 +111,7 @@ public class PhEyeFilterStrategy extends AbstractFilterStrategy {
     }
 
     @Override
-    public Replacement getReplacement(String label, String context, String documentId, String token, String[] window, Crypto crypto, FPE fpe, AnonymizationService anonymizationService, FilterPattern filterPattern) throws Exception {
+    public Replacement getReplacement(String label, String context, String token, String[] window, Crypto crypto, FPE fpe, AnonymizationService anonymizationService, FilterPattern filterPattern) throws Exception {
 
         String replacement = null;
         String salt = "";

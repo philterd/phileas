@@ -46,7 +46,7 @@ public class AgeFilterStrategyTest extends AbstractFilterStrategyTest {
         final AbstractFilterStrategy strategy = getFilterStrategy();
         strategy.setStrategy(AbstractFilterStrategy.RANDOM_REPLACE);
 
-        final Replacement replacement = strategy.getReplacement("name", "context",  "docId", "52 years old", WINDOW, new Crypto(), new FPE(), anonymizationService, null);
+        final Replacement replacement = strategy.getReplacement("name", "context",  "52 years old", WINDOW, new Crypto(), new FPE(), anonymizationService, null);
 
         Assertions.assertTrue(replacement.getReplacement().endsWith(" years old"));
         Assertions.assertNotEquals("52 years old", replacement.getReplacement());

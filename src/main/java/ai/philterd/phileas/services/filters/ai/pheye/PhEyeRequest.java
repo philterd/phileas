@@ -21,7 +21,6 @@ public class PhEyeRequest {
     
     private String text;
     private Collection<String> labels;
-    private String documentId;
     private String context;
     private int piece;
     
@@ -39,14 +38,6 @@ public class PhEyeRequest {
 
     public void setLabels(Collection<String> labels) {
         this.labels = labels;
-    }
-
-    public String getDocumentId() {
-        return documentId;
-    }
-
-    public void setDocumentId(String documentId) {
-        this.documentId = documentId;
     }
 
     public String getContext() {

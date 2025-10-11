@@ -43,7 +43,7 @@ public class IdentifierFilterStrategyTest extends AbstractFilterStrategyTest {
         final AbstractFilterStrategy strategy = getFilterStrategy();
 
         attributes.put("classification", "WV");
-        final boolean conditionSatisfied = strategy.evaluateCondition(getPolicy(), "context",  "documentid", "90210", WINDOW, "classification == \"WV\"", 1.0, attributes);
+        final boolean conditionSatisfied = strategy.evaluateCondition(getPolicy(), "context", "90210", WINDOW, "classification == \"WV\"", 1.0, attributes);
 
         Assertions.assertTrue(conditionSatisfied);
 
@@ -57,7 +57,7 @@ public class IdentifierFilterStrategyTest extends AbstractFilterStrategyTest {
         final AbstractFilterStrategy strategy = new IdentifierFilterStrategy();
         strategy.setStrategy(AbstractFilterStrategy.LAST_4);
 
-        final Replacement replacement = strategy.getReplacement("name", "context", "docId",  "4111111111111111", WINDOW, new Crypto(), new FPE(), anonymizationService, null);
+        final Replacement replacement = strategy.getReplacement("name", "context",  "4111111111111111", WINDOW, new Crypto(), new FPE(), anonymizationService, null);
 
         Assertions.assertEquals("1111", replacement.getReplacement());
 

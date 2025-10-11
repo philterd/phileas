@@ -52,18 +52,18 @@ public class VectorBasedSpanDisambiguationServiceTest {
 
         final VectorBasedSpanDisambiguationService vectorBasedSpanDisambiguationService = new VectorBasedSpanDisambiguationService(phileasConfiguration, vectorService);
 
-        final Span span1 = Span.make(0, 4, FilterType.SSN, context, "d", 0.00, "123-45-6789", "000-00-0000", "", false, true, new String[]{"ssn", "was", "he", "id"}, 0);
+        final Span span1 = Span.make(0, 4, FilterType.SSN, context, 0.00, "123-45-6789", "000-00-0000", "", false, true, new String[]{"ssn", "was", "he", "id"}, 0);
         vectorBasedSpanDisambiguationService.hashAndInsert(context, span1);
 
-        final Span span = Span.make(0, 4, FilterType.SSN, context, "d", 0.00, "123-45-6789", "000-00-0000",  "", false, true, new String[]{"ssn", "asdf", "he", "was"}, 0);
+        final Span span = Span.make(0, 4, FilterType.SSN, context, 0.00, "123-45-6789", "000-00-0000",  "", false, true, new String[]{"ssn", "asdf", "he", "was"}, 0);
         vectorBasedSpanDisambiguationService.hashAndInsert(context, span);
 
-        final Span span2 = Span.make(0, 4, FilterType.PHONE_NUMBER, "c", "d", 0.00, "123-45-6789", "000-00-0000",  "", false, true, new String[]{"phone", "number", "she", "had"}, 0);
+        final Span span2 = Span.make(0, 4, FilterType.PHONE_NUMBER, "c", 0.00, "123-45-6789", "000-00-0000",  "", false, true, new String[]{"phone", "number", "she", "had"}, 0);
         vectorBasedSpanDisambiguationService.hashAndInsert(context, span2);
 
         final List<FilterType> filterTypes = Arrays.asList(span1.getFilterType(), span2.getFilterType());
 
-        final Span ambiguousSpan = Span.make(0, 4, FilterType.PHONE_NUMBER, "c", "d", 0.00, "123-45-6789", "000-00-0000",  "", false, true, new String[]{"phone", "number", "called", "is"}, 0);
+        final Span ambiguousSpan = Span.make(0, 4, FilterType.PHONE_NUMBER, "c", 0.00, "123-45-6789", "000-00-0000",  "", false, true, new String[]{"phone", "number", "called", "is"}, 0);
         final FilterType filterType = vectorBasedSpanDisambiguationService.disambiguate(context, filterTypes, ambiguousSpan);
 
         Assertions.assertEquals(FilterType.PHONE_NUMBER, filterType);
@@ -87,16 +87,16 @@ public class VectorBasedSpanDisambiguationServiceTest {
 
         final VectorBasedSpanDisambiguationService vectorBasedSpanDisambiguationService = new VectorBasedSpanDisambiguationService(phileasConfiguration, vectorService);
 
-        final Span span1 = Span.make(0, 4, FilterType.SSN, context, "d", 0.00, "123-45-6789", "000-00-0000",  "", false, true, new String[]{"ssn", "was", "he", "id"}, 0);
+        final Span span1 = Span.make(0, 4, FilterType.SSN, context, 0.00, "123-45-6789", "000-00-0000",  "", false, true, new String[]{"ssn", "was", "he", "id"}, 0);
         vectorBasedSpanDisambiguationService.hashAndInsert(context, span1);
 
-        final Span span = Span.make(0, 4, FilterType.SSN, context, "d", 0.00, "123-45-6789", "000-00-0000",  "", false, true, new String[]{"ssn", "asdf", "he", "was"}, 0);
+        final Span span = Span.make(0, 4, FilterType.SSN, context, 0.00, "123-45-6789", "000-00-0000",  "", false, true, new String[]{"ssn", "asdf", "he", "was"}, 0);
         vectorBasedSpanDisambiguationService.hashAndInsert(context, span);
 
-        final Span span2 = Span.make(0, 4, FilterType.PHONE_NUMBER, "c", "d", 0.00, "123-45-6789", "000-00-0000",  "", false, true, new String[]{"phone", "number", "she", "had"}, 0);
+        final Span span2 = Span.make(0, 4, FilterType.PHONE_NUMBER, "c", 0.00, "123-45-6789", "000-00-0000",  "", false, true, new String[]{"phone", "number", "she", "had"}, 0);
         vectorBasedSpanDisambiguationService.hashAndInsert(context, span2);
 
-        final Span ambiguousSpan = Span.make(0, 4, FilterType.PHONE_NUMBER, "c", "d", 0.00, "123-45-6789", "000-00-0000", "",  false, true, new String[]{"phone", "number", "called", "is"}, 0);
+        final Span ambiguousSpan = Span.make(0, 4, FilterType.PHONE_NUMBER, "c", 0.00, "123-45-6789", "000-00-0000", "",  false, true, new String[]{"phone", "number", "called", "is"}, 0);
 
         final List<Span> spans = Arrays.asList(span, span1, span2, ambiguousSpan);
 

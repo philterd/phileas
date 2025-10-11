@@ -49,10 +49,10 @@ public class FirstNameFilterStrategyTest extends AbstractFilterStrategyTest {
 
         if(anonymizationService instanceof FirstNameAnonymizationService) {
 
-            final Replacement replacement1 = strategy.getReplacement("name", "context",  "docId", "jeff", WINDOW, new Crypto(), new FPE(), anonymizationService, null);
+            final Replacement replacement1 = strategy.getReplacement("name", "context",  "jeff", WINDOW, new Crypto(), new FPE(), anonymizationService, null);
             Assertions.assertEquals("john", replacement1.getReplacement());
 
-            final Replacement replacement2 = strategy.getReplacement("name", "context",  "docId", "thomas", WINDOW, new Crypto(), new FPE(), anonymizationService, null);
+            final Replacement replacement2 = strategy.getReplacement("name", "context",  "thomas", WINDOW, new Crypto(), new FPE(), anonymizationService, null);
             Assertions.assertNotEquals("john", replacement2.getReplacement());
             Assertions.assertNotEquals("jeff", replacement2.getReplacement());
             Assertions.assertNotEquals("thomas", replacement2.getReplacement());
@@ -73,10 +73,10 @@ public class FirstNameFilterStrategyTest extends AbstractFilterStrategyTest {
 
         if(anonymizationService instanceof FirstNameAnonymizationService) {
 
-            final Replacement replacement1 = strategy.getReplacement("name", "context",  "docId", "jeff", WINDOW, new Crypto(), new FPE(), anonymizationService, null);
+            final Replacement replacement1 = strategy.getReplacement("name", "context",  "jeff", WINDOW, new Crypto(), new FPE(), anonymizationService, null);
             Assertions.assertNotEquals("john", replacement1.getReplacement());
 
-            final Replacement replacement2 = strategy.getReplacement("name", "context",  "docId", "thomas", WINDOW, new Crypto(), new FPE(), anonymizationService, null);
+            final Replacement replacement2 = strategy.getReplacement("name", "context",  "thomas", WINDOW, new Crypto(), new FPE(), anonymizationService, null);
             Assertions.assertNotEquals("john", replacement2.getReplacement());
             Assertions.assertNotEquals("jeff", replacement2.getReplacement());
             Assertions.assertNotEquals("thomas", replacement2.getReplacement());

@@ -40,7 +40,7 @@ public class IgnoredPatternsFilterTest {
         policy.setIgnoredPatterns(List.of(ignoredPattern));
 
         final List<Span> spans = new LinkedList<>();
-        spans.add(Span.make(6, 10, FilterType.IDENTIFIER, "context", "docid", 0.80, "AB01", "*****",  "", false, true, new String[0], 0));
+        spans.add(Span.make(6, 10, FilterType.IDENTIFIER, "context", 0.80, "AB01", "*****",  "", false, true, new String[0], 0));
 
         final IgnoredPatternsFilter ignoredPatternsFilter = new IgnoredPatternsFilter(Arrays.asList(ignoredPattern));
         final List<Span> filteredSpans = ignoredPatternsFilter.filter("ID is AB01.", spans);
@@ -60,7 +60,7 @@ public class IgnoredPatternsFilterTest {
         policy.setIgnoredPatterns(List.of(ignoredPattern));
 
         final List<Span> spans = new LinkedList<>();
-        spans.add(Span.make(6, 10, FilterType.IDENTIFIER, "context", "docid", 0.80, "Ab01", "*****",  "", false, true, new String[0], 0));
+        spans.add(Span.make(6, 10, FilterType.IDENTIFIER, "context", 0.80, "Ab01", "*****",  "", false, true, new String[0], 0));
 
         final IgnoredPatternsFilter ignoredPatternsFilter = new IgnoredPatternsFilter(List.of(ignoredPattern));
         final List<Span> filteredSpans = ignoredPatternsFilter.filter("ID is Ab01.", spans);

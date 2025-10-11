@@ -83,7 +83,7 @@ public class PhEyeFilter extends NerFilter {
     }
 
     @Override
-    public FilterResult filter(final Policy policy, final String context, final String documentId, final int piece,
+    public FilterResult filter(final Policy policy, final String context, final int piece,
                                final String input, final Map<String, String> attributes) throws Exception {
 
         final List<Span> spans = new LinkedList<>();
@@ -102,7 +102,6 @@ public class PhEyeFilter extends NerFilter {
         final PhEyeRequest phEyeRequest = new PhEyeRequest();
         phEyeRequest.setText(input);
         phEyeRequest.setContext(context);
-        phEyeRequest.setDocumentId(documentId);
         phEyeRequest.setPiece(piece);
         phEyeRequest.setLabels(labels);
 
@@ -170,7 +169,7 @@ public class PhEyeFilter extends NerFilter {
                             // Currently only PERSON type is supported.
                             final FilterType filterType = FilterType.PERSON;
 
-                            final Span span = createSpan(policy, context, documentId, filterType, phEyeSpan.getText(),
+                            final Span span = createSpan(policy, context, filterType, phEyeSpan.getText(),
                                     window, phEyeSpan.getLabel(), phEyeSpan.getStart(), phEyeSpan.getEnd(),
                                     phEyeSpan.getScore(), attributes);
 
@@ -188,7 +187,7 @@ public class PhEyeFilter extends NerFilter {
             }
 
             LOGGER.debug("Returning {} NER spans from ph-eye.", spans.size());
-            return new FilterResult(context, documentId, piece, spans);
+            return new FilterResult(context, piece, spans);
 
         } else {
 
@@ -202,16 +201,16 @@ public class PhEyeFilter extends NerFilter {
     @Override
     public int getOccurrences(final Policy policy, final String input, Map<String, String> attributes) throws Exception {
 
-        return filter(policy, "none",  "", 0, input, attributes).getSpans().size();
+        return filter(policy, "none", 0, input, attributes).getSpans().size();
 
     }
 
-    private Span createSpan(final Policy policy, final String context, final String documentId,
+    private Span createSpan(final Policy policy, final String context,
                             final FilterType filterType, final String text, final  String[] window,
                             final String classification, final int start, final int end, final double confidence,
                             final Map<String, String> attributes) throws Exception {
 
-        final Replacement replacement = getReplacement(policy, context, documentId, text, window, confidence, classification, attributes, null);
+        final Replacement replacement = getReplacement(policy, context, text, window, confidence, classification, attributes, null);
 
         if(StringUtils.equals(replacement.getReplacement(), text)) {
 
@@ -225,7 +224,7 @@ public class PhEyeFilter extends NerFilter {
             // Is this term ignored?
             final boolean ignored = isIgnored(text);
 
-            return Span.make(start, end, filterType, context, documentId, confidence, text,
+            return Span.make(start, end, filterType, context, confidence, text,
                     replacement.getReplacement(), replacement.getSalt(), ignored, replacement.isApplied(), window, priority);
 
         }

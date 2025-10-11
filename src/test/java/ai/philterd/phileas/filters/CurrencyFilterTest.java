@@ -40,7 +40,7 @@ public class CurrencyFilterTest extends AbstractFilterTest {
 
         final CurrencyFilter filter = new CurrencyFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "the drug cost is $35.53 .", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "the drug cost is $35.53 .", attributes);
 
         showSpans(filterResult.getSpans());
 
@@ -61,7 +61,7 @@ public class CurrencyFilterTest extends AbstractFilterTest {
 
         final CurrencyFilter filter = new CurrencyFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "the drug cost is $35.53.", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "the drug cost is $35.53.", attributes);
 
         showSpans(filterResult.getSpans());
 
@@ -82,7 +82,7 @@ public class CurrencyFilterTest extends AbstractFilterTest {
 
         final CurrencyFilter filter = new CurrencyFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "the drug cost is $35.00.", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "the drug cost is $35.00.", attributes);
 
         showSpans(filterResult.getSpans());
 
@@ -103,7 +103,7 @@ public class CurrencyFilterTest extends AbstractFilterTest {
 
         final CurrencyFilter filter = new CurrencyFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "the drug cost is $3.00.", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "the drug cost is $3.00.", attributes);
 
         showSpans(filterResult.getSpans());
 
@@ -124,7 +124,7 @@ public class CurrencyFilterTest extends AbstractFilterTest {
 
         final CurrencyFilter filter = new CurrencyFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", "documentid", PIECE, "the drug cost is $.50.", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "the drug cost is $.50.", attributes);
 
         showSpans(filterResult.getSpans());
 
@@ -148,7 +148,7 @@ public class CurrencyFilterTest extends AbstractFilterTest {
 
         final CurrencyFilter filter = new CurrencyFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context",  "documentid", PIECE, "the drug cost is $50.", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "the drug cost is $50.", attributes);
 
         showSpans(filterResult.getSpans());
 
@@ -172,7 +172,7 @@ public class CurrencyFilterTest extends AbstractFilterTest {
 
         final CurrencyFilter filter = new CurrencyFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context",  "documentid", PIECE, "the drug cost is $.50.", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "the drug cost is $.50.", attributes);
 
         showSpans(filterResult.getSpans());
 

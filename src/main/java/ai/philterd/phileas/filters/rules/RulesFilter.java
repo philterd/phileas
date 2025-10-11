@@ -70,12 +70,11 @@ public abstract class RulesFilter extends Filter {
      * @param analyzer A filter {@link Analyzer}.
      * @param input The text input.
      * @param context The context.
-     * @param documentId The document ID.
      * @param attributes Attributes about the input text.
      * @return A list of matching {@link Span spans}.
      */
     protected List<Span> findSpans(final Policy policy, final Analyzer analyzer, final String input, final String context,
-                                   final String documentId, final Map<String, String> attributes) throws Exception {
+                                   final Map<String, String> attributes) throws Exception {
 
         final List<Span> spans = new LinkedList<>();
 
@@ -178,11 +177,11 @@ public abstract class RulesFilter extends Filter {
                         final String[] window = getWindow(input, characterStart, characterEnd);
 
                         // Get the span's replacement.
-                        final Replacement replacement = getReplacement(policy, context, documentId, token,
+                        final Replacement replacement = getReplacement(policy, context, token,
                                 window, initialConfidence, classification, attributes, filterPattern);
 
                         // Create the span.
-                        final Span span = Span.make(characterStart, characterEnd, getFilterType(), context, documentId,
+                        final Span span = Span.make(characterStart, characterEnd, getFilterType(), context,
                                 initialConfidence, token, replacement.getReplacement(), replacement.getSalt(),
                                 ignored, replacement.isApplied(), window, priority);
 
@@ -218,7 +217,7 @@ public abstract class RulesFilter extends Filter {
     @Override
     public int getOccurrences(final Policy policy, final String input, final Map<String, String> attributes) throws Exception {
 
-        return filter(policy, "none",  "none", 0, input, attributes).getSpans().size();
+        return filter(policy, "none",  0,input, attributes).getSpans().size();
 
     }
 

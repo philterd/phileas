@@ -38,7 +38,7 @@ public class EmailAddressFilterStrategyTest extends AbstractFilterStrategyTest {
 
         final AbstractFilterStrategy strategy = new EmailAddressFilterStrategy();
 
-        final boolean conditionSatisfied = strategy.evaluateCondition(getPolicy(), "context",  "documentid",  "test@test.com", WINDOW, "token == \"test@test.com\"", 1.0, attributes);
+        final boolean conditionSatisfied = strategy.evaluateCondition(getPolicy(), "context",  "test@test.com", WINDOW, "token == \"test@test.com\"", 1.0, attributes);
 
         Assertions.assertTrue(conditionSatisfied);
 

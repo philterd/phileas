@@ -39,7 +39,7 @@ public class DriversLicenseFilterTest extends AbstractFilterTest {
 
         final DriversLicenseFilter filter = new DriversLicenseFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context",  "documentid", PIECE, "the number is 123456789.", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "the number is 123456789.", attributes);
 
         showSpans(filterResult.getSpans());
 

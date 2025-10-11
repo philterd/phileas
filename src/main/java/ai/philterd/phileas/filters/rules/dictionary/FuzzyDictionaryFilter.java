@@ -68,7 +68,7 @@ public class FuzzyDictionaryFilter extends DictionaryFilter {
     }
 
     @Override
-    public FilterResult filter(Policy policy, final String context, String documentId, int piece, String input, Map<String, String> attributes) throws Exception {
+    public FilterResult filter(Policy policy, final String context, int piece, String input, Map<String, String> attributes) throws Exception {
 
         final List<Span> spans = new LinkedList<>();
 
@@ -90,7 +90,7 @@ public class FuzzyDictionaryFilter extends DictionaryFilter {
                 if (matcher.find()) {
 
                     final int startPosition = matcher.start();
-                    spans.add(createSpan(input, startPosition, startPosition + entry.length(), 1.0, context, documentId, entry, policy, attributes));
+                    spans.add(createSpan(input, startPosition, startPosition + entry.length(), 1.0, context, entry, policy, attributes));
 
                 } else {
 
@@ -117,11 +117,11 @@ public class FuzzyDictionaryFilter extends DictionaryFilter {
                                     final int distance = levenshteinDistance.apply(entry, ngram);
 
                                     if (sensitivityLevel == SensitivityLevel.HIGH && distance < 1) {
-                                        spans.add(createSpan(input, start, end, 0.9, context, documentId, entry, policy, attributes));
+                                        spans.add(createSpan(input, start, end, 0.9, context, entry, policy, attributes));
                                     } else if (sensitivityLevel == SensitivityLevel.MEDIUM && distance <= 2) {
-                                        spans.add(createSpan(input, start, end, 0.7, context, documentId, entry, policy, attributes));
+                                        spans.add(createSpan(input, start, end, 0.7, context, entry, policy, attributes));
                                     } else if (sensitivityLevel == SensitivityLevel.LOW && distance < 3) {
-                                        spans.add(createSpan(input, start, end, 0.5, context, documentId, entry, policy, attributes));
+                                        spans.add(createSpan(input, start, end, 0.5, context, entry, policy, attributes));
                                     }
 
                                 }
@@ -138,23 +138,23 @@ public class FuzzyDictionaryFilter extends DictionaryFilter {
 
         }
 
-        return new FilterResult(context, documentId, spans);
+        return new FilterResult(context, spans);
 
     }
 
     private Span createSpan(String text, int characterStart, int characterEnd, double confidence, String context,
-                            String documentId, String token, Policy policy, Map<String, String> attributes) throws Exception {
+                            String token, Policy policy, Map<String, String> attributes) throws Exception {
 
         final boolean ignored = isIgnored(text);
         final String[] window = getWindow(text, characterStart, characterEnd);
 
         // Get the replacement token or the original token if no filter strategy conditions are met.
-        final Replacement replacement = getReplacement(policy, context, documentId, token,
+        final Replacement replacement = getReplacement(policy, context, token,
                 window, confidence, classification, attributes, null);
 
         // Add the span to the list.
         return Span.make(characterStart, characterEnd, getFilterType(), context,
-                documentId, confidence, token, replacement.getReplacement(),
+                confidence, token, replacement.getReplacement(),
                 replacement.getSalt(), ignored, replacement.isApplied(), window, priority);
 
     }

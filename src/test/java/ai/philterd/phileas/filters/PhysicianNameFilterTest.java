@@ -43,7 +43,7 @@ public class PhysicianNameFilterTest extends AbstractFilterTest {
 
         final PhysicianNameFilter filter = new PhysicianNameFilter(filterConfiguration);
 
-          final FilterResult filterResult = filter.filter(getPolicy(), "context",  "documentid", PIECE, "Doctor Smith was the attending physician.", attributes);
+          final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "Doctor Smith was the attending physician.", attributes);
         showSpans(filterResult.getSpans());
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
@@ -63,7 +63,7 @@ public class PhysicianNameFilterTest extends AbstractFilterTest {
 
         final PhysicianNameFilter filter = new PhysicianNameFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context",  "documentid", PIECE, "Doctor James Smith", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "Doctor James Smith", attributes);
         showSpans(filterResult.getSpans());
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
@@ -83,7 +83,7 @@ public class PhysicianNameFilterTest extends AbstractFilterTest {
 
         final PhysicianNameFilter filter = new PhysicianNameFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context",  "documentid", PIECE, "John Smith, MD", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "John Smith, MD", attributes);
         showSpans(filterResult.getSpans());
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
@@ -103,7 +103,7 @@ public class PhysicianNameFilterTest extends AbstractFilterTest {
 
         final PhysicianNameFilter filter = new PhysicianNameFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context",  "documentid", PIECE, "attending physician was John Smith, MD", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "attending physician was John Smith, MD", attributes);
         showSpans(filterResult.getSpans());
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
@@ -123,7 +123,7 @@ public class PhysicianNameFilterTest extends AbstractFilterTest {
 
         final PhysicianNameFilter filter = new PhysicianNameFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context",  "documentid", PIECE, "was John J. van Smith, MD", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "was John J. van Smith, MD", attributes);
         showSpans(filterResult.getSpans());
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
@@ -143,7 +143,7 @@ public class PhysicianNameFilterTest extends AbstractFilterTest {
 
         final PhysicianNameFilter filter = new PhysicianNameFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context",  "documentid", PIECE, "Smith,James D,MD -General Surgery", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "Smith,James D,MD -General Surgery", attributes);
         showSpans(filterResult.getSpans());
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
@@ -163,7 +163,7 @@ public class PhysicianNameFilterTest extends AbstractFilterTest {
 
         final PhysicianNameFilter filter = new PhysicianNameFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context",  "documentid", PIECE, "Smith,James )D,MD -General Surgery", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "Smith,James )D,MD -General Surgery", attributes);
         showSpans(filterResult.getSpans());
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
@@ -183,7 +183,7 @@ public class PhysicianNameFilterTest extends AbstractFilterTest {
 
         final PhysicianNameFilter filter = new PhysicianNameFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context",  "documentid", PIECE, "1.0 cm in outside diameter pink tan everted", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "1.0 cm in outside diameter pink tan everted", attributes);
         showSpans(filterResult.getSpans());
 
         Assertions.assertEquals(0, filterResult.getSpans().size());
@@ -201,7 +201,7 @@ public class PhysicianNameFilterTest extends AbstractFilterTest {
 
         final PhysicianNameFilter filter = new PhysicianNameFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context",  "documentid", PIECE, "1.0 cm", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "1.0 cm", attributes);
         showSpans(filterResult.getSpans());
 
         Assertions.assertEquals(0, filterResult.getSpans().size());
@@ -219,7 +219,7 @@ public class PhysicianNameFilterTest extends AbstractFilterTest {
 
         final PhysicianNameFilter filter = new PhysicianNameFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context",  "documentid", PIECE, "Ahu,Amanda D,MD -General Surgery", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "Ahu,Amanda D,MD -General Surgery", attributes);
         showSpans(filterResult.getSpans());
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
@@ -239,7 +239,7 @@ public class PhysicianNameFilterTest extends AbstractFilterTest {
 
         final PhysicianNameFilter filter = new PhysicianNameFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context",  "documentid", PIECE, "Johnns,Melinda S,MD - 1/2/2018 11:54 CST 1/2/2018 12:46 CST", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "Johnns,Melinda S,MD - 1/2/2018 11:54 CST 1/2/2018 12:46 CST", attributes);
         showSpans(filterResult.getSpans());
 
         Assertions.assertEquals(1, filterResult.getSpans().size());

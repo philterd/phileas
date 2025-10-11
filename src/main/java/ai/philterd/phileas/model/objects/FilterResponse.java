@@ -37,20 +37,18 @@ public class FilterResponse {
 
     private final String filteredText;
     private final String context;
-    private final String documentId;
     private final int piece;
     private final Explanation explanation;
     private final Map<String, String> attributes;
     private final long tokens;
     private final transient List<IncrementalRedaction> incrementalRedactions;
 
-    public FilterResponse(String filteredText, String context, String documentId, int piece,
+    public FilterResponse(String filteredText, String context, int piece,
                           Explanation explanation, Map<String, String> attributes, List<IncrementalRedaction> incrementalRedactions,
                           long tokens) {
 
         this.filteredText = filteredText;
         this.context = context;
-        this.documentId = documentId;
         this.piece = piece;
         this.explanation = explanation;
         this.attributes = attributes;
@@ -66,12 +64,11 @@ public class FilterResponse {
      * @param filterResponses A list of {@link FilterResponse} objects to combine.
      *                        Objects must be in order from first to last.
      * @param context         The context for the returned {@link FilterResponse}.
-     * @param documentId      The document ID for the returned {@link FilterResponse}.
      * @return A single, combined {@link FilterResponse}.
      */
-    public static FilterResponse combine(List<FilterResponse> filterResponses, final String context, String documentId, String separator) {
+    public static FilterResponse combine(List<FilterResponse> filterResponses, final String context, String separator) {
 
-        LOGGER.debug("Combining {} filter responses for document ID: {}", filterResponses.size(), documentId);
+        LOGGER.debug("Combining {} filter responses", filterResponses.size());
 
         // Combine the results into a single filterResponse object.
         final StringBuilder filteredText = new StringBuilder();
@@ -119,7 +116,7 @@ public class FilterResponse {
         }
 
         // Return the newly built FilterResponse.
-        return new FilterResponse(filteredText.toString().trim(), context, documentId, 0,
+        return new FilterResponse(filteredText.toString().trim(), context, 0,
                 new Explanation(appliedSpans, identifiedSpans), combinedAttributes, combinedIncrementalRedactions,
                 tokens);
 
@@ -149,10 +146,6 @@ public class FilterResponse {
 
     public String getContext() {
         return context;
-    }
-
-    public String getDocumentId() {
-        return documentId;
     }
 
     public int getPiece() {

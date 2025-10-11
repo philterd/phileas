@@ -55,11 +55,11 @@ public class DateFilter extends RegexFilter {
     }
 
     @Override
-    public FilterResult filter(Policy policy, String context, String documentId, int piece, String input, Map<String, String> attributes) throws Exception {
+    public FilterResult filter(Policy policy, String context, int piece, String input, Map<String, String> attributes) throws Exception {
 
         final List<Span> spans = new LinkedList<>();
 
-        final List<Span> rawSpans = findSpans(policy, analyzer, input, context, documentId, attributes);
+        final List<Span> rawSpans = findSpans(policy, analyzer, input, context, attributes);
 
         if(onlyValidDates) {
 
@@ -87,7 +87,7 @@ public class DateFilter extends RegexFilter {
 
         }
 
-        return new FilterResult(context, documentId, Span.dropOverlappingSpans(spans));
+        return new FilterResult(context, Span.dropOverlappingSpans(spans));
 
     }
 
