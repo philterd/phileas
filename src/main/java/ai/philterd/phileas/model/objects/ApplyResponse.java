@@ -31,7 +31,7 @@ public class ApplyResponse {
 
     private final String filteredText;
     private final long tokens;
-    private final transient List<IncrementalRedaction> incrementalRedactions;
+    private final List<IncrementalRedaction> incrementalRedactions;
 
     public ApplyResponse(final String filteredText, final List<IncrementalRedaction> incrementalRedactions, final long tokens) {
 
