@@ -15,7 +15,6 @@
  */
 package ai.philterd.phileas.model.objects;
 
-import com.google.gson.Gson;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.logging.log4j.LogManager;
@@ -34,7 +33,7 @@ public class ApplyResponse {
     private final long tokens;
     private final transient List<IncrementalRedaction> incrementalRedactions;
 
-    public ApplyResponse(String filteredText, List<IncrementalRedaction> incrementalRedactions, long tokens) {
+    public ApplyResponse(final String filteredText, final List<IncrementalRedaction> incrementalRedactions, final long tokens) {
 
         this.filteredText = filteredText;
         this.incrementalRedactions = incrementalRedactions;
@@ -44,10 +43,7 @@ public class ApplyResponse {
 
     @Override
     public String toString() {
-
-        final Gson gson = new Gson();
-        return gson.toJson(this);
-
+        return filteredText;
     }
 
     @Override
