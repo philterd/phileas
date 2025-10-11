@@ -51,7 +51,7 @@ public interface FilterService {
     BinaryDocumentFilterResponse filter(final Policy policy, final String context, byte[] input, MimeType mimeType, MimeType outputMimeType) throws Exception;
 
     /**
-     * Applies spans to the input text.
+     * Applies spans to the input text. Useful for when spans have previously been identified. Only supports plain text input.
      * @param spans A list of {@link Span spans}.
      * @param input The input text.
      * @return A {@link ApplyResponse}.
