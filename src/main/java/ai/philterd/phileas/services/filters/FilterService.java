@@ -16,9 +16,13 @@
 package ai.philterd.phileas.services.filters;
 
 import ai.philterd.phileas.model.enums.MimeType;
+import ai.philterd.phileas.model.objects.ApplyResponse;
+import ai.philterd.phileas.model.objects.Span;
 import ai.philterd.phileas.policy.Policy;
 import ai.philterd.phileas.model.objects.BinaryDocumentFilterResponse;
 import ai.philterd.phileas.model.objects.FilterResponse;
+
+import java.util.List;
 
 /**
  * Interface for implementing filter services.
@@ -45,5 +49,13 @@ public interface FilterService {
      * @throws Exception Thrown if the text cannot be filtered.
      */
     BinaryDocumentFilterResponse filter(final Policy policy, final String context, byte[] input, MimeType mimeType, MimeType outputMimeType) throws Exception;
+
+    /**
+     * Applies spans to the input text. Useful for when spans have previously been identified. Only supports plain text input.
+     * @param spans A list of {@link Span spans}.
+     * @param input The input text.
+     * @return A {@link ApplyResponse}.
+     */
+    ApplyResponse apply(final List<Span> spans, final String input);
 
 }
