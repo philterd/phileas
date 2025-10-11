@@ -33,10 +33,11 @@ public interface FilterService {
      * Filter text from a string.
      * @param policy The {@link Policy} to apply.
      * @param input The input text.
+     * @param mimeType The {@link MimeType}.
      * @return A {@link FilterResponse}.
      * @throws Exception Thrown if the text cannot be filtered.
      */
-    FilterResponse filter(final Policy policy, final String context, final String input) throws Exception;
+    FilterResponse filter(final Policy policy, final String context, final String input, final MimeType mimeType) throws Exception;
 
     /**
      * Filter text from a binary document.
@@ -53,9 +54,8 @@ public interface FilterService {
      * Applies spans to the input text.
      * @param spans A list of {@link Span spans}.
      * @param input The input text.
-     * @param mimeType The input {@link MimeType}.
      * @return A {@link ApplyResponse}.
      */
-    ApplyResponse apply(final List<Span> spans, final String input, final MimeType mimeType);
+    ApplyResponse apply(final List<Span> spans, final String input);
 
 }

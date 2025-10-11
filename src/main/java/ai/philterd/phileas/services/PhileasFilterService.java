@@ -49,6 +49,7 @@ import ai.philterd.phileas.services.split.SplitFactory;
 import ai.philterd.phileas.services.split.SplitService;
 import ai.philterd.phileas.services.tokens.TokenCounter;
 import ai.philterd.phileas.services.tokens.WhitespaceTokenCounter;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -101,26 +102,31 @@ public class PhileasFilterService implements FilterService {
     }
 
     @Override
-    public ApplyResponse apply(final List<Span> spans, final String input, final MimeType mimeType) {
+    public ApplyResponse apply(final List<Span> spans, final String input) {
 
-        String filteredText = input;
+        final StringBuilder sb = new StringBuilder(input);
         final List<IncrementalRedaction> incrementalRedactions = new ArrayList<>();
         final long tokens = tokenCounter.countTokens(input);
 
         for(final Span span : spans) {
 
+            // Replace the text with the replacement.
+            sb.delete(span.getCharacterStart(), span.getCharacterEnd());
+            sb.insert(span.getCharacterStart(), span.getReplacement());
 
+            // Generate the incrementation redaction.
+            final String hash = DigestUtils.sha256Hex(sb.toString());
+            final IncrementalRedaction incrementalRedaction = new IncrementalRedaction(hash, span, sb.toString());
+            incrementalRedactions.add(incrementalRedaction);
 
         }
 
-        return new ApplyResponse(filteredText, incrementalRedactions, tokens);
-
-    // public ApplyResponse(String filteredText, List<IncrementalRedaction> incrementalRedactions, long tokens) {
+        return new ApplyResponse(sb.toString(), incrementalRedactions, tokens);
 
     }
 
     @Override
-    public FilterResponse filter(final Policy policy, final String context, final String input) throws Exception {
+    public FilterResponse filter(final Policy policy, final String context, final String input, final MimeType mimeType) throws Exception {
 
         // Initialize potential attributes that are associated with the input text.
         final Map<String, String> attributes = new HashMap<>();
