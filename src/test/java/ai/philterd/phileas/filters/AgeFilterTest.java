@@ -1,7 +1,7 @@
 /*
  *     Copyright 2025 Philterd, LLC @ https://www.philterd.ai
  *
- * Licensed under the Apache License, Version 2.0 (the "License", attributes);
+ * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
@@ -45,7 +45,7 @@ public class AgeFilterTest extends AbstractFilterTest {
 
         final AgeFilter filter = new AgeFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "the patient is 35years old.", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "the patient is 35years old.");
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertTrue(filterResult.getSpans().get(0).isIgnored());
@@ -67,7 +67,7 @@ public class AgeFilterTest extends AbstractFilterTest {
 
         final AgeFilter filter = new AgeFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "the patient is 35yEaRs old.", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "the patient is 35yEaRs old.");
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertTrue(filterResult.getSpans().get(0).isIgnored());
@@ -87,7 +87,7 @@ public class AgeFilterTest extends AbstractFilterTest {
 
         final AgeFilter filter = new AgeFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "the patient is 3.5years old.", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "the patient is 3.5years old.");
 
         showSpans(filterResult.getSpans());
 
@@ -110,7 +110,7 @@ public class AgeFilterTest extends AbstractFilterTest {
 
         final AgeFilter filter = new AgeFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "the patient is 3.5years old.", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "the patient is 3.5years old.");
 
         showSpans(filterResult.getSpans());
 
@@ -131,7 +131,7 @@ public class AgeFilterTest extends AbstractFilterTest {
 
         final AgeFilter filter = new AgeFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "the patient age is 3.yrs.", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "the patient age is 3.yrs.");
 
         showSpans(filterResult.getSpans());
 
@@ -152,7 +152,7 @@ public class AgeFilterTest extends AbstractFilterTest {
 
         final AgeFilter filter = new AgeFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "the patient age is 3yrs.", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "the patient age is 3yrs.");
 
         showSpans(filterResult.getSpans());
 
@@ -173,7 +173,7 @@ public class AgeFilterTest extends AbstractFilterTest {
 
         final AgeFilter filter = new AgeFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "the patient is 3.5yrs old.", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "the patient is 3.5yrs old.");
 
         showSpans(filterResult.getSpans());
 
@@ -194,7 +194,7 @@ public class AgeFilterTest extends AbstractFilterTest {
 
         final AgeFilter filter = new AgeFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "the patient is 39yrs. old", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "the patient is 39yrs. old");
 
         showSpans(filterResult.getSpans());
 
@@ -215,7 +215,7 @@ public class AgeFilterTest extends AbstractFilterTest {
 
         final AgeFilter filter = new AgeFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "she is aged 39", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "she is aged 39");
 
         showSpans(filterResult.getSpans());
 
@@ -236,7 +236,7 @@ public class AgeFilterTest extends AbstractFilterTest {
 
         final AgeFilter filter = new AgeFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "she is age 39", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "she is age 39");
 
         showSpans(filterResult.getSpans());
 
@@ -257,7 +257,7 @@ public class AgeFilterTest extends AbstractFilterTest {
 
         final AgeFilter filter = new AgeFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "she is age 39.5", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "she is age 39.5");
 
         showSpans(filterResult.getSpans());
 
@@ -278,7 +278,7 @@ public class AgeFilterTest extends AbstractFilterTest {
 
         final AgeFilter filter = new AgeFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "Patient Timothy Hook is 72 Yr. old male lives alone.", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "Patient Timothy Hook is 72 Yr. old male lives alone.");
 
         showSpans(filterResult.getSpans());
 
@@ -301,7 +301,7 @@ public class AgeFilterTest extends AbstractFilterTest {
 
         final AgeFilter filter = new AgeFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "Cari Morris is 75 yo female alert and oriented x’s3 with some mild memory loss.", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "Cari Morris is 75 yo female alert and oriented x’s3 with some mild memory loss.");
 
         showSpans(filterResult.getSpans());
 
@@ -324,7 +324,7 @@ public class AgeFilterTest extends AbstractFilterTest {
 
         final AgeFilter filter = new AgeFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "Had symptoms for the past 10 years", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "Had symptoms for the past 10 years");
 
         showSpans(filterResult.getSpans());
 
@@ -345,7 +345,7 @@ public class AgeFilterTest extends AbstractFilterTest {
 
         final AgeFilter filter = new AgeFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "She is a 22-year-old female", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "She is a 22-year-old female");
 
         showSpans(filterResult.getSpans());
 
@@ -368,7 +368,7 @@ public class AgeFilterTest extends AbstractFilterTest {
 
         final AgeFilter filter = new AgeFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "Admit age: 69 years", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "Admit age: 69 years");
 
         showSpans(filterResult.getSpans());
 
@@ -391,7 +391,7 @@ public class AgeFilterTest extends AbstractFilterTest {
 
         final AgeFilter filter = new AgeFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "Female Admit Age: 69 years", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "Female Admit Age: 69 years");
 
         showSpans(filterResult.getSpans());
 
@@ -414,7 +414,7 @@ public class AgeFilterTest extends AbstractFilterTest {
 
         final AgeFilter filter = new AgeFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "Female Admit Age: 69 years\n", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "Female Admit Age: 69 years\n");
 
         showSpans(filterResult.getSpans());
 
@@ -437,7 +437,7 @@ public class AgeFilterTest extends AbstractFilterTest {
 
         final AgeFilter filter = new AgeFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "patient is 61 y/o and", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "patient is 61 y/o and");
 
         showSpans(filterResult.getSpans());
 
@@ -460,7 +460,7 @@ public class AgeFilterTest extends AbstractFilterTest {
 
         final AgeFilter filter = new AgeFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "patient is 161 y/o and", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "patient is 161 y/o and");
 
         showSpans(filterResult.getSpans());
 
@@ -483,7 +483,7 @@ public class AgeFilterTest extends AbstractFilterTest {
 
         final AgeFilter filter = new AgeFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "patient is 4161 y/o and", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "patient is 4161 y/o and");
 
         showSpans(filterResult.getSpans());
 

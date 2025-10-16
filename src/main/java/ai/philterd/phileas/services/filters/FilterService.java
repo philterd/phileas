@@ -41,17 +41,6 @@ public interface FilterService {
     FilterResponse filter(final Policy policy, final String context, final String input, final MimeType mimeType) throws Exception;
 
     /**
-     * Filter text from a string.
-     * @param policy The {@link Policy} to apply.
-     * @param input The input text.
-     * @param mimeType The {@link MimeType}.
-     * @param attributes Additional parameters that are available from identified spans.
-     * @return A {@link FilterResponse}.
-     * @throws Exception Thrown if the text cannot be filtered.
-     */
-    FilterResponse filter(final Policy policy, final String context, final String input, final MimeType mimeType, final Map<String, String> attributes) throws Exception;
-
-    /**
      * Filter text from a binary document.
      * @param policy The {@link Policy} to apply.s
      * @param input The input document as a byte array.
@@ -61,18 +50,6 @@ public interface FilterService {
      * @throws Exception Thrown if the text cannot be filtered.
      */
     BinaryDocumentFilterResponse filter(final Policy policy, final String context, byte[] input, MimeType mimeType, MimeType outputMimeType) throws Exception;
-
-    /**
-     * Filter text from a binary document.
-     * @param policy The {@link Policy} to apply.s
-     * @param input The input document as a byte array.
-     * @param mimeType The input {@link MimeType}.
-     * @param outputMimeType The output {@link MimeType}.
-     * @param attributes Additional parameters that are available from identified spans.
-     * @return A {@link BinaryDocumentFilterResponse}.
-     * @throws Exception Thrown if the text cannot be filtered.
-     */
-    BinaryDocumentFilterResponse filter(final Policy policy, final String context, byte[] input, MimeType mimeType, MimeType outputMimeType, final Map<String, String> attributes) throws Exception;
 
     /**
      * Applies spans to the input text. Useful for when spans have previously been identified. Only supports plain text input.

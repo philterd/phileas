@@ -28,7 +28,6 @@ import com.google.gson.annotations.SerializedName;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
-import java.util.Map;
 import java.util.UUID;
 
 public abstract class AbstractFilterStrategy {
@@ -137,7 +136,6 @@ public abstract class AbstractFilterStrategy {
      * Gets the replacement for a token.
      * @param classification The filter type classification.
      * @param context The name of the context.
-     * @param context The context.
      * @param token The token.
      * @param window The window containing the token.
      * @param crypto The encryption key used to encrypt values when enabled, otherwise <code>null</code>.
@@ -153,18 +151,15 @@ public abstract class AbstractFilterStrategy {
     /**
      * Evaluates the condition on the given token.
      * @param policy The policy being applied.
-     * @param context The context name.
-     * @param context The context.
+     * @param context The name of the context.
      * @param token The token.
      * @param window The window containing the token.
      * @param condition The condition to evaluate.
      * @param confidence The span's confidence.
-     * @param attributes Attributes about hte document.
      * @return <code>true</code> if the condition matches; otherwise <code>false</code>.
      */
     public abstract boolean evaluateCondition(Policy policy, String context, String token,
-                                              String[] window, String condition, double confidence,
-                                              Map<String, String> attributes);
+                                              String[] window, String condition, double confidence);
 
     public abstract FilterType getFilterType();
 

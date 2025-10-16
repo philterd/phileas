@@ -1,7 +1,7 @@
 /*
  *     Copyright 2025 Philterd, LLC @ https://www.philterd.ai
  *
- * Licensed under the Apache License, Version 2.0 (the "License", attributes);
+ * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
@@ -43,7 +43,7 @@ public class PhoneNumberFilterTest extends AbstractFilterTest {
 
         final PhoneNumberRulesFilter filter = new PhoneNumberRulesFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "the number is (123) 456-7890.", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "the number is (123) 456-7890.");
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 14, 28, FilterType.PHONE_NUMBER));
         Assertions.assertEquals("(123) 456-7890", filterResult.getSpans().get(0).getText());
@@ -62,7 +62,7 @@ public class PhoneNumberFilterTest extends AbstractFilterTest {
 
         final PhoneNumberRulesFilter filter = new PhoneNumberRulesFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "the number is (123) 456-7890 and (123) 456-7890.", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "the number is (123) 456-7890 and (123) 456-7890.");
         Assertions.assertEquals(2, filterResult.getSpans().size());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 14, 28, FilterType.PHONE_NUMBER));
         Assertions.assertEquals(0.95, filterResult.getSpans().get(0).getConfidence());
@@ -82,7 +82,7 @@ public class PhoneNumberFilterTest extends AbstractFilterTest {
 
         final PhoneNumberRulesFilter filter = new PhoneNumberRulesFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "the number is 123-456-7890.", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "the number is 123-456-7890.");
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 14, 26, FilterType.PHONE_NUMBER));
         Assertions.assertEquals(0.95, filterResult.getSpans().get(0).getConfidence());
@@ -100,7 +100,7 @@ public class PhoneNumberFilterTest extends AbstractFilterTest {
 
         final PhoneNumberRulesFilter filter = new PhoneNumberRulesFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "the number is 123-456-7890 and he was ok.", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "the number is 123-456-7890 and he was ok.");
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 14, 26, FilterType.PHONE_NUMBER));
 
@@ -117,7 +117,7 @@ public class PhoneNumberFilterTest extends AbstractFilterTest {
 
         final PhoneNumberRulesFilter filter = new PhoneNumberRulesFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "the number is ( 800 ) 123-4567 and he was ok.", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "the number is ( 800 ) 123-4567 and he was ok.");
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 14, 30, FilterType.PHONE_NUMBER));
         Assertions.assertEquals(0.75, filterResult.getSpans().get(0).getConfidence());
@@ -135,7 +135,7 @@ public class PhoneNumberFilterTest extends AbstractFilterTest {
 
         final PhoneNumberRulesFilter filter = new PhoneNumberRulesFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "the number is (800) 123-4567 x532 and he was ok.", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "the number is (800) 123-4567 x532 and he was ok.");
         showSpans(filterResult.getSpans());
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
@@ -155,7 +155,7 @@ public class PhoneNumberFilterTest extends AbstractFilterTest {
 
         final PhoneNumberRulesFilter filter = new PhoneNumberRulesFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "the number is (800) 123-4567x532 and he was ok.", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "the number is (800) 123-4567x532 and he was ok.");
         showSpans(filterResult.getSpans());
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
@@ -175,7 +175,7 @@ public class PhoneNumberFilterTest extends AbstractFilterTest {
 
         final PhoneNumberRulesFilter filter = new PhoneNumberRulesFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "7 64116-3220", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "7 64116-3220");
         showSpans(filterResult.getSpans());
 
         Assertions.assertEquals(1, filterResult.getSpans().size());

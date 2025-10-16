@@ -1,7 +1,7 @@
 /*
  *     Copyright 2025 Philterd, LLC @ https://www.philterd.ai
  *
- * Licensed under the Apache License, Version 2.0 (the "License", attributes);
+ * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
@@ -45,7 +45,7 @@ public class FilterTest extends AbstractFilterTest {
 
         final AgeFilter filter = new AgeFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "this is a first sentence. the patient is 3.5 years old and he's cool. this is a surrounding sentence.", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "this is a first sentence. the patient is 3.5 years old and he's cool. this is a surrounding sentence.");
 
         showSpans(filterResult.getSpans());
 
@@ -75,7 +75,7 @@ public class FilterTest extends AbstractFilterTest {
 
         final AgeFilter filter = new AgeFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "this is a first sentence. the patient is 3.5 years old and he's cool. this is a surrounding sentence.", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "this is a first sentence. the patient is 3.5 years old and he's cool. this is a surrounding sentence.");
 
         showSpans(filterResult.getSpans());
 
@@ -106,7 +106,7 @@ public class FilterTest extends AbstractFilterTest {
 
         final AgeFilter filter = new AgeFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "this is a first sentence. the patient is 3.5 years old and he's cool. this is a surrounding sentence.", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "this is a first sentence. the patient is 3.5 years old and he's cool. this is a surrounding sentence.");
 
         showSpans(filterResult.getSpans());
 

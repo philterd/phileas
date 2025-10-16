@@ -66,9 +66,9 @@ public class IbanCodeFilter extends RegexFilter {
     }
 
     @Override
-    public FilterResult filter(Policy policy, String context, int piece, String input, Map<String, String> attributes) throws Exception {
+    public FilterResult filter(Policy policy, String context, int piece, String input) throws Exception {
 
-        final List<Span> spans = findSpans(policy, analyzer, input, context, attributes);
+        final List<Span> spans = findSpans(policy, analyzer, input, context);
 
         final List<Span> validSpans = new LinkedList<>();
 

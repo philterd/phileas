@@ -105,20 +105,17 @@ public abstract class Filter {
      * @param context The name of the context.
      * @param piece A numbered piece of the document. Pass <code>0</code> if only piece of document.
      * @param input The input text.
-     * @param attributes Attributes about the text.
      * @return A {@link FilterResult} containing the identified {@link Span spans}.
      */
-    public abstract FilterResult filter(Policy policy, String context, int piece, String input,
-                                        final Map<String, String> attributes) throws Exception;
+    public abstract FilterResult filter(Policy policy, String context, int piece, String input) throws Exception;
 
     /**
      * Determines if the input text may contain sensitive information matching the filter type.
      * @param policy The {@link Policy}.
      * @param input The input text.
-     * @param attributes Attributes about the text.
      * @return A count of possible occurrences of the filter type in the input text.
      */
-    public abstract int getOccurrences(final Policy policy, final String input, Map<String, String> attributes) throws Exception;
+    public abstract int getOccurrences(final Policy policy, final String input) throws Exception;
 
     /**
      * Creates a new filter.
@@ -245,7 +242,7 @@ public abstract class Filter {
      */
     public Replacement getReplacement(final Policy policy, final String context,
                                       final String token, final String[] window, double confidence,
-                                      final String classification, final Map<String, String> attributes,
+                                      final String classification,
                                       final FilterPattern filterPattern) throws Exception {
 
         if(strategies != null && !strategies.isEmpty()) {
@@ -262,7 +259,7 @@ public abstract class Filter {
                 if(hasCondition) {
 
                     // If there is a condition, does it evaluate?
-                    final boolean evaluates = strategy.evaluateCondition(policy, context, token, window, condition, confidence, attributes);
+                    final boolean evaluates = strategy.evaluateCondition(policy, context, token, window, condition, confidence);
 
                     if(evaluates) {
 

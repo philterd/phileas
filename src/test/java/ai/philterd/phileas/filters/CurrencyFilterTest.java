@@ -1,7 +1,7 @@
 /*
  *     Copyright 2025 Philterd, LLC @ https://www.philterd.ai
  *
- * Licensed under the Apache License, Version 2.0 (the "License", attributes);
+ * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
@@ -40,7 +40,7 @@ public class CurrencyFilterTest extends AbstractFilterTest {
 
         final CurrencyFilter filter = new CurrencyFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "the drug cost is $35.53 .", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "the drug cost is $35.53 .");
 
         showSpans(filterResult.getSpans());
 
@@ -61,7 +61,7 @@ public class CurrencyFilterTest extends AbstractFilterTest {
 
         final CurrencyFilter filter = new CurrencyFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "the drug cost is $35.53.", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "the drug cost is $35.53.");
 
         showSpans(filterResult.getSpans());
 
@@ -82,7 +82,7 @@ public class CurrencyFilterTest extends AbstractFilterTest {
 
         final CurrencyFilter filter = new CurrencyFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "the drug cost is $35.00.", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "the drug cost is $35.00.");
 
         showSpans(filterResult.getSpans());
 
@@ -103,7 +103,7 @@ public class CurrencyFilterTest extends AbstractFilterTest {
 
         final CurrencyFilter filter = new CurrencyFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "the drug cost is $3.00.", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "the drug cost is $3.00.");
 
         showSpans(filterResult.getSpans());
 
@@ -124,7 +124,7 @@ public class CurrencyFilterTest extends AbstractFilterTest {
 
         final CurrencyFilter filter = new CurrencyFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "the drug cost is $.50.", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "the drug cost is $.50.");
 
         showSpans(filterResult.getSpans());
 
@@ -148,7 +148,7 @@ public class CurrencyFilterTest extends AbstractFilterTest {
 
         final CurrencyFilter filter = new CurrencyFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "the drug cost is $50.", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "the drug cost is $50.");
 
         showSpans(filterResult.getSpans());
 
@@ -172,7 +172,7 @@ public class CurrencyFilterTest extends AbstractFilterTest {
 
         final CurrencyFilter filter = new CurrencyFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "the drug cost is $.50.", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "the drug cost is $.50.");
 
         showSpans(filterResult.getSpans());
 

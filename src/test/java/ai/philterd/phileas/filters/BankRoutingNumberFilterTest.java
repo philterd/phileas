@@ -1,7 +1,7 @@
 /*
  *     Copyright 2025 Philterd, LLC @ https://www.philterd.ai
  *
- * Licensed under the Apache License, Version 2.0 (the "License", attributes);
+ * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
@@ -39,7 +39,7 @@ public class BankRoutingNumberFilterTest extends AbstractFilterTest {
 
         final BankRoutingNumberFilter filter = new BankRoutingNumberFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "the routing number is 111000025 patient is 3.5years old.", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "the routing number is 111000025 patient is 3.5years old.");
 
         showSpans(filterResult.getSpans());
 
@@ -60,7 +60,7 @@ public class BankRoutingNumberFilterTest extends AbstractFilterTest {
 
         final BankRoutingNumberFilter filter = new BankRoutingNumberFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "the routing number is 111007025 patient is 3.5years old.", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "the routing number is 111007025 patient is 3.5years old.");
 
         showSpans(filterResult.getSpans());
 
@@ -79,7 +79,7 @@ public class BankRoutingNumberFilterTest extends AbstractFilterTest {
 
         final BankRoutingNumberFilter filter = new BankRoutingNumberFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "the routing number is 1131007025 patient is 3.5years old.", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "the routing number is 1131007025 patient is 3.5years old.");
 
         showSpans(filterResult.getSpans());
 

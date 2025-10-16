@@ -1,7 +1,7 @@
 /*
  *     Copyright 2025 Philterd, LLC @ https://www.philterd.ai
  *
- * Licensed under the Apache License, Version 2.0 (the "License", attributes);
+ * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
@@ -39,7 +39,7 @@ public class BitcoinAddressFilterTest extends AbstractFilterTest {
 
         final BitcoinAddressFilter filter = new BitcoinAddressFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "the address is 127NVqnjf8gB9BFAW2dnQeM6wqmy1gbGtv.", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "the address is 127NVqnjf8gB9BFAW2dnQeM6wqmy1gbGtv.");
 
         showSpans(filterResult.getSpans());
 
@@ -61,7 +61,7 @@ public class BitcoinAddressFilterTest extends AbstractFilterTest {
 
         final BitcoinAddressFilter filter = new BitcoinAddressFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "the address is 12qnjf8FAW2dnQeM6wqmy1gbGtv.", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "the address is 12qnjf8FAW2dnQeM6wqmy1gbGtv.");
 
         showSpans(filterResult.getSpans());
 
@@ -83,7 +83,7 @@ public class BitcoinAddressFilterTest extends AbstractFilterTest {
 
         final BitcoinAddressFilter filter = new BitcoinAddressFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "the address is 126wqmy1gbGtv.", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "the address is 126wqmy1gbGtv.");
 
         showSpans(filterResult.getSpans());
 

@@ -1,7 +1,7 @@
 /*
  *     Copyright 2025 Philterd, LLC @ https://www.philterd.ai
  *
- * Licensed under the Apache License, Version 2.0 (the "License", attributes);
+ * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
@@ -44,7 +44,7 @@ public class StateFilterTest extends AbstractFilterTest {
 
         final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.LOCATION_STATE, filterConfiguration, SensitivityLevel.LOW, true);
 
-        FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE,"Lived in Washington", attributes);
+        FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE,"Lived in Washington");
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertEquals("Washington", filterResult.getSpans().get(0).getText());
 
@@ -61,7 +61,7 @@ public class StateFilterTest extends AbstractFilterTest {
 
         final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.LOCATION_STATE, filterConfiguration, SensitivityLevel.MEDIUM, true);
 
-        FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "Lived in Wshington", attributes);
+        FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "Lived in Wshington");
         Assertions.assertEquals(1, filterResult.getSpans().size());
 
     }
@@ -77,7 +77,7 @@ public class StateFilterTest extends AbstractFilterTest {
 
         final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.LOCATION_STATE, filterConfiguration, SensitivityLevel.HIGH, true);
 
-        FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "Lived in Wasinton", attributes);
+        FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "Lived in Wasinton");
         Assertions.assertEquals(0, filterResult.getSpans().size());
 
     }

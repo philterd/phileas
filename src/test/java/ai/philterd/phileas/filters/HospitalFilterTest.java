@@ -1,7 +1,7 @@
 /*
  *     Copyright 2025 Philterd, LLC @ https://www.philterd.ai
  *
- * Licensed under the Apache License, Version 2.0 (the "License", attributes);
+ * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
@@ -44,7 +44,7 @@ public class HospitalFilterTest extends AbstractFilterTest {
 
         final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.HOSPITAL, filterConfiguration, SensitivityLevel.LOW, true);
 
-        FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE,"Wyoming Medical Center", attributes);
+        FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE,"Wyoming Medical Center");
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertEquals("wyoming medical center", filterResult.getSpans().get(0).getText());
 
