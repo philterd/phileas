@@ -62,9 +62,7 @@ public abstract class AbstractFilterStrategy {
     // Conditions
     public static final String TOKEN = "token";
     public static final String CONTEXT = "context";
-    public static final String TYPE = "type";
     public static final String CONFIDENCE = "confidence";
-    public static final String CLASSIFICATION = "classification";
     public static final String BIRTHDATE = "birthdate";
     public static final String DEATHDATE = "deathdate";
     public static final String BIRTHDATE_OR_DEATHDATE = "birthdate or deathdate";

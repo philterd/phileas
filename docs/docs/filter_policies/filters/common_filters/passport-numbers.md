@@ -40,7 +40,6 @@ Each filter strategy may have one condition. See [Conditions](#conditions) for d
 | Conditional      | Description                                                              | Operators                          |
 |------------------|--------------------------------------------------------------------------|------------------------------------|
 | `TOKEN`          | Compares the value of the sensitive text.                                | `==` , `!=`                        |
-| `CLASSIFICATION` | Compares the issuing country of the passport number.                     | `==` , `!=`                        |
 | `CONTEXT`        | Compares the filtering context.                                          | `==` , `!=`                        |
 | `CONFIDENCE`     | Compares the confidence in the sensitive text against a threshold value. | `<` , `<=`, `>` , `>=`, `==`, `!=` |
 
