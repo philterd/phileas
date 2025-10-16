@@ -31,6 +31,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
+import java.util.Map;
 import java.util.Properties;
 
 import static ai.philterd.phileas.services.EndToEndTestsHelper.getPolicy;

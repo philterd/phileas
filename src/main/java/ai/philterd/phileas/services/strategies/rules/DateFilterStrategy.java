@@ -79,7 +79,7 @@ public class DateFilterStrategy extends AbstractFilterStrategy {
     }
 
     @Override
-    public boolean evaluateCondition(Policy policy, String context, String token, String[] window, String condition, double confidence, Map<String, String> attributes) {
+    public boolean evaluateCondition(Policy policy, String context, String token, String[] window, String condition, double confidence) {
 
         boolean conditionsSatisfied = false;
 

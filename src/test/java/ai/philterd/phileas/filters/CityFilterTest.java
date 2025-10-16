@@ -1,7 +1,7 @@
 /*
  *     Copyright 2025 Philterd, LLC @ https://www.philterd.ai
  *
- * Licensed under the Apache License, Version 2.0 (the "License", attributes);
+ * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
@@ -44,7 +44,7 @@ public class CityFilterTest extends AbstractFilterTest {
 
         final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.LOCATION_CITY, filterConfiguration, SensitivityLevel.MEDIUM, true);
 
-        FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "Lived in Washington.", attributes);
+        FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "Lived in Washington.");
 
         showSpans(filterResult.getSpans());
 
@@ -64,7 +64,7 @@ public class CityFilterTest extends AbstractFilterTest {
 
         final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.LOCATION_CITY, filterConfiguration, SensitivityLevel.HIGH, true);
 
-        FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "Lived in New York.", attributes);
+        FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "Lived in New York.");
 
         showSpans(filterResult.getSpans());
 
@@ -86,7 +86,7 @@ public class CityFilterTest extends AbstractFilterTest {
 
         final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.LOCATION_CITY, filterConfiguration, SensitivityLevel.LOW, true);
 
-        FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE,"Lived in Wshington", attributes);
+        FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE,"Lived in Wshington");
 
         showSpans(filterResult.getSpans());
 
@@ -105,7 +105,7 @@ public class CityFilterTest extends AbstractFilterTest {
 
         final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.LOCATION_CITY, filterConfiguration, SensitivityLevel.MEDIUM, true);
 
-        FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "Lived in Wshington", attributes);
+        FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "Lived in Wshington");
 
         showSpans(filterResult.getSpans());
 
@@ -125,7 +125,7 @@ public class CityFilterTest extends AbstractFilterTest {
 
         final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.LOCATION_CITY, filterConfiguration, SensitivityLevel.HIGH, true);
 
-        FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE,"Lived in Wasinton", attributes);
+        FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE,"Lived in Wasinton");
 
         showSpans(filterResult.getSpans());
 

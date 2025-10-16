@@ -39,19 +39,17 @@ public class FilterResponse {
     private final String context;
     private final int piece;
     private final Explanation explanation;
-    private final Map<String, String> attributes;
     private final long tokens;
     private final transient List<IncrementalRedaction> incrementalRedactions;
 
     public FilterResponse(String filteredText, String context, int piece,
-                          Explanation explanation, Map<String, String> attributes, List<IncrementalRedaction> incrementalRedactions,
+                          Explanation explanation, List<IncrementalRedaction> incrementalRedactions,
                           long tokens) {
 
         this.filteredText = filteredText;
         this.context = context;
         this.piece = piece;
         this.explanation = explanation;
-        this.attributes = attributes;
         this.incrementalRedactions = incrementalRedactions;
         this.tokens = tokens;
 
@@ -104,9 +102,6 @@ public class FilterResponse {
             // Adjust the document offset.
             documentOffset += pieceFilteredText.length();
 
-            // Combine the attributes (they should be the same anyway since attributes are on the document-level.
-            combinedAttributes.putAll(filterResponse.getAttributes());
-
             // Combine the incremental redactions.
             combinedIncrementalRedactions.addAll(filterResponse.getIncrementalRedactions());
 
@@ -117,8 +112,7 @@ public class FilterResponse {
 
         // Return the newly built FilterResponse.
         return new FilterResponse(filteredText.toString().trim(), context, 0,
-                new Explanation(appliedSpans, identifiedSpans), combinedAttributes, combinedIncrementalRedactions,
-                tokens);
+                new Explanation(appliedSpans, identifiedSpans), combinedIncrementalRedactions, tokens);
 
     }
 
@@ -154,10 +148,6 @@ public class FilterResponse {
 
     public Explanation getExplanation() {
         return explanation;
-    }
-
-    public Map<String, String> getAttributes() {
-        return attributes;
     }
 
     public List<IncrementalRedaction> getIncrementalRedactions() {

@@ -57,8 +57,7 @@ public class UnstructuredDocumentProcessor implements DocumentProcessor {
 
     @Override
     public FilterResponse process(final Policy policy, final List<Filter> filters, final List<PostFilter> postFilters,
-                                  final String context, final int piece, final String input,
-                                  final Map<String, String> attributes) throws Exception {
+                                  final String context, final int piece, final String input) throws Exception {
 
         // The list that will contain the spans containing PHI/PII.
         List<Span> identifiedSpans = new LinkedList<>();
@@ -67,7 +66,7 @@ public class UnstructuredDocumentProcessor implements DocumentProcessor {
         for(final Filter filter : filters) {
 
             final long startTimeMs = System.currentTimeMillis();
-            final FilterResult filterResult = filter.filter(policy, context, piece, input, attributes);
+            final FilterResult filterResult = filter.filter(policy, context, piece, input);
             final long elapsedTimeMs = System.currentTimeMillis() - startTimeMs;
 
             identifiedSpans.addAll(filterResult.getSpans());
@@ -157,7 +156,7 @@ public class UnstructuredDocumentProcessor implements DocumentProcessor {
 
         }
 
-        return new FilterResponse(sb.toString(), context, piece, explanation, attributes, incrementalRedactions, tokens);
+        return new FilterResponse(sb.toString(), context, piece, explanation, incrementalRedactions, tokens);
 
     }
 

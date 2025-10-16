@@ -1,7 +1,7 @@
 /*
  *     Copyright 2025 Philterd, LLC @ https://www.philterd.ai
  *
- * Licensed under the Apache License, Version 2.0 (the "License", attributes);
+ * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
@@ -39,7 +39,7 @@ public class IpAddressFilterTest extends AbstractFilterTest {
 
         final IpAddressFilter filter = new IpAddressFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "the ip is 192.168.1.101.", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "the ip is 192.168.1.101.");
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 10, 23, FilterType.IP_ADDRESS));
@@ -58,7 +58,7 @@ public class IpAddressFilterTest extends AbstractFilterTest {
 
         final IpAddressFilter filter = new IpAddressFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "the ip is 1::", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "the ip is 1::");
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 10, 13, FilterType.IP_ADDRESS));
@@ -76,7 +76,7 @@ public class IpAddressFilterTest extends AbstractFilterTest {
 
         final IpAddressFilter filter = new IpAddressFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "the ip is 2001:0db8:85a3:0000:0000:8a2e:0370:7334", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "the ip is 2001:0db8:85a3:0000:0000:8a2e:0370:7334");
 
         // Finds duplicate spans. Duplicates/overlapping will be removed by the service prior to returning.
         Assertions.assertEquals(2, filterResult.getSpans().size());
@@ -96,7 +96,7 @@ public class IpAddressFilterTest extends AbstractFilterTest {
 
         final IpAddressFilter filter = new IpAddressFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "the ip is fe80::0202:B3FF:FE1E:8329", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "the ip is fe80::0202:B3FF:FE1E:8329");
 
         // Finds duplicate spans. Duplicates/overlapping will be removed by the service prior to returning.
         Assertions.assertEquals(2, filterResult.getSpans().size());

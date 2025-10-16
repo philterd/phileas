@@ -150,19 +150,7 @@ public class PhEyeStrategyTest extends AbstractFilterStrategyTest {
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
 
-        final boolean conditionSatisfied = strategy.evaluateCondition(getPolicy(), "context", "John Smith", WINDOW,"confidence > 0.25",  0.5, attributes);
-
-        Assertions.assertTrue(conditionSatisfied);
-
-    }
-
-    @Test
-    public void evaluateCondition2() {
-
-        final AbstractFilterStrategy strategy = getFilterStrategy();
-
-        attributes.put("classification", "PER");
-        final boolean conditionSatisfied = strategy.evaluateCondition(getPolicy(), "context", "John Smith", WINDOW,"type == PER",  1.0, attributes);
+        final boolean conditionSatisfied = strategy.evaluateCondition(getPolicy(), "context", "John Smith", WINDOW,"confidence > 0.25",  0.5);
 
         Assertions.assertTrue(conditionSatisfied);
 
@@ -174,7 +162,7 @@ public class PhEyeStrategyTest extends AbstractFilterStrategyTest {
         final AbstractFilterStrategy strategy = getFilterStrategy();
 
         attributes.put("classification", "LOC");
-        final boolean conditionSatisfied = strategy.evaluateCondition(getPolicy(), "context", "John Smith", WINDOW,"type == PER",  1.0, attributes);
+        final boolean conditionSatisfied = strategy.evaluateCondition(getPolicy(), "context", "John Smith", WINDOW,"type == PER",  1.0);
 
         Assertions.assertFalse(conditionSatisfied);
 
@@ -185,7 +173,7 @@ public class PhEyeStrategyTest extends AbstractFilterStrategyTest {
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
 
-        final boolean conditionSatisfied = strategy.evaluateCondition(getPolicy(), "context", "John Smith", WINDOW,"confidence == 0.5",  0.5, attributes);
+        final boolean conditionSatisfied = strategy.evaluateCondition(getPolicy(), "context", "John Smith", WINDOW,"confidence == 0.5",  0.5);
 
         Assertions.assertTrue(conditionSatisfied);
 
@@ -196,7 +184,7 @@ public class PhEyeStrategyTest extends AbstractFilterStrategyTest {
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
 
-        final boolean conditionSatisfied = strategy.evaluateCondition(getPolicy(), "context", "John Smith", WINDOW,"confidence != 0.5",  0.6, attributes);
+        final boolean conditionSatisfied = strategy.evaluateCondition(getPolicy(), "context", "John Smith", WINDOW,"confidence != 0.5",  0.6);
 
         Assertions.assertTrue(conditionSatisfied);
 
@@ -207,7 +195,7 @@ public class PhEyeStrategyTest extends AbstractFilterStrategyTest {
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
 
-        final boolean conditionSatisfied = strategy.evaluateCondition(getPolicy(), "context", "John Smith", WINDOW,"confidence != 0.5",  0.5, attributes);
+        final boolean conditionSatisfied = strategy.evaluateCondition(getPolicy(), "context", "John Smith", WINDOW,"confidence != 0.5",  0.5);
 
         Assertions.assertFalse(conditionSatisfied);
 
@@ -219,7 +207,7 @@ public class PhEyeStrategyTest extends AbstractFilterStrategyTest {
         final AbstractFilterStrategy strategy = getFilterStrategy();
 
         attributes.put("classification", "LOC");
-        final boolean conditionSatisfied = strategy.evaluateCondition(getPolicy(), "context", "John Smith", WINDOW,"confidence != 0.5 and type == PER",  0.5, attributes);
+        final boolean conditionSatisfied = strategy.evaluateCondition(getPolicy(), "context", "John Smith", WINDOW,"confidence != 0.5 and type == PER",  0.5);
 
         Assertions.assertFalse(conditionSatisfied);
 
@@ -231,7 +219,7 @@ public class PhEyeStrategyTest extends AbstractFilterStrategyTest {
         final AbstractFilterStrategy strategy = getFilterStrategy();
 
         attributes.put("classification", "PER");
-        final boolean conditionSatisfied = strategy.evaluateCondition(getPolicy(), "context", "John Smith", WINDOW,"confidence != 0.5 and type != LOC",  0.5, attributes);
+        final boolean conditionSatisfied = strategy.evaluateCondition(getPolicy(), "context", "John Smith", WINDOW,"confidence != 0.5 and type != LOC",  0.5);
 
         Assertions.assertFalse(conditionSatisfied);
 
@@ -243,7 +231,7 @@ public class PhEyeStrategyTest extends AbstractFilterStrategyTest {
         final AbstractFilterStrategy strategy = getFilterStrategy();
 
         attributes.put("classification", "PER");
-        final boolean conditionSatisfied = strategy.evaluateCondition(getPolicy(), "context", "John Smith", WINDOW,"confidence > 0.4 and type == PER",  0.5, attributes);
+        final boolean conditionSatisfied = strategy.evaluateCondition(getPolicy(), "context", "John Smith", WINDOW,"confidence > 0.4 and type == PER",  0.5);
 
         Assertions.assertTrue(conditionSatisfied);
 
@@ -256,7 +244,7 @@ public class PhEyeStrategyTest extends AbstractFilterStrategyTest {
 
 
         attributes.put("classification", "PER");
-        final boolean conditionSatisfied = strategy.evaluateCondition(getPolicy(), "context", "John Smith", WINDOW,"confidence < 0.4 and type == PER",  0.5, attributes);
+        final boolean conditionSatisfied = strategy.evaluateCondition(getPolicy(), "context", "John Smith", WINDOW,"confidence < 0.4 and type == PER",  0.5);
 
         Assertions.assertFalse(conditionSatisfied);
 
@@ -267,7 +255,7 @@ public class PhEyeStrategyTest extends AbstractFilterStrategyTest {
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
 
-        final boolean conditionSatisfied = strategy.evaluateCondition(getPolicy(), "context", "John Smith", WINDOW,"context == \"c1\"",  1.0, attributes);
+        final boolean conditionSatisfied = strategy.evaluateCondition(getPolicy(), "context", "John Smith", WINDOW,"context == \"c1\"",  1.0);
 
         Assertions.assertFalse(conditionSatisfied);
 
@@ -278,7 +266,7 @@ public class PhEyeStrategyTest extends AbstractFilterStrategyTest {
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
 
-        final boolean conditionSatisfied = strategy.evaluateCondition(getPolicy(), "ctx", "John Smith", WINDOW,"context == \"ctx\"",  1.0, attributes);
+        final boolean conditionSatisfied = strategy.evaluateCondition(getPolicy(), "ctx", "John Smith", WINDOW,"context == \"ctx\"",  1.0);
 
         Assertions.assertTrue(conditionSatisfied);
 
@@ -289,7 +277,7 @@ public class PhEyeStrategyTest extends AbstractFilterStrategyTest {
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
 
-        final boolean conditionSatisfied = strategy.evaluateCondition(getPolicy(), "ctx", "John Smith", WINDOW,"token == \"John Smith\"",  1.0, attributes);
+        final boolean conditionSatisfied = strategy.evaluateCondition(getPolicy(), "ctx", "John Smith", WINDOW,"token == \"John Smith\"",  1.0);
 
         Assertions.assertTrue(conditionSatisfied);
 
@@ -300,7 +288,7 @@ public class PhEyeStrategyTest extends AbstractFilterStrategyTest {
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
 
-        final boolean conditionSatisfied = strategy.evaluateCondition(getPolicy(), "ctx", "John Smith", WINDOW,"token != \"John Smith\"",  1.0, attributes);
+        final boolean conditionSatisfied = strategy.evaluateCondition(getPolicy(), "ctx", "John Smith", WINDOW,"token != \"John Smith\"",  1.0);
 
         Assertions.assertFalse(conditionSatisfied);
 

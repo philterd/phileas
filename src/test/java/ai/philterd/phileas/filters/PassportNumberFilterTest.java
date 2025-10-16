@@ -1,7 +1,7 @@
 /*
  *     Copyright 2025 Philterd, LLC @ https://www.philterd.ai
  *
- * Licensed under the Apache License, Version 2.0 (the "License", attributes);
+ * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
@@ -39,7 +39,7 @@ public class PassportNumberFilterTest extends AbstractFilterTest {
 
         final PassportNumberFilter filter = new PassportNumberFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "the passport number is 036001231.", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "the passport number is 036001231.");
 
         showSpans(filterResult.getSpans());
 

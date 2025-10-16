@@ -57,7 +57,6 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -128,9 +127,6 @@ public class PhileasFilterService implements FilterService {
     @Override
     public FilterResponse filter(final Policy policy, final String context, final String input, final MimeType mimeType) throws Exception {
 
-        // Initialize potential attributes that are associated with the input text.
-        final Map<String, String> attributes = new HashMap<>();
-
         final List<Filter> filters = filterPolicyLoader.getFiltersForPolicy(policy, filterCache);
         final List<PostFilter> postFilters = getPostFiltersForPolicy(policy);
 
@@ -156,7 +152,7 @@ public class PhileasFilterService implements FilterService {
 
                     // Process each split.
                     for (int i = 0; i < splits.size(); i++) {
-                        final FilterResponse fr = unstructuredDocumentProcessor.process(policy, filters, postFilters, context, i, splits.get(i), attributes);
+                        final FilterResponse fr = unstructuredDocumentProcessor.process(policy, filters, postFilters, context, i, splits.get(i));
                         filterResponses.add(fr);
                     }
 
@@ -166,7 +162,7 @@ public class PhileasFilterService implements FilterService {
             } else {
 
                 // Do not split. Process the entire string at once.
-                filterResponse = unstructuredDocumentProcessor.process(policy, filters, postFilters, context, 0, input, attributes);
+                filterResponse = unstructuredDocumentProcessor.process(policy, filters, postFilters, context, 0, input);
 
             }
 
@@ -183,10 +179,6 @@ public class PhileasFilterService implements FilterService {
     public BinaryDocumentFilterResponse filter(final Policy policy, final String context,
                                                final byte[] input, final MimeType mimeType,
                                                final MimeType outputMimeType) throws Exception {
-
-        // Initialize potential attributes that are associated with the input text.
-        // NOTE: Binary documents do not currently have any attributes.
-        final Map<String, String> attributes = new HashMap<>();
 
         final BinaryDocumentFilterResponse binaryDocumentFilterResponse;
 
@@ -223,7 +215,7 @@ public class PhileasFilterService implements FilterService {
                 tokens += tokenCounter.countTokens(line);
 
                 // Process the text.
-                final FilterResponse filterResponse = unstructuredDocumentProcessor.process(policy, filters, postFilters, context, piece, line, attributes);
+                final FilterResponse filterResponse = unstructuredDocumentProcessor.process(policy, filters, postFilters, context, piece, line);
 
                 // Add all the found spans to the list of spans.
                 spans.addAll(filterResponse.getExplanation().appliedSpans());

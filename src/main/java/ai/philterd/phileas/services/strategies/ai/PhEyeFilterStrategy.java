@@ -48,7 +48,7 @@ public class PhEyeFilterStrategy extends AbstractFilterStrategy {
     }
 
     @Override
-    public boolean evaluateCondition(Policy policy, String context, String token, String[] window, String condition, double confidence, Map<String, String> attributes) {
+    public boolean evaluateCondition(Policy policy, String context, String token, String[] window, String condition, double confidence) {
 
         final List<ParsedCondition> parsedConditions = ParserListener.getTerminals(condition);
 
@@ -59,21 +59,6 @@ public class PhEyeFilterStrategy extends AbstractFilterStrategy {
             if(StringUtils.equalsIgnoreCase(TOKEN, parsedCondition.getField())) {
 
                 conditionsSatisfied = evaluateTokenCondition(parsedCondition, token, window);
-
-            } else if(StringUtils.equalsIgnoreCase(CLASSIFICATION, parsedCondition.getField()) || StringUtils.equalsIgnoreCase(TYPE, parsedCondition.getField())) {
-
-                final String entityType = attributes.getOrDefault("classification", "");
-
-                if(parsedCondition.getOperator().equalsIgnoreCase("==")) {
-                    conditionsSatisfied = StringUtils.equalsIgnoreCase(entityType, parsedCondition.getValue());
-                } else if(parsedCondition.getOperator().equalsIgnoreCase("!=")) {
-                    conditionsSatisfied = !StringUtils.equalsIgnoreCase(entityType, parsedCondition.getValue());
-                } else {
-                    // Invalid operator.
-                    LOGGER.warn("Invalid comparator on NER filter strategy condition: {}", condition);
-                }
-
-                break;
 
             } else if(StringUtils.equalsIgnoreCase(CONFIDENCE, parsedCondition.getField())) {
 

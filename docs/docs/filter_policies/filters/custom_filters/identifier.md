@@ -49,7 +49,6 @@ Each filter strategy may have one condition. See [Conditions](#conditions) for d
 | `TOKEN`          | Compares the value of the sensitive text.                                | `==` , `!=`                        |
 | `CONTEXT`        | Compares the filtering context.                                          | `==` , `!=`                        |
 | `CONFIDENCE`     | Compares the confidence in the sensitive text against a threshold value. | `<` , `<=`, `>` , `>=`, `==`, `!=` |
-| `CLASSIFICATION` | Compares the classification of the sensitive text.                       | `==` , `!=`                        |
 
 ## Example Policy
 

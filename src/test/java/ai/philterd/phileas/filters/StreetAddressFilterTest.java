@@ -1,7 +1,7 @@
 /*
  *     Copyright 2025 Philterd, LLC @ https://www.philterd.ai
  *
- * Licensed under the Apache License, Version 2.0 (the "License", attributes);
+ * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
@@ -39,7 +39,7 @@ public class StreetAddressFilterTest extends AbstractFilterTest {
 
         final StreetAddressFilter filter = new StreetAddressFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "lived at 100 Main St", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "lived at 100 Main St");
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 9, 20, FilterType.STREET_ADDRESS));
@@ -57,7 +57,7 @@ public class StreetAddressFilterTest extends AbstractFilterTest {
 
         final StreetAddressFilter filter = new StreetAddressFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "lived at 100 S Main St", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "lived at 100 S Main St");
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 9, 22, FilterType.STREET_ADDRESS));
@@ -75,7 +75,7 @@ public class StreetAddressFilterTest extends AbstractFilterTest {
 
         final StreetAddressFilter filter = new StreetAddressFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "lived at 100 South Main St", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "lived at 100 South Main St");
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 9, 26, FilterType.STREET_ADDRESS));
@@ -93,7 +93,7 @@ public class StreetAddressFilterTest extends AbstractFilterTest {
 
         final StreetAddressFilter filter = new StreetAddressFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "lived at 1000 Main Street", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "lived at 1000 Main Street");
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 9, 25, FilterType.STREET_ADDRESS));
@@ -111,7 +111,7 @@ public class StreetAddressFilterTest extends AbstractFilterTest {
 
         final StreetAddressFilter filter = new StreetAddressFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "North 2800 Clay Edwards Drive", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "North 2800 Clay Edwards Drive");
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 6, 29, FilterType.STREET_ADDRESS));
@@ -129,7 +129,7 @@ public class StreetAddressFilterTest extends AbstractFilterTest {
 
         final StreetAddressFilter filter = new StreetAddressFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "14 Southampton St.", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "14 Southampton St.");
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 0, 18, FilterType.STREET_ADDRESS));
@@ -147,7 +147,7 @@ public class StreetAddressFilterTest extends AbstractFilterTest {
 
         final StreetAddressFilter filter = new StreetAddressFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "22 Newport Drive", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "22 Newport Drive");
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 0, 16, FilterType.STREET_ADDRESS));
@@ -165,7 +165,7 @@ public class StreetAddressFilterTest extends AbstractFilterTest {
 
         final StreetAddressFilter filter = new StreetAddressFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "78 Glendale Street", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "78 Glendale Street");
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 0, 18, FilterType.STREET_ADDRESS));
@@ -183,7 +183,7 @@ public class StreetAddressFilterTest extends AbstractFilterTest {
 
         final StreetAddressFilter filter = new StreetAddressFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "6 Berkshire Court", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "6 Berkshire Court");
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 0, 17, FilterType.STREET_ADDRESS));
@@ -201,7 +201,7 @@ public class StreetAddressFilterTest extends AbstractFilterTest {
 
         final StreetAddressFilter filter = new StreetAddressFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "291 North Pawnee Ave.", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "291 North Pawnee Ave.");
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 0, 21, FilterType.STREET_ADDRESS));
@@ -219,7 +219,7 @@ public class StreetAddressFilterTest extends AbstractFilterTest {
 
         final StreetAddressFilter filter = new StreetAddressFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "468 William Street", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "468 William Street");
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 0, 18, FilterType.STREET_ADDRESS));
@@ -237,7 +237,7 @@ public class StreetAddressFilterTest extends AbstractFilterTest {
 
         final StreetAddressFilter filter = new StreetAddressFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "291 6th Dr.", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "291 6th Dr.");
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 0, 11, FilterType.STREET_ADDRESS));
@@ -255,7 +255,7 @@ public class StreetAddressFilterTest extends AbstractFilterTest {
 
         final StreetAddressFilter filter = new StreetAddressFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "9444 Heritage St.", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "9444 Heritage St.");
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 0, 17, FilterType.STREET_ADDRESS));
@@ -273,7 +273,7 @@ public class StreetAddressFilterTest extends AbstractFilterTest {
 
         final StreetAddressFilter filter = new StreetAddressFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "70 Birchpond Street", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "70 Birchpond Street");
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 0, 19, FilterType.STREET_ADDRESS));
@@ -291,7 +291,7 @@ public class StreetAddressFilterTest extends AbstractFilterTest {
 
         final StreetAddressFilter filter = new StreetAddressFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "656 S. Inverness St.", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "656 S. Inverness St.");
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 0, 20, FilterType.STREET_ADDRESS));
@@ -309,7 +309,7 @@ public class StreetAddressFilterTest extends AbstractFilterTest {
 
         final StreetAddressFilter filter = new StreetAddressFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "9142 Arlington Court", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "9142 Arlington Court");
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 0, 20, FilterType.STREET_ADDRESS));
@@ -327,7 +327,7 @@ public class StreetAddressFilterTest extends AbstractFilterTest {
 
         final StreetAddressFilter filter = new StreetAddressFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "4 Devonshire Ct.", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "4 Devonshire Ct.");
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 0, 16, FilterType.STREET_ADDRESS));
@@ -345,7 +345,7 @@ public class StreetAddressFilterTest extends AbstractFilterTest {
 
         final StreetAddressFilter filter = new StreetAddressFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "4 Devonshire Ct", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "4 Devonshire Ct");
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 0, 15, FilterType.STREET_ADDRESS));
@@ -363,7 +363,7 @@ public class StreetAddressFilterTest extends AbstractFilterTest {
 
         final StreetAddressFilter filter = new StreetAddressFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "4 Devonshire Ct ste 2", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "4 Devonshire Ct ste 2");
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 0, 21, FilterType.STREET_ADDRESS));
@@ -381,7 +381,7 @@ public class StreetAddressFilterTest extends AbstractFilterTest {
 
         final StreetAddressFilter filter = new StreetAddressFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "4 Devonshire Ct apartment 222", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "4 Devonshire Ct apartment 222");
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 0, 29, FilterType.STREET_ADDRESS));
@@ -399,7 +399,7 @@ public class StreetAddressFilterTest extends AbstractFilterTest {
 
         final StreetAddressFilter filter = new StreetAddressFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "4 Devonshire Ct apt 222", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "4 Devonshire Ct apt 222");
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 0, 23, FilterType.STREET_ADDRESS));
@@ -417,7 +417,7 @@ public class StreetAddressFilterTest extends AbstractFilterTest {
 
         final StreetAddressFilter filter = new StreetAddressFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "4 Devonshire Ct apt 222 anywhere", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "4 Devonshire Ct apt 222 anywhere");
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 0, 23, FilterType.STREET_ADDRESS));
@@ -435,7 +435,7 @@ public class StreetAddressFilterTest extends AbstractFilterTest {
 
         final StreetAddressFilter filter = new StreetAddressFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "address is 9444 Heritage St. over there", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "address is 9444 Heritage St. over there");
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 11, 28, FilterType.STREET_ADDRESS));
@@ -453,7 +453,7 @@ public class StreetAddressFilterTest extends AbstractFilterTest {
 
         final StreetAddressFilter filter = new StreetAddressFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "address is 9444 Heritage St. apt 2 over there", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "address is 9444 Heritage St. apt 2 over there");
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 11, 34, FilterType.STREET_ADDRESS));

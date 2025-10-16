@@ -1,7 +1,7 @@
 /*
  *     Copyright 2025 Philterd, LLC @ https://www.philterd.ai
  *
- * Licensed under the Apache License, Version 2.0 (the "License", attributes);
+ * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
@@ -39,7 +39,7 @@ public class PhoneNumberExtensionFilterTest extends AbstractFilterTest {
 
         final PhoneNumberExtensionFilter filter = new PhoneNumberExtensionFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "he is at x123", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "he is at x123");
         showSpans(filterResult.getSpans());
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
@@ -59,7 +59,7 @@ public class PhoneNumberExtensionFilterTest extends AbstractFilterTest {
 
         final PhoneNumberExtensionFilter filter = new PhoneNumberExtensionFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "his phone number was +1 151-841-2829 x416.", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "his phone number was +1 151-841-2829 x416.");
         showSpans(filterResult.getSpans());
 
         Assertions.assertEquals(1, filterResult.getSpans().size());

@@ -1,7 +1,7 @@
 /*
  *     Copyright 2025 Philterd, LLC @ https://www.philterd.ai
  *
- * Licensed under the Apache License, Version 2.0 (the "License", attributes);
+ * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
@@ -44,7 +44,7 @@ public class SurnameFilterTest extends AbstractFilterTest {
 
         final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.SURNAME, filterConfiguration, SensitivityLevel.LOW, true);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "Lived in Wshington", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "Lived in Wshington");
         showSpans(filterResult.getSpans());
         Assertions.assertEquals(44, filterResult.getSpans().size());
 
@@ -61,7 +61,7 @@ public class SurnameFilterTest extends AbstractFilterTest {
 
         final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.SURNAME, filterConfiguration, SensitivityLevel.MEDIUM, true);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "Lived in Wshington", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "Lived in Wshington");
         showSpans(filterResult.getSpans());
         Assertions.assertEquals(44, filterResult.getSpans().size());
 
@@ -78,7 +78,7 @@ public class SurnameFilterTest extends AbstractFilterTest {
 
         final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.SURNAME, filterConfiguration, SensitivityLevel.HIGH, true);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "Jones", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "Jones");
         showSpans(filterResult.getSpans());
         Assertions.assertEquals(1, filterResult.getSpans().size());
 
@@ -95,7 +95,7 @@ public class SurnameFilterTest extends AbstractFilterTest {
 
         final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.SURNAME, filterConfiguration, SensitivityLevel.LOW, true);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "date", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "date");
         showSpans(filterResult.getSpans());
         Assertions.assertEquals(1, filterResult.getSpans().size());
 
@@ -112,7 +112,7 @@ public class SurnameFilterTest extends AbstractFilterTest {
 
         final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.SURNAME, filterConfiguration, SensitivityLevel.LOW, true);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "Jones", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "Jones");
         showSpans(filterResult.getSpans());
         Assertions.assertEquals(349, filterResult.getSpans().size());
 
@@ -129,7 +129,7 @@ public class SurnameFilterTest extends AbstractFilterTest {
 
         final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.SURNAME, filterConfiguration, SensitivityLevel.LOW, true);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "from", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "from");
         showSpans(filterResult.getSpans());
         Assertions.assertEquals(1, filterResult.getSpans().size());
 

@@ -1,7 +1,7 @@
 /*
  *     Copyright 2025 Philterd, LLC @ https://www.philterd.ai
  *
- * Licensed under the Apache License, Version 2.0 (the "License", attributes);
+ * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
@@ -42,7 +42,7 @@ public class SectionFilterTest extends AbstractFilterTest {
 
         final SectionFilter filter = new SectionFilter(filterConfiguration, startPattern, endPattern);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "This is some test. BEGIN-REDACT This text should be redacted. END-REDACT This is outside the text.", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "This is some test. BEGIN-REDACT This text should be redacted. END-REDACT This is outside the text.");
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 19, 72, FilterType.SECTION));
@@ -64,7 +64,7 @@ public class SectionFilterTest extends AbstractFilterTest {
 
         final SectionFilter filter = new SectionFilter(filterConfiguration, startPattern, endPattern);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "This is some test. BEGIN-REDACT This text should be redacted. This is outside the text.", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "This is some test. BEGIN-REDACT This text should be redacted. This is outside the text.");
 
         Assertions.assertEquals(0, filterResult.getSpans().size());
 
@@ -84,7 +84,7 @@ public class SectionFilterTest extends AbstractFilterTest {
 
         final SectionFilter filter = new SectionFilter(filterConfiguration, startPattern, endPattern);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "BEGIN-REDACT This text should be redacted. END-REDACT This is outside the text.", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "BEGIN-REDACT This text should be redacted. END-REDACT This is outside the text.");
 
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 0, 53, FilterType.SECTION));

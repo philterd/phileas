@@ -23,6 +23,7 @@ import ai.philterd.phileas.model.objects.BinaryDocumentFilterResponse;
 import ai.philterd.phileas.model.objects.FilterResponse;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Interface for implementing filter services.

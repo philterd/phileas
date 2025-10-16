@@ -55,7 +55,7 @@ public class PhoneNumberRulesFilter extends RulesFilter {
 
     @Override
     public FilterResult filter(final Policy policy, final String context, final int piece,
-                               final String input, final Map<String, String> attributes) throws Exception {
+                               final String input) throws Exception {
 
         final List<Span> spans = new LinkedList<>();
 
@@ -82,7 +82,7 @@ public class PhoneNumberRulesFilter extends RulesFilter {
                 final String[] window = getWindow(input, match.start(), match.end());
                 final String classification = "";
                 final Replacement replacement = getReplacement(policy, context, text, window, confidence,
-                        classification, attributes, null);
+                        classification, null);
                 final boolean isIgnored = ignored.contains(text);
 
                 spans.add(Span.make(match.start(), match.end(), getFilterType(), context, confidence,

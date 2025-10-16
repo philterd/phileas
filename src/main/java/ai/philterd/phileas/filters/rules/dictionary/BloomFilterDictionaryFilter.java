@@ -78,8 +78,7 @@ public class BloomFilterDictionaryFilter extends DictionaryFilter {
     }
 
     @Override
-    public FilterResult filter(Policy policy, String context, int piece, String text,
-                               Map<String, String> attributes) throws Exception {
+    public FilterResult filter(Policy policy, String context, int piece, String text) throws Exception {
 
         final List<Span> spans = new LinkedList<>();
 
@@ -105,7 +104,7 @@ public class BloomFilterDictionaryFilter extends DictionaryFilter {
                     final String originalToken = text.substring(characterStart, characterEnd);
 
                     final Replacement replacement = getReplacement(policy, context,
-                            originalToken, window, confidence, classification, attributes, null);
+                            originalToken, window, confidence, classification, null);
 
                     spans.add(Span.make(characterStart, characterEnd, getFilterType(), context,
                             confidence, originalToken, replacement.getReplacement(), replacement.getSalt(),

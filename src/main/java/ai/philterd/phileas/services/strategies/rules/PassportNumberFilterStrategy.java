@@ -44,7 +44,7 @@ public class PassportNumberFilterStrategy extends StandardFilterStrategy {
     }
 
     @Override
-    public boolean evaluateCondition(Policy policy, String context, String token, String[] window, String condition, double confidence, Map<String, String> attributes) {
+    public boolean evaluateCondition(Policy policy, String context, String token, String[] window, String condition, double confidence) {
 
         boolean conditionsSatisfied = false;
 
@@ -80,17 +80,8 @@ public class PassportNumberFilterStrategy extends StandardFilterStrategy {
                     default -> conditionsSatisfied;
                 };
 
-            } else if(StringUtils.equalsIgnoreCase(CLASSIFICATION, parsedCondition.getField())) {
-
-                final String conditionClassification = parsedCondition.getValue();
-
-                conditionsSatisfied = switch (parsedCondition.getOperator()) {
-                    case "==" -> (StringUtils.equalsIgnoreCase("\"" + attributes.getOrDefault("classification", "") + "\"", conditionClassification));
-                    case "!=" -> !(StringUtils.equalsIgnoreCase("\"" + attributes.getOrDefault("classification", "") + "\"", conditionClassification));
-                    default -> conditionsSatisfied;
-                };
-
             }
+
             LOGGER.debug("Condition for [{}] satisfied: {}", condition, conditionsSatisfied);
 
             // Short-circuit if we have a failure.

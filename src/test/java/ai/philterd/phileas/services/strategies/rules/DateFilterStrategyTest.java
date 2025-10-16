@@ -67,7 +67,7 @@ public class DateFilterStrategyTest extends AbstractFilterStrategyTest {
 
         final AbstractFilterStrategy strategy = new DateFilterStrategy();
 
-        final boolean conditionSatisfied = strategy.evaluateCondition(getPolicy(), "context", "test@test.com", window, "token is \"birthdate\"", 1.0, attributes);
+        final boolean conditionSatisfied = strategy.evaluateCondition(getPolicy(), "context", "test@test.com", window, "token is \"birthdate\"", 1.0);
 
         Assertions.assertTrue(conditionSatisfied);
 
@@ -80,7 +80,7 @@ public class DateFilterStrategyTest extends AbstractFilterStrategyTest {
 
         final AbstractFilterStrategy strategy = new DateFilterStrategy();
 
-        final boolean conditionSatisfied = strategy.evaluateCondition(getPolicy(), "context", "test@test.com", window, "token is \"birthdate\"", 1.0, attributes);
+        final boolean conditionSatisfied = strategy.evaluateCondition(getPolicy(), "context", "test@test.com", window, "token is \"birthdate\"", 1.0);
 
         Assertions.assertFalse(conditionSatisfied);
 
@@ -93,7 +93,7 @@ public class DateFilterStrategyTest extends AbstractFilterStrategyTest {
 
         final AbstractFilterStrategy strategy = new DateFilterStrategy();
 
-        final boolean conditionSatisfied = strategy.evaluateCondition(getPolicy(), "context", "test@test.com", window, "token is \"deathdate\"", 1.0, attributes);
+        final boolean conditionSatisfied = strategy.evaluateCondition(getPolicy(), "context", "test@test.com", window, "token is \"deathdate\"", 1.0);
 
         Assertions.assertTrue(conditionSatisfied);
 
@@ -106,7 +106,7 @@ public class DateFilterStrategyTest extends AbstractFilterStrategyTest {
 
         final AbstractFilterStrategy strategy = new DateFilterStrategy();
 
-        final boolean conditionSatisfied = strategy.evaluateCondition(getPolicy(), "context", "test@test.com", window, "token is not \"deathdate\"", 1.0, attributes);
+        final boolean conditionSatisfied = strategy.evaluateCondition(getPolicy(), "context", "test@test.com", window, "token is not \"deathdate\"", 1.0);
 
         Assertions.assertFalse(conditionSatisfied);
 
@@ -119,7 +119,7 @@ public class DateFilterStrategyTest extends AbstractFilterStrategyTest {
 
         final AbstractFilterStrategy strategy = new DateFilterStrategy();
 
-        final boolean conditionSatisfied = strategy.evaluateCondition(getPolicy(), "context", "test@test.com", window, "token is not \"birthdate\"", 1.0, attributes);
+        final boolean conditionSatisfied = strategy.evaluateCondition(getPolicy(), "context", "test@test.com", window, "token is not \"birthdate\"", 1.0);
 
         Assertions.assertFalse(conditionSatisfied);
 
@@ -132,7 +132,7 @@ public class DateFilterStrategyTest extends AbstractFilterStrategyTest {
 
         final AbstractFilterStrategy strategy = new DateFilterStrategy();
 
-        final boolean conditionSatisfied = strategy.evaluateCondition(getPolicy(), "context", "test@test.com", window, "token is not \"birthdate or deathdate\"", 1.0, attributes);
+        final boolean conditionSatisfied = strategy.evaluateCondition(getPolicy(), "context", "test@test.com", window, "token is not \"birthdate or deathdate\"", 1.0);
 
         Assertions.assertFalse(conditionSatisfied);
 
@@ -145,7 +145,7 @@ public class DateFilterStrategyTest extends AbstractFilterStrategyTest {
 
         final AbstractFilterStrategy strategy = new DateFilterStrategy();
 
-        final boolean conditionSatisfied = strategy.evaluateCondition(getPolicy(), "context", "test@test.com", window, "token is not \"birthdate or deathdate\"", 1.0, attributes);
+        final boolean conditionSatisfied = strategy.evaluateCondition(getPolicy(), "context", "test@test.com", window, "token is not \"birthdate or deathdate\"", 1.0);
 
         Assertions.assertFalse(conditionSatisfied);
 
@@ -158,7 +158,7 @@ public class DateFilterStrategyTest extends AbstractFilterStrategyTest {
 
         final AbstractFilterStrategy strategy = new DateFilterStrategy();
 
-        final boolean conditionSatisfied = strategy.evaluateCondition(getPolicy(), "context", "test@test.com", window, "token == \"10-05-2005\"", 1.0, attributes);
+        final boolean conditionSatisfied = strategy.evaluateCondition(getPolicy(), "context", "test@test.com", window, "token == \"10-05-2005\"", 1.0);
 
         Assertions.assertFalse(conditionSatisfied);
 

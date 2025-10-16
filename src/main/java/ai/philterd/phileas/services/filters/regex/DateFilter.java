@@ -55,11 +55,11 @@ public class DateFilter extends RegexFilter {
     }
 
     @Override
-    public FilterResult filter(Policy policy, String context, int piece, String input, Map<String, String> attributes) throws Exception {
+    public FilterResult filter(Policy policy, String context, int piece, String input) throws Exception {
 
         final List<Span> spans = new LinkedList<>();
 
-        final List<Span> rawSpans = findSpans(policy, analyzer, input, context, attributes);
+        final List<Span> rawSpans = findSpans(policy, analyzer, input, context);
 
         if(onlyValidDates) {
 

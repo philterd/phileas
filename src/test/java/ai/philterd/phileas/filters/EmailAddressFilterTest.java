@@ -1,7 +1,7 @@
 /*
  *     Copyright 2025 Philterd, LLC @ https://www.philterd.ai
  *
- * Licensed under the Apache License, Version 2.0 (the "License", attributes);
+ * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
@@ -68,7 +68,7 @@ public class EmailAddressFilterTest extends AbstractFilterTest {
 
         final EmailAddressFilter filter = new EmailAddressFilter(filterConfiguration, true, true);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "my email is none@none.com.", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "my email is none@none.com.");
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 12, 25, FilterType.EMAIL_ADDRESS));
         Assertions.assertEquals("none@none.com", filterResult.getSpans().get(0).getText());
@@ -86,13 +86,13 @@ public class EmailAddressFilterTest extends AbstractFilterTest {
 
         final EmailAddressFilter filter = new EmailAddressFilter(filterConfiguration, true, true);
 
-        final FilterResult filterResult1 = filter.filter(getPolicy(), "context", PIECE, "my email is none@none.codfm.", attributes);
+        final FilterResult filterResult1 = filter.filter(getPolicy(), "context", PIECE, "my email is none@none.codfm.");
         Assertions.assertEquals(0, filterResult1.getSpans().size());
 
-        final FilterResult filterResult2 = filter.filter(getPolicy(), "context", PIECE, "my email is none@none.com.dmf.", attributes);
+        final FilterResult filterResult2 = filter.filter(getPolicy(), "context", PIECE, "my email is none@none.com.dmf.");
         Assertions.assertEquals(0, filterResult2.getSpans().size());
 
-        final FilterResult filterResult3 = filter.filter(getPolicy(), "context", PIECE, "my email is none@none.cob", attributes);
+        final FilterResult filterResult3 = filter.filter(getPolicy(), "context", PIECE, "my email is none@none.cob");
         Assertions.assertEquals(0, filterResult3.getSpans().size());
 
     }
@@ -108,7 +108,7 @@ public class EmailAddressFilterTest extends AbstractFilterTest {
 
         final EmailAddressFilter filter = new EmailAddressFilter(filterConfiguration, false, true);
 
-        final FilterResult filterResult4 = filter.filter(getPolicy(), "context", PIECE, "my email is none@lb.co_m", attributes);
+        final FilterResult filterResult4 = filter.filter(getPolicy(), "context", PIECE, "my email is none@lb.co_m");
         showSpans(filterResult4.getSpans());
         Assertions.assertEquals(0, filterResult4.getSpans().size());
 
@@ -122,7 +122,7 @@ public class EmailAddressFilterTest extends AbstractFilterTest {
 
         final Map<String, String> context = Collections.emptyMap();
 
-        final FilterResult filterResult = filter.filter(policy, cxt, PIECE, "my email is none@none.com.", attributes);
+        final FilterResult filterResult = filter.filter(policy, cxt, PIECE, "my email is none@none.com.");
         Assertions.assertEquals(1, filterResult.getSpans().size());
         Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 12, 25, FilterType.EMAIL_ADDRESS));
         Assertions.assertEquals("none@none.com", filterResult.getSpans().get(0).getText());
@@ -130,50 +130,50 @@ public class EmailAddressFilterTest extends AbstractFilterTest {
         // 👇 cases adapted from https://www.tumblr.com/codefool/15288874550/list-of-valid-and-invalid-email-addresses
 
         // valid email addresses
-        Assertions.assertEquals(1, filter.filter(policy, cxt, PIECE, "firstname.lastname@example.com", attributes).getSpans().size());
-        Assertions.assertEquals(1, filter.filter(policy, cxt, PIECE, "email@subdomain.example.com", attributes).getSpans().size());
-        Assertions.assertEquals(1, filter.filter(policy, cxt, PIECE, "firstname+lastname@example.com", attributes).getSpans().size());
-        Assertions.assertEquals(1, filter.filter(policy, cxt, PIECE, "email@123.123.123.123", attributes).getSpans().size());
-        Assertions.assertEquals(1, filter.filter(policy, cxt, PIECE, "1234567890@example.com", attributes).getSpans().size());
-        Assertions.assertEquals(1, filter.filter(policy, cxt, PIECE, "email@example-one.com", attributes).getSpans().size());
-        Assertions.assertEquals(1, filter.filter(policy, cxt, PIECE, "_______@example.com", attributes).getSpans().size());
-        Assertions.assertEquals(1, filter.filter(policy, cxt, PIECE, "email@example.name", attributes).getSpans().size());
-        Assertions.assertEquals(1, filter.filter(policy, cxt, PIECE, "email@example.museum", attributes).getSpans().size());
-        Assertions.assertEquals(1, filter.filter(policy, cxt, PIECE, "email@example.co.jp", attributes).getSpans().size());
-        Assertions.assertEquals(1, filter.filter(policy, cxt, PIECE, "firstname-lastname@example.com", attributes).getSpans().size());
-        Assertions.assertEquals(1, filter.filter(policy, cxt, PIECE, "very.unusual.“@”.unusual.com@example.com", attributes).getSpans().size());
-        Assertions.assertEquals(1, filter.filter(policy, cxt, PIECE, "very.“(),:;<>[]”.VERY.“very@\\\\ \"very”.unusual@strange.example.com", attributes).getSpans().size());
-        //Assertions.assertEquals(1, filter.filter(policy, cxt, PIECE, "“email”@example.com", attributes).getSpans().size());                // todo include quotes
-        //Assertions.assertEquals(1, filter.filter(policy, cxt, PIECE, "much.“more\\ unusual”@example.com", attributes).getSpans().size());  // todo include quotes
+        Assertions.assertEquals(1, filter.filter(policy, cxt, PIECE, "firstname.lastname@example.com").getSpans().size());
+        Assertions.assertEquals(1, filter.filter(policy, cxt, PIECE, "email@subdomain.example.com").getSpans().size());
+        Assertions.assertEquals(1, filter.filter(policy, cxt, PIECE, "firstname+lastname@example.com").getSpans().size());
+        Assertions.assertEquals(1, filter.filter(policy, cxt, PIECE, "email@123.123.123.123").getSpans().size());
+        Assertions.assertEquals(1, filter.filter(policy, cxt, PIECE, "1234567890@example.com").getSpans().size());
+        Assertions.assertEquals(1, filter.filter(policy, cxt, PIECE, "email@example-one.com").getSpans().size());
+        Assertions.assertEquals(1, filter.filter(policy, cxt, PIECE, "_______@example.com").getSpans().size());
+        Assertions.assertEquals(1, filter.filter(policy, cxt, PIECE, "email@example.name").getSpans().size());
+        Assertions.assertEquals(1, filter.filter(policy, cxt, PIECE, "email@example.museum").getSpans().size());
+        Assertions.assertEquals(1, filter.filter(policy, cxt, PIECE, "email@example.co.jp").getSpans().size());
+        Assertions.assertEquals(1, filter.filter(policy, cxt, PIECE, "firstname-lastname@example.com").getSpans().size());
+        Assertions.assertEquals(1, filter.filter(policy, cxt, PIECE, "very.unusual.“@”.unusual.com@example.com").getSpans().size());
+        Assertions.assertEquals(1, filter.filter(policy, cxt, PIECE, "very.“(),:;<>[]”.VERY.“very@\\\\ \"very”.unusual@strange.example.com").getSpans().size());
+        //Assertions.assertEquals(1, filter.filter(policy, cxt, PIECE, "“email”@example.com").getSpans().size());                // todo include quotes
+        //Assertions.assertEquals(1, filter.filter(policy, cxt, PIECE, "much.“more\\ unusual”@example.com").getSpans().size());  // todo include quotes
 
         // valid email addresses only detected with strict matching
-        Assertions.assertEquals(onlyStrictMatches ? 1 : 0, filter.filter(policy, cxt, PIECE, "email@[123.123.123.123]", attributes).getSpans().size());
+        Assertions.assertEquals(onlyStrictMatches ? 1 : 0, filter.filter(policy, cxt, PIECE, "email@[123.123.123.123]").getSpans().size());
 
         // invalid email addresses
-        Assertions.assertEquals(0, filter.filter(policy, cxt, PIECE, "plainaddress", attributes).getSpans().size());
-        Assertions.assertEquals(0, filter.filter(policy, cxt, PIECE, "#@%^%#$@#$@#.com", attributes).getSpans().size());
-        Assertions.assertEquals(0, filter.filter(policy, cxt, PIECE, "@example.com", attributes).getSpans().size());
-        Assertions.assertEquals(0, filter.filter(policy, cxt, PIECE, "email.example.com", attributes).getSpans().size());
-        Assertions.assertEquals(0, filter.filter(policy, cxt, PIECE, "あいうえお@example.com", attributes).getSpans().size());
-        Assertions.assertEquals(0, filter.filter(policy, cxt, PIECE, "email@example", attributes).getSpans().size());
-        Assertions.assertEquals(0, filter.filter(policy, cxt, PIECE, "email@example..com", attributes).getSpans().size());
-        Assertions.assertEquals(0, filter.filter(policy, cxt, PIECE, "“(),:;<>[\\]@example.com", attributes).getSpans().size());
-        //Assertions.assertEquals(0, filter.filter(policy, cxt, PIECE, "email@example.web", attributes).getSpans().size());        // todo detect invalid TLD
-        //Assertions.assertEquals(0, filter.filter(policy, cxt, PIECE, "email@111.222.333.44444", attributes).getSpans().size());  // todo detect invalid TLD
+        Assertions.assertEquals(0, filter.filter(policy, cxt, PIECE, "plainaddress").getSpans().size());
+        Assertions.assertEquals(0, filter.filter(policy, cxt, PIECE, "#@%^%#$@#$@#.com").getSpans().size());
+        Assertions.assertEquals(0, filter.filter(policy, cxt, PIECE, "@example.com").getSpans().size());
+        Assertions.assertEquals(0, filter.filter(policy, cxt, PIECE, "email.example.com").getSpans().size());
+        Assertions.assertEquals(0, filter.filter(policy, cxt, PIECE, "あいうえお@example.com").getSpans().size());
+        Assertions.assertEquals(0, filter.filter(policy, cxt, PIECE, "email@example").getSpans().size());
+        Assertions.assertEquals(0, filter.filter(policy, cxt, PIECE, "email@example..com").getSpans().size());
+        Assertions.assertEquals(0, filter.filter(policy, cxt, PIECE, "“(),:;<>[\\]@example.com").getSpans().size());
+        //Assertions.assertEquals(0, filter.filter(policy, cxt, PIECE, "email@example.web").getSpans().size());        // todo detect invalid TLD
+        //Assertions.assertEquals(0, filter.filter(policy, cxt, PIECE, "email@111.222.333.44444").getSpans().size());  // todo detect invalid TLD
 
         // invalid email addresses only rejected with strict matching
-        Assertions.assertEquals(onlyStrictMatches ? 0 : 1, filter.filter(policy, cxt, PIECE, "email.@example.com", attributes).getSpans().size());
-        Assertions.assertEquals(onlyStrictMatches ? 0 : 1, filter.filter(policy, cxt, PIECE, "email@-example.com", attributes).getSpans().size());
+        Assertions.assertEquals(onlyStrictMatches ? 0 : 1, filter.filter(policy, cxt, PIECE, "email.@example.com").getSpans().size());
+        Assertions.assertEquals(onlyStrictMatches ? 0 : 1, filter.filter(policy, cxt, PIECE, "email@-example.com").getSpans().size());
 
         // valid partial matches against invalid email addresses
-        Assertions.assertEquals(1, filter.filter(policy, cxt, PIECE, "Joe Smith <email@example.com>", attributes).getSpans().size());
-        Assertions.assertEquals(1, filter.filter(policy, cxt, PIECE, "email@example@example.com", attributes).getSpans().size());
-        Assertions.assertEquals(1, filter.filter(policy, cxt, PIECE, ".email@example.com", attributes).getSpans().size());
-        Assertions.assertEquals(1, filter.filter(policy, cxt, PIECE, "email..email@example.com", attributes).getSpans().size());
-        Assertions.assertEquals(1, filter.filter(policy, cxt, PIECE, "email@example.com (Joe Smith)", attributes).getSpans().size());
-        Assertions.assertEquals(1, filter.filter(policy, cxt, PIECE, "Abc..123@example.com", attributes).getSpans().size());
-        Assertions.assertEquals(1, filter.filter(policy, cxt, PIECE, "just\"not\"right@example.com", attributes).getSpans().size());
-        Assertions.assertEquals(1, filter.filter(policy, cxt, PIECE, "this\\ is\"really\"not\\allowed@example.com", attributes).getSpans().size());
+        Assertions.assertEquals(1, filter.filter(policy, cxt, PIECE, "Joe Smith <email@example.com>").getSpans().size());
+        Assertions.assertEquals(1, filter.filter(policy, cxt, PIECE, "email@example@example.com").getSpans().size());
+        Assertions.assertEquals(1, filter.filter(policy, cxt, PIECE, ".email@example.com").getSpans().size());
+        Assertions.assertEquals(1, filter.filter(policy, cxt, PIECE, "email..email@example.com").getSpans().size());
+        Assertions.assertEquals(1, filter.filter(policy, cxt, PIECE, "email@example.com (Joe Smith)").getSpans().size());
+        Assertions.assertEquals(1, filter.filter(policy, cxt, PIECE, "Abc..123@example.com").getSpans().size());
+        Assertions.assertEquals(1, filter.filter(policy, cxt, PIECE, "just\"not\"right@example.com").getSpans().size());
+        Assertions.assertEquals(1, filter.filter(policy, cxt, PIECE, "this\\ is\"really\"not\\allowed@example.com").getSpans().size());
 
     }
 

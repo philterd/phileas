@@ -84,7 +84,7 @@ public class PhEyeFilter extends NerFilter {
 
     @Override
     public FilterResult filter(final Policy policy, final String context, final int piece,
-                               final String input, final Map<String, String> attributes) throws Exception {
+                               final String input) throws Exception {
 
         final List<Span> spans = new LinkedList<>();
 
@@ -171,7 +171,7 @@ public class PhEyeFilter extends NerFilter {
 
                             final Span span = createSpan(policy, context, filterType, phEyeSpan.getText(),
                                     window, phEyeSpan.getLabel(), phEyeSpan.getStart(), phEyeSpan.getEnd(),
-                                    phEyeSpan.getScore(), attributes);
+                                    phEyeSpan.getScore());
 
                             // Span will be null if no span was created due to it being excluded.
                             if (span != null) {
@@ -199,18 +199,17 @@ public class PhEyeFilter extends NerFilter {
     }
 
     @Override
-    public int getOccurrences(final Policy policy, final String input, Map<String, String> attributes) throws Exception {
+    public int getOccurrences(final Policy policy, final String input) throws Exception {
 
-        return filter(policy, "none", 0, input, attributes).getSpans().size();
+        return filter(policy, "none", 0, input).getSpans().size();
 
     }
 
     private Span createSpan(final Policy policy, final String context,
                             final FilterType filterType, final String text, final  String[] window,
-                            final String classification, final int start, final int end, final double confidence,
-                            final Map<String, String> attributes) throws Exception {
+                            final String classification, final int start, final int end, final double confidence) throws Exception {
 
-        final Replacement replacement = getReplacement(policy, context, text, window, confidence, classification, attributes, null);
+        final Replacement replacement = getReplacement(policy, context, text, window, confidence, classification, null);
 
         if(StringUtils.equals(replacement.getReplacement(), text)) {
 

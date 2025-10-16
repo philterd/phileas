@@ -1,7 +1,7 @@
 /*
  *     Copyright 2025 Philterd, LLC @ https://www.philterd.ai
  *
- * Licensed under the Apache License, Version 2.0 (the "License", attributes);
+ * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
@@ -45,7 +45,7 @@ public class IbanCodeFilterTest extends AbstractFilterTest {
 
         final Filter filter = getFilter(true, false);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "bank code of GB33BUKB20201555555555 ok?", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "bank code of GB33BUKB20201555555555 ok?");
 
         showSpans(filterResult.getSpans());
 
@@ -61,7 +61,7 @@ public class IbanCodeFilterTest extends AbstractFilterTest {
 
         final Filter filter = getFilter(false, false);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "bank code of GB15MIDL40051512345678 ok?", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "bank code of GB15MIDL40051512345678 ok?");
 
         showSpans(filterResult.getSpans());
 
@@ -77,7 +77,7 @@ public class IbanCodeFilterTest extends AbstractFilterTest {
 
         final Filter filter = getFilter(true, true);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "bank code of GB15 MIDL 4005 1512 3456 78 ok?", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "bank code of GB15 MIDL 4005 1512 3456 78 ok?");
 
         showSpans(filterResult.getSpans());
 
@@ -93,7 +93,7 @@ public class IbanCodeFilterTest extends AbstractFilterTest {
 
         final Filter filter = getFilter(false, true);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "bank code of GB15 MIDL 4005 1512 3456 zz ok?", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "bank code of GB15 MIDL 4005 1512 3456 zz ok?");
 
         showSpans(filterResult.getSpans());
 
@@ -106,7 +106,7 @@ public class IbanCodeFilterTest extends AbstractFilterTest {
 
         final Filter filter = getFilter(true, false);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "bank code of AV01AZ ok?", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "bank code of AV01AZ ok?");
 
         showSpans(filterResult.getSpans());
 
@@ -119,7 +119,7 @@ public class IbanCodeFilterTest extends AbstractFilterTest {
 
         final Filter filter = getFilter(false, false);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "bank code of AV01AZ ok?", attributes);
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "bank code of AV01AZ ok?");
 
         showSpans(filterResult.getSpans());
 

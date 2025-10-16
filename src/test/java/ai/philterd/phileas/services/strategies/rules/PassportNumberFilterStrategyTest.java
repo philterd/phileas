@@ -35,16 +35,4 @@ public class PassportNumberFilterStrategyTest extends AbstractFilterStrategyTest
         return new PassportNumberAnonymizationService(new DefaultContextService());
     }
 
-    @Test
-    public void evaluateCondition1() throws IOException {
-
-        final AbstractFilterStrategy strategy = getFilterStrategy();
-
-        attributes.put("classification", "US");
-        final boolean conditionSatisfied = strategy.evaluateCondition(getPolicy(), "context", "986001231", WINDOW, "classification == \"US\"", 1.0, attributes);
-
-        Assertions.assertTrue(conditionSatisfied);
-
-    }
-
 }
