@@ -31,6 +31,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
+import java.util.Map;
 import java.util.Properties;
 
 import static ai.philterd.phileas.services.EndToEndTestsHelper.getPolicy;
@@ -54,7 +55,7 @@ public class EndToEndWithIncrementalRedactionsTest {
         final Policy policy = getPolicy("default");
 
         final PhileasFilterService service = new PhileasFilterService(phileasConfiguration, contextService, vectorService);
-        final FilterResponse response = service.filter(policy, "context", "George Washington whose SSN was 123-45-6789 was the first president of the United States and he lived at 90210.", MimeType.TEXT_PLAIN);
+        final FilterResponse response = service.filter(policy, "context", "George Washington whose SSN was 123-45-6789 was the first president of the United States and he lived at 90210.", MimeType.TEXT_PLAIN, Map.of());
 
         LOGGER.info(response.getFilteredText());
 
@@ -79,7 +80,7 @@ public class EndToEndWithIncrementalRedactionsTest {
         final Policy policy = getPolicy("default");
 
         final PhileasFilterService service = new PhileasFilterService(phileasConfiguration, contextService, vectorService);
-        final FilterResponse response = service.filter(policy, "context", "George Washington was president.", MimeType.TEXT_PLAIN);
+        final FilterResponse response = service.filter(policy, "context", "George Washington was president.", MimeType.TEXT_PLAIN, Map.of());
 
         LOGGER.info(response.getFilteredText());
 
@@ -99,7 +100,7 @@ public class EndToEndWithIncrementalRedactionsTest {
         final Policy policy = getPolicyWithSplits("default");
 
         final PhileasFilterService service = new PhileasFilterService(phileasConfiguration, contextService, vectorService);
-        final FilterResponse response = service.filter(policy, "context", "George Washington whose SSN was 123-45-6789 was\n the first president of the United States and he lived at 90210.\nThe second president was John Adams. Abraham Lincoln was later on. His SSN was 123-45-6789.", MimeType.TEXT_PLAIN);
+        final FilterResponse response = service.filter(policy, "context", "George Washington whose SSN was 123-45-6789 was\n the first president of the United States and he lived at 90210.\nThe second president was John Adams. Abraham Lincoln was later on. His SSN was 123-45-6789.", MimeType.TEXT_PLAIN, Map.of());
 
         LOGGER.info(response.getFilteredText());
 

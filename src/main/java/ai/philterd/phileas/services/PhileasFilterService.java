@@ -57,7 +57,6 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -127,9 +126,12 @@ public class PhileasFilterService implements FilterService {
 
     @Override
     public FilterResponse filter(final Policy policy, final String context, final String input, final MimeType mimeType) throws Exception {
+        return filter(policy, context, input, mimeType, Map.of());
+    }
 
-        // Initialize potential attributes that are associated with the input text.
-        final Map<String, String> attributes = new HashMap<>();
+    @Override
+    public FilterResponse filter(final Policy policy, final String context, final String input, final MimeType mimeType,
+                                 final Map<String, String> attributes) throws Exception {
 
         final List<Filter> filters = filterPolicyLoader.getFiltersForPolicy(policy, filterCache);
         final List<PostFilter> postFilters = getPostFiltersForPolicy(policy);
@@ -183,10 +185,14 @@ public class PhileasFilterService implements FilterService {
     public BinaryDocumentFilterResponse filter(final Policy policy, final String context,
                                                final byte[] input, final MimeType mimeType,
                                                final MimeType outputMimeType) throws Exception {
+        return filter(policy, context, input, mimeType, outputMimeType, Map.of());
+    }
 
-        // Initialize potential attributes that are associated with the input text.
-        // NOTE: Binary documents do not currently have any attributes.
-        final Map<String, String> attributes = new HashMap<>();
+    @Override
+    public BinaryDocumentFilterResponse filter(final Policy policy, final String context,
+                                               final byte[] input, final MimeType mimeType,
+                                               final MimeType outputMimeType,
+                                               final Map<String, String> attributes) throws Exception {
 
         final BinaryDocumentFilterResponse binaryDocumentFilterResponse;
 
