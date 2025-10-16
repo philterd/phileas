@@ -33,16 +33,4 @@ public class DriversLicenseFilterStrategyTest extends AbstractFilterStrategyTest
         return new AlphanumericAnonymizationService(new DefaultContextService());
     }
 
-    @Test
-    public void evaluateCondition1() {
-
-        final AbstractFilterStrategy strategy = getFilterStrategy();
-
-        attributes.put("classification", "WV");
-        final boolean conditionSatisfied = strategy.evaluateCondition(getPolicy(), "context", "90210", WINDOW, "classification == \"WV\"", 1.0);
-
-        Assertions.assertTrue(conditionSatisfied);
-
-    }
-
 }

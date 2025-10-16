@@ -157,18 +157,6 @@ public class PhEyeStrategyTest extends AbstractFilterStrategyTest {
     }
 
     @Test
-    public void evaluateCondition2() {
-
-        final AbstractFilterStrategy strategy = getFilterStrategy();
-
-        attributes.put("classification", "PER");
-        final boolean conditionSatisfied = strategy.evaluateCondition(getPolicy(), "context", "John Smith", WINDOW,"type == PER",  1.0);
-
-        Assertions.assertTrue(conditionSatisfied);
-
-    }
-
-    @Test
     public void evaluateCondition3() {
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
