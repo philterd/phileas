@@ -15,13 +15,11 @@
  */
 package ai.philterd.phileas.services.strategies.rules;
 
-import ai.philterd.phileas.services.context.DefaultContextService;
 import ai.philterd.phileas.services.anonymization.AbstractAnonymizationService;
 import ai.philterd.phileas.services.anonymization.AlphanumericAnonymizationService;
+import ai.philterd.phileas.services.context.DefaultContextService;
 import ai.philterd.phileas.services.strategies.AbstractFilterStrategy;
 import ai.philterd.phileas.services.strategies.AbstractFilterStrategyTest;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 
 public class DriversLicenseFilterStrategyTest extends AbstractFilterStrategyTest {
 

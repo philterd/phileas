@@ -17,10 +17,10 @@ package ai.philterd.phileas.filters;
 
 import ai.philterd.phileas.model.enums.FilterType;
 import ai.philterd.phileas.model.objects.FilterResult;
-import ai.philterd.phileas.services.context.DefaultContextService;
-import ai.philterd.phileas.services.strategies.rules.StateAbbreviationFilterStrategy;
 import ai.philterd.phileas.services.anonymization.StateAbbreviationAnonymizationService;
+import ai.philterd.phileas.services.context.DefaultContextService;
 import ai.philterd.phileas.services.filters.regex.StateAbbreviationFilter;
+import ai.philterd.phileas.services.strategies.rules.StateAbbreviationFilterStrategy;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Assertions;

@@ -15,12 +15,12 @@
  */
 package ai.philterd.phileas.services.strategies;
 
-import ai.philterd.phileas.services.anonymization.AbstractAnonymizationService;
-import ai.philterd.phileas.services.anonymization.AgeAnonymizationService;
 import ai.philterd.phileas.model.objects.Replacement;
 import ai.philterd.phileas.policy.Crypto;
 import ai.philterd.phileas.policy.FPE;
 import ai.philterd.phileas.policy.Policy;
+import ai.philterd.phileas.services.anonymization.AbstractAnonymizationService;
+import ai.philterd.phileas.services.anonymization.AgeAnonymizationService;
 import ai.philterd.phileas.services.anonymization.AnonymizationService;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.logging.log4j.LogManager;

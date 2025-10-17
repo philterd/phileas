@@ -17,9 +17,9 @@ package ai.philterd.phileas.filters;
 
 import ai.philterd.phileas.model.enums.FilterType;
 import ai.philterd.phileas.model.objects.FilterResult;
-import ai.philterd.phileas.services.context.DefaultContextService;
 import ai.philterd.phileas.policy.IgnoredPattern;
 import ai.philterd.phileas.services.anonymization.AgeAnonymizationService;
+import ai.philterd.phileas.services.context.DefaultContextService;
 import ai.philterd.phileas.services.filters.regex.AgeFilter;
 import ai.philterd.phileas.services.strategies.rules.AgeFilterStrategy;
 import org.junit.jupiter.api.Assertions;

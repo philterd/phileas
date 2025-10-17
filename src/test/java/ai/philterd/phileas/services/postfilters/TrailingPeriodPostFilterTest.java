@@ -15,9 +15,9 @@
  */
 package ai.philterd.phileas.services.postfilters;
 
+import ai.philterd.phileas.filters.AbstractFilterTest;
 import ai.philterd.phileas.model.enums.FilterType;
 import ai.philterd.phileas.model.objects.Span;
-import ai.philterd.phileas.filters.AbstractFilterTest;
 import ai.philterd.phileas.services.filters.postfilters.TrailingPeriodPostFilter;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

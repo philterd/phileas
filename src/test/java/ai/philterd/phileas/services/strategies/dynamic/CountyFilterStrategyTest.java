@@ -15,10 +15,10 @@
  */
 package ai.philterd.phileas.services.strategies.dynamic;
 
-import ai.philterd.phileas.services.context.DefaultContextService;
-import ai.philterd.phileas.services.strategies.AbstractFilterStrategy;
 import ai.philterd.phileas.services.anonymization.AbstractAnonymizationService;
 import ai.philterd.phileas.services.anonymization.CountyAnonymizationService;
+import ai.philterd.phileas.services.context.DefaultContextService;
+import ai.philterd.phileas.services.strategies.AbstractFilterStrategy;
 import ai.philterd.phileas.services.strategies.AbstractFilterStrategyTest;
 
 public class CountyFilterStrategyTest extends AbstractFilterStrategyTest {

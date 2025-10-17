@@ -17,10 +17,10 @@ package ai.philterd.phileas.filters;
 
 import ai.philterd.phileas.model.enums.FilterType;
 import ai.philterd.phileas.model.objects.FilterResult;
-import ai.philterd.phileas.services.anonymization.AnonymizationService;
-import ai.philterd.phileas.services.context.DefaultContextService;
 import ai.philterd.phileas.policy.filters.Identifier;
 import ai.philterd.phileas.services.anonymization.AlphanumericAnonymizationService;
+import ai.philterd.phileas.services.anonymization.AnonymizationService;
+import ai.philterd.phileas.services.context.DefaultContextService;
 import ai.philterd.phileas.services.filters.regex.IdentifierFilter;
 import ai.philterd.phileas.services.strategies.rules.IdentifierFilterStrategy;
 import org.junit.jupiter.api.Assertions;

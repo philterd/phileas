@@ -17,11 +17,11 @@ package ai.philterd.phileas.services;
 
 import ai.philterd.phileas.PhileasConfiguration;
 import ai.philterd.phileas.model.enums.MimeType;
-import ai.philterd.phileas.model.objects.IncrementalRedaction;
 import ai.philterd.phileas.model.objects.FilterResponse;
+import ai.philterd.phileas.model.objects.IncrementalRedaction;
+import ai.philterd.phileas.policy.Policy;
 import ai.philterd.phileas.services.context.ContextService;
 import ai.philterd.phileas.services.disambiguation.vector.VectorService;
-import ai.philterd.phileas.policy.Policy;
 import com.google.gson.Gson;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.collections4.CollectionUtils;
@@ -31,7 +31,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import java.util.Map;
 import java.util.Properties;
 
 import static ai.philterd.phileas.services.EndToEndTestsHelper.getPolicy;

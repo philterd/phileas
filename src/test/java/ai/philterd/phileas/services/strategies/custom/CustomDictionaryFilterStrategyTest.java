@@ -15,10 +15,10 @@
  */
 package ai.philterd.phileas.services.strategies.custom;
 
-import ai.philterd.phileas.services.context.DefaultContextService;
-import ai.philterd.phileas.services.strategies.AbstractFilterStrategy;
 import ai.philterd.phileas.services.anonymization.AbstractAnonymizationService;
 import ai.philterd.phileas.services.anonymization.AlphanumericAnonymizationService;
+import ai.philterd.phileas.services.context.DefaultContextService;
+import ai.philterd.phileas.services.strategies.AbstractFilterStrategy;
 import ai.philterd.phileas.services.strategies.AbstractFilterStrategyTest;
 
 public class CustomDictionaryFilterStrategyTest extends AbstractFilterStrategyTest {

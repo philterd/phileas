@@ -16,12 +16,12 @@
 package ai.philterd.phileas.services.strategies.dynamic;
 
 import ai.philterd.phileas.model.objects.Replacement;
-import ai.philterd.phileas.services.anonymization.AnonymizationService;
-import ai.philterd.phileas.services.context.DefaultContextService;
 import ai.philterd.phileas.policy.Crypto;
 import ai.philterd.phileas.policy.FPE;
 import ai.philterd.phileas.services.anonymization.AbstractAnonymizationService;
+import ai.philterd.phileas.services.anonymization.AnonymizationService;
 import ai.philterd.phileas.services.anonymization.FirstNameAnonymizationService;
+import ai.philterd.phileas.services.context.DefaultContextService;
 import ai.philterd.phileas.services.strategies.AbstractFilterStrategy;
 import ai.philterd.phileas.services.strategies.AbstractFilterStrategyTest;
 import org.junit.jupiter.api.Assertions;

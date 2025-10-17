@@ -15,13 +15,13 @@
  */
 package ai.philterd.phileas.filters;
 
+import ai.philterd.phileas.filters.rules.dictionary.FuzzyDictionaryFilter;
 import ai.philterd.phileas.model.enums.FilterType;
 import ai.philterd.phileas.model.enums.SensitivityLevel;
-import ai.philterd.phileas.filters.rules.dictionary.FuzzyDictionaryFilter;
 import ai.philterd.phileas.model.objects.FilterResult;
+import ai.philterd.phileas.services.anonymization.SurnameAnonymizationService;
 import ai.philterd.phileas.services.context.DefaultContextService;
 import ai.philterd.phileas.services.strategies.dynamic.SurnameFilterStrategy;
-import ai.philterd.phileas.services.anonymization.SurnameAnonymizationService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Assertions;

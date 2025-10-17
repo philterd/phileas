@@ -17,8 +17,8 @@ package ai.philterd.phileas.filters;
 
 import ai.philterd.phileas.model.enums.FilterType;
 import ai.philterd.phileas.model.objects.FilterResult;
-import ai.philterd.phileas.services.context.DefaultContextService;
 import ai.philterd.phileas.services.anonymization.AlphanumericAnonymizationService;
+import ai.philterd.phileas.services.context.DefaultContextService;
 import ai.philterd.phileas.services.filters.regex.VinFilter;
 import ai.philterd.phileas.services.strategies.rules.VinFilterStrategy;
 import org.junit.jupiter.api.Assertions;

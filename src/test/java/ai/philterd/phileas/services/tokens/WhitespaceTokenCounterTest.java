@@ -15,8 +15,6 @@
  */
 package ai.philterd.phileas.services.tokens;
 
-import ai.philterd.phileas.services.tokens.TokenCounter;
-import ai.philterd.phileas.services.tokens.WhitespaceTokenCounter;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

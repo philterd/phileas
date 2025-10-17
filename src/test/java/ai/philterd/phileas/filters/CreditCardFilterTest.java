@@ -17,8 +17,8 @@ package ai.philterd.phileas.filters;
 
 import ai.philterd.phileas.model.enums.FilterType;
 import ai.philterd.phileas.model.objects.FilterResult;
-import ai.philterd.phileas.services.context.DefaultContextService;
 import ai.philterd.phileas.services.anonymization.CreditCardAnonymizationService;
+import ai.philterd.phileas.services.context.DefaultContextService;
 import ai.philterd.phileas.services.filters.regex.CreditCardFilter;
 import ai.philterd.phileas.services.strategies.rules.CreditCardFilterStrategy;
 import org.junit.jupiter.api.Assertions;

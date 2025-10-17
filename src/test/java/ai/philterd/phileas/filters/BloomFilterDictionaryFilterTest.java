@@ -15,13 +15,13 @@
  */
 package ai.philterd.phileas.filters;
 
-import ai.philterd.phileas.model.enums.FilterType;
 import ai.philterd.phileas.filters.rules.dictionary.BloomFilterDictionaryFilter;
+import ai.philterd.phileas.model.enums.FilterType;
 import ai.philterd.phileas.model.objects.FilterResult;
 import ai.philterd.phileas.model.objects.Span;
+import ai.philterd.phileas.services.anonymization.AlphanumericAnonymizationService;
 import ai.philterd.phileas.services.context.DefaultContextService;
 import ai.philterd.phileas.services.strategies.custom.CustomDictionaryFilterStrategy;
-import ai.philterd.phileas.services.anonymization.AlphanumericAnonymizationService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Assertions;

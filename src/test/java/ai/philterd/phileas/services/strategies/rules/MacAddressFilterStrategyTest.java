@@ -15,9 +15,9 @@
  */
 package ai.philterd.phileas.services.strategies.rules;
 
-import ai.philterd.phileas.services.context.DefaultContextService;
 import ai.philterd.phileas.services.anonymization.AbstractAnonymizationService;
 import ai.philterd.phileas.services.anonymization.MacAddressAnonymizationService;
+import ai.philterd.phileas.services.context.DefaultContextService;
 import ai.philterd.phileas.services.strategies.AbstractFilterStrategy;
 import ai.philterd.phileas.services.strategies.AbstractFilterStrategyTest;
 

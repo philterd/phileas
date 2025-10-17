@@ -16,13 +16,13 @@
 package ai.philterd.phileas.services;
 
 import ai.philterd.phileas.PhileasConfiguration;
-import ai.philterd.phileas.model.enums.FilterType;
 import ai.philterd.phileas.filters.Filter;
-import ai.philterd.phileas.services.context.ContextService;
-import ai.philterd.phileas.services.context.DefaultContextService;
+import ai.philterd.phileas.model.enums.FilterType;
 import ai.philterd.phileas.policy.Identifiers;
 import ai.philterd.phileas.policy.Policy;
 import ai.philterd.phileas.policy.filters.ZipCode;
+import ai.philterd.phileas.services.context.ContextService;
+import ai.philterd.phileas.services.context.DefaultContextService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Assertions;

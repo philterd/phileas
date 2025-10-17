@@ -1,8 +1,5 @@
 package ai.philterd.phileas.model.metadata.zipcode;
 
-import ai.philterd.phileas.model.metadata.zipcode.ZipCodeMetadataRequest;
-import ai.philterd.phileas.model.metadata.zipcode.ZipCodeMetadataResponse;
-import ai.philterd.phileas.model.metadata.zipcode.ZipCodeMetadataService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

@@ -15,10 +15,10 @@
  */
 package ai.philterd.phileas.model.format.lapps;
 
-import com.google.gson.Gson;
 import ai.philterd.phileas.model.formats.lapps.Annotation;
 import ai.philterd.phileas.model.formats.lapps.Lapps;
 import ai.philterd.phileas.model.formats.lapps.View;
+import com.google.gson.Gson;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Assertions;

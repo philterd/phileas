@@ -16,9 +16,6 @@
 package ai.philterd.phileas.policy;
 
 import ai.philterd.phileas.model.enums.FilterType;
-import ai.philterd.phileas.policy.Identifiers;
-import ai.philterd.phileas.policy.Ignored;
-import ai.philterd.phileas.policy.Policy;
 import ai.philterd.phileas.policy.filters.Age;
 import ai.philterd.phileas.policy.filters.City;
 import ai.philterd.phileas.policy.filters.County;

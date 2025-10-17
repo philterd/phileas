@@ -16,7 +16,6 @@
 package ai.philterd.phileas.services.anonymization;
 
 import ai.philterd.phileas.services.context.DefaultContextService;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Test;

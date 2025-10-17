@@ -17,10 +17,10 @@ package ai.philterd.phileas.filters;
 
 import ai.philterd.phileas.model.enums.FilterType;
 import ai.philterd.phileas.model.objects.FilterResult;
-import ai.philterd.phileas.services.context.DefaultContextService;
-import ai.philterd.phileas.services.strategies.rules.IbanCodeFilterStrategy;
 import ai.philterd.phileas.services.anonymization.IbanCodeAnonymizationService;
+import ai.philterd.phileas.services.context.DefaultContextService;
 import ai.philterd.phileas.services.filters.regex.IbanCodeFilter;
+import ai.philterd.phileas.services.strategies.rules.IbanCodeFilterStrategy;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

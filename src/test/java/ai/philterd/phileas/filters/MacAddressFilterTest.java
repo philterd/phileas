@@ -17,10 +17,10 @@ package ai.philterd.phileas.filters;
 
 import ai.philterd.phileas.model.enums.FilterType;
 import ai.philterd.phileas.model.objects.FilterResult;
-import ai.philterd.phileas.services.context.DefaultContextService;
-import ai.philterd.phileas.services.strategies.rules.MacAddressFilterStrategy;
 import ai.philterd.phileas.services.anonymization.MacAddressAnonymizationService;
+import ai.philterd.phileas.services.context.DefaultContextService;
 import ai.philterd.phileas.services.filters.regex.MacAddressFilter;
+import ai.philterd.phileas.services.strategies.rules.MacAddressFilterStrategy;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

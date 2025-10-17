@@ -17,11 +17,11 @@ package ai.philterd.phileas.filters;
 
 import ai.philterd.phileas.model.enums.FilterType;
 import ai.philterd.phileas.model.objects.FilterResult;
-import ai.philterd.phileas.services.context.DefaultContextService;
 import ai.philterd.phileas.policy.Policy;
-import ai.philterd.phileas.services.strategies.rules.EmailAddressFilterStrategy;
 import ai.philterd.phileas.services.anonymization.AlphanumericAnonymizationService;
+import ai.philterd.phileas.services.context.DefaultContextService;
 import ai.philterd.phileas.services.filters.regex.EmailAddressFilter;
+import ai.philterd.phileas.services.strategies.rules.EmailAddressFilterStrategy;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

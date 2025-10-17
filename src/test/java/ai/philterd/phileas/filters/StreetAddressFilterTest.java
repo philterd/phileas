@@ -17,8 +17,8 @@ package ai.philterd.phileas.filters;
 
 import ai.philterd.phileas.model.enums.FilterType;
 import ai.philterd.phileas.model.objects.FilterResult;
-import ai.philterd.phileas.services.context.DefaultContextService;
 import ai.philterd.phileas.services.anonymization.StreetAddressAnonymizationService;
+import ai.philterd.phileas.services.context.DefaultContextService;
 import ai.philterd.phileas.services.filters.regex.StreetAddressFilter;
 import ai.philterd.phileas.services.strategies.rules.StreetAddressFilterStrategy;
 import org.junit.jupiter.api.Assertions;
