@@ -146,4 +146,22 @@ public class SsnFilterTest extends AbstractFilterTest {
 
     }
 
+    @Test
+    public void filterSsn8() throws Exception {
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(new SsnFilterStrategy()))
+                .withAnonymizationService(new AlphanumericAnonymizationService(new DefaultContextService()))
+                .withWindowSize(windowSize)
+                .build();
+
+        final SsnFilter filter = new SsnFilter(filterConfiguration);
+
+        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "489-36-8351");
+        Assertions.assertEquals(1, filterResult.getSpans().size());
+        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 0, 11, FilterType.SSN));
+
+    }
+
+
 }
