@@ -57,10 +57,6 @@ import java.util.List;
 
 public class Identifiers {
 
-    @SerializedName("all")
-    @Expose
-    private boolean all;
-
     @SerializedName("person")
     @Expose
     private PhEye phEye;
@@ -688,14 +684,6 @@ public class Identifiers {
 
     public void setPassportNumber(PassportNumber passportNumber) {
         this.passportNumber = passportNumber;
-    }
-
-    public boolean isAll() {
-        return all;
-    }
-
-    public void setAll(boolean all) {
-        this.all = all;
     }
 
     public TrackingNumber getTrackingNumber() {
