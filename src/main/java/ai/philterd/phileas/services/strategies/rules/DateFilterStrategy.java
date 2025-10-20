@@ -20,9 +20,9 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import ai.philterd.phileas.model.conditions.ParsedCondition;
 import ai.philterd.phileas.model.conditions.ParserListener;
-import ai.philterd.phileas.model.enums.FilterType;
-import ai.philterd.phileas.model.objects.FilterPattern;
-import ai.philterd.phileas.model.objects.Replacement;
+import ai.philterd.phileas.model.filtering.FilterType;
+import ai.philterd.phileas.model.filtering.FilterPattern;
+import ai.philterd.phileas.model.filtering.Replacement;
 import ai.philterd.phileas.policy.Crypto;
 import ai.philterd.phileas.policy.FPE;
 import ai.philterd.phileas.services.strategies.AbstractFilterStrategy;
@@ -45,7 +45,6 @@ import java.time.format.ResolverStyle;
 import java.time.temporal.ChronoField;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 public class DateFilterStrategy extends AbstractFilterStrategy {
 

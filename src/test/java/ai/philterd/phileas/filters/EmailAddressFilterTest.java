@@ -15,8 +15,8 @@
  */
 package ai.philterd.phileas.filters;
 
-import ai.philterd.phileas.model.enums.FilterType;
-import ai.philterd.phileas.model.objects.FilterResult;
+import ai.philterd.phileas.model.filtering.FilterType;
+import ai.philterd.phileas.model.filtering.Filtered;
 import ai.philterd.phileas.policy.Policy;
 import ai.philterd.phileas.services.anonymization.AlphanumericAnonymizationService;
 import ai.philterd.phileas.services.context.DefaultContextService;
@@ -68,10 +68,10 @@ public class EmailAddressFilterTest extends AbstractFilterTest {
 
         final EmailAddressFilter filter = new EmailAddressFilter(filterConfiguration, true, true);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "my email is none@none.com.");
-        Assertions.assertEquals(1, filterResult.getSpans().size());
-        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 12, 25, FilterType.EMAIL_ADDRESS));
-        Assertions.assertEquals("none@none.com", filterResult.getSpans().get(0).getText());
+        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "my email is none@none.com.");
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 12, 25, FilterType.EMAIL_ADDRESS));
+        Assertions.assertEquals("none@none.com", filtered.getSpans().get(0).getText());
 
     }
 
@@ -86,14 +86,14 @@ public class EmailAddressFilterTest extends AbstractFilterTest {
 
         final EmailAddressFilter filter = new EmailAddressFilter(filterConfiguration, true, true);
 
-        final FilterResult filterResult1 = filter.filter(getPolicy(), "context", PIECE, "my email is none@none.codfm.");
-        Assertions.assertEquals(0, filterResult1.getSpans().size());
+        final Filtered filtered1 = filter.filter(getPolicy(), "context", PIECE, "my email is none@none.codfm.");
+        Assertions.assertEquals(0, filtered1.getSpans().size());
 
-        final FilterResult filterResult2 = filter.filter(getPolicy(), "context", PIECE, "my email is none@none.com.dmf.");
-        Assertions.assertEquals(0, filterResult2.getSpans().size());
+        final Filtered filtered2 = filter.filter(getPolicy(), "context", PIECE, "my email is none@none.com.dmf.");
+        Assertions.assertEquals(0, filtered2.getSpans().size());
 
-        final FilterResult filterResult3 = filter.filter(getPolicy(), "context", PIECE, "my email is none@none.cob");
-        Assertions.assertEquals(0, filterResult3.getSpans().size());
+        final Filtered filtered3 = filter.filter(getPolicy(), "context", PIECE, "my email is none@none.cob");
+        Assertions.assertEquals(0, filtered3.getSpans().size());
 
     }
 
@@ -108,9 +108,9 @@ public class EmailAddressFilterTest extends AbstractFilterTest {
 
         final EmailAddressFilter filter = new EmailAddressFilter(filterConfiguration, false, true);
 
-        final FilterResult filterResult4 = filter.filter(getPolicy(), "context", PIECE, "my email is none@lb.co_m");
-        showSpans(filterResult4.getSpans());
-        Assertions.assertEquals(0, filterResult4.getSpans().size());
+        final Filtered filtered4 = filter.filter(getPolicy(), "context", PIECE, "my email is none@lb.co_m");
+        showSpans(filtered4.getSpans());
+        Assertions.assertEquals(0, filtered4.getSpans().size());
 
     }
 
@@ -122,10 +122,10 @@ public class EmailAddressFilterTest extends AbstractFilterTest {
 
         final Map<String, String> context = Collections.emptyMap();
 
-        final FilterResult filterResult = filter.filter(policy, cxt, PIECE, "my email is none@none.com.");
-        Assertions.assertEquals(1, filterResult.getSpans().size());
-        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 12, 25, FilterType.EMAIL_ADDRESS));
-        Assertions.assertEquals("none@none.com", filterResult.getSpans().get(0).getText());
+        final Filtered filtered = filter.filter(policy, cxt, PIECE, "my email is none@none.com.");
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 12, 25, FilterType.EMAIL_ADDRESS));
+        Assertions.assertEquals("none@none.com", filtered.getSpans().get(0).getText());
 
         // 👇 cases adapted from https://www.tumblr.com/codefool/15288874550/list-of-valid-and-invalid-email-addresses
 

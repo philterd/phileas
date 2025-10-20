@@ -15,8 +15,8 @@
  */
 package ai.philterd.phileas.filters;
 
-import ai.philterd.phileas.model.enums.FilterType;
-import ai.philterd.phileas.model.objects.FilterResult;
+import ai.philterd.phileas.model.filtering.FilterType;
+import ai.philterd.phileas.model.filtering.Filtered;
 import ai.philterd.phileas.services.anonymization.CurrencyAnonymizationService;
 import ai.philterd.phileas.services.context.DefaultContextService;
 import ai.philterd.phileas.services.filters.regex.CurrencyFilter;
@@ -40,13 +40,13 @@ public class CurrencyFilterTest extends AbstractFilterTest {
 
         final CurrencyFilter filter = new CurrencyFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "the drug cost is $35.53 .");
+        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "the drug cost is $35.53 .");
 
-        showSpans(filterResult.getSpans());
+        showSpans(filtered.getSpans());
 
-        Assertions.assertEquals(1, filterResult.getSpans().size());
-        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 17, 23, FilterType.CURRENCY));
-        Assertions.assertNotEquals(filterResult.getSpans().get(0).getText(), filterResult.getSpans().get(0).getReplacement());
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 17, 23, FilterType.CURRENCY));
+        Assertions.assertNotEquals(filtered.getSpans().get(0).getText(), filtered.getSpans().get(0).getReplacement());
 
     }
 
@@ -61,13 +61,13 @@ public class CurrencyFilterTest extends AbstractFilterTest {
 
         final CurrencyFilter filter = new CurrencyFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "the drug cost is $35.53.");
+        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "the drug cost is $35.53.");
 
-        showSpans(filterResult.getSpans());
+        showSpans(filtered.getSpans());
 
-        Assertions.assertEquals(1, filterResult.getSpans().size());
-        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 17, 23, FilterType.CURRENCY));
-        Assertions.assertNotEquals(filterResult.getSpans().get(0).getText(), filterResult.getSpans().get(0).getReplacement());
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 17, 23, FilterType.CURRENCY));
+        Assertions.assertNotEquals(filtered.getSpans().get(0).getText(), filtered.getSpans().get(0).getReplacement());
 
     }
 
@@ -82,13 +82,13 @@ public class CurrencyFilterTest extends AbstractFilterTest {
 
         final CurrencyFilter filter = new CurrencyFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "the drug cost is $35.00.");
+        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "the drug cost is $35.00.");
 
-        showSpans(filterResult.getSpans());
+        showSpans(filtered.getSpans());
 
-        Assertions.assertEquals(1, filterResult.getSpans().size());
-        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 17, 23, FilterType.CURRENCY));
-        Assertions.assertNotEquals(filterResult.getSpans().get(0).getText(), filterResult.getSpans().get(0).getReplacement());
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 17, 23, FilterType.CURRENCY));
+        Assertions.assertNotEquals(filtered.getSpans().get(0).getText(), filtered.getSpans().get(0).getReplacement());
 
     }
 
@@ -103,13 +103,13 @@ public class CurrencyFilterTest extends AbstractFilterTest {
 
         final CurrencyFilter filter = new CurrencyFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "the drug cost is $3.00.");
+        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "the drug cost is $3.00.");
 
-        showSpans(filterResult.getSpans());
+        showSpans(filtered.getSpans());
 
-        Assertions.assertEquals(1, filterResult.getSpans().size());
-        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 17, 22, FilterType.CURRENCY));
-        Assertions.assertNotEquals(filterResult.getSpans().get(0).getText(), filterResult.getSpans().get(0).getReplacement());
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 17, 22, FilterType.CURRENCY));
+        Assertions.assertNotEquals(filtered.getSpans().get(0).getText(), filtered.getSpans().get(0).getReplacement());
 
     }
 
@@ -124,13 +124,13 @@ public class CurrencyFilterTest extends AbstractFilterTest {
 
         final CurrencyFilter filter = new CurrencyFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "the drug cost is $.50.");
+        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "the drug cost is $.50.");
 
-        showSpans(filterResult.getSpans());
+        showSpans(filtered.getSpans());
 
-        Assertions.assertEquals(1, filterResult.getSpans().size());
-        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 17, 21, FilterType.CURRENCY));
-        Assertions.assertNotEquals(filterResult.getSpans().get(0).getText(), filterResult.getSpans().get(0).getReplacement());
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 17, 21, FilterType.CURRENCY));
+        Assertions.assertNotEquals(filtered.getSpans().get(0).getText(), filtered.getSpans().get(0).getReplacement());
 
     }
 
@@ -148,13 +148,13 @@ public class CurrencyFilterTest extends AbstractFilterTest {
 
         final CurrencyFilter filter = new CurrencyFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "the drug cost is $50.");
+        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "the drug cost is $50.");
 
-        showSpans(filterResult.getSpans());
+        showSpans(filtered.getSpans());
 
-        Assertions.assertEquals(1, filterResult.getSpans().size());
-        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 17, 20, FilterType.CURRENCY));
-        Assertions.assertNotEquals(filterResult.getSpans().get(0).getText(), filterResult.getSpans().get(0).getReplacement());
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 17, 20, FilterType.CURRENCY));
+        Assertions.assertNotEquals(filtered.getSpans().get(0).getText(), filtered.getSpans().get(0).getReplacement());
 
     }
 
@@ -172,13 +172,13 @@ public class CurrencyFilterTest extends AbstractFilterTest {
 
         final CurrencyFilter filter = new CurrencyFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "the drug cost is $.50.");
+        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "the drug cost is $.50.");
 
-        showSpans(filterResult.getSpans());
+        showSpans(filtered.getSpans());
 
-        Assertions.assertEquals(1, filterResult.getSpans().size());
-        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 17, 21, FilterType.CURRENCY));
-        Assertions.assertNotEquals(filterResult.getSpans().get(0).getText(), filterResult.getSpans().get(0).getReplacement());
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 17, 21, FilterType.CURRENCY));
+        Assertions.assertNotEquals(filtered.getSpans().get(0).getText(), filtered.getSpans().get(0).getReplacement());
 
     }
 

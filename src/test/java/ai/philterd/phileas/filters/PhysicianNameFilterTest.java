@@ -15,8 +15,8 @@
  */
 package ai.philterd.phileas.filters;
 
-import ai.philterd.phileas.model.enums.FilterType;
-import ai.philterd.phileas.model.objects.FilterResult;
+import ai.philterd.phileas.model.filtering.FilterType;
+import ai.philterd.phileas.model.filtering.Filtered;
 import ai.philterd.phileas.services.anonymization.PersonsAnonymizationService;
 import ai.philterd.phileas.services.context.DefaultContextService;
 import ai.philterd.phileas.services.filters.regex.PhysicianNameFilter;
@@ -43,12 +43,12 @@ public class PhysicianNameFilterTest extends AbstractFilterTest {
 
         final PhysicianNameFilter filter = new PhysicianNameFilter(filterConfiguration);
 
-          final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "Doctor Smith was the attending physician.");
-        showSpans(filterResult.getSpans());
+          final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "Doctor Smith was the attending physician.");
+        showSpans(filtered.getSpans());
 
-        Assertions.assertEquals(1, filterResult.getSpans().size());
-        Assertions.assertEquals(FilterType.PHYSICIAN_NAME, filterResult.getSpans().get(0).getFilterType());
-        Assertions.assertTrue(filterResult.getSpans().get(0).getText().contains("Doctor Smith"));
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertEquals(FilterType.PHYSICIAN_NAME, filtered.getSpans().get(0).getFilterType());
+        Assertions.assertTrue(filtered.getSpans().get(0).getText().contains("Doctor Smith"));
 
     }
 
@@ -63,12 +63,12 @@ public class PhysicianNameFilterTest extends AbstractFilterTest {
 
         final PhysicianNameFilter filter = new PhysicianNameFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "Doctor James Smith");
-        showSpans(filterResult.getSpans());
+        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "Doctor James Smith");
+        showSpans(filtered.getSpans());
 
-        Assertions.assertEquals(1, filterResult.getSpans().size());
-        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 0, 18, FilterType.PHYSICIAN_NAME));
-        Assertions.assertEquals("Doctor James Smith", filterResult.getSpans().get(0).getText());
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 0, 18, FilterType.PHYSICIAN_NAME));
+        Assertions.assertEquals("Doctor James Smith", filtered.getSpans().get(0).getText());
 
     }
 
@@ -83,12 +83,12 @@ public class PhysicianNameFilterTest extends AbstractFilterTest {
 
         final PhysicianNameFilter filter = new PhysicianNameFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "John Smith, MD");
-        showSpans(filterResult.getSpans());
+        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "John Smith, MD");
+        showSpans(filtered.getSpans());
 
-        Assertions.assertEquals(1, filterResult.getSpans().size());
-        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 0, 14, FilterType.PHYSICIAN_NAME));
-        Assertions.assertEquals("John Smith, MD", filterResult.getSpans().get(0).getText());
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 0, 14, FilterType.PHYSICIAN_NAME));
+        Assertions.assertEquals("John Smith, MD", filtered.getSpans().get(0).getText());
 
     }
 
@@ -103,12 +103,12 @@ public class PhysicianNameFilterTest extends AbstractFilterTest {
 
         final PhysicianNameFilter filter = new PhysicianNameFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "attending physician was John Smith, MD");
-        showSpans(filterResult.getSpans());
+        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "attending physician was John Smith, MD");
+        showSpans(filtered.getSpans());
 
-        Assertions.assertEquals(1, filterResult.getSpans().size());
-        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 10, 38, FilterType.PHYSICIAN_NAME));
-        Assertions.assertEquals("physician was John Smith, MD", filterResult.getSpans().get(0).getText());
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 10, 38, FilterType.PHYSICIAN_NAME));
+        Assertions.assertEquals("physician was John Smith, MD", filtered.getSpans().get(0).getText());
 
     }
 
@@ -123,12 +123,12 @@ public class PhysicianNameFilterTest extends AbstractFilterTest {
 
         final PhysicianNameFilter filter = new PhysicianNameFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "was John J. van Smith, MD");
-        showSpans(filterResult.getSpans());
+        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "was John J. van Smith, MD");
+        showSpans(filtered.getSpans());
 
-        Assertions.assertEquals(1, filterResult.getSpans().size());
-        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 4, 25, FilterType.PHYSICIAN_NAME));
-        Assertions.assertEquals("John J. van Smith, MD", filterResult.getSpans().get(0).getText());
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 4, 25, FilterType.PHYSICIAN_NAME));
+        Assertions.assertEquals("John J. van Smith, MD", filtered.getSpans().get(0).getText());
 
     }
 
@@ -143,12 +143,12 @@ public class PhysicianNameFilterTest extends AbstractFilterTest {
 
         final PhysicianNameFilter filter = new PhysicianNameFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "Smith,James D,MD -General Surgery");
-        showSpans(filterResult.getSpans());
+        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "Smith,James D,MD -General Surgery");
+        showSpans(filtered.getSpans());
 
-        Assertions.assertEquals(1, filterResult.getSpans().size());
-        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 0, 16, FilterType.PHYSICIAN_NAME));
-        Assertions.assertEquals("Smith,James D,MD", filterResult.getSpans().get(0).getText());
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 0, 16, FilterType.PHYSICIAN_NAME));
+        Assertions.assertEquals("Smith,James D,MD", filtered.getSpans().get(0).getText());
 
     }
 
@@ -163,12 +163,12 @@ public class PhysicianNameFilterTest extends AbstractFilterTest {
 
         final PhysicianNameFilter filter = new PhysicianNameFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "Smith,James )D,MD -General Surgery");
-        showSpans(filterResult.getSpans());
+        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "Smith,James )D,MD -General Surgery");
+        showSpans(filtered.getSpans());
 
-        Assertions.assertEquals(1, filterResult.getSpans().size());
-        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 0, 17, FilterType.PHYSICIAN_NAME));
-        Assertions.assertEquals("Smith,James )D,MD", filterResult.getSpans().get(0).getText());
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 0, 17, FilterType.PHYSICIAN_NAME));
+        Assertions.assertEquals("Smith,James )D,MD", filtered.getSpans().get(0).getText());
 
     }
 
@@ -183,10 +183,10 @@ public class PhysicianNameFilterTest extends AbstractFilterTest {
 
         final PhysicianNameFilter filter = new PhysicianNameFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "1.0 cm in outside diameter pink tan everted");
-        showSpans(filterResult.getSpans());
+        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "1.0 cm in outside diameter pink tan everted");
+        showSpans(filtered.getSpans());
 
-        Assertions.assertEquals(0, filterResult.getSpans().size());
+        Assertions.assertEquals(0, filtered.getSpans().size());
 
     }
 
@@ -201,10 +201,10 @@ public class PhysicianNameFilterTest extends AbstractFilterTest {
 
         final PhysicianNameFilter filter = new PhysicianNameFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "1.0 cm");
-        showSpans(filterResult.getSpans());
+        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "1.0 cm");
+        showSpans(filtered.getSpans());
 
-        Assertions.assertEquals(0, filterResult.getSpans().size());
+        Assertions.assertEquals(0, filtered.getSpans().size());
 
     }
 
@@ -219,12 +219,12 @@ public class PhysicianNameFilterTest extends AbstractFilterTest {
 
         final PhysicianNameFilter filter = new PhysicianNameFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "Ahu,Amanda D,MD -General Surgery");
-        showSpans(filterResult.getSpans());
+        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "Ahu,Amanda D,MD -General Surgery");
+        showSpans(filtered.getSpans());
 
-        Assertions.assertEquals(1, filterResult.getSpans().size());
-        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 0, 15, FilterType.PHYSICIAN_NAME));
-        Assertions.assertEquals("Ahu,Amanda D,MD", filterResult.getSpans().get(0).getText());
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 0, 15, FilterType.PHYSICIAN_NAME));
+        Assertions.assertEquals("Ahu,Amanda D,MD", filtered.getSpans().get(0).getText());
 
     }
 
@@ -239,12 +239,12 @@ public class PhysicianNameFilterTest extends AbstractFilterTest {
 
         final PhysicianNameFilter filter = new PhysicianNameFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "Johnns,Melinda S,MD - 1/2/2018 11:54 CST 1/2/2018 12:46 CST");
-        showSpans(filterResult.getSpans());
+        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "Johnns,Melinda S,MD - 1/2/2018 11:54 CST 1/2/2018 12:46 CST");
+        showSpans(filtered.getSpans());
 
-        Assertions.assertEquals(1, filterResult.getSpans().size());
-        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 0, 19, FilterType.PHYSICIAN_NAME));
-        Assertions.assertEquals("Johnns,Melinda S,MD", filterResult.getSpans().get(0).getText());
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 0, 19, FilterType.PHYSICIAN_NAME));
+        Assertions.assertEquals("Johnns,Melinda S,MD", filtered.getSpans().get(0).getText());
 
     }
 

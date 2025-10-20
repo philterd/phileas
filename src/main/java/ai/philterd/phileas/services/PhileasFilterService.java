@@ -17,14 +17,14 @@ package ai.philterd.phileas.services;
 
 import ai.philterd.phileas.PhileasConfiguration;
 import ai.philterd.phileas.filters.Filter;
-import ai.philterd.phileas.model.enums.FilterType;
-import ai.philterd.phileas.model.enums.MimeType;
-import ai.philterd.phileas.model.objects.ApplyResponse;
-import ai.philterd.phileas.model.objects.BinaryDocumentFilterResponse;
-import ai.philterd.phileas.model.objects.Explanation;
-import ai.philterd.phileas.model.objects.FilterResponse;
-import ai.philterd.phileas.model.objects.IncrementalRedaction;
-import ai.philterd.phileas.model.objects.Span;
+import ai.philterd.phileas.model.filtering.FilterType;
+import ai.philterd.phileas.model.filtering.MimeType;
+import ai.philterd.phileas.model.filtering.ApplyResult;
+import ai.philterd.phileas.model.filtering.BinaryDocumentFilterResult;
+import ai.philterd.phileas.model.filtering.Explanation;
+import ai.philterd.phileas.model.filtering.FilterResult;
+import ai.philterd.phileas.model.filtering.IncrementalRedaction;
+import ai.philterd.phileas.model.filtering.Span;
 import ai.philterd.phileas.policy.Ignored;
 import ai.philterd.phileas.policy.Policy;
 import ai.philterd.phileas.policy.config.Pdf;
@@ -101,7 +101,7 @@ public class PhileasFilterService implements FilterService {
     }
 
     @Override
-    public ApplyResponse apply(final List<Span> spans, final String input) {
+    public ApplyResult apply(final List<Span> spans, final String input) {
 
         final StringBuilder sb = new StringBuilder(input);
         final List<IncrementalRedaction> incrementalRedactions = new ArrayList<>();
@@ -120,17 +120,17 @@ public class PhileasFilterService implements FilterService {
 
         }
 
-        return new ApplyResponse(sb.toString(), incrementalRedactions, tokens);
+        return new ApplyResult(sb.toString(), incrementalRedactions, tokens);
 
     }
 
     @Override
-    public FilterResponse filter(final Policy policy, final String context, final String input, final MimeType mimeType) throws Exception {
+    public FilterResult filter(final Policy policy, final String context, final String input, final MimeType mimeType) throws Exception {
 
         final List<Filter> filters = filterPolicyLoader.getFiltersForPolicy(policy, filterCache);
         final List<PostFilter> postFilters = getPostFiltersForPolicy(policy);
 
-        final FilterResponse filterResponse;
+        final FilterResult filterResult;
 
         if(mimeType == MimeType.TEXT_PLAIN) {
 
@@ -145,24 +145,24 @@ public class PhileasFilterService implements FilterService {
                     );
 
                     // Holds all filter responses that will ultimately be combined into a single response.
-                    final List<FilterResponse> filterResponses = new LinkedList<>();
+                    final List<FilterResult> filterRespons = new LinkedList<>();
 
                     // Split the string.
                     final List<String> splits = splitService.split(input);
 
                     // Process each split.
                     for (int i = 0; i < splits.size(); i++) {
-                        final FilterResponse fr = unstructuredDocumentProcessor.process(policy, filters, postFilters, context, i, splits.get(i));
-                        filterResponses.add(fr);
+                        final FilterResult fr = unstructuredDocumentProcessor.process(policy, filters, postFilters, context, i, splits.get(i));
+                        filterRespons.add(fr);
                     }
 
                     // Combine the results into a single filterResponse object.
-                    filterResponse = FilterResponse.combine(filterResponses, context, splitService.getSeparator());
+                    filterResult = FilterResult.combine(filterRespons, context, splitService.getSeparator());
 
             } else {
 
                 // Do not split. Process the entire string at once.
-                filterResponse = unstructuredDocumentProcessor.process(policy, filters, postFilters, context, 0, input);
+                filterResult = unstructuredDocumentProcessor.process(policy, filters, postFilters, context, 0, input);
 
             }
 
@@ -171,16 +171,16 @@ public class PhileasFilterService implements FilterService {
             throw new Exception("Unknown mime type.");
         }
 
-        return filterResponse;
+        return filterResult;
 
     }
 
     @Override
-    public BinaryDocumentFilterResponse filter(final Policy policy, final String context,
-                                               final byte[] input, final MimeType mimeType,
-                                               final MimeType outputMimeType) throws Exception {
+    public BinaryDocumentFilterResult filter(final Policy policy, final String context,
+                                             final byte[] input, final MimeType mimeType,
+                                             final MimeType outputMimeType) throws Exception {
 
-        final BinaryDocumentFilterResponse binaryDocumentFilterResponse;
+        final BinaryDocumentFilterResult binaryDocumentFilterResult;
 
         final List<IncrementalRedaction> incrementalRedactions = new ArrayList<>();
 
@@ -215,15 +215,15 @@ public class PhileasFilterService implements FilterService {
                 tokens += tokenCounter.countTokens(line);
 
                 // Process the text.
-                final FilterResponse filterResponse = unstructuredDocumentProcessor.process(policy, filters, postFilters, context, piece, line);
+                final FilterResult filterResult = unstructuredDocumentProcessor.process(policy, filters, postFilters, context, piece, line);
 
                 // Add all the found spans to the list of spans.
-                spans.addAll(filterResponse.getExplanation().appliedSpans());
+                spans.addAll(filterResult.getExplanation().appliedSpans());
 
                 // Add the incremental redactions to the list.
-                incrementalRedactions.addAll(filterResponse.getIncrementalRedactions());
+                incrementalRedactions.addAll(filterResult.getIncrementalRedactions());
 
-                for (final Span span : filterResponse.getExplanation().appliedSpans()) {
+                for (final Span span : filterResult.getExplanation().appliedSpans()) {
                     span.setCharacterStart(span.getCharacterStart() + offset);
                     span.setCharacterEnd(span.getCharacterEnd() + offset);
                     nonRelativeSpans.add(span);
@@ -254,7 +254,7 @@ public class PhileasFilterService implements FilterService {
             // TODO: The identified vs the applied will actually be different
             // but we are setting the same here. Fix this at some point.
             final Explanation explanation = new Explanation(spansList, spansList);
-            binaryDocumentFilterResponse = new BinaryDocumentFilterResponse(redacted, context, explanation, tokens, incrementalRedactions);
+            binaryDocumentFilterResult = new BinaryDocumentFilterResult(redacted, context, explanation, tokens, incrementalRedactions);
 
         /*} else if(mimeType == MimeType.IMAGE_JPEG) {
             // PHL-223: Face recognition
@@ -273,7 +273,7 @@ public class PhileasFilterService implements FilterService {
             throw new Exception("Unknown mime type.");
         }
 
-        return binaryDocumentFilterResponse;
+        return binaryDocumentFilterResult;
 
     }
 

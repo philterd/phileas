@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ai.philterd.phileas.model.objects;
+package ai.philterd.phileas.model.filtering;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -25,15 +25,15 @@ import java.util.List;
 /**
  * Response to a filter operation.
  */
-public class ApplyResponse {
+public class ApplyResult {
 
-    private static final Logger LOGGER = LogManager.getLogger(ApplyResponse.class);
+    private static final Logger LOGGER = LogManager.getLogger(ApplyResult.class);
 
     private final String filteredText;
     private final long tokens;
     private final List<IncrementalRedaction> incrementalRedactions;
 
-    public ApplyResponse(final String filteredText, final List<IncrementalRedaction> incrementalRedactions, final long tokens) {
+    public ApplyResult(final String filteredText, final List<IncrementalRedaction> incrementalRedactions, final long tokens) {
 
         this.filteredText = filteredText;
         this.incrementalRedactions = incrementalRedactions;

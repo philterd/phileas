@@ -15,14 +15,14 @@
  */
 package ai.philterd.phileas.services.filters.regex;
 
-import ai.philterd.phileas.model.enums.FilterType;
+import ai.philterd.phileas.model.filtering.FilterType;
 import ai.philterd.phileas.filters.FilterConfiguration;
 import ai.philterd.phileas.filters.rules.regex.RegexFilter;
 import ai.philterd.phileas.services.Analyzer;
-import ai.philterd.phileas.model.objects.ConfidenceModifier;
-import ai.philterd.phileas.model.objects.FilterPattern;
-import ai.philterd.phileas.model.objects.FilterResult;
-import ai.philterd.phileas.model.objects.Span;
+import ai.philterd.phileas.model.filtering.ConfidenceModifier;
+import ai.philterd.phileas.model.filtering.FilterPattern;
+import ai.philterd.phileas.model.filtering.Filtered;
+import ai.philterd.phileas.model.filtering.Span;
 import ai.philterd.phileas.policy.Policy;
 import org.apache.commons.validator.routines.checkdigit.LuhnCheckDigit;
 import org.apache.logging.log4j.LogManager;
@@ -32,7 +32,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.regex.Pattern;
 
 public class CreditCardFilter extends RegexFilter {
@@ -109,7 +108,7 @@ public class CreditCardFilter extends RegexFilter {
     }
 
     @Override
-    public FilterResult filter(Policy policy, String context, int piece, String input) throws Exception {
+    public Filtered filter(Policy policy, String context, int piece, String input) throws Exception {
 
         final List<Span> spans = findSpans(policy, analyzer, input, context);
 
@@ -137,7 +136,7 @@ public class CreditCardFilter extends RegexFilter {
 
         }
 
-        return new FilterResult(context, spans);
+        return new Filtered(context, spans);
 
     }
 

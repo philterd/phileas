@@ -16,9 +16,9 @@
 package ai.philterd.phileas.filters;
 
 import ai.philterd.phileas.filters.rules.dictionary.FuzzyDictionaryFilter;
-import ai.philterd.phileas.model.enums.FilterType;
-import ai.philterd.phileas.model.enums.SensitivityLevel;
-import ai.philterd.phileas.model.objects.FilterResult;
+import ai.philterd.phileas.model.filtering.FilterType;
+import ai.philterd.phileas.model.filtering.SensitivityLevel;
+import ai.philterd.phileas.model.filtering.Filtered;
 import ai.philterd.phileas.services.anonymization.StateAnonymizationService;
 import ai.philterd.phileas.services.context.DefaultContextService;
 import ai.philterd.phileas.services.strategies.dynamic.StateFilterStrategy;
@@ -44,9 +44,9 @@ public class StateFilterTest extends AbstractFilterTest {
 
         final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.LOCATION_STATE, filterConfiguration, SensitivityLevel.LOW, true);
 
-        FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE,"Lived in Washington");
-        Assertions.assertEquals(1, filterResult.getSpans().size());
-        Assertions.assertEquals("Washington", filterResult.getSpans().get(0).getText());
+        Filtered filtered = filter.filter(getPolicy(), "context", PIECE,"Lived in Washington");
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertEquals("Washington", filtered.getSpans().get(0).getText());
 
     }
 
@@ -61,8 +61,8 @@ public class StateFilterTest extends AbstractFilterTest {
 
         final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.LOCATION_STATE, filterConfiguration, SensitivityLevel.MEDIUM, true);
 
-        FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "Lived in Wshington");
-        Assertions.assertEquals(1, filterResult.getSpans().size());
+        Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "Lived in Wshington");
+        Assertions.assertEquals(1, filtered.getSpans().size());
 
     }
 
@@ -77,8 +77,8 @@ public class StateFilterTest extends AbstractFilterTest {
 
         final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.LOCATION_STATE, filterConfiguration, SensitivityLevel.HIGH, true);
 
-        FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "Lived in Wasinton");
-        Assertions.assertEquals(0, filterResult.getSpans().size());
+        Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "Lived in Wasinton");
+        Assertions.assertEquals(0, filtered.getSpans().size());
 
     }
 

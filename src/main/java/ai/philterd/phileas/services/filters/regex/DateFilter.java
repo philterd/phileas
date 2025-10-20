@@ -15,13 +15,13 @@
  */
 package ai.philterd.phileas.services.filters.regex;
 
-import ai.philterd.phileas.model.enums.FilterType;
+import ai.philterd.phileas.model.filtering.FilterType;
 import ai.philterd.phileas.filters.FilterConfiguration;
 import ai.philterd.phileas.filters.rules.regex.RegexFilter;
 import ai.philterd.phileas.services.Analyzer;
-import ai.philterd.phileas.model.objects.FilterPattern;
-import ai.philterd.phileas.model.objects.FilterResult;
-import ai.philterd.phileas.model.objects.Span;
+import ai.philterd.phileas.model.filtering.FilterPattern;
+import ai.philterd.phileas.model.filtering.Filtered;
+import ai.philterd.phileas.model.filtering.Span;
 import ai.philterd.phileas.policy.Policy;
 import ai.philterd.phileas.services.validators.SpanValidator;
 
@@ -55,7 +55,7 @@ public class DateFilter extends RegexFilter {
     }
 
     @Override
-    public FilterResult filter(Policy policy, String context, int piece, String input) throws Exception {
+    public Filtered filter(Policy policy, String context, int piece, String input) throws Exception {
 
         final List<Span> spans = new LinkedList<>();
 
@@ -87,7 +87,7 @@ public class DateFilter extends RegexFilter {
 
         }
 
-        return new FilterResult(context, Span.dropOverlappingSpans(spans));
+        return new Filtered(context, Span.dropOverlappingSpans(spans));
 
     }
 

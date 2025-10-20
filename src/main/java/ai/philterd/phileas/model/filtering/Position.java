@@ -13,34 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ai.philterd.phileas.model.objects;
+package ai.philterd.phileas.model.filtering;
 
-import com.google.gson.Gson;
+public class Position {
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+    private final int start;
+    private final int end;
 
-public class SpanVector {
+    public Position(int start, int end) {
+        this.start = start;
+        this.end = end;
+    }
 
-    private Map<Double, Double> vectorIndexes;
-    private final transient Gson gson;
+    public int getStart() {
+        return start;
+    }
 
-    public SpanVector() {
-        this.vectorIndexes = new ConcurrentHashMap<>();
-        this.gson = new Gson();
+    public int getEnd() {
+        return end;
     }
 
     @Override
     public String toString() {
-        return gson.toJson(this);
-    }
-
-    public Map<Double, Double> getVectorIndexes() {
-        return vectorIndexes;
-    }
-
-    public void setVectorIndexes(Map<Double, Double> vectorIndexes) {
-        this.vectorIndexes = vectorIndexes;
+        return "Position [start=" + start + ", end=" + end + "]";
     }
 
 }

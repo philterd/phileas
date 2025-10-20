@@ -13,14 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ai.philterd.phileas.model.objects;
+package ai.philterd.phileas.model.metadata;
 
-import java.util.List;
-
-/**
- * Contains the spans that were identified and the spans that were applied.
- * Provides insight into how the filters executed.
- */
-public record Explanation(List<Span> appliedSpans, List<Span> identifiedSpans) {
+public abstract class MetadataResult {
 
 }

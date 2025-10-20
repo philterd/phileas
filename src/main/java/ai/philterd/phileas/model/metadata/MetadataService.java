@@ -15,7 +15,7 @@
  */
 package ai.philterd.phileas.model.metadata;
 
-public interface MetadataService<T extends MetadataRequest, U extends MetadataResponse> {
+public interface MetadataService<T extends MetadataRequest, U extends MetadataResult> {
 
     U getMetadata(T request);
 

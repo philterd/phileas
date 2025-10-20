@@ -15,8 +15,8 @@
  */
 package ai.philterd.phileas.filters;
 
-import ai.philterd.phileas.model.enums.FilterType;
-import ai.philterd.phileas.model.objects.FilterResult;
+import ai.philterd.phileas.model.filtering.FilterType;
+import ai.philterd.phileas.model.filtering.Filtered;
 import ai.philterd.phileas.services.anonymization.AlphanumericAnonymizationService;
 import ai.philterd.phileas.services.context.DefaultContextService;
 import ai.philterd.phileas.services.filters.regex.DriversLicenseFilter;
@@ -39,15 +39,15 @@ public class DriversLicenseFilterTest extends AbstractFilterTest {
 
         final DriversLicenseFilter filter = new DriversLicenseFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "the number is 123456789.");
+        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "the number is 123456789.");
 
-        showSpans(filterResult.getSpans());
+        showSpans(filtered.getSpans());
 
-        Assertions.assertEquals(1, filterResult.getSpans().size());
-        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 14, 23, FilterType.DRIVERS_LICENSE_NUMBER));
-        Assertions.assertEquals("{{{REDACTED-drivers-license-number}}}", filterResult.getSpans().get(0).getReplacement());
-        Assertions.assertEquals("123456789", filterResult.getSpans().get(0).getText());
-        Assertions.assertEquals("NORTH CAROLINA", filterResult.getSpans().get(0).getClassification());
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 14, 23, FilterType.DRIVERS_LICENSE_NUMBER));
+        Assertions.assertEquals("{{{REDACTED-drivers-license-number}}}", filtered.getSpans().get(0).getReplacement());
+        Assertions.assertEquals("123456789", filtered.getSpans().get(0).getText());
+        Assertions.assertEquals("NORTH CAROLINA", filtered.getSpans().get(0).getClassification());
 
     }
 

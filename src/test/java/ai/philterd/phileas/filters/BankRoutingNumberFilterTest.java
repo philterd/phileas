@@ -15,8 +15,8 @@
  */
 package ai.philterd.phileas.filters;
 
-import ai.philterd.phileas.model.enums.FilterType;
-import ai.philterd.phileas.model.objects.FilterResult;
+import ai.philterd.phileas.model.filtering.FilterType;
+import ai.philterd.phileas.model.filtering.Filtered;
 import ai.philterd.phileas.services.anonymization.AlphanumericAnonymizationService;
 import ai.philterd.phileas.services.context.DefaultContextService;
 import ai.philterd.phileas.services.filters.regex.BankRoutingNumberFilter;
@@ -39,13 +39,13 @@ public class BankRoutingNumberFilterTest extends AbstractFilterTest {
 
         final BankRoutingNumberFilter filter = new BankRoutingNumberFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "the routing number is 111000025 patient is 3.5years old.");
+        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "the routing number is 111000025 patient is 3.5years old.");
 
-        showSpans(filterResult.getSpans());
+        showSpans(filtered.getSpans());
 
-        Assertions.assertEquals(1, filterResult.getSpans().size());
-        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 22, 31, FilterType.BANK_ROUTING_NUMBER));
-        Assertions.assertNotEquals(filterResult.getSpans().get(0).getText(), filterResult.getSpans().get(0).getReplacement());
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 22, 31, FilterType.BANK_ROUTING_NUMBER));
+        Assertions.assertNotEquals(filtered.getSpans().get(0).getText(), filtered.getSpans().get(0).getReplacement());
 
     }
 
@@ -60,11 +60,11 @@ public class BankRoutingNumberFilterTest extends AbstractFilterTest {
 
         final BankRoutingNumberFilter filter = new BankRoutingNumberFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "the routing number is 111007025 patient is 3.5years old.");
+        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "the routing number is 111007025 patient is 3.5years old.");
 
-        showSpans(filterResult.getSpans());
+        showSpans(filtered.getSpans());
 
-        Assertions.assertEquals(0, filterResult.getSpans().size());
+        Assertions.assertEquals(0, filtered.getSpans().size());
 
     }
 
@@ -79,11 +79,11 @@ public class BankRoutingNumberFilterTest extends AbstractFilterTest {
 
         final BankRoutingNumberFilter filter = new BankRoutingNumberFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "the routing number is 1131007025 patient is 3.5years old.");
+        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "the routing number is 1131007025 patient is 3.5years old.");
 
-        showSpans(filterResult.getSpans());
+        showSpans(filtered.getSpans());
 
-        Assertions.assertEquals(0, filterResult.getSpans().size());
+        Assertions.assertEquals(0, filtered.getSpans().size());
 
     }
 

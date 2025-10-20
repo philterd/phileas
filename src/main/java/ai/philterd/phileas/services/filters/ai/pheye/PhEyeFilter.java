@@ -15,12 +15,12 @@
  */
 package ai.philterd.phileas.services.filters.ai.pheye;
 
-import ai.philterd.phileas.model.enums.FilterType;
+import ai.philterd.phileas.model.filtering.FilterType;
 import ai.philterd.phileas.filters.FilterConfiguration;
 import ai.philterd.phileas.filters.dynamic.NerFilter;
-import ai.philterd.phileas.model.objects.FilterResult;
-import ai.philterd.phileas.model.objects.Replacement;
-import ai.philterd.phileas.model.objects.Span;
+import ai.philterd.phileas.model.filtering.Filtered;
+import ai.philterd.phileas.model.filtering.Replacement;
+import ai.philterd.phileas.model.filtering.Span;
 import ai.philterd.phileas.policy.Policy;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -83,8 +83,8 @@ public class PhEyeFilter extends NerFilter {
     }
 
     @Override
-    public FilterResult filter(final Policy policy, final String context, final int piece,
-                               final String input) throws Exception {
+    public Filtered filter(final Policy policy, final String context, final int piece,
+                           final String input) throws Exception {
 
         final List<Span> spans = new LinkedList<>();
 
@@ -187,7 +187,7 @@ public class PhEyeFilter extends NerFilter {
             }
 
             LOGGER.debug("Returning {} NER spans from ph-eye.", spans.size());
-            return new FilterResult(context, piece, spans);
+            return new Filtered(context, piece, spans);
 
         } else {
 

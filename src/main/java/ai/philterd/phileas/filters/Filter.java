@@ -15,12 +15,12 @@
  */
 package ai.philterd.phileas.filters;
 
-import ai.philterd.phileas.model.enums.FilterType;
-import ai.philterd.phileas.model.objects.FilterPattern;
-import ai.philterd.phileas.model.objects.FilterResult;
-import ai.philterd.phileas.model.objects.Position;
-import ai.philterd.phileas.model.objects.Replacement;
-import ai.philterd.phileas.model.objects.Span;
+import ai.philterd.phileas.model.filtering.FilterType;
+import ai.philterd.phileas.model.filtering.FilterPattern;
+import ai.philterd.phileas.model.filtering.Filtered;
+import ai.philterd.phileas.model.filtering.Position;
+import ai.philterd.phileas.model.filtering.Replacement;
+import ai.philterd.phileas.model.filtering.Span;
 import ai.philterd.phileas.services.anonymization.AnonymizationService;
 import ai.philterd.phileas.policy.Crypto;
 import ai.philterd.phileas.policy.FPE;
@@ -103,11 +103,11 @@ public abstract class Filter {
      * Filters the input text.
      * @param policy The {@link Policy} to use.
      * @param context The name of the context.
-     * @param piece A numbered piece of the document. Pass <code>0</code> if only piece of document.
+     * @param piece A numbered piece of the document. Pass <code>0</code> if only one piece of a document.
      * @param input The input text.
-     * @return A {@link FilterResult} containing the identified {@link Span spans}.
+     * @return A {@link Filtered} containing the identified {@link Span spans}.
      */
-    public abstract FilterResult filter(Policy policy, String context, int piece, String input) throws Exception;
+    public abstract Filtered filter(Policy policy, String context, int piece, String input) throws Exception;
 
     /**
      * Determines if the input text may contain sensitive information matching the filter type.

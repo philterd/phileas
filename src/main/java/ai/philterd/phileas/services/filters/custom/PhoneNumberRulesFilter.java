@@ -17,18 +17,17 @@ package ai.philterd.phileas.services.filters.custom;
 
 import com.google.i18n.phonenumbers.PhoneNumberMatch;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
-import ai.philterd.phileas.model.enums.FilterType;
+import ai.philterd.phileas.model.filtering.FilterType;
 import ai.philterd.phileas.filters.FilterConfiguration;
 import ai.philterd.phileas.filters.rules.RulesFilter;
-import ai.philterd.phileas.model.objects.FilterResult;
-import ai.philterd.phileas.model.objects.Replacement;
-import ai.philterd.phileas.model.objects.Span;
+import ai.philterd.phileas.model.filtering.Filtered;
+import ai.philterd.phileas.model.filtering.Replacement;
+import ai.philterd.phileas.model.filtering.Span;
 import ai.philterd.phileas.policy.Policy;
 
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.regex.Pattern;
 
 // TODO: This should not extend RulesFilter because it is not a rule-based filter.
@@ -54,8 +53,8 @@ public class PhoneNumberRulesFilter extends RulesFilter {
     }
 
     @Override
-    public FilterResult filter(final Policy policy, final String context, final int piece,
-                               final String input) throws Exception {
+    public Filtered filter(final Policy policy, final String context, final int piece,
+                           final String input) throws Exception {
 
         final List<Span> spans = new LinkedList<>();
 
@@ -92,7 +91,7 @@ public class PhoneNumberRulesFilter extends RulesFilter {
 
         }
 
-        return new FilterResult(context, spans);
+        return new Filtered(context, spans);
 
     }
 

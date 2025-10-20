@@ -15,6 +15,7 @@
  */
 package ai.philterd.phileas.model.enums;
 
+import ai.philterd.phileas.model.filtering.SensitivityLevel;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

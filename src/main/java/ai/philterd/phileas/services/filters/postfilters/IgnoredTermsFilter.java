@@ -15,8 +15,8 @@
  */
 package ai.philterd.phileas.services.filters.postfilters;
 
-import ai.philterd.phileas.model.objects.PostFilterResult;
-import ai.philterd.phileas.model.objects.Span;
+import ai.philterd.phileas.model.filtering.PostFiltered;
+import ai.philterd.phileas.model.filtering.Span;
 import ai.philterd.phileas.policy.Ignored;
 import ai.philterd.phileas.utils.BloomFilter;
 import org.apache.commons.io.FileUtils;
@@ -80,7 +80,7 @@ public class IgnoredTermsFilter extends PostFilter {
     }
 
     @Override
-    protected PostFilterResult process(final String text, final Span span) {
+    protected PostFiltered process(final String text, final Span span) {
 
         String spanText = span.getText(text);
 
@@ -99,7 +99,7 @@ public class IgnoredTermsFilter extends PostFilter {
         }
 
         // Return false if allowed; true if ignored.
-        return new PostFilterResult(span, ignored);
+        return new PostFiltered(span, ignored);
 
     }
 

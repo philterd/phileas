@@ -16,9 +16,9 @@
 package ai.philterd.phileas.filters;
 
 import ai.philterd.phileas.filters.rules.dictionary.FuzzyDictionaryFilter;
-import ai.philterd.phileas.model.enums.FilterType;
-import ai.philterd.phileas.model.enums.SensitivityLevel;
-import ai.philterd.phileas.model.objects.FilterResult;
+import ai.philterd.phileas.model.filtering.FilterType;
+import ai.philterd.phileas.model.filtering.SensitivityLevel;
+import ai.philterd.phileas.model.filtering.Filtered;
 import ai.philterd.phileas.services.anonymization.HospitalAnonymizationService;
 import ai.philterd.phileas.services.context.DefaultContextService;
 import ai.philterd.phileas.services.strategies.dynamic.HospitalFilterStrategy;
@@ -44,9 +44,9 @@ public class HospitalFilterTest extends AbstractFilterTest {
 
         final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.HOSPITAL, filterConfiguration, SensitivityLevel.LOW, true);
 
-        FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE,"Wyoming Medical Center");
-        Assertions.assertEquals(1, filterResult.getSpans().size());
-        Assertions.assertEquals("wyoming medical center", filterResult.getSpans().get(0).getText());
+        Filtered filtered = filter.filter(getPolicy(), "context", PIECE,"Wyoming Medical Center");
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertEquals("wyoming medical center", filtered.getSpans().get(0).getText());
 
     }
 

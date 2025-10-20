@@ -15,7 +15,7 @@
  */
 package ai.philterd.phileas.services.validators;
 
-import ai.philterd.phileas.model.objects.Span;
+import ai.philterd.phileas.model.filtering.Span;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

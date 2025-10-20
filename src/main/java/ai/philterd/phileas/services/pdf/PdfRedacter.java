@@ -15,8 +15,8 @@
  */
 package ai.philterd.phileas.services.pdf;
 
-import ai.philterd.phileas.model.enums.MimeType;
-import ai.philterd.phileas.model.objects.Span;
+import ai.philterd.phileas.model.filtering.MimeType;
+import ai.philterd.phileas.model.filtering.Span;
 import ai.philterd.phileas.policy.Policy;
 import ai.philterd.phileas.policy.graphical.BoundingBox;
 import org.apache.logging.log4j.LogManager;

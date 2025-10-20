@@ -15,7 +15,7 @@
  */
 package ai.philterd.phileas.services.validators;
 
-import ai.philterd.phileas.model.objects.Span;
+import ai.philterd.phileas.model.filtering.Span;
 
 public interface SpanValidator {
 

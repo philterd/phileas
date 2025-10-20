@@ -16,9 +16,9 @@
 package ai.philterd.phileas.filters;
 
 import ai.philterd.phileas.filters.rules.dictionary.FuzzyDictionaryFilter;
-import ai.philterd.phileas.model.enums.FilterType;
-import ai.philterd.phileas.model.enums.SensitivityLevel;
-import ai.philterd.phileas.model.objects.FilterResult;
+import ai.philterd.phileas.model.filtering.FilterType;
+import ai.philterd.phileas.model.filtering.SensitivityLevel;
+import ai.philterd.phileas.model.filtering.Filtered;
 import ai.philterd.phileas.services.anonymization.SurnameAnonymizationService;
 import ai.philterd.phileas.services.context.DefaultContextService;
 import ai.philterd.phileas.services.strategies.dynamic.SurnameFilterStrategy;
@@ -44,9 +44,9 @@ public class SurnameFilterTest extends AbstractFilterTest {
 
         final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.SURNAME, filterConfiguration, SensitivityLevel.LOW, true);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "Lived in Wshington");
-        showSpans(filterResult.getSpans());
-        Assertions.assertEquals(44, filterResult.getSpans().size());
+        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "Lived in Wshington");
+        showSpans(filtered.getSpans());
+        Assertions.assertEquals(44, filtered.getSpans().size());
 
     }
 
@@ -61,9 +61,9 @@ public class SurnameFilterTest extends AbstractFilterTest {
 
         final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.SURNAME, filterConfiguration, SensitivityLevel.MEDIUM, true);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "Lived in Wshington");
-        showSpans(filterResult.getSpans());
-        Assertions.assertEquals(44, filterResult.getSpans().size());
+        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "Lived in Wshington");
+        showSpans(filtered.getSpans());
+        Assertions.assertEquals(44, filtered.getSpans().size());
 
     }
 
@@ -78,9 +78,9 @@ public class SurnameFilterTest extends AbstractFilterTest {
 
         final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.SURNAME, filterConfiguration, SensitivityLevel.HIGH, true);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "Jones");
-        showSpans(filterResult.getSpans());
-        Assertions.assertEquals(1, filterResult.getSpans().size());
+        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "Jones");
+        showSpans(filtered.getSpans());
+        Assertions.assertEquals(1, filtered.getSpans().size());
 
     }
 
@@ -95,9 +95,9 @@ public class SurnameFilterTest extends AbstractFilterTest {
 
         final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.SURNAME, filterConfiguration, SensitivityLevel.LOW, true);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "date");
-        showSpans(filterResult.getSpans());
-        Assertions.assertEquals(1, filterResult.getSpans().size());
+        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "date");
+        showSpans(filtered.getSpans());
+        Assertions.assertEquals(1, filtered.getSpans().size());
 
     }
 
@@ -112,9 +112,9 @@ public class SurnameFilterTest extends AbstractFilterTest {
 
         final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.SURNAME, filterConfiguration, SensitivityLevel.LOW, true);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "Jones");
-        showSpans(filterResult.getSpans());
-        Assertions.assertEquals(349, filterResult.getSpans().size());
+        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "Jones");
+        showSpans(filtered.getSpans());
+        Assertions.assertEquals(349, filtered.getSpans().size());
 
     }
 
@@ -129,9 +129,9 @@ public class SurnameFilterTest extends AbstractFilterTest {
 
         final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.SURNAME, filterConfiguration, SensitivityLevel.LOW, true);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "from");
-        showSpans(filterResult.getSpans());
-        Assertions.assertEquals(1, filterResult.getSpans().size());
+        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "from");
+        showSpans(filtered.getSpans());
+        Assertions.assertEquals(1, filtered.getSpans().size());
 
     }
 

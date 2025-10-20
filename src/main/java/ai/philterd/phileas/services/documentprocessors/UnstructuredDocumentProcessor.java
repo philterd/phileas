@@ -16,11 +16,11 @@
 package ai.philterd.phileas.services.documentprocessors;
 
 import ai.philterd.phileas.filters.Filter;
-import ai.philterd.phileas.model.objects.Explanation;
-import ai.philterd.phileas.model.objects.FilterResult;
-import ai.philterd.phileas.model.objects.IncrementalRedaction;
-import ai.philterd.phileas.model.objects.Span;
-import ai.philterd.phileas.model.objects.FilterResponse;
+import ai.philterd.phileas.model.filtering.Explanation;
+import ai.philterd.phileas.model.filtering.Filtered;
+import ai.philterd.phileas.model.filtering.IncrementalRedaction;
+import ai.philterd.phileas.model.filtering.Span;
+import ai.philterd.phileas.model.filtering.FilterResult;
 import ai.philterd.phileas.services.filters.postfilters.PostFilter;
 import ai.philterd.phileas.services.disambiguation.SpanDisambiguationService;
 import ai.philterd.phileas.services.tokens.TokenCounter;
@@ -32,7 +32,6 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.function.Predicate;
 
 import static java.util.stream.Collectors.toList;
@@ -56,8 +55,8 @@ public class UnstructuredDocumentProcessor implements DocumentProcessor {
     }
 
     @Override
-    public FilterResponse process(final Policy policy, final List<Filter> filters, final List<PostFilter> postFilters,
-                                  final String context, final int piece, final String input) throws Exception {
+    public FilterResult process(final Policy policy, final List<Filter> filters, final List<PostFilter> postFilters,
+                                final String context, final int piece, final String input) throws Exception {
 
         // The list that will contain the spans containing PHI/PII.
         List<Span> identifiedSpans = new LinkedList<>();
@@ -66,10 +65,10 @@ public class UnstructuredDocumentProcessor implements DocumentProcessor {
         for(final Filter filter : filters) {
 
             final long startTimeMs = System.currentTimeMillis();
-            final FilterResult filterResult = filter.filter(policy, context, piece, input);
+            final Filtered filtered = filter.filter(policy, context, piece, input);
             final long elapsedTimeMs = System.currentTimeMillis() - startTimeMs;
 
-            identifiedSpans.addAll(filterResult.getSpans());
+            identifiedSpans.addAll(filtered.getSpans());
 
         }
 
@@ -156,7 +155,7 @@ public class UnstructuredDocumentProcessor implements DocumentProcessor {
 
         }
 
-        return new FilterResponse(sb.toString(), context, piece, explanation, incrementalRedactions, tokens);
+        return new FilterResult(sb.toString(), context, piece, explanation, incrementalRedactions, tokens);
 
     }
 

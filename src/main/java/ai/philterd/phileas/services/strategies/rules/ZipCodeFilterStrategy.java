@@ -17,12 +17,12 @@ package ai.philterd.phileas.services.strategies.rules;
 
 import ai.philterd.phileas.model.conditions.ParsedCondition;
 import ai.philterd.phileas.model.conditions.ParserListener;
-import ai.philterd.phileas.model.enums.FilterType;
+import ai.philterd.phileas.model.filtering.FilterType;
 import ai.philterd.phileas.model.metadata.zipcode.ZipCodeMetadataRequest;
-import ai.philterd.phileas.model.metadata.zipcode.ZipCodeMetadataResponse;
+import ai.philterd.phileas.model.metadata.zipcode.ZipCodeMetadataResult;
 import ai.philterd.phileas.model.metadata.zipcode.ZipCodeMetadataService;
-import ai.philterd.phileas.model.objects.FilterPattern;
-import ai.philterd.phileas.model.objects.Replacement;
+import ai.philterd.phileas.model.filtering.FilterPattern;
+import ai.philterd.phileas.model.filtering.Replacement;
 import ai.philterd.phileas.policy.Crypto;
 import ai.philterd.phileas.policy.FPE;
 import ai.philterd.phileas.policy.Policy;
@@ -37,7 +37,6 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Map;
 
 public class ZipCodeFilterStrategy extends AbstractFilterStrategy {
 
@@ -73,7 +72,7 @@ public class ZipCodeFilterStrategy extends AbstractFilterStrategy {
 
                 final int value = Integer.parseInt(parsedCondition.getValue());
 
-                final ZipCodeMetadataResponse response = zipCodeMetadataService.getMetadata(new ZipCodeMetadataRequest(token));
+                final ZipCodeMetadataResult response = zipCodeMetadataService.getMetadata(new ZipCodeMetadataRequest(token));
 
                 if(response.isExists()) {
 

@@ -13,29 +13,46 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ai.philterd.phileas.model.objects;
+package ai.philterd.phileas.model.filtering;
 
-public class Position {
+/**
+ * A mime type
+ */
+public enum MimeType {
 
-    private final int start;
-    private final int end;
+    /**
+     * text/plain
+     */
+    TEXT_PLAIN("text/plain"),
 
-    public Position(int start, int end) {
-        this.start = start;
-        this.end = end;
+    /**
+     * text/html
+     */
+    TEXT_HTML("text/html"),
+
+    /**
+     * application/pdf
+     */
+    APPLICATION_PDF("application/pdf"),
+
+    /**
+     * image/jpeg
+     */
+    IMAGE_JPEG("image/jpeg");
+
+    private String value;
+
+    MimeType(String value) {
+        this.value = value;
     }
 
-    public int getStart() {
-        return start;
-    }
-
-    public int getEnd() {
-        return end;
+    public String getValue() {
+        return value;
     }
 
     @Override
     public String toString() {
-        return "Position [start=" + start + ", end=" + end + "]";
+        return value;
     }
 
 }

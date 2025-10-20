@@ -14,7 +14,7 @@ public class ZipCodeMetadataServiceTest {
 
         final ZipCodeMetadataRequest zipCodeMetadataRequest = new ZipCodeMetadataRequest("90210");
 
-        final ZipCodeMetadataResponse zipCodeMetadataResponse = zipCodeMetadataService.getMetadata(zipCodeMetadataRequest);
+        final ZipCodeMetadataResult zipCodeMetadataResponse = zipCodeMetadataService.getMetadata(zipCodeMetadataRequest);
 
         Assertions.assertEquals(21134, zipCodeMetadataResponse.getPopulation());
 
@@ -27,7 +27,7 @@ public class ZipCodeMetadataServiceTest {
 
         final ZipCodeMetadataRequest zipCodeMetadataRequest = new ZipCodeMetadataRequest("90095");
 
-        final ZipCodeMetadataResponse zipCodeMetadataResponse = zipCodeMetadataService.getMetadata(zipCodeMetadataRequest);
+        final ZipCodeMetadataResult zipCodeMetadataResponse = zipCodeMetadataService.getMetadata(zipCodeMetadataRequest);
 
         Assertions.assertEquals(1, zipCodeMetadataResponse.getPopulation());
 
@@ -40,7 +40,7 @@ public class ZipCodeMetadataServiceTest {
 
         final ZipCodeMetadataRequest zipCodeMetadataRequest = new ZipCodeMetadataRequest("12345");
 
-        final ZipCodeMetadataResponse zipCodeMetadataResponse = zipCodeMetadataService.getMetadata(zipCodeMetadataRequest);
+        final ZipCodeMetadataResult zipCodeMetadataResponse = zipCodeMetadataService.getMetadata(zipCodeMetadataRequest);
 
         Assertions.assertEquals(-1, zipCodeMetadataResponse.getPopulation());
 

@@ -15,8 +15,8 @@
  */
 package ai.philterd.phileas.filters;
 
-import ai.philterd.phileas.model.enums.FilterType;
-import ai.philterd.phileas.model.objects.FilterResult;
+import ai.philterd.phileas.model.filtering.FilterType;
+import ai.philterd.phileas.model.filtering.Filtered;
 import ai.philterd.phileas.services.anonymization.AgeAnonymizationService;
 import ai.philterd.phileas.services.context.DefaultContextService;
 import ai.philterd.phileas.services.filters.regex.AgeFilter;
@@ -45,20 +45,20 @@ public class FilterTest extends AbstractFilterTest {
 
         final AgeFilter filter = new AgeFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "this is a first sentence. the patient is 3.5 years old and he's cool. this is a surrounding sentence.");
+        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "this is a first sentence. the patient is 3.5 years old and he's cool. this is a surrounding sentence.");
 
-        showSpans(filterResult.getSpans());
+        showSpans(filtered.getSpans());
 
         final String[] window = new String[]{"the", "patient", "is", "35", "years", "old", "and", "hes", "cool"};
 
         LOGGER.info("Expected: {}", Arrays.toString(window));
-        LOGGER.info("Actual:   {}", Arrays.toString(filterResult.getSpans().get(0).getWindow()));
+        LOGGER.info("Actual:   {}", Arrays.toString(filtered.getSpans().get(0).getWindow()));
 
-        Assertions.assertEquals(1, filterResult.getSpans().size());
-        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 41, 54, FilterType.AGE));
-        Assertions.assertEquals("{{{REDACTED-age}}}", filterResult.getSpans().get(0).getReplacement());
-        Assertions.assertArrayEquals(window, filterResult.getSpans().get(0).getWindow());
-        Assertions.assertEquals("3.5 years old", filterResult.getSpans().get(0).getText());
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 41, 54, FilterType.AGE));
+        Assertions.assertEquals("{{{REDACTED-age}}}", filtered.getSpans().get(0).getReplacement());
+        Assertions.assertArrayEquals(window, filtered.getSpans().get(0).getWindow());
+        Assertions.assertEquals("3.5 years old", filtered.getSpans().get(0).getText());
 
     }
 
@@ -75,20 +75,20 @@ public class FilterTest extends AbstractFilterTest {
 
         final AgeFilter filter = new AgeFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "this is a first sentence. the patient is 3.5 years old and he's cool. this is a surrounding sentence.");
+        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "this is a first sentence. the patient is 3.5 years old and he's cool. this is a surrounding sentence.");
 
-        showSpans(filterResult.getSpans());
+        showSpans(filtered.getSpans());
 
         final String[] window = new String[]{"first", "sentence", "the", "patient", "is", "35", "years", "old", "and", "hes", "cool", "this", "is"};
 
         LOGGER.info("Expected: {}", Arrays.toString(window));
-        LOGGER.info("Actual:   {}", Arrays.toString(filterResult.getSpans().get(0).getWindow()));
+        LOGGER.info("Actual:   {}", Arrays.toString(filtered.getSpans().get(0).getWindow()));
 
-        Assertions.assertEquals(1, filterResult.getSpans().size());
-        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 41, 54, FilterType.AGE));
-        Assertions.assertEquals("{{{REDACTED-age}}}", filterResult.getSpans().get(0).getReplacement());
-        Assertions.assertArrayEquals(window, filterResult.getSpans().get(0).getWindow());
-        Assertions.assertEquals("3.5 years old", filterResult.getSpans().get(0).getText());
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 41, 54, FilterType.AGE));
+        Assertions.assertEquals("{{{REDACTED-age}}}", filtered.getSpans().get(0).getReplacement());
+        Assertions.assertArrayEquals(window, filtered.getSpans().get(0).getWindow());
+        Assertions.assertEquals("3.5 years old", filtered.getSpans().get(0).getText());
 
     }
 
@@ -106,20 +106,20 @@ public class FilterTest extends AbstractFilterTest {
 
         final AgeFilter filter = new AgeFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "this is a first sentence. the patient is 3.5 years old and he's cool. this is a surrounding sentence.");
+        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "this is a first sentence. the patient is 3.5 years old and he's cool. this is a surrounding sentence.");
 
-        showSpans(filterResult.getSpans());
+        showSpans(filtered.getSpans());
 
         final String[] window = new String[]{"first", "sentence", "the", "patient", "is", "35", "years", "old", "and", "hes", "cool", "this", "is"};
 
         LOGGER.info("Expected: {}", Arrays.toString(window));
-        LOGGER.info("Actual:   {}", Arrays.toString(filterResult.getSpans().get(0).getWindow()));
+        LOGGER.info("Actual:   {}", Arrays.toString(filtered.getSpans().get(0).getWindow()));
 
-        Assertions.assertEquals(1, filterResult.getSpans().size());
-        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 41, 54, FilterType.AGE));
-        Assertions.assertEquals("{{{REDACTED-age}}}", filterResult.getSpans().get(0).getReplacement());
-        Assertions.assertArrayEquals(window, filterResult.getSpans().get(0).getWindow());
-        Assertions.assertEquals("3.5 years old", filterResult.getSpans().get(0).getText());
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 41, 54, FilterType.AGE));
+        Assertions.assertEquals("{{{REDACTED-age}}}", filtered.getSpans().get(0).getReplacement());
+        Assertions.assertArrayEquals(window, filtered.getSpans().get(0).getWindow());
+        Assertions.assertEquals("3.5 years old", filtered.getSpans().get(0).getText());
 
     }
 

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ai.philterd.phileas.model.enums;
+package ai.philterd.phileas.model.filtering;
 
 /**
  * A filter type.

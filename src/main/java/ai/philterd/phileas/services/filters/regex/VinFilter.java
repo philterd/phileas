@@ -15,19 +15,18 @@
  */
 package ai.philterd.phileas.services.filters.regex;
 
-import ai.philterd.phileas.model.enums.FilterType;
+import ai.philterd.phileas.model.filtering.FilterType;
 import ai.philterd.phileas.filters.FilterConfiguration;
 import ai.philterd.phileas.filters.rules.regex.RegexFilter;
 import ai.philterd.phileas.services.Analyzer;
-import ai.philterd.phileas.model.objects.FilterPattern;
-import ai.philterd.phileas.model.objects.FilterResult;
-import ai.philterd.phileas.model.objects.Span;
+import ai.philterd.phileas.model.filtering.FilterPattern;
+import ai.philterd.phileas.model.filtering.Filtered;
+import ai.philterd.phileas.model.filtering.Span;
 import ai.philterd.phileas.policy.Policy;
 import org.apache.commons.collections.CollectionUtils;
 
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.regex.Pattern;
 
 public class VinFilter extends RegexFilter {
@@ -50,7 +49,7 @@ public class VinFilter extends RegexFilter {
     }
 
     @Override
-    public FilterResult filter(Policy policy, String context, int piece, String input) throws Exception {
+    public Filtered filter(Policy policy, String context, int piece, String input) throws Exception {
 
         final List<Span> spans = findSpans(policy, analyzer, input, context);
 
@@ -59,7 +58,7 @@ public class VinFilter extends RegexFilter {
             return isVinValid(input.substring(s.getCharacterStart(), s.getCharacterEnd()));
         });
 
-        return new FilterResult(context, spans);
+        return new Filtered(context, spans);
 
     }
 

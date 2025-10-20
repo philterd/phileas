@@ -13,8 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ai.philterd.phileas.model.metadata;
+package ai.philterd.phileas.model.objects;
 
-public abstract class MetadataResponse {
+import ai.philterd.phileas.model.filtering.FilterResult;
+import nl.jqno.equalsverifier.EqualsVerifier;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.junit.jupiter.api.Test;
+
+public class FilterResultTest {
+
+    private static final Logger LOGGER = LogManager.getLogger(FilterResultTest.class);
+
+    @Test
+    public void equalsContract() {
+        EqualsVerifier.forClass(FilterResult.class).verify();
+    }
 
 }

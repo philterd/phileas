@@ -16,8 +16,8 @@
 package ai.philterd.phileas.services.disambiguation.vector;
 
 import ai.philterd.phileas.PhileasConfiguration;
-import ai.philterd.phileas.model.enums.FilterType;
-import ai.philterd.phileas.model.objects.Span;
+import ai.philterd.phileas.model.filtering.FilterType;
+import ai.philterd.phileas.model.filtering.Span;
 import ai.philterd.phileas.services.disambiguation.AbstractSpanDisambiguationService;
 import ai.philterd.phileas.services.disambiguation.SpanDisambiguationService;
 import org.apache.commons.lang3.StringUtils;

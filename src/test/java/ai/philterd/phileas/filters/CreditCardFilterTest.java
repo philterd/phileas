@@ -15,8 +15,8 @@
  */
 package ai.philterd.phileas.filters;
 
-import ai.philterd.phileas.model.enums.FilterType;
-import ai.philterd.phileas.model.objects.FilterResult;
+import ai.philterd.phileas.model.filtering.FilterType;
+import ai.philterd.phileas.model.filtering.Filtered;
 import ai.philterd.phileas.services.anonymization.CreditCardAnonymizationService;
 import ai.philterd.phileas.services.context.DefaultContextService;
 import ai.philterd.phileas.services.filters.regex.CreditCardFilter;
@@ -41,53 +41,53 @@ public class CreditCardFilterTest extends AbstractFilterTest {
 
         // VISA
 
-        FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "the payment method is 4532613702852251 visa.");
-        Assertions.assertEquals(1, filterResult.getSpans().size());
-        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 22, 38, FilterType.CREDIT_CARD));
-        Assertions.assertEquals("4532613702852251", filterResult.getSpans().get(0).getText());
+        Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "the payment method is 4532613702852251 visa.");
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 22, 38, FilterType.CREDIT_CARD));
+        Assertions.assertEquals("4532613702852251", filtered.getSpans().get(0).getText());
 
-        filterResult = filter.filter(getPolicy(), "context", PIECE, "the payment method is 4556662764258031");
-        Assertions.assertEquals(1, filterResult.getSpans().size());
-        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 22, 38, FilterType.CREDIT_CARD));
+        filtered = filter.filter(getPolicy(), "context", PIECE, "the payment method is 4556662764258031");
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 22, 38, FilterType.CREDIT_CARD));
 
-        filterResult = filter.filter(getPolicy(), "context", PIECE, "the payment method is 4929081870602661");
-        Assertions.assertEquals(1, filterResult.getSpans().size());
+        filtered = filter.filter(getPolicy(), "context", PIECE, "the payment method is 4929081870602661");
+        Assertions.assertEquals(1, filtered.getSpans().size());
 
-        filterResult = filter.filter(getPolicy(), "context", PIECE, "the payment method is 4716-4366-8767-7438");
-        Assertions.assertEquals(1, filterResult.getSpans().size());
+        filtered = filter.filter(getPolicy(), "context", PIECE, "the payment method is 4716-4366-8767-7438");
+        Assertions.assertEquals(1, filtered.getSpans().size());
 
-        filterResult = filter.filter(getPolicy(), "context", PIECE, "the payment method is 4556 5849 8186 7933");
-        Assertions.assertEquals(1, filterResult.getSpans().size());
+        filtered = filter.filter(getPolicy(), "context", PIECE, "the payment method is 4556 5849 8186 7933");
+        Assertions.assertEquals(1, filtered.getSpans().size());
 
         // AMEX
 
-        filterResult = filter.filter(getPolicy(), "context", PIECE, "the payment method is 376454057275914");
-        Assertions.assertEquals(1, filterResult.getSpans().size());
-        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 22, 37, FilterType.CREDIT_CARD));
+        filtered = filter.filter(getPolicy(), "context", PIECE, "the payment method is 376454057275914");
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 22, 37, FilterType.CREDIT_CARD));
 
-        filterResult = filter.filter(getPolicy(), "context", PIECE, "the payment method is 346009657106278.");
-        Assertions.assertEquals(1, filterResult.getSpans().size());
-        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 22, 37, FilterType.CREDIT_CARD));
+        filtered = filter.filter(getPolicy(), "context", PIECE, "the payment method is 346009657106278.");
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 22, 37, FilterType.CREDIT_CARD));
 
         // MASTERCARD
 
-        filterResult = filter.filter(getPolicy(), "context", PIECE, "the payment method is 5567408136464012");
-        Assertions.assertEquals(1, filterResult.getSpans().size());
-        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 22, 38, FilterType.CREDIT_CARD));
+        filtered = filter.filter(getPolicy(), "context", PIECE, "the payment method is 5567408136464012");
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 22, 38, FilterType.CREDIT_CARD));
 
-        filterResult = filter.filter(getPolicy(), "context", PIECE, "the payment method is 5100170632668801.");
-        Assertions.assertEquals(1, filterResult.getSpans().size());
-        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 22, 38, FilterType.CREDIT_CARD));
+        filtered = filter.filter(getPolicy(), "context", PIECE, "the payment method is 5100170632668801.");
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 22, 38, FilterType.CREDIT_CARD));
 
         // DISCOVER
 
-        filterResult = filter.filter(getPolicy(), "context", PIECE, "the payment method is 6011485579364263");
-        Assertions.assertEquals(1, filterResult.getSpans().size());
-        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 22, 38, FilterType.CREDIT_CARD));
+        filtered = filter.filter(getPolicy(), "context", PIECE, "the payment method is 6011485579364263");
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 22, 38, FilterType.CREDIT_CARD));
 
-        filterResult = filter.filter(getPolicy(), "context", PIECE, "the payment method is 6011792597726344.");
-        Assertions.assertEquals(1, filterResult.getSpans().size());
-        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 22, 38, FilterType.CREDIT_CARD));
+        filtered = filter.filter(getPolicy(), "context", PIECE, "the payment method is 6011792597726344.");
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 22, 38, FilterType.CREDIT_CARD));
 
     }
 
@@ -105,52 +105,52 @@ public class CreditCardFilterTest extends AbstractFilterTest {
 
         // VISA
 
-        FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "the payment method is 1234567812345678 visa.");
-        Assertions.assertEquals(1, filterResult.getSpans().size());
-        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 22, 38, FilterType.CREDIT_CARD));
+        Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "the payment method is 1234567812345678 visa.");
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 22, 38, FilterType.CREDIT_CARD));
 
-        filterResult = filter.filter(getPolicy(), "context", PIECE, "the payment method is 0000000000000000");
-        Assertions.assertEquals(1, filterResult.getSpans().size());
-        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 22, 38, FilterType.CREDIT_CARD));
+        filtered = filter.filter(getPolicy(), "context", PIECE, "the payment method is 0000000000000000");
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 22, 38, FilterType.CREDIT_CARD));
 
-        filterResult = filter.filter(getPolicy(), "context", PIECE, "the payment method is 9876543219876543");
-        Assertions.assertEquals(1, filterResult.getSpans().size());
+        filtered = filter.filter(getPolicy(), "context", PIECE, "the payment method is 9876543219876543");
+        Assertions.assertEquals(1, filtered.getSpans().size());
 
-        filterResult = filter.filter(getPolicy(), "context", PIECE, "the payment method is 9876-5432-1987-6543");
-        Assertions.assertEquals(1, filterResult.getSpans().size());
+        filtered = filter.filter(getPolicy(), "context", PIECE, "the payment method is 9876-5432-1987-6543");
+        Assertions.assertEquals(1, filtered.getSpans().size());
 
-        filterResult = filter.filter(getPolicy(), "context", PIECE, "the payment method is 4556 6627 6425 8000");
-        Assertions.assertEquals(1, filterResult.getSpans().size());
+        filtered = filter.filter(getPolicy(), "context", PIECE, "the payment method is 4556 6627 6425 8000");
+        Assertions.assertEquals(1, filtered.getSpans().size());
 
         // AMEX
 
-        filterResult = filter.filter(getPolicy(), "context", PIECE, "the payment method is 376454057005914");
-        Assertions.assertEquals(1, filterResult.getSpans().size());
-        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 22, 37, FilterType.CREDIT_CARD));
+        filtered = filter.filter(getPolicy(), "context", PIECE, "the payment method is 376454057005914");
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 22, 37, FilterType.CREDIT_CARD));
 
-        filterResult = filter.filter(getPolicy(), "context", PIECE, "the payment method is 346119657106278.");
-        Assertions.assertEquals(1, filterResult.getSpans().size());
-        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 22, 37, FilterType.CREDIT_CARD));
+        filtered = filter.filter(getPolicy(), "context", PIECE, "the payment method is 346119657106278.");
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 22, 37, FilterType.CREDIT_CARD));
 
         // MASTERCARD
 
-        filterResult = filter.filter(getPolicy(), "context", PIECE, "the payment method is 5567408136464000");
-        Assertions.assertEquals(1, filterResult.getSpans().size());
-        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 22, 38, FilterType.CREDIT_CARD));
+        filtered = filter.filter(getPolicy(), "context", PIECE, "the payment method is 5567408136464000");
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 22, 38, FilterType.CREDIT_CARD));
 
-        filterResult = filter.filter(getPolicy(), "context", PIECE, "the payment method is 5100170632668000.");
-        Assertions.assertEquals(1, filterResult.getSpans().size());
-        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 22, 38, FilterType.CREDIT_CARD));
+        filtered = filter.filter(getPolicy(), "context", PIECE, "the payment method is 5100170632668000.");
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 22, 38, FilterType.CREDIT_CARD));
 
         // DISCOVER
 
-        filterResult = filter.filter(getPolicy(), "context", PIECE, "the payment method is 6011485579364000");
-        Assertions.assertEquals(1, filterResult.getSpans().size());
-        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 22, 38, FilterType.CREDIT_CARD));
+        filtered = filter.filter(getPolicy(), "context", PIECE, "the payment method is 6011485579364000");
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 22, 38, FilterType.CREDIT_CARD));
 
-        filterResult = filter.filter(getPolicy(), "context", PIECE, "the payment method is 6011792597726000.");
-        Assertions.assertEquals(1, filterResult.getSpans().size());
-        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 22, 38, FilterType.CREDIT_CARD));
+        filtered = filter.filter(getPolicy(), "context", PIECE, "the payment method is 6011792597726000.");
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 22, 38, FilterType.CREDIT_CARD));
 
     }
 
@@ -165,35 +165,35 @@ public class CreditCardFilterTest extends AbstractFilterTest {
 
         final CreditCardFilter filter = new CreditCardFilter(filterConfiguration, false, false, true);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "the payment method is 1234567812345678- visa.");
-        Assertions.assertEquals(1, filterResult.getSpans().size());
-        Assertions.assertEquals(0.6, filterResult.getSpans().get(0).getConfidence());
-        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 22, 38, FilterType.CREDIT_CARD));
+        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "the payment method is 1234567812345678- visa.");
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertEquals(0.6, filtered.getSpans().get(0).getConfidence());
+        Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 22, 38, FilterType.CREDIT_CARD));
 
-        final FilterResult filterResult2 = filter.filter(getPolicy(), "context", PIECE, "the payment method is -1234567812345678 visa.");
-        Assertions.assertEquals(1, filterResult2.getSpans().size());
-        Assertions.assertEquals(0.6, filterResult2.getSpans().get(0).getConfidence());
-        Assertions.assertTrue(checkSpan(filterResult2.getSpans().get(0), 23, 39, FilterType.CREDIT_CARD));
+        final Filtered filtered2 = filter.filter(getPolicy(), "context", PIECE, "the payment method is -1234567812345678 visa.");
+        Assertions.assertEquals(1, filtered2.getSpans().size());
+        Assertions.assertEquals(0.6, filtered2.getSpans().get(0).getConfidence());
+        Assertions.assertTrue(checkSpan(filtered2.getSpans().get(0), 23, 39, FilterType.CREDIT_CARD));
 
-        final FilterResult filterResult3 = filter.filter(getPolicy(), "context", PIECE, "the payment method is -1234567812345678- visa.");
-        Assertions.assertEquals(1, filterResult3.getSpans().size());
-        Assertions.assertEquals(0.5, filterResult3.getSpans().get(0).getConfidence());
-        Assertions.assertTrue(checkSpan(filterResult3.getSpans().get(0), 23, 39, FilterType.CREDIT_CARD));
+        final Filtered filtered3 = filter.filter(getPolicy(), "context", PIECE, "the payment method is -1234567812345678- visa.");
+        Assertions.assertEquals(1, filtered3.getSpans().size());
+        Assertions.assertEquals(0.5, filtered3.getSpans().get(0).getConfidence());
+        Assertions.assertTrue(checkSpan(filtered3.getSpans().get(0), 23, 39, FilterType.CREDIT_CARD));
 
-        final FilterResult filterResult4 = filter.filter(getPolicy(), "context", PIECE, "1234567812345678- visa.");
-        Assertions.assertEquals(1, filterResult4.getSpans().size());
-        Assertions.assertEquals(0.6, filterResult4.getSpans().get(0).getConfidence());
-        Assertions.assertTrue(checkSpan(filterResult4.getSpans().get(0), 0, 16, FilterType.CREDIT_CARD));
+        final Filtered filtered4 = filter.filter(getPolicy(), "context", PIECE, "1234567812345678- visa.");
+        Assertions.assertEquals(1, filtered4.getSpans().size());
+        Assertions.assertEquals(0.6, filtered4.getSpans().get(0).getConfidence());
+        Assertions.assertTrue(checkSpan(filtered4.getSpans().get(0), 0, 16, FilterType.CREDIT_CARD));
 
-        final FilterResult filterResult5 = filter.filter(getPolicy(), "context", PIECE, "-1234567812345678");
-        Assertions.assertEquals(1, filterResult5.getSpans().size());
-        Assertions.assertEquals(0.6, filterResult5.getSpans().get(0).getConfidence());
-        Assertions.assertTrue(checkSpan(filterResult5.getSpans().get(0), 1, 17, FilterType.CREDIT_CARD));
+        final Filtered filtered5 = filter.filter(getPolicy(), "context", PIECE, "-1234567812345678");
+        Assertions.assertEquals(1, filtered5.getSpans().size());
+        Assertions.assertEquals(0.6, filtered5.getSpans().get(0).getConfidence());
+        Assertions.assertTrue(checkSpan(filtered5.getSpans().get(0), 1, 17, FilterType.CREDIT_CARD));
 
-        final FilterResult filterResult6 = filter.filter(getPolicy(), "context", PIECE, "-1234567812345678-");
-        Assertions.assertEquals(1, filterResult6.getSpans().size());
-        Assertions.assertEquals(0.5, filterResult6.getSpans().get(0).getConfidence());
-        Assertions.assertTrue(checkSpan(filterResult6.getSpans().get(0), 1, 17, FilterType.CREDIT_CARD));
+        final Filtered filtered6 = filter.filter(getPolicy(), "context", PIECE, "-1234567812345678-");
+        Assertions.assertEquals(1, filtered6.getSpans().size());
+        Assertions.assertEquals(0.5, filtered6.getSpans().get(0).getConfidence());
+        Assertions.assertTrue(checkSpan(filtered6.getSpans().get(0), 1, 17, FilterType.CREDIT_CARD));
     }
 
     @Test
@@ -207,20 +207,20 @@ public class CreditCardFilterTest extends AbstractFilterTest {
 
         final CreditCardFilter filter = new CreditCardFilter(filterConfiguration, true, false, false);
 
-        FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "00752457000200000007230041111111111111116");
-        Assertions.assertEquals(1, filterResult.getSpans().size());
-        Assertions.assertEquals(0.7, filterResult.getSpans().get(0).getConfidence());
-        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 24, 40, FilterType.CREDIT_CARD));
+        Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "00752457000200000007230041111111111111116");
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertEquals(0.7, filtered.getSpans().get(0).getConfidence());
+        Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 24, 40, FilterType.CREDIT_CARD));
 
-        filterResult = filter.filter(getPolicy(), "context", PIECE, "0075245700020000000133004111-1111-1111-11116");
-        Assertions.assertEquals(1, filterResult.getSpans().size());
-        Assertions.assertEquals(0.7, filterResult.getSpans().get(0).getConfidence(), 0.01);
-        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 24, 43, FilterType.CREDIT_CARD));
+        filtered = filter.filter(getPolicy(), "context", PIECE, "0075245700020000000133004111-1111-1111-11116");
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertEquals(0.7, filtered.getSpans().get(0).getConfidence(), 0.01);
+        Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 24, 43, FilterType.CREDIT_CARD));
 
-        filterResult = filter.filter(getPolicy(), "context", PIECE, "the payment method is 4111111111111111 visa.");
-        Assertions.assertEquals(1, filterResult.getSpans().size());
-        Assertions.assertEquals(0.9, filterResult.getSpans().get(0).getConfidence(), 0.01);
-        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 22, 38, FilterType.CREDIT_CARD));
+        filtered = filter.filter(getPolicy(), "context", PIECE, "the payment method is 4111111111111111 visa.");
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertEquals(0.9, filtered.getSpans().get(0).getConfidence(), 0.01);
+        Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 22, 38, FilterType.CREDIT_CARD));
     }
 
     @Test
@@ -234,10 +234,10 @@ public class CreditCardFilterTest extends AbstractFilterTest {
 
         final CreditCardFilter filter = new CreditCardFilter(filterConfiguration, true, false, true);
 
-        FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "the payment method is 4532613702852251 visa and 1532000000852251.");
-        Assertions.assertEquals(1, filterResult.getSpans().size());
-        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 22, 38, FilterType.CREDIT_CARD));
-        Assertions.assertEquals("4532613702852251", filterResult.getSpans().get(0).getText());
+        Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "the payment method is 4532613702852251 visa and 1532000000852251.");
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 22, 38, FilterType.CREDIT_CARD));
+        Assertions.assertEquals("4532613702852251", filtered.getSpans().get(0).getText());
 
     }
 

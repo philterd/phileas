@@ -15,15 +15,14 @@
  */
 package ai.philterd.phileas.services.filters;
 
-import ai.philterd.phileas.model.enums.MimeType;
-import ai.philterd.phileas.model.objects.ApplyResponse;
-import ai.philterd.phileas.model.objects.Span;
+import ai.philterd.phileas.model.filtering.MimeType;
+import ai.philterd.phileas.model.filtering.ApplyResult;
+import ai.philterd.phileas.model.filtering.Span;
 import ai.philterd.phileas.policy.Policy;
-import ai.philterd.phileas.model.objects.BinaryDocumentFilterResponse;
-import ai.philterd.phileas.model.objects.FilterResponse;
+import ai.philterd.phileas.model.filtering.BinaryDocumentFilterResult;
+import ai.philterd.phileas.model.filtering.FilterResult;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * Interface for implementing filter services.
@@ -35,10 +34,10 @@ public interface FilterService {
      * @param policy The {@link Policy} to apply.
      * @param input The input text.
      * @param mimeType The {@link MimeType}.
-     * @return A {@link FilterResponse}.
+     * @return A {@link FilterResult}.
      * @throws Exception Thrown if the text cannot be filtered.
      */
-    FilterResponse filter(final Policy policy, final String context, final String input, final MimeType mimeType) throws Exception;
+    FilterResult filter(final Policy policy, final String context, final String input, final MimeType mimeType) throws Exception;
 
     /**
      * Filter text from a binary document.
@@ -46,17 +45,17 @@ public interface FilterService {
      * @param input The input document as a byte array.
      * @param mimeType The input {@link MimeType}.
      * @param outputMimeType The output {@link MimeType}.
-     * @return A {@link BinaryDocumentFilterResponse}.
+     * @return A {@link BinaryDocumentFilterResult}.
      * @throws Exception Thrown if the text cannot be filtered.
      */
-    BinaryDocumentFilterResponse filter(final Policy policy, final String context, byte[] input, MimeType mimeType, MimeType outputMimeType) throws Exception;
+    BinaryDocumentFilterResult filter(final Policy policy, final String context, byte[] input, MimeType mimeType, MimeType outputMimeType) throws Exception;
 
     /**
      * Applies spans to the input text. Useful for when spans have previously been identified. Only supports plain text input.
      * @param spans A list of {@link Span spans}.
      * @param input The input text.
-     * @return A {@link ApplyResponse}.
+     * @return A {@link ApplyResult}.
      */
-    ApplyResponse apply(final List<Span> spans, final String input);
+    ApplyResult apply(final List<Span> spans, final String input);
 
 }

@@ -15,12 +15,12 @@
  */
 package ai.philterd.phileas.filters.rules.dictionary;
 
-import ai.philterd.phileas.model.enums.FilterType;
+import ai.philterd.phileas.model.filtering.FilterType;
 import ai.philterd.phileas.filters.FilterConfiguration;
-import ai.philterd.phileas.model.objects.FilterResult;
-import ai.philterd.phileas.model.objects.Position;
-import ai.philterd.phileas.model.objects.Replacement;
-import ai.philterd.phileas.model.objects.Span;
+import ai.philterd.phileas.model.filtering.Filtered;
+import ai.philterd.phileas.model.filtering.Position;
+import ai.philterd.phileas.model.filtering.Replacement;
+import ai.philterd.phileas.model.filtering.Span;
 import ai.philterd.phileas.policy.Policy;
 import ai.philterd.phileas.utils.BloomFilter;
 import org.apache.logging.log4j.LogManager;
@@ -78,7 +78,7 @@ public class BloomFilterDictionaryFilter extends DictionaryFilter {
     }
 
     @Override
-    public FilterResult filter(Policy policy, String context, int piece, String text) throws Exception {
+    public Filtered filter(Policy policy, String context, int piece, String text) throws Exception {
 
         final List<Span> spans = new LinkedList<>();
 
@@ -116,7 +116,7 @@ public class BloomFilterDictionaryFilter extends DictionaryFilter {
 
         }
 
-        return new FilterResult(context, spans);
+        return new Filtered(context, spans);
 
     }
 

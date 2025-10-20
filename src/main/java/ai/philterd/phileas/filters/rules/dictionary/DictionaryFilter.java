@@ -15,7 +15,7 @@
  */
 package ai.philterd.phileas.filters.rules.dictionary;
 
-import ai.philterd.phileas.model.enums.FilterType;
+import ai.philterd.phileas.model.filtering.FilterType;
 import ai.philterd.phileas.filters.FilterConfiguration;
 import ai.philterd.phileas.filters.rules.RulesFilter;
 

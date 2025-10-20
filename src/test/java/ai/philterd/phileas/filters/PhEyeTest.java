@@ -15,7 +15,7 @@
  */
 package ai.philterd.phileas.filters;
 
-import ai.philterd.phileas.model.objects.FilterResult;
+import ai.philterd.phileas.model.filtering.Filtered;
 import ai.philterd.phileas.services.anonymization.AgeAnonymizationService;
 import ai.philterd.phileas.services.context.DefaultContextService;
 import ai.philterd.phileas.services.filters.ai.pheye.PhEyeConfiguration;
@@ -44,10 +44,10 @@ public class PhEyeTest extends AbstractFilterTest {
 
         final PhEyeFilter filter = new PhEyeFilter(filterConfiguration, phEyeConfiguration, removePunctuation, thresholds);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "George Washington was the first president.");
+        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "George Washington was the first president.");
 
-        Assertions.assertEquals(1, filterResult.getSpans().size());
-        Assertions.assertEquals("George Washington", filterResult.getSpans().iterator().next().getText());
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertEquals("George Washington", filtered.getSpans().iterator().next().getText());
 
     }
 
@@ -65,9 +65,9 @@ public class PhEyeTest extends AbstractFilterTest {
 
         final PhEyeFilter filter = new PhEyeFilter(filterConfiguration, phEyeConfiguration, removePunctuation, thresholds);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "No name here was the first president.");
+        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "No name here was the first president.");
 
-        Assertions.assertEquals(0, filterResult.getSpans().size());
+        Assertions.assertEquals(0, filtered.getSpans().size());
 
     }
 
@@ -88,12 +88,12 @@ public class PhEyeTest extends AbstractFilterTest {
         // This is to test the http connection pooling for connections to ph-eye.
         for(int x = 0; x < 10; x++) {
 
-            final FilterResult filterResult1 = filter.filter(getPolicy(), "context", PIECE, "George Washington was the first president.");
-            Assertions.assertEquals(1, filterResult1.getSpans().size());
-            Assertions.assertEquals("George Washington", filterResult1.getSpans().iterator().next().getText());
+            final Filtered filtered1 = filter.filter(getPolicy(), "context", PIECE, "George Washington was the first president.");
+            Assertions.assertEquals(1, filtered1.getSpans().size());
+            Assertions.assertEquals("George Washington", filtered1.getSpans().iterator().next().getText());
 
-            final FilterResult filterResult2 = filter.filter(getPolicy(), "context", PIECE, "No name here was the first president.");
-            Assertions.assertEquals(0, filterResult2.getSpans().size());
+            final Filtered filtered2 = filter.filter(getPolicy(), "context", PIECE, "No name here was the first president.");
+            Assertions.assertEquals(0, filtered2.getSpans().size());
 
         }
 

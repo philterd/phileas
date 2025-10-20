@@ -16,9 +16,9 @@
 package ai.philterd.phileas.filters;
 
 import ai.philterd.phileas.filters.rules.dictionary.FuzzyDictionaryFilter;
-import ai.philterd.phileas.model.enums.FilterType;
-import ai.philterd.phileas.model.enums.SensitivityLevel;
-import ai.philterd.phileas.model.objects.FilterResult;
+import ai.philterd.phileas.model.filtering.FilterType;
+import ai.philterd.phileas.model.filtering.SensitivityLevel;
+import ai.philterd.phileas.model.filtering.Filtered;
 import ai.philterd.phileas.services.anonymization.HospitalAbbreviationAnonymizationService;
 import ai.philterd.phileas.services.context.ContextService;
 import ai.philterd.phileas.services.context.DefaultContextService;
@@ -47,9 +47,9 @@ public class HospitalAbbreviationFilterTest extends AbstractFilterTest {
 
         final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.HOSPITAL_ABBREVIATION, filterConfiguration, SensitivityLevel.HIGH, true);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "Went to WMC");
-        showSpans(filterResult.getSpans());
-        Assertions.assertEquals(1, filterResult.getSpans().size());
+        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "Went to WMC");
+        showSpans(filtered.getSpans());
+        Assertions.assertEquals(1, filtered.getSpans().size());
 
     }
 

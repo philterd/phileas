@@ -15,8 +15,8 @@
  */
 package ai.philterd.phileas.services.filters.postfilters;
 
-import ai.philterd.phileas.model.objects.PostFilterResult;
-import ai.philterd.phileas.model.objects.Span;
+import ai.philterd.phileas.model.filtering.PostFiltered;
+import ai.philterd.phileas.model.filtering.Span;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -39,7 +39,7 @@ public abstract class PostFilter {
      * @return <code>true</code> if the span should not be filtered.
      * <code>false</code> if the span should be filtered.
      */
-    protected abstract PostFilterResult process(String text, Span span);
+    protected abstract PostFiltered process(String text, Span span);
 
     public boolean skipped() {
         return skipped;
@@ -58,9 +58,9 @@ public abstract class PostFilter {
         while (i.hasNext()) {
 
             final Span span = i.next();
-            final PostFilterResult postFilterResult = process(text, span);
+            final PostFiltered postFiltered = process(text, span);
 
-            if(postFilterResult.isPostFiltered()) {
+            if(postFiltered.isPostFiltered()) {
                 i.remove();
             }
 

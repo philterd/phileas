@@ -15,8 +15,8 @@
  */
 package ai.philterd.phileas.filters;
 
-import ai.philterd.phileas.model.enums.FilterType;
-import ai.philterd.phileas.model.objects.FilterResult;
+import ai.philterd.phileas.model.filtering.FilterType;
+import ai.philterd.phileas.model.filtering.Filtered;
 import ai.philterd.phileas.policy.IgnoredPattern;
 import ai.philterd.phileas.services.anonymization.AgeAnonymizationService;
 import ai.philterd.phileas.services.context.DefaultContextService;
@@ -45,11 +45,11 @@ public class AgeFilterTest extends AbstractFilterTest {
 
         final AgeFilter filter = new AgeFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "the patient is 35years old.");
+        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "the patient is 35years old.");
 
-        Assertions.assertEquals(1, filterResult.getSpans().size());
-        Assertions.assertTrue(filterResult.getSpans().get(0).isIgnored());
-        Assertions.assertNotEquals(filterResult.getSpans().get(0).getText(), filterResult.getSpans().get(0).getReplacement());
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertTrue(filtered.getSpans().get(0).isIgnored());
+        Assertions.assertNotEquals(filtered.getSpans().get(0).getText(), filtered.getSpans().get(0).getReplacement());
 
     }
 
@@ -67,11 +67,11 @@ public class AgeFilterTest extends AbstractFilterTest {
 
         final AgeFilter filter = new AgeFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "the patient is 35yEaRs old.");
+        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "the patient is 35yEaRs old.");
 
-        Assertions.assertEquals(1, filterResult.getSpans().size());
-        Assertions.assertTrue(filterResult.getSpans().get(0).isIgnored());
-        Assertions.assertNotEquals(filterResult.getSpans().get(0).getText(), filterResult.getSpans().get(0).getReplacement());
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertTrue(filtered.getSpans().get(0).isIgnored());
+        Assertions.assertNotEquals(filtered.getSpans().get(0).getText(), filtered.getSpans().get(0).getReplacement());
 
     }
 
@@ -87,15 +87,15 @@ public class AgeFilterTest extends AbstractFilterTest {
 
         final AgeFilter filter = new AgeFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "the patient is 3.5years old.");
+        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "the patient is 3.5years old.");
 
-        showSpans(filterResult.getSpans());
+        showSpans(filtered.getSpans());
 
-        Assertions.assertEquals(1, filterResult.getSpans().size());
-        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 15, 27, FilterType.AGE));
-        Assertions.assertEquals("{{{REDACTED-age}}}", filterResult.getSpans().get(0).getReplacement());
-        Assertions.assertEquals("3.5years old", filterResult.getSpans().get(0).getText());
-        Assertions.assertNotEquals(filterResult.getSpans().get(0).getText(), filterResult.getSpans().get(0).getReplacement());
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 15, 27, FilterType.AGE));
+        Assertions.assertEquals("{{{REDACTED-age}}}", filtered.getSpans().get(0).getReplacement());
+        Assertions.assertEquals("3.5years old", filtered.getSpans().get(0).getText());
+        Assertions.assertNotEquals(filtered.getSpans().get(0).getText(), filtered.getSpans().get(0).getReplacement());
 
     }
 
@@ -110,13 +110,13 @@ public class AgeFilterTest extends AbstractFilterTest {
 
         final AgeFilter filter = new AgeFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "the patient is 3.5years old.");
+        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "the patient is 3.5years old.");
 
-        showSpans(filterResult.getSpans());
+        showSpans(filtered.getSpans());
 
-        Assertions.assertEquals(1, filterResult.getSpans().size());
-        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 15, 27, FilterType.AGE));
-        Assertions.assertNotEquals(filterResult.getSpans().get(0).getText(), filterResult.getSpans().get(0).getReplacement());
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 15, 27, FilterType.AGE));
+        Assertions.assertNotEquals(filtered.getSpans().get(0).getText(), filtered.getSpans().get(0).getReplacement());
 
     }
 
@@ -131,13 +131,13 @@ public class AgeFilterTest extends AbstractFilterTest {
 
         final AgeFilter filter = new AgeFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "the patient age is 3.yrs.");
+        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "the patient age is 3.yrs.");
 
-        showSpans(filterResult.getSpans());
+        showSpans(filtered.getSpans());
 
-        Assertions.assertEquals(1, filterResult.getSpans().size());
-        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 19, 24, FilterType.AGE));
-        Assertions.assertNotEquals(filterResult.getSpans().get(0).getText(), filterResult.getSpans().get(0).getReplacement());
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 19, 24, FilterType.AGE));
+        Assertions.assertNotEquals(filtered.getSpans().get(0).getText(), filtered.getSpans().get(0).getReplacement());
 
     }
 
@@ -152,13 +152,13 @@ public class AgeFilterTest extends AbstractFilterTest {
 
         final AgeFilter filter = new AgeFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "the patient age is 3yrs.");
+        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "the patient age is 3yrs.");
 
-        showSpans(filterResult.getSpans());
+        showSpans(filtered.getSpans());
 
-        Assertions.assertEquals(1, filterResult.getSpans().size());
-        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 19, 23, FilterType.AGE));
-        Assertions.assertNotEquals(filterResult.getSpans().get(0).getText(), filterResult.getSpans().get(0).getReplacement());
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 19, 23, FilterType.AGE));
+        Assertions.assertNotEquals(filtered.getSpans().get(0).getText(), filtered.getSpans().get(0).getReplacement());
 
     }
 
@@ -173,13 +173,13 @@ public class AgeFilterTest extends AbstractFilterTest {
 
         final AgeFilter filter = new AgeFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "the patient is 3.5yrs old.");
+        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "the patient is 3.5yrs old.");
 
-        showSpans(filterResult.getSpans());
+        showSpans(filtered.getSpans());
 
-        Assertions.assertEquals(1, filterResult.getSpans().size());
-        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 15, 25, FilterType.AGE));
-        Assertions.assertNotEquals(filterResult.getSpans().get(0).getText(), filterResult.getSpans().get(0).getReplacement());
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 15, 25, FilterType.AGE));
+        Assertions.assertNotEquals(filtered.getSpans().get(0).getText(), filtered.getSpans().get(0).getReplacement());
 
     }
 
@@ -194,13 +194,13 @@ public class AgeFilterTest extends AbstractFilterTest {
 
         final AgeFilter filter = new AgeFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "the patient is 39yrs. old");
+        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "the patient is 39yrs. old");
 
-        showSpans(filterResult.getSpans());
+        showSpans(filtered.getSpans());
 
-        Assertions.assertEquals(1, filterResult.getSpans().size());
-        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 15, 25, FilterType.AGE));
-        Assertions.assertNotEquals(filterResult.getSpans().get(0).getText(), filterResult.getSpans().get(0).getReplacement());
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 15, 25, FilterType.AGE));
+        Assertions.assertNotEquals(filtered.getSpans().get(0).getText(), filtered.getSpans().get(0).getReplacement());
 
     }
 
@@ -215,13 +215,13 @@ public class AgeFilterTest extends AbstractFilterTest {
 
         final AgeFilter filter = new AgeFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "she is aged 39");
+        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "she is aged 39");
 
-        showSpans(filterResult.getSpans());
+        showSpans(filtered.getSpans());
 
-        Assertions.assertEquals(1, filterResult.getSpans().size());
-        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 7, 14, FilterType.AGE));
-        Assertions.assertNotEquals(filterResult.getSpans().get(0).getText(), filterResult.getSpans().get(0).getReplacement());
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 7, 14, FilterType.AGE));
+        Assertions.assertNotEquals(filtered.getSpans().get(0).getText(), filtered.getSpans().get(0).getReplacement());
 
     }
 
@@ -236,13 +236,13 @@ public class AgeFilterTest extends AbstractFilterTest {
 
         final AgeFilter filter = new AgeFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "she is age 39");
+        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "she is age 39");
 
-        showSpans(filterResult.getSpans());
+        showSpans(filtered.getSpans());
 
-        Assertions.assertEquals(1, filterResult.getSpans().size());
-        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 7, 13, FilterType.AGE));
-        Assertions.assertNotEquals(filterResult.getSpans().get(0).getText(), filterResult.getSpans().get(0).getReplacement());
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 7, 13, FilterType.AGE));
+        Assertions.assertNotEquals(filtered.getSpans().get(0).getText(), filtered.getSpans().get(0).getReplacement());
 
     }
 
@@ -257,13 +257,13 @@ public class AgeFilterTest extends AbstractFilterTest {
 
         final AgeFilter filter = new AgeFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "she is age 39.5");
+        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "she is age 39.5");
 
-        showSpans(filterResult.getSpans());
+        showSpans(filtered.getSpans());
 
-        Assertions.assertEquals(1, filterResult.getSpans().size());
-        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 7, 15, FilterType.AGE));
-        Assertions.assertNotEquals(filterResult.getSpans().get(0).getText(), filterResult.getSpans().get(0).getReplacement());
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 7, 15, FilterType.AGE));
+        Assertions.assertNotEquals(filtered.getSpans().get(0).getText(), filtered.getSpans().get(0).getReplacement());
 
     }
 
@@ -278,15 +278,15 @@ public class AgeFilterTest extends AbstractFilterTest {
 
         final AgeFilter filter = new AgeFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "Patient Timothy Hook is 72 Yr. old male lives alone.");
+        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "Patient Timothy Hook is 72 Yr. old male lives alone.");
 
-        showSpans(filterResult.getSpans());
+        showSpans(filtered.getSpans());
 
-        Assertions.assertEquals(1, filterResult.getSpans().size());
-        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 24, 34, FilterType.AGE));
-        Assertions.assertNotEquals(filterResult.getSpans().get(0).getText(), filterResult.getSpans().get(0).getReplacement());
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 24, 34, FilterType.AGE));
+        Assertions.assertNotEquals(filtered.getSpans().get(0).getText(), filtered.getSpans().get(0).getReplacement());
 
-        LOGGER.info("Span text: " + filterResult.getSpans().get(0).getText());
+        LOGGER.info("Span text: " + filtered.getSpans().get(0).getText());
 
     }
 
@@ -301,15 +301,15 @@ public class AgeFilterTest extends AbstractFilterTest {
 
         final AgeFilter filter = new AgeFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "Cari Morris is 75 yo female alert and oriented x’s3 with some mild memory loss.");
+        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "Cari Morris is 75 yo female alert and oriented x’s3 with some mild memory loss.");
 
-        showSpans(filterResult.getSpans());
+        showSpans(filtered.getSpans());
 
-        Assertions.assertEquals(1, filterResult.getSpans().size());
-        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 15, 21, FilterType.AGE));
-        Assertions.assertNotEquals(filterResult.getSpans().get(0).getText(), filterResult.getSpans().get(0).getReplacement());
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 15, 21, FilterType.AGE));
+        Assertions.assertNotEquals(filtered.getSpans().get(0).getText(), filtered.getSpans().get(0).getReplacement());
 
-        LOGGER.info("Span text: " + filterResult.getSpans().get(0).getText());
+        LOGGER.info("Span text: " + filtered.getSpans().get(0).getText());
 
     }
 
@@ -324,11 +324,11 @@ public class AgeFilterTest extends AbstractFilterTest {
 
         final AgeFilter filter = new AgeFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "Had symptoms for the past 10 years");
+        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "Had symptoms for the past 10 years");
 
-        showSpans(filterResult.getSpans());
+        showSpans(filtered.getSpans());
 
-        Assertions.assertEquals(0, filterResult.getSpans().size());
+        Assertions.assertEquals(0, filtered.getSpans().size());
 
     }
 
@@ -345,13 +345,13 @@ public class AgeFilterTest extends AbstractFilterTest {
 
         final AgeFilter filter = new AgeFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "She is a 22-year-old female");
+        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "She is a 22-year-old female");
 
-        showSpans(filterResult.getSpans());
+        showSpans(filtered.getSpans());
 
-        Assertions.assertEquals(1, filterResult.getSpans().size());
-        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 9, 20, FilterType.AGE));
-        Assertions.assertNotEquals(filterResult.getSpans().get(0).getText(), filterResult.getSpans().get(0).getReplacement());
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 9, 20, FilterType.AGE));
+        Assertions.assertNotEquals(filtered.getSpans().get(0).getText(), filtered.getSpans().get(0).getReplacement());
 
     }
 
@@ -368,13 +368,13 @@ public class AgeFilterTest extends AbstractFilterTest {
 
         final AgeFilter filter = new AgeFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "Admit age: 69 years");
+        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "Admit age: 69 years");
 
-        showSpans(filterResult.getSpans());
+        showSpans(filtered.getSpans());
 
-        Assertions.assertEquals(1, filterResult.getSpans().size());
-        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 11, 19, FilterType.AGE));
-        Assertions.assertNotEquals(filterResult.getSpans().get(0).getText(), filterResult.getSpans().get(0).getReplacement());
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 11, 19, FilterType.AGE));
+        Assertions.assertNotEquals(filtered.getSpans().get(0).getText(), filtered.getSpans().get(0).getReplacement());
 
     }
 
@@ -391,13 +391,13 @@ public class AgeFilterTest extends AbstractFilterTest {
 
         final AgeFilter filter = new AgeFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "Female Admit Age: 69 years");
+        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "Female Admit Age: 69 years");
 
-        showSpans(filterResult.getSpans());
+        showSpans(filtered.getSpans());
 
-        Assertions.assertEquals(1, filterResult.getSpans().size());
-        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 18, 26, FilterType.AGE));
-        Assertions.assertNotEquals(filterResult.getSpans().get(0).getText(), filterResult.getSpans().get(0).getReplacement());
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 18, 26, FilterType.AGE));
+        Assertions.assertNotEquals(filtered.getSpans().get(0).getText(), filtered.getSpans().get(0).getReplacement());
 
     }
 
@@ -414,13 +414,13 @@ public class AgeFilterTest extends AbstractFilterTest {
 
         final AgeFilter filter = new AgeFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "Female Admit Age: 69 years\n");
+        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "Female Admit Age: 69 years\n");
 
-        showSpans(filterResult.getSpans());
+        showSpans(filtered.getSpans());
 
-        Assertions.assertEquals(1, filterResult.getSpans().size());
-        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 18, 26, FilterType.AGE));
-        Assertions.assertNotEquals(filterResult.getSpans().get(0).getText(), filterResult.getSpans().get(0).getReplacement());
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 18, 26, FilterType.AGE));
+        Assertions.assertNotEquals(filtered.getSpans().get(0).getText(), filtered.getSpans().get(0).getReplacement());
 
     }
 
@@ -437,13 +437,13 @@ public class AgeFilterTest extends AbstractFilterTest {
 
         final AgeFilter filter = new AgeFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "patient is 61 y/o and");
+        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "patient is 61 y/o and");
 
-        showSpans(filterResult.getSpans());
+        showSpans(filtered.getSpans());
 
-        Assertions.assertEquals(1, filterResult.getSpans().size());
-        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 11, 17, FilterType.AGE));
-        Assertions.assertNotEquals(filterResult.getSpans().get(0).getText(), filterResult.getSpans().get(0).getReplacement());
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 11, 17, FilterType.AGE));
+        Assertions.assertNotEquals(filtered.getSpans().get(0).getText(), filtered.getSpans().get(0).getReplacement());
 
     }
 
@@ -460,13 +460,13 @@ public class AgeFilterTest extends AbstractFilterTest {
 
         final AgeFilter filter = new AgeFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "patient is 161 y/o and");
+        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "patient is 161 y/o and");
 
-        showSpans(filterResult.getSpans());
+        showSpans(filtered.getSpans());
 
-        Assertions.assertEquals(1, filterResult.getSpans().size());
-        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 11, 18, FilterType.AGE));
-        Assertions.assertNotEquals(filterResult.getSpans().get(0).getText(), filterResult.getSpans().get(0).getReplacement());
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 11, 18, FilterType.AGE));
+        Assertions.assertNotEquals(filtered.getSpans().get(0).getText(), filtered.getSpans().get(0).getReplacement());
 
     }
 
@@ -483,11 +483,11 @@ public class AgeFilterTest extends AbstractFilterTest {
 
         final AgeFilter filter = new AgeFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "patient is 4161 y/o and");
+        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "patient is 4161 y/o and");
 
-        showSpans(filterResult.getSpans());
+        showSpans(filtered.getSpans());
 
-        Assertions.assertEquals(0, filterResult.getSpans().size());
+        Assertions.assertEquals(0, filtered.getSpans().size());
 
     }
 

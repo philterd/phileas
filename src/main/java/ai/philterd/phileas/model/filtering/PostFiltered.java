@@ -13,20 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ai.philterd.phileas.model.objects;
+package ai.philterd.phileas.model.filtering;
 
-import nl.jqno.equalsverifier.EqualsVerifier;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.junit.jupiter.api.Test;
-
-public class FilterResponseTest {
-
-    private static final Logger LOGGER = LogManager.getLogger(FilterResponseTest.class);
-
-    @Test
-    public void equalsContract() {
-        EqualsVerifier.forClass(FilterResponse.class).verify();
-    }
+public record PostFiltered(Span span, boolean isPostFiltered) {
 
 }
