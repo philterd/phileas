@@ -110,14 +110,6 @@ public abstract class Filter {
     public abstract Filtered filter(Policy policy, String context, int piece, String input) throws Exception;
 
     /**
-     * Determines if the input text may contain sensitive information matching the filter type.
-     * @param policy The {@link Policy}.
-     * @param input The input text.
-     * @return A count of possible occurrences of the filter type in the input text.
-     */
-    public abstract int getOccurrences(final Policy policy, final String input) throws Exception;
-
-    /**
      * Creates a new filter.
      *
      * @param filterConfiguration The {@link FilterConfiguration} for the filter.

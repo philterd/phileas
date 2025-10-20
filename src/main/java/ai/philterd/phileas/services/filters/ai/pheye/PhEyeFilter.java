@@ -198,13 +198,6 @@ public class PhEyeFilter extends NerFilter {
 
     }
 
-    @Override
-    public int getOccurrences(final Policy policy, final String input) throws Exception {
-
-        return filter(policy, "none", 0, input).getSpans().size();
-
-    }
-
     private Span createSpan(final Policy policy, final String context,
                             final FilterType filterType, final String text, final  String[] window,
                             final String classification, final int start, final int end, final double confidence) throws Exception {
