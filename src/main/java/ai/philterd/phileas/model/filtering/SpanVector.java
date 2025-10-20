@@ -13,41 +13,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ai.philterd.phileas.model.objects;
+package ai.philterd.phileas.model.filtering;
 
-import java.util.List;
+import com.google.gson.Gson;
 
-public class FilterResult {
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
-    private final String context;
-    private int piece;
-    private final List<Span> spans;
+public class SpanVector {
 
-    public FilterResult(final String context, final List<Span> spans) {
+    private Map<Double, Double> vectorIndexes;
+    private final transient Gson gson;
 
-        this.context = context;
-        this.piece = 0;
-        this.spans = spans;
-
+    public SpanVector() {
+        this.vectorIndexes = new ConcurrentHashMap<>();
+        this.gson = new Gson();
     }
 
-    public FilterResult(String context, int piece, List<Span> spans) {
-
-        this.context = context;
-        this.spans = spans;
-
+    @Override
+    public String toString() {
+        return gson.toJson(this);
     }
 
-    public String getContext() {
-        return context;
+    public Map<Double, Double> getVectorIndexes() {
+        return vectorIndexes;
     }
 
-    public int getPiece() {
-        return piece;
-    }
-
-    public List<Span> getSpans() {
-        return spans;
+    public void setVectorIndexes(Map<Double, Double> vectorIndexes) {
+        this.vectorIndexes = vectorIndexes;
     }
 
 }

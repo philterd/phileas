@@ -13,46 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ai.philterd.phileas.model.enums;
+package ai.philterd.phileas.model.metadata.zipcode;
 
-/**
- * A mime type
- */
-public enum MimeType {
+import ai.philterd.phileas.model.metadata.MetadataResult;
 
-    /**
-     * text/plain
-     */
-    TEXT_PLAIN("text/plain"),
+public class ZipCodeMetadataResult extends MetadataResult {
 
-    /**
-     * text/html
-     */
-    TEXT_HTML("text/html"),
+    private final int population;
+    private final boolean exists;
 
-    /**
-     * application/pdf
-     */
-    APPLICATION_PDF("application/pdf"),
-
-    /**
-     * image/jpeg
-     */
-    IMAGE_JPEG("image/jpeg");
-
-    private String value;
-
-    MimeType(String value) {
-        this.value = value;
+    public ZipCodeMetadataResult(int population) {
+        this.population = population;
+        this.exists = true;
     }
 
-    public String getValue() {
-        return value;
+    public ZipCodeMetadataResult(int population, boolean exists) {
+        this.population = population;
+        this.exists = exists;
     }
 
-    @Override
-    public String toString() {
-        return value;
+    public int getPopulation() {
+        return population;
+    }
+
+    public boolean isExists() {
+        return exists;
     }
 
 }

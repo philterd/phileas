@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ai.philterd.phileas.model.objects;
+package ai.philterd.phileas.model.filtering;
 
 import com.google.gson.Gson;
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -31,9 +31,9 @@ import java.util.Map;
 /**
  * Response to a filter operation.
  */
-public class FilterResponse {
+public class FilterResult {
 
-    private static final Logger LOGGER = LogManager.getLogger(FilterResponse.class);
+    private static final Logger LOGGER = LogManager.getLogger(FilterResult.class);
 
     private final String filteredText;
     private final String context;
@@ -42,9 +42,9 @@ public class FilterResponse {
     private final long tokens;
     private final transient List<IncrementalRedaction> incrementalRedactions;
 
-    public FilterResponse(String filteredText, String context, int piece,
-                          Explanation explanation, List<IncrementalRedaction> incrementalRedactions,
-                          long tokens) {
+    public FilterResult(String filteredText, String context, int piece,
+                        Explanation explanation, List<IncrementalRedaction> incrementalRedactions,
+                        long tokens) {
 
         this.filteredText = filteredText;
         this.context = context;
@@ -56,17 +56,17 @@ public class FilterResponse {
     }
 
     /**
-     * Combine multiple {@link FilterResponse} objects into a single {@link FilterResponse}.
-     * The list of {@link FilterResponse} objects must be in order from first to last.
+     * Combine multiple {@link FilterResult} objects into a single {@link FilterResult}.
+     * The list of {@link FilterResult} objects must be in order from first to last.
      *
-     * @param filterResponses A list of {@link FilterResponse} objects to combine.
+     * @param filterRespons A list of {@link FilterResult} objects to combine.
      *                        Objects must be in order from first to last.
-     * @param context         The context for the returned {@link FilterResponse}.
-     * @return A single, combined {@link FilterResponse}.
+     * @param context         The context for the returned {@link FilterResult}.
+     * @return A single, combined {@link FilterResult}.
      */
-    public static FilterResponse combine(List<FilterResponse> filterResponses, final String context, String separator) {
+    public static FilterResult combine(List<FilterResult> filterRespons, final String context, String separator) {
 
-        LOGGER.debug("Combining {} filter responses", filterResponses.size());
+        LOGGER.debug("Combining {} filter responses", filterRespons.size());
 
         // Combine the results into a single filterResponse object.
         final StringBuilder filteredText = new StringBuilder();
@@ -74,8 +74,8 @@ public class FilterResponse {
         final List<Span> identifiedSpans = new LinkedList<>();
 
         // Order the filter responses by piece number, lowest to greatest.
-        final List<FilterResponse> sortedFilterResponses =
-                filterResponses.stream().sorted(Comparator.comparing(FilterResponse::getPiece)).toList();
+        final List<FilterResult> sortedFilterRespons =
+                filterRespons.stream().sorted(Comparator.comparing(FilterResult::getPiece)).toList();
 
         // Tracks the document offset for each piece so the span locations can be adjusted.
         int documentOffset = 0;
@@ -87,31 +87,31 @@ public class FilterResponse {
         long tokens = 0;
 
         // Loop over each filter response and build the combined filter response.
-        for (final FilterResponse filterResponse : sortedFilterResponses) {
+        for (final FilterResult filterResult : sortedFilterRespons) {
 
             // The text is the filtered text plus the separator.
-            final String pieceFilteredText = filterResponse.getFilteredText() + separator;
+            final String pieceFilteredText = filterResult.getFilteredText() + separator;
 
             // Append the filtered text.
             filteredText.append(pieceFilteredText);
 
             // Adjust the character offsets when combining.
-            appliedSpans.addAll(Span.shiftSpans(documentOffset, filterResponse.getExplanation().appliedSpans()));
-            identifiedSpans.addAll(Span.shiftSpans(documentOffset, filterResponse.getExplanation().identifiedSpans()));
+            appliedSpans.addAll(Span.shiftSpans(documentOffset, filterResult.getExplanation().appliedSpans()));
+            identifiedSpans.addAll(Span.shiftSpans(documentOffset, filterResult.getExplanation().identifiedSpans()));
 
             // Adjust the document offset.
             documentOffset += pieceFilteredText.length();
 
             // Combine the incremental redactions.
-            combinedIncrementalRedactions.addAll(filterResponse.getIncrementalRedactions());
+            combinedIncrementalRedactions.addAll(filterResult.getIncrementalRedactions());
 
             // Sum the tokens.
-            tokens += filterResponse.getTokens();
+            tokens += filterResult.getTokens();
 
         }
 
         // Return the newly built FilterResponse.
-        return new FilterResponse(filteredText.toString().trim(), context, 0,
+        return new FilterResult(filteredText.toString().trim(), context, 0,
                 new Explanation(appliedSpans, identifiedSpans), combinedIncrementalRedactions, tokens);
 
     }

@@ -17,7 +17,7 @@ package ai.philterd.phileas.policy.filters;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
-import ai.philterd.phileas.model.enums.SensitivityLevel;
+import ai.philterd.phileas.model.filtering.SensitivityLevel;
 import ai.philterd.phileas.services.strategies.dynamic.HospitalFilterStrategy;
 
 import java.util.List;

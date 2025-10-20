@@ -15,7 +15,7 @@
  */
 package ai.philterd.phileas.services.pdf;
 
-import ai.philterd.phileas.model.enums.MimeType;
+import ai.philterd.phileas.model.filtering.MimeType;
 
 import java.io.IOException;
 

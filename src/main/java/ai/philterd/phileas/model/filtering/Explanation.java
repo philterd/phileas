@@ -13,8 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ai.philterd.phileas.model.objects;
+package ai.philterd.phileas.model.filtering;
 
-public record PostFilterResult(Span span, boolean isPostFiltered) {
+import java.util.List;
+
+/**
+ * Contains the spans that were identified and the spans that were applied.
+ * Provides insight into how the filters operated.
+ */
+public record Explanation(List<Span> appliedSpans, List<Span> identifiedSpans) {
 
 }

@@ -16,11 +16,11 @@
 package ai.philterd.phileas.services;
 
 import ai.philterd.phileas.PhileasConfiguration;
-import ai.philterd.phileas.model.enums.FilterType;
-import ai.philterd.phileas.model.enums.MimeType;
-import ai.philterd.phileas.model.objects.ApplyResponse;
-import ai.philterd.phileas.model.objects.BinaryDocumentFilterResponse;
-import ai.philterd.phileas.model.objects.Span;
+import ai.philterd.phileas.model.filtering.FilterType;
+import ai.philterd.phileas.model.filtering.MimeType;
+import ai.philterd.phileas.model.filtering.ApplyResult;
+import ai.philterd.phileas.model.filtering.BinaryDocumentFilterResult;
+import ai.philterd.phileas.model.filtering.Span;
 import ai.philterd.phileas.policy.Ignored;
 import ai.philterd.phileas.policy.Policy;
 import ai.philterd.phileas.services.context.ContextService;
@@ -116,7 +116,7 @@ public class PhileasFilterServiceTest {
         final Policy policy = getPdfPolicy("pdf");
 
         final PhileasFilterService service = new PhileasFilterService(phileasConfiguration, contextService, vectorService);
-        final BinaryDocumentFilterResponse response = service.filter(policy, "context", document, MimeType.APPLICATION_PDF, MimeType.APPLICATION_PDF);
+        final BinaryDocumentFilterResult response = service.filter(policy, "context", document, MimeType.APPLICATION_PDF, MimeType.APPLICATION_PDF);
 
         // Write the byte array to a file.
         final File outputFile = File.createTempFile("redact", ".pdf");
@@ -149,7 +149,7 @@ public class PhileasFilterServiceTest {
         final Policy policy = getPdfPolicy("pdf");
 
         PhileasFilterService service = new PhileasFilterService(phileasConfiguration, contextService, vectorService);
-        final BinaryDocumentFilterResponse response = service.filter(policy, "context", document, MimeType.APPLICATION_PDF, MimeType.APPLICATION_PDF);
+        final BinaryDocumentFilterResult response = service.filter(policy, "context", document, MimeType.APPLICATION_PDF, MimeType.APPLICATION_PDF);
 
         // Write the byte array to a file.
         final File outputFile = File.createTempFile("redact", ".pdf");
@@ -184,12 +184,12 @@ public class PhileasFilterServiceTest {
         spans.add(Span.make(0, 17, FilterType.PERSON, "context", 1.0, "George Washington", "***", "", false, true, null, 1));
         spans.add(Span.make(18, 29, FilterType.SSN, "context", 1.0, "123-45-6789", "***", "", false, true, null, 1));
 
-        final ApplyResponse applyResponse = service.apply(spans, input);
-        LOGGER.info(applyResponse.toString());
+        final ApplyResult applyResult = service.apply(spans, input);
+        LOGGER.info(applyResult.toString());
 
-        Assertions.assertEquals("*** whose SSN was *** was the first president of the United States and he lived at 90210.", applyResponse.getFilteredText());
-        Assertions.assertEquals(2, applyResponse.getIncrementalRedactions().size());
-        Assertions.assertTrue(0 < applyResponse.getTokens());
+        Assertions.assertEquals("*** whose SSN was *** was the first president of the United States and he lived at 90210.", applyResult.getFilteredText());
+        Assertions.assertEquals(2, applyResult.getIncrementalRedactions().size());
+        Assertions.assertTrue(0 < applyResult.getTokens());
 
     }
 
@@ -204,12 +204,12 @@ public class PhileasFilterServiceTest {
 
         final List<Span> spans = new ArrayList<>();
 
-        final ApplyResponse applyResponse = service.apply(spans, input);
-        LOGGER.info(applyResponse.toString());
+        final ApplyResult applyResult = service.apply(spans, input);
+        LOGGER.info(applyResult.toString());
 
-        Assertions.assertEquals("George Washington whose SSN was 123-45-6789", applyResponse.getFilteredText());
-        Assertions.assertEquals(0, applyResponse.getIncrementalRedactions().size());
-        Assertions.assertTrue(0 < applyResponse.getTokens());
+        Assertions.assertEquals("George Washington whose SSN was 123-45-6789", applyResult.getFilteredText());
+        Assertions.assertEquals(0, applyResult.getIncrementalRedactions().size());
+        Assertions.assertTrue(0 < applyResult.getTokens());
 
     }
 

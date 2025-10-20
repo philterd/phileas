@@ -15,8 +15,8 @@
  */
 package ai.philterd.phileas.services.filters.postfilters;
 
-import ai.philterd.phileas.model.objects.PostFilterResult;
-import ai.philterd.phileas.model.objects.Span;
+import ai.philterd.phileas.model.filtering.PostFiltered;
+import ai.philterd.phileas.model.filtering.Span;
 import ai.philterd.phileas.policy.IgnoredPattern;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -39,7 +39,7 @@ public class IgnoredPatternsFilter extends PostFilter {
     }
 
     @Override
-    protected PostFilterResult process(final String text, final Span span) {
+    protected PostFiltered process(final String text, final Span span) {
 
         final String spanText = span.getText(text);
 
@@ -48,12 +48,12 @@ public class IgnoredPatternsFilter extends PostFilter {
             final boolean ignored = spanText.matches(pattern.getPattern());
 
             if(ignored) {
-                return new PostFilterResult(span, true);
+                return new PostFiltered(span, true);
             }
 
         }
 
-        return new PostFilterResult(span, false);
+        return new PostFiltered(span, false);
 
     }
 

@@ -15,14 +15,14 @@
  */
 package ai.philterd.phileas.services.filters.regex;
 
-import ai.philterd.phileas.model.enums.FilterType;
+import ai.philterd.phileas.model.filtering.FilterType;
 import ai.philterd.phileas.filters.FilterConfiguration;
 import ai.philterd.phileas.filters.rules.regex.RegexFilter;
 import ai.philterd.phileas.services.Analyzer;
-import ai.philterd.phileas.model.objects.FilterPattern;
-import ai.philterd.phileas.model.objects.FilterResult;
-import ai.philterd.phileas.model.objects.Position;
-import ai.philterd.phileas.model.objects.Span;
+import ai.philterd.phileas.model.filtering.FilterPattern;
+import ai.philterd.phileas.model.filtering.Filtered;
+import ai.philterd.phileas.model.filtering.Position;
+import ai.philterd.phileas.model.filtering.Span;
 import ai.philterd.phileas.policy.Policy;
 
 import java.util.HashSet;
@@ -61,7 +61,7 @@ public class PhysicianNameFilter extends RegexFilter {
     }
 
     @Override
-    public FilterResult filter(Policy policy, String context, int piece, String input) throws Exception {
+    public Filtered filter(Policy policy, String context, int piece, String input) throws Exception {
 
         // \b([A-Z][A-Za-z'\s+]+)(,|\s)?([A-Z][A-Za-z'\s+]+(,|\s))?([A-Z][A-Za-z'\s+]+(,|\s)?(MD|PhD))\b
 
@@ -93,7 +93,7 @@ public class PhysicianNameFilter extends RegexFilter {
 
         final List<Span> droppedOverlappingSpans = Span.dropOverlappingSpans(spans);
 
-        return new FilterResult(context, droppedOverlappingSpans);
+        return new Filtered(context, droppedOverlappingSpans);
 
     }
 

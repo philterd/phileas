@@ -15,8 +15,8 @@
  */
 package ai.philterd.phileas.filters;
 
-import ai.philterd.phileas.model.enums.FilterType;
-import ai.philterd.phileas.model.objects.FilterResult;
+import ai.philterd.phileas.model.filtering.FilterType;
+import ai.philterd.phileas.model.filtering.Filtered;
 import ai.philterd.phileas.services.anonymization.MacAddressAnonymizationService;
 import ai.philterd.phileas.services.context.DefaultContextService;
 import ai.philterd.phileas.services.filters.regex.PhoneNumberExtensionFilter;
@@ -39,12 +39,12 @@ public class PhoneNumberExtensionFilterTest extends AbstractFilterTest {
 
         final PhoneNumberExtensionFilter filter = new PhoneNumberExtensionFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "he is at x123");
-        showSpans(filterResult.getSpans());
+        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "he is at x123");
+        showSpans(filtered.getSpans());
 
-        Assertions.assertEquals(1, filterResult.getSpans().size());
-        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 9, 13, FilterType.PHONE_NUMBER_EXTENSION));
-        Assertions.assertEquals("x123", filterResult.getSpans().get(0).getText());
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 9, 13, FilterType.PHONE_NUMBER_EXTENSION));
+        Assertions.assertEquals("x123", filtered.getSpans().get(0).getText());
 
     }
 
@@ -59,12 +59,12 @@ public class PhoneNumberExtensionFilterTest extends AbstractFilterTest {
 
         final PhoneNumberExtensionFilter filter = new PhoneNumberExtensionFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "his phone number was +1 151-841-2829 x416.");
-        showSpans(filterResult.getSpans());
+        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "his phone number was +1 151-841-2829 x416.");
+        showSpans(filtered.getSpans());
 
-        Assertions.assertEquals(1, filterResult.getSpans().size());
-        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 37, 41, FilterType.PHONE_NUMBER_EXTENSION));
-        Assertions.assertEquals("x416", filterResult.getSpans().get(0).getText());
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 37, 41, FilterType.PHONE_NUMBER_EXTENSION));
+        Assertions.assertEquals("x416", filtered.getSpans().get(0).getText());
 
     }
 

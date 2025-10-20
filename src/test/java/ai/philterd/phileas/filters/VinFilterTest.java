@@ -15,8 +15,8 @@
  */
 package ai.philterd.phileas.filters;
 
-import ai.philterd.phileas.model.enums.FilterType;
-import ai.philterd.phileas.model.objects.FilterResult;
+import ai.philterd.phileas.model.filtering.FilterType;
+import ai.philterd.phileas.model.filtering.Filtered;
 import ai.philterd.phileas.services.anonymization.AlphanumericAnonymizationService;
 import ai.philterd.phileas.services.context.DefaultContextService;
 import ai.philterd.phileas.services.filters.regex.VinFilter;
@@ -39,10 +39,10 @@ public class VinFilterTest extends AbstractFilterTest {
 
         final VinFilter filter = new VinFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "the vin is JB3BA36KXHU036784.");
-        Assertions.assertEquals(1, filterResult.getSpans().size());
-        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 11, 28, FilterType.VIN));
-        Assertions.assertEquals("JB3BA36KXHU036784", filterResult.getSpans().get(0).getText());
+        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "the vin is JB3BA36KXHU036784.");
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 11, 28, FilterType.VIN));
+        Assertions.assertEquals("JB3BA36KXHU036784", filtered.getSpans().get(0).getText());
 
     }
 
@@ -57,9 +57,9 @@ public class VinFilterTest extends AbstractFilterTest {
 
         final VinFilter filter = new VinFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "the vin is 2T2HK31U38C057399.");
-        Assertions.assertEquals(1, filterResult.getSpans().size());
-        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 11, 28, FilterType.VIN));
+        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "the vin is 2T2HK31U38C057399.");
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 11, 28, FilterType.VIN));
 
     }
 
@@ -74,8 +74,8 @@ public class VinFilterTest extends AbstractFilterTest {
 
         final VinFilter filter = new VinFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "the vin is 11131517191011111.");
-        Assertions.assertEquals(0, filterResult.getSpans().size());
+        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "the vin is 11131517191011111.");
+        Assertions.assertEquals(0, filtered.getSpans().size());
 
     }
 
@@ -90,8 +90,8 @@ public class VinFilterTest extends AbstractFilterTest {
 
         final VinFilter filter = new VinFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "the vin is 11131517191X11111.");
-        Assertions.assertEquals(0, filterResult.getSpans().size());
+        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "the vin is 11131517191X11111.");
+        Assertions.assertEquals(0, filtered.getSpans().size());
 
     }
 
@@ -106,9 +106,9 @@ public class VinFilterTest extends AbstractFilterTest {
 
         final VinFilter filter = new VinFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "the vin is 2t2hk31u38c057399.");
-        Assertions.assertEquals(1, filterResult.getSpans().size());
-        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 11, 28, FilterType.VIN));
+        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "the vin is 2t2hk31u38c057399.");
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 11, 28, FilterType.VIN));
 
     }
 

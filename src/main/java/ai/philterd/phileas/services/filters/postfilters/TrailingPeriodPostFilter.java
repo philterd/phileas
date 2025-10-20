@@ -15,9 +15,9 @@
  */
 package ai.philterd.phileas.services.filters.postfilters;
 
-import ai.philterd.phileas.model.enums.FilterType;
-import ai.philterd.phileas.model.objects.PostFilterResult;
-import ai.philterd.phileas.model.objects.Span;
+import ai.philterd.phileas.model.filtering.FilterType;
+import ai.philterd.phileas.model.filtering.PostFiltered;
+import ai.philterd.phileas.model.filtering.Span;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -43,7 +43,7 @@ public class TrailingPeriodPostFilter extends PostFilter {
     }
 
     @Override
-    protected PostFilterResult process(final String text, Span span) {
+    protected PostFiltered process(final String text, Span span) {
 
         // A street filter can end with a period.
         if(span.getFilterType() != FilterType.STREET_ADDRESS) {
@@ -62,7 +62,7 @@ public class TrailingPeriodPostFilter extends PostFilter {
 
         }
 
-        return new PostFilterResult(span, false);
+        return new PostFiltered(span, false);
 
     }
 

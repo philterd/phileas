@@ -16,9 +16,9 @@
 package ai.philterd.phileas.services;
 
 import ai.philterd.phileas.PhileasConfiguration;
-import ai.philterd.phileas.model.enums.MimeType;
-import ai.philterd.phileas.model.objects.FilterResponse;
-import ai.philterd.phileas.model.objects.IncrementalRedaction;
+import ai.philterd.phileas.model.filtering.MimeType;
+import ai.philterd.phileas.model.filtering.FilterResult;
+import ai.philterd.phileas.model.filtering.IncrementalRedaction;
 import ai.philterd.phileas.policy.Policy;
 import ai.philterd.phileas.services.context.ContextService;
 import ai.philterd.phileas.services.disambiguation.vector.VectorService;
@@ -54,7 +54,7 @@ public class EndToEndWithIncrementalRedactionsTest {
         final Policy policy = getPolicy("default");
 
         final PhileasFilterService service = new PhileasFilterService(phileasConfiguration, contextService, vectorService);
-        final FilterResponse response = service.filter(policy, "context", "George Washington whose SSN was 123-45-6789 was the first president of the United States and he lived at 90210.", MimeType.TEXT_PLAIN);
+        final FilterResult response = service.filter(policy, "context", "George Washington whose SSN was 123-45-6789 was the first president of the United States and he lived at 90210.", MimeType.TEXT_PLAIN);
 
         LOGGER.info(response.getFilteredText());
 
@@ -79,7 +79,7 @@ public class EndToEndWithIncrementalRedactionsTest {
         final Policy policy = getPolicy("default");
 
         final PhileasFilterService service = new PhileasFilterService(phileasConfiguration, contextService, vectorService);
-        final FilterResponse response = service.filter(policy, "context", "George Washington was president.", MimeType.TEXT_PLAIN);
+        final FilterResult response = service.filter(policy, "context", "George Washington was president.", MimeType.TEXT_PLAIN);
 
         LOGGER.info(response.getFilteredText());
 
@@ -99,7 +99,7 @@ public class EndToEndWithIncrementalRedactionsTest {
         final Policy policy = getPolicyWithSplits("default");
 
         final PhileasFilterService service = new PhileasFilterService(phileasConfiguration, contextService, vectorService);
-        final FilterResponse response = service.filter(policy, "context", "George Washington whose SSN was 123-45-6789 was\n the first president of the United States and he lived at 90210.\nThe second president was John Adams. Abraham Lincoln was later on. His SSN was 123-45-6789.", MimeType.TEXT_PLAIN);
+        final FilterResult response = service.filter(policy, "context", "George Washington whose SSN was 123-45-6789 was\n the first president of the United States and he lived at 90210.\nThe second president was John Adams. Abraham Lincoln was later on. His SSN was 123-45-6789.", MimeType.TEXT_PLAIN);
 
         LOGGER.info(response.getFilteredText());
 

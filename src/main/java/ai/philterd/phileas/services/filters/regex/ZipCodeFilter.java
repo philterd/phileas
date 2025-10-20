@@ -15,21 +15,20 @@
  */
 package ai.philterd.phileas.services.filters.regex;
 
-import ai.philterd.phileas.model.enums.FilterType;
+import ai.philterd.phileas.model.filtering.FilterType;
 import ai.philterd.phileas.filters.FilterConfiguration;
 import ai.philterd.phileas.filters.rules.regex.RegexFilter;
 import ai.philterd.phileas.model.metadata.zipcode.ZipCodeMetadataRequest;
-import ai.philterd.phileas.model.metadata.zipcode.ZipCodeMetadataResponse;
+import ai.philterd.phileas.model.metadata.zipcode.ZipCodeMetadataResult;
 import ai.philterd.phileas.model.metadata.zipcode.ZipCodeMetadataService;
 import ai.philterd.phileas.services.Analyzer;
-import ai.philterd.phileas.model.objects.FilterPattern;
-import ai.philterd.phileas.model.objects.FilterResult;
-import ai.philterd.phileas.model.objects.Span;
+import ai.philterd.phileas.model.filtering.FilterPattern;
+import ai.philterd.phileas.model.filtering.Filtered;
+import ai.philterd.phileas.model.filtering.Span;
 import ai.philterd.phileas.policy.Policy;
 
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.regex.Pattern;
 
 public class ZipCodeFilter extends RegexFilter {
@@ -67,7 +66,7 @@ public class ZipCodeFilter extends RegexFilter {
     }
 
     @Override
-    public FilterResult filter(Policy policy, String context, int piece, String input) throws Exception {
+    public Filtered filter(Policy policy, String context, int piece, String input) throws Exception {
 
         final List<Span> spans = findSpans(policy, analyzer, input, context);
 
@@ -80,7 +79,7 @@ public class ZipCodeFilter extends RegexFilter {
                 // Zip code database only has first 5 digits.
                 final String zipCode = span.getText().substring(0, 5);
 
-                final ZipCodeMetadataResponse zipCodeMetadataResponse = zipCodeMetadataService.getMetadata(new ZipCodeMetadataRequest(zipCode));
+                final ZipCodeMetadataResult zipCodeMetadataResponse = zipCodeMetadataService.getMetadata(new ZipCodeMetadataRequest(zipCode));
 
                 if (!zipCodeMetadataResponse.isExists()) {
                     span.setApplied(false);
@@ -90,7 +89,7 @@ public class ZipCodeFilter extends RegexFilter {
 
         }
 
-        return new FilterResult(context, spans);
+        return new Filtered(context, spans);
 
     }
 

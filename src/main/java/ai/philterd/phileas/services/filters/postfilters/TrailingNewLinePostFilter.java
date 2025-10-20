@@ -15,8 +15,8 @@
  */
 package ai.philterd.phileas.services.filters.postfilters;
 
-import ai.philterd.phileas.model.objects.PostFilterResult;
-import ai.philterd.phileas.model.objects.Span;
+import ai.philterd.phileas.model.filtering.PostFiltered;
+import ai.philterd.phileas.model.filtering.Span;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -42,7 +42,7 @@ public class TrailingNewLinePostFilter extends PostFilter {
     }
 
     @Override
-    protected PostFilterResult process(final String text, Span span) {
+    protected PostFiltered process(final String text, Span span) {
 
         if(span.getText().endsWith(System.lineSeparator())) {
 
@@ -56,7 +56,7 @@ public class TrailingNewLinePostFilter extends PostFilter {
             span = process(text, span).span();
         }
 
-        return new PostFilterResult(span, false);
+        return new PostFiltered(span, false);
 
     }
 

@@ -15,9 +15,9 @@
  */
 package ai.philterd.phileas.services.disambiguation.vector;
 
-import ai.philterd.phileas.model.enums.FilterType;
-import ai.philterd.phileas.model.objects.Span;
-import ai.philterd.phileas.model.objects.SpanVector;
+import ai.philterd.phileas.model.filtering.FilterType;
+import ai.philterd.phileas.model.filtering.Span;
+import ai.philterd.phileas.model.filtering.SpanVector;
 
 import java.util.HashMap;
 import java.util.Map;

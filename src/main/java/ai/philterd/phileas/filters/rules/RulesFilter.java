@@ -15,15 +15,15 @@
  */
 package ai.philterd.phileas.filters.rules;
 
-import ai.philterd.phileas.model.enums.FilterType;
+import ai.philterd.phileas.model.filtering.FilterType;
 import ai.philterd.phileas.filters.Filter;
 import ai.philterd.phileas.filters.FilterConfiguration;
 import ai.philterd.phileas.services.Analyzer;
-import ai.philterd.phileas.model.objects.ConfidenceModifier;
-import ai.philterd.phileas.model.objects.FilterPattern;
-import ai.philterd.phileas.model.objects.Position;
-import ai.philterd.phileas.model.objects.Replacement;
-import ai.philterd.phileas.model.objects.Span;
+import ai.philterd.phileas.model.filtering.ConfidenceModifier;
+import ai.philterd.phileas.model.filtering.FilterPattern;
+import ai.philterd.phileas.model.filtering.Position;
+import ai.philterd.phileas.model.filtering.Replacement;
+import ai.philterd.phileas.model.filtering.Span;
 import ai.philterd.phileas.policy.Policy;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -70,7 +70,6 @@ public abstract class RulesFilter extends Filter {
      * @param analyzer A filter {@link Analyzer}.
      * @param input The text input.
      * @param context The context.
-     * @param attributes Attributes about the input text.
      * @return A list of matching {@link Span spans}.
      */
     protected List<Span> findSpans(final Policy policy, final Analyzer analyzer, final String input, final String context) throws Exception {

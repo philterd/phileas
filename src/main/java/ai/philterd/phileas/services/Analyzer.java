@@ -15,7 +15,7 @@
  */
 package ai.philterd.phileas.services;
 
-import ai.philterd.phileas.model.objects.FilterPattern;
+import ai.philterd.phileas.model.filtering.FilterPattern;
 
 import java.util.Collections;
 import java.util.LinkedList;

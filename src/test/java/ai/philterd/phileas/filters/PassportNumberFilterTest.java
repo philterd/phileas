@@ -15,8 +15,8 @@
  */
 package ai.philterd.phileas.filters;
 
-import ai.philterd.phileas.model.enums.FilterType;
-import ai.philterd.phileas.model.objects.FilterResult;
+import ai.philterd.phileas.model.filtering.FilterType;
+import ai.philterd.phileas.model.filtering.Filtered;
 import ai.philterd.phileas.services.anonymization.AlphanumericAnonymizationService;
 import ai.philterd.phileas.services.context.DefaultContextService;
 import ai.philterd.phileas.services.filters.regex.PassportNumberFilter;
@@ -39,15 +39,15 @@ public class PassportNumberFilterTest extends AbstractFilterTest {
 
         final PassportNumberFilter filter = new PassportNumberFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "the passport number is 036001231.");
+        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "the passport number is 036001231.");
 
-        showSpans(filterResult.getSpans());
+        showSpans(filtered.getSpans());
 
-        Assertions.assertEquals(1, filterResult.getSpans().size());
-        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 23, 32, FilterType.PASSPORT_NUMBER));
-        Assertions.assertEquals("{{{REDACTED-passport-number}}}", filterResult.getSpans().get(0).getReplacement());
-        Assertions.assertEquals("036001231", filterResult.getSpans().get(0).getText());
-        Assertions.assertEquals("US", filterResult.getSpans().get(0).getClassification());
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 23, 32, FilterType.PASSPORT_NUMBER));
+        Assertions.assertEquals("{{{REDACTED-passport-number}}}", filtered.getSpans().get(0).getReplacement());
+        Assertions.assertEquals("036001231", filtered.getSpans().get(0).getText());
+        Assertions.assertEquals("US", filtered.getSpans().get(0).getClassification());
 
     }
 

@@ -15,8 +15,8 @@
  */
 package ai.philterd.phileas.filters;
 
-import ai.philterd.phileas.model.enums.FilterType;
-import ai.philterd.phileas.model.objects.FilterResult;
+import ai.philterd.phileas.model.filtering.FilterType;
+import ai.philterd.phileas.model.filtering.Filtered;
 import ai.philterd.phileas.services.anonymization.AlphanumericAnonymizationService;
 import ai.philterd.phileas.services.context.DefaultContextService;
 import ai.philterd.phileas.services.filters.regex.SsnFilter;
@@ -39,10 +39,10 @@ public class SsnFilterTest extends AbstractFilterTest {
 
         final SsnFilter filter = new SsnFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "the ssn is 123-45-6789.");
-        Assertions.assertEquals(1, filterResult.getSpans().size());
-        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 11, 22, FilterType.SSN));
-        Assertions.assertEquals("123-45-6789", filterResult.getSpans().get(0).getText());
+        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "the ssn is 123-45-6789.");
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 11, 22, FilterType.SSN));
+        Assertions.assertEquals("123-45-6789", filtered.getSpans().get(0).getText());
 
     }
 
@@ -57,9 +57,9 @@ public class SsnFilterTest extends AbstractFilterTest {
 
         final SsnFilter filter = new SsnFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "the ssn is 123456789.");
-        Assertions.assertEquals(1, filterResult.getSpans().size());
-        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 11, 20, FilterType.SSN));
+        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "the ssn is 123456789.");
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 11, 20, FilterType.SSN));
 
     }
 
@@ -74,9 +74,9 @@ public class SsnFilterTest extends AbstractFilterTest {
 
         final SsnFilter filter = new SsnFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "the ssn is 123 45 6789.");
-        Assertions.assertEquals(1, filterResult.getSpans().size());
-        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 11, 22, FilterType.SSN));
+        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "the ssn is 123 45 6789.");
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 11, 22, FilterType.SSN));
 
     }
 
@@ -91,9 +91,9 @@ public class SsnFilterTest extends AbstractFilterTest {
 
         final SsnFilter filter = new SsnFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "the ssn is 123 45 6789.");
-        Assertions.assertEquals(1, filterResult.getSpans().size());
-        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 11, 22, FilterType.SSN));
+        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "the ssn is 123 45 6789.");
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 11, 22, FilterType.SSN));
 
     }
 
@@ -108,8 +108,8 @@ public class SsnFilterTest extends AbstractFilterTest {
 
         final SsnFilter filter = new SsnFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "the ssn is 123 454 6789.");
-        Assertions.assertEquals(0, filterResult.getSpans().size());
+        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "the ssn is 123 454 6789.");
+        Assertions.assertEquals(0, filtered.getSpans().size());
 
     }
 
@@ -124,8 +124,8 @@ public class SsnFilterTest extends AbstractFilterTest {
 
         final SsnFilter filter = new SsnFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "the ssn is 123 4f 6789.");
-        Assertions.assertEquals(0, filterResult.getSpans().size());
+        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "the ssn is 123 4f 6789.");
+        Assertions.assertEquals(0, filtered.getSpans().size());
 
     }
 
@@ -140,9 +140,9 @@ public class SsnFilterTest extends AbstractFilterTest {
 
         final SsnFilter filter = new SsnFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "the ssn is 11-1234567.");
-        Assertions.assertEquals(1, filterResult.getSpans().size());
-        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 11, 21, FilterType.SSN));
+        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "the ssn is 11-1234567.");
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 11, 21, FilterType.SSN));
 
     }
 
@@ -157,9 +157,9 @@ public class SsnFilterTest extends AbstractFilterTest {
 
         final SsnFilter filter = new SsnFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "489-36-8351");
-        Assertions.assertEquals(1, filterResult.getSpans().size());
-        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 0, 11, FilterType.SSN));
+        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "489-36-8351");
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 0, 11, FilterType.SSN));
 
     }
 

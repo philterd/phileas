@@ -15,7 +15,7 @@
  */
 package ai.philterd.phileas.services.pdf;
 
-import ai.philterd.phileas.model.objects.Span;
+import ai.philterd.phileas.model.filtering.Span;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
 
 public class RedactedRectangle {

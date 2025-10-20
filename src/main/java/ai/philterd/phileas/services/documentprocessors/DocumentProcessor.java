@@ -18,17 +18,16 @@ package ai.philterd.phileas.services.documentprocessors;
 import ai.philterd.phileas.filters.Filter;
 import ai.philterd.phileas.services.filters.postfilters.PostFilter;
 import ai.philterd.phileas.policy.Policy;
-import ai.philterd.phileas.model.objects.FilterResponse;
+import ai.philterd.phileas.model.filtering.FilterResult;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * Processes a certain type of document.
  */
 public interface DocumentProcessor {
 
-    FilterResponse process(Policy policy, List<Filter> filters, List<PostFilter> postFilters,
-                           String context, int piece, String input) throws Exception;
+    FilterResult process(Policy policy, List<Filter> filters, List<PostFilter> postFilters,
+                         String context, int piece, String input) throws Exception;
 
 }

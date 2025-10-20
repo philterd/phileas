@@ -23,7 +23,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.HashMap;
 
-public class ZipCodeMetadataService implements MetadataService<ZipCodeMetadataRequest, ZipCodeMetadataResponse> {
+public class ZipCodeMetadataService implements MetadataService<ZipCodeMetadataRequest, ZipCodeMetadataResult> {
 
     private final static String zipCodeCensusFileName = "zip-code-population.csv";
 
@@ -34,15 +34,15 @@ public class ZipCodeMetadataService implements MetadataService<ZipCodeMetadataRe
     }
 
     @Override
-    public ZipCodeMetadataResponse getMetadata(final ZipCodeMetadataRequest request) {
+    public ZipCodeMetadataResult getMetadata(final ZipCodeMetadataRequest request) {
 
         final int population = zipCodesFromCensus.getOrDefault(request.getZipCode(), -1);
 
         if(population == -1) {
             // The zip code was not found.
-            return new ZipCodeMetadataResponse(-1, false);
+            return new ZipCodeMetadataResult(-1, false);
         } else {
-            return new ZipCodeMetadataResponse(population);
+            return new ZipCodeMetadataResult(population);
         }
 
     }

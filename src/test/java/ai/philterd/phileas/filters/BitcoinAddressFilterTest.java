@@ -15,8 +15,8 @@
  */
 package ai.philterd.phileas.filters;
 
-import ai.philterd.phileas.model.enums.FilterType;
-import ai.philterd.phileas.model.objects.FilterResult;
+import ai.philterd.phileas.model.filtering.FilterType;
+import ai.philterd.phileas.model.filtering.Filtered;
 import ai.philterd.phileas.services.anonymization.BitcoinAddressAnonymizationService;
 import ai.philterd.phileas.services.context.DefaultContextService;
 import ai.philterd.phileas.services.filters.regex.BitcoinAddressFilter;
@@ -39,14 +39,14 @@ public class BitcoinAddressFilterTest extends AbstractFilterTest {
 
         final BitcoinAddressFilter filter = new BitcoinAddressFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "the address is 127NVqnjf8gB9BFAW2dnQeM6wqmy1gbGtv.");
+        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "the address is 127NVqnjf8gB9BFAW2dnQeM6wqmy1gbGtv.");
 
-        showSpans(filterResult.getSpans());
+        showSpans(filtered.getSpans());
 
-        Assertions.assertEquals(1, filterResult.getSpans().size());
-        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 15, 49, FilterType.BITCOIN_ADDRESS));
-        Assertions.assertEquals("{{{REDACTED-bitcoin-address}}}", filterResult.getSpans().get(0).getReplacement());
-        Assertions.assertEquals("127NVqnjf8gB9BFAW2dnQeM6wqmy1gbGtv", filterResult.getSpans().get(0).getText());
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 15, 49, FilterType.BITCOIN_ADDRESS));
+        Assertions.assertEquals("{{{REDACTED-bitcoin-address}}}", filtered.getSpans().get(0).getReplacement());
+        Assertions.assertEquals("127NVqnjf8gB9BFAW2dnQeM6wqmy1gbGtv", filtered.getSpans().get(0).getText());
 
     }
 
@@ -61,14 +61,14 @@ public class BitcoinAddressFilterTest extends AbstractFilterTest {
 
         final BitcoinAddressFilter filter = new BitcoinAddressFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "the address is 12qnjf8FAW2dnQeM6wqmy1gbGtv.");
+        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "the address is 12qnjf8FAW2dnQeM6wqmy1gbGtv.");
 
-        showSpans(filterResult.getSpans());
+        showSpans(filtered.getSpans());
 
-        Assertions.assertEquals(1, filterResult.getSpans().size());
-        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 15, 42, FilterType.BITCOIN_ADDRESS));
-        Assertions.assertEquals("{{{REDACTED-bitcoin-address}}}", filterResult.getSpans().get(0).getReplacement());
-        Assertions.assertEquals("12qnjf8FAW2dnQeM6wqmy1gbGtv", filterResult.getSpans().get(0).getText());
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 15, 42, FilterType.BITCOIN_ADDRESS));
+        Assertions.assertEquals("{{{REDACTED-bitcoin-address}}}", filtered.getSpans().get(0).getReplacement());
+        Assertions.assertEquals("12qnjf8FAW2dnQeM6wqmy1gbGtv", filtered.getSpans().get(0).getText());
 
     }
 
@@ -83,11 +83,11 @@ public class BitcoinAddressFilterTest extends AbstractFilterTest {
 
         final BitcoinAddressFilter filter = new BitcoinAddressFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "the address is 126wqmy1gbGtv.");
+        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "the address is 126wqmy1gbGtv.");
 
-        showSpans(filterResult.getSpans());
+        showSpans(filtered.getSpans());
 
-        Assertions.assertEquals(0, filterResult.getSpans().size());
+        Assertions.assertEquals(0, filtered.getSpans().size());
 
     }
 

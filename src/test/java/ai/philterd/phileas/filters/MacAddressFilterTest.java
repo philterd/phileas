@@ -15,8 +15,8 @@
  */
 package ai.philterd.phileas.filters;
 
-import ai.philterd.phileas.model.enums.FilterType;
-import ai.philterd.phileas.model.objects.FilterResult;
+import ai.philterd.phileas.model.filtering.FilterType;
+import ai.philterd.phileas.model.filtering.Filtered;
 import ai.philterd.phileas.services.anonymization.MacAddressAnonymizationService;
 import ai.philterd.phileas.services.context.DefaultContextService;
 import ai.philterd.phileas.services.filters.regex.MacAddressFilter;
@@ -39,11 +39,11 @@ public class MacAddressFilterTest extends AbstractFilterTest {
 
         final MacAddressFilter filter = new MacAddressFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "the mac is 00-14-22-04-25-37.");
+        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "the mac is 00-14-22-04-25-37.");
 
-        Assertions.assertEquals(1, filterResult.getSpans().size());
-        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 11, 28, FilterType.MAC_ADDRESS));
-        Assertions.assertEquals("00-14-22-04-25-37", filterResult.getSpans().get(0).getText());
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 11, 28, FilterType.MAC_ADDRESS));
+        Assertions.assertEquals("00-14-22-04-25-37", filtered.getSpans().get(0).getText());
 
     }
 
@@ -58,10 +58,10 @@ public class MacAddressFilterTest extends AbstractFilterTest {
 
         final MacAddressFilter filter = new MacAddressFilter(filterConfiguration);
 
-        final FilterResult filterResult = filter.filter(getPolicy(), "context", PIECE, "the mac is 00:14:22:04:25:37.");
+        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "the mac is 00:14:22:04:25:37.");
 
-        Assertions.assertEquals(1, filterResult.getSpans().size());
-        Assertions.assertTrue(checkSpan(filterResult.getSpans().get(0), 11, 28, FilterType.MAC_ADDRESS));
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 11, 28, FilterType.MAC_ADDRESS));
 
     }
 

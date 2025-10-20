@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ai.philterd.phileas.model.objects;
+package ai.philterd.phileas.model.filtering;
 
 import com.google.gson.Gson;
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -21,7 +21,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import java.util.List;
 
-public final class BinaryDocumentFilterResponse {
+public final class BinaryDocumentFilterResult {
 
     private transient final byte[] document;
 	private final String context;
@@ -29,7 +29,7 @@ public final class BinaryDocumentFilterResponse {
     private final long tokens;
     private final transient List<IncrementalRedaction> incrementalRedactions;
 
-    public BinaryDocumentFilterResponse(byte[] document, String context, Explanation explanation, long tokens, List<IncrementalRedaction> incrementalRedactions) {
+    public BinaryDocumentFilterResult(byte[] document, String context, Explanation explanation, long tokens, List<IncrementalRedaction> incrementalRedactions) {
 
         this.document = document;
         this.context = context;
