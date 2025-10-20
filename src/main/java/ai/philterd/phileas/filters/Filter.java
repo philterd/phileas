@@ -21,12 +21,12 @@ import ai.philterd.phileas.model.objects.FilterResult;
 import ai.philterd.phileas.model.objects.Position;
 import ai.philterd.phileas.model.objects.Replacement;
 import ai.philterd.phileas.model.objects.Span;
-import ai.philterd.phileas.services.anonymization.AnonymizationService;
 import ai.philterd.phileas.policy.Crypto;
 import ai.philterd.phileas.policy.FPE;
 import ai.philterd.phileas.policy.IgnoredPattern;
 import ai.philterd.phileas.policy.Policy;
 import ai.philterd.phileas.policy.filters.Identifier;
+import ai.philterd.phileas.services.anonymization.AnonymizationService;
 import ai.philterd.phileas.services.strategies.AbstractFilterStrategy;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.FileUtils;
@@ -108,14 +108,6 @@ public abstract class Filter {
      * @return A {@link FilterResult} containing the identified {@link Span spans}.
      */
     public abstract FilterResult filter(Policy policy, String context, int piece, String input) throws Exception;
-
-    /**
-     * Determines if the input text may contain sensitive information matching the filter type.
-     * @param policy The {@link Policy}.
-     * @param input The input text.
-     * @return A count of possible occurrences of the filter type in the input text.
-     */
-    public abstract int getOccurrences(final Policy policy, final String input) throws Exception;
 
     /**
      * Creates a new filter.
