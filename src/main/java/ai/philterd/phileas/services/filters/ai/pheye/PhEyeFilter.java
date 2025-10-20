@@ -15,9 +15,9 @@
  */
 package ai.philterd.phileas.services.filters.ai.pheye;
 
-import ai.philterd.phileas.model.enums.FilterType;
 import ai.philterd.phileas.filters.FilterConfiguration;
 import ai.philterd.phileas.filters.dynamic.NerFilter;
+import ai.philterd.phileas.model.enums.FilterType;
 import ai.philterd.phileas.model.objects.FilterResult;
 import ai.philterd.phileas.model.objects.Replacement;
 import ai.philterd.phileas.model.objects.Span;
@@ -195,13 +195,6 @@ public class PhEyeFilter extends NerFilter {
             throw new IOException("Unable to process document. Received error response from philter-ner.");
 
         }
-
-    }
-
-    @Override
-    public int getOccurrences(final Policy policy, final String input) throws Exception {
-
-        return filter(policy, "none", 0, input).getSpans().size();
 
     }
 

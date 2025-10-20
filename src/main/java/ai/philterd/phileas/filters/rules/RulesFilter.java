@@ -208,19 +208,6 @@ public abstract class RulesFilter extends Filter {
     }
 
     /**
-     * Gets the count of occurrences.
-     * @param policy The {@link Policy} to use.
-     * @param input The input text.
-     * @return A count of occurrences in the text.
-     */
-    @Override
-    public int getOccurrences(final Policy policy, final String input) throws Exception {
-
-        return filter(policy, "none",  0, input).getSpans().size();
-
-    }
-
-    /**
      * Get n-grams from text up to a given length.
      * @param text The text from which to extract n-grams.
      * @param length The max length of n-grams to extract.
