@@ -28,6 +28,10 @@ public class County extends AbstractFilter {
     @Expose
     private List<CountyFilterStrategy> countyFilterStrategies;
 
+    @SerializedName("fuzzy")
+    @Expose
+    private boolean fuzzy = false;
+
     @SerializedName("sensitivity")
     @Expose
     private String sensitivity = SensitivityLevel.MEDIUM.getName();
@@ -63,4 +67,13 @@ public class County extends AbstractFilter {
     public void setCapitalized(boolean capitalized) {
         this.capitalized = capitalized;
     }
+
+    public boolean isFuzzy() {
+        return fuzzy;
+    }
+
+    public void setFuzzy(boolean fuzzy) {
+        this.fuzzy = fuzzy;
+    }
+
 }

@@ -28,6 +28,10 @@ public class FirstName extends AbstractFilter {
     @Expose
     private List<FirstNameFilterStrategy> firstNameFilterStrategies;
 
+    @SerializedName("fuzzy")
+    @Expose
+    private boolean fuzzy = false;
+
     @SerializedName("sensitivity")
     @Expose
     private String sensitivity = SensitivityLevel.MEDIUM.getName();
@@ -64,4 +68,11 @@ public class FirstName extends AbstractFilter {
         this.capitalized = capitalized;
     }
 
+    public boolean isFuzzy() {
+        return fuzzy;
+    }
+
+    public void setFuzzy(boolean fuzzy) {
+        this.fuzzy = fuzzy;
+    }
 }

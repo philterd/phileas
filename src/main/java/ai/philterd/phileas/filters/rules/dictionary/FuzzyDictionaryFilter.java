@@ -15,21 +15,18 @@
  */
 package ai.philterd.phileas.filters.rules.dictionary;
 
-import ai.philterd.phileas.model.filtering.FilterType;
-import ai.philterd.phileas.model.filtering.SensitivityLevel;
 import ai.philterd.phileas.filters.FilterConfiguration;
+import ai.philterd.phileas.model.filtering.FilterType;
 import ai.philterd.phileas.model.filtering.Filtered;
 import ai.philterd.phileas.model.filtering.Position;
 import ai.philterd.phileas.model.filtering.Replacement;
+import ai.philterd.phileas.model.filtering.SensitivityLevel;
 import ai.philterd.phileas.model.filtering.Span;
 import ai.philterd.phileas.policy.Policy;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.similarity.LevenshteinDistance;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -190,46 +187,6 @@ public class FuzzyDictionaryFilter extends DictionaryFilter {
         for(final String term : terms) {
                 final Pattern pattern = Pattern.compile("\\b" + term + "\\b", Pattern.CASE_INSENSITIVE);
             dictionary.put(term, pattern);
-        }
-
-        return dictionary;
-
-    }
-
-    private Map<String, Pattern> loadData(final FilterType filterType) throws IOException {
-
-        final Map<String, Pattern> dictionary = new HashMap<>();
-
-        final String fileName;
-
-        if(filterType == FilterType.LOCATION_CITY) {
-            fileName = "cities";
-        } else if(filterType == FilterType.LOCATION_COUNTY) {
-            fileName = "counties";
-        } else if(filterType == FilterType.LOCATION_STATE) {
-            fileName = "states";
-        } else if(filterType == FilterType.HOSPITAL) {
-            fileName = "hospitals";
-        } else if(filterType == FilterType.HOSPITAL_ABBREVIATION) {
-            fileName = "hospital-abbreviations";
-        } else if(filterType == FilterType.FIRST_NAME) {
-            fileName = "names";
-        } else if(filterType == FilterType.SURNAME) {
-            fileName = "surnames";
-        } else {
-            throw new IllegalArgumentException("Invalid filter type.");
-        }
-
-        try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream(fileName);
-             BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
-
-            String line;
-            while ((line = reader.readLine()) != null) {
-
-                final Pattern pattern = Pattern.compile("\\b" + line + "\\b", Pattern.CASE_INSENSITIVE);
-                dictionary.put(line, pattern);
-
-            }
         }
 
         return dictionary;

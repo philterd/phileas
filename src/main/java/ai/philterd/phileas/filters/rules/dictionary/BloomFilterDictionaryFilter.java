@@ -20,17 +20,20 @@ import ai.philterd.phileas.filters.FilterConfiguration;
 import ai.philterd.phileas.model.filtering.Filtered;
 import ai.philterd.phileas.model.filtering.Position;
 import ai.philterd.phileas.model.filtering.Replacement;
+import ai.philterd.phileas.model.filtering.SensitivityLevel;
 import ai.philterd.phileas.model.filtering.Span;
 import ai.philterd.phileas.policy.Policy;
 import ai.philterd.phileas.utils.BloomFilter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 /**
  * A filter that operates on a bloom filter.
@@ -42,6 +45,31 @@ public class BloomFilterDictionaryFilter extends DictionaryFilter {
     private final BloomFilter<String> bloomFilter;
     private final Set<String> lowerCaseTerms;
     private int maxNgramSize = 0;
+
+    public BloomFilterDictionaryFilter(final FilterType filterType, final FilterConfiguration filterConfiguration) throws IOException {
+        super(filterType, filterConfiguration);
+
+        this.lowerCaseTerms = new HashSet<>();
+
+
+        final Map<String, Pattern> data = loadData(filterType);
+        this.bloomFilter = new BloomFilter<>(data.size());
+
+        // Find the max n-gram size. It is equal to the maximum number of spaces in any single dictionary entry.
+        for(final String term : data.keySet()) {
+            final String[] split = term.split("\\s");
+            if(split.length > maxNgramSize) {
+                maxNgramSize = split.length;
+            }
+        }
+
+        // Lowercase the terms and add each to the bloom filter.
+        for(final String term : data.keySet()) {
+            lowerCaseTerms.add(term.toLowerCase());
+            bloomFilter.put(term.toLowerCase());
+        }
+
+    }
 
     /**
      * Creates a new bloom filter-based filter.
