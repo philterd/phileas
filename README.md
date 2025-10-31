@@ -164,13 +164,6 @@ Phileas is the underlying core of [Philter](https://www.philterd.ai/philter/), a
 * [Philter on the Azure Marketplace](https://azuremarketplace.microsoft.com/en-us/marketplace/apps/philterdllc1687189098111.philter?tab=Overview)
 * On-prem deployments by contacting us at [https://www.philterd.ai/](https://www.philterd.ai). 
 
-Phileas also powers [Airlock](https://www.philterd.ai/airlock), an AI policy layer to prevent the disclosure of sensitive information, such as PII and PHI, in your AI applications.
-
-* [Airlock on the AWS Marketplace](https://aws.amazon.com/marketplace/pp/prodview-inkh5a3kbhtf2)
-* [Airlock on the Google Cloud Marketplace](https://console.cloud.google.com/marketplace/product/philterd-public/airlock)
-* [Airlock on the Azure Marketplace](https://azuremarketplace.microsoft.com/en-us/marketplace/apps/philterdllc1687189098111.airlock?tab=Overview)
-* On-prem deployments by contacting us at [https://www.philterd.ai/](https://www.philterd.ai). 
-
 ## License
 
 As of Phileas 2.2.1, Phileas is licensed under the Apache License, version 2.0. Previous versions were under a proprietary license.
