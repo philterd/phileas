@@ -88,7 +88,7 @@ Add the Phileas dependency to your project:
 <dependency>
   <groupId>ai.philterd</groupId>
   <artifactId>phileas</artifactId>
-  <version>3.0.0-SNAPSHOT</version>
+  <version>3.0.0</version>
 </dependency>
 
 ```
