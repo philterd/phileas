@@ -21,6 +21,8 @@ import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.util.regex.Pattern;
+
 public class CreditCardAnonymizationServiceTest {
 
     private static final Logger LOGGER = LogManager.getLogger(CreditCardAnonymizationServiceTest.class);
@@ -35,7 +37,7 @@ public class CreditCardAnonymizationServiceTest {
 
         LOGGER.info("Credit Card: {}", replacement);
         Assertions.assertNotNull(replacement);
-        Assertions.assertTrue(replacement.length() >= 13 && replacement.length() <= 23);
+        Assertions.assertTrue(Pattern.matches("^[0-9-]*$", replacement));
 
     }
 
@@ -49,7 +51,7 @@ public class CreditCardAnonymizationServiceTest {
 
         LOGGER.info("Credit Card: {}", replacement);
         Assertions.assertNotNull(replacement);
-        Assertions.assertTrue(replacement.length() >= 13 && replacement.length() <= 23);
+        Assertions.assertTrue(Pattern.matches("^[0-9-]*$", replacement));
 
     }
 
