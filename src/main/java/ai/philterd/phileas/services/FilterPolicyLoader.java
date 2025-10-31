@@ -888,10 +888,18 @@ public class FilterPolicyLoader {
                         .withPriority(policy.getIdentifiers().getCity().getPriority())
                         .build();
 
-                final SensitivityLevel sensitivityLevel = policy.getIdentifiers().getCity().getSensitivityLevel();
-                final boolean capitalized = policy.getIdentifiers().getCity().isCapitalized();
+                final Filter filter;
 
-                final Filter filter = new FuzzyDictionaryFilter(FilterType.LOCATION_CITY, filterConfiguration, sensitivityLevel, capitalized);
+                if(policy.getIdentifiers().getCity().isFuzzy()) {
+
+                    final SensitivityLevel sensitivityLevel = policy.getIdentifiers().getCity().getSensitivityLevel();
+                    final boolean capitalized = policy.getIdentifiers().getCity().isCapitalized();
+                    filter = new FuzzyDictionaryFilter(FilterType.LOCATION_CITY, filterConfiguration, sensitivityLevel, capitalized);
+
+                } else {
+                    filter = new BloomFilterDictionaryFilter(FilterType.LOCATION_CITY, filterConfiguration);
+                }
+
                 enabledFilters.add(filter);
                 filterCache.get(policy.getName()).put(FilterType.LOCATION_CITY, filter);
 
@@ -918,10 +926,18 @@ public class FilterPolicyLoader {
                         .withPriority(policy.getIdentifiers().getCounty().getPriority())
                         .build();
 
-                final SensitivityLevel sensitivityLevel = policy.getIdentifiers().getCounty().getSensitivityLevel();
-                final boolean capitalized = policy.getIdentifiers().getCounty().isCapitalized();
+                final Filter filter;
 
-                final Filter filter = new FuzzyDictionaryFilter(FilterType.LOCATION_COUNTY, filterConfiguration, sensitivityLevel, capitalized);
+                if(policy.getIdentifiers().getCounty().isFuzzy()) {
+
+                    final SensitivityLevel sensitivityLevel = policy.getIdentifiers().getCounty().getSensitivityLevel();
+                    final boolean capitalized = policy.getIdentifiers().getCounty().isCapitalized();
+                    filter = new FuzzyDictionaryFilter(FilterType.LOCATION_COUNTY, filterConfiguration, sensitivityLevel, capitalized);
+
+                } else {
+                    filter = new BloomFilterDictionaryFilter(FilterType.LOCATION_COUNTY, filterConfiguration);
+                }
+
                 enabledFilters.add(filter);
                 filterCache.get(policy.getName()).put(FilterType.LOCATION_COUNTY, filter);
 
@@ -948,10 +964,18 @@ public class FilterPolicyLoader {
                         .withPriority(policy.getIdentifiers().getState().getPriority())
                         .build();
 
-                final SensitivityLevel sensitivityLevel = policy.getIdentifiers().getState().getSensitivityLevel();
-                final boolean capitalized = policy.getIdentifiers().getState().isCapitalized();
+                final Filter filter;
 
-                final Filter filter = new FuzzyDictionaryFilter(FilterType.LOCATION_STATE, filterConfiguration, sensitivityLevel, capitalized);
+                if(policy.getIdentifiers().getState().isFuzzy()) {
+
+                    final SensitivityLevel sensitivityLevel = policy.getIdentifiers().getState().getSensitivityLevel();
+                    final boolean capitalized = policy.getIdentifiers().getState().isCapitalized();
+                    filter = new FuzzyDictionaryFilter(FilterType.LOCATION_STATE, filterConfiguration, sensitivityLevel, capitalized);
+
+                } else {
+                    filter = new BloomFilterDictionaryFilter(FilterType.LOCATION_STATE, filterConfiguration);
+                }
+
                 enabledFilters.add(filter);
                 filterCache.get(policy.getName()).put(FilterType.LOCATION_STATE, filter);
 
@@ -978,10 +1002,18 @@ public class FilterPolicyLoader {
                         .withPriority(policy.getIdentifiers().getHospital().getPriority())
                         .build();
 
-                final SensitivityLevel sensitivityLevel = policy.getIdentifiers().getHospital().getSensitivityLevel();
-                final boolean capitalized = policy.getIdentifiers().getHospital().isCapitalized();
+                final Filter filter;
 
-                final Filter filter = new FuzzyDictionaryFilter(FilterType.HOSPITAL, filterConfiguration, sensitivityLevel, capitalized);
+                if(policy.getIdentifiers().getHospital().isFuzzy()) {
+
+                    final SensitivityLevel sensitivityLevel = policy.getIdentifiers().getHospital().getSensitivityLevel();
+                    final boolean capitalized = policy.getIdentifiers().getHospital().isCapitalized();
+                    filter = new FuzzyDictionaryFilter(FilterType.HOSPITAL, filterConfiguration, sensitivityLevel, capitalized);
+
+                } else {
+                    filter = new BloomFilterDictionaryFilter(FilterType.HOSPITAL, filterConfiguration);
+                }
+
                 enabledFilters.add(filter);
                 filterCache.get(policy.getName()).put(FilterType.HOSPITAL, filter);
 
@@ -1008,10 +1040,18 @@ public class FilterPolicyLoader {
                         .withPriority(policy.getIdentifiers().getHospitalAbbreviation().getPriority())
                         .build();
 
-                final SensitivityLevel sensitivityLevel = policy.getIdentifiers().getHospitalAbbreviation().getSensitivityLevel();
-                final boolean capitalized = policy.getIdentifiers().getHospitalAbbreviation().isCapitalized();
+                final Filter filter;
 
-                final Filter filter = new FuzzyDictionaryFilter(FilterType.HOSPITAL_ABBREVIATION, filterConfiguration,  sensitivityLevel, capitalized);
+                if(policy.getIdentifiers().getHospitalAbbreviation().isFuzzy()) {
+
+                    final SensitivityLevel sensitivityLevel = policy.getIdentifiers().getHospitalAbbreviation().getSensitivityLevel();
+                    final boolean capitalized = policy.getIdentifiers().getHospitalAbbreviation().isCapitalized();
+                    filter = new FuzzyDictionaryFilter(FilterType.HOSPITAL_ABBREVIATION, filterConfiguration, sensitivityLevel, capitalized);
+
+                } else {
+                    filter = new BloomFilterDictionaryFilter(FilterType.HOSPITAL_ABBREVIATION, filterConfiguration);
+                }
+
                 enabledFilters.add(filter);
                 filterCache.get(policy.getName()).put(FilterType.HOSPITAL_ABBREVIATION, filter);
 
@@ -1038,10 +1078,18 @@ public class FilterPolicyLoader {
                         .withPriority(policy.getIdentifiers().getFirstName().getPriority())
                         .build();
 
-                final SensitivityLevel sensitivityLevel = policy.getIdentifiers().getFirstName().getSensitivityLevel();
-                final boolean capitalized = policy.getIdentifiers().getFirstName().isCapitalized();
+                final Filter filter;
 
-                final Filter filter = new FuzzyDictionaryFilter(FilterType.FIRST_NAME, filterConfiguration, sensitivityLevel, capitalized);
+                if(policy.getIdentifiers().getFirstName().isFuzzy()) {
+
+                    final SensitivityLevel sensitivityLevel = policy.getIdentifiers().getFirstName().getSensitivityLevel();
+                    final boolean capitalized = policy.getIdentifiers().getFirstName().isCapitalized();
+                    filter = new FuzzyDictionaryFilter(FilterType.FIRST_NAME, filterConfiguration, sensitivityLevel, capitalized);
+
+                } else {
+                    filter = new BloomFilterDictionaryFilter(FilterType.FIRST_NAME, filterConfiguration);
+                }
+
                 enabledFilters.add(filter);
                 filterCache.get(policy.getName()).put(FilterType.FIRST_NAME, filter);
 
@@ -1068,10 +1116,18 @@ public class FilterPolicyLoader {
                         .withPriority(policy.getIdentifiers().getSurname().getPriority())
                         .build();
 
-                final SensitivityLevel sensitivityLevel = policy.getIdentifiers().getSurname().getSensitivityLevel();
-                final boolean capitalized = policy.getIdentifiers().getSurname().isCapitalized();
+                final Filter filter;
 
-                final Filter filter = new FuzzyDictionaryFilter(FilterType.SURNAME, filterConfiguration,sensitivityLevel, capitalized);
+                if(policy.getIdentifiers().getSurname().isFuzzy()) {
+
+                    final SensitivityLevel sensitivityLevel = policy.getIdentifiers().getSurname().getSensitivityLevel();
+                    final boolean capitalized = policy.getIdentifiers().getSurname().isCapitalized();
+                    filter = new FuzzyDictionaryFilter(FilterType.SURNAME, filterConfiguration, sensitivityLevel, capitalized);
+
+                } else {
+                    filter = new BloomFilterDictionaryFilter(FilterType.SURNAME, filterConfiguration);
+                }
+
                 enabledFilters.add(filter);
                 filterCache.get(policy.getName()).put(FilterType.SURNAME, filter);
 
