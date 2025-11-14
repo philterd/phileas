@@ -23,10 +23,8 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Response to a filter operation.
@@ -52,14 +50,14 @@ public class TextFilterResult extends AbstractFilterResult {
      * Combine multiple {@link TextFilterResult} objects into a single {@link TextFilterResult}.
      * The list of {@link TextFilterResult} objects must be in order from first to last.
      *
-     * @param filterRespons A list of {@link TextFilterResult} objects to combine.
+     * @param filterResponse A list of {@link TextFilterResult} objects to combine.
      *                        Objects must be in order from first to last.
      * @param context         The context for the returned {@link TextFilterResult}.
      * @return A single, combined {@link TextFilterResult}.
      */
-    public static TextFilterResult combine(List<TextFilterResult> filterRespons, final String context, String separator) {
+    public static TextFilterResult combine(List<TextFilterResult> filterResponse, final String context, String separator) {
 
-        LOGGER.debug("Combining {} filter responses", filterRespons.size());
+        LOGGER.debug("Combining {} filter responses", filterResponse.size());
 
         // Combine the results into a single filterResponse object.
         final StringBuilder filteredText = new StringBuilder();
@@ -67,20 +65,17 @@ public class TextFilterResult extends AbstractFilterResult {
         final List<Span> identifiedSpans = new LinkedList<>();
 
         // Order the filter responses by piece number, lowest to greatest.
-        final List<TextFilterResult> sortedFilterRespons =
-                filterRespons.stream().sorted(Comparator.comparing(TextFilterResult::getPiece)).toList();
+        final List<TextFilterResult> sortedFilterResponse =
+                filterResponse.stream().sorted(Comparator.comparing(TextFilterResult::getPiece)).toList();
 
         // Tracks the document offset for each piece so the span locations can be adjusted.
         int documentOffset = 0;
-
-        // The attributes for each filterResponse should actually be identical.
-        final Map<String, String> combinedAttributes = new HashMap<>();
 
         final List<IncrementalRedaction> combinedIncrementalRedactions = new ArrayList<>();
         long tokens = 0;
 
         // Loop over each filter response and build the combined filter response.
-        for (final TextFilterResult textFilterResult : sortedFilterRespons) {
+        for (final TextFilterResult textFilterResult : sortedFilterResponse) {
 
             // The text is the filtered text plus the separator.
             final String pieceFilteredText = textFilterResult.getFilteredText() + separator;
