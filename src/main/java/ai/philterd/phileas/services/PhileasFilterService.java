@@ -143,7 +143,7 @@ public class PhileasFilterService implements FilterService {
                 );
 
                 // Holds all filter responses that will ultimately be combined into a single response.
-                final List<TextFilterResult> filterRespons = new LinkedList<>();
+                final List<TextFilterResult> filterResponse = new LinkedList<>();
 
                 // Split the string.
                 final List<String> splits = splitService.split(input);
@@ -151,11 +151,11 @@ public class PhileasFilterService implements FilterService {
                 // Process each split.
                 for (int i = 0; i < splits.size(); i++) {
                     final TextFilterResult fr = unstructuredDocumentProcessor.process(policy, filters, postFilters, context, i, splits.get(i));
-                    filterRespons.add(fr);
+                    filterResponse.add(fr);
                 }
 
                 // Combine the results into a single filterResponse object.
-                textFilterResult = TextFilterResult.combine(filterRespons, context, splitService.getSeparator());
+                textFilterResult = TextFilterResult.combine(filterResponse, context, splitService.getSeparator());
 
         } else {
 
