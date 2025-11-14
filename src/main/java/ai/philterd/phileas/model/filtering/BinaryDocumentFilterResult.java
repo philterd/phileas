@@ -21,21 +21,14 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import java.util.List;
 
-public final class BinaryDocumentFilterResult {
+public final class BinaryDocumentFilterResult extends AbstractFilterResult {
 
     private transient final byte[] document;
-	private final String context;
-    private final Explanation explanation;
-    private final long tokens;
-    private final transient List<IncrementalRedaction> incrementalRedactions;
 
     public BinaryDocumentFilterResult(byte[] document, String context, Explanation explanation, long tokens, List<IncrementalRedaction> incrementalRedactions) {
+        super(context, explanation, tokens, incrementalRedactions);
 
         this.document = document;
-        this.context = context;
-        this.explanation = explanation;
-        this.tokens = tokens;
-        this.incrementalRedactions = incrementalRedactions;
 
     }
 
@@ -68,22 +61,6 @@ public final class BinaryDocumentFilterResult {
 
     public byte[] getDocument() {
         return document;
-    }
-
-    public String getContext() {
-        return context;
-    }
-
-    public Explanation getExplanation() {
-        return explanation;
-    }
-
-    public long getTokens() {
-        return tokens;
-    }
-
-    public List<IncrementalRedaction> getIncrementalRedactions() {
-        return incrementalRedactions;
     }
 
 }

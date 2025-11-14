@@ -18,7 +18,7 @@ package ai.philterd.phileas.services.documentprocessors;
 import ai.philterd.phileas.filters.Filter;
 import ai.philterd.phileas.services.filters.postfilters.PostFilter;
 import ai.philterd.phileas.policy.Policy;
-import ai.philterd.phileas.model.filtering.FilterResult;
+import ai.philterd.phileas.model.filtering.TextFilterResult;
 
 import java.util.List;
 
@@ -27,7 +27,7 @@ import java.util.List;
  */
 public interface DocumentProcessor {
 
-    FilterResult process(Policy policy, List<Filter> filters, List<PostFilter> postFilters,
-                         String context, int piece, String input) throws Exception;
+    TextFilterResult process(Policy policy, List<Filter> filters, List<PostFilter> postFilters,
+                             String context, int piece, String input) throws Exception;
 
 }

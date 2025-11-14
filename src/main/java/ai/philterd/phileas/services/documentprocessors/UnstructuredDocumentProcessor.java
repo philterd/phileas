@@ -20,7 +20,7 @@ import ai.philterd.phileas.model.filtering.Explanation;
 import ai.philterd.phileas.model.filtering.Filtered;
 import ai.philterd.phileas.model.filtering.IncrementalRedaction;
 import ai.philterd.phileas.model.filtering.Span;
-import ai.philterd.phileas.model.filtering.FilterResult;
+import ai.philterd.phileas.model.filtering.TextFilterResult;
 import ai.philterd.phileas.services.filters.postfilters.PostFilter;
 import ai.philterd.phileas.services.disambiguation.SpanDisambiguationService;
 import ai.philterd.phileas.services.tokens.TokenCounter;
@@ -55,8 +55,8 @@ public class UnstructuredDocumentProcessor implements DocumentProcessor {
     }
 
     @Override
-    public FilterResult process(final Policy policy, final List<Filter> filters, final List<PostFilter> postFilters,
-                                final String context, final int piece, final String input) throws Exception {
+    public TextFilterResult process(final Policy policy, final List<Filter> filters, final List<PostFilter> postFilters,
+                                    final String context, final int piece, final String input) throws Exception {
 
         // The list that will contain the spans containing PHI/PII.
         List<Span> identifiedSpans = new LinkedList<>();
@@ -155,7 +155,7 @@ public class UnstructuredDocumentProcessor implements DocumentProcessor {
 
         }
 
-        return new FilterResult(sb.toString(), context, piece, explanation, incrementalRedactions, tokens);
+        return new TextFilterResult(sb.toString(), context, piece, explanation, incrementalRedactions, tokens);
 
     }
 

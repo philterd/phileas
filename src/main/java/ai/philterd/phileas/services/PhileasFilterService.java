@@ -22,7 +22,7 @@ import ai.philterd.phileas.model.filtering.MimeType;
 import ai.philterd.phileas.model.filtering.ApplyResult;
 import ai.philterd.phileas.model.filtering.BinaryDocumentFilterResult;
 import ai.philterd.phileas.model.filtering.Explanation;
-import ai.philterd.phileas.model.filtering.FilterResult;
+import ai.philterd.phileas.model.filtering.TextFilterResult;
 import ai.philterd.phileas.model.filtering.IncrementalRedaction;
 import ai.philterd.phileas.model.filtering.Span;
 import ai.philterd.phileas.policy.Ignored;
@@ -125,12 +125,12 @@ public class PhileasFilterService implements FilterService {
     }
 
     @Override
-    public FilterResult filter(final Policy policy, final String context, final String input, final MimeType mimeType) throws Exception {
+    public TextFilterResult filter(final Policy policy, final String context, final String input, final MimeType mimeType) throws Exception {
 
         final List<Filter> filters = filterPolicyLoader.getFiltersForPolicy(policy, filterCache);
         final List<PostFilter> postFilters = getPostFiltersForPolicy(policy);
 
-        final FilterResult filterResult;
+        final TextFilterResult textFilterResult;
 
         if(mimeType == MimeType.TEXT_PLAIN) {
 
@@ -145,24 +145,24 @@ public class PhileasFilterService implements FilterService {
                     );
 
                     // Holds all filter responses that will ultimately be combined into a single response.
-                    final List<FilterResult> filterRespons = new LinkedList<>();
+                    final List<TextFilterResult> filterRespons = new LinkedList<>();
 
                     // Split the string.
                     final List<String> splits = splitService.split(input);
 
                     // Process each split.
                     for (int i = 0; i < splits.size(); i++) {
-                        final FilterResult fr = unstructuredDocumentProcessor.process(policy, filters, postFilters, context, i, splits.get(i));
+                        final TextFilterResult fr = unstructuredDocumentProcessor.process(policy, filters, postFilters, context, i, splits.get(i));
                         filterRespons.add(fr);
                     }
 
                     // Combine the results into a single filterResponse object.
-                    filterResult = FilterResult.combine(filterRespons, context, splitService.getSeparator());
+                    textFilterResult = TextFilterResult.combine(filterRespons, context, splitService.getSeparator());
 
             } else {
 
                 // Do not split. Process the entire string at once.
-                filterResult = unstructuredDocumentProcessor.process(policy, filters, postFilters, context, 0, input);
+                textFilterResult = unstructuredDocumentProcessor.process(policy, filters, postFilters, context, 0, input);
 
             }
 
@@ -171,7 +171,7 @@ public class PhileasFilterService implements FilterService {
             throw new Exception("Unknown mime type.");
         }
 
-        return filterResult;
+        return textFilterResult;
 
     }
 
@@ -215,15 +215,15 @@ public class PhileasFilterService implements FilterService {
                 tokens += tokenCounter.countTokens(line);
 
                 // Process the text.
-                final FilterResult filterResult = unstructuredDocumentProcessor.process(policy, filters, postFilters, context, piece, line);
+                final TextFilterResult textFilterResult = unstructuredDocumentProcessor.process(policy, filters, postFilters, context, piece, line);
 
                 // Add all the found spans to the list of spans.
-                spans.addAll(filterResult.getExplanation().appliedSpans());
+                spans.addAll(textFilterResult.getExplanation().appliedSpans());
 
                 // Add the incremental redactions to the list.
-                incrementalRedactions.addAll(filterResult.getIncrementalRedactions());
+                incrementalRedactions.addAll(textFilterResult.getIncrementalRedactions());
 
-                for (final Span span : filterResult.getExplanation().appliedSpans()) {
+                for (final Span span : textFilterResult.getExplanation().appliedSpans()) {
                     span.setCharacterStart(span.getCharacterStart() + offset);
                     span.setCharacterEnd(span.getCharacterEnd() + offset);
                     nonRelativeSpans.add(span);
