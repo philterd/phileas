@@ -15,19 +15,19 @@
  */
 package ai.philterd.phileas.model.objects;
 
-import ai.philterd.phileas.model.filtering.FilterResult;
+import ai.philterd.phileas.model.filtering.TextFilterResult;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Test;
 
-public class FilterResultTest {
+public class TextFilterResultTest {
 
-    private static final Logger LOGGER = LogManager.getLogger(FilterResultTest.class);
+    private static final Logger LOGGER = LogManager.getLogger(TextFilterResultTest.class);
 
     @Test
     public void equalsContract() {
-        EqualsVerifier.forClass(FilterResult.class).verify();
+        EqualsVerifier.forClass(TextFilterResult.class).verify();
     }
 
 }
