@@ -122,10 +122,6 @@ public abstract class AbstractFilterStrategy {
     @Expose
     protected String condition = "";
 
-    @SerializedName("alert")
-    @Expose
-    protected boolean alert = false;
-
     @SerializedName("salt")
     @Expose
     protected boolean salt;
@@ -413,14 +409,6 @@ public abstract class AbstractFilterStrategy {
 
     public String getCondition() {
         return condition;
-    }
-
-    public boolean isAlert() {
-        return alert;
-    }
-
-    public void setAlert(boolean alert) {
-        this.alert = alert;
     }
 
     public boolean isSalt() {

@@ -189,25 +189,3 @@ This policy has a list of globally ignored terms.
   }
 }
 ```
-
-### Generating Alerts
-
-This policy generates an alert when a matching email address is identified.
-
-```
-{
-  "name": "email-address-alert",
-  "identifiers": {
-    "emailAddress": {
-      "emailAddressFilterStrategies": [
-        {
-          "strategy": "REDACT",
-          "redactionFormat": "{{{REDACTED-%t}}}",
-          "condition": "token == \"test@test.com\"",
-          "alert": true
-        }
-      ]
-    }
-  }
-}
-```
