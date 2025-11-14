@@ -17,14 +17,14 @@ package ai.philterd.phileas.services;
 
 import ai.philterd.phileas.PhileasConfiguration;
 import ai.philterd.phileas.filters.Filter;
-import ai.philterd.phileas.model.filtering.FilterType;
-import ai.philterd.phileas.model.filtering.MimeType;
 import ai.philterd.phileas.model.filtering.ApplyResult;
 import ai.philterd.phileas.model.filtering.BinaryDocumentFilterResult;
 import ai.philterd.phileas.model.filtering.Explanation;
-import ai.philterd.phileas.model.filtering.TextFilterResult;
+import ai.philterd.phileas.model.filtering.FilterType;
 import ai.philterd.phileas.model.filtering.IncrementalRedaction;
+import ai.philterd.phileas.model.filtering.MimeType;
 import ai.philterd.phileas.model.filtering.Span;
+import ai.philterd.phileas.model.filtering.TextFilterResult;
 import ai.philterd.phileas.policy.Ignored;
 import ai.philterd.phileas.policy.Policy;
 import ai.philterd.phileas.policy.config.Pdf;
@@ -125,50 +125,43 @@ public class PhileasFilterService implements FilterService {
     }
 
     @Override
-    public TextFilterResult filter(final Policy policy, final String context, final String input, final MimeType mimeType) throws Exception {
+    public TextFilterResult filter(final Policy policy, final String context, final String input) throws Exception {
 
         final List<Filter> filters = filterPolicyLoader.getFiltersForPolicy(policy, filterCache);
         final List<PostFilter> postFilters = getPostFiltersForPolicy(policy);
 
         final TextFilterResult textFilterResult;
 
-        if(mimeType == MimeType.TEXT_PLAIN) {
+        // Do we need to split the input text due to its size?
+        // Is the appliesToFilter = "*" or is at least one of the filters in the policy in the appliesToFilter list?
+        if (policy.getConfig().getSplitting().isEnabled() && input.length() >= policy.getConfig().getSplitting().getThreshold()) {
 
-            // Do we need to split the input text due to its size?
-            // Is the appliesToFilter = "*" or is at least one of the filters in the policy in the appliesToFilter list?
-            if (policy.getConfig().getSplitting().isEnabled() && input.length() >= policy.getConfig().getSplitting().getThreshold()) {
+                // Get the splitter to use from the policy.
+                final SplitService splitService = SplitFactory.getSplitService(
+                        policy.getConfig().getSplitting().getMethod(),
+                        policy.getConfig().getSplitting().getThreshold()
+                );
 
-                    // Get the splitter to use from the policy.
-                    final SplitService splitService = SplitFactory.getSplitService(
-                            policy.getConfig().getSplitting().getMethod(),
-                            policy.getConfig().getSplitting().getThreshold()
-                    );
+                // Holds all filter responses that will ultimately be combined into a single response.
+                final List<TextFilterResult> filterRespons = new LinkedList<>();
 
-                    // Holds all filter responses that will ultimately be combined into a single response.
-                    final List<TextFilterResult> filterRespons = new LinkedList<>();
+                // Split the string.
+                final List<String> splits = splitService.split(input);
 
-                    // Split the string.
-                    final List<String> splits = splitService.split(input);
+                // Process each split.
+                for (int i = 0; i < splits.size(); i++) {
+                    final TextFilterResult fr = unstructuredDocumentProcessor.process(policy, filters, postFilters, context, i, splits.get(i));
+                    filterRespons.add(fr);
+                }
 
-                    // Process each split.
-                    for (int i = 0; i < splits.size(); i++) {
-                        final TextFilterResult fr = unstructuredDocumentProcessor.process(policy, filters, postFilters, context, i, splits.get(i));
-                        filterRespons.add(fr);
-                    }
-
-                    // Combine the results into a single filterResponse object.
-                    textFilterResult = TextFilterResult.combine(filterRespons, context, splitService.getSeparator());
-
-            } else {
-
-                // Do not split. Process the entire string at once.
-                textFilterResult = unstructuredDocumentProcessor.process(policy, filters, postFilters, context, 0, input);
-
-            }
+                // Combine the results into a single filterResponse object.
+                textFilterResult = TextFilterResult.combine(filterRespons, context, splitService.getSeparator());
 
         } else {
-            // Should never happen but just in case.
-            throw new Exception("Unknown mime type.");
+
+            // Do not split. Process the entire string at once.
+            textFilterResult = unstructuredDocumentProcessor.process(policy, filters, postFilters, context, 0, input);
+
         }
 
         return textFilterResult;
