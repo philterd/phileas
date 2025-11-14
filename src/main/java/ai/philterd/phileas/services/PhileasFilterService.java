@@ -125,31 +125,45 @@ public class PhileasFilterService implements FilterService {
     }
 
     @Override
+<<<<<<< Updated upstream
     public FilterResult filter(final Policy policy, final String context, final String input, final MimeType mimeType) throws Exception {
+=======
+    public TextFilterResult filter(final Policy policy, final String context, final String input) throws Exception {
+>>>>>>> Stashed changes
 
         final List<Filter> filters = filterPolicyLoader.getFiltersForPolicy(policy, filterCache);
         final List<PostFilter> postFilters = getPostFiltersForPolicy(policy);
 
         final FilterResult filterResult;
 
-        if(mimeType == MimeType.TEXT_PLAIN) {
+        // Do we need to split the input text due to its size?
+        // Is the appliesToFilter = "*" or is at least one of the filters in the policy in the appliesToFilter list?
+        if (policy.getConfig().getSplitting().isEnabled() && input.length() >= policy.getConfig().getSplitting().getThreshold()) {
 
-            // Do we need to split the input text due to its size?
-            // Is the appliesToFilter = "*" or is at least one of the filters in the policy in the appliesToFilter list?
-            if (policy.getConfig().getSplitting().isEnabled() && input.length() >= policy.getConfig().getSplitting().getThreshold()) {
+                // Get the splitter to use from the policy.
+                final SplitService splitService = SplitFactory.getSplitService(
+                        policy.getConfig().getSplitting().getMethod(),
+                        policy.getConfig().getSplitting().getThreshold()
+                );
 
-                    // Get the splitter to use from the policy.
-                    final SplitService splitService = SplitFactory.getSplitService(
-                            policy.getConfig().getSplitting().getMethod(),
-                            policy.getConfig().getSplitting().getThreshold()
-                    );
+                // Holds all filter responses that will ultimately be combined into a single response.
+                final List<TextFilterResult> filterResponse = new LinkedList<>();
 
+<<<<<<< Updated upstream
                     // Holds all filter responses that will ultimately be combined into a single response.
                     final List<FilterResult> filterRespons = new LinkedList<>();
+=======
+                // Split the string.
+                final List<String> splits = splitService.split(input);
+>>>>>>> Stashed changes
 
-                    // Split the string.
-                    final List<String> splits = splitService.split(input);
+                // Process each split.
+                for (int i = 0; i < splits.size(); i++) {
+                    final TextFilterResult fr = unstructuredDocumentProcessor.process(policy, filters, postFilters, context, i, splits.get(i));
+                    filterResponse.add(fr);
+                }
 
+<<<<<<< Updated upstream
                     // Process each split.
                     for (int i = 0; i < splits.size(); i++) {
                         final FilterResult fr = unstructuredDocumentProcessor.process(policy, filters, postFilters, context, i, splits.get(i));
@@ -165,10 +179,16 @@ public class PhileasFilterService implements FilterService {
                 filterResult = unstructuredDocumentProcessor.process(policy, filters, postFilters, context, 0, input);
 
             }
+=======
+                // Combine the results into a single filterResponse object.
+                textFilterResult = TextFilterResult.combine(filterResponse, context, splitService.getSeparator());
+>>>>>>> Stashed changes
 
         } else {
-            // Should never happen but just in case.
-            throw new Exception("Unknown mime type.");
+
+            // Do not split. Process the entire string at once.
+            textFilterResult = unstructuredDocumentProcessor.process(policy, filters, postFilters, context, 0, input);
+
         }
 
         return filterResult;

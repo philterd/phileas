@@ -33,11 +33,18 @@ public interface FilterService {
      * Filter text from a string.
      * @param policy The {@link Policy} to apply.
      * @param input The input text.
+<<<<<<< Updated upstream
      * @param mimeType The {@link MimeType}.
      * @return A {@link FilterResult}.
      * @throws Exception Thrown if the text cannot be filtered.
      */
     FilterResult filter(final Policy policy, final String context, final String input, final MimeType mimeType) throws Exception;
+=======
+     * @return A {@link TextFilterResult}.
+     * @throws Exception Thrown if the text cannot be filtered.
+     */
+    TextFilterResult filter(final Policy policy, final String context, final String input) throws Exception;
+>>>>>>> Stashed changes
 
     /**
      * Filter text from a binary document.
