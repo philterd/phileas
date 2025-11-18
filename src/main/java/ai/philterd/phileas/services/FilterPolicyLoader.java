@@ -342,6 +342,7 @@ public class FilterPolicyLoader {
                         .withIgnoredFiles(policy.getIdentifiers().getEmailAddress().getIgnoredFiles())
                         .withIgnoredPatterns(policy.getIdentifiers().getEmailAddress().getIgnoredPatterns())
                         .withCrypto(policy.getCrypto())
+                        .withFPE(policy.getFpe())
                         .withWindowSize(windowSize)
                         .withPriority(policy.getIdentifiers().getEmailAddress().getPriority())
                         .build();
@@ -403,6 +404,7 @@ public class FilterPolicyLoader {
                         .withIgnoredFiles(policy.getIdentifiers().getIpAddress().getIgnoredFiles())
                         .withIgnoredPatterns(policy.getIdentifiers().getIpAddress().getIgnoredPatterns())
                         .withCrypto(policy.getCrypto())
+                        .withFPE(policy.getFpe())
                         .withWindowSize(windowSize)
                         .withPriority(policy.getIdentifiers().getIpAddress().getPriority())
                         .build();
@@ -430,6 +432,7 @@ public class FilterPolicyLoader {
                         .withIgnoredFiles(policy.getIdentifiers().getMacAddress().getIgnoredFiles())
                         .withIgnoredPatterns(policy.getIdentifiers().getMacAddress().getIgnoredPatterns())
                         .withCrypto(policy.getCrypto())
+                        .withFPE(policy.getFpe())
                         .withWindowSize(windowSize)
                         .withPriority(policy.getIdentifiers().getMacAddress().getPriority())
                         .build();
@@ -564,7 +567,6 @@ public class FilterPolicyLoader {
                     final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                             .withStrategies(section.getSectionFilterStrategies())
                             .withAnonymizationService(new AlphanumericAnonymizationService(contextService))
-
                             .withIgnored(section.getIgnored())
                             .withIgnoredFiles(section.getIgnoredFiles())
                             .withIgnoredPatterns(section.getIgnoredPatterns())
@@ -713,6 +715,7 @@ public class FilterPolicyLoader {
                         .withIgnoredFiles(policy.getIdentifiers().getUrl().getIgnoredFiles())
                         .withIgnoredPatterns(policy.getIdentifiers().getUrl().getIgnoredPatterns())
                         .withCrypto(policy.getCrypto())
+                        .withFPE(policy.getFpe())
                         .withWindowSize(windowSize)
                         .withPriority(policy.getIdentifiers().getUrl().getPriority())
                         .build();
@@ -770,6 +773,7 @@ public class FilterPolicyLoader {
                         .withIgnoredFiles(policy.getIdentifiers().getZipCode().getIgnoredFiles())
                         .withIgnoredPatterns(policy.getIdentifiers().getZipCode().getIgnoredPatterns())
                         .withCrypto(policy.getCrypto())
+                        .withFPE(policy.getFpe())
                         .withWindowSize(windowSize)
                         .withPriority(policy.getIdentifiers().getZipCode().getPriority())
                         .build();
@@ -884,6 +888,7 @@ public class FilterPolicyLoader {
                         .withIgnoredFiles(policy.getIdentifiers().getCity().getIgnoredFiles())
                         .withIgnoredPatterns(policy.getIdentifiers().getCity().getIgnoredPatterns())
                         .withCrypto(policy.getCrypto())
+                        .withFPE(policy.getFpe())
                         .withWindowSize(windowSize)
                         .withPriority(policy.getIdentifiers().getCity().getPriority())
                         .build();
@@ -922,6 +927,7 @@ public class FilterPolicyLoader {
                         .withIgnoredFiles(policy.getIdentifiers().getCounty().getIgnoredFiles())
                         .withIgnoredPatterns(policy.getIdentifiers().getCounty().getIgnoredPatterns())
                         .withCrypto(policy.getCrypto())
+                        .withFPE(policy.getFpe())
                         .withWindowSize(windowSize)
                         .withPriority(policy.getIdentifiers().getCounty().getPriority())
                         .build();
@@ -960,6 +966,7 @@ public class FilterPolicyLoader {
                         .withIgnoredFiles(policy.getIdentifiers().getState().getIgnoredFiles())
                         .withIgnoredPatterns(policy.getIdentifiers().getState().getIgnoredPatterns())
                         .withCrypto(policy.getCrypto())
+                        .withFPE(policy.getFpe())
                         .withWindowSize(windowSize)
                         .withPriority(policy.getIdentifiers().getState().getPriority())
                         .build();
@@ -1074,6 +1081,7 @@ public class FilterPolicyLoader {
                         .withIgnoredFiles(policy.getIdentifiers().getFirstName().getIgnoredFiles())
                         .withIgnoredPatterns(policy.getIdentifiers().getFirstName().getIgnoredPatterns())
                         .withCrypto(policy.getCrypto())
+                        .withFPE(policy.getFpe())
                         .withWindowSize(windowSize)
                         .withPriority(policy.getIdentifiers().getFirstName().getPriority())
                         .build();
@@ -1112,6 +1120,7 @@ public class FilterPolicyLoader {
                         .withIgnoredFiles(policy.getIdentifiers().getSurname().getIgnoredFiles())
                         .withIgnoredPatterns(policy.getIdentifiers().getSurname().getIgnoredPatterns())
                         .withCrypto(policy.getCrypto())
+                        .withFPE(policy.getFpe())
                         .withWindowSize(windowSize)
                         .withPriority(policy.getIdentifiers().getSurname().getPriority())
                         .build();
@@ -1156,6 +1165,7 @@ public class FilterPolicyLoader {
                             .withIgnoredFiles(identifier.getIgnoredFiles())
                             .withIgnoredPatterns(identifier.getIgnoredPatterns())
                             .withCrypto(policy.getCrypto())
+                            .withFPE(policy.getFpe())
                             .withWindowSize(windowSize)
                             .withPriority(identifier.getPriority())
                             .build();
@@ -1192,6 +1202,7 @@ public class FilterPolicyLoader {
                         .withIgnoredFiles(policy.getIdentifiers().getPhEye().getIgnoredFiles())
                         .withIgnoredPatterns(policy.getIdentifiers().getPhEye().getIgnoredPatterns())
                         .withCrypto(policy.getCrypto())
+                        .withFPE(policy.getFpe())
                         .withWindowSize(windowSize)
                         .withPriority(policy.getIdentifiers().getPhEye().getPriority())
                         .build();

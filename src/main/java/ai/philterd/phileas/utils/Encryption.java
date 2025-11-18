@@ -105,7 +105,7 @@ public class Encryption {
     }
 
     /**
-     * Encrypts the <code>plainText</code> using format preserving encryption.
+     * Encrypts the <code>plainText</code> using format-preserving encryption.
      * @param plainText The plain text.
      * @return The encrypted text.
      */
