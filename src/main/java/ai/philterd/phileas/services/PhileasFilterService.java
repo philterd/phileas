@@ -101,30 +101,6 @@ public class PhileasFilterService implements FilterService {
     }
 
     @Override
-    public ApplyResult apply(final List<Span> spans, final String input) {
-
-        final StringBuilder sb = new StringBuilder(input);
-        final List<IncrementalRedaction> incrementalRedactions = new ArrayList<>();
-        final long tokens = tokenCounter.countTokens(input);
-
-        for(final Span span : spans) {
-
-            // Replace the text with the replacement.
-            sb.delete(span.getCharacterStart(), span.getCharacterEnd());
-            sb.insert(span.getCharacterStart(), span.getReplacement());
-
-            // Generate the incrementation redaction.
-            final String hash = DigestUtils.sha256Hex(sb.toString());
-            final IncrementalRedaction incrementalRedaction = new IncrementalRedaction(hash, span, sb.toString());
-            incrementalRedactions.add(incrementalRedaction);
-
-        }
-
-        return new ApplyResult(sb.toString(), incrementalRedactions, tokens);
-
-    }
-
-    @Override
     public TextFilterResult filter(final Policy policy, final String context, final String input) throws Exception {
 
         final List<Filter> filters = filterPolicyLoader.getFiltersForPolicy(policy, filterCache);
