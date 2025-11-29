@@ -26,11 +26,10 @@ public interface ApplyService {
     /**
      * Applies spans to the input text. Useful for when spans have previously been identified. Only supports plain text input.
      * @param spans A list of {@link Span spans}.
-     * @param input The input text.
+     * @param input The input bytes.
+     * @param mimeType The input {@link MimeType}.
      * @return A {@link ApplyResult}.
      */
-    ApplyResult apply(final List<Span> spans, final String input);
-
     ApplyResult apply(final List<Span> spans, final byte[] input, final MimeType mimeType);
 
 }

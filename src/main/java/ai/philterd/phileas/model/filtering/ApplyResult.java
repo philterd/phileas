@@ -20,25 +20,15 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.List;
-
 /**
  * Response to a filter operation.
  */
 public class ApplyResult {
 
-    private static final Logger LOGGER = LogManager.getLogger(ApplyResult.class);
-
     private final String filteredText;
-    private final long tokens;
-    private final List<IncrementalRedaction> incrementalRedactions;
 
-    public ApplyResult(final String filteredText, final List<IncrementalRedaction> incrementalRedactions, final long tokens) {
-
+    public ApplyResult(final String filteredText) {
         this.filteredText = filteredText;
-        this.incrementalRedactions = incrementalRedactions;
-        this.tokens = tokens;
-
     }
 
     @Override
@@ -58,14 +48,6 @@ public class ApplyResult {
 
     public String getFilteredText() {
         return filteredText;
-    }
-
-    public List<IncrementalRedaction> getIncrementalRedactions() {
-        return incrementalRedactions;
-    }
-
-    public long getTokens() {
-        return tokens;
     }
 
 }
