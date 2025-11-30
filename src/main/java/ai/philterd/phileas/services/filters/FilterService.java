@@ -16,13 +16,9 @@
 package ai.philterd.phileas.services.filters;
 
 import ai.philterd.phileas.model.filtering.MimeType;
-import ai.philterd.phileas.model.filtering.ApplyResult;
-import ai.philterd.phileas.model.filtering.Span;
 import ai.philterd.phileas.policy.Policy;
 import ai.philterd.phileas.model.filtering.BinaryDocumentFilterResult;
 import ai.philterd.phileas.model.filtering.TextFilterResult;
-
-import java.util.List;
 
 /**
  * Interface for implementing filter services.

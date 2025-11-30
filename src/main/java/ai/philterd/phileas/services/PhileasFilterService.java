@@ -17,7 +17,6 @@ package ai.philterd.phileas.services;
 
 import ai.philterd.phileas.PhileasConfiguration;
 import ai.philterd.phileas.filters.Filter;
-import ai.philterd.phileas.model.filtering.ApplyResult;
 import ai.philterd.phileas.model.filtering.BinaryDocumentFilterResult;
 import ai.philterd.phileas.model.filtering.Explanation;
 import ai.philterd.phileas.model.filtering.FilterType;
@@ -49,7 +48,6 @@ import ai.philterd.phileas.services.split.SplitFactory;
 import ai.philterd.phileas.services.split.SplitService;
 import ai.philterd.phileas.services.tokens.TokenCounter;
 import ai.philterd.phileas.services.tokens.WhitespaceTokenCounter;
-import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
