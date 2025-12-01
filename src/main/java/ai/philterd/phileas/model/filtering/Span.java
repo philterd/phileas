@@ -86,6 +86,8 @@ public final class Span {
     // Whether the span should always pass validation.
     private transient boolean alwaysValid = false;
 
+    private transient int lineNumber = 0;
+
     /**
      * Don't use this constructor.
      * Use <code>span.make()</code> instead.
@@ -622,6 +624,14 @@ public final class Span {
 
     public int getPriority() {
         return priority;
+    }
+
+    public void setLineNumber(int lineNumber) {
+        this.lineNumber = lineNumber;
+    }
+
+    public int getLineNumber() {
+        return lineNumber;
     }
 
 }

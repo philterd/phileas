@@ -168,6 +168,9 @@ public class PhileasFilterService implements FilterService {
             // Track the document offset.
             int offset = 0;
 
+            // Track the line number.
+            int lineNumber = 1;
+
             final List<Filter> filters = filterPolicyLoader.getFiltersForPolicy(policy, filterCache);
             final List<PostFilter> postFilters = getPostFiltersForPolicy(policy);
 
@@ -193,9 +196,11 @@ public class PhileasFilterService implements FilterService {
                 for (final Span span : textFilterResult.getExplanation().appliedSpans()) {
                     span.setCharacterStart(span.getCharacterStart() + offset);
                     span.setCharacterEnd(span.getCharacterEnd() + offset);
+                    span.setLineNumber(lineNumber);
                     nonRelativeSpans.add(span);
                 }
 
+                lineNumber++;
                 offset += line.length();
 
             }
