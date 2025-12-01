@@ -16,10 +16,8 @@
 package ai.philterd.phileas.services;
 
 import ai.philterd.phileas.PhileasConfiguration;
-import ai.philterd.phileas.model.filtering.FilterType;
-import ai.philterd.phileas.model.filtering.MimeType;
-import ai.philterd.phileas.model.filtering.ApplyResult;
 import ai.philterd.phileas.model.filtering.BinaryDocumentFilterResult;
+import ai.philterd.phileas.model.filtering.MimeType;
 import ai.philterd.phileas.model.filtering.Span;
 import ai.philterd.phileas.policy.Ignored;
 import ai.philterd.phileas.policy.Policy;
@@ -42,7 +40,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
@@ -168,48 +165,6 @@ public class PhileasFilterServiceTest {
         // but it's possible that they're in the images, we would need to OCR
         // the files for this assertion to be truly valuable
         Assertions.assertFalse(documentContainsText(response.getDocument(), "90210"));
-
-    }
-
-    @Test
-    public void apply1() {
-
-        final Properties properties = new Properties();
-        final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties);
-        final PhileasFilterService service = new PhileasFilterService(phileasConfiguration, contextService, vectorService);
-
-        final String input = "George Washington whose SSN was 123-45-6789 was the first president of the United States and he lived at 90210.";
-
-        final List<Span> spans = new ArrayList<>();
-        spans.add(Span.make(0, 17, FilterType.PERSON, "context", 1.0, "George Washington", "***", "", false, true, null, 1));
-        spans.add(Span.make(18, 29, FilterType.SSN, "context", 1.0, "123-45-6789", "***", "", false, true, null, 1));
-
-        final ApplyResult applyResult = service.apply(spans, input);
-        LOGGER.info(applyResult.toString());
-
-        Assertions.assertEquals("*** whose SSN was *** was the first president of the United States and he lived at 90210.", applyResult.getFilteredText());
-        Assertions.assertEquals(2, applyResult.getIncrementalRedactions().size());
-        Assertions.assertTrue(0 < applyResult.getTokens());
-
-    }
-
-    @Test
-    public void applyNoSpans() {
-
-        final Properties properties = new Properties();
-        final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties);
-        final PhileasFilterService service = new PhileasFilterService(phileasConfiguration, contextService, vectorService);
-
-        final String input = "George Washington whose SSN was 123-45-6789";
-
-        final List<Span> spans = new ArrayList<>();
-
-        final ApplyResult applyResult = service.apply(spans, input);
-        LOGGER.info(applyResult.toString());
-
-        Assertions.assertEquals("George Washington whose SSN was 123-45-6789", applyResult.getFilteredText());
-        Assertions.assertEquals(0, applyResult.getIncrementalRedactions().size());
-        Assertions.assertTrue(0 < applyResult.getTokens());
 
     }
 

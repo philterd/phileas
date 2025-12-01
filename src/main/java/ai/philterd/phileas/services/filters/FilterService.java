@@ -16,13 +16,9 @@
 package ai.philterd.phileas.services.filters;
 
 import ai.philterd.phileas.model.filtering.MimeType;
-import ai.philterd.phileas.model.filtering.ApplyResult;
-import ai.philterd.phileas.model.filtering.Span;
 import ai.philterd.phileas.policy.Policy;
 import ai.philterd.phileas.model.filtering.BinaryDocumentFilterResult;
 import ai.philterd.phileas.model.filtering.TextFilterResult;
-
-import java.util.List;
 
 /**
  * Interface for implementing filter services.
@@ -48,13 +44,5 @@ public interface FilterService {
      * @throws Exception Thrown if the text cannot be filtered.
      */
     BinaryDocumentFilterResult filter(final Policy policy, final String context, byte[] input, MimeType mimeType, MimeType outputMimeType) throws Exception;
-
-    /**
-     * Applies spans to the input text. Useful for when spans have previously been identified. Only supports plain text input.
-     * @param spans A list of {@link Span spans}.
-     * @param input The input text.
-     * @return A {@link ApplyResult}.
-     */
-    ApplyResult apply(final List<Span> spans, final String input);
 
 }

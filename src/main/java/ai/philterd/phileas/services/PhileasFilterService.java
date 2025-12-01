@@ -17,7 +17,6 @@ package ai.philterd.phileas.services;
 
 import ai.philterd.phileas.PhileasConfiguration;
 import ai.philterd.phileas.filters.Filter;
-import ai.philterd.phileas.model.filtering.ApplyResult;
 import ai.philterd.phileas.model.filtering.BinaryDocumentFilterResult;
 import ai.philterd.phileas.model.filtering.Explanation;
 import ai.philterd.phileas.model.filtering.FilterType;
@@ -49,7 +48,6 @@ import ai.philterd.phileas.services.split.SplitFactory;
 import ai.philterd.phileas.services.split.SplitService;
 import ai.philterd.phileas.services.tokens.TokenCounter;
 import ai.philterd.phileas.services.tokens.WhitespaceTokenCounter;
-import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -97,30 +95,6 @@ public class PhileasFilterService implements FilterService {
                 new VectorBasedSpanDisambiguationService(phileasConfiguration, vectorService),
                 phileasConfiguration.incrementalRedactionsEnabled()
         );
-
-    }
-
-    @Override
-    public ApplyResult apply(final List<Span> spans, final String input) {
-
-        final StringBuilder sb = new StringBuilder(input);
-        final List<IncrementalRedaction> incrementalRedactions = new ArrayList<>();
-        final long tokens = tokenCounter.countTokens(input);
-
-        for(final Span span : spans) {
-
-            // Replace the text with the replacement.
-            sb.delete(span.getCharacterStart(), span.getCharacterEnd());
-            sb.insert(span.getCharacterStart(), span.getReplacement());
-
-            // Generate the incrementation redaction.
-            final String hash = DigestUtils.sha256Hex(sb.toString());
-            final IncrementalRedaction incrementalRedaction = new IncrementalRedaction(hash, span, sb.toString());
-            incrementalRedactions.add(incrementalRedaction);
-
-        }
-
-        return new ApplyResult(sb.toString(), incrementalRedactions, tokens);
 
     }
 
