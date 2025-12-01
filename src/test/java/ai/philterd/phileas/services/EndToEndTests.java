@@ -29,6 +29,8 @@ import ai.philterd.phileas.policy.filters.CustomDictionary;
 import ai.philterd.phileas.policy.filters.DriversLicense;
 import ai.philterd.phileas.services.context.ContextService;
 import ai.philterd.phileas.services.disambiguation.vector.VectorService;
+import ai.philterd.phileas.services.filters.filtering.PdfFilterService;
+import ai.philterd.phileas.services.filters.filtering.PlainTextFilterService;
 import ai.philterd.phileas.services.strategies.AbstractFilterStrategy;
 import ai.philterd.phileas.services.strategies.custom.CustomDictionaryFilterStrategy;
 import ai.philterd.phileas.services.strategies.rules.BitcoinAddressFilterStrategy;
@@ -87,7 +89,7 @@ public class EndToEndTests {
 
         final byte[] document = Files.readAllBytes(Paths.get(this.getClass().getResource("/pdfs/12-12110 K.pdf").toURI()));
 
-        final PhileasFilterService service = new PhileasFilterService(phileasConfiguration, contextService, vectorService);
+        final PdfFilterService service = new PdfFilterService(phileasConfiguration, contextService, vectorService);
         final BinaryDocumentFilterResult response = service.filter(policy, "context", document, MimeType.APPLICATION_PDF, MimeType.APPLICATION_PDF);
 
         Assertions.assertFalse(response.getIncrementalRedactions().isEmpty());
@@ -106,7 +108,7 @@ public class EndToEndTests {
 
         final Policy policy = getPolicy("default");
 
-        final PhileasFilterService service = new PhileasFilterService(phileasConfiguration, contextService, vectorService);
+        final PlainTextFilterService service = new PlainTextFilterService(phileasConfiguration, contextService, vectorService);
         final TextFilterResult response = service.filter(policy, "context", "George Washington was president and his ssn was 123-45-6789 and he lived at 90210.");
 
         LOGGER.info(response.getFilteredText());
@@ -124,7 +126,7 @@ public class EndToEndTests {
 
         final Policy policy = getPolicy("default");
 
-        final PhileasFilterService service = new PhileasFilterService(phileasConfiguration, contextService, vectorService);
+        final PlainTextFilterService service = new PlainTextFilterService(phileasConfiguration, contextService, vectorService);
         final TextFilterResult response = service.filter(policy, "context", "My email is test@something.com and cc is 4121742025464465");
 
         LOGGER.info(response.getFilteredText());
@@ -142,7 +144,7 @@ public class EndToEndTests {
 
         final Policy policy = getPolicy("default");
 
-        final PhileasFilterService service = new PhileasFilterService(phileasConfiguration, contextService, vectorService);
+        final PlainTextFilterService service = new PlainTextFilterService(phileasConfiguration, contextService, vectorService);
         final TextFilterResult response = service.filter(policy, "context", "test@something.com is email and cc is 4121742025464465");
 
         LOGGER.info(response.getFilteredText());
@@ -160,7 +162,7 @@ public class EndToEndTests {
 
         final Policy policy = getPolicy("default");
 
-        final PhileasFilterService service = new PhileasFilterService(phileasConfiguration, contextService, vectorService);
+        final PlainTextFilterService service = new PlainTextFilterService(phileasConfiguration, contextService, vectorService);
         final TextFilterResult response = service.filter(policy, "context", "test@something.com");
 
         LOGGER.info(response.getFilteredText());
@@ -178,7 +180,7 @@ public class EndToEndTests {
 
         final Policy policy = getPolicy("default");
 
-        final PhileasFilterService service = new PhileasFilterService(phileasConfiguration, contextService, vectorService);
+        final PlainTextFilterService service = new PlainTextFilterService(phileasConfiguration, contextService, vectorService);
         final TextFilterResult response = service.filter(policy, "context", "90210");
 
         LOGGER.info(response.getFilteredText());
@@ -196,7 +198,7 @@ public class EndToEndTests {
 
         final Policy policy = getPolicy("default");
 
-        final PhileasFilterService service = new PhileasFilterService(phileasConfiguration, contextService, vectorService);
+        final PlainTextFilterService service = new PlainTextFilterService(phileasConfiguration, contextService, vectorService);
         final TextFilterResult response = service.filter(policy, "context", "his name was JEFF.");
 
         LOGGER.info(response.getFilteredText());
@@ -214,7 +216,7 @@ public class EndToEndTests {
 
         final Policy policy = getPolicy("default");
 
-        final PhileasFilterService service = new PhileasFilterService(phileasConfiguration, contextService, vectorService);
+        final PlainTextFilterService service = new PlainTextFilterService(phileasConfiguration, contextService, vectorService);
         final TextFilterResult response = service.filter(policy, "context", "he was seen on 10-19-2020.");
 
         LOGGER.info(response.getFilteredText());
@@ -232,7 +234,7 @@ public class EndToEndTests {
 
         final Policy policy = getPolicy("default");
 
-        final PhileasFilterService service = new PhileasFilterService(phileasConfiguration, contextService, vectorService);
+        final PlainTextFilterService service = new PlainTextFilterService(phileasConfiguration, contextService, vectorService);
         final TextFilterResult response = service.filter(policy, "context",
                 "George Washington was president." + System.lineSeparator() + "Abraham Lincoln was president.");
 
@@ -251,7 +253,7 @@ public class EndToEndTests {
 
         final Policy policy = getPolicy("default");
 
-        final PhileasFilterService service = new PhileasFilterService(phileasConfiguration, contextService, vectorService);
+        final PlainTextFilterService service = new PlainTextFilterService(phileasConfiguration, contextService, vectorService);
         final TextFilterResult response = service.filter(policy, "context", "George Washington was president and his ssn was 123-45-6789 and he lived at 90210. The name 456 should be filtered. Jeff Smith should be ignored.");
 
         LOGGER.info(response.getFilteredText());
@@ -271,7 +273,7 @@ public class EndToEndTests {
 
         final String input = IOUtils.toString(this.getClass().getResourceAsStream("/inputs/1.txt"), Charset.defaultCharset());
 
-        final PhileasFilterService service = new PhileasFilterService(phileasConfiguration, contextService, vectorService);
+        final PlainTextFilterService service = new PlainTextFilterService(phileasConfiguration, contextService, vectorService);
         final TextFilterResult response = service.filter(policy, "context", input);
 
         LOGGER.info(response.getFilteredText());
@@ -294,7 +296,7 @@ public class EndToEndTests {
 
         final String input = "IN THE UNITED STATES DISTRICT COURT \nEASTERN DISTRICT OF ARKANSAS \nWESTERN DIVISION \nJAMES EDWARD SMITH, \nafk/a James Edward Bridges, \nADC#103093 \nv. No. 4:14-cv-455-DPM \nPLAINTIFF \nCHARLES A. SMITH; \nMARY ANN CONLEY, \nafk/a Mary Ann Smith; and \nROBERT CASTILLOW DEFENDANTS \nORDER \nJames Smith's prose complaint must be dismissed without prejudice. \nHe hasn't paid the filing fee, moved to proceed in forma pauperis, or provided \nproof of service on any defendant. FED. R. CIV. P. 4(I); Local Rule 5.5(c)(2). \nSo Ordered. \nD.P. Marshall Jr. \nUnited States District Judge \nCase 4:14-cv-00455-DPM   Document 2   Filed 12/09/14   Page 1 of 1\n";
 
-        final PhileasFilterService service = new PhileasFilterService(phileasConfiguration, contextService, vectorService);
+        final PlainTextFilterService service = new PlainTextFilterService(phileasConfiguration, contextService, vectorService);
         final TextFilterResult response = service.filter(policy, "context", input);
 
         LOGGER.info(response.getFilteredText());
@@ -314,7 +316,7 @@ public class EndToEndTests {
 
         final String input = IOUtils.toString(this.getClass().getResourceAsStream("/inputs/Oxford_City_unveil_merger_to_expand_their_youth_system.json.txt"), Charset.defaultCharset());
 
-        final PhileasFilterService service = new PhileasFilterService(phileasConfiguration, contextService, vectorService);
+        final PlainTextFilterService service = new PlainTextFilterService(phileasConfiguration, contextService, vectorService);
         final TextFilterResult response = service.filter(policy, "context", input);
 
         LOGGER.info(response.getFilteredText());
@@ -337,7 +339,7 @@ public class EndToEndTests {
 
         final String input = IOUtils.toString(this.getClass().getResourceAsStream("/inputs/Kinross_reports_strong_2020_secondquarter_results.json.txt"), Charset.defaultCharset());
 
-        final PhileasFilterService service = new PhileasFilterService(phileasConfiguration, contextService, vectorService);
+        final PlainTextFilterService service = new PlainTextFilterService(phileasConfiguration, contextService, vectorService);
         final TextFilterResult response = service.filter(policy, "context", input);
 
         LOGGER.info(response.getFilteredText());
@@ -360,7 +362,7 @@ public class EndToEndTests {
 
         final String input = IOUtils.toString(this.getClass().getResourceAsStream("/inputs/Donations_to_Black_Lives_Matter_Group_Dont_Go_to_DNC.json.txt"), Charset.defaultCharset());
 
-        final PhileasFilterService service = new PhileasFilterService(phileasConfiguration, contextService, vectorService);
+        final PlainTextFilterService service = new PlainTextFilterService(phileasConfiguration, contextService, vectorService);
         final TextFilterResult response = service.filter(policy, "context", input);
 
         LOGGER.info(response.getFilteredText());
@@ -383,7 +385,7 @@ public class EndToEndTests {
 
         final String input = IOUtils.toString(this.getClass().getResourceAsStream("/inputs/Fantasy_Baseball_Winners__Losers_Sixto_Sanchez_and_Jeff_McNeil_stay_hot.json.txt"), Charset.defaultCharset());
 
-        final PhileasFilterService service = new PhileasFilterService(phileasConfiguration, contextService, vectorService);
+        final PlainTextFilterService service = new PlainTextFilterService(phileasConfiguration, contextService, vectorService);
         final TextFilterResult response = service.filter(policy, "context", input);
 
         LOGGER.info(response.getFilteredText());
@@ -406,7 +408,7 @@ public class EndToEndTests {
 
         final String input = "the id is 123456.";
 
-        final PhileasFilterService service = new PhileasFilterService(phileasConfiguration, contextService, vectorService);
+        final PlainTextFilterService service = new PlainTextFilterService(phileasConfiguration, contextService, vectorService);
         final TextFilterResult response = service.filter(policy, "context", input);
 
         LOGGER.info(response.getFilteredText());
@@ -429,7 +431,7 @@ public class EndToEndTests {
 
         final String input = "he lived at 100 main street";
 
-        final PhileasFilterService service = new PhileasFilterService(phileasConfiguration, contextService, vectorService);
+        final PlainTextFilterService service = new PlainTextFilterService(phileasConfiguration, contextService, vectorService);
         final TextFilterResult response = service.filter(policy, "context", input);
 
         LOGGER.info(response.getFilteredText());
@@ -479,7 +481,7 @@ public class EndToEndTests {
 
         final String input = "the payment method is 4532613702852251 visa or 1Lbcfr7sAHTD9CgdQo3HTMTkV8LK4ZnX71 BTC from user.";
 
-        final PhileasFilterService service = new PhileasFilterService(configuration, contextService, vectorService);
+        final PlainTextFilterService service = new PlainTextFilterService(configuration, contextService, vectorService);
         final TextFilterResult response = service.filter(policy, "context", input);
 
         LOGGER.info(response.getFilteredText());
@@ -506,7 +508,7 @@ public class EndToEndTests {
 
         final String input = "his number is 123-456-7890. her number is 9999999999. her number is 102-304-5678.";
 
-        final PhileasFilterService service = new PhileasFilterService(phileasConfiguration, contextService, vectorService);
+        final PlainTextFilterService service = new PlainTextFilterService(phileasConfiguration, contextService, vectorService);
         final TextFilterResult response = service.filter(policy, "context", input);
 
         LOGGER.info(response.getFilteredText());
@@ -534,7 +536,7 @@ public class EndToEndTests {
 
         final String input = "he lived at 100 main street";
 
-        final PhileasFilterService service = new PhileasFilterService(phileasConfiguration, contextService, vectorService);
+        final PlainTextFilterService service = new PlainTextFilterService(phileasConfiguration, contextService, vectorService);
         final TextFilterResult response = service.filter(policy, "context", input);
 
         LOGGER.info(response.getFilteredText());
@@ -560,7 +562,7 @@ public class EndToEndTests {
         final Properties properties = new Properties();
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties);
 
-        final PhileasFilterService service = new PhileasFilterService(phileasConfiguration, contextService, vectorService);
+        final PlainTextFilterService service = new PlainTextFilterService(phileasConfiguration, contextService, vectorService);
         final TextFilterResult response = service.filter(policy, "context", "his name was samuel and george.");
 
         LOGGER.info(response.getFilteredText());
@@ -593,7 +595,7 @@ public class EndToEndTests {
         final Properties properties = new Properties();
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties);
 
-        final PhileasFilterService service = new PhileasFilterService(phileasConfiguration, contextService, vectorService);
+        final PlainTextFilterService service = new PlainTextFilterService(phileasConfiguration, contextService, vectorService);
         final TextFilterResult response = service.filter(policy, "context", "his name was samuel and george.");
 
         LOGGER.info(response.getFilteredText());
@@ -625,7 +627,7 @@ public class EndToEndTests {
         final Properties properties = new Properties();
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties);
 
-        final PhileasFilterService service = new PhileasFilterService(phileasConfiguration, contextService, vectorService);
+        final PlainTextFilterService service = new PlainTextFilterService(phileasConfiguration, contextService, vectorService);
         final TextFilterResult response = service.filter(policy, "context", "his name was samuel.");
 
         LOGGER.info(response.getFilteredText());
@@ -643,7 +645,7 @@ public class EndToEndTests {
 
         final Policy policy = getPolicyJustCreditCard("justcreditcard");
 
-        final PhileasFilterService service = new PhileasFilterService(phileasConfiguration, contextService, vectorService);
+        final PlainTextFilterService service = new PlainTextFilterService(phileasConfiguration, contextService, vectorService);
         final TextFilterResult response = service.filter(policy, "context", "My email is test@something.com");
 
         LOGGER.info(response.getFilteredText());
@@ -660,7 +662,7 @@ public class EndToEndTests {
 
         final Policy policy = getPolicyJustCreditCard("justcreditcard");
 
-        final PhileasFilterService service = new PhileasFilterService(phileasConfiguration, contextService, vectorService);
+        final PlainTextFilterService service = new PlainTextFilterService(phileasConfiguration, contextService, vectorService);
         final TextFilterResult response = service.filter(policy, "context", "My cc is 4121742025464465");
 
         LOGGER.info(response.getFilteredText());
@@ -677,7 +679,7 @@ public class EndToEndTests {
 
         final Policy policy = getPolicyJustCreditCardNotInUnixTimestamps("justcreditcard");
 
-        final PhileasFilterService service = new PhileasFilterService(phileasConfiguration, contextService, vectorService);
+        final PlainTextFilterService service = new PlainTextFilterService(phileasConfiguration, contextService, vectorService);
         final TextFilterResult response = service.filter(policy, "context", "My cc is 1647725122227");
 
         LOGGER.info(response.getFilteredText());
@@ -694,7 +696,7 @@ public class EndToEndTests {
 
         final Policy policy = getPolicyJustCreditCard("justcreditcard");
 
-        final PhileasFilterService service = new PhileasFilterService(phileasConfiguration, contextService, vectorService);
+        final PlainTextFilterService service = new PlainTextFilterService(phileasConfiguration, contextService, vectorService);
         final TextFilterResult response = service.filter(policy, "context", "My cc is 4121742025464400");
 
         LOGGER.info(response.getFilteredText());
@@ -711,7 +713,7 @@ public class EndToEndTests {
 
         final Policy policy = getPolicyZipCodeWithIgnored("default");
 
-        final PhileasFilterService service = new PhileasFilterService(phileasConfiguration, contextService, vectorService);
+        final PlainTextFilterService service = new PlainTextFilterService(phileasConfiguration, contextService, vectorService);
         final TextFilterResult response = service.filter(policy, "context", "George Washington was president and his ssn was 123-45-6789 and he lived at 90210.");
 
         LOGGER.info(response.getFilteredText());
@@ -728,7 +730,7 @@ public class EndToEndTests {
 
         final Policy policy = getPolicy("default");
 
-        final PhileasFilterService service = new PhileasFilterService(phileasConfiguration, contextService, vectorService);
+        final PlainTextFilterService service = new PlainTextFilterService(phileasConfiguration, contextService, vectorService);
         final TextFilterResult response = service.filter(policy, "context", "George Washington was president and his ssn was 123-45-6789 and he lived at 90210.");
 
         LOGGER.info(response.getFilteredText());
@@ -747,7 +749,7 @@ public class EndToEndTests {
 
         Assertions.assertThrows(FileNotFoundException.class, () -> {
 
-            final PhileasFilterService service = new PhileasFilterService(phileasConfiguration, contextService, vectorService);
+            final PlainTextFilterService service = new PlainTextFilterService(phileasConfiguration, contextService, vectorService);
             service.filter(policy, "context", "My email is test@something.com");
 
         });

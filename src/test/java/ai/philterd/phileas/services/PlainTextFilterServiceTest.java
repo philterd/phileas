@@ -24,6 +24,7 @@ import ai.philterd.phileas.policy.Policy;
 import ai.philterd.phileas.services.context.ContextService;
 import ai.philterd.phileas.services.context.DefaultContextService;
 import ai.philterd.phileas.services.disambiguation.vector.VectorService;
+import ai.philterd.phileas.services.filters.filtering.PdfFilterService;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.apache.commons.collections.CollectionUtils;
@@ -48,9 +49,9 @@ import static ai.philterd.phileas.services.EndToEndTestsHelper.documentContainsT
 import static ai.philterd.phileas.services.EndToEndTestsHelper.getPdfPolicy;
 import static ai.philterd.phileas.services.EndToEndTestsHelper.getPolicy;
 
-public class PhileasFilterServiceTest {
+public class PlainTextFilterServiceTest {
 
-    private static final Logger LOGGER = LogManager.getLogger(PhileasFilterServiceTest.class);
+    private static final Logger LOGGER = LogManager.getLogger(PlainTextFilterServiceTest.class);
 
     private Gson gson;
     private final VectorService vectorService = Mockito.mock(VectorService.class);
@@ -112,7 +113,7 @@ public class PhileasFilterServiceTest {
 
         final Policy policy = getPdfPolicy("pdf");
 
-        final PhileasFilterService service = new PhileasFilterService(phileasConfiguration, contextService, vectorService);
+        final PdfFilterService service = new PdfFilterService(phileasConfiguration, contextService, vectorService);
         final BinaryDocumentFilterResult response = service.filter(policy, "context", document, MimeType.APPLICATION_PDF, MimeType.APPLICATION_PDF);
 
         // Write the byte array to a file.
@@ -145,7 +146,7 @@ public class PhileasFilterServiceTest {
 
         final Policy policy = getPdfPolicy("pdf");
 
-        PhileasFilterService service = new PhileasFilterService(phileasConfiguration, contextService, vectorService);
+        final PdfFilterService service = new PdfFilterService(phileasConfiguration, contextService, vectorService);
         final BinaryDocumentFilterResult response = service.filter(policy, "context", document, MimeType.APPLICATION_PDF, MimeType.APPLICATION_PDF);
 
         // Write the byte array to a file.
