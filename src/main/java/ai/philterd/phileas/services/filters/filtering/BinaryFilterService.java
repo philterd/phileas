@@ -21,7 +21,7 @@ import ai.philterd.phileas.model.filtering.MimeType;
 import ai.philterd.phileas.policy.Policy;
 import ai.philterd.phileas.services.context.ContextService;
 
-public abstract class BinaryFilterService extends FilterService<BinaryDocumentFilterResult> {
+public abstract class BinaryFilterService extends FilterService {
 
     /**
      * Filter text from a binary document.
@@ -35,7 +35,7 @@ public abstract class BinaryFilterService extends FilterService<BinaryDocumentFi
      */
     public abstract BinaryDocumentFilterResult filter(final Policy policy, final String context, final byte[] input, final MimeType mimeType, final MimeType outputMimeType) throws Exception;
 
-    public BinaryFilterService(final PhileasConfiguration phileasConfiguration,
+    protected BinaryFilterService(final PhileasConfiguration phileasConfiguration,
                          final ContextService contextService) {
 
         super(phileasConfiguration, contextService);

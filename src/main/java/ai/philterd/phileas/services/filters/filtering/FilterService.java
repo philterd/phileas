@@ -17,7 +17,6 @@ package ai.philterd.phileas.services.filters.filtering;
 
 import ai.philterd.phileas.PhileasConfiguration;
 import ai.philterd.phileas.filters.Filter;
-import ai.philterd.phileas.model.filtering.AbstractFilterResult;
 import ai.philterd.phileas.model.filtering.FilterType;
 import ai.philterd.phileas.policy.Ignored;
 import ai.philterd.phileas.policy.Policy;
@@ -37,14 +36,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public abstract class FilterService<T extends AbstractFilterResult> {
+public abstract class FilterService {
 
     protected final FilterPolicyLoader filterPolicyLoader;
 
     // A map that gives each filter profile its own cache of filters.
     protected final Map<String, Map<FilterType, Filter>> filterCache;
 
-    public FilterService(final PhileasConfiguration phileasConfiguration,
+    protected FilterService(final PhileasConfiguration phileasConfiguration,
                          final ContextService contextService) {
 
         this.filterCache = new ConcurrentHashMap<>();

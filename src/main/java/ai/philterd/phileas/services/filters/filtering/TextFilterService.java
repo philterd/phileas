@@ -20,7 +20,7 @@ import ai.philterd.phileas.model.filtering.TextFilterResult;
 import ai.philterd.phileas.policy.Policy;
 import ai.philterd.phileas.services.context.ContextService;
 
-public abstract class TextFilterService extends FilterService<TextFilterResult> {
+public abstract class TextFilterService extends FilterService {
 
     /**
      * Filter text from plain text.
@@ -32,7 +32,7 @@ public abstract class TextFilterService extends FilterService<TextFilterResult> 
      */
     public abstract TextFilterResult filter(final Policy policy, final String context, final String input) throws Exception;
 
-    public TextFilterService(final PhileasConfiguration phileasConfiguration,
+    protected TextFilterService(final PhileasConfiguration phileasConfiguration,
                                final ContextService contextService) {
 
         super(phileasConfiguration, contextService);
