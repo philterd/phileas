@@ -16,11 +16,11 @@
 package ai.philterd.phileas.services;
 
 import ai.philterd.phileas.PhileasConfiguration;
-import ai.philterd.phileas.model.filtering.MimeType;
 import ai.philterd.phileas.model.filtering.BinaryDocumentFilterResult;
-import ai.philterd.phileas.model.filtering.TextFilterResult;
 import ai.philterd.phileas.model.filtering.IncrementalRedaction;
+import ai.philterd.phileas.model.filtering.MimeType;
 import ai.philterd.phileas.model.filtering.Span;
+import ai.philterd.phileas.model.filtering.TextFilterResult;
 import ai.philterd.phileas.policy.Identifiers;
 import ai.philterd.phileas.policy.Policy;
 import ai.philterd.phileas.policy.filters.BitcoinAddress;
@@ -90,7 +90,7 @@ public class EndToEndTests {
         final byte[] document = Files.readAllBytes(Paths.get(this.getClass().getResource("/pdfs/12-12110 K.pdf").toURI()));
 
         final PdfFilterService service = new PdfFilterService(phileasConfiguration, contextService, vectorService);
-        final BinaryDocumentFilterResult response = service.filter(policy, "context", document, MimeType.APPLICATION_PDF, MimeType.APPLICATION_PDF);
+        final BinaryDocumentFilterResult response = service.filter(policy, "context", document, MimeType.APPLICATION_PDF);
 
         Assertions.assertFalse(response.getIncrementalRedactions().isEmpty());
 

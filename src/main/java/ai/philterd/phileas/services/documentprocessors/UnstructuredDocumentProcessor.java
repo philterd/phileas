@@ -64,10 +64,7 @@ public class UnstructuredDocumentProcessor implements DocumentProcessor {
         // Apply each filter.
         for(final Filter filter : filters) {
 
-            final long startTimeMs = System.currentTimeMillis();
             final Filtered filtered = filter.filter(policy, context, piece, input);
-            final long elapsedTimeMs = System.currentTimeMillis() - startTimeMs;
-
             identifiedSpans.addAll(filtered.getSpans());
 
         }
