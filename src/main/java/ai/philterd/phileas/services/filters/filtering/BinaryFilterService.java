@@ -13,36 +13,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ai.philterd.phileas.services.filters;
+package ai.philterd.phileas.services.filters.filtering;
 
+import ai.philterd.phileas.PhileasConfiguration;
+import ai.philterd.phileas.model.filtering.BinaryDocumentFilterResult;
 import ai.philterd.phileas.model.filtering.MimeType;
 import ai.philterd.phileas.policy.Policy;
-import ai.philterd.phileas.model.filtering.BinaryDocumentFilterResult;
-import ai.philterd.phileas.model.filtering.TextFilterResult;
+import ai.philterd.phileas.services.context.ContextService;
 
-/**
- * Interface for implementing filter services.
- */
-public interface FilterService {
-
-    /**
-     * Filter text from a string.
-     * @param policy The {@link Policy} to apply.
-     * @param input The input text.
-     * @return A {@link TextFilterResult}.
-     * @throws Exception Thrown if the text cannot be filtered.
-     */
-    TextFilterResult filter(final Policy policy, final String context, final String input) throws Exception;
+public abstract class BinaryFilterService extends FilterService {
 
     /**
      * Filter text from a binary document.
-     * @param policy The {@link Policy} to apply.s
+     * @param policy The {@link Policy} to apply.
+     * @param context The redaction context.
      * @param input The input document as a byte array.
      * @param mimeType The input {@link MimeType}.
      * @param outputMimeType The output {@link MimeType}.
      * @return A {@link BinaryDocumentFilterResult}.
      * @throws Exception Thrown if the text cannot be filtered.
      */
-    BinaryDocumentFilterResult filter(final Policy policy, final String context, byte[] input, MimeType mimeType, MimeType outputMimeType) throws Exception;
+    public abstract BinaryDocumentFilterResult filter(final Policy policy, final String context, final byte[] input, final MimeType mimeType, final MimeType outputMimeType) throws Exception;
+
+    protected BinaryFilterService(final PhileasConfiguration phileasConfiguration,
+                         final ContextService contextService) {
+
+        super(phileasConfiguration, contextService);
+
+    }
 
 }

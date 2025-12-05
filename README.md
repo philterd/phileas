@@ -101,9 +101,9 @@ Create a `FilterService`, using a `PhileasConfiguration`, and call `filter()` on
 Properties properties = new Properties();
 PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties);
 
-FilterService filterService = new PhileasFilterService(phileasConfiguration);
+PlainTextFilterService filterService = new PlainTextFilterService(phileasConfiguration);
 
-FilterResponse response = filterService.filter(policies, context, body, MimeType.TEXT_PLAIN);
+FilterResponse response = filterService.filter(policies, context, text);
 ```
 
 The `policies` is a list of `Policy` classes. (See below for more about Policies.) Lastly, we specify that the data is plain text.
@@ -121,7 +121,7 @@ Create a `FilterService`, using a `PhileasConfiguration`, and call `filter()` on
 ```
 PhileasConfiguration phileasConfiguration = ConfigFactory.create(PhileasConfiguration.class);
 
-FilterService filterService = new PhileasFilterService(phileasConfiguration);
+PdfFilterService filterService = new PdfFilterService(phileasConfiguration);
 
 BinaryDocumentFilterResponse response = filterService.filter(policies, context, body, MimeType.APPLICATION_PDF, MimeType.IMAGE_JPEG);
 ```

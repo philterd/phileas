@@ -13,18 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ai.philterd.phileas.services;
+package ai.philterd.phileas.services.filters.filtering;
 
 import ai.philterd.phileas.PhileasConfiguration;
 import ai.philterd.phileas.filters.Filter;
 import ai.philterd.phileas.model.filtering.BinaryDocumentFilterResult;
 import ai.philterd.phileas.model.filtering.Explanation;
-import ai.philterd.phileas.model.filtering.FilterType;
 import ai.philterd.phileas.model.filtering.IncrementalRedaction;
 import ai.philterd.phileas.model.filtering.MimeType;
 import ai.philterd.phileas.model.filtering.Span;
 import ai.philterd.phileas.model.filtering.TextFilterResult;
-import ai.philterd.phileas.policy.Ignored;
 import ai.philterd.phileas.policy.Policy;
 import ai.philterd.phileas.policy.config.Pdf;
 import ai.philterd.phileas.policy.graphical.BoundingBox;
@@ -33,112 +31,46 @@ import ai.philterd.phileas.services.disambiguation.vector.VectorBasedSpanDisambi
 import ai.philterd.phileas.services.disambiguation.vector.VectorService;
 import ai.philterd.phileas.services.documentprocessors.DocumentProcessor;
 import ai.philterd.phileas.services.documentprocessors.UnstructuredDocumentProcessor;
-import ai.philterd.phileas.services.filters.FilterService;
-import ai.philterd.phileas.services.filters.postfilters.IgnoredPatternsFilter;
-import ai.philterd.phileas.services.filters.postfilters.IgnoredTermsFilter;
 import ai.philterd.phileas.services.filters.postfilters.PostFilter;
-import ai.philterd.phileas.services.filters.postfilters.TrailingNewLinePostFilter;
-import ai.philterd.phileas.services.filters.postfilters.TrailingPeriodPostFilter;
-import ai.philterd.phileas.services.filters.postfilters.TrailingSpacePostFilter;
 import ai.philterd.phileas.services.pdf.PdfRedacter;
 import ai.philterd.phileas.services.pdf.PdfRedactionOptions;
 import ai.philterd.phileas.services.pdf.PdfTextExtractor;
 import ai.philterd.phileas.services.pdf.Redacter;
-import ai.philterd.phileas.services.split.SplitFactory;
-import ai.philterd.phileas.services.split.SplitService;
 import ai.philterd.phileas.services.tokens.TokenCounter;
 import ai.philterd.phileas.services.tokens.WhitespaceTokenCounter;
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 
-public class PhileasFilterService implements FilterService {
+public class PdfFilterService extends BinaryFilterService {
 
-	private static final Logger LOGGER = LogManager.getLogger(PhileasFilterService.class);
+	private static final Logger LOGGER = LogManager.getLogger(PdfFilterService.class);
 
     private final DocumentProcessor unstructuredDocumentProcessor;
-    private final FilterPolicyLoader filterPolicyLoader;
     private final TokenCounter tokenCounter;
 
-    // A map that gives each filter profile its own cache of filters.
-    private final Map<String, Map<FilterType, Filter>> filterCache;
+    public PdfFilterService(final PhileasConfiguration phileasConfiguration,
+                            final ContextService contextService,
+                            final VectorService vectorService) {
 
-    // PHL-223: Face recognition
-    //private final ImageProcessor imageProcessor;
+        super(phileasConfiguration, contextService);
 
-    public PhileasFilterService(final PhileasConfiguration phileasConfiguration,
-                                final ContextService contextService,
-                                final VectorService vectorService) {
-
-        LOGGER.info("Initializing Phileas engine.");
-
-        this.filterCache = new ConcurrentHashMap<>();
+        LOGGER.info("Initializing PDF filter service.");
 
         // Set the token counter.
         this.tokenCounter = new WhitespaceTokenCounter();
-
-        // The filter loader for policies.
-        this.filterPolicyLoader = new FilterPolicyLoader(contextService, phileasConfiguration);
 
         // Create a new unstructured document processor.
         this.unstructuredDocumentProcessor = new UnstructuredDocumentProcessor(
                 new VectorBasedSpanDisambiguationService(phileasConfiguration, vectorService),
                 phileasConfiguration.incrementalRedactionsEnabled()
         );
-
-    }
-
-    @Override
-    public TextFilterResult filter(final Policy policy, final String context, final String input) throws Exception {
-
-        final List<Filter> filters = filterPolicyLoader.getFiltersForPolicy(policy, filterCache);
-        final List<PostFilter> postFilters = getPostFiltersForPolicy(policy);
-
-        final TextFilterResult textFilterResult;
-
-        // Do we need to split the input text due to its size?
-        // Is the appliesToFilter = "*" or is at least one of the filters in the policy in the appliesToFilter list?
-        if (policy.getConfig().getSplitting().isEnabled() && input.length() >= policy.getConfig().getSplitting().getThreshold()) {
-
-                // Get the splitter to use from the policy.
-                final SplitService splitService = SplitFactory.getSplitService(
-                        policy.getConfig().getSplitting().getMethod(),
-                        policy.getConfig().getSplitting().getThreshold()
-                );
-
-                // Holds all filter responses that will ultimately be combined into a single response.
-                final List<TextFilterResult> filterResponse = new LinkedList<>();
-
-                // Split the string.
-                final List<String> splits = splitService.split(input);
-
-                // Process each split.
-                for (int i = 0; i < splits.size(); i++) {
-                    final TextFilterResult fr = unstructuredDocumentProcessor.process(policy, filters, postFilters, context, i, splits.get(i));
-                    filterResponse.add(fr);
-                }
-
-                // Combine the results into a single filterResponse object.
-                textFilterResult = TextFilterResult.combine(filterResponse, context, splitService.getSeparator());
-
-        } else {
-
-            // Do not split. Process the entire string at once.
-            textFilterResult = unstructuredDocumentProcessor.process(policy, filters, postFilters, context, 0, input);
-
-        }
-
-        return textFilterResult;
 
     }
 
@@ -228,18 +160,6 @@ public class PhileasFilterService implements FilterService {
             final Explanation explanation = new Explanation(spansList, spansList);
             binaryDocumentFilterResult = new BinaryDocumentFilterResult(redacted, context, explanation, tokens, incrementalRedactions);
 
-        /*} else if(mimeType == MimeType.IMAGE_JPEG) {
-            // PHL-223: Face recognition
-
-            // TODO: Get options from the policy.
-            final ImageFilterResponse imageFilterResponse = imageProcessor.process(input);
-
-            // TODO: Explanation?
-            final Explanation explanation = new Explanation(Collections.emptyList(), Collections.emptyList());
-
-            binaryDocumentFilterResponse = new BinaryDocumentFilterResponse(imageFilterResponse.getImage(),
-                    context, explanation);*/
-
         } else {
             // Should never happen but just in case.
             throw new Exception("Unknown mime type.");
@@ -266,45 +186,6 @@ public class PhileasFilterService implements FilterService {
         }
 
         return boundingBoxes;
-
-    }
-
-    private List<PostFilter> getPostFiltersForPolicy(final Policy policy) throws IOException {
-
-        final List<PostFilter> postFilters = new LinkedList<>();
-
-        // Ignored terms filter. Looks for ignored terms in the scope of the whole document (and not just a particular filter).
-        // No matter what filter found the span, it is subject to this ignore list.
-        if(CollectionUtils.isNotEmpty(policy.getIgnored())) {
-
-            // Make a post filter for each Ignored item in the list.
-            for(final Ignored ignored : policy.getIgnored()) {
-                postFilters.add(new IgnoredTermsFilter(ignored));
-            }
-
-        }
-
-        // Ignored patterns filter. Looks for terms matching a pattern in the scope of the whole document (and not just a particular filter).
-        // No matter what filter found the span, it is subject to this ignore list.
-        if(CollectionUtils.isNotEmpty(policy.getIgnoredPatterns())) {
-            postFilters.add(new IgnoredPatternsFilter(policy.getIgnoredPatterns()));
-        }
-
-        // Add the post filters if they are enabled in the policy.
-
-        if(policy.getConfig().getPostFilters().isRemoveTrailingPeriods()) {
-            postFilters.add(TrailingPeriodPostFilter.getInstance());
-        }
-
-        if(policy.getConfig().getPostFilters().isRemoveTrailingSpaces()) {
-            postFilters.add(TrailingSpacePostFilter.getInstance());
-        }
-
-        if(policy.getConfig().getPostFilters().isRemoveTrailingNewLines()) {
-            postFilters.add(TrailingNewLinePostFilter.getInstance());
-        }
-
-        return postFilters;
 
     }
 
