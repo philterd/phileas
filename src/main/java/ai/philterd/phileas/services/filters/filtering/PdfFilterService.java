@@ -128,11 +128,7 @@ public class PdfFilterService extends BinaryFilterService {
                 span.setCharacterStart(characterStart);
                 span.setCharacterEnd(characterEnd);
                 span.setLineNumber(lineNumber);
-                span.setX(pdfLine.getTextPositions().get(span.getCharacterStart() - offset).getX());
-                span.setY(pdfLine.getTextPositions().get(span.getCharacterEnd() - offset).getY());
                 span.setPageNumber(pdfLine.getPageNumber());
-                span.setLineBasedCharacterStart(span.getCharacterStart() - offset);
-                span.setLineBasedCharacterEnd(span.getCharacterEnd() - offset);
                 span.setLineHash(pdfLine.getLineHash());
 
                 System.out.println("span = " + span);

@@ -20,7 +20,7 @@ import ai.philterd.phileas.model.filtering.Span;
 import ai.philterd.phileas.policy.Policy;
 import ai.philterd.phileas.policy.graphical.BoundingBox;
 import org.apache.commons.codec.digest.DigestUtils;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.pdfbox.Loader;
@@ -334,18 +334,11 @@ public class PdfRedacter extends PDFTextStripper implements Redacter {
 
         for(final Span span : spans) {
 
-          //  System.out.println(span.getPageNumber() + " - " + this.getCurrentPageNo());
-
-            if(true) {
-            //if(span.getPageNumber() + 1 == this.getCurrentPageNo()) {
+           // if(span.getPageNumber()  == this.getCurrentPageNo() - 1) {
 
                 final String lineHash = lineHash(text, textPositions, this.getCurrentPageNo() - 1);
 
-//                System.out.println("line hash = " + lineHash);
-//                System.out.println("span hash = " + span.getLineHash());
-//                System.out.println("=======");
-
-                if(StringUtils.equalsIgnoreCase(span.getLineHash(), lineHash)) {
+                if(Strings.CI.equals(span.getLineHash(), lineHash)) {
 
                  if (text.contains(span.getText())) {
 
@@ -417,7 +410,7 @@ public class PdfRedacter extends PDFTextStripper implements Redacter {
 
                  }
 
-             }
+          //   }
 
             }
 

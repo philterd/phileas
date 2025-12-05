@@ -87,11 +87,7 @@ public final class Span {
     private transient boolean alwaysValid = false;
 
     private transient int lineNumber = 0;
-    private transient float x = 0;
-    private transient float y = 0;
     private transient int pageNumber = 0;
-    private transient int lineBasedCharacterStart = 0;
-    private transient int lineBasedCharacterEnd = 0;
     private transient String lineHash;
 
     /**
@@ -505,11 +501,7 @@ public final class Span {
                 + " classification: " + classification + "; "
                 + " priority: " + priority + "; "
                 + " line number: " + lineNumber + ";"
-                + " x: " + x + ";"
-                + " y: " + y + ";"
                 + " page number: " + pageNumber + ";"
-                + " line based character start: " + lineBasedCharacterStart + ";"
-                + " line based character end: " + lineBasedCharacterEnd + ";"
                 + " line hash: " + lineHash;
 
     }
@@ -646,44 +638,12 @@ public final class Span {
         return lineNumber;
     }
 
-    public float getX() {
-        return x;
-    }
-
-    public void setX(float x) {
-        this.x = x;
-    }
-
-    public float getY() {
-        return y;
-    }
-
-    public void setY(float y) {
-        this.y = y;
-    }
-
     public int getPageNumber() {
         return pageNumber;
     }
 
     public void setPageNumber(int pageNumber) {
         this.pageNumber = pageNumber;
-    }
-
-    public int getLineBasedCharacterStart() {
-        return lineBasedCharacterStart;
-    }
-
-    public void setLineBasedCharacterStart(int lineBasedCharacterStart) {
-        this.lineBasedCharacterStart = lineBasedCharacterStart;
-    }
-
-    public int getLineBasedCharacterEnd() {
-        return lineBasedCharacterEnd;
-    }
-
-    public void setLineBasedCharacterEnd(int lineBasedCharacterEnd) {
-        this.lineBasedCharacterEnd = lineBasedCharacterEnd;
     }
 
     public String getLineHash() {
@@ -693,4 +653,5 @@ public final class Span {
     public void setLineHash(String lineHash) {
         this.lineHash = lineHash;
     }
+
 }
