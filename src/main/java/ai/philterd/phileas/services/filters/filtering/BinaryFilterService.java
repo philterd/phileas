@@ -17,6 +17,7 @@ package ai.philterd.phileas.services.filters.filtering;
 
 import ai.philterd.phileas.PhileasConfiguration;
 import ai.philterd.phileas.model.filtering.BinaryDocumentFilterResult;
+import ai.philterd.phileas.model.filtering.IncrementalRedaction;
 import ai.philterd.phileas.model.filtering.MimeType;
 import ai.philterd.phileas.model.filtering.Span;
 import ai.philterd.phileas.policy.Policy;
@@ -37,7 +38,7 @@ public abstract class BinaryFilterService extends FilterService {
      */
     public abstract BinaryDocumentFilterResult filter(final Policy policy, final String context, final byte[] input, final MimeType outputMimeType) throws Exception;
 
-    public abstract BinaryDocumentFilterResult apply(final Policy policy, final byte[] input, final List<Span> spans, final MimeType outputMimeType) throws Exception;
+    public abstract BinaryDocumentFilterResult apply(final Policy policy, final byte[] input, final String context, final List<Span> spans, final long tokens, final MimeType outputMimeType, final List<IncrementalRedaction> incrementalRedactions) throws Exception;
 
     protected BinaryFilterService(final PhileasConfiguration phileasConfiguration,
                          final ContextService contextService) {

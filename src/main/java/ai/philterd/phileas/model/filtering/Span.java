@@ -24,17 +24,18 @@ import org.apache.commons.lang3.Range;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Represents a location in text identified as sensitive information.
  */
 public final class Span {
-
-    private static final Logger LOGGER = LogManager.getLogger(Span.class);
 
     @Expose
     private int characterStart;
@@ -86,9 +87,14 @@ public final class Span {
     // Whether the span should always pass validation.
     private transient boolean alwaysValid = false;
 
-    private transient int lineNumber = 0;
-    private transient int pageNumber = 0;
+    private int lineNumber = 0;
+    private int pageNumber = 0;
     private transient String lineHash;
+
+    private float lowerLeftX;
+    private float lowerLeftY;
+    private float upperRightX;
+    private float upperRightY;
 
     /**
      * Don't use this constructor.
@@ -289,6 +295,10 @@ public final class Span {
                     && span1.getCharacterEnd() == span.getCharacterEnd()
                     && span1.getFilterType() != span.getFilterType()
                     && span1.getConfidence() == span.getConfidence()
+                    && span1.getLowerLeftX() == span.getLowerLeftX()
+                    && span1.getLowerLeftY() == span.getLowerLeftY()
+                    && span1.getUpperRightX() == span.getUpperRightX()
+                    && span1.getUpperRightY() == span.getUpperRightY()
                     && !span1.equals(span)) {
 
                 identicalSpans.add(span1);
@@ -474,6 +484,12 @@ public final class Span {
                 append(applied).
                 append(classification).
                 append(priority).
+                append(lowerLeftX).
+                append(lowerLeftY).
+                append(upperRightX).
+                append(upperRightY).
+                append(lineNumber).
+                append(pageNumber).
                 toHashCode();
 
     }
@@ -652,6 +668,38 @@ public final class Span {
 
     public void setLineHash(String lineHash) {
         this.lineHash = lineHash;
+    }
+
+    public float getLowerLeftX() {
+        return lowerLeftX;
+    }
+
+    public void setLowerLeftX(float lowerLeftX) {
+        this.lowerLeftX = lowerLeftX;
+    }
+
+    public float getLowerLeftY() {
+        return lowerLeftY;
+    }
+
+    public void setLowerLeftY(float lowerLeftY) {
+        this.lowerLeftY = lowerLeftY;
+    }
+
+    public float getUpperRightX() {
+        return upperRightX;
+    }
+
+    public void setUpperRightX(float upperRightX) {
+        this.upperRightX = upperRightX;
+    }
+
+    public float getUpperRightY() {
+        return upperRightY;
+    }
+
+    public void setUpperRightY(float upperRightY) {
+        this.upperRightY = upperRightY;
     }
 
 }

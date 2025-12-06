@@ -15,6 +15,7 @@
  */
 package ai.philterd.phileas.services.pdf;
 
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.pdfbox.text.TextPosition;
 
 import java.util.List;
@@ -31,6 +32,20 @@ public class PdfLine {
         this.textPositions = textPositions;
     }
 
+    public static String lineHash(final List<TextPosition> textPositions, final int pageNumber) {
+
+        final StringBuilder sb = new StringBuilder();
+
+        for (final TextPosition textPosition : textPositions) {
+            sb.append(textPosition.getUnicode());
+        }
+
+        sb.append(pageNumber);
+
+        return DigestUtils.md5Hex(sb.toString());
+
+    }
+
     @Override
     public String toString() {
         return text + " (" + pageNumber + ")";
@@ -44,12 +59,8 @@ public class PdfLine {
         return pageNumber;
     }
 
-    public List<TextPosition> getTextPositions() {
-        return textPositions;
-    }
-
     public String getLineHash() {
-        return PdfRedacter.lineHash(text, textPositions, pageNumber);
+        return lineHash(textPositions, pageNumber);
     }
 
 }

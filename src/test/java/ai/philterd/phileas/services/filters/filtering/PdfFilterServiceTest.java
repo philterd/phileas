@@ -96,7 +96,7 @@ public class PdfFilterServiceTest {
 
         final List<Span> spans = List.of(span1, span2);
 
-        final BinaryDocumentFilterResult binaryDocumentFilterResult = pdfFilterService.apply(policy, file, spans, MimeType.APPLICATION_PDF);
+        final BinaryDocumentFilterResult binaryDocumentFilterResult = pdfFilterService.apply(policy, file, "context", spans, 0, MimeType.APPLICATION_PDF, List.of());
 
         final File outputFile = new File("/tmp/output.pdf");// File.createTempFile("output", ".pdf");
         try (FileOutputStream outputStream = new FileOutputStream(outputFile)) {

@@ -19,7 +19,6 @@ import ai.philterd.phileas.model.filtering.MimeType;
 import ai.philterd.phileas.model.filtering.Span;
 import ai.philterd.phileas.policy.Policy;
 import ai.philterd.phileas.policy.graphical.BoundingBox;
-import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.Strings;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -96,7 +95,7 @@ public class PdfRedacter extends PDFTextStripper implements Redacter {
 
     public PdfRedacter(Policy policy,
                        List<Span> spans, PdfRedactionOptions pdfRedactionOptions,
-                       List<BoundingBox> boundingBoxes) throws IOException {
+                       List<BoundingBox> boundingBoxes) {
 
         this.policy = policy;
         this.spans = spans;
@@ -122,7 +121,7 @@ public class PdfRedacter extends PDFTextStripper implements Redacter {
         dummy.close();
 
         // Redact the bounding boxes in the output stream.
-        for(final BoundingBox boundingBox : boundingBoxes) {
+        for (final BoundingBox boundingBox : boundingBoxes) {
 
             final PDPage page = pdDocument.getPage(boundingBox.getPage() - 1);
             final PDPageContentStream contentStream = new PDPageContentStream(pdDocument, page, PDPageContentStream.AppendMode.APPEND, true);
@@ -142,7 +141,7 @@ public class PdfRedacter extends PDFTextStripper implements Redacter {
 
         final PDFRenderer pdfRenderer = new PDFRenderer(pdDocument);
 
-        if(outputMimeType == MimeType.IMAGE_JPEG) {
+        if (outputMimeType == MimeType.IMAGE_JPEG) {
 
             final ZipOutputStream zipOut = new ZipOutputStream(outputStream);
 
@@ -173,7 +172,7 @@ public class PdfRedacter extends PDFTextStripper implements Redacter {
             zipOut.close();
             pdDocument.close();
 
-        } else if(outputMimeType == MimeType.APPLICATION_PDF) {
+        } else if (outputMimeType == MimeType.APPLICATION_PDF) {
 
             pdfRenderer.setSubsamplingAllowed(true);
 
@@ -243,13 +242,13 @@ public class PdfRedacter extends PDFTextStripper implements Redacter {
 
         final int buffer = 10;
 
-        for(int pageNumber : rectangles.keySet()) {
+        for (int pageNumber : rectangles.keySet()) {
 
             final PDPage page = document.getPage(pageNumber);
             final PDPageContentStream rectContentStream = new PDPageContentStream(doc, page, PDPageContentStream.AppendMode.APPEND, true, true);
             final PDPageContentStream textContentStream = new PDPageContentStream(doc, page, PDPageContentStream.AppendMode.APPEND, true, true);
 
-            for(final RedactedRectangle rectangle : rectangles.get(pageNumber)) {
+            for (final RedactedRectangle rectangle : rectangles.get(pageNumber)) {
 
                 rectContentStream.addRect(
                         rectangle.getPdRectangle().getLowerLeftX(),
@@ -257,7 +256,7 @@ public class PdfRedacter extends PDFTextStripper implements Redacter {
                         rectangle.getPdRectangle().getWidth(),
                         rectangle.getPdRectangle().getHeight() + buffer);
 
-                if(showReplacement) {
+                if (showReplacement) {
                     addReplacementTextToRect(rectangle, textContentStream);
                 }
             }
@@ -305,112 +304,71 @@ public class PdfRedacter extends PDFTextStripper implements Redacter {
         textContentStream.endText();
     }
 
-    public static String lineHash(final String text, final List<TextPosition> textPositions, final int pageNumber) {
-
-        final StringBuilder sb = new StringBuilder();
-
-        for(final TextPosition textPosition : textPositions) {
-            sb.append(textPosition.getUnicode());
-        }
-
-       // sb.append(text);
-        sb.append(pageNumber);
-
-        return DigestUtils.md5Hex(sb.toString());
-
-    }
-
     @Override
     protected void writeString(final String text, final List<TextPosition> textPositions) {
 
         float
-                posXInit  = 0,
-                posXEnd   = 0,
-                posYInit  = 0,
-                posYEnd   = 0,
-                width     = 0,
-                height    = 0,
-                fontHeight = 0;
+                posXInit = 0,
+                posXEnd = 0,
+                posYEnd = 0,
+                height = 0;
 
-        for(final Span span : spans) {
+        final String lineHash = PdfLine.lineHash(textPositions, this.getCurrentPageNo() - 1);
 
-           // if(span.getPageNumber()  == this.getCurrentPageNo() - 1) {
+        for (final Span span : spans) {
 
-                final String lineHash = lineHash(text, textPositions, this.getCurrentPageNo() - 1);
+            if (Strings.CI.equals(span.getLineHash(), lineHash)) {
 
-                if(Strings.CI.equals(span.getLineHash(), lineHash)) {
+                if (text.contains(span.getText())) {
 
-                 if (text.contains(span.getText())) {
+                    final String term = span.getText();
 
-                     //try {
+                    // Set index to 0 to do the whole line
+                    final List<Integer> indexes = findIndexes(text, span);
 
-                     final String term = span.getText();
+                    for (final int index : indexes) {
 
-                     // Set index to 0 to do the whole line
-                     final List<Integer> indexes = findIndexes(text, span);
+                        if (index + term.length() >= textPositions.size()) {
+                            posXEnd = textPositions.get(textPositions.size() - 1).getXDirAdj() + textPositions.get(textPositions.size() - 1).getWidth();
+                            posYEnd = textPositions.get(index).getPageHeight() - textPositions.get(textPositions.size() - 1).getYDirAdj();
+                        } else {
+                            posXEnd = textPositions.get(index + term.length()).getXDirAdj() + textPositions.get(index + term.length()).getWidth();
+                            posYEnd = textPositions.get(index).getPageHeight() - textPositions.get(index + term.length()).getYDirAdj();
+                        }
 
-                     for (final int index : indexes) {
+                        posXInit = textPositions.get(index).getXDirAdj();
 
-                         if (index + term.length() >= textPositions.size()) {
-                             posXEnd = textPositions.get(textPositions.size() - 1).getXDirAdj() + textPositions.get(textPositions.size() - 1).getWidth();
-                             posYEnd = textPositions.get(index).getPageHeight() - textPositions.get(textPositions.size() - 1).getYDirAdj();
-                         } else {
-                             posXEnd = textPositions.get(index + term.length()).getXDirAdj() + textPositions.get(index + term.length()).getWidth();
-                             posYEnd = textPositions.get(index).getPageHeight() - textPositions.get(index + term.length()).getYDirAdj();
-                         }
+                        height = textPositions.get(index).getHeightDir();
 
-                         posXInit = textPositions.get(index).getXDirAdj();
-                         //posYInit = textPositions.get(index).getPageHeight() - textPositions.get(index).getYDirAdj();
+                        final PDRectangle position = new PDRectangle();
+                        position.setLowerLeftX(posXInit);
+                        position.setLowerLeftY(posYEnd);
+                        position.setUpperRightX(posXEnd);
+                        position.setUpperRightY(posYEnd + height);
 
-                         //width = textPositions.get(index).getWidthDirAdj();
-                         height = textPositions.get(index).getHeightDir();
+                        span.setLowerLeftX(posXInit);
+                        span.setLowerLeftY(posYEnd);
+                        position.setUpperRightX(posXEnd);
+                        position.setUpperRightY(posYEnd + height);
 
-                         // quadPoints is array of x,y coordinates in Z-like order (top-left, top-right, bottom-left,bottom-right)
-                         // of the area to be highlighted
+                        rectangles.putIfAbsent(this.getCurrentPageNo() - 1, new LinkedList<>());
 
-                         //final int buffer = 5;
+                        final RedactedRectangle redactedRectangle = new RedactedRectangle(position, span);
+                        rectangles.get(this.getCurrentPageNo() - 1).add(redactedRectangle);
 
-                            /*final float quadPoints[] = {
-                            posXInit, posYEnd + height + buffer,
-                            posXEnd, posYEnd + height + buffer,
-                            posXInit, posYInit - buffer,
-                            posXEnd, posYEnd - buffer
-                            };*/
+                        /*highlight.setRectangle(position);
+                        highlight.setQuadPoints(quadPoints);
+                        highlight.setConstantOpacity(100);
+                        highlight.setHidden(false);
+                        highlight.setNoView(false);
 
-                         //final List<PDAnnotation> annotations = document.getPage(this.getCurrentPageNo() - 1).getAnnotations();
-                         //final PDAnnotationTextMarkup highlight = new PDAnnotationTextMarkup(PDAnnotationTextMarkup.SUB_TYPE_HIGHLIGHT);
+                        final PDColor yellow = new PDColor(new float[]{1, 1, 1 / 255F}, PDDeviceRGB.INSTANCE);
+                        highlight.setColor(yellow);
+                        annotations.add(highlight);*/
 
-                         final PDRectangle position = new PDRectangle();
-                         position.setLowerLeftX(posXInit);
-                         position.setLowerLeftY(posYEnd);
-                         position.setUpperRightX(posXEnd);
-                         position.setUpperRightY(posYEnd + height);
+                    }
 
-                         rectangles.putIfAbsent(this.getCurrentPageNo() - 1, new LinkedList<>());
-
-                         final RedactedRectangle redactedRectangle = new RedactedRectangle(position, span);
-                         rectangles.get(this.getCurrentPageNo() - 1).add(redactedRectangle);
-
-                            /*highlight.setRectangle(position);
-                            highlight.setQuadPoints(quadPoints);
-                            highlight.setConstantOpacity(100);
-                            highlight.setHidden(false);
-                            highlight.setNoView(false);
-
-                            final PDColor yellow = new PDColor(new float[]{1, 1, 1 / 255F}, PDDeviceRGB.INSTANCE);
-                            highlight.setColor(yellow);
-                            annotations.add(highlight);*/
-
-                     }
-
-                    /*} catch (Exception ex) {
-                        // TODO: Need to figure out why this sometimes fail.
-                        LOGGER.warn("Problem parsing PDF span: " + ex.getMessage());
-                    }*/
-
-                 }
-
-          //   }
+                }
 
             }
 
@@ -427,7 +385,7 @@ public class PdfRedacter extends PDFTextStripper implements Redacter {
 
         int index = 0;
 
-        while(index != -1){
+        while (index != -1) {
 
             index = text.indexOf(span.getText(), index);
 
