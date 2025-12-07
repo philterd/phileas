@@ -47,6 +47,9 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * Implementation of {@link FilterService} that filters PDF documents.
+ */
 public class PdfFilterService extends BinaryFilterService {
 
 	private static final Logger LOGGER = LogManager.getLogger(PdfFilterService.class);

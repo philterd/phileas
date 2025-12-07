@@ -36,7 +36,13 @@ public abstract class TextFilterService extends FilterService {
      */
     public abstract TextFilterResult filter(final Policy policy, final String context, final String input) throws Exception;
 
-    public abstract byte[] apply(final byte[] input, final List<Span> spans) throws Exception;
+    /**
+     * Redact a list of spans in a text document.
+     * @param input The input document as a byte array.
+     * @param spans A list of {@link Span spans}.
+     * @return A byte array containing the filtered document.
+     */
+    public abstract byte[] apply(final byte[] input, final List<Span> spans);
 
     protected TextFilterService(final PhileasConfiguration phileasConfiguration,
                                final ContextService contextService) {

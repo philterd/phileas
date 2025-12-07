@@ -35,6 +35,9 @@ import java.nio.charset.StandardCharsets;
 import java.util.LinkedList;
 import java.util.List;
 
+/**
+ * Implementation of {@link FilterService} that filters plain text.
+ */
 public class PlainTextFilterService extends TextFilterService {
 
 	private static final Logger LOGGER = LogManager.getLogger(PlainTextFilterService.class);
@@ -102,7 +105,7 @@ public class PlainTextFilterService extends TextFilterService {
     }
 
     @Override
-    public byte[] apply(final byte[] input, final List<Span> spans) throws Exception {
+    public byte[] apply(final byte[] input, final List<Span> spans) {
 
         final String text = new String(input);
         final StringBuilder sb = new StringBuilder(text);

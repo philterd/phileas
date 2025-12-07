@@ -24,6 +24,9 @@ import ai.philterd.phileas.services.context.ContextService;
 
 import java.util.List;
 
+/**
+ * Abstract base class for services that filter text from binary documents.
+ */
 public abstract class BinaryFilterService extends FilterService {
 
     /**
@@ -37,6 +40,15 @@ public abstract class BinaryFilterService extends FilterService {
      */
     public abstract BinaryDocumentFilterResult filter(final Policy policy, final String context, final byte[] input, final MimeType outputMimeType) throws Exception;
 
+    /**
+     * Redact a list of spans in a binary document.
+     * @param policy A {@link Policy}.
+     * @param input The input document as a byte array.
+     * @param spans A list of {@link Span spans}.
+     * @param outputMimeType The output {@link MimeType}.
+     * @return A byte array containing the filtered document.
+     * @throws Exception Thrown if the spans cannot be applied.
+     */
     public abstract byte[] apply(final Policy policy, final byte[] input, final List<Span> spans, final MimeType outputMimeType) throws Exception;
 
     protected BinaryFilterService(final PhileasConfiguration phileasConfiguration,
