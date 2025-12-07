@@ -18,6 +18,7 @@ package ai.philterd.phileas.services.pdf;
 import ai.philterd.phileas.model.filtering.FilterType;
 import ai.philterd.phileas.model.filtering.MimeType;
 import ai.philterd.phileas.model.filtering.Span;
+import ai.philterd.phileas.policy.Graphical;
 import ai.philterd.phileas.policy.Policy;
 import ai.philterd.phileas.policy.graphical.BoundingBox;
 import org.apache.commons.io.FileUtils;
@@ -40,7 +41,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -71,8 +71,7 @@ public class PdfRedacterTest {
         pdfRedactionOptions.setScale(0.25f);
         pdfRedactionOptions.setCompressionQuality(1.0f);
 
-        final List<BoundingBox> boundingBoxes = Collections.emptyList();
-        final Redacter pdfRedacter = new PdfRedacter(policy, spanList, pdfRedactionOptions, boundingBoxes);
+        final Redacter pdfRedacter = new PdfRedacter(policy, spanList, pdfRedactionOptions);
 
         final byte[] redacted = pdfRedacter.process(document, MimeType.APPLICATION_PDF);
 
@@ -102,8 +101,7 @@ public class PdfRedacterTest {
         policy.getConfig().getPdf().setShowReplacement(true);
         final PdfRedactionOptions pdfRedactionOptions = new PdfRedactionOptions();
 
-        final List<BoundingBox> boundingBoxes = Collections.emptyList();
-        final Redacter pdfRedacter = new PdfRedacter(policy, spanList, pdfRedactionOptions, boundingBoxes);
+        final Redacter pdfRedacter = new PdfRedacter(policy, spanList, pdfRedactionOptions);
 
         final byte[] redacted = pdfRedacter.process(document, MimeType.APPLICATION_PDF);
 
@@ -132,8 +130,7 @@ public class PdfRedacterTest {
         final Policy policy = new Policy();
         final PdfRedactionOptions pdfRedactionOptions = new PdfRedactionOptions();
 
-        final List<BoundingBox> boundingBoxes = Collections.emptyList();
-        final Redacter pdfRedacter = new PdfRedacter(policy, spanList, pdfRedactionOptions, boundingBoxes);
+        final Redacter pdfRedacter = new PdfRedacter(policy, spanList, pdfRedactionOptions);
         final byte[] redacted = pdfRedacter.process(document, MimeType.IMAGE_JPEG);
 
         final File outputFile = File.createTempFile("output", ".zip");
@@ -160,8 +157,7 @@ public class PdfRedacterTest {
         final Policy policy = new Policy();
         final PdfRedactionOptions pdfRedactionOptions = new PdfRedactionOptions();
 
-        final List<BoundingBox> boundingBoxes = Collections.emptyList();
-        final Redacter pdfRedacter = new PdfRedacter(policy, spanList, pdfRedactionOptions, boundingBoxes);
+        final Redacter pdfRedacter = new PdfRedacter(policy, spanList, pdfRedactionOptions);
         final byte[] redacted = pdfRedacter.process(document, MimeType.IMAGE_JPEG);
 
         final File outputFile = File.createTempFile("output", ".zip");
@@ -200,7 +196,11 @@ public class PdfRedacterTest {
 
         final List<BoundingBox> boundingBoxes = Arrays.asList(boundingBox1, boundingBox2);
 
-        final Redacter pdfRedacter = new PdfRedacter(policy, List.of(), pdfRedactionOptions, boundingBoxes);
+        final Graphical graphical = new Graphical();
+        graphical.setBoundingBoxes(boundingBoxes);
+        policy.setGraphical(graphical);
+
+        final Redacter pdfRedacter = new PdfRedacter(policy, List.of(), pdfRedactionOptions);
         final byte[] redacted = pdfRedacter.process(document, MimeType.APPLICATION_PDF);
 
         final File outputFile = File.createTempFile("output", ".pdf");
@@ -228,7 +228,6 @@ public class PdfRedacterTest {
         boundingBox1.setH(150);
         boundingBox1.setPage(1);
         boundingBox1.setColor("yellow");
-        boundingBox1.setMimeType(MimeType.APPLICATION_PDF.toString());
 
         final BoundingBox boundingBox2 = new BoundingBox();
         boundingBox2.setX(100);
@@ -237,11 +236,14 @@ public class PdfRedacterTest {
         boundingBox2.setH(75);
         boundingBox2.setPage(2);
         boundingBox2.setColor("red");
-        boundingBox2.setMimeType(MimeType.APPLICATION_PDF.toString());
 
         final List<BoundingBox> boundingBoxes = Arrays.asList(boundingBox1, boundingBox2);
 
-        final Redacter pdfRedacter = new PdfRedacter(policy, List.of(), pdfRedactionOptions, boundingBoxes);
+        final Graphical graphical = new Graphical();
+        graphical.setBoundingBoxes(boundingBoxes);
+        policy.setGraphical(graphical);
+
+        final Redacter pdfRedacter = new PdfRedacter(policy, List.of(), pdfRedactionOptions);
         final byte[] redacted = pdfRedacter.process(document, MimeType.APPLICATION_PDF);
 
         final File outputFile = File.createTempFile("output", ".pdf");
@@ -283,7 +285,11 @@ public class PdfRedacterTest {
 
         final List<BoundingBox> boundingBoxes = Arrays.asList(boundingBox1, boundingBox2);
 
-        final Redacter pdfRedacter = new PdfRedacter(policy, spanList, pdfRedactionOptions, boundingBoxes);
+        final Graphical graphical = new Graphical();
+        graphical.setBoundingBoxes(boundingBoxes);
+        policy.setGraphical(graphical);
+
+        final Redacter pdfRedacter = new PdfRedacter(policy, spanList, pdfRedactionOptions);
         final byte[] redacted = pdfRedacter.process(document, MimeType.APPLICATION_PDF);
 
         final File outputFile = File.createTempFile("output", ".pdf");
@@ -308,9 +314,7 @@ public class PdfRedacterTest {
         policy.getConfig().getPdf().setShowReplacement(true);
         final PdfRedactionOptions pdfRedactionOptions = new PdfRedactionOptions();
 
-        final List<BoundingBox> boundingBoxes = Collections.emptyList();
-
-        final PdfRedacter pdfRedacter = new PdfRedacter(policy, spanList, pdfRedactionOptions, boundingBoxes);
+        final PdfRedacter pdfRedacter = new PdfRedacter(policy, spanList, pdfRedactionOptions);
 
         final RedactedRectangle redactedRectangle = new RedactedRectangle(PDRectangle.LETTER, span1);
         pdfRedacter.addReplacementTextToRect(redactedRectangle, contentStream);

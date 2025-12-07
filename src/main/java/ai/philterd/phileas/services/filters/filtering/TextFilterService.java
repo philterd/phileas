@@ -16,9 +16,13 @@
 package ai.philterd.phileas.services.filters.filtering;
 
 import ai.philterd.phileas.PhileasConfiguration;
+import ai.philterd.phileas.model.filtering.MimeType;
+import ai.philterd.phileas.model.filtering.Span;
 import ai.philterd.phileas.model.filtering.TextFilterResult;
 import ai.philterd.phileas.policy.Policy;
 import ai.philterd.phileas.services.context.ContextService;
+
+import java.util.List;
 
 public abstract class TextFilterService extends FilterService {
 
@@ -31,6 +35,8 @@ public abstract class TextFilterService extends FilterService {
      * @throws Exception Thrown if the text cannot be filtered.
      */
     public abstract TextFilterResult filter(final Policy policy, final String context, final String input) throws Exception;
+
+    public abstract byte[] apply(final byte[] input, final List<Span> spans) throws Exception;
 
     protected TextFilterService(final PhileasConfiguration phileasConfiguration,
                                final ContextService contextService) {

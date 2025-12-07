@@ -17,6 +17,7 @@ package ai.philterd.phileas.services.filters.filtering;
 
 import ai.philterd.phileas.PhileasConfiguration;
 import ai.philterd.phileas.filters.Filter;
+import ai.philterd.phileas.model.filtering.Span;
 import ai.philterd.phileas.model.filtering.TextFilterResult;
 import ai.philterd.phileas.policy.Policy;
 import ai.philterd.phileas.services.context.ContextService;
@@ -30,6 +31,7 @@ import ai.philterd.phileas.services.split.SplitService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.nio.charset.StandardCharsets;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -96,6 +98,29 @@ public class PlainTextFilterService extends TextFilterService {
         }
 
         return textFilterResult;
+
+    }
+
+    @Override
+    public byte[] apply(final byte[] input, final List<Span> spans) throws Exception {
+
+        final String text = new String(input);
+        final StringBuilder sb = new StringBuilder(text);
+
+        LOGGER.info("Applying {} spans from the changeset.", spans.size());
+
+        // Page numbers don't matter for plain text, so just loop over all spans.
+        // The page number for each will be 0.
+
+        for(final Span span : spans) {
+
+            // Replace the text with the replacement.
+            sb.delete(span.getCharacterStart(), span.getCharacterEnd());
+            sb.insert(span.getCharacterStart(), span.getReplacement());
+
+        }
+
+        return sb.toString().getBytes(StandardCharsets.UTF_8);
 
     }
 

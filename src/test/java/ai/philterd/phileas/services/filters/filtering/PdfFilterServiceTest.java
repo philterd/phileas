@@ -96,11 +96,11 @@ public class PdfFilterServiceTest {
 
         final List<Span> spans = List.of(span1, span2);
 
-        final BinaryDocumentFilterResult binaryDocumentFilterResult = pdfFilterService.apply(policy, file, "context", spans, 0, MimeType.APPLICATION_PDF, List.of());
+        final byte[] bytes = pdfFilterService.apply(policy, file,  spans,  MimeType.APPLICATION_PDF);
 
         final File outputFile = new File("/tmp/output.pdf");// File.createTempFile("output", ".pdf");
         try (FileOutputStream outputStream = new FileOutputStream(outputFile)) {
-            outputStream.write(binaryDocumentFilterResult.getDocument());
+            outputStream.write(bytes);
         }
 
         System.out.println("Output written to " + outputFile.getAbsolutePath());

@@ -44,7 +44,6 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
@@ -141,14 +140,29 @@ public class PdfFilterService extends BinaryFilterService {
         }
 
         final List<Span> spansList = new ArrayList<>(nonRelativeSpans);
-        return apply(policy, input, context, spansList, tokens, outputMimeType, incrementalRedactions);
+
+        // Load the PDF config from the policy and apply to the PdfRedactionOptions that are used when
+        // generating the new PDF document from the result of the redaction
+        final Pdf policyPdfConfig = policy.getConfig().getPdf();
+        final PdfRedactionOptions pdfRedactionOptions = new PdfRedactionOptions(
+                policyPdfConfig.getDpi(),
+                policyPdfConfig.getCompressionQuality(),
+                policyPdfConfig.getScale(),
+                policyPdfConfig.getPreserveUnredactedPages()
+        );
+
+        final Redacter redacter = new PdfRedacter(policy, spansList, pdfRedactionOptions);
+        final byte[] redacted = redacter.process(input, outputMimeType);
+
+        // TODO: The identified vs the applied will actually be different
+        // but we are setting the same here. Fix this at some point.
+        final Explanation explanation = new Explanation(spansList, spansList);
+        return new BinaryDocumentFilterResult(redacted, context, explanation, tokens, incrementalRedactions);
 
     }
 
     @Override
-    public BinaryDocumentFilterResult apply(final Policy policy, final byte[] input, final String context,
-                                            final List<Span> spans, final long tokens, final MimeType outputMimeType,
-                                            final List<IncrementalRedaction> incrementalRedactions) throws Exception {
+    public byte[] apply(final Policy policy, final byte[] input, final List<Span> spans, final MimeType outputMimeType) throws Exception {
 
         // Load the PDF config from the policy and apply to the PdfRedactionOptions that are used when
         // generating the new PDF document from the result of the redaction
@@ -161,32 +175,11 @@ public class PdfFilterService extends BinaryFilterService {
         );
 
         // Redact those terms in the document along with any bounding boxes identified in the policy.
-        // TODO: Add bounding boxes from the policy.
-        final List<BoundingBox> boundingBoxes = List.of();
-        final Redacter redacter = new PdfRedacter(policy, spans, pdfRedactionOptions, boundingBoxes);
-        final byte[] redacted = redacter.process(input, outputMimeType);
 
-        // TODO: The identified vs the applied will actually be different
-        // but we are setting the same here. Fix this at some point.
-        final Explanation explanation = new Explanation(spans, spans);
-        return new BinaryDocumentFilterResult(redacted, context, explanation, tokens, incrementalRedactions);
+        // Add bounding boxes from the policy.
+        final Redacter redacter = new PdfRedacter(policy, spans, pdfRedactionOptions);
 
-    }
-
-    /**
-     * Get the bounding boxes from the policy for a given mime type.
-     * @param policy The policy.
-     * @return A list of bounding boxes from the policy for the given mime type.
-     */
-    private List<BoundingBox> getBoundingBoxes(final Policy policy) {
-
-        final List<BoundingBox> boundingBoxes = new LinkedList<>();
-
-        for(final BoundingBox boundingBox : policy.getGraphical().getBoundingBoxes()) {
-            boundingBoxes.add(boundingBox);
-        }
-
-        return boundingBoxes;
+        return redacter.process(input, outputMimeType);
 
     }
 

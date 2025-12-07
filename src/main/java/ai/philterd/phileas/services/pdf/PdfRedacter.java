@@ -72,7 +72,6 @@ public class PdfRedacter extends PDFTextStripper implements Redacter {
     private final Policy policy;
     private final List<Span> spans;
     private final PdfRedactionOptions pdfRedactionOptions;
-    private final List<BoundingBox> boundingBoxes;
 
     private static final Map<String, PDColor> COLORS = new LinkedHashMap<>();
     private static final Map<String, PDFont> FONTS = new LinkedHashMap<>();
@@ -93,14 +92,11 @@ public class PdfRedacter extends PDFTextStripper implements Redacter {
     private final PDFont replacementFont;
     private final PDColor replacementFontColor;
 
-    public PdfRedacter(Policy policy,
-                       List<Span> spans, PdfRedactionOptions pdfRedactionOptions,
-                       List<BoundingBox> boundingBoxes) {
+    public PdfRedacter(final Policy policy, final List<Span> spans, PdfRedactionOptions pdfRedactionOptions) {
 
         this.policy = policy;
         this.spans = spans;
         this.pdfRedactionOptions = pdfRedactionOptions;
-        this.boundingBoxes = boundingBoxes;
         this.showReplacement = policy.getConfig().getPdf().getShowReplacement();
         this.replacementFont = FONTS.getOrDefault(policy.getConfig().getPdf().getReplacementFont(), FONTS.get("helvetica"));
         this.replacementFontSize = policy.getConfig().getPdf().getReplacementMaxFontSize();
@@ -121,7 +117,7 @@ public class PdfRedacter extends PDFTextStripper implements Redacter {
         dummy.close();
 
         // Redact the bounding boxes in the output stream.
-        for (final BoundingBox boundingBox : boundingBoxes) {
+        for (final BoundingBox boundingBox : getBoundingBoxes(policy)) {
 
             final PDPage page = pdDocument.getPage(boundingBox.getPage() - 1);
             final PDPageContentStream contentStream = new PDPageContentStream(pdDocument, page, PDPageContentStream.AppendMode.APPEND, true);
@@ -397,6 +393,23 @@ public class PdfRedacter extends PDFTextStripper implements Redacter {
         }
 
         return indexes;
+
+    }
+
+    /**
+     * Get the bounding boxes from the policy for a given mime type.
+     * @param policy The policy.
+     * @return A list of bounding boxes from the policy for the given mime type.
+     */
+    private List<BoundingBox> getBoundingBoxes(final Policy policy) {
+
+        final List<BoundingBox> boundingBoxes = new LinkedList<>();
+
+        for(final BoundingBox boundingBox : policy.getGraphical().getBoundingBoxes()) {
+            boundingBoxes.add(boundingBox);
+        }
+
+        return boundingBoxes;
 
     }
 

@@ -89,12 +89,12 @@ public final class Span {
 
     private int lineNumber = 0;
     private int pageNumber = 0;
-    private transient String lineHash;
-
     private float lowerLeftX;
     private float lowerLeftY;
     private float upperRightX;
     private float upperRightY;
+
+    private transient String lineHash;
 
     /**
      * Don't use this constructor.
