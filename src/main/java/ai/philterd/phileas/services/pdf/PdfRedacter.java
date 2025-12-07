@@ -19,7 +19,7 @@ import ai.philterd.phileas.model.filtering.MimeType;
 import ai.philterd.phileas.model.filtering.Span;
 import ai.philterd.phileas.policy.Policy;
 import ai.philterd.phileas.policy.graphical.BoundingBox;
-import org.apache.commons.lang3.Strings;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.pdfbox.Loader;
@@ -313,7 +313,7 @@ public class PdfRedacter extends PDFTextStripper implements Redacter {
 
         for (final Span span : spans) {
 
-            if (Strings.CI.equals(span.getLineHash(), lineHash)) {
+            if (StringUtils.equalsIgnoreCase(span.getLineHash(), lineHash)) {
 
                 if (text.contains(span.getText())) {
 
@@ -344,8 +344,8 @@ public class PdfRedacter extends PDFTextStripper implements Redacter {
 
                         span.setLowerLeftX(posXInit);
                         span.setLowerLeftY(posYEnd);
-                        position.setUpperRightX(posXEnd);
-                        position.setUpperRightY(posYEnd + height);
+                        span.setUpperRightX(posXEnd);
+                        span.setUpperRightY(posYEnd + height);
 
                         rectangles.putIfAbsent(this.getCurrentPageNo() - 1, new LinkedList<>());
 

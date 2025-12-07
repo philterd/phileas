@@ -43,7 +43,6 @@ public class PdfFilterServiceTest {
 
         final Policy policy = getPolicy("test");
 
-
         final InputStream is = getClass().getClassLoader().getResourceAsStream("12-12110 K.pdf");
         final byte[] file = IOUtils.toByteArray(is);
         is.close();
