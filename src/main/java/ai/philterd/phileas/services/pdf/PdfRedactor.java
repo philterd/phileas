@@ -92,7 +92,7 @@ public class PdfRedactor extends PDFTextStripper {
     private final PDFont replacementFont;
     private final PDColor replacementFontColor;
 
-    public PdfRedactor(final Policy policy, final List<Span> spans, PdfRedactionOptions pdfRedactionOptions) {
+    public PdfRedactor(final Policy policy, final List<Span> spans, final PdfRedactionOptions pdfRedactionOptions) {
 
         this.policy = policy;
         this.spans = spans;
@@ -104,7 +104,7 @@ public class PdfRedactor extends PDFTextStripper {
 
     }
 
-    public byte[] process(byte[] document, MimeType outputMimeType) throws IOException {
+    public byte[] process(final byte[] document, final MimeType outputMimeType) throws IOException {
         final PDDocument pdDocument = Loader.loadPDF(document);
 
         setSortByPosition(true);
@@ -116,7 +116,8 @@ public class PdfRedactor extends PDFTextStripper {
         dummy.close();
 
         // Redact the bounding boxes in the output stream.
-        for (final BoundingBox boundingBox : getBoundingBoxes(policy)) {
+        final List<BoundingBox> boundingBoxes = new LinkedList<>(policy.getGraphical().getBoundingBoxes());
+        for (final BoundingBox boundingBox : boundingBoxes) {
 
             final PDPage page = pdDocument.getPage(boundingBox.getPage() - 1);
             final PDPageContentStream contentStream = new PDPageContentStream(pdDocument, page, PDPageContentStream.AppendMode.APPEND, true);
@@ -233,7 +234,7 @@ public class PdfRedactor extends PDFTextStripper {
     }
 
     @Override
-    protected void endDocument(PDDocument doc) throws IOException {
+    protected void endDocument(final PDDocument doc) throws IOException {
 
         final int buffer = 10;
 
@@ -269,7 +270,7 @@ public class PdfRedactor extends PDFTextStripper {
 
     }
 
-    public void addReplacementTextToRect(RedactedRectangle rectangle, PDPageContentStream textContentStream) throws IOException {
+    public void addReplacementTextToRect(final RedactedRectangle rectangle, final PDPageContentStream textContentStream) throws IOException {
         var replacementText = rectangle.getSpan().getReplacement();
         var rectangleWidth = rectangle.getPdRectangle().getWidth();
         var rectangleHeight = rectangle.getPdRectangle().getHeight();
@@ -374,7 +375,7 @@ public class PdfRedactor extends PDFTextStripper {
     /**
      * Find all indexes of a span in a string.
      */
-    private List<Integer> findIndexes(String text, Span span) {
+    private List<Integer> findIndexes(final String text, final Span span) {
 
         final List<Integer> indexes = new ArrayList<>();
 
@@ -392,23 +393,6 @@ public class PdfRedactor extends PDFTextStripper {
         }
 
         return indexes;
-
-    }
-
-    /**
-     * Get the bounding boxes from the policy for a given mime type.
-     * @param policy The policy.
-     * @return A list of bounding boxes from the policy for the given mime type.
-     */
-    private List<BoundingBox> getBoundingBoxes(final Policy policy) {
-
-        final List<BoundingBox> boundingBoxes = new LinkedList<>();
-
-        for(final BoundingBox boundingBox : policy.getGraphical().getBoundingBoxes()) {
-            boundingBoxes.add(boundingBox);
-        }
-
-        return boundingBoxes;
 
     }
 

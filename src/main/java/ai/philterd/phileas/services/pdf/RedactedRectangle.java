@@ -23,7 +23,7 @@ public class RedactedRectangle {
     private final PDRectangle pdRectangle;
     private final Span span;
 
-    public RedactedRectangle(final PDRectangle pdRectangle, final  Span span) {
+    public RedactedRectangle(final PDRectangle pdRectangle, final Span span) {
 
         this.pdRectangle = pdRectangle;
         this.span = span;
