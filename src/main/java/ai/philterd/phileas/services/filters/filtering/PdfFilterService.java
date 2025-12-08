@@ -25,7 +25,6 @@ import ai.philterd.phileas.model.filtering.Span;
 import ai.philterd.phileas.model.filtering.TextFilterResult;
 import ai.philterd.phileas.policy.Policy;
 import ai.philterd.phileas.policy.config.Pdf;
-import ai.philterd.phileas.policy.graphical.BoundingBox;
 import ai.philterd.phileas.services.context.ContextService;
 import ai.philterd.phileas.services.disambiguation.vector.VectorBasedSpanDisambiguationService;
 import ai.philterd.phileas.services.disambiguation.vector.VectorService;
@@ -86,12 +85,7 @@ public class PdfFilterService extends BinaryFilterService {
         final PdfTextExtractor pdfTextExtractor = new PdfTextExtractor();
         final List<PdfLine> pdfLines = pdfTextExtractor.getLines(input);
 
-        // A list of identified spans.
-        // These spans start/end are relative to the line containing the span.
-        final Set<Span> spans = new LinkedHashSet<>();
-
-        // A list of identified spans.
-        // These spans start/end are relative to the whole document.
+        // A list of identified spans whose start/end are relative to the whole document.
         final Set<Span> nonRelativeSpans = new LinkedHashSet<>();
 
         // Track the document offset.
@@ -105,40 +99,41 @@ public class PdfFilterService extends BinaryFilterService {
 
         long tokens = 0;
 
-        // TODO: The following code really only needs to be done if there is at least one filter defined in the policy.
+        // If there are no filters in the policy, we don't need to process the text.
+        // This can be the case if the policy contains bounding boxes but no filters.
+        if(!filters.isEmpty()) {
 
-        // Process each line looking for sensitive information in each line.
-        for (final PdfLine pdfLine : pdfLines) {
+            // Process each line looking for sensitive information in each line.
+            for (final PdfLine pdfLine : pdfLines) {
 
-            final int piece = 0;
-            tokens += tokenCounter.countTokens(pdfLine.getText());
+                final int piece = 0;
+                tokens += tokenCounter.countTokens(pdfLine.getText());
 
-            // Process the text.
-            final TextFilterResult textFilterResult = unstructuredDocumentProcessor.process(policy, filters, postFilters, context, piece, pdfLine.getText());
+                // Process the text.
+                final TextFilterResult textFilterResult = unstructuredDocumentProcessor.process(policy, filters, postFilters, context, piece, pdfLine.getText());
 
-            // Add all the found spans to the list of spans.
-            spans.addAll(textFilterResult.getExplanation().appliedSpans());
+                // Add the incremental redactions to the list.
+                incrementalRedactions.addAll(textFilterResult.getIncrementalRedactions());
 
-            // Add the incremental redactions to the list.
-            incrementalRedactions.addAll(textFilterResult.getIncrementalRedactions());
+                for (final Span span : textFilterResult.getExplanation().appliedSpans()) {
 
-            for (final Span span : textFilterResult.getExplanation().appliedSpans()) {
+                    final int characterStart = span.getCharacterStart() + offset;
+                    final int characterEnd = span.getCharacterEnd() + offset;
 
-                final int characterStart = span.getCharacterStart() + offset;
-                final int characterEnd = span.getCharacterEnd() + offset;
+                    span.setCharacterStart(characterStart);
+                    span.setCharacterEnd(characterEnd);
+                    span.setLineNumber(lineNumber);
+                    span.setPageNumber(pdfLine.getPageNumber());
+                    span.setLineHash(pdfLine.getLineHash());
 
-                span.setCharacterStart(characterStart);
-                span.setCharacterEnd(characterEnd);
-                span.setLineNumber(lineNumber);
-                span.setPageNumber(pdfLine.getPageNumber());
-                span.setLineHash(pdfLine.getLineHash());
+                    nonRelativeSpans.add(span);
 
-                nonRelativeSpans.add(span);
+                }
+
+                lineNumber++;
+                offset += pdfLine.getText().length();
 
             }
-
-            lineNumber++;
-            offset += pdfLine.getText().length();
 
         }
 
@@ -178,10 +173,7 @@ public class PdfFilterService extends BinaryFilterService {
         );
 
         // Redact those terms in the document along with any bounding boxes identified in the policy.
-
-        // Add bounding boxes from the policy.
         final Redacter redacter = new PdfRedacter(policy, spans, pdfRedactionOptions);
-
         return redacter.process(input, outputMimeType);
 
     }
