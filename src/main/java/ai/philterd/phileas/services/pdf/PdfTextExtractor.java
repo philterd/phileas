@@ -75,8 +75,6 @@ public class PdfTextExtractor extends PDFTextStripper implements TextExtractor {
     public void writeString(final String text, final List<TextPosition> textPositions) {
 
         // The text positions is a list of positions for all characters in the string.
-        //System.out.println(text + "      - " + "number of textpositions = " + textPositions.size());
-
         lines.add(new PdfLine(text, pageNumber, textPositions));
 
     }

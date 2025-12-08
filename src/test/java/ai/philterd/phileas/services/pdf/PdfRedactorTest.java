@@ -48,9 +48,9 @@ import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 
-public class PdfRedacterTest {
+public class PdfRedactorTest {
 
-    private static final Logger LOGGER = LogManager.getLogger(PdfRedacterTest.class);
+    private static final Logger LOGGER = LogManager.getLogger(PdfRedactorTest.class);
 
     @Test
     public void testPDF1() throws IOException {
@@ -71,9 +71,9 @@ public class PdfRedacterTest {
         pdfRedactionOptions.setScale(0.25f);
         pdfRedactionOptions.setCompressionQuality(1.0f);
 
-        final Redacter pdfRedacter = new PdfRedacter(policy, spanList, pdfRedactionOptions);
+        final PdfRedactor pdfRedactor = new PdfRedactor(policy, spanList, pdfRedactionOptions);
 
-        final byte[] redacted = pdfRedacter.process(document, MimeType.APPLICATION_PDF);
+        final byte[] redacted = pdfRedactor.process(document, MimeType.APPLICATION_PDF);
 
         final File outputFile = File.createTempFile("output", ".pdf");
         //outputFile.deleteOnExit();
@@ -101,9 +101,9 @@ public class PdfRedacterTest {
         policy.getConfig().getPdf().setShowReplacement(true);
         final PdfRedactionOptions pdfRedactionOptions = new PdfRedactionOptions();
 
-        final Redacter pdfRedacter = new PdfRedacter(policy, spanList, pdfRedactionOptions);
+        final PdfRedactor pdfRedactor = new PdfRedactor(policy, spanList, pdfRedactionOptions);
 
-        final byte[] redacted = pdfRedacter.process(document, MimeType.APPLICATION_PDF);
+        final byte[] redacted = pdfRedactor.process(document, MimeType.APPLICATION_PDF);
 
         final File outputFile = File.createTempFile("output", ".pdf");
         outputFile.deleteOnExit();
@@ -130,8 +130,8 @@ public class PdfRedacterTest {
         final Policy policy = new Policy();
         final PdfRedactionOptions pdfRedactionOptions = new PdfRedactionOptions();
 
-        final Redacter pdfRedacter = new PdfRedacter(policy, spanList, pdfRedactionOptions);
-        final byte[] redacted = pdfRedacter.process(document, MimeType.IMAGE_JPEG);
+        final PdfRedactor pdfRedactor = new PdfRedactor(policy, spanList, pdfRedactionOptions);
+        final byte[] redacted = pdfRedactor.process(document, MimeType.IMAGE_JPEG);
 
         final File outputFile = File.createTempFile("output", ".zip");
         //outputFile.deleteOnExit();
@@ -157,8 +157,8 @@ public class PdfRedacterTest {
         final Policy policy = new Policy();
         final PdfRedactionOptions pdfRedactionOptions = new PdfRedactionOptions();
 
-        final Redacter pdfRedacter = new PdfRedacter(policy, spanList, pdfRedactionOptions);
-        final byte[] redacted = pdfRedacter.process(document, MimeType.IMAGE_JPEG);
+        final PdfRedactor pdfRedactor = new PdfRedactor(policy, spanList, pdfRedactionOptions);
+        final byte[] redacted = pdfRedactor.process(document, MimeType.IMAGE_JPEG);
 
         final File outputFile = File.createTempFile("output", ".zip");
         outputFile.deleteOnExit();
@@ -200,8 +200,8 @@ public class PdfRedacterTest {
         graphical.setBoundingBoxes(boundingBoxes);
         policy.setGraphical(graphical);
 
-        final Redacter pdfRedacter = new PdfRedacter(policy, List.of(), pdfRedactionOptions);
-        final byte[] redacted = pdfRedacter.process(document, MimeType.APPLICATION_PDF);
+        final PdfRedactor pdfRedactor = new PdfRedactor(policy, List.of(), pdfRedactionOptions);
+        final byte[] redacted = pdfRedactor.process(document, MimeType.APPLICATION_PDF);
 
         final File outputFile = File.createTempFile("output", ".pdf");
         outputFile.deleteOnExit();
@@ -243,8 +243,8 @@ public class PdfRedacterTest {
         graphical.setBoundingBoxes(boundingBoxes);
         policy.setGraphical(graphical);
 
-        final Redacter pdfRedacter = new PdfRedacter(policy, List.of(), pdfRedactionOptions);
-        final byte[] redacted = pdfRedacter.process(document, MimeType.APPLICATION_PDF);
+        final PdfRedactor pdfRedactor = new PdfRedactor(policy, List.of(), pdfRedactionOptions);
+        final byte[] redacted = pdfRedactor.process(document, MimeType.APPLICATION_PDF);
 
         final File outputFile = File.createTempFile("output", ".pdf");
         outputFile.deleteOnExit();
@@ -289,8 +289,8 @@ public class PdfRedacterTest {
         graphical.setBoundingBoxes(boundingBoxes);
         policy.setGraphical(graphical);
 
-        final Redacter pdfRedacter = new PdfRedacter(policy, spanList, pdfRedactionOptions);
-        final byte[] redacted = pdfRedacter.process(document, MimeType.APPLICATION_PDF);
+        final PdfRedactor pdfRedactor = new PdfRedactor(policy, spanList, pdfRedactionOptions);
+        final byte[] redacted = pdfRedactor.process(document, MimeType.APPLICATION_PDF);
 
         final File outputFile = File.createTempFile("output", ".pdf");
         outputFile.deleteOnExit();
@@ -314,10 +314,10 @@ public class PdfRedacterTest {
         policy.getConfig().getPdf().setShowReplacement(true);
         final PdfRedactionOptions pdfRedactionOptions = new PdfRedactionOptions();
 
-        final PdfRedacter pdfRedacter = new PdfRedacter(policy, spanList, pdfRedactionOptions);
+        final PdfRedactor pdfRedactor = new PdfRedactor(policy, spanList, pdfRedactionOptions);
 
         final RedactedRectangle redactedRectangle = new RedactedRectangle(PDRectangle.LETTER, span1);
-        pdfRedacter.addReplacementTextToRect(redactedRectangle, contentStream);
+        pdfRedactor.addReplacementTextToRect(redactedRectangle, contentStream);
 
         verify(contentStream).beginText();
         verify(contentStream).setNonStrokingColor(

@@ -20,6 +20,9 @@ import org.apache.pdfbox.text.TextPosition;
 
 import java.util.List;
 
+/**
+ * Uniquely represents a line of text in a PDF document.
+ */
 public class PdfLine {
 
     final String text;

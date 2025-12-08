@@ -15,7 +15,7 @@
  */
 package ai.philterd.phileas.services.pdf;
 
-public class PdfRedactionOptions extends RedactionOptions {
+public class PdfRedactionOptions {
 
     private int dpi = 150;
     private float compressionQuality = 1.0F;

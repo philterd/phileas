@@ -32,10 +32,9 @@ import ai.philterd.phileas.services.documentprocessors.DocumentProcessor;
 import ai.philterd.phileas.services.documentprocessors.UnstructuredDocumentProcessor;
 import ai.philterd.phileas.services.filters.postfilters.PostFilter;
 import ai.philterd.phileas.services.pdf.PdfLine;
-import ai.philterd.phileas.services.pdf.PdfRedacter;
+import ai.philterd.phileas.services.pdf.PdfRedactor;
 import ai.philterd.phileas.services.pdf.PdfRedactionOptions;
 import ai.philterd.phileas.services.pdf.PdfTextExtractor;
-import ai.philterd.phileas.services.pdf.Redacter;
 import ai.philterd.phileas.services.tokens.TokenCounter;
 import ai.philterd.phileas.services.tokens.WhitespaceTokenCounter;
 import org.apache.logging.log4j.LogManager;
@@ -149,7 +148,7 @@ public class PdfFilterService extends BinaryFilterService {
                 policyPdfConfig.getPreserveUnredactedPages()
         );
 
-        final Redacter redacter = new PdfRedacter(policy, spansList, pdfRedactionOptions);
+        final PdfRedactor redacter = new PdfRedactor(policy, spansList, pdfRedactionOptions);
         final byte[] redacted = redacter.process(input, outputMimeType);
 
         // TODO: The identified vs the applied will actually be different
@@ -173,7 +172,7 @@ public class PdfFilterService extends BinaryFilterService {
         );
 
         // Redact those terms in the document along with any bounding boxes identified in the policy.
-        final Redacter redacter = new PdfRedacter(policy, spans, pdfRedactionOptions);
+        final PdfRedactor redacter = new PdfRedactor(policy, spans, pdfRedactionOptions);
         return redacter.process(input, outputMimeType);
 
     }

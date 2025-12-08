@@ -63,9 +63,9 @@ import java.util.zip.ZipOutputStream;
 /**
  * Redacts a list of given terms in a PDF document.
  */
-public class PdfRedacter extends PDFTextStripper implements Redacter {
+public class PdfRedactor extends PDFTextStripper {
 
-    private static final Logger LOGGER = LogManager.getLogger(PdfRedacter.class);
+    private static final Logger LOGGER = LogManager.getLogger(PdfRedactor.class);
 
     private final Map<Integer, List<RedactedRectangle>> rectangles = new HashMap<>();
 
@@ -92,7 +92,7 @@ public class PdfRedacter extends PDFTextStripper implements Redacter {
     private final PDFont replacementFont;
     private final PDColor replacementFontColor;
 
-    public PdfRedacter(final Policy policy, final List<Span> spans, PdfRedactionOptions pdfRedactionOptions) {
+    public PdfRedactor(final Policy policy, final List<Span> spans, PdfRedactionOptions pdfRedactionOptions) {
 
         this.policy = policy;
         this.spans = spans;
@@ -104,7 +104,6 @@ public class PdfRedacter extends PDFTextStripper implements Redacter {
 
     }
 
-    @Override
     public byte[] process(byte[] document, MimeType outputMimeType) throws IOException {
         final PDDocument pdDocument = Loader.loadPDF(document);
 
