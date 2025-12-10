@@ -19,6 +19,7 @@ import ai.philterd.phileas.model.filtering.MimeType;
 import ai.philterd.phileas.model.filtering.Span;
 import ai.philterd.phileas.policy.Policy;
 import ai.philterd.phileas.policy.graphical.BoundingBox;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.pdfbox.Loader;
@@ -56,23 +57,21 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 /**
  * Redacts a list of given terms in a PDF document.
  */
-public class PdfRedacter extends PDFTextStripper implements Redacter {
+public class PdfRedactor extends PDFTextStripper {
 
-    private static final Logger LOGGER = LogManager.getLogger(PdfRedacter.class);
+    private static final Logger LOGGER = LogManager.getLogger(PdfRedactor.class);
 
-    private Map<Integer, List<RedactedRectangle>> rectangles = new HashMap<>();
+    private final Map<Integer, List<RedactedRectangle>> rectangles = new HashMap<>();
 
-    private Policy policy;
-    private final Set<Span> spans;
+    private final Policy policy;
+    private final List<Span> spans;
     private final PdfRedactionOptions pdfRedactionOptions;
-    private final List<BoundingBox> boundingBoxes;
 
     private static final Map<String, PDColor> COLORS = new LinkedHashMap<>();
     private static final Map<String, PDFont> FONTS = new LinkedHashMap<>();
@@ -93,14 +92,11 @@ public class PdfRedacter extends PDFTextStripper implements Redacter {
     private final PDFont replacementFont;
     private final PDColor replacementFontColor;
 
-    public PdfRedacter(Policy policy,
-                       Set<Span> spans, PdfRedactionOptions pdfRedactionOptions,
-                       List<BoundingBox> boundingBoxes) throws IOException {
+    public PdfRedactor(final Policy policy, final List<Span> spans, final PdfRedactionOptions pdfRedactionOptions) {
 
         this.policy = policy;
         this.spans = spans;
         this.pdfRedactionOptions = pdfRedactionOptions;
-        this.boundingBoxes = boundingBoxes;
         this.showReplacement = policy.getConfig().getPdf().getShowReplacement();
         this.replacementFont = FONTS.getOrDefault(policy.getConfig().getPdf().getReplacementFont(), FONTS.get("helvetica"));
         this.replacementFontSize = policy.getConfig().getPdf().getReplacementMaxFontSize();
@@ -108,8 +104,7 @@ public class PdfRedacter extends PDFTextStripper implements Redacter {
 
     }
 
-    @Override
-    public byte[] process(byte[] document, MimeType outputMimeType) throws IOException {
+    public byte[] process(final byte[] document, final MimeType outputMimeType) throws IOException {
         final PDDocument pdDocument = Loader.loadPDF(document);
 
         setSortByPosition(true);
@@ -120,9 +115,9 @@ public class PdfRedacter extends PDFTextStripper implements Redacter {
         writeText(pdDocument, dummy);
         dummy.close();
 
-
-        // PHL-244: Redact the bounding boxes in the output stream.
-        for(final BoundingBox boundingBox : boundingBoxes) {
+        // Redact the bounding boxes in the output stream.
+        final List<BoundingBox> boundingBoxes = new LinkedList<>(policy.getGraphical().getBoundingBoxes());
+        for (final BoundingBox boundingBox : boundingBoxes) {
 
             final PDPage page = pdDocument.getPage(boundingBox.getPage() - 1);
             final PDPageContentStream contentStream = new PDPageContentStream(pdDocument, page, PDPageContentStream.AppendMode.APPEND, true);
@@ -142,7 +137,7 @@ public class PdfRedacter extends PDFTextStripper implements Redacter {
 
         final PDFRenderer pdfRenderer = new PDFRenderer(pdDocument);
 
-        if(outputMimeType == MimeType.IMAGE_JPEG) {
+        if (outputMimeType == MimeType.IMAGE_JPEG) {
 
             final ZipOutputStream zipOut = new ZipOutputStream(outputStream);
 
@@ -173,7 +168,7 @@ public class PdfRedacter extends PDFTextStripper implements Redacter {
             zipOut.close();
             pdDocument.close();
 
-        } else if(outputMimeType == MimeType.APPLICATION_PDF) {
+        } else if (outputMimeType == MimeType.APPLICATION_PDF) {
 
             pdfRenderer.setSubsamplingAllowed(true);
 
@@ -239,17 +234,17 @@ public class PdfRedacter extends PDFTextStripper implements Redacter {
     }
 
     @Override
-    protected void endDocument(PDDocument doc) throws IOException {
+    protected void endDocument(final PDDocument doc) throws IOException {
 
         final int buffer = 10;
 
-        for(int pageNumber : rectangles.keySet()) {
+        for (int pageNumber : rectangles.keySet()) {
 
             final PDPage page = document.getPage(pageNumber);
             final PDPageContentStream rectContentStream = new PDPageContentStream(doc, page, PDPageContentStream.AppendMode.APPEND, true, true);
             final PDPageContentStream textContentStream = new PDPageContentStream(doc, page, PDPageContentStream.AppendMode.APPEND, true, true);
 
-            for(final RedactedRectangle rectangle : rectangles.get(pageNumber)) {
+            for (final RedactedRectangle rectangle : rectangles.get(pageNumber)) {
 
                 rectContentStream.addRect(
                         rectangle.getPdRectangle().getLowerLeftX(),
@@ -257,7 +252,7 @@ public class PdfRedacter extends PDFTextStripper implements Redacter {
                         rectangle.getPdRectangle().getWidth(),
                         rectangle.getPdRectangle().getHeight() + buffer);
 
-                if(showReplacement) {
+                if (showReplacement) {
                     addReplacementTextToRect(rectangle, textContentStream);
                 }
             }
@@ -275,7 +270,7 @@ public class PdfRedacter extends PDFTextStripper implements Redacter {
 
     }
 
-    public void addReplacementTextToRect(RedactedRectangle rectangle, PDPageContentStream textContentStream) throws IOException {
+    public void addReplacementTextToRect(final RedactedRectangle rectangle, final PDPageContentStream textContentStream) throws IOException {
         var replacementText = rectangle.getSpan().getReplacement();
         var rectangleWidth = rectangle.getPdRectangle().getWidth();
         var rectangleHeight = rectangle.getPdRectangle().getHeight();
@@ -306,31 +301,30 @@ public class PdfRedacter extends PDFTextStripper implements Redacter {
     }
 
     @Override
-    protected void writeString(String text, List<TextPosition> textPositions) throws IOException {
+    protected void writeString(final String text, final List<TextPosition> textPositions) {
 
         float
-                posXInit  = 0,
-                posXEnd   = 0,
-                posYInit  = 0,
-                posYEnd   = 0,
-                width     = 0,
-                height    = 0,
-                fontHeight = 0;
+                posXInit = 0,
+                posXEnd = 0,
+                posYEnd = 0,
+                height = 0;
 
-        for(final Span span : spans) {
+        final String lineHash = PdfLine.lineHash(textPositions, this.getCurrentPageNo() - 1);
 
-            if (text.contains(span.getText())) {
+        for (final Span span : spans) {
 
-                //try {
+            if (StringUtils.equalsIgnoreCase(span.getLineHash(), lineHash)) {
+
+                if (text.contains(span.getText())) {
 
                     final String term = span.getText();
 
                     // Set index to 0 to do the whole line
                     final List<Integer> indexes = findIndexes(text, span);
 
-                    for(final int index : indexes) {
+                    for (final int index : indexes) {
 
-                        if(index + term.length() >= textPositions.size()) {
+                        if (index + term.length() >= textPositions.size()) {
                             posXEnd = textPositions.get(textPositions.size() - 1).getXDirAdj() + textPositions.get(textPositions.size() - 1).getWidth();
                             posYEnd = textPositions.get(index).getPageHeight() - textPositions.get(textPositions.size() - 1).getYDirAdj();
                         } else {
@@ -339,31 +333,19 @@ public class PdfRedacter extends PDFTextStripper implements Redacter {
                         }
 
                         posXInit = textPositions.get(index).getXDirAdj();
-                        //posYInit = textPositions.get(index).getPageHeight() - textPositions.get(index).getYDirAdj();
 
-                        //width = textPositions.get(index).getWidthDirAdj();
                         height = textPositions.get(index).getHeightDir();
-
-                        // quadPoints is array of x,y coordinates in Z-like order (top-left, top-right, bottom-left,bottom-right)
-                        // of the area to be highlighted
-
-                        //final int buffer = 5;
-
-                        /*final float quadPoints[] = {
-                        posXInit, posYEnd + height + buffer,
-                        posXEnd, posYEnd + height + buffer,
-                        posXInit, posYInit - buffer,
-                        posXEnd, posYEnd - buffer
-                        };*/
-
-                        //final List<PDAnnotation> annotations = document.getPage(this.getCurrentPageNo() - 1).getAnnotations();
-                        //final PDAnnotationTextMarkup highlight = new PDAnnotationTextMarkup(PDAnnotationTextMarkup.SUB_TYPE_HIGHLIGHT);
 
                         final PDRectangle position = new PDRectangle();
                         position.setLowerLeftX(posXInit);
                         position.setLowerLeftY(posYEnd);
                         position.setUpperRightX(posXEnd);
                         position.setUpperRightY(posYEnd + height);
+
+                        span.setLowerLeftX(posXInit);
+                        span.setLowerLeftY(posYEnd);
+                        span.setUpperRightX(posXEnd);
+                        span.setUpperRightY(posYEnd + height);
 
                         rectangles.putIfAbsent(this.getCurrentPageNo() - 1, new LinkedList<>());
 
@@ -382,10 +364,7 @@ public class PdfRedacter extends PDFTextStripper implements Redacter {
 
                     }
 
-                /*} catch (Exception ex) {
-                    // TODO: Need to figure out why this sometimes fail.
-                    LOGGER.warn("Problem parsing PDF span: " + ex.getMessage());
-                }*/
+                }
 
             }
 
@@ -396,13 +375,13 @@ public class PdfRedacter extends PDFTextStripper implements Redacter {
     /**
      * Find all indexes of a span in a string.
      */
-    private List<Integer> findIndexes(String text, Span span) {
+    private List<Integer> findIndexes(final String text, final Span span) {
 
         final List<Integer> indexes = new ArrayList<>();
 
         int index = 0;
 
-        while(index != -1){
+        while (index != -1) {
 
             index = text.indexOf(span.getText(), index);
 

@@ -26,9 +26,9 @@ public interface TextExtractor {
     /**
      * Extracts lines of text from a document.
      * @param document A byte array document.
-     * @return A list of lines of text from the document.
+     * @return A list of {@link PdfLine lines} from the document.
      * @throws IOException Thrown if the lines cannot be extracted.
      */
-    List<String> getLines(byte[] document) throws IOException;
+    List<PdfLine> getLines(byte[] document) throws IOException;
 
 }

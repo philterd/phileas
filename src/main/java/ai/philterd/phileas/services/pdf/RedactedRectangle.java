@@ -20,10 +20,10 @@ import org.apache.pdfbox.pdmodel.common.PDRectangle;
 
 public class RedactedRectangle {
 
-    private PDRectangle pdRectangle;
-    private Span span;
+    private final PDRectangle pdRectangle;
+    private final Span span;
 
-    public RedactedRectangle(PDRectangle pdRectangle, Span span) {
+    public RedactedRectangle(final PDRectangle pdRectangle, final Span span) {
 
         this.pdRectangle = pdRectangle;
         this.span = span;

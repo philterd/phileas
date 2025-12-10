@@ -30,41 +30,53 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * Extracts lines of text from PDF documes.
+ * Extracts lines of text from PDF documents.
  */
 public class PdfTextExtractor extends PDFTextStripper implements TextExtractor {
 
     private static final Logger LOGGER = LogManager.getLogger(PdfTextExtractor.class);
 
-    private List<String> lines;
+    private final List<PdfLine> lines;
+    private int pageNumber;
 
-    public PdfTextExtractor() throws IOException {
+    public PdfTextExtractor() {
         this.lines = new LinkedList<>();
     }
 
     @Override
-    public List<String> getLines(byte[] document) throws IOException {
+    public List<PdfLine> getLines(final byte[] document) throws IOException {
 
         final PDDocument pdDocument = Loader.loadPDF(document);
 
         this.setSortByPosition(true);
         this.setStartPage(0);
-        this.setEndPage(pdDocument.getNumberOfPages());
 
-        final Writer dummy = new OutputStreamWriter(new ByteArrayOutputStream());
-        this.writeText(pdDocument, dummy);
+        for(int i = 0; i < pdDocument.getNumberOfPages(); i++) {
+
+            pageNumber = i;
+
+            this.setStartPage(i);
+            this.setEndPage(i + 1);
+
+            final Writer dummy = new OutputStreamWriter(new ByteArrayOutputStream());
+            this.writeText(pdDocument, dummy);
+
+        }
 
         pdDocument.close();
 
         LOGGER.debug("Read {} lines from the PDF.", lines.size());
 
-        return this.lines;
+        return lines;
 
     }
 
     @Override
-    public void writeString(String str, List<TextPosition> textPositions) {
-        lines.add(str);
+    public void writeString(final String text, final List<TextPosition> textPositions) {
+
+        // The text positions is a list of positions for all characters in the string.
+        lines.add(new PdfLine(text, pageNumber, textPositions));
+
     }
 
 }

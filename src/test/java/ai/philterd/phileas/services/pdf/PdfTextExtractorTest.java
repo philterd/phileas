@@ -37,15 +37,15 @@ public class PdfTextExtractorTest {
         is.close();
 
         final PdfTextExtractor pdfTextExtractor = new PdfTextExtractor();
-        final List<String> lines = pdfTextExtractor.getLines(document);
+        final List<PdfLine> lines = pdfTextExtractor.getLines(document);
 
         LOGGER.info("Read {} lines", lines.size());
 
-        for(final String line : lines) {
-            LOGGER.info(line);
+        for(final PdfLine pdfLine : lines) {
+            LOGGER.info("{} page number = {}", pdfLine, pdfLine.getPageNumber());
         }
 
-        Assertions.assertEquals(215, lines.size());
+        Assertions.assertEquals(417, lines.size());
 
     }
 

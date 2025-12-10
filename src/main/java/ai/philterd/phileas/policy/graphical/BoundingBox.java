@@ -26,10 +26,6 @@ public class BoundingBox extends AbstractFilter {
     @Expose
     private String color;
 
-    @SerializedName("mimeType")
-    @Expose
-    private String mimeType = MimeType.APPLICATION_PDF.toString();
-
     @SerializedName("x")
     @Expose
     private float x;
@@ -88,14 +84,6 @@ public class BoundingBox extends AbstractFilter {
 
     public void setColor(String color) {
         this.color = color;
-    }
-
-    public String getMimeType() {
-        return mimeType;
-    }
-
-    public void setMimeType(String mimeType) {
-        this.mimeType = mimeType;
     }
 
     public int getPage() {

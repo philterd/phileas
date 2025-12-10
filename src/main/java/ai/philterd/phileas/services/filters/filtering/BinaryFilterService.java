@@ -18,9 +18,15 @@ package ai.philterd.phileas.services.filters.filtering;
 import ai.philterd.phileas.PhileasConfiguration;
 import ai.philterd.phileas.model.filtering.BinaryDocumentFilterResult;
 import ai.philterd.phileas.model.filtering.MimeType;
+import ai.philterd.phileas.model.filtering.Span;
 import ai.philterd.phileas.policy.Policy;
 import ai.philterd.phileas.services.context.ContextService;
 
+import java.util.List;
+
+/**
+ * Abstract base class for services that filter text from binary documents.
+ */
 public abstract class BinaryFilterService extends FilterService {
 
     /**
@@ -28,12 +34,22 @@ public abstract class BinaryFilterService extends FilterService {
      * @param policy The {@link Policy} to apply.
      * @param context The redaction context.
      * @param input The input document as a byte array.
-     * @param mimeType The input {@link MimeType}.
      * @param outputMimeType The output {@link MimeType}.
      * @return A {@link BinaryDocumentFilterResult}.
      * @throws Exception Thrown if the text cannot be filtered.
      */
-    public abstract BinaryDocumentFilterResult filter(final Policy policy, final String context, final byte[] input, final MimeType mimeType, final MimeType outputMimeType) throws Exception;
+    public abstract BinaryDocumentFilterResult filter(final Policy policy, final String context, final byte[] input, final MimeType outputMimeType) throws Exception;
+
+    /**
+     * Redact a list of spans in a binary document.
+     * @param policy A {@link Policy}.
+     * @param input The input document as a byte array.
+     * @param spans A list of {@link Span spans}.
+     * @param outputMimeType The output {@link MimeType}.
+     * @return A byte array containing the filtered document.
+     * @throws Exception Thrown if the spans cannot be applied.
+     */
+    public abstract byte[] apply(final Policy policy, final byte[] input, final List<Span> spans, final MimeType outputMimeType) throws Exception;
 
     protected BinaryFilterService(final PhileasConfiguration phileasConfiguration,
                          final ContextService contextService) {

@@ -36,6 +36,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * Abstract base class for filter services.
+ */
 public abstract class FilterService {
 
     protected final FilterPolicyLoader filterPolicyLoader;

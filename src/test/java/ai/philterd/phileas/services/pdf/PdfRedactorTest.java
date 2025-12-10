@@ -18,6 +18,7 @@ package ai.philterd.phileas.services.pdf;
 import ai.philterd.phileas.model.filtering.FilterType;
 import ai.philterd.phileas.model.filtering.MimeType;
 import ai.philterd.phileas.model.filtering.Span;
+import ai.philterd.phileas.policy.Graphical;
 import ai.philterd.phileas.policy.Policy;
 import ai.philterd.phileas.policy.graphical.BoundingBox;
 import org.apache.commons.io.FileUtils;
@@ -38,8 +39,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -47,9 +48,9 @@ import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 
-public class PdfRedacterTest {
+public class PdfRedactorTest {
 
-    private static final Logger LOGGER = LogManager.getLogger(PdfRedacterTest.class);
+    private static final Logger LOGGER = LogManager.getLogger(PdfRedactorTest.class);
 
     @Test
     public void testPDF1() throws IOException {
@@ -57,6 +58,7 @@ public class PdfRedacterTest {
         final Span span1 = Span.make(0, 1, FilterType.AGE, "ctx", 0.25, "Bankruptcy", "repl", null, false, true, null, 0);
         final Span span2 = Span.make(0, 1, FilterType.AGE, "ctx", 0.25, "William", "repl", null, false, true, null, 0);
         final Set<Span> spans = Set.copyOf(Arrays.asList(span1, span2));
+        final List<Span> spanList = new ArrayList<>(spans);
 
         final String filename = "33011-pdf-118-pages.pdf"; //"12-12110 K.pdf";
         final InputStream is = getClass().getClassLoader().getResourceAsStream(filename);
@@ -69,10 +71,9 @@ public class PdfRedacterTest {
         pdfRedactionOptions.setScale(0.25f);
         pdfRedactionOptions.setCompressionQuality(1.0f);
 
-        final List<BoundingBox> boundingBoxes = Collections.emptyList();
-        final Redacter pdfRedacter = new PdfRedacter(policy, spans, pdfRedactionOptions, boundingBoxes);
+        final PdfRedactor pdfRedactor = new PdfRedactor(policy, spanList, pdfRedactionOptions);
 
-        final byte[] redacted = pdfRedacter.process(document, MimeType.APPLICATION_PDF);
+        final byte[] redacted = pdfRedactor.process(document, MimeType.APPLICATION_PDF);
 
         final File outputFile = File.createTempFile("output", ".pdf");
         //outputFile.deleteOnExit();
@@ -90,6 +91,7 @@ public class PdfRedacterTest {
         final Span span1 = Span.make(0, 1, FilterType.DATE, "ctx", 0.25, "July 3, 2012", "||||", null, false, true, null, 0);
         final Span span2 = Span.make(0, 1, FilterType.AGE, "ctx", 0.25, "Wendy", "repl", null, false, true, null, 0);
         final Set<Span> spans = Set.copyOf(Arrays.asList(span1, span2));
+        final List<Span> spanList = new ArrayList<>(spans);
 
         final String filename = "12-12110 K.pdf";
         final InputStream is = getClass().getClassLoader().getResourceAsStream(filename);
@@ -99,10 +101,9 @@ public class PdfRedacterTest {
         policy.getConfig().getPdf().setShowReplacement(true);
         final PdfRedactionOptions pdfRedactionOptions = new PdfRedactionOptions();
 
-        final List<BoundingBox> boundingBoxes = Collections.emptyList();
-        final Redacter pdfRedacter = new PdfRedacter(policy, spans, pdfRedactionOptions, boundingBoxes);
+        final PdfRedactor pdfRedactor = new PdfRedactor(policy, spanList, pdfRedactionOptions);
 
-        final byte[] redacted = pdfRedacter.process(document, MimeType.APPLICATION_PDF);
+        final byte[] redacted = pdfRedactor.process(document, MimeType.APPLICATION_PDF);
 
         final File outputFile = File.createTempFile("output", ".pdf");
         outputFile.deleteOnExit();
@@ -120,6 +121,7 @@ public class PdfRedacterTest {
         final Span span1 = Span.make(0, 1, FilterType.AGE, "ctx", 0.25, "Wendy", "repl", null, false, true, null, 0);
         final Span span2 = Span.make(0, 1, FilterType.AGE, "ctx", 0.25, "Bankruptcy", "repl", null, false, true, null, 0);
         final Set<Span> spans = Set.copyOf(Arrays.asList(span1, span2));
+        final List<Span> spanList = new ArrayList<>(spans);
 
         final String filename = "12-12110 K.pdf";
         final InputStream is = getClass().getClassLoader().getResourceAsStream(filename);
@@ -128,9 +130,8 @@ public class PdfRedacterTest {
         final Policy policy = new Policy();
         final PdfRedactionOptions pdfRedactionOptions = new PdfRedactionOptions();
 
-        final List<BoundingBox> boundingBoxes = Collections.emptyList();
-        final Redacter pdfRedacter = new PdfRedacter(policy, spans, pdfRedactionOptions, boundingBoxes);
-        final byte[] redacted = pdfRedacter.process(document, MimeType.IMAGE_JPEG);
+        final PdfRedactor pdfRedactor = new PdfRedactor(policy, spanList, pdfRedactionOptions);
+        final byte[] redacted = pdfRedactor.process(document, MimeType.IMAGE_JPEG);
 
         final File outputFile = File.createTempFile("output", ".zip");
         //outputFile.deleteOnExit();
@@ -146,7 +147,8 @@ public class PdfRedacterTest {
     public void testJpeg2() throws IOException {
 
         final Span span1 = Span.make(0, 1, FilterType.DATE, "ctx", 0.25, "July 3, 2012", "||||", null, false, true, null, 0);
-        final Set<Span> spans = Set.copyOf(Arrays.asList(span1));
+        final Set<Span> spans = Set.copyOf(List.of(span1));
+        final List<Span> spanList = new ArrayList<>(spans);
 
         final String filename = "12-12110 K.pdf";
         final InputStream is = getClass().getClassLoader().getResourceAsStream(filename);
@@ -155,9 +157,8 @@ public class PdfRedacterTest {
         final Policy policy = new Policy();
         final PdfRedactionOptions pdfRedactionOptions = new PdfRedactionOptions();
 
-        final List<BoundingBox> boundingBoxes = Collections.emptyList();
-        final Redacter pdfRedacter = new PdfRedacter(policy, spans, pdfRedactionOptions, boundingBoxes);
-        final byte[] redacted = pdfRedacter.process(document, MimeType.IMAGE_JPEG);
+        final PdfRedactor pdfRedactor = new PdfRedactor(policy, spanList, pdfRedactionOptions);
+        final byte[] redacted = pdfRedactor.process(document, MimeType.IMAGE_JPEG);
 
         final File outputFile = File.createTempFile("output", ".zip");
         outputFile.deleteOnExit();
@@ -195,8 +196,12 @@ public class PdfRedacterTest {
 
         final List<BoundingBox> boundingBoxes = Arrays.asList(boundingBox1, boundingBox2);
 
-        final Redacter pdfRedacter = new PdfRedacter(policy, Collections.emptySet(), pdfRedactionOptions, boundingBoxes);
-        final byte[] redacted = pdfRedacter.process(document, MimeType.APPLICATION_PDF);
+        final Graphical graphical = new Graphical();
+        graphical.setBoundingBoxes(boundingBoxes);
+        policy.setGraphical(graphical);
+
+        final PdfRedactor pdfRedactor = new PdfRedactor(policy, List.of(), pdfRedactionOptions);
+        final byte[] redacted = pdfRedactor.process(document, MimeType.APPLICATION_PDF);
 
         final File outputFile = File.createTempFile("output", ".pdf");
         outputFile.deleteOnExit();
@@ -223,7 +228,6 @@ public class PdfRedacterTest {
         boundingBox1.setH(150);
         boundingBox1.setPage(1);
         boundingBox1.setColor("yellow");
-        boundingBox1.setMimeType(MimeType.APPLICATION_PDF.toString());
 
         final BoundingBox boundingBox2 = new BoundingBox();
         boundingBox2.setX(100);
@@ -232,12 +236,15 @@ public class PdfRedacterTest {
         boundingBox2.setH(75);
         boundingBox2.setPage(2);
         boundingBox2.setColor("red");
-        boundingBox2.setMimeType(MimeType.APPLICATION_PDF.toString());
 
         final List<BoundingBox> boundingBoxes = Arrays.asList(boundingBox1, boundingBox2);
 
-        final Redacter pdfRedacter = new PdfRedacter(policy, Collections.emptySet(), pdfRedactionOptions, boundingBoxes);
-        final byte[] redacted = pdfRedacter.process(document, MimeType.APPLICATION_PDF);
+        final Graphical graphical = new Graphical();
+        graphical.setBoundingBoxes(boundingBoxes);
+        policy.setGraphical(graphical);
+
+        final PdfRedactor pdfRedactor = new PdfRedactor(policy, List.of(), pdfRedactionOptions);
+        final byte[] redacted = pdfRedactor.process(document, MimeType.APPLICATION_PDF);
 
         final File outputFile = File.createTempFile("output", ".pdf");
         outputFile.deleteOnExit();
@@ -253,6 +260,7 @@ public class PdfRedacterTest {
         final Span span1 = Span.make(0, 1, FilterType.AGE, "ctx", 0.25, "Wendy", "repl", null, false, true, null, 0);
         final Span span2 = Span.make(0, 1, FilterType.AGE, "ctx", 0.25, "Bankruptcy", "repl", null, false, true, null, 0);
         final Set<Span> spans = Set.copyOf(Arrays.asList(span1, span2));
+        final List<Span> spanList = new ArrayList<>(spans);
 
         final String filename = "12-12110 K.pdf";
         final InputStream is = getClass().getClassLoader().getResourceAsStream(filename);
@@ -277,8 +285,12 @@ public class PdfRedacterTest {
 
         final List<BoundingBox> boundingBoxes = Arrays.asList(boundingBox1, boundingBox2);
 
-        final Redacter pdfRedacter = new PdfRedacter(policy, spans, pdfRedactionOptions, boundingBoxes);
-        final byte[] redacted = pdfRedacter.process(document, MimeType.APPLICATION_PDF);
+        final Graphical graphical = new Graphical();
+        graphical.setBoundingBoxes(boundingBoxes);
+        policy.setGraphical(graphical);
+
+        final PdfRedactor pdfRedactor = new PdfRedactor(policy, spanList, pdfRedactionOptions);
+        final byte[] redacted = pdfRedactor.process(document, MimeType.APPLICATION_PDF);
 
         final File outputFile = File.createTempFile("output", ".pdf");
         outputFile.deleteOnExit();
@@ -296,17 +308,16 @@ public class PdfRedacterTest {
         final Span span1 = Span.make(0, 1, FilterType.AGE, "ctx", 0.25, "Wendy", "repl", null, false, true, null, 0);
         final Span span2 = Span.make(0, 1, FilterType.AGE, "ctx", 0.25, "Bankruptcy", "repl", null, false, true, null, 0);
         final Set<Span> spans = Set.copyOf(Arrays.asList(span1, span2));
+        final List<Span> spanList = new ArrayList<>(spans);
 
         final Policy policy = new Policy();
         policy.getConfig().getPdf().setShowReplacement(true);
         final PdfRedactionOptions pdfRedactionOptions = new PdfRedactionOptions();
 
-        final List<BoundingBox> boundingBoxes = Collections.emptyList();
-
-        final PdfRedacter pdfRedacter = new PdfRedacter(policy, spans, pdfRedactionOptions, boundingBoxes);
+        final PdfRedactor pdfRedactor = new PdfRedactor(policy, spanList, pdfRedactionOptions);
 
         final RedactedRectangle redactedRectangle = new RedactedRectangle(PDRectangle.LETTER, span1);
-        pdfRedacter.addReplacementTextToRect(redactedRectangle, contentStream);
+        pdfRedactor.addReplacementTextToRect(redactedRectangle, contentStream);
 
         verify(contentStream).beginText();
         verify(contentStream).setNonStrokingColor(
