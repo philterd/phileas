@@ -300,6 +300,9 @@ public final class Span {
                     && span1.getLowerLeftY() == span.getLowerLeftY()
                     && span1.getUpperRightX() == span.getUpperRightX()
                     && span1.getUpperRightY() == span.getUpperRightY()
+                    && span1.getLineNumber() == span.getLineNumber()
+                    && span1.getPageNumber() == span.getPageNumber()
+                    && span1.getParagraphNumber() == span.getParagraphNumber()
                     && !span1.equals(span)) {
 
                 identicalSpans.add(span1);
@@ -491,6 +494,7 @@ public final class Span {
                 append(upperRightY).
                 append(lineNumber).
                 append(pageNumber).
+                append(paragraphNumber).
                 toHashCode();
 
     }
