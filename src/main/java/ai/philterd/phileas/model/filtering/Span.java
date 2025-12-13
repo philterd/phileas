@@ -89,6 +89,7 @@ public final class Span {
 
     private int lineNumber = 0;
     private int pageNumber = 0;
+    private int paragraphNumber = 0;
     private float lowerLeftX;
     private float lowerLeftY;
     private float upperRightX;
@@ -700,6 +701,14 @@ public final class Span {
 
     public void setUpperRightY(float upperRightY) {
         this.upperRightY = upperRightY;
+    }
+
+    public int getParagraphNumber() {
+        return paragraphNumber;
+    }
+
+    public void setParagraphNumber(int paragraphNumber) {
+        this.paragraphNumber = paragraphNumber;
     }
 
 }
