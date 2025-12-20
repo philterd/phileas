@@ -55,7 +55,7 @@
         <junit.version>5.11.3</junit.version>
         <junit.pioneer.version>2.3.0</junit.pioneer.version>
         <libphonenumber.version>9.0.16</libphonenumber.version>
-        <log4j.version>2.23.1</log4j.version>
+        <log4j.version>2.25.3</log4j.version>
         <maven.compiler.version>3.13.0</maven.compiler.version>
         <maven.failsafe.version>3.2.5</maven.failsafe.version>
         <maven.surefire.version>3.2.5</maven.surefire.version>
