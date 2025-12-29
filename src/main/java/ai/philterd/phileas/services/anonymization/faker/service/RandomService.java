@@ -30,10 +30,11 @@
  */
 package ai.philterd.phileas.services.anonymization.faker.service;
 
+import java.security.SecureRandom;
 import java.util.Random;
 
 public class RandomService {
-    private static final Random SHARED_RANDOM = new Random();
+    private static final Random SHARED_RANDOM = new SecureRandom();
     private final Random random;
 
     /**

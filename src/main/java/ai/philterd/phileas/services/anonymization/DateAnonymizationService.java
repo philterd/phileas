@@ -19,6 +19,7 @@ import ai.philterd.phileas.services.context.ContextService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.security.SecureRandom;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
@@ -39,7 +40,7 @@ public class DateAnonymizationService extends AbstractAnonymizationService {
 
     public DateAnonymizationService(final ContextService contextService) {
         super(contextService);
-        this.random = new Random();
+        this.random = new SecureRandom();
     }
 
     @Override
