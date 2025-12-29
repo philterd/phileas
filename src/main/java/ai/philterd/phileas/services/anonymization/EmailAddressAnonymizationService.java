@@ -31,7 +31,7 @@ public class EmailAddressAnonymizationService extends AbstractAnonymizationServi
 
     @Override
     public String anonymize(String token) {
-        return RandomStringUtils.randomAlphanumeric(10) + "@fake.com";
+        return RandomStringUtils.secure().nextAlphanumeric(10) + "@fake.com";
     }
 
 }

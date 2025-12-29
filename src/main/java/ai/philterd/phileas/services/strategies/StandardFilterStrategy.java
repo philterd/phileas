@@ -97,7 +97,7 @@ public abstract class StandardFilterStrategy extends AbstractFilterStrategy {
         } else if(StringUtils.equalsIgnoreCase(strategy, HASH_SHA256_REPLACE)) {
 
             if(isSalt()) {
-                salt = RandomStringUtils.randomAlphanumeric(16);
+                salt = RandomStringUtils.secure().nextAlphanumeric(16);
             }
 
             replacement = DigestUtils.sha256Hex(token + salt);

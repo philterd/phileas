@@ -50,7 +50,7 @@ public class AlphanumericAnonymizationService extends AbstractAnonymizationServi
 
             } else if (Character.isAlphabetic(c)) {
 
-                sb.append(RandomStringUtils.randomAlphabetic(1));
+                sb.append(RandomStringUtils.secure().nextAlphanumeric(1));
 
             } else if (Character.isSpaceChar(c)) {
 

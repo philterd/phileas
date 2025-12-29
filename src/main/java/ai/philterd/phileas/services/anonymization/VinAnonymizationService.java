@@ -66,7 +66,7 @@ public class VinAnonymizationService extends AbstractAnonymizationService {
 
         return randomVins.stream()
                 .skip((int) (randomVins.size() * Math.random()))
-                .findFirst().orElse(RandomStringUtils.random(17));
+                .findFirst().orElse(RandomStringUtils.secure().nextNumeric(17));
 
     }
 

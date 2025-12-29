@@ -31,7 +31,7 @@ public class NumericAnonymizationService extends AbstractAnonymizationService {
 
     @Override
     public String anonymize(String token) {
-        return RandomStringUtils.randomNumeric(token.length());
+        return RandomStringUtils.secure().nextNumeric(token.length());
     }
 
 }

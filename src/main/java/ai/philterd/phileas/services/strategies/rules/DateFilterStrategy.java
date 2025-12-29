@@ -187,7 +187,7 @@ public class DateFilterStrategy extends AbstractFilterStrategy {
         } else if(StringUtils.equalsIgnoreCase(strategy, HASH_SHA256_REPLACE)) {
 
             if (isSalt()) {
-                salt = RandomStringUtils.randomAlphanumeric(16);
+                salt = RandomStringUtils.secure().nextAlphanumeric(16);
             }
 
             replacement = DigestUtils.sha256Hex(token + salt);
@@ -223,9 +223,9 @@ public class DateFilterStrategy extends AbstractFilterStrategy {
                 // Shift the date. Only valid dates can be shifted.
                 if(shiftRandom) {
                     // Shifting based on a random days, months, years.
-                    final int randomShiftDays = RandomUtils.nextInt(1, 30);
-                    final int randomShiftMonths = RandomUtils.nextInt(1, 12);
-                    final int randomShiftYears = -RandomUtils.nextInt(1, 3);
+                    final int randomShiftDays = RandomUtils.secure().randomInt(1, 30);
+                    final int randomShiftMonths = RandomUtils.secure().randomInt(1, 12);
+                    final int randomShiftYears = -RandomUtils.secure().randomInt(1, 3);
                     final LocalDateTime shiftedDate = parsedDate.plusDays(randomShiftDays).plusMonths(randomShiftMonths).plusYears(randomShiftYears);
                     replacement = shiftedDate.format(dtf);
                 } else {

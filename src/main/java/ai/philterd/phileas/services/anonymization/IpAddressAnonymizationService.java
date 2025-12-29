@@ -36,23 +36,23 @@ public class IpAddressAnonymizationService extends AbstractAnonymizationService 
 
             // IPv6
 
-            return RandomStringUtils.randomNumeric(4) + ":"
-                    + RandomStringUtils.randomNumeric(4) + ":"
-                    + RandomStringUtils.randomNumeric(4) + ":"
-                    + RandomStringUtils.randomNumeric(4) + ":"
-                    + RandomStringUtils.randomNumeric(4) + ":"
-                    + RandomStringUtils.randomNumeric(4) + ":"
-                    + RandomStringUtils.randomNumeric(4) + ":"
-                    + RandomStringUtils.randomNumeric(4);
+            return RandomStringUtils.secure().nextNumeric(4) + ":"
+                    + RandomStringUtils.secure().nextNumeric(4) + ":"
+                    + RandomStringUtils.secure().nextNumeric(4) + ":"
+                    + RandomStringUtils.secure().nextNumeric(4) + ":"
+                    + RandomStringUtils.secure().nextNumeric(4) + ":"
+                    + RandomStringUtils.secure().nextNumeric(4) + ":"
+                    + RandomStringUtils.secure().nextNumeric(4) + ":"
+                    + RandomStringUtils.secure().nextNumeric(4);
 
         } else {
 
             // IPv4
 
-            return RandomStringUtils.randomNumeric(3) + "."
-                    + RandomStringUtils.randomNumeric(3) + "."
-                    + RandomStringUtils.randomNumeric(3) + "."
-                    + RandomStringUtils.randomNumeric(3);
+            return RandomStringUtils.secure().nextNumeric(3) + "."
+                    + RandomStringUtils.secure().nextNumeric(3) + "."
+                    + RandomStringUtils.secure().nextNumeric(3) + "."
+                    + RandomStringUtils.secure().nextNumeric(3);
 
         }
 
