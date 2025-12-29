@@ -33,7 +33,7 @@ public class BitcoinAddressAnonymizationService extends AbstractAnonymizationSer
     public String anonymize(String token) {
 
         // See PHL-117: Just generating a random alphanumeric string.
-        return RandomStringUtils.randomAlphanumeric(32);
+        return RandomStringUtils.secure().nextAlphanumeric(32);
 
     }
 

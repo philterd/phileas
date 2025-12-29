@@ -31,7 +31,7 @@ public class UrlAnonymizationService extends AbstractAnonymizationService {
 
     @Override
     public String anonymize(String token) {
-        return "http://" + RandomStringUtils.randomAlphanumeric(10).toLowerCase() + ".com";
+        return "http://" + RandomStringUtils.secure().nextAlphanumeric(10).toLowerCase() + ".com";
     }
 
 }
