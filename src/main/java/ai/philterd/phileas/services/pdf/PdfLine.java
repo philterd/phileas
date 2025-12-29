@@ -35,6 +35,8 @@ public class PdfLine {
         this.textPositions = textPositions;
     }
 
+    // The MS5 hash is not used for cryptographic purposes. It is used to generate a unique identifier for a line.
+    @SuppressWarnings("squid:S4790")
     public static String lineHash(final List<TextPosition> textPositions, final int pageNumber) {
 
         final StringBuilder sb = new StringBuilder();

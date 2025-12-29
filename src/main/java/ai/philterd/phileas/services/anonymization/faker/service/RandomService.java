@@ -38,13 +38,6 @@ public class RandomService {
     private final Random random;
 
     /**
-     * Uses a default shared random.
-     */
-    public RandomService() {
-        this(SHARED_RANDOM);
-    }
-
-    /**
      * @param random If null is passed in, a default Random is assigned
      */
     public RandomService(Random random) {
@@ -86,23 +79,4 @@ public class RandomService {
         return random.nextInt((max - min) + 1) + min;
     }
 
-    public String hex() {
-        return hex(8);
-    }
-
-    public String hex(int length) {
-        if (length <= 0) {
-            return ""; // Keep the existing behavior instead of throwing an error.
-        }
-        final char[] hexChars = new char[length];
-        for (int i = 0; i < length; i++) {
-            final int nextHex = nextInt(16);
-            if (nextHex < 10) {
-                hexChars[i] = (char) ('0' + nextHex);
-            } else {
-                hexChars[i] = (char) ('A' + nextHex - 10);
-            }
-        }
-        return new String(hexChars);
-    }
 }
