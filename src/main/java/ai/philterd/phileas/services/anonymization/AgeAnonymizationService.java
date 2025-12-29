@@ -17,6 +17,7 @@ package ai.philterd.phileas.services.anonymization;
 
 import ai.philterd.phileas.services.context.ContextService;
 
+import java.security.SecureRandom;
 import java.util.Random;
 
 public class AgeAnonymizationService extends AbstractAnonymizationService {
@@ -25,7 +26,7 @@ public class AgeAnonymizationService extends AbstractAnonymizationService {
 
     public AgeAnonymizationService(final ContextService contextService) {
         super(contextService);
-        this.random = new Random();
+        this.random = new SecureRandom();
     }
 
     @Override
