@@ -18,13 +18,20 @@ package ai.philterd.phileas.services.anonymization;
 import ai.philterd.phileas.services.context.ContextService;
 import ai.philterd.phileas.services.anonymization.faker.Faker;
 
+import java.util.Random;
+
 public class StateAnonymizationService extends AbstractAnonymizationService {
 
     private final transient Faker faker;
 
+    public StateAnonymizationService(final ContextService contextService, final Random random) {
+        super(contextService, random);
+        this.faker = new Faker(random);
+    }
+
     public StateAnonymizationService(final ContextService contextService) {
         super(contextService);
-        this.faker = new Faker();
+        this.faker = new Faker(random);
     }
 
     @Override
@@ -33,8 +40,10 @@ public class StateAnonymizationService extends AbstractAnonymizationService {
     }
 
     @Override
-    public String anonymize(String token) {
+    public String anonymize(final String token) {
+
         return faker.address().state();
+
     }
 
 }

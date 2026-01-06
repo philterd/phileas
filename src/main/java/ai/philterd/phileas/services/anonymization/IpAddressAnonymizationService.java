@@ -16,9 +16,14 @@
 package ai.philterd.phileas.services.anonymization;
 
 import ai.philterd.phileas.services.context.ContextService;
-import org.apache.commons.lang3.RandomStringUtils;
+
+import java.util.Random;
 
 public class IpAddressAnonymizationService extends AbstractAnonymizationService {
+
+    public IpAddressAnonymizationService(final ContextService contextService, final Random random) {
+        super(contextService, random);
+    }
 
     public IpAddressAnonymizationService(final ContextService contextService) {
         super(contextService);
@@ -30,32 +35,34 @@ public class IpAddressAnonymizationService extends AbstractAnonymizationService 
     }
 
     @Override
-    public String anonymize(String token) {
+    public String anonymize(final String token) {
 
         if(token.contains(":")) {
 
             // IPv6
 
-            return RandomStringUtils.secure().nextNumeric(4) + ":"
-                    + RandomStringUtils.secure().nextNumeric(4) + ":"
-                    + RandomStringUtils.secure().nextNumeric(4) + ":"
-                    + RandomStringUtils.secure().nextNumeric(4) + ":"
-                    + RandomStringUtils.secure().nextNumeric(4) + ":"
-                    + RandomStringUtils.secure().nextNumeric(4) + ":"
-                    + RandomStringUtils.secure().nextNumeric(4) + ":"
-                    + RandomStringUtils.secure().nextNumeric(4);
+            return generateNumeric(4) + ":"
+                    + generateNumeric(4) + ":"
+                    + generateNumeric(4) + ":"
+                    + generateNumeric(4) + ":"
+                    + generateNumeric(4) + ":"
+                    + generateNumeric(4) + ":"
+                    + generateNumeric(4) + ":"
+                    + generateNumeric(4);
 
         } else {
 
             // IPv4
 
-            return RandomStringUtils.secure().nextNumeric(3) + "."
-                    + RandomStringUtils.secure().nextNumeric(3) + "."
-                    + RandomStringUtils.secure().nextNumeric(3) + "."
-                    + RandomStringUtils.secure().nextNumeric(3);
+            return generateNumeric(3) + "."
+                    + generateNumeric(3) + "."
+                    + generateNumeric(3) + "."
+                    + generateNumeric(3);
 
         }
 
     }
+
+
 
 }

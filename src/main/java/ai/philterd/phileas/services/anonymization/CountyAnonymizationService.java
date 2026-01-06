@@ -16,118 +16,127 @@
 package ai.philterd.phileas.services.anonymization;
 
 import ai.philterd.phileas.services.context.ContextService;
+import org.apache.commons.lang3.StringUtils;
 
-import java.util.Collection;
 import java.util.LinkedList;
+import java.util.List;
+import java.util.Random;
 
 public class CountyAnonymizationService extends AbstractAnonymizationService {
 
-    private static final Collection<String> counties = new LinkedList<>();
+    private static final List<String> COUNTIES = new LinkedList<>();
+
+    static {
+
+        COUNTIES.add("Beaver");
+        COUNTIES.add("Ohio");
+        COUNTIES.add("Tallahatchie");
+        COUNTIES.add("Braxton");
+        COUNTIES.add("Orange");
+        COUNTIES.add("Lemhi");
+        COUNTIES.add("Wagoner");
+        COUNTIES.add("Osage");
+        COUNTIES.add("Rensselaer");
+        COUNTIES.add("Meeker");
+        COUNTIES.add("Stark");
+        COUNTIES.add("McCone");
+        COUNTIES.add("Clarion");
+        COUNTIES.add("Spotsylvania");
+        COUNTIES.add("Accomack");
+        COUNTIES.add("Dauphin");
+        COUNTIES.add("Jim Hogg");
+        COUNTIES.add("Prince Edward");
+        COUNTIES.add("Greenville");
+        COUNTIES.add("Tillman");
+        COUNTIES.add("Ravalli");
+        COUNTIES.add("Santa Rosa");
+        COUNTIES.add("Wyandot");
+        COUNTIES.add("Box Butte");
+        COUNTIES.add("Milwaukee");
+        COUNTIES.add("Trinity");
+        COUNTIES.add("Kleberg");
+        COUNTIES.add("Ritchie");
+        COUNTIES.add("Rockland");
+        COUNTIES.add("Miami-Dade");
+        COUNTIES.add("Keya Paha");
+        COUNTIES.add("McCulloch");
+        COUNTIES.add("Meade");
+        COUNTIES.add("Collin");
+        COUNTIES.add("Utah");
+        COUNTIES.add("Breathitt");
+        COUNTIES.add("Allen Parish");
+        COUNTIES.add("Refugio");
+        COUNTIES.add("Jim Wells");
+        COUNTIES.add("Torrance");
+        COUNTIES.add("Lunenburg");
+        COUNTIES.add("Otsego");
+        COUNTIES.add("Bryan");
+        COUNTIES.add("Nueces");
+        COUNTIES.add("Decatur");
+        COUNTIES.add("Sibley");
+        COUNTIES.add("Candler");
+        COUNTIES.add("Del Norte");
+        COUNTIES.add("Aleutians East");
+        COUNTIES.add("Humboldt");
+        COUNTIES.add("Cheboygan");
+        COUNTIES.add("Tom Green");
+        COUNTIES.add("Hodgeman");
+        COUNTIES.add("Benzie");
+        COUNTIES.add("Kidder");
+        COUNTIES.add("Burleigh");
+        COUNTIES.add("Berrien");
+        COUNTIES.add("St. Lucie");
+        COUNTIES.add("Harnett");
+        COUNTIES.add("Sublette");
+        COUNTIES.add("Traverse");
+        COUNTIES.add("Caldwell Parish");
+        COUNTIES.add("Walworth");
+        COUNTIES.add("Kalamazoo");
+        COUNTIES.add("Hamilton");
+        COUNTIES.add("Yellow Medicine");
+        COUNTIES.add("Mora");
+        COUNTIES.add("Sherman");
+        COUNTIES.add("Bethel");
+        COUNTIES.add("Charles City");
+        COUNTIES.add("Daniels");
+        COUNTIES.add("Washington");
+        COUNTIES.add("Dearborn");
+        COUNTIES.add("Solano");
+        COUNTIES.add("Conejos");
+        COUNTIES.add("Elk");
+        COUNTIES.add("Harris");
+        COUNTIES.add("Fremont");
+        COUNTIES.add("Addison");
+        COUNTIES.add("LaGrange");
+        COUNTIES.add("Sarasota");
+        COUNTIES.add("Schuyler");
+        COUNTIES.add("Bacon");
+        COUNTIES.add("Brookings");
+        COUNTIES.add("Androscoggin");
+        COUNTIES.add("Forrest");
+        COUNTIES.add("Smith");
+        COUNTIES.add("Milam");
+        COUNTIES.add("McClain");
+        COUNTIES.add("Labette");
+        COUNTIES.add("Powhatan");
+        COUNTIES.add("Musselshell");
+        COUNTIES.add("Coosa");
+        COUNTIES.add("Kootenai");
+        COUNTIES.add("Parker");
+        COUNTIES.add("Mitchell");
+        COUNTIES.add("Niobrara");
+        COUNTIES.add("Miller");
+        COUNTIES.add("Bingham");
+        COUNTIES.add("Borden");
+
+    }
+
+    public CountyAnonymizationService(final ContextService contextService, final Random random) {
+        super(contextService, random);
+    }
 
     public CountyAnonymizationService(final ContextService contextService) {
         super(contextService);
-
-        counties.add("Beaver");
-        counties.add("Ohio");
-        counties.add("Tallahatchie");
-        counties.add("Braxton");
-        counties.add("Orange");
-        counties.add("Lemhi");
-        counties.add("Wagoner");
-        counties.add("Osage");
-        counties.add("Rensselaer");
-        counties.add("Meeker");
-        counties.add("Stark");
-        counties.add("McCone");
-        counties.add("Clarion");
-        counties.add("Spotsylvania");
-        counties.add("Accomack");
-        counties.add("Dauphin");
-        counties.add("Jim Hogg");
-        counties.add("Prince Edward");
-        counties.add("Greenville");
-        counties.add("Tillman");
-        counties.add("Ravalli");
-        counties.add("Santa Rosa");
-        counties.add("Wyandot");
-        counties.add("Box Butte");
-        counties.add("Milwaukee");
-        counties.add("Trinity");
-        counties.add("Kleberg");
-        counties.add("Ritchie");
-        counties.add("Rockland");
-        counties.add("Miami-Dade");
-        counties.add("Keya Paha");
-        counties.add("McCulloch");
-        counties.add("Meade");
-        counties.add("Collin");
-        counties.add("Utah");
-        counties.add("Breathitt");
-        counties.add("Allen Parish");
-        counties.add("Refugio");
-        counties.add("Jim Wells");
-        counties.add("Torrance");
-        counties.add("Lunenburg");
-        counties.add("Otsego");
-        counties.add("Bryan");
-        counties.add("Nueces");
-        counties.add("Decatur");
-        counties.add("Sibley");
-        counties.add("Candler");
-        counties.add("Del Norte");
-        counties.add("Aleutians East");
-        counties.add("Humboldt");
-        counties.add("Cheboygan");
-        counties.add("Tom Green");
-        counties.add("Hodgeman");
-        counties.add("Benzie");
-        counties.add("Kidder");
-        counties.add("Burleigh");
-        counties.add("Berrien");
-        counties.add("St. Lucie");
-        counties.add("Harnett");
-        counties.add("Sublette");
-        counties.add("Traverse");
-        counties.add("Caldwell Parish");
-        counties.add("Walworth");
-        counties.add("Kalamazoo");
-        counties.add("Hamilton");
-        counties.add("Yellow Medicine");
-        counties.add("Mora");
-        counties.add("Sherman");
-        counties.add("Bethel");
-        counties.add("Charles City");
-        counties.add("Daniels");
-        counties.add("Washington");
-        counties.add("Dearborn");
-        counties.add("Solano");
-        counties.add("Conejos");
-        counties.add("Elk");
-        counties.add("Harris");
-        counties.add("Fremont");
-        counties.add("Addison");
-        counties.add("LaGrange");
-        counties.add("Sarasota");
-        counties.add("Schuyler");
-        counties.add("Bacon");
-        counties.add("Brookings");
-        counties.add("Androscoggin");
-        counties.add("Forrest");
-        counties.add("Smith");
-        counties.add("Milam");
-        counties.add("McClain");
-        counties.add("Labette");
-        counties.add("Powhatan");
-        counties.add("Musselshell");
-        counties.add("Coosa");
-        counties.add("Kootenai");
-        counties.add("Parker");
-        counties.add("Mitchell");
-        counties.add("Niobrara");
-        counties.add("Miller");
-        counties.add("Bingham");
-        counties.add("Borden");
-
     }
 
     @Override
@@ -138,9 +147,16 @@ public class CountyAnonymizationService extends AbstractAnonymizationService {
     @Override
     public String anonymize(String token) {
 
-        return counties.stream()
-                .skip((int) (counties.size() * Math.random()))
-                .findFirst().orElse("Harris");
+        final int randomInt = generateInteger(0, COUNTIES.size() - 1);
+
+        final String anonymized = COUNTIES.get(randomInt);
+
+        // Make sure the anonymized and the token aren't the same since it's a small pool.
+        if(StringUtils.equalsIgnoreCase(token, anonymized)) {
+            return anonymize(token);
+        }
+
+        return anonymized;
 
     }
 

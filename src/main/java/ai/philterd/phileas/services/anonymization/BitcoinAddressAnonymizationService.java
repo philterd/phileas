@@ -17,6 +17,7 @@ package ai.philterd.phileas.services.anonymization;
 
 import ai.philterd.phileas.services.context.ContextService;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.text.RandomStringGenerator;
 
 public class BitcoinAddressAnonymizationService extends AbstractAnonymizationService {
 
@@ -32,8 +33,7 @@ public class BitcoinAddressAnonymizationService extends AbstractAnonymizationSer
     @Override
     public String anonymize(String token) {
 
-        // See PHL-117: Just generating a random alphanumeric string.
-        return RandomStringUtils.secure().nextAlphanumeric(32);
+        return generateAlphanumeric(32);
 
     }
 

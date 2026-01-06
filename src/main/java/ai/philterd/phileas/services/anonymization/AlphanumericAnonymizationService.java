@@ -23,11 +23,13 @@ import java.util.Random;
 
 public class AlphanumericAnonymizationService extends AbstractAnonymizationService {
 
-    private final Random random;
+    public AlphanumericAnonymizationService(final ContextService contextService, final Random random) {
+        super(contextService);
+        this.random = random;
+    }
 
     public AlphanumericAnonymizationService(final ContextService contextService) {
         super(contextService);
-        this.random = new SecureRandom();
     }
 
     @Override

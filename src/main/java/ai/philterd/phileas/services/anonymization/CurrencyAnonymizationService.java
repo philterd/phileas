@@ -23,11 +23,12 @@ import java.util.Random;
 
 public class CurrencyAnonymizationService extends AbstractAnonymizationService {
 
-    private final Random random;
+    public CurrencyAnonymizationService(final ContextService contextService, final Random random) {
+        super(contextService, random);
+    }
 
     public CurrencyAnonymizationService(final ContextService contextService) {
         super(contextService);
-        this.random = new SecureRandom();
     }
 
     @Override
@@ -36,7 +37,7 @@ public class CurrencyAnonymizationService extends AbstractAnonymizationService {
     }
 
     @Override
-    public String anonymize(String token) {
+    public String anonymize(final String token) {
 
         // Replace all digits with other digits.
 

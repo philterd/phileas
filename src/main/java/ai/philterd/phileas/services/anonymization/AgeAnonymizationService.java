@@ -22,7 +22,10 @@ import java.util.Random;
 
 public class AgeAnonymizationService extends AbstractAnonymizationService {
 
-    private final Random random;
+    public AgeAnonymizationService(final ContextService contextService, final Random random) {
+        super(contextService);
+        this.random = random;
+    }
 
     public AgeAnonymizationService(final ContextService contextService) {
         super(contextService);

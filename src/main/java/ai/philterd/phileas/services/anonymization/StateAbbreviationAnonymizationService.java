@@ -20,15 +20,13 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Random;
 
 public class StateAbbreviationAnonymizationService extends AbstractAnonymizationService {
 
-    private final List<String> STATES;
+    private static final List<String> STATES = new LinkedList<>();
 
-    public StateAbbreviationAnonymizationService(final ContextService contextService) {
-        super(contextService);
-
-        this.STATES = new LinkedList<>();
+    static {
 
         // TODO: Don't duplicate this from StateFilter.
         STATES.add("AL");
@@ -84,19 +82,27 @@ public class StateAbbreviationAnonymizationService extends AbstractAnonymization
 
     }
 
+    public StateAbbreviationAnonymizationService(final ContextService contextService, final Random random) {
+        super(contextService, random);
+    }
+
+    public StateAbbreviationAnonymizationService(final ContextService contextService) {
+        super(contextService);
+    }
+
     @Override
     public ContextService getContextService() {
         return contextService;
     }
 
     @Override
-    public String anonymize(String token) {
+    public String anonymize(final String token) {
 
-        final String anonymized = STATES.stream()
-                .skip((int) (STATES.size() * Math.random()))
-                .findFirst().orElse("AK");
+        final int randomInt = generateInteger(0, STATES.size() - 1);
 
-        // Make sure the anonymized and the token aren't the same.
+        final String anonymized = STATES.get(randomInt);
+
+        // Make sure the anonymized and the token aren't the same since it's a small pool.
         if(StringUtils.equalsIgnoreCase(token, anonymized)) {
             return anonymize(token);
         }

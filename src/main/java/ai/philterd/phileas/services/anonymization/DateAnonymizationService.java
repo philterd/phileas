@@ -36,11 +36,12 @@ public class DateAnonymizationService extends AbstractAnonymizationService {
     private static final Pattern DATE_MDYYYY_REGEX = Pattern.compile("\\b\\d{1,2}-\\d{1,2}-\\d{2,4}\\b");
     private static final Pattern DATE_MONTH_REGEX = Pattern.compile("(?i)(\\b\\d{1,2}\\D{0,3})?\\b(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:tember)?|Oct(?:ober)?|(Nov|Dec)(?:ember)?)\\D?(\\d{1,2}(\\D?(st|nd|rd|th))?\\D?)(\\D?((19[7-9]\\d|20\\d{2})|\\d{2}))?\\b", Pattern.CASE_INSENSITIVE);
 
-    private final Random random;
+    public DateAnonymizationService(final ContextService contextService, final Random random) {
+        super(contextService, random);
+    }
 
     public DateAnonymizationService(final ContextService contextService) {
         super(contextService);
-        this.random = new SecureRandom();
     }
 
     @Override
@@ -49,9 +50,9 @@ public class DateAnonymizationService extends AbstractAnonymizationService {
     }
 
     @Override
-    public String anonymize(String token) {
+    public String anonymize(final String token) {
 
-        LocalDate localDate = getRandomDate();
+        final LocalDate localDate = getRandomDate();
 
         // Generate a date in the same format as the token.
 

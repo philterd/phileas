@@ -18,7 +18,14 @@ package ai.philterd.phileas.services.anonymization;
 import ai.philterd.phileas.services.context.ContextService;
 import org.apache.commons.lang3.RandomStringUtils;
 
+import java.util.Random;
+
 public class NumericAnonymizationService extends AbstractAnonymizationService {
+
+    public NumericAnonymizationService(final ContextService contextService, final Random random) {
+        super(contextService, random);
+    }
+
 
     public NumericAnonymizationService(final ContextService contextService) {
         super(contextService);
@@ -30,8 +37,10 @@ public class NumericAnonymizationService extends AbstractAnonymizationService {
     }
 
     @Override
-    public String anonymize(String token) {
-        return RandomStringUtils.secure().nextNumeric(token.length());
+    public String anonymize(final String token) {
+
+        return generateNumeric(token.length());
+
     }
 
 }
