@@ -40,9 +40,11 @@ import ai.philterd.phileas.services.tokens.WhitespaceTokenCounter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Random;
 import java.util.Set;
 
 /**
@@ -59,7 +61,15 @@ public class PdfFilterService extends BinaryFilterService {
                             final ContextService contextService,
                             final VectorService vectorService) {
 
-        super(phileasConfiguration, contextService);
+        this(phileasConfiguration, contextService, vectorService, new SecureRandom());
+
+    }
+    public PdfFilterService(final PhileasConfiguration phileasConfiguration,
+                            final ContextService contextService,
+                            final VectorService vectorService,
+                            final Random random) {
+
+        super(phileasConfiguration, contextService, random);
 
         LOGGER.info("Initializing PDF filter service.");
 

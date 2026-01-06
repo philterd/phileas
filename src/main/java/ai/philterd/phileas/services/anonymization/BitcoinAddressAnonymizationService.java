@@ -19,7 +19,13 @@ import ai.philterd.phileas.services.context.ContextService;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.text.RandomStringGenerator;
 
+import java.util.Random;
+
 public class BitcoinAddressAnonymizationService extends AbstractAnonymizationService {
+
+    public BitcoinAddressAnonymizationService(final ContextService contextService, final Random random) {
+        super(contextService, random);
+    }
 
     public BitcoinAddressAnonymizationService(final ContextService contextService) {
         super(contextService);
