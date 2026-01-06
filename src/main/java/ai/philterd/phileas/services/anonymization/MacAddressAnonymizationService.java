@@ -17,7 +17,6 @@ package ai.philterd.phileas.services.anonymization;
 
 import ai.philterd.phileas.services.context.ContextService;
 
-import java.security.SecureRandom;
 import java.util.Random;
 
 public class MacAddressAnonymizationService extends AbstractAnonymizationService {

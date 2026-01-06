@@ -31,7 +31,7 @@ public abstract class AbstractAnonymizationService implements AnonymizationServi
         this.random = new SecureRandom();
     }
 
-    public AbstractAnonymizationService(final ContextService contextService, final Random random) {
+    protected AbstractAnonymizationService(final ContextService contextService, final Random random) {
         this.contextService = contextService;
         this.random = random;
     }

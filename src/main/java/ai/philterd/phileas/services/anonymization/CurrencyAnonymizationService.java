@@ -18,7 +18,6 @@ package ai.philterd.phileas.services.anonymization;
 import ai.philterd.phileas.services.context.ContextService;
 import org.apache.commons.lang3.StringUtils;
 
-import java.security.SecureRandom;
 import java.util.Random;
 
 public class CurrencyAnonymizationService extends AbstractAnonymizationService {
