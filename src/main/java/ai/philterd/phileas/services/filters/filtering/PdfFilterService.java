@@ -32,8 +32,8 @@ import ai.philterd.phileas.services.documentprocessors.DocumentProcessor;
 import ai.philterd.phileas.services.documentprocessors.UnstructuredDocumentProcessor;
 import ai.philterd.phileas.services.filters.postfilters.PostFilter;
 import ai.philterd.phileas.services.pdf.PdfLine;
-import ai.philterd.phileas.services.pdf.PdfRedactor;
 import ai.philterd.phileas.services.pdf.PdfRedactionOptions;
+import ai.philterd.phileas.services.pdf.PdfRedactor;
 import ai.philterd.phileas.services.pdf.PdfTextExtractor;
 import ai.philterd.phileas.services.tokens.TokenCounter;
 import ai.philterd.phileas.services.tokens.WhitespaceTokenCounter;
@@ -43,7 +43,6 @@ import org.apache.logging.log4j.Logger;
 
 import java.security.SecureRandom;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Random;
