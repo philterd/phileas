@@ -18,14 +18,18 @@ package ai.philterd.phileas.services.anonymization;
 import ai.philterd.phileas.services.context.ContextService;
 
 import java.security.SecureRandom;
+import java.util.Random;
 
 public class PassportNumberAnonymizationService extends AbstractAnonymizationService {
 
-    private final SecureRandom secureRandom;
+    public PassportNumberAnonymizationService(final ContextService contextService, final Random random) {
+        super(contextService, random);
+        this.random = random;
+    }
 
     public PassportNumberAnonymizationService(final ContextService contextService) {
         super(contextService);
-        this.secureRandom = new SecureRandom();
+        this.random = new SecureRandom();
     }
 
     @Override
@@ -34,10 +38,10 @@ public class PassportNumberAnonymizationService extends AbstractAnonymizationSer
     }
 
     @Override
-    public String anonymize(String token) {
+    public String anonymize(final String token) {
 
-        byte[] macAddr = new byte[6];
-        secureRandom.nextBytes(macAddr);
+        final byte[] macAddr = new byte[6];
+        random.nextBytes(macAddr);
 
         final StringBuilder sb = new StringBuilder(18);
 

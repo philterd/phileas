@@ -16,13 +16,52 @@
 package ai.philterd.phileas.services.anonymization;
 
 import ai.philterd.phileas.services.context.ContextService;
+import org.apache.commons.text.RandomStringGenerator;
+
+import java.security.SecureRandom;
+import java.util.Random;
 
 public abstract class AbstractAnonymizationService implements AnonymizationService {
 
-    protected final ContextService contextService;
+    protected ContextService contextService;
+    protected Random random;
 
     public AbstractAnonymizationService(final ContextService contextService) {
         this.contextService = contextService;
+        this.random = new SecureRandom();
+    }
+
+    protected AbstractAnonymizationService(final ContextService contextService, final Random random) {
+        this.contextService = contextService;
+        this.random = random;
+    }
+
+    protected int generateInteger(final int min, final int max) {
+        return random.nextInt((max - min) + 1) + min;
+    }
+
+    protected String generateNumeric(final int length) {
+
+        final RandomStringGenerator randomStringGenerator = new RandomStringGenerator.Builder()
+                .withinRange('0', '0')
+                .filteredBy(Character::isDigit)
+                .usingRandom(random::nextInt)
+                .get();
+
+        return randomStringGenerator.generate(length);
+
+    }
+
+    protected String generateAlphanumeric(final int length) {
+
+        final RandomStringGenerator randomStringGenerator = new RandomStringGenerator.Builder()
+                .withinRange('0', 'z')
+                .filteredBy(Character::isLetterOrDigit)
+                .usingRandom(random::nextInt)
+                .get();
+
+        return randomStringGenerator.generate(length);
+
     }
 
 }

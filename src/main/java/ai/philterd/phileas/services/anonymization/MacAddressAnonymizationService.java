@@ -17,15 +17,16 @@ package ai.philterd.phileas.services.anonymization;
 
 import ai.philterd.phileas.services.context.ContextService;
 
-import java.security.SecureRandom;
+import java.util.Random;
 
 public class MacAddressAnonymizationService extends AbstractAnonymizationService {
 
-    private final SecureRandom secureRandom;
+    public MacAddressAnonymizationService(final ContextService contextService, final Random random) {
+        super(contextService, random);
+    }
 
     public MacAddressAnonymizationService(final ContextService contextService) {
         super(contextService);
-        this.secureRandom = new SecureRandom();
     }
 
     @Override
@@ -34,10 +35,10 @@ public class MacAddressAnonymizationService extends AbstractAnonymizationService
     }
 
     @Override
-    public String anonymize(String token) {
+    public String anonymize(final String token) {
 
-        byte[] macAddr = new byte[6];
-        secureRandom.nextBytes(macAddr);
+        final byte[] macAddr = new byte[6];
+        random.nextBytes(macAddr);
 
         final StringBuilder sb = new StringBuilder(18);
 

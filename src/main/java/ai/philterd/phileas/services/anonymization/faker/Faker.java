@@ -62,14 +62,6 @@ public class Faker {
     private final Bool bool;
     private final File file;
 
-    public Faker() {
-        this(Locale.ENGLISH);
-    }
-
-    public Faker(Locale locale) {
-        this(locale, (Random)null);
-    }
-
     public Faker(Random random) {
         this(Locale.ENGLISH, random);
     }
@@ -101,25 +93,6 @@ public class Faker {
         this.finance = new Finance(this);
         this.dateAndTime = new DateAndTime(this);
         this.bool = new Bool(this);
-    }
-
-    /**
-     * Constructs Faker instance with default argument.
-     *
-     * @return {@link Faker#Faker()}
-     */
-    public static Faker instance() {
-        return new Faker();
-    }
-
-    /**
-     * Constructs Faker instance with provided {@link Locale}.
-     *
-     * @param locale - {@link Locale}
-     * @return {@link Faker#Faker(Locale)}
-     */
-    public static Faker instance(Locale locale) {
-        return new Faker(locale);
     }
 
     /**

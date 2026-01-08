@@ -16,9 +16,15 @@
 package ai.philterd.phileas.services.anonymization;
 
 import ai.philterd.phileas.services.context.ContextService;
-import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.text.RandomStringGenerator;
+
+import java.util.Random;
 
 public class EmailAddressAnonymizationService extends AbstractAnonymizationService {
+
+    public EmailAddressAnonymizationService(final ContextService contextService, final Random random) {
+        super(contextService, random);
+    }
 
     public EmailAddressAnonymizationService(final ContextService contextService) {
         super(contextService);
@@ -30,8 +36,16 @@ public class EmailAddressAnonymizationService extends AbstractAnonymizationServi
     }
 
     @Override
-    public String anonymize(String token) {
-        return RandomStringUtils.secure().nextAlphanumeric(10) + "@fake.com";
+    public String anonymize(final String token) {
+
+        final RandomStringGenerator randomStringGenerator = new RandomStringGenerator.Builder()
+                .withinRange('0', 'z')
+                .filteredBy(Character::isLetterOrDigit)
+                .usingRandom(random::nextInt)
+                .get();
+
+        return randomStringGenerator.generate(10) + "@fake.com";
+
     }
 
 }

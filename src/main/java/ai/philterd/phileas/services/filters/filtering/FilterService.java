@@ -34,6 +34,7 @@ import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -47,10 +48,11 @@ public abstract class FilterService {
     protected final Map<String, Map<FilterType, Filter>> filterCache;
 
     protected FilterService(final PhileasConfiguration phileasConfiguration,
-                         final ContextService contextService) {
+                            final ContextService contextService,
+                            final Random random) {
 
         this.filterCache = new ConcurrentHashMap<>();
-        this.filterPolicyLoader = new FilterPolicyLoader(contextService, phileasConfiguration);
+        this.filterPolicyLoader = new FilterPolicyLoader(contextService, phileasConfiguration, random);
 
     }
 

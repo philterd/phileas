@@ -23,6 +23,7 @@ import ai.philterd.phileas.policy.Policy;
 import ai.philterd.phileas.services.context.ContextService;
 
 import java.util.List;
+import java.util.Random;
 
 public abstract class TextFilterService extends FilterService {
 
@@ -45,9 +46,10 @@ public abstract class TextFilterService extends FilterService {
     public abstract byte[] apply(final byte[] input, final List<Span> spans);
 
     protected TextFilterService(final PhileasConfiguration phileasConfiguration,
-                               final ContextService contextService) {
+                                final ContextService contextService,
+                                final Random random) {
 
-        super(phileasConfiguration, contextService);
+        super(phileasConfiguration, contextService, random);
 
     }
 

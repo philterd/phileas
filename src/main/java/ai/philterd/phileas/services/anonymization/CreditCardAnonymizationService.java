@@ -18,13 +18,20 @@ package ai.philterd.phileas.services.anonymization;
 import ai.philterd.phileas.services.anonymization.faker.Faker;
 import ai.philterd.phileas.services.context.ContextService;
 
+import java.util.Random;
+
 public class CreditCardAnonymizationService extends AbstractAnonymizationService {
 
     private final Faker faker;
 
+    public CreditCardAnonymizationService(final ContextService contextService, final Random random) {
+        super(contextService, random);
+        this.faker = new Faker(random);
+    }
+
     public CreditCardAnonymizationService(final ContextService contextService) {
         super(contextService);
-        this.faker = new Faker();
+        this.faker = new Faker(random);
     }
 
     @Override
@@ -33,8 +40,10 @@ public class CreditCardAnonymizationService extends AbstractAnonymizationService
     }
 
     @Override
-    public String anonymize(String token) {
+    public String anonymize(final String token) {
+
         return faker.finance().creditCard();
+
     }
 
 }
