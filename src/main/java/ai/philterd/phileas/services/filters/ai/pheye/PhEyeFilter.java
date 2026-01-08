@@ -29,7 +29,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.hc.client5.http.classic.HttpClient;
 import org.apache.hc.client5.http.classic.methods.HttpPost;
 import org.apache.hc.client5.http.config.RequestConfig;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
 import org.apache.hc.core5.http.HttpEntity;
+import org.apache.hc.core5.http.HttpResponse;
 import org.apache.hc.core5.http.io.HttpClientResponseHandler;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.apache.hc.core5.http.io.entity.StringEntity;
@@ -125,6 +127,9 @@ public class PhEyeFilter extends NerFilter {
                 return responseEntity != null ? EntityUtils.toString(responseEntity) : null;
 
             } else {
+
+                // Ensure the connection is released even on error.
+                EntityUtils.consume(response.getEntity());
 
                 // The request to philter-ner was not successful.
                 LOGGER.error("PhEyeFilter failed with code {}", response.getCode());
