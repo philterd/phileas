@@ -28,11 +28,13 @@ import ai.philterd.phileas.services.documentprocessors.UnstructuredDocumentProce
 import ai.philterd.phileas.services.filters.postfilters.PostFilter;
 import ai.philterd.phileas.services.split.SplitFactory;
 import ai.philterd.phileas.services.split.SplitService;
+import org.apache.hc.client5.http.classic.HttpClient;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
@@ -48,18 +50,20 @@ public class PlainTextFilterService extends TextFilterService {
 
     public PlainTextFilterService(final PhileasConfiguration phileasConfiguration,
                                   final ContextService contextService,
-                                  final VectorService vectorService) {
+                                  final VectorService vectorService,
+                                  final HttpClient httpClient) {
 
-        this(phileasConfiguration, contextService, vectorService, new SecureRandom());
+        this(phileasConfiguration, contextService, vectorService, new SecureRandom(), httpClient);
 
     }
 
     public PlainTextFilterService(final PhileasConfiguration phileasConfiguration,
                                   final ContextService contextService,
                                   final VectorService vectorService,
-                                  final Random random) {
+                                  final Random random,
+                                  final HttpClient httpClient) {
 
-        super(phileasConfiguration, contextService, random);
+        super(phileasConfiguration, contextService, random, httpClient);
 
         LOGGER.info("Initializing plain text filter service.");
 

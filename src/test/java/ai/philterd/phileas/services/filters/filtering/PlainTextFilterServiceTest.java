@@ -28,7 +28,7 @@ public class PlainTextFilterServiceTest {
         final ContextService contextService = new DefaultContextService();
         final VectorService vectorService = new InMemoryVectorService();
 
-        final PlainTextFilterService service = new PlainTextFilterService(phileasConfiguration, contextService, vectorService);
+        final PlainTextFilterService service = new PlainTextFilterService(phileasConfiguration, contextService, vectorService, null);
 
         final String input = "George Washington whose SSN was 123-45-6789 was the first president of the United States and he lived at 90210.";
 
@@ -51,7 +51,7 @@ public class PlainTextFilterServiceTest {
         final ContextService contextService = new DefaultContextService();
         final VectorService vectorService = new InMemoryVectorService();
 
-        final PlainTextFilterService service = new PlainTextFilterService(phileasConfiguration, contextService, vectorService);
+        final PlainTextFilterService service = new PlainTextFilterService(phileasConfiguration, contextService, vectorService, null);
 
         final String input = "George Washington whose SSN was 123-45-6789";
 

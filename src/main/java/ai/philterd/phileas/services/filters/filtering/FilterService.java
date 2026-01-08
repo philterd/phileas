@@ -29,6 +29,7 @@ import ai.philterd.phileas.services.filters.postfilters.TrailingNewLinePostFilte
 import ai.philterd.phileas.services.filters.postfilters.TrailingPeriodPostFilter;
 import ai.philterd.phileas.services.filters.postfilters.TrailingSpacePostFilter;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.hc.client5.http.classic.HttpClient;
 
 import java.io.IOException;
 import java.util.LinkedList;
@@ -49,10 +50,11 @@ public abstract class FilterService {
 
     protected FilterService(final PhileasConfiguration phileasConfiguration,
                             final ContextService contextService,
-                            final Random random) {
+                            final Random random,
+                            final HttpClient httpClient) {
 
         this.filterCache = new ConcurrentHashMap<>();
-        this.filterPolicyLoader = new FilterPolicyLoader(contextService, phileasConfiguration, random);
+        this.filterPolicyLoader = new FilterPolicyLoader(contextService, phileasConfiguration, random, httpClient);
 
     }
 

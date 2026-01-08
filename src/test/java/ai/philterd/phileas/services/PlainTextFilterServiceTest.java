@@ -113,7 +113,7 @@ public class PlainTextFilterServiceTest {
 
         final Policy policy = getPdfPolicy("pdf");
 
-        final PdfFilterService service = new PdfFilterService(phileasConfiguration, contextService, vectorService);
+        final PdfFilterService service = new PdfFilterService(phileasConfiguration, contextService, vectorService, null);
         final BinaryDocumentFilterResult response = service.filter(policy, "context", document, MimeType.APPLICATION_PDF);
 
         // Write the byte array to a file.
@@ -146,7 +146,7 @@ public class PlainTextFilterServiceTest {
 
         final Policy policy = getPdfPolicy("pdf");
 
-        final PdfFilterService service = new PdfFilterService(phileasConfiguration, contextService, vectorService);
+        final PdfFilterService service = new PdfFilterService(phileasConfiguration, contextService, vectorService, null);
         final BinaryDocumentFilterResult response = service.filter(policy, "context", document, MimeType.APPLICATION_PDF);
 
         // Write the byte array to a file.

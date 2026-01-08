@@ -15,9 +15,9 @@
  */
 package ai.philterd.phileas.services.filters.ai.pheye;
 
-import ai.philterd.phileas.model.filtering.FilterType;
 import ai.philterd.phileas.filters.FilterConfiguration;
 import ai.philterd.phileas.filters.dynamic.NerFilter;
+import ai.philterd.phileas.model.filtering.FilterType;
 import ai.philterd.phileas.model.filtering.Filtered;
 import ai.philterd.phileas.model.filtering.Replacement;
 import ai.philterd.phileas.model.filtering.Span;
@@ -26,11 +26,9 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.hc.client5.http.classic.HttpClient;
 import org.apache.hc.client5.http.classic.methods.HttpPost;
 import org.apache.hc.client5.http.config.RequestConfig;
-import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
-import org.apache.hc.client5.http.impl.classic.HttpClients;
-import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManager;
 import org.apache.hc.core5.http.HttpEntity;
 import org.apache.hc.core5.http.io.HttpClientResponseHandler;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
@@ -58,11 +56,13 @@ public class PhEyeFilter extends NerFilter {
     private final PhEyeConfiguration phEyeConfiguration;
     private final Collection<String> labels;
     private final Gson gson;
+    private final HttpClient httpClient;
 
     public PhEyeFilter(final FilterConfiguration filterConfiguration,
                        final PhEyeConfiguration phEyeConfiguration,
                        final boolean removePunctuation,
-                       final Map<String, Double> thresholds) {
+                       final Map<String, Double> thresholds,
+                       final HttpClient httpClient) {
 
         super(filterConfiguration, thresholds, FilterType.AGE);
 
@@ -70,6 +70,7 @@ public class PhEyeFilter extends NerFilter {
         this.removePunctuation = removePunctuation;
         this.labels = phEyeConfiguration.getLabels();
         this.gson = new Gson();
+        this.httpClient = httpClient;
 
     }
 
@@ -133,69 +134,53 @@ public class PhEyeFilter extends NerFilter {
 
         };
 
-        try(final PoolingHttpClientConnectionManager connectionManager = new PoolingHttpClientConnectionManager()) {
+        final String responseBody = httpClient.execute(httpPost, responseHandler);
 
-            if (phEyeConfiguration.getMaxIdleConnections() > 0) {
-                connectionManager.setMaxTotal(phEyeConfiguration.getMaxIdleConnections());
-                connectionManager.setDefaultMaxPerRoute(phEyeConfiguration.getMaxIdleConnections());
-            }
+        if (responseBody != null) {
 
-            try (final CloseableHttpClient httpClient = HttpClients.custom()
-                    .setConnectionManager(connectionManager)
-                    .build()) {
+            final Type listType = new TypeToken<ArrayList<PhEyeSpan>>() {}.getType();
+            final List<PhEyeSpan> phEyeSpans = new Gson().fromJson(responseBody, listType);
 
-                final String responseBody = httpClient.execute(httpPost, responseHandler);
+            if (CollectionUtils.isNotEmpty(phEyeSpans)) {
 
-                if (responseBody != null) {
+                for (final PhEyeSpan phEyeSpan : phEyeSpans) {
 
-                    final Type listType = new TypeToken<ArrayList<PhEyeSpan>>() {
-                    }.getType();
-                    final List<PhEyeSpan> phEyeSpans = new Gson().fromJson(responseBody, listType);
+                    // Only interested in spans matching the tag we are looking for, e.g. PER, LOC.
+                    if (labels.contains(phEyeSpan.getLabel())) {
 
-                    if (CollectionUtils.isNotEmpty(phEyeSpans)) {
+                        // Check the confidence threshold.
+                        if (!thresholds.containsKey(phEyeSpan.getLabel().toUpperCase()) || phEyeSpan.getScore() >= thresholds.get(phEyeSpan.getLabel().toUpperCase())) {
 
-                        for (final PhEyeSpan phEyeSpan : phEyeSpans) {
+                            // Get the window of text surrounding the token.
+                            final String[] window = getWindow(formattedInput, phEyeSpan.getStart(), phEyeSpan.getEnd());
 
-                            // Only interested in spans matching the tag we are looking for, e.g. PER, LOC.
-                            if (labels.contains(phEyeSpan.getLabel())) {
+                            // Currently only PERSON type is supported.
+                            final FilterType filterType = FilterType.PERSON;
 
-                                // Check the confidence threshold.
-                                if (!thresholds.containsKey(phEyeSpan.getLabel().toUpperCase()) || phEyeSpan.getScore() >= thresholds.get(phEyeSpan.getLabel().toUpperCase())) {
+                            final Span span = createSpan(policy, context, filterType, phEyeSpan.getText(),
+                                    window, phEyeSpan.getLabel(), phEyeSpan.getStart(), phEyeSpan.getEnd(),
+                                    phEyeSpan.getScore());
 
-                                    // Get the window of text surrounding the token.
-                                    final String[] window = getWindow(formattedInput, phEyeSpan.getStart(), phEyeSpan.getEnd());
-
-                                    // Currently only PERSON type is supported.
-                                    final FilterType filterType = FilterType.PERSON;
-
-                                    final Span span = createSpan(policy, context, filterType, phEyeSpan.getText(),
-                                            window, phEyeSpan.getLabel(), phEyeSpan.getStart(), phEyeSpan.getEnd(),
-                                            phEyeSpan.getScore());
-
-                                    // Span will be null if no span was created due to it being excluded.
-                                    if (span != null) {
-                                        spans.add(span);
-                                    }
-
-                                }
-
+                            // Span will be null if no span was created due to it being excluded.
+                            if (span != null) {
+                                spans.add(span);
                             }
 
                         }
 
                     }
 
-                    LOGGER.debug("Returning {} NER spans from ph-eye.", spans.size());
-                    return new Filtered(context, piece, spans);
-
-                } else {
-
-                    // We received null back which is not expected.
-                    throw new IOException("Unable to process document. Received error response from philter-ner.");
-
                 }
 
             }
+
+            LOGGER.debug("Returning {} NER spans from ph-eye.", spans.size());
+            return new Filtered(context, piece, spans);
+
+        } else {
+
+            // We received null back which is not expected.
+            throw new IOException("Unable to process document. Received error response from philter-ner.");
 
         }
 

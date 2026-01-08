@@ -16,11 +16,11 @@
 package ai.philterd.phileas.services.filters.filtering;
 
 import ai.philterd.phileas.PhileasConfiguration;
-import ai.philterd.phileas.model.filtering.MimeType;
 import ai.philterd.phileas.model.filtering.Span;
 import ai.philterd.phileas.model.filtering.TextFilterResult;
 import ai.philterd.phileas.policy.Policy;
 import ai.philterd.phileas.services.context.ContextService;
+import org.apache.hc.client5.http.classic.HttpClient;
 
 import java.util.List;
 import java.util.Random;
@@ -47,9 +47,10 @@ public abstract class TextFilterService extends FilterService {
 
     protected TextFilterService(final PhileasConfiguration phileasConfiguration,
                                 final ContextService contextService,
-                                final Random random) {
+                                final Random random,
+                                final HttpClient httpClient) {
 
-        super(phileasConfiguration, contextService, random);
+        super(phileasConfiguration, contextService, random, httpClient);
 
     }
 
