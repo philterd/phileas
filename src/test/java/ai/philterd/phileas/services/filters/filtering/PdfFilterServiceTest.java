@@ -39,7 +39,7 @@ public class PdfFilterServiceTest {
         final ContextService contextService = new DefaultContextService();
         final VectorService vectorService = new InMemoryVectorService();
 
-        final PdfFilterService pdfFilterService = new PdfFilterService(phileasConfiguration, contextService, vectorService);
+        final PdfFilterService pdfFilterService = new PdfFilterService(phileasConfiguration, contextService, vectorService, null);
 
         final Policy policy = getPolicy("test");
 
@@ -67,7 +67,7 @@ public class PdfFilterServiceTest {
         final ContextService contextService = new DefaultContextService();
         final VectorService vectorService = new InMemoryVectorService();
 
-        final PdfFilterService pdfFilterService = new PdfFilterService(phileasConfiguration, contextService, vectorService);
+        final PdfFilterService pdfFilterService = new PdfFilterService(phileasConfiguration, contextService, vectorService, null);
 
         final Policy policy = new Policy();
 

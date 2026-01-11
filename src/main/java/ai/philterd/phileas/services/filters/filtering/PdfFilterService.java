@@ -32,11 +32,12 @@ import ai.philterd.phileas.services.documentprocessors.DocumentProcessor;
 import ai.philterd.phileas.services.documentprocessors.UnstructuredDocumentProcessor;
 import ai.philterd.phileas.services.filters.postfilters.PostFilter;
 import ai.philterd.phileas.services.pdf.PdfLine;
-import ai.philterd.phileas.services.pdf.PdfRedactor;
 import ai.philterd.phileas.services.pdf.PdfRedactionOptions;
+import ai.philterd.phileas.services.pdf.PdfRedactor;
 import ai.philterd.phileas.services.pdf.PdfTextExtractor;
 import ai.philterd.phileas.services.tokens.TokenCounter;
 import ai.philterd.phileas.services.tokens.WhitespaceTokenCounter;
+import org.apache.hc.client5.http.classic.HttpClient;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -59,17 +60,19 @@ public class PdfFilterService extends BinaryFilterService {
 
     public PdfFilterService(final PhileasConfiguration phileasConfiguration,
                             final ContextService contextService,
-                            final VectorService vectorService) {
+                            final VectorService vectorService,
+                            final HttpClient httpClient) {
 
-        this(phileasConfiguration, contextService, vectorService, new SecureRandom());
+        this(phileasConfiguration, contextService, vectorService, new SecureRandom(), httpClient);
 
     }
     public PdfFilterService(final PhileasConfiguration phileasConfiguration,
                             final ContextService contextService,
                             final VectorService vectorService,
-                            final Random random) {
+                            final Random random,
+                            final HttpClient httpClient) {
 
-        super(phileasConfiguration, contextService, random);
+        super(phileasConfiguration, contextService, random, httpClient);
 
         LOGGER.info("Initializing PDF filter service.");
 

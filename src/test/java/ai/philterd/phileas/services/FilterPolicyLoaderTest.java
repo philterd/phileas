@@ -28,6 +28,7 @@ import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.security.SecureRandom;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -46,7 +47,7 @@ public class FilterPolicyLoaderTest {
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(new Properties());
         final Map<String, String> context = Collections.emptyMap();
 
-        final FilterPolicyLoader filterPolicyLoader = new FilterPolicyLoader(contextService, phileasConfiguration);
+        final FilterPolicyLoader filterPolicyLoader = new FilterPolicyLoader(contextService, phileasConfiguration, new SecureRandom(), null);
 
         final Identifiers identifiers = new Identifiers();
         identifiers.setZipCode(new ZipCode());
@@ -73,7 +74,7 @@ public class FilterPolicyLoaderTest {
         properties.put("span.window.size", "3");
 
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties);
-        final FilterPolicyLoader filterPolicyLoader = new FilterPolicyLoader(contextService, phileasConfiguration);
+        final FilterPolicyLoader filterPolicyLoader = new FilterPolicyLoader(contextService, phileasConfiguration, new SecureRandom(), null);
         final Map<String, String> context = Collections.emptyMap();
 
         final Identifiers identifiers = new Identifiers();
@@ -100,7 +101,7 @@ public class FilterPolicyLoaderTest {
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(new Properties());
         final Map<String, String> context = Collections.emptyMap();
 
-        final FilterPolicyLoader filterPolicyLoader = new FilterPolicyLoader(contextService, phileasConfiguration);
+        final FilterPolicyLoader filterPolicyLoader = new FilterPolicyLoader(contextService, phileasConfiguration, new SecureRandom(), null);
 
         final Identifiers identifiers = new Identifiers();
         identifiers.setZipCode(new ZipCode());
@@ -126,7 +127,7 @@ public class FilterPolicyLoaderTest {
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(new Properties());
         final Map<String, String> context = Collections.emptyMap();
 
-        final FilterPolicyLoader filterPolicyLoader = new FilterPolicyLoader(contextService, phileasConfiguration);
+        final FilterPolicyLoader filterPolicyLoader = new FilterPolicyLoader(contextService, phileasConfiguration, new SecureRandom(), null);
 
         final Policy policy = new Policy();
         policy.setName("unnamed");

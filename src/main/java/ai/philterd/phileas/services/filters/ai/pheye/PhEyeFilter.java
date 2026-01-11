@@ -15,9 +15,9 @@
  */
 package ai.philterd.phileas.services.filters.ai.pheye;
 
-import ai.philterd.phileas.model.filtering.FilterType;
 import ai.philterd.phileas.filters.FilterConfiguration;
 import ai.philterd.phileas.filters.dynamic.NerFilter;
+import ai.philterd.phileas.model.filtering.FilterType;
 import ai.philterd.phileas.model.filtering.Filtered;
 import ai.philterd.phileas.model.filtering.Replacement;
 import ai.philterd.phileas.model.filtering.Span;
@@ -26,12 +26,9 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.hc.client5.http.classic.HttpClient;
 import org.apache.hc.client5.http.classic.methods.HttpPost;
 import org.apache.hc.client5.http.config.RequestConfig;
-import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
-import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
-import org.apache.hc.client5.http.impl.classic.HttpClients;
-import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManager;
 import org.apache.hc.core5.http.HttpEntity;
 import org.apache.hc.core5.http.io.HttpClientResponseHandler;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
@@ -59,12 +56,13 @@ public class PhEyeFilter extends NerFilter {
     private final PhEyeConfiguration phEyeConfiguration;
     private final Collection<String> labels;
     private final Gson gson;
-    final PoolingHttpClientConnectionManager connectionManager;
+    private final HttpClient httpClient;
 
     public PhEyeFilter(final FilterConfiguration filterConfiguration,
                        final PhEyeConfiguration phEyeConfiguration,
                        final boolean removePunctuation,
-                       final Map<String, Double> thresholds) {
+                       final Map<String, Double> thresholds,
+                       final HttpClient httpClient) {
 
         super(filterConfiguration, thresholds, FilterType.AGE);
 
@@ -72,13 +70,7 @@ public class PhEyeFilter extends NerFilter {
         this.removePunctuation = removePunctuation;
         this.labels = phEyeConfiguration.getLabels();
         this.gson = new Gson();
-
-        this.connectionManager = new PoolingHttpClientConnectionManager();
-
-        if(phEyeConfiguration.getMaxIdleConnections() > 0) {
-            connectionManager.setMaxTotal(phEyeConfiguration.getMaxIdleConnections());
-            connectionManager.setDefaultMaxPerRoute(phEyeConfiguration.getMaxIdleConnections());
-        }
+        this.httpClient = httpClient;
 
     }
 
@@ -125,10 +117,6 @@ public class PhEyeFilter extends NerFilter {
             httpPost.setHeader("Authorization", "Bearer " + phEyeConfiguration.getBearerToken());
         }
 
-        final HttpClientBuilder httpClientBuilder = HttpClients.custom().setConnectionManager(connectionManager);
-
-        final CloseableHttpClient httpClient = httpClientBuilder.build();
-
         final HttpClientResponseHandler<String> responseHandler = response -> {
 
             if (response.getCode() == 200) {
@@ -137,6 +125,9 @@ public class PhEyeFilter extends NerFilter {
                 return responseEntity != null ? EntityUtils.toString(responseEntity) : null;
 
             } else {
+
+                // Ensure the connection is released even on error.
+                EntityUtils.consume(response.getEntity());
 
                 // The request to philter-ner was not successful.
                 LOGGER.error("PhEyeFilter failed with code {}", response.getCode());

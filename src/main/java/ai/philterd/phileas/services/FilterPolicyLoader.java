@@ -22,8 +22,6 @@ import ai.philterd.phileas.filters.rules.dictionary.BloomFilterDictionaryFilter;
 import ai.philterd.phileas.filters.rules.dictionary.FuzzyDictionaryFilter;
 import ai.philterd.phileas.model.filtering.FilterType;
 import ai.philterd.phileas.model.filtering.SensitivityLevel;
-import ai.philterd.phileas.services.context.ContextService;
-import ai.philterd.phileas.services.validators.SpanValidator;
 import ai.philterd.phileas.policy.Policy;
 import ai.philterd.phileas.policy.filters.CustomDictionary;
 import ai.philterd.phileas.policy.filters.Identifier;
@@ -50,6 +48,7 @@ import ai.philterd.phileas.services.anonymization.StreetAddressAnonymizationServ
 import ai.philterd.phileas.services.anonymization.SurnameAnonymizationService;
 import ai.philterd.phileas.services.anonymization.UrlAnonymizationService;
 import ai.philterd.phileas.services.anonymization.ZipCodeAnonymizationService;
+import ai.philterd.phileas.services.context.ContextService;
 import ai.philterd.phileas.services.filters.ai.pheye.PhEyeConfiguration;
 import ai.philterd.phileas.services.filters.ai.pheye.PhEyeFilter;
 import ai.philterd.phileas.services.filters.custom.PhoneNumberRulesFilter;
@@ -77,14 +76,15 @@ import ai.philterd.phileas.services.filters.regex.UrlFilter;
 import ai.philterd.phileas.services.filters.regex.VinFilter;
 import ai.philterd.phileas.services.filters.regex.ZipCodeFilter;
 import ai.philterd.phileas.services.validators.DateSpanValidator;
+import ai.philterd.phileas.services.validators.SpanValidator;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.FileUtils;
+import org.apache.hc.client5.http.classic.HttpClient;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 import java.nio.charset.Charset;
-import java.security.SecureRandom;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -100,23 +100,17 @@ public class FilterPolicyLoader {
     private final ContextService contextService;
     private final PhileasConfiguration phileasConfiguration;
     private final Random random;
-
-    public FilterPolicyLoader(final ContextService contextService,
-                              final PhileasConfiguration phileasConfiguration) {
-
-        this.contextService = contextService;
-        this.phileasConfiguration = phileasConfiguration;
-        this.random = new SecureRandom();
-
-    }
+    private final HttpClient httpClient;
 
     public FilterPolicyLoader(final ContextService contextService,
                               final PhileasConfiguration phileasConfiguration,
-                              final Random random) {
+                              final Random random,
+                              final HttpClient httpClient) {
 
         this.contextService = contextService;
         this.phileasConfiguration = phileasConfiguration;
         this.random = random;
+        this.httpClient = httpClient;
 
     }
 
@@ -1230,7 +1224,8 @@ public class FilterPolicyLoader {
                         filterConfiguration,
                         phEyeConfiguration,
                         policy.getIdentifiers().getPhEye().isRemovePunctuation(),
-                        policy.getIdentifiers().getPhEye().getThresholds()
+                        policy.getIdentifiers().getPhEye().getThresholds(),
+                        httpClient
                 );
 
                 enabledFilters.add(filter);

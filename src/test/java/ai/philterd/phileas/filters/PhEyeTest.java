@@ -42,7 +42,7 @@ public class PhEyeTest extends AbstractFilterTest {
                 .withWindowSize(windowSize)
                 .build();
 
-        final PhEyeFilter filter = new PhEyeFilter(filterConfiguration, phEyeConfiguration, removePunctuation, thresholds);
+        final PhEyeFilter filter = new PhEyeFilter(filterConfiguration, phEyeConfiguration, removePunctuation, thresholds, null);
 
         final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "George Washington was the first president.");
 
@@ -63,7 +63,7 @@ public class PhEyeTest extends AbstractFilterTest {
                 .withWindowSize(windowSize)
                 .build();
 
-        final PhEyeFilter filter = new PhEyeFilter(filterConfiguration, phEyeConfiguration, removePunctuation, thresholds);
+        final PhEyeFilter filter = new PhEyeFilter(filterConfiguration, phEyeConfiguration, removePunctuation, thresholds, null);
 
         final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "No name here was the first president.");
 
@@ -83,7 +83,7 @@ public class PhEyeTest extends AbstractFilterTest {
                 .withWindowSize(windowSize)
                 .build();
 
-        final PhEyeFilter filter = new PhEyeFilter(filterConfiguration, phEyeConfiguration, removePunctuation, thresholds);
+        final PhEyeFilter filter = new PhEyeFilter(filterConfiguration, phEyeConfiguration, removePunctuation, thresholds, null);
 
         // This is to test the http connection pooling for connections to ph-eye.
         for(int x = 0; x < 10; x++) {

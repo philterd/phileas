@@ -21,6 +21,7 @@ import ai.philterd.phileas.model.filtering.MimeType;
 import ai.philterd.phileas.model.filtering.Span;
 import ai.philterd.phileas.policy.Policy;
 import ai.philterd.phileas.services.context.ContextService;
+import org.apache.hc.client5.http.classic.HttpClient;
 
 import java.util.List;
 import java.util.Random;
@@ -53,9 +54,9 @@ public abstract class BinaryFilterService extends FilterService {
     public abstract byte[] apply(final Policy policy, final byte[] input, final List<Span> spans, final MimeType outputMimeType) throws Exception;
 
     protected BinaryFilterService(final PhileasConfiguration phileasConfiguration,
-                         final ContextService contextService, final Random random) {
+                                  final ContextService contextService, final Random random, final HttpClient httpClient) {
 
-        super(phileasConfiguration, contextService, random);
+        super(phileasConfiguration, contextService, random, httpClient);
 
     }
 
