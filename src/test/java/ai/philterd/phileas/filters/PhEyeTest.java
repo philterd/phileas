@@ -15,8 +15,10 @@
  */
 package ai.philterd.phileas.filters;
 
+import ai.philterd.phileas.model.filtering.FilterType;
 import ai.philterd.phileas.model.filtering.Filtered;
-import ai.philterd.phileas.services.anonymization.AgeAnonymizationService;
+import ai.philterd.phileas.services.anonymization.PersonsAnonymizationService;
+import ai.philterd.phileas.services.anonymization.PersonsAnonymizationService;
 import ai.philterd.phileas.services.context.DefaultContextService;
 import ai.philterd.phileas.services.filters.ai.pheye.PhEyeConfiguration;
 import ai.philterd.phileas.services.filters.ai.pheye.PhEyeFilter;
@@ -38,11 +40,11 @@ public class PhEyeTest extends AbstractFilterTest {
         final Map<String, Double> thresholds = new HashMap<>();
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
-                .withAnonymizationService(new AgeAnonymizationService(new DefaultContextService()))
+                .withAnonymizationService(new PersonsAnonymizationService(new DefaultContextService()))
                 .withWindowSize(windowSize)
                 .build();
 
-        final PhEyeFilter filter = new PhEyeFilter(filterConfiguration, phEyeConfiguration, removePunctuation, thresholds, null);
+        final PhEyeFilter filter = new PhEyeFilter(filterConfiguration, phEyeConfiguration, removePunctuation, thresholds, FilterType.PERSON,null);
 
         final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "George Washington was the first president.");
 
@@ -59,11 +61,11 @@ public class PhEyeTest extends AbstractFilterTest {
         final Map<String, Double> thresholds = new HashMap<>();
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
-                .withAnonymizationService(new AgeAnonymizationService(new DefaultContextService()))
+                .withAnonymizationService(new PersonsAnonymizationService(new DefaultContextService()))
                 .withWindowSize(windowSize)
                 .build();
 
-        final PhEyeFilter filter = new PhEyeFilter(filterConfiguration, phEyeConfiguration, removePunctuation, thresholds, null);
+        final PhEyeFilter filter = new PhEyeFilter(filterConfiguration, phEyeConfiguration, removePunctuation, thresholds, FilterType.PERSON,null);
 
         final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "No name here was the first president.");
 
@@ -79,11 +81,11 @@ public class PhEyeTest extends AbstractFilterTest {
         final Map<String, Double> thresholds = new HashMap<>();
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
-                .withAnonymizationService(new AgeAnonymizationService(new DefaultContextService()))
+                .withAnonymizationService(new PersonsAnonymizationService(new DefaultContextService()))
                 .withWindowSize(windowSize)
                 .build();
 
-        final PhEyeFilter filter = new PhEyeFilter(filterConfiguration, phEyeConfiguration, removePunctuation, thresholds, null);
+        final PhEyeFilter filter = new PhEyeFilter(filterConfiguration, phEyeConfiguration, removePunctuation, thresholds, FilterType.PERSON,null);
 
         // This is to test the http connection pooling for connections to ph-eye.
         for(int x = 0; x < 10; x++) {

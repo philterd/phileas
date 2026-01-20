@@ -86,26 +86,26 @@ public class PlainTextFilterService extends TextFilterService {
         // Is the appliesToFilter = "*" or is at least one of the filters in the policy in the appliesToFilter list?
         if (policy.getConfig().getSplitting().isEnabled() && input.length() >= policy.getConfig().getSplitting().getThreshold()) {
 
-                // Get the splitter to use from the policy.
-                final SplitService splitService = SplitFactory.getSplitService(
-                        policy.getConfig().getSplitting().getMethod(),
-                        policy.getConfig().getSplitting().getThreshold()
-                );
+            // Get the splitter to use from the policy.
+            final SplitService splitService = SplitFactory.getSplitService(
+                    policy.getConfig().getSplitting().getMethod(),
+                    policy.getConfig().getSplitting().getThreshold()
+            );
 
-                // Holds all filter responses that will ultimately be combined into a single response.
-                final List<TextFilterResult> filterResponse = new LinkedList<>();
+            // Holds all filter responses that will ultimately be combined into a single response.
+            final List<TextFilterResult> filterResponse = new LinkedList<>();
 
-                // Split the string.
-                final List<String> splits = splitService.split(input);
+            // Split the string.
+            final List<String> splits = splitService.split(input);
 
-                // Process each split.
-                for (int i = 0; i < splits.size(); i++) {
-                    final TextFilterResult fr = unstructuredDocumentProcessor.process(policy, filters, postFilters, context, i, splits.get(i));
-                    filterResponse.add(fr);
-                }
+            // Process each split.
+            for (int i = 0; i < splits.size(); i++) {
+                final TextFilterResult fr = unstructuredDocumentProcessor.process(policy, filters, postFilters, context, i, splits.get(i));
+                filterResponse.add(fr);
+            }
 
-                // Combine the results into a single filterResponse object.
-                textFilterResult = TextFilterResult.combine(filterResponse, context, splitService.getSeparator());
+            // Combine the results into a single filterResponse object.
+            textFilterResult = TextFilterResult.combine(filterResponse, context, splitService.getSeparator());
 
         } else {
 

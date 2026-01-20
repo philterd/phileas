@@ -1219,12 +1219,14 @@ public class FilterPolicyLoader {
                 phEyeConfiguration.setTimeout(policy.getIdentifiers().getPhEye().getPhEyeConfiguration().getTimeout());
                 phEyeConfiguration.setMaxIdleConnections(policy.getIdentifiers().getPhEye().getPhEyeConfiguration().getMaxIdleConnections());
                 phEyeConfiguration.setBearerToken(policy.getIdentifiers().getPhEye().getPhEyeConfiguration().getBearerToken());
+                phEyeConfiguration.setLabels(policy.getIdentifiers().getPhEye().getPhEyeConfiguration().getLabels());
 
                 final Filter filter = new PhEyeFilter(
                         filterConfiguration,
                         phEyeConfiguration,
                         policy.getIdentifiers().getPhEye().isRemovePunctuation(),
                         policy.getIdentifiers().getPhEye().getThresholds(),
+                        FilterType.PERSON,
                         httpClient
                 );
 
@@ -1259,12 +1261,14 @@ public class FilterPolicyLoader {
                 phEyeConfiguration.setTimeout(policy.getIdentifiers().getMedicalCondition().getPhEyeConfiguration().getTimeout());
                 phEyeConfiguration.setMaxIdleConnections(policy.getIdentifiers().getMedicalCondition().getPhEyeConfiguration().getMaxIdleConnections());
                 phEyeConfiguration.setBearerToken(policy.getIdentifiers().getMedicalCondition().getPhEyeConfiguration().getBearerToken());
+                phEyeConfiguration.setLabels(policy.getIdentifiers().getMedicalCondition().getPhEyeConfiguration().getLabels());
 
                 final Filter filter = new PhEyeFilter(
                         filterConfiguration,
                         phEyeConfiguration,
                         policy.getIdentifiers().getMedicalCondition().isRemovePunctuation(),
                         policy.getIdentifiers().getMedicalCondition().getThresholds(),
+                        FilterType.MEDICAL_CONDITION,
                         httpClient
                 );
 
