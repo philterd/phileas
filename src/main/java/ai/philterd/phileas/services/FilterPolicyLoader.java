@@ -1263,8 +1263,8 @@ public class FilterPolicyLoader {
                 final Filter filter = new PhEyeFilter(
                         filterConfiguration,
                         phEyeConfiguration,
-                        policy.getIdentifiers().getPhEye().isRemovePunctuation(),
-                        policy.getIdentifiers().getPhEye().getThresholds(),
+                        policy.getIdentifiers().getMedicalCondition().isRemovePunctuation(),
+                        policy.getIdentifiers().getMedicalCondition().getThresholds(),
                         httpClient
                 );
 

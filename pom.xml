@@ -54,7 +54,7 @@
         <junit.version>5.11.3</junit.version>
         <junit.pioneer.version>2.3.0</junit.pioneer.version>
         <libphonenumber.version>9.0.21</libphonenumber.version>
-        <log4j.version>2.23.1</log4j.version>
+        <log4j.version>2.25.3</log4j.version>
         <maven.compiler.version>3.14.1</maven.compiler.version>
         <maven.failsafe.version>3.5.4</maven.failsafe.version>
         <maven.surefire.version>3.5.4</maven.surefire.version>
@@ -287,6 +287,17 @@
             </build>
         </profile>
     </profiles>
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-bom</artifactId>
+                <version>${log4j.version}</version>
+                <scope>import</scope>
+                <type>pom</type>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
     <dependencies>
         <dependency>
             <groupId>com.googlecode.libphonenumber</groupId>
@@ -365,8 +376,11 @@
         </dependency>
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-core</artifactId>
-            <version>${log4j.version}</version>
         </dependency>
         <dependency>
             <groupId>com.github.mifmif</groupId>
