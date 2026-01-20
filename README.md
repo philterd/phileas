@@ -37,6 +37,10 @@ This list might be outdated. Please check the individual filter classes for deta
 * First Names
 * Surnames
 
+### Medical
+
+* Medical Conditions
+
 ### Common
 
 * Ages
