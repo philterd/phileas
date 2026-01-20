@@ -34,6 +34,7 @@ import ai.philterd.phileas.policy.filters.IbanCode;
 import ai.philterd.phileas.policy.filters.Identifier;
 import ai.philterd.phileas.policy.filters.IpAddress;
 import ai.philterd.phileas.policy.filters.MacAddress;
+import ai.philterd.phileas.policy.filters.MedicalCondition;
 import ai.philterd.phileas.policy.filters.PassportNumber;
 import ai.philterd.phileas.policy.filters.PhEye;
 import ai.philterd.phileas.policy.filters.PhoneNumber;
@@ -161,6 +162,10 @@ public class Identifiers {
     @Expose
     private ZipCode zipCode;
 
+    @SerializedName("medicalCondition")
+    @Expose
+    private MedicalCondition medicalCondition;
+
     @SerializedName("city")
     @Expose
     private City city;
@@ -239,6 +244,8 @@ public class Identifiers {
                 if(this.getIpAddress() != null) { return true; } break;
             case MAC_ADDRESS:
                 if(this.getMacAddress() != null) { return true; } break;
+            case MEDICAL_CONDITION:
+                if(this.getMedicalCondition() != null) {return true; } break;
             case PERSON:
                 if(this.getPhEye() != null) { return true; } break;
             case PASSPORT_NUMBER:
@@ -725,5 +732,13 @@ public class Identifiers {
     public void setCurrency(Currency currency) {
         this.currency = currency;
     }
-    
+
+    public MedicalCondition getMedicalCondition() {
+        return medicalCondition;
+    }
+
+    public void setMedicalCondition(MedicalCondition medicalCondition) {
+        this.medicalCondition = medicalCondition;
+    }
+
 }

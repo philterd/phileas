@@ -157,8 +157,15 @@ public class PhEyeFilter extends NerFilter {
                             // Get the window of text surrounding the token.
                             final String[] window = getWindow(formattedInput, phEyeSpan.getStart(), phEyeSpan.getEnd());
 
-                            // Currently only PERSON type is supported.
-                            final FilterType filterType = FilterType.PERSON;
+                            // Set the filter type based on the entity's type that's returned from pheye.
+                            final FilterType filterType;
+                            if(phEyeSpan.getLabel().equalsIgnoreCase("PERSON")) {
+                                filterType = FilterType.PERSON;
+                            } else if(phEyeSpan.getLabel().equalsIgnoreCase("DISEASE_DISORDER")) {
+                                filterType = FilterType.MEDICAL_CONDITION;
+                            } else {
+                                filterType = FilterType.OTHER;
+                            }
 
                             final Span span = createSpan(policy, context, filterType, phEyeSpan.getText(),
                                     window, phEyeSpan.getLabel(), phEyeSpan.getStart(), phEyeSpan.getEnd(),

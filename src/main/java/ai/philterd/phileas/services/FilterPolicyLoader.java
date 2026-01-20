@@ -1235,6 +1235,46 @@ public class FilterPolicyLoader {
 
         }
 
+        if(policy.getIdentifiers().hasFilter(FilterType.MEDICAL_CONDITION) && policy.getIdentifiers().getPhEye().isEnabled()) {
+
+            if(cache.containsKey(FilterType.MEDICAL_CONDITION)) {
+                enabledFilters.add(cache.get(FilterType.MEDICAL_CONDITION));
+            } else {
+
+                final int windowSize = policy.getIdentifiers().getPhEye().getWindowSizeOrDefault(phileasConfiguration.spanWindowSize());
+
+                final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                        .withStrategies(policy.getIdentifiers().getPhEye().getPhEyeFilterStrategies())
+                        .withAnonymizationService(new AlphanumericAnonymizationService(contextService, random))
+                        .withIgnored(policy.getIdentifiers().getPhEye().getIgnored())
+                        .withIgnoredFiles(policy.getIdentifiers().getPhEye().getIgnoredFiles())
+                        .withIgnoredPatterns(policy.getIdentifiers().getPhEye().getIgnoredPatterns())
+                        .withCrypto(policy.getCrypto())
+                        .withFPE(policy.getFpe())
+                        .withWindowSize(windowSize)
+                        .withPriority(policy.getIdentifiers().getPhEye().getPriority())
+                        .build();
+
+                final PhEyeConfiguration phEyeConfiguration = new PhEyeConfiguration(policy.getIdentifiers().getPhEye().getPhEyeConfiguration().getEndpoint());
+                phEyeConfiguration.setTimeout(policy.getIdentifiers().getPhEye().getPhEyeConfiguration().getTimeout());
+                phEyeConfiguration.setMaxIdleConnections(policy.getIdentifiers().getPhEye().getPhEyeConfiguration().getMaxIdleConnections());
+                phEyeConfiguration.setBearerToken(policy.getIdentifiers().getPhEye().getPhEyeConfiguration().getBearerToken());
+
+                final Filter filter = new PhEyeFilter(
+                        filterConfiguration,
+                        phEyeConfiguration,
+                        policy.getIdentifiers().getPhEye().isRemovePunctuation(),
+                        policy.getIdentifiers().getPhEye().getThresholds(),
+                        httpClient
+                );
+
+                enabledFilters.add(filter);
+                filterCache.get(policy.getName()).put(FilterType.MEDICAL_CONDITION, filter);
+
+            }
+
+        }
+
         return enabledFilters;
 
     }

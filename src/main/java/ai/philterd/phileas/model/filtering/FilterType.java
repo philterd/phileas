@@ -52,7 +52,11 @@ public enum FilterType {
     URL("url", true),
     VIN("vin", true),
     ZIP_CODE("zip-code", true),
-    CUSTOM_DICTIONARY("custom-dictionary", false);
+    CUSTOM_DICTIONARY("custom-dictionary", false),
+
+    // These are not natively identified by Phileas.
+    MEDICAL_CONDITION("medical-condition", false),
+    OTHER("other", false);
 
     private final String type;
     private final boolean deterministic;
