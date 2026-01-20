@@ -64,7 +64,7 @@ public class PhEyeFilter extends NerFilter {
                        final Map<String, Double> thresholds,
                        final HttpClient httpClient) {
 
-        super(filterConfiguration, thresholds, FilterType.AGE);
+        super(filterConfiguration, thresholds, FilterType.PERSON);
 
         this.phEyeConfiguration = phEyeConfiguration;
         this.removePunctuation = removePunctuation;
