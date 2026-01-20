@@ -15,24 +15,51 @@
  */
 package ai.philterd.phileas.policy.filters;
 
-import ai.philterd.phileas.services.strategies.rules.VinFilterStrategy;
+import ai.philterd.phileas.policy.filters.pheye.AbstractPhEye;
+import ai.philterd.phileas.services.strategies.rules.MedicalConditionFilterStrategy;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
-public class MedicalCondition extends AbstractFilter {
+public class MedicalCondition extends AbstractPhEye {
 
     @SerializedName("medicalConditionFilterStrategies")
     @Expose
-    private List<VinFilterStrategy> medicalConditionFilterStrategies;
+    private List<MedicalConditionFilterStrategy> medicalConditionFilterStrategies;
 
-    public List<VinFilterStrategy> getMedicalConditionFilterStrategies() {
+    @SerializedName("removePunctuation")
+    @Expose
+    private boolean removePunctuation = false;
+
+    @SerializedName("thresholds")
+    @Expose
+    private Map<String, Double> thresholds = new LinkedHashMap<>();
+
+    public List<MedicalConditionFilterStrategy> getMedicalConditionFilterStrategies() {
         return medicalConditionFilterStrategies;
     }
 
-    public void setMedicalConditionFilterStrategies(List<VinFilterStrategy> medicalConditionFilterStrategies) {
+    public void setMedicalConditionFilterStrategies(List<MedicalConditionFilterStrategy> medicalConditionFilterStrategies) {
         this.medicalConditionFilterStrategies = medicalConditionFilterStrategies;
+    }
+
+    public boolean isRemovePunctuation() {
+        return removePunctuation;
+    }
+
+    public void setRemovePunctuation(boolean removePunctuation) {
+        this.removePunctuation = removePunctuation;
+    }
+
+    public Map<String, Double> getThresholds() {
+        return thresholds;
+    }
+
+    public void setThresholds(Map<String, Double> thresholds) {
+        this.thresholds = thresholds;
     }
 
 }

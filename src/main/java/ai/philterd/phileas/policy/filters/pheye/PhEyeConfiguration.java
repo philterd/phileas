@@ -4,7 +4,6 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.Optional;
 
 public class PhEyeConfiguration {
@@ -27,7 +26,7 @@ public class PhEyeConfiguration {
 
     @SerializedName("labels")
     @Expose
-    protected Collection<String> labels = List.of("Person");
+    protected Collection<String> labels;
 
     public String getEndpoint() {
         return endpoint;

@@ -62,9 +62,10 @@ public class PhEyeFilter extends NerFilter {
                        final PhEyeConfiguration phEyeConfiguration,
                        final boolean removePunctuation,
                        final Map<String, Double> thresholds,
+                       final FilterType filterType,
                        final HttpClient httpClient) {
 
-        super(filterConfiguration, thresholds, FilterType.PERSON);
+        super(filterConfiguration, thresholds, filterType);
 
         this.phEyeConfiguration = phEyeConfiguration;
         this.removePunctuation = removePunctuation;
@@ -148,8 +149,8 @@ public class PhEyeFilter extends NerFilter {
 
                 for (final PhEyeSpan phEyeSpan : phEyeSpans) {
 
-                    // Only interested in spans matching the tag we are looking for, e.g. PER, LOC.
-                    if (labels.contains(phEyeSpan.getLabel())) {
+                    // Only interested in spans matching the tag we are looking for, e.g. PER, LOC, or if there are no labels specified.
+                    if (labels.isEmpty() || labels.contains(phEyeSpan.getLabel())) {
 
                         // Check the confidence threshold.
                         if (!thresholds.containsKey(phEyeSpan.getLabel().toUpperCase()) || phEyeSpan.getScore() >= thresholds.get(phEyeSpan.getLabel().toUpperCase())) {
