@@ -129,6 +129,9 @@ public class PlainTextFilterService extends TextFilterService {
         // Page numbers don't matter for plain text, so just loop over all spans.
         // The page number for each will be 0.
 
+        // Sort the spans by start character.
+        spans.sort((s1, s2) -> Integer.compare(s2.getCharacterStart(), s1.getCharacterStart()));
+
         for(final Span span : spans) {
 
             // Replace the text with the replacement.
