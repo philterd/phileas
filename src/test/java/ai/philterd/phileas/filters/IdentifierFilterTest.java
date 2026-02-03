@@ -347,4 +347,23 @@ public class IdentifierFilterTest extends AbstractFilterTest {
 
     }
 
+    @Test
+    public void filterId18() throws Exception {
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(new IdentifierFilterStrategy()))
+                .withAnonymizationService(new AlphanumericAnonymizationService(new DefaultContextService()))
+                .withWindowSize(windowSize)
+                .build();
+
+        final IdentifierFilter filter = new IdentifierFilter(filterConfiguration, "name", "\\d{3}-\\d{3}-\\d{3}", false, 0);
+
+        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "his id was 123-456-789");
+
+        showSpans(filtered.getSpans());
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 11,22, FilterType.IDENTIFIER));
+
+    }
+
 }
