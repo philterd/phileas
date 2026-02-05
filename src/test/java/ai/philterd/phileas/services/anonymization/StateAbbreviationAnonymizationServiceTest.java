@@ -35,6 +35,7 @@ public class StateAbbreviationAnonymizationServiceTest {
 
         Assertions.assertNotNull(replacement);
         Assertions.assertNotEquals(token, replacement);
+        Assertions.assertFalse(replacement.isEmpty());
 
     }
 

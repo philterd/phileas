@@ -45,10 +45,20 @@ public class NumericAnonymizationService extends AbstractAnonymizationService {
     public String anonymize(final String token) {
 
         if(CollectionUtils.isNotEmpty(candidates)) {
-            return candidates.get(random.nextInt(candidates.size()));
+            String anonymized = candidates.get(random.nextInt(candidates.size()));
+            while(anonymized.equalsIgnoreCase(token)) {
+                anonymized = candidates.get(random.nextInt(candidates.size()));
+            }
+            return anonymized;
         }
 
-        return generateNumeric(token.length());
+        String anonymized = generateNumeric(token.length());
+
+        while(anonymized.equalsIgnoreCase(token)) {
+            anonymized = generateNumeric(token.length());
+        }
+
+        return anonymized;
 
     }
 

@@ -34,8 +34,9 @@ public class PersonsAnonymizationServiceTest {
         final String replacement = anonymizationService.anonymize(token);
 
         LOGGER.info("Entity: " + replacement);
+        Assertions.assertNotEquals(token, replacement);
         Assertions.assertNotNull(replacement);
-        Assertions.assertTrue(replacement.length() > 0);
+        Assertions.assertFalse(replacement.isEmpty());
 
     }
 
@@ -48,8 +49,9 @@ public class PersonsAnonymizationServiceTest {
         final String replacement = anonymizationService.anonymize(token);
 
         LOGGER.info("Entity: " + replacement);
+        Assertions.assertNotEquals(token, replacement);
         Assertions.assertNotNull(replacement);
-        Assertions.assertTrue(replacement.length() > 0);
+        Assertions.assertFalse(replacement.isEmpty());
 
     }
 

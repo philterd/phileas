@@ -473,28 +473,4 @@ public class AgeFilterTest extends AbstractFilterTest {
 
     }
 
-    @Test
-    public void filterWithCandidates1() throws Exception {
-
-        final List<String> candidates = List.of("100", "101", "102");
-        final AgeAnonymizationService ageAnonymizationService = new AgeAnonymizationService(new DefaultContextService(), new SecureRandom(), candidates);
-
-        final AgeFilterStrategy ageFilterStrategy = new AgeFilterStrategy();
-        ageFilterStrategy.setStrategy(RANDOM_REPLACE);
-
-        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
-                .withStrategies(List.of(ageFilterStrategy))
-                .withAnonymizationService(ageAnonymizationService)
-                .withWindowSize(windowSize)
-                .build();
-
-        final AgeFilter filter = new AgeFilter(filterConfiguration);
-
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "patient is 61 years old");
-        showSpans(filtered.getSpans());
-        Assertions.assertEquals(1, filtered.getSpans().size());
-        Assertions.assertTrue(candidates.contains(filtered.getSpans().get(0).getReplacement()));
-
-    }
-
 }

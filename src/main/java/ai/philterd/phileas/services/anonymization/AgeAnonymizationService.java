@@ -44,13 +44,27 @@ public class AgeAnonymizationService extends AbstractAnonymizationService {
     public String anonymize(final String token) {
 
         if(CollectionUtils.isNotEmpty(candidates)) {
-            return candidates.get(random.nextInt(candidates.size()));
+            String anonymized = candidates.get(random.nextInt(candidates.size()));
+            while(anonymized.equalsIgnoreCase(token)) {
+                anonymized = candidates.get(random.nextInt(candidates.size()));
+            }
+            return anonymized;
         }
 
-        // Replace all digits with other digits.
-        int numberOfDigits = 0;
+        String anonymized = getAnonymizedAge(token);
 
-        StringBuilder sb = new StringBuilder();
+        while(anonymized.equalsIgnoreCase(token)) {
+            anonymized = getAnonymizedAge(token);
+        }
+
+        return anonymized;
+
+    }
+
+    private String getAnonymizedAge(final String token) {
+
+        // Replace all digits with other digits.
+        final StringBuilder sb = new StringBuilder();
 
         for (int i = 0; i < token.length(); i++) {
 
@@ -59,7 +73,6 @@ public class AgeAnonymizationService extends AbstractAnonymizationService {
             if (Character.isDigit(c)) {
 
                 sb.append(random.nextInt((9) + 1));
-                numberOfDigits++;
 
             } else {
 
@@ -70,16 +83,7 @@ public class AgeAnonymizationService extends AbstractAnonymizationService {
 
         }
 
-        final String anonymized = sb.toString();
-
-        // Just ensure that the new one does not equal the original.
-        if(numberOfDigits > 0) {
-            if (token.equalsIgnoreCase(anonymized)) {
-                return anonymize(token);
-            }
-        }
-
-        return anonymized;
+        return sb.toString();
 
     }
 

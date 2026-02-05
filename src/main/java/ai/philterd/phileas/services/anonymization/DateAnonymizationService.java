@@ -59,8 +59,24 @@ public class DateAnonymizationService extends AbstractAnonymizationService {
     public String anonymize(final String token) {
 
         if(CollectionUtils.isNotEmpty(candidates)) {
-            return candidates.get(random.nextInt(candidates.size()));
+            String anonymized = candidates.get(random.nextInt(candidates.size()));
+            while(anonymized.equalsIgnoreCase(token)) {
+                anonymized = candidates.get(random.nextInt(candidates.size()));
+            }
+            return anonymized;
         }
+
+        String anonymized = getAnonymizedDate(token);
+
+        while(anonymized.equalsIgnoreCase(token)) {
+            anonymized = getAnonymizedDate(token);
+        }
+
+        return anonymized;
+
+    }
+
+    private String getAnonymizedDate(String token) {
 
         final LocalDate localDate = getRandomDate();
 

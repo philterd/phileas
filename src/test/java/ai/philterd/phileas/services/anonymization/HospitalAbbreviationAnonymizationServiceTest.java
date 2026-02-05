@@ -35,6 +35,7 @@ public class HospitalAbbreviationAnonymizationServiceTest {
         final String replacement = anonymizationService.anonymize(token);
 
         LOGGER.info("Hospital abbreviation: " + replacement);
+        Assertions.assertNotEquals(token, replacement);
 
         Assertions.assertTrue(StringUtils.isAllUpperCase(replacement));
         Assertions.assertEquals(-1, replacement.indexOf(" "));

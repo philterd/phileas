@@ -34,6 +34,7 @@ public class StateAnonymizationServiceTest {
         final String replacement = anonymizationService.anonymize(token);
 
         LOGGER.info("State: {}", replacement);
+        Assertions.assertNotEquals(token, replacement);
         Assertions.assertNotNull(replacement);
         Assertions.assertFalse(replacement.isEmpty());
 

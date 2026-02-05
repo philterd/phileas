@@ -45,12 +45,20 @@ public class UrlAnonymizationService extends AbstractAnonymizationService {
     public String anonymize(final String token) {
 
         if(CollectionUtils.isNotEmpty(candidates)) {
-            return candidates.get(random.nextInt(candidates.size()));
+            String anonymized = candidates.get(random.nextInt(candidates.size()));
+            while(anonymized.equalsIgnoreCase(token)) {
+                anonymized = candidates.get(random.nextInt(candidates.size()));
+            }
+            return anonymized;
         }
 
-        final String url = generateAlphanumeric(10).toLowerCase();
+        String anonymized = "https://" + generateAlphanumeric(10).toLowerCase() + ".com";
 
-        return "http://" + url + ".com";
+        while(anonymized.equalsIgnoreCase(token)) {
+            anonymized = "https://" + generateAlphanumeric(10).toLowerCase() + ".com";
+        }
+
+        return anonymized;
 
     }
 

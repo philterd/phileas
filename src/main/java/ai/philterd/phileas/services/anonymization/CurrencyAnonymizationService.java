@@ -46,11 +46,26 @@ public class CurrencyAnonymizationService extends AbstractAnonymizationService {
     public String anonymize(final String token) {
 
         if(CollectionUtils.isNotEmpty(candidates)) {
-            return candidates.get(random.nextInt(candidates.size()));
+            String anonymized = candidates.get(random.nextInt(candidates.size()));
+            while(anonymized.equalsIgnoreCase(token)) {
+                anonymized = candidates.get(random.nextInt(candidates.size()));
+            }
+            return anonymized;
         }
 
-        // Replace all digits with other digits.
+        String anonymized = getAnonymizedCurrency(token);
 
+        while(anonymized.equalsIgnoreCase(token)) {
+            anonymized = getAnonymizedCurrency(token);
+        }
+
+        return anonymized;
+
+    }
+
+    private String getAnonymizedCurrency(String token) {
+
+        // Replace all digits with other digits.
         final StringBuilder sb = new StringBuilder();
 
         for (int i = 0; i < token.length(); i++) {
@@ -80,11 +95,6 @@ public class CurrencyAnonymizationService extends AbstractAnonymizationService {
 
             anonymized = sb.toString();
 
-        }
-
-        // Just ensure that the new one does not equal the original.
-        if(StringUtils.equalsIgnoreCase(token, anonymized)) {
-            return anonymize(token);
         }
 
         return anonymized;

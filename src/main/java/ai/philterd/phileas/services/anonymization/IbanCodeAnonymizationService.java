@@ -51,10 +51,20 @@ public class IbanCodeAnonymizationService extends AbstractAnonymizationService {
     public String anonymize(final String token) {
 
         if(CollectionUtils.isNotEmpty(candidates)) {
-            return candidates.get(random.nextInt(candidates.size()));
+            String anonymized = candidates.get(random.nextInt(candidates.size()));
+            while(anonymized.equalsIgnoreCase(token)) {
+                anonymized = candidates.get(random.nextInt(candidates.size()));
+            }
+            return anonymized;
         }
 
-        return faker.finance().iban();
+        String anonymized = faker.finance().iban();
+
+        while(anonymized.equalsIgnoreCase(token)) {
+            anonymized = faker.finance().iban();
+        }
+
+        return anonymized;
 
     }
 

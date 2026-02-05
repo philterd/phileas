@@ -51,10 +51,20 @@ public class StreetAddressAnonymizationService extends AbstractAnonymizationServ
     public String anonymize(final String token) {
 
         if(CollectionUtils.isNotEmpty(candidates)) {
-            return candidates.get(random.nextInt(candidates.size()));
+            String anonymized = candidates.get(random.nextInt(candidates.size()));
+            while(anonymized.equalsIgnoreCase(token)) {
+                anonymized = candidates.get(random.nextInt(candidates.size()));
+            }
+            return anonymized;
         }
 
-        return faker.address().streetAddress();
+        String anonymized = faker.address().streetAddress();
+
+        while(anonymized.equalsIgnoreCase(token)) {
+            anonymized = faker.address().streetAddress();
+        }
+
+        return anonymized;
 
     }
 

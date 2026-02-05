@@ -51,10 +51,20 @@ public class StateAnonymizationService extends AbstractAnonymizationService {
     public String anonymize(final String token) {
 
         if(CollectionUtils.isNotEmpty(candidates)) {
-            return candidates.get(random.nextInt(candidates.size()));
+            String anonymized = candidates.get(random.nextInt(candidates.size()));
+            while(anonymized.equalsIgnoreCase(token)) {
+                anonymized = candidates.get(random.nextInt(candidates.size()));
+            }
+            return anonymized;
         }
 
-        return faker.address().state();
+        String anonymized = faker.address().state();
+
+        while(anonymized.equalsIgnoreCase(token)) {
+            anonymized = faker.address().state();
+        }
+
+        return anonymized;
 
     }
 

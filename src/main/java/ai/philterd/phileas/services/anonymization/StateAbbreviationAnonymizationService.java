@@ -105,16 +105,20 @@ public class StateAbbreviationAnonymizationService extends AbstractAnonymization
     public String anonymize(final String token) {
 
         if(CollectionUtils.isNotEmpty(candidates)) {
-            return candidates.get(random.nextInt(candidates.size()));
+            String anonymized = candidates.get(random.nextInt(candidates.size()));
+            while(anonymized.equalsIgnoreCase(token)) {
+                anonymized = candidates.get(random.nextInt(candidates.size()));
+            }
+            return anonymized;
         }
 
         final int randomInt = generateInteger(0, STATES.size() - 1);
 
-        final String anonymized = STATES.get(randomInt);
+        String anonymized = STATES.get(randomInt);
 
-        // Make sure the anonymized and the token aren't the same since it's a small pool.
-        if(StringUtils.equalsIgnoreCase(token, anonymized)) {
-            return anonymize(token);
+        while(anonymized.equalsIgnoreCase(token)) {
+            final int nextRandomInt = generateInteger(0, STATES.size() - 1);
+            anonymized = STATES.get(nextRandomInt);
         }
 
         return anonymized;

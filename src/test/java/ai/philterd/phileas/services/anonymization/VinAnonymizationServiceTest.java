@@ -35,6 +35,7 @@ public class VinAnonymizationServiceTest {
 
         LOGGER.info("VIN replacement: {}", replacement);
 
+        Assertions.assertNotEquals(token, replacement);
         Assertions.assertNotNull(replacement);
         Assertions.assertEquals(17, replacement.length());
 

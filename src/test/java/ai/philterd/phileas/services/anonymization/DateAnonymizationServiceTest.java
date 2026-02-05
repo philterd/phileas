@@ -18,6 +18,7 @@ package ai.philterd.phileas.services.anonymization;
 import ai.philterd.phileas.services.context.DefaultContextService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 public class DateAnonymizationServiceTest {
@@ -33,6 +34,7 @@ public class DateAnonymizationServiceTest {
         final String replacement = anonymizationService.anonymize(token);
 
         LOGGER.info("Date: " + replacement);
+        Assertions.assertNotEquals(token, replacement);
 
     }
 
@@ -45,6 +47,7 @@ public class DateAnonymizationServiceTest {
         final String replacement = anonymizationService.anonymize(token);
 
         LOGGER.info("Date: " + replacement);
+        Assertions.assertNotEquals(token, replacement);
 
     }
 

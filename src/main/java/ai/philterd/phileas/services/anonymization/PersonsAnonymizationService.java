@@ -48,11 +48,23 @@ public class PersonsAnonymizationService extends AbstractAnonymizationService {
 
     @Override
     public String anonymize(final String token) {
-        if(CollectionUtils.isEmpty(candidates)) {
-            return faker.name().firstName() + " " + faker.name().lastName();
-        } else {
-            return candidates.get(random.nextInt(candidates.size()));
+
+        if(CollectionUtils.isNotEmpty(candidates)) {
+            String anonymized = candidates.get(random.nextInt(candidates.size()));
+            while(anonymized.equalsIgnoreCase(token)) {
+                anonymized = candidates.get(random.nextInt(candidates.size()));
+            }
+            return anonymized;
         }
+
+        String anonymized = faker.name().firstName() + " " + faker.name().lastName();
+
+        while(anonymized.equalsIgnoreCase(token)) {
+            anonymized = faker.name().firstName() + " " + faker.name().lastName();
+        }
+
+        return anonymized;
+
     }
 
 }

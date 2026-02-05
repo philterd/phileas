@@ -46,8 +46,24 @@ public class AlphanumericAnonymizationService extends AbstractAnonymizationServi
     public String anonymize(final String token) {
 
         if(CollectionUtils.isNotEmpty(candidates)) {
-            return candidates.get(random.nextInt(candidates.size()));
+            String anonymized = candidates.get(random.nextInt(candidates.size()));
+            while(anonymized.equalsIgnoreCase(token)) {
+                anonymized = candidates.get(random.nextInt(candidates.size()));
+            }
+            return anonymized;
         }
+
+        String anonymized = getAnonymizedAlphanumeric(token);
+
+        while(anonymized.equalsIgnoreCase(token)) {
+            anonymized = getAnonymizedAlphanumeric(token);
+        }
+
+        return anonymized;
+
+    }
+
+    private String getAnonymizedAlphanumeric(String token) {
 
         StringBuilder sb = new StringBuilder();
 

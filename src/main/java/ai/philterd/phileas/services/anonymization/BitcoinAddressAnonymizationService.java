@@ -45,10 +45,20 @@ public class BitcoinAddressAnonymizationService extends AbstractAnonymizationSer
     public String anonymize(final String token) {
 
         if(CollectionUtils.isNotEmpty(candidates)) {
-            return candidates.get(random.nextInt(candidates.size()));
+            String anonymized = candidates.get(random.nextInt(candidates.size()));
+            while(anonymized.equalsIgnoreCase(token)) {
+                anonymized = candidates.get(random.nextInt(candidates.size()));
+            }
+            return anonymized;
         }
 
-        return generateAlphanumeric(32);
+        String anonymized = generateAlphanumeric(32);
+
+        while(anonymized.equalsIgnoreCase(token)) {
+            anonymized = generateAlphanumeric(32);
+        }
+
+        return anonymized;
 
     }
 

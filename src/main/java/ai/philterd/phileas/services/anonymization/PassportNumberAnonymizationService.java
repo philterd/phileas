@@ -44,8 +44,24 @@ public class PassportNumberAnonymizationService extends AbstractAnonymizationSer
     public String anonymize(final String token) {
 
         if(CollectionUtils.isNotEmpty(candidates)) {
-            return candidates.get(random.nextInt(candidates.size()));
+            String anonymized = candidates.get(random.nextInt(candidates.size()));
+            while(anonymized.equalsIgnoreCase(token)) {
+                anonymized = candidates.get(random.nextInt(candidates.size()));
+            }
+            return anonymized;
         }
+
+        String anonymized = getAnonymizedPassportNumber();
+
+        while(anonymized.equalsIgnoreCase(token)) {
+            anonymized = getAnonymizedPassportNumber();
+        }
+
+        return anonymized;
+
+    }
+
+    private String getAnonymizedPassportNumber() {
 
         final byte[] macAddr = new byte[6];
         random.nextBytes(macAddr);
