@@ -15,20 +15,27 @@
  */
 package ai.philterd.phileas.services.anonymization;
 
+import org.apache.commons.collections4.CollectionUtils;
+
 import ai.philterd.phileas.services.anonymization.faker.Faker;
 import ai.philterd.phileas.services.context.ContextService;
 
+import java.util.List;
 import java.util.Random;
 
 public class IbanCodeAnonymizationService extends AbstractAnonymizationService {
 
     private final Faker faker;
 
+    public IbanCodeAnonymizationService(final ContextService contextService, final Random random, final List<String> candidates) {
+        super(contextService, random, candidates);
+        this.faker = new Faker(random);
+    }
+
     public IbanCodeAnonymizationService(final ContextService contextService, final Random random) {
         super(contextService, random);
         this.faker = new Faker(random);
     }
-
 
     public IbanCodeAnonymizationService(final ContextService contextService) {
         super(contextService);
@@ -42,6 +49,10 @@ public class IbanCodeAnonymizationService extends AbstractAnonymizationService {
 
     @Override
     public String anonymize(final String token) {
+
+        if(CollectionUtils.isNotEmpty(candidates)) {
+            return candidates.get(random.nextInt(candidates.size()));
+        }
 
         return faker.finance().iban();
 

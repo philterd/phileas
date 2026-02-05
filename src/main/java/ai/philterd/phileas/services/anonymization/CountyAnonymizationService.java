@@ -15,6 +15,8 @@
  */
 package ai.philterd.phileas.services.anonymization;
 
+import org.apache.commons.collections4.CollectionUtils;
+
 import ai.philterd.phileas.services.context.ContextService;
 import org.apache.commons.lang3.StringUtils;
 
@@ -23,6 +25,18 @@ import java.util.List;
 import java.util.Random;
 
 public class CountyAnonymizationService extends AbstractAnonymizationService {
+
+    public CountyAnonymizationService(final ContextService contextService, final Random random, final List<String> candidates) {
+        super(contextService, random, candidates);
+    }
+
+    public CountyAnonymizationService(final ContextService contextService, final Random random) {
+        super(contextService, random);
+    }
+
+    public CountyAnonymizationService(final ContextService contextService) {
+        super(contextService);
+    }
 
     private static final List<String> COUNTIES = new LinkedList<>();
 
@@ -131,21 +145,17 @@ public class CountyAnonymizationService extends AbstractAnonymizationService {
 
     }
 
-    public CountyAnonymizationService(final ContextService contextService, final Random random) {
-        super(contextService, random);
-    }
-
-    public CountyAnonymizationService(final ContextService contextService) {
-        super(contextService);
-    }
-
     @Override
     public ContextService getContextService() {
         return contextService;
     }
 
     @Override
-    public String anonymize(String token) {
+    public String anonymize(final String token) {
+
+        if(CollectionUtils.isNotEmpty(candidates)) {
+            return candidates.get(random.nextInt(candidates.size()));
+        }
 
         final int randomInt = generateInteger(0, COUNTIES.size() - 1);
 

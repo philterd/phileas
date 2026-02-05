@@ -15,12 +15,19 @@
  */
 package ai.philterd.phileas.services.anonymization;
 
+import org.apache.commons.collections4.CollectionUtils;
+
 import ai.philterd.phileas.services.context.ContextService;
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.List;
 import java.util.Random;
 
 public class CurrencyAnonymizationService extends AbstractAnonymizationService {
+
+    public CurrencyAnonymizationService(final ContextService contextService, final Random random, final List<String> candidates) {
+        super(contextService, random, candidates);
+    }
 
     public CurrencyAnonymizationService(final ContextService contextService, final Random random) {
         super(contextService, random);
@@ -37,6 +44,10 @@ public class CurrencyAnonymizationService extends AbstractAnonymizationService {
 
     @Override
     public String anonymize(final String token) {
+
+        if(CollectionUtils.isNotEmpty(candidates)) {
+            return candidates.get(random.nextInt(candidates.size()));
+        }
 
         // Replace all digits with other digits.
 

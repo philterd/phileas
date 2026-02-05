@@ -15,15 +15,23 @@
  */
 package ai.philterd.phileas.services.anonymization;
 
+import org.apache.commons.collections4.CollectionUtils;
+
 import ai.philterd.phileas.services.anonymization.faker.Faker;
 import ai.philterd.phileas.services.context.ContextService;
 import org.apache.commons.text.WordUtils;
 
+import java.util.List;
 import java.util.Random;
 
 public class HospitalAbbreviationAnonymizationService extends AbstractAnonymizationService {
 
     private final transient Faker faker;
+
+    public HospitalAbbreviationAnonymizationService(final ContextService contextService, final Random random, final List<String> candidates) {
+        super(contextService, random, candidates);
+        this.faker = new Faker(random);
+    }
 
     public HospitalAbbreviationAnonymizationService(final ContextService contextService, final Random random) {
         super(contextService, random);
@@ -42,6 +50,10 @@ public class HospitalAbbreviationAnonymizationService extends AbstractAnonymizat
 
     @Override
     public String anonymize(final String token) {
+
+        if(CollectionUtils.isNotEmpty(candidates)) {
+            return candidates.get(random.nextInt(candidates.size()));
+        }
 
         final String hospitalName = faker.address().cityName() + " General Hospital";
 

@@ -15,11 +15,18 @@
  */
 package ai.philterd.phileas.services.anonymization;
 
+import org.apache.commons.collections4.CollectionUtils;
+
 import ai.philterd.phileas.services.context.ContextService;
 
+import java.util.List;
 import java.util.Random;
 
 public class UrlAnonymizationService extends AbstractAnonymizationService {
+
+    public UrlAnonymizationService(final ContextService contextService, final Random random, final List<String> candidates) {
+        super(contextService, random, candidates);
+    }
 
     public UrlAnonymizationService(final ContextService contextService, final Random random) {
         super(contextService, random);
@@ -35,7 +42,11 @@ public class UrlAnonymizationService extends AbstractAnonymizationService {
     }
 
     @Override
-    public String anonymize(String token) {
+    public String anonymize(final String token) {
+
+        if(CollectionUtils.isNotEmpty(candidates)) {
+            return candidates.get(random.nextInt(candidates.size()));
+        }
 
         final String url = generateAlphanumeric(10).toLowerCase();
 

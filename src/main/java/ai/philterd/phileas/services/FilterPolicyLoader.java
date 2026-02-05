@@ -143,9 +143,16 @@ public class FilterPolicyLoader {
 
                 final int windowSize = policy.getIdentifiers().getAge().getWindowSizeOrDefault(phileasConfiguration.spanWindowSize());
 
+                final AgeAnonymizationService ageAnonymizationService;
+                if(CollectionUtils.isEmpty((policy.getIdentifiers().getAge().getAnonymizationCandidates()))) {
+                    ageAnonymizationService = new AgeAnonymizationService(contextService, random);
+                } else {
+                    ageAnonymizationService = new AgeAnonymizationService(contextService, random, policy.getIdentifiers().getAge().getAnonymizationCandidates());
+                }
+
                 final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                         .withStrategies(policy.getIdentifiers().getAge().getAgeFilterStrategies())
-                        .withAnonymizationService(new AgeAnonymizationService(contextService, random))
+                        .withAnonymizationService(ageAnonymizationService)
                         .withIgnored(policy.getIdentifiers().getAge().getIgnored())
                         .withIgnoredFiles(policy.getIdentifiers().getAge().getIgnoredFiles())
                         .withIgnoredPatterns(policy.getIdentifiers().getAge().getIgnoredPatterns())
@@ -170,9 +177,16 @@ public class FilterPolicyLoader {
 
                 final int windowSize = policy.getIdentifiers().getBankRoutingNumber().getWindowSizeOrDefault(phileasConfiguration.spanWindowSize());
 
+                final AlphanumericAnonymizationService alphanumericAnonymizationService;
+                if(CollectionUtils.isEmpty((policy.getIdentifiers().getBankRoutingNumber().getAnonymizationCandidates()))) {
+                    alphanumericAnonymizationService = new AlphanumericAnonymizationService(contextService, random);
+                } else {
+                    alphanumericAnonymizationService = new AlphanumericAnonymizationService(contextService, random, policy.getIdentifiers().getBankRoutingNumber().getAnonymizationCandidates());
+                }
+
                 final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                         .withStrategies(policy.getIdentifiers().getBankRoutingNumber().getBankRoutingNumberFilterStrategies())
-                        .withAnonymizationService(new AlphanumericAnonymizationService(contextService, random))
+                        .withAnonymizationService(alphanumericAnonymizationService)
                         .withIgnored(policy.getIdentifiers().getBankRoutingNumber().getIgnored())
                         .withIgnoredFiles(policy.getIdentifiers().getBankRoutingNumber().getIgnoredFiles())
                         .withIgnoredPatterns(policy.getIdentifiers().getBankRoutingNumber().getIgnoredPatterns())
@@ -198,9 +212,16 @@ public class FilterPolicyLoader {
 
                 final int windowSize = policy.getIdentifiers().getBitcoinAddress().getWindowSizeOrDefault(phileasConfiguration.spanWindowSize());
 
+                final BitcoinAddressAnonymizationService bitcoinAddressAnonymizationService;
+                if(CollectionUtils.isEmpty((policy.getIdentifiers().getBitcoinAddress().getAnonymizationCandidates()))) {
+                    bitcoinAddressAnonymizationService = new BitcoinAddressAnonymizationService(contextService, random);
+                } else {
+                    bitcoinAddressAnonymizationService = new BitcoinAddressAnonymizationService(contextService, random, policy.getIdentifiers().getBitcoinAddress().getAnonymizationCandidates());
+                }
+
                 final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                         .withStrategies(policy.getIdentifiers().getBitcoinAddress().getBitcoinFilterStrategies())
-                        .withAnonymizationService(new BitcoinAddressAnonymizationService(contextService, random))
+                        .withAnonymizationService(bitcoinAddressAnonymizationService)
                         .withIgnored(policy.getIdentifiers().getBitcoinAddress().getIgnored())
                         .withIgnoredFiles(policy.getIdentifiers().getBitcoinAddress().getIgnoredFiles())
                         .withIgnoredPatterns(policy.getIdentifiers().getBitcoinAddress().getIgnoredPatterns())
@@ -226,9 +247,16 @@ public class FilterPolicyLoader {
 
                 final int windowSize = policy.getIdentifiers().getCreditCard().getWindowSizeOrDefault(phileasConfiguration.spanWindowSize());
 
+                final CreditCardAnonymizationService creditCardAnonymizationService;
+                if(CollectionUtils.isEmpty((policy.getIdentifiers().getCreditCard().getAnonymizationCandidates()))) {
+                    creditCardAnonymizationService = new CreditCardAnonymizationService(contextService, random);
+                } else {
+                    creditCardAnonymizationService = new CreditCardAnonymizationService(contextService, random, policy.getIdentifiers().getCreditCard().getAnonymizationCandidates());
+                }
+
                 final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                         .withStrategies(policy.getIdentifiers().getCreditCard().getCreditCardFilterStrategies())
-                        .withAnonymizationService(new CreditCardAnonymizationService(contextService, random))
+                        .withAnonymizationService(creditCardAnonymizationService)
                         .withIgnored(policy.getIdentifiers().getCreditCard().getIgnored())
                         .withIgnoredFiles(policy.getIdentifiers().getCreditCard().getIgnoredFiles())
                         .withIgnoredPatterns(policy.getIdentifiers().getCreditCard().getIgnoredPatterns())
@@ -258,9 +286,16 @@ public class FilterPolicyLoader {
 
                 final int windowSize = policy.getIdentifiers().getCurrency().getWindowSizeOrDefault(phileasConfiguration.spanWindowSize());
 
+                final CurrencyAnonymizationService currencyAnonymizationService;
+                if(CollectionUtils.isEmpty((policy.getIdentifiers().getCurrency().getAnonymizationCandidates()))) {
+                    currencyAnonymizationService = new CurrencyAnonymizationService(contextService, random);
+                } else {
+                    currencyAnonymizationService = new CurrencyAnonymizationService(contextService, random, policy.getIdentifiers().getCurrency().getAnonymizationCandidates());
+                }
+
                 final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                         .withStrategies(policy.getIdentifiers().getCurrency().getCurrencyFilterStrategies())
-                        .withAnonymizationService(new CurrencyAnonymizationService(contextService, random))
+                        .withAnonymizationService(currencyAnonymizationService)
                         .withIgnored(policy.getIdentifiers().getCurrency().getIgnored())
                         .withIgnoredFiles(policy.getIdentifiers().getCurrency().getIgnoredFiles())
                         .withIgnoredPatterns(policy.getIdentifiers().getCurrency().getIgnoredPatterns())
@@ -285,9 +320,16 @@ public class FilterPolicyLoader {
 
                 final int windowSize = policy.getIdentifiers().getDate().getWindowSizeOrDefault(phileasConfiguration.spanWindowSize());
 
+                final DateAnonymizationService dateAnonymizationService;
+                if(CollectionUtils.isEmpty((policy.getIdentifiers().getDate().getAnonymizationCandidates()))) {
+                    dateAnonymizationService = new DateAnonymizationService(contextService, random);
+                } else {
+                    dateAnonymizationService = new DateAnonymizationService(contextService, random, policy.getIdentifiers().getDate().getAnonymizationCandidates());
+                }
+
                 final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                         .withStrategies(policy.getIdentifiers().getDate().getDateFilterStrategies())
-                        .withAnonymizationService(new DateAnonymizationService(contextService, random))
+                        .withAnonymizationService(dateAnonymizationService)
                         .withIgnored(policy.getIdentifiers().getDate().getIgnored())
                         .withIgnoredFiles(policy.getIdentifiers().getDate().getIgnoredFiles())
                         .withIgnoredPatterns(policy.getIdentifiers().getDate().getIgnoredPatterns())
@@ -315,9 +357,16 @@ public class FilterPolicyLoader {
 
                 final int windowSize = policy.getIdentifiers().getDriversLicense().getWindowSizeOrDefault(phileasConfiguration.spanWindowSize());
 
+                final AlphanumericAnonymizationService alphanumericAnonymizationService;
+                if(CollectionUtils.isEmpty((policy.getIdentifiers().getDriversLicense().getAnonymizationCandidates()))) {
+                    alphanumericAnonymizationService = new AlphanumericAnonymizationService(contextService, random);
+                } else {
+                    alphanumericAnonymizationService = new AlphanumericAnonymizationService(contextService, random, policy.getIdentifiers().getDriversLicense().getAnonymizationCandidates());
+                }
+
                 final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                         .withStrategies(policy.getIdentifiers().getDriversLicense().getDriversLicenseFilterStrategies())
-                        .withAnonymizationService(new AlphanumericAnonymizationService(contextService, random))
+                        .withAnonymizationService(alphanumericAnonymizationService)
                         .withIgnored(policy.getIdentifiers().getDriversLicense().getIgnored())
                         .withIgnoredFiles(policy.getIdentifiers().getDriversLicense().getIgnoredFiles())
                         .withIgnoredPatterns(policy.getIdentifiers().getDriversLicense().getIgnoredPatterns())
@@ -343,9 +392,16 @@ public class FilterPolicyLoader {
 
                 final int windowSize = policy.getIdentifiers().getEmailAddress().getWindowSizeOrDefault(phileasConfiguration.spanWindowSize());
 
+                final EmailAddressAnonymizationService emailAddressAnonymizationService;
+                if(CollectionUtils.isEmpty((policy.getIdentifiers().getEmailAddress().getAnonymizationCandidates()))) {
+                    emailAddressAnonymizationService = new EmailAddressAnonymizationService(contextService, random);
+                } else {
+                    emailAddressAnonymizationService = new EmailAddressAnonymizationService(contextService, random, policy.getIdentifiers().getEmailAddress().getAnonymizationCandidates());
+                }
+
                 final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                         .withStrategies(policy.getIdentifiers().getEmailAddress().getEmailAddressFilterStrategies())
-                        .withAnonymizationService(new EmailAddressAnonymizationService(contextService, random))
+                        .withAnonymizationService(emailAddressAnonymizationService)
                         .withIgnored(policy.getIdentifiers().getEmailAddress().getIgnored())
                         .withIgnoredFiles(policy.getIdentifiers().getEmailAddress().getIgnoredFiles())
                         .withIgnoredPatterns(policy.getIdentifiers().getEmailAddress().getIgnoredPatterns())
@@ -374,9 +430,16 @@ public class FilterPolicyLoader {
 
                 final int windowSize = policy.getIdentifiers().getIbanCode().getWindowSizeOrDefault(phileasConfiguration.spanWindowSize());
 
+                final IbanCodeAnonymizationService ibanCodeAnonymizationService;
+                if(CollectionUtils.isEmpty((policy.getIdentifiers().getIbanCode().getAnonymizationCandidates()))) {
+                    ibanCodeAnonymizationService = new IbanCodeAnonymizationService(contextService, random);
+                } else {
+                    ibanCodeAnonymizationService = new IbanCodeAnonymizationService(contextService, random, policy.getIdentifiers().getIbanCode().getAnonymizationCandidates());
+                }
+
                 final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                         .withStrategies(policy.getIdentifiers().getIbanCode().getIbanCodeFilterStrategies())
-                        .withAnonymizationService(new IbanCodeAnonymizationService(contextService, random))
+                        .withAnonymizationService(ibanCodeAnonymizationService)
                         .withIgnored(policy.getIdentifiers().getIbanCode().getIgnored())
                         .withIgnoredFiles(policy.getIdentifiers().getIbanCode().getIgnoredFiles())
                         .withIgnoredPatterns(policy.getIdentifiers().getIbanCode().getIgnoredPatterns())
@@ -405,9 +468,16 @@ public class FilterPolicyLoader {
 
                 final int windowSize = policy.getIdentifiers().getIpAddress().getWindowSizeOrDefault(phileasConfiguration.spanWindowSize());
 
+                final IpAddressAnonymizationService ipAddressAnonymizationService;
+                if(CollectionUtils.isEmpty((policy.getIdentifiers().getIpAddress().getAnonymizationCandidates()))) {
+                    ipAddressAnonymizationService = new IpAddressAnonymizationService(contextService, random);
+                } else {
+                    ipAddressAnonymizationService = new IpAddressAnonymizationService(contextService, random, policy.getIdentifiers().getIpAddress().getAnonymizationCandidates());
+                }
+
                 final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                         .withStrategies(policy.getIdentifiers().getIpAddress().getIpAddressFilterStrategies())
-                        .withAnonymizationService(new IpAddressAnonymizationService(contextService, random))
+                        .withAnonymizationService(ipAddressAnonymizationService)
                         .withIgnored(policy.getIdentifiers().getIpAddress().getIgnored())
                         .withIgnoredFiles(policy.getIdentifiers().getIpAddress().getIgnoredFiles())
                         .withIgnoredPatterns(policy.getIdentifiers().getIpAddress().getIgnoredPatterns())
@@ -433,9 +503,16 @@ public class FilterPolicyLoader {
 
                 final int windowSize = policy.getIdentifiers().getMacAddress().getWindowSizeOrDefault(phileasConfiguration.spanWindowSize());
 
+                final MacAddressAnonymizationService macAddressAnonymizationService;
+                if(CollectionUtils.isEmpty((policy.getIdentifiers().getMacAddress().getAnonymizationCandidates()))) {
+                    macAddressAnonymizationService = new MacAddressAnonymizationService(contextService, random);
+                } else {
+                    macAddressAnonymizationService = new MacAddressAnonymizationService(contextService, random, policy.getIdentifiers().getMacAddress().getAnonymizationCandidates());
+                }
+
                 final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                         .withStrategies(policy.getIdentifiers().getMacAddress().getMacAddressFilterStrategies())
-                        .withAnonymizationService(new MacAddressAnonymizationService(contextService, random))
+                        .withAnonymizationService(macAddressAnonymizationService)
                         .withIgnored(policy.getIdentifiers().getMacAddress().getIgnored())
                         .withIgnoredFiles(policy.getIdentifiers().getMacAddress().getIgnoredFiles())
                         .withIgnoredPatterns(policy.getIdentifiers().getMacAddress().getIgnoredPatterns())
@@ -461,9 +538,16 @@ public class FilterPolicyLoader {
 
                 final int windowSize = policy.getIdentifiers().getPassportNumber().getWindowSizeOrDefault(phileasConfiguration.spanWindowSize());
 
+                final PassportNumberAnonymizationService passportNumberAnonymizationService;
+                if(CollectionUtils.isEmpty((policy.getIdentifiers().getPassportNumber().getAnonymizationCandidates()))) {
+                    passportNumberAnonymizationService = new PassportNumberAnonymizationService(contextService, random);
+                } else {
+                    passportNumberAnonymizationService = new PassportNumberAnonymizationService(contextService, random, policy.getIdentifiers().getPassportNumber().getAnonymizationCandidates());
+                }
+
                 final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                         .withStrategies(policy.getIdentifiers().getPassportNumber().getPassportNumberFilterStrategies())
-                        .withAnonymizationService(new PassportNumberAnonymizationService(contextService, random))
+                        .withAnonymizationService(passportNumberAnonymizationService)
                         .withIgnored(policy.getIdentifiers().getPassportNumber().getIgnored())
                         .withIgnoredFiles(policy.getIdentifiers().getPassportNumber().getIgnoredFiles())
                         .withIgnoredPatterns(policy.getIdentifiers().getPassportNumber().getIgnoredPatterns())
@@ -489,9 +573,16 @@ public class FilterPolicyLoader {
 
                 final int windowSize = policy.getIdentifiers().getPhoneNumberExtension().getWindowSizeOrDefault(phileasConfiguration.spanWindowSize());
 
+                final AlphanumericAnonymizationService alphanumericAnonymizationService;
+                if(CollectionUtils.isEmpty((policy.getIdentifiers().getPhoneNumberExtension().getAnonymizationCandidates()))) {
+                    alphanumericAnonymizationService = new AlphanumericAnonymizationService(contextService, random);
+                } else {
+                    alphanumericAnonymizationService = new AlphanumericAnonymizationService(contextService, random, policy.getIdentifiers().getPhoneNumberExtension().getAnonymizationCandidates());
+                }
+
                 final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                         .withStrategies(policy.getIdentifiers().getPhoneNumberExtension().getPhoneNumberExtensionFilterStrategies())
-                        .withAnonymizationService(new AlphanumericAnonymizationService(contextService, random))
+                        .withAnonymizationService(alphanumericAnonymizationService)
                         .withIgnored(policy.getIdentifiers().getPhoneNumberExtension().getIgnored())
                         .withIgnoredFiles(policy.getIdentifiers().getPhoneNumberExtension().getIgnoredFiles())
                         .withIgnoredPatterns(policy.getIdentifiers().getPhoneNumberExtension().getIgnoredPatterns())
@@ -543,9 +634,16 @@ public class FilterPolicyLoader {
 
                 final int windowSize = policy.getIdentifiers().getPhysicianName().getWindowSizeOrDefault(phileasConfiguration.spanWindowSize());
 
+                final AlphanumericAnonymizationService alphanumericAnonymizationService;
+                if(CollectionUtils.isEmpty((policy.getIdentifiers().getPhysicianName().getAnonymizationCandidates()))) {
+                    alphanumericAnonymizationService = new AlphanumericAnonymizationService(contextService, random);
+                } else {
+                    alphanumericAnonymizationService = new AlphanumericAnonymizationService(contextService, random, policy.getIdentifiers().getPhysicianName().getAnonymizationCandidates());
+                }
+
                 final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                         .withStrategies(policy.getIdentifiers().getPhysicianName().getPhysicianNameFilterStrategies())
-                        .withAnonymizationService(new PersonsAnonymizationService(contextService, random))
+                        .withAnonymizationService(alphanumericAnonymizationService)
                         .withIgnored(policy.getIdentifiers().getPhysicianName().getIgnored())
                         .withIgnoredFiles(policy.getIdentifiers().getPhysicianName().getIgnoredFiles())
                         .withIgnoredPatterns(policy.getIdentifiers().getPhysicianName().getIgnoredPatterns())
@@ -602,9 +700,16 @@ public class FilterPolicyLoader {
 
                 final int windowSize = policy.getIdentifiers().getSsn().getWindowSizeOrDefault(phileasConfiguration.spanWindowSize());
 
+                final AlphanumericAnonymizationService alphanumericAnonymizationService;
+                if(CollectionUtils.isEmpty((policy.getIdentifiers().getSsn().getAnonymizationCandidates()))) {
+                    alphanumericAnonymizationService = new AlphanumericAnonymizationService(contextService, random);
+                } else {
+                    alphanumericAnonymizationService = new AlphanumericAnonymizationService(contextService, random, policy.getIdentifiers().getSsn().getAnonymizationCandidates());
+                }
+
                 final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                         .withStrategies(policy.getIdentifiers().getSsn().getSsnFilterStrategies())
-                        .withAnonymizationService(new AlphanumericAnonymizationService(contextService, random))
+                        .withAnonymizationService(alphanumericAnonymizationService)
                         .withIgnored(policy.getIdentifiers().getSsn().getIgnored())
                         .withIgnoredFiles(policy.getIdentifiers().getSsn().getIgnoredFiles())
                         .withIgnoredPatterns(policy.getIdentifiers().getSsn().getIgnoredPatterns())
@@ -630,9 +735,16 @@ public class FilterPolicyLoader {
 
                 final int windowSize = policy.getIdentifiers().getStateAbbreviation().getWindowSizeOrDefault(phileasConfiguration.spanWindowSize());
 
+                final StateAbbreviationAnonymizationService stateAbbreviationAnonymizationService;
+                if(CollectionUtils.isEmpty((policy.getIdentifiers().getStateAbbreviation().getAnonymizationCandidates()))) {
+                    stateAbbreviationAnonymizationService = new StateAbbreviationAnonymizationService(contextService, random);
+                } else {
+                    stateAbbreviationAnonymizationService = new StateAbbreviationAnonymizationService(contextService, random, policy.getIdentifiers().getStateAbbreviation().getAnonymizationCandidates());
+                }
+
                 final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                         .withStrategies(policy.getIdentifiers().getStateAbbreviation().getStateAbbreviationsFilterStrategies())
-                        .withAnonymizationService(new StateAbbreviationAnonymizationService(contextService, random))
+                        .withAnonymizationService(stateAbbreviationAnonymizationService)
                         .withIgnored(policy.getIdentifiers().getStateAbbreviation().getIgnored())
                         .withIgnoredFiles(policy.getIdentifiers().getStateAbbreviation().getIgnoredFiles())
                         .withIgnoredPatterns(policy.getIdentifiers().getStateAbbreviation().getIgnoredPatterns())
@@ -657,9 +769,16 @@ public class FilterPolicyLoader {
 
                 final int windowSize = policy.getIdentifiers().getStreetAddress().getWindowSizeOrDefault(phileasConfiguration.spanWindowSize());
 
+                final StreetAddressAnonymizationService streetAddressAnonymizationService;
+                if(CollectionUtils.isEmpty((policy.getIdentifiers().getStreetAddress().getAnonymizationCandidates()))) {
+                    streetAddressAnonymizationService = new StreetAddressAnonymizationService(contextService, random);
+                } else {
+                    streetAddressAnonymizationService = new StreetAddressAnonymizationService(contextService, random, policy.getIdentifiers().getStreetAddress().getAnonymizationCandidates());
+                }
+
                 final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                         .withStrategies(policy.getIdentifiers().getStreetAddress().getStreetAddressFilterStrategies())
-                        .withAnonymizationService(new StreetAddressAnonymizationService(contextService, random))
+                        .withAnonymizationService(streetAddressAnonymizationService)
                         .withIgnored(policy.getIdentifiers().getStreetAddress().getIgnored())
                         .withIgnoredFiles(policy.getIdentifiers().getStreetAddress().getIgnoredFiles())
                         .withIgnoredPatterns(policy.getIdentifiers().getStreetAddress().getIgnoredPatterns())
@@ -684,9 +803,16 @@ public class FilterPolicyLoader {
 
                 final int windowSize = policy.getIdentifiers().getTrackingNumber().getWindowSizeOrDefault(phileasConfiguration.spanWindowSize());
 
+                final AlphanumericAnonymizationService alphanumericAnonymizationService;
+                if(CollectionUtils.isEmpty((policy.getIdentifiers().getTrackingNumber().getAnonymizationCandidates()))) {
+                    alphanumericAnonymizationService = new AlphanumericAnonymizationService(contextService, random);
+                } else {
+                    alphanumericAnonymizationService = new AlphanumericAnonymizationService(contextService, random, policy.getIdentifiers().getTrackingNumber().getAnonymizationCandidates());
+                }
+
                 final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                         .withStrategies(policy.getIdentifiers().getTrackingNumber().getTrackingNumberFilterStrategies())
-                        .withAnonymizationService(new AlphanumericAnonymizationService(contextService, random))
+                        .withAnonymizationService(alphanumericAnonymizationService)
                         .withIgnored(policy.getIdentifiers().getTrackingNumber().getIgnored())
                         .withIgnoredFiles(policy.getIdentifiers().getTrackingNumber().getIgnoredFiles())
                         .withIgnoredPatterns(policy.getIdentifiers().getTrackingNumber().getIgnoredPatterns())
@@ -716,9 +842,16 @@ public class FilterPolicyLoader {
 
                 final int windowSize = policy.getIdentifiers().getUrl().getWindowSizeOrDefault(phileasConfiguration.spanWindowSize());
 
+                final UrlAnonymizationService urlAnonymizationService;
+                if(CollectionUtils.isEmpty((policy.getIdentifiers().getUrl().getAnonymizationCandidates()))) {
+                    urlAnonymizationService = new UrlAnonymizationService(contextService, random);
+                } else {
+                    urlAnonymizationService = new UrlAnonymizationService(contextService, random, policy.getIdentifiers().getUrl().getAnonymizationCandidates());
+                }
+
                 final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                         .withStrategies(policy.getIdentifiers().getUrl().getUrlFilterStrategies())
-                        .withAnonymizationService(new UrlAnonymizationService(contextService, random))
+                        .withAnonymizationService(urlAnonymizationService)
                         .withIgnored(policy.getIdentifiers().getUrl().getIgnored())
                         .withIgnoredFiles(policy.getIdentifiers().getUrl().getIgnoredFiles())
                         .withIgnoredPatterns(policy.getIdentifiers().getUrl().getIgnoredPatterns())
@@ -746,9 +879,16 @@ public class FilterPolicyLoader {
 
                 final int windowSize = policy.getIdentifiers().getVin().getWindowSizeOrDefault(phileasConfiguration.spanWindowSize());
 
+                final AlphanumericAnonymizationService alphanumericAnonymizationService;
+                if(CollectionUtils.isEmpty((policy.getIdentifiers().getVin().getAnonymizationCandidates()))) {
+                    alphanumericAnonymizationService = new AlphanumericAnonymizationService(contextService, random);
+                } else {
+                    alphanumericAnonymizationService = new AlphanumericAnonymizationService(contextService, random, policy.getIdentifiers().getVin().getAnonymizationCandidates());
+                }
+
                 final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                         .withStrategies(policy.getIdentifiers().getVin().getVinFilterStrategies())
-                        .withAnonymizationService(new AlphanumericAnonymizationService(contextService, random))
+                        .withAnonymizationService(alphanumericAnonymizationService)
                         .withIgnored(policy.getIdentifiers().getVin().getIgnored())
                         .withIgnoredFiles(policy.getIdentifiers().getVin().getIgnoredFiles())
                         .withIgnoredPatterns(policy.getIdentifiers().getVin().getIgnoredPatterns())
@@ -774,9 +914,16 @@ public class FilterPolicyLoader {
 
                 final int windowSize = policy.getIdentifiers().getZipCode().getWindowSizeOrDefault(phileasConfiguration.spanWindowSize());
 
+                final ZipCodeAnonymizationService zipCodeAnonymizationService;
+                if(CollectionUtils.isEmpty((policy.getIdentifiers().getZipCode().getAnonymizationCandidates()))) {
+                    zipCodeAnonymizationService = new ZipCodeAnonymizationService(contextService, random);
+                } else {
+                    zipCodeAnonymizationService = new ZipCodeAnonymizationService(contextService, random, policy.getIdentifiers().getZipCode().getAnonymizationCandidates());
+                }
+
                 final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                         .withStrategies(policy.getIdentifiers().getZipCode().getZipCodeFilterStrategies())
-                        .withAnonymizationService(new ZipCodeAnonymizationService(contextService, random))
+                        .withAnonymizationService(zipCodeAnonymizationService)
                         .withIgnored(policy.getIdentifiers().getZipCode().getIgnored())
                         .withIgnoredFiles(policy.getIdentifiers().getZipCode().getIgnoredFiles())
                         .withIgnoredPatterns(policy.getIdentifiers().getZipCode().getIgnoredPatterns())
@@ -833,9 +980,16 @@ public class FilterPolicyLoader {
 
                     final int windowSize = customDictionary.getWindowSizeOrDefault(phileasConfiguration.spanWindowSize());
 
+                    final ZipCodeAnonymizationService zipCodeAnonymizationService;
+                    if(CollectionUtils.isEmpty(customDictionary.getAnonymizationCandidates())) {
+                        zipCodeAnonymizationService = new ZipCodeAnonymizationService(contextService, random);
+                    } else {
+                        zipCodeAnonymizationService = new ZipCodeAnonymizationService(contextService, random, customDictionary.getAnonymizationCandidates());
+                    }
+
                     final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                             .withStrategies(customDictionary.getCustomDictionaryFilterStrategies())
-                            .withAnonymizationService(new ZipCodeAnonymizationService(contextService, random))
+                            .withAnonymizationService(zipCodeAnonymizationService)
                             .withIgnored(customDictionary.getIgnored())
                             .withIgnoredFiles(customDictionary.getIgnoredFiles())
                             .withIgnoredPatterns(customDictionary.getIgnoredPatterns())
@@ -889,9 +1043,16 @@ public class FilterPolicyLoader {
 
                 final int windowSize = policy.getIdentifiers().getCity().getWindowSizeOrDefault(phileasConfiguration.spanWindowSize());
 
+                final CityAnonymizationService cityAnonymizationService;
+                if(CollectionUtils.isEmpty((policy.getIdentifiers().getCity().getAnonymizationCandidates()))) {
+                    cityAnonymizationService = new CityAnonymizationService(contextService, random);
+                } else {
+                    cityAnonymizationService = new CityAnonymizationService(contextService, random, policy.getIdentifiers().getCity().getAnonymizationCandidates());
+                }
+
                 final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                         .withStrategies(policy.getIdentifiers().getCity().getCityFilterStrategies())
-                        .withAnonymizationService(new CityAnonymizationService(contextService, random))
+                        .withAnonymizationService(cityAnonymizationService)
                         .withIgnored(policy.getIdentifiers().getCity().getIgnored())
                         .withIgnoredFiles(policy.getIdentifiers().getCity().getIgnoredFiles())
                         .withIgnoredPatterns(policy.getIdentifiers().getCity().getIgnoredPatterns())
@@ -928,9 +1089,16 @@ public class FilterPolicyLoader {
 
                 final int windowSize = policy.getIdentifiers().getCounty().getWindowSizeOrDefault(phileasConfiguration.spanWindowSize());
 
+                final CountyAnonymizationService countyAnonymizationService;
+                if(CollectionUtils.isEmpty((policy.getIdentifiers().getCounty().getAnonymizationCandidates()))) {
+                    countyAnonymizationService = new CountyAnonymizationService(contextService, random);
+                } else {
+                    countyAnonymizationService = new CountyAnonymizationService(contextService, random, policy.getIdentifiers().getCounty().getAnonymizationCandidates());
+                }
+
                 final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                         .withStrategies(policy.getIdentifiers().getCounty().getCountyFilterStrategies())
-                        .withAnonymizationService(new CountyAnonymizationService(contextService, random))
+                        .withAnonymizationService(countyAnonymizationService)
                         .withIgnored(policy.getIdentifiers().getCounty().getIgnored())
                         .withIgnoredFiles(policy.getIdentifiers().getCounty().getIgnoredFiles())
                         .withIgnoredPatterns(policy.getIdentifiers().getCounty().getIgnoredPatterns())
@@ -967,9 +1135,16 @@ public class FilterPolicyLoader {
 
                 final int windowSize = policy.getIdentifiers().getState().getWindowSizeOrDefault(phileasConfiguration.spanWindowSize());
 
+                final StateAnonymizationService stateAnonymizationService;
+                if(CollectionUtils.isEmpty((policy.getIdentifiers().getState().getAnonymizationCandidates()))) {
+                    stateAnonymizationService = new StateAnonymizationService(contextService, random);
+                } else {
+                    stateAnonymizationService = new StateAnonymizationService(contextService, random, policy.getIdentifiers().getState().getAnonymizationCandidates());
+                }
+
                 final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                         .withStrategies(policy.getIdentifiers().getState().getStateFilterStrategies())
-                        .withAnonymizationService(new StateAnonymizationService(contextService, random))
+                        .withAnonymizationService(stateAnonymizationService)
                         .withIgnored(policy.getIdentifiers().getState().getIgnored())
                         .withIgnoredFiles(policy.getIdentifiers().getState().getIgnoredFiles())
                         .withIgnoredPatterns(policy.getIdentifiers().getState().getIgnoredPatterns())
@@ -1006,9 +1181,16 @@ public class FilterPolicyLoader {
 
                 final int windowSize = policy.getIdentifiers().getHospital().getWindowSizeOrDefault(phileasConfiguration.spanWindowSize());
 
+                final HospitalAnonymizationService hospitalAnonymizationService;
+                if(CollectionUtils.isEmpty((policy.getIdentifiers().getHospital().getAnonymizationCandidates()))) {
+                    hospitalAnonymizationService = new HospitalAnonymizationService(contextService, random);
+                } else {
+                    hospitalAnonymizationService = new HospitalAnonymizationService(contextService, random, policy.getIdentifiers().getHospital().getAnonymizationCandidates());
+                }
+
                 final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                         .withStrategies(policy.getIdentifiers().getHospital().getHospitalFilterStrategies())
-                        .withAnonymizationService(new HospitalAnonymizationService(contextService, random))
+                        .withAnonymizationService(hospitalAnonymizationService)
                         .withIgnored(policy.getIdentifiers().getHospital().getIgnored())
                         .withIgnoredFiles(policy.getIdentifiers().getHospital().getIgnoredFiles())
                         .withIgnoredPatterns(policy.getIdentifiers().getHospital().getIgnoredPatterns())
@@ -1044,9 +1226,16 @@ public class FilterPolicyLoader {
 
                 final int windowSize = policy.getIdentifiers().getHospitalAbbreviation().getWindowSizeOrDefault(phileasConfiguration.spanWindowSize());
 
+                final HospitalAbbreviationAnonymizationService hospitalAbbreviationAnonymizationService;
+                if(CollectionUtils.isEmpty((policy.getIdentifiers().getHospitalAbbreviation().getAnonymizationCandidates()))) {
+                    hospitalAbbreviationAnonymizationService = new HospitalAbbreviationAnonymizationService(contextService, random);
+                } else {
+                    hospitalAbbreviationAnonymizationService = new HospitalAbbreviationAnonymizationService(contextService, random, policy.getIdentifiers().getHospitalAbbreviation().getAnonymizationCandidates());
+                }
+
                 final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                         .withStrategies(policy.getIdentifiers().getHospitalAbbreviation().getHospitalAbbreviationFilterStrategies())
-                        .withAnonymizationService(new HospitalAbbreviationAnonymizationService(contextService, random))
+                        .withAnonymizationService(hospitalAbbreviationAnonymizationService)
                         .withIgnored(policy.getIdentifiers().getHospitalAbbreviation().getIgnored())
                         .withIgnoredFiles(policy.getIdentifiers().getHospitalAbbreviation().getIgnoredFiles())
                         .withIgnoredPatterns(policy.getIdentifiers().getHospitalAbbreviation().getIgnoredPatterns())
@@ -1082,9 +1271,16 @@ public class FilterPolicyLoader {
 
                 final int windowSize = policy.getIdentifiers().getFirstName().getWindowSizeOrDefault(phileasConfiguration.spanWindowSize());
 
+                final PersonsAnonymizationService personsAnonymizationService;
+                if(CollectionUtils.isEmpty((policy.getIdentifiers().getFirstName().getAnonymizationCandidates()))) {
+                    personsAnonymizationService = new PersonsAnonymizationService(contextService, random);
+                } else {
+                    personsAnonymizationService = new PersonsAnonymizationService(contextService, random, policy.getIdentifiers().getFirstName().getAnonymizationCandidates());
+                }
+
                 final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                         .withStrategies(policy.getIdentifiers().getFirstName().getFirstNameFilterStrategies())
-                        .withAnonymizationService(new PersonsAnonymizationService(contextService, random))
+                        .withAnonymizationService(personsAnonymizationService)
                         .withIgnored(policy.getIdentifiers().getFirstName().getIgnored())
                         .withIgnoredFiles(policy.getIdentifiers().getFirstName().getIgnoredFiles())
                         .withIgnoredPatterns(policy.getIdentifiers().getFirstName().getIgnoredPatterns())
@@ -1121,9 +1317,16 @@ public class FilterPolicyLoader {
 
                 final int windowSize = policy.getIdentifiers().getSurname().getWindowSizeOrDefault(phileasConfiguration.spanWindowSize());
 
+                final SurnameAnonymizationService surnameAnonymizationService;
+                if(CollectionUtils.isEmpty((policy.getIdentifiers().getSurname().getAnonymizationCandidates()))) {
+                    surnameAnonymizationService = new SurnameAnonymizationService(contextService, random);
+                } else {
+                    surnameAnonymizationService = new SurnameAnonymizationService(contextService, random, policy.getIdentifiers().getSurname().getAnonymizationCandidates());
+                }
+
                 final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                         .withStrategies(policy.getIdentifiers().getSurname().getSurnameFilterStrategies())
-                        .withAnonymizationService(new SurnameAnonymizationService(contextService, random))
+                        .withAnonymizationService(surnameAnonymizationService)
                         .withIgnored(policy.getIdentifiers().getSurname().getIgnored())
                         .withIgnoredFiles(policy.getIdentifiers().getSurname().getIgnoredFiles())
                         .withIgnoredPatterns(policy.getIdentifiers().getSurname().getIgnoredPatterns())
@@ -1166,9 +1369,16 @@ public class FilterPolicyLoader {
 
                     final int windowSize = identifier.getWindowSizeOrDefault(phileasConfiguration.spanWindowSize());
 
+                    final AlphanumericAnonymizationService alphanumericAnonymizationService;
+                    if(CollectionUtils.isEmpty(identifier.getAnonymizationCandidates())) {
+                        alphanumericAnonymizationService = new AlphanumericAnonymizationService(contextService, random);
+                    } else {
+                        alphanumericAnonymizationService = new AlphanumericAnonymizationService(contextService, random, identifier.getAnonymizationCandidates());
+                    }
+
                     final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                             .withStrategies(identifier.getIdentifierFilterStrategies())
-                            .withAnonymizationService(new AlphanumericAnonymizationService(contextService, random))
+                            .withAnonymizationService(alphanumericAnonymizationService)
                             .withIgnored(identifier.getIgnored())
                             .withIgnoredFiles(identifier.getIgnoredFiles())
                             .withIgnoredPatterns(identifier.getIgnoredPatterns())
@@ -1203,9 +1413,16 @@ public class FilterPolicyLoader {
 
                 final int windowSize = policy.getIdentifiers().getPhEye().getWindowSizeOrDefault(phileasConfiguration.spanWindowSize());
 
+                final PersonsAnonymizationService personsAnonymizationService;
+                if(CollectionUtils.isEmpty((policy.getIdentifiers().getPhEye().getAnonymizationCandidates()))) {
+                    personsAnonymizationService = new PersonsAnonymizationService(contextService, random);
+                } else {
+                    personsAnonymizationService = new PersonsAnonymizationService(contextService, random, policy.getIdentifiers().getPhEye().getAnonymizationCandidates());
+                }
+
                 final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                         .withStrategies(policy.getIdentifiers().getPhEye().getPhEyeFilterStrategies())
-                        .withAnonymizationService(new PersonsAnonymizationService(contextService, random))
+                        .withAnonymizationService(personsAnonymizationService)
                         .withIgnored(policy.getIdentifiers().getPhEye().getIgnored())
                         .withIgnoredFiles(policy.getIdentifiers().getPhEye().getIgnoredFiles())
                         .withIgnoredPatterns(policy.getIdentifiers().getPhEye().getIgnoredPatterns())
@@ -1245,9 +1462,16 @@ public class FilterPolicyLoader {
 
                 final int windowSize = policy.getIdentifiers().getMedicalCondition().getWindowSizeOrDefault(phileasConfiguration.spanWindowSize());
 
+                final AlphanumericAnonymizationService alphanumericAnonymizationService;
+                if(CollectionUtils.isEmpty((policy.getIdentifiers().getMedicalCondition().getAnonymizationCandidates()))) {
+                    alphanumericAnonymizationService = new AlphanumericAnonymizationService(contextService, random);
+                } else {
+                    alphanumericAnonymizationService = new AlphanumericAnonymizationService(contextService, random, policy.getIdentifiers().getMedicalCondition().getAnonymizationCandidates());
+                }
+
                 final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                         .withStrategies(policy.getIdentifiers().getMedicalCondition().getMedicalConditionFilterStrategies())
-                        .withAnonymizationService(new AlphanumericAnonymizationService(contextService, random))
+                        .withAnonymizationService(alphanumericAnonymizationService)
                         .withIgnored(policy.getIdentifiers().getMedicalCondition().getIgnored())
                         .withIgnoredFiles(policy.getIdentifiers().getMedicalCondition().getIgnoredFiles())
                         .withIgnoredPatterns(policy.getIdentifiers().getMedicalCondition().getIgnoredPatterns())

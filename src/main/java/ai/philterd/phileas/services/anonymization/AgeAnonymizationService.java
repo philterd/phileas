@@ -15,21 +15,26 @@
  */
 package ai.philterd.phileas.services.anonymization;
 
+import org.apache.commons.collections4.CollectionUtils;
+
 import ai.philterd.phileas.services.context.ContextService;
 
 import java.security.SecureRandom;
+import java.util.List;
 import java.util.Random;
 
 public class AgeAnonymizationService extends AbstractAnonymizationService {
 
+    public AgeAnonymizationService(final ContextService contextService, final Random random, final List<String> candidates) {
+        super(contextService, random, candidates);
+    }
+
     public AgeAnonymizationService(final ContextService contextService, final Random random) {
-        super(contextService);
-        this.random = random;
+        super(contextService, random);
     }
 
     public AgeAnonymizationService(final ContextService contextService) {
         super(contextService);
-        this.random = new SecureRandom();
     }
 
     @Override
@@ -39,6 +44,10 @@ public class AgeAnonymizationService extends AbstractAnonymizationService {
 
     @Override
     public String anonymize(final String token) {
+
+        if(CollectionUtils.isNotEmpty(candidates)) {
+            return candidates.get(random.nextInt(candidates.size()));
+        }
 
         // Replace all digits with other digits.
         int numberOfDigits = 0;

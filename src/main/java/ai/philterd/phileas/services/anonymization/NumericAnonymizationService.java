@@ -15,16 +15,22 @@
  */
 package ai.philterd.phileas.services.anonymization;
 
+import org.apache.commons.collections4.CollectionUtils;
+
 import ai.philterd.phileas.services.context.ContextService;
 
+import java.util.List;
 import java.util.Random;
 
 public class NumericAnonymizationService extends AbstractAnonymizationService {
 
+    public NumericAnonymizationService(final ContextService contextService, final Random random, final List<String> candidates) {
+        super(contextService, random, candidates);
+    }
+
     public NumericAnonymizationService(final ContextService contextService, final Random random) {
         super(contextService, random);
     }
-
 
     public NumericAnonymizationService(final ContextService contextService) {
         super(contextService);
@@ -37,6 +43,10 @@ public class NumericAnonymizationService extends AbstractAnonymizationService {
 
     @Override
     public String anonymize(final String token) {
+
+        if(CollectionUtils.isNotEmpty(candidates)) {
+            return candidates.get(random.nextInt(candidates.size()));
+        }
 
         return generateNumeric(token.length());
 
