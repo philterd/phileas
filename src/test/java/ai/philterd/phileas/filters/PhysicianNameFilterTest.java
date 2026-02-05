@@ -26,7 +26,10 @@ import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.security.SecureRandom;
 import java.util.List;
+
+import static ai.philterd.phileas.services.strategies.AbstractFilterStrategy.RANDOM_REPLACE;
 
 public class PhysicianNameFilterTest extends AbstractFilterTest {
 
@@ -245,6 +248,30 @@ public class PhysicianNameFilterTest extends AbstractFilterTest {
         Assertions.assertEquals(1, filtered.getSpans().size());
         Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 0, 19, FilterType.PHYSICIAN_NAME));
         Assertions.assertEquals("Johnns,Melinda S,MD", filtered.getSpans().get(0).getText());
+
+    }
+
+    @Test
+    public void filterWithCandidates1() throws Exception {
+
+        final List<String> candidates = List.of("Doctor Smith", "Doctor Jones");
+        final PersonsAnonymizationService personsAnonymizationService = new PersonsAnonymizationService(new DefaultContextService(), new SecureRandom(), candidates);
+
+        final PhysicianNameFilterStrategy physicianNameFilterStrategy = new PhysicianNameFilterStrategy();
+        physicianNameFilterStrategy.setStrategy(RANDOM_REPLACE);
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(physicianNameFilterStrategy))
+                .withAnonymizationService(personsAnonymizationService)
+                .withWindowSize(windowSize)
+                .build();
+
+        final PhysicianNameFilter filter = new PhysicianNameFilter(filterConfiguration);
+
+        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "Doctor James Smith was here.");
+        showSpans(filtered.getSpans());
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertTrue(candidates.contains(filtered.getSpans().get(0).getReplacement()));
 
     }
 

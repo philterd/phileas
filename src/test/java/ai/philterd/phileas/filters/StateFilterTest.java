@@ -27,7 +27,10 @@ import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.security.SecureRandom;
 import java.util.List;
+
+import static ai.philterd.phileas.services.strategies.AbstractFilterStrategy.RANDOM_REPLACE;
 
 public class StateFilterTest extends AbstractFilterTest {
 
@@ -67,18 +70,26 @@ public class StateFilterTest extends AbstractFilterTest {
     }
 
     @Test
-    public void filterStatesHigh() throws Exception {
+    public void filterWithCandidates1() throws Exception {
+
+        final List<String> candidates = List.of("candidate1", "candidate2");
+        final StateAnonymizationService stateAnonymizationService = new StateAnonymizationService(new DefaultContextService(), new SecureRandom(), candidates);
+
+        final StateFilterStrategy stateFilterStrategy = new StateFilterStrategy();
+        stateFilterStrategy.setStrategy(RANDOM_REPLACE);
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
-                .withStrategies(List.of(new StateFilterStrategy()))
-                .withAnonymizationService(new StateAnonymizationService(new DefaultContextService()))
+                .withStrategies(List.of(stateFilterStrategy))
+                .withAnonymizationService(stateAnonymizationService)
                 .withWindowSize(windowSize)
                 .build();
 
-        final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.LOCATION_STATE, filterConfiguration, SensitivityLevel.HIGH, true);
+        final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.LOCATION_STATE, filterConfiguration, SensitivityLevel.LOW, true);
 
-        Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "Lived in Wasinton");
-        Assertions.assertEquals(0, filtered.getSpans().size());
+        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "Lived in Washington");
+        showSpans(filtered.getSpans());
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertTrue(candidates.contains(filtered.getSpans().get(0).getReplacement()));
 
     }
 

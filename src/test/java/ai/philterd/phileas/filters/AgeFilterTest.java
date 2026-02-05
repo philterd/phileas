@@ -25,9 +25,12 @@ import ai.philterd.phileas.services.strategies.rules.AgeFilterStrategy;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.security.SecureRandom;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+
+import static ai.philterd.phileas.services.strategies.AbstractFilterStrategy.RANDOM_REPLACE;
 
 public class AgeFilterTest extends AbstractFilterTest {
     
@@ -471,23 +474,26 @@ public class AgeFilterTest extends AbstractFilterTest {
     }
 
     @Test
-    public void filter18() throws Exception {
+    public void filterWithCandidates1() throws Exception {
 
-        // PHL-238: Support ages like: 61 y/o
+        final List<String> candidates = List.of("100", "101", "102");
+        final AgeAnonymizationService ageAnonymizationService = new AgeAnonymizationService(new DefaultContextService(), new SecureRandom(), candidates);
+
+        final AgeFilterStrategy ageFilterStrategy = new AgeFilterStrategy();
+        ageFilterStrategy.setStrategy(RANDOM_REPLACE);
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
-                .withStrategies(List.of(new AgeFilterStrategy()))
-                .withAnonymizationService(new AgeAnonymizationService(new DefaultContextService()))
+                .withStrategies(List.of(ageFilterStrategy))
+                .withAnonymizationService(ageAnonymizationService)
                 .withWindowSize(windowSize)
                 .build();
 
         final AgeFilter filter = new AgeFilter(filterConfiguration);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "patient is 4161 y/o and");
-
+        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "patient is 61 years old");
         showSpans(filtered.getSpans());
-
-        Assertions.assertEquals(0, filtered.getSpans().size());
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertTrue(candidates.contains(filtered.getSpans().get(0).getReplacement()));
 
     }
 

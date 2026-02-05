@@ -24,7 +24,10 @@ import ai.philterd.phileas.services.strategies.rules.IpAddressFilterStrategy;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.security.SecureRandom;
 import java.util.List;
+
+import static ai.philterd.phileas.services.strategies.AbstractFilterStrategy.RANDOM_REPLACE;
 
 public class IpAddressFilterTest extends AbstractFilterTest {
 
@@ -102,6 +105,30 @@ public class IpAddressFilterTest extends AbstractFilterTest {
         Assertions.assertEquals(2, filtered.getSpans().size());
         Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 10, 35, FilterType.IP_ADDRESS));
         Assertions.assertTrue(checkSpan(filtered.getSpans().get(1), 10, 31, FilterType.IP_ADDRESS));
+
+    }
+
+    @Test
+    public void filterWithCandidates1() throws Exception {
+
+        final List<String> candidates = List.of("1.1.1.1", "2.2.2.2");
+        final IpAddressAnonymizationService ipAddressAnonymizationService = new IpAddressAnonymizationService(new DefaultContextService(), new SecureRandom(), candidates);
+
+        final IpAddressFilterStrategy ipAddressFilterStrategy = new IpAddressFilterStrategy();
+        ipAddressFilterStrategy.setStrategy(RANDOM_REPLACE);
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(ipAddressFilterStrategy))
+                .withAnonymizationService(ipAddressAnonymizationService)
+                .withWindowSize(windowSize)
+                .build();
+
+        final IpAddressFilter filter = new IpAddressFilter(filterConfiguration);
+
+        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "the ip is 192.168.1.101.");
+        showSpans(filtered.getSpans());
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertTrue(candidates.contains(filtered.getSpans().get(0).getReplacement()));
 
     }
 

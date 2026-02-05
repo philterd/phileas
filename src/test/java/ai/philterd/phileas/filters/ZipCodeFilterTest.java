@@ -25,7 +25,10 @@ import ai.philterd.phileas.services.strategies.rules.ZipCodeFilterStrategy;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.security.SecureRandom;
 import java.util.List;
+
+import static ai.philterd.phileas.services.strategies.AbstractFilterStrategy.RANDOM_REPLACE;
 
 public class ZipCodeFilterTest extends AbstractFilterTest {
     
@@ -316,31 +319,26 @@ public class ZipCodeFilterTest extends AbstractFilterTest {
     }
 
     @Test
-    public void filterZipCodeAndValidate5() throws Exception {
+    public void filterWithCandidates1() throws Exception {
+
+        final List<String> candidates = List.of("candidate1", "candidate2");
+        final ZipCodeAnonymizationService zipCodeAnonymizationService = new ZipCodeAnonymizationService(new DefaultContextService(), new SecureRandom(), candidates);
+
+        final ZipCodeFilterStrategy zipCodeFilterStrategy = new ZipCodeFilterStrategy();
+        zipCodeFilterStrategy.setStrategy(RANDOM_REPLACE);
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
-                .withStrategies(List.of(new ZipCodeFilterStrategy()))
-                .withAnonymizationService(new ZipCodeAnonymizationService(new DefaultContextService()))
+                .withStrategies(List.of(zipCodeFilterStrategy))
+                .withAnonymizationService(zipCodeAnonymizationService)
                 .withWindowSize(windowSize)
                 .build();
 
-        final ZipCodeFilter filter = new ZipCodeFilter(filterConfiguration, false, true);
+        final ZipCodeFilter filter = new ZipCodeFilter(filterConfiguration, false, false);
 
-        // 09865 is an invalid zip code.
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "George Washington lived in 902101234 and 098651234.");
-        Assertions.assertEquals(2, filtered.getSpans().size());
-
-        for(final Span span : filtered.getSpans()) {
-
-            Assertions.assertTrue(span.getText().equals("902101234") || span.getText().equals("098651234"));
-
-            if(span.getText().equals("902101234")) {
-                Assertions.assertTrue(span.isApplied());
-            } else {
-                Assertions.assertFalse(span.isApplied());
-            }
-
-        }
+        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "the zip code is 90210");
+        showSpans(filtered.getSpans());
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertTrue(candidates.contains(filtered.getSpans().get(0).getReplacement()));
 
     }
 

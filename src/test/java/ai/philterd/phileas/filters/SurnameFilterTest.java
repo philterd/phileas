@@ -27,7 +27,10 @@ import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.security.SecureRandom;
 import java.util.List;
+
+import static ai.philterd.phileas.services.strategies.AbstractFilterStrategy.RANDOM_REPLACE;
 
 public class SurnameFilterTest extends AbstractFilterTest {
 
@@ -119,19 +122,26 @@ public class SurnameFilterTest extends AbstractFilterTest {
     }
 
     @Test
-    public void filter6() throws Exception {
+    public void filterWithCandidates1() throws Exception {
+
+        final List<String> candidates = List.of("candidate1", "candidate2");
+        final SurnameAnonymizationService surnameAnonymizationService = new SurnameAnonymizationService(new DefaultContextService(), new SecureRandom(), candidates);
+
+        final SurnameFilterStrategy surnameFilterStrategy = new SurnameFilterStrategy();
+        surnameFilterStrategy.setStrategy(RANDOM_REPLACE);
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
-                .withStrategies(List.of(new SurnameFilterStrategy()))
-                .withAnonymizationService(new SurnameAnonymizationService(new DefaultContextService()))
+                .withStrategies(List.of(surnameFilterStrategy))
+                .withAnonymizationService(surnameAnonymizationService)
                 .withWindowSize(windowSize)
                 .build();
 
         final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.SURNAME, filterConfiguration, SensitivityLevel.LOW, true);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "from");
+        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "Jones");
         showSpans(filtered.getSpans());
-        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertTrue(filtered.getSpans().size() >= 1);
+        Assertions.assertTrue(candidates.contains(filtered.getSpans().get(0).getReplacement()));
 
     }
 

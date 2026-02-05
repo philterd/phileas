@@ -26,7 +26,10 @@ import ai.philterd.phileas.services.strategies.rules.IdentifierFilterStrategy;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.security.SecureRandom;
 import java.util.List;
+
+import static ai.philterd.phileas.services.strategies.AbstractFilterStrategy.RANDOM_REPLACE;
 
 public class IdentifierFilterTest extends AbstractFilterTest {
 
@@ -363,6 +366,30 @@ public class IdentifierFilterTest extends AbstractFilterTest {
         showSpans(filtered.getSpans());
         Assertions.assertEquals(1, filtered.getSpans().size());
         Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 11,22, FilterType.IDENTIFIER));
+
+    }
+
+    @Test
+    public void filterWithCandidates1() throws Exception {
+
+        final List<String> candidates = List.of("candidate1", "candidate2");
+        final AlphanumericAnonymizationService alphanumericAnonymizationService = new AlphanumericAnonymizationService(new DefaultContextService(), new SecureRandom(), candidates);
+
+        final IdentifierFilterStrategy identifierFilterStrategy = new IdentifierFilterStrategy();
+        identifierFilterStrategy.setStrategy(RANDOM_REPLACE);
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(identifierFilterStrategy))
+                .withAnonymizationService(alphanumericAnonymizationService)
+                .withWindowSize(windowSize)
+                .build();
+
+        final IdentifierFilter filter = new IdentifierFilter(filterConfiguration, "name", Identifier.DEFAULT_IDENTIFIER_REGEX, true, 0);
+
+        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "the id is AB4736021 in california.");
+        showSpans(filtered.getSpans());
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertTrue(candidates.contains(filtered.getSpans().get(0).getReplacement()));
 
     }
 

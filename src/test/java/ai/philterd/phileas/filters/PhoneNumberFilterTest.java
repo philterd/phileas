@@ -17,7 +17,7 @@ package ai.philterd.phileas.filters;
 
 import ai.philterd.phileas.model.filtering.FilterType;
 import ai.philterd.phileas.model.filtering.Filtered;
-import ai.philterd.phileas.services.anonymization.MacAddressAnonymizationService;
+import ai.philterd.phileas.services.anonymization.NumericAnonymizationService;
 import ai.philterd.phileas.services.context.DefaultContextService;
 import ai.philterd.phileas.services.filters.custom.PhoneNumberRulesFilter;
 import ai.philterd.phileas.services.strategies.rules.PhoneNumberFilterStrategy;
@@ -26,7 +26,10 @@ import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.security.SecureRandom;
 import java.util.List;
+
+import static ai.philterd.phileas.services.strategies.AbstractFilterStrategy.RANDOM_REPLACE;
 
 public class PhoneNumberFilterTest extends AbstractFilterTest {
 
@@ -37,7 +40,7 @@ public class PhoneNumberFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new PhoneNumberFilterStrategy()))
-                .withAnonymizationService(new MacAddressAnonymizationService(new DefaultContextService()))
+                .withAnonymizationService(new NumericAnonymizationService(new DefaultContextService()))
                 .withWindowSize(windowSize)
                 .build();
 
@@ -56,7 +59,7 @@ public class PhoneNumberFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new PhoneNumberFilterStrategy()))
-                .withAnonymizationService(new MacAddressAnonymizationService(new DefaultContextService()))
+                .withAnonymizationService(new NumericAnonymizationService(new DefaultContextService()))
                 .withWindowSize(windowSize)
                 .build();
 
@@ -76,7 +79,7 @@ public class PhoneNumberFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new PhoneNumberFilterStrategy()))
-                .withAnonymizationService(new MacAddressAnonymizationService(new DefaultContextService()))
+                .withAnonymizationService(new NumericAnonymizationService(new DefaultContextService()))
                 .withWindowSize(windowSize)
                 .build();
 
@@ -94,7 +97,7 @@ public class PhoneNumberFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new PhoneNumberFilterStrategy()))
-                .withAnonymizationService(new MacAddressAnonymizationService(new DefaultContextService()))
+                .withAnonymizationService(new NumericAnonymizationService(new DefaultContextService()))
                 .withWindowSize(windowSize)
                 .build();
 
@@ -111,7 +114,7 @@ public class PhoneNumberFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new PhoneNumberFilterStrategy()))
-                .withAnonymizationService(new MacAddressAnonymizationService(new DefaultContextService()))
+                .withAnonymizationService(new NumericAnonymizationService(new DefaultContextService()))
                 .withWindowSize(windowSize)
                 .build();
 
@@ -129,7 +132,7 @@ public class PhoneNumberFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new PhoneNumberFilterStrategy()))
-                .withAnonymizationService(new MacAddressAnonymizationService(new DefaultContextService()))
+                .withAnonymizationService(new NumericAnonymizationService(new DefaultContextService()))
                 .withWindowSize(windowSize)
                 .build();
 
@@ -149,7 +152,7 @@ public class PhoneNumberFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new PhoneNumberFilterStrategy()))
-                .withAnonymizationService(new MacAddressAnonymizationService(new DefaultContextService()))
+                .withAnonymizationService(new NumericAnonymizationService(new DefaultContextService()))
                 .withWindowSize(windowSize)
                 .build();
 
@@ -169,7 +172,7 @@ public class PhoneNumberFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new PhoneNumberFilterStrategy()))
-                .withAnonymizationService(new MacAddressAnonymizationService(new DefaultContextService()))
+                .withAnonymizationService(new NumericAnonymizationService(new DefaultContextService()))
                 .withWindowSize(windowSize)
                 .build();
 
@@ -180,6 +183,30 @@ public class PhoneNumberFilterTest extends AbstractFilterTest {
 
         Assertions.assertEquals(1, filtered.getSpans().size());
         Assertions.assertEquals(0.60, filtered.getSpans().get(0).getConfidence());
+
+    }
+
+    @Test
+    public void filterWithCandidates1() throws Exception {
+
+        final List<String> candidates = List.of("555-555-5555", "555-555-5556");
+        final NumericAnonymizationService numericAnonymizationService = new NumericAnonymizationService(new DefaultContextService(), new SecureRandom(), candidates);
+
+        final PhoneNumberFilterStrategy phoneNumberFilterStrategy = new PhoneNumberFilterStrategy();
+        phoneNumberFilterStrategy.setStrategy(RANDOM_REPLACE);
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(phoneNumberFilterStrategy))
+                .withAnonymizationService(numericAnonymizationService)
+                .withWindowSize(windowSize)
+                .build();
+
+        final PhoneNumberRulesFilter filter = new PhoneNumberRulesFilter(filterConfiguration);
+
+        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "the number is (123) 456-7890.");
+        showSpans(filtered.getSpans());
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertTrue(candidates.contains(filtered.getSpans().get(0).getReplacement()));
 
     }
 
