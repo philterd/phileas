@@ -60,7 +60,7 @@ public class PhoneNumberRulesFilter extends RulesFilter {
 
         if(policy.getIdentifiers().hasFilter(filterType)) {
 
-            final Iterable<PhoneNumberMatch> matches = phoneUtil.findNumbers(input, "US", PhoneNumberUtil.Leniency.POSSIBLE, 1);
+            final Iterable<PhoneNumberMatch> matches = phoneUtil.findNumbers(input, "US", PhoneNumberUtil.Leniency.POSSIBLE, Long.MAX_VALUE);
 
             for (final PhoneNumberMatch match : matches) {
 

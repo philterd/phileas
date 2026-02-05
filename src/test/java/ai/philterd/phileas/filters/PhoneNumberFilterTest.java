@@ -18,6 +18,7 @@ package ai.philterd.phileas.filters;
 import ai.philterd.phileas.model.filtering.FilterType;
 import ai.philterd.phileas.model.filtering.Filtered;
 import ai.philterd.phileas.services.anonymization.MacAddressAnonymizationService;
+import ai.philterd.phileas.services.anonymization.NumericAnonymizationService;
 import ai.philterd.phileas.services.context.DefaultContextService;
 import ai.philterd.phileas.services.filters.custom.PhoneNumberRulesFilter;
 import ai.philterd.phileas.services.strategies.rules.PhoneNumberFilterStrategy;
@@ -180,6 +181,27 @@ public class PhoneNumberFilterTest extends AbstractFilterTest {
 
         Assertions.assertEquals(1, filtered.getSpans().size());
         Assertions.assertEquals(0.60, filtered.getSpans().get(0).getConfidence());
+
+    }
+
+    @Test
+    public void filterPhone9() throws Exception {
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(new PhoneNumberFilterStrategy()))
+                .withAnonymizationService(new NumericAnonymizationService(new DefaultContextService()))
+                .withWindowSize(windowSize)
+                .build();
+
+        final PhoneNumberRulesFilter filter = new PhoneNumberRulesFilter(filterConfiguration);
+
+        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "George Washington was president and his SSN was 123-45-6789. His phone number was (555) 123-9988 and he lived in 20001.");
+        showSpans(filtered.getSpans());
+
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertEquals(0.95, filtered.getSpans().get(0).getConfidence());
+        Assertions.assertEquals(82, filtered.getSpans().get(0).getCharacterStart());
+        Assertions.assertEquals(96, filtered.getSpans().get(0).getCharacterEnd());
 
     }
 
