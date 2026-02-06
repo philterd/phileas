@@ -23,6 +23,6 @@ public interface ContextService {
 
     String getReplacement(final String token);
 
-    void putReplacement(final String token, final String replacement);
+    void putReplacement(final String token, final String replacement, final String filterType);
 
 }
