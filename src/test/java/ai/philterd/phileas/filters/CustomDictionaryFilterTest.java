@@ -26,10 +26,13 @@ import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.security.SecureRandom;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import static ai.philterd.phileas.services.strategies.AbstractFilterStrategy.RANDOM_REPLACE;
 
 public class CustomDictionaryFilterTest extends AbstractFilterTest {
 
@@ -72,6 +75,31 @@ public class CustomDictionaryFilterTest extends AbstractFilterTest {
         showSpans(filtered.getSpans());
 
         Assertions.assertEquals(0, filtered.getSpans().size());
+
+    }
+
+    @Test
+    public void filterWithCandidates1() throws Exception {
+
+        final List<String> candidates = List.of("candidate1", "candidate2");
+        final AlphanumericAnonymizationService alphanumericAnonymizationService = new AlphanumericAnonymizationService(new DefaultContextService(), new SecureRandom(), candidates);
+
+        final CustomDictionaryFilterStrategy customDictionaryFilterStrategy = new CustomDictionaryFilterStrategy();
+        customDictionaryFilterStrategy.setStrategy(RANDOM_REPLACE);
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(customDictionaryFilterStrategy))
+                .withAnonymizationService(alphanumericAnonymizationService)
+                .withWindowSize(windowSize)
+                .build();
+
+        final Set<String> names = new HashSet<>(Arrays.asList("george", "ted", "bill", "john"));
+        final BloomFilterDictionaryFilter filter = new BloomFilterDictionaryFilter(FilterType.CUSTOM_DICTIONARY, filterConfiguration, names, "names");
+
+        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE,"He lived with Bill in California.");
+        showSpans(filtered.getSpans());
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertTrue(candidates.contains(filtered.getSpans().get(0).getReplacement()));
 
     }
 

@@ -24,7 +24,10 @@ import ai.philterd.phileas.services.strategies.rules.MacAddressFilterStrategy;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.security.SecureRandom;
 import java.util.List;
+
+import static ai.philterd.phileas.services.strategies.AbstractFilterStrategy.RANDOM_REPLACE;
 
 public class MacAddressFilterTest extends AbstractFilterTest {
 
@@ -62,6 +65,30 @@ public class MacAddressFilterTest extends AbstractFilterTest {
 
         Assertions.assertEquals(1, filtered.getSpans().size());
         Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 11, 28, FilterType.MAC_ADDRESS));
+
+    }
+
+    @Test
+    public void filterWithCandidates1() throws Exception {
+
+        final List<String> candidates = List.of("candidate1", "candidate2");
+        final MacAddressAnonymizationService macAddressAnonymizationService = new MacAddressAnonymizationService(new DefaultContextService(), new SecureRandom(), candidates);
+
+        final MacAddressFilterStrategy macAddressFilterStrategy = new MacAddressFilterStrategy();
+        macAddressFilterStrategy.setStrategy(RANDOM_REPLACE);
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(macAddressFilterStrategy))
+                .withAnonymizationService(macAddressAnonymizationService)
+                .withWindowSize(windowSize)
+                .build();
+
+        final MacAddressFilter filter = new MacAddressFilter(filterConfiguration);
+
+        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "the mac is 00-14-22-04-25-37.");
+        showSpans(filtered.getSpans());
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertTrue(candidates.contains(filtered.getSpans().get(0).getReplacement()));
 
     }
 

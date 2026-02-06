@@ -36,6 +36,7 @@ public class CreditCardAnonymizationServiceTest {
         final String replacement = anonymizationService.anonymize(token);
 
         LOGGER.info("Credit Card: {}", replacement);
+        Assertions.assertNotEquals(token, replacement);
         Assertions.assertNotNull(replacement);
         Assertions.assertTrue(Pattern.matches("^[0-9-]*$", replacement));
 
@@ -50,6 +51,7 @@ public class CreditCardAnonymizationServiceTest {
         final String replacement = anonymizationService.anonymize(token);
 
         LOGGER.info("Credit Card: {}", replacement);
+        Assertions.assertNotEquals(token, replacement);
         Assertions.assertNotNull(replacement);
         Assertions.assertTrue(Pattern.matches("^[0-9-]*$", replacement));
 

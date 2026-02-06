@@ -27,7 +27,10 @@ import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.security.SecureRandom;
 import java.util.List;
+
+import static ai.philterd.phileas.services.strategies.AbstractFilterStrategy.RANDOM_REPLACE;
 
 public class CountyFilterTest extends AbstractFilterTest {
 
@@ -129,6 +132,30 @@ public class CountyFilterTest extends AbstractFilterTest {
         showSpans(filtered.getSpans());
 
         Assertions.assertEquals(0, filtered.getSpans().size());
+
+    }
+
+    @Test
+    public void filterWithCandidates1() throws Exception {
+
+        final List<String> candidates = List.of("candidate1", "candidate2");
+        final CountyAnonymizationService countyAnonymizationService = new CountyAnonymizationService(new DefaultContextService(), new SecureRandom(), candidates);
+
+        final CountyFilterStrategy countyFilterStrategy = new CountyFilterStrategy();
+        countyFilterStrategy.setStrategy(RANDOM_REPLACE);
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(countyFilterStrategy))
+                .withAnonymizationService(countyAnonymizationService)
+                .withWindowSize(windowSize)
+                .build();
+
+        final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.LOCATION_COUNTY, filterConfiguration, SensitivityLevel.LOW, true);
+
+        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "Lived in Fayette County");
+        showSpans(filtered.getSpans());
+        Assertions.assertTrue(filtered.getSpans().size() >= 1);
+        Assertions.assertTrue(candidates.contains(filtered.getSpans().get(0).getReplacement()));
 
     }
 

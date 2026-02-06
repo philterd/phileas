@@ -24,7 +24,10 @@ import ai.philterd.phileas.services.strategies.rules.SsnFilterStrategy;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.security.SecureRandom;
 import java.util.List;
+
+import static ai.philterd.phileas.services.strategies.AbstractFilterStrategy.RANDOM_REPLACE;
 
 public class SsnFilterTest extends AbstractFilterTest {
 
@@ -147,21 +150,27 @@ public class SsnFilterTest extends AbstractFilterTest {
     }
 
     @Test
-    public void filterSsn8() throws Exception {
+    public void filterWithCandidates1() throws Exception {
+
+        final List<String> candidates = List.of("candidate1", "candidate2");
+        final AlphanumericAnonymizationService alphanumericAnonymizationService = new AlphanumericAnonymizationService(new DefaultContextService(), new SecureRandom(), candidates);
+
+        final SsnFilterStrategy ssnFilterStrategy = new SsnFilterStrategy();
+        ssnFilterStrategy.setStrategy(RANDOM_REPLACE);
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
-                .withStrategies(List.of(new SsnFilterStrategy()))
-                .withAnonymizationService(new AlphanumericAnonymizationService(new DefaultContextService()))
+                .withStrategies(List.of(ssnFilterStrategy))
+                .withAnonymizationService(alphanumericAnonymizationService)
                 .withWindowSize(windowSize)
                 .build();
 
         final SsnFilter filter = new SsnFilter(filterConfiguration);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "489-36-8351");
+        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "the ssn is 123-45-6789.");
+        showSpans(filtered.getSpans());
         Assertions.assertEquals(1, filtered.getSpans().size());
-        Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 0, 11, FilterType.SSN));
+        Assertions.assertTrue(candidates.contains(filtered.getSpans().get(0).getReplacement()));
 
     }
-
 
 }

@@ -27,7 +27,11 @@ import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.security.SecureRandom;
+import java.util.Collections;
 import java.util.List;
+
+import static ai.philterd.phileas.services.strategies.AbstractFilterStrategy.RANDOM_REPLACE;
 
 public class FirstNameFilterTest extends AbstractFilterTest {
 
@@ -201,6 +205,78 @@ public class FirstNameFilterTest extends AbstractFilterTest {
         final Filtered filtered = filter.filter(getPolicy(), "context", PIECE,"Smith,Melissa A,MD");
         showSpans(filtered.getSpans());
         Assertions.assertEquals(3, filtered.getSpans().size());
+
+    }
+
+    @Test
+    public void filterWithCandidates1() throws Exception {
+
+        final List<String> candidates = List.of("John", "Melissa", "James");
+        final PersonsAnonymizationService personsAnonymizationService = new PersonsAnonymizationService(new DefaultContextService(), new SecureRandom(), candidates);
+
+        final FirstNameFilterStrategy firstNameFilterStrategy = new FirstNameFilterStrategy();
+        firstNameFilterStrategy.setStrategy(RANDOM_REPLACE);
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(firstNameFilterStrategy))
+                .withAnonymizationService(personsAnonymizationService)
+                .withWindowSize(windowSize)
+                .build();
+
+        final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.FIRST_NAME, filterConfiguration, SensitivityLevel.LOW, true);
+
+        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE,"Timothy");
+        showSpans(filtered.getSpans());
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertTrue(candidates.contains(filtered.getSpans().get(0).getReplacement()));
+
+    }
+
+    @Test
+    public void filterWithCandidates2() throws Exception {
+
+        final List<String> candidates = List.of("John");
+        final PersonsAnonymizationService personsAnonymizationService = new PersonsAnonymizationService(new DefaultContextService(), new SecureRandom(), candidates);
+
+        final FirstNameFilterStrategy firstNameFilterStrategy = new FirstNameFilterStrategy();
+        firstNameFilterStrategy.setStrategy(RANDOM_REPLACE);
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(firstNameFilterStrategy))
+                .withAnonymizationService(personsAnonymizationService)
+                .withWindowSize(windowSize)
+                .build();
+
+        final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.FIRST_NAME, filterConfiguration, SensitivityLevel.LOW, true);
+
+        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE,"Timothy");
+        showSpans(filtered.getSpans());
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertTrue(candidates.contains(filtered.getSpans().get(0).getReplacement()));
+
+    }
+
+    @Test
+    public void filterWithCandidates3() throws Exception {
+
+        final List<String> candidates = Collections.emptyList();
+        final PersonsAnonymizationService personsAnonymizationService = new PersonsAnonymizationService(new DefaultContextService(), new SecureRandom(), candidates);
+
+        final FirstNameFilterStrategy firstNameFilterStrategy = new FirstNameFilterStrategy();
+        firstNameFilterStrategy.setStrategy(RANDOM_REPLACE);
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(firstNameFilterStrategy))
+                .withAnonymizationService(personsAnonymizationService)
+                .withWindowSize(windowSize)
+                .build();
+
+        final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.FIRST_NAME, filterConfiguration, SensitivityLevel.LOW, true);
+
+        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE,"Timothy");
+        showSpans(filtered.getSpans());
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertFalse(candidates.contains(filtered.getSpans().get(0).getReplacement()));
 
     }
 

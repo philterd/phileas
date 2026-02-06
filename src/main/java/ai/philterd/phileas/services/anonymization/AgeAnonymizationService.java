@@ -16,20 +16,23 @@
 package ai.philterd.phileas.services.anonymization;
 
 import ai.philterd.phileas.services.context.ContextService;
+import org.apache.commons.collections4.CollectionUtils;
 
-import java.security.SecureRandom;
+import java.util.List;
 import java.util.Random;
 
 public class AgeAnonymizationService extends AbstractAnonymizationService {
 
+    public AgeAnonymizationService(final ContextService contextService, final Random random, final List<String> candidates) {
+        super(contextService, random, candidates);
+    }
+
     public AgeAnonymizationService(final ContextService contextService, final Random random) {
-        super(contextService);
-        this.random = random;
+        super(contextService, random);
     }
 
     public AgeAnonymizationService(final ContextService contextService) {
         super(contextService);
-        this.random = new SecureRandom();
     }
 
     @Override
@@ -40,10 +43,28 @@ public class AgeAnonymizationService extends AbstractAnonymizationService {
     @Override
     public String anonymize(final String token) {
 
-        // Replace all digits with other digits.
-        int numberOfDigits = 0;
+        if(CollectionUtils.isNotEmpty(candidates)) {
+            String anonymized = candidates.get(random.nextInt(candidates.size()));
+            while(anonymized.equalsIgnoreCase(token)) {
+                anonymized = candidates.get(random.nextInt(candidates.size()));
+            }
+            return anonymized;
+        }
 
-        StringBuilder sb = new StringBuilder();
+        String anonymized = getAnonymizedAge(token);
+
+        while(anonymized.equalsIgnoreCase(token)) {
+            anonymized = getAnonymizedAge(token);
+        }
+
+        return anonymized;
+
+    }
+
+    private String getAnonymizedAge(final String token) {
+
+        // Replace all digits with other digits.
+        final StringBuilder sb = new StringBuilder();
 
         for (int i = 0; i < token.length(); i++) {
 
@@ -52,7 +73,6 @@ public class AgeAnonymizationService extends AbstractAnonymizationService {
             if (Character.isDigit(c)) {
 
                 sb.append(random.nextInt((9) + 1));
-                numberOfDigits++;
 
             } else {
 
@@ -63,16 +83,7 @@ public class AgeAnonymizationService extends AbstractAnonymizationService {
 
         }
 
-        final String anonymized = sb.toString();
-
-        // Just ensure that the new one does not equal the original.
-        if(numberOfDigits > 0) {
-            if (token.equalsIgnoreCase(anonymized)) {
-                return anonymize(token);
-            }
-        }
-
-        return anonymized;
+        return sb.toString();
 
     }
 

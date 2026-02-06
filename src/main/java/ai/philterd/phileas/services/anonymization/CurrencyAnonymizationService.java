@@ -15,12 +15,19 @@
  */
 package ai.philterd.phileas.services.anonymization;
 
+import org.apache.commons.collections4.CollectionUtils;
+
 import ai.philterd.phileas.services.context.ContextService;
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.List;
 import java.util.Random;
 
 public class CurrencyAnonymizationService extends AbstractAnonymizationService {
+
+    public CurrencyAnonymizationService(final ContextService contextService, final Random random, final List<String> candidates) {
+        super(contextService, random, candidates);
+    }
 
     public CurrencyAnonymizationService(final ContextService contextService, final Random random) {
         super(contextService, random);
@@ -38,8 +45,27 @@ public class CurrencyAnonymizationService extends AbstractAnonymizationService {
     @Override
     public String anonymize(final String token) {
 
-        // Replace all digits with other digits.
+        if(CollectionUtils.isNotEmpty(candidates)) {
+            String anonymized = candidates.get(random.nextInt(candidates.size()));
+            while(anonymized.equalsIgnoreCase(token)) {
+                anonymized = candidates.get(random.nextInt(candidates.size()));
+            }
+            return anonymized;
+        }
 
+        String anonymized = getAnonymizedCurrency(token);
+
+        while(anonymized.equalsIgnoreCase(token)) {
+            anonymized = getAnonymizedCurrency(token);
+        }
+
+        return anonymized;
+
+    }
+
+    private String getAnonymizedCurrency(String token) {
+
+        // Replace all digits with other digits.
         final StringBuilder sb = new StringBuilder();
 
         for (int i = 0; i < token.length(); i++) {
@@ -69,11 +95,6 @@ public class CurrencyAnonymizationService extends AbstractAnonymizationService {
 
             anonymized = sb.toString();
 
-        }
-
-        // Just ensure that the new one does not equal the original.
-        if(StringUtils.equalsIgnoreCase(token, anonymized)) {
-            return anonymize(token);
         }
 
         return anonymized;

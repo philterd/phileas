@@ -27,7 +27,10 @@ import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.security.SecureRandom;
 import java.util.List;
+
+import static ai.philterd.phileas.services.strategies.AbstractFilterStrategy.RANDOM_REPLACE;
 
 public class CityFilterTest extends AbstractFilterTest {
 
@@ -130,6 +133,30 @@ public class CityFilterTest extends AbstractFilterTest {
         showSpans(filtered.getSpans());
 
         Assertions.assertEquals(0, filtered.getSpans().size());
+
+    }
+
+    @Test
+    public void filterWithCandidates1() throws Exception {
+
+        final List<String> candidates = List.of("candidate1", "candidate2");
+        final CityAnonymizationService cityAnonymizationService = new CityAnonymizationService(new DefaultContextService(), new SecureRandom(), candidates);
+
+        final CityFilterStrategy cityFilterStrategy = new CityFilterStrategy();
+        cityFilterStrategy.setStrategy(RANDOM_REPLACE);
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(cityFilterStrategy))
+                .withAnonymizationService(cityAnonymizationService)
+                .withWindowSize(windowSize)
+                .build();
+
+        final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.LOCATION_CITY, filterConfiguration, SensitivityLevel.LOW, true);
+
+        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "Lived in Washington.");
+        showSpans(filtered.getSpans());
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertTrue(candidates.contains(filtered.getSpans().get(0).getReplacement()));
 
     }
 

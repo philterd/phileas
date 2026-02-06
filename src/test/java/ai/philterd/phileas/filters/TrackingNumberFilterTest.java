@@ -25,7 +25,10 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
+import java.security.SecureRandom;
 import java.util.List;
+
+import static ai.philterd.phileas.services.strategies.AbstractFilterStrategy.RANDOM_REPLACE;
 
 public class TrackingNumberFilterTest extends AbstractFilterTest {
 
@@ -302,6 +305,30 @@ public class TrackingNumberFilterTest extends AbstractFilterTest {
         Assertions.assertEquals("{{{REDACTED-tracking-number}}}", filtered.getSpans().get(0).getReplacement());
         Assertions.assertEquals("9400100000000000000000", filtered.getSpans().get(0).getText());
         Assertions.assertEquals("fedex", filtered.getSpans().get(0).getClassification());
+
+    }
+
+    @Test
+    public void filterWithCandidates1() throws Exception {
+
+        final List<String> candidates = List.of("candidate1", "candidate2");
+        final AlphanumericAnonymizationService alphanumericAnonymizationService = new AlphanumericAnonymizationService(new DefaultContextService(), new SecureRandom(), candidates);
+
+        final TrackingNumberFilterStrategy trackingNumberFilterStrategy = new TrackingNumberFilterStrategy();
+        trackingNumberFilterStrategy.setStrategy(RANDOM_REPLACE);
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(trackingNumberFilterStrategy))
+                .withAnonymizationService(alphanumericAnonymizationService)
+                .withWindowSize(windowSize)
+                .build();
+
+        final TrackingNumberFilter filter = new TrackingNumberFilter(filterConfiguration, true, true, true);
+
+        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "the tracking number is 1Z9YF1280343418566");
+        showSpans(filtered.getSpans());
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertTrue(candidates.contains(filtered.getSpans().get(0).getReplacement()));
 
     }
 

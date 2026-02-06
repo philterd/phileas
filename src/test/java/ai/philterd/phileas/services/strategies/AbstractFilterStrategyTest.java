@@ -81,10 +81,11 @@ public abstract class AbstractFilterStrategyTest {
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
         strategy.setStrategy(AbstractFilterStrategy.RANDOM_REPLACE);
+        strategy.setReplacementScope(AbstractFilterStrategy.REPLACEMENT_SCOPE_CONTEXT);
 
-        final Replacement replacement = strategy.getReplacement("name", "context",  "token", WINDOW, new Crypto(), new FPE(), anonymizationService, null);
+        final Replacement replacement = strategy.getReplacement("name", "context", "token", WINDOW, new Crypto(), new FPE(), anonymizationService, null);
 
-        Assertions.assertNotEquals("random", replacement.getReplacement());
+        Assertions.assertEquals("random", replacement.getReplacement());
 
     }
 
@@ -97,7 +98,7 @@ public abstract class AbstractFilterStrategyTest {
         final AbstractFilterStrategy strategy = getFilterStrategy();
         strategy.setStrategy("something-wrong");
 
-        final Replacement replacement = strategy.getReplacement("name", "context",  "token", WINDOW, new Crypto(), new FPE(), anonymizationService, null);
+        final Replacement replacement = strategy.getReplacement("name", "context", "token", WINDOW, new Crypto(), new FPE(), anonymizationService, null);
 
         Assertions.assertEquals("{{{REDACTED-" + strategy.getFilterType().getType() + "}}}", replacement.getReplacement());
 
@@ -144,11 +145,11 @@ public abstract class AbstractFilterStrategyTest {
         final AbstractFilterStrategy strategy = getFilterStrategy();
         strategy.setStrategy(AbstractFilterStrategy.RANDOM_REPLACE);
 
-        final Replacement replacement = strategy.getReplacement("name", "context",  "token", WINDOW, new Crypto(), new FPE(), anonymizationService, null);
+        final Replacement replacement = strategy.getReplacement("name", "context",  "54", WINDOW, new Crypto(), new FPE(), anonymizationService, null);
 
         // If this is a test for the age filter, the replacement will be "token" because there are no digits in "token".
         if(anonymizationService instanceof AgeAnonymizationService) {
-            Assertions.assertEquals("token", replacement.getReplacement());
+            Assertions.assertNotEquals("54", replacement.getReplacement());
         } else {
             Assertions.assertNotEquals("token", replacement.getReplacement());
         }
@@ -205,6 +206,21 @@ public abstract class AbstractFilterStrategyTest {
 
         // This is the hash of "token"
         Assertions.assertEquals(expected, replacement.getReplacement());
+
+    }
+
+    @Test
+    public void replacement11() throws Exception {
+
+        final AnonymizationService anonymizationService = getAnonymizationService();
+
+        final AbstractFilterStrategy strategy = getFilterStrategy();
+        strategy.setStrategy(AbstractFilterStrategy.RANDOM_REPLACE);
+        strategy.setReplacementScope(AbstractFilterStrategy.REPLACEMENT_SCOPE_DOCUMENT);
+
+        final Replacement replacement = strategy.getReplacement("name", "context", "54", WINDOW, new Crypto(), new FPE(), anonymizationService, null);
+
+        Assertions.assertNotEquals("54", replacement.getReplacement());
 
     }
 

@@ -27,7 +27,10 @@ import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.security.SecureRandom;
 import java.util.List;
+
+import static ai.philterd.phileas.services.strategies.AbstractFilterStrategy.RANDOM_REPLACE;
 
 public class HospitalFilterTest extends AbstractFilterTest {
 
@@ -47,6 +50,30 @@ public class HospitalFilterTest extends AbstractFilterTest {
         Filtered filtered = filter.filter(getPolicy(), "context", PIECE,"Wyoming Medical Center");
         Assertions.assertEquals(1, filtered.getSpans().size());
         Assertions.assertEquals("wyoming medical center", filtered.getSpans().get(0).getText());
+
+    }
+
+    @Test
+    public void filterWithCandidates1() throws Exception {
+
+        final List<String> candidates = List.of("candidate1", "candidate2");
+        final HospitalAnonymizationService hospitalAnonymizationService = new HospitalAnonymizationService(new DefaultContextService(), new SecureRandom(), candidates);
+
+        final HospitalFilterStrategy hospitalFilterStrategy = new HospitalFilterStrategy();
+        hospitalFilterStrategy.setStrategy(RANDOM_REPLACE);
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(hospitalFilterStrategy))
+                .withAnonymizationService(hospitalAnonymizationService)
+                .withWindowSize(windowSize)
+                .build();
+
+        final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.HOSPITAL, filterConfiguration, SensitivityLevel.LOW, true);
+
+        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "Wyoming Medical Center");
+        showSpans(filtered.getSpans());
+        Assertions.assertTrue(filtered.getSpans().size() >= 1);
+        Assertions.assertTrue(candidates.contains(filtered.getSpans().get(0).getReplacement()));
 
     }
 

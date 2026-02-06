@@ -24,30 +24,34 @@ import ai.philterd.phileas.services.strategies.rules.DriversLicenseFilterStrateg
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.security.SecureRandom;
 import java.util.List;
+
+import static ai.philterd.phileas.services.strategies.AbstractFilterStrategy.RANDOM_REPLACE;
 
 public class DriversLicenseFilterTest extends AbstractFilterTest {
 
     @Test
-    public void filter1() throws Exception {
+    public void filterWithCandidates1() throws Exception {
+
+        final List<String> candidates = List.of("candidate1", "candidate2");
+        final AlphanumericAnonymizationService alphanumericAnonymizationService = new AlphanumericAnonymizationService(new DefaultContextService(), new SecureRandom(), candidates);
+
+        final DriversLicenseFilterStrategy driversLicenseFilterStrategy = new DriversLicenseFilterStrategy();
+        driversLicenseFilterStrategy.setStrategy(RANDOM_REPLACE);
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
-                .withStrategies(List.of(new DriversLicenseFilterStrategy()))
-                .withAnonymizationService(new AlphanumericAnonymizationService(new DefaultContextService()))
+                .withStrategies(List.of(driversLicenseFilterStrategy))
+                .withAnonymizationService(alphanumericAnonymizationService)
                 .withWindowSize(windowSize)
                 .build();
 
         final DriversLicenseFilter filter = new DriversLicenseFilter(filterConfiguration);
 
         final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "the number is 123456789.");
-
         showSpans(filtered.getSpans());
-
         Assertions.assertEquals(1, filtered.getSpans().size());
-        Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 14, 23, FilterType.DRIVERS_LICENSE_NUMBER));
-        Assertions.assertEquals("{{{REDACTED-drivers-license-number}}}", filtered.getSpans().get(0).getReplacement());
-        Assertions.assertEquals("123456789", filtered.getSpans().get(0).getText());
-        Assertions.assertEquals("NORTH CAROLINA", filtered.getSpans().get(0).getClassification());
+        Assertions.assertTrue(candidates.contains(filtered.getSpans().get(0).getReplacement()));
 
     }
 

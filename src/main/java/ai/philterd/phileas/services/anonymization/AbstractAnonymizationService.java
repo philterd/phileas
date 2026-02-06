@@ -19,21 +19,32 @@ import ai.philterd.phileas.services.context.ContextService;
 import org.apache.commons.text.RandomStringGenerator;
 
 import java.security.SecureRandom;
+import java.util.Collections;
+import java.util.List;
 import java.util.Random;
 
 public abstract class AbstractAnonymizationService implements AnonymizationService {
 
     protected ContextService contextService;
     protected Random random;
+    protected List<String> candidates;
 
     public AbstractAnonymizationService(final ContextService contextService) {
         this.contextService = contextService;
         this.random = new SecureRandom();
+        this.candidates = Collections.emptyList();
     }
 
     protected AbstractAnonymizationService(final ContextService contextService, final Random random) {
         this.contextService = contextService;
         this.random = random;
+        this.candidates = Collections.emptyList();
+    }
+
+    protected AbstractAnonymizationService(final ContextService contextService, final Random random, final List<String> candidates) {
+        this.contextService = contextService;
+        this.random = random;
+        this.candidates = candidates;
     }
 
     protected int generateInteger(final int min, final int max) {

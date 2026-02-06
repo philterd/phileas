@@ -26,7 +26,10 @@ import ai.philterd.phileas.services.validators.DateSpanValidator;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.security.SecureRandom;
 import java.util.List;
+
+import static ai.philterd.phileas.services.strategies.AbstractFilterStrategy.RANDOM_REPLACE;
 
 public class DateFilterTest extends AbstractFilterTest {
     
@@ -595,6 +598,29 @@ public class DateFilterTest extends AbstractFilterTest {
         Assertions.assertEquals(3, filtered.getSpans().get(0).getCharacterStart());
         Assertions.assertEquals(16, filtered.getSpans().get(0).getCharacterEnd());
         Assertions.assertEquals("Aug. 31, 2020", filtered.getSpans().get(0).getText());
+
+    }
+
+    @Test
+    public void filterWithCandidates1() throws Exception {
+
+        final List<String> candidates = List.of("2000-01-01", "1999-12-31");
+        final DateAnonymizationService dateAnonymizationService = new DateAnonymizationService(new DefaultContextService(), new SecureRandom(), candidates);
+
+        final DateFilterStrategy dateFilterStrategy = new DateFilterStrategy();
+        dateFilterStrategy.setStrategy(RANDOM_REPLACE);
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(dateFilterStrategy))
+                .withAnonymizationService(dateAnonymizationService)
+                .build();
+
+        final DateFilter filter = new DateFilter(filterConfiguration, false, DateSpanValidator.getInstance());
+
+        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "May 22, 1999");
+        showSpans(filtered.getSpans());
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertTrue(candidates.contains(filtered.getSpans().get(0).getReplacement()));
 
     }
 

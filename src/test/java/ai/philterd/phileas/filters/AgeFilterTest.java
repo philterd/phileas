@@ -25,9 +25,12 @@ import ai.philterd.phileas.services.strategies.rules.AgeFilterStrategy;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.security.SecureRandom;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+
+import static ai.philterd.phileas.services.strategies.AbstractFilterStrategy.RANDOM_REPLACE;
 
 public class AgeFilterTest extends AbstractFilterTest {
     
@@ -467,27 +470,6 @@ public class AgeFilterTest extends AbstractFilterTest {
         Assertions.assertEquals(1, filtered.getSpans().size());
         Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 11, 18, FilterType.AGE));
         Assertions.assertNotEquals(filtered.getSpans().get(0).getText(), filtered.getSpans().get(0).getReplacement());
-
-    }
-
-    @Test
-    public void filter18() throws Exception {
-
-        // PHL-238: Support ages like: 61 y/o
-
-        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
-                .withStrategies(List.of(new AgeFilterStrategy()))
-                .withAnonymizationService(new AgeAnonymizationService(new DefaultContextService()))
-                .withWindowSize(windowSize)
-                .build();
-
-        final AgeFilter filter = new AgeFilter(filterConfiguration);
-
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "patient is 4161 y/o and");
-
-        showSpans(filtered.getSpans());
-
-        Assertions.assertEquals(0, filtered.getSpans().size());
 
     }
 

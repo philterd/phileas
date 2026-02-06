@@ -24,7 +24,10 @@ import ai.philterd.phileas.services.strategies.rules.StreetAddressFilterStrategy
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.security.SecureRandom;
 import java.util.List;
+
+import static ai.philterd.phileas.services.strategies.AbstractFilterStrategy.RANDOM_REPLACE;
 
 public class StreetAddressFilterTest extends AbstractFilterTest {
 
@@ -457,6 +460,30 @@ public class StreetAddressFilterTest extends AbstractFilterTest {
 
         Assertions.assertEquals(1, filtered.getSpans().size());
         Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 11, 34, FilterType.STREET_ADDRESS));
+
+    }
+
+    @Test
+    public void filterWithCandidates1() throws Exception {
+
+        final List<String> candidates = List.of("candidate1", "candidate2");
+        final StreetAddressAnonymizationService streetAddressAnonymizationService = new StreetAddressAnonymizationService(new DefaultContextService(), new SecureRandom(), candidates);
+
+        final StreetAddressFilterStrategy streetAddressFilterStrategy = new StreetAddressFilterStrategy();
+        streetAddressFilterStrategy.setStrategy(RANDOM_REPLACE);
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(streetAddressFilterStrategy))
+                .withAnonymizationService(streetAddressAnonymizationService)
+                .withWindowSize(windowSize)
+                .build();
+
+        final StreetAddressFilter filter = new StreetAddressFilter(filterConfiguration);
+
+        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "lived at 100 Main St");
+        showSpans(filtered.getSpans());
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertTrue(candidates.contains(filtered.getSpans().get(0).getReplacement()));
 
     }
 

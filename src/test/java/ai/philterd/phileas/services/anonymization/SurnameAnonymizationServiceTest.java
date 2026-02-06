@@ -37,6 +37,7 @@ public class SurnameAnonymizationServiceTest {
         final String replacement = anonymizationService.anonymize(token);
 
         LOGGER.info("Surname: {}", replacement);
+        Assertions.assertNotEquals(token, replacement);
         Assertions.assertNotNull(replacement);
         Assertions.assertFalse(replacement.isEmpty());
 
@@ -53,6 +54,7 @@ public class SurnameAnonymizationServiceTest {
         final String replacement = anonymizationService.anonymize(token);
 
         LOGGER.info("Surname: {}", replacement);
+        Assertions.assertNotEquals(token, replacement);
         Assertions.assertNotNull(replacement);
         Assertions.assertFalse(replacement.isEmpty());
 

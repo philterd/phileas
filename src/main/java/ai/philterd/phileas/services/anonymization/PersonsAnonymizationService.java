@@ -17,12 +17,19 @@ package ai.philterd.phileas.services.anonymization;
 
 import ai.philterd.phileas.services.anonymization.faker.Faker;
 import ai.philterd.phileas.services.context.ContextService;
+import org.apache.commons.collections4.CollectionUtils;
 
+import java.util.List;
 import java.util.Random;
 
 public class PersonsAnonymizationService extends AbstractAnonymizationService {
 
     private final transient Faker faker;
+
+    public PersonsAnonymizationService(final ContextService contextService, final Random random, final List<String> candidates) {
+        super(contextService, random, candidates);
+        this.faker = new Faker(random);
+    }
 
     public PersonsAnonymizationService(final ContextService contextService, final Random random) {
         super(contextService, random);
@@ -41,7 +48,23 @@ public class PersonsAnonymizationService extends AbstractAnonymizationService {
 
     @Override
     public String anonymize(final String token) {
-        return faker.name().firstName() + " " + faker.name().lastName();
+
+        if(CollectionUtils.isNotEmpty(candidates)) {
+            String anonymized = candidates.get(random.nextInt(candidates.size()));
+            while(anonymized.equalsIgnoreCase(token)) {
+                anonymized = candidates.get(random.nextInt(candidates.size()));
+            }
+            return anonymized;
+        }
+
+        String anonymized = faker.name().firstName() + " " + faker.name().lastName();
+
+        while(anonymized.equalsIgnoreCase(token)) {
+            anonymized = faker.name().firstName() + " " + faker.name().lastName();
+        }
+
+        return anonymized;
+
     }
 
 }

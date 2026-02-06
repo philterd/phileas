@@ -25,7 +25,10 @@ import ai.philterd.phileas.services.strategies.rules.CurrencyFilterStrategy;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.security.SecureRandom;
 import java.util.List;
+
+import static ai.philterd.phileas.services.strategies.AbstractFilterStrategy.RANDOM_REPLACE;
 
 public class CurrencyFilterTest extends AbstractFilterTest {
 
@@ -159,26 +162,26 @@ public class CurrencyFilterTest extends AbstractFilterTest {
     }
 
     @Test
-    public void filter7() throws Exception {
+    public void filterWithCandidates1() throws Exception {
+
+        final List<String> candidates = List.of("candidate1", "candidate2");
+        final CurrencyAnonymizationService currencyAnonymizationService = new CurrencyAnonymizationService(new DefaultContextService(), new SecureRandom(), candidates);
 
         final CurrencyFilterStrategy currencyFilterStrategy = new CurrencyFilterStrategy();
-        currencyFilterStrategy.setStrategy(AbstractFilterStrategy.RANDOM_REPLACE);
+        currencyFilterStrategy.setStrategy(RANDOM_REPLACE);
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(currencyFilterStrategy))
-                .withAnonymizationService(new CurrencyAnonymizationService(new DefaultContextService()))
+                .withAnonymizationService(currencyAnonymizationService)
                 .withWindowSize(windowSize)
                 .build();
 
         final CurrencyFilter filter = new CurrencyFilter(filterConfiguration);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "the drug cost is $.50.");
-
+        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "the drug cost is $35.53 .");
         showSpans(filtered.getSpans());
-
         Assertions.assertEquals(1, filtered.getSpans().size());
-        Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 17, 21, FilterType.CURRENCY));
-        Assertions.assertNotEquals(filtered.getSpans().get(0).getText(), filtered.getSpans().get(0).getReplacement());
+        Assertions.assertTrue(candidates.contains(filtered.getSpans().get(0).getReplacement()));
 
     }
 

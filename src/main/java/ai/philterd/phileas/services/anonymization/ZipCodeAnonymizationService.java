@@ -15,14 +15,22 @@
  */
 package ai.philterd.phileas.services.anonymization;
 
+import org.apache.commons.collections4.CollectionUtils;
+
 import ai.philterd.phileas.services.anonymization.faker.Faker;
 import ai.philterd.phileas.services.context.ContextService;
 
+import java.util.List;
 import java.util.Random;
 
 public class ZipCodeAnonymizationService extends AbstractAnonymizationService {
 
     private final transient Faker faker;
+
+    public ZipCodeAnonymizationService(final ContextService contextService, final Random random, final List<String> candidates) {
+        super(contextService, random, candidates);
+        this.faker = new Faker(random);
+    }
 
     public ZipCodeAnonymizationService(final ContextService contextService, final Random random) {
         super(contextService, random);
@@ -42,7 +50,19 @@ public class ZipCodeAnonymizationService extends AbstractAnonymizationService {
     @Override
     public String anonymize(final String token) {
 
-        return faker.address().zipCode();
+        if(CollectionUtils.isNotEmpty(candidates)) {
+            String anonymized = candidates.get(random.nextInt(candidates.size()));
+            while(anonymized.equalsIgnoreCase(token)) {
+                anonymized = candidates.get(random.nextInt(candidates.size()));
+            }
+            return anonymized;
+        } else {
+            String anonymized = faker.address().zipCode();
+            while(anonymized.equalsIgnoreCase(token)) {
+                anonymized = faker.address().zipCode();
+            }
+            return anonymized;
+        }
 
     }
 

@@ -24,7 +24,10 @@ import ai.philterd.phileas.services.strategies.rules.IbanCodeFilterStrategy;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.security.SecureRandom;
 import java.util.List;
+
+import static ai.philterd.phileas.services.strategies.AbstractFilterStrategy.RANDOM_REPLACE;
 
 public class IbanCodeFilterTest extends AbstractFilterTest {
 
@@ -124,6 +127,30 @@ public class IbanCodeFilterTest extends AbstractFilterTest {
         showSpans(filtered.getSpans());
 
         Assertions.assertEquals(1, filtered.getSpans().size());
+
+    }
+
+    @Test
+    public void filterWithCandidates1() throws Exception {
+
+        final List<String> candidates = List.of("candidate1", "candidate2");
+        final IbanCodeAnonymizationService ibanCodeAnonymizationService = new IbanCodeAnonymizationService(new DefaultContextService(), new SecureRandom(), candidates);
+
+        final IbanCodeFilterStrategy ibanCodeFilterStrategy = new IbanCodeFilterStrategy();
+        ibanCodeFilterStrategy.setStrategy(RANDOM_REPLACE);
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(ibanCodeFilterStrategy))
+                .withAnonymizationService(ibanCodeAnonymizationService)
+                .withWindowSize(windowSize)
+                .build();
+
+        final IbanCodeFilter filter = new IbanCodeFilter(filterConfiguration, true, false);
+
+        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "bank code of GB33BUKB20201555555555 ok?");
+        showSpans(filtered.getSpans());
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertTrue(candidates.contains(filtered.getSpans().get(0).getReplacement()));
 
     }
 

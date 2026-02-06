@@ -18,13 +18,17 @@ package ai.philterd.phileas.filters;
 import ai.philterd.phileas.model.filtering.FilterType;
 import ai.philterd.phileas.model.filtering.Filtered;
 import ai.philterd.phileas.services.anonymization.AlphanumericAnonymizationService;
+import ai.philterd.phileas.services.anonymization.UrlAnonymizationService;
 import ai.philterd.phileas.services.context.DefaultContextService;
 import ai.philterd.phileas.services.filters.regex.UrlFilter;
 import ai.philterd.phileas.services.strategies.rules.UrlFilterStrategy;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.security.SecureRandom;
 import java.util.List;
+
+import static ai.philterd.phileas.services.strategies.AbstractFilterStrategy.RANDOM_REPLACE;
 
 public class UrlFilterTest extends AbstractFilterTest {
 
@@ -299,6 +303,30 @@ public class UrlFilterTest extends AbstractFilterTest {
         Assertions.assertEquals(2, filtered.getSpans().size());
         Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 42, 51, FilterType.URL));
         Assertions.assertTrue(checkSpan(filtered.getSpans().get(1), 12, 76, FilterType.URL));
+
+    }
+
+    @Test
+    public void filterWithCandidates1() throws Exception {
+
+        final List<String> candidates = List.of("http://candidate1.com", "https://candidate2.com");
+        final UrlAnonymizationService urlAnonymizationService = new UrlAnonymizationService(new DefaultContextService(), new SecureRandom(), candidates);
+
+        final UrlFilterStrategy urlFilterStrategy = new UrlFilterStrategy();
+        urlFilterStrategy.setStrategy(RANDOM_REPLACE);
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(urlFilterStrategy))
+                .withAnonymizationService(urlAnonymizationService)
+                .withWindowSize(windowSize)
+                .build();
+
+        final UrlFilter filter = new UrlFilter(filterConfiguration, true);
+
+        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "visit http://example.com now");
+        showSpans(filtered.getSpans());
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertTrue(candidates.contains(filtered.getSpans().get(0).getReplacement()));
 
     }
 

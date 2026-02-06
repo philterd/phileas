@@ -21,35 +21,22 @@ import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class CountyAnonymizationServiceTest {
+public class FirstNameAnonymizationServiceTest {
 
-    private static final Logger LOGGER = LogManager.getLogger(CountyAnonymizationServiceTest.class);
-
-    @Test
-    public void anonymize1() {
-
-        AnonymizationService anonymizationService = new CountyAnonymizationService(new DefaultContextService());
-
-        final String token = "abcd1234";
-        final String replacement = anonymizationService.anonymize(token);
-
-        LOGGER.info("County: {}", replacement);
-        Assertions.assertNotEquals(token, replacement);
-        Assertions.assertNotNull(replacement);
-
-    }
+    private static final Logger LOGGER = LogManager.getLogger(FirstNameAnonymizationServiceTest.class);
 
     @Test
-    public void anonymize2() {
+    public void anonymize() {
 
-        AnonymizationService anonymizationService = new CountyAnonymizationService(new DefaultContextService());
+        AnonymizationService anonymizationService = new FirstNameAnonymizationService(new DefaultContextService());
 
-        final String token = "April 1, 2019";
+        final String token = "John";
         final String replacement = anonymizationService.anonymize(token);
 
-        LOGGER.info("County: {}", replacement);
-        Assertions.assertNotEquals(token, replacement);
+        LOGGER.info("First Name: {}", replacement);
         Assertions.assertNotNull(replacement);
+        Assertions.assertFalse(replacement.isEmpty());
+        Assertions.assertNotEquals(token, replacement);
 
     }
 

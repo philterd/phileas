@@ -24,7 +24,10 @@ import ai.philterd.phileas.services.strategies.rules.BankRoutingNumberFilterStra
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.security.SecureRandom;
 import java.util.List;
+
+import static ai.philterd.phileas.services.strategies.AbstractFilterStrategy.RANDOM_REPLACE;
 
 public class BankRoutingNumberFilterTest extends AbstractFilterTest {
 
@@ -69,21 +72,26 @@ public class BankRoutingNumberFilterTest extends AbstractFilterTest {
     }
 
     @Test
-    public void filter3() throws Exception {
+    public void filterWithCandidates1() throws Exception {
+
+        final List<String> candidates = List.of("111000025", "111000026");
+        final AlphanumericAnonymizationService alphanumericAnonymizationService = new AlphanumericAnonymizationService(new DefaultContextService(), new SecureRandom(), candidates);
+
+        final BankRoutingNumberFilterStrategy bankRoutingNumberFilterStrategy = new BankRoutingNumberFilterStrategy();
+        bankRoutingNumberFilterStrategy.setStrategy(RANDOM_REPLACE);
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
-                .withStrategies(List.of(new BankRoutingNumberFilterStrategy()))
-                .withAnonymizationService(new AlphanumericAnonymizationService(new DefaultContextService()))
+                .withStrategies(List.of(bankRoutingNumberFilterStrategy))
+                .withAnonymizationService(alphanumericAnonymizationService)
                 .withWindowSize(windowSize)
                 .build();
 
         final BankRoutingNumberFilter filter = new BankRoutingNumberFilter(filterConfiguration);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "the routing number is 1131007025 patient is 3.5years old.");
-
+        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "the routing number is 111000025");
         showSpans(filtered.getSpans());
-
-        Assertions.assertEquals(0, filtered.getSpans().size());
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertTrue(candidates.contains(filtered.getSpans().get(0).getReplacement()));
 
     }
 

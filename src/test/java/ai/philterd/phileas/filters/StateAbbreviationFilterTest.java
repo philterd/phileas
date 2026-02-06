@@ -26,7 +26,10 @@ import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.security.SecureRandom;
 import java.util.List;
+
+import static ai.philterd.phileas.services.strategies.AbstractFilterStrategy.RANDOM_REPLACE;
 
 public class StateAbbreviationFilterTest extends AbstractFilterTest {
 
@@ -76,32 +79,28 @@ public class StateAbbreviationFilterTest extends AbstractFilterTest {
     }
 
     @Test
-    public void filter3() throws Exception {
+    public void filterWithCandidates1() throws Exception {
+
+        final List<String> candidates = List.of("WV", "MD");
+        final StateAbbreviationAnonymizationService stateAbbreviationAnonymizationService = new StateAbbreviationAnonymizationService(new DefaultContextService(), new SecureRandom(), candidates);
+
+        final StateAbbreviationFilterStrategy stateAbbreviationFilterStrategy = new StateAbbreviationFilterStrategy();
+        stateAbbreviationFilterStrategy.setStrategy(RANDOM_REPLACE);
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
-                .withStrategies(List.of(new StateAbbreviationFilterStrategy()))
-                .withAnonymizationService(new StateAbbreviationAnonymizationService(new DefaultContextService()))
+                .withStrategies(List.of(stateAbbreviationFilterStrategy))
+                .withAnonymizationService(stateAbbreviationAnonymizationService)
                 .withWindowSize(windowSize)
                 .build();
 
         final StateAbbreviationFilter filter = new StateAbbreviationFilter(filterConfiguration);
 
-        final String input = "Patients from WV and MD.";
+        final String input = "The patient is from WV.";
         final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, input);
 
         showSpans(filtered.getSpans());
-
-        Assertions.assertEquals(2, filtered.getSpans().size());
-
-        Assertions.assertEquals(21, filtered.getSpans().get(0).getCharacterStart());
-        Assertions.assertEquals(23, filtered.getSpans().get(0).getCharacterEnd());
-        Assertions.assertEquals(FilterType.STATE_ABBREVIATION, filtered.getSpans().get(0).getFilterType());
-        Assertions.assertEquals("MD", filtered.getSpans().get(0).getText());
-
-        Assertions.assertEquals(14, filtered.getSpans().get(1).getCharacterStart());
-        Assertions.assertEquals(16, filtered.getSpans().get(1).getCharacterEnd());
-        Assertions.assertEquals(FilterType.STATE_ABBREVIATION, filtered.getSpans().get(1).getFilterType());
-        Assertions.assertEquals("WV", filtered.getSpans().get(1).getText());
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertTrue(candidates.contains(filtered.getSpans().get(0).getReplacement()));
 
     }
 

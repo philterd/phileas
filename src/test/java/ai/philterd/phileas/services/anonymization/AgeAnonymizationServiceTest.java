@@ -34,6 +34,7 @@ public class AgeAnonymizationServiceTest {
         final String replacement = anonymizationService.anonymize(token);
 
         LOGGER.info("Age: {}", replacement);
+        Assertions.assertNotEquals(token, replacement);
         Assertions.assertEquals(token.length(), replacement.length());
 
     }
@@ -47,6 +48,7 @@ public class AgeAnonymizationServiceTest {
         final String replacement = anonymizationService.anonymize(token);
 
         LOGGER.info("Age: {}", replacement);
+        Assertions.assertNotEquals(token, replacement);
         Assertions.assertEquals(token.length(), replacement.length());
 
     }

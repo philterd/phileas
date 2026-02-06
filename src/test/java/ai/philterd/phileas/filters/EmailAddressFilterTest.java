@@ -25,9 +25,12 @@ import ai.philterd.phileas.services.strategies.rules.EmailAddressFilterStrategy;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.security.SecureRandom;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+
+import static ai.philterd.phileas.services.strategies.AbstractFilterStrategy.RANDOM_REPLACE;
 
 public class EmailAddressFilterTest extends AbstractFilterTest {
 
@@ -111,6 +114,30 @@ public class EmailAddressFilterTest extends AbstractFilterTest {
         final Filtered filtered4 = filter.filter(getPolicy(), "context", PIECE, "my email is none@lb.co_m");
         showSpans(filtered4.getSpans());
         Assertions.assertEquals(0, filtered4.getSpans().size());
+
+    }
+
+    @Test
+    public void filterWithCandidates1() throws Exception {
+
+        final List<String> candidates = List.of("candidate1", "candidate2");
+        final AlphanumericAnonymizationService alphanumericAnonymizationService = new AlphanumericAnonymizationService(new DefaultContextService(), new SecureRandom(), candidates);
+
+        final EmailAddressFilterStrategy emailAddressFilterStrategy = new EmailAddressFilterStrategy();
+        emailAddressFilterStrategy.setStrategy(RANDOM_REPLACE);
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(emailAddressFilterStrategy))
+                .withAnonymizationService(alphanumericAnonymizationService)
+                .withWindowSize(windowSize)
+                .build();
+
+        final EmailAddressFilter filter = new EmailAddressFilter(filterConfiguration, true, true);
+
+        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "my email is none@none.com.");
+        showSpans(filtered.getSpans());
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertTrue(candidates.contains(filtered.getSpans().get(0).getReplacement()));
 
     }
 

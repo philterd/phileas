@@ -16,10 +16,16 @@
 package ai.philterd.phileas.services.anonymization;
 
 import ai.philterd.phileas.services.context.ContextService;
+import org.apache.commons.collections4.CollectionUtils;
 
+import java.util.List;
 import java.util.Random;
 
 public class IpAddressAnonymizationService extends AbstractAnonymizationService {
+
+    public IpAddressAnonymizationService(final ContextService contextService, final Random random, final List<String> candidates) {
+        super(contextService, random, candidates);
+    }
 
     public IpAddressAnonymizationService(final ContextService contextService, final Random random) {
         super(contextService, random);
@@ -36,6 +42,26 @@ public class IpAddressAnonymizationService extends AbstractAnonymizationService 
 
     @Override
     public String anonymize(final String token) {
+
+        if(CollectionUtils.isNotEmpty(candidates)) {
+            String anonymized = candidates.get(random.nextInt(candidates.size()));
+            while(anonymized.equalsIgnoreCase(token)) {
+                anonymized = candidates.get(random.nextInt(candidates.size()));
+            }
+            return anonymized;
+        }
+
+        String anonymized = getAnonymizedIpAddress(token);
+
+        while(anonymized.equalsIgnoreCase(token)) {
+            anonymized = getAnonymizedIpAddress(token);
+        }
+
+        return anonymized;
+
+    }
+
+    private String getAnonymizedIpAddress(String token) {
 
         if(token.contains(":")) {
 

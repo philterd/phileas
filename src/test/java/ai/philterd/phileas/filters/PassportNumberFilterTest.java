@@ -24,7 +24,10 @@ import ai.philterd.phileas.services.strategies.rules.PassportNumberFilterStrateg
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.security.SecureRandom;
 import java.util.List;
+
+import static ai.philterd.phileas.services.strategies.AbstractFilterStrategy.RANDOM_REPLACE;
 
 public class PassportNumberFilterTest extends AbstractFilterTest {
 
@@ -48,6 +51,30 @@ public class PassportNumberFilterTest extends AbstractFilterTest {
         Assertions.assertEquals("{{{REDACTED-passport-number}}}", filtered.getSpans().get(0).getReplacement());
         Assertions.assertEquals("036001231", filtered.getSpans().get(0).getText());
         Assertions.assertEquals("US", filtered.getSpans().get(0).getClassification());
+
+    }
+
+    @Test
+    public void filterWithCandidates1() throws Exception {
+
+        final List<String> candidates = List.of("candidate1", "candidate2");
+        final AlphanumericAnonymizationService alphanumericAnonymizationService = new AlphanumericAnonymizationService(new DefaultContextService(), new SecureRandom(), candidates);
+
+        final PassportNumberFilterStrategy passportNumberFilterStrategy = new PassportNumberFilterStrategy();
+        passportNumberFilterStrategy.setStrategy(RANDOM_REPLACE);
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(passportNumberFilterStrategy))
+                .withAnonymizationService(alphanumericAnonymizationService)
+                .withWindowSize(windowSize)
+                .build();
+
+        final PassportNumberFilter filter = new PassportNumberFilter(filterConfiguration);
+
+        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "the passport number is 036001231.");
+        showSpans(filtered.getSpans());
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertTrue(candidates.contains(filtered.getSpans().get(0).getReplacement()));
 
     }
 

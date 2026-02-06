@@ -34,6 +34,7 @@ public class CityAnonymizationServiceTest {
         final String replacement = anonymizationService.anonymize(token);
 
         LOGGER.info("City: {}", replacement);
+        Assertions.assertNotEquals(token, replacement);
         Assertions.assertNotNull(replacement);
         Assertions.assertFalse(replacement.isEmpty());
 
@@ -48,6 +49,7 @@ public class CityAnonymizationServiceTest {
         final String replacement = anonymizationService.anonymize(token);
 
         LOGGER.info("City: {}", replacement);
+        Assertions.assertNotEquals(token, replacement);
         Assertions.assertNotNull(replacement);
         Assertions.assertFalse(replacement.isEmpty());
 

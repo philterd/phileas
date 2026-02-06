@@ -35,6 +35,8 @@ public class StreetAddressAnonymizationServiceTest {
 
         LOGGER.info("Street Address: {}", replacement);
         Assertions.assertNotEquals(token, replacement);
+        Assertions.assertNotNull(replacement);
+        Assertions.assertFalse(replacement.isEmpty());
 
     }
 
@@ -48,6 +50,8 @@ public class StreetAddressAnonymizationServiceTest {
 
         LOGGER.info("Street Address: {}", replacement);
         Assertions.assertNotEquals(token, replacement);
+        Assertions.assertNotNull(replacement);
+        Assertions.assertFalse(replacement.isEmpty());
 
     }
 
