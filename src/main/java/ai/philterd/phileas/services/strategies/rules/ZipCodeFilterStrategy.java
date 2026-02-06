@@ -172,7 +172,7 @@ public class ZipCodeFilterStrategy extends AbstractFilterStrategy {
                 scope = REPLACEMENT_SCOPE_CONTEXT;
             }
 
-            replacement = getAnonymizedToken(scope, token, anonymizationService);
+            replacement = getAnonymizedToken(scope, token, anonymizationService, filterType.getType());
 
         } else if(StringUtils.equalsIgnoreCase(strategy, STATIC_REPLACE)) {
 

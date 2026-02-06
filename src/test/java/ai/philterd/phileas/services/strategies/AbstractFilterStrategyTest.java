@@ -15,6 +15,7 @@
  */
 package ai.philterd.phileas.services.strategies;
 
+import ai.philterd.phileas.model.filtering.FilterType;
 import ai.philterd.phileas.model.filtering.Replacement;
 import ai.philterd.phileas.policy.Crypto;
 import ai.philterd.phileas.policy.FPE;
@@ -77,7 +78,7 @@ public abstract class AbstractFilterStrategyTest {
     public void replacement3() throws Exception {
 
         final AnonymizationService anonymizationService = getAnonymizationService();
-        anonymizationService.getContextService().putReplacement("token", "random");
+        anonymizationService.getContextService().putReplacement("token", "random", FilterType.CREDIT_CARD.getType());
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
         strategy.setStrategy(AbstractFilterStrategy.RANDOM_REPLACE);
@@ -93,7 +94,7 @@ public abstract class AbstractFilterStrategyTest {
     public void replacement4() throws Exception {
 
         final AnonymizationService anonymizationService = getAnonymizationService();
-        anonymizationService.getContextService().putReplacement("token", "random");
+        anonymizationService.getContextService().putReplacement("token", "random", FilterType.CREDIT_CARD.getType());
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
         strategy.setStrategy("something-wrong");
@@ -123,7 +124,7 @@ public abstract class AbstractFilterStrategyTest {
     public void replacement6() throws Exception {
 
         final AnonymizationService anonymizationService = getAnonymizationService();
-        anonymizationService.getContextService().putReplacement("token", "random");
+        anonymizationService.getContextService().putReplacement("token", "random", FilterType.CREDIT_CARD.getType());
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
         strategy.setStrategy(AbstractFilterStrategy.CRYPTO_REPLACE);

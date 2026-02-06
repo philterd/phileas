@@ -276,9 +276,8 @@ public abstract class AbstractFilterStrategy {
      * @param replacementScope The replacement scope.
      * @param anonymizationService The {@link AnonymizationService} for the token.
      * @return An anonymized version of the token, or <code>null</code> if the token has already been anonymized.
-     * @throws IOException Thrown if the cache service is not accessible.
      */
-    protected String getAnonymizedToken(final String replacementScope, final String token, final AnonymizationService anonymizationService) throws IOException {
+    protected String getAnonymizedToken(final String replacementScope, final String token, final AnonymizationService anonymizationService, final String filterType) {
 
         String replacement = null;
 
@@ -304,7 +303,7 @@ public abstract class AbstractFilterStrategy {
 
                     // This is not a token we have already anonymized.
                     replacement = anonymizationService.anonymize(token);
-                    anonymizationService.getContextService().putReplacement(token, replacement);
+                    anonymizationService.getContextService().putReplacement(token, replacement, filterType);
 
                 }
 

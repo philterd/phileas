@@ -15,6 +15,7 @@
  */
 package ai.philterd.phileas.services.strategies.ai;
 
+import ai.philterd.phileas.model.filtering.FilterType;
 import ai.philterd.phileas.model.filtering.Replacement;
 import ai.philterd.phileas.policy.Crypto;
 import ai.philterd.phileas.policy.FPE;
@@ -71,7 +72,7 @@ public class PhEyeStrategyTest extends AbstractFilterStrategyTest {
     public void replacement3() throws Exception {
 
         final AnonymizationService anonymizationService = getAnonymizationService();
-        anonymizationService.getContextService().putReplacement("token", "random");
+        anonymizationService.getContextService().putReplacement("token", "random", FilterType.PERSON.getType());
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
         strategy.setStrategy(AbstractFilterStrategy.RANDOM_REPLACE);
@@ -86,7 +87,7 @@ public class PhEyeStrategyTest extends AbstractFilterStrategyTest {
     public void replacement4() throws Exception {
 
         final AnonymizationService anonymizationService = getAnonymizationService();
-        anonymizationService.getContextService().putReplacement("token", "random");
+        anonymizationService.getContextService().putReplacement("token", "random", FilterType.PERSON.getType());
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
         strategy.setStrategy("something-wrong");

@@ -42,7 +42,7 @@ public class DefaultContextService implements ContextService {
     }
 
     @Override
-    public void putReplacement(String token, String replacement) {
+    public void putReplacement(String token, String replacement, final String filterType) {
         context.put(token, replacement);
     }
 
