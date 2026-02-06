@@ -20,6 +20,7 @@ import ai.philterd.phileas.model.filtering.Filtered;
 import ai.philterd.phileas.services.anonymization.AlphanumericAnonymizationService;
 import ai.philterd.phileas.services.context.DefaultContextService;
 import ai.philterd.phileas.services.filters.regex.SsnFilter;
+import ai.philterd.phileas.services.strategies.AbstractFilterStrategy;
 import ai.philterd.phileas.services.strategies.rules.SsnFilterStrategy;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -170,6 +171,47 @@ public class SsnFilterTest extends AbstractFilterTest {
         showSpans(filtered.getSpans());
         Assertions.assertEquals(1, filtered.getSpans().size());
         Assertions.assertTrue(candidates.contains(filtered.getSpans().get(0).getReplacement()));
+
+    }
+
+    @Test
+    public void filterSsnContext() throws Exception {
+
+        final SsnFilterStrategy ssnFilterStrategy = new SsnFilterStrategy();
+        ssnFilterStrategy.setStrategy(RANDOM_REPLACE);
+        ssnFilterStrategy.setReplacementScope(AbstractFilterStrategy.REPLACEMENT_SCOPE_CONTEXT);
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(ssnFilterStrategy))
+                .withAnonymizationService(new AlphanumericAnonymizationService(new DefaultContextService()))
+                .withWindowSize(windowSize)
+                .build();
+
+        final SsnFilter filter = new SsnFilter(filterConfiguration);
+
+        final Filtered filtered1 = filter.filter(getPolicy(), "context", PIECE, "the ssn is 123-45-6789.");
+        Assertions.assertEquals(1, filtered1.getSpans().size());
+        final String replacement1 = filtered1.getSpans().get(0).getReplacement();
+
+        final Filtered filtered2 = filter.filter(getPolicy(), "context", PIECE, "the ssn is 123-45-6789.");
+        Assertions.assertEquals(1, filtered2.getSpans().size());
+        final String replacement2 = filtered2.getSpans().get(0).getReplacement();
+
+        Assertions.assertEquals(replacement1, replacement2);
+
+        final FilterConfiguration filterConfiguration2 = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(ssnFilterStrategy))
+                .withAnonymizationService(new AlphanumericAnonymizationService(new DefaultContextService()))
+                .withWindowSize(windowSize)
+                .build();
+
+        final SsnFilter filter2 = new SsnFilter(filterConfiguration2);
+
+        final Filtered filtered3 = filter2.filter(getPolicy(), "anothercontext", PIECE, "the ssn is 123-45-6789.");
+        Assertions.assertEquals(1, filtered3.getSpans().size());
+        final String replacement3 = filtered3.getSpans().get(0).getReplacement();
+
+        Assertions.assertNotEquals(replacement1, replacement3);
 
     }
 
