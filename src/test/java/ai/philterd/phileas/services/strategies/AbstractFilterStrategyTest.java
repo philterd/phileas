@@ -78,7 +78,7 @@ public abstract class AbstractFilterStrategyTest {
     public void replacement3() throws Exception {
 
         final AnonymizationService anonymizationService = getAnonymizationService();
-        anonymizationService.getContextService().putReplacement("context", "token", "random", FilterType.CREDIT_CARD.getType());
+        anonymizationService.getContextService().putReplacement("token", "random", FilterType.CREDIT_CARD.getType());
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
         strategy.setStrategy(AbstractFilterStrategy.RANDOM_REPLACE);
@@ -94,7 +94,7 @@ public abstract class AbstractFilterStrategyTest {
     public void replacement4() throws Exception {
 
         final AnonymizationService anonymizationService = getAnonymizationService();
-        anonymizationService.getContextService().putReplacement("context", "token", "random", FilterType.CREDIT_CARD.getType());
+        anonymizationService.getContextService().putReplacement("token", "random", FilterType.CREDIT_CARD.getType());
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
         strategy.setStrategy("something-wrong");
@@ -124,7 +124,7 @@ public abstract class AbstractFilterStrategyTest {
     public void replacement6() throws Exception {
 
         final AnonymizationService anonymizationService = getAnonymizationService();
-        anonymizationService.getContextService().putReplacement("context", "token", "random", FilterType.CREDIT_CARD.getType());
+        anonymizationService.getContextService().putReplacement("token", "random", FilterType.CREDIT_CARD.getType());
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
         strategy.setStrategy(AbstractFilterStrategy.CRYPTO_REPLACE);

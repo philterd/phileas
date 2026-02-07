@@ -286,13 +286,12 @@ public abstract class AbstractFilterStrategy {
     /**
      * Gets an anonymized token for a token. This function is called by <code>getReplacement</code>.
      * @param replacementScope The replacement scope.
-     * @param context The context.
      * @param token The token to anonymize.
      * @param anonymizationService The {@link AnonymizationService} for the token.
      * @param filterType The {@link FilterType}.
      * @return An anonymized version of the token, or <code>null</code> if the token has already been anonymized.
      */
-    protected String getAnonymizedToken(final String replacementScope, final String context, final String token, AnonymizationService anonymizationService, final String filterType) {
+    protected String getAnonymizedToken(final String replacementScope, final String token, AnonymizationService anonymizationService, final String filterType) {
 
         if (this.anonymizationService != null) {
             anonymizationService = this.anonymizationService;
@@ -310,19 +309,19 @@ public abstract class AbstractFilterStrategy {
             // Do look at the context.
 
             // Have we seen this token in this context before?
-            if (anonymizationService.getContextService().containsToken(context, token)) {
+            if (anonymizationService.getContextService().containsToken(token)) {
 
                 // Yes, we have previously seen this token in this context.
-                replacement = anonymizationService.getContextService().getReplacement(context, token);
+                replacement = anonymizationService.getContextService().getReplacement(token);
 
             } else {
 
                 // Make sure we aren't trying to anonymize a token we have already anonymized.
-                if (!anonymizationService.getContextService().containsReplacement(context, token)) {
+                if (!anonymizationService.getContextService().containsReplacement(token)) {
 
                     // This is not a token we have already anonymized.
                     replacement = anonymizationService.anonymize(token);
-                    anonymizationService.getContextService().putReplacement(context, token, replacement, filterType);
+                    anonymizationService.getContextService().putReplacement(token, replacement, filterType);
 
                 }
 

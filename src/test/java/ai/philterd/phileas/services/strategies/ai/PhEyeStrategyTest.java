@@ -72,7 +72,7 @@ public class PhEyeStrategyTest extends AbstractFilterStrategyTest {
     public void replacement3() throws Exception {
 
         final AnonymizationService anonymizationService = getAnonymizationService();
-        anonymizationService.getContextService().putReplacement("ctx", "token", "random", FilterType.PERSON.getType());
+        anonymizationService.getContextService().putReplacement("token", "random", FilterType.PERSON.getType());
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
         strategy.setStrategy(AbstractFilterStrategy.RANDOM_REPLACE);
@@ -87,7 +87,7 @@ public class PhEyeStrategyTest extends AbstractFilterStrategyTest {
     public void replacement4() throws Exception {
 
         final AnonymizationService anonymizationService = getAnonymizationService();
-        anonymizationService.getContextService().putReplacement("ctx", "token", "random", FilterType.PERSON.getType());
+        anonymizationService.getContextService().putReplacement("token", "random", FilterType.PERSON.getType());
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
         strategy.setStrategy("something-wrong");

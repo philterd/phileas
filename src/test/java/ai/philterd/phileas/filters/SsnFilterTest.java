@@ -214,7 +214,7 @@ public class SsnFilterTest extends AbstractFilterTest {
 
         final SsnFilter filter2 = new SsnFilter(filterConfiguration2);
 
-        final Filtered filtered3 = filter2.filter(getPolicy(), "anothercontext", PIECE, "the ssn is 123-45-6789.");
+        final Filtered filtered3 = filter2.filter(getPolicy(), "anothercontext", PIECE, "the ssn is 555-55-1234.");
         Assertions.assertEquals(1, filtered3.getSpans().size());
         final String replacement3 = filtered3.getSpans().get(0).getReplacement();
 

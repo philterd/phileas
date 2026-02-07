@@ -99,7 +99,7 @@ public class AgeFilterStrategy extends StandardFilterStrategy {
                                       AnonymizationService anonymizationService,
                                       FilterPattern filterPattern) throws Exception {
 
-        return getStandardReplacement(label, context, token, crypto, fpe, anonymizationService, filterType);
+        return getStandardReplacement(label, token, crypto, fpe, anonymizationService, filterType);
 
     }
 

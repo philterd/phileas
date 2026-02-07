@@ -50,7 +50,7 @@ public class ContextInsertionTest extends AbstractFilterTest {
         firstNameFilter.filter(getPolicy(), "ctx", PIECE, "His name is Melissa.");
 
         // Check ContextService
-        Assertions.assertTrue(contextService.containsToken("ctx", "123-45-6789"), "SSN should be in context");
+        Assertions.assertTrue(contextService.containsToken("123-45-6789"), "SSN should be in context");
         // Assertions.assertTrue(contextService.containsToken("ctx", "ctx", "Melissa"), "First name should be in context");
 
     }
