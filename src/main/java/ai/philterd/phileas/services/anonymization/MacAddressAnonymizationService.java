@@ -21,6 +21,7 @@ import ai.philterd.phileas.services.context.ContextService;
 
 import java.util.List;
 import java.util.Random;
+import java.util.UUID;
 
 public class MacAddressAnonymizationService extends AbstractAnonymizationService {
 
@@ -51,14 +52,19 @@ public class MacAddressAnonymizationService extends AbstractAnonymizationService
         if (anonymizationMethod == AnonymizationMethod.CUSTOM_LIST) {
 
             if (CollectionUtils.isNotEmpty(candidates)) {
+
                 String anonymized = candidates.get(random.nextInt(candidates.size()));
                 while (anonymized.equalsIgnoreCase(token)) {
                     anonymized = candidates.get(random.nextInt(candidates.size()));
                 }
                 return anonymized;
-            }
 
-            return token;
+            } else {
+
+                // Provided list was empty - return a random UUID.
+                return UUID.randomUUID().toString();
+
+            }
 
         } else if (anonymizationMethod == AnonymizationMethod.UUID) {
 

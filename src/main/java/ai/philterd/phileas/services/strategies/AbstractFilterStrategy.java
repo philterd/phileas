@@ -22,11 +22,14 @@ import ai.philterd.phileas.model.filtering.Replacement;
 import ai.philterd.phileas.policy.Crypto;
 import ai.philterd.phileas.policy.FPE;
 import ai.philterd.phileas.policy.Policy;
+import ai.philterd.phileas.services.anonymization.AnonymizationMethod;
 import ai.philterd.phileas.services.anonymization.AnonymizationService;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.UUID;
 
 public abstract class AbstractFilterStrategy {
@@ -124,6 +127,16 @@ public abstract class AbstractFilterStrategy {
     @SerializedName("salt")
     @Expose
     protected boolean salt;
+
+    @SerializedName("anonymizationMethod")
+    @Expose
+    protected AnonymizationMethod anonymizationMethod = AnonymizationMethod.REALISTIC_REPLACE;
+
+    @SerializedName("anonymizationCandidates")
+    @Expose
+    protected List<String> anonymizationCandidates = Collections.emptyList();
+
+    protected transient AnonymizationService anonymizationService;
 
     /**
      * Gets the replacement for a token.
@@ -273,10 +286,17 @@ public abstract class AbstractFilterStrategy {
     /**
      * Gets an anonymized token for a token. This function is called by <code>getReplacement</code>.
      * @param replacementScope The replacement scope.
+     * @param context The context.
+     * @param token The token to anonymize.
      * @param anonymizationService The {@link AnonymizationService} for the token.
+     * @param filterType The {@link FilterType}.
      * @return An anonymized version of the token, or <code>null</code> if the token has already been anonymized.
      */
-    protected String getAnonymizedToken(final String replacementScope, final String token, final AnonymizationService anonymizationService, final String filterType) {
+    protected String getAnonymizedToken(final String replacementScope, final String context, final String token, AnonymizationService anonymizationService, final String filterType) {
+
+        if (this.anonymizationService != null) {
+            anonymizationService = this.anonymizationService;
+        }
 
         String replacement = null;
 
@@ -290,19 +310,19 @@ public abstract class AbstractFilterStrategy {
             // Do look at the context.
 
             // Have we seen this token in this context before?
-            if (anonymizationService.getContextService().containsToken(token)) {
+            if (anonymizationService.getContextService().containsToken(context, token)) {
 
                 // Yes, we have previously seen this token in this context.
-                replacement = anonymizationService.getContextService().getReplacement(token);
+                replacement = anonymizationService.getContextService().getReplacement(context, token);
 
             } else {
 
                 // Make sure we aren't trying to anonymize a token we have already anonymized.
-                if (!anonymizationService.getContextService().containsReplacement(token)) {
+                if (!anonymizationService.getContextService().containsReplacement(context, token)) {
 
                     // This is not a token we have already anonymized.
                     replacement = anonymizationService.anonymize(token);
-                    anonymizationService.getContextService().putReplacement(token, replacement, filterType);
+                    anonymizationService.getContextService().putReplacement(context, token, replacement, filterType);
 
                 }
 
@@ -415,6 +435,30 @@ public abstract class AbstractFilterStrategy {
 
     public void setSalt(boolean salt) {
         this.salt = salt;
+    }
+
+    public AnonymizationMethod getAnonymizationMethod() {
+        return anonymizationMethod;
+    }
+
+    public void setAnonymizationMethod(AnonymizationMethod anonymizationMethod) {
+        this.anonymizationMethod = anonymizationMethod;
+    }
+
+    public List<String> getAnonymizationCandidates() {
+        return anonymizationCandidates;
+    }
+
+    public void setAnonymizationCandidates(List<String> anonymizationCandidates) {
+        this.anonymizationCandidates = anonymizationCandidates;
+    }
+
+    public AnonymizationService getAnonymizationService() {
+        return anonymizationService;
+    }
+
+    public void setAnonymizationService(AnonymizationService anonymizationService) {
+        this.anonymizationService = anonymizationService;
     }
 
 }

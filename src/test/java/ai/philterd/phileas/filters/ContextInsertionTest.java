@@ -3,8 +3,6 @@ package ai.philterd.phileas.filters;
 import ai.philterd.phileas.filters.rules.dictionary.FuzzyDictionaryFilter;
 import ai.philterd.phileas.model.filtering.FilterType;
 import ai.philterd.phileas.model.filtering.SensitivityLevel;
-import ai.philterd.phileas.services.anonymization.AlphanumericAnonymizationService;
-import ai.philterd.phileas.services.anonymization.PersonsAnonymizationService;
 import ai.philterd.phileas.services.context.DefaultContextService;
 import ai.philterd.phileas.services.filters.regex.SsnFilter;
 import ai.philterd.phileas.services.strategies.AbstractFilterStrategy;
@@ -28,7 +26,8 @@ public class ContextInsertionTest extends AbstractFilterTest {
 
         FilterConfiguration ssnConfig = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(ssnFilterStrategy))
-                .withAnonymizationService(new AlphanumericAnonymizationService(contextService))
+                .withContextService(contextService)
+                .withRandom(random)
                 .build();
         SsnFilter ssnFilter = new SsnFilter(ssnConfig);
 
@@ -39,7 +38,8 @@ public class ContextInsertionTest extends AbstractFilterTest {
 
         FilterConfiguration firstNameConfig = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(firstNameFilterStrategy))
-                .withAnonymizationService(new PersonsAnonymizationService(contextService))
+                .withContextService(contextService)
+                .withRandom(random)
                 .build();
         FuzzyDictionaryFilter firstNameFilter = new FuzzyDictionaryFilter(FilterType.FIRST_NAME, firstNameConfig, SensitivityLevel.LOW, true);
 
@@ -50,8 +50,8 @@ public class ContextInsertionTest extends AbstractFilterTest {
         firstNameFilter.filter(getPolicy(), "ctx", PIECE, "His name is Melissa.");
 
         // Check ContextService
-        Assertions.assertTrue(contextService.containsToken("123-45-6789"), "SSN should be in context");
-        // Assertions.assertTrue(contextService.containsToken("Melissa"), "First name should be in context");
+        Assertions.assertTrue(contextService.containsToken("ctx", "123-45-6789"), "SSN should be in context");
+        // Assertions.assertTrue(contextService.containsToken("ctx", "ctx", "Melissa"), "First name should be in context");
 
     }
 

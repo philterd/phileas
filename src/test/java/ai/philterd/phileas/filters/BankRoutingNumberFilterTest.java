@@ -17,7 +17,6 @@ package ai.philterd.phileas.filters;
 
 import ai.philterd.phileas.model.filtering.FilterType;
 import ai.philterd.phileas.model.filtering.Filtered;
-import ai.philterd.phileas.services.anonymization.AlphanumericAnonymizationService;
 import ai.philterd.phileas.services.context.DefaultContextService;
 import ai.philterd.phileas.services.filters.regex.BankRoutingNumberFilter;
 import ai.philterd.phileas.services.strategies.rules.BankRoutingNumberFilterStrategy;
@@ -36,7 +35,8 @@ public class BankRoutingNumberFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new BankRoutingNumberFilterStrategy()))
-                .withAnonymizationService(new AlphanumericAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -57,7 +57,8 @@ public class BankRoutingNumberFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new BankRoutingNumberFilterStrategy()))
-                .withAnonymizationService(new AlphanumericAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -75,14 +76,15 @@ public class BankRoutingNumberFilterTest extends AbstractFilterTest {
     public void filterWithCandidates1() throws Exception {
 
         final List<String> candidates = List.of("111000025", "111000026");
-        final AlphanumericAnonymizationService alphanumericAnonymizationService = new AlphanumericAnonymizationService(new DefaultContextService(), new SecureRandom(), candidates);
 
         final BankRoutingNumberFilterStrategy bankRoutingNumberFilterStrategy = new BankRoutingNumberFilterStrategy();
         bankRoutingNumberFilterStrategy.setStrategy(RANDOM_REPLACE);
+        bankRoutingNumberFilterStrategy.setAnonymizationCandidates(candidates);
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(bankRoutingNumberFilterStrategy))
-                .withAnonymizationService(alphanumericAnonymizationService)
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 

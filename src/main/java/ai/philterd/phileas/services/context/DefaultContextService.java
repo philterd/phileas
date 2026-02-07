@@ -20,30 +20,31 @@ import java.util.Map;
 
 public class DefaultContextService implements ContextService {
 
-    private final Map<String, String> context;
+    private final Map<String, Map<String, String>> context;
 
     public DefaultContextService() {
         this.context = new HashMap<>();
     }
 
     @Override
-    public boolean containsToken(String token) {
-        return context.containsKey(token);
+    public boolean containsToken(String context, String token) {
+        return this.context.containsKey(context) && this.context.get(context).containsKey(token);
     }
 
     @Override
-    public boolean containsReplacement(String replacement) {
-        return context.containsValue(replacement);
+    public boolean containsReplacement(String context, String replacement) {
+        return this.context.containsKey(context) && this.context.get(context).containsValue(replacement);
     }
 
     @Override
-    public String getReplacement(String token) {
-        return context.get(token);
+    public String getReplacement(String context, String token) {
+        return this.context.get(context).get(token);
     }
 
     @Override
-    public void putReplacement(String token, String replacement, final String filterType) {
-        context.put(token, replacement);
+    public void putReplacement(String context, String token, String replacement, final String filterType) {
+        this.context.putIfAbsent(context, new HashMap<>());
+        this.context.get(context).put(token, replacement);
     }
 
 }

@@ -17,7 +17,6 @@ package ai.philterd.phileas.filters;
 
 import ai.philterd.phileas.model.filtering.FilterType;
 import ai.philterd.phileas.model.filtering.Filtered;
-import ai.philterd.phileas.services.anonymization.IbanCodeAnonymizationService;
 import ai.philterd.phileas.services.context.DefaultContextService;
 import ai.philterd.phileas.services.filters.regex.IbanCodeFilter;
 import ai.philterd.phileas.services.strategies.rules.IbanCodeFilterStrategy;
@@ -35,7 +34,8 @@ public class IbanCodeFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new IbanCodeFilterStrategy()))
-                .withAnonymizationService(new IbanCodeAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -134,14 +134,15 @@ public class IbanCodeFilterTest extends AbstractFilterTest {
     public void filterWithCandidates1() throws Exception {
 
         final List<String> candidates = List.of("candidate1", "candidate2");
-        final IbanCodeAnonymizationService ibanCodeAnonymizationService = new IbanCodeAnonymizationService(new DefaultContextService(), new SecureRandom(), candidates);
 
         final IbanCodeFilterStrategy ibanCodeFilterStrategy = new IbanCodeFilterStrategy();
         ibanCodeFilterStrategy.setStrategy(RANDOM_REPLACE);
+        ibanCodeFilterStrategy.setAnonymizationCandidates(candidates);
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(ibanCodeFilterStrategy))
-                .withAnonymizationService(ibanCodeAnonymizationService)
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 

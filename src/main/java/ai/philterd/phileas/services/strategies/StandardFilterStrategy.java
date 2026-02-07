@@ -27,7 +27,7 @@ import org.apache.commons.lang3.StringUtils;
 
 public abstract class StandardFilterStrategy extends AbstractFilterStrategy {
 
-    public Replacement getStandardReplacement(String label, String token,
+    public Replacement getStandardReplacement(String label, String context, String token,
                                       Crypto crypto, FPE fpe,
                                       AnonymizationService anonymizationService,
                                       FilterType filterType) throws Exception {
@@ -69,7 +69,12 @@ public abstract class StandardFilterStrategy extends AbstractFilterStrategy {
 
         } else if(StringUtils.equalsIgnoreCase(strategy, RANDOM_REPLACE)) {
 
-            replacement = getAnonymizedToken(replacementScope, token, anonymizationService, filterType.getType());
+            AnonymizationService as = anonymizationService;
+            if (this.anonymizationService != null) {
+                as = this.anonymizationService;
+            }
+
+            replacement = getAnonymizedToken(replacementScope, context, token, as, filterType.getType());
 
         } else if(StringUtils.equalsIgnoreCase(strategy, STATIC_REPLACE)) {
 

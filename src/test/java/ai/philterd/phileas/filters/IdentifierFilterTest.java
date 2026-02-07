@@ -18,8 +18,6 @@ package ai.philterd.phileas.filters;
 import ai.philterd.phileas.model.filtering.FilterType;
 import ai.philterd.phileas.model.filtering.Filtered;
 import ai.philterd.phileas.policy.filters.Identifier;
-import ai.philterd.phileas.services.anonymization.AlphanumericAnonymizationService;
-import ai.philterd.phileas.services.anonymization.AnonymizationService;
 import ai.philterd.phileas.services.context.DefaultContextService;
 import ai.philterd.phileas.services.filters.regex.IdentifierFilter;
 import ai.philterd.phileas.services.strategies.rules.IdentifierFilterStrategy;
@@ -33,14 +31,14 @@ import static ai.philterd.phileas.services.strategies.AbstractFilterStrategy.RAN
 
 public class IdentifierFilterTest extends AbstractFilterTest {
 
-    private final AnonymizationService anonymizationService = new AlphanumericAnonymizationService(new DefaultContextService());
 
     @Test
     public void filterId1() throws Exception {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new IdentifierFilterStrategy()))
-                .withAnonymizationService(new AlphanumericAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -59,7 +57,8 @@ public class IdentifierFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new IdentifierFilterStrategy()))
-                .withAnonymizationService(new AlphanumericAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -77,7 +76,8 @@ public class IdentifierFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new IdentifierFilterStrategy()))
-                .withAnonymizationService(new AlphanumericAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -95,7 +95,8 @@ public class IdentifierFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new IdentifierFilterStrategy()))
-                .withAnonymizationService(new AlphanumericAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -113,7 +114,8 @@ public class IdentifierFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new IdentifierFilterStrategy()))
-                .withAnonymizationService(new AlphanumericAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -131,7 +133,8 @@ public class IdentifierFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new IdentifierFilterStrategy()))
-                .withAnonymizationService(new AlphanumericAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -149,7 +152,8 @@ public class IdentifierFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new IdentifierFilterStrategy()))
-                .withAnonymizationService(new AlphanumericAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -170,7 +174,8 @@ public class IdentifierFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new IdentifierFilterStrategy()))
-                .withAnonymizationService(new AlphanumericAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -189,7 +194,8 @@ public class IdentifierFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new IdentifierFilterStrategy()))
-                .withAnonymizationService(new AlphanumericAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -208,7 +214,8 @@ public class IdentifierFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new IdentifierFilterStrategy()))
-                .withAnonymizationService(new AlphanumericAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -226,7 +233,8 @@ public class IdentifierFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new IdentifierFilterStrategy()))
-                .withAnonymizationService(new AlphanumericAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -244,7 +252,8 @@ public class IdentifierFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new IdentifierFilterStrategy()))
-                .withAnonymizationService(new AlphanumericAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -262,7 +271,8 @@ public class IdentifierFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new IdentifierFilterStrategy()))
-                .withAnonymizationService(new AlphanumericAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -280,7 +290,8 @@ public class IdentifierFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new IdentifierFilterStrategy()))
-                .withAnonymizationService(new AlphanumericAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -298,7 +309,8 @@ public class IdentifierFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new IdentifierFilterStrategy()))
-                .withAnonymizationService(new AlphanumericAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -317,7 +329,8 @@ public class IdentifierFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new IdentifierFilterStrategy()))
-                .withAnonymizationService(new AlphanumericAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -336,7 +349,8 @@ public class IdentifierFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new IdentifierFilterStrategy()))
-                .withAnonymizationService(new AlphanumericAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -355,7 +369,8 @@ public class IdentifierFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new IdentifierFilterStrategy()))
-                .withAnonymizationService(new AlphanumericAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -373,14 +388,15 @@ public class IdentifierFilterTest extends AbstractFilterTest {
     public void filterWithCandidates1() throws Exception {
 
         final List<String> candidates = List.of("candidate1", "candidate2");
-        final AlphanumericAnonymizationService alphanumericAnonymizationService = new AlphanumericAnonymizationService(new DefaultContextService(), new SecureRandom(), candidates);
 
         final IdentifierFilterStrategy identifierFilterStrategy = new IdentifierFilterStrategy();
         identifierFilterStrategy.setStrategy(RANDOM_REPLACE);
+        identifierFilterStrategy.setAnonymizationCandidates(candidates);
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(identifierFilterStrategy))
-                .withAnonymizationService(alphanumericAnonymizationService)
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 

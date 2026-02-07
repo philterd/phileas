@@ -18,7 +18,7 @@ package ai.philterd.phileas.filters;
 import ai.philterd.phileas.model.filtering.FilterType;
 import ai.philterd.phileas.model.filtering.Filtered;
 import ai.philterd.phileas.model.filtering.Span;
-import ai.philterd.phileas.services.anonymization.ZipCodeAnonymizationService;
+import ai.philterd.phileas.services.anonymization.AnonymizationMethod;
 import ai.philterd.phileas.services.context.DefaultContextService;
 import ai.philterd.phileas.services.filters.regex.ZipCodeFilter;
 import ai.philterd.phileas.services.strategies.rules.ZipCodeFilterStrategy;
@@ -29,6 +29,7 @@ import java.security.SecureRandom;
 import java.util.List;
 
 import static ai.philterd.phileas.services.strategies.AbstractFilterStrategy.RANDOM_REPLACE;
+import static ai.philterd.phileas.services.strategies.AbstractFilterStrategy.REDACT;
 
 public class ZipCodeFilterTest extends AbstractFilterTest {
     
@@ -37,7 +38,8 @@ public class ZipCodeFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new ZipCodeFilterStrategy()))
-                .withAnonymizationService(new ZipCodeAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -55,7 +57,8 @@ public class ZipCodeFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new ZipCodeFilterStrategy()))
-                .withAnonymizationService(new ZipCodeAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -71,7 +74,8 @@ public class ZipCodeFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new ZipCodeFilterStrategy()))
-                .withAnonymizationService(new ZipCodeAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -88,7 +92,8 @@ public class ZipCodeFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new ZipCodeFilterStrategy()))
-                .withAnonymizationService(new ZipCodeAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -105,7 +110,8 @@ public class ZipCodeFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new ZipCodeFilterStrategy()))
-                .withAnonymizationService(new ZipCodeAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -122,7 +128,8 @@ public class ZipCodeFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new ZipCodeFilterStrategy()))
-                .withAnonymizationService(new ZipCodeAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -139,7 +146,8 @@ public class ZipCodeFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new ZipCodeFilterStrategy()))
-                .withAnonymizationService(new ZipCodeAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -156,7 +164,8 @@ public class ZipCodeFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new ZipCodeFilterStrategy()))
-                .withAnonymizationService(new ZipCodeAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -173,7 +182,8 @@ public class ZipCodeFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new ZipCodeFilterStrategy()))
-                .withAnonymizationService(new ZipCodeAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -190,7 +200,8 @@ public class ZipCodeFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new ZipCodeFilterStrategy()))
-                .withAnonymizationService(new ZipCodeAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -207,7 +218,8 @@ public class ZipCodeFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new ZipCodeFilterStrategy()))
-                .withAnonymizationService(new ZipCodeAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -236,7 +248,8 @@ public class ZipCodeFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new ZipCodeFilterStrategy()))
-                .withAnonymizationService(new ZipCodeAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -265,7 +278,8 @@ public class ZipCodeFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new ZipCodeFilterStrategy()))
-                .withAnonymizationService(new ZipCodeAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -294,7 +308,8 @@ public class ZipCodeFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new ZipCodeFilterStrategy()))
-                .withAnonymizationService(new ZipCodeAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -322,14 +337,15 @@ public class ZipCodeFilterTest extends AbstractFilterTest {
     public void filterWithCandidates1() throws Exception {
 
         final List<String> candidates = List.of("candidate1", "candidate2");
-        final ZipCodeAnonymizationService zipCodeAnonymizationService = new ZipCodeAnonymizationService(new DefaultContextService(), new SecureRandom(), candidates);
 
         final ZipCodeFilterStrategy zipCodeFilterStrategy = new ZipCodeFilterStrategy();
         zipCodeFilterStrategy.setStrategy(RANDOM_REPLACE);
+        zipCodeFilterStrategy.setAnonymizationCandidates(candidates);
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(zipCodeFilterStrategy))
-                .withAnonymizationService(zipCodeAnonymizationService)
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -339,6 +355,28 @@ public class ZipCodeFilterTest extends AbstractFilterTest {
         showSpans(filtered.getSpans());
         Assertions.assertEquals(1, filtered.getSpans().size());
         Assertions.assertTrue(candidates.contains(filtered.getSpans().get(0).getReplacement()));
+
+    }
+
+    @Test
+    public void filterWithNoCandidates1() throws Exception {
+
+        final ZipCodeFilterStrategy zipCodeFilterStrategy = new ZipCodeFilterStrategy();
+        zipCodeFilterStrategy.setStrategy(RANDOM_REPLACE);
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(zipCodeFilterStrategy))
+                .withContextService(contextService)
+                .withRandom(random)
+                .withWindowSize(windowSize)
+                .build();
+
+        final ZipCodeFilter filter = new ZipCodeFilter(filterConfiguration, false, false);
+
+        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "the zip code is 90210");
+        showSpans(filtered.getSpans());
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertEquals(36, filtered.getSpans().get(0).getReplacement().length());
 
     }
 

@@ -17,15 +17,12 @@ package ai.philterd.phileas.filters;
 
 import ai.philterd.phileas.model.filtering.FilterType;
 import ai.philterd.phileas.model.filtering.Filtered;
-import ai.philterd.phileas.services.anonymization.AlphanumericAnonymizationService;
-import ai.philterd.phileas.services.context.DefaultContextService;
 import ai.philterd.phileas.services.filters.regex.SsnFilter;
 import ai.philterd.phileas.services.strategies.AbstractFilterStrategy;
 import ai.philterd.phileas.services.strategies.rules.SsnFilterStrategy;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.security.SecureRandom;
 import java.util.List;
 
 import static ai.philterd.phileas.services.strategies.AbstractFilterStrategy.RANDOM_REPLACE;
@@ -37,7 +34,8 @@ public class SsnFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new SsnFilterStrategy()))
-                .withAnonymizationService(new AlphanumericAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -55,7 +53,8 @@ public class SsnFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new SsnFilterStrategy()))
-                .withAnonymizationService(new AlphanumericAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -72,7 +71,8 @@ public class SsnFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new SsnFilterStrategy()))
-                .withAnonymizationService(new AlphanumericAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -89,7 +89,8 @@ public class SsnFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new SsnFilterStrategy()))
-                .withAnonymizationService(new AlphanumericAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -106,7 +107,8 @@ public class SsnFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new SsnFilterStrategy()))
-                .withAnonymizationService(new AlphanumericAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -122,7 +124,8 @@ public class SsnFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new SsnFilterStrategy()))
-                .withAnonymizationService(new AlphanumericAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -138,7 +141,8 @@ public class SsnFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new SsnFilterStrategy()))
-                .withAnonymizationService(new AlphanumericAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -154,14 +158,15 @@ public class SsnFilterTest extends AbstractFilterTest {
     public void filterWithCandidates1() throws Exception {
 
         final List<String> candidates = List.of("candidate1", "candidate2");
-        final AlphanumericAnonymizationService alphanumericAnonymizationService = new AlphanumericAnonymizationService(new DefaultContextService(), new SecureRandom(), candidates);
 
         final SsnFilterStrategy ssnFilterStrategy = new SsnFilterStrategy();
         ssnFilterStrategy.setStrategy(RANDOM_REPLACE);
+        ssnFilterStrategy.setAnonymizationCandidates(candidates);
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(ssnFilterStrategy))
-                .withAnonymizationService(alphanumericAnonymizationService)
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -183,7 +188,8 @@ public class SsnFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(ssnFilterStrategy))
-                .withAnonymizationService(new AlphanumericAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -201,7 +207,8 @@ public class SsnFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration2 = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(ssnFilterStrategy))
-                .withAnonymizationService(new AlphanumericAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 

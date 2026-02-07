@@ -19,7 +19,6 @@ import ai.philterd.phileas.filters.rules.dictionary.FuzzyDictionaryFilter;
 import ai.philterd.phileas.model.filtering.FilterType;
 import ai.philterd.phileas.model.filtering.SensitivityLevel;
 import ai.philterd.phileas.model.filtering.Filtered;
-import ai.philterd.phileas.services.anonymization.StateAnonymizationService;
 import ai.philterd.phileas.services.context.DefaultContextService;
 import ai.philterd.phileas.services.strategies.dynamic.StateFilterStrategy;
 import org.apache.logging.log4j.LogManager;
@@ -41,7 +40,8 @@ public class StateFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new StateFilterStrategy()))
-                .withAnonymizationService(new StateAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -58,7 +58,8 @@ public class StateFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new StateFilterStrategy()))
-                .withAnonymizationService(new StateAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -73,14 +74,15 @@ public class StateFilterTest extends AbstractFilterTest {
     public void filterWithCandidates1() throws Exception {
 
         final List<String> candidates = List.of("candidate1", "candidate2");
-        final StateAnonymizationService stateAnonymizationService = new StateAnonymizationService(new DefaultContextService(), new SecureRandom(), candidates);
 
         final StateFilterStrategy stateFilterStrategy = new StateFilterStrategy();
         stateFilterStrategy.setStrategy(RANDOM_REPLACE);
+        stateFilterStrategy.setAnonymizationCandidates(candidates);
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(stateFilterStrategy))
-                .withAnonymizationService(stateAnonymizationService)
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 

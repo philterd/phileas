@@ -17,12 +17,12 @@ package ai.philterd.phileas.services.context;
 
 public interface ContextService {
 
-    boolean containsToken(final String token);
+    boolean containsToken(final String context, final String token);
 
-    boolean containsReplacement(final String replacement);
+    boolean containsReplacement(final String context, final String replacement);
 
-    String getReplacement(final String token);
+    String getReplacement(final String context, final String token);
 
-    void putReplacement(final String token, final String replacement, final String filterType);
+    void putReplacement(final String context, final String token, final String replacement, final String filterType);
 
 }

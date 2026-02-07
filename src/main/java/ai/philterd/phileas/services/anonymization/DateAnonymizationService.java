@@ -26,6 +26,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Random;
+import java.util.UUID;
 import java.util.regex.Pattern;
 
 public class DateAnonymizationService extends AbstractAnonymizationService {
@@ -65,14 +66,19 @@ public class DateAnonymizationService extends AbstractAnonymizationService {
         if (anonymizationMethod == AnonymizationMethod.CUSTOM_LIST) {
 
             if (CollectionUtils.isNotEmpty(candidates)) {
+
                 String anonymized = candidates.get(random.nextInt(candidates.size()));
                 while (anonymized.equalsIgnoreCase(token)) {
                     anonymized = candidates.get(random.nextInt(candidates.size()));
                 }
                 return anonymized;
-            }
 
-            return token;
+            } else {
+
+                // Provided list was empty - return a random UUID.
+                return UUID.randomUUID().toString();
+
+            }
 
         } else if (anonymizationMethod == AnonymizationMethod.UUID) {
 

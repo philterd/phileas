@@ -17,7 +17,6 @@ package ai.philterd.phileas.filters;
 
 import ai.philterd.phileas.model.filtering.FilterType;
 import ai.philterd.phileas.model.filtering.Filtered;
-import ai.philterd.phileas.services.anonymization.StateAbbreviationAnonymizationService;
 import ai.philterd.phileas.services.context.DefaultContextService;
 import ai.philterd.phileas.services.filters.regex.StateAbbreviationFilter;
 import ai.philterd.phileas.services.strategies.rules.StateAbbreviationFilterStrategy;
@@ -40,7 +39,8 @@ public class StateAbbreviationFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new StateAbbreviationFilterStrategy()))
-                .withAnonymizationService(new StateAbbreviationAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -62,7 +62,8 @@ public class StateAbbreviationFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new StateAbbreviationFilterStrategy()))
-                .withAnonymizationService(new StateAbbreviationAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -82,14 +83,15 @@ public class StateAbbreviationFilterTest extends AbstractFilterTest {
     public void filterWithCandidates1() throws Exception {
 
         final List<String> candidates = List.of("WV", "MD");
-        final StateAbbreviationAnonymizationService stateAbbreviationAnonymizationService = new StateAbbreviationAnonymizationService(new DefaultContextService(), new SecureRandom(), candidates);
 
         final StateAbbreviationFilterStrategy stateAbbreviationFilterStrategy = new StateAbbreviationFilterStrategy();
         stateAbbreviationFilterStrategy.setStrategy(RANDOM_REPLACE);
+        stateAbbreviationFilterStrategy.setAnonymizationCandidates(candidates);
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(stateAbbreviationFilterStrategy))
-                .withAnonymizationService(stateAbbreviationAnonymizationService)
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 

@@ -23,6 +23,7 @@ import org.apache.commons.lang3.StringUtils;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
+import java.util.UUID;
 
 public class StateAbbreviationAnonymizationService extends AbstractAnonymizationService {
 
@@ -111,14 +112,19 @@ public class StateAbbreviationAnonymizationService extends AbstractAnonymization
         if (anonymizationMethod == AnonymizationMethod.CUSTOM_LIST) {
 
             if (CollectionUtils.isNotEmpty(candidates)) {
+
                 String anonymized = candidates.get(random.nextInt(candidates.size()));
                 while (anonymized.equalsIgnoreCase(token)) {
                     anonymized = candidates.get(random.nextInt(candidates.size()));
                 }
                 return anonymized;
-            }
 
-            return token;
+            } else {
+
+                // Provided list was empty - return a random UUID.
+                return UUID.randomUUID().toString();
+
+            }
 
         } else if (anonymizationMethod == AnonymizationMethod.UUID) {
 

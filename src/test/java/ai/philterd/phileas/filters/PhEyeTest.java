@@ -17,8 +17,6 @@ package ai.philterd.phileas.filters;
 
 import ai.philterd.phileas.model.filtering.FilterType;
 import ai.philterd.phileas.model.filtering.Filtered;
-import ai.philterd.phileas.services.anonymization.PersonsAnonymizationService;
-import ai.philterd.phileas.services.anonymization.PersonsAnonymizationService;
 import ai.philterd.phileas.services.context.DefaultContextService;
 import ai.philterd.phileas.services.filters.ai.pheye.PhEyeConfiguration;
 import ai.philterd.phileas.services.filters.ai.pheye.PhEyeFilter;
@@ -40,7 +38,8 @@ public class PhEyeTest extends AbstractFilterTest {
         final Map<String, Double> thresholds = new HashMap<>();
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
-                .withAnonymizationService(new PersonsAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -61,7 +60,8 @@ public class PhEyeTest extends AbstractFilterTest {
         final Map<String, Double> thresholds = new HashMap<>();
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
-                .withAnonymizationService(new PersonsAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -81,7 +81,8 @@ public class PhEyeTest extends AbstractFilterTest {
         final Map<String, Double> thresholds = new HashMap<>();
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
-                .withAnonymizationService(new PersonsAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 

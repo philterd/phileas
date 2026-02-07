@@ -42,7 +42,7 @@ public class FirstNameFilterStrategyTest extends AbstractFilterStrategyTest {
     public void replacementWithContext() throws Exception {
 
         final AnonymizationService anonymizationService = getAnonymizationService();
-        anonymizationService.getContextService().putReplacement("jeff", "john", FilterType.FIRST_NAME.getType());
+        anonymizationService.getContextService().putReplacement("context", "jeff", "john", FilterType.FIRST_NAME.getType());
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
         strategy.setStrategy(AbstractFilterStrategy.RANDOM_REPLACE);
@@ -66,7 +66,7 @@ public class FirstNameFilterStrategyTest extends AbstractFilterStrategyTest {
     public void replacementWithContextDocumentScope() throws Exception {
 
         final AnonymizationService anonymizationService = getAnonymizationService();
-        anonymizationService.getContextService().putReplacement("jeff", "john", FilterType.FIRST_NAME.getType());
+        anonymizationService.getContextService().putReplacement("context", "jeff", "john", FilterType.FIRST_NAME.getType());
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
         strategy.setStrategy(AbstractFilterStrategy.RANDOM_REPLACE);

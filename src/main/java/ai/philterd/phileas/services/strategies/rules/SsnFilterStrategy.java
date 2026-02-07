@@ -94,7 +94,7 @@ public class SsnFilterStrategy extends StandardFilterStrategy {
     @Override
     public Replacement getReplacement(String label, String context, String token, String[] window, Crypto crypto, FPE fpe, AnonymizationService anonymizationService, FilterPattern filterPattern) throws Exception {
 
-        return getStandardReplacement(label, token, crypto, fpe, anonymizationService, filterType);
+        return getStandardReplacement(label, context, token, crypto, fpe, anonymizationService, filterType);
 
     }
 
