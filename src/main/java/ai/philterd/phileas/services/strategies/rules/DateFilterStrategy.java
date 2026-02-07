@@ -167,14 +167,7 @@ public class DateFilterStrategy extends AbstractFilterStrategy {
 
         } else if(StringUtils.equalsIgnoreCase(strategy, RANDOM_REPLACE)) {
 
-            // Default to document scope.
-            String scope = REPLACEMENT_SCOPE_DOCUMENT;
-
-            if (StringUtils.equalsIgnoreCase(replacementScope, REPLACEMENT_SCOPE_CONTEXT)) {
-                scope = REPLACEMENT_SCOPE_CONTEXT;
-            }
-
-            replacement = getAnonymizedToken(scope, token, anonymizationService, filterType.getType());
+            replacement = getAnonymizedToken(replacementScope, token, anonymizationService, filterType.getType());
 
         } else if(StringUtils.equalsIgnoreCase(strategy, STATIC_REPLACE)) {
 
