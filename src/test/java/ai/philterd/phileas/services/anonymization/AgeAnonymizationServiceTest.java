@@ -21,9 +21,25 @@ import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class AgeAnonymizationServiceTest {
+import java.security.SecureRandom;
 
+public class AgeAnonymizationServiceTest {
+    
     private static final Logger LOGGER = LogManager.getLogger(AgeAnonymizationServiceTest.class);
+
+    @Test
+    public void constructor() {
+
+        AnonymizationService anonymizationService = new AgeAnonymizationService(new DefaultContextService(), new SecureRandom(), AnonymizationMethod.REALISTIC_REPLACE);
+
+        final String token = "18 years old";
+        final String replacement = anonymizationService.anonymize(token);
+
+        LOGGER.info("Age: {}", replacement);
+        Assertions.assertNotEquals(token, replacement);
+        Assertions.assertEquals(token.length(), replacement.length());
+
+    }
 
     @Test
     public void anonymize1() {
@@ -50,6 +66,20 @@ public class AgeAnonymizationServiceTest {
         LOGGER.info("Age: {}", replacement);
         Assertions.assertNotEquals(token, replacement);
         Assertions.assertEquals(token.length(), replacement.length());
+
+    }
+
+    @Test
+    public void anonymizeUUID() {
+
+        AnonymizationService anonymizationService = new AgeAnonymizationService(new DefaultContextService(), new SecureRandom(), AnonymizationMethod.UUID);
+
+        final String token = "18 years old";
+        final String replacement = anonymizationService.anonymize(token);
+
+        LOGGER.info("Age: {}", replacement);
+        Assertions.assertNotEquals(token, replacement);
+        Assertions.assertTrue(replacement.length() >= 32);
 
     }
 

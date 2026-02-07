@@ -21,6 +21,7 @@ import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.security.SecureRandom;
 import java.util.regex.Pattern;
 
 public class CreditCardAnonymizationServiceTest {
@@ -54,6 +55,20 @@ public class CreditCardAnonymizationServiceTest {
         Assertions.assertNotEquals(token, replacement);
         Assertions.assertNotNull(replacement);
         Assertions.assertTrue(Pattern.matches("^[0-9-]*$", replacement));
+
+    }
+
+    @Test
+    public void anonymizeUUID() {
+
+        AnonymizationService anonymizationService = new CreditCardAnonymizationService(new DefaultContextService(), new SecureRandom(), AnonymizationMethod.UUID);
+
+        final String token = "abcd1234";
+        final String replacement = anonymizationService.anonymize(token);
+
+        LOGGER.info("Credit Card: {}", replacement);
+        Assertions.assertNotEquals(token, replacement);
+        Assertions.assertTrue(replacement.length() >= 32);
 
     }
 

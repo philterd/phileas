@@ -21,6 +21,8 @@ import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.security.SecureRandom;
+
 public class CurrencyAnonymizationServiceTest {
 
     private static final Logger LOGGER = LogManager.getLogger(CurrencyAnonymizationServiceTest.class);
@@ -38,6 +40,20 @@ public class CurrencyAnonymizationServiceTest {
         Assertions.assertFalse(replacement.isEmpty());
         Assertions.assertNotEquals(token, replacement);
         Assertions.assertTrue(replacement.startsWith("$"));
+
+    }
+
+    @Test
+    public void anonymizeUUID() {
+
+        AnonymizationService anonymizationService = new CurrencyAnonymizationService(new DefaultContextService(), new SecureRandom(), AnonymizationMethod.UUID);
+
+        final String token = "$1,000.00";
+        final String replacement = anonymizationService.anonymize(token);
+
+        LOGGER.info("Currency: {}", replacement);
+        Assertions.assertNotEquals(token, replacement);
+        Assertions.assertTrue(replacement.length() >= 32);
 
     }
 

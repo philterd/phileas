@@ -30,6 +30,10 @@ import java.util.regex.Pattern;
 
 public class DateAnonymizationService extends AbstractAnonymizationService {
 
+    public DateAnonymizationService(final ContextService contextService, final Random random, final AnonymizationMethod anonymizationMethod) {
+        super(contextService, random, anonymizationMethod);
+    }
+
     public DateAnonymizationService(final ContextService contextService, final Random random, final List<String> candidates) {
         super(contextService, random, candidates);
     }
@@ -58,21 +62,34 @@ public class DateAnonymizationService extends AbstractAnonymizationService {
     @Override
     public String anonymize(final String token) {
 
-        if(CollectionUtils.isNotEmpty(candidates)) {
-            String anonymized = candidates.get(random.nextInt(candidates.size()));
-            while(anonymized.equalsIgnoreCase(token)) {
-                anonymized = candidates.get(random.nextInt(candidates.size()));
+        if (anonymizationMethod == AnonymizationMethod.CUSTOM_LIST) {
+
+            if (CollectionUtils.isNotEmpty(candidates)) {
+                String anonymized = candidates.get(random.nextInt(candidates.size()));
+                while (anonymized.equalsIgnoreCase(token)) {
+                    anonymized = candidates.get(random.nextInt(candidates.size()));
+                }
+                return anonymized;
             }
+
+            return token;
+
+        } else if (anonymizationMethod == AnonymizationMethod.UUID) {
+
+            return java.util.UUID.randomUUID().toString();
+
+        } else {
+
+            // REALISTIC_REPLACE
+            String anonymized = getAnonymizedDate(token);
+
+            while (anonymized.equalsIgnoreCase(token)) {
+                anonymized = getAnonymizedDate(token);
+            }
+
             return anonymized;
+
         }
-
-        String anonymized = getAnonymizedDate(token);
-
-        while(anonymized.equalsIgnoreCase(token)) {
-            anonymized = getAnonymizedDate(token);
-        }
-
-        return anonymized;
 
     }
 

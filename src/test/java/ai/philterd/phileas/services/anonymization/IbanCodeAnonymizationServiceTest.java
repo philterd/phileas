@@ -21,9 +21,26 @@ import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.security.SecureRandom;
+
 public class IbanCodeAnonymizationServiceTest {
 
     private static final Logger LOGGER = LogManager.getLogger(IbanCodeAnonymizationServiceTest.class);
+
+    @Test
+    public void constructor() {
+
+        AnonymizationService anonymizationService = new IbanCodeAnonymizationService(new DefaultContextService(), new SecureRandom(), AnonymizationMethod.REALISTIC_REPLACE);
+
+        final String token = "GB29 XBBB 2222 2222 2222 22";
+        final String replacement = anonymizationService.anonymize(token);
+
+        LOGGER.info("IBAN Code: {}", replacement);
+        Assertions.assertNotNull(replacement);
+        Assertions.assertFalse(replacement.isEmpty());
+        Assertions.assertNotEquals(token, replacement);
+
+    }
 
     @Test
     public void anonymize() {
@@ -37,6 +54,20 @@ public class IbanCodeAnonymizationServiceTest {
         Assertions.assertNotNull(replacement);
         Assertions.assertFalse(replacement.isEmpty());
         Assertions.assertNotEquals(token, replacement);
+
+    }
+
+    @Test
+    public void anonymizeUUID() {
+
+        AnonymizationService anonymizationService = new IbanCodeAnonymizationService(new DefaultContextService(), new SecureRandom(), AnonymizationMethod.UUID);
+
+        final String token = "GB29 XBBB 2222 2222 2222 22";
+        final String replacement = anonymizationService.anonymize(token);
+
+        LOGGER.info("IBAN Code: {}", replacement);
+        Assertions.assertNotEquals(token, replacement);
+        Assertions.assertTrue(replacement.length() >= 32);
 
     }
 

@@ -21,6 +21,8 @@ import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.security.SecureRandom;
+
 public class CountyAnonymizationServiceTest {
 
     private static final Logger LOGGER = LogManager.getLogger(CountyAnonymizationServiceTest.class);
@@ -50,6 +52,20 @@ public class CountyAnonymizationServiceTest {
         LOGGER.info("County: {}", replacement);
         Assertions.assertNotEquals(token, replacement);
         Assertions.assertNotNull(replacement);
+
+    }
+
+    @Test
+    public void anonymizeUUID() {
+
+        AnonymizationService anonymizationService = new CountyAnonymizationService(new DefaultContextService(), new SecureRandom(), AnonymizationMethod.UUID);
+
+        final String token = "abcd1234";
+        final String replacement = anonymizationService.anonymize(token);
+
+        LOGGER.info("County: {}", replacement);
+        Assertions.assertNotEquals(token, replacement);
+        Assertions.assertTrue(replacement.length() >= 32);
 
     }
 

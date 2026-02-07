@@ -21,9 +21,24 @@ import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.security.SecureRandom;
+
 public class ZipCodeAnonymizationServiceTest {
 
     private static final Logger LOGGER = LogManager.getLogger(ZipCodeAnonymizationServiceTest.class);
+
+    @Test
+    public void constructor() {
+
+        AnonymizationService anonymizationService = new ZipCodeAnonymizationService(new DefaultContextService(), new SecureRandom(), AnonymizationMethod.REALISTIC_REPLACE);
+
+        final String token = "90210";
+        final String replacement = anonymizationService.anonymize(token);
+
+        LOGGER.info("Zip code replacement: {}", replacement);
+        Assertions.assertNotEquals(token, replacement);
+
+    }
 
     @Test
     public void anonymize() {
@@ -35,6 +50,20 @@ public class ZipCodeAnonymizationServiceTest {
 
         LOGGER.info("Zip code replacement: {}", replacement);
         Assertions.assertNotEquals(token, replacement);
+
+    }
+
+    @Test
+    public void anonymizeUUID() {
+
+        AnonymizationService anonymizationService = new ZipCodeAnonymizationService(new DefaultContextService(), new SecureRandom(), AnonymizationMethod.UUID);
+
+        final String token = "90210";
+        final String replacement = anonymizationService.anonymize(token);
+
+        LOGGER.info("Zip code replacement: {}", replacement);
+        Assertions.assertNotEquals(token, replacement);
+        Assertions.assertTrue(replacement.length() >= 32);
 
     }
 

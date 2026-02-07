@@ -21,9 +21,24 @@ import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.security.SecureRandom;
+
 public class EmailAddressAnonymizationServiceTest {
 
     private static final Logger LOGGER = LogManager.getLogger(EmailAddressAnonymizationServiceTest.class);
+
+    @Test
+    public void constructor() {
+
+        AnonymizationService anonymizationService = new EmailAddressAnonymizationService(new DefaultContextService(), new SecureRandom(), AnonymizationMethod.REALISTIC_REPLACE);
+
+        final String token = "me@testemail.com";
+        final String replacement = anonymizationService.anonymize(token);
+
+        LOGGER.info("Email replacement: " + replacement);
+        Assertions.assertNotEquals(token, replacement);
+
+    }
 
     @Test
     public void anonymize() {
@@ -35,6 +50,20 @@ public class EmailAddressAnonymizationServiceTest {
 
         LOGGER.info("Email replacement: " + replacement);
         Assertions.assertNotEquals(token, replacement);
+
+    }
+
+    @Test
+    public void anonymizeUUID() {
+
+        AnonymizationService anonymizationService = new EmailAddressAnonymizationService(new DefaultContextService(), new SecureRandom(), AnonymizationMethod.UUID);
+
+        final String token = "me@testemail.com";
+        final String replacement = anonymizationService.anonymize(token);
+
+        LOGGER.info("Email replacement: " + replacement);
+        Assertions.assertNotEquals(token, replacement);
+        Assertions.assertTrue(replacement.length() >= 32);
 
     }
 

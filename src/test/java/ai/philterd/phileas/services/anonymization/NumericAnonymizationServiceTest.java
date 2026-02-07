@@ -21,9 +21,27 @@ import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.security.SecureRandom;
+
 public class NumericAnonymizationServiceTest {
 
     private static final Logger LOGGER = LogManager.getLogger(NumericAnonymizationServiceTest.class);
+
+    @Test
+    public void constructor() {
+
+        AnonymizationService anonymizationService = new NumericAnonymizationService(new DefaultContextService(), new SecureRandom(), AnonymizationMethod.REALISTIC_REPLACE);
+
+        final String token = "123456789";
+        final String replacement = anonymizationService.anonymize(token);
+
+        LOGGER.info("Numeric: {}", replacement);
+        Assertions.assertNotNull(replacement);
+        Assertions.assertFalse(replacement.isEmpty());
+        Assertions.assertNotEquals(token, replacement);
+        Assertions.assertEquals(token.length(), replacement.length());
+
+    }
 
     @Test
     public void anonymize() {
@@ -38,6 +56,20 @@ public class NumericAnonymizationServiceTest {
         Assertions.assertFalse(replacement.isEmpty());
         Assertions.assertNotEquals(token, replacement);
         Assertions.assertEquals(token.length(), replacement.length());
+
+    }
+
+    @Test
+    public void anonymizeUUID() {
+
+        AnonymizationService anonymizationService = new NumericAnonymizationService(new DefaultContextService(), new SecureRandom(), AnonymizationMethod.UUID);
+
+        final String token = "123456789";
+        final String replacement = anonymizationService.anonymize(token);
+
+        LOGGER.info("Numeric: {}", replacement);
+        Assertions.assertNotEquals(token, replacement);
+        Assertions.assertTrue(replacement.length() >= 32);
 
     }
 
