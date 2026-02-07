@@ -21,9 +21,24 @@ import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.security.SecureRandom;
+
 public class IpAddressAnonymizationServiceTest {
 
     private static final Logger LOGGER = LogManager.getLogger(IpAddressAnonymizationServiceTest.class);
+
+    @Test
+    public void constructor() {
+
+        AnonymizationService anonymizationService = new IpAddressAnonymizationService(new DefaultContextService(), new SecureRandom(), AnonymizationMethod.REALISTIC_REPLACE);
+
+        final String token = "192.168.1.1";
+        final String replacement = anonymizationService.anonymize(token);
+
+        LOGGER.info("IP replacement: " + replacement);
+        Assertions.assertNotEquals(token, replacement);
+
+    }
 
     @Test
     public void anonymizeIPv4() {
@@ -48,6 +63,20 @@ public class IpAddressAnonymizationServiceTest {
 
         LOGGER.info("IP replacement: " + replacement);
         Assertions.assertNotEquals(token, replacement);
+
+    }
+
+    @Test
+    public void anonymizeUUID() {
+
+        AnonymizationService anonymizationService = new IpAddressAnonymizationService(new DefaultContextService(), new SecureRandom(), AnonymizationMethod.UUID);
+
+        final String token = "192.168.1.1";
+        final String replacement = anonymizationService.anonymize(token);
+
+        LOGGER.info("IP replacement: " + replacement);
+        Assertions.assertNotEquals(token, replacement);
+        Assertions.assertTrue(replacement.length() >= 32);
 
     }
 

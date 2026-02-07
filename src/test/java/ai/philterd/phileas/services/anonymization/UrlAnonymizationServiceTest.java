@@ -21,9 +21,24 @@ import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.security.SecureRandom;
+
 public class UrlAnonymizationServiceTest {
 
     private static final Logger LOGGER = LogManager.getLogger(UrlAnonymizationServiceTest.class);
+
+    @Test
+    public void constructor() {
+
+        AnonymizationService anonymizationService = new UrlAnonymizationService(new DefaultContextService(), new SecureRandom(), AnonymizationMethod.REALISTIC_REPLACE);
+
+        final String token = "http://www.cnn.com";
+        final String replacement = anonymizationService.anonymize(token);
+
+        LOGGER.info("URL replacement: {}", replacement);
+        Assertions.assertNotEquals(token, replacement);
+
+    }
 
     @Test
     public void anonymize() {
@@ -35,6 +50,20 @@ public class UrlAnonymizationServiceTest {
 
         LOGGER.info("URL replacement: {}", replacement);
         Assertions.assertNotEquals(token, replacement);
+
+    }
+
+    @Test
+    public void anonymizeUUID() {
+
+        AnonymizationService anonymizationService = new UrlAnonymizationService(new DefaultContextService(), new SecureRandom(), AnonymizationMethod.UUID);
+
+        final String token = "http://www.cnn.com";
+        final String replacement = anonymizationService.anonymize(token);
+
+        LOGGER.info("URL replacement: {}", replacement);
+        Assertions.assertNotEquals(token, replacement);
+        Assertions.assertTrue(replacement.length() >= 32);
 
     }
 

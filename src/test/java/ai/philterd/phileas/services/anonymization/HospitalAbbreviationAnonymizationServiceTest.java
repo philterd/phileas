@@ -22,9 +22,24 @@ import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.security.SecureRandom;
+
 public class HospitalAbbreviationAnonymizationServiceTest {
 
     private static final Logger LOGGER = LogManager.getLogger(HospitalAbbreviationAnonymizationServiceTest.class);
+
+    @Test
+    public void constructor() {
+
+        AnonymizationService anonymizationService = new HospitalAbbreviationAnonymizationService(new DefaultContextService(), new SecureRandom(), AnonymizationMethod.REALISTIC_REPLACE);
+
+        final String token = "Plateau Medical Center";
+        final String replacement = anonymizationService.anonymize(token);
+
+        LOGGER.info("Hospital abbreviation: " + replacement);
+        Assertions.assertNotEquals(token, replacement);
+
+    }
 
     @Test
     public void anonymize() {
@@ -39,6 +54,20 @@ public class HospitalAbbreviationAnonymizationServiceTest {
 
         Assertions.assertTrue(StringUtils.isAllUpperCase(replacement));
         Assertions.assertEquals(-1, replacement.indexOf(" "));
+
+    }
+
+    @Test
+    public void anonymizeUUID() {
+
+        AnonymizationService anonymizationService = new HospitalAbbreviationAnonymizationService(new DefaultContextService(), new SecureRandom(), AnonymizationMethod.UUID);
+
+        final String token = "Plateau Medical Center";
+        final String replacement = anonymizationService.anonymize(token);
+
+        LOGGER.info("Hospital abbreviation: " + replacement);
+        Assertions.assertNotEquals(token, replacement);
+        Assertions.assertTrue(replacement.length() >= 32);
 
     }
 

@@ -21,9 +21,26 @@ import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.security.SecureRandom;
+
 public class BitcoinAddressAnonymizationServiceTest {
 
     private static final Logger LOGGER = LogManager.getLogger(BitcoinAddressAnonymizationServiceTest.class);
+
+    @Test
+    public void constructor() {
+
+        AnonymizationService anonymizationService = new BitcoinAddressAnonymizationService(new DefaultContextService(), new SecureRandom(), AnonymizationMethod.REALISTIC_REPLACE);
+
+        final String token = "1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa";
+        final String replacement = anonymizationService.anonymize(token);
+
+        LOGGER.info("Bitcoin Address: {}", replacement);
+        Assertions.assertNotNull(replacement);
+        Assertions.assertFalse(replacement.isEmpty());
+        Assertions.assertNotEquals(token, replacement);
+
+    }
 
     @Test
     public void anonymize() {
@@ -37,6 +54,20 @@ public class BitcoinAddressAnonymizationServiceTest {
         Assertions.assertNotNull(replacement);
         Assertions.assertFalse(replacement.isEmpty());
         Assertions.assertNotEquals(token, replacement);
+
+    }
+
+    @Test
+    public void anonymizeUUID() {
+
+        AnonymizationService anonymizationService = new BitcoinAddressAnonymizationService(new DefaultContextService(), new SecureRandom(), AnonymizationMethod.UUID);
+
+        final String token = "1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa";
+        final String replacement = anonymizationService.anonymize(token);
+
+        LOGGER.info("Bitcoin Address: {}", replacement);
+        Assertions.assertNotEquals(token, replacement);
+        Assertions.assertTrue(replacement.length() >= 32);
 
     }
 

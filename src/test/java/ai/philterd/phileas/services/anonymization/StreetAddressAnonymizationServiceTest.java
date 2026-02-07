@@ -21,9 +21,26 @@ import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.security.SecureRandom;
+
 public class StreetAddressAnonymizationServiceTest {
 
     private static final Logger LOGGER = LogManager.getLogger(StreetAddressAnonymizationServiceTest.class);
+
+    @Test
+    public void constructor() {
+
+        AnonymizationService anonymizationService = new StreetAddressAnonymizationService(new DefaultContextService(), new SecureRandom(), AnonymizationMethod.REALISTIC_REPLACE);
+
+        final String token = "100 Main St";
+        final String replacement = anonymizationService.anonymize(token);
+
+        LOGGER.info("Street Address: {}", replacement);
+        Assertions.assertNotEquals(token, replacement);
+        Assertions.assertNotNull(replacement);
+        Assertions.assertFalse(replacement.isEmpty());
+
+    }
 
     @Test
     public void anonymize1() {
@@ -52,6 +69,20 @@ public class StreetAddressAnonymizationServiceTest {
         Assertions.assertNotEquals(token, replacement);
         Assertions.assertNotNull(replacement);
         Assertions.assertFalse(replacement.isEmpty());
+
+    }
+
+    @Test
+    public void anonymizeUUID() {
+
+        AnonymizationService anonymizationService = new StreetAddressAnonymizationService(new DefaultContextService(), new SecureRandom(), AnonymizationMethod.UUID);
+
+        final String token = "100 Main St";
+        final String replacement = anonymizationService.anonymize(token);
+
+        LOGGER.info("Street Address: {}", replacement);
+        Assertions.assertNotEquals(token, replacement);
+        Assertions.assertTrue(replacement.length() >= 32);
 
     }
 

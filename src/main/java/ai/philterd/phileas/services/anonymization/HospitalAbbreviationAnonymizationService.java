@@ -28,6 +28,11 @@ public class HospitalAbbreviationAnonymizationService extends AbstractAnonymizat
 
     private final transient Faker faker;
 
+    public HospitalAbbreviationAnonymizationService(final ContextService contextService, final Random random, final AnonymizationMethod anonymizationMethod) {
+        super(contextService, random, anonymizationMethod);
+        this.faker = new Faker(random);
+    }
+
     public HospitalAbbreviationAnonymizationService(final ContextService contextService, final Random random, final List<String> candidates) {
         super(contextService, random, candidates);
         this.faker = new Faker(random);
@@ -51,21 +56,34 @@ public class HospitalAbbreviationAnonymizationService extends AbstractAnonymizat
     @Override
     public String anonymize(final String token) {
 
-        if(CollectionUtils.isNotEmpty(candidates)) {
-            String anonymized = candidates.get(random.nextInt(candidates.size()));
-            while(anonymized.equalsIgnoreCase(token)) {
-                anonymized = candidates.get(random.nextInt(candidates.size()));
+        if (anonymizationMethod == AnonymizationMethod.CUSTOM_LIST) {
+
+            if (CollectionUtils.isNotEmpty(candidates)) {
+                String anonymized = candidates.get(random.nextInt(candidates.size()));
+                while (anonymized.equalsIgnoreCase(token)) {
+                    anonymized = candidates.get(random.nextInt(candidates.size()));
+                }
+                return anonymized;
             }
+
+            return token;
+
+        } else if (anonymizationMethod == AnonymizationMethod.UUID) {
+
+            return java.util.UUID.randomUUID().toString();
+
+        } else {
+
+            // REALISTIC_REPLACE
+            String anonymized = getAnonymizedHospitalAbbreviation();
+
+            while (anonymized.equalsIgnoreCase(token)) {
+                anonymized = getAnonymizedHospitalAbbreviation();
+            }
+
             return anonymized;
+
         }
-
-        String anonymized = getAnonymizedHospitalAbbreviation();
-
-        while(anonymized.equalsIgnoreCase(token)) {
-            anonymized = getAnonymizedHospitalAbbreviation();
-        }
-
-        return anonymized;
 
     }
 

@@ -21,9 +21,24 @@ import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.security.SecureRandom;
+
 public class MacAddressAnonymizationServiceTest {
 
     private static final Logger LOGGER = LogManager.getLogger(MacAddressAnonymizationServiceTest.class);
+
+    @Test
+    public void constructor() {
+
+        AnonymizationService anonymizationService = new MacAddressAnonymizationService(new DefaultContextService(), new SecureRandom(), AnonymizationMethod.REALISTIC_REPLACE);
+
+        final String token = "00-14-22-04-25-37";
+        final String replacement = anonymizationService.anonymize(token);
+
+        LOGGER.info("MAC address replacement: {}", replacement);
+        Assertions.assertNotEquals(token, replacement);
+
+    }
 
     @Test
     public void anonymize1() {
@@ -35,6 +50,20 @@ public class MacAddressAnonymizationServiceTest {
 
         LOGGER.info("MAC address replacement: {}", replacement);
         Assertions.assertNotEquals(token, replacement);
+
+    }
+
+    @Test
+    public void anonymizeUUID() {
+
+        AnonymizationService anonymizationService = new MacAddressAnonymizationService(new DefaultContextService(), new SecureRandom(), AnonymizationMethod.UUID);
+
+        final String token = "00-14-22-04-25-37";
+        final String replacement = anonymizationService.anonymize(token);
+
+        LOGGER.info("MAC address replacement: {}", replacement);
+        Assertions.assertNotEquals(token, replacement);
+        Assertions.assertTrue(replacement.length() >= 32);
 
     }
 

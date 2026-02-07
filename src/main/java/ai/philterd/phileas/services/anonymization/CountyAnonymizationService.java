@@ -26,6 +26,10 @@ import java.util.Random;
 
 public class CountyAnonymizationService extends AbstractAnonymizationService {
 
+    public CountyAnonymizationService(final ContextService contextService, final Random random, final AnonymizationMethod anonymizationMethod) {
+        super(contextService, random, anonymizationMethod);
+    }
+
     public CountyAnonymizationService(final ContextService contextService, final Random random, final List<String> candidates) {
         super(contextService, random, candidates);
     }
@@ -153,24 +157,37 @@ public class CountyAnonymizationService extends AbstractAnonymizationService {
     @Override
     public String anonymize(final String token) {
 
-        if(CollectionUtils.isNotEmpty(candidates)) {
-            String anonymized = candidates.get(random.nextInt(candidates.size()));
-            while(anonymized.equalsIgnoreCase(token)) {
-                anonymized = candidates.get(random.nextInt(candidates.size()));
+        if (anonymizationMethod == AnonymizationMethod.CUSTOM_LIST) {
+
+            if (CollectionUtils.isNotEmpty(candidates)) {
+                String anonymized = candidates.get(random.nextInt(candidates.size()));
+                while (anonymized.equalsIgnoreCase(token)) {
+                    anonymized = candidates.get(random.nextInt(candidates.size()));
+                }
+                return anonymized;
             }
+
+            return token;
+
+        } else if (anonymizationMethod == AnonymizationMethod.UUID) {
+
+            return java.util.UUID.randomUUID().toString();
+
+        } else {
+
+            // REALISTIC_REPLACE
+            final int randomInt = generateInteger(0, COUNTIES.size() - 1);
+
+            String anonymized = COUNTIES.get(randomInt);
+
+            while (anonymized.equalsIgnoreCase(token)) {
+                final int nextRandomInt = generateInteger(0, COUNTIES.size() - 1);
+                anonymized = COUNTIES.get(nextRandomInt);
+            }
+
             return anonymized;
+
         }
-
-        final int randomInt = generateInteger(0, COUNTIES.size() - 1);
-
-        String anonymized = COUNTIES.get(randomInt);
-
-        while(anonymized.equalsIgnoreCase(token)) {
-            final int nextRandomInt = generateInteger(0, COUNTIES.size() - 1);
-            anonymized = COUNTIES.get(nextRandomInt);
-        }
-
-        return anonymized;
 
     }
 

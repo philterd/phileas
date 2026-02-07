@@ -21,9 +21,27 @@ import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.security.SecureRandom;
+
 public class VinAnonymizationServiceTest {
 
     private static final Logger LOGGER = LogManager.getLogger(VinAnonymizationServiceTest.class);
+
+    @Test
+    public void constructor() {
+
+        AnonymizationService anonymizationService = new VinAnonymizationService(new DefaultContextService(), new SecureRandom(), AnonymizationMethod.REALISTIC_REPLACE);
+
+        final String token = "11111111111111111";
+        final String replacement = anonymizationService.anonymize(token);
+
+        LOGGER.info("VIN replacement: {}", replacement);
+
+        Assertions.assertNotEquals(token, replacement);
+        Assertions.assertNotNull(replacement);
+        Assertions.assertEquals(17, replacement.length());
+
+    }
 
     @Test
     public void anonymize() {
@@ -38,6 +56,20 @@ public class VinAnonymizationServiceTest {
         Assertions.assertNotEquals(token, replacement);
         Assertions.assertNotNull(replacement);
         Assertions.assertEquals(17, replacement.length());
+
+    }
+
+    @Test
+    public void anonymizeUUID() {
+
+        AnonymizationService anonymizationService = new VinAnonymizationService(new DefaultContextService(), new SecureRandom(), AnonymizationMethod.UUID);
+
+        final String token = "11111111111111111";
+        final String replacement = anonymizationService.anonymize(token);
+
+        LOGGER.info("VIN replacement: {}", replacement);
+        Assertions.assertNotEquals(token, replacement);
+        Assertions.assertTrue(replacement.length() >= 32);
 
     }
 

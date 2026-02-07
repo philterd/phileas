@@ -24,6 +24,10 @@ import java.util.Random;
 
 public class NumericAnonymizationService extends AbstractAnonymizationService {
 
+    public NumericAnonymizationService(final ContextService contextService, final Random random, final AnonymizationMethod anonymizationMethod) {
+        super(contextService, random, anonymizationMethod);
+    }
+
     public NumericAnonymizationService(final ContextService contextService, final Random random, final List<String> candidates) {
         super(contextService, random, candidates);
     }
@@ -44,21 +48,34 @@ public class NumericAnonymizationService extends AbstractAnonymizationService {
     @Override
     public String anonymize(final String token) {
 
-        if(CollectionUtils.isNotEmpty(candidates)) {
-            String anonymized = candidates.get(random.nextInt(candidates.size()));
-            while(anonymized.equalsIgnoreCase(token)) {
-                anonymized = candidates.get(random.nextInt(candidates.size()));
+        if (anonymizationMethod == AnonymizationMethod.CUSTOM_LIST) {
+
+            if (CollectionUtils.isNotEmpty(candidates)) {
+                String anonymized = candidates.get(random.nextInt(candidates.size()));
+                while (anonymized.equalsIgnoreCase(token)) {
+                    anonymized = candidates.get(random.nextInt(candidates.size()));
+                }
+                return anonymized;
             }
+
+            return token;
+
+        } else if (anonymizationMethod == AnonymizationMethod.UUID) {
+
+            return java.util.UUID.randomUUID().toString();
+
+        } else {
+
+            // REALISTIC_REPLACE
+            String anonymized = generateNumeric(token.length());
+
+            while (anonymized.equalsIgnoreCase(token)) {
+                anonymized = generateNumeric(token.length());
+            }
+
             return anonymized;
+
         }
-
-        String anonymized = generateNumeric(token.length());
-
-        while(anonymized.equalsIgnoreCase(token)) {
-            anonymized = generateNumeric(token.length());
-        }
-
-        return anonymized;
 
     }
 

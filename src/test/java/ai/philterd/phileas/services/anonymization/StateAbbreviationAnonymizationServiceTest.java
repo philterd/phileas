@@ -21,9 +21,25 @@ import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.security.SecureRandom;
+
 public class StateAbbreviationAnonymizationServiceTest {
 
     private static final Logger LOGGER = LogManager.getLogger(StateAbbreviationAnonymizationServiceTest.class);
+
+    @Test
+    public void constructor() {
+
+        AnonymizationService anonymizationService = new StateAbbreviationAnonymizationService(new DefaultContextService(), new SecureRandom(), AnonymizationMethod.REALISTIC_REPLACE);
+
+        final String token = "AK";
+        final String replacement = anonymizationService.anonymize(token);
+
+        Assertions.assertNotNull(replacement);
+        Assertions.assertNotEquals(token, replacement);
+        Assertions.assertFalse(replacement.isEmpty());
+
+    }
 
     @Test
     public void anonymize1() {
@@ -36,6 +52,19 @@ public class StateAbbreviationAnonymizationServiceTest {
         Assertions.assertNotNull(replacement);
         Assertions.assertNotEquals(token, replacement);
         Assertions.assertFalse(replacement.isEmpty());
+
+    }
+
+    @Test
+    public void anonymizeUUID() {
+
+        AnonymizationService anonymizationService = new StateAbbreviationAnonymizationService(new DefaultContextService(), new SecureRandom(), AnonymizationMethod.UUID);
+
+        final String token = "AK";
+        final String replacement = anonymizationService.anonymize(token);
+
+        Assertions.assertNotEquals(token, replacement);
+        Assertions.assertTrue(replacement.length() >= 32);
 
     }
 

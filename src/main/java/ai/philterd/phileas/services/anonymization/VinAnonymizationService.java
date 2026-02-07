@@ -24,6 +24,10 @@ import java.util.Random;
 
 public class VinAnonymizationService extends AbstractAnonymizationService {
 
+    public VinAnonymizationService(final ContextService contextService, final Random random, final AnonymizationMethod anonymizationMethod) {
+        super(contextService, random, anonymizationMethod);
+    }
+
     public VinAnonymizationService(final ContextService contextService, final Random random, final List<String> candidates) {
         super(contextService, random, candidates);
     }
@@ -44,18 +48,33 @@ public class VinAnonymizationService extends AbstractAnonymizationService {
     @Override
     public String anonymize(final String token) {
 
-        if(CollectionUtils.isNotEmpty(candidates)) {
-            String anonymized = candidates.get(random.nextInt(candidates.size()));
-            while(anonymized.equalsIgnoreCase(token)) {
-                anonymized = candidates.get(random.nextInt(candidates.size()));
+        if (anonymizationMethod == AnonymizationMethod.CUSTOM_LIST) {
+
+            if (CollectionUtils.isNotEmpty(candidates)) {
+                String anonymized = candidates.get(random.nextInt(candidates.size()));
+                while (anonymized.equalsIgnoreCase(token)) {
+                    anonymized = candidates.get(random.nextInt(candidates.size()));
+                }
+                return anonymized;
             }
-            return anonymized;
+
+            return token;
+
+        } else if (anonymizationMethod == AnonymizationMethod.UUID) {
+
+            return java.util.UUID.randomUUID().toString();
+
         } else {
+
+            // REALISTIC_REPLACE
             String anonymized = generateAlphanumeric(17);
-            while(anonymized.equalsIgnoreCase(token)) {
+
+            while (anonymized.equalsIgnoreCase(token)) {
                 anonymized = generateAlphanumeric(17);
             }
+
             return anonymized;
+
         }
 
     }

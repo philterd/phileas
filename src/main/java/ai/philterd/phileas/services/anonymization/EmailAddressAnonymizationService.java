@@ -24,6 +24,10 @@ import java.util.Random;
 
 public class EmailAddressAnonymizationService extends AbstractAnonymizationService {
 
+    public EmailAddressAnonymizationService(final ContextService contextService, final Random random, final AnonymizationMethod anonymizationMethod) {
+        super(contextService, random, anonymizationMethod);
+    }
+
     public EmailAddressAnonymizationService(final ContextService contextService, final Random random, final List<String> candidates) {
         super(contextService, random, candidates);
     }
@@ -44,27 +48,40 @@ public class EmailAddressAnonymizationService extends AbstractAnonymizationServi
     @Override
     public String anonymize(final String token) {
 
-        if(CollectionUtils.isNotEmpty(candidates)) {
-            String anonymized = candidates.get(random.nextInt(candidates.size()));
-            while(anonymized.equalsIgnoreCase(token)) {
-                anonymized = candidates.get(random.nextInt(candidates.size()));
+        if (anonymizationMethod == AnonymizationMethod.CUSTOM_LIST) {
+
+            if (CollectionUtils.isNotEmpty(candidates)) {
+                String anonymized = candidates.get(random.nextInt(candidates.size()));
+                while (anonymized.equalsIgnoreCase(token)) {
+                    anonymized = candidates.get(random.nextInt(candidates.size()));
+                }
+                return anonymized;
             }
+
+            return token;
+
+        } else if (anonymizationMethod == AnonymizationMethod.UUID) {
+
+            return java.util.UUID.randomUUID().toString();
+
+        } else {
+
+            // REALISTIC_REPLACE
+            final RandomStringGenerator randomStringGenerator = new RandomStringGenerator.Builder()
+                    .withinRange('0', 'z')
+                    .filteredBy(Character::isLetterOrDigit)
+                    .usingRandom(random::nextInt)
+                    .get();
+
+            String anonymized = randomStringGenerator.generate(10) + "@fake.com";
+
+            while (anonymized.equalsIgnoreCase(token)) {
+                anonymized = randomStringGenerator.generate(10) + "@fake.com";
+            }
+
             return anonymized;
+
         }
-
-        final RandomStringGenerator randomStringGenerator = new RandomStringGenerator.Builder()
-                .withinRange('0', 'z')
-                .filteredBy(Character::isLetterOrDigit)
-                .usingRandom(random::nextInt)
-                .get();
-
-        String anonymized = randomStringGenerator.generate(10) + "@fake.com";
-
-        while(anonymized.equalsIgnoreCase(token)) {
-            anonymized = randomStringGenerator.generate(10) + "@fake.com";
-        }
-
-        return anonymized;
 
     }
 
