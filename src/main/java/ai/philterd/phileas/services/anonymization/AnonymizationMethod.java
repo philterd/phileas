@@ -27,6 +27,21 @@ public enum AnonymizationMethod {
         this.value = value;
     }
 
+    public static AnonymizationMethod fromString(String value) {
+
+        if(value.equalsIgnoreCase(REALISTIC_REPLACE.getValue())) {
+            return REALISTIC_REPLACE;
+        } else if(value.equalsIgnoreCase(CUSTOM_LIST.getValue())) {
+            return CUSTOM_LIST;
+        } else if(value.equalsIgnoreCase(UUID.getValue())) {
+            return UUID;
+        } else {
+            // Default to UUID if invalid value.
+            return UUID;
+        }
+
+    }
+
     @Override
     public String toString() {
         return value;
