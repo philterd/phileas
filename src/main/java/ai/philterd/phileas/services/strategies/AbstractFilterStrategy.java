@@ -130,7 +130,7 @@ public abstract class AbstractFilterStrategy {
 
     @SerializedName("anonymizationMethod")
     @Expose
-    protected AnonymizationMethod anonymizationMethod = AnonymizationMethod.REALISTIC_REPLACE;
+    protected AnonymizationMethod anonymizationMethod = AnonymizationMethod.REALISTIC;
 
     @SerializedName("anonymizationCandidates")
     @Expose

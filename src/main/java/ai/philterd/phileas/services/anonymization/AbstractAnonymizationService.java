@@ -34,14 +34,14 @@ public abstract class AbstractAnonymizationService implements AnonymizationServi
         this.contextService = contextService;
         this.random = new SecureRandom();
         this.candidates = Collections.emptyList();
-        this.anonymizationMethod = AnonymizationMethod.REALISTIC_REPLACE;
+        this.anonymizationMethod = AnonymizationMethod.REALISTIC;
     }
 
     public AbstractAnonymizationService(final ContextService contextService, final Random random) {
         this.contextService = contextService;
         this.random = random;
         this.candidates = Collections.emptyList();
-        this.anonymizationMethod = AnonymizationMethod.REALISTIC_REPLACE;
+        this.anonymizationMethod = AnonymizationMethod.REALISTIC;
     }
 
     protected AbstractAnonymizationService(final ContextService contextService, final Random random, final AnonymizationMethod anonymizationMethod) {
@@ -55,7 +55,7 @@ public abstract class AbstractAnonymizationService implements AnonymizationServi
         this.contextService = contextService;
         this.random = random;
         this.candidates = candidates;
-        this.anonymizationMethod = AnonymizationMethod.CUSTOM_LIST;
+        this.anonymizationMethod = AnonymizationMethod.FROM_LIST;
     }
 
     protected int generateInteger(final int min, final int max) {

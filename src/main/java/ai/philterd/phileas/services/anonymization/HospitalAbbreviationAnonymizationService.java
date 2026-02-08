@@ -57,7 +57,7 @@ public class HospitalAbbreviationAnonymizationService extends AbstractAnonymizat
     @Override
     public String anonymize(final String token) {
 
-        if (anonymizationMethod == AnonymizationMethod.CUSTOM_LIST) {
+        if (anonymizationMethod == AnonymizationMethod.FROM_LIST) {
 
             if (CollectionUtils.isNotEmpty(candidates)) {
 

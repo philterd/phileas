@@ -18,7 +18,6 @@ package ai.philterd.phileas.services.anonymization;
 import org.apache.commons.collections4.CollectionUtils;
 
 import ai.philterd.phileas.services.context.ContextService;
-import org.apache.commons.lang3.StringUtils;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -109,7 +108,7 @@ public class StateAbbreviationAnonymizationService extends AbstractAnonymization
     @Override
     public String anonymize(final String token) {
 
-        if (anonymizationMethod == AnonymizationMethod.CUSTOM_LIST) {
+        if (anonymizationMethod == AnonymizationMethod.FROM_LIST) {
 
             if (CollectionUtils.isNotEmpty(candidates)) {
 

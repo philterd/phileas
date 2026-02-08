@@ -18,7 +18,6 @@ package ai.philterd.phileas.services.anonymization;
 import org.apache.commons.collections4.CollectionUtils;
 
 import ai.philterd.phileas.services.context.ContextService;
-import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;
 import java.util.Random;
@@ -50,7 +49,7 @@ public class CurrencyAnonymizationService extends AbstractAnonymizationService {
     @Override
     public String anonymize(final String token) {
 
-        if (anonymizationMethod == AnonymizationMethod.CUSTOM_LIST) {
+        if (anonymizationMethod == AnonymizationMethod.FROM_LIST) {
 
             if (CollectionUtils.isNotEmpty(candidates)) {
 

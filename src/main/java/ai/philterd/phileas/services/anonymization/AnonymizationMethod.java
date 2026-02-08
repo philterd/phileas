@@ -17,8 +17,8 @@ package ai.philterd.phileas.services.anonymization;
 
 public enum AnonymizationMethod {
 
-    REALISTIC_REPLACE("realistic_replace"),
-    CUSTOM_LIST("custom_list"),
+    REALISTIC("realistic"),
+    FROM_LIST("from_list"),
     UUID("uuid");
 
     private final String value;
@@ -34,10 +34,10 @@ public enum AnonymizationMethod {
             return UUID;
         }
 
-        if(value.equalsIgnoreCase(REALISTIC_REPLACE.getValue())) {
-            return REALISTIC_REPLACE;
-        } else if(value.equalsIgnoreCase(CUSTOM_LIST.getValue())) {
-            return CUSTOM_LIST;
+        if(value.equalsIgnoreCase(REALISTIC.getValue())) {
+            return REALISTIC;
+        } else if(value.equalsIgnoreCase(FROM_LIST.getValue())) {
+            return FROM_LIST;
         } else if(value.equalsIgnoreCase(UUID.getValue())) {
             return UUID;
         } else {
