@@ -17,7 +17,6 @@ package ai.philterd.phileas.filters;
 
 import ai.philterd.phileas.model.filtering.FilterType;
 import ai.philterd.phileas.model.filtering.Filtered;
-import ai.philterd.phileas.services.anonymization.NumericAnonymizationService;
 import ai.philterd.phileas.services.context.DefaultContextService;
 import ai.philterd.phileas.services.filters.regex.PhoneNumberExtensionFilter;
 import ai.philterd.phileas.services.strategies.rules.PhoneNumberExtensionFilterStrategy;
@@ -36,7 +35,8 @@ public class PhoneNumberExtensionFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new PhoneNumberExtensionFilterStrategy()))
-                .withAnonymizationService(new NumericAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -56,7 +56,8 @@ public class PhoneNumberExtensionFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new PhoneNumberExtensionFilterStrategy()))
-                .withAnonymizationService(new NumericAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -75,14 +76,15 @@ public class PhoneNumberExtensionFilterTest extends AbstractFilterTest {
     public void filterWithCandidates1() throws Exception {
 
         final List<String> candidates = List.of("100", "101");
-        final NumericAnonymizationService numericAnonymizationService = new NumericAnonymizationService(new DefaultContextService(), new SecureRandom(), candidates);
 
         final PhoneNumberExtensionFilterStrategy phoneNumberExtensionFilterStrategy = new PhoneNumberExtensionFilterStrategy();
         phoneNumberExtensionFilterStrategy.setStrategy(RANDOM_REPLACE);
+        phoneNumberExtensionFilterStrategy.setAnonymizationCandidates(candidates);
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(phoneNumberExtensionFilterStrategy))
-                .withAnonymizationService(numericAnonymizationService)
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 

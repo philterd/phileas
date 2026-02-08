@@ -30,7 +30,7 @@ public class StreetAddressAnonymizationServiceTest {
     @Test
     public void constructor() {
 
-        AnonymizationService anonymizationService = new StreetAddressAnonymizationService(new DefaultContextService(), new SecureRandom(), AnonymizationMethod.REALISTIC_REPLACE);
+        AnonymizationService anonymizationService = new StreetAddressAnonymizationService(new DefaultContextService(), new SecureRandom(), AnonymizationMethod.REALISTIC);
 
         final String token = "100 Main St";
         final String replacement = anonymizationService.anonymize(token);

@@ -17,7 +17,6 @@ package ai.philterd.phileas.filters;
 
 import ai.philterd.phileas.model.filtering.FilterType;
 import ai.philterd.phileas.model.filtering.Filtered;
-import ai.philterd.phileas.services.anonymization.IpAddressAnonymizationService;
 import ai.philterd.phileas.services.context.DefaultContextService;
 import ai.philterd.phileas.services.filters.regex.IpAddressFilter;
 import ai.philterd.phileas.services.strategies.rules.IpAddressFilterStrategy;
@@ -36,7 +35,8 @@ public class IpAddressFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new IpAddressFilterStrategy()))
-                .withAnonymizationService(new IpAddressAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -55,7 +55,8 @@ public class IpAddressFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new IpAddressFilterStrategy()))
-                .withAnonymizationService(new IpAddressAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -73,7 +74,8 @@ public class IpAddressFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new IpAddressFilterStrategy()))
-                .withAnonymizationService(new IpAddressAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -93,7 +95,8 @@ public class IpAddressFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new IpAddressFilterStrategy()))
-                .withAnonymizationService(new IpAddressAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -112,14 +115,15 @@ public class IpAddressFilterTest extends AbstractFilterTest {
     public void filterWithCandidates1() throws Exception {
 
         final List<String> candidates = List.of("1.1.1.1", "2.2.2.2");
-        final IpAddressAnonymizationService ipAddressAnonymizationService = new IpAddressAnonymizationService(new DefaultContextService(), new SecureRandom(), candidates);
 
         final IpAddressFilterStrategy ipAddressFilterStrategy = new IpAddressFilterStrategy();
         ipAddressFilterStrategy.setStrategy(RANDOM_REPLACE);
+        ipAddressFilterStrategy.setAnonymizationCandidates(candidates);
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(ipAddressFilterStrategy))
-                .withAnonymizationService(ipAddressAnonymizationService)
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 

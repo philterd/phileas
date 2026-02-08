@@ -30,7 +30,7 @@ public class VinAnonymizationServiceTest {
     @Test
     public void constructor() {
 
-        AnonymizationService anonymizationService = new VinAnonymizationService(new DefaultContextService(), new SecureRandom(), AnonymizationMethod.REALISTIC_REPLACE);
+        AnonymizationService anonymizationService = new VinAnonymizationService(new DefaultContextService(), new SecureRandom(), AnonymizationMethod.REALISTIC);
 
         final String token = "11111111111111111";
         final String replacement = anonymizationService.anonymize(token);

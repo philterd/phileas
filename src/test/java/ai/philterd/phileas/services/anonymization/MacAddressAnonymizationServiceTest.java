@@ -30,7 +30,7 @@ public class MacAddressAnonymizationServiceTest {
     @Test
     public void constructor() {
 
-        AnonymizationService anonymizationService = new MacAddressAnonymizationService(new DefaultContextService(), new SecureRandom(), AnonymizationMethod.REALISTIC_REPLACE);
+        AnonymizationService anonymizationService = new MacAddressAnonymizationService(new DefaultContextService(), new SecureRandom(), AnonymizationMethod.REALISTIC);
 
         final String token = "00-14-22-04-25-37";
         final String replacement = anonymizationService.anonymize(token);

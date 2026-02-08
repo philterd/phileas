@@ -49,10 +49,6 @@ public abstract class AbstractFilter {
     @Expose
     protected int priority;
 
-    @SerializedName("anonymizationCandidates")
-    @Expose
-    protected List<String> anonymizationCandidates = Collections.emptyList();
-
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
     }
@@ -106,14 +102,6 @@ public abstract class AbstractFilter {
 
     public void setPriority(int priority) {
         this.priority = priority;
-    }
-
-    public List<String> getAnonymizationCandidates() {
-        return anonymizationCandidates;
-    }
-
-    public void setAnonymizationCandidates(List<String> anonymizationCandidates) {
-        this.anonymizationCandidates = anonymizationCandidates;
     }
 
 }

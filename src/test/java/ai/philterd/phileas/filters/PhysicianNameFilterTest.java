@@ -17,7 +17,6 @@ package ai.philterd.phileas.filters;
 
 import ai.philterd.phileas.model.filtering.FilterType;
 import ai.philterd.phileas.model.filtering.Filtered;
-import ai.philterd.phileas.services.anonymization.PersonsAnonymizationService;
 import ai.philterd.phileas.services.context.DefaultContextService;
 import ai.philterd.phileas.services.filters.regex.PhysicianNameFilter;
 import ai.philterd.phileas.services.strategies.rules.PhysicianNameFilterStrategy;
@@ -40,7 +39,8 @@ public class PhysicianNameFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new PhysicianNameFilterStrategy()))
-                .withAnonymizationService(new PersonsAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -60,7 +60,8 @@ public class PhysicianNameFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new PhysicianNameFilterStrategy()))
-                .withAnonymizationService(new PersonsAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -80,7 +81,8 @@ public class PhysicianNameFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new PhysicianNameFilterStrategy()))
-                .withAnonymizationService(new PersonsAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -100,7 +102,8 @@ public class PhysicianNameFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new PhysicianNameFilterStrategy()))
-                .withAnonymizationService(new PersonsAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -120,7 +123,8 @@ public class PhysicianNameFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new PhysicianNameFilterStrategy()))
-                .withAnonymizationService(new PersonsAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -140,7 +144,8 @@ public class PhysicianNameFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new PhysicianNameFilterStrategy()))
-                .withAnonymizationService(new PersonsAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -160,7 +165,8 @@ public class PhysicianNameFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new PhysicianNameFilterStrategy()))
-                .withAnonymizationService(new PersonsAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -180,7 +186,8 @@ public class PhysicianNameFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new PhysicianNameFilterStrategy()))
-                .withAnonymizationService(new PersonsAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -198,7 +205,8 @@ public class PhysicianNameFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new PhysicianNameFilterStrategy()))
-                .withAnonymizationService(new PersonsAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -216,7 +224,8 @@ public class PhysicianNameFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new PhysicianNameFilterStrategy()))
-                .withAnonymizationService(new PersonsAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -236,7 +245,8 @@ public class PhysicianNameFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new PhysicianNameFilterStrategy()))
-                .withAnonymizationService(new PersonsAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -255,14 +265,15 @@ public class PhysicianNameFilterTest extends AbstractFilterTest {
     public void filterWithCandidates1() throws Exception {
 
         final List<String> candidates = List.of("Doctor Smith", "Doctor Jones");
-        final PersonsAnonymizationService personsAnonymizationService = new PersonsAnonymizationService(new DefaultContextService(), new SecureRandom(), candidates);
 
         final PhysicianNameFilterStrategy physicianNameFilterStrategy = new PhysicianNameFilterStrategy();
         physicianNameFilterStrategy.setStrategy(RANDOM_REPLACE);
+        physicianNameFilterStrategy.setAnonymizationCandidates(candidates);
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(physicianNameFilterStrategy))
-                .withAnonymizationService(personsAnonymizationService)
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 

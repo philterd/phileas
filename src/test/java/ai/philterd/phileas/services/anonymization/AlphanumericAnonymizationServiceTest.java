@@ -30,7 +30,7 @@ public class AlphanumericAnonymizationServiceTest {
     @Test
     public void constructor() {
 
-        AnonymizationService anonymizationService = new AlphanumericAnonymizationService(new DefaultContextService(), new SecureRandom(), AnonymizationMethod.REALISTIC_REPLACE);
+        AnonymizationService anonymizationService = new AlphanumericAnonymizationService(new DefaultContextService(), new SecureRandom(), AnonymizationMethod.REALISTIC);
 
         final String token = "abcd1234";
         final String replacement = anonymizationService.anonymize(token);

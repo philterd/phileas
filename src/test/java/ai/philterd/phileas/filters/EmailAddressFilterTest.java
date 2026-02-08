@@ -18,7 +18,6 @@ package ai.philterd.phileas.filters;
 import ai.philterd.phileas.model.filtering.FilterType;
 import ai.philterd.phileas.model.filtering.Filtered;
 import ai.philterd.phileas.policy.Policy;
-import ai.philterd.phileas.services.anonymization.AlphanumericAnonymizationService;
 import ai.philterd.phileas.services.context.DefaultContextService;
 import ai.philterd.phileas.services.filters.regex.EmailAddressFilter;
 import ai.philterd.phileas.services.strategies.rules.EmailAddressFilterStrategy;
@@ -39,7 +38,8 @@ public class EmailAddressFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new EmailAddressFilterStrategy()))
-                .withAnonymizationService(new AlphanumericAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -52,7 +52,8 @@ public class EmailAddressFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new EmailAddressFilterStrategy()))
-                .withAnonymizationService(new AlphanumericAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -65,7 +66,8 @@ public class EmailAddressFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new EmailAddressFilterStrategy()))
-                .withAnonymizationService(new AlphanumericAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -83,7 +85,8 @@ public class EmailAddressFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new EmailAddressFilterStrategy()))
-                .withAnonymizationService(new AlphanumericAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -105,7 +108,8 @@ public class EmailAddressFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new EmailAddressFilterStrategy()))
-                .withAnonymizationService(new AlphanumericAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -121,14 +125,15 @@ public class EmailAddressFilterTest extends AbstractFilterTest {
     public void filterWithCandidates1() throws Exception {
 
         final List<String> candidates = List.of("candidate1", "candidate2");
-        final AlphanumericAnonymizationService alphanumericAnonymizationService = new AlphanumericAnonymizationService(new DefaultContextService(), new SecureRandom(), candidates);
 
         final EmailAddressFilterStrategy emailAddressFilterStrategy = new EmailAddressFilterStrategy();
         emailAddressFilterStrategy.setStrategy(RANDOM_REPLACE);
+        emailAddressFilterStrategy.setAnonymizationCandidates(candidates);
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(emailAddressFilterStrategy))
-                .withAnonymizationService(alphanumericAnonymizationService)
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 

@@ -30,7 +30,7 @@ public class CityAnonymizationServiceTest {
     @Test
     public void constructor() {
 
-        AnonymizationService anonymizationService = new CityAnonymizationService(new DefaultContextService(), new SecureRandom(), AnonymizationMethod.REALISTIC_REPLACE);
+        AnonymizationService anonymizationService = new CityAnonymizationService(new DefaultContextService(), new SecureRandom(), AnonymizationMethod.REALISTIC);
 
         final String token = "New York";
         final String replacement = anonymizationService.anonymize(token);

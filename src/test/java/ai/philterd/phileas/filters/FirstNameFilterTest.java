@@ -19,7 +19,6 @@ import ai.philterd.phileas.filters.rules.dictionary.FuzzyDictionaryFilter;
 import ai.philterd.phileas.model.filtering.FilterType;
 import ai.philterd.phileas.model.filtering.SensitivityLevel;
 import ai.philterd.phileas.model.filtering.Filtered;
-import ai.philterd.phileas.services.anonymization.PersonsAnonymizationService;
 import ai.philterd.phileas.services.context.DefaultContextService;
 import ai.philterd.phileas.services.strategies.dynamic.FirstNameFilterStrategy;
 import org.apache.logging.log4j.LogManager;
@@ -42,7 +41,8 @@ public class FirstNameFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new FirstNameFilterStrategy()))
-                .withAnonymizationService(new PersonsAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -59,7 +59,8 @@ public class FirstNameFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new FirstNameFilterStrategy()))
-                .withAnonymizationService(new PersonsAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -76,7 +77,8 @@ public class FirstNameFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new FirstNameFilterStrategy()))
-                .withAnonymizationService(new PersonsAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -93,7 +95,8 @@ public class FirstNameFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new FirstNameFilterStrategy()))
-                .withAnonymizationService(new PersonsAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -110,7 +113,8 @@ public class FirstNameFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new FirstNameFilterStrategy()))
-                .withAnonymizationService(new PersonsAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -128,7 +132,8 @@ public class FirstNameFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new FirstNameFilterStrategy()))
-                .withAnonymizationService(new PersonsAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -145,7 +150,8 @@ public class FirstNameFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new FirstNameFilterStrategy()))
-                .withAnonymizationService(new PersonsAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -162,7 +168,8 @@ public class FirstNameFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new FirstNameFilterStrategy()))
-                .withAnonymizationService(new PersonsAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -179,7 +186,8 @@ public class FirstNameFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new FirstNameFilterStrategy()))
-                .withAnonymizationService(new PersonsAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -196,7 +204,8 @@ public class FirstNameFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new FirstNameFilterStrategy()))
-                .withAnonymizationService(new PersonsAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -212,14 +221,15 @@ public class FirstNameFilterTest extends AbstractFilterTest {
     public void filterWithCandidates1() throws Exception {
 
         final List<String> candidates = List.of("John", "Melissa", "James");
-        final PersonsAnonymizationService personsAnonymizationService = new PersonsAnonymizationService(new DefaultContextService(), new SecureRandom(), candidates);
 
         final FirstNameFilterStrategy firstNameFilterStrategy = new FirstNameFilterStrategy();
         firstNameFilterStrategy.setStrategy(RANDOM_REPLACE);
+        firstNameFilterStrategy.setAnonymizationCandidates(candidates);
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(firstNameFilterStrategy))
-                .withAnonymizationService(personsAnonymizationService)
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -236,14 +246,15 @@ public class FirstNameFilterTest extends AbstractFilterTest {
     public void filterWithCandidates2() throws Exception {
 
         final List<String> candidates = List.of("John");
-        final PersonsAnonymizationService personsAnonymizationService = new PersonsAnonymizationService(new DefaultContextService(), new SecureRandom(), candidates);
 
         final FirstNameFilterStrategy firstNameFilterStrategy = new FirstNameFilterStrategy();
         firstNameFilterStrategy.setStrategy(RANDOM_REPLACE);
+        firstNameFilterStrategy.setAnonymizationCandidates(candidates);
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(firstNameFilterStrategy))
-                .withAnonymizationService(personsAnonymizationService)
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -260,14 +271,15 @@ public class FirstNameFilterTest extends AbstractFilterTest {
     public void filterWithCandidates3() throws Exception {
 
         final List<String> candidates = Collections.emptyList();
-        final PersonsAnonymizationService personsAnonymizationService = new PersonsAnonymizationService(new DefaultContextService(), new SecureRandom(), candidates);
 
         final FirstNameFilterStrategy firstNameFilterStrategy = new FirstNameFilterStrategy();
         firstNameFilterStrategy.setStrategy(RANDOM_REPLACE);
+        firstNameFilterStrategy.setAnonymizationCandidates(candidates);
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(firstNameFilterStrategy))
-                .withAnonymizationService(personsAnonymizationService)
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 

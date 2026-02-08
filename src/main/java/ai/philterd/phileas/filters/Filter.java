@@ -21,12 +21,15 @@ import ai.philterd.phileas.model.filtering.Filtered;
 import ai.philterd.phileas.model.filtering.Position;
 import ai.philterd.phileas.model.filtering.Replacement;
 import ai.philterd.phileas.model.filtering.Span;
-import ai.philterd.phileas.services.anonymization.AnonymizationService;
+import ai.philterd.phileas.services.context.ContextService;
+import ai.philterd.phileas.services.strategies.AbstractFilterStrategy;
+import ai.philterd.phileas.services.anonymization.*;
 import ai.philterd.phileas.policy.Crypto;
 import ai.philterd.phileas.policy.FPE;
 import ai.philterd.phileas.policy.IgnoredPattern;
 import ai.philterd.phileas.policy.Policy;
 import ai.philterd.phileas.policy.filters.Identifier;
+import ai.philterd.phileas.services.context.ContextService;
 import ai.philterd.phileas.services.strategies.AbstractFilterStrategy;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.FileUtils;
@@ -37,12 +40,8 @@ import org.apache.logging.log4j.Logger;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.util.HashMap;
-import java.util.LinkedHashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.security.SecureRandom;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public abstract class Filter {
@@ -53,11 +52,6 @@ public abstract class Filter {
      * The {@link FilterType type} of identifiers handled by this filter.
      */
     protected final FilterType filterType;
-
-    /**
-     * The {@link AnonymizationService} to use when replacing values if enabled.
-     */
-    protected final AnonymizationService anonymizationService;
 
     /**
      * A list of filter strategies.
@@ -118,8 +112,7 @@ public abstract class Filter {
 
         this.filterType = filterType;
 
-        this.strategies = filterConfiguration.getStrategies();
-        this.anonymizationService = filterConfiguration.getAnonymizationService();
+        this.strategies = filterConfiguration.getStrategies() != null ? filterConfiguration.getStrategies() : Collections.emptyList();
         this.ignoredPatterns = filterConfiguration.getIgnoredPatterns();
         this.ignored = filterConfiguration.getIgnored();
         this.crypto = filterConfiguration.getCrypto();
@@ -155,6 +148,71 @@ public abstract class Filter {
         if(CollectionUtils.isNotEmpty(this.ignored)) {
             // PHL-151: Lowercase all terms in the ignore list to not be case-sensitive.
             this.ignored = ignored.stream().map(String::toLowerCase).collect(Collectors.toSet());
+        }
+
+        // Initialize the strategy-specific anonymization services.
+        for(final AbstractFilterStrategy strategy : strategies) {
+
+            final AnonymizationService strategyAnonymizationService = getAnonymizationService(
+                    filterType,
+                    filterConfiguration.getContextService(),
+                    filterConfiguration.getRandom(),
+                    strategy.getAnonymizationCandidates(),
+                    strategy.getAnonymizationMethod()
+            );
+
+            strategy.setAnonymizationService(strategyAnonymizationService);
+
+        }
+
+    }
+
+    private AnonymizationService getAnonymizationService(FilterType filterType, ContextService contextService, Random random, List<String> candidates, AnonymizationMethod anonymizationMethod) {
+
+        if(filterType == FilterType.AGE) {
+            return new AgeAnonymizationService(contextService, random, candidates);
+        } else if(filterType == FilterType.BITCOIN_ADDRESS) {
+            return new BitcoinAddressAnonymizationService(contextService, random, candidates);
+        } else if(filterType == FilterType.LOCATION_CITY) {
+            return new CityAnonymizationService(contextService, random, candidates);
+        } else if(filterType == FilterType.LOCATION_COUNTY) {
+            return new CountyAnonymizationService(contextService, random, candidates);
+        } else if(filterType == FilterType.CREDIT_CARD) {
+            return new CreditCardAnonymizationService(contextService, random, candidates);
+        } else if(filterType == FilterType.CURRENCY) {
+            return new CurrencyAnonymizationService(contextService, random, candidates);
+        } else if(filterType == FilterType.DATE) {
+            return new DateAnonymizationService(contextService, random, candidates);
+        } else if(filterType == FilterType.EMAIL_ADDRESS) {
+            return new EmailAddressAnonymizationService(contextService, random, candidates);
+        } else if(filterType == FilterType.HOSPITAL) {
+            return new HospitalAnonymizationService(contextService, random, candidates);
+        } else if(filterType == FilterType.HOSPITAL_ABBREVIATION) {
+            return new HospitalAbbreviationAnonymizationService(contextService, random, candidates);
+        } else if(filterType == FilterType.IBAN_CODE) {
+            return new IbanCodeAnonymizationService(contextService, random, candidates);
+        } else if(filterType == FilterType.IP_ADDRESS) {
+            return new IpAddressAnonymizationService(contextService, random, candidates);
+        } else if(filterType == FilterType.MAC_ADDRESS) {
+            return new MacAddressAnonymizationService(contextService, random, candidates);
+        } else if(filterType == FilterType.PASSPORT_NUMBER) {
+            return new PassportNumberAnonymizationService(contextService, random, candidates);
+        } else if(filterType == FilterType.PERSON) {
+            return new PersonsAnonymizationService(contextService, random, candidates);
+        } else if(filterType == FilterType.LOCATION_STATE) {
+            return new StateAnonymizationService(contextService, random, candidates);
+        } else if(filterType == FilterType.STATE_ABBREVIATION) {
+            return new StateAbbreviationAnonymizationService(contextService, random, candidates);
+        } else if(filterType == FilterType.STREET_ADDRESS) {
+            return new StreetAddressAnonymizationService(contextService, random, candidates);
+        } else if(filterType == FilterType.SURNAME) {
+            return new SurnameAnonymizationService(contextService, random, candidates);
+        } else if(filterType == FilterType.URL) {
+            return new UrlAnonymizationService(contextService, random, candidates);
+        } else if(filterType == FilterType.ZIP_CODE) {
+            return new ZipCodeAnonymizationService(contextService, random, candidates);
+        } else {
+            return new AlphanumericAnonymizationService(contextService, random, candidates);
         }
 
     }
@@ -256,14 +314,14 @@ public abstract class Filter {
                     if(evaluates) {
 
                         // Break early since we met the strategy's condition.
-                        return strategy.getReplacement(classification, context, token, window, crypto, fpe, anonymizationService, filterPattern);
+                        return strategy.getReplacement(classification, context, token, window, crypto, fpe, strategy.getAnonymizationService(), filterPattern);
 
                     }
 
                 } else {
 
                     // Break early since there is no condition.
-                    return strategy.getReplacement(classification, context, token, window, crypto, fpe, anonymizationService, filterPattern);
+                    return strategy.getReplacement(classification, context, token, window, crypto, fpe, strategy.getAnonymizationService(), filterPattern);
 
                 }
 

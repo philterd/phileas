@@ -134,7 +134,12 @@ public class PhEyeFilterStrategy extends AbstractFilterStrategy {
 
         } else if(StringUtils.equalsIgnoreCase(strategy, RANDOM_REPLACE)) {
 
-            replacement = getAnonymizedToken(replacementScope, token, anonymizationService, filterType.getType());
+            AnonymizationService as = anonymizationService;
+            if (this.anonymizationService != null) {
+                as = this.anonymizationService;
+            }
+
+            replacement = getAnonymizedToken(replacementScope, token, as, filterType.getType());
 
         } else if(StringUtils.equalsIgnoreCase(strategy, STATIC_REPLACE)) {
 

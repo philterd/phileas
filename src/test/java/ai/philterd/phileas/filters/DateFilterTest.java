@@ -17,7 +17,6 @@ package ai.philterd.phileas.filters;
 
 import ai.philterd.phileas.model.filtering.FilterType;
 import ai.philterd.phileas.model.filtering.Filtered;
-import ai.philterd.phileas.services.anonymization.DateAnonymizationService;
 import ai.philterd.phileas.services.context.DefaultContextService;
 import ai.philterd.phileas.services.filters.regex.DateFilter;
 import ai.philterd.phileas.services.strategies.AbstractFilterStrategy;
@@ -37,7 +36,8 @@ public class DateFilterTest extends AbstractFilterTest {
 
         return new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new DateFilterStrategy()))
-                .withAnonymizationService(new DateAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .build();
 
     }
@@ -412,7 +412,8 @@ public class DateFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(dateFilterStrategy))
-                .withAnonymizationService(new DateAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .build();
 
         final DateFilter filter = new DateFilter(filterConfiguration, false, DateSpanValidator.getInstance());
@@ -605,14 +606,15 @@ public class DateFilterTest extends AbstractFilterTest {
     public void filterWithCandidates1() throws Exception {
 
         final List<String> candidates = List.of("2000-01-01", "1999-12-31");
-        final DateAnonymizationService dateAnonymizationService = new DateAnonymizationService(new DefaultContextService(), new SecureRandom(), candidates);
 
         final DateFilterStrategy dateFilterStrategy = new DateFilterStrategy();
         dateFilterStrategy.setStrategy(RANDOM_REPLACE);
+        dateFilterStrategy.setAnonymizationCandidates(candidates);
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(dateFilterStrategy))
-                .withAnonymizationService(dateAnonymizationService)
+                .withContextService(contextService)
+                .withRandom(random)
                 .build();
 
         final DateFilter filter = new DateFilter(filterConfiguration, false, DateSpanValidator.getInstance());

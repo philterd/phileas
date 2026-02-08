@@ -31,7 +31,7 @@ public class HospitalAbbreviationAnonymizationServiceTest {
     @Test
     public void constructor() {
 
-        AnonymizationService anonymizationService = new HospitalAbbreviationAnonymizationService(new DefaultContextService(), new SecureRandom(), AnonymizationMethod.REALISTIC_REPLACE);
+        AnonymizationService anonymizationService = new HospitalAbbreviationAnonymizationService(new DefaultContextService(), new SecureRandom(), AnonymizationMethod.REALISTIC);
 
         final String token = "Plateau Medical Center";
         final String replacement = anonymizationService.anonymize(token);

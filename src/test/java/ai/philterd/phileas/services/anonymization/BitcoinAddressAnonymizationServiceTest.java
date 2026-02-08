@@ -30,7 +30,7 @@ public class BitcoinAddressAnonymizationServiceTest {
     @Test
     public void constructor() {
 
-        AnonymizationService anonymizationService = new BitcoinAddressAnonymizationService(new DefaultContextService(), new SecureRandom(), AnonymizationMethod.REALISTIC_REPLACE);
+        AnonymizationService anonymizationService = new BitcoinAddressAnonymizationService(new DefaultContextService(), new SecureRandom(), AnonymizationMethod.REALISTIC);
 
         final String token = "1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa";
         final String replacement = anonymizationService.anonymize(token);

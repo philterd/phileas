@@ -17,7 +17,6 @@ package ai.philterd.phileas.filters;
 
 import ai.philterd.phileas.model.filtering.FilterType;
 import ai.philterd.phileas.model.filtering.Filtered;
-import ai.philterd.phileas.services.anonymization.BitcoinAddressAnonymizationService;
 import ai.philterd.phileas.services.context.DefaultContextService;
 import ai.philterd.phileas.services.filters.regex.BitcoinAddressFilter;
 import ai.philterd.phileas.services.strategies.rules.BitcoinAddressFilterStrategy;
@@ -36,7 +35,8 @@ public class BitcoinAddressFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new BitcoinAddressFilterStrategy()))
-                .withAnonymizationService(new BitcoinAddressAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -58,7 +58,8 @@ public class BitcoinAddressFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new BitcoinAddressFilterStrategy()))
-                .withAnonymizationService(new BitcoinAddressAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -79,14 +80,15 @@ public class BitcoinAddressFilterTest extends AbstractFilterTest {
     public void filterWithCandidates1() throws Exception {
 
         final List<String> candidates = List.of("address1", "address2");
-        final BitcoinAddressAnonymizationService bitcoinAddressAnonymizationService = new BitcoinAddressAnonymizationService(new DefaultContextService(), new SecureRandom(), candidates);
 
         final BitcoinAddressFilterStrategy bitcoinAddressFilterStrategy = new BitcoinAddressFilterStrategy();
         bitcoinAddressFilterStrategy.setStrategy(RANDOM_REPLACE);
+        bitcoinAddressFilterStrategy.setAnonymizationCandidates(candidates);
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(bitcoinAddressFilterStrategy))
-                .withAnonymizationService(bitcoinAddressAnonymizationService)
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
