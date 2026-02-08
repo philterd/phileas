@@ -19,7 +19,6 @@ import ai.philterd.phileas.filters.rules.dictionary.FuzzyDictionaryFilter;
 import ai.philterd.phileas.model.filtering.FilterType;
 import ai.philterd.phileas.model.filtering.SensitivityLevel;
 import ai.philterd.phileas.model.filtering.Filtered;
-import ai.philterd.phileas.services.anonymization.HospitalAnonymizationService;
 import ai.philterd.phileas.services.context.DefaultContextService;
 import ai.philterd.phileas.services.strategies.dynamic.HospitalFilterStrategy;
 import org.apache.logging.log4j.LogManager;
@@ -41,7 +40,8 @@ public class HospitalFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new HospitalFilterStrategy()))
-                .withAnonymizationService(new HospitalAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -57,14 +57,15 @@ public class HospitalFilterTest extends AbstractFilterTest {
     public void filterWithCandidates1() throws Exception {
 
         final List<String> candidates = List.of("candidate1", "candidate2");
-        final HospitalAnonymizationService hospitalAnonymizationService = new HospitalAnonymizationService(new DefaultContextService(), new SecureRandom(), candidates);
 
         final HospitalFilterStrategy hospitalFilterStrategy = new HospitalFilterStrategy();
         hospitalFilterStrategy.setStrategy(RANDOM_REPLACE);
+        hospitalFilterStrategy.setAnonymizationCandidates(candidates);
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(hospitalFilterStrategy))
-                .withAnonymizationService(hospitalAnonymizationService)
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 

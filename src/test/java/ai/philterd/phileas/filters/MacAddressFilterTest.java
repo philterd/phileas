@@ -17,7 +17,6 @@ package ai.philterd.phileas.filters;
 
 import ai.philterd.phileas.model.filtering.FilterType;
 import ai.philterd.phileas.model.filtering.Filtered;
-import ai.philterd.phileas.services.anonymization.MacAddressAnonymizationService;
 import ai.philterd.phileas.services.context.DefaultContextService;
 import ai.philterd.phileas.services.filters.regex.MacAddressFilter;
 import ai.philterd.phileas.services.strategies.rules.MacAddressFilterStrategy;
@@ -36,7 +35,8 @@ public class MacAddressFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new MacAddressFilterStrategy()))
-                .withAnonymizationService(new MacAddressAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -55,7 +55,8 @@ public class MacAddressFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new MacAddressFilterStrategy()))
-                .withAnonymizationService(new MacAddressAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -72,14 +73,15 @@ public class MacAddressFilterTest extends AbstractFilterTest {
     public void filterWithCandidates1() throws Exception {
 
         final List<String> candidates = List.of("candidate1", "candidate2");
-        final MacAddressAnonymizationService macAddressAnonymizationService = new MacAddressAnonymizationService(new DefaultContextService(), new SecureRandom(), candidates);
 
         final MacAddressFilterStrategy macAddressFilterStrategy = new MacAddressFilterStrategy();
         macAddressFilterStrategy.setStrategy(RANDOM_REPLACE);
+        macAddressFilterStrategy.setAnonymizationCandidates(candidates);
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(macAddressFilterStrategy))
-                .withAnonymizationService(macAddressAnonymizationService)
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 

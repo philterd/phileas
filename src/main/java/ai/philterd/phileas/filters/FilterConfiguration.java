@@ -18,8 +18,8 @@ package ai.philterd.phileas.filters;
 import ai.philterd.phileas.policy.Crypto;
 import ai.philterd.phileas.policy.FPE;
 import ai.philterd.phileas.policy.IgnoredPattern;
+import ai.philterd.phileas.services.context.ContextService;
 import ai.philterd.phileas.services.strategies.AbstractFilterStrategy;
-import ai.philterd.phileas.services.anonymization.AnonymizationService;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -31,7 +31,8 @@ import static ai.philterd.phileas.services.strategies.AbstractFilterStrategy.FPE
 public class FilterConfiguration {
 
     private final List<? extends AbstractFilterStrategy> strategies;
-    private final AnonymizationService anonymizationService;
+    private final ContextService contextService;
+    private final Random random;
     private final Set<String> ignored;
     private final Set<String> ignoredFiles;
     private final List<IgnoredPattern> ignoredPatterns;
@@ -42,7 +43,8 @@ public class FilterConfiguration {
 
     private FilterConfiguration(
             final List<? extends AbstractFilterStrategy> strategies,
-            final AnonymizationService anonymizationService,
+            final ContextService contextService,
+            final Random random,
             final Set<String> ignored,
             final Set<String> ignoredFiles,
             final List<IgnoredPattern> ignoredPatterns,
@@ -53,7 +55,8 @@ public class FilterConfiguration {
     ) {
 
         this.strategies = strategies;
-        this.anonymizationService = anonymizationService;
+        this.contextService = contextService;
+        this.random = random;
         this.ignored = ignored;
         this.ignoredFiles = ignoredFiles;
         this.ignoredPatterns = ignoredPatterns;
@@ -67,7 +70,8 @@ public class FilterConfiguration {
     public static class FilterConfigurationBuilder {
 
         private List<? extends AbstractFilterStrategy> strategies;
-        private AnonymizationService anonymizationService;
+        private ContextService contextService;
+        private Random random;
         private Set<String> ignored;
         private Set<String> ignoredFiles;
         private List<IgnoredPattern> ignoredPatterns;
@@ -83,7 +87,8 @@ public class FilterConfiguration {
 
             return new FilterConfiguration(
                     strategies,
-                    anonymizationService,
+                    contextService,
+                    random,
                     ignored,
                     ignoredFiles,
                     ignoredPatterns,
@@ -150,8 +155,13 @@ public class FilterConfiguration {
             return this;
         }
 
-        public FilterConfigurationBuilder withAnonymizationService(AnonymizationService anonymizationService) {
-            this.anonymizationService = anonymizationService;
+        public FilterConfigurationBuilder withContextService(ContextService contextService) {
+            this.contextService = contextService;
+            return this;
+        }
+
+        public FilterConfigurationBuilder withRandom(Random random) {
+            this.random = random;
             return this;
         }
 
@@ -196,8 +206,12 @@ public class FilterConfiguration {
         return strategies;
     }
 
-    public AnonymizationService getAnonymizationService() {
-        return anonymizationService;
+    public ContextService getContextService() {
+        return contextService;
+    }
+
+    public Random getRandom() {
+        return random;
     }
 
     public Set<String> getIgnored() {

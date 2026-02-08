@@ -52,6 +52,8 @@ import ai.philterd.phileas.policy.filters.TrackingNumber;
 import ai.philterd.phileas.policy.filters.Url;
 import ai.philterd.phileas.policy.filters.Vin;
 import ai.philterd.phileas.policy.filters.ZipCode;
+import ai.philterd.phileas.services.context.ContextService;
+import ai.philterd.phileas.services.context.DefaultContextService;
 import ai.philterd.phileas.services.strategies.custom.CustomDictionaryFilterStrategy;
 import ai.philterd.phileas.services.strategies.dynamic.CityFilterStrategy;
 import ai.philterd.phileas.services.strategies.dynamic.CountyFilterStrategy;
@@ -89,9 +91,11 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
+import java.security.SecureRandom;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 public abstract class AbstractFilterTest {
 
@@ -100,6 +104,8 @@ public abstract class AbstractFilterTest {
     protected static final int PIECE = 0;
     protected final int windowSize = 3;
     protected final Map<String, String> attributes = new HashMap<>();
+    protected final Random random = new SecureRandom();
+    protected final ContextService contextService = new DefaultContextService();
 
     /**
      * Gets a {@link Policy} where all non-deterministic filters use the given {@link SensitivityLevel}.

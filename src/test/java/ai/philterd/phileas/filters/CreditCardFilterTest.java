@@ -17,7 +17,6 @@ package ai.philterd.phileas.filters;
 
 import ai.philterd.phileas.model.filtering.FilterType;
 import ai.philterd.phileas.model.filtering.Filtered;
-import ai.philterd.phileas.services.anonymization.CreditCardAnonymizationService;
 import ai.philterd.phileas.services.context.DefaultContextService;
 import ai.philterd.phileas.services.filters.regex.CreditCardFilter;
 import ai.philterd.phileas.services.strategies.rules.CreditCardFilterStrategy;
@@ -36,7 +35,8 @@ public class CreditCardFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new CreditCardFilterStrategy()))
-                .withAnonymizationService(new CreditCardAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -100,7 +100,8 @@ public class CreditCardFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new CreditCardFilterStrategy()))
-                .withAnonymizationService(new CreditCardAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -162,7 +163,8 @@ public class CreditCardFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new CreditCardFilterStrategy()))
-                .withAnonymizationService(new CreditCardAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -204,7 +206,8 @@ public class CreditCardFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new CreditCardFilterStrategy()))
-                .withAnonymizationService(new CreditCardAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -230,14 +233,15 @@ public class CreditCardFilterTest extends AbstractFilterTest {
     public void filterWithCandidates1() throws Exception {
 
         final List<String> candidates = List.of("candidate1", "candidate2");
-        final CreditCardAnonymizationService creditCardAnonymizationService = new CreditCardAnonymizationService(new DefaultContextService(), new SecureRandom(), candidates);
 
         final CreditCardFilterStrategy creditCardFilterStrategy = new CreditCardFilterStrategy();
         creditCardFilterStrategy.setStrategy(RANDOM_REPLACE);
+        creditCardFilterStrategy.setAnonymizationCandidates(candidates);
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(creditCardFilterStrategy))
-                .withAnonymizationService(creditCardAnonymizationService)
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 

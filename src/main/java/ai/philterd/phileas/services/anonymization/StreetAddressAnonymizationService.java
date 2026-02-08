@@ -22,6 +22,7 @@ import ai.philterd.phileas.services.context.ContextService;
 
 import java.util.List;
 import java.util.Random;
+import java.util.UUID;
 
 public class StreetAddressAnonymizationService extends AbstractAnonymizationService {
 
@@ -55,17 +56,22 @@ public class StreetAddressAnonymizationService extends AbstractAnonymizationServ
     @Override
     public String anonymize(final String token) {
 
-        if (anonymizationMethod == AnonymizationMethod.CUSTOM_LIST) {
+        if (anonymizationMethod == AnonymizationMethod.FROM_LIST) {
 
             if (CollectionUtils.isNotEmpty(candidates)) {
+
                 String anonymized = candidates.get(random.nextInt(candidates.size()));
                 while (anonymized.equalsIgnoreCase(token)) {
                     anonymized = candidates.get(random.nextInt(candidates.size()));
                 }
                 return anonymized;
-            }
 
-            return token;
+            } else {
+
+                // Provided list was empty - return a random UUID.
+                return UUID.randomUUID().toString();
+
+            }
 
         } else if (anonymizationMethod == AnonymizationMethod.UUID) {
 

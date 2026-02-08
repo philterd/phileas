@@ -30,7 +30,7 @@ public class IbanCodeAnonymizationServiceTest {
     @Test
     public void constructor() {
 
-        AnonymizationService anonymizationService = new IbanCodeAnonymizationService(new DefaultContextService(), new SecureRandom(), AnonymizationMethod.REALISTIC_REPLACE);
+        AnonymizationService anonymizationService = new IbanCodeAnonymizationService(new DefaultContextService(), new SecureRandom(), AnonymizationMethod.REALISTIC);
 
         final String token = "GB29 XBBB 2222 2222 2222 22";
         final String replacement = anonymizationService.anonymize(token);

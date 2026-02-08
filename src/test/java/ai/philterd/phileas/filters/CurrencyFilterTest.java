@@ -17,7 +17,6 @@ package ai.philterd.phileas.filters;
 
 import ai.philterd.phileas.model.filtering.FilterType;
 import ai.philterd.phileas.model.filtering.Filtered;
-import ai.philterd.phileas.services.anonymization.CurrencyAnonymizationService;
 import ai.philterd.phileas.services.context.DefaultContextService;
 import ai.philterd.phileas.services.filters.regex.CurrencyFilter;
 import ai.philterd.phileas.services.strategies.AbstractFilterStrategy;
@@ -37,7 +36,8 @@ public class CurrencyFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new CurrencyFilterStrategy()))
-                .withAnonymizationService(new CurrencyAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -58,7 +58,8 @@ public class CurrencyFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new CurrencyFilterStrategy()))
-                .withAnonymizationService(new CurrencyAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -79,7 +80,8 @@ public class CurrencyFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new CurrencyFilterStrategy()))
-                .withAnonymizationService(new CurrencyAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -100,7 +102,8 @@ public class CurrencyFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new CurrencyFilterStrategy()))
-                .withAnonymizationService(new CurrencyAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -121,7 +124,8 @@ public class CurrencyFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new CurrencyFilterStrategy()))
-                .withAnonymizationService(new CurrencyAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -145,7 +149,8 @@ public class CurrencyFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(currencyFilterStrategy))
-                .withAnonymizationService(new CurrencyAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -165,14 +170,15 @@ public class CurrencyFilterTest extends AbstractFilterTest {
     public void filterWithCandidates1() throws Exception {
 
         final List<String> candidates = List.of("candidate1", "candidate2");
-        final CurrencyAnonymizationService currencyAnonymizationService = new CurrencyAnonymizationService(new DefaultContextService(), new SecureRandom(), candidates);
 
         final CurrencyFilterStrategy currencyFilterStrategy = new CurrencyFilterStrategy();
         currencyFilterStrategy.setStrategy(RANDOM_REPLACE);
+        currencyFilterStrategy.setAnonymizationCandidates(candidates);
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(currencyFilterStrategy))
-                .withAnonymizationService(currencyAnonymizationService)
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 

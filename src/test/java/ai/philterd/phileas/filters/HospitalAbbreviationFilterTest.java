@@ -19,7 +19,6 @@ import ai.philterd.phileas.filters.rules.dictionary.FuzzyDictionaryFilter;
 import ai.philterd.phileas.model.filtering.FilterType;
 import ai.philterd.phileas.model.filtering.SensitivityLevel;
 import ai.philterd.phileas.model.filtering.Filtered;
-import ai.philterd.phileas.services.anonymization.HospitalAbbreviationAnonymizationService;
 import ai.philterd.phileas.services.context.ContextService;
 import ai.philterd.phileas.services.context.DefaultContextService;
 import ai.philterd.phileas.services.strategies.dynamic.HospitalAbbreviationFilterStrategy;
@@ -44,7 +43,8 @@ public class HospitalAbbreviationFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new HospitalAbbreviationFilterStrategy()))
-                .withAnonymizationService(new HospitalAbbreviationAnonymizationService(contextService))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -60,14 +60,15 @@ public class HospitalAbbreviationFilterTest extends AbstractFilterTest {
     public void filterWithCandidates1() throws Exception {
 
         final List<String> candidates = List.of("candidate1", "candidate2");
-        final HospitalAbbreviationAnonymizationService hospitalAbbreviationAnonymizationService = new HospitalAbbreviationAnonymizationService(new DefaultContextService(), new SecureRandom(), candidates);
 
         final HospitalAbbreviationFilterStrategy hospitalAbbreviationFilterStrategy = new HospitalAbbreviationFilterStrategy();
         hospitalAbbreviationFilterStrategy.setStrategy(RANDOM_REPLACE);
+        hospitalAbbreviationFilterStrategy.setAnonymizationCandidates(candidates);
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(hospitalAbbreviationFilterStrategy))
-                .withAnonymizationService(hospitalAbbreviationAnonymizationService)
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
