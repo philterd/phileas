@@ -18,25 +18,29 @@ package ai.philterd.phileas.data.generators;
 import org.junit.jupiter.api.Test;
 
 import java.security.SecureRandom;
-import java.util.Collections;
+import java.util.Arrays;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class FirstNameGeneratorTest {
 
     @Test
     public void testGenerateFirstName() {
-        final FirstNameGenerator generator = new FirstNameGenerator(Collections.singletonList("John"), new SecureRandom());
+        final List<String> firstNames = Arrays.asList("John", "Jane", "Mary");
+        final FirstNameGenerator generator = new FirstNameGenerator(firstNames, new SecureRandom());
         final String firstName = generator.random();
         assertNotNull(firstName, "First name should not be null");
-        assertEquals("John", firstName);
+        assertTrue(firstNames.contains(firstName));
     }
 
     @Test
     public void testPoolSize() {
-        final FirstNameGenerator generator = new FirstNameGenerator(Collections.singletonList("John"), new SecureRandom());
-        assertEquals(1, generator.poolSize());
+        final List<String> firstNames = Arrays.asList("John", "Jane", "Mary");
+        final FirstNameGenerator generator = new FirstNameGenerator(firstNames, new SecureRandom());
+        assertEquals(3, generator.poolSize());
     }
 
 }

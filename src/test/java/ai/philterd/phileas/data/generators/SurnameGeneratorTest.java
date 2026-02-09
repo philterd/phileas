@@ -18,25 +18,29 @@ package ai.philterd.phileas.data.generators;
 import org.junit.jupiter.api.Test;
 
 import java.security.SecureRandom;
-import java.util.Collections;
+import java.util.Arrays;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SurnameGeneratorTest {
 
     @Test
     public void testGenerateSurname() {
-        final SurnameGenerator generator = new SurnameGenerator(Collections.singletonList("Doe"), new SecureRandom());
+        final List<String> surnames = Arrays.asList("Doe", "Smith", "Jones");
+        final SurnameGenerator generator = new SurnameGenerator(surnames, new SecureRandom());
         final String surname = generator.random();
         assertNotNull(surname, "Surname should not be null");
-        assertEquals("Doe", surname);
+        assertTrue(surnames.contains(surname));
     }
 
     @Test
     public void testPoolSize() {
-        final SurnameGenerator generator = new SurnameGenerator(Collections.singletonList("Doe"), new SecureRandom());
-        assertEquals(1, generator.poolSize());
+        final List<String> surnames = Arrays.asList("Doe", "Smith", "Jones");
+        final SurnameGenerator generator = new SurnameGenerator(surnames, new SecureRandom());
+        assertEquals(3, generator.poolSize());
     }
 
 }

@@ -19,7 +19,8 @@ import ai.philterd.phileas.data.DataGenerator;
 import org.junit.jupiter.api.Test;
 
 import java.security.SecureRandom;
-import java.util.Collections;
+import java.util.Arrays;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -29,24 +30,29 @@ public class FullNameGeneratorTest {
 
     @Test
     public void testGenerateFullName() {
-        final DataGenerator.Generator<String> firstNameGenerator = new FirstNameGenerator(Collections.singletonList("John"), new SecureRandom());
-        final DataGenerator.Generator<String> surnameGenerator = new SurnameGenerator(Collections.singletonList("Doe"), new SecureRandom());
+        final List<String> firstNamePool = Arrays.asList("John", "Jane", "Mary");
+        final List<String> surnamePool = Arrays.asList("Doe", "Smith", "Jones");
+        final DataGenerator.Generator<String> firstNameGenerator = new FirstNameGenerator(firstNamePool, new SecureRandom());
+        final DataGenerator.Generator<String> surnameGenerator = new SurnameGenerator(surnamePool, new SecureRandom());
         final FullNameGenerator generator = new FullNameGenerator(firstNameGenerator, surnameGenerator);
         
         final String fullName = generator.random();
         assertNotNull(fullName, "Full name should not be null");
-        assertEquals("John Doe", fullName);
         assertTrue(fullName.contains(" "), "Full name should contain a space");
         final String[] parts = fullName.split(" ");
         assertEquals(2, parts.length, "Full name should have two parts");
+        assertTrue(firstNamePool.contains(parts[0]));
+        assertTrue(surnamePool.contains(parts[1]));
     }
 
     @Test
     public void testPoolSize() {
-        final DataGenerator.Generator<String> firstNameGenerator = new FirstNameGenerator(Collections.singletonList("John"), new SecureRandom());
-        final DataGenerator.Generator<String> surnameGenerator = new SurnameGenerator(Collections.singletonList("Doe"), new SecureRandom());
+        final List<String> firstNamePool = Arrays.asList("John", "Jane", "Mary");
+        final List<String> surnamePool = Arrays.asList("Doe", "Smith", "Jones");
+        final DataGenerator.Generator<String> firstNameGenerator = new FirstNameGenerator(firstNamePool, new SecureRandom());
+        final DataGenerator.Generator<String> surnameGenerator = new SurnameGenerator(surnamePool, new SecureRandom());
         final FullNameGenerator generator = new FullNameGenerator(firstNameGenerator, surnameGenerator);
-        assertEquals(1, generator.poolSize());
+        assertEquals(3 * 3, generator.poolSize());
     }
 
 }

@@ -20,7 +20,8 @@ import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.security.SecureRandom;
-import java.util.Collections;
+import java.util.Arrays;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -30,8 +31,10 @@ public class EmailAddressGeneratorTest {
 
     @Test
     public void testGenerateEmail() {
-        final DataGenerator.Generator<String> firstNames = new FirstNameGenerator(Collections.singletonList("John"), new SecureRandom());
-        final DataGenerator.Generator<String> surnames = new SurnameGenerator(Collections.singletonList("Doe"), new SecureRandom());
+        final List<String> firstNamePool = Arrays.asList("John", "Jane", "Mary");
+        final List<String> surnamePool = Arrays.asList("Doe", "Smith", "Jones");
+        final DataGenerator.Generator<String> firstNames = new FirstNameGenerator(firstNamePool, new SecureRandom());
+        final DataGenerator.Generator<String> surnames = new SurnameGenerator(surnamePool, new SecureRandom());
         final EmailAddressGenerator generator = new EmailAddressGenerator(firstNames, surnames, new SecureRandom());
         
         final String email = generator.random();
@@ -45,8 +48,10 @@ public class EmailAddressGeneratorTest {
 
     @Test
     public void testCustomPools() {
-        final DataGenerator.Generator<String> firstNames = new FirstNameGenerator(Collections.singletonList("John"), new SecureRandom());
-        final DataGenerator.Generator<String> surnames = new SurnameGenerator(Collections.singletonList("Doe"), new SecureRandom());
+        final List<String> firstNamePool = Arrays.asList("John", "Jane", "Mary");
+        final List<String> surnamePool = Arrays.asList("Doe", "Smith", "Jones");
+        final DataGenerator.Generator<String> firstNames = new FirstNameGenerator(firstNamePool, new SecureRandom());
+        final DataGenerator.Generator<String> surnames = new SurnameGenerator(surnamePool, new SecureRandom());
         final String[] customDomains = {"test.com"};
         final EmailAddressGenerator emailGenerator = new EmailAddressGenerator(firstNames, surnames, new SecureRandom(), customDomains);
         assertTrue(emailGenerator.random().endsWith("@test.com"));
@@ -63,11 +68,13 @@ public class EmailAddressGeneratorTest {
 
     @Test
     public void testPoolSize() {
-        final DataGenerator.Generator<String> firstNames = new FirstNameGenerator(Collections.singletonList("John"), new SecureRandom());
-        final DataGenerator.Generator<String> surnames = new SurnameGenerator(Collections.singletonList("Doe"), new SecureRandom());
+        final List<String> firstNamePool = Arrays.asList("John", "Jane", "Mary");
+        final List<String> surnamePool = Arrays.asList("Doe", "Smith", "Jones");
+        final DataGenerator.Generator<String> firstNames = new FirstNameGenerator(firstNamePool, new SecureRandom());
+        final DataGenerator.Generator<String> surnames = new SurnameGenerator(surnamePool, new SecureRandom());
         final String[] domains = {"gmail.com", "yahoo.com"};
         final EmailAddressGenerator generator = new EmailAddressGenerator(firstNames, surnames, new SecureRandom(), domains);
-        assertEquals(1 * 1 * 1000L * 2, generator.poolSize());
+        assertEquals(3 * 3 * 1000L * 2, generator.poolSize());
     }
 
 }

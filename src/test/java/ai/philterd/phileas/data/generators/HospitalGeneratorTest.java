@@ -19,20 +19,23 @@ import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.security.SecureRandom;
-import java.util.Collections;
+import java.util.Arrays;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class HospitalGeneratorTest {
 
     @Test
     public void testGenerateHospital() {
-        final HospitalGenerator generator = new HospitalGenerator(Collections.singletonList("General Hospital"), new SecureRandom());
+        final List<String> hospitals = Arrays.asList("General Hospital", "St. Jude", "Mayo Clinic");
+        final HospitalGenerator generator = new HospitalGenerator(hospitals, new SecureRandom());
         final String hospital = generator.random();
         assertNotNull(hospital);
-        assertEquals("General Hospital", hospital);
+        assertTrue(hospitals.contains(hospital));
     }
 
     @Test
@@ -45,8 +48,9 @@ public class HospitalGeneratorTest {
 
     @Test
     public void testPoolSize() {
-        final HospitalGenerator generator = new HospitalGenerator(Collections.singletonList("General Hospital"), new SecureRandom());
-        assertEquals(1, generator.poolSize());
+        final List<String> hospitals = Arrays.asList("General Hospital", "St. Jude", "Mayo Clinic");
+        final HospitalGenerator generator = new HospitalGenerator(hospitals, new SecureRandom());
+        assertEquals(3, generator.poolSize());
     }
 
 }

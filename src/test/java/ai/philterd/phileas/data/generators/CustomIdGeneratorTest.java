@@ -59,6 +59,48 @@ public class CustomIdGeneratorTest {
 
         final CustomIdGenerator generator3 = new CustomIdGenerator(new SecureRandom(), "1A-");
         assertEquals(10L * 26L, generator3.poolSize());
+
+        final CustomIdGenerator generator4 = new CustomIdGenerator(new SecureRandom(), "");
+        assertEquals(1L, generator4.poolSize());
+
+        final CustomIdGenerator generator5 = new CustomIdGenerator(new SecureRandom(), "!!!");
+        assertEquals(1L, generator5.poolSize());
+    }
+
+    @Test
+    public void testEmptyPattern() {
+        final CustomIdGenerator generator = new CustomIdGenerator(new SecureRandom(), "");
+        assertEquals("", generator.random());
+        assertEquals(1, generator.poolSize());
+    }
+
+    @Test
+    public void testSpecialCharactersPattern() {
+        final String pattern = "!@#$%^&*()";
+        final CustomIdGenerator generator = new CustomIdGenerator(new SecureRandom(), pattern);
+        assertEquals(pattern, generator.random());
+        assertEquals(1, generator.poolSize());
+    }
+
+    @Test
+    public void testOnlyDigitsPattern() {
+        final String pattern = "0000";
+        final CustomIdGenerator generator = new CustomIdGenerator(new SecureRandom(), pattern);
+        final String id = generator.random();
+        assertEquals(4, id.length());
+        assertTrue(id.matches("\\d{4}"));
+        assertEquals(10000, generator.poolSize());
+    }
+
+    @Test
+    public void testOnlyLettersPattern() {
+        final String pattern = "aaaaAAAA";
+        final CustomIdGenerator generator = new CustomIdGenerator(new SecureRandom(), pattern);
+        final String id = generator.random();
+        assertEquals(8, id.length());
+        assertTrue(id.substring(0, 4).matches("[a-z]{4}"));
+        assertTrue(id.substring(4, 8).matches("[A-Z]{4}"));
+        assertEquals((long) Math.pow(26, 8), generator.poolSize());
     }
 
     @Test

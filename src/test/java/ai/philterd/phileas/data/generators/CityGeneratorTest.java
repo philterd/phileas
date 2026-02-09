@@ -18,25 +18,29 @@ package ai.philterd.phileas.data.generators;
 import org.junit.jupiter.api.Test;
 
 import java.security.SecureRandom;
-import java.util.Collections;
+import java.util.Arrays;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CityGeneratorTest {
 
     @Test
     public void testGenerateCity() {
-        final CityGenerator generator = new CityGenerator(Collections.singletonList("New York"), new SecureRandom());
+        final List<String> cities = Arrays.asList("New York", "Los Angeles", "Chicago");
+        final CityGenerator generator = new CityGenerator(cities, new SecureRandom());
         final String city = generator.random();
         assertNotNull(city);
-        assertEquals("New York", city);
+        assertTrue(cities.contains(city));
     }
 
     @Test
     public void testPoolSize() {
-        final CityGenerator generator = new CityGenerator(Collections.singletonList("New York"), new SecureRandom());
-        assertEquals(1, generator.poolSize());
+        final List<String> cities = Arrays.asList("New York", "Los Angeles", "Chicago");
+        final CityGenerator generator = new CityGenerator(cities, new SecureRandom());
+        assertEquals(3, generator.poolSize());
     }
 
 }

@@ -19,7 +19,8 @@ import ai.philterd.phileas.data.DataGenerator;
 import org.junit.jupiter.api.Test;
 
 import java.security.SecureRandom;
-import java.util.Collections;
+import java.util.Arrays;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -28,7 +29,8 @@ public class URLGeneratorTest {
 
     @Test
     public void testGenerateURL() {
-        final DataGenerator.Generator<String> firstNames = new FirstNameGenerator(Collections.singletonList("John"), new SecureRandom());
+        final List<String> firstNamePool = Arrays.asList("John", "Jane", "Mary");
+        final DataGenerator.Generator<String> firstNames = new FirstNameGenerator(firstNamePool, new SecureRandom());
         final URLGenerator generator = new URLGenerator(firstNames, new SecureRandom());
         final String url = generator.random();
         assertNotNull(url);
@@ -37,7 +39,8 @@ public class URLGeneratorTest {
 
     @Test
     public void testCustomPools() {
-        final DataGenerator.Generator<String> firstNames = new FirstNameGenerator(Collections.singletonList("John"), new SecureRandom());
+        final List<String> firstNamePool = Arrays.asList("John", "Jane", "Mary");
+        final DataGenerator.Generator<String> firstNames = new FirstNameGenerator(firstNamePool, new SecureRandom());
         final String[] customProtocols = {"ftp"};
         final String[] customExtensions = {"biz"};
         final URLGenerator urlGenerator = new URLGenerator(firstNames, new SecureRandom(), customProtocols, customExtensions);
@@ -48,7 +51,8 @@ public class URLGeneratorTest {
 
     @Test
     public void testPoolSize() {
-        final DataGenerator.Generator<String> firstNames = new FirstNameGenerator(Collections.singletonList("John"), new SecureRandom());
+        final List<String> firstNamePool = Arrays.asList("John", "Jane", "Mary");
+        final DataGenerator.Generator<String> firstNames = new FirstNameGenerator(firstNamePool, new SecureRandom());
         final URLGenerator generator = new URLGenerator(firstNames, new SecureRandom());
         assertTrue(generator.poolSize() > 0);
     }

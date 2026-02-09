@@ -68,4 +68,5 @@ public class CreditCardNumberGeneratorTest {
         }
         return (sum % 10 == 0);
     }
+
 }

@@ -18,25 +18,29 @@ package ai.philterd.phileas.data.generators;
 import org.junit.jupiter.api.Test;
 
 import java.security.SecureRandom;
-import java.util.Collections;
+import java.util.Arrays;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CountyGeneratorTest {
 
     @Test
     public void testGenerateCounty() {
-        final CountyGenerator generator = new CountyGenerator(Collections.singletonList("Fairfax"), new SecureRandom());
+        final List<String> counties = Arrays.asList("Fairfax", "Loudoun", "Arlington");
+        final CountyGenerator generator = new CountyGenerator(counties, new SecureRandom());
         final String county = generator.random();
         assertNotNull(county);
-        assertEquals("Fairfax", county);
+        assertTrue(counties.contains(county));
     }
 
     @Test
     public void testPoolSize() {
-        final CountyGenerator generator = new CountyGenerator(Collections.singletonList("Fairfax"), new SecureRandom());
-        assertEquals(1, generator.poolSize());
+        final List<String> counties = Arrays.asList("Fairfax", "Loudoun", "Arlington");
+        final CountyGenerator generator = new CountyGenerator(counties, new SecureRandom());
+        assertEquals(3, generator.poolSize());
     }
 
 }
