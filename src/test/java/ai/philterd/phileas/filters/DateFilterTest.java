@@ -601,6 +601,24 @@ public class DateFilterTest extends AbstractFilterTest {
     }
 
     @Test
+    public void filterDate46() throws Exception {
+
+        // PHL-239: Support dates like Aug. 31, 2020
+
+        final DateFilter filter = new DateFilter(buildFilterConfiguration(), true, DateSpanValidator.getInstance());
+
+        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "The date of March 4 1932 was fun");
+
+        showSpans(filtered.getSpans());
+
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertEquals(12, filtered.getSpans().get(0).getCharacterStart());
+        Assertions.assertEquals(24, filtered.getSpans().get(0).getCharacterEnd());
+        Assertions.assertEquals("March 4 1932", filtered.getSpans().get(0).getText());
+
+    }
+
+    @Test
     public void filterWithCandidates1() throws Exception {
 
         final List<String> candidates = List.of("2000-01-01", "1999-12-31");
