@@ -29,6 +29,7 @@ import ai.philterd.phileas.utils.Encryption;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.commons.text.WordUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -55,11 +56,11 @@ public class PhEyeFilterStrategy extends AbstractFilterStrategy {
 
         for(ParsedCondition parsedCondition : parsedConditions) {
 
-            if(StringUtils.equalsIgnoreCase(TOKEN, parsedCondition.getField())) {
+            if(Strings.CI.equals(TOKEN, parsedCondition.getField())) {
 
                 conditionsSatisfied = evaluateTokenCondition(parsedCondition, token, window);
 
-            } else if(StringUtils.equalsIgnoreCase(CONFIDENCE, parsedCondition.getField())) {
+            } else if(Strings.CI.equals(CONFIDENCE, parsedCondition.getField())) {
 
                 final double threshold = Double.parseDouble(parsedCondition.getValue());
 
@@ -73,13 +74,13 @@ public class PhEyeFilterStrategy extends AbstractFilterStrategy {
                     default -> conditionsSatisfied;
                 };
 
-            } else if(StringUtils.equalsIgnoreCase(CONTEXT, parsedCondition.getField())) {
+            } else if(Strings.CI.equals(CONTEXT, parsedCondition.getField())) {
 
                 final String conditionContext = parsedCondition.getValue();
 
                 conditionsSatisfied = switch (parsedCondition.getOperator()) {
-                    case EQUALS -> (StringUtils.equalsIgnoreCase("\"" + context + "\"", conditionContext));
-                    case NOT_EQUALS -> !(StringUtils.equalsIgnoreCase("\"" + context + "\"", conditionContext));
+                    case EQUALS -> (Strings.CI.equals("\"" + context + "\"", conditionContext));
+                    case NOT_EQUALS -> !(Strings.CI.equals("\"" + context + "\"", conditionContext));
                     default -> conditionsSatisfied;
                 };
 
@@ -100,15 +101,15 @@ public class PhEyeFilterStrategy extends AbstractFilterStrategy {
         String replacement = null;
         String salt = "";
 
-        if(StringUtils.equalsIgnoreCase(strategy, REDACT)) {
+        if(Strings.CI.equals(strategy, REDACT)) {
 
             replacement = getRedactedToken(token, label, filterType);
 
-        } else if(StringUtils.equalsIgnoreCase(strategy, MASK)) {
+        } else if(Strings.CI.equals(strategy, MASK)) {
 
             int characters = token.length();
 
-            if(!StringUtils.equalsIgnoreCase(maskLength, AbstractFilterStrategy.SAME)) {
+            if(!Strings.CI.equals(maskLength, AbstractFilterStrategy.SAME)) {
                 characters = Integer.parseInt(maskLength);
             }
 
@@ -118,7 +119,7 @@ public class PhEyeFilterStrategy extends AbstractFilterStrategy {
 
             replacement = maskCharacter.repeat(characters);
 
-        } else if(StringUtils.equalsIgnoreCase(strategy, TRUNCATE)) {
+        } else if(Strings.CI.equals(strategy, TRUNCATE)) {
 
             int leaveCharacters = getValueOrDefault(truncateLeaveCharacters, 4);
 
@@ -126,13 +127,13 @@ public class PhEyeFilterStrategy extends AbstractFilterStrategy {
                 leaveCharacters = 1;
             }
 
-            if(StringUtils.equalsIgnoreCase(truncateDirection, LEADING)) {
+            if(Strings.CI.equals(truncateDirection, LEADING)) {
                 replacement = token.substring(0, leaveCharacters) + StringUtils.repeat(truncateCharacter, token.length() - leaveCharacters);
             } else {
                 replacement = StringUtils.repeat(truncateCharacter, token.length() - leaveCharacters) + token.substring(token.length() - leaveCharacters);
             }
 
-        } else if(StringUtils.equalsIgnoreCase(strategy, RANDOM_REPLACE)) {
+        } else if(Strings.CI.equals(strategy, RANDOM_REPLACE)) {
 
             AnonymizationService as = anonymizationService;
             if (this.anonymizationService != null) {
@@ -141,19 +142,19 @@ public class PhEyeFilterStrategy extends AbstractFilterStrategy {
 
             replacement = getAnonymizedToken(replacementScope, token, as, filterType.getType());
 
-        } else if(StringUtils.equalsIgnoreCase(strategy, STATIC_REPLACE)) {
+        } else if(Strings.CI.equals(strategy, STATIC_REPLACE)) {
 
             replacement = staticReplacement;
 
-        } else if(StringUtils.equalsIgnoreCase(strategy, CRYPTO_REPLACE)) {
+        } else if(Strings.CI.equals(strategy, CRYPTO_REPLACE)) {
 
             replacement = "{{" + Encryption.encrypt(token, crypto) + "}}";
 
-        } else if(StringUtils.equalsIgnoreCase(strategy, FPE_ENCRYPT_REPLACE)) {
+        } else if(Strings.CI.equals(strategy, FPE_ENCRYPT_REPLACE)) {
 
             replacement = Encryption.formatPreservingEncrypt(fpe, token);
 
-        } else if(StringUtils.equalsIgnoreCase(strategy, HASH_SHA256_REPLACE)) {
+        } else if(Strings.CI.equals(strategy, HASH_SHA256_REPLACE)) {
 
             if (isSalt()) {
                 salt = RandomStringUtils.secure().nextAlphanumeric(16);
@@ -161,11 +162,11 @@ public class PhEyeFilterStrategy extends AbstractFilterStrategy {
 
             replacement = DigestUtils.sha256Hex(token + salt);
 
-        } else if(StringUtils.equalsIgnoreCase(strategy, ABBREVIATE)) {
+        } else if(Strings.CI.equals(strategy, ABBREVIATE)) {
 
             // TODO: Make PER a constant somewhere.
             // Philter-NER is only returning PER entities at this point.
-            if(StringUtils.equalsIgnoreCase(label, "PER")) {
+            if(Strings.CI.equals(label, "PER")) {
                 replacement = WordUtils.initials(token, null);
             }
 

@@ -15,7 +15,7 @@
  */
 package ai.philterd.phileas.services.split;
 
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -25,18 +25,18 @@ public class SplitFactory {
 
     public static SplitService getSplitService(final String method, final int threshold) {
 
-        if(StringUtils.equalsIgnoreCase("newline", method)) {
+        if(Strings.CI.equals("newline", method)) {
 
             LOGGER.debug("Instantiating a newline split service.");
             return new NewLineSplitService();
 
-        } else if(StringUtils.equalsIgnoreCase("width", method)) {
+        } else if(Strings.CI.equals("width", method)) {
 
             // TODO: Make line width configurable.
             LOGGER.debug("Instantiating a line width split service.");
             return new LineWidthSplitService(threshold);
 
-        } else if(StringUtils.equalsIgnoreCase("characters", method)) {
+        } else if(Strings.CI.equals("characters", method)) {
 
             LOGGER.debug("Instantiating a character count split service.");
             return new CharacterCountSplitService(threshold);

@@ -19,7 +19,7 @@ import ai.philterd.phileas.model.filtering.MimeType;
 import ai.philterd.phileas.model.filtering.Span;
 import ai.philterd.phileas.policy.Policy;
 import ai.philterd.phileas.policy.graphical.BoundingBox;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.pdfbox.Loader;
@@ -313,7 +313,7 @@ public class PdfRedactor extends PDFTextStripper {
 
         for (final Span span : spans) {
 
-            if (StringUtils.equalsIgnoreCase(span.getLineHash(), lineHash)) {
+            if (Strings.CI.equals(span.getLineHash(), lineHash)) {
 
                 if (text.contains(span.getText())) {
 

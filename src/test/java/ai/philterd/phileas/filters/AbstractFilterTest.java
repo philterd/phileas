@@ -33,7 +33,6 @@ import ai.philterd.phileas.policy.filters.DriversLicense;
 import ai.philterd.phileas.policy.filters.EmailAddress;
 import ai.philterd.phileas.policy.filters.FirstName;
 import ai.philterd.phileas.policy.filters.Hospital;
-import ai.philterd.phileas.policy.filters.HospitalAbbreviation;
 import ai.philterd.phileas.policy.filters.IbanCode;
 import ai.philterd.phileas.policy.filters.Identifier;
 import ai.philterd.phileas.policy.filters.IpAddress;
@@ -58,7 +57,6 @@ import ai.philterd.phileas.services.strategies.custom.CustomDictionaryFilterStra
 import ai.philterd.phileas.services.strategies.dynamic.CityFilterStrategy;
 import ai.philterd.phileas.services.strategies.dynamic.CountyFilterStrategy;
 import ai.philterd.phileas.services.strategies.dynamic.FirstNameFilterStrategy;
-import ai.philterd.phileas.services.strategies.dynamic.HospitalAbbreviationFilterStrategy;
 import ai.philterd.phileas.services.strategies.dynamic.HospitalFilterStrategy;
 import ai.philterd.phileas.services.strategies.dynamic.StateFilterStrategy;
 import ai.philterd.phileas.services.strategies.dynamic.SurnameFilterStrategy;
@@ -205,9 +203,6 @@ public abstract class AbstractFilterTest {
         FirstName firstName = new FirstName();
         firstName.setFirstNameFilterStrategies(List.of(firstNameFilterStrategy));
 
-        HospitalAbbreviation hospitalAbbreviation = new HospitalAbbreviation();
-        hospitalAbbreviation.setHospitalAbbreviationFilterStrategies(List.of(new HospitalAbbreviationFilterStrategy()));
-
         HospitalFilterStrategy hospitalFilterStrategy = new HospitalFilterStrategy();
 
         Hospital hospital = new Hospital();
@@ -254,7 +249,6 @@ public abstract class AbstractFilterTest {
         identifiers.setCounty(county);
         identifiers.setFirstName(firstName);
         identifiers.setHospital(hospital);
-        identifiers.setHospitalAbbreviation(hospitalAbbreviation);
         identifiers.setState(state);
         identifiers.setSurname(surname);
 

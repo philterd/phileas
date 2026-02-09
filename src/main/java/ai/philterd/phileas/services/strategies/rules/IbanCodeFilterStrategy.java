@@ -25,7 +25,7 @@ import ai.philterd.phileas.policy.FPE;
 import ai.philterd.phileas.policy.Policy;
 import ai.philterd.phileas.services.anonymization.AnonymizationService;
 import ai.philterd.phileas.services.strategies.StandardFilterStrategy;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -51,21 +51,21 @@ public class IbanCodeFilterStrategy extends StandardFilterStrategy {
 
         for(ParsedCondition parsedCondition : parsedConditions) {
 
-            if(StringUtils.equalsIgnoreCase(TOKEN, parsedCondition.getField())) {
+            if(Strings.CI.equals(TOKEN, parsedCondition.getField())) {
 
                 conditionsSatisfied = evaluateTokenCondition(parsedCondition, token, window);
 
-            } else if(StringUtils.equalsIgnoreCase(CONTEXT, parsedCondition.getField())) {
+            } else if(Strings.CI.equals(CONTEXT, parsedCondition.getField())) {
 
                 final String conditionContext = parsedCondition.getValue();
 
                 conditionsSatisfied = switch (parsedCondition.getOperator()) {
-                    case EQUALS -> (StringUtils.equalsIgnoreCase("\"" + context + "\"", conditionContext));
-                    case NOT_EQUALS -> !(StringUtils.equalsIgnoreCase("\"" + context + "\"", conditionContext));
+                    case EQUALS -> (Strings.CI.equals("\"" + context + "\"", conditionContext));
+                    case NOT_EQUALS -> !(Strings.CI.equals("\"" + context + "\"", conditionContext));
                     default -> conditionsSatisfied;
                 };
 
-            } else if(StringUtils.equalsIgnoreCase(CONFIDENCE, parsedCondition.getField())) {
+            } else if(Strings.CI.equals(CONFIDENCE, parsedCondition.getField())) {
 
                 final double threshold = Double.parseDouble(parsedCondition.getValue());
 

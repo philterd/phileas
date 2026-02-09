@@ -32,6 +32,7 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.RandomUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -86,21 +87,21 @@ public class DateFilterStrategy extends AbstractFilterStrategy {
 
         for(ParsedCondition parsedCondition : parsedConditions) {
 
-            if(StringUtils.equalsIgnoreCase(TOKEN, parsedCondition.getField())) {
+            if(Strings.CI.equals(TOKEN, parsedCondition.getField())) {
 
                 conditionsSatisfied = evaluateTokenCondition(parsedCondition, token, window);
 
-            } else if(StringUtils.equalsIgnoreCase(CONTEXT, parsedCondition.getField())) {
+            } else if(Strings.CI.equals(CONTEXT, parsedCondition.getField())) {
 
                 final String conditionContext = parsedCondition.getValue();
 
                 conditionsSatisfied = switch (parsedCondition.getOperator()) {
-                    case EQUALS -> (StringUtils.equalsIgnoreCase("\"" + context + "\"", conditionContext));
-                    case NOT_EQUALS -> !(StringUtils.equalsIgnoreCase("\"" + context + "\"", conditionContext));
+                    case EQUALS -> (Strings.CI.equals("\"" + context + "\"", conditionContext));
+                    case NOT_EQUALS -> !(Strings.CI.equals("\"" + context + "\"", conditionContext));
                     default -> conditionsSatisfied;
                 };
 
-            } else if(StringUtils.equalsIgnoreCase(CONFIDENCE, parsedCondition.getField())) {
+            } else if(Strings.CI.equals(CONFIDENCE, parsedCondition.getField())) {
 
                 final double threshold = Double.parseDouble(parsedCondition.getValue());
 
@@ -133,15 +134,15 @@ public class DateFilterStrategy extends AbstractFilterStrategy {
         String replacement;
         String salt = "";
 
-        if(StringUtils.equalsIgnoreCase(strategy, REDACT)) {
+        if(Strings.CI.equals(strategy, REDACT)) {
 
             replacement = getRedactedToken(token, label, filterType);
 
-        } else if(StringUtils.equalsIgnoreCase(strategy, MASK)) {
+        } else if(Strings.CI.equals(strategy, MASK)) {
 
             int characters = token.length();
 
-            if(!StringUtils.equalsIgnoreCase(maskLength, AbstractFilterStrategy.SAME)) {
+            if(!Strings.CI.equals(maskLength, AbstractFilterStrategy.SAME)) {
                 characters = Integer.parseInt(maskLength);
             }
 
@@ -151,7 +152,7 @@ public class DateFilterStrategy extends AbstractFilterStrategy {
 
             replacement = maskCharacter.repeat(characters);
 
-        } else if(StringUtils.equalsIgnoreCase(strategy, TRUNCATE)) {
+        } else if(Strings.CI.equals(strategy, TRUNCATE)) {
 
             int leaveCharacters = getValueOrDefault(truncateLeaveCharacters, 4);
 
@@ -159,13 +160,13 @@ public class DateFilterStrategy extends AbstractFilterStrategy {
                 leaveCharacters = 1;
             }
 
-            if(StringUtils.equalsIgnoreCase(truncateDirection, LEADING)) {
+            if(Strings.CI.equals(truncateDirection, LEADING)) {
                 replacement = token.substring(0, leaveCharacters) + StringUtils.repeat(truncateCharacter, token.length() - leaveCharacters);
             } else {
                 replacement = StringUtils.repeat(truncateCharacter, token.length() - leaveCharacters) + token.substring(token.length() - leaveCharacters);
             }
 
-        } else if(StringUtils.equalsIgnoreCase(strategy, RANDOM_REPLACE)) {
+        } else if(Strings.CI.equals(strategy, RANDOM_REPLACE)) {
 
             AnonymizationService as = anonymizationService;
             if (this.anonymizationService != null) {
@@ -174,15 +175,15 @@ public class DateFilterStrategy extends AbstractFilterStrategy {
 
             replacement = getAnonymizedToken(replacementScope, token, as, filterType.getType());
 
-        } else if(StringUtils.equalsIgnoreCase(strategy, STATIC_REPLACE)) {
+        } else if(Strings.CI.equals(strategy, STATIC_REPLACE)) {
 
             replacement = staticReplacement;
 
-        } else if(StringUtils.equalsIgnoreCase(strategy, CRYPTO_REPLACE)) {
+        } else if(Strings.CI.equals(strategy, CRYPTO_REPLACE)) {
 
             replacement = "{{" + Encryption.encrypt(token, crypto) + "}}";
 
-        } else if(StringUtils.equalsIgnoreCase(strategy, HASH_SHA256_REPLACE)) {
+        } else if(Strings.CI.equals(strategy, HASH_SHA256_REPLACE)) {
 
             if (isSalt()) {
                 salt = RandomStringUtils.secure().nextAlphanumeric(16);
@@ -190,7 +191,7 @@ public class DateFilterStrategy extends AbstractFilterStrategy {
 
             replacement = DigestUtils.sha256Hex(token + salt);
 
-        } else if(StringUtils.equalsIgnoreCase(strategy, TRUNCATE_TO_YEAR)) {
+        } else if(Strings.CI.equals(strategy, TRUNCATE_TO_YEAR)) {
 
             try {
 
@@ -209,7 +210,7 @@ public class DateFilterStrategy extends AbstractFilterStrategy {
 
             }
 
-        } else if(StringUtils.equalsIgnoreCase(strategy, SHIFT)) {
+        } else if(Strings.CI.equals(strategy, SHIFT)) {
 
             // Shift the date given some number of days, months, and/or years.
 
@@ -242,7 +243,7 @@ public class DateFilterStrategy extends AbstractFilterStrategy {
 
             }
 
-        } else if(StringUtils.equalsIgnoreCase(strategy, RELATIVE)) {
+        } else if(Strings.CI.equals(strategy, RELATIVE)) {
 
             // Make the date relative such as "3 months ago."
 

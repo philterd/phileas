@@ -20,7 +20,7 @@ import ai.philterd.phileas.model.formats.lapps.Lapps;
 import ai.philterd.phileas.model.formats.lapps.View;
 import com.google.gson.Gson;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -47,11 +47,11 @@ public class LappsTest {
 
             for(final Annotation annotation : view.getAnnotations()) {
 
-                if(StringUtils.equalsIgnoreCase(Lapps.NAMED_ENTITY, annotation.getType())) {
+                if(Strings.CI.equals(Lapps.NAMED_ENTITY, annotation.getType())) {
 
                     if(annotation.getFeatures() != null) {
 
-                        if(StringUtils.equalsIgnoreCase("PER", annotation.getFeatures().getCategory())) {
+                        if(Strings.CI.equals("PER", annotation.getFeatures().getCategory())) {
 
                             Assertions.assertEquals(282, annotation.getStart());
                             Assertions.assertEquals(295, annotation.getEnd());
@@ -60,7 +60,7 @@ public class LappsTest {
 
                         }
 
-                        if(StringUtils.equalsIgnoreCase("PHONE_NUMBER", annotation.getFeatures().getCategory())) {
+                        if(Strings.CI.equals("PHONE_NUMBER", annotation.getFeatures().getCategory())) {
 
                             Assertions.assertEquals(300, annotation.getStart());
                             Assertions.assertEquals(315, annotation.getEnd());

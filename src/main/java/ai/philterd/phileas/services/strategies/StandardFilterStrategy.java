@@ -24,6 +24,7 @@ import ai.philterd.phileas.utils.Encryption;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 
 public abstract class StandardFilterStrategy extends AbstractFilterStrategy {
 
@@ -35,15 +36,15 @@ public abstract class StandardFilterStrategy extends AbstractFilterStrategy {
         String replacement;
         String salt = "";
 
-        if(StringUtils.equalsIgnoreCase(strategy, REDACT)) {
+        if(Strings.CI.equals(strategy, REDACT)) {
 
             replacement = getRedactedToken(token, label, filterType);
 
-        } else if(StringUtils.equalsIgnoreCase(strategy, MASK)) {
+        } else if(Strings.CI.equals(strategy, MASK)) {
 
             int characters = token.length();
 
-            if(maskLength != null && !maskLength.equals("null") && !StringUtils.equalsIgnoreCase(maskLength, AbstractFilterStrategy.SAME)) {
+            if(maskLength != null && !maskLength.equals("null") && !Strings.CI.equals(maskLength, AbstractFilterStrategy.SAME)) {
                 characters = Integer.parseInt(maskLength);
             }
 
@@ -53,7 +54,7 @@ public abstract class StandardFilterStrategy extends AbstractFilterStrategy {
 
             replacement = maskCharacter.repeat(characters);
 
-        } else if(StringUtils.equalsIgnoreCase(strategy, TRUNCATE)) {
+        } else if(Strings.CI.equals(strategy, TRUNCATE)) {
 
             int leaveCharacters = getValueOrDefault(truncateLeaveCharacters, 4);
 
@@ -61,13 +62,13 @@ public abstract class StandardFilterStrategy extends AbstractFilterStrategy {
                 leaveCharacters = 1;
             }
 
-            if(StringUtils.equalsIgnoreCase(truncateDirection, LEADING)) {
+            if(Strings.CI.equals(truncateDirection, LEADING)) {
                 replacement = token.substring(0, leaveCharacters) + StringUtils.repeat(truncateCharacter, token.length() - leaveCharacters);
             } else {
                 replacement = StringUtils.repeat(truncateCharacter, token.length() - leaveCharacters) + token.substring(token.length() - leaveCharacters);
             }
 
-        } else if(StringUtils.equalsIgnoreCase(strategy, RANDOM_REPLACE)) {
+        } else if(Strings.CI.equals(strategy, RANDOM_REPLACE)) {
 
             AnonymizationService as = anonymizationService;
             if (this.anonymizationService != null) {
@@ -76,23 +77,23 @@ public abstract class StandardFilterStrategy extends AbstractFilterStrategy {
 
             replacement = getAnonymizedToken(replacementScope, token, as, filterType.getType());
 
-        } else if(StringUtils.equalsIgnoreCase(strategy, STATIC_REPLACE)) {
+        } else if(Strings.CI.equals(strategy, STATIC_REPLACE)) {
 
             replacement = staticReplacement;
 
-        } else if(StringUtils.equalsIgnoreCase(strategy, CRYPTO_REPLACE)) {
+        } else if(Strings.CI.equals(strategy, CRYPTO_REPLACE)) {
 
             replacement = "{{" + Encryption.encrypt(token, crypto) + "}}";
 
-        } else if(StringUtils.equalsIgnoreCase(strategy, FPE_ENCRYPT_REPLACE)) {
+        } else if(Strings.CI.equals(strategy, FPE_ENCRYPT_REPLACE)) {
 
             replacement = Encryption.formatPreservingEncrypt(fpe, token);
 
-        } else if(StringUtils.equalsIgnoreCase(strategy, LAST_4)) {
+        } else if(Strings.CI.equals(strategy, LAST_4)) {
 
             replacement = token.substring(token.length() - 4);
 
-        } else if(StringUtils.equalsIgnoreCase(strategy, HASH_SHA256_REPLACE)) {
+        } else if(Strings.CI.equals(strategy, HASH_SHA256_REPLACE)) {
 
             if(isSalt()) {
                 salt = RandomStringUtils.secure().nextAlphanumeric(16);
