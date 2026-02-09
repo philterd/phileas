@@ -69,7 +69,6 @@ This list might be outdated. Please check the individual filter classes for deta
 * Cities
 * Counties
 * Hospitals
-* Hospital Abbreviations
 * States
 * State Abbreviations
 

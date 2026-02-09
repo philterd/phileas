@@ -15,11 +15,11 @@
  */
 package ai.philterd.phileas.data.generators;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Random;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class AgeGeneratorTest {
 
@@ -27,7 +27,7 @@ public class AgeGeneratorTest {
     public void testGenerateAge() {
         final AgeGenerator generator = new AgeGenerator(new Random());
         final int age = generator.random();
-        assertTrue("Age should be between 0 and 100", age >= 0 && age <= 100);
+        assertTrue(age >= 0 && age <= 100, "Age should be between 0 and 100");
     }
 
     @Test

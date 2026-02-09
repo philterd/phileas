@@ -16,13 +16,13 @@
 package ai.philterd.phileas.data.generators;
 
 import ai.philterd.phileas.data.DataGenerator;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.util.Collections;
 import java.util.Random;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class EmailAddressGeneratorTest {
 
@@ -33,12 +33,12 @@ public class EmailAddressGeneratorTest {
         final EmailAddressGenerator generator = new EmailAddressGenerator(firstNames, surnames, new Random());
         
         final String email = generator.random();
-        assertNotNull("Email should not be null", email);
-        assertTrue("Email should contain @", email.contains("@"));
-        assertTrue("Email should contain .", email.contains("."));
+        assertNotNull(email, "Email should not be null");
+        assertTrue(email.contains("@"), "Email should contain @");
+        assertTrue(email.contains("."), "Email should contain .");
         final String[] parts = email.split("@");
-        assertEquals("Email should have two parts separated by @", 2, parts.length);
-        assertTrue("Username should end with 3 digits", parts[0].matches(".*\\d{3}"));
+        assertEquals(2, parts.length, "Email should have two parts separated by @");
+        assertTrue(parts[0].matches(".*\\d{3}"), "Username should end with 3 digits");
     }
 
     @Test

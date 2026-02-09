@@ -67,7 +67,7 @@ public class CountyFilterTest extends AbstractFilterTest {
 
         final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.LOCATION_COUNTY, filterConfiguration, SensitivityLevel.MEDIUM, true);
 
-        Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "He lived in Fyette");
+        Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "He lived in Fyette County");
 
         showSpans(filtered.getSpans());
 

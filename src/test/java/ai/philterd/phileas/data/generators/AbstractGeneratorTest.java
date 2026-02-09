@@ -15,12 +15,12 @@
  */
 package ai.philterd.phileas.data.generators;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class AbstractGeneratorTest {
 
@@ -45,9 +45,9 @@ public class AbstractGeneratorTest {
         }
     }
 
-    @Test(expected = IOException.class)
-    public void testLoadNamesNotFound() throws IOException {
+    @Test
+    public void testLoadNamesNotFound() {
         TestGenerator generator = new TestGenerator();
-        generator.testLoadNames("/non-existent.txt");
+        assertThrows(IOException.class, () -> generator.testLoadNames("/non-existent.txt"));
     }
 }

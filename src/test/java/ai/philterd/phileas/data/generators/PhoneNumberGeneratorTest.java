@@ -15,11 +15,11 @@
  */
 package ai.philterd.phileas.data.generators;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Random;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class PhoneNumberGeneratorTest {
 
@@ -27,9 +27,9 @@ public class PhoneNumberGeneratorTest {
     public void testGeneratePhoneNumber() {
         final PhoneNumberGenerator generator = new PhoneNumberGenerator(new Random());
         final String phoneNumber = generator.random();
-        assertNotNull("Phone number should not be null", phoneNumber);
-        assertTrue("Phone number should match (XXX) XXX-XXXX format", 
-                   phoneNumber.matches("\\(\\d{3}\\) \\d{3}-\\d{4}"));
+        assertNotNull(phoneNumber, "Phone number should not be null");
+        assertTrue(phoneNumber.matches("\\(\\d{3}\\) \\d{3}-\\d{4}"),
+                   "Phone number should match (XXX) XXX-XXXX format");
     }
 
     @Test

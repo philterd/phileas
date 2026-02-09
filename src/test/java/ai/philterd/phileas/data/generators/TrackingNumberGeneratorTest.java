@@ -15,11 +15,11 @@
  */
 package ai.philterd.phileas.data.generators;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Random;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class TrackingNumberGeneratorTest {
 
@@ -40,8 +40,8 @@ public class TrackingNumberGeneratorTest {
             }
         }
         
-        assertTrue("Should have generated at least one UPS tracking number", foundUPS);
-        assertTrue("Should have generated at least one FedEx tracking number", foundFedEx);
+        assertTrue(foundUPS, "Should have generated at least one UPS tracking number");
+        assertTrue(foundFedEx, "Should have generated at least one FedEx tracking number");
     }
 
     @Test

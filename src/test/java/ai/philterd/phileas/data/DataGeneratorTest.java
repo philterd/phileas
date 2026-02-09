@@ -59,8 +59,8 @@ public class DataGeneratorTest {
         assertTrue(generator.urls().poolSize() > 0);
         assertEquals(1000000000L, generator.driversLicenseNumbers().poolSize());
         assertTrue(generator.hospitals().poolSize() > 0);
-        assertTrue(generator.hospitalAbbreviations().poolSize() > 0);
         assertEquals(Long.MAX_VALUE, generator.trackingNumbers().poolSize());
+        assertTrue(generator.streetAddresses().poolSize() > 0);
         assertEquals(18720L, generator.cities().poolSize());
         assertTrue(generator.counties().poolSize() > 0);
         assertEquals(1000L, generator.customId("123").poolSize());
@@ -131,6 +131,14 @@ public class DataGeneratorTest {
         if (generator instanceof DefaultDataGenerator) {
             assertNull(((DefaultDataGenerator) generator).random());
         }
+    }
+
+    @Test
+    public void testStreetAddresses() {
+        final String address = generator.streetAddresses().random();
+        assertNotNull(address);
+        // Simple regex to match: "<numbers> <street name> <suffix>"
+        assertTrue(address.matches("\\d+ .* (St|Ave|Blvd|Rd|Ln|Dr|Ct|Pl|Way|Ter)"));
     }
 
     @Test

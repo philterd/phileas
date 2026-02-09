@@ -142,11 +142,6 @@ public class DefaultDataGenerator extends AbstractGenerator<Object> implements D
     public final Generator<String> hospitals;
 
     /**
-     * Generator for hospital abbreviations.
-     */
-    public final Generator<String> hospitalAbbreviations;
-
-    /**
      * Generator for tracking numbers.
      */
     public final Generator<String> trackingNumbers;
@@ -155,6 +150,11 @@ public class DefaultDataGenerator extends AbstractGenerator<Object> implements D
      * Generator for cities.
      */
     public final Generator<String> cities;
+
+    /**
+     * Generator for street addresses.
+     */
+    public final Generator<String> streetAddresses;
 
     /**
      * Generator for counties.
@@ -201,9 +201,9 @@ public class DefaultDataGenerator extends AbstractGenerator<Object> implements D
         this.urls = new URLGenerator(firstNames, random);
         this.driversLicenseNumbers = new DriversLicenseGenerator(random);
         this.hospitals = new HospitalGenerator(random);
-        this.hospitalAbbreviations = new HospitalAbbreviationGenerator(random);
         this.trackingNumbers = new TrackingNumberGenerator(random);
         this.cities = new CityGenerator(loadNames("/cities.txt"), random);
+        this.streetAddresses = new StreetAddressGenerator(surnames, random);
         this.counties = new CountyGenerator(loadNames("/counties.txt"), random);
     }
 
@@ -229,8 +229,8 @@ public class DefaultDataGenerator extends AbstractGenerator<Object> implements D
     @Override public Generator<String> urls() { return urls; }
     @Override public Generator<String> driversLicenseNumbers() { return driversLicenseNumbers; }
     @Override public Generator<String> hospitals() { return hospitals; }
-    @Override public Generator<String> hospitalAbbreviations() { return hospitalAbbreviations; }
     @Override public Generator<String> trackingNumbers() { return trackingNumbers; }
+    @Override public Generator<String> streetAddresses() { return streetAddresses; }
     @Override public Generator<String> cities() { return cities; }
     @Override public Generator<String> counties() { return counties; }
     @Override public Generator<String> customId(final String pattern) { return new CustomIdGenerator(random, pattern); }

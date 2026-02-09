@@ -51,8 +51,8 @@ public class CityFilterTest extends AbstractFilterTest {
 
         showSpans(filtered.getSpans());
 
-        Assertions.assertEquals(1, filtered.getSpans().size());
-        Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 9, 19, FilterType.LOCATION_CITY));
+        Assertions.assertEquals(6, filtered.getSpans().size());
+        Assertions.assertTrue(checkSpanInSpans(filtered.getSpans(), 9, 19, FilterType.LOCATION_CITY, "Washington", "{{{REDACTED-city}}}"));
 
     }
 
@@ -75,7 +75,7 @@ public class CityFilterTest extends AbstractFilterTest {
         Assertions.assertEquals(2, filtered.getSpans().size());
         Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 9, 17, FilterType.LOCATION_CITY));
         Assertions.assertTrue(checkSpan(filtered.getSpans().get(1), 13, 17, FilterType.LOCATION_CITY));
-        Assertions.assertEquals("new york", filtered.getSpans().get(0).getText());
+        Assertions.assertEquals("New York", filtered.getSpans().get(0).getText());
 
     }
 
@@ -95,7 +95,8 @@ public class CityFilterTest extends AbstractFilterTest {
 
         showSpans(filtered.getSpans());
 
-        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertEquals(8, filtered.getSpans().size());
+        Assertions.assertTrue(checkSpanInSpans(filtered.getSpans(), 9, 18, FilterType.LOCATION_CITY, "Washington", "{{{REDACTED-city}}}"));
 
     }
 
@@ -115,8 +116,8 @@ public class CityFilterTest extends AbstractFilterTest {
 
         showSpans(filtered.getSpans());
 
-        Assertions.assertEquals(1, filtered.getSpans().size());
-        Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 9, 18, FilterType.LOCATION_CITY));
+        Assertions.assertEquals(8, filtered.getSpans().size());
+        Assertions.assertTrue(checkSpanInSpans(filtered.getSpans(), 9, 18, FilterType.LOCATION_CITY, "Washington", "{{{REDACTED-city}}}"));
 
     }
 
@@ -160,7 +161,7 @@ public class CityFilterTest extends AbstractFilterTest {
 
         final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "Lived in Washington.");
         showSpans(filtered.getSpans());
-        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertEquals(6, filtered.getSpans().size());
         Assertions.assertTrue(candidates.contains(filtered.getSpans().get(0).getReplacement()));
 
     }

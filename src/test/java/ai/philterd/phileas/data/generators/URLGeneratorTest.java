@@ -16,12 +16,12 @@
 package ai.philterd.phileas.data.generators;
 
 import ai.philterd.phileas.data.DataGenerator;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
 import java.util.Random;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class URLGeneratorTest {
 

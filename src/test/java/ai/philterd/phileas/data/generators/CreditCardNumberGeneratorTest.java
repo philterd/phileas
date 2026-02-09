@@ -15,11 +15,11 @@
  */
 package ai.philterd.phileas.data.generators;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Random;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class CreditCardNumberGeneratorTest {
 
@@ -37,7 +37,7 @@ public class CreditCardNumberGeneratorTest {
         
         for (int i = 0; i < 100; i++) {
             final String cc = validGenerator.random();
-            assertTrue("CC " + cc + " should be valid", isValidLuhn(cc.replace("-", "")));
+            assertTrue(isValidLuhn(cc.replace("-", "")), "CC " + cc + " should be valid");
         }
     }
 

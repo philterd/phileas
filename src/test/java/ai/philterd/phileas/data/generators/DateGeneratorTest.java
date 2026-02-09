@@ -15,12 +15,12 @@
  */
 package ai.philterd.phileas.data.generators;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
 import java.util.Random;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class DateGeneratorTest {
 
@@ -48,8 +48,8 @@ public class DateGeneratorTest {
         for (int i = 0; i < 100; i++) {
             final String dateStr = boundedGenerator.random();
             final LocalDate date = LocalDate.parse(dateStr);
-            assertTrue("Year " + date.getYear() + " should be >= " + minYear, date.getYear() >= minYear);
-            assertTrue("Year " + date.getYear() + " should be < " + maxYear, date.getYear() < maxYear);
+            assertTrue(date.getYear() >= minYear, "Year " + date.getYear() + " should be >= " + minYear);
+            assertTrue(date.getYear() < maxYear, "Year " + date.getYear() + " should be < " + maxYear);
         }
         assertTrue(boundedGenerator.poolSize() >= (maxYear - minYear) * 365L);
     }
@@ -75,8 +75,8 @@ public class DateGeneratorTest {
                 foundDec31 = true;
             }
         }
-        assertTrue("Feb 29 should be possible in a leap year", foundFeb29);
-        assertTrue("Dec 31 should be possible in a leap year", foundDec31);
+        assertTrue(foundFeb29, "Feb 29 should be possible in a leap year");
+        assertTrue(foundDec31, "Dec 31 should be possible in a leap year");
     }
 
     @Test
@@ -85,8 +85,8 @@ public class DateGeneratorTest {
         final DateGenerator generator = new DateGenerator(new Random(), 2023, 2024);
         for (int i = 0; i < 10000; i++) {
             final String dateStr = generator.random();
-            assertFalse("Feb 29 should not be possible in a non-leap year: " + dateStr, dateStr.endsWith("-02-29"));
-            assertFalse("April 31 is never valid: " + dateStr, dateStr.endsWith("-04-31"));
+            assertFalse(dateStr.endsWith("-02-29"), "Feb 29 should not be possible in a non-leap year: " + dateStr);
+            assertFalse(dateStr.endsWith("-04-31"), "April 31 is never valid: " + dateStr);
         }
     }
 

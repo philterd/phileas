@@ -15,12 +15,12 @@
  */
 package ai.philterd.phileas.data.generators;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
 import java.util.Random;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class FirstNameGeneratorTest {
 
@@ -28,7 +28,7 @@ public class FirstNameGeneratorTest {
     public void testGenerateFirstName() {
         final FirstNameGenerator generator = new FirstNameGenerator(Collections.singletonList("John"), new Random());
         final String firstName = generator.random();
-        assertNotNull("First name should not be null", firstName);
+        assertNotNull(firstName, "First name should not be null");
         assertEquals("John", firstName);
     }
 

@@ -15,12 +15,12 @@
  */
 package ai.philterd.phileas.data.generators;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
 import java.util.Random;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class SurnameGeneratorTest {
 
@@ -28,7 +28,7 @@ public class SurnameGeneratorTest {
     public void testGenerateSurname() {
         final SurnameGenerator generator = new SurnameGenerator(Collections.singletonList("Doe"), new Random());
         final String surname = generator.random();
-        assertNotNull("Surname should not be null", surname);
+        assertNotNull(surname, "Surname should not be null");
         assertEquals("Doe", surname);
     }
 

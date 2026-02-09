@@ -15,11 +15,11 @@
  */
 package ai.philterd.phileas.data.generators;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Random;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class SSNGeneratorTest {
 
@@ -27,8 +27,8 @@ public class SSNGeneratorTest {
     public void testGenerateSSN() {
         final SSNGenerator generator = new SSNGenerator(new Random());
         final String ssn = generator.random();
-        assertNotNull("SSN should not be null", ssn);
-        assertTrue("SSN should match XXX-XX-XXXX format", ssn.matches("\\d{3}-\\d{2}-\\d{4}"));
+        assertNotNull(ssn, "SSN should not be null");
+        assertTrue(ssn.matches("\\d{3}-\\d{2}-\\d{4}"), "SSN should match XXX-XX-XXXX format");
     }
 
     @Test

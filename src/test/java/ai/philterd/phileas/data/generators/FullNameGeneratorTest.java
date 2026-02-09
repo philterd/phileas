@@ -16,12 +16,12 @@
 package ai.philterd.phileas.data.generators;
 
 import ai.philterd.phileas.data.DataGenerator;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
 import java.util.Random;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class FullNameGeneratorTest {
 
@@ -32,11 +32,11 @@ public class FullNameGeneratorTest {
         final FullNameGenerator generator = new FullNameGenerator(firstNameGenerator, surnameGenerator);
         
         final String fullName = generator.random();
-        assertNotNull("Full name should not be null", fullName);
+        assertNotNull(fullName, "Full name should not be null");
         assertEquals("John Doe", fullName);
-        assertTrue("Full name should contain a space", fullName.contains(" "));
+        assertTrue(fullName.contains(" "), "Full name should contain a space");
         final String[] parts = fullName.split(" ");
-        assertEquals("Full name should have two parts", 2, parts.length);
+        assertEquals(2, parts.length, "Full name should have two parts");
     }
 
     @Test

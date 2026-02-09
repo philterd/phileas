@@ -173,16 +173,16 @@ public interface DataGenerator {
     Generator<String> hospitals();
 
     /**
-     * Gets a generator for hospital abbreviations.
-     * @return A generator for hospital abbreviations.
-     */
-    Generator<String> hospitalAbbreviations();
-
-    /**
      * Gets a generator for tracking numbers.
      * @return A generator for tracking numbers.
      */
     Generator<String> trackingNumbers();
+
+    /**
+     * Gets a generator for street addresses.
+     * @return A generator for street addresses.
+     */
+    Generator<String> streetAddresses();
 
     /**
      * Gets a generator for cities.
