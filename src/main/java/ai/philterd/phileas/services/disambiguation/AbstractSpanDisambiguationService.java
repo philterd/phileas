@@ -18,7 +18,6 @@ package ai.philterd.phileas.services.disambiguation;
 import ai.philterd.phileas.PhileasConfiguration;
 import ai.philterd.phileas.services.disambiguation.vector.VectorService;
 import org.apache.commons.codec.digest.MurmurHash3;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

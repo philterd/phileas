@@ -15,11 +15,11 @@
  */
 package ai.philterd.phileas.policy;
 
-import com.google.gson.annotations.Expose;
-import com.google.gson.annotations.SerializedName;
 import ai.philterd.phileas.policy.config.Analysis;
 import ai.philterd.phileas.policy.config.Pdf;
 import ai.philterd.phileas.policy.config.Splitting;
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 
 public class Config {
 

@@ -15,8 +15,8 @@
  */
 package ai.philterd.phileas.services.strategies.rules;
 
-import ai.philterd.phileas.model.filtering.FilterType;
 import ai.philterd.phileas.model.filtering.FilterPattern;
+import ai.philterd.phileas.model.filtering.FilterType;
 import ai.philterd.phileas.model.filtering.Replacement;
 import ai.philterd.phileas.policy.Crypto;
 import ai.philterd.phileas.policy.FPE;

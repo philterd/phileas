@@ -15,9 +15,9 @@
  */
 package ai.philterd.phileas.filters.rules.dictionary;
 
-import ai.philterd.phileas.model.filtering.FilterType;
 import ai.philterd.phileas.filters.FilterConfiguration;
 import ai.philterd.phileas.filters.rules.RulesFilter;
+import ai.philterd.phileas.model.filtering.FilterType;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -48,19 +48,17 @@ public abstract class DictionaryFilter extends RulesFilter {
         final String fileName;
 
         if(filterType == FilterType.LOCATION_CITY) {
-            fileName = "cities";
+            fileName = "cities.txt";
         } else if(filterType == FilterType.LOCATION_COUNTY) {
-            fileName = "counties";
+            fileName = "counties.txt";
         } else if(filterType == FilterType.LOCATION_STATE) {
-            fileName = "states";
+            fileName = "states.txt";
         } else if(filterType == FilterType.HOSPITAL) {
-            fileName = "hospitals";
-        } else if(filterType == FilterType.HOSPITAL_ABBREVIATION) {
-            fileName = "hospital-abbreviations";
+            fileName = "hospitals.txt";
         } else if(filterType == FilterType.FIRST_NAME) {
-            fileName = "names";
+            fileName = "first-names.txt";
         } else if(filterType == FilterType.SURNAME) {
-            fileName = "surnames";
+            fileName = "surnames.txt";
         } else {
             throw new IllegalArgumentException("Invalid filter type.");
         }

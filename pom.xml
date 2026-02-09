@@ -42,7 +42,6 @@
         <commons.collections4.version>4.5.0</commons.collections4.version>
         <commons.lang3.version>3.20.0</commons.lang3.version>
         <commons.codec.version>1.19.0</commons.codec.version>
-        <commons.csv.version>1.14.0</commons.csv.version>
         <commons.io.version>2.21.0</commons.io.version>
         <commons.text.version>1.15.0</commons.text.version>
         <commons.validator.version>1.10.1</commons.validator.version>
@@ -51,7 +50,6 @@
         <gson.version>2.13.2</gson.version>
         <httpclient.version>5.6</httpclient.version>
         <json.version>20251224</json.version>
-        <junit.version>5.11.3</junit.version>
         <junit.pioneer.version>2.3.0</junit.pioneer.version>
         <libphonenumber.version>9.0.21</libphonenumber.version>
         <log4j.version>2.25.3</log4j.version>
@@ -60,7 +58,6 @@
         <maven.surefire.version>3.5.4</maven.surefire.version>
         <mockito.version>5.20.0</mockito.version>
         <pdfbox.version>3.0.6</pdfbox.version>
-        <snakeyaml.version>2.5</snakeyaml.version>
     </properties>
     <build>
         <plugins>
@@ -340,21 +337,6 @@
             <version>${pdfbox.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.github.jai-imageio</groupId>
-            <artifactId>jai-imageio-core</artifactId>
-            <version>1.4.0</version>
-        </dependency>
-        <dependency>
-            <groupId>com.github.jai-imageio</groupId>
-            <artifactId>jai-imageio-jpeg2000</artifactId>
-            <version>1.4.0</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.pdfbox</groupId>
-            <artifactId>jbig2-imageio</artifactId>
-            <version>3.0.4</version>
-        </dependency>
-        <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
             <version>${commons.lang3.version}</version>
@@ -379,20 +361,6 @@
             <artifactId>log4j-api</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.github.mifmif</groupId>
-            <artifactId>generex</artifactId>
-            <version>1.0.2</version>
-        </dependency>
-        <dependency>
-            <groupId>org.yaml</groupId>
-            <artifactId>snakeyaml</artifactId>
-            <version>${snakeyaml.version}</version>
-        </dependency>
-        <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
             <version>${mockito.version}</version>
@@ -408,12 +376,6 @@
             <groupId>org.junit-pioneer</groupId>
             <artifactId>junit-pioneer</artifactId>
             <version>${junit.pioneer.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-engine</artifactId>
-            <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

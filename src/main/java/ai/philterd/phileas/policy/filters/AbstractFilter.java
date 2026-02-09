@@ -15,9 +15,9 @@
  */
 package ai.philterd.phileas.policy.filters;
 
+import ai.philterd.phileas.policy.IgnoredPattern;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
-import ai.philterd.phileas.policy.IgnoredPattern;
 
 import java.util.Collections;
 import java.util.List;

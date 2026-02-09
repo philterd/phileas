@@ -15,37 +15,62 @@
  */
 package ai.philterd.phileas.services.anonymization;
 
-import org.apache.commons.collections4.CollectionUtils;
-
-import ai.philterd.phileas.services.anonymization.faker.Faker;
+import ai.philterd.phileas.data.DataGenerator;
+import ai.philterd.phileas.data.DefaultDataGenerator;
 import ai.philterd.phileas.services.context.ContextService;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
 
 public class CreditCardAnonymizationService extends AbstractAnonymizationService {
 
-    private final Faker faker;
+    private static final Logger LOGGER = LogManager.getLogger(CreditCardAnonymizationService.class);
+
+    private DataGenerator dataGenerator;
 
     public CreditCardAnonymizationService(final ContextService contextService, final Random random, final AnonymizationMethod anonymizationMethod) {
         super(contextService, random, anonymizationMethod);
-        this.faker = new Faker(random);
+
+        try {
+            this.dataGenerator = new DefaultDataGenerator(random);
+        } catch (IOException e) {
+            LOGGER.error("Could not initialize data generator.", e);
+        }
     }
 
     public CreditCardAnonymizationService(final ContextService contextService, final Random random, final List<String> candidates) {
         super(contextService, random, candidates);
-        this.faker = new Faker(random);
+
+        try {
+            this.dataGenerator = new DefaultDataGenerator(random);
+        } catch (IOException e) {
+            LOGGER.error("Could not initialize data generator.", e);
+        }
     }
 
     public CreditCardAnonymizationService(final ContextService contextService, final Random random) {
         super(contextService, random);
-        this.faker = new Faker(random);
+
+        try {
+            this.dataGenerator = new DefaultDataGenerator(random);
+        } catch (IOException e) {
+            LOGGER.error("Could not initialize data generator.", e);
+        }
     }
 
     public CreditCardAnonymizationService(final ContextService contextService) {
         super(contextService);
-        this.faker = new Faker(random);
+
+        try {
+            this.dataGenerator = new DefaultDataGenerator(random);
+        } catch (IOException e) {
+            LOGGER.error("Could not initialize data generator.", e);
+        }
     }
 
     @Override
@@ -80,10 +105,10 @@ public class CreditCardAnonymizationService extends AbstractAnonymizationService
         } else {
 
             // REALISTIC_REPLACE
-            String anonymized = faker.finance().creditCard();
+            String anonymized = dataGenerator.creditCardNumbers().random();
 
             while (anonymized.equalsIgnoreCase(token)) {
-                anonymized = faker.finance().creditCard();
+                anonymized = dataGenerator.creditCardNumbers().random();
             }
 
             return anonymized;

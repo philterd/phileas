@@ -116,9 +116,9 @@ public class FuzzyDictionaryFilter extends DictionaryFilter {
                                     if (sensitivityLevel == SensitivityLevel.HIGH && distance < 1) {
                                         spans.add(createSpan(input, start, end, 0.9, context, entry, policy));
                                     } else if (sensitivityLevel == SensitivityLevel.MEDIUM && distance <= 2) {
-                                        spans.add(createSpan(input, start, end, 0.7, context, entry, policy));
-                                    } else if (sensitivityLevel == SensitivityLevel.LOW && distance < 3) {
                                         spans.add(createSpan(input, start, end, 0.5, context, entry, policy));
+                                    } else if (sensitivityLevel == SensitivityLevel.LOW && distance < 3) {
+                                        spans.add(createSpan(input, start, end, 0.3, context, entry, policy));
                                     }
 
                                 }

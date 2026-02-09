@@ -15,16 +15,16 @@
  */
 package ai.philterd.phileas.filters.rules;
 
-import ai.philterd.phileas.model.filtering.FilterType;
 import ai.philterd.phileas.filters.Filter;
 import ai.philterd.phileas.filters.FilterConfiguration;
-import ai.philterd.phileas.services.Analyzer;
 import ai.philterd.phileas.model.filtering.ConfidenceModifier;
 import ai.philterd.phileas.model.filtering.FilterPattern;
+import ai.philterd.phileas.model.filtering.FilterType;
 import ai.philterd.phileas.model.filtering.Position;
 import ai.philterd.phileas.model.filtering.Replacement;
 import ai.philterd.phileas.model.filtering.Span;
 import ai.philterd.phileas.policy.Policy;
+import ai.philterd.phileas.services.Analyzer;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
