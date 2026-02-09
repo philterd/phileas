@@ -17,15 +17,17 @@ package ai.philterd.phileas.data.generators;
 
 import org.junit.jupiter.api.Test;
 
-import java.util.Random;
+import java.security.SecureRandom;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class BitcoinAddressGeneratorTest {
 
     @Test
     public void testGenerateBitcoinAddress() {
-        final BitcoinAddressGenerator generator = new BitcoinAddressGenerator(new Random());
+        final BitcoinAddressGenerator generator = new BitcoinAddressGenerator(new SecureRandom());
         final String bitcoin = generator.random();
         assertNotNull(bitcoin);
         assertTrue(bitcoin.startsWith("1"));
@@ -34,7 +36,7 @@ public class BitcoinAddressGeneratorTest {
 
     @Test
     public void testPoolSize() {
-        final BitcoinAddressGenerator generator = new BitcoinAddressGenerator(new Random());
+        final BitcoinAddressGenerator generator = new BitcoinAddressGenerator(new SecureRandom());
         assertEquals(Long.MAX_VALUE, generator.poolSize());
     }
 

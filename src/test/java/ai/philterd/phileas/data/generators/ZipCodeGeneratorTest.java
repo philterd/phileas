@@ -17,15 +17,17 @@ package ai.philterd.phileas.data.generators;
 
 import org.junit.jupiter.api.Test;
 
-import java.util.Random;
+import java.security.SecureRandom;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ZipCodeGeneratorTest {
 
     @Test
     public void testGenerateZipCode() {
-        final ZipCodeGenerator generator = new ZipCodeGenerator(new Random());
+        final ZipCodeGenerator generator = new ZipCodeGenerator(new SecureRandom());
         final String zip = generator.random();
         assertNotNull(zip);
         assertTrue(zip.matches("\\d{5}"));
@@ -33,7 +35,7 @@ public class ZipCodeGeneratorTest {
 
     @Test
     public void testPoolSize() {
-        final ZipCodeGenerator generator = new ZipCodeGenerator(new Random());
+        final ZipCodeGenerator generator = new ZipCodeGenerator(new SecureRandom());
         assertEquals(100000L, generator.poolSize());
     }
 

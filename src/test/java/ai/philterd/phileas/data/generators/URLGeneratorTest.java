@@ -18,17 +18,18 @@ package ai.philterd.phileas.data.generators;
 import ai.philterd.phileas.data.DataGenerator;
 import org.junit.jupiter.api.Test;
 
+import java.security.SecureRandom;
 import java.util.Collections;
-import java.util.Random;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class URLGeneratorTest {
 
     @Test
     public void testGenerateURL() {
-        final DataGenerator.Generator<String> firstNames = new FirstNameGenerator(Collections.singletonList("John"), new Random());
-        final URLGenerator generator = new URLGenerator(firstNames, new Random());
+        final DataGenerator.Generator<String> firstNames = new FirstNameGenerator(Collections.singletonList("John"), new SecureRandom());
+        final URLGenerator generator = new URLGenerator(firstNames, new SecureRandom());
         final String url = generator.random();
         assertNotNull(url);
         assertTrue(url.startsWith("http://") || url.startsWith("https://"));
@@ -36,10 +37,10 @@ public class URLGeneratorTest {
 
     @Test
     public void testCustomPools() {
-        final DataGenerator.Generator<String> firstNames = new FirstNameGenerator(Collections.singletonList("John"), new Random());
+        final DataGenerator.Generator<String> firstNames = new FirstNameGenerator(Collections.singletonList("John"), new SecureRandom());
         final String[] customProtocols = {"ftp"};
         final String[] customExtensions = {"biz"};
-        final URLGenerator urlGenerator = new URLGenerator(firstNames, new Random(), customProtocols, customExtensions);
+        final URLGenerator urlGenerator = new URLGenerator(firstNames, new SecureRandom(), customProtocols, customExtensions);
         final String url = urlGenerator.random();
         assertTrue(url.startsWith("ftp://"));
         assertTrue(url.endsWith(".biz"));
@@ -47,8 +48,8 @@ public class URLGeneratorTest {
 
     @Test
     public void testPoolSize() {
-        final DataGenerator.Generator<String> firstNames = new FirstNameGenerator(Collections.singletonList("John"), new Random());
-        final URLGenerator generator = new URLGenerator(firstNames, new Random());
+        final DataGenerator.Generator<String> firstNames = new FirstNameGenerator(Collections.singletonList("John"), new SecureRandom());
+        final URLGenerator generator = new URLGenerator(firstNames, new SecureRandom());
         assertTrue(generator.poolSize() > 0);
     }
 

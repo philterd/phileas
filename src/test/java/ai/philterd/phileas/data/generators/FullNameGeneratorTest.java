@@ -18,17 +18,19 @@ package ai.philterd.phileas.data.generators;
 import ai.philterd.phileas.data.DataGenerator;
 import org.junit.jupiter.api.Test;
 
+import java.security.SecureRandom;
 import java.util.Collections;
-import java.util.Random;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class FullNameGeneratorTest {
 
     @Test
     public void testGenerateFullName() {
-        final DataGenerator.Generator<String> firstNameGenerator = new FirstNameGenerator(Collections.singletonList("John"), new Random());
-        final DataGenerator.Generator<String> surnameGenerator = new SurnameGenerator(Collections.singletonList("Doe"), new Random());
+        final DataGenerator.Generator<String> firstNameGenerator = new FirstNameGenerator(Collections.singletonList("John"), new SecureRandom());
+        final DataGenerator.Generator<String> surnameGenerator = new SurnameGenerator(Collections.singletonList("Doe"), new SecureRandom());
         final FullNameGenerator generator = new FullNameGenerator(firstNameGenerator, surnameGenerator);
         
         final String fullName = generator.random();
@@ -41,8 +43,8 @@ public class FullNameGeneratorTest {
 
     @Test
     public void testPoolSize() {
-        final DataGenerator.Generator<String> firstNameGenerator = new FirstNameGenerator(Collections.singletonList("John"), new Random());
-        final DataGenerator.Generator<String> surnameGenerator = new SurnameGenerator(Collections.singletonList("Doe"), new Random());
+        final DataGenerator.Generator<String> firstNameGenerator = new FirstNameGenerator(Collections.singletonList("John"), new SecureRandom());
+        final DataGenerator.Generator<String> surnameGenerator = new SurnameGenerator(Collections.singletonList("Doe"), new SecureRandom());
         final FullNameGenerator generator = new FullNameGenerator(firstNameGenerator, surnameGenerator);
         assertEquals(1, generator.poolSize());
     }

@@ -17,15 +17,17 @@ package ai.philterd.phileas.data.generators;
 
 import org.junit.jupiter.api.Test;
 
-import java.util.Random;
+import java.security.SecureRandom;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SSNGeneratorTest {
 
     @Test
     public void testGenerateSSN() {
-        final SSNGenerator generator = new SSNGenerator(new Random());
+        final SSNGenerator generator = new SSNGenerator(new SecureRandom());
         final String ssn = generator.random();
         assertNotNull(ssn, "SSN should not be null");
         assertTrue(ssn.matches("\\d{3}-\\d{2}-\\d{4}"), "SSN should match XXX-XX-XXXX format");
@@ -33,7 +35,7 @@ public class SSNGeneratorTest {
 
     @Test
     public void testPoolSize() {
-        final SSNGenerator generator = new SSNGenerator(new Random());
+        final SSNGenerator generator = new SSNGenerator(new SecureRandom());
         assertEquals(900000000L, generator.poolSize());
     }
 

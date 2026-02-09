@@ -17,15 +17,17 @@ package ai.philterd.phileas.data.generators;
 
 import org.junit.jupiter.api.Test;
 
-import java.util.Random;
+import java.security.SecureRandom;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class DriversLicenseGeneratorTest {
 
     @Test
     public void testGenerateDriversLicenseNumber() {
-        final DriversLicenseGenerator generator = new DriversLicenseGenerator(new Random());
+        final DriversLicenseGenerator generator = new DriversLicenseGenerator(new SecureRandom());
         final String dl = generator.random();
         assertNotNull(dl);
         assertTrue(dl.matches("\\d{9}"));
@@ -33,7 +35,7 @@ public class DriversLicenseGeneratorTest {
 
     @Test
     public void testPoolSize() {
-        final DriversLicenseGenerator generator = new DriversLicenseGenerator(new Random());
+        final DriversLicenseGenerator generator = new DriversLicenseGenerator(new SecureRandom());
         assertEquals(1000000000L, generator.poolSize());
     }
 

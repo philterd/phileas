@@ -15,9 +15,8 @@
  */
 package ai.philterd.phileas.services.anonymization;
 
-import org.apache.commons.collections4.CollectionUtils;
-
 import ai.philterd.phileas.services.context.ContextService;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

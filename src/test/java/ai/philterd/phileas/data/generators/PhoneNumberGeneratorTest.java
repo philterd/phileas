@@ -17,15 +17,17 @@ package ai.philterd.phileas.data.generators;
 
 import org.junit.jupiter.api.Test;
 
-import java.util.Random;
+import java.security.SecureRandom;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class PhoneNumberGeneratorTest {
 
     @Test
     public void testGeneratePhoneNumber() {
-        final PhoneNumberGenerator generator = new PhoneNumberGenerator(new Random());
+        final PhoneNumberGenerator generator = new PhoneNumberGenerator(new SecureRandom());
         final String phoneNumber = generator.random();
         assertNotNull(phoneNumber, "Phone number should not be null");
         assertTrue(phoneNumber.matches("\\(\\d{3}\\) \\d{3}-\\d{4}"),
@@ -34,7 +36,7 @@ public class PhoneNumberGeneratorTest {
 
     @Test
     public void testPoolSize() {
-        final PhoneNumberGenerator generator = new PhoneNumberGenerator(new Random());
+        final PhoneNumberGenerator generator = new PhoneNumberGenerator(new SecureRandom());
         assertEquals(8100000000L, generator.poolSize());
     }
 

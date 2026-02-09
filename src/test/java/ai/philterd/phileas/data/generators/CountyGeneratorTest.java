@@ -17,16 +17,17 @@ package ai.philterd.phileas.data.generators;
 
 import org.junit.jupiter.api.Test;
 
+import java.security.SecureRandom;
 import java.util.Collections;
-import java.util.Random;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class CountyGeneratorTest {
 
     @Test
     public void testGenerateCounty() {
-        final CountyGenerator generator = new CountyGenerator(Collections.singletonList("Fairfax"), new Random());
+        final CountyGenerator generator = new CountyGenerator(Collections.singletonList("Fairfax"), new SecureRandom());
         final String county = generator.random();
         assertNotNull(county);
         assertEquals("Fairfax", county);
@@ -34,7 +35,7 @@ public class CountyGeneratorTest {
 
     @Test
     public void testPoolSize() {
-        final CountyGenerator generator = new CountyGenerator(Collections.singletonList("Fairfax"), new Random());
+        final CountyGenerator generator = new CountyGenerator(Collections.singletonList("Fairfax"), new SecureRandom());
         assertEquals(1, generator.poolSize());
     }
 

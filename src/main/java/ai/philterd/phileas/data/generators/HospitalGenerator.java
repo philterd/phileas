@@ -16,6 +16,7 @@
 package ai.philterd.phileas.data.generators;
 
 import java.io.IOException;
+import java.security.SecureRandom;
 import java.util.List;
 import java.util.Random;
 
@@ -32,7 +33,7 @@ public class HospitalGenerator extends AbstractGenerator<String> {
      * @throws IOException if the hospital data cannot be loaded.
      */
     public HospitalGenerator() throws IOException {
-        this(new Random());
+        this(new SecureRandom());
     }
 
     /**

@@ -17,15 +17,16 @@ package ai.philterd.phileas.data.generators;
 
 import org.junit.jupiter.api.Test;
 
-import java.util.Random;
+import java.security.SecureRandom;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class VINGeneratorTest {
 
     @Test
     public void testGenerateVIN() {
-        final VINGenerator generator = new VINGenerator(new Random());
+        final VINGenerator generator = new VINGenerator(new SecureRandom());
         final String vin = generator.random();
         assertNotNull(vin);
         assertEquals(17, vin.length());
@@ -33,7 +34,7 @@ public class VINGeneratorTest {
 
     @Test
     public void testPoolSize() {
-        final VINGenerator generator = new VINGenerator(new Random());
+        final VINGenerator generator = new VINGenerator(new SecureRandom());
         assertEquals(Long.MAX_VALUE, generator.poolSize());
     }
 

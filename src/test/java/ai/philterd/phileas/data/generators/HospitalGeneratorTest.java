@@ -18,16 +18,18 @@ package ai.philterd.phileas.data.generators;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.security.SecureRandom;
 import java.util.Collections;
-import java.util.Random;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class HospitalGeneratorTest {
 
     @Test
     public void testGenerateHospital() {
-        final HospitalGenerator generator = new HospitalGenerator(Collections.singletonList("General Hospital"), new Random());
+        final HospitalGenerator generator = new HospitalGenerator(Collections.singletonList("General Hospital"), new SecureRandom());
         final String hospital = generator.random();
         assertNotNull(hospital);
         assertEquals("General Hospital", hospital);
@@ -43,7 +45,7 @@ public class HospitalGeneratorTest {
 
     @Test
     public void testPoolSize() {
-        final HospitalGenerator generator = new HospitalGenerator(Collections.singletonList("General Hospital"), new Random());
+        final HospitalGenerator generator = new HospitalGenerator(Collections.singletonList("General Hospital"), new SecureRandom());
         assertEquals(1, generator.poolSize());
     }
 

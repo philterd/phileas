@@ -15,9 +15,9 @@
  */
 package ai.philterd.phileas.filters.rules.regex;
 
-import ai.philterd.phileas.model.filtering.FilterType;
 import ai.philterd.phileas.filters.FilterConfiguration;
 import ai.philterd.phileas.filters.rules.RulesFilter;
+import ai.philterd.phileas.model.filtering.FilterType;
 import ai.philterd.phileas.services.Analyzer;
 
 /**

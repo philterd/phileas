@@ -17,15 +17,17 @@ package ai.philterd.phileas.data.generators;
 
 import org.junit.jupiter.api.Test;
 
-import java.util.Random;
+import java.security.SecureRandom;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class PassportNumberGeneratorTest {
 
     @Test
     public void testGeneratePassportNumber() {
-        final PassportNumberGenerator generator = new PassportNumberGenerator(new Random());
+        final PassportNumberGenerator generator = new PassportNumberGenerator(new SecureRandom());
         final String passport = generator.random();
         assertNotNull(passport);
         assertTrue(passport.matches("[A-Z]\\d{8}"));
@@ -33,7 +35,7 @@ public class PassportNumberGeneratorTest {
 
     @Test
     public void testPoolSize() {
-        final PassportNumberGenerator generator = new PassportNumberGenerator(new Random());
+        final PassportNumberGenerator generator = new PassportNumberGenerator(new SecureRandom());
         assertEquals(2600000000L, generator.poolSize());
     }
 }

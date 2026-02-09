@@ -6,8 +6,8 @@ import ai.philterd.phileas.model.filtering.SensitivityLevel;
 import ai.philterd.phileas.services.context.DefaultContextService;
 import ai.philterd.phileas.services.filters.regex.SsnFilter;
 import ai.philterd.phileas.services.strategies.AbstractFilterStrategy;
-import ai.philterd.phileas.services.strategies.rules.SsnFilterStrategy;
 import ai.philterd.phileas.services.strategies.dynamic.FirstNameFilterStrategy;
+import ai.philterd.phileas.services.strategies.rules.SsnFilterStrategy;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

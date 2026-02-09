@@ -17,22 +17,23 @@ package ai.philterd.phileas.data.generators;
 
 import org.junit.jupiter.api.Test;
 
-import java.util.Random;
+import java.security.SecureRandom;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class AgeGeneratorTest {
 
     @Test
     public void testGenerateAge() {
-        final AgeGenerator generator = new AgeGenerator(new Random());
+        final AgeGenerator generator = new AgeGenerator(new SecureRandom());
         final int age = generator.random();
         assertTrue(age >= 0 && age <= 100, "Age should be between 0 and 100");
     }
 
     @Test
     public void testPoolSize() {
-        final AgeGenerator generator = new AgeGenerator(new Random());
+        final AgeGenerator generator = new AgeGenerator(new SecureRandom());
         assertEquals(101L, generator.poolSize());
     }
 

@@ -17,16 +17,17 @@ package ai.philterd.phileas.data.generators;
 
 import org.junit.jupiter.api.Test;
 
+import java.security.SecureRandom;
 import java.util.Collections;
-import java.util.Random;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class SurnameGeneratorTest {
 
     @Test
     public void testGenerateSurname() {
-        final SurnameGenerator generator = new SurnameGenerator(Collections.singletonList("Doe"), new Random());
+        final SurnameGenerator generator = new SurnameGenerator(Collections.singletonList("Doe"), new SecureRandom());
         final String surname = generator.random();
         assertNotNull(surname, "Surname should not be null");
         assertEquals("Doe", surname);
@@ -34,7 +35,7 @@ public class SurnameGeneratorTest {
 
     @Test
     public void testPoolSize() {
-        final SurnameGenerator generator = new SurnameGenerator(Collections.singletonList("Doe"), new Random());
+        final SurnameGenerator generator = new SurnameGenerator(Collections.singletonList("Doe"), new SecureRandom());
         assertEquals(1, generator.poolSize());
     }
 

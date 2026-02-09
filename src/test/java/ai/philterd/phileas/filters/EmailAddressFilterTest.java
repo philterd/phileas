@@ -18,13 +18,11 @@ package ai.philterd.phileas.filters;
 import ai.philterd.phileas.model.filtering.FilterType;
 import ai.philterd.phileas.model.filtering.Filtered;
 import ai.philterd.phileas.policy.Policy;
-import ai.philterd.phileas.services.context.DefaultContextService;
 import ai.philterd.phileas.services.filters.regex.EmailAddressFilter;
 import ai.philterd.phileas.services.strategies.rules.EmailAddressFilterStrategy;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.security.SecureRandom;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;

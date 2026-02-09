@@ -17,16 +17,19 @@ package ai.philterd.phileas.data.generators;
 
 import org.junit.jupiter.api.Test;
 
-import java.util.Random;
+import java.security.SecureRandom;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CustomIdGeneratorTest {
 
     @Test
     public void testGenerateCustomId() {
         final String pattern = "123-ABC-abc";
-        final CustomIdGenerator generator = new CustomIdGenerator(new Random(), pattern);
+        final CustomIdGenerator generator = new CustomIdGenerator(new SecureRandom(), pattern);
         final String id = generator.random();
         
         assertNotNull(id);
@@ -48,19 +51,19 @@ public class CustomIdGeneratorTest {
 
     @Test
     public void testPoolSize() {
-        final CustomIdGenerator generator1 = new CustomIdGenerator(new Random(), "123");
+        final CustomIdGenerator generator1 = new CustomIdGenerator(new SecureRandom(), "123");
         assertEquals(1000L, generator1.poolSize());
 
-        final CustomIdGenerator generator2 = new CustomIdGenerator(new Random(), "ABC");
+        final CustomIdGenerator generator2 = new CustomIdGenerator(new SecureRandom(), "ABC");
         assertEquals(26L * 26L * 26L, generator2.poolSize());
 
-        final CustomIdGenerator generator3 = new CustomIdGenerator(new Random(), "1A-");
+        final CustomIdGenerator generator3 = new CustomIdGenerator(new SecureRandom(), "1A-");
         assertEquals(10L * 26L, generator3.poolSize());
     }
 
     @Test
     public void testNullPattern() {
-        final CustomIdGenerator generator = new CustomIdGenerator(new Random(), null);
+        final CustomIdGenerator generator = new CustomIdGenerator(new SecureRandom(), null);
         assertNull(generator.random());
         assertEquals(0, generator.poolSize());
     }

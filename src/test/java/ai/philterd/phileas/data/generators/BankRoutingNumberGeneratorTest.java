@@ -17,15 +17,17 @@ package ai.philterd.phileas.data.generators;
 
 import org.junit.jupiter.api.Test;
 
-import java.util.Random;
+import java.security.SecureRandom;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class BankRoutingNumberGeneratorTest {
 
     @Test
     public void testGenerateBankRoutingNumber() {
-        final BankRoutingNumberGenerator generator = new BankRoutingNumberGenerator(new Random());
+        final BankRoutingNumberGenerator generator = new BankRoutingNumberGenerator(new SecureRandom());
         final String routingNumber = generator.random();
         assertNotNull(routingNumber);
         assertEquals(9, routingNumber.length());
@@ -34,7 +36,7 @@ public class BankRoutingNumberGeneratorTest {
 
     @Test
     public void testPoolSize() {
-        final BankRoutingNumberGenerator generator = new BankRoutingNumberGenerator(new Random());
+        final BankRoutingNumberGenerator generator = new BankRoutingNumberGenerator(new SecureRandom());
         assertEquals(1000000000L, generator.poolSize());
     }
 }

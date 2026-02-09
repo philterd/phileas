@@ -17,17 +17,20 @@ package ai.philterd.phileas.data.generators;
 
 import org.junit.jupiter.api.Test;
 
+import java.security.SecureRandom;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Random;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class StateGeneratorTest {
 
     @Test
     public void testGenerateState() {
-        final StateGenerator generator = new StateGenerator(new Random());
+        final StateGenerator generator = new StateGenerator(new SecureRandom());
         final String state = generator.random();
         assertNotNull(state);
         assertFalse(state.isEmpty());
@@ -36,14 +39,14 @@ public class StateGeneratorTest {
     @Test
     public void testCustomPools() {
         final List<String> customStates = Arrays.asList("Confusion", "Disbelief");
-        final StateGenerator stateGenerator = new StateGenerator(new Random(), customStates);
+        final StateGenerator stateGenerator = new StateGenerator(new SecureRandom(), customStates);
         assertTrue(customStates.contains(stateGenerator.random()));
         assertEquals(2, stateGenerator.poolSize());
     }
 
     @Test
     public void testPoolSize() {
-        final StateGenerator generator = new StateGenerator(new Random());
+        final StateGenerator generator = new StateGenerator(new SecureRandom());
         assertEquals(50L, generator.poolSize());
     }
 }

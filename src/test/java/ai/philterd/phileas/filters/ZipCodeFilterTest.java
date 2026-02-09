@@ -18,18 +18,14 @@ package ai.philterd.phileas.filters;
 import ai.philterd.phileas.model.filtering.FilterType;
 import ai.philterd.phileas.model.filtering.Filtered;
 import ai.philterd.phileas.model.filtering.Span;
-import ai.philterd.phileas.services.anonymization.AnonymizationMethod;
-import ai.philterd.phileas.services.context.DefaultContextService;
 import ai.philterd.phileas.services.filters.regex.ZipCodeFilter;
 import ai.philterd.phileas.services.strategies.rules.ZipCodeFilterStrategy;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.security.SecureRandom;
 import java.util.List;
 
 import static ai.philterd.phileas.services.strategies.AbstractFilterStrategy.RANDOM_REPLACE;
-import static ai.philterd.phileas.services.strategies.AbstractFilterStrategy.REDACT;
 
 public class ZipCodeFilterTest extends AbstractFilterTest {
     

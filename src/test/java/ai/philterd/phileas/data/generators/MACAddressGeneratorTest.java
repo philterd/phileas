@@ -17,15 +17,17 @@ package ai.philterd.phileas.data.generators;
 
 import org.junit.jupiter.api.Test;
 
-import java.util.Random;
+import java.security.SecureRandom;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MACAddressGeneratorTest {
 
     @Test
     public void testGenerateMACAddress() {
-        final MACAddressGenerator generator = new MACAddressGenerator(new Random());
+        final MACAddressGenerator generator = new MACAddressGenerator(new SecureRandom());
         final String mac = generator.random();
         assertNotNull(mac);
         assertTrue(mac.matches("([0-9A-F]{2}:){5}[0-9A-F]{2}"));
@@ -33,7 +35,7 @@ public class MACAddressGeneratorTest {
 
     @Test
     public void testPoolSize() {
-        final MACAddressGenerator generator = new MACAddressGenerator(new Random());
+        final MACAddressGenerator generator = new MACAddressGenerator(new SecureRandom());
         assertEquals(281474976710656L, generator.poolSize());
     }
 

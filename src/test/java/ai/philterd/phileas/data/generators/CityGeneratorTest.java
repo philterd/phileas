@@ -17,16 +17,17 @@ package ai.philterd.phileas.data.generators;
 
 import org.junit.jupiter.api.Test;
 
+import java.security.SecureRandom;
 import java.util.Collections;
-import java.util.Random;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class CityGeneratorTest {
 
     @Test
     public void testGenerateCity() {
-        final CityGenerator generator = new CityGenerator(Collections.singletonList("New York"), new Random());
+        final CityGenerator generator = new CityGenerator(Collections.singletonList("New York"), new SecureRandom());
         final String city = generator.random();
         assertNotNull(city);
         assertEquals("New York", city);
@@ -34,7 +35,7 @@ public class CityGeneratorTest {
 
     @Test
     public void testPoolSize() {
-        final CityGenerator generator = new CityGenerator(Collections.singletonList("New York"), new Random());
+        final CityGenerator generator = new CityGenerator(Collections.singletonList("New York"), new SecureRandom());
         assertEquals(1, generator.poolSize());
     }
 

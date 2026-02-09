@@ -17,15 +17,17 @@ package ai.philterd.phileas.data.generators;
 
 import org.junit.jupiter.api.Test;
 
-import java.util.Random;
+import java.security.SecureRandom;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class IPAddressGeneratorTest {
 
     @Test
     public void testGenerateIPAddress() {
-        final IPAddressGenerator generator = new IPAddressGenerator(new Random());
+        final IPAddressGenerator generator = new IPAddressGenerator(new SecureRandom());
         final String ip = generator.random();
         assertNotNull(ip);
         assertTrue(ip.matches("\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}"));
@@ -33,7 +35,7 @@ public class IPAddressGeneratorTest {
 
     @Test
     public void testPoolSize() {
-        final IPAddressGenerator generator = new IPAddressGenerator(new Random());
+        final IPAddressGenerator generator = new IPAddressGenerator(new SecureRandom());
         assertEquals(4294967296L, generator.poolSize());
     }
 

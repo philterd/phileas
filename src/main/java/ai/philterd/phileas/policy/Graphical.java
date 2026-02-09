@@ -15,9 +15,9 @@
  */
 package ai.philterd.phileas.policy;
 
+import ai.philterd.phileas.policy.graphical.BoundingBox;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
-import ai.philterd.phileas.policy.graphical.BoundingBox;
 
 import java.util.Collections;
 import java.util.List;

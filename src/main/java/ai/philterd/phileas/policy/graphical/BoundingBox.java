@@ -15,10 +15,9 @@
  */
 package ai.philterd.phileas.policy.graphical;
 
+import ai.philterd.phileas.policy.filters.AbstractFilter;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
-import ai.philterd.phileas.model.filtering.MimeType;
-import ai.philterd.phileas.policy.filters.AbstractFilter;
 
 public class BoundingBox extends AbstractFilter {
 

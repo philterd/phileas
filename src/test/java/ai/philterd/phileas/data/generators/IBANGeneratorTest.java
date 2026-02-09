@@ -17,15 +17,17 @@ package ai.philterd.phileas.data.generators;
 
 import org.junit.jupiter.api.Test;
 
-import java.util.Random;
+import java.security.SecureRandom;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class IBANGeneratorTest {
 
     @Test
     public void testGenerateIBAN() {
-        final IBANGenerator generator = new IBANGenerator(new Random());
+        final IBANGenerator generator = new IBANGenerator(new SecureRandom());
         final String iban = generator.random();
         assertNotNull(iban);
         assertTrue(iban.startsWith("US"));
@@ -34,7 +36,7 @@ public class IBANGeneratorTest {
 
     @Test
     public void testPoolSize() {
-        final IBANGenerator generator = new IBANGenerator(new Random());
+        final IBANGenerator generator = new IBANGenerator(new SecureRandom());
         assertEquals(Long.MAX_VALUE, generator.poolSize());
     }
 

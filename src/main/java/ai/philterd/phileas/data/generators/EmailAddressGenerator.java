@@ -18,6 +18,7 @@ package ai.philterd.phileas.data.generators;
 import ai.philterd.phileas.data.DataGenerator;
 
 import java.io.IOException;
+import java.security.SecureRandom;
 import java.util.Random;
 
 public class EmailAddressGenerator extends AbstractGenerator<String> {
@@ -28,7 +29,7 @@ public class EmailAddressGenerator extends AbstractGenerator<String> {
     private static final String[] DEFAULT_DOMAINS = {"gmail.com", "yahoo.com", "hotmail.com", "outlook.com", "example.com"};
 
     public EmailAddressGenerator() throws IOException {
-        this(new Random());
+        this(new SecureRandom());
     }
 
     public EmailAddressGenerator(final Random random) throws IOException {

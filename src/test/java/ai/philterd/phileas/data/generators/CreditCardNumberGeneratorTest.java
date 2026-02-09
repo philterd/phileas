@@ -17,15 +17,17 @@ package ai.philterd.phileas.data.generators;
 
 import org.junit.jupiter.api.Test;
 
-import java.util.Random;
+import java.security.SecureRandom;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CreditCardNumberGeneratorTest {
 
     @Test
     public void testGenerateCreditCardNumber() {
-        final CreditCardNumberGenerator generator = new CreditCardNumberGenerator(new Random());
+        final CreditCardNumberGenerator generator = new CreditCardNumberGenerator(new SecureRandom());
         final String cc = generator.random();
         assertNotNull(cc);
         assertTrue(cc.matches("\\d{4}-\\d{4}-\\d{4}-\\d{4}"));
@@ -33,7 +35,7 @@ public class CreditCardNumberGeneratorTest {
 
     @Test
     public void testGenerateValidCreditCardNumber() {
-        final CreditCardNumberGenerator validGenerator = new CreditCardNumberGenerator(new Random(), true);
+        final CreditCardNumberGenerator validGenerator = new CreditCardNumberGenerator(new SecureRandom(), true);
         
         for (int i = 0; i < 100; i++) {
             final String cc = validGenerator.random();
@@ -43,10 +45,10 @@ public class CreditCardNumberGeneratorTest {
 
     @Test
     public void testPoolSize() {
-        final CreditCardNumberGenerator generator = new CreditCardNumberGenerator(new Random());
+        final CreditCardNumberGenerator generator = new CreditCardNumberGenerator(new SecureRandom());
         assertEquals(10000L * 10000L * 10000L * 10000L, generator.poolSize());
 
-        final CreditCardNumberGenerator validGenerator = new CreditCardNumberGenerator(new Random(), true);
+        final CreditCardNumberGenerator validGenerator = new CreditCardNumberGenerator(new SecureRandom(), true);
         assertEquals(1000000000000000L, validGenerator.poolSize());
     }
 

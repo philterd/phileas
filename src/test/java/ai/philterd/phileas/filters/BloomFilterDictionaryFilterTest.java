@@ -19,14 +19,12 @@ import ai.philterd.phileas.filters.rules.dictionary.BloomFilterDictionaryFilter;
 import ai.philterd.phileas.model.filtering.FilterType;
 import ai.philterd.phileas.model.filtering.Filtered;
 import ai.philterd.phileas.model.filtering.Span;
-import ai.philterd.phileas.services.context.DefaultContextService;
 import ai.philterd.phileas.services.strategies.custom.CustomDictionaryFilterStrategy;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.security.SecureRandom;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;

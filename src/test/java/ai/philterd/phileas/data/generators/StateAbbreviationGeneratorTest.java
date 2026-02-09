@@ -17,17 +17,19 @@ package ai.philterd.phileas.data.generators;
 
 import org.junit.jupiter.api.Test;
 
+import java.security.SecureRandom;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Random;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class StateAbbreviationGeneratorTest {
 
     @Test
     public void testGenerateStateAbbreviation() {
-        final StateAbbreviationGenerator generator = new StateAbbreviationGenerator(new Random());
+        final StateAbbreviationGenerator generator = new StateAbbreviationGenerator(new SecureRandom());
         final String abbreviation = generator.random();
         assertNotNull(abbreviation);
         assertEquals(2, abbreviation.length());
@@ -36,14 +38,14 @@ public class StateAbbreviationGeneratorTest {
     @Test
     public void testCustomPools() {
         final List<String> customAbbreviations = Arrays.asList("CF", "DB");
-        final StateAbbreviationGenerator abbreviationGenerator = new StateAbbreviationGenerator(new Random(), customAbbreviations);
+        final StateAbbreviationGenerator abbreviationGenerator = new StateAbbreviationGenerator(new SecureRandom(), customAbbreviations);
         assertTrue(customAbbreviations.contains(abbreviationGenerator.random()));
         assertEquals(2, abbreviationGenerator.poolSize());
     }
 
     @Test
     public void testPoolSize() {
-        final StateAbbreviationGenerator generator = new StateAbbreviationGenerator(new Random());
+        final StateAbbreviationGenerator generator = new StateAbbreviationGenerator(new SecureRandom());
         assertEquals(50L, generator.poolSize());
     }
 

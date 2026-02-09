@@ -15,6 +15,7 @@
  */
 package ai.philterd.phileas.data.generators;
 
+import java.security.SecureRandom;
 import java.util.Random;
 
 /**
@@ -30,7 +31,7 @@ public class CustomIdGenerator extends AbstractGenerator<String> {
      * @param pattern The pattern to use for generation.
      */
     public CustomIdGenerator(final String pattern) {
-        this(new Random(), pattern);
+        this(new SecureRandom(), pattern);
     }
 
     /**

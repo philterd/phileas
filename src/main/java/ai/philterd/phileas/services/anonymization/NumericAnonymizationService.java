@@ -15,9 +15,8 @@
  */
 package ai.philterd.phileas.services.anonymization;
 
-import org.apache.commons.collections4.CollectionUtils;
-
 import ai.philterd.phileas.services.context.ContextService;
+import org.apache.commons.collections4.CollectionUtils;
 
 import java.util.List;
 import java.util.Random;

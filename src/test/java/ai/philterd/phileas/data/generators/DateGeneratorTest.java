@@ -17,16 +17,18 @@ package ai.philterd.phileas.data.generators;
 
 import org.junit.jupiter.api.Test;
 
+import java.security.SecureRandom;
 import java.time.LocalDate;
-import java.util.Random;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class DateGeneratorTest {
 
     @Test
     public void testGenerateDate() {
-        final DateGenerator generator = new DateGenerator(new Random());
+        final DateGenerator generator = new DateGenerator(new SecureRandom());
         final String date = generator.random();
         assertNotNull(date);
         assertTrue(date.matches("\\d{4}-\\d{2}-\\d{2}"));
@@ -34,7 +36,7 @@ public class DateGeneratorTest {
 
     @Test
     public void testDateGeneratorDefaultConstructor() {
-        final DateGenerator generator = new DateGenerator(new Random());
+        final DateGenerator generator = new DateGenerator(new SecureRandom());
         assertNotNull(generator.random());
         assertTrue(generator.poolSize() > 0);
     }
@@ -43,7 +45,7 @@ public class DateGeneratorTest {
     public void testGenerateDateWithBounds() {
         final int minYear = 2000;
         final int maxYear = 2010;
-        final DateGenerator boundedGenerator = new DateGenerator(new Random(), minYear, maxYear);
+        final DateGenerator boundedGenerator = new DateGenerator(new SecureRandom(), minYear, maxYear);
         
         for (int i = 0; i < 100; i++) {
             final String dateStr = boundedGenerator.random();
@@ -56,14 +58,14 @@ public class DateGeneratorTest {
 
     @Test
     public void testPoolSize() {
-        final DateGenerator generator = new DateGenerator(new Random());
+        final DateGenerator generator = new DateGenerator(new SecureRandom());
         assertTrue(generator.poolSize() >= 60L * 365L);
     }
 
     @Test
     public void testLeapYearDate() {
         // 2024 is a leap year.
-        final DateGenerator generator = new DateGenerator(new Random(), 2024, 2025);
+        final DateGenerator generator = new DateGenerator(new SecureRandom(), 2024, 2025);
         boolean foundFeb29 = false;
         boolean foundDec31 = false;
         for (int i = 0; i < 10000; i++) {
@@ -82,7 +84,7 @@ public class DateGeneratorTest {
     @Test
     public void testNonLeapYearDate() {
         // 2023 is not a leap year.
-        final DateGenerator generator = new DateGenerator(new Random(), 2023, 2024);
+        final DateGenerator generator = new DateGenerator(new SecureRandom(), 2023, 2024);
         for (int i = 0; i < 10000; i++) {
             final String dateStr = generator.random();
             assertFalse(dateStr.endsWith("-02-29"), "Feb 29 should not be possible in a non-leap year: " + dateStr);
@@ -93,7 +95,7 @@ public class DateGeneratorTest {
     @Test
     public void testCustomDateFormat() {
         final String pattern = "MM/dd/yyyy";
-        final DateGenerator generator = new DateGenerator(new Random(), 2020, 2021, pattern);
+        final DateGenerator generator = new DateGenerator(new SecureRandom(), 2020, 2021, pattern);
         final String date = generator.random();
         assertNotNull(date);
         assertTrue(date.matches("\\d{2}/\\d{2}/\\d{4}"));
