@@ -1,0 +1,50 @@
+/*
+ * Copyright 2026 Philterd, LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package ai.philterd.phileas.data.generators;
+
+import org.junit.Test;
+
+import java.io.IOException;
+import java.util.Collections;
+import java.util.Random;
+
+import static org.junit.Assert.*;
+
+public class HospitalGeneratorTest {
+
+    @Test
+    public void testGenerateHospital() {
+        final HospitalGenerator generator = new HospitalGenerator(Collections.singletonList("General Hospital"), new Random());
+        final String hospital = generator.random();
+        assertNotNull(hospital);
+        assertEquals("General Hospital", hospital);
+    }
+
+    @Test
+    public void testHospitalGeneratorDefaultConstructor() throws IOException {
+        final HospitalGenerator generator = new HospitalGenerator();
+        final String hospital = generator.random();
+        assertNotNull(hospital);
+        assertFalse(hospital.isEmpty());
+    }
+
+    @Test
+    public void testPoolSize() {
+        final HospitalGenerator generator = new HospitalGenerator(Collections.singletonList("General Hospital"), new Random());
+        assertEquals(1, generator.poolSize());
+    }
+
+}
