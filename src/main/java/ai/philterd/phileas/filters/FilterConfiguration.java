@@ -22,6 +22,7 @@ import ai.philterd.phileas.services.context.ContextService;
 import ai.philterd.phileas.services.strategies.AbstractFilterStrategy;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 
 import java.util.List;
 import java.util.Random;
@@ -112,7 +113,7 @@ public class FilterConfiguration {
 
                 for (final AbstractFilterStrategy strategy : strategies) {
 
-                    if (StringUtils.equalsIgnoreCase(FPE_ENCRYPT_REPLACE, strategy.getStrategy())) {
+                    if (Strings.CI.equals(FPE_ENCRYPT_REPLACE, strategy.getStrategy())) {
 
                         if (this.fpe != null) {
 
@@ -128,7 +129,7 @@ public class FilterConfiguration {
                             throw new RuntimeException("Invalid configuration for filter: Missing FPE encryption property.");
                         }
 
-                    } else if (StringUtils.equalsIgnoreCase(CRYPTO_REPLACE, strategy.getStrategy())) {
+                    } else if (Strings.CI.equals(CRYPTO_REPLACE, strategy.getStrategy())) {
 
                         if (this.crypto != null) {
 

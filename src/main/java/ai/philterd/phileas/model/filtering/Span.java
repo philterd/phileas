@@ -22,6 +22,7 @@ import com.google.gson.Gson;
 import com.google.gson.annotations.Expose;
 import org.apache.commons.lang3.Range;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
@@ -358,7 +359,7 @@ public final class Span {
 
             for(final Annotation annotation : view.getAnnotations()) {
 
-                if(StringUtils.equalsIgnoreCase(Lapps.NAMED_ENTITY, annotation.getType())) {
+                if(Strings.CI.equals(Lapps.NAMED_ENTITY, annotation.getType())) {
 
                     if(annotation.getFeatures() != null) {
 
@@ -368,7 +369,7 @@ public final class Span {
                         span.setCharacterEnd(annotation.getEnd());
                         span.setText(lapps.getText().getValue().substring(annotation.getStart(), annotation.getEnd()));
 
-                        if(StringUtils.equalsIgnoreCase("PER", annotation.getFeatures().getCategory())) {
+                        if(Strings.CI.equals("PER", annotation.getFeatures().getCategory())) {
 
                             span.setFilterType(FilterType.PERSON);
                             span.setClassification("PER");

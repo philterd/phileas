@@ -25,7 +25,6 @@ import ai.philterd.phileas.policy.filters.Date;
 import ai.philterd.phileas.policy.filters.EmailAddress;
 import ai.philterd.phileas.policy.filters.FirstName;
 import ai.philterd.phileas.policy.filters.Hospital;
-import ai.philterd.phileas.policy.filters.HospitalAbbreviation;
 import ai.philterd.phileas.policy.filters.Identifier;
 import ai.philterd.phileas.policy.filters.IpAddress;
 import ai.philterd.phileas.policy.filters.PhEye;
@@ -43,7 +42,6 @@ import ai.philterd.phileas.services.strategies.custom.CustomDictionaryFilterStra
 import ai.philterd.phileas.services.strategies.dynamic.CityFilterStrategy;
 import ai.philterd.phileas.services.strategies.dynamic.CountyFilterStrategy;
 import ai.philterd.phileas.services.strategies.dynamic.FirstNameFilterStrategy;
-import ai.philterd.phileas.services.strategies.dynamic.HospitalAbbreviationFilterStrategy;
 import ai.philterd.phileas.services.strategies.dynamic.HospitalFilterStrategy;
 import ai.philterd.phileas.services.strategies.dynamic.StateFilterStrategy;
 import ai.philterd.phileas.services.strategies.dynamic.SurnameFilterStrategy;
@@ -406,9 +404,6 @@ public class PolicyTest {
         Hospital hospital = new Hospital();
         hospital.setHospitalFilterStrategies(List.of(new HospitalFilterStrategy()));
 
-        HospitalAbbreviation hospitalAbbreviation = new HospitalAbbreviation();
-        hospitalAbbreviation.setHospitalAbbreviationFilterStrategies(List.of(new HospitalAbbreviationFilterStrategy()));
-
         Identifier identifier = new Identifier();
         identifier.setIdentifierFilterStrategies(List.of(new IdentifierFilterStrategy()));
 
@@ -460,7 +455,6 @@ public class PolicyTest {
         identifiers.setEmailAddress(emailAddress);
         identifiers.setFirstName(firstName);
         identifiers.setHospital(hospital);
-        identifiers.setHospitalAbbreviation(hospitalAbbreviation);
         identifiers.setIdentifiers(List.of(identifier));
         identifiers.setIpAddress(ipAddress);
         identifiers.setPerson(phEye);

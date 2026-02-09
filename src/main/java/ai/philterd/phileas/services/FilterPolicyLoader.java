@@ -1068,46 +1068,6 @@ public class FilterPolicyLoader {
 
         }
 
-        if(policy.getIdentifiers().hasFilter(FilterType.HOSPITAL_ABBREVIATION) && policy.getIdentifiers().getHospitalAbbreviation().isEnabled()) {
-
-            if(cache.containsKey(FilterType.HOSPITAL_ABBREVIATION)) {
-                enabledFilters.add(cache.get(FilterType.HOSPITAL_ABBREVIATION));
-            } else {
-
-                final int windowSize = policy.getIdentifiers().getHospitalAbbreviation().getWindowSizeOrDefault(phileasConfiguration.spanWindowSize());
-
-
-                final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
-                        .withStrategies(policy.getIdentifiers().getHospitalAbbreviation().getHospitalAbbreviationFilterStrategies())
-                        .withContextService(contextService)
-                        .withRandom(random)
-                        .withIgnored(policy.getIdentifiers().getHospitalAbbreviation().getIgnored())
-                        .withIgnoredFiles(policy.getIdentifiers().getHospitalAbbreviation().getIgnoredFiles())
-                        .withIgnoredPatterns(policy.getIdentifiers().getHospitalAbbreviation().getIgnoredPatterns())
-                        .withCrypto(policy.getCrypto())
-                        .withWindowSize(windowSize)
-                        .withPriority(policy.getIdentifiers().getHospitalAbbreviation().getPriority())
-                        .build();
-
-                final Filter filter;
-
-                if(policy.getIdentifiers().getHospitalAbbreviation().isFuzzy()) {
-
-                    final SensitivityLevel sensitivityLevel = policy.getIdentifiers().getHospitalAbbreviation().getSensitivityLevel();
-                    final boolean capitalized = policy.getIdentifiers().getHospitalAbbreviation().isCapitalized();
-                    filter = new FuzzyDictionaryFilter(FilterType.HOSPITAL_ABBREVIATION, filterConfiguration, sensitivityLevel, capitalized);
-
-                } else {
-                    filter = new BloomFilterDictionaryFilter(FilterType.HOSPITAL_ABBREVIATION, filterConfiguration);
-                }
-
-                enabledFilters.add(filter);
-                filterCache.get(policy.getName()).put(FilterType.HOSPITAL_ABBREVIATION, filter);
-
-            }
-
-        }
-
         if(policy.getIdentifiers().hasFilter(FilterType.FIRST_NAME) && policy.getIdentifiers().getFirstName().isEnabled()) {
 
             if(cache.containsKey(FilterType.FIRST_NAME)) {

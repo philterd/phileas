@@ -29,7 +29,6 @@ import ai.philterd.phileas.policy.filters.DriversLicense;
 import ai.philterd.phileas.policy.filters.EmailAddress;
 import ai.philterd.phileas.policy.filters.FirstName;
 import ai.philterd.phileas.policy.filters.Hospital;
-import ai.philterd.phileas.policy.filters.HospitalAbbreviation;
 import ai.philterd.phileas.policy.filters.IbanCode;
 import ai.philterd.phileas.policy.filters.Identifier;
 import ai.philterd.phileas.policy.filters.IpAddress;
@@ -178,10 +177,6 @@ public class Identifiers {
     @Expose
     private FirstName firstName;
 
-    @SerializedName("hospitalAbbreviation")
-    @Expose
-    private HospitalAbbreviation hospitalAbbreviation;
-
     @SerializedName("hospital")
     @Expose
     private Hospital hospital;
@@ -234,8 +229,6 @@ public class Identifiers {
                 if(this.getFirstName() != null) { return true; } break;
             case HOSPITAL:
                 if(this.getHospital() != null) { return true; } break;
-            case HOSPITAL_ABBREVIATION:
-                if(this.getHospitalAbbreviation() != null) { return true; } break;
             case IBAN_CODE:
                 if(this.getIbanCode() != null) { return true; } break;
             case IDENTIFIER:
@@ -401,14 +394,6 @@ public class Identifiers {
 
     public void setFirstName(FirstName firstName) {
         this.firstName = firstName;
-    }
-
-    public HospitalAbbreviation getHospitalAbbreviation() {
-        return hospitalAbbreviation;
-    }
-
-    public void setHospitalAbbreviation(HospitalAbbreviation hospitalAbbreviation) {
-        this.hospitalAbbreviation = hospitalAbbreviation;
     }
 
     public Hospital getHospital() {

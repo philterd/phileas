@@ -26,7 +26,7 @@ import ai.philterd.phileas.model.filtering.Span;
 import ai.philterd.phileas.policy.Policy;
 import ai.philterd.phileas.services.Analyzer;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -109,7 +109,7 @@ public abstract class RulesFilter extends Filter {
 
                                 if(modifier.getConfidenceCondition() == ConfidenceModifier.ConfidenceCondition.CHARACTER_SEQUENCE_BEFORE) {
                                     if(characterStart > 0) {
-                                        if (StringUtils.equalsIgnoreCase(String.valueOf(input.charAt(characterStart - 1)), modifier.getCharacters())) {
+                                        if (Strings.CI.equals(String.valueOf(input.charAt(characterStart - 1)), modifier.getCharacters())) {
                                             if(modifier.getConfidenceDelta() != 0) {
                                                 initialConfidence += modifier.getConfidenceDelta();
                                             } else {
@@ -121,7 +121,7 @@ public abstract class RulesFilter extends Filter {
 
                                 if(modifier.getConfidenceCondition() == ConfidenceModifier.ConfidenceCondition.CHARACTER_SEQUENCE_AFTER) {
                                     if(characterEnd < input.length()) {
-                                        if (StringUtils.equalsIgnoreCase(String.valueOf(input.charAt(characterEnd)), modifier.getCharacters())) {
+                                        if (Strings.CI.equals(String.valueOf(input.charAt(characterEnd)), modifier.getCharacters())) {
                                             if(modifier.getConfidenceDelta() != 0) {
                                                 initialConfidence += modifier.getConfidenceDelta();
                                             } else {
@@ -133,8 +133,8 @@ public abstract class RulesFilter extends Filter {
 
                                 if(modifier.getConfidenceCondition() == ConfidenceModifier.ConfidenceCondition.CHARACTER_SEQUENCE_SURROUNDING) {
                                     if(characterStart > 0 && characterEnd < input.length()) {
-                                        if (StringUtils.equalsIgnoreCase(String.valueOf(input.charAt(characterStart - 1)), modifier.getCharacters())) {
-                                            if (StringUtils.equalsIgnoreCase(String.valueOf(input.charAt(characterEnd)), modifier.getCharacters())) {
+                                        if (Strings.CI.equals(String.valueOf(input.charAt(characterStart - 1)), modifier.getCharacters())) {
+                                            if (Strings.CI.equals(String.valueOf(input.charAt(characterEnd)), modifier.getCharacters())) {
                                                 if(modifier.getConfidenceDelta() != 0) {
                                                     initialConfidence += modifier.getConfidenceDelta();
                                                 } else {
