@@ -55,6 +55,7 @@ import ai.philterd.phileas.services.filters.regex.VinFilter;
 import ai.philterd.phileas.services.filters.regex.ZipCodeFilter;
 import ai.philterd.phileas.services.validators.DateSpanValidator;
 import ai.philterd.phileas.services.validators.SpanValidator;
+import com.google.gson.Gson;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.hc.client5.http.classic.HttpClient;
@@ -63,6 +64,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -79,6 +81,7 @@ public class FilterPolicyLoader {
     private final PhileasConfiguration phileasConfiguration;
     private final Random random;
     private final HttpClient httpClient;
+    private final Gson gson;
 
     public FilterPolicyLoader(final ContextService contextService,
                               final PhileasConfiguration phileasConfiguration,
@@ -89,6 +92,7 @@ public class FilterPolicyLoader {
         this.phileasConfiguration = phileasConfiguration;
         this.random = random;
         this.httpClient = httpClient;
+        this.gson = new Gson();
 
     }
 
@@ -101,13 +105,15 @@ public class FilterPolicyLoader {
      */
     public List<Filter> getFiltersForPolicy(final Policy policy, final Map<String, Map<FilterType, Filter>> filterCache) throws Exception {
 
-        LOGGER.debug("Getting filters for policy [{}]", policy.getName());
+        LOGGER.debug("Getting filters for policy.");
+
+        final String policyKey = getFnv1a64(gson.toJson(policy));
 
         // See if this filter is already cached.
-        filterCache.putIfAbsent(policy.getName(), new ConcurrentHashMap<>());
+        filterCache.putIfAbsent(policyKey, new ConcurrentHashMap<>());
 
         // Each policy has its own filter cache.
-        final Map<FilterType, Filter> cache = filterCache.get(policy.getName());
+        final Map<FilterType, Filter> cache = filterCache.get(policyKey);
 
         final List<Filter> enabledFilters = new LinkedList<>();
 
@@ -136,7 +142,7 @@ public class FilterPolicyLoader {
 
                 final Filter filter = new AgeFilter(filterConfiguration);
                 enabledFilters.add(filter);
-                filterCache.get(policy.getName()).put(FilterType.AGE, filter);
+                filterCache.get(policyKey).put(FilterType.AGE, filter);
 
             }
 
@@ -166,7 +172,7 @@ public class FilterPolicyLoader {
 
                 final Filter filter = new BankRoutingNumberFilter(filterConfiguration);
                 enabledFilters.add(filter);
-                filterCache.get(policy.getName()).put(FilterType.BANK_ROUTING_NUMBER, filter);
+                filterCache.get(policyKey).put(FilterType.BANK_ROUTING_NUMBER, filter);
 
             }
 
@@ -196,7 +202,7 @@ public class FilterPolicyLoader {
 
                 final Filter filter = new BitcoinAddressFilter(filterConfiguration);
                 enabledFilters.add(filter);
-                filterCache.get(policy.getName()).put(FilterType.BITCOIN_ADDRESS, filter);
+                filterCache.get(policyKey).put(FilterType.BITCOIN_ADDRESS, filter);
 
             }
 
@@ -230,7 +236,7 @@ public class FilterPolicyLoader {
 
                 final Filter filter = new CreditCardFilter(filterConfiguration, onlyValidCreditCardNumbers, ignoreWhenInUnixTimestamp, onlyWordBoundaries);
                 enabledFilters.add(filter);
-                filterCache.get(policy.getName()).put(FilterType.CREDIT_CARD, filter);
+                filterCache.get(policyKey).put(FilterType.CREDIT_CARD, filter);
 
             }
 
@@ -259,7 +265,7 @@ public class FilterPolicyLoader {
 
                 final Filter filter = new CurrencyFilter(filterConfiguration);
                 enabledFilters.add(filter);
-                filterCache.get(policy.getName()).put(FilterType.CURRENCY, filter);
+                filterCache.get(policyKey).put(FilterType.CURRENCY, filter);
 
             }
 
@@ -291,7 +297,7 @@ public class FilterPolicyLoader {
 
                 final Filter filter = new DateFilter(filterConfiguration, onlyValidDates, dateSpanValidator);
                 enabledFilters.add(filter);
-                filterCache.get(policy.getName()).put(FilterType.DATE, filter);
+                filterCache.get(policyKey).put(FilterType.DATE, filter);
 
             }
 
@@ -321,7 +327,7 @@ public class FilterPolicyLoader {
 
                 final Filter filter = new DriversLicenseFilter(filterConfiguration);
                 enabledFilters.add(filter);
-                filterCache.get(policy.getName()).put(FilterType.DRIVERS_LICENSE_NUMBER, filter);
+                filterCache.get(policyKey).put(FilterType.DRIVERS_LICENSE_NUMBER, filter);
 
             }
 
@@ -354,7 +360,7 @@ public class FilterPolicyLoader {
 
                 final Filter filter = new EmailAddressFilter(filterConfiguration, isStrict, onlyValidTLDs);
                 enabledFilters.add(filter);
-                filterCache.get(policy.getName()).put(FilterType.EMAIL_ADDRESS, filter);
+                filterCache.get(policyKey).put(FilterType.EMAIL_ADDRESS, filter);
 
             }
 
@@ -387,7 +393,7 @@ public class FilterPolicyLoader {
 
                 final Filter filter = new IbanCodeFilter(filterConfiguration, onlyValidIBANCodes, allowSpaces);
                 enabledFilters.add(filter);
-                filterCache.get(policy.getName()).put(FilterType.IBAN_CODE, filter);
+                filterCache.get(policyKey).put(FilterType.IBAN_CODE, filter);
 
             }
 
@@ -417,7 +423,7 @@ public class FilterPolicyLoader {
 
                 final Filter filter = new IpAddressFilter(filterConfiguration);
                 enabledFilters.add(filter);
-                filterCache.get(policy.getName()).put(FilterType.IP_ADDRESS, filter);
+                filterCache.get(policyKey).put(FilterType.IP_ADDRESS, filter);
 
             }
 
@@ -447,7 +453,7 @@ public class FilterPolicyLoader {
 
                 final Filter filter = new MacAddressFilter(filterConfiguration);
                 enabledFilters.add(filter);
-                filterCache.get(policy.getName()).put(FilterType.MAC_ADDRESS, filter);
+                filterCache.get(policyKey).put(FilterType.MAC_ADDRESS, filter);
 
             }
 
@@ -477,7 +483,7 @@ public class FilterPolicyLoader {
 
                 final Filter filter = new PassportNumberFilter(filterConfiguration);
                 enabledFilters.add(filter);
-                filterCache.get(policy.getName()).put(FilterType.PASSPORT_NUMBER, filter);
+                filterCache.get(policyKey).put(FilterType.PASSPORT_NUMBER, filter);
 
             }
 
@@ -506,7 +512,7 @@ public class FilterPolicyLoader {
 
                 final Filter filter = new PhoneNumberExtensionFilter(filterConfiguration);
                 enabledFilters.add(filter);
-                filterCache.get(policy.getName()).put(FilterType.PHONE_NUMBER_EXTENSION, filter);
+                filterCache.get(policyKey).put(FilterType.PHONE_NUMBER_EXTENSION, filter);
 
             }
 
@@ -534,7 +540,7 @@ public class FilterPolicyLoader {
 
                 final Filter filter = new PhoneNumberRulesFilter(filterConfiguration);
                 enabledFilters.add(filter);
-                filterCache.get(policy.getName()).put(FilterType.PHONE_NUMBER, filter);
+                filterCache.get(policyKey).put(FilterType.PHONE_NUMBER, filter);
 
             }
 
@@ -563,7 +569,7 @@ public class FilterPolicyLoader {
 
                 final Filter filter = new PhysicianNameFilter(filterConfiguration);
                 enabledFilters.add(filter);
-                filterCache.get(policy.getName()).put(FilterType.PHYSICIAN_NAME, filter);
+                filterCache.get(policyKey).put(FilterType.PHYSICIAN_NAME, filter);
 
             }
 
@@ -626,7 +632,7 @@ public class FilterPolicyLoader {
 
                 final Filter filter = new SsnFilter(filterConfiguration);
                 enabledFilters.add(filter);
-                filterCache.get(policy.getName()).put(FilterType.SSN, filter);
+                filterCache.get(policyKey).put(FilterType.SSN, filter);
 
             }
 
@@ -655,7 +661,7 @@ public class FilterPolicyLoader {
 
                 final Filter filter = new StateAbbreviationFilter(filterConfiguration);
                 enabledFilters.add(filter);
-                filterCache.get(policy.getName()).put(FilterType.STATE_ABBREVIATION, filter);
+                filterCache.get(policyKey).put(FilterType.STATE_ABBREVIATION, filter);
 
             }
 
@@ -684,7 +690,7 @@ public class FilterPolicyLoader {
 
                 final Filter filter = new StreetAddressFilter(filterConfiguration);
                 enabledFilters.add(filter);
-                filterCache.get(policy.getName()).put(FilterType.STREET_ADDRESS, filter);
+                filterCache.get(policyKey).put(FilterType.STREET_ADDRESS, filter);
 
             }
 
@@ -718,7 +724,7 @@ public class FilterPolicyLoader {
 
                 final Filter filter = new TrackingNumberFilter(filterConfiguration, ups, fedex, usps);
                 enabledFilters.add(filter);
-                filterCache.get(policy.getName()).put(FilterType.TRACKING_NUMBER, filter);
+                filterCache.get(policyKey).put(FilterType.TRACKING_NUMBER, filter);
 
             }
 
@@ -750,7 +756,7 @@ public class FilterPolicyLoader {
 
                 final Filter filter = new UrlFilter(filterConfiguration, requireHttpWwwPrefix);
                 enabledFilters.add(filter);
-                filterCache.get(policy.getName()).put(FilterType.URL, filter);
+                filterCache.get(policyKey).put(FilterType.URL, filter);
 
             }
 
@@ -780,7 +786,7 @@ public class FilterPolicyLoader {
 
                 final Filter filter = new VinFilter(filterConfiguration);
                 enabledFilters.add(filter);
-                filterCache.get(policy.getName()).put(FilterType.VIN, filter);
+                filterCache.get(policyKey).put(FilterType.VIN, filter);
 
             }
 
@@ -813,7 +819,7 @@ public class FilterPolicyLoader {
 
                 final Filter filter = new ZipCodeFilter(filterConfiguration, requireDelimiter, validate);
                 enabledFilters.add(filter);
-                filterCache.get(policy.getName()).put(FilterType.ZIP_CODE, filter);
+                filterCache.get(policyKey).put(FilterType.ZIP_CODE, filter);
 
             }
 
@@ -823,7 +829,7 @@ public class FilterPolicyLoader {
 
         if(policy.getIdentifiers().hasFilter(FilterType.CUSTOM_DICTIONARY)) {
 
-            LOGGER.info("Policy {} has {} custom dictionaries.", policy.getName(), policy.getIdentifiers().getCustomDictionaries().size());
+            LOGGER.info("Policy {} has {} custom dictionaries.", policyKey, policy.getIdentifiers().getCustomDictionaries().size());
 
             // We keep track of the index of the custom dictionary in the list so we know
             // how to retrieve the strategy for the custom dictionary. This is because
@@ -899,7 +905,7 @@ public class FilterPolicyLoader {
 
         } else {
 
-            LOGGER.debug("Policy {} has no custom dictionaries.", policy.getName());
+            LOGGER.debug("Policy {} has no custom dictionaries.", policyKey);
 
         }
 
@@ -940,7 +946,7 @@ public class FilterPolicyLoader {
                 }
 
                 enabledFilters.add(filter);
-                filterCache.get(policy.getName()).put(FilterType.LOCATION_CITY, filter);
+                filterCache.get(policyKey).put(FilterType.LOCATION_CITY, filter);
 
             }
 
@@ -981,7 +987,7 @@ public class FilterPolicyLoader {
                 }
 
                 enabledFilters.add(filter);
-                filterCache.get(policy.getName()).put(FilterType.LOCATION_COUNTY, filter);
+                filterCache.get(policyKey).put(FilterType.LOCATION_COUNTY, filter);
 
             }
 
@@ -1022,7 +1028,7 @@ public class FilterPolicyLoader {
                 }
 
                 enabledFilters.add(filter);
-                filterCache.get(policy.getName()).put(FilterType.LOCATION_STATE, filter);
+                filterCache.get(policyKey).put(FilterType.LOCATION_STATE, filter);
 
             }
 
@@ -1062,7 +1068,7 @@ public class FilterPolicyLoader {
                 }
 
                 enabledFilters.add(filter);
-                filterCache.get(policy.getName()).put(FilterType.HOSPITAL, filter);
+                filterCache.get(policyKey).put(FilterType.HOSPITAL, filter);
 
             }
 
@@ -1103,7 +1109,7 @@ public class FilterPolicyLoader {
                 }
 
                 enabledFilters.add(filter);
-                filterCache.get(policy.getName()).put(FilterType.FIRST_NAME, filter);
+                filterCache.get(policyKey).put(FilterType.FIRST_NAME, filter);
 
             }
 
@@ -1144,7 +1150,7 @@ public class FilterPolicyLoader {
                 }
 
                 enabledFilters.add(filter);
-                filterCache.get(policy.getName()).put(FilterType.SURNAME, filter);
+                filterCache.get(policyKey).put(FilterType.SURNAME, filter);
 
             }
 
@@ -1233,7 +1239,7 @@ public class FilterPolicyLoader {
                 );
 
                 enabledFilters.add(filter);
-                filterCache.get(policy.getName()).put(FilterType.PERSON, filter);
+                filterCache.get(policyKey).put(FilterType.PERSON, filter);
 
             }
 
@@ -1277,13 +1283,30 @@ public class FilterPolicyLoader {
                 );
 
                 enabledFilters.add(filter);
-                filterCache.get(policy.getName()).put(FilterType.MEDICAL_CONDITION, filter);
+                filterCache.get(policyKey).put(FilterType.MEDICAL_CONDITION, filter);
 
             }
 
         }
 
         return enabledFilters;
+
+    }
+
+    public static String getFnv1a64(String input) {
+
+        final long FNV_OFFSET_BASIS = 0xcbf29ce484222325L;
+        final long FNV_PRIME = 0x100000001b3L;
+
+        long hash = FNV_OFFSET_BASIS;
+        final byte[] data = input.getBytes(StandardCharsets.UTF_8);
+
+        for (final byte b : data) {
+            hash ^= (b & 0xff);
+            hash *= FNV_PRIME;
+        }
+
+        return Long.toHexString(hash);
 
     }
 

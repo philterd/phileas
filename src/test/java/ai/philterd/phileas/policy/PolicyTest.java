@@ -358,22 +358,6 @@ public class PolicyTest {
 
     }
 
-    @Test
-    public void deserializeEmpty() {
-
-        final String json = """
-                {
-                  "identifiers": {
-                  }
-                }""";
-
-        Gson gson = new Gson();
-        Policy policy = gson.fromJson(json, Policy.class);
-
-        Assertions.assertEquals("unnamed", policy.getName());
-
-    }
-
     private Policy getPolicy() throws IOException {
 
         CustomDictionary customDictionary = new CustomDictionary();
@@ -473,7 +457,6 @@ public class PolicyTest {
         ignored.setTerms(Arrays.asList("term1", "term2"));
 
         Policy policy = new Policy();
-        policy.setName("default");
         policy.setIdentifiers(identifiers);
         policy.setIgnored(List.of(ignored));
 

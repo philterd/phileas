@@ -215,7 +215,6 @@ public class ZipCodeFilterStrategy extends AbstractFilterStrategy {
 
         }
 
-        System.out.println("Using replacement = " + replacement);
         return new Replacement(replacement, salt);
 
     }

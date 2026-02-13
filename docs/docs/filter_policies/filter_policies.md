@@ -16,7 +16,6 @@ documents.
 
 A policy:
 
-* Must have a `name` that uniquely identifies it.
 * Must have a list of `identifiers` that are filters for sensitive information.
     * Each `identifier` , or filter, can have zero or more [filter strategies](filter-strategies.md). A filter strategy
       tells Phileas how to manipulate that type of sensitive information when it is identified.

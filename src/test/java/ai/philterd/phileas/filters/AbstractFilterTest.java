@@ -253,7 +253,6 @@ public abstract class AbstractFilterTest {
         identifiers.setSurname(surname);
 
         Policy policy = new Policy();
-        policy.setName("default");
         policy.setIdentifiers(identifiers);
 
         return policy;

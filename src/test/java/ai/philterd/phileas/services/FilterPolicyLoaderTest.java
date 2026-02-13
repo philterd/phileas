@@ -45,7 +45,6 @@ public class FilterPolicyLoaderTest {
         final ContextService contextService = new DefaultContextService();
 
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(new Properties());
-        final Map<String, String> context = Collections.emptyMap();
 
         final FilterPolicyLoader filterPolicyLoader = new FilterPolicyLoader(contextService, phileasConfiguration, new SecureRandom(), null);
 
@@ -53,7 +52,6 @@ public class FilterPolicyLoaderTest {
         identifiers.setZipCode(new ZipCode());
 
         final Policy policy = new Policy();
-        policy.setName("unnamed");
         policy.setIdentifiers(identifiers);
 
         final Map<String, Map<FilterType, Filter>> filterCache = new HashMap<>();
@@ -81,7 +79,6 @@ public class FilterPolicyLoaderTest {
         identifiers.setZipCode(new ZipCode());
 
         final Policy policy = new Policy();
-        policy.setName("unnamed");
         policy.setIdentifiers(identifiers);
 
         final Map<String, Map<FilterType, Filter>> filterCache = new HashMap<>();
@@ -99,7 +96,6 @@ public class FilterPolicyLoaderTest {
         final ContextService contextService = new DefaultContextService();
 
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(new Properties());
-        final Map<String, String> context = Collections.emptyMap();
 
         final FilterPolicyLoader filterPolicyLoader = new FilterPolicyLoader(contextService, phileasConfiguration, new SecureRandom(), null);
 
@@ -107,7 +103,6 @@ public class FilterPolicyLoaderTest {
         identifiers.setZipCode(new ZipCode());
 
         final Policy policy = new Policy();
-        policy.setName("unnamed");
         policy.setIdentifiers(identifiers);
 
         final Map<String, Map<FilterType, Filter>> filterCache = new HashMap<>();
@@ -116,7 +111,6 @@ public class FilterPolicyLoaderTest {
 
         Assertions.assertEquals(1, filters.size());
         Assertions.assertEquals(1, filterCache.size());
-        Assertions.assertNotNull(filterCache.get("unnamed").get(FilterType.ZIP_CODE));
 
     }
 
@@ -130,7 +124,6 @@ public class FilterPolicyLoaderTest {
         final FilterPolicyLoader filterPolicyLoader = new FilterPolicyLoader(contextService, phileasConfiguration, new SecureRandom(), null);
 
         final Policy policy = new Policy();
-        policy.setName("unnamed");
 
         final Map<String, Map<FilterType, Filter>> filterCache = new HashMap<>();
 
@@ -138,7 +131,6 @@ public class FilterPolicyLoaderTest {
 
         Assertions.assertEquals(0, filters.size());
         Assertions.assertEquals(1, filterCache.size());
-        Assertions.assertEquals(0, filterCache.get("unnamed").size());
 
     }
 
