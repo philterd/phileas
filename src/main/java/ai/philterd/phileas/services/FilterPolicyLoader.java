@@ -55,6 +55,7 @@ import ai.philterd.phileas.services.filters.regex.VinFilter;
 import ai.philterd.phileas.services.filters.regex.ZipCodeFilter;
 import ai.philterd.phileas.services.validators.DateSpanValidator;
 import ai.philterd.phileas.services.validators.SpanValidator;
+import com.google.common.hash.Hashing;
 import com.google.gson.Gson;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.collections4.CollectionUtils;
@@ -65,6 +66,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -106,7 +108,10 @@ public class FilterPolicyLoader {
     public List<Filter> getFiltersForPolicy(final Policy policy, final Map<String, Map<FilterType, Filter>> filterCache) throws Exception {
 
         LOGGER.debug("Getting filters for policy.");
-        final String policyKey = DigestUtils.md5Hex(gson.toJson(policy));
+
+        final String policyKey = Hashing.murmur3_128()
+                .hashString(gson.toJson(policy), StandardCharsets.UTF_8)
+                .toString();
 
         // See if this filter is already cached.
         filterCache.putIfAbsent(policyKey, new ConcurrentHashMap<>());
