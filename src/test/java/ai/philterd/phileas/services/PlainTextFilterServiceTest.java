@@ -70,7 +70,7 @@ public class PlainTextFilterServiceTest {
         final Ignored ignored = new Ignored();
         ignored.setTerms(Arrays.asList("john", "jeff", "${USER}"));
 
-        final Policy policy = getPolicy("placeholder");
+        final Policy policy = getPolicy();
         policy.setIgnored(List.of(ignored));
         final String json = gson.toJson(policy);
         LOGGER.info(json);
@@ -97,7 +97,7 @@ public class PlainTextFilterServiceTest {
 
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties);
 
-        final Policy policy = getPdfPolicy("pdf");
+        final Policy policy = getPdfPolicy();
 
         final PdfFilterService service = new PdfFilterService(phileasConfiguration, contextService, vectorService, null);
         final BinaryDocumentFilterResult response = service.filter(policy, "context", document, MimeType.APPLICATION_PDF);
@@ -130,7 +130,7 @@ public class PlainTextFilterServiceTest {
         final Properties properties = new Properties();
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties);
 
-        final Policy policy = getPdfPolicy("pdf");
+        final Policy policy = getPdfPolicy();
 
         final PdfFilterService service = new PdfFilterService(phileasConfiguration, contextService, vectorService, null);
         final BinaryDocumentFilterResult response = service.filter(policy, "context", document, MimeType.APPLICATION_PDF);
