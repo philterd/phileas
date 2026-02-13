@@ -102,7 +102,6 @@ public class EndToEndTestsHelper {
         identifiers.setZipCode(zipCode);
 
         Policy policy = new Policy();
-        policy.setName(policyName);
         policy.setIdentifiers(identifiers);
 
         return policy;
@@ -127,7 +126,6 @@ public class EndToEndTestsHelper {
         identifiers.setZipCode(zipCode);
 
         Policy policy = new Policy();
-        policy.setName(policyName);
         policy.setIdentifiers(identifiers);
 
         return policy;
@@ -160,7 +158,6 @@ public class EndToEndTestsHelper {
         identifiers.setZipCode(zipCode);
 
         Policy policy = new Policy();
-        policy.setName(policyName);
         policy.setIdentifiers(identifiers);
 
         return policy;
@@ -188,7 +185,6 @@ public class EndToEndTestsHelper {
         identifiers.setZipCode(zipCode);
 
         Policy policy = new Policy();
-        policy.setName(policyName);
         policy.setIdentifiers(identifiers);
 
         return policy;
@@ -210,7 +206,6 @@ public class EndToEndTestsHelper {
         ignored.setTerms(Arrays.asList("4121742025464400", "12341341234", "2423543545"));
 
         Policy policy = new Policy();
-        policy.setName(policyName);
         policy.setIdentifiers(identifiers);
         policy.setIgnored(List.of(ignored));
 
@@ -232,7 +227,6 @@ public class EndToEndTestsHelper {
         ignored.setTerms(Arrays.asList("4121742025464400", "12341341234", "2423543545"));
 
         Policy policy = new Policy();
-        policy.setName(policyName);
         policy.setIdentifiers(identifiers);
         policy.setIgnored(List.of(ignored));
 
@@ -372,7 +366,6 @@ public class EndToEndTestsHelper {
         identifiers.setSurname(surname);*/
 
         Policy policy = new Policy();
-        policy.setName(policyName);
         policy.setIdentifiers(identifiers);
 
         return policy;
@@ -405,7 +398,6 @@ public class EndToEndTestsHelper {
         config.setSplitting(splitting);
 
         Policy policy = new Policy();
-        policy.setName(policyName);
         policy.setIdentifiers(identifiers);
         policy.setConfig(config);
 
@@ -424,7 +416,6 @@ public class EndToEndTestsHelper {
         identifiers.setStreetAddress(streetAddress);
 
         Policy policy = new Policy();
-        policy.setName(policyName);
         policy.setIdentifiers(identifiers);
 
         return policy;
@@ -444,7 +435,6 @@ public class EndToEndTestsHelper {
         identifiers.setPhoneNumber(phoneNumber);
 
         Policy policy = new Policy();
-        policy.setName(policyName);
         policy.setIdentifiers(identifiers);
 
         return policy;

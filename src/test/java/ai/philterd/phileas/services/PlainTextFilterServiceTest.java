@@ -65,19 +65,6 @@ public class PlainTextFilterServiceTest {
     }
 
     @Test
-    public void policy() throws IOException, URISyntaxException {
-
-        final Policy policy = getPolicy("default");
-        final String json = gson.toJson(policy);
-        LOGGER.info(json);
-
-        final Policy deserialized = gson.fromJson(json, Policy.class);
-
-        Assertions.assertEquals("default", deserialized.getName());
-
-    }
-
-    @Test
     public void policyWithPlaceholder() throws IOException, URISyntaxException {
 
         final Ignored ignored = new Ignored();
@@ -90,7 +77,6 @@ public class PlainTextFilterServiceTest {
 
         final Policy deserialized = gson.fromJson(json, Policy.class);
 
-        Assertions.assertEquals("placeholder", deserialized.getName());
         Assertions.assertEquals(3, policy.getIgnored().get(0).getTerms().size());
         Assertions.assertTrue(CollectionUtils.isNotEmpty(deserialized.getIgnored().get(0).getTerms()));
 

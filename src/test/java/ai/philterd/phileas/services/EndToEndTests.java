@@ -474,7 +474,6 @@ public class EndToEndTests {
         identifiers.setDriversLicense(driversLicense);
 
         final Policy policy = new Policy();
-        policy.setName("default");
         policy.setIdentifiers(identifiers);
         Properties properties = new Properties();
         PhileasConfiguration configuration = new PhileasConfiguration(properties);
@@ -556,7 +555,6 @@ public class EndToEndTests {
         customDictionary.setTerms(List.of("george", "samuel"));
 
         final Policy policy = new Policy();
-        policy.setName("custom-dictionary");
         policy.getIdentifiers().setCustomDictionaries(List.of(customDictionary));
 
         final Properties properties = new Properties();
@@ -589,7 +587,6 @@ public class EndToEndTests {
         customDictionary.setTerms(List.of("george"));
 
         final Policy policy = new Policy();
-        policy.setName("custom-dictionary");
         policy.getIdentifiers().setCustomDictionaries(List.of(customDictionary));
 
         final Properties properties = new Properties();
@@ -621,7 +618,6 @@ public class EndToEndTests {
         customDictionary.setClassification("names");
 
         final Policy policy = new Policy();
-        policy.setName("custom-dictionary-bloom");
         policy.getIdentifiers().setCustomDictionaries(List.of(customDictionary));
 
         final Properties properties = new Properties();

@@ -132,7 +132,6 @@ public class PdfFilterServiceTest {
         identifiers.setZipCode(zipCode);
 
         Policy policy = new Policy();
-        policy.setName(policyName);
         policy.setIdentifiers(identifiers);
 
         return policy;
