@@ -70,7 +70,6 @@ import org.apache.pdfbox.text.PDFTextStripper;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -234,7 +233,7 @@ public class EndToEndTestsHelper {
 
     }
 
-    public static Policy getPolicy() throws IOException, URISyntaxException {
+    public static Policy getPolicy() throws IOException {
 
         AgeFilterStrategy ageFilterStrategy = new AgeFilterStrategy();
 

@@ -41,7 +41,7 @@ public class PdfFilterServiceTest {
 
         final PdfFilterService pdfFilterService = new PdfFilterService(phileasConfiguration, contextService, vectorService, null);
 
-        final Policy policy = getPolicy("test");
+        final Policy policy = getPolicy();
 
         final InputStream is = getClass().getClassLoader().getResourceAsStream("12-12110 K.pdf");
         final byte[] file = IOUtils.toByteArray(is);
@@ -106,7 +106,7 @@ public class PdfFilterServiceTest {
 
     }
 
-    public static Policy getPolicy(String policyName) throws IOException, URISyntaxException {
+    public static Policy getPolicy() throws IOException, URISyntaxException {
 
         DateFilterStrategy dateFilterStrategy = new DateFilterStrategy();
         dateFilterStrategy.setStrategy(AbstractFilterStrategy.REDACT);
