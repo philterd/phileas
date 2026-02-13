@@ -55,9 +55,7 @@ import ai.philterd.phileas.services.filters.regex.VinFilter;
 import ai.philterd.phileas.services.filters.regex.ZipCodeFilter;
 import ai.philterd.phileas.services.validators.DateSpanValidator;
 import ai.philterd.phileas.services.validators.SpanValidator;
-import com.google.common.hash.Hashing;
 import com.google.gson.Gson;
-import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.hc.client5.http.classic.HttpClient;
@@ -109,9 +107,7 @@ public class FilterPolicyLoader {
 
         LOGGER.debug("Getting filters for policy.");
 
-        final String policyKey = Hashing.murmur3_128()
-                .hashString(gson.toJson(policy), StandardCharsets.UTF_8)
-                .toString();
+        final String policyKey = getFnv1a64(gson.toJson(policy));
 
         // See if this filter is already cached.
         filterCache.putIfAbsent(policyKey, new ConcurrentHashMap<>());
@@ -1294,6 +1290,23 @@ public class FilterPolicyLoader {
         }
 
         return enabledFilters;
+
+    }
+
+    public static String getFnv1a64(String input) {
+
+        final long FNV_OFFSET_BASIS = 0xcbf29ce484222325L;
+        final long FNV_PRIME = 0x100000001b3L;
+
+        long hash = FNV_OFFSET_BASIS;
+        final byte[] data = input.getBytes(StandardCharsets.UTF_8);
+
+        for (final byte b : data) {
+            hash ^= (b & 0xff);
+            hash *= FNV_PRIME;
+        }
+
+        return Long.toHexString(hash);
 
     }
 

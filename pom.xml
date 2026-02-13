@@ -48,7 +48,6 @@
         <equals.verifier.version>3.19.1</equals.verifier.version>
         <ff3.version>1.2.0</ff3.version>
         <gson.version>2.13.2</gson.version>
-        <guava.version>33.5.0-jre</guava.version>
         <httpclient.version>5.6</httpclient.version>
         <json.version>20251224</json.version>
         <junit.pioneer.version>2.3.0</junit.pioneer.version>
@@ -346,11 +345,6 @@
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-text</artifactId>
             <version>${commons.text.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-            <version>${guava.version}</version>
         </dependency>
         <dependency>
             <groupId>commons-io</groupId>
