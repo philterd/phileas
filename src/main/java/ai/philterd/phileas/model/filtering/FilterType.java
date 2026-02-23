@@ -39,7 +39,7 @@ public enum FilterType {
     IP_ADDRESS("ip-address", true),
     MAC_ADDRESS("mac-address", true),
     PASSPORT_NUMBER("passport-number", true),
-    PERSON("person", false),
+    PH_EYE("pheye", false),
     PHONE_NUMBER("phone-number", true),
     PHONE_NUMBER_EXTENSION("phone-number-extension", true),
     PHYSICIAN_NAME("physician-name", true),
@@ -55,6 +55,7 @@ public enum FilterType {
     CUSTOM_DICTIONARY("custom-dictionary", false),
 
     // These are not natively identified by Phileas.
+    PERSON("person", false),
     MEDICAL_CONDITION("medical-condition", false),
     OTHER("other", false);
 

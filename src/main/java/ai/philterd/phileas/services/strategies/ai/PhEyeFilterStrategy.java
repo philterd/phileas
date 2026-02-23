@@ -40,7 +40,7 @@ public class PhEyeFilterStrategy extends AbstractFilterStrategy {
 
     private static final Logger LOGGER = LogManager.getLogger(PhEyeFilterStrategy.class);
 
-    private final FilterType filterType = FilterType.PERSON;
+    private final FilterType filterType = FilterType.OTHER;
 
     @Override
     public FilterType getFilterType() {
@@ -103,7 +103,14 @@ public class PhEyeFilterStrategy extends AbstractFilterStrategy {
 
         if(Strings.CI.equals(strategy, REDACT)) {
 
-            replacement = getRedactedToken(token, label, filterType);
+            // Use the label for the type because a PhEye filter can have any filter type.
+            replacement = getValueOrDefault(redactionFormat, DEFAULT_REDACTION).replaceAll("%t", label.toLowerCase());
+
+            if(StringUtils.isNotEmpty(label)) {
+                replacement = replacement.replaceAll("%l", label.toLowerCase());
+            }
+
+            replacement = replacement.replaceAll("%v", token);
 
         } else if(Strings.CI.equals(strategy, MASK)) {
 

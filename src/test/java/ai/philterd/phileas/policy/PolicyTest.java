@@ -441,7 +441,7 @@ public class PolicyTest {
         identifiers.setHospital(hospital);
         identifiers.setIdentifiers(List.of(identifier));
         identifiers.setIpAddress(ipAddress);
-        identifiers.setPerson(phEye);
+        identifiers.setPhEyes(List.of(phEye));
         identifiers.setPhoneNumber(phoneNumber);
         identifiers.setPhoneNumberExtension(phoneNumberExtension);
         identifiers.setSsn(ssn);
