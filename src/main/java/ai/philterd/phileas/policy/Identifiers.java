@@ -57,9 +57,14 @@ import java.util.List;
 
 public class Identifiers {
 
-    @SerializedName("person")
+    @SerializedName("pheyes")
     @Expose
     private List<PhEye> phEyes;
+
+    @Deprecated
+    @SerializedName("person")
+    @Expose
+    private PhEye person;
 
     @SerializedName("dictionaries")
     @Expose
@@ -206,7 +211,7 @@ public class Identifiers {
             case PH_EYE:
                 if(CollectionUtils.isNotEmpty(this.getPhEyes())) { return true; } break;
             case PERSON:
-                if(CollectionUtils.isNotEmpty(this.getPhEyes())) { return true; } break;
+                if(this.getPerson() != null) {return true; } break;
             case CUSTOM_DICTIONARY:
                 if(CollectionUtils.isNotEmpty(this.getCustomDictionaries())) { return true; } break;
             case AGE:
@@ -540,6 +545,14 @@ public class Identifiers {
 
     public void setPhEyes(List<PhEye> phEyes) {
         this.phEyes = phEyes;
+    }
+
+    public PhEye getPerson() {
+        return person;
+    }
+
+    public void setPerson(PhEye person) {
+        this.person = person;
     }
 
 }

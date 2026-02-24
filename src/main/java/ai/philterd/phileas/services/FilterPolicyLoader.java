@@ -1207,6 +1207,8 @@ public class FilterPolicyLoader {
             // There can be multiple custom dictionary filters because it is a list.
             for (final PhEye phEye : policy.getIdentifiers().getPhEyes()) {
 
+                // TODO: Adding caching for the pheye filters.
+
                 if(phEye.isEnabled()) {
 
                     final int windowSize = phEye.getWindowSizeOrDefault(phileasConfiguration.spanWindowSize());
@@ -1224,11 +1226,13 @@ public class FilterPolicyLoader {
                             .withPriority(phEye.getPriority())
                             .build();
 
-                    final PhEyeConfiguration phEyeConfiguration = new PhEyeConfiguration(phEye.getPhEyeConfiguration().getEndpoint());
-                    phEyeConfiguration.setTimeout(phEye.getPhEyeConfiguration().getTimeout());
-                    phEyeConfiguration.setMaxIdleConnections(phEye.getPhEyeConfiguration().getMaxIdleConnections());
-                    phEyeConfiguration.setBearerToken(phEye.getPhEyeConfiguration().getBearerToken());
-                    phEyeConfiguration.setLabels(phEye.getPhEyeConfiguration().getLabels());
+                    final ai.philterd.phileas.policy.filters.pheye.PhEyeConfiguration phEyePolicyConfig = phEye.getPhEyeConfiguration();
+
+                    final PhEyeConfiguration phEyeConfiguration = new PhEyeConfiguration(phEyePolicyConfig.getEndpoint());
+                    phEyeConfiguration.setTimeout(phEyePolicyConfig.getTimeout());
+                    phEyeConfiguration.setMaxIdleConnections(phEyePolicyConfig.getMaxIdleConnections());
+                    phEyeConfiguration.setBearerToken(phEyePolicyConfig.getBearerToken());
+                    phEyeConfiguration.setLabels(phEyePolicyConfig.getLabels());
 
                     final Filter filter = new PhEyeFilter(
                             filterConfiguration,
@@ -1243,6 +1247,52 @@ public class FilterPolicyLoader {
                     filterCache.get(policyKey).put(FilterType.PH_EYE, filter);
 
                 }
+
+            }
+
+        }
+
+        if(policy.getIdentifiers().hasFilter(FilterType.PERSON) && policy.getIdentifiers().getPerson().isEnabled()) {
+
+            if(filterCache.get(policyKey).containsKey(FilterType.PERSON)) {
+                enabledFilters.add(filterCache.get(policyKey).get(FilterType.PERSON));
+            } else {
+
+                final PhEye phEye = policy.getIdentifiers().getPerson();
+                final int windowSize = phEye.getWindowSizeOrDefault(phileasConfiguration.spanWindowSize());
+
+                final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                        .withStrategies(phEye.getPhEyeFilterStrategies())
+                        .withContextService(contextService)
+                        .withRandom(random)
+                        .withIgnored(phEye.getIgnored())
+                        .withIgnoredFiles(phEye.getIgnoredFiles())
+                        .withIgnoredPatterns(phEye.getIgnoredPatterns())
+                        .withCrypto(policy.getCrypto())
+                        .withFPE(policy.getFpe())
+                        .withWindowSize(windowSize)
+                        .withPriority(phEye.getPriority())
+                        .build();
+
+                final ai.philterd.phileas.policy.filters.pheye.PhEyeConfiguration phEyePolicyConfig = phEye.getPhEyeConfiguration();
+
+                final PhEyeConfiguration phEyeConfiguration = new PhEyeConfiguration(phEyePolicyConfig.getEndpoint());
+                phEyeConfiguration.setTimeout(phEyePolicyConfig.getTimeout());
+                phEyeConfiguration.setMaxIdleConnections(phEyePolicyConfig.getMaxIdleConnections());
+                phEyeConfiguration.setBearerToken(phEyePolicyConfig.getBearerToken());
+                phEyeConfiguration.setLabels(phEyePolicyConfig.getLabels());
+
+                final Filter filter = new PhEyeFilter(
+                        filterConfiguration,
+                        phEyeConfiguration,
+                        phEye.isRemovePunctuation(),
+                        phEye.getThresholds(),
+                        FilterType.PERSON,
+                        httpClient
+                );
+
+                enabledFilters.add(filter);
+                filterCache.get(policyKey).put(FilterType.PERSON, filter);
 
             }
 

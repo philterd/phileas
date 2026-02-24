@@ -31,7 +31,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.security.SecureRandom;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -163,6 +162,34 @@ public class FilterPolicyLoaderTest {
         final List<Filter> filters = filterPolicyLoader.getFiltersForPolicy(policy, filterCache);
 
         Assertions.assertEquals(2, filters.size());
+
+    }
+
+    @Test
+    public void getFiltersForPolicyWithPerson() throws Exception {
+
+        final ContextService contextService = new DefaultContextService();
+        final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(new Properties());
+
+        final FilterPolicyLoader filterPolicyLoader = new FilterPolicyLoader(contextService, phileasConfiguration, new SecureRandom(), null);
+
+        final PhEye person = new PhEye();
+        final PhEyeConfiguration config = new PhEyeConfiguration();
+        config.setEndpoint("http://localhost:5000");
+        person.setPhEyeConfiguration(config);
+
+        final Identifiers identifiers = new Identifiers();
+        identifiers.setPerson(person);
+
+        final Policy policy = new Policy();
+        policy.setIdentifiers(identifiers);
+
+        final Map<String, Map<FilterType, Filter>> filterCache = new HashMap<>();
+
+        final List<Filter> filters = filterPolicyLoader.getFiltersForPolicy(policy, filterCache);
+
+        Assertions.assertEquals(1, filters.size());
+        Assertions.assertEquals(FilterType.PERSON, filters.get(0).getFilterType());
 
     }
 
