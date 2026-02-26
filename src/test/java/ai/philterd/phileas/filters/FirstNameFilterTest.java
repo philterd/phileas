@@ -17,29 +17,31 @@ package ai.philterd.phileas.filters;
 
 import ai.philterd.phileas.filters.rules.dictionary.FuzzyDictionaryFilter;
 import ai.philterd.phileas.model.filtering.FilterType;
-import ai.philterd.phileas.model.filtering.SensitivityLevel;
 import ai.philterd.phileas.model.filtering.Filtered;
+import ai.philterd.phileas.model.filtering.SensitivityLevel;
 import ai.philterd.phileas.model.filtering.Span;
-import ai.philterd.phileas.services.anonymization.PersonsAnonymizationService;
-import ai.philterd.phileas.services.context.DefaultContextService;
 import ai.philterd.phileas.services.strategies.dynamic.FirstNameFilterStrategy;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.util.Collections;
 import java.util.List;
+
+import static ai.philterd.phileas.services.strategies.AbstractFilterStrategy.RANDOM_REPLACE;
 
 public class FirstNameFilterTest extends AbstractFilterTest {
 
     private static final Logger LOGGER = LogManager.getLogger(FirstNameFilterTest.class);
 
     @Test
-    public void filterLow() throws Exception {
+    void filterLow() throws Exception {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new FirstNameFilterStrategy()))
-                .withAnonymizationService(new PersonsAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -52,11 +54,12 @@ public class FirstNameFilterTest extends AbstractFilterTest {
     }
 
     @Test
-    public void filterMedium1() throws Exception {
+    void filterMedium1() throws Exception {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new FirstNameFilterStrategy()))
-                .withAnonymizationService(new PersonsAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -69,11 +72,12 @@ public class FirstNameFilterTest extends AbstractFilterTest {
     }
 
     @Test
-    public void filterMedium2() throws Exception {
+    void filterMedium2() throws Exception {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new FirstNameFilterStrategy()))
-                .withAnonymizationService(new PersonsAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -86,11 +90,12 @@ public class FirstNameFilterTest extends AbstractFilterTest {
     }
 
     @Test
-    public void filterHigh() throws Exception {
+    void filterHigh() throws Exception {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new FirstNameFilterStrategy()))
-                .withAnonymizationService(new PersonsAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -103,11 +108,12 @@ public class FirstNameFilterTest extends AbstractFilterTest {
     }
 
     @Test
-    public void filter1() throws Exception {
+    void filter1() throws Exception {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new FirstNameFilterStrategy()))
-                .withAnonymizationService(new PersonsAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -121,11 +127,12 @@ public class FirstNameFilterTest extends AbstractFilterTest {
     }
 
     @Test
-    public void filter2() throws Exception {
+    void filter2() throws Exception {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new FirstNameFilterStrategy()))
-                .withAnonymizationService(new PersonsAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -142,11 +149,12 @@ public class FirstNameFilterTest extends AbstractFilterTest {
     }
 
     @Test
-    public void filter3() throws Exception {
+    void filter3() throws Exception {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new FirstNameFilterStrategy()))
-                .withAnonymizationService(new PersonsAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -159,11 +167,12 @@ public class FirstNameFilterTest extends AbstractFilterTest {
     }
 
     @Test
-    public void filter4() throws Exception {
+    void filter4() throws Exception {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new FirstNameFilterStrategy()))
-                .withAnonymizationService(new PersonsAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -176,11 +185,12 @@ public class FirstNameFilterTest extends AbstractFilterTest {
     }
 
     @Test
-    public void filter5() throws Exception {
+    void filter5() throws Exception {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new FirstNameFilterStrategy()))
-                .withAnonymizationService(new PersonsAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -193,11 +203,12 @@ public class FirstNameFilterTest extends AbstractFilterTest {
     }
 
     @Test
-    public void filter6() throws Exception {
+    void filter6() throws Exception {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new FirstNameFilterStrategy()))
-                .withAnonymizationService(new PersonsAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -206,6 +217,81 @@ public class FirstNameFilterTest extends AbstractFilterTest {
         final Filtered filtered = filter.filter(getPolicy(), "context", PIECE,"Smith,Melissa A,MD");
         showSpans(Span.dropOverlappingSpans(filtered.getSpans()));
         Assertions.assertEquals(3, Span.dropOverlappingSpans(filtered.getSpans()).size());
+
+    }
+
+    @Test
+    void filterWithCandidates1() throws Exception {
+
+        final List<String> candidates = List.of("John", "Melissa", "James");
+
+        final FirstNameFilterStrategy firstNameFilterStrategy = new FirstNameFilterStrategy();
+        firstNameFilterStrategy.setStrategy(RANDOM_REPLACE);
+        firstNameFilterStrategy.setAnonymizationCandidates(candidates);
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(firstNameFilterStrategy))
+                .withContextService(contextService)
+                .withRandom(random)
+                .withWindowSize(windowSize)
+                .build();
+
+        final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.FIRST_NAME, filterConfiguration, SensitivityLevel.LOW, true);
+
+        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE,"Timothy");
+        showSpans(Span.dropOverlappingSpans(filtered.getSpans()));
+        Assertions.assertEquals(1, Span.dropOverlappingSpans(filtered.getSpans()).size());
+        Assertions.assertTrue(candidates.contains(Span.dropOverlappingSpans(filtered.getSpans()).get(0).getReplacement()));
+
+    }
+
+    @Test
+    void filterWithCandidates2() throws Exception {
+
+        final List<String> candidates = List.of("John");
+
+        final FirstNameFilterStrategy firstNameFilterStrategy = new FirstNameFilterStrategy();
+        firstNameFilterStrategy.setStrategy(RANDOM_REPLACE);
+        firstNameFilterStrategy.setAnonymizationCandidates(candidates);
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(firstNameFilterStrategy))
+                .withContextService(contextService)
+                .withRandom(random)
+                .withWindowSize(windowSize)
+                .build();
+
+        final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.FIRST_NAME, filterConfiguration, SensitivityLevel.LOW, true);
+
+        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE,"Timothy");
+        showSpans(Span.dropOverlappingSpans(filtered.getSpans()));
+        Assertions.assertEquals(1, Span.dropOverlappingSpans(filtered.getSpans()).size());
+        Assertions.assertTrue(candidates.contains(Span.dropOverlappingSpans(filtered.getSpans()).get(0).getReplacement()));
+
+    }
+
+    @Test
+    void filterWithCandidates3() throws Exception {
+
+        final List<String> candidates = Collections.emptyList();
+
+        final FirstNameFilterStrategy firstNameFilterStrategy = new FirstNameFilterStrategy();
+        firstNameFilterStrategy.setStrategy(RANDOM_REPLACE);
+        firstNameFilterStrategy.setAnonymizationCandidates(candidates);
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(firstNameFilterStrategy))
+                .withContextService(contextService)
+                .withRandom(random)
+                .withWindowSize(windowSize)
+                .build();
+
+        final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.FIRST_NAME, filterConfiguration, SensitivityLevel.LOW, true);
+
+        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE,"Timothy");
+        showSpans(Span.dropOverlappingSpans(filtered.getSpans()));
+        Assertions.assertEquals(1, Span.dropOverlappingSpans(filtered.getSpans()).size());
+        Assertions.assertFalse(candidates.contains(Span.dropOverlappingSpans(filtered.getSpans()).get(0).getReplacement()));
 
     }
 

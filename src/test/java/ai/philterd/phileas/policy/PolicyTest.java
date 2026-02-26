@@ -25,7 +25,6 @@ import ai.philterd.phileas.policy.filters.Date;
 import ai.philterd.phileas.policy.filters.EmailAddress;
 import ai.philterd.phileas.policy.filters.FirstName;
 import ai.philterd.phileas.policy.filters.Hospital;
-import ai.philterd.phileas.policy.filters.HospitalAbbreviation;
 import ai.philterd.phileas.policy.filters.Identifier;
 import ai.philterd.phileas.policy.filters.IpAddress;
 import ai.philterd.phileas.policy.filters.PhEye;
@@ -43,7 +42,6 @@ import ai.philterd.phileas.services.strategies.custom.CustomDictionaryFilterStra
 import ai.philterd.phileas.services.strategies.dynamic.CityFilterStrategy;
 import ai.philterd.phileas.services.strategies.dynamic.CountyFilterStrategy;
 import ai.philterd.phileas.services.strategies.dynamic.FirstNameFilterStrategy;
-import ai.philterd.phileas.services.strategies.dynamic.HospitalAbbreviationFilterStrategy;
 import ai.philterd.phileas.services.strategies.dynamic.HospitalFilterStrategy;
 import ai.philterd.phileas.services.strategies.dynamic.StateFilterStrategy;
 import ai.philterd.phileas.services.strategies.dynamic.SurnameFilterStrategy;
@@ -71,21 +69,6 @@ import java.util.Arrays;
 import java.util.List;
 
 public class PolicyTest {
-
-    private final Gson gson = new Gson();
-
-//    @Test
-//    public void compare() throws IOException {
-//
-//        final Policy policy1 = getPolicy();
-//        final String policyJson1 = gson.toJson(policy1);
-//
-//        final Policy policy2 = getPolicy();
-//        final String policyJson2 = gson.toJson(policy2);
-//
-//        Assertions.assertEquals(policyJson1, policyJson2);
-//
-//    }
 
     @Test
     public void serialize() throws IOException {
@@ -360,22 +343,6 @@ public class PolicyTest {
 
     }
 
-    @Test
-    public void deserializeEmpty() {
-
-        final String json = """
-                {
-                  "identifiers": {
-                  }
-                }""";
-
-        Gson gson = new Gson();
-        Policy policy = gson.fromJson(json, Policy.class);
-
-        Assertions.assertEquals("unnamed", policy.getName());
-
-    }
-
     private Policy getPolicy() throws IOException {
 
         CustomDictionary customDictionary = new CustomDictionary();
@@ -405,9 +372,6 @@ public class PolicyTest {
 
         Hospital hospital = new Hospital();
         hospital.setHospitalFilterStrategies(List.of(new HospitalFilterStrategy()));
-
-        HospitalAbbreviation hospitalAbbreviation = new HospitalAbbreviation();
-        hospitalAbbreviation.setHospitalAbbreviationFilterStrategies(List.of(new HospitalAbbreviationFilterStrategy()));
 
         Identifier identifier = new Identifier();
         identifier.setIdentifierFilterStrategies(List.of(new IdentifierFilterStrategy()));
@@ -460,10 +424,9 @@ public class PolicyTest {
         identifiers.setEmailAddress(emailAddress);
         identifiers.setFirstName(firstName);
         identifiers.setHospital(hospital);
-        identifiers.setHospitalAbbreviation(hospitalAbbreviation);
         identifiers.setIdentifiers(List.of(identifier));
         identifiers.setIpAddress(ipAddress);
-        identifiers.setPerson(phEye);
+        identifiers.setPhEyes(List.of(phEye));
         identifiers.setPhoneNumber(phoneNumber);
         identifiers.setPhoneNumberExtension(phoneNumberExtension);
         identifiers.setSsn(ssn);
@@ -479,7 +442,6 @@ public class PolicyTest {
         ignored.setTerms(Arrays.asList("term1", "term2"));
 
         Policy policy = new Policy();
-        policy.setName("default");
         policy.setIdentifiers(identifiers);
         policy.setIgnored(List.of(ignored));
 

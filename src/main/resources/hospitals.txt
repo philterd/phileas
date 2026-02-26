@@ -1,0 +1,336 @@
+Mayo Clinic
+Cleveland Clinic
+Massachusetts General Hospital
+The Johns Hopkins Hospital
+UCLA Medical Center
+Cedars-Sinai Medical Center
+New York-Presbyterian Hospital-Columbia and Cornell
+UCSF Health-UCSF Medical Center
+NYU Langone Hospitals
+Northwestern Memorial Hospital
+Stanford Health Care-Stanford Hospital
+Brigham and Women's Hospital
+Mount Sinai Hospital
+Hospitals of the University of Pennsylvania-Penn Presbyterian
+Mayo Clinic Phoenix
+Houston Methodist Hospital
+Barnes-Jewish Hospital
+Rush University Medical Center
+UC San Diego Health-Jacobs Medical Center
+University of Michigan Health-Ann Arbor
+Duke University Hospital
+Vanderbilt University Medical Center
+Cleveland Clinic Abu Dhabi
+Cleveland Clinic Florida
+Jefferson Health-Thomas Jefferson University Hospitals
+Emory University Hospital
+UT Southwestern Medical Center
+University of Chicago Medical Center
+University of Washington Medical Center
+Yale New Haven Hospital
+Beth Israel Deaconess Medical Center
+University of Kansas Hospital
+Ohio State University Wexner Medical Center
+UC Davis Medical Center
+University of Alabama at Birmingham Hospital
+University of Iowa Hospitals and Clinics
+Ochsner Medical Center
+Banner-University Medical Center Phoenix
+Tufts Medical Center
+Scripps La Jolla Hospitals
+UC Health University of Cincinnati Medical Center
+University of Kentucky Albert B. Chandler Hospital
+University of Utah Health-Hospitals and Clinics
+Georgetown University Hospital
+Temple University Hospital
+University of Maryland Medical Center
+University of Rochester Medical Center
+Wake Forest Baptist Medical Center
+Albany Medical Center
+Allegheny General Hospital
+Asante Rogue Regional Medical Center
+Aspirus Wausau Hospital
+Aultman Hospital
+Aurora St. Luke's Medical Center
+Ball Memorial Hospital
+Baptist Health Arkansas
+Baptist Health Louisville
+Baptist Medical Center San Antonio
+Baylor Scott & White Medical Center-Temple
+Baylor University Medical Center
+Beaumont Hospital-Royal Oak
+Beebe Healthcare
+Benedictine Hospital
+Berkshire Medical Center
+Beth Israel Medical Center
+Billings Clinic
+Blessing Hospital
+Boone Hospital Center
+Borgess Medical Center
+Boston Medical Center
+Boulder Community Health
+Bronson Methodist Hospital
+Bryan Medical Center
+Buffalo General Medical Center
+Butterworth Hospital
+California Pacific Medical Center
+Cape Cod Hospital
+Cape Fear Valley Medical Center
+Capital Health Regional Medical Center
+Carilion Roanoke Memorial Hospital
+Carle Foundation Hospital
+Centra State Healthcare System
+Centura Health-Penrose St. Francis Health Services
+Charleston Area Medical Center
+Chesapeake Regional Medical Center
+Children's Hospital Colorado
+Children's Hospital Los Angeles
+Children's Hospital of Philadelphia
+Christiana Care-Christiana Hospital
+Christus Santa Rosa Hospital-Westover Hills
+City of Hope Comprehensive Cancer Center
+Columbia University Irving Medical Center
+Cone Health
+Cooper University Health Care
+Cox Medical Centers
+Creighton University Medical Center-Bergan Mercy
+Dartmouth-Hitchcock Medical Center
+Denver Health
+Detroit Receiving Hospital
+Dignity Health-St. Joseph's Hospital and Medical Center
+Doctors Hospital of Sarasota
+Doylestown Hospital
+Duke Raleigh Hospital
+Eastern Maine Medical Center
+Eisenhower Medical Center
+El Camino Health-Mountain View
+Ellis Hospital
+Erlanger Health System
+Evanston Hospital
+Exempla Saint Joseph Hospital
+Fairview Hospital
+Florida Hospital Orlando
+Franciscan Health Indianapolis
+Freeman Health System
+Froedtert Hospital & the Medical College of Wisconsin
+Gadsden Regional Medical Center
+Geisinger Medical Center
+Genesys Regional Medical Center
+Gillette Children's Specialty Healthcare
+Good Samaritan Hospital Los Angeles
+Grady Memorial Hospital
+Greenwich Hospital
+Gundersen Health System
+Hackensack University Medical Center
+Hallmark Health System
+Harris Health System
+Hartford Hospital
+HealthSciences Center
+Hendrick Medical Center
+Henry Ford Hospital
+High Point Medical Center
+Hoag Memorial Hospital Presbyterian
+Holy Cross Hospital
+HonorHealth Scottsdale Shea Medical Center
+Hospital for Special Surgery
+Huntsman Cancer Institute
+Huntsville Hospital
+Inova Fairfax Hospital
+Intermountain Medical Center
+IU Health Methodist Hospital
+Jackson Memorial Hospital
+John Muir Health-Walnut Creek Medical Center
+Kaiser Permanente Anaheim Medical Center
+Kaiser Permanente Los Angeles Medical Center
+Kaiser Permanente Oakland Medical Center
+Kaiser Permanente San Francisco Medical Center
+Kaiser Permanente Santa Clara Medical Center
+Kansas City VA Medical Center
+Keck Hospital of USC
+Kettering Medical Center
+King's Daughters Medical Center
+Lahey Hospital and Medical Center
+Lancaster General Hospital
+Lankenau Medical Center
+Legacy Emanuel Medical Center
+Lehigh Valley Hospital-Cedar Crest
+Lenox Hill Hospital
+Loma Linda University Medical Center
+Long Island Jewish Medical Center
+Louisiana State University Health Sciences Center Shreveport
+Loyola University Medical Center
+Luminis Health Anne Arundel Medical Center
+Lutheran Medical Center
+Maine Medical Center
+Martin Luther King, Jr. Community Hospital
+Mary Washington Hospital
+Maryland General Hospital
+McLaren Northern Michigan
+Medical City Dallas Hospital
+Medical College of Georgia
+Medical University of South Carolina Medical Center
+MedStar Franklin Square Medical Center
+MedStar Washington Hospital Center
+Memorial Hermann-Texas Medical Center
+Memorial Sloan Kettering Cancer Center
+Mercy Health-St. Vincent Medical Center
+Mercy Hospital St. Louis
+Mercy Medical Center Baltimore
+Methodist Hospital of Southern California
+MetroHealth Medical Center
+Miami Valley Hospital
+Michigan Medicine-University of Michigan
+MidMichigan Medical Center-Midland
+Middlesex Health
+Milton S. Hershey Medical Center
+Mission Hospital Asheville
+Monmouth Medical Center
+Montefiore Medical Center
+Morton Plant Hospital
+Mount Sinai Medical Center Miami Beach
+MultiCare Tacoma General Hospital
+Munson Medical Center
+Nationwide Children's Hospital
+Nebraska Medicine-Nebraska Medical Center
+Nemours Children's Hospital
+New Britain General Hospital
+New York University Medical Center
+Newton-Wellesley Hospital
+Norfolk General Hospital
+North Kansas City Hospital
+North Mississippi Medical Center
+North Shore University Hospital
+Northside Hospital Atlanta
+Norton Hospital
+Novant Health Forsyth Medical Center
+Oakwood Hospital-Dearborn
+Orlando Health Orlando Regional Medical Center
+OSF Saint Francis Medical Center
+Overlake Medical Center
+Overlook Medical Center
+Palomar Medical Center Escondido
+Parkland Health
+PeaceHealth St. Joseph Medical Center
+Piedmont Atlanta Hospital
+Poudre Valley Hospital
+Presbyterian Hospital Albuquerque
+Presbyterian/St. Luke's Medical Center
+Presence Saint Joseph Medical Center
+Providence Portland Medical Center
+Providence St. Vincent Medical Center
+Queens Hospital Center
+Reading Hospital
+Regional Medical Center of San Jose
+Renown Regional Medical Center
+Riverside Methodist Hospital
+Robert Wood Johnson University Hospital
+Rochester General Hospital
+Rockford Memorial Hospital
+Saint Alphonsus Regional Medical Center
+Saint Barnabas Medical Center
+Saint Francis Hospital and Medical Center
+Saint Francis Hospital-Memphis
+Saint Joseph Hospital Lexington
+Saint Joseph Mercy Ann Arbor Hospital
+Saint Luke's Hospital of Kansas City
+Saint Mary's Hospital Waterbury
+Saint Vincent Hospital Worcester
+Salem Hospital
+San Francisco General Hospital
+Sanford Medical Center Fargo
+Sarasota Memorial Hospital
+Sentara Norfolk General Hospital
+Sharp Memorial Hospital
+Shands at the University of Florida
+Shawnee Mission Health
+Sinai Hospital of Baltimore
+South Broward Hospital District-Memorial Regional Hospital
+South Nassau Communities Hospital
+Southwest Washington Medical Center
+Spartanburg Medical Center
+Spectrum Health Butterworth Hospital
+St. Alexius Medical Center
+St. Cloud Hospital
+St. David's Medical Center
+St. Elizabeth Healthcare-Edgewood
+St. Francis Medical Center Peoria
+St. John Hospital and Medical Center
+St. John's Health Center
+St. Joseph's Hospital Tampa
+St. Jude Children's Research Hospital
+St. Luke's Boise Medical Center
+St. Luke's Hospital Bethlehem
+St. Luke's Regional Medical Center Sioux City
+St. Mary's Medical Center Huntington
+St. Peter's Health Partners
+St. Vincent Charity Medical Center
+St. Vincent Indianapolis Hospital
+Stamford Hospital
+State University of New York Downstate Medical Center
+Staten Island University Hospital
+Strong Memorial Hospital
+Suburban Hospital
+Summa Health System-Akron Campus
+Swedish Medical Center Cherry Hill
+Tallahassee Memorial HealthCare
+Tampa General Hospital
+Tarrant County Hospital District-John Peter Smith Hospital
+Texas Children's Hospital
+Texas Health Harris Methodist Hospital Fort Worth
+Texas Health Presbyterian Hospital Dallas
+The Christ Hospital
+The Medical Center of Central Georgia
+The Methodist Hospital Houston
+The Queen's Medical Center
+The University of Kansas Health System
+The Valley Hospital
+Thomas Jefferson University Hospital
+Tisch Hospital
+Tripler Army Medical Center
+Truman Medical Center-Hospital Hill
+UC Irvine Medical Center
+UCLA Santa Monica Medical Center
+UConn Health-John Dempsey Hospital
+UF Health Shands Hospital
+UMass Memorial Medical Center
+Union Memorial Hospital
+University Hospital Newark
+University Hospitals Cleveland Medical Center
+University of Arkansas for Medical Sciences Medical Center
+University of California Davis Medical Center
+University of California Irvine Medical Center
+University of California San Francisco Medical Center
+University of Colorado Hospital
+University of Florida Health Shands Hospital
+University of Illinois Hospital & Health Sciences System
+University of Louisville Hospital
+University of Miami Health System
+University of Minnesota Medical Center
+University of Mississippi Medical Center
+University of Missouri Health Care
+University of Nebraska Medical Center
+University of New Mexico Hospital
+University of North Carolina Hospitals
+University of Oklahoma Medical Center
+University of Pittsburgh Medical Center
+University of South Alabama Medical Center
+University of Tennessee Medical Center
+University of Texas Medical Branch at Galveston
+University of Virginia Medical Center
+University of Wisconsin Hospital and Clinics
+UPMC Presbyterian Shadyside
+UT Health Tyler
+Valley Medical Center
+Vidant Medical Center
+Virginia Commonwealth University Medical Center
+Virginia Mason Medical Center
+WakeMed Raleigh Campus
+Walter Reed National Military Medical Center
+Washoe Medical Center
+West Virginia University Hospitals
+Westchester Medical Center
+William Beaumont Hospital
+Winchester Medical Center
+Winthrop-University Hospital
+Wuesthoff Medical Center-Rockledge
+Wyckoff Heights Medical Center

@@ -17,10 +17,8 @@ package ai.philterd.phileas.filters;
 
 import ai.philterd.phileas.filters.rules.dictionary.FuzzyDictionaryFilter;
 import ai.philterd.phileas.model.filtering.FilterType;
-import ai.philterd.phileas.model.filtering.SensitivityLevel;
 import ai.philterd.phileas.model.filtering.Filtered;
-import ai.philterd.phileas.services.anonymization.HospitalAnonymizationService;
-import ai.philterd.phileas.services.context.DefaultContextService;
+import ai.philterd.phileas.model.filtering.SensitivityLevel;
 import ai.philterd.phileas.services.strategies.dynamic.HospitalFilterStrategy;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -28,6 +26,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
+
+import static ai.philterd.phileas.services.strategies.AbstractFilterStrategy.RANDOM_REPLACE;
 
 public class HospitalFilterTest extends AbstractFilterTest {
 
@@ -38,7 +38,8 @@ public class HospitalFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new HospitalFilterStrategy()))
-                .withAnonymizationService(new HospitalAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -46,7 +47,32 @@ public class HospitalFilterTest extends AbstractFilterTest {
 
         Filtered filtered = filter.filter(getPolicy(), "context", PIECE,"Wyoming Medical Center");
         Assertions.assertEquals(1, filtered.getSpans().size());
-        Assertions.assertEquals("wyoming medical center", filtered.getSpans().get(0).getText());
+        Assertions.assertEquals("Wyoming Medical Center", filtered.getSpans().get(0).getText());
+
+    }
+
+    @Test
+    public void filterWithCandidates1() throws Exception {
+
+        final List<String> candidates = List.of("candidate1", "candidate2");
+
+        final HospitalFilterStrategy hospitalFilterStrategy = new HospitalFilterStrategy();
+        hospitalFilterStrategy.setStrategy(RANDOM_REPLACE);
+        hospitalFilterStrategy.setAnonymizationCandidates(candidates);
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(hospitalFilterStrategy))
+                .withContextService(contextService)
+                .withRandom(random)
+                .withWindowSize(windowSize)
+                .build();
+
+        final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.HOSPITAL, filterConfiguration, SensitivityLevel.LOW, true);
+
+        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "Wyoming Medical Center");
+        showSpans(filtered.getSpans());
+        Assertions.assertTrue(filtered.getSpans().size() >= 1);
+        Assertions.assertTrue(candidates.contains(filtered.getSpans().get(0).getReplacement()));
 
     }
 

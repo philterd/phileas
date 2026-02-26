@@ -24,7 +24,7 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import org.antlr.v4.runtime.tree.TerminalNode;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -82,7 +82,7 @@ public class ParserListener extends FilterConditionBaseListener {
 
         conditions.add(parsedCondition);
 
-        if(StringUtils.equalsIgnoreCase(terminals.poll(), "AND")) {
+        if(Strings.CI.equals(terminals.poll(), "AND")) {
             getConditions();
         }
 

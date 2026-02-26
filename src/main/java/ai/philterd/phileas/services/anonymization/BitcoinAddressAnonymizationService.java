@@ -16,10 +16,21 @@
 package ai.philterd.phileas.services.anonymization;
 
 import ai.philterd.phileas.services.context.ContextService;
+import org.apache.commons.collections4.CollectionUtils;
 
+import java.util.List;
 import java.util.Random;
+import java.util.UUID;
 
 public class BitcoinAddressAnonymizationService extends AbstractAnonymizationService {
+
+    public BitcoinAddressAnonymizationService(final ContextService contextService, final Random random, final AnonymizationMethod anonymizationMethod) {
+        super(contextService, random, anonymizationMethod);
+    }
+
+    public BitcoinAddressAnonymizationService(final ContextService contextService, final Random random, final List<String> candidates) {
+        super(contextService, random, candidates);
+    }
 
     public BitcoinAddressAnonymizationService(final ContextService contextService, final Random random) {
         super(contextService, random);
@@ -35,9 +46,41 @@ public class BitcoinAddressAnonymizationService extends AbstractAnonymizationSer
     }
 
     @Override
-    public String anonymize(String token) {
+    public String anonymize(final String token) {
 
-        return generateAlphanumeric(32);
+        if (anonymizationMethod == AnonymizationMethod.FROM_LIST) {
+
+            if (CollectionUtils.isNotEmpty(candidates)) {
+
+                String anonymized = candidates.get(random.nextInt(candidates.size()));
+                while (anonymized.equalsIgnoreCase(token)) {
+                    anonymized = candidates.get(random.nextInt(candidates.size()));
+                }
+                return anonymized;
+
+            } else {
+
+                // Provided list was empty - return a random UUID.
+                return UUID.randomUUID().toString();
+
+            }
+
+        } else if (anonymizationMethod == AnonymizationMethod.UUID) {
+
+            return java.util.UUID.randomUUID().toString();
+
+        } else {
+
+            // REALISTIC_REPLACE
+            String anonymized = generateAlphanumeric(32);
+
+            while (anonymized.equalsIgnoreCase(token)) {
+                anonymized = generateAlphanumeric(32);
+            }
+
+            return anonymized;
+
+        }
 
     }
 

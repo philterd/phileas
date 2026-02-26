@@ -29,7 +29,6 @@ import ai.philterd.phileas.policy.filters.Date;
 import ai.philterd.phileas.policy.filters.EmailAddress;
 import ai.philterd.phileas.policy.filters.FirstName;
 import ai.philterd.phileas.policy.filters.Hospital;
-import ai.philterd.phileas.policy.filters.HospitalAbbreviation;
 import ai.philterd.phileas.policy.filters.Identifier;
 import ai.philterd.phileas.policy.filters.IpAddress;
 import ai.philterd.phileas.policy.filters.PhoneNumber;
@@ -46,7 +45,6 @@ import ai.philterd.phileas.services.strategies.custom.CustomDictionaryFilterStra
 import ai.philterd.phileas.services.strategies.dynamic.CityFilterStrategy;
 import ai.philterd.phileas.services.strategies.dynamic.CountyFilterStrategy;
 import ai.philterd.phileas.services.strategies.dynamic.FirstNameFilterStrategy;
-import ai.philterd.phileas.services.strategies.dynamic.HospitalAbbreviationFilterStrategy;
 import ai.philterd.phileas.services.strategies.dynamic.HospitalFilterStrategy;
 import ai.philterd.phileas.services.strategies.dynamic.StateFilterStrategy;
 import ai.philterd.phileas.services.strategies.dynamic.SurnameFilterStrategy;
@@ -72,7 +70,6 @@ import org.apache.pdfbox.text.PDFTextStripper;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -82,7 +79,7 @@ public class EndToEndTestsHelper {
 
     private static final Logger LOGGER = LogManager.getLogger(EndToEndTestsHelper.class);
 
-    public static Policy getPolicyZipCodeWithIgnored(String policyName) throws IOException {
+    public static Policy getPolicyZipCodeWithIgnored() throws IOException {
 
         Set<String> ignored = new HashSet<>();
         ignored.add("90210");
@@ -104,14 +101,13 @@ public class EndToEndTestsHelper {
         identifiers.setZipCode(zipCode);
 
         Policy policy = new Policy();
-        policy.setName(policyName);
         policy.setIdentifiers(identifiers);
 
         return policy;
 
     }
 
-    public static Policy getPolicySSNAndZipCode(String policyName) throws IOException {
+    public static Policy getPolicySSNAndZipCode() throws IOException {
 
         SsnFilterStrategy ssnFilterStrategy = new SsnFilterStrategy();
 
@@ -129,14 +125,13 @@ public class EndToEndTestsHelper {
         identifiers.setZipCode(zipCode);
 
         Policy policy = new Policy();
-        policy.setName(policyName);
         policy.setIdentifiers(identifiers);
 
         return policy;
 
     }
 
-    public static Policy getPolicyZipCodeWithIgnoredFromFile(String policyName) throws IOException {
+    public static Policy getPolicyZipCodeWithIgnoredFromFile() throws IOException {
 
         // Copy file to temp directory.
         final File file = File.createTempFile("philter", "ignore");
@@ -162,14 +157,13 @@ public class EndToEndTestsHelper {
         identifiers.setZipCode(zipCode);
 
         Policy policy = new Policy();
-        policy.setName(policyName);
         policy.setIdentifiers(identifiers);
 
         return policy;
 
     }
 
-    public static Policy getPdfPolicy(String policyName) throws IOException {
+    public static Policy getPdfPolicy() throws IOException {
 
         ZipCodeFilterStrategy zipCodeFilterStrategy = new ZipCodeFilterStrategy();
         zipCodeFilterStrategy.setTruncateDigits(2);
@@ -190,14 +184,13 @@ public class EndToEndTestsHelper {
         identifiers.setZipCode(zipCode);
 
         Policy policy = new Policy();
-        policy.setName(policyName);
         policy.setIdentifiers(identifiers);
 
         return policy;
 
     }
 
-    public static Policy getPolicyJustCreditCardNotInUnixTimestamps(String policyName) {
+    public static Policy getPolicyJustCreditCardNotInUnixTimestamps() {
 
         CreditCardFilterStrategy creditCardFilterStrategy = new CreditCardFilterStrategy();
 
@@ -212,7 +205,6 @@ public class EndToEndTestsHelper {
         ignored.setTerms(Arrays.asList("4121742025464400", "12341341234", "2423543545"));
 
         Policy policy = new Policy();
-        policy.setName(policyName);
         policy.setIdentifiers(identifiers);
         policy.setIgnored(List.of(ignored));
 
@@ -220,7 +212,7 @@ public class EndToEndTestsHelper {
 
     }
 
-    public static Policy getPolicyJustCreditCard(String policyName) {
+    public static Policy getPolicyJustCreditCard() {
 
         CreditCardFilterStrategy creditCardFilterStrategy = new CreditCardFilterStrategy();
 
@@ -234,7 +226,6 @@ public class EndToEndTestsHelper {
         ignored.setTerms(Arrays.asList("4121742025464400", "12341341234", "2423543545"));
 
         Policy policy = new Policy();
-        policy.setName(policyName);
         policy.setIdentifiers(identifiers);
         policy.setIgnored(List.of(ignored));
 
@@ -242,7 +233,7 @@ public class EndToEndTestsHelper {
 
     }
 
-    public static Policy getPolicy(String policyName) throws IOException, URISyntaxException {
+    public static Policy getPolicy() throws IOException {
 
         AgeFilterStrategy ageFilterStrategy = new AgeFilterStrategy();
 
@@ -332,11 +323,6 @@ public class EndToEndTestsHelper {
         FirstName firstName = new FirstName();
         firstName.setFirstNameFilterStrategies(List.of(firstNameFilterStrategy));
 
-        HospitalAbbreviationFilterStrategy hospitalAbbreviationFilterStrategy = new HospitalAbbreviationFilterStrategy();
-
-        HospitalAbbreviation hospitalAbbreviation = new HospitalAbbreviation();
-        hospitalAbbreviation.setHospitalAbbreviationFilterStrategies(List.of(hospitalAbbreviationFilterStrategy));
-
         HospitalFilterStrategy hospitalFilterStrategy = new HospitalFilterStrategy();
 
         Hospital hospital = new Hospital();
@@ -379,14 +365,13 @@ public class EndToEndTestsHelper {
         identifiers.setSurname(surname);*/
 
         Policy policy = new Policy();
-        policy.setName(policyName);
         policy.setIdentifiers(identifiers);
 
         return policy;
 
     }
 
-    public static Policy getPolicyWithSplits(String policyName) throws IOException {
+    public static Policy getPolicyWithSplits() throws IOException {
 
         SsnFilterStrategy ssnFilterStrategy = new SsnFilterStrategy();
 
@@ -412,7 +397,6 @@ public class EndToEndTestsHelper {
         config.setSplitting(splitting);
 
         Policy policy = new Policy();
-        policy.setName(policyName);
         policy.setIdentifiers(identifiers);
         policy.setConfig(config);
 
@@ -420,7 +404,7 @@ public class EndToEndTestsHelper {
 
     }
 
-    public static Policy getPolicyJustStreetAddress(String policyName) {
+    public static Policy getPolicyJustStreetAddress() {
 
         StreetAddressFilterStrategy streetAddressFilterStrategy = new StreetAddressFilterStrategy();
 
@@ -431,14 +415,13 @@ public class EndToEndTestsHelper {
         identifiers.setStreetAddress(streetAddress);
 
         Policy policy = new Policy();
-        policy.setName(policyName);
         policy.setIdentifiers(identifiers);
 
         return policy;
 
     }
 
-    public static Policy getPolicyJustPhoneNumber(String policyName) {
+    public static Policy getPolicyJustPhoneNumber() {
 
         PhoneNumberFilterStrategy phoneNumberFilterStrategy = new PhoneNumberFilterStrategy();
         phoneNumberFilterStrategy.setConditions("confidence > 0.70");
@@ -451,7 +434,6 @@ public class EndToEndTestsHelper {
         identifiers.setPhoneNumber(phoneNumber);
 
         Policy policy = new Policy();
-        policy.setName(policyName);
         policy.setIdentifiers(identifiers);
 
         return policy;

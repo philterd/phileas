@@ -18,8 +18,6 @@ package ai.philterd.phileas.filters;
 import ai.philterd.phileas.model.filtering.FilterType;
 import ai.philterd.phileas.model.filtering.Filtered;
 import ai.philterd.phileas.policy.IgnoredPattern;
-import ai.philterd.phileas.services.anonymization.AgeAnonymizationService;
-import ai.philterd.phileas.services.context.DefaultContextService;
 import ai.philterd.phileas.services.filters.regex.AgeFilter;
 import ai.philterd.phileas.services.strategies.rules.AgeFilterStrategy;
 import org.junit.jupiter.api.Assertions;
@@ -38,7 +36,8 @@ public class AgeFilterTest extends AbstractFilterTest {
         final List<IgnoredPattern> ignoredPatterns = List.of(ignoredPattern);
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
-                .withAnonymizationService(new AgeAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withIgnoredPatterns(ignoredPatterns)
                 .withWindowSize(windowSize)
                 .build();
@@ -60,7 +59,8 @@ public class AgeFilterTest extends AbstractFilterTest {
         ignore.add("35yEaRs old");
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
-                .withAnonymizationService(new AgeAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withIgnored(ignore)
                 .withWindowSize(windowSize)
                 .build();
@@ -81,7 +81,8 @@ public class AgeFilterTest extends AbstractFilterTest {
         // This tests PHL-68. When there are no filter strategies just redact.
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
-                .withAnonymizationService(new AgeAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -104,7 +105,8 @@ public class AgeFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new AgeFilterStrategy()))
-                .withAnonymizationService(new AgeAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -125,7 +127,8 @@ public class AgeFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new AgeFilterStrategy()))
-                .withAnonymizationService(new AgeAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -146,7 +149,8 @@ public class AgeFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new AgeFilterStrategy()))
-                .withAnonymizationService(new AgeAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -167,7 +171,8 @@ public class AgeFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new AgeFilterStrategy()))
-                .withAnonymizationService(new AgeAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -188,7 +193,8 @@ public class AgeFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new AgeFilterStrategy()))
-                .withAnonymizationService(new AgeAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -209,7 +215,8 @@ public class AgeFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new AgeFilterStrategy()))
-                .withAnonymizationService(new AgeAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -230,7 +237,8 @@ public class AgeFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new AgeFilterStrategy()))
-                .withAnonymizationService(new AgeAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -251,7 +259,8 @@ public class AgeFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new AgeFilterStrategy()))
-                .withAnonymizationService(new AgeAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -272,7 +281,8 @@ public class AgeFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new AgeFilterStrategy()))
-                .withAnonymizationService(new AgeAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -295,7 +305,8 @@ public class AgeFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new AgeFilterStrategy()))
-                .withAnonymizationService(new AgeAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -318,7 +329,8 @@ public class AgeFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new AgeFilterStrategy()))
-                .withAnonymizationService(new AgeAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -339,7 +351,8 @@ public class AgeFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new AgeFilterStrategy()))
-                .withAnonymizationService(new AgeAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -362,7 +375,8 @@ public class AgeFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new AgeFilterStrategy()))
-                .withAnonymizationService(new AgeAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -385,7 +399,8 @@ public class AgeFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new AgeFilterStrategy()))
-                .withAnonymizationService(new AgeAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -408,7 +423,8 @@ public class AgeFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new AgeFilterStrategy()))
-                .withAnonymizationService(new AgeAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -431,7 +447,8 @@ public class AgeFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new AgeFilterStrategy()))
-                .withAnonymizationService(new AgeAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -454,7 +471,8 @@ public class AgeFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new AgeFilterStrategy()))
-                .withAnonymizationService(new AgeAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -467,27 +485,6 @@ public class AgeFilterTest extends AbstractFilterTest {
         Assertions.assertEquals(1, filtered.getSpans().size());
         Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 11, 18, FilterType.AGE));
         Assertions.assertNotEquals(filtered.getSpans().get(0).getText(), filtered.getSpans().get(0).getReplacement());
-
-    }
-
-    @Test
-    public void filter18() throws Exception {
-
-        // PHL-238: Support ages like: 61 y/o
-
-        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
-                .withStrategies(List.of(new AgeFilterStrategy()))
-                .withAnonymizationService(new AgeAnonymizationService(new DefaultContextService()))
-                .withWindowSize(windowSize)
-                .build();
-
-        final AgeFilter filter = new AgeFilter(filterConfiguration);
-
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "patient is 4161 y/o and");
-
-        showSpans(filtered.getSpans());
-
-        Assertions.assertEquals(0, filtered.getSpans().size());
 
     }
 

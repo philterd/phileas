@@ -15,6 +15,7 @@
  */
 package ai.philterd.phileas.services.strategies.dynamic;
 
+import ai.philterd.phileas.model.filtering.FilterType;
 import ai.philterd.phileas.model.filtering.Replacement;
 import ai.philterd.phileas.policy.Crypto;
 import ai.philterd.phileas.policy.FPE;
@@ -41,7 +42,7 @@ public class FirstNameFilterStrategyTest extends AbstractFilterStrategyTest {
     public void replacementWithContext() throws Exception {
 
         final AnonymizationService anonymizationService = getAnonymizationService();
-        anonymizationService.getContextService().putReplacement("jeff", "john");
+        anonymizationService.getContextService().putReplacement("jeff", "john", FilterType.FIRST_NAME.getType());
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
         strategy.setStrategy(AbstractFilterStrategy.RANDOM_REPLACE);
@@ -65,7 +66,7 @@ public class FirstNameFilterStrategyTest extends AbstractFilterStrategyTest {
     public void replacementWithContextDocumentScope() throws Exception {
 
         final AnonymizationService anonymizationService = getAnonymizationService();
-        anonymizationService.getContextService().putReplacement("jeff", "john");
+        anonymizationService.getContextService().putReplacement("jeff", "john", FilterType.FIRST_NAME.getType());
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
         strategy.setStrategy(AbstractFilterStrategy.RANDOM_REPLACE);

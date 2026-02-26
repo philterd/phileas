@@ -21,9 +21,26 @@ import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.security.SecureRandom;
+
 public class CityAnonymizationServiceTest {
 
     private static final Logger LOGGER = LogManager.getLogger(CityAnonymizationServiceTest.class);
+
+    @Test
+    public void constructor() {
+
+        AnonymizationService anonymizationService = new CityAnonymizationService(new DefaultContextService(), new SecureRandom(), AnonymizationMethod.REALISTIC);
+
+        final String token = "New York";
+        final String replacement = anonymizationService.anonymize(token);
+
+        LOGGER.info("City: {}", replacement);
+        Assertions.assertNotEquals(token, replacement);
+        Assertions.assertNotNull(replacement);
+        Assertions.assertFalse(replacement.isEmpty());
+
+    }
 
     @Test
     public void anonymize1() {
@@ -34,6 +51,7 @@ public class CityAnonymizationServiceTest {
         final String replacement = anonymizationService.anonymize(token);
 
         LOGGER.info("City: {}", replacement);
+        Assertions.assertNotEquals(token, replacement);
         Assertions.assertNotNull(replacement);
         Assertions.assertFalse(replacement.isEmpty());
 
@@ -48,8 +66,23 @@ public class CityAnonymizationServiceTest {
         final String replacement = anonymizationService.anonymize(token);
 
         LOGGER.info("City: {}", replacement);
+        Assertions.assertNotEquals(token, replacement);
         Assertions.assertNotNull(replacement);
         Assertions.assertFalse(replacement.isEmpty());
+
+    }
+
+    @Test
+    public void anonymizeUUID() {
+
+        AnonymizationService anonymizationService = new CityAnonymizationService(new DefaultContextService(), new SecureRandom(), AnonymizationMethod.UUID);
+
+        final String token = "New York";
+        final String replacement = anonymizationService.anonymize(token);
+
+        LOGGER.info("City: {}", replacement);
+        Assertions.assertNotEquals(token, replacement);
+        Assertions.assertTrue(replacement.length() >= 32);
 
     }
 

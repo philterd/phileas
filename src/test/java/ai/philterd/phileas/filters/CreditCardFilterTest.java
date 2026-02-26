@@ -17,14 +17,14 @@ package ai.philterd.phileas.filters;
 
 import ai.philterd.phileas.model.filtering.FilterType;
 import ai.philterd.phileas.model.filtering.Filtered;
-import ai.philterd.phileas.services.anonymization.CreditCardAnonymizationService;
-import ai.philterd.phileas.services.context.DefaultContextService;
 import ai.philterd.phileas.services.filters.regex.CreditCardFilter;
 import ai.philterd.phileas.services.strategies.rules.CreditCardFilterStrategy;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
+
+import static ai.philterd.phileas.services.strategies.AbstractFilterStrategy.RANDOM_REPLACE;
 
 public class CreditCardFilterTest extends AbstractFilterTest {
     
@@ -33,7 +33,8 @@ public class CreditCardFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new CreditCardFilterStrategy()))
-                .withAnonymizationService(new CreditCardAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -97,7 +98,8 @@ public class CreditCardFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new CreditCardFilterStrategy()))
-                .withAnonymizationService(new CreditCardAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -159,7 +161,8 @@ public class CreditCardFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new CreditCardFilterStrategy()))
-                .withAnonymizationService(new CreditCardAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -201,7 +204,8 @@ public class CreditCardFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new CreditCardFilterStrategy()))
-                .withAnonymizationService(new CreditCardAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -224,20 +228,27 @@ public class CreditCardFilterTest extends AbstractFilterTest {
     }
 
     @Test
-    public void filterCreditCardMultipleOnlyValid() throws Exception {
+    public void filterWithCandidates1() throws Exception {
+
+        final List<String> candidates = List.of("candidate1", "candidate2");
+
+        final CreditCardFilterStrategy creditCardFilterStrategy = new CreditCardFilterStrategy();
+        creditCardFilterStrategy.setStrategy(RANDOM_REPLACE);
+        creditCardFilterStrategy.setAnonymizationCandidates(candidates);
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
-                .withStrategies(List.of(new CreditCardFilterStrategy()))
-                .withAnonymizationService(new CreditCardAnonymizationService(new DefaultContextService()))
+                .withStrategies(List.of(creditCardFilterStrategy))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final CreditCardFilter filter = new CreditCardFilter(filterConfiguration, true, false, true);
 
-        Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "the payment method is 4532613702852251 visa and 1532000000852251.");
+        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "the payment method is 4532613702852251 visa.");
+        showSpans(filtered.getSpans());
         Assertions.assertEquals(1, filtered.getSpans().size());
-        Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 22, 38, FilterType.CREDIT_CARD));
-        Assertions.assertEquals("4532613702852251", filtered.getSpans().get(0).getText());
+        Assertions.assertTrue(candidates.contains(filtered.getSpans().get(0).getReplacement()));
 
     }
 

@@ -16,11 +16,22 @@
 package ai.philterd.phileas.services.anonymization;
 
 import ai.philterd.phileas.services.context.ContextService;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.text.RandomStringGenerator;
 
+import java.util.List;
 import java.util.Random;
+import java.util.UUID;
 
 public class EmailAddressAnonymizationService extends AbstractAnonymizationService {
+
+    public EmailAddressAnonymizationService(final ContextService contextService, final Random random, final AnonymizationMethod anonymizationMethod) {
+        super(contextService, random, anonymizationMethod);
+    }
+
+    public EmailAddressAnonymizationService(final ContextService contextService, final Random random, final List<String> candidates) {
+        super(contextService, random, candidates);
+    }
 
     public EmailAddressAnonymizationService(final ContextService contextService, final Random random) {
         super(contextService, random);
@@ -38,13 +49,45 @@ public class EmailAddressAnonymizationService extends AbstractAnonymizationServi
     @Override
     public String anonymize(final String token) {
 
-        final RandomStringGenerator randomStringGenerator = new RandomStringGenerator.Builder()
-                .withinRange('0', 'z')
-                .filteredBy(Character::isLetterOrDigit)
-                .usingRandom(random::nextInt)
-                .get();
+        if (anonymizationMethod == AnonymizationMethod.FROM_LIST) {
 
-        return randomStringGenerator.generate(10) + "@fake.com";
+            if (CollectionUtils.isNotEmpty(candidates)) {
+
+                String anonymized = candidates.get(random.nextInt(candidates.size()));
+                while (anonymized.equalsIgnoreCase(token)) {
+                    anonymized = candidates.get(random.nextInt(candidates.size()));
+                }
+                return anonymized;
+
+            } else {
+
+                // Provided list was empty - return a random UUID.
+                return UUID.randomUUID().toString();
+
+            }
+
+        } else if (anonymizationMethod == AnonymizationMethod.UUID) {
+
+            return java.util.UUID.randomUUID().toString();
+
+        } else {
+
+            // REALISTIC_REPLACE
+            final RandomStringGenerator randomStringGenerator = new RandomStringGenerator.Builder()
+                    .withinRange('0', 'z')
+                    .filteredBy(Character::isLetterOrDigit)
+                    .usingRandom(random::nextInt)
+                    .get();
+
+            String anonymized = randomStringGenerator.generate(10) + "@fake.com";
+
+            while (anonymized.equalsIgnoreCase(token)) {
+                anonymized = randomStringGenerator.generate(10) + "@fake.com";
+            }
+
+            return anonymized;
+
+        }
 
     }
 

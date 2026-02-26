@@ -20,7 +20,9 @@ import ai.philterd.phileas.filters.Filter;
 import ai.philterd.phileas.model.filtering.FilterType;
 import ai.philterd.phileas.policy.Identifiers;
 import ai.philterd.phileas.policy.Policy;
+import ai.philterd.phileas.policy.filters.PhEye;
 import ai.philterd.phileas.policy.filters.ZipCode;
+import ai.philterd.phileas.policy.filters.pheye.PhEyeConfiguration;
 import ai.philterd.phileas.services.context.ContextService;
 import ai.philterd.phileas.services.context.DefaultContextService;
 import org.apache.logging.log4j.LogManager;
@@ -29,7 +31,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.security.SecureRandom;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -45,7 +46,6 @@ public class FilterPolicyLoaderTest {
         final ContextService contextService = new DefaultContextService();
 
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(new Properties());
-        final Map<String, String> context = Collections.emptyMap();
 
         final FilterPolicyLoader filterPolicyLoader = new FilterPolicyLoader(contextService, phileasConfiguration, new SecureRandom(), null);
 
@@ -53,7 +53,6 @@ public class FilterPolicyLoaderTest {
         identifiers.setZipCode(new ZipCode());
 
         final Policy policy = new Policy();
-        policy.setName("unnamed");
         policy.setIdentifiers(identifiers);
 
         final Map<String, Map<FilterType, Filter>> filterCache = new HashMap<>();
@@ -75,13 +74,11 @@ public class FilterPolicyLoaderTest {
 
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties);
         final FilterPolicyLoader filterPolicyLoader = new FilterPolicyLoader(contextService, phileasConfiguration, new SecureRandom(), null);
-        final Map<String, String> context = Collections.emptyMap();
 
         final Identifiers identifiers = new Identifiers();
         identifiers.setZipCode(new ZipCode());
 
         final Policy policy = new Policy();
-        policy.setName("unnamed");
         policy.setIdentifiers(identifiers);
 
         final Map<String, Map<FilterType, Filter>> filterCache = new HashMap<>();
@@ -99,7 +96,6 @@ public class FilterPolicyLoaderTest {
         final ContextService contextService = new DefaultContextService();
 
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(new Properties());
-        final Map<String, String> context = Collections.emptyMap();
 
         final FilterPolicyLoader filterPolicyLoader = new FilterPolicyLoader(contextService, phileasConfiguration, new SecureRandom(), null);
 
@@ -107,7 +103,6 @@ public class FilterPolicyLoaderTest {
         identifiers.setZipCode(new ZipCode());
 
         final Policy policy = new Policy();
-        policy.setName("unnamed");
         policy.setIdentifiers(identifiers);
 
         final Map<String, Map<FilterType, Filter>> filterCache = new HashMap<>();
@@ -116,7 +111,6 @@ public class FilterPolicyLoaderTest {
 
         Assertions.assertEquals(1, filters.size());
         Assertions.assertEquals(1, filterCache.size());
-        Assertions.assertNotNull(filterCache.get("unnamed").get(FilterType.ZIP_CODE));
 
     }
 
@@ -125,12 +119,10 @@ public class FilterPolicyLoaderTest {
 
         final ContextService contextService = new DefaultContextService();
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(new Properties());
-        final Map<String, String> context = Collections.emptyMap();
 
         final FilterPolicyLoader filterPolicyLoader = new FilterPolicyLoader(contextService, phileasConfiguration, new SecureRandom(), null);
 
         final Policy policy = new Policy();
-        policy.setName("unnamed");
 
         final Map<String, Map<FilterType, Filter>> filterCache = new HashMap<>();
 
@@ -138,7 +130,66 @@ public class FilterPolicyLoaderTest {
 
         Assertions.assertEquals(0, filters.size());
         Assertions.assertEquals(1, filterCache.size());
-        Assertions.assertEquals(0, filterCache.get("unnamed").size());
+
+    }
+
+    @Test
+    public void getFiltersForPolicyWithMultiplePhEye() throws Exception {
+
+        final ContextService contextService = new DefaultContextService();
+        final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(new Properties());
+
+        final FilterPolicyLoader filterPolicyLoader = new FilterPolicyLoader(contextService, phileasConfiguration, new SecureRandom(), null);
+
+        final PhEye phEye1 = new PhEye();
+        final PhEyeConfiguration config1 = new PhEyeConfiguration();
+        config1.setEndpoint("http://localhost:5000");
+        phEye1.setPhEyeConfiguration(config1);
+
+        final PhEye phEye2 = new PhEye();
+        final PhEyeConfiguration config2 = new PhEyeConfiguration();
+        config2.setEndpoint("http://localhost:5001");
+        phEye2.setPhEyeConfiguration(config2);
+
+        final Identifiers identifiers = new Identifiers();
+        identifiers.setPhEyes(List.of(phEye1, phEye2));
+
+        final Policy policy = new Policy();
+        policy.setIdentifiers(identifiers);
+
+        final Map<String, Map<FilterType, Filter>> filterCache = new HashMap<>();
+
+        final List<Filter> filters = filterPolicyLoader.getFiltersForPolicy(policy, filterCache);
+
+        Assertions.assertEquals(2, filters.size());
+
+    }
+
+    @Test
+    public void getFiltersForPolicyWithPerson() throws Exception {
+
+        final ContextService contextService = new DefaultContextService();
+        final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(new Properties());
+
+        final FilterPolicyLoader filterPolicyLoader = new FilterPolicyLoader(contextService, phileasConfiguration, new SecureRandom(), null);
+
+        final PhEye person = new PhEye();
+        final PhEyeConfiguration config = new PhEyeConfiguration();
+        config.setEndpoint("http://localhost:5000");
+        person.setPhEyeConfiguration(config);
+
+        final Identifiers identifiers = new Identifiers();
+        identifiers.setPerson(person);
+
+        final Policy policy = new Policy();
+        policy.setIdentifiers(identifiers);
+
+        final Map<String, Map<FilterType, Filter>> filterCache = new HashMap<>();
+
+        final List<Filter> filters = filterPolicyLoader.getFiltersForPolicy(policy, filterCache);
+
+        Assertions.assertEquals(1, filters.size());
+        Assertions.assertEquals(FilterType.PERSON, filters.get(0).getFilterType());
 
     }
 

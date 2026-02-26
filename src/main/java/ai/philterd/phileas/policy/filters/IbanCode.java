@@ -15,9 +15,9 @@
  */
 package ai.philterd.phileas.policy.filters;
 
+import ai.philterd.phileas.services.strategies.rules.IbanCodeFilterStrategy;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
-import ai.philterd.phileas.services.strategies.rules.IbanCodeFilterStrategy;
 
 import java.util.List;
 

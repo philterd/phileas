@@ -16,8 +16,8 @@
 package ai.philterd.phileas.services;
 
 import ai.philterd.phileas.PhileasConfiguration;
-import ai.philterd.phileas.model.filtering.TextFilterResult;
 import ai.philterd.phileas.model.filtering.IncrementalRedaction;
+import ai.philterd.phileas.model.filtering.TextFilterResult;
 import ai.philterd.phileas.policy.Policy;
 import ai.philterd.phileas.services.context.ContextService;
 import ai.philterd.phileas.services.disambiguation.vector.VectorService;
@@ -51,7 +51,7 @@ public class EndToEndWithIncrementalRedactionsTest {
 
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties);
 
-        final Policy policy = getPolicy("default");
+        final Policy policy = getPolicy();
 
         final PlainTextFilterService service = new PlainTextFilterService(phileasConfiguration, contextService, vectorService, null);
         final TextFilterResult response = service.filter(policy, "context", "George Washington whose SSN was 123-45-6789 was the first president of the United States and he lived at 90210.");
@@ -76,7 +76,7 @@ public class EndToEndWithIncrementalRedactionsTest {
 
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties);
 
-        final Policy policy = getPolicy("default");
+        final Policy policy = getPolicy();
 
         final PlainTextFilterService service = new PlainTextFilterService(phileasConfiguration, contextService, vectorService, null);
         final TextFilterResult response = service.filter(policy, "context", "George Washington was president.");
@@ -96,7 +96,7 @@ public class EndToEndWithIncrementalRedactionsTest {
 
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties);
 
-        final Policy policy = getPolicyWithSplits("default");
+        final Policy policy = getPolicyWithSplits();
 
         final PlainTextFilterService service = new PlainTextFilterService(phileasConfiguration, contextService, vectorService, null);
         final TextFilterResult response = service.filter(policy, "context", "George Washington whose SSN was 123-45-6789 was\n the first president of the United States and he lived at 90210.\nThe second president was John Adams. Abraham Lincoln was later on. His SSN was 123-45-6789.");

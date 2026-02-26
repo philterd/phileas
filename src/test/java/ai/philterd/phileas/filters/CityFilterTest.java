@@ -17,10 +17,9 @@ package ai.philterd.phileas.filters;
 
 import ai.philterd.phileas.filters.rules.dictionary.FuzzyDictionaryFilter;
 import ai.philterd.phileas.model.filtering.FilterType;
-import ai.philterd.phileas.model.filtering.SensitivityLevel;
 import ai.philterd.phileas.model.filtering.Filtered;
-import ai.philterd.phileas.services.anonymization.CityAnonymizationService;
-import ai.philterd.phileas.services.context.DefaultContextService;
+import ai.philterd.phileas.model.filtering.SensitivityLevel;
+import ai.philterd.phileas.model.filtering.Span;
 import ai.philterd.phileas.services.strategies.dynamic.CityFilterStrategy;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -28,6 +27,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
+
+import static ai.philterd.phileas.services.strategies.AbstractFilterStrategy.RANDOM_REPLACE;
 
 public class CityFilterTest extends AbstractFilterTest {
 
@@ -38,7 +39,8 @@ public class CityFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new CityFilterStrategy()))
-                .withAnonymizationService(new CityAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -46,10 +48,10 @@ public class CityFilterTest extends AbstractFilterTest {
 
         Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "Lived in Washington.");
 
-        showSpans(filtered.getSpans());
+        showSpans(Span.dropOverlappingSpans(filtered.getSpans()));
 
-        Assertions.assertEquals(1, filtered.getSpans().size());
-        Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 9, 19, FilterType.LOCATION_CITY));
+        Assertions.assertEquals(2, Span.dropOverlappingSpans(filtered.getSpans()).size());
+        Assertions.assertTrue(checkSpanInSpans(Span.dropOverlappingSpans(filtered.getSpans()), 9, 19, FilterType.LOCATION_CITY, "Washington", "{{{REDACTED-city}}}"));
 
     }
 
@@ -58,7 +60,8 @@ public class CityFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new CityFilterStrategy()))
-                .withAnonymizationService(new CityAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -66,12 +69,11 @@ public class CityFilterTest extends AbstractFilterTest {
 
         Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "Lived in New York.");
 
-        showSpans(filtered.getSpans());
+        showSpans(Span.dropOverlappingSpans(filtered.getSpans()));
 
-        Assertions.assertEquals(2, filtered.getSpans().size());
-        Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 9, 17, FilterType.LOCATION_CITY));
-        Assertions.assertTrue(checkSpan(filtered.getSpans().get(1), 13, 17, FilterType.LOCATION_CITY));
-        Assertions.assertEquals("new york", filtered.getSpans().get(0).getText());
+        Assertions.assertEquals(1, Span.dropOverlappingSpans(filtered.getSpans()).size());
+        Assertions.assertTrue(checkSpan(Span.dropOverlappingSpans(filtered.getSpans()).get(0), 9, 17, FilterType.LOCATION_CITY));
+        Assertions.assertEquals("New York", Span.dropOverlappingSpans(filtered.getSpans()).get(0).getText());
 
     }
 
@@ -80,7 +82,8 @@ public class CityFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new CityFilterStrategy()))
-                .withAnonymizationService(new CityAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -88,9 +91,10 @@ public class CityFilterTest extends AbstractFilterTest {
 
         Filtered filtered = filter.filter(getPolicy(), "context", PIECE,"Lived in Wshington");
 
-        showSpans(filtered.getSpans());
+        showSpans(Span.dropOverlappingSpans(filtered.getSpans()));
 
-        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertEquals(2, Span.dropOverlappingSpans(filtered.getSpans()).size());
+        Assertions.assertTrue(checkSpanInSpans(Span.dropOverlappingSpans(filtered.getSpans()), 9, 18, FilterType.LOCATION_CITY, "Wshington", "{{{REDACTED-city}}}"));
 
     }
 
@@ -99,7 +103,8 @@ public class CityFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new CityFilterStrategy()))
-                .withAnonymizationService(new CityAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -107,10 +112,10 @@ public class CityFilterTest extends AbstractFilterTest {
 
         Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "Lived in Wshington");
 
-        showSpans(filtered.getSpans());
+        showSpans(Span.dropOverlappingSpans(filtered.getSpans()));
 
-        Assertions.assertEquals(1, filtered.getSpans().size());
-        Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 9, 18, FilterType.LOCATION_CITY));
+        Assertions.assertEquals(2, Span.dropOverlappingSpans(filtered.getSpans()).size());
+        Assertions.assertTrue(checkSpanInSpans(Span.dropOverlappingSpans(filtered.getSpans()), 9, 18, FilterType.LOCATION_CITY, "Wshington", "{{{REDACTED-city}}}"));
 
     }
 
@@ -119,7 +124,8 @@ public class CityFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new CityFilterStrategy()))
-                .withAnonymizationService(new CityAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -127,9 +133,34 @@ public class CityFilterTest extends AbstractFilterTest {
 
         Filtered filtered = filter.filter(getPolicy(), "context", PIECE,"Lived in Wasinton");
 
-        showSpans(filtered.getSpans());
+        showSpans(Span.dropOverlappingSpans(filtered.getSpans()));
 
-        Assertions.assertEquals(0, filtered.getSpans().size());
+        Assertions.assertEquals(0, Span.dropOverlappingSpans(filtered.getSpans()).size());
+
+    }
+
+    @Test
+    public void filterWithCandidates1() throws Exception {
+
+        final List<String> candidates = List.of("candidate1", "candidate2");
+
+        final CityFilterStrategy cityFilterStrategy = new CityFilterStrategy();
+        cityFilterStrategy.setStrategy(RANDOM_REPLACE);
+        cityFilterStrategy.setAnonymizationCandidates(candidates);
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(cityFilterStrategy))
+                .withContextService(contextService)
+                .withRandom(random)
+                .withWindowSize(windowSize)
+                .build();
+
+        final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.LOCATION_CITY, filterConfiguration, SensitivityLevel.LOW, true);
+
+        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "Lived in Washington.");
+        showSpans(Span.dropOverlappingSpans(filtered.getSpans()));
+        Assertions.assertEquals(2, Span.dropOverlappingSpans(filtered.getSpans()).size());
+        Assertions.assertTrue(candidates.contains(Span.dropOverlappingSpans(filtered.getSpans()).get(0).getReplacement()));
 
     }
 

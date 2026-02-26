@@ -17,14 +17,14 @@ package ai.philterd.phileas.filters;
 
 import ai.philterd.phileas.model.filtering.FilterType;
 import ai.philterd.phileas.model.filtering.Filtered;
-import ai.philterd.phileas.services.anonymization.BitcoinAddressAnonymizationService;
-import ai.philterd.phileas.services.context.DefaultContextService;
 import ai.philterd.phileas.services.filters.regex.BitcoinAddressFilter;
 import ai.philterd.phileas.services.strategies.rules.BitcoinAddressFilterStrategy;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
+
+import static ai.philterd.phileas.services.strategies.AbstractFilterStrategy.RANDOM_REPLACE;
 
 public class BitcoinAddressFilterTest extends AbstractFilterTest {
 
@@ -33,7 +33,8 @@ public class BitcoinAddressFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new BitcoinAddressFilterStrategy()))
-                .withAnonymizationService(new BitcoinAddressAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -55,7 +56,8 @@ public class BitcoinAddressFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new BitcoinAddressFilterStrategy()))
-                .withAnonymizationService(new BitcoinAddressAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -73,21 +75,27 @@ public class BitcoinAddressFilterTest extends AbstractFilterTest {
     }
 
     @Test
-    public void filter3() throws Exception {
+    public void filterWithCandidates1() throws Exception {
+
+        final List<String> candidates = List.of("address1", "address2");
+
+        final BitcoinAddressFilterStrategy bitcoinAddressFilterStrategy = new BitcoinAddressFilterStrategy();
+        bitcoinAddressFilterStrategy.setStrategy(RANDOM_REPLACE);
+        bitcoinAddressFilterStrategy.setAnonymizationCandidates(candidates);
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
-                .withStrategies(List.of(new BitcoinAddressFilterStrategy()))
-                .withAnonymizationService(new BitcoinAddressAnonymizationService(new DefaultContextService()))
+                .withStrategies(List.of(bitcoinAddressFilterStrategy))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final BitcoinAddressFilter filter = new BitcoinAddressFilter(filterConfiguration);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "the address is 126wqmy1gbGtv.");
-
+        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "the address is 127NVqnjf8gB9BFAW2dnQeM6wqmy1gbGtv");
         showSpans(filtered.getSpans());
-
-        Assertions.assertEquals(0, filtered.getSpans().size());
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertTrue(candidates.contains(filtered.getSpans().get(0).getReplacement()));
 
     }
 

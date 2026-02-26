@@ -15,14 +15,14 @@
  */
 package ai.philterd.phileas.services.filters.regex;
 
-import ai.philterd.phileas.model.filtering.FilterType;
 import ai.philterd.phileas.filters.FilterConfiguration;
 import ai.philterd.phileas.filters.rules.regex.RegexFilter;
-import ai.philterd.phileas.services.Analyzer;
 import ai.philterd.phileas.model.filtering.FilterPattern;
+import ai.philterd.phileas.model.filtering.FilterType;
 import ai.philterd.phileas.model.filtering.Filtered;
 import ai.philterd.phileas.model.filtering.Span;
 import ai.philterd.phileas.policy.Policy;
+import ai.philterd.phileas.services.Analyzer;
 
 import java.io.File;
 import java.io.IOException;

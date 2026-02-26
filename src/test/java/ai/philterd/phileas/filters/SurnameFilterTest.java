@@ -17,11 +17,9 @@ package ai.philterd.phileas.filters;
 
 import ai.philterd.phileas.filters.rules.dictionary.FuzzyDictionaryFilter;
 import ai.philterd.phileas.model.filtering.FilterType;
-import ai.philterd.phileas.model.filtering.SensitivityLevel;
 import ai.philterd.phileas.model.filtering.Filtered;
+import ai.philterd.phileas.model.filtering.SensitivityLevel;
 import ai.philterd.phileas.model.filtering.Span;
-import ai.philterd.phileas.services.anonymization.SurnameAnonymizationService;
-import ai.philterd.phileas.services.context.DefaultContextService;
 import ai.philterd.phileas.services.strategies.dynamic.SurnameFilterStrategy;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -30,16 +28,19 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
+import static ai.philterd.phileas.services.strategies.AbstractFilterStrategy.RANDOM_REPLACE;
+
 public class SurnameFilterTest extends AbstractFilterTest {
 
     private static final Logger LOGGER = LogManager.getLogger(SurnameFilterTest.class);
 
     @Test
-    public void filter1() throws Exception {
+    void filter1() throws Exception {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new SurnameFilterStrategy()))
-                .withAnonymizationService(new SurnameAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -52,11 +53,12 @@ public class SurnameFilterTest extends AbstractFilterTest {
     }
 
     @Test
-    public void filter2() throws Exception {
+    void filter2() throws Exception {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new SurnameFilterStrategy()))
-                .withAnonymizationService(new SurnameAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -69,11 +71,12 @@ public class SurnameFilterTest extends AbstractFilterTest {
     }
 
     @Test
-    public void filter3() throws Exception {
+    void filter3() throws Exception {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new SurnameFilterStrategy()))
-                .withAnonymizationService(new SurnameAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -86,11 +89,12 @@ public class SurnameFilterTest extends AbstractFilterTest {
     }
 
     @Test
-    public void filter4() throws Exception {
+    void filter4() throws Exception {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new SurnameFilterStrategy()))
-                .withAnonymizationService(new SurnameAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -103,11 +107,12 @@ public class SurnameFilterTest extends AbstractFilterTest {
     }
 
     @Test
-    public void filter5() throws Exception {
+    void filter5() throws Exception {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new SurnameFilterStrategy()))
-                .withAnonymizationService(new SurnameAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -120,11 +125,18 @@ public class SurnameFilterTest extends AbstractFilterTest {
     }
 
     @Test
-    public void filter6() throws Exception {
+    void filterWithCandidates1() throws Exception {
+
+        final List<String> candidates = List.of("candidate1", "candidate2");
+
+        final SurnameFilterStrategy surnameFilterStrategy = new SurnameFilterStrategy();
+        surnameFilterStrategy.setStrategy(RANDOM_REPLACE);
+        surnameFilterStrategy.setAnonymizationCandidates(candidates);
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
-                .withStrategies(List.of(new SurnameFilterStrategy()))
-                .withAnonymizationService(new SurnameAnonymizationService(new DefaultContextService()))
+                .withStrategies(List.of(surnameFilterStrategy))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -133,6 +145,12 @@ public class SurnameFilterTest extends AbstractFilterTest {
         final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "from");
         showSpans(Span.dropOverlappingSpans(filtered.getSpans()));
         Assertions.assertEquals(1, Span.dropOverlappingSpans(filtered.getSpans()).size());
+
+        final Filtered filtered2 = filter.filter(getPolicy(), "context", PIECE, "Jones");
+        showSpans(filtered2.getSpans());
+        Assertions.assertTrue(filtered2.getSpans().size() >= 1);
+        Assertions.assertTrue(candidates.contains(filtered2.getSpans().get(0).getReplacement()));
+
 
     }
 

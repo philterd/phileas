@@ -15,9 +15,9 @@
  */
 package ai.philterd.phileas.policy.filters;
 
+import ai.philterd.phileas.services.strategies.rules.EmailAddressFilterStrategy;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
-import ai.philterd.phileas.services.strategies.rules.EmailAddressFilterStrategy;
 
 import java.util.List;
 

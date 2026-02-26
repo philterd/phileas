@@ -17,8 +17,6 @@ package ai.philterd.phileas.filters;
 
 import ai.philterd.phileas.model.filtering.FilterType;
 import ai.philterd.phileas.model.filtering.Filtered;
-import ai.philterd.phileas.services.anonymization.DateAnonymizationService;
-import ai.philterd.phileas.services.context.DefaultContextService;
 import ai.philterd.phileas.services.filters.regex.DateFilter;
 import ai.philterd.phileas.services.strategies.AbstractFilterStrategy;
 import ai.philterd.phileas.services.strategies.rules.DateFilterStrategy;
@@ -28,13 +26,16 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
+import static ai.philterd.phileas.services.strategies.AbstractFilterStrategy.RANDOM_REPLACE;
+
 public class DateFilterTest extends AbstractFilterTest {
     
     private FilterConfiguration buildFilterConfiguration() {
 
         return new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new DateFilterStrategy()))
-                .withAnonymizationService(new DateAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .build();
 
     }
@@ -409,7 +410,8 @@ public class DateFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(dateFilterStrategy))
-                .withAnonymizationService(new DateAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .build();
 
         final DateFilter filter = new DateFilter(filterConfiguration, false, DateSpanValidator.getInstance());
@@ -595,6 +597,48 @@ public class DateFilterTest extends AbstractFilterTest {
         Assertions.assertEquals(3, filtered.getSpans().get(0).getCharacterStart());
         Assertions.assertEquals(16, filtered.getSpans().get(0).getCharacterEnd());
         Assertions.assertEquals("Aug. 31, 2020", filtered.getSpans().get(0).getText());
+
+    }
+
+    @Test
+    public void filterDate46() throws Exception {
+
+        // PHL-239: Support dates like Aug. 31, 2020
+
+        final DateFilter filter = new DateFilter(buildFilterConfiguration(), true, DateSpanValidator.getInstance());
+
+        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "The date of March 4 1932 was fun");
+
+        showSpans(filtered.getSpans());
+
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertEquals(12, filtered.getSpans().get(0).getCharacterStart());
+        Assertions.assertEquals(24, filtered.getSpans().get(0).getCharacterEnd());
+        Assertions.assertEquals("March 4 1932", filtered.getSpans().get(0).getText());
+
+    }
+
+    @Test
+    public void filterWithCandidates1() throws Exception {
+
+        final List<String> candidates = List.of("2000-01-01", "1999-12-31");
+
+        final DateFilterStrategy dateFilterStrategy = new DateFilterStrategy();
+        dateFilterStrategy.setStrategy(RANDOM_REPLACE);
+        dateFilterStrategy.setAnonymizationCandidates(candidates);
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(dateFilterStrategy))
+                .withContextService(contextService)
+                .withRandom(random)
+                .build();
+
+        final DateFilter filter = new DateFilter(filterConfiguration, false, DateSpanValidator.getInstance());
+
+        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "May 22, 1999");
+        showSpans(filtered.getSpans());
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertTrue(candidates.contains(filtered.getSpans().get(0).getReplacement()));
 
     }
 

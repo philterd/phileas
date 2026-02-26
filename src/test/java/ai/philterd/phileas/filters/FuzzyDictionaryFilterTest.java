@@ -19,8 +19,6 @@ import ai.philterd.phileas.filters.rules.dictionary.FuzzyDictionaryFilter;
 import ai.philterd.phileas.model.filtering.FilterType;
 import ai.philterd.phileas.model.filtering.Filtered;
 import ai.philterd.phileas.model.filtering.SensitivityLevel;
-import ai.philterd.phileas.services.anonymization.AlphanumericAnonymizationService;
-import ai.philterd.phileas.services.context.DefaultContextService;
 import ai.philterd.phileas.services.strategies.custom.CustomDictionaryFilterStrategy;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -33,11 +31,10 @@ import java.util.Set;
 public class FuzzyDictionaryFilterTest extends AbstractFilterTest {
 
     @Test
-    public void filterExactMatch() throws Exception {
+    void filterExactMatch() throws Exception {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new CustomDictionaryFilterStrategy()))
-                .withAnonymizationService(new AlphanumericAnonymizationService(new DefaultContextService()))
                 .withWindowSize(windowSize)
                 .build();
 
@@ -53,11 +50,10 @@ public class FuzzyDictionaryFilterTest extends AbstractFilterTest {
     }
 
     @Test
-    public void filterFuzzyHigh() throws Exception {
+    void filterFuzzyHigh() throws Exception {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new CustomDictionaryFilterStrategy()))
-                .withAnonymizationService(new AlphanumericAnonymizationService(new DefaultContextService()))
                 .withWindowSize(windowSize)
                 .build();
 
@@ -80,11 +76,10 @@ public class FuzzyDictionaryFilterTest extends AbstractFilterTest {
     }
 
     @Test
-    public void filterExactMatchWithCapitalization() throws Exception {
+    void filterExactMatchWithCapitalization() throws Exception {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new CustomDictionaryFilterStrategy()))
-                .withAnonymizationService(new AlphanumericAnonymizationService(new DefaultContextService()))
                 .withWindowSize(windowSize)
                 .build();
 
@@ -106,11 +101,10 @@ public class FuzzyDictionaryFilterTest extends AbstractFilterTest {
     }
 
     @Test
-    public void filterFuzzyMedium() throws Exception {
+    void filterFuzzyMedium() throws Exception {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new CustomDictionaryFilterStrategy()))
-                .withAnonymizationService(new AlphanumericAnonymizationService(new DefaultContextService()))
                 .withWindowSize(windowSize)
                 .build();
 
@@ -131,11 +125,10 @@ public class FuzzyDictionaryFilterTest extends AbstractFilterTest {
     }
 
     @Test
-    public void filterFuzzyLow() throws Exception {
+    void filterFuzzyLow() throws Exception {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new CustomDictionaryFilterStrategy()))
-                .withAnonymizationService(new AlphanumericAnonymizationService(new DefaultContextService()))
                 .withWindowSize(windowSize)
                 .build();
 
@@ -153,11 +146,10 @@ public class FuzzyDictionaryFilterTest extends AbstractFilterTest {
     }
 
     @Test
-    public void filterRequireCapitalizationTrue() throws Exception {
+    void filterRequireCapitalizationTrue() throws Exception {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new CustomDictionaryFilterStrategy()))
-                .withAnonymizationService(new AlphanumericAnonymizationService(new DefaultContextService()))
                 .withWindowSize(windowSize)
                 .build();
 
@@ -180,11 +172,10 @@ public class FuzzyDictionaryFilterTest extends AbstractFilterTest {
     }
 
     @Test
-    public void filterRequireCapitalizationFalse() throws Exception {
+    void filterRequireCapitalizationFalse() throws Exception {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new CustomDictionaryFilterStrategy()))
-                .withAnonymizationService(new AlphanumericAnonymizationService(new DefaultContextService()))
                 .withWindowSize(windowSize)
                 .build();
 
@@ -199,11 +190,10 @@ public class FuzzyDictionaryFilterTest extends AbstractFilterTest {
     }
 
     @Test
-    public void filterPhraseExactMatch() throws Exception {
+    void filterPhraseExactMatch() throws Exception {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new CustomDictionaryFilterStrategy()))
-                .withAnonymizationService(new AlphanumericAnonymizationService(new DefaultContextService()))
                 .withWindowSize(windowSize)
                 .build();
 
@@ -218,11 +208,10 @@ public class FuzzyDictionaryFilterTest extends AbstractFilterTest {
     }
 
     @Test
-    public void filterPhraseFuzzyMatch() throws Exception {
+    void filterPhraseFuzzyMatch() throws Exception {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new CustomDictionaryFilterStrategy()))
-                .withAnonymizationService(new AlphanumericAnonymizationService(new DefaultContextService()))
                 .withWindowSize(windowSize)
                 .build();
 

@@ -15,8 +15,8 @@
  */
 package ai.philterd.phileas.filters.dynamic;
 
-import ai.philterd.phileas.model.filtering.FilterType;
 import ai.philterd.phileas.filters.FilterConfiguration;
+import ai.philterd.phileas.model.filtering.FilterType;
 
 import java.util.Map;
 

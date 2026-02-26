@@ -17,14 +17,15 @@ package ai.philterd.phileas.filters;
 
 import ai.philterd.phileas.model.filtering.FilterType;
 import ai.philterd.phileas.model.filtering.Filtered;
-import ai.philterd.phileas.services.anonymization.AlphanumericAnonymizationService;
-import ai.philterd.phileas.services.context.DefaultContextService;
 import ai.philterd.phileas.services.filters.regex.SsnFilter;
+import ai.philterd.phileas.services.strategies.AbstractFilterStrategy;
 import ai.philterd.phileas.services.strategies.rules.SsnFilterStrategy;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
+
+import static ai.philterd.phileas.services.strategies.AbstractFilterStrategy.RANDOM_REPLACE;
 
 public class SsnFilterTest extends AbstractFilterTest {
 
@@ -33,7 +34,8 @@ public class SsnFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new SsnFilterStrategy()))
-                .withAnonymizationService(new AlphanumericAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -51,7 +53,8 @@ public class SsnFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new SsnFilterStrategy()))
-                .withAnonymizationService(new AlphanumericAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -68,7 +71,8 @@ public class SsnFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new SsnFilterStrategy()))
-                .withAnonymizationService(new AlphanumericAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -85,7 +89,8 @@ public class SsnFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new SsnFilterStrategy()))
-                .withAnonymizationService(new AlphanumericAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -102,7 +107,8 @@ public class SsnFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new SsnFilterStrategy()))
-                .withAnonymizationService(new AlphanumericAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -118,7 +124,8 @@ public class SsnFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new SsnFilterStrategy()))
-                .withAnonymizationService(new AlphanumericAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -134,7 +141,8 @@ public class SsnFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new SsnFilterStrategy()))
-                .withAnonymizationService(new AlphanumericAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -147,21 +155,71 @@ public class SsnFilterTest extends AbstractFilterTest {
     }
 
     @Test
-    public void filterSsn8() throws Exception {
+    public void filterWithCandidates1() throws Exception {
+
+        final List<String> candidates = List.of("candidate1", "candidate2");
+
+        final SsnFilterStrategy ssnFilterStrategy = new SsnFilterStrategy();
+        ssnFilterStrategy.setStrategy(RANDOM_REPLACE);
+        ssnFilterStrategy.setAnonymizationCandidates(candidates);
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
-                .withStrategies(List.of(new SsnFilterStrategy()))
-                .withAnonymizationService(new AlphanumericAnonymizationService(new DefaultContextService()))
+                .withStrategies(List.of(ssnFilterStrategy))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final SsnFilter filter = new SsnFilter(filterConfiguration);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "489-36-8351");
+        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "the ssn is 123-45-6789.");
+        showSpans(filtered.getSpans());
         Assertions.assertEquals(1, filtered.getSpans().size());
-        Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 0, 11, FilterType.SSN));
+        Assertions.assertTrue(candidates.contains(filtered.getSpans().get(0).getReplacement()));
 
     }
 
+    @Test
+    public void filterSsnContext() throws Exception {
+
+        final SsnFilterStrategy ssnFilterStrategy = new SsnFilterStrategy();
+        ssnFilterStrategy.setStrategy(RANDOM_REPLACE);
+        ssnFilterStrategy.setReplacementScope(AbstractFilterStrategy.REPLACEMENT_SCOPE_CONTEXT);
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(ssnFilterStrategy))
+                .withContextService(contextService)
+                .withRandom(random)
+                .withWindowSize(windowSize)
+                .build();
+
+        final SsnFilter filter = new SsnFilter(filterConfiguration);
+
+        final Filtered filtered1 = filter.filter(getPolicy(), "context", PIECE, "the ssn is 123-45-6789.");
+        Assertions.assertEquals(1, filtered1.getSpans().size());
+        final String replacement1 = filtered1.getSpans().get(0).getReplacement();
+
+        final Filtered filtered2 = filter.filter(getPolicy(), "context", PIECE, "the ssn is 123-45-6789.");
+        Assertions.assertEquals(1, filtered2.getSpans().size());
+        final String replacement2 = filtered2.getSpans().get(0).getReplacement();
+
+        Assertions.assertEquals(replacement1, replacement2);
+
+        final FilterConfiguration filterConfiguration2 = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(ssnFilterStrategy))
+                .withContextService(contextService)
+                .withRandom(random)
+                .withWindowSize(windowSize)
+                .build();
+
+        final SsnFilter filter2 = new SsnFilter(filterConfiguration2);
+
+        final Filtered filtered3 = filter2.filter(getPolicy(), "anothercontext", PIECE, "the ssn is 555-55-1234.");
+        Assertions.assertEquals(1, filtered3.getSpans().size());
+        final String replacement3 = filtered3.getSpans().get(0).getReplacement();
+
+        Assertions.assertNotEquals(replacement1, replacement3);
+
+    }
 
 }

@@ -16,13 +16,30 @@
 package ai.philterd.phileas.services.anonymization;
 
 import ai.philterd.phileas.services.context.ContextService;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.collections4.CollectionUtils;
 
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
+import java.util.UUID;
 
 public class CountyAnonymizationService extends AbstractAnonymizationService {
+
+    public CountyAnonymizationService(final ContextService contextService, final Random random, final AnonymizationMethod anonymizationMethod) {
+        super(contextService, random, anonymizationMethod);
+    }
+
+    public CountyAnonymizationService(final ContextService contextService, final Random random, final List<String> candidates) {
+        super(contextService, random, candidates);
+    }
+
+    public CountyAnonymizationService(final ContextService contextService, final Random random) {
+        super(contextService, random);
+    }
+
+    public CountyAnonymizationService(final ContextService contextService) {
+        super(contextService);
+    }
 
     private static final List<String> COUNTIES = new LinkedList<>();
 
@@ -131,32 +148,50 @@ public class CountyAnonymizationService extends AbstractAnonymizationService {
 
     }
 
-    public CountyAnonymizationService(final ContextService contextService, final Random random) {
-        super(contextService, random);
-    }
-
-    public CountyAnonymizationService(final ContextService contextService) {
-        super(contextService);
-    }
-
     @Override
     public ContextService getContextService() {
         return contextService;
     }
 
     @Override
-    public String anonymize(String token) {
+    public String anonymize(final String token) {
 
-        final int randomInt = generateInteger(0, COUNTIES.size() - 1);
+        if (anonymizationMethod == AnonymizationMethod.FROM_LIST) {
 
-        final String anonymized = COUNTIES.get(randomInt);
+            if (CollectionUtils.isNotEmpty(candidates)) {
 
-        // Make sure the anonymized and the token aren't the same since it's a small pool.
-        if(StringUtils.equalsIgnoreCase(token, anonymized)) {
-            return anonymize(token);
+                String anonymized = candidates.get(random.nextInt(candidates.size()));
+                while (anonymized.equalsIgnoreCase(token)) {
+                    anonymized = candidates.get(random.nextInt(candidates.size()));
+                }
+                return anonymized;
+
+            } else {
+
+                // Provided list was empty - return a random UUID.
+                return UUID.randomUUID().toString();
+
+            }
+
+        } else if (anonymizationMethod == AnonymizationMethod.UUID) {
+
+            return java.util.UUID.randomUUID().toString();
+
+        } else {
+
+            // REALISTIC_REPLACE
+            final int randomInt = generateInteger(0, COUNTIES.size() - 1);
+
+            String anonymized = COUNTIES.get(randomInt);
+
+            while (anonymized.equalsIgnoreCase(token)) {
+                final int nextRandomInt = generateInteger(0, COUNTIES.size() - 1);
+                anonymized = COUNTIES.get(nextRandomInt);
+            }
+
+            return anonymized;
+
         }
-
-        return anonymized;
 
     }
 

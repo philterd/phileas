@@ -17,10 +17,8 @@ package ai.philterd.phileas.filters;
 
 import ai.philterd.phileas.filters.rules.dictionary.FuzzyDictionaryFilter;
 import ai.philterd.phileas.model.filtering.FilterType;
-import ai.philterd.phileas.model.filtering.SensitivityLevel;
 import ai.philterd.phileas.model.filtering.Filtered;
-import ai.philterd.phileas.services.anonymization.StateAnonymizationService;
-import ai.philterd.phileas.services.context.DefaultContextService;
+import ai.philterd.phileas.model.filtering.SensitivityLevel;
 import ai.philterd.phileas.services.strategies.dynamic.StateFilterStrategy;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -28,6 +26,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
+
+import static ai.philterd.phileas.services.strategies.AbstractFilterStrategy.RANDOM_REPLACE;
 
 public class StateFilterTest extends AbstractFilterTest {
 
@@ -38,7 +38,8 @@ public class StateFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new StateFilterStrategy()))
-                .withAnonymizationService(new StateAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -55,7 +56,8 @@ public class StateFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new StateFilterStrategy()))
-                .withAnonymizationService(new StateAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -67,18 +69,27 @@ public class StateFilterTest extends AbstractFilterTest {
     }
 
     @Test
-    public void filterStatesHigh() throws Exception {
+    public void filterWithCandidates1() throws Exception {
+
+        final List<String> candidates = List.of("candidate1", "candidate2");
+
+        final StateFilterStrategy stateFilterStrategy = new StateFilterStrategy();
+        stateFilterStrategy.setStrategy(RANDOM_REPLACE);
+        stateFilterStrategy.setAnonymizationCandidates(candidates);
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
-                .withStrategies(List.of(new StateFilterStrategy()))
-                .withAnonymizationService(new StateAnonymizationService(new DefaultContextService()))
+                .withStrategies(List.of(stateFilterStrategy))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
-        final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.LOCATION_STATE, filterConfiguration, SensitivityLevel.HIGH, true);
+        final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.LOCATION_STATE, filterConfiguration, SensitivityLevel.LOW, true);
 
-        Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "Lived in Wasinton");
-        Assertions.assertEquals(0, filtered.getSpans().size());
+        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "Lived in Washington");
+        showSpans(filtered.getSpans());
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertTrue(candidates.contains(filtered.getSpans().get(0).getReplacement()));
 
     }
 

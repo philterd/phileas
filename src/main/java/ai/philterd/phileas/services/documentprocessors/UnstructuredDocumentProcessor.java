@@ -21,11 +21,11 @@ import ai.philterd.phileas.model.filtering.Filtered;
 import ai.philterd.phileas.model.filtering.IncrementalRedaction;
 import ai.philterd.phileas.model.filtering.Span;
 import ai.philterd.phileas.model.filtering.TextFilterResult;
-import ai.philterd.phileas.services.filters.postfilters.PostFilter;
+import ai.philterd.phileas.policy.Policy;
 import ai.philterd.phileas.services.disambiguation.SpanDisambiguationService;
+import ai.philterd.phileas.services.filters.postfilters.PostFilter;
 import ai.philterd.phileas.services.tokens.TokenCounter;
 import ai.philterd.phileas.services.tokens.WhitespaceTokenCounter;
-import ai.philterd.phileas.policy.Policy;
 import org.apache.commons.codec.digest.DigestUtils;
 
 import java.util.ArrayList;

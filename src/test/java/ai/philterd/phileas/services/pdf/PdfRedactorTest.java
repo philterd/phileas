@@ -76,7 +76,7 @@ public class PdfRedactorTest {
         final byte[] redacted = pdfRedactor.process(document, MimeType.APPLICATION_PDF);
 
         final File outputFile = File.createTempFile("output", ".pdf");
-        //outputFile.deleteOnExit();
+        outputFile.deleteOnExit();
 
         LOGGER.info("Writing redacted PDF to {}", outputFile.getAbsolutePath());
         FileUtils.writeByteArrayToFile(outputFile, redacted);

@@ -25,10 +25,6 @@ import java.util.List;
 
 public class Policy {
 
-    @SerializedName("name")
-    @Expose
-    private String name = "unnamed";
-
     @SerializedName("config")
     @Expose
     private Config config = new Config();
@@ -65,21 +61,12 @@ public class Policy {
     @Override
     public int hashCode() {
         return new HashCodeBuilder(17, 37).
-                append(name).
                 append(crypto).
                 append(identifiers).
                 append(ignored).
                 append(ignoredPatterns).
                 append(config).
                 toHashCode();
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public Identifiers getIdentifiers() {

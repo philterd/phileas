@@ -16,9 +16,9 @@
 package ai.philterd.phileas.services.documentprocessors;
 
 import ai.philterd.phileas.filters.Filter;
-import ai.philterd.phileas.services.filters.postfilters.PostFilter;
-import ai.philterd.phileas.policy.Policy;
 import ai.philterd.phileas.model.filtering.TextFilterResult;
+import ai.philterd.phileas.policy.Policy;
+import ai.philterd.phileas.services.filters.postfilters.PostFilter;
 
 import java.util.List;
 

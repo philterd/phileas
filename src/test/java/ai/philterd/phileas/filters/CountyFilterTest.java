@@ -17,11 +17,9 @@ package ai.philterd.phileas.filters;
 
 import ai.philterd.phileas.filters.rules.dictionary.FuzzyDictionaryFilter;
 import ai.philterd.phileas.model.filtering.FilterType;
-import ai.philterd.phileas.model.filtering.SensitivityLevel;
 import ai.philterd.phileas.model.filtering.Filtered;
+import ai.philterd.phileas.model.filtering.SensitivityLevel;
 import ai.philterd.phileas.model.filtering.Span;
-import ai.philterd.phileas.services.anonymization.CountyAnonymizationService;
-import ai.philterd.phileas.services.context.DefaultContextService;
 import ai.philterd.phileas.services.strategies.dynamic.CountyFilterStrategy;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -30,16 +28,19 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
+import static ai.philterd.phileas.services.strategies.AbstractFilterStrategy.RANDOM_REPLACE;
+
 public class CountyFilterTest extends AbstractFilterTest {
 
     private static final Logger LOGGER = LogManager.getLogger(CountyFilterTest.class);
 
     @Test
-    public void filterCountiesLow() throws Exception {
+    void filterCountiesLow() throws Exception {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new CountyFilterStrategy()))
-                .withAnonymizationService(new CountyAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -54,17 +55,18 @@ public class CountyFilterTest extends AbstractFilterTest {
     }
 
     @Test
-    public void filterCountiesMedium() throws Exception {
+    void filterCountiesMedium() throws Exception {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new CountyFilterStrategy()))
-                .withAnonymizationService(new CountyAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.LOCATION_COUNTY, filterConfiguration, SensitivityLevel.MEDIUM, true);
 
-        Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "He lived in Fyette");
+        Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "He lived in Fyette County");
 
         showSpans(Span.dropOverlappingSpans(filtered.getSpans()));
 
@@ -74,11 +76,12 @@ public class CountyFilterTest extends AbstractFilterTest {
     }
 
     @Test
-    public void filterCountiesHigh() throws Exception {
+    void filterCountiesHigh() throws Exception {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new CountyFilterStrategy()))
-                .withAnonymizationService(new CountyAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -93,11 +96,12 @@ public class CountyFilterTest extends AbstractFilterTest {
     }
 
     @Test
-    public void filterCountiesOffWithExactMatch() throws Exception {
+    void filterCountiesOffWithExactMatch() throws Exception {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new CountyFilterStrategy()))
-                .withAnonymizationService(new CountyAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -114,11 +118,12 @@ public class CountyFilterTest extends AbstractFilterTest {
     }
 
     @Test
-    public void filterCountiesOffNoExactMatch() throws Exception {
+    void filterCountiesOffNoExactMatch() throws Exception {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new CountyFilterStrategy()))
-                .withAnonymizationService(new CountyAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -129,6 +134,31 @@ public class CountyFilterTest extends AbstractFilterTest {
         showSpans(Span.dropOverlappingSpans(filtered.getSpans()));
 
         Assertions.assertEquals(0, Span.dropOverlappingSpans(filtered.getSpans()).size());
+
+    }
+
+    @Test
+    void filterWithCandidates1() throws Exception {
+
+        final List<String> candidates = List.of("candidate1", "candidate2");
+
+        final CountyFilterStrategy countyFilterStrategy = new CountyFilterStrategy();
+        countyFilterStrategy.setStrategy(RANDOM_REPLACE);
+        countyFilterStrategy.setAnonymizationCandidates(candidates);
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(countyFilterStrategy))
+                .withContextService(contextService)
+                .withRandom(random)
+                .withWindowSize(windowSize)
+                .build();
+
+        final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.LOCATION_COUNTY, filterConfiguration, SensitivityLevel.LOW, true);
+
+        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "Lived in Fayette County");
+        showSpans(filtered.getSpans());
+        Assertions.assertTrue(filtered.getSpans().size() >= 1);
+        Assertions.assertTrue(candidates.contains(filtered.getSpans().get(0).getReplacement()));
 
     }
 

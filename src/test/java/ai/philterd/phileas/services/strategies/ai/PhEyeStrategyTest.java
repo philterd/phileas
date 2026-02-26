@@ -15,6 +15,7 @@
  */
 package ai.philterd.phileas.services.strategies.ai;
 
+import ai.philterd.phileas.model.filtering.FilterType;
 import ai.philterd.phileas.model.filtering.Replacement;
 import ai.philterd.phileas.policy.Crypto;
 import ai.philterd.phileas.policy.FPE;
@@ -63,7 +64,7 @@ public class PhEyeStrategyTest extends AbstractFilterStrategyTest {
 
         final Replacement replacement = strategy.getReplacement("PER", "context",  "token", WINDOW, new Crypto(), new FPE(), anonymizationService, null);
 
-        Assertions.assertEquals("REDACTION-person", replacement.getReplacement());
+        Assertions.assertEquals("REDACTION-per", replacement.getReplacement());
 
     }
 
@@ -71,7 +72,7 @@ public class PhEyeStrategyTest extends AbstractFilterStrategyTest {
     public void replacement3() throws Exception {
 
         final AnonymizationService anonymizationService = getAnonymizationService();
-        anonymizationService.getContextService().putReplacement("token", "random");
+        anonymizationService.getContextService().putReplacement("token", "random", FilterType.PERSON.getType());
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
         strategy.setStrategy(AbstractFilterStrategy.RANDOM_REPLACE);
@@ -86,14 +87,14 @@ public class PhEyeStrategyTest extends AbstractFilterStrategyTest {
     public void replacement4() throws Exception {
 
         final AnonymizationService anonymizationService = getAnonymizationService();
-        anonymizationService.getContextService().putReplacement("token", "random");
+        anonymizationService.getContextService().putReplacement("token", "random", FilterType.PERSON.getType());
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
         strategy.setStrategy("something-wrong");
 
         final Replacement replacement = strategy.getReplacement("PER", "context",  "token", WINDOW, new Crypto(), new FPE(), anonymizationService, null);
 
-        Assertions.assertEquals("{{{REDACTED-person}}}", replacement.getReplacement());
+        Assertions.assertEquals("{{{REDACTED-other}}}", replacement.getReplacement());
 
     }
 
@@ -108,7 +109,7 @@ public class PhEyeStrategyTest extends AbstractFilterStrategyTest {
 
         final Replacement replacement = strategy.getReplacement("PER", "context",  "token", WINDOW, new Crypto(), new FPE(), anonymizationService, null);
 
-        Assertions.assertEquals("<ENTITY:person>token</ENTITY>", replacement.getReplacement());
+        Assertions.assertEquals("<ENTITY:per>token</ENTITY>", replacement.getReplacement());
 
     }
 

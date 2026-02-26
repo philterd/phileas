@@ -17,8 +17,6 @@ package ai.philterd.phileas.filters;
 
 import ai.philterd.phileas.model.filtering.FilterType;
 import ai.philterd.phileas.model.filtering.Filtered;
-import ai.philterd.phileas.services.anonymization.IbanCodeAnonymizationService;
-import ai.philterd.phileas.services.context.DefaultContextService;
 import ai.philterd.phileas.services.filters.regex.IbanCodeFilter;
 import ai.philterd.phileas.services.strategies.rules.IbanCodeFilterStrategy;
 import org.junit.jupiter.api.Assertions;
@@ -26,13 +24,16 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
+import static ai.philterd.phileas.services.strategies.AbstractFilterStrategy.RANDOM_REPLACE;
+
 public class IbanCodeFilterTest extends AbstractFilterTest {
 
     private Filter getFilter(boolean validate, boolean allowSpaces) {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new IbanCodeFilterStrategy()))
-                .withAnonymizationService(new IbanCodeAnonymizationService(new DefaultContextService()))
+                .withContextService(contextService)
+                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -124,6 +125,31 @@ public class IbanCodeFilterTest extends AbstractFilterTest {
         showSpans(filtered.getSpans());
 
         Assertions.assertEquals(1, filtered.getSpans().size());
+
+    }
+
+    @Test
+    public void filterWithCandidates1() throws Exception {
+
+        final List<String> candidates = List.of("candidate1", "candidate2");
+
+        final IbanCodeFilterStrategy ibanCodeFilterStrategy = new IbanCodeFilterStrategy();
+        ibanCodeFilterStrategy.setStrategy(RANDOM_REPLACE);
+        ibanCodeFilterStrategy.setAnonymizationCandidates(candidates);
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(ibanCodeFilterStrategy))
+                .withContextService(contextService)
+                .withRandom(random)
+                .withWindowSize(windowSize)
+                .build();
+
+        final IbanCodeFilter filter = new IbanCodeFilter(filterConfiguration, true, false);
+
+        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "bank code of GB33BUKB20201555555555 ok?");
+        showSpans(filtered.getSpans());
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertTrue(candidates.contains(filtered.getSpans().get(0).getReplacement()));
 
     }
 

@@ -16,11 +16,21 @@
 package ai.philterd.phileas.services.anonymization;
 
 import ai.philterd.phileas.services.context.ContextService;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.collections4.CollectionUtils;
 
+import java.util.List;
 import java.util.Random;
+import java.util.UUID;
 
 public class CurrencyAnonymizationService extends AbstractAnonymizationService {
+
+    public CurrencyAnonymizationService(final ContextService contextService, final Random random, final AnonymizationMethod anonymizationMethod) {
+        super(contextService, random, anonymizationMethod);
+    }
+
+    public CurrencyAnonymizationService(final ContextService contextService, final Random random, final List<String> candidates) {
+        super(contextService, random, candidates);
+    }
 
     public CurrencyAnonymizationService(final ContextService contextService, final Random random) {
         super(contextService, random);
@@ -38,8 +48,45 @@ public class CurrencyAnonymizationService extends AbstractAnonymizationService {
     @Override
     public String anonymize(final String token) {
 
-        // Replace all digits with other digits.
+        if (anonymizationMethod == AnonymizationMethod.FROM_LIST) {
 
+            if (CollectionUtils.isNotEmpty(candidates)) {
+
+                String anonymized = candidates.get(random.nextInt(candidates.size()));
+                while (anonymized.equalsIgnoreCase(token)) {
+                    anonymized = candidates.get(random.nextInt(candidates.size()));
+                }
+                return anonymized;
+
+            } else {
+
+                // Provided list was empty - return a random UUID.
+                return UUID.randomUUID().toString();
+
+            }
+
+        } else if (anonymizationMethod == AnonymizationMethod.UUID) {
+
+            return java.util.UUID.randomUUID().toString();
+
+        } else {
+
+            // REALISTIC_REPLACE
+            String anonymized = getAnonymizedCurrency(token);
+
+            while (anonymized.equalsIgnoreCase(token)) {
+                anonymized = getAnonymizedCurrency(token);
+            }
+
+            return anonymized;
+
+        }
+
+    }
+
+    private String getAnonymizedCurrency(String token) {
+
+        // Replace all digits with other digits.
         final StringBuilder sb = new StringBuilder();
 
         for (int i = 0; i < token.length(); i++) {
@@ -69,11 +116,6 @@ public class CurrencyAnonymizationService extends AbstractAnonymizationService {
 
             anonymized = sb.toString();
 
-        }
-
-        // Just ensure that the new one does not equal the original.
-        if(StringUtils.equalsIgnoreCase(token, anonymized)) {
-            return anonymize(token);
         }
 
         return anonymized;

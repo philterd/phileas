@@ -65,32 +65,18 @@ public class PlainTextFilterServiceTest {
     }
 
     @Test
-    public void policy() throws IOException, URISyntaxException {
-
-        final Policy policy = getPolicy("default");
-        final String json = gson.toJson(policy);
-        LOGGER.info(json);
-
-        final Policy deserialized = gson.fromJson(json, Policy.class);
-
-        Assertions.assertEquals("default", deserialized.getName());
-
-    }
-
-    @Test
     public void policyWithPlaceholder() throws IOException, URISyntaxException {
 
         final Ignored ignored = new Ignored();
         ignored.setTerms(Arrays.asList("john", "jeff", "${USER}"));
 
-        final Policy policy = getPolicy("placeholder");
+        final Policy policy = getPolicy();
         policy.setIgnored(List.of(ignored));
         final String json = gson.toJson(policy);
         LOGGER.info(json);
 
         final Policy deserialized = gson.fromJson(json, Policy.class);
 
-        Assertions.assertEquals("placeholder", deserialized.getName());
         Assertions.assertEquals(3, policy.getIgnored().get(0).getTerms().size());
         Assertions.assertTrue(CollectionUtils.isNotEmpty(deserialized.getIgnored().get(0).getTerms()));
 
@@ -111,7 +97,7 @@ public class PlainTextFilterServiceTest {
 
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties);
 
-        final Policy policy = getPdfPolicy("pdf");
+        final Policy policy = getPdfPolicy();
 
         final PdfFilterService service = new PdfFilterService(phileasConfiguration, contextService, vectorService, null);
         final BinaryDocumentFilterResult response = service.filter(policy, "context", document, MimeType.APPLICATION_PDF);
@@ -144,7 +130,7 @@ public class PlainTextFilterServiceTest {
         final Properties properties = new Properties();
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties);
 
-        final Policy policy = getPdfPolicy("pdf");
+        final Policy policy = getPdfPolicy();
 
         final PdfFilterService service = new PdfFilterService(phileasConfiguration, contextService, vectorService, null);
         final BinaryDocumentFilterResult response = service.filter(policy, "context", document, MimeType.APPLICATION_PDF);

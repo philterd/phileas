@@ -16,10 +16,21 @@
 package ai.philterd.phileas.services.anonymization;
 
 import ai.philterd.phileas.services.context.ContextService;
+import org.apache.commons.collections4.CollectionUtils;
 
+import java.util.List;
 import java.util.Random;
+import java.util.UUID;
 
 public class MacAddressAnonymizationService extends AbstractAnonymizationService {
+
+    public MacAddressAnonymizationService(final ContextService contextService, final Random random, final AnonymizationMethod anonymizationMethod) {
+        super(contextService, random, anonymizationMethod);
+    }
+
+    public MacAddressAnonymizationService(final ContextService contextService, final Random random, final List<String> candidates) {
+        super(contextService, random, candidates);
+    }
 
     public MacAddressAnonymizationService(final ContextService contextService, final Random random) {
         super(contextService, random);
@@ -36,6 +47,44 @@ public class MacAddressAnonymizationService extends AbstractAnonymizationService
 
     @Override
     public String anonymize(final String token) {
+
+        if (anonymizationMethod == AnonymizationMethod.FROM_LIST) {
+
+            if (CollectionUtils.isNotEmpty(candidates)) {
+
+                String anonymized = candidates.get(random.nextInt(candidates.size()));
+                while (anonymized.equalsIgnoreCase(token)) {
+                    anonymized = candidates.get(random.nextInt(candidates.size()));
+                }
+                return anonymized;
+
+            } else {
+
+                // Provided list was empty - return a random UUID.
+                return UUID.randomUUID().toString();
+
+            }
+
+        } else if (anonymizationMethod == AnonymizationMethod.UUID) {
+
+            return java.util.UUID.randomUUID().toString();
+
+        } else {
+
+            // REALISTIC_REPLACE
+            String anonymized = getAnonymizedMacAddress();
+
+            while (anonymized.equalsIgnoreCase(token)) {
+                anonymized = getAnonymizedMacAddress();
+            }
+
+            return anonymized;
+
+        }
+
+    }
+
+    private String getAnonymizedMacAddress() {
 
         final byte[] macAddr = new byte[6];
         random.nextBytes(macAddr);
