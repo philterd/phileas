@@ -23,7 +23,6 @@ import ai.philterd.phileas.model.filtering.Replacement;
 import ai.philterd.phileas.model.filtering.SensitivityLevel;
 import ai.philterd.phileas.model.filtering.Span;
 import ai.philterd.phileas.policy.Policy;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.similarity.LevenshteinDistance;
 
 import java.io.IOException;
@@ -73,9 +72,8 @@ public class FuzzyDictionaryFilter extends DictionaryFilter {
 
             // Build ngrams from the input text.
             final Map<Integer, Map<Position, String>> ngrams = new HashMap<>();
-            ngrams.put(0, splitWithIndexes(input, " "));
 
-            for(int x = 1; x < maxNgrams; x++) {
+            for(int x = 1; x <= maxNgrams; x++) {
                 ngrams.put(x, getNgramsOfLength(input, x));
             }
 
@@ -87,7 +85,11 @@ public class FuzzyDictionaryFilter extends DictionaryFilter {
                 if (matcher.find()) {
 
                     final int startPosition = matcher.start();
-                    spans.add(createSpan(input, startPosition, startPosition + entry.length(), 1.0, context, entry, policy));
+                    if (requireCapitalization && Character.isUpperCase(input.charAt(startPosition))) {
+                        spans.add(createSpan(input, startPosition, startPosition + entry.length(), 1.0, context, entry, policy));
+                    } else if(!requireCapitalization) {
+                        spans.add(createSpan(input, startPosition, startPosition + entry.length(), 1.0, context, entry, policy));
+                    }
 
                 } else {
 
@@ -95,36 +97,38 @@ public class FuzzyDictionaryFilter extends DictionaryFilter {
                     if(sensitivityLevel != SensitivityLevel.OFF) {
 
                         // Fuzzy matches.
-                        final int spacesInEntry = StringUtils.countMatches(entry, " ");
+                        final int wordsInEntry = entry.split(" ").length;
 
-                        for (final Position position : ngrams.get(spacesInEntry).keySet()) {
+                        if (ngrams.containsKey(wordsInEntry)) {
+                            for (final Position position : ngrams.get(wordsInEntry).keySet()) {
 
-                            // Compare string distance between word and ngrams.
-                            final String ngram = ngrams.get(spacesInEntry).get(position);
+                                // Compare string distance between word and ngrams.
+                                final String ngram = ngrams.get(wordsInEntry).get(position);
 
-                            if (ngram.length() > 2) {
-
-                                if (requireCapitalization && Character.isUpperCase(ngram.charAt(0))) {
-
-                                    final int start = position.getStart();
-                                    final int end = position.getEnd();
+                                if (ngram.length() > 2) {
 
                                     // TODO: Should this be customizable in the dictionary's properties in the filter policy?
                                     final LevenshteinDistance levenshteinDistance = LevenshteinDistance.getDefaultInstance();
-                                    final int distance = levenshteinDistance.apply(entry, ngram);
+                                    final int distance = levenshteinDistance.apply(entry.toLowerCase(), ngram.toLowerCase());
 
-                                    if (sensitivityLevel == SensitivityLevel.HIGH && distance < 1) {
-                                        spans.add(createSpan(input, start, end, 0.9, context, entry, policy));
-                                    } else if (sensitivityLevel == SensitivityLevel.MEDIUM && distance <= 2) {
-                                        spans.add(createSpan(input, start, end, 0.5, context, entry, policy));
-                                    } else if (sensitivityLevel == SensitivityLevel.LOW && distance < 3) {
-                                        spans.add(createSpan(input, start, end, 0.3, context, entry, policy));
+                                    if (!requireCapitalization || Character.isUpperCase(ngram.charAt(0))) {
+
+                                        final int start = position.getStart();
+                                        final int end = position.getEnd();
+
+                                        if (sensitivityLevel == SensitivityLevel.HIGH && distance < 1) {
+                                            spans.add(createSpan(input, start, end, 0.9, context, ngram, policy));
+                                        } else if (sensitivityLevel == SensitivityLevel.MEDIUM && distance <= 2) {
+                                            spans.add(createSpan(input, start, end, 0.7, context, ngram, policy));
+                                        } else if (sensitivityLevel == SensitivityLevel.LOW && distance < 3) {
+                                            spans.add(createSpan(input, start, end, 0.5, context, ngram, policy));
+                                        }
+
                                     }
 
                                 }
 
                             }
-
                         }
 
                     }

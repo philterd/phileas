@@ -19,6 +19,7 @@ import ai.philterd.phileas.filters.rules.dictionary.FuzzyDictionaryFilter;
 import ai.philterd.phileas.model.filtering.FilterType;
 import ai.philterd.phileas.model.filtering.Filtered;
 import ai.philterd.phileas.model.filtering.SensitivityLevel;
+import ai.philterd.phileas.model.filtering.Span;
 import ai.philterd.phileas.services.strategies.dynamic.FirstNameFilterStrategy;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -35,7 +36,7 @@ public class FirstNameFilterTest extends AbstractFilterTest {
     private static final Logger LOGGER = LogManager.getLogger(FirstNameFilterTest.class);
 
     @Test
-    public void filterLow() throws Exception {
+    void filterLow() throws Exception {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new FirstNameFilterStrategy()))
@@ -47,13 +48,13 @@ public class FirstNameFilterTest extends AbstractFilterTest {
         final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.FIRST_NAME, filterConfiguration, SensitivityLevel.LOW, true);
 
         final Filtered filtered = filter.filter(getPolicy(), "context", PIECE,"John");
-        showSpans(filtered.getSpans());
-        Assertions.assertEquals(50, filtered.getSpans().size());
+        showSpans(Span.dropOverlappingSpans(filtered.getSpans()));
+        Assertions.assertEquals(1, Span.dropOverlappingSpans(filtered.getSpans()).size());
 
     }
 
     @Test
-    public void filterMedium1() throws Exception {
+    void filterMedium1() throws Exception {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new FirstNameFilterStrategy()))
@@ -65,13 +66,13 @@ public class FirstNameFilterTest extends AbstractFilterTest {
         final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.FIRST_NAME, filterConfiguration, SensitivityLevel.MEDIUM, true);
 
         final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "Michel had eye cancer");
-        showSpans(filtered.getSpans());
-        Assertions.assertEquals(20, filtered.getSpans().size());
+        showSpans(Span.dropOverlappingSpans(filtered.getSpans()));
+        Assertions.assertEquals(1, Span.dropOverlappingSpans(filtered.getSpans()).size());
 
     }
 
     @Test
-    public void filterMedium2() throws Exception {
+    void filterMedium2() throws Exception {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new FirstNameFilterStrategy()))
@@ -83,13 +84,13 @@ public class FirstNameFilterTest extends AbstractFilterTest {
         final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.FIRST_NAME, filterConfiguration, SensitivityLevel.LOW, true);
 
         final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "Jennifer had eye cancer");
-        showSpans(filtered.getSpans());
-        Assertions.assertEquals(4, filtered.getSpans().size());
+        showSpans(Span.dropOverlappingSpans(filtered.getSpans()));
+        Assertions.assertEquals(1, Span.dropOverlappingSpans(filtered.getSpans()).size());
 
     }
 
     @Test
-    public void filterHigh() throws Exception {
+    void filterHigh() throws Exception {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new FirstNameFilterStrategy()))
@@ -107,7 +108,7 @@ public class FirstNameFilterTest extends AbstractFilterTest {
     }
 
     @Test
-    public void filter1() throws Exception {
+    void filter1() throws Exception {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new FirstNameFilterStrategy()))
@@ -120,13 +121,13 @@ public class FirstNameFilterTest extends AbstractFilterTest {
 
         final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "Melissa");
 
-        showSpans(filtered.getSpans());
-        Assertions.assertEquals(33, filtered.getSpans().size());
+        showSpans(Span.dropOverlappingSpans(filtered.getSpans()));
+        Assertions.assertEquals(1, Span.dropOverlappingSpans(filtered.getSpans()).size());
 
     }
 
     @Test
-    public void filter2() throws Exception {
+    void filter2() throws Exception {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new FirstNameFilterStrategy()))
@@ -137,14 +138,18 @@ public class FirstNameFilterTest extends AbstractFilterTest {
 
         final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.FIRST_NAME, filterConfiguration, SensitivityLevel.LOW, true);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE,"thomas");
-        showSpans(filtered.getSpans());
-        Assertions.assertEquals(1, filtered.getSpans().size());
+        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE,"Thomas");
+        showSpans(Span.dropOverlappingSpans(filtered.getSpans()));
+        Assertions.assertEquals(1, Span.dropOverlappingSpans(filtered.getSpans()).size());
+
+        final Filtered filtered2 = filter.filter(getPolicy(), "context", PIECE,"thomas");
+        showSpans(filtered2.getSpans());
+        Assertions.assertEquals(0, filtered2.getSpans().size());
 
     }
 
     @Test
-    public void filter3() throws Exception {
+    void filter3() throws Exception {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new FirstNameFilterStrategy()))
@@ -153,16 +158,16 @@ public class FirstNameFilterTest extends AbstractFilterTest {
                 .withWindowSize(windowSize)
                 .build();
 
-        final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.FIRST_NAME, filterConfiguration, SensitivityLevel.LOW, true);
+        final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.FIRST_NAME, filterConfiguration, SensitivityLevel.LOW, false);
 
         final Filtered filtered = filter.filter(getPolicy(), "context", PIECE,"dat");
-        showSpans(filtered.getSpans());
-        Assertions.assertEquals(1, filtered.getSpans().size());
+        showSpans(Span.dropOverlappingSpans(filtered.getSpans()));
+        Assertions.assertEquals(1, Span.dropOverlappingSpans(filtered.getSpans()).size());
 
     }
 
     @Test
-    public void filter4() throws Exception {
+    void filter4() throws Exception {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new FirstNameFilterStrategy()))
@@ -171,16 +176,16 @@ public class FirstNameFilterTest extends AbstractFilterTest {
                 .withWindowSize(windowSize)
                 .build();
 
-        final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.FIRST_NAME, filterConfiguration, SensitivityLevel.LOW, true);
+        final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.FIRST_NAME, filterConfiguration, SensitivityLevel.LOW, false);
 
         final Filtered filtered = filter.filter(getPolicy(), "context", PIECE,"joie");
-        showSpans(filtered.getSpans());
-        Assertions.assertEquals(1, filtered.getSpans().size());
+        showSpans(Span.dropOverlappingSpans(filtered.getSpans()));
+        Assertions.assertEquals(1, Span.dropOverlappingSpans(filtered.getSpans()).size());
 
     }
 
     @Test
-    public void filter5() throws Exception {
+    void filter5() throws Exception {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new FirstNameFilterStrategy()))
@@ -192,13 +197,13 @@ public class FirstNameFilterTest extends AbstractFilterTest {
         final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.FIRST_NAME, filterConfiguration, SensitivityLevel.LOW, true);
 
         final Filtered filtered = filter.filter(getPolicy(), "context", PIECE,"John");
-        showSpans(filtered.getSpans());
-        Assertions.assertEquals(50, filtered.getSpans().size());
+        showSpans(Span.dropOverlappingSpans(filtered.getSpans()));
+        Assertions.assertEquals(1, Span.dropOverlappingSpans(filtered.getSpans()).size());
 
     }
 
     @Test
-    public void filter6() throws Exception {
+    void filter6() throws Exception {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new FirstNameFilterStrategy()))
@@ -210,13 +215,13 @@ public class FirstNameFilterTest extends AbstractFilterTest {
         final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.FIRST_NAME, filterConfiguration, SensitivityLevel.LOW, true);
 
         final Filtered filtered = filter.filter(getPolicy(), "context", PIECE,"Smith,Melissa A,MD");
-        showSpans(filtered.getSpans());
-        Assertions.assertEquals(3, filtered.getSpans().size());
+        showSpans(Span.dropOverlappingSpans(filtered.getSpans()));
+        Assertions.assertEquals(3, Span.dropOverlappingSpans(filtered.getSpans()).size());
 
     }
 
     @Test
-    public void filterWithCandidates1() throws Exception {
+    void filterWithCandidates1() throws Exception {
 
         final List<String> candidates = List.of("John", "Melissa", "James");
 
@@ -234,14 +239,14 @@ public class FirstNameFilterTest extends AbstractFilterTest {
         final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.FIRST_NAME, filterConfiguration, SensitivityLevel.LOW, true);
 
         final Filtered filtered = filter.filter(getPolicy(), "context", PIECE,"Timothy");
-        showSpans(filtered.getSpans());
-        Assertions.assertEquals(1, filtered.getSpans().size());
-        Assertions.assertTrue(candidates.contains(filtered.getSpans().get(0).getReplacement()));
+        showSpans(Span.dropOverlappingSpans(filtered.getSpans()));
+        Assertions.assertEquals(1, Span.dropOverlappingSpans(filtered.getSpans()).size());
+        Assertions.assertTrue(candidates.contains(Span.dropOverlappingSpans(filtered.getSpans()).get(0).getReplacement()));
 
     }
 
     @Test
-    public void filterWithCandidates2() throws Exception {
+    void filterWithCandidates2() throws Exception {
 
         final List<String> candidates = List.of("John");
 
@@ -259,14 +264,14 @@ public class FirstNameFilterTest extends AbstractFilterTest {
         final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.FIRST_NAME, filterConfiguration, SensitivityLevel.LOW, true);
 
         final Filtered filtered = filter.filter(getPolicy(), "context", PIECE,"Timothy");
-        showSpans(filtered.getSpans());
-        Assertions.assertEquals(1, filtered.getSpans().size());
-        Assertions.assertTrue(candidates.contains(filtered.getSpans().get(0).getReplacement()));
+        showSpans(Span.dropOverlappingSpans(filtered.getSpans()));
+        Assertions.assertEquals(1, Span.dropOverlappingSpans(filtered.getSpans()).size());
+        Assertions.assertTrue(candidates.contains(Span.dropOverlappingSpans(filtered.getSpans()).get(0).getReplacement()));
 
     }
 
     @Test
-    public void filterWithCandidates3() throws Exception {
+    void filterWithCandidates3() throws Exception {
 
         final List<String> candidates = Collections.emptyList();
 
@@ -284,9 +289,9 @@ public class FirstNameFilterTest extends AbstractFilterTest {
         final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.FIRST_NAME, filterConfiguration, SensitivityLevel.LOW, true);
 
         final Filtered filtered = filter.filter(getPolicy(), "context", PIECE,"Timothy");
-        showSpans(filtered.getSpans());
-        Assertions.assertEquals(1, filtered.getSpans().size());
-        Assertions.assertFalse(candidates.contains(filtered.getSpans().get(0).getReplacement()));
+        showSpans(Span.dropOverlappingSpans(filtered.getSpans()));
+        Assertions.assertEquals(1, Span.dropOverlappingSpans(filtered.getSpans()).size());
+        Assertions.assertFalse(candidates.contains(Span.dropOverlappingSpans(filtered.getSpans()).get(0).getReplacement()));
 
     }
 
