@@ -87,7 +87,11 @@ public class FuzzyDictionaryFilter extends DictionaryFilter {
                 if (matcher.find()) {
 
                     final int startPosition = matcher.start();
-                    spans.add(createSpan(input, startPosition, startPosition + entry.length(), 1.0, context, entry, policy));
+                    if (requireCapitalization && Character.isUpperCase(input.charAt(startPosition))) {
+                        spans.add(createSpan(input, startPosition, startPosition + entry.length(), 1.0, context, entry, policy));
+                    } else if(!requireCapitalization) {
+                        spans.add(createSpan(input, startPosition, startPosition + entry.length(), 1.0, context, entry, policy));
+                    }
 
                 } else {
 
