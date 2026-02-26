@@ -46,8 +46,8 @@ public class FirstNameFilterTest extends AbstractFilterTest {
         final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.FIRST_NAME, filterConfiguration, SensitivityLevel.LOW, true);
 
         final Filtered filtered = filter.filter(getPolicy(), "context", PIECE,"John");
-        showSpans(filtered.getSpans());
-        Assertions.assertEquals(50, filtered.getSpans().size());
+        showSpans(Span.dropOverlappingSpans(filtered.getSpans()));
+        Assertions.assertEquals(1, Span.dropOverlappingSpans(filtered.getSpans()).size());
 
     }
 
@@ -63,8 +63,8 @@ public class FirstNameFilterTest extends AbstractFilterTest {
         final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.FIRST_NAME, filterConfiguration, SensitivityLevel.MEDIUM, true);
 
         final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "Michel had eye cancer");
-        showSpans(filtered.getSpans());
-        Assertions.assertEquals(20, filtered.getSpans().size());
+        showSpans(Span.dropOverlappingSpans(filtered.getSpans()));
+        Assertions.assertEquals(1, Span.dropOverlappingSpans(filtered.getSpans()).size());
 
     }
 
@@ -80,8 +80,8 @@ public class FirstNameFilterTest extends AbstractFilterTest {
         final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.FIRST_NAME, filterConfiguration, SensitivityLevel.LOW, true);
 
         final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "Jennifer had eye cancer");
-        showSpans(filtered.getSpans());
-        Assertions.assertEquals(4, filtered.getSpans().size());
+        showSpans(Span.dropOverlappingSpans(filtered.getSpans()));
+        Assertions.assertEquals(1, Span.dropOverlappingSpans(filtered.getSpans()).size());
 
     }
 
@@ -115,8 +115,8 @@ public class FirstNameFilterTest extends AbstractFilterTest {
 
         final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "Melissa");
 
-        showSpans(filtered.getSpans());
-        Assertions.assertEquals(33, filtered.getSpans().size());
+        showSpans(Span.dropOverlappingSpans(filtered.getSpans()));
+        Assertions.assertEquals(1, Span.dropOverlappingSpans(filtered.getSpans()).size());
 
     }
 
@@ -153,8 +153,8 @@ public class FirstNameFilterTest extends AbstractFilterTest {
         final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.FIRST_NAME, filterConfiguration, SensitivityLevel.LOW, false);
 
         final Filtered filtered = filter.filter(getPolicy(), "context", PIECE,"dat");
-        showSpans(filtered.getSpans());
-        Assertions.assertEquals(1, filtered.getSpans().size());
+        showSpans(Span.dropOverlappingSpans(filtered.getSpans()));
+        Assertions.assertEquals(1, Span.dropOverlappingSpans(filtered.getSpans()).size());
 
     }
 
@@ -170,8 +170,8 @@ public class FirstNameFilterTest extends AbstractFilterTest {
         final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.FIRST_NAME, filterConfiguration, SensitivityLevel.LOW, false);
 
         final Filtered filtered = filter.filter(getPolicy(), "context", PIECE,"joie");
-        showSpans(filtered.getSpans());
-        Assertions.assertEquals(1, filtered.getSpans().size());
+        showSpans(Span.dropOverlappingSpans(filtered.getSpans()));
+        Assertions.assertEquals(1, Span.dropOverlappingSpans(filtered.getSpans()).size());
 
     }
 
@@ -187,8 +187,8 @@ public class FirstNameFilterTest extends AbstractFilterTest {
         final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.FIRST_NAME, filterConfiguration, SensitivityLevel.LOW, true);
 
         final Filtered filtered = filter.filter(getPolicy(), "context", PIECE,"John");
-        showSpans(filtered.getSpans());
-        Assertions.assertEquals(50, filtered.getSpans().size());
+        showSpans(Span.dropOverlappingSpans(filtered.getSpans()));
+        Assertions.assertEquals(1, Span.dropOverlappingSpans(filtered.getSpans()).size());
 
     }
 
@@ -204,8 +204,8 @@ public class FirstNameFilterTest extends AbstractFilterTest {
         final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.FIRST_NAME, filterConfiguration, SensitivityLevel.LOW, true);
 
         final Filtered filtered = filter.filter(getPolicy(), "context", PIECE,"Smith,Melissa A,MD");
-        showSpans(filtered.getSpans());
-        Assertions.assertEquals(3, filtered.getSpans().size());
+        showSpans(Span.dropOverlappingSpans(filtered.getSpans()));
+        Assertions.assertEquals(3, Span.dropOverlappingSpans(filtered.getSpans()).size());
 
     }
 

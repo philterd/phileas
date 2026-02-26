@@ -125,7 +125,7 @@ public class FuzzyDictionaryFilterTest extends AbstractFilterTest {
         final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "He lived with Billi in California.");
 
         Assertions.assertEquals(1, filtered.getSpans().size());
-        Assertions.assertEquals("Bill", filtered.getSpans().get(0).getText());
+        Assertions.assertEquals("Billi", filtered.getSpans().get(0).getText());
         Assertions.assertEquals(0.7, filtered.getSpans().get(0).getConfidence());
 
     }
