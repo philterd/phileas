@@ -26,6 +26,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.hc.client5.http.classic.HttpClient;
 import org.apache.hc.client5.http.classic.methods.HttpPost;
 import org.apache.hc.client5.http.config.RequestConfig;
@@ -55,8 +56,8 @@ public class PhEyeFilter extends NerFilter {
 
     private final PhEyeConfiguration phEyeConfiguration;
     private final Collection<String> labels;
-    private final Gson gson;
     private final HttpClient httpClient;
+    private final Gson gson;
 
     public PhEyeFilter(final FilterConfiguration filterConfiguration,
                        final PhEyeConfiguration phEyeConfiguration,
@@ -70,14 +71,13 @@ public class PhEyeFilter extends NerFilter {
         this.phEyeConfiguration = phEyeConfiguration;
         this.removePunctuation = removePunctuation;
         this.labels = phEyeConfiguration.getLabels();
-        this.gson = new Gson();
         this.httpClient = httpClient;
+        this.gson = new Gson();
 
     }
 
     @Override
-    public Filtered filter(final Policy policy, final String context, final int piece,
-                           final String input) throws Exception {
+    public Filtered filter(final Policy policy, final String context, final int piece, final String input) throws Exception {
 
         final List<Span> spans = new LinkedList<>();
 
@@ -162,8 +162,6 @@ public class PhEyeFilter extends NerFilter {
                             final FilterType filterType;
                             if(phEyeSpan.getLabel().equalsIgnoreCase("PERSON")) {
                                 filterType = FilterType.PERSON;
-                            } else if(phEyeSpan.getLabel().equalsIgnoreCase("DISEASE_DISORDER")) {
-                                filterType = FilterType.MEDICAL_CONDITION;
                             } else {
                                 filterType = FilterType.OTHER;
                             }
@@ -203,7 +201,7 @@ public class PhEyeFilter extends NerFilter {
 
         final Replacement replacement = getReplacement(policy, context, text, window, confidence, classification, null);
 
-        if(StringUtils.equals(replacement.getReplacement(), text)) {
+        if(Strings.CI.equals(replacement.getReplacement(), text)) {
 
             // If the replacement is the same as the token then there is no span.
             // A condition in the strategy excluded it.

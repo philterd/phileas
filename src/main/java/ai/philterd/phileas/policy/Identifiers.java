@@ -57,9 +57,14 @@ import java.util.List;
 
 public class Identifiers {
 
+    @SerializedName("pheyes")
+    @Expose
+    private List<PhEye> phEyes;
+
+    @Deprecated
     @SerializedName("person")
     @Expose
-    private PhEye phEye;
+    private PhEye person;
 
     @SerializedName("dictionaries")
     @Expose
@@ -203,6 +208,10 @@ public class Identifiers {
 
         switch(filterType) {
 
+            case PH_EYE:
+                if(CollectionUtils.isNotEmpty(this.getPhEyes())) { return true; } break;
+            case PERSON:
+                if(this.getPerson() != null) {return true; } break;
             case CUSTOM_DICTIONARY:
                 if(CollectionUtils.isNotEmpty(this.getCustomDictionaries())) { return true; } break;
             case AGE:
@@ -239,8 +248,6 @@ public class Identifiers {
                 if(this.getMacAddress() != null) { return true; } break;
             case MEDICAL_CONDITION:
                 if(this.getMedicalCondition() != null) {return true; } break;
-            case PERSON:
-                if(this.getPhEye() != null) { return true; } break;
             case PASSPORT_NUMBER:
                 if(this.getPassportNumber() != null) { return true; } break;
             case PHONE_NUMBER:
@@ -428,14 +435,6 @@ public class Identifiers {
         this.phoneNumberExtension = phoneNumberExtension;
     }
 
-    public PhEye getPhEye() {
-        return phEye;
-    }
-
-    public void setPerson(PhEye phEye) {
-        this.phEye = phEye;
-    }
-
     public List<CustomDictionary> getCustomDictionaries() {
         return customDictionaries;
     }
@@ -538,6 +537,22 @@ public class Identifiers {
 
     public void setMedicalCondition(MedicalCondition medicalCondition) {
         this.medicalCondition = medicalCondition;
+    }
+
+    public List<PhEye> getPhEyes() {
+        return phEyes;
+    }
+
+    public void setPhEyes(List<PhEye> phEyes) {
+        this.phEyes = phEyes;
+    }
+
+    public PhEye getPerson() {
+        return person;
+    }
+
+    public void setPerson(PhEye person) {
+        this.person = person;
     }
 
 }

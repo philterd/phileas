@@ -70,21 +70,6 @@ import java.util.List;
 
 public class PolicyTest {
 
-    private final Gson gson = new Gson();
-
-//    @Test
-//    public void compare() throws IOException {
-//
-//        final Policy policy1 = getPolicy();
-//        final String policyJson1 = gson.toJson(policy1);
-//
-//        final Policy policy2 = getPolicy();
-//        final String policyJson2 = gson.toJson(policy2);
-//
-//        Assertions.assertEquals(policyJson1, policyJson2);
-//
-//    }
-
     @Test
     public void serialize() throws IOException {
 
@@ -441,7 +426,7 @@ public class PolicyTest {
         identifiers.setHospital(hospital);
         identifiers.setIdentifiers(List.of(identifier));
         identifiers.setIpAddress(ipAddress);
-        identifiers.setPerson(phEye);
+        identifiers.setPhEyes(List.of(phEye));
         identifiers.setPhoneNumber(phoneNumber);
         identifiers.setPhoneNumberExtension(phoneNumberExtension);
         identifiers.setSsn(ssn);

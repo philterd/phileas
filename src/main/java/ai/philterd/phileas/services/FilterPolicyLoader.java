@@ -25,6 +25,7 @@ import ai.philterd.phileas.model.filtering.SensitivityLevel;
 import ai.philterd.phileas.policy.Policy;
 import ai.philterd.phileas.policy.filters.CustomDictionary;
 import ai.philterd.phileas.policy.filters.Identifier;
+import ai.philterd.phileas.policy.filters.PhEye;
 import ai.philterd.phileas.policy.filters.Section;
 import ai.philterd.phileas.services.context.ContextService;
 import ai.philterd.phileas.services.filters.ai.pheye.PhEyeConfiguration;
@@ -1201,89 +1202,97 @@ public class FilterPolicyLoader {
 
         }
 
-        if(policy.getIdentifiers().hasFilter(FilterType.PERSON) && policy.getIdentifiers().getPhEye().isEnabled()) {
+        if(policy.getIdentifiers().hasFilter(FilterType.PH_EYE)) {
 
-            if(cache.containsKey(FilterType.PERSON)) {
-                enabledFilters.add(cache.get(FilterType.PERSON));
+            // There can be multiple custom dictionary filters because it is a list.
+            for (final PhEye phEye : policy.getIdentifiers().getPhEyes()) {
+
+                // TODO: Adding caching for the pheye filters.
+
+                if(phEye.isEnabled()) {
+
+                    final int windowSize = phEye.getWindowSizeOrDefault(phileasConfiguration.spanWindowSize());
+
+                    final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                            .withStrategies(phEye.getPhEyeFilterStrategies())
+                            .withContextService(contextService)
+                            .withRandom(random)
+                            .withIgnored(phEye.getIgnored())
+                            .withIgnoredFiles(phEye.getIgnoredFiles())
+                            .withIgnoredPatterns(phEye.getIgnoredPatterns())
+                            .withCrypto(policy.getCrypto())
+                            .withFPE(policy.getFpe())
+                            .withWindowSize(windowSize)
+                            .withPriority(phEye.getPriority())
+                            .build();
+
+                    final ai.philterd.phileas.policy.filters.pheye.PhEyeConfiguration phEyePolicyConfig = phEye.getPhEyeConfiguration();
+
+                    final PhEyeConfiguration phEyeConfiguration = new PhEyeConfiguration(phEyePolicyConfig.getEndpoint());
+                    phEyeConfiguration.setTimeout(phEyePolicyConfig.getTimeout());
+                    phEyeConfiguration.setMaxIdleConnections(phEyePolicyConfig.getMaxIdleConnections());
+                    phEyeConfiguration.setBearerToken(phEyePolicyConfig.getBearerToken());
+                    phEyeConfiguration.setLabels(phEyePolicyConfig.getLabels());
+
+                    final Filter filter = new PhEyeFilter(
+                            filterConfiguration,
+                            phEyeConfiguration,
+                            phEye.isRemovePunctuation(),
+                            phEye.getThresholds(),
+                            FilterType.PH_EYE,
+                            httpClient
+                    );
+
+                    enabledFilters.add(filter);
+                    filterCache.get(policyKey).put(FilterType.PH_EYE, filter);
+
+                }
+
+            }
+
+        }
+
+        if(policy.getIdentifiers().hasFilter(FilterType.PERSON) && policy.getIdentifiers().getPerson().isEnabled()) {
+
+            if(filterCache.get(policyKey).containsKey(FilterType.PERSON)) {
+                enabledFilters.add(filterCache.get(policyKey).get(FilterType.PERSON));
             } else {
 
-                final int windowSize = policy.getIdentifiers().getPhEye().getWindowSizeOrDefault(phileasConfiguration.spanWindowSize());
-
+                final PhEye phEye = policy.getIdentifiers().getPerson();
+                final int windowSize = phEye.getWindowSizeOrDefault(phileasConfiguration.spanWindowSize());
 
                 final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
-                        .withStrategies(policy.getIdentifiers().getPhEye().getPhEyeFilterStrategies())
+                        .withStrategies(phEye.getPhEyeFilterStrategies())
                         .withContextService(contextService)
                         .withRandom(random)
-                        .withIgnored(policy.getIdentifiers().getPhEye().getIgnored())
-                        .withIgnoredFiles(policy.getIdentifiers().getPhEye().getIgnoredFiles())
-                        .withIgnoredPatterns(policy.getIdentifiers().getPhEye().getIgnoredPatterns())
+                        .withIgnored(phEye.getIgnored())
+                        .withIgnoredFiles(phEye.getIgnoredFiles())
+                        .withIgnoredPatterns(phEye.getIgnoredPatterns())
                         .withCrypto(policy.getCrypto())
                         .withFPE(policy.getFpe())
                         .withWindowSize(windowSize)
-                        .withPriority(policy.getIdentifiers().getPhEye().getPriority())
+                        .withPriority(phEye.getPriority())
                         .build();
 
-                final PhEyeConfiguration phEyeConfiguration = new PhEyeConfiguration(policy.getIdentifiers().getPhEye().getPhEyeConfiguration().getEndpoint());
-                phEyeConfiguration.setTimeout(policy.getIdentifiers().getPhEye().getPhEyeConfiguration().getTimeout());
-                phEyeConfiguration.setMaxIdleConnections(policy.getIdentifiers().getPhEye().getPhEyeConfiguration().getMaxIdleConnections());
-                phEyeConfiguration.setBearerToken(policy.getIdentifiers().getPhEye().getPhEyeConfiguration().getBearerToken());
-                phEyeConfiguration.setLabels(policy.getIdentifiers().getPhEye().getPhEyeConfiguration().getLabels());
+                final ai.philterd.phileas.policy.filters.pheye.PhEyeConfiguration phEyePolicyConfig = phEye.getPhEyeConfiguration();
+
+                final PhEyeConfiguration phEyeConfiguration = new PhEyeConfiguration(phEyePolicyConfig.getEndpoint());
+                phEyeConfiguration.setTimeout(phEyePolicyConfig.getTimeout());
+                phEyeConfiguration.setMaxIdleConnections(phEyePolicyConfig.getMaxIdleConnections());
+                phEyeConfiguration.setBearerToken(phEyePolicyConfig.getBearerToken());
+                phEyeConfiguration.setLabels(phEyePolicyConfig.getLabels());
 
                 final Filter filter = new PhEyeFilter(
                         filterConfiguration,
                         phEyeConfiguration,
-                        policy.getIdentifiers().getPhEye().isRemovePunctuation(),
-                        policy.getIdentifiers().getPhEye().getThresholds(),
+                        phEye.isRemovePunctuation(),
+                        phEye.getThresholds(),
                         FilterType.PERSON,
                         httpClient
                 );
 
                 enabledFilters.add(filter);
                 filterCache.get(policyKey).put(FilterType.PERSON, filter);
-
-            }
-
-        }
-
-        if(policy.getIdentifiers().hasFilter(FilterType.MEDICAL_CONDITION) && policy.getIdentifiers().getMedicalCondition().isEnabled()) {
-
-            if(cache.containsKey(FilterType.MEDICAL_CONDITION)) {
-                enabledFilters.add(cache.get(FilterType.MEDICAL_CONDITION));
-            } else {
-
-                final int windowSize = policy.getIdentifiers().getMedicalCondition().getWindowSizeOrDefault(phileasConfiguration.spanWindowSize());
-
-
-                final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
-                        .withStrategies(policy.getIdentifiers().getMedicalCondition().getMedicalConditionFilterStrategies())
-                        .withContextService(contextService)
-                        .withRandom(random)
-                        .withIgnored(policy.getIdentifiers().getMedicalCondition().getIgnored())
-                        .withIgnoredFiles(policy.getIdentifiers().getMedicalCondition().getIgnoredFiles())
-                        .withIgnoredPatterns(policy.getIdentifiers().getMedicalCondition().getIgnoredPatterns())
-                        .withCrypto(policy.getCrypto())
-                        .withFPE(policy.getFpe())
-                        .withWindowSize(windowSize)
-                        .withPriority(policy.getIdentifiers().getMedicalCondition().getPriority())
-                        .build();
-
-                final PhEyeConfiguration phEyeConfiguration = new PhEyeConfiguration(policy.getIdentifiers().getMedicalCondition().getPhEyeConfiguration().getEndpoint());
-                phEyeConfiguration.setTimeout(policy.getIdentifiers().getMedicalCondition().getPhEyeConfiguration().getTimeout());
-                phEyeConfiguration.setMaxIdleConnections(policy.getIdentifiers().getMedicalCondition().getPhEyeConfiguration().getMaxIdleConnections());
-                phEyeConfiguration.setBearerToken(policy.getIdentifiers().getMedicalCondition().getPhEyeConfiguration().getBearerToken());
-                phEyeConfiguration.setLabels(policy.getIdentifiers().getMedicalCondition().getPhEyeConfiguration().getLabels());
-
-                final Filter filter = new PhEyeFilter(
-                        filterConfiguration,
-                        phEyeConfiguration,
-                        policy.getIdentifiers().getMedicalCondition().isRemovePunctuation(),
-                        policy.getIdentifiers().getMedicalCondition().getThresholds(),
-                        FilterType.MEDICAL_CONDITION,
-                        httpClient
-                );
-
-                enabledFilters.add(filter);
-                filterCache.get(policyKey).put(FilterType.MEDICAL_CONDITION, filter);
 
             }
 
