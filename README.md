@@ -13,6 +13,14 @@ Information can be redacted based on the content of the information and other at
 
 For Phileas' documentation, please see https://philterd.github.io/phileas/.
 
+## Ports
+
+This is the *primary* Phileas repository, but it has been ported to a few other languages. Functionality between this Java version and the versions for other languages will differ. Some features available here are not (yet) available in the ports, and there may be features in the ports that are not available in the Java version. Development will likely focus on the Java version since it powers Philter and other applications.
+
+* Phileas (Python) - https://github.com/philterd/phileas-python
+* Phileas (.NET) - https://github.com/philterd/phileas-net
+* Phileas (Go) - https://github.com/philterd/go-phileas
+
 ## What Phileas Can Do
 
 * Phileas can identify and redact over 30 types of sensitive information (see list below).
