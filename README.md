@@ -15,10 +15,12 @@ For Phileas' documentation, please see https://philterd.github.io/phileas/.
 
 ## Ports
 
-This is the *primary* Phileas repository, but it has been ported to a few other languages. Functionality between this Java version and the versions for other languages will differ. Some features available here are not (yet) available in the ports, and there may be features in the ports that are not available in the Java version. Development will likely focus on the Java version since it powers Philter and other applications.
+This is the *primary* Phileas repository, but it has been ported to a few other languages. Functionality between this Java version and the versions for other languages will differ. Some features available here are not (yet) available in the ports, and there may be features in the ports that are not available in the Java version. Refer to the documentation for each port for more information.
 
-* Phileas (Python) - https://github.com/philterd/phileas-python
-* Phileas (.NET) - https://github.com/philterd/phileas-net
+Development will likely focus on the Java version since it powers Philter and other applications.
+
+* Phileas (Python) - https://github.com/philterd/phileas-python ([docs](https://philterd.github.io/phileas-python/))
+* Phileas (.NET) - https://github.com/philterd/phileas-net ([docs](https://philterd.github.io/phileas-net/))
 * Phileas (Go) - https://github.com/philterd/go-phileas
 
 ## What Phileas Can Do
