@@ -180,6 +180,6 @@ Phileas is the underlying core of [Philter](https://www.github.com/philterd/phil
 
 As of Phileas 2.2.1, Phileas is licensed under the Apache License, version 2.0. Previous versions were under a proprietary license.
 
-Copyright 2024-2025 Philterd, LLC.
+Copyright 2024-2026 Philterd, LLC.
 
 Copyright 2018-2023 Mountain Fog, Inc.
