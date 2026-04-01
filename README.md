@@ -4,7 +4,6 @@
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=philterd_phileas&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=philterd_phileas)
 
 * For an open source API-based redaction app built on Phileas, please see [Philter](https://www.github.com/philterd/philter).
-* For a hosted document redaction service, please see [Philterd Data Services](https://www.philterd.ai/data-services).
 
 Phileas is a Java library to deidentify and redact PII, PHI, and other sensitive information from text. Given text or documents (PDF), Phileas analyzes the text searching for sensitive information such as persons' names, ages, addresses, and many other types of information. Phileas is highly configurable through its settings and policies.
 
