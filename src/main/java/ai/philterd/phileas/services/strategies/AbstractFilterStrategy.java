@@ -289,7 +289,8 @@ public abstract class AbstractFilterStrategy {
      * @param token The token to anonymize.
      * @param anonymizationService The {@link AnonymizationService} for the token.
      * @param filterType The {@link FilterType}.
-     * @return An anonymized version of the token, or <code>null</code> if the token has already been anonymized.
+     * @return An anonymized version of the token. Never <code>null</code>: a replacement is always
+     *         produced so a detected token is never left unredacted.
      */
     protected String getAnonymizedToken(final String replacementScope, final String token, AnonymizationService anonymizationService, final String filterType) {
 
@@ -297,35 +298,34 @@ public abstract class AbstractFilterStrategy {
             anonymizationService = this.anonymizationService;
         }
 
-        String replacement = null;
+        final String replacement;
 
-        if(replacementScope.equalsIgnoreCase(REPLACEMENT_SCOPE_DOCUMENT)) {
+        if(replacementScope.equalsIgnoreCase(REPLACEMENT_SCOPE_CONTEXT)) {
 
-            // Don't look at the context for this replacement.
-            replacement = anonymizationService.anonymize(token);
+            // CONTEXT scope: reuse a previously generated replacement for this token so the same
+            // value is anonymized consistently across documents in the context.
 
-        } else if(replacementScope.equalsIgnoreCase(REPLACEMENT_SCOPE_CONTEXT)) {
-
-            // Do look at the context.
-
-            // Have we seen this token in this context before?
             if (anonymizationService.getContextService().containsToken(token)) {
 
-                // Yes, we have previously seen this token in this context.
+                // We have seen this token in this context before; reuse its replacement.
                 replacement = anonymizationService.getContextService().getReplacement(token);
 
             } else {
 
-                // Make sure we aren't trying to anonymize a token we have already anonymized.
-                if (!anonymizationService.getContextService().containsReplacement(token)) {
-
-                    // This is not a token we have already anonymized.
-                    replacement = anonymizationService.anonymize(token);
-                    anonymizationService.getContextService().putReplacement(token, replacement, filterType);
-
-                }
+                // First time we have seen this token in this context. Generate a replacement and
+                // store it, keyed on the token. We always generate one (rather than skipping when
+                // the token happens to equal an existing replacement value, which previously
+                // produced a null replacement and left the token unredacted), so the detected
+                // token is always redacted.
+                replacement = anonymizationService.anonymize(token);
+                anonymizationService.getContextService().putReplacement(token, replacement, filterType);
 
             }
+
+        } else {
+
+            // DOCUMENT scope (the default): do not consult the context; anonymize directly.
+            replacement = anonymizationService.anonymize(token);
 
         }
 
