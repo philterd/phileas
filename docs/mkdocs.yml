@@ -25,3 +25,6 @@ nav:
     - 'Anonymization': 'other_features/anonymization.md'
     - 'Span Disambiguation': 'other_features/span_disambiguation.md'
   - Settings: settings.md
+extra:
+  version:
+    provider: mike

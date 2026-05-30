@@ -1,8 +1,8 @@
 name: docs
 on:
   push:
-    branches:
-      - main
+    tags:
+      - '[0-9]+.[0-9]+.[0-9]+'
 permissions:
   contents: write
 jobs:
@@ -10,6 +10,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - name: Configure Git Credentials
         run: |
           git config user.name github-actions[bot]
@@ -26,5 +28,8 @@ jobs:
             mkdocs-material-
       - run: pip install -r requirements.txt
         working-directory: ./docs
-      - run: mkdocs gh-deploy --force
+      - name: Deploy versioned docs
         working-directory: ./docs
+        run: |
+          mike deploy --push --update-aliases "${GITHUB_REF_NAME}" latest
+          mike set-default --push latest
