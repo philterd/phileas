@@ -1,8 +1,13 @@
 # Phileas Release Notes
 
-These release notes are for versions prior to being open source on GitHub. For newer versions, see the [releases](https://github.com/philterd/phileas/releases) on GitHub.
+Notable changes to Phileas, most recent first.
 
-Issues whose identifiers start with `PHL-` were previously tracked in Jira before the project's issues were managed in GitHub.
+Versions released only on GitHub (between 2.6.0 and 3.4.0) are documented in the [GitHub releases](https://github.com/philterd/phileas/releases). Issues whose identifiers start with `PHL-` were previously tracked in Jira before the project's issues were managed in GitHub.
+
+## Version 3.4.0
+
+* Embedded the redaction policy JSON schema in the Phileas jar and added the `ai.philterd.phileas.policy.PolicySchema` API to read the supported schema version at runtime. `PolicySchema.getSupportedSchemaVersion()` returns the version (for example, `1.0.0`) and `PolicySchema.getSchema()` returns the full embedded schema. A given Phileas release supports exactly one schema version.
+* Added a top-level `version` field to the redaction policy schema so the version is readable from the schema body, not just its `$id` URL.
 
 ## Version 2.6.0
 

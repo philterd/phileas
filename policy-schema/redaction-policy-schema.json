@@ -1,6 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://www.philterd.ai/schemas/redaction-policy/1.0.0/schema.json",
+  "version": "1.0.0",
   "title": "Phileas Redaction Policy",
   "description": "Schema for a Phileas redaction policy JSON file. A policy defines which types of sensitive information to detect and how to redact or transform each type.",
   "type": "object",
