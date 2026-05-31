@@ -15,16 +15,17 @@
  */
 package ai.philterd.phileas.services.context;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Supplier;
 
 public class DefaultContextService implements ContextService {
 
-    private final Map<String, String> context;
-
-    public DefaultContextService() {
-        this.context = new HashMap<>();
-    }
+    // A single context service instance is shared across all filters and across documents
+    // processed concurrently, so the backing map must be thread-safe. ConcurrentHashMap also
+    // provides the atomic compute-if-absent used to keep CONTEXT-scope replacements consistent
+    // under concurrent access.
+    private final Map<String, String> context = new ConcurrentHashMap<>();
 
     @Override
     public boolean containsToken(String token) {
@@ -44,6 +45,11 @@ public class DefaultContextService implements ContextService {
     @Override
     public void putReplacement(String token, String replacement, final String filterType) {
         context.put(token, replacement);
+    }
+
+    @Override
+    public String computeReplacementIfAbsent(final String token, final String filterType, final Supplier<String> replacementSupplier) {
+        return context.computeIfAbsent(token, t -> replacementSupplier.get());
     }
 
 }

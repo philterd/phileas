@@ -298,34 +298,29 @@ public abstract class AbstractFilterStrategy {
             anonymizationService = this.anonymizationService;
         }
 
+        // Effectively-final reference so it can be captured by the supplier lambda below.
+        final AnonymizationService service = anonymizationService;
+
         final String replacement;
 
         if(replacementScope.equalsIgnoreCase(REPLACEMENT_SCOPE_CONTEXT)) {
 
             // CONTEXT scope: reuse a previously generated replacement for this token so the same
-            // value is anonymized consistently across documents in the context.
-
-            if (anonymizationService.getContextService().containsToken(token)) {
-
-                // We have seen this token in this context before; reuse its replacement.
-                replacement = anonymizationService.getContextService().getReplacement(token);
-
-            } else {
-
-                // First time we have seen this token in this context. Generate a replacement and
-                // store it, keyed on the token. We always generate one (rather than skipping when
-                // the token happens to equal an existing replacement value, which previously
-                // produced a null replacement and left the token unredacted), so the detected
-                // token is always redacted.
-                replacement = anonymizationService.anonymize(token);
-                anonymizationService.getContextService().putReplacement(token, replacement, filterType);
-
-            }
+            // value is anonymized consistently across documents in the context. This is done
+            // atomically: a separate contains/get/else-generate-put sequence let two threads that
+            // saw the same token concurrently both miss, generate different replacements, and
+            // store conflicting values - breaking the consistency guarantee and losing one of the
+            // replacements. computeReplacementIfAbsent invokes the supplier at most once per token.
+            // A replacement is always generated (rather than skipping when the token happens to
+            // equal an existing replacement value, which previously produced a null replacement
+            // and left the token unredacted), so the detected token is always redacted.
+            replacement = service.getContextService().computeReplacementIfAbsent(
+                    token, filterType, () -> service.anonymize(token));
 
         } else {
 
             // DOCUMENT scope (the default): do not consult the context; anonymize directly.
-            replacement = anonymizationService.anonymize(token);
+            replacement = service.anonymize(token);
 
         }
 
