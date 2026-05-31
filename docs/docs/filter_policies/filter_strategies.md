@@ -144,6 +144,8 @@ The `FPE_ENCRYPT_REPLACE` filter strategy uses format-preserving encryption (FPE
 * [https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-38Gr1-draft.pdf](https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-38Gr1-draft.pdf)
 * [https://nvlpubs.nist.gov/nistpubs/specialpublications/nist.sp.800-38g.pdf](https://nvlpubs.nist.gov/nistpubs/specialpublications/nist.sp.800-38g.pdf)
 
+> FF3 can only encrypt values whose format-preservable (alphanumeric) content is between 6 and 56 characters long. When a detected value falls outside this range — for example a 5-digit ZIP code — it cannot be format-preserving encrypted. In that case Phileas falls back to redacting that value (using the `REDACT` placeholder) instead, so the value is still redacted and a single out-of-range value does not affect the rest of the document. Consider applying `FPE_ENCRYPT_REPLACE` to types whose values fall within the supported length range.
+
 An example policy using the FPE\_ENCRYPT\_REPLACE filter strategy:
 
 ```

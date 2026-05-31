@@ -22,9 +22,7 @@ import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.binary.Hex;
 
-import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
-import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
@@ -37,6 +35,12 @@ import java.security.NoSuchAlgorithmException;
  * Provides encryption methods.
  */
 public class Encryption {
+
+    // FF3 format-preserving encryption only supports a bounded input length: the domain must be
+    // large enough to be secure and within FF3's block limits. Values whose format-preservable
+    // content falls outside this range cannot be format-preserving encrypted.
+    private static final int FPE_MIN_LENGTH = 6;
+    private static final int FPE_MAX_LENGTH = 56;
 
     private Encryption() {
         // Access the methods in this class through the static functions.
@@ -108,12 +112,15 @@ public class Encryption {
      * Encrypts the <code>plainText</code> using format-preserving encryption.
      * @param plainText The plain text.
      * @return The encrypted text.
+     * @throws FormatPreservingEncryptionException If the value cannot be format-preserving encrypted,
+     *         for example because its length is outside the range FF3 supports. The plain text is not
+     *         included in the exception message.
      */
     private static String doFormatPreservingEncryption(final String plainText, final FPE fpe) {
 
-        // TODO: Handle shorter and longer strings.
-        if(plainText.length() < 6 || plainText.length() > 56) {
-            throw new RuntimeException("Plain text is outside the acceptable length.");
+        if(plainText.length() < FPE_MIN_LENGTH || plainText.length() > FPE_MAX_LENGTH) {
+            throw new FormatPreservingEncryptionException("The value's format-preservable content (" + plainText.length()
+                    + " characters) is outside the supported range of " + FPE_MIN_LENGTH + " to " + FPE_MAX_LENGTH + " characters.");
         }
 
         try {
@@ -122,8 +129,10 @@ public class Encryption {
 
             return c.encrypt(plainText);
 
-        } catch (IllegalBlockSizeException | BadPaddingException ex) {
-            throw new RuntimeException("Unable to encrypt plain text value.", ex);
+        } catch (final Exception ex) {
+            // Wrap any FF3 failure so callers can fall back for this token rather than failing the
+            // whole document. The plain text is intentionally not included in the message.
+            throw new FormatPreservingEncryptionException("The value could not be format-preserving encrypted.", ex);
         }
 
     }

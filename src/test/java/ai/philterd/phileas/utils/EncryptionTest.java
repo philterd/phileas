@@ -72,6 +72,29 @@ public class EncryptionTest {
     }
 
     @Test
+    public void formatPreservingEncryptionRejectsShortInput() {
+
+        // FF3 cannot encrypt content shorter than its minimum supported length.
+        final FPE fpe = new FPE("EF4359D8D580AA4F7F036D6F04FC6A94", "D8E7920AFA330A73");
+
+        Assertions.assertThrows(FormatPreservingEncryptionException.class,
+                () -> Encryption.formatPreservingEncrypt(fpe, "12345"));
+
+    }
+
+    @Test
+    public void formatPreservingEncryptionRejectsLongInput() {
+
+        // FF3 cannot encrypt content longer than its maximum supported length.
+        final FPE fpe = new FPE("EF4359D8D580AA4F7F036D6F04FC6A94", "D8E7920AFA330A73");
+        final String tooLong = "1".repeat(57);
+
+        Assertions.assertThrows(FormatPreservingEncryptionException.class,
+                () -> Encryption.formatPreservingEncrypt(fpe, tooLong));
+
+    }
+
+    @Test
     public void encrypt1() throws Exception {
 
         final String token = "asdf";

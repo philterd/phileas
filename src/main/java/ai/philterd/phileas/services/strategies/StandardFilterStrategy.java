@@ -21,12 +21,17 @@ import ai.philterd.phileas.policy.Crypto;
 import ai.philterd.phileas.policy.FPE;
 import ai.philterd.phileas.services.anonymization.AnonymizationService;
 import ai.philterd.phileas.utils.Encryption;
+import ai.philterd.phileas.utils.FormatPreservingEncryptionException;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public abstract class StandardFilterStrategy extends AbstractFilterStrategy {
+
+    private static final Logger LOGGER = LogManager.getLogger(StandardFilterStrategy.class);
 
     public Replacement getStandardReplacement(String label, String token,
                                       Crypto crypto, FPE fpe,
@@ -87,7 +92,17 @@ public abstract class StandardFilterStrategy extends AbstractFilterStrategy {
 
         } else if(Strings.CI.equals(strategy, FPE_ENCRYPT_REPLACE)) {
 
-            replacement = Encryption.formatPreservingEncrypt(fpe, token);
+            try {
+                replacement = Encryption.formatPreservingEncrypt(fpe, token);
+            } catch (final FormatPreservingEncryptionException e) {
+                // This token cannot be format-preserving encrypted (for example, its content is
+                // outside FF3's supported length range). Fall back to redaction so the token is
+                // still redacted - one such token must not abort redaction of the whole document,
+                // and the original value must never be emitted. The token is not logged.
+                LOGGER.warn("Could not format-preserving encrypt a {} value; falling back to redaction. Reason: {}",
+                        filterType.getType(), e.getMessage());
+                replacement = getRedactedToken(token, label, filterType);
+            }
 
         } else if(Strings.CI.equals(strategy, LAST_4)) {
 
