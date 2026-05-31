@@ -28,6 +28,8 @@ import ai.philterd.phileas.policy.filters.CreditCard;
 import ai.philterd.phileas.policy.filters.CustomDictionary;
 import ai.philterd.phileas.policy.filters.DriversLicense;
 import ai.philterd.phileas.services.context.ContextService;
+import ai.philterd.phileas.services.context.DefaultContextService;
+import ai.philterd.phileas.services.disambiguation.vector.InMemoryVectorService;
 import ai.philterd.phileas.services.disambiguation.vector.VectorService;
 import ai.philterd.phileas.services.filters.filtering.PdfFilterService;
 import ai.philterd.phileas.services.filters.filtering.PlainTextFilterService;
@@ -45,7 +47,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -68,8 +69,10 @@ public class EndToEndTests {
 
     private static final Logger LOGGER = LogManager.getLogger(EndToEndTests.class);
 
-    private final ContextService contextService = Mockito.mock(ContextService.class); 
-    private final VectorService vectorService = Mockito.mock(VectorService.class);
+    // Use the real services rather than mocks so these end-to-end tests exercise the actual
+    // replacement-context and vector wiring instead of no-op stubs.
+    private final ContextService contextService = new DefaultContextService();
+    private final VectorService vectorService = new InMemoryVectorService();
     
     @BeforeEach
     public void before() {

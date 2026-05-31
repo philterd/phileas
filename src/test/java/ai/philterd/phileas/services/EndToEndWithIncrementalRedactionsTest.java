@@ -20,6 +20,8 @@ import ai.philterd.phileas.model.filtering.IncrementalRedaction;
 import ai.philterd.phileas.model.filtering.TextFilterResult;
 import ai.philterd.phileas.policy.Policy;
 import ai.philterd.phileas.services.context.ContextService;
+import ai.philterd.phileas.services.context.DefaultContextService;
+import ai.philterd.phileas.services.disambiguation.vector.InMemoryVectorService;
 import ai.philterd.phileas.services.disambiguation.vector.VectorService;
 import ai.philterd.phileas.services.filters.filtering.PlainTextFilterService;
 import com.google.gson.Gson;
@@ -29,7 +31,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
 import java.util.Properties;
 
@@ -40,8 +41,10 @@ public class EndToEndWithIncrementalRedactionsTest {
 
     private static final Logger LOGGER = LogManager.getLogger(EndToEndWithIncrementalRedactionsTest.class);
 
-    private final ContextService contextService = Mockito.mock(ContextService.class);
-    private final VectorService vectorService = Mockito.mock(VectorService.class);
+    // Use the real services rather than mocks so these end-to-end tests actually exercise the
+    // replacement-context and vector wiring instead of no-op stubs.
+    private final ContextService contextService = new DefaultContextService();
+    private final VectorService vectorService = new InMemoryVectorService();
 
     @Test
     public void endToEndWithRedactionIncrements() throws Exception {
