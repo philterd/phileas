@@ -1,6 +1,6 @@
 # Span Disambiguation
 
-Span disambiguation is an optional feature in Phileas that is disabled by default. Refer to Phileas' [Settings](settings.md#cache) to enable and configure span disambiguation.
+Span disambiguation is an optional feature in Phileas that is disabled by default. Refer to Phileas' [Settings](../settings.md#span-disambiguation) to enable and configure span disambiguation.
 
 In Phileas, a _span_ is a piece of the input text that Phileas has identified as sensitive information. A span has a start and end positions, a confidence, a type, and other attributes. Ideally, each piece of identified sensitive information will only have a single span associated with it. In this case, the type of sensitive information is unambiguous. The goal of span disambiguation is provide more accurate filtering by removing the potential ambiguities in the types of sensitive information for duplicate spans.
 
@@ -24,8 +24,15 @@ Span disambiguation is only invoked for spans that differ only by the type of se
 
 #### Cache Service
 
-When multiple application using Phileas are deployed alongside each other behind a load balancer, Phileas' [cache service](settings.md#cache) should be configured and enabled. Phileas will store the information needed to disambiguate spans in the cache such that the information is available to each instance of Phileas. If only a single instance of Phileas is running then the cache service is not required, however, the information needed to disambiguate spans will be stored in memory and will be lost when Phileas is stopped or restarted. Because of this, we recommend the cache service always be used unless there is a specific reason not to.
+Span disambiguation accumulates the context vectors it learns in a _vector store_ — a cache of the information needed to disambiguate spans. Phileas provides two vector store implementations:
+
+- **In-memory (the default).** The learned vectors are held only in memory. This requires no additional setup, but the vectors are not shared between instances and are lost when Phileas stops or restarts.
+- **File-based.** The learned vectors are persisted to a file and reloaded on startup, so the "improves over time" learning survives restarts.
+
+The vector store is supplied to Phileas by the application that embeds it, so which store is used is determined by how Phileas is deployed rather than by a configuration property.
+
+When multiple applications using Phileas run alongside each other (for example, behind a load balancer), they should share a single persistent vector store so the vectors learned by one instance are available to all of them. Otherwise each instance learns independently, only from the documents it happens to process. For a single instance, the default in-memory store is sufficient, though its learning is lost on restart.
 
 #### Fine-Tuning the Span Disambiguation
 
-There are properties available to fine-tune how the span disambiguation operates. These properties are not documented because improper use of the properties could have a negative impact on performance. We will be glad to walk through these properties upon request.
+Additional properties are available to fine-tune how span disambiguation operates, such as the vector size, the hash algorithm, and stop-word handling. These are listed under [Span Disambiguation in the Settings](../settings.md#span-disambiguation). Most deployments do not need to change them, and improper values — for example, changing the vector size or hash algorithm after vectors have already been learned — can reduce accuracy or performance.
