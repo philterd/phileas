@@ -69,11 +69,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public abstract class Filter {
 
     protected static final Logger LOGGER = LogManager.getLogger(Filter.class);
+
+    // Precompiled patterns used when building the token window, compiled once rather than on every
+    // span/token via String.split and String.replaceAll.
+    private static final Pattern WINDOW_WHITESPACE = Pattern.compile("\\s");
+    private static final Pattern WINDOW_PUNCTUATION = Pattern.compile("\\p{Punct}");
 
     /**
      * The {@link FilterType type} of identifiers handled by this filter.
@@ -295,7 +301,7 @@ public abstract class Filter {
 
         }
 
-        final String[] rawTokens = text.substring(finalStart + 1, finalEnd).trim().split("\\s");
+        final String[] rawTokens = WINDOW_WHITESPACE.split(text.substring(finalStart + 1, finalEnd).trim());
 
         // Strip punctuation from each token and drop any that become empty (for example a token that
         // was only punctuation, or an empty entry produced by splitting). Empty tokens are not real
@@ -304,7 +310,7 @@ public abstract class Filter {
         // TODO: Should punctuation be preserved in the token itself?
         final List<String> tokens = new LinkedList<>();
         for(final String rawToken : rawTokens) {
-            final String token = rawToken.replaceAll("\\p{Punct}", "");
+            final String token = WINDOW_PUNCTUATION.matcher(rawToken).replaceAll("");
             if(!token.isEmpty()) {
                 tokens.add(token);
             }
@@ -365,7 +371,7 @@ public abstract class Filter {
 
             // PHL-68: When there are no strategies just redact.
             LOGGER.warn("No filter strategies found for filter type {}. Defaulting to redaction.", filterType.getType());
-            return new Replacement(AbstractFilterStrategy.DEFAULT_REDACTION.replaceAll("%t", filterType.getType()));
+            return new Replacement(AbstractFilterStrategy.DEFAULT_REDACTION.replace("%t", filterType.getType()));
 
         }
 
@@ -388,7 +394,7 @@ public abstract class Filter {
         // No reason to check if it is already ignored by an ignored term.
         if(!isIgnored) {
             for (final IgnoredPattern ignoredPattern : ignoredPatterns) {
-                if (token.matches(ignoredPattern.getPattern())) {
+                if (ignoredPattern.matches(token)) {
                     isIgnored = true;
                     break;
                 }

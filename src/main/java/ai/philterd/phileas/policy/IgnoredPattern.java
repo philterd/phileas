@@ -20,6 +20,8 @@ import com.google.gson.annotations.SerializedName;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
+import java.util.regex.Pattern;
+
 public class IgnoredPattern {
 
     @SerializedName("name")
@@ -29,6 +31,11 @@ public class IgnoredPattern {
     @SerializedName("pattern")
     @Expose
     private String pattern;
+
+    // The compiled form of the pattern, cached so a Pattern is not compiled on every match. It is
+    // built lazily (Gson sets the pattern field directly, bypassing the setter) and invalidated
+    // whenever the pattern changes.
+    private transient Pattern compiledPattern;
 
     public IgnoredPattern() {
 
@@ -85,6 +92,22 @@ public class IgnoredPattern {
 
     public void setPattern(String pattern) {
         this.pattern = pattern;
+        this.compiledPattern = null;
+    }
+
+    /**
+     * Determines whether the input matches this ignored pattern, using a cached compiled
+     * {@link Pattern} so the regex is compiled at most once per pattern value.
+     * @param input The text to test.
+     * @return <code>true</code> if the input fully matches the pattern.
+     */
+    public boolean matches(final String input) {
+        Pattern p = compiledPattern;
+        if (p == null) {
+            p = Pattern.compile(pattern);
+            compiledPattern = p;
+        }
+        return p.matcher(input).matches();
     }
 
 }

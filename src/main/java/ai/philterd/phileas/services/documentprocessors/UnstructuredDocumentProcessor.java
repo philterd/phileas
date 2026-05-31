@@ -99,54 +99,41 @@ public class UnstructuredDocumentProcessor implements DocumentProcessor {
         // Used to manipulate the text.
         final StringBuilder sb = new StringBuilder(input);
 
-        // Initialize this to the input length, but it may grow in length if redactions/replacements
-        // are longer than the original spans.
-        int stringLength = input.length();
-
         final List<IncrementalRedaction> incrementalRedactions = new ArrayList<>();
         final long tokens = tokenCounter.countTokens(input);
 
-        // Do the actual replacement of spans in the text by going character by character through the input.
-        for(int i = 0; i < stringLength; i++) {
+        // Apply the replacements in ascending start order, tracking the cumulative offset introduced
+        // by replacements whose length differs from the original span. This replaces the previous
+        // character-by-character scan (which called Span.doesIndexStartSpan - a linear scan of the
+        // span list - for every character of the document, i.e. O(documentLength x spans)) and the
+        // per-replacement Span.shiftSpans rebuild of the entire span list. The spans do not overlap
+        // (overlaps were removed earlier by Span.dropOverlappingSpans), so this single left-to-right
+        // pass is safe and preserves the original replacement order. appliedSpans is left unmodified
+        // so the Explanation keeps the original span locations.
+        final List<Span> orderedSpans = appliedSpans.stream()
+                .sorted(Comparator.comparingInt(Span::getCharacterStart))
+                .collect(toList());
 
-            // Is index i the start of a span?
-            final Span span = Span.doesIndexStartSpan(i, appliedSpans);
+        int offset = 0;
 
-            if(span != null) {
+        for(final Span span : orderedSpans) {
 
-                // Get the replacement. This might be the token itself or an anonymized version.
-                final String replacement = span.getReplacement();
+            // Get the replacement. This might be the token itself or an anonymized version.
+            final String replacement = span.getReplacement();
 
-                final int spanLength = span.getCharacterEnd() - span.getCharacterStart();
-                final int replacementLength = replacement.length();
+            final int start = span.getCharacterStart() + offset;
+            final int end = span.getCharacterEnd() + offset;
 
-                if(spanLength != replacementLength) {
+            // Do the replacement at the offset-adjusted position.
+            sb.replace(start, end, replacement);
 
-                    // We need to adjust the characterStart and characterEnd for the remaining spans.
-                    // A negative value means shift left.
-                    // A positive value means shift right.
-                    final int shift = (spanLength - replacementLength) * -1;
+            // A replacement longer than the original shifts later spans right; shorter shifts left.
+            offset += replacement.length() - (span.getCharacterEnd() - span.getCharacterStart());
 
-                    // Shift the remaining spans by the shift value.
-                    appliedSpans = Span.shiftSpans(shift, span, appliedSpans);
-
-                    // Update the length of the string.
-                    stringLength += shift;
-
-                }
-
-                // We can now do the replacement.
-                sb.replace(span.getCharacterStart(), span.getCharacterEnd(), replacement);
-
-                if(incrementalRedactionsEnabled) {
-                    // Hash the text at this point.
-                    final String hash = DigestUtils.sha256Hex(sb.toString());
-                    incrementalRedactions.add(new IncrementalRedaction(hash, span, sb.toString()));
-                }
-
-                // Jump ahead outside of this span.
-                i = span.getCharacterEnd();
-
+            if(incrementalRedactionsEnabled) {
+                // Hash the text at this point.
+                final String snapshot = sb.toString();
+                incrementalRedactions.add(new IncrementalRedaction(DigestUtils.sha256Hex(snapshot), span, snapshot));
             }
 
         }

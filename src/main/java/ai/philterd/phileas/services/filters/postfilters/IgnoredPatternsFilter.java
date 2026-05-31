@@ -45,7 +45,7 @@ public class IgnoredPatternsFilter extends PostFilter {
 
         for(final IgnoredPattern pattern : ignoredPatterns) {
 
-            final boolean ignored = spanText.matches(pattern.getPattern());
+            final boolean ignored = pattern.matches(spanText);
 
             if(ignored) {
                 return new PostFiltered(span, true);

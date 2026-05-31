@@ -477,7 +477,40 @@ public final class Span {
     @Override
     public boolean equals(Object o) {
 
-        return EqualsBuilder.reflectionEquals(this, o);
+        if (this == o) {
+            return true;
+        }
+
+        if (!(o instanceof Span)) {
+            return false;
+        }
+
+        final Span span = (Span) o;
+
+        // Compares the same fields as hashCode() (transient fields such as range, pattern, window,
+        // alwaysValid and lineHash are intentionally excluded, matching the previous
+        // reflectionEquals behavior). Keep this list in sync with hashCode().
+        return new EqualsBuilder()
+                .append(characterStart, span.characterStart)
+                .append(characterEnd, span.characterEnd)
+                .append(confidence, span.confidence)
+                .append(ignored, span.ignored)
+                .append(applied, span.applied)
+                .append(priority, span.priority)
+                .append(lineNumber, span.lineNumber)
+                .append(pageNumber, span.pageNumber)
+                .append(paragraphNumber, span.paragraphNumber)
+                .append(lowerLeftX, span.lowerLeftX)
+                .append(lowerLeftY, span.lowerLeftY)
+                .append(upperRightX, span.upperRightX)
+                .append(upperRightY, span.upperRightY)
+                .append(filterType, span.filterType)
+                .append(context, span.context)
+                .append(text, span.text)
+                .append(replacement, span.replacement)
+                .append(salt, span.salt)
+                .append(classification, span.classification)
+                .isEquals();
 
     }
 

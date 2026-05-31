@@ -31,10 +31,15 @@ import org.apache.commons.lang3.StringUtils;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
+import java.util.regex.Pattern;
 
 public abstract class AbstractFilterStrategy {
 
     public static final String DEFAULT_REDACTION = "{{{REDACTED-%t}}}";
+
+    // Strips everything except letters and spaces from a joined window before keyword matching.
+    // Compiled once rather than on every birthdate/deathdate check.
+    private static final Pattern WINDOW_LETTERS_ONLY = Pattern.compile("[^a-zA-Z ]");
 
     public static final String REDACT = "REDACT";
     public static final String RANDOM_REPLACE = "RANDOM_REPLACE";
@@ -171,14 +176,18 @@ public abstract class AbstractFilterStrategy {
 
     protected String getRedactedToken(String token, String label, FilterType filterType) {
 
+        // These are literal placeholder substitutions, so use String.replace rather than
+        // replaceAll: it avoids compiling a Pattern on every call, and (for %v) avoids treating the
+        // detected token as a regex replacement string - a token containing '$' or '\' would
+        // otherwise throw and abort redaction of the document.
         String replacement = getValueOrDefault(redactionFormat, DEFAULT_REDACTION)
-                .replaceAll("%t", filterType.getType());
+                .replace("%t", filterType.getType());
 
         if(StringUtils.isNotEmpty(label)) {
-            replacement = replacement.replaceAll("%l", label);
+            replacement = replacement.replace("%l", label);
         }
 
-        replacement = replacement.replaceAll("%v", token);
+        replacement = replacement.replace("%v", token);
 
         return replacement;
 
@@ -234,10 +243,18 @@ public abstract class AbstractFilterStrategy {
      * @param window The window surrounding the token.
      * @return <code>true</code> if the date is found to be a birthdate, otherwise <code>false</code>.
      */
+    /**
+     * Joins the window tokens and strips them down to lower-cased letters and spaces, ready for
+     * keyword matching. Uses a precompiled pattern.
+     */
+    private static String cleanWindow(final String[] window) {
+        return WINDOW_LETTERS_ONLY.matcher(StringUtils.join(window, " ")).replaceAll("").toLowerCase();
+    }
+
     protected boolean isBirthdate(String[] window) {
 
         // PHL-165: Is this a birthday?
-        final String joinedWindow = StringUtils.join(window, " ").replaceAll("[^a-zA-Z ]", "").toLowerCase();
+        final String joinedWindow = cleanWindow(window);
 
         return
                 joinedWindow.contains("dob") ||
@@ -258,8 +275,8 @@ public abstract class AbstractFilterStrategy {
      */
     protected boolean isDeathdate(String[] window) {
 
-        // PHL-165: Is this a birthday?
-        final String joinedWindow = StringUtils.join(window, " ").replaceAll("[^a-zA-Z ]", "").toLowerCase();
+        // PHL-165: Is this a death date?
+        final String joinedWindow = cleanWindow(window);
 
         return
                 joinedWindow.contains("deathdate") ||
