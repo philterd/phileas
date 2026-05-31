@@ -25,10 +25,16 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Implementation of {@link VectorService} that stores everything in memory.
+ *
+ * <p>Documents are routinely processed concurrently, so all mutation here is done with the atomic
+ * primitives of {@link ConcurrentHashMap} ({@code computeIfAbsent}, {@code merge}) rather than
+ * check-then-act sequences. A check-then-act increment would lose counts under contention, and a
+ * check-then-put initialization could replace an already-populated context map and discard
+ * accumulated training data.
  */
 public class InMemoryVectorService implements VectorService {
 
-    private final Map<String, Map<FilterType, SpanVector>> vectorCache;
+    protected final Map<String, Map<FilterType, SpanVector>> vectorCache;
 
     public InMemoryVectorService() {
         this.vectorCache = new ConcurrentHashMap<>();
@@ -39,19 +45,16 @@ public class InMemoryVectorService implements VectorService {
     @Override
     public void hashAndInsert(String context, double[] hashes, Span span, int vectorSize) {
 
-        // Insert a new map for this context if it's needed to avoid an NPE.
-        initializeVectorCache(context);
+        final Map<Double, Double> vectorIndexes = initializeVectorCache(context)
+                .get(span.getFilterType()).getVectorIndexes();
 
-        for(double i = 0; i < hashes.length; i++) {
+        for(int i = 0; i < hashes.length; i++) {
 
-            if(hashes[(int) i] != 0) {
+            if(hashes[i] != 0) {
 
-                if (vectorCache.get(context).get(span.getFilterType()).getVectorIndexes().get(i) == null) {
-                    vectorCache.get(context).get(span.getFilterType()).getVectorIndexes().putIfAbsent(i, 0.0);
-                }
-
-                final double value = vectorCache.get(context).get(span.getFilterType()).getVectorIndexes().get(i);
-                vectorCache.get(context).get(span.getFilterType()).getVectorIndexes().put(i, value + 1.0);
+                // Atomically accumulate the count for this index. We only care that the token was
+                // present in the window; the magnitude is the number of windows that hit this index.
+                vectorIndexes.merge((double) i, 1.0, Double::sum);
 
             }
 
@@ -62,17 +65,18 @@ public class InMemoryVectorService implements VectorService {
     @Override
     public Map<Double, Double> getVectorRepresentation(String context, FilterType filterType) {
 
-        // Insert a new map for this context if it's needed to avoid an NPE.
-        initializeVectorCache(context);
-
-        return vectorCache.get(context).get(filterType).getVectorIndexes();
+        return initializeVectorCache(context).get(filterType).getVectorIndexes();
 
     }
 
-    private void initializeVectorCache(String context) {
+    /**
+     * Returns the per-filter-type vectors for the context, creating them atomically on first use.
+     * The map is fully populated for every {@link FilterType} before it is published, so callers
+     * never see a partially-initialized context.
+     */
+    private Map<FilterType, SpanVector> initializeVectorCache(String context) {
 
-        // Initialize the cached map for all filter types if it does not already exist.
-        if(vectorCache.get(context) == null) {
+        return vectorCache.computeIfAbsent(context, c -> {
 
             final Map<FilterType, SpanVector> vector = new HashMap<>();
 
@@ -80,9 +84,9 @@ public class InMemoryVectorService implements VectorService {
                 vector.put(filterType, new SpanVector());
             }
 
-            vectorCache.put(context, vector);
+            return vector;
 
-        }
+        });
 
     }
 

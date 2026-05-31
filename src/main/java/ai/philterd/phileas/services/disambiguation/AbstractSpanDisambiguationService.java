@@ -21,7 +21,6 @@ import org.apache.commons.codec.digest.MurmurHash3;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -47,15 +46,39 @@ public abstract class AbstractSpanDisambiguationService {
         this.phileasConfiguration = phileasConfiguration;
         this.vectorSize = phileasConfiguration.spanDisambiguationVectorSize();
         this.ignoreStopWords = phileasConfiguration.spanDisambiguationIgnoreStopWords();
-        this.stopwords = new HashSet<>(Arrays.asList(phileasConfiguration.spanDisambiguationStopWords().split("")));
+        this.stopwords = parseStopWords(phileasConfiguration.spanDisambiguationStopWords());
         this.enabled = phileasConfiguration.spanDisambiguationEnabled();
         this.vectorService = vectorService;
 
     }
 
+    /**
+     * Parses the comma-separated stop word list into a set of individual, lower-cased words.
+     * Tokens are compared against this set after being lower-cased, so the entries are stored
+     * lower-cased here too.
+     */
+    private static Set<String> parseStopWords(final String stopWords) {
+
+        final Set<String> words = new HashSet<>();
+
+        if (stopWords == null || stopWords.isBlank()) {
+            return words;
+        }
+
+        for (final String word : stopWords.split(",")) {
+            final String trimmed = word.trim().toLowerCase();
+            if (!trimmed.isEmpty()) {
+                words.add(trimmed);
+            }
+        }
+
+        return words;
+
+    }
+
     public int hashToken(String token) {
 
-        if(phileasConfiguration.spanDisambiguationHashAlgorithm().equalsIgnoreCase("murmu3")) {
+        if(phileasConfiguration.spanDisambiguationHashAlgorithm().equalsIgnoreCase("murmur3")) {
             return Math.abs(MurmurHash3.hash32x86(token.getBytes()) % vectorSize);
         } else {
             return Math.abs(token.hashCode() % vectorSize);
