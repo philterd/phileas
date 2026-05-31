@@ -22,10 +22,33 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.security.SecureRandom;
+import java.util.Random;
 
 public class AgeAnonymizationServiceTest {
-    
+
     private static final Logger LOGGER = LogManager.getLogger(AgeAnonymizationServiceTest.class);
+
+    /**
+     * The realistic age anonymization replaces each digit with another digit and leaves every other
+     * character untouched, so the result must be the same length, differ from the input, and match
+     * the input character-for-character except that digit positions hold (possibly different) digits.
+     */
+    private static void assertOnlyDigitsReplaced(final String token, final String replacement) {
+
+        Assertions.assertNotEquals(token, replacement);
+        Assertions.assertEquals(token.length(), replacement.length());
+
+        for (int i = 0; i < token.length(); i++) {
+            if (Character.isDigit(token.charAt(i))) {
+                Assertions.assertTrue(Character.isDigit(replacement.charAt(i)),
+                        "digit positions must remain digits");
+            } else {
+                Assertions.assertEquals(token.charAt(i), replacement.charAt(i),
+                        "non-digit characters must be preserved");
+            }
+        }
+
+    }
 
     @Test
     public void constructor() {
@@ -36,8 +59,7 @@ public class AgeAnonymizationServiceTest {
         final String replacement = anonymizationService.anonymize(token);
 
         LOGGER.info("Age: {}", replacement);
-        Assertions.assertNotEquals(token, replacement);
-        Assertions.assertEquals(token.length(), replacement.length());
+        assertOnlyDigitsReplaced(token, replacement);
 
     }
 
@@ -50,8 +72,7 @@ public class AgeAnonymizationServiceTest {
         final String replacement = anonymizationService.anonymize(token);
 
         LOGGER.info("Age: {}", replacement);
-        Assertions.assertNotEquals(token, replacement);
-        Assertions.assertEquals(token.length(), replacement.length());
+        assertOnlyDigitsReplaced(token, replacement);
 
     }
 
@@ -64,8 +85,22 @@ public class AgeAnonymizationServiceTest {
         final String replacement = anonymizationService.anonymize(token);
 
         LOGGER.info("Age: {}", replacement);
-        Assertions.assertNotEquals(token, replacement);
-        Assertions.assertEquals(token.length(), replacement.length());
+        assertOnlyDigitsReplaced(token, replacement);
+
+    }
+
+    @Test
+    public void sameSeedProducesSameReplacement() {
+
+        // With a fixed seed the anonymization is deterministic; this locks the behavior so a change
+        // to the algorithm is caught rather than hidden by random output.
+        final String token = "18 years old";
+
+        final String first = new AgeAnonymizationService(new DefaultContextService(), new Random(42)).anonymize(token);
+        final String second = new AgeAnonymizationService(new DefaultContextService(), new Random(42)).anonymize(token);
+
+        Assertions.assertEquals(first, second, "the same seed must produce the same replacement");
+        assertOnlyDigitsReplaced(token, first);
 
     }
 

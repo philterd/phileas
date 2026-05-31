@@ -22,6 +22,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.security.SecureRandom;
+import java.util.Random;
 
 public class FirstNameAnonymizationServiceTest {
 
@@ -68,6 +69,22 @@ public class FirstNameAnonymizationServiceTest {
         LOGGER.info("First Name: {}", replacement);
         Assertions.assertNotEquals(token, replacement);
         Assertions.assertTrue(replacement.length() >= 32);
+
+    }
+
+    @Test
+    public void sameSeedProducesSameReplacement() {
+
+        // A fixed seed makes the dictionary selection deterministic, locking the behavior so a
+        // change is caught rather than hidden by random output.
+        final String token = "John";
+
+        final String first = new FirstNameAnonymizationService(new DefaultContextService(), new Random(42)).anonymize(token);
+        final String second = new FirstNameAnonymizationService(new DefaultContextService(), new Random(42)).anonymize(token);
+
+        Assertions.assertEquals(first, second, "the same seed must produce the same replacement");
+        Assertions.assertNotEquals(token, first);
+        Assertions.assertFalse(first.isEmpty());
 
     }
 

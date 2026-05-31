@@ -834,12 +834,6 @@ public class FilterPolicyLoader {
 
             LOGGER.info("Policy {} has {} custom dictionaries.", policyKey, policy.getIdentifiers().getCustomDictionaries().size());
 
-            // We keep track of the index of the custom dictionary in the list so we know
-            // how to retrieve the strategy for the custom dictionary. This is because
-            // there can be multiple custom dictionaries and not a 1-to-1 between filter
-            // and strategy.
-            int index = 0;
-
             // There can be multiple custom dictionary filters because it is a list.
             for(final CustomDictionary customDictionary : policy.getIdentifiers().getCustomDictionaries()) {
 
@@ -901,8 +895,6 @@ public class FilterPolicyLoader {
                     }
 
                 }
-
-                index++;
 
             }
 

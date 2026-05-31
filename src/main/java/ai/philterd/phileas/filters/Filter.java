@@ -418,7 +418,8 @@ public abstract class Filter {
 
         final Identifier identifier = identifiers.stream().
                 filter(p -> p.getClassification().equalsIgnoreCase(name)).
-                findFirst().get();
+                findFirst().
+                orElseThrow(() -> new IllegalArgumentException("No identifier filter found with classification: " + name));
 
         return identifier.getIdentifierFilterStrategies();
 
