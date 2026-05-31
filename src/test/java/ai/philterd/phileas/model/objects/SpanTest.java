@@ -280,6 +280,96 @@ public class SpanTest {
 
     }
 
+    /**
+     * Exercises winner selection across several independent overlap groups in a single call: the
+     * longest span wins, ties break to highest confidence then highest priority, and a disjoint
+     * span is left untouched. The result is returned in ascending start order with no overlaps.
+     */
+    @Test
+    public void dropOverlappingSpansSelectsCorrectWinnerAcrossMultipleGroups() {
+
+        final List<Span> spans = new LinkedList<>();
+
+        // Group A: longest span wins.
+        spans.add(Span.make(2, 7, FilterType.AGE, "context", 1.0, "test", "***", "salt", false, true, new String[0], 0));
+        spans.add(Span.make(0, 10, FilterType.AGE, "context", 1.0, "test", "***", "salt", false, true, new String[0], 0));
+        spans.add(Span.make(5, 9, FilterType.AGE, "context", 1.0, "test", "***", "salt", false, true, new String[0], 0));
+
+        // Group B: same extent, highest confidence wins.
+        spans.add(Span.make(20, 24, FilterType.AGE, "context", 0.5, "test", "***", "salt", false, true, new String[0], 0));
+        spans.add(Span.make(20, 24, FilterType.AGE, "context", 0.9, "test", "***", "salt", false, true, new String[0], 0));
+
+        // Group C: same extent and confidence, highest priority wins.
+        spans.add(Span.make(30, 40, FilterType.ZIP_CODE, "context", 1.0, "test", "***", "salt", false, true, new String[0], 1));
+        spans.add(Span.make(30, 40, FilterType.IDENTIFIER, "context", 1.0, "test", "***", "salt", false, true, new String[0], 5));
+
+        // Disjoint span: kept untouched.
+        spans.add(Span.make(50, 55, FilterType.AGE, "context", 1.0, "test", "***", "salt", false, true, new String[0], 0));
+
+        final List<Span> result = Span.dropOverlappingSpans(spans);
+
+        Assertions.assertEquals(4, result.size());
+
+        // Ascending start order, correct winner per group.
+        Assertions.assertEquals(0, result.get(0).getCharacterStart());
+        Assertions.assertEquals(10, result.get(0).getCharacterEnd());
+
+        Assertions.assertEquals(20, result.get(1).getCharacterStart());
+        Assertions.assertEquals(0.9, result.get(1).getConfidence(), 0);
+
+        Assertions.assertEquals(30, result.get(2).getCharacterStart());
+        Assertions.assertEquals(FilterType.IDENTIFIER, result.get(2).getFilterType());
+
+        Assertions.assertEquals(50, result.get(3).getCharacterStart());
+
+        // No two returned spans overlap.
+        for (int i = 0; i < result.size(); i++) {
+            for (int j = i + 1; j < result.size(); j++) {
+                final Span a = result.get(i);
+                final Span b = result.get(j);
+                final boolean overlap = a.getCharacterStart() <= b.getCharacterEnd()
+                        && b.getCharacterStart() <= a.getCharacterEnd();
+                Assertions.assertFalse(overlap, "result must not contain overlapping spans: " + a + " / " + b);
+            }
+        }
+
+    }
+
+    @Test
+    public void dropOverlappingSpansDoesNotMutateTheInputList() {
+
+        final List<Span> spans = new LinkedList<>();
+        spans.add(Span.make(1, 5, FilterType.AGE, "context", 1.0, "test", "***", "salt", false, true, new String[0], 0));
+        spans.add(Span.make(2, 12, FilterType.AGE, "context", 1.0, "test", "***", "salt", false, true, new String[0], 0));
+        spans.add(Span.make(14, 20, FilterType.AGE, "context", 1.0, "test", "***", "salt", false, true, new String[0], 0));
+
+        final List<Span> snapshot = new LinkedList<>(spans);
+
+        Span.dropOverlappingSpans(spans);
+
+        Assertions.assertEquals(snapshot, spans, "the input list must not be reordered or modified");
+
+    }
+
+    /**
+     * Documents the deliberate behavior for a partial overlap (neither span contains the other):
+     * the longer span is kept and the shorter is dropped (its non-overlapping tail is not retained).
+     */
+    @Test
+    public void dropOverlappingSpansKeepsTheLongerSpanOnPartialOverlap() {
+
+        final List<Span> spans = new LinkedList<>();
+        spans.add(Span.make(0, 8, FilterType.AGE, "context", 1.0, "test", "***", "salt", false, true, new String[0], 0));
+        spans.add(Span.make(5, 12, FilterType.AGE, "context", 1.0, "test", "***", "salt", false, true, new String[0], 0));
+
+        final List<Span> result = Span.dropOverlappingSpans(spans);
+
+        Assertions.assertEquals(1, result.size());
+        Assertions.assertEquals(0, result.get(0).getCharacterStart());
+        Assertions.assertEquals(8, result.get(0).getCharacterEnd());
+
+    }
+
     @Test
     public void getIdenticalSpans1() {
 

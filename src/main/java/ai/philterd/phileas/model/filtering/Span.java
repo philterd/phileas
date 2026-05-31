@@ -26,8 +26,7 @@ import org.apache.commons.lang3.Strings;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
-import java.util.Collections;
-import java.util.HashSet;
+import java.util.Comparator;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -398,76 +397,51 @@ public final class Span {
     }
 
     /**
-     * Drop overlapping spans that are shorter.
+     * Resolves a list of spans that may overlap down to a set of non-overlapping spans, keeping a
+     * single winner per group of overlapping spans. The winner is the longest span; ties are broken
+     * by the highest confidence, then by the highest priority. Exact duplicates collapse to one.
+     * The given list is not modified.
      * @param spans A list of {@link Span spans} that may or may not contain overlapping spans.
      * @return A list of {@link Span spans} without overlapping spans.
      */
-    public static List<Span> dropOverlappingSpans(List<Span> spans) {
+    public static List<Span> dropOverlappingSpans(final List<Span> spans) {
 
-        List<Span> nonOverlappingSpans = new LinkedList<>();
+        // Rank spans best-first: longest, then highest confidence, then highest priority. The final
+        // tie-break on start position makes the output deterministic. A defensive copy is sorted so
+        // the caller's list is never mutated.
+        final List<Span> ranked = new LinkedList<>(spans);
+        ranked.sort(Comparator.comparingInt(Span::length).reversed()
+                .thenComparing(Comparator.comparingDouble(Span::getConfidence).reversed())
+                .thenComparing(Comparator.comparingInt(Span::getPriority).reversed())
+                .thenComparingInt(Span::getCharacterStart));
 
-        // Order spans by length and reverse so the spans
-        // are sorted longest to shortest.
-        spans.sort((s1, s2) -> (s1.length()));
-        Collections.reverse(spans);
+        // Greedily keep a span only if it does not overlap a span already kept. Because spans are
+        // processed best-first, any overlap with an already-kept span means this span lost the
+        // ranking, so it is dropped. This yields exactly one winner per group of overlapping spans
+        // and collapses exact duplicates (a duplicate overlaps the copy already kept). Replaces the
+        // previous O(n^3) pairwise-and-recurse approach, which also used an invalid sort comparator.
+        final List<Span> nonOverlappingSpans = new LinkedList<>();
 
-        // Loop over each span.
-        for (final Span span : spans) {
+        for (final Span span : ranked) {
 
-            boolean overlapping = false;
+            boolean overlapsKeptSpan = false;
 
-            // Loop over each span.
-            for (final Span span2 : spans) {
-
-                // Ignore if the span is not the same.
-                if (!span.equals(span2)) {
-
-                    if (span.range.isOverlappedBy(span2.range)) {
-
-                        final int spanLength = span.getCharacterEnd() - span.getCharacterStart();
-                        final int span2Length = span2.getCharacterEnd() - span2.getCharacterStart();
-
-                        if ((span2Length > spanLength)) {
-
-                            overlapping = true;
-                            nonOverlappingSpans.add(span2);
-
-                        } else if (span2Length == spanLength && span2.confidence > span.confidence) {
-
-                            overlapping = true;
-
-                        } else if(span2Length == spanLength && span2.confidence == span.confidence) {
-
-                            // Use the span from the filter with the highest priority.
-                            if(span2.getPriority() > span.getPriority()) {
-                                overlapping = true;
-                                nonOverlappingSpans.add(span2);
-                            }
-
-                        }
-
-                    }
-
+            for (final Span kept : nonOverlappingSpans) {
+                if (span.range.isOverlappedBy(kept.range)) {
+                    overlapsKeptSpan = true;
+                    break;
                 }
-
             }
 
-            if (!overlapping) {
+            if (!overlapsKeptSpan) {
                 nonOverlappingSpans.add(span);
             }
 
         }
 
-        // If there are two spans in the list that have the same character start and
-        // the same confidence, the one(s) appear later in the list will be kept.
-        final HashSet<Integer> seen = new HashSet<>();
-        nonOverlappingSpans.removeIf(e -> !seen.add(e.getCharacterStart()));
-
-        // Keep calling this until the sizes of the input and output are equal.
-        int removed = spans.size() - nonOverlappingSpans.size();
-        if(removed > 0) {
-            nonOverlappingSpans = dropOverlappingSpans(nonOverlappingSpans);
-        }
+        // Return the surviving spans in document order (the greedy pass above produces them in rank
+        // order) so the result is deterministic and intuitive for callers.
+        nonOverlappingSpans.sort(Comparator.comparingInt(Span::getCharacterStart));
 
         return nonOverlappingSpans;
 

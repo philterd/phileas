@@ -556,12 +556,13 @@ public class DateFilterTest extends AbstractFilterTest {
 
         showSpans(filtered.getSpans());
 
+        // dropOverlappingSpans now returns non-overlapping spans in ascending start order.
         Assertions.assertEquals(2, filtered.getSpans().size());
-        Assertions.assertEquals(61, filtered.getSpans().get(0).getCharacterStart());
-        Assertions.assertEquals(69, filtered.getSpans().get(0).getCharacterEnd());
+        Assertions.assertEquals(40, filtered.getSpans().get(0).getCharacterStart());
+        Assertions.assertEquals(48, filtered.getSpans().get(0).getCharacterEnd());
         Assertions.assertEquals("06/16/20", filtered.getSpans().get(0).getText());
-        Assertions.assertEquals(40, filtered.getSpans().get(1).getCharacterStart());
-        Assertions.assertEquals(48, filtered.getSpans().get(1).getCharacterEnd());
+        Assertions.assertEquals(61, filtered.getSpans().get(1).getCharacterStart());
+        Assertions.assertEquals(69, filtered.getSpans().get(1).getCharacterEnd());
         Assertions.assertEquals("06/16/20", filtered.getSpans().get(1).getText());
 
     }
