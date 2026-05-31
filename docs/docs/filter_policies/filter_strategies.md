@@ -32,14 +32,14 @@ A sample policy containing a filter strategy is shown below. In this example, em
 
 The filter strategies are described below. Each filter type can specify zero or more filter strategies. When no filter strategies are given, Phileas will default to `REDACT` for that filter type. When multiple filter strategies are given for a single filter type, the filter strategies will be applied in order as they are listed in the policy, top to bottom.
 
-* [`REDACT`](filter-strategies.md#the-redact-filter-strategy)
-* [`CRYPTO_REPLACE`](filter-strategies.md#crypto)(AES encryption)
-* [`HASH_SHA256_REPLACE`](filter-strategies.md#hash)(SHA512 encryption)
-* [`FPE_ENCRYPT_REPLACE`](filter-strategies.md#fpe)(Format-preserving encryption)
-* [`RANDOM_REPLACE`](filter-strategies.md#random)
-* [`STATIC_REPLACE`](filter-strategies.md#static)
-* [`TRUNCATE`](filter-strategies.md#truncate)
-* [`ZERO_LEADING`](filter-strategies.md#zero_leading)
+* [`REDACT`](filter_strategies.md#the-redact-filter-strategy)
+* [`CRYPTO_REPLACE`](filter_strategies.md#crypto)(AES encryption)
+* [`HASH_SHA256_REPLACE`](filter_strategies.md#hash)(SHA512 encryption)
+* [`FPE_ENCRYPT_REPLACE`](filter_strategies.md#fpe)(Format-preserving encryption)
+* [`RANDOM_REPLACE`](filter_strategies.md#random)
+* [`STATIC_REPLACE`](filter_strategies.md#static)
+* [`TRUNCATE`](filter_strategies.md#truncate)
+* [`ZERO_LEADING`](filter_strategies.md#zero_leading)
 
 ### The `REDACT` Filter Strategy
 
@@ -118,7 +118,7 @@ An example policy using the `CRYPTO_REPLACE` filter strategy:
 
 ### The `HASH_SHA256_REPLACE` Filter Strategy {id="hash"}
 
-The `HASH_SHA256_REPLACE` filter strategy replaces sensitive information with the SHA256 hash value of the sensitive information. To append a random salt value to each value prior to hashing, set the `salt` property to `true`. The salt value used will be returned in the `explain` response from Phileas' API.
+The `HASH_SHA256_REPLACE` filter strategy replaces sensitive information with the SHA256 hash value of the sensitive information. To append a random salt value to each value prior to hashing, set the `salt` property to `true`. The salt value used is returned in the redaction explanation that Phileas produces.
 
 An example policy using the `HASH_SHA256_REPLACE` filter strategy:
 
@@ -305,7 +305,7 @@ The `ZERO_LEADING` filter strategy is only available to zip code filters. An exa
 
 ## Filter Strategy Conditions
 
-A replacement strategy can be applied based on the sensitive information meeting one or more conditions. For example, you can create a condition such that only dates of `11/05/2010` are replaced by using the condition `token == "11/05/2010"`. The conditions that can be applied vary based on the type of sensitive information. For instance, zip codes can have conditions based on their population. Refer to each specific [filter type](filters_README.md) for the conditions available.
+A replacement strategy can be applied based on the sensitive information meeting one or more conditions. For example, you can create a condition such that only dates of `11/05/2010` are replaced by using the condition `token == "11/05/2010"`. The conditions that can be applied vary based on the type of sensitive information. For instance, zip codes can have conditions based on their population. Refer to each specific [filter type](filters.md) for the conditions available.
 
 The following is an example policy for credit cards that contains a condition to only redact credit card numbers that start with the digits `3000`:
 

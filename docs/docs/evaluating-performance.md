@@ -23,7 +23,7 @@ To evaluate Phileas' performance you need:
 
 #### Configuring Phileas
 
-Before we can begin our evaluation we need to create a policy. A [policy](policies_README.md) is a file that defines the types of sensitive information that will be redacted and how it will be redacted. The policies are stored on the Phileas instance under `/opt/Phileas/policies`. You can edit the policies directly there using a text editor or you can use Phileas' [API](policies-api.md) to upload a policy. In this case we recommend just using a text editor on the Phileas instance to create a policy.
+Before we can begin our evaluation we need to create a policy. A [policy](filter_policies/filter_policies.md) is a file that defines the types of sensitive information that will be redacted and how it will be redacted. For this evaluation we will create the policy as a JSON file using a text editor.
 
 When using a text editor to create and edit a policy, be sure to save the policy often. Frequent saving can make editing a policy easier.
 
@@ -75,7 +75,7 @@ If a filter is listed in the policy and you do not need the filter you have two 
 
 Let's say you want to redact bitcoin addresses. The bitcoin address filter is not in the default policy. To add the bitcoin address filter we will refer to Phileas' documentation on the bitcoin address filter, get the configuration, and copy it into the policy.
 
-From the [bitcoin address filter documentation](bitcoin-addresses.md) we see the configuration for the bitcoin address filter is:
+From the [bitcoin address filter documentation](filter_policies/filters/common_filters/bitcoin-addresses.md) we see the configuration for the bitcoin address filter is:
 
 ```
       "bitcoinAddress": {
@@ -126,15 +126,11 @@ The order of the filters in the policy does not matter and has no impact on perf
 
 Repeat these steps until you have added a filter for each of the types of sensitive information you want to redact. Typically, the default redaction `strategy` and `redactionFormat` values for each filter should be fine for evaluation.
 
-When finished modifying the policy, save the file and close the text editor. Now restart Phileas for the policy changes to be loaded:
-
-```
-sudo systemctl restart Phileas
-```
+When finished modifying the policy, save the file and close the text editor.
 
 #### Submitting Text for Redaction
 
-With our policy in place we can now send text to Phileas for redaction using that policy:
+With our policy in place we can now filter text using that policy:
 
 ```
 PhileasConfiguration phileasConfiguration = ConfigFactory.create(PhileasConfiguration.class);
@@ -144,7 +140,7 @@ FilterService filterService = new PhileasFilterService(phileasConfiguration);
 FilterResponse response = filterService.filter(policies, context, body, MimeType.TEXT_PLAIN);
 ```
 
-The `explain` API [endpoint](filtering-api.md#explain) produces a detailed description of the redaction. The response will include a list of spans that contain the start and stop positions of redacted text and the type of sensitive information that was redacted. Using this information we can compare the redacted information to our annotated file to calculate precision and recall metrics.
+The `response` includes a detailed explanation of the redaction: a list of spans that contain the start and stop positions of redacted text and the type of sensitive information that was redacted. Using this information we can compare the redacted information to our annotated file to calculate precision and recall metrics.
 
 #### Calculating Precision and Recall
 

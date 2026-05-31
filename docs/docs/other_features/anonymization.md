@@ -2,12 +2,12 @@
 
 Anonymization in the context of Phileas is the process of replacing certain values with random but similar values. For
 example, the identified name of “John Smith” may be replaced with “David Jones”, or an identified phone number of
-123-555-9358 may be replaced by 842-436-2042. A [VIN](vins.md) number will be replaced by a 17 character randomly
+123-555-9358 may be replaced by 842-436-2042. A [VIN](../filter_policies/filters/common_filters/vins.md) number will be replaced by a 17 character randomly
 selected VIN number that adheres to the standard for VIN numbers.
 
 Anonymization is useful in instances where you want to remove sensitive information from text without changing the
 meaning of the text. Anonymization can be enabled for each type of sensitive information in the policy by setting the
-filter strategy to `RANDOM_REPLACE`. (See [Policies](policies_README.md) for more information.)
+filter strategy to `RANDOM_REPLACE`. (See [Policies](../filter_policies/filter_policies.md) for more information.)
 
 ## Consistent Anonymization
 

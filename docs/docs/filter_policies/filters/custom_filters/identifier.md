@@ -34,7 +34,7 @@ This filter has no required parameters.
 
 The filter may have zero or more filter strategies. When no filter strategy is given the default strategy of `REDACT` is
 used. When multiple filter strategies are given the filter strategies will be applied in as they are listed.
-See [Filter Strategies ](filter-strategies.md)for details.
+See [Filter Strategies ](../../filter_strategies.md)for details.
 
 | Strategy              | Description                                                                |
 |-----------------------|----------------------------------------------------------------------------|
