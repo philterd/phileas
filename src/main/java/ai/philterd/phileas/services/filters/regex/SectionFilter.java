@@ -33,7 +33,9 @@ public class SectionFilter extends RegexFilter {
     public SectionFilter(FilterConfiguration filterConfiguration, String startPattern, String endPattern) {
         super(FilterType.SECTION, filterConfiguration);
 
-        final Pattern pattern = Pattern.compile(startPattern + "(.*?)" + endPattern);
+        // Wrap each user-supplied sub-pattern in a non-capturing group so a sub-pattern cannot alter
+        // the combined regex's group structure. The captured section body remains group 1.
+        final Pattern pattern = Pattern.compile("(?:" + startPattern + ")(.*?)(?:" + endPattern + ")");
         final FilterPattern sectionPattern1 = new FilterPattern.FilterPatternBuilder(pattern, 0.90).build();
 
         // There are no contextual terms because it doesn't make sense to have them for a section.

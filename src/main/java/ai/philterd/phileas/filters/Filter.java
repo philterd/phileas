@@ -127,6 +127,12 @@ public abstract class Filter {
     protected int priority;
 
     /**
+     * The maximum time, in milliseconds, a single regex match attempt may run before being aborted
+     * as a suspected ReDoS pattern.
+     */
+    protected long regexTimeoutMs;
+
+    /**
      * Filters the input text.
      * @param policy The {@link Policy} to use.
      * @param context The name of the context.
@@ -152,6 +158,7 @@ public abstract class Filter {
         this.fpe = filterConfiguration.getFPE();
         this.windowSize = filterConfiguration.getWindowSize();
         this.priority = filterConfiguration.getPriority();
+        this.regexTimeoutMs = filterConfiguration.getRegexTimeoutMs();
 
         if(this.ignored == null) {
             this.ignored = new LinkedHashSet<>();

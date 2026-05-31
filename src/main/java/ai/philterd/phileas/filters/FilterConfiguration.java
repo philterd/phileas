@@ -43,6 +43,7 @@ public class FilterConfiguration {
     private final FPE fpe;
     private final int windowSize;
     private final int priority;
+    private final long regexTimeoutMs;
 
     private FilterConfiguration(
             final List<? extends AbstractFilterStrategy> strategies,
@@ -54,7 +55,8 @@ public class FilterConfiguration {
             final Crypto crypto,
             final FPE fpe,
             final int windowSize,
-            final int priority
+            final int priority,
+            final long regexTimeoutMs
     ) {
 
         this.strategies = strategies;
@@ -67,6 +69,7 @@ public class FilterConfiguration {
         this.fpe = fpe;
         this.windowSize = windowSize;
         this.priority = priority;
+        this.regexTimeoutMs = regexTimeoutMs;
 
     }
 
@@ -82,6 +85,8 @@ public class FilterConfiguration {
         private FPE fpe;
         private int windowSize;
         private int priority;
+        // Defaults so existing builders are protected without changes; a value <= 0 disables the guard.
+        private long regexTimeoutMs = 1000;
 
         public FilterConfiguration build() {
 
@@ -98,7 +103,8 @@ public class FilterConfiguration {
                     crypto,
                     fpe,
                     windowSize,
-                    priority
+                    priority,
+                    regexTimeoutMs
             );
 
         }
@@ -203,6 +209,11 @@ public class FilterConfiguration {
             return this;
         }
 
+        public FilterConfigurationBuilder withRegexTimeoutMs(long regexTimeoutMs) {
+            this.regexTimeoutMs = regexTimeoutMs;
+            return this;
+        }
+
     }
 
     public List<? extends AbstractFilterStrategy> getStrategies() {
@@ -243,6 +254,10 @@ public class FilterConfiguration {
 
     public int getPriority() {
         return priority;
+    }
+
+    public long getRegexTimeoutMs() {
+        return regexTimeoutMs;
     }
 
 }

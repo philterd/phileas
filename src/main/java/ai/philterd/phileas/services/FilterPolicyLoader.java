@@ -596,6 +596,8 @@ public class FilterPolicyLoader {
                             .withCrypto(policy.getCrypto())
                             .withWindowSize(windowSize)
                             .withPriority(section.getPriority())
+                            // The section start/end patterns come from the policy, so bound matching to guard against ReDoS.
+                            .withRegexTimeoutMs(phileasConfiguration.regexTimeoutMs())
                             .build();
 
                     final String startPattern = section.getStartPattern();
@@ -1183,6 +1185,8 @@ public class FilterPolicyLoader {
                             .withFPE(policy.getFpe())
                             .withWindowSize(windowSize)
                             .withPriority(identifier.getPriority())
+                            // The identifier pattern comes from the policy, so bound matching to guard against ReDoS.
+                            .withRegexTimeoutMs(phileasConfiguration.regexTimeoutMs())
                             .build();
 
                     final String classification = identifier.getClassification();

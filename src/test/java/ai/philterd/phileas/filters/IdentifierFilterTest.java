@@ -23,6 +23,7 @@ import ai.philterd.phileas.services.strategies.rules.IdentifierFilterStrategy;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.time.Duration;
 import java.util.List;
 
 import static ai.philterd.phileas.services.strategies.AbstractFilterStrategy.RANDOM_REPLACE;
@@ -404,6 +405,62 @@ public class IdentifierFilterTest extends AbstractFilterTest {
         showSpans(filtered.getSpans());
         Assertions.assertEquals(1, filtered.getSpans().size());
         Assertions.assertTrue(candidates.contains(filtered.getSpans().get(0).getReplacement()));
+
+    }
+
+    /**
+     * A catastrophic-backtracking (ReDoS) pattern from the policy must be aborted by the regex time
+     * budget rather than running unbounded. The filter returns no spans (fail safe) and completes
+     * well within the preemptive timeout; without the guard this match runs far longer than the
+     * budget. (Modern JVMs optimize the classic exponential patterns, so this uses a polynomial
+     * pattern - nested greedy .* under a bounded repetition - which still backtracks badly.)
+     */
+    @Test
+    public void catastrophicPatternIsAbortedByTheRegexBudget() {
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(new IdentifierFilterStrategy()))
+                .withContextService(contextService)
+                .withRandom(random)
+                .withWindowSize(windowSize)
+                .withRegexTimeoutMs(200)
+                .build();
+
+        // Nested greedy .* under a bounded repetition, with a trailing 'b' that never appears, so
+        // the match cannot succeed and the engine exhausts an enormous backtracking space (unguarded,
+        // this runs for many seconds).
+        final IdentifierFilter filter = new IdentifierFilter(filterConfiguration, "name", "(.*a){16}b", true, 0);
+        final String input = "the id is " + "a".repeat(30) + "!";
+
+        Assertions.assertTimeoutPreemptively(Duration.ofSeconds(5), () -> {
+            final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, input);
+            Assertions.assertTrue(filtered.getSpans().isEmpty(),
+                    "a timed-out pattern should yield no spans");
+        });
+
+    }
+
+    /**
+     * A small budget must not break legitimate matching: a well-behaved pattern still finds its
+     * matches quickly, so the guard does not produce false timeouts.
+     */
+    @Test
+    public void legitimatePatternStillMatchesUnderASmallBudget() throws Exception {
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(new IdentifierFilterStrategy()))
+                .withContextService(contextService)
+                .withRandom(random)
+                .withWindowSize(windowSize)
+                .withRegexTimeoutMs(200)
+                .build();
+
+        final IdentifierFilter filter = new IdentifierFilter(filterConfiguration, "name", Identifier.DEFAULT_IDENTIFIER_REGEX, true, 0);
+
+        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "the id is AB4736021 in california.");
+
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 10, 19, FilterType.IDENTIFIER));
 
     }
 

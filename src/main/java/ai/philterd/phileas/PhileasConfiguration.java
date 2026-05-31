@@ -42,6 +42,15 @@ public class PhileasConfiguration {
         return Integer.parseInt(getProperty("span.window.size", "5"));
     }
 
+    /**
+     * The maximum time, in milliseconds, a single regex match attempt may run before it is aborted
+     * as a suspected catastrophic-backtracking (ReDoS) pattern. A value of zero or less disables
+     * the guard. Defaults to 1000 ms.
+     */
+    public long regexTimeoutMs() {
+        return Long.parseLong(getProperty("regex.timeout.ms", "1000"));
+    }
+
     private String getProperty(final String property, final String defaultValue) {
 
         final String environmentVariableValue = getEnvironmentVariable(property);
