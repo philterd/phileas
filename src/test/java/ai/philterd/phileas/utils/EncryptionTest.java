@@ -17,6 +17,7 @@ package ai.philterd.phileas.utils;
 
 import ai.philterd.phileas.policy.Crypto;
 import ai.philterd.phileas.policy.FPE;
+import org.apache.commons.codec.binary.Base64;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Assertions;
@@ -95,26 +96,42 @@ public class EncryptionTest {
     }
 
     @Test
-    public void encrypt1() throws Exception {
+    public void encryptDecryptRoundTrips() throws Exception {
 
-        final String token = "asdf";
-        final String encrypted = Encryption.encrypt(token, new Crypto(KEY, IV));
+        final Crypto crypto = new Crypto(KEY, IV);
+        final String token = "346596542547526";
 
+        final String encrypted = Encryption.encrypt(token, crypto);
         LOGGER.info("Encrypted '{}' is '{}'", token, encrypted);
 
-        Assertions.assertEquals("r6cPN50ikH9qBZD0FNPG2g==", encrypted);
+        Assertions.assertEquals(token, Encryption.decrypt(encrypted, crypto));
 
     }
 
     @Test
-    public void encrypt2() throws Exception {
+    public void encryptionIsNonDeterministic() throws Exception {
 
+        // A fresh random nonce per call means the same plaintext encrypts to different ciphertext,
+        // so identical values do not produce identical redactions across the corpus.
+        final Crypto crypto = new Crypto(KEY, IV);
         final String token = "346596542547526";
-        final String encrypted = Encryption.encrypt(token, new Crypto(KEY, IV));
 
-        LOGGER.info("Encrypted '{}' is '{}'", token, encrypted);
+        Assertions.assertNotEquals(Encryption.encrypt(token, crypto), Encryption.encrypt(token, crypto));
 
-        Assertions.assertEquals("5G4lCAQADM68uvVumZ9Lxw==", encrypted);
+    }
+
+    @Test
+    public void decryptRejectsTamperedCiphertext() throws Exception {
+
+        final Crypto crypto = new Crypto(KEY, IV);
+        final String encrypted = Encryption.encrypt("sensitive-value", crypto);
+
+        // Flip the last byte (part of the GCM authentication tag); decryption must fail.
+        final byte[] raw = Base64.decodeBase64(encrypted);
+        raw[raw.length - 1] ^= 0x01;
+        final String tampered = Base64.encodeBase64String(raw);
+
+        Assertions.assertThrows(Exception.class, () -> Encryption.decrypt(tampered, crypto));
 
     }
 

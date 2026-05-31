@@ -23,6 +23,7 @@ import ai.philterd.phileas.policy.Policy;
 import ai.philterd.phileas.services.anonymization.AbstractAnonymizationService;
 import ai.philterd.phileas.services.anonymization.AgeAnonymizationService;
 import ai.philterd.phileas.services.anonymization.AnonymizationService;
+import ai.philterd.phileas.utils.Encryption;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -134,7 +135,12 @@ public abstract class AbstractFilterStrategyTest {
 
         final Replacement replacement = strategy.getReplacement("name", "context",  "token", WINDOW, crypto, new FPE(), anonymizationService, null);
 
-        Assertions.assertEquals("{{j6HcaY8m7hPACVVyQtj4PQ==}}", replacement.getReplacement());
+        // CRYPTO_REPLACE wraps the AES-GCM ciphertext in {{ }}. The output is non-deterministic, so
+        // verify it round-trips back to the original token rather than matching a fixed string.
+        final String result = replacement.getReplacement();
+        Assertions.assertTrue(result.startsWith("{{") && result.endsWith("}}"));
+        final String inner = result.substring(2, result.length() - 2);
+        Assertions.assertEquals("token", Encryption.decrypt(inner, crypto));
 
     }
 

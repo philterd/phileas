@@ -143,9 +143,8 @@ public class FilterConfiguration {
                                 throw new RuntimeException("Invalid configuration for filter: Missing crypto encryption key.");
                             }
 
-                            if (StringUtils.isEmpty(this.crypto.getIv())) {
-                                throw new RuntimeException("Invalid configuration for filter: Missing crypto encryption IV value.");
-                            }
+                            // No IV is required: AES-GCM generates a fresh random nonce per value,
+                            // so the policy's iv (if any) is not used.
 
                         } else {
                             throw new RuntimeException("Invalid configuration for filter: Missing crypto encryption property.");

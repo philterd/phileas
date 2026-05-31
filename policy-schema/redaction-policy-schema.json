@@ -176,20 +176,16 @@
       }
     },
     "crypto": {
-      "description": "AES encryption settings used by the CRYPTO_REPLACE strategy. Values may be prefixed with 'env:' to read from environment variables.",
+      "description": "AES-GCM encryption settings used by the CRYPTO_REPLACE strategy. A fresh random nonce is generated per value, so no initialization vector is configured. Values may be prefixed with 'env:' to read from environment variables.",
       "type": "object",
       "additionalProperties": false,
       "properties": {
         "key": {
           "description": "AES encryption key. Prefix with 'env:' to read from an environment variable (e.g. 'env:CRYPTO_KEY').",
           "type": "string"
-        },
-        "iv": {
-          "description": "AES initialization vector. Prefix with 'env:' to read from an environment variable (e.g. 'env:CRYPTO_IV').",
-          "type": "string"
         }
       },
-      "required": ["key", "iv"]
+      "required": ["key"]
     },
     "fpe": {
       "description": "Format-preserving encryption settings used by the FPE_ENCRYPT_REPLACE strategy. Values may be prefixed with 'env:' to read from environment variables.",

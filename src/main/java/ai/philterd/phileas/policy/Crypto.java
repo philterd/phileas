@@ -24,6 +24,9 @@ public class Crypto {
     @Expose
     private String key;
 
+    // No longer used: CRYPTO_REPLACE uses AES-GCM with a fresh random nonce per value, so no
+    // policy-supplied IV is needed. Retained so existing policies that still specify an iv continue
+    // to deserialize.
     @SerializedName("iv")
     @Expose
     private String iv;

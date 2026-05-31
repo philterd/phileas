@@ -33,7 +33,7 @@ A sample policy containing a filter strategy is shown below. In this example, em
 The filter strategies are described below. Each filter type can specify zero or more filter strategies. When no filter strategies are given, Phileas will default to `REDACT` for that filter type. When multiple filter strategies are given for a single filter type, the filter strategies will be applied in order as they are listed in the policy, top to bottom.
 
 * [`REDACT`](filter_strategies.md#the-redact-filter-strategy)
-* [`CRYPTO_REPLACE`](filter_strategies.md#crypto)(AES encryption)
+* [`CRYPTO_REPLACE`](filter_strategies.md#crypto)(AES-GCM authenticated encryption)
 * [`HASH_SHA256_REPLACE`](filter_strategies.md#hash)(SHA512 encryption)
 * [`FPE_ENCRYPT_REPLACE`](filter_strategies.md#fpe)(Format-preserving encryption)
 * [`RANDOM_REPLACE`](filter_strategies.md#random)
@@ -75,25 +75,41 @@ An example filter using the `REDACT` filter strategy:
 
 ### The `CRYPTO_REPLACE` Filter Strategy {id="crypto"}
 
-The `CRYPTO_REPLACE` filter strategy replaces each identified piece of sensitive information by encrypting it using the AES encryption algorithm. To use this filter strategy, the policy must include the details of the encryption key as shown below:
+The `CRYPTO_REPLACE` filter strategy replaces each identified piece of sensitive information with its encrypted value, so an authorized party holding the key can recover the original later. Phileas uses **AES in GCM mode** (authenticated encryption). To use this filter strategy, the policy must include the encryption `key`:
 
 ```
 {
    "name":"sample-profile",
    "crypto": {
-     "key": "....",
-     "iv": "...."
+     "key": "...."
    },
    ...
 ```
 
-In the snippet of a policy shown above, a crypto element is is defined with a `key` and an initialization vector (`iv`). These two items are required to encrypt the sensitive information. To generate a key, run the following command:
+The `key` is a hex-encoded AES key (for example, 64 hex characters for a 256-bit key). You can generate one with:
 
 ```
-openssl enc -e -aes-256-cbc -a -salt -P
+openssl rand -hex 32
 ```
 
-You will be prompted to enter an encryption password. Once entered, the values of the `key` and `iv` will be shown. Copy and paste those values into the policy.
+> A fresh random nonce is generated for every value, so encrypting the same value twice produces different output — identical values do not produce identical redactions across the corpus — and each value carries an authentication tag that detects tampering. Because the nonce is random, no initialization vector (`iv`) is required; an `iv` in an existing policy is ignored.
+
+The encrypted replacement has the form `{{<base64>}}`, where the Base64 content is `nonce || ciphertext || tag` (a 12-byte nonce, the ciphertext, and a 16-byte authentication tag).
+
+#### Decrypting a value
+
+Because GCM is an authenticated mode, a value cannot be decrypted with the `openssl enc` command line, which does not support GCM. Decrypt it with a GCM-capable library instead — for example, with Python:
+
+```
+from cryptography.hazmat.primitives.ciphers.aead import AESGCM
+import base64
+
+key  = bytes.fromhex("<the hex key from the policy>")
+blob = base64.b64decode("<the base64 inside the {{ }}>")
+nonce, ciphertext_and_tag = blob[:12], blob[12:]
+plaintext = AESGCM(key).decrypt(nonce, ciphertext_and_tag, None)
+print(plaintext.decode())
+```
 
 An example policy using the `CRYPTO_REPLACE` filter strategy:
 
@@ -101,8 +117,7 @@ An example policy using the `CRYPTO_REPLACE` filter strategy:
 {
    "name": "email-address",
    "crypto": {
-     "key": "....",
-     "iv": "...."
+     "key": "...."
    },
    "identifiers": {
       "emailAddress": {
