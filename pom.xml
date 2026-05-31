@@ -39,6 +39,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <!-- Project dependency versions -->
         <antlr.version>4.13.2</antlr.version>
+        <commons.collections.version>3.2.2</commons.collections.version>
         <commons.collections4.version>4.5.0</commons.collections4.version>
         <commons.lang3.version>3.20.0</commons.lang3.version>
         <commons.codec.version>1.22.0</commons.codec.version>
@@ -49,6 +50,8 @@
         <ff3.version>1.2.0</ff3.version>
         <gson.version>2.14.0</gson.version>
         <httpclient.version>5.6.1</httpclient.version>
+        <httpcore.version>5.4</httpcore.version>
+        <junit.version>5.11.2</junit.version>
         <junit.pioneer.version>2.3.0</junit.pioneer.version>
         <libphonenumber.version>9.0.31</libphonenumber.version>
         <log4j.version>2.26.0</log4j.version>
@@ -338,9 +341,24 @@
             <version>${httpclient.version}</version>
         </dependency>
         <dependency>
+            <!-- Used directly by code that calls org.apache.hc.core5; declared explicitly
+                 rather than relying on httpclient5 to supply it transitively. -->
+            <groupId>org.apache.httpcomponents.core5</groupId>
+            <artifactId>httpcore5</artifactId>
+            <version>${httpcore.version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-collections4</artifactId>
             <version>${commons.collections4.version}</version>
+        </dependency>
+        <dependency>
+            <!-- VinFilter and a test use the legacy 3.x CollectionUtils. Declared explicitly
+                 (pinned to 3.2.2, which fixes the 3.2.x deserialization vulnerability) rather
+                 than inheriting it transitively. -->
+            <groupId>commons-collections</groupId>
+            <artifactId>commons-collections</artifactId>
+            <version>${commons.collections.version}</version>
         </dependency>
         <dependency>
             <groupId>org.antlr</groupId>
@@ -360,6 +378,13 @@
         <dependency>
             <groupId>org.apache.pdfbox</groupId>
             <artifactId>pdfbox</artifactId>
+            <version>${pdfbox.version}</version>
+        </dependency>
+        <dependency>
+            <!-- Used directly by code that calls org.apache.pdfbox.io; declared explicitly
+                 rather than relying on pdfbox to supply it transitively. -->
+            <groupId>org.apache.pdfbox</groupId>
+            <artifactId>pdfbox-io</artifactId>
             <version>${pdfbox.version}</version>
         </dependency>
         <dependency>
@@ -385,6 +410,14 @@
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-api</artifactId>
+        </dependency>
+        <dependency>
+            <!-- The test sources compile against JUnit Jupiter directly; declared explicitly
+                 rather than relying on junit-pioneer to supply it transitively. -->
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.mockito</groupId>
