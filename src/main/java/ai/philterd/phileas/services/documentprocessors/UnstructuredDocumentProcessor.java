@@ -69,10 +69,9 @@ public class UnstructuredDocumentProcessor implements DocumentProcessor {
 
         }
 
-        // Perform span disambiguation.
-        if(spanDisambiguationService.isEnabled()) {
-            identifiedSpans = spanDisambiguationService.disambiguate(context, identifiedSpans);
-        }
+        // Perform span disambiguation. When disabled, this is a no-op implementation that returns
+        // the spans unchanged (see SpanDisambiguationServiceFactory), so no enabled-check is needed.
+        identifiedSpans = spanDisambiguationService.disambiguate(context, identifiedSpans);
 
         // Drop overlapping spans.
         identifiedSpans = Span.dropOverlappingSpans(identifiedSpans);

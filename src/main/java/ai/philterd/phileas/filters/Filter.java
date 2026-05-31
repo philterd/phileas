@@ -295,15 +295,22 @@ public abstract class Filter {
 
         }
 
-        final String[] tokens = text.substring(finalStart + 1, finalEnd).trim().split("\\s");
+        final String[] rawTokens = text.substring(finalStart + 1, finalEnd).trim().split("\\s");
 
-        // Remove punctuation from each token.
+        // Strip punctuation from each token and drop any that become empty (for example a token that
+        // was only punctuation, or an empty entry produced by splitting). Empty tokens are not real
+        // context words; keeping them would, for instance, make every all-punctuation window hash to
+        // the same bucket and add correlated noise to the disambiguation vectors.
         // TODO: Should punctuation be preserved in the token itself?
-        for(int i = 0; i < tokens.length; i++) {
-            tokens[i] = tokens[i].replaceAll("\\p{Punct}", "");
+        final List<String> tokens = new LinkedList<>();
+        for(final String rawToken : rawTokens) {
+            final String token = rawToken.replaceAll("\\p{Punct}", "");
+            if(!token.isEmpty()) {
+                tokens.add(token);
+            }
         }
 
-        return tokens;
+        return tokens.toArray(new String[0]);
 
     }
 

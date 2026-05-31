@@ -124,4 +124,32 @@ public class FilterTest extends AbstractFilterTest {
 
     }
 
+    @Test
+    public void windowDropsEmptyTokens() throws Exception {
+
+        // Standalone punctuation tokens ("--", "!!!") strip to empty strings; the window must not
+        // contain them, while the real surrounding words are kept.
+        final int windowSize = 5;
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withContextService(contextService)
+                .withRandom(random)
+                .withWindowSize(windowSize)
+                .build();
+
+        final AgeFilter filter = new AgeFilter(filterConfiguration);
+
+        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE,
+                "the patient is 3.5 years old -- really !!! done here");
+
+        Assertions.assertEquals(1, filtered.getSpans().size());
+
+        final String[] window = filtered.getSpans().get(0).getWindow();
+        LOGGER.info("Window: {}", Arrays.toString(window));
+
+        Assertions.assertFalse(Arrays.asList(window).contains(""), "the window must not contain empty tokens");
+        Assertions.assertTrue(Arrays.asList(window).contains("really"), "real surrounding words should be kept");
+
+    }
+
 }

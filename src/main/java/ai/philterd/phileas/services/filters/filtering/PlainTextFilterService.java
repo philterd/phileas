@@ -21,7 +21,7 @@ import ai.philterd.phileas.model.filtering.Span;
 import ai.philterd.phileas.model.filtering.TextFilterResult;
 import ai.philterd.phileas.policy.Policy;
 import ai.philterd.phileas.services.context.ContextService;
-import ai.philterd.phileas.services.disambiguation.vector.VectorBasedSpanDisambiguationService;
+import ai.philterd.phileas.services.disambiguation.SpanDisambiguationServiceFactory;
 import ai.philterd.phileas.services.disambiguation.vector.VectorService;
 import ai.philterd.phileas.services.documentprocessors.DocumentProcessor;
 import ai.philterd.phileas.services.documentprocessors.UnstructuredDocumentProcessor;
@@ -68,7 +68,7 @@ public class PlainTextFilterService extends TextFilterService {
 
         // Create a new unstructured document processor.
         this.unstructuredDocumentProcessor = new UnstructuredDocumentProcessor(
-                new VectorBasedSpanDisambiguationService(phileasConfiguration, vectorService),
+                SpanDisambiguationServiceFactory.getSpanDisambiguationService(phileasConfiguration, vectorService),
                 phileasConfiguration.incrementalRedactionsEnabled()
         );
 

@@ -74,4 +74,23 @@ public class InMemoryVectorServiceTest {
                 "every concurrent insert should be counted exactly once");
     }
 
+    @Test
+    public void vectorsAreIsolatedPerContext() {
+
+        // The cache is keyed by context; an insert into one context must not appear in another.
+        final InMemoryVectorService vectorService = new InMemoryVectorService();
+
+        final double[] hashes = new double[16];
+        hashes[2] = 1;
+        final Span span = Span.make(0, 4, FilterType.SSN, "a", 0.0, "x", "x", "",
+                false, true, new String[]{"x"}, 0);
+
+        vectorService.hashAndInsert("a", hashes, span, 16);
+
+        Assertions.assertEquals(1.0, vectorService.getVectorRepresentation("a", FilterType.SSN).get(2.0),
+                "the insert should be visible in its own context");
+        Assertions.assertTrue(vectorService.getVectorRepresentation("b", FilterType.SSN).isEmpty(),
+                "a different context must not see the insert");
+    }
+
 }

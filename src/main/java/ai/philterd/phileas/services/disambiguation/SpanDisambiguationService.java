@@ -49,10 +49,4 @@ public interface SpanDisambiguationService {
      */
     List<Span> disambiguate(String context, List<Span> spans);
 
-    /**
-     * Gets a boolean indicating if the disambiguation service is enabled.
-     * @return A boolean indicating if the disambiguation service is enabled.
-     */
-    boolean isEnabled();
-
 }

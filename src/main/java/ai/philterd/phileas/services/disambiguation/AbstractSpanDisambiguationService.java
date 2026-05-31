@@ -21,6 +21,7 @@ import org.apache.commons.codec.digest.MurmurHash3;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.nio.charset.StandardCharsets;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -35,7 +36,6 @@ public abstract class AbstractSpanDisambiguationService {
 
     private final PhileasConfiguration phileasConfiguration;
 
-    protected boolean enabled;
     protected final int vectorSize;
     protected final boolean ignoreStopWords;
     protected Set<String> stopwords;
@@ -47,7 +47,6 @@ public abstract class AbstractSpanDisambiguationService {
         this.vectorSize = phileasConfiguration.spanDisambiguationVectorSize();
         this.ignoreStopWords = phileasConfiguration.spanDisambiguationIgnoreStopWords();
         this.stopwords = parseStopWords(phileasConfiguration.spanDisambiguationStopWords());
-        this.enabled = phileasConfiguration.spanDisambiguationEnabled();
         this.vectorService = vectorService;
 
     }
@@ -79,20 +78,15 @@ public abstract class AbstractSpanDisambiguationService {
     public int hashToken(String token) {
 
         if(phileasConfiguration.spanDisambiguationHashAlgorithm().equalsIgnoreCase("murmur3")) {
-            return Math.abs(MurmurHash3.hash32x86(token.getBytes()) % vectorSize);
+            // Hash the UTF-8 bytes explicitly rather than the platform default charset, so a token
+            // hashes to the same index on every platform. This matters because vectors now persist
+            // across runs (and potentially across machines); a charset-dependent index would make a
+            // persisted store wrong when loaded under a different default charset.
+            return Math.abs(MurmurHash3.hash32x86(token.getBytes(StandardCharsets.UTF_8)) % vectorSize);
         } else {
             return Math.abs(token.hashCode() % vectorSize);
         }
 
-    }
-
-    // TODO: I don't like this. I did this because the SpanDisambiguationService has to be created
-    // before a boolean check to determine if the service is actually enabled. Making an
-    // implementation of SpanDisambiguationService that does nothing seemed like a really
-    // bad idea so I went this route instead. It needs worked on from service instantiation
-    // up to service use.
-    public boolean isEnabled() {
-        return enabled;
     }
 
 }

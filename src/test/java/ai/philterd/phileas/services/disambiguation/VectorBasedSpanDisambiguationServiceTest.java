@@ -16,24 +16,21 @@
 package ai.philterd.phileas.services.disambiguation;
 
 import ai.philterd.phileas.PhileasConfiguration;
-import ai.philterd.phileas.filters.Filter;
-import ai.philterd.phileas.filters.FilterConfiguration;
 import ai.philterd.phileas.model.filtering.FilterType;
-import ai.philterd.phileas.model.filtering.Filtered;
 import ai.philterd.phileas.model.filtering.Span;
-import ai.philterd.phileas.policy.Policy;
-import ai.philterd.phileas.services.documentprocessors.UnstructuredDocumentProcessor;
 import ai.philterd.phileas.services.disambiguation.vector.InMemoryVectorService;
 import ai.philterd.phileas.services.disambiguation.vector.VectorBasedSpanDisambiguationService;
 import ai.philterd.phileas.services.disambiguation.vector.VectorService;
+import org.apache.commons.codec.digest.MurmurHash3;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
-import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -211,6 +208,24 @@ public class VectorBasedSpanDisambiguationServiceTest {
     }
 
     @Test
+    public void murmur3HashesUtf8BytesForCrossPlatformDeterminism() {
+
+        // The murmur3 path must hash the token's UTF-8 bytes, not the platform default charset, so a
+        // token maps to the same index everywhere a persisted store might be loaded. Verified with a
+        // non-ASCII token, whose byte representation differs across charsets.
+        final int vectorSize = 512;
+        final VectorBasedSpanDisambiguationService service = service(new InMemoryVectorService(),
+                Map.of("span.disambiguation.hash.algorithm", "murmur3",
+                        "span.disambiguation.vector.size", String.valueOf(vectorSize)));
+
+        final String token = "naïve";
+        final int expected = Math.abs(MurmurHash3.hash32x86(token.getBytes(StandardCharsets.UTF_8)) % vectorSize);
+
+        Assertions.assertEquals(expected, service.hashToken(token),
+                "murmur3 hashing should be computed over the token's UTF-8 bytes");
+    }
+
+    @Test
     public void hashingIsCaseInsensitive() {
 
         // Train PHONE_NUMBER on lower-cased phone context, then disambiguate an ambiguous span whose
@@ -268,81 +283,120 @@ public class VectorBasedSpanDisambiguationServiceTest {
     }
 
     @Test
-    public void disambiguationRunsThroughTheProcessorOnlyWhenEnabled() throws Exception {
+    public void ambiguousSpansAreNotRecordedAsTrainingData() {
 
-        // The processor must call disambiguate() exactly when the service reports enabled, and skip
-        // it otherwise. A recording stub makes the gate observable without depending on downstream
-        // overlap-dropping behavior.
+        // A location where two filters disagree is, by definition, NOT a confident example, so no
+        // span at that location may be added to the training store. Because the list-level
+        // disambiguate() resolves spans by mutating their filter type in place, a naive
+        // implementation lets the second competing span appear unambiguous (its competitor's type was
+        // just changed to match it) and trains on it, polluting the store with an ambiguous span.
+        final InMemoryVectorService vectorService = new InMemoryVectorService();
+        final VectorBasedSpanDisambiguationService service = service(vectorService);
         final String context = "c";
-        final String input = "1234 was the number";
 
-        final Span asSsn = Span.make(0, 4, FilterType.SSN, context, 0.5, "1234", "x", "",
-                false, true, new String[]{"phone", "number"}, 0);
-        final Span asPhone = Span.make(0, 4, FilterType.PHONE_NUMBER, context, 0.5, "1234", "x", "",
-                false, true, new String[]{"phone", "number"}, 0);
-        final Filter filter = fakeFilter(Arrays.asList(asSsn, asPhone));
+        final String[] window = {"phone", "number", "call", "office"};
 
-        // Enabled: disambiguate() is invoked.
-        final RecordingSpanDisambiguationService enabled = new RecordingSpanDisambiguationService(true);
-        new UnstructuredDocumentProcessor(enabled, false)
-                .process(new Policy(), List.of(filter), Collections.emptyList(), context, 0, input);
-        Assertions.assertTrue(enabled.disambiguateCalled, "disambiguate() should be called when enabled");
+        // Train PHONE_NUMBER so that this window resolves to PHONE_NUMBER (which forces the SSN span
+        // to be mutated to PHONE_NUMBER, the condition that triggers the pollution).
+        service.hashAndInsert(context, Span.make(0, 4, FilterType.PHONE_NUMBER, context, 0.0, "555-1212", "x", "",
+                false, true, window, 0));
 
-        // Disabled: disambiguate() is skipped.
-        final RecordingSpanDisambiguationService disabled = new RecordingSpanDisambiguationService(false);
-        new UnstructuredDocumentProcessor(disabled, false)
-                .process(new Policy(), List.of(filter), Collections.emptyList(), context, 0, input);
-        Assertions.assertFalse(disabled.disambiguateCalled, "disambiguate() should be skipped when disabled");
+        // Snapshot the store after the legitimate training and before disambiguation.
+        final Map<Double, Double> phoneBefore = new HashMap<>(vectorService.getVectorRepresentation(context, FilterType.PHONE_NUMBER));
+        final Map<Double, Double> ssnBefore = new HashMap<>(vectorService.getVectorRepresentation(context, FilterType.SSN));
+
+        // Two competing spans at the same ambiguous location sharing the same window.
+        final Span asSsn = Span.make(0, 4, FilterType.SSN, context, 0.5, "123456789", "x", "",
+                false, true, window, 0);
+        final Span asPhone = Span.make(0, 4, FilterType.PHONE_NUMBER, context, 0.5, "123456789", "x", "",
+                false, true, window, 0);
+
+        service.disambiguate(context, Arrays.asList(asSsn, asPhone));
+
+        // The store must be untouched: neither competing span is a confident example.
+        Assertions.assertEquals(phoneBefore, vectorService.getVectorRepresentation(context, FilterType.PHONE_NUMBER),
+                "an ambiguous-location span must not be recorded as PHONE_NUMBER training data");
+        Assertions.assertEquals(ssnBefore, vectorService.getVectorRepresentation(context, FilterType.SSN),
+                "an ambiguous-location span must not be recorded as SSN training data");
     }
 
-    /**
-     * A minimal {@link Filter} that returns a fixed set of spans, used to drive the processor without
-     * standing up real identifier filters.
-     */
-    private Filter fakeFilter(final List<Span> spans) {
-        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder().build();
-        return new Filter(FilterType.SSN, filterConfiguration) {
-            @Override
-            public Filtered filter(final Policy policy, final String context, final int piece, final String input) {
-                return new Filtered(context, piece, spans);
-            }
-        };
+    @Test
+    public void trainingIsIsolatedPerContext() {
+
+        // Vectors are keyed by context, so training one context must not influence another. A value
+        // trained for PHONE_NUMBER in context "a" resolves to PHONE_NUMBER there, but in the
+        // untrained context "b" the same ambiguous span falls back to the cold-start first candidate.
+        final VectorBasedSpanDisambiguationService service = service(new InMemoryVectorService());
+
+        service.hashAndInsert("a", Span.make(0, 4, FilterType.PHONE_NUMBER, "a", 0.0, "555-1212", "x", "",
+                false, true, new String[]{"phone", "number", "call"}, 0));
+
+        final List<FilterType> candidates = Arrays.asList(FilterType.SSN, FilterType.PHONE_NUMBER);
+        final Span ambiguous = Span.make(0, 4, FilterType.SSN, "a", 0.0, "123-4567", "x", "",
+                false, true, new String[]{"phone", "number", "call"}, 0);
+
+        Assertions.assertEquals(FilterType.PHONE_NUMBER, service.disambiguate("a", candidates, ambiguous),
+                "the trained context should resolve to the learned type");
+        Assertions.assertEquals(FilterType.SSN, service.disambiguate("b", candidates, ambiguous),
+                "an untrained context must not see another context's training (cold-start first candidate)");
     }
 
-    /**
-     * A {@link SpanDisambiguationService} stub that records whether disambiguate() was invoked and
-     * otherwise returns the spans unchanged.
-     */
-    private static final class RecordingSpanDisambiguationService implements SpanDisambiguationService {
+    @Test
+    public void accumulatedCountsWeightTheDecision() {
 
-        private final boolean enabled;
-        private boolean disambiguateCalled = false;
+        // Cosine similarity is over the accumulated counts, not mere token presence, so the type that
+        // saw the ambiguous span's token more often wins. Build two learned vectors over the same two
+        // tokens but with opposite count weights, then disambiguate a span containing only the token
+        // SSN saw more often.
+        final VectorBasedSpanDisambiguationService service = service(new InMemoryVectorService(),
+                Map.of("span.disambiguation.vector.size", "512", "span.disambiguation.ignore.stopwords", "false"));
+        final String context = "c";
 
-        private RecordingSpanDisambiguationService(final boolean enabled) {
-            this.enabled = enabled;
-        }
+        // Precondition: the two tokens must occupy different indexes or the test premise is invalid.
+        Assertions.assertNotEquals(service.hashToken("alpha"), service.hashToken("beta"),
+                "the two tokens must hash to different indexes for this test to be meaningful");
 
-        @Override
-        public void hashAndInsert(final String context, final Span span) {
-            // No-op for the stub.
-        }
+        // SSN becomes alpha-heavy: {alpha:3, beta:1}.
+        service.hashAndInsert(context, span(FilterType.SSN, "alpha", "beta"));
+        service.hashAndInsert(context, span(FilterType.SSN, "alpha"));
+        service.hashAndInsert(context, span(FilterType.SSN, "alpha"));
 
-        @Override
-        public FilterType disambiguate(final String context, final List<FilterType> filterTypes, final Span ambiguousSpan) {
-            disambiguateCalled = true;
-            return filterTypes.get(0);
-        }
+        // PHONE_NUMBER becomes beta-heavy: {alpha:1, beta:3}.
+        service.hashAndInsert(context, span(FilterType.PHONE_NUMBER, "alpha", "beta"));
+        service.hashAndInsert(context, span(FilterType.PHONE_NUMBER, "beta"));
+        service.hashAndInsert(context, span(FilterType.PHONE_NUMBER, "beta"));
 
-        @Override
-        public List<Span> disambiguate(final String context, final List<Span> spans) {
-            disambiguateCalled = true;
-            return spans;
-        }
+        // Ambiguous span contains only "alpha", which SSN accumulated more often. List PHONE_NUMBER
+        // first so an SSN win cannot be a cold-start/ordering artifact.
+        final List<FilterType> candidates = Arrays.asList(FilterType.PHONE_NUMBER, FilterType.SSN);
+        final Span ambiguous = span(FilterType.SSN, "alpha");
 
-        @Override
-        public boolean isEnabled() {
-            return enabled;
-        }
+        Assertions.assertEquals(FilterType.SSN, service.disambiguate(context, candidates, ambiguous),
+                "the type with the higher accumulated count for the shared token should win");
+    }
+
+    @Test
+    public void cosineSimilarityHandlesIdenticalOrthogonalAndZeroVectors() {
+
+        // Identical direction -> 1.0, regardless of magnitude (the learned vector holds counts while
+        // the ambiguous vector is binary, so only direction matters).
+        Assertions.assertEquals(1.0,
+                VectorBasedSpanDisambiguationService.cosineSimilarity(new double[]{3, 0, 0}, new double[]{1, 0, 0}), 1e-9);
+
+        // Orthogonal -> 0.0.
+        Assertions.assertEquals(0.0,
+                VectorBasedSpanDisambiguationService.cosineSimilarity(new double[]{1, 0}, new double[]{0, 1}), 1e-9);
+
+        // A zero vector has no direction -> NaN. disambiguate() relies on this (it maps NaN to 0 so a
+        // candidate with no signal never outranks one with real overlap), so the contract is pinned here.
+        Assertions.assertTrue(Double.isNaN(
+                VectorBasedSpanDisambiguationService.cosineSimilarity(new double[]{0, 0}, new double[]{1, 1})),
+                "cosine similarity against a zero vector should be NaN");
+    }
+
+    /** Builds a span at a fixed location with the given window tokens. */
+    private static Span span(final FilterType filterType, final String... window) {
+        return Span.make(0, 4, filterType, "c", 0.0, "x", "x", "", false, true, window, 0);
     }
 
     @Test

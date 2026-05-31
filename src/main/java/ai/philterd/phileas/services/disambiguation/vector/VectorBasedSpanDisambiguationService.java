@@ -25,6 +25,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.Arrays;
+import java.util.IdentityHashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -61,10 +62,21 @@ public class VectorBasedSpanDisambiguationService extends AbstractSpanDisambigua
 
         final Set<Span> disambiguatedSpans = new LinkedHashSet<>();
 
+        // Determine each span's competitors up front, against the original (unmutated) list. The loop
+        // below resolves spans by changing their filter type in place; if competitors were recomputed
+        // mid-loop, resolving one span to match its rival would make that rival look unambiguous and
+        // it would be wrongly recorded as training data. An identity map keeps per-object lists even
+        // if two spans become equal once their filter types match after resolution.
+        final Map<Span, List<Span>> competingSpansBySpan = new IdentityHashMap<>();
+        for(final Span span : spans) {
+            competingSpansBySpan.put(span, getCompetingSpans(span, spans));
+        }
+
         for(final Span span : spans) {
 
-            // Find the spans that compete with this one (same location, different filter type).
-            final List<Span> identicalSpans = getCompetingSpans(span, spans);
+            // The spans that compete with this one (same location, different filter type), as computed
+            // before any resolution mutated the list.
+            final List<Span> identicalSpans = competingSpansBySpan.get(span);
 
             // Only continue if there is a competing span.
             if(!identicalSpans.isEmpty()) {
