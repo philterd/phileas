@@ -2,7 +2,8 @@
 
 ## Filter
 
-This filter identifies ages such as `3.5 years old` in text.
+This filter identifies ages such as `3.5 years old` in text. Ages written as spelled-out numbers are
+also identified, for example `thirty-five years old`, `thirty-five-year-old`, and `aged forty-two`.
 
 ### Required Parameters
 

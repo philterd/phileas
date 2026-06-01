@@ -488,4 +488,111 @@ public class AgeFilterTest extends AbstractFilterTest {
 
     }
 
+    @Test
+    public void spelledOutYearsOld() throws Exception {
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(new AgeFilterStrategy()))
+                .withContextService(contextService)
+                .withRandom(random)
+                .withWindowSize(windowSize)
+                .build();
+
+        final AgeFilter filter = new AgeFilter(filterConfiguration);
+
+        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "the patient is thirty-five years old.");
+
+        showSpans(filtered.getSpans());
+
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertEquals("thirty-five years old", filtered.getSpans().get(0).getText());
+        Assertions.assertEquals("{{{REDACTED-age}}}", filtered.getSpans().get(0).getReplacement());
+
+    }
+
+    @Test
+    public void spelledOutHyphenatedYearOld() throws Exception {
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(new AgeFilterStrategy()))
+                .withContextService(contextService)
+                .withRandom(random)
+                .withWindowSize(windowSize)
+                .build();
+
+        final AgeFilter filter = new AgeFilter(filterConfiguration);
+
+        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "a thirty-five-year-old patient");
+
+        showSpans(filtered.getSpans());
+
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertEquals("thirty-five-year-old", filtered.getSpans().get(0).getText());
+
+    }
+
+    @Test
+    public void spelledOutAgedPrefix() throws Exception {
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(new AgeFilterStrategy()))
+                .withContextService(contextService)
+                .withRandom(random)
+                .withWindowSize(windowSize)
+                .build();
+
+        final AgeFilter filter = new AgeFilter(filterConfiguration);
+
+        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "she is aged forty-two");
+
+        showSpans(filtered.getSpans());
+
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertEquals("aged forty-two", filtered.getSpans().get(0).getText());
+
+    }
+
+    @Test
+    public void spelledOutOneHundredYearsOld() throws Exception {
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(new AgeFilterStrategy()))
+                .withContextService(contextService)
+                .withRandom(random)
+                .withWindowSize(windowSize)
+                .build();
+
+        final AgeFilter filter = new AgeFilter(filterConfiguration);
+
+        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "he is one hundred years old");
+
+        showSpans(filtered.getSpans());
+
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertEquals("one hundred years old", filtered.getSpans().get(0).getText());
+
+    }
+
+    @Test
+    public void spelledOutPostFilterDropsNonAge() throws Exception {
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(new AgeFilterStrategy()))
+                .withContextService(contextService)
+                .withRandom(random)
+                .withWindowSize(windowSize)
+                .build();
+
+        final AgeFilter filter = new AgeFilter(filterConfiguration);
+
+        // "five years ago" is matched by the pattern but has no age/old context, so the post-filter
+        // drops it. "thirty-five years old" has the "old" context and is kept.
+        final var dropped = filter.postFilter(filter.filter(getPolicy(), "context", PIECE, "she left five years ago").getSpans());
+        Assertions.assertEquals(0, dropped.size());
+
+        final var kept = filter.postFilter(filter.filter(getPolicy(), "context", PIECE, "she is thirty-five years old").getSpans());
+        Assertions.assertEquals(1, kept.size());
+
+    }
+
 }
