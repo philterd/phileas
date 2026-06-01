@@ -485,6 +485,25 @@ public class StreetAddressFilterTest extends AbstractFilterTest {
     }
 
     @Test
+    public void filter25() throws Exception {
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(new StreetAddressFilterStrategy()))
+                .withContextService(contextService)
+                .withRandom(random)
+                .withWindowSize(windowSize)
+                .build();
+
+        final StreetAddressFilter filter = new StreetAddressFilter(filterConfiguration);
+
+        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "445 Minnesota Street, Suite 175");
+
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 0, 31, FilterType.STREET_ADDRESS));
+
+    }
+
+    @Test
     public void filterWithCandidates1() throws Exception {
 
         final List<String> candidates = List.of("candidate1", "candidate2");
