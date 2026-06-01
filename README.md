@@ -90,6 +90,8 @@ This list might be outdated. Please check the individual filter classes for deta
 
 After cloning, run `git lfs pull` to download models needed for unit tests. Phileas can then be built with `mvn clean install`.
 
+The benchmark tests (timed redaction workloads) are excluded from the normal build and are run separately with the `benchmark` profile, for example `mvn test -Pbenchmark` (optionally with `-Dbenchmark.redactor=mask_all -Dbenchmark.document=all -Dbenchmark.millis=2000`).
+
 ## Using Phileas
 
 Phileas snapshots and releases as of version 2.12.1 are available in Maven Central. Previous versions were in the [Philterd repository](https://artifacts.philterd.ai).
