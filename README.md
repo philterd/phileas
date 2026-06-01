@@ -41,7 +41,7 @@ This list might be outdated. Please check the individual filter classes for deta
 
 ### Persons
 
-* Person's Names - Multiple methods, e.g. NER, dictionary, census data
+* Person's Names - Multiple methods, e.g. NER (via [Ph-Eye](https://www.github.com/philterd/ph-eye)), dictionary, census data
 * Physician Names
 * First Names
 * Surnames
@@ -52,7 +52,7 @@ This list might be outdated. Please check the individual filter classes for deta
 
 ### Common
 
-* Ages
+* Ages (numeric and spelled-out, e.g. "thirty-five years old")
 * Bank Account Numbers
 * Bitcoin Addresses
 * Credit Cards
@@ -169,9 +169,19 @@ Policies can be de/serialized to JSON. Here is a basic (but valid) policy that i
 
 There is a long list of `identifiers` that can be applied, and each identifier has several possible `strategy` values. In this case, when a age is found, it is redacted by being replaced with the text `{{{REDACTED-age}}}`. The `%t` is a placeholder for the type of filter. In this case, it is the literal text `age`.
 
-## Policy Schema Versions
+## Policy Schema and PhiSQL
 
-Phileas policies conform to the [Phileas redaction policy JSON schema](https://philterd.ai/schemas/redaction-policy/1.0.0/schema.json), which is published and versioned independently of Phileas. Each Phileas release supports exactly one schema version. The table below maps each Phileas version to the policy schema version it uses.
+The [Phileas redaction policy JSON schema](https://philterd.ai/schemas/redaction-policy/1.0.0/schema.json) is the canonical execution contract for Phileas. It defines what a valid policy looks like and is the source of truth for every filter type, strategy, and configuration option Phileas understands. The schema is owned and versioned in the [philterd/phisql](https://github.com/philterd/phisql) repository.
+
+[PhiSQL](https://github.com/philterd/phisql) is the declarative authoring language that compiles to that schema. Instead of writing JSON by hand, you write PhiSQL and the compiler produces a valid Phileas policy:
+
+```
+PhiSQL source  →  Compiler  →  Phileas JSON policy  →  Phileas runtime
+```
+
+**Schema changes go through philterd/phisql first.** Adding a new entity type, strategy, or filter option requires a schema update and a matching PhiSQL grammar change in the same pull request in that repository. Once the schema version is released, Phileas is updated to target it. Phileas itself only executes JSON policies and does not change when PhiSQL changes. Existing JSON policies remain valid — PhiSQL is purely additive.
+
+Each Phileas release supports exactly one schema version:
 
 | Phileas Version | Policy Schema Version |
 |-----------------|-----------------------|
