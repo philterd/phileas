@@ -15,6 +15,7 @@
  */
 package ai.philterd.phileas.services.anonymization;
 
+import ai.philterd.phileas.data.generators.VINGenerator;
 import ai.philterd.phileas.services.context.ContextService;
 import org.apache.commons.collections4.CollectionUtils;
 
@@ -72,10 +73,15 @@ public class VinAnonymizationService extends AbstractAnonymizationService {
         } else {
 
             // REALISTIC_REPLACE
-            String anonymized = generateAlphanumeric(17);
+            // A VIN uses digits and the letters A-Z excluding I, O, and Q (which are disallowed to
+            // avoid confusion with 1 and 0). Generate from the VIN character set rather than from
+            // all alphanumeric characters.
+            final VINGenerator vinGenerator = new VINGenerator(random);
+
+            String anonymized = vinGenerator.random();
 
             while (anonymized.equalsIgnoreCase(token)) {
-                anonymized = generateAlphanumeric(17);
+                anonymized = vinGenerator.random();
             }
 
             return anonymized;

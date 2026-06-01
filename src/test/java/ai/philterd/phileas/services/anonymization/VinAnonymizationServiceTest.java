@@ -60,6 +60,21 @@ public class VinAnonymizationServiceTest {
     }
 
     @Test
+    public void realisticReplacementUsesOnlyVinCharacters() {
+
+        final AnonymizationService anonymizationService = new VinAnonymizationService(new DefaultContextService(), new SecureRandom(), AnonymizationMethod.REALISTIC);
+
+        // A VIN uses digits and the letters A-Z excluding I, O, and Q. Generate many replacements to
+        // be confident those letters are never produced.
+        for (int i = 0; i < 1000; i++) {
+            final String replacement = anonymizationService.anonymize("11111111111111111");
+            Assertions.assertTrue(replacement.matches("[0-9A-HJ-NPR-Z]{17}"),
+                    "VIN replacement contained an invalid character (I, O, or Q): " + replacement);
+        }
+
+    }
+
+    @Test
     public void anonymizeUUID() {
 
         AnonymizationService anonymizationService = new VinAnonymizationService(new DefaultContextService(), new SecureRandom(), AnonymizationMethod.UUID);
