@@ -1,9 +1,8 @@
-# IP Addresses
+# Street Addresses
 
 ## Filter
 
-This filter identifies IPv4 and IPv6 addresses `127.0.0.1`, `192.168.3.58`, and
-`2001:0db8:85a3:0000:0000:8a2e:0370:7334` in text.
+This filter identifies US street addresses in text, such as `123 Main Street` or `123 Main Street, Suite 100`.
 
 ### Required Parameters
 
@@ -11,13 +10,13 @@ This filter has no required parameters.
 
 ### Optional Parameters
 
-| Parameter                   | Description                                                                                                                                                                | Default Value                                            |
-|-----------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------|
-| `ipAddressFilterStrategies` | A list of filter strategies.                                                                                                                                               | None                                                     |
-| `enabled`                   | When set to false, the filter will be disabled and not applied                                                                                                             | `true`                                                   |
-| `ignored`                   | A list of terms to be ignored by the filter.                                                                                                                               | None                                                     |
-| `windowSize`                | Sets the size of the window (in terms) surrounding a span to look for contextual terms. If set, this value overrides the value of `span.window.size` in the configuration. | The value of `span.window.size` which is by default `5`. |
-| `priority`                  | The priority (integer) of this filter. Valid values are any positive integer, where a higher value indicates a higher priority. Priority is used for tie-breaking when two spans may be otherwise identical. | `0`           |
+| Parameter                       | Description                                                                                                                                                                                                  | Default Value                                            |
+|---------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------|
+| `streetAddressFilterStrategies` | A list of filter strategies.                                                                                                                                                                                 | None                                                     |
+| `enabled`                       | When set to false, the filter will be disabled and not applied                                                                                                                                               | `true`                                                   |
+| `ignored`                       | A list of terms to be ignored by the filter.                                                                                                                                                                 | None                                                     |
+| `windowSize`                    | Sets the size of the window (in terms) surrounding a span to look for contextual terms. If set, this value overrides the value of `span.window.size` in the configuration.                                   | The value of `span.window.size` which is by default `5`. |
+| `priority`                      | The priority (integer) of this filter. Valid values are any positive integer, where a higher value indicates a higher priority. Priority is used for tie-breaking when two spans may be otherwise identical. | `0`                                                      |
 
 ### Filter Strategies
 
@@ -51,10 +50,10 @@ Each filter strategy may have one condition. See [Conditions](#conditions) for d
 
 ```
 {
-   "name": "ip-address-example",
+   "name": "street-address-example",
    "identifiers": {
-      "ipAddress": {
-         "ipAddressFilterStrategies": [
+      "streetAddress": {
+         "streetAddressFilterStrategies": [
             {
                "strategy": "REDACT",
                "redactionFormat": "{{{REDACTED-%t}}}"

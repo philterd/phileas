@@ -6,8 +6,6 @@ Versions released only on GitHub (between 2.6.0 and 4.0.0) are documented in the
 
 ## Version 4.0.0
 
-* Embedded the redaction policy JSON schema in the Phileas jar and added the `ai.philterd.phileas.policy.PolicySchema` API to read the supported schema version at runtime. `PolicySchema.getSupportedSchemaVersion()` returns the version (for example, `1.0.0`) and `PolicySchema.getSchema()` returns the full embedded schema. A given Phileas release supports exactly one schema version.
-* Added a top-level `version` field to the redaction policy schema so the version is readable from the schema body, not just its `$id` URL.
 * Fixed a referential integrity bug in context-scoped anonymization (`RANDOM_REPLACE` with a `CONTEXT` replacement scope). When a detected token happened to equal a replacement value already generated for a different token in the same context, the anonymizer returned a null replacement and the token was left unredacted (it appeared in output as the literal text `null`). The token is now always redacted and mapped consistently.
 * Overhauled span disambiguation (the feature that uses context vectors to decide which type an ambiguously-typed span is, such as an SSN vs. a phone number) so it works as intended, is safe under concurrency, and can persist its learning:
     * Correctness: it now learns only from genuinely unambiguous spans over time (a span at a location two filters disagreed about is no longer mistakenly recorded as training data), uses correct cosine-similarity scoring with deterministic cold-start handling, hashes context tokens case-insensitively and over their UTF-8 bytes (so a token maps to the same vector index on every platform), and honors the configured stop words and hash algorithm.

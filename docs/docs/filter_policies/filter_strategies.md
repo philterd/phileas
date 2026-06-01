@@ -25,7 +25,7 @@ A sample policy containing a filter strategy is shown below. In this example, em
 }
 ```
 
-> Most of the filter strategies apply to all types of data, however, some filter strategies only apply to a few types. For example, the `TRUNCATE` filter strategy only applies to a zip code filter.
+> Most of the filter strategies apply to all types of data, however, some filter strategies only apply to a few types. For example, the `ZERO_LEADING` filter strategy only applies to the zip code filter, and the `ABBREVIATE` filter strategy only applies to the person's names (NER) filter.
 
 
 ## Filter Strategies
@@ -33,6 +33,7 @@ A sample policy containing a filter strategy is shown below. In this example, em
 The filter strategies are described below. Each filter type can specify zero or more filter strategies. When no filter strategies are given, Phileas will default to `REDACT` for that filter type. When multiple filter strategies are given for a single filter type, the filter strategies will be applied in order as they are listed in the policy, top to bottom.
 
 * [`REDACT`](filter_strategies.md#the-redact-filter-strategy)
+* [`MASK`](filter_strategies.md#mask)
 * [`CRYPTO_REPLACE`](filter_strategies.md#crypto)(AES-GCM authenticated encryption)
 * [`HASH_SHA256_REPLACE`](filter_strategies.md#hash)(SHA512 encryption)
 * [`FPE_ENCRYPT_REPLACE`](filter_strategies.md#fpe)(Format-preserving encryption)
@@ -40,6 +41,7 @@ The filter strategies are described below. Each filter type can specify zero or 
 * [`STATIC_REPLACE`](filter_strategies.md#static)
 * [`TRUNCATE`](filter_strategies.md#truncate)
 * [`ZERO_LEADING`](filter_strategies.md#zero_leading)
+* [`ABBREVIATE`](filter_strategies.md#abbreviate)
 
 ### The `REDACT` Filter Strategy
 
@@ -277,6 +279,32 @@ An example policy using the `STATIC_REPLACE` filter strategy:
 }
 ```
 
+### The `MASK` Filter Strategy {id="mask"}
+
+This strategy replaces each character of the identified text with a mask character. By default the mask character
+is `*` and the masked value is the same length as the original text. Set `maskCharacter` to change the character
+used. Set `maskLength` to a number to force a fixed length, or leave it as the default `SAME` to preserve the
+original length. Available to all filter types.
+
+An example policy using the `MASK` filter strategy:
+
+```
+{
+   "name": "credit-cards",
+   "identifiers": {
+      "creditCardNumbers": {
+         "creditCardNumbersFilterStrategies": [
+            {
+               "strategy": "MASK",
+               "maskCharacter": "#",
+               "maskLength": "SAME"
+            }
+         ]
+      }
+   }
+}
+```
+
 ### The `TRUNCATE` Filter Strategy {id="truncate"}
 
 This strategy allows for truncating tokens to only a select number of digits. Specify `truncateLeaveCharacters`
@@ -319,6 +347,27 @@ The `ZERO_LEADING` filter strategy is only available to zip code filters. An exa
          "zipCodeFilterStrategies": [
             {
                "strategy": "ZERO_LEADING"
+            }
+         ]
+      }
+   }
+}
+```
+
+### The `ABBREVIATE` Filter Strategy {id="abbreviate"}
+
+Available only to the person's names (NER) filter, this strategy replaces a person's name with its initials. For example, `George Washington` will be changed to `GW`.
+
+An example person's names filter using the `ABBREVIATE` filter strategy:
+
+```
+{
+   "name": "ner-example",
+   "identifiers": {
+      "pheye": {
+         "pheyeFilterStrategies": [
+            {
+               "strategy": "ABBREVIATE"
             }
          ]
       }

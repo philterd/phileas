@@ -37,9 +37,6 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <!-- The redaction policy schema version to download and embed. The schema is published at
-             https://philterd.ai/schemas/redaction-policy/<version>/schema.json -->
-        <redaction.policy.schema.version>1.0.0</redaction.policy.schema.version>
         <!-- Project dependency versions -->
         <antlr.version>4.13.2</antlr.version>
         <commons.collections.version>3.2.2</commons.collections.version>
@@ -74,30 +71,6 @@
                 <configuration>
                     <publishingServerId>central</publishingServerId>
                 </configuration>
-            </plugin>
-            <plugin>
-                <!-- Download the canonical redaction policy schema (published on the Philterd website)
-                     at build time and embed it in the jar at the classpath root, so PolicySchema can
-                     read the supported schema and version at runtime. The schema is no longer stored
-                     in this repository; the version is the redaction.policy.schema.version property.
-                     The download is cached locally, so subsequent builds do not require network. -->
-                <groupId>com.googlecode.maven-download-plugin</groupId>
-                <artifactId>download-maven-plugin</artifactId>
-                <version>1.13.0</version>
-                <executions>
-                    <execution>
-                        <id>download-policy-schema</id>
-                        <phase>process-resources</phase>
-                        <goals>
-                            <goal>wget</goal>
-                        </goals>
-                        <configuration>
-                            <url>https://philterd.ai/schemas/redaction-policy/${redaction.policy.schema.version}/schema.json</url>
-                            <outputDirectory>${project.build.outputDirectory}</outputDirectory>
-                            <outputFileName>redaction-policy-schema.json</outputFileName>
-                        </configuration>
-                    </execution>
-                </executions>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

@@ -42,6 +42,7 @@ Phileas uses several methods to identify person's names.
 | [Cities](filters/locations/cities.md)                                    | Identifies common cities                                                        |
 | [Counties](filters/locations/counties.md)                                | Identifies common counties                                                      |
 | [Credit Card Numbers](filters/common_filters/creditcards.md)                 | Identifies VISA, American Express, MasterCard, and Discover credit card numbers |
+| [Currency](filters/common_filters/currency.md)                                | Identifies monetary amounts such as `$100.00`                                    |
 | [Dates](filters/common_filters/dates.md)                                      | Identifies dates in many formats such as May 22, 1999                           |
 | [Driver's License Numbers](filters/common_filters/drivers-license-numbers.md) | Identifies driver's license numbers for all 50 US states                        |
 | [Email Addresses](filters/common_filters/email-addresses.md)                  | Identifies email addresses                                                      |
@@ -56,6 +57,7 @@ Phileas uses several methods to identify person's names.
 | [SSNs and TINs](filters/common_filters/ssns-and-tins.md)                      | Identifies US SSNs and TINs                                                     |
 | [States](filters/locations/states.md)                                         | Identifies US state names                                                       |
 | [State Abbreviations](filters/locations/state-abbreviations.md)               | Identifies US state names by their abbreviations                                |
+| [Street Addresses](filters/common_filters/street-address.md)                  | Identifies US street addresses such as `123 Main Street`                         |
 | [Tracking Numbers](filters/common_filters/tracking-numbers.md)                | Identifies UPS, FedEx, and USPS tracking numbers                                |
 | [URLs](filters/common_filters/urls.md)                                        | Identifies URLs                                                                 |
 | [VINs](filters/common_filters/vins.md)                                        | Identifies vehicle identification numbers                                       |
