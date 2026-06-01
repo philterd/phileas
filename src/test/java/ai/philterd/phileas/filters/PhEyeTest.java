@@ -19,10 +19,14 @@ import ai.philterd.phileas.model.filtering.FilterType;
 import ai.philterd.phileas.model.filtering.Filtered;
 import ai.philterd.phileas.services.filters.ai.pheye.PhEyeConfiguration;
 import ai.philterd.phileas.services.filters.ai.pheye.PhEyeFilter;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import org.apache.hc.client5.http.classic.HttpClient;
+import org.apache.hc.client5.http.classic.methods.HttpPost;
 import org.apache.hc.core5.http.ClassicHttpResponse;
 import org.apache.hc.core5.http.HttpEntity;
 import org.apache.hc.core5.http.io.HttpClientResponseHandler;
+import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.apache.hc.core5.http.io.entity.StringEntity;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -158,6 +162,84 @@ public class PhEyeTest extends AbstractFilterTest {
             Assertions.assertEquals(0, filtered2.getSpans().size());
 
         }
+
+    }
+
+    @Test
+    public void removePunctuationStripsPunctuationFromModelInput() throws Exception {
+
+        final PhEyeConfiguration phEyeConfiguration = new PhEyeConfiguration("http://localhost:18080");
+        final boolean removePunctuation = true;
+        final Map<String, Double> thresholds = new HashMap<>();
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withContextService(contextService)
+                .withRandom(random)
+                .withWindowSize(windowSize)
+                .build();
+
+        final HttpClient httpClient = mock(HttpClient.class);
+        final String[] sentText = new String[1];
+
+        when(httpClient.execute(any(), ArgumentMatchers.<HttpClientResponseHandler<String>>any())).thenAnswer(invocation -> {
+            final HttpPost post = invocation.getArgument(0);
+            sentText[0] = new Gson().fromJson(EntityUtils.toString(post.getEntity()), JsonObject.class).get("text").getAsString();
+
+            final HttpClientResponseHandler<String> handler = invocation.getArgument(1);
+            final ClassicHttpResponse response = mock(ClassicHttpResponse.class);
+            when(response.getCode()).thenReturn(200);
+            when(response.getEntity()).thenReturn(new StringEntity("[]"));
+            return handler.handleResponse(response);
+        });
+
+        final PhEyeFilter filter = new PhEyeFilter(filterConfiguration, phEyeConfiguration, removePunctuation, thresholds, FilterType.PERSON, httpClient);
+
+        final String input = "George Washington, the first president.";
+        filter.filter(getPolicy(), "context", PIECE, input);
+
+        // With removePunctuation enabled, the text sent to the model has its punctuation removed, and
+        // it remains the same length (each punctuation mark is replaced with a space) so span offsets
+        // still line up with the original input.
+        Assertions.assertNotNull(sentText[0]);
+        Assertions.assertFalse(sentText[0].matches(".*\\p{Punct}.*"), "Sent text still contains punctuation: " + sentText[0]);
+        Assertions.assertEquals(input.length(), sentText[0].length());
+
+    }
+
+    @Test
+    public void modelInputUnchangedWhenRemovePunctuationDisabled() throws Exception {
+
+        final PhEyeConfiguration phEyeConfiguration = new PhEyeConfiguration("http://localhost:18080");
+        final boolean removePunctuation = false;
+        final Map<String, Double> thresholds = new HashMap<>();
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withContextService(contextService)
+                .withRandom(random)
+                .withWindowSize(windowSize)
+                .build();
+
+        final HttpClient httpClient = mock(HttpClient.class);
+        final String[] sentText = new String[1];
+
+        when(httpClient.execute(any(), ArgumentMatchers.<HttpClientResponseHandler<String>>any())).thenAnswer(invocation -> {
+            final HttpPost post = invocation.getArgument(0);
+            sentText[0] = new Gson().fromJson(EntityUtils.toString(post.getEntity()), JsonObject.class).get("text").getAsString();
+
+            final HttpClientResponseHandler<String> handler = invocation.getArgument(1);
+            final ClassicHttpResponse response = mock(ClassicHttpResponse.class);
+            when(response.getCode()).thenReturn(200);
+            when(response.getEntity()).thenReturn(new StringEntity("[]"));
+            return handler.handleResponse(response);
+        });
+
+        final PhEyeFilter filter = new PhEyeFilter(filterConfiguration, phEyeConfiguration, removePunctuation, thresholds, FilterType.PERSON, httpClient);
+
+        final String input = "George Washington, the first president.";
+        filter.filter(getPolicy(), "context", PIECE, input);
+
+        // With removePunctuation disabled, the original text (including punctuation) is sent unchanged.
+        Assertions.assertEquals(input, sentText[0]);
 
     }
 

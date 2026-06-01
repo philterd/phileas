@@ -93,7 +93,7 @@ public class PhEyeFilter extends NerFilter {
         }
         
         final PhEyeRequest phEyeRequest = new PhEyeRequest();
-        phEyeRequest.setText(input);
+        phEyeRequest.setText(formattedInput);
         phEyeRequest.setContext(context);
         phEyeRequest.setPiece(piece);
         phEyeRequest.setLabels(labels);
@@ -166,7 +166,13 @@ public class PhEyeFilter extends NerFilter {
                                 filterType = FilterType.OTHER;
                             }
 
-                            final Span span = createSpan(policy, context, filterType, phEyeSpan.getText(),
+                            // The span offsets line up with the original input because any removed
+                            // punctuation was replaced with a same-length space, so use the original
+                            // text for the token rather than the (possibly punctuation-stripped) text
+                            // the model saw.
+                            final String originalToken = input.substring(phEyeSpan.getStart(), phEyeSpan.getEnd());
+
+                            final Span span = createSpan(policy, context, filterType, originalToken,
                                     window, phEyeSpan.getLabel(), phEyeSpan.getStart(), phEyeSpan.getEnd(),
                                     phEyeSpan.getScore());
 
