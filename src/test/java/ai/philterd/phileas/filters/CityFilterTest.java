@@ -50,7 +50,8 @@ public class CityFilterTest extends AbstractFilterTest {
 
         showSpans(Span.dropOverlappingSpans(filtered.getSpans()));
 
-        Assertions.assertEquals(2, Span.dropOverlappingSpans(filtered.getSpans()).size());
+        // At MEDIUM sensitivity (Levenshtein distance up to 1) only the exact city "Washington" matches.
+        Assertions.assertEquals(1, Span.dropOverlappingSpans(filtered.getSpans()).size());
         Assertions.assertTrue(checkSpanInSpans(Span.dropOverlappingSpans(filtered.getSpans()), 9, 19, FilterType.LOCATION_CITY, "Washington", "{{{REDACTED-city}}}"));
 
     }
@@ -114,7 +115,10 @@ public class CityFilterTest extends AbstractFilterTest {
 
         showSpans(Span.dropOverlappingSpans(filtered.getSpans()));
 
-        Assertions.assertEquals(2, Span.dropOverlappingSpans(filtered.getSpans()).size());
+        // At MEDIUM sensitivity (Levenshtein distance up to 1) only "Wshington" (distance 1 from
+        // "Washington") matches. At LOW sensitivity (distance up to 2) an additional looser match is
+        // found, which is what distinguishes MEDIUM from LOW (see filterCitiesLow).
+        Assertions.assertEquals(1, Span.dropOverlappingSpans(filtered.getSpans()).size());
         Assertions.assertTrue(checkSpanInSpans(Span.dropOverlappingSpans(filtered.getSpans()), 9, 18, FilterType.LOCATION_CITY, "Wshington", "{{{REDACTED-city}}}"));
 
     }

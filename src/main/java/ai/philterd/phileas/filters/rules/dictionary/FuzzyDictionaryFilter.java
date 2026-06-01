@@ -116,11 +116,16 @@ public class FuzzyDictionaryFilter extends DictionaryFilter {
                                         final int start = position.getStart();
                                         final int end = position.getEnd();
 
-                                        if (sensitivityLevel == SensitivityLevel.HIGH && distance < 1) {
+                                        // Higher sensitivity requires a closer match: HIGH matches only
+                                        // exact tokens, MEDIUM allows a Levenshtein distance up to 1, and
+                                        // LOW allows a distance up to 2. The thresholds are distinct so the
+                                        // three levels behave differently (previously MEDIUM and LOW were
+                                        // both an effective distance of 2 and so were indistinguishable).
+                                        if (sensitivityLevel == SensitivityLevel.HIGH && distance == 0) {
                                             spans.add(createSpan(input, start, end, 0.9, context, ngram, policy));
-                                        } else if (sensitivityLevel == SensitivityLevel.MEDIUM && distance <= 2) {
+                                        } else if (sensitivityLevel == SensitivityLevel.MEDIUM && distance <= 1) {
                                             spans.add(createSpan(input, start, end, 0.7, context, ngram, policy));
-                                        } else if (sensitivityLevel == SensitivityLevel.LOW && distance < 3) {
+                                        } else if (sensitivityLevel == SensitivityLevel.LOW && distance <= 2) {
                                             spans.add(createSpan(input, start, end, 0.5, context, ngram, policy));
                                         }
 
