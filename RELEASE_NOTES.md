@@ -2,9 +2,9 @@
 
 Notable changes to Phileas, most recent first.
 
-Versions released only on GitHub (between 2.6.0 and 3.4.0) are documented in the [GitHub releases](https://github.com/philterd/phileas/releases). Issues whose identifiers start with `PHL-` were previously tracked in Jira before the project's issues were managed in GitHub.
+Versions released only on GitHub (between 2.6.0 and 4.0.0) are documented in the [GitHub releases](https://github.com/philterd/phileas/releases). Issues whose identifiers start with `PHL-` were previously tracked in Jira before the project's issues were managed in GitHub.
 
-## Version 3.4.0
+## Version 4.0.0
 
 * Embedded the redaction policy JSON schema in the Phileas jar and added the `ai.philterd.phileas.policy.PolicySchema` API to read the supported schema version at runtime. `PolicySchema.getSupportedSchemaVersion()` returns the version (for example, `1.0.0`) and `PolicySchema.getSchema()` returns the full embedded schema. A given Phileas release supports exactly one schema version.
 * Added a top-level `version` field to the redaction policy schema so the version is readable from the schema body, not just its `$id` URL.
@@ -15,6 +15,8 @@ Versions released only on GitHub (between 2.6.0 and 3.4.0) are documented in the
     * Persistence: added `FileBasedVectorService`, which loads on startup and saves on demand (or on `close()`), so the "learns over time" behavior survives process restarts. The persisted file records the vector size and hash algorithm its vectors were built with; if either no longer matches the configuration, the stale vectors are discarded with a warning (a cold start) rather than reused as invalid data.
     * Wiring: the service is now selected by `SpanDisambiguationServiceFactory`, which returns the vector-based implementation when the feature is enabled and a no-op implementation when it is disabled, so the pipeline no longer checks whether the feature is enabled before calling it. The `SpanDisambiguationService.isEnabled()` method was removed as part of this change.
     * Context windows no longer include empty tokens produced when a token was only punctuation (or from an empty split), removing correlated noise from the vectors and cleaning up the window used by all filters.
+* The tracking number filter now also detects USPS tracking numbers written in the space-separated grouped form (for example, `9400 1000 0000 0000 0000`). Previously only tracking numbers written as a continuous string of digits were detected.
+* Fixed an `IllegalStateException` in the credit card filter that could occur when a credit-card-like number appeared inside a Unix timestamp and both the "ignore when in a Unix timestamp" and "only valid credit card numbers" options were enabled. The number is now correctly ignored instead of throwing.
 
 ## Version 2.6.0
 

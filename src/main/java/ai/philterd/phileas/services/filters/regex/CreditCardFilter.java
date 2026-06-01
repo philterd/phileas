@@ -120,6 +120,7 @@ public class CreditCardFilter extends RegexFilter {
             if (ignoreWhenInUnixTimestamp && span.getText().matches(UNIX_TIMESTAMP_REGEX)) {
                 LOGGER.debug("Ignoring unix timestamp");
                 iterator.remove();
+                continue;
             }
 
             if (onlyValidCreditCardNumbers) {

@@ -20,7 +20,6 @@ import ai.philterd.phileas.model.filtering.Filtered;
 import ai.philterd.phileas.services.filters.regex.TrackingNumberFilter;
 import ai.philterd.phileas.services.strategies.rules.TrackingNumberFilterStrategy;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -78,7 +77,6 @@ public class TrackingNumberFilterTest extends AbstractFilterTest {
     }
 
     @Test
-    @Disabled
     public void filter2() throws Exception {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
