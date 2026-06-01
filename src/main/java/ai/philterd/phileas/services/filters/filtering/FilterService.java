@@ -17,7 +17,6 @@ package ai.philterd.phileas.services.filters.filtering;
 
 import ai.philterd.phileas.PhileasConfiguration;
 import ai.philterd.phileas.filters.Filter;
-import ai.philterd.phileas.model.filtering.FilterType;
 import ai.philterd.phileas.policy.Ignored;
 import ai.philterd.phileas.policy.Policy;
 import ai.philterd.phileas.services.FilterPolicyLoader;
@@ -45,8 +44,8 @@ public abstract class FilterService {
 
     protected final FilterPolicyLoader filterPolicyLoader;
 
-    // A map that gives each filter profile its own cache of filters.
-    protected final Map<String, Map<FilterType, Filter>> filterCache;
+    // Caches the complete list of filters built for a policy, keyed by a hash of the policy.
+    protected final Map<String, List<Filter>> filterCache;
 
     protected FilterService(final PhileasConfiguration phileasConfiguration,
                             final ContextService contextService,

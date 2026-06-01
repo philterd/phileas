@@ -15,7 +15,7 @@
  */
 package ai.philterd.phileas.filters;
 
-import ai.philterd.phileas.filters.rules.dictionary.BloomFilterDictionaryFilter;
+import ai.philterd.phileas.filters.rules.dictionary.SetDictionaryFilter;
 import ai.philterd.phileas.model.filtering.FilterType;
 import ai.philterd.phileas.model.filtering.Filtered;
 import ai.philterd.phileas.services.strategies.custom.CustomDictionaryFilterStrategy;
@@ -46,7 +46,7 @@ public class CustomDictionaryFilterTest extends AbstractFilterTest {
                 .build();
 
         final Set<String> names = new HashSet<>(Arrays.asList("george", "ted", "bill", "john"));
-        final BloomFilterDictionaryFilter filter = new BloomFilterDictionaryFilter(FilterType.CUSTOM_DICTIONARY, filterConfiguration, names, "names");
+        final SetDictionaryFilter filter = new SetDictionaryFilter(FilterType.CUSTOM_DICTIONARY, filterConfiguration, names, "names");
 
         final Filtered filtered = filter.filter(getPolicy(), "context", PIECE,"He lived with Bill in California.");
         showSpans(filtered.getSpans());
@@ -68,7 +68,7 @@ public class CustomDictionaryFilterTest extends AbstractFilterTest {
                 .build();
 
         final Set<String> names = new HashSet<>(Arrays.asList("george", "ted", "bill", "john"));
-        final BloomFilterDictionaryFilter filter = new BloomFilterDictionaryFilter(FilterType.CUSTOM_DICTIONARY, filterConfiguration, names, "names");
+        final SetDictionaryFilter filter = new SetDictionaryFilter(FilterType.CUSTOM_DICTIONARY, filterConfiguration, names, "names");
 
         final Filtered filtered = filter.filter(getPolicy(), "context", PIECE,"He lived with Sam in California.");
         showSpans(filtered.getSpans());
@@ -94,7 +94,7 @@ public class CustomDictionaryFilterTest extends AbstractFilterTest {
                 .build();
 
         final Set<String> names = new HashSet<>(Arrays.asList("george", "ted", "bill", "john"));
-        final BloomFilterDictionaryFilter filter = new BloomFilterDictionaryFilter(FilterType.CUSTOM_DICTIONARY, filterConfiguration, names, "names");
+        final SetDictionaryFilter filter = new SetDictionaryFilter(FilterType.CUSTOM_DICTIONARY, filterConfiguration, names, "names");
 
         final Filtered filtered = filter.filter(getPolicy(), "context", PIECE,"He lived with Bill in California.");
         showSpans(filtered.getSpans());

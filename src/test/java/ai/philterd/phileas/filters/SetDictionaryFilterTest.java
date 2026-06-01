@@ -15,13 +15,11 @@
  */
 package ai.philterd.phileas.filters;
 
-import ai.philterd.phileas.filters.rules.dictionary.BloomFilterDictionaryFilter;
+import ai.philterd.phileas.filters.rules.dictionary.SetDictionaryFilter;
 import ai.philterd.phileas.model.filtering.FilterType;
 import ai.philterd.phileas.model.filtering.Filtered;
 import ai.philterd.phileas.model.filtering.Span;
 import ai.philterd.phileas.services.strategies.custom.CustomDictionaryFilterStrategy;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -32,9 +30,7 @@ import java.util.Set;
 
 import static ai.philterd.phileas.services.strategies.AbstractFilterStrategy.RANDOM_REPLACE;
 
-public class BloomFilterDictionaryFilterTest extends AbstractFilterTest {
-
-    private static final Logger LOGGER = LogManager.getLogger(BloomFilterDictionaryFilterTest.class);
+public class SetDictionaryFilterTest extends AbstractFilterTest {
 
     @Test
     public void filterDictionaryExactMatch() throws Exception {
@@ -47,9 +43,9 @@ public class BloomFilterDictionaryFilterTest extends AbstractFilterTest {
                 .build();
 
         final Set<String> names = new HashSet<>(Arrays.asList("george", "ted", "Bill", "john"));
-        final BloomFilterDictionaryFilter filter = new BloomFilterDictionaryFilter(FilterType.CUSTOM_DICTIONARY, filterConfiguration, names, "none");
+        final SetDictionaryFilter filter = new SetDictionaryFilter(FilterType.CUSTOM_DICTIONARY, filterConfiguration, names, "none");
 
-         final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "He lived with Bill in California.");
+        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "He lived with Bill in California.");
 
         showSpans(filtered.getSpans());
 
@@ -70,7 +66,7 @@ public class BloomFilterDictionaryFilterTest extends AbstractFilterTest {
                 .build();
 
         final Set<String> names = new HashSet<>(Arrays.asList("george", "ted", "bill", "john"));
-        final BloomFilterDictionaryFilter filter = new BloomFilterDictionaryFilter(FilterType.CUSTOM_DICTIONARY, filterConfiguration, names, "none");
+        final SetDictionaryFilter filter = new SetDictionaryFilter(FilterType.CUSTOM_DICTIONARY, filterConfiguration, names, "none");
 
         final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "He lived with Bill in California.");
 
@@ -93,7 +89,7 @@ public class BloomFilterDictionaryFilterTest extends AbstractFilterTest {
                 .build();
 
         final Set<String> names = new HashSet<>(Arrays.asList("george", "ted", "bill", "john"));
-        final BloomFilterDictionaryFilter filter = new BloomFilterDictionaryFilter(FilterType.CUSTOM_DICTIONARY, filterConfiguration, names, "none");
+        final SetDictionaryFilter filter = new SetDictionaryFilter(FilterType.CUSTOM_DICTIONARY, filterConfiguration, names, "none");
 
         final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "He lived with Sam in California.");
 
@@ -114,9 +110,9 @@ public class BloomFilterDictionaryFilterTest extends AbstractFilterTest {
                 .build();
 
         final Set<String> names = new HashSet<>(Arrays.asList("george jones", "ted", "bill", "john"));
-        final BloomFilterDictionaryFilter filter = new BloomFilterDictionaryFilter(FilterType.CUSTOM_DICTIONARY, filterConfiguration, names, "none");
+        final SetDictionaryFilter filter = new SetDictionaryFilter(FilterType.CUSTOM_DICTIONARY, filterConfiguration, names, "none");
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE,"He lived with george jones in California.");
+        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "He lived with george jones in California.");
 
         showSpans(filtered.getSpans());
 
@@ -137,9 +133,9 @@ public class BloomFilterDictionaryFilterTest extends AbstractFilterTest {
                 .build();
 
         final Set<String> names = new HashSet<>(Arrays.asList("george jones jr", "ted", "bill smith", "john"));
-        final BloomFilterDictionaryFilter filter = new BloomFilterDictionaryFilter(FilterType.CUSTOM_DICTIONARY, filterConfiguration, names, "none");
+        final SetDictionaryFilter filter = new SetDictionaryFilter(FilterType.CUSTOM_DICTIONARY, filterConfiguration, names, "none");
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE,"Bill Smith lived with george jones jr in California.");
+        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "Bill Smith lived with george jones jr in California.");
 
         showSpans(filtered.getSpans());
 
@@ -164,9 +160,9 @@ public class BloomFilterDictionaryFilterTest extends AbstractFilterTest {
                 .build();
 
         final Set<String> names = new HashSet<>(Arrays.asList("george jones", "ted", "bill", "john"));
-        final BloomFilterDictionaryFilter filter = new BloomFilterDictionaryFilter(FilterType.CUSTOM_DICTIONARY, filterConfiguration, names, "none");
+        final SetDictionaryFilter filter = new SetDictionaryFilter(FilterType.CUSTOM_DICTIONARY, filterConfiguration, names, "none");
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE,"He lived with george jones and george jones in California.");
+        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "He lived with george jones and george jones in California.");
 
         showSpans(filtered.getSpans());
 
@@ -197,12 +193,64 @@ public class BloomFilterDictionaryFilterTest extends AbstractFilterTest {
                 .build();
 
         final Set<String> names = new HashSet<>(Arrays.asList("george", "ted", "Bill", "john"));
-        final BloomFilterDictionaryFilter filter = new BloomFilterDictionaryFilter(FilterType.CUSTOM_DICTIONARY, filterConfiguration, names, "none");
+        final SetDictionaryFilter filter = new SetDictionaryFilter(FilterType.CUSTOM_DICTIONARY, filterConfiguration, names, "none");
 
         final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "He lived with Bill in California.");
         showSpans(filtered.getSpans());
         Assertions.assertEquals(1, filtered.getSpans().size());
         Assertions.assertTrue(candidates.contains(filtered.getSpans().get(0).getReplacement()));
+
+    }
+
+    @Test
+    public void filterFromBundledDictionaryFile() throws Exception {
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(new CustomDictionaryFilterStrategy()))
+                .withContextService(contextService)
+                .withRandom(random)
+                .withWindowSize(windowSize)
+                .build();
+
+        // Uses the file-loading constructor, which reads terms from the bundled cities.txt dictionary.
+        final SetDictionaryFilter filter = new SetDictionaryFilter(FilterType.LOCATION_CITY, filterConfiguration);
+
+        // The term is adjacent to a trailing period; the whitespace tokenizer produces the token
+        // "Boston.", which must still match the city "Boston" (and the span must cover only "Boston").
+        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "He visited Boston.");
+
+        showSpans(filtered.getSpans());
+
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 11, 17, FilterType.LOCATION_CITY));
+        Assertions.assertEquals("Boston", filtered.getSpans().get(0).getText());
+
+    }
+
+    @Test
+    public void filterDictionaryWithSurroundingPunctuation() throws Exception {
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(new CustomDictionaryFilterStrategy()))
+                .withContextService(contextService)
+                .withRandom(random)
+                .withWindowSize(windowSize)
+                .build();
+
+        final Set<String> names = new HashSet<>(Arrays.asList("george", "ted", "bill", "john"));
+        final SetDictionaryFilter filter = new SetDictionaryFilter(FilterType.CUSTOM_DICTIONARY, filterConfiguration, names, "none");
+
+        // Terms appear next to a comma and a period; both should still match, and each span should
+        // cover only the term itself, not the punctuation.
+        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "He knew Bill, Ted, and John.");
+
+        showSpans(filtered.getSpans());
+
+        Assertions.assertEquals(3, filtered.getSpans().size());
+
+        for(final Span span : filtered.getSpans()) {
+            Assertions.assertTrue(span.getText().equals("Bill") || span.getText().equals("Ted") || span.getText().equals("John"));
+        }
 
     }
 
