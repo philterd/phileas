@@ -167,6 +167,14 @@ Policies can be de/serialized to JSON. Here is a basic (but valid) policy that i
 
 There is a long list of `identifiers` that can be applied, and each identifier has several possible `strategy` values. In this case, when a age is found, it is redacted by being replaced with the text `{{{REDACTED-age}}}`. The `%t` is a placeholder for the type of filter. In this case, it is the literal text `age`.
 
+## Policy Schema Versions
+
+Phileas policies conform to the [Phileas redaction policy JSON schema](https://philterd.ai/schemas/redaction-policy/1.0.0/schema.json), which is published and versioned independently of Phileas. Each Phileas release supports exactly one schema version. The table below maps each Phileas version to the policy schema version it uses.
+
+| Phileas Version | Policy Schema Version |
+|-----------------|-----------------------|
+| 4.0.0           | 1.0.0                 |
+
 ## Powered by Phileas
 
 Phileas is the underlying core of [Philter](https://www.github.com/philterd/philter), a turnkey text redaction engine which is built on top of Phileas and provides an API for redacting text. Philter runs entirely within your cloud and never transmits data outside your cloud. Custom AI models are available for domains like healthcare, legal, and news.
