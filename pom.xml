@@ -109,7 +109,7 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>${maven.compiler.version}</version>
                 <configuration>
-                    <release>17</release>
+                    <release>25</release>
                 </configuration>
             </plugin>
             <plugin>
@@ -324,6 +324,11 @@
             <groupId>ai.philterd</groupId>
             <artifactId>phisql</artifactId>
             <version>${phisql.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.networknt</groupId>
+            <artifactId>json-schema-validator</artifactId>
+            <version>1.5.5</version>
         </dependency>
         <dependency>
             <groupId>com.googlecode.libphonenumber</groupId>

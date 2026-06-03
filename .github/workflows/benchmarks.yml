@@ -7,11 +7,11 @@ jobs:
       - uses: actions/checkout@v4
         with:
           lfs: true
-      - name: Set up JDK 21
+      - name: Set up JDK 25
         uses: actions/setup-java@v4
         with:
-          distribution: adopt
-          java-version: 21
+          distribution: 'temurin'
+          java-version: '25'
           cache: maven
       - name: Build
         run: BENCHMARKS_ENABLED=true BENCHMARKS_CONNECTION_STRING="${{ secrets.BENCHMARKS_CONNECTION_STRING }}" BENCHMARKS_USER="${{ secrets.BENCHMARKS_USER }}" BENCHMARKS_PASSWORD="${{ secrets.BENCHMARKS_PASSWORD }}" mvn test

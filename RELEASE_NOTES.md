@@ -6,6 +6,7 @@ Versions released only on GitHub (between 2.6.0 and 4.0.0) are documented in the
 
 ## Version 4.0.0
 
+* Now uses Java 25.
 * The age filter now also detects ages written as spelled-out numbers, for example "thirty-five years old", "thirty-five-year-old", "aged forty-two", and "one hundred years old", in addition to numeric ages. (Other digit-based filters, such as SSN and credit card, continue to match numeric values only.)
 * Dictionary-based filters now match terms with a direct, case-insensitive set lookup instead of a bloom filter. This applies to custom dictionaries and to the predefined location and name dictionaries (cities, counties, states, hospitals, first names, and surnames) when fuzzy matching is not enabled. The bloom filter was only a pre-filter in front of an in-memory set that already performs the actual lookup, so it added work (and memory) without speeding anything up at any dictionary size. The now-unused `BloomFilterDictionaryFilter` was removed.
 * The non-fuzzy (exact) dictionary filters now match a term even when it is immediately adjacent to punctuation — for example, "Boston" is now redacted in "He visited Boston." Previously the trailing punctuation was treated as part of the token, so the term was not matched. The redaction covers only the term, not the surrounding punctuation.

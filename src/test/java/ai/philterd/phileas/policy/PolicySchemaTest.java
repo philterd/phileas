@@ -43,7 +43,24 @@ public class PolicySchemaTest {
     @Test
     public void supportedSchemaVersionIsAvailableFromPhisql() {
 
-        assertEquals("1.0.0", PolicySchema.getSupportedSchemaVersion());
+        assertEquals("1.0.0", ai.philterd.phisql.PolicySchema.getSupportedSchemaVersion());
+
+    }
+
+    @Test
+    public void supportedSchemaVersionIsAvailable() {
+
+        assertEquals("1.0.0", ai.philterd.phileas.policy.PolicySchema.getSupportedSchemaVersion());
+
+    }
+
+    @Test
+    public void schemaIsAvailable() {
+
+        final String schema = ai.philterd.phileas.policy.PolicySchema.getSchema();
+
+        assertNotNull(schema);
+        assertFalse(schema.isBlank());
 
     }
 

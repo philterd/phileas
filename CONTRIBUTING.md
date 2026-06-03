@@ -22,7 +22,7 @@ We prefer to take contributions as GitHub pull requests. This workflow allows yo
 
 ### Required Tools
 
-* Java 17+
+* Java 25+
 * maven
 * redis-server
 
