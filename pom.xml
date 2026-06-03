@@ -60,6 +60,7 @@
         <maven.surefire.version>3.5.4</maven.surefire.version>
         <mockito.version>5.23.0</mockito.version>
         <pdfbox.version>3.0.7</pdfbox.version>
+        <phisql.version>1.0.0</phisql.version>
     </properties>
     <build>
         <plugins>
@@ -319,6 +320,11 @@
         </dependencies>
     </dependencyManagement>
     <dependencies>
+        <dependency>
+            <groupId>ai.philterd</groupId>
+            <artifactId>phisql</artifactId>
+            <version>${phisql.version}</version>
+        </dependency>
         <dependency>
             <groupId>com.googlecode.libphonenumber</groupId>
             <artifactId>libphonenumber</artifactId>
