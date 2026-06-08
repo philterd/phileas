@@ -126,7 +126,7 @@ public class DateAnonymizationService extends AbstractAnonymizationService {
 
         } else {
 
-            LOGGER.warn("Date {} matched no pattern.", token);
+            LOGGER.warn("A date value matched no known pattern.");
 
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
             return localDate.format(formatter);

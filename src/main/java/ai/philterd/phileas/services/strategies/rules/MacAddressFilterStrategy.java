@@ -80,7 +80,6 @@ public class MacAddressFilterStrategy extends StandardFilterStrategy {
                 };
 
             }
-            LOGGER.debug("Condition for [{}] satisfied: {}", condition, conditionsSatisfied);
 
             // Short-circuit if we have a failure.
             if(!conditionsSatisfied) break;
