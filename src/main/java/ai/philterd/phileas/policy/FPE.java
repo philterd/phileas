@@ -42,7 +42,7 @@ public class FPE {
 
     public String getKey() {
 
-        if(key.startsWith("env:")) {
+        if(key != null && key.startsWith("env:")) {
 
             final String envVarName = key.substring(4);
             return System.getenv(envVarName);
@@ -55,7 +55,7 @@ public class FPE {
 
     public String getTweak() {
 
-        if(tweak.startsWith("env:")) {
+        if(tweak != null && tweak.startsWith("env:")) {
 
             final String envVarName = tweak.substring(4);
             return System.getenv(envVarName);

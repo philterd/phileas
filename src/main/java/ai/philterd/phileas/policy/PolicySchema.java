@@ -19,8 +19,10 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.networknt.schema.JsonSchema;
 import com.networknt.schema.JsonSchemaFactory;
-import com.networknt.schema.SpecVersion;
+import com.networknt.schema.SpecVersionDetector;
 import com.networknt.schema.ValidationMessage;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import java.util.Set;
 
 /**
@@ -29,6 +31,8 @@ import java.util.Set;
  * version is owned and versioned by the {@code phisql} dependency.
  */
 public final class PolicySchema {
+
+    private static final Logger LOGGER = LogManager.getLogger(PolicySchema.class);
 
     private PolicySchema() {
         // Access the members of this class through its static methods.
@@ -57,20 +61,36 @@ public final class PolicySchema {
      */
     public static boolean validate(final String jsonPolicy) {
 
+        final ObjectMapper mapper = new ObjectMapper();
+
+        final JsonNode node;
+        try {
+            node = mapper.readTree(jsonPolicy);
+        } catch (final Exception ex) {
+            // The policy is not well-formed JSON. That is an invalid policy, not a validator failure.
+            LOGGER.debug("Policy is not well-formed JSON.", ex);
+            return false;
+        }
+
         try {
 
-            final ObjectMapper mapper = new ObjectMapper();
-            final JsonNode node = mapper.readTree(jsonPolicy);
+            final JsonNode schemaNode = mapper.readTree(getSchema());
 
-            final JsonSchemaFactory factory = JsonSchemaFactory.getInstance(SpecVersion.VersionFlag.V7);
-            final JsonSchema schema = factory.getSchema(getSchema());
+            // Build the validator for the draft the schema actually declares (its $schema) rather than
+            // assuming one. The redaction policy schema is Draft 2020-12; hardcoding an older draft would
+            // silently ignore newer keywords and under-enforce the contract.
+            final JsonSchemaFactory factory = JsonSchemaFactory.getInstance(SpecVersionDetector.detect(schemaNode));
+            final JsonSchema schema = factory.getSchema(schemaNode);
 
             final Set<ValidationMessage> errors = schema.validate(node);
 
             return errors.isEmpty();
 
-        } catch (Exception ex) {
-            return false;
+        } catch (final Exception ex) {
+            // A failure here means validation itself could not run (an unreadable schema, an unsupported
+            // draft, and so on) - not that the policy is invalid. Surface it rather than silently reporting
+            // the policy as invalid, which would mask a real defect in the schema or its wiring.
+            throw new IllegalStateException("Could not validate the policy against the redaction policy schema.", ex);
         }
 
     }

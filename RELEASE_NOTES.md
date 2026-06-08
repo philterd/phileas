@@ -8,6 +8,7 @@ Versions released only on GitHub (between 2.6.0 and 4.0.0) are documented in the
 
 * Now uses Java 25.
 * `CRYPTO_REPLACE` now uses authenticated AES-GCM encryption with a fresh random nonce per value, replacing AES-CBC with a static IV. Values encrypted by earlier versions are not compatible, and the `iv` policy field has been removed. Encryption keys and FPE tweaks are referenced from environment variables with the `env:` prefix rather than stored in policies. See the documentation for details.
+    * **Upgrading from 3.x:** values that were redacted with `CRYPTO_REPLACE` under 3.x (AES-CBC) cannot be decrypted by 4.0.0, and there is no in-place migration. Decrypt anything you need to recover with a 3.x build before upgrading. See the documentation for details.
 * The redaction policy JSON schema is now published at [philterd.ai](https://philterd.ai/schemas/redaction-policy/1.0.0/schema.json) and authored in the [philterd/phisql](https://github.com/philterd/phisql) repository. The Phileas-to-schema version mapping is in the README. See the documentation for details.
 * Format-preserving encryption that cannot encrypt a token now redacts that token instead of failing the document.
 * Added a configurable regular-expression timeout to guard against catastrophic backtracking. See the documentation for details.

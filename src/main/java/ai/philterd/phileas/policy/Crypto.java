@@ -45,7 +45,7 @@ public class Crypto {
 
     public String getKey() {
 
-        if(key.startsWith("env:")) {
+        if(key != null && key.startsWith("env:")) {
 
             final String envVarName = key.substring(4);
             return System.getenv(envVarName);
@@ -58,7 +58,7 @@ public class Crypto {
 
     public String getIv() {
 
-        if(iv.startsWith("env:")) {
+        if(iv != null && iv.startsWith("env:")) {
 
             final String envVarName = iv.substring(4);
             return System.getenv(envVarName);

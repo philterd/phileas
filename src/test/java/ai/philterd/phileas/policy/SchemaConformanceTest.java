@@ -31,9 +31,9 @@ import java.util.Set;
 /**
  * Guards against the redaction policy schema (the published contract) drifting away from what the
  * Phileas runtime actually implements. The schema is authored and versioned externally (in
- * philterd/phisql, published to philterd.ai) and downloaded into the jar at build time; this test
- * fails the build if the schema declares a filter strategy for which Phileas has no corresponding
- * {@link AbstractFilterStrategy} constant.
+ * philterd/phisql, published to philterd.ai) and provided to Phileas on the classpath by the
+ * {@code phisql} dependency; this test fails the build if the schema declares a filter strategy for
+ * which Phileas has no corresponding {@link AbstractFilterStrategy} constant.
  */
 public class SchemaConformanceTest {
 
