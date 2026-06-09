@@ -145,6 +145,41 @@ public class Encryption {
     }
 
     /**
+     * Reverses a value produced by {@link #formatPreservingEncrypt(FPE, String)}. The same key and
+     * tweak used to encrypt must be provided. Non-alphanumeric characters are treated as structural
+     * and passed through unchanged, exactly as they were during encryption.
+     * @param fpe The FPE key and tweak.
+     * @param encryptedToken The format-preserving-encrypted token to reverse.
+     * @return The original plain text.
+     * @throws FormatPreservingEncryptionException If the value cannot be decrypted.
+     */
+    public static String formatPreservingDecrypt(final FPE fpe, final String encryptedToken) {
+
+        final char[] structural = new char[encryptedToken.length()];
+        final StringBuilder alphanumeric = new StringBuilder();
+
+        for (int i = 0; i < encryptedToken.length(); i++) {
+            if (!Character.isDigit(encryptedToken.charAt(i)) && !Character.isAlphabetic(encryptedToken.charAt(i))) {
+                structural[i] = encryptedToken.charAt(i);
+            } else {
+                alphanumeric.append(encryptedToken.charAt(i));
+            }
+        }
+
+        final String decryptedPart = doFormatPreservingDecryption(alphanumeric.toString(), fpe);
+
+        int idx = 0;
+        for (int i = 0; i < structural.length; i++) {
+            if (structural[i] == 0) {
+                structural[i] = decryptedPart.charAt(idx++);
+            }
+        }
+
+        return new String(structural);
+
+    }
+
+    /**
      * Encrypts the <code>plainText</code> using format-preserving encryption.
      * @param plainText The plain text.
      * @return The encrypted text.
@@ -169,6 +204,25 @@ public class Encryption {
             // Wrap any FF3 failure so callers can fall back for this token rather than failing the
             // whole document. The plain text is intentionally not included in the message.
             throw new FormatPreservingEncryptionException("The value could not be format-preserving encrypted.", ex);
+        }
+
+    }
+
+    private static String doFormatPreservingDecryption(final String cipherText, final FPE fpe) {
+
+        if (cipherText.length() < FPE_MIN_LENGTH || cipherText.length() > FPE_MAX_LENGTH) {
+            throw new FormatPreservingEncryptionException("The value's format-preservable content (" + cipherText.length()
+                    + " characters) is outside the supported range of " + FPE_MIN_LENGTH + " to " + FPE_MAX_LENGTH + " characters.");
+        }
+
+        try {
+
+            final FF3Cipher c = new FF3Cipher(fpe.getKey(), fpe.getTweak());
+
+            return c.decrypt(cipherText);
+
+        } catch (final Exception ex) {
+            throw new FormatPreservingEncryptionException("The value could not be format-preserving decrypted.", ex);
         }
 
     }

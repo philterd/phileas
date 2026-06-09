@@ -135,4 +135,88 @@ public class EncryptionTest {
 
     }
 
+    // ----- formatPreservingDecrypt -----
+
+    @Test
+    public void formatPreservingDecryption1() {
+
+        // Inverse of formatPreservingEncryption1 using the same NIST test vector.
+        final FPE fpe = new FPE("EF4359D8D580AA4F7F036D6F04FC6A94", "D8E7920AFA330A73");
+        final String decrypted = Encryption.formatPreservingDecrypt(fpe, "750918814058654607");
+
+        Assertions.assertEquals("890121234567890000", decrypted);
+
+    }
+
+    @Test
+    public void formatPreservingDecryption2() {
+
+        // Inverse of formatPreservingEncryption2 using the same NIST test vector.
+        final FPE fpe = new FPE("EF4359D8D580AA4F7F036D6F04FC6A94", "9A768A92F60E12D8");
+        final String decrypted = Encryption.formatPreservingDecrypt(fpe, "018989839189395384");
+
+        Assertions.assertEquals("890121234567890000", decrypted);
+
+    }
+
+    @Test
+    public void formatPreservingDecryption3() {
+
+        // Inverse of formatPreservingEncryption3 using the same NIST test vector.
+        final FPE fpe = new FPE("EF4359D8D580AA4F7F036D6F04FC6A94", "D8E7920AFA330A73");
+        final String decrypted = Encryption.formatPreservingDecrypt(fpe, "48598367162252569629397416226");
+
+        Assertions.assertEquals("89012123456789000000789000000", decrypted);
+
+    }
+
+    @Test
+    public void formatPreservingDecryptRoundTrips() {
+
+        final FPE fpe = new FPE("EF4359D8D580AA4F7F036D6F04FC6A94", "D8E7920AFA330A73");
+        final String plainText = "890121234567890000";
+
+        Assertions.assertEquals(plainText,
+                Encryption.formatPreservingDecrypt(fpe, Encryption.formatPreservingEncrypt(fpe, plainText)));
+
+    }
+
+    @Test
+    public void formatPreservingDecryptPreservesStructuralCharacters() {
+
+        // Non-alphanumeric characters (the dashes in an SSN) are structural and must pass through
+        // unchanged; only the digit positions are encrypted and then decrypted.
+        final FPE fpe = new FPE("EF4359D8D580AA4F7F036D6F04FC6A94", "D8E7920AFA330A73");
+        final String plainText = "123-45-6789";
+
+        final String encrypted = Encryption.formatPreservingEncrypt(fpe, plainText);
+        Assertions.assertEquals("123-45-6789".length(), encrypted.length());
+        Assertions.assertEquals('-', encrypted.charAt(3));
+        Assertions.assertEquals('-', encrypted.charAt(6));
+
+        Assertions.assertEquals(plainText, Encryption.formatPreservingDecrypt(fpe, encrypted));
+
+    }
+
+    @Test
+    public void formatPreservingDecryptRejectsShortInput() {
+
+        final FPE fpe = new FPE("EF4359D8D580AA4F7F036D6F04FC6A94", "D8E7920AFA330A73");
+
+        Assertions.assertThrows(FormatPreservingEncryptionException.class,
+                () -> Encryption.formatPreservingDecrypt(fpe, "12345"));
+
+    }
+
+    @Test
+    public void formatPreservingDecryptRejectsLongInput() {
+
+        final FPE fpe = new FPE("EF4359D8D580AA4F7F036D6F04FC6A94", "D8E7920AFA330A73");
+        final String tooLong = "1".repeat(57);
+
+        Assertions.assertThrows(FormatPreservingEncryptionException.class,
+                () -> Encryption.formatPreservingDecrypt(fpe, tooLong));
+
+    }
+
 }
