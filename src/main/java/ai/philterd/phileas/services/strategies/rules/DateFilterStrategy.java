@@ -117,8 +117,6 @@ public class DateFilterStrategy extends AbstractFilterStrategy {
 
             }
 
-            LOGGER.debug("Condition for [{}] satisfied: {}", condition, conditionsSatisfied);
-
             // Short-circuit if we have a failure.
             if(!conditionsSatisfied) break;
 
@@ -202,7 +200,8 @@ public class DateFilterStrategy extends AbstractFilterStrategy {
 
             } catch (DateTimeParseException ex) {
 
-                LOGGER.error("Unable to parse date with format {}. Falling back to redaction.", filterPattern.getFormat(), ex);
+                // The DateTimeParseException message echoes the unparsed date text, so it is not logged.
+                LOGGER.error("Unable to parse date with format {}. Falling back to redaction.", filterPattern.getFormat());
 
                 // This will be thrown if the input date is not a valid date.
                 // Default back to redaction.
@@ -235,7 +234,8 @@ public class DateFilterStrategy extends AbstractFilterStrategy {
 
             } catch (DateTimeParseException ex) {
 
-                LOGGER.error("Unable to parse date with format {}. Falling back to redaction.", filterPattern.getFormat(), ex);
+                // The DateTimeParseException message echoes the unparsed date text, so it is not logged.
+                LOGGER.error("Unable to parse date with format {}. Falling back to redaction.", filterPattern.getFormat());
 
                 // This will be thrown if the input date is not a valid date.
                 // Default back to redaction.
@@ -262,7 +262,8 @@ public class DateFilterStrategy extends AbstractFilterStrategy {
 
             } catch (DateTimeParseException ex) {
 
-                LOGGER.error("Unable to parse date. Falling back to redaction.", ex);
+                // The DateTimeParseException message echoes the unparsed date text, so it is not logged.
+                LOGGER.error("Unable to parse date. Falling back to redaction.");
 
                 // This will be thrown if the input date is not a valid date.
                 // Default back to redaction.

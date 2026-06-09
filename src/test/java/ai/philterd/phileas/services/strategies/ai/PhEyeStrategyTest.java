@@ -295,4 +295,23 @@ public class PhEyeStrategyTest extends AbstractFilterStrategyTest {
 
     }
 
+    @Test
+    public void formatPreservingEncryptionFallsBackToRedactionForOutOfRangeTokens() throws Exception {
+
+        final FPE fpe = new FPE("2DE79D232DF5585D68CE47882AE256D6", "CBD09280979564");
+
+        final AnonymizationService anonymizationService = getAnonymizationService();
+
+        final AbstractFilterStrategy strategy = getFilterStrategy();
+        strategy.setStrategy(AbstractFilterStrategy.FPE_ENCRYPT_REPLACE);
+
+        // "12345" has only five characters, below FF3's minimum, so format-preserving encryption
+        // cannot apply. The ph-eye path must fall back to redaction rather than throwing and
+        // aborting the document - the same behavior as the rules-based strategy.
+        final Replacement replacement = strategy.getReplacement("PER", "context", "12345", WINDOW, new Crypto(), fpe, anonymizationService, null);
+
+        Assertions.assertEquals("{{{REDACTED-other}}}", replacement.getReplacement());
+
+    }
+
 }

@@ -20,6 +20,8 @@ import ai.philterd.phileas.policy.FPE;
 import ai.philterd.phileas.policy.IgnoredPattern;
 import ai.philterd.phileas.services.context.ContextService;
 import ai.philterd.phileas.services.strategies.AbstractFilterStrategy;
+import org.apache.commons.codec.DecoderException;
+import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
@@ -139,8 +141,24 @@ public class FilterConfiguration {
 
                         if (this.crypto != null) {
 
-                            if (StringUtils.isEmpty(this.crypto.getKey())) {
+                            final String cryptoKey = this.crypto.getKey();
+
+                            if (StringUtils.isEmpty(cryptoKey)) {
                                 throw new RuntimeException("Invalid configuration for filter: Missing crypto encryption key.");
+                            }
+
+                            // Validate the key is decodable hex of a legal AES length so a bad key fails
+                            // fast at configuration time rather than per-document at encryption time. The
+                            // key value itself is never included in the message.
+                            final byte[] cryptoKeyBytes;
+                            try {
+                                cryptoKeyBytes = Hex.decodeHex(cryptoKey);
+                            } catch (final DecoderException ex) {
+                                throw new RuntimeException("Invalid configuration for filter: The crypto encryption key is not valid hexadecimal.");
+                            }
+                            if (cryptoKeyBytes.length != 16 && cryptoKeyBytes.length != 24 && cryptoKeyBytes.length != 32) {
+                                throw new RuntimeException("Invalid configuration for filter: The crypto encryption key must be a 128-, 192-, "
+                                        + "or 256-bit AES key (16, 24, or 32 bytes); got " + cryptoKeyBytes.length + " bytes.");
                             }
 
                             // No IV is required: AES-GCM generates a fresh random nonce per value,

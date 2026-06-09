@@ -51,7 +51,8 @@ public class ParserListener extends FilterConditionBaseListener {
     public void visitTerminal(final TerminalNode node) {
 
         terminals.add(node.getText());
-        LOGGER.debug("Processing terminal node: [{}]", node.getText());
+        // The terminal's text can contain literal values from a policy condition, so it is not logged.
+        LOGGER.debug("Processing a terminal node of the filter condition.");
 
     }
 
@@ -89,6 +90,5 @@ public class ParserListener extends FilterConditionBaseListener {
         return conditions;
 
     }
-
 
 }

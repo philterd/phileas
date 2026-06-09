@@ -52,7 +52,7 @@ public class DateSpanValidator implements SpanValidator {
 
         try {
 
-            LOGGER.info("Date {} : Pattern {}", span.getText(), span.getPattern());
+            LOGGER.debug("Validating a date span against pattern {}.", span.getPattern());
 
             final DateTimeFormatter dtf = DateTimeFormatter.ofPattern(span.getPattern(), Locale.US).withResolverStyle(ResolverStyle.STRICT);
             final LocalDateTime localDateTime = LocalDate.parse(span.getText(), dtf).atStartOfDay();
@@ -72,12 +72,12 @@ public class DateSpanValidator implements SpanValidator {
             }
 
         } catch (DateTimeException ex) {
-            // Not a date.
+            // Not a date. The exception message echoes the parsed text, so it is not logged.
             valid = false;
-            LOGGER.error(ex.getMessage());
+            LOGGER.debug("Span did not parse as a valid date for the pattern.");
         }
 
-        LOGGER.debug("Validated date span {} against pattern {}: Valid = {}", span.getText(), span.getPattern(), valid);
+        LOGGER.debug("Validated a date span against pattern {}: Valid = {}", span.getPattern(), valid);
 
         return valid;
 

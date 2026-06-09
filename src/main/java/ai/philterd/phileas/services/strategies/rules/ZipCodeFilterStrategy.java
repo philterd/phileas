@@ -129,7 +129,6 @@ public class ZipCodeFilterStrategy extends AbstractFilterStrategy {
                 };
 
             }
-            LOGGER.debug("Condition for [{}] satisfied: {}", condition, conditionsSatisfied);
 
             // Short-circuit if we have a failure.
             if(!conditionsSatisfied) break;
@@ -190,7 +189,6 @@ public class ZipCodeFilterStrategy extends AbstractFilterStrategy {
             } else {
                 replacement = StringUtils.repeat(truncateCharacter, Math.min(token.length() - leaveCharacters, 5 - leaveCharacters)) + token.substring(Math.min(token.length() - leaveCharacters, 5 - leaveCharacters), 5);
             }
-
 
         } else if(Strings.CI.equals(strategy, ZERO_LEADING)) {
 

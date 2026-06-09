@@ -15,6 +15,10 @@
  */
 package ai.philterd.phileas.policy;
 
+import ai.philterd.phisql.CompileResult;
+import ai.philterd.phisql.Compiler;
+import ai.philterd.phisql.PhiSQL;
+import com.google.gson.Gson;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -24,6 +28,32 @@ import java.util.Collections;
 import java.util.List;
 
 public class Policy {
+
+    /**
+     * Creates a {@link Policy} from a PhiSQL document. The PhiSQL is compiled to a Phileas JSON
+     * policy by the {@code phisql} compiler and then deserialized into a {@link Policy}; the runtime
+     * engine is unchanged and still executes JSON. Existing JSON policies continue to load via the
+     * usual JSON deserialization — PhiSQL is purely an additional authoring format.
+     * @param phisql The PhiSQL document source.
+     * @return The compiled {@link Policy}.
+     * @throws PolicyCompilationException if the PhiSQL cannot be parsed or compiled.
+     */
+    public static Policy fromPhiSQL(final String phisql) {
+
+        final CompileResult result;
+        try {
+            result = new Compiler().compile(phisql);
+        } catch (final PhiSQL.ParseException | Compiler.CompileException ex) {
+            // Both are unchecked diagnostics from the compiler: ParseException for syntax errors,
+            // CompileException for semantic ones (unknown entity type, strategy, and so on). Wrap them
+            // in a Phileas type so callers get one exception to catch and the original message is kept.
+            throw new PolicyCompilationException("The PhiSQL document could not be compiled into a policy: "
+                    + ex.getMessage(), ex);
+        }
+
+        return new Gson().fromJson(result.toJsonString(), Policy.class);
+
+    }
 
     @SerializedName("config")
     @Expose

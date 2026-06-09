@@ -71,13 +71,13 @@ public class DateFilter extends RegexFilter {
                 if(span.isAlwaysValid() || spanValidator.validate(span)) {
 
                     // The date is valid.
-                    LOGGER.debug("Date {} for pattern {} is valid.", span.getText(), span.getPattern());
+                    LOGGER.debug("Date for pattern {} is valid.", span.getPattern());
                     spans.add(span);
 
                 } else {
 
                     // The date is invalid.
-                    LOGGER.debug("Date {} for pattern {} is invalid.", span.getText(), span.getPattern());
+                    LOGGER.debug("Date for pattern {} is invalid.", span.getPattern());
 
                 }
 

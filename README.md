@@ -179,7 +179,19 @@ The [Phileas redaction policy JSON schema](https://philterd.ai/schemas/redaction
 PhiSQL source  →  Compiler  →  Phileas JSON policy  →  Phileas runtime
 ```
 
-**Schema changes go through philterd/phisql first.** Adding a new entity type, strategy, or filter option requires a schema update and a matching PhiSQL grammar change in the same pull request in that repository. Once the schema version is released, Phileas is updated to target it. Phileas itself only executes JSON policies and does not change when PhiSQL changes. Existing JSON policies remain valid — PhiSQL is purely additive.
+Phileas accepts PhiSQL directly. `Policy.fromPhiSQL(...)` compiles a PhiSQL document to a JSON policy and loads it, so you do not have to run the compiler as a separate step:
+
+```java
+Policy policy = Policy.fromPhiSQL("""
+        POLICY example DESCRIPTION 'redact emails and zip codes';
+        REDACT EMAIL_ADDRESS WITH REDACT;
+        REDACT ZIP_CODE WITH REDACT;
+        """);
+```
+
+If the document cannot be parsed or compiled, `fromPhiSQL` throws a `PolicyCompilationException` carrying the underlying compiler diagnostics. The runtime engine is unchanged — PhiSQL is compiled to JSON and the same JSON policy is executed.
+
+**Schema changes go through philterd/phisql first.** Adding a new entity type, strategy, or filter option requires a schema update and a matching PhiSQL grammar change in the same pull request in that repository. Once the schema version is released, Phileas is updated to target it. Existing JSON policies remain valid and continue to load unchanged — PhiSQL is purely additive.
 
 Each Phileas release supports exactly one schema version:
 
