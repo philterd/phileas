@@ -2,7 +2,7 @@
 
 Notable changes to Phileas, most recent first.
 
-Versions released only on GitHub (between 2.6.0 and 4.0.0) are documented in the [GitHub releases](https://github.com/philterd/phileas/releases). Issues whose identifiers start with `PHL-` were previously tracked in Jira before the project's issues were managed in GitHub.
+Full changelogs for each release are available in the [GitHub releases](https://github.com/philterd/phileas/releases). Issues whose identifiers start with `PHL-` were previously tracked in Jira before the project's issues were managed in GitHub.
 
 ## Version 4.0.0
 
@@ -27,6 +27,103 @@ Versions released only on GitHub (between 2.6.0 and 4.0.0) are documented in the
     * Context windows no longer include empty tokens produced when a token was only punctuation (or from an empty split), removing correlated noise from the vectors and cleaning up the window used by all filters.
 * The tracking number filter now also detects USPS tracking numbers written in the space-separated grouped form (for example, `9400 1000 0000 0000 0000`). Previously only tracking numbers written as a continuous string of digits were detected.
 * Fixed an `IllegalStateException` in the credit card filter that could occur when a credit-card-like number appeared inside a Unix timestamp and both the "ignore when in a Unix timestamp" and "only valid credit card numbers" options were enabled. The number is now correctly ignored instead of throwing.
+
+## Version 3.3.0 - April 2, 2026
+
+* Added a UUID anonymization method ([#297](https://github.com/philterd/phileas/pull/297)) and optional custom anonymization lists for each filter ([#293](https://github.com/philterd/phileas/pull/293)).
+* Moved the anonymization service to the filter strategy ([#298](https://github.com/philterd/phileas/pull/298)) and simplified how the anonymized token is retrieved ([#296](https://github.com/philterd/phileas/pull/296)).
+* Allowed multiple ph-eye services in a policy ([#304](https://github.com/philterd/phileas/pull/304)) and added the filter type to the context service ([#295](https://github.com/philterd/phileas/pull/295)).
+* Added the `mmmm dd yyyy` (no comma) date format ([#301](https://github.com/philterd/phileas/pull/301)).
+* Replaced the faker library ([#299](https://github.com/philterd/phileas/pull/299)) and removed the hospital abbreviations filter ([#300](https://github.com/philterd/phileas/pull/300)) and the policy name ([#302](https://github.com/philterd/phileas/pull/302)).
+* Fixed applying existing spans to text ([#292](https://github.com/philterd/phileas/pull/292)), fixed the `firstName.setCapitalized(true)` check only being applied to fuzzy matches ([#305](https://github.com/philterd/phileas/pull/305)), and adjusted the libphonenumber max tries ([#294](https://github.com/philterd/phileas/pull/294)).
+
+## Version 3.2.0 - January 20, 2026
+
+* Added support for the ph-eye medical conditions filter ([#287](https://github.com/philterd/phileas/pull/287), [#288](https://github.com/philterd/phileas/pull/288)).
+* Anonymization services can now use a custom `Random` implementation ([#282](https://github.com/philterd/phileas/pull/282)), and the HTTP client can be passed in for more control ([#283](https://github.com/philterd/phileas/pull/283)).
+* Fixed persons being detected as ages ([#290](https://github.com/philterd/phileas/pull/290)).
+* Updated log4j to 2.25.3 ([#285](https://github.com/philterd/phileas/pull/285)).
+
+## Version 3.1.0 - December 29, 2025
+
+* Format-preserving encryption is now available on more filters ([#270](https://github.com/philterd/phileas/pull/270)).
+* Added line and paragraph numbers to spans during PDF processing ([#273](https://github.com/philterd/phileas/pull/273), [#276](https://github.com/philterd/phileas/pull/276)) and the ability to redact previously identified spans in a PDF ([#275](https://github.com/philterd/phileas/pull/275)).
+* Added a `fuzzy` option to dictionaries that enables a bloom filter ([#262](https://github.com/philterd/phileas/pull/262)).
+* Switched random value generation to `SecureRandom` ([#278](https://github.com/philterd/phileas/pull/278), [#280](https://github.com/philterd/phileas/pull/280)).
+* Internal refactoring: separated `PhileasFilterService` into subclasses ([#274](https://github.com/philterd/phileas/pull/274)), created an abstract filter result ([#266](https://github.com/philterd/phileas/pull/266)), removed `apply()` ([#272](https://github.com/philterd/phileas/pull/272)), and removed the alert on filter strategies ([#264](https://github.com/philterd/phileas/pull/264)).
+
+## Version 3.0.0 - October 31, 2025
+
+This version restructured the project for simplification — Phileas is now a single Maven module instead of multiple modules, and the `context` concept was reimagined ([#249](https://github.com/philterd/phileas/pull/249)).
+
+* Simplified policy handling: policies are now passed as `Policy` objects and the `PolicyService` abstraction was removed ([#214](https://github.com/philterd/phileas/pull/214), [#216](https://github.com/philterd/phileas/pull/216), [#227](https://github.com/philterd/phileas/pull/227), [#236](https://github.com/philterd/phileas/pull/236)).
+* Added "incremental redaction" that hashes the text after each span is applied, for both text and PDFs ([#238](https://github.com/philterd/phileas/pull/238), [#251](https://github.com/philterd/phileas/pull/251)).
+* Added token counts to responses ([#244](https://github.com/philterd/phileas/pull/244)), a split service based on character count ([#241](https://github.com/philterd/phileas/pull/241)), a `skip` property on post filters ([#245](https://github.com/philterd/phileas/pull/245)), and the ability to apply previously identified spans to text ([#254](https://github.com/philterd/phileas/pull/254)).
+* Changed the condition operator `=>` to the more common `>=` ([#248](https://github.com/philterd/phileas/pull/248)).
+* Fixed invalid IBAN codes being returned ([#250](https://github.com/philterd/phileas/pull/250)) and a hardcoded ph-eye filter type ([#247](https://github.com/philterd/phileas/pull/247)).
+* Removed the document ID ([#253](https://github.com/philterd/phileas/pull/253)), sentiment detection ([#231](https://github.com/philterd/phileas/pull/231)), built-in metrics ([#225](https://github.com/philterd/phileas/pull/225)), and various unused code and dependencies.
+* Renamed the Response classes to Result and reorganized packages ([#257](https://github.com/philterd/phileas/pull/257)).
+
+## Version 2.12.3 - May 29, 2025
+
+* Fixed the HTTP connection to ph-eye being closed after each request ([#212](https://github.com/philterd/phileas/pull/212)).
+
+## Version 2.12.2 - May 27, 2025
+
+* Artifacts are now published to Maven Central ([#209](https://github.com/philterd/phileas/pull/209)).
+* Consolidated the caches ([#202](https://github.com/philterd/phileas/pull/202)) and replaced retrofit with Apache HttpComponents ([#205](https://github.com/philterd/phileas/pull/205)).
+* Removed the `domain` property from policies ([#207](https://github.com/philterd/phileas/pull/207)) and fixed the `SAME` value ([#201](https://github.com/philterd/phileas/pull/201)).
+
+## Version 2.12.1 - March 24, 2025
+
+* Fixed the duplicate span check for filter priority ([#195](https://github.com/philterd/phileas/pull/195)).
+
+## Version 2.12.0 - March 20, 2025
+
+* Added a filter `priority` ([#195](https://github.com/philterd/phileas/pull/195)) and a per-filter `windowSize` ([#194](https://github.com/philterd/phileas/pull/194)).
+* Added an option to validate zip codes ([#193](https://github.com/philterd/phileas/pull/193)) and updated the zip code population data to the 2020 census ([#192](https://github.com/philterd/phileas/pull/192)).
+
+## Version 2.11.0 - March 3, 2025
+
+* PDF redaction improvements ([#186](https://github.com/philterd/phileas/pull/186)).
+* Changed the behavior for zip codes that don't exist ([#189](https://github.com/philterd/phileas/pull/189)).
+* Ignored words are now checked with a bloom filter ([#191](https://github.com/philterd/phileas/pull/191)).
+
+## Version 2.10.0 - January 6, 2025
+
+* Replaced the Lucene-based dictionary filter with a fuzzy dictionary filter ([#185](https://github.com/philterd/phileas/pull/185)).
+* Added a truncation filter strategy for all filters ([#180](https://github.com/philterd/phileas/pull/180)) and the ability to output the replacement value on PDFs ([#179](https://github.com/philterd/phileas/pull/179)).
+* Updated PDFBox to 3.0 ([#177](https://github.com/philterd/phileas/pull/177)) and fixed the policy service being hardcoded to "local" ([#178](https://github.com/philterd/phileas/pull/178)).
+* Removed the guava ([#172](https://github.com/philterd/phileas/pull/172)) and commons-csv ([#174](https://github.com/philterd/phileas/pull/174)) dependencies, and `FilterResponse` is no longer a final record class ([#166](https://github.com/philterd/phileas/pull/166)).
+
+## Version 2.9.1 - November 20, 2024
+
+* Fixed `LineWidthSplitService` using a new line separator instead of a space ([#163](https://github.com/philterd/phileas/issues/163)).
+* An empty list of spans from ph-eye no longer indicates failure ([#162](https://github.com/philterd/phileas/issues/162)).
+* Added a default `PhEyeConfiguration` value so filters do not have to provide one ([#161](https://github.com/philterd/phileas/issues/161)).
+
+## Version 2.9.0 - November 19, 2024
+
+* More in-depth regex checking on credit cards based on BIN ([#152](https://github.com/philterd/phileas/pull/152)).
+* Fixed concurrent modification issues ([#148](https://github.com/philterd/phileas/pull/148)) and failing tests on Windows ([#160](https://github.com/philterd/phileas/pull/160)).
+* Upgraded ANTLR to 4.13.2 ([#150](https://github.com/philterd/phileas/pull/150)) and cleaned up dependencies ([#156](https://github.com/philterd/phileas/pull/156), [#158](https://github.com/philterd/phileas/pull/158)).
+
+## Version 2.8.0 - September 25, 2024
+
+* Incorporated ph-eye as a replacement for the PersonsV1 filter ([#144](https://github.com/philterd/phileas/issues/144)).
+* Changed the default `ner.endpoint` value to `ph-eye:18080` ([#143](https://github.com/philterd/phileas/issues/143)).
+
+## Version 2.7.1 - September 25, 2024
+
+* Fixed span start positions not being adjusted based on previous replacements, a regression introduced in 2.7.0 ([#145](https://github.com/philterd/phileas/issues/145)).
+
+## Version 2.7.0 - September 4, 2024
+
+* Added the MASK filter strategy ([#105](https://github.com/philterd/phileas/pull/105)).
+* Improved performance of email address detection ([#132](https://github.com/philterd/phileas/pull/132)) and added an optional check that email addresses have a valid TLD ([#135](https://github.com/philterd/phileas/pull/135)).
+* Credit card improvements: a flag to ignore credit-card-like numbers in Unix timestamps ([#137](https://github.com/philterd/phileas/pull/137)) and reduced confidence when a credit card span is bordered by dashes ([#142](https://github.com/philterd/phileas/pull/142)).
+* Spans are now placed into the applied and identified lists appropriately ([#127](https://github.com/philterd/phileas/pull/127)).
+* Removed the metrics service implementation ([#133](https://github.com/philterd/phileas/pull/133)) and fixed the EOL handling in the ANTLR grammar for conditions ([#136](https://github.com/philterd/phileas/pull/136)).
 
 ## Version 2.6.0
 
