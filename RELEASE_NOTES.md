@@ -7,6 +7,14 @@ Full changelogs for each release are available in the [GitHub releases](https://
 ## Version 4.1.0
 
 * The custom `identifier` filter now supports an optional `validator`. The validator runs a named, built-in check on each regex match and keeps the match only if the check passes, so a generic identifier can reject format-valid but checksum-invalid values without a dedicated filter and without embedding any executable code in the policy. The first validator is `luhn` (standard mod-10 Luhn over the digits of the match, ignoring separators), which validates identifiers such as the Canadian SIN. The validator may be written as a string (`"validator": "luhn"`) or as an object with a `name` and optional `params`. An unknown or not-yet-implemented validator name is a policy error rather than being silently ignored. This requires redaction policy schema 1.1.0. See the documentation for details.
+* Added the `bic-structural` identifier validator, which checks that a match is a structurally valid SWIFT/BIC code (ISO 9362: 8 or 11 characters, with a valid ISO 3166-1 country segment). SWIFT/BIC has no checksum, so this is a structural check rather than a checksum.
+* Added the `de-personalausweis` identifier validator, which validates the ICAO 9303 (7-3-1 weighted) check digit of a German Personalausweis (national ID card) number.
+* Added the `de-steuerid` identifier validator, which validates a German tax identification number (Steuer-ID) using the structural digit-repetition rule on the first ten digits and the ISO/IEC 7064 MOD 11,10 check digit.
+* Added the `mod11` identifier validator (weighted-sum mod-11 check digits), with `cpf` and `cnpj` variants for the Brazilian CPF and CNPJ.
+* Added the `mod97` identifier validator (control derived from the value mod 97), with an `iban` variant (ISO 13616 MOD-97-10) and a `nir` variant for the French INSEE/NIR, including Corsica department substitutions.
+* Added the `mod23-letter` identifier validator (control letter from a 23-entry table), for the Spanish DNI and NIE.
+* Added the `es-cif` identifier validator for the Spanish CIF (organization tax ID).
+* Using PhiSQL 1.1.0.
 
 ## Version 4.0.0
 

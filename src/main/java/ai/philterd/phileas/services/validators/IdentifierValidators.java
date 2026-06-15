@@ -58,9 +58,31 @@ public final class IdentifierValidators {
             case "luhn":
                 return LuhnValidator.getInstance();
 
+            case "bic-structural":
+                return BicStructuralValidator.getInstance();
+
+            case "de-personalausweis":
+                return DePersonalausweisValidator.getInstance();
+
+            case "de-steuerid":
+                return DeSteuerIdValidator.getInstance();
+
+            case "mod11":
+                return Mod11Validator.fromParams(validator.getParams());
+
+            case "mod97":
+                return Mod97Validator.fromParams(validator.getParams());
+
+            case "mod23-letter":
+                return Mod23LetterValidator.fromParams(validator.getParams());
+
+            case "es-cif":
+                return EsCifValidator.getInstance();
+
             default:
                 throw new IllegalArgumentException("Unsupported identifier validator '" + name
-                        + "'. This build implements: luhn.");
+                        + "'. This build implements: luhn, bic-structural, de-personalausweis, de-steuerid, "
+                        + "mod11, mod97, mod23-letter, es-cif.");
 
         }
 

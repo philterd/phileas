@@ -35,6 +35,54 @@ public class IdentifierValidatorsTest {
     }
 
     @Test
+    public void bicStructuralResolvesToBicStructuralValidator() {
+        final SpanValidator validator = IdentifierValidators.fromPolicy(new Validator("bic-structural"));
+        Assertions.assertNotNull(validator);
+        Assertions.assertTrue(validator instanceof BicStructuralValidator);
+    }
+
+    @Test
+    public void dePersonalausweisResolvesToValidator() {
+        final SpanValidator validator = IdentifierValidators.fromPolicy(new Validator("de-personalausweis"));
+        Assertions.assertNotNull(validator);
+        Assertions.assertTrue(validator instanceof DePersonalausweisValidator);
+    }
+
+    @Test
+    public void deSteuerIdResolvesToValidator() {
+        final SpanValidator validator = IdentifierValidators.fromPolicy(new Validator("de-steuerid"));
+        Assertions.assertNotNull(validator);
+        Assertions.assertTrue(validator instanceof DeSteuerIdValidator);
+    }
+
+    @Test
+    public void mod11ResolvesWithVariantParam() {
+        final SpanValidator validator = IdentifierValidators.fromPolicy(new Validator("mod11", java.util.Map.of("variant", "cpf")));
+        Assertions.assertTrue(validator instanceof Mod11Validator);
+    }
+
+    @Test
+    public void mod11WithoutVariantIsAPolicyError() {
+        Assertions.assertThrows(IllegalArgumentException.class,
+                () -> IdentifierValidators.fromPolicy(new Validator("mod11")));
+    }
+
+    @Test
+    public void mod97ResolvesWithVariantParam() {
+        Assertions.assertTrue(IdentifierValidators.fromPolicy(new Validator("mod97", java.util.Map.of("variant", "iban"))) instanceof Mod97Validator);
+    }
+
+    @Test
+    public void mod23LetterResolves() {
+        Assertions.assertTrue(IdentifierValidators.fromPolicy(new Validator("mod23-letter")) instanceof Mod23LetterValidator);
+    }
+
+    @Test
+    public void esCifResolves() {
+        Assertions.assertTrue(IdentifierValidators.fromPolicy(new Validator("es-cif")) instanceof EsCifValidator);
+    }
+
+    @Test
     public void unknownNameIsAPolicyError() {
         // A name that is not implemented must fail loudly, never be silently ignored.
         final IllegalArgumentException ex = Assertions.assertThrows(IllegalArgumentException.class,

@@ -67,15 +67,28 @@ The validator may be written in either of two forms:
 "validator": { "name": "luhn", "params": { } }
 ```
 
-The object form exists for validators that take parameters; `luhn` takes none, so the two forms are
-equivalent for it. The validator name must be one defined by the
+The object form is used by validators that take parameters, for example:
+
+```
+"validator": { "name": "mod11", "params": { "variant": "cpf" } }
+```
+
+For a validator that takes no parameters, such as `luhn`, the string and object forms are
+equivalent. The validator name must be one defined by the
 [redaction policy schema](https://philterd.ai/schemas/redaction-policy/1.1.0/schema.json). An unknown
 name, or a name the current build does not implement, is a policy error and the policy will fail to
 load. A validator is never silently skipped.
 
-| Validator | Description                                                                                       |
-|-----------|---------------------------------------------------------------------------------------------------|
-| `luhn`    | Standard mod-10 Luhn checksum over the digits of the match. Separators (spaces, hyphens) are ignored, so a value may be formatted or unformatted. Used by identifiers such as the Canadian SIN, French SIREN, and SIRET. |
+| Validator        | Description                                                                                       |
+|------------------|---------------------------------------------------------------------------------------------------|
+| `luhn`           | Standard mod-10 Luhn checksum over the digits of the match. Separators (spaces, hyphens) are ignored, so a value may be formatted or unformatted. Used by identifiers such as the Canadian SIN, French SIREN, and SIRET. |
+| `bic-structural` | Structural check for a SWIFT/BIC code (ISO 9362), which has no checksum: 4 letters (institution), 2 letters (country), 2 alphanumeric (location), and an optional 3 alphanumeric (branch), for a length of 8 or 11. The country segment must be a valid ISO 3166-1 alpha-2 code. The check is case-insensitive and takes no parameters. |
+| `de-personalausweis` | ICAO 9303 check-digit validation for a German Personalausweis (national ID card) number: a 9-character document number followed by one check digit, for a length of 10. Each document-number character is valued (digits 0-9, letters A-Z map to 10-35), weighted by the repeating 7, 3, 1 pattern, summed, and reduced mod 10 to equal the trailing check digit. The check is case-insensitive and takes no parameters. |
+| `de-steuerid` | Validates a German tax identification number (Steuer-ID / IdNr): 11 digits, first digit non-zero. Applies the structural digit-repetition rule on the first ten digits (exactly one digit repeated, twice or three times, the rest distinct) and the ISO/IEC 7064 MOD 11,10 check digit. Whitespace and `. / -` separators are ignored; takes no parameters. |
+| `mod11` | Weighted-sum mod-11 check digit(s). Requires a `variant` parameter selecting the scheme: `cpf` (Brazilian CPF, 11 digits) or `cnpj` (Brazilian CNPJ, 14 digits), each with two check digits. Non-digit separators are ignored; sequences of a single repeated digit are rejected. |
+| `mod97` | Control derived from the value mod 97. Requires a `variant` parameter: `iban` (ISO 13616 / MOD-97-10, value mod 97 equals 1) or `nir` (French INSEE/NIR, key = 97 - (body mod 97)). For `nir`, a `substitutions` parameter maps Corsica department codes to digits (default `2A` to `19`, `2B` to `18`). |
+| `mod23-letter` | Control letter taken from a 23-entry table indexed by the number mod 23, for the Spanish DNI (8 digits plus a letter) and NIE (leading X/Y/Z plus 7 digits plus a letter). A `substitutions` parameter maps the leading NIE letter to a digit (default `X` to `0`, `Y` to `1`, `Z` to `2`). |
+| `es-cif` | Bespoke validator for the Spanish CIF (organization tax ID): a leading organization-type letter, seven digits, and a control character that is a digit or a letter (table `JABCDEFGHI`) derived from a Luhn-like weighted sum. Takes no parameters. |
 
 > The `luhn` validator implements the standard Luhn algorithm only. La Poste SIRETs are a known
 > exception (they are validated by a digit-sum mod 5 rather than Luhn) and will not pass this check.
