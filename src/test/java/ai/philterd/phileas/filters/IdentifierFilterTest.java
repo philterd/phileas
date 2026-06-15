@@ -20,6 +20,7 @@ import ai.philterd.phileas.model.filtering.Filtered;
 import ai.philterd.phileas.policy.filters.Identifier;
 import ai.philterd.phileas.services.filters.regex.IdentifierFilter;
 import ai.philterd.phileas.services.strategies.rules.IdentifierFilterStrategy;
+import ai.philterd.phileas.services.validators.LuhnValidator;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -461,6 +462,124 @@ public class IdentifierFilterTest extends AbstractFilterTest {
 
         Assertions.assertEquals(1, filtered.getSpans().size());
         Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 10, 19, FilterType.IDENTIFIER));
+
+    }
+
+    private static final String SIN_PATTERN = "\\b\\d{3}[ -]?\\d{3}[ -]?\\d{3}\\b";
+
+    /**
+     * With the luhn validator attached, a Luhn-valid Canadian SIN is kept.
+     */
+    @Test
+    public void luhnValidatorKeepsValidSin() throws Exception {
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(new IdentifierFilterStrategy()))
+                .withContextService(contextService)
+                .withRandom(random)
+                .withWindowSize(windowSize)
+                .build();
+
+        final IdentifierFilter filter = new IdentifierFilter(filterConfiguration, "canada-sin", SIN_PATTERN, false, 0, LuhnValidator.getInstance());
+
+        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "the sin is 046 454 286 on file.");
+
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertEquals("046 454 286", filtered.getSpans().get(0).getText());
+
+    }
+
+    /**
+     * With the luhn validator attached, a value that matches the pattern but fails the checksum
+     * is dropped. Without the validator the same value would be redacted, so this is the behavior
+     * the validator adds.
+     */
+    @Test
+    public void luhnValidatorDropsChecksumInvalidValue() throws Exception {
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(new IdentifierFilterStrategy()))
+                .withContextService(contextService)
+                .withRandom(random)
+                .withWindowSize(windowSize)
+                .build();
+
+        final IdentifierFilter filter = new IdentifierFilter(filterConfiguration, "canada-sin", SIN_PATTERN, false, 0, LuhnValidator.getInstance());
+
+        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "the number 123 456 789 is not a sin.");
+
+        Assertions.assertEquals(0, filtered.getSpans().size());
+
+    }
+
+    /**
+     * The same pattern with no validator keeps the checksum-invalid value, confirming the drop
+     * above is the validator's doing and not the pattern's.
+     */
+    @Test
+    public void noValidatorKeepsChecksumInvalidValue() throws Exception {
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(new IdentifierFilterStrategy()))
+                .withContextService(contextService)
+                .withRandom(random)
+                .withWindowSize(windowSize)
+                .build();
+
+        final IdentifierFilter filter = new IdentifierFilter(filterConfiguration, "canada-sin", SIN_PATTERN, false, 0);
+
+        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "the number 123 456 789 is not a sin.");
+
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertEquals("123 456 789", filtered.getSpans().get(0).getText());
+
+    }
+
+    // A context-anchored pattern that captures only the SIN digits in group 1.
+    private static final String SIN_CONTEXT_PATTERN = "SIN[:\\s]*((?:\\d{3}[ -]?){2}\\d{3})";
+
+    /**
+     * The validator runs against the captured group (what gets redacted), not the whole match, so
+     * a context-cued pattern with a capture group still validates the identifier itself.
+     */
+    @Test
+    public void luhnValidatorAppliesToCapturedGroupValidSin() throws Exception {
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(new IdentifierFilterStrategy()))
+                .withContextService(contextService)
+                .withRandom(random)
+                .withWindowSize(windowSize)
+                .build();
+
+        final IdentifierFilter filter = new IdentifierFilter(filterConfiguration, "canada-sin", SIN_CONTEXT_PATTERN, false, 1, LuhnValidator.getInstance());
+
+        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "the SIN: 046 454 286 is on file.");
+
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertEquals("046 454 286", filtered.getSpans().get(0).getText());
+
+    }
+
+    /**
+     * The captured group is checksum-invalid, so it is dropped even though the surrounding context
+     * matched.
+     */
+    @Test
+    public void luhnValidatorAppliesToCapturedGroupInvalidSin() throws Exception {
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(new IdentifierFilterStrategy()))
+                .withContextService(contextService)
+                .withRandom(random)
+                .withWindowSize(windowSize)
+                .build();
+
+        final IdentifierFilter filter = new IdentifierFilter(filterConfiguration, "canada-sin", SIN_CONTEXT_PATTERN, false, 1, LuhnValidator.getInstance());
+
+        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "the SIN: 123 456 789 is on file.");
+
+        Assertions.assertEquals(0, filtered.getSpans().size());
 
     }
 

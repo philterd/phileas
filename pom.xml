@@ -5,7 +5,7 @@
     <artifactId>phileas</artifactId>
     <groupId>ai.philterd</groupId>
     <packaging>jar</packaging>
-    <version>4.0.0</version>
+    <version>4.1.0-SNAPSHOT</version>
     <name>phileas</name>
     <url>https://www.philterd.ai</url>
     <description>Phileas is a library for identifying and redacting sensitive information from natural language text.
@@ -60,7 +60,7 @@
         <maven.surefire.version>3.5.4</maven.surefire.version>
         <mockito.version>5.23.0</mockito.version>
         <pdfbox.version>3.0.7</pdfbox.version>
-        <phisql.version>1.0.0</phisql.version>
+        <phisql.version>1.1.0</phisql.version>
     </properties>
     <build>
         <plugins>
