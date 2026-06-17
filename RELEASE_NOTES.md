@@ -4,6 +4,10 @@ Notable changes to Phileas, most recent first.
 
 Full changelogs for each release are available in the [GitHub releases](https://github.com/philterd/phileas/releases). Issues whose identifiers start with `PHL-` were previously tracked in Jira before the project's issues were managed in GitHub.
 
+## Version 4.1.0
+
+* PhEye detection can now be backed by a pluggable detector. In addition to calling a remote Ph-Eye service over HTTP, a PhEye filter can run a GLiNER model on-device by setting `modelPath` on its configuration; local inference is provided by the optional [`phileas-pheye-onnx`](https://github.com/philterd/phileas-pheye-onnx) module (ONNX Runtime). Without that module on the classpath, setting `modelPath` fails with a clear message and remote Ph-Eye behavior is unchanged.
+
 ## Version 4.0.0
 
 * Now uses Java 25.

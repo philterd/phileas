@@ -199,6 +199,10 @@ Each Phileas release supports exactly one schema version:
 |-----------------|-----------------------|
 | 4.0.0           | 1.0.0                 |
 
+## Local PhEye Inference
+
+Phileas detects names by calling a [Ph-Eye](https://www.github.com/philterd/ph-eye) service over HTTP. To run a GLiNER model on-device instead, with no Ph-Eye server, add the optional [phileas-pheye-onnx](https://github.com/philterd/phileas-pheye-onnx) module, which performs local inference via ONNX Runtime. Configure a PhEye filter with a local model directory (`modelPath`) and detection runs in-process; without the module, Phileas uses the remote Ph-Eye service as before.
+
 ## Powered by Phileas
 
 Phileas is the underlying core of [Philter](https://www.github.com/philterd/philter), a turnkey text redaction engine which is built on top of Phileas and provides an API for redacting text. Philter runs entirely within your cloud and never transmits data outside your cloud. Custom AI models are available for domains like healthcare, legal, and news.

@@ -1031,6 +1031,7 @@ public class FilterPolicyLoader {
                     phEyeConfiguration.setMaxIdleConnections(phEyePolicyConfig.getMaxIdleConnections());
                     phEyeConfiguration.setBearerToken(phEyePolicyConfig.getBearerToken());
                     phEyeConfiguration.setLabels(phEyePolicyConfig.getLabels());
+                    phEyeConfiguration.setModelPath(phEyePolicyConfig.getModelPath());
 
                     final Filter filter = new PhEyeFilter(
                             filterConfiguration,
@@ -1074,6 +1075,7 @@ public class FilterPolicyLoader {
             phEyeConfiguration.setMaxIdleConnections(phEyePolicyConfig.getMaxIdleConnections());
             phEyeConfiguration.setBearerToken(phEyePolicyConfig.getBearerToken());
             phEyeConfiguration.setLabels(phEyePolicyConfig.getLabels());
+            phEyeConfiguration.setModelPath(phEyePolicyConfig.getModelPath());
 
             final Filter filter = new PhEyeFilter(
                     filterConfiguration,

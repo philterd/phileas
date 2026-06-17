@@ -28,6 +28,13 @@ public class PhEyeConfiguration {
     @Expose
     protected Collection<String> labels;
 
+    // Optional path to a local GLiNER model directory (ONNX model, tokenizer, and
+    // gliner_config.json). When set, detection runs locally via ONNX Runtime instead
+    // of calling the remote endpoint. Emitted by phisql's DETECT PHEYE ... MODEL clause.
+    @SerializedName("modelPath")
+    @Expose
+    protected String modelPath;
+
     public String getEndpoint() {
         return endpoint;
     }
@@ -66,6 +73,14 @@ public class PhEyeConfiguration {
 
     public void setBearerToken(String bearerToken) {
         this.bearerToken = bearerToken;
+    }
+
+    public String getModelPath() {
+        return modelPath;
+    }
+
+    public void setModelPath(String modelPath) {
+        this.modelPath = modelPath;
     }
 
 }

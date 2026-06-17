@@ -28,7 +28,11 @@ public class PhEyeConfiguration {
     private int maxIdleConnections;
     private int keepAliveDurationMs;
     private Collection<String> labels;
-    
+
+    // Optional path to a local GLiNER model directory. When set, detection runs
+    // locally via ONNX Runtime instead of calling the remote endpoint.
+    private String modelPath;
+
     public PhEyeConfiguration(final String endpoint) {
         this.endpoint = endpoint;
     }
@@ -83,6 +87,14 @@ public class PhEyeConfiguration {
 
     public void setBearerToken(String bearerToken) {
         this.bearerToken = bearerToken;
+    }
+
+    public String getModelPath() {
+        return modelPath;
+    }
+
+    public void setModelPath(String modelPath) {
+        this.modelPath = modelPath;
     }
 
 }
