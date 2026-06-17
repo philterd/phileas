@@ -4,11 +4,20 @@ Notable changes to Phileas, most recent first.
 
 Full changelogs for each release are available in the [GitHub releases](https://github.com/philterd/phileas/releases). Issues whose identifiers start with `PHL-` were previously tracked in Jira before the project's issues were managed in GitHub.
 
-## Version 4.1.0
+## Version 4.1.0 - Unreleased
 
+* The custom `identifier` filter now supports an optional `validator`. The validator runs a named, built-in check on each regex match and keeps the match only if the check passes, so a generic identifier can reject format-valid but checksum-invalid values without a dedicated filter and without embedding any executable code in the policy. The first validator is `luhn` (standard mod-10 Luhn over the digits of the match, ignoring separators), which validates identifiers such as the Canadian SIN. The validator may be written as a string (`"validator": "luhn"`) or as an object with a `name` and optional `params`. An unknown or not-yet-implemented validator name is a policy error rather than being silently ignored. This requires redaction policy schema 1.1.0. See the documentation for details.
+* Added the `bic-structural` identifier validator, which checks that a match is a structurally valid SWIFT/BIC code (ISO 9362: 8 or 11 characters, with a valid ISO 3166-1 country segment). SWIFT/BIC has no checksum, so this is a structural check rather than a checksum.
+* Added the `de-personalausweis` identifier validator, which validates the ICAO 9303 (7-3-1 weighted) check digit of a German Personalausweis (national ID card) number.
+* Added the `de-steuerid` identifier validator, which validates a German tax identification number (Steuer-ID) using the structural digit-repetition rule on the first ten digits and the ISO/IEC 7064 MOD 11,10 check digit.
+* Added the `mod11` identifier validator (weighted-sum mod-11 check digits), with `cpf` and `cnpj` variants for the Brazilian CPF and CNPJ.
+* Added the `mod97` identifier validator (control derived from the value mod 97), with an `iban` variant (ISO 13616 MOD-97-10) and a `nir` variant for the French INSEE/NIR, including Corsica department substitutions.
+* Added the `mod23-letter` identifier validator (control letter from a 23-entry table), for the Spanish DNI and NIE.
+* Added the `es-cif` identifier validator for the Spanish CIF (organization tax ID).
 * PhEye detection can now be backed by a pluggable detector. In addition to calling a remote Ph-Eye service over HTTP, a PhEye filter can run a GLiNER model on-device by setting `modelPath` on its configuration; local inference is provided by the optional [`phileas-pheye-onnx`](https://github.com/philterd/phileas-pheye-onnx) module (ONNX Runtime). Without that module on the classpath, setting `modelPath` fails with a clear message and remote Ph-Eye behavior is unchanged.
+* Using PhiSQL 1.1.0.
 
-## Version 4.0.0
+## Version 4.0.0 - June 10, 2026
 
 * Now uses Java 25.
 * `CRYPTO_REPLACE` now uses authenticated AES-GCM encryption with a fresh random nonce per value, replacing AES-CBC with a static IV. Values encrypted by earlier versions are not compatible, and the `iv` policy field is no longer used (it is still accepted in policies for backward compatibility but is ignored). Encryption keys and FPE tweaks are referenced from environment variables with the `env:` prefix rather than stored in policies. See the documentation for details.
@@ -129,7 +138,7 @@ This version restructured the project for simplification — Phileas is now a si
 * Spans are now placed into the applied and identified lists appropriately ([#127](https://github.com/philterd/phileas/pull/127)).
 * Removed the metrics service implementation ([#133](https://github.com/philterd/phileas/pull/133)) and fixed the EOL handling in the ANTLR grammar for conditions ([#136](https://github.com/philterd/phileas/pull/136)).
 
-## Version 2.6.0
+## Version 2.6.0 - July 2, 2024
 
 * PHL-313 - Remove OWNER project fork for managing application properties
 * PHL-312 - Add death date detection similar to the birthdate detection
@@ -355,7 +364,7 @@ This version restructured the project for simplification — Phileas is now a si
 * PHL-13 - Do not require filter profile name for StaticFilterProfileService
 * PHL-3 - Apply sensitivity level to NER entities
 
-## Version 1.0.1
+## Version 1.0.1 - October 17, 2019
 
 * PHL-11 - Fix issue where spans aren't getting applied - Bug
 * PHL-10 - Remove unneeded guava dependency

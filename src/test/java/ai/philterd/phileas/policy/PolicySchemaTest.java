@@ -43,14 +43,14 @@ public class PolicySchemaTest {
     @Test
     public void supportedSchemaVersionIsAvailableFromPhisql() {
 
-        assertEquals("1.0.0", ai.philterd.phisql.PolicySchema.getSupportedSchemaVersion());
+        assertEquals("1.1.0", ai.philterd.phisql.PolicySchema.getSupportedSchemaVersion());
 
     }
 
     @Test
     public void supportedSchemaVersionIsAvailable() {
 
-        assertEquals("1.0.0", ai.philterd.phileas.policy.PolicySchema.getSupportedSchemaVersion());
+        assertEquals("1.1.0", ai.philterd.phileas.policy.PolicySchema.getSupportedSchemaVersion());
 
     }
 

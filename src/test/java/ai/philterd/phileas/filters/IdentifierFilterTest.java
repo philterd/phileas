@@ -18,13 +18,21 @@ package ai.philterd.phileas.filters;
 import ai.philterd.phileas.model.filtering.FilterType;
 import ai.philterd.phileas.model.filtering.Filtered;
 import ai.philterd.phileas.policy.filters.Identifier;
+import ai.philterd.phileas.policy.filters.Validator;
 import ai.philterd.phileas.services.filters.regex.IdentifierFilter;
 import ai.philterd.phileas.services.strategies.rules.IdentifierFilterStrategy;
+import ai.philterd.phileas.services.validators.BicStructuralValidator;
+import ai.philterd.phileas.services.validators.DePersonalausweisValidator;
+import ai.philterd.phileas.services.validators.DeSteuerIdValidator;
+import ai.philterd.phileas.services.validators.IdentifierValidators;
+import ai.philterd.phileas.services.validators.LuhnValidator;
+import ai.philterd.phileas.services.validators.SpanValidator;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.time.Duration;
 import java.util.List;
+import java.util.Map;
 
 import static ai.philterd.phileas.services.strategies.AbstractFilterStrategy.RANDOM_REPLACE;
 
@@ -461,6 +469,310 @@ public class IdentifierFilterTest extends AbstractFilterTest {
 
         Assertions.assertEquals(1, filtered.getSpans().size());
         Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 10, 19, FilterType.IDENTIFIER));
+
+    }
+
+    private static final String SIN_PATTERN = "\\b\\d{3}[ -]?\\d{3}[ -]?\\d{3}\\b";
+
+    /**
+     * With the luhn validator attached, a Luhn-valid Canadian SIN is kept.
+     */
+    @Test
+    public void luhnValidatorKeepsValidSin() throws Exception {
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(new IdentifierFilterStrategy()))
+                .withContextService(contextService)
+                .withRandom(random)
+                .withWindowSize(windowSize)
+                .build();
+
+        final IdentifierFilter filter = new IdentifierFilter(filterConfiguration, "canada-sin", SIN_PATTERN, false, 0, LuhnValidator.getInstance());
+
+        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "the sin is 046 454 286 on file.");
+
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertEquals("046 454 286", filtered.getSpans().get(0).getText());
+
+    }
+
+    /**
+     * With the luhn validator attached, a value that matches the pattern but fails the checksum
+     * is dropped. Without the validator the same value would be redacted, so this is the behavior
+     * the validator adds.
+     */
+    @Test
+    public void luhnValidatorDropsChecksumInvalidValue() throws Exception {
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(new IdentifierFilterStrategy()))
+                .withContextService(contextService)
+                .withRandom(random)
+                .withWindowSize(windowSize)
+                .build();
+
+        final IdentifierFilter filter = new IdentifierFilter(filterConfiguration, "canada-sin", SIN_PATTERN, false, 0, LuhnValidator.getInstance());
+
+        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "the number 123 456 789 is not a sin.");
+
+        Assertions.assertEquals(0, filtered.getSpans().size());
+
+    }
+
+    /**
+     * The same pattern with no validator keeps the checksum-invalid value, confirming the drop
+     * above is the validator's doing and not the pattern's.
+     */
+    @Test
+    public void noValidatorKeepsChecksumInvalidValue() throws Exception {
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(new IdentifierFilterStrategy()))
+                .withContextService(contextService)
+                .withRandom(random)
+                .withWindowSize(windowSize)
+                .build();
+
+        final IdentifierFilter filter = new IdentifierFilter(filterConfiguration, "canada-sin", SIN_PATTERN, false, 0);
+
+        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "the number 123 456 789 is not a sin.");
+
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertEquals("123 456 789", filtered.getSpans().get(0).getText());
+
+    }
+
+    // A context-anchored pattern that captures only the SIN digits in group 1.
+    private static final String SIN_CONTEXT_PATTERN = "SIN[:\\s]*((?:\\d{3}[ -]?){2}\\d{3})";
+
+    /**
+     * The validator runs against the captured group (what gets redacted), not the whole match, so
+     * a context-cued pattern with a capture group still validates the identifier itself.
+     */
+    @Test
+    public void luhnValidatorAppliesToCapturedGroupValidSin() throws Exception {
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(new IdentifierFilterStrategy()))
+                .withContextService(contextService)
+                .withRandom(random)
+                .withWindowSize(windowSize)
+                .build();
+
+        final IdentifierFilter filter = new IdentifierFilter(filterConfiguration, "canada-sin", SIN_CONTEXT_PATTERN, false, 1, LuhnValidator.getInstance());
+
+        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "the SIN: 046 454 286 is on file.");
+
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertEquals("046 454 286", filtered.getSpans().get(0).getText());
+
+    }
+
+    /**
+     * The captured group is checksum-invalid, so it is dropped even though the surrounding context
+     * matched.
+     */
+    @Test
+    public void luhnValidatorAppliesToCapturedGroupInvalidSin() throws Exception {
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(new IdentifierFilterStrategy()))
+                .withContextService(contextService)
+                .withRandom(random)
+                .withWindowSize(windowSize)
+                .build();
+
+        final IdentifierFilter filter = new IdentifierFilter(filterConfiguration, "canada-sin", SIN_CONTEXT_PATTERN, false, 1, LuhnValidator.getInstance());
+
+        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "the SIN: 123 456 789 is on file.");
+
+        Assertions.assertEquals(0, filtered.getSpans().size());
+
+    }
+
+    private static final String BIC_PATTERN = "\\b[A-Z]{6}[A-Z0-9]{2}([A-Z0-9]{3})?\\b";
+
+    /**
+     * With the bic-structural validator attached, a structurally valid BIC with a real country code
+     * is kept.
+     */
+    @Test
+    public void bicValidatorKeepsValidBic() throws Exception {
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(new IdentifierFilterStrategy()))
+                .withContextService(contextService)
+                .withRandom(random)
+                .withWindowSize(windowSize)
+                .build();
+
+        final IdentifierFilter filter = new IdentifierFilter(filterConfiguration, "bic", BIC_PATTERN, true, 0, BicStructuralValidator.getInstance());
+
+        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "wire to DEUTDEFF please.");
+
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertEquals("DEUTDEFF", filtered.getSpans().get(0).getText());
+
+    }
+
+    /**
+     * A token that matches the BIC shape but has an unassigned country code is dropped.
+     */
+    @Test
+    public void bicValidatorDropsInvalidCountry() throws Exception {
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(new IdentifierFilterStrategy()))
+                .withContextService(contextService)
+                .withRandom(random)
+                .withWindowSize(windowSize)
+                .build();
+
+        final IdentifierFilter filter = new IdentifierFilter(filterConfiguration, "bic", BIC_PATTERN, true, 0, BicStructuralValidator.getInstance());
+
+        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "wire to DEUTZZFF please.");
+
+        Assertions.assertEquals(0, filtered.getSpans().size());
+
+    }
+
+    // A leading letter followed by nine digits (the last is the check digit).
+    private static final String DE_ID_PATTERN = "\\b[A-Z]\\d{9}\\b";
+
+    /**
+     * With the de-personalausweis validator attached, a number with a correct check digit is kept.
+     */
+    @Test
+    public void dePersonalausweisValidatorKeepsValidNumber() throws Exception {
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(new IdentifierFilterStrategy()))
+                .withContextService(contextService)
+                .withRandom(random)
+                .withWindowSize(windowSize)
+                .build();
+
+        final IdentifierFilter filter = new IdentifierFilter(filterConfiguration, "de-id", DE_ID_PATTERN, true, 0, DePersonalausweisValidator.getInstance());
+
+        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "ID card T220001293 on file.");
+
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertEquals("T220001293", filtered.getSpans().get(0).getText());
+
+    }
+
+    /**
+     * A number that matches the shape but fails the check digit is dropped.
+     */
+    @Test
+    public void dePersonalausweisValidatorDropsBadCheckDigit() throws Exception {
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(new IdentifierFilterStrategy()))
+                .withContextService(contextService)
+                .withRandom(random)
+                .withWindowSize(windowSize)
+                .build();
+
+        final IdentifierFilter filter = new IdentifierFilter(filterConfiguration, "de-id", DE_ID_PATTERN, true, 0, DePersonalausweisValidator.getInstance());
+
+        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "ID card T220001294 on file.");
+
+        Assertions.assertEquals(0, filtered.getSpans().size());
+
+    }
+
+    private static final String DE_STEUERID_PATTERN = "\\b\\d{11}\\b";
+
+    /**
+     * With the de-steuerid validator attached, a number that satisfies the repetition rule and the
+     * check digit is kept.
+     */
+    @Test
+    public void deSteuerIdValidatorKeepsValidNumber() throws Exception {
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(new IdentifierFilterStrategy()))
+                .withContextService(contextService)
+                .withRandom(random)
+                .withWindowSize(windowSize)
+                .build();
+
+        final IdentifierFilter filter = new IdentifierFilter(filterConfiguration, "de-steuerid", DE_STEUERID_PATTERN, true, 0, DeSteuerIdValidator.getInstance());
+
+        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "tax id 86095742719 on file.");
+
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertEquals("86095742719", filtered.getSpans().get(0).getText());
+
+    }
+
+    /**
+     * A number that matches the shape but fails the check digit is dropped.
+     */
+    @Test
+    public void deSteuerIdValidatorDropsBadCheckDigit() throws Exception {
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(new IdentifierFilterStrategy()))
+                .withContextService(contextService)
+                .withRandom(random)
+                .withWindowSize(windowSize)
+                .build();
+
+        final IdentifierFilter filter = new IdentifierFilter(filterConfiguration, "de-steuerid", DE_STEUERID_PATTERN, true, 0, DeSteuerIdValidator.getInstance());
+
+        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "tax id 86095742718 on file.");
+
+        Assertions.assertEquals(0, filtered.getSpans().size());
+
+    }
+
+    private static final String CPF_PATTERN = "\\b\\d{11}\\b";
+
+    /**
+     * A parameterized validator (mod11 with the cpf variant) resolved through the registry keeps a
+     * valid CPF, proving the params path works end to end through the filter.
+     */
+    @Test
+    public void mod11CpfValidatorKeepsValidCpf() throws Exception {
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(new IdentifierFilterStrategy()))
+                .withContextService(contextService)
+                .withRandom(random)
+                .withWindowSize(windowSize)
+                .build();
+
+        final SpanValidator cpf = IdentifierValidators.fromPolicy(new Validator("mod11", Map.of("variant", "cpf")));
+        final IdentifierFilter filter = new IdentifierFilter(filterConfiguration, "cpf", CPF_PATTERN, true, 0, cpf);
+
+        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "cpf 52998224725 on file.");
+
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertEquals("52998224725", filtered.getSpans().get(0).getText());
+
+    }
+
+    /**
+     * The same validator drops a value that matches the shape but fails the mod-11 check digits.
+     */
+    @Test
+    public void mod11CpfValidatorDropsInvalidCpf() throws Exception {
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(new IdentifierFilterStrategy()))
+                .withContextService(contextService)
+                .withRandom(random)
+                .withWindowSize(windowSize)
+                .build();
+
+        final SpanValidator cpf = IdentifierValidators.fromPolicy(new Validator("mod11", Map.of("variant", "cpf")));
+        final IdentifierFilter filter = new IdentifierFilter(filterConfiguration, "cpf", CPF_PATTERN, true, 0, cpf);
+
+        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "cpf 52998224724 on file.");
+
+        Assertions.assertEquals(0, filtered.getSpans().size());
 
     }
 

@@ -17,6 +17,7 @@ package ai.philterd.phileas.policy.filters;
 
 import ai.philterd.phileas.services.strategies.rules.IdentifierFilterStrategy;
 import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.JsonAdapter;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
@@ -47,6 +48,11 @@ public class Identifier extends AbstractFilter {
     @SerializedName("classification")
     @Expose
     private String classification = "custom-identifier";
+
+    @SerializedName("validator")
+    @Expose
+    @JsonAdapter(Validator.ValidatorAdapter.class)
+    private Validator validator;
 
     public List<IdentifierFilterStrategy> getIdentifierFilterStrategies() {
         return identifierFilterStrategies;
@@ -86,6 +92,14 @@ public class Identifier extends AbstractFilter {
 
     public void setGroupNumber(int groupNumber) {
         this.groupNumber = groupNumber;
+    }
+
+    public Validator getValidator() {
+        return validator;
+    }
+
+    public void setValidator(Validator validator) {
+        this.validator = validator;
     }
 
 }

@@ -55,6 +55,7 @@ import ai.philterd.phileas.services.filters.regex.UrlFilter;
 import ai.philterd.phileas.services.filters.regex.VinFilter;
 import ai.philterd.phileas.services.filters.regex.ZipCodeFilter;
 import ai.philterd.phileas.services.validators.DateSpanValidator;
+import ai.philterd.phileas.services.validators.IdentifierValidators;
 import ai.philterd.phileas.services.validators.SpanValidator;
 import com.google.gson.Gson;
 import org.apache.commons.collections4.CollectionUtils;
@@ -989,9 +990,10 @@ public class FilterPolicyLoader {
                     final String pattern = identifier.getPattern();
                     final boolean caseSensitive = identifier.isCaseSensitive();
                     final int groupNumber = identifier.getGroupNumber();
+                    final SpanValidator validator = IdentifierValidators.fromPolicy(identifier.getValidator());
 
                     final Filter identifierFilter = new IdentifierFilter(
-                            filterConfiguration, classification, pattern, caseSensitive, groupNumber
+                            filterConfiguration, classification, pattern, caseSensitive, groupNumber, validator
                     );
 
                     enabledFilters.add(identifierFilter);

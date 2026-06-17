@@ -23,15 +23,25 @@ import ai.philterd.phileas.model.filtering.Filtered;
 import ai.philterd.phileas.model.filtering.Span;
 import ai.philterd.phileas.policy.Policy;
 import ai.philterd.phileas.services.Analyzer;
+import ai.philterd.phileas.services.validators.SpanValidator;
 
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Pattern;
 
 public class IdentifierFilter extends RegexFilter {
 
+    private final SpanValidator validator;
+
     public IdentifierFilter(FilterConfiguration filterConfiguration, String classification, String regex, boolean caseSensitive, int groupNumber) {
+        this(filterConfiguration, classification, regex, caseSensitive, groupNumber, null);
+    }
+
+    public IdentifierFilter(FilterConfiguration filterConfiguration, String classification, String regex, boolean caseSensitive, int groupNumber, SpanValidator validator) {
         super(FilterType.IDENTIFIER, filterConfiguration);
+
+        this.validator = validator;
 
         final Pattern pattern;
 
@@ -55,7 +65,22 @@ public class IdentifierFilter extends RegexFilter {
     @Override
     public Filtered filter(Policy policy, String context, int piece, String input) throws Exception {
 
-        final List<Span> spans = findSpans(policy, analyzer, input, context);
+        final List<Span> rawSpans = findSpans(policy, analyzer, input, context);
+
+        // With no validator, every regex match is kept. With a validator, a match is kept only
+        // if it passes (for example a checksum), so a generic identifier can reject format-valid
+        // but invalid values.
+        if(validator == null) {
+            return new Filtered(context, rawSpans);
+        }
+
+        final List<Span> spans = new LinkedList<>();
+
+        for(final Span span : rawSpans) {
+            if(span.isAlwaysValid() || validator.validate(span)) {
+                spans.add(span);
+            }
+        }
 
         return new Filtered(context, spans);
 
