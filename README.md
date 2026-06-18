@@ -111,6 +111,7 @@ Each Phileas release supports exactly one schema version:
 | Phileas Version | Policy Schema Version |
 |-----------------|-----------------------|
 | 4.0.0           | 1.0.0                 |
+| 4.1.0           | 1.1.0                 |
 
 ## Names and Free-Text Entities with Ph-Eye
 
