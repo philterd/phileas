@@ -64,6 +64,23 @@ The `response` contains information about the identified sensitive information a
 
 The [PhileasFilterServiceTest](https://github.com/philterd/phileas/blob/main/phileas-core/src/test/java/io/philterd/test/phileas/services/PhileasFilterServiceTest.java) and [EndToEndTests](https://github.com/philterd/phileas/blob/main/phileas-core/src/test/java/io/philterd/test/phileas/services/EndToEndTests.java) test classes have examples of how to configure Phileas and filter text.
 
+#### Redacting many texts efficiently (prepared policy)
+
+When you redact many texts with the same policy in a tight loop (for example a per-row Spark, Kafka, or logging function), prepare the policy once and reuse the handle. `prepare()` resolves the policy's filters and post-filters a single time, so each call avoids that per-call work. The handle is safe to reuse across calls and across threads.
+
+```
+PlainTextFilterService service = new PlainTextFilterService(
+        phileasConfiguration, contextService, vectorService, null);
+
+// Resolve the policy once.
+PlainTextFilterService.PreparedPolicy prepared = service.prepare(policy);
+
+// Reuse the handle for every text.
+for (String text : texts) {
+    TextFilterResult result = prepared.filter(context, text);
+}
+```
+
 ### Finding and Redacting Sensitive Information in a PDF Document
 
 Create a `FilterService`, using a `PhileasConfiguration`, and call `filter()` on the service:

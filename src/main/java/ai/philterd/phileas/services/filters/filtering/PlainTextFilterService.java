@@ -80,10 +80,34 @@ public class PlainTextFilterService extends TextFilterService {
         final List<Filter> filters = filterPolicyLoader.getFiltersForPolicy(policy, filterCache);
         final List<PostFilter> postFilters = getPostFiltersForPolicy(policy);
 
+        return filter(policy, filters, postFilters, context, input);
+
+    }
+
+    /**
+     * Resolves a policy's filters and post-filters once and returns a reusable handle, so per-row
+     * callers (for example a Spark or Kafka UDF) do not re-resolve the policy on every call. The
+     * returned {@link PreparedPolicy} produces the same result as {@link #filter(Policy, String,
+     * String)} with this policy, and is safe to reuse across calls and across threads.
+     * @param policy The {@link Policy} to prepare.
+     * @return A {@link PreparedPolicy} bound to the resolved filters for {@code policy}.
+     * @throws Exception Thrown if the policy's filters cannot be built.
+     */
+    public PreparedPolicy prepare(final Policy policy) throws Exception {
+        final List<Filter> filters = filterPolicyLoader.getFiltersForPolicy(policy, filterCache);
+        final List<PostFilter> postFilters = getPostFiltersForPolicy(policy);
+        return new PreparedPolicy(policy, filters, postFilters);
+    }
+
+    // Shared processing path used by both filter(policy, context, input) and a PreparedPolicy, after
+    // the policy's filters and post-filters have been resolved.
+    private TextFilterResult filter(final Policy policy, final List<Filter> filters,
+                                    final List<PostFilter> postFilters, final String context,
+                                    final String input) throws Exception {
+
         final TextFilterResult textFilterResult;
 
         // Do we need to split the input text due to its size?
-        // Is the appliesToFilter = "*" or is at least one of the filters in the policy in the appliesToFilter list?
         if (policy.getConfig().getSplitting().isEnabled() && input.length() >= policy.getConfig().getSplitting().getThreshold()) {
 
             // Get the splitter to use from the policy.
@@ -115,6 +139,37 @@ public class PlainTextFilterService extends TextFilterService {
         }
 
         return textFilterResult;
+
+    }
+
+    /**
+     * A policy with its filters and post-filters already resolved, for repeated filtering without the
+     * per-call policy resolution. Create one with {@link PlainTextFilterService#prepare(Policy)} and
+     * reuse it. Like the service itself, it is safe to call concurrently on a shared instance.
+     */
+    public final class PreparedPolicy {
+
+        private final Policy policy;
+        private final List<Filter> filters;
+        private final List<PostFilter> postFilters;
+
+        private PreparedPolicy(final Policy policy, final List<Filter> filters, final List<PostFilter> postFilters) {
+            this.policy = policy;
+            this.filters = filters;
+            this.postFilters = postFilters;
+        }
+
+        /**
+         * Filters text using this prepared policy. Equivalent to {@link
+         * PlainTextFilterService#filter(Policy, String, String)} but without re-resolving the policy.
+         * @param context The redaction context.
+         * @param input The input text.
+         * @return A {@link TextFilterResult}.
+         * @throws Exception Thrown if the text cannot be filtered.
+         */
+        public TextFilterResult filter(final String context, final String input) throws Exception {
+            return PlainTextFilterService.this.filter(policy, filters, postFilters, context, input);
+        }
 
     }
 
