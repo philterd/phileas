@@ -39,6 +39,11 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Abstract base class for filter services.
+ *
+ * <p>A warm instance is safe to share across threads: the filter cache is a
+ * {@link ConcurrentHashMap} populated via {@code computeIfAbsent}, and {@code filter()} does not
+ * mutate instance state. Per-row callers (Spark, Kafka, logging UDFs) should share one instance
+ * rather than locking around {@code filter()}.
  */
 public abstract class FilterService {
 

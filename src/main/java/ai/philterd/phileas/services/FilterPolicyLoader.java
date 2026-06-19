@@ -73,6 +73,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
+import java.util.concurrent.CompletionException;
 
 public class FilterPolicyLoader {
 
@@ -114,10 +115,39 @@ public class FilterPolicyLoader {
         // complete list of filters for this policy has already been built, reuse it. Caching the whole
         // list (rather than individual filters by type) means the list-based custom dictionary,
         // identifier, and ph-eye filters are cached too, instead of being rebuilt on every call.
-        final List<Filter> cachedFilters = filterCache.get(policyKey);
-        if (cachedFilters != null) {
-            return cachedFilters;
+        //
+        // computeIfAbsent builds the filter set at most once per policy even when multiple threads
+        // race a cold cache, so a single FilterService can be shared across threads (for example a
+        // per-row Spark/Kafka UDF) without each racing thread redundantly building the same filters.
+        // The build throws checked exceptions, which a mapping function cannot, so they are wrapped
+        // in a CompletionException and unwrapped here to preserve this method's throws contract.
+        try {
+            return filterCache.computeIfAbsent(policyKey, key -> {
+                try {
+                    return buildFilters(policy, policyKey);
+                } catch (final Exception e) {
+                    throw new CompletionException(e);
+                }
+            });
+        } catch (final CompletionException e) {
+            final Throwable cause = e.getCause();
+            if (cause instanceof Exception) {
+                throw (Exception) cause;
+            }
+            throw e;
         }
+
+    }
+
+    /**
+     * Build the complete list of filters for a policy. This is the cache-miss path of
+     * {@link #getFiltersForPolicy(Policy, Map)} and is invoked at most once per distinct policy.
+     * @param policy The {@link Policy} containing the filters.
+     * @param policyKey A hash of the policy, used only for logging.
+     * @return A list of {@link Filter} from the policy.
+     * @throws Exception Thrown if the policy cannot be read or the filters cannot be instantiated.
+     */
+    private List<Filter> buildFilters(final Policy policy, final String policyKey) throws Exception {
 
         final List<Filter> enabledFilters = new LinkedList<>();
 
@@ -1091,8 +1121,6 @@ public class FilterPolicyLoader {
             enabledFilters.add(filter);
 
         }
-
-        filterCache.put(policyKey, enabledFilters);
 
         return enabledFilters;
 

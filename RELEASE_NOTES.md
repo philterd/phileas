@@ -15,6 +15,7 @@ Full changelogs for each release are available in the [GitHub releases](https://
 * Added the `mod23-letter` identifier validator (control letter from a 23-entry table), for the Spanish DNI and NIE.
 * Added the `es-cif` identifier validator for the Spanish CIF (organization tax ID).
 * PhEye detection can now be backed by a pluggable detector. In addition to calling a remote Ph-Eye service over HTTP, a PhEye filter can run a GLiNER model on-device by setting `modelPath` on its configuration; local inference is provided by the optional [`phileas-pheye-onnx`](https://github.com/philterd/phileas-pheye-onnx) module (ONNX Runtime). Without that module on the classpath, setting `modelPath` fails with a clear message and remote Ph-Eye behavior is unchanged.
+* `filter()` is now documented and tested as safe to call concurrently on a single shared `FilterService` instance. The per-policy filter cache is populated with `computeIfAbsent`, so concurrent first-calls for the same policy build the filter set once instead of each racing thread rebuilding it. Per-row callers (such as a Spark, Kafka, or logging UDF) can share one instance across threads without locking around `filter()`.
 * Using PhiSQL 1.1.0.
 
 ## Version 4.0.0 - June 10, 2026

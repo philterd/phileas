@@ -28,7 +28,7 @@ import java.util.Random;
 public abstract class TextFilterService extends FilterService {
 
     /**
-     * Filter text from plain text.
+     * Filter text from plain text. Safe to call concurrently on a shared instance.
      * @param policy The {@link Policy} to apply.
      * @param context The redaction context.
      * @param input The input document as a byte array.
