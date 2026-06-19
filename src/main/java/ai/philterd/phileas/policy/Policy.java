@@ -24,6 +24,7 @@ import com.google.gson.annotations.SerializedName;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.List;
 
@@ -82,6 +83,42 @@ public class Policy {
     @SerializedName("graphical")
     @Expose
     private Graphical graphical = new Graphical();
+
+    // Memoized cache key. transient/static so it is excluded from JSON serialization and from
+    // reflectionEquals.
+    private static final Gson CACHE_KEY_GSON = new Gson();
+    private transient volatile String cacheKey;
+
+    /**
+     * Returns a stable cache key for this policy: an FNV-1a 64-bit hash of its JSON form, computed
+     * once and memoized. Reusing one policy across many filter() calls (for example a per-row Spark or
+     * Kafka UDF) then avoids re-serializing and re-hashing it on every call.
+     *
+     * <p>A policy is treated as immutable once it has been used for filtering: the key is computed on
+     * first use and is not recomputed for that instance, so mutating the policy afterwards (at any
+     * level, top-level or nested) does not change its key and is not supported. To change a policy,
+     * build a new one.
+     * @return The memoized FNV-1a 64-bit hex key for this policy.
+     */
+    public String getCacheKey() {
+        String key = cacheKey;
+        if (key == null) {
+            key = fnv1a64(CACHE_KEY_GSON.toJson(this));
+            cacheKey = key;
+        }
+        return key;
+    }
+
+    private static String fnv1a64(final String input) {
+        final long fnvOffsetBasis = 0xcbf29ce484222325L;
+        final long fnvPrime = 0x100000001b3L;
+        long hash = fnvOffsetBasis;
+        for (final byte b : input.getBytes(StandardCharsets.UTF_8)) {
+            hash ^= (b & 0xff);
+            hash *= fnvPrime;
+        }
+        return Long.toHexString(hash);
+    }
 
     @Override
     public boolean equals(Object o) {

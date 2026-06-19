@@ -57,7 +57,6 @@ import ai.philterd.phileas.services.filters.regex.ZipCodeFilter;
 import ai.philterd.phileas.services.validators.DateSpanValidator;
 import ai.philterd.phileas.services.validators.IdentifierValidators;
 import ai.philterd.phileas.services.validators.SpanValidator;
-import com.google.gson.Gson;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.hc.client5.http.classic.HttpClient;
@@ -66,7 +65,6 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -83,7 +81,6 @@ public class FilterPolicyLoader {
     private final PhileasConfiguration phileasConfiguration;
     private final Random random;
     private final HttpClient httpClient;
-    private final Gson gson;
 
     public FilterPolicyLoader(final ContextService contextService,
                               final PhileasConfiguration phileasConfiguration,
@@ -94,7 +91,6 @@ public class FilterPolicyLoader {
         this.phileasConfiguration = phileasConfiguration;
         this.random = random;
         this.httpClient = httpClient;
-        this.gson = new Gson();
 
     }
 
@@ -109,7 +105,7 @@ public class FilterPolicyLoader {
 
         LOGGER.debug("Getting filters for policy.");
 
-        final String policyKey = getFnv1a64(gson.toJson(policy));
+        final String policyKey = policy.getCacheKey();
 
         // The policy key is a hash of the entire policy, so it fully determines the filter set. If the
         // complete list of filters for this policy has already been built, reuse it. Caching the whole
@@ -1123,23 +1119,6 @@ public class FilterPolicyLoader {
         }
 
         return enabledFilters;
-
-    }
-
-    public static String getFnv1a64(String input) {
-
-        final long FNV_OFFSET_BASIS = 0xcbf29ce484222325L;
-        final long FNV_PRIME = 0x100000001b3L;
-
-        long hash = FNV_OFFSET_BASIS;
-        final byte[] data = input.getBytes(StandardCharsets.UTF_8);
-
-        for (final byte b : data) {
-            hash ^= (b & 0xff);
-            hash *= FNV_PRIME;
-        }
-
-        return Long.toHexString(hash);
 
     }
 
