@@ -22,7 +22,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.CompletionException;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Base class for data generators.
@@ -30,15 +34,42 @@ import java.util.List;
  */
 public abstract class AbstractGenerator<T> implements DataGenerator.Generator<T> {
 
+    // Resource-backed lists (first names, surnames, cities, and so on) are immutable and identical
+    // across instances, so each is loaded once per process and shared as an unmodifiable list rather
+    // than re-read and duplicated by every generator/instance. Keyed by resource path.
+    private static final Map<String, List<String>> NAME_CACHE = new ConcurrentHashMap<>();
+
     /**
-     * Loads names from a resource file.
+     * Loads names from a resource file, returning a shared immutable list (loaded once per path).
      * @param resourcePath The path to the resource file.
-     * @return A list of names.
+     * @return An unmodifiable list of names.
      * @throws IOException if the resource file cannot be read.
      */
     protected List<String> loadNames(final String resourcePath) throws IOException {
+
+        // computeIfAbsent loads each resource at most once. The reader throws a checked IOException,
+        // which a mapping function cannot, so it is wrapped in a CompletionException and unwrapped here.
+        try {
+            return NAME_CACHE.computeIfAbsent(resourcePath, path -> {
+                try {
+                    return readNames(path);
+                } catch (final IOException e) {
+                    throw new CompletionException(e);
+                }
+            });
+        } catch (final CompletionException e) {
+            final Throwable cause = e.getCause();
+            if (cause instanceof IOException) {
+                throw (IOException) cause;
+            }
+            throw e;
+        }
+
+    }
+
+    private static List<String> readNames(final String resourcePath) throws IOException {
         final List<String> names = new ArrayList<>();
-        try (final InputStream is = getClass().getResourceAsStream(resourcePath)) {
+        try (final InputStream is = AbstractGenerator.class.getResourceAsStream(resourcePath)) {
             if (is == null) {
                 throw new IOException("Resource not found: " + resourcePath);
             }
@@ -52,7 +83,7 @@ public abstract class AbstractGenerator<T> implements DataGenerator.Generator<T>
                 }
             }
         }
-        return names;
+        return Collections.unmodifiableList(names);
     }
 
 }

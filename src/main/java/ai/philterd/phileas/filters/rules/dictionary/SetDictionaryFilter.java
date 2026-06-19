@@ -29,7 +29,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.regex.Pattern;
 
 /**
  * A dictionary filter that matches terms by exact, case-insensitive lookup in a set.
@@ -59,19 +58,11 @@ public class SetDictionaryFilter extends DictionaryFilter {
 
         super(filterType, filterConfiguration);
 
-        this.lowerCaseTerms = new HashSet<>();
-
-        final Map<String, Pattern> data = loadData(filterType);
-
-        // Lowercase each term and find the max n-gram size, which is the maximum number of
-        // whitespace-separated words in any single dictionary entry.
-        for(final String term : data.keySet()) {
-            final String[] split = term.split("\\s");
-            if(split.length > maxNgramSize) {
-                maxNgramSize = split.length;
-            }
-            lowerCaseTerms.add(term.toLowerCase());
-        }
+        // Reuse the shared, process-wide predefined dictionary so the large term set is not
+        // duplicated per FilterService instance.
+        final PredefinedDictionary dictionary = getPredefinedDictionary(filterType);
+        this.lowerCaseTerms = dictionary.lowerCaseTerms();
+        this.maxNgramSize = dictionary.maxNgramSize();
 
     }
 
