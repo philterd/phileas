@@ -35,13 +35,14 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.concurrent.CompletionException;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Abstract base class for filter services.
  *
- * <p>A warm instance is safe to share across threads: the filter cache is a
- * {@link ConcurrentHashMap} populated via {@code computeIfAbsent}, and {@code filter()} does not
+ * <p>A warm instance is safe to share across threads: the filter and post-filter caches are
+ * {@link ConcurrentHashMap}s populated via {@code computeIfAbsent}, and {@code filter()} does not
  * mutate instance state. Per-row callers (Spark, Kafka, logging UDFs) should share one instance
  * rather than locking around {@code filter()}.
  */
@@ -52,17 +53,44 @@ public abstract class FilterService {
     // Caches the complete list of filters built for a policy, keyed by a hash of the policy.
     protected final Map<String, List<Filter>> filterCache;
 
+    // Caches the post-filters built for a policy, keyed by the same policy hash as filterCache.
+    protected final Map<String, List<PostFilter>> postFilterCache;
+
     protected FilterService(final PhileasConfiguration phileasConfiguration,
                             final ContextService contextService,
                             final Random random,
                             final HttpClient httpClient) {
 
         this.filterCache = new ConcurrentHashMap<>();
+        this.postFilterCache = new ConcurrentHashMap<>();
         this.filterPolicyLoader = new FilterPolicyLoader(contextService, phileasConfiguration, random, httpClient);
 
     }
 
     protected List<PostFilter> getPostFiltersForPolicy(final Policy policy) throws IOException {
+
+        // Build the post-filter list at most once per policy and reuse it, mirroring the filter cache.
+        // The build throws a checked IOException, which a mapping function cannot, so it is wrapped in
+        // a CompletionException and unwrapped here to preserve this method's throws contract.
+        try {
+            return postFilterCache.computeIfAbsent(policy.getCacheKey(), key -> {
+                try {
+                    return buildPostFilters(policy);
+                } catch (final IOException e) {
+                    throw new CompletionException(e);
+                }
+            });
+        } catch (final CompletionException e) {
+            final Throwable cause = e.getCause();
+            if (cause instanceof IOException) {
+                throw (IOException) cause;
+            }
+            throw e;
+        }
+
+    }
+
+    private List<PostFilter> buildPostFilters(final Policy policy) throws IOException {
 
         final List<PostFilter> postFilters = new LinkedList<>();
 
