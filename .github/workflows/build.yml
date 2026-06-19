@@ -16,3 +16,28 @@ jobs:
           distribution: 'temurin'
       - name: Run the Maven verify phase
         run: mvn --batch-mode --update-snapshots package
+
+  publish-snapshot:
+    # Publish a -SNAPSHOT to the Maven Central snapshot repository on every push
+    # to main, but only after the build job passes. Never runs on pull requests
+    # (which keeps the credentials away from fork builds).
+    needs: build
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    concurrency:
+      group: publish-snapshot-${{ github.ref }}
+      cancel-in-progress: true
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          java-version: '25'
+          distribution: 'temurin'
+          server-id: central
+          server-username: MAVEN_CENTRAL_USERNAME
+          server-password: MAVEN_CENTRAL_PASSWORD
+      - name: Publish snapshot to Maven Central
+        run: mvn --batch-mode --no-transfer-progress -DskipTests deploy
+        env:
+          MAVEN_CENTRAL_USERNAME: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
+          MAVEN_CENTRAL_PASSWORD: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}

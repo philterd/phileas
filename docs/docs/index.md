@@ -8,37 +8,40 @@ Information can be redacted based on the content of the information and other at
 
 ## Using Phileas
 
-Phileas snapshots and releases are available in our [Maven repositories](https://artifacts.philterd.ai/) so add the following to your Maven configuration:
+Phileas releases are published to [Maven Central](https://central.sonatype.com/artifact/ai.philterd/phileas). Maven Central is configured by default, so for a release version you only need to add the dependency:
+
+```
+<dependency>
+  <groupId>ai.philterd</groupId>
+  <artifactId>phileas</artifactId>
+  <version>4.0.0</version>
+</dependency>
+```
+
+To track the latest development build, depend on the current `-SNAPSHOT` version and add the Maven Central snapshot repository to your build (snapshots are not served from the default Maven Central repository):
 
 ```
 <repositories>
     <repository>
-        <id>philterd-repository-releases</id>
-        <url>https://artifacts.philterd.ai/releases</url>
-        <snapshots>
+        <id>central-portal-snapshots</id>
+        <url>https://central.sonatype.com/repository/maven-snapshots/</url>
+        <releases>
             <enabled>false</enabled>
-        </snapshots>
-    </repository>
-    <repository>
-        <id>philterd-repository-snapshots</id>
-        <url>https://artifacts.philterd.ai/snapshots</url>
+        </releases>
         <snapshots>
             <enabled>true</enabled>
         </snapshots>
     </repository>
 </repositories>
-```
 
-Next, add the Phileas dependency to your project:
-
-```
 <dependency>
   <groupId>ai.philterd</groupId>
-  <artifactId>phileas-core</artifactId>
-  <version>2.7.1</version>
+  <artifactId>phileas</artifactId>
+  <version>4.1.0-SNAPSHOT</version>
 </dependency>
-
 ```
+
+Snapshots are development builds: they are mutable and are periodically pruned, so pin a release version for anything you need to reproduce.
 
 ### Quick Start
 
