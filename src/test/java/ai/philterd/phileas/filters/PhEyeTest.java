@@ -55,7 +55,7 @@ public class PhEyeTest extends AbstractFilterTest {
                 .build();
 
         final HttpClient httpClient = mock(HttpClient.class);
-        final String jsonResponse = "[{\"start\": 0, \"end\": 17, \"label\": \"Person\", \"text\": \"George Washington\", \"score\": 1.0}]";
+        final String jsonResponse = "[{\"start\": 0, \"end\": 17, \"label\": \"name\", \"text\": \"George Washington\", \"score\": 1.0}]";
 
         when(httpClient.execute(any(), ArgumentMatchers.<HttpClientResponseHandler<String>>any())).thenAnswer(invocation -> {
             final HttpClientResponseHandler<String> handler = invocation.getArgument(1);
@@ -126,7 +126,7 @@ public class PhEyeTest extends AbstractFilterTest {
                 .build();
 
         final HttpClient httpClient = mock(HttpClient.class);
-        final String jsonResponse1 = "[{\"start\": 0, \"end\": 17, \"label\": \"Person\", \"text\": \"George Washington\", \"score\": 1.0}]";
+        final String jsonResponse1 = "[{\"start\": 0, \"end\": 17, \"label\": \"name\", \"text\": \"George Washington\", \"score\": 1.0}]";
         final String jsonResponse2 = "[]";
 
         final PhEyeFilter filter = new PhEyeFilter(filterConfiguration, phEyeConfiguration, removePunctuation, thresholds, FilterType.PERSON, httpClient);
@@ -241,6 +241,61 @@ public class PhEyeTest extends AbstractFilterTest {
         // With removePunctuation disabled, the original text (including punctuation) is sent unchanged.
         Assertions.assertEquals(input, sentText[0]);
 
+    }
+
+    @Test
+    public void nameLabelMapsToPersonFilterType() throws Exception {
+        // The ph-eye-pii-en-* models label person names "name". A span returned
+        // with the "name" label must classify as FilterType.PERSON.
+        final Filtered filtered = filterWithMockLabel("name", null);
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertEquals(FilterType.PERSON, filtered.getSpans().iterator().next().getFilterType());
+    }
+
+    @Test
+    public void personLabelStillMapsToPersonFilterType() throws Exception {
+        // Backward compatibility: the older "Person" label must still classify as PERSON.
+        final Filtered filtered = filterWithMockLabel("Person", java.util.List.of("Person"));
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertEquals(FilterType.PERSON, filtered.getSpans().iterator().next().getFilterType());
+    }
+
+    // Runs a PhEyeFilter against a mocked ph-eye response carrying a single span
+    // with the given label. When requestedLabels is null the filter uses its
+    // configured default labels.
+    private Filtered filterWithMockLabel(final String label, final java.util.Collection<String> requestedLabels) throws Exception {
+
+        final PhEyeConfiguration phEyeConfiguration = new PhEyeConfiguration("http://localhost:18080");
+        if (requestedLabels != null) {
+            phEyeConfiguration.setLabels(requestedLabels);
+        }
+
+        final boolean removePunctuation = false;
+        final Map<String, Double> thresholds = new HashMap<>();
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withContextService(contextService)
+                .withRandom(random)
+                .withWindowSize(windowSize)
+                .build();
+
+        final HttpClient httpClient = mock(HttpClient.class);
+        final String jsonResponse = "[{\"start\": 0, \"end\": 17, \"label\": \"" + label + "\", \"text\": \"George Washington\", \"score\": 1.0}]";
+
+        when(httpClient.execute(any(), ArgumentMatchers.<HttpClientResponseHandler<String>>any())).thenAnswer(invocation -> {
+            final HttpClientResponseHandler<String> handler = invocation.getArgument(1);
+            final ClassicHttpResponse response = mock(ClassicHttpResponse.class);
+            final HttpEntity entity = new StringEntity(jsonResponse);
+
+            when(response.getCode()).thenReturn(200);
+            when(response.getEntity()).thenReturn(entity);
+
+            return handler.handleResponse(response);
+        });
+
+        final PhEyeFilter filter = new PhEyeFilter(filterConfiguration, phEyeConfiguration, removePunctuation, thresholds, FilterType.PERSON, httpClient);
+
+        return filter.filter(getPolicy(), "context", PIECE, "George Washington was the first president.");
     }
 
 }

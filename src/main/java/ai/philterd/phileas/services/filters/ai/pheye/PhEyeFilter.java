@@ -124,8 +124,11 @@ public class PhEyeFilter extends NerFilter {
                         final String[] window = getWindow(formattedInput, phEyeSpan.getStart(), phEyeSpan.getEnd());
 
                         // Set the filter type based on the entity's type that's returned from pheye.
+                        // The ph-eye-pii-en-* models label person names "name"; older models (and
+                        // explicit policies) use "Person". Map both to FilterType.PERSON.
                         final FilterType filterType;
-                        if (phEyeSpan.getLabel().equalsIgnoreCase("PERSON")) {
+                        final String phEyeLabel = phEyeSpan.getLabel();
+                        if (phEyeLabel.equalsIgnoreCase("PERSON") || phEyeLabel.equalsIgnoreCase("name")) {
                             filterType = FilterType.PERSON;
                         } else {
                             filterType = FilterType.OTHER;

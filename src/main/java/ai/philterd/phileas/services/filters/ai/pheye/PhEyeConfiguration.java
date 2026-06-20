@@ -73,7 +73,11 @@ public class PhEyeConfiguration {
         if(CollectionUtils.isNotEmpty(labels)) {
             return labels;
         } else {
-            return List.of("Person");
+            // The default ph-eye English model (ph-eye-pii-en-small and the other
+            // ph-eye-pii-en-* sizes) is a GLiNER model trained on the label "name".
+            // GLiNER also responds to "Person", but "name" is the model's trained
+            // prompt, so it is the default. PhEyeFilter maps both to FilterType.PERSON.
+            return List.of("name");
         }
     }
 
