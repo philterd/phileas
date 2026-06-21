@@ -212,7 +212,7 @@ Phileas snapshots and releases as of version 2.12.1 are published to Maven Centr
 <dependency>
   <groupId>ai.philterd</groupId>
   <artifactId>phileas</artifactId>
-  <version>4.0.0</version>
+  <version>4.1.0</version>
 </dependency>
 ```
 
