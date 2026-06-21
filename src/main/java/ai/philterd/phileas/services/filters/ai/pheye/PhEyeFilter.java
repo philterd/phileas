@@ -74,9 +74,11 @@ public class PhEyeFilter extends NerFilter {
             final Iterator<PhEyeDetectorProvider> providers = loader.iterator();
 
             if (!providers.hasNext()) {
-                throw new IllegalStateException("PhEye modelPath '" + phEyeConfiguration.getModelPath()
+                final String message = "PhEye modelPath '" + phEyeConfiguration.getModelPath()
                         + "' is set, but no local detector provider is on the classpath. Add the optional"
-                        + " ai.philterd:phileas-pheye-onnx dependency to enable local GLiNER inference.");
+                        + " ai.philterd:phileas-pheye-onnx dependency to enable local GLiNER inference.";
+                LOGGER.error(message);
+                throw new MissingPhEyeProviderException(message);
             }
 
             try {

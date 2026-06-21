@@ -102,7 +102,7 @@ Each entry under `identifiers` configures one filter, and each filter has one or
 
 ### Policy schema and versioning
 
-The [Phileas redaction policy JSON schema](https://philterd.ai/schemas/redaction-policy/1.0.0/schema.json) is the canonical execution contract: it defines what a valid policy looks like and is the source of truth for every filter type, strategy, and option Phileas understands. The schema is owned and versioned in the [philterd/phisql](https://github.com/philterd/phisql) repository.
+The [Phileas redaction policy JSON schema](https://philterd.ai/schemas/redaction-policy/1.1.0/schema.json) is the canonical execution contract: it defines what a valid policy looks like and is the source of truth for every filter type, strategy, and option Phileas understands. The schema is owned and versioned in the [philterd/phisql](https://github.com/philterd/phisql) repository.
 
 Schema changes go through philterd/phisql first. Adding an entity type, strategy, or filter option requires a schema update and a matching PhiSQL grammar change in the same pull request there. Once a schema version is released, Phileas is updated to target it.
 

@@ -14,7 +14,7 @@ Phileas releases are published to [Maven Central](https://central.sonatype.com/a
 <dependency>
   <groupId>ai.philterd</groupId>
   <artifactId>phileas</artifactId>
-  <version>4.0.0</version>
+  <version>4.1.0</version>
 </dependency>
 ```
 
@@ -37,7 +37,7 @@ To track the latest development build, depend on the current `-SNAPSHOT` version
 <dependency>
   <groupId>ai.philterd</groupId>
   <artifactId>phileas</artifactId>
-  <version>4.1.0-SNAPSHOT</version>
+  <version>4.2.0-SNAPSHOT</version>
 </dependency>
 ```
 
@@ -59,6 +59,8 @@ FilterResponse response = filterService.filter(policies, context, body, MimeType
 The `policies` is a list of `Policy` classes. (See below for more about Policies.) The `context` is an arbitrary value you can use to uniquely identify the text being filtered. The `body` is the text you are filtering. Lastly, we specify that the data is plain text.
 
 The `response` contains information about the identified sensitive information along with the filtered text.
+
+A `FilterService` is safe to call concurrently: `filter()` may be invoked from multiple threads on a single shared instance without external locking, so a per-row caller (such as a Spark, Kafka, or logging function) can share one instance across threads.
 
 #### Usage Examples
 

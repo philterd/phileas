@@ -17,6 +17,7 @@ package ai.philterd.phileas.filters;
 
 import ai.philterd.phileas.model.filtering.FilterType;
 import ai.philterd.phileas.model.filtering.Filtered;
+import ai.philterd.phileas.services.filters.ai.pheye.MissingPhEyeProviderException;
 import ai.philterd.phileas.services.filters.ai.pheye.PhEyeConfiguration;
 import ai.philterd.phileas.services.filters.ai.pheye.PhEyeFilter;
 import com.google.gson.Gson;
@@ -258,6 +259,32 @@ public class PhEyeTest extends AbstractFilterTest {
         final Filtered filtered = filterWithMockLabel("Person", java.util.List.of("Person"));
         Assertions.assertEquals(1, filtered.getSpans().size());
         Assertions.assertEquals(FilterType.PERSON, filtered.getSpans().iterator().next().getFilterType());
+    }
+
+    @Test
+    public void modelPathWithoutProviderFailsClearly() {
+        // A policy that asks for local inference (modelPath set) but without the optional
+        // phileas-pheye-onnx module on the classpath must fail with a dedicated exception
+        // whose message points the user at the missing dependency, rather than silently
+        // falling back to the remote service. The failure occurs while the filter is built.
+        final PhEyeConfiguration phEyeConfiguration = new PhEyeConfiguration("http://localhost:18080");
+        phEyeConfiguration.setModelPath("/models/ph-eye-pii-en-small");
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withContextService(contextService)
+                .withRandom(random)
+                .withWindowSize(windowSize)
+                .build();
+
+        final HttpClient httpClient = mock(HttpClient.class);
+
+        final MissingPhEyeProviderException exception = Assertions.assertThrows(
+                MissingPhEyeProviderException.class,
+                () -> new PhEyeFilter(filterConfiguration, phEyeConfiguration, false,
+                        new HashMap<>(), FilterType.PERSON, httpClient));
+
+        Assertions.assertTrue(exception.getMessage().contains("phileas-pheye-onnx"));
+        Assertions.assertTrue(exception.getMessage().contains("/models/ph-eye-pii-en-small"));
     }
 
     // Runs a PhEyeFilter against a mocked ph-eye response carrying a single span

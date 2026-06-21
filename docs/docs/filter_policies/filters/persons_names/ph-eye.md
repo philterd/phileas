@@ -13,7 +13,7 @@ This filter requires the connection properties for the ph-eye service in a `phEy
 |------------|-------------------------------------------------------------------|---------------------------|
 | `endpoint` | The ph-eye service endpoint.                                      | `http://localhost:18080` |
 | `timeout`  | The ph-eye service connection timeout in seconds.                 | `600`                     |
-| `labels`   | A comma-separated list of labels supported by the ph-eye service. | `Person`                  |
+| `labels`   | A comma-separated list of labels supported by the ph-eye service. The default `ph-eye-pii-en-*` models are trained on the `name` label; both `name` and `Person` are recognized as person names. | `name`                  |
 
 ### Optional Parameters
 
@@ -22,6 +22,7 @@ This filter requires the connection properties for the ph-eye service in a `phEy
 | `removePunctuation`     | When set to true, punctuation will be removed prior to analysis.                                                                                                                                             | `false`                                                  |
 | `phEyeFilterStrategies` | A list of filter strategies.                                                                                                                                                                                 | None                                                     |
 | `bearerToken`           | A bearer token for the Ph-Eye service.                                                                                                                                                                       | None                                                     |
+| `modelPath`             | Path to a local GLiNER model directory for on-device inference. When set, detection runs locally instead of calling the remote `endpoint`. See [Local inference](#local-inference) below.                     | None                                                     |
 | `enabled`               | When set to false, the filter will be disabled and not applied                                                                                                                                               | `true`                                                   |
 | `ignored`               | A list of terms to be ignored by the filter.                                                                                                                                                                 | None                                                     |
 | `windowSize`            | Sets the size of the window (in terms) surrounding a span to look for contextual terms. If set, this value overrides the value of `span.window.size` in the configuration.                                   | The value of `span.window.size` which is by default `5`. |
@@ -64,6 +65,42 @@ Each filter strategy may have one condition. See [Conditions](#conditions) for d
       "pheye": {
         "phEyeConfiguration": {
             "endpoint": "http://localhost:18080"
+        },
+        "pheyeFilterStrategies": [
+           {
+              "strategy": "REDACT",
+              "redactionFormat": "{{{REDACTED-%t}}}"
+           }
+        ]
+      }
+   }
+}
+```
+
+## Local inference
+
+By default the filter calls a remote Ph-Eye service over HTTP at its `endpoint`. It can instead run a
+GLiNER model on-device by setting `modelPath` on the `phEyeConfiguration` to a local model directory
+(the ONNX model, the tokenizer, and `gliner_config.json`). When `modelPath` is set, detection runs
+locally and the `endpoint` is not used.
+
+Local inference is provided by the optional
+[`phileas-pheye-onnx`](https://github.com/philterd/phileas-pheye-onnx) module (ONNX Runtime), which
+is not a dependency of core Phileas. Add it to your build to enable local inference. If `modelPath`
+is set but that module is not on the classpath, Phileas fails fast while the policy's filters are
+built (for example when you call `prepare(policy)`, or on the first `filter()` call for the policy),
+rather than silently falling back to the remote service or failing part-way through a document. The
+failure is a `MissingPhEyeProviderException` with a logged error naming the missing
+`phileas-pheye-onnx` dependency, so loading the policy up front surfaces the problem before any text
+is processed.
+
+```
+{
+   "name": "ner-local-example",
+   "identifiers": {
+      "pheye": {
+        "phEyeConfiguration": {
+            "modelPath": "/models/ph-eye-pii-en-small"
         },
         "pheyeFilterStrategies": [
            {
