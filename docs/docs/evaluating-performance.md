@@ -133,14 +133,15 @@ When finished modifying the policy, save the file and close the text editor.
 With our policy in place we can now filter text using that policy:
 
 ```
-PhileasConfiguration phileasConfiguration = ConfigFactory.create(PhileasConfiguration.class);
+PhileasConfiguration phileasConfiguration = new PhileasConfiguration(new Properties());
 
-FilterService filterService = new PhileasFilterService(phileasConfiguration);
+PlainTextFilterService filterService = new PlainTextFilterService(
+        phileasConfiguration, new DefaultContextService(), new InMemoryVectorService(), null);
 
-FilterResponse response = filterService.filter(policies, context, body, MimeType.TEXT_PLAIN);
+TextFilterResult result = filterService.filter(policy, context, body);
 ```
 
-The `response` includes a detailed explanation of the redaction: a list of spans that contain the start and stop positions of redacted text and the type of sensitive information that was redacted. Using this information we can compare the redacted information to our annotated file to calculate precision and recall metrics.
+The `result` includes a detailed explanation of the redaction: a list of spans that contain the start and stop positions of redacted text and the type of sensitive information that was redacted. Using this information we can compare the redacted information to our annotated file to calculate precision and recall metrics.
 
 #### Calculating Precision and Recall
 

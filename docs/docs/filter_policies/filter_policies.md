@@ -70,14 +70,16 @@ A policy is applied by passing it to Phileas' filter service along with the text
 Properties properties = new Properties();
 PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties);
 
-FilterService filterService = new PhileasFilterService(phileasConfiguration);
+PlainTextFilterService filterService = new PlainTextFilterService(
+        phileasConfiguration, new DefaultContextService(), new InMemoryVectorService(), null);
 
-FilterResponse response = filterService.filter(List.of(policy), "context", body, MimeType.TEXT_PLAIN);
+TextFilterResult result = filterService.filter(policy, "context", body);
 ```
 
 Phileas processes the `body` text by applying the policy, which (as shown above) redacts email addresses and phone
-numbers, and the `response` contains the redacted text. The `context` is an arbitrary value used to uniquely identify
-the text being filtered. To use a different policy for a given request, simply pass a different `Policy` to `filter()`.
+numbers, and the `result` contains the redacted text (from `result.getFilteredText()`). The `context` is an arbitrary
+value used to uniquely identify the text being filtered. To use a different policy for a given request, simply pass a
+different `Policy` to `filter()`.
 
 To manipulate the sensitive information by methods other than redaction, see
 the [Filter Strategies](filter_strategies.md).
