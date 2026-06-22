@@ -36,7 +36,13 @@ jobs:
           server-id: central
           server-username: MAVEN_CENTRAL_USERNAME
           server-password: MAVEN_CENTRAL_PASSWORD
+      - name: Resolve the project version
+        id: version
+        run: echo "version=$(mvn -q help:evaluate -Dexpression=project.version -DforceStdout)" >> "$GITHUB_OUTPUT"
       - name: Publish snapshot to Maven Central
+        # Only publish when the resolved version is a snapshot; a release version
+        # must never be pushed into the snapshot channel. Skip cleanly otherwise.
+        if: endsWith(steps.version.outputs.version, '-SNAPSHOT')
         run: mvn --batch-mode --no-transfer-progress -DskipTests deploy
         env:
           MAVEN_CENTRAL_USERNAME: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
