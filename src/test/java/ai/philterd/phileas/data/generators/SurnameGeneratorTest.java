@@ -30,7 +30,7 @@ public class SurnameGeneratorTest {
     @Test
     public void testGenerateSurname() {
         final List<String> surnames = Arrays.asList("Doe", "Smith", "Jones");
-        final SurnameGenerator generator = new SurnameGenerator(surnames, new SecureRandom());
+        final SurnameGenerator generator = new SurnameGenerator(new SecureRandom(), surnames);
         final String surname = generator.random();
         assertNotNull(surname, "Surname should not be null");
         assertTrue(surnames.contains(surname));
@@ -39,7 +39,7 @@ public class SurnameGeneratorTest {
     @Test
     public void testPoolSize() {
         final List<String> surnames = Arrays.asList("Doe", "Smith", "Jones");
-        final SurnameGenerator generator = new SurnameGenerator(surnames, new SecureRandom());
+        final SurnameGenerator generator = new SurnameGenerator(new SecureRandom(), surnames);
         assertEquals(3, generator.poolSize());
     }
 

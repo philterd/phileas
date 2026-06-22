@@ -34,7 +34,6 @@ public class SectionFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new SectionFilterStrategy()))
-                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -56,7 +55,6 @@ public class SectionFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new SectionFilterStrategy()))
-                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -76,7 +74,6 @@ public class SectionFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new SectionFilterStrategy()))
-                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 

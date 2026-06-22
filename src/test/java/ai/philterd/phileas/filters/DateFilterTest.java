@@ -34,7 +34,6 @@ public class DateFilterTest extends AbstractFilterTest {
 
         return new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new DateFilterStrategy()))
-                .withRandom(random)
                 .build();
 
     }
@@ -409,7 +408,6 @@ public class DateFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(dateFilterStrategy))
-                .withRandom(random)
                 .build();
 
         final DateFilter filter = new DateFilter(filterConfiguration, false, DateSpanValidator.getInstance());
@@ -628,7 +626,6 @@ public class DateFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(dateFilterStrategy))
-                .withRandom(random)
                 .build();
 
         final DateFilter filter = new DateFilter(filterConfiguration, false, DateSpanValidator.getInstance());

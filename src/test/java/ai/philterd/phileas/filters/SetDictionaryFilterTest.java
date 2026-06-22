@@ -37,7 +37,6 @@ public class SetDictionaryFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new CustomDictionaryFilterStrategy()))
-                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -59,7 +58,6 @@ public class SetDictionaryFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new CustomDictionaryFilterStrategy()))
-                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -81,7 +79,6 @@ public class SetDictionaryFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new CustomDictionaryFilterStrategy()))
-                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -101,7 +98,6 @@ public class SetDictionaryFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new CustomDictionaryFilterStrategy()))
-                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -123,7 +119,6 @@ public class SetDictionaryFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new CustomDictionaryFilterStrategy()))
-                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -149,7 +144,6 @@ public class SetDictionaryFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new CustomDictionaryFilterStrategy()))
-                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -181,7 +175,6 @@ public class SetDictionaryFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(customDictionaryFilterStrategy))
-                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -200,7 +193,6 @@ public class SetDictionaryFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new CustomDictionaryFilterStrategy()))
-                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -224,7 +216,6 @@ public class SetDictionaryFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new CustomDictionaryFilterStrategy()))
-                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 

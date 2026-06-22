@@ -15,14 +15,15 @@
  */
 package ai.philterd.phileas.data.generators;
 
+
 import java.util.List;
-import java.util.Random;
+import java.security.SecureRandom;
 
 public class CountyGenerator extends AbstractGenerator<String> {
     private final List<String> counties;
-    private final Random random;
+    private final SecureRandom random;
 
-    public CountyGenerator(final List<String> counties, final Random random) {
+    public CountyGenerator(final SecureRandom random, final List<String> counties) {
         this.counties = counties;
         this.random = random;
     }

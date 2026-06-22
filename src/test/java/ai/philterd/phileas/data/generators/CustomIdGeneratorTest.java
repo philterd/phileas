@@ -112,7 +112,7 @@ public class CustomIdGeneratorTest {
 
     @Test
     public void testCustomIdGeneratorSingleArgConstructor() {
-        final CustomIdGenerator generator = new CustomIdGenerator("123");
+        final CustomIdGenerator generator = new CustomIdGenerator(new SecureRandom(), "123");
         assertNotNull(generator.random());
         assertEquals(1000L, generator.poolSize());
     }

@@ -19,31 +19,26 @@ import ai.philterd.phileas.data.DataGenerator;
 
 import java.io.IOException;
 import java.security.SecureRandom;
-import java.util.Random;
 
 public class EmailAddressGenerator extends AbstractGenerator<String> {
     private final DataGenerator.Generator<String> firstNames;
     private final DataGenerator.Generator<String> surnames;
-    private final Random random;
+    private final SecureRandom random;
     private final String[] domains;
     private static final String[] DEFAULT_DOMAINS = {"gmail.com", "yahoo.com", "hotmail.com", "outlook.com", "example.com"};
 
-    public EmailAddressGenerator() throws IOException {
-        this(new SecureRandom());
-    }
-
-    public EmailAddressGenerator(final Random random) throws IOException {
+    public EmailAddressGenerator(final SecureRandom random) throws IOException {
         this.random = random;
-        this.firstNames = new FirstNameGenerator(loadNames("/first-names.txt"), random);
-        this.surnames = new SurnameGenerator(loadNames("/surnames.txt"), random);
+        this.firstNames = new FirstNameGenerator(random, loadNames("/first-names.txt"));
+        this.surnames = new SurnameGenerator(random, loadNames("/surnames.txt"));
         this.domains = DEFAULT_DOMAINS;
     }
 
-    public EmailAddressGenerator(final DataGenerator.Generator<String> firstNames, final DataGenerator.Generator<String> surnames, final Random random) {
-        this(firstNames, surnames, random, DEFAULT_DOMAINS);
+    public EmailAddressGenerator(final SecureRandom random, final DataGenerator.Generator<String> firstNames, final DataGenerator.Generator<String> surnames) {
+        this(random, firstNames, surnames, DEFAULT_DOMAINS);
     }
 
-    public EmailAddressGenerator(final DataGenerator.Generator<String> firstNames, final DataGenerator.Generator<String> surnames, final Random random, final String[] domains) {
+    public EmailAddressGenerator(final SecureRandom random, final DataGenerator.Generator<String> firstNames, final DataGenerator.Generator<String> surnames, final String[] domains) {
         this.firstNames = firstNames;
         this.surnames = surnames;
         this.random = random;

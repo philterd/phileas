@@ -19,25 +19,25 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.security.SecureRandom;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.List;
-import java.util.Random;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
 public class DateAnonymizationService extends AbstractAnonymizationService {
 
-    public DateAnonymizationService(final Random random, final AnonymizationMethod anonymizationMethod) {
+    public DateAnonymizationService(final SecureRandom random, final AnonymizationMethod anonymizationMethod) {
         super(random, anonymizationMethod);
     }
 
-    public DateAnonymizationService(final Random random, final List<String> candidates) {
+    public DateAnonymizationService(final SecureRandom random, final List<String> candidates) {
         super(random, candidates);
     }
 
-    public DateAnonymizationService(final Random random) {
+    public DateAnonymizationService(final SecureRandom random) {
         super(random);
     }
 

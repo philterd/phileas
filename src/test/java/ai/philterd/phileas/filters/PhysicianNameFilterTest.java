@@ -37,7 +37,6 @@ public class PhysicianNameFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new PhysicianNameFilterStrategy()))
-                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -57,7 +56,6 @@ public class PhysicianNameFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new PhysicianNameFilterStrategy()))
-                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -77,7 +75,6 @@ public class PhysicianNameFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new PhysicianNameFilterStrategy()))
-                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -97,7 +94,6 @@ public class PhysicianNameFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new PhysicianNameFilterStrategy()))
-                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -117,7 +113,6 @@ public class PhysicianNameFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new PhysicianNameFilterStrategy()))
-                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -137,7 +132,6 @@ public class PhysicianNameFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new PhysicianNameFilterStrategy()))
-                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -157,7 +151,6 @@ public class PhysicianNameFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new PhysicianNameFilterStrategy()))
-                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -177,7 +170,6 @@ public class PhysicianNameFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new PhysicianNameFilterStrategy()))
-                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -195,7 +187,6 @@ public class PhysicianNameFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new PhysicianNameFilterStrategy()))
-                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -213,7 +204,6 @@ public class PhysicianNameFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new PhysicianNameFilterStrategy()))
-                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -233,7 +223,6 @@ public class PhysicianNameFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new PhysicianNameFilterStrategy()))
-                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -259,7 +248,6 @@ public class PhysicianNameFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(physicianNameFilterStrategy))
-                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 

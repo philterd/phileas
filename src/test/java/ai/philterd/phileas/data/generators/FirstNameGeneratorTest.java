@@ -30,7 +30,7 @@ public class FirstNameGeneratorTest {
     @Test
     public void testGenerateFirstName() {
         final List<String> firstNames = Arrays.asList("John", "Jane", "Mary");
-        final FirstNameGenerator generator = new FirstNameGenerator(firstNames, new SecureRandom());
+        final FirstNameGenerator generator = new FirstNameGenerator(new SecureRandom(), firstNames);
         final String firstName = generator.random();
         assertNotNull(firstName, "First name should not be null");
         assertTrue(firstNames.contains(firstName));
@@ -39,7 +39,7 @@ public class FirstNameGeneratorTest {
     @Test
     public void testPoolSize() {
         final List<String> firstNames = Arrays.asList("John", "Jane", "Mary");
-        final FirstNameGenerator generator = new FirstNameGenerator(firstNames, new SecureRandom());
+        final FirstNameGenerator generator = new FirstNameGenerator(new SecureRandom(), firstNames);
         assertEquals(3, generator.poolSize());
     }
 

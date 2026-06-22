@@ -17,12 +17,12 @@ package ai.philterd.phileas.data.generators;
 
 import ai.philterd.phileas.data.DataGenerator;
 
-import java.util.Random;
+import java.security.SecureRandom;
 
 public class BankRoutingNumberGenerator implements DataGenerator.Generator<String> {
-    private final Random random;
+    private final SecureRandom random;
 
-    public BankRoutingNumberGenerator(final Random random) {
+    public BankRoutingNumberGenerator(final SecureRandom random) {
         this.random = random;
     }
 

@@ -22,7 +22,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.security.SecureRandom;
-import java.util.Random;
 
 public class AgeAnonymizationServiceTest {
 
@@ -90,16 +89,14 @@ public class AgeAnonymizationServiceTest {
     }
 
     @Test
-    public void sameSeedProducesSameReplacement() {
+    public void producesNonEmptyReplacement() {
 
-        // With a fixed seed the anonymization is deterministic; this locks the behavior so a change
-        // to the algorithm is caught rather than hidden by random output.
+        // SecureRandom is not deterministically seedable, so the replacement varies run to run;
+        // verify the anonymizer still produces a non-empty replacement distinct from the input.
         final String token = "18 years old";
 
-        final String first = new AgeAnonymizationService(new Random(42)).anonymize(token);
-        final String second = new AgeAnonymizationService(new Random(42)).anonymize(token);
+        final String first = new AgeAnonymizationService().anonymize(token);
 
-        Assertions.assertEquals(first, second, "the same seed must produce the same replacement");
         assertOnlyDigitsReplaced(token, first);
 
     }

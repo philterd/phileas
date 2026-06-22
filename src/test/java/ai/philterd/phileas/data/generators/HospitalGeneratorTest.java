@@ -32,7 +32,7 @@ public class HospitalGeneratorTest {
     @Test
     public void testGenerateHospital() {
         final List<String> hospitals = Arrays.asList("General Hospital", "St. Jude", "Mayo Clinic");
-        final HospitalGenerator generator = new HospitalGenerator(hospitals, new SecureRandom());
+        final HospitalGenerator generator = new HospitalGenerator(new SecureRandom(), hospitals);
         final String hospital = generator.random();
         assertNotNull(hospital);
         assertTrue(hospitals.contains(hospital));
@@ -40,7 +40,7 @@ public class HospitalGeneratorTest {
 
     @Test
     public void testHospitalGeneratorDefaultConstructor() throws IOException {
-        final HospitalGenerator generator = new HospitalGenerator();
+        final HospitalGenerator generator = new HospitalGenerator(new SecureRandom());
         final String hospital = generator.random();
         assertNotNull(hospital);
         assertFalse(hospital.isEmpty());
@@ -49,7 +49,7 @@ public class HospitalGeneratorTest {
     @Test
     public void testPoolSize() {
         final List<String> hospitals = Arrays.asList("General Hospital", "St. Jude", "Mayo Clinic");
-        final HospitalGenerator generator = new HospitalGenerator(hospitals, new SecureRandom());
+        final HospitalGenerator generator = new HospitalGenerator(new SecureRandom(), hospitals);
         assertEquals(3, generator.poolSize());
     }
 

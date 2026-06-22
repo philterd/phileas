@@ -32,8 +32,8 @@ public class FullNameGeneratorTest {
     public void testGenerateFullName() {
         final List<String> firstNamePool = Arrays.asList("John", "Jane", "Mary");
         final List<String> surnamePool = Arrays.asList("Doe", "Smith", "Jones");
-        final DataGenerator.Generator<String> firstNameGenerator = new FirstNameGenerator(firstNamePool, new SecureRandom());
-        final DataGenerator.Generator<String> surnameGenerator = new SurnameGenerator(surnamePool, new SecureRandom());
+        final DataGenerator.Generator<String> firstNameGenerator = new FirstNameGenerator(new SecureRandom(), firstNamePool);
+        final DataGenerator.Generator<String> surnameGenerator = new SurnameGenerator(new SecureRandom(), surnamePool);
         final FullNameGenerator generator = new FullNameGenerator(firstNameGenerator, surnameGenerator);
         
         final String fullName = generator.random();
@@ -49,8 +49,8 @@ public class FullNameGeneratorTest {
     public void testPoolSize() {
         final List<String> firstNamePool = Arrays.asList("John", "Jane", "Mary");
         final List<String> surnamePool = Arrays.asList("Doe", "Smith", "Jones");
-        final DataGenerator.Generator<String> firstNameGenerator = new FirstNameGenerator(firstNamePool, new SecureRandom());
-        final DataGenerator.Generator<String> surnameGenerator = new SurnameGenerator(surnamePool, new SecureRandom());
+        final DataGenerator.Generator<String> firstNameGenerator = new FirstNameGenerator(new SecureRandom(), firstNamePool);
+        final DataGenerator.Generator<String> surnameGenerator = new SurnameGenerator(new SecureRandom(), surnamePool);
         final FullNameGenerator generator = new FullNameGenerator(firstNameGenerator, surnameGenerator);
         assertEquals(3 * 3, generator.poolSize());
     }

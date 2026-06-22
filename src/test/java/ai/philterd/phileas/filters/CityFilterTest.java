@@ -39,7 +39,6 @@ public class CityFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new CityFilterStrategy()))
-                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -60,7 +59,6 @@ public class CityFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new CityFilterStrategy()))
-                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -81,7 +79,6 @@ public class CityFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new CityFilterStrategy()))
-                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -101,7 +98,6 @@ public class CityFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new CityFilterStrategy()))
-                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -124,7 +120,6 @@ public class CityFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new CityFilterStrategy()))
-                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -149,7 +144,6 @@ public class CityFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(cityFilterStrategy))
-                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 

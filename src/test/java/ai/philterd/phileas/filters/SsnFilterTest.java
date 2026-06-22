@@ -34,7 +34,6 @@ public class SsnFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new SsnFilterStrategy()))
-                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -52,7 +51,6 @@ public class SsnFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new SsnFilterStrategy()))
-                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -69,7 +67,6 @@ public class SsnFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new SsnFilterStrategy()))
-                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -86,7 +83,6 @@ public class SsnFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new SsnFilterStrategy()))
-                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -103,7 +99,6 @@ public class SsnFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new SsnFilterStrategy()))
-                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -119,7 +114,6 @@ public class SsnFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new SsnFilterStrategy()))
-                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -135,7 +129,6 @@ public class SsnFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new SsnFilterStrategy()))
-                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -158,7 +151,6 @@ public class SsnFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(ssnFilterStrategy))
-                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -180,7 +172,6 @@ public class SsnFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(ssnFilterStrategy))
-                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -198,7 +189,6 @@ public class SsnFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration2 = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(ssnFilterStrategy))
-                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 

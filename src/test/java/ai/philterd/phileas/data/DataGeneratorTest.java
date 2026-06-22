@@ -18,6 +18,8 @@ package ai.philterd.phileas.data;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.security.SecureRandom;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -108,15 +110,13 @@ public class DataGeneratorTest {
     }
 
     @Test
-    public void testCustomRandom() throws Exception {
-        final java.util.Random random1 = new java.util.Random(12345);
-        final DataGenerator generator1 = new DefaultDataGenerator(random1);
+    public void testGeneratorDrawsFromProvider() throws Exception {
+        // The generator draws its randomness from the shared SecureRandomProvider (no Random is passed
+        // in); verify it produces valid output.
+        final DataGenerator generator1 = new DefaultDataGenerator();
 
-        final java.util.Random random2 = new java.util.Random(12345);
-        final DataGenerator generator2 = new DefaultDataGenerator(random2);
-
-        assertEquals(generator1.ssn().random(), generator2.ssn().random());
-        assertEquals(generator1.firstNames().random(), generator2.firstNames().random());
+        assertNotNull(generator1.ssn().random());
+        assertNotNull(generator1.firstNames().random());
     }
 
     @Test

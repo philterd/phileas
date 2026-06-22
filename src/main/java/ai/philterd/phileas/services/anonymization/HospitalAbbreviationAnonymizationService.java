@@ -22,9 +22,9 @@ import org.apache.commons.text.WordUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.security.SecureRandom;
 import java.io.IOException;
 import java.util.List;
-import java.util.Random;
 import java.util.UUID;
 
 public class HospitalAbbreviationAnonymizationService extends AbstractAnonymizationService {
@@ -33,7 +33,7 @@ public class HospitalAbbreviationAnonymizationService extends AbstractAnonymizat
 
     private DataGenerator dataGenerator;
 
-    public HospitalAbbreviationAnonymizationService(final Random random, final AnonymizationMethod anonymizationMethod) {
+    public HospitalAbbreviationAnonymizationService(final SecureRandom random, final AnonymizationMethod anonymizationMethod) {
         super(random, anonymizationMethod);
 
         try {
@@ -43,7 +43,7 @@ public class HospitalAbbreviationAnonymizationService extends AbstractAnonymizat
         }
     }
 
-    public HospitalAbbreviationAnonymizationService(final Random random, final List<String> candidates) {
+    public HospitalAbbreviationAnonymizationService(final SecureRandom random, final List<String> candidates) {
         super(random, candidates);
 
         try {
@@ -53,7 +53,7 @@ public class HospitalAbbreviationAnonymizationService extends AbstractAnonymizat
         }
     }
 
-    public HospitalAbbreviationAnonymizationService(final Random random) {
+    public HospitalAbbreviationAnonymizationService(final SecureRandom random) {
         super(random);
 
         try {

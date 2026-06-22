@@ -17,30 +17,30 @@ package ai.philterd.phileas.data.generators;
 
 import ai.philterd.phileas.data.DataGenerator;
 
-import java.util.Random;
+import java.security.SecureRandom;
 
 /**
  * Generates random Vehicle Identification Numbers (VIN).
  */
 public class VINGenerator implements DataGenerator.Generator<String> {
-    private final Random random;
+    private final SecureRandom random;
     private final boolean onlyValid;
     private final String chars = "0123456789ABCDEFGHJKLMNPRSTUVWXYZ";
 
     /**
      * Creates a new VIN generator.
-     * @param random The {@link Random} to use.
+     * @param random The {@link SecureRandom} to use.
      */
-    public VINGenerator(final Random random) {
+    public VINGenerator(final SecureRandom random) {
         this(random, false);
     }
 
     /**
      * Creates a new VIN generator.
-     * @param random The {@link Random} to use.
+     * @param random The {@link SecureRandom} to use.
      * @param onlyValid If <code>true</code>, only valid VINs will be generated.
      */
-    public VINGenerator(final Random random, final boolean onlyValid) {
+    public VINGenerator(final SecureRandom random, final boolean onlyValid) {
         this.random = random;
         this.onlyValid = onlyValid;
     }

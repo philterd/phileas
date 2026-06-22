@@ -17,14 +17,14 @@ package ai.philterd.phileas.data.generators;
 
 import ai.philterd.phileas.data.DataGenerator;
 
-import java.util.Random;
+import java.security.SecureRandom;
 
 /**
  * Generates random URLs.
  */
 public class URLGenerator implements DataGenerator.Generator<String> {
     private final DataGenerator.Generator<String> firstNames;
-    private final Random random;
+    private final SecureRandom random;
     private final String[] protocols;
     private final String[] extensions;
     private static final String[] DEFAULT_PROTOCOLS = {"http", "https"};
@@ -33,20 +33,20 @@ public class URLGenerator implements DataGenerator.Generator<String> {
     /**
      * Creates a new URL generator.
      * @param firstNames A generator for first names.
-     * @param random The {@link Random} to use.
+     * @param random The {@link SecureRandom} to use.
      */
-    public URLGenerator(final DataGenerator.Generator<String> firstNames, final Random random) {
-        this(firstNames, random, DEFAULT_PROTOCOLS, DEFAULT_EXTENSIONS);
+    public URLGenerator(final SecureRandom random, final DataGenerator.Generator<String> firstNames) {
+        this(random, firstNames, DEFAULT_PROTOCOLS, DEFAULT_EXTENSIONS);
     }
 
     /**
      * Creates a new URL generator.
      * @param firstNames A generator for first names.
-     * @param random The {@link Random} to use.
+     * @param random The {@link SecureRandom} to use.
      * @param protocols A list of protocols.
      * @param extensions A list of extensions.
      */
-    public URLGenerator(final DataGenerator.Generator<String> firstNames, final Random random, final String[] protocols, final String[] extensions) {
+    public URLGenerator(final SecureRandom random, final DataGenerator.Generator<String> firstNames, final String[] protocols, final String[] extensions) {
         this.firstNames = firstNames;
         this.random = random;
         this.protocols = protocols;

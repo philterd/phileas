@@ -17,19 +17,19 @@ package ai.philterd.phileas.data.generators;
 
 import ai.philterd.phileas.data.DataGenerator;
 
-import java.util.Random;
+import java.security.SecureRandom;
 
 /**
  * Generates random passport numbers.
  */
 public class PassportNumberGenerator implements DataGenerator.Generator<String> {
-    private final Random random;
+    private final SecureRandom random;
 
     /**
      * Creates a new passport number generator.
-     * @param random The {@link Random} to use.
+     * @param random The {@link SecureRandom} to use.
      */
-    public PassportNumberGenerator(final Random random) {
+    public PassportNumberGenerator(final SecureRandom random) {
         this.random = random;
     }
 

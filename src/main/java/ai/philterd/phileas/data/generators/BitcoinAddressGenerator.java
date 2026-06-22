@@ -17,20 +17,20 @@ package ai.philterd.phileas.data.generators;
 
 import ai.philterd.phileas.data.DataGenerator;
 
-import java.util.Random;
+import java.security.SecureRandom;
 
 /**
  * Generates random Bitcoin addresses.
  */
 public class BitcoinAddressGenerator implements DataGenerator.Generator<String> {
-    private final Random random;
+    private final SecureRandom random;
     private final String chars = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz";
 
     /**
      * Creates a new Bitcoin address generator.
-     * @param random The {@link Random} to use.
+     * @param random The {@link SecureRandom} to use.
      */
-    public BitcoinAddressGenerator(final Random random) {
+    public BitcoinAddressGenerator(final SecureRandom random) {
         this.random = random;
     }
 

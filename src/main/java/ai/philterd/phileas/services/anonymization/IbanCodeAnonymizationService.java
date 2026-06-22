@@ -21,9 +21,9 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.security.SecureRandom;
 import java.io.IOException;
 import java.util.List;
-import java.util.Random;
 import java.util.UUID;
 
 public class IbanCodeAnonymizationService extends AbstractAnonymizationService {
@@ -32,7 +32,7 @@ public class IbanCodeAnonymizationService extends AbstractAnonymizationService {
 
     private DataGenerator dataGenerator;
 
-    public IbanCodeAnonymizationService(final Random random, final AnonymizationMethod anonymizationMethod) {
+    public IbanCodeAnonymizationService(final SecureRandom random, final AnonymizationMethod anonymizationMethod) {
         super(random, anonymizationMethod);
 
         try {
@@ -42,7 +42,7 @@ public class IbanCodeAnonymizationService extends AbstractAnonymizationService {
         }
     }
 
-    public IbanCodeAnonymizationService(final Random random, final List<String> candidates) {
+    public IbanCodeAnonymizationService(final SecureRandom random, final List<String> candidates) {
         super(random, candidates);
 
         try {
@@ -52,7 +52,7 @@ public class IbanCodeAnonymizationService extends AbstractAnonymizationService {
         }
     }
 
-    public IbanCodeAnonymizationService(final Random random) {
+    public IbanCodeAnonymizationService(final SecureRandom random) {
         super(random);
 
         try {

@@ -50,7 +50,6 @@ public class PhEyeTest extends AbstractFilterTest {
         final Map<String, Double> thresholds = new HashMap<>();
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
-                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -85,7 +84,6 @@ public class PhEyeTest extends AbstractFilterTest {
         final Map<String, Double> thresholds = new HashMap<>();
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
-                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -119,7 +117,6 @@ public class PhEyeTest extends AbstractFilterTest {
         final Map<String, Double> thresholds = new HashMap<>();
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
-                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -171,7 +168,6 @@ public class PhEyeTest extends AbstractFilterTest {
         final Map<String, Double> thresholds = new HashMap<>();
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
-                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -211,7 +207,6 @@ public class PhEyeTest extends AbstractFilterTest {
         final Map<String, Double> thresholds = new HashMap<>();
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
-                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -266,7 +261,6 @@ public class PhEyeTest extends AbstractFilterTest {
         phEyeConfiguration.setModelPath("/models/ph-eye-pii-en-small");
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
-                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -295,7 +289,6 @@ public class PhEyeTest extends AbstractFilterTest {
         final Map<String, Double> thresholds = new HashMap<>();
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
-                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 

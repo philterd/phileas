@@ -38,7 +38,6 @@ public class DriversLicenseFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(driversLicenseFilterStrategy))
-                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 

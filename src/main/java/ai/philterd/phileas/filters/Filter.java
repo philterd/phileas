@@ -26,6 +26,7 @@ import ai.philterd.phileas.policy.FPE;
 import ai.philterd.phileas.policy.IgnoredPattern;
 import ai.philterd.phileas.policy.Policy;
 import ai.philterd.phileas.policy.filters.Identifier;
+import java.security.SecureRandom;
 import ai.philterd.phileas.services.anonymization.AgeAnonymizationService;
 import ai.philterd.phileas.services.anonymization.AlphanumericAnonymizationService;
 import ai.philterd.phileas.services.anonymization.AnonymizationMethod;
@@ -67,7 +68,6 @@ import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -206,7 +206,7 @@ public abstract class Filter {
 
     }
 
-    private AnonymizationService getAnonymizationService(FilterType filterType, Random random, List<String> candidates, AnonymizationMethod anonymizationMethod) {
+    private AnonymizationService getAnonymizationService(FilterType filterType, SecureRandom random, List<String> candidates, AnonymizationMethod anonymizationMethod) {
 
         if(filterType == FilterType.AGE) {
             return new AgeAnonymizationService(random, candidates);

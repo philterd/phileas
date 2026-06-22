@@ -20,54 +20,54 @@ import ai.philterd.phileas.data.DataGenerator;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
-import java.util.Random;
+import java.security.SecureRandom;
 
 /**
  * Generates random dates.
  */
 public class DateGenerator implements DataGenerator.Generator<String> {
-    private final Random random;
+    private final SecureRandom random;
     private final LocalDate startDate;
     private final long days;
     private final DateTimeFormatter formatter;
 
     /**
      * Creates a new date generator.
-     * @param random The {@link Random} to use.
+     * @param random The {@link SecureRandom} to use.
      */
-    public DateGenerator(final Random random) {
+    public DateGenerator(final SecureRandom random) {
         this(random, 1970, 2030);
     }
 
     /**
      * Creates a new date generator.
-     * @param random The {@link Random} to use.
+     * @param random The {@link SecureRandom} to use.
      * @param minYear The minimum year.
      * @param maxYear The maximum year.
      */
-    public DateGenerator(final Random random, final int minYear, final int maxYear) {
+    public DateGenerator(final SecureRandom random, final int minYear, final int maxYear) {
         this(random, minYear, maxYear, "yyyy-MM-dd");
     }
 
     /**
      * Creates a new date generator.
-     * @param random The {@link Random} to use.
+     * @param random The {@link SecureRandom} to use.
      * @param minYear The minimum year.
      * @param maxYear The maximum year.
      * @param pattern The date pattern to use.
      */
-    public DateGenerator(final Random random, final int minYear, final int maxYear, final String pattern) {
+    public DateGenerator(final SecureRandom random, final int minYear, final int maxYear, final String pattern) {
         this(random, minYear, maxYear, DateTimeFormatter.ofPattern(pattern));
     }
 
     /**
      * Creates a new date generator.
-     * @param random The {@link Random} to use.
+     * @param random The {@link SecureRandom} to use.
      * @param minYear The minimum year.
      * @param maxYear The maximum year.
      * @param formatter The {@link DateTimeFormatter} to use.
      */
-    public DateGenerator(final Random random, final int minYear, final int maxYear, final DateTimeFormatter formatter) {
+    public DateGenerator(final SecureRandom random, final int minYear, final int maxYear, final DateTimeFormatter formatter) {
         this.random = random;
         this.startDate = LocalDate.of(minYear, 1, 1);
         final LocalDate endDate = LocalDate.of(maxYear, 1, 1);

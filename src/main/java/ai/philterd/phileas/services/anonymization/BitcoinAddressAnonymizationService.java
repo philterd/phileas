@@ -17,21 +17,21 @@ package ai.philterd.phileas.services.anonymization;
 
 import org.apache.commons.collections4.CollectionUtils;
 
+import java.security.SecureRandom;
 import java.util.List;
-import java.util.Random;
 import java.util.UUID;
 
 public class BitcoinAddressAnonymizationService extends AbstractAnonymizationService {
 
-    public BitcoinAddressAnonymizationService(final Random random, final AnonymizationMethod anonymizationMethod) {
+    public BitcoinAddressAnonymizationService(final SecureRandom random, final AnonymizationMethod anonymizationMethod) {
         super(random, anonymizationMethod);
     }
 
-    public BitcoinAddressAnonymizationService(final Random random, final List<String> candidates) {
+    public BitcoinAddressAnonymizationService(final SecureRandom random, final List<String> candidates) {
         super(random, candidates);
     }
 
-    public BitcoinAddressAnonymizationService(final Random random) {
+    public BitcoinAddressAnonymizationService(final SecureRandom random) {
         super(random);
     }
 

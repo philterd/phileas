@@ -17,29 +17,29 @@ package ai.philterd.phileas.data.generators;
 
 import ai.philterd.phileas.data.DataGenerator;
 
-import java.util.Random;
+import java.security.SecureRandom;
 
 /**
  * Generates random credit card numbers.
  */
 public class CreditCardNumberGenerator implements DataGenerator.Generator<String> {
-    private final Random random;
+    private final SecureRandom random;
     private final boolean valid;
 
     /**
      * Creates a new credit card number generator.
-     * @param random The {@link Random} to use.
+     * @param random The {@link SecureRandom} to use.
      */
-    public CreditCardNumberGenerator(final Random random) {
+    public CreditCardNumberGenerator(final SecureRandom random) {
         this(random, false);
     }
 
     /**
      * Creates a new credit card number generator.
-     * @param random The {@link Random} to use.
+     * @param random The {@link SecureRandom} to use.
      * @param valid If <code>true</code>, the generated numbers will pass Luhn validation.
      */
-    public CreditCardNumberGenerator(final Random random, final boolean valid) {
+    public CreditCardNumberGenerator(final SecureRandom random, final boolean valid) {
         this.random = random;
         this.valid = valid;
     }

@@ -36,7 +36,6 @@ import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Random;
 
 /**
  * Implementation of {@link FilterService} that filters plain text.
@@ -64,7 +63,7 @@ public class PlainTextFilterService extends TextFilterService {
     public PlainTextFilterService(final PhileasConfiguration phileasConfiguration,
                                   final ContextService contextService,
                                   final VectorService vectorService,
-                                  final Random random,
+                                  final SecureRandom random,
                                   final HttpClient httpClient) {
 
         super(phileasConfiguration, random, httpClient);
@@ -99,14 +98,15 @@ public class PlainTextFilterService extends TextFilterService {
     }
 
     /**
-     * Creates a warm, reusable service whose context and vector services are supplied per call.
+     * Creates a warm, reusable service whose context and vector services are supplied per call, using
+     * the given {@link SecureRandom} for anonymization. The instance is shared across requests, so the
+     * {@link SecureRandom} must be thread-safe (the default {@link SecureRandom} is).
      * @param phileasConfiguration The {@link PhileasConfiguration}.
-     * @param random The {@link Random} used for anonymization. Must be thread-safe when the instance
-     *               is shared across threads (for example {@link SecureRandom}).
+     * @param random The {@link SecureRandom} used for anonymization.
      * @param httpClient The {@link HttpClient}.
      */
     public PlainTextFilterService(final PhileasConfiguration phileasConfiguration,
-                                  final Random random,
+                                  final SecureRandom random,
                                   final HttpClient httpClient) {
 
         super(phileasConfiguration, random, httpClient);

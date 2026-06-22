@@ -17,19 +17,19 @@ package ai.philterd.phileas.data.generators;
 
 import ai.philterd.phileas.data.DataGenerator;
 
-import java.util.Random;
+import java.security.SecureRandom;
 
 /**
  * Generates random IBANs.
  */
 public class IBANGenerator implements DataGenerator.Generator<String> {
-    private final Random random;
+    private final SecureRandom random;
 
     /**
      * Creates a new IBAN generator.
-     * @param random The {@link Random} to use.
+     * @param random The {@link SecureRandom} to use.
      */
-    public IBANGenerator(final Random random) {
+    public IBANGenerator(final SecureRandom random) {
         this.random = random;
     }
 

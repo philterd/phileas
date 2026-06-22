@@ -45,7 +45,6 @@ import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Random;
 import java.util.Set;
 
 /**
@@ -71,10 +70,11 @@ public class PdfFilterService extends BinaryFilterService {
         this(phileasConfiguration, contextService, vectorService, new SecureRandom(), httpClient);
 
     }
+
     public PdfFilterService(final PhileasConfiguration phileasConfiguration,
                             final ContextService contextService,
                             final VectorService vectorService,
-                            final Random random,
+                            final SecureRandom random,
                             final HttpClient httpClient) {
 
         super(phileasConfiguration, random, httpClient);
@@ -109,14 +109,15 @@ public class PdfFilterService extends BinaryFilterService {
     }
 
     /**
-     * Creates a warm, reusable service whose context and vector services are supplied per call.
+     * Creates a warm, reusable service whose context and vector services are supplied per call, using
+     * the given {@link SecureRandom} for anonymization. The instance is shared across requests, so the
+     * {@link SecureRandom} must be thread-safe (the default {@link SecureRandom} is).
      * @param phileasConfiguration The {@link PhileasConfiguration}.
-     * @param random The {@link Random} used for anonymization. Must be thread-safe when the instance
-     *               is shared across threads (for example {@link SecureRandom}).
+     * @param random The {@link SecureRandom} used for anonymization.
      * @param httpClient The {@link HttpClient}.
      */
     public PdfFilterService(final PhileasConfiguration phileasConfiguration,
-                            final Random random,
+                            final SecureRandom random,
                             final HttpClient httpClient) {
 
         super(phileasConfiguration, random, httpClient);

@@ -17,19 +17,19 @@ package ai.philterd.phileas.data.generators;
 
 import ai.philterd.phileas.data.DataGenerator;
 
-import java.util.Random;
+import java.security.SecureRandom;
 
 /**
  * Generates random ages.
  */
 public class AgeGenerator implements DataGenerator.Generator<Integer> {
-    private final Random random;
+    private final SecureRandom random;
 
     /**
      * Creates a new age generator.
-     * @param random The {@link Random} to use.
+     * @param random The {@link SecureRandom} to use.
      */
-    public AgeGenerator(final Random random) {
+    public AgeGenerator(final SecureRandom random) {
         this.random = random;
     }
 

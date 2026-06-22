@@ -18,21 +18,21 @@ package ai.philterd.phileas.services.anonymization;
 import ai.philterd.phileas.data.generators.VINGenerator;
 import org.apache.commons.collections4.CollectionUtils;
 
+import java.security.SecureRandom;
 import java.util.List;
-import java.util.Random;
 import java.util.UUID;
 
 public class VinAnonymizationService extends AbstractAnonymizationService {
 
-    public VinAnonymizationService(final Random random, final AnonymizationMethod anonymizationMethod) {
+    public VinAnonymizationService(final SecureRandom random, final AnonymizationMethod anonymizationMethod) {
         super(random, anonymizationMethod);
     }
 
-    public VinAnonymizationService(final Random random, final List<String> candidates) {
+    public VinAnonymizationService(final SecureRandom random, final List<String> candidates) {
         super(random, candidates);
     }
 
-    public VinAnonymizationService(final Random random) {
+    public VinAnonymizationService(final SecureRandom random) {
         super(random);
     }
 

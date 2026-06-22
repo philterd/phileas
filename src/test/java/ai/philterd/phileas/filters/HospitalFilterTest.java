@@ -38,7 +38,6 @@ public class HospitalFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new HospitalFilterStrategy()))
-                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -61,7 +60,6 @@ public class HospitalFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(hospitalFilterStrategy))
-                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 

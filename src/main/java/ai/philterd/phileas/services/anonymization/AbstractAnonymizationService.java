@@ -20,11 +20,10 @@ import org.apache.commons.text.RandomStringGenerator;
 import java.security.SecureRandom;
 import java.util.Collections;
 import java.util.List;
-import java.util.Random;
 
 public abstract class AbstractAnonymizationService implements AnonymizationService {
 
-    protected Random random;
+    protected SecureRandom random;
     protected List<String> candidates;
     protected AnonymizationMethod anonymizationMethod;
 
@@ -34,19 +33,19 @@ public abstract class AbstractAnonymizationService implements AnonymizationServi
         this.anonymizationMethod = AnonymizationMethod.REALISTIC;
     }
 
-    public AbstractAnonymizationService(final Random random) {
+    public AbstractAnonymizationService(final SecureRandom random) {
         this.random = random;
         this.candidates = Collections.emptyList();
         this.anonymizationMethod = AnonymizationMethod.REALISTIC;
     }
 
-    protected AbstractAnonymizationService(final Random random, final AnonymizationMethod anonymizationMethod) {
+    protected AbstractAnonymizationService(final SecureRandom random, final AnonymizationMethod anonymizationMethod) {
         this.random = random;
         this.candidates = Collections.emptyList();
         this.anonymizationMethod = anonymizationMethod;
     }
 
-    protected AbstractAnonymizationService(final Random random, final List<String> candidates) {
+    protected AbstractAnonymizationService(final SecureRandom random, final List<String> candidates) {
         this.random = random;
         this.candidates = candidates;
         this.anonymizationMethod = AnonymizationMethod.FROM_LIST;

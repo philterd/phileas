@@ -15,22 +15,23 @@
  */
 package ai.philterd.phileas.data.generators;
 
+
 import java.util.List;
-import java.util.Random;
+import java.security.SecureRandom;
 
 /**
  * Generates random surnames.
  */
 public class SurnameGenerator extends AbstractGenerator<String> {
     private final List<String> surnames;
-    private final Random random;
+    private final SecureRandom random;
 
     /**
      * Creates a new surname generator.
      * @param surnames A list of surnames.
-     * @param random The {@link Random} to use.
+     * @param random The {@link SecureRandom} to use.
      */
-    public SurnameGenerator(final List<String> surnames, final Random random) {
+    public SurnameGenerator(final SecureRandom random, final List<String> surnames) {
         this.surnames = surnames;
         this.random = random;
     }

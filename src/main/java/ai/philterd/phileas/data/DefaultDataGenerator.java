@@ -47,7 +47,6 @@ import ai.philterd.phileas.data.generators.ZipCodeGenerator;
 import java.io.IOException;
 import java.security.SecureRandom;
 import java.util.List;
-import java.util.Random;
 
 /**
  * Default implementation of {@link DataGenerator}.
@@ -56,7 +55,7 @@ public class DefaultDataGenerator extends AbstractGenerator<Object> implements D
 
     private final List<String> firstNamesList;
     private final List<String> surnamesList;
-    private final Random random;
+    private final SecureRandom random;
 
     /**
      * Generator for first names.
@@ -197,21 +196,21 @@ public class DefaultDataGenerator extends AbstractGenerator<Object> implements D
     }
 
     /**
-     * Creates a new DefaultDataGenerator instance with a given {@link Random}.
-     * @param random The {@link Random} to use.
+     * Creates a new DefaultDataGenerator instance.
+     * @param random The {@link SecureRandom} to use.
      * @throws IOException if name data files cannot be loaded
      */
-    public DefaultDataGenerator(final Random random) throws IOException {
+    public DefaultDataGenerator(final SecureRandom random) throws IOException {
         this.random = random;
         this.firstNamesList = loadNames("/first-names.txt");
         this.surnamesList = loadNames("/surnames.txt");
 
-        this.firstNames = new FirstNameGenerator(firstNamesList, random);
-        this.surnames = new SurnameGenerator(surnamesList, random);
+        this.firstNames = new FirstNameGenerator(random, firstNamesList);
+        this.surnames = new SurnameGenerator(random, surnamesList);
         this.fullNames = new FullNameGenerator(firstNames, surnames);
         this.ssn = new SSNGenerator(random);
         this.phoneNumbers = new PhoneNumberGenerator(random);
-        this.emailAddresses = new EmailAddressGenerator(firstNames, surnames, random);
+        this.emailAddresses = new EmailAddressGenerator(random, firstNames, surnames);
         this.age = new AgeGenerator(random);
         this.bankRoutingNumbers = new BankRoutingNumberGenerator(random);
         this.creditCardNumbers = new CreditCardNumberGenerator(random);
@@ -225,13 +224,13 @@ public class DefaultDataGenerator extends AbstractGenerator<Object> implements D
         this.zipCodes = new ZipCodeGenerator(random);
         this.bitcoinAddresses = new BitcoinAddressGenerator(random);
         this.vin = new VINGenerator(random);
-        this.urls = new URLGenerator(firstNames, random);
+        this.urls = new URLGenerator(random, firstNames);
         this.driversLicenseNumbers = new DriversLicenseGenerator(random);
         this.hospitals = new HospitalGenerator(random);
         this.trackingNumbers = new TrackingNumberGenerator(random);
-        this.cities = new CityGenerator(loadNames("/cities.txt"), random);
-        this.streetAddresses = new StreetAddressGenerator(surnames, random);
-        this.counties = new CountyGenerator(loadNames("/counties.txt"), random);
+        this.cities = new CityGenerator(random, loadNames("/cities.txt"));
+        this.streetAddresses = new StreetAddressGenerator(random, surnames);
+        this.counties = new CountyGenerator(random, loadNames("/counties.txt"));
     }
 
     @Override public Generator<String> firstNames() { return firstNames; }

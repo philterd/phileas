@@ -20,30 +20,30 @@ import ai.philterd.phileas.data.DataGenerator;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
+import java.security.SecureRandom;
 
 /**
  * Generates random zip codes.
  */
 public class ZipCodeGenerator extends AbstractGenerator<String> implements DataGenerator.Generator<String> {
-    private final Random random;
+    private final SecureRandom random;
     private final boolean onlyValid;
     private List<String> validZipCodes;
 
     /**
      * Creates a new zip code generator.
-     * @param random The {@link Random} to use.
+     * @param random The {@link SecureRandom} to use.
      */
-    public ZipCodeGenerator(final Random random) {
+    public ZipCodeGenerator(final SecureRandom random) {
         this(random, false);
     }
 
     /**
      * Creates a new zip code generator.
-     * @param random The {@link Random} to use.
+     * @param random The {@link SecureRandom} to use.
      * @param onlyValid If <code>true</code>, only valid zip codes from the census will be used.
      */
-    public ZipCodeGenerator(final Random random, final boolean onlyValid) {
+    public ZipCodeGenerator(final SecureRandom random, final boolean onlyValid) {
         this.random = random;
         this.onlyValid = onlyValid;
 

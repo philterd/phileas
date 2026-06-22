@@ -15,22 +15,23 @@
  */
 package ai.philterd.phileas.data.generators;
 
+
 import java.util.List;
-import java.util.Random;
+import java.security.SecureRandom;
 
 /**
  * Generates random city names.
  */
 public class CityGenerator extends AbstractGenerator<String> {
     private final List<String> cities;
-    private final Random random;
+    private final SecureRandom random;
 
     /**
      * Creates a new city generator.
      * @param cities A list of cities.
-     * @param random The {@link Random} to use.
+     * @param random The {@link SecureRandom} to use.
      */
-    public CityGenerator(final List<String> cities, final Random random) {
+    public CityGenerator(final SecureRandom random, final List<String> cities) {
         this.cities = cities;
         this.random = random;
     }

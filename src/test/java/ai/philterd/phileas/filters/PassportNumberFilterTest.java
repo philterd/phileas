@@ -33,7 +33,6 @@ public class PassportNumberFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new PassportNumberFilterStrategy()))
-                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -62,7 +61,6 @@ public class PassportNumberFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(passportNumberFilterStrategy))
-                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 

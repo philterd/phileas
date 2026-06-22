@@ -15,22 +15,23 @@
  */
 package ai.philterd.phileas.data.generators;
 
+
 import java.util.List;
-import java.util.Random;
+import java.security.SecureRandom;
 
 /**
  * Generates random first names.
  */
 public class FirstNameGenerator extends AbstractGenerator<String> {
     private final List<String> firstNames;
-    private final Random random;
+    private final SecureRandom random;
 
     /**
      * Creates a new first name generator.
      * @param firstNames A list of first names.
-     * @param random The {@link Random} to use.
+     * @param random The {@link SecureRandom} to use.
      */
-    public FirstNameGenerator(final List<String> firstNames, final Random random) {
+    public FirstNameGenerator(final SecureRandom random, final List<String> firstNames) {
         this.firstNames = firstNames;
         this.random = random;
     }

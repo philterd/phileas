@@ -17,19 +17,19 @@ package ai.philterd.phileas.data.generators;
 
 import ai.philterd.phileas.data.DataGenerator;
 
-import java.util.Random;
+import java.security.SecureRandom;
 
 /**
  * Generates random phone numbers.
  */
 public class PhoneNumberGenerator implements DataGenerator.Generator<String> {
-    private final Random random;
+    private final SecureRandom random;
 
     /**
      * Creates a new phone number generator.
-     * @param random The {@link Random} to use.
+     * @param random The {@link SecureRandom} to use.
      */
-    public PhoneNumberGenerator(final Random random) {
+    public PhoneNumberGenerator(final SecureRandom random) {
         this.random = random;
     }
 

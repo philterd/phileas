@@ -17,21 +17,21 @@ package ai.philterd.phileas.services.anonymization;
 
 import org.apache.commons.collections4.CollectionUtils;
 
+import java.security.SecureRandom;
 import java.util.List;
-import java.util.Random;
 import java.util.UUID;
 
 public class NumericAnonymizationService extends AbstractAnonymizationService {
 
-    public NumericAnonymizationService(final Random random, final AnonymizationMethod anonymizationMethod) {
+    public NumericAnonymizationService(final SecureRandom random, final AnonymizationMethod anonymizationMethod) {
         super(random, anonymizationMethod);
     }
 
-    public NumericAnonymizationService(final Random random, final List<String> candidates) {
+    public NumericAnonymizationService(final SecureRandom random, final List<String> candidates) {
         super(random, candidates);
     }
 
-    public NumericAnonymizationService(final Random random) {
+    public NumericAnonymizationService(final SecureRandom random) {
         super(random);
     }
 

@@ -25,8 +25,8 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
 
+import java.security.SecureRandom;
 import java.util.List;
-import java.util.Random;
 import java.util.Set;
 
 import static ai.philterd.phileas.services.strategies.AbstractFilterStrategy.CRYPTO_REPLACE;
@@ -35,7 +35,7 @@ import static ai.philterd.phileas.services.strategies.AbstractFilterStrategy.FPE
 public class FilterConfiguration {
 
     private final List<? extends AbstractFilterStrategy> strategies;
-    private final Random random;
+    private final SecureRandom random;
     private final Set<String> ignored;
     private final Set<String> ignoredFiles;
     private final List<IgnoredPattern> ignoredPatterns;
@@ -47,7 +47,7 @@ public class FilterConfiguration {
 
     private FilterConfiguration(
             final List<? extends AbstractFilterStrategy> strategies,
-            final Random random,
+            final SecureRandom random,
             final Set<String> ignored,
             final Set<String> ignoredFiles,
             final List<IgnoredPattern> ignoredPatterns,
@@ -74,7 +74,9 @@ public class FilterConfiguration {
     public static class FilterConfigurationBuilder {
 
         private List<? extends AbstractFilterStrategy> strategies;
-        private Random random;
+        // Defaults to a per-instance SecureRandom so a configuration built without withRandom(...) still
+        // has a usable RNG; FilterPolicyLoader overrides this with the filter service's instance.
+        private SecureRandom random = new SecureRandom();
         private Set<String> ignored;
         private Set<String> ignoredFiles;
         private List<IgnoredPattern> ignoredPatterns;
@@ -175,7 +177,7 @@ public class FilterConfiguration {
             return this;
         }
 
-        public FilterConfigurationBuilder withRandom(Random random) {
+        public FilterConfigurationBuilder withRandom(SecureRandom random) {
             this.random = random;
             return this;
         }
@@ -226,7 +228,7 @@ public class FilterConfiguration {
         return strategies;
     }
 
-    public Random getRandom() {
+    public SecureRandom getRandom() {
         return random;
     }
 

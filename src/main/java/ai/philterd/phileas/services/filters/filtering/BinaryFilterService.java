@@ -24,8 +24,8 @@ import ai.philterd.phileas.services.context.ContextService;
 import ai.philterd.phileas.services.disambiguation.vector.VectorService;
 import org.apache.hc.client5.http.classic.HttpClient;
 
+import java.security.SecureRandom;
 import java.util.List;
-import java.util.Random;
 
 /**
  * Abstract base class for services that filter text from binary documents.
@@ -72,7 +72,7 @@ public abstract class BinaryFilterService extends FilterService {
     public abstract byte[] apply(final Policy policy, final byte[] input, final List<Span> spans, final MimeType outputMimeType) throws Exception;
 
     protected BinaryFilterService(final PhileasConfiguration phileasConfiguration,
-                                  final Random random, final HttpClient httpClient) {
+                                  final SecureRandom random, final HttpClient httpClient) {
 
         super(phileasConfiguration, random, httpClient);
 

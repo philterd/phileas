@@ -23,8 +23,8 @@ import ai.philterd.phileas.services.context.ContextService;
 import ai.philterd.phileas.services.disambiguation.vector.VectorService;
 import org.apache.hc.client5.http.classic.HttpClient;
 
+import java.security.SecureRandom;
 import java.util.List;
-import java.util.Random;
 
 public abstract class TextFilterService extends FilterService {
 
@@ -65,7 +65,7 @@ public abstract class TextFilterService extends FilterService {
     public abstract byte[] apply(final byte[] input, final List<Span> spans);
 
     protected TextFilterService(final PhileasConfiguration phileasConfiguration,
-                                final Random random,
+                                final SecureRandom random,
                                 final HttpClient httpClient) {
 
         super(phileasConfiguration, random, httpClient);

@@ -69,7 +69,6 @@ public class SpanDisambiguationEndToEndTest extends AbstractFilterTest {
     private FilterConfiguration filterConfiguration(final AbstractFilterStrategy strategy) {
         return new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(strategy))
-                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
     }

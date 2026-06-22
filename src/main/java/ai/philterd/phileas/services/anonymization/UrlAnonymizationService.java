@@ -17,21 +17,21 @@ package ai.philterd.phileas.services.anonymization;
 
 import org.apache.commons.collections4.CollectionUtils;
 
+import java.security.SecureRandom;
 import java.util.List;
-import java.util.Random;
 import java.util.UUID;
 
 public class UrlAnonymizationService extends AbstractAnonymizationService {
 
-    public UrlAnonymizationService(final Random random, final AnonymizationMethod anonymizationMethod) {
+    public UrlAnonymizationService(final SecureRandom random, final AnonymizationMethod anonymizationMethod) {
         super(random, anonymizationMethod);
     }
 
-    public UrlAnonymizationService(final Random random, final List<String> candidates) {
+    public UrlAnonymizationService(final SecureRandom random, final List<String> candidates) {
         super(random, candidates);
     }
 
-    public UrlAnonymizationService(final Random random) {
+    public UrlAnonymizationService(final SecureRandom random) {
         super(random);
     }
 

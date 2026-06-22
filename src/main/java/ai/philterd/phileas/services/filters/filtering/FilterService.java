@@ -29,11 +29,12 @@ import ai.philterd.phileas.services.filters.postfilters.TrailingSpacePostFilter;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.hc.client5.http.classic.HttpClient;
 
+import java.security.SecureRandom;
+
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import java.util.concurrent.CompletionException;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -43,11 +44,10 @@ import java.util.concurrent.ConcurrentHashMap;
  * <p>A warm instance is safe to share across threads: the filter and post-filter caches are
  * {@link ConcurrentHashMap}s populated via {@code computeIfAbsent}, and {@code filter()} does not
  * mutate instance state. The per-request context and vector services are supplied per call rather
- * than held on the instance, so concurrent callers do not share that state. The only shared mutable
- * dependency is the {@link Random} used for anonymization, which must be thread-safe when the
- * instance is shared across threads (the default {@link java.security.SecureRandom} is). Per-row
- * callers (Spark, Kafka, logging UDFs) should share one instance rather than locking around
- * {@code filter()}.
+ * than held on the instance, so concurrent callers do not share that state. The {@link SecureRandom}
+ * used for anonymization is supplied at construction and shared across calls, so it must be
+ * thread-safe (the default {@link SecureRandom} is). Per-row callers (Spark, Kafka, logging UDFs)
+ * should share one instance rather than locking around {@code filter()}.
  */
 public abstract class FilterService {
 
@@ -60,7 +60,7 @@ public abstract class FilterService {
     protected final Map<String, List<PostFilter>> postFilterCache;
 
     protected FilterService(final PhileasConfiguration phileasConfiguration,
-                            final Random random,
+                            final SecureRandom random,
                             final HttpClient httpClient) {
 
         this.filterCache = new ConcurrentHashMap<>();

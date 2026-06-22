@@ -30,7 +30,7 @@ public class CityGeneratorTest {
     @Test
     public void testGenerateCity() {
         final List<String> cities = Arrays.asList("New York", "Los Angeles", "Chicago");
-        final CityGenerator generator = new CityGenerator(cities, new SecureRandom());
+        final CityGenerator generator = new CityGenerator(new SecureRandom(), cities);
         final String city = generator.random();
         assertNotNull(city);
         assertTrue(cities.contains(city));
@@ -39,7 +39,7 @@ public class CityGeneratorTest {
     @Test
     public void testPoolSize() {
         final List<String> cities = Arrays.asList("New York", "Los Angeles", "Chicago");
-        final CityGenerator generator = new CityGenerator(cities, new SecureRandom());
+        final CityGenerator generator = new CityGenerator(new SecureRandom(), cities);
         assertEquals(3, generator.poolSize());
     }
 

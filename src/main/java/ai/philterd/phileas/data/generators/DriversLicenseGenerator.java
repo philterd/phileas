@@ -17,20 +17,20 @@ package ai.philterd.phileas.data.generators;
 
 import ai.philterd.phileas.data.DataGenerator;
 
-import java.util.Random;
+import java.security.SecureRandom;
 
 /**
  * Generates random driver's license numbers.
  */
 public class DriversLicenseGenerator implements DataGenerator.Generator<String> {
 
-    private final Random random;
+    private final SecureRandom random;
 
     /**
      * Creates a new driver's license generator.
-     * @param random The {@link Random} to use.
+     * @param random The {@link SecureRandom} to use.
      */
-    public DriversLicenseGenerator(final Random random) {
+    public DriversLicenseGenerator(final SecureRandom random) {
         this.random = random;
     }
 

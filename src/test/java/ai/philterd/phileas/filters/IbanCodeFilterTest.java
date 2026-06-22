@@ -32,7 +32,6 @@ public class IbanCodeFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new IbanCodeFilterStrategy()))
-                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -138,7 +137,6 @@ public class IbanCodeFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(ibanCodeFilterStrategy))
-                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 

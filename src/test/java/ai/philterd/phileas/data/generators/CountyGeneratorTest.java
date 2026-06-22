@@ -30,7 +30,7 @@ public class CountyGeneratorTest {
     @Test
     public void testGenerateCounty() {
         final List<String> counties = Arrays.asList("Fairfax", "Loudoun", "Arlington");
-        final CountyGenerator generator = new CountyGenerator(counties, new SecureRandom());
+        final CountyGenerator generator = new CountyGenerator(new SecureRandom(), counties);
         final String county = generator.random();
         assertNotNull(county);
         assertTrue(counties.contains(county));
@@ -39,7 +39,7 @@ public class CountyGeneratorTest {
     @Test
     public void testPoolSize() {
         final List<String> counties = Arrays.asList("Fairfax", "Loudoun", "Arlington");
-        final CountyGenerator generator = new CountyGenerator(counties, new SecureRandom());
+        final CountyGenerator generator = new CountyGenerator(new SecureRandom(), counties);
         assertEquals(3, generator.poolSize());
     }
 

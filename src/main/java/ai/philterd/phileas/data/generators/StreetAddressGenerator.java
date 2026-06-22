@@ -17,7 +17,7 @@ package ai.philterd.phileas.data.generators;
 
 import ai.philterd.phileas.data.DataGenerator;
 
-import java.util.Random;
+import java.security.SecureRandom;
 
 /**
  * Generates random street addresses.
@@ -25,15 +25,15 @@ import java.util.Random;
 public class StreetAddressGenerator extends AbstractGenerator<String> {
 
     private final DataGenerator.Generator<String> surnames;
-    private final Random random;
+    private final SecureRandom random;
     private final String[] suffixes = {"St", "Ave", "Blvd", "Rd", "Ln", "Dr", "Ct", "Pl", "Way", "Ter"};
 
     /**
      * Creates a new street address generator.
      * @param surnames A generator for surnames to be used as street names.
-     * @param random The {@link Random} to use.
+     * @param random The {@link SecureRandom} to use.
      */
-    public StreetAddressGenerator(final DataGenerator.Generator<String> surnames, final Random random) {
+    public StreetAddressGenerator(final SecureRandom random, final DataGenerator.Generator<String> surnames) {
         this.surnames = surnames;
         this.random = random;
     }

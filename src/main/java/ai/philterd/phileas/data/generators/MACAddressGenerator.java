@@ -17,12 +17,12 @@ package ai.philterd.phileas.data.generators;
 
 import ai.philterd.phileas.data.DataGenerator;
 
-import java.util.Random;
+import java.security.SecureRandom;
 
 public class MACAddressGenerator implements DataGenerator.Generator<String> {
-    private final Random random;
+    private final SecureRandom random;
 
-    public MACAddressGenerator(final Random random) {
+    public MACAddressGenerator(final SecureRandom random) {
         this.random = random;
     }
 

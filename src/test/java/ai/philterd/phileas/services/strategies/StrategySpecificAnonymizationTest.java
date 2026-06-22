@@ -21,7 +21,7 @@ public class StrategySpecificAnonymizationTest {
     @Test
     public void testStrategySpecificAnonymization() throws Exception {
 
-        final AnonymizationService defaultAnonymizationService = new AgeAnonymizationService(new SecureRandom());
+        final AnonymizationService defaultAnonymizationService = new AgeAnonymizationService();
         final ContextService contextService = new DefaultContextService();
 
         // Create a strategy with specific candidates

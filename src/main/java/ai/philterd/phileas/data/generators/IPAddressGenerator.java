@@ -17,19 +17,19 @@ package ai.philterd.phileas.data.generators;
 
 import ai.philterd.phileas.data.DataGenerator;
 
-import java.util.Random;
+import java.security.SecureRandom;
 
 /**
  * Generates random IP addresses.
  */
 public class IPAddressGenerator implements DataGenerator.Generator<String> {
-    private final Random random;
+    private final SecureRandom random;
 
     /**
      * Creates a new IP address generator.
-     * @param random The {@link Random} to use.
+     * @param random The {@link SecureRandom} to use.
      */
-    public IPAddressGenerator(final Random random) {
+    public IPAddressGenerator(final SecureRandom random) {
         this.random = random;
     }
 

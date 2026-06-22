@@ -21,9 +21,9 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.security.SecureRandom;
 import java.io.IOException;
 import java.util.List;
-import java.util.Random;
 import java.util.UUID;
 
 public class CreditCardAnonymizationService extends AbstractAnonymizationService {
@@ -32,7 +32,7 @@ public class CreditCardAnonymizationService extends AbstractAnonymizationService
 
     private DataGenerator dataGenerator;
 
-    public CreditCardAnonymizationService(final Random random, final AnonymizationMethod anonymizationMethod) {
+    public CreditCardAnonymizationService(final SecureRandom random, final AnonymizationMethod anonymizationMethod) {
         super(random, anonymizationMethod);
 
         try {
@@ -42,7 +42,7 @@ public class CreditCardAnonymizationService extends AbstractAnonymizationService
         }
     }
 
-    public CreditCardAnonymizationService(final Random random, final List<String> candidates) {
+    public CreditCardAnonymizationService(final SecureRandom random, final List<String> candidates) {
         super(random, candidates);
 
         try {
@@ -52,7 +52,7 @@ public class CreditCardAnonymizationService extends AbstractAnonymizationService
         }
     }
 
-    public CreditCardAnonymizationService(final Random random) {
+    public CreditCardAnonymizationService(final SecureRandom random) {
         super(random);
 
         try {

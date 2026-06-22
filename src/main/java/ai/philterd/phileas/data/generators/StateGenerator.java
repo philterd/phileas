@@ -19,30 +19,30 @@ import ai.philterd.phileas.data.DataGenerator;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Random;
+import java.security.SecureRandom;
 
 /**
  * Generates random state names.
  */
 public class StateGenerator implements DataGenerator.Generator<String> {
-    private final Random random;
+    private final SecureRandom random;
     private final List<String> states;
     private static final List<String> DEFAULT_STATES = Arrays.asList("Alabama", "Alaska", "Arizona", "Arkansas", "California", "Colorado", "Connecticut", "Delaware", "Florida", "Georgia", "Hawaii", "Idaho", "Illinois", "Indiana", "Iowa", "Kansas", "Kentucky", "Louisiana", "Maine", "Maryland", "Massachusetts", "Michigan", "Minnesota", "Mississippi", "Missouri", "Montana", "Nebraska", "Nevada", "New Hampshire", "New Jersey", "New Mexico", "New York", "North Carolina", "North Dakota", "Ohio", "Oklahoma", "Oregon", "Pennsylvania", "Rhode Island", "South Carolina", "South Dakota", "Tennessee", "Texas", "Utah", "Vermont", "Virginia", "Washington", "West Virginia", "Wisconsin", "Wyoming");
 
     /**
      * Creates a new state generator.
-     * @param random The {@link Random} to use.
+     * @param random The {@link SecureRandom} to use.
      */
-    public StateGenerator(final Random random) {
+    public StateGenerator(final SecureRandom random) {
         this(random, DEFAULT_STATES);
     }
 
     /**
      * Creates a new state generator.
-     * @param random The {@link Random} to use.
+     * @param random The {@link SecureRandom} to use.
      * @param states A list of state names.
      */
-    public StateGenerator(final Random random, final List<String> states) {
+    public StateGenerator(final SecureRandom random, final List<String> states) {
         this.random = random;
         this.states = states;
     }

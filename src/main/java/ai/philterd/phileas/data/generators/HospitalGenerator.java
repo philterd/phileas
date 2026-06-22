@@ -15,33 +15,24 @@
  */
 package ai.philterd.phileas.data.generators;
 
+
 import java.io.IOException;
 import java.security.SecureRandom;
 import java.util.List;
-import java.util.Random;
 
 /**
  * Generates random hospital names.
  */
 public class HospitalGenerator extends AbstractGenerator<String> {
 
-    private final Random random;
+    private final SecureRandom random;
     private final List<String> hospitals;
 
     /**
      * Creates a new hospital generator.
      * @throws IOException if the hospital data cannot be loaded.
      */
-    public HospitalGenerator() throws IOException {
-        this(new SecureRandom());
-    }
-
-    /**
-     * Creates a new hospital generator.
-     * @param random The {@link Random} to use.
-     * @throws IOException if the hospital data cannot be loaded.
-     */
-    public HospitalGenerator(final Random random) throws IOException {
+    public HospitalGenerator(final SecureRandom random) throws IOException {
         this.random = random;
         this.hospitals = loadNames("/hospitals.txt");
     }
@@ -49,9 +40,8 @@ public class HospitalGenerator extends AbstractGenerator<String> {
     /**
      * Creates a new hospital generator.
      * @param hospitals A list of hospital names.
-     * @param random The {@link Random} to use.
      */
-    public HospitalGenerator(final List<String> hospitals, final Random random) {
+    public HospitalGenerator(final SecureRandom random, final List<String> hospitals) {
         this.random = random;
         this.hospitals = hospitals;
     }

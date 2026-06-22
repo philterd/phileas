@@ -17,19 +17,19 @@ package ai.philterd.phileas.data.generators;
 
 import ai.philterd.phileas.data.DataGenerator;
 
-import java.util.Random;
+import java.security.SecureRandom;
 
 /**
  * Generates random tracking numbers (UPS and FedEx).
  */
 public class TrackingNumberGenerator implements DataGenerator.Generator<String> {
-    private final Random random;
+    private final SecureRandom random;
 
     /**
      * Creates a new tracking number generator.
-     * @param random The {@link Random} to use.
+     * @param random The {@link SecureRandom} to use.
      */
-    public TrackingNumberGenerator(final Random random) {
+    public TrackingNumberGenerator(final SecureRandom random) {
         this.random = random;
     }
 

@@ -17,21 +17,21 @@ package ai.philterd.phileas.services.anonymization;
 
 import org.apache.commons.collections4.CollectionUtils;
 
+import java.security.SecureRandom;
 import java.util.List;
-import java.util.Random;
 import java.util.UUID;
 
 public class MacAddressAnonymizationService extends AbstractAnonymizationService {
 
-    public MacAddressAnonymizationService(final Random random, final AnonymizationMethod anonymizationMethod) {
+    public MacAddressAnonymizationService(final SecureRandom random, final AnonymizationMethod anonymizationMethod) {
         super(random, anonymizationMethod);
     }
 
-    public MacAddressAnonymizationService(final Random random, final List<String> candidates) {
+    public MacAddressAnonymizationService(final SecureRandom random, final List<String> candidates) {
         super(random, candidates);
     }
 
-    public MacAddressAnonymizationService(final Random random) {
+    public MacAddressAnonymizationService(final SecureRandom random) {
         super(random);
     }
 

@@ -37,7 +37,6 @@ public class FilterTest extends AbstractFilterTest {
 
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
-                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -67,7 +66,6 @@ public class FilterTest extends AbstractFilterTest {
         int windowSize = 5;
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
-                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -98,7 +96,6 @@ public class FilterTest extends AbstractFilterTest {
         int windowSize = 5;
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
-                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
@@ -129,7 +126,6 @@ public class FilterTest extends AbstractFilterTest {
         final int windowSize = 5;
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
-                .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 

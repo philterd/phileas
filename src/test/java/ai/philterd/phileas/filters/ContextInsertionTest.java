@@ -26,7 +26,6 @@ public class ContextInsertionTest extends AbstractFilterTest {
 
         FilterConfiguration ssnConfig = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(ssnFilterStrategy))
-                .withRandom(random)
                 .build();
         SsnFilter ssnFilter = new SsnFilter(ssnConfig);
 
@@ -37,7 +36,6 @@ public class ContextInsertionTest extends AbstractFilterTest {
 
         FilterConfiguration firstNameConfig = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(firstNameFilterStrategy))
-                .withRandom(random)
                 .build();
         FuzzyDictionaryFilter firstNameFilter = new FuzzyDictionaryFilter(FilterType.FIRST_NAME, firstNameConfig, SensitivityLevel.LOW, true);
 

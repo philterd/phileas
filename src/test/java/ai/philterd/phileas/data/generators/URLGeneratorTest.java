@@ -30,8 +30,8 @@ public class URLGeneratorTest {
     @Test
     public void testGenerateURL() {
         final List<String> firstNamePool = Arrays.asList("John", "Jane", "Mary");
-        final DataGenerator.Generator<String> firstNames = new FirstNameGenerator(firstNamePool, new SecureRandom());
-        final URLGenerator generator = new URLGenerator(firstNames, new SecureRandom());
+        final DataGenerator.Generator<String> firstNames = new FirstNameGenerator(new SecureRandom(), firstNamePool);
+        final URLGenerator generator = new URLGenerator(new SecureRandom(), firstNames);
         final String url = generator.random();
         assertNotNull(url);
         assertTrue(url.startsWith("http://") || url.startsWith("https://"));
@@ -40,10 +40,10 @@ public class URLGeneratorTest {
     @Test
     public void testCustomPools() {
         final List<String> firstNamePool = Arrays.asList("John", "Jane", "Mary");
-        final DataGenerator.Generator<String> firstNames = new FirstNameGenerator(firstNamePool, new SecureRandom());
+        final DataGenerator.Generator<String> firstNames = new FirstNameGenerator(new SecureRandom(), firstNamePool);
         final String[] customProtocols = {"ftp"};
         final String[] customExtensions = {"biz"};
-        final URLGenerator urlGenerator = new URLGenerator(firstNames, new SecureRandom(), customProtocols, customExtensions);
+        final URLGenerator urlGenerator = new URLGenerator(new SecureRandom(), firstNames, customProtocols, customExtensions);
         final String url = urlGenerator.random();
         assertTrue(url.startsWith("ftp://"));
         assertTrue(url.endsWith(".biz"));
@@ -52,8 +52,8 @@ public class URLGeneratorTest {
     @Test
     public void testPoolSize() {
         final List<String> firstNamePool = Arrays.asList("John", "Jane", "Mary");
-        final DataGenerator.Generator<String> firstNames = new FirstNameGenerator(firstNamePool, new SecureRandom());
-        final URLGenerator generator = new URLGenerator(firstNames, new SecureRandom());
+        final DataGenerator.Generator<String> firstNames = new FirstNameGenerator(new SecureRandom(), firstNamePool);
+        final URLGenerator generator = new URLGenerator(new SecureRandom(), firstNames);
         assertTrue(generator.poolSize() > 0);
     }
 

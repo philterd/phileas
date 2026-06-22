@@ -21,9 +21,9 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.security.SecureRandom;
 import java.io.IOException;
 import java.util.List;
-import java.util.Random;
 import java.util.UUID;
 
 public class StreetAddressAnonymizationService extends AbstractAnonymizationService {
@@ -32,7 +32,7 @@ public class StreetAddressAnonymizationService extends AbstractAnonymizationServ
 
     private DataGenerator dataGenerator;
 
-    public StreetAddressAnonymizationService(final Random random, final AnonymizationMethod anonymizationMethod) {
+    public StreetAddressAnonymizationService(final SecureRandom random, final AnonymizationMethod anonymizationMethod) {
         super(random, anonymizationMethod);
         try {
             this.dataGenerator = new DefaultDataGenerator(random);
@@ -41,7 +41,7 @@ public class StreetAddressAnonymizationService extends AbstractAnonymizationServ
         }
     }
 
-    public StreetAddressAnonymizationService(final Random random, final List<String> candidates) {
+    public StreetAddressAnonymizationService(final SecureRandom random, final List<String> candidates) {
         super(random, candidates);
         try {
             this.dataGenerator = new DefaultDataGenerator(random);
@@ -50,7 +50,7 @@ public class StreetAddressAnonymizationService extends AbstractAnonymizationServ
         }
     }
 
-    public StreetAddressAnonymizationService(final Random random) {
+    public StreetAddressAnonymizationService(final SecureRandom random) {
         super(random);
         try {
             this.dataGenerator = new DefaultDataGenerator(random);

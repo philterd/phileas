@@ -17,22 +17,22 @@ package ai.philterd.phileas.services.anonymization;
 
 import org.apache.commons.collections4.CollectionUtils;
 
+import java.security.SecureRandom;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Random;
 import java.util.UUID;
 
 public class StateAbbreviationAnonymizationService extends AbstractAnonymizationService {
 
-    public StateAbbreviationAnonymizationService(final Random random, final AnonymizationMethod anonymizationMethod) {
+    public StateAbbreviationAnonymizationService(final SecureRandom random, final AnonymizationMethod anonymizationMethod) {
         super(random, anonymizationMethod);
     }
 
-    public StateAbbreviationAnonymizationService(final Random random, final List<String> candidates) {
+    public StateAbbreviationAnonymizationService(final SecureRandom random, final List<String> candidates) {
         super(random, candidates);
     }
 
-    public StateAbbreviationAnonymizationService(final Random random) {
+    public StateAbbreviationAnonymizationService(final SecureRandom random) {
         super(random);
     }
 
