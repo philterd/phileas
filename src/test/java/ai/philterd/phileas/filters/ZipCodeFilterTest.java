@@ -34,14 +34,13 @@ public class ZipCodeFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new ZipCodeFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final ZipCodeFilter filter = new ZipCodeFilter(filterConfiguration, true, false);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "the zip is 90210.");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "the zip is 90210.");
         Assertions.assertEquals(1, filtered.getSpans().size());
         Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 11, 16, FilterType.ZIP_CODE));
         Assertions.assertEquals("90210", filtered.getSpans().get(0).getText());
@@ -53,14 +52,13 @@ public class ZipCodeFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new ZipCodeFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final ZipCodeFilter filter = new ZipCodeFilter(filterConfiguration, true, false);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "the zip is 90210abd.");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "the zip is 90210abd.");
         Assertions.assertEquals(0, filtered.getSpans().size());
 
     }
@@ -70,14 +68,13 @@ public class ZipCodeFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new ZipCodeFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final ZipCodeFilter filter = new ZipCodeFilter(filterConfiguration, true, false);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "the zip is 90210 in california.");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "the zip is 90210 in california.");
         Assertions.assertEquals(1, filtered.getSpans().size());
         Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 11, 16, FilterType.ZIP_CODE));
 
@@ -88,14 +85,13 @@ public class ZipCodeFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new ZipCodeFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final ZipCodeFilter filter = new ZipCodeFilter(filterConfiguration, true, false);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "the zip is 85055 in california.");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "the zip is 85055 in california.");
         Assertions.assertEquals(1, filtered.getSpans().size());
         Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 11, 16, FilterType.ZIP_CODE));
 
@@ -106,14 +102,13 @@ public class ZipCodeFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new ZipCodeFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final ZipCodeFilter filter = new ZipCodeFilter(filterConfiguration, true, false);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "the zip is 90213-1544 in california.");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "the zip is 90213-1544 in california.");
         Assertions.assertEquals(1, filtered.getSpans().size());
         Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 11, 21, FilterType.ZIP_CODE));
 
@@ -124,14 +119,13 @@ public class ZipCodeFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new ZipCodeFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final ZipCodeFilter filter = new ZipCodeFilter(filterConfiguration, true, false);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "George Washington was president and his ssn was 123-45-6789 and he lived in 90210.");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "George Washington was president and his ssn was 123-45-6789 and he lived in 90210.");
         Assertions.assertEquals(1, filtered.getSpans().size());
         Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 76, 81, FilterType.ZIP_CODE));
 
@@ -142,7 +136,6 @@ public class ZipCodeFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new ZipCodeFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
@@ -150,7 +143,7 @@ public class ZipCodeFilterTest extends AbstractFilterTest {
         final ZipCodeFilter filter = new ZipCodeFilter(filterConfiguration, true, false);
 
         // Tests whole word only.
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "George Washington was president and his ssn was 123-45-6789 and he lived in 9021032.");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "George Washington was president and his ssn was 123-45-6789 and he lived in 9021032.");
         Assertions.assertEquals(0, filtered.getSpans().size());
 
     }
@@ -160,7 +153,6 @@ public class ZipCodeFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new ZipCodeFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
@@ -168,7 +160,7 @@ public class ZipCodeFilterTest extends AbstractFilterTest {
         final ZipCodeFilter filter = new ZipCodeFilter(filterConfiguration, true, false);
 
         // Tests whole word only.
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "George Washington was president and his ssn was 123-45-6789 and he lived in 90210-1234.");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "George Washington was president and his ssn was 123-45-6789 and he lived in 90210-1234.");
         Assertions.assertEquals(1, filtered.getSpans().size());
 
     }
@@ -178,7 +170,6 @@ public class ZipCodeFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new ZipCodeFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
@@ -186,7 +177,7 @@ public class ZipCodeFilterTest extends AbstractFilterTest {
         final ZipCodeFilter filter = new ZipCodeFilter(filterConfiguration, false, false);
 
         // Tests without delimiter.
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "George Washington was president and his ssn was 123-45-6789 and he lived in 902101234.");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "George Washington was president and his ssn was 123-45-6789 and he lived in 902101234.");
         Assertions.assertEquals(1, filtered.getSpans().size());
 
     }
@@ -196,7 +187,6 @@ public class ZipCodeFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new ZipCodeFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
@@ -204,7 +194,7 @@ public class ZipCodeFilterTest extends AbstractFilterTest {
         final ZipCodeFilter filter = new ZipCodeFilter(filterConfiguration, true, false);
 
         // Tests without delimiter.
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "George Washington was president and his ssn was 123-45-6789 and he lived in 902101234.");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "George Washington was president and his ssn was 123-45-6789 and he lived in 902101234.");
         Assertions.assertEquals(0, filtered.getSpans().size());
 
     }
@@ -214,7 +204,6 @@ public class ZipCodeFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new ZipCodeFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
@@ -222,7 +211,7 @@ public class ZipCodeFilterTest extends AbstractFilterTest {
         final ZipCodeFilter filter = new ZipCodeFilter(filterConfiguration, true, true);
 
         // 09865 is an invalid zip code.
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "George Washington lived in 90210 and 09865.");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "George Washington lived in 90210 and 09865.");
         Assertions.assertEquals(2, filtered.getSpans().size());
 
         for(final Span span : filtered.getSpans()) {
@@ -244,7 +233,6 @@ public class ZipCodeFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new ZipCodeFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
@@ -252,7 +240,7 @@ public class ZipCodeFilterTest extends AbstractFilterTest {
         final ZipCodeFilter filter = new ZipCodeFilter(filterConfiguration, true, true);
 
         // 09865 is an invalid zip code.
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "George Washington lived in 90210-1234 and 09865.");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "George Washington lived in 90210-1234 and 09865.");
         Assertions.assertEquals(2, filtered.getSpans().size());
 
         for(final Span span : filtered.getSpans()) {
@@ -274,7 +262,6 @@ public class ZipCodeFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new ZipCodeFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
@@ -282,7 +269,7 @@ public class ZipCodeFilterTest extends AbstractFilterTest {
         final ZipCodeFilter filter = new ZipCodeFilter(filterConfiguration, false, true);
 
         // 09865 is an invalid zip code.
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "George Washington lived in 902101234 and 09865.");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "George Washington lived in 902101234 and 09865.");
         Assertions.assertEquals(2, filtered.getSpans().size());
 
         for(final Span span : filtered.getSpans()) {
@@ -304,7 +291,6 @@ public class ZipCodeFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new ZipCodeFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
@@ -312,7 +298,7 @@ public class ZipCodeFilterTest extends AbstractFilterTest {
         final ZipCodeFilter filter = new ZipCodeFilter(filterConfiguration, true, true);
 
         // 09865 is an invalid zip code.
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "George Washington lived in 90210-1234 and 09865-1234.");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "George Washington lived in 90210-1234 and 09865-1234.");
         Assertions.assertEquals(2, filtered.getSpans().size());
 
         for(final Span span : filtered.getSpans()) {
@@ -340,14 +326,13 @@ public class ZipCodeFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(zipCodeFilterStrategy))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final ZipCodeFilter filter = new ZipCodeFilter(filterConfiguration, false, false);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "the zip code is 90210");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "the zip code is 90210");
         showSpans(filtered.getSpans());
         Assertions.assertEquals(1, filtered.getSpans().size());
         Assertions.assertTrue(candidates.contains(filtered.getSpans().get(0).getReplacement()));
@@ -362,14 +347,13 @@ public class ZipCodeFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(zipCodeFilterStrategy))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final ZipCodeFilter filter = new ZipCodeFilter(filterConfiguration, false, false);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "the zip code is 90210");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "the zip code is 90210");
         showSpans(filtered.getSpans());
         Assertions.assertEquals(1, filtered.getSpans().size());
         Assertions.assertEquals(36, filtered.getSpans().get(0).getReplacement().length());

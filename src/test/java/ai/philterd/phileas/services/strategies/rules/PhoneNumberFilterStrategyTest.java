@@ -28,7 +28,7 @@ public class PhoneNumberFilterStrategyTest extends AbstractFilterStrategyTest {
     }
 
     public AbstractAnonymizationService getAnonymizationService() {
-        return new NumericAnonymizationService(new DefaultContextService());
+        return new NumericAnonymizationService();
     }
 
 }

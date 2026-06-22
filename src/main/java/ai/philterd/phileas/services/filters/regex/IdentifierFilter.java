@@ -23,6 +23,7 @@ import ai.philterd.phileas.model.filtering.Filtered;
 import ai.philterd.phileas.model.filtering.Span;
 import ai.philterd.phileas.policy.Policy;
 import ai.philterd.phileas.services.Analyzer;
+import ai.philterd.phileas.services.context.ContextService;
 import ai.philterd.phileas.services.validators.SpanValidator;
 
 import java.util.HashSet;
@@ -63,9 +64,9 @@ public class IdentifierFilter extends RegexFilter {
     }
 
     @Override
-    public Filtered filter(Policy policy, String context, int piece, String input) throws Exception {
+    public Filtered filter(ContextService contextService, Policy policy, String context, int piece, String input) throws Exception {
 
-        final List<Span> rawSpans = findSpans(policy, analyzer, input, context);
+        final List<Span> rawSpans = findSpans(contextService, policy, analyzer, input, context);
 
         // With no validator, every regex match is kept. With a validator, a match is kept only
         // if it passes (for example a checksum), so a generic identifier can reject format-valid

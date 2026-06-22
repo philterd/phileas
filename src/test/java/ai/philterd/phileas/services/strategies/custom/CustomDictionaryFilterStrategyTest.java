@@ -28,7 +28,7 @@ public class CustomDictionaryFilterStrategyTest extends AbstractFilterStrategyTe
     }
 
     public AbstractAnonymizationService getAnonymizationService() {
-        return new AlphanumericAnonymizationService(new DefaultContextService());
+        return new AlphanumericAnonymizationService();
     }
 
 }

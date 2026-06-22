@@ -26,7 +26,6 @@ public class ContextInsertionTest extends AbstractFilterTest {
 
         FilterConfiguration ssnConfig = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(ssnFilterStrategy))
-                .withContextService(contextService)
                 .withRandom(random)
                 .build();
         SsnFilter ssnFilter = new SsnFilter(ssnConfig);
@@ -38,16 +37,15 @@ public class ContextInsertionTest extends AbstractFilterTest {
 
         FilterConfiguration firstNameConfig = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(firstNameFilterStrategy))
-                .withContextService(contextService)
                 .withRandom(random)
                 .build();
         FuzzyDictionaryFilter firstNameFilter = new FuzzyDictionaryFilter(FilterType.FIRST_NAME, firstNameConfig, SensitivityLevel.LOW, true);
 
         // Filter SSN
-        ssnFilter.filter(getPolicy(), "ctx", PIECE, "The ssn is 123-45-6789.");
+        ssnFilter.filter(contextService, getPolicy(), "ctx", PIECE, "The ssn is 123-45-6789.");
         
         // Filter FirstName
-        firstNameFilter.filter(getPolicy(), "ctx", PIECE, "His name is Melissa.");
+        firstNameFilter.filter(contextService, getPolicy(), "ctx", PIECE, "His name is Melissa.");
 
         // Check ContextService
         Assertions.assertTrue(contextService.containsToken("123-45-6789"), "SSN should be in context");

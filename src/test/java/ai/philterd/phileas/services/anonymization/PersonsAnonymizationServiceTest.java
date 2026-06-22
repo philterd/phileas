@@ -30,7 +30,7 @@ public class PersonsAnonymizationServiceTest {
     @Test
     public void constructor() {
 
-        AnonymizationService anonymizationService = new PersonsAnonymizationService(new DefaultContextService(), new SecureRandom(), AnonymizationMethod.REALISTIC);
+        AnonymizationService anonymizationService = new PersonsAnonymizationService(new SecureRandom(), AnonymizationMethod.REALISTIC);
 
         final String token = "John Doe";
         final String replacement = anonymizationService.anonymize(token);
@@ -45,7 +45,7 @@ public class PersonsAnonymizationServiceTest {
     @Test
     public void anonymize1() {
 
-        AnonymizationService anonymizationService = new PersonsAnonymizationService(new DefaultContextService());
+        AnonymizationService anonymizationService = new PersonsAnonymizationService();
 
         final String token = "abcd1234";
         final String replacement = anonymizationService.anonymize(token);
@@ -60,7 +60,7 @@ public class PersonsAnonymizationServiceTest {
     @Test
     public void anonymize2() {
 
-        AnonymizationService anonymizationService = new PersonsAnonymizationService(new DefaultContextService());
+        AnonymizationService anonymizationService = new PersonsAnonymizationService();
 
         final String token = "April 1, 2019";
         final String replacement = anonymizationService.anonymize(token);
@@ -75,7 +75,7 @@ public class PersonsAnonymizationServiceTest {
     @Test
     public void anonymizeUUID() {
 
-        AnonymizationService anonymizationService = new PersonsAnonymizationService(new DefaultContextService(), new SecureRandom(), AnonymizationMethod.UUID);
+        AnonymizationService anonymizationService = new PersonsAnonymizationService(new SecureRandom(), AnonymizationMethod.UUID);
 
         final String token = "John Doe";
         final String replacement = anonymizationService.anonymize(token);

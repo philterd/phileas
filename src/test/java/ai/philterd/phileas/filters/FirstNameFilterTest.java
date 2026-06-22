@@ -40,14 +40,13 @@ public class FirstNameFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new FirstNameFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.FIRST_NAME, filterConfiguration, SensitivityLevel.LOW, true);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE,"John");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE,"John");
         showSpans(Span.dropOverlappingSpans(filtered.getSpans()));
         Assertions.assertEquals(1, Span.dropOverlappingSpans(filtered.getSpans()).size());
 
@@ -58,14 +57,13 @@ public class FirstNameFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new FirstNameFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.FIRST_NAME, filterConfiguration, SensitivityLevel.MEDIUM, true);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "Michel had eye cancer");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "Michel had eye cancer");
         showSpans(Span.dropOverlappingSpans(filtered.getSpans()));
         Assertions.assertEquals(1, Span.dropOverlappingSpans(filtered.getSpans()).size());
 
@@ -76,14 +74,13 @@ public class FirstNameFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new FirstNameFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.FIRST_NAME, filterConfiguration, SensitivityLevel.LOW, true);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "Jennifer had eye cancer");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "Jennifer had eye cancer");
         showSpans(Span.dropOverlappingSpans(filtered.getSpans()));
         Assertions.assertEquals(1, Span.dropOverlappingSpans(filtered.getSpans()).size());
 
@@ -94,14 +91,13 @@ public class FirstNameFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new FirstNameFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.FIRST_NAME, filterConfiguration, SensitivityLevel.HIGH, true);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "Sandra in Washington");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "Sandra in Washington");
         showSpans(filtered.getSpans());
         Assertions.assertEquals(2, filtered.getSpans().size());
 
@@ -112,14 +108,13 @@ public class FirstNameFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new FirstNameFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.FIRST_NAME, filterConfiguration, SensitivityLevel.MEDIUM, true);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "Melissa");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "Melissa");
 
         showSpans(Span.dropOverlappingSpans(filtered.getSpans()));
         Assertions.assertEquals(1, Span.dropOverlappingSpans(filtered.getSpans()).size());
@@ -131,18 +126,17 @@ public class FirstNameFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new FirstNameFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.FIRST_NAME, filterConfiguration, SensitivityLevel.LOW, true);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE,"Thomas");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE,"Thomas");
         showSpans(Span.dropOverlappingSpans(filtered.getSpans()));
         Assertions.assertEquals(1, Span.dropOverlappingSpans(filtered.getSpans()).size());
 
-        final Filtered filtered2 = filter.filter(getPolicy(), "context", PIECE,"thomas");
+        final Filtered filtered2 = filter.filter(contextService, getPolicy(), "context", PIECE,"thomas");
         showSpans(filtered2.getSpans());
         Assertions.assertEquals(0, filtered2.getSpans().size());
 
@@ -153,14 +147,13 @@ public class FirstNameFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new FirstNameFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.FIRST_NAME, filterConfiguration, SensitivityLevel.LOW, false);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE,"dat");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE,"dat");
         showSpans(Span.dropOverlappingSpans(filtered.getSpans()));
         Assertions.assertEquals(1, Span.dropOverlappingSpans(filtered.getSpans()).size());
 
@@ -171,14 +164,13 @@ public class FirstNameFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new FirstNameFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.FIRST_NAME, filterConfiguration, SensitivityLevel.LOW, false);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE,"joie");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE,"joie");
         showSpans(Span.dropOverlappingSpans(filtered.getSpans()));
         Assertions.assertEquals(1, Span.dropOverlappingSpans(filtered.getSpans()).size());
 
@@ -189,14 +181,13 @@ public class FirstNameFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new FirstNameFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.FIRST_NAME, filterConfiguration, SensitivityLevel.LOW, true);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE,"John");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE,"John");
         showSpans(Span.dropOverlappingSpans(filtered.getSpans()));
         Assertions.assertEquals(1, Span.dropOverlappingSpans(filtered.getSpans()).size());
 
@@ -207,14 +198,13 @@ public class FirstNameFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new FirstNameFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.FIRST_NAME, filterConfiguration, SensitivityLevel.LOW, true);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE,"Smith,Melissa A,MD");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE,"Smith,Melissa A,MD");
         showSpans(Span.dropOverlappingSpans(filtered.getSpans()));
         Assertions.assertEquals(3, Span.dropOverlappingSpans(filtered.getSpans()).size());
 
@@ -231,14 +221,13 @@ public class FirstNameFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(firstNameFilterStrategy))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.FIRST_NAME, filterConfiguration, SensitivityLevel.LOW, true);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE,"Timothy");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE,"Timothy");
         showSpans(Span.dropOverlappingSpans(filtered.getSpans()));
         Assertions.assertEquals(1, Span.dropOverlappingSpans(filtered.getSpans()).size());
         Assertions.assertTrue(candidates.contains(Span.dropOverlappingSpans(filtered.getSpans()).get(0).getReplacement()));
@@ -256,14 +245,13 @@ public class FirstNameFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(firstNameFilterStrategy))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.FIRST_NAME, filterConfiguration, SensitivityLevel.LOW, true);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE,"Timothy");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE,"Timothy");
         showSpans(Span.dropOverlappingSpans(filtered.getSpans()));
         Assertions.assertEquals(1, Span.dropOverlappingSpans(filtered.getSpans()).size());
         Assertions.assertTrue(candidates.contains(Span.dropOverlappingSpans(filtered.getSpans()).get(0).getReplacement()));
@@ -281,14 +269,13 @@ public class FirstNameFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(firstNameFilterStrategy))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.FIRST_NAME, filterConfiguration, SensitivityLevel.LOW, true);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE,"Timothy");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE,"Timothy");
         showSpans(Span.dropOverlappingSpans(filtered.getSpans()));
         Assertions.assertEquals(1, Span.dropOverlappingSpans(filtered.getSpans()).size());
         Assertions.assertFalse(candidates.contains(Span.dropOverlappingSpans(filtered.getSpans()).get(0).getReplacement()));

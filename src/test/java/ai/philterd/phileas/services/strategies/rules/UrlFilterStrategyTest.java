@@ -28,7 +28,7 @@ public class UrlFilterStrategyTest extends AbstractFilterStrategyTest {
     }
 
     public AbstractAnonymizationService getAnonymizationService() {
-        return new UrlAnonymizationService(new DefaultContextService());
+        return new UrlAnonymizationService();
     }
 
 }

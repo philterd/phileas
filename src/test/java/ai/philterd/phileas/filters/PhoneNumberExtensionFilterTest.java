@@ -33,14 +33,13 @@ public class PhoneNumberExtensionFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new PhoneNumberExtensionFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final PhoneNumberExtensionFilter filter = new PhoneNumberExtensionFilter(filterConfiguration);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "he is at x123");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "he is at x123");
         showSpans(filtered.getSpans());
 
         Assertions.assertEquals(1, filtered.getSpans().size());
@@ -54,14 +53,13 @@ public class PhoneNumberExtensionFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new PhoneNumberExtensionFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final PhoneNumberExtensionFilter filter = new PhoneNumberExtensionFilter(filterConfiguration);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "his phone number was +1 151-841-2829 x416.");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "his phone number was +1 151-841-2829 x416.");
         showSpans(filtered.getSpans());
 
         Assertions.assertEquals(1, filtered.getSpans().size());
@@ -81,14 +79,13 @@ public class PhoneNumberExtensionFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(phoneNumberExtensionFilterStrategy))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final PhoneNumberExtensionFilter filter = new PhoneNumberExtensionFilter(filterConfiguration);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "he is at x123");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "he is at x123");
         showSpans(filtered.getSpans());
         Assertions.assertEquals(1, filtered.getSpans().size());
         Assertions.assertTrue(candidates.contains(filtered.getSpans().get(0).getReplacement()));

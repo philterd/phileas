@@ -15,7 +15,6 @@
  */
 package ai.philterd.phileas.services.anonymization;
 
-import ai.philterd.phileas.services.context.ContextService;
 import org.apache.commons.text.RandomStringGenerator;
 
 import java.security.SecureRandom;
@@ -25,34 +24,29 @@ import java.util.Random;
 
 public abstract class AbstractAnonymizationService implements AnonymizationService {
 
-    protected ContextService contextService;
     protected Random random;
     protected List<String> candidates;
     protected AnonymizationMethod anonymizationMethod;
 
-    public AbstractAnonymizationService(final ContextService contextService) {
-        this.contextService = contextService;
+    public AbstractAnonymizationService() {
         this.random = new SecureRandom();
         this.candidates = Collections.emptyList();
         this.anonymizationMethod = AnonymizationMethod.REALISTIC;
     }
 
-    public AbstractAnonymizationService(final ContextService contextService, final Random random) {
-        this.contextService = contextService;
+    public AbstractAnonymizationService(final Random random) {
         this.random = random;
         this.candidates = Collections.emptyList();
         this.anonymizationMethod = AnonymizationMethod.REALISTIC;
     }
 
-    protected AbstractAnonymizationService(final ContextService contextService, final Random random, final AnonymizationMethod anonymizationMethod) {
-        this.contextService = contextService;
+    protected AbstractAnonymizationService(final Random random, final AnonymizationMethod anonymizationMethod) {
         this.random = random;
         this.candidates = Collections.emptyList();
         this.anonymizationMethod = anonymizationMethod;
     }
 
-    protected AbstractAnonymizationService(final ContextService contextService, final Random random, final List<String> candidates) {
-        this.contextService = contextService;
+    protected AbstractAnonymizationService(final Random random, final List<String> candidates) {
         this.random = random;
         this.candidates = candidates;
         this.anonymizationMethod = AnonymizationMethod.FROM_LIST;

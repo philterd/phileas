@@ -44,14 +44,13 @@ public class IdentifierFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new IdentifierFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final IdentifierFilter filter = new IdentifierFilter(filterConfiguration, "name", Identifier.DEFAULT_IDENTIFIER_REGEX, true, 0);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "the id is AB4736021 in california.");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "the id is AB4736021 in california.");
 
         Assertions.assertEquals(1, filtered.getSpans().size());
         Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 10,19, FilterType.IDENTIFIER));
@@ -64,14 +63,13 @@ public class IdentifierFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new IdentifierFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final IdentifierFilter filter = new IdentifierFilter(filterConfiguration, "name", Identifier.DEFAULT_IDENTIFIER_REGEX, true, 0);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "the id is AB473-6021 in california.");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "the id is AB473-6021 in california.");
 
         Assertions.assertEquals(1, filtered.getSpans().size());
         Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 10,20, FilterType.IDENTIFIER));
@@ -83,14 +81,13 @@ public class IdentifierFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new IdentifierFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final IdentifierFilter filter = new IdentifierFilter(filterConfiguration, "name", Identifier.DEFAULT_IDENTIFIER_REGEX, true, 0);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "the id is 473-6AB021 in california.");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "the id is 473-6AB021 in california.");
 
         Assertions.assertEquals(1, filtered.getSpans().size());
         Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 10,20, FilterType.IDENTIFIER));
@@ -102,14 +99,13 @@ public class IdentifierFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new IdentifierFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final IdentifierFilter filter = new IdentifierFilter(filterConfiguration, "name", Identifier.DEFAULT_IDENTIFIER_REGEX, true, 0);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "the id is AB473-6021 in california.");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "the id is AB473-6021 in california.");
 
         Assertions.assertEquals(1, filtered.getSpans().size());
         Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 10,20, FilterType.IDENTIFIER));
@@ -121,14 +117,13 @@ public class IdentifierFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new IdentifierFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final IdentifierFilter filter = new IdentifierFilter(filterConfiguration, "name", Identifier.DEFAULT_IDENTIFIER_REGEX, true, 0);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "the id is 473-6AB021 in california.");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "the id is 473-6AB021 in california.");
 
         Assertions.assertEquals(1, filtered.getSpans().size());
         Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 10,20, FilterType.IDENTIFIER));
@@ -140,14 +135,13 @@ public class IdentifierFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new IdentifierFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final IdentifierFilter filter = new IdentifierFilter(filterConfiguration, "name", Identifier.DEFAULT_IDENTIFIER_REGEX, true, 0);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "the id is 123-45-6789 in california.");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "the id is 123-45-6789 in california.");
 
         Assertions.assertEquals(1, filtered.getSpans().size());
         Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 10,21, FilterType.IDENTIFIER));
@@ -159,14 +153,13 @@ public class IdentifierFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new IdentifierFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final IdentifierFilter filter = new IdentifierFilter(filterConfiguration, "name", Identifier.DEFAULT_IDENTIFIER_REGEX, true, 0);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "George Washington was president and his ssn was 123-45-6789 and he lived at 90210. Patient id 00076A and 93821A. He is on biotin. Diagnosed with A01000.");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "George Washington was president and his ssn was 123-45-6789 and he lived at 90210. Patient id 00076A and 93821A. He is on biotin. Diagnosed with A01000.");
 
         Assertions.assertEquals(4, filtered.getSpans().size());
         Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 48, 59, FilterType.IDENTIFIER));
@@ -181,14 +174,13 @@ public class IdentifierFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new IdentifierFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final IdentifierFilter filter = new IdentifierFilter(filterConfiguration, "name", Identifier.DEFAULT_IDENTIFIER_REGEX, true, 0);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "the id is 000-00-00-00 ABC123 in california.");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "the id is 000-00-00-00 ABC123 in california.");
 
         Assertions.assertEquals(2, filtered.getSpans().size());
         Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 10, 22, FilterType.IDENTIFIER));
@@ -201,14 +193,13 @@ public class IdentifierFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new IdentifierFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final IdentifierFilter filter = new IdentifierFilter(filterConfiguration, "name", Identifier.DEFAULT_IDENTIFIER_REGEX, true, 0);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "the id is AZ12 ABC1234/123ABC4 in california.");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "the id is AZ12 ABC1234/123ABC4 in california.");
 
         Assertions.assertEquals(2, filtered.getSpans().size());
         Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 15, 22, FilterType.IDENTIFIER));
@@ -221,14 +212,13 @@ public class IdentifierFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new IdentifierFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final IdentifierFilter filter = new IdentifierFilter(filterConfiguration, "name", Identifier.DEFAULT_IDENTIFIER_REGEX, true, 0);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "the id is H3SNPUHYEE7JD3H in california.");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "the id is H3SNPUHYEE7JD3H in california.");
 
         Assertions.assertEquals(1, filtered.getSpans().size());
         Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 10,25, FilterType.IDENTIFIER));
@@ -240,14 +230,13 @@ public class IdentifierFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new IdentifierFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final IdentifierFilter filter = new IdentifierFilter(filterConfiguration, "name", Identifier.DEFAULT_IDENTIFIER_REGEX, true, 0);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "the id is 86637729 in california.");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "the id is 86637729 in california.");
 
         Assertions.assertEquals(1, filtered.getSpans().size());
         Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 10,18, FilterType.IDENTIFIER));
@@ -259,14 +248,13 @@ public class IdentifierFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new IdentifierFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final IdentifierFilter filter = new IdentifierFilter(filterConfiguration, "name", Identifier.DEFAULT_IDENTIFIER_REGEX, true, 0);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "the id is 33778376 in california.");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "the id is 33778376 in california.");
 
         Assertions.assertEquals(1, filtered.getSpans().size());
         Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 10,18, FilterType.IDENTIFIER));
@@ -278,14 +266,13 @@ public class IdentifierFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new IdentifierFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final IdentifierFilter filter = new IdentifierFilter(filterConfiguration, "name", "\\b[A-Z]{4,}\\b", true, 0);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "the id is ABCD.");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "the id is ABCD.");
 
         Assertions.assertEquals(1, filtered.getSpans().size());
         Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 10,14, FilterType.IDENTIFIER));
@@ -297,14 +284,13 @@ public class IdentifierFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new IdentifierFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final IdentifierFilter filter = new IdentifierFilter(filterConfiguration, "name", Identifier.DEFAULT_IDENTIFIER_REGEX, true, 0);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "the id is 123456.");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "the id is 123456.");
 
         Assertions.assertEquals(1, filtered.getSpans().size());
         Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 10,16, FilterType.IDENTIFIER));
@@ -316,14 +302,13 @@ public class IdentifierFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new IdentifierFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final IdentifierFilter filter = new IdentifierFilter(filterConfiguration, "name", Identifier.DEFAULT_IDENTIFIER_REGEX, true, 0);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "John Smith, patient ID A203493, was seen on February 18.");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "John Smith, patient ID A203493, was seen on February 18.");
 
         showSpans(filtered.getSpans());
         Assertions.assertEquals(1, filtered.getSpans().size());
@@ -336,14 +321,13 @@ public class IdentifierFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new IdentifierFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final IdentifierFilter filter = new IdentifierFilter(filterConfiguration, "name", "\\b\\d{3,8}\\b", false, 0);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "The ID is 123456.");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "The ID is 123456.");
 
         showSpans(filtered.getSpans());
         Assertions.assertEquals(1, filtered.getSpans().size());
@@ -356,14 +340,13 @@ public class IdentifierFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new IdentifierFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final IdentifierFilter filter = new IdentifierFilter(filterConfiguration, "name", "(?i)([^Application Name])(.*)$", false, 0);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "Application Name John Smith");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "Application Name John Smith");
 
         showSpans(filtered.getSpans());
         Assertions.assertEquals(1, filtered.getSpans().size());
@@ -376,14 +359,13 @@ public class IdentifierFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new IdentifierFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final IdentifierFilter filter = new IdentifierFilter(filterConfiguration, "name", "\\d{3}-\\d{3}-\\d{3}", false, 0);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "his id was 123-456-789");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "his id was 123-456-789");
 
         showSpans(filtered.getSpans());
         Assertions.assertEquals(1, filtered.getSpans().size());
@@ -402,14 +384,13 @@ public class IdentifierFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(identifierFilterStrategy))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final IdentifierFilter filter = new IdentifierFilter(filterConfiguration, "name", Identifier.DEFAULT_IDENTIFIER_REGEX, true, 0);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "the id is AB4736021 in california.");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "the id is AB4736021 in california.");
         showSpans(filtered.getSpans());
         Assertions.assertEquals(1, filtered.getSpans().size());
         Assertions.assertTrue(candidates.contains(filtered.getSpans().get(0).getReplacement()));
@@ -428,7 +409,6 @@ public class IdentifierFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new IdentifierFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .withRegexTimeoutMs(200)
@@ -441,7 +421,7 @@ public class IdentifierFilterTest extends AbstractFilterTest {
         final String input = "the id is " + "a".repeat(30) + "!";
 
         Assertions.assertTimeoutPreemptively(Duration.ofSeconds(5), () -> {
-            final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, input);
+            final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, input);
             Assertions.assertTrue(filtered.getSpans().isEmpty(),
                     "a timed-out pattern should yield no spans");
         });
@@ -457,7 +437,6 @@ public class IdentifierFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new IdentifierFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .withRegexTimeoutMs(200)
@@ -465,7 +444,7 @@ public class IdentifierFilterTest extends AbstractFilterTest {
 
         final IdentifierFilter filter = new IdentifierFilter(filterConfiguration, "name", Identifier.DEFAULT_IDENTIFIER_REGEX, true, 0);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "the id is AB4736021 in california.");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "the id is AB4736021 in california.");
 
         Assertions.assertEquals(1, filtered.getSpans().size());
         Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 10, 19, FilterType.IDENTIFIER));
@@ -482,14 +461,13 @@ public class IdentifierFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new IdentifierFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final IdentifierFilter filter = new IdentifierFilter(filterConfiguration, "canada-sin", SIN_PATTERN, false, 0, LuhnValidator.getInstance());
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "the sin is 046 454 286 on file.");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "the sin is 046 454 286 on file.");
 
         Assertions.assertEquals(1, filtered.getSpans().size());
         Assertions.assertEquals("046 454 286", filtered.getSpans().get(0).getText());
@@ -506,14 +484,13 @@ public class IdentifierFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new IdentifierFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final IdentifierFilter filter = new IdentifierFilter(filterConfiguration, "canada-sin", SIN_PATTERN, false, 0, LuhnValidator.getInstance());
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "the number 123 456 789 is not a sin.");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "the number 123 456 789 is not a sin.");
 
         Assertions.assertEquals(0, filtered.getSpans().size());
 
@@ -528,14 +505,13 @@ public class IdentifierFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new IdentifierFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final IdentifierFilter filter = new IdentifierFilter(filterConfiguration, "canada-sin", SIN_PATTERN, false, 0);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "the number 123 456 789 is not a sin.");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "the number 123 456 789 is not a sin.");
 
         Assertions.assertEquals(1, filtered.getSpans().size());
         Assertions.assertEquals("123 456 789", filtered.getSpans().get(0).getText());
@@ -554,14 +530,13 @@ public class IdentifierFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new IdentifierFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final IdentifierFilter filter = new IdentifierFilter(filterConfiguration, "canada-sin", SIN_CONTEXT_PATTERN, false, 1, LuhnValidator.getInstance());
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "the SIN: 046 454 286 is on file.");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "the SIN: 046 454 286 is on file.");
 
         Assertions.assertEquals(1, filtered.getSpans().size());
         Assertions.assertEquals("046 454 286", filtered.getSpans().get(0).getText());
@@ -577,14 +552,13 @@ public class IdentifierFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new IdentifierFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final IdentifierFilter filter = new IdentifierFilter(filterConfiguration, "canada-sin", SIN_CONTEXT_PATTERN, false, 1, LuhnValidator.getInstance());
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "the SIN: 123 456 789 is on file.");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "the SIN: 123 456 789 is on file.");
 
         Assertions.assertEquals(0, filtered.getSpans().size());
 
@@ -601,14 +575,13 @@ public class IdentifierFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new IdentifierFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final IdentifierFilter filter = new IdentifierFilter(filterConfiguration, "bic", BIC_PATTERN, true, 0, BicStructuralValidator.getInstance());
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "wire to DEUTDEFF please.");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "wire to DEUTDEFF please.");
 
         Assertions.assertEquals(1, filtered.getSpans().size());
         Assertions.assertEquals("DEUTDEFF", filtered.getSpans().get(0).getText());
@@ -623,14 +596,13 @@ public class IdentifierFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new IdentifierFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final IdentifierFilter filter = new IdentifierFilter(filterConfiguration, "bic", BIC_PATTERN, true, 0, BicStructuralValidator.getInstance());
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "wire to DEUTZZFF please.");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "wire to DEUTZZFF please.");
 
         Assertions.assertEquals(0, filtered.getSpans().size());
 
@@ -647,14 +619,13 @@ public class IdentifierFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new IdentifierFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final IdentifierFilter filter = new IdentifierFilter(filterConfiguration, "de-id", DE_ID_PATTERN, true, 0, DePersonalausweisValidator.getInstance());
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "ID card T220001293 on file.");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "ID card T220001293 on file.");
 
         Assertions.assertEquals(1, filtered.getSpans().size());
         Assertions.assertEquals("T220001293", filtered.getSpans().get(0).getText());
@@ -669,14 +640,13 @@ public class IdentifierFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new IdentifierFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final IdentifierFilter filter = new IdentifierFilter(filterConfiguration, "de-id", DE_ID_PATTERN, true, 0, DePersonalausweisValidator.getInstance());
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "ID card T220001294 on file.");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "ID card T220001294 on file.");
 
         Assertions.assertEquals(0, filtered.getSpans().size());
 
@@ -693,14 +663,13 @@ public class IdentifierFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new IdentifierFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final IdentifierFilter filter = new IdentifierFilter(filterConfiguration, "de-steuerid", DE_STEUERID_PATTERN, true, 0, DeSteuerIdValidator.getInstance());
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "tax id 86095742719 on file.");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "tax id 86095742719 on file.");
 
         Assertions.assertEquals(1, filtered.getSpans().size());
         Assertions.assertEquals("86095742719", filtered.getSpans().get(0).getText());
@@ -715,14 +684,13 @@ public class IdentifierFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new IdentifierFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final IdentifierFilter filter = new IdentifierFilter(filterConfiguration, "de-steuerid", DE_STEUERID_PATTERN, true, 0, DeSteuerIdValidator.getInstance());
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "tax id 86095742718 on file.");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "tax id 86095742718 on file.");
 
         Assertions.assertEquals(0, filtered.getSpans().size());
 
@@ -739,7 +707,6 @@ public class IdentifierFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new IdentifierFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
@@ -747,7 +714,7 @@ public class IdentifierFilterTest extends AbstractFilterTest {
         final SpanValidator cpf = IdentifierValidators.fromPolicy(new Validator("mod11", Map.of("variant", "cpf")));
         final IdentifierFilter filter = new IdentifierFilter(filterConfiguration, "cpf", CPF_PATTERN, true, 0, cpf);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "cpf 52998224725 on file.");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "cpf 52998224725 on file.");
 
         Assertions.assertEquals(1, filtered.getSpans().size());
         Assertions.assertEquals("52998224725", filtered.getSpans().get(0).getText());
@@ -762,7 +729,6 @@ public class IdentifierFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new IdentifierFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
@@ -770,7 +736,7 @@ public class IdentifierFilterTest extends AbstractFilterTest {
         final SpanValidator cpf = IdentifierValidators.fromPolicy(new Validator("mod11", Map.of("variant", "cpf")));
         final IdentifierFilter filter = new IdentifierFilter(filterConfiguration, "cpf", CPF_PATTERN, true, 0, cpf);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "cpf 52998224724 on file.");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "cpf 52998224724 on file.");
 
         Assertions.assertEquals(0, filtered.getSpans().size());
 

@@ -21,6 +21,7 @@ import ai.philterd.phileas.policy.FPE;
 import ai.philterd.phileas.services.anonymization.AbstractAnonymizationService;
 import ai.philterd.phileas.services.anonymization.AgeAnonymizationService;
 import ai.philterd.phileas.services.anonymization.AnonymizationService;
+import ai.philterd.phileas.services.context.ContextService;
 import ai.philterd.phileas.services.context.DefaultContextService;
 import ai.philterd.phileas.services.strategies.AbstractFilterStrategy;
 import ai.philterd.phileas.services.strategies.AbstractFilterStrategyTest;
@@ -35,18 +36,19 @@ public class AgeFilterStrategyTest extends AbstractFilterStrategyTest {
     }
 
     public AbstractAnonymizationService getAnonymizationService() {
-        return new AgeAnonymizationService(new DefaultContextService());
+        return new AgeAnonymizationService();
     }
 
     @Test
     public void replacement1() throws Exception {
 
         final AnonymizationService anonymizationService = getAnonymizationService();
+        final ContextService contextService = new DefaultContextService();
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
         strategy.setStrategy(AbstractFilterStrategy.RANDOM_REPLACE);
 
-        final Replacement replacement = strategy.getReplacement("name", "context",  "52 years old", WINDOW, new Crypto(), new FPE(), anonymizationService, null);
+        final Replacement replacement = strategy.getReplacement(contextService, "name", "context",  "52 years old", WINDOW, new Crypto(), new FPE(), anonymizationService, null);
 
         Assertions.assertTrue(replacement.getReplacement().endsWith(" years old"));
         Assertions.assertNotEquals("52 years old", replacement.getReplacement());

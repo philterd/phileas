@@ -28,7 +28,7 @@ public class IpAddressFilterStrategyTest extends AbstractFilterStrategyTest {
     }
 
     public AbstractAnonymizationService getAnonymizationService() {
-        return new IpAddressAnonymizationService(new DefaultContextService());
+        return new IpAddressAnonymizationService();
     }
 
 }

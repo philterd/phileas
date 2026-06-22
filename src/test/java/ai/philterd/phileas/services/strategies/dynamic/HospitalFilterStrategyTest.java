@@ -28,7 +28,7 @@ public class HospitalFilterStrategyTest extends AbstractFilterStrategyTest {
     }
 
     public AbstractAnonymizationService getAnonymizationService() {
-        return new HospitalAnonymizationService(new DefaultContextService());
+        return new HospitalAnonymizationService();
     }
 
 }

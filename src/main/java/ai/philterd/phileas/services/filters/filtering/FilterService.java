@@ -20,7 +20,6 @@ import ai.philterd.phileas.filters.Filter;
 import ai.philterd.phileas.policy.Ignored;
 import ai.philterd.phileas.policy.Policy;
 import ai.philterd.phileas.services.FilterPolicyLoader;
-import ai.philterd.phileas.services.context.ContextService;
 import ai.philterd.phileas.services.filters.postfilters.IgnoredPatternsFilter;
 import ai.philterd.phileas.services.filters.postfilters.IgnoredTermsFilter;
 import ai.philterd.phileas.services.filters.postfilters.PostFilter;
@@ -43,8 +42,12 @@ import java.util.concurrent.ConcurrentHashMap;
  *
  * <p>A warm instance is safe to share across threads: the filter and post-filter caches are
  * {@link ConcurrentHashMap}s populated via {@code computeIfAbsent}, and {@code filter()} does not
- * mutate instance state. Per-row callers (Spark, Kafka, logging UDFs) should share one instance
- * rather than locking around {@code filter()}.
+ * mutate instance state. The per-request context and vector services are supplied per call rather
+ * than held on the instance, so concurrent callers do not share that state. The only shared mutable
+ * dependency is the {@link Random} used for anonymization, which must be thread-safe when the
+ * instance is shared across threads (the default {@link java.security.SecureRandom} is). Per-row
+ * callers (Spark, Kafka, logging UDFs) should share one instance rather than locking around
+ * {@code filter()}.
  */
 public abstract class FilterService {
 
@@ -57,13 +60,12 @@ public abstract class FilterService {
     protected final Map<String, List<PostFilter>> postFilterCache;
 
     protected FilterService(final PhileasConfiguration phileasConfiguration,
-                            final ContextService contextService,
                             final Random random,
                             final HttpClient httpClient) {
 
         this.filterCache = new ConcurrentHashMap<>();
         this.postFilterCache = new ConcurrentHashMap<>();
-        this.filterPolicyLoader = new FilterPolicyLoader(contextService, phileasConfiguration, random, httpClient);
+        this.filterPolicyLoader = new FilterPolicyLoader(phileasConfiguration, random, httpClient);
 
     }
 

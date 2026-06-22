@@ -26,6 +26,7 @@ import ai.philterd.phileas.model.metadata.zipcode.ZipCodeMetadataResult;
 import ai.philterd.phileas.model.metadata.zipcode.ZipCodeMetadataService;
 import ai.philterd.phileas.policy.Policy;
 import ai.philterd.phileas.services.Analyzer;
+import ai.philterd.phileas.services.context.ContextService;
 
 import java.util.HashSet;
 import java.util.List;
@@ -66,9 +67,9 @@ public class ZipCodeFilter extends RegexFilter {
     }
 
     @Override
-    public Filtered filter(Policy policy, String context, int piece, String input) throws Exception {
+    public Filtered filter(ContextService contextService, Policy policy, String context, int piece, String input) throws Exception {
 
-        final List<Span> spans = findSpans(policy, analyzer, input, context);
+        final List<Span> spans = findSpans(contextService, policy, analyzer, input, context);
 
         if(validate) {
 

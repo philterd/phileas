@@ -30,7 +30,7 @@ public class PassportNumberAnonymizationServiceTest {
     @Test
     public void constructor() {
 
-        AnonymizationService anonymizationService = new PassportNumberAnonymizationService(new DefaultContextService(), new SecureRandom(), AnonymizationMethod.REALISTIC);
+        AnonymizationService anonymizationService = new PassportNumberAnonymizationService(new SecureRandom(), AnonymizationMethod.REALISTIC);
 
         final String token = "A1234567";
         final String replacement = anonymizationService.anonymize(token);
@@ -45,7 +45,7 @@ public class PassportNumberAnonymizationServiceTest {
     @Test
     public void anonymize() {
 
-        AnonymizationService anonymizationService = new PassportNumberAnonymizationService(new DefaultContextService());
+        AnonymizationService anonymizationService = new PassportNumberAnonymizationService();
 
         final String token = "A1234567";
         final String replacement = anonymizationService.anonymize(token);
@@ -60,7 +60,7 @@ public class PassportNumberAnonymizationServiceTest {
     @Test
     public void anonymizeUUID() {
 
-        AnonymizationService anonymizationService = new PassportNumberAnonymizationService(new DefaultContextService(), new SecureRandom(), AnonymizationMethod.UUID);
+        AnonymizationService anonymizationService = new PassportNumberAnonymizationService(new SecureRandom(), AnonymizationMethod.UUID);
 
         final String token = "A1234567";
         final String replacement = anonymizationService.anonymize(token);

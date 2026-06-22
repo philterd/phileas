@@ -22,6 +22,7 @@ import ai.philterd.phileas.policy.FPE;
 import ai.philterd.phileas.services.anonymization.AbstractAnonymizationService;
 import ai.philterd.phileas.services.anonymization.AnonymizationService;
 import ai.philterd.phileas.services.anonymization.PersonsAnonymizationService;
+import ai.philterd.phileas.services.context.ContextService;
 import ai.philterd.phileas.services.context.DefaultContextService;
 import ai.philterd.phileas.services.strategies.AbstractFilterStrategy;
 import ai.philterd.phileas.services.strategies.AbstractFilterStrategyTest;
@@ -35,19 +36,20 @@ public class PhEyeStrategyTest extends AbstractFilterStrategyTest {
     }
 
     public AbstractAnonymizationService getAnonymizationService() {
-        return new PersonsAnonymizationService(new DefaultContextService());
+        return new PersonsAnonymizationService();
     }
 
     @Test
     public void replacement1() throws Exception {
 
         final AnonymizationService anonymizationService = getAnonymizationService();
+        final ContextService contextService = new DefaultContextService();
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
         strategy.setStrategy(AbstractFilterStrategy.STATIC_REPLACE);
         strategy.setStaticReplacement("static-value");
 
-        final Replacement replacement = strategy.getReplacement("PER", "context",  "token", WINDOW, new Crypto(), new FPE(), anonymizationService, null);
+        final Replacement replacement = strategy.getReplacement(contextService, "PER", "context",  "token", WINDOW, new Crypto(), new FPE(), anonymizationService, null);
 
         Assertions.assertEquals("static-value", replacement.getReplacement());
 
@@ -57,12 +59,13 @@ public class PhEyeStrategyTest extends AbstractFilterStrategyTest {
     public void replacement2() throws Exception {
 
         final AnonymizationService anonymizationService = getAnonymizationService();
+        final ContextService contextService = new DefaultContextService();
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
         strategy.setStrategy(AbstractFilterStrategy.REDACT);
         strategy.setRedactionFormat("REDACTION-%t");
 
-        final Replacement replacement = strategy.getReplacement("PER", "context",  "token", WINDOW, new Crypto(), new FPE(), anonymizationService, null);
+        final Replacement replacement = strategy.getReplacement(contextService, "PER", "context",  "token", WINDOW, new Crypto(), new FPE(), anonymizationService, null);
 
         Assertions.assertEquals("REDACTION-per", replacement.getReplacement());
 
@@ -72,12 +75,13 @@ public class PhEyeStrategyTest extends AbstractFilterStrategyTest {
     public void replacement3() throws Exception {
 
         final AnonymizationService anonymizationService = getAnonymizationService();
-        anonymizationService.getContextService().putReplacement("token", "random", FilterType.PERSON.getType());
+        final ContextService contextService = new DefaultContextService();
+        contextService.putReplacement("token", "random", FilterType.PERSON.getType());
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
         strategy.setStrategy(AbstractFilterStrategy.RANDOM_REPLACE);
 
-        final Replacement replacement = strategy.getReplacement("PER", "context",  "token", WINDOW, new Crypto(), new FPE(), anonymizationService, null);
+        final Replacement replacement = strategy.getReplacement(contextService, "PER", "context",  "token", WINDOW, new Crypto(), new FPE(), anonymizationService, null);
 
         Assertions.assertNotEquals("random", replacement.getReplacement());
 
@@ -87,12 +91,13 @@ public class PhEyeStrategyTest extends AbstractFilterStrategyTest {
     public void replacement4() throws Exception {
 
         final AnonymizationService anonymizationService = getAnonymizationService();
-        anonymizationService.getContextService().putReplacement("token", "random", FilterType.PERSON.getType());
+        final ContextService contextService = new DefaultContextService();
+        contextService.putReplacement("token", "random", FilterType.PERSON.getType());
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
         strategy.setStrategy("something-wrong");
 
-        final Replacement replacement = strategy.getReplacement("PER", "context",  "token", WINDOW, new Crypto(), new FPE(), anonymizationService, null);
+        final Replacement replacement = strategy.getReplacement(contextService, "PER", "context",  "token", WINDOW, new Crypto(), new FPE(), anonymizationService, null);
 
         Assertions.assertEquals("{{{REDACTED-other}}}", replacement.getReplacement());
 
@@ -102,12 +107,13 @@ public class PhEyeStrategyTest extends AbstractFilterStrategyTest {
     public void replacement5() throws Exception {
 
         final AnonymizationService anonymizationService = getAnonymizationService();
+        final ContextService contextService = new DefaultContextService();
 
         final AbstractFilterStrategy strategy = new PhEyeFilterStrategy();
         strategy.setStrategy(AbstractFilterStrategy.REDACT);
         strategy.setRedactionFormat("<ENTITY:%t>%v</ENTITY>");
 
-        final Replacement replacement = strategy.getReplacement("PER", "context",  "token", WINDOW, new Crypto(), new FPE(), anonymizationService, null);
+        final Replacement replacement = strategy.getReplacement(contextService, "PER", "context",  "token", WINDOW, new Crypto(), new FPE(), anonymizationService, null);
 
         Assertions.assertEquals("<ENTITY:per>token</ENTITY>", replacement.getReplacement());
 
@@ -117,31 +123,32 @@ public class PhEyeStrategyTest extends AbstractFilterStrategyTest {
     public void replacement6() throws Exception {
 
         final AnonymizationService anonymizationService = getAnonymizationService();
+        final ContextService contextService = new DefaultContextService();
 
         final AbstractFilterStrategy strategy = new PhEyeFilterStrategy();
         strategy.setStrategy(AbstractFilterStrategy.ABBREVIATE);
 
         Replacement replacement;
 
-        replacement = strategy.getReplacement("PER", "context",  "John Smith", WINDOW, new Crypto(), new FPE(), anonymizationService, null);
+        replacement = strategy.getReplacement(contextService, "PER", "context",  "John Smith", WINDOW, new Crypto(), new FPE(), anonymizationService, null);
         Assertions.assertEquals("JS", replacement.getReplacement());
 
-        replacement = strategy.getReplacement("PER", "context",  "John P. Smith", WINDOW, new Crypto(), new FPE(), anonymizationService, null);
+        replacement = strategy.getReplacement(contextService, "PER", "context",  "John P. Smith", WINDOW, new Crypto(), new FPE(), anonymizationService, null);
         Assertions.assertEquals("JPS", replacement.getReplacement());
 
-        replacement = strategy.getReplacement("PER", "context",  "John P Smith", WINDOW, new Crypto(), new FPE(), anonymizationService, null);
+        replacement = strategy.getReplacement(contextService, "PER", "context",  "John P Smith", WINDOW, new Crypto(), new FPE(), anonymizationService, null);
         Assertions.assertEquals("JPS", replacement.getReplacement());
 
-        replacement = strategy.getReplacement("PER", "context",  "John P.", WINDOW, new Crypto(), new FPE(), anonymizationService, null);
+        replacement = strategy.getReplacement(contextService, "PER", "context",  "John P.", WINDOW, new Crypto(), new FPE(), anonymizationService, null);
         Assertions.assertEquals("JP", replacement.getReplacement());
 
-        replacement = strategy.getReplacement("PER", "context",  "John", WINDOW, new Crypto(), new FPE(), anonymizationService, null);
+        replacement = strategy.getReplacement(contextService, "PER", "context",  "John", WINDOW, new Crypto(), new FPE(), anonymizationService, null);
         Assertions.assertEquals("J", replacement.getReplacement());
 
-        replacement = strategy.getReplacement("PER", "context",  "J Smith", WINDOW, new Crypto(), new FPE(), anonymizationService, null);
+        replacement = strategy.getReplacement(contextService, "PER", "context",  "J Smith", WINDOW, new Crypto(), new FPE(), anonymizationService, null);
         Assertions.assertEquals("JS", replacement.getReplacement());
 
-        replacement = strategy.getReplacement("PER", "context",  "J. Peter Smith", WINDOW, new Crypto(), new FPE(), anonymizationService, null);
+        replacement = strategy.getReplacement(contextService, "PER", "context",  "J. Peter Smith", WINDOW, new Crypto(), new FPE(), anonymizationService, null);
         Assertions.assertEquals("JPS", replacement.getReplacement());
 
     }
@@ -301,6 +308,7 @@ public class PhEyeStrategyTest extends AbstractFilterStrategyTest {
         final FPE fpe = new FPE("2DE79D232DF5585D68CE47882AE256D6", "CBD09280979564");
 
         final AnonymizationService anonymizationService = getAnonymizationService();
+        final ContextService contextService = new DefaultContextService();
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
         strategy.setStrategy(AbstractFilterStrategy.FPE_ENCRYPT_REPLACE);
@@ -308,7 +316,7 @@ public class PhEyeStrategyTest extends AbstractFilterStrategyTest {
         // "12345" has only five characters, below FF3's minimum, so format-preserving encryption
         // cannot apply. The ph-eye path must fall back to redaction rather than throwing and
         // aborting the document - the same behavior as the rules-based strategy.
-        final Replacement replacement = strategy.getReplacement("PER", "context", "12345", WINDOW, new Crypto(), fpe, anonymizationService, null);
+        final Replacement replacement = strategy.getReplacement(contextService, "PER", "context", "12345", WINDOW, new Crypto(), fpe, anonymizationService, null);
 
         Assertions.assertEquals("{{{REDACTED-other}}}", replacement.getReplacement());
 

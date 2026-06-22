@@ -32,7 +32,6 @@ public class IbanCodeFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new IbanCodeFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
@@ -46,7 +45,7 @@ public class IbanCodeFilterTest extends AbstractFilterTest {
 
         final Filter filter = getFilter(true, false);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "bank code of GB33BUKB20201555555555 ok?");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "bank code of GB33BUKB20201555555555 ok?");
 
         showSpans(filtered.getSpans());
 
@@ -62,7 +61,7 @@ public class IbanCodeFilterTest extends AbstractFilterTest {
 
         final Filter filter = getFilter(false, false);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "bank code of GB15MIDL40051512345678 ok?");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "bank code of GB15MIDL40051512345678 ok?");
 
         showSpans(filtered.getSpans());
 
@@ -78,7 +77,7 @@ public class IbanCodeFilterTest extends AbstractFilterTest {
 
         final Filter filter = getFilter(true, true);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "bank code of GB15 MIDL 4005 1512 3456 78 ok?");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "bank code of GB15 MIDL 4005 1512 3456 78 ok?");
 
         showSpans(filtered.getSpans());
 
@@ -94,7 +93,7 @@ public class IbanCodeFilterTest extends AbstractFilterTest {
 
         final Filter filter = getFilter(false, true);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "bank code of GB15 MIDL 4005 1512 3456 zz ok?");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "bank code of GB15 MIDL 4005 1512 3456 zz ok?");
 
         showSpans(filtered.getSpans());
 
@@ -107,7 +106,7 @@ public class IbanCodeFilterTest extends AbstractFilterTest {
 
         final Filter filter = getFilter(true, false);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "bank code of AV01AZ ok?");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "bank code of AV01AZ ok?");
 
         showSpans(filtered.getSpans());
 
@@ -120,7 +119,7 @@ public class IbanCodeFilterTest extends AbstractFilterTest {
 
         final Filter filter = getFilter(false, false);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "bank code of AV01AZ ok?");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "bank code of AV01AZ ok?");
 
         showSpans(filtered.getSpans());
 
@@ -139,14 +138,13 @@ public class IbanCodeFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(ibanCodeFilterStrategy))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final IbanCodeFilter filter = new IbanCodeFilter(filterConfiguration, true, false);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "bank code of GB33BUKB20201555555555 ok?");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "bank code of GB33BUKB20201555555555 ok?");
         showSpans(filtered.getSpans());
         Assertions.assertEquals(1, filtered.getSpans().size());
         Assertions.assertTrue(candidates.contains(filtered.getSpans().get(0).getReplacement()));

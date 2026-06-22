@@ -33,14 +33,13 @@ public class PassportNumberFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new PassportNumberFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final PassportNumberFilter filter = new PassportNumberFilter(filterConfiguration);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "the passport number is 036001231.");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "the passport number is 036001231.");
 
         showSpans(filtered.getSpans());
 
@@ -63,14 +62,13 @@ public class PassportNumberFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(passportNumberFilterStrategy))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final PassportNumberFilter filter = new PassportNumberFilter(filterConfiguration);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "the passport number is 036001231.");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "the passport number is 036001231.");
         showSpans(filtered.getSpans());
         Assertions.assertEquals(1, filtered.getSpans().size());
         Assertions.assertTrue(candidates.contains(filtered.getSpans().get(0).getReplacement()));

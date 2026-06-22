@@ -21,6 +21,7 @@ import ai.philterd.phileas.policy.FPE;
 import ai.philterd.phileas.services.anonymization.AbstractAnonymizationService;
 import ai.philterd.phileas.services.anonymization.AnonymizationService;
 import ai.philterd.phileas.services.anonymization.IbanCodeAnonymizationService;
+import ai.philterd.phileas.services.context.ContextService;
 import ai.philterd.phileas.services.context.DefaultContextService;
 import ai.philterd.phileas.services.strategies.AbstractFilterStrategy;
 import ai.philterd.phileas.services.strategies.AbstractFilterStrategyTest;
@@ -34,18 +35,19 @@ public class IbanCodeFilterStrategyTest extends AbstractFilterStrategyTest {
     }
 
     public AbstractAnonymizationService getAnonymizationService() {
-        return new IbanCodeAnonymizationService(new DefaultContextService());
+        return new IbanCodeAnonymizationService();
     }
 
     @Test
     public void lastFour1() throws Exception {
 
         final AnonymizationService anonymizationService = getAnonymizationService();
+        final ContextService contextService = new DefaultContextService();
 
         final AbstractFilterStrategy strategy = new IbanCodeFilterStrategy();
         strategy.setStrategy(AbstractFilterStrategy.LAST_4);
 
-        final Replacement replacement = strategy.getReplacement("name", "context",  "4111111111111111", WINDOW, new Crypto(), new FPE(), anonymizationService, null);
+        final Replacement replacement = strategy.getReplacement(contextService, "name", "context",  "4111111111111111", WINDOW, new Crypto(), new FPE(), anonymizationService, null);
 
         Assertions.assertEquals("1111", replacement.getReplacement());
 

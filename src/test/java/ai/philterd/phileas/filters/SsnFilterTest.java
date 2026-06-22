@@ -34,14 +34,13 @@ public class SsnFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new SsnFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final SsnFilter filter = new SsnFilter(filterConfiguration);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "the ssn is 123-45-6789.");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "the ssn is 123-45-6789.");
         Assertions.assertEquals(1, filtered.getSpans().size());
         Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 11, 22, FilterType.SSN));
         Assertions.assertEquals("123-45-6789", filtered.getSpans().get(0).getText());
@@ -53,14 +52,13 @@ public class SsnFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new SsnFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final SsnFilter filter = new SsnFilter(filterConfiguration);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "the ssn is 123456789.");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "the ssn is 123456789.");
         Assertions.assertEquals(1, filtered.getSpans().size());
         Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 11, 20, FilterType.SSN));
 
@@ -71,14 +69,13 @@ public class SsnFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new SsnFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final SsnFilter filter = new SsnFilter(filterConfiguration);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "the ssn is 123 45 6789.");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "the ssn is 123 45 6789.");
         Assertions.assertEquals(1, filtered.getSpans().size());
         Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 11, 22, FilterType.SSN));
 
@@ -89,14 +86,13 @@ public class SsnFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new SsnFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final SsnFilter filter = new SsnFilter(filterConfiguration);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "the ssn is 123 45 6789.");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "the ssn is 123 45 6789.");
         Assertions.assertEquals(1, filtered.getSpans().size());
         Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 11, 22, FilterType.SSN));
 
@@ -107,14 +103,13 @@ public class SsnFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new SsnFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final SsnFilter filter = new SsnFilter(filterConfiguration);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "the ssn is 123 454 6789.");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "the ssn is 123 454 6789.");
         Assertions.assertEquals(0, filtered.getSpans().size());
 
     }
@@ -124,14 +119,13 @@ public class SsnFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new SsnFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final SsnFilter filter = new SsnFilter(filterConfiguration);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "the ssn is 123 4f 6789.");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "the ssn is 123 4f 6789.");
         Assertions.assertEquals(0, filtered.getSpans().size());
 
     }
@@ -141,14 +135,13 @@ public class SsnFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new SsnFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final SsnFilter filter = new SsnFilter(filterConfiguration);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "the ssn is 11-1234567.");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "the ssn is 11-1234567.");
         Assertions.assertEquals(1, filtered.getSpans().size());
         Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 11, 21, FilterType.SSN));
 
@@ -165,14 +158,13 @@ public class SsnFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(ssnFilterStrategy))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final SsnFilter filter = new SsnFilter(filterConfiguration);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "the ssn is 123-45-6789.");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "the ssn is 123-45-6789.");
         showSpans(filtered.getSpans());
         Assertions.assertEquals(1, filtered.getSpans().size());
         Assertions.assertTrue(candidates.contains(filtered.getSpans().get(0).getReplacement()));
@@ -188,18 +180,17 @@ public class SsnFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(ssnFilterStrategy))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final SsnFilter filter = new SsnFilter(filterConfiguration);
 
-        final Filtered filtered1 = filter.filter(getPolicy(), "context", PIECE, "the ssn is 123-45-6789.");
+        final Filtered filtered1 = filter.filter(contextService, getPolicy(), "context", PIECE, "the ssn is 123-45-6789.");
         Assertions.assertEquals(1, filtered1.getSpans().size());
         final String replacement1 = filtered1.getSpans().get(0).getReplacement();
 
-        final Filtered filtered2 = filter.filter(getPolicy(), "context", PIECE, "the ssn is 123-45-6789.");
+        final Filtered filtered2 = filter.filter(contextService, getPolicy(), "context", PIECE, "the ssn is 123-45-6789.");
         Assertions.assertEquals(1, filtered2.getSpans().size());
         final String replacement2 = filtered2.getSpans().get(0).getReplacement();
 
@@ -207,14 +198,13 @@ public class SsnFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration2 = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(ssnFilterStrategy))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final SsnFilter filter2 = new SsnFilter(filterConfiguration2);
 
-        final Filtered filtered3 = filter2.filter(getPolicy(), "anothercontext", PIECE, "the ssn is 555-55-1234.");
+        final Filtered filtered3 = filter2.filter(contextService, getPolicy(), "anothercontext", PIECE, "the ssn is 555-55-1234.");
         Assertions.assertEquals(1, filtered3.getSpans().size());
         final String replacement3 = filtered3.getSpans().get(0).getReplacement();
 

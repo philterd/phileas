@@ -30,7 +30,7 @@ public class EmailAddressAnonymizationServiceTest {
     @Test
     public void constructor() {
 
-        AnonymizationService anonymizationService = new EmailAddressAnonymizationService(new DefaultContextService(), new SecureRandom(), AnonymizationMethod.REALISTIC);
+        AnonymizationService anonymizationService = new EmailAddressAnonymizationService(new SecureRandom(), AnonymizationMethod.REALISTIC);
 
         final String token = "me@testemail.com";
         final String replacement = anonymizationService.anonymize(token);
@@ -43,7 +43,7 @@ public class EmailAddressAnonymizationServiceTest {
     @Test
     public void anonymize() {
 
-        AnonymizationService anonymizationService = new EmailAddressAnonymizationService(new DefaultContextService());
+        AnonymizationService anonymizationService = new EmailAddressAnonymizationService();
 
         final String token = "me@testemail.com";
         final String replacement = anonymizationService.anonymize(token);
@@ -56,7 +56,7 @@ public class EmailAddressAnonymizationServiceTest {
     @Test
     public void anonymizeUUID() {
 
-        AnonymizationService anonymizationService = new EmailAddressAnonymizationService(new DefaultContextService(), new SecureRandom(), AnonymizationMethod.UUID);
+        AnonymizationService anonymizationService = new EmailAddressAnonymizationService(new SecureRandom(), AnonymizationMethod.UUID);
 
         final String token = "me@testemail.com";
         final String replacement = anonymizationService.anonymize(token);

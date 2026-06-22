@@ -29,7 +29,7 @@ public class BitcoinAddressFilterStrategyTest extends AbstractFilterStrategyTest
     }
 
     public AbstractAnonymizationService getAnonymizationService() {
-        return new BitcoinAddressAnonymizationService(new DefaultContextService());
+        return new BitcoinAddressAnonymizationService();
     }
 
 }

@@ -41,7 +41,7 @@ public class FuzzyDictionaryFilterTest extends AbstractFilterTest {
         final Set<String> terms = new HashSet<>(Arrays.asList("George", "Ted", "Bill", "John"));
         final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.CUSTOM_DICTIONARY, filterConfiguration, SensitivityLevel.OFF, terms, false);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "He lived with Bill in California.");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "He lived with Bill in California.");
 
         Assertions.assertEquals(1, filtered.getSpans().size());
         Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 14, 18, FilterType.CUSTOM_DICTIONARY));
@@ -63,14 +63,14 @@ public class FuzzyDictionaryFilterTest extends AbstractFilterTest {
         final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.CUSTOM_DICTIONARY, filterConfiguration, SensitivityLevel.HIGH, terms, false);
 
         // This is an exact match, should be found.
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "He lived with Bill in California.");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "He lived with Bill in California.");
 
         Assertions.assertEquals(1, filtered.getSpans().size());
         Assertions.assertEquals("Bill", filtered.getSpans().get(0).getText());
 
         // This is NOT an exact match (Billi vs Bill). distance = 1.
         // SensitivityLevel.HIGH requires distance < 1. So it should NOT match.
-        final Filtered filtered2 = filter.filter(getPolicy(), "context", PIECE, "He lived with Billi in California.");
+        final Filtered filtered2 = filter.filter(contextService, getPolicy(), "context", PIECE, "He lived with Billi in California.");
         Assertions.assertEquals(0, filtered2.getSpans().size());
 
     }
@@ -89,13 +89,13 @@ public class FuzzyDictionaryFilterTest extends AbstractFilterTest {
         final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.CUSTOM_DICTIONARY, filterConfiguration, SensitivityLevel.OFF, terms, true);
 
         // "Bill" is capitalized. Should be found.
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "He lived with Bill in California.");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "He lived with Bill in California.");
         Assertions.assertEquals(1, filtered.getSpans().size());
         Assertions.assertEquals("Bill", filtered.getSpans().get(0).getText());
 
         // "bill" is NOT capitalized. Should NOT be found.
         // Currently this fails because exact matches ignore requireCapitalization.
-        final Filtered filtered2 = filter.filter(getPolicy(), "context", PIECE, "He lived with bill in California.");
+        final Filtered filtered2 = filter.filter(contextService, getPolicy(), "context", PIECE, "He lived with bill in California.");
         Assertions.assertEquals(0, filtered2.getSpans().size());
 
     }
@@ -116,7 +116,7 @@ public class FuzzyDictionaryFilterTest extends AbstractFilterTest {
         // ngrams.get(0) contains "Billi" at some position.
         // entry "Bill" has 0 spaces, so spacesInEntry = 0.
         // loop over ngrams.get(0).
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "He lived with Billi in California.");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "He lived with Billi in California.");
 
         Assertions.assertEquals(1, filtered.getSpans().size());
         Assertions.assertEquals("Billi", filtered.getSpans().get(0).getText());
@@ -137,7 +137,7 @@ public class FuzzyDictionaryFilterTest extends AbstractFilterTest {
         final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.CUSTOM_DICTIONARY, filterConfiguration, SensitivityLevel.LOW, terms, false);
 
         // "Billie" vs "Bill" is distance 2.
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "He lived with Billie in California.");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "He lived with Billie in California.");
 
         Assertions.assertEquals(1, filtered.getSpans().size());
         Assertions.assertEquals("Billie", filtered.getSpans().get(0).getText());
@@ -162,11 +162,11 @@ public class FuzzyDictionaryFilterTest extends AbstractFilterTest {
         // Fuzzy match checks Character.isUpperCase(ngram.charAt(0)) if requireCapitalization is true.
 
         // Not capitalized, should NOT match fuzzy.
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "He lived with billi in California.");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "He lived with billi in California.");
         Assertions.assertEquals(0, filtered.getSpans().size());
 
         // Capitalized, SHOULD match fuzzy.
-        final Filtered filtered2 = filter.filter(getPolicy(), "context", PIECE, "He lived with Billi in California.");
+        final Filtered filtered2 = filter.filter(contextService, getPolicy(), "context", PIECE, "He lived with Billi in California.");
         Assertions.assertEquals(1, filtered2.getSpans().size());
 
     }
@@ -183,7 +183,7 @@ public class FuzzyDictionaryFilterTest extends AbstractFilterTest {
         final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.CUSTOM_DICTIONARY, filterConfiguration, SensitivityLevel.MEDIUM, terms, false);
 
         // Not capitalized, SHOULD match fuzzy because requireCapitalization is false.
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "He lived with billi in California.");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "He lived with billi in California.");
         Assertions.assertEquals(1, filtered.getSpans().size());
         Assertions.assertEquals("billi", filtered.getSpans().get(0).getText());
 
@@ -200,7 +200,7 @@ public class FuzzyDictionaryFilterTest extends AbstractFilterTest {
         final Set<String> terms = new HashSet<>(Arrays.asList("George Jones", "Bill Smith"));
         final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.CUSTOM_DICTIONARY, filterConfiguration, SensitivityLevel.OFF, terms, false);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "He lived with Bill Smith in California.");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "He lived with Bill Smith in California.");
 
         Assertions.assertEquals(1, filtered.getSpans().size());
         Assertions.assertEquals("Bill Smith", filtered.getSpans().get(0).getText());
@@ -219,7 +219,7 @@ public class FuzzyDictionaryFilterTest extends AbstractFilterTest {
         final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.CUSTOM_DICTIONARY, filterConfiguration, SensitivityLevel.MEDIUM, terms, false);
 
         // "Bill Smeth" vs "Bill Smith" distance is 1.
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "He lived with Bill Smeth in California.");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "He lived with Bill Smeth in California.");
 
         Assertions.assertEquals(1, filtered.getSpans().size());
         Assertions.assertEquals("Bill Smeth", filtered.getSpans().get(0).getText());

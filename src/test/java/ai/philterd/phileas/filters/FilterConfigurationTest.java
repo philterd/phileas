@@ -37,7 +37,6 @@ public class FilterConfigurationTest extends AbstractFilterTest {
         strategy.setStrategy(AbstractFilterStrategy.CRYPTO_REPLACE);
         return new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(strategy))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .withCrypto(new Crypto(key, null));

@@ -22,6 +22,7 @@ import ai.philterd.phileas.model.filtering.Filtered;
 import ai.philterd.phileas.model.filtering.Replacement;
 import ai.philterd.phileas.model.filtering.Span;
 import ai.philterd.phileas.policy.Policy;
+import ai.philterd.phileas.services.context.ContextService;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
@@ -95,7 +96,7 @@ public class PhEyeFilter extends NerFilter {
     }
 
     @Override
-    public Filtered filter(final Policy policy, final String context, final int piece, final String input) throws Exception {
+    public Filtered filter(final ContextService contextService, final Policy policy, final String context, final int piece, final String input) throws Exception {
 
         final List<Span> spans = new LinkedList<>();
 
@@ -142,7 +143,7 @@ public class PhEyeFilter extends NerFilter {
                         // the model saw.
                         final String originalToken = input.substring(phEyeSpan.getStart(), phEyeSpan.getEnd());
 
-                        final Span span = createSpan(policy, context, filterType, originalToken,
+                        final Span span = createSpan(contextService, policy, context, filterType, originalToken,
                                 window, phEyeSpan.getLabel(), phEyeSpan.getStart(), phEyeSpan.getEnd(),
                                 phEyeSpan.getScore());
 
@@ -164,11 +165,11 @@ public class PhEyeFilter extends NerFilter {
 
     }
 
-    private Span createSpan(final Policy policy, final String context,
+    private Span createSpan(final ContextService contextService, final Policy policy, final String context,
                             final FilterType filterType, final String text, final  String[] window,
                             final String classification, final int start, final int end, final double confidence) throws Exception {
 
-        final Replacement replacement = getReplacement(policy, context, text, window, confidence, classification, null);
+        final Replacement replacement = getReplacement(contextService, policy, context, text, window, confidence, classification, null);
 
         if(Strings.CI.equals(replacement.getReplacement(), text)) {
 

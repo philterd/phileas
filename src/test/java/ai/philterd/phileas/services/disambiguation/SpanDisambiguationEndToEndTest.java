@@ -58,18 +58,17 @@ public class SpanDisambiguationEndToEndTest extends AbstractFilterTest {
     /** Custom identifier regex that matches the same nine digits the SSN filter matches. */
     private static final String IDENTIFIER_REGEX = "\\b\\d{9}\\b";
 
-    private VectorBasedSpanDisambiguationService disambiguationService(final VectorService vectorService) {
+    private VectorBasedSpanDisambiguationService disambiguationService() {
         final Properties properties = new Properties();
         properties.setProperty("span.disambiguation.enabled", "true");
         properties.setProperty("span.disambiguation.ignore.stopwords", "true");
         properties.setProperty("span.disambiguation.vector.size", "64");
-        return new VectorBasedSpanDisambiguationService(new PhileasConfiguration(properties), vectorService);
+        return new VectorBasedSpanDisambiguationService(new PhileasConfiguration(properties));
     }
 
     private FilterConfiguration filterConfiguration(final AbstractFilterStrategy strategy) {
         return new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(strategy))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
@@ -80,6 +79,7 @@ public class SpanDisambiguationEndToEndTest extends AbstractFilterTest {
      * location of the nine-digit value after disambiguation and overlap resolution.
      */
     private Span resolveNumberSpan(final VectorBasedSpanDisambiguationService disambiguation,
+                                   final VectorService vectorService,
                                    final String input) throws Exception {
 
         final Filter ssnFilter = new SsnFilter(filterConfiguration(new SsnFilterStrategy()));
@@ -88,7 +88,7 @@ public class SpanDisambiguationEndToEndTest extends AbstractFilterTest {
 
         final UnstructuredDocumentProcessor processor = new UnstructuredDocumentProcessor(disambiguation, false);
 
-        final TextFilterResult result = processor.process(getPolicy(),
+        final TextFilterResult result = processor.process(contextService, vectorService, getPolicy(),
                 List.of(ssnFilter, identifierFilter), Collections.emptyList(), "ctx", PIECE, input);
 
         // After disambiguation + overlap resolution there should be exactly one span at the number.
@@ -113,8 +113,8 @@ public class SpanDisambiguationEndToEndTest extends AbstractFilterTest {
 
         final String input = "The number " + NUMBER + " is here.";
 
-        final List<Span> ssnSpans = ssnFilter.filter(getPolicy(), "ctx", PIECE, input).getSpans();
-        final List<Span> idSpans = identifierFilter.filter(getPolicy(), "ctx", PIECE, input).getSpans();
+        final List<Span> ssnSpans = ssnFilter.filter(contextService, getPolicy(), "ctx", PIECE, input).getSpans();
+        final List<Span> idSpans = identifierFilter.filter(contextService, getPolicy(), "ctx", PIECE, input).getSpans();
 
         Assertions.assertEquals(1, ssnSpans.size());
         Assertions.assertEquals(1, idSpans.size());
@@ -128,16 +128,17 @@ public class SpanDisambiguationEndToEndTest extends AbstractFilterTest {
     @Test
     public void contextTrainedForSsnResolvesAmbiguousValueToSsn() throws Exception {
 
-        final VectorBasedSpanDisambiguationService disambiguation = disambiguationService(new InMemoryVectorService());
+        final VectorService vectorService = new InMemoryVectorService();
+        final VectorBasedSpanDisambiguationService disambiguation = disambiguationService();
 
         // Train: process documents where the nine-digit value appears unambiguously in SSN-like
         // context. (Only the SSN filter is configured to match in these training documents, so the
         // span is unambiguous and is recorded as SSN training data by the pipeline.)
-        trainSsn(disambiguation, "The patient ssn social security number is " + NUMBER + " on record.");
-        trainSsn(disambiguation, "Their social security ssn was listed as " + NUMBER + " here.");
+        trainSsn(disambiguation, vectorService, "The patient ssn social security number is " + NUMBER + " on record.");
+        trainSsn(disambiguation, vectorService, "Their social security ssn was listed as " + NUMBER + " here.");
 
         // Now resolve an ambiguous occurrence sitting in clearly SSN-like context.
-        final Span resolved = resolveNumberSpan(disambiguation,
+        final Span resolved = resolveNumberSpan(disambiguation, vectorService,
                 "The ssn social security number " + NUMBER + " was confirmed.");
 
         Assertions.assertEquals(FilterType.SSN, resolved.getFilterType(),
@@ -148,14 +149,15 @@ public class SpanDisambiguationEndToEndTest extends AbstractFilterTest {
     @Test
     public void contextTrainedForIdentifierResolvesAmbiguousValueToIdentifier() throws Exception {
 
-        final VectorBasedSpanDisambiguationService disambiguation = disambiguationService(new InMemoryVectorService());
+        final VectorService vectorService = new InMemoryVectorService();
+        final VectorBasedSpanDisambiguationService disambiguation = disambiguationService();
 
         // Train: the nine-digit value appears unambiguously in employee-identifier context.
-        trainIdentifier(disambiguation, "The employee badge identifier " + NUMBER + " was assigned.");
-        trainIdentifier(disambiguation, "Employee badge identifier number " + NUMBER + " is active.");
+        trainIdentifier(disambiguation, vectorService, "The employee badge identifier " + NUMBER + " was assigned.");
+        trainIdentifier(disambiguation, vectorService, "Employee badge identifier number " + NUMBER + " is active.");
 
         // Resolve an ambiguous occurrence sitting in employee-identifier context.
-        final Span resolved = resolveNumberSpan(disambiguation,
+        final Span resolved = resolveNumberSpan(disambiguation, vectorService,
                 "The employee badge identifier " + NUMBER + " is shown.");
 
         Assertions.assertEquals(FilterType.IDENTIFIER, resolved.getFilterType(),
@@ -167,30 +169,31 @@ public class SpanDisambiguationEndToEndTest extends AbstractFilterTest {
     public void identicalInputResolvesIdenticallyAcrossRuns() throws Exception {
 
         // Determinism: the same trained store and the same input must yield the same decision.
-        final VectorBasedSpanDisambiguationService disambiguation = disambiguationService(new InMemoryVectorService());
-        trainIdentifier(disambiguation, "The employee badge identifier " + NUMBER + " was assigned.");
+        final VectorService vectorService = new InMemoryVectorService();
+        final VectorBasedSpanDisambiguationService disambiguation = disambiguationService();
+        trainIdentifier(disambiguation, vectorService, "The employee badge identifier " + NUMBER + " was assigned.");
 
         final String input = "The employee badge identifier " + NUMBER + " is shown.";
-        final FilterType first = resolveNumberSpan(disambiguation, input).getFilterType();
-        final FilterType second = resolveNumberSpan(disambiguation, input).getFilterType();
+        final FilterType first = resolveNumberSpan(disambiguation, vectorService, input).getFilterType();
+        final FilterType second = resolveNumberSpan(disambiguation, vectorService, input).getFilterType();
 
         Assertions.assertEquals(first, second);
 
     }
 
     /** Trains the store with an SSN-only document so the value is recorded as SSN context. */
-    private void trainSsn(final VectorBasedSpanDisambiguationService disambiguation, final String input) throws Exception {
+    private void trainSsn(final VectorBasedSpanDisambiguationService disambiguation, final VectorService vectorService, final String input) throws Exception {
         final Filter ssnFilter = new SsnFilter(filterConfiguration(new SsnFilterStrategy()));
         final UnstructuredDocumentProcessor processor = new UnstructuredDocumentProcessor(disambiguation, false);
-        processor.process(getPolicy(), List.of(ssnFilter), Collections.emptyList(), "ctx", PIECE, input);
+        processor.process(contextService, vectorService, getPolicy(), List.of(ssnFilter), Collections.emptyList(), "ctx", PIECE, input);
     }
 
     /** Trains the store with an identifier-only document so the value is recorded as IDENTIFIER context. */
-    private void trainIdentifier(final VectorBasedSpanDisambiguationService disambiguation, final String input) throws Exception {
+    private void trainIdentifier(final VectorBasedSpanDisambiguationService disambiguation, final VectorService vectorService, final String input) throws Exception {
         final Filter identifierFilter = new IdentifierFilter(
                 filterConfiguration(new IdentifierFilterStrategy()), "id", IDENTIFIER_REGEX, true, 0);
         final UnstructuredDocumentProcessor processor = new UnstructuredDocumentProcessor(disambiguation, false);
-        processor.process(getPolicy(), List.of(identifierFilter), Collections.emptyList(), "ctx", PIECE, input);
+        processor.process(contextService, vectorService, getPolicy(), List.of(identifierFilter), Collections.emptyList(), "ctx", PIECE, input);
     }
 
 }

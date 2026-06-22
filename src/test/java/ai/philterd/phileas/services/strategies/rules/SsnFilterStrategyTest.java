@@ -21,6 +21,7 @@ import ai.philterd.phileas.policy.FPE;
 import ai.philterd.phileas.services.anonymization.AbstractAnonymizationService;
 import ai.philterd.phileas.services.anonymization.AnonymizationService;
 import ai.philterd.phileas.services.anonymization.NumericAnonymizationService;
+import ai.philterd.phileas.services.context.ContextService;
 import ai.philterd.phileas.services.context.DefaultContextService;
 import ai.philterd.phileas.services.strategies.AbstractFilterStrategy;
 import ai.philterd.phileas.services.strategies.AbstractFilterStrategyTest;
@@ -34,7 +35,7 @@ public class SsnFilterStrategyTest extends AbstractFilterStrategyTest {
     }
 
     public AbstractAnonymizationService getAnonymizationService() {
-        return new NumericAnonymizationService(new DefaultContextService());
+        return new NumericAnonymizationService();
     }
 
     @Test
@@ -43,11 +44,12 @@ public class SsnFilterStrategyTest extends AbstractFilterStrategyTest {
         final FPE fpe = new FPE("2DE79D232DF5585D68CE47882AE256D6", "CBD09280979564");
 
         final AnonymizationService anonymizationService = getAnonymizationService();
+        final ContextService contextService = new DefaultContextService();
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
         strategy.setStrategy(AbstractFilterStrategy.FPE_ENCRYPT_REPLACE);
 
-        final Replacement replacement = strategy.getReplacement("name", "context",  "123-45-6789", WINDOW, new Crypto(), fpe, anonymizationService, null);
+        final Replacement replacement = strategy.getReplacement(contextService, "name", "context",  "123-45-6789", WINDOW, new Crypto(), fpe, anonymizationService, null);
 
         Assertions.assertEquals(11, replacement.getReplacement().length());
         Assertions.assertEquals("609-59-7486", replacement.getReplacement());
@@ -60,11 +62,12 @@ public class SsnFilterStrategyTest extends AbstractFilterStrategyTest {
         final FPE fpe = new FPE("2DE79D232DF5585D68CE47882AE256D6", "CBD09280979564");
 
         final AnonymizationService anonymizationService = getAnonymizationService();
+        final ContextService contextService = new DefaultContextService();
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
         strategy.setStrategy(AbstractFilterStrategy.FPE_ENCRYPT_REPLACE);
 
-        final Replacement replacement = strategy.getReplacement("name", "context",  "987 65 4321", WINDOW, new Crypto(), fpe, anonymizationService, null);
+        final Replacement replacement = strategy.getReplacement(contextService, "name", "context",  "987 65 4321", WINDOW, new Crypto(), fpe, anonymizationService, null);
 
         Assertions.assertEquals(11, replacement.getReplacement().length());
         Assertions.assertEquals("195 55 5147", replacement.getReplacement());
@@ -77,11 +80,12 @@ public class SsnFilterStrategyTest extends AbstractFilterStrategyTest {
         final FPE fpe = new FPE("2DE79D232DF5585D68CE47882AE256D6", "CBD09280979564");
 
         final AnonymizationService anonymizationService = getAnonymizationService();
+        final ContextService contextService = new DefaultContextService();
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
         strategy.setStrategy(AbstractFilterStrategy.FPE_ENCRYPT_REPLACE);
 
-        final Replacement replacement = strategy.getReplacement("name", "context",  "987654321", WINDOW, new Crypto(), fpe, anonymizationService, null);
+        final Replacement replacement = strategy.getReplacement(contextService, "name", "context",  "987654321", WINDOW, new Crypto(), fpe, anonymizationService, null);
 
         Assertions.assertEquals(9, replacement.getReplacement().length());
         Assertions.assertEquals("195555147", replacement.getReplacement());
@@ -94,6 +98,7 @@ public class SsnFilterStrategyTest extends AbstractFilterStrategyTest {
         final FPE fpe = new FPE("2DE79D232DF5585D68CE47882AE256D6", "CBD09280979564");
 
         final AnonymizationService anonymizationService = getAnonymizationService();
+        final ContextService contextService = new DefaultContextService();
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
         strategy.setStrategy(AbstractFilterStrategy.FPE_ENCRYPT_REPLACE);
@@ -101,7 +106,7 @@ public class SsnFilterStrategyTest extends AbstractFilterStrategyTest {
         // "12345" has only five characters, below FF3's minimum, so format-preserving encryption
         // cannot apply. The token must fall back to redaction rather than throwing and aborting the
         // document.
-        final Replacement replacement = strategy.getReplacement("name", "context", "12345", WINDOW, new Crypto(), fpe, anonymizationService, null);
+        final Replacement replacement = strategy.getReplacement(contextService, "name", "context", "12345", WINDOW, new Crypto(), fpe, anonymizationService, null);
 
         Assertions.assertEquals("{{{REDACTED-ssn}}}", replacement.getReplacement());
 
@@ -111,11 +116,12 @@ public class SsnFilterStrategyTest extends AbstractFilterStrategyTest {
     public void lastFour1() throws Exception {
 
         final AnonymizationService anonymizationService = getAnonymizationService();
+        final ContextService contextService = new DefaultContextService();
 
         final AbstractFilterStrategy strategy = new SsnFilterStrategy();
         strategy.setStrategy(AbstractFilterStrategy.LAST_4);
 
-        final Replacement replacement = strategy.getReplacement("name", "context",  "4111111111111111", WINDOW, new Crypto(), new FPE(), anonymizationService, null);
+        final Replacement replacement = strategy.getReplacement(contextService, "name", "context",  "4111111111111111", WINDOW, new Crypto(), new FPE(), anonymizationService, null);
 
         Assertions.assertEquals("1111", replacement.getReplacement());
 
@@ -125,11 +131,12 @@ public class SsnFilterStrategyTest extends AbstractFilterStrategyTest {
     public void lastFour2() throws Exception {
 
         final AnonymizationService anonymizationService = getAnonymizationService();
+        final ContextService contextService = new DefaultContextService();
 
         final AbstractFilterStrategy strategy = new SsnFilterStrategy();
         strategy.setStrategy(AbstractFilterStrategy.LAST_4);
 
-        final Replacement replacement = strategy.getReplacement("name", "context",  "123-456-7890", WINDOW, new Crypto(), new FPE(), anonymizationService, null);
+        final Replacement replacement = strategy.getReplacement(contextService, "name", "context",  "123-456-7890", WINDOW, new Crypto(), new FPE(), anonymizationService, null);
 
         Assertions.assertEquals("7890", replacement.getReplacement());
 

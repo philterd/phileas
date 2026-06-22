@@ -50,7 +50,6 @@ public class PhEyeTest extends AbstractFilterTest {
         final Map<String, Double> thresholds = new HashMap<>();
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
@@ -71,7 +70,7 @@ public class PhEyeTest extends AbstractFilterTest {
 
         final PhEyeFilter filter = new PhEyeFilter(filterConfiguration, phEyeConfiguration, removePunctuation, thresholds, FilterType.PERSON, httpClient);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "George Washington was the first president.");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "George Washington was the first president.");
 
         Assertions.assertEquals(1, filtered.getSpans().size());
         Assertions.assertEquals("George Washington", filtered.getSpans().iterator().next().getText());
@@ -86,7 +85,6 @@ public class PhEyeTest extends AbstractFilterTest {
         final Map<String, Double> thresholds = new HashMap<>();
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
@@ -107,7 +105,7 @@ public class PhEyeTest extends AbstractFilterTest {
 
         final PhEyeFilter filter = new PhEyeFilter(filterConfiguration, phEyeConfiguration, removePunctuation, thresholds, FilterType.PERSON, httpClient);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "No name here was the first president.");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "No name here was the first president.");
 
         Assertions.assertEquals(0, filtered.getSpans().size());
 
@@ -121,7 +119,6 @@ public class PhEyeTest extends AbstractFilterTest {
         final Map<String, Double> thresholds = new HashMap<>();
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
@@ -145,7 +142,7 @@ public class PhEyeTest extends AbstractFilterTest {
                 return handler.handleResponse(response);
             });
 
-            final Filtered filtered1 = filter.filter(getPolicy(), "context", PIECE, "George Washington was the first president.");
+            final Filtered filtered1 = filter.filter(contextService, getPolicy(), "context", PIECE, "George Washington was the first president.");
             Assertions.assertEquals(1, filtered1.getSpans().size());
             Assertions.assertEquals("George Washington", filtered1.getSpans().iterator().next().getText());
 
@@ -159,7 +156,7 @@ public class PhEyeTest extends AbstractFilterTest {
                 return handler.handleResponse(response);
             });
 
-            final Filtered filtered2 = filter.filter(getPolicy(), "context", PIECE, "No name here was the first president.");
+            final Filtered filtered2 = filter.filter(contextService, getPolicy(), "context", PIECE, "No name here was the first president.");
             Assertions.assertEquals(0, filtered2.getSpans().size());
 
         }
@@ -174,7 +171,6 @@ public class PhEyeTest extends AbstractFilterTest {
         final Map<String, Double> thresholds = new HashMap<>();
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
@@ -196,7 +192,7 @@ public class PhEyeTest extends AbstractFilterTest {
         final PhEyeFilter filter = new PhEyeFilter(filterConfiguration, phEyeConfiguration, removePunctuation, thresholds, FilterType.PERSON, httpClient);
 
         final String input = "George Washington, the first president.";
-        filter.filter(getPolicy(), "context", PIECE, input);
+        filter.filter(contextService, getPolicy(), "context", PIECE, input);
 
         // With removePunctuation enabled, the text sent to the model has its punctuation removed, and
         // it remains the same length (each punctuation mark is replaced with a space) so span offsets
@@ -215,7 +211,6 @@ public class PhEyeTest extends AbstractFilterTest {
         final Map<String, Double> thresholds = new HashMap<>();
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
@@ -237,7 +232,7 @@ public class PhEyeTest extends AbstractFilterTest {
         final PhEyeFilter filter = new PhEyeFilter(filterConfiguration, phEyeConfiguration, removePunctuation, thresholds, FilterType.PERSON, httpClient);
 
         final String input = "George Washington, the first president.";
-        filter.filter(getPolicy(), "context", PIECE, input);
+        filter.filter(contextService, getPolicy(), "context", PIECE, input);
 
         // With removePunctuation disabled, the original text (including punctuation) is sent unchanged.
         Assertions.assertEquals(input, sentText[0]);
@@ -271,7 +266,6 @@ public class PhEyeTest extends AbstractFilterTest {
         phEyeConfiguration.setModelPath("/models/ph-eye-pii-en-small");
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
@@ -301,7 +295,6 @@ public class PhEyeTest extends AbstractFilterTest {
         final Map<String, Double> thresholds = new HashMap<>();
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
@@ -322,7 +315,7 @@ public class PhEyeTest extends AbstractFilterTest {
 
         final PhEyeFilter filter = new PhEyeFilter(filterConfiguration, phEyeConfiguration, removePunctuation, thresholds, FilterType.PERSON, httpClient);
 
-        return filter.filter(getPolicy(), "context", PIECE, "George Washington was the first president.");
+        return filter.filter(contextService, getPolicy(), "context", PIECE, "George Washington was the first president.");
     }
 
 }

@@ -30,7 +30,7 @@ public class PhoneNumberExtensionFilterStrategyTest extends AbstractFilterStrate
     }
 
     public AbstractAnonymizationService getAnonymizationService() {
-        return new NumericAnonymizationService(new DefaultContextService());
+        return new NumericAnonymizationService();
     }
 
     @Test

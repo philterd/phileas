@@ -7,6 +7,7 @@ Full changelogs for each release are available in the [GitHub releases](https://
 ## Version 4.2.0 - June 22, 2026
 
 * Lowered the Java baseline from 25 to 17. Phileas now compiles to Java 17 bytecode, so it can be embedded in Java 17 and Java 21 runtimes (for example OpenSearch and Elasticsearch plugins, and Spark or Databricks jobs) that could not load the previous Java 25 build. There are no API changes, and consumers already on Java 21 or newer are unaffected.
+* Added a warm, reusable filtering path so one filter-service instance can serve requests that each bring their own context and vector service (issue #413). `PlainTextFilterService` and `PdfFilterService` now offer service-less constructors plus `filter(...)` overloads (and a `PreparedPolicy.filter(...)` overload) that take a per-call `ContextService` and `VectorService`. A single shared instance keeps its filter and post-filter caches populated across requests instead of rebuilding them per request, while context and vector state stay per request. The existing constructors and `filter(policy, context, input)` methods are unchanged, so current callers need no changes. When sharing one instance across threads, supply a thread-safe `Random` (the default `SecureRandom` is).
 * Using PhiSQL 1.2.0.
 
 ## Version 4.1.0 - June 21, 2026

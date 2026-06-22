@@ -28,7 +28,7 @@ public class CityFilterStrategyTest extends AbstractFilterStrategyTest {
     }
 
     public AbstractAnonymizationService getAnonymizationService() {
-        return new CityAnonymizationService(new DefaultContextService());
+        return new CityAnonymizationService();
     }
 
 }

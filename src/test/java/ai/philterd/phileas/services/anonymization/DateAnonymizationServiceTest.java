@@ -30,7 +30,7 @@ public class DateAnonymizationServiceTest {
     @Test
     public void anonymize1() {
 
-        AnonymizationService anonymizationService = new DateAnonymizationService(new DefaultContextService());
+        AnonymizationService anonymizationService = new DateAnonymizationService();
 
         final String token = "11-18-2018";
         final String replacement = anonymizationService.anonymize(token);
@@ -43,7 +43,7 @@ public class DateAnonymizationServiceTest {
     @Test
     public void anonymize2() {
 
-        AnonymizationService anonymizationService = new DateAnonymizationService(new DefaultContextService());
+        AnonymizationService anonymizationService = new DateAnonymizationService();
 
         final String token = "April 1, 2019";
         final String replacement = anonymizationService.anonymize(token);
@@ -56,7 +56,7 @@ public class DateAnonymizationServiceTest {
     @Test
     public void anonymizeUUID() {
 
-        AnonymizationService anonymizationService = new DateAnonymizationService(new DefaultContextService(), new SecureRandom(), AnonymizationMethod.UUID);
+        AnonymizationService anonymizationService = new DateAnonymizationService(new SecureRandom(), AnonymizationMethod.UUID);
 
         final String token = "11-18-2018";
         final String replacement = anonymizationService.anonymize(token);

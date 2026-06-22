@@ -47,6 +47,11 @@ public class PlainTextFilterService extends TextFilterService {
 
     private final DocumentProcessor unstructuredDocumentProcessor;
 
+    // The context and vector services bound at construction, used by the no-service filter overloads.
+    // Null when the instance was created with a service-less constructor for warm, per-call reuse.
+    private final ContextService defaultContextService;
+    private final VectorService defaultVectorService;
+
     public PlainTextFilterService(final PhileasConfiguration phileasConfiguration,
                                   final ContextService contextService,
                                   final VectorService vectorService,
@@ -62,13 +67,57 @@ public class PlainTextFilterService extends TextFilterService {
                                   final Random random,
                                   final HttpClient httpClient) {
 
-        super(phileasConfiguration, contextService, random, httpClient);
+        super(phileasConfiguration, random, httpClient);
 
         LOGGER.info("Initializing plain text filter service.");
 
-        // Create a new unstructured document processor.
+        this.defaultContextService = contextService;
+        this.defaultVectorService = vectorService;
+
+        // Create a new unstructured document processor. The vector service is supplied per call, so
+        // the disambiguation service is built once here without one.
         this.unstructuredDocumentProcessor = new UnstructuredDocumentProcessor(
-                SpanDisambiguationServiceFactory.getSpanDisambiguationService(phileasConfiguration, vectorService),
+                SpanDisambiguationServiceFactory.getSpanDisambiguationService(phileasConfiguration),
+                phileasConfiguration.incrementalRedactionsEnabled()
+        );
+
+    }
+
+    /**
+     * Creates a warm, reusable service whose context and vector services are supplied per call. Share
+     * one instance across requests so its filter and post-filter caches stay populated; pass each
+     * request's {@link ContextService} and {@link VectorService} to {@link #filter(Policy,
+     * ContextService, VectorService, String, String)}.
+     * @param phileasConfiguration The {@link PhileasConfiguration}.
+     * @param httpClient The {@link HttpClient}.
+     */
+    public PlainTextFilterService(final PhileasConfiguration phileasConfiguration,
+                                  final HttpClient httpClient) {
+
+        this(phileasConfiguration, new SecureRandom(), httpClient);
+
+    }
+
+    /**
+     * Creates a warm, reusable service whose context and vector services are supplied per call.
+     * @param phileasConfiguration The {@link PhileasConfiguration}.
+     * @param random The {@link Random} used for anonymization. Must be thread-safe when the instance
+     *               is shared across threads (for example {@link SecureRandom}).
+     * @param httpClient The {@link HttpClient}.
+     */
+    public PlainTextFilterService(final PhileasConfiguration phileasConfiguration,
+                                  final Random random,
+                                  final HttpClient httpClient) {
+
+        super(phileasConfiguration, random, httpClient);
+
+        LOGGER.info("Initializing plain text filter service.");
+
+        this.defaultContextService = null;
+        this.defaultVectorService = null;
+
+        this.unstructuredDocumentProcessor = new UnstructuredDocumentProcessor(
+                SpanDisambiguationServiceFactory.getSpanDisambiguationService(phileasConfiguration),
                 phileasConfiguration.incrementalRedactionsEnabled()
         );
 
@@ -76,11 +125,18 @@ public class PlainTextFilterService extends TextFilterService {
 
     @Override
     public TextFilterResult filter(final Policy policy, final String context, final String input) throws Exception {
+        return filter(policy, defaultContextService, defaultVectorService, context, input);
+    }
+
+    @Override
+    public TextFilterResult filter(final Policy policy, final ContextService contextService,
+                                   final VectorService vectorService, final String context,
+                                   final String input) throws Exception {
 
         final List<Filter> filters = filterPolicyLoader.getFiltersForPolicy(policy, filterCache);
         final List<PostFilter> postFilters = getPostFiltersForPolicy(policy);
 
-        return filter(policy, filters, postFilters, context, input);
+        return filter(policy, contextService, vectorService, filters, postFilters, context, input);
 
     }
 
@@ -99,9 +155,10 @@ public class PlainTextFilterService extends TextFilterService {
         return new PreparedPolicy(policy, filters, postFilters);
     }
 
-    // Shared processing path used by both filter(policy, context, input) and a PreparedPolicy, after
-    // the policy's filters and post-filters have been resolved.
-    private TextFilterResult filter(final Policy policy, final List<Filter> filters,
+    // Shared processing path used by both filter(...) overloads and a PreparedPolicy, after the
+    // policy's filters and post-filters have been resolved.
+    private TextFilterResult filter(final Policy policy, final ContextService contextService,
+                                    final VectorService vectorService, final List<Filter> filters,
                                     final List<PostFilter> postFilters, final String context,
                                     final String input) throws Exception {
 
@@ -124,7 +181,7 @@ public class PlainTextFilterService extends TextFilterService {
 
             // Process each split.
             for (int i = 0; i < splits.size(); i++) {
-                final TextFilterResult fr = unstructuredDocumentProcessor.process(policy, filters, postFilters, context, i, splits.get(i));
+                final TextFilterResult fr = unstructuredDocumentProcessor.process(contextService, vectorService, policy, filters, postFilters, context, i, splits.get(i));
                 filterResponse.add(fr);
             }
 
@@ -134,7 +191,7 @@ public class PlainTextFilterService extends TextFilterService {
         } else {
 
             // Do not split. Process the entire string at once.
-            textFilterResult = unstructuredDocumentProcessor.process(policy, filters, postFilters, context, 0, input);
+            textFilterResult = unstructuredDocumentProcessor.process(contextService, vectorService, policy, filters, postFilters, context, 0, input);
 
         }
 
@@ -160,15 +217,32 @@ public class PlainTextFilterService extends TextFilterService {
         }
 
         /**
-         * Filters text using this prepared policy. Equivalent to {@link
-         * PlainTextFilterService#filter(Policy, String, String)} but without re-resolving the policy.
+         * Filters text using this prepared policy and the context and vector services bound to the
+         * enclosing service at construction. Equivalent to {@link PlainTextFilterService#filter(Policy,
+         * String, String)} but without re-resolving the policy.
          * @param context The redaction context.
          * @param input The input text.
          * @return A {@link TextFilterResult}.
          * @throws Exception Thrown if the text cannot be filtered.
          */
         public TextFilterResult filter(final String context, final String input) throws Exception {
-            return PlainTextFilterService.this.filter(policy, filters, postFilters, context, input);
+            return PlainTextFilterService.this.filter(policy, defaultContextService, defaultVectorService, filters, postFilters, context, input);
+        }
+
+        /**
+         * Filters text using this prepared policy with a per-call {@link ContextService} and {@link
+         * VectorService}, so one warm prepared policy can serve requests that each bring their own
+         * services. Safe to call concurrently on a shared instance.
+         * @param contextService The {@link ContextService} for this request.
+         * @param vectorService The {@link VectorService} for this request.
+         * @param context The redaction context.
+         * @param input The input text.
+         * @return A {@link TextFilterResult}.
+         * @throws Exception Thrown if the text cannot be filtered.
+         */
+        public TextFilterResult filter(final ContextService contextService, final VectorService vectorService,
+                                       final String context, final String input) throws Exception {
+            return PlainTextFilterService.this.filter(policy, contextService, vectorService, filters, postFilters, context, input);
         }
 
     }

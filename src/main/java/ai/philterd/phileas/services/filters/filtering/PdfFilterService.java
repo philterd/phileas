@@ -58,6 +58,11 @@ public class PdfFilterService extends BinaryFilterService {
     private final DocumentProcessor unstructuredDocumentProcessor;
     private final TokenCounter tokenCounter;
 
+    // The context and vector services bound at construction, used by the no-service filter overload.
+    // Null when the instance was created with a service-less constructor for warm, per-call reuse.
+    private final ContextService defaultContextService;
+    private final VectorService defaultVectorService;
+
     public PdfFilterService(final PhileasConfiguration phileasConfiguration,
                             final ContextService contextService,
                             final VectorService vectorService,
@@ -72,16 +77,59 @@ public class PdfFilterService extends BinaryFilterService {
                             final Random random,
                             final HttpClient httpClient) {
 
-        super(phileasConfiguration, contextService, random, httpClient);
+        super(phileasConfiguration, random, httpClient);
 
         LOGGER.info("Initializing PDF filter service.");
+
+        this.defaultContextService = contextService;
+        this.defaultVectorService = vectorService;
 
         // Set the token counter.
         this.tokenCounter = new WhitespaceTokenCounter();
 
-        // Create a new unstructured document processor.
+        // Create a new unstructured document processor. The vector service is supplied per call, so
+        // the disambiguation service is built once here without one.
         this.unstructuredDocumentProcessor = new UnstructuredDocumentProcessor(
-                SpanDisambiguationServiceFactory.getSpanDisambiguationService(phileasConfiguration, vectorService),
+                SpanDisambiguationServiceFactory.getSpanDisambiguationService(phileasConfiguration),
+                phileasConfiguration.incrementalRedactionsEnabled()
+        );
+
+    }
+
+    /**
+     * Creates a warm, reusable service whose context and vector services are supplied per call.
+     * @param phileasConfiguration The {@link PhileasConfiguration}.
+     * @param httpClient The {@link HttpClient}.
+     */
+    public PdfFilterService(final PhileasConfiguration phileasConfiguration,
+                            final HttpClient httpClient) {
+
+        this(phileasConfiguration, new SecureRandom(), httpClient);
+
+    }
+
+    /**
+     * Creates a warm, reusable service whose context and vector services are supplied per call.
+     * @param phileasConfiguration The {@link PhileasConfiguration}.
+     * @param random The {@link Random} used for anonymization. Must be thread-safe when the instance
+     *               is shared across threads (for example {@link SecureRandom}).
+     * @param httpClient The {@link HttpClient}.
+     */
+    public PdfFilterService(final PhileasConfiguration phileasConfiguration,
+                            final Random random,
+                            final HttpClient httpClient) {
+
+        super(phileasConfiguration, random, httpClient);
+
+        LOGGER.info("Initializing PDF filter service.");
+
+        this.defaultContextService = null;
+        this.defaultVectorService = null;
+
+        this.tokenCounter = new WhitespaceTokenCounter();
+
+        this.unstructuredDocumentProcessor = new UnstructuredDocumentProcessor(
+                SpanDisambiguationServiceFactory.getSpanDisambiguationService(phileasConfiguration),
                 phileasConfiguration.incrementalRedactionsEnabled()
         );
 
@@ -89,6 +137,13 @@ public class PdfFilterService extends BinaryFilterService {
 
     @Override
     public BinaryDocumentFilterResult filter(final Policy policy, final String context,
+                                             final byte[] input, final MimeType outputMimeType) throws Exception {
+        return filter(policy, defaultContextService, defaultVectorService, context, input, outputMimeType);
+    }
+
+    @Override
+    public BinaryDocumentFilterResult filter(final Policy policy, final ContextService contextService,
+                                             final VectorService vectorService, final String context,
                                              final byte[] input, final MimeType outputMimeType) throws Exception {
 
         final List<IncrementalRedaction> incrementalRedactions = new ArrayList<>();
@@ -122,7 +177,7 @@ public class PdfFilterService extends BinaryFilterService {
                 tokens += tokenCounter.countTokens(pdfLine.getText());
 
                 // Process the text.
-                final TextFilterResult textFilterResult = unstructuredDocumentProcessor.process(policy, filters, postFilters, context, piece, pdfLine.getText());
+                final TextFilterResult textFilterResult = unstructuredDocumentProcessor.process(contextService, vectorService, policy, filters, postFilters, context, piece, pdfLine.getText());
 
                 // Add the incremental redactions to the list.
                 incrementalRedactions.addAll(textFilterResult.getIncrementalRedactions());

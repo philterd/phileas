@@ -26,8 +26,6 @@ import ai.philterd.phileas.policy.filters.PhEye;
 import ai.philterd.phileas.policy.filters.Ssn;
 import ai.philterd.phileas.policy.filters.ZipCode;
 import ai.philterd.phileas.policy.filters.pheye.PhEyeConfiguration;
-import ai.philterd.phileas.services.context.ContextService;
-import ai.philterd.phileas.services.context.DefaultContextService;
 import ai.philterd.phileas.services.strategies.custom.CustomDictionaryFilterStrategy;
 import ai.philterd.phileas.services.strategies.rules.IdentifierFilterStrategy;
 import org.apache.logging.log4j.LogManager;
@@ -48,11 +46,9 @@ public class FilterPolicyLoaderTest {
     @Test
     public void checkDefaultWindowSize() throws Exception {
 
-        final ContextService contextService = new DefaultContextService();
-
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(new Properties());
 
-        final FilterPolicyLoader filterPolicyLoader = new FilterPolicyLoader(contextService, phileasConfiguration, new SecureRandom(), null);
+        final FilterPolicyLoader filterPolicyLoader = new FilterPolicyLoader(phileasConfiguration, new SecureRandom(), null);
 
         final Identifiers identifiers = new Identifiers();
         identifiers.setZipCode(new ZipCode());
@@ -72,13 +68,11 @@ public class FilterPolicyLoaderTest {
     @Test
     public void checkCustomWindowSize() throws Exception {
 
-        final ContextService contextService = new DefaultContextService();
-
         final Properties properties = new Properties();
         properties.put("span.window.size", "3");
 
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties);
-        final FilterPolicyLoader filterPolicyLoader = new FilterPolicyLoader(contextService, phileasConfiguration, new SecureRandom(), null);
+        final FilterPolicyLoader filterPolicyLoader = new FilterPolicyLoader(phileasConfiguration, new SecureRandom(), null);
 
         final Identifiers identifiers = new Identifiers();
         identifiers.setZipCode(new ZipCode());
@@ -98,11 +92,9 @@ public class FilterPolicyLoaderTest {
     @Test
     public void getFiltersForPolicy() throws Exception {
 
-        final ContextService contextService = new DefaultContextService();
-
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(new Properties());
 
-        final FilterPolicyLoader filterPolicyLoader = new FilterPolicyLoader(contextService, phileasConfiguration, new SecureRandom(), null);
+        final FilterPolicyLoader filterPolicyLoader = new FilterPolicyLoader(phileasConfiguration, new SecureRandom(), null);
 
         final Identifiers identifiers = new Identifiers();
         identifiers.setZipCode(new ZipCode());
@@ -122,10 +114,9 @@ public class FilterPolicyLoaderTest {
     @Test
     public void getFiltersForPolicyWithNoFilters() throws Exception {
 
-        final ContextService contextService = new DefaultContextService();
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(new Properties());
 
-        final FilterPolicyLoader filterPolicyLoader = new FilterPolicyLoader(contextService, phileasConfiguration, new SecureRandom(), null);
+        final FilterPolicyLoader filterPolicyLoader = new FilterPolicyLoader(phileasConfiguration, new SecureRandom(), null);
 
         final Policy policy = new Policy();
 
@@ -141,10 +132,9 @@ public class FilterPolicyLoaderTest {
     @Test
     public void getFiltersForPolicyWithMultiplePhEye() throws Exception {
 
-        final ContextService contextService = new DefaultContextService();
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(new Properties());
 
-        final FilterPolicyLoader filterPolicyLoader = new FilterPolicyLoader(contextService, phileasConfiguration, new SecureRandom(), null);
+        final FilterPolicyLoader filterPolicyLoader = new FilterPolicyLoader(phileasConfiguration, new SecureRandom(), null);
 
         final PhEye phEye1 = new PhEye();
         final PhEyeConfiguration config1 = new PhEyeConfiguration();
@@ -173,10 +163,9 @@ public class FilterPolicyLoaderTest {
     @Test
     public void getFiltersForPolicyWithPerson() throws Exception {
 
-        final ContextService contextService = new DefaultContextService();
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(new Properties());
 
-        final FilterPolicyLoader filterPolicyLoader = new FilterPolicyLoader(contextService, phileasConfiguration, new SecureRandom(), null);
+        final FilterPolicyLoader filterPolicyLoader = new FilterPolicyLoader(phileasConfiguration, new SecureRandom(), null);
 
         final PhEye person = new PhEye();
         final PhEyeConfiguration config = new PhEyeConfiguration();
@@ -201,10 +190,9 @@ public class FilterPolicyLoaderTest {
     @Test
     public void getFiltersForPolicyCachesCustomDictionaryFilter() throws Exception {
 
-        final ContextService contextService = new DefaultContextService();
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(new Properties());
 
-        final FilterPolicyLoader filterPolicyLoader = new FilterPolicyLoader(contextService, phileasConfiguration, new SecureRandom(), null);
+        final FilterPolicyLoader filterPolicyLoader = new FilterPolicyLoader(phileasConfiguration, new SecureRandom(), null);
 
         final CustomDictionary customDictionary = new CustomDictionary();
         customDictionary.setCustomDictionaryFilterStrategies(List.of(new CustomDictionaryFilterStrategy()));
@@ -233,10 +221,9 @@ public class FilterPolicyLoaderTest {
     @Test
     public void getFiltersForPolicyCachesIdentifierFilter() throws Exception {
 
-        final ContextService contextService = new DefaultContextService();
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(new Properties());
 
-        final FilterPolicyLoader filterPolicyLoader = new FilterPolicyLoader(contextService, phileasConfiguration, new SecureRandom(), null);
+        final FilterPolicyLoader filterPolicyLoader = new FilterPolicyLoader(phileasConfiguration, new SecureRandom(), null);
 
         final Identifier identifier = new Identifier();
         identifier.setIdentifierFilterStrategies(List.of(new IdentifierFilterStrategy()));
@@ -264,10 +251,9 @@ public class FilterPolicyLoaderTest {
     @Test
     public void getFiltersForPolicyReusesCachedListAcrossCalls() throws Exception {
 
-        final ContextService contextService = new DefaultContextService();
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(new Properties());
 
-        final FilterPolicyLoader filterPolicyLoader = new FilterPolicyLoader(contextService, phileasConfiguration, new SecureRandom(), null);
+        final FilterPolicyLoader filterPolicyLoader = new FilterPolicyLoader(phileasConfiguration, new SecureRandom(), null);
 
         final Identifiers identifiers = new Identifiers();
         identifiers.setZipCode(new ZipCode());
@@ -300,10 +286,9 @@ public class FilterPolicyLoaderTest {
     @Test
     public void getFiltersForPolicyCachesMultipleCustomDictionaries() throws Exception {
 
-        final ContextService contextService = new DefaultContextService();
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(new Properties());
 
-        final FilterPolicyLoader filterPolicyLoader = new FilterPolicyLoader(contextService, phileasConfiguration, new SecureRandom(), null);
+        final FilterPolicyLoader filterPolicyLoader = new FilterPolicyLoader(phileasConfiguration, new SecureRandom(), null);
 
         final CustomDictionary first = new CustomDictionary();
         first.setCustomDictionaryFilterStrategies(List.of(new CustomDictionaryFilterStrategy()));
@@ -335,10 +320,9 @@ public class FilterPolicyLoaderTest {
     @Test
     public void getFiltersForPolicyExcludesDisabledCustomDictionary() throws Exception {
 
-        final ContextService contextService = new DefaultContextService();
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(new Properties());
 
-        final FilterPolicyLoader filterPolicyLoader = new FilterPolicyLoader(contextService, phileasConfiguration, new SecureRandom(), null);
+        final FilterPolicyLoader filterPolicyLoader = new FilterPolicyLoader(phileasConfiguration, new SecureRandom(), null);
 
         final CustomDictionary enabled = new CustomDictionary();
         enabled.setCustomDictionaryFilterStrategies(List.of(new CustomDictionaryFilterStrategy()));
@@ -368,10 +352,9 @@ public class FilterPolicyLoaderTest {
     @Test
     public void getFiltersForPolicyExcludesCustomDictionaryWithNoTerms() throws Exception {
 
-        final ContextService contextService = new DefaultContextService();
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(new Properties());
 
-        final FilterPolicyLoader filterPolicyLoader = new FilterPolicyLoader(contextService, phileasConfiguration, new SecureRandom(), null);
+        final FilterPolicyLoader filterPolicyLoader = new FilterPolicyLoader(phileasConfiguration, new SecureRandom(), null);
 
         // A custom dictionary with no terms (and no files) is not turned into a filter.
         final CustomDictionary customDictionary = new CustomDictionary();
@@ -395,10 +378,9 @@ public class FilterPolicyLoaderTest {
     @Test
     public void getFiltersForPolicyExcludesDisabledIdentifier() throws Exception {
 
-        final ContextService contextService = new DefaultContextService();
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(new Properties());
 
-        final FilterPolicyLoader filterPolicyLoader = new FilterPolicyLoader(contextService, phileasConfiguration, new SecureRandom(), null);
+        final FilterPolicyLoader filterPolicyLoader = new FilterPolicyLoader(phileasConfiguration, new SecureRandom(), null);
 
         final Identifier identifier = new Identifier();
         identifier.setIdentifierFilterStrategies(List.of(new IdentifierFilterStrategy()));

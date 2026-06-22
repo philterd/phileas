@@ -17,7 +17,6 @@ package ai.philterd.phileas.services.disambiguation;
 
 import ai.philterd.phileas.PhileasConfiguration;
 import ai.philterd.phileas.services.disambiguation.vector.VectorBasedSpanDisambiguationService;
-import ai.philterd.phileas.services.disambiguation.vector.VectorService;
 
 /**
  * Builds the {@link SpanDisambiguationService} appropriate for the configuration: the real
@@ -33,14 +32,13 @@ public final class SpanDisambiguationServiceFactory {
 
     /**
      * @param phileasConfiguration The configuration that decides whether disambiguation is enabled.
-     * @param vectorService The {@link VectorService} backing the vector-based implementation.
      * @return The vector-based service if enabled, otherwise a no-op service.
      */
     public static SpanDisambiguationService getSpanDisambiguationService(
-            final PhileasConfiguration phileasConfiguration, final VectorService vectorService) {
+            final PhileasConfiguration phileasConfiguration) {
 
         if(phileasConfiguration.spanDisambiguationEnabled()) {
-            return new VectorBasedSpanDisambiguationService(phileasConfiguration, vectorService);
+            return new VectorBasedSpanDisambiguationService(phileasConfiguration);
         }
 
         return new NoOpSpanDisambiguationService();

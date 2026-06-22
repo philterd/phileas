@@ -33,14 +33,13 @@ public class IpAddressFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new IpAddressFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final IpAddressFilter filter = new IpAddressFilter(filterConfiguration);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "the ip is 192.168.1.101.");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "the ip is 192.168.1.101.");
 
         Assertions.assertEquals(1, filtered.getSpans().size());
         Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 10, 23, FilterType.IP_ADDRESS));
@@ -53,14 +52,13 @@ public class IpAddressFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new IpAddressFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final IpAddressFilter filter = new IpAddressFilter(filterConfiguration);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "the ip is 1::");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "the ip is 1::");
 
         Assertions.assertEquals(1, filtered.getSpans().size());
         Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 10, 13, FilterType.IP_ADDRESS));
@@ -72,14 +70,13 @@ public class IpAddressFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new IpAddressFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final IpAddressFilter filter = new IpAddressFilter(filterConfiguration);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "the ip is 2001:0db8:85a3:0000:0000:8a2e:0370:7334");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "the ip is 2001:0db8:85a3:0000:0000:8a2e:0370:7334");
 
         // Finds duplicate spans. Duplicates/overlapping will be removed by the service prior to returning.
         Assertions.assertEquals(2, filtered.getSpans().size());
@@ -93,14 +90,13 @@ public class IpAddressFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new IpAddressFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final IpAddressFilter filter = new IpAddressFilter(filterConfiguration);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "the ip is fe80::0202:B3FF:FE1E:8329");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "the ip is fe80::0202:B3FF:FE1E:8329");
 
         // Finds duplicate spans. Duplicates/overlapping will be removed by the service prior to returning.
         Assertions.assertEquals(2, filtered.getSpans().size());
@@ -120,14 +116,13 @@ public class IpAddressFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(ipAddressFilterStrategy))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final IpAddressFilter filter = new IpAddressFilter(filterConfiguration);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "the ip is 192.168.1.101.");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "the ip is 192.168.1.101.");
         showSpans(filtered.getSpans());
         Assertions.assertEquals(1, filtered.getSpans().size());
         Assertions.assertTrue(candidates.contains(filtered.getSpans().get(0).getReplacement()));

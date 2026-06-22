@@ -28,7 +28,7 @@ public class MacAddressFilterStrategyTest extends AbstractFilterStrategyTest {
     }
 
     public AbstractAnonymizationService getAnonymizationService() {
-        return new MacAddressAnonymizationService(new DefaultContextService());
+        return new MacAddressAnonymizationService();
     }
 
 }

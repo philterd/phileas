@@ -22,7 +22,9 @@ import ai.philterd.phileas.model.filtering.IncrementalRedaction;
 import ai.philterd.phileas.model.filtering.Span;
 import ai.philterd.phileas.model.filtering.TextFilterResult;
 import ai.philterd.phileas.policy.Policy;
+import ai.philterd.phileas.services.context.ContextService;
 import ai.philterd.phileas.services.disambiguation.SpanDisambiguationService;
+import ai.philterd.phileas.services.disambiguation.vector.VectorService;
 import ai.philterd.phileas.services.filters.postfilters.PostFilter;
 import ai.philterd.phileas.services.tokens.TokenCounter;
 import ai.philterd.phileas.services.tokens.WhitespaceTokenCounter;
@@ -55,7 +57,8 @@ public class UnstructuredDocumentProcessor implements DocumentProcessor {
     }
 
     @Override
-    public TextFilterResult process(final Policy policy, final List<Filter> filters, final List<PostFilter> postFilters,
+    public TextFilterResult process(final ContextService contextService, final VectorService vectorService,
+                                    final Policy policy, final List<Filter> filters, final List<PostFilter> postFilters,
                                     final String context, final int piece, final String input) throws Exception {
 
         // The list that will contain the spans containing PHI/PII.
@@ -64,14 +67,14 @@ public class UnstructuredDocumentProcessor implements DocumentProcessor {
         // Apply each filter.
         for(final Filter filter : filters) {
 
-            final Filtered filtered = filter.filter(policy, context, piece, input);
+            final Filtered filtered = filter.filter(contextService, policy, context, piece, input);
             identifiedSpans.addAll(filtered.getSpans());
 
         }
 
         // Perform span disambiguation. When disabled, this is a no-op implementation that returns
         // the spans unchanged (see SpanDisambiguationServiceFactory), so no enabled-check is needed.
-        identifiedSpans = spanDisambiguationService.disambiguate(context, identifiedSpans);
+        identifiedSpans = spanDisambiguationService.disambiguate(vectorService, context, identifiedSpans);
 
         // Drop overlapping spans.
         identifiedSpans = Span.dropOverlappingSpans(identifiedSpans);

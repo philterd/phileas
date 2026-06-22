@@ -17,6 +17,7 @@ package ai.philterd.phileas.services.disambiguation;
 
 import ai.philterd.phileas.model.filtering.FilterType;
 import ai.philterd.phileas.model.filtering.Span;
+import ai.philterd.phileas.services.disambiguation.vector.VectorService;
 
 import java.util.List;
 
@@ -29,18 +30,18 @@ import java.util.List;
 public class NoOpSpanDisambiguationService implements SpanDisambiguationService {
 
     @Override
-    public void hashAndInsert(final String context, final Span span) {
+    public void hashAndInsert(final VectorService vectorService, final String context, final Span span) {
         // Nothing to learn when disambiguation is disabled.
     }
 
     @Override
-    public FilterType disambiguate(final String context, final List<FilterType> filterTypes, final Span ambiguousSpan) {
+    public FilterType disambiguate(final VectorService vectorService, final String context, final List<FilterType> filterTypes, final Span ambiguousSpan) {
         // No information to disambiguate with; keep the first candidate.
         return filterTypes.get(0);
     }
 
     @Override
-    public List<Span> disambiguate(final String context, final List<Span> spans) {
+    public List<Span> disambiguate(final VectorService vectorService, final String context, final List<Span> spans) {
         // Pass the spans through untouched.
         return spans;
     }

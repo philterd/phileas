@@ -15,8 +15,6 @@
  */
 package ai.philterd.phileas.services.anonymization;
 
-import ai.philterd.phileas.services.context.ContextService;
-
 /**
  * An anonymization service.
  */
@@ -28,7 +26,5 @@ public interface AnonymizationService {
      * @return The anonymized token.
      */
     String anonymize(String token);
-
-    ContextService getContextService();
 
 }

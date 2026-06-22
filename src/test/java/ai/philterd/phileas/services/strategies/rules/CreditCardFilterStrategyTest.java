@@ -21,6 +21,7 @@ import ai.philterd.phileas.policy.FPE;
 import ai.philterd.phileas.services.anonymization.AbstractAnonymizationService;
 import ai.philterd.phileas.services.anonymization.AnonymizationService;
 import ai.philterd.phileas.services.anonymization.CreditCardAnonymizationService;
+import ai.philterd.phileas.services.context.ContextService;
 import ai.philterd.phileas.services.context.DefaultContextService;
 import ai.philterd.phileas.services.strategies.AbstractFilterStrategy;
 import ai.philterd.phileas.services.strategies.AbstractFilterStrategyTest;
@@ -35,7 +36,7 @@ public class CreditCardFilterStrategyTest extends AbstractFilterStrategyTest {
     }
 
     public AbstractAnonymizationService getAnonymizationService() {
-        return new CreditCardAnonymizationService(new DefaultContextService());
+        return new CreditCardAnonymizationService();
     }
 
     @Test
@@ -44,11 +45,12 @@ public class CreditCardFilterStrategyTest extends AbstractFilterStrategyTest {
         final FPE fpe = new FPE("2DE79D232DF5585D68CE47882AE256D6", "CBD09280979564");
 
         final AnonymizationService anonymizationService = getAnonymizationService();
+        final ContextService contextService = new DefaultContextService();
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
         strategy.setStrategy(AbstractFilterStrategy.FPE_ENCRYPT_REPLACE);
 
-        final Replacement replacement = strategy.getReplacement("name", "context",  "4111111111111111", WINDOW, new Crypto(), fpe, anonymizationService, null);
+        final Replacement replacement = strategy.getReplacement(contextService, "name", "context",  "4111111111111111", WINDOW, new Crypto(), fpe, anonymizationService, null);
 
         Assertions.assertEquals(16, replacement.getReplacement().length());
         Assertions.assertEquals("0154737668890616", replacement.getReplacement());
@@ -59,11 +61,12 @@ public class CreditCardFilterStrategyTest extends AbstractFilterStrategyTest {
     public void lastFour1() throws Exception {
 
         final AnonymizationService anonymizationService = getAnonymizationService();
+        final ContextService contextService = new DefaultContextService();
 
         final AbstractFilterStrategy strategy = new CreditCardFilterStrategy();
         strategy.setStrategy(AbstractFilterStrategy.LAST_4);
 
-        final Replacement replacement = strategy.getReplacement("name", "context",  "4111111111111111", WINDOW, new Crypto(), new FPE(), anonymizationService, null);
+        final Replacement replacement = strategy.getReplacement(contextService, "name", "context",  "4111111111111111", WINDOW, new Crypto(), new FPE(), anonymizationService, null);
 
         Assertions.assertEquals("1111", replacement.getReplacement());
 

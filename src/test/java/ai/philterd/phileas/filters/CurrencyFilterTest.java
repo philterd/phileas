@@ -34,14 +34,13 @@ public class CurrencyFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new CurrencyFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final CurrencyFilter filter = new CurrencyFilter(filterConfiguration);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "the drug cost is $35.53 .");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "the drug cost is $35.53 .");
 
         showSpans(filtered.getSpans());
 
@@ -56,14 +55,13 @@ public class CurrencyFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new CurrencyFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final CurrencyFilter filter = new CurrencyFilter(filterConfiguration);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "the drug cost is $35.53.");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "the drug cost is $35.53.");
 
         showSpans(filtered.getSpans());
 
@@ -78,14 +76,13 @@ public class CurrencyFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new CurrencyFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final CurrencyFilter filter = new CurrencyFilter(filterConfiguration);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "the drug cost is $35.00.");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "the drug cost is $35.00.");
 
         showSpans(filtered.getSpans());
 
@@ -100,14 +97,13 @@ public class CurrencyFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new CurrencyFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final CurrencyFilter filter = new CurrencyFilter(filterConfiguration);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "the drug cost is $3.00.");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "the drug cost is $3.00.");
 
         showSpans(filtered.getSpans());
 
@@ -122,14 +118,13 @@ public class CurrencyFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new CurrencyFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final CurrencyFilter filter = new CurrencyFilter(filterConfiguration);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "the drug cost is $.50.");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "the drug cost is $.50.");
 
         showSpans(filtered.getSpans());
 
@@ -147,14 +142,13 @@ public class CurrencyFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(currencyFilterStrategy))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final CurrencyFilter filter = new CurrencyFilter(filterConfiguration);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "the drug cost is $50.");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "the drug cost is $50.");
 
         showSpans(filtered.getSpans());
 
@@ -175,14 +169,13 @@ public class CurrencyFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(currencyFilterStrategy))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final CurrencyFilter filter = new CurrencyFilter(filterConfiguration);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "the drug cost is $35.53 .");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "the drug cost is $35.53 .");
         showSpans(filtered.getSpans());
         Assertions.assertEquals(1, filtered.getSpans().size());
         Assertions.assertTrue(candidates.contains(filtered.getSpans().get(0).getReplacement()));

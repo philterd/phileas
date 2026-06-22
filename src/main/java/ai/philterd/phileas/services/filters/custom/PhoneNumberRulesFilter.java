@@ -22,6 +22,7 @@ import ai.philterd.phileas.model.filtering.Filtered;
 import ai.philterd.phileas.model.filtering.Replacement;
 import ai.philterd.phileas.model.filtering.Span;
 import ai.philterd.phileas.policy.Policy;
+import ai.philterd.phileas.services.context.ContextService;
 import com.google.i18n.phonenumbers.PhoneNumberMatch;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
 
@@ -53,7 +54,7 @@ public class PhoneNumberRulesFilter extends RulesFilter {
     }
 
     @Override
-    public Filtered filter(final Policy policy, final String context, final int piece,
+    public Filtered filter(final ContextService contextService, final Policy policy, final String context, final int piece,
                            final String input) throws Exception {
 
         final List<Span> spans = new LinkedList<>();
@@ -80,7 +81,7 @@ public class PhoneNumberRulesFilter extends RulesFilter {
 
                 final String[] window = getWindow(input, match.start(), match.end());
                 final String classification = "";
-                final Replacement replacement = getReplacement(policy, context, text, window, confidence,
+                final Replacement replacement = getReplacement(contextService, policy, context, text, window, confidence,
                         classification, null);
                 final boolean isIgnored = ignored.contains(text);
 

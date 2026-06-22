@@ -28,7 +28,7 @@ public class StateFilterStrategyTest extends AbstractFilterStrategyTest {
     }
 
     public AbstractAnonymizationService getAnonymizationService() {
-        return new StateAnonymizationService(new DefaultContextService());
+        return new StateAnonymizationService();
     }
 
 }

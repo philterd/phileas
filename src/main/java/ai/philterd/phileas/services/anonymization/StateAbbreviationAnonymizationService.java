@@ -15,7 +15,6 @@
  */
 package ai.philterd.phileas.services.anonymization;
 
-import ai.philterd.phileas.services.context.ContextService;
 import org.apache.commons.collections4.CollectionUtils;
 
 import java.util.LinkedList;
@@ -25,20 +24,20 @@ import java.util.UUID;
 
 public class StateAbbreviationAnonymizationService extends AbstractAnonymizationService {
 
-    public StateAbbreviationAnonymizationService(final ContextService contextService, final Random random, final AnonymizationMethod anonymizationMethod) {
-        super(contextService, random, anonymizationMethod);
+    public StateAbbreviationAnonymizationService(final Random random, final AnonymizationMethod anonymizationMethod) {
+        super(random, anonymizationMethod);
     }
 
-    public StateAbbreviationAnonymizationService(final ContextService contextService, final Random random, final List<String> candidates) {
-        super(contextService, random, candidates);
+    public StateAbbreviationAnonymizationService(final Random random, final List<String> candidates) {
+        super(random, candidates);
     }
 
-    public StateAbbreviationAnonymizationService(final ContextService contextService, final Random random) {
-        super(contextService, random);
+    public StateAbbreviationAnonymizationService(final Random random) {
+        super(random);
     }
 
-    public StateAbbreviationAnonymizationService(final ContextService contextService) {
-        super(contextService);
+    public StateAbbreviationAnonymizationService() {
+        super();
     }
 
     private static final List<String> STATES = new LinkedList<>();
@@ -97,11 +96,6 @@ public class StateAbbreviationAnonymizationService extends AbstractAnonymization
         STATES.add("WI");
         STATES.add("WY");
 
-    }
-
-    @Override
-    public ContextService getContextService() {
-        return contextService;
     }
 
     @Override

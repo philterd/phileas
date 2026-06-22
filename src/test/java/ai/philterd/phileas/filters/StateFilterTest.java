@@ -38,14 +38,13 @@ public class StateFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new StateFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.LOCATION_STATE, filterConfiguration, SensitivityLevel.LOW, true);
 
-        Filtered filtered = filter.filter(getPolicy(), "context", PIECE,"Lived in Washington");
+        Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE,"Lived in Washington");
         Assertions.assertEquals(1, filtered.getSpans().size());
         Assertions.assertEquals("Washington", filtered.getSpans().get(0).getText());
 
@@ -56,14 +55,13 @@ public class StateFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new StateFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.LOCATION_STATE, filterConfiguration, SensitivityLevel.MEDIUM, true);
 
-        Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "Lived in Wshington");
+        Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "Lived in Wshington");
         Assertions.assertEquals(1, filtered.getSpans().size());
 
     }
@@ -79,14 +77,13 @@ public class StateFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(stateFilterStrategy))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.LOCATION_STATE, filterConfiguration, SensitivityLevel.LOW, true);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "Lived in Washington");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "Lived in Washington");
         showSpans(filtered.getSpans());
         Assertions.assertEquals(1, filtered.getSpans().size());
         Assertions.assertTrue(candidates.contains(filtered.getSpans().get(0).getReplacement()));

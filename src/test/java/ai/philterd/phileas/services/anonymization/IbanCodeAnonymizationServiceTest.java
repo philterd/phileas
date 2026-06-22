@@ -30,7 +30,7 @@ public class IbanCodeAnonymizationServiceTest {
     @Test
     public void constructor() {
 
-        AnonymizationService anonymizationService = new IbanCodeAnonymizationService(new DefaultContextService(), new SecureRandom(), AnonymizationMethod.REALISTIC);
+        AnonymizationService anonymizationService = new IbanCodeAnonymizationService(new SecureRandom(), AnonymizationMethod.REALISTIC);
 
         final String token = "GB29 XBBB 2222 2222 2222 22";
         final String replacement = anonymizationService.anonymize(token);
@@ -45,7 +45,7 @@ public class IbanCodeAnonymizationServiceTest {
     @Test
     public void anonymize() {
 
-        AnonymizationService anonymizationService = new IbanCodeAnonymizationService(new DefaultContextService());
+        AnonymizationService anonymizationService = new IbanCodeAnonymizationService();
 
         final String token = "GB29 XBBB 2222 2222 2222 22";
         final String replacement = anonymizationService.anonymize(token);
@@ -60,7 +60,7 @@ public class IbanCodeAnonymizationServiceTest {
     @Test
     public void anonymizeUUID() {
 
-        AnonymizationService anonymizationService = new IbanCodeAnonymizationService(new DefaultContextService(), new SecureRandom(), AnonymizationMethod.UUID);
+        AnonymizationService anonymizationService = new IbanCodeAnonymizationService(new SecureRandom(), AnonymizationMethod.UUID);
 
         final String token = "GB29 XBBB 2222 2222 2222 22";
         final String replacement = anonymizationService.anonymize(token);

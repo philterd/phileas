@@ -18,7 +18,6 @@ package ai.philterd.phileas.filters;
 import ai.philterd.phileas.policy.Crypto;
 import ai.philterd.phileas.policy.FPE;
 import ai.philterd.phileas.policy.IgnoredPattern;
-import ai.philterd.phileas.services.context.ContextService;
 import ai.philterd.phileas.services.strategies.AbstractFilterStrategy;
 import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.binary.Hex;
@@ -36,7 +35,6 @@ import static ai.philterd.phileas.services.strategies.AbstractFilterStrategy.FPE
 public class FilterConfiguration {
 
     private final List<? extends AbstractFilterStrategy> strategies;
-    private final ContextService contextService;
     private final Random random;
     private final Set<String> ignored;
     private final Set<String> ignoredFiles;
@@ -49,7 +47,6 @@ public class FilterConfiguration {
 
     private FilterConfiguration(
             final List<? extends AbstractFilterStrategy> strategies,
-            final ContextService contextService,
             final Random random,
             final Set<String> ignored,
             final Set<String> ignoredFiles,
@@ -62,7 +59,6 @@ public class FilterConfiguration {
     ) {
 
         this.strategies = strategies;
-        this.contextService = contextService;
         this.random = random;
         this.ignored = ignored;
         this.ignoredFiles = ignoredFiles;
@@ -78,7 +74,6 @@ public class FilterConfiguration {
     public static class FilterConfigurationBuilder {
 
         private List<? extends AbstractFilterStrategy> strategies;
-        private ContextService contextService;
         private Random random;
         private Set<String> ignored;
         private Set<String> ignoredFiles;
@@ -97,7 +92,6 @@ public class FilterConfiguration {
 
             return new FilterConfiguration(
                     strategies,
-                    contextService,
                     random,
                     ignored,
                     ignoredFiles,
@@ -181,11 +175,6 @@ public class FilterConfiguration {
             return this;
         }
 
-        public FilterConfigurationBuilder withContextService(ContextService contextService) {
-            this.contextService = contextService;
-            return this;
-        }
-
         public FilterConfigurationBuilder withRandom(Random random) {
             this.random = random;
             return this;
@@ -235,10 +224,6 @@ public class FilterConfiguration {
 
     public List<? extends AbstractFilterStrategy> getStrategies() {
         return strategies;
-    }
-
-    public ContextService getContextService() {
-        return contextService;
     }
 
     public Random getRandom() {

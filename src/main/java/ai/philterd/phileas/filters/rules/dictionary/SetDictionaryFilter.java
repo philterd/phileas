@@ -22,6 +22,7 @@ import ai.philterd.phileas.model.filtering.Position;
 import ai.philterd.phileas.model.filtering.Replacement;
 import ai.philterd.phileas.model.filtering.Span;
 import ai.philterd.phileas.policy.Policy;
+import ai.philterd.phileas.services.context.ContextService;
 
 import java.io.IOException;
 import java.util.HashSet;
@@ -96,7 +97,7 @@ public class SetDictionaryFilter extends DictionaryFilter {
     }
 
     @Override
-    public Filtered filter(final Policy policy, final String context, final int piece, final String text) throws Exception {
+    public Filtered filter(final ContextService contextService, final Policy policy, final String context, final int piece, final String text) throws Exception {
 
         final List<Span> spans = new LinkedList<>();
 
@@ -140,7 +141,7 @@ public class SetDictionaryFilter extends DictionaryFilter {
                 final double confidence = 1.0;
                 final String[] window = getWindow(text, characterStart, characterEnd);
 
-                final Replacement replacement = getReplacement(policy, context,
+                final Replacement replacement = getReplacement(contextService, policy, context,
                         originalToken, window, confidence, classification, null);
 
                 spans.add(Span.make(characterStart, characterEnd, getFilterType(), context,

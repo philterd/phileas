@@ -16,7 +16,6 @@
 package ai.philterd.phileas.services.disambiguation;
 
 import ai.philterd.phileas.PhileasConfiguration;
-import ai.philterd.phileas.services.disambiguation.vector.VectorService;
 import org.apache.commons.codec.digest.MurmurHash3;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -39,15 +38,13 @@ public abstract class AbstractSpanDisambiguationService {
     protected final int vectorSize;
     protected final boolean ignoreStopWords;
     protected Set<String> stopwords;
-    protected final VectorService vectorService;
 
-    public AbstractSpanDisambiguationService(final PhileasConfiguration phileasConfiguration, final VectorService vectorService) {
+    public AbstractSpanDisambiguationService(final PhileasConfiguration phileasConfiguration) {
 
         this.phileasConfiguration = phileasConfiguration;
         this.vectorSize = phileasConfiguration.spanDisambiguationVectorSize();
         this.ignoreStopWords = phileasConfiguration.spanDisambiguationIgnoreStopWords();
         this.stopwords = parseStopWords(phileasConfiguration.spanDisambiguationStopWords());
-        this.vectorService = vectorService;
 
     }
 

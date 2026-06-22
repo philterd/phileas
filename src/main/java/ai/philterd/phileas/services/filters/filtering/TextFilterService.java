@@ -20,6 +20,7 @@ import ai.philterd.phileas.model.filtering.Span;
 import ai.philterd.phileas.model.filtering.TextFilterResult;
 import ai.philterd.phileas.policy.Policy;
 import ai.philterd.phileas.services.context.ContextService;
+import ai.philterd.phileas.services.disambiguation.vector.VectorService;
 import org.apache.hc.client5.http.classic.HttpClient;
 
 import java.util.List;
@@ -28,14 +29,32 @@ import java.util.Random;
 public abstract class TextFilterService extends FilterService {
 
     /**
-     * Filter text from plain text. Safe to call concurrently on a shared instance.
+     * Filter text using the context and vector services bound to this instance at construction.
+     * Retained for callers that construct a service per request; prefer the per-call overload on a
+     * shared, warm instance.
      * @param policy The {@link Policy} to apply.
      * @param context The redaction context.
-     * @param input The input document as a byte array.
+     * @param input The input document.
      * @return A {@link TextFilterResult}.
      * @throws Exception Thrown if the text cannot be filtered.
      */
     public abstract TextFilterResult filter(final Policy policy, final String context, final String input) throws Exception;
+
+    /**
+     * Filter text with a per-call {@link ContextService} and {@link VectorService}, so a single warm
+     * instance, with its populated filter and post-filter caches, can serve requests that each bring
+     * their own context and vector services. Safe to call concurrently on a shared instance.
+     * @param policy The {@link Policy} to apply.
+     * @param contextService The {@link ContextService} for this request.
+     * @param vectorService The {@link VectorService} for this request.
+     * @param context The redaction context.
+     * @param input The input document.
+     * @return A {@link TextFilterResult}.
+     * @throws Exception Thrown if the text cannot be filtered.
+     */
+    public abstract TextFilterResult filter(final Policy policy, final ContextService contextService,
+                                            final VectorService vectorService, final String context,
+                                            final String input) throws Exception;
 
     /**
      * Redact a list of spans in a text document.
@@ -46,11 +65,10 @@ public abstract class TextFilterService extends FilterService {
     public abstract byte[] apply(final byte[] input, final List<Span> spans);
 
     protected TextFilterService(final PhileasConfiguration phileasConfiguration,
-                                final ContextService contextService,
                                 final Random random,
                                 final HttpClient httpClient) {
 
-        super(phileasConfiguration, contextService, random, httpClient);
+        super(phileasConfiguration, random, httpClient);
 
     }
 

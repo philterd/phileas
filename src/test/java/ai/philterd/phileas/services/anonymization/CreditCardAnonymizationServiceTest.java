@@ -31,7 +31,7 @@ public class CreditCardAnonymizationServiceTest {
     @Test
     public void anonymize1() {
 
-        AnonymizationService anonymizationService = new CreditCardAnonymizationService(new DefaultContextService());
+        AnonymizationService anonymizationService = new CreditCardAnonymizationService();
 
         final String token = "abcd1234";
         final String replacement = anonymizationService.anonymize(token);
@@ -46,7 +46,7 @@ public class CreditCardAnonymizationServiceTest {
     @Test
     public void anonymize2() {
 
-        AnonymizationService anonymizationService = new CreditCardAnonymizationService(new DefaultContextService());
+        AnonymizationService anonymizationService = new CreditCardAnonymizationService();
 
         final String token = "April 1, 2019";
         final String replacement = anonymizationService.anonymize(token);
@@ -61,7 +61,7 @@ public class CreditCardAnonymizationServiceTest {
     @Test
     public void anonymizeUUID() {
 
-        AnonymizationService anonymizationService = new CreditCardAnonymizationService(new DefaultContextService(), new SecureRandom(), AnonymizationMethod.UUID);
+        AnonymizationService anonymizationService = new CreditCardAnonymizationService(new SecureRandom(), AnonymizationMethod.UUID);
 
         final String token = "abcd1234";
         final String replacement = anonymizationService.anonymize(token);

@@ -20,6 +20,7 @@ import ai.philterd.phileas.model.filtering.FilterType;
 import ai.philterd.phileas.model.filtering.Span;
 import ai.philterd.phileas.services.disambiguation.AbstractSpanDisambiguationService;
 import ai.philterd.phileas.services.disambiguation.SpanDisambiguationService;
+import ai.philterd.phileas.services.disambiguation.vector.VectorService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -43,14 +44,13 @@ public class VectorBasedSpanDisambiguationService extends AbstractSpanDisambigua
     /**
      * Initializes the service.
      * @param phileasConfiguration The {@link PhileasConfiguration} used to configure the service.
-     * @param vectorService A {@link VectorService}.
      */
-    public VectorBasedSpanDisambiguationService(final PhileasConfiguration phileasConfiguration, final VectorService vectorService) {
-        super(phileasConfiguration, vectorService);
+    public VectorBasedSpanDisambiguationService(final PhileasConfiguration phileasConfiguration) {
+        super(phileasConfiguration);
     }
 
     @Override
-    public void hashAndInsert(String context, Span span) {
+    public void hashAndInsert(final VectorService vectorService, final String context, final Span span) {
 
         final double[] hashes = hash(span);
         vectorService.hashAndInsert(context, hashes, span, vectorSize);
@@ -58,7 +58,7 @@ public class VectorBasedSpanDisambiguationService extends AbstractSpanDisambigua
     }
 
     @Override
-    public List<Span> disambiguate(final String context, final List<Span> spans) {
+    public List<Span> disambiguate(final VectorService vectorService, final String context, final List<Span> spans) {
 
         final Set<Span> disambiguatedSpans = new LinkedHashSet<>();
 
@@ -91,7 +91,7 @@ public class VectorBasedSpanDisambiguationService extends AbstractSpanDisambigua
 
                 // Get the filter type of the disambiguated span.
                 // The "ambiguous span" is any of the spans in the list since they only differ by filter type.
-                final FilterType disambiguatedFilterType = disambiguate(context, filterTypes, span);
+                final FilterType disambiguatedFilterType = disambiguate(vectorService, context, filterTypes, span);
 
                 // Update the filter type on the span.
                 span.setFilterType(disambiguatedFilterType);
@@ -105,7 +105,7 @@ public class VectorBasedSpanDisambiguationService extends AbstractSpanDisambigua
                 // it a confident training example, so record its context vector under its filter
                 // type. This is what lets disambiguation improve over time, since future ambiguous
                 // spans are compared against these accumulated vectors.
-                hashAndInsert(context, span);
+                hashAndInsert(vectorService, context, span);
 
                 disambiguatedSpans.add(span);
 
@@ -153,7 +153,7 @@ public class VectorBasedSpanDisambiguationService extends AbstractSpanDisambigua
     }
 
     @Override
-    public FilterType disambiguate(final String context, final List<FilterType> filterTypes, final Span ambiguousSpan) {
+    public FilterType disambiguate(final VectorService vectorService, final String context, final List<FilterType> filterTypes, final Span ambiguousSpan) {
 
         // Build the vector for the ambiguous span from its surrounding context window.
         final double[] ambiguousSpanVector = hash(ambiguousSpan);

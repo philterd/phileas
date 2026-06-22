@@ -33,14 +33,13 @@ public class BitcoinAddressFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new BitcoinAddressFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final BitcoinAddressFilter filter = new BitcoinAddressFilter(filterConfiguration);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "the address is 127NVqnjf8gB9BFAW2dnQeM6wqmy1gbGtv.");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "the address is 127NVqnjf8gB9BFAW2dnQeM6wqmy1gbGtv.");
 
         showSpans(filtered.getSpans());
 
@@ -56,14 +55,13 @@ public class BitcoinAddressFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new BitcoinAddressFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final BitcoinAddressFilter filter = new BitcoinAddressFilter(filterConfiguration);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "the address is 12qnjf8FAW2dnQeM6wqmy1gbGtv.");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "the address is 12qnjf8FAW2dnQeM6wqmy1gbGtv.");
 
         showSpans(filtered.getSpans());
 
@@ -85,14 +83,13 @@ public class BitcoinAddressFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(bitcoinAddressFilterStrategy))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final BitcoinAddressFilter filter = new BitcoinAddressFilter(filterConfiguration);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "the address is 127NVqnjf8gB9BFAW2dnQeM6wqmy1gbGtv");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "the address is 127NVqnjf8gB9BFAW2dnQeM6wqmy1gbGtv");
         showSpans(filtered.getSpans());
         Assertions.assertEquals(1, filtered.getSpans().size());
         Assertions.assertTrue(candidates.contains(filtered.getSpans().get(0).getReplacement()));

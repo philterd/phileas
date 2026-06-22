@@ -38,14 +38,13 @@ public class HospitalFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new HospitalFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.HOSPITAL, filterConfiguration, SensitivityLevel.LOW, true);
 
-        Filtered filtered = filter.filter(getPolicy(), "context", PIECE,"Wyoming Medical Center");
+        Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE,"Wyoming Medical Center");
         Assertions.assertEquals(1, filtered.getSpans().size());
         Assertions.assertEquals("Wyoming Medical Center", filtered.getSpans().get(0).getText());
 
@@ -62,14 +61,13 @@ public class HospitalFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(hospitalFilterStrategy))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.HOSPITAL, filterConfiguration, SensitivityLevel.LOW, true);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "Wyoming Medical Center");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "Wyoming Medical Center");
         showSpans(filtered.getSpans());
         Assertions.assertTrue(filtered.getSpans().size() >= 1);
         Assertions.assertTrue(candidates.contains(filtered.getSpans().get(0).getReplacement()));

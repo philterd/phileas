@@ -30,7 +30,7 @@ public class IpAddressAnonymizationServiceTest {
     @Test
     public void constructor() {
 
-        AnonymizationService anonymizationService = new IpAddressAnonymizationService(new DefaultContextService(), new SecureRandom(), AnonymizationMethod.REALISTIC);
+        AnonymizationService anonymizationService = new IpAddressAnonymizationService(new SecureRandom(), AnonymizationMethod.REALISTIC);
 
         final String token = "192.168.1.1";
         final String replacement = anonymizationService.anonymize(token);
@@ -43,7 +43,7 @@ public class IpAddressAnonymizationServiceTest {
     @Test
     public void anonymizeIPv4() {
 
-        AnonymizationService anonymizationService = new IpAddressAnonymizationService(new DefaultContextService());
+        AnonymizationService anonymizationService = new IpAddressAnonymizationService();
 
         final String token = "192.168.1.1";
         final String replacement = anonymizationService.anonymize(token);
@@ -56,7 +56,7 @@ public class IpAddressAnonymizationServiceTest {
     @Test
     public void anonymizeIPv6() {
 
-        AnonymizationService anonymizationService = new IpAddressAnonymizationService(new DefaultContextService());
+        AnonymizationService anonymizationService = new IpAddressAnonymizationService();
 
         final String token = "2001:0db8:85a3:08d3:1319:8a2e:0370:7344";
         final String replacement = anonymizationService.anonymize(token);
@@ -69,7 +69,7 @@ public class IpAddressAnonymizationServiceTest {
     @Test
     public void anonymizeUUID() {
 
-        AnonymizationService anonymizationService = new IpAddressAnonymizationService(new DefaultContextService(), new SecureRandom(), AnonymizationMethod.UUID);
+        AnonymizationService anonymizationService = new IpAddressAnonymizationService(new SecureRandom(), AnonymizationMethod.UUID);
 
         final String token = "192.168.1.1";
         final String replacement = anonymizationService.anonymize(token);

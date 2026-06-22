@@ -24,6 +24,7 @@ import ai.philterd.phileas.model.filtering.Position;
 import ai.philterd.phileas.model.filtering.Span;
 import ai.philterd.phileas.policy.Policy;
 import ai.philterd.phileas.services.Analyzer;
+import ai.philterd.phileas.services.context.ContextService;
 
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -61,7 +62,7 @@ public class PhysicianNameFilter extends RegexFilter {
     }
 
     @Override
-    public Filtered filter(Policy policy, String context, int piece, String input) throws Exception {
+    public Filtered filter(ContextService contextService, Policy policy, String context, int piece, String input) throws Exception {
 
         // \b([A-Z][A-Za-z'\s+]+)(,|\s)?([A-Z][A-Za-z'\s+]+(,|\s))?([A-Z][A-Za-z'\s+]+(,|\s)?(MD|PhD))\b
 
@@ -81,7 +82,7 @@ public class PhysicianNameFilter extends RegexFilter {
                     final FilterPattern filterPattern = new FilterPattern.FilterPatternBuilder(candidatePattern, 0.90).build();
                     this.analyzer = new Analyzer(contextualTerms, filterPattern);
 
-                    final List<Span> patternSpans = findSpans(policy, analyzer, input, context);
+                    final List<Span> patternSpans = findSpans(contextService, policy, analyzer, input, context);
 
                     spans.addAll(patternSpans);
 

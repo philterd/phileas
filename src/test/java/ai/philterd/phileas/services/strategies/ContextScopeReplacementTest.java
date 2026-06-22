@@ -45,12 +45,12 @@ public class ContextScopeReplacementTest {
     public void sameTokenGetsSameReplacementWithinContext() throws Exception {
 
         final DefaultContextService contextService = new DefaultContextService();
-        final CityAnonymizationService anonymizationService = new CityAnonymizationService(contextService);
+        final CityAnonymizationService anonymizationService = new CityAnonymizationService();
         final CityFilterStrategy strategy = contextStrategy();
 
-        final Replacement first = strategy.getReplacement("name", "ctx", "Springfield", WINDOW,
+        final Replacement first = strategy.getReplacement(contextService, "name", "ctx", "Springfield", WINDOW,
                 new Crypto(), new FPE(), anonymizationService, null);
-        final Replacement second = strategy.getReplacement("name", "ctx", "Springfield", WINDOW,
+        final Replacement second = strategy.getReplacement(contextService, "name", "ctx", "Springfield", WINDOW,
                 new Crypto(), new FPE(), anonymizationService, null);
 
         Assertions.assertNotNull(first.getReplacement());
@@ -62,7 +62,7 @@ public class ContextScopeReplacementTest {
     public void tokenEqualToAnExistingReplacementIsStillRedacted() throws Exception {
 
         final DefaultContextService contextService = new DefaultContextService();
-        final CityAnonymizationService anonymizationService = new CityAnonymizationService(contextService);
+        final CityAnonymizationService anonymizationService = new CityAnonymizationService();
         final CityFilterStrategy strategy = contextStrategy();
 
         // Simulate that an earlier token was anonymized to "Metropolis": that value now exists in
@@ -70,7 +70,7 @@ public class ContextScopeReplacementTest {
         contextService.putReplacement("some-other-token", "Metropolis", "LOCATION_CITY");
 
         // Now a real token whose text happens to equal that existing replacement value is detected.
-        final Replacement replacement = strategy.getReplacement("name", "ctx", "Metropolis", WINDOW,
+        final Replacement replacement = strategy.getReplacement(contextService, "name", "ctx", "Metropolis", WINDOW,
                 new Crypto(), new FPE(), anonymizationService, null);
 
         // It must still be redacted (non-null) rather than left as a null/"null" replacement.
@@ -81,7 +81,7 @@ public class ContextScopeReplacementTest {
         Assertions.assertTrue(contextService.containsToken("Metropolis"),
                 "the token should be stored in the context under its own key");
 
-        final Replacement again = strategy.getReplacement("name", "ctx", "Metropolis", WINDOW,
+        final Replacement again = strategy.getReplacement(contextService, "name", "ctx", "Metropolis", WINDOW,
                 new Crypto(), new FPE(), anonymizationService, null);
         Assertions.assertEquals(replacement.getReplacement(), again.getReplacement(),
                 "the token must map consistently on subsequent occurrences");

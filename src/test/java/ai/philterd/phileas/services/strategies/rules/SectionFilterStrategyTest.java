@@ -28,7 +28,7 @@ public class SectionFilterStrategyTest extends AbstractFilterStrategyTest {
     }
 
     public AbstractAnonymizationService getAnonymizationService() {
-        return new AlphanumericAnonymizationService(new DefaultContextService());
+        return new AlphanumericAnonymizationService();
     }
 
 }

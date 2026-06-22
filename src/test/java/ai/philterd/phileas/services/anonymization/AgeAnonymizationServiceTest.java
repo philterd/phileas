@@ -53,7 +53,7 @@ public class AgeAnonymizationServiceTest {
     @Test
     public void constructor() {
 
-        AnonymizationService anonymizationService = new AgeAnonymizationService(new DefaultContextService(), new SecureRandom(), AnonymizationMethod.REALISTIC);
+        AnonymizationService anonymizationService = new AgeAnonymizationService(new SecureRandom(), AnonymizationMethod.REALISTIC);
 
         final String token = "18 years old";
         final String replacement = anonymizationService.anonymize(token);
@@ -66,7 +66,7 @@ public class AgeAnonymizationServiceTest {
     @Test
     public void anonymize1() {
 
-        AnonymizationService anonymizationService = new AgeAnonymizationService(new DefaultContextService());
+        AnonymizationService anonymizationService = new AgeAnonymizationService();
 
         final String token = "3.5yrs";
         final String replacement = anonymizationService.anonymize(token);
@@ -79,7 +79,7 @@ public class AgeAnonymizationServiceTest {
     @Test
     public void anonymize2() {
 
-        AnonymizationService anonymizationService = new AgeAnonymizationService(new DefaultContextService());
+        AnonymizationService anonymizationService = new AgeAnonymizationService();
 
         final String token = "18 years old";
         final String replacement = anonymizationService.anonymize(token);
@@ -96,8 +96,8 @@ public class AgeAnonymizationServiceTest {
         // to the algorithm is caught rather than hidden by random output.
         final String token = "18 years old";
 
-        final String first = new AgeAnonymizationService(new DefaultContextService(), new Random(42)).anonymize(token);
-        final String second = new AgeAnonymizationService(new DefaultContextService(), new Random(42)).anonymize(token);
+        final String first = new AgeAnonymizationService(new Random(42)).anonymize(token);
+        final String second = new AgeAnonymizationService(new Random(42)).anonymize(token);
 
         Assertions.assertEquals(first, second, "the same seed must produce the same replacement");
         assertOnlyDigitsReplaced(token, first);
@@ -107,7 +107,7 @@ public class AgeAnonymizationServiceTest {
     @Test
     public void anonymizeUUID() {
 
-        AnonymizationService anonymizationService = new AgeAnonymizationService(new DefaultContextService(), new SecureRandom(), AnonymizationMethod.UUID);
+        AnonymizationService anonymizationService = new AgeAnonymizationService(new SecureRandom(), AnonymizationMethod.UUID);
 
         final String token = "18 years old";
         final String replacement = anonymizationService.anonymize(token);

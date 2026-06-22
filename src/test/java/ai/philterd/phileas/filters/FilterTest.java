@@ -37,14 +37,13 @@ public class FilterTest extends AbstractFilterTest {
 
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final AgeFilter filter = new AgeFilter(filterConfiguration);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "this is a first sentence. the patient is 3.5 years old and he's cool. this is a surrounding sentence.");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "this is a first sentence. the patient is 3.5 years old and he's cool. this is a surrounding sentence.");
 
         showSpans(filtered.getSpans());
 
@@ -68,14 +67,13 @@ public class FilterTest extends AbstractFilterTest {
         int windowSize = 5;
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final AgeFilter filter = new AgeFilter(filterConfiguration);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "this is a first sentence. the patient is 3.5 years old and he's cool. this is a surrounding sentence.");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "this is a first sentence. the patient is 3.5 years old and he's cool. this is a surrounding sentence.");
 
         showSpans(filtered.getSpans());
 
@@ -100,14 +98,13 @@ public class FilterTest extends AbstractFilterTest {
         int windowSize = 5;
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final AgeFilter filter = new AgeFilter(filterConfiguration);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "this is a first sentence. the patient is 3.5 years old and he's cool. this is a surrounding sentence.");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "this is a first sentence. the patient is 3.5 years old and he's cool. this is a surrounding sentence.");
 
         showSpans(filtered.getSpans());
 
@@ -132,14 +129,13 @@ public class FilterTest extends AbstractFilterTest {
         final int windowSize = 5;
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final AgeFilter filter = new AgeFilter(filterConfiguration);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE,
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE,
                 "the patient is 3.5 years old -- really !!! done here");
 
         Assertions.assertEquals(1, filtered.getSpans().size());

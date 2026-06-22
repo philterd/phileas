@@ -23,6 +23,7 @@ import ai.philterd.phileas.model.filtering.Filtered;
 import ai.philterd.phileas.model.filtering.Span;
 import ai.philterd.phileas.policy.Policy;
 import ai.philterd.phileas.services.Analyzer;
+import ai.philterd.phileas.services.context.ContextService;
 import ai.philterd.phileas.services.validators.SpanValidator;
 
 import java.util.Arrays;
@@ -58,11 +59,11 @@ public class DateFilter extends RegexFilter {
     }
 
     @Override
-    public Filtered filter(Policy policy, String context, int piece, String input) throws Exception {
+    public Filtered filter(ContextService contextService, Policy policy, String context, int piece, String input) throws Exception {
 
         final List<Span> spans = new LinkedList<>();
 
-        final List<Span> rawSpans = findSpans(policy, analyzer, input, context);
+        final List<Span> rawSpans = findSpans(contextService, policy, analyzer, input, context);
 
         if(onlyValidDates) {
 

@@ -30,7 +30,7 @@ public class CountyAnonymizationServiceTest {
     @Test
     public void anonymize1() {
 
-        AnonymizationService anonymizationService = new CountyAnonymizationService(new DefaultContextService());
+        AnonymizationService anonymizationService = new CountyAnonymizationService();
 
         final String token = "abcd1234";
         final String replacement = anonymizationService.anonymize(token);
@@ -44,7 +44,7 @@ public class CountyAnonymizationServiceTest {
     @Test
     public void anonymize2() {
 
-        AnonymizationService anonymizationService = new CountyAnonymizationService(new DefaultContextService());
+        AnonymizationService anonymizationService = new CountyAnonymizationService();
 
         final String token = "April 1, 2019";
         final String replacement = anonymizationService.anonymize(token);
@@ -58,7 +58,7 @@ public class CountyAnonymizationServiceTest {
     @Test
     public void anonymizeUUID() {
 
-        AnonymizationService anonymizationService = new CountyAnonymizationService(new DefaultContextService(), new SecureRandom(), AnonymizationMethod.UUID);
+        AnonymizationService anonymizationService = new CountyAnonymizationService(new SecureRandom(), AnonymizationMethod.UUID);
 
         final String token = "abcd1234";
         final String replacement = anonymizationService.anonymize(token);

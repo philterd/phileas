@@ -31,7 +31,7 @@ public class CityAnonymizationServiceTest {
     @Test
     public void constructor() {
 
-        AnonymizationService anonymizationService = new CityAnonymizationService(new DefaultContextService(), new SecureRandom(), AnonymizationMethod.REALISTIC);
+        AnonymizationService anonymizationService = new CityAnonymizationService(new SecureRandom(), AnonymizationMethod.REALISTIC);
 
         final String token = "New York";
         final String replacement = anonymizationService.anonymize(token);
@@ -46,7 +46,7 @@ public class CityAnonymizationServiceTest {
     @Test
     public void anonymize1() {
 
-        AnonymizationService anonymizationService = new CityAnonymizationService(new DefaultContextService());
+        AnonymizationService anonymizationService = new CityAnonymizationService();
 
         final String token = "abcd1234";
         final String replacement = anonymizationService.anonymize(token);
@@ -61,7 +61,7 @@ public class CityAnonymizationServiceTest {
     @Test
     public void anonymize2() {
 
-        AnonymizationService anonymizationService = new CityAnonymizationService(new DefaultContextService());
+        AnonymizationService anonymizationService = new CityAnonymizationService();
 
         final String token = "April 1, 2019";
         final String replacement = anonymizationService.anonymize(token);
@@ -76,7 +76,7 @@ public class CityAnonymizationServiceTest {
     @Test
     public void anonymizeUUID() {
 
-        AnonymizationService anonymizationService = new CityAnonymizationService(new DefaultContextService(), new SecureRandom(), AnonymizationMethod.UUID);
+        AnonymizationService anonymizationService = new CityAnonymizationService(new SecureRandom(), AnonymizationMethod.UUID);
 
         final String token = "New York";
         final String replacement = anonymizationService.anonymize(token);
@@ -94,8 +94,8 @@ public class CityAnonymizationServiceTest {
         // change is caught rather than hidden by random output.
         final String token = "New York";
 
-        final String first = new CityAnonymizationService(new DefaultContextService(), new Random(42)).anonymize(token);
-        final String second = new CityAnonymizationService(new DefaultContextService(), new Random(42)).anonymize(token);
+        final String first = new CityAnonymizationService(new Random(42)).anonymize(token);
+        final String second = new CityAnonymizationService(new Random(42)).anonymize(token);
 
         Assertions.assertEquals(first, second, "the same seed must produce the same replacement");
         Assertions.assertNotEquals(token, first);

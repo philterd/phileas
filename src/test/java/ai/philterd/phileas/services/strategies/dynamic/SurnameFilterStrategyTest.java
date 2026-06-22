@@ -28,7 +28,7 @@ public class SurnameFilterStrategyTest extends AbstractFilterStrategyTest {
     }
 
     public AbstractAnonymizationService getAnonymizationService() {
-        return new SurnameAnonymizationService(new DefaultContextService());
+        return new SurnameAnonymizationService();
     }
 
 }

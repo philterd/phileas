@@ -15,7 +15,6 @@
  */
 package ai.philterd.phileas.services.anonymization;
 
-import ai.philterd.phileas.services.context.ContextService;
 import org.apache.commons.collections4.CollectionUtils;
 
 import java.util.List;
@@ -24,25 +23,20 @@ import java.util.UUID;
 
 public class BitcoinAddressAnonymizationService extends AbstractAnonymizationService {
 
-    public BitcoinAddressAnonymizationService(final ContextService contextService, final Random random, final AnonymizationMethod anonymizationMethod) {
-        super(contextService, random, anonymizationMethod);
+    public BitcoinAddressAnonymizationService(final Random random, final AnonymizationMethod anonymizationMethod) {
+        super(random, anonymizationMethod);
     }
 
-    public BitcoinAddressAnonymizationService(final ContextService contextService, final Random random, final List<String> candidates) {
-        super(contextService, random, candidates);
+    public BitcoinAddressAnonymizationService(final Random random, final List<String> candidates) {
+        super(random, candidates);
     }
 
-    public BitcoinAddressAnonymizationService(final ContextService contextService, final Random random) {
-        super(contextService, random);
+    public BitcoinAddressAnonymizationService(final Random random) {
+        super(random);
     }
 
-    public BitcoinAddressAnonymizationService(final ContextService contextService) {
-        super(contextService);
-    }
-
-    @Override
-    public ContextService getContextService() {
-        return contextService;
+    public BitcoinAddressAnonymizationService() {
+        super();
     }
 
     @Override

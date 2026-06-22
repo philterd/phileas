@@ -30,7 +30,7 @@ public class StateAbbreviationAnonymizationServiceTest {
     @Test
     public void constructor() {
 
-        AnonymizationService anonymizationService = new StateAbbreviationAnonymizationService(new DefaultContextService(), new SecureRandom(), AnonymizationMethod.REALISTIC);
+        AnonymizationService anonymizationService = new StateAbbreviationAnonymizationService(new SecureRandom(), AnonymizationMethod.REALISTIC);
 
         final String token = "AK";
         final String replacement = anonymizationService.anonymize(token);
@@ -44,7 +44,7 @@ public class StateAbbreviationAnonymizationServiceTest {
     @Test
     public void anonymize1() {
 
-        AnonymizationService anonymizationService = new StateAbbreviationAnonymizationService(new DefaultContextService());
+        AnonymizationService anonymizationService = new StateAbbreviationAnonymizationService();
 
         final String token = "AK";
         final String replacement = anonymizationService.anonymize(token);
@@ -58,7 +58,7 @@ public class StateAbbreviationAnonymizationServiceTest {
     @Test
     public void anonymizeUUID() {
 
-        AnonymizationService anonymizationService = new StateAbbreviationAnonymizationService(new DefaultContextService(), new SecureRandom(), AnonymizationMethod.UUID);
+        AnonymizationService anonymizationService = new StateAbbreviationAnonymizationService(new SecureRandom(), AnonymizationMethod.UUID);
 
         final String token = "AK";
         final String replacement = anonymizationService.anonymize(token);

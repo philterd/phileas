@@ -17,7 +17,6 @@ package ai.philterd.phileas.services.anonymization;
 
 import ai.philterd.phileas.data.DataGenerator;
 import ai.philterd.phileas.data.DefaultDataGenerator;
-import ai.philterd.phileas.services.context.ContextService;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -33,8 +32,8 @@ public class CityAnonymizationService extends AbstractAnonymizationService {
 
     private DataGenerator dataGenerator;
 
-    public CityAnonymizationService(final ContextService contextService, final Random random, final AnonymizationMethod anonymizationMethod) {
-        super(contextService, random, anonymizationMethod);
+    public CityAnonymizationService(final Random random, final AnonymizationMethod anonymizationMethod) {
+        super(random, anonymizationMethod);
 
         try {
             this.dataGenerator = new DefaultDataGenerator(random);
@@ -43,8 +42,8 @@ public class CityAnonymizationService extends AbstractAnonymizationService {
         }
     }
 
-    public CityAnonymizationService(final ContextService contextService, final Random random, final List<String> candidates) {
-        super(contextService, random, candidates);
+    public CityAnonymizationService(final Random random, final List<String> candidates) {
+        super(random, candidates);
 
         try {
             this.dataGenerator = new DefaultDataGenerator(random);
@@ -53,8 +52,8 @@ public class CityAnonymizationService extends AbstractAnonymizationService {
         }
     }
 
-    public CityAnonymizationService(final ContextService contextService, final Random random) {
-        super(contextService, random);
+    public CityAnonymizationService(final Random random) {
+        super(random);
 
         try {
             this.dataGenerator = new DefaultDataGenerator(random);
@@ -63,19 +62,14 @@ public class CityAnonymizationService extends AbstractAnonymizationService {
         }
     }
 
-    public CityAnonymizationService(final ContextService contextService) {
-        super(contextService);
+    public CityAnonymizationService() {
+        super();
 
         try {
             this.dataGenerator = new DefaultDataGenerator(random);
         } catch (IOException e) {
             LOGGER.error("Could not initialize data generator.", e);
         }
-    }
-
-    @Override
-    public ContextService getContextService() {
-        return contextService;
     }
 
     @Override

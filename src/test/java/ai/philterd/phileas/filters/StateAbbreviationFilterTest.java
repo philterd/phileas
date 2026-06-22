@@ -37,7 +37,6 @@ public class StateAbbreviationFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new StateAbbreviationFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
@@ -45,7 +44,7 @@ public class StateAbbreviationFilterTest extends AbstractFilterTest {
         final StateAbbreviationFilter filter = new StateAbbreviationFilter(filterConfiguration);
 
         final String input = "The patient is from WV.";
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, input);
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, input);
 
         Assertions.assertEquals(1, filtered.getSpans().size());
         Assertions.assertEquals(20, filtered.getSpans().get(0).getCharacterStart());
@@ -60,7 +59,6 @@ public class StateAbbreviationFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new StateAbbreviationFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
@@ -68,7 +66,7 @@ public class StateAbbreviationFilterTest extends AbstractFilterTest {
         final StateAbbreviationFilter filter = new StateAbbreviationFilter(filterConfiguration);
 
         final String input = "The patient is from wv.";
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, input);
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, input);
 
         Assertions.assertEquals(1, filtered.getSpans().size());
         Assertions.assertEquals(20, filtered.getSpans().get(0).getCharacterStart());
@@ -88,7 +86,6 @@ public class StateAbbreviationFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(stateAbbreviationFilterStrategy))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
@@ -96,7 +93,7 @@ public class StateAbbreviationFilterTest extends AbstractFilterTest {
         final StateAbbreviationFilter filter = new StateAbbreviationFilter(filterConfiguration);
 
         final String input = "The patient is from WV.";
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, input);
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, input);
 
         showSpans(filtered.getSpans());
         Assertions.assertEquals(1, filtered.getSpans().size());

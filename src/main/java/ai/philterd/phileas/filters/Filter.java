@@ -140,7 +140,7 @@ public abstract class Filter {
      * @param input The input text.
      * @return A {@link Filtered} containing the identified {@link Span spans}.
      */
-    public abstract Filtered filter(Policy policy, String context, int piece, String input) throws Exception;
+    public abstract Filtered filter(ContextService contextService, Policy policy, String context, int piece, String input) throws Exception;
 
     /**
      * Creates a new filter.
@@ -195,7 +195,6 @@ public abstract class Filter {
 
             final AnonymizationService strategyAnonymizationService = getAnonymizationService(
                     filterType,
-                    filterConfiguration.getContextService(),
                     filterConfiguration.getRandom(),
                     strategy.getAnonymizationCandidates(),
                     strategy.getAnonymizationMethod()
@@ -207,52 +206,52 @@ public abstract class Filter {
 
     }
 
-    private AnonymizationService getAnonymizationService(FilterType filterType, ContextService contextService, Random random, List<String> candidates, AnonymizationMethod anonymizationMethod) {
+    private AnonymizationService getAnonymizationService(FilterType filterType, Random random, List<String> candidates, AnonymizationMethod anonymizationMethod) {
 
         if(filterType == FilterType.AGE) {
-            return new AgeAnonymizationService(contextService, random, candidates);
+            return new AgeAnonymizationService(random, candidates);
         } else if(filterType == FilterType.BITCOIN_ADDRESS) {
-            return new BitcoinAddressAnonymizationService(contextService, random, candidates);
+            return new BitcoinAddressAnonymizationService(random, candidates);
         } else if(filterType == FilterType.LOCATION_CITY) {
-            return new CityAnonymizationService(contextService, random, candidates);
+            return new CityAnonymizationService(random, candidates);
         } else if(filterType == FilterType.LOCATION_COUNTY) {
-            return new CountyAnonymizationService(contextService, random, candidates);
+            return new CountyAnonymizationService(random, candidates);
         } else if(filterType == FilterType.CREDIT_CARD) {
-            return new CreditCardAnonymizationService(contextService, random, candidates);
+            return new CreditCardAnonymizationService(random, candidates);
         } else if(filterType == FilterType.CURRENCY) {
-            return new CurrencyAnonymizationService(contextService, random, candidates);
+            return new CurrencyAnonymizationService(random, candidates);
         } else if(filterType == FilterType.DATE) {
-            return new DateAnonymizationService(contextService, random, candidates);
+            return new DateAnonymizationService(random, candidates);
         } else if(filterType == FilterType.EMAIL_ADDRESS) {
-            return new EmailAddressAnonymizationService(contextService, random, candidates);
+            return new EmailAddressAnonymizationService(random, candidates);
         } else if(filterType == FilterType.HOSPITAL) {
-            return new HospitalAnonymizationService(contextService, random, candidates);
+            return new HospitalAnonymizationService(random, candidates);
         } else if(filterType == FilterType.HOSPITAL_ABBREVIATION) {
-            return new HospitalAbbreviationAnonymizationService(contextService, random, candidates);
+            return new HospitalAbbreviationAnonymizationService(random, candidates);
         } else if(filterType == FilterType.IBAN_CODE) {
-            return new IbanCodeAnonymizationService(contextService, random, candidates);
+            return new IbanCodeAnonymizationService(random, candidates);
         } else if(filterType == FilterType.IP_ADDRESS) {
-            return new IpAddressAnonymizationService(contextService, random, candidates);
+            return new IpAddressAnonymizationService(random, candidates);
         } else if(filterType == FilterType.MAC_ADDRESS) {
-            return new MacAddressAnonymizationService(contextService, random, candidates);
+            return new MacAddressAnonymizationService(random, candidates);
         } else if(filterType == FilterType.PASSPORT_NUMBER) {
-            return new PassportNumberAnonymizationService(contextService, random, candidates);
+            return new PassportNumberAnonymizationService(random, candidates);
         } else if(filterType == FilterType.PERSON) {
-            return new PersonsAnonymizationService(contextService, random, candidates);
+            return new PersonsAnonymizationService(random, candidates);
         } else if(filterType == FilterType.LOCATION_STATE) {
-            return new StateAnonymizationService(contextService, random, candidates);
+            return new StateAnonymizationService(random, candidates);
         } else if(filterType == FilterType.STATE_ABBREVIATION) {
-            return new StateAbbreviationAnonymizationService(contextService, random, candidates);
+            return new StateAbbreviationAnonymizationService(random, candidates);
         } else if(filterType == FilterType.STREET_ADDRESS) {
-            return new StreetAddressAnonymizationService(contextService, random, candidates);
+            return new StreetAddressAnonymizationService(random, candidates);
         } else if(filterType == FilterType.SURNAME) {
-            return new SurnameAnonymizationService(contextService, random, candidates);
+            return new SurnameAnonymizationService(random, candidates);
         } else if(filterType == FilterType.URL) {
-            return new UrlAnonymizationService(contextService, random, candidates);
+            return new UrlAnonymizationService(random, candidates);
         } else if(filterType == FilterType.ZIP_CODE) {
-            return new ZipCodeAnonymizationService(contextService, random, candidates);
+            return new ZipCodeAnonymizationService(random, candidates);
         } else {
-            return new AlphanumericAnonymizationService(contextService, random, candidates);
+            return new AlphanumericAnonymizationService(random, candidates);
         }
 
     }
@@ -337,7 +336,7 @@ public abstract class Filter {
      * @param classification The classification of the item.
      * @return The replacement string.
      */
-    public Replacement getReplacement(final Policy policy, final String context,
+    public Replacement getReplacement(final ContextService contextService, final Policy policy, final String context,
                                       final String token, final String[] window, double confidence,
                                       final String classification,
                                       final FilterPattern filterPattern) throws Exception {
@@ -361,14 +360,14 @@ public abstract class Filter {
                     if(evaluates) {
 
                         // Break early since we met the strategy's condition.
-                        return strategy.getReplacement(classification, context, token, window, crypto, fpe, strategy.getAnonymizationService(), filterPattern);
+                        return strategy.getReplacement(contextService, classification, context, token, window, crypto, fpe, strategy.getAnonymizationService(), filterPattern);
 
                     }
 
                 } else {
 
                     // Break early since there is no condition.
-                    return strategy.getReplacement(classification, context, token, window, crypto, fpe, strategy.getAnonymizationService(), filterPattern);
+                    return strategy.getReplacement(contextService, classification, context, token, window, crypto, fpe, strategy.getAnonymizationService(), filterPattern);
 
                 }
 

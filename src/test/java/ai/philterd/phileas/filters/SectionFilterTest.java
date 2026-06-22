@@ -34,14 +34,13 @@ public class SectionFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new SectionFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final SectionFilter filter = new SectionFilter(filterConfiguration, startPattern, endPattern);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "This is some test. BEGIN-REDACT This text should be redacted. END-REDACT This is outside the text.");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "This is some test. BEGIN-REDACT This text should be redacted. END-REDACT This is outside the text.");
 
         Assertions.assertEquals(1, filtered.getSpans().size());
         Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 19, 72, FilterType.SECTION));
@@ -57,14 +56,13 @@ public class SectionFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new SectionFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final SectionFilter filter = new SectionFilter(filterConfiguration, startPattern, endPattern);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "This is some test. BEGIN-REDACT This text should be redacted. This is outside the text.");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "This is some test. BEGIN-REDACT This text should be redacted. This is outside the text.");
 
         Assertions.assertEquals(0, filtered.getSpans().size());
 
@@ -78,14 +76,13 @@ public class SectionFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new SectionFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final SectionFilter filter = new SectionFilter(filterConfiguration, startPattern, endPattern);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "BEGIN-REDACT This text should be redacted. END-REDACT This is outside the text.");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "BEGIN-REDACT This text should be redacted. END-REDACT This is outside the text.");
 
         Assertions.assertEquals(1, filtered.getSpans().size());
         Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 0, 53, FilterType.SECTION));

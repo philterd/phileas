@@ -17,7 +17,6 @@ package ai.philterd.phileas.services.anonymization;
 
 import ai.philterd.phileas.data.DataGenerator;
 import ai.philterd.phileas.data.DefaultDataGenerator;
-import ai.philterd.phileas.services.context.ContextService;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.text.WordUtils;
 import org.apache.logging.log4j.LogManager;
@@ -34,8 +33,8 @@ public class HospitalAbbreviationAnonymizationService extends AbstractAnonymizat
 
     private DataGenerator dataGenerator;
 
-    public HospitalAbbreviationAnonymizationService(final ContextService contextService, final Random random, final AnonymizationMethod anonymizationMethod) {
-        super(contextService, random, anonymizationMethod);
+    public HospitalAbbreviationAnonymizationService(final Random random, final AnonymizationMethod anonymizationMethod) {
+        super(random, anonymizationMethod);
 
         try {
             this.dataGenerator = new DefaultDataGenerator(random);
@@ -44,8 +43,8 @@ public class HospitalAbbreviationAnonymizationService extends AbstractAnonymizat
         }
     }
 
-    public HospitalAbbreviationAnonymizationService(final ContextService contextService, final Random random, final List<String> candidates) {
-        super(contextService, random, candidates);
+    public HospitalAbbreviationAnonymizationService(final Random random, final List<String> candidates) {
+        super(random, candidates);
 
         try {
             this.dataGenerator = new DefaultDataGenerator(random);
@@ -54,8 +53,8 @@ public class HospitalAbbreviationAnonymizationService extends AbstractAnonymizat
         }
     }
 
-    public HospitalAbbreviationAnonymizationService(final ContextService contextService, final Random random) {
-        super(contextService, random);
+    public HospitalAbbreviationAnonymizationService(final Random random) {
+        super(random);
 
         try {
             this.dataGenerator = new DefaultDataGenerator(random);
@@ -64,19 +63,14 @@ public class HospitalAbbreviationAnonymizationService extends AbstractAnonymizat
         }
     }
 
-    public HospitalAbbreviationAnonymizationService(final ContextService contextService) {
-        super(contextService);
+    public HospitalAbbreviationAnonymizationService() {
+        super();
 
         try {
             this.dataGenerator = new DefaultDataGenerator(random);
         } catch (IOException e) {
             LOGGER.error("Could not initialize data generator.", e);
         }
-    }
-
-    @Override
-    public ContextService getContextService() {
-        return contextService;
     }
 
     @Override

@@ -25,6 +25,7 @@ import ai.philterd.phileas.model.filtering.Replacement;
 import ai.philterd.phileas.model.filtering.Span;
 import ai.philterd.phileas.policy.Policy;
 import ai.philterd.phileas.services.Analyzer;
+import ai.philterd.phileas.services.context.ContextService;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.Strings;
 
@@ -92,7 +93,7 @@ public abstract class RulesFilter extends Filter {
      * @param context The context.
      * @return A list of matching {@link Span spans}.
      */
-    protected List<Span> findSpans(final Policy policy, final Analyzer analyzer, final String input, final String context) throws Exception {
+    protected List<Span> findSpans(final ContextService contextService, final Policy policy, final Analyzer analyzer, final String input, final String context) throws Exception {
 
         final List<Span> spans = new LinkedList<>();
 
@@ -199,7 +200,7 @@ public abstract class RulesFilter extends Filter {
                         final String[] window = getWindow(input, characterStart, characterEnd);
 
                         // Get the span's replacement.
-                        final Replacement replacement = getReplacement(policy, context, token,
+                        final Replacement replacement = getReplacement(contextService, policy, context, token,
                                 window, initialConfidence, classification, filterPattern);
 
                         // Create the span.

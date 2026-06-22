@@ -39,14 +39,13 @@ public class SurnameFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new SurnameFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.SURNAME, filterConfiguration, SensitivityLevel.LOW, true);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "Lived in Wshington");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "Lived in Wshington");
         showSpans(Span.dropOverlappingSpans(Span.dropOverlappingSpans(filtered.getSpans())));
         Assertions.assertEquals(2, Span.dropOverlappingSpans(Span.dropOverlappingSpans(filtered.getSpans())).size());
 
@@ -57,14 +56,13 @@ public class SurnameFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new SurnameFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.SURNAME, filterConfiguration, SensitivityLevel.MEDIUM, true);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "Lived in Wshington");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "Lived in Wshington");
         showSpans(Span.dropOverlappingSpans(Span.dropOverlappingSpans(filtered.getSpans())));
         Assertions.assertEquals(2, Span.dropOverlappingSpans(Span.dropOverlappingSpans(filtered.getSpans())).size());
 
@@ -75,14 +73,13 @@ public class SurnameFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new SurnameFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.SURNAME, filterConfiguration, SensitivityLevel.HIGH, true);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "Jones");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "Jones");
         showSpans(Span.dropOverlappingSpans(filtered.getSpans()));
         Assertions.assertEquals(1, Span.dropOverlappingSpans(filtered.getSpans()).size());
 
@@ -93,14 +90,13 @@ public class SurnameFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new SurnameFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.SURNAME, filterConfiguration, SensitivityLevel.LOW, false);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "date");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "date");
         showSpans(Span.dropOverlappingSpans(filtered.getSpans()));
         Assertions.assertEquals(1, Span.dropOverlappingSpans(filtered.getSpans()).size());
 
@@ -111,14 +107,13 @@ public class SurnameFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new SurnameFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.SURNAME, filterConfiguration, SensitivityLevel.LOW, true);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "Jones");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "Jones");
         showSpans(Span.dropOverlappingSpans(filtered.getSpans()));
         Assertions.assertEquals(1, Span.dropOverlappingSpans(filtered.getSpans()).size());
 
@@ -135,18 +130,17 @@ public class SurnameFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(surnameFilterStrategy))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.SURNAME, filterConfiguration, SensitivityLevel.LOW, false);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "from");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "from");
         showSpans(Span.dropOverlappingSpans(filtered.getSpans()));
         Assertions.assertEquals(1, Span.dropOverlappingSpans(filtered.getSpans()).size());
 
-        final Filtered filtered2 = filter.filter(getPolicy(), "context", PIECE, "Jones");
+        final Filtered filtered2 = filter.filter(contextService, getPolicy(), "context", PIECE, "Jones");
         showSpans(filtered2.getSpans());
         Assertions.assertTrue(filtered2.getSpans().size() >= 1);
         Assertions.assertTrue(candidates.contains(filtered2.getSpans().get(0).getReplacement()));

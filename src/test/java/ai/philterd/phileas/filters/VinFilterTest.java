@@ -33,14 +33,13 @@ public class VinFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new VinFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final VinFilter filter = new VinFilter(filterConfiguration);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "the vin is JB3BA36KXHU036784.");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "the vin is JB3BA36KXHU036784.");
         Assertions.assertEquals(1, filtered.getSpans().size());
         Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 11, 28, FilterType.VIN));
         Assertions.assertEquals("JB3BA36KXHU036784", filtered.getSpans().get(0).getText());
@@ -52,14 +51,13 @@ public class VinFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new VinFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final VinFilter filter = new VinFilter(filterConfiguration);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "the vin is 2T2HK31U38C057399.");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "the vin is 2T2HK31U38C057399.");
         Assertions.assertEquals(1, filtered.getSpans().size());
         Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 11, 28, FilterType.VIN));
 
@@ -70,14 +68,13 @@ public class VinFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new VinFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final VinFilter filter = new VinFilter(filterConfiguration);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "the vin is 11131517191011111.");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "the vin is 11131517191011111.");
         Assertions.assertEquals(0, filtered.getSpans().size());
 
     }
@@ -87,14 +84,13 @@ public class VinFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new VinFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final VinFilter filter = new VinFilter(filterConfiguration);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "the vin is 11131517191X11111.");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "the vin is 11131517191X11111.");
         Assertions.assertEquals(0, filtered.getSpans().size());
 
     }
@@ -110,14 +106,13 @@ public class VinFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(vinFilterStrategy))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final VinFilter filter = new VinFilter(filterConfiguration);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "the vin is JB3BA36KXHU036784.");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "the vin is JB3BA36KXHU036784.");
         showSpans(filtered.getSpans());
         Assertions.assertEquals(1, filtered.getSpans().size());
         Assertions.assertTrue(candidates.contains(filtered.getSpans().get(0).getReplacement()));

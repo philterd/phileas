@@ -83,6 +83,24 @@ for (String text : texts) {
 }
 ```
 
+#### Reusing one warm instance across requests with different context and vector services
+
+The constructor above binds a single `ContextService` and `VectorService` to the instance. When each request needs its own context or vector service (for example a server that scopes the context store per user, or per-request entity-type disambiguation), build the service once with the service-less constructor and pass the per-request `ContextService` and `VectorService` to `filter()`. One warm instance then serves every request, keeping its filter and post-filter caches populated rather than rebuilding them on each request. The instance is safe to call concurrently; supply a thread-safe `Random` (the default is `SecureRandom`) when sharing it across threads.
+
+```
+// Build once and share. No context or vector service is bound to the instance.
+PlainTextFilterService service = new PlainTextFilterService(phileasConfiguration, httpClient);
+
+// Each request supplies its own context and vector service.
+TextFilterResult result = service.filter(policy, contextService, vectorService, context, text);
+
+// prepare() works the same way: resolve the policy once, then pass per-request services.
+PlainTextFilterService.PreparedPolicy prepared = service.prepare(policy);
+TextFilterResult prepared1 = prepared.filter(contextService, vectorService, context, text);
+```
+
+`PdfFilterService` exposes the same service-less constructor and per-call `filter(...)` overload for PDF and image documents.
+
 ### Finding and Redacting Sensitive Information in a PDF Document
 
 Create a `FilterService`, using a `PhileasConfiguration`, and call `filter()` on the service:

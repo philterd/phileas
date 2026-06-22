@@ -33,14 +33,13 @@ public class BankRoutingNumberFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new BankRoutingNumberFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final BankRoutingNumberFilter filter = new BankRoutingNumberFilter(filterConfiguration);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "the routing number is 111000025 patient is 3.5years old.");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "the routing number is 111000025 patient is 3.5years old.");
 
         showSpans(filtered.getSpans());
 
@@ -55,14 +54,13 @@ public class BankRoutingNumberFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new BankRoutingNumberFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final BankRoutingNumberFilter filter = new BankRoutingNumberFilter(filterConfiguration);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "the routing number is 111007025 patient is 3.5years old.");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "the routing number is 111007025 patient is 3.5years old.");
 
         showSpans(filtered.getSpans());
 
@@ -81,14 +79,13 @@ public class BankRoutingNumberFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(bankRoutingNumberFilterStrategy))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final BankRoutingNumberFilter filter = new BankRoutingNumberFilter(filterConfiguration);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "the routing number is 111000025");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "the routing number is 111000025");
         showSpans(filtered.getSpans());
         Assertions.assertEquals(1, filtered.getSpans().size());
         Assertions.assertTrue(candidates.contains(filtered.getSpans().get(0).getReplacement()));

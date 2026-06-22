@@ -28,7 +28,7 @@ public class PassportNumberFilterStrategyTest extends AbstractFilterStrategyTest
     }
 
     public AbstractAnonymizationService getAnonymizationService() {
-        return new PassportNumberAnonymizationService(new DefaultContextService());
+        return new PassportNumberAnonymizationService();
     }
 
 }

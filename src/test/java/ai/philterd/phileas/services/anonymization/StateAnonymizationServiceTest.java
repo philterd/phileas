@@ -31,7 +31,7 @@ public class StateAnonymizationServiceTest {
     @Test
     public void constructor() {
 
-        AnonymizationService anonymizationService = new StateAnonymizationService(new DefaultContextService(), new SecureRandom(), AnonymizationMethod.REALISTIC);
+        AnonymizationService anonymizationService = new StateAnonymizationService(new SecureRandom(), AnonymizationMethod.REALISTIC);
 
         final String token = "West Virginia";
         final String replacement = anonymizationService.anonymize(token);
@@ -46,7 +46,7 @@ public class StateAnonymizationServiceTest {
     @Test
     public void anonymize1() {
 
-        AnonymizationService anonymizationService = new StateAnonymizationService(new DefaultContextService());
+        AnonymizationService anonymizationService = new StateAnonymizationService();
 
         final String token = "abcd1234";
         final String replacement = anonymizationService.anonymize(token);
@@ -61,7 +61,7 @@ public class StateAnonymizationServiceTest {
     @Test
     public void anonymizeUUID() {
 
-        AnonymizationService anonymizationService = new StateAnonymizationService(new DefaultContextService(), new SecureRandom(), AnonymizationMethod.UUID);
+        AnonymizationService anonymizationService = new StateAnonymizationService(new SecureRandom(), AnonymizationMethod.UUID);
 
         final String token = "West Virginia";
         final String replacement = anonymizationService.anonymize(token);
@@ -79,8 +79,8 @@ public class StateAnonymizationServiceTest {
         // change is caught rather than hidden by random output.
         final String token = "West Virginia";
 
-        final String first = new StateAnonymizationService(new DefaultContextService(), new Random(42)).anonymize(token);
-        final String second = new StateAnonymizationService(new DefaultContextService(), new Random(42)).anonymize(token);
+        final String first = new StateAnonymizationService(new Random(42)).anonymize(token);
+        final String second = new StateAnonymizationService(new Random(42)).anonymize(token);
 
         Assertions.assertEquals(first, second, "the same seed must produce the same replacement");
         Assertions.assertNotEquals(token, first);

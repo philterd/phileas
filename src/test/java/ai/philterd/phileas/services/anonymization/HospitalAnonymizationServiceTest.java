@@ -30,7 +30,7 @@ public class HospitalAnonymizationServiceTest {
     @Test
     public void constructor() {
 
-        AnonymizationService anonymizationService = new HospitalAnonymizationService(new DefaultContextService(), new SecureRandom(), AnonymizationMethod.REALISTIC);
+        AnonymizationService anonymizationService = new HospitalAnonymizationService(new SecureRandom(), AnonymizationMethod.REALISTIC);
 
         final String token = "Plateau Medical Center";
         final String replacement = anonymizationService.anonymize(token);
@@ -43,7 +43,7 @@ public class HospitalAnonymizationServiceTest {
     @Test
     public void anonymize() {
 
-        AnonymizationService anonymizationService = new HospitalAnonymizationService(new DefaultContextService());
+        AnonymizationService anonymizationService = new HospitalAnonymizationService();
 
         final String token = "Plateau Medical Center";
         final String replacement = anonymizationService.anonymize(token);
@@ -56,7 +56,7 @@ public class HospitalAnonymizationServiceTest {
     @Test
     public void anonymizeUUID() {
 
-        AnonymizationService anonymizationService = new HospitalAnonymizationService(new DefaultContextService(), new SecureRandom(), AnonymizationMethod.UUID);
+        AnonymizationService anonymizationService = new HospitalAnonymizationService(new SecureRandom(), AnonymizationMethod.UUID);
 
         final String token = "Plateau Medical Center";
         final String replacement = anonymizationService.anonymize(token);

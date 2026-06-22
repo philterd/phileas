@@ -40,14 +40,13 @@ public class PhoneNumberFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new PhoneNumberFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final PhoneNumberRulesFilter filter = new PhoneNumberRulesFilter(filterConfiguration);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "the number is (123) 456-7890.");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "the number is (123) 456-7890.");
         Assertions.assertEquals(1, filtered.getSpans().size());
         Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 14, 28, FilterType.PHONE_NUMBER));
         Assertions.assertEquals("(123) 456-7890", filtered.getSpans().get(0).getText());
@@ -60,14 +59,13 @@ public class PhoneNumberFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new PhoneNumberFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final PhoneNumberRulesFilter filter = new PhoneNumberRulesFilter(filterConfiguration);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "the number is (123) 456-7890 and (123) 456-7890.");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "the number is (123) 456-7890 and (123) 456-7890.");
         Assertions.assertEquals(2, filtered.getSpans().size());
         Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 14, 28, FilterType.PHONE_NUMBER));
         Assertions.assertEquals(0.95, filtered.getSpans().get(0).getConfidence());
@@ -81,14 +79,13 @@ public class PhoneNumberFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new PhoneNumberFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final PhoneNumberRulesFilter filter = new PhoneNumberRulesFilter(filterConfiguration);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "the number is 123-456-7890.");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "the number is 123-456-7890.");
         Assertions.assertEquals(1, filtered.getSpans().size());
         Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 14, 26, FilterType.PHONE_NUMBER));
         Assertions.assertEquals(0.95, filtered.getSpans().get(0).getConfidence());
@@ -100,14 +97,13 @@ public class PhoneNumberFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new PhoneNumberFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final PhoneNumberRulesFilter filter = new PhoneNumberRulesFilter(filterConfiguration);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "the number is 123-456-7890 and he was ok.");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "the number is 123-456-7890 and he was ok.");
         Assertions.assertEquals(1, filtered.getSpans().size());
         Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 14, 26, FilterType.PHONE_NUMBER));
 
@@ -118,14 +114,13 @@ public class PhoneNumberFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new PhoneNumberFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final PhoneNumberRulesFilter filter = new PhoneNumberRulesFilter(filterConfiguration);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "the number is ( 800 ) 123-4567 and he was ok.");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "the number is ( 800 ) 123-4567 and he was ok.");
         Assertions.assertEquals(1, filtered.getSpans().size());
         Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 14, 30, FilterType.PHONE_NUMBER));
         Assertions.assertEquals(0.75, filtered.getSpans().get(0).getConfidence());
@@ -137,14 +132,13 @@ public class PhoneNumberFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new PhoneNumberFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final PhoneNumberRulesFilter filter = new PhoneNumberRulesFilter(filterConfiguration);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "the number is (800) 123-4567 x532 and he was ok.");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "the number is (800) 123-4567 x532 and he was ok.");
         showSpans(filtered.getSpans());
 
         Assertions.assertEquals(1, filtered.getSpans().size());
@@ -158,14 +152,13 @@ public class PhoneNumberFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new PhoneNumberFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final PhoneNumberRulesFilter filter = new PhoneNumberRulesFilter(filterConfiguration);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "the number is (800) 123-4567x532 and he was ok.");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "the number is (800) 123-4567x532 and he was ok.");
         showSpans(filtered.getSpans());
 
         Assertions.assertEquals(1, filtered.getSpans().size());
@@ -179,14 +172,13 @@ public class PhoneNumberFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new PhoneNumberFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final PhoneNumberRulesFilter filter = new PhoneNumberRulesFilter(filterConfiguration);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "7 64116-3220");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "7 64116-3220");
         showSpans(filtered.getSpans());
 
         Assertions.assertEquals(1, filtered.getSpans().size());
@@ -205,14 +197,13 @@ public class PhoneNumberFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(identifierFilterStrategy))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final IdentifierFilter filter = new IdentifierFilter(filterConfiguration, "name", Identifier.DEFAULT_IDENTIFIER_REGEX, true, 0);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "the id is AB4736021 in california.");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "the id is AB4736021 in california.");
         showSpans(filtered.getSpans());
         Assertions.assertEquals(1, filtered.getSpans().size());
         Assertions.assertTrue(candidates.contains(filtered.getSpans().get(0).getReplacement()));
@@ -224,14 +215,13 @@ public class PhoneNumberFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new PhoneNumberFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final PhoneNumberRulesFilter filter = new PhoneNumberRulesFilter(filterConfiguration);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "George Washington was president and his SSN was 123-45-6789. His phone number was (555) 123-9988 and he lived in 20001.");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "George Washington was president and his SSN was 123-45-6789. His phone number was (555) 123-9988 and he lived in 20001.");
         showSpans(filtered.getSpans());
 
         Assertions.assertEquals(1, filtered.getSpans().size());

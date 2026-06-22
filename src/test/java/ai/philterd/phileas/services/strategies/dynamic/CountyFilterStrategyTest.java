@@ -28,7 +28,7 @@ public class CountyFilterStrategyTest extends AbstractFilterStrategyTest {
     }
 
     public AbstractAnonymizationService getAnonymizationService() {
-        return new CountyAnonymizationService(new DefaultContextService());
+        return new CountyAnonymizationService();
     }
 
 }

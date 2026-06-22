@@ -24,6 +24,7 @@ import ai.philterd.phileas.policy.Crypto;
 import ai.philterd.phileas.policy.FPE;
 import ai.philterd.phileas.policy.Policy;
 import ai.philterd.phileas.services.anonymization.AnonymizationService;
+import ai.philterd.phileas.services.context.ContextService;
 import ai.philterd.phileas.services.strategies.AbstractFilterStrategy;
 import ai.philterd.phileas.utils.Encryption;
 import com.google.gson.annotations.Expose;
@@ -127,7 +128,7 @@ public class DateFilterStrategy extends AbstractFilterStrategy {
     }
 
     @Override
-    public Replacement getReplacement(String label, String context, String token, String[] window, Crypto crypto, FPE fpe, AnonymizationService anonymizationService, FilterPattern filterPattern) throws Exception {
+    public Replacement getReplacement(ContextService contextService, String label, String context, String token, String[] window, Crypto crypto, FPE fpe, AnonymizationService anonymizationService, FilterPattern filterPattern) throws Exception {
 
         String replacement;
         String salt = "";
@@ -171,7 +172,7 @@ public class DateFilterStrategy extends AbstractFilterStrategy {
                 as = this.anonymizationService;
             }
 
-            replacement = getAnonymizedToken(replacementScope, token, as, filterType.getType());
+            replacement = getAnonymizedToken(contextService, replacementScope, token, as, filterType.getType());
 
         } else if(Strings.CI.equals(strategy, STATIC_REPLACE)) {
 

@@ -17,6 +17,7 @@ package ai.philterd.phileas.services.disambiguation;
 
 import ai.philterd.phileas.model.filtering.FilterType;
 import ai.philterd.phileas.model.filtering.Span;
+import ai.philterd.phileas.services.disambiguation.vector.VectorService;
 
 import java.util.List;
 
@@ -26,11 +27,12 @@ import java.util.List;
 public interface SpanDisambiguationService {
 
     /**
-     * Hashes and inserts the span into the cache.
+     * Hashes and inserts the span into the given vector service.
+     * @param vectorService The {@link VectorService} for this request.
      * @param context The context.
      * @param span The {@link Span}.
      */
-    void hashAndInsert(String context, Span span);
+    void hashAndInsert(VectorService vectorService, String context, Span span);
 
     /**
      * Disambiguates two identical spans differing only by their filter types.
@@ -39,7 +41,7 @@ public interface SpanDisambiguationService {
      * @param ambiguousSpan The ambiguous {@link Span}.
      * @return The filter type most closely matching the ambiguous span.
      */
-    FilterType disambiguate(String context, List<FilterType> filterTypes, Span ambiguousSpan);
+    FilterType disambiguate(VectorService vectorService, String context, List<FilterType> filterTypes, Span ambiguousSpan);
 
     /**
      * Disambiguates two identical spans differing only by their filter types.
@@ -47,6 +49,6 @@ public interface SpanDisambiguationService {
      * @param spans A list of ambiguous spans.
      * @return A list of disambiguated spans.
      */
-    List<Span> disambiguate(String context, List<Span> spans);
+    List<Span> disambiguate(VectorService vectorService, String context, List<Span> spans);
 
 }

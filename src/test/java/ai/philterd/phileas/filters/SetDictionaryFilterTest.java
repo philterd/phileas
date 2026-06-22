@@ -37,7 +37,6 @@ public class SetDictionaryFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new CustomDictionaryFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
@@ -45,7 +44,7 @@ public class SetDictionaryFilterTest extends AbstractFilterTest {
         final Set<String> names = new HashSet<>(Arrays.asList("george", "ted", "Bill", "john"));
         final SetDictionaryFilter filter = new SetDictionaryFilter(FilterType.CUSTOM_DICTIONARY, filterConfiguration, names, "none");
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "He lived with Bill in California.");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "He lived with Bill in California.");
 
         showSpans(filtered.getSpans());
 
@@ -60,7 +59,6 @@ public class SetDictionaryFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new CustomDictionaryFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
@@ -68,7 +66,7 @@ public class SetDictionaryFilterTest extends AbstractFilterTest {
         final Set<String> names = new HashSet<>(Arrays.asList("george", "ted", "bill", "john"));
         final SetDictionaryFilter filter = new SetDictionaryFilter(FilterType.CUSTOM_DICTIONARY, filterConfiguration, names, "none");
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "He lived with Bill in California.");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "He lived with Bill in California.");
 
         showSpans(filtered.getSpans());
 
@@ -83,7 +81,6 @@ public class SetDictionaryFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new CustomDictionaryFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
@@ -91,7 +88,7 @@ public class SetDictionaryFilterTest extends AbstractFilterTest {
         final Set<String> names = new HashSet<>(Arrays.asList("george", "ted", "bill", "john"));
         final SetDictionaryFilter filter = new SetDictionaryFilter(FilterType.CUSTOM_DICTIONARY, filterConfiguration, names, "none");
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "He lived with Sam in California.");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "He lived with Sam in California.");
 
         showSpans(filtered.getSpans());
 
@@ -104,7 +101,6 @@ public class SetDictionaryFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new CustomDictionaryFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
@@ -112,7 +108,7 @@ public class SetDictionaryFilterTest extends AbstractFilterTest {
         final Set<String> names = new HashSet<>(Arrays.asList("george jones", "ted", "bill", "john"));
         final SetDictionaryFilter filter = new SetDictionaryFilter(FilterType.CUSTOM_DICTIONARY, filterConfiguration, names, "none");
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "He lived with george jones in California.");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "He lived with george jones in California.");
 
         showSpans(filtered.getSpans());
 
@@ -127,7 +123,6 @@ public class SetDictionaryFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new CustomDictionaryFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
@@ -135,7 +130,7 @@ public class SetDictionaryFilterTest extends AbstractFilterTest {
         final Set<String> names = new HashSet<>(Arrays.asList("george jones jr", "ted", "bill smith", "john"));
         final SetDictionaryFilter filter = new SetDictionaryFilter(FilterType.CUSTOM_DICTIONARY, filterConfiguration, names, "none");
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "Bill Smith lived with george jones jr in California.");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "Bill Smith lived with george jones jr in California.");
 
         showSpans(filtered.getSpans());
 
@@ -154,7 +149,6 @@ public class SetDictionaryFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new CustomDictionaryFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
@@ -162,7 +156,7 @@ public class SetDictionaryFilterTest extends AbstractFilterTest {
         final Set<String> names = new HashSet<>(Arrays.asList("george jones", "ted", "bill", "john"));
         final SetDictionaryFilter filter = new SetDictionaryFilter(FilterType.CUSTOM_DICTIONARY, filterConfiguration, names, "none");
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "He lived with george jones and george jones in California.");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "He lived with george jones and george jones in California.");
 
         showSpans(filtered.getSpans());
 
@@ -187,7 +181,6 @@ public class SetDictionaryFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(customDictionaryFilterStrategy))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
@@ -195,7 +188,7 @@ public class SetDictionaryFilterTest extends AbstractFilterTest {
         final Set<String> names = new HashSet<>(Arrays.asList("george", "ted", "Bill", "john"));
         final SetDictionaryFilter filter = new SetDictionaryFilter(FilterType.CUSTOM_DICTIONARY, filterConfiguration, names, "none");
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "He lived with Bill in California.");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "He lived with Bill in California.");
         showSpans(filtered.getSpans());
         Assertions.assertEquals(1, filtered.getSpans().size());
         Assertions.assertTrue(candidates.contains(filtered.getSpans().get(0).getReplacement()));
@@ -207,7 +200,6 @@ public class SetDictionaryFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new CustomDictionaryFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
@@ -217,7 +209,7 @@ public class SetDictionaryFilterTest extends AbstractFilterTest {
 
         // The term is adjacent to a trailing period; the whitespace tokenizer produces the token
         // "Boston.", which must still match the city "Boston" (and the span must cover only "Boston").
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "He visited Boston.");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "He visited Boston.");
 
         showSpans(filtered.getSpans());
 
@@ -232,7 +224,6 @@ public class SetDictionaryFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new CustomDictionaryFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
@@ -242,7 +233,7 @@ public class SetDictionaryFilterTest extends AbstractFilterTest {
 
         // Terms appear next to a comma and a period; both should still match, and each span should
         // cover only the term itself, not the punctuation.
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "He knew Bill, Ted, and John.");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "He knew Bill, Ted, and John.");
 
         showSpans(filtered.getSpans());
 

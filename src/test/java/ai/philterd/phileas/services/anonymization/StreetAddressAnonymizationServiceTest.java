@@ -30,7 +30,7 @@ public class StreetAddressAnonymizationServiceTest {
     @Test
     public void constructor() {
 
-        AnonymizationService anonymizationService = new StreetAddressAnonymizationService(new DefaultContextService(), new SecureRandom(), AnonymizationMethod.REALISTIC);
+        AnonymizationService anonymizationService = new StreetAddressAnonymizationService(new SecureRandom(), AnonymizationMethod.REALISTIC);
 
         final String token = "100 Main St";
         final String replacement = anonymizationService.anonymize(token);
@@ -45,7 +45,7 @@ public class StreetAddressAnonymizationServiceTest {
     @Test
     public void anonymize1() {
 
-        AnonymizationService anonymizationService = new StreetAddressAnonymizationService(new DefaultContextService());
+        AnonymizationService anonymizationService = new StreetAddressAnonymizationService();
 
         final String token = "100 Main St";
         final String replacement = anonymizationService.anonymize(token);
@@ -60,7 +60,7 @@ public class StreetAddressAnonymizationServiceTest {
     @Test
     public void anonymize2() {
 
-        AnonymizationService anonymizationService = new StreetAddressAnonymizationService(new DefaultContextService());
+        AnonymizationService anonymizationService = new StreetAddressAnonymizationService();
 
         final String token = "1000 Main St";
         final String replacement = anonymizationService.anonymize(token);
@@ -75,7 +75,7 @@ public class StreetAddressAnonymizationServiceTest {
     @Test
     public void anonymizeUUID() {
 
-        AnonymizationService anonymizationService = new StreetAddressAnonymizationService(new DefaultContextService(), new SecureRandom(), AnonymizationMethod.UUID);
+        AnonymizationService anonymizationService = new StreetAddressAnonymizationService(new SecureRandom(), AnonymizationMethod.UUID);
 
         final String token = "100 Main St";
         final String replacement = anonymizationService.anonymize(token);

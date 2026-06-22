@@ -33,14 +33,13 @@ public class TrackingNumberFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new TrackingNumberFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final TrackingNumberFilter filter = new TrackingNumberFilter(filterConfiguration, true, true, true);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "the tracking number is 1Z9YF1280343418566");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "the tracking number is 1Z9YF1280343418566");
 
         showSpans(filtered.getSpans());
 
@@ -57,14 +56,13 @@ public class TrackingNumberFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new TrackingNumberFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final TrackingNumberFilter filter = new TrackingNumberFilter(filterConfiguration, true, true, true);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "the tracking number is 9400100000000000000000");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "the tracking number is 9400100000000000000000");
 
         showSpans(filtered.getSpans());
 
@@ -81,14 +79,13 @@ public class TrackingNumberFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new TrackingNumberFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final TrackingNumberFilter filter = new TrackingNumberFilter(filterConfiguration, true, true, true);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "the tracking number is 9400 1000 0000 0000 0000");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "the tracking number is 9400 1000 0000 0000 0000");
 
         showSpans(filtered.getSpans());
 
@@ -105,14 +102,13 @@ public class TrackingNumberFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new TrackingNumberFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final TrackingNumberFilter filter = new TrackingNumberFilter(filterConfiguration, true, true, true);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "the tracking number is 4204319935009201990138501144099814");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "the tracking number is 4204319935009201990138501144099814");
 
         showSpans(filtered.getSpans());
 
@@ -129,14 +125,13 @@ public class TrackingNumberFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new TrackingNumberFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final TrackingNumberFilter filter = new TrackingNumberFilter(filterConfiguration, true, true, true);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "the tracking number is 420431993500920199013850114409");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "the tracking number is 420431993500920199013850114409");
 
         showSpans(filtered.getSpans());
 
@@ -153,14 +148,13 @@ public class TrackingNumberFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new TrackingNumberFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final TrackingNumberFilter filter = new TrackingNumberFilter(filterConfiguration, true, true, true);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "the tracking number is 4204319935009201990138501144");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "the tracking number is 4204319935009201990138501144");
 
         showSpans(filtered.getSpans());
 
@@ -177,14 +171,13 @@ public class TrackingNumberFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new TrackingNumberFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final TrackingNumberFilter filter = new TrackingNumberFilter(filterConfiguration, true, true, true);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "the tracking number is 42043199350092019901385011");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "the tracking number is 42043199350092019901385011");
 
         showSpans(filtered.getSpans());
 
@@ -202,14 +195,13 @@ public class TrackingNumberFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new TrackingNumberFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final TrackingNumberFilter filter = new TrackingNumberFilter(filterConfiguration, false, false, true);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "the tracking number is 42043199350092019901385011");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "the tracking number is 42043199350092019901385011");
 
         showSpans(filtered.getSpans());
 
@@ -227,14 +219,13 @@ public class TrackingNumberFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new TrackingNumberFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final TrackingNumberFilter filter = new TrackingNumberFilter(filterConfiguration, false, false, false);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "the tracking number is 42043199350092019901385011");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "the tracking number is 42043199350092019901385011");
 
         showSpans(filtered.getSpans());
 
@@ -247,14 +238,13 @@ public class TrackingNumberFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new TrackingNumberFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final TrackingNumberFilter filter = new TrackingNumberFilter(filterConfiguration, true, false, true);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "the tracking number is 9400100000000000000000");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "the tracking number is 9400100000000000000000");
 
         showSpans(filtered.getSpans());
 
@@ -271,14 +261,13 @@ public class TrackingNumberFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new TrackingNumberFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final TrackingNumberFilter filter = new TrackingNumberFilter(filterConfiguration, true, true, false);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "the tracking number is 9400100000000000000000");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "the tracking number is 9400100000000000000000");
 
         showSpans(filtered.getSpans());
 
@@ -295,14 +284,13 @@ public class TrackingNumberFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new TrackingNumberFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final TrackingNumberFilter filter = new TrackingNumberFilter(filterConfiguration, true, true, true);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "the tracking number is 9400100000000000000000");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "the tracking number is 9400100000000000000000");
 
         showSpans(filtered.getSpans());
 
@@ -326,14 +314,13 @@ public class TrackingNumberFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(trackingNumberFilterStrategy))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final TrackingNumberFilter filter = new TrackingNumberFilter(filterConfiguration, true, true, true);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "the tracking number is 1Z9YF1280343418566");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "the tracking number is 1Z9YF1280343418566");
         showSpans(filtered.getSpans());
         Assertions.assertEquals(1, filtered.getSpans().size());
         Assertions.assertTrue(candidates.contains(filtered.getSpans().get(0).getReplacement()));

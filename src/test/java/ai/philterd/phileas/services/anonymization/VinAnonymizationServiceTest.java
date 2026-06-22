@@ -30,7 +30,7 @@ public class VinAnonymizationServiceTest {
     @Test
     public void constructor() {
 
-        AnonymizationService anonymizationService = new VinAnonymizationService(new DefaultContextService(), new SecureRandom(), AnonymizationMethod.REALISTIC);
+        AnonymizationService anonymizationService = new VinAnonymizationService(new SecureRandom(), AnonymizationMethod.REALISTIC);
 
         final String token = "11111111111111111";
         final String replacement = anonymizationService.anonymize(token);
@@ -46,7 +46,7 @@ public class VinAnonymizationServiceTest {
     @Test
     public void anonymize() {
 
-        AnonymizationService anonymizationService = new VinAnonymizationService(new DefaultContextService());
+        AnonymizationService anonymizationService = new VinAnonymizationService();
 
         final String token = "11111111111111111";
         final String replacement = anonymizationService.anonymize(token);
@@ -62,7 +62,7 @@ public class VinAnonymizationServiceTest {
     @Test
     public void realisticReplacementUsesOnlyVinCharacters() {
 
-        final AnonymizationService anonymizationService = new VinAnonymizationService(new DefaultContextService(), new SecureRandom(), AnonymizationMethod.REALISTIC);
+        final AnonymizationService anonymizationService = new VinAnonymizationService(new SecureRandom(), AnonymizationMethod.REALISTIC);
 
         // A VIN uses digits and the letters A-Z excluding I, O, and Q. Generate many replacements to
         // be confident those letters are never produced.
@@ -77,7 +77,7 @@ public class VinAnonymizationServiceTest {
     @Test
     public void anonymizeUUID() {
 
-        AnonymizationService anonymizationService = new VinAnonymizationService(new DefaultContextService(), new SecureRandom(), AnonymizationMethod.UUID);
+        AnonymizationService anonymizationService = new VinAnonymizationService(new SecureRandom(), AnonymizationMethod.UUID);
 
         final String token = "11111111111111111";
         final String replacement = anonymizationService.anonymize(token);

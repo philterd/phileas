@@ -30,7 +30,7 @@ public class EmailAddressFilterStrategyTest extends AbstractFilterStrategyTest {
     }
 
     public AbstractAnonymizationService getAnonymizationService() {
-        return new EmailAddressAnonymizationService(new DefaultContextService());
+        return new EmailAddressAnonymizationService();
     }
 
     @Test

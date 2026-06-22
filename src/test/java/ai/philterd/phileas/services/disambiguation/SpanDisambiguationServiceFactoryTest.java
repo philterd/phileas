@@ -30,24 +30,24 @@ import java.util.Properties;
 
 public class SpanDisambiguationServiceFactoryTest {
 
-    private SpanDisambiguationService build(final boolean enabled, final VectorService vectorService) {
+    private SpanDisambiguationService build(final boolean enabled) {
         final Properties properties = new Properties();
         properties.setProperty("span.disambiguation.enabled", Boolean.toString(enabled));
         return SpanDisambiguationServiceFactory.getSpanDisambiguationService(
-                new PhileasConfiguration(properties), vectorService);
+                new PhileasConfiguration(properties));
     }
 
     @Test
     public void enabledConfigurationYieldsTheVectorBasedService() {
         Assertions.assertInstanceOf(VectorBasedSpanDisambiguationService.class,
-                build(true, new InMemoryVectorService()),
+                build(true),
                 "disambiguation enabled should produce the vector-based implementation");
     }
 
     @Test
     public void disabledConfigurationYieldsTheNoOpService() {
         Assertions.assertInstanceOf(NoOpSpanDisambiguationService.class,
-                build(false, new InMemoryVectorService()),
+                build(false),
                 "disambiguation disabled should produce the no-op implementation");
     }
 
@@ -57,7 +57,7 @@ public class SpanDisambiguationServiceFactoryTest {
         // The no-op service must pass spans through untouched and record nothing, so a disabled
         // configuration behaves exactly as if disambiguation never ran.
         final InMemoryVectorService vectorService = new InMemoryVectorService();
-        final SpanDisambiguationService service = build(false, vectorService);
+        final SpanDisambiguationService service = build(false);
 
         final Span asSsn = Span.make(0, 4, FilterType.SSN, "c", 0.5, "123456789", "x", "",
                 false, true, new String[]{"phone", "number"}, 0);
@@ -65,7 +65,7 @@ public class SpanDisambiguationServiceFactoryTest {
                 false, true, new String[]{"phone", "number"}, 0);
 
         final List<Span> spans = Arrays.asList(asSsn, asPhone);
-        final List<Span> result = service.disambiguate("c", spans);
+        final List<Span> result = service.disambiguate(vectorService, "c", spans);
 
         Assertions.assertEquals(spans, result, "the no-op service should return the spans unchanged");
         Assertions.assertTrue(vectorService.getVectorRepresentation("c", FilterType.PHONE_NUMBER).isEmpty(),
@@ -73,7 +73,7 @@ public class SpanDisambiguationServiceFactoryTest {
 
         // The three-argument form keeps the first candidate.
         Assertions.assertEquals(FilterType.SSN,
-                service.disambiguate("c", Arrays.asList(FilterType.SSN, FilterType.PHONE_NUMBER), asSsn),
+                service.disambiguate(vectorService, "c", Arrays.asList(FilterType.SSN, FilterType.PHONE_NUMBER), asSsn),
                 "the no-op service should keep the first candidate");
     }
 

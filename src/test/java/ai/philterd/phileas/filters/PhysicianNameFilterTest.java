@@ -37,14 +37,13 @@ public class PhysicianNameFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new PhysicianNameFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final PhysicianNameFilter filter = new PhysicianNameFilter(filterConfiguration);
 
-          final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "Doctor Smith was the attending physician.");
+          final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "Doctor Smith was the attending physician.");
         showSpans(filtered.getSpans());
 
         Assertions.assertEquals(1, filtered.getSpans().size());
@@ -58,14 +57,13 @@ public class PhysicianNameFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new PhysicianNameFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final PhysicianNameFilter filter = new PhysicianNameFilter(filterConfiguration);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "Doctor James Smith");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "Doctor James Smith");
         showSpans(filtered.getSpans());
 
         Assertions.assertEquals(1, filtered.getSpans().size());
@@ -79,14 +77,13 @@ public class PhysicianNameFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new PhysicianNameFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final PhysicianNameFilter filter = new PhysicianNameFilter(filterConfiguration);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "John Smith, MD");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "John Smith, MD");
         showSpans(filtered.getSpans());
 
         Assertions.assertEquals(1, filtered.getSpans().size());
@@ -100,14 +97,13 @@ public class PhysicianNameFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new PhysicianNameFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final PhysicianNameFilter filter = new PhysicianNameFilter(filterConfiguration);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "attending physician was John Smith, MD");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "attending physician was John Smith, MD");
         showSpans(filtered.getSpans());
 
         Assertions.assertEquals(1, filtered.getSpans().size());
@@ -121,14 +117,13 @@ public class PhysicianNameFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new PhysicianNameFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final PhysicianNameFilter filter = new PhysicianNameFilter(filterConfiguration);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "was John J. van Smith, MD");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "was John J. van Smith, MD");
         showSpans(filtered.getSpans());
 
         Assertions.assertEquals(1, filtered.getSpans().size());
@@ -142,14 +137,13 @@ public class PhysicianNameFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new PhysicianNameFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final PhysicianNameFilter filter = new PhysicianNameFilter(filterConfiguration);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "Smith,James D,MD -General Surgery");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "Smith,James D,MD -General Surgery");
         showSpans(filtered.getSpans());
 
         Assertions.assertEquals(1, filtered.getSpans().size());
@@ -163,14 +157,13 @@ public class PhysicianNameFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new PhysicianNameFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final PhysicianNameFilter filter = new PhysicianNameFilter(filterConfiguration);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "Smith,James )D,MD -General Surgery");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "Smith,James )D,MD -General Surgery");
         showSpans(filtered.getSpans());
 
         Assertions.assertEquals(1, filtered.getSpans().size());
@@ -184,14 +177,13 @@ public class PhysicianNameFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new PhysicianNameFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final PhysicianNameFilter filter = new PhysicianNameFilter(filterConfiguration);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "1.0 cm in outside diameter pink tan everted");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "1.0 cm in outside diameter pink tan everted");
         showSpans(filtered.getSpans());
 
         Assertions.assertEquals(0, filtered.getSpans().size());
@@ -203,14 +195,13 @@ public class PhysicianNameFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new PhysicianNameFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final PhysicianNameFilter filter = new PhysicianNameFilter(filterConfiguration);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "1.0 cm");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "1.0 cm");
         showSpans(filtered.getSpans());
 
         Assertions.assertEquals(0, filtered.getSpans().size());
@@ -222,14 +213,13 @@ public class PhysicianNameFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new PhysicianNameFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final PhysicianNameFilter filter = new PhysicianNameFilter(filterConfiguration);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "Ahu,Amanda D,MD -General Surgery");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "Ahu,Amanda D,MD -General Surgery");
         showSpans(filtered.getSpans());
 
         Assertions.assertEquals(1, filtered.getSpans().size());
@@ -243,14 +233,13 @@ public class PhysicianNameFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new PhysicianNameFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final PhysicianNameFilter filter = new PhysicianNameFilter(filterConfiguration);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "Johnns,Melinda S,MD - 1/2/2018 11:54 CST 1/2/2018 12:46 CST");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "Johnns,Melinda S,MD - 1/2/2018 11:54 CST 1/2/2018 12:46 CST");
         showSpans(filtered.getSpans());
 
         Assertions.assertEquals(1, filtered.getSpans().size());
@@ -270,14 +259,13 @@ public class PhysicianNameFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(physicianNameFilterStrategy))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final PhysicianNameFilter filter = new PhysicianNameFilter(filterConfiguration);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "Doctor James Smith was here.");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "Doctor James Smith was here.");
         showSpans(filtered.getSpans());
         Assertions.assertEquals(1, filtered.getSpans().size());
         Assertions.assertTrue(candidates.contains(filtered.getSpans().get(0).getReplacement()));

@@ -20,6 +20,7 @@ import ai.philterd.phileas.model.filtering.Replacement;
 import ai.philterd.phileas.policy.Crypto;
 import ai.philterd.phileas.policy.FPE;
 import ai.philterd.phileas.services.anonymization.AnonymizationService;
+import ai.philterd.phileas.services.context.ContextService;
 import ai.philterd.phileas.utils.Encryption;
 import ai.philterd.phileas.utils.FormatPreservingEncryptionException;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -33,7 +34,7 @@ public abstract class StandardFilterStrategy extends AbstractFilterStrategy {
 
     private static final Logger LOGGER = LogManager.getLogger(StandardFilterStrategy.class);
 
-    public Replacement getStandardReplacement(String label, String token,
+    public Replacement getStandardReplacement(ContextService contextService, String label, String token,
                                       Crypto crypto, FPE fpe,
                                       AnonymizationService anonymizationService,
                                       FilterType filterType) throws Exception {
@@ -80,7 +81,7 @@ public abstract class StandardFilterStrategy extends AbstractFilterStrategy {
                 as = this.anonymizationService;
             }
 
-            replacement = getAnonymizedToken(replacementScope, token, as, filterType.getType());
+            replacement = getAnonymizedToken(contextService, replacementScope, token, as, filterType.getType());
 
         } else if(Strings.CI.equals(strategy, STATIC_REPLACE)) {
 

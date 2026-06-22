@@ -21,6 +21,7 @@ import ai.philterd.phileas.policy.FPE;
 import ai.philterd.phileas.services.anonymization.AbstractAnonymizationService;
 import ai.philterd.phileas.services.anonymization.AnonymizationService;
 import ai.philterd.phileas.services.anonymization.NumericAnonymizationService;
+import ai.philterd.phileas.services.context.ContextService;
 import ai.philterd.phileas.services.context.DefaultContextService;
 import ai.philterd.phileas.services.strategies.AbstractFilterStrategy;
 import ai.philterd.phileas.services.strategies.AbstractFilterStrategyTest;
@@ -35,7 +36,7 @@ public class BankRoutingNumberFilterStrategyTest extends AbstractFilterStrategyT
     }
 
     public AbstractAnonymizationService getAnonymizationService() {
-        return new NumericAnonymizationService(new DefaultContextService());
+        return new NumericAnonymizationService();
     }
 
     @Test
@@ -44,11 +45,12 @@ public class BankRoutingNumberFilterStrategyTest extends AbstractFilterStrategyT
         final FPE fpe = new FPE("2DE79D232DF5585D68CE47882AE256D6", "CBD09280979564");
 
         final AnonymizationService anonymizationService = getAnonymizationService();
+        final ContextService contextService = new DefaultContextService();
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
         strategy.setStrategy(AbstractFilterStrategy.FPE_ENCRYPT_REPLACE);
 
-        final Replacement replacement = strategy.getReplacement("name", "context",  "091000022", WINDOW, new Crypto(), fpe, anonymizationService, null);
+        final Replacement replacement = strategy.getReplacement(contextService, "name", "context",  "091000022", WINDOW, new Crypto(), fpe, anonymizationService, null);
 
         Assertions.assertEquals(9, replacement.getReplacement().length());
         Assertions.assertEquals("970881062", replacement.getReplacement());

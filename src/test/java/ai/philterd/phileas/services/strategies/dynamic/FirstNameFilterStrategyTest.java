@@ -22,6 +22,7 @@ import ai.philterd.phileas.policy.FPE;
 import ai.philterd.phileas.services.anonymization.AbstractAnonymizationService;
 import ai.philterd.phileas.services.anonymization.AnonymizationService;
 import ai.philterd.phileas.services.anonymization.FirstNameAnonymizationService;
+import ai.philterd.phileas.services.context.ContextService;
 import ai.philterd.phileas.services.context.DefaultContextService;
 import ai.philterd.phileas.services.strategies.AbstractFilterStrategy;
 import ai.philterd.phileas.services.strategies.AbstractFilterStrategyTest;
@@ -35,14 +36,15 @@ public class FirstNameFilterStrategyTest extends AbstractFilterStrategyTest {
     }
 
     public AbstractAnonymizationService getAnonymizationService() {
-        return new FirstNameAnonymizationService(new DefaultContextService());
+        return new FirstNameAnonymizationService();
     }
 
     @Test
     public void replacementWithContext() throws Exception {
 
         final AnonymizationService anonymizationService = getAnonymizationService();
-        anonymizationService.getContextService().putReplacement("jeff", "john", FilterType.FIRST_NAME.getType());
+        final ContextService contextService = new DefaultContextService();
+        contextService.putReplacement("jeff", "john", FilterType.FIRST_NAME.getType());
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
         strategy.setStrategy(AbstractFilterStrategy.RANDOM_REPLACE);
@@ -50,10 +52,10 @@ public class FirstNameFilterStrategyTest extends AbstractFilterStrategyTest {
 
         if(anonymizationService instanceof FirstNameAnonymizationService) {
 
-            final Replacement replacement1 = strategy.getReplacement("name", "context",  "jeff", WINDOW, new Crypto(), new FPE(), anonymizationService, null);
+            final Replacement replacement1 = strategy.getReplacement(contextService, "name", "context",  "jeff", WINDOW, new Crypto(), new FPE(), anonymizationService, null);
             Assertions.assertEquals("john", replacement1.getReplacement());
 
-            final Replacement replacement2 = strategy.getReplacement("name", "context",  "thomas", WINDOW, new Crypto(), new FPE(), anonymizationService, null);
+            final Replacement replacement2 = strategy.getReplacement(contextService, "name", "context",  "thomas", WINDOW, new Crypto(), new FPE(), anonymizationService, null);
             Assertions.assertNotEquals("john", replacement2.getReplacement());
             Assertions.assertNotEquals("jeff", replacement2.getReplacement());
             Assertions.assertNotEquals("thomas", replacement2.getReplacement());
@@ -66,7 +68,8 @@ public class FirstNameFilterStrategyTest extends AbstractFilterStrategyTest {
     public void replacementWithContextDocumentScope() throws Exception {
 
         final AnonymizationService anonymizationService = getAnonymizationService();
-        anonymizationService.getContextService().putReplacement("jeff", "john", FilterType.FIRST_NAME.getType());
+        final ContextService contextService = new DefaultContextService();
+        contextService.putReplacement("jeff", "john", FilterType.FIRST_NAME.getType());
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
         strategy.setStrategy(AbstractFilterStrategy.RANDOM_REPLACE);
@@ -74,10 +77,10 @@ public class FirstNameFilterStrategyTest extends AbstractFilterStrategyTest {
 
         if(anonymizationService instanceof FirstNameAnonymizationService) {
 
-            final Replacement replacement1 = strategy.getReplacement("name", "context",  "jeff", WINDOW, new Crypto(), new FPE(), anonymizationService, null);
+            final Replacement replacement1 = strategy.getReplacement(contextService, "name", "context",  "jeff", WINDOW, new Crypto(), new FPE(), anonymizationService, null);
             Assertions.assertNotEquals("john", replacement1.getReplacement());
 
-            final Replacement replacement2 = strategy.getReplacement("name", "context",  "thomas", WINDOW, new Crypto(), new FPE(), anonymizationService, null);
+            final Replacement replacement2 = strategy.getReplacement(contextService, "name", "context",  "thomas", WINDOW, new Crypto(), new FPE(), anonymizationService, null);
             Assertions.assertNotEquals("john", replacement2.getReplacement());
             Assertions.assertNotEquals("jeff", replacement2.getReplacement());
             Assertions.assertNotEquals("thomas", replacement2.getReplacement());

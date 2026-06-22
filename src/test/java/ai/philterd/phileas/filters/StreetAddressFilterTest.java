@@ -33,14 +33,13 @@ public class StreetAddressFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new StreetAddressFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final StreetAddressFilter filter = new StreetAddressFilter(filterConfiguration);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "lived at 100 Main St");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "lived at 100 Main St");
 
         Assertions.assertEquals(1, filtered.getSpans().size());
         Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 9, 20, FilterType.STREET_ADDRESS));
@@ -52,14 +51,13 @@ public class StreetAddressFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new StreetAddressFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final StreetAddressFilter filter = new StreetAddressFilter(filterConfiguration);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "lived at 100 S Main St");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "lived at 100 S Main St");
 
         Assertions.assertEquals(1, filtered.getSpans().size());
         Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 9, 22, FilterType.STREET_ADDRESS));
@@ -71,14 +69,13 @@ public class StreetAddressFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new StreetAddressFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final StreetAddressFilter filter = new StreetAddressFilter(filterConfiguration);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "lived at 100 South Main St");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "lived at 100 South Main St");
 
         Assertions.assertEquals(1, filtered.getSpans().size());
         Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 9, 26, FilterType.STREET_ADDRESS));
@@ -90,14 +87,13 @@ public class StreetAddressFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new StreetAddressFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final StreetAddressFilter filter = new StreetAddressFilter(filterConfiguration);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "lived at 1000 Main Street");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "lived at 1000 Main Street");
 
         Assertions.assertEquals(1, filtered.getSpans().size());
         Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 9, 25, FilterType.STREET_ADDRESS));
@@ -109,14 +105,13 @@ public class StreetAddressFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new StreetAddressFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final StreetAddressFilter filter = new StreetAddressFilter(filterConfiguration);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "North 2800 Clay Edwards Drive");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "North 2800 Clay Edwards Drive");
 
         Assertions.assertEquals(1, filtered.getSpans().size());
         Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 6, 29, FilterType.STREET_ADDRESS));
@@ -128,14 +123,13 @@ public class StreetAddressFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new StreetAddressFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final StreetAddressFilter filter = new StreetAddressFilter(filterConfiguration);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "14 Southampton St.");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "14 Southampton St.");
 
         Assertions.assertEquals(1, filtered.getSpans().size());
         Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 0, 18, FilterType.STREET_ADDRESS));
@@ -147,14 +141,13 @@ public class StreetAddressFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new StreetAddressFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final StreetAddressFilter filter = new StreetAddressFilter(filterConfiguration);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "22 Newport Drive");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "22 Newport Drive");
 
         Assertions.assertEquals(1, filtered.getSpans().size());
         Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 0, 16, FilterType.STREET_ADDRESS));
@@ -166,14 +159,13 @@ public class StreetAddressFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new StreetAddressFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final StreetAddressFilter filter = new StreetAddressFilter(filterConfiguration);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "78 Glendale Street");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "78 Glendale Street");
 
         Assertions.assertEquals(1, filtered.getSpans().size());
         Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 0, 18, FilterType.STREET_ADDRESS));
@@ -185,14 +177,13 @@ public class StreetAddressFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new StreetAddressFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final StreetAddressFilter filter = new StreetAddressFilter(filterConfiguration);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "6 Berkshire Court");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "6 Berkshire Court");
 
         Assertions.assertEquals(1, filtered.getSpans().size());
         Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 0, 17, FilterType.STREET_ADDRESS));
@@ -204,14 +195,13 @@ public class StreetAddressFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new StreetAddressFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final StreetAddressFilter filter = new StreetAddressFilter(filterConfiguration);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "291 North Pawnee Ave.");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "291 North Pawnee Ave.");
 
         Assertions.assertEquals(1, filtered.getSpans().size());
         Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 0, 21, FilterType.STREET_ADDRESS));
@@ -223,14 +213,13 @@ public class StreetAddressFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new StreetAddressFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final StreetAddressFilter filter = new StreetAddressFilter(filterConfiguration);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "468 William Street");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "468 William Street");
 
         Assertions.assertEquals(1, filtered.getSpans().size());
         Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 0, 18, FilterType.STREET_ADDRESS));
@@ -242,14 +231,13 @@ public class StreetAddressFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new StreetAddressFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final StreetAddressFilter filter = new StreetAddressFilter(filterConfiguration);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "291 6th Dr.");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "291 6th Dr.");
 
         Assertions.assertEquals(1, filtered.getSpans().size());
         Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 0, 11, FilterType.STREET_ADDRESS));
@@ -261,14 +249,13 @@ public class StreetAddressFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new StreetAddressFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final StreetAddressFilter filter = new StreetAddressFilter(filterConfiguration);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "9444 Heritage St.");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "9444 Heritage St.");
 
         Assertions.assertEquals(1, filtered.getSpans().size());
         Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 0, 17, FilterType.STREET_ADDRESS));
@@ -280,14 +267,13 @@ public class StreetAddressFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new StreetAddressFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final StreetAddressFilter filter = new StreetAddressFilter(filterConfiguration);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "70 Birchpond Street");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "70 Birchpond Street");
 
         Assertions.assertEquals(1, filtered.getSpans().size());
         Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 0, 19, FilterType.STREET_ADDRESS));
@@ -299,14 +285,13 @@ public class StreetAddressFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new StreetAddressFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final StreetAddressFilter filter = new StreetAddressFilter(filterConfiguration);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "656 S. Inverness St.");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "656 S. Inverness St.");
 
         Assertions.assertEquals(1, filtered.getSpans().size());
         Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 0, 20, FilterType.STREET_ADDRESS));
@@ -318,14 +303,13 @@ public class StreetAddressFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new StreetAddressFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final StreetAddressFilter filter = new StreetAddressFilter(filterConfiguration);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "9142 Arlington Court");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "9142 Arlington Court");
 
         Assertions.assertEquals(1, filtered.getSpans().size());
         Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 0, 20, FilterType.STREET_ADDRESS));
@@ -337,14 +321,13 @@ public class StreetAddressFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new StreetAddressFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final StreetAddressFilter filter = new StreetAddressFilter(filterConfiguration);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "4 Devonshire Ct.");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "4 Devonshire Ct.");
 
         Assertions.assertEquals(1, filtered.getSpans().size());
         Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 0, 16, FilterType.STREET_ADDRESS));
@@ -356,14 +339,13 @@ public class StreetAddressFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new StreetAddressFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final StreetAddressFilter filter = new StreetAddressFilter(filterConfiguration);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "4 Devonshire Ct");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "4 Devonshire Ct");
 
         Assertions.assertEquals(1, filtered.getSpans().size());
         Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 0, 15, FilterType.STREET_ADDRESS));
@@ -375,14 +357,13 @@ public class StreetAddressFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new StreetAddressFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final StreetAddressFilter filter = new StreetAddressFilter(filterConfiguration);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "4 Devonshire Ct ste 2");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "4 Devonshire Ct ste 2");
 
         Assertions.assertEquals(1, filtered.getSpans().size());
         Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 0, 21, FilterType.STREET_ADDRESS));
@@ -394,14 +375,13 @@ public class StreetAddressFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new StreetAddressFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final StreetAddressFilter filter = new StreetAddressFilter(filterConfiguration);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "4 Devonshire Ct apartment 222");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "4 Devonshire Ct apartment 222");
 
         Assertions.assertEquals(1, filtered.getSpans().size());
         Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 0, 29, FilterType.STREET_ADDRESS));
@@ -413,14 +393,13 @@ public class StreetAddressFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new StreetAddressFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final StreetAddressFilter filter = new StreetAddressFilter(filterConfiguration);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "4 Devonshire Ct apt 222");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "4 Devonshire Ct apt 222");
 
         Assertions.assertEquals(1, filtered.getSpans().size());
         Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 0, 23, FilterType.STREET_ADDRESS));
@@ -432,14 +411,13 @@ public class StreetAddressFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new StreetAddressFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final StreetAddressFilter filter = new StreetAddressFilter(filterConfiguration);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "4 Devonshire Ct apt 222 anywhere");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "4 Devonshire Ct apt 222 anywhere");
 
         Assertions.assertEquals(1, filtered.getSpans().size());
         Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 0, 23, FilterType.STREET_ADDRESS));
@@ -451,14 +429,13 @@ public class StreetAddressFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new StreetAddressFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final StreetAddressFilter filter = new StreetAddressFilter(filterConfiguration);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "address is 9444 Heritage St. over there");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "address is 9444 Heritage St. over there");
 
         Assertions.assertEquals(1, filtered.getSpans().size());
         Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 11, 28, FilterType.STREET_ADDRESS));
@@ -470,14 +447,13 @@ public class StreetAddressFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new StreetAddressFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final StreetAddressFilter filter = new StreetAddressFilter(filterConfiguration);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "address is 9444 Heritage St. apt 2 over there");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "address is 9444 Heritage St. apt 2 over there");
 
         Assertions.assertEquals(1, filtered.getSpans().size());
         Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 11, 34, FilterType.STREET_ADDRESS));
@@ -489,14 +465,13 @@ public class StreetAddressFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new StreetAddressFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final StreetAddressFilter filter = new StreetAddressFilter(filterConfiguration);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "445 Minnesota Street, Suite 175");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "445 Minnesota Street, Suite 175");
 
         Assertions.assertEquals(1, filtered.getSpans().size());
         Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 0, 31, FilterType.STREET_ADDRESS));
@@ -514,14 +489,13 @@ public class StreetAddressFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(streetAddressFilterStrategy))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final StreetAddressFilter filter = new StreetAddressFilter(filterConfiguration);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "lived at 100 Main St");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "lived at 100 Main St");
         showSpans(filtered.getSpans());
         Assertions.assertEquals(1, filtered.getSpans().size());
         Assertions.assertTrue(candidates.contains(filtered.getSpans().get(0).getReplacement()));

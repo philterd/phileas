@@ -34,7 +34,6 @@ public class DateFilterTest extends AbstractFilterTest {
 
         return new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new DateFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .build();
 
@@ -45,7 +44,7 @@ public class DateFilterTest extends AbstractFilterTest {
 
         final DateFilter filter = new DateFilter(buildFilterConfiguration(), false, DateSpanValidator.getInstance());
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "May 22, 1999");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "May 22, 1999");
         showSpans(filtered.getSpans());
         Assertions.assertEquals(1, filtered.getSpans().size());
         Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 0, 12, FilterType.DATE));
@@ -58,7 +57,7 @@ public class DateFilterTest extends AbstractFilterTest {
 
         final DateFilter filter = new DateFilter(buildFilterConfiguration(), false, DateSpanValidator.getInstance());
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "13-06-31");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "13-06-31");
         Assertions.assertEquals(1, filtered.getSpans().size());
         Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 0, 8, FilterType.DATE));
 
@@ -69,7 +68,7 @@ public class DateFilterTest extends AbstractFilterTest {
 
         final DateFilter filter = new DateFilter(buildFilterConfiguration(), false, DateSpanValidator.getInstance());
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "2205-02-31");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "2205-02-31");
         Assertions.assertEquals(1, filtered.getSpans().size());
         Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 0, 10, FilterType.DATE));
 
@@ -79,7 +78,7 @@ public class DateFilterTest extends AbstractFilterTest {
     public void filterDate4() throws Exception {
 
         final DateFilter filter = new DateFilter(buildFilterConfiguration(), false, DateSpanValidator.getInstance());
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "02-31-2019");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "02-31-2019");
 
         Assertions.assertEquals(1, filtered.getSpans().size());
         Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 0, 10, FilterType.DATE));
@@ -91,7 +90,7 @@ public class DateFilterTest extends AbstractFilterTest {
 
         final DateFilter filter = new DateFilter(buildFilterConfiguration(), false, DateSpanValidator.getInstance());
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "02-31-19");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "02-31-19");
         Assertions.assertEquals(1, filtered.getSpans().size());
         Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 0, 8, FilterType.DATE));
 
@@ -102,7 +101,7 @@ public class DateFilterTest extends AbstractFilterTest {
 
         final DateFilter filter = new DateFilter(buildFilterConfiguration(), false, DateSpanValidator.getInstance());
 
-        final Filtered filtered = filter.filter(getPolicy(), "context",  PIECE, "2-8-2019");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context",  PIECE, "2-8-2019");
         Assertions.assertEquals(1, filtered.getSpans().size());
         Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 0, 8, FilterType.DATE));
 
@@ -113,7 +112,7 @@ public class DateFilterTest extends AbstractFilterTest {
 
         final DateFilter filter = new DateFilter(buildFilterConfiguration(), false, DateSpanValidator.getInstance());
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "2-15-2019");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "2-15-2019");
         Assertions.assertEquals(1, filtered.getSpans().size());
         Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 0, 9, FilterType.DATE));
 
@@ -124,7 +123,7 @@ public class DateFilterTest extends AbstractFilterTest {
 
         final DateFilter filter = new DateFilter(buildFilterConfiguration(), false, DateSpanValidator.getInstance());
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "January 2012");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "January 2012");
         Assertions.assertEquals(1, filtered.getSpans().size());
         Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 0, 12, FilterType.DATE));
 
@@ -135,7 +134,7 @@ public class DateFilterTest extends AbstractFilterTest {
 
         final DateFilter filter = new DateFilter(buildFilterConfiguration(), false, DateSpanValidator.getInstance());
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "December 2015");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "December 2015");
         Assertions.assertEquals(1, filtered.getSpans().size());
         Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 0, 13, FilterType.DATE));
 
@@ -146,7 +145,7 @@ public class DateFilterTest extends AbstractFilterTest {
 
         final DateFilter filter = new DateFilter(buildFilterConfiguration(), false, DateSpanValidator.getInstance());
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "November 1999");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "November 1999");
         Assertions.assertEquals(1, filtered.getSpans().size());
         Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 0, 13, FilterType.DATE));
 
@@ -157,7 +156,7 @@ public class DateFilterTest extends AbstractFilterTest {
 
         final DateFilter filter = new DateFilter(buildFilterConfiguration(), false, DateSpanValidator.getInstance());
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "april 1999");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "april 1999");
         Assertions.assertEquals(1, filtered.getSpans().size());
         Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 0, 10, FilterType.DATE));
 
@@ -168,7 +167,7 @@ public class DateFilterTest extends AbstractFilterTest {
 
         final DateFilter filter = new DateFilter(buildFilterConfiguration(), false, DateSpanValidator.getInstance());
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "12-05-2014");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "12-05-2014");
         Assertions.assertEquals(1, filtered.getSpans().size());
         Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 0, 10, FilterType.DATE));
 
@@ -179,7 +178,7 @@ public class DateFilterTest extends AbstractFilterTest {
 
         final DateFilter filter = new DateFilter(buildFilterConfiguration(), false, DateSpanValidator.getInstance());
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "November 22, 1999");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "November 22, 1999");
         Assertions.assertEquals(1, filtered.getSpans().size());
         Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 0, 17, FilterType.DATE));
 
@@ -190,7 +189,7 @@ public class DateFilterTest extends AbstractFilterTest {
 
         final DateFilter filter = new DateFilter(buildFilterConfiguration(), false, DateSpanValidator.getInstance());
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "November 22nd, 1999");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "November 22nd, 1999");
         Assertions.assertEquals(1, filtered.getSpans().size());
         Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 0, 19, FilterType.DATE));
 
@@ -201,7 +200,7 @@ public class DateFilterTest extends AbstractFilterTest {
 
         final DateFilter filter = new DateFilter(buildFilterConfiguration(), false, DateSpanValidator.getInstance());
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "November 22 nd, 1999");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "November 22 nd, 1999");
         Assertions.assertEquals(1, filtered.getSpans().size());
         Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 0, 20, FilterType.DATE));
 
@@ -212,7 +211,7 @@ public class DateFilterTest extends AbstractFilterTest {
 
         final DateFilter filter = new DateFilter(buildFilterConfiguration(), false, DateSpanValidator.getInstance());
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "November 22nd");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "November 22nd");
         Assertions.assertEquals(1, filtered.getSpans().size());
         Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 0, 13, FilterType.DATE));
 
@@ -223,7 +222,7 @@ public class DateFilterTest extends AbstractFilterTest {
 
         final DateFilter filter = new DateFilter(buildFilterConfiguration(), false, DateSpanValidator.getInstance());
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "May 1 st");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "May 1 st");
         Assertions.assertEquals(1, filtered.getSpans().size());
         Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 0, 8, FilterType.DATE));
 
@@ -234,7 +233,7 @@ public class DateFilterTest extends AbstractFilterTest {
 
         final DateFilter filter = new DateFilter(buildFilterConfiguration(), false, DateSpanValidator.getInstance());
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "June 13th");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "June 13th");
         Assertions.assertEquals(1, filtered.getSpans().size());
         Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 0, 9, FilterType.DATE));
 
@@ -245,7 +244,7 @@ public class DateFilterTest extends AbstractFilterTest {
 
         final DateFilter filter = new DateFilter(buildFilterConfiguration(), false, DateSpanValidator.getInstance());
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "November 2, 1999");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "November 2, 1999");
         Assertions.assertEquals(1, filtered.getSpans().size());
         Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 0, 16, FilterType.DATE));
 
@@ -256,7 +255,7 @@ public class DateFilterTest extends AbstractFilterTest {
 
         final DateFilter filter = new DateFilter(buildFilterConfiguration(), false, DateSpanValidator.getInstance());
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "May 1st");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "May 1st");
         Assertions.assertEquals(1, filtered.getSpans().size());
         Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 0, 7, FilterType.DATE));
 
@@ -267,7 +266,7 @@ public class DateFilterTest extends AbstractFilterTest {
 
         final DateFilter filter = new DateFilter(buildFilterConfiguration(), false, DateSpanValidator.getInstance());
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "December 4th");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "December 4th");
         Assertions.assertEquals(1, filtered.getSpans().size());
         Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 0, 12, FilterType.DATE));
 
@@ -278,7 +277,7 @@ public class DateFilterTest extends AbstractFilterTest {
 
         final DateFilter filter = new DateFilter(buildFilterConfiguration(), false, DateSpanValidator.getInstance());
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "02-31-19@12:00");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "02-31-19@12:00");
         Assertions.assertEquals(1, filtered.getSpans().size());
         Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 0, 8, FilterType.DATE));
 
@@ -289,7 +288,7 @@ public class DateFilterTest extends AbstractFilterTest {
 
         final DateFilter filter = new DateFilter(buildFilterConfiguration(), false, DateSpanValidator.getInstance());
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "02-31-19@12:00");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "02-31-19@12:00");
         showSpans(filtered.getSpans());
         Assertions.assertEquals(1, filtered.getSpans().size());
 
@@ -300,7 +299,7 @@ public class DateFilterTest extends AbstractFilterTest {
 
         final DateFilter filter = new DateFilter(buildFilterConfiguration(), false, DateSpanValidator.getInstance());
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "02-35-19@12:00");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "02-35-19@12:00");
         Assertions.assertEquals(1, filtered.getSpans().size());
 
     }
@@ -310,7 +309,7 @@ public class DateFilterTest extends AbstractFilterTest {
 
         final DateFilter filter = new DateFilter(buildFilterConfiguration(), false, DateSpanValidator.getInstance());
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "02-15-19");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "02-15-19");
         Assertions.assertEquals(1, filtered.getSpans().size());
 
     }
@@ -320,7 +319,7 @@ public class DateFilterTest extends AbstractFilterTest {
 
         final DateFilter filter = new DateFilter(buildFilterConfiguration(), false, DateSpanValidator.getInstance());
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "The good news is everywhere we go it is that way but this may be on top of that.");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "The good news is everywhere we go it is that way but this may be on top of that.");
         Assertions.assertEquals(0, filtered.getSpans().size());
 
     }
@@ -330,7 +329,7 @@ public class DateFilterTest extends AbstractFilterTest {
 
         final DateFilter filter = new DateFilter(buildFilterConfiguration(), false, DateSpanValidator.getInstance());
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "The good news is everywhere we go it is that way but this may 15 be on top of that.");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "The good news is everywhere we go it is that way but this may 15 be on top of that.");
         Assertions.assertEquals(1, filtered.getSpans().size());
 
     }
@@ -340,7 +339,7 @@ public class DateFilterTest extends AbstractFilterTest {
 
         final DateFilter filter = new DateFilter(buildFilterConfiguration(), false, DateSpanValidator.getInstance());
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "The good news is everywhere we go it is that way but this may 15, 2020 be on top of that.");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "The good news is everywhere we go it is that way but this may 15, 2020 be on top of that.");
         Assertions.assertEquals(1, filtered.getSpans().size());
 
     }
@@ -350,7 +349,7 @@ public class DateFilterTest extends AbstractFilterTest {
 
         final DateFilter filter = new DateFilter(buildFilterConfiguration(), false, DateSpanValidator.getInstance());
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "The good news is everywhere we go it is that way but this may 15 2020 be on top of that.");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "The good news is everywhere we go it is that way but this may 15 2020 be on top of that.");
         Assertions.assertEquals(1, filtered.getSpans().size());
 
     }
@@ -360,7 +359,7 @@ public class DateFilterTest extends AbstractFilterTest {
 
         final DateFilter filter = new DateFilter(buildFilterConfiguration(), false, DateSpanValidator.getInstance());
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "The good news is everywhere we go it is that way but this may 15 19 be on top of that.");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "The good news is everywhere we go it is that way but this may 15 19 be on top of that.");
         Assertions.assertEquals(1, filtered.getSpans().size());
 
     }
@@ -370,7 +369,7 @@ public class DateFilterTest extends AbstractFilterTest {
 
         final DateFilter filter = new DateFilter(buildFilterConfiguration(), false, DateSpanValidator.getInstance());
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "The good news is everywhere we go it is that way but this may 5 19 be on top of that.");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "The good news is everywhere we go it is that way but this may 5 19 be on top of that.");
         Assertions.assertEquals(1, filtered.getSpans().size());
 
     }
@@ -380,7 +379,7 @@ public class DateFilterTest extends AbstractFilterTest {
 
         final DateFilter filter = new DateFilter(buildFilterConfiguration(), false, DateSpanValidator.getInstance());
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "The good news is everywhere we go it is that way but this June 21, 2020 be on top of that.");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "The good news is everywhere we go it is that way but this June 21, 2020 be on top of that.");
         Assertions.assertEquals(1, filtered.getSpans().size());
         Assertions.assertEquals("June 21, 2020", filtered.getSpans().get(0).getText());
 
@@ -393,7 +392,7 @@ public class DateFilterTest extends AbstractFilterTest {
 
         final DateFilter filter = new DateFilter(buildFilterConfiguration(), false, DateSpanValidator.getInstance());
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "The good news is everywhere we go it is that way but this 09-2021 be on top of that.");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "The good news is everywhere we go it is that way but this 09-2021 be on top of that.");
         Assertions.assertEquals(1, filtered.getSpans().size());
         Assertions.assertEquals("09-2021", filtered.getSpans().get(0).getText());
 
@@ -410,13 +409,12 @@ public class DateFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(dateFilterStrategy))
-                .withContextService(contextService)
                 .withRandom(random)
                 .build();
 
         final DateFilter filter = new DateFilter(filterConfiguration, false, DateSpanValidator.getInstance());
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "Owns and drives his own vehicle but states he has not driven his car since last October 2009.");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "Owns and drives his own vehicle but states he has not driven his car since last October 2009.");
 
         LOGGER.info(filtered.getSpans().get(0).getReplacement());
 
@@ -432,7 +430,7 @@ public class DateFilterTest extends AbstractFilterTest {
 
         final DateFilter filter = new DateFilter(buildFilterConfiguration(), true, DateSpanValidator.getInstance());
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "Observation: 91-100% strong nuclear staining");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "Observation: 91-100% strong nuclear staining");
         Assertions.assertEquals(0, filtered.getSpans().size());
 
         showSpans(filtered.getSpans());
@@ -444,7 +442,7 @@ public class DateFilterTest extends AbstractFilterTest {
 
         final DateFilter filter = new DateFilter(buildFilterConfiguration(), false, DateSpanValidator.getInstance());
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "That on July 3, 2012 an involuntary petition on behalf of FKAAHS, Inc. fka Aire");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "That on July 3, 2012 an involuntary petition on behalf of FKAAHS, Inc. fka Aire");
 
         showSpans(filtered.getSpans());
 
@@ -462,7 +460,7 @@ public class DateFilterTest extends AbstractFilterTest {
 
         final DateFilter filter = new DateFilter(buildFilterConfiguration(), true, DateSpanValidator.getInstance());
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "That on July 3, 2012 an involuntary petition on behalf of FKAAHS, Inc. fka Aire");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "That on July 3, 2012 an involuntary petition on behalf of FKAAHS, Inc. fka Aire");
 
         showSpans(filtered.getSpans());
 
@@ -478,7 +476,7 @@ public class DateFilterTest extends AbstractFilterTest {
 
         final DateFilter filter = new DateFilter(buildFilterConfiguration(), false, DateSpanValidator.getInstance());
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "Case No. 12-12110 K");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "Case No. 12-12110 K");
 
         showSpans(filtered.getSpans());
 
@@ -494,7 +492,7 @@ public class DateFilterTest extends AbstractFilterTest {
 
         final DateFilter filter = new DateFilter(buildFilterConfiguration(), true, DateSpanValidator.getInstance());
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "Case No. 12-12110 K");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "Case No. 12-12110 K");
 
         showSpans(filtered.getSpans());
 
@@ -507,7 +505,7 @@ public class DateFilterTest extends AbstractFilterTest {
 
         final DateFilter filter = new DateFilter(buildFilterConfiguration(), true, DateSpanValidator.getInstance());
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "Case 1-20-01023-MJK");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "Case 1-20-01023-MJK");
 
         showSpans(filtered.getSpans());
 
@@ -520,7 +518,7 @@ public class DateFilterTest extends AbstractFilterTest {
 
         final DateFilter filter = new DateFilter(buildFilterConfiguration(), true, DateSpanValidator.getInstance());
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "That on July 3, 2012 an involuntary");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "That on July 3, 2012 an involuntary");
 
         showSpans(filtered.getSpans());
 
@@ -536,7 +534,7 @@ public class DateFilterTest extends AbstractFilterTest {
 
         final DateFilter filter = new DateFilter(buildFilterConfiguration(), true, DateSpanValidator.getInstance());
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "Entered 06/16/20 11:55:37,");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "Entered 06/16/20 11:55:37,");
 
         showSpans(filtered.getSpans());
 
@@ -552,7 +550,7 @@ public class DateFilterTest extends AbstractFilterTest {
 
         final DateFilter filter = new DateFilter(buildFilterConfiguration(), true, DateSpanValidator.getInstance());
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "Case 1-20-01023-MJK,    Doc 1,    Filed 06/16/20,    Entered 06/16/20 11:55:37,");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "Case 1-20-01023-MJK,    Doc 1,    Filed 06/16/20,    Entered 06/16/20 11:55:37,");
 
         showSpans(filtered.getSpans());
 
@@ -572,7 +570,7 @@ public class DateFilterTest extends AbstractFilterTest {
 
         final DateFilter filter = new DateFilter(buildFilterConfiguration(), true, DateSpanValidator.getInstance());
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "On August 22, 2012, Plaintiff, Wendy J. Christophersen, was appointed as interim");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "On August 22, 2012, Plaintiff, Wendy J. Christophersen, was appointed as interim");
 
         showSpans(filtered.getSpans());
 
@@ -590,7 +588,7 @@ public class DateFilterTest extends AbstractFilterTest {
 
         final DateFilter filter = new DateFilter(buildFilterConfiguration(), true, DateSpanValidator.getInstance());
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "On Aug. 31, 2020, Plaintiff, Wendy J. Christophersen, was appointed as interim");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "On Aug. 31, 2020, Plaintiff, Wendy J. Christophersen, was appointed as interim");
 
         showSpans(filtered.getSpans());
 
@@ -608,7 +606,7 @@ public class DateFilterTest extends AbstractFilterTest {
 
         final DateFilter filter = new DateFilter(buildFilterConfiguration(), true, DateSpanValidator.getInstance());
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "The date of March 4 1932 was fun");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "The date of March 4 1932 was fun");
 
         showSpans(filtered.getSpans());
 
@@ -630,13 +628,12 @@ public class DateFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(dateFilterStrategy))
-                .withContextService(contextService)
                 .withRandom(random)
                 .build();
 
         final DateFilter filter = new DateFilter(filterConfiguration, false, DateSpanValidator.getInstance());
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "May 22, 1999");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "May 22, 1999");
         showSpans(filtered.getSpans());
         Assertions.assertEquals(1, filtered.getSpans().size());
         Assertions.assertTrue(candidates.contains(filtered.getSpans().get(0).getReplacement()));

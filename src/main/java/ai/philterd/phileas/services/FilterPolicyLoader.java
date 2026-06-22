@@ -27,7 +27,6 @@ import ai.philterd.phileas.policy.filters.CustomDictionary;
 import ai.philterd.phileas.policy.filters.Identifier;
 import ai.philterd.phileas.policy.filters.PhEye;
 import ai.philterd.phileas.policy.filters.Section;
-import ai.philterd.phileas.services.context.ContextService;
 import ai.philterd.phileas.services.filters.ai.pheye.PhEyeConfiguration;
 import ai.philterd.phileas.services.filters.ai.pheye.PhEyeFilter;
 import ai.philterd.phileas.services.filters.custom.PhoneNumberRulesFilter;
@@ -77,17 +76,14 @@ public class FilterPolicyLoader {
 
     private static final Logger LOGGER = LogManager.getLogger(FilterPolicyLoader.class);
 
-    private final ContextService contextService;
     private final PhileasConfiguration phileasConfiguration;
     private final Random random;
     private final HttpClient httpClient;
 
-    public FilterPolicyLoader(final ContextService contextService,
-                              final PhileasConfiguration phileasConfiguration,
+    public FilterPolicyLoader(final PhileasConfiguration phileasConfiguration,
                               final Random random,
                               final HttpClient httpClient) {
 
-        this.contextService = contextService;
         this.phileasConfiguration = phileasConfiguration;
         this.random = random;
         this.httpClient = httpClient;
@@ -156,7 +152,6 @@ public class FilterPolicyLoader {
 
             final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                     .withStrategies(policy.getIdentifiers().getAge().getAgeFilterStrategies())
-                    .withContextService(contextService)
                     .withRandom(random)
                     .withIgnored(policy.getIdentifiers().getAge().getIgnored())
                     .withIgnoredFiles(policy.getIdentifiers().getAge().getIgnoredFiles())
@@ -178,7 +173,6 @@ public class FilterPolicyLoader {
 
             final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                     .withStrategies(policy.getIdentifiers().getBankRoutingNumber().getBankRoutingNumberFilterStrategies())
-                    .withContextService(contextService)
                     .withRandom(random)
                     .withIgnored(policy.getIdentifiers().getBankRoutingNumber().getIgnored())
                     .withIgnoredFiles(policy.getIdentifiers().getBankRoutingNumber().getIgnoredFiles())
@@ -201,7 +195,6 @@ public class FilterPolicyLoader {
 
             final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                     .withStrategies(policy.getIdentifiers().getBitcoinAddress().getBitcoinFilterStrategies())
-                    .withContextService(contextService)
                     .withRandom(random)
                     .withIgnored(policy.getIdentifiers().getBitcoinAddress().getIgnored())
                     .withIgnoredFiles(policy.getIdentifiers().getBitcoinAddress().getIgnoredFiles())
@@ -224,7 +217,6 @@ public class FilterPolicyLoader {
 
             final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                     .withStrategies(policy.getIdentifiers().getCreditCard().getCreditCardFilterStrategies())
-                    .withContextService(contextService)
                     .withRandom(random)
                     .withIgnored(policy.getIdentifiers().getCreditCard().getIgnored())
                     .withIgnoredFiles(policy.getIdentifiers().getCreditCard().getIgnoredFiles())
@@ -251,7 +243,6 @@ public class FilterPolicyLoader {
 
             final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                     .withStrategies(policy.getIdentifiers().getCurrency().getCurrencyFilterStrategies())
-                    .withContextService(contextService)
                     .withRandom(random)
                     .withIgnored(policy.getIdentifiers().getCurrency().getIgnored())
                     .withIgnoredFiles(policy.getIdentifiers().getCurrency().getIgnoredFiles())
@@ -273,7 +264,6 @@ public class FilterPolicyLoader {
 
             final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                     .withStrategies(policy.getIdentifiers().getDate().getDateFilterStrategies())
-                    .withContextService(contextService)
                     .withRandom(random)
                     .withIgnored(policy.getIdentifiers().getDate().getIgnored())
                     .withIgnoredFiles(policy.getIdentifiers().getDate().getIgnoredFiles())
@@ -298,7 +288,6 @@ public class FilterPolicyLoader {
 
             final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                     .withStrategies(policy.getIdentifiers().getDriversLicense().getDriversLicenseFilterStrategies())
-                    .withContextService(contextService)
                     .withRandom(random)
                     .withIgnored(policy.getIdentifiers().getDriversLicense().getIgnored())
                     .withIgnoredFiles(policy.getIdentifiers().getDriversLicense().getIgnoredFiles())
@@ -321,7 +310,6 @@ public class FilterPolicyLoader {
 
             final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                     .withStrategies(policy.getIdentifiers().getEmailAddress().getEmailAddressFilterStrategies())
-                    .withContextService(contextService)
                     .withRandom(random)
                     .withIgnored(policy.getIdentifiers().getEmailAddress().getIgnored())
                     .withIgnoredFiles(policy.getIdentifiers().getEmailAddress().getIgnoredFiles())
@@ -347,7 +335,6 @@ public class FilterPolicyLoader {
 
             final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                     .withStrategies(policy.getIdentifiers().getIbanCode().getIbanCodeFilterStrategies())
-                    .withContextService(contextService)
                     .withRandom(random)
                     .withIgnored(policy.getIdentifiers().getIbanCode().getIgnored())
                     .withIgnoredFiles(policy.getIdentifiers().getIbanCode().getIgnoredFiles())
@@ -373,7 +360,6 @@ public class FilterPolicyLoader {
 
             final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                     .withStrategies(policy.getIdentifiers().getIpAddress().getIpAddressFilterStrategies())
-                    .withContextService(contextService)
                     .withRandom(random)
                     .withIgnored(policy.getIdentifiers().getIpAddress().getIgnored())
                     .withIgnoredFiles(policy.getIdentifiers().getIpAddress().getIgnoredFiles())
@@ -396,7 +382,6 @@ public class FilterPolicyLoader {
 
             final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                     .withStrategies(policy.getIdentifiers().getMacAddress().getMacAddressFilterStrategies())
-                    .withContextService(contextService)
                     .withRandom(random)
                     .withIgnored(policy.getIdentifiers().getMacAddress().getIgnored())
                     .withIgnoredFiles(policy.getIdentifiers().getMacAddress().getIgnoredFiles())
@@ -419,7 +404,6 @@ public class FilterPolicyLoader {
 
             final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                     .withStrategies(policy.getIdentifiers().getPassportNumber().getPassportNumberFilterStrategies())
-                    .withContextService(contextService)
                     .withRandom(random)
                     .withIgnored(policy.getIdentifiers().getPassportNumber().getIgnored())
                     .withIgnoredFiles(policy.getIdentifiers().getPassportNumber().getIgnoredFiles())
@@ -442,7 +426,6 @@ public class FilterPolicyLoader {
 
             final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                     .withStrategies(policy.getIdentifiers().getPhoneNumberExtension().getPhoneNumberExtensionFilterStrategies())
-                    .withContextService(contextService)
                     .withRandom(random)
                     .withIgnored(policy.getIdentifiers().getPhoneNumberExtension().getIgnored())
                     .withIgnoredFiles(policy.getIdentifiers().getPhoneNumberExtension().getIgnoredFiles())
@@ -463,7 +446,6 @@ public class FilterPolicyLoader {
 
             final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                     .withStrategies(policy.getIdentifiers().getPhoneNumber().getPhoneNumberFilterStrategies())
-                    .withContextService(contextService)
                     .withRandom(random)
                     .withIgnored(policy.getIdentifiers().getPhoneNumber().getIgnored())
                     .withIgnoredFiles(policy.getIdentifiers().getPhoneNumber().getIgnoredFiles())
@@ -485,7 +467,6 @@ public class FilterPolicyLoader {
 
             final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                     .withStrategies(policy.getIdentifiers().getPhysicianName().getPhysicianNameFilterStrategies())
-                    .withContextService(contextService)
                     .withRandom(random)
                     .withIgnored(policy.getIdentifiers().getPhysicianName().getIgnored())
                     .withIgnoredFiles(policy.getIdentifiers().getPhysicianName().getIgnoredFiles())
@@ -512,8 +493,7 @@ public class FilterPolicyLoader {
 
                     final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                             .withStrategies(section.getSectionFilterStrategies())
-                            .withContextService(contextService)
-                            .withRandom(random)
+                                    .withRandom(random)
                             .withIgnored(section.getIgnored())
                             .withIgnoredFiles(section.getIgnoredFiles())
                             .withIgnoredPatterns(section.getIgnoredPatterns())
@@ -542,7 +522,6 @@ public class FilterPolicyLoader {
 
             final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                     .withStrategies(policy.getIdentifiers().getSsn().getSsnFilterStrategies())
-                    .withContextService(contextService)
                     .withRandom(random)
                     .withIgnored(policy.getIdentifiers().getSsn().getIgnored())
                     .withIgnoredFiles(policy.getIdentifiers().getSsn().getIgnoredFiles())
@@ -565,7 +544,6 @@ public class FilterPolicyLoader {
 
             final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                     .withStrategies(policy.getIdentifiers().getStateAbbreviation().getStateAbbreviationsFilterStrategies())
-                    .withContextService(contextService)
                     .withRandom(random)
                     .withIgnored(policy.getIdentifiers().getStateAbbreviation().getIgnored())
                     .withIgnoredFiles(policy.getIdentifiers().getStateAbbreviation().getIgnoredFiles())
@@ -587,7 +565,6 @@ public class FilterPolicyLoader {
 
             final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                     .withStrategies(policy.getIdentifiers().getStreetAddress().getStreetAddressFilterStrategies())
-                    .withContextService(contextService)
                     .withRandom(random)
                     .withIgnored(policy.getIdentifiers().getStreetAddress().getIgnored())
                     .withIgnoredFiles(policy.getIdentifiers().getStreetAddress().getIgnoredFiles())
@@ -609,7 +586,6 @@ public class FilterPolicyLoader {
 
             final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                     .withStrategies(policy.getIdentifiers().getTrackingNumber().getTrackingNumberFilterStrategies())
-                    .withContextService(contextService)
                     .withRandom(random)
                     .withIgnored(policy.getIdentifiers().getTrackingNumber().getIgnored())
                     .withIgnoredFiles(policy.getIdentifiers().getTrackingNumber().getIgnoredFiles())
@@ -636,7 +612,6 @@ public class FilterPolicyLoader {
 
             final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                     .withStrategies(policy.getIdentifiers().getUrl().getUrlFilterStrategies())
-                    .withContextService(contextService)
                     .withRandom(random)
                     .withIgnored(policy.getIdentifiers().getUrl().getIgnored())
                     .withIgnoredFiles(policy.getIdentifiers().getUrl().getIgnoredFiles())
@@ -661,7 +636,6 @@ public class FilterPolicyLoader {
 
             final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                     .withStrategies(policy.getIdentifiers().getVin().getVinFilterStrategies())
-                    .withContextService(contextService)
                     .withRandom(random)
                     .withIgnored(policy.getIdentifiers().getVin().getIgnored())
                     .withIgnoredFiles(policy.getIdentifiers().getVin().getIgnoredFiles())
@@ -684,7 +658,6 @@ public class FilterPolicyLoader {
 
             final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                     .withStrategies(policy.getIdentifiers().getZipCode().getZipCodeFilterStrategies())
-                    .withContextService(contextService)
                     .withRandom(random)
                     .withIgnored(policy.getIdentifiers().getZipCode().getIgnored())
                     .withIgnoredFiles(policy.getIdentifiers().getZipCode().getIgnoredFiles())
@@ -734,8 +707,7 @@ public class FilterPolicyLoader {
 
                     final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                             .withStrategies(customDictionary.getCustomDictionaryFilterStrategies())
-                            .withContextService(contextService)
-                            .withRandom(random)
+                                    .withRandom(random)
                             .withIgnored(customDictionary.getIgnored())
                             .withIgnoredFiles(customDictionary.getIgnoredFiles())
                             .withIgnoredPatterns(customDictionary.getIgnoredPatterns())
@@ -788,7 +760,6 @@ public class FilterPolicyLoader {
 
             final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                     .withStrategies(policy.getIdentifiers().getCity().getCityFilterStrategies())
-                    .withContextService(contextService)
                     .withRandom(random)
                     .withIgnored(policy.getIdentifiers().getCity().getIgnored())
                     .withIgnoredFiles(policy.getIdentifiers().getCity().getIgnoredFiles())
@@ -822,7 +793,6 @@ public class FilterPolicyLoader {
 
             final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                     .withStrategies(policy.getIdentifiers().getCounty().getCountyFilterStrategies())
-                    .withContextService(contextService)
                     .withRandom(random)
                     .withIgnored(policy.getIdentifiers().getCounty().getIgnored())
                     .withIgnoredFiles(policy.getIdentifiers().getCounty().getIgnoredFiles())
@@ -856,7 +826,6 @@ public class FilterPolicyLoader {
 
             final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                     .withStrategies(policy.getIdentifiers().getState().getStateFilterStrategies())
-                    .withContextService(contextService)
                     .withRandom(random)
                     .withIgnored(policy.getIdentifiers().getState().getIgnored())
                     .withIgnoredFiles(policy.getIdentifiers().getState().getIgnoredFiles())
@@ -890,7 +859,6 @@ public class FilterPolicyLoader {
 
             final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                     .withStrategies(policy.getIdentifiers().getHospital().getHospitalFilterStrategies())
-                    .withContextService(contextService)
                     .withRandom(random)
                     .withIgnored(policy.getIdentifiers().getHospital().getIgnored())
                     .withIgnoredFiles(policy.getIdentifiers().getHospital().getIgnoredFiles())
@@ -923,7 +891,6 @@ public class FilterPolicyLoader {
 
             final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                     .withStrategies(policy.getIdentifiers().getFirstName().getFirstNameFilterStrategies())
-                    .withContextService(contextService)
                     .withRandom(random)
                     .withIgnored(policy.getIdentifiers().getFirstName().getIgnored())
                     .withIgnoredFiles(policy.getIdentifiers().getFirstName().getIgnoredFiles())
@@ -957,7 +924,6 @@ public class FilterPolicyLoader {
 
             final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                     .withStrategies(policy.getIdentifiers().getSurname().getSurnameFilterStrategies())
-                    .withContextService(contextService)
                     .withRandom(random)
                     .withIgnored(policy.getIdentifiers().getSurname().getIgnored())
                     .withIgnoredFiles(policy.getIdentifiers().getSurname().getIgnoredFiles())
@@ -999,8 +965,7 @@ public class FilterPolicyLoader {
 
                     final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                             .withStrategies(identifier.getIdentifierFilterStrategies())
-                            .withContextService(contextService)
-                            .withRandom(random)
+                                    .withRandom(random)
                             .withIgnored(identifier.getIgnored())
                             .withIgnoredFiles(identifier.getIgnoredFiles())
                             .withIgnoredPatterns(identifier.getIgnoredPatterns())
@@ -1041,8 +1006,7 @@ public class FilterPolicyLoader {
 
                     final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                             .withStrategies(phEye.getPhEyeFilterStrategies())
-                            .withContextService(contextService)
-                            .withRandom(random)
+                                    .withRandom(random)
                             .withIgnored(phEye.getIgnored())
                             .withIgnoredFiles(phEye.getIgnoredFiles())
                             .withIgnoredPatterns(phEye.getIgnoredPatterns())
@@ -1085,7 +1049,6 @@ public class FilterPolicyLoader {
 
             final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                     .withStrategies(phEye.getPhEyeFilterStrategies())
-                    .withContextService(contextService)
                     .withRandom(random)
                     .withIgnored(phEye.getIgnored())
                     .withIgnoredFiles(phEye.getIgnoredFiles())

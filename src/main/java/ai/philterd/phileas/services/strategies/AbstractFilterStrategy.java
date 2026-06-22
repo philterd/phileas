@@ -24,6 +24,7 @@ import ai.philterd.phileas.policy.FPE;
 import ai.philterd.phileas.policy.Policy;
 import ai.philterd.phileas.services.anonymization.AnonymizationMethod;
 import ai.philterd.phileas.services.anonymization.AnonymizationService;
+import ai.philterd.phileas.services.context.ContextService;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import org.apache.commons.lang3.StringUtils;
@@ -155,7 +156,7 @@ public abstract class AbstractFilterStrategy {
      * @param filterPattern The filter pattern that identified the filter, or <code>null</code> if no pattern was used.
      * @return A replacement value for a token.
      */
-    public abstract Replacement getReplacement(String classification, String context, String token,
+    public abstract Replacement getReplacement(ContextService contextService, String classification, String context, String token,
                                                String[] window, Crypto crypto, FPE fpe,
                                                AnonymizationService anonymizationService, FilterPattern filterPattern) throws Exception;
 
@@ -309,7 +310,7 @@ public abstract class AbstractFilterStrategy {
      * @return An anonymized version of the token. Never <code>null</code>: a replacement is always
      *         produced so a detected token is never left unredacted.
      */
-    protected String getAnonymizedToken(final String replacementScope, final String token, AnonymizationService anonymizationService, final String filterType) {
+    protected String getAnonymizedToken(final ContextService contextService, final String replacementScope, final String token, AnonymizationService anonymizationService, final String filterType) {
 
         if (this.anonymizationService != null) {
             anonymizationService = this.anonymizationService;
@@ -331,7 +332,7 @@ public abstract class AbstractFilterStrategy {
             // A replacement is always generated (rather than skipping when the token happens to
             // equal an existing replacement value, which previously produced a null replacement
             // and left the token unredacted), so the detected token is always redacted.
-            replacement = service.getContextService().computeReplacementIfAbsent(
+            replacement = contextService.computeReplacementIfAbsent(
                     token, filterType, () -> service.anonymize(token));
 
         } else {

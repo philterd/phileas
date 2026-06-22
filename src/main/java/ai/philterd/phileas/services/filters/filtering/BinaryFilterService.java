@@ -21,6 +21,7 @@ import ai.philterd.phileas.model.filtering.MimeType;
 import ai.philterd.phileas.model.filtering.Span;
 import ai.philterd.phileas.policy.Policy;
 import ai.philterd.phileas.services.context.ContextService;
+import ai.philterd.phileas.services.disambiguation.vector.VectorService;
 import org.apache.hc.client5.http.classic.HttpClient;
 
 import java.util.List;
@@ -32,7 +33,8 @@ import java.util.Random;
 public abstract class BinaryFilterService extends FilterService {
 
     /**
-     * Filter text from a binary document.
+     * Filter text from a binary document using the context and vector services bound to this instance
+     * at construction. Prefer the per-call overload on a shared, warm instance.
      * @param policy The {@link Policy} to apply.
      * @param context The redaction context.
      * @param input The input document as a byte array.
@@ -41,6 +43,22 @@ public abstract class BinaryFilterService extends FilterService {
      * @throws Exception Thrown if the text cannot be filtered.
      */
     public abstract BinaryDocumentFilterResult filter(final Policy policy, final String context, final byte[] input, final MimeType outputMimeType) throws Exception;
+
+    /**
+     * Filter text from a binary document with a per-call {@link ContextService} and {@link
+     * VectorService}, so one warm instance can serve requests that each bring their own services.
+     * @param policy The {@link Policy} to apply.
+     * @param contextService The {@link ContextService} for this request.
+     * @param vectorService The {@link VectorService} for this request.
+     * @param context The redaction context.
+     * @param input The input document as a byte array.
+     * @param outputMimeType The output {@link MimeType}.
+     * @return A {@link BinaryDocumentFilterResult}.
+     * @throws Exception Thrown if the text cannot be filtered.
+     */
+    public abstract BinaryDocumentFilterResult filter(final Policy policy, final ContextService contextService,
+                                                      final VectorService vectorService, final String context,
+                                                      final byte[] input, final MimeType outputMimeType) throws Exception;
 
     /**
      * Redact a list of spans in a binary document.
@@ -54,9 +72,9 @@ public abstract class BinaryFilterService extends FilterService {
     public abstract byte[] apply(final Policy policy, final byte[] input, final List<Span> spans, final MimeType outputMimeType) throws Exception;
 
     protected BinaryFilterService(final PhileasConfiguration phileasConfiguration,
-                                  final ContextService contextService, final Random random, final HttpClient httpClient) {
+                                  final Random random, final HttpClient httpClient) {
 
-        super(phileasConfiguration, contextService, random, httpClient);
+        super(phileasConfiguration, random, httpClient);
 
     }
 

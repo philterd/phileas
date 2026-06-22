@@ -30,7 +30,7 @@ public class MacAddressAnonymizationServiceTest {
     @Test
     public void constructor() {
 
-        AnonymizationService anonymizationService = new MacAddressAnonymizationService(new DefaultContextService(), new SecureRandom(), AnonymizationMethod.REALISTIC);
+        AnonymizationService anonymizationService = new MacAddressAnonymizationService(new SecureRandom(), AnonymizationMethod.REALISTIC);
 
         final String token = "00-14-22-04-25-37";
         final String replacement = anonymizationService.anonymize(token);
@@ -43,7 +43,7 @@ public class MacAddressAnonymizationServiceTest {
     @Test
     public void anonymize1() {
 
-        final AnonymizationService anonymizationService = new MacAddressAnonymizationService(new DefaultContextService());
+        final AnonymizationService anonymizationService = new MacAddressAnonymizationService();
 
         final String token = "00-14-22-04-25-37";
         final String replacement = anonymizationService.anonymize(token);
@@ -56,7 +56,7 @@ public class MacAddressAnonymizationServiceTest {
     @Test
     public void anonymizeUUID() {
 
-        AnonymizationService anonymizationService = new MacAddressAnonymizationService(new DefaultContextService(), new SecureRandom(), AnonymizationMethod.UUID);
+        AnonymizationService anonymizationService = new MacAddressAnonymizationService(new SecureRandom(), AnonymizationMethod.UUID);
 
         final String token = "00-14-22-04-25-37";
         final String replacement = anonymizationService.anonymize(token);

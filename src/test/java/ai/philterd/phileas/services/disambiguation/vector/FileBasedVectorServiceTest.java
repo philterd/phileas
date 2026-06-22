@@ -40,7 +40,7 @@ public class FileBasedVectorServiceTest {
         properties.setProperty("span.disambiguation.enabled", "true");
         properties.setProperty("span.disambiguation.ignore.stopwords", "false");
         properties.setProperty("span.disambiguation.vector.size", "64");
-        return new VectorBasedSpanDisambiguationService(new PhileasConfiguration(properties), vectorService);
+        return new VectorBasedSpanDisambiguationService(new PhileasConfiguration(properties));
     }
 
     @Test
@@ -63,7 +63,7 @@ public class FileBasedVectorServiceTest {
         // Train PHONE_NUMBER on a phone-like context, then persist.
         final FileBasedVectorService original = new FileBasedVectorService(path, VECTOR_SIZE, ALGORITHM);
         final VectorBasedSpanDisambiguationService trainer = service(original);
-        trainer.hashAndInsert(context, Span.make(0, 4, FilterType.PHONE_NUMBER, context, 0.0, "555-1212", "x", "",
+        trainer.hashAndInsert(original, context, Span.make(0, 4, FilterType.PHONE_NUMBER, context, 0.0, "555-1212", "x", "",
                 false, true, new String[]{"phone", "number", "call"}, 0));
 
         final Map<Double, Double> beforeSave = new HashMap<>(original.getVectorRepresentation(context, FilterType.PHONE_NUMBER));
@@ -83,7 +83,7 @@ public class FileBasedVectorServiceTest {
         final Span ambiguous = Span.make(0, 4, FilterType.SSN, context, 0.0, "123-4567", "x", "",
                 false, true, new String[]{"phone", "number", "call"}, 0);
 
-        Assertions.assertEquals(FilterType.PHONE_NUMBER, afterRestart.disambiguate(context, candidates, ambiguous),
+        Assertions.assertEquals(FilterType.PHONE_NUMBER, afterRestart.disambiguate(reloaded, context, candidates, ambiguous),
                 "learning should survive a restart and still resolve the ambiguous value");
     }
 
@@ -121,7 +121,7 @@ public class FileBasedVectorServiceTest {
         final String context = "c";
 
         try (final FileBasedVectorService vectorService = new FileBasedVectorService(path, VECTOR_SIZE, ALGORITHM)) {
-            service(vectorService).hashAndInsert(context, Span.make(0, 4, FilterType.SSN, context, 0.0, "x", "x", "",
+            service(vectorService).hashAndInsert(vectorService, context, Span.make(0, 4, FilterType.SSN, context, 0.0, "x", "x", "",
                     false, true, new String[]{"social", "security"}, 0));
         }
 

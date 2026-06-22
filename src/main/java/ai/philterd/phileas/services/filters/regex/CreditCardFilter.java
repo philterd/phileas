@@ -24,6 +24,7 @@ import ai.philterd.phileas.model.filtering.Filtered;
 import ai.philterd.phileas.model.filtering.Span;
 import ai.philterd.phileas.policy.Policy;
 import ai.philterd.phileas.services.Analyzer;
+import ai.philterd.phileas.services.context.ContextService;
 import org.apache.commons.validator.routines.checkdigit.LuhnCheckDigit;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -108,9 +109,9 @@ public class CreditCardFilter extends RegexFilter {
     }
 
     @Override
-    public Filtered filter(Policy policy, String context, int piece, String input) throws Exception {
+    public Filtered filter(ContextService contextService, Policy policy, String context, int piece, String input) throws Exception {
 
-        final List<Span> spans = findSpans(policy, analyzer, input, context);
+        final List<Span> spans = findSpans(contextService, policy, analyzer, input, context);
 
         LOGGER.debug("Found {} spans", spans.size());
         for (final Iterator<Span> iterator = spans.iterator(); iterator.hasNext(); ) {

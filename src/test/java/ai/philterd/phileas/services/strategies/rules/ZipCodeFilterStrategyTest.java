@@ -21,6 +21,7 @@ import ai.philterd.phileas.policy.FPE;
 import ai.philterd.phileas.services.anonymization.AbstractAnonymizationService;
 import ai.philterd.phileas.services.anonymization.AnonymizationService;
 import ai.philterd.phileas.services.anonymization.ZipCodeAnonymizationService;
+import ai.philterd.phileas.services.context.ContextService;
 import ai.philterd.phileas.services.context.DefaultContextService;
 import ai.philterd.phileas.services.strategies.AbstractFilterStrategy;
 import ai.philterd.phileas.services.strategies.AbstractFilterStrategyTest;
@@ -37,7 +38,7 @@ public class ZipCodeFilterStrategyTest extends AbstractFilterStrategyTest {
     }
 
     public AbstractAnonymizationService getAnonymizationService() {
-        return new ZipCodeAnonymizationService(new DefaultContextService());
+        return new ZipCodeAnonymizationService();
     }
 
     @Test
@@ -136,8 +137,9 @@ public class ZipCodeFilterStrategyTest extends AbstractFilterStrategyTest {
         strategy.setStaticReplacement("whoa");
 
         final AnonymizationService anonymizationService = getAnonymizationService();
+        final ContextService contextService = new DefaultContextService();
 
-        final Replacement replacement = strategy.getReplacement("name", "context",  "90210", WINDOW, new Crypto(), new FPE(), anonymizationService, null);
+        final Replacement replacement = strategy.getReplacement(contextService, "name", "context",  "90210", WINDOW, new Crypto(), new FPE(), anonymizationService, null);
 
         Assertions.assertEquals("whoa", replacement.getReplacement());
 
@@ -151,8 +153,9 @@ public class ZipCodeFilterStrategyTest extends AbstractFilterStrategyTest {
         strategy.setTruncateDigits(2);
 
         AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
+        final ContextService contextService = new DefaultContextService();
 
-        final Replacement replacement = strategy.getReplacement("name", "context",  "90210", WINDOW, new Crypto(), new FPE(), anonymizationService, null);
+        final Replacement replacement = strategy.getReplacement(contextService, "name", "context",  "90210", WINDOW, new Crypto(), new FPE(), anonymizationService, null);
 
         LOGGER.info(replacement);
 
@@ -168,8 +171,9 @@ public class ZipCodeFilterStrategyTest extends AbstractFilterStrategyTest {
         strategy.setTruncateDigits(3);
 
         AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
+        final ContextService contextService = new DefaultContextService();
 
-        final Replacement replacement = strategy.getReplacement("name", "context",  "90210-0110", WINDOW, new Crypto(), new FPE(), anonymizationService, null);
+        final Replacement replacement = strategy.getReplacement(contextService, "name", "context",  "90210-0110", WINDOW, new Crypto(), new FPE(), anonymizationService, null);
 
         LOGGER.info(replacement);
 
@@ -185,8 +189,9 @@ public class ZipCodeFilterStrategyTest extends AbstractFilterStrategyTest {
         strategy.setTruncateDigits(1);
 
         AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
+        final ContextService contextService = new DefaultContextService();
 
-        final Replacement replacement = strategy.getReplacement("name", "context",  "90210-0110", WINDOW, new Crypto(), new FPE(), anonymizationService, null);
+        final Replacement replacement = strategy.getReplacement(contextService, "name", "context",  "90210-0110", WINDOW, new Crypto(), new FPE(), anonymizationService, null);
 
         LOGGER.info(replacement);
 
@@ -203,8 +208,9 @@ public class ZipCodeFilterStrategyTest extends AbstractFilterStrategyTest {
         strategy.setTruncateDirection(AbstractFilterStrategy.TRAILING);
 
         AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
+        final ContextService contextService = new DefaultContextService();
 
-        final Replacement replacement = strategy.getReplacement("name", "context",  "90210-0110", WINDOW, new Crypto(), new FPE(), anonymizationService, null);
+        final Replacement replacement = strategy.getReplacement(contextService, "name", "context",  "90210-0110", WINDOW, new Crypto(), new FPE(), anonymizationService, null);
 
         LOGGER.info(replacement);
 
@@ -221,8 +227,9 @@ public class ZipCodeFilterStrategyTest extends AbstractFilterStrategyTest {
         strategy.setTruncateDirection(AbstractFilterStrategy.TRAILING);
 
         AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
+        final ContextService contextService = new DefaultContextService();
 
-        final Replacement replacement = strategy.getReplacement("name", "context",  "90210-0110", WINDOW, new Crypto(), new FPE(), anonymizationService, null);
+        final Replacement replacement = strategy.getReplacement(contextService, "name", "context",  "90210-0110", WINDOW, new Crypto(), new FPE(), anonymizationService, null);
 
         LOGGER.info(replacement);
 
@@ -237,8 +244,9 @@ public class ZipCodeFilterStrategyTest extends AbstractFilterStrategyTest {
         strategy.setStrategy(ZipCodeFilterStrategy.ZERO_LEADING);
 
         AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
+        final ContextService contextService = new DefaultContextService();
 
-        final Replacement replacement = strategy.getReplacement("name", "context",  "90210-0110", WINDOW, new Crypto(), new FPE(), anonymizationService, null);
+        final Replacement replacement = strategy.getReplacement(contextService, "name", "context",  "90210-0110", WINDOW, new Crypto(), new FPE(), anonymizationService, null);
 
         LOGGER.info(replacement);
 

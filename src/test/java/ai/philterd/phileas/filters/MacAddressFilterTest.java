@@ -33,14 +33,13 @@ public class MacAddressFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new MacAddressFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final MacAddressFilter filter = new MacAddressFilter(filterConfiguration);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "the mac is 00-14-22-04-25-37.");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "the mac is 00-14-22-04-25-37.");
 
         Assertions.assertEquals(1, filtered.getSpans().size());
         Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 11, 28, FilterType.MAC_ADDRESS));
@@ -53,14 +52,13 @@ public class MacAddressFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new MacAddressFilterStrategy()))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final MacAddressFilter filter = new MacAddressFilter(filterConfiguration);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "the mac is 00:14:22:04:25:37.");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "the mac is 00:14:22:04:25:37.");
 
         Assertions.assertEquals(1, filtered.getSpans().size());
         Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 11, 28, FilterType.MAC_ADDRESS));
@@ -78,14 +76,13 @@ public class MacAddressFilterTest extends AbstractFilterTest {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(macAddressFilterStrategy))
-                .withContextService(contextService)
                 .withRandom(random)
                 .withWindowSize(windowSize)
                 .build();
 
         final MacAddressFilter filter = new MacAddressFilter(filterConfiguration);
 
-        final Filtered filtered = filter.filter(getPolicy(), "context", PIECE, "the mac is 00-14-22-04-25-37.");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "the mac is 00-14-22-04-25-37.");
         showSpans(filtered.getSpans());
         Assertions.assertEquals(1, filtered.getSpans().size());
         Assertions.assertTrue(candidates.contains(filtered.getSpans().get(0).getReplacement()));

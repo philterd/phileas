@@ -30,7 +30,7 @@ public class LocationsAnonymizationServiceTest {
     @Test
     public void constructor() {
 
-        AnonymizationService anonymizationService = new LocationsAnonymizationService(new DefaultContextService(), new SecureRandom(), AnonymizationMethod.REALISTIC);
+        AnonymizationService anonymizationService = new LocationsAnonymizationService(new SecureRandom(), AnonymizationMethod.REALISTIC);
 
         final String token = "Morgantown";
         final String replacement = anonymizationService.anonymize(token);
@@ -43,7 +43,7 @@ public class LocationsAnonymizationServiceTest {
     @Test
     public void anonymizeLocation1() {
 
-        LocationsAnonymizationService anonymizationService = new LocationsAnonymizationService(new DefaultContextService());
+        LocationsAnonymizationService anonymizationService = new LocationsAnonymizationService();
 
         final String token = "Morgantown";
         final String replacement = anonymizationService.anonymize(token);
@@ -56,7 +56,7 @@ public class LocationsAnonymizationServiceTest {
     @Test
     public void anonymizeUUID() {
 
-        AnonymizationService anonymizationService = new LocationsAnonymizationService(new DefaultContextService(), new SecureRandom(), AnonymizationMethod.UUID);
+        AnonymizationService anonymizationService = new LocationsAnonymizationService(new SecureRandom(), AnonymizationMethod.UUID);
 
         final String token = "Morgantown";
         final String replacement = anonymizationService.anonymize(token);

@@ -30,7 +30,7 @@ public class UrlAnonymizationServiceTest {
     @Test
     public void constructor() {
 
-        AnonymizationService anonymizationService = new UrlAnonymizationService(new DefaultContextService(), new SecureRandom(), AnonymizationMethod.REALISTIC);
+        AnonymizationService anonymizationService = new UrlAnonymizationService(new SecureRandom(), AnonymizationMethod.REALISTIC);
 
         final String token = "http://www.cnn.com";
         final String replacement = anonymizationService.anonymize(token);
@@ -43,7 +43,7 @@ public class UrlAnonymizationServiceTest {
     @Test
     public void anonymize() {
 
-        AnonymizationService anonymizationService = new UrlAnonymizationService(new DefaultContextService());
+        AnonymizationService anonymizationService = new UrlAnonymizationService();
 
         final String token = "http://www.cnn.com";
         final String replacement = anonymizationService.anonymize(token);
@@ -56,7 +56,7 @@ public class UrlAnonymizationServiceTest {
     @Test
     public void anonymizeUUID() {
 
-        AnonymizationService anonymizationService = new UrlAnonymizationService(new DefaultContextService(), new SecureRandom(), AnonymizationMethod.UUID);
+        AnonymizationService anonymizationService = new UrlAnonymizationService(new SecureRandom(), AnonymizationMethod.UUID);
 
         final String token = "http://www.cnn.com";
         final String replacement = anonymizationService.anonymize(token);
