@@ -4,6 +4,11 @@ Notable changes to Phileas, most recent first.
 
 Full changelogs for each release are available in the [GitHub releases](https://github.com/philterd/phileas/releases). Issues whose identifiers start with `PHL-` were previously tracked in Jira before the project's issues were managed in GitHub.
 
+## Version 4.2.0 - June 22, 2026
+
+* Lowered the Java baseline from 25 to 17. Phileas now compiles to Java 17 bytecode, so it can be embedded in Java 17 and Java 21 runtimes (for example OpenSearch and Elasticsearch plugins, and Spark or Databricks jobs) that could not load the previous Java 25 build. There are no API changes, and consumers already on Java 21 or newer are unaffected.
+* Using PhiSQL 1.2.0.
+
 ## Version 4.1.0 - June 21, 2026
 
 * The custom `identifier` filter now supports an optional `validator`. The validator runs a named, built-in check on each regex match and keeps the match only if the check passes, so a generic identifier can reject format-valid but checksum-invalid values without a dedicated filter and without embedding any executable code in the policy. The first validator is `luhn` (standard mod-10 Luhn over the digits of the match, ignoring separators), which validates identifiers such as the Canadian SIN. The validator may be written as a string (`"validator": "luhn"`) or as an object with a `name` and optional `params`. An unknown or not-yet-implemented validator name is a policy error rather than being silently ignored. This requires redaction policy schema 1.1.0. See the documentation for details.
