@@ -19,6 +19,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Supplier;
 
+/** In-memory {@link ContextService} backed by maps. */
 public class DefaultContextService implements ContextService {
 
     // A single context service instance is shared across all filters and across documents

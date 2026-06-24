@@ -4,7 +4,7 @@ Notable changes to Phileas, most recent first.
 
 Full changelogs for each release are available in the [GitHub releases](https://github.com/philterd/phileas/releases). Issues whose identifiers start with `PHL-` were previously tracked in Jira before the project's issues were managed in GitHub.
 
-## Version 4.2.0 - June 22, 2026
+## Version 4.2.0 - June 24, 2026
 
 * Lowered the Java baseline from 25 to 17. Phileas now compiles to Java 17 bytecode, so it can be embedded in Java 17 and Java 21 runtimes (for example OpenSearch and Elasticsearch plugins, and Spark or Databricks jobs) that could not load the previous Java 25 build. There are no API changes, and consumers already on Java 21 or newer are unaffected.
 * Added a warm, reusable filtering path so one filter-service instance can serve requests that each bring their own context and vector service (issue #413). `PlainTextFilterService` and `PdfFilterService` now offer service-less constructors plus `filter(...)` overloads (and a `PreparedPolicy.filter(...)` overload) that take a per-call `ContextService` and `VectorService`. A single shared instance keeps its filter and post-filter caches populated across requests instead of rebuilding them per request, while context and vector state stay per request. The existing constructors and `filter(policy, context, input)` methods are unchanged, so current callers need no changes. The instance is safe to share across threads.

@@ -55,14 +55,14 @@ public class WarmReuseTest {
 
         final Policy policy = getPolicy();
 
-        // The per-request style: a fresh service with the context and vector services baked in.
+        // Per-request style: services baked in.
         final ContextService perRequestContext = new DefaultContextService();
         final VectorService perRequestVectors = new InMemoryVectorService();
         final TextFilterResult perRequest = new PlainTextFilterService(
                 configuration(), perRequestContext, perRequestVectors, null)
                 .filter(policy, "context", INPUT);
 
-        // The warm style: one instance, services supplied per call.
+        // Warm style: one instance, services supplied per call.
         final PlainTextFilterService warm = new PlainTextFilterService(configuration(), null);
         final TextFilterResult perCall = warm.filter(policy,
                 new DefaultContextService(), new InMemoryVectorService(), "context", INPUT);
@@ -76,9 +76,7 @@ public class WarmReuseTest {
 
         final Policy policy = getPolicy();
 
-        // A single warm instance, reused. Its filter and post-filter caches are populated on the first
-        // call and reused on the second even though the second call brings a different context and
-        // vector service.
+        // One warm instance reused across two calls that bring different context and vector services.
         final PlainTextFilterService warm = new PlainTextFilterService(configuration(), null);
 
         final TextFilterResult first = warm.filter(policy,
@@ -88,6 +86,22 @@ public class WarmReuseTest {
 
         Assertions.assertEquals(EXPECTED, first.getFilteredText());
         Assertions.assertEquals(EXPECTED, second.getFilteredText());
+    }
+
+    @Test
+    public void noServiceOverloadOnAWarmInstanceFailsWithAClearMessage() throws Exception {
+
+        // A warm instance has no bound services, so the no-service overloads must fail fast.
+        final PlainTextFilterService warm = new PlainTextFilterService(configuration(), null);
+
+        final IllegalStateException direct = Assertions.assertThrows(IllegalStateException.class,
+                () -> warm.filter(getPolicy(), "context", INPUT));
+        Assertions.assertTrue(direct.getMessage().contains("per-call context and vector services"),
+                "the message should explain the per-call requirement");
+
+        final PlainTextFilterService.PreparedPolicy prepared = warm.prepare(getPolicy());
+        Assertions.assertThrows(IllegalStateException.class,
+                () -> prepared.filter("context", INPUT));
     }
 
     @Test

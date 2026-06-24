@@ -15,6 +15,7 @@
  */
 package ai.philterd.phileas.services.tokens;
 
+/** Counts the tokens in a text. */
 public interface TokenCounter {
 
     long countTokens(String text);

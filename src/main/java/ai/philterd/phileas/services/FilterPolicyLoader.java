@@ -72,6 +72,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CompletionException;
 
+/** Builds the list of filters for a policy from its configuration. */
 public class FilterPolicyLoader {
 
     private static final Logger LOGGER = LogManager.getLogger(FilterPolicyLoader.class);

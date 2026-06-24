@@ -17,6 +17,7 @@ package ai.philterd.phileas.services.split;
 
 import java.util.List;
 
+/** Splits input text into pieces for filtering and supplies the separator to rejoin them. */
 public interface SplitService {
 
     List<String> split(String input);

@@ -24,6 +24,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashSet;
 import java.util.Set;
 
+/** Base for span-disambiguation services, providing token hashing and shared configuration. */
 public abstract class AbstractSpanDisambiguationService {
 
     private static final Logger LOGGER = LogManager.getLogger(AbstractSpanDisambiguationService.class);

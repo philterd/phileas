@@ -15,6 +15,7 @@
  */
 package ai.philterd.phileas.services.tokens;
 
+/** Counts tokens delimited by whitespace. */
 public class WhitespaceTokenCounter implements TokenCounter {
 
     @Override

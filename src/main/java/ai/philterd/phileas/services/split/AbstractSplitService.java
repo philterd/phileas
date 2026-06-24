@@ -19,6 +19,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/** Base class for split services. */
 public abstract class AbstractSplitService {
 
     protected List<String> clean(List<String> lines) {

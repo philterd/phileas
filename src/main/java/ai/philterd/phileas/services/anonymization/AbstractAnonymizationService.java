@@ -21,6 +21,7 @@ import java.security.SecureRandom;
 import java.util.Collections;
 import java.util.List;
 
+/** Base for anonymization services, providing the shared random and candidate-list handling. */
 public abstract class AbstractAnonymizationService implements AnonymizationService {
 
     protected SecureRandom random;

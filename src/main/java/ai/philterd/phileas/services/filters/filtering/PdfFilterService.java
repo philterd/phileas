@@ -57,8 +57,7 @@ public class PdfFilterService extends BinaryFilterService {
     private final DocumentProcessor unstructuredDocumentProcessor;
     private final TokenCounter tokenCounter;
 
-    // The context and vector services bound at construction, used by the no-service filter overload.
-    // Null when the instance was created with a service-less constructor for warm, per-call reuse.
+    // Bound at construction for the no-service overload; null for a warm, per-call instance.
     private final ContextService defaultContextService;
     private final VectorService defaultVectorService;
 
@@ -84,11 +83,8 @@ public class PdfFilterService extends BinaryFilterService {
         this.defaultContextService = contextService;
         this.defaultVectorService = vectorService;
 
-        // Set the token counter.
         this.tokenCounter = new WhitespaceTokenCounter();
 
-        // Create a new unstructured document processor. The vector service is supplied per call, so
-        // the disambiguation service is built once here without one.
         this.unstructuredDocumentProcessor = new UnstructuredDocumentProcessor(
                 SpanDisambiguationServiceFactory.getSpanDisambiguationService(phileasConfiguration),
                 phileasConfiguration.incrementalRedactionsEnabled()
@@ -96,11 +92,7 @@ public class PdfFilterService extends BinaryFilterService {
 
     }
 
-    /**
-     * Creates a warm, reusable service whose context and vector services are supplied per call.
-     * @param phileasConfiguration The {@link PhileasConfiguration}.
-     * @param httpClient The {@link HttpClient}.
-     */
+    /** Creates a warm, reusable service whose context and vector services are supplied per call. */
     public PdfFilterService(final PhileasConfiguration phileasConfiguration,
                             final HttpClient httpClient) {
 
@@ -108,14 +100,7 @@ public class PdfFilterService extends BinaryFilterService {
 
     }
 
-    /**
-     * Creates a warm, reusable service whose context and vector services are supplied per call, using
-     * the given {@link SecureRandom} for anonymization. The instance is shared across requests, so the
-     * {@link SecureRandom} must be thread-safe (the default {@link SecureRandom} is).
-     * @param phileasConfiguration The {@link PhileasConfiguration}.
-     * @param random The {@link SecureRandom} used for anonymization.
-     * @param httpClient The {@link HttpClient}.
-     */
+    /** Warm, reusable service using the given thread-safe {@link SecureRandom} for anonymization. */
     public PdfFilterService(final PhileasConfiguration phileasConfiguration,
                             final SecureRandom random,
                             final HttpClient httpClient) {
@@ -139,7 +124,18 @@ public class PdfFilterService extends BinaryFilterService {
     @Override
     public BinaryDocumentFilterResult filter(final Policy policy, final String context,
                                              final byte[] input, final MimeType outputMimeType) throws Exception {
+        requireBoundServices();
         return filter(policy, defaultContextService, defaultVectorService, context, input, outputMimeType);
+    }
+
+    // Fails fast when a warm instance is used through an overload that needs construction-bound services.
+    private void requireBoundServices() {
+        if (defaultContextService == null || defaultVectorService == null) {
+            throw new IllegalStateException(
+                    "This PdfFilterService was created for per-call context and vector services. "
+                            + "Call filter(policy, contextService, vectorService, context, input, outputMimeType) instead, "
+                            + "or construct it with a ContextService and VectorService.");
+        }
     }
 
     @Override

@@ -46,8 +46,7 @@ public class PlainTextFilterService extends TextFilterService {
 
     private final DocumentProcessor unstructuredDocumentProcessor;
 
-    // The context and vector services bound at construction, used by the no-service filter overloads.
-    // Null when the instance was created with a service-less constructor for warm, per-call reuse.
+    // Bound at construction for the no-service overloads; null for a warm, per-call instance.
     private final ContextService defaultContextService;
     private final VectorService defaultVectorService;
 
@@ -73,8 +72,6 @@ public class PlainTextFilterService extends TextFilterService {
         this.defaultContextService = contextService;
         this.defaultVectorService = vectorService;
 
-        // Create a new unstructured document processor. The vector service is supplied per call, so
-        // the disambiguation service is built once here without one.
         this.unstructuredDocumentProcessor = new UnstructuredDocumentProcessor(
                 SpanDisambiguationServiceFactory.getSpanDisambiguationService(phileasConfiguration),
                 phileasConfiguration.incrementalRedactionsEnabled()
@@ -82,14 +79,7 @@ public class PlainTextFilterService extends TextFilterService {
 
     }
 
-    /**
-     * Creates a warm, reusable service whose context and vector services are supplied per call. Share
-     * one instance across requests so its filter and post-filter caches stay populated; pass each
-     * request's {@link ContextService} and {@link VectorService} to {@link #filter(Policy,
-     * ContextService, VectorService, String, String)}.
-     * @param phileasConfiguration The {@link PhileasConfiguration}.
-     * @param httpClient The {@link HttpClient}.
-     */
+    /** Creates a warm, reusable service whose context and vector services are supplied per call. */
     public PlainTextFilterService(final PhileasConfiguration phileasConfiguration,
                                   final HttpClient httpClient) {
 
@@ -97,14 +87,7 @@ public class PlainTextFilterService extends TextFilterService {
 
     }
 
-    /**
-     * Creates a warm, reusable service whose context and vector services are supplied per call, using
-     * the given {@link SecureRandom} for anonymization. The instance is shared across requests, so the
-     * {@link SecureRandom} must be thread-safe (the default {@link SecureRandom} is).
-     * @param phileasConfiguration The {@link PhileasConfiguration}.
-     * @param random The {@link SecureRandom} used for anonymization.
-     * @param httpClient The {@link HttpClient}.
-     */
+    /** Warm, reusable service using the given thread-safe {@link SecureRandom} for anonymization. */
     public PlainTextFilterService(final PhileasConfiguration phileasConfiguration,
                                   final SecureRandom random,
                                   final HttpClient httpClient) {
@@ -125,7 +108,19 @@ public class PlainTextFilterService extends TextFilterService {
 
     @Override
     public TextFilterResult filter(final Policy policy, final String context, final String input) throws Exception {
+        requireBoundServices();
         return filter(policy, defaultContextService, defaultVectorService, context, input);
+    }
+
+    // Fails fast when a warm instance is used through an overload that needs construction-bound services.
+    private void requireBoundServices() {
+        if (defaultContextService == null || defaultVectorService == null) {
+            throw new IllegalStateException(
+                    "This PlainTextFilterService was created for per-call context and vector services. "
+                            + "Call filter(policy, contextService, vectorService, context, input) "
+                            + "(or PreparedPolicy.filter(contextService, vectorService, context, input)) instead, "
+                            + "or construct it with a ContextService and VectorService.");
+        }
     }
 
     @Override
@@ -217,22 +212,21 @@ public class PlainTextFilterService extends TextFilterService {
         }
 
         /**
-         * Filters text using this prepared policy and the context and vector services bound to the
-         * enclosing service at construction. Equivalent to {@link PlainTextFilterService#filter(Policy,
-         * String, String)} but without re-resolving the policy.
+         * Filters text using this prepared policy and the services bound at construction, without
+         * re-resolving the policy.
          * @param context The redaction context.
          * @param input The input text.
          * @return A {@link TextFilterResult}.
          * @throws Exception Thrown if the text cannot be filtered.
          */
         public TextFilterResult filter(final String context, final String input) throws Exception {
+            requireBoundServices();
             return PlainTextFilterService.this.filter(policy, defaultContextService, defaultVectorService, filters, postFilters, context, input);
         }
 
         /**
          * Filters text using this prepared policy with a per-call {@link ContextService} and {@link
-         * VectorService}, so one warm prepared policy can serve requests that each bring their own
-         * services. Safe to call concurrently on a shared instance.
+         * VectorService}.
          * @param contextService The {@link ContextService} for this request.
          * @param vectorService The {@link VectorService} for this request.
          * @param context The redaction context.

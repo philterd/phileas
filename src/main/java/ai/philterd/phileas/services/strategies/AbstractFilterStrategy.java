@@ -34,6 +34,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
+/** Base for filter strategies: produces the replacement for a detected token. */
 public abstract class AbstractFilterStrategy {
 
     public static final String DEFAULT_REDACTION = "{{{REDACTED-%t}}}";

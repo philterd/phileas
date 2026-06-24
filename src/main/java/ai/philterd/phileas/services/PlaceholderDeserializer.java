@@ -24,6 +24,7 @@ import java.lang.reflect.Type;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/** Gson deserializer that substitutes placeholder values in policy strings while a policy is read. */
 public class PlaceholderDeserializer implements JsonDeserializer<String> {
 
     final Pattern pattern = Pattern.compile("\\$\\{([A-Z0-9_]+)\\}", Pattern.CASE_INSENSITIVE);

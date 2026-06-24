@@ -26,12 +26,11 @@ import org.apache.hc.client5.http.classic.HttpClient;
 import java.security.SecureRandom;
 import java.util.List;
 
+/** Base for filter services that redact text documents. */
 public abstract class TextFilterService extends FilterService {
 
     /**
-     * Filter text using the context and vector services bound to this instance at construction.
-     * Retained for callers that construct a service per request; prefer the per-call overload on a
-     * shared, warm instance.
+     * Filter text using the context and vector services bound at construction.
      * @param policy The {@link Policy} to apply.
      * @param context The redaction context.
      * @param input The input document.
@@ -41,9 +40,7 @@ public abstract class TextFilterService extends FilterService {
     public abstract TextFilterResult filter(final Policy policy, final String context, final String input) throws Exception;
 
     /**
-     * Filter text with a per-call {@link ContextService} and {@link VectorService}, so a single warm
-     * instance, with its populated filter and post-filter caches, can serve requests that each bring
-     * their own context and vector services. Safe to call concurrently on a shared instance.
+     * Filter text with a per-call {@link ContextService} and {@link VectorService}.
      * @param policy The {@link Policy} to apply.
      * @param contextService The {@link ContextService} for this request.
      * @param vectorService The {@link VectorService} for this request.

@@ -17,6 +17,7 @@ package ai.philterd.phileas.services.context;
 
 import java.util.function.Supplier;
 
+/** Stores per-context token-to-replacement mappings so a value is anonymized consistently within a context. */
 public interface ContextService {
 
     boolean containsToken(final String token);

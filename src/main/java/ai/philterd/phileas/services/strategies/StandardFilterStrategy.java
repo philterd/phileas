@@ -30,6 +30,7 @@ import org.apache.commons.lang3.Strings;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+/** Base for strategies that use the standard replacement handling (redact, replace, encrypt, anonymize). */
 public abstract class StandardFilterStrategy extends AbstractFilterStrategy {
 
     private static final Logger LOGGER = LogManager.getLogger(StandardFilterStrategy.class);

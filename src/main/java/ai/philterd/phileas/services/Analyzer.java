@@ -22,6 +22,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+/** Holds the regex filter patterns, and optional contextual terms, a regex filter matches against. */
 public class Analyzer {
 
     private Set<String> contextualTerms;

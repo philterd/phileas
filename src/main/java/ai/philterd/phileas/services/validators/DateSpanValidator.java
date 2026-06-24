@@ -26,6 +26,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.ResolverStyle;
 import java.util.Locale;
 
+/** Validates that a detected span is a real date for its matched pattern. */
 public class DateSpanValidator implements SpanValidator {
 
     private static final Logger LOGGER = LogManager.getLogger(DateSpanValidator.class);

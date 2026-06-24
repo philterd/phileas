@@ -19,6 +19,7 @@ import org.apache.commons.lang3.Strings;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+/** Creates the {@link SplitService} for a configured splitting method. */
 public class SplitFactory {
 
     private static final Logger LOGGER = LogManager.getLogger(SplitFactory.class);

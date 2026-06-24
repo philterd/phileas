@@ -33,8 +33,7 @@ import java.util.List;
 public abstract class BinaryFilterService extends FilterService {
 
     /**
-     * Filter text from a binary document using the context and vector services bound to this instance
-     * at construction. Prefer the per-call overload on a shared, warm instance.
+     * Filter text from a binary document using the context and vector services bound at construction.
      * @param policy The {@link Policy} to apply.
      * @param context The redaction context.
      * @param input The input document as a byte array.
@@ -45,8 +44,7 @@ public abstract class BinaryFilterService extends FilterService {
     public abstract BinaryDocumentFilterResult filter(final Policy policy, final String context, final byte[] input, final MimeType outputMimeType) throws Exception;
 
     /**
-     * Filter text from a binary document with a per-call {@link ContextService} and {@link
-     * VectorService}, so one warm instance can serve requests that each bring their own services.
+     * Filter text from a binary document with a per-call {@link ContextService} and {@link VectorService}.
      * @param policy The {@link Policy} to apply.
      * @param contextService The {@link ContextService} for this request.
      * @param vectorService The {@link VectorService} for this request.

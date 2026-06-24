@@ -20,6 +20,7 @@ import ai.philterd.phileas.model.filtering.Span;
 
 import java.util.Map;
 
+/** Stores and retrieves the per-context vectors used for span disambiguation. */
 public interface VectorService {
 
     // ---- For span disambiguation

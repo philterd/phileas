@@ -17,6 +17,7 @@ package ai.philterd.phileas.services.validators;
 
 import ai.philterd.phileas.model.filtering.Span;
 
+/** Validates a detected span, rejecting matches that fail the check. */
 public interface SpanValidator {
 
     boolean validate(Span span);
