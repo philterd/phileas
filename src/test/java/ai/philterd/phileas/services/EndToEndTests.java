@@ -39,8 +39,6 @@ import ai.philterd.phileas.services.strategies.rules.BitcoinAddressFilterStrateg
 import ai.philterd.phileas.services.strategies.rules.CreditCardFilterStrategy;
 import ai.philterd.phileas.services.strategies.rules.DriversLicenseFilterStrategy;
 import com.google.gson.GsonBuilder;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Assertions;
@@ -385,9 +383,9 @@ public class EndToEndTests {
 
         final Path temp = Files.createTempDirectory("philter");
 
-        final String terms = IOUtils.toString(this.getClass().getResourceAsStream("/customdictionaries/terms1.txt"), Charset.defaultCharset());
+        final String terms = new String(this.getClass().getResourceAsStream("/customdictionaries/terms1.txt").readAllBytes(), Charset.defaultCharset());
         final File termsFile = Paths.get(temp.toFile().getAbsolutePath(), "terms1.txt").toFile();
-        FileUtils.writeStringToFile(termsFile, terms, Charset.defaultCharset());
+        Files.writeString(termsFile.toPath(), terms, Charset.defaultCharset());
         LOGGER.info("Terms file written to {}", termsFile.getAbsolutePath());
 
         final CustomDictionary customDictionary = new CustomDictionary();
@@ -419,9 +417,9 @@ public class EndToEndTests {
 
         final Path temp = Files.createTempDirectory("philter");
 
-        final String terms = IOUtils.toString(this.getClass().getResourceAsStream("/customdictionaries/terms1.txt"), Charset.defaultCharset());
+        final String terms = new String(this.getClass().getResourceAsStream("/customdictionaries/terms1.txt").readAllBytes(), Charset.defaultCharset());
         final File termsFile = Paths.get(temp.toFile().getAbsolutePath(), "terms1.txt").toFile();
-        FileUtils.writeStringToFile(termsFile, terms, Charset.defaultCharset());
+        Files.writeString(termsFile.toPath(), terms, Charset.defaultCharset());
         LOGGER.info("Terms file written to {}", termsFile.getAbsolutePath());
 
         final CustomDictionary customDictionary = new CustomDictionary();

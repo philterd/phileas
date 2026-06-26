@@ -17,7 +17,6 @@ package ai.philterd.phileas.services.pdf;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.pdfbox.io.IOUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -33,7 +32,7 @@ public class PdfTextExtractorTest {
     public void test() throws IOException {
 
         final InputStream is = getClass().getClassLoader().getResourceAsStream("12-12110 K.pdf");
-        final byte[] document = IOUtils.toByteArray(is);
+        final byte[] document = is.readAllBytes();
         is.close();
 
         final PdfTextExtractor pdfTextExtractor = new PdfTextExtractor();

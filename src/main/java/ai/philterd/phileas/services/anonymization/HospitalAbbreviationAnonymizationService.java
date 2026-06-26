@@ -17,7 +17,7 @@ package ai.philterd.phileas.services.anonymization;
 
 import ai.philterd.phileas.data.DataGenerator;
 import ai.philterd.phileas.data.DefaultDataGenerator;
-import org.apache.commons.collections4.CollectionUtils;
+import ai.philterd.phileas.utils.CollectionUtils;
 import org.apache.commons.text.WordUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

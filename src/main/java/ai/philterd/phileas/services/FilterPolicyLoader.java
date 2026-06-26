@@ -56,8 +56,7 @@ import ai.philterd.phileas.services.filters.regex.ZipCodeFilter;
 import ai.philterd.phileas.services.validators.DateSpanValidator;
 import ai.philterd.phileas.services.validators.IdentifierValidators;
 import ai.philterd.phileas.services.validators.SpanValidator;
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.io.FileUtils;
+import ai.philterd.phileas.utils.CollectionUtils;
 import org.apache.hc.client5.http.classic.HttpClient;
 import java.security.SecureRandom;
 import org.apache.logging.log4j.LogManager;
@@ -65,6 +64,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 import java.nio.charset.Charset;
+import java.nio.file.Files;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -699,7 +699,7 @@ public class FilterPolicyLoader {
                     // Next, read terms from files, if given.
                     if(CollectionUtils.isNotEmpty(customDictionary.getFiles())) {
                         for (final String file : customDictionary.getFiles()) {
-                            terms.addAll(FileUtils.readLines(new File(file), Charset.defaultCharset()));
+                            terms.addAll(Files.readAllLines(new File(file).toPath(), Charset.defaultCharset()));
                         }
                     }
 

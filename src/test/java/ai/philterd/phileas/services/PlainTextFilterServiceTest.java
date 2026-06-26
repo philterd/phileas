@@ -27,9 +27,8 @@ import ai.philterd.phileas.services.disambiguation.vector.VectorService;
 import ai.philterd.phileas.services.filters.filtering.PdfFilterService;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
+import ai.philterd.phileas.utils.CollectionUtils;
+import java.nio.file.Files;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Assertions;
@@ -88,7 +87,7 @@ public class PlainTextFilterServiceTest {
         final String filename = "12-12110 K.pdf";
 
         final InputStream is = this.getClass().getResourceAsStream("/pdfs/" + filename);
-        final byte[] document = IOUtils.toByteArray(is);
+        final byte[] document = is.readAllBytes();
         is.close();
 
         Assertions.assertTrue(documentContainsText(document, "Wendy"));
@@ -107,7 +106,7 @@ public class PlainTextFilterServiceTest {
         //outputFile.deleteOnExit();
         final String output = outputFile.getAbsolutePath();
         LOGGER.info("Writing redacted PDF to {}", output);
-        FileUtils.writeByteArrayToFile(new File(output), response.getDocument());
+        Files.write(new File(output).toPath(), response.getDocument());
 
         LOGGER.info("Spans: {}", response.getExplanation().appliedSpans().size());
         showSpans(response.getExplanation().appliedSpans());
@@ -122,7 +121,7 @@ public class PlainTextFilterServiceTest {
     public void pdf2() throws Exception {
 
         final InputStream is = this.getClass().getResourceAsStream("/pdfs/new-lines.pdf");
-        final byte[] document = IOUtils.toByteArray(is);
+        final byte[] document = is.readAllBytes();
         is.close();
 
         Assertions.assertTrue(documentContainsText(document, "90210"));
@@ -140,7 +139,7 @@ public class PlainTextFilterServiceTest {
         outputFile.deleteOnExit();
         final String output = outputFile.getAbsolutePath();
         LOGGER.info("Writing redacted PDF to {}", output);
-        FileUtils.writeByteArrayToFile(new File(output), response.getDocument());
+        Files.write(new File(output).toPath(), response.getDocument());
 
         LOGGER.info("Spans: {}", response.getExplanation().appliedSpans().size());
         showSpans(response.getExplanation().appliedSpans());

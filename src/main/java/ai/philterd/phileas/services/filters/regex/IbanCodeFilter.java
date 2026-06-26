@@ -24,7 +24,7 @@ import ai.philterd.phileas.model.filtering.Span;
 import ai.philterd.phileas.policy.Policy;
 import ai.philterd.phileas.services.Analyzer;
 import ai.philterd.phileas.services.context.ContextService;
-import org.apache.commons.validator.routines.IBANValidator;
+import ai.philterd.phileas.utils.IbanValidator;
 
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -74,13 +74,11 @@ public class IbanCodeFilter extends RegexFilter {
 
         if(validate) {
 
-            // Validate the IBANs.
-            // commons-validator has an IBANValidator class.
-            // https://commons.apache.org/proper/commons-validator/apidocs/src-html/org/apache/commons/validator/routines/IBANValidator.html
+            // Validate the IBANs against the in-tree IBAN registry (country structure + checksum).
 
             for (final Span span : spans) {
 
-                final boolean valid = IBANValidator.getInstance().isValid(span.getText().replaceAll("\\s", ""));
+                final boolean valid = IbanValidator.isValid(span.getText().replaceAll("\\s", ""));
 
                 if(valid) {
                     validSpans.add(span);

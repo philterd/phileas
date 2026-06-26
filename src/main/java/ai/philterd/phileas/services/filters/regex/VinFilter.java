@@ -24,7 +24,6 @@ import ai.philterd.phileas.model.filtering.Span;
 import ai.philterd.phileas.policy.Policy;
 import ai.philterd.phileas.services.Analyzer;
 import ai.philterd.phileas.services.context.ContextService;
-import org.apache.commons.collections.CollectionUtils;
 
 import java.util.HashSet;
 import java.util.List;
@@ -54,10 +53,7 @@ public class VinFilter extends RegexFilter {
 
         final List<Span> spans = findSpans(contextService, policy, analyzer, input, context);
 
-        CollectionUtils.filter(spans, object -> {
-            Span s = (Span) object;
-            return isVinValid(input.substring(s.getCharacterStart(), s.getCharacterEnd()));
-        });
+        spans.removeIf(s -> !isVinValid(input.substring(s.getCharacterStart(), s.getCharacterEnd())));
 
         return new Filtered(context, spans);
 

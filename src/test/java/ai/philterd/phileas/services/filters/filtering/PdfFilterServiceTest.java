@@ -17,7 +17,6 @@ import ai.philterd.phileas.services.strategies.AbstractFilterStrategy;
 import ai.philterd.phileas.services.strategies.rules.DateFilterStrategy;
 import ai.philterd.phileas.services.strategies.rules.EmailAddressFilterStrategy;
 import ai.philterd.phileas.services.strategies.rules.ZipCodeFilterStrategy;
-import org.apache.pdfbox.io.IOUtils;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -44,7 +43,7 @@ public class PdfFilterServiceTest {
         final Policy policy = getPolicy();
 
         final InputStream is = getClass().getClassLoader().getResourceAsStream("12-12110 K.pdf");
-        final byte[] file = IOUtils.toByteArray(is);
+        final byte[] file = is.readAllBytes();
         is.close();
 
         final BinaryDocumentFilterResult binaryDocumentFilterResult = pdfFilterService.filter(policy, "context", file, MimeType.APPLICATION_PDF);
@@ -72,7 +71,7 @@ public class PdfFilterServiceTest {
         final Policy policy = new Policy();
 
         final InputStream is = getClass().getClassLoader().getResourceAsStream("12-12110 K.pdf");
-        final byte[] file = IOUtils.toByteArray(is);
+        final byte[] file = is.readAllBytes();
         is.close();
 
         // characterStart: 21798;  characterEnd: 21807;  filterType: date;  context: context;  confidence: 75.0;  text: 1-20-0102;  replacement: {{{REDACTED-date}}};  salt: ;  ignored: false;  applied: true;  classification: null;  priority: 0;  line number: 416; x: 120.39199; y: 764.47; page number: 6

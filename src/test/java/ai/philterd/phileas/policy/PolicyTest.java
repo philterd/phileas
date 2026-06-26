@@ -60,7 +60,7 @@ import ai.philterd.phileas.services.strategies.rules.VinFilterStrategy;
 import ai.philterd.phileas.services.strategies.rules.ZipCodeFilterStrategy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import org.apache.commons.collections4.CollectionUtils;
+import ai.philterd.phileas.utils.CollectionUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

@@ -19,7 +19,7 @@ import ai.philterd.phileas.model.formats.lapps.Annotation;
 import ai.philterd.phileas.model.formats.lapps.Lapps;
 import ai.philterd.phileas.model.formats.lapps.View;
 import com.google.gson.Gson;
-import org.apache.commons.io.FileUtils;
+import java.nio.file.Files;
 import org.apache.commons.lang3.Strings;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -34,7 +34,7 @@ public class LappsTest {
     public void lapps1() throws IOException {
 
         final File file = new File("src/test/resources/lapps/lapps1.json");
-        final String input = FileUtils.readFileToString(file, Charset.defaultCharset());
+        final String input = Files.readString(file.toPath(), Charset.defaultCharset());
 
         final Gson gson = new Gson();
         final Lapps lapps = gson.fromJson(input, Lapps.class);

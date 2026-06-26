@@ -53,8 +53,7 @@ import ai.philterd.phileas.services.anonymization.UrlAnonymizationService;
 import ai.philterd.phileas.services.anonymization.ZipCodeAnonymizationService;
 import ai.philterd.phileas.services.context.ContextService;
 import ai.philterd.phileas.services.strategies.AbstractFilterStrategy;
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.io.FileUtils;
+import ai.philterd.phileas.utils.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -62,6 +61,7 @@ import org.apache.logging.log4j.Logger;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.nio.file.Files;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
@@ -174,7 +174,7 @@ public abstract class Filter {
                 final File file = new File(fileName);
                 if (file.exists()) {
                     try {
-                        final List<String> words = FileUtils.readLines(file, Charset.defaultCharset());
+                        final List<String> words = Files.readAllLines(file.toPath(), Charset.defaultCharset());
                         ignored.addAll(words);
                     } catch (IOException ex) {
                         LOGGER.error("Unable to process file of ignored terms: {}", fileName, ex);

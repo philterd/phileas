@@ -21,7 +21,7 @@ import ai.philterd.phileas.policy.IgnoredPattern;
 import ai.philterd.phileas.services.strategies.AbstractFilterStrategy;
 import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.binary.Hex;
-import org.apache.commons.collections4.CollectionUtils;
+import ai.philterd.phileas.utils.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
 

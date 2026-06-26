@@ -19,7 +19,7 @@ import ai.philterd.phileas.model.filtering.FilterType;
 import ai.philterd.phileas.model.filtering.Span;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
-import org.apache.commons.io.FileUtils;
+import java.nio.file.Files;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Assertions;
@@ -521,7 +521,7 @@ public class SpanTest {
     public void lapps1() throws IOException {
 
         final File file = new File("src/test/resources/lapps/lapps1.json");
-        final String input = FileUtils.readFileToString(file, Charset.defaultCharset());
+        final String input = Files.readString(file.toPath(), Charset.defaultCharset());
 
         final List<Span> spans = Span.fromLappsJson(input);
 

@@ -15,7 +15,7 @@
  */
 package ai.philterd.phileas.services.filters.ai.pheye;
 
-import org.apache.commons.collections4.CollectionUtils;
+import ai.philterd.phileas.utils.CollectionUtils;
 
 import java.util.Collection;
 import java.util.List;

@@ -24,7 +24,6 @@ import ai.philterd.phileas.policy.graphical.BoundingBox;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.pdfbox.Loader;
-import org.apache.pdfbox.io.IOUtils;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
@@ -171,7 +170,7 @@ public class PdfRedactorTest {
         try (ZipInputStream zip = new ZipInputStream(new ByteArrayInputStream(redacted))) {
             ZipEntry entry;
             while ((entry = zip.getNextEntry()) != null) {
-                final byte[] imageBytes = IOUtils.toByteArray(zip);
+                final byte[] imageBytes = zip.readAllBytes();
                 Assertions.assertTrue(imageBytes.length > 0, "image entry should not be empty: " + entry.getName());
                 final BufferedImage image = ImageIO.read(new ByteArrayInputStream(imageBytes));
                 Assertions.assertNotNull(image, "each zip entry should be a readable image: " + entry.getName());
@@ -250,7 +249,7 @@ public class PdfRedactorTest {
     private byte[] load(final String resource) throws IOException {
         try (InputStream is = getClass().getClassLoader().getResourceAsStream(resource)) {
             Assertions.assertNotNull(is, "missing test resource: " + resource);
-            return IOUtils.toByteArray(is);
+            return is.readAllBytes();
         }
     }
 

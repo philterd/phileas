@@ -26,7 +26,7 @@ import ai.philterd.phileas.services.filters.postfilters.PostFilter;
 import ai.philterd.phileas.services.filters.postfilters.TrailingNewLinePostFilter;
 import ai.philterd.phileas.services.filters.postfilters.TrailingPeriodPostFilter;
 import ai.philterd.phileas.services.filters.postfilters.TrailingSpacePostFilter;
-import org.apache.commons.collections4.CollectionUtils;
+import ai.philterd.phileas.utils.CollectionUtils;
 import org.apache.hc.client5.http.classic.HttpClient;
 
 import java.security.SecureRandom;

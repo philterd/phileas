@@ -19,13 +19,13 @@ import ai.philterd.phileas.model.filtering.PostFiltered;
 import ai.philterd.phileas.model.filtering.Span;
 import ai.philterd.phileas.policy.Ignored;
 import ai.philterd.phileas.utils.BloomFilter;
-import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.nio.file.Files;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -49,7 +49,7 @@ public class IgnoredTermsFilter extends PostFilter {
         final Set<String> ignoredTermsFromFiles = new HashSet<>();
 
         for(final String file : ignored.getFiles()) {
-            ignoredTermsFromFiles.addAll(FileUtils.readLines(new File(file), Charset.defaultCharset()));
+            ignoredTermsFromFiles.addAll(Files.readAllLines(new File(file).toPath(), Charset.defaultCharset()));
         }
 
         if(ignored.isCaseSensitive()) {

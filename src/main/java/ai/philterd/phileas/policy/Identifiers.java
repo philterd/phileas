@@ -51,7 +51,7 @@ import ai.philterd.phileas.policy.filters.Vin;
 import ai.philterd.phileas.policy.filters.ZipCode;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
-import org.apache.commons.collections4.CollectionUtils;
+import ai.philterd.phileas.utils.CollectionUtils;
 
 import java.util.List;
 

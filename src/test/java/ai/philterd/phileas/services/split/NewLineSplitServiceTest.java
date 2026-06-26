@@ -15,7 +15,7 @@
  */
 package ai.philterd.phileas.services.split;
 
-import org.apache.commons.io.FileUtils;
+import java.nio.file.Files;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Test;
@@ -36,7 +36,7 @@ public class NewLineSplitServiceTest {
     public void split0() throws IOException {
 
         final File file = new File("src/test/resources/simple-test.txt");
-        final String input = FileUtils.readFileToString(file, Charset.defaultCharset());
+        final String input = Files.readString(file.toPath(), Charset.defaultCharset());
 
         assertTrue(input != null);
         LOGGER.info("Input text length = " + input.length());
@@ -54,7 +54,7 @@ public class NewLineSplitServiceTest {
     public void split1() throws IOException {
 
         final File file = new File("src/test/resources/alice29.txt");
-        final String input = FileUtils.readFileToString(file, Charset.defaultCharset());
+        final String input = Files.readString(file.toPath(), Charset.defaultCharset());
 
         assertTrue(input != null);
         LOGGER.info("Input text length = " + input.length());
@@ -75,7 +75,7 @@ public class NewLineSplitServiceTest {
     public void split2() throws IOException {
 
         final File file = new File("src/test/resources/alice29-formatted.txt");
-        String input = FileUtils.readFileToString(file, Charset.defaultCharset());
+        String input = Files.readString(file.toPath(), Charset.defaultCharset());
 
         assertTrue(input != null);
         LOGGER.info("Input text length = " + input.length());

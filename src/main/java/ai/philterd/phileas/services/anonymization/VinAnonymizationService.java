@@ -16,7 +16,7 @@
 package ai.philterd.phileas.services.anonymization;
 
 import ai.philterd.phileas.data.generators.VINGenerator;
-import org.apache.commons.collections4.CollectionUtils;
+import ai.philterd.phileas.utils.CollectionUtils;
 
 import java.security.SecureRandom;
 import java.util.List;

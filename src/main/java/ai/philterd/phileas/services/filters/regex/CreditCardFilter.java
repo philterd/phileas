@@ -25,7 +25,7 @@ import ai.philterd.phileas.model.filtering.Span;
 import ai.philterd.phileas.policy.Policy;
 import ai.philterd.phileas.services.Analyzer;
 import ai.philterd.phileas.services.context.ContextService;
-import org.apache.commons.validator.routines.checkdigit.LuhnCheckDigit;
+import ai.philterd.phileas.utils.LuhnCheck;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -38,7 +38,6 @@ import java.util.regex.Pattern;
 public class CreditCardFilter extends RegexFilter {
 
     private final boolean onlyValidCreditCardNumbers;
-    private final LuhnCheckDigit luhnCheckDigit;
     private final boolean ignoreWhenInUnixTimestamp;
     protected static final Logger LOGGER = LogManager.getLogger(CreditCardFilter.class);
 
@@ -61,7 +60,6 @@ public class CreditCardFilter extends RegexFilter {
         super(FilterType.CREDIT_CARD, filterConfiguration);
 
         this.onlyValidCreditCardNumbers = onlyValidCreditCardNumbers;
-        this.luhnCheckDigit = new LuhnCheckDigit();
         this.ignoreWhenInUnixTimestamp = ignoreWhenInUnixTimestamp;
 
         // Modify the confidence based on the characters around the span.
@@ -129,7 +127,7 @@ public class CreditCardFilter extends RegexFilter {
                         .replaceAll(" ", "")
                         .replaceAll("-", "");
 
-                if (!detailedSearch.matcher(creditCardNumber).matches() || !luhnCheckDigit.isValid(creditCardNumber)) {
+                if (!detailedSearch.matcher(creditCardNumber).matches() || !LuhnCheck.isValid(creditCardNumber)) {
                     LOGGER.debug("Ignoring a number that doesn't quite fit the credit card number patterns or LUHN");
                     iterator.remove();
                 }

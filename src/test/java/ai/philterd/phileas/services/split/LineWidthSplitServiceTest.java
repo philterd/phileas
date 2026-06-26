@@ -15,7 +15,7 @@
  */
 package ai.philterd.phileas.services.split;
 
-import org.apache.commons.io.FileUtils;
+import java.nio.file.Files;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Assertions;
@@ -36,7 +36,7 @@ public class LineWidthSplitServiceTest {
         final int splitLength = 384;
 
         final File file = new File("src/test/resources/simple-test.txt");
-        final String input = FileUtils.readFileToString(file, Charset.defaultCharset());
+        final String input = Files.readString(file.toPath(), Charset.defaultCharset());
 
         Assertions.assertNotNull(input);
         LOGGER.info("Input text length = {}", input.length());

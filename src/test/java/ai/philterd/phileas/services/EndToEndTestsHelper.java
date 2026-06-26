@@ -61,7 +61,7 @@ import ai.philterd.phileas.services.strategies.rules.StreetAddressFilterStrategy
 import ai.philterd.phileas.services.strategies.rules.UrlFilterStrategy;
 import ai.philterd.phileas.services.strategies.rules.VinFilterStrategy;
 import ai.philterd.phileas.services.strategies.rules.ZipCodeFilterStrategy;
-import org.apache.commons.io.FileUtils;
+import java.nio.file.Files;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.pdfbox.Loader;
@@ -70,6 +70,7 @@ import org.apache.pdfbox.text.PDFTextStripper;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -135,7 +136,7 @@ public class EndToEndTestsHelper {
 
         // Copy file to temp directory.
         final File file = File.createTempFile("philter", "ignore");
-        FileUtils.writeLines(file, Arrays.asList("90210", "John Smith"));
+        Files.write(file.toPath(), Arrays.asList("90210", "John Smith"), Charset.defaultCharset());
 
         Set<String> ignoredFiles = new HashSet<>();
         ignoredFiles.add(file.getAbsolutePath());
