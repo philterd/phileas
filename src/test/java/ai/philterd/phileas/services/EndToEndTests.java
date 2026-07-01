@@ -18,6 +18,7 @@ package ai.philterd.phileas.services;
 import ai.philterd.phileas.PhileasConfiguration;
 import ai.philterd.phileas.model.filtering.BinaryDocumentFilterResult;
 import ai.philterd.phileas.model.filtering.IncrementalRedaction;
+import ai.philterd.phileas.model.filtering.FilterType;
 import ai.philterd.phileas.model.filtering.MimeType;
 import ai.philterd.phileas.model.filtering.Span;
 import ai.philterd.phileas.model.filtering.TextFilterResult;
@@ -27,6 +28,7 @@ import ai.philterd.phileas.policy.filters.BitcoinAddress;
 import ai.philterd.phileas.policy.filters.CreditCard;
 import ai.philterd.phileas.policy.filters.CustomDictionary;
 import ai.philterd.phileas.policy.filters.DriversLicense;
+import ai.philterd.phileas.policy.filters.PassportNumber;
 import ai.philterd.phileas.services.context.ContextService;
 import ai.philterd.phileas.services.context.DefaultContextService;
 import ai.philterd.phileas.services.disambiguation.vector.InMemoryVectorService;
@@ -38,6 +40,7 @@ import ai.philterd.phileas.services.strategies.custom.CustomDictionaryFilterStra
 import ai.philterd.phileas.services.strategies.rules.BitcoinAddressFilterStrategy;
 import ai.philterd.phileas.services.strategies.rules.CreditCardFilterStrategy;
 import ai.philterd.phileas.services.strategies.rules.DriversLicenseFilterStrategy;
+import ai.philterd.phileas.services.strategies.rules.PassportNumberFilterStrategy;
 import com.google.gson.GsonBuilder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -544,6 +547,41 @@ public class EndToEndTests {
         LOGGER.info(response.getFilteredText());
 
         Assertions.assertEquals("George Washington was president and his ssn was {{{REDACTED-ssn}}} and he lived at {{{REDACTED-zip-code}}}.", response.getFilteredText());
+
+    }
+
+    @Test
+    public void endToEndPassportWinsOverDriversLicenseForNineDigits() throws Exception {
+
+        // With both the passport and driver's-license filters enabled, a bare 9-digit number resolves
+        // to a single passport span (confidence 0.55) rather than a driver's-license span (0.50).
+
+        final PassportNumberFilterStrategy passportNumberFilterStrategy = new PassportNumberFilterStrategy();
+        passportNumberFilterStrategy.setStrategy(AbstractFilterStrategy.REDACT);
+        final PassportNumber passportNumber = new PassportNumber();
+        passportNumber.setPassportNumberFilterStrategies(List.of(passportNumberFilterStrategy));
+
+        final DriversLicenseFilterStrategy driversLicenseFilterStrategy = new DriversLicenseFilterStrategy();
+        driversLicenseFilterStrategy.setStrategy(AbstractFilterStrategy.REDACT);
+        final DriversLicense driversLicense = new DriversLicense();
+        driversLicense.setDriversLicenseFilterStrategies(List.of(driversLicenseFilterStrategy));
+
+        final Identifiers identifiers = new Identifiers();
+        identifiers.setPassportNumber(passportNumber);
+        identifiers.setDriversLicense(driversLicense);
+
+        final Policy policy = new Policy();
+        policy.setIdentifiers(identifiers);
+
+        final PhileasConfiguration configuration = new PhileasConfiguration(new Properties());
+
+        final PlainTextFilterService service = new PlainTextFilterService(configuration, contextService, vectorService, null);
+        final TextFilterResult response = service.filter(policy, "context", "the number is 223456789 today.");
+
+        showSpans(response.getExplanation().appliedSpans());
+
+        Assertions.assertEquals(1, response.getExplanation().appliedSpans().size());
+        Assertions.assertEquals(FilterType.PASSPORT_NUMBER, response.getExplanation().appliedSpans().get(0).getFilterType());
 
     }
 

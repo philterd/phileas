@@ -69,6 +69,12 @@ public class PassportNumberFilter extends RegexFilter {
         final FilterPattern passportUS80 = new FilterPattern.FilterPatternBuilder(Pattern.compile("\\b(80)[A-Z0-9]{4,8}\\b", Pattern.CASE_INSENSITIVE), 0.90).withClassification("US").build();
         final FilterPattern passportUS90 = new FilterPattern.FilterPatternBuilder(Pattern.compile("\\b(90)[A-Z0-9]{4,8}\\b", Pattern.CASE_INSENSITIVE), 0.90).withClassification("US").build();
 
+        // All-numeric 9-digit US passport book number. Its confidence (0.55) is set above the
+        // driver's-license 9-digit shape (0.50) so a bare 9-digit number resolves to the passport
+        // type when both filters are enabled. Registered last so a number that also matches a
+        // specific prefix pattern above keeps that higher-confidence, more-specific match.
+        final FilterPattern passportUSNumeric = new FilterPattern.FilterPatternBuilder(Pattern.compile("\\b[0-9]{9}\\b"), 0.55).withClassification("US").build();
+
         this.contextualTerms = new HashSet<>();
         this.contextualTerms.add("passport");
 
@@ -97,7 +103,8 @@ public class PassportNumberFilter extends RegexFilter {
                 passportUS50,
                 passportUS60,
                 passportUS80,
-                passportUS90);
+                passportUS90,
+                passportUSNumeric);
 
     }
 

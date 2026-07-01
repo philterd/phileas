@@ -15,6 +15,7 @@
  */
 package ai.philterd.phileas.filters;
 
+import ai.philterd.phileas.model.filtering.FilterType;
 import ai.philterd.phileas.model.filtering.Filtered;
 import ai.philterd.phileas.services.filters.regex.DriversLicenseFilter;
 import ai.philterd.phileas.services.strategies.rules.DriversLicenseFilterStrategy;
@@ -47,6 +48,29 @@ public class DriversLicenseFilterTest extends AbstractFilterTest {
         showSpans(filtered.getSpans());
         Assertions.assertEquals(1, filtered.getSpans().size());
         Assertions.assertTrue(candidates.contains(filtered.getSpans().get(0).getReplacement()));
+
+    }
+
+    @Test
+    public void filterThirteenCharacter() throws Exception {
+
+        // A 13-character license (one letter followed by 12 digits, e.g. Florida/Maryland/Michigan)
+        // is detected as a driver's-license number.
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(new DriversLicenseFilterStrategy()))
+                .withWindowSize(windowSize)
+                .build();
+
+        final DriversLicenseFilter filter = new DriversLicenseFilter(filterConfiguration);
+
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "the license is A123456789012.");
+
+        showSpans(filtered.getSpans());
+
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 15, 28, FilterType.DRIVERS_LICENSE_NUMBER));
+        Assertions.assertEquals("A123456789012", filtered.getSpans().get(0).getText());
 
     }
 

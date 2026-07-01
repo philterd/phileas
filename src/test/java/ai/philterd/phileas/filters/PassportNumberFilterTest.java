@@ -51,6 +51,31 @@ public class PassportNumberFilterTest extends AbstractFilterTest {
     }
 
     @Test
+    public void filterAllNumeric() throws Exception {
+
+        // A bare all-numeric 9-digit US passport book number is detected. This number's leading
+        // digits ("22") are not one of the specific passport prefixes above, so it is caught only by
+        // the all-numeric pattern.
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(new PassportNumberFilterStrategy()))
+                .withWindowSize(windowSize)
+                .build();
+
+        final PassportNumberFilter filter = new PassportNumberFilter(filterConfiguration);
+
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "the passport number is 223456789.");
+
+        showSpans(filtered.getSpans());
+
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 23, 32, FilterType.PASSPORT_NUMBER));
+        Assertions.assertEquals("223456789", filtered.getSpans().get(0).getText());
+        Assertions.assertEquals("US", filtered.getSpans().get(0).getClassification());
+
+    }
+
+    @Test
     public void filterWithCandidates1() throws Exception {
 
         final List<String> candidates = List.of("candidate1", "candidate2");
