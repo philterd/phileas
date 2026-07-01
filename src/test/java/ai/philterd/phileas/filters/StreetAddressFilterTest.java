@@ -1,5 +1,5 @@
 /*
- *     Copyright 2025 Philterd, LLC @ https://www.philterd.ai
+ *     Copyright 2026 Philterd, LLC @ https://www.philterd.ai
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -450,6 +450,106 @@ public class StreetAddressFilterTest extends AbstractFilterTest {
 
         Assertions.assertEquals(1, filtered.getSpans().size());
         Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 0, 31, FilterType.STREET_ADDRESS));
+
+    }
+
+    private Filtered detect(final String input) throws Exception {
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(new StreetAddressFilterStrategy()))
+                .withWindowSize(windowSize)
+                .build();
+
+        final StreetAddressFilter filter = new StreetAddressFilter(filterConfiguration);
+
+        return filter.filter(contextService, getPolicy(), "context", PIECE, input);
+
+    }
+
+    private void assertAddress(final String input, final String expected) throws Exception {
+
+        final Filtered filtered = detect(input);
+
+        showSpans(filtered.getSpans());
+
+        Assertions.assertEquals(1, filtered.getSpans().size(), input);
+        Assertions.assertEquals(expected, filtered.getSpans().get(0).getText(), input);
+        Assertions.assertEquals(FilterType.STREET_ADDRESS, filtered.getSpans().get(0).getFilterType(), input);
+
+    }
+
+    @Test
+    public void filterDirectionals() throws Exception {
+
+        assertAddress("123 N Main St", "123 N Main St");
+        assertAddress("123 North Main Street", "123 North Main Street");
+        assertAddress("123 Main St NW", "123 Main St NW");
+
+    }
+
+    @Test
+    public void filterOrdinals() throws Exception {
+
+        assertAddress("123 5th Avenue", "123 5th Avenue");
+        assertAddress("42 42nd Street", "42 42nd Street");
+
+    }
+
+    @Test
+    public void filterExpandedStreetTypes() throws Exception {
+
+        assertAddress("10 Sunset Loop", "10 Sunset Loop");
+        assertAddress("5 Kings Crossing", "5 Kings Crossing");
+        assertAddress("12 Harbor Plaza", "12 Harbor Plaza");
+        assertAddress("34 Oak Point", "34 Oak Point");
+        assertAddress("77 Rectory Mews", "77 Rectory Mews");
+
+    }
+
+    @Test
+    public void filterRangesAndLetters() throws Exception {
+
+        assertAddress("123-125 Main St", "123-125 Main St");
+        assertAddress("123A Main Street", "123A Main Street");
+
+    }
+
+    @Test
+    public void filterSaintNames() throws Exception {
+
+        assertAddress("100 St. Charles Avenue", "100 St. Charles Avenue");
+
+    }
+
+    @Test
+    public void filterUnitsFolded() throws Exception {
+
+        assertAddress("123 Main St Apt 4B", "123 Main St Apt 4B");
+        assertAddress("12 Pine Rd #5", "12 Pine Rd #5");
+        assertAddress("100 Main St NW", "100 Main St NW");
+
+    }
+
+    @Test
+    public void filterPoBoxes() throws Exception {
+
+        assertAddress("PO Box 1234", "PO Box 1234");
+        assertAddress("P.O. Box 56", "P.O. Box 56");
+        assertAddress("Post Office Box 789", "Post Office Box 789");
+
+    }
+
+    @Test
+    public void filterNegatives() throws Exception {
+
+        for (final String input : List.of("Chapter 4 summary", "Meeting at 3 PM today",
+                "Section 5 covers everything", "PO Box without a number")) {
+
+            final Filtered filtered = detect(input);
+            showSpans(filtered.getSpans());
+            Assertions.assertEquals(0, filtered.getSpans().size(), input);
+
+        }
 
     }
 

@@ -1,5 +1,5 @@
 /*
- *     Copyright 2025 Philterd, LLC @ https://www.philterd.ai
+ *     Copyright 2026 Philterd, LLC @ https://www.philterd.ai
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,17 +31,48 @@ import java.util.regex.Pattern;
 
 public class StreetAddressFilter extends RegexFilter {
 
+    // Directionals, longest forms first so a full word wins over its abbreviation.
+    private static final String DIRECTIONAL =
+            "(?:Northeast|Northwest|Southeast|Southwest|North|South|East|West|NE|NW|SE|SW|N|S|E|W)";
+
+    // Street types, each long form before its abbreviation so the whole word is preferred.
+    private static final String STREET_TYPE =
+            "(?:Street|St|Avenue|Ave|Boulevard|Blvd|Drive|Dr|Road|Rd|Lane|Ln|Way|Court|Ct|Place|Pl|Circle|Cir" +
+            "|Highway|Hwy|Parkway|Pkwy|Square|Sq|Trail|Trl|Terrace|Ter|Turnpike|Tpke|Expressway|Expy|Freeway|Fwy" +
+            "|Crossing|Xing|Crescent|Cres|Plaza|Plz|Landing|Lndg|Gardens|Garden|Gdns|Commons|Manor|Mnr|Ridge|Rdg" +
+            "|Point|Pt|Grove|Grv|Alley|Aly|Cove|Cv|Bend|Bnd|Loop|Pike|Path|Mews|Row|Run|Walk|Close)";
+
+    // Unit / secondary-address designators, folded into the span when present.
+    private static final String UNIT =
+            "(?:[,\\s]+(?:Apt|Apartment|Suite|Ste|Unit|Bldg|Building|Floor|Fl|Room|Rm|#)\\.?\\s*#?\\s*[A-Za-z0-9-]+)?";
+
     public StreetAddressFilter(FilterConfiguration filterConfiguration) {
         super(FilterType.STREET_ADDRESS, filterConfiguration);
 
-        final Pattern addressPattern = Pattern.compile("(?i)\\b\\d{1,6} +.*?\\b(avenue|ave|av e|cir|court|ct|street|st|drive|dr|lane|ln|road|rd|blvd|boulevard|plaza|parkway|pkwy)[.]?(([,\\s]+)?\\b(suite|ste|apt|apartment)[\\s]+\\d{1,6})?", Pattern.CASE_INSENSITIVE);
-        final FilterPattern filterPattern = new FilterPattern.FilterPatternBuilder(addressPattern, 0.90).build();
+        // A street address: a house number (optionally a range and/or a trailing letter), an optional
+        // leading directional, one to five name words (ordinals, saint/abbreviated names, etc.), a
+        // street type, an optional trailing directional, and an optional unit.
+        final Pattern addressPattern = Pattern.compile(
+                "\\b\\d{1,6}(?:-\\d{1,6})?[A-Za-z]?\\s+" +
+                "(?:" + DIRECTIONAL + "\\s+)?" +
+                "(?:[A-Za-z0-9'.-]+\\s+){1,5}" +
+                STREET_TYPE + "\\b\\.?" +
+                "(?:\\s+" + DIRECTIONAL + "\\b)?" +
+                UNIT,
+                Pattern.CASE_INSENSITIVE);
+        final FilterPattern addressFilterPattern = new FilterPattern.FilterPatternBuilder(addressPattern, 0.85).build();
+
+        // A PO box, e.g. "PO Box 1234", "P.O. Box 56", "Post Office Box 789".
+        final Pattern poBoxPattern = Pattern.compile(
+                "\\b(?:P\\.?\\s?O\\.?\\s?Box|Post\\s+Office\\s+Box)\\s+\\d+\\b",
+                Pattern.CASE_INSENSITIVE);
+        final FilterPattern poBoxFilterPattern = new FilterPattern.FilterPatternBuilder(poBoxPattern, 0.85).build();
 
         this.contextualTerms = new HashSet<>();
         this.contextualTerms.add("address");
         this.contextualTerms.add("location");
 
-        this.analyzer = new Analyzer(contextualTerms, filterPattern);
+        this.analyzer = new Analyzer(contextualTerms, addressFilterPattern, poBoxFilterPattern);
 
     }
 
