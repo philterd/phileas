@@ -616,6 +616,149 @@ public class DateFilterTest extends AbstractFilterTest {
     }
 
     @Test
+    public void filterDate47() throws Exception {
+
+        // day-first numeric dates (DD/MM/YYYY) are detected with only-valid-dates on.
+
+        final DateFilter filter = new DateFilter(buildFilterConfiguration(), true, DateSpanValidator.getInstance());
+
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "25/12/1980");
+
+        showSpans(filtered.getSpans());
+
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertEquals("25/12/1980", filtered.getSpans().get(0).getText());
+
+    }
+
+    @Test
+    public void filterDate48() throws Exception {
+
+        // day-first dates with the '-' and '.' delimiters are detected too.
+
+        final DateFilter dashFilter = new DateFilter(buildFilterConfiguration(), true, DateSpanValidator.getInstance());
+        final Filtered dashFiltered = dashFilter.filter(contextService, getPolicy(), "context", PIECE, "25-12-1980");
+        showSpans(dashFiltered.getSpans());
+        Assertions.assertEquals(1, dashFiltered.getSpans().size());
+        Assertions.assertEquals("25-12-1980", dashFiltered.getSpans().get(0).getText());
+
+        final DateFilter dotFilter = new DateFilter(buildFilterConfiguration(), true, DateSpanValidator.getInstance());
+        final Filtered dotFiltered = dotFilter.filter(contextService, getPolicy(), "context", PIECE, "25.12.1980");
+        showSpans(dotFiltered.getSpans());
+        Assertions.assertEquals(1, dotFiltered.getSpans().size());
+        Assertions.assertEquals("25.12.1980", dotFiltered.getSpans().get(0).getText());
+
+    }
+
+    @Test
+    public void filterDate49() throws Exception {
+
+        // a two-digit-year day-first date is detected with only-valid-dates on.
+
+        final DateFilter filter = new DateFilter(buildFilterConfiguration(), true, DateSpanValidator.getInstance());
+
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "25/12/80");
+
+        showSpans(filtered.getSpans());
+
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertEquals("25/12/80", filtered.getSpans().get(0).getText());
+
+    }
+
+    @Test
+    public void filterDate50() throws Exception {
+
+        // an ambiguous date is still redacted exactly once (month-first kept).
+
+        final DateFilter filter = new DateFilter(buildFilterConfiguration(), true, DateSpanValidator.getInstance());
+
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "03/04/1981");
+
+        showSpans(filtered.getSpans());
+
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertEquals("03/04/1981", filtered.getSpans().get(0).getText());
+
+    }
+
+    @Test
+    public void filterDate51() throws Exception {
+
+        // with only-valid-dates on, an impossible date is not redacted as a full date.
+
+        final DateFilter filter = new DateFilter(buildFilterConfiguration(), true, DateSpanValidator.getInstance());
+
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "31/02/1980");
+
+        showSpans(filtered.getSpans());
+
+        for(final var span : filtered.getSpans()) {
+            Assertions.assertNotEquals("31/02/1980", span.getText());
+        }
+
+    }
+
+    @Test
+    public void filterDate52() throws Exception {
+
+        // existing month-first detection is unchanged.
+
+        final DateFilter filter = new DateFilter(buildFilterConfiguration(), true, DateSpanValidator.getInstance());
+
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "12/25/1980");
+
+        showSpans(filtered.getSpans());
+
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertEquals("12/25/1980", filtered.getSpans().get(0).getText());
+
+    }
+
+    @Test
+    public void filterDate53() throws Exception {
+
+        // A day-first date under the SHIFT strategy is still redacted. The replacement was computed
+        // upstream with the month-first format, which is not a real date, so SHIFT falls back to
+        // redaction (the date is removed, but not shifted).
+
+        final DateFilterStrategy dateFilterStrategy = new DateFilterStrategy();
+        dateFilterStrategy.setStrategy(AbstractFilterStrategy.SHIFT);
+        dateFilterStrategy.setShiftDays(5);
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(dateFilterStrategy))
+                .build();
+
+        final DateFilter filter = new DateFilter(filterConfiguration, true, DateSpanValidator.getInstance());
+
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "25/12/1980");
+
+        showSpans(filtered.getSpans());
+
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertEquals("25/12/1980", filtered.getSpans().get(0).getText());
+        Assertions.assertEquals("{{{REDACTED-date}}}", filtered.getSpans().get(0).getReplacement());
+
+    }
+
+    @Test
+    public void filterDate54() throws Exception {
+
+        // The '.' delimiter must not turn a decimal number into a date. The month-and-year pattern
+        // is not generated for '.', so "3.14" is not detected even with only-valid-dates off.
+
+        final DateFilter filter = new DateFilter(buildFilterConfiguration(), false, DateSpanValidator.getInstance());
+
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "The value is 3.14 today");
+
+        showSpans(filtered.getSpans());
+
+        Assertions.assertEquals(0, filtered.getSpans().size());
+
+    }
+
+    @Test
     public void filterWithCandidates1() throws Exception {
 
         final List<String> candidates = List.of("2000-01-01", "1999-12-31");

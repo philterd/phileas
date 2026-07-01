@@ -4,6 +4,10 @@ Notable changes to Phileas, most recent first.
 
 Full changelogs for each release are available in the [GitHub releases](https://github.com/philterd/phileas/releases). Issues whose identifiers start with `PHL-` were previously tracked in Jira before the project's issues were managed in GitHub.
 
+## Version 4.3.0 - Unreleased
+
+* The date filter now detects day-first numeric dates (for example `25/12/1980`). When a numeric date is not a valid date in month-first order, the filter re-validates it in day-first order, so real day-first dates are redacted rather than left in the clear when `onlyValidDates` is enabled. Ambiguous dates such as `03/04/1981` keep their month-first interpretation. Numeric dates using a `.` delimiter (for example `25.12.1980`) are now detected as well; the `.` delimiter is not applied to the month-and-year pattern, so a decimal such as `3.14` is not treated as a date. Day-first dates are removed by redaction; the `SHIFT` and `TRUNCATE_TO_YEAR` strategies fall back to redaction for a day-first date rather than transforming it.
+
 ## Version 4.2.0 - June 24, 2026
 
 * Lowered the Java baseline from 25 to 17. Phileas now compiles to Java 17 bytecode, so it can be embedded in Java 17 and Java 21 runtimes (for example OpenSearch and Elasticsearch plugins, and Spark or Databricks jobs) that could not load the previous Java 25 build. There are no API changes, and consumers already on Java 21 or newer are unaffected.

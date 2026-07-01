@@ -30,6 +30,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class DateFilter extends RegexFilter {
@@ -37,7 +38,11 @@ public class DateFilter extends RegexFilter {
     private final SpanValidator spanValidator;
     private final boolean onlyValidDates;
 
-    final private List<String> delimiters = Arrays.asList("-", "/", " ");
+    // A month-first numeric date format (e.g. M/d/u, MM-dd-uuuu, MM.dd.uuuu) whose month and day
+    // components can be swapped to its day-first equivalent. The two delimiters must be identical.
+    private static final Pattern MONTH_FIRST_NUMERIC = Pattern.compile("^(M{1,2})(\\W)(d{1,2})\\2(u{1,4})$");
+
+    final private List<String> delimiters = Arrays.asList("-", "/", " ", ".");
 
     public DateFilter(FilterConfiguration filterConfiguration, boolean onlyValidDates, SpanValidator spanValidator) {
         super(FilterType.DATE, filterConfiguration);
@@ -73,6 +78,18 @@ public class DateFilter extends RegexFilter {
 
                     // The date is valid.
                     LOGGER.debug("Date for pattern {} is valid.", span.getPattern());
+                    spans.add(span);
+
+                } else if(validatesAsDayFirst(span)) {
+
+                    // The month-first interpretation was not a real date, but the same text is a
+                    // valid day-first date (e.g. 25/12/1980), so keep it: the date is redacted rather
+                    // than left in the clear. Record the day-first format on the span so its reported
+                    // format is correct. Note the replacement was already computed upstream with the
+                    // month-first format, so a SHIFT/TRUNCATE strategy falls back to redaction for a
+                    // day-first date (it is removed, but not transformed).
+                    LOGGER.debug("Date for pattern {} is valid as day-first.", span.getPattern());
+                    span.setPattern(toDayFirstFormat(span.getPattern()));
                     spans.add(span);
 
                 } else {
@@ -117,16 +134,81 @@ public class DateFilter extends RegexFilter {
             // DateTimeFormatter patterns: https://docs.oracle.com/javase/8/docs/api/java/time/format/DateTimeFormatter.html
             // 'u' is year. 'y' is year-of-era.
 
-            // Make a filter pattern for each pattern with each delimiter.
-            filterPatterns.add(new FilterPattern.FilterPatternBuilder(Pattern.compile("\\b\\d{4}" + delimiter + "\\d{2}" + delimiter + "\\d{2}"), 0.75).withFormat("uuuu-MM-dd".replaceAll("-", delimiter)).build());
-            filterPatterns.add(new FilterPattern.FilterPatternBuilder(Pattern.compile("\\b\\d{2}" + delimiter + "\\d{2}" + delimiter + "\\d{4}"), 0.75).withFormat("MM-dd-uuuu".replaceAll("-", delimiter)).build());
-            filterPatterns.add(new FilterPattern.FilterPatternBuilder(Pattern.compile("\\b\\d{1,2}" + delimiter + "\\d{1,2}" + delimiter + "\\d{2,4}"), 75).withFormat("M-d-u".replaceAll("-", delimiter)).build());
-            filterPatterns.add(new FilterPattern.FilterPatternBuilder(Pattern.compile("\\b\\d{1,2}" + delimiter + "\\d{2,4}"), 75).withFormat("M-u".replaceAll("-", delimiter)).build());
+            // The delimiter is inserted literally into the date regex, so quote it for the regex (a
+            // "." must match a literal dot, not any character) while keeping the raw delimiter for the
+            // human-readable date format.
+            final String d = Pattern.quote(delimiter);
+
+            // Make a filter pattern for each pattern with each delimiter. The numeric day/month/year
+            // patterns carry a month-first format; day-first dates (e.g. 25/12/1980) that month-first
+            // cannot validate are recovered in the filter() validation step, which retries the same
+            // text as day-first. See toDayFirstFormat / validate().
+            filterPatterns.add(new FilterPattern.FilterPatternBuilder(Pattern.compile("\\b\\d{4}" + d + "\\d{2}" + d + "\\d{2}"), 0.75).withFormat("uuuu-MM-dd".replaceAll("-", delimiter)).build());
+            filterPatterns.add(new FilterPattern.FilterPatternBuilder(Pattern.compile("\\b\\d{2}" + d + "\\d{2}" + d + "\\d{4}"), 0.75).withFormat("MM-dd-uuuu".replaceAll("-", delimiter)).build());
+            filterPatterns.add(new FilterPattern.FilterPatternBuilder(Pattern.compile("\\b\\d{1,2}" + d + "\\d{1,2}" + d + "\\d{2,4}"), 75).withFormat("M-d-u".replaceAll("-", delimiter)).build());
+
+            // Month-and-year only. Not generated for the "." delimiter, where it would match decimals
+            // such as 3.14.
+            if(!".".equals(delimiter)) {
+                filterPatterns.add(new FilterPattern.FilterPatternBuilder(Pattern.compile("\\b\\d{1,2}" + d + "\\d{2,4}"), 75).withFormat("M-u".replaceAll("-", delimiter)).build());
+            }
+
             filterPatterns.add(new FilterPattern.FilterPatternBuilder(Pattern.compile("(?i)(\\b\\d{1,2}\\D{0,3})?\\b(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:tember)?|Oct(?:ober)?|(Nov|Dec)(?:ember)?)(\\.)?\\D?(\\d{1,2}(\\D?(st|nd|rd|th))?\\D?)(\\D?((19[7-9]\\d|20\\d{2})|\\d{2}))?\\b"), 0.75).withFormat("MMMM-dd".replaceAll("-", delimiter)).withAlwaysValid(true).build());
 
         }
 
         return filterPatterns;
+
+    }
+
+    /**
+     * Validates the span's text against the day-first equivalent of its (month-first) format. The
+     * span is not modified.
+     * @param span The {@link Span} to validate.
+     * @return {@code true} if the span has a day-first-convertible format and its text is a valid
+     * date in day-first order.
+     */
+    private boolean validatesAsDayFirst(final Span span) {
+
+        final String dayFirstFormat = toDayFirstFormat(span.getPattern());
+
+        if(dayFirstFormat == null) {
+            return false;
+        }
+
+        final String originalFormat = span.getPattern();
+
+        try {
+            span.setPattern(dayFirstFormat);
+            return spanValidator.validate(span);
+        } finally {
+            span.setPattern(originalFormat);
+        }
+
+    }
+
+    /**
+     * Converts a month-first numeric date format to its day-first equivalent by swapping the month
+     * and day components, e.g. {@code M/d/u} to {@code d/M/u} and {@code MM-dd-uuuu} to
+     * {@code dd-MM-uuuu}. Returns {@code null} for any format that is not a month-first numeric
+     * day/month/year format (year-first, month-and-year, and month-name formats are left alone).
+     * @param format The date format.
+     * @return The day-first format, or {@code null}.
+     */
+    private static String toDayFirstFormat(final String format) {
+
+        if(format == null) {
+            return null;
+        }
+
+        final Matcher matcher = MONTH_FIRST_NUMERIC.matcher(format);
+
+        if(matcher.matches()) {
+            // groups: 1=month, 2=delimiter, 3=day, 4=year. Swap month and day.
+            return matcher.group(3) + matcher.group(2) + matcher.group(1) + matcher.group(2) + matcher.group(4);
+        }
+
+        return null;
 
     }
 
