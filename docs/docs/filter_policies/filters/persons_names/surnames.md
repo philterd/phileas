@@ -32,6 +32,7 @@ See [Filter Strategies](#filter-strategies) for details.
 | `REDACT`              | Replace the sensitive text with a placeholder.           |
 | `MASK`                | Replace each character of the sensitive text with a mask character (`*` by default).                                |
 | `TRUNCATE`            | Replace all but a few characters of the sensitive text with a truncation character (`*` by default).                |
+| `ABBREVIATE`          | Replace the name with its initials (for example, `George Washington` becomes `GW`).                                 |
 | `RANDOM_REPLACE`      | Replace the sensitive text with a similar, random value. |
 | `STATIC_REPLACE`      | Replace the sensitive text with a given value.           |
 | `CRYPTO_REPLACE`      | Replace the sensitive text with its encrypted value.     |

@@ -15,11 +15,18 @@
  */
 package ai.philterd.phileas.services.strategies.dynamic;
 
+import ai.philterd.phileas.model.filtering.Replacement;
+import ai.philterd.phileas.policy.Crypto;
+import ai.philterd.phileas.policy.FPE;
 import ai.philterd.phileas.services.anonymization.AbstractAnonymizationService;
+import ai.philterd.phileas.services.anonymization.AnonymizationService;
 import ai.philterd.phileas.services.anonymization.SurnameAnonymizationService;
+import ai.philterd.phileas.services.context.ContextService;
 import ai.philterd.phileas.services.context.DefaultContextService;
 import ai.philterd.phileas.services.strategies.AbstractFilterStrategy;
 import ai.philterd.phileas.services.strategies.AbstractFilterStrategyTest;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class SurnameFilterStrategyTest extends AbstractFilterStrategyTest {
 
@@ -29,6 +36,36 @@ public class SurnameFilterStrategyTest extends AbstractFilterStrategyTest {
 
     public AbstractAnonymizationService getAnonymizationService() {
         return new SurnameAnonymizationService();
+    }
+
+    @Test
+    public void abbreviateMultipleTokens() throws Exception {
+
+        final AnonymizationService anonymizationService = getAnonymizationService();
+        final ContextService contextService = new DefaultContextService();
+
+        final AbstractFilterStrategy strategy = getFilterStrategy();
+        strategy.setStrategy(AbstractFilterStrategy.ABBREVIATE);
+
+        final Replacement replacement = strategy.getReplacement(contextService, "surname", "context", "John Smith", WINDOW, new Crypto(), new FPE(), anonymizationService, null);
+
+        Assertions.assertEquals("JS", replacement.getReplacement());
+
+    }
+
+    @Test
+    public void abbreviateSingleToken() throws Exception {
+
+        final AnonymizationService anonymizationService = getAnonymizationService();
+        final ContextService contextService = new DefaultContextService();
+
+        final AbstractFilterStrategy strategy = getFilterStrategy();
+        strategy.setStrategy(AbstractFilterStrategy.ABBREVIATE);
+
+        final Replacement replacement = strategy.getReplacement(contextService, "surname", "context", "Smith", WINDOW, new Crypto(), new FPE(), anonymizationService, null);
+
+        Assertions.assertEquals("S", replacement.getReplacement());
+
     }
 
 }

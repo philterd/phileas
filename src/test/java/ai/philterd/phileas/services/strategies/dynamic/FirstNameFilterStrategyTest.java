@@ -40,6 +40,36 @@ public class FirstNameFilterStrategyTest extends AbstractFilterStrategyTest {
     }
 
     @Test
+    public void abbreviateMultipleTokens() throws Exception {
+
+        final AnonymizationService anonymizationService = getAnonymizationService();
+        final ContextService contextService = new DefaultContextService();
+
+        final AbstractFilterStrategy strategy = getFilterStrategy();
+        strategy.setStrategy(AbstractFilterStrategy.ABBREVIATE);
+
+        final Replacement replacement = strategy.getReplacement(contextService, "first-name", "context", "John Smith", WINDOW, new Crypto(), new FPE(), anonymizationService, null);
+
+        Assertions.assertEquals("JS", replacement.getReplacement());
+
+    }
+
+    @Test
+    public void abbreviateSingleToken() throws Exception {
+
+        final AnonymizationService anonymizationService = getAnonymizationService();
+        final ContextService contextService = new DefaultContextService();
+
+        final AbstractFilterStrategy strategy = getFilterStrategy();
+        strategy.setStrategy(AbstractFilterStrategy.ABBREVIATE);
+
+        final Replacement replacement = strategy.getReplacement(contextService, "first-name", "context", "John", WINDOW, new Crypto(), new FPE(), anonymizationService, null);
+
+        Assertions.assertEquals("J", replacement.getReplacement());
+
+    }
+
+    @Test
     public void replacementWithContext() throws Exception {
 
         final AnonymizationService anonymizationService = getAnonymizationService();
