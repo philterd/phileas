@@ -186,7 +186,7 @@ public class PhEyeFilterStrategy extends AbstractFilterStrategy {
             // TODO: Make PER a constant somewhere.
             // Philter-NER is only returning PER entities at this point.
             if(Strings.CI.equals(label, "PER")) {
-                replacement = WordUtils.initials(token, null);
+                replacement = WordUtils.initials(token);
             }
 
         } else {
