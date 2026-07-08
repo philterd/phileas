@@ -122,7 +122,8 @@ public abstract class StandardFilterStrategy extends AbstractFilterStrategy {
         } else if(Strings.CI.equals(strategy, ABBREVIATE)) {
 
             // Reduce the detected value to its initials, e.g. "John Smith" becomes "JS".
-            replacement = WordUtils.initials(token, null);
+            // The single-argument overload splits on whitespace.
+            replacement = WordUtils.initials(token);
 
         } else {
 
