@@ -25,12 +25,17 @@ import ai.philterd.phileas.policy.Policy;
 import ai.philterd.phileas.services.anonymization.AnonymizationMethod;
 import ai.philterd.phileas.services.anonymization.AnonymizationService;
 import ai.philterd.phileas.services.context.ContextService;
+import ai.philterd.phileas.services.generators.ReplacementGenerator;
+import ai.philterd.phileas.services.generators.ReplacementValidator;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
@@ -53,6 +58,7 @@ public abstract class AbstractFilterStrategy {
     public static final String MASK = "MASK";
     public static final String SAME = "SAME";
     public static final String TRUNCATE = "TRUNCATE";
+    public static final String MAP_REPLACE = "MAP_REPLACE";
     public static final String LEADING = "LEADING";
     public static final String TRAILING = "TRAILING";
 
@@ -143,7 +149,64 @@ public abstract class AbstractFilterStrategy {
     @Expose
     protected List<String> anonymizationCandidates = Collections.emptyList();
 
+    // MAP_REPLACE: inline lookup table mapping a detected value to its replacement. Inline entries
+    // take precedence over any loaded from mappingFiles.
+    @SerializedName("mappings")
+    @Expose
+    protected Map<String, String> mappings = Collections.emptyMap();
+
+    // MAP_REPLACE: local TSV file paths (one tab-delimited key/value pair per row) merged into the
+    // lookup table at policy-load time. Inline mappings override entries loaded from files.
+    @SerializedName("mappingFiles")
+    @Expose
+    protected List<String> mappingFiles = Collections.emptyList();
+
+    // MAP_REPLACE: whether lookup-table keys are matched case-sensitively.
+    @SerializedName("caseSensitive")
+    @Expose
+    protected boolean caseSensitive;
+
+    // MAP_REPLACE: name of a generator declared in the policy's top-level generators block, invoked
+    // to produce a replacement for a detected value absent from the lookup table.
+    @SerializedName("generator")
+    @Expose
+    protected String generator;
+
+    // MAP_REPLACE: terminal strategy applied when a detected value is absent from the lookup table and
+    // no generator is set, or when the generator fails, times out, or returns invalid output.
+    @SerializedName("fallbackStrategy")
+    @Expose
+    protected String fallbackStrategy = REDACT;
+
     protected transient AnonymizationService anonymizationService;
+
+    // MAP_REPLACE resolved state, populated when the filter is built (see Filter): the normalized
+    // lookup table (inline mappings merged over any loaded from mappingFiles), the resolved generator
+    // instance, and the validator that re-scans generated values for reintroduced PII. All transient
+    // so they are excluded from JSON.
+    protected transient Map<String, String> resolvedMappings;
+    protected transient ReplacementGenerator replacementGenerator;
+    protected transient ReplacementValidator replacementValidator;
+
+    // Guards against unbounded recursion when a generated MAP_REPLACE value is re-scanned for PII: the
+    // re-scan runs the policy's filters over the candidate, and any MAP_REPLACE strategy encountered
+    // during that pass must not itself invoke a generator (which would re-scan again). The flag is
+    // per-thread because filtering can run concurrently on a shared filter set.
+    private static final ThreadLocal<Boolean> RESCANNING = ThreadLocal.withInitial(() -> Boolean.FALSE);
+
+    /** @return whether the current thread is inside a generated-value PII re-scan. */
+    public static boolean isRescanning() {
+        return RESCANNING.get();
+    }
+
+    /** Marks (or clears) the current thread as being inside a generated-value PII re-scan. */
+    public static void setRescanning(final boolean rescanning) {
+        if (rescanning) {
+            RESCANNING.set(Boolean.TRUE);
+        } else {
+            RESCANNING.remove();
+        }
+    }
 
     /**
      * Gets the replacement for a token.
@@ -472,6 +535,110 @@ public abstract class AbstractFilterStrategy {
 
     public void setAnonymizationService(AnonymizationService anonymizationService) {
         this.anonymizationService = anonymizationService;
+    }
+
+    public Map<String, String> getMappings() {
+        return mappings;
+    }
+
+    public void setMappings(Map<String, String> mappings) {
+        this.mappings = mappings;
+    }
+
+    public List<String> getMappingFiles() {
+        return mappingFiles;
+    }
+
+    public void setMappingFiles(List<String> mappingFiles) {
+        this.mappingFiles = mappingFiles;
+    }
+
+    public boolean isCaseSensitive() {
+        return caseSensitive;
+    }
+
+    public void setCaseSensitive(boolean caseSensitive) {
+        this.caseSensitive = caseSensitive;
+    }
+
+    public String getGenerator() {
+        return generator;
+    }
+
+    public void setGenerator(String generator) {
+        this.generator = generator;
+    }
+
+    public String getFallbackStrategy() {
+        return fallbackStrategy;
+    }
+
+    public void setFallbackStrategy(String fallbackStrategy) {
+        this.fallbackStrategy = fallbackStrategy;
+    }
+
+    public ReplacementGenerator getReplacementGenerator() {
+        return replacementGenerator;
+    }
+
+    public void setReplacementGenerator(ReplacementGenerator replacementGenerator) {
+        this.replacementGenerator = replacementGenerator;
+    }
+
+    public ReplacementValidator getReplacementValidator() {
+        return replacementValidator;
+    }
+
+    public void setReplacementValidator(ReplacementValidator replacementValidator) {
+        this.replacementValidator = replacementValidator;
+    }
+
+    /**
+     * Builds the resolved MAP_REPLACE lookup table by merging the inline {@code mappings} over any
+     * entries provided from {@code mappingFiles}, normalizing each key for the configured case
+     * sensitivity. Called once when the filter is built.
+     * @param fileMappings Entries loaded from {@code mappingFiles}, or {@code null} if none.
+     */
+    public void initializeMappings(final Map<String, String> fileMappings) {
+
+        final Map<String, String> resolved = new LinkedHashMap<>();
+
+        if (fileMappings != null) {
+            for (final Map.Entry<String, String> entry : fileMappings.entrySet()) {
+                resolved.put(normalizeMappingKey(entry.getKey()), entry.getValue());
+            }
+        }
+
+        // Inline mappings override entries loaded from files.
+        if (mappings != null) {
+            for (final Map.Entry<String, String> entry : mappings.entrySet()) {
+                resolved.put(normalizeMappingKey(entry.getKey()), entry.getValue());
+            }
+        }
+
+        this.resolvedMappings = resolved;
+
+    }
+
+    /**
+     * Looks up a detected token in the resolved MAP_REPLACE lookup table.
+     * @param token The detected value.
+     * @return The mapped replacement, or {@code null} if the token is absent from the table.
+     */
+    protected String lookupMapping(final String token) {
+
+        // The lookup table is normally built by Filter when the strategy is wired up; fall back to the
+        // inline mappings only (single-threaded callers such as unit tests) if it was not.
+        if (resolvedMappings == null) {
+            initializeMappings(null);
+        }
+
+        return resolvedMappings.get(normalizeMappingKey(token));
+
+    }
+
+    private String normalizeMappingKey(final String key) {
+        return caseSensitive ? key : key.toLowerCase(Locale.ROOT);
     }
 
 }

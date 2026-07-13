@@ -52,9 +52,11 @@ import ai.philterd.phileas.services.anonymization.SurnameAnonymizationService;
 import ai.philterd.phileas.services.anonymization.UrlAnonymizationService;
 import ai.philterd.phileas.services.anonymization.ZipCodeAnonymizationService;
 import ai.philterd.phileas.services.context.ContextService;
+import ai.philterd.phileas.services.generators.ReplacementGenerator;
 import ai.philterd.phileas.services.strategies.AbstractFilterStrategy;
 import ai.philterd.phileas.utils.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -202,7 +204,73 @@ public abstract class Filter {
 
             strategy.setAnonymizationService(strategyAnonymizationService);
 
+            // MAP_REPLACE wiring: build the strategy's lookup table (merging any TSV mapping files with
+            // the inline mappings) and resolve its generator reference against the policy's generators.
+            if(Strings.CI.equals(AbstractFilterStrategy.MAP_REPLACE, strategy.getStrategy())) {
+
+                strategy.initializeMappings(loadMappingFiles(strategy.getMappingFiles()));
+
+                final String generatorName = strategy.getGenerator();
+                if(StringUtils.isNotEmpty(generatorName)) {
+                    final ReplacementGenerator generator = filterConfiguration.getGenerators().get(generatorName);
+                    if(generator != null) {
+                        strategy.setReplacementGenerator(generator);
+                    } else {
+                        LOGGER.warn("A {} strategy references generator '{}', which is not defined in the "
+                                + "policy's generators block; the strategy will use its fallback strategy.",
+                                filterType.getType(), generatorName);
+                    }
+                }
+
+            }
+
         }
+
+    }
+
+    /**
+     * Loads the MAP_REPLACE mapping files into a single lookup table. Each file is a TSV with one
+     * tab-delimited key/value pair per row; when the same key appears more than once (within a file or
+     * across files) the last occurrence wins. A missing or unreadable file is logged and skipped.
+     * @param mappingFiles The list of TSV file paths, or {@code null}.
+     * @return The merged key/value pairs. Empty if there are no files.
+     */
+    private Map<String, String> loadMappingFiles(final List<String> mappingFiles) {
+
+        final Map<String, String> loaded = new HashMap<>();
+
+        if(CollectionUtils.isEmpty(mappingFiles)) {
+            return loaded;
+        }
+
+        for(final String fileName : mappingFiles) {
+
+            final File file = new File(fileName);
+
+            if(!file.exists()) {
+                LOGGER.error("Mapping file specified in policy does not exist: {}", fileName);
+                continue;
+            }
+
+            try {
+                for(final String line : Files.readAllLines(file.toPath(), Charset.defaultCharset())) {
+                    if(line.isEmpty()) {
+                        continue;
+                    }
+                    final int tab = line.indexOf('\t');
+                    if(tab < 0) {
+                        // A row without a tab has no value; skip it rather than mapping to an empty string.
+                        continue;
+                    }
+                    loaded.put(line.substring(0, tab), line.substring(tab + 1));
+                }
+            } catch (final IOException ex) {
+                LOGGER.error("Unable to read mapping file: {}", fileName, ex);
+            }
+
+        }
+
+        return loaded;
 
     }
 
@@ -442,6 +510,10 @@ public abstract class Filter {
 
     public FilterType getFilterType() {
         return filterType;
+    }
+
+    public List<? extends AbstractFilterStrategy> getStrategies() {
+        return strategies;
     }
 
     public String getClassification() {

@@ -15,6 +15,7 @@ nav:
   - Deidentification:
     - 'Bucketing': 'deidentification/bucketing.md'
     - 'Date Shifting': 'deidentification/date-shifting.md'
+    - 'Mapped Replacement': 'deidentification/mapped-replacement.md'
   - 'Filter Policies':
     - 'Filter Policies': 'filter_policies/filter_policies.md'
     - 'Filters': 'filter_policies/filters.md'

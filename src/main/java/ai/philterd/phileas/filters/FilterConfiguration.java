@@ -18,6 +18,7 @@ package ai.philterd.phileas.filters;
 import ai.philterd.phileas.policy.Crypto;
 import ai.philterd.phileas.policy.FPE;
 import ai.philterd.phileas.policy.IgnoredPattern;
+import ai.philterd.phileas.services.generators.ReplacementGenerator;
 import ai.philterd.phileas.services.strategies.AbstractFilterStrategy;
 import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.binary.Hex;
@@ -26,7 +27,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
 
 import java.security.SecureRandom;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import static ai.philterd.phileas.services.strategies.AbstractFilterStrategy.CRYPTO_REPLACE;
@@ -44,6 +47,7 @@ public class FilterConfiguration {
     private final int windowSize;
     private final int priority;
     private final long regexTimeoutMs;
+    private final Map<String, ReplacementGenerator> generators;
 
     private FilterConfiguration(
             final List<? extends AbstractFilterStrategy> strategies,
@@ -55,7 +59,8 @@ public class FilterConfiguration {
             final FPE fpe,
             final int windowSize,
             final int priority,
-            final long regexTimeoutMs
+            final long regexTimeoutMs,
+            final Map<String, ReplacementGenerator> generators
     ) {
 
         this.strategies = strategies;
@@ -68,6 +73,7 @@ public class FilterConfiguration {
         this.windowSize = windowSize;
         this.priority = priority;
         this.regexTimeoutMs = regexTimeoutMs;
+        this.generators = generators != null ? generators : Collections.emptyMap();
 
     }
 
@@ -86,6 +92,7 @@ public class FilterConfiguration {
         private int priority;
         // Defaults so existing builders are protected without changes; a value <= 0 disables the guard.
         private long regexTimeoutMs = 1000;
+        private Map<String, ReplacementGenerator> generators = Collections.emptyMap();
 
         public FilterConfiguration build() {
 
@@ -102,7 +109,8 @@ public class FilterConfiguration {
                     fpe,
                     windowSize,
                     priority,
-                    regexTimeoutMs
+                    regexTimeoutMs,
+                    generators
             );
 
         }
@@ -222,6 +230,11 @@ public class FilterConfiguration {
             return this;
         }
 
+        public FilterConfigurationBuilder withGenerators(Map<String, ReplacementGenerator> generators) {
+            this.generators = generators != null ? generators : Collections.emptyMap();
+            return this;
+        }
+
     }
 
     public List<? extends AbstractFilterStrategy> getStrategies() {
@@ -262,6 +275,10 @@ public class FilterConfiguration {
 
     public long getRegexTimeoutMs() {
         return regexTimeoutMs;
+    }
+
+    public Map<String, ReplacementGenerator> getGenerators() {
+        return generators;
     }
 
 }

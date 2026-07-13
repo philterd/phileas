@@ -343,6 +343,59 @@ public class PolicyTest {
 
     }
 
+    @Test
+    public void deserializeGeneratorsAndMapReplace() {
+
+        final String json = """
+                {
+                  "name": "map-replace",
+                  "generators": {
+                    "vendor-namer": {
+                      "type": "ollama",
+                      "endpoint": "http://localhost:11434",
+                      "model": "llama3.1",
+                      "prompt": "Replace {{token}}.",
+                      "timeoutMs": 2000
+                    }
+                  },
+                  "identifiers": {
+                    "identifiers": [
+                      {
+                        "identifierFilterStrategies": [
+                          {
+                            "strategy": "MAP_REPLACE",
+                            "mappings": { "Acme Corp": "Widget Co" },
+                            "mappingFiles": [ "/tmp/vendors.tsv" ],
+                            "caseSensitive": true,
+                            "generator": "vendor-namer",
+                            "fallbackStrategy": "REDACT"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                }
+                """;
+
+        final Policy policy = new Gson().fromJson(json, Policy.class);
+
+        final Generator generator = policy.getGenerators().get("vendor-namer");
+        Assertions.assertNotNull(generator);
+        Assertions.assertEquals("ollama", generator.getType());
+        Assertions.assertEquals("http://localhost:11434", generator.getEndpoint());
+        Assertions.assertEquals("llama3.1", generator.getModel());
+        Assertions.assertEquals(2000, generator.getTimeoutMs());
+
+        final var strategy = policy.getIdentifiers().getIdentifiers().get(0).getIdentifierFilterStrategies().get(0);
+        Assertions.assertEquals("MAP_REPLACE", strategy.getStrategy());
+        Assertions.assertEquals("Widget Co", strategy.getMappings().get("Acme Corp"));
+        Assertions.assertEquals(List.of("/tmp/vendors.tsv"), strategy.getMappingFiles());
+        Assertions.assertTrue(strategy.isCaseSensitive());
+        Assertions.assertEquals("vendor-namer", strategy.getGenerator());
+        Assertions.assertEquals("REDACT", strategy.getFallbackStrategy());
+
+    }
+
     private Policy getPolicy() throws IOException {
 
         CustomDictionary customDictionary = new CustomDictionary();

@@ -27,6 +27,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 public class Policy {
 
@@ -83,6 +84,10 @@ public class Policy {
     @SerializedName("graphical")
     @Expose
     private Graphical graphical = new Graphical();
+
+    @SerializedName("generators")
+    @Expose
+    private Map<String, Generator> generators = Collections.emptyMap();
 
     // Memoized cache key. transient/static so it is excluded from JSON serialization and from
     // reflectionEquals.
@@ -190,6 +195,14 @@ public class Policy {
 
     public void setFpe(FPE fpe) {
         this.fpe = fpe;
+    }
+
+    public Map<String, Generator> getGenerators() {
+        return generators;
+    }
+
+    public void setGenerators(Map<String, Generator> generators) {
+        this.generators = generators;
     }
 
 }

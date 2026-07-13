@@ -22,6 +22,7 @@ import ai.philterd.phileas.filters.rules.dictionary.FuzzyDictionaryFilter;
 import ai.philterd.phileas.filters.rules.dictionary.SetDictionaryFilter;
 import ai.philterd.phileas.model.filtering.FilterType;
 import ai.philterd.phileas.model.filtering.SensitivityLevel;
+import ai.philterd.phileas.policy.Generator;
 import ai.philterd.phileas.policy.Policy;
 import ai.philterd.phileas.policy.filters.CustomDictionary;
 import ai.philterd.phileas.policy.filters.Identifier;
@@ -29,7 +30,13 @@ import ai.philterd.phileas.policy.filters.PhEye;
 import ai.philterd.phileas.policy.filters.Section;
 import ai.philterd.phileas.services.filters.ai.pheye.PhEyeConfiguration;
 import ai.philterd.phileas.services.filters.ai.pheye.PhEyeFilter;
+import ai.philterd.phileas.services.context.ContextService;
+import ai.philterd.phileas.services.context.DefaultContextService;
 import ai.philterd.phileas.services.filters.custom.PhoneNumberRulesFilter;
+import ai.philterd.phileas.services.generators.OllamaReplacementGenerator;
+import ai.philterd.phileas.services.generators.ReplacementGenerator;
+import ai.philterd.phileas.services.generators.ReplacementValidator;
+import ai.philterd.phileas.services.strategies.AbstractFilterStrategy;
 import ai.philterd.phileas.services.filters.regex.AgeFilter;
 import ai.philterd.phileas.services.filters.regex.BankRoutingNumberFilter;
 import ai.philterd.phileas.services.filters.regex.BitcoinAddressFilter;
@@ -65,6 +72,7 @@ import org.apache.logging.log4j.Logger;
 import java.io.File;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -140,9 +148,54 @@ public class FilterPolicyLoader {
      * @return A list of {@link Filter} from the policy.
      * @throws Exception Thrown if the policy cannot be read or the filters cannot be instantiated.
      */
+    /**
+     * Resolves the policy's named {@link Generator} definitions into invocable
+     * {@link ReplacementGenerator} instances, keyed by generator name. Called once per policy load;
+     * the resulting instances are shared across every filter built for the policy.
+     * @param policy The {@link Policy} whose generators block is resolved.
+     * @return A map of generator name to its resolved {@link ReplacementGenerator}. Empty if the
+     *         policy declares no generators.
+     */
+    private Map<String, ReplacementGenerator> buildReplacementGenerators(final Policy policy) {
+
+        final Map<String, Generator> definitions = policy.getGenerators();
+
+        if (definitions == null || definitions.isEmpty()) {
+            return Map.of();
+        }
+
+        final Map<String, ReplacementGenerator> resolved = new HashMap<>();
+
+        for (final Map.Entry<String, Generator> entry : definitions.entrySet()) {
+
+            final Generator generator = entry.getValue();
+
+            if (generator == null || generator.getType() == null) {
+                LOGGER.warn("Generator '{}' has no type and will be ignored.", entry.getKey());
+                continue;
+            }
+
+            if (Generator.TYPE_OLLAMA.equalsIgnoreCase(generator.getType())) {
+                resolved.put(entry.getKey(), new OllamaReplacementGenerator(generator, httpClient));
+            } else {
+                LOGGER.warn("Generator '{}' has unsupported type '{}' and will be ignored.",
+                        entry.getKey(), generator.getType());
+            }
+
+        }
+
+        return resolved;
+
+    }
+
     private List<Filter> buildFilters(final Policy policy, final String policyKey) throws Exception {
 
         final List<Filter> enabledFilters = new LinkedList<>();
+
+        // Resolve the policy's named generators to invocable ReplacementGenerators once, and share them
+        // across every filter. A MAP_REPLACE strategy references a generator by name; the resolved
+        // instance is injected into the strategy when its filter is built.
+        final Map<String, ReplacementGenerator> replacementGenerators = buildReplacementGenerators(policy);
 
         // Rules filters.
 
@@ -158,6 +211,7 @@ public class FilterPolicyLoader {
                     .withIgnoredFiles(policy.getIdentifiers().getAge().getIgnoredFiles())
                     .withIgnoredPatterns(policy.getIdentifiers().getAge().getIgnoredPatterns())
                     .withCrypto(policy.getCrypto())
+                    .withGenerators(replacementGenerators)
                     .withWindowSize(windowSize)
                     .withPriority(policy.getIdentifiers().getAge().getPriority())
                     .build();
@@ -179,6 +233,7 @@ public class FilterPolicyLoader {
                     .withIgnoredFiles(policy.getIdentifiers().getBankRoutingNumber().getIgnoredFiles())
                     .withIgnoredPatterns(policy.getIdentifiers().getBankRoutingNumber().getIgnoredPatterns())
                     .withCrypto(policy.getCrypto())
+                    .withGenerators(replacementGenerators)
                     .withFPE(policy.getFpe())
                     .withWindowSize(windowSize)
                     .withPriority(policy.getIdentifiers().getBankRoutingNumber().getPriority())
@@ -201,6 +256,7 @@ public class FilterPolicyLoader {
                     .withIgnoredFiles(policy.getIdentifiers().getBitcoinAddress().getIgnoredFiles())
                     .withIgnoredPatterns(policy.getIdentifiers().getBitcoinAddress().getIgnoredPatterns())
                     .withCrypto(policy.getCrypto())
+                    .withGenerators(replacementGenerators)
                     .withFPE(policy.getFpe())
                     .withWindowSize(windowSize)
                     .withPriority(policy.getIdentifiers().getBitcoinAddress().getPriority())
@@ -223,6 +279,7 @@ public class FilterPolicyLoader {
                     .withIgnoredFiles(policy.getIdentifiers().getCreditCard().getIgnoredFiles())
                     .withIgnoredPatterns(policy.getIdentifiers().getCreditCard().getIgnoredPatterns())
                     .withCrypto(policy.getCrypto())
+                    .withGenerators(replacementGenerators)
                     .withFPE(policy.getFpe())
                     .withWindowSize(windowSize)
                     .withPriority(policy.getIdentifiers().getCreditCard().getPriority())
@@ -249,6 +306,7 @@ public class FilterPolicyLoader {
                     .withIgnoredFiles(policy.getIdentifiers().getCurrency().getIgnoredFiles())
                     .withIgnoredPatterns(policy.getIdentifiers().getCurrency().getIgnoredPatterns())
                     .withCrypto(policy.getCrypto())
+                    .withGenerators(replacementGenerators)
                     .withWindowSize(windowSize)
                     .withPriority(policy.getIdentifiers().getCurrency().getPriority())
                     .build();
@@ -270,6 +328,7 @@ public class FilterPolicyLoader {
                     .withIgnoredFiles(policy.getIdentifiers().getDate().getIgnoredFiles())
                     .withIgnoredPatterns(policy.getIdentifiers().getDate().getIgnoredPatterns())
                     .withCrypto(policy.getCrypto())
+                    .withGenerators(replacementGenerators)
                     .withWindowSize(windowSize)
                     .withPriority(policy.getIdentifiers().getDate().getPriority())
                     .build();
@@ -294,6 +353,7 @@ public class FilterPolicyLoader {
                     .withIgnoredFiles(policy.getIdentifiers().getDriversLicense().getIgnoredFiles())
                     .withIgnoredPatterns(policy.getIdentifiers().getDriversLicense().getIgnoredPatterns())
                     .withCrypto(policy.getCrypto())
+                    .withGenerators(replacementGenerators)
                     .withFPE(policy.getFpe())
                     .withWindowSize(windowSize)
                     .withPriority(policy.getIdentifiers().getDriversLicense().getPriority())
@@ -316,6 +376,7 @@ public class FilterPolicyLoader {
                     .withIgnoredFiles(policy.getIdentifiers().getEmailAddress().getIgnoredFiles())
                     .withIgnoredPatterns(policy.getIdentifiers().getEmailAddress().getIgnoredPatterns())
                     .withCrypto(policy.getCrypto())
+                    .withGenerators(replacementGenerators)
                     .withFPE(policy.getFpe())
                     .withWindowSize(windowSize)
                     .withPriority(policy.getIdentifiers().getEmailAddress().getPriority())
@@ -341,6 +402,7 @@ public class FilterPolicyLoader {
                     .withIgnoredFiles(policy.getIdentifiers().getIbanCode().getIgnoredFiles())
                     .withIgnoredPatterns(policy.getIdentifiers().getIbanCode().getIgnoredPatterns())
                     .withCrypto(policy.getCrypto())
+                    .withGenerators(replacementGenerators)
                     .withFPE(policy.getFpe())
                     .withWindowSize(windowSize)
                     .withPriority(policy.getIdentifiers().getIbanCode().getPriority())
@@ -366,6 +428,7 @@ public class FilterPolicyLoader {
                     .withIgnoredFiles(policy.getIdentifiers().getIpAddress().getIgnoredFiles())
                     .withIgnoredPatterns(policy.getIdentifiers().getIpAddress().getIgnoredPatterns())
                     .withCrypto(policy.getCrypto())
+                    .withGenerators(replacementGenerators)
                     .withFPE(policy.getFpe())
                     .withWindowSize(windowSize)
                     .withPriority(policy.getIdentifiers().getIpAddress().getPriority())
@@ -388,6 +451,7 @@ public class FilterPolicyLoader {
                     .withIgnoredFiles(policy.getIdentifiers().getMacAddress().getIgnoredFiles())
                     .withIgnoredPatterns(policy.getIdentifiers().getMacAddress().getIgnoredPatterns())
                     .withCrypto(policy.getCrypto())
+                    .withGenerators(replacementGenerators)
                     .withFPE(policy.getFpe())
                     .withWindowSize(windowSize)
                     .withPriority(policy.getIdentifiers().getMacAddress().getPriority())
@@ -410,6 +474,7 @@ public class FilterPolicyLoader {
                     .withIgnoredFiles(policy.getIdentifiers().getPassportNumber().getIgnoredFiles())
                     .withIgnoredPatterns(policy.getIdentifiers().getPassportNumber().getIgnoredPatterns())
                     .withCrypto(policy.getCrypto())
+                    .withGenerators(replacementGenerators)
                     .withFPE(policy.getFpe())
                     .withWindowSize(windowSize)
                     .withPriority(policy.getIdentifiers().getPassportNumber().getPriority())
@@ -432,6 +497,7 @@ public class FilterPolicyLoader {
                     .withIgnoredFiles(policy.getIdentifiers().getPhoneNumberExtension().getIgnoredFiles())
                     .withIgnoredPatterns(policy.getIdentifiers().getPhoneNumberExtension().getIgnoredPatterns())
                     .withCrypto(policy.getCrypto())
+                    .withGenerators(replacementGenerators)
                     .withWindowSize(windowSize)
                     .withPriority(policy.getIdentifiers().getPhoneNumberExtension().getPriority())
                     .build();
@@ -452,6 +518,7 @@ public class FilterPolicyLoader {
                     .withIgnoredFiles(policy.getIdentifiers().getPhoneNumber().getIgnoredFiles())
                     .withIgnoredPatterns(policy.getIdentifiers().getPhoneNumber().getIgnoredPatterns())
                     .withCrypto(policy.getCrypto())
+                    .withGenerators(replacementGenerators)
                     .withWindowSize(windowSize)
                     .withPriority(policy.getIdentifiers().getPhoneNumber().getPriority())
                     .build();
@@ -473,6 +540,7 @@ public class FilterPolicyLoader {
                     .withIgnoredFiles(policy.getIdentifiers().getPhysicianName().getIgnoredFiles())
                     .withIgnoredPatterns(policy.getIdentifiers().getPhysicianName().getIgnoredPatterns())
                     .withCrypto(policy.getCrypto())
+                    .withGenerators(replacementGenerators)
                     .withWindowSize(windowSize)
                     .withPriority(policy.getIdentifiers().getPhysicianName().getPriority())
                     .build();
@@ -499,6 +567,7 @@ public class FilterPolicyLoader {
                             .withIgnoredFiles(section.getIgnoredFiles())
                             .withIgnoredPatterns(section.getIgnoredPatterns())
                             .withCrypto(policy.getCrypto())
+                    .withGenerators(replacementGenerators)
                             .withWindowSize(windowSize)
                             .withPriority(section.getPriority())
                             // The section start/end patterns come from the policy, so bound matching to guard against ReDoS.
@@ -528,6 +597,7 @@ public class FilterPolicyLoader {
                     .withIgnoredFiles(policy.getIdentifiers().getSsn().getIgnoredFiles())
                     .withIgnoredPatterns(policy.getIdentifiers().getSsn().getIgnoredPatterns())
                     .withCrypto(policy.getCrypto())
+                    .withGenerators(replacementGenerators)
                     .withFPE(policy.getFpe())
                     .withWindowSize(windowSize)
                     .withPriority(policy.getIdentifiers().getSsn().getPriority())
@@ -550,6 +620,7 @@ public class FilterPolicyLoader {
                     .withIgnoredFiles(policy.getIdentifiers().getStateAbbreviation().getIgnoredFiles())
                     .withIgnoredPatterns(policy.getIdentifiers().getStateAbbreviation().getIgnoredPatterns())
                     .withCrypto(policy.getCrypto())
+                    .withGenerators(replacementGenerators)
                     .withWindowSize(windowSize)
                     .withPriority(policy.getIdentifiers().getStateAbbreviation().getPriority())
                     .build();
@@ -571,6 +642,7 @@ public class FilterPolicyLoader {
                     .withIgnoredFiles(policy.getIdentifiers().getStreetAddress().getIgnoredFiles())
                     .withIgnoredPatterns(policy.getIdentifiers().getStreetAddress().getIgnoredPatterns())
                     .withCrypto(policy.getCrypto())
+                    .withGenerators(replacementGenerators)
                     .withWindowSize(windowSize)
                     .withPriority(policy.getIdentifiers().getStreetAddress().getPriority())
                     .build();
@@ -592,6 +664,7 @@ public class FilterPolicyLoader {
                     .withIgnoredFiles(policy.getIdentifiers().getTrackingNumber().getIgnoredFiles())
                     .withIgnoredPatterns(policy.getIdentifiers().getTrackingNumber().getIgnoredPatterns())
                     .withCrypto(policy.getCrypto())
+                    .withGenerators(replacementGenerators)
                     .withFPE(policy.getFpe())
                     .withWindowSize(windowSize)
                     .withPriority(policy.getIdentifiers().getTrackingNumber().getPriority())
@@ -618,6 +691,7 @@ public class FilterPolicyLoader {
                     .withIgnoredFiles(policy.getIdentifiers().getUrl().getIgnoredFiles())
                     .withIgnoredPatterns(policy.getIdentifiers().getUrl().getIgnoredPatterns())
                     .withCrypto(policy.getCrypto())
+                    .withGenerators(replacementGenerators)
                     .withFPE(policy.getFpe())
                     .withWindowSize(windowSize)
                     .withPriority(policy.getIdentifiers().getUrl().getPriority())
@@ -642,6 +716,7 @@ public class FilterPolicyLoader {
                     .withIgnoredFiles(policy.getIdentifiers().getVin().getIgnoredFiles())
                     .withIgnoredPatterns(policy.getIdentifiers().getVin().getIgnoredPatterns())
                     .withCrypto(policy.getCrypto())
+                    .withGenerators(replacementGenerators)
                     .withFPE(policy.getFpe())
                     .withWindowSize(windowSize)
                     .withPriority(policy.getIdentifiers().getVin().getPriority())
@@ -664,6 +739,7 @@ public class FilterPolicyLoader {
                     .withIgnoredFiles(policy.getIdentifiers().getZipCode().getIgnoredFiles())
                     .withIgnoredPatterns(policy.getIdentifiers().getZipCode().getIgnoredPatterns())
                     .withCrypto(policy.getCrypto())
+                    .withGenerators(replacementGenerators)
                     .withFPE(policy.getFpe())
                     .withWindowSize(windowSize)
                     .withPriority(policy.getIdentifiers().getZipCode().getPriority())
@@ -713,6 +789,7 @@ public class FilterPolicyLoader {
                             .withIgnoredFiles(customDictionary.getIgnoredFiles())
                             .withIgnoredPatterns(customDictionary.getIgnoredPatterns())
                             .withCrypto(policy.getCrypto())
+                    .withGenerators(replacementGenerators)
                             .withWindowSize(windowSize)
                             .withPriority(customDictionary.getPriority())
                             .build();
@@ -766,6 +843,7 @@ public class FilterPolicyLoader {
                     .withIgnoredFiles(policy.getIdentifiers().getCity().getIgnoredFiles())
                     .withIgnoredPatterns(policy.getIdentifiers().getCity().getIgnoredPatterns())
                     .withCrypto(policy.getCrypto())
+                    .withGenerators(replacementGenerators)
                     .withFPE(policy.getFpe())
                     .withWindowSize(windowSize)
                     .withPriority(policy.getIdentifiers().getCity().getPriority())
@@ -799,6 +877,7 @@ public class FilterPolicyLoader {
                     .withIgnoredFiles(policy.getIdentifiers().getCounty().getIgnoredFiles())
                     .withIgnoredPatterns(policy.getIdentifiers().getCounty().getIgnoredPatterns())
                     .withCrypto(policy.getCrypto())
+                    .withGenerators(replacementGenerators)
                     .withFPE(policy.getFpe())
                     .withWindowSize(windowSize)
                     .withPriority(policy.getIdentifiers().getCounty().getPriority())
@@ -832,6 +911,7 @@ public class FilterPolicyLoader {
                     .withIgnoredFiles(policy.getIdentifiers().getState().getIgnoredFiles())
                     .withIgnoredPatterns(policy.getIdentifiers().getState().getIgnoredPatterns())
                     .withCrypto(policy.getCrypto())
+                    .withGenerators(replacementGenerators)
                     .withFPE(policy.getFpe())
                     .withWindowSize(windowSize)
                     .withPriority(policy.getIdentifiers().getState().getPriority())
@@ -865,6 +945,7 @@ public class FilterPolicyLoader {
                     .withIgnoredFiles(policy.getIdentifiers().getHospital().getIgnoredFiles())
                     .withIgnoredPatterns(policy.getIdentifiers().getHospital().getIgnoredPatterns())
                     .withCrypto(policy.getCrypto())
+                    .withGenerators(replacementGenerators)
                     .withWindowSize(windowSize)
                     .withPriority(policy.getIdentifiers().getHospital().getPriority())
                     .build();
@@ -897,6 +978,7 @@ public class FilterPolicyLoader {
                     .withIgnoredFiles(policy.getIdentifiers().getFirstName().getIgnoredFiles())
                     .withIgnoredPatterns(policy.getIdentifiers().getFirstName().getIgnoredPatterns())
                     .withCrypto(policy.getCrypto())
+                    .withGenerators(replacementGenerators)
                     .withFPE(policy.getFpe())
                     .withWindowSize(windowSize)
                     .withPriority(policy.getIdentifiers().getFirstName().getPriority())
@@ -930,6 +1012,7 @@ public class FilterPolicyLoader {
                     .withIgnoredFiles(policy.getIdentifiers().getSurname().getIgnoredFiles())
                     .withIgnoredPatterns(policy.getIdentifiers().getSurname().getIgnoredPatterns())
                     .withCrypto(policy.getCrypto())
+                    .withGenerators(replacementGenerators)
                     .withFPE(policy.getFpe())
                     .withWindowSize(windowSize)
                     .withPriority(policy.getIdentifiers().getSurname().getPriority())
@@ -971,6 +1054,7 @@ public class FilterPolicyLoader {
                             .withIgnoredFiles(identifier.getIgnoredFiles())
                             .withIgnoredPatterns(identifier.getIgnoredPatterns())
                             .withCrypto(policy.getCrypto())
+                    .withGenerators(replacementGenerators)
                             .withFPE(policy.getFpe())
                             .withWindowSize(windowSize)
                             .withPriority(identifier.getPriority())
@@ -1012,6 +1096,7 @@ public class FilterPolicyLoader {
                             .withIgnoredFiles(phEye.getIgnoredFiles())
                             .withIgnoredPatterns(phEye.getIgnoredPatterns())
                             .withCrypto(policy.getCrypto())
+                    .withGenerators(replacementGenerators)
                             .withFPE(policy.getFpe())
                             .withWindowSize(windowSize)
                             .withPriority(phEye.getPriority())
@@ -1055,6 +1140,7 @@ public class FilterPolicyLoader {
                     .withIgnoredFiles(phEye.getIgnoredFiles())
                     .withIgnoredPatterns(phEye.getIgnoredPatterns())
                     .withCrypto(policy.getCrypto())
+                    .withGenerators(replacementGenerators)
                     .withFPE(policy.getFpe())
                     .withWindowSize(windowSize)
                     .withPriority(phEye.getPriority())
@@ -1082,7 +1168,59 @@ public class FilterPolicyLoader {
 
         }
 
+        // Wire the generated-value PII re-scan into every MAP_REPLACE strategy. The validator runs the
+        // now-complete filter set over a candidate replacement and reports whether any PII is detected.
+        wireReplacementValidators(policy, enabledFilters);
+
         return enabledFilters;
+
+    }
+
+    /**
+     * Injects a {@link ReplacementValidator} into every MAP_REPLACE strategy in the built filter set.
+     * The validator re-scans a generated replacement by running the policy's filters over it; if any
+     * filter detects PII the generated value is rejected and the strategy falls back. The re-scan uses
+     * a throwaway context so it never mutates the caller's context, and a per-thread guard prevents a
+     * MAP_REPLACE strategy encountered during the re-scan from invoking its generator (which would
+     * recurse). A re-scan that itself errors is treated as unsafe so the strategy falls back.
+     * @param policy The policy being loaded.
+     * @param filters The complete, built filter set for the policy.
+     */
+    private void wireReplacementValidators(final Policy policy, final List<Filter> filters) {
+
+        final ReplacementValidator validator = (candidate) -> {
+
+            if (AbstractFilterStrategy.isRescanning()) {
+                return false;
+            }
+
+            AbstractFilterStrategy.setRescanning(true);
+            try {
+                // A throwaway context so the re-scan never mutates the caller's context. The context
+                // name is immaterial to detection over this fresh context.
+                final ContextService rescanContext = new DefaultContextService();
+                for (final Filter filter : filters) {
+                    if (!filter.filter(rescanContext, policy, "", 0, candidate).getSpans().isEmpty()) {
+                        return true;
+                    }
+                }
+                return false;
+            } catch (final Exception e) {
+                LOGGER.warn("Re-scan of a generated replacement failed; treating it as unsafe. Reason: {}", e.getMessage());
+                return true;
+            } finally {
+                AbstractFilterStrategy.setRescanning(false);
+            }
+
+        };
+
+        for (final Filter filter : filters) {
+            for (final AbstractFilterStrategy strategy : filter.getStrategies()) {
+                if (AbstractFilterStrategy.MAP_REPLACE.equalsIgnoreCase(strategy.getStrategy())) {
+                    strategy.setReplacementValidator(validator);
+                }
+            }
+        }
 
     }
 

@@ -39,6 +39,7 @@ The filter strategies are described below. Each filter type can specify zero or 
 * [`FPE_ENCRYPT_REPLACE`](filter_strategies.md#fpe)(Format-preserving encryption)
 * [`RANDOM_REPLACE`](filter_strategies.md#random)
 * [`STATIC_REPLACE`](filter_strategies.md#static)
+* [`MAP_REPLACE`](filter_strategies.md#map)
 * [`TRUNCATE`](filter_strategies.md#truncate)
 * [`ZERO_LEADING`](filter_strategies.md#zero_leading)
 * [`ABBREVIATE`](filter_strategies.md#abbreviate)
@@ -272,6 +273,31 @@ An example policy using the `STATIC_REPLACE` filter strategy:
             {
                "strategy": "STATIC_REPLACE",
                "staticReplacement": "some new value"
+            }
+         ]
+      }
+   }
+}
+```
+
+### The `MAP_REPLACE` Filter Strategy {id="map"}
+
+Replaces a detected value with a replacement from a lookup table you provide. When the value is absent from the table, an optional generator produces a replacement, and a fallback strategy is applied when the table and generator do not yield one. A detected value is never left in the clear. Available to all filter types. See [Mapped Replacement](../deidentification/mapped-replacement.md) for full details, including generators.
+
+An example policy using the `MAP_REPLACE` filter strategy:
+
+```
+{
+   "name": "identifier",
+   "identifiers": {
+      "identifier": {
+         "identifierFilterStrategies": [
+            {
+               "strategy": "MAP_REPLACE",
+               "mappings": { "Acme Corp": "Widget Co" },
+               "mappingFiles": [ "/etc/philter/vendors.tsv" ],
+               "caseSensitive": false,
+               "fallbackStrategy": "REDACT"
             }
          ]
       }
