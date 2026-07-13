@@ -396,6 +396,68 @@ public class PolicyTest {
 
     }
 
+    @Test
+    public void deserializePhoneNumberRegionString() {
+
+        final String json = """
+                {
+                  "name": "phone-region",
+                  "identifiers": {
+                    "phoneNumber": {
+                      "region": "GB",
+                      "phoneNumberFilterStrategies": []
+                    }
+                  }
+                }
+                """;
+
+        final Policy policy = new Gson().fromJson(json, Policy.class);
+
+        Assertions.assertEquals(List.of("GB"), policy.getIdentifiers().getPhoneNumber().getRegion());
+
+    }
+
+    @Test
+    public void deserializePhoneNumberRegionArray() {
+
+        final String json = """
+                {
+                  "name": "phone-region",
+                  "identifiers": {
+                    "phoneNumber": {
+                      "region": ["US", "GB", "FR"],
+                      "phoneNumberFilterStrategies": []
+                    }
+                  }
+                }
+                """;
+
+        final Policy policy = new Gson().fromJson(json, Policy.class);
+
+        Assertions.assertEquals(List.of("US", "GB", "FR"), policy.getIdentifiers().getPhoneNumber().getRegion());
+
+    }
+
+    @Test
+    public void deserializePhoneNumberRegionDefault() {
+
+        final String json = """
+                {
+                  "name": "phone-region",
+                  "identifiers": {
+                    "phoneNumber": {
+                      "phoneNumberFilterStrategies": []
+                    }
+                  }
+                }
+                """;
+
+        final Policy policy = new Gson().fromJson(json, Policy.class);
+
+        Assertions.assertEquals(List.of("US"), policy.getIdentifiers().getPhoneNumber().getRegion());
+
+    }
+
     private Policy getPolicy() throws IOException {
 
         CustomDictionary customDictionary = new CustomDictionary();

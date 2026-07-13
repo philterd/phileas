@@ -523,7 +523,7 @@ public class FilterPolicyLoader {
                     .withPriority(policy.getIdentifiers().getPhoneNumber().getPriority())
                     .build();
 
-            final Filter filter = new PhoneNumberRulesFilter(filterConfiguration);
+            final Filter filter = new PhoneNumberRulesFilter(filterConfiguration, policy.getIdentifiers().getPhoneNumber().getRegion());
             enabledFilters.add(filter);
 
         }

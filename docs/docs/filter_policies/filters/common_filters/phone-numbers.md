@@ -13,6 +13,7 @@ This filter has no required parameters.
 | Parameter                     | Description                                                                                                                                                                                                  | Default Value                                            |
 |-------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------|
 | `phoneNumberFilterStrategies` | A list of filter strategies.                                                                                                                                                                                 | None                                                     |
+| `region`                      | Default region(s), ISO 3166-1 alpha-2 (for example `"US"`, `"GB"`, `"FR"`), used to interpret phone numbers written without an international `+` country code. A string sets a single region; an array enables detection for each listed region, and the merged results are de-duplicated. Numbers with a `+` prefix are detected regardless of this value. | `"US"`                                                   |
 | `enabled`                     | When set to false, the filter will be disabled and not applied                                                                                                                                               | `true`                                                   |
 | `ignored`                     | A list of terms to be ignored by the filter.                                                                                                                                                                 | None                                                     |
 | `windowSize`                  | Sets the size of the window (in terms) surrounding a span to look for contextual terms. If set, this value overrides the value of `span.window.size` in the configuration.                                   | The value of `span.window.size` which is by default `5`. |
@@ -63,3 +64,23 @@ Each filter strategy may have one condition. See [Conditions](#conditions) for d
    }     
 }
 ```
+
+To detect national-format numbers from regions other than the United States, set `region` to a single ISO 3166-1 alpha-2 code or an array of them:
+
+```
+{
+   "name": "phone-number-example",
+   "identifiers": {
+      "phoneNumber": {
+         "region": ["US", "GB", "FR"],
+         "phoneNumberFilterStrategies": [
+            {
+               "strategy": "REDACT"
+            }
+         ]
+      }
+   }
+}
+```
+
+The `region` property requires redaction policy schema 1.2.0.

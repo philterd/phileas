@@ -42,4 +42,26 @@ public class PolicySchemaValidationTest {
 
     }
 
+    @Test
+    public void validatePhoneNumberRegionString() {
+
+        final String jsonPolicy = "{\"identifiers\": {\"phoneNumber\": {\"region\": \"GB\"}}}";
+
+        final boolean valid = PolicySchema.validate(jsonPolicy);
+
+        Assertions.assertTrue(valid);
+
+    }
+
+    @Test
+    public void validatePhoneNumberRegionArray() {
+
+        final String jsonPolicy = "{\"identifiers\": {\"phoneNumber\": {\"region\": [\"US\", \"GB\", \"FR\"]}}}";
+
+        final boolean valid = PolicySchema.validate(jsonPolicy);
+
+        Assertions.assertTrue(valid);
+
+    }
+
 }

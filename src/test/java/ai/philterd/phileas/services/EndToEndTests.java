@@ -335,6 +335,37 @@ public class EndToEndTests {
     }
 
     @Test
+    public void endToEndPhoneNumberRegionGb() throws Exception {
+
+        final Properties properties = new Properties();
+        final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties);
+
+        // Parse from JSON so the region deserialization, the FilterPolicyLoader wiring, and the filter
+        // are all exercised together on the real load path.
+        final String json = """
+                {
+                  "identifiers": {
+                    "phoneNumber": {
+                      "region": "GB",
+                      "phoneNumberFilterStrategies": [ { "strategy": "REDACT" } ]
+                    }
+                  }
+                }
+                """;
+        final Policy policy = new com.google.gson.Gson().fromJson(json, Policy.class);
+
+        final String input = "his UK number is 020 7946 0958.";
+
+        final PlainTextFilterService service = new PlainTextFilterService(phileasConfiguration, contextService, vectorService, null);
+        final TextFilterResult response = service.filter(policy, "context", input);
+
+        LOGGER.info(response.getFilteredText());
+
+        Assertions.assertEquals("his UK number is {{{REDACTED-phone-number}}}.", response.getFilteredText().trim());
+
+    }
+
+    @Test
     public void endToEndWithPolicyAsObject() throws Exception {
 
         final Policy policy = getPolicyJustStreetAddress();

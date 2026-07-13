@@ -22,10 +22,12 @@ import ai.philterd.phileas.model.filtering.Filtered;
 import ai.philterd.phileas.model.filtering.Replacement;
 import ai.philterd.phileas.model.filtering.Span;
 import ai.philterd.phileas.policy.Policy;
+import ai.philterd.phileas.policy.filters.PhoneNumber;
 import ai.philterd.phileas.services.context.ContextService;
 import com.google.i18n.phonenumbers.PhoneNumberMatch;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -36,13 +38,19 @@ import java.util.regex.Pattern;
 public class PhoneNumberRulesFilter extends RulesFilter {
 
     private final PhoneNumberUtil phoneUtil;
+    private final List<String> regions;
     private final Pattern pattern = Pattern.compile("^(\\+\\d{1,2}\\s)?\\(?\\d{3}\\)?[\\s.-]\\d{3}[\\s.-]\\d{4}$");
 
     public PhoneNumberRulesFilter(final FilterConfiguration filterConfiguration) {
+        this(filterConfiguration, List.of(PhoneNumber.DEFAULT_REGION));
+    }
+
+    public PhoneNumberRulesFilter(final FilterConfiguration filterConfiguration, final List<String> regions) {
 
         super(FilterType.PHONE_NUMBER, filterConfiguration);
 
         this.phoneUtil = PhoneNumberUtil.getInstance();
+        this.regions = (regions == null || regions.isEmpty()) ? List.of(PhoneNumber.DEFAULT_REGION) : regions;
 
         this.contextualTerms = new HashSet<>();
         this.contextualTerms.add("phone");
@@ -61,9 +69,17 @@ public class PhoneNumberRulesFilter extends RulesFilter {
 
         if(policy.getIdentifiers().hasFilter(filterType)) {
 
-            final Iterable<PhoneNumberMatch> matches = phoneUtil.findNumbers(input, "US", PhoneNumberUtil.Leniency.POSSIBLE, Long.MAX_VALUE);
+            // Scan once per configured region and merge the results. A "+"-prefixed number is found under
+            // every region and a bare national-format number may match in several, so overlapping spans are
+            // de-duplicated below, preferring valid numbers over merely-possible ones and longer over shorter.
+            final List<PhoneNumberMatch> allMatches = new ArrayList<>();
+            for (final String region : regions) {
+                for (final PhoneNumberMatch match : phoneUtil.findNumbers(input, region, PhoneNumberUtil.Leniency.POSSIBLE, Long.MAX_VALUE)) {
+                    allMatches.add(match);
+                }
+            }
 
-            for (final PhoneNumberMatch match : matches) {
+            for (final PhoneNumberMatch match : dedupe(allMatches)) {
 
                 final String text = match.rawString();
 
@@ -93,6 +109,50 @@ public class PhoneNumberRulesFilter extends RulesFilter {
         }
 
         return new Filtered(context, spans);
+
+    }
+
+    /**
+     * Merges matches found across the configured regions, removing overlapping spans. When two matches
+     * overlap the "better" one is kept: a valid number is preferred over a merely-possible one, and among
+     * equally-valid matches the longer span wins.
+     */
+    private List<PhoneNumberMatch> dedupe(final List<PhoneNumberMatch> matches) {
+
+        // Best-first ordering so a greedy sweep keeps the strongest match in each overlapping cluster.
+        final List<PhoneNumberMatch> sorted = new ArrayList<>(matches);
+        sorted.sort((a, b) -> {
+            final boolean aValid = phoneUtil.isValidNumber(a.number());
+            final boolean bValid = phoneUtil.isValidNumber(b.number());
+            if (aValid != bValid) {
+                return aValid ? -1 : 1;
+            }
+            final int aLength = a.end() - a.start();
+            final int bLength = b.end() - b.start();
+            if (aLength != bLength) {
+                return Integer.compare(bLength, aLength);
+            }
+            return Integer.compare(a.start(), b.start());
+        });
+
+        final List<PhoneNumberMatch> kept = new ArrayList<>();
+        for (final PhoneNumberMatch candidate : sorted) {
+            boolean overlaps = false;
+            for (final PhoneNumberMatch accepted : kept) {
+                if (candidate.start() < accepted.end() && accepted.start() < candidate.end()) {
+                    overlaps = true;
+                    break;
+                }
+            }
+            if (!overlaps) {
+                kept.add(candidate);
+            }
+        }
+
+        // Restore document order so emitted spans are left-to-right.
+        kept.sort((a, b) -> Integer.compare(a.start(), b.start()));
+
+        return kept;
 
     }
 

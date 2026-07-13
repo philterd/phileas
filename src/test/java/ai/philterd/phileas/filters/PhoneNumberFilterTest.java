@@ -179,6 +179,91 @@ public class PhoneNumberFilterTest extends AbstractFilterTest {
     }
 
     @Test
+    public void filterPhoneRegionGb() throws Exception {
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(new PhoneNumberFilterStrategy()))
+                .withWindowSize(windowSize)
+                .build();
+
+        final PhoneNumberRulesFilter filter = new PhoneNumberRulesFilter(filterConfiguration, List.of("GB"));
+
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "the number is 020 7946 0958.");
+        showSpans(filtered.getSpans());
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertEquals("020 7946 0958", filtered.getSpans().get(0).getText());
+
+    }
+
+    @Test
+    public void filterPhoneRegionGbNotFoundWithUsDefault() throws Exception {
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(new PhoneNumberFilterStrategy()))
+                .withWindowSize(windowSize)
+                .build();
+
+        // The default (US) region does not recognize this UK national-format number.
+        final PhoneNumberRulesFilter filter = new PhoneNumberRulesFilter(filterConfiguration);
+
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "the number is 020 7946 0958.");
+        Assertions.assertEquals(0, filtered.getSpans().size());
+
+    }
+
+    @Test
+    public void filterPhoneMultiRegion() throws Exception {
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(new PhoneNumberFilterStrategy()))
+                .withWindowSize(windowSize)
+                .build();
+
+        final PhoneNumberRulesFilter filter = new PhoneNumberRulesFilter(filterConfiguration, List.of("US", "GB", "FR"));
+
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context",
+                PIECE, "call 123-456-7890 or 020 7946 0958 or 01 42 68 53 00.");
+        showSpans(filtered.getSpans());
+        Assertions.assertEquals(3, filtered.getSpans().size());
+
+    }
+
+    @Test
+    public void filterPhoneInternationalRegardlessOfRegion() throws Exception {
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(new PhoneNumberFilterStrategy()))
+                .withWindowSize(windowSize)
+                .build();
+
+        // A "+"-prefixed international number is detected even though the configured region is GB.
+        final PhoneNumberRulesFilter filter = new PhoneNumberRulesFilter(filterConfiguration, List.of("GB"));
+
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "the number is +1 202-555-0182.");
+        showSpans(filtered.getSpans());
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertEquals("+1 202-555-0182", filtered.getSpans().get(0).getText());
+
+    }
+
+    @Test
+    public void filterPhoneMultiRegionDedupe() throws Exception {
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(new PhoneNumberFilterStrategy()))
+                .withWindowSize(windowSize)
+                .build();
+
+        // A single "+"-prefixed number is found under every region; the merged result must not double it.
+        final PhoneNumberRulesFilter filter = new PhoneNumberRulesFilter(filterConfiguration, List.of("US", "GB", "FR"));
+
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "the number is +1 202-555-0182.");
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertEquals("+1 202-555-0182", filtered.getSpans().get(0).getText());
+
+    }
+
+    @Test
     public void filterWithCandidates1() throws Exception {
 
         final List<String> candidates = List.of("candidate1", "candidate2");
