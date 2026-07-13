@@ -28,6 +28,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
+import static ai.philterd.phileas.services.strategies.AbstractFilterStrategy.ABBREVIATE;
 import static ai.philterd.phileas.services.strategies.AbstractFilterStrategy.RANDOM_REPLACE;
 
 public class SurnameFilterTest extends AbstractFilterTest {
@@ -111,6 +112,31 @@ public class SurnameFilterTest extends AbstractFilterTest {
         final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "Jones");
         showSpans(Span.dropOverlappingSpans(filtered.getSpans()));
         Assertions.assertEquals(1, Span.dropOverlappingSpans(filtered.getSpans()).size());
+
+    }
+
+    @Test
+    void filterAbbreviate() throws Exception {
+
+        // End-to-end: a detected surname is reduced to its initials by the ABBREVIATE strategy rather
+        // than fully redacted (the FRBP 9037 scenario in issue #320).
+        final SurnameFilterStrategy surnameFilterStrategy = new SurnameFilterStrategy();
+        surnameFilterStrategy.setStrategy(ABBREVIATE);
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(surnameFilterStrategy))
+                .withWindowSize(windowSize)
+                .build();
+
+        final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.SURNAME, filterConfiguration, SensitivityLevel.LOW, true);
+
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "Jones");
+        final List<Span> spans = Span.dropOverlappingSpans(filtered.getSpans());
+
+        Assertions.assertEquals(1, spans.size());
+        // The surname is reduced to its initial rather than fully redacted. The fuzzy dictionary filter
+        // matches on a lower-cased token, so the initial is lower-cased here.
+        Assertions.assertEquals("j", spans.get(0).getReplacement());
 
     }
 
