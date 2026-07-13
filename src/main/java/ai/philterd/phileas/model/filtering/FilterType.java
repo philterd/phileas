@@ -26,6 +26,7 @@ public enum FilterType {
     CURRENCY("currency", true),
     CREDIT_CARD("credit-card", true),
     DRIVERS_LICENSE_NUMBER("drivers-license-number", true),
+    EIN("ein", true),
     LOCATION_CITY("city", false),
     LOCATION_STATE("state", false),
     LOCATION_COUNTY("county", false),

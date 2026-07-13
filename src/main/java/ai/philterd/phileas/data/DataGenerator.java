@@ -65,6 +65,12 @@ public interface DataGenerator {
     Generator<String> ssn();
 
     /**
+     * Gets a generator for Employer Identification Numbers (EIN).
+     * @return A generator for Employer Identification Numbers (EIN).
+     */
+    Generator<String> ein();
+
+    /**
      * Gets a generator for phone numbers.
      * @return A generator for phone numbers.
      */

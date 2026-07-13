@@ -15,10 +15,12 @@
  */
 package ai.philterd.phileas.policy;
 
+import ai.philterd.phileas.policy.Identifiers;
 import ai.philterd.phileas.services.strategies.AbstractFilterStrategy;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.annotations.SerializedName;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -32,8 +34,8 @@ import java.util.Set;
  * Guards against the redaction policy schema (the published contract) drifting away from what the
  * Phileas runtime actually implements. The schema is authored and versioned externally (in
  * philterd/phisql, published to philterd.ai) and provided to Phileas on the classpath by the
- * {@code phisql} dependency; this test fails the build if the schema declares a filter strategy for
- * which Phileas has no corresponding {@link AbstractFilterStrategy} constant.
+ * {@code phisql} dependency; this test fails the build if the schema declares a filter strategy, or
+ * an identifier (filter type), for which Phileas has no corresponding runtime support.
  */
 public class SchemaConformanceTest {
 
@@ -51,6 +53,43 @@ public class SchemaConformanceTest {
                     "The policy schema declares strategy '" + strategy + "' but Phileas has no matching "
                             + "constant in AbstractFilterStrategy. The published schema and the runtime have drifted.");
         }
+    }
+
+    @Test
+    public void everyIdentifierDeclaredBySchemaIsModeledByPhileas() {
+
+        final Set<String> phileasIdentifiers = serializedNamesOf(Identifiers.class);
+        final Set<String> schemaIdentifiers = identifierNamesIn(PolicySchema.getSchema());
+
+        Assertions.assertFalse(schemaIdentifiers.isEmpty(),
+                "expected the embedded policy schema to declare identifiers");
+
+        for (final String identifier : schemaIdentifiers) {
+            Assertions.assertTrue(phileasIdentifiers.contains(identifier),
+                    "The policy schema declares identifier '" + identifier + "' but Phileas has no matching "
+                            + "@SerializedName field in Identifiers. The published schema and the runtime have drifted.");
+        }
+    }
+
+    /** Every {@code @SerializedName} value declared on the class's fields. */
+    private static Set<String> serializedNamesOf(final Class<?> type) {
+        final Set<String> values = new HashSet<>();
+        for (final Field field : type.getDeclaredFields()) {
+            final SerializedName annotation = field.getAnnotation(SerializedName.class);
+            if (annotation != null) {
+                values.add(annotation.value());
+            }
+        }
+        return values;
+    }
+
+    /** The names of every identifier (filter) declared under {@code $defs.identifiers.properties}. */
+    private static Set<String> identifierNamesIn(final String schemaJson) {
+        final JsonObject schema = new Gson().fromJson(schemaJson, JsonObject.class);
+        return schema.getAsJsonObject("$defs")
+                .getAsJsonObject("identifiers")
+                .getAsJsonObject("properties")
+                .keySet();
     }
 
     /** Every public static final String constant value declared on the class. */

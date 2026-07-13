@@ -46,6 +46,7 @@ Phileas uses several methods to identify person's names.
 | [Dates](filters/common_filters/dates.md)                                      | Identifies dates in many formats such as May 22, 1999                           |
 | [Driver's License Numbers](filters/common_filters/drivers-license-numbers.md) | Identifies driver's license numbers for all 50 US states                        |
 | [Email Addresses](filters/common_filters/email-addresses.md)                  | Identifies email addresses                                                      |
+| [Employer Identification Numbers (EIN)](filters/common_filters/ein.md)        | Identifies US Employer Identification Numbers such as `12-3456789`              |
 | [Hospitals](filters/locations/hospitals.md)                                   | Identifies common hospital names                                                |
 | [IBAN Codes](filters/common_filters/iban-codes.md)                            | Identifies international bank account numbers                                   |
 | [IP Addresses](filters/common_filters/ip-addresses.md)                        | Identifies IPv4 and IPv6 addresses                                              |

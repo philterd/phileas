@@ -34,6 +34,7 @@ import ai.philterd.phileas.data.generators.IPAddressGenerator;
 import ai.philterd.phileas.data.generators.MACAddressGenerator;
 import ai.philterd.phileas.data.generators.PassportNumberGenerator;
 import ai.philterd.phileas.data.generators.PhoneNumberGenerator;
+import ai.philterd.phileas.data.generators.EINGenerator;
 import ai.philterd.phileas.data.generators.SSNGenerator;
 import ai.philterd.phileas.data.generators.StateAbbreviationGenerator;
 import ai.philterd.phileas.data.generators.StateGenerator;
@@ -76,6 +77,11 @@ public class DefaultDataGenerator extends AbstractGenerator<Object> implements D
      * Generator for SSNs.
      */
     public final Generator<String> ssn;
+
+    /**
+     * Generator for EINs.
+     */
+    public final Generator<String> ein;
 
     /**
      * Generator for phone numbers.
@@ -209,6 +215,7 @@ public class DefaultDataGenerator extends AbstractGenerator<Object> implements D
         this.surnames = new SurnameGenerator(random, surnamesList);
         this.fullNames = new FullNameGenerator(firstNames, surnames);
         this.ssn = new SSNGenerator(random);
+        this.ein = new EINGenerator(random);
         this.phoneNumbers = new PhoneNumberGenerator(random);
         this.emailAddresses = new EmailAddressGenerator(random, firstNames, surnames);
         this.age = new AgeGenerator(random);
@@ -237,6 +244,7 @@ public class DefaultDataGenerator extends AbstractGenerator<Object> implements D
     @Override public Generator<String> surnames() { return surnames; }
     @Override public Generator<String> fullNames() { return fullNames; }
     @Override public Generator<String> ssn() { return ssn; }
+    @Override public Generator<String> ein() { return ein; }
     @Override public Generator<String> phoneNumbers() { return phoneNumbers; }
     @Override public Generator<String> emailAddresses() { return emailAddresses; }
     @Override public Generator<Integer> age() { return age; }

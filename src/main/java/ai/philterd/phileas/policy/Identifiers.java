@@ -26,6 +26,7 @@ import ai.philterd.phileas.policy.filters.Currency;
 import ai.philterd.phileas.policy.filters.CustomDictionary;
 import ai.philterd.phileas.policy.filters.Date;
 import ai.philterd.phileas.policy.filters.DriversLicense;
+import ai.philterd.phileas.policy.filters.Ein;
 import ai.philterd.phileas.policy.filters.EmailAddress;
 import ai.philterd.phileas.policy.filters.FirstName;
 import ai.philterd.phileas.policy.filters.Hospital;
@@ -97,6 +98,10 @@ public class Identifiers {
     @SerializedName("driversLicense")
     @Expose
     private DriversLicense driversLicense;
+
+    @SerializedName("ein")
+    @Expose
+    private Ein ein;
 
     @SerializedName("emailAddress")
     @Expose
@@ -232,6 +237,8 @@ public class Identifiers {
                 if(this.getDate() != null) { return true; } break;
             case DRIVERS_LICENSE_NUMBER:
                 if(this.getDriversLicense() != null) { return true; } break;
+            case EIN:
+                if(this.getEin() != null) { return true; } break;
             case EMAIL_ADDRESS:
                 if(this.getEmailAddress() != null) { return true; } break;
             case FIRST_NAME:
@@ -321,6 +328,14 @@ public class Identifiers {
 
     public void setSsn(Ssn ssn) {
         this.ssn = ssn;
+    }
+
+    public Ein getEin() {
+        return ein;
+    }
+
+    public void setEin(Ein ein) {
+        this.ein = ein;
     }
 
     public PhoneNumber getPhoneNumber() {

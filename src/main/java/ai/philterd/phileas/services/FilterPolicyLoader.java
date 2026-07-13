@@ -44,6 +44,7 @@ import ai.philterd.phileas.services.filters.regex.CreditCardFilter;
 import ai.philterd.phileas.services.filters.regex.CurrencyFilter;
 import ai.philterd.phileas.services.filters.regex.DateFilter;
 import ai.philterd.phileas.services.filters.regex.DriversLicenseFilter;
+import ai.philterd.phileas.services.filters.regex.EinFilter;
 import ai.philterd.phileas.services.filters.regex.EmailAddressFilter;
 import ai.philterd.phileas.services.filters.regex.IbanCodeFilter;
 import ai.philterd.phileas.services.filters.regex.IdentifierFilter;
@@ -582,6 +583,28 @@ public class FilterPolicyLoader {
                 }
 
             }
+
+        }
+
+        if(policy.getIdentifiers().hasFilter(FilterType.EIN) && policy.getIdentifiers().getEin().isEnabled()) {
+
+            final int windowSize = policy.getIdentifiers().getEin().getWindowSizeOrDefault(phileasConfiguration.spanWindowSize());
+
+            final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                    .withRandom(random)
+                    .withStrategies(policy.getIdentifiers().getEin().getEinFilterStrategies())
+                    .withIgnored(policy.getIdentifiers().getEin().getIgnored())
+                    .withIgnoredFiles(policy.getIdentifiers().getEin().getIgnoredFiles())
+                    .withIgnoredPatterns(policy.getIdentifiers().getEin().getIgnoredPatterns())
+                    .withCrypto(policy.getCrypto())
+                    .withGenerators(replacementGenerators)
+                    .withFPE(policy.getFpe())
+                    .withWindowSize(windowSize)
+                    .withPriority(policy.getIdentifiers().getEin().getPriority())
+                    .build();
+
+            final Filter filter = new EinFilter(filterConfiguration, policy.getIdentifiers().getEin().isOnlyValidPrefixes());
+            enabledFilters.add(filter);
 
         }
 

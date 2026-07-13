@@ -366,6 +366,86 @@ public class EndToEndTests {
     }
 
     @Test
+    public void endToEndEin() throws Exception {
+
+        final Properties properties = new Properties();
+        final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties);
+
+        // Parse from JSON so deserialization, the FilterPolicyLoader wiring, and the filter run together.
+        final String json = """
+                {
+                  "identifiers": {
+                    "ein": {
+                      "einFilterStrategies": [ { "strategy": "REDACT" } ]
+                    }
+                  }
+                }
+                """;
+        final Policy policy = new com.google.gson.Gson().fromJson(json, Policy.class);
+
+        final PlainTextFilterService service = new PlainTextFilterService(phileasConfiguration, contextService, vectorService, null);
+        final TextFilterResult response = service.filter(policy, "context", "the ein is 12-3456789.");
+
+        Assertions.assertEquals("the ein is {{{REDACTED-ein}}}.", response.getFilteredText().trim());
+
+    }
+
+    @Test
+    public void endToEndEinOnlyValidPrefixes() throws Exception {
+
+        final Properties properties = new Properties();
+        final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties);
+
+        final String json = """
+                {
+                  "identifiers": {
+                    "ein": {
+                      "onlyValidPrefixes": true,
+                      "einFilterStrategies": [ { "strategy": "REDACT" } ]
+                    }
+                  }
+                }
+                """;
+        final Policy policy = new com.google.gson.Gson().fromJson(json, Policy.class);
+
+        final PlainTextFilterService service = new PlainTextFilterService(phileasConfiguration, contextService, vectorService, null);
+
+        // 07 is not an IRS-issued prefix, so with onlyValidPrefixes on it is left in the clear.
+        final TextFilterResult invalid = service.filter(policy, "context", "the ein is 07-1234567.");
+        Assertions.assertEquals("the ein is 07-1234567.", invalid.getFilteredText().trim());
+
+        // 12 is a valid prefix, so it is redacted.
+        final TextFilterResult valid = service.filter(policy, "context", "the ein is 12-3456789.");
+        Assertions.assertEquals("the ein is {{{REDACTED-ein}}}.", valid.getFilteredText().trim());
+
+    }
+
+    @Test
+    public void endToEndEinSsnDisambiguation() throws Exception {
+
+        final Properties properties = new Properties();
+        final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties);
+
+        // Both ein and ssn are enabled. The canonical EIN form (NN-NNNNNNN) resolves to EIN, while the
+        // canonical SSN form (NNN-NN-NNNN) and bare nine-digit runs resolve to SSN.
+        final String json = """
+                {
+                  "identifiers": {
+                    "ein": { "einFilterStrategies": [ { "strategy": "REDACT" } ] },
+                    "ssn": { "ssnFilterStrategies": [ { "strategy": "REDACT" } ] }
+                  }
+                }
+                """;
+        final Policy policy = new com.google.gson.Gson().fromJson(json, Policy.class);
+
+        final PlainTextFilterService service = new PlainTextFilterService(phileasConfiguration, contextService, vectorService, null);
+        final TextFilterResult response = service.filter(policy, "context", "ein 12-3456789 and ssn 123-45-6789.");
+
+        Assertions.assertEquals("ein {{{REDACTED-ein}}} and ssn {{{REDACTED-ssn}}}.", response.getFilteredText().trim());
+
+    }
+
+    @Test
     public void endToEndWithPolicyAsObject() throws Exception {
 
         final Policy policy = getPolicyJustStreetAddress();

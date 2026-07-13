@@ -43,6 +43,17 @@ public class PolicySchemaValidationTest {
     }
 
     @Test
+    public void validateEinPolicy() {
+
+        final String jsonPolicy = "{\"identifiers\": {\"ein\": {\"onlyValidPrefixes\": true, \"einFilterStrategies\": [{\"strategy\": \"REDACT\"}]}}}";
+
+        final boolean valid = PolicySchema.validate(jsonPolicy);
+
+        Assertions.assertTrue(valid);
+
+    }
+
+    @Test
     public void validatePhoneNumberRegionString() {
 
         final String jsonPolicy = "{\"identifiers\": {\"phoneNumber\": {\"region\": \"GB\"}}}";
