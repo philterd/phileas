@@ -25,7 +25,7 @@ A sample policy containing a filter strategy is shown below. In this example, em
 }
 ```
 
-> Most of the filter strategies apply to all types of data, however, some filter strategies only apply to a few types. For example, the `ZERO_LEADING` filter strategy only applies to the zip code filter, and the `ABBREVIATE` filter strategy only applies to the person's names (NER) filter.
+> Most of the filter strategies apply to all types of data, however, some filter strategies only apply to a few types. For example, the `ZERO_LEADING` filter strategy only applies to the zip code filter, and the `ABBREVIATE` filter strategy only applies to the person's name filters (Ph-Eye/NER, first names, surnames, and physician names).
 
 
 ## Filter Strategies
@@ -97,13 +97,13 @@ openssl rand -hex 32
 
 > **Keep the key out of the policy file.** Because policies are configuration files that are often kept in version control, prefix the value with `env:` to read the key from an environment variable at runtime instead of storing it inline. For example, `"key": "env:CRYPTO_KEY"` reads the key from the `CRYPTO_KEY` environment variable. This is the recommended way to supply the key.
 
-> A fresh random nonce is generated for every value, so encrypting the same value twice produces different output — identical values do not produce identical redactions across the corpus — and each value carries an authentication tag that detects tampering. Because the nonce is random, no initialization vector (`iv`) is required; an `iv` in an existing policy is ignored.
+> A fresh random nonce is generated for every value, so encrypting the same value twice produces different output (identical values do not produce identical redactions across the corpus), and each value carries an authentication tag that detects tampering. Because the nonce is random, no initialization vector (`iv`) is required; an `iv` in an existing policy is ignored.
 
 The encrypted replacement has the form `{{<base64>}}`, where the Base64 content is `nonce || ciphertext || tag` (a 12-byte nonce, the ciphertext, and a 16-byte authentication tag).
 
 #### Decrypting a value
 
-Because GCM is an authenticated mode, a value cannot be decrypted with the `openssl enc` command line, which does not support GCM. Decrypt it with a GCM-capable library instead — for example, with Python:
+Because GCM is an authenticated mode, a value cannot be decrypted with the `openssl enc` command line, which does not support GCM. Decrypt it with a GCM-capable library instead, for example with Python:
 
 ```
 from cryptography.hazmat.primitives.ciphers.aead import AESGCM
@@ -164,9 +164,9 @@ The `FPE_ENCRYPT_REPLACE` filter strategy uses format-preserving encryption (FPE
 * [https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-38Gr1-draft.pdf](https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-38Gr1-draft.pdf)
 * [https://nvlpubs.nist.gov/nistpubs/specialpublications/nist.sp.800-38g.pdf](https://nvlpubs.nist.gov/nistpubs/specialpublications/nist.sp.800-38g.pdf)
 
-> **Keep these secrets out of the policy file.** As with the [crypto key](#crypto), prefix either value with `env:` to read it from an environment variable at runtime — for example, `"key": "env:FPE_KEY"` and `"tweak": "env:FPE_TWEAK"`. This is the recommended way to supply the `key` and `tweak`.
+> **Keep these secrets out of the policy file.** As with the [crypto key](#crypto), prefix either value with `env:` to read it from an environment variable at runtime, for example `"key": "env:FPE_KEY"` and `"tweak": "env:FPE_TWEAK"`. This is the recommended way to supply the `key` and `tweak`.
 
-> FF3 can only encrypt values whose format-preservable (alphanumeric) content is between 6 and 56 characters long. When a detected value falls outside this range — for example a 5-digit ZIP code — it cannot be format-preserving encrypted. In that case Phileas falls back to redacting that value (using the `REDACT` placeholder) instead, so the value is still redacted and a single out-of-range value does not affect the rest of the document. Consider applying `FPE_ENCRYPT_REPLACE` to types whose values fall within the supported length range.
+> FF3 can only encrypt values whose format-preservable (alphanumeric) content is between 6 and 56 characters long. When a detected value falls outside this range (for example a 5-digit ZIP code) it cannot be format-preserving encrypted. In that case Phileas falls back to redacting that value (using the `REDACT` placeholder) instead, so the value is still redacted and a single out-of-range value does not affect the rest of the document. Consider applying `FPE_ENCRYPT_REPLACE` to types whose values fall within the supported length range.
 
 > **Which filters support FPE.** Every filter supports the `FPE_ENCRYPT_REPLACE` strategy except the **date** and **zip code** filters, which do not offer it. (A ZIP code is shorter than the 6-character minimum noted above; date values use the date-specific strategies such as `SHIFT` instead.) Each filter's own documentation page lists the strategies it supports.
 
@@ -382,7 +382,7 @@ The `ZERO_LEADING` filter strategy is only available to zip code filters. An exa
 
 ### The `ABBREVIATE` Filter Strategy {id="abbreviate"}
 
-Available only to the person's names (NER) filter, this strategy replaces a person's name with its initials. For example, `George Washington` will be changed to `GW`.
+Available to the person's name filters (Ph-Eye/NER, first names, surnames, and physician names), this strategy replaces a person's name with its initials. For example, `George Washington` will be changed to `GW`.
 
 An example person's names filter using the `ABBREVIATE` filter strategy:
 

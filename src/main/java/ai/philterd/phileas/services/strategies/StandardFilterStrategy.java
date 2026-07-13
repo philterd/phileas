@@ -27,6 +27,7 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
+import org.apache.commons.text.WordUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -150,6 +151,14 @@ public abstract class StandardFilterStrategy extends AbstractFilterStrategy {
             }
 
             replacement = DigestUtils.sha256Hex(token + salt);
+
+        } else if(Strings.CI.equals(effectiveStrategy, ABBREVIATE)) {
+
+            // Reduce the detected value to its initials, e.g. "John Smith" becomes "JS".
+            // The single-argument overload splits on whitespace. Mirrors PhEyeFilterStrategy so the
+            // strategy behaves the same on the dictionary name filters (surname, first name, physician
+            // name) as it does on the Ph-Eye NER path.
+            replacement = WordUtils.initials(token);
 
         } else {
 
