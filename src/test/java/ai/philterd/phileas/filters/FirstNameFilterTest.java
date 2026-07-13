@@ -29,11 +29,34 @@ import org.junit.jupiter.api.Test;
 import java.util.Collections;
 import java.util.List;
 
+import static ai.philterd.phileas.services.strategies.AbstractFilterStrategy.ABBREVIATE;
 import static ai.philterd.phileas.services.strategies.AbstractFilterStrategy.RANDOM_REPLACE;
 
 public class FirstNameFilterTest extends AbstractFilterTest {
 
     private static final Logger LOGGER = LogManager.getLogger(FirstNameFilterTest.class);
+
+    @Test
+    void filterAbbreviate() throws Exception {
+
+        // End-to-end: a detected first name is reduced to its uppercase initial rather than redacted.
+        final FirstNameFilterStrategy firstNameFilterStrategy = new FirstNameFilterStrategy();
+        firstNameFilterStrategy.setStrategy(ABBREVIATE);
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(firstNameFilterStrategy))
+                .withWindowSize(windowSize)
+                .build();
+
+        final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.FIRST_NAME, filterConfiguration, SensitivityLevel.LOW, true);
+
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "John");
+        final List<Span> spans = Span.dropOverlappingSpans(filtered.getSpans());
+
+        Assertions.assertEquals(1, spans.size());
+        Assertions.assertEquals("J", spans.get(0).getReplacement());
+
+    }
 
     @Test
     void filterLow() throws Exception {

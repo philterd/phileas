@@ -366,6 +366,25 @@ public abstract class AbstractFilterStrategy {
     }
 
     /**
+     * Reduces a token to the uppercase initials of its whitespace-separated words, so
+     * <code>John Smith</code> and <code>john smith</code> both produce <code>JS</code> and a
+     * single-token value such as <code>john</code> produces <code>J</code>. An empty or
+     * whitespace-only token yields an empty string. This is the shared {@code ABBREVIATE} behavior
+     * used by every strategy and matches the phileas-python and phileas-dotnet ports.
+     * @param token The detected value.
+     * @return The uppercase initials of the token's words.
+     */
+    protected static String abbreviate(final String token) {
+        final StringBuilder initials = new StringBuilder();
+        for (final String word : token.trim().split("\\s+")) {
+            if (!word.isEmpty()) {
+                initials.append(Character.toUpperCase(word.charAt(0)));
+            }
+        }
+        return initials.toString();
+    }
+
+    /**
      * Gets an anonymized token for a token. This function is called by <code>getReplacement</code>.
      * @param replacementScope The replacement scope.
      * @param token The token to anonymize.

@@ -32,7 +32,6 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
-import org.apache.commons.text.WordUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -183,11 +182,9 @@ public class PhEyeFilterStrategy extends AbstractFilterStrategy {
 
         } else if(Strings.CI.equals(strategy, ABBREVIATE)) {
 
-            // TODO: Make PER a constant somewhere.
-            // Philter-NER is only returning PER entities at this point.
-            if(Strings.CI.equals(label, "PER")) {
-                replacement = WordUtils.initials(token);
-            }
+            // Reduce the detected value to the uppercase initials of its words, regardless of entity
+            // label, matching the other strategies and the sibling ports.
+            replacement = abbreviate(token);
 
         } else {
 

@@ -154,6 +154,39 @@ public class PhEyeStrategyTest extends AbstractFilterStrategyTest {
     }
 
     @Test
+    public void abbreviateUppercasesLowercaseInput() throws Exception {
+
+        final AnonymizationService anonymizationService = getAnonymizationService();
+        final ContextService contextService = new DefaultContextService();
+
+        final AbstractFilterStrategy strategy = new PhEyeFilterStrategy();
+        strategy.setStrategy(AbstractFilterStrategy.ABBREVIATE);
+
+        // Lowercase input produces uppercase initials.
+        Replacement replacement = strategy.getReplacement(contextService, "PER", "context", "john smith", WINDOW, new Crypto(), new FPE(), anonymizationService, null);
+        Assertions.assertEquals("JS", replacement.getReplacement());
+
+        replacement = strategy.getReplacement(contextService, "PER", "context", "john", WINDOW, new Crypto(), new FPE(), anonymizationService, null);
+        Assertions.assertEquals("J", replacement.getReplacement());
+
+    }
+
+    @Test
+    public void abbreviateWorksForNonPerLabel() throws Exception {
+
+        final AnonymizationService anonymizationService = getAnonymizationService();
+        final ContextService contextService = new DefaultContextService();
+
+        final AbstractFilterStrategy strategy = new PhEyeFilterStrategy();
+        strategy.setStrategy(AbstractFilterStrategy.ABBREVIATE);
+
+        // The PER label gate is gone: any label produces initials and never a null replacement.
+        final Replacement replacement = strategy.getReplacement(contextService, "LOC", "context", "New York", WINDOW, new Crypto(), new FPE(), anonymizationService, null);
+        Assertions.assertEquals("NY", replacement.getReplacement());
+
+    }
+
+    @Test
     public void evaluateCondition1() {
 
         final AbstractFilterStrategy strategy = getFilterStrategy();

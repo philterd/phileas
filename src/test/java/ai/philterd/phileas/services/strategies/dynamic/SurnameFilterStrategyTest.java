@@ -68,4 +68,18 @@ public class SurnameFilterStrategyTest extends AbstractFilterStrategyTest {
 
     }
 
+    @Test
+    public void abbreviateUppercasesLowercaseInput() throws Exception {
+
+        final AnonymizationService anonymizationService = getAnonymizationService();
+        final ContextService contextService = new DefaultContextService();
+
+        final AbstractFilterStrategy strategy = getFilterStrategy();
+        strategy.setStrategy(AbstractFilterStrategy.ABBREVIATE);
+
+        Assertions.assertEquals("JS", strategy.getReplacement(contextService, "surname", "context", "john smith", WINDOW, new Crypto(), new FPE(), anonymizationService, null).getReplacement());
+        Assertions.assertEquals("S", strategy.getReplacement(contextService, "surname", "context", "smith", WINDOW, new Crypto(), new FPE(), anonymizationService, null).getReplacement());
+
+    }
+
 }

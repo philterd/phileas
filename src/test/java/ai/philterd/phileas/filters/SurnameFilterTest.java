@@ -134,9 +134,9 @@ public class SurnameFilterTest extends AbstractFilterTest {
         final List<Span> spans = Span.dropOverlappingSpans(filtered.getSpans());
 
         Assertions.assertEquals(1, spans.size());
-        // The surname is reduced to its initial rather than fully redacted. The fuzzy dictionary filter
-        // matches on a lower-cased token, so the initial is lower-cased here.
-        Assertions.assertEquals("j", spans.get(0).getReplacement());
+        // The surname is reduced to its uppercase initial rather than fully redacted. The fuzzy
+        // dictionary filter matches on a lower-cased token, but ABBREVIATE uppercases the initial.
+        Assertions.assertEquals("J", spans.get(0).getReplacement());
 
     }
 

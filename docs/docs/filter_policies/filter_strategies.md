@@ -25,7 +25,7 @@ A sample policy containing a filter strategy is shown below. In this example, em
 }
 ```
 
-> Most of the filter strategies apply to all types of data, however, some filter strategies only apply to a few types. For example, the `ZERO_LEADING` filter strategy only applies to the zip code filter, and the `ABBREVIATE` filter strategy only applies to the person's name filters (Ph-Eye/NER, first names, surnames, and physician names).
+> Most of the filter strategies apply to all types of data, however, some filter strategies only apply to a few types. For example, the `ZERO_LEADING` filter strategy only applies to the zip code filter.
 
 
 ## Filter Strategies
@@ -382,7 +382,7 @@ The `ZERO_LEADING` filter strategy is only available to zip code filters. An exa
 
 ### The `ABBREVIATE` Filter Strategy {id="abbreviate"}
 
-Available to the person's name filters (Ph-Eye/NER, first names, surnames, and physician names), this strategy replaces a person's name with its initials. For example, `George Washington` will be changed to `GW`.
+This strategy replaces a detected value with the uppercase initials of its whitespace-separated words. For example, `George Washington` becomes `GW`, and `john smith` becomes `JS`. It is most useful for names (for example reducing a person's name to initials) and is available to any filter type.
 
 An example person's names filter using the `ABBREVIATE` filter strategy:
 
