@@ -100,8 +100,12 @@ public class CurrencyAnonymizationService extends AbstractAnonymizationService {
 
         }
 
-        final boolean containsCurrencyMarker = token.matches(".*[$\\u20AC\\u00A3\\u00A5\\u20B9].*") ||
-                token.matches(".*(?i)\\b(USD|EUR|GBP|JPY|CAD|AUD|INR)\\b.*");
+        final String upperToken = token.toUpperCase();
+        final boolean containsCurrencyMarker = token.indexOf('$') >= 0 || token.indexOf('€') >= 0 ||
+                token.indexOf('£') >= 0 || token.indexOf('¥') >= 0 || token.indexOf('₹') >= 0 ||
+                upperToken.contains("USD") || upperToken.contains("EUR") || upperToken.contains("GBP") ||
+                upperToken.contains("JPY") || upperToken.contains("CAD") || upperToken.contains("AUD") ||
+                upperToken.contains("INR");
 
         final String anonymized;
 
