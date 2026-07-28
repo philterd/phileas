@@ -24,6 +24,7 @@ import ai.philterd.phileas.policy.filters.Age;
 import ai.philterd.phileas.policy.filters.City;
 import ai.philterd.phileas.policy.filters.County;
 import ai.philterd.phileas.policy.filters.CreditCard;
+import ai.philterd.phileas.policy.filters.Currency;
 import ai.philterd.phileas.policy.filters.CustomDictionary;
 import ai.philterd.phileas.policy.filters.Date;
 import ai.philterd.phileas.policy.filters.EmailAddress;
@@ -50,6 +51,7 @@ import ai.philterd.phileas.services.strategies.dynamic.StateFilterStrategy;
 import ai.philterd.phileas.services.strategies.dynamic.SurnameFilterStrategy;
 import ai.philterd.phileas.services.strategies.rules.AgeFilterStrategy;
 import ai.philterd.phileas.services.strategies.rules.CreditCardFilterStrategy;
+import ai.philterd.phileas.services.strategies.rules.CurrencyFilterStrategy;
 import ai.philterd.phileas.services.strategies.rules.DateFilterStrategy;
 import ai.philterd.phileas.services.strategies.rules.EmailAddressFilterStrategy;
 import ai.philterd.phileas.services.strategies.rules.IdentifierFilterStrategy;
@@ -433,6 +435,23 @@ public class EndToEndTestsHelper {
 
         Identifiers identifiers = new Identifiers();
         identifiers.setPhoneNumber(phoneNumber);
+
+        Policy policy = new Policy();
+        policy.setIdentifiers(identifiers);
+
+        return policy;
+
+    }
+
+    public static Policy getPolicyWithCurrency() {
+
+        CurrencyFilterStrategy currencyFilterStrategy = new CurrencyFilterStrategy();
+
+        Currency currency = new Currency();
+        currency.setCurrencyFilterStrategies(List.of(currencyFilterStrategy));
+
+        Identifiers identifiers = new Identifiers();
+        identifiers.setCurrency(currency);
 
         Policy policy = new Policy();
         policy.setIdentifiers(identifiers);

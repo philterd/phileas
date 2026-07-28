@@ -175,4 +175,151 @@ public class CurrencyFilterTest extends AbstractFilterTest {
 
     }
 
+    @Test
+    public void filterEuroUSFormat() throws Exception {
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(new CurrencyFilterStrategy()))
+                .withWindowSize(windowSize)
+                .build();
+        final CurrencyFilter filter = new CurrencyFilter(filterConfiguration);
+
+        final String input = "the cost is €1,450.00.";
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, input);
+
+        showSpans(filtered.getSpans());
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertEquals("€1,450.00", filtered.getSpans().get(0).getText());
+        Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 12, 21, FilterType.CURRENCY));
+    }
+
+    @Test
+    public void filterEuroEUFormat() throws Exception {
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(new CurrencyFilterStrategy()))
+                .withWindowSize(windowSize)
+                .build();
+        final CurrencyFilter filter = new CurrencyFilter(filterConfiguration);
+
+        final String input = "the cost is 1.450,00 €.";
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, input);
+
+        showSpans(filtered.getSpans());
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertEquals("1.450,00 €", filtered.getSpans().get(0).getText());
+        Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 12, 22, FilterType.CURRENCY));
+    }
+
+    @Test
+    public void filterPoundSymbol() throws Exception {
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(new CurrencyFilterStrategy()))
+                .withWindowSize(windowSize)
+                .build();
+        final CurrencyFilter filter = new CurrencyFilter(filterConfiguration);
+
+        final String input = "the fee is £250.00.";
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, input);
+
+        showSpans(filtered.getSpans());
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertEquals("£250.00", filtered.getSpans().get(0).getText());
+    }
+
+    @Test
+    public void filterYenSymbol() throws Exception {
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(new CurrencyFilterStrategy()))
+                .withWindowSize(windowSize)
+                .build();
+        final CurrencyFilter filter = new CurrencyFilter(filterConfiguration);
+
+        final String input = "the price is ¥5,000.";
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, input);
+
+        showSpans(filtered.getSpans());
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertEquals("¥5,000", filtered.getSpans().get(0).getText());
+    }
+
+    @Test
+    public void filterRupeeSymbol() throws Exception {
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(new CurrencyFilterStrategy()))
+                .withWindowSize(windowSize)
+                .build();
+        final CurrencyFilter filter = new CurrencyFilter(filterConfiguration);
+
+        final String input = "the total is ₹1,000.00.";
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, input);
+
+        showSpans(filtered.getSpans());
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertEquals("₹1,000.00", filtered.getSpans().get(0).getText());
+    }
+
+    @Test
+    public void filterIsoCodeGbpPostfix() throws Exception {
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(new CurrencyFilterStrategy()))
+                .withWindowSize(windowSize)
+                .build();
+        final CurrencyFilter filter = new CurrencyFilter(filterConfiguration);
+
+        final String input = "fee is 250 GBP.";
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, input);
+
+        showSpans(filtered.getSpans());
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertEquals("250 GBP", filtered.getSpans().get(0).getText());
+    }
+
+    @Test
+    public void filterIsoCodeEurPrefix() throws Exception {
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(new CurrencyFilterStrategy()))
+                .withWindowSize(windowSize)
+                .build();
+        final CurrencyFilter filter = new CurrencyFilter(filterConfiguration);
+
+        final String input = "paid EUR 500.00.";
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, input);
+
+        showSpans(filtered.getSpans());
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertEquals("EUR 500.00", filtered.getSpans().get(0).getText());
+    }
+
+    @Test
+    public void filterNegativeNonCurrencyNumbers() throws Exception {
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(new CurrencyFilterStrategy()))
+                .withWindowSize(windowSize)
+                .build();
+        final CurrencyFilter filter = new CurrencyFilter(filterConfiguration);
+
+        final String input = "In year 2026 patient was in room 500.";
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, input);
+
+        showSpans(filtered.getSpans());
+        Assertions.assertEquals(0, filtered.getSpans().size());
+    }
+
+    @Test
+    public void testConsecutiveCurrencies() throws Exception {
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(new CurrencyFilterStrategy()))
+                .withWindowSize(windowSize)
+                .build();
+        final CurrencyFilter filter = new CurrencyFilter(filterConfiguration);
+
+        final String input = "€50 £100 $150";
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, input);
+
+        showSpans(filtered.getSpans());
+        Assertions.assertEquals(3, filtered.getSpans().size());
+        Assertions.assertEquals("€50", filtered.getSpans().get(0).getText());
+        Assertions.assertEquals("£100", filtered.getSpans().get(1).getText());
+        Assertions.assertEquals("$150", filtered.getSpans().get(2).getText());
+    }
+
 }

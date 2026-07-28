@@ -100,9 +100,12 @@ public class CurrencyAnonymizationService extends AbstractAnonymizationService {
 
         }
 
+        final boolean containsCurrencyMarker = token.matches(".*[$\\u20AC\\u00A3\\u00A5\\u20B9].*") ||
+                token.matches(".*(?i)\\b(USD|EUR|GBP|JPY|CAD|AUD|INR)\\b.*");
+
         final String anonymized;
 
-        if(!sb.toString().startsWith("$")) {
+        if (!containsCurrencyMarker && !sb.toString().startsWith("$")) {
 
             anonymized = "$" + sb;
 
