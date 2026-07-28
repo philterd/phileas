@@ -35,19 +35,19 @@ public class CurrencyFilter extends RegexFilter {
         super(FilterType.CURRENCY, filterConfiguration);
 
         // Pattern 1: Prefix Symbol (e.g., €1,450.00, € 1.500,00, $35.53, £250.00, ¥5000, ₹500, $3,450.75 USD)
-        final Pattern currencyPattern1 = Pattern.compile("[$\\u20AC\\u00A3\\u00A5\\u20B9]\\s*(?:\\d*(?:[.,]\\d+)+|\\d+)(?:\\s*\\b(?:USD|EUR|GBP|JPY|CAD|AUD|INR)\\b)?", Pattern.CASE_INSENSITIVE);
+        final Pattern currencyPattern1 = Pattern.compile("[$\\u20AC\\u00A3\\u00A5\\u20B9]\\s*[0-9.,]*[0-9](?:\\s*\\b(?:USD|EUR|GBP|JPY|CAD|AUD|INR)\\b)?", Pattern.CASE_INSENSITIVE);
         final FilterPattern currency1 = new FilterPattern.FilterPatternBuilder(currencyPattern1, 0.80).build();
 
         // Pattern 2: Suffix Symbol (e.g., 1.450,00 €, 250,50 £, 5000 ¥, 500 ₹)
-        final Pattern currencyPattern2 = Pattern.compile("(?<![$\\u20AC\\u00A3\\u00A5\\u20B9])(?:\\d*(?:[.,]\\d+)+|\\d+)\\s*[$\\u20AC\\u00A3\\u00A5\\u20B9](?!\\d)", Pattern.CASE_INSENSITIVE);
+        final Pattern currencyPattern2 = Pattern.compile("(?<![$\\u20AC\\u00A3\\u00A5\\u20B9])[0-9.,]*[0-9]\\s*[$\\u20AC\\u00A3\\u00A5\\u20B9](?!\\d)", Pattern.CASE_INSENSITIVE);
         final FilterPattern currency2 = new FilterPattern.FilterPatternBuilder(currencyPattern2, 0.80).build();
 
         // Pattern 3: Prefix ISO Code (e.g., GBP 250.00, EUR 500.00, CAD 150.00, AUD 75.50, JPY 10000, USD 1,234.56, INR 2,500)
-        final Pattern currencyPattern3 = Pattern.compile("\\b(?:USD|EUR|GBP|JPY|CAD|AUD|INR)\\b\\s*(?:\\d*(?:[.,]\\d+)+|\\d+)", Pattern.CASE_INSENSITIVE);
+        final Pattern currencyPattern3 = Pattern.compile("\\b(?:USD|EUR|GBP|JPY|CAD|AUD|INR)\\b\\s*[0-9.,]*[0-9]", Pattern.CASE_INSENSITIVE);
         final FilterPattern currency3 = new FilterPattern.FilterPatternBuilder(currencyPattern3, 0.80).build();
 
         // Pattern 4: Suffix ISO Code (e.g., 500 EUR, 250 GBP, 150.00 CAD, 75.50 AUD, 10000 JPY, 1234.56 USD, 2500.00 INR)
-        final Pattern currencyPattern4 = Pattern.compile("(?:\\d*(?:[.,]\\d+)+|\\d+)\\s*\\b(?:USD|EUR|GBP|JPY|CAD|AUD|INR)\\b", Pattern.CASE_INSENSITIVE);
+        final Pattern currencyPattern4 = Pattern.compile("[0-9.,]*[0-9]\\s*\\b(?:USD|EUR|GBP|JPY|CAD|AUD|INR)\\b", Pattern.CASE_INSENSITIVE);
         final FilterPattern currency4 = new FilterPattern.FilterPatternBuilder(currencyPattern4, 0.80).build();
 
         this.contextualTerms = new HashSet<>();
