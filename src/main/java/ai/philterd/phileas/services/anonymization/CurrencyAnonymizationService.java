@@ -100,9 +100,16 @@ public class CurrencyAnonymizationService extends AbstractAnonymizationService {
 
         }
 
+        final String upperToken = token.toUpperCase();
+        final boolean containsCurrencyMarker = token.indexOf('$') >= 0 || token.indexOf('€') >= 0 ||
+                token.indexOf('£') >= 0 || token.indexOf('¥') >= 0 || token.indexOf('₹') >= 0 ||
+                upperToken.contains("USD") || upperToken.contains("EUR") || upperToken.contains("GBP") ||
+                upperToken.contains("JPY") || upperToken.contains("CAD") || upperToken.contains("AUD") ||
+                upperToken.contains("INR");
+
         final String anonymized;
 
-        if(!sb.toString().startsWith("$")) {
+        if (!containsCurrencyMarker && !sb.toString().startsWith("$")) {
 
             anonymized = "$" + sb;
 

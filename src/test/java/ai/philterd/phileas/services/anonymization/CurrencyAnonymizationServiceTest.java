@@ -57,4 +57,68 @@ public class CurrencyAnonymizationServiceTest {
 
     }
 
+    @Test
+    public void anonymizeEuro() {
+        AnonymizationService anonymizationService = new CurrencyAnonymizationService();
+        final String token = "€1,450.00";
+        final String replacement = anonymizationService.anonymize(token);
+
+        LOGGER.info("Currency Euro: {}", replacement);
+        Assertions.assertNotNull(replacement);
+        Assertions.assertFalse(replacement.isEmpty());
+        Assertions.assertNotEquals(token, replacement);
+        Assertions.assertTrue(replacement.startsWith("€"));
+        Assertions.assertFalse(replacement.startsWith("$"));
+    }
+
+    @Test
+    public void anonymizeGbp() {
+        AnonymizationService anonymizationService = new CurrencyAnonymizationService();
+        final String token = "250 GBP";
+        final String replacement = anonymizationService.anonymize(token);
+
+        LOGGER.info("Currency GBP: {}", replacement);
+        Assertions.assertNotNull(replacement);
+        Assertions.assertFalse(replacement.isEmpty());
+        Assertions.assertNotEquals(token, replacement);
+        Assertions.assertTrue(replacement.endsWith("GBP"));
+        Assertions.assertFalse(replacement.startsWith("$"));
+    }
+
+    @Test
+    public void anonymizeYen() {
+        AnonymizationService anonymizationService = new CurrencyAnonymizationService();
+        final String token = "¥5,000";
+        final String replacement = anonymizationService.anonymize(token);
+
+        LOGGER.info("Currency Yen: {}", replacement);
+        Assertions.assertNotNull(replacement);
+        Assertions.assertFalse(replacement.startsWith("$"));
+        Assertions.assertTrue(replacement.startsWith("¥"));
+    }
+
+    @Test
+    public void anonymizeRupee() {
+        AnonymizationService anonymizationService = new CurrencyAnonymizationService();
+        final String token = "₹1,000.00";
+        final String replacement = anonymizationService.anonymize(token);
+
+        LOGGER.info("Currency Rupee: {}", replacement);
+        Assertions.assertNotNull(replacement);
+        Assertions.assertFalse(replacement.startsWith("$"));
+        Assertions.assertTrue(replacement.startsWith("₹"));
+    }
+
+    @Test
+    public void anonymizeEurIso() {
+        AnonymizationService anonymizationService = new CurrencyAnonymizationService();
+        final String token = "500 EUR";
+        final String replacement = anonymizationService.anonymize(token);
+
+        LOGGER.info("Currency EUR ISO: {}", replacement);
+        Assertions.assertNotNull(replacement);
+        Assertions.assertFalse(replacement.startsWith("$"));
+        Assertions.assertTrue(replacement.endsWith("EUR"));
+    }
+
 }
