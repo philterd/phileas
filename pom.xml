@@ -52,7 +52,7 @@
         <ff3.version>1.2.0</ff3.version>
         <gson.version>2.14.0</gson.version>
         <httpclient.version>5.6.1</httpclient.version>
-        <httpcore.version>5.4</httpcore.version>
+        <httpcore.version>5.4.3</httpcore.version>
         <junit.version>5.11.2</junit.version>
         <junit.pioneer.version>2.3.0</junit.pioneer.version>
         <libphonenumber.version>9.0.31</libphonenumber.version>
