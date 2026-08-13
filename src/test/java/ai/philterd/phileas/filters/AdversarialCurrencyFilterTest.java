@@ -156,31 +156,29 @@ public class AdversarialCurrencyFilterTest extends AbstractFilterTest {
         Assertions.assertTrue(inrAnon.startsWith("₹"));
     }
 
+    /**
+     * Repeatedly filters the same input to confirm the filter is stable under reuse. Throughput is
+     * printed for information only; it is not asserted, because wall-clock speed varies with the
+     * machine and load. Measure performance with the phileas-benchmark project instead.
+     */
     @Test
-    public void testPerformanceAndThroughput() throws Exception {
+    public void testRepeatedFilteringIsStable() throws Exception {
         final CurrencyFilter filter = getFilter();
         final String input = "The surgery balance is €1.500,00 and consultation fee is 250 GBP. Additional charges: $50.00, ¥5000, ₹1,000.00, and 150.00 CAD.";
 
-        // Warmup
-        for (int i = 0; i < 1000; i++) {
-            filter.filter(contextService, getPolicy(), "context", PIECE, input);
-        }
+        final int expectedSpans = filter.filter(contextService, getPolicy(), "context", PIECE, input).getSpans().size();
+        Assertions.assertTrue(expectedSpans > 0, "no currency spans were found");
 
-        // Benchmark
-        int iterations = 10000;
-        long startTime = System.nanoTime();
+        final int iterations = 500;
+        final long startTime = System.nanoTime();
         for (int i = 0; i < iterations; i++) {
-            filter.filter(contextService, getPolicy(), "context", PIECE, input);
+            final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, input);
+            Assertions.assertEquals(expectedSpans, filtered.getSpans().size(), "span count changed on iteration " + i);
         }
-        long durationNs = System.nanoTime() - startTime;
-        double durationMs = durationNs / 1_000_000.0;
-        double opsPerSec = (iterations * 1000.0) / durationMs;
+        final double durationMs = (System.nanoTime() - startTime) / 1_000_000.0;
 
         System.out.printf("[BENCHMARK] Executed %d document filter operations in %.2f ms (%.2f ops/sec, %.4f ms/op)%n",
-                iterations, durationMs, opsPerSec, durationMs / iterations);
-
-        // Throughput assertion: Must execute at least 100 ops/sec
-        Assertions.assertTrue(opsPerSec > 100, "Throughput below minimum threshold: " + opsPerSec);
+                iterations, durationMs, (iterations * 1000.0) / durationMs, durationMs / iterations);
     }
 }
 
