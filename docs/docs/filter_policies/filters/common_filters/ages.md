@@ -5,6 +5,12 @@
 This filter identifies ages such as `3.5 years old` in text. Ages written as spelled-out numbers are
 also identified, for example `thirty-five years old`, `thirty-five-year-old`, and `aged forty-two`.
 
+Ages labeled with an `age` or `aged` keyword are identified whether or not a separator follows the
+keyword. A colon, an equals sign, or a hyphen is accepted, with or without surrounding whitespace, so
+`Age: 47`, `Age:47`, `Age = 47`, `Age - 47`, and `Age 47` are all identified, as is the spelled-out
+form (`Age: thirty-five`). The whitespace may include a line break, so a label on one line with the
+value on the next is also identified.
+
 ### Required Parameters
 
 This filter has no required parameters.

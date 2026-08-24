@@ -17,6 +17,7 @@ package ai.philterd.phileas.filters;
 
 import ai.philterd.phileas.model.filtering.FilterType;
 import ai.philterd.phileas.model.filtering.Filtered;
+import ai.philterd.phileas.model.filtering.Span;
 import ai.philterd.phileas.policy.IgnoredPattern;
 import ai.philterd.phileas.services.filters.regex.AgeFilter;
 import ai.philterd.phileas.services.strategies.rules.AgeFilterStrategy;
@@ -542,6 +543,136 @@ public class AgeFilterTest extends AbstractFilterTest {
 
         final var kept = filter.postFilter(filter.filter(contextService, getPolicy(), "context", PIECE, "she is thirty-five years old").getSpans());
         Assertions.assertEquals(1, kept.size());
+
+    }
+
+    private AgeFilter buildFilter() {
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(new AgeFilterStrategy()))
+                .withWindowSize(windowSize)
+                .build();
+
+        return new AgeFilter(filterConfiguration);
+
+    }
+
+    @Test
+    public void labeledAgeWithColon() throws Exception {
+
+        // Issue 332: "Age: 47" as written in a structured record.
+
+        final AgeFilter filter = buildFilter();
+
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "Patient: Jane Doe\nAge: 47");
+
+        showSpans(filtered.getSpans());
+
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertEquals("Age: 47", filtered.getSpans().get(0).getText());
+        Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 18, 25, FilterType.AGE));
+
+    }
+
+    @Test
+    public void labeledAgeSeparatorVariants() throws Exception {
+
+        // Issue 332: colon, equals, or hyphen, with or without whitespace, or omitted.
+
+        final AgeFilter filter = buildFilter();
+
+        final List<String> ages = List.of("Age: 47", "Age:47", "Age : 47", "Age = 47", "Age=47",
+                "Age - 47", "Age-47", "Age  47", "Age 47", "aged 47", "Aged: 47");
+
+        for(final String age : ages) {
+
+            final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, age);
+
+            Assertions.assertEquals(1, filtered.getSpans().size(), age);
+            Assertions.assertEquals(age, filtered.getSpans().get(0).getText());
+
+        }
+
+    }
+
+    @Test
+    public void labeledAgeSpelledOut() throws Exception {
+
+        // Issue 332: spelled-out values take the same separators.
+
+        final AgeFilter filter = buildFilter();
+
+        final List<String> ages = List.of("Age: thirty-five", "Age:thirty-five", "Age = thirty-five",
+                "Age - thirty-five", "Aged: thirty-five");
+
+        for(final String age : ages) {
+
+            final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, age);
+
+            Assertions.assertEquals(1, filtered.getSpans().size(), age);
+            Assertions.assertEquals(age, filtered.getSpans().get(0).getText());
+
+        }
+
+    }
+
+    @Test
+    public void labeledAgeSurvivesPostFilter() throws Exception {
+
+        // Issue 332: the matched text contains "age", so the post-filter keeps it.
+
+        final AgeFilter filter = buildFilter();
+
+        final List<Span> kept = filter.postFilter(
+                filter.filter(contextService, getPolicy(), "context", PIECE, "Patient: Jane Doe\nAge: 47").getSpans());
+
+        Assertions.assertEquals(1, kept.size());
+        Assertions.assertEquals("Age: 47", kept.get(0).getText());
+
+    }
+
+    @Test
+    public void labeledAgeOnFollowingLine() throws Exception {
+
+        // Issue 332: the separator's whitespace is \s, so a line break between label and value matches.
+
+        final AgeFilter filter = buildFilter();
+
+        final List<Span> kept = filter.postFilter(
+                filter.filter(contextService, getPolicy(), "context", PIECE, "Patient: Jane Doe\nAge\n47").getSpans());
+
+        Assertions.assertEquals(1, kept.size());
+        Assertions.assertEquals("Age\n47", kept.get(0).getText());
+
+    }
+
+    @Test
+    public void wordEndingInAgeIsNotAnAge() throws Exception {
+
+        // Issue 332: the keyword needs a word boundary.
+
+        final AgeFilter filter = buildFilter();
+
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "coverage: 47");
+
+        showSpans(filtered.getSpans());
+
+        Assertions.assertEquals(0, filtered.getSpans().size());
+
+    }
+
+    @Test
+    public void hyphenatedDateIsNotAnAge() throws Exception {
+
+        // Issue 332: a hyphen separator must not turn a date into an age.
+
+        final AgeFilter filter = buildFilter();
+
+        final List<String> spans = filter.postFilter(
+                filter.filter(contextService, getPolicy(), "context", PIECE, "The visit was on 2026-01-15.").getSpans())
+                .stream().map(Span::getText).toList();
+
+        Assertions.assertEquals(List.of(), spans);
 
     }
 
