@@ -45,7 +45,8 @@ public class AgeFilter extends RegexFilter {
             "(?:(?:(?:one|a)\\s+)?hundred(?:\\s+(?:and\\s+)?" + ONE_TO_NINETY_NINE + ")?|" + ONE_TO_NINETY_NINE + ")";
 
     // Optional separator between an "age"/"aged" keyword and its value, e.g. "Age: 47", "Age - 47".
-    private static final String AGE_SEPARATOR = "\\s*[:=-]?\\s*";
+    // Whitespace sits inside the group to avoid ambiguous backtracking.
+    private static final String AGE_SEPARATOR = "\\s*(?:[:=-]\\s*)?";
 
     public AgeFilter(FilterConfiguration filterConfiguration) {
         super(FilterType.AGE, filterConfiguration);
