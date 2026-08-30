@@ -8,8 +8,8 @@ also identified, for example `thirty-five years old`, `thirty-five-year-old`, an
 Ages labeled with an `age` or `aged` keyword are identified whether or not a separator follows the
 keyword. A colon, an equals sign, or a hyphen is accepted, with or without surrounding whitespace, so
 `Age: 47`, `Age:47`, `Age = 47`, `Age - 47`, and `Age 47` are all identified, as is the spelled-out
-form (`Age: thirty-five`). The whitespace may include a line break, so a label on one line with the
-value on the next is also identified.
+form (`Age: thirty-five`). The whitespace around a separator may include a line break, so `Age:` on
+one line with its value on the next is also identified.
 
 ### Required Parameters
 

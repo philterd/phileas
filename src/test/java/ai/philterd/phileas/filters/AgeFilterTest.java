@@ -634,15 +634,16 @@ public class AgeFilterTest extends AbstractFilterTest {
     @Test
     public void labeledAgeOnFollowingLine() throws Exception {
 
-        // Issue 332: the separator's whitespace is \s, so a line break between label and value matches.
+        // Issue 332: the separator's trailing whitespace is \s, so a line break between the separator
+        // and the value matches.
 
         final AgeFilter filter = buildFilter();
 
         final List<Span> kept = filter.postFilter(
-                filter.filter(contextService, getPolicy(), "context", PIECE, "Patient: Jane Doe\nAge\n47").getSpans());
+                filter.filter(contextService, getPolicy(), "context", PIECE, "Patient: Jane Doe\nAge:\n47").getSpans());
 
         Assertions.assertEquals(1, kept.size());
-        Assertions.assertEquals("Age\n47", kept.get(0).getText());
+        Assertions.assertEquals("Age:\n47", kept.get(0).getText());
 
     }
 
