@@ -102,6 +102,42 @@ public class IpAddressFilterTest extends AbstractFilterTest {
     }
 
     @Test
+    public void filterIpv4AllOnesOctetNotTruncated() throws Exception {
+
+        // https://github.com/philterd/phileas/issues/335
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(new IpAddressFilterStrategy()))
+                .withWindowSize(windowSize)
+                .build();
+
+        final IpAddressFilter filter = new IpAddressFilter(filterConfiguration);
+
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "ip 255.255.255.255");
+
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 3, 18, FilterType.IP_ADDRESS));
+        Assertions.assertEquals("255.255.255.255", filtered.getSpans().get(0).getText());
+
+    }
+
+    @Test
+    public void filterIpv4OutOfRangeLeadingOctetProducesNoSpan() throws Exception {
+
+        // https://github.com/philterd/phileas/issues/336
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(new IpAddressFilterStrategy()))
+                .withWindowSize(windowSize)
+                .build();
+
+        final IpAddressFilter filter = new IpAddressFilter(filterConfiguration);
+
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "ip 256.1.1.1");
+
+        Assertions.assertEquals(0, filtered.getSpans().size());
+
+    }
+
+    @Test
     public void filterWithCandidates1() throws Exception {
 
         final List<String> candidates = List.of("1.1.1.1", "2.2.2.2");
