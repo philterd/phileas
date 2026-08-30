@@ -34,7 +34,11 @@ public class IpAddressFilter extends RegexFilter {
     public IpAddressFilter(FilterConfiguration filterConfiguration) {
         super(FilterType.IP_ADDRESS, filterConfiguration);
 
-        final Pattern ipv4Pattern = Pattern.compile("([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\." + "([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\." + "([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\." + "([01]?\\d\\d?|2[0-4]\\d|25[0-5])");
+        // The per-octet alternation already carried most of this complexity before the (?<!\d)/(?!\d)
+        // boundaries added here for issues #335 and #336; splitting octet validation out of the regex
+        // and into post-match Java code would be a larger, separate change.
+        @SuppressWarnings("java:S5843")
+        final Pattern ipv4Pattern = Pattern.compile("(?<!\\d)([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\." + "([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\." + "([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\." + "([01]?\\d\\d?|2[0-4]\\d|25[0-5])(?!\\d)");
 
         final FilterPattern ipv4 = new FilterPattern.FilterPatternBuilder(ipv4Pattern, 0.90).build();
 
