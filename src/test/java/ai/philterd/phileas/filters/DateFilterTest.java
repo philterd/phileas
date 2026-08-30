@@ -504,6 +504,38 @@ public class DateFilterTest extends AbstractFilterTest {
     }
 
     @Test
+    public void filterDate38c() throws Exception {
+
+        // https://github.com/philterd/phileas/pull/347#pullrequestreview
+        // Space is also a word separator, so "date + space + digit" must not be treated the same
+        // as "date + delimiter + digit" for the '-'/'/' delimiters.
+        final DateFilter filter = new DateFilter(buildFilterConfiguration(), false, DateSpanValidator.getInstance());
+
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "12 25 2020 4 days");
+
+        showSpans(filtered.getSpans());
+
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertEquals("12 25 2020", filtered.getSpans().get(0).getText());
+
+    }
+
+    @Test
+    public void filterDate38d() throws Exception {
+
+        // https://github.com/philterd/phileas/pull/347#pullrequestreview
+        final DateFilter filter = new DateFilter(buildFilterConfiguration(), false, DateSpanValidator.getInstance());
+
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "01 15 2026 42 units");
+
+        showSpans(filtered.getSpans());
+
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertEquals("01 15 2026", filtered.getSpans().get(0).getText());
+
+    }
+
+    @Test
     public void filterDate39() throws Exception {
 
         final DateFilter filter = new DateFilter(buildFilterConfiguration(), true, DateSpanValidator.getInstance());

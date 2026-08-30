@@ -146,7 +146,12 @@ public class DateFilter extends RegexFilter {
             // Neither a bare digit nor "delimiter + digit" may follow a match: the former blocks
             // matching a short prefix of a longer number (e.g. "255" as "25"), the latter blocks
             // matching a short prefix of a longer delimited chain (e.g. "1-20" out of "1-20-01023").
-            final String noMoreDigits = "(?!\\d)(?!" + d + "\\d)";
+            // The space delimiter is exempt from the second lookahead: space also separates ordinary
+            // words, so "space + digit" after a space-delimited date (e.g. "12 25 2020 4 days") is
+            // normal surrounding text, not a continuation of the same chain.
+            final String noMoreDigits = " ".equals(delimiter)
+                    ? "(?!\\d)"
+                    : "(?!\\d)(?!" + d + "\\d)";
 
             // Make a filter pattern for each pattern with each delimiter. The numeric day/month/year
             // patterns carry a month-first format; day-first dates (e.g. 25/12/1980) that month-first
