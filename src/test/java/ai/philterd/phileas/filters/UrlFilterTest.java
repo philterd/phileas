@@ -294,6 +294,29 @@ public class UrlFilterTest extends AbstractFilterTest {
     }
 
     @Test
+    public void filterUrl16() throws Exception {
+
+        // https://github.com/philterd/phileas/pull/348#pullrequestreview
+        // A non-atomic (?:...)* here compiles to a recursive call per path character in
+        // java.util.regex, so a long path overflows the stack well before this length.
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(new UrlFilterStrategy()))
+                .withWindowSize(windowSize)
+                .build();
+
+        final UrlFilter filter = new UrlFilter(filterConfiguration, true);
+
+        final String longPath = "a".repeat(10_000);
+        final String input = "the page is http://myhomepage.com/" + longPath;
+
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, input);
+        showSpans(filtered.getSpans());
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 12, input.length(), FilterType.URL));
+
+    }
+
+    @Test
     public void filterWithCandidates1() throws Exception {
 
         final List<String> candidates = List.of("http://candidate1.com", "https://candidate2.com");
