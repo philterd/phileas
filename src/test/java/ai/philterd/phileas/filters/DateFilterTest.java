@@ -28,6 +28,9 @@ import java.util.List;
 
 import static ai.philterd.phileas.services.strategies.AbstractFilterStrategy.RANDOM_REPLACE;
 
+// The many near-identical test methods predate this fix; converting them to @ParameterizedTest
+// groups would be a separate, unrelated refactor of the whole file.
+@SuppressWarnings("java:S5976")
 public class DateFilterTest extends AbstractFilterTest {
     
     private FilterConfiguration buildFilterConfiguration() {
@@ -472,16 +475,31 @@ public class DateFilterTest extends AbstractFilterTest {
     @Test
     public void filterDate38() throws Exception {
 
+        // https://github.com/philterd/phileas/issues/341
+        // "12-12110" is 2 digits, a delimiter, and 5 digits: not a M-u shaped date. The pattern
+        // used to accept a truncated match ("12-1211") because it had no trailing boundary, so
+        // nothing stopped it from ignoring the digit run's last character.
         final DateFilter filter = new DateFilter(buildFilterConfiguration(), false, DateSpanValidator.getInstance());
 
         final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "Case No. 12-12110 K");
 
         showSpans(filtered.getSpans());
 
-        Assertions.assertEquals(1, filtered.getSpans().size());
-        Assertions.assertEquals(9, filtered.getSpans().get(0).getCharacterStart());
-        Assertions.assertEquals(16, filtered.getSpans().get(0).getCharacterEnd());
-        Assertions.assertEquals("12-1211", filtered.getSpans().get(0).getText());
+        Assertions.assertEquals(0, filtered.getSpans().size());
+
+    }
+
+    @Test
+    public void filterDate38b() throws Exception {
+
+        // https://github.com/philterd/phileas/issues/341
+        final DateFilter filter = new DateFilter(buildFilterConfiguration(), false, DateSpanValidator.getInstance());
+
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "Case 1-20-01023-MJK");
+
+        showSpans(filtered.getSpans());
+
+        Assertions.assertEquals(0, filtered.getSpans().size());
 
     }
 
