@@ -36,17 +36,36 @@ public class UrlFilter extends RegexFilter {
 
         // https://www.regexpal.com/93652: This regex will find things like test.link where it might just be two sentences without a space between them.
         // These two patterns do NOT consider IP addresses instead of domain names.
-        final Pattern urlWithOptionalProtocolPattern = Pattern.compile("(http:\\/\\/www\\.|https:\\/\\/www\\.|http:\\/\\/|https:\\/\\/)?[a-z\\d]+([\\-\\.]{1}[a-z\\d]+)*\\.[a-z]{2,5}(:[\\d]{1,5})?(\\/.*)?", Pattern.CASE_INSENSITIVE);
+        // The trailing path group stops at whitespace so it can't run into the next sentence, and
+        // excludes a period only when it's followed by whitespace (a sentence-ending period), so a
+        // period inside the path/host, or one at the very end of the input, still matches. The group
+        // is atomic, (?>...)*, not (?:...)*: java.util.regex compiles a non-atomic repeated group into
+        // a recursive call per character, and a path of ~3000+ characters overflows the stack. Atomic
+        // means the engine never needs to keep backtracking state per character, so it iterates
+        // instead of recursing; matching behavior is unchanged since neither branch ever needs to
+        // backtrack into the other (one excludes '.', the other matches only '.').
+        // This pattern's alternation-heavy structure predates this fix; splitting it into smaller
+        // composable patterns would be a separate, larger restructuring of this class.
+        @SuppressWarnings({"java:S5843", "java:S5998"})
+        final Pattern urlWithOptionalProtocolPattern = Pattern.compile("(http:\\/\\/www\\.|https:\\/\\/www\\.|http:\\/\\/|https:\\/\\/)?[a-z\\d]+([\\-\\.]{1}[a-z\\d]+)*\\.[a-z]{2,5}(:[\\d]{1,5})?(\\/(?>[^\\s.]|\\.(?!\\s))*)?", Pattern.CASE_INSENSITIVE);
         final FilterPattern url1 = new FilterPattern.FilterPatternBuilder(urlWithOptionalProtocolPattern, 0.10).build();
 
-        final Pattern urlWithProtocolPattern = Pattern.compile("(www\\.|http:\\/\\/www\\.|https:\\/\\/www\\.|http:\\/\\/|https:\\/\\/)[a-z\\d]+([\\-\\.]{1}[a-z\\d]+)*\\.[a-z]{2,5}(:[\\d]{1,5})?(\\/.*)?", Pattern.CASE_INSENSITIVE);
+        // Same pre-existing alternation-heavy structure as urlWithOptionalProtocolPattern above.
+        @SuppressWarnings({"java:S5843", "java:S5998"})
+        final Pattern urlWithProtocolPattern = Pattern.compile("(www\\.|http:\\/\\/www\\.|https:\\/\\/www\\.|http:\\/\\/|https:\\/\\/)[a-z\\d]+([\\-\\.]{1}[a-z\\d]+)*\\.[a-z]{2,5}(:[\\d]{1,5})?(\\/(?>[^\\s.]|\\.(?!\\s))*)?", Pattern.CASE_INSENSITIVE);
         final FilterPattern url2 = new FilterPattern.FilterPatternBuilder(urlWithProtocolPattern, 0.80).build();
 
         // These two patterns only consider IP addresses.
-        final Pattern urlIpv4AddressPattern = Pattern.compile("(http:\\/\\/www\\.|https:\\/\\/www\\.|http:\\/\\/|https:\\/\\/)?(?:[\\d]{1,3}\\.){3}[\\d]{1,3}(:[\\d]{1,5})?(\\/.*)?", Pattern.CASE_INSENSITIVE);
+        // Same pre-existing alternation-heavy structure as urlWithOptionalProtocolPattern above.
+        @SuppressWarnings({"java:S5843", "java:S5998"})
+        final Pattern urlIpv4AddressPattern = Pattern.compile("(http:\\/\\/www\\.|https:\\/\\/www\\.|http:\\/\\/|https:\\/\\/)?(?:[\\d]{1,3}\\.){3}[\\d]{1,3}(:[\\d]{1,5})?(\\/(?>[^\\s.]|\\.(?!\\s))*)?", Pattern.CASE_INSENSITIVE);
         final FilterPattern url3 = new FilterPattern.FilterPatternBuilder(urlIpv4AddressPattern, 0.80).build();
 
-        final Pattern urlIpv6AddressPattern = Pattern.compile("(http:\\/\\/www\\.|https:\\/\\/www\\.|http:\\/\\/|https:\\/\\/)?(([\\da-fA-F]{1,4}:){7,7}[\\da-fA-F]{1,4}|([\\da-fA-F]{1,4}:){1,7}:|([\\da-fA-F]{1,4}:){1,6}:[\\da-fA-F]{1,4}|([\\da-fA-F]{1,4}:){1,5}(:[\\da-fA-F]{1,4}){1,2}|([\\da-fA-F]{1,4}:){1,4}(:[\\da-fA-F]{1,4}){1,3}|([\\da-fA-F]{1,4}:){1,3}(:[\\da-fA-F]{1,4}){1,4}|([\\da-fA-F]{1,4}:){1,2}(:[\\da-fA-F]{1,4}){1,5}|[\\da-fA-F]{1,4}:((:[\\da-fA-F]{1,4}){1,6})|:((:[\\da-fA-F]{1,4}){1,7}|:)|fe80:(:[\\da-fA-F]{0,4}){0,4}%[\\da-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[\\d]){0,1}[\\d])\\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[\\d]){0,1}[\\d])|([\\da-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[\\d]){0,1}[\\d])\\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[\\d]){0,1}[\\d]))(:[\\d]{1,5})?(\\/.*)?", Pattern.CASE_INSENSITIVE);
+        // Ported wholesale from the Dynatrace source cited above; splitting it into a Pattern per
+        // compression form or replacing it with a non-regex validator would be a separate, much
+        // larger effort than this fix, and risks regressing IPv6 forms this file has no test for.
+        @SuppressWarnings({"java:S5843", "java:S5998"})
+        final Pattern urlIpv6AddressPattern = Pattern.compile("(http:\\/\\/www\\.|https:\\/\\/www\\.|http:\\/\\/|https:\\/\\/)?(([\\da-f]{1,4}:){7}[\\da-f]{1,4}|([\\da-f]{1,4}:){1,7}:|([\\da-f]{1,4}:){1,6}:[\\da-f]{1,4}|([\\da-f]{1,4}:){1,5}(:[\\da-f]{1,4}){1,2}|([\\da-f]{1,4}:){1,4}(:[\\da-f]{1,4}){1,3}|([\\da-f]{1,4}:){1,3}(:[\\da-f]{1,4}){1,4}|([\\da-f]{1,4}:){1,2}(:[\\da-f]{1,4}){1,5}|[\\da-f]{1,4}:((:[\\da-f]{1,4}){1,6})|:((:[\\da-f]{1,4}){1,7}|:)|fe80:(:[\\da-f]{0,4}){0,4}%[\\da-z]+|::(ffff(:0{1,4})?:)?((25[0-5]|(2[0-4]|1?[\\d])?[\\d])\\.){3}(25[0-5]|(2[0-4]|1?[\\d])?[\\d])|([\\da-f]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1?[\\d])?[\\d])\\.){3}(25[0-5]|(2[0-4]|1?[\\d])?[\\d]))(:[\\d]{1,5})?(\\/(?>[^\\s.]|\\.(?!\\s))*)?", Pattern.CASE_INSENSITIVE);
         final FilterPattern url4 = new FilterPattern.FilterPatternBuilder(urlIpv6AddressPattern, 0.80).build();
 
         this.contextualTerms = new HashSet<>();
