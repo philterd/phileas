@@ -396,6 +396,13 @@
             <artifactId>log4j-api</artifactId>
         </dependency>
         <dependency>
+            <!-- Declared so it cannot reach consumers transitively at a version other than
+                 log4j-api's, which fails at startup. Issue #350. -->
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
             <!-- The test sources compile against JUnit Jupiter directly; declared explicitly
                  rather than relying on junit-pioneer to supply it transitively. -->
             <groupId>org.junit.jupiter</groupId>
