@@ -26,6 +26,9 @@ import java.util.List;
 
 import static ai.philterd.phileas.services.strategies.AbstractFilterStrategy.RANDOM_REPLACE;
 
+// The many near-identical test methods predate this fix; converting them to @ParameterizedTest
+// groups would be a separate, unrelated refactor of the whole file.
+@SuppressWarnings("java:S5976")
 public class UrlFilterTest extends AbstractFilterTest {
 
     @Test
@@ -272,6 +275,8 @@ public class UrlFilterTest extends AbstractFilterTest {
     @Test
     public void filterUrl15() throws Exception {
 
+        // https://github.com/philterd/phileas/issues/342
+        // The path used to run to the end of the string, taking the rest of the sentence with it.
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new UrlFilterStrategy()))
                 .withWindowSize(windowSize)
@@ -283,7 +288,31 @@ public class UrlFilterTest extends AbstractFilterTest {
         showSpans(filtered.getSpans());
         Assertions.assertEquals(2, filtered.getSpans().size());
         Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 42, 51, FilterType.URL));
-        Assertions.assertTrue(checkSpan(filtered.getSpans().get(1), 12, 76, FilterType.URL));
+        Assertions.assertTrue(checkSpan(filtered.getSpans().get(1), 12, 51, FilterType.URL));
+        Assertions.assertEquals("https://192.168.1.1:80/folder/page.html", filtered.getSpans().get(1).getText());
+
+    }
+
+    @Test
+    public void filterUrl16() throws Exception {
+
+        // https://github.com/philterd/phileas/pull/348#pullrequestreview
+        // A non-atomic (?:...)* here compiles to a recursive call per path character in
+        // java.util.regex, so a long path overflows the stack well before this length.
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(new UrlFilterStrategy()))
+                .withWindowSize(windowSize)
+                .build();
+
+        final UrlFilter filter = new UrlFilter(filterConfiguration, true);
+
+        final String longPath = "a".repeat(10_000);
+        final String input = "the page is http://myhomepage.com/" + longPath;
+
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, input);
+        showSpans(filtered.getSpans());
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 12, input.length(), FilterType.URL));
 
     }
 
