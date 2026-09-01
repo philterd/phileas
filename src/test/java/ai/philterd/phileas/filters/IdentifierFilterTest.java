@@ -17,6 +17,7 @@ package ai.philterd.phileas.filters;
 
 import ai.philterd.phileas.model.filtering.FilterType;
 import ai.philterd.phileas.model.filtering.Filtered;
+import ai.philterd.phileas.policy.IgnoredPattern;
 import ai.philterd.phileas.policy.filters.Identifier;
 import ai.philterd.phileas.policy.filters.Validator;
 import ai.philterd.phileas.services.filters.regex.IdentifierFilter;
@@ -405,6 +406,81 @@ public class IdentifierFilterTest extends AbstractFilterTest {
             Assertions.assertTrue(filtered.getSpans().isEmpty(),
                     "a timed-out pattern should yield no spans");
         });
+
+    }
+
+    /**
+     * A policy-supplied pattern that overflows the stack must be contained to that pattern rather
+     * than ending the filter call. java.util.regex compiles a non-atomic repeated group into a
+     * recursive call per character, so this pattern overflows on a few thousand characters of
+     * input. The time budget cannot catch it: the failure is not slow, it is an Error.
+     * See https://github.com/philterd/phileas/issues/352.
+     */
+    @Test
+    public void stackOverflowInAPatternIsContainedToThatPattern() throws Exception {
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(new IdentifierFilterStrategy()))
+                .withWindowSize(windowSize)
+                .build();
+
+        final IdentifierFilter filter = new IdentifierFilter(filterConfiguration, "name", "(?:[^\\s.]|\\.(?!\\s))*", true, 0);
+        final String input = "x".repeat(20_000);
+
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, input);
+
+        Assertions.assertTrue(filtered.getSpans().isEmpty(),
+                "an overflowed pattern should yield no spans rather than throwing");
+
+    }
+
+    /**
+     * Matches found before the overflow are kept rather than discarded, the same way the time budget
+     * keeps what it found. See https://github.com/philterd/phileas/issues/352.
+     */
+    @Test
+    public void spansFoundBeforeAnOverflowAreKept() throws Exception {
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(new IdentifierFilterStrategy()))
+                .withWindowSize(windowSize)
+                .build();
+
+        // Matches "xxz" straight away, then recurses per character over the long trailing run of x.
+        final IdentifierFilter filter = new IdentifierFilter(filterConfiguration, "name", "(?:x|y)*z", true, 0);
+        final String input = "xxz " + "x".repeat(20_000);
+
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, input);
+
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertEquals("xxz", filtered.getSpans().get(0).getText());
+
+    }
+
+    /**
+     * An ignored pattern is also a policy-supplied regular expression, and it is matched against the
+     * matched token outside the pattern loop, so an overflow there ended filtering for the whole
+     * document just as one in a filter pattern did. The token is kept (not ignored), which is the
+     * safe answer for a redaction tool. See https://github.com/philterd/phileas/issues/352.
+     */
+    @Test
+    public void stackOverflowInAnIgnoredPatternKeepsTheSpan() throws Exception {
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(new IdentifierFilterStrategy()))
+                .withWindowSize(windowSize)
+                .withIgnoredPatterns(List.of(new IgnoredPattern("(?:[^\\s.]|\\.(?!\\s))*")))
+                .build();
+
+        // A well-behaved identifier pattern that produces one very long token.
+        final IdentifierFilter filter = new IdentifierFilter(filterConfiguration, "name", "[A-Z0-9_-]{6,}", true, 0);
+        final String input = "id " + "X".repeat(20_000) + " end";
+
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, input);
+
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertFalse(filtered.getSpans().get(0).isIgnored(),
+                "a token whose ignored-pattern check overflowed should not be treated as ignored");
 
     }
 

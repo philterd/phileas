@@ -12,7 +12,8 @@ _Note that backslashes in the regular expression will need to be escaped for the
 > Because the `pattern` is a user-supplied regular expression, each match attempt is time-bounded to guard against
 > catastrophic backtracking (ReDoS). If a pattern exceeds the budget on a given input, matching is aborted and that
 > input yields no matches for the identifier. The budget is controlled by the `regex.timeout.ms`
-> [setting](../../../settings.md#advanced-settings) (default `1000` ms).
+> [setting](../../../settings.md#advanced-settings) (default `1000` ms). A pattern that exhausts the stack instead of
+> the budget is handled the same way: matching stops for that pattern, and the rest of the document is still filtered.
 
 ### Required Parameters
 

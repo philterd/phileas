@@ -67,9 +67,9 @@ public abstract class RulesFilter extends Filter {
 
     /**
      * Advances the matcher to the next match under a per-attempt time budget. Returns
-     * <code>false</code> if there is no further match or if the match attempt exceeded the budget
-     * (a suspected ReDoS pattern), in which case any matches already found are kept and a warning
-     * is logged.
+     * <code>false</code> if there is no further match, if the match attempt exceeded the budget
+     * (a suspected ReDoS pattern), or if it overflowed the stack. In either failure case the
+     * matches already found are kept and a warning is logged.
      */
     private boolean findNext(final Matcher matcher, final DeadlineCharSequence guardedInput) {
 
@@ -80,6 +80,16 @@ public abstract class RulesFilter extends Filter {
         } catch (final RegexTimeoutException e) {
             LOGGER.warn("Regex matching for filter type {} exceeded the {} ms budget on this input; "
                     + "skipping remaining matches for this pattern.", filterType.getType(), regexTimeoutMs);
+            return false;
+        } catch (final StackOverflowError e) {
+            // java.util.regex compiles a non-atomic repeated group into a recursive call per
+            // character, so a policy-supplied pattern of that shape overflows the stack on a few
+            // thousand characters of input. The deadline above cannot catch this: the failure is
+            // not slow, it is an Error. Catching it is safe because the stack has already unwound
+            // and nothing is left half-written: the matcher is discarded along with the pattern,
+            // so the remaining patterns, filters, and the document itself are unaffected.
+            LOGGER.warn("Regex matching for filter type {} overflowed the stack on this input; "
+                    + "skipping remaining matches for this pattern.", filterType.getType());
             return false;
         }
 

@@ -8,7 +8,8 @@ expression pattern.
 > Because the `startPattern` and `endPattern` are user-supplied regular expressions, each match attempt is
 > time-bounded to guard against catastrophic backtracking (ReDoS). If matching exceeds the budget on a given input,
 > it is aborted and that input yields no section matches. The budget is controlled by the `regex.timeout.ms`
-> [setting](../../../settings.md#advanced-settings) (default `1000` ms).
+> [setting](../../../settings.md#advanced-settings) (default `1000` ms). A pattern that exhausts the stack instead of
+> the budget is handled the same way: matching stops for that pattern, and the rest of the document is still filtered.
 
 ### Required Parameters
 

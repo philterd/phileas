@@ -19,12 +19,16 @@ import ai.philterd.phileas.PhileasConfiguration;
 import ai.philterd.phileas.model.filtering.BinaryDocumentFilterResult;
 import ai.philterd.phileas.model.filtering.MimeType;
 import ai.philterd.phileas.model.filtering.Span;
+import ai.philterd.phileas.model.filtering.TextFilterResult;
 import ai.philterd.phileas.policy.Ignored;
 import ai.philterd.phileas.policy.Policy;
 import ai.philterd.phileas.services.context.ContextService;
 import ai.philterd.phileas.services.context.DefaultContextService;
 import ai.philterd.phileas.services.disambiguation.vector.VectorService;
 import ai.philterd.phileas.services.filters.filtering.PdfFilterService;
+import ai.philterd.phileas.services.filters.filtering.PlainTextFilterService;
+import ai.philterd.phileas.policy.filters.Identifier;
+import ai.philterd.phileas.services.strategies.rules.IdentifierFilterStrategy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import ai.philterd.phileas.utils.CollectionUtils;
@@ -78,6 +82,36 @@ public class PlainTextFilterServiceTest {
 
         Assertions.assertEquals(3, policy.getIgnored().get(0).getTerms().size());
         Assertions.assertTrue(CollectionUtils.isNotEmpty(deserialized.getIgnored().get(0).getTerms()));
+
+    }
+
+    /**
+     * A policy-supplied identifier pattern that overflows the stack must not end filtering for the
+     * whole document: the remaining filters still run and the document is still returned.
+     * See https://github.com/philterd/phileas/issues/352.
+     */
+    @Test
+    public void stackOverflowInAnIdentifierPatternDoesNotAbortTheDocument() throws Exception {
+
+        final Policy policy = getPolicy();
+
+        final Identifier identifier = new Identifier();
+        identifier.setIdentifierFilterStrategies(List.of(new IdentifierFilterStrategy()));
+        // java.util.regex compiles this non-atomic repeated group into a recursive call per
+        // character, so it overflows the stack on a few thousand characters of input.
+        identifier.setPattern("(?:[^\\s.]|\\.(?!\\s))*");
+        identifier.setCaseSensitive(true);
+        policy.getIdentifiers().setIdentifiers(List.of(identifier));
+
+        final String input = "x".repeat(20_000) + " the email is test@something.com";
+
+        final PlainTextFilterService service = new PlainTextFilterService(
+                new PhileasConfiguration(new Properties()), contextService, vectorService, null);
+
+        final TextFilterResult response = service.filter(policy, "context", input);
+
+        Assertions.assertTrue(response.getFilteredText().contains("{{{REDACTED-email-address}}}"),
+                "the email filter should still run after the identifier pattern overflows");
 
     }
 
