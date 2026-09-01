@@ -143,15 +143,20 @@ public class DateFilter extends RegexFilter {
             // human-readable date format.
             final String d = Pattern.quote(delimiter);
 
-            // Neither a bare digit nor "delimiter + digit" may follow a match: the former blocks
-            // matching a short prefix of a longer number (e.g. "255" as "25"), the latter blocks
-            // matching a short prefix of a longer delimited chain (e.g. "1-20" out of "1-20-01023").
-            // The space delimiter is exempt from the second lookahead: space also separates ordinary
-            // words, so "space + digit" after a space-delimited date (e.g. "12 25 2020 4 days") is
-            // normal surrounding text, not a continuation of the same chain.
+            // Any complete numeric date. The month-and-year shape is left out for "." for the same
+            // reason it is not generated there: it would make a decimal such as 3.14 a date.
+            final String anyNumericDate = "(?:\\d{4}" + d + "\\d{2}" + d + "\\d{2}"
+                    + "|\\d{1,2}" + d + "\\d{1,2}" + d + "\\d{2,4}"
+                    + (".".equals(delimiter) ? "" : "|\\d{1,2}" + d + "\\d{2,4}") + ")";
+
+            // A match may not stop partway through a longer number ("25" out of "255") or a longer
+            // delimited chain ("1-20" out of "1-20-01023"). A continuation is allowed only when all
+            // that is left decomposes into dates, so "2024-06-01-2024-06-30" keeps both. Unbounded,
+            // the repetition overflows the stack on a long chain. Space is exempt: it separates
+            // ordinary words too. See issues #341 and #353.
             final String noMoreDigits = " ".equals(delimiter)
                     ? "(?!\\d)"
-                    : "(?!\\d)(?!" + d + "\\d)";
+                    : "(?!\\d)(?:(?!" + d + "\\d)|(?=(?:" + d + anyNumericDate + "){1,8}(?!\\d)(?!" + d + "\\d)))";
 
             // Make a filter pattern for each pattern with each delimiter. The numeric day/month/year
             // patterns carry a month-first format; day-first dates (e.g. 25/12/1980) that month-first

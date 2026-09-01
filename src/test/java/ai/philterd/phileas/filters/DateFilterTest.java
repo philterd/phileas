@@ -536,6 +536,122 @@ public class DateFilterTest extends AbstractFilterTest {
     }
 
     @Test
+    public void filterDate38e() throws Exception {
+
+        // https://github.com/philterd/phileas/issues/353
+        // A range without spaces: the #341 boundary dropped every date but the last.
+
+        final DateFilter filter = new DateFilter(buildFilterConfiguration(), false, DateSpanValidator.getInstance());
+
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "seen 2024-06-01-2024-06-30");
+
+        showSpans(filtered.getSpans());
+
+        Assertions.assertEquals(2, filtered.getSpans().size());
+        Assertions.assertEquals("2024-06-01", filtered.getSpans().get(0).getText());
+        Assertions.assertEquals(5, filtered.getSpans().get(0).getCharacterStart());
+        Assertions.assertEquals(15, filtered.getSpans().get(0).getCharacterEnd());
+        Assertions.assertEquals("2024-06-30", filtered.getSpans().get(1).getText());
+        Assertions.assertEquals(16, filtered.getSpans().get(1).getCharacterStart());
+        Assertions.assertEquals(26, filtered.getSpans().get(1).getCharacterEnd());
+
+    }
+
+    @Test
+    public void filterDate38f() throws Exception {
+
+        // https://github.com/philterd/phileas/issues/353
+
+        final DateFilter filter = new DateFilter(buildFilterConfiguration(), false, DateSpanValidator.getInstance());
+
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "log 2024-06-01-2024-06-30-2024-07-01");
+
+        showSpans(filtered.getSpans());
+
+        Assertions.assertEquals(3, filtered.getSpans().size());
+        Assertions.assertEquals("2024-06-01", filtered.getSpans().get(0).getText());
+        Assertions.assertEquals(4, filtered.getSpans().get(0).getCharacterStart());
+        Assertions.assertEquals(14, filtered.getSpans().get(0).getCharacterEnd());
+        Assertions.assertEquals("2024-06-30", filtered.getSpans().get(1).getText());
+        Assertions.assertEquals(15, filtered.getSpans().get(1).getCharacterStart());
+        Assertions.assertEquals(25, filtered.getSpans().get(1).getCharacterEnd());
+        Assertions.assertEquals("2024-07-01", filtered.getSpans().get(2).getText());
+        Assertions.assertEquals(26, filtered.getSpans().get(2).getCharacterStart());
+        Assertions.assertEquals(36, filtered.getSpans().get(2).getCharacterEnd());
+
+    }
+
+    @Test
+    public void filterDate38g() throws Exception {
+
+        // https://github.com/philterd/phileas/issues/353
+        // Month-and-year dates chained the same way.
+
+        final DateFilter filter = new DateFilter(buildFilterConfiguration(), false, DateSpanValidator.getInstance());
+
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "ref 12-2020-12-2021");
+
+        showSpans(filtered.getSpans());
+
+        Assertions.assertEquals(2, filtered.getSpans().size());
+        Assertions.assertEquals("12-2020", filtered.getSpans().get(0).getText());
+        Assertions.assertEquals(4, filtered.getSpans().get(0).getCharacterStart());
+        Assertions.assertEquals(11, filtered.getSpans().get(0).getCharacterEnd());
+        Assertions.assertEquals("12-2021", filtered.getSpans().get(1).getText());
+        Assertions.assertEquals(12, filtered.getSpans().get(1).getCharacterStart());
+        Assertions.assertEquals(19, filtered.getSpans().get(1).getCharacterEnd());
+
+    }
+
+    @Test
+    public void filterDate38h() throws Exception {
+
+        // https://github.com/philterd/phileas/issues/353
+        // A phone number is still not a date.
+
+        final DateFilter filter = new DateFilter(buildFilterConfiguration(), false, DateSpanValidator.getInstance());
+
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "phone 555-123-4567");
+
+        showSpans(filtered.getSpans());
+
+        Assertions.assertEquals(0, filtered.getSpans().size());
+
+    }
+
+    @Test
+    public void filterDate38i() throws Exception {
+
+        // https://github.com/philterd/phileas/issues/353
+        // The tail starts date-shaped ("1-20") but does not decompose into dates.
+
+        final DateFilter filter = new DateFilter(buildFilterConfiguration(), false, DateSpanValidator.getInstance());
+
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "acct 12-2020-1-20-01023");
+
+        showSpans(filtered.getSpans());
+
+        Assertions.assertEquals(0, filtered.getSpans().size());
+
+    }
+
+    @Test
+    public void filterDate38j() throws Exception {
+
+        // https://github.com/philterd/phileas/issues/353
+        // ".3.14" is not a date for the "." delimiter, so it does not make this one either.
+
+        final DateFilter filter = new DateFilter(buildFilterConfiguration(), false, DateSpanValidator.getInstance());
+
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "x 25.12.1980.3.14");
+
+        showSpans(filtered.getSpans());
+
+        Assertions.assertEquals(0, filtered.getSpans().size());
+
+    }
+
+    @Test
     public void filterDate39() throws Exception {
 
         final DateFilter filter = new DateFilter(buildFilterConfiguration(), true, DateSpanValidator.getInstance());
