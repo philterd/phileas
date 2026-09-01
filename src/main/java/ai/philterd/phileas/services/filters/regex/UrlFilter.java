@@ -31,34 +31,38 @@ import java.util.regex.Pattern;
 
 public class UrlFilter extends RegexFilter {
 
+    // Sentence punctuation and closing delimiters, which prose puts after a URL rather than in one.
+    private static final String PATH_PUNCTUATION = "[.,;:!?\"')\\]}>]";
+
+    // Any other non-whitespace character. A URL may end on one of these.
+    private static final String PATH_CHARACTER = "[^\\s.,;:!?\"')\\]}>]";
+
+    // Each chunk may open with punctuation but must end on a character that can end a URL, so
+    // punctuation inside a path is kept ("/a/b.html", "?q=1,2") and a trailing run of it is left
+    // out ("page." and "path..."). Atomic because a non-atomic repeated group compiles to a
+    // recursive call per iteration and overflows the stack on a long path.
+    private static final String PATH = "(\\/(?>" + PATH_PUNCTUATION + "*" + PATH_CHARACTER + ")*)?";
+
     public UrlFilter(FilterConfiguration filterConfiguration, boolean requireHttpWwwPrefix) {
         super(FilterType.URL, filterConfiguration);
 
         // https://www.regexpal.com/93652: This regex will find things like test.link where it might just be two sentences without a space between them.
         // These two patterns do NOT consider IP addresses instead of domain names.
-        // The trailing path group stops at whitespace so it can't run into the next sentence, and
-        // excludes a period only when it's followed by whitespace (a sentence-ending period), so a
-        // period inside the path/host, or one at the very end of the input, still matches. The group
-        // is atomic, (?>...)*, not (?:...)*: java.util.regex compiles a non-atomic repeated group into
-        // a recursive call per character, and a path of ~3000+ characters overflows the stack. Atomic
-        // means the engine never needs to keep backtracking state per character, so it iterates
-        // instead of recursing; matching behavior is unchanged since neither branch ever needs to
-        // backtrack into the other (one excludes '.', the other matches only '.').
         // This pattern's alternation-heavy structure predates this fix; splitting it into smaller
         // composable patterns would be a separate, larger restructuring of this class.
         @SuppressWarnings({"java:S5843", "java:S5998"})
-        final Pattern urlWithOptionalProtocolPattern = Pattern.compile("(http:\\/\\/www\\.|https:\\/\\/www\\.|http:\\/\\/|https:\\/\\/)?[a-z\\d]+([\\-\\.]{1}[a-z\\d]+)*\\.[a-z]{2,5}(:[\\d]{1,5})?(\\/(?>[^\\s.]|\\.(?!\\s))*)?", Pattern.CASE_INSENSITIVE);
+        final Pattern urlWithOptionalProtocolPattern = Pattern.compile("(http:\\/\\/www\\.|https:\\/\\/www\\.|http:\\/\\/|https:\\/\\/)?[a-z\\d]+([\\-\\.]{1}[a-z\\d]+)*\\.[a-z]{2,5}(:[\\d]{1,5})?" + PATH, Pattern.CASE_INSENSITIVE);
         final FilterPattern url1 = new FilterPattern.FilterPatternBuilder(urlWithOptionalProtocolPattern, 0.10).build();
 
         // Same pre-existing alternation-heavy structure as urlWithOptionalProtocolPattern above.
         @SuppressWarnings({"java:S5843", "java:S5998"})
-        final Pattern urlWithProtocolPattern = Pattern.compile("(www\\.|http:\\/\\/www\\.|https:\\/\\/www\\.|http:\\/\\/|https:\\/\\/)[a-z\\d]+([\\-\\.]{1}[a-z\\d]+)*\\.[a-z]{2,5}(:[\\d]{1,5})?(\\/(?>[^\\s.]|\\.(?!\\s))*)?", Pattern.CASE_INSENSITIVE);
+        final Pattern urlWithProtocolPattern = Pattern.compile("(www\\.|http:\\/\\/www\\.|https:\\/\\/www\\.|http:\\/\\/|https:\\/\\/)[a-z\\d]+([\\-\\.]{1}[a-z\\d]+)*\\.[a-z]{2,5}(:[\\d]{1,5})?" + PATH, Pattern.CASE_INSENSITIVE);
         final FilterPattern url2 = new FilterPattern.FilterPatternBuilder(urlWithProtocolPattern, 0.80).build();
 
         // These two patterns only consider IP addresses.
         // Same pre-existing alternation-heavy structure as urlWithOptionalProtocolPattern above.
         @SuppressWarnings({"java:S5843", "java:S5998"})
-        final Pattern urlIpv4AddressPattern = Pattern.compile("(http:\\/\\/www\\.|https:\\/\\/www\\.|http:\\/\\/|https:\\/\\/)?(?:[\\d]{1,3}\\.){3}[\\d]{1,3}(:[\\d]{1,5})?(\\/(?>[^\\s.]|\\.(?!\\s))*)?", Pattern.CASE_INSENSITIVE);
+        final Pattern urlIpv4AddressPattern = Pattern.compile("(http:\\/\\/www\\.|https:\\/\\/www\\.|http:\\/\\/|https:\\/\\/)?(?:[\\d]{1,3}\\.){3}[\\d]{1,3}(:[\\d]{1,5})?" + PATH, Pattern.CASE_INSENSITIVE);
         final FilterPattern url3 = new FilterPattern.FilterPatternBuilder(urlIpv4AddressPattern, 0.80).build();
 
         // Ported wholesale from the Dynatrace source cited above; splitting it into a Pattern per
@@ -89,7 +93,7 @@ public class UrlFilter extends RegexFilter {
         // Only a bracketed host can carry a port: an unbracketed trailing ":8080" cannot be told
         // apart from another hextet, and is treated as part of the address.
         @SuppressWarnings({"java:S5843", "java:S5998"})
-        final Pattern urlIpv6AddressPattern = Pattern.compile("(http:\\/\\/www\\.|https:\\/\\/www\\.|http:\\/\\/|https:\\/\\/)?(?:\\[" + ipv6Address + "\\](:[\\d]{1,5})?|" + ipv6Address + ")(\\/(?>[^\\s.]|\\.(?!\\s))*)?", Pattern.CASE_INSENSITIVE);
+        final Pattern urlIpv6AddressPattern = Pattern.compile("(http:\\/\\/www\\.|https:\\/\\/www\\.|http:\\/\\/|https:\\/\\/)?(?:\\[" + ipv6Address + "\\](:[\\d]{1,5})?|" + ipv6Address + ")" + PATH, Pattern.CASE_INSENSITIVE);
         final FilterPattern url4 = new FilterPattern.FilterPatternBuilder(urlIpv6AddressPattern, 0.80).build();
 
         this.contextualTerms = new HashSet<>();
