@@ -42,59 +42,12 @@ public class IpAddressFilter extends RegexFilter {
 
         final FilterPattern ipv4 = new FilterPattern.FilterPatternBuilder(ipv4Pattern, 0.90).build();
 
-        // IPv6 patterns taken from https://github.com/Dynatrace/openkit-java
-        // https://github.com/Dynatrace/openkit-java/blob/master/src/main/java/com/dynatrace/openkit/core/util/InetAddressValidator.java
-        // At commit 1d7118913bf2ea6befc1522724eed3ef6378b9d1
-        // Apache License, version 2.0: https://github.com/Dynatrace/openkit-java/blob/master/LICENSE
+        // One pattern for every IPv6 form. The alternation came from Dynatrace's InetAddressValidator
+        // (Apache 2.0), which is used anchored; unanchored it needs the boundary in Ipv6Patterns to
+        // stop a compressed address matching only as far as its "::". See issues #351 and #354.
+        final Pattern ipv6Pattern = Pattern.compile(Ipv6Patterns.ADDRESS, Pattern.CASE_INSENSITIVE);
 
-        final Pattern ipv6StdPattern =
-                Pattern.compile(
-                        ""                           // start of string
-                                + "(?:[\\da-fA-F]{1,4}:){7}"    // 7 blocks of a 1 to 4 digit hex number followed by double colon ':'
-                                + "[\\da-fA-F]{1,4}"            // one more block of a 1 to 4 digit hex number
-                                + "");                          // end of string
-
-        final FilterPattern ipv61 = new FilterPattern.FilterPatternBuilder(ipv6StdPattern, 0.90).build();
-
-        final Pattern ipv6HexCompressedPattern =
-                Pattern.compile(
-                        ""                             // start of string
-                                + "("                             // 1st group
-                                + "(?:[\\dA-Fa-f]{1,4}"           // at least one block of a 1 to 4 digit hex number
-                                + "(?::[\\dA-Fa-f]{1,4})*)?"      // optional further blocks, any number
-                                + ")"
-                                + "::"                            // in the middle of the expression the two occurences of ':' are neccessary
-                                + "("                             // 2nd group
-                                + "(?:[\\dA-Fa-f]{1,4}"           // at least one block of a 1 to 4 digit hex number
-                                + "(?::[\\dA-Fa-f]{1,4})*)?"      // optional further blocks, any number
-                                + ")"
-                                + "");                           // end of string
-
-        final FilterPattern ipv62 = new FilterPattern.FilterPatternBuilder(ipv6HexCompressedPattern, 0.90).build();
-
-        //this regex checks the ipv6 uncompressed part of a ipv6 mixed address
-        final Pattern ipv6MixedCompressedPattern =
-                Pattern.compile(""                                               // start of string
-                        + "("                                               // 1st group
-                        + "(?:[\\dA-Fa-f]{1,4}"                             // at least one block of a 1 to 4 digit hex number
-                        + "(?::[\\dA-Fa-f]{1,4})*)?"                        // optional further blocks, any number
-                        + ")"
-                        + "::"                                              // in the middle of the expression the two occurences of ':' are neccessary
-                        + "("                                               // 2nd group
-                        + "(?:[\\dA-Fa-f]{1,4}:"                            // at least one block of a 1 to 4 digit hex number followed by a ':' character
-                        + "(?:[\\dA-Fa-f]{1,4}:)*)?"                        // optional further blocks, any number, all succeeded by ':' character
-                        + ")"
-                        + "");                                             // end of string
-
-        final FilterPattern ipv63 = new FilterPattern.FilterPatternBuilder(ipv6MixedCompressedPattern, 0.90).build();
-
-        //this regex checks the ipv6 uncompressed part of a ipv6 mixed address
-        final Pattern IPV6_MIXED_UNCOMPRESSED_REGEX =
-                Pattern.compile(""  // start of string
-                        + "(?:[\\da-fA-F]{1,4}:){6}"                             // 6 blocks of a 1 to 4 digit hex number followed by double colon ':'
-                        + "" );                                                 // end of string
-
-        final FilterPattern ipv64 = new FilterPattern.FilterPatternBuilder(IPV6_MIXED_UNCOMPRESSED_REGEX, 0.90).build();
+        final FilterPattern ipv6 = new FilterPattern.FilterPatternBuilder(ipv6Pattern, 0.90).build();
 
         this.contextualTerms = new HashSet<>();
         this.contextualTerms.add("ipv4");
@@ -102,14 +55,16 @@ public class IpAddressFilter extends RegexFilter {
         this.contextualTerms.add("ip");
         this.contextualTerms.add("ip address");
 
-        this.analyzer = new Analyzer(contextualTerms, ipv4, ipv61, ipv62, ipv63, ipv64);
+        this.analyzer = new Analyzer(contextualTerms, ipv4, ipv6);
 
     }
 
     @Override
     public Filtered filter(ContextService contextService, Policy policy, String context, int piece, String input) throws Exception {
 
-        final List<Span> spans = findSpans(contextService, policy, analyzer, input, context);
+        // The IPv4 pattern also matches the dotted quad inside an IPv4-mapped address, so resolve
+        // overlaps here rather than leaving two spans for one address. See issue #354.
+        final List<Span> spans = Span.dropOverlappingSpans(findSpans(contextService, policy, analyzer, input, context));
 
         return new Filtered(context, spans);
 

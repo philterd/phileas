@@ -75,10 +75,8 @@ public class IpAddressFilterTest extends AbstractFilterTest {
 
         final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "the ip is 2001:0db8:85a3:0000:0000:8a2e:0370:7334");
 
-        // Finds duplicate spans. Duplicates/overlapping will be removed by the service prior to returning.
-        Assertions.assertEquals(2, filtered.getSpans().size());
+        Assertions.assertEquals(1, filtered.getSpans().size());
         Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 10, 49, FilterType.IP_ADDRESS));
-        Assertions.assertTrue(checkSpan(filtered.getSpans().get(1), 10, 40, FilterType.IP_ADDRESS));
 
     }
 
@@ -94,10 +92,8 @@ public class IpAddressFilterTest extends AbstractFilterTest {
 
         final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "the ip is fe80::0202:B3FF:FE1E:8329");
 
-        // Finds duplicate spans. Duplicates/overlapping will be removed by the service prior to returning.
-        Assertions.assertEquals(2, filtered.getSpans().size());
+        Assertions.assertEquals(1, filtered.getSpans().size());
         Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 10, 35, FilterType.IP_ADDRESS));
-        Assertions.assertTrue(checkSpan(filtered.getSpans().get(1), 10, 31, FilterType.IP_ADDRESS));
 
     }
 
@@ -134,6 +130,144 @@ public class IpAddressFilterTest extends AbstractFilterTest {
         final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "ip 256.1.1.1");
 
         Assertions.assertEquals(0, filtered.getSpans().size());
+
+    }
+
+    @Test
+    public void filterIpv6CompressedProducesOneSpan() throws Exception {
+
+        // https://github.com/philterd/phileas/issues/354
+        // A compressed address used to produce the full span plus a truncated one from a second pattern.
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(new IpAddressFilterStrategy()))
+                .withWindowSize(windowSize)
+                .build();
+
+        final IpAddressFilter filter = new IpAddressFilter(filterConfiguration);
+
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "host FE80::1");
+
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 5, 12, FilterType.IP_ADDRESS));
+        Assertions.assertEquals("FE80::1", filtered.getSpans().get(0).getText());
+
+    }
+
+    @Test
+    public void filterIpv6CompressedMidAddressProducesOneSpan() throws Exception {
+
+        // https://github.com/philterd/phileas/issues/354
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(new IpAddressFilterStrategy()))
+                .withWindowSize(windowSize)
+                .build();
+
+        final IpAddressFilter filter = new IpAddressFilter(filterConfiguration);
+
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "host 2001:db8:85a3::8a2e:370:7334");
+
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 5, 33, FilterType.IP_ADDRESS));
+        Assertions.assertEquals("2001:db8:85a3::8a2e:370:7334", filtered.getSpans().get(0).getText());
+
+    }
+
+    @Test
+    public void filterIpv6LoopbackProducesOneSpan() throws Exception {
+
+        // https://github.com/philterd/phileas/issues/354
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(new IpAddressFilterStrategy()))
+                .withWindowSize(windowSize)
+                .build();
+
+        final IpAddressFilter filter = new IpAddressFilter(filterConfiguration);
+
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "host ::1");
+
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 5, 8, FilterType.IP_ADDRESS));
+        Assertions.assertEquals("::1", filtered.getSpans().get(0).getText());
+
+    }
+
+    @Test
+    public void filterIpv6MappedIpv4ProducesOneSpan() throws Exception {
+
+        // https://github.com/philterd/phileas/issues/354
+        // The IPv4 pattern also matches the trailing dotted quad, so this used to produce three spans.
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(new IpAddressFilterStrategy()))
+                .withWindowSize(windowSize)
+                .build();
+
+        final IpAddressFilter filter = new IpAddressFilter(filterConfiguration);
+
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "host ::ffff:192.0.2.128");
+
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 5, 23, FilterType.IP_ADDRESS));
+        Assertions.assertEquals("::ffff:192.0.2.128", filtered.getSpans().get(0).getText());
+
+    }
+
+    @Test
+    public void filterIpv6ZoneIdentifierIsIncluded() throws Exception {
+
+        // https://github.com/philterd/phileas/issues/354
+        // The zone identifier used to be left in the clear.
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(new IpAddressFilterStrategy()))
+                .withWindowSize(windowSize)
+                .build();
+
+        final IpAddressFilter filter = new IpAddressFilter(filterConfiguration);
+
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "host fe80::1%eth0");
+
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 5, 17, FilterType.IP_ADDRESS));
+        Assertions.assertEquals("fe80::1%eth0", filtered.getSpans().get(0).getText());
+
+    }
+
+    @Test
+    public void filterIpv4StillProducesOneSpan() throws Exception {
+
+        // https://github.com/philterd/phileas/issues/354
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(new IpAddressFilterStrategy()))
+                .withWindowSize(windowSize)
+                .build();
+
+        final IpAddressFilter filter = new IpAddressFilter(filterConfiguration);
+
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "host 192.168.1.1");
+
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 5, 16, FilterType.IP_ADDRESS));
+        Assertions.assertEquals("192.168.1.1", filtered.getSpans().get(0).getText());
+
+    }
+
+    @Test
+    public void filterIpv6ExpandedMixedProducesOneSpan() throws Exception {
+
+        // https://github.com/philterd/phileas/issues/354
+        // Six hextets and a dotted quad. This form was matched as two adjacent spans before, so the
+        // single-pattern rewrite has to keep covering it.
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(new IpAddressFilterStrategy()))
+                .withWindowSize(windowSize)
+                .build();
+
+        final IpAddressFilter filter = new IpAddressFilter(filterConfiguration);
+
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "ip 1:2:3:4:5:6:1.2.3.4");
+
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 3, 22, FilterType.IP_ADDRESS));
+        Assertions.assertEquals("1:2:3:4:5:6:1.2.3.4", filtered.getSpans().get(0).getText());
 
     }
 
