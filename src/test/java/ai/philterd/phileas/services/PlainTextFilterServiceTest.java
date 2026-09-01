@@ -22,6 +22,7 @@ import ai.philterd.phileas.model.filtering.Span;
 import ai.philterd.phileas.model.filtering.TextFilterResult;
 import ai.philterd.phileas.policy.Ignored;
 import ai.philterd.phileas.policy.Policy;
+import ai.philterd.phileas.policy.RegexMatchFailedException;
 import ai.philterd.phileas.services.context.ContextService;
 import ai.philterd.phileas.services.context.DefaultContextService;
 import ai.philterd.phileas.services.disambiguation.vector.VectorService;
@@ -86,19 +87,17 @@ public class PlainTextFilterServiceTest {
     }
 
     /**
-     * A policy-supplied identifier pattern that overflows the stack must not end filtering for the
-     * whole document: the remaining filters still run and the document is still returned.
-     * See https://github.com/philterd/phileas/issues/352.
+     * An identifier pattern that overflows the stack fails the whole document, with no partially
+     * filtered text returned. See https://github.com/philterd/phileas/issues/357.
      */
     @Test
-    public void stackOverflowInAnIdentifierPatternDoesNotAbortTheDocument() throws Exception {
+    public void stackOverflowInAnIdentifierPatternFailsTheDocument() throws Exception {
 
         final Policy policy = getPolicy();
 
         final Identifier identifier = new Identifier();
         identifier.setIdentifierFilterStrategies(List.of(new IdentifierFilterStrategy()));
-        // java.util.regex compiles this non-atomic repeated group into a recursive call per
-        // character, so it overflows the stack on a few thousand characters of input.
+        // A non-atomic repeated group recurses per character, so it overflows on a long input.
         identifier.setPattern("(?:[^\\s.]|\\.(?!\\s))*");
         identifier.setCaseSensitive(true);
         policy.getIdentifiers().setIdentifiers(List.of(identifier));
@@ -108,10 +107,10 @@ public class PlainTextFilterServiceTest {
         final PlainTextFilterService service = new PlainTextFilterService(
                 new PhileasConfiguration(new Properties()), contextService, vectorService, null);
 
-        final TextFilterResult response = service.filter(policy, "context", input);
+        final RegexMatchFailedException e = Assertions.assertThrows(RegexMatchFailedException.class,
+                () -> service.filter(policy, "context", input));
 
-        Assertions.assertTrue(response.getFilteredText().contains("{{{REDACTED-email-address}}}"),
-                "the email filter should still run after the identifier pattern overflows");
+        Assertions.assertTrue(e.getMessage().contains("overflowed the stack"), e.getMessage());
 
     }
 

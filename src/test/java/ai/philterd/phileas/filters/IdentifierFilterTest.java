@@ -18,6 +18,7 @@ package ai.philterd.phileas.filters;
 import ai.philterd.phileas.model.filtering.FilterType;
 import ai.philterd.phileas.model.filtering.Filtered;
 import ai.philterd.phileas.policy.IgnoredPattern;
+import ai.philterd.phileas.policy.RegexMatchFailedException;
 import ai.philterd.phileas.policy.filters.Identifier;
 import ai.philterd.phileas.policy.filters.Validator;
 import ai.philterd.phileas.services.filters.regex.IdentifierFilter;
@@ -380,11 +381,10 @@ public class IdentifierFilterTest extends AbstractFilterTest {
     }
 
     /**
-     * A catastrophic-backtracking (ReDoS) pattern from the policy must be aborted by the regex time
-     * budget rather than running unbounded. The filter returns no spans (fail safe) and completes
-     * well within the preemptive timeout; without the guard this match runs far longer than the
-     * budget. (Modern JVMs optimize the classic exponential patterns, so this uses a polynomial
-     * pattern - nested greedy .* under a bounded repetition - which still backtracks badly.)
+     * A catastrophic-backtracking (ReDoS) pattern must be aborted by the time budget rather than
+     * running unbounded, and fails the document rather than being silently skipped (#357). (Modern
+     * JVMs optimize the classic exponential patterns, so this uses a polynomial one - nested greedy
+     * .* under a bounded repetition - which still backtracks badly.)
      */
     @Test
     public void catastrophicPatternIsAbortedByTheRegexBudget() {
@@ -402,22 +402,19 @@ public class IdentifierFilterTest extends AbstractFilterTest {
         final String input = "the id is " + "a".repeat(30) + "!";
 
         Assertions.assertTimeoutPreemptively(Duration.ofSeconds(5), () -> {
-            final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, input);
-            Assertions.assertTrue(filtered.getSpans().isEmpty(),
-                    "a timed-out pattern should yield no spans");
+            final RegexMatchFailedException e = Assertions.assertThrows(RegexMatchFailedException.class,
+                    () -> filter.filter(contextService, getPolicy(), "context", PIECE, input));
+            Assertions.assertTrue(e.getMessage().contains("exceeded the 200 ms budget"), e.getMessage());
         });
 
     }
 
     /**
-     * A policy-supplied pattern that overflows the stack must be contained to that pattern rather
-     * than ending the filter call. java.util.regex compiles a non-atomic repeated group into a
-     * recursive call per character, so this pattern overflows on a few thousand characters of
-     * input. The time budget cannot catch it: the failure is not slow, it is an Error.
-     * See https://github.com/philterd/phileas/issues/352.
+     * A policy pattern whose non-atomic repeated group overflows the stack fails the document with a
+     * named exception rather than an Error. See https://github.com/philterd/phileas/issues/357.
      */
     @Test
-    public void stackOverflowInAPatternIsContainedToThatPattern() throws Exception {
+    public void stackOverflowInAPatternFailsTheDocument() {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new IdentifierFilterStrategy()))
@@ -427,19 +424,19 @@ public class IdentifierFilterTest extends AbstractFilterTest {
         final IdentifierFilter filter = new IdentifierFilter(filterConfiguration, "name", "(?:[^\\s.]|\\.(?!\\s))*", true, 0);
         final String input = "x".repeat(20_000);
 
-        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, input);
+        final RegexMatchFailedException e = Assertions.assertThrows(RegexMatchFailedException.class,
+                () -> filter.filter(contextService, getPolicy(), "context", PIECE, input));
 
-        Assertions.assertTrue(filtered.getSpans().isEmpty(),
-                "an overflowed pattern should yield no spans rather than throwing");
+        Assertions.assertTrue(e.getMessage().contains("overflowed the stack"), e.getMessage());
 
     }
 
     /**
-     * Matches found before the overflow are kept rather than discarded, the same way the time budget
-     * keeps what it found. See https://github.com/philterd/phileas/issues/352.
+     * A pattern that matched before it overflowed still fails the document: a partial result is
+     * exactly what must not be returned. See https://github.com/philterd/phileas/issues/357.
      */
     @Test
-    public void spansFoundBeforeAnOverflowAreKept() throws Exception {
+    public void overflowAfterEarlierMatchesStillFailsTheDocument() {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new IdentifierFilterStrategy()))
@@ -450,21 +447,17 @@ public class IdentifierFilterTest extends AbstractFilterTest {
         final IdentifierFilter filter = new IdentifierFilter(filterConfiguration, "name", "(?:x|y)*z", true, 0);
         final String input = "xxz " + "x".repeat(20_000);
 
-        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, input);
-
-        Assertions.assertEquals(1, filtered.getSpans().size());
-        Assertions.assertEquals("xxz", filtered.getSpans().get(0).getText());
+        Assertions.assertThrows(RegexMatchFailedException.class,
+                () -> filter.filter(contextService, getPolicy(), "context", PIECE, input));
 
     }
 
     /**
-     * An ignored pattern is also a policy-supplied regular expression, and it is matched against the
-     * matched token outside the pattern loop, so an overflow there ended filtering for the whole
-     * document just as one in a filter pattern did. The token is kept (not ignored), which is the
-     * safe answer for a redaction tool. See https://github.com/philterd/phileas/issues/352.
+     * An ignored pattern is a policy regular expression too, so a failure there fails the document.
+     * See https://github.com/philterd/phileas/issues/357.
      */
     @Test
-    public void stackOverflowInAnIgnoredPatternKeepsTheSpan() throws Exception {
+    public void stackOverflowInAnIgnoredPatternFailsTheDocument() {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new IdentifierFilterStrategy()))
@@ -476,11 +469,10 @@ public class IdentifierFilterTest extends AbstractFilterTest {
         final IdentifierFilter filter = new IdentifierFilter(filterConfiguration, "name", "[A-Z0-9_-]{6,}", true, 0);
         final String input = "id " + "X".repeat(20_000) + " end";
 
-        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, input);
+        final RegexMatchFailedException e = Assertions.assertThrows(RegexMatchFailedException.class,
+                () -> filter.filter(contextService, getPolicy(), "context", PIECE, input));
 
-        Assertions.assertEquals(1, filtered.getSpans().size());
-        Assertions.assertFalse(filtered.getSpans().get(0).isIgnored(),
-                "a token whose ignored-pattern check overflowed should not be treated as ignored");
+        Assertions.assertTrue(e.getMessage().contains("Ignored pattern"), e.getMessage());
 
     }
 

@@ -24,6 +24,7 @@ import ai.philterd.phileas.model.filtering.Position;
 import ai.philterd.phileas.model.filtering.Replacement;
 import ai.philterd.phileas.model.filtering.Span;
 import ai.philterd.phileas.policy.Policy;
+import ai.philterd.phileas.policy.RegexMatchFailedException;
 import ai.philterd.phileas.services.Analyzer;
 import ai.philterd.phileas.services.context.ContextService;
 import ai.philterd.phileas.utils.CollectionUtils;
@@ -67,9 +68,9 @@ public abstract class RulesFilter extends Filter {
 
     /**
      * Advances the matcher to the next match under a per-attempt time budget. Returns
-     * <code>false</code> if there is no further match, if the match attempt exceeded the budget
-     * (a suspected ReDoS pattern), or if it overflowed the stack. In either failure case the
-     * matches already found are kept and a warning is logged.
+     * <code>false</code> when there is no further match. A match attempt that exceeds the budget or
+     * overflows the stack throws {@link RegexMatchFailedException}, failing the document rather than
+     * returning it filtered by every pattern but this one. See issue #357.
      */
     private boolean findNext(final Matcher matcher, final DeadlineCharSequence guardedInput) {
 
@@ -78,19 +79,16 @@ public abstract class RulesFilter extends Filter {
         try {
             return matcher.find();
         } catch (final RegexTimeoutException e) {
-            LOGGER.warn("Regex matching for filter type {} exceeded the {} ms budget on this input; "
-                    + "skipping remaining matches for this pattern.", filterType.getType(), regexTimeoutMs);
-            return false;
+            throw new RegexMatchFailedException(String.format(
+                    "Regex matching for filter type %s exceeded the %d ms budget on this input. "
+                            + "Pattern: %s", filterType.getType(), regexTimeoutMs, matcher.pattern().pattern()));
         } catch (final StackOverflowError e) {
             // java.util.regex compiles a non-atomic repeated group into a recursive call per
-            // character, so a policy-supplied pattern of that shape overflows the stack on a few
-            // thousand characters of input. The deadline above cannot catch this: the failure is
-            // not slow, it is an Error. Catching it is safe because the stack has already unwound
-            // and nothing is left half-written: the matcher is discarded along with the pattern,
-            // so the remaining patterns, filters, and the document itself are unaffected.
-            LOGGER.warn("Regex matching for filter type {} overflowed the stack on this input; "
-                    + "skipping remaining matches for this pattern.", filterType.getType());
-            return false;
+            // character, so such a pattern overflows on a few thousand characters. The budget cannot
+            // catch it: the failure is not slow, it is an Error. Caught only to name the pattern.
+            throw new RegexMatchFailedException(String.format(
+                    "Regex matching for filter type %s overflowed the stack on this input. "
+                            + "Pattern: %s", filterType.getType(), matcher.pattern().pattern()));
         }
 
     }

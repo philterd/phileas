@@ -19,14 +19,10 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import java.util.regex.Pattern;
 
 public class IgnoredPattern {
-
-    private static final Logger LOGGER = LogManager.getLogger(IgnoredPattern.class);
 
     @SerializedName("name")
     @Expose
@@ -114,13 +110,11 @@ public class IgnoredPattern {
         try {
             return p.matcher(input).matches();
         } catch (final StackOverflowError e) {
-            // The pattern comes from the policy, and java.util.regex compiles a non-atomic repeated
-            // group into a recursive call per character, so matching a long token overflows the
-            // stack. Without this the Error ends filtering for the whole document. Treating the
-            // token as not ignored is the safe answer: it stays a span and is redacted.
-            LOGGER.warn("Ignored pattern {} overflowed the stack on a {} character token; "
-                    + "treating the token as not ignored.", pattern, input.length());
-            return false;
+            // A non-atomic repeated group recurses per character, so a long token overflows the
+            // stack. Caught only to name the pattern in the failure. See issue #357.
+            throw new RegexMatchFailedException(String.format(
+                    "Ignored pattern overflowed the stack on a %d character token. Pattern: %s",
+                    input.length(), pattern));
         }
     }
 
