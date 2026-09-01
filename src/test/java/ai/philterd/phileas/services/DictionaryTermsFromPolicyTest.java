@@ -39,7 +39,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
-import org.mockito.Mockito;
+import static org.mockito.Mockito.mock;
 
 import java.util.List;
 import java.util.Properties;
@@ -48,9 +48,9 @@ import java.util.Properties;
  * The dictionary-backed filters take their terms from the policy instead of the word list
  * bundled in the jar, so a case can be self-contained.
  */
-public class DictionaryTermsFromPolicyTest {
+class DictionaryTermsFromPolicyTest {
 
-    private final VectorService vectorService = Mockito.mock(VectorService.class);
+    private final VectorService vectorService = mock(VectorService.class);
 
     // Each row is a filter type, a term supplied by the policy, and a term in the bundled word
     // list that the policy does not supply.
@@ -63,7 +63,7 @@ public class DictionaryTermsFromPolicyTest {
             "state       | Morvia        | Alabama",
             "hospital    | Kelbourne     | Mayo Clinic",
     })
-    public void policyTermsReplaceTheBundledList(final String type, final String supplied, final String bundled) throws Exception {
+    void policyTermsReplaceTheBundledList(final String type, final String supplied, final String bundled) throws Exception {
 
         final Policy policy = policyFor(type, List.of(supplied), false);
         final String input = supplied + " and " + bundled + " are here";
@@ -84,7 +84,7 @@ public class DictionaryTermsFromPolicyTest {
             "state       | Alabama",
             "hospital    | Mayo Clinic",
     })
-    public void omittingTermsKeepsTheBundledList(final String type, final String bundled) throws Exception {
+    void omittingTermsKeepsTheBundledList(final String type, final String bundled) throws Exception {
 
         final Policy policy = policyFor(type, null, false);
 
@@ -103,7 +103,7 @@ public class DictionaryTermsFromPolicyTest {
             "state       | Morvia        | Alabama",
             "hospital    | Kelbourne     | Mayo Clinic",
     })
-    public void policyTermsReplaceTheBundledListWhenFuzzy(final String type, final String supplied, final String bundled) throws Exception {
+    void policyTermsReplaceTheBundledListWhenFuzzy(final String type, final String supplied, final String bundled) throws Exception {
 
         final Policy policy = policyFor(type, List.of(supplied), true);
         final String input = supplied + " and " + bundled + " are here";
@@ -120,7 +120,7 @@ public class DictionaryTermsFromPolicyTest {
             "surname     | Smith",
             "city        | Abbeville",
     })
-    public void anEmptyTermsListKeepsTheBundledList(final String type, final String bundled) throws Exception {
+    void anEmptyTermsListKeepsTheBundledList(final String type, final String bundled) throws Exception {
 
         final Policy policy = policyFor(type, List.of(), false);
 
@@ -131,7 +131,7 @@ public class DictionaryTermsFromPolicyTest {
     }
 
     @Test
-    public void twoPoliciesDifferingOnlyInTermsDoNotShareCachedFilters() throws Exception {
+    void twoPoliciesDifferingOnlyInTermsDoNotShareCachedFilters() throws Exception {
 
         // The filter cache is keyed on a hash of the whole policy, so the terms have to be part of
         // that hash or the second policy would reuse the first policy's dictionary.
@@ -155,7 +155,7 @@ public class DictionaryTermsFromPolicyTest {
     }
 
     @Test
-    public void termsAreReadFromPolicyJson() throws Exception {
+    void termsAreReadFromPolicyJson() throws Exception {
 
         final String json = """
                 {
@@ -181,7 +181,7 @@ public class DictionaryTermsFromPolicyTest {
     }
 
     @Test
-    public void aPolicyWithNoTermsKeyStillUsesTheBundledList() throws Exception {
+    void aPolicyWithNoTermsKeyStillUsesTheBundledList() throws Exception {
 
         final String json = """
                 {
@@ -201,7 +201,7 @@ public class DictionaryTermsFromPolicyTest {
     }
 
     @Test
-    public void aMultiWordTermIsMatched() throws Exception {
+    void aMultiWordTermIsMatched() throws Exception {
 
         final Policy policy = policyFor("hospital", List.of("Kelbourne Regional Medical Center"), false);
 
@@ -213,7 +213,7 @@ public class DictionaryTermsFromPolicyTest {
     }
 
     @Test
-    public void aSuppliedTermMatchesRegardlessOfCase() throws Exception {
+    void aSuppliedTermMatchesRegardlessOfCase() throws Exception {
 
         final Policy policy = policyFor("surname", List.of("Quorlan"), false);
 
@@ -223,7 +223,7 @@ public class DictionaryTermsFromPolicyTest {
     }
 
     @Test
-    public void termsCanBeSetFromPhiSQL() throws Exception {
+    void termsCanBeSetFromPhiSQL() throws Exception {
 
         // The key has to be quoted because TERMS is a PhiSQL keyword, and an array uses brackets.
         final Policy policy = Policy.fromPhiSQL(
