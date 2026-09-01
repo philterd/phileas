@@ -5,6 +5,20 @@
 This filter identifies URLs such as `myhomepage.com`, `http://myhomepage.com/folder/page.html`, and
 `www.myhomepage.com/folder/page.html` in text.
 
+### Where a URL Ends
+
+A URL ends at whitespace, at the end of the input, or at a run of trailing punctuation. Sentence
+punctuation and closing delimiters (`.` `,` `;` `:` `!` `?` `"` `'` `)` `]` `}` `>`) are not part of
+a URL when they are the last characters before whitespace or the end of the input, so
+`See http://example.com/page.` matches `http://example.com/page`. The same characters within a path,
+query, or fragment are kept, so `http://example.com/a/b.html`, `http://example.com/s?q=1,2`, and
+`http://example.com/p#frag.x` each match in full. Because a URL also ends at whitespace, a match
+never runs into the following sentence.
+
+A regular expression cannot balance delimiters, so a closing delimiter always ends the match. A URL
+whose path legitimately contains one, such as `https://en.wikipedia.org/wiki/Foo_(bar)`, is matched
+up to but not including it.
+
 ### Required Parameters
 
 This filter has no required parameters.
