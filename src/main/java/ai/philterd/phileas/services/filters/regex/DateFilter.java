@@ -116,6 +116,10 @@ public class DateFilter extends RegexFilter {
      * Build the list of date filter patterns.
      * @return A list of {@link FilterPattern}.
      */
+    // Per-delimiter pattern construction (Pattern.compile() inside the loop, the "\d{2}"/"\d{4}"
+    // literals repeated across the four numeric templates) predates this fix; hoisting it into
+    // delimiter-independent constants would be a separate, larger restructuring of this method.
+    @SuppressWarnings({"java:S9142", "java:S1192"})
     private List<FilterPattern> buildFilterPatterns() {
 
         final List<FilterPattern> filterPatterns = new LinkedList<>();
@@ -139,18 +143,28 @@ public class DateFilter extends RegexFilter {
             // human-readable date format.
             final String d = Pattern.quote(delimiter);
 
+            // Neither a bare digit nor "delimiter + digit" may follow a match: the former blocks
+            // matching a short prefix of a longer number (e.g. "255" as "25"), the latter blocks
+            // matching a short prefix of a longer delimited chain (e.g. "1-20" out of "1-20-01023").
+            // The space delimiter is exempt from the second lookahead: space also separates ordinary
+            // words, so "space + digit" after a space-delimited date (e.g. "12 25 2020 4 days") is
+            // normal surrounding text, not a continuation of the same chain.
+            final String noMoreDigits = " ".equals(delimiter)
+                    ? "(?!\\d)"
+                    : "(?!\\d)(?!" + d + "\\d)";
+
             // Make a filter pattern for each pattern with each delimiter. The numeric day/month/year
             // patterns carry a month-first format; day-first dates (e.g. 25/12/1980) that month-first
             // cannot validate are recovered in the filter() validation step, which retries the same
             // text as day-first. See toDayFirstFormat / validate().
-            filterPatterns.add(new FilterPattern.FilterPatternBuilder(Pattern.compile("\\b\\d{4}" + d + "\\d{2}" + d + "\\d{2}"), 0.75).withFormat("uuuu-MM-dd".replaceAll("-", delimiter)).build());
-            filterPatterns.add(new FilterPattern.FilterPatternBuilder(Pattern.compile("\\b\\d{2}" + d + "\\d{2}" + d + "\\d{4}"), 0.75).withFormat("MM-dd-uuuu".replaceAll("-", delimiter)).build());
-            filterPatterns.add(new FilterPattern.FilterPatternBuilder(Pattern.compile("\\b\\d{1,2}" + d + "\\d{1,2}" + d + "\\d{2,4}"), 75).withFormat("M-d-u".replaceAll("-", delimiter)).build());
+            filterPatterns.add(new FilterPattern.FilterPatternBuilder(Pattern.compile("\\b\\d{4}" + d + "\\d{2}" + d + "\\d{2}" + noMoreDigits), 0.75).withFormat("uuuu-MM-dd".replace("-", delimiter)).build());
+            filterPatterns.add(new FilterPattern.FilterPatternBuilder(Pattern.compile("\\b\\d{2}" + d + "\\d{2}" + d + "\\d{4}" + noMoreDigits), 0.75).withFormat("MM-dd-uuuu".replace("-", delimiter)).build());
+            filterPatterns.add(new FilterPattern.FilterPatternBuilder(Pattern.compile("\\b\\d{1,2}" + d + "\\d{1,2}" + d + "\\d{2,4}" + noMoreDigits), 75).withFormat("M-d-u".replace("-", delimiter)).build());
 
             // Month-and-year only. Not generated for the "." delimiter, where it would match decimals
             // such as 3.14.
             if(!".".equals(delimiter)) {
-                filterPatterns.add(new FilterPattern.FilterPatternBuilder(Pattern.compile("\\b\\d{1,2}" + d + "\\d{2,4}"), 75).withFormat("M-u".replaceAll("-", delimiter)).build());
+                filterPatterns.add(new FilterPattern.FilterPatternBuilder(Pattern.compile("\\b\\d{1,2}" + d + "\\d{2,4}" + noMoreDigits), 75).withFormat("M-u".replace("-", delimiter)).build());
             }
 
             filterPatterns.add(new FilterPattern.FilterPatternBuilder(Pattern.compile("(?i)(\\b\\d{1,2}\\D{0,3})?\\b(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:tember)?|Oct(?:ober)?|(Nov|Dec)(?:ember)?)(\\.)?\\D?(\\d{1,2}(\\D?(st|nd|rd|th))?\\D?)(\\D?((19[7-9]\\d|20\\d{2})|\\d{2}))?\\b"), 0.75).withFormat("MMMM-dd".replaceAll("-", delimiter)).withAlwaysValid(true).build());
