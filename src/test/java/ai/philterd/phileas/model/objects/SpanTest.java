@@ -245,10 +245,10 @@ public class SpanTest {
     public void overlapping8() {
 
         final List<Span> spans = new LinkedList<>();
-        spans.add(Span.make(10, 38, FilterType.PHYSICIAN_NAME, "context", 1.0, "test", "***", "salt",  false, true, new String[0], 0));
-        spans.add(Span.make(20, 38, FilterType.PHYSICIAN_NAME, "context", 1.0, "test", "***", "salt",  false, true, new String[0], 0));
-        spans.add(Span.make(24, 38, FilterType.PHYSICIAN_NAME, "context", 1.0, "test", "***", "salt",  false, true, new String[0], 0));
-        spans.add(Span.make(29, 38, FilterType.PHYSICIAN_NAME, "context", 1.0, "test", "***", "salt",  false, true, new String[0], 0));
+        spans.add(Span.make(10, 38, FilterType.SURNAME, "context", 1.0, "test", "***", "salt",  false, true, new String[0], 0));
+        spans.add(Span.make(20, 38, FilterType.SURNAME, "context", 1.0, "test", "***", "salt",  false, true, new String[0], 0));
+        spans.add(Span.make(24, 38, FilterType.SURNAME, "context", 1.0, "test", "***", "salt",  false, true, new String[0], 0));
+        spans.add(Span.make(29, 38, FilterType.SURNAME, "context", 1.0, "test", "***", "salt",  false, true, new String[0], 0));
 
         final List<Span> nonOverlappingSpans = Span.dropOverlappingSpans(spans);
 
@@ -257,7 +257,7 @@ public class SpanTest {
         Assertions.assertEquals(1, nonOverlappingSpans.size());
         Assertions.assertEquals(10, nonOverlappingSpans.get(0).getCharacterStart());
         Assertions.assertEquals(38, nonOverlappingSpans.get(0).getCharacterEnd());
-        Assertions.assertEquals(FilterType.PHYSICIAN_NAME, nonOverlappingSpans.get(0).getFilterType());
+        Assertions.assertEquals(FilterType.SURNAME, nonOverlappingSpans.get(0).getFilterType());
 
     }
 
@@ -265,9 +265,9 @@ public class SpanTest {
     public void overlapping9() {
 
         final List<Span> spans = new LinkedList<>();
-        spans.add(Span.make(0, 6, FilterType.PHYSICIAN_NAME, "context", 1.0, "test", "***", "salt",  false, true, new String[0], 0));
-        spans.add(Span.make(0, 12, FilterType.PHYSICIAN_NAME, "context", 1.0, "test", "***", "salt",  false, true, new String[0], 0));
-        spans.add(Span.make(0, 18, FilterType.PHYSICIAN_NAME, "context", 1.0, "test", "***", "salt",  false, true, new String[0], 0));
+        spans.add(Span.make(0, 6, FilterType.SURNAME, "context", 1.0, "test", "***", "salt",  false, true, new String[0], 0));
+        spans.add(Span.make(0, 12, FilterType.SURNAME, "context", 1.0, "test", "***", "salt",  false, true, new String[0], 0));
+        spans.add(Span.make(0, 18, FilterType.SURNAME, "context", 1.0, "test", "***", "salt",  false, true, new String[0], 0));
 
         final List<Span> nonOverlappingSpans = Span.dropOverlappingSpans(spans);
 
@@ -276,7 +276,7 @@ public class SpanTest {
         Assertions.assertEquals(1, nonOverlappingSpans.size());
         Assertions.assertEquals(0, nonOverlappingSpans.get(0).getCharacterStart());
         Assertions.assertEquals(18, nonOverlappingSpans.get(0).getCharacterEnd());
-        Assertions.assertEquals(FilterType.PHYSICIAN_NAME, nonOverlappingSpans.get(0).getFilterType());
+        Assertions.assertEquals(FilterType.SURNAME, nonOverlappingSpans.get(0).getFilterType());
 
     }
 

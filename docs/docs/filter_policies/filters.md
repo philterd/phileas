@@ -30,7 +30,6 @@ Phileas uses several methods to identify person's names.
 | [First Names](filters/persons_names/first-names.md)              | Identifies common first names                                         |
 | [Surnames](filters/persons_names/surnames.md)                    | Identifies common surnames                                            |
 | [Person's Names (NER)](filters/persons_names/ph-eye)             | Identifies full names using natural language processing analysis      |
-| [Physician's Names (NER)](filters/persons_names/physician-names) | Identifies physician names using natural language processing analysis |
 
 ### Other Filters
 

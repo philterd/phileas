@@ -39,7 +39,6 @@ import ai.philterd.phileas.policy.filters.PassportNumber;
 import ai.philterd.phileas.policy.filters.PhEye;
 import ai.philterd.phileas.policy.filters.PhoneNumber;
 import ai.philterd.phileas.policy.filters.PhoneNumberExtension;
-import ai.philterd.phileas.policy.filters.PhysicianName;
 import ai.philterd.phileas.policy.filters.Section;
 import ai.philterd.phileas.policy.filters.Ssn;
 import ai.philterd.phileas.policy.filters.State;
@@ -134,10 +133,6 @@ public class Identifiers {
     @SerializedName("phoneNumberExtension")
     @Expose
     private PhoneNumberExtension phoneNumberExtension;
-
-    @SerializedName("physicianName")
-    @Expose
-    private PhysicianName physicianName;
 
     @SerializedName("sections")
     @Expose
@@ -261,8 +256,6 @@ public class Identifiers {
                 if(this.getPhoneNumber() != null) { return true; } break;
             case PHONE_NUMBER_EXTENSION:
                 if(this.getPhoneNumberExtension() != null) { return true; } break;
-            case PHYSICIAN_NAME:
-                if(this.getPhysicianName() != null) { return true; } break;
             case SECTION:
                 if(this.getSections() != null) { return true; } break;
             case SSN:
@@ -520,14 +513,6 @@ public class Identifiers {
 
     public void setStreetAddress(StreetAddress streetAddress) {
         this.streetAddress = streetAddress;
-    }
-
-    public PhysicianName getPhysicianName() {
-        return physicianName;
-    }
-
-    public void setPhysicianName(PhysicianName physicianName) {
-        this.physicianName = physicianName;
     }
 
     public BankRoutingNumber getBankRoutingNumber() {
