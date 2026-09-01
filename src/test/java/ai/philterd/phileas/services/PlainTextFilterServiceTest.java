@@ -19,12 +19,17 @@ import ai.philterd.phileas.PhileasConfiguration;
 import ai.philterd.phileas.model.filtering.BinaryDocumentFilterResult;
 import ai.philterd.phileas.model.filtering.MimeType;
 import ai.philterd.phileas.model.filtering.Span;
+import ai.philterd.phileas.model.filtering.TextFilterResult;
 import ai.philterd.phileas.policy.Ignored;
 import ai.philterd.phileas.policy.Policy;
+import ai.philterd.phileas.policy.RegexMatchFailedException;
 import ai.philterd.phileas.services.context.ContextService;
 import ai.philterd.phileas.services.context.DefaultContextService;
 import ai.philterd.phileas.services.disambiguation.vector.VectorService;
 import ai.philterd.phileas.services.filters.filtering.PdfFilterService;
+import ai.philterd.phileas.services.filters.filtering.PlainTextFilterService;
+import ai.philterd.phileas.policy.filters.Identifier;
+import ai.philterd.phileas.services.strategies.rules.IdentifierFilterStrategy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import ai.philterd.phileas.utils.CollectionUtils;
@@ -78,6 +83,34 @@ public class PlainTextFilterServiceTest {
 
         Assertions.assertEquals(3, policy.getIgnored().get(0).getTerms().size());
         Assertions.assertTrue(CollectionUtils.isNotEmpty(deserialized.getIgnored().get(0).getTerms()));
+
+    }
+
+    /**
+     * An identifier pattern that overflows the stack fails the whole document, with no partially
+     * filtered text returned. See https://github.com/philterd/phileas/issues/357.
+     */
+    @Test
+    public void stackOverflowInAnIdentifierPatternFailsTheDocument() throws Exception {
+
+        final Policy policy = getPolicy();
+
+        final Identifier identifier = new Identifier();
+        identifier.setIdentifierFilterStrategies(List.of(new IdentifierFilterStrategy()));
+        // A non-atomic repeated group recurses per character, so it overflows on a long input.
+        identifier.setPattern("(?:[^\\s.]|\\.(?!\\s))*");
+        identifier.setCaseSensitive(true);
+        policy.getIdentifiers().setIdentifiers(List.of(identifier));
+
+        final String input = "x".repeat(20_000) + " the email is test@something.com";
+
+        final PlainTextFilterService service = new PlainTextFilterService(
+                new PhileasConfiguration(new Properties()), contextService, vectorService, null);
+
+        final RegexMatchFailedException e = Assertions.assertThrows(RegexMatchFailedException.class,
+                () -> service.filter(policy, "context", input));
+
+        Assertions.assertTrue(e.getMessage().contains("overflowed the stack"), e.getMessage());
 
     }
 

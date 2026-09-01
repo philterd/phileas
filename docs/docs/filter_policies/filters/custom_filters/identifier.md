@@ -10,9 +10,10 @@ for an example.&#x20;
 _Note that backslashes in the regular expression will need to be escaped for the policy to be valid JSON._
 
 > Because the `pattern` is a user-supplied regular expression, each match attempt is time-bounded to guard against
-> catastrophic backtracking (ReDoS). If a pattern exceeds the budget on a given input, matching is aborted and that
-> input yields no matches for the identifier. The budget is controlled by the `regex.timeout.ms`
-> [setting](../../../settings.md#advanced-settings) (default `1000` ms).
+> catastrophic backtracking (ReDoS). If a pattern exceeds the budget on a given input, or exhausts the stack, filtering
+> that input fails with an error naming the filter and the pattern. No partially filtered text is returned: a document
+> that looks filtered while the values the pattern covers are still in it is worse than a visible failure. The budget is
+> controlled by the `regex.timeout.ms` [setting](../../../settings.md#advanced-settings) (default `1000` ms).
 
 ### Required Parameters
 

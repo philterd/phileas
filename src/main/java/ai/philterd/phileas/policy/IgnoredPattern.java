@@ -107,7 +107,15 @@ public class IgnoredPattern {
             p = Pattern.compile(pattern);
             compiledPattern = p;
         }
-        return p.matcher(input).matches();
+        try {
+            return p.matcher(input).matches();
+        } catch (final StackOverflowError e) {
+            // A non-atomic repeated group recurses per character, so a long token overflows the
+            // stack. Caught only to name the pattern in the failure. See issue #357.
+            throw new RegexMatchFailedException(String.format(
+                    "Ignored pattern overflowed the stack on a %d character token. Pattern: %s",
+                    input.length(), pattern));
+        }
     }
 
 }

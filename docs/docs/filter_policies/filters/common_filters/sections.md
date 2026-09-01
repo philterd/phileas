@@ -6,8 +6,9 @@ This filter identifies sections in text between a given start regular expression
 expression pattern.
 
 > Because the `startPattern` and `endPattern` are user-supplied regular expressions, each match attempt is
-> time-bounded to guard against catastrophic backtracking (ReDoS). If matching exceeds the budget on a given input,
-> it is aborted and that input yields no section matches. The budget is controlled by the `regex.timeout.ms`
+> time-bounded to guard against catastrophic backtracking (ReDoS). If matching exceeds the budget on a given input, or
+> exhausts the stack, filtering that input fails with an error naming the filter and the pattern. No partially filtered
+> text is returned. The budget is controlled by the `regex.timeout.ms`
 > [setting](../../../settings.md#advanced-settings) (default `1000` ms).
 
 ### Required Parameters
