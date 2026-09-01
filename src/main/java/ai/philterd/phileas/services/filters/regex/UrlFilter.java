@@ -63,9 +63,33 @@ public class UrlFilter extends RegexFilter {
 
         // Ported wholesale from the Dynatrace source cited above; splitting it into a Pattern per
         // compression form or replacing it with a non-regex validator would be a separate, much
-        // larger effort than this fix, and risks regressing IPv6 forms this file has no test for.
+        // larger effort than this fix.
         @SuppressWarnings({"java:S5843", "java:S5998"})
-        final Pattern urlIpv6AddressPattern = Pattern.compile("(http:\\/\\/www\\.|https:\\/\\/www\\.|http:\\/\\/|https:\\/\\/)?(([\\da-f]{1,4}:){7}[\\da-f]{1,4}|([\\da-f]{1,4}:){1,7}:|([\\da-f]{1,4}:){1,6}:[\\da-f]{1,4}|([\\da-f]{1,4}:){1,5}(:[\\da-f]{1,4}){1,2}|([\\da-f]{1,4}:){1,4}(:[\\da-f]{1,4}){1,3}|([\\da-f]{1,4}:){1,3}(:[\\da-f]{1,4}){1,4}|([\\da-f]{1,4}:){1,2}(:[\\da-f]{1,4}){1,5}|[\\da-f]{1,4}:((:[\\da-f]{1,4}){1,6})|:((:[\\da-f]{1,4}){1,7}|:)|fe80:(:[\\da-f]{0,4}){0,4}%[\\da-z]+|::(ffff(:0{1,4})?:)?((25[0-5]|(2[0-4]|1?[\\d])?[\\d])\\.){3}(25[0-5]|(2[0-4]|1?[\\d])?[\\d])|([\\da-f]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1?[\\d])?[\\d])\\.){3}(25[0-5]|(2[0-4]|1?[\\d])?[\\d]))(:[\\d]{1,5})?(\\/(?>[^\\s.]|\\.(?!\\s))*)?", Pattern.CASE_INSENSITIVE);
+        final String ipv6Alternatives = "(([\\da-f]{1,4}:){7}[\\da-f]{1,4}|([\\da-f]{1,4}:){1,7}:|([\\da-f]{1,4}:){1,6}:[\\da-f]{1,4}|([\\da-f]{1,4}:){1,5}(:[\\da-f]{1,4}){1,2}|([\\da-f]{1,4}:){1,4}(:[\\da-f]{1,4}){1,3}|([\\da-f]{1,4}:){1,3}(:[\\da-f]{1,4}){1,4}|([\\da-f]{1,4}:){1,2}(:[\\da-f]{1,4}){1,5}|[\\da-f]{1,4}:((:[\\da-f]{1,4}){1,6})|:((:[\\da-f]{1,4}){1,7}|:)|fe80:(:[\\da-f]{0,4}){0,4}%[\\da-z]+|::(ffff(:0{1,4})?:)?((25[0-5]|(2[0-4]|1?[\\d])?[\\d])\\.){3}(25[0-5]|(2[0-4]|1?[\\d])?[\\d])|([\\da-f]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1?[\\d])?[\\d])\\.){3}(25[0-5]|(2[0-4]|1?[\\d])?[\\d]))";
+
+        // The alternation above is ordered and java.util.regex takes the first alternative that
+        // matches, not the longest, so a compressed address was matched only as far as its "::" and
+        // the rest of it stayed in the document. See issue #351. This boundary rejects a match that
+        // stopped inside an address, which makes the engine backtrack into an alternative that
+        // consumes all of it:
+        //   (?![\da-f])   not a bare hex digit,     e.g. "FE80::" out of "FE80::1"
+        //   (?!:[\da-f])  not a further hextet,     e.g. "2001:db8:85a3::" out of "...::8a2e:370:7334"
+        //   (?!\.\d)      not a further IPv4 octet, e.g. "::ffff:192" out of "::ffff:192.0.2.128"
+        // A period that is not followed by a digit still ends the match, so the trailing period of
+        // "the host is fe80::1." is left out of the address rather than blocking the match.
+        final String ipv6Boundary = "(?![\\da-f])(?!:[\\da-f])(?!\\.\\d)";
+
+        // An optional zone identifier, e.g. "fe80::1%eth0", or "%25eth0" percent-encoded for a URI.
+        // Without this an address carrying a zone matched nothing at all, because the boundary above
+        // rejects every alternative that stops at the "%".
+        final String ipv6Zone = "(?:%[\\da-z]+)?";
+
+        final String ipv6Address = ipv6Alternatives + ipv6Zone + ipv6Boundary;
+
+        // Only a bracketed host can carry a port: an unbracketed trailing ":8080" cannot be told
+        // apart from another hextet, and is treated as part of the address.
+        @SuppressWarnings({"java:S5843", "java:S5998"})
+        final Pattern urlIpv6AddressPattern = Pattern.compile("(http:\\/\\/www\\.|https:\\/\\/www\\.|http:\\/\\/|https:\\/\\/)?(?:\\[" + ipv6Address + "\\](:[\\d]{1,5})?|" + ipv6Address + ")(\\/(?>[^\\s.]|\\.(?!\\s))*)?", Pattern.CASE_INSENSITIVE);
         final FilterPattern url4 = new FilterPattern.FilterPatternBuilder(urlIpv6AddressPattern, 0.80).build();
 
         this.contextualTerms = new HashSet<>();
