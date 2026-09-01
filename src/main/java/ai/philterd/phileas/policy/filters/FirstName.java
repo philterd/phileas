@@ -28,6 +28,10 @@ public class FirstName extends AbstractFilter {
     @Expose
     private List<FirstNameFilterStrategy> firstNameFilterStrategies;
 
+    @SerializedName("terms")
+    @Expose
+    private List<String> terms;
+
     @SerializedName("fuzzy")
     @Expose
     private boolean fuzzy = false;
@@ -75,4 +79,13 @@ public class FirstName extends AbstractFilter {
     public void setFuzzy(boolean fuzzy) {
         this.fuzzy = fuzzy;
     }
+
+    public List<String> getTerms() {
+        return terms;
+    }
+
+    public void setTerms(List<String> terms) {
+        this.terms = terms;
+    }
+
 }

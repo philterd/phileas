@@ -71,6 +71,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.util.HashMap;
@@ -872,19 +873,11 @@ public class FilterPolicyLoader {
                     .withPriority(policy.getIdentifiers().getCity().getPriority())
                     .build();
 
-            final Filter filter;
-
-            if(policy.getIdentifiers().getCity().isFuzzy()) {
-
-                final SensitivityLevel sensitivityLevel = policy.getIdentifiers().getCity().getSensitivityLevel();
-                final boolean capitalized = policy.getIdentifiers().getCity().isCapitalized();
-                filter = new FuzzyDictionaryFilter(FilterType.LOCATION_CITY, filterConfiguration, sensitivityLevel, capitalized);
-
-            } else {
-                filter = new SetDictionaryFilter(FilterType.LOCATION_CITY, filterConfiguration);
-            }
-
-            enabledFilters.add(filter);
+            enabledFilters.add(createDictionaryFilter(FilterType.LOCATION_CITY, filterConfiguration,
+                    policy.getIdentifiers().getCity().getTerms(),
+                    policy.getIdentifiers().getCity().isFuzzy(),
+                    policy.getIdentifiers().getCity().getSensitivity(),
+                    policy.getIdentifiers().getCity().isCapitalized()));
 
         }
 
@@ -906,19 +899,11 @@ public class FilterPolicyLoader {
                     .withPriority(policy.getIdentifiers().getCounty().getPriority())
                     .build();
 
-            final Filter filter;
-
-            if(policy.getIdentifiers().getCounty().isFuzzy()) {
-
-                final SensitivityLevel sensitivityLevel = policy.getIdentifiers().getCounty().getSensitivityLevel();
-                final boolean capitalized = policy.getIdentifiers().getCounty().isCapitalized();
-                filter = new FuzzyDictionaryFilter(FilterType.LOCATION_COUNTY, filterConfiguration, sensitivityLevel, capitalized);
-
-            } else {
-                filter = new SetDictionaryFilter(FilterType.LOCATION_COUNTY, filterConfiguration);
-            }
-
-            enabledFilters.add(filter);
+            enabledFilters.add(createDictionaryFilter(FilterType.LOCATION_COUNTY, filterConfiguration,
+                    policy.getIdentifiers().getCounty().getTerms(),
+                    policy.getIdentifiers().getCounty().isFuzzy(),
+                    policy.getIdentifiers().getCounty().getSensitivity(),
+                    policy.getIdentifiers().getCounty().isCapitalized()));
 
         }
 
@@ -940,19 +925,11 @@ public class FilterPolicyLoader {
                     .withPriority(policy.getIdentifiers().getState().getPriority())
                     .build();
 
-            final Filter filter;
-
-            if(policy.getIdentifiers().getState().isFuzzy()) {
-
-                final SensitivityLevel sensitivityLevel = policy.getIdentifiers().getState().getSensitivityLevel();
-                final boolean capitalized = policy.getIdentifiers().getState().isCapitalized();
-                filter = new FuzzyDictionaryFilter(FilterType.LOCATION_STATE, filterConfiguration, sensitivityLevel, capitalized);
-
-            } else {
-                filter = new SetDictionaryFilter(FilterType.LOCATION_STATE, filterConfiguration);
-            }
-
-            enabledFilters.add(filter);
+            enabledFilters.add(createDictionaryFilter(FilterType.LOCATION_STATE, filterConfiguration,
+                    policy.getIdentifiers().getState().getTerms(),
+                    policy.getIdentifiers().getState().isFuzzy(),
+                    policy.getIdentifiers().getState().getSensitivity(),
+                    policy.getIdentifiers().getState().isCapitalized()));
 
         }
 
@@ -973,19 +950,11 @@ public class FilterPolicyLoader {
                     .withPriority(policy.getIdentifiers().getHospital().getPriority())
                     .build();
 
-            final Filter filter;
-
-            if(policy.getIdentifiers().getHospital().isFuzzy()) {
-
-                final SensitivityLevel sensitivityLevel = policy.getIdentifiers().getHospital().getSensitivityLevel();
-                final boolean capitalized = policy.getIdentifiers().getHospital().isCapitalized();
-                filter = new FuzzyDictionaryFilter(FilterType.HOSPITAL, filterConfiguration, sensitivityLevel, capitalized);
-
-            } else {
-                filter = new SetDictionaryFilter(FilterType.HOSPITAL, filterConfiguration);
-            }
-
-            enabledFilters.add(filter);
+            enabledFilters.add(createDictionaryFilter(FilterType.HOSPITAL, filterConfiguration,
+                    policy.getIdentifiers().getHospital().getTerms(),
+                    policy.getIdentifiers().getHospital().isFuzzy(),
+                    policy.getIdentifiers().getHospital().getSensitivity(),
+                    policy.getIdentifiers().getHospital().isCapitalized()));
 
         }
 
@@ -1007,19 +976,11 @@ public class FilterPolicyLoader {
                     .withPriority(policy.getIdentifiers().getFirstName().getPriority())
                     .build();
 
-            final Filter filter;
-
-            if(policy.getIdentifiers().getFirstName().isFuzzy()) {
-
-                final SensitivityLevel sensitivityLevel = policy.getIdentifiers().getFirstName().getSensitivityLevel();
-                final boolean capitalized = policy.getIdentifiers().getFirstName().isCapitalized();
-                filter = new FuzzyDictionaryFilter(FilterType.FIRST_NAME, filterConfiguration, sensitivityLevel, capitalized);
-
-            } else {
-                filter = new SetDictionaryFilter(FilterType.FIRST_NAME, filterConfiguration);
-            }
-
-            enabledFilters.add(filter);
+            enabledFilters.add(createDictionaryFilter(FilterType.FIRST_NAME, filterConfiguration,
+                    policy.getIdentifiers().getFirstName().getTerms(),
+                    policy.getIdentifiers().getFirstName().isFuzzy(),
+                    policy.getIdentifiers().getFirstName().getSensitivity(),
+                    policy.getIdentifiers().getFirstName().isCapitalized()));
 
         }
 
@@ -1041,19 +1002,11 @@ public class FilterPolicyLoader {
                     .withPriority(policy.getIdentifiers().getSurname().getPriority())
                     .build();
 
-            final Filter filter;
-
-            if(policy.getIdentifiers().getSurname().isFuzzy()) {
-
-                final SensitivityLevel sensitivityLevel = policy.getIdentifiers().getSurname().getSensitivityLevel();
-                final boolean capitalized = policy.getIdentifiers().getSurname().isCapitalized();
-                filter = new FuzzyDictionaryFilter(FilterType.SURNAME, filterConfiguration, sensitivityLevel, capitalized);
-
-            } else {
-                filter = new SetDictionaryFilter(FilterType.SURNAME, filterConfiguration);
-            }
-
-            enabledFilters.add(filter);
+            enabledFilters.add(createDictionaryFilter(FilterType.SURNAME, filterConfiguration,
+                    policy.getIdentifiers().getSurname().getTerms(),
+                    policy.getIdentifiers().getSurname().isFuzzy(),
+                    policy.getIdentifiers().getSurname().getSensitivity(),
+                    policy.getIdentifiers().getSurname().isCapitalized()));
 
         }
 
@@ -1209,6 +1162,30 @@ public class FilterPolicyLoader {
      * @param policy The policy being loaded.
      * @param filters The complete, built filter set for the policy.
      */
+    // Terms given in the policy replace the word list bundled in the jar, so a deployment can
+    // narrow or extend a dictionary-backed type. Without terms the bundled list is used, which is
+    // the shared, process-wide instance.
+    private Filter createDictionaryFilter(final FilterType filterType, final FilterConfiguration filterConfiguration,
+                                          final List<String> terms, final boolean fuzzy,
+                                          final String sensitivity, final boolean capitalized)
+            throws IOException {
+
+        if(fuzzy) {
+
+            final SensitivityLevel sensitivityLevel = SensitivityLevel.fromName(sensitivity);
+
+            return CollectionUtils.isNotEmpty(terms)
+                    ? new FuzzyDictionaryFilter(filterType, filterConfiguration, sensitivityLevel, new LinkedHashSet<>(terms), capitalized)
+                    : new FuzzyDictionaryFilter(filterType, filterConfiguration, sensitivityLevel, capitalized);
+
+        }
+
+        return CollectionUtils.isNotEmpty(terms)
+                ? new SetDictionaryFilter(filterType, filterConfiguration, new LinkedHashSet<>(terms), null)
+                : new SetDictionaryFilter(filterType, filterConfiguration);
+
+    }
+
     private void wireReplacementValidators(final Policy policy, final List<Filter> filters) {
 
         final ReplacementValidator validator = (candidate) -> {

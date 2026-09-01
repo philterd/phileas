@@ -28,6 +28,10 @@ public class Hospital extends AbstractFilter {
     @Expose
     private List<HospitalFilterStrategy> hospitalFilterStrategies;
 
+    @SerializedName("terms")
+    @Expose
+    private List<String> terms;
+
     @SerializedName("fuzzy")
     @Expose
     private boolean fuzzy = false;
@@ -74,6 +78,14 @@ public class Hospital extends AbstractFilter {
 
     public void setFuzzy(boolean fuzzy) {
         this.fuzzy = fuzzy;
+    }
+
+    public List<String> getTerms() {
+        return terms;
+    }
+
+    public void setTerms(List<String> terms) {
+        this.terms = terms;
     }
 
 }
