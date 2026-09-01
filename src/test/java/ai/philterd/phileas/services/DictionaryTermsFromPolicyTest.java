@@ -20,7 +20,9 @@ import com.google.gson.Gson;
 import ai.philterd.phileas.model.filtering.TextFilterResult;
 import ai.philterd.phileas.policy.Identifiers;
 import ai.philterd.phileas.policy.Policy;
+import ai.philterd.phileas.model.filtering.SensitivityLevel;
 import ai.philterd.phileas.policy.filters.City;
+import ai.philterd.phileas.policy.filters.CustomDictionary;
 import ai.philterd.phileas.policy.filters.County;
 import ai.philterd.phileas.policy.filters.FirstName;
 import ai.philterd.phileas.policy.filters.Hospital;
@@ -236,6 +238,33 @@ class DictionaryTermsFromPolicyTest {
         Assertions.assertFalse(filtered.contains("Quorlan"), filtered);
         Assertions.assertFalse(filtered.contains("Thrandia"), filtered);
         Assertions.assertTrue(filtered.contains("Smith"), filtered);
+
+    }
+
+    @Test
+    void theSensitivityDefaultDiffersBetweenACustomDictionaryAndTheBundledFilters() {
+
+        // Both read sensitivity from the same base class, but a custom dictionary defaults to OFF
+        // and the word-list filters default to MEDIUM. Gson uses the declared no-argument
+        // constructor, so the default survives deserialization of a policy that omits the key.
+        Assertions.assertEquals(SensitivityLevel.OFF.getName(), new CustomDictionary().getSensitivity());
+        Assertions.assertEquals(SensitivityLevel.MEDIUM.getName(), new Surname().getSensitivity());
+
+        final String json = """
+                {
+                  "identifiers": {
+                    "dictionaries": [ { "classification": "names", "terms": ["Quorlan"] } ],
+                    "surname": { "surnameFilterStrategies": [ { "strategy": "REDACT" } ] }
+                  }
+                }
+                """;
+
+        final Policy policy = new Gson().fromJson(json, Policy.class);
+
+        Assertions.assertEquals(SensitivityLevel.OFF.getName(),
+                policy.getIdentifiers().getCustomDictionaries().get(0).getSensitivity());
+        Assertions.assertEquals(SensitivityLevel.MEDIUM.getName(),
+                policy.getIdentifiers().getSurname().getSensitivity());
 
     }
 
