@@ -15,30 +15,17 @@
  */
 package ai.philterd.phileas.policy.filters;
 
-import ai.philterd.phileas.model.filtering.SensitivityLevel;
 import ai.philterd.phileas.services.strategies.dynamic.FirstNameFilterStrategy;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
-public class FirstName extends AbstractFilter {
+public class FirstName extends AbstractDictionaryBackedFilter {
 
     @SerializedName("firstNameFilterStrategies")
     @Expose
     private List<FirstNameFilterStrategy> firstNameFilterStrategies;
-
-    @SerializedName("fuzzy")
-    @Expose
-    private boolean fuzzy = false;
-
-    @SerializedName("sensitivity")
-    @Expose
-    private String sensitivity = SensitivityLevel.MEDIUM.getName();
-
-    @SerializedName("capitalized")
-    @Expose
-    private boolean capitalized = false;
 
     public List<FirstNameFilterStrategy> getFirstNameFilterStrategies() {
         return firstNameFilterStrategies;
@@ -48,31 +35,4 @@ public class FirstName extends AbstractFilter {
         this.firstNameFilterStrategies = firstNameFilterStrategies;
     }
 
-    public SensitivityLevel getSensitivityLevel() {
-        return SensitivityLevel.fromName(sensitivity);
-    }
-
-    public String getSensitivity() {
-        return sensitivity;
-    }
-
-    public void setSensitivity(String sensitivity) {
-        this.sensitivity = sensitivity;
-    }
-
-    public boolean isCapitalized() {
-        return capitalized;
-    }
-
-    public void setCapitalized(boolean capitalized) {
-        this.capitalized = capitalized;
-    }
-
-    public boolean isFuzzy() {
-        return fuzzy;
-    }
-
-    public void setFuzzy(boolean fuzzy) {
-        this.fuzzy = fuzzy;
-    }
 }

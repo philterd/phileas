@@ -141,6 +141,118 @@ public class SsnFilterTest extends AbstractFilterTest {
     }
 
     @Test
+    public void filterSsn8() throws Exception {
+
+        // https://github.com/philterd/phileas/issues/343
+        // Two SSNs with nothing between them: a fragment straddling the two used to match instead.
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(new SsnFilterStrategy()))
+                .withWindowSize(windowSize)
+                .build();
+
+        final SsnFilter filter = new SsnFilter(filterConfiguration);
+
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "123-45-6789123-45-6789");
+        showSpans(filtered.getSpans());
+
+        // The run is redacted as one span. Nothing separates the two values, so there is no
+        // boundary between them to split on.
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 0, 22, FilterType.SSN));
+        Assertions.assertEquals("123-45-6789123-45-6789", filtered.getSpans().get(0).getText());
+
+    }
+
+    @Test
+    public void filterSsn9() throws Exception {
+
+        // https://github.com/philterd/phileas/issues/343
+        // A space between the two SSNs still gives two spans.
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(new SsnFilterStrategy()))
+                .withWindowSize(windowSize)
+                .build();
+
+        final SsnFilter filter = new SsnFilter(filterConfiguration);
+
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "123-45-6789 123-45-6789");
+        showSpans(filtered.getSpans());
+        Assertions.assertEquals(2, filtered.getSpans().size());
+        Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 0, 11, FilterType.SSN));
+        Assertions.assertTrue(checkSpan(filtered.getSpans().get(1), 12, 23, FilterType.SSN));
+
+    }
+
+    @Test
+    public void filterSsn10() throws Exception {
+
+        // https://github.com/philterd/phileas/issues/343
+        // A comma between the two SSNs still gives two spans.
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(new SsnFilterStrategy()))
+                .withWindowSize(windowSize)
+                .build();
+
+        final SsnFilter filter = new SsnFilter(filterConfiguration);
+
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "123-45-6789, 123-45-6789");
+        showSpans(filtered.getSpans());
+        Assertions.assertEquals(2, filtered.getSpans().size());
+        Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 0, 11, FilterType.SSN));
+        Assertions.assertTrue(checkSpan(filtered.getSpans().get(1), 13, 24, FilterType.SSN));
+
+    }
+
+    @Test
+    public void filterSsn11() throws Exception {
+
+        // https://github.com/philterd/phileas/issues/343
+        // A match may not start or end partway through a longer run of digits.
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(new SsnFilterStrategy()))
+                .withWindowSize(windowSize)
+                .build();
+
+        final SsnFilter filter = new SsnFilter(filterConfiguration);
+
+        // A run that does not divide evenly into SSNs matches nothing, however long it is. The
+        // last nine digits of a twenty-digit account number are not an SSN.
+        for (final String input : List.of("the account is 1234567891.",
+                "the account is 12345678901234567890.",
+                "the account is 123456789012345678901234567890123456789012345678.")) {
+
+            final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, input);
+            showSpans(filtered.getSpans());
+            Assertions.assertEquals(0, filtered.getSpans().size(), input);
+
+        }
+
+    }
+
+    @Test
+    public void filterSsn12() throws Exception {
+
+        // https://github.com/philterd/phileas/issues/343
+        // A TIN inside a longer hyphenated token is not a TIN.
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(new SsnFilterStrategy()))
+                .withWindowSize(windowSize)
+                .build();
+
+        final SsnFilter filter = new SsnFilter(filterConfiguration);
+
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "case 12-1234567-8");
+        showSpans(filtered.getSpans());
+        Assertions.assertEquals(0, filtered.getSpans().size());
+
+    }
+
+    @Test
     public void filterWithCandidates1() throws Exception {
 
         final List<String> candidates = List.of("candidate1", "candidate2");

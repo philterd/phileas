@@ -22,42 +22,24 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
-public class CustomDictionary extends AbstractFilter {
+public class CustomDictionary extends AbstractDictionaryBackedFilter {
 
     @SerializedName("classification")
     @Expose
     private String classification;
 
-    @SerializedName("terms")
-    @Expose
-    private List<String> terms;
-
     @SerializedName("files")
     @Expose
     private List<String> files;
-
-    @SerializedName("fuzzy")
-    @Expose
-    private boolean fuzzy = false;
-
-    @SerializedName("sensitivity")
-    @Expose
-    private String sensitivity = SensitivityLevel.OFF.getName();
-
-    @SerializedName("capitalized")
-    @Expose
-    private boolean capitalized = false;
 
     @SerializedName("customFilterStrategies")
     @Expose
     private List<CustomDictionaryFilterStrategy> customDictionaryFilterStrategies;
 
-    public List<String> getTerms() {
-        return terms;
-    }
-
-    public void setTerms(List<String> terms) {
-        this.terms = terms;
+    public CustomDictionary() {
+        // A custom dictionary defaults to an exact lookup, unlike the filters that match against a
+        // bundled word list.
+        setSensitivity(SensitivityLevel.OFF.getName());
     }
 
     public List<CustomDictionaryFilterStrategy> getCustomDictionaryFilterStrategies() {
@@ -82,30 +64,6 @@ public class CustomDictionary extends AbstractFilter {
 
     public void setClassification(String classification) {
         this.classification = classification;
-    }
-
-    public String getSensitivity() {
-        return sensitivity;
-    }
-
-    public void setSensitivity(String sensitivity) {
-        this.sensitivity = sensitivity;
-    }
-
-    public boolean isCapitalized() {
-        return capitalized;
-    }
-
-    public void setCapitalized(boolean capitalized) {
-        this.capitalized = capitalized;
-    }
-
-    public boolean isFuzzy() {
-        return fuzzy;
-    }
-
-    public void setFuzzy(boolean fuzzy) {
-        this.fuzzy = fuzzy;
     }
 
 }

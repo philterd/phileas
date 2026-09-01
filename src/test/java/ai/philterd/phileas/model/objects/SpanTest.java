@@ -280,6 +280,28 @@ public class SpanTest {
 
     }
 
+    @Test
+    public void abuttingSpansAreNotOverlapping() {
+
+        // The end of a span is exclusive, so two spans that abut share no character and are both
+        // kept. They were compared as inclusive ranges, so the second was dropped as overlapping.
+
+        final List<Span> spans = new LinkedList<>();
+        spans.add(Span.make(0, 11, FilterType.SSN, "context", 0.9, "test", "***", "salt", false, true, new String[0], 0));
+        spans.add(Span.make(11, 22, FilterType.SSN, "context", 0.9, "test", "***", "salt", false, true, new String[0], 0));
+
+        final List<Span> nonOverlappingSpans = Span.dropOverlappingSpans(spans);
+
+        showSpans(nonOverlappingSpans);
+
+        Assertions.assertEquals(2, nonOverlappingSpans.size());
+        Assertions.assertEquals(0, nonOverlappingSpans.get(0).getCharacterStart());
+        Assertions.assertEquals(11, nonOverlappingSpans.get(0).getCharacterEnd());
+        Assertions.assertEquals(11, nonOverlappingSpans.get(1).getCharacterStart());
+        Assertions.assertEquals(22, nonOverlappingSpans.get(1).getCharacterEnd());
+
+    }
+
     /**
      * Exercises winner selection across several independent overlap groups in a single call: the
      * longest span wins, ties break to highest confidence then highest priority, and a disjoint

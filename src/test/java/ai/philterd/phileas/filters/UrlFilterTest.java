@@ -21,6 +21,8 @@ import ai.philterd.phileas.services.filters.regex.UrlFilter;
 import ai.philterd.phileas.services.strategies.rules.UrlFilterStrategy;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 import java.util.List;
 
@@ -78,7 +80,7 @@ public class UrlFilterTest extends AbstractFilterTest {
         final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "the page is http://myhomepage.com/folder/page.html.");
         showSpans(filtered.getSpans());
         Assertions.assertEquals(1, filtered.getSpans().size());
-        Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 12, 51, FilterType.URL));
+        Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 12, 50, FilterType.URL));
 
     }
 
@@ -112,7 +114,7 @@ public class UrlFilterTest extends AbstractFilterTest {
         final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "the page is www.myhomepage.com/folder/page.html.");
         showSpans(filtered.getSpans());
         Assertions.assertEquals(1, filtered.getSpans().size());
-        Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 12, 48, FilterType.URL));
+        Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 12, 47, FilterType.URL));
 
     }
 
@@ -146,7 +148,7 @@ public class UrlFilterTest extends AbstractFilterTest {
         final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "the page is www.myhomepage.com:80/folder/page.html.");
         showSpans(filtered.getSpans());
         Assertions.assertEquals(1, filtered.getSpans().size());
-        Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 12, 51, FilterType.URL));
+        Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 12, 50, FilterType.URL));
 
     }
 
@@ -163,7 +165,7 @@ public class UrlFilterTest extends AbstractFilterTest {
         final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "the page is http://192.168.1.1:80/folder/page.html.");
         showSpans(filtered.getSpans());
         Assertions.assertEquals(1, filtered.getSpans().size());
-        Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 12, 51, FilterType.URL));
+        Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 12, 50, FilterType.URL));
 
     }
 
@@ -181,7 +183,7 @@ public class UrlFilterTest extends AbstractFilterTest {
         showSpans(filtered.getSpans());
         Assertions.assertEquals(2, filtered.getSpans().size());
         Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 34, 43, FilterType.URL));
-        Assertions.assertTrue(checkSpan(filtered.getSpans().get(1), 12, 44, FilterType.URL));
+        Assertions.assertTrue(checkSpan(filtered.getSpans().get(1), 12, 43, FilterType.URL));
 
     }
 
@@ -199,7 +201,7 @@ public class UrlFilterTest extends AbstractFilterTest {
         showSpans(filtered.getSpans());
         Assertions.assertEquals(2, filtered.getSpans().size());
         Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 41, 50, FilterType.URL));
-        Assertions.assertTrue(checkSpan(filtered.getSpans().get(1), 12, 51, FilterType.URL));
+        Assertions.assertTrue(checkSpan(filtered.getSpans().get(1), 12, 50, FilterType.URL));
 
     }
 
@@ -217,7 +219,7 @@ public class UrlFilterTest extends AbstractFilterTest {
         showSpans(filtered.getSpans());
         Assertions.assertEquals(2, filtered.getSpans().size());
         Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 42, 51, FilterType.URL));
-        Assertions.assertTrue(checkSpan(filtered.getSpans().get(1), 12, 52, FilterType.URL));
+        Assertions.assertTrue(checkSpan(filtered.getSpans().get(1), 12, 51, FilterType.URL));
 
     }
 
@@ -251,7 +253,7 @@ public class UrlFilterTest extends AbstractFilterTest {
         showSpans(filtered.getSpans());
         Assertions.assertEquals(2, filtered.getSpans().size());
         Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 59, 68, FilterType.URL));
-        Assertions.assertTrue(checkSpan(filtered.getSpans().get(1), 12, 69, FilterType.URL));
+        Assertions.assertTrue(checkSpan(filtered.getSpans().get(1), 12, 68, FilterType.URL));
 
     }
 
@@ -268,7 +270,7 @@ public class UrlFilterTest extends AbstractFilterTest {
         final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "the page is http://2001:0db8:85a3:0000:0000:8a2e:0370:7334/test/.");
         showSpans(filtered.getSpans());
         Assertions.assertEquals(1, filtered.getSpans().size());
-        Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 12, 65, FilterType.URL));
+        Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 12, 64, FilterType.URL));
 
     }
 
@@ -476,6 +478,66 @@ public class UrlFilterTest extends AbstractFilterTest {
         showSpans(filtered.getSpans());
         Assertions.assertEquals(1, filtered.getSpans().size());
         Assertions.assertTrue(candidates.contains(filtered.getSpans().get(0).getReplacement()));
+
+    }
+
+    // A URL in prose is followed by punctuation that is not part of it. Each row is an input and
+    // the span text expected from it.
+    @ParameterizedTest(name = "{0}")
+    @CsvSource(delimiter = '|', value = {
+            "comma            | Visit https://example.com/page, then           | https://example.com/page",
+            "semicolon        | Visit https://example.com/page; then           | https://example.com/page",
+            "colon            | Visit https://example.com/page: then           | https://example.com/page",
+            "exclamation      | Visit https://example.com/page! Then           | https://example.com/page",
+            "question mark    | Visit https://example.com/page? Then           | https://example.com/page",
+            "parentheses      | Visit (https://example.com/page). Then         | https://example.com/page",
+            "double quotes    | Visit \"https://example.com/page.\" Then        | https://example.com/page",
+            "single quotes    | Visit 'https://example.com/page' then          | https://example.com/page",
+            "square brackets  | Visit [https://example.com/page] then          | https://example.com/page",
+            "angle brackets   | Visit <https://example.com/page> then          | https://example.com/page",
+            "period run       | Visit http://example.com/path... then          | http://example.com/path",
+            "period at end    | Visit https://example.com/page.                | https://example.com/page",
+            "comma at end     | Visit https://example.com/page,                | https://example.com/page",
+            "paren at end     | Visit (https://example.com/page)               | https://example.com/page",
+            "no punctuation   | Visit https://example.com/page                 | https://example.com/page",
+            "dot in path      | Visit http://example.com/a/b.html now          | http://example.com/a/b.html",
+            "comma in query   | Visit http://example.com/s?q=1,2 now           | http://example.com/s?q=1,2",
+            "dot in fragment  | Visit http://example.com/p#frag.x now          | http://example.com/p#frag.x",
+            "trailing slash   | Visit http://example.com/path/. Then           | http://example.com/path/",
+            "ipv4 host        | Visit http://192.168.1.1/page, then            | http://192.168.1.1/page",
+            "ipv6 host        | Visit http://[fe80::1]/page, then              | http://[fe80::1]/page",
+    })
+    public void trailingPunctuationIsNotPartOfTheUrl(final String name, final String input, final String expected) throws Exception {
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(new UrlFilterStrategy()))
+                .withWindowSize(windowSize)
+                .build();
+
+        final UrlFilter filter = new UrlFilter(filterConfiguration, true);
+
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, input);
+        showSpans(filtered.getSpans());
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertEquals(expected, filtered.getSpans().get(0).getText());
+
+    }
+
+    @Test
+    public void closingParenthesisInAPathIsNotPartOfTheUrl() throws Exception {
+
+        // Telling "(url)" from "url_(part)" needs counting, which a regular expression cannot do,
+        // so a path that legitimately ends in a delimiter loses it.
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(new UrlFilterStrategy()))
+                .withWindowSize(windowSize)
+                .build();
+
+        final UrlFilter filter = new UrlFilter(filterConfiguration, true);
+
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "see https://en.wikipedia.org/wiki/Foo_(bar) now");
+        showSpans(filtered.getSpans());
+        Assertions.assertEquals("https://en.wikipedia.org/wiki/Foo_(bar", filtered.getSpans().get(0).getText());
 
     }
 

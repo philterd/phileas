@@ -20,7 +20,6 @@ import ai.philterd.phileas.model.formats.lapps.Lapps;
 import ai.philterd.phileas.model.formats.lapps.View;
 import com.google.gson.Gson;
 import com.google.gson.annotations.Expose;
-import org.apache.commons.lang3.Range;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -73,9 +72,6 @@ public final class Span {
     // The priority of the filter that identified this span.
     @Expose
     private int priority;
-
-    // Encapsulates the characterStart and characterEnd for easy intersection functions.
-    private transient Range<Integer> range;
 
     // The textual (non-compiled) regex expression, if any, used to identify the span.
     // This is used to validate a regex after finding.
@@ -154,14 +150,8 @@ public final class Span {
                             double confidence, String text, String replacement, String salt,
                             boolean ignored, boolean applied, String[] window, int priority) {
 
-        final Span span = new Span(characterStart, characterEnd, filterType, context, confidence, text,
+        return new Span(characterStart, characterEnd, filterType, context, confidence, text,
                 replacement, salt, ignored, applied, window, priority);
-
-        // This is made here and not passed into the constructor because that would be redundant
-        // given the characterStart and characterEnd parameters in the constructor.
-        span.range = Range.of(characterStart, characterEnd);
-
-        return span;
 
     }
 
@@ -171,12 +161,8 @@ public final class Span {
      */
     public Span copy() {
 
-        final Span clone = Span.make(characterStart, characterEnd, filterType, context, confidence, text,
+        return Span.make(characterStart, characterEnd, filterType, context, confidence, text,
                 replacement, salt, ignored, applied, window, priority);
-
-        clone.range = range;
-
-        return clone;
 
     }
 
@@ -427,7 +413,7 @@ public final class Span {
             boolean overlapsKeptSpan = false;
 
             for (final Span kept : nonOverlappingSpans) {
-                if (span.range.isOverlappedBy(kept.range)) {
+                if (overlaps(span, kept)) {
                     overlapsKeptSpan = true;
                     break;
                 }
@@ -444,6 +430,21 @@ public final class Span {
         nonOverlappingSpans.sort(Comparator.comparingInt(Span::getCharacterStart));
 
         return nonOverlappingSpans;
+
+    }
+
+    /**
+     * Determines if two spans share at least one character. The end of a span is exclusive, so two
+     * spans that merely abut, where one begins at the character the other ends at, share no
+     * character and do not overlap.
+     * @param span1 The first span.
+     * @param span2 The second span.
+     * @return <code>true</code> if the spans overlap.
+     */
+    private static boolean overlaps(final Span span1, final Span span2) {
+
+        return span1.getCharacterStart() < span2.getCharacterEnd()
+                && span2.getCharacterStart() < span1.getCharacterEnd();
 
     }
 
@@ -487,7 +488,7 @@ public final class Span {
 
         final Span span = (Span) o;
 
-        // Compares the same fields as hashCode() (transient fields such as range, pattern, window,
+        // Compares the same fields as hashCode() (transient fields such as pattern, window,
         // alwaysValid and lineHash are intentionally excluded, matching the previous
         // reflectionEquals behavior). Keep this list in sync with hashCode().
         return new EqualsBuilder()
