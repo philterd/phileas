@@ -317,6 +317,146 @@ public class UrlFilterTest extends AbstractFilterTest {
     }
 
     @Test
+    public void filterUrl17() throws Exception {
+
+        // https://github.com/philterd/phileas/issues/351
+        // A compressed address used to match only as far as its "::", leaving the rest in the clear.
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(new UrlFilterStrategy()))
+                .withWindowSize(windowSize)
+                .build();
+
+        final UrlFilter filter = new UrlFilter(filterConfiguration, false);
+
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "host FE80::1");
+        showSpans(filtered.getSpans());
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 5, 12, FilterType.URL));
+        Assertions.assertEquals("FE80::1", filtered.getSpans().get(0).getText());
+
+    }
+
+    @Test
+    public void filterUrl18() throws Exception {
+
+        // https://github.com/philterd/phileas/issues/351
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(new UrlFilterStrategy()))
+                .withWindowSize(windowSize)
+                .build();
+
+        final UrlFilter filter = new UrlFilter(filterConfiguration, false);
+
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "host 2001:db8:85a3::8a2e:370:7334");
+        showSpans(filtered.getSpans());
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 5, 33, FilterType.URL));
+        Assertions.assertEquals("2001:db8:85a3::8a2e:370:7334", filtered.getSpans().get(0).getText());
+
+    }
+
+    @Test
+    public void filterUrl19() throws Exception {
+
+        // https://github.com/philterd/phileas/issues/351
+        // An IPv4-mapped address. The embedded IPv4 address is also matched by the IPv4 pattern, so
+        // the whole address and the trailing dotted quad are both spans.
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(new UrlFilterStrategy()))
+                .withWindowSize(windowSize)
+                .build();
+
+        final UrlFilter filter = new UrlFilter(filterConfiguration, false);
+
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "host ::ffff:192.0.2.128");
+        showSpans(filtered.getSpans());
+        Assertions.assertEquals(2, filtered.getSpans().size());
+        Assertions.assertEquals("192.0.2.128", filtered.getSpans().get(0).getText());
+        Assertions.assertTrue(checkSpan(filtered.getSpans().get(1), 5, 23, FilterType.URL));
+        Assertions.assertEquals("::ffff:192.0.2.128", filtered.getSpans().get(1).getText());
+
+    }
+
+    @Test
+    public void filterUrl20() throws Exception {
+
+        // https://github.com/philterd/phileas/issues/351
+        // A zone identifier. Without the zone in the pattern the boundary rejects every alternative
+        // that stops at the "%", so the address matched nothing at all.
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(new UrlFilterStrategy()))
+                .withWindowSize(windowSize)
+                .build();
+
+        final UrlFilter filter = new UrlFilter(filterConfiguration, false);
+
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "host fe80::1%eth0");
+        showSpans(filtered.getSpans());
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 5, 17, FilterType.URL));
+        Assertions.assertEquals("fe80::1%eth0", filtered.getSpans().get(0).getText());
+
+    }
+
+    @Test
+    public void filterUrl21() throws Exception {
+
+        // https://github.com/philterd/phileas/issues/351
+        // A bracketed host, which is the only form that can carry a port.
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(new UrlFilterStrategy()))
+                .withWindowSize(windowSize)
+                .build();
+
+        final UrlFilter filter = new UrlFilter(filterConfiguration, false);
+
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "http://[2001:db8::1]:8080/x");
+        showSpans(filtered.getSpans());
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 0, 27, FilterType.URL));
+        Assertions.assertEquals("http://[2001:db8::1]:8080/x", filtered.getSpans().get(0).getText());
+
+    }
+
+    @Test
+    public void filterUrl22() throws Exception {
+
+        // https://github.com/philterd/phileas/issues/351
+        // Colon-separated text that is not an address stays unmatched.
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(new UrlFilterStrategy()))
+                .withWindowSize(windowSize)
+                .build();
+
+        final UrlFilter filter = new UrlFilter(filterConfiguration, false);
+
+        Assertions.assertEquals(0, filter.filter(contextService, getPolicy(), "context", PIECE, "the time is 12:30 and the ratio is 1:2").getSpans().size());
+        Assertions.assertEquals(0, filter.filter(contextService, getPolicy(), "context", PIECE, "see chapter 3:16 for details").getSpans().size());
+        Assertions.assertEquals(0, filter.filter(contextService, getPolicy(), "context", PIECE, "the mac address is 00:1b:44:11:3a:b7").getSpans().size());
+
+    }
+
+    @Test
+    public void filterUrl23() throws Exception {
+
+        // https://github.com/philterd/phileas/issues/351
+        // The fully expanded form, on its own rather than inside a URL as in filterUrl13 and 14.
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(new UrlFilterStrategy()))
+                .withWindowSize(windowSize)
+                .build();
+
+        final UrlFilter filter = new UrlFilter(filterConfiguration, false);
+
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "host 2001:0db8:85a3:0000:0000:8a2e:0370:7334");
+        showSpans(filtered.getSpans());
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 5, 44, FilterType.URL));
+        Assertions.assertEquals("2001:0db8:85a3:0000:0000:8a2e:0370:7334", filtered.getSpans().get(0).getText());
+
+    }
+
+    @Test
     public void filterWithCandidates1() throws Exception {
 
         final List<String> candidates = List.of("http://candidate1.com", "https://candidate2.com");
