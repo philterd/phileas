@@ -34,10 +34,20 @@ public class SsnFilter extends RegexFilter {
     public SsnFilter(FilterConfiguration filterConfiguration) {
         super(FilterType.SSN, filterConfiguration);
 
-        final Pattern ssnPattern = Pattern.compile("\\b(?!000|666)[0-8][0-9]{2}[- ]?(?!00)[0-9]{2}[- ]?(?!0000)[0-9]{4}\\b");
+        final String ssn = "(?!000|666)[0-8][0-9]{2}[- ]?(?!00)[0-9]{2}[- ]?(?!0000)[0-9]{4}";
+
+        // A match may not begin or end partway through a longer run of digits: that is what let a
+        // fragment straddling two unseparated SSNs match while neither SSN did. Repeating the SSN
+        // between the boundaries keeps SSNs written with nothing between them redacted, as a single
+        // span covering the run, while a run that does not divide evenly into SSNs (an account
+        // number, say) still matches nothing. The repetition is bounded because the engine recurses
+        // once per iteration. See issue #343.
+        final Pattern ssnPattern = Pattern.compile("(?<!\\w)(?:" + ssn + "){1,8}(?!\\w)");
         final FilterPattern ssn1 = new FilterPattern.FilterPatternBuilder(ssnPattern, 0.90).build();
 
-        final Pattern tinPattern = Pattern.compile("\\b\\d{2}-\\d{7}\\b");
+        // A TIN gets the same boundaries, and a hyphen counts as part of a longer token: without
+        // that, "45-6789123" out of "123-45-6789123-45-6789" was a TIN.
+        final Pattern tinPattern = Pattern.compile("(?<![\\w-])\\d{2}-\\d{7}(?![\\w-])");
         final FilterPattern tin1 = new FilterPattern.FilterPatternBuilder(tinPattern, 0.90).build();
 
         this.contextualTerms = new HashSet<>();
