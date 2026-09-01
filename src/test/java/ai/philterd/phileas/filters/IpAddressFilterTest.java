@@ -21,6 +21,8 @@ import ai.philterd.phileas.services.filters.regex.IpAddressFilter;
 import ai.philterd.phileas.services.strategies.rules.IpAddressFilterStrategy;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 import java.util.List;
 
@@ -28,95 +30,46 @@ import static ai.philterd.phileas.services.strategies.AbstractFilterStrategy.RAN
 
 public class IpAddressFilterTest extends AbstractFilterTest {
 
-    @Test
-    public void filterIpv41() throws Exception {
+    private IpAddressFilter filter() {
 
-        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+        return new IpAddressFilter(new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new IpAddressFilterStrategy()))
                 .withWindowSize(windowSize)
-                .build();
+                .build());
 
-        final IpAddressFilter filter = new IpAddressFilter(filterConfiguration);
+    }
 
-        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "the ip is 192.168.1.101.");
+    /**
+     * Every address form produces exactly one span covering the whole address. The IPv6 rows are
+     * from https://github.com/philterd/phileas/issues/354, where a compressed address produced a
+     * truncated span alongside the full one, or none at all.
+     */
+    @ParameterizedTest(name = "{0}")
+    @CsvSource({
+            "'the ip is 192.168.1.101.', 192.168.1.101, 10, 23",
+            "'host 192.168.1.1', 192.168.1.1, 5, 16",
+            // https://github.com/philterd/phileas/issues/335
+            "'ip 255.255.255.255', 255.255.255.255, 3, 18",
+            "'the ip is 1::', 1::, 10, 13",
+            "'the ip is 2001:0db8:85a3:0000:0000:8a2e:0370:7334', 2001:0db8:85a3:0000:0000:8a2e:0370:7334, 10, 49",
+            "'the ip is fe80::0202:B3FF:FE1E:8329', fe80::0202:B3FF:FE1E:8329, 10, 35",
+            "'host FE80::1', FE80::1, 5, 12",
+            "'host 2001:db8:85a3::8a2e:370:7334', 2001:db8:85a3::8a2e:370:7334, 5, 33",
+            "'host ::1', ::1, 5, 8",
+            // The IPv4 pattern also matches the trailing dotted quad, so this once produced three spans.
+            "'host ::ffff:192.0.2.128', ::ffff:192.0.2.128, 5, 23",
+            // The zone identifier was left in the clear.
+            "'host fe80::1%eth0', fe80::1%eth0, 5, 17",
+            // Six hextets and a dotted quad, which was matched as two adjacent spans before.
+            "'ip 1:2:3:4:5:6:1.2.3.4', 1:2:3:4:5:6:1.2.3.4, 3, 22"
+    })
+    public void addressProducesOneSpan(final String input, final String expected, final int start, final int end) throws Exception {
+
+        final Filtered filtered = filter().filter(contextService, getPolicy(), "context", PIECE, input);
 
         Assertions.assertEquals(1, filtered.getSpans().size());
-        Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 10, 23, FilterType.IP_ADDRESS));
-        Assertions.assertEquals("192.168.1.101", filtered.getSpans().get(0).getText());
-
-    }
-
-    @Test
-    public void filterIpv61() throws Exception {
-
-        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
-                .withStrategies(List.of(new IpAddressFilterStrategy()))
-                .withWindowSize(windowSize)
-                .build();
-
-        final IpAddressFilter filter = new IpAddressFilter(filterConfiguration);
-
-        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "the ip is 1::");
-
-        Assertions.assertEquals(1, filtered.getSpans().size());
-        Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 10, 13, FilterType.IP_ADDRESS));
-
-    }
-
-    @Test
-    public void filterIpv62() throws Exception {
-
-        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
-                .withStrategies(List.of(new IpAddressFilterStrategy()))
-                .withWindowSize(windowSize)
-                .build();
-
-        final IpAddressFilter filter = new IpAddressFilter(filterConfiguration);
-
-        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "the ip is 2001:0db8:85a3:0000:0000:8a2e:0370:7334");
-
-        // Finds duplicate spans. Duplicates/overlapping will be removed by the service prior to returning.
-        Assertions.assertEquals(2, filtered.getSpans().size());
-        Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 10, 49, FilterType.IP_ADDRESS));
-        Assertions.assertTrue(checkSpan(filtered.getSpans().get(1), 10, 40, FilterType.IP_ADDRESS));
-
-    }
-
-    @Test
-    public void filterIpv63() throws Exception {
-
-        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
-                .withStrategies(List.of(new IpAddressFilterStrategy()))
-                .withWindowSize(windowSize)
-                .build();
-
-        final IpAddressFilter filter = new IpAddressFilter(filterConfiguration);
-
-        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "the ip is fe80::0202:B3FF:FE1E:8329");
-
-        // Finds duplicate spans. Duplicates/overlapping will be removed by the service prior to returning.
-        Assertions.assertEquals(2, filtered.getSpans().size());
-        Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 10, 35, FilterType.IP_ADDRESS));
-        Assertions.assertTrue(checkSpan(filtered.getSpans().get(1), 10, 31, FilterType.IP_ADDRESS));
-
-    }
-
-    @Test
-    public void filterIpv4AllOnesOctetNotTruncated() throws Exception {
-
-        // https://github.com/philterd/phileas/issues/335
-        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
-                .withStrategies(List.of(new IpAddressFilterStrategy()))
-                .withWindowSize(windowSize)
-                .build();
-
-        final IpAddressFilter filter = new IpAddressFilter(filterConfiguration);
-
-        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "ip 255.255.255.255");
-
-        Assertions.assertEquals(1, filtered.getSpans().size());
-        Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 3, 18, FilterType.IP_ADDRESS));
-        Assertions.assertEquals("255.255.255.255", filtered.getSpans().get(0).getText());
+        Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), start, end, FilterType.IP_ADDRESS));
+        Assertions.assertEquals(expected, filtered.getSpans().get(0).getText());
 
     }
 
