@@ -40,7 +40,6 @@ import ai.philterd.phileas.policy.filters.MacAddress;
 import ai.philterd.phileas.policy.filters.PassportNumber;
 import ai.philterd.phileas.policy.filters.PhoneNumber;
 import ai.philterd.phileas.policy.filters.PhoneNumberExtension;
-import ai.philterd.phileas.policy.filters.PhysicianName;
 import ai.philterd.phileas.policy.filters.Section;
 import ai.philterd.phileas.policy.filters.Ein;
 import ai.philterd.phileas.policy.filters.Ssn;
@@ -76,7 +75,6 @@ import ai.philterd.phileas.services.strategies.rules.MacAddressFilterStrategy;
 import ai.philterd.phileas.services.strategies.rules.PassportNumberFilterStrategy;
 import ai.philterd.phileas.services.strategies.rules.PhoneNumberExtensionFilterStrategy;
 import ai.philterd.phileas.services.strategies.rules.PhoneNumberFilterStrategy;
-import ai.philterd.phileas.services.strategies.rules.PhysicianNameFilterStrategy;
 import ai.philterd.phileas.services.strategies.rules.SectionFilterStrategy;
 import ai.philterd.phileas.services.strategies.rules.EinFilterStrategy;
 import ai.philterd.phileas.services.strategies.rules.SsnFilterStrategy;
@@ -161,9 +159,6 @@ public abstract class AbstractFilterTest {
         PhoneNumberExtension phoneNumberExtension = new PhoneNumberExtension();
         phoneNumberExtension.setPhoneNumberExtensionFilterStrategies(List.of(new PhoneNumberExtensionFilterStrategy()));
 
-        PhysicianName physicianName = new PhysicianName();
-        physicianName.setPhysicianNameFilterStrategies(List.of(new PhysicianNameFilterStrategy()));
-
         Section section = new Section();
         section.setSectionFilterStrategies(List.of(new SectionFilterStrategy()));
 
@@ -239,7 +234,6 @@ public abstract class AbstractFilterTest {
         identifiers.setPassportNumber(passportNumber);
         identifiers.setPhoneNumber(phoneNumber);
         identifiers.setPhoneNumberExtension(phoneNumberExtension);
-        identifiers.setPhysicianName(physicianName);
         identifiers.setSections(List.of(section));
         identifiers.setEin(ein);
         identifiers.setSsn(ssn);

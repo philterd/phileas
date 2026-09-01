@@ -52,7 +52,6 @@ import ai.philterd.phileas.services.filters.regex.IpAddressFilter;
 import ai.philterd.phileas.services.filters.regex.MacAddressFilter;
 import ai.philterd.phileas.services.filters.regex.PassportNumberFilter;
 import ai.philterd.phileas.services.filters.regex.PhoneNumberExtensionFilter;
-import ai.philterd.phileas.services.filters.regex.PhysicianNameFilter;
 import ai.philterd.phileas.services.filters.regex.SectionFilter;
 import ai.philterd.phileas.services.filters.regex.SsnFilter;
 import ai.philterd.phileas.services.filters.regex.StateAbbreviationFilter;
@@ -525,28 +524,6 @@ public class FilterPolicyLoader {
                     .build();
 
             final Filter filter = new PhoneNumberRulesFilter(filterConfiguration, policy.getIdentifiers().getPhoneNumber().getRegion());
-            enabledFilters.add(filter);
-
-        }
-
-        if(policy.getIdentifiers().hasFilter(FilterType.PHYSICIAN_NAME) && policy.getIdentifiers().getPhysicianName().isEnabled()) {
-
-            final int windowSize = policy.getIdentifiers().getPhysicianName().getWindowSizeOrDefault(phileasConfiguration.spanWindowSize());
-
-
-            final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
-                    .withRandom(random)
-                    .withStrategies(policy.getIdentifiers().getPhysicianName().getPhysicianNameFilterStrategies())
-                    .withIgnored(policy.getIdentifiers().getPhysicianName().getIgnored())
-                    .withIgnoredFiles(policy.getIdentifiers().getPhysicianName().getIgnoredFiles())
-                    .withIgnoredPatterns(policy.getIdentifiers().getPhysicianName().getIgnoredPatterns())
-                    .withCrypto(policy.getCrypto())
-                    .withGenerators(replacementGenerators)
-                    .withWindowSize(windowSize)
-                    .withPriority(policy.getIdentifiers().getPhysicianName().getPriority())
-                    .build();
-
-            final Filter filter = new PhysicianNameFilter(filterConfiguration);
             enabledFilters.add(filter);
 
         }

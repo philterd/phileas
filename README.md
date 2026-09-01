@@ -112,6 +112,8 @@ Each Phileas release supports exactly one schema version:
 |-----------------|-----------------------|
 | 4.0.0           | 1.0.0                 |
 | 4.1.0           | 1.1.0                 |
+| 4.2.0           | 1.1.0                 |
+| 4.3.0           | 1.3.0                 |
 
 ## Names and Free-Text Entities with Ph-Eye
 
@@ -130,7 +132,6 @@ Built-in validators include `luhn`, `mod11`, `mod23-letter`, `mod97`, `bic-struc
 ### Persons
 
 * Person's Names, detected by NER via [Ph-Eye](https://www.github.com/philterd/ph-eye), dictionary, and census data
-* Physician Names
 * First Names
 * Surnames
 
