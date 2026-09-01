@@ -446,6 +446,32 @@ public class EndToEndTests {
     }
 
     @Test
+    public void endToEndAdjacentSsnsWithNoSeparator() throws Exception {
+
+        // https://github.com/philterd/phileas/issues/343
+        // Two SSNs written with no separator between them used to defeat detection, leaving
+        // "123-" and "-45-6789" in the output.
+
+        final Properties properties = new Properties();
+        final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties);
+
+        final String json = """
+                {
+                  "identifiers": {
+                    "ssn": { "ssnFilterStrategies": [ { "strategy": "REDACT" } ] }
+                  }
+                }
+                """;
+        final Policy policy = new com.google.gson.Gson().fromJson(json, Policy.class);
+
+        final PlainTextFilterService service = new PlainTextFilterService(phileasConfiguration, contextService, vectorService, null);
+        final TextFilterResult response = service.filter(policy, "context", "the ssn is 123-45-6789123-45-6789.");
+
+        Assertions.assertEquals("the ssn is {{{REDACTED-ssn}}}.", response.getFilteredText().trim());
+
+    }
+
+    @Test
     public void endToEndWithPolicyAsObject() throws Exception {
 
         final Policy policy = getPolicyJustStreetAddress();
