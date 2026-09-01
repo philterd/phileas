@@ -36,6 +36,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
@@ -92,6 +93,14 @@ public abstract class AbstractFilterStrategy {
     public static final String LESS_THAN_EQUALS = "<=";
     public static final String IS = "is";
     public static final String IS_NOT = "is not";
+
+    // The strategies StandardFilterStrategy implements, and so the ones every filter accepts unless
+    // it overrides getAcceptedStrategies(). A strategy outside a filter's set is not an error: the
+    // filter falls back to REDACT, which fails closed, but Filter warns about it so that a typo in,
+    // say, CRYPTO_REPLACE does not quietly produce irreversible redaction. See issue #344.
+    protected static final Set<String> STANDARD_STRATEGIES = Set.of(REDACT, RANDOM_REPLACE, STATIC_REPLACE,
+            CRYPTO_REPLACE, FPE_ENCRYPT_REPLACE, HASH_SHA256_REPLACE, LAST_4, MASK, TRUNCATE, ABBREVIATE,
+            MAP_REPLACE);
 
     @SerializedName("id")
     @Expose
@@ -435,6 +444,16 @@ public abstract class AbstractFilterStrategy {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    /**
+     * The strategy names this filter strategy implements, compared case-insensitively. A name
+     * outside this set falls
+     * back to redaction; {@link ai.philterd.phileas.filters.Filter} warns when a policy asks for one.
+     * @return The accepted strategy names.
+     */
+    public Set<String> getAcceptedStrategies() {
+        return STANDARD_STRATEGIES;
     }
 
     public String getStrategy() {

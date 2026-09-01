@@ -47,6 +47,7 @@ import java.time.format.ResolverStyle;
 import java.time.temporal.ChronoField;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 public class DateFilterStrategy extends AbstractFilterStrategy {
 
@@ -73,6 +74,16 @@ public class DateFilterStrategy extends AbstractFilterStrategy {
     @SerializedName("futureDates")
     @Expose
     private boolean futureDates = false;
+
+    /**
+     * The date filter adds the date-only strategies and implements neither FPE_ENCRYPT_REPLACE,
+     * LAST_4 nor MAP_REPLACE.
+     */
+    @Override
+    public Set<String> getAcceptedStrategies() {
+        return Set.of(REDACT, RANDOM_REPLACE, STATIC_REPLACE, CRYPTO_REPLACE, HASH_SHA256_REPLACE, MASK,
+                TRUNCATE, TRUNCATE_TO_YEAR, SHIFT, RELATIVE);
+    }
 
     @Override
     public FilterType getFilterType() {
