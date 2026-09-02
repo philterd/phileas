@@ -59,6 +59,8 @@ import ai.philterd.phileas.services.strategies.rules.UrlFilterStrategy;
 import ai.philterd.phileas.services.strategies.rules.VinFilterStrategy;
 import ai.philterd.phileas.services.strategies.rules.ZipCodeFilterStrategy;
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.google.gson.GsonBuilder;
 import ai.philterd.phileas.utils.CollectionUtils;
 import org.junit.jupiter.api.Assertions;
@@ -79,6 +81,45 @@ public class PolicyTest {
         System.out.println(json);
 
         Assertions.assertNotNull(json);
+
+    }
+
+    @Test
+    public void metadataRoundTrips() {
+
+        // Keys beyond description are allowed by the schema, so they have to survive too.
+        final String json = """
+                {
+                  "metadata": {
+                    "description": "Client intake forms.",
+                    "author": "records team",
+                    "labels": ["intake", "pii"]
+                  },
+                  "identifiers": { "ssn": { "ssnFilterStrategies": [ { "strategy": "REDACT" } ] } }
+                }""";
+
+        final Gson gson = new Gson();
+        final Policy policy = gson.fromJson(json, Policy.class);
+
+        Assertions.assertEquals("Client intake forms.", policy.getMetadata().get("description").getAsString());
+        Assertions.assertEquals("records team", policy.getMetadata().get("author").getAsString());
+
+        // Re-serializing must not drop or alter any of it.
+        final JsonObject before = JsonParser.parseString(json).getAsJsonObject().getAsJsonObject("metadata");
+        final JsonObject after = JsonParser.parseString(gson.toJson(policy)).getAsJsonObject().getAsJsonObject("metadata");
+        Assertions.assertEquals(before, after);
+
+    }
+
+    @Test
+    public void policyWithoutMetadataSerializesWithoutIt() {
+
+        final Gson gson = new Gson();
+        final Policy policy = gson.fromJson("""
+                { "identifiers": { "ssn": { "ssnFilterStrategies": [ { "strategy": "REDACT" } ] } } }""", Policy.class);
+
+        Assertions.assertNull(policy.getMetadata());
+        Assertions.assertFalse(gson.toJson(policy).contains("metadata"));
 
     }
 
