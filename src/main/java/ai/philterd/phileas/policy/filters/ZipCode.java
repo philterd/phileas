@@ -23,7 +23,10 @@ import java.util.List;
 
 public class ZipCode extends AbstractFilter {
 
-    @SerializedName("zipCodeFilterStrategy")
+    // Every other filter uses the plural key. The singular is kept as an alternate so
+    // policies written against earlier releases keep working; remove it in a future
+    // major release.
+    @SerializedName(value = "zipCodeFilterStrategies", alternate = {"zipCodeFilterStrategy"})
     @Expose
     private List<ZipCodeFilterStrategy> zipCodeFilterStrategies;
 
