@@ -62,7 +62,7 @@
         <maven.surefire.version>3.5.4</maven.surefire.version>
         <mockito.version>5.23.0</mockito.version>
         <pdfbox.version>3.0.7</pdfbox.version>
-        <phisql.version>1.4.0-SNAPSHOT</phisql.version>
+        <phisql.version>1.4.0</phisql.version>
     </properties>
     <repositories>
         <repository>
