@@ -83,6 +83,32 @@ public class PolicyTest {
     }
 
     @Test
+    public void zipCodeAcceptsBothStrategyKeys() {
+
+        final String plural = """
+                { "identifiers": { "zipCode": { "zipCodeFilterStrategies": [ { "strategy": "REDACT" } ] } } }""";
+
+        final String singular = """
+                { "identifiers": { "zipCode": { "zipCodeFilterStrategy": [ { "strategy": "REDACT" } ] } } }""";
+
+        final Gson gson = new Gson();
+
+        // The plural matches the convention every other filter follows.
+        final Policy fromPlural = gson.fromJson(plural, Policy.class);
+        Assertions.assertEquals(1, fromPlural.getIdentifiers().getZipCode().getZipCodeFilterStrategies().size());
+
+        // The singular is what releases before 4.3.0 required, so it has to keep working.
+        final Policy fromSingular = gson.fromJson(singular, Policy.class);
+        Assertions.assertEquals(1, fromSingular.getIdentifiers().getZipCode().getZipCodeFilterStrategies().size());
+
+        // The plural is the canonical name, so it is the one written back out.
+        final String serialized = gson.toJson(fromSingular);
+        Assertions.assertTrue(serialized.contains("zipCodeFilterStrategies"), serialized);
+        Assertions.assertFalse(serialized.contains("\"zipCodeFilterStrategy\""), serialized);
+
+    }
+
+    @Test
     public void deserialize1() {
 
         final String json = """

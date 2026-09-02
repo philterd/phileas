@@ -24,6 +24,10 @@ This filter has no required parameters.
 | `priority`                | The priority (integer) of this filter. Valid values are any positive integer, where a higher value indicates a higher priority. Priority is used for tie-breaking when two spans may be otherwise identical.                                                                                 | `0`                                                      |
 | `validate`                | When set to true, the database of zip codes from the US census will be checked for the first 5 digits of the zip code. If not found, the span will be marked as not applied. Use this with caution as US zip codes can change frequently and the database included may not be comprehensive. | `false`                                                  |
 
+Releases before 4.3.0 required the singular `zipCodeFilterStrategy` for this filter. That name is
+still accepted, so existing policies do not have to change, but use `zipCodeFilterStrategies` in
+new policies.
+
 ### Filter Strategies
 
 The filter may have zero or more filter strategies. When no filter strategy is given the default strategy of `REDACT` is
