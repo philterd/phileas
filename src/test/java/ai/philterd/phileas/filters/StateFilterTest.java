@@ -50,6 +50,26 @@ public class StateFilterTest extends AbstractFilterTest {
     }
 
     @Test
+    public void filterStateLowercaseInput() throws Exception {
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(new StateFilterStrategy()))
+                .withWindowSize(windowSize)
+                .build();
+
+        // Sensitivity off, so only exact case-insensitive matches.
+        final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.LOCATION_STATE, filterConfiguration, SensitivityLevel.OFF, false);
+
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "Lived in alabama");
+
+        Assertions.assertEquals(1, filtered.getSpans().size());
+
+        // Text is the match, not the term's casing.
+        Assertions.assertEquals("alabama", filtered.getSpans().get(0).getText());
+
+    }
+
+    @Test
     public void filterStatesMedium() throws Exception {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()

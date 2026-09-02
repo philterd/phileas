@@ -86,10 +86,16 @@ public class FuzzyDictionaryFilter extends DictionaryFilter {
                 if (matcher.find()) {
 
                     final int startPosition = matcher.start();
+
+                    // The match is case-insensitive and the term is interpolated into the
+                    // pattern as-is, so take the end and text from the matcher, not the term.
+                    final int endPosition = matcher.end();
+                    final String matched = matcher.group();
+
                     if (requireCapitalization && Character.isUpperCase(input.charAt(startPosition))) {
-                        spans.add(createSpan(contextService, input, startPosition, startPosition + entry.length(), 1.0, context, entry, policy));
+                        spans.add(createSpan(contextService, input, startPosition, endPosition, 1.0, context, matched, policy));
                     } else if(!requireCapitalization) {
-                        spans.add(createSpan(contextService, input, startPosition, startPosition + entry.length(), 1.0, context, entry, policy));
+                        spans.add(createSpan(contextService, input, startPosition, endPosition, 1.0, context, matched, policy));
                     }
 
                 } else {
