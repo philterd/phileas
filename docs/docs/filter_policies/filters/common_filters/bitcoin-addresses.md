@@ -2,7 +2,7 @@
 
 ## Filter
 
-This filter identifies bitcoin addresses such as `1BvBMSEYstWetqTFn5Au4m4GFg7xJaNVN2` in text.
+This filter identifies bitcoin addresses in text, in both the Base58 format (`1BvBMSEYstWetqTFn5Au4m4GFg7xJaNVN2`) and the bech32 format (`bc1qw508d6qejxtdg4y5r3zarvary0c5xw7kv8f3t4`).
 
 ### Required Parameters
 

@@ -34,8 +34,13 @@ public class BitcoinAddressFilter extends RegexFilter {
     public BitcoinAddressFilter(FilterConfiguration filterConfiguration) {
         super(FilterType.BITCOIN_ADDRESS, filterConfiguration);
 
-        final Pattern bitcoinPattern = Pattern.compile("\\b[13][a-km-zA-HJ-NP-Z1-9]{25,34}\\b", Pattern.CASE_INSENSITIVE);
-        final FilterPattern bitcoin1 = new FilterPattern.FilterPatternBuilder(bitcoinPattern, 0.90).build();
+        final Pattern base58Pattern = Pattern.compile("\\b[13][a-km-zA-HJ-NP-Z1-9]{25,34}\\b", Pattern.CASE_INSENSITIVE);
+        final FilterPattern base58 = new FilterPattern.FilterPatternBuilder(base58Pattern, 0.90).build();
+
+        // "bc1" plus a data part from the bech32 character set, which omits 1, b, i and o.
+        // 39 characters for a version 0 witness program, up to the 90 character BIP 173 max.
+        final Pattern bech32Pattern = Pattern.compile("\\bbc1[ac-hj-np-z02-9]{39,87}\\b", Pattern.CASE_INSENSITIVE);
+        final FilterPattern bech32 = new FilterPattern.FilterPatternBuilder(bech32Pattern, 0.90).build();
 
         this.contextualTerms = new HashSet<>();
         this.contextualTerms.add("bitcoin");
@@ -43,7 +48,7 @@ public class BitcoinAddressFilter extends RegexFilter {
         this.contextualTerms.add("btc");
         this.contextualTerms.add("crypto");
 
-        this.analyzer = new Analyzer(contextualTerms, bitcoin1);
+        this.analyzer = new Analyzer(contextualTerms, base58, bech32);
 
     }
 
