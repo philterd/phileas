@@ -39,6 +39,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Set;
 
 public class ZipCodeFilterStrategy extends AbstractFilterStrategy {
 
@@ -54,6 +55,16 @@ public class ZipCodeFilterStrategy extends AbstractFilterStrategy {
 
     public ZipCodeFilterStrategy() throws IOException {
         this.zipCodeMetadataService = new ZipCodeMetadataService();
+    }
+
+    /**
+     * The zip code filter adds ZERO_LEADING and implements neither ABBREVIATE, FPE_ENCRYPT_REPLACE,
+     * LAST_4 nor MAP_REPLACE.
+     */
+    @Override
+    public Set<String> getAcceptedStrategies() {
+        return Set.of(REDACT, RANDOM_REPLACE, STATIC_REPLACE, CRYPTO_REPLACE, HASH_SHA256_REPLACE, MASK,
+                TRUNCATE, ZERO_LEADING);
     }
 
     @Override

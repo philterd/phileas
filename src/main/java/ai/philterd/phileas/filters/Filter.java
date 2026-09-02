@@ -69,8 +69,10 @@ import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -134,6 +136,7 @@ public abstract class Filter {
      */
     protected long regexTimeoutMs;
 
+
     /**
      * Filters the input text.
      * @param policy The {@link Policy} to use.
@@ -169,6 +172,8 @@ public abstract class Filter {
         if(this.ignoredPatterns == null) {
             this.ignoredPatterns = new LinkedList<>();
         }
+
+        warnAboutUnsupportedStrategies();
 
         // Add the terms from the ignored files if there are any.
         if(CollectionUtils.isNotEmpty(filterConfiguration.getIgnoredFiles())) {
@@ -221,6 +226,41 @@ public abstract class Filter {
                                 filterType.getType(), generatorName);
                     }
                 }
+
+            }
+
+        }
+
+    }
+
+    /**
+     * Warns about any strategy in the policy that this filter does not implement. Such a strategy is
+     * not rejected: the filter falls back to redaction, which fails closed. It is logged because the
+     * fallback is otherwise silent, and a typo in a reversible strategy such as CRYPTO_REPLACE or
+     * FPE_ENCRYPT_REPLACE yields irreversible redaction, with re-identification then failing against
+     * data that can no longer be recovered. See issue #344.
+     */
+    private void warnAboutUnsupportedStrategies() {
+
+        for(final AbstractFilterStrategy strategy : this.strategies) {
+
+            final String name = strategy.getStrategy();
+
+            // Strategy names are compared case-insensitively everywhere else, and some are declared
+            // in lower case (ZipCodeFilterStrategy's TRUNCATE and ZERO_LEADING), so normalize both
+            // sides rather than trusting the case a constant happens to carry.
+            final Set<String> accepted = new TreeSet<>();
+            for(final String acceptedStrategy : strategy.getAcceptedStrategies()) {
+                accepted.add(acceptedStrategy.toUpperCase(Locale.ROOT));
+            }
+
+            // A policy that omits "strategy" leaves the default of REDACT, so only a value that was
+            // actually given - including an empty one - can be unsupported.
+            if(StringUtils.isBlank(name) || !accepted.contains(name.trim().toUpperCase(Locale.ROOT))) {
+
+                LOGGER.warn("Filter {} was given the filter strategy \"{}\", which it does not support. "
+                                + "Falling back to {}. The strategies this filter supports are {}.",
+                        filterType.getType(), name, AbstractFilterStrategy.REDACT, accepted);
 
             }
 

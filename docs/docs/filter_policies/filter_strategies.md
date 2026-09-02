@@ -44,6 +44,27 @@ The filter strategies are described below. Each filter type can specify zero or 
 * [`ZERO_LEADING`](filter_strategies.md#zero_leading)
 * [`ABBREVIATE`](filter_strategies.md#abbreviate)
 
+### Which Filters Accept Which Strategies
+
+Most filters accept the same set of strategies. The date, ZIP code, and Ph-Eye filters differ: each
+adds strategies of its own and leaves out some of the common ones.
+
+| Filter | Accepted strategies |
+| ------ | ------------------- |
+| Every filter except those below | `REDACT`, `RANDOM_REPLACE`, `STATIC_REPLACE`, `MAP_REPLACE`, `CRYPTO_REPLACE`, `FPE_ENCRYPT_REPLACE`, `HASH_SHA256_REPLACE`, `LAST_4`, `MASK`, `TRUNCATE`, `ABBREVIATE` |
+| `date` | `REDACT`, `RANDOM_REPLACE`, `STATIC_REPLACE`, `CRYPTO_REPLACE`, `HASH_SHA256_REPLACE`, `MASK`, `TRUNCATE`, `TRUNCATE_TO_YEAR`, `SHIFT`, `RELATIVE` |
+| `zipCode` | `REDACT`, `RANDOM_REPLACE`, `STATIC_REPLACE`, `CRYPTO_REPLACE`, `HASH_SHA256_REPLACE`, `MASK`, `TRUNCATE`, `ZERO_LEADING` |
+| `pheyes` | `REDACT`, `RANDOM_REPLACE`, `STATIC_REPLACE`, `CRYPTO_REPLACE`, `FPE_ENCRYPT_REPLACE`, `HASH_SHA256_REPLACE`, `MASK`, `TRUNCATE`, `ABBREVIATE` |
+
+Strategy names are not case-sensitive.
+
+A strategy a filter does not accept is not an error: the filter falls back to `REDACT`, so a policy
+whose strategy name is misspelled still removes the sensitive value rather than leaving it in the
+clear. Phileas logs a warning at `WARN` when it loads such a policy, naming the strategy and the
+filter, because the fallback is otherwise invisible — a misspelled `CRYPTO_REPLACE` or
+`FPE_ENCRYPT_REPLACE` produces irreversible redaction, and re-identification then fails against data
+that can no longer be recovered.
+
 ### The `REDACT` Filter Strategy
 
 The REDACT filter strategy replaces sensitive information with a given redaction format. You can put variables in the redaction format that Phileas will replace when performing the redaction.

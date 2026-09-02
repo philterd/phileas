@@ -36,12 +36,20 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.List;
+import java.util.Set;
 
 public class PhEyeFilterStrategy extends AbstractFilterStrategy {
 
     private static final Logger LOGGER = LogManager.getLogger(PhEyeFilterStrategy.class);
 
     private final FilterType filterType = FilterType.OTHER;
+
+    /** The Ph-Eye filter implements neither LAST_4 nor MAP_REPLACE. */
+    @Override
+    public Set<String> getAcceptedStrategies() {
+        return Set.of(REDACT, RANDOM_REPLACE, STATIC_REPLACE, CRYPTO_REPLACE, FPE_ENCRYPT_REPLACE,
+                HASH_SHA256_REPLACE, MASK, TRUNCATE, ABBREVIATE);
+    }
 
     @Override
     public FilterType getFilterType() {
