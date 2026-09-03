@@ -117,6 +117,29 @@ A filter names itself in a log message by its type, qualified by its `id` when o
 custom dictionaries. Do not put sensitive information in an `id`: it is written to logs, and it is written back out
 with the policy.
 
+### Span Disambiguation
+
+Some values match more than one filter: nine digits can be an SSN or a phone number. Span disambiguation resolves
+which type applies by comparing the text around the value to what it has seen for each type in that context.
+
+It is a deployment-wide feature, off by default, enabled with `span.disambiguation.enabled` in the Phileas
+configuration. A policy can opt out of it:
+
+```
+{
+   "config": {
+      "analysis": {
+         "spanDisambiguation": false
+      }
+   }
+}
+```
+
+Disambiguation runs only when the deployment has it enabled and the policy has not set `spanDisambiguation` to
+`false`. A policy can turn it off, but cannot turn it on when the deployment has it disabled. The default is `true`,
+so a policy that omits the property behaves as before. Turning it off lowers the per-document cost for policies whose
+filters are not ambiguous.
+
 ### Applying a Policy to Text
 
 A policy is applied by passing it to Phileas' filter service along with the text to filter. Using the
