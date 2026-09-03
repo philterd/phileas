@@ -48,6 +48,7 @@ public class FilterConfiguration {
     private final int priority;
     private final long regexTimeoutMs;
     private final Map<String, ReplacementGenerator> generators;
+    private final String id;
 
     private FilterConfiguration(
             final List<? extends AbstractFilterStrategy> strategies,
@@ -60,7 +61,8 @@ public class FilterConfiguration {
             final int windowSize,
             final int priority,
             final long regexTimeoutMs,
-            final Map<String, ReplacementGenerator> generators
+            final Map<String, ReplacementGenerator> generators,
+            final String id
     ) {
 
         this.strategies = strategies;
@@ -74,6 +76,7 @@ public class FilterConfiguration {
         this.priority = priority;
         this.regexTimeoutMs = regexTimeoutMs;
         this.generators = generators != null ? generators : Collections.emptyMap();
+        this.id = id;
 
     }
 
@@ -93,6 +96,7 @@ public class FilterConfiguration {
         // Defaults so existing builders are protected without changes; a value <= 0 disables the guard.
         private long regexTimeoutMs = 1000;
         private Map<String, ReplacementGenerator> generators = Collections.emptyMap();
+        private String id;
 
         public FilterConfiguration build() {
 
@@ -110,7 +114,8 @@ public class FilterConfiguration {
                     windowSize,
                     priority,
                     regexTimeoutMs,
-                    generators
+                    generators,
+                    id
             );
 
         }
@@ -235,6 +240,11 @@ public class FilterConfiguration {
             return this;
         }
 
+        public FilterConfigurationBuilder withId(String id) {
+            this.id = id;
+            return this;
+        }
+
     }
 
     public List<? extends AbstractFilterStrategy> getStrategies() {
@@ -279,6 +289,10 @@ public class FilterConfiguration {
 
     public Map<String, ReplacementGenerator> getGenerators() {
         return generators;
+    }
+
+    public String getId() {
+        return id;
     }
 
 }

@@ -20,6 +20,7 @@ A policy:
 * Can have an optional list of [terms](ignoring_sensitive_information.md) or [patterns](ignoring_sensitive_information.md).
 * Can have encryption keys to support [encryption](filter_strategies.md#fpe) of sensitive information.
 * Can have an optional [`metadata`](#policy-metadata) object describing the policy itself.
+* Can give each filter an optional [`id`](#filter-identifiers) naming it in logs.
 
 ### An Example Policy
 
@@ -90,6 +91,31 @@ import, and sharing instead of living in separate storage.
 Additional properties are allowed, as shown by `author` above, so the object can grow without a schema change. Keys
 Phileas does not model survive a load and save unchanged. Do not put sensitive information in `metadata`: it is not
 redacted, and it is written back out with the policy.
+
+### Filter Identifiers
+
+Any filter can carry an optional `id`, a label that names that filter in logs and diagnostics. It has no effect on
+detection or redaction, and nothing else in the policy refers to it.
+
+```
+{
+   "identifiers": {
+      "ssn": {
+         "id": "intake-ssn",
+         "ssnFilterStrategies": [
+            {
+               "strategy": "REDACT"
+            }
+         ]
+      }
+   }
+}
+```
+
+A filter names itself in a log message by its type, qualified by its `id` when one is set, for example
+`ssn (id: intake-ssn)`. This traces a message to one filter in a policy that has several of the same type, such as two
+custom dictionaries. Do not put sensitive information in an `id`: it is written to logs, and it is written back out
+with the policy.
 
 ### Applying a Policy to Text
 

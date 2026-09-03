@@ -6,6 +6,7 @@ Full changelogs for each release are available in the [GitHub releases](https://
 
 ## Version 4.4.0 - Unreleased
 
+* Any filter in a policy can now carry an optional `id`, a label that names it in logs. A filter's diagnostics identify it by type qualified with the `id` when one is set, for example `ssn (id: intake-ssn)`, which tells apart two filters of the same type in one policy. The value has no effect on detection or redaction, is round-tripped unchanged, and is available on a built filter through `Filter.getId()`. This uses redaction policy schema 1.2.0. See the documentation for details. (issue #373, PhiSQL RFC philterd/phisql#18)
 * `Policy` now exposes the description held in `metadata.description` through `getDescription()` and `setDescription(String)`, so a caller no longer parses the raw metadata JSON. Setting a description on a policy that has no metadata creates the section, and clearing the only description removes it, so an empty `metadata` object is never serialized; any other metadata keys are left in place. A PhiSQL `DESCRIPTION` clause compiles to `metadata.description`, so a compiled policy carries its description here. (issue #375)
 
 ## Version 4.3.0 - September 3, 2026

@@ -214,6 +214,36 @@ public class PolicyTest {
     }
 
     @Test
+    public void filterIdRoundTrips() {
+
+        final String json = """
+                { "identifiers": { "ssn": { "id": "intake-ssn",
+                  "ssnFilterStrategies": [ { "strategy": "REDACT" } ] } } }""";
+
+        final Gson gson = new Gson();
+        final Policy policy = gson.fromJson(json, Policy.class);
+
+        Assertions.assertEquals("intake-ssn", policy.getIdentifiers().getSsn().getId());
+        Assertions.assertTrue(gson.toJson(policy).contains("\"id\":\"intake-ssn\""));
+
+    }
+
+    @Test
+    public void filterWithoutAnIdSerializesWithoutOne() {
+
+        final Gson gson = new Gson();
+        final Policy policy = gson.fromJson("""
+                { "identifiers": { "ssn": { "ssnFilterStrategies": [ { "strategy": "REDACT" } ] } } }""", Policy.class);
+
+        Assertions.assertNull(policy.getIdentifiers().getSsn().getId());
+
+        final JsonObject ssn = JsonParser.parseString(gson.toJson(policy)).getAsJsonObject()
+                .getAsJsonObject("identifiers").getAsJsonObject("ssn");
+        Assertions.assertFalse(ssn.has("id"));
+
+    }
+
+    @Test
     public void zipCodeAcceptsBothStrategyKeys() {
 
         final String plural = """
