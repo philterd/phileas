@@ -53,7 +53,6 @@ Each filter strategy may have one condition. See [Conditions](#conditions) for d
 
 ```
 {
-   "name": "ein-example",
    "identifiers": {
       "ein": {
          "onlyValidPrefixes": true,

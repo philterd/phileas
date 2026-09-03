@@ -3,11 +3,9 @@
 The types of sensitive information identified by Phileas and how that information is de-identified are controlled
 through policies.
 
-Each policy has a `name` that is used by Phileas to apply the appropriate de-identification methods. The `name` is
-passed to Phileas along with the text to be filtered. This
-provides flexibility and allows you to de-identify different types of documents in differing manners with a single
-instance of Phileas. For example, you may have a policy for bankruptcy documents and a separate policy for financial
-documents.
+A policy is passed to Phileas along with the text to be filtered. This provides flexibility and allows you to
+de-identify different types of documents in differing manners with a single instance of Phileas. For example, you may
+have a policy for bankruptcy documents and a separate policy for financial documents.
 
 > There are [sample policies](sample_filter_policies.md) available for immediate use or customization to fit your
 > use-cases.
@@ -22,6 +20,7 @@ A policy:
 * Can have an optional list of [terms](ignoring_sensitive_information.md) or [patterns](ignoring_sensitive_information.md).
 * Can have encryption keys to support [encryption](filter_strategies.md#fpe) of sensitive information.
 * Can have an optional [`metadata`](#policy-metadata) object describing the policy itself.
+* Can give each filter an optional [`id`](#filter-identifiers) naming it in logs.
 
 ### An Example Policy
 
@@ -31,7 +30,6 @@ when found. This policy identifies email addresses and phone numbers and redacts
 
 ```
 {
-   "name": "email-and-phone-numbers",
    "identifiers": {
       "emailAddress": {
          "emailAddressFilterStrategies": [
@@ -58,9 +56,9 @@ When an email address is identified by this policy, the email address is replace
 it is replaced with the text `{{{REDACTED-phone-number}}}`. You are free to change the redaction formats to whatever
 fits your use-case. See [Filter Strategies](filter_strategies.md) for all replacement options.
 
-The name of the policy is `email-and-phone-numbers`. Policies can be named anything you like but their names must be
-unique from all other policies. As a best practice, the policy should be saved as `[name].json`, e.g.
-`email-and-phone-numbers.json`.
+A policy is not named inside the JSON. A policy stored as a file is identified by its file name, so name the file for
+what the policy does, for example `email-and-phone-numbers.json`. To describe a policy in the policy itself, use
+[`metadata.description`](#policy-metadata).
 
 ### Policy Metadata
 
@@ -93,6 +91,31 @@ import, and sharing instead of living in separate storage.
 Additional properties are allowed, as shown by `author` above, so the object can grow without a schema change. Keys
 Phileas does not model survive a load and save unchanged. Do not put sensitive information in `metadata`: it is not
 redacted, and it is written back out with the policy.
+
+### Filter Identifiers
+
+Any filter can carry an optional `id`, a label that names that filter in logs and diagnostics. It has no effect on
+detection or redaction, and nothing else in the policy refers to it.
+
+```
+{
+   "identifiers": {
+      "ssn": {
+         "id": "intake-ssn",
+         "ssnFilterStrategies": [
+            {
+               "strategy": "REDACT"
+            }
+         ]
+      }
+   }
+}
+```
+
+A filter names itself in a log message by its type, qualified by its `id` when one is set, for example
+`ssn (id: intake-ssn)`. This traces a message to one filter in a policy that has several of the same type, such as two
+custom dictionaries. Do not put sensitive information in an `id`: it is written to logs, and it is written back out
+with the policy.
 
 ### Splitting Large Documents
 

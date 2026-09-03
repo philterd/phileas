@@ -44,6 +44,70 @@ public class FilterPolicyLoaderTest {
     private static final Logger LOGGER = LogManager.getLogger(FilterPolicyLoaderTest.class);
 
     @Test
+    public void filterIdFromThePolicyReachesTheFilter() throws Exception {
+
+        final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(new Properties());
+        final FilterPolicyLoader filterPolicyLoader = new FilterPolicyLoader(phileasConfiguration, new SecureRandom(), null);
+
+        final ZipCode zipCode = new ZipCode();
+        zipCode.setId("intake-zip");
+
+        final Identifiers identifiers = new Identifiers();
+        identifiers.setZipCode(zipCode);
+
+        final Policy policy = new Policy();
+        policy.setIdentifiers(identifiers);
+
+        final List<Filter> filters = filterPolicyLoader.getFiltersForPolicy(policy, new HashMap<>());
+
+        Assertions.assertEquals(1, filters.size());
+        Assertions.assertEquals("intake-zip", filters.get(0).getId());
+
+    }
+
+    @Test
+    public void filterIdReachesAListShapedFilter() throws Exception {
+
+        final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(new Properties());
+        final FilterPolicyLoader filterPolicyLoader = new FilterPolicyLoader(phileasConfiguration, new SecureRandom(), null);
+
+        final Identifier identifier = new Identifier();
+        identifier.setId("intake-identifier");
+        identifier.setPattern("[0-9]{5}-[A-Z]{2}");
+
+        final Identifiers identifiers = new Identifiers();
+        identifiers.setIdentifiers(List.of(identifier));
+
+        final Policy policy = new Policy();
+        policy.setIdentifiers(identifiers);
+
+        final List<Filter> filters = filterPolicyLoader.getFiltersForPolicy(policy, new HashMap<>());
+
+        Assertions.assertEquals(1, filters.size());
+        Assertions.assertEquals("intake-identifier", filters.get(0).getId());
+
+    }
+
+    @Test
+    public void filterWithoutAnIdHasNone() throws Exception {
+
+        final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(new Properties());
+        final FilterPolicyLoader filterPolicyLoader = new FilterPolicyLoader(phileasConfiguration, new SecureRandom(), null);
+
+        final Identifiers identifiers = new Identifiers();
+        identifiers.setZipCode(new ZipCode());
+
+        final Policy policy = new Policy();
+        policy.setIdentifiers(identifiers);
+
+        final List<Filter> filters = filterPolicyLoader.getFiltersForPolicy(policy, new HashMap<>());
+
+        Assertions.assertEquals(1, filters.size());
+        Assertions.assertNull(filters.get(0).getId());
+
+    }
+
+    @Test
     public void checkDefaultWindowSize() throws Exception {
 
         final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(new Properties());

@@ -58,7 +58,6 @@ See [Conditions](#conditions) for details.
 
 ```
 {
-   "name": "ages-example",
    "identifiers": {
       "age": {
          "ageFilterStrategies": [

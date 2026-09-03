@@ -49,6 +49,19 @@ public abstract class AbstractFilter {
     @Expose
     protected int priority;
 
+    // Opaque label used only in logs. Never read during filtering.
+    @SerializedName("id")
+    @Expose
+    protected String id;
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
     }

@@ -10,7 +10,6 @@ This policy finds email addresses and phone numbers and redacts them with `{{{RE
 
 ```
 {
-  "name": "email-and-phone-numbers",
   "identifiers": {
     "emailAddress": {
       "emailAddressFilterStrategies": [
@@ -34,20 +33,25 @@ This policy finds email addresses and phone numbers and redacts them with `{{{RE
 
 ### Persons Names and SSNs
 
-This policy finds persons names and SSNs and redacts them with `{{{REDACTED-entity}}}` and `{{{REDACTED-ssn}}}`, respectively.
+This policy finds persons names with [PhEye](filters/persons_names/ph-eye.md) and SSNs with the SSN filter, and
+redacts each with the type of the filter that found it. It needs a running PhEye service at the `endpoint` shown.
 
 ```
 {
-  "name": "persons-names-ssn",
   "identifiers": {
-    "ner": {
-      "nerFilterStrategies": [
-        {
-          "strategy": "REDACT",
-          "redactionFormat": "{{{REDACTED-%t}}}"
-        }
-      ]
-    },
+    "pheyes": [
+      {
+        "phEyeConfiguration": {
+          "endpoint": "http://localhost:18080"
+        },
+        "phEyeFilterStrategies": [
+          {
+            "strategy": "REDACT",
+            "redactionFormat": "{{{REDACTED-%t}}}"
+          }
+        ]
+      }
+    ],
     "ssn": {
       "ssnFilterStrategies": [
         {
@@ -66,7 +70,6 @@ This policy finds dates, URLs, and VINs. Dates and URLs are redacted with `{{{RE
 
 ```
 {
-  "name": "dates-urls-vin",
   "identifiers": {
     "date": {
       "dateFilterStrategies": [
@@ -101,7 +104,6 @@ This policy finds IP addresses and replaces each identified IP address with the 
 
 ```
 {
-  "name": "ip-addresses",
   "identifiers": {
     "ipAddress": {
       "ipAddressFilterStrategies": [
@@ -122,7 +124,6 @@ This policy finds ZIP codes starting with `90` and truncates the zip code to jus
 
 ```
 {
-  "name": "zip-codes",
   "identifiers": {
     "creditCard": {
       "creditCardFilterStrategies": [
@@ -143,7 +144,6 @@ This policy enables text splitting for input over 10,000 characters.
 
 ```
 {
-  "name": "default-split-enabled",
   "config": {
     "splitting": {
       "enabled": true,
@@ -170,7 +170,6 @@ This policy has a list of globally ignored terms.
 
 ```
 {
-  "name": "default-global-ignore",
   "ignored": [
     {
       "name": "ignored credit cards",
