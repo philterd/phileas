@@ -59,6 +59,9 @@ public class Policy {
 
     }
 
+    /** The key of the policy description within the metadata. */
+    private static final String DESCRIPTION = "description";
+
     // Descriptive information carried with the policy. Held as raw JSON so keys the
     // engine does not know about survive a load-and-save round trip. Never read during
     // filtering.
@@ -197,11 +200,11 @@ public class Policy {
      */
     public String getDescription() {
 
-        if (metadata == null || !metadata.has("description")) {
+        if (metadata == null || !metadata.has(DESCRIPTION)) {
             return null;
         }
 
-        final JsonElement description = metadata.get("description");
+        final JsonElement description = metadata.get(DESCRIPTION);
 
         // The schema defines description as a string. Anything else (an object, an array, a null) has
         // no string form, so report it as absent rather than guessing at one.
@@ -219,7 +222,7 @@ public class Policy {
         if (description == null) {
 
             if (metadata != null) {
-                metadata.remove("description");
+                metadata.remove(DESCRIPTION);
 
                 // Drop the section entirely once it is empty so it is not serialized as "metadata": {}.
                 if (metadata.isEmpty()) {
@@ -235,7 +238,7 @@ public class Policy {
             metadata = new JsonObject();
         }
 
-        metadata.addProperty("description", description);
+        metadata.addProperty(DESCRIPTION, description);
 
     }
 
