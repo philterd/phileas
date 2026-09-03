@@ -85,6 +85,26 @@ public class PolicyTest {
     }
 
     @Test
+    public void spanDisambiguationRoundTrips() {
+
+        final Gson gson = new Gson();
+        final Policy policy = gson.fromJson("""
+                { "config": { "analysis": { "spanDisambiguation": false } } }""", Policy.class);
+
+        Assertions.assertFalse(policy.getConfig().getAnalysis().isSpanDisambiguation());
+        Assertions.assertTrue(gson.toJson(policy).contains("\"spanDisambiguation\":false"));
+
+    }
+
+    @Test
+    public void spanDisambiguationDefaultsToOn() {
+
+        Assertions.assertTrue(new Gson().fromJson("{}", Policy.class).getConfig().getAnalysis().isSpanDisambiguation());
+        Assertions.assertTrue(new Policy().getConfig().getAnalysis().isSpanDisambiguation());
+
+    }
+
+    @Test
     public void metadataRoundTrips() {
 
         // Keys beyond description are allowed by the schema, so they have to survive too.
