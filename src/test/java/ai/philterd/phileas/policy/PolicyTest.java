@@ -124,6 +124,96 @@ public class PolicyTest {
     }
 
     @Test
+    public void descriptionReadsFromMetadata() {
+
+        final Policy policy = new Gson().fromJson("""
+                { "metadata": { "description": "Client intake forms." } }""", Policy.class);
+
+        Assertions.assertEquals("Client intake forms.", policy.getDescription());
+
+    }
+
+    @Test
+    public void descriptionIsNullWhenAbsent() {
+
+        final Gson gson = new Gson();
+
+        // No metadata at all, metadata without a description, and a description that is not a string.
+        Assertions.assertNull(gson.fromJson("{}", Policy.class).getDescription());
+        Assertions.assertNull(gson.fromJson("""
+                { "metadata": { "author": "records team" } }""", Policy.class).getDescription());
+        Assertions.assertNull(gson.fromJson("""
+                { "metadata": { "description": { "text": "no" } } }""", Policy.class).getDescription());
+
+    }
+
+    @Test
+    public void settingDescriptionKeepsOtherMetadataKeys() {
+
+        final Policy policy = new Gson().fromJson("""
+                { "metadata": { "description": "Old.", "author": "records team" } }""", Policy.class);
+
+        policy.setDescription("New.");
+
+        Assertions.assertEquals("New.", policy.getDescription());
+        Assertions.assertEquals("records team", policy.getMetadata().get("author").getAsString());
+
+    }
+
+    @Test
+    public void settingDescriptionOnPolicyWithoutMetadataCreatesTheSection() {
+
+        final Policy policy = new Gson().fromJson("{}", Policy.class);
+        policy.setDescription("Client intake forms.");
+
+        Assertions.assertEquals("Client intake forms.", policy.getDescription());
+        Assertions.assertEquals("Client intake forms.", policy.getMetadata().get("description").getAsString());
+
+    }
+
+    @Test
+    public void clearingTheOnlyDescriptionRemovesTheMetadataSection() {
+
+        final Policy policy = new Gson().fromJson("""
+                { "metadata": { "description": "Client intake forms." } }""", Policy.class);
+
+        policy.setDescription(null);
+
+        Assertions.assertNull(policy.getDescription());
+
+        // The section is dropped rather than left behind as "metadata": {}.
+        Assertions.assertNull(policy.getMetadata());
+        Assertions.assertFalse(new Gson().toJson(policy).contains("metadata"));
+
+    }
+
+    @Test
+    public void clearingDescriptionKeepsRemainingMetadata() {
+
+        final Policy policy = new Gson().fromJson("""
+                { "metadata": { "description": "Client intake forms.", "author": "records team" } }""", Policy.class);
+
+        policy.setDescription(null);
+
+        Assertions.assertNull(policy.getDescription());
+        Assertions.assertEquals("records team", policy.getMetadata().get("author").getAsString());
+
+    }
+
+    @Test
+    public void descriptionFromPhiSQLIsCarriedInMetadata() {
+
+        // PhiSQL 1.4.0 compiles a DESCRIPTION clause into metadata.description.
+        final Policy policy = Policy.fromPhiSQL("""
+                POLICY intake DESCRIPTION 'Client intake forms.';
+                REDACT SSN WITH REDACT;
+                """);
+
+        Assertions.assertEquals("Client intake forms.", policy.getDescription());
+
+    }
+
+    @Test
     public void zipCodeAcceptsBothStrategyKeys() {
 
         final String plural = """

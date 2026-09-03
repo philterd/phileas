@@ -19,6 +19,7 @@ import ai.philterd.phisql.CompileResult;
 import ai.philterd.phisql.Compiler;
 import ai.philterd.phisql.PhiSQL;
 import com.google.gson.Gson;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
@@ -57,6 +58,9 @@ public class Policy {
         return new Gson().fromJson(result.toJsonString(), Policy.class);
 
     }
+
+    /** The key of the policy description within the metadata. */
+    private static final String DESCRIPTION = "description";
 
     // Descriptive information carried with the policy. Held as raw JSON so keys the
     // engine does not know about survive a load-and-save round trip. Never read during
@@ -187,6 +191,55 @@ public class Policy {
 
     public void setMetadata(JsonObject metadata) {
         this.metadata = metadata;
+    }
+
+    /**
+     * Returns the policy's description, held in the metadata as {@code metadata.description} and
+     * written there by a PhiSQL {@code DESCRIPTION} clause.
+     * @return The description, or <code>null</code> when the policy has none.
+     */
+    public String getDescription() {
+
+        if (metadata == null || !metadata.has(DESCRIPTION)) {
+            return null;
+        }
+
+        final JsonElement description = metadata.get(DESCRIPTION);
+
+        // The schema defines description as a string. Anything else (an object, an array, a null) has
+        // no string form, so report it as absent rather than guessing at one.
+        return description.isJsonPrimitive() ? description.getAsString() : null;
+
+    }
+
+    /**
+     * Sets the policy's description, held in the metadata as {@code metadata.description}. Any other
+     * metadata keys are left in place.
+     * @param description The description. A <code>null</code> removes the description.
+     */
+    public void setDescription(final String description) {
+
+        if (description == null) {
+
+            if (metadata != null) {
+                metadata.remove(DESCRIPTION);
+
+                // Drop the section entirely once it is empty so it is not serialized as "metadata": {}.
+                if (metadata.isEmpty()) {
+                    metadata = null;
+                }
+            }
+
+            return;
+
+        }
+
+        if (metadata == null) {
+            metadata = new JsonObject();
+        }
+
+        metadata.addProperty(DESCRIPTION, description);
+
     }
 
     public Config getConfig() {

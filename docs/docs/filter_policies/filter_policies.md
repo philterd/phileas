@@ -21,6 +21,7 @@ A policy:
       tells Phileas how to manipulate that type of sensitive information when it is identified.
 * Can have an optional list of [terms](ignoring_sensitive_information.md) or [patterns](ignoring_sensitive_information.md).
 * Can have encryption keys to support [encryption](filter_strategies.md#fpe) of sensitive information.
+* Can have an optional [`metadata`](#policy-metadata) object describing the policy itself.
 
 ### An Example Policy
 
@@ -60,6 +61,38 @@ fits your use-case. See [Filter Strategies](filter_strategies.md) for all replac
 The name of the policy is `email-and-phone-numbers`. Policies can be named anything you like but their names must be
 unique from all other policies. As a best practice, the policy should be saved as `[name].json`, e.g.
 `email-and-phone-numbers.json`.
+
+### Policy Metadata
+
+A policy can carry an optional top-level `metadata` object describing the policy itself. Nothing in `metadata` affects
+detection or redaction. Phileas reads and writes it unchanged, so a description travels with the policy through export,
+import, and sharing instead of living in separate storage.
+
+```
+{
+   "metadata": {
+      "description": "Redacts intake forms before archival.",
+      "author": "records team"
+   },
+   "identifiers": {
+      "emailAddress": {
+         "emailAddressFilterStrategies": [
+            {
+               "strategy": "REDACT"
+            }
+         ]
+      }
+   }
+}
+```
+
+`metadata.description` is a human-readable description of what the policy does. It is available from
+`Policy.getDescription()` and set with `Policy.setDescription(String)`. Compiling a
+[PhiSQL](https://philterd.github.io/phisql/) policy with a `DESCRIPTION` clause writes the text here.
+
+Additional properties are allowed, as shown by `author` above, so the object can grow without a schema change. Keys
+Phileas does not model survive a load and save unchanged. Do not put sensitive information in `metadata`: it is not
+redacted, and it is written back out with the policy.
 
 ### Applying a Policy to Text
 
