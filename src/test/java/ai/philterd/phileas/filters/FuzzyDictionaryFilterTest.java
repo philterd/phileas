@@ -50,6 +50,68 @@ public class FuzzyDictionaryFilterTest extends AbstractFilterTest {
     }
 
     @Test
+    void filterExactMatchLowercaseInput() throws Exception {
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(new CustomDictionaryFilterStrategy()))
+                .withWindowSize(windowSize)
+                .build();
+
+        final Set<String> terms = new HashSet<>(List.of("Thrackmoor"));
+        final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.CUSTOM_DICTIONARY, filterConfiguration, SensitivityLevel.OFF, terms, false);
+
+        final String input = "thrackmoor is lowercase";
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, input);
+
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 0, 10, FilterType.CUSTOM_DICTIONARY));
+
+        // Text is the match, not the term's casing.
+        Assertions.assertEquals("thrackmoor", filtered.getSpans().get(0).getText());
+
+    }
+
+    @Test
+    void filterExactMatchUppercaseInput() throws Exception {
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(new CustomDictionaryFilterStrategy()))
+                .withWindowSize(windowSize)
+                .build();
+
+        final Set<String> terms = new HashSet<>(List.of("Bluebird"));
+        final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.CUSTOM_DICTIONARY, filterConfiguration, SensitivityLevel.OFF, terms, true);
+
+        final String input = "The BLUEBIRD sings.";
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, input);
+
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 4, 12, FilterType.CUSTOM_DICTIONARY));
+        Assertions.assertEquals("BLUEBIRD", filtered.getSpans().get(0).getText());
+
+    }
+
+    @Test
+    void filterExactMatchTermContainingRegexSyntax() throws Exception {
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(new CustomDictionaryFilterStrategy()))
+                .withWindowSize(windowSize)
+                .build();
+
+        // "Jones?" is six characters but matches the five-character "Jones".
+        final Set<String> terms = new HashSet<>(List.of("Jones?"));
+        final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.CUSTOM_DICTIONARY, filterConfiguration, SensitivityLevel.OFF, terms, false);
+
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "Jones");
+
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 0, 5, FilterType.CUSTOM_DICTIONARY));
+        Assertions.assertEquals("Jones", filtered.getSpans().get(0).getText());
+
+    }
+
+    @Test
     void filterFuzzyHigh() throws Exception {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
