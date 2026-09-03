@@ -47,6 +47,7 @@ class SpanDisambiguationPolicyTest {
 
         @Override
         public void hashAndInsert(VectorService vectorService, String context, Span span) {
+            // Nothing to record: only the disambiguate call matters here.
         }
 
         @Override
