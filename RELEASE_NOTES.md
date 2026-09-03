@@ -4,7 +4,7 @@ Notable changes to Phileas, most recent first.
 
 Full changelogs for each release are available in the [GitHub releases](https://github.com/philterd/phileas/releases). Issues whose identifiers start with `PHL-` were previously tracked in Jira before the project's issues were managed in GitHub.
 
-## Version 4.3.0 - Unreleased
+## Version 4.3.0 - September 3, 2026
 
 * The `ABBREVIATE` redaction strategy now reduces a detected value to the uppercase initials of its words (for example `john smith` becomes `JS`) for any filter type, matching the Python and .NET ports. Previously it produced initials only on the Ph-Eye NER path for `PER`-labeled entities, did not uppercase, and silently fell back to full redaction for the dictionary-based filters (surname, first name, and others). It is also honored as a `MAP_REPLACE` fallback strategy.
 * The street-address filter (opt-in, off by default) now matches many more formats: leading and trailing directionals (`123 N Main St`, `123 Main St NW`), ordinal street names (`123 5th Avenue`), house-number ranges and letter suffixes (`123-125 Main St`, `123A Main Street`), saint/abbreviated names (`100 St. Charles Avenue`), a wider set of street types (turnpike, expressway, crossing, plaza, loop, mews, and more), a trailing unit folded into the span (`Apt 4B`, `Suite 200`, `#5`), and PO boxes (`PO Box 1234`, `P.O. Box 56`, `Post Office Box 789`). Everyday phrases such as "Chapter 4 summary" are still not matched.
