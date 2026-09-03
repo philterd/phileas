@@ -117,6 +117,72 @@ A filter names itself in a log message by its type, qualified by its `id` when o
 custom dictionaries. Do not put sensitive information in an `id`: it is written to logs, and it is written back out
 with the policy.
 
+### Splitting Large Documents
+
+A large document can be split into pieces that are filtered one at a time. Splitting is off by default and applies
+only to input at or over the `threshold`.
+
+| Property    | Description                                                                                        | Default   |
+|-------------|----------------------------------------------------------------------------------------------------|-----------|
+| `enabled`   | Whether to split input at or over the `threshold`.                                                 | `false`   |
+| `threshold` | The input length (characters) at which splitting starts. Also sets the piece size.                 | `10000`   |
+| `method`    | How to split: `newline`, `characters` (sentence-aware), or `width` (wraps on spaces).              | `newline` |
+| `overlap`   | Characters each piece shares with the end of the previous piece.                                   | `0`       |
+
+Without an overlap, pieces are contiguous, so a value sitting across a piece boundary is seen only in part by each
+piece and can be missed. With `width` splitting, for example, `May 22, 1999` can be cut after `May 22,`, leaving the
+year in the output. An `overlap` gives each piece the trailing characters of the one before it, so such a value is seen
+whole. Set it larger than the longest value you expect to detect.
+
+```
+{
+   "config": {
+      "splitting": {
+         "enabled": true,
+         "threshold": 10000,
+         "method": "width",
+         "overlap": 200
+      }
+   },
+   "identifiers": {
+      "date": {
+         "dateFilterStrategies": [
+            {
+               "strategy": "REDACT"
+            }
+         ]
+      }
+   }
+}
+```
+
+A value found in an overlap is detected by both pieces. Phileas keeps one of them and reports it at its position in the
+whole document, so an overlap does not produce duplicate spans or shifted offsets. The cost is that the overlapping
+text is scanned twice, so prefer the smallest overlap that covers your values.
+
+### Span Disambiguation
+
+Some values match more than one filter: nine digits can be an SSN or a phone number. Span disambiguation resolves
+which type applies by comparing the text around the value to what it has seen for each type in that context.
+
+It is a deployment-wide feature, off by default, enabled with `span.disambiguation.enabled` in the Phileas
+configuration. A policy can opt out of it:
+
+```
+{
+   "config": {
+      "analysis": {
+         "spanDisambiguation": false
+      }
+   }
+}
+```
+
+Disambiguation runs only when the deployment has it enabled and the policy has not set `spanDisambiguation` to
+`false`. A policy can turn it off, but cannot turn it on when the deployment has it disabled. The default is `true`,
+so a policy that omits the property behaves as before. Turning it off lowers the per-document cost for policies whose
+filters are not ambiguous.
+
 ### Applying a Policy to Text
 
 A policy is applied by passing it to Phileas' filter service along with the text to filter. Using the

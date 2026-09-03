@@ -23,11 +23,11 @@ import ai.philterd.phileas.policy.Policy;
 import ai.philterd.phileas.services.context.ContextService;
 import ai.philterd.phileas.services.disambiguation.SpanDisambiguationServiceFactory;
 import ai.philterd.phileas.services.disambiguation.vector.VectorService;
-import ai.philterd.phileas.services.documentprocessors.DocumentProcessor;
 import ai.philterd.phileas.services.documentprocessors.UnstructuredDocumentProcessor;
 import ai.philterd.phileas.services.filters.postfilters.PostFilter;
 import ai.philterd.phileas.services.split.SplitFactory;
 import ai.philterd.phileas.services.split.SplitService;
+import ai.philterd.phileas.services.split.TextSplit;
 import org.apache.hc.client5.http.classic.HttpClient;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -36,6 +36,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Implementation of {@link FilterService} that filters plain text.
@@ -44,7 +45,7 @@ public class PlainTextFilterService extends TextFilterService {
 
 	private static final Logger LOGGER = LogManager.getLogger(PlainTextFilterService.class);
 
-    private final DocumentProcessor unstructuredDocumentProcessor;
+    private final UnstructuredDocumentProcessor unstructuredDocumentProcessor;
 
     // Bound at construction for the no-service overloads; null for a warm, per-call instance.
     private final ContextService defaultContextService;
@@ -168,20 +169,50 @@ public class PlainTextFilterService extends TextFilterService {
                     policy.getConfig().getSplitting().getThreshold()
             );
 
-            // Holds all filter responses that will ultimately be combined into a single response.
-            final List<TextFilterResult> filterResponse = new LinkedList<>();
+            final int overlap = policy.getConfig().getSplitting().getOverlap();
 
-            // Split the string.
-            final List<String> splits = splitService.split(input);
+            // Empty when the pieces cannot be located in the input, in which case the contiguous
+            // path below is used instead.
+            final Optional<List<TextSplit>> overlapped = overlap > 0
+                    ? splitService.splitWithOverlap(input, overlap)
+                    : Optional.empty();
 
-            // Process each split.
-            for (int i = 0; i < splits.size(); i++) {
-                final TextFilterResult fr = unstructuredDocumentProcessor.process(contextService, vectorService, policy, filters, postFilters, context, i, splits.get(i));
-                filterResponse.add(fr);
+            if (overlapped.isPresent()) {
+
+                // Filtered pieces cannot be concatenated when they share text, and a seam entity
+                // belongs to neither piece alone. Detect over all pieces, then apply once.
+                final List<Span> identifiedSpans = new LinkedList<>();
+                final List<TextSplit> splits = overlapped.get();
+
+                for (int i = 0; i < splits.size(); i++) {
+                    final TextSplit split = splits.get(i);
+                    final List<Span> spans = unstructuredDocumentProcessor.detect(
+                            contextService, policy, filters, context, i, split.text());
+                    identifiedSpans.addAll(Span.shiftSpans(split.offset(), spans));
+                }
+
+                // Both pieces find a seam entity; dropping overlapping spans keeps one.
+                textFilterResult = unstructuredDocumentProcessor.apply(
+                        vectorService, policy, postFilters, context, 0, input, identifiedSpans);
+
+            } else {
+
+                // Holds all filter responses that will ultimately be combined into a single response.
+                final List<TextFilterResult> filterResponse = new LinkedList<>();
+
+                // Split the string.
+                final List<String> splits = splitService.split(input);
+
+                // Process each split.
+                for (int i = 0; i < splits.size(); i++) {
+                    final TextFilterResult fr = unstructuredDocumentProcessor.process(contextService, vectorService, policy, filters, postFilters, context, i, splits.get(i));
+                    filterResponse.add(fr);
+                }
+
+                // Combine the results into a single filterResponse object.
+                textFilterResult = TextFilterResult.combine(filterResponse, context, splitService.getSeparator());
+
             }
-
-            // Combine the results into a single filterResponse object.
-            textFilterResult = TextFilterResult.combine(filterResponse, context, splitService.getSeparator());
 
         } else {
 
