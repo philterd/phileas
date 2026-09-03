@@ -20,6 +20,7 @@ public class Replacement {
     private final String replacement;
     private String salt;
     private boolean applied = true;
+    private String color;
 
     public Replacement(final String replacement) {
         this.replacement = replacement;
@@ -41,6 +42,14 @@ public class Replacement {
 
     public String getSalt() {
         return salt;
+    }
+
+    public String getColor() {
+        return color;
+    }
+
+    public void setColor(final String color) {
+        this.color = color;
     }
 
     public boolean isApplied() {

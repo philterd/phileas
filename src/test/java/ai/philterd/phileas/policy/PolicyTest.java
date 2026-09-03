@@ -85,6 +85,20 @@ public class PolicyTest {
     }
 
     @Test
+    public void strategyColorRoundTrips() {
+
+        final Gson gson = new Gson();
+        final Policy policy = gson.fromJson("""
+                { "identifiers": { "ssn": { "ssnFilterStrategies": [
+                  { "strategy": "REDACT", "color": "#ff8800" } ] } } }""", Policy.class);
+
+        Assertions.assertEquals("#ff8800",
+                policy.getIdentifiers().getSsn().getSsnFilterStrategies().get(0).getColor());
+        Assertions.assertTrue(gson.toJson(policy).contains("\"color\":\"#ff8800\""));
+
+    }
+
+    @Test
     public void splittingOverlapRoundTrips() {
 
         final Gson gson = new Gson();
@@ -93,6 +107,16 @@ public class PolicyTest {
 
         Assertions.assertEquals(200, policy.getConfig().getSplitting().getOverlap());
         Assertions.assertTrue(gson.toJson(policy).contains("\"overlap\":200"));
+
+    }
+
+    @Test
+    public void aStrategyWithoutAColorHasNone() {
+
+        final Policy policy = new Gson().fromJson("""
+                { "identifiers": { "ssn": { "ssnFilterStrategies": [ { "strategy": "REDACT" } ] } } }""", Policy.class);
+
+        Assertions.assertNull(policy.getIdentifiers().getSsn().getSsnFilterStrategies().get(0).getColor());
 
     }
 

@@ -183,6 +183,11 @@ public abstract class AbstractFilterStrategy {
 
     // MAP_REPLACE: terminal strategy applied when a detected value is absent from the lookup table and
     // no generator is set, or when the generator fails, times out, or returns invalid output.
+    // Color of the redaction bar drawn for this strategy's spans in a PDF. No effect on text.
+    @SerializedName("color")
+    @Expose
+    protected String color;
+
     @SerializedName("fallbackStrategy")
     @Expose
     protected String fallbackStrategy = REDACT;
@@ -454,6 +459,14 @@ public abstract class AbstractFilterStrategy {
      */
     public Set<String> getAcceptedStrategies() {
         return STANDARD_STRATEGIES;
+    }
+
+    public String getColor() {
+        return color;
+    }
+
+    public void setColor(String color) {
+        this.color = color;
     }
 
     public String getStrategy() {

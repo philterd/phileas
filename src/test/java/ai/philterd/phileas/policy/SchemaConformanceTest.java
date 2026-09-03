@@ -356,8 +356,6 @@ public class SchemaConformanceTest {
      * implementing one fails this test until its entry is removed.
      */
     private static final Map<String, String> EXPECTED_GAPS = Map.of(
-            "baseFilterStrategy.color", "PDF redaction takes its color from the policy-wide setting",
-            "dateFilterStrategy.color", "PDF redaction takes its color from the policy-wide setting",
             "medicalCondition", "no filter is built for it; the entity type is being retired",
             "ZERO_LEADING", "the zip code strategy is not in the schema's strategy enum");
 

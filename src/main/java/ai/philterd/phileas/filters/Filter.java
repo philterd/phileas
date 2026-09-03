@@ -443,6 +443,12 @@ public abstract class Filter {
 
     }
 
+    /** Tags the replacement with the applying strategy's redaction color, if it set one. */
+    private static Replacement withColor(final AbstractFilterStrategy strategy, final Replacement replacement) {
+        replacement.setColor(strategy.getColor());
+        return replacement;
+    }
+
     /**
      * Gets the string to be used as a replacement.
      * @param policy The policy that's being applied.
@@ -477,14 +483,14 @@ public abstract class Filter {
                     if(evaluates) {
 
                         // Break early since we met the strategy's condition.
-                        return strategy.getReplacement(contextService, classification, context, token, window, crypto, fpe, strategy.getAnonymizationService(), filterPattern);
+                        return withColor(strategy, strategy.getReplacement(contextService, classification, context, token, window, crypto, fpe, strategy.getAnonymizationService(), filterPattern));
 
                     }
 
                 } else {
 
                     // Break early since there is no condition.
-                    return strategy.getReplacement(contextService, classification, context, token, window, crypto, fpe, strategy.getAnonymizationService(), filterPattern);
+                    return withColor(strategy, strategy.getReplacement(contextService, classification, context, token, window, crypto, fpe, strategy.getAnonymizationService(), filterPattern));
 
                 }
 

@@ -216,6 +216,8 @@ public abstract class RulesFilter extends Filter {
                                 initialConfidence, token, replacement.getReplacement(), replacement.getSalt(),
                                 ignored, replacement.isApplied(), window, priority);
 
+                        span.setColor(replacement.getColor());
+
                         // TODO: Add "format" to Span.make() so we don't have to make a separate call here.
                         span.setPattern(filterPattern.getFormat());
 

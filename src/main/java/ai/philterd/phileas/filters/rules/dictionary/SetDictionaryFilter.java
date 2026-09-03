@@ -144,9 +144,12 @@ public class SetDictionaryFilter extends DictionaryFilter {
                 final Replacement replacement = getReplacement(contextService, policy, context,
                         originalToken, window, confidence, classification, null);
 
-                spans.add(Span.make(characterStart, characterEnd, getFilterType(), context,
+                final Span span = Span.make(characterStart, characterEnd, getFilterType(), context,
                         confidence, originalToken, replacement.getReplacement(), replacement.getSalt(),
-                        isIgnored, replacement.isApplied(), window, priority));
+                        isIgnored, replacement.isApplied(), window, priority);
+
+                span.setColor(replacement.getColor());
+                spans.add(span);
 
             }
 
