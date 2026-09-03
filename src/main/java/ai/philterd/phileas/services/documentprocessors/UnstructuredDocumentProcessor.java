@@ -22,6 +22,7 @@ import ai.philterd.phileas.model.filtering.IncrementalRedaction;
 import ai.philterd.phileas.model.filtering.Span;
 import ai.philterd.phileas.model.filtering.TextFilterResult;
 import ai.philterd.phileas.policy.Policy;
+import ai.philterd.phileas.policy.config.Analysis;
 import ai.philterd.phileas.services.context.ContextService;
 import ai.philterd.phileas.services.disambiguation.SpanDisambiguationService;
 import ai.philterd.phileas.services.disambiguation.vector.VectorService;
@@ -54,6 +55,12 @@ public class UnstructuredDocumentProcessor implements DocumentProcessor {
         this.incrementalRedactionsEnabled = incrementalRedactionsEnabled;
         this.tokenCounter = new WhitespaceTokenCounter();
 
+    }
+
+    /** A missing analysis section means the default, enabled. */
+    private static boolean disambiguationAllowed(final Policy policy) {
+        final Analysis analysis = policy.getConfig().getAnalysis();
+        return analysis == null || analysis.isSpanDisambiguation();
     }
 
     @Override
@@ -98,9 +105,10 @@ public class UnstructuredDocumentProcessor implements DocumentProcessor {
 
         List<Span> identifiedSpans = spans;
 
-        // Perform span disambiguation. When disabled, this is a no-op implementation that returns
-        // the spans unchanged (see SpanDisambiguationServiceFactory), so no enabled-check is needed.
-        identifiedSpans = spanDisambiguationService.disambiguate(vectorService, context, identifiedSpans);
+        // A policy can turn this off but not on: the service is a no-op when off globally.
+        if(disambiguationAllowed(policy)) {
+            identifiedSpans = spanDisambiguationService.disambiguate(vectorService, context, identifiedSpans);
+        }
 
         // Drop overlapping spans.
         identifiedSpans = Span.dropOverlappingSpans(identifiedSpans);

@@ -97,10 +97,30 @@ public class PolicyTest {
     }
 
     @Test
+    public void spanDisambiguationRoundTrips() {
+
+        final Gson gson = new Gson();
+        final Policy policy = gson.fromJson("""
+                { "config": { "analysis": { "spanDisambiguation": false } } }""", Policy.class);
+
+        Assertions.assertFalse(policy.getConfig().getAnalysis().isSpanDisambiguation());
+        Assertions.assertTrue(gson.toJson(policy).contains("\"spanDisambiguation\":false"));
+
+    }
+
+    @Test
     public void splittingOverlapDefaultsToNone() {
 
         Assertions.assertEquals(0, new Gson().fromJson("{}", Policy.class).getConfig().getSplitting().getOverlap());
         Assertions.assertEquals(0, new Policy().getConfig().getSplitting().getOverlap());
+
+    }
+
+    @Test
+    public void spanDisambiguationDefaultsToOn() {
+
+        Assertions.assertTrue(new Gson().fromJson("{}", Policy.class).getConfig().getAnalysis().isSpanDisambiguation());
+        Assertions.assertTrue(new Policy().getConfig().getAnalysis().isSpanDisambiguation());
 
     }
 

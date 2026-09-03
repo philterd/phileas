@@ -24,6 +24,19 @@ public class Analysis {
     @Expose
     private boolean identification = true;
 
+    // Can only turn disambiguation off; the global setting decides if it runs at all.
+    @SerializedName("spanDisambiguation")
+    @Expose
+    private boolean spanDisambiguation = true;
+
+    public boolean isSpanDisambiguation() {
+        return spanDisambiguation;
+    }
+
+    public void setSpanDisambiguation(boolean spanDisambiguation) {
+        this.spanDisambiguation = spanDisambiguation;
+    }
+
     public boolean isIdentification() {
         return identification;
     }
