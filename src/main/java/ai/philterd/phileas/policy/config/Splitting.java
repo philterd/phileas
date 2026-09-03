@@ -32,6 +32,19 @@ public class Splitting {
     @Expose
     private String method = "newline";
 
+    // Characters shared with the previous piece. Zero keeps them contiguous.
+    @SerializedName("overlap")
+    @Expose
+    private int overlap = 0;
+
+    public int getOverlap() {
+        return overlap;
+    }
+
+    public void setOverlap(int overlap) {
+        this.overlap = overlap;
+    }
+
     public String getMethod() {
         return method;
     }
