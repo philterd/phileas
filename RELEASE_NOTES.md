@@ -4,6 +4,8 @@ Notable changes to Phileas, most recent first.
 
 Full changelogs for each release are available in the [GitHub releases](https://github.com/philterd/phileas/releases). Issues whose identifiers start with `PHL-` were previously tracked in Jira before the project's issues were managed in GitHub.
 
+## Version 4.4.0 - Not yet released
+
 ## Version 4.3.0 - September 3, 2026
 
 * Using PhiSQL 1.4.0.
