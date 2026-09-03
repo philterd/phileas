@@ -259,17 +259,19 @@ public class PdfRedactor extends PDFTextStripper {
     /** A named color or 6-digit hex value. Anything else renders black. */
     private static PDColor colorOrBlack(final String value) {
 
-        if (StringUtils.isNotBlank(value)) {
+        final String color = value == null ? "" : value.trim();
 
-            final PDColor named = COLORS.get(value.trim().toLowerCase(Locale.ROOT));
+        if (!color.isEmpty()) {
+
+            final PDColor named = COLORS.get(color.toLowerCase(Locale.ROOT));
 
             if (named != null) {
                 return named;
             }
 
-            if (HEX_COLOR.matcher(value.trim()).matches()) {
+            if (HEX_COLOR.matcher(color).matches()) {
 
-                final int rgb = Integer.parseInt(value.trim().substring(1), 16);
+                final int rgb = Integer.parseInt(color.substring(1), 16);
 
                 return new PDColor(new float[]{
                         ((rgb >> 16) & 0xFF) / 255F,

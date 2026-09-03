@@ -106,14 +106,14 @@ class StrategyColorTest extends AbstractFilterTest {
 
         final String input = "the ssn is 123-45-6789 and another is 987-65-4321";
 
-        Assertions.assertEquals(filteredText(null), filteredText("red"));
-        Assertions.assertEquals(filteredText(null), filteredText("#ff8800"));
-        Assertions.assertEquals(filteredText(null), filteredText("chartreuse"));
+        Assertions.assertEquals(filteredText(input, null), filteredText(input, "red"));
+        Assertions.assertEquals(filteredText(input, null), filteredText(input, "#ff8800"));
+        Assertions.assertEquals(filteredText(input, null), filteredText(input, "chartreuse"));
 
     }
 
     /** The filtered text for an SSN policy whose strategy carries the given color. */
-    private String filteredText(final String color) throws Exception {
+    private String filteredText(final String input, final String color) throws Exception {
 
         final SsnFilterStrategy strategy = new SsnFilterStrategy();
         strategy.setColor(color);
@@ -129,7 +129,7 @@ class StrategyColorTest extends AbstractFilterTest {
 
         return new PlainTextFilterService(new PhileasConfiguration(new Properties()), contextService,
                 new InMemoryVectorService(), null)
-                .filter(policy, "context", "the ssn is 123-45-6789 and another is 987-65-4321")
+                .filter(policy, "context", input)
                 .getFilteredText();
 
     }
