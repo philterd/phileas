@@ -4,6 +4,10 @@ Notable changes to Phileas, most recent first.
 
 Full changelogs for each release are available in the [GitHub releases](https://github.com/philterd/phileas/releases). Issues whose identifiers start with `PHL-` were previously tracked in Jira before the project's issues were managed in GitHub.
 
+## Version 4.4.0 - Unreleased
+
+* `Policy` now exposes the description held in `metadata.description` through `getDescription()` and `setDescription(String)`, so a caller no longer parses the raw metadata JSON. Setting a description on a policy that has no metadata creates the section, and clearing the only description removes it, so an empty `metadata` object is never serialized; any other metadata keys are left in place. A PhiSQL `DESCRIPTION` clause compiles to `metadata.description`, so a compiled policy carries its description here. (issue #375)
+
 ## Version 4.3.0 - September 3, 2026
 
 * The `ABBREVIATE` redaction strategy now reduces a detected value to the uppercase initials of its words (for example `john smith` becomes `JS`) for any filter type, matching the Python and .NET ports. Previously it produced initials only on the Ph-Eye NER path for `PER`-labeled entities, did not uppercase, and silently fell back to full redaction for the dictionary-based filters (surname, first name, and others). It is also honored as a `MAP_REPLACE` fallback strategy.
@@ -26,6 +30,7 @@ Full changelogs for each release are available in the [GitHub releases](https://
 * A filter strategy a filter does not implement is now logged at `WARN` when the policy is loaded, naming the strategy and the filter and listing what that filter accepts. The behavior is unchanged: the filter still falls back to `REDACT`, which fails closed, so existing policies keep working. Previously the fallback was silent at every log level, so a misspelled `CRYPTO_REPLACE` or `FPE_ENCRYPT_REPLACE` produced irreversible redaction with nothing to indicate it. An empty or blank strategy is treated the same way. The documentation now lists which strategies each filter accepts. (issue #344)
 * The zip-code filter now accepts `zipCodeFilterStrategies` in a policy, the plural form every other filter uses. Previously it read only the singular `zipCodeFilterStrategy`, so a policy following the convention (including the examples in the documentation) was accepted without error and produced a zip-code filter with no strategies. The singular name is still read, so existing policies keep working, but the plural is now the canonical name and is what Phileas writes when it serializes a policy. (issue #337)
 * The bitcoin-address filter now detects bech32 addresses (`bc1...`), which have been the default address format in most wallets since 2017 and were previously missed entirely. Both the 42-character version 0 form and the longer version 1 (taproot) form are detected, in lowercase or uppercase. The data part is restricted to the bech32 character set, which omits `1`, `b`, `i`, and `o`, so a string containing one of those is not matched. Base58 detection (`1...`, `3...`) is unchanged. (issue #338)
+* A policy can carry an optional top-level `metadata` object describing the policy itself, such as a `description` of what it does. It is held as raw JSON and round-tripped unchanged through a load and save, including keys Phileas does not model, so a description travels with the policy instead of living in separate storage. Nothing in `metadata` is read during filtering. This uses redaction policy schema 1.3.0. See the documentation for details. (PhiSQL philterd/phisql#23)
 * Using PhiSQL 1.4.0.
 
 ## Version 4.2.0 - June 24, 2026
