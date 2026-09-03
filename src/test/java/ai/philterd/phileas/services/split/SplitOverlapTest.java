@@ -20,10 +20,10 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-public class SplitOverlapTest {
+class SplitOverlapTest {
 
     @Test
-    public void eachPieceCarriesTheTailOfThePreviousOne() {
+    void eachPieceCarriesTheTailOfThePreviousOne() {
 
         final String input = "line one\nline two\nline three";
         final List<TextSplit> splits = new NewLineSplitService().splitWithOverlap(input, 4).orElseThrow();
@@ -43,7 +43,7 @@ public class SplitOverlapTest {
     }
 
     @Test
-    public void offsetsLocateEachPieceInTheInput() {
+    void offsetsLocateEachPieceInTheInput() {
 
         final String input = "line one\nline two\nline three";
 
@@ -54,7 +54,7 @@ public class SplitOverlapTest {
     }
 
     @Test
-    public void noOverlapLeavesPiecesContiguous() {
+    void noOverlapLeavesPiecesContiguous() {
 
         final String input = "line one\nline two";
         final List<TextSplit> splits = new NewLineSplitService().splitWithOverlap(input, 0).orElseThrow();
@@ -67,7 +67,7 @@ public class SplitOverlapTest {
     }
 
     @Test
-    public void anOverlapLongerThanTheInputIsClamped() {
+    void anOverlapLongerThanTheInputIsClamped() {
 
         final String input = "line one\nline two";
         final List<TextSplit> splits = new NewLineSplitService().splitWithOverlap(input, 500).orElseThrow();
@@ -78,7 +78,7 @@ public class SplitOverlapTest {
     }
 
     @Test
-    public void duplicateLinesAreEachLocatedAtTheirOwnPosition() {
+    void duplicateLinesAreEachLocatedAtTheirOwnPosition() {
 
         // Identical pieces must not all resolve to the first match.
         final String input = "row\nrow\nrow";
@@ -92,7 +92,7 @@ public class SplitOverlapTest {
     }
 
     @Test
-    public void sentencePiecesThatAreVerbatimGetAnOverlap() {
+    void sentencePiecesThatAreVerbatimGetAnOverlap() {
 
         final String input = "Ada lives here. The ssn is 123-45-6789. Bob lives there.";
         final List<TextSplit> splits = new CharacterCountSplitService(20).splitWithOverlap(input, 6).orElseThrow();
@@ -104,7 +104,7 @@ public class SplitOverlapTest {
     }
 
     @Test
-    public void everyPieceIsVerbatimAtItsOffsetForEachSplitter() {
+    void everyPieceIsVerbatimAtItsOffsetForEachSplitter() {
 
         final String input = "Ada lives here. The ssn is 123-45-6789. Bob lives there. The date was May 22, 1999.";
 
@@ -118,7 +118,7 @@ public class SplitOverlapTest {
     }
 
     @Test
-    public void offsetsNeverGoBackwards() {
+    void offsetsNeverGoBackwards() {
 
         final String input = "one one one one one one";
         final List<TextSplit> splits = new LineWidthSplitService(8).splitWithOverlap(input, 4).orElseThrow();
@@ -131,7 +131,7 @@ public class SplitOverlapTest {
     }
 
     @Test
-    public void aNegativeOverlapIsTreatedAsNone() {
+    void aNegativeOverlapIsTreatedAsNone() {
 
         final String input = "line one\nline two";
         final List<TextSplit> splits = new NewLineSplitService().splitWithOverlap(input, -50).orElseThrow();
@@ -142,14 +142,14 @@ public class SplitOverlapTest {
     }
 
     @Test
-    public void blankInputProducesNoPieces() {
+    void blankInputProducesNoPieces() {
 
         Assertions.assertTrue(new CharacterCountSplitService(20).splitWithOverlap("   ", 5).orElseThrow().isEmpty());
 
     }
 
     @Test
-    public void anInputThatDoesNotSplitIsOnePieceAtZero() {
+    void anInputThatDoesNotSplitIsOnePieceAtZero() {
 
         final String input = "just one line";
         final List<TextSplit> splits = new NewLineSplitService().splitWithOverlap(input, 5).orElseThrow();
@@ -161,7 +161,7 @@ public class SplitOverlapTest {
     }
 
     @Test
-    public void surroundingWhitespaceDoesNotShiftOffsets() {
+    void surroundingWhitespaceDoesNotShiftOffsets() {
 
         // The splitter trims each piece, so the offsets must skip the whitespace, not include it.
         final String input = "   line one   \n   line two   ";
@@ -185,7 +185,7 @@ public class SplitOverlapTest {
     }
 
     @Test
-    public void piecesThatAreNotVerbatimInTheInputCannotBeLocated() {
+    void piecesThatAreNotVerbatimInTheInputCannotBeLocated() {
 
         // The sentence splitter joins sentences with a space, so a piece covering a newline-separated
         // pair is not a substring of the input. Locating it by search could match the identical text
@@ -197,7 +197,7 @@ public class SplitOverlapTest {
     }
 
     @Test
-    public void aWrappedPieceCarriesTheTailOfThePreviousOne() {
+    void aWrappedPieceCarriesTheTailOfThePreviousOne() {
 
         // The line-width splitter wraps on spaces, so a value containing a space can be cut in two.
         final String input = "the date was May 22, 1999 in the record";

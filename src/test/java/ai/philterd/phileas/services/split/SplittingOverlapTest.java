@@ -38,7 +38,7 @@ import java.util.List;
 import java.util.Properties;
 
 /** The line-width splitter wraps on spaces, so a date containing spaces can be cut at a seam. */
-public class SplittingOverlapTest {
+class SplittingOverlapTest {
 
     private static final String SEAM_INPUT = "the date was May 22, 1999 in the record and more text here";
 
@@ -91,7 +91,7 @@ public class SplittingOverlapTest {
     }
 
     @Test
-    public void withoutOverlapASeamDateIsOnlyPartlyRedacted() throws Exception {
+    void withoutOverlapASeamDateIsOnlyPartlyRedacted() throws Exception {
 
         final TextFilterResult result = filter(policy(0), SEAM_INPUT);
 
@@ -102,7 +102,7 @@ public class SplittingOverlapTest {
     }
 
     @Test
-    public void withOverlapASeamDateIsRedactedWhole() throws Exception {
+    void withOverlapASeamDateIsRedactedWhole() throws Exception {
 
         final TextFilterResult result = filter(policy(20), SEAM_INPUT);
 
@@ -112,7 +112,7 @@ public class SplittingOverlapTest {
     }
 
     @Test
-    public void aSeamDateIsRedactedOnceAndKeepsItsOffsets() throws Exception {
+    void aSeamDateIsRedactedOnceAndKeepsItsOffsets() throws Exception {
 
         final TextFilterResult result = filter(policy(20), SEAM_INPUT);
 
@@ -128,7 +128,7 @@ public class SplittingOverlapTest {
     }
 
     @Test
-    public void overlapDoesNotChangeAnEntityAwayFromASeam() throws Exception {
+    void overlapDoesNotChangeAnEntityAwayFromASeam() throws Exception {
 
         final String input = "one two three four five six seven eight nine ssn 123-45-6789 ten";
 
@@ -138,7 +138,7 @@ public class SplittingOverlapTest {
     }
 
     @Test
-    public void overlapMatchesFilteringWithoutSplittingAtAll() throws Exception {
+    void overlapMatchesFilteringWithoutSplittingAtAll() throws Exception {
 
         final String input = MIXED_INPUT;
 
@@ -152,7 +152,7 @@ public class SplittingOverlapTest {
     }
 
     @Test
-    public void overlapDoesNotDoubleCountTokens() throws Exception {
+    void overlapDoesNotDoubleCountTokens() throws Exception {
 
         Assertions.assertEquals(filter(unsplitPolicy(), MIXED_INPUT).getTokens(),
                 filter(policy(30), MIXED_INPUT).getTokens());
@@ -160,7 +160,7 @@ public class SplittingOverlapTest {
     }
 
     @Test
-    public void contiguousSplittingLeaksASeamValueThatOverlapCatches() throws Exception {
+    void contiguousSplittingLeaksASeamValueThatOverlapCatches() throws Exception {
 
         final TextFilterResult contiguous = filter(policy(0), MIXED_INPUT);
         final TextFilterResult overlapped = filter(policy(30), MIXED_INPUT);
@@ -174,7 +174,7 @@ public class SplittingOverlapTest {
     }
 
     @Test
-    public void everySpanOffsetPointsAtItsOwnTextInTheInput() throws Exception {
+    void everySpanOffsetPointsAtItsOwnTextInTheInput() throws Exception {
 
         final TextFilterResult result = filter(policy(30), MIXED_INPUT);
 
@@ -187,7 +187,7 @@ public class SplittingOverlapTest {
     }
 
     @Test
-    public void noValueIsReportedTwiceWithAnOverlap() throws Exception {
+    void noValueIsReportedTwiceWithAnOverlap() throws Exception {
 
         final TextFilterResult result = filter(policy(30), MIXED_INPUT);
         final List<Span> spans = result.getExplanation().appliedSpans();
@@ -204,7 +204,7 @@ public class SplittingOverlapTest {
     }
 
     @Test
-    public void twoSeamsInOneDocumentAreBothCaught() throws Exception {
+    void twoSeamsInOneDocumentAreBothCaught() throws Exception {
 
         final String input = "the first date was May 22, 1999 and the second date was June 30, 2001 in the record";
 
@@ -217,7 +217,7 @@ public class SplittingOverlapTest {
     }
 
     @Test
-    public void parityHoldsForARangeOfOverlaps() throws Exception {
+    void parityHoldsForARangeOfOverlaps() throws Exception {
 
         final String expected = filter(unsplitPolicy(), MIXED_INPUT).getFilteredText();
 
@@ -229,7 +229,7 @@ public class SplittingOverlapTest {
     }
 
     @Test
-    public void overlapIsIgnoredWhenSplittingIsDisabled() throws Exception {
+    void overlapIsIgnoredWhenSplittingIsDisabled() throws Exception {
 
         final Policy policy = policy(30);
         policy.getConfig().getSplitting().setEnabled(false);
@@ -240,7 +240,7 @@ public class SplittingOverlapTest {
     }
 
     @Test
-    public void overlapIsIgnoredBelowTheThreshold() throws Exception {
+    void overlapIsIgnoredBelowTheThreshold() throws Exception {
 
         final String input = "ssn 123-45-6789";
 
@@ -252,7 +252,7 @@ public class SplittingOverlapTest {
     }
 
     @Test
-    public void anUnlocatablePieceFallsBackToFilteringWithoutOverlap() throws Exception {
+    void anUnlocatablePieceFallsBackToFilteringWithoutOverlap() throws Exception {
 
         // The sentence splitter joins sentences with a space, so its pieces are not verbatim in this
         // input and an overlap cannot be applied. Filtering must still be correct.
@@ -274,7 +274,7 @@ public class SplittingOverlapTest {
     }
 
     @Test
-    public void anOverlapLargerThanTheDocumentStillFiltersOnce() throws Exception {
+    void anOverlapLargerThanTheDocumentStillFiltersOnce() throws Exception {
 
         final TextFilterResult result = filter(policy(5000), SEAM_INPUT);
 
