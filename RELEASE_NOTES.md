@@ -4,9 +4,9 @@ Notable changes to Phileas, most recent first.
 
 Full changelogs for each release are available in the [GitHub releases](https://github.com/philterd/phileas/releases). Issues whose identifiers start with `PHL-` were previously tracked in Jira before the project's issues were managed in GitHub.
 
-## Version 4.4.0 - Not yet released
+## Version 4.5.0 - Not yet released
 
-## Version 4.3.0 - September 3, 2026
+## Version 4.4.0 - September 3, 2026
 
 * Using PhiSQL 1.4.0.
 * The `ABBREVIATE` redaction strategy now reduces a detected value to the uppercase initials of its words (for example `john smith` becomes `JS`) for any filter type, matching the Python and .NET ports. Previously it produced initials only on the Ph-Eye NER path for `PER`-labeled entities, did not uppercase, and silently fell back to full redaction for the dictionary-based filters (surname, first name, and others). It is also honored as a `MAP_REPLACE` fallback strategy.
@@ -35,6 +35,8 @@ Full changelogs for each release are available in the [GitHub releases](https://
 * A policy can now skip span disambiguation with `config.analysis.spanDisambiguation`, the context-vector step that resolves which type an ambiguously-typed value is, such as nine digits that match both the SSN and phone-number filters. Previously the step was controlled only by the deployment-wide `span.disambiguation.enabled`, and a policy that set the property had it silently dropped. Disambiguation now runs only when the deployment has it enabled and the policy has not set the property to `false`: a policy can turn it off, but cannot turn it on when the deployment has it disabled. The default of `true` leaves behavior unchanged. This uses redaction policy schema 1.2.0. See the documentation for details. (issue #307, PhiSQL RFC philterd/phisql#20)
 * Any filter in a policy can now carry an optional `id`, a label that names it in logs. A filter's diagnostics identify it by type qualified with the `id` when one is set, for example `ssn (id: intake-ssn)`, which tells apart two filters of the same type in one policy. The value has no effect on detection or redaction, is round-tripped unchanged, and is available on a built filter through `Filter.getId()`. This uses redaction policy schema 1.2.0. See the documentation for details. (issue #373, PhiSQL RFC philterd/phisql#18)
 * `Policy` now exposes the description held in `metadata.description` through `getDescription()` and `setDescription(String)`, so a caller no longer parses the raw metadata JSON. Setting a description on a policy that has no metadata creates the section, and clearing the only description removes it, so an empty `metadata` object is never serialized; any other metadata keys are left in place. A PhiSQL `DESCRIPTION` clause compiles to `metadata.description`, so a compiled policy carries its description here. (issue #375)
+
+## Version 4.3.0
 
 ## Version 4.2.0 - June 24, 2026
 
