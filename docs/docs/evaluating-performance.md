@@ -39,7 +39,6 @@ Now open `/opt/Phileas/policies/evaluation.json` in a text editor. (The content 
 
 ```
 {
-   "name": "default",
    "identifiers": {
       "emailAddress": {
          "emailAddressFilterStrategies": [
@@ -61,7 +60,7 @@ Now open `/opt/Phileas/policies/evaluation.json` in a text editor. (The content 
 }
 ```
 
-The first thing we need to do is to set the name of the policy. Replace `default` with `evaluation` and save the file.
+A policy is identified by its file name, which is already `evaluation.json` after the copy above.
 
 #### Identifying the Filters You Need
 
@@ -79,7 +78,7 @@ From the [bitcoin address filter documentation](filter_policies/filters/common_f
 
 ```
       "bitcoinAddress": {
-         "bitcoinAddressFilterStrategies": [
+         "bitcoinFilterStrategies": [
             {
                "strategy": "REDACT",
                "redactionFormat": "{{{REDACTED-%t}}}"
@@ -92,10 +91,9 @@ We can copy this configuration and paste it into our policy:
 
 ```
 {
-   "name": "evaluation",
    "identifiers": {
       "bitcoinAddress": {
-         "bitcoinAddressFilterStrategies": [
+         "bitcoinFilterStrategies": [
             {
                "strategy": "REDACT",
                "redactionFormat": "{{{REDACTED-%t}}}"

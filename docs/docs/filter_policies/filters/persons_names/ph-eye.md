@@ -60,19 +60,20 @@ Each filter strategy may have one condition. See [Conditions](#conditions) for d
 
 ```
 {
-   "name": "ner-example",
    "identifiers": {
-      "pheye": {
-        "phEyeConfiguration": {
-            "endpoint": "http://localhost:18080"
-        },
-        "pheyeFilterStrategies": [
-           {
-              "strategy": "REDACT",
-              "redactionFormat": "{{{REDACTED-%t}}}"
-           }
-        ]
-      }
+      "pheyes": [
+        {
+          "phEyeConfiguration": {
+              "endpoint": "http://localhost:18080"
+          },
+          "phEyeFilterStrategies": [
+             {
+                "strategy": "REDACT",
+                "redactionFormat": "{{{REDACTED-%t}}}"
+             }
+          ]
+        }
+      ]
    }
 }
 ```
@@ -96,19 +97,20 @@ is processed.
 
 ```
 {
-   "name": "ner-local-example",
    "identifiers": {
-      "pheye": {
-        "phEyeConfiguration": {
-            "modelPath": "/models/ph-eye-pii-en-small"
-        },
-        "pheyeFilterStrategies": [
-           {
-              "strategy": "REDACT",
-              "redactionFormat": "{{{REDACTED-%t}}}"
-           }
-        ]
-      }
+      "pheyes": [
+        {
+          "phEyeConfiguration": {
+              "modelPath": "/models/ph-eye-pii-en-small"
+          },
+          "phEyeFilterStrategies": [
+             {
+                "strategy": "REDACT",
+                "redactionFormat": "{{{REDACTED-%t}}}"
+             }
+          ]
+        }
+      ]
    }
 }
 ```

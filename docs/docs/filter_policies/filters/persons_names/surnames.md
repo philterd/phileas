@@ -55,7 +55,6 @@ Each filter strategy may have one condition. See [Conditions](#conditions) for d
 
 ```
 {
-   "name": "surnames-example",
    "identifiers": {
       "surname": {
          "surnameFilterStrategies": [

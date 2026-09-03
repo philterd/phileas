@@ -60,17 +60,19 @@ Each filter strategy may have one condition. See [Conditions](#conditions) for d
 
 ```
 {
-   "name": "sections-example",
    "identifiers": {
-      "section": {
-         "startPattern": "START",
-         "endPattern": "END",
-         "sectionFilterStrategies": [
-            {
-               "strategy": "REDACT",
-               "redactionFormat": "{{{REDACTED-%t}}}"
-            }
-         ]
-      }
+      "sections": [
+         {
+            "startPattern": "START",
+            "endPattern": "END",
+            "sectionFilterStrategies": [
+               {
+                  "strategy": "REDACT",
+                  "redactionFormat": "{{{REDACTED-%t}}}"
+               }
+            ]
+         }
+      ]
+   }
 }
 ```

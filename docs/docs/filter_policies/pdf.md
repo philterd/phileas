@@ -22,7 +22,6 @@ The following is an example policy setting the PDF redaction options.
 
 ```
 {
-   "name": "example-pdf-policy",
    "identifiers": {
       "emailAddress": {
          "emailAddressFilterStrategies": [

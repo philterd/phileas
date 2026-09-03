@@ -3,11 +3,9 @@
 The types of sensitive information identified by Phileas and how that information is de-identified are controlled
 through policies.
 
-Each policy has a `name` that is used by Phileas to apply the appropriate de-identification methods. The `name` is
-passed to Phileas along with the text to be filtered. This
-provides flexibility and allows you to de-identify different types of documents in differing manners with a single
-instance of Phileas. For example, you may have a policy for bankruptcy documents and a separate policy for financial
-documents.
+A policy is passed to Phileas along with the text to be filtered. This provides flexibility and allows you to
+de-identify different types of documents in differing manners with a single instance of Phileas. For example, you may
+have a policy for bankruptcy documents and a separate policy for financial documents.
 
 > There are [sample policies](sample_filter_policies.md) available for immediate use or customization to fit your
 > use-cases.
@@ -31,7 +29,6 @@ when found. This policy identifies email addresses and phone numbers and redacts
 
 ```
 {
-   "name": "email-and-phone-numbers",
    "identifiers": {
       "emailAddress": {
          "emailAddressFilterStrategies": [
@@ -58,9 +55,9 @@ When an email address is identified by this policy, the email address is replace
 it is replaced with the text `{{{REDACTED-phone-number}}}`. You are free to change the redaction formats to whatever
 fits your use-case. See [Filter Strategies](filter_strategies.md) for all replacement options.
 
-The name of the policy is `email-and-phone-numbers`. Policies can be named anything you like but their names must be
-unique from all other policies. As a best practice, the policy should be saved as `[name].json`, e.g.
-`email-and-phone-numbers.json`.
+A policy is not named inside the JSON. A policy stored as a file is identified by its file name, so name the file for
+what the policy does, for example `email-and-phone-numbers.json`. To describe a policy in the policy itself, use
+[`metadata.description`](#policy-metadata).
 
 ### Policy Metadata
 

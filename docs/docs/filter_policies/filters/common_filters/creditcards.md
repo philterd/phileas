@@ -53,9 +53,8 @@ Each filter strategy may have one condition. See [Conditions](#conditions) for d
 
 ```
 {
-   "name": "credit-cards-example",
    "identifiers": {
-      "creditcard": {
+      "creditCard": {
          "onlyValidCreditCardNumbers": false,
          "onlyWordBoundaries": false,
          "creditCardFilterStrategies": [

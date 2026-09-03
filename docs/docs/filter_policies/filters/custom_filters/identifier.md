@@ -111,7 +111,6 @@ Each filter strategy may have one condition. See [Conditions](#conditions) for d
 
 ```
 {
-  "name": "default",
   "identifiers": {
     "identifiers": [
       {
@@ -138,7 +137,6 @@ matches that pass the Luhn checksum.
 
 ```
 {
-  "name": "default",
   "identifiers": {
     "identifiers": [
       {

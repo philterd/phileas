@@ -52,7 +52,6 @@ Each filter strategy may have one condition. See [Conditions](#conditions) for d
 
 ```
 {
-   "name": "hospitals-example",
    "identifiers": {
       "hospital": {
          "sensitivity": "medium",

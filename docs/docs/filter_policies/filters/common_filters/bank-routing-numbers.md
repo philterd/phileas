@@ -52,7 +52,6 @@ See [Conditions](#conditions) for details.
 
 ```
 {
-   "name": "bank-routing-number-example",
    "identifiers": {
       "bankRoutingNumber": {
          "bankRoutingNumberFilterStrategies": [
