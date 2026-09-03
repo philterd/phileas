@@ -59,6 +59,8 @@ import ai.philterd.phileas.services.strategies.rules.UrlFilterStrategy;
 import ai.philterd.phileas.services.strategies.rules.VinFilterStrategy;
 import ai.philterd.phileas.services.strategies.rules.ZipCodeFilterStrategy;
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.google.gson.GsonBuilder;
 import ai.philterd.phileas.utils.CollectionUtils;
 import org.junit.jupiter.api.Assertions;
@@ -79,6 +81,71 @@ public class PolicyTest {
         System.out.println(json);
 
         Assertions.assertNotNull(json);
+
+    }
+
+    @Test
+    public void metadataRoundTrips() {
+
+        // Keys beyond description are allowed by the schema, so they have to survive too.
+        final String json = """
+                {
+                  "metadata": {
+                    "description": "Client intake forms.",
+                    "author": "records team",
+                    "labels": ["intake", "pii"]
+                  },
+                  "identifiers": { "ssn": { "ssnFilterStrategies": [ { "strategy": "REDACT" } ] } }
+                }""";
+
+        final Gson gson = new Gson();
+        final Policy policy = gson.fromJson(json, Policy.class);
+
+        Assertions.assertEquals("Client intake forms.", policy.getMetadata().get("description").getAsString());
+        Assertions.assertEquals("records team", policy.getMetadata().get("author").getAsString());
+
+        // Re-serializing must not drop or alter any of it.
+        final JsonObject before = JsonParser.parseString(json).getAsJsonObject().getAsJsonObject("metadata");
+        final JsonObject after = JsonParser.parseString(gson.toJson(policy)).getAsJsonObject().getAsJsonObject("metadata");
+        Assertions.assertEquals(before, after);
+
+    }
+
+    @Test
+    public void policyWithoutMetadataSerializesWithoutIt() {
+
+        final Gson gson = new Gson();
+        final Policy policy = gson.fromJson("""
+                { "identifiers": { "ssn": { "ssnFilterStrategies": [ { "strategy": "REDACT" } ] } } }""", Policy.class);
+
+        Assertions.assertNull(policy.getMetadata());
+        Assertions.assertFalse(gson.toJson(policy).contains("metadata"));
+
+    }
+
+    @Test
+    public void zipCodeAcceptsBothStrategyKeys() {
+
+        final String plural = """
+                { "identifiers": { "zipCode": { "zipCodeFilterStrategies": [ { "strategy": "REDACT" } ] } } }""";
+
+        final String singular = """
+                { "identifiers": { "zipCode": { "zipCodeFilterStrategy": [ { "strategy": "REDACT" } ] } } }""";
+
+        final Gson gson = new Gson();
+
+        // The plural matches the convention every other filter follows.
+        final Policy fromPlural = gson.fromJson(plural, Policy.class);
+        Assertions.assertEquals(1, fromPlural.getIdentifiers().getZipCode().getZipCodeFilterStrategies().size());
+
+        // The singular is what releases before 4.3.0 required, so it has to keep working.
+        final Policy fromSingular = gson.fromJson(singular, Policy.class);
+        Assertions.assertEquals(1, fromSingular.getIdentifiers().getZipCode().getZipCodeFilterStrategies().size());
+
+        // The plural is the canonical name, so it is the one written back out.
+        final String serialized = gson.toJson(fromSingular);
+        Assertions.assertTrue(serialized.contains("zipCodeFilterStrategies"), serialized);
+        Assertions.assertFalse(serialized.contains("\"zipCodeFilterStrategy\""), serialized);
 
     }
 

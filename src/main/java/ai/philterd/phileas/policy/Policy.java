@@ -19,6 +19,7 @@ import ai.philterd.phisql.CompileResult;
 import ai.philterd.phisql.Compiler;
 import ai.philterd.phisql.PhiSQL;
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -56,6 +57,13 @@ public class Policy {
         return new Gson().fromJson(result.toJsonString(), Policy.class);
 
     }
+
+    // Descriptive information carried with the policy. Held as raw JSON so keys the
+    // engine does not know about survive a load-and-save round trip. Never read during
+    // filtering.
+    @SerializedName("metadata")
+    @Expose
+    private JsonObject metadata;
 
     @SerializedName("config")
     @Expose
@@ -171,6 +179,14 @@ public class Policy {
 
     public void setIgnoredPatterns(List<IgnoredPattern> ignoredPatterns) {
         this.ignoredPatterns = ignoredPatterns;
+    }
+
+    public JsonObject getMetadata() {
+        return metadata;
+    }
+
+    public void setMetadata(JsonObject metadata) {
+        this.metadata = metadata;
     }
 
     public Config getConfig() {
