@@ -136,6 +136,9 @@ public abstract class Filter {
      */
     protected long regexTimeoutMs;
 
+    /** Opaque label from the policy, used only in logs. */
+    protected String id;
+
 
     /**
      * Filters the input text.
@@ -164,6 +167,7 @@ public abstract class Filter {
         this.windowSize = filterConfiguration.getWindowSize();
         this.priority = filterConfiguration.getPriority();
         this.regexTimeoutMs = filterConfiguration.getRegexTimeoutMs();
+        this.id = filterConfiguration.getId();
 
         if(this.ignored == null) {
             this.ignored = new LinkedHashSet<>();
@@ -184,10 +188,10 @@ public abstract class Filter {
                         final List<String> words = Files.readAllLines(file.toPath(), Charset.defaultCharset());
                         ignored.addAll(words);
                     } catch (IOException ex) {
-                        LOGGER.error("Unable to process file of ignored terms: {}", fileName, ex);
+                        LOGGER.error("Filter {} could not process its file of ignored terms: {}", describe(), fileName, ex);
                     }
                 } else {
-                    LOGGER.error("Ignore list file specified in policy does not exist: {}", fileName);
+                    LOGGER.error("Filter {} has an ignore list file that does not exist: {}", describe(), fileName);
                 }
             }
         }
@@ -240,6 +244,11 @@ public abstract class Filter {
      * FPE_ENCRYPT_REPLACE yields irreversible redaction, with re-identification then failing against
      * data that can no longer be recovered. See issue #344.
      */
+    /** The filter type, qualified by its id when set. */
+    protected String describe() {
+        return StringUtils.isBlank(id) ? filterType.getType() : filterType.getType() + " (id: " + id + ")";
+    }
+
     private void warnAboutUnsupportedStrategies() {
 
         for(final AbstractFilterStrategy strategy : this.strategies) {
@@ -260,7 +269,7 @@ public abstract class Filter {
 
                 LOGGER.warn("Filter {} was given the filter strategy \"{}\", which it does not support. "
                                 + "Falling back to {}. The strategies this filter supports are {}.",
-                        filterType.getType(), name, AbstractFilterStrategy.REDACT, accepted);
+                        describe(), name, AbstractFilterStrategy.REDACT, accepted);
 
             }
 
@@ -484,7 +493,7 @@ public abstract class Filter {
         } else {
 
             // PHL-68: When there are no strategies just redact.
-            LOGGER.warn("No filter strategies found for filter type {}. Defaulting to redaction.", filterType.getType());
+            LOGGER.warn("No filter strategies found for filter {}. Defaulting to redaction.", describe());
             return new Replacement(AbstractFilterStrategy.DEFAULT_REDACTION.replace("%t", filterType.getType()));
 
         }
@@ -570,6 +579,10 @@ public abstract class Filter {
 
     public int getWindowSize() {
         return windowSize;
+    }
+
+    public String getId() {
+        return id;
     }
 
     public int getPriority() {

@@ -215,6 +215,7 @@ public class FilterPolicyLoader {
                     .withGenerators(replacementGenerators)
                     .withWindowSize(windowSize)
                     .withPriority(policy.getIdentifiers().getAge().getPriority())
+                    .withId(policy.getIdentifiers().getAge().getId())
                     .build();
 
             final Filter filter = new AgeFilter(filterConfiguration);
@@ -238,6 +239,7 @@ public class FilterPolicyLoader {
                     .withFPE(policy.getFpe())
                     .withWindowSize(windowSize)
                     .withPriority(policy.getIdentifiers().getBankRoutingNumber().getPriority())
+                    .withId(policy.getIdentifiers().getBankRoutingNumber().getId())
                     .build();
 
             final Filter filter = new BankRoutingNumberFilter(filterConfiguration);
@@ -261,6 +263,7 @@ public class FilterPolicyLoader {
                     .withFPE(policy.getFpe())
                     .withWindowSize(windowSize)
                     .withPriority(policy.getIdentifiers().getBitcoinAddress().getPriority())
+                    .withId(policy.getIdentifiers().getBitcoinAddress().getId())
                     .build();
 
             final Filter filter = new BitcoinAddressFilter(filterConfiguration);
@@ -284,6 +287,7 @@ public class FilterPolicyLoader {
                     .withFPE(policy.getFpe())
                     .withWindowSize(windowSize)
                     .withPriority(policy.getIdentifiers().getCreditCard().getPriority())
+                    .withId(policy.getIdentifiers().getCreditCard().getId())
                     .build();
 
             final boolean onlyValidCreditCardNumbers = policy.getIdentifiers().getCreditCard().isOnlyValidCreditCardNumbers();
@@ -310,6 +314,7 @@ public class FilterPolicyLoader {
                     .withGenerators(replacementGenerators)
                     .withWindowSize(windowSize)
                     .withPriority(policy.getIdentifiers().getCurrency().getPriority())
+                    .withId(policy.getIdentifiers().getCurrency().getId())
                     .build();
 
             final Filter filter = new CurrencyFilter(filterConfiguration);
@@ -332,6 +337,7 @@ public class FilterPolicyLoader {
                     .withGenerators(replacementGenerators)
                     .withWindowSize(windowSize)
                     .withPriority(policy.getIdentifiers().getDate().getPriority())
+                    .withId(policy.getIdentifiers().getDate().getId())
                     .build();
 
             final boolean onlyValidDates = policy.getIdentifiers().getDate().isOnlyValidDates();
@@ -358,6 +364,7 @@ public class FilterPolicyLoader {
                     .withFPE(policy.getFpe())
                     .withWindowSize(windowSize)
                     .withPriority(policy.getIdentifiers().getDriversLicense().getPriority())
+                    .withId(policy.getIdentifiers().getDriversLicense().getId())
                     .build();
 
             final Filter filter = new DriversLicenseFilter(filterConfiguration);
@@ -381,6 +388,7 @@ public class FilterPolicyLoader {
                     .withFPE(policy.getFpe())
                     .withWindowSize(windowSize)
                     .withPriority(policy.getIdentifiers().getEmailAddress().getPriority())
+                    .withId(policy.getIdentifiers().getEmailAddress().getId())
                     .build();
 
             final boolean isStrict = policy.getIdentifiers().getEmailAddress().isOnlyStrictMatches();
@@ -407,6 +415,7 @@ public class FilterPolicyLoader {
                     .withFPE(policy.getFpe())
                     .withWindowSize(windowSize)
                     .withPriority(policy.getIdentifiers().getIbanCode().getPriority())
+                    .withId(policy.getIdentifiers().getIbanCode().getId())
                     .build();
 
             final boolean onlyValidIBANCodes = policy.getIdentifiers().getIbanCode().isOnlyValidIBANCodes();
@@ -433,6 +442,7 @@ public class FilterPolicyLoader {
                     .withFPE(policy.getFpe())
                     .withWindowSize(windowSize)
                     .withPriority(policy.getIdentifiers().getIpAddress().getPriority())
+                    .withId(policy.getIdentifiers().getIpAddress().getId())
                     .build();
 
             final Filter filter = new IpAddressFilter(filterConfiguration);
@@ -456,6 +466,7 @@ public class FilterPolicyLoader {
                     .withFPE(policy.getFpe())
                     .withWindowSize(windowSize)
                     .withPriority(policy.getIdentifiers().getMacAddress().getPriority())
+                    .withId(policy.getIdentifiers().getMacAddress().getId())
                     .build();
 
             final Filter filter = new MacAddressFilter(filterConfiguration);
@@ -479,6 +490,7 @@ public class FilterPolicyLoader {
                     .withFPE(policy.getFpe())
                     .withWindowSize(windowSize)
                     .withPriority(policy.getIdentifiers().getPassportNumber().getPriority())
+                    .withId(policy.getIdentifiers().getPassportNumber().getId())
                     .build();
 
             final Filter filter = new PassportNumberFilter(filterConfiguration);
@@ -501,6 +513,7 @@ public class FilterPolicyLoader {
                     .withGenerators(replacementGenerators)
                     .withWindowSize(windowSize)
                     .withPriority(policy.getIdentifiers().getPhoneNumberExtension().getPriority())
+                    .withId(policy.getIdentifiers().getPhoneNumberExtension().getId())
                     .build();
 
             final Filter filter = new PhoneNumberExtensionFilter(filterConfiguration);
@@ -522,6 +535,7 @@ public class FilterPolicyLoader {
                     .withGenerators(replacementGenerators)
                     .withWindowSize(windowSize)
                     .withPriority(policy.getIdentifiers().getPhoneNumber().getPriority())
+                    .withId(policy.getIdentifiers().getPhoneNumber().getId())
                     .build();
 
             final Filter filter = new PhoneNumberRulesFilter(filterConfiguration, policy.getIdentifiers().getPhoneNumber().getRegion());
@@ -549,6 +563,7 @@ public class FilterPolicyLoader {
                     .withGenerators(replacementGenerators)
                             .withWindowSize(windowSize)
                             .withPriority(section.getPriority())
+                            .withId(section.getId())
                             // The section start/end patterns come from the policy, so bound matching to guard against ReDoS.
                             .withRegexTimeoutMs(phileasConfiguration.regexTimeoutMs())
                             .build();
@@ -579,6 +594,7 @@ public class FilterPolicyLoader {
                     .withFPE(policy.getFpe())
                     .withWindowSize(windowSize)
                     .withPriority(policy.getIdentifiers().getEin().getPriority())
+                    .withId(policy.getIdentifiers().getEin().getId())
                     .build();
 
             final Filter filter = new EinFilter(filterConfiguration, policy.getIdentifiers().getEin().isOnlyValidPrefixes());
@@ -602,6 +618,7 @@ public class FilterPolicyLoader {
                     .withFPE(policy.getFpe())
                     .withWindowSize(windowSize)
                     .withPriority(policy.getIdentifiers().getSsn().getPriority())
+                    .withId(policy.getIdentifiers().getSsn().getId())
                     .build();
 
             final Filter filter = new SsnFilter(filterConfiguration);
@@ -624,6 +641,7 @@ public class FilterPolicyLoader {
                     .withGenerators(replacementGenerators)
                     .withWindowSize(windowSize)
                     .withPriority(policy.getIdentifiers().getStateAbbreviation().getPriority())
+                    .withId(policy.getIdentifiers().getStateAbbreviation().getId())
                     .build();
 
             final Filter filter = new StateAbbreviationFilter(filterConfiguration);
@@ -646,6 +664,7 @@ public class FilterPolicyLoader {
                     .withGenerators(replacementGenerators)
                     .withWindowSize(windowSize)
                     .withPriority(policy.getIdentifiers().getStreetAddress().getPriority())
+                    .withId(policy.getIdentifiers().getStreetAddress().getId())
                     .build();
 
             final Filter filter = new StreetAddressFilter(filterConfiguration);
@@ -669,6 +688,7 @@ public class FilterPolicyLoader {
                     .withFPE(policy.getFpe())
                     .withWindowSize(windowSize)
                     .withPriority(policy.getIdentifiers().getTrackingNumber().getPriority())
+                    .withId(policy.getIdentifiers().getTrackingNumber().getId())
                     .build();
 
             final boolean ups = policy.getIdentifiers().getTrackingNumber().isUps();
@@ -696,6 +716,7 @@ public class FilterPolicyLoader {
                     .withFPE(policy.getFpe())
                     .withWindowSize(windowSize)
                     .withPriority(policy.getIdentifiers().getUrl().getPriority())
+                    .withId(policy.getIdentifiers().getUrl().getId())
                     .build();
 
             final boolean requireHttpWwwPrefix = policy.getIdentifiers().getUrl().isRequireHttpWwwPrefix();
@@ -721,6 +742,7 @@ public class FilterPolicyLoader {
                     .withFPE(policy.getFpe())
                     .withWindowSize(windowSize)
                     .withPriority(policy.getIdentifiers().getVin().getPriority())
+                    .withId(policy.getIdentifiers().getVin().getId())
                     .build();
 
             final Filter filter = new VinFilter(filterConfiguration);
@@ -744,6 +766,7 @@ public class FilterPolicyLoader {
                     .withFPE(policy.getFpe())
                     .withWindowSize(windowSize)
                     .withPriority(policy.getIdentifiers().getZipCode().getPriority())
+                    .withId(policy.getIdentifiers().getZipCode().getId())
                     .build();
 
             final boolean requireDelimiter = policy.getIdentifiers().getZipCode().isRequireDelimiter();
@@ -793,6 +816,7 @@ public class FilterPolicyLoader {
                     .withGenerators(replacementGenerators)
                             .withWindowSize(windowSize)
                             .withPriority(customDictionary.getPriority())
+                            .withId(customDictionary.getId())
                             .build();
 
                     // Only enable the filter if there is at least one term present.
@@ -848,6 +872,7 @@ public class FilterPolicyLoader {
                     .withFPE(policy.getFpe())
                     .withWindowSize(windowSize)
                     .withPriority(policy.getIdentifiers().getCity().getPriority())
+                    .withId(policy.getIdentifiers().getCity().getId())
                     .build();
 
             enabledFilters.add(createDictionaryFilter(FilterType.LOCATION_CITY, filterConfiguration,
@@ -874,6 +899,7 @@ public class FilterPolicyLoader {
                     .withFPE(policy.getFpe())
                     .withWindowSize(windowSize)
                     .withPriority(policy.getIdentifiers().getCounty().getPriority())
+                    .withId(policy.getIdentifiers().getCounty().getId())
                     .build();
 
             enabledFilters.add(createDictionaryFilter(FilterType.LOCATION_COUNTY, filterConfiguration,
@@ -900,6 +926,7 @@ public class FilterPolicyLoader {
                     .withFPE(policy.getFpe())
                     .withWindowSize(windowSize)
                     .withPriority(policy.getIdentifiers().getState().getPriority())
+                    .withId(policy.getIdentifiers().getState().getId())
                     .build();
 
             enabledFilters.add(createDictionaryFilter(FilterType.LOCATION_STATE, filterConfiguration,
@@ -925,6 +952,7 @@ public class FilterPolicyLoader {
                     .withGenerators(replacementGenerators)
                     .withWindowSize(windowSize)
                     .withPriority(policy.getIdentifiers().getHospital().getPriority())
+                    .withId(policy.getIdentifiers().getHospital().getId())
                     .build();
 
             enabledFilters.add(createDictionaryFilter(FilterType.HOSPITAL, filterConfiguration,
@@ -951,6 +979,7 @@ public class FilterPolicyLoader {
                     .withFPE(policy.getFpe())
                     .withWindowSize(windowSize)
                     .withPriority(policy.getIdentifiers().getFirstName().getPriority())
+                    .withId(policy.getIdentifiers().getFirstName().getId())
                     .build();
 
             enabledFilters.add(createDictionaryFilter(FilterType.FIRST_NAME, filterConfiguration,
@@ -977,6 +1006,7 @@ public class FilterPolicyLoader {
                     .withFPE(policy.getFpe())
                     .withWindowSize(windowSize)
                     .withPriority(policy.getIdentifiers().getSurname().getPriority())
+                    .withId(policy.getIdentifiers().getSurname().getId())
                     .build();
 
             enabledFilters.add(createDictionaryFilter(FilterType.SURNAME, filterConfiguration,
@@ -1011,6 +1041,7 @@ public class FilterPolicyLoader {
                             .withFPE(policy.getFpe())
                             .withWindowSize(windowSize)
                             .withPriority(identifier.getPriority())
+                            .withId(identifier.getId())
                             // The identifier pattern comes from the policy, so bound matching to guard against ReDoS.
                             .withRegexTimeoutMs(phileasConfiguration.regexTimeoutMs())
                             .build();
@@ -1053,6 +1084,7 @@ public class FilterPolicyLoader {
                             .withFPE(policy.getFpe())
                             .withWindowSize(windowSize)
                             .withPriority(phEye.getPriority())
+                            .withId(phEye.getId())
                             .build();
 
                     final ai.philterd.phileas.policy.filters.pheye.PhEyeConfiguration phEyePolicyConfig = phEye.getPhEyeConfiguration();
@@ -1097,6 +1129,7 @@ public class FilterPolicyLoader {
                     .withFPE(policy.getFpe())
                     .withWindowSize(windowSize)
                     .withPriority(phEye.getPriority())
+                    .withId(phEye.getId())
                     .build();
 
             final ai.philterd.phileas.policy.filters.pheye.PhEyeConfiguration phEyePolicyConfig = phEye.getPhEyeConfiguration();
