@@ -31,12 +31,12 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.RandomStringUtils;
-import org.apache.commons.lang3.RandomUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.security.SecureRandom;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Period;
@@ -52,6 +52,8 @@ import java.util.Set;
 public class DateFilterStrategy extends AbstractFilterStrategy {
 
     private static final Logger LOGGER = LogManager.getLogger(DateFilterStrategy.class);
+
+    private static final SecureRandom RANDOM = new SecureRandom();
 
     private final FilterType filterType = FilterType.DATE;
 
@@ -233,9 +235,9 @@ public class DateFilterStrategy extends AbstractFilterStrategy {
                 // Shift the date. Only valid dates can be shifted.
                 if(shiftRandom) {
                     // Shifting based on a random days, months, years.
-                    final int randomShiftDays = RandomUtils.secure().randomInt(1, 30);
-                    final int randomShiftMonths = RandomUtils.secure().randomInt(1, 12);
-                    final int randomShiftYears = -RandomUtils.secure().randomInt(1, 3);
+                    final int randomShiftDays = RANDOM.nextInt(1, 30);
+                    final int randomShiftMonths = RANDOM.nextInt(1, 12);
+                    final int randomShiftYears = -RANDOM.nextInt(1, 3);
                     final LocalDateTime shiftedDate = parsedDate.plusDays(randomShiftDays).plusMonths(randomShiftMonths).plusYears(randomShiftYears);
                     replacement = shiftedDate.format(dtf);
                 } else {
