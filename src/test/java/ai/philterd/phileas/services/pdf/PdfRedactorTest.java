@@ -232,7 +232,7 @@ public class PdfRedactorTest {
         verify(contentStream).setNonStrokingColor(
                 argThat((PDColor color) -> {
                     return (
-                            Arrays.equals(color.getComponents(), new float[]{255, 255, 255})
+                            Arrays.equals(color.getComponents(), new float[]{1, 1, 1})
                                     && color.getColorSpace() == PDDeviceRGB.INSTANCE
                     );
                 })

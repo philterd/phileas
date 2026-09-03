@@ -166,9 +166,13 @@ public class FuzzyDictionaryFilter extends DictionaryFilter {
                 window, confidence, classification, null);
 
         // Add the span to the list.
-        return Span.make(characterStart, characterEnd, getFilterType(), context,
+        final Span span = Span.make(characterStart, characterEnd, getFilterType(), context,
                 confidence, token, replacement.getReplacement(),
                 replacement.getSalt(), ignored, replacement.isApplied(), window, priority);
+
+        span.setColor(replacement.getColor());
+
+        return span;
 
     }
 

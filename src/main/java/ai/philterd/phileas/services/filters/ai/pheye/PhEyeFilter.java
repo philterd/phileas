@@ -183,8 +183,12 @@ public class PhEyeFilter extends NerFilter {
             // Is this term ignored?
             final boolean ignored = isIgnored(text);
 
-            return Span.make(start, end, filterType, context, confidence, text,
+            final Span span = Span.make(start, end, filterType, context, confidence, text,
                     replacement.getReplacement(), replacement.getSalt(), ignored, replacement.isApplied(), window, priority);
+
+            span.setColor(replacement.getColor());
+
+            return span;
 
         }
 

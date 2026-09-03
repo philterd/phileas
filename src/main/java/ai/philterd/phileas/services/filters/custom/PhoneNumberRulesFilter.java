@@ -101,8 +101,11 @@ public class PhoneNumberRulesFilter extends RulesFilter {
                         classification, null);
                 final boolean isIgnored = ignored.contains(text);
 
-                spans.add(Span.make(match.start(), match.end(), getFilterType(), context, confidence,
-                        text, replacement.getReplacement(), replacement.getSalt(), isIgnored, replacement.isApplied(), window, priority));
+                final Span span = Span.make(match.start(), match.end(), getFilterType(), context, confidence,
+                        text, replacement.getReplacement(), replacement.getSalt(), isIgnored, replacement.isApplied(), window, priority);
+
+                span.setColor(replacement.getColor());
+                spans.add(span);
 
             }
 

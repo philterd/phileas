@@ -73,6 +73,9 @@ public final class Span {
     @Expose
     private int priority;
 
+    // Redaction bar color from the applying strategy. Only used when rendering a PDF.
+    private transient String color;
+
     // The textual (non-compiled) regex expression, if any, used to identify the span.
     // This is used to validate a regex after finding.
     private transient String pattern;
@@ -161,8 +164,12 @@ public final class Span {
      */
     public Span copy() {
 
-        return Span.make(characterStart, characterEnd, filterType, context, confidence, text,
+        final Span copy = Span.make(characterStart, characterEnd, filterType, context, confidence, text,
                 replacement, salt, ignored, applied, window, priority);
+
+        copy.setColor(color);
+
+        return copy;
 
     }
 
@@ -184,8 +191,11 @@ public final class Span {
                 final int start = span.getCharacterStart() + shift;
                 final int end = span.getCharacterEnd() + shift;
 
-                shiftedSpans.add(Span.make(start, end, span.filterType, span.context, span.confidence,
-                        span.text, span.replacement, span.salt, span.ignored, span.applied, span.window, span.priority));
+                final Span shifted = Span.make(start, end, span.filterType, span.context, span.confidence,
+                        span.text, span.replacement, span.salt, span.ignored, span.applied, span.window, span.priority);
+
+                shifted.setColor(span.color);
+                shiftedSpans.add(shifted);
 
             }
 
@@ -210,8 +220,11 @@ public final class Span {
                 final int start = span.getCharacterStart() + shift;
                 final int end = span.getCharacterEnd() + shift;
 
-                shiftedSpans.add(Span.make(start, end, span.filterType, span.context, span.confidence,
-                        span.text, span.replacement, span.salt, span.ignored, span.applied, span.window, span.priority));
+                final Span shifted = Span.make(start, end, span.filterType, span.context, span.confidence,
+                        span.text, span.replacement, span.salt, span.ignored, span.applied, span.window, span.priority);
+
+                shifted.setColor(span.color);
+                shiftedSpans.add(shifted);
 
         }
 
@@ -650,6 +663,14 @@ public final class Span {
 
     public void setAlwaysValid(boolean alwaysValid) {
         this.alwaysValid = alwaysValid;
+    }
+
+    public String getColor() {
+        return color;
+    }
+
+    public void setColor(String color) {
+        this.color = color;
     }
 
     public void setPriority(int priority) {

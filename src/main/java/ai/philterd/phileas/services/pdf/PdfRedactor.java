@@ -19,6 +19,7 @@ import ai.philterd.phileas.model.filtering.MimeType;
 import ai.philterd.phileas.model.filtering.Span;
 import ai.philterd.phileas.policy.Policy;
 import ai.philterd.phileas.policy.graphical.BoundingBox;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -56,7 +57,9 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -73,14 +76,20 @@ public class PdfRedactor extends PDFTextStripper {
     private final List<Span> spans;
     private final PdfRedactionOptions pdfRedactionOptions;
 
+    private static final Pattern HEX_COLOR = Pattern.compile("^#[0-9A-Fa-f]{6}$");
+
     private static final Map<String, PDColor> COLORS = new LinkedHashMap<>();
     private static final Map<String, PDFont> FONTS = new LinkedHashMap<>();
 
     static {
-        COLORS.put("white", new PDColor(new float[]{255, 255, 255}, PDDeviceRGB.INSTANCE));
         COLORS.put("black", new PDColor(new float[]{0, 0, 0}, PDDeviceRGB.INSTANCE));
-        COLORS.put("red", new PDColor(new float[]{255, 0, 0}, PDDeviceRGB.INSTANCE));
-        COLORS.put("yellow", new PDColor(new float[]{1, 1, 100 / 255F}, PDDeviceRGB.INSTANCE));
+        COLORS.put("white", new PDColor(new float[]{1, 1, 1}, PDDeviceRGB.INSTANCE));
+        COLORS.put("red", new PDColor(new float[]{1, 0, 0}, PDDeviceRGB.INSTANCE));
+        COLORS.put("orange", new PDColor(new float[]{1, 165 / 255F, 0}, PDDeviceRGB.INSTANCE));
+        COLORS.put("yellow", new PDColor(new float[]{1, 1, 0}, PDDeviceRGB.INSTANCE));
+        COLORS.put("green", new PDColor(new float[]{0, 128 / 255F, 0}, PDDeviceRGB.INSTANCE));
+        COLORS.put("blue", new PDColor(new float[]{0, 0, 1}, PDDeviceRGB.INSTANCE));
+        COLORS.put("gray", new PDColor(new float[]{128 / 255F, 128 / 255F, 128 / 255F}, PDDeviceRGB.INSTANCE));
 
         FONTS.put("helvetica", new PDType1Font(Standard14Fonts.FontName.HELVETICA));
         FONTS.put("times", new PDType1Font(Standard14Fonts.FontName.TIMES_ROMAN));
@@ -100,7 +109,8 @@ public class PdfRedactor extends PDFTextStripper {
         this.showReplacement = policy.getConfig().getPdf().getShowReplacement();
         this.replacementFont = FONTS.getOrDefault(policy.getConfig().getPdf().getReplacementFont(), FONTS.get("helvetica"));
         this.replacementFontSize = policy.getConfig().getPdf().getReplacementMaxFontSize();
-        this.replacementFontColor = COLORS.getOrDefault(policy.getConfig().getPdf().getReplacementFontColor(), COLORS.get("white"));
+        final String fontColor = policy.getConfig().getPdf().getReplacementFontColor();
+        this.replacementFontColor = StringUtils.isBlank(fontColor) ? COLORS.get("white") : colorOrBlack(fontColor);
 
     }
 
@@ -123,7 +133,7 @@ public class PdfRedactor extends PDFTextStripper {
             final PDPageContentStream contentStream = new PDPageContentStream(pdDocument, page, PDPageContentStream.AppendMode.APPEND, true);
 
             // TODO: Should there be a default redaction color defined as a constant?
-            contentStream.setNonStrokingColor(COLORS.getOrDefault(boundingBox.getColor(), COLORS.get("black")));
+            contentStream.setNonStrokingColor(colorOrBlack(boundingBox.getColor()));
             contentStream.addRect(boundingBox.getX(), boundingBox.getY(), boundingBox.getW(), boundingBox.getH());
             contentStream.fill();
             contentStream.close();
@@ -233,6 +243,47 @@ public class PdfRedactor extends PDFTextStripper {
 
     }
 
+    /** The strategy's color when it set one, otherwise the policy-wide color. */
+    private PDColor redactionColorFor(final Span span) {
+
+        final String strategyColor = span == null ? null : span.getColor();
+
+        if (StringUtils.isNotBlank(strategyColor)) {
+            return colorOrBlack(strategyColor);
+        }
+
+        return colorOrBlack(policy.getConfig().getPdf().getRedactionColor());
+
+    }
+
+    /** A named color or 6-digit hex value. Anything else renders black. */
+    private static PDColor colorOrBlack(final String value) {
+
+        if (StringUtils.isNotBlank(value)) {
+
+            final PDColor named = COLORS.get(value.trim().toLowerCase(Locale.ROOT));
+
+            if (named != null) {
+                return named;
+            }
+
+            if (HEX_COLOR.matcher(value.trim()).matches()) {
+
+                final int rgb = Integer.parseInt(value.trim().substring(1), 16);
+
+                return new PDColor(new float[]{
+                        ((rgb >> 16) & 0xFF) / 255F,
+                        ((rgb >> 8) & 0xFF) / 255F,
+                        (rgb & 0xFF) / 255F}, PDDeviceRGB.INSTANCE);
+
+            }
+
+        }
+
+        return COLORS.get("black");
+
+    }
+
     @Override
     protected void endDocument(final PDDocument doc) throws IOException {
 
@@ -252,16 +303,16 @@ public class PdfRedactor extends PDFTextStripper {
                         rectangle.getPdRectangle().getWidth(),
                         rectangle.getPdRectangle().getHeight() + buffer);
 
+                // Filled one at a time so each span can use its own strategy's color.
+                rectContentStream.setNonStrokingColor(redactionColorFor(rectangle.getSpan()));
+                rectContentStream.setRenderingMode(RenderingMode.FILL);
+                rectContentStream.fill();
+
                 if (showReplacement) {
                     addReplacementTextToRect(rectangle, textContentStream);
                 }
             }
 
-            // Get the color based on the filter.
-            final PDColor pdColor = COLORS.getOrDefault(policy.getConfig().getPdf().getRedactionColor(), COLORS.get("black"));
-            rectContentStream.setNonStrokingColor(pdColor);
-            rectContentStream.setRenderingMode(RenderingMode.FILL);
-            rectContentStream.fill();
             rectContentStream.close();
 
             textContentStream.close();
