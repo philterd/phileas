@@ -6,6 +6,7 @@ Full changelogs for each release are available in the [GitHub releases](https://
 
 ## Version 4.4.0 - Unreleased
 
+* `config.splitting` now accepts an `overlap` (characters, default `0`), giving each piece of a split document the trailing characters of the piece before it, so a value sitting across a piece boundary is seen whole rather than in part by each piece. Previously such a value could be partly redacted or missed: with `width` splitting, `May 22, 1999` could be cut after `May 22,` and leave the year in the output. When an overlap is set, detection runs over every piece and the spans are mapped to their positions in the whole document, de-duplicated, and applied once, so there are no duplicate spans, no double redaction, and no shifted offsets. The default of `0` keeps pieces contiguous and behavior unchanged. This uses redaction policy schema 1.2.0. See the documentation for details. (issue #310, PhiSQL RFC philterd/phisql#19)
 * `Policy` now exposes the description held in `metadata.description` through `getDescription()` and `setDescription(String)`, so a caller no longer parses the raw metadata JSON. Setting a description on a policy that has no metadata creates the section, and clearing the only description removes it, so an empty `metadata` object is never serialized; any other metadata keys are left in place. A PhiSQL `DESCRIPTION` clause compiles to `metadata.description`, so a compiled policy carries its description here. (issue #375)
 
 ## Version 4.3.0 - September 3, 2026

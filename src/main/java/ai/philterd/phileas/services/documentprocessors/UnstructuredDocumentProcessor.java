@@ -61,16 +61,42 @@ public class UnstructuredDocumentProcessor implements DocumentProcessor {
                                     final Policy policy, final List<Filter> filters, final List<PostFilter> postFilters,
                                     final String context, final int piece, final String input) throws Exception {
 
-        // The list that will contain the spans containing PHI/PII.
-        List<Span> identifiedSpans = new LinkedList<>();
+        final List<Span> identifiedSpans = detect(contextService, policy, filters, context, piece, input);
 
-        // Apply each filter.
+        return apply(vectorService, policy, postFilters, context, piece, input, identifiedSpans);
+
+    }
+
+    /**
+     * Runs the filters over one piece of text.
+     *
+     * @return The spans found, with offsets relative to the given text.
+     */
+    public List<Span> detect(final ContextService contextService, final Policy policy, final List<Filter> filters,
+                             final String context, final int piece, final String input) throws Exception {
+
+        final List<Span> identifiedSpans = new LinkedList<>();
+
         for(final Filter filter : filters) {
 
             final Filtered filtered = filter.filter(contextService, policy, context, piece, input);
             identifiedSpans.addAll(filtered.getSpans());
 
         }
+
+        return identifiedSpans;
+
+    }
+
+    /**
+     * Disambiguates, de-duplicates and post-filters the given spans, then applies them to the text.
+     * The span offsets must be relative to the text given here.
+     */
+    public TextFilterResult apply(final VectorService vectorService, final Policy policy,
+                                  final List<PostFilter> postFilters, final String context, final int piece,
+                                  final String input, final List<Span> spans) throws Exception {
+
+        List<Span> identifiedSpans = spans;
 
         // Perform span disambiguation. When disabled, this is a no-op implementation that returns
         // the spans unchanged (see SpanDisambiguationServiceFactory), so no enabled-check is needed.
