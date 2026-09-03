@@ -52,7 +52,6 @@ Each filter strategy may have one condition. See [Conditions](#conditions) for d
 
 ```
 {
-   "name": "email-address-example",
    "identifiers": {
       "emailAddress": {
          "emailAddressFilterStrategies": [

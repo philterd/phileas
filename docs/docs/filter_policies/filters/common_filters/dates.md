@@ -85,7 +85,6 @@ The following policy redacts dates.
 
 ```
 {
-   "name": "dates-example",
    "identifiers": {
       "date": {
          "onlyValidDates": false,
@@ -106,7 +105,6 @@ The following policy to shift dates forward by 2 days and 4 months.
 
 ```
 {
-   "name": "dates-example",
    "identifiers": {
       "date": {
          "onlyValidDates": false,

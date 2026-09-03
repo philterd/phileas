@@ -51,7 +51,6 @@ Each filter strategy may have one condition. See [Conditions](#conditions) for d
 
 ```
 {
-   "name": "ip-address-example",
    "identifiers": {
       "ipAddress": {
          "ipAddressFilterStrategies": [

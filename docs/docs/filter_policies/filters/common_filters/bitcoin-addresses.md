@@ -50,10 +50,9 @@ Each filter strategy may have one condition. See [Conditions](#conditions) for d
 
 ```
 {
-   "name": "bitcoin-address-example",
    "identifiers": {
       "bitcoinAddress": {
-         "bitcoinAddressFilterStrategies": [
+         "bitcoinFilterStrategies": [
             {
                "strategy": "REDACT",
                "redactionFormat": "{{{REDACTED-%t}}}"

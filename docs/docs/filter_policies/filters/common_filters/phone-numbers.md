@@ -51,7 +51,6 @@ Each filter strategy may have one condition. See [Conditions](#conditions) for d
 
 ```
 {
-   "name": "phone-number-example",
    "identifiers": {
       "phoneNumber": {
          "phoneNumberFilterStrategies": [
@@ -69,7 +68,6 @@ To detect national-format numbers from regions other than the United States, set
 
 ```
 {
-   "name": "phone-number-example",
    "identifiers": {
       "phoneNumber": {
          "region": ["US", "GB", "FR"],

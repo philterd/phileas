@@ -57,15 +57,14 @@ Each filter strategy may have one condition. See [Conditions](#conditions) for d
 
 ```
 {
-   "name": "dictionary-example",
    "identifiers": {
       "dictionaries": [
-         "customDictionary": {
+         {
             "terms": ["john", "jane", "doe"],
-            "files": "c:\temp\dictionary.txt",
+            "files": ["/tmp/dictionary.txt"],
             "fuzzy": true,
             "sensitivity": "medium",
-            "sectionFilterStrategies": [
+            "customFilterStrategies": [
                {
                   "strategy": "REDACT",
                   "redactionFormat": "{{{REDACTED-%t}}}"

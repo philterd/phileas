@@ -11,7 +11,6 @@ A sample policy containing a filter strategy is shown below. In this example, em
 
 ```
 {
-   "name": "email-address",
    "identifiers": {
       "emailAddress": {
          "emailAddressFilterStrategies": [
@@ -83,7 +82,6 @@ An example filter using the `REDACT` filter strategy:
 
 ```
 {
-   "name": "email-address",
    "identifiers": {
       "emailAddress": {
          "emailAddressFilterStrategies": [
@@ -103,7 +101,6 @@ The `CRYPTO_REPLACE` filter strategy replaces each identified piece of sensitive
 
 ```
 {
-   "name":"sample-profile",
    "crypto": {
      "key": "...."
    },
@@ -141,7 +138,6 @@ An example policy using the `CRYPTO_REPLACE` filter strategy:
 
 ```
 {
-   "name": "email-address",
    "crypto": {
      "key": "...."
    },
@@ -165,7 +161,6 @@ An example policy using the `HASH_SHA256_REPLACE` filter strategy:
 
 ```
 {
-   "name": "email-address",
    "identifiers": {
       "emailAddress": {
          "emailAddressFilterStrategies": [
@@ -195,14 +190,15 @@ An example policy using the FPE\_ENCRYPT\_REPLACE filter strategy:
 
 ```
 {
-   "name": "credit-cards",
+   "fpe": {
+      "key": "...",
+      "tweak": "..."
+   },
    "identifiers": {
-      "creditCardNumbers": {
-         "creditCardNumbersFilterStrategies": [
+      "creditCard": {
+         "creditCardFilterStrategies": [
             {
-               "strategy": "FPE_ENCRYPT_REPLACE",
-               "key": "...",
-               "tweak": "..."
+               "strategy": "FPE_ENCRYPT_REPLACE"
             }
          ]
       }
@@ -224,7 +220,6 @@ An example policy using the `REALISTIC` filter strategy:
 
 ```
 {
-   "name": "email-address",
    "identifiers": {
       "emailAddress": {
          "emailAddressFilterStrategies": [
@@ -242,7 +237,6 @@ An example policy using the `RANDOM_REPLACE` filter strategy with a list of cand
 
 ```
 {
-   "name": "email-address",
    "identifiers": {
       "emailAddress": {
          "emailAddressFilterStrategies": [
@@ -265,7 +259,6 @@ An example policy using the `RANDOM_REPLACE` filter strategy with a UUID:
 
 ```
 {
-   "name": "email-address",
    "identifiers": {
       "emailAddress": {
          "emailAddressFilterStrategies": [
@@ -287,7 +280,6 @@ An example policy using the `STATIC_REPLACE` filter strategy:
 
 ```
 {
-   "name": "email-address",
    "identifiers": {
       "emailAddress": {
          "emailAddressFilterStrategies": [
@@ -309,19 +301,21 @@ An example policy using the `MAP_REPLACE` filter strategy:
 
 ```
 {
-   "name": "identifier",
    "identifiers": {
-      "identifier": {
-         "identifierFilterStrategies": [
-            {
-               "strategy": "MAP_REPLACE",
-               "mappings": { "Acme Corp": "Widget Co" },
-               "mappingFiles": [ "/etc/philter/vendors.tsv" ],
-               "caseSensitive": false,
-               "fallbackStrategy": "REDACT"
-            }
-         ]
-      }
+      "identifiers": [
+         {
+            "pattern": "Acme Corp|Globex",
+            "identifierFilterStrategies": [
+               {
+                  "strategy": "MAP_REPLACE",
+                  "mappings": { "Acme Corp": "Widget Co" },
+                  "mappingFiles": [ "/etc/philter/vendors.tsv" ],
+                  "caseSensitive": false,
+                  "fallbackStrategy": "REDACT"
+               }
+            ]
+         }
+      ]
    }
 }
 ```
@@ -337,10 +331,9 @@ An example policy using the `MASK` filter strategy:
 
 ```
 {
-   "name": "credit-cards",
    "identifiers": {
-      "creditCardNumbers": {
-         "creditCardNumbersFilterStrategies": [
+      "creditCard": {
+         "creditCardFilterStrategies": [
             {
                "strategy": "MASK",
                "maskCharacter": "#",
@@ -366,7 +359,6 @@ to 5 digits long. For example, `truncateLeaveCharacters=2` and a token of `90210
 
 ```
 {
-   "name": "zip-codes",
    "identifiers": {
       "zipCode": {
          "zipCodeFilterStrategies": [
@@ -388,9 +380,8 @@ The `ZERO_LEADING` filter strategy is only available to zip code filters. An exa
 
 ```
 {
-   "name": "zip-codes",
    "identifiers": {
-      "zipCodes": {
+      "zipCode": {
          "zipCodeFilterStrategies": [
             {
                "strategy": "ZERO_LEADING"
@@ -409,15 +400,16 @@ An example person's names filter using the `ABBREVIATE` filter strategy:
 
 ```
 {
-   "name": "ner-example",
    "identifiers": {
-      "pheye": {
-         "pheyeFilterStrategies": [
-            {
-               "strategy": "ABBREVIATE"
-            }
-         ]
-      }
+      "pheyes": [
+         {
+            "phEyeFilterStrategies": [
+               {
+                  "strategy": "ABBREVIATE"
+               }
+            ]
+         }
+      ]
    }
 }
 ```
@@ -430,7 +422,6 @@ The following is an example policy for credit cards that contains a condition to
 
 ```
 {
-  "name": "default",
   "identifiers": {
     "creditCard": {
       "creditCardFilterStrategies": [

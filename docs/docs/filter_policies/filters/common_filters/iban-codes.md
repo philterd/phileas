@@ -53,7 +53,6 @@ Each filter strategy may have one condition. See [Conditions](#conditions) for d
 
 ```
 {
-   "name": "iban-example",
    "identifiers": {
       "ibanCode": {
          "onlyValidIBANCodes": false,

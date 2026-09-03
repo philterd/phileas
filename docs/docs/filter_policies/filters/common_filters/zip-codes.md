@@ -64,7 +64,6 @@ the `POPULATION` conditional with this in mind.
 
 ```
 {
-   "name": "zip-code-example",
    "identifiers": {
       "zipCode": {
          "zipCodeFilterStrategies": [

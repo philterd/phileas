@@ -15,7 +15,6 @@ In the policy shown below, an ignore list is set at the level of the policy. The
 
 ```
 {
-   "name": "example-policy",
    "ignored": [
      {
        "name": "names to ignore",
@@ -40,12 +39,11 @@ Terms to be ignored at the policy level can also be read from one or more files 
 
 ```
 {
-   "name": "example-policy",
    "ignored": [
      {
        "name": "names to ignore",
        "terms": ["john smith", "jane doe"],
-       "files": ["/tmp/names.txt"]
+       "files": ["/tmp/names.txt"],
        "caseSensitive": false
      }
    ],   
@@ -68,7 +66,6 @@ In the policy shown below, an ignore list is set at the level of a filter. The t
 
 ```
 {
-   "name": "example-filter-profile",
    "identifiers": {
       "emailAddress": {
          "ignored": ["john smith", "jane doe"],
@@ -97,7 +94,6 @@ In the policy shown below, ignore patterns are set at the level of the policy. T
 
 ```
 {
-   "name": "example-policy",
    "ignoredPatterns": [
      {
        "name": "ignore-room-numbers",
@@ -123,7 +119,6 @@ In the policy shown below, ignore patterns are set at the level of a filter. The
 
 ```
 {
-   "name": "example-policy",
    "identifiers": {
       "emailAddress": {
          "ignoredPatterns": [
