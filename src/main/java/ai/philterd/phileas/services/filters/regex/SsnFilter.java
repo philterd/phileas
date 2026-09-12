@@ -46,7 +46,7 @@ public class SsnFilter extends RegexFilter {
         // Between the groups of an SSN: a hyphen, wrapped or not, or one horizontal space.
         final String separator = "(?:" + wrap + "|\\h)?";
 
-        final String ssn = "(?!000|666)[0-8][0-9]{2}" + separator + "(?!00)[0-9]{2}" + separator + "(?!0000)[0-9]{4}";
+        final String ssn = "(?!000|666)[0-8]\\d{2}" + separator + "(?!00)\\d{2}" + separator + "(?!0000)\\d{4}";
 
         // A match may not begin or end partway through a longer run of digits: that is what let a
         // fragment straddling two unseparated SSNs match while neither SSN did. Repeating the SSN

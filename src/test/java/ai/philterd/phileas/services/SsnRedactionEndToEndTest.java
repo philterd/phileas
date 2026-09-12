@@ -26,22 +26,25 @@ import ai.philterd.phileas.services.filters.filtering.PlainTextFilterService;
 import ai.philterd.phileas.services.strategies.rules.SsnFilterStrategy;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.List;
 import java.util.Properties;
+import java.util.stream.Stream;
 
 /**
  * Redaction of SSNs written with Unicode hyphens or wrapped across a line break, checked on the
  * filtered text rather than on the spans.
  */
-public class SsnRedactionEndToEndTest {
+class SsnRedactionEndToEndTest {
 
     private PlainTextFilterService filterService;
     private Policy policy;
 
     @BeforeEach
-    public void setup() throws Exception {
+    void setup() {
 
         filterService = new PlainTextFilterService(new PhileasConfiguration(new Properties()),
                 new DefaultContextService(), new InMemoryVectorService(), null);
@@ -57,49 +60,34 @@ public class SsnRedactionEndToEndTest {
 
     }
 
-    @Test
-    public void redactAscii() throws Exception {
-
-        final TextFilterResult result = filterService.filter(policy, "context", "SSN: 078-05-1120 end");
-        Assertions.assertEquals("SSN: {{{REDACTED-ssn}}} end", result.getFilteredText());
-
+    private static Stream<Arguments> redactions() {
+        return Stream.of(
+                Arguments.of("ASCII control",
+                        "SSN: 078-05-1120 end",
+                        "SSN: {{{REDACTED-ssn}}} end"),
+                Arguments.of("non-breaking hyphens",
+                        "SSN: 078‑05‑1120 end",
+                        "SSN: {{{REDACTED-ssn}}} end"),
+                // The whole identifier goes, line break included, and the surrounding text is untouched.
+                Arguments.of("wrapped across a line break",
+                        "SSN: 078-05-\n1120 end",
+                        "SSN: {{{REDACTED-ssn}}} end"),
+                Arguments.of("repeated identifiers in different forms",
+                        "СНИЛС 078‑05‑1120 и 078-05-\n1120 конец",
+                        "СНИЛС {{{REDACTED-ssn}}} и {{{REDACTED-ssn}}} конец"),
+                // No hyphen precedes the breaks, so the numbers are left alone.
+                Arguments.of("numbers on separate lines",
+                        "totals\n123\n45\n6789\n",
+                        "totals\n123\n45\n6789\n")
+        );
     }
 
-    @Test
-    public void redactNonBreakingHyphens() throws Exception {
-
-        final TextFilterResult result = filterService.filter(policy, "context", "SSN: 078‑05‑1120 end");
-        Assertions.assertEquals("SSN: {{{REDACTED-ssn}}} end", result.getFilteredText());
-
-    }
-
-    @Test
-    public void redactLineWrapped() throws Exception {
-
-        // The whole identifier goes, line break included, and the surrounding text is untouched.
-        final TextFilterResult result = filterService.filter(policy, "context", "SSN: 078-05-\n1120 end");
-        Assertions.assertEquals("SSN: {{{REDACTED-ssn}}} end", result.getFilteredText());
-
-    }
-
-    @Test
-    public void redactRepeatedIdentifiers() throws Exception {
-
-        final String input = "СНИЛС 078‑05‑1120 и 078-05-\n1120 конец";
+    @ParameterizedTest(name = "{0}")
+    @MethodSource("redactions")
+    void redact(final String description, final String input, final String expected) throws Exception {
 
         final TextFilterResult result = filterService.filter(policy, "context", input);
-        Assertions.assertEquals("СНИЛС {{{REDACTED-ssn}}} и {{{REDACTED-ssn}}} конец",
-                result.getFilteredText());
-
-    }
-
-    @Test
-    public void leaveNumbersOnSeparateLines() throws Exception {
-
-        final String input = "totals\n123\n45\n6789\n";
-
-        final TextFilterResult result = filterService.filter(policy, "context", input);
-        Assertions.assertEquals(input, result.getFilteredText());
+        Assertions.assertEquals(expected, result.getFilteredText(), description);
 
     }
 
