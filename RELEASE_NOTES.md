@@ -6,6 +6,8 @@ Full changelogs for each release are available in the [GitHub releases](https://
 
 ## Version 4.5.0 - Not yet released
 
+* The span offsets returned when splitting is enabled now index into the input rather than into the filtered output, and the input's whitespace is preserved in the filtered text. Previously this held only when a non-zero `overlap` was configured; at the default `overlap` of `0` each piece was filtered on its own and the pieces were trimmed and rejoined with a single separator, so `characterStart` and `characterEnd` pointed into the redacted output and the original newlines and runs of spaces were lost. The filtered text itself was correct. Anything using span positions, such as reviewer tooling or a redaction ledger, was affected. Locating the pieces is also more reliable: it now skips exactly the characters the splitters trim (every character at or below U+0020) rather than those `Character.isWhitespace` reports, so a document carrying a stray control character, a U+2028 line separator, or a U+3000 ideographic space no longer falls back to the path with the drifted offsets. (issue #386)
+
 ## Version 4.4.0 - September 3, 2026
 
 * Using PhiSQL 1.4.0.

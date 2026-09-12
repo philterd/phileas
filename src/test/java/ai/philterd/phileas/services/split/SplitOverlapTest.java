@@ -142,6 +142,28 @@ class SplitOverlapTest {
     }
 
     @Test
+    void piecesAreLocatedPastExactlyWhatTheSplittersTrim() {
+
+        // String.trim removes every character at or below U+0020 and nothing above it, so a
+        // control character must be skipped and a U+2028 or U+3000 must not be.
+        for(final char awkward : new char[]{'\u0001', '\u001F', '\u2028', '\u2029', '\u3000', '\u00A0'}) {
+
+            final String input = awkward + "line one\nline two\nline three";
+
+            for(final SplitService splitService : List.of(new NewLineSplitService(), new LineWidthSplitService(10))) {
+
+                final List<TextSplit> splits = splitService.splitWithOverlap(input, 4).orElseThrow(
+                        () -> new AssertionError("not located past " + Integer.toHexString(awkward)));
+
+                assertEveryPieceIsVerbatim(input, splits);
+
+            }
+
+        }
+
+    }
+
+    @Test
     void blankInputProducesNoPieces() {
 
         Assertions.assertTrue(new CharacterCountSplitService(20).splitWithOverlap("   ", 5).orElseThrow().isEmpty());

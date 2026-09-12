@@ -106,7 +106,7 @@ public class EndToEndWithIncrementalRedactionsTest {
 
         LOGGER.info(response.getFilteredText());
 
-        Assertions.assertEquals("George Washington whose SSN was {{{REDACTED-ssn}}} was\nthe first president of the United States and he lived at {{{REDACTED-zip-code}}}.\nThe second president was John Adams. Abraham Lincoln was later on. His SSN was {{{REDACTED-ssn}}}.", response.getFilteredText());
+        Assertions.assertEquals("George Washington whose SSN was {{{REDACTED-ssn}}} was\n the first president of the United States and he lived at {{{REDACTED-zip-code}}}.\nThe second president was John Adams. Abraham Lincoln was later on. His SSN was {{{REDACTED-ssn}}}.", response.getFilteredText());
 
         for(final IncrementalRedaction incrementalRedaction : response.getIncrementalRedactions()) {
             LOGGER.info("Incremental Redaction: {}", incrementalRedaction);

@@ -38,8 +38,8 @@ public interface SplitService {
      *
      * @param input The text to split.
      * @param overlap The number of characters each piece shares with the previous one.
-     * @return The pieces with their offsets, or empty when the pieces are not verbatim substrings of
-     *         the input and so cannot be located in it. Callers must then split without an overlap.
+     * @return The pieces with their offsets, or empty when they are not verbatim substrings of the
+     *         input. Callers must then filter each piece on its own, losing the input offsets.
      */
     default Optional<List<TextSplit>> splitWithOverlap(final String input, final int overlap) {
 
@@ -53,12 +53,12 @@ public interface SplitService {
             // Each piece must begin at the cursor, give or take the whitespace the splitter consumed.
             // Searching further would risk matching identical text elsewhere and mislocating spans.
             int start = cursor;
-            while(start < input.length() && Character.isWhitespace(input.charAt(start))) {
+            while(start < input.length() && isTrimmable(input.charAt(start))) {
                 start++;
             }
 
             if(!input.startsWith(piece, start)) {
-                SPLIT_LOGGER.warn("Split pieces are not verbatim in the input; splitting without an overlap.");
+                SPLIT_LOGGER.warn("Split pieces are not verbatim in the input; filtering the pieces separately, so span offsets will not index into the input.");
                 return Optional.empty();
             }
 
@@ -72,6 +72,15 @@ public interface SplitService {
 
         return Optional.of(splits);
 
+    }
+
+    /**
+     * Whether a splitter may have dropped this character between two pieces: what String.trim
+     * removes. Character.isWhitespace is wrong both ways, missing control characters and matching
+     * separators such as U+2028 that trim leaves in place.
+     */
+    private static boolean isTrimmable(final char c) {
+        return c <= ' ';
     }
 
 }

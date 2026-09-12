@@ -171,18 +171,17 @@ public class PlainTextFilterService extends TextFilterService {
 
             final int overlap = policy.getConfig().getSplitting().getOverlap();
 
-            // Empty when the pieces cannot be located in the input, in which case the contiguous
-            // path below is used instead.
-            final Optional<List<TextSplit>> overlapped = overlap > 0
-                    ? splitService.splitWithOverlap(input, overlap)
-                    : Optional.empty();
+            // Locating the pieces is what keeps span offsets indexing into the input, so it runs
+            // with or without an overlap. Empty when they cannot be located.
+            final Optional<List<TextSplit>> located = splitService.splitWithOverlap(input, overlap);
 
-            if (overlapped.isPresent()) {
+            if (located.isPresent()) {
 
                 // Filtered pieces cannot be concatenated when they share text, and a seam entity
-                // belongs to neither piece alone. Detect over all pieces, then apply once.
+                // belongs to neither piece alone. Detect over all pieces, then apply once to the
+                // input, which also preserves its whitespace.
                 final List<Span> identifiedSpans = new LinkedList<>();
-                final List<TextSplit> splits = overlapped.get();
+                final List<TextSplit> splits = located.get();
 
                 for (int i = 0; i < splits.size(); i++) {
                     final TextSplit split = splits.get(i);

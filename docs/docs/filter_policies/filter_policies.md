@@ -157,8 +157,18 @@ whole. Set it larger than the longest value you expect to detect.
 ```
 
 A value found in an overlap is detected by both pieces. Phileas keeps one of them and reports it at its position in the
-whole document, so an overlap does not produce duplicate spans or shifted offsets. The cost is that the overlapping
-text is scanned twice, so prefer the smallest overlap that covers your values.
+whole document, so an overlap does not produce duplicate spans. The cost is that the overlapping text is scanned twice,
+so prefer the smallest overlap that covers your values.
+
+Splitting does not change the positions Phileas reports or the text it returns. The pieces are located in the input,
+so `characterStart` and `characterEnd` index into the input rather than into the filtered output, and the replacements
+are applied to the input, so its newlines and runs of spaces are preserved. This holds with or without an overlap.
+
+A piece that cannot be located in the input falls back to filtering each piece on its own and joining the results.
+That does shift the reported positions and normalizes whitespace, and a shifted position can fall outside the input
+altogether, so do not index into the input with it. In practice only the `characters` method produces such a piece,
+and only when the character separating two sentences is not a space, since it rejoins them with one. The fallback logs
+a `WARN` beginning "Split pieces are not verbatim in the input".
 
 ### Span Disambiguation
 
