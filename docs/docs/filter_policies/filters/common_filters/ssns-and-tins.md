@@ -4,6 +4,37 @@
 
 This filter identifies US SSNs and TINs such as `123-45-6789` and `123456789` in text.
 
+### Separators
+
+Between the digit groups of an SSN the filter accepts a hyphen, a single horizontal whitespace
+character (a space, a tab, or a non-breaking space), or nothing at all. In place of the ASCII
+hyphen it also accepts the soft hyphen (U+00AD), the dashes U+2010 through U+2015 (which include
+the non-breaking hyphen U+2011), the minus sign (U+2212), and the small and fullwidth hyphen-minus
+forms (U+FE58, U+FE63, U+FF0D). A TIN requires one of these hyphens.
+
+An identifier wrapped across a line break is detected when the break follows a hyphen:
+
+```
+SSN: 078-05-
+1120
+```
+
+Indentation on the continuation line is allowed. The span covers the whole identifier, line break
+included, and its offsets index into the original text, since the input is not normalized before
+matching.
+
+The following are not detected:
+
+* A line break that no hyphen precedes, so digits on separate lines are not joined into an
+  identifier.
+* A break inside a digit group, such as `078-05-11` followed by `20` on the next line.
+* Digits outside ASCII, such as fullwidth or Arabic-Indic digits.
+* More than one whitespace character between groups.
+
+When `splitting` is enabled with the `newline` method, a wrapped identifier falls across two pieces
+and is not detected at the default `overlap` of `0`. Set an `overlap` at least as long as the
+identifier to keep it detectable.
+
 ### Required Parameters
 
 This filter has no required parameters.
