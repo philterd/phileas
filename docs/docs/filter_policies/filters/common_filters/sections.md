@@ -10,6 +10,11 @@ expression pattern.
 > exhausts the stack, filtering that input fails with an error naming the filter and the pattern. No partially filtered
 > text is returned. The budget is controlled by the `regex.timeout.ms`
 > [setting](../../../settings.md#advanced-settings) (default `1000` ms).
+>
+> Both patterns are also checked when the policy is loaded: each is compiled, and the joined pattern the
+> filter runs is given a probe under the same budget. A pattern that does not compile, exhausts the budget,
+> or exhausts the stack is rejected there rather than on a document. The check is not exhaustive, so the
+> limits above still apply at filtering time.
 
 ### Required Parameters
 

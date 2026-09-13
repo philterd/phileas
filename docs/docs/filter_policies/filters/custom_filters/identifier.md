@@ -14,6 +14,11 @@ _Note that backslashes in the regular expression will need to be escaped for the
 > that input fails with an error naming the filter and the pattern. No partially filtered text is returned: a document
 > that looks filtered while the values the pattern covers are still in it is worse than a visible failure. The budget is
 > controlled by the `regex.timeout.ms` [setting](../../../settings.md#advanced-settings) (default `1000` ms).
+>
+> The pattern is also checked when the policy is loaded: it is compiled, then run against canary inputs under
+> the same budget. A pattern that does not compile, exhausts the budget, or exhausts the stack is rejected
+> there, so the policy fails rather than whichever document first produces a token that reaches the pattern.
+> The check is not exhaustive, so the limits above still apply at filtering time.
 
 ### Required Parameters
 

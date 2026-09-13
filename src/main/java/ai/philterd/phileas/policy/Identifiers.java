@@ -16,6 +16,7 @@
 package ai.philterd.phileas.policy;
 
 import ai.philterd.phileas.model.filtering.FilterType;
+import ai.philterd.phileas.policy.filters.AbstractFilter;
 import ai.philterd.phileas.policy.filters.Age;
 import ai.philterd.phileas.policy.filters.BankRoutingNumber;
 import ai.philterd.phileas.policy.filters.BitcoinAddress;
@@ -53,7 +54,10 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import ai.philterd.phileas.utils.CollectionUtils;
 
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Stream;
 
 public class Identifiers {
 
@@ -195,6 +199,30 @@ public class Identifiers {
     private Surname surname;
 
     public Identifiers() {
+
+    }
+
+    /**
+     * Every filter this policy declares, whether or not it is enabled.
+     * @return The non-null filters, including those held in lists.
+     */
+    public List<AbstractFilter> getAllFilters() {
+
+        final List<AbstractFilter> filters = new LinkedList<>();
+
+        Stream.of(age, bankRoutingNumber, bitcoinAddress, city, county, creditCard, currency, date,
+                        driversLicense, ein, emailAddress, firstName, hospital, ibanCode, ipAddress,
+                        macAddress, medicalCondition, passportNumber, person, phoneNumber,
+                        phoneNumberExtension, ssn, state, stateAbbreviation, streetAddress, surname,
+                        trackingNumber, url, vin, zipCode)
+                .filter(Objects::nonNull)
+                .forEach(filters::add);
+
+        Stream.of(customDictionaries, identifiers, phEyes, sections)
+                .filter(Objects::nonNull)
+                .forEach(filters::addAll);
+
+        return filters;
 
     }
 
