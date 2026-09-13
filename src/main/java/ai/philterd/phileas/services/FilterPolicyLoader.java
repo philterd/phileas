@@ -142,14 +142,6 @@ public class FilterPolicyLoader {
     }
 
     /**
-     * Build the complete list of filters for a policy. This is the cache-miss path of
-     * {@link #getFiltersForPolicy(Policy, Map)} and is invoked at most once per distinct policy.
-     * @param policy The {@link Policy} containing the filters.
-     * @param policyKey A hash of the policy, used only for logging.
-     * @return A list of {@link Filter} from the policy.
-     * @throws Exception Thrown if the policy cannot be read or the filters cannot be instantiated.
-     */
-    /**
      * Resolves the policy's named {@link Generator} definitions into invocable
      * {@link ReplacementGenerator} instances, keyed by generator name. Called once per policy load;
      * the resulting instances are shared across every filter built for the policy.
@@ -189,7 +181,19 @@ public class FilterPolicyLoader {
 
     }
 
+    /**
+     * Build the complete list of filters for a policy. This is the cache-miss path of
+     * {@link #getFiltersForPolicy(Policy, Map)} and is invoked at most once per distinct policy.
+     * @param policy The {@link Policy} containing the filters.
+     * @param policyKey A hash of the policy, used only for logging.
+     * @return A list of {@link Filter} from the policy.
+     * @throws Exception Thrown if the policy cannot be read or the filters cannot be instantiated.
+     */
     private List<Filter> buildFilters(final Policy policy, final String policyKey) throws Exception {
+
+        // Reject a bad pattern here, where the cost is paid once per policy, rather than on whichever
+        // document first reaches it.
+        new PolicyPatternValidator(phileasConfiguration.regexTimeoutMs()).validate(policy);
 
         final List<Filter> enabledFilters = new LinkedList<>();
 

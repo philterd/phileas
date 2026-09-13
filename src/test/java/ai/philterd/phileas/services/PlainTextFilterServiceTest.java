@@ -22,7 +22,7 @@ import ai.philterd.phileas.model.filtering.Span;
 import ai.philterd.phileas.model.filtering.TextFilterResult;
 import ai.philterd.phileas.policy.Ignored;
 import ai.philterd.phileas.policy.Policy;
-import ai.philterd.phileas.policy.RegexMatchFailedException;
+import ai.philterd.phileas.policy.InvalidPolicyPatternException;
 import ai.philterd.phileas.services.context.ContextService;
 import ai.philterd.phileas.services.context.DefaultContextService;
 import ai.philterd.phileas.services.disambiguation.vector.VectorService;
@@ -87,11 +87,12 @@ public class PlainTextFilterServiceTest {
     }
 
     /**
-     * An identifier pattern that overflows the stack fails the whole document, with no partially
-     * filtered text returned. See https://github.com/philterd/phileas/issues/357.
+     * An identifier pattern that overflows the stack is rejected when the policy is loaded, so it
+     * fails on a document that contains nothing for it to match. The filter-level guard still covers
+     * a pattern that only misbehaves on input the load-time probe does not resemble.
      */
     @Test
-    public void stackOverflowInAnIdentifierPatternFailsTheDocument() throws Exception {
+    public void stackOverflowInAnIdentifierPatternFailsThePolicy() throws Exception {
 
         final Policy policy = getPolicy();
 
@@ -102,13 +103,11 @@ public class PlainTextFilterServiceTest {
         identifier.setCaseSensitive(true);
         policy.getIdentifiers().setIdentifiers(List.of(identifier));
 
-        final String input = "x".repeat(20_000) + " the email is test@something.com";
-
         final PlainTextFilterService service = new PlainTextFilterService(
                 new PhileasConfiguration(new Properties()), contextService, vectorService, null);
 
-        final RegexMatchFailedException e = Assertions.assertThrows(RegexMatchFailedException.class,
-                () -> service.filter(policy, "context", input));
+        final InvalidPolicyPatternException e = Assertions.assertThrows(InvalidPolicyPatternException.class,
+                () -> service.filter(policy, "context", "short"));
 
         Assertions.assertTrue(e.getMessage().contains("overflowed the stack"), e.getMessage());
 
