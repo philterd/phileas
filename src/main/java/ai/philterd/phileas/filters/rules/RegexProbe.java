@@ -81,15 +81,20 @@ public final class RegexProbe {
 
         final Set<String> units = new LinkedHashSet<>(BASE_UNITS);
 
-        for (int i = 0; i < regex.length() && units.size() < MAX_UNITS; i++) {
+        int i = 0;
+
+        while (i < regex.length() && units.size() < MAX_UNITS) {
 
             final char c = regex.charAt(i);
 
             if (c == '\\') {
                 // Skip the escaped character: the 'd' of "\d" is not a literal.
+                i += 2;
+            } else {
+                if (Character.isLetterOrDigit(c)) {
+                    units.add(String.valueOf(c));
+                }
                 i++;
-            } else if (Character.isLetterOrDigit(c)) {
-                units.add(String.valueOf(c));
             }
 
         }

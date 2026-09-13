@@ -124,7 +124,7 @@ class PolicyPatternValidationTest {
     }
 
     @Test
-    void rejectBeforeAnyDocumentReachesThePattern() throws Exception {
+    void rejectBeforeAnyDocumentReachesThePattern() {
 
         // The failure used to depend on the document: one with no matching token filtered fine.
         final Policy policy = withIgnoredPattern(MALFORMED);
