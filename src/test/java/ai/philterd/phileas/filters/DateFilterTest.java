@@ -24,6 +24,8 @@ import ai.philterd.phileas.services.validators.DateSpanValidator;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.time.LocalDate;
+import java.time.Period;
 import java.util.List;
 
 import static ai.philterd.phileas.services.strategies.AbstractFilterStrategy.RANDOM_REPLACE;
@@ -421,8 +423,10 @@ public class DateFilterTest extends AbstractFilterTest {
 
         showSpans(filtered.getSpans());
         Assertions.assertEquals(1, filtered.getSpans().size());
-        // This value can differ depending on when the test is run.
-        Assertions.assertTrue(filtered.getSpans().get(0).getReplacement().startsWith("16 years") || filtered.getSpans().get(0).getReplacement().startsWith("14 years"));
+        // The replacement is relative to today, so compute the expected years rather than fixing them.
+        final int years = Period.between(LocalDate.of(2009, 10, 1), LocalDate.now()).getYears();
+        final String replacement = filtered.getSpans().get(0).getReplacement();
+        Assertions.assertTrue(replacement.startsWith(years + " years ") && replacement.endsWith(" months ago"), replacement);
 
     }
 
