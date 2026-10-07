@@ -43,7 +43,9 @@ jobs:
         # Only publish when the resolved version is a snapshot; a release version
         # must never be pushed into the snapshot channel. Skip cleanly otherwise.
         if: endsWith(steps.version.outputs.version, '-SNAPSHOT')
-        run: mvn --batch-mode --no-transfer-progress -DskipTests deploy
+        # Maven 3.10 sends a server's credentials only to its declared origins, and the server id
+        # "central" is bound to repo.maven.apache.org, so the Sonatype upload got a 401. Restore id matching.
+        run: mvn --batch-mode --no-transfer-progress -DskipTests -Dmaven.repository.credentialScope=id deploy
         env:
           MAVEN_CENTRAL_USERNAME: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
           MAVEN_CENTRAL_PASSWORD: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
