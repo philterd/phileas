@@ -33,7 +33,24 @@ import java.util.regex.Pattern;
 public class TrackingNumberFilter extends RegexFilter {
 
     public TrackingNumberFilter(FilterConfiguration filterConfiguration, final boolean ups, final boolean fedex, final boolean usps) {
+        this(filterConfiguration, ups, fedex, usps, false);
+    }
+
+    /**
+     * Creates a new tracking number filter.
+     * @param filterConfiguration The {@link FilterConfiguration} for the filter.
+     * @param ups Whether to detect UPS tracking numbers.
+     * @param fedex Whether to detect FedEx tracking numbers.
+     * @param usps Whether to detect USPS tracking numbers.
+     * @param allowSpaces Whether to also detect a tracking number written in space-separated groups.
+     */
+    public TrackingNumberFilter(FilterConfiguration filterConfiguration, final boolean ups, final boolean fedex, final boolean usps,
+                                final boolean allowSpaces) {
         super(FilterType.TRACKING_NUMBER, filterConfiguration);
+
+        // With spaces allowed, a single space may sit between any two characters of the number, so a
+        // number printed in groups is matched whole. The number still starts and ends on a character.
+        final String sp = allowSpaces ? " ?" : "";
 
         // https://andrewkurochkin.com/blog/code-for-recognizing-delivery-company-by-track
 
@@ -42,19 +59,19 @@ public class TrackingNumberFilter extends RegexFilter {
         if(fedex) {
 
             // FedEx
-            final Pattern fedex1 = Pattern.compile("\\b\\d{20}\\b", Pattern.CASE_INSENSITIVE);
+            final Pattern fedex1 = Pattern.compile("\\b" + run("\\d", 20, allowSpaces) + "\\b", Pattern.CASE_INSENSITIVE);
             final FilterPattern fedex1FilterPattern = new FilterPattern.FilterPatternBuilder(fedex1, 0.75).withClassification("fedex").build();
             filterPatterns.add(fedex1FilterPattern);
 
-            final Pattern fedex2 = Pattern.compile("\\b\\d{15}\\b", Pattern.CASE_INSENSITIVE);
+            final Pattern fedex2 = Pattern.compile("\\b" + run("\\d", 15, allowSpaces) + "\\b", Pattern.CASE_INSENSITIVE);
             final FilterPattern fedex2FilterPattern = new FilterPattern.FilterPatternBuilder(fedex2, 0.75).withClassification("fedex").build();
             filterPatterns.add(fedex2FilterPattern);
 
-            final Pattern fedex3 = Pattern.compile("\\b\\d{12}\\b", Pattern.CASE_INSENSITIVE);
+            final Pattern fedex3 = Pattern.compile("\\b" + run("\\d", 12, allowSpaces) + "\\b", Pattern.CASE_INSENSITIVE);
             final FilterPattern fedex3FilterPattern = new FilterPattern.FilterPatternBuilder(fedex3, 0.75).withClassification("fedex").build();
             filterPatterns.add(fedex3FilterPattern);
 
-            final Pattern fedex4 = Pattern.compile("\\b\\d{22}\\b", Pattern.CASE_INSENSITIVE);
+            final Pattern fedex4 = Pattern.compile("\\b" + run("\\d", 22, allowSpaces) + "\\b", Pattern.CASE_INSENSITIVE);
             final FilterPattern fedex4FilterPattern = new FilterPattern.FilterPatternBuilder(fedex4, 0.75).withClassification("fedex").build();
             filterPatterns.add(fedex4FilterPattern);
 
@@ -64,19 +81,19 @@ public class TrackingNumberFilter extends RegexFilter {
 
             // UPS
 
-            final Pattern ups1 = Pattern.compile("\\b(1Z)[\\dA-Z]{16}\\b", Pattern.CASE_INSENSITIVE);
+            final Pattern ups1 = Pattern.compile("\\b(1Z)" + sp + run("[\\dA-Z]", 16, allowSpaces) + "\\b", Pattern.CASE_INSENSITIVE);
             final FilterPattern ups1FilterPattern = new FilterPattern.FilterPatternBuilder(ups1, 0.90).withClassification("ups").build();
             filterPatterns.add(ups1FilterPattern);
 
-            final Pattern ups2 = Pattern.compile("\\b(T)+[\\dA-Z]{10}\\b", Pattern.CASE_INSENSITIVE);
+            final Pattern ups2 = Pattern.compile("\\b(T)+" + sp + run("[\\dA-Z]", 10, allowSpaces) + "\\b", Pattern.CASE_INSENSITIVE);
             final FilterPattern ups2FilterPattern = new FilterPattern.FilterPatternBuilder(ups2, 0.90).withClassification("ups").build();
             filterPatterns.add(ups2FilterPattern);
 
-            final Pattern ups3 = Pattern.compile("\\b\\d{9}\\b", Pattern.CASE_INSENSITIVE);
+            final Pattern ups3 = Pattern.compile("\\b" + run("\\d", 9, allowSpaces) + "\\b", Pattern.CASE_INSENSITIVE);
             final FilterPattern ups3FilterPattern = new FilterPattern.FilterPatternBuilder(ups3, 0.75).withClassification("ups").build();
             filterPatterns.add(ups3FilterPattern);
 
-            final Pattern ups4 = Pattern.compile("\\b\\d{26}\\b", Pattern.CASE_INSENSITIVE);
+            final Pattern ups4 = Pattern.compile("\\b" + run("\\d", 26, allowSpaces) + "\\b", Pattern.CASE_INSENSITIVE);
             final FilterPattern ups4FilterPattern = new FilterPattern.FilterPatternBuilder(ups4, 0.75).withClassification("ups").build();
             filterPatterns.add(ups4FilterPattern);
 
@@ -86,11 +103,11 @@ public class TrackingNumberFilter extends RegexFilter {
 
             // USPS
 
-            final Pattern usps1 = Pattern.compile("\\b(94|93|92|94|95)\\d{20}\\b", Pattern.CASE_INSENSITIVE);
+            final Pattern usps1 = Pattern.compile("\\b(94|93|92|94|95)" + sp + run("\\d", 20, allowSpaces) + "\\b", Pattern.CASE_INSENSITIVE);
             final FilterPattern usps1FilterPattern = new FilterPattern.FilterPatternBuilder(usps1, 0.90).withClassification("usps").build();
             filterPatterns.add(usps1FilterPattern);
 
-            final Pattern usps2 = Pattern.compile("\\b(94|93|92|94|95)\\d{22}\\b", Pattern.CASE_INSENSITIVE);
+            final Pattern usps2 = Pattern.compile("\\b(94|93|92|94|95)" + sp + run("\\d", 22, allowSpaces) + "\\b", Pattern.CASE_INSENSITIVE);
             final FilterPattern usps2FilterPattern = new FilterPattern.FilterPatternBuilder(usps2, 0.90).withClassification("usps").build();
             filterPatterns.add(usps2FilterPattern);
 
@@ -100,27 +117,27 @@ public class TrackingNumberFilter extends RegexFilter {
             final FilterPattern usps2GroupedFilterPattern = new FilterPattern.FilterPatternBuilder(usps2Grouped, 0.90).withClassification("usps").build();
             filterPatterns.add(usps2GroupedFilterPattern);
 
-            final Pattern usps3 = Pattern.compile("\\b(70|14|23|03)\\d{14}\\b", Pattern.CASE_INSENSITIVE);
+            final Pattern usps3 = Pattern.compile("\\b(70|14|23|03)" + sp + run("\\d", 14, allowSpaces) + "\\b", Pattern.CASE_INSENSITIVE);
             final FilterPattern usps3FilterPattern = new FilterPattern.FilterPatternBuilder(usps3, 0.90).withClassification("usps").build();
             filterPatterns.add(usps3FilterPattern);
 
-            final Pattern usps4 = Pattern.compile("\\b([A-Z]{2})\\d{9}([A-Z]{2})\\b", Pattern.CASE_INSENSITIVE);
+            final Pattern usps4 = Pattern.compile("\\b([A-Z]{2})" + sp + run("\\d", 9, allowSpaces) + sp + "([A-Z]{2})\\b", Pattern.CASE_INSENSITIVE);
             final FilterPattern usps4FilterPattern = new FilterPattern.FilterPatternBuilder(usps4, 0.90).withClassification("usps").build();
             filterPatterns.add(usps4FilterPattern);
 
-            final Pattern usps5 = Pattern.compile("\\b\\d{34}\\b", Pattern.CASE_INSENSITIVE);
+            final Pattern usps5 = Pattern.compile("\\b" + run("\\d", 34, allowSpaces) + "\\b", Pattern.CASE_INSENSITIVE);
             final FilterPattern usps5FilterPattern = new FilterPattern.FilterPatternBuilder(usps5, 0.75).withClassification("usps").build();
             filterPatterns.add(usps5FilterPattern);
 
-            final Pattern usps6 = Pattern.compile("\\b\\d{30}\\b", Pattern.CASE_INSENSITIVE);
+            final Pattern usps6 = Pattern.compile("\\b" + run("\\d", 30, allowSpaces) + "\\b", Pattern.CASE_INSENSITIVE);
             final FilterPattern usps6FilterPattern = new FilterPattern.FilterPatternBuilder(usps6, 0.75).withClassification("usps").build();
             filterPatterns.add(usps6FilterPattern);
 
-            final Pattern usps7 = Pattern.compile("\\b\\d{28}\\b", Pattern.CASE_INSENSITIVE);
+            final Pattern usps7 = Pattern.compile("\\b" + run("\\d", 28, allowSpaces) + "\\b", Pattern.CASE_INSENSITIVE);
             final FilterPattern usps7FilterPattern = new FilterPattern.FilterPatternBuilder(usps7, 0.75).withClassification("usps").build();
             filterPatterns.add(usps7FilterPattern);
 
-            final Pattern usps8 = Pattern.compile("\\b\\d{26}\\b", Pattern.CASE_INSENSITIVE);
+            final Pattern usps8 = Pattern.compile("\\b" + run("\\d", 26, allowSpaces) + "\\b", Pattern.CASE_INSENSITIVE);
             final FilterPattern usps8FilterPattern = new FilterPattern.FilterPatternBuilder(usps8, 0.75).withClassification("usps").build();
             filterPatterns.add(usps8FilterPattern);
 
@@ -136,6 +153,20 @@ public class TrackingNumberFilter extends RegexFilter {
 
         this.analyzer = new Analyzer(contextualTerms, filterPatterns);
 
+    }
+
+    /**
+     * Returns a pattern for a run of characters. With spaces allowed, a single space may separate
+     * any two of them.
+     * @param characterClass The pattern for one character.
+     * @param length The number of characters.
+     * @param allowSpaces Whether a space may separate the characters.
+     * @return The pattern.
+     */
+    private static String run(final String characterClass, final int length, final boolean allowSpaces) {
+        return allowSpaces
+                ? characterClass + "(?: ?" + characterClass + "){" + (length - 1) + "}"
+                : characterClass + "{" + length + "}";
     }
 
     @Override

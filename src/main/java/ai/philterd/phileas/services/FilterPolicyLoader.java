@@ -698,8 +698,9 @@ public class FilterPolicyLoader {
             final boolean ups = policy.getIdentifiers().getTrackingNumber().isUps();
             final boolean fedex = policy.getIdentifiers().getTrackingNumber().isFedex();
             final boolean usps = policy.getIdentifiers().getTrackingNumber().isUsps();
+            final boolean allowSpaces = policy.getIdentifiers().getTrackingNumber().isAllowSpaces();
 
-            final Filter filter = new TrackingNumberFilter(filterConfiguration, ups, fedex, usps);
+            final Filter filter = new TrackingNumberFilter(filterConfiguration, ups, fedex, usps, allowSpaces);
             enabledFilters.add(filter);
 
         }
