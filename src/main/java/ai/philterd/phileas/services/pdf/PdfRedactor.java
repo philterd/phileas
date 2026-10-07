@@ -56,7 +56,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -127,8 +129,10 @@ public class PdfRedactor extends PDFTextStripper {
 
         // Redact the bounding boxes in the output stream.
         final List<BoundingBox> boundingBoxes = new LinkedList<>(policy.getGraphical().getBoundingBoxes());
+        final Set<Integer> boundingBoxPages = new HashSet<>();
         for (final BoundingBox boundingBox : boundingBoxes) {
 
+            boundingBoxPages.add(boundingBox.getPage() - 1);
             final PDPage page = pdDocument.getPage(boundingBox.getPage() - 1);
             final PDPageContentStream contentStream = new PDPageContentStream(pdDocument, page, PDPageContentStream.AppendMode.APPEND, true);
 
@@ -189,8 +193,8 @@ public class PdfRedactor extends PDFTextStripper {
             // Scaling, DPI and Compression can be tuned to control output quality and size of the resulting pdf.
             boolean preserveUnredactedPages = pdfRedactionOptions.getPreserveUnredactedPages();
             for (int x = 0; x < pdDocument.getNumberOfPages(); x++) {
-                // We want to preserve unredacted pages and we don't have a redaction rectangle for this page, transpose
-                if (preserveUnredactedPages && !rectangles.containsKey(x)) {
+                // A bounding box is only drawn over the text, so its page must be rasterized too.
+                if (preserveUnredactedPages && !rectangles.containsKey(x) && !boundingBoxPages.contains(x)) {
                     LOGGER.debug("Copying page {} from input to output document as no redaction needed on page", x);
                     PDPage inputPage = pdDocument.getPage(x);
                     outputPdfDocument.importPage(inputPage);
