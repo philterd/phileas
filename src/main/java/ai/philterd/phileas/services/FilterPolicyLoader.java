@@ -1100,6 +1100,7 @@ public class FilterPolicyLoader {
                     phEyeConfiguration.setBearerToken(phEyePolicyConfig.getBearerToken());
                     phEyeConfiguration.setLabels(phEyePolicyConfig.getLabels());
                     phEyeConfiguration.setModelPath(phEyePolicyConfig.getModelPath());
+                    phEyeConfiguration.setThreshold(phEyePolicyConfig.getThreshold());
 
                     final Filter filter = new PhEyeFilter(
                             filterConfiguration,
@@ -1145,6 +1146,7 @@ public class FilterPolicyLoader {
             phEyeConfiguration.setBearerToken(phEyePolicyConfig.getBearerToken());
             phEyeConfiguration.setLabels(phEyePolicyConfig.getLabels());
             phEyeConfiguration.setModelPath(phEyePolicyConfig.getModelPath());
+            phEyeConfiguration.setThreshold(phEyePolicyConfig.getThreshold());
 
             final Filter filter = new PhEyeFilter(
                     filterConfiguration,

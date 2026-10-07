@@ -23,6 +23,7 @@ This filter requires the connection properties for the ph-eye service in a `phEy
 | `phEyeFilterStrategies` | A list of filter strategies.                                                                                                                                                                                 | None                                                     |
 | `bearerToken`           | A bearer token for the Ph-Eye service.                                                                                                                                                                       | None                                                     |
 | `modelPath`             | Path to a local GLiNER model directory for on-device inference. When set, detection runs locally instead of calling the remote `endpoint`. See [Local inference](#local-inference) below.                     | None                                                     |
+| `threshold`             | For local inference, the minimum confidence for a detection: a span is kept only when its score is above this value. Ignored by the remote service. See [Local inference](#local-inference) below.          | `0.5`                                                    |
 | `enabled`               | When set to false, the filter will be disabled and not applied                                                                                                                                               | `true`                                                   |
 | `ignored`               | A list of terms to be ignored by the filter.                                                                                                                                                                 | None                                                     |
 | `windowSize`            | Sets the size of the window (in terms) surrounding a span to look for contextual terms. If set, this value overrides the value of `span.window.size` in the configuration.                                   | The value of `span.window.size` which is by default `5`. |
@@ -83,7 +84,9 @@ Each filter strategy may have one condition. See [Conditions](#conditions) for d
 By default the filter calls a remote Ph-Eye service over HTTP at its `endpoint`. It can instead run a
 GLiNER model on-device by setting `modelPath` on the `phEyeConfiguration` to a local model directory
 (the ONNX model, the tokenizer, and `gliner_config.json`). When `modelPath` is set, detection runs
-locally and the `endpoint` is not used.
+locally and the `endpoint` is not used. A detection is kept only when its score is above the
+`phEyeConfiguration`'s `threshold` (`0.5` by default); the remote service applies its model's own
+cutoff and ignores `threshold`.
 
 Local inference is provided by the optional
 [`phileas-pheye-onnx`](https://github.com/philterd/phileas-pheye-onnx) module (ONNX Runtime), which

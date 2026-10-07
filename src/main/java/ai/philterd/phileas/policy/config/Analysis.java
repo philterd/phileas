@@ -20,6 +20,8 @@ import com.google.gson.annotations.SerializedName;
 
 public class Analysis {
 
+    // Read so existing policies still load, but it has no effect.
+    @Deprecated
     @SerializedName("identification")
     @Expose
     private boolean identification = true;
@@ -37,10 +39,14 @@ public class Analysis {
         this.spanDisambiguation = spanDisambiguation;
     }
 
+    /** @deprecated Has no effect. */
+    @Deprecated
     public boolean isIdentification() {
         return identification;
     }
 
+    /** @deprecated Has no effect. */
+    @Deprecated
     public void setIdentification(boolean identification) {
         this.identification = identification;
     }

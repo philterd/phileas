@@ -193,6 +193,8 @@ Disambiguation runs only when the deployment has it enabled and the policy has n
 so a policy that omits the property behaves as before. Turning it off lowers the per-document cost for policies whose
 filters are not ambiguous.
 
+`config.analysis` also accepts `identification`, which is deprecated and has no effect.
+
 ### Applying a Policy to Text
 
 A policy is applied by passing it to Phileas' filter service along with the text to filter. Using the

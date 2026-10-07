@@ -35,6 +35,11 @@ public class PhEyeConfiguration {
     @Expose
     protected String modelPath;
 
+    // Minimum span confidence for the local model. Ignored by the remote PhEye service.
+    @SerializedName("threshold")
+    @Expose
+    protected double threshold = 0.5;
+
     public String getEndpoint() {
         return endpoint;
     }
@@ -81,6 +86,14 @@ public class PhEyeConfiguration {
 
     public void setModelPath(String modelPath) {
         this.modelPath = modelPath;
+    }
+
+    public double getThreshold() {
+        return threshold;
+    }
+
+    public void setThreshold(double threshold) {
+        this.threshold = threshold;
     }
 
 }

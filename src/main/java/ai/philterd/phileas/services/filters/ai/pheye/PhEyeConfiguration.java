@@ -33,6 +33,9 @@ public class PhEyeConfiguration {
     // locally via ONNX Runtime instead of calling the remote endpoint.
     private String modelPath;
 
+    // Minimum span confidence for the local model. A span must score above it.
+    private double threshold = 0.5;
+
     public PhEyeConfiguration(final String endpoint) {
         this.endpoint = endpoint;
     }
@@ -99,6 +102,14 @@ public class PhEyeConfiguration {
 
     public void setModelPath(String modelPath) {
         this.modelPath = modelPath;
+    }
+
+    public double getThreshold() {
+        return threshold;
+    }
+
+    public void setThreshold(double threshold) {
+        this.threshold = threshold;
     }
 
 }

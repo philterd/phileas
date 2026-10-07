@@ -273,6 +273,216 @@ public class SchemaConformanceTest {
 
     }
 
+    @Test
+    public void everyNestedPropertyDeclaredBySchemaIsModeledByPhileas() throws Exception {
+
+        final Set<String> unmodeled = new java.util.TreeSet<>();
+        walkSchema((definition, property, field, instance) -> {
+            if (field == null && !EXPECTED_GAPS.containsKey(definition + "." + property)) {
+                unmodeled.add(definition + "." + property + " on " + instance.getClass().getSimpleName());
+            }
+        });
+
+        Assertions.assertTrue(unmodeled.isEmpty(), "The policy schema declares properties that Phileas does not "
+                + "model, so a policy setting them is silently dropped: " + unmodeled);
+
+    }
+
+    @Test
+    public void everyDefaultDeclaredBySchemaMatchesPhileas() throws Exception {
+
+        final JsonObject definitions = schema().getAsJsonObject("$defs");
+        final Set<String> mismatches = new java.util.TreeSet<>();
+        final int[] checked = {0};
+
+        walkSchema((definition, property, field, instance) -> {
+
+            final JsonElement declared = definitions.getAsJsonObject(definition).has("properties")
+                    ? propertyOf(definitions, definition, property) : null;
+
+            if (field == null || declared == null || !declared.isJsonObject() || !declared.getAsJsonObject().has("default")) {
+                return;
+            }
+
+            final String variable = ENVIRONMENT_DEFAULTS.get(definition + "." + property);
+            if (variable != null && System.getenv(variable) != null) {
+                return;
+            }
+
+            final JsonElement expected = declared.getAsJsonObject().get("default");
+            final Object actual = effectiveValue(instance, field);
+            checked[0]++;
+
+            if (!sameValue(expected, actual)) {
+                mismatches.add(definition + "." + property + ": schema " + expected + ", "
+                        + instance.getClass().getSimpleName() + " " + actual);
+            }
+
+        });
+
+        Assertions.assertTrue(checked[0] > 50, "expected to compare most schema defaults, compared " + checked[0]);
+        Assertions.assertTrue(mismatches.isEmpty(), "The policy schema documents defaults that Phileas does not "
+                + "use: " + mismatches);
+
+    }
+
+    /** Defaults the model takes from an environment variable when it is set. */
+    private static final Map<String, String> ENVIRONMENT_DEFAULTS = Map.of(
+            "phEyeConfiguration.timeout", "PHEYE_TIMEOUT");
+
+    private interface SchemaPropertyVisitor {
+        void visit(String definition, String property, Field field, Object instance) throws Exception;
+    }
+
+    /**
+     * Walks the schema from {@code config} and each identifier down through every {@code $ref}, alongside
+     * a model instance built from an empty policy object, so each default is the one a policy gets.
+     */
+    private static void walkSchema(final SchemaPropertyVisitor visitor) throws Exception {
+
+        final JsonObject definitions = schema().getAsJsonObject("$defs");
+
+        walkDefinition(definitions, "config", Config.class, visitor);
+
+        for (final String identifier : identifierNamesIn(PolicySchema.getSchema())) {
+            final String definition = definitionFor(schema(), "identifiers", identifier);
+            walkDefinition(definitions, definition, policyTypeOf(Identifiers.class, identifier), visitor);
+        }
+
+    }
+
+    private static void walkDefinition(final JsonObject definitions, final String definition, final Class<?> type,
+                                       final SchemaPropertyVisitor visitor) throws Exception {
+
+        if (type == null || Modifier.isAbstract(type.getModifiers())) {
+            return;
+        }
+
+        final Object instance = new Gson().fromJson("{}", type);
+
+        for (final String property : inheritedPropertiesOf(definitions, definition)) {
+
+            final Field field = fieldFor(type, property);
+            visitor.visit(definitionDeclaring(definitions, definition, property), property, field, instance);
+
+            final JsonElement declared = propertyOf(definitions, definitionDeclaring(definitions, definition, property), property);
+
+            if (field != null && declared != null && declared.isJsonObject()) {
+                JsonObject target = declared.getAsJsonObject();
+                if (target.has("items") && target.get("items").isJsonObject()) {
+                    target = target.getAsJsonObject("items");
+                }
+                if (target.has("$ref")) {
+                    final String child = target.get("$ref").getAsString().replace("#/$defs/", "");
+                    if (definitions.getAsJsonObject(child).has("properties")) {
+                        walkDefinition(definitions, child, elementTypeOf(field), visitor);
+                    }
+                }
+            }
+
+        }
+
+    }
+
+    /** A definition's own properties plus those it takes from {@code allOf} references. */
+    private static Set<String> inheritedPropertiesOf(final JsonObject definitions, final String definition) {
+        final Set<String> properties = new java.util.LinkedHashSet<>();
+        final JsonObject object = definitions.getAsJsonObject(definition);
+        if (object.has("allOf")) {
+            for (final JsonElement part : object.getAsJsonArray("allOf")) {
+                if (part.getAsJsonObject().has("$ref")) {
+                    properties.addAll(inheritedPropertiesOf(definitions,
+                            part.getAsJsonObject().get("$ref").getAsString().replace("#/$defs/", "")));
+                }
+            }
+        }
+        if (object.has("properties")) {
+            properties.addAll(object.getAsJsonObject("properties").keySet());
+        }
+        return properties;
+    }
+
+    /** The definition that describes a property: its own, unless it only re-allows an inherited one. */
+    private static String definitionDeclaring(final JsonObject definitions, final String definition, final String property) {
+        final JsonElement own = propertyOf(definitions, definition, property);
+        if (own != null && own.isJsonObject()) {
+            return definition;
+        }
+        final JsonObject object = definitions.getAsJsonObject(definition);
+        if (object.has("allOf")) {
+            for (final JsonElement part : object.getAsJsonArray("allOf")) {
+                if (part.getAsJsonObject().has("$ref")) {
+                    final String parent = part.getAsJsonObject().get("$ref").getAsString().replace("#/$defs/", "");
+                    if (inheritedPropertiesOf(definitions, parent).contains(property)) {
+                        return definitionDeclaring(definitions, parent, property);
+                    }
+                }
+            }
+        }
+        return definition;
+    }
+
+    private static JsonElement propertyOf(final JsonObject definitions, final String definition, final String property) {
+        final JsonObject object = definitions.getAsJsonObject(definition);
+        return object.has("properties") ? object.getAsJsonObject("properties").get(property) : null;
+    }
+
+    private static Field fieldFor(final Class<?> type, final String serializedName) {
+        for (Class<?> c = type; c != null && c != Object.class; c = c.getSuperclass()) {
+            for (final Field field : c.getDeclaredFields()) {
+                final SerializedName annotation = field.getAnnotation(SerializedName.class);
+                if (annotation != null && (annotation.value().equals(serializedName)
+                        || Arrays.asList(annotation.alternate()).contains(serializedName))) {
+                    return field;
+                }
+            }
+        }
+        return null;
+    }
+
+    private static Class<?> elementTypeOf(final Field field) {
+        if (List.class.isAssignableFrom(field.getType()) && field.getGenericType() instanceof ParameterizedType parameterized) {
+            return (Class<?>) parameterized.getActualTypeArguments()[0];
+        }
+        return field.getType();
+    }
+
+    /** The value through the field's getter when there is one, since a getter may supply the default. */
+    private static Object effectiveValue(final Object instance, final Field field) throws Exception {
+        final String suffix = Character.toUpperCase(field.getName().charAt(0)) + field.getName().substring(1);
+        for (final String name : List.of("get" + suffix, "is" + suffix)) {
+            try {
+                return instance.getClass().getMethod(name).invoke(instance);
+            } catch (final NoSuchMethodException ignored) {
+                // Try the next accessor name, then the field.
+            }
+        }
+        field.setAccessible(true);
+        return field.get(instance);
+    }
+
+    /** Compares a schema default with a model value. Strings compare without case, as Phileas reads them. */
+    private static boolean sameValue(final JsonElement expected, Object actual) {
+        if (actual instanceof java.util.Collection<?> collection && collection.size() == 1 && !expected.isJsonArray()) {
+            actual = collection.iterator().next();
+        }
+        if (actual == null) {
+            return expected.isJsonNull();
+        }
+        if (!expected.isJsonPrimitive()) {
+            return expected.equals(new Gson().toJsonTree(actual));
+        }
+        final com.google.gson.JsonPrimitive primitive = expected.getAsJsonPrimitive();
+        if (primitive.isNumber() && actual instanceof Number number) {
+            return primitive.getAsDouble() == number.doubleValue();
+        }
+        if (primitive.isBoolean() && actual instanceof Boolean bool) {
+            return primitive.getAsBoolean() == bool;
+        }
+        final String value = actual instanceof Enum<?> e ? e.name() : String.valueOf(actual);
+        return primitive.isString() && primitive.getAsString().equalsIgnoreCase(value);
+    }
+
     /** Fails unless the schema property has a matching field, allowing for a listed gap. */
     private static void assertModeled(final String definition, final String property, final Class<?> type) {
 

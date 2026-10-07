@@ -46,6 +46,10 @@ public class PhEyeFilter extends NerFilter {
     private final Collection<String> labels;
     private final PhEyeDetector detector;
 
+    // The local model's threshold, also applied here so it holds whatever the provider's own cutoff;
+    // null for the remote service.
+    private final Double localThreshold;
+
     public PhEyeFilter(final FilterConfiguration filterConfiguration,
                        final PhEyeConfiguration phEyeConfiguration,
                        final boolean removePunctuation,
@@ -58,6 +62,7 @@ public class PhEyeFilter extends NerFilter {
         this.removePunctuation = removePunctuation;
         this.labels = phEyeConfiguration.getLabels();
         this.detector = createDetector(phEyeConfiguration, httpClient);
+        this.localThreshold = StringUtils.isNotEmpty(phEyeConfiguration.getModelPath()) ? phEyeConfiguration.getThreshold() : null;
 
     }
 
@@ -118,7 +123,8 @@ public class PhEyeFilter extends NerFilter {
             for (final PhEyeSpan phEyeSpan : phEyeSpans) {
 
                 // Only interested in spans matching the tag we are looking for, e.g. PER, LOC, or if there are no labels specified.
-                if (labels.isEmpty() || labels.contains(phEyeSpan.getLabel())) {
+                if ((labels.isEmpty() || labels.contains(phEyeSpan.getLabel()))
+                        && (localThreshold == null || phEyeSpan.getScore() > localThreshold)) {
 
                     // Check the confidence threshold.
                     if (!thresholds.containsKey(phEyeSpan.getLabel().toUpperCase()) || phEyeSpan.getScore() >= thresholds.get(phEyeSpan.getLabel().toUpperCase())) {
