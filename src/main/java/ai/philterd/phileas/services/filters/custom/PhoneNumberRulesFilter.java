@@ -99,7 +99,7 @@ public class PhoneNumberRulesFilter extends RulesFilter {
                 final String classification = "";
                 final Replacement replacement = getReplacement(contextService, policy, context, text, window, confidence,
                         classification, null);
-                final boolean isIgnored = ignored.contains(text);
+                final boolean isIgnored = isIgnored(text);
 
                 final Span span = Span.make(match.start(), match.end(), getFilterType(), context, confidence,
                         text, replacement.getReplacement(), replacement.getSalt(), isIgnored, replacement.isApplied(), window, priority);
