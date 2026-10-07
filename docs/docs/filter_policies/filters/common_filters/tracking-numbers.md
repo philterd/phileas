@@ -4,6 +4,8 @@
 
 This filter identifies tracking numbers in text. FedEx, UPS, and USPS tracking number formats are supported.
 
+UPS tracking numbers are recognized as `1Z` followed by 16 letters or digits, `T` followed by 10 digits, or 26 digits. A standalone 9-digit number is not detected as a UPS tracking number.
+
 USPS tracking numbers are recognized both as a continuous string of digits (for example, `9400100000000000000000`) and in the space-separated grouped form (for example, `9400 1000 0000 0000 0000`).
 
 ### Required Parameters

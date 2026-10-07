@@ -85,13 +85,13 @@ public class TrackingNumberFilter extends RegexFilter {
             final FilterPattern ups1FilterPattern = new FilterPattern.FilterPatternBuilder(ups1, 0.90).withClassification("ups").build();
             filterPatterns.add(ups1FilterPattern);
 
-            final Pattern ups2 = Pattern.compile("\\b(T)+" + sp + run("[\\dA-Z]", 10, allowSpaces) + "\\b", Pattern.CASE_INSENSITIVE);
+            // Digits only after the T, so an 11-letter word starting with "t" is not matched.
+            final Pattern ups2 = Pattern.compile("\\bT" + sp + run("\\d", 10, allowSpaces) + "\\b", Pattern.CASE_INSENSITIVE);
             final FilterPattern ups2FilterPattern = new FilterPattern.FilterPatternBuilder(ups2, 0.90).withClassification("ups").build();
             filterPatterns.add(ups2FilterPattern);
 
-            final Pattern ups3 = Pattern.compile("\\b" + run("\\d", 9, allowSpaces) + "\\b", Pattern.CASE_INSENSITIVE);
-            final FilterPattern ups3FilterPattern = new FilterPattern.FilterPatternBuilder(ups3, 0.75).withClassification("ups").build();
-            filterPatterns.add(ups3FilterPattern);
+            // No pattern for a bare 9-digit number: it cannot be told apart from an order, invoice or
+            // account number, or an SSN written without dashes.
 
             final Pattern ups4 = Pattern.compile("\\b" + run("\\d", 26, allowSpaces) + "\\b", Pattern.CASE_INSENSITIVE);
             final FilterPattern ups4FilterPattern = new FilterPattern.FilterPatternBuilder(ups4, 0.75).withClassification("ups").build();
