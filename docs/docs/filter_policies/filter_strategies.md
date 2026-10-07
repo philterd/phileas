@@ -436,6 +436,27 @@ The following is an example policy for credit cards that contains a condition to
 }
 ```
 
+#### Evaluation Order
+
+A filter's strategies are evaluated in the order they are listed. The first strategy that has no condition, or whose condition is satisfied, is applied, and the remaining strategies are not evaluated.
+
+If every strategy has a condition and none is satisfied, the identified text is left unchanged. It is reported in the explanation's identified spans but not in its applied spans (`getExplanation().appliedSpans()`). In the example above, a credit card number that does not start with `3000` is left in the text as is. To transform every value a filter identifies, end the list with a strategy that has no condition:
+
+```
+"creditCardFilterStrategies": [
+  {
+    "condition": "token startswith \"3000\"",
+    "strategy": "REDACT",
+    "redactionFormat": "{{{REDACTED-%t}}}"
+  },
+  {
+    "strategy": "MASK"
+  }
+]
+```
+
+A filter with no strategies defaults to `REDACT` with the redaction format `{{{REDACTED-%t}}}`.
+
 #### Combining Conditions
 
 Conditions can be joined through the use of the `and` keyword. When conditions are joined, each condition must be satisfied for the identified text to be filtered. If any of the conditions are not satisfied the identified text will not be filtered. Below is an example joined condition:
