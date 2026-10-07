@@ -23,6 +23,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -31,6 +32,7 @@ import java.util.Set;
 import java.util.concurrent.CompletionException;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * A filter that operates on a preset list of dictionary words.
@@ -108,17 +110,40 @@ public abstract class DictionaryFilter extends RulesFilter {
         final Set<String> lowerCaseTerms = new HashSet<>();
         int maxNgramSize = 0;
         for (final String term : data.keySet()) {
-            final String[] split = term.split("\\s");
-            if (split.length > maxNgramSize) {
-                maxNgramSize = split.length;
-            }
-            lowerCaseTerms.add(term.toLowerCase());
+            maxNgramSize = Math.max(maxNgramSize, wordCount(term));
+            lowerCaseTerms.add(normalizeWhitespace(term).toLowerCase());
         }
 
         return new PredefinedDictionary(
                 Collections.unmodifiableMap(data),
                 Collections.unmodifiableSet(lowerCaseTerms),
                 maxNgramSize);
+
+    }
+
+    /**
+     * Returns the number of whitespace-separated words in a term.
+     * @param term The term.
+     * @return The number of words.
+     */
+    static int wordCount(final String term) {
+        final String normalized = normalizeWhitespace(term);
+        return normalized.isEmpty() ? 0 : normalized.split(" ").length;
+    }
+
+    /**
+     * Returns a case-insensitive pattern matching a term as a whole word. The term is matched
+     * literally, and its words may be separated by any run of whitespace, such as a line break.
+     * @param term The term.
+     * @return The compiled pattern.
+     */
+    static Pattern termPattern(final String term) {
+
+        final String words = Arrays.stream(normalizeWhitespace(term).split(" "))
+                .map(Pattern::quote)
+                .collect(Collectors.joining("\\s+"));
+
+        return Pattern.compile("\\b" + words + "\\b", Pattern.CASE_INSENSITIVE);
 
     }
 
@@ -150,8 +175,7 @@ public abstract class DictionaryFilter extends RulesFilter {
             String line;
             while ((line = reader.readLine()) != null) {
 
-                final Pattern pattern = Pattern.compile("\\b" + line + "\\b", Pattern.CASE_INSENSITIVE);
-                dictionary.put(line, pattern);
+                dictionary.put(line, termPattern(line));
 
             }
 

@@ -10,7 +10,7 @@ At least one of `terms` or `files` must be provided.
 
 | Parameter | Description                                    | Default Value |
 |-----------|------------------------------------------------|---------------|
-| `terms`   | A list of terms in the dictionary.             | None          |
+| `terms`   | A list of terms in the dictionary. Terms are plain text, not regular expressions, and the words of a multi-word term may be separated in the text by any whitespace, such as a line break or tab. | None          |
 | `files`   | A list of files containing terms one per line. | None          |
 
 ### Optional Parameters

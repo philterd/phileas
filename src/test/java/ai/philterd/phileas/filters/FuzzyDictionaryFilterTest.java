@@ -92,22 +92,39 @@ public class FuzzyDictionaryFilterTest extends AbstractFilterTest {
     }
 
     @Test
-    void filterExactMatchTermContainingRegexSyntax() throws Exception {
+    void filterExactMatchTextLongerThanTerm() throws Exception {
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new CustomDictionaryFilterStrategy()))
                 .withWindowSize(windowSize)
                 .build();
 
-        // "Jones?" is six characters but matches the five-character "Jones".
-        final Set<String> terms = new HashSet<>(List.of("Jones?"));
+        // "Jo Jones" is eight characters but matches the ten-character "Jo\r\n\tJones".
+        final Set<String> terms = new HashSet<>(List.of("Jo Jones"));
         final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.CUSTOM_DICTIONARY, filterConfiguration, SensitivityLevel.OFF, terms, false);
 
-        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "Jones");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "Jo\r\n\tJones");
 
         Assertions.assertEquals(1, filtered.getSpans().size());
-        Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 0, 5, FilterType.CUSTOM_DICTIONARY));
-        Assertions.assertEquals("Jones", filtered.getSpans().get(0).getText());
+        Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 0, 10, FilterType.CUSTOM_DICTIONARY));
+        Assertions.assertEquals("Jo\r\n\tJones", filtered.getSpans().get(0).getText());
+
+    }
+
+    @Test
+    void filterExactMatchTermIsLiteral() throws Exception {
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(new CustomDictionaryFilterStrategy()))
+                .withWindowSize(windowSize)
+                .build();
+
+        // The period in the term matches only a period, not any character.
+        final Set<String> terms = new HashSet<>(List.of("St. Lucie"));
+        final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.CUSTOM_DICTIONARY, filterConfiguration, SensitivityLevel.OFF, terms, false);
+
+        Assertions.assertEquals(0, filter.filter(contextService, getPolicy(), "context", PIECE, "StX Lucie").getSpans().size());
+        Assertions.assertEquals(1, filter.filter(contextService, getPolicy(), "context", PIECE, "St. Lucie").getSpans().size());
 
     }
 

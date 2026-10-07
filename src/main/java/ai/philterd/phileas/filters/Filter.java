@@ -198,7 +198,7 @@ public abstract class Filter {
 
         if(CollectionUtils.isNotEmpty(this.ignored)) {
             // PHL-151: Lowercase all terms in the ignore list to not be case-sensitive.
-            this.ignored = ignored.stream().map(String::toLowerCase).collect(Collectors.toSet());
+            this.ignored = ignored.stream().map(t -> normalizeWhitespace(t).toLowerCase()).collect(Collectors.toSet());
         }
 
         // Initialize the strategy-specific anonymization services.
@@ -516,8 +516,9 @@ public abstract class Filter {
      */
     public boolean isIgnored(final String token) {
 
-        // Is this term ignored?
-        boolean isIgnored = ignored.contains(token.toLowerCase());
+        // Is this term ignored? Whitespace is collapsed so "UCLA Medical Center" also ignores
+        // the same words separated by a line break.
+        boolean isIgnored = ignored.contains(normalizeWhitespace(token).toLowerCase());
 
         // Is this term ignored by a pattern?
         // No reason to check if it is already ignored by an ignored term.
@@ -531,6 +532,34 @@ public abstract class Filter {
         }
 
         return isIgnored;
+
+    }
+
+    /**
+     * Trims the text and collapses each run of whitespace (as defined by
+     * {@link Character#isWhitespace(char)}) to a single space.
+     * @param text The text.
+     * @return The normalized text.
+     */
+    public static String normalizeWhitespace(final String text) {
+
+        final StringBuilder sb = new StringBuilder(text.length());
+        boolean pendingSpace = false;
+
+        for (int i = 0; i < text.length(); i++) {
+            final char c = text.charAt(i);
+            if (Character.isWhitespace(c)) {
+                pendingSpace = sb.length() > 0;
+            } else {
+                if (pendingSpace) {
+                    sb.append(' ');
+                    pendingSpace = false;
+                }
+                sb.append(c);
+            }
+        }
+
+        return sb.toString();
 
     }
 

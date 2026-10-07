@@ -104,7 +104,7 @@ public class FuzzyDictionaryFilter extends DictionaryFilter {
                     if(sensitivityLevel != SensitivityLevel.OFF) {
 
                         // Fuzzy matches.
-                        final int wordsInEntry = entry.split(" ").length;
+                        final int wordsInEntry = wordCount(entry);
 
                         if (ngrams.containsKey(wordsInEntry)) {
                             for (final Position position : ngrams.get(wordsInEntry).keySet()) {
@@ -116,7 +116,7 @@ public class FuzzyDictionaryFilter extends DictionaryFilter {
 
                                     // TODO: Should this be customizable in the dictionary's properties in the filter policy?
                                     final LevenshteinDistance levenshteinDistance = LevenshteinDistance.getDefaultInstance();
-                                    final int distance = levenshteinDistance.apply(entry.toLowerCase(), ngram.toLowerCase());
+                                    final int distance = levenshteinDistance.apply(normalizeWhitespace(entry).toLowerCase(), normalizeWhitespace(ngram).toLowerCase());
 
                                     if (!requireCapitalization || Character.isUpperCase(ngram.charAt(0))) {
 
@@ -186,7 +186,7 @@ public class FuzzyDictionaryFilter extends DictionaryFilter {
         int maxNgrams = 0;
 
         for(final String key : dictionary.keySet()) {
-            final int n = key.split(" ").length;
+            final int n = wordCount(key);
             if(n > maxNgrams) {
                 maxNgrams = n;
             }
@@ -205,8 +205,7 @@ public class FuzzyDictionaryFilter extends DictionaryFilter {
         final Map<String, Pattern> dictionary = new HashMap<>();
 
         for(final String term : terms) {
-                final Pattern pattern = Pattern.compile("\\b" + term + "\\b", Pattern.CASE_INSENSITIVE);
-            dictionary.put(term, pattern);
+            dictionary.put(term, termPattern(term));
         }
 
         return dictionary;

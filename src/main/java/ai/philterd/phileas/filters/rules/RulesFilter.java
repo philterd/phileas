@@ -30,6 +30,7 @@ import ai.philterd.phileas.services.context.ContextService;
 import ai.philterd.phileas.utils.CollectionUtils;
 import org.apache.commons.lang3.Strings;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -267,33 +268,35 @@ public abstract class RulesFilter extends Filter {
      */
     public Map<Position, String> getNgramsOfLength(String text, int length) {
 
-        final String delimiter = " ";
-
         final Map<Position, String> ngramsWithIndexes = new HashMap<>();
-        final String[] words = text.split(delimiter);
-        int lastLocation = 0;
 
-        for (int i = 0; i <= words.length - length; i++) {
+        if (length < 1) {
+            return ngramsWithIndexes;
+        }
 
-            final StringBuilder ngram = new StringBuilder();
-
-            for (int j = 0; j < length; j++) {
-
-                ngram.append(words[i + j]);
-
-                if (j < length - 1) {
-                    ngram.append(" ");
-                }
-
+        // Split on any run of whitespace, recording where each word starts and ends so an n-gram's
+        // position is that of the words it was built from.
+        final List<int[]> words = new ArrayList<>();
+        int i = 0;
+        while (i < text.length()) {
+            while (i < text.length() && Character.isWhitespace(text.charAt(i))) {
+                i++;
             }
+            final int wordStart = i;
+            while (i < text.length() && !Character.isWhitespace(text.charAt(i))) {
+                i++;
+            }
+            if (i > wordStart) {
+                words.add(new int[]{wordStart, i});
+            }
+        }
 
-            int newLocation = text.indexOf(ngram.toString(), lastLocation);
-            lastLocation = newLocation;
-
-            final Position position = new Position(newLocation, newLocation + ngram.toString().length());
-
-            ngramsWithIndexes.put(position, ngram.toString());
-
+        // An n-gram is the original text from its first word's start to its last word's end, so it
+        // keeps the document's own separators.
+        for (int w = 0; w <= words.size() - length; w++) {
+            final int start = words.get(w)[0];
+            final int end = words.get(w + length - 1)[1];
+            ngramsWithIndexes.put(new Position(start, end), text.substring(start, end));
         }
 
         return ngramsWithIndexes;

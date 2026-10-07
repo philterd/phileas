@@ -11,7 +11,7 @@ Ignore lists can be specified at the policy level and/or for each filter in the 
 
 ### Ignore List for a Policy
 
-In the policy shown below, an ignore list is set at the level of the policy. The terms specified in the list will be ignored for _all_ filter types enabled in the policy. Only the terms property is required. The `name` and `caseSensitive` properties are optional.
+In the policy shown below, an ignore list is set at the level of the policy. The terms specified in the list will be ignored for _all_ filter types enabled in the policy. Only the terms property is required. The `name` and `caseSensitive` properties are optional. Runs of whitespace are compared as a single space, so `john smith` also ignores `john` and `smith` separated by a line break.
 
 ```
 {
@@ -62,7 +62,7 @@ Terms to be ignored at the policy level can also be read from one or more files 
 
 ### Ignore List for a Filter
 
-In the policy shown below, an ignore list is set at the level of a filter. The terms specified in the list will be ignored _only_ for that filter type. Each filter in a policy can have its own list of ignored terms. Terms are compared case-insensitively, so `john` in the list also ignores `John` and `JOHN`. For the dictionary-based filters (`firstName`, `surname`, `city`, `county`, `state`, `hospital`, and custom `dictionaries`), ignored terms and ignored patterns apply whether `fuzzy` is enabled or not. An ignored pattern must match the whole detected value.
+In the policy shown below, an ignore list is set at the level of a filter. The terms specified in the list will be ignored _only_ for that filter type. Each filter in a policy can have its own list of ignored terms. Terms are compared case-insensitively, so `john` in the list also ignores `John` and `JOHN`. Runs of whitespace are compared as a single space, so `UCLA Medical Center` also ignores the same words separated by a line break or tab. For the dictionary-based filters (`firstName`, `surname`, `city`, `county`, `state`, `hospital`, and custom `dictionaries`), ignored terms and ignored patterns apply whether `fuzzy` is enabled or not. An ignored pattern must match the whole detected value.
 
 ```
 {

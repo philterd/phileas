@@ -15,6 +15,7 @@
  */
 package ai.philterd.phileas.services.filters.postfilters;
 
+import ai.philterd.phileas.filters.Filter;
 import ai.philterd.phileas.model.filtering.PostFiltered;
 import ai.philterd.phileas.model.filtering.Span;
 import ai.philterd.phileas.policy.Ignored;
@@ -52,10 +53,17 @@ public class IgnoredTermsFilter extends PostFilter {
             ignoredTermsFromFiles.addAll(Files.readAllLines(new File(file).toPath(), Charset.defaultCharset()));
         }
 
+        // Runs of whitespace are compared as a single space, so a term also ignores the same words
+        // separated by a line break.
         if(ignored.isCaseSensitive()) {
 
-            ignoredTerms.addAll(ignored.getTerms());
-            ignoredTerms.addAll(ignoredTermsFromFiles);
+            ignoredTerms.addAll(ignored.getTerms().stream()
+                    .map(Filter::normalizeWhitespace)
+                    .toList());
+
+            ignoredTerms.addAll(ignoredTermsFromFiles.stream()
+                    .map(Filter::normalizeWhitespace)
+                    .toList());
 
         } else {
 
@@ -63,11 +71,11 @@ public class IgnoredTermsFilter extends PostFilter {
 
             // Not case-sensitive. Lowercase everything before adding.
             ignoredTerms.addAll(ignored.getTerms().stream()
-                    .map(String::toLowerCase)
+                    .map(t -> Filter.normalizeWhitespace(t).toLowerCase())
                     .toList());
 
             ignoredTerms.addAll(ignoredTermsFromFiles.stream()
-                    .map(String::toLowerCase)
+                    .map(t -> Filter.normalizeWhitespace(t).toLowerCase())
                     .toList());
 
         }
@@ -82,7 +90,7 @@ public class IgnoredTermsFilter extends PostFilter {
     @Override
     protected PostFiltered process(final String text, final Span span) {
 
-        String spanText = span.getText(text);
+        String spanText = Filter.normalizeWhitespace(span.getText(text));
 
         if(!ignored.isCaseSensitive()) {
             spanText = spanText.toLowerCase();

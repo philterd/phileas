@@ -87,11 +87,8 @@ public class SetDictionaryFilter extends DictionaryFilter {
         // Lowercase each term and find the max n-gram size, which is the maximum number of
         // whitespace-separated words in any single dictionary entry.
         for(final String term : terms) {
-            final String[] split = term.split("\\s");
-            if(split.length > maxNgramSize) {
-                maxNgramSize = split.length;
-            }
-            lowerCaseTerms.add(term.toLowerCase());
+            maxNgramSize = Math.max(maxNgramSize, wordCount(term));
+            lowerCaseTerms.add(normalizeWhitespace(term).toLowerCase());
         }
 
     }
@@ -114,7 +111,7 @@ public class SetDictionaryFilter extends DictionaryFilter {
             // the term, not the punctuation.
             int begin = 0;
             int end = ngram.length();
-            boolean matched = lowerCaseTerms.contains(ngram.toLowerCase());
+            boolean matched = lowerCaseTerms.contains(normalizeWhitespace(ngram).toLowerCase());
 
             if (!matched) {
                 while (begin < end && !Character.isLetterOrDigit(ngram.charAt(begin))) {
@@ -124,7 +121,7 @@ public class SetDictionaryFilter extends DictionaryFilter {
                     end--;
                 }
                 if (begin != 0 || end != ngram.length()) {
-                    matched = lowerCaseTerms.contains(ngram.substring(begin, end).toLowerCase());
+                    matched = lowerCaseTerms.contains(normalizeWhitespace(ngram.substring(begin, end)).toLowerCase());
                 }
             }
 
