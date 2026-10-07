@@ -70,6 +70,18 @@ public class SpanTest {
     }
 
     @Test
+    public void copyAndShiftKeepTheClassification() {
+
+        final Span span = Span.make(1, 6, FilterType.CUSTOM_DICTIONARY, "context", 1.0, "test", "***", "salt", false, true, new String[0], 0);
+        span.setClassification("codename");
+
+        Assertions.assertEquals("codename", span.copy().getClassification());
+        Assertions.assertEquals("codename", Span.shiftSpans(4, List.of(span)).get(0).getClassification());
+        Assertions.assertEquals("codename", Span.shiftSpans(4, null, List.of(span)).get(0).getClassification());
+
+    }
+
+    @Test
     public void shiftSpansTest2() {
 
         Span span1 = Span.make(1, 6, FilterType.AGE, "context", 1.0, "test", "***", "salt",  false, true, new String[0], 0);

@@ -168,6 +168,7 @@ public final class Span {
                 replacement, salt, ignored, applied, window, priority);
 
         copy.setColor(color);
+        copy.setClassification(classification);
 
         return copy;
 
@@ -195,6 +196,7 @@ public final class Span {
                         span.text, span.replacement, span.salt, span.ignored, span.applied, span.window, span.priority);
 
                 shifted.setColor(span.color);
+                shifted.setClassification(span.classification);
                 shiftedSpans.add(shifted);
 
             }
@@ -224,6 +226,7 @@ public final class Span {
                         span.text, span.replacement, span.salt, span.ignored, span.applied, span.window, span.priority);
 
                 shifted.setColor(span.color);
+                shifted.setClassification(span.classification);
                 shiftedSpans.add(shifted);
 
         }

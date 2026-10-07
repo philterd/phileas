@@ -146,6 +146,7 @@ public class SetDictionaryFilter extends DictionaryFilter {
                         isIgnored, replacement.isApplied(), window, priority);
 
                 span.setColor(replacement.getColor());
+                span.setClassification(classification);
                 spans.add(span);
 
             }

@@ -55,12 +55,28 @@ public class FuzzyDictionaryFilter extends DictionaryFilter {
 
     public FuzzyDictionaryFilter(final FilterType filterType, final FilterConfiguration filterConfiguration,
                                  final SensitivityLevel sensitivityLevel, final Set<String> terms, final boolean requireCapitalization) {
+        this(filterType, filterConfiguration, sensitivityLevel, terms, requireCapitalization, null);
+    }
+
+    /**
+     * Creates a new fuzzy dictionary filter.
+     * @param filterType The {@link FilterType type} of the filter.
+     * @param filterConfiguration The {@link FilterConfiguration} for the filter.
+     * @param sensitivityLevel The {@link SensitivityLevel} for fuzzy matching.
+     * @param terms A set of terms that will be in the dictionary.
+     * @param requireCapitalization Whether a match must start with an uppercase letter.
+     * @param classification A classification label for the type of information.
+     */
+    public FuzzyDictionaryFilter(final FilterType filterType, final FilterConfiguration filterConfiguration,
+                                 final SensitivityLevel sensitivityLevel, final Set<String> terms, final boolean requireCapitalization,
+                                 final String classification) {
         super(filterType, filterConfiguration);
 
         this.sensitivityLevel = sensitivityLevel;
         this.dictionary = loadData(terms);
         this.maxNgrams = getMaxNgrams();
         this.requireCapitalization = requireCapitalization;
+        this.classification = classification;
 
     }
 
@@ -171,6 +187,7 @@ public class FuzzyDictionaryFilter extends DictionaryFilter {
                 replacement.getSalt(), ignored, replacement.isApplied(), window, priority);
 
         span.setColor(replacement.getColor());
+        span.setClassification(classification);
 
         return span;
 
