@@ -96,17 +96,7 @@ public abstract class StandardFilterStrategy extends AbstractFilterStrategy {
 
         } else if(Strings.CI.equals(effectiveStrategy, TRUNCATE)) {
 
-            int leaveCharacters = getValueOrDefault(truncateLeaveCharacters, 4);
-
-            if (leaveCharacters < 1) {
-                leaveCharacters = 1;
-            }
-
-            if(Strings.CI.equals(truncateDirection, LEADING)) {
-                replacement = token.substring(0, leaveCharacters) + StringUtils.repeat(truncateCharacter, token.length() - leaveCharacters);
-            } else {
-                replacement = StringUtils.repeat(truncateCharacter, token.length() - leaveCharacters) + token.substring(token.length() - leaveCharacters);
-            }
+            replacement = truncate(token);
 
         } else if(Strings.CI.equals(effectiveStrategy, RANDOM_REPLACE)) {
 

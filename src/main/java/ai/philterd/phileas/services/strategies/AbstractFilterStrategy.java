@@ -30,6 +30,7 @@ import ai.philterd.phileas.services.generators.ReplacementValidator;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -396,6 +397,22 @@ public abstract class AbstractFilterStrategy {
             }
         }
         return initials.toString();
+    }
+
+    /**
+     * Applies the {@code TRUNCATE} strategy. At most <code>length - 1</code> characters are kept, so a
+     * token is never returned unchanged.
+     * @param token The detected value.
+     * @return The truncated token.
+     */
+    protected String truncate(final String token) {
+        final int leaveCharacters = Math.min(Math.max(getValueOrDefault(truncateLeaveCharacters, 4), 1),
+                Math.max(token.length() - 1, 0));
+        final String removed = StringUtils.repeat(getValueOrDefault(truncateCharacter, "*"), token.length() - leaveCharacters);
+        if (Strings.CI.equals(getValueOrDefault(truncateDirection, LEADING), LEADING)) {
+            return token.substring(0, leaveCharacters) + removed;
+        }
+        return removed + token.substring(token.length() - leaveCharacters);
     }
 
     /**

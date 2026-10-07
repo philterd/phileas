@@ -347,12 +347,21 @@ An example policy using the `MASK` filter strategy:
 
 ### The `TRUNCATE` Filter Strategy {id="truncate"}
 
-This strategy allows for truncating tokens to only a select number of digits. Specify `truncateLeaveCharacters`
-to set the desired number of digits to leave. For example, if `truncateLeaveCharacters` is 4, the
-string `4111111111111111` will be truncated to `4111************`. `truncateDirection` can be set to
-`LEADING` (the default) which leaves N leading digits or `TRAILING` which leaves N trailing digits.
-`truncateCharacter` can be overwritten (defaults to `*`) to change the character that is used for the
-replacement.
+This strategy keeps a set number of characters of the value and replaces each of the others with
+`truncateCharacter`.
+
+| Setting | Default | Description |
+| ------- | ------- | ----------- |
+| `truncateLeaveCharacters` | `4` | The number of characters to keep. A value below 1 is treated as 1. |
+| `truncateDirection` | `LEADING` | `LEADING` keeps the first characters; `TRAILING` keeps the last ones. |
+| `truncateCharacter` | `*` | The character put in place of each removed character. |
+
+For example, with the defaults `4111111111111111` becomes `4111************`, and with `TRAILING` it
+becomes `************1111`.
+
+Except for zip codes (below), at least one character is always replaced, so a value is never returned
+unchanged: a value no longer than `truncateLeaveCharacters` keeps all but one of its characters. With the defaults, `ABCD` becomes
+`ABC*` and `AB` becomes `A*` (`*BCD` and `*B` with `TRAILING`), and a single character becomes `*`.
 
 The `TRUNCATE` filter has special behavior for the zip code filter. For zip codes the Zip will always be truncated
 to 5 digits long. For example, `truncateLeaveCharacters=2` and a token of `90210-0110` will result in `90***`.
