@@ -158,7 +158,7 @@ public class FuzzyDictionaryFilter extends DictionaryFilter {
     private Span createSpan(ContextService contextService, String text, int characterStart, int characterEnd, double confidence, String context,
                             String token, Policy policy) throws Exception {
 
-        final boolean ignored = isIgnored(text);
+        final boolean ignored = isIgnored(token);
         final String[] window = getWindow(text, characterStart, characterEnd);
 
         // Get the replacement token or the original token if no filter strategy conditions are met.

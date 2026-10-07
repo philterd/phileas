@@ -62,7 +62,7 @@ Terms to be ignored at the policy level can also be read from one or more files 
 
 ### Ignore List for a Filter
 
-In the policy shown below, an ignore list is set at the level of a filter. The terms specified in the list will be ignored _only_ for that filter type. Each filter in a policy can have its own list of ignored terms. The terms listed will be ignored case-sensitive, meaning, "John" will be ignored if "John" is an ignored term but will not be ignored if "john" is an ignored term.
+In the policy shown below, an ignore list is set at the level of a filter. The terms specified in the list will be ignored _only_ for that filter type. Each filter in a policy can have its own list of ignored terms. Terms are compared case-insensitively, so `john` in the list also ignores `John` and `JOHN`. For the dictionary-based filters (`firstName`, `surname`, `city`, `county`, `state`, `hospital`, and custom `dictionaries`), ignored terms and ignored patterns apply whether `fuzzy` is enabled or not. An ignored pattern must match the whole detected value.
 
 ```
 {

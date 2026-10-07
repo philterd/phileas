@@ -137,7 +137,7 @@ public class SetDictionaryFilter extends DictionaryFilter {
                 final String originalToken = text.substring(characterStart, characterEnd);
 
                 // Set the meta values for the span.
-                final boolean isIgnored = ignored.contains(originalToken);
+                final boolean isIgnored = isIgnored(originalToken);
                 final double confidence = 1.0;
                 final String[] window = getWindow(text, characterStart, characterEnd);
 
