@@ -12,6 +12,8 @@ Phileas is the redaction engine underneath [Philter](https://www.github.com/phil
 
 Full documentation is at https://philterd.github.io/phileas/.
 
+Questions, ideas, or want to contribute? [Join the Philterd community on Slack](https://philterd.ai/slack/) to talk with other users and developers.
+
 ## Quickstart
 
 Add the dependency (see [Using Phileas](#using-phileas) for the current version), then redact some text. Policies are written in PhiSQL and loaded with `Policy.fromPhiSQL(...)`:
