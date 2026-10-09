@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import java.util.regex.Pattern;
 
 // TODO: This should not extend RulesFilter because it is not a rule-based filter.
@@ -39,6 +40,7 @@ public class PhoneNumberRulesFilter extends RulesFilter {
 
     private final PhoneNumberUtil phoneUtil;
     private final List<String> regions;
+    private final PhoneNumberUtil.Leniency leniency;
     private final Pattern pattern = Pattern.compile("^(\\+\\d{1,2}\\s)?\\(?\\d{3}\\)?[\\s.-]\\d{3}[\\s.-]\\d{4}$");
 
     public PhoneNumberRulesFilter(final FilterConfiguration filterConfiguration) {
@@ -47,9 +49,17 @@ public class PhoneNumberRulesFilter extends RulesFilter {
 
     public PhoneNumberRulesFilter(final FilterConfiguration filterConfiguration, final List<String> regions) {
 
+        this(filterConfiguration, regions, PhoneNumberUtil.Leniency.POSSIBLE);
+
+    }
+
+    public PhoneNumberRulesFilter(final FilterConfiguration filterConfiguration, final List<String> regions,
+                                  final PhoneNumberUtil.Leniency leniency) {
+
         super(FilterType.PHONE_NUMBER, filterConfiguration);
 
         this.phoneUtil = PhoneNumberUtil.getInstance();
+        this.leniency = Objects.requireNonNull(leniency, "leniency");
         this.regions = (regions == null || regions.isEmpty()) ? List.of(PhoneNumber.DEFAULT_REGION) : regions;
 
         this.contextualTerms = new HashSet<>();
@@ -74,7 +84,7 @@ public class PhoneNumberRulesFilter extends RulesFilter {
             // de-duplicated below, preferring valid numbers over merely-possible ones and longer over shorter.
             final List<PhoneNumberMatch> allMatches = new ArrayList<>();
             for (final String region : regions) {
-                for (final PhoneNumberMatch match : phoneUtil.findNumbers(input, region, PhoneNumberUtil.Leniency.POSSIBLE, Long.MAX_VALUE)) {
+                for (final PhoneNumberMatch match : phoneUtil.findNumbers(input, region, leniency, Long.MAX_VALUE)) {
                     allMatches.add(match);
                 }
             }

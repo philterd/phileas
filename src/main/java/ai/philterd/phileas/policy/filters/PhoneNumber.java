@@ -16,6 +16,7 @@
 package ai.philterd.phileas.policy.filters;
 
 import ai.philterd.phileas.services.strategies.rules.PhoneNumberFilterStrategy;
+import com.google.i18n.phonenumbers.PhoneNumberUtil;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.JsonAdapter;
 import com.google.gson.annotations.SerializedName;
@@ -40,6 +41,22 @@ public class PhoneNumber extends AbstractFilter {
     @Expose
     @JsonAdapter(StringOrArrayListDeserializer.class)
     private List<String> region;
+
+    @SerializedName("leniency")
+    @Expose
+    private String leniency;
+
+    /**
+     * Matching strictness. Omitted or null values retain the historical POSSIBLE behavior.
+     * Invalid names fail when the policy is prepared instead of silently weakening detection.
+     */
+    public PhoneNumberUtil.Leniency getLeniency() {
+        return leniency == null ? PhoneNumberUtil.Leniency.POSSIBLE : PhoneNumberUtil.Leniency.valueOf(leniency);
+    }
+
+    public void setLeniency(PhoneNumberUtil.Leniency leniency) {
+        this.leniency = leniency == null ? null : leniency.name();
+    }
 
     public List<PhoneNumberFilterStrategy> getPhoneNumberFilterStrategies() {
         return phoneNumberFilterStrategies;
