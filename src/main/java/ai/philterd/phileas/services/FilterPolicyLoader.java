@@ -542,7 +542,9 @@ public class FilterPolicyLoader {
                     .withId(policy.getIdentifiers().getPhoneNumber().getId())
                     .build();
 
-            final Filter filter = new PhoneNumberRulesFilter(filterConfiguration, policy.getIdentifiers().getPhoneNumber().getRegion());
+            final Filter filter = new PhoneNumberRulesFilter(filterConfiguration,
+                    policy.getIdentifiers().getPhoneNumber().getRegion(),
+                    policy.getIdentifiers().getPhoneNumber().getLeniency());
             enabledFilters.add(filter);
 
         }
