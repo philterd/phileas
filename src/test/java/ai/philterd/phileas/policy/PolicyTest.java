@@ -709,6 +709,18 @@ public class PolicyTest {
 
     }
 
+    @Test
+    public void deserializePhoneNumberRejectsUnknownLeniency() {
+
+        final Policy policy = new Gson().fromJson("""
+                {"identifiers":{"phoneNumber":{"leniency":"unknown"}}}
+                """, Policy.class);
+
+        Assertions.assertThrows(IllegalArgumentException.class,
+                () -> policy.getIdentifiers().getPhoneNumber().getLeniency());
+
+    }
+
     private Policy getPolicy() throws IOException {
 
         CustomDictionary customDictionary = new CustomDictionary();

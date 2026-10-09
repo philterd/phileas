@@ -26,6 +26,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import com.google.i18n.phonenumbers.PhoneNumberUtil;
 
 import java.util.List;
 
@@ -497,6 +498,24 @@ public class PhoneNumberFilterTest extends AbstractFilterTest {
         Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 7, 19, FilterType.PHONE_NUMBER));
         Assertions.assertEquals("112-997-5633", filtered.getSpans().get(0).getText());
         Assertions.assertEquals(0.95, filtered.getSpans().get(0).getConfidence());
+
+    }
+
+    @Test
+    public void validLeniencyRejectsYearButDetectsPhone() throws Exception {
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(new PhoneNumberFilterStrategy()))
+                .withWindowSize(windowSize)
+                .build();
+
+        final PhoneNumberRulesFilter filter = new PhoneNumberRulesFilter(
+                filterConfiguration, List.of("US", "GB", "DE"), PhoneNumberUtil.Leniency.VALID);
+
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE,
+                "Calendar: Oct 9, 2026. Call +1 202-555-0182.");
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertEquals("+1 202-555-0182", filtered.getSpans().get(0).getText());
 
     }
 
