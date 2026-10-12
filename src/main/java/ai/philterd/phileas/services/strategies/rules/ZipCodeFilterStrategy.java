@@ -190,11 +190,9 @@ public class ZipCodeFilterStrategy extends AbstractFilterStrategy {
 
         } else if(Strings.CI.equals(strategy, TRUNCATE)) {
 
-            int leaveCharacters = getValueOrDefault(truncateLeaveCharacters, 4);
-
-            if (leaveCharacters < 1) {
-                leaveCharacters = 1;
-            }
+            // A policy sets truncateLeaveCharacters without going through its setter, so keep it
+            // within 1 to 4 here. At least one of the five digits is always replaced.
+            final int leaveCharacters = Math.min(Math.max(getValueOrDefault(truncateLeaveCharacters, 4), 1), 4);
 
             if(Strings.CI.equals(truncateDirection, LEADING)) {
                 replacement = token.substring(0, leaveCharacters) + StringUtils.repeat(truncateCharacter, Math.min(token.length() - leaveCharacters, 5 - leaveCharacters));

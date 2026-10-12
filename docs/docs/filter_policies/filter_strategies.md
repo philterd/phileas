@@ -365,6 +365,9 @@ unchanged: a value no longer than `truncateLeaveCharacters` keeps all but one of
 
 The `TRUNCATE` filter has special behavior for the zip code filter. For zip codes the Zip will always be truncated
 to 5 digits long. For example, `truncateLeaveCharacters=2` and a token of `90210-0110` will result in `90***`.
+For zip codes, `truncateLeaveCharacters` is kept between 1 and 4: a value below 1 is treated as 1 and a value
+above 4 is treated as 4, so at least one digit is always replaced. For example, `truncateLeaveCharacters=5` and a
+token of `90210` will result in `9021*` (`*0210` with `TRAILING`).
 
 ```
 {
