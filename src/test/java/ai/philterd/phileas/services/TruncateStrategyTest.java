@@ -25,6 +25,7 @@ import ai.philterd.phileas.services.filters.filtering.PlainTextFilterService;
 import ai.philterd.phileas.services.strategies.AbstractFilterStrategy;
 import ai.philterd.phileas.services.strategies.ai.PhEyeFilterStrategy;
 import ai.philterd.phileas.services.strategies.rules.DateFilterStrategy;
+import ai.philterd.phileas.services.strategies.rules.ZipCodeFilterStrategy;
 import com.google.gson.Gson;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -58,6 +59,25 @@ class TruncateStrategyTest {
             ABCD,       ', "truncateLeaveCharacters": 0',                                A***
             """;
 
+    // A zip code keeps 1 to 4 of its five digits, whatever truncateLeaveCharacters the policy gives.
+    private static final String ZIP_CODE_CASES = """
+            # value,     settings,                                                          expected
+            90210,       '',                                                                9021*
+            90210,       ', "truncateLeaveCharacters": 0',                                  9****
+            90210,       ', "truncateLeaveCharacters": 1',                                  9****
+            90210,       ', "truncateLeaveCharacters": 4',                                  9021*
+            90210,       ', "truncateLeaveCharacters": 5',                                  9021*
+            90210,       ', "truncateLeaveCharacters": 6',                                  9021*
+            90210-0110,  ', "truncateLeaveCharacters": 5',                                  9021*
+            90210,       ', "truncateDirection": "TRAILING"',                               *0210
+            90210,       ', "truncateLeaveCharacters": 0, "truncateDirection": "TRAILING"', ****0
+            90210,       ', "truncateLeaveCharacters": 1, "truncateDirection": "TRAILING"', ****0
+            90210,       ', "truncateLeaveCharacters": 4, "truncateDirection": "TRAILING"', *0210
+            90210,       ', "truncateLeaveCharacters": 5, "truncateDirection": "TRAILING"', *0210
+            90210,       ', "truncateLeaveCharacters": 6, "truncateDirection": "TRAILING"', *0210
+            90210-0110,  ', "truncateLeaveCharacters": 5, "truncateDirection": "TRAILING"', *0210
+            """;
+
     private final VectorService vectorService = mock(VectorService.class);
 
     @ParameterizedTest
@@ -87,6 +107,29 @@ class TruncateStrategyTest {
     @CsvSource(textBlock = CASES)
     void phEyeStrategy(final String value, final String settings, final String expected) throws Exception {
         Assertions.assertEquals(expected, replace(PhEyeFilterStrategy.class, value, settings));
+    }
+
+    @ParameterizedTest
+    @CsvSource(textBlock = ZIP_CODE_CASES)
+    void zipCodePolicy(final String value, final String settings, final String expected) throws Exception {
+
+        final String json = "{ \"identifiers\": { \"zipCode\": { "
+                + "\"zipCodeFilterStrategies\": [ { \"strategy\": \"TRUNCATE\"" + settings + " } ] } } }";
+
+        final PlainTextFilterService service = new PlainTextFilterService(
+                new PhileasConfiguration(new Properties()), new DefaultContextService(), vectorService, null);
+
+        final String input = "Zip " + value + " here.";
+
+        Assertions.assertEquals("Zip " + expected + " here.",
+                service.filter(new Gson().fromJson(json, Policy.class), "context", input).getFilteredText());
+
+    }
+
+    @ParameterizedTest
+    @CsvSource(textBlock = ZIP_CODE_CASES)
+    void zipCodeStrategy(final String value, final String settings, final String expected) throws Exception {
+        Assertions.assertEquals(expected, replace(ZipCodeFilterStrategy.class, value, settings));
     }
 
     private String replace(final Class<? extends AbstractFilterStrategy> type, final String value,

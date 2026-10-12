@@ -42,7 +42,7 @@ See [Filter Strategies](#filter-strategies) for details.
 | `STATIC_REPLACE`      | Replace the sensitive text with a given value.                                                                                                                                         |
 | `CRYPTO_REPLACE`      | Replace the sensitive text with its encrypted value.                                                                                                                                   |
 | `HASH_SHA256_REPLACE` | Replace the sensitive text with its SHA256 hash value.                                                                                                                                 |
-| `TRUNCATE`            | Replace the sensitive text by removing everything except `x` characters. (Set the number of characters to leave using the `truncateLeaveCharacters` parameter of the filter strategy.) |
+| `TRUNCATE`            | Replace the sensitive text by removing everything except `x` characters. (Set the number of characters to leave, from 1 to 4, using the `truncateLeaveCharacters` parameter of the filter strategy.) |
 | `ZERO_LEADING`        | Replace the sensitive text by zeroing the first 3 digits.                                                                                                                              |
 
 ### Conditions
