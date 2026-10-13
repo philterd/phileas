@@ -4,6 +4,8 @@
 
 This filter identifies US SSNs and TINs such as `123-45-6789` and `123456789` in text.
 
+An SSN-shaped value beginning with 9 is never reported by this filter. Those values are Individual Taxpayer Identification Numbers; use the [ITIN filter](itin.md) to detect them.
+
 ### Separators
 
 Between the digit groups of an SSN the filter accepts a hyphen, a single horizontal whitespace

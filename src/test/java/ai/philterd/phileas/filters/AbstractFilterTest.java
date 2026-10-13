@@ -36,6 +36,7 @@ import ai.philterd.phileas.policy.filters.Hospital;
 import ai.philterd.phileas.policy.filters.IbanCode;
 import ai.philterd.phileas.policy.filters.Identifier;
 import ai.philterd.phileas.policy.filters.IpAddress;
+import ai.philterd.phileas.policy.filters.Itin;
 import ai.philterd.phileas.policy.filters.MacAddress;
 import ai.philterd.phileas.policy.filters.PassportNumber;
 import ai.philterd.phileas.policy.filters.PhoneNumber;
@@ -71,6 +72,7 @@ import ai.philterd.phileas.services.strategies.rules.EmailAddressFilterStrategy;
 import ai.philterd.phileas.services.strategies.rules.IbanCodeFilterStrategy;
 import ai.philterd.phileas.services.strategies.rules.IdentifierFilterStrategy;
 import ai.philterd.phileas.services.strategies.rules.IpAddressFilterStrategy;
+import ai.philterd.phileas.services.strategies.rules.ItinFilterStrategy;
 import ai.philterd.phileas.services.strategies.rules.MacAddressFilterStrategy;
 import ai.philterd.phileas.services.strategies.rules.PassportNumberFilterStrategy;
 import ai.philterd.phileas.services.strategies.rules.PhoneNumberExtensionFilterStrategy;
@@ -165,6 +167,9 @@ public abstract class AbstractFilterTest {
         Ein ein = new Ein();
         ein.setEinFilterStrategies(List.of(new EinFilterStrategy()));
 
+        Itin itin = new Itin();
+        itin.setItinFilterStrategies(List.of(new ItinFilterStrategy()));
+
         Ssn ssn = new Ssn();
         ssn.setSsnFilterStrategies(List.of(new SsnFilterStrategy()));
 
@@ -236,6 +241,7 @@ public abstract class AbstractFilterTest {
         identifiers.setPhoneNumberExtension(phoneNumberExtension);
         identifiers.setSections(List.of(section));
         identifiers.setEin(ein);
+        identifiers.setItin(itin);
         identifiers.setSsn(ssn);
         identifiers.setStateAbbreviation(stateAbbreviation);
         identifiers.setStreetAddress(streetAddress);

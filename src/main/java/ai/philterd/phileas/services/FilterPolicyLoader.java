@@ -49,6 +49,7 @@ import ai.philterd.phileas.services.filters.regex.EmailAddressFilter;
 import ai.philterd.phileas.services.filters.regex.IbanCodeFilter;
 import ai.philterd.phileas.services.filters.regex.IdentifierFilter;
 import ai.philterd.phileas.services.filters.regex.IpAddressFilter;
+import ai.philterd.phileas.services.filters.regex.ItinFilter;
 import ai.philterd.phileas.services.filters.regex.MacAddressFilter;
 import ai.philterd.phileas.services.filters.regex.PassportNumberFilter;
 import ai.philterd.phileas.services.filters.regex.PhoneNumberExtensionFilter;
@@ -602,6 +603,29 @@ public class FilterPolicyLoader {
                     .build();
 
             final Filter filter = new EinFilter(filterConfiguration, policy.getIdentifiers().getEin().isOnlyValidPrefixes());
+            enabledFilters.add(filter);
+
+        }
+
+        if(policy.getIdentifiers().hasFilter(FilterType.ITIN) && policy.getIdentifiers().getItin().isEnabled()) {
+
+            final int windowSize = policy.getIdentifiers().getItin().getWindowSizeOrDefault(phileasConfiguration.spanWindowSize());
+
+            final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                    .withRandom(random)
+                    .withStrategies(policy.getIdentifiers().getItin().getItinFilterStrategies())
+                    .withIgnored(policy.getIdentifiers().getItin().getIgnored())
+                    .withIgnoredFiles(policy.getIdentifiers().getItin().getIgnoredFiles())
+                    .withIgnoredPatterns(policy.getIdentifiers().getItin().getIgnoredPatterns())
+                    .withCrypto(policy.getCrypto())
+                    .withGenerators(replacementGenerators)
+                    .withFPE(policy.getFpe())
+                    .withWindowSize(windowSize)
+                    .withPriority(policy.getIdentifiers().getItin().getPriority())
+                    .withId(policy.getIdentifiers().getItin().getId())
+                    .build();
+
+            final Filter filter = new ItinFilter(filterConfiguration, policy.getIdentifiers().getItin().isOnlyValidRanges());
             enabledFilters.add(filter);
 
         }

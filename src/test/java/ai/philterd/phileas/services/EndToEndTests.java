@@ -421,6 +421,71 @@ public class EndToEndTests {
     }
 
     @Test
+    public void endToEndItinAndSsn() throws Exception {
+
+        final Properties properties = new Properties();
+        final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties);
+
+        // With ssn, ein, and itin all enabled, an ITIN is reported only as itin and an SSN only as ssn.
+        final String json = """
+                {
+                  "identifiers": {
+                    "ssn": {
+                      "ssnFilterStrategies": [ { "strategy": "REDACT" } ]
+                    },
+                    "ein": {
+                      "einFilterStrategies": [ { "strategy": "REDACT" } ]
+                    },
+                    "itin": {
+                      "itinFilterStrategies": [ { "strategy": "REDACT" } ]
+                    }
+                  }
+                }
+                """;
+        final Policy policy = new com.google.gson.Gson().fromJson(json, Policy.class);
+
+        final PlainTextFilterService service = new PlainTextFilterService(phileasConfiguration, contextService, vectorService, null);
+
+        for (final String itin : List.of("912-70-1234", "912 70 1234", "912701234")) {
+            final TextFilterResult response = service.filter(policy, "context", "the itin is " + itin + ".");
+            Assertions.assertEquals("the itin is {{{REDACTED-itin}}}.", response.getFilteredText().trim(), itin);
+        }
+
+        final TextFilterResult ssn = service.filter(policy, "context", "the ssn is 123-45-6789.");
+        Assertions.assertEquals("the ssn is {{{REDACTED-ssn}}}.", ssn.getFilteredText().trim());
+
+    }
+
+    @Test
+    public void endToEndItinOnlyValidRanges() throws Exception {
+
+        final Properties properties = new Properties();
+        final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties);
+
+        final String json = """
+                {
+                  "identifiers": {
+                    "itin": {
+                      "onlyValidRanges": true,
+                      "itinFilterStrategies": [ { "strategy": "REDACT" } ]
+                    }
+                  }
+                }
+                """;
+        final Policy policy = new com.google.gson.Gson().fromJson(json, Policy.class);
+
+        final PlainTextFilterService service = new PlainTextFilterService(phileasConfiguration, contextService, vectorService, null);
+
+        // An ATIN (93) is outside the ITIN ranges, so with onlyValidRanges on it is left in the clear.
+        final TextFilterResult atin = service.filter(policy, "context", "the number is 912-93-1234.");
+        Assertions.assertEquals("the number is 912-93-1234.", atin.getFilteredText().trim());
+
+        final TextFilterResult itin = service.filter(policy, "context", "the number is 912-70-1234.");
+        Assertions.assertEquals("the number is {{{REDACTED-itin}}}.", itin.getFilteredText().trim());
+
+    }
+
+    @Test
     public void endToEndEinSsnDisambiguation() throws Exception {
 
         final Properties properties = new Properties();

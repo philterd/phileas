@@ -49,6 +49,7 @@ Phileas uses several methods to identify person's names.
 | [Hospitals](filters/locations/hospitals.md)                                   | Identifies common hospital names                                                |
 | [IBAN Codes](filters/common_filters/iban-codes.md)                            | Identifies international bank account numbers                                   |
 | [IP Addresses](filters/common_filters/ip-addresses.md)                        | Identifies IPv4 and IPv6 addresses                                              |
+| [Individual Taxpayer Identification Numbers (ITIN)](filters/common_filters/itin.md) | Identifies US Individual Taxpayer Identification Numbers such as `912-70-1234` |
 | [MAC Addresses](filters/common_filters/mac-addresses.md)                      | Identifies network MAC addresses                                                |
 | [Passport Numbers](filters/common_filters/passport-numbers.md)                | Identifies US passport numbers                                                  |
 | [Phone Numbers](filters/common_filters/phone-numbers.md)                      | Identifies phone numbers                                                        |

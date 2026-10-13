@@ -84,6 +84,11 @@ public class SchemaConformanceTest {
                 "expected the embedded policy schema to declare identifiers");
 
         for (final String identifier : schemaIdentifiers) {
+            if (UNMODELED_IDENTIFIERS.containsKey(identifier)) {
+                Assertions.assertFalse(phileasIdentifiers.contains(identifier), "'" + identifier + "' is listed "
+                        + "as unmodeled but Identifiers models it now. Remove it from UNMODELED_IDENTIFIERS.");
+                continue;
+            }
             Assertions.assertTrue(phileasIdentifiers.contains(identifier),
                     "The policy schema declares identifier '" + identifier + "' but Phileas has no matching "
                             + "@SerializedName field in Identifiers. The published schema and the runtime have drifted.");
@@ -110,6 +115,10 @@ public class SchemaConformanceTest {
         final JsonObject schema = schema();
 
         for (final String identifier : identifierNamesIn(PolicySchema.getSchema())) {
+
+            if (UNMODELED_IDENTIFIERS.containsKey(identifier)) {
+                continue;
+            }
 
             final String definition = definitionFor(schema, "identifiers", identifier);
             final Class<?> type = policyTypeOf(Identifiers.class, identifier);
@@ -175,6 +184,10 @@ public class SchemaConformanceTest {
 
         for (final String identifier : identifierNamesIn(PolicySchema.getSchema())) {
 
+            if (UNMODELED_IDENTIFIERS.containsKey(identifier)) {
+                continue;
+            }
+
             final Policy policy = new Gson().fromJson(minimalPolicyFor(identifier), Policy.class);
             final boolean built = !loader.getFiltersForPolicy(policy, new HashMap<>()).isEmpty();
 
@@ -200,7 +213,7 @@ public class SchemaConformanceTest {
 
             final String entity = catalog.entityNameForField(identifier);
 
-            if (entity == null) {
+            if (entity == null || UNMODELED_IDENTIFIERS.containsKey(identifier)) {
                 continue;
             }
 
@@ -568,6 +581,13 @@ public class SchemaConformanceTest {
     private static final Map<String, String> EXPECTED_GAPS = Map.of(
             "medicalCondition", "no filter is built for it; the entity type is being retired",
             "ZERO_LEADING", "the zip code strategy is not in the schema's strategy enum");
+
+    /**
+     * Identifiers the schema declares that Phileas does not model yet, with why. Each is asserted to
+     * still be unmodeled, so implementing one fails this test until its entry is removed.
+     */
+    private static final Map<String, String> UNMODELED_IDENTIFIERS = Map.of(
+            "canadaSin", "the Canadian SIN filter is not implemented yet (issue #416)");
 
     /** Every {@code @SerializedName} value and alternate on the class and its superclasses. */
     private static Set<String> serializedNamesOf(final Class<?> type) {

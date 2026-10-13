@@ -42,6 +42,7 @@ import ai.philterd.phileas.services.anonymization.HospitalAbbreviationAnonymizat
 import ai.philterd.phileas.services.anonymization.HospitalAnonymizationService;
 import ai.philterd.phileas.services.anonymization.IbanCodeAnonymizationService;
 import ai.philterd.phileas.services.anonymization.IpAddressAnonymizationService;
+import ai.philterd.phileas.services.anonymization.ItinAnonymizationService;
 import ai.philterd.phileas.services.anonymization.MacAddressAnonymizationService;
 import ai.philterd.phileas.services.anonymization.PassportNumberAnonymizationService;
 import ai.philterd.phileas.services.anonymization.PersonsAnonymizationService;
@@ -349,6 +350,8 @@ public abstract class Filter {
             return new IbanCodeAnonymizationService(random, candidates);
         } else if(filterType == FilterType.IP_ADDRESS) {
             return new IpAddressAnonymizationService(random, candidates);
+        } else if(filterType == FilterType.ITIN) {
+            return new ItinAnonymizationService(random, candidates);
         } else if(filterType == FilterType.MAC_ADDRESS) {
             return new MacAddressAnonymizationService(random, candidates);
         } else if(filterType == FilterType.PASSPORT_NUMBER) {

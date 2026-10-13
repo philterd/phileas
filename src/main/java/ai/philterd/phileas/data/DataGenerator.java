@@ -71,6 +71,12 @@ public interface DataGenerator {
     Generator<String> ein();
 
     /**
+     * Gets a generator for Individual Taxpayer Identification Numbers (ITIN).
+     * @return A generator for Individual Taxpayer Identification Numbers (ITIN).
+     */
+    Generator<String> itin();
+
+    /**
      * Gets a generator for phone numbers.
      * @return A generator for phone numbers.
      */

@@ -54,6 +54,17 @@ public class PolicySchemaValidationTest {
     }
 
     @Test
+    public void validateItinPolicy() {
+
+        final String jsonPolicy = "{\"identifiers\": {\"itin\": {\"onlyValidRanges\": true, \"itinFilterStrategies\": [{\"strategy\": \"LAST_4\"}]}}}";
+
+        final boolean valid = PolicySchema.validate(jsonPolicy);
+
+        Assertions.assertTrue(valid);
+
+    }
+
+    @Test
     public void validatePhoneNumberRegionString() {
 
         final String jsonPolicy = "{\"identifiers\": {\"phoneNumber\": {\"region\": \"GB\"}}}";

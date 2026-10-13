@@ -34,6 +34,7 @@ import ai.philterd.phileas.policy.filters.Hospital;
 import ai.philterd.phileas.policy.filters.IbanCode;
 import ai.philterd.phileas.policy.filters.Identifier;
 import ai.philterd.phileas.policy.filters.IpAddress;
+import ai.philterd.phileas.policy.filters.Itin;
 import ai.philterd.phileas.policy.filters.MacAddress;
 import ai.philterd.phileas.policy.filters.MedicalCondition;
 import ai.philterd.phileas.policy.filters.PassportNumber;
@@ -105,6 +106,10 @@ public class Identifiers {
     @SerializedName("ein")
     @Expose
     private Ein ein;
+
+    @SerializedName("itin")
+    @Expose
+    private Itin itin;
 
     @SerializedName("emailAddress")
     @Expose
@@ -211,7 +216,7 @@ public class Identifiers {
         final List<AbstractFilter> filters = new LinkedList<>();
 
         Stream.of(age, bankRoutingNumber, bitcoinAddress, city, county, creditCard, currency, date,
-                        driversLicense, ein, emailAddress, firstName, hospital, ibanCode, ipAddress,
+                        driversLicense, ein, emailAddress, firstName, hospital, ibanCode, ipAddress, itin,
                         macAddress, medicalCondition, passportNumber, person, phoneNumber,
                         phoneNumberExtension, ssn, state, stateAbbreviation, streetAddress, surname,
                         trackingNumber, url, vin, zipCode)
@@ -262,6 +267,8 @@ public class Identifiers {
                 if(this.getDriversLicense() != null) { return true; } break;
             case EIN:
                 if(this.getEin() != null) { return true; } break;
+            case ITIN:
+                if(this.getItin() != null) { return true; } break;
             case EMAIL_ADDRESS:
                 if(this.getEmailAddress() != null) { return true; } break;
             case FIRST_NAME:
@@ -357,6 +364,14 @@ public class Identifiers {
 
     public void setEin(Ein ein) {
         this.ein = ein;
+    }
+
+    public Itin getItin() {
+        return itin;
+    }
+
+    public void setItin(Itin itin) {
+        this.itin = itin;
     }
 
     public PhoneNumber getPhoneNumber() {

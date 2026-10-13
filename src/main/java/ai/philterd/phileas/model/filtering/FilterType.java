@@ -38,6 +38,7 @@ public enum FilterType {
     IBAN_CODE("iban-code", true),
     IDENTIFIER("id", true),
     IP_ADDRESS("ip-address", true),
+    ITIN("itin", true),
     MAC_ADDRESS("mac-address", true),
     PASSPORT_NUMBER("passport-number", true),
     PH_EYE("pheye", false),
