@@ -58,7 +58,6 @@ public enum FilterType {
 
     // These are not natively identified by Phileas.
     PERSON("person", false),
-    MEDICAL_CONDITION("medical-condition", false),
     OTHER("other", false);
 
     private final String type;

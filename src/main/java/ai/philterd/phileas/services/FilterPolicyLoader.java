@@ -193,6 +193,14 @@ public class FilterPolicyLoader {
      */
     private List<Filter> buildFilters(final Policy policy, final String policyKey) throws Exception {
 
+        // The medicalCondition identifier never built a filter, so a policy setting it redacted nothing.
+        // It was removed rather than left as a setting that silently does nothing.
+        if (policy.getIdentifiers().hasMedicalCondition()) {
+            throw new IllegalArgumentException("The medicalCondition filter has been removed: it never detected "
+                    + "anything. To detect medical conditions, use a pheyes filter with a model that detects them, "
+                    + "or a custom dictionary of condition names.");
+        }
+
         // Reject a bad pattern here, where the cost is paid once per policy, rather than on whichever
         // document first reaches it.
         new PolicyPatternValidator(phileasConfiguration.regexTimeoutMs()).validate(policy);

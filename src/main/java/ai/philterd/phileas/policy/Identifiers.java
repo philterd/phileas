@@ -37,7 +37,6 @@ import ai.philterd.phileas.policy.filters.Identifier;
 import ai.philterd.phileas.policy.filters.IpAddress;
 import ai.philterd.phileas.policy.filters.Itin;
 import ai.philterd.phileas.policy.filters.MacAddress;
-import ai.philterd.phileas.policy.filters.MedicalCondition;
 import ai.philterd.phileas.policy.filters.PassportNumber;
 import ai.philterd.phileas.policy.filters.PhEye;
 import ai.philterd.phileas.policy.filters.PhoneNumber;
@@ -52,6 +51,7 @@ import ai.philterd.phileas.policy.filters.TrackingNumber;
 import ai.philterd.phileas.policy.filters.Url;
 import ai.philterd.phileas.policy.filters.Vin;
 import ai.philterd.phileas.policy.filters.ZipCode;
+import com.google.gson.JsonElement;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import ai.philterd.phileas.utils.CollectionUtils;
@@ -180,9 +180,11 @@ public class Identifiers {
     @Expose
     private ZipCode zipCode;
 
+    // Retired: no filter was ever built for it, so a policy setting it redacted nothing. Kept only so a
+    // policy that still sets it can be refused when it is loaded, rather than silently ignored.
     @SerializedName("medicalCondition")
     @Expose
-    private MedicalCondition medicalCondition;
+    private JsonElement medicalCondition;
 
     @SerializedName("city")
     @Expose
@@ -222,7 +224,7 @@ public class Identifiers {
 
         Stream.of(age, bankRoutingNumber, bitcoinAddress, canadaSin, city, county, creditCard, currency, date,
                         driversLicense, ein, emailAddress, firstName, hospital, ibanCode, ipAddress, itin,
-                        macAddress, medicalCondition, passportNumber, person, phoneNumber,
+                        macAddress, passportNumber, person, phoneNumber,
                         phoneNumberExtension, ssn, state, stateAbbreviation, streetAddress, surname,
                         trackingNumber, url, vin, zipCode)
                 .filter(Objects::nonNull)
@@ -290,8 +292,6 @@ public class Identifiers {
                 if(this.getIpAddress() != null) { return true; } break;
             case MAC_ADDRESS:
                 if(this.getMacAddress() != null) { return true; } break;
-            case MEDICAL_CONDITION:
-                if(this.getMedicalCondition() != null) {return true; } break;
             case PASSPORT_NUMBER:
                 if(this.getPassportNumber() != null) { return true; } break;
             case PHONE_NUMBER:
@@ -589,12 +589,12 @@ public class Identifiers {
         this.currency = currency;
     }
 
-    public MedicalCondition getMedicalCondition() {
-        return medicalCondition;
-    }
-
-    public void setMedicalCondition(MedicalCondition medicalCondition) {
-        this.medicalCondition = medicalCondition;
+    /**
+     * Whether the policy sets the retired {@code medicalCondition} identifier.
+     * @return {@code true} if it does.
+     */
+    public boolean hasMedicalCondition() {
+        return medicalCondition != null && !medicalCondition.isJsonNull();
     }
 
     public List<PhEye> getPhEyes() {

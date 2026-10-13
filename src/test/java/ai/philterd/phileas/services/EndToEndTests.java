@@ -737,6 +737,35 @@ public class EndToEndTests {
     }
 
     @Test
+    public void endToEndTheRetiredMedicalConditionFilterRefusesThePolicy() {
+
+        // https://github.com/philterd/phileas/issues/409: medicalCondition never built a filter, so it was
+        // removed. A policy still setting it is refused rather than silently redacting nothing.
+        final String message = "The medicalCondition filter has been removed: it never detected anything. To detect "
+                + "medical conditions, use a pheyes filter with a model that detects them, or a custom dictionary of "
+                + "condition names.";
+
+        final Policy[] policies = {
+                new com.google.gson.Gson().fromJson("{ \"identifiers\": { \"medicalCondition\": {} } }", Policy.class),
+                new com.google.gson.Gson().fromJson("{ \"identifiers\": { \"ssn\": {}, \"medicalCondition\": "
+                        + "{ \"medicalConditionFilterStrategies\": [ { \"strategy\": \"REDACT\" } ] } } }", Policy.class),
+                Policy.fromPhiSQL("REDACT MEDICAL_CONDITION WITH REDACT;")};
+
+        for (final Policy policy : policies) {
+            final PlainTextFilterService service = new PlainTextFilterService(new PhileasConfiguration(new Properties()), contextService, vectorService, null);
+            final IllegalArgumentException ex = Assertions.assertThrows(IllegalArgumentException.class,
+                    () -> service.filter(policy, "context", "SSN 123-45-6789, diabetes"));
+            Assertions.assertEquals(message, ex.getMessage());
+        }
+
+        // An explicit null is the same as not setting it.
+        final Policy unset = new com.google.gson.Gson().fromJson("{ \"identifiers\": { \"ssn\": {}, \"medicalCondition\": null } }", Policy.class);
+        final PlainTextFilterService service = new PlainTextFilterService(new PhileasConfiguration(new Properties()), contextService, vectorService, null);
+        Assertions.assertDoesNotThrow(() -> service.filter(unset, "context", "SSN 123-45-6789"));
+
+    }
+
+    @Test
     public void endToEndAnUnknownSensitivityRefusesThePolicy() {
 
         // https://github.com/philterd/phileas/issues/440: a misspelled sensitivity is refused when the policy

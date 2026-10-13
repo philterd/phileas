@@ -116,7 +116,7 @@ public class SchemaConformanceTest {
 
         for (final String identifier : identifierNamesIn(PolicySchema.getSchema())) {
 
-            if (UNMODELED_IDENTIFIERS.containsKey(identifier)) {
+            if (UNMODELED_IDENTIFIERS.containsKey(identifier) || RETIRED_IDENTIFIERS.containsKey(identifier)) {
                 continue;
             }
 
@@ -189,6 +189,14 @@ public class SchemaConformanceTest {
             }
 
             final Policy policy = new Gson().fromJson(minimalPolicyFor(identifier), Policy.class);
+
+            if (RETIRED_IDENTIFIERS.containsKey(identifier)) {
+                Assertions.assertThrows(IllegalArgumentException.class,
+                        () -> loader.getFiltersForPolicy(policy, new HashMap<>()),
+                        "'" + identifier + "' is retired, so a policy setting it must be refused when loaded");
+                continue;
+            }
+
             final boolean built = !loader.getFiltersForPolicy(policy, new HashMap<>()).isEmpty();
 
             if (EXPECTED_GAPS.containsKey(identifier)) {
@@ -213,7 +221,7 @@ public class SchemaConformanceTest {
 
             final String entity = catalog.entityNameForField(identifier);
 
-            if (entity == null || UNMODELED_IDENTIFIERS.containsKey(identifier)) {
+            if (entity == null || UNMODELED_IDENTIFIERS.containsKey(identifier) || RETIRED_IDENTIFIERS.containsKey(identifier)) {
                 continue;
             }
 
@@ -262,6 +270,15 @@ public class SchemaConformanceTest {
             }
         }
 
+    }
+
+    @Test
+    public void everyRetiredIdentifierIsStillDeclaredBySchema() {
+        final Set<String> schemaIdentifiers = identifierNamesIn(PolicySchema.getSchema());
+        for (final String identifier : RETIRED_IDENTIFIERS.keySet()) {
+            Assertions.assertTrue(schemaIdentifiers.contains(identifier), "The schema no longer declares '"
+                    + identifier + "'. Remove it from RETIRED_IDENTIFIERS and from Identifiers.");
+        }
     }
 
     @Test
@@ -579,8 +596,14 @@ public class SchemaConformanceTest {
      * implementing one fails this test until its entry is removed.
      */
     private static final Map<String, String> EXPECTED_GAPS = Map.of(
-            "medicalCondition", "no filter is built for it; the entity type is being retired",
             "ZERO_LEADING", "the zip code strategy is not in the schema's strategy enum");
+
+    /**
+     * Identifiers the schema still declares that Phileas has retired, with why. A policy setting one is refused
+     * when it is loaded. Each is asserted to still be declared, so the entry goes once the schema drops it.
+     */
+    private static final Map<String, String> RETIRED_IDENTIFIERS = Map.of(
+            "medicalCondition", "no filter was ever built for it; philterd/phisql#41 removes it from the schema");
 
     /**
      * Identifiers the schema declares that Phileas does not model yet, with why. Each is asserted to
