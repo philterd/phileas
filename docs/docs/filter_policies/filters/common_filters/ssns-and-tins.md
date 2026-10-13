@@ -1,8 +1,10 @@
-# SSNs and TINs
+# Social Security Numbers (SSN)
 
 ## Filter
 
-This filter identifies US SSNs and TINs such as `123-45-6789` and `123456789` in text.
+This filter identifies US Social Security Numbers (SSN) such as `123-45-6789` and `123456789` in text.
+
+A value in the form `NN-NNNNNNN` (two digits, a hyphen, then seven digits) is an Employer Identification Number and is not reported by this filter; use the [EIN filter](ein.md) to detect it.
 
 An SSN-shaped value beginning with 9 is never reported by this filter. Those values are Individual Taxpayer Identification Numbers; use the [ITIN filter](itin.md) to detect them.
 
@@ -12,7 +14,7 @@ Between the digit groups of an SSN the filter accepts a hyphen, a single horizon
 character (a space, a tab, or a non-breaking space), or nothing at all. In place of the ASCII
 hyphen it also accepts the soft hyphen (U+00AD), the dashes U+2010 through U+2015 (which include
 the non-breaking hyphen U+2011), the minus sign (U+2212), and the small and fullwidth hyphen-minus
-forms (U+FE58, U+FE63, U+FF0D). A TIN requires one of these hyphens.
+forms (U+FE58, U+FE63, U+FF0D).
 
 An identifier wrapped across a line break is detected when the break follows a hyphen:
 

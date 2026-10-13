@@ -736,6 +736,59 @@ public class EndToEndTests {
     }
 
     @Test
+    public void endToEndSsnAloneNoLongerDetectsEins() throws Exception {
+
+        // https://github.com/philterd/phileas/issues/390: NN-NNNNNNN is an EIN, which only the EIN filter detects.
+        final String json = """
+                {
+                  "identifiers": {
+                    "ssn": { "ssnFilterStrategies": [ { "strategy": "REDACT" } ] }
+                  }
+                }
+                """;
+        final Policy policy = new com.google.gson.Gson().fromJson(json, Policy.class);
+
+        final PlainTextFilterService service = new PlainTextFilterService(new PhileasConfiguration(new Properties()), contextService, vectorService, null);
+
+        for (final String ein : List.of("12-3456789", "12\u20103456789", "12-\n3456789")) {
+            final String text = "ein " + ein + " and ssn 123-45-6789.";
+            Assertions.assertEquals("ein " + ein + " and ssn {{{REDACTED-ssn}}}.", service.filter(policy, "context", text).getFilteredText().trim(), ein);
+        }
+
+    }
+
+    @Test
+    public void endToEndEinsAreTypedEin() throws Exception {
+
+        final String json = """
+                {
+                  "identifiers": {
+                    "ein": { "einFilterStrategies": [ { "strategy": "REDACT" } ] },
+                    "ssn": { "ssnFilterStrategies": [ { "strategy": "REDACT" } ] }
+                  }
+                }
+                """;
+        final Policy policy = new com.google.gson.Gson().fromJson(json, Policy.class);
+
+        final PlainTextFilterService service = new PlainTextFilterService(new PhileasConfiguration(new Properties()), contextService, vectorService, null);
+
+        // Every form of NN-NNNNNNN is an EIN, including those written with a hyphen substitute or wrapped.
+        for (final String ein : List.of("12-3456789", "12\u20103456789", "12\uFF0D3456789", "12-\n3456789", "12-\n    3456789")) {
+            final TextFilterResult response = service.filter(policy, "context", "ein " + ein + " and ssn 123-45-6789.");
+            Assertions.assertEquals("ein {{{REDACTED-ein}}} and ssn {{{REDACTED-ssn}}}.", response.getFilteredText().trim(), ein);
+        }
+
+        // Not inside two adjacent SSNs.
+        Assertions.assertEquals("the ssn is {{{REDACTED-ssn}}}.",
+                service.filter(policy, "context", "the ssn is 123-45-6789123-45-6789.").getFilteredText().trim());
+
+        // A bare nine-digit run is still an SSN.
+        Assertions.assertEquals("the ssn is {{{REDACTED-ssn}}}.",
+                service.filter(policy, "context", "the ssn is 123456789.").getFilteredText().trim());
+
+    }
+
+    @Test
     public void endToEndAdjacentSsnsWithNoSeparator() throws Exception {
 
         // https://github.com/philterd/phileas/issues/343

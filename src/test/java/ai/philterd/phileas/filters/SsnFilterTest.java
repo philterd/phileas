@@ -142,9 +142,9 @@ public class SsnFilterTest extends AbstractFilterTest {
 
         final SsnFilter filter = new SsnFilter(filterConfiguration);
 
+        // NN-NNNNNNN is an EIN, which the EIN filter detects; the SSN filter does not.
         final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "the ssn is 11-1234567.");
-        Assertions.assertEquals(1, filtered.getSpans().size());
-        Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 11, 21, FilterType.SSN));
+        Assertions.assertEquals(0, filtered.getSpans().size());
 
     }
 
@@ -245,7 +245,7 @@ public class SsnFilterTest extends AbstractFilterTest {
     public void filterSsn12() throws Exception {
 
         // https://github.com/philterd/phileas/issues/343
-        // A TIN inside a longer hyphenated token is not a TIN.
+        // Nothing inside a longer hyphenated token is an SSN.
 
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                 .withStrategies(List.of(new SsnFilterStrategy()))
@@ -372,19 +372,14 @@ public class SsnFilterTest extends AbstractFilterTest {
     @Test
     public void filterSsn18() throws Exception {
 
-        // A TIN takes the same hyphens and the same wrapping.
+        // NN-NNNNNNN is not an SSN in any of the forms the EIN filter accepts.
 
         final SsnFilter filter = new SsnFilter(getSsnFilterConfiguration());
 
-        final Filtered filtered1 = filter.filter(contextService, getPolicy(), "context", PIECE, "the tin is 11‑1234567.");
-        showSpans(filtered1.getSpans());
-        Assertions.assertEquals(1, filtered1.getSpans().size());
-        Assertions.assertEquals("11‑1234567", filtered1.getSpans().get(0).getText());
-
-        final Filtered filtered2 = filter.filter(contextService, getPolicy(), "context", PIECE, "the tin is 11-\n1234567.");
-        showSpans(filtered2.getSpans());
-        Assertions.assertEquals(1, filtered2.getSpans().size());
-        Assertions.assertEquals("11-\n1234567", filtered2.getSpans().get(0).getText());
+        for (final String ein : List.of("11-1234567", "11\u20111234567", "11-\n1234567", "11-\n    1234567")) {
+            final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "the ein is " + ein + ".");
+            Assertions.assertEquals(0, filtered.getSpans().size(), ein);
+        }
 
         // A Unicode hyphen extends the token the same way an ASCII one does.
         final Filtered filtered3 = filter.filter(contextService, getPolicy(), "context", PIECE, "case 12‑1234567‑8");

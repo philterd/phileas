@@ -4,7 +4,28 @@
 
 This filter identifies US Employer Identification Numbers (EIN), the federal tax ID, in the canonical form `NN-NNNNNNN` (two digits, a hyphen, then seven digits) such as `12-3456789`.
 
-Only the hyphenated form is detected. A bare nine-digit run is ambiguous with an SSN and is not claimed as an EIN; the hyphen after the second digit is what distinguishes an EIN from an SSN (whose canonical form hyphenates after the third and fifth digits). When both the `ein` and `ssn` filters are enabled, a value in the `NN-NNNNNNN` form resolves to EIN.
+Only the hyphenated form is detected. A bare nine-digit run is ambiguous with an SSN and is not claimed as an EIN; the hyphen after the second digit is what distinguishes an EIN from an SSN (whose canonical form hyphenates after the third and fifth digits). This is the only filter that detects the `NN-NNNNNNN` form: the [SSN filter](ssns-and-tins.md) does not, so a policy must enable `ein` to detect EINs.
+
+### Separators
+
+In place of the ASCII hyphen the filter also accepts the soft hyphen (U+00AD), the dashes U+2010 through U+2015 (which include the non-breaking hyphen U+2011), the minus sign (U+2212), and the small and fullwidth hyphen-minus forms (U+FE58, U+FE63, U+FF0D), the same hyphens the SSN filter accepts.
+
+An EIN wrapped across a line break is detected when the break follows the hyphen:
+
+```
+EIN: 12-
+3456789
+```
+
+Indentation on the continuation line is allowed. The span covers the whole EIN, line break included, and its offsets index into the original text, since the input is not normalized before matching.
+
+The following are not detected:
+
+* An EIN inside a longer token joined by hyphens, such as `45-6789123` in `123-45-6789123-45-6789` or `12-1234567` in `12-1234567-8`. A hyphen next to the start or end of a match (the ASCII hyphen, the soft hyphen, U+2010 through U+2012, the minus sign, or the small or fullwidth hyphen-minus) counts as part of a longer token, as a letter or digit does. An en dash, em dash, horizontal bar, or small em dash next to an EIN is treated as punctuation, so an EIN followed directly by an em dash (U+2014), or a range of two EINs joined by an en dash (U+2013), is still detected.
+* A line break that no hyphen precedes, or a break inside the seven digits.
+* Digits outside ASCII, such as fullwidth or Arabic-Indic digits.
+
+When `splitting` is enabled with the `newline` method, a wrapped EIN falls across two pieces and is not detected at the default `overlap` of `0`. Set an `overlap` at least as long as the EIN to keep it detectable.
 
 ### Required Parameters
 

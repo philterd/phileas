@@ -34,17 +34,9 @@ public class SsnFilter extends RegexFilter {
     public SsnFilter(FilterConfiguration filterConfiguration) {
         super(FilterType.SSN, filterConfiguration);
 
-        // Substitutes for the ASCII hyphen: the soft hyphen, the U+2010 dash block (including the
-        // non-breaking hyphen), the minus sign, and the small and fullwidth forms.
-        final String hyphenCharacters = "-\\u00AD\\u2010-\\u2015\\u2212\\uFE58\\uFE63\\uFF0D";
-
-        // A hyphen the identifier may be wrapped across. Requiring the hyphen before the line break
-        // keeps three numbers on three lines from matching. Whitespace is never part of a digit
-        // group, so the runs are possessive.
-        final String wrap = "[" + hyphenCharacters + "]\\h*+(?:\\R\\h*+)?+";
-
-        // Between the groups of an SSN: a hyphen, wrapped or not, or one horizontal space.
-        final String separator = "(?:" + wrap + "|\\h)?";
+        // Between the groups of an SSN: a hyphen or hyphen substitute, wrapped or not, one
+        // horizontal space, or nothing.
+        final String separator = IdentifierSeparators.SEPARATOR;
 
         final String ssn = "(?!000|666)[0-8]\\d{2}" + separator + "(?!00)\\d{2}" + separator + "(?!0000)\\d{4}";
 
@@ -57,19 +49,12 @@ public class SsnFilter extends RegexFilter {
         final Pattern ssnPattern = Pattern.compile("(?<!\\w)(?:" + ssn + "){1,8}(?!\\w)");
         final FilterPattern ssn1 = new FilterPattern.FilterPatternBuilder(ssnPattern, 0.90).build();
 
-        // A TIN gets the same boundaries, and a hyphen counts as part of a longer token: without
-        // that, "45-6789123" out of "123-45-6789123-45-6789" was a TIN.
-        final Pattern tinPattern = Pattern.compile("(?<![\\w" + hyphenCharacters + "])\\d{2}" + wrap
-                + "\\d{7}(?![\\w" + hyphenCharacters + "])");
-        final FilterPattern tin1 = new FilterPattern.FilterPatternBuilder(tinPattern, 0.90).build();
-
         this.contextualTerms = new HashSet<>();
         this.contextualTerms.add("ssn");
-        this.contextualTerms.add("tin");
         this.contextualTerms.add("social");
         this.contextualTerms.add("ssid");
 
-        this.analyzer = new Analyzer(contextualTerms, ssn1, tin1);
+        this.analyzer = new Analyzer(contextualTerms, ssn1);
 
     }
 

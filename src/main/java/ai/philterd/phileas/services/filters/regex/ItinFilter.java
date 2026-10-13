@@ -52,9 +52,7 @@ public class ItinFilter extends RegexFilter {
 
         // The same separators as the SSN filter: a hyphen (or a substitute for one), optionally
         // wrapped across a line break after it, or one horizontal space.
-        final String hyphenCharacters = "-\\u00AD\\u2010-\\u2015\\u2212\\uFE58\\uFE63\\uFF0D";
-        final String wrap = "[" + hyphenCharacters + "]\\h*+(?:\\R\\h*+)?+";
-        final String separator = "(?:" + wrap + "|\\h)?";
+        final String separator = IdentifierSeparators.SEPARATOR;
 
         // A match may not begin or end partway through a longer run of digits.
         final Pattern itinPattern = Pattern.compile("(?<!\\w)9\\d{2}" + separator + "\\d{2}" + separator + "\\d{4}(?!\\w)");

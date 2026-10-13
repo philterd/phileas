@@ -56,7 +56,7 @@ Phileas uses several methods to identify person's names.
 | [Phone Numbers](filters/common_filters/phone-numbers.md)                      | Identifies phone numbers                                                        |
 | [Phone Number Extensions](filters/common_filters/phone-number-extensions.md)  | Identifies phone numbers                                                        |
 | [Sections](filters/common_filters/sections.md)                                | Identifies sections in text denoted by                                          |
-| [SSNs and TINs](filters/common_filters/ssns-and-tins.md)                      | Identifies US SSNs and TINs                                                     |
+| [Social Security Numbers (SSN)](filters/common_filters/ssns-and-tins.md)      | Identifies US Social Security Numbers such as `123-45-6789`                     |
 | [States](filters/locations/states.md)                                         | Identifies US state names                                                       |
 | [State Abbreviations](filters/locations/state-abbreviations.md)               | Identifies US state names by their abbreviations                                |
 | [Street Addresses](filters/common_filters/street-address.md)                  | Identifies US street addresses such as `123 Main Street`                         |

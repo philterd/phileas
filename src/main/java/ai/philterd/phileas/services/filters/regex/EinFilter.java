@@ -34,11 +34,12 @@ import java.util.regex.Pattern;
  * Detects U.S. Employer Identification Numbers (EIN), the federal tax ID with canonical form
  * {@code NN-NNNNNNN} (two digits, hyphen, seven digits).
  *
- * <p>Only the hyphenated form is matched. A bare nine-digit run is deliberately not claimed because
- * it is ambiguous with SSN and other identifiers; the hyphen after the second digit is what
- * distinguishes an EIN from an SSN (whose canonical form hyphenates after the third and fifth
- * digits). This keeps EIN from competing with SSN for bare nine-digit runs during span
- * disambiguation.</p>
+ * <p>This is the only filter that detects the {@code NN-NNNNNNN} form. The hyphen may be any hyphen
+ * substitute the SSN filter accepts, and the EIN may be wrapped across a line break after it (see
+ * {@link IdentifierSeparators}). The hyphen is required: a bare nine-digit run is deliberately not
+ * claimed because it is ambiguous with SSN and other identifiers, and the hyphen after the second
+ * digit is what distinguishes an EIN from an SSN (whose canonical form hyphenates after the third and
+ * fifth digits).</p>
  */
 public class EinFilter extends RegexFilter {
 
@@ -69,14 +70,18 @@ public class EinFilter extends RegexFilter {
 
         this.onlyValidPrefixes = onlyValidPrefixes;
 
-        // Canonical EIN form NN-NNNNNNN. This is the same shape SSN historically labels as a TIN;
-        // EIN is given a higher confidence so it wins span disambiguation for its canonical form
-        // when both filters are enabled.
-        final Pattern einPattern = Pattern.compile("\\b\\d{2}-\\d{7}\\b");
-        final FilterPattern ein1 = new FilterPattern.FilterPatternBuilder(einPattern, 0.95).build();
+        // NN-NNNNNNN, with the hyphen required. It may be a hyphen substitute, and the EIN may be
+        // wrapped across a line break after it. A joining hyphen counts as part of a longer token, so
+        // a match may not begin or end next to one: without that, "45-6789123" out of
+        // "123-45-6789123-45-6789" was an EIN.
+        final String joining = IdentifierSeparators.JOINING_HYPHENS;
+        final Pattern einPattern = Pattern.compile("(?<![\\w" + joining + "])\\d{2}" + IdentifierSeparators.WRAP
+                + "\\d{7}(?![\\w" + joining + "])");
+        final FilterPattern ein1 = new FilterPattern.FilterPatternBuilder(einPattern, 0.90).build();
 
         this.contextualTerms = new HashSet<>();
         this.contextualTerms.add("ein");
+        this.contextualTerms.add("tin");
         this.contextualTerms.add("fein");
         this.contextualTerms.add("employer");
         this.contextualTerms.add("tax");
@@ -91,7 +96,8 @@ public class EinFilter extends RegexFilter {
         final List<Span> spans = findSpans(contextService, policy, analyzer, input, context);
 
         if(onlyValidPrefixes) {
-            // Keep only EINs whose two-digit prefix is one the IRS issues.
+            // Keep only EINs whose two-digit prefix is one the IRS issues. The prefix is always the
+            // first two characters, whatever the hyphen or line break that follows it.
             spans.removeIf(span -> !VALID_PREFIXES.contains(span.getText().substring(0, 2)));
         }
 

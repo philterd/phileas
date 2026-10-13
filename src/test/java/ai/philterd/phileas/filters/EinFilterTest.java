@@ -17,6 +17,7 @@ package ai.philterd.phileas.filters;
 
 import ai.philterd.phileas.model.filtering.FilterType;
 import ai.philterd.phileas.model.filtering.Filtered;
+import ai.philterd.phileas.model.filtering.Span;
 import ai.philterd.phileas.services.filters.regex.EinFilter;
 import ai.philterd.phileas.services.strategies.AbstractFilterStrategy;
 import ai.philterd.phileas.services.strategies.rules.EinFilterStrategy;
@@ -174,6 +175,113 @@ public class EinFilterTest extends AbstractFilterTest {
         Assertions.assertEquals(1, filtered.getSpans().size());
         // MASK replaces each character with the mask character.
         Assertions.assertEquals("**********", filtered.getSpans().get(0).getReplacement());
+
+    }
+
+    private EinFilter filter(final boolean onlyValidPrefixes) {
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(new EinFilterStrategy()))
+                .withWindowSize(windowSize)
+                .build();
+
+        return new EinFilter(filterConfiguration, onlyValidPrefixes);
+
+    }
+
+    @Test
+    public void filterEinEveryHyphenSubstitute() throws Exception {
+
+        // The soft hyphen, U+2010 through U+2015, the minus sign, and the small and fullwidth hyphen-minus.
+        for (final char hyphen : new char[]{'\u00AD', '\u2010', '\u2011', '\u2012', '\u2013', '\u2014', '\u2015',
+                '\u2212', '\uFE58', '\uFE63', '\uFF0D'}) {
+
+            final String ein = "12" + hyphen + "3456789";
+            final Filtered filtered = filter(false).filter(contextService, getPolicy(), "context", PIECE, "the ein is " + ein + ".");
+
+            Assertions.assertEquals(1, filtered.getSpans().size(), String.format("U+%04X", (int) hyphen));
+            Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 11, 21, FilterType.EIN), String.format("U+%04X", (int) hyphen));
+            Assertions.assertEquals(ein, filtered.getSpans().get(0).getText());
+
+        }
+
+    }
+
+    @Test
+    public void filterEinWrappedAfterTheHyphen() throws Exception {
+
+        // Wrapped onto the next line, and onto an indented continuation line.
+        for (final String ein : List.of("12-\n3456789", "12-\r\n3456789", "12-\n    3456789", "12\u2011\n\t3456789")) {
+
+            final String input = "the ein is " + ein + ".";
+            final Filtered filtered = filter(false).filter(contextService, getPolicy(), "context", PIECE, input);
+
+            Assertions.assertEquals(1, filtered.getSpans().size(), ein);
+            final Span span = filtered.getSpans().get(0);
+            Assertions.assertEquals(FilterType.EIN, span.getFilterType());
+            Assertions.assertEquals(ein, span.getText());
+
+            // The span indexes into the original text and covers the whole EIN, line break included.
+            Assertions.assertEquals(11, span.getCharacterStart());
+            Assertions.assertEquals(11 + ein.length(), span.getCharacterEnd());
+            Assertions.assertEquals(ein, input.substring(span.getCharacterStart(), span.getCharacterEnd()));
+
+        }
+
+    }
+
+    @Test
+    public void filterEinNotWrappedWithoutAHyphen() throws Exception {
+
+        // A line break is a separator only after a hyphen.
+        Assertions.assertEquals(0, filter(false).filter(contextService, getPolicy(), "context", PIECE, "12\n3456789").getSpans().size());
+        Assertions.assertEquals(0, filter(false).filter(contextService, getPolicy(), "context", PIECE, "12-3456\n789").getSpans().size());
+
+    }
+
+    @Test
+    public void filterEinNotInsideALongerHyphenatedToken() throws Exception {
+
+        // https://github.com/philterd/phileas/issues/343: "45-6789123" is not an EIN inside two adjacent SSNs.
+        for (final String input : List.of("123-45-6789123-45-6789", "case 12-1234567-8", "case 12\u20111234567\u20118",
+                "case 12\u20121234567\u20128", "case 12\u22121234567\u22128", "x-12-3456789")) {
+            Assertions.assertEquals(0, filter(false).filter(contextService, getPolicy(), "context", PIECE, input).getSpans().size(), input);
+        }
+
+    }
+
+    @Test
+    public void filterEinNextToPunctuationDashes() throws Exception {
+
+        // An en dash, em dash, horizontal bar, or small em dash next to an EIN is punctuation, not part of
+        // a longer token.
+        for (final char dash : new char[]{'\u2013', '\u2014', '\u2015', '\uFE58'}) {
+
+            final String label = String.format("U+%04X", (int) dash);
+
+            final Filtered after = filter(false).filter(contextService, getPolicy(), "context", PIECE, "EIN 12-3456789" + dash + "see below.");
+            Assertions.assertEquals(1, after.getSpans().size(), label);
+            Assertions.assertEquals("12-3456789", after.getSpans().get(0).getText(), label);
+
+            final Filtered range = filter(false).filter(contextService, getPolicy(), "context", PIECE, "EINs 12-3456789" + dash + "98-7654321.");
+            Assertions.assertEquals(2, range.getSpans().size(), label);
+
+        }
+
+    }
+
+    @Test
+    public void filterEinOnlyValidPrefixesOnAWrappedOrUnicodeEin() throws Exception {
+
+        for (final String ein : List.of("12\u20113456789", "12-\n    3456789")) {
+            Assertions.assertEquals(1, filter(true).filter(contextService, getPolicy(), "context", PIECE, "the ein is " + ein + ".").getSpans().size(), ein);
+        }
+
+        // 07 is not an IRS-issued prefix.
+        for (final String ein : List.of("07\u20111234567", "07-\n    1234567")) {
+            Assertions.assertEquals(0, filter(true).filter(contextService, getPolicy(), "context", PIECE, "the ein is " + ein + ".").getSpans().size(), ein);
+            Assertions.assertEquals(1, filter(false).filter(contextService, getPolicy(), "context", PIECE, "the ein is " + ein + ".").getSpans().size(), ein);
+        }
 
     }
 
