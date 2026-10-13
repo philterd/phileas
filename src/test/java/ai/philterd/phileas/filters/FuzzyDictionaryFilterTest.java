@@ -476,4 +476,27 @@ public class FuzzyDictionaryFilterTest extends AbstractFilterTest {
                 "an exact match is reported in any case unless capitalized is set");
     }
 
+    @Test
+    void aCatastrophicFilterIgnoredPatternIsBoundedAndTheSpanIsKept() throws Exception {
+
+        // https://github.com/philterd/phileas/issues/356: a filter's own ignored patterns are bounded by the same
+        // regex budget as its patterns. The term is still reported, not ignored.
+        final String token = "a".repeat(30);
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(new CustomDictionaryFilterStrategy()))
+                .withWindowSize(windowSize)
+                .withIgnoredPatterns(List.of(new ai.philterd.phileas.policy.IgnoredPattern("(.*a){16}b")))
+                .withRegexTimeoutMs(200)
+                .build();
+        final FuzzyDictionaryFilter filter = new FuzzyDictionaryFilter(FilterType.CUSTOM_DICTIONARY, filterConfiguration,
+                SensitivityLevel.OFF, Set.of(token), false);
+
+        final Filtered filtered = Assertions.assertTimeoutPreemptively(java.time.Duration.ofSeconds(5),
+                () -> filter.filter(contextService, getPolicy(), "context", PIECE, "Code " + token + " here"));
+
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertFalse(filtered.getSpans().get(0).isIgnored(), "the term stays redacted");
+
+    }
+
 }

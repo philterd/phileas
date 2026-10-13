@@ -59,6 +59,9 @@ public abstract class FilterService {
     // Caches the post-filters built for a policy, keyed by the same policy hash as filterCache.
     protected final Map<String, List<PostFilter>> postFilterCache;
 
+    // The regex time budget, so the policy's ignored patterns are bounded as the filters' patterns are.
+    private final long regexTimeoutMs;
+
     protected FilterService(final PhileasConfiguration phileasConfiguration,
                             final SecureRandom random,
                             final HttpClient httpClient) {
@@ -66,6 +69,7 @@ public abstract class FilterService {
         this.filterCache = new ConcurrentHashMap<>();
         this.postFilterCache = new ConcurrentHashMap<>();
         this.filterPolicyLoader = new FilterPolicyLoader(phileasConfiguration, random, httpClient);
+        this.regexTimeoutMs = phileasConfiguration.regexTimeoutMs();
 
     }
 
@@ -110,7 +114,7 @@ public abstract class FilterService {
         // Ignored patterns filter. Looks for terms matching a pattern in the scope of the whole document (and not just a particular filter).
         // No matter what filter found the span, it is subject to this ignore list.
         if(CollectionUtils.isNotEmpty(policy.getIgnoredPatterns())) {
-            postFilters.add(new IgnoredPatternsFilter(policy.getIgnoredPatterns()));
+            postFilters.add(new IgnoredPatternsFilter(policy.getIgnoredPatterns(), regexTimeoutMs));
         }
 
         // Add the post-filters if they are enabled in the policy.

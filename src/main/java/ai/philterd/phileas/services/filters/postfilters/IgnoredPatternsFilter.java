@@ -31,10 +31,20 @@ public class IgnoredPatternsFilter extends PostFilter {
     private static final Logger LOGGER = LogManager.getLogger(IgnoredPatternsFilter.class);
 
     private final List<IgnoredPattern> ignoredPatterns;
+    private final long regexTimeoutMs;
 
     public IgnoredPatternsFilter(final List<IgnoredPattern> ignoredPatterns) {
+        this(ignoredPatterns, IgnoredPattern.DEFAULT_BUDGET_MS);
+    }
+
+    /**
+     * @param ignoredPatterns The patterns that ignore a span in the whole document.
+     * @param regexTimeoutMs The time a match may take, as for a filter's own patterns ({@code regex.timeout.ms}).
+     */
+    public IgnoredPatternsFilter(final List<IgnoredPattern> ignoredPatterns, final long regexTimeoutMs) {
 
         this.ignoredPatterns = ignoredPatterns;
+        this.regexTimeoutMs = regexTimeoutMs;
 
     }
 
@@ -45,7 +55,7 @@ public class IgnoredPatternsFilter extends PostFilter {
 
         for(final IgnoredPattern pattern : ignoredPatterns) {
 
-            final boolean ignored = pattern.matches(spanText);
+            final boolean ignored = pattern.matches(spanText, regexTimeoutMs);
 
             if(ignored) {
                 return new PostFiltered(span, true);

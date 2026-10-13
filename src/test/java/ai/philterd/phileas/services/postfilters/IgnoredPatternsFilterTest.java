@@ -69,4 +69,21 @@ public class IgnoredPatternsFilterTest {
 
     }
 
+    @Test
+    public void aCatastrophicPatternIsBoundedAndTheSpanIsKept() {
+
+        // https://github.com/philterd/phileas/issues/356: "(.*a){16}b" backtracks catastrophically on a run of a's
+        // with no b, which takes far longer than the budget unbounded. Within it, the span is not ignored.
+        final String token = "a".repeat(30);
+        final IgnoredPatternsFilter ignoredPatternsFilter = new IgnoredPatternsFilter(List.of(new IgnoredPattern("(.*a){16}b")), 200);
+        final List<Span> spans = new LinkedList<>();
+        spans.add(Span.make(0, 30, FilterType.IDENTIFIER, "context", 0.80, token, "*****", "", false, true, new String[0], 0));
+
+        final List<Span> filteredSpans = Assertions.assertTimeoutPreemptively(java.time.Duration.ofSeconds(5),
+                () -> ignoredPatternsFilter.filter(token, spans));
+
+        Assertions.assertEquals(1, filteredSpans.size(), "the span stays, so the value stays redacted");
+
+    }
+
 }

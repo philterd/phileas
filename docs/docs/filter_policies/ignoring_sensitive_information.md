@@ -93,9 +93,10 @@ Ignore patterns can be specified at the policy level and/or at the level of each
 > [setting](../settings.md#advanced-settings) (default `1000` ms). A pattern that does not compile, exhausts the
 > budget, or exhausts the stack is rejected with an error naming the filter and the pattern, so the policy fails
 > rather than whichever document first produces a token that reaches the pattern. The check is not exhaustive: a
-> pattern that misbehaves only on text unlike a canary passes it. Matching an ignored pattern is not itself
-> time-bounded, so such a pattern is caught at filtering time only when it exhausts the stack, which fails the
-> document.
+> pattern that misbehaves only on text unlike a canary passes it. Matching an ignored pattern while filtering is
+> bounded by the same budget: a match that runs out of time counts as not matching, so the token is not ignored
+> and stays redacted, and a warning naming the pattern (not the token) is logged. A pattern that exhausts the
+> stack fails the document.
 
 ### Ignore Patterns for a Policy
 

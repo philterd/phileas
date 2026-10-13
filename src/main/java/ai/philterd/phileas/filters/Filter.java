@@ -602,7 +602,7 @@ public abstract class Filter {
         // No reason to check if it is already ignored by an ignored term.
         if(!isIgnored) {
             for (final IgnoredPattern ignoredPattern : ignoredPatterns) {
-                if (ignoredPattern.matches(token)) {
+                if (ignoredPattern.matches(token, regexTimeoutMs)) {
                     isIgnored = true;
                     break;
                 }

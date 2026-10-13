@@ -23,7 +23,7 @@ package ai.philterd.phileas.filters.rules;
  * attempt via {@link #startClock()}, and nanoTime() is sampled every 1024th access so the guard
  * adds negligible overhead to legitimate matches.
  */
-final class DeadlineCharSequence implements CharSequence {
+public final class DeadlineCharSequence implements CharSequence {
 
     private static final int SAMPLE_MASK = 0x3FF; // check the clock every 1024 accesses
 
@@ -32,7 +32,7 @@ final class DeadlineCharSequence implements CharSequence {
     private long deadlineNanos;
     private int accessCount;
 
-    DeadlineCharSequence(final CharSequence inner, final long budgetMs) {
+    public DeadlineCharSequence(final CharSequence inner, final long budgetMs) {
         this.inner = inner;
         this.budgetNanos = budgetMs * 1_000_000L;
     }
@@ -41,7 +41,7 @@ final class DeadlineCharSequence implements CharSequence {
      * Resets the deadline relative to now. Call before each {@link java.util.regex.Matcher#find()}
      * so each individual match attempt is bounded rather than the loop as a whole.
      */
-    void startClock() {
+    public void startClock() {
         this.deadlineNanos = System.nanoTime() + budgetNanos;
     }
 
