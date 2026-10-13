@@ -27,6 +27,7 @@ import ai.philterd.phileas.services.context.ContextService;
 import org.apache.commons.text.similarity.LevenshteinDistance;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -96,10 +97,12 @@ public class FuzzyDictionaryFilter extends DictionaryFilter {
 
             for(final String entry : dictionary.keySet()) {
 
+                // Exact matches: every occurrence, not only the first. Each is remembered, whether or not
+                // the capitalization check reports it, so the fuzzy pass does not report it again.
+                final List<Position> exactMatches = new ArrayList<>();
                 final Matcher matcher = dictionary.get(entry).matcher(input);
 
-                // Exact matches.
-                if (matcher.find()) {
+                while (matcher.find()) {
 
                     final int startPosition = matcher.start();
 
@@ -108,57 +111,59 @@ public class FuzzyDictionaryFilter extends DictionaryFilter {
                     final int endPosition = matcher.end();
                     final String matched = matcher.group();
 
-                    if (requireCapitalization && Character.isUpperCase(input.charAt(startPosition))) {
-                        spans.add(createSpan(contextService, input, startPosition, endPosition, 1.0, context, matched, policy));
-                    } else if(!requireCapitalization) {
+                    exactMatches.add(new Position(startPosition, endPosition));
+
+                    if (!requireCapitalization || Character.isUpperCase(input.charAt(startPosition))) {
                         spans.add(createSpan(contextService, input, startPosition, endPosition, 1.0, context, matched, policy));
                     }
 
-                } else {
+                }
 
-                    // Only when the sensitivity level is not "off".
-                    if(sensitivityLevel != SensitivityLevel.OFF) {
+                // Fuzzy matches, whether or not the term also appears exactly, so a misspelling is found
+                // alongside a correct spelling. Only when the sensitivity level is not "off".
+                if(sensitivityLevel != SensitivityLevel.OFF) {
 
-                        // Fuzzy matches.
-                        final int wordsInEntry = wordCount(entry);
+                    final int wordsInEntry = wordCount(entry);
 
-                        if (ngrams.containsKey(wordsInEntry)) {
-                            for (final Position position : ngrams.get(wordsInEntry).keySet()) {
+                    if (ngrams.containsKey(wordsInEntry)) {
+                        for (final Position position : ngrams.get(wordsInEntry).keySet()) {
 
-                                // Compare string distance between word and ngrams.
-                                final String ngram = ngrams.get(wordsInEntry).get(position);
+                            final int start = position.getStart();
+                            final int end = position.getEnd();
 
-                                if (ngram.length() > 2) {
+                            if (overlapsAny(exactMatches, start, end)) {
+                                continue;
+                            }
 
-                                    // TODO: Should this be customizable in the dictionary's properties in the filter policy?
-                                    final LevenshteinDistance levenshteinDistance = LevenshteinDistance.getDefaultInstance();
-                                    final int distance = levenshteinDistance.apply(normalizeWhitespace(entry).toLowerCase(), normalizeWhitespace(ngram).toLowerCase());
+                            // Compare string distance between word and ngrams.
+                            final String ngram = ngrams.get(wordsInEntry).get(position);
 
-                                    if (!requireCapitalization || Character.isUpperCase(ngram.charAt(0))) {
+                            if (ngram.length() > 2) {
 
-                                        final int start = position.getStart();
-                                        final int end = position.getEnd();
+                                // TODO: Should this be customizable in the dictionary's properties in the filter policy?
+                                final LevenshteinDistance levenshteinDistance = LevenshteinDistance.getDefaultInstance();
+                                final int distance = levenshteinDistance.apply(normalizeWhitespace(entry).toLowerCase(), normalizeWhitespace(ngram).toLowerCase());
 
-                                        // Higher sensitivity requires a closer match: HIGH matches only
-                                        // exact tokens, MEDIUM allows a Levenshtein distance up to 1, and
-                                        // LOW allows a distance up to 2. The thresholds are distinct so the
-                                        // three levels behave differently (previously MEDIUM and LOW were
-                                        // both an effective distance of 2 and so were indistinguishable).
-                                        if (sensitivityLevel == SensitivityLevel.HIGH && distance == 0) {
-                                            spans.add(createSpan(contextService, input, start, end, 0.9, context, ngram, policy));
-                                        } else if (sensitivityLevel == SensitivityLevel.MEDIUM && distance <= 1) {
-                                            spans.add(createSpan(contextService, input, start, end, 0.7, context, ngram, policy));
-                                        } else if (sensitivityLevel == SensitivityLevel.LOW && distance <= 2) {
-                                            spans.add(createSpan(contextService, input, start, end, 0.5, context, ngram, policy));
-                                        }
+                                if (!requireCapitalization || Character.isUpperCase(ngram.charAt(0))) {
 
+                                    // Higher sensitivity requires a closer match: HIGH matches only
+                                    // exact tokens, MEDIUM allows a Levenshtein distance up to 1, and
+                                    // LOW allows a distance up to 2. The thresholds are distinct so the
+                                    // three levels behave differently (previously MEDIUM and LOW were
+                                    // both an effective distance of 2 and so were indistinguishable).
+                                    if (sensitivityLevel == SensitivityLevel.HIGH && distance == 0) {
+                                        spans.add(createSpan(contextService, input, start, end, 0.9, context, ngram, policy));
+                                    } else if (sensitivityLevel == SensitivityLevel.MEDIUM && distance <= 1) {
+                                        spans.add(createSpan(contextService, input, start, end, 0.7, context, ngram, policy));
+                                    } else if (sensitivityLevel == SensitivityLevel.LOW && distance <= 2) {
+                                        spans.add(createSpan(contextService, input, start, end, 0.5, context, ngram, policy));
                                     }
 
                                 }
 
                             }
-                        }
 
+                        }
                     }
 
                 }
@@ -169,6 +174,16 @@ public class FuzzyDictionaryFilter extends DictionaryFilter {
 
         return new Filtered(context, spans);
 
+    }
+
+    /** Whether {@code [start, end)} overlaps any of the positions. */
+    private static boolean overlapsAny(final List<Position> positions, final int start, final int end) {
+        for (final Position position : positions) {
+            if (start < position.getEnd() && position.getStart() < end) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private Span createSpan(ContextService contextService, String text, int characterStart, int characterEnd, double confidence, String context,

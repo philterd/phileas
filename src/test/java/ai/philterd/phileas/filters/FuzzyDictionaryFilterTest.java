@@ -24,6 +24,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -303,6 +304,73 @@ public class FuzzyDictionaryFilterTest extends AbstractFilterTest {
         Assertions.assertEquals(1, filtered.getSpans().size());
         Assertions.assertEquals("Bill Smeth", filtered.getSpans().get(0).getText());
 
+    }
+
+    private FuzzyDictionaryFilter springfield(final SensitivityLevel sensitivityLevel, final boolean requireCapitalization) {
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(new CustomDictionaryFilterStrategy()))
+                .withWindowSize(windowSize)
+                .build();
+        return new FuzzyDictionaryFilter(FilterType.CUSTOM_DICTIONARY, filterConfiguration, sensitivityLevel,
+                Set.of("Springfield"), requireCapitalization);
+    }
+
+    /** Each span's text and confidence, in the order of the text. */
+    private List<String> found(final Filtered filtered) {
+        return filtered.getSpans().stream()
+                .sorted(Comparator.comparingInt(span -> span.getCharacterStart()))
+                .map(span -> span.getText() + "@" + span.getConfidence())
+                .toList();
+    }
+
+    @Test
+    void everyExactOccurrenceIsReportedOnceAtEachLevel() throws Exception {
+        for (final SensitivityLevel level : List.of(SensitivityLevel.OFF, SensitivityLevel.HIGH, SensitivityLevel.MEDIUM, SensitivityLevel.LOW)) {
+            final Filtered filtered = springfield(level, false).filter(contextService, getPolicy(), "context", PIECE,
+                    "Springfield and Springfield and Springfield today");
+            Assertions.assertEquals(List.of("Springfield@1.0", "Springfield@1.0", "Springfield@1.0"), found(filtered),
+                    "every occurrence, each once, at " + level);
+        }
+    }
+
+    @Test
+    void everyMisspellingIsReportedWithinTheLevelsDistance() throws Exception {
+        final String text = "Springfeld and Sprngfeld today";
+        Assertions.assertEquals(List.of(), found(springfield(SensitivityLevel.OFF, false).filter(contextService, getPolicy(), "context", PIECE, text)));
+        Assertions.assertEquals(List.of(), found(springfield(SensitivityLevel.HIGH, false).filter(contextService, getPolicy(), "context", PIECE, text)));
+        Assertions.assertEquals(List.of("Springfeld@0.7"),
+                found(springfield(SensitivityLevel.MEDIUM, false).filter(contextService, getPolicy(), "context", PIECE, text)),
+                "one edit at medium; two edits is too far");
+        Assertions.assertEquals(List.of("Springfeld@0.5", "Sprngfeld@0.5"),
+                found(springfield(SensitivityLevel.LOW, false).filter(contextService, getPolicy(), "context", PIECE, text)));
+        Assertions.assertEquals(List.of("Springfeld@0.7", "Springfeld@0.7"),
+                found(springfield(SensitivityLevel.MEDIUM, false).filter(contextService, getPolicy(), "context", PIECE, "Springfeld and Springfeld today")),
+                "a repeated misspelling is reported each time");
+    }
+
+    @Test
+    void aMisspellingIsReportedAlongsideAnExactOccurrence() throws Exception {
+        final String text = "Springfield and Springfeld today";
+        Assertions.assertEquals(List.of("Springfield@1.0", "Springfeld@0.7"),
+                found(springfield(SensitivityLevel.MEDIUM, false).filter(contextService, getPolicy(), "context", PIECE, text)));
+        Assertions.assertEquals(List.of("Springfield@1.0", "Springfeld@0.5"),
+                found(springfield(SensitivityLevel.LOW, false).filter(contextService, getPolicy(), "context", PIECE, text)));
+        Assertions.assertEquals(List.of("Springfield@1.0"),
+                found(springfield(SensitivityLevel.HIGH, false).filter(contextService, getPolicy(), "context", PIECE, text)));
+        Assertions.assertEquals(List.of("Springfield@1.0"),
+                found(springfield(SensitivityLevel.OFF, false).filter(contextService, getPolicy(), "context", PIECE, text)));
+    }
+
+    @Test
+    void capitalizationIsCheckedForEachExactOccurrence() throws Exception {
+        final String text = "Springfield and springfield and Springfield today";
+        for (final SensitivityLevel level : List.of(SensitivityLevel.OFF, SensitivityLevel.MEDIUM)) {
+            Assertions.assertEquals(List.of("Springfield@1.0", "Springfield@1.0"),
+                    found(springfield(level, true).filter(contextService, getPolicy(), "context", PIECE, text)),
+                    "the lowercase occurrence is not reported, exactly or as a fuzzy match, at " + level);
+        }
+        Assertions.assertEquals(List.of("Springfield@1.0", "springfield@1.0", "Springfield@1.0"),
+                found(springfield(SensitivityLevel.MEDIUM, false).filter(contextService, getPolicy(), "context", PIECE, text)));
     }
 
 }
