@@ -65,6 +65,17 @@ public class PolicySchemaValidationTest {
     }
 
     @Test
+    public void validateCanadaSinPolicy() {
+
+        final String jsonPolicy = "{\"identifiers\": {\"canadaSin\": {\"onlyValidPrefixes\": true, \"canadaSinFilterStrategies\": [{\"strategy\": \"LAST_4\"}]}}}";
+
+        final boolean valid = PolicySchema.validate(jsonPolicy);
+
+        Assertions.assertTrue(valid);
+
+    }
+
+    @Test
     public void validatePhoneNumberRegionString() {
 
         final String jsonPolicy = "{\"identifiers\": {\"phoneNumber\": {\"region\": \"GB\"}}}";

@@ -77,6 +77,12 @@ public interface DataGenerator {
     Generator<String> itin();
 
     /**
+     * Gets a generator for Canadian Social Insurance Numbers (SIN).
+     * @return A generator for Canadian Social Insurance Numbers (SIN).
+     */
+    Generator<String> canadaSin();
+
+    /**
      * Gets a generator for phone numbers.
      * @return A generator for phone numbers.
      */

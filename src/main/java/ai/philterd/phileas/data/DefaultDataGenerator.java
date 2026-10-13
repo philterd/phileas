@@ -36,6 +36,7 @@ import ai.philterd.phileas.data.generators.PassportNumberGenerator;
 import ai.philterd.phileas.data.generators.PhoneNumberGenerator;
 import ai.philterd.phileas.data.generators.EINGenerator;
 import ai.philterd.phileas.data.generators.ITINGenerator;
+import ai.philterd.phileas.data.generators.CanadaSINGenerator;
 import ai.philterd.phileas.data.generators.SSNGenerator;
 import ai.philterd.phileas.data.generators.StateAbbreviationGenerator;
 import ai.philterd.phileas.data.generators.StateGenerator;
@@ -88,6 +89,11 @@ public class DefaultDataGenerator extends AbstractGenerator<Object> implements D
      * Generator for ITINs.
      */
     public final Generator<String> itin;
+
+    /**
+     * Generator for Canadian SINs.
+     */
+    public final Generator<String> canadaSin;
 
     /**
      * Generator for phone numbers.
@@ -223,6 +229,7 @@ public class DefaultDataGenerator extends AbstractGenerator<Object> implements D
         this.ssn = new SSNGenerator(random);
         this.ein = new EINGenerator(random);
         this.itin = new ITINGenerator(random);
+        this.canadaSin = new CanadaSINGenerator(random);
         this.phoneNumbers = new PhoneNumberGenerator(random);
         this.emailAddresses = new EmailAddressGenerator(random, firstNames, surnames);
         this.age = new AgeGenerator(random);
@@ -253,6 +260,7 @@ public class DefaultDataGenerator extends AbstractGenerator<Object> implements D
     @Override public Generator<String> ssn() { return ssn; }
     @Override public Generator<String> ein() { return ein; }
     @Override public Generator<String> itin() { return itin; }
+    @Override public Generator<String> canadaSin() { return canadaSin; }
     @Override public Generator<String> phoneNumbers() { return phoneNumbers; }
     @Override public Generator<String> emailAddresses() { return emailAddresses; }
     @Override public Generator<Integer> age() { return age; }

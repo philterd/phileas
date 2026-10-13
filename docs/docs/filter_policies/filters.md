@@ -38,6 +38,7 @@ Phileas uses several methods to identify person's names.
 | [Ages](filters/common_filters/ages.md)                                        | Identifies ages such as `3.5 years old`                                         |
 | [Bank Routing Numbers](filters/common_filters/bank-routing-numbers.md)     | Identifies bank routing numbers                                                 |
 | [Bitcoin Addresses](filters/common_filters/bitcoin-addresses.md)              | Identifies Bitcoin addresses such as `127NVqnjf8gB9BFAW2dnQeM6wqmy1gbGtv`       |
+| [Canadian Social Insurance Numbers (SIN)](filters/common_filters/canada-sin.md) | Identifies Canadian Social Insurance Numbers such as `046-454-286` |
 | [Cities](filters/locations/cities.md)                                    | Identifies common cities                                                        |
 | [Counties](filters/locations/counties.md)                                | Identifies common counties                                                      |
 | [Credit Card Numbers](filters/common_filters/creditcards.md)                 | Identifies VISA, American Express, MasterCard, and Discover credit card numbers |

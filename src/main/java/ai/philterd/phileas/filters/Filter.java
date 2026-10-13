@@ -32,6 +32,7 @@ import ai.philterd.phileas.services.anonymization.AlphanumericAnonymizationServi
 import ai.philterd.phileas.services.anonymization.AnonymizationMethod;
 import ai.philterd.phileas.services.anonymization.AnonymizationService;
 import ai.philterd.phileas.services.anonymization.BitcoinAddressAnonymizationService;
+import ai.philterd.phileas.services.anonymization.CanadaSinAnonymizationService;
 import ai.philterd.phileas.services.anonymization.CityAnonymizationService;
 import ai.philterd.phileas.services.anonymization.CountyAnonymizationService;
 import ai.philterd.phileas.services.anonymization.CreditCardAnonymizationService;
@@ -330,6 +331,8 @@ public abstract class Filter {
             return new AgeAnonymizationService(random, candidates);
         } else if(filterType == FilterType.BITCOIN_ADDRESS) {
             return new BitcoinAddressAnonymizationService(random, candidates);
+        } else if(filterType == FilterType.CANADA_SIN) {
+            return new CanadaSinAnonymizationService(random, candidates);
         } else if(filterType == FilterType.LOCATION_CITY) {
             return new CityAnonymizationService(random, candidates);
         } else if(filterType == FilterType.LOCATION_COUNTY) {

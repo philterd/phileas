@@ -40,6 +40,7 @@ import ai.philterd.phileas.services.strategies.AbstractFilterStrategy;
 import ai.philterd.phileas.services.filters.regex.AgeFilter;
 import ai.philterd.phileas.services.filters.regex.BankRoutingNumberFilter;
 import ai.philterd.phileas.services.filters.regex.BitcoinAddressFilter;
+import ai.philterd.phileas.services.filters.regex.CanadaSinFilter;
 import ai.philterd.phileas.services.filters.regex.CreditCardFilter;
 import ai.philterd.phileas.services.filters.regex.CurrencyFilter;
 import ai.philterd.phileas.services.filters.regex.DateFilter;
@@ -626,6 +627,29 @@ public class FilterPolicyLoader {
                     .build();
 
             final Filter filter = new ItinFilter(filterConfiguration, policy.getIdentifiers().getItin().isOnlyValidRanges());
+            enabledFilters.add(filter);
+
+        }
+
+        if(policy.getIdentifiers().hasFilter(FilterType.CANADA_SIN) && policy.getIdentifiers().getCanadaSin().isEnabled()) {
+
+            final int windowSize = policy.getIdentifiers().getCanadaSin().getWindowSizeOrDefault(phileasConfiguration.spanWindowSize());
+
+            final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                    .withRandom(random)
+                    .withStrategies(policy.getIdentifiers().getCanadaSin().getCanadaSinFilterStrategies())
+                    .withIgnored(policy.getIdentifiers().getCanadaSin().getIgnored())
+                    .withIgnoredFiles(policy.getIdentifiers().getCanadaSin().getIgnoredFiles())
+                    .withIgnoredPatterns(policy.getIdentifiers().getCanadaSin().getIgnoredPatterns())
+                    .withCrypto(policy.getCrypto())
+                    .withGenerators(replacementGenerators)
+                    .withFPE(policy.getFpe())
+                    .withWindowSize(windowSize)
+                    .withPriority(policy.getIdentifiers().getCanadaSin().getPriority())
+                    .withId(policy.getIdentifiers().getCanadaSin().getId())
+                    .build();
+
+            final Filter filter = new CanadaSinFilter(filterConfiguration, policy.getIdentifiers().getCanadaSin().isOnlyValidPrefixes());
             enabledFilters.add(filter);
 
         }

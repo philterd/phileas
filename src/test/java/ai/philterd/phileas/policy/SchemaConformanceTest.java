@@ -586,8 +586,7 @@ public class SchemaConformanceTest {
      * Identifiers the schema declares that Phileas does not model yet, with why. Each is asserted to
      * still be unmodeled, so implementing one fails this test until its entry is removed.
      */
-    private static final Map<String, String> UNMODELED_IDENTIFIERS = Map.of(
-            "canadaSin", "the Canadian SIN filter is not implemented yet (issue #416)");
+    private static final Map<String, String> UNMODELED_IDENTIFIERS = Map.of();
 
     /** Every {@code @SerializedName} value and alternate on the class and its superclasses. */
     private static Set<String> serializedNamesOf(final Class<?> type) {

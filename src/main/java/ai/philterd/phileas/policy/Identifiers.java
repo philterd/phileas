@@ -20,6 +20,7 @@ import ai.philterd.phileas.policy.filters.AbstractFilter;
 import ai.philterd.phileas.policy.filters.Age;
 import ai.philterd.phileas.policy.filters.BankRoutingNumber;
 import ai.philterd.phileas.policy.filters.BitcoinAddress;
+import ai.philterd.phileas.policy.filters.CanadaSin;
 import ai.philterd.phileas.policy.filters.City;
 import ai.philterd.phileas.policy.filters.County;
 import ai.philterd.phileas.policy.filters.CreditCard;
@@ -110,6 +111,10 @@ public class Identifiers {
     @SerializedName("itin")
     @Expose
     private Itin itin;
+
+    @SerializedName("canadaSin")
+    @Expose
+    private CanadaSin canadaSin;
 
     @SerializedName("emailAddress")
     @Expose
@@ -215,7 +220,7 @@ public class Identifiers {
 
         final List<AbstractFilter> filters = new LinkedList<>();
 
-        Stream.of(age, bankRoutingNumber, bitcoinAddress, city, county, creditCard, currency, date,
+        Stream.of(age, bankRoutingNumber, bitcoinAddress, canadaSin, city, county, creditCard, currency, date,
                         driversLicense, ein, emailAddress, firstName, hospital, ibanCode, ipAddress, itin,
                         macAddress, medicalCondition, passportNumber, person, phoneNumber,
                         phoneNumberExtension, ssn, state, stateAbbreviation, streetAddress, surname,
@@ -269,6 +274,8 @@ public class Identifiers {
                 if(this.getEin() != null) { return true; } break;
             case ITIN:
                 if(this.getItin() != null) { return true; } break;
+            case CANADA_SIN:
+                if(this.getCanadaSin() != null) { return true; } break;
             case EMAIL_ADDRESS:
                 if(this.getEmailAddress() != null) { return true; } break;
             case FIRST_NAME:
@@ -372,6 +379,14 @@ public class Identifiers {
 
     public void setItin(Itin itin) {
         this.itin = itin;
+    }
+
+    public CanadaSin getCanadaSin() {
+        return canadaSin;
+    }
+
+    public void setCanadaSin(CanadaSin canadaSin) {
+        this.canadaSin = canadaSin;
     }
 
     public PhoneNumber getPhoneNumber() {

@@ -23,6 +23,7 @@ public enum FilterType {
     AGE("age", true),
     BANK_ROUTING_NUMBER("bank-routing-number", true),
     BITCOIN_ADDRESS("bitcoin-address", true),
+    CANADA_SIN("canada-sin", true),
     CURRENCY("currency", true),
     CREDIT_CARD("credit-card", true),
     DRIVERS_LICENSE_NUMBER("drivers-license-number", true),

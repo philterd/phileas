@@ -486,6 +486,98 @@ public class EndToEndTests {
     }
 
     @Test
+    public void endToEndCanadaSin() throws Exception {
+
+        final Properties properties = new Properties();
+        final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties);
+
+        final String json = """
+                {
+                  "identifiers": {
+                    "canadaSin": {
+                      "canadaSinFilterStrategies": [ { "strategy": "REDACT" } ]
+                    }
+                  }
+                }
+                """;
+        final Policy policy = new com.google.gson.Gson().fromJson(json, Policy.class);
+
+        final PlainTextFilterService service = new PlainTextFilterService(phileasConfiguration, contextService, vectorService, null);
+
+        for (final String sin : List.of("046454286", "046 454 286", "046-454-286", "912-345-675")) {
+            final TextFilterResult response = service.filter(policy, "context", "the sin is " + sin + ".");
+            Assertions.assertEquals("the sin is {{{REDACTED-canada-sin}}}.", response.getFilteredText().trim(), sin);
+        }
+
+        // A Luhn-invalid value is left in the clear.
+        final TextFilterResult invalid = service.filter(policy, "context", "the number 123 456 789 is not a sin.");
+        Assertions.assertEquals("the number 123 456 789 is not a sin.", invalid.getFilteredText().trim());
+
+    }
+
+    @Test
+    public void endToEndCanadaSinOnlyValidPrefixes() throws Exception {
+
+        final Properties properties = new Properties();
+        final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties);
+
+        final String json = """
+                {
+                  "identifiers": {
+                    "canadaSin": {
+                      "onlyValidPrefixes": true,
+                      "canadaSinFilterStrategies": [ { "strategy": "REDACT" } ]
+                    }
+                  }
+                }
+                """;
+        final Policy policy = new com.google.gson.Gson().fromJson(json, Policy.class);
+
+        final PlainTextFilterService service = new PlainTextFilterService(phileasConfiguration, contextService, vectorService, null);
+
+        // A value beginning with 8 (the business number range) is left in the clear.
+        final TextFilterResult business = service.filter(policy, "context", "the number is 812 345 676.");
+        Assertions.assertEquals("the number is 812 345 676.", business.getFilteredText().trim());
+
+        final TextFilterResult sin = service.filter(policy, "context", "the sin is 912 345 675.");
+        Assertions.assertEquals("the sin is {{{REDACTED-canada-sin}}}.", sin.getFilteredText().trim());
+
+    }
+
+    @Test
+    public void endToEndCanadaSinAndSsn() throws Exception {
+
+        final Properties properties = new Properties();
+        final PhileasConfiguration phileasConfiguration = new PhileasConfiguration(properties);
+
+        // With both enabled the existing span disambiguation applies; no SIN-specific rule.
+        final String json = """
+                {
+                  "identifiers": {
+                    "ssn": {
+                      "ssnFilterStrategies": [ { "strategy": "REDACT" } ]
+                    },
+                    "canadaSin": {
+                      "canadaSinFilterStrategies": [ { "strategy": "REDACT" } ]
+                    }
+                  }
+                }
+                """;
+        final Policy policy = new com.google.gson.Gson().fromJson(json, Policy.class);
+
+        final PlainTextFilterService service = new PlainTextFilterService(phileasConfiguration, contextService, vectorService, null);
+
+        // Hyphenated forms never collide.
+        Assertions.assertEquals("the sin is {{{REDACTED-canada-sin}}}.", service.filter(policy, "context", "the sin is 046-454-286.").getFilteredText().trim());
+        Assertions.assertEquals("the ssn is {{{REDACTED-ssn}}}.", service.filter(policy, "context", "the ssn is 123-45-6789.").getFilteredText().trim());
+
+        // An unformatted value matching both is redacted as one of them.
+        final String both = service.filter(policy, "context", "the number is 046454286.").getFilteredText().trim();
+        Assertions.assertTrue(both.equals("the number is {{{REDACTED-canada-sin}}}.") || both.equals("the number is {{{REDACTED-ssn}}}."), both);
+
+    }
+
+    @Test
     public void endToEndEinSsnDisambiguation() throws Exception {
 
         final Properties properties = new Properties();

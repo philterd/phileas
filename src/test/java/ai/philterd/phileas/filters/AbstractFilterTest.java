@@ -23,6 +23,7 @@ import ai.philterd.phileas.policy.Policy;
 import ai.philterd.phileas.policy.filters.Age;
 import ai.philterd.phileas.policy.filters.BankRoutingNumber;
 import ai.philterd.phileas.policy.filters.BitcoinAddress;
+import ai.philterd.phileas.policy.filters.CanadaSin;
 import ai.philterd.phileas.policy.filters.City;
 import ai.philterd.phileas.policy.filters.County;
 import ai.philterd.phileas.policy.filters.CreditCard;
@@ -64,6 +65,7 @@ import ai.philterd.phileas.services.strategies.dynamic.SurnameFilterStrategy;
 import ai.philterd.phileas.services.strategies.rules.AgeFilterStrategy;
 import ai.philterd.phileas.services.strategies.rules.BankRoutingNumberFilterStrategy;
 import ai.philterd.phileas.services.strategies.rules.BitcoinAddressFilterStrategy;
+import ai.philterd.phileas.services.strategies.rules.CanadaSinFilterStrategy;
 import ai.philterd.phileas.services.strategies.rules.CreditCardFilterStrategy;
 import ai.philterd.phileas.services.strategies.rules.CurrencyFilterStrategy;
 import ai.philterd.phileas.services.strategies.rules.DateFilterStrategy;
@@ -167,6 +169,9 @@ public abstract class AbstractFilterTest {
         Ein ein = new Ein();
         ein.setEinFilterStrategies(List.of(new EinFilterStrategy()));
 
+        CanadaSin canadaSin = new CanadaSin();
+        canadaSin.setCanadaSinFilterStrategies(List.of(new CanadaSinFilterStrategy()));
+
         Itin itin = new Itin();
         itin.setItinFilterStrategies(List.of(new ItinFilterStrategy()));
 
@@ -242,6 +247,7 @@ public abstract class AbstractFilterTest {
         identifiers.setSections(List.of(section));
         identifiers.setEin(ein);
         identifiers.setItin(itin);
+        identifiers.setCanadaSin(canadaSin);
         identifiers.setSsn(ssn);
         identifiers.setStateAbbreviation(stateAbbreviation);
         identifiers.setStreetAddress(streetAddress);

@@ -140,6 +140,10 @@ Each filter strategy may have one condition. See [Conditions](#conditions) for d
 This identifier matches a nine-digit Canadian SIN, formatted or unformatted, and keeps only the
 matches that pass the Luhn checksum.
 
+To detect Canadian SINs, the built-in [`canadaSin` filter](../common_filters/canada-sin.md) is
+simpler to configure and also handles line wraps and Unicode hyphens. This example shows how a
+validator is attached to a custom identifier.
+
 ```
 {
   "identifiers": {
