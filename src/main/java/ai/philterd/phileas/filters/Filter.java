@@ -24,7 +24,9 @@ import ai.philterd.phileas.model.filtering.Span;
 import ai.philterd.phileas.policy.Crypto;
 import ai.philterd.phileas.policy.FPE;
 import ai.philterd.phileas.policy.IgnoredPattern;
+import ai.philterd.phileas.model.conditions.ConditionSupport;
 import ai.philterd.phileas.model.conditions.InvalidConditionException;
+import ai.philterd.phileas.model.conditions.ParsedCondition;
 import ai.philterd.phileas.model.conditions.ParserListener;
 import ai.philterd.phileas.policy.InvalidPolicyConditionException;
 import ai.philterd.phileas.policy.Policy;
@@ -210,17 +212,26 @@ public abstract class Filter {
             this.ignored = ignored.stream().map(t -> normalizeWhitespace(t).toLowerCase()).collect(Collectors.toSet());
         }
 
-        // Parse each strategy's condition now, once per policy, so a condition that cannot be parsed
-        // refuses the policy before any document is filtered with it.
+        // Parse each strategy's condition now, once per policy, so a condition that cannot be parsed, or that
+        // no strategy of this filter evaluates, refuses the policy before any document is filtered with it.
         for(int i = 0; i < strategies.size(); i++) {
             final String condition = strategies.get(i).getCondition();
             if(StringUtils.isNotEmpty(condition)) {
+                final List<ParsedCondition> parsed;
                 try {
-                    ParserListener.getTerminals(condition);
+                    parsed = ParserListener.getTerminals(condition);
                 } catch (final InvalidConditionException ex) {
                     throw new InvalidPolicyConditionException(String.format(
                             "Strategy %d of the %s filter has a condition that is not valid: %s",
                             i + 1, filterType.getType(), ex.getMessage()), ex);
+                }
+                for (final ParsedCondition clause : parsed) {
+                    final String reason = ConditionSupport.unsupported(clause, filterType);
+                    if (reason != null) {
+                        throw new InvalidPolicyConditionException(String.format(
+                                "Strategy %d of the %s filter has a condition that is not supported: %s",
+                                i + 1, filterType.getType(), reason), null);
+                    }
                 }
             }
         }

@@ -821,6 +821,32 @@ public class EndToEndTests {
     }
 
     @Test
+    public void endToEndAConditionNoStrategyEvaluatesRefusesThePolicy() {
+
+        // https://github.com/philterd/phileas/issues/408: a condition the grammar accepts but no strategy evaluates
+        // is refused when the policy is loaded. Alone it would never be satisfied, so the value went unredacted;
+        // after a satisfied clause it was ignored, so the strategy applied more widely than written.
+        final String[][] cases = {
+                {"token is \\\"SECRET-123\\\"", "Strategy 1 of the ssn filter has a condition that is not supported: token is "
+                        + "compares with \"birthdate\", \"deathdate\", or \"birthdate or deathdate\" only."},
+                {"token == \\\"123-45-6789\\\" and context startswith \\\"c\\\"", "Strategy 1 of the ssn filter has a condition "
+                        + "that is not supported: context supports == and !=, not startswith."},
+                {"population > 4500", "Strategy 1 of the ssn filter has a condition that is not supported: population applies "
+                        + "only to the zip code filter."}};
+
+        for (final String[] c : cases) {
+            final Policy policy = new com.google.gson.Gson().fromJson("{ \"identifiers\": { \"ssn\": { \"ssnFilterStrategies\": [ "
+                    + "{ \"condition\": \"" + c[0] + "\", \"strategy\": \"REDACT\" } ] } } }", Policy.class);
+            final PlainTextFilterService service = new PlainTextFilterService(new PhileasConfiguration(new Properties()), contextService, vectorService, null);
+            final InvalidPolicyConditionException ex = Assertions.assertThrows(InvalidPolicyConditionException.class,
+                    () -> service.filter(policy, "context", "SSN 123-45-6789"));
+            Assertions.assertEquals(c[1], ex.getMessage(), c[0]);
+            Assertions.assertFalse(ex.getMessage().contains("SECRET-123"), ex.getMessage());
+        }
+
+    }
+
+    @Test
     public void endToEndMalformedConditionRefusesThePolicy() {
 
         // https://github.com/philterd/phileas/issues/438: the policy is refused before any document is

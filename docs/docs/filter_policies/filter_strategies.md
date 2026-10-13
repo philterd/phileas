@@ -461,6 +461,17 @@ The date filter also supports the `is` and `is not` operators for `token`, to te
 
 The conditions of every enabled filter are checked when the policy is loaded. (A filter with `enabled` set to `false` is not loaded, so its conditions are neither checked nor evaluated.) A condition that cannot be parsed, such as one with a value that is not in double quotes (123 where `"123"` belongs), a misspelled field, or a word where a number belongs, refuses the policy with an `InvalidPolicyConditionException` before any document is filtered with it. The message names the filter, the position of the strategy in its list, and the character where the condition stops making sense. It does not repeat the condition, since a condition can contain a sensitive value.
 
+A condition is also refused when no strategy evaluates it, even though it parses. The grammar accepts any field with any operator, but only these are evaluated:
+
+| Field | Operators |
+|---|---|
+| `token` | `==`, `!=`, and `startswith`; `is` and `is not` with `"birthdate"`, `"deathdate"`, or `"birthdate or deathdate"` |
+| `context` | `==` and `!=` |
+| `confidence` | `<`, `<=`, `>`, `>=`, `==`, and `!=` |
+| `population` | `<`, `<=`, `>`, `>=`, `==`, and `!=` with a whole number, on the zip code filter only |
+
+Any other condition, such as `context startswith "a"`, `token is "x"`, `population > 4500` on a filter other than zip codes, or any condition on `type`, refuses the policy when it is loaded, with a message naming the field and operator. Previously such a condition was never satisfied on its own, so its strategy was skipped, and after a satisfied clause joined with `and` it was ignored, so its strategy applied more widely than written.
+
 The following is an example policy for credit cards that contains a condition to only redact credit card numbers that start with the digits `3000`:
 
 ```

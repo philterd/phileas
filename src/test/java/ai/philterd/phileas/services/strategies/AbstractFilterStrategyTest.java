@@ -432,6 +432,31 @@ public abstract class AbstractFilterStrategyTest {
     }
 
     @Test
+    public void evaluateEachSupportedOperatorBothWays() throws IOException {
+
+        // https://github.com/philterd/phileas/issues/408: each operator a strategy evaluates is satisfied by a
+        // matching value and not by another. Anything else is refused when the policy is loaded.
+        final AbstractFilterStrategy strategy = getFilterStrategy();
+        final Object[][] cases = {
+                {"token == \"90210\"", "90210", 1.0, true}, {"token == \"90210\"", "12345", 1.0, false},
+                {"token startswith \"902\"", "90210", 1.0, true}, {"token startswith \"902\"", "12345", 1.0, false},
+                {"context == \"context\"", "90210", 1.0, true}, {"context == \"other\"", "90210", 1.0, false},
+                {"context != \"other\"", "90210", 1.0, true}, {"context != \"context\"", "90210", 1.0, false},
+                {"confidence > 0.5", "90210", 0.9, true}, {"confidence > 0.5", "90210", 0.5, false},
+                {"confidence < 0.5", "90210", 0.4, true}, {"confidence < 0.5", "90210", 0.5, false},
+                {"confidence >= 0.5", "90210", 0.5, true}, {"confidence >= 0.5", "90210", 0.4, false},
+                {"confidence <= 0.5", "90210", 0.5, true}, {"confidence <= 0.5", "90210", 0.6, false},
+                {"confidence == 0.5", "90210", 0.5, true}, {"confidence == 0.5", "90210", 0.6, false},
+                {"confidence != 0.5", "90210", 0.6, true}, {"confidence != 0.5", "90210", 0.5, false}};
+
+        for (final Object[] c : cases) {
+            Assertions.assertEquals(c[3], strategy.evaluateCondition(getPolicy(), "context", (String) c[1], WINDOW,
+                    (String) c[0], (Double) c[2]), c[0] + " with " + c[1] + " at " + c[2]);
+        }
+
+    }
+
+    @Test
     public void evaluateConditionNotEqualsJoined() throws IOException {
 
         final AbstractFilterStrategy strategy = getFilterStrategy();
