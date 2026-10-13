@@ -24,6 +24,18 @@ public class FilterConditionBaseListener implements FilterConditionListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitExpression(FilterConditionParser.ExpressionContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterCondition(FilterConditionParser.ConditionContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitCondition(FilterConditionParser.ConditionContext ctx) { }
 
 	/**
 	 * {@inheritDoc}

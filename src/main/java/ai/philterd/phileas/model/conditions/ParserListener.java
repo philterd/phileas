@@ -18,9 +18,12 @@ package ai.philterd.phileas.model.conditions;
 import ai.philterd.phileas.model.conditions.parser.FilterConditionBaseListener;
 import ai.philterd.phileas.model.conditions.parser.FilterConditionLexer;
 import ai.philterd.phileas.model.conditions.parser.FilterConditionParser;
+import org.antlr.v4.runtime.BaseErrorListener;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
+import org.antlr.v4.runtime.RecognitionException;
+import org.antlr.v4.runtime.Recognizer;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import org.antlr.v4.runtime.tree.TerminalNode;
@@ -36,6 +39,22 @@ import java.util.concurrent.LinkedBlockingQueue;
 public class ParserListener extends FilterConditionBaseListener {
 
     protected static final Logger LOGGER = LogManager.getLogger(ParserListener.class);
+
+    /** Why a condition may fail to parse, without repeating its text. */
+    private static final String REASON = "a condition is a field (token, context, confidence, population, or type), "
+            + "an operator, and a value, such as token == \"value\" or confidence > 0.5, and conditions are joined "
+            + "with and. Values compared with token and context must be in double quotes.";
+
+    private static final BaseErrorListener THROWING_ERROR_LISTENER = new BaseErrorListener() {
+
+        @Override
+        public void syntaxError(final Recognizer<?, ?> recognizer, final Object offendingSymbol, final int line,
+                                final int charPositionInLine, final String msg, final RecognitionException e) {
+            // ANTLR's message quotes the offending text, which can be a sensitive value, so it is not used.
+            throw new InvalidConditionException(charPositionInLine, REASON);
+        }
+
+    };
 
     private final List<ParsedCondition> conditions;
     private final Queue<String> terminals;
@@ -56,12 +75,25 @@ public class ParserListener extends FilterConditionBaseListener {
 
     }
 
+    /**
+     * Parses a condition.
+     * @param condition The condition.
+     * @return The conditions it joins with {@code and}, in order.
+     * @throws InvalidConditionException if the condition cannot be parsed.
+     */
     public static List<ParsedCondition> getTerminals(final String condition) {
 
-        final CharStream codePointCharStream = CharStreams.fromString(condition);
+        final CharStream codePointCharStream = CharStreams.fromString(condition == null ? "" : condition);
         final FilterConditionLexer lexer = new FilterConditionLexer(codePointCharStream);
         final CommonTokenStream tokens = new CommonTokenStream(lexer);
         final FilterConditionParser parser = new FilterConditionParser(tokens);
+
+        // Fail on the first error rather than recovering from it and returning a partial parse. The
+        // default listeners print the offending text to the console, so they are replaced.
+        lexer.removeErrorListeners();
+        lexer.addErrorListener(THROWING_ERROR_LISTENER);
+        parser.removeErrorListeners();
+        parser.addErrorListener(THROWING_ERROR_LISTENER);
 
         final ParseTree tree = parser.expression();
         final ParserListener parserListener = new ParserListener();

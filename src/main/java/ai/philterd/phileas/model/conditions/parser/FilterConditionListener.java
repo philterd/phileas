@@ -17,4 +17,14 @@ public interface FilterConditionListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitExpression(FilterConditionParser.ExpressionContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link FilterConditionParser#condition}.
+	 * @param ctx the parse tree
+	 */
+	void enterCondition(FilterConditionParser.ConditionContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link FilterConditionParser#condition}.
+	 * @param ctx the parse tree
+	 */
+	void exitCondition(FilterConditionParser.ConditionContext ctx);
 }

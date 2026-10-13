@@ -115,4 +115,100 @@ public class FilterConditionGrammarTest {
 
     }
 
+    private static final java.time.Duration LIMIT = java.time.Duration.ofSeconds(5);
+
+    @Test
+    public void malformedConditionsAreRefusedPromptly() {
+
+        // Each of these used to make the lexer return zero-length tokens without end (issue #438).
+        final String[] malformed = {
+                "token == x",                       // a value not in double quotes
+                "token is birthdate",               // the same, with is
+                "confidence > abc",                 // a word where a number belongs
+                "tokn == \"x\"",                    // a misspelled field
+                "",                                 // nothing at all
+                "   ",                              // only spaces
+                "token == \"x",                      // an unterminated value
+                "token == \"x\" and",                 // a dangling and
+                "token == \"x\" or token == \"y\"",   // or is not supported
+                "token\t==\t\"x\"",                   // tabs between the parts
+                "classification == \"x\"",          // a field no strategy evaluates
+                "token ==",                         // no value
+                "== \"x\"",                           // no field
+                "\u00FF\u0000%^&*(",                   // noise
+        };
+
+        for (final String condition : malformed) {
+            final InvalidConditionException ex = Assertions.assertThrows(InvalidConditionException.class,
+                    () -> Assertions.assertTimeoutPreemptively(LIMIT, () -> ParserListener.getTerminals(condition)),
+                    "expected '" + condition + "' to be refused");
+            Assertions.assertTrue(ex.getPosition() >= 0 && ex.getPosition() <= condition.length(), condition);
+        }
+
+    }
+
+    @Test
+    public void errorsGiveThePositionButNotTheValue() {
+
+        final InvalidConditionException ex = Assertions.assertThrows(InvalidConditionException.class,
+                () -> ParserListener.getTerminals("token == SECRET123"));
+
+        Assertions.assertEquals(9, ex.getPosition());
+        Assertions.assertTrue(ex.getMessage().contains("character 10"), ex.getMessage());
+        Assertions.assertFalse(ex.getMessage().contains("SECRET123"), ex.getMessage());
+
+    }
+
+    @Test
+    public void randomInputIsParsedOrRefusedPromptly() {
+
+        final java.util.Random random = new java.util.Random(438);
+        final String alphabet = "tokenconfidcxpulais=!<>\"0123456789. \t\\ANDPERLOC";
+
+        Assertions.assertTimeoutPreemptively(java.time.Duration.ofSeconds(60), () -> {
+            for (int i = 0; i < 2000; i++) {
+                final StringBuilder sb = new StringBuilder();
+                final int length = random.nextInt(30);
+                for (int j = 0; j < length; j++) {
+                    sb.append(alphabet.charAt(random.nextInt(alphabet.length())));
+                }
+                try {
+                    ParserListener.getTerminals(sb.toString());
+                } catch (final InvalidConditionException ex) {
+                    // Refused, as expected for most random input.
+                }
+            }
+        });
+
+    }
+
+    @Test
+    public void validConditionsParseAsBefore() {
+
+        assertParses("token is not \"birthdate\"", "token", "is not", "\"birthdate\"");
+        assertParses("token is \"birthdate or deathdate\"", "token", "is", "\"birthdate or deathdate\"");
+        assertParses("token startswith \"90\"", "token", "startswith", "\"90\"");
+        assertParses("token != \"127.0.0.1\"", "token", "!=", "\"127.0.0.1\"");
+        assertParses("context == \"my-context\"", "context", "==", "\"my-context\"");
+        assertParses("population >= 2500", "population", ">=", "2500");
+        assertParses("type == loc", "type", "==", "loc");
+
+        final List<ParsedCondition> joined = ParserListener.getTerminals("token != \"123-45-6789\" AND context == \"c\" and confidence <= 0.9");
+        Assertions.assertEquals(3, joined.size());
+        Assertions.assertEquals("token", joined.get(0).getField());
+        Assertions.assertEquals("context", joined.get(1).getField());
+        Assertions.assertEquals("confidence", joined.get(2).getField());
+        Assertions.assertEquals("<=", joined.get(2).getOperator());
+        Assertions.assertEquals("0.9", joined.get(2).getValue());
+
+    }
+
+    private static void assertParses(final String condition, final String field, final String operator, final String value) {
+        final List<ParsedCondition> conditions = ParserListener.getTerminals(condition);
+        Assertions.assertEquals(1, conditions.size(), condition);
+        Assertions.assertEquals(field, conditions.get(0).getField(), condition);
+        Assertions.assertEquals(operator, conditions.get(0).getOperator(), condition);
+        Assertions.assertEquals(value, conditions.get(0).getValue(), condition);
+    }
+
 }

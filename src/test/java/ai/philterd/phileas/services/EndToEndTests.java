@@ -23,6 +23,7 @@ import ai.philterd.phileas.model.filtering.MimeType;
 import ai.philterd.phileas.model.filtering.Span;
 import ai.philterd.phileas.model.filtering.TextFilterResult;
 import ai.philterd.phileas.policy.Identifiers;
+import ai.philterd.phileas.policy.InvalidPolicyConditionException;
 import ai.philterd.phileas.policy.Policy;
 import ai.philterd.phileas.policy.filters.BitcoinAddress;
 import ai.philterd.phileas.policy.filters.CreditCard;
@@ -732,6 +733,40 @@ public class EndToEndTests {
         final TextFilterResult response = service.filter(policy, "context", "ein 12-3456789 and ssn 123-45-6789.");
 
         Assertions.assertEquals("ein {{{REDACTED-ein}}} and ssn {{{REDACTED-ssn}}}.", response.getFilteredText().trim());
+
+    }
+
+    @Test
+    public void endToEndMalformedConditionRefusesThePolicy() {
+
+        // https://github.com/philterd/phileas/issues/438: the policy is refused before any document is
+        // filtered, naming the filter and strategy, without repeating the condition's text.
+        final String json = """
+                {
+                  "identifiers": {
+                    "ssn": {
+                      "ssnFilterStrategies": [
+                        { "condition": "token == \\"x\\"", "strategy": "MASK" },
+                        { "condition": "token == SECRET123", "strategy": "REDACT" }
+                      ]
+                    }
+                  }
+                }
+                """;
+        final Policy policy = new com.google.gson.Gson().fromJson(json, Policy.class);
+
+        final PlainTextFilterService service = new PlainTextFilterService(new PhileasConfiguration(new Properties()), contextService, vectorService, null);
+
+        final InvalidPolicyConditionException ex = Assertions.assertThrows(InvalidPolicyConditionException.class,
+                () -> Assertions.assertTimeoutPreemptively(java.time.Duration.ofSeconds(30),
+                        () -> service.filter(policy, "context", "no identifiers here.")));
+
+        Assertions.assertTrue(ex.getMessage().startsWith("Strategy 2 of the ssn filter has a condition that is not valid"), ex.getMessage());
+        Assertions.assertTrue(ex.getMessage().contains("character 10"), ex.getMessage());
+        Assertions.assertFalse(ex.getMessage().contains("SECRET123"), ex.getMessage());
+
+        // Nothing is cached for the refused policy, so it is refused again rather than used.
+        Assertions.assertThrows(InvalidPolicyConditionException.class, () -> service.filter(policy, "context", "again."));
 
     }
 

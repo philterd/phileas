@@ -457,7 +457,9 @@ A condition compares a field to a value. The values compared with the identified
 | `!=` | The identified text does not equal the value, ignoring case. | `token != "127.0.0.1"` |
 | `startswith` | The identified text begins with the value. This comparison is case-sensitive. | `token startswith "3000"` |
 
-The date filter also supports `token is` and `token is not`, to tell birth and death dates apart. See [Dates](filters/common_filters/dates.md).
+The date filter also supports the `is` and `is not` operators for `token`, to tell birth and death dates apart, as in `token is "birthdate"`. See [Dates](filters/common_filters/dates.md).
+
+The conditions of every enabled filter are checked when the policy is loaded. (A filter with `enabled` set to `false` is not loaded, so its conditions are neither checked nor evaluated.) A condition that cannot be parsed, such as one with a value that is not in double quotes (123 where `"123"` belongs), a misspelled field, or a word where a number belongs, refuses the policy with an `InvalidPolicyConditionException` before any document is filtered with it. The message names the filter, the position of the strategy in its list, and the character where the condition stops making sense. It does not repeat the condition, since a condition can contain a sensitive value.
 
 The following is an example policy for credit cards that contains a condition to only redact credit card numbers that start with the digits `3000`:
 
