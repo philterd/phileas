@@ -67,13 +67,7 @@ public class AlphanumericAnonymizationService extends AbstractAnonymizationServi
         } else {
 
             // REALISTIC_REPLACE
-            String anonymized = getAnonymizedAlphanumeric(token);
-
-            while (anonymized.equalsIgnoreCase(token)) {
-                anonymized = getAnonymizedAlphanumeric(token);
-            }
-
-            return anonymized;
+            return anonymizeRealistic(token, () -> getAnonymizedAlphanumeric(token));
 
         }
 

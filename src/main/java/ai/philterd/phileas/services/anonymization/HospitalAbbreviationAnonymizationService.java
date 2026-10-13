@@ -100,13 +100,7 @@ public class HospitalAbbreviationAnonymizationService extends AbstractAnonymizat
         } else {
 
             // REALISTIC_REPLACE
-            String anonymized = getAnonymizedHospitalAbbreviation();
-
-            while (anonymized.equalsIgnoreCase(token)) {
-                anonymized = getAnonymizedHospitalAbbreviation();
-            }
-
-            return anonymized;
+            return anonymizeRealistic(token, () -> getAnonymizedHospitalAbbreviation());
 
         }
 

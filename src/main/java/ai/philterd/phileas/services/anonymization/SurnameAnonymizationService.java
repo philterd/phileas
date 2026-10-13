@@ -99,13 +99,7 @@ public class SurnameAnonymizationService extends AbstractAnonymizationService {
         } else {
 
             // REALISTIC_REPLACE
-            String anonymized = dataGenerator.surnames().random();
-
-            while (anonymized.equalsIgnoreCase(token)) {
-                anonymized = dataGenerator.surnames().random();
-            }
-
-            return anonymized;
+            return anonymizeRealistic(token, () -> dataGenerator.surnames().random());
 
         }
 

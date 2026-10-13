@@ -66,13 +66,7 @@ public class NumericAnonymizationService extends AbstractAnonymizationService {
         } else {
 
             // REALISTIC_REPLACE
-            String anonymized = generateNumeric(token.length());
-
-            while (anonymized.equalsIgnoreCase(token)) {
-                anonymized = generateNumeric(token.length());
-            }
-
-            return anonymized;
+            return anonymizeRealistic(token, () -> generateNumeric(token.length()));
 
         }
 

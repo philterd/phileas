@@ -73,13 +73,7 @@ public class EmailAddressAnonymizationService extends AbstractAnonymizationServi
                     .usingRandom(random::nextInt)
                     .get();
 
-            String anonymized = randomStringGenerator.generate(10) + "@fake.com";
-
-            while (anonymized.equalsIgnoreCase(token)) {
-                anonymized = randomStringGenerator.generate(10) + "@fake.com";
-            }
-
-            return anonymized;
+            return anonymizeRealistic(token, () -> randomStringGenerator.generate(10) + "@fake.com");
 
         }
 

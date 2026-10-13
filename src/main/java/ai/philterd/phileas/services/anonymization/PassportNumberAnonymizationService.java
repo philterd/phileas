@@ -66,13 +66,7 @@ public class PassportNumberAnonymizationService extends AbstractAnonymizationSer
         } else {
 
             // REALISTIC_REPLACE
-            String anonymized = getAnonymizedPassportNumber();
-
-            while (anonymized.equalsIgnoreCase(token)) {
-                anonymized = getAnonymizedPassportNumber();
-            }
-
-            return anonymized;
+            return anonymizeRealistic(token, () -> getAnonymizedPassportNumber());
 
         }
 

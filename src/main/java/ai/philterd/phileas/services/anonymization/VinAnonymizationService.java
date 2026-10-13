@@ -72,13 +72,7 @@ public class VinAnonymizationService extends AbstractAnonymizationService {
             // all alphanumeric characters.
             final VINGenerator vinGenerator = new VINGenerator(random);
 
-            String anonymized = vinGenerator.random();
-
-            while (anonymized.equalsIgnoreCase(token)) {
-                anonymized = vinGenerator.random();
-            }
-
-            return anonymized;
+            return anonymizeRealistic(token, () -> vinGenerator.random());
 
         }
 

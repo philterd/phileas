@@ -174,16 +174,7 @@ public class CountyAnonymizationService extends AbstractAnonymizationService {
         } else {
 
             // REALISTIC_REPLACE
-            final int randomInt = generateInteger(0, COUNTIES.size() - 1);
-
-            String anonymized = COUNTIES.get(randomInt);
-
-            while (anonymized.equalsIgnoreCase(token)) {
-                final int nextRandomInt = generateInteger(0, COUNTIES.size() - 1);
-                anonymized = COUNTIES.get(nextRandomInt);
-            }
-
-            return anonymized;
+            return anonymizeRealistic(token, () -> COUNTIES.get(generateInteger(0, COUNTIES.size() - 1)));
 
         }
 

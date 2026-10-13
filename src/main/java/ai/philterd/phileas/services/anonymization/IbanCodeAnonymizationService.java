@@ -99,13 +99,7 @@ public class IbanCodeAnonymizationService extends AbstractAnonymizationService {
         } else {
 
             // REALISTIC_REPLACE
-            String anonymized = dataGenerator.iban().random();
-
-            while (anonymized.equalsIgnoreCase(token)) {
-                anonymized = dataGenerator.iban().random();
-            }
-
-            return anonymized;
+            return anonymizeRealistic(token, () -> dataGenerator.iban().random());
 
         }
 

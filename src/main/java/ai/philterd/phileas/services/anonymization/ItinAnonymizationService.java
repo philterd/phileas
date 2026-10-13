@@ -71,13 +71,7 @@ public class ItinAnonymizationService extends AbstractAnonymizationService {
         } else {
 
             // REALISTIC_REPLACE
-            String anonymized = getAnonymizedItin(token);
-
-            while (anonymized.equalsIgnoreCase(token)) {
-                anonymized = getAnonymizedItin(token);
-            }
-
-            return anonymized;
+            return anonymizeRealistic(token, () -> getAnonymizedItin(token));
 
         }
 

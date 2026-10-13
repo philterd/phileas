@@ -99,13 +99,7 @@ public class CreditCardAnonymizationService extends AbstractAnonymizationService
         } else {
 
             // REALISTIC_REPLACE
-            String anonymized = dataGenerator.creditCardNumbers().random();
-
-            while (anonymized.equalsIgnoreCase(token)) {
-                anonymized = dataGenerator.creditCardNumbers().random();
-            }
-
-            return anonymized;
+            return anonymizeRealistic(token, () -> dataGenerator.creditCardNumbers().random());
 
         }
 

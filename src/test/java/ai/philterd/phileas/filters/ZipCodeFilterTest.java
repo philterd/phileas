@@ -340,7 +340,9 @@ public class ZipCodeFilterTest extends AbstractFilterTest {
         final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "the zip code is 90210");
         showSpans(filtered.getSpans());
         Assertions.assertEquals(1, filtered.getSpans().size());
-        Assertions.assertEquals(36, filtered.getSpans().get(0).getReplacement().length());
+        // With no candidates, the default REALISTIC method replaces the zip code with another zip code.
+        Assertions.assertTrue(filtered.getSpans().get(0).getReplacement().matches("\\d{5}"), filtered.getSpans().get(0).getReplacement());
+        Assertions.assertNotEquals("90210", filtered.getSpans().get(0).getReplacement());
 
     }
 

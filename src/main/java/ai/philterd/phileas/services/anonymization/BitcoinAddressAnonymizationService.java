@@ -66,13 +66,7 @@ public class BitcoinAddressAnonymizationService extends AbstractAnonymizationSer
         } else {
 
             // REALISTIC_REPLACE
-            String anonymized = generateAlphanumeric(32);
-
-            while (anonymized.equalsIgnoreCase(token)) {
-                anonymized = generateAlphanumeric(32);
-            }
-
-            return anonymized;
+            return anonymizeRealistic(token, () -> generateAlphanumeric(32));
 
         }
 

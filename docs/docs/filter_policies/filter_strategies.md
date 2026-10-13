@@ -211,10 +211,12 @@ An example policy using the FPE\_ENCRYPT\_REPLACE filter strategy:
 Replaces the identified text with one of the following:
 
 * A fake value but of the same type. For example, an SSN will be replaced by a random text having the format `###-##-####`, such as 123-45-6789. An email address will be replaced with a randomly generated email address. Available to all filter types. Set `anonymizationMethod` to `REALISTIC`.
-* A random value from a list of candidate replacement values. For example, an SSN could be replaced with a random value from a list of known fake SSNs. Available to all filter types. Set `anonymizationMethod` to `FROM_LIST`, and set `candidateReplacementValues` to a list of candidate replacement values.
+* A random value from a list of candidate replacement values. For example, an SSN could be replaced with a random value from a list of known fake SSNs. Available to all filter types. Set `anonymizationMethod` to `FROM_LIST`, and set `anonymizationCandidates` to a list of candidate replacement values.
 * A random UUID. Set `anonymizationMethod` to `UUID`.
 
 If `anonymizationMethod` is not specified, the default is `REALISTIC`. If an invalid value is given for `anonymizationMethod`, `UUID` will be used as the default.
+
+When `anonymizationCandidates` is a non-empty list, its values are used unless `anonymizationMethod` is `UUID`, so a policy that sets `anonymizationCandidates` without an `anonymizationMethod` draws from the list. When `anonymizationMethod` is `FROM_LIST` and `anonymizationCandidates` is empty or not set, a random UUID is used.
 
 An example policy using the `REALISTIC` filter strategy:
 
@@ -243,10 +245,10 @@ An example policy using the `RANDOM_REPLACE` filter strategy with a list of cand
             {
                "strategy": "RANDOM_REPLACE",
                "anonymizationMethod": "FROM_LIST",
-               "candidateReplacementValues": [
-                  "123-45-6789",
-                  "987-65-4321",
-                  "555-55-5555"
+               "anonymizationCandidates": [
+                  "jane.doe@example.com",
+                  "john.roe@example.com",
+                  "alex.poe@example.com"
                ]
             }
          ]

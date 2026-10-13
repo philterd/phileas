@@ -99,13 +99,7 @@ public class ZipCodeAnonymizationService extends AbstractAnonymizationService {
         } else {
 
             // REALISTIC_REPLACE
-            String anonymized = dataGenerator.zipCodes().random();
-
-            while (anonymized.equalsIgnoreCase(token)) {
-                anonymized = dataGenerator.zipCodes().random();
-            }
-
-            return anonymized;
+            return anonymizeRealistic(token, () -> dataGenerator.zipCodes().random());
 
         }
 

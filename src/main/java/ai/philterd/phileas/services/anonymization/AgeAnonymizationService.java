@@ -66,13 +66,7 @@ public class AgeAnonymizationService extends AbstractAnonymizationService {
         } else {
 
             // REALISTIC_REPLACE
-            String anonymized = getAnonymizedAge(token);
-
-            while (anonymized.equalsIgnoreCase(token)) {
-                anonymized = getAnonymizedAge(token);
-            }
-
-            return anonymized;
+            return anonymizeRealistic(token, () -> getAnonymizedAge(token));
 
         }
 

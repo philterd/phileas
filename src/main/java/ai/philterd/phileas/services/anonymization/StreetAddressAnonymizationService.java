@@ -95,13 +95,7 @@ public class StreetAddressAnonymizationService extends AbstractAnonymizationServ
         } else {
 
             // REALISTIC_REPLACE
-            String anonymized = dataGenerator.streetAddresses().random();
-
-            while (anonymized.equalsIgnoreCase(token)) {
-                anonymized = dataGenerator.streetAddresses().random();
-            }
-
-            return anonymized;
+            return anonymizeRealistic(token, () -> dataGenerator.streetAddresses().random());
 
         }
 

@@ -99,13 +99,7 @@ public class FirstNameAnonymizationService extends AbstractAnonymizationService 
         } else {
 
             // REALISTIC_REPLACE
-            String anonymized = dataGenerator.firstNames().random();
-
-            while (anonymized.equalsIgnoreCase(token)) {
-                anonymized = dataGenerator.firstNames().random();
-            }
-
-            return anonymized;
+            return anonymizeRealistic(token, () -> dataGenerator.firstNames().random());
 
         }
 

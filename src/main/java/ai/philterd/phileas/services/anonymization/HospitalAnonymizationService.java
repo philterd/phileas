@@ -99,13 +99,7 @@ public class HospitalAnonymizationService extends AbstractAnonymizationService {
         } else {
 
             // REALISTIC_REPLACE
-            String anonymized = dataGenerator.hospitals().random();
-
-            while (anonymized.equalsIgnoreCase(token)) {
-                anonymized = dataGenerator.hospitals().random();
-            }
-
-            return anonymized;
+            return anonymizeRealistic(token, () -> dataGenerator.hospitals().random());
 
         }
 

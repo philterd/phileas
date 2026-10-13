@@ -99,13 +99,7 @@ public class StateAnonymizationService extends AbstractAnonymizationService {
         } else {
 
             // REALISTIC_REPLACE
-            String anonymized = dataGenerator.states().random();
-
-            while (anonymized.equalsIgnoreCase(token)) {
-                anonymized = dataGenerator.states().random();
-            }
-
-            return anonymized;
+            return anonymizeRealistic(token, () -> dataGenerator.states().random());
 
         }
 

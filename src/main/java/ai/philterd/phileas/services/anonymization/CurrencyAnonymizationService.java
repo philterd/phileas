@@ -66,13 +66,7 @@ public class CurrencyAnonymizationService extends AbstractAnonymizationService {
         } else {
 
             // REALISTIC_REPLACE
-            String anonymized = getAnonymizedCurrency(token);
-
-            while (anonymized.equalsIgnoreCase(token)) {
-                anonymized = getAnonymizedCurrency(token);
-            }
-
-            return anonymized;
+            return anonymizeRealistic(token, () -> getAnonymizedCurrency(token));
 
         }
 

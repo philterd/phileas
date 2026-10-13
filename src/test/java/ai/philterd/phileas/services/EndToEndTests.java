@@ -577,6 +577,105 @@ public class EndToEndTests {
 
     }
 
+    /** Filters the text with a policy that applies RANDOM_REPLACE, with the given extra properties, to one filter. */
+    private String randomReplace(final String filter, final String strategyProperties, final String text) throws Exception {
+
+        final String json = "{ \"identifiers\": { \"" + filter + "\": { \"" + filter + "FilterStrategies\": [ "
+                + "{ \"strategy\": \"RANDOM_REPLACE\"" + strategyProperties + " } ] } } }";
+        final Policy policy = new com.google.gson.Gson().fromJson(json, Policy.class);
+
+        final PlainTextFilterService service = new PlainTextFilterService(new PhileasConfiguration(new Properties()), contextService, vectorService, null);
+
+        return service.filter(policy, "context", text).getFilteredText().trim();
+
+    }
+
+    private static final String UUID_PATTERN = "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}";
+
+    @Test
+    public void endToEndRandomReplaceRealisticByDefault() throws Exception {
+
+        for (final String method : List.of("", ", \"anonymizationMethod\": \"REALISTIC\"")) {
+
+            final String ssn = randomReplace("ssn", method, "the ssn is 123-45-6789.");
+            Assertions.assertTrue(ssn.matches("the ssn is \\d{3}-\\d{2}-\\d{4}\\."), ssn);
+            Assertions.assertNotEquals("the ssn is 123-45-6789.", ssn);
+
+            final String email = randomReplace("emailAddress", method, "write to jane@example.com today.");
+            Assertions.assertTrue(email.matches("write to [^\\s@]+@[^\\s@]+\\.[a-z]+ today\\."), email);
+            Assertions.assertFalse(email.contains("jane@example.com"), email);
+
+            final String itin = randomReplace("itin", method, "the itin is 912-70-1234.");
+            Assertions.assertTrue(itin.matches("the itin is 9\\d{2}-\\d{2}-\\d{4}\\."), itin);
+            Assertions.assertNotEquals("the itin is 912-70-1234.", itin);
+
+        }
+
+    }
+
+    @Test
+    public void endToEndRandomReplaceTokenItCannotChange() {
+
+        // An age in words has no digits to replace, and an all-zero IP address was the only value the IP
+        // generator produced, so the realistic value could only equal the token: this used to loop
+        // forever. It now falls back to a UUID.
+        Assertions.assertTimeoutPreemptively(java.time.Duration.ofSeconds(30), () -> {
+
+            final String age = randomReplace("age", "", "she is thirty-five years old.");
+            Assertions.assertTrue(age.matches("she is " + UUID_PATTERN + "\\."), age);
+
+            final String ipv4 = randomReplace("ipAddress", "", "the ip is 000.000.000.000 here.");
+            Assertions.assertTrue(ipv4.matches("the ip is \\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3} here\\."), ipv4);
+            Assertions.assertFalse(ipv4.contains("000.000.000.000"), ipv4);
+
+            final String ipv6 = randomReplace("ipAddress", "", "the ip is 0000:0000:0000:0000:0000:0000:0000:0000 here.");
+            Assertions.assertFalse(ipv6.contains("0000:0000:0000:0000:0000:0000:0000:0000"), ipv6);
+
+        });
+
+    }
+
+    @Test
+    public void endToEndRandomReplaceUuid() throws Exception {
+
+        for (final String method : List.of(", \"anonymizationMethod\": \"UUID\"", ", \"anonymizationMethod\": \"UUID\", \"anonymizationCandidates\": [ \"000-00-0001\" ]")) {
+            final String ssn = randomReplace("ssn", method, "the ssn is 123-45-6789.");
+            Assertions.assertTrue(ssn.matches("the ssn is " + UUID_PATTERN + "\\."), ssn);
+        }
+
+    }
+
+    @Test
+    public void endToEndRandomReplaceFromList() throws Exception {
+
+        // Candidates are used with FROM_LIST, and also when no method is given.
+        for (final String method : List.of(", \"anonymizationMethod\": \"FROM_LIST\"", "")) {
+
+            final String ssn = randomReplace("ssn", method + ", \"anonymizationCandidates\": [ \"000-00-0001\", \"000-00-0002\" ]", "the ssn is 123-45-6789.");
+            Assertions.assertTrue(ssn.equals("the ssn is 000-00-0001.") || ssn.equals("the ssn is 000-00-0002."), ssn);
+
+        }
+
+    }
+
+    @Test
+    public void endToEndRandomReplaceFromEmptyListIsUuid() throws Exception {
+
+        for (final String candidates : List.of("", ", \"anonymizationCandidates\": [ ]")) {
+            final String ssn = randomReplace("ssn", ", \"anonymizationMethod\": \"FROM_LIST\"" + candidates, "the ssn is 123-45-6789.");
+            Assertions.assertTrue(ssn.matches("the ssn is " + UUID_PATTERN + "\\."), ssn);
+        }
+
+    }
+
+    @Test
+    public void endToEndRandomReplaceUnrecognizedMethodIsUuid() throws Exception {
+
+        final String ssn = randomReplace("ssn", ", \"anonymizationMethod\": \"BOGUS\"", "the ssn is 123-45-6789.");
+        Assertions.assertTrue(ssn.matches("the ssn is " + UUID_PATTERN + "\\."), ssn);
+
+    }
+
     @Test
     public void endToEndEinSsnDisambiguation() throws Exception {
 

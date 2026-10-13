@@ -99,13 +99,7 @@ public class LocationsAnonymizationService extends AbstractAnonymizationService 
         } else {
 
             // REALISTIC_REPLACE
-            String anonymized = dataGenerator.cities().random();
-
-            while (anonymized.equalsIgnoreCase(token)) {
-                anonymized = dataGenerator.cities().random();
-            }
-
-            return anonymized;
+            return anonymizeRealistic(token, () -> dataGenerator.cities().random());
 
         }
 

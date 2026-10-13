@@ -80,13 +80,7 @@ public class DateAnonymizationService extends AbstractAnonymizationService {
         } else {
 
             // REALISTIC_REPLACE
-            String anonymized = getAnonymizedDate(token);
-
-            while (anonymized.equalsIgnoreCase(token)) {
-                anonymized = getAnonymizedDate(token);
-            }
-
-            return anonymized;
+            return anonymizeRealistic(token, () -> getAnonymizedDate(token));
 
         }
 

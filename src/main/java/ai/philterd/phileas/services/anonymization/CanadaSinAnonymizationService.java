@@ -71,13 +71,7 @@ public class CanadaSinAnonymizationService extends AbstractAnonymizationService 
         } else {
 
             // REALISTIC_REPLACE
-            String anonymized = getAnonymizedSin(token);
-
-            while (anonymized.equalsIgnoreCase(token)) {
-                anonymized = getAnonymizedSin(token);
-            }
-
-            return anonymized;
+            return anonymizeRealistic(token, () -> getAnonymizedSin(token));
 
         }
 

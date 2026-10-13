@@ -66,13 +66,7 @@ public class MacAddressAnonymizationService extends AbstractAnonymizationService
         } else {
 
             // REALISTIC_REPLACE
-            String anonymized = getAnonymizedMacAddress();
-
-            while (anonymized.equalsIgnoreCase(token)) {
-                anonymized = getAnonymizedMacAddress();
-            }
-
-            return anonymized;
+            return anonymizeRealistic(token, () -> getAnonymizedMacAddress());
 
         }
 

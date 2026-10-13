@@ -125,16 +125,7 @@ public class StateAbbreviationAnonymizationService extends AbstractAnonymization
         } else {
 
             // REALISTIC_REPLACE
-            final int randomInt = generateInteger(0, STATES.size() - 1);
-
-            String anonymized = STATES.get(randomInt);
-
-            while (anonymized.equalsIgnoreCase(token)) {
-                final int nextRandomInt = generateInteger(0, STATES.size() - 1);
-                anonymized = STATES.get(nextRandomInt);
-            }
-
-            return anonymized;
+            return anonymizeRealistic(token, () -> STATES.get(generateInteger(0, STATES.size() - 1)));
 
         }
 

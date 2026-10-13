@@ -66,13 +66,7 @@ public class IpAddressAnonymizationService extends AbstractAnonymizationService 
         } else {
 
             // REALISTIC_REPLACE
-            String anonymized = getAnonymizedIpAddress(token);
-
-            while (anonymized.equalsIgnoreCase(token)) {
-                anonymized = getAnonymizedIpAddress(token);
-            }
-
-            return anonymized;
+            return anonymizeRealistic(token, () -> getAnonymizedIpAddress(token));
 
         }
 
@@ -82,25 +76,25 @@ public class IpAddressAnonymizationService extends AbstractAnonymizationService 
 
         if(token.contains(":")) {
 
-            // IPv6
+            // IPv6: eight groups of four hexadecimal digits.
+            final StringBuilder sb = new StringBuilder();
 
-            return generateNumeric(4) + ":"
-                    + generateNumeric(4) + ":"
-                    + generateNumeric(4) + ":"
-                    + generateNumeric(4) + ":"
-                    + generateNumeric(4) + ":"
-                    + generateNumeric(4) + ":"
-                    + generateNumeric(4) + ":"
-                    + generateNumeric(4);
+            for(int group = 0; group < 8; group++) {
+                if(group > 0) {
+                    sb.append(':');
+                }
+                sb.append(String.format("%04x", random.nextInt(0x10000)));
+            }
+
+            return sb.toString();
 
         } else {
 
-            // IPv4
-
-            return generateNumeric(3) + "."
-                    + generateNumeric(3) + "."
-                    + generateNumeric(3) + "."
-                    + generateNumeric(3);
+            // IPv4: four octets from 0 to 255.
+            return generateInteger(0, 255) + "."
+                    + generateInteger(0, 255) + "."
+                    + generateInteger(0, 255) + "."
+                    + generateInteger(0, 255);
 
         }
 

@@ -66,13 +66,7 @@ public class UrlAnonymizationService extends AbstractAnonymizationService {
         } else {
 
             // REALISTIC_REPLACE
-            String anonymized = "https://" + generateAlphanumeric(10).toLowerCase() + ".com";
-
-            while (anonymized.equalsIgnoreCase(token)) {
-                anonymized = "https://" + generateAlphanumeric(10).toLowerCase() + ".com";
-            }
-
-            return anonymized;
+            return anonymizeRealistic(token, () -> "https://" + generateAlphanumeric(10).toLowerCase() + ".com");
 
         }
 

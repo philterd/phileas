@@ -27,6 +27,7 @@ import ai.philterd.phileas.policy.IgnoredPattern;
 import ai.philterd.phileas.policy.Policy;
 import ai.philterd.phileas.policy.filters.Identifier;
 import java.security.SecureRandom;
+import ai.philterd.phileas.services.anonymization.AbstractAnonymizationService;
 import ai.philterd.phileas.services.anonymization.AgeAnonymizationService;
 import ai.philterd.phileas.services.anonymization.AlphanumericAnonymizationService;
 import ai.philterd.phileas.services.anonymization.AnonymizationMethod;
@@ -326,6 +327,39 @@ public abstract class Filter {
     }
 
     private AnonymizationService getAnonymizationService(FilterType filterType, SecureRandom random, List<String> candidates, AnonymizationMethod anonymizationMethod) {
+
+        final AbstractAnonymizationService anonymizationService = createAnonymizationService(filterType, random, candidates);
+        anonymizationService.setAnonymizationMethod(resolveAnonymizationMethod(anonymizationMethod, candidates));
+
+        return anonymizationService;
+
+    }
+
+    /**
+     * The anonymization method a strategy's RANDOM_REPLACE uses.
+     *
+     * <p>{@code UUID} and {@code FROM_LIST} are used as given. {@code REALISTIC}, the default, produces a
+     * value of the filter's type, except that a non-empty candidate list is still drawn from, so a policy
+     * that sets {@code anonymizationCandidates} without an {@code anonymizationMethod} keeps working. A
+     * {@code null} method, which is what an unrecognized value deserializes to, means {@code UUID}.</p>
+     *
+     * @param anonymizationMethod The strategy's anonymization method.
+     * @param candidates The strategy's anonymization candidates.
+     * @return The anonymization method to use.
+     */
+    public static AnonymizationMethod resolveAnonymizationMethod(final AnonymizationMethod anonymizationMethod, final List<String> candidates) {
+
+        if(anonymizationMethod == null) {
+            return AnonymizationMethod.UUID;
+        } else if(anonymizationMethod == AnonymizationMethod.REALISTIC && CollectionUtils.isNotEmpty(candidates)) {
+            return AnonymizationMethod.FROM_LIST;
+        } else {
+            return anonymizationMethod;
+        }
+
+    }
+
+    private AbstractAnonymizationService createAnonymizationService(FilterType filterType, SecureRandom random, List<String> candidates) {
 
         if(filterType == FilterType.AGE) {
             return new AgeAnonymizationService(random, candidates);
