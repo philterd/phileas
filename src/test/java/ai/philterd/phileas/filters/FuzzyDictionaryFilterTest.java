@@ -373,4 +373,53 @@ public class FuzzyDictionaryFilterTest extends AbstractFilterTest {
                 found(springfield(SensitivityLevel.MEDIUM, false).filter(contextService, getPolicy(), "context", PIECE, text)));
     }
 
+    private FuzzyDictionaryFilter dictionary(final SensitivityLevel sensitivityLevel, final String... terms) {
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(new CustomDictionaryFilterStrategy()))
+                .withWindowSize(windowSize)
+                .build();
+        return new FuzzyDictionaryFilter(FilterType.CUSTOM_DICTIONARY, filterConfiguration, sensitivityLevel, Set.of(terms), false);
+    }
+
+    /** Each span's position and text, in the order of the text. */
+    private List<String> located(final Filtered filtered) {
+        return filtered.getSpans().stream()
+                .sorted(Comparator.comparingInt(span -> span.getCharacterStart()))
+                .map(span -> span.getCharacterStart() + "-" + span.getCharacterEnd() + " " + span.getText())
+                .toList();
+    }
+
+    @Test
+    void aMisspellingNextToPunctuationIsReportedWithoutIt() throws Exception {
+        final FuzzyDictionaryFilter filter = springfield(SensitivityLevel.MEDIUM, false);
+        Assertions.assertEquals(List.of("5-15 Springfeld"),
+                located(filter.filter(contextService, getPolicy(), "context", PIECE, "From Springfeld.")));
+        Assertions.assertEquals(List.of("3-13 Springfeld"),
+                located(filter.filter(contextService, getPolicy(), "context", PIECE, "In Springfeld, she")));
+        Assertions.assertEquals(List.of("1-11 Springfeld"),
+                located(filter.filter(contextService, getPolicy(), "context", PIECE, "(Springfeld) today")));
+    }
+
+    @Test
+    void aMultiWordMisspellingNextToPunctuationIsReportedWithoutIt() throws Exception {
+        Assertions.assertEquals(List.of("9-20 Port Angels"),
+                located(dictionary(SensitivityLevel.MEDIUM, "Port Angeles").filter(contextService, getPolicy(), "context", PIECE,
+                        "She saw (Port Angels) today")));
+    }
+
+    @Test
+    void aTermEndingInPunctuationKeepsItInTheComparison() throws Exception {
+        Assertions.assertEquals(List.of("8-22 Washingtn D.C."),
+                located(dictionary(SensitivityLevel.MEDIUM, "Washington D.C.").filter(contextService, getPolicy(), "context", PIECE,
+                        "Born in Washingtn D.C. in May")));
+    }
+
+    @Test
+    void punctuationAndShortWordsAreNotCompared() throws Exception {
+        // "(Te)" is two edits from "Ted", within low's distance, but trimmed it is too short to compare.
+        Assertions.assertEquals(List.of(),
+                located(dictionary(SensitivityLevel.LOW, "Ted").filter(contextService, getPolicy(), "context", PIECE,
+                        "Ask (Te) or --- now ...")));
+    }
+
 }

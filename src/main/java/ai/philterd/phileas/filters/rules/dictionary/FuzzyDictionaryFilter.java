@@ -124,25 +124,43 @@ public class FuzzyDictionaryFilter extends DictionaryFilter {
                 if(sensitivityLevel != SensitivityLevel.OFF) {
 
                     final int wordsInEntry = wordCount(entry);
+                    final String normalizedEntry = normalizeWhitespace(entry);
+                    final boolean trimLeading = !normalizedEntry.isEmpty() && Character.isLetterOrDigit(normalizedEntry.charAt(0));
+                    final boolean trimTrailing = !normalizedEntry.isEmpty()
+                            && Character.isLetterOrDigit(normalizedEntry.charAt(normalizedEntry.length() - 1));
 
                     if (ngrams.containsKey(wordsInEntry)) {
                         for (final Position position : ngrams.get(wordsInEntry).keySet()) {
 
-                            final int start = position.getStart();
-                            final int end = position.getEnd();
+                            // N-grams are split on whitespace, so punctuation next to a word is part of
+                            // it: "Springfeld," would be two edits from "Springfield". Compare and report
+                            // the word without it, as the exact dictionary filter does, unless the term
+                            // itself has punctuation at that end.
+                            final String token = ngrams.get(wordsInEntry).get(position);
+                            int begin = 0;
+                            int finish = token.length();
+                            while (trimLeading && begin < finish && !Character.isLetterOrDigit(token.charAt(begin))) {
+                                begin++;
+                            }
+                            while (trimTrailing && finish > begin && !Character.isLetterOrDigit(token.charAt(finish - 1))) {
+                                finish--;
+                            }
+
+                            final int start = position.getStart() + begin;
+                            final int end = position.getStart() + finish;
 
                             if (overlapsAny(exactMatches, start, end)) {
                                 continue;
                             }
 
                             // Compare string distance between word and ngrams.
-                            final String ngram = ngrams.get(wordsInEntry).get(position);
+                            final String ngram = token.substring(begin, finish);
 
                             if (ngram.length() > 2) {
 
                                 // TODO: Should this be customizable in the dictionary's properties in the filter policy?
                                 final LevenshteinDistance levenshteinDistance = LevenshteinDistance.getDefaultInstance();
-                                final int distance = levenshteinDistance.apply(normalizeWhitespace(entry).toLowerCase(), normalizeWhitespace(ngram).toLowerCase());
+                                final int distance = levenshteinDistance.apply(normalizedEntry.toLowerCase(), normalizeWhitespace(ngram).toLowerCase());
 
                                 if (!requireCapitalization || Character.isUpperCase(ngram.charAt(0))) {
 
