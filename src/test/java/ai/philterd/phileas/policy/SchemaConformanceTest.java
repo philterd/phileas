@@ -343,7 +343,10 @@ public class SchemaConformanceTest {
             final Object actual = effectiveValue(instance, field);
             checked[0]++;
 
-            if (!sameValue(expected, actual)) {
+            if (DEFAULT_GAPS.containsKey(definition + "." + property)) {
+                Assertions.assertFalse(sameValue(expected, actual), definition + "." + property + " now matches the "
+                        + "schema's default. Remove it from DEFAULT_GAPS.");
+            } else if (!sameValue(expected, actual)) {
                 mismatches.add(definition + "." + property + ": schema " + expected + ", "
                         + instance.getClass().getSimpleName() + " " + actual);
             }
@@ -355,6 +358,21 @@ public class SchemaConformanceTest {
                 + "use: " + mismatches);
 
     }
+
+    private static final String AUTO_DEFAULT = "the bundled lists default to auto (philterd/phileas#441); "
+            + "the schema still declares medium";
+
+    /**
+     * Defaults Phileas has changed ahead of the schema, with why. Each is asserted to still differ, so the
+     * entry goes once the schema's default matches.
+     */
+    private static final Map<String, String> DEFAULT_GAPS = Map.of(
+            "filterCity.sensitivity", AUTO_DEFAULT,
+            "filterCounty.sensitivity", AUTO_DEFAULT,
+            "filterFirstName.sensitivity", AUTO_DEFAULT,
+            "filterHospital.sensitivity", AUTO_DEFAULT,
+            "filterState.sensitivity", AUTO_DEFAULT,
+            "filterSurname.sensitivity", AUTO_DEFAULT);
 
     /** Defaults the model takes from an environment variable when it is set. */
     private static final Map<String, String> ENVIRONMENT_DEFAULTS = Map.of(

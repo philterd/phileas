@@ -737,6 +737,35 @@ public class EndToEndTests {
     }
 
     @Test
+    public void endToEndFuzzyMatchingOnTheBundledListsAtTheDefaultSensitivity() throws Exception {
+
+        // https://github.com/philterd/phileas/issues/441: with fuzzy on and no sensitivity set, the bundled
+        // lists report no ordinary word that the exact lookup would not, and still catch misspellings.
+        // surname is not checked here: the test classpath's surnames.txt is a much larger list than the one
+        // the jar ships, and it contains common words, so it would not reflect the shipped behavior.
+        final String sentence = "She went to the store and then she left for home.";
+        final String[][] cases = {
+                {"city", "She went to the store and then she left for {{{REDACTED-city}}}."},
+                {"county", sentence},
+                {"firstName", sentence}};
+
+        for (final String[] c : cases) {
+            final PlainTextFilterService service = new PlainTextFilterService(new PhileasConfiguration(new Properties()), contextService, vectorService, null);
+            final Policy fuzzy = new com.google.gson.Gson().fromJson("{ \"identifiers\": { \"" + c[0] + "\": { \"fuzzy\": true } } }", Policy.class);
+            final Policy exact = new com.google.gson.Gson().fromJson("{ \"identifiers\": { \"" + c[0] + "\": { } } }", Policy.class);
+            Assertions.assertEquals(c[1], service.filter(fuzzy, "context", sentence).getFilteredText(), c[0]);
+            Assertions.assertEquals(c[1], service.filter(exact, "context", sentence).getFilteredText(), c[0]);
+        }
+
+        final PlainTextFilterService service = new PlainTextFilterService(new PhileasConfiguration(new Properties()), contextService, vectorService, null);
+        final Policy city = new com.google.gson.Gson().fromJson("{ \"identifiers\": { \"city\": { \"fuzzy\": true } } }", Policy.class);
+        Assertions.assertEquals("From {{{REDACTED-city}}}.", service.filter(city, "context", "From Springfeld.").getFilteredText());
+        final Policy firstName = new com.google.gson.Gson().fromJson("{ \"identifiers\": { \"firstName\": { \"fuzzy\": true } } }", Policy.class);
+        Assertions.assertEquals("Call {{{REDACTED-first-name}}} today.", service.filter(firstName, "context", "Call Micheal today.").getFilteredText());
+
+    }
+
+    @Test
     public void endToEndTheRetiredMedicalConditionFilterRefusesThePolicy() {
 
         // https://github.com/philterd/phileas/issues/409: medicalCondition never built a filter, so it was

@@ -37,7 +37,7 @@ public abstract class AbstractDictionaryBackedFilter extends AbstractFilter {
 
     @SerializedName("sensitivity")
     @Expose
-    private String sensitivity = SensitivityLevel.MEDIUM.getName();
+    private String sensitivity = SensitivityLevel.AUTO.getName();
 
     @SerializedName("capitalized")
     @Expose

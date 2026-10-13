@@ -422,4 +422,50 @@ public class FuzzyDictionaryFilterTest extends AbstractFilterTest {
                         "Ask (Te) or --- now ...")));
     }
 
+    @Test
+    void autoAllowsMoreEditsForLongerWords() {
+        Assertions.assertEquals(0, FuzzyDictionaryFilter.autoEditsAllowed(3));
+        Assertions.assertEquals(0, FuzzyDictionaryFilter.autoEditsAllowed(4));
+        Assertions.assertEquals(1, FuzzyDictionaryFilter.autoEditsAllowed(5));
+        Assertions.assertEquals(1, FuzzyDictionaryFilter.autoEditsAllowed(8));
+        Assertions.assertEquals(2, FuzzyDictionaryFilter.autoEditsAllowed(9));
+        Assertions.assertEquals(2, FuzzyDictionaryFilter.autoEditsAllowed(20));
+    }
+
+    @Test
+    void aSwapOfNeighboringLettersIsOneEdit() {
+        Assertions.assertEquals(1, FuzzyDictionaryFilter.optimalStringAlignmentDistance("smith", "smiht"));
+        Assertions.assertEquals(0, FuzzyDictionaryFilter.optimalStringAlignmentDistance("smith", "smith"));
+        Assertions.assertEquals(1, FuzzyDictionaryFilter.optimalStringAlignmentDistance("springfield", "springfeld"));
+        Assertions.assertEquals(2, FuzzyDictionaryFilter.optimalStringAlignmentDistance("springfield", "sprngfeld"));
+        Assertions.assertEquals(3, FuzzyDictionaryFilter.optimalStringAlignmentDistance("", "abc"));
+    }
+
+    @Test
+    void autoMatchesByTheComparedWordsLength() throws Exception {
+        // Under five letters, only an exact match: "Jonn" is one edit from "John".
+        Assertions.assertEquals(List.of(), located(dictionary(SensitivityLevel.AUTO, "John").filter(contextService, getPolicy(), "context", PIECE,
+                "Ask Jonn today")));
+        // Five letters, one edit, and a swap counts as one: "Smiht" for "Smith".
+        Assertions.assertEquals(List.of("4-9 Smiht"), located(dictionary(SensitivityLevel.AUTO, "Smith").filter(contextService, getPolicy(), "context", PIECE,
+                "Ask Smiht today")));
+        // Eight letters allow one edit, not two: "Kathrne" for "Katherine" is two edits at seven letters.
+        Assertions.assertEquals(List.of(), located(dictionary(SensitivityLevel.AUTO, "Katherine").filter(contextService, getPolicy(), "context", PIECE,
+                "Ask Kathrne today")));
+        Assertions.assertEquals(List.of("4-12 Katherin"), located(dictionary(SensitivityLevel.AUTO, "Katherine").filter(contextService, getPolicy(), "context", PIECE,
+                "Ask Katherin today")));
+        // Nine letters or more allow two edits.
+        Assertions.assertEquals(List.of("4-13 Sprngfeld"), located(springfield(SensitivityLevel.AUTO, false).filter(contextService, getPolicy(), "context", PIECE,
+                "Ask Sprngfeld today")));
+    }
+
+    @Test
+    void autoReportsAFuzzyMatchOnlyWhenItIsCapitalized() throws Exception {
+        Assertions.assertEquals(List.of("Springfeld@0.7"),
+                found(springfield(SensitivityLevel.AUTO, false).filter(contextService, getPolicy(), "context", PIECE, "From Springfeld and springfeld")));
+        Assertions.assertEquals(List.of("springfield@1.0"),
+                found(springfield(SensitivityLevel.AUTO, false).filter(contextService, getPolicy(), "context", PIECE, "From springfield today")),
+                "an exact match is reported in any case unless capitalized is set");
+    }
+
 }

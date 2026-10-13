@@ -156,7 +156,23 @@ public class FuzzyDictionaryFilter extends DictionaryFilter {
                             // Compare string distance between word and ngrams.
                             final String ngram = token.substring(begin, finish);
 
-                            if (ngram.length() > 2) {
+                            if (ngram.length() > 2 && sensitivityLevel == SensitivityLevel.AUTO) {
+
+                                // AUTO allows more edits for longer words, counts two swapped neighboring
+                                // letters as one edit, and requires a capital letter, so that common short
+                                // words ("and", "the") do not match names and places in a large list.
+                                final String word = normalizeWhitespace(ngram).toLowerCase();
+                                final String term = normalizedEntry.toLowerCase();
+                                final int allowed = autoEditsAllowed(word.length());
+
+                                if (Character.isUpperCase(ngram.charAt(0)) && Math.abs(term.length() - word.length()) <= allowed) {
+                                    final int distance = optimalStringAlignmentDistance(term, word);
+                                    if (distance <= allowed) {
+                                        spans.add(createSpan(contextService, input, start, end, confidenceFor(distance), context, ngram, policy));
+                                    }
+                                }
+
+                            } else if (ngram.length() > 2) {
 
                                 // TODO: Should this be customizable in the dictionary's properties in the filter policy?
                                 final LevenshteinDistance levenshteinDistance = LevenshteinDistance.getDefaultInstance();
@@ -192,6 +208,49 @@ public class FuzzyDictionaryFilter extends DictionaryFilter {
 
         return new Filtered(context, spans);
 
+    }
+
+    /**
+     * The edits {@link SensitivityLevel#AUTO} allows for a word of this length: none under five
+     * characters, one under nine, and two otherwise.
+     */
+    public static int autoEditsAllowed(final int length) {
+        if (length < 5) {
+            return 0;
+        }
+        return length < 9 ? 1 : 2;
+    }
+
+    /** The confidence of a fuzzy match at this distance, as the fixed levels assign it. */
+    private static double confidenceFor(final int distance) {
+        if (distance == 0) {
+            return 0.9;
+        }
+        return distance == 1 ? 0.7 : 0.5;
+    }
+
+    /**
+     * The optimal string alignment distance: the Levenshtein distance, except that swapping two
+     * neighboring characters counts as one edit rather than two, so "smiht" is one edit from "smith".
+     */
+    public static int optimalStringAlignmentDistance(final String a, final String b) {
+        final int[][] d = new int[a.length() + 1][b.length() + 1];
+        for (int i = 0; i <= a.length(); i++) {
+            d[i][0] = i;
+        }
+        for (int j = 0; j <= b.length(); j++) {
+            d[0][j] = j;
+        }
+        for (int i = 1; i <= a.length(); i++) {
+            for (int j = 1; j <= b.length(); j++) {
+                final int cost = a.charAt(i - 1) == b.charAt(j - 1) ? 0 : 1;
+                d[i][j] = Math.min(Math.min(d[i - 1][j] + 1, d[i][j - 1] + 1), d[i - 1][j - 1] + cost);
+                if (i > 1 && j > 1 && a.charAt(i - 1) == b.charAt(j - 2) && a.charAt(i - 2) == b.charAt(j - 1)) {
+                    d[i][j] = Math.min(d[i][j], d[i - 2][j - 2] + 1);
+                }
+            }
+        }
+        return d[a.length()][b.length()];
     }
 
     /** Whether {@code [start, end)} overlaps any of the positions. */

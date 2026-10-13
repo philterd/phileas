@@ -245,10 +245,10 @@ class DictionaryTermsFromPolicyTest {
     void theSensitivityDefaultDiffersBetweenACustomDictionaryAndTheBundledFilters() {
 
         // Both read sensitivity from the same base class, but a custom dictionary defaults to OFF
-        // and the word-list filters default to MEDIUM. Gson uses the declared no-argument
+        // and the word-list filters default to AUTO. Gson uses the declared no-argument
         // constructor, so the default survives deserialization of a policy that omits the key.
         Assertions.assertEquals(SensitivityLevel.OFF.getName(), new CustomDictionary().getSensitivity());
-        Assertions.assertEquals(SensitivityLevel.MEDIUM.getName(), new Surname().getSensitivity());
+        Assertions.assertEquals(SensitivityLevel.AUTO.getName(), new Surname().getSensitivity());
 
         final String json = """
                 {
@@ -263,7 +263,7 @@ class DictionaryTermsFromPolicyTest {
 
         Assertions.assertEquals(SensitivityLevel.OFF.getName(),
                 policy.getIdentifiers().getCustomDictionaries().get(0).getSensitivity());
-        Assertions.assertEquals(SensitivityLevel.MEDIUM.getName(),
+        Assertions.assertEquals(SensitivityLevel.AUTO.getName(),
                 policy.getIdentifiers().getSurname().getSensitivity());
 
     }
