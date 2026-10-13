@@ -109,7 +109,7 @@ This policy finds IP addresses and replaces each identified IP address with the 
       "ipAddressFilterStrategies": [
         {
           "strategy": "STATIC_REPLACE",
-          "redactionFormat": "IP_ADDRESS",
+          "staticReplacement": "IP_ADDRESS",
           "condition": "token != \"127.0.0.1\""
         }
       ]
@@ -125,8 +125,8 @@ This policy finds ZIP codes starting with `90` and truncates the zip code to jus
 ```
 {
   "identifiers": {
-    "creditCard": {
-      "creditCardFilterStrategies": [
+    "zipCode": {
+      "zipCodeFilterStrategies": [
         {
           "condition": "token startswith \"90\"",
           "strategy": "TRUNCATE",

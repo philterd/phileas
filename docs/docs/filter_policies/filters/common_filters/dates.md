@@ -71,16 +71,40 @@ Each filter strategy may have one condition. See [Conditions](#conditions) for d
 
 | Conditional  | Description                                                              | Operators                          |
 |--------------|--------------------------------------------------------------------------|------------------------------------|
-| `TOKEN`      | Compares the value of the sensitive text.                                | `==` , `!=`                        |
-| `TOKEN`      | Compares the sensitive text to some category, e.g. `birthdate`.          | `is`                               |
+| `TOKEN`      | Compares the value of the sensitive text.                                | `==`, `!=`, `startswith`           |
+| `TOKEN`      | Whether the date is a birth date or a death date. See below.             | `is`, `is not`                     |
 | `CONTEXT`    | Compares the filtering context.                                          | `==` , `!=`                        |
 | `CONFIDENCE` | Compares the confidence in the sensitive text against a threshold value. | `<` , `<=`, `>` , `>=`, `==`, `!=` |
 
 #### Differentiating Between Dates and Birth Dates
 
 In some cases it may be necessary to redact birth dates and dates differently. Using conditions it is possible to
-determine if an identified date is a birth date. The conditional `token is birthdate` will determine if the identified
-date (token) is a birth date by analyzing the content surrounding the date.
+determine if an identified date is a birth date or a death date. The condition `token is "birthdate"` is satisfied when
+the words surrounding the identified date (within the filter's `windowSize`) suggest a birth date, such as `born`,
+`birth`, or `dob`. `token is "deathdate"` does the same for a death date, with words such as `died`, `death`, or
+`passed away`, and `token is "birthdate or deathdate"` is satisfied by either. `is not` is satisfied when the date is
+not one of these. The value must be in double quotes.
+
+The following policy shifts birth dates and redacts every other date:
+
+```
+{
+   "identifiers": {
+      "date": {
+         "dateFilterStrategies": [
+            {
+               "condition": "token is \"birthdate\"",
+               "strategy": "SHIFT",
+               "shiftYears": 1
+            },
+            {
+               "strategy": "REDACT"
+            }
+         ]
+      }
+   }
+}
+```
 
 ## Example Policy to Redact Dates
 

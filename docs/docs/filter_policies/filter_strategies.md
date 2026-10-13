@@ -449,6 +449,16 @@ An example person's names filter using the `ABBREVIATE` filter strategy:
 
 A replacement strategy can be applied based on the sensitive information meeting one or more conditions. For example, you can create a condition such that only dates of `11/05/2010` are replaced by using the condition `token == "11/05/2010"`. The conditions that can be applied vary based on the type of sensitive information. For instance, zip codes can have conditions based on their population. Refer to each specific [filter type](filters.md) for the conditions available.
 
+A condition compares a field to a value. The values compared with the identified text (`token`) and the context (`context`) must be in double quotes. The `token` condition supports these operators on every filter type:
+
+| Operator | Satisfied when | Example |
+|---|---|---|
+| `==` | The identified text equals the value, ignoring case. | `token == "123-45-6789"` |
+| `!=` | The identified text does not equal the value, ignoring case. | `token != "127.0.0.1"` |
+| `startswith` | The identified text begins with the value. This comparison is case-sensitive. | `token startswith "3000"` |
+
+The date filter also supports `token is` and `token is not`, to tell birth and death dates apart. See [Dates](filters/common_filters/dates.md).
+
 The following is an example policy for credit cards that contains a condition to only redact credit card numbers that start with the digits `3000`:
 
 ```

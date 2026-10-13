@@ -420,6 +420,28 @@ public abstract class AbstractFilterStrategyTest {
     }
 
     @Test
+    public void evaluateConditionNotEquals() throws IOException {
+
+        final AbstractFilterStrategy strategy = getFilterStrategy();
+
+        // != is the negation of ==, which ignores case.
+        Assertions.assertTrue(strategy.evaluateCondition(getPolicy(), "context", "12345", WINDOW, "token != \"90210\"", 1.0));
+        Assertions.assertFalse(strategy.evaluateCondition(getPolicy(), "context", "90210", WINDOW, "token != \"90210\"", 1.0));
+        Assertions.assertFalse(strategy.evaluateCondition(getPolicy(), "context", "abc", WINDOW, "token != \"ABC\"", 1.0));
+
+    }
+
+    @Test
+    public void evaluateConditionNotEqualsJoined() throws IOException {
+
+        final AbstractFilterStrategy strategy = getFilterStrategy();
+
+        Assertions.assertTrue(strategy.evaluateCondition(getPolicy(), "context", "12345", WINDOW, "token != \"90210\" and context == \"context\"", 1.0));
+        Assertions.assertFalse(strategy.evaluateCondition(getPolicy(), "context", "12345", WINDOW, "token != \"90210\" and context == \"other\"", 1.0));
+
+    }
+
+    @Test
     public void evaluateCondition3() throws IOException {
 
         final AbstractFilterStrategy strategy = getFilterStrategy();

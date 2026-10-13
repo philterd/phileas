@@ -293,6 +293,9 @@ public abstract class AbstractFilterStrategy {
             case EQUALS:
                 conditionSatisfied = (token.equalsIgnoreCase(value));
                 break;
+            case NOT_EQUALS:
+                conditionSatisfied = !(token.equalsIgnoreCase(value));
+                break;
             case IS:
                 if(value.equalsIgnoreCase(BIRTHDATE)) {
                     conditionSatisfied = isBirthdate(window);

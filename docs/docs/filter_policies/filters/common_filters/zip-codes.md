@@ -55,7 +55,7 @@ the `POPULATION` conditional with this in mind.
 
 | Conditional  | Description                                                              | Operators                          |
 |--------------|--------------------------------------------------------------------------|------------------------------------|
-| `TOKEN`      | Compares the value of the sensitive text.                                | `==` , `!=`                        |
+| `TOKEN`      | Compares the value of the sensitive text.                                | `==`, `!=`, `startswith`           |
 | `CONTEXT`    | Compares the filtering context.                                          | `==` , `!=`                        |
 | `CONFIDENCE` | Compares the confidence in the sensitive text against a threshold value. | `<` , `<=`, `>` , `>=`, `==`, `!=` |
 | `POPULATION` | Compares the population of the zip code against the 2010 census values.  | `<` , `<=`, `>` , `>=`, `==`, `!=` |
