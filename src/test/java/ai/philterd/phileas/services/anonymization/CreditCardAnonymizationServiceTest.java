@@ -72,4 +72,32 @@ public class CreditCardAnonymizationServiceTest {
 
     }
 
+    @Test
+    public void brandPrefixLengthKeepsOnlyTheDigitsThatIdentifyTheBrand() {
+
+        // Visa, MasterCard, American Express, Diners Club, Discover, and JCB, at the edges of their ranges.
+        Assertions.assertEquals(1, CreditCardAnonymizationService.brandPrefixLength("4111111111111111"));
+        Assertions.assertEquals(2, CreditCardAnonymizationService.brandPrefixLength("5105105105105100"));
+        Assertions.assertEquals(2, CreditCardAnonymizationService.brandPrefixLength("5555555555554444"));
+        Assertions.assertEquals(4, CreditCardAnonymizationService.brandPrefixLength("2221000000000009"));
+        Assertions.assertEquals(4, CreditCardAnonymizationService.brandPrefixLength("2720990000000007"));
+        Assertions.assertEquals(2, CreditCardAnonymizationService.brandPrefixLength("378282246310005"));
+        Assertions.assertEquals(2, CreditCardAnonymizationService.brandPrefixLength("341111111111111"));
+        Assertions.assertEquals(3, CreditCardAnonymizationService.brandPrefixLength("30569309025904"));
+        Assertions.assertEquals(2, CreditCardAnonymizationService.brandPrefixLength("36259600000004"));
+        Assertions.assertEquals(2, CreditCardAnonymizationService.brandPrefixLength("38520000023237"));
+        Assertions.assertEquals(4, CreditCardAnonymizationService.brandPrefixLength("6011111111111117"));
+        Assertions.assertEquals(2, CreditCardAnonymizationService.brandPrefixLength("6500000000000002"));
+        Assertions.assertEquals(2, CreditCardAnonymizationService.brandPrefixLength("3530111333300000"));
+        Assertions.assertEquals(4, CreditCardAnonymizationService.brandPrefixLength("213100000000000"));
+        Assertions.assertEquals(4, CreditCardAnonymizationService.brandPrefixLength("180000000000000"));
+
+        // Numbers of no known brand keep only their first digit.
+        for (final String digits : new String[]{"2220000000000000", "2721000000000000", "3060000000000000", "3300000000000000",
+                "5000000000000000", "5600000000000000", "6012000000000000", "6400000000000000", "1234567890123456", "9999999999999999"}) {
+            Assertions.assertEquals(1, CreditCardAnonymizationService.brandPrefixLength(digits), digits);
+        }
+
+    }
+
 }

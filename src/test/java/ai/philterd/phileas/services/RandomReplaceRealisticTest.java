@@ -30,7 +30,13 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.math.BigInteger;
+import java.security.MessageDigest;
 import java.time.Duration;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Locale;
 import java.util.Properties;
 import java.util.function.Predicate;
 import java.util.regex.Matcher;
@@ -50,18 +56,18 @@ public class RandomReplaceRealisticTest {
                 // filter, strategies key, text before, identified text, text after, replacement pattern
                 Arguments.of("age", "ageFilterStrategies", "she is ", "47", " years old.", "\\d{2}"),
                 Arguments.of("bankRoutingNumber", "bankRoutingNumberFilterStrategies", "routing ", "021000021", " ok.", "\\d{9}"),
-                Arguments.of("bitcoinAddress", "bitcoinFilterStrategies", "send to ", "127NVqnjf8gB9BFAW2dnQeM6wqmy1gbGtv", " now.", "[A-Za-z0-9]{32}"),
+                Arguments.of("bitcoinAddress", "bitcoinFilterStrategies", "send to ", "127NVqnjf8gB9BFAW2dnQeM6wqmy1gbGtv", " now.", "1[a-km-zA-HJ-NP-Z1-9]{25,33}"),
                 Arguments.of("canadaSin", "canadaSinFilterStrategies", "sin ", "046-454-286", ".", "\\d{3}-\\d{3}-\\d{3}"),
-                Arguments.of("city", "cityFilterStrategies", "he lived in ", "Boston", " last year.", "[A-Z][A-Za-z .'-]*"),
+                Arguments.of("city", "cityFilterStrategies", "he lived in ", "Boston", " last year.", "[A-Z][A-Za-z .'/-]*"),
                 Arguments.of("county", "countyFilterStrategies", "in ", "Fairfax County", " today.", "[A-Z][A-Za-z .'-]*"),
-                Arguments.of("creditCard", "creditCardFilterStrategies", "card ", "4111111111111111", " ok.", "\\d{4}-\\d{4}-\\d{4}-\\d{4}"),
+                Arguments.of("creditCard", "creditCardFilterStrategies", "card ", "4111111111111111", " ok.", "4\\d{15}"),
                 Arguments.of("currency", "currencyFilterStrategies", "paid ", "$100.00", " today.", "\\$\\d{3}\\.\\d{2}"),
                 Arguments.of("date", "dateFilterStrategies", "born ", "May 22, 1999", " here.", "[A-Z][a-z]+ \\d{1,2}, \\d{4}"),
                 Arguments.of("driversLicense", "driversLicenseFilterStrategies", "license ", "123456789", " ok.", "\\d{9}"),
                 Arguments.of("ein", "einFilterStrategies", "ein ", "12-3456789", ".", "\\d{2}-\\d{7}"),
                 Arguments.of("emailAddress", "emailAddressFilterStrategies", "mail ", "john@example.com", " now.", "[A-Za-z0-9]+@[a-z]+\\.com"),
                 Arguments.of("firstName", "firstNameFilterStrategies", "hello ", "John", " there.", "[A-Z][a-z'-]*"),
-                Arguments.of("hospital", "hospitalFilterStrategies", "at ", "Mayo Clinic", " today.", "[A-Z][A-Za-z .'&-]*"),
+                Arguments.of("hospital", "hospitalFilterStrategies", "at ", "Mayo Clinic", " today.", "[A-Z][A-Za-z .,'&/-]*"),
                 Arguments.of("ibanCode", "ibanCodeFilterStrategies", "iban ", "GB82WEST12345698765432", " ok.", "GB\\d{2}[A-Z]{4}\\d{14}"),
                 Arguments.of("ipAddress", "ipAddressFilterStrategies", "ip ", "192.168.1.1", " ok.", "\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}"),
                 Arguments.of("itin", "itinFilterStrategies", "itin ", "912-70-1234", ".", "9\\d{2}-\\d{2}-\\d{4}"),
@@ -121,6 +127,84 @@ public class RandomReplaceRealisticTest {
     }
 
     @Test
+    public void creditCardReplacementIsAValidCardOfTheSameBrandAndLayout() throws Exception {
+
+        // Card networks' published test numbers, one per brand the credit card filter knows.
+        final String[] cards = {"4111111111111111", "4111 1111 1111 1111", "4111-1111-1111-1111", "4222222222222",
+                "5555555555554444", "2223000048400011", "378282246310005", "30569309025904", "6011111111111117",
+                "3530111333300000"};
+
+        final String replace = "{ \"identifiers\": { \"creditCard\": { \"creditCardFilterStrategies\": [ { \"strategy\": \"RANDOM_REPLACE\" } ] } } }";
+        final Policy onlyValid = new Gson().fromJson("{ \"identifiers\": { \"creditCard\": { \"onlyValidCreditCardNumbers\": true } } }", Policy.class);
+
+        for (final String card : cards) {
+
+            // The filter detects the original with onlyValidCreditCardNumbers, so a valid replacement is detected too.
+            Assertions.assertEquals("card {{{REDACTED-credit-card}}} ok.",
+                    service().filter(onlyValid, "context", "card " + card + " ok.").getFilteredText().trim(), card);
+
+            for (int run = 0; run < RUNS; run++) {
+
+                final String replacement = replacement(replace, "card ", card, " ok.");
+
+                Assertions.assertNotEquals(card, replacement);
+                Assertions.assertEquals(card.replaceAll("[0-9]", "0"), replacement.replaceAll("[0-9]", "0"), card + " -> " + replacement);
+                Assertions.assertTrue(LuhnValidator.isValid(replacement), card + " -> " + replacement);
+                Assertions.assertEquals(brand(card), brand(replacement), card + " -> " + replacement);
+                Assertions.assertEquals("card {{{REDACTED-credit-card}}} ok.",
+                        service().filter(onlyValid, "context", "card " + replacement + " ok.").getFilteredText().trim(), card + " -> " + replacement);
+
+            }
+
+        }
+
+    }
+
+    @Test
+    public void bitcoinReplacementIsAValidAddressOfTheSameForm() {
+
+        final String replace = "{ \"identifiers\": { \"bitcoinAddress\": { \"bitcoinFilterStrategies\": [ { \"strategy\": \"RANDOM_REPLACE\" } ] } } }";
+
+        // BIP 13, BIP 173, and BIP 350 example addresses.
+        final String[][] addresses = {
+                {"127NVqnjf8gB9BFAW2dnQeM6wqmy1gbGtv", "1[a-km-zA-HJ-NP-Z1-9]{25,33}"},
+                {"3J98t1WpEZ73CNmQviecrnyiWrnqRhWNLy", "3[a-km-zA-HJ-NP-Z1-9]{25,33}"},
+                {"bc1qw508d6qejxtdg4y5r3zarvary0c5xw7kv8f3t4", "bc1q[ac-hj-np-z02-9]{38}"},
+                {"BC1QW508D6QEJXTDG4Y5R3ZARVARY0C5XW7KV8F3T4", "BC1Q[AC-HJ-NP-Z02-9]{38}"},
+                {"bc1qrp33g0q5c5txsp9arysrx4k6zdkfs4nce4xj0gdcccefvpysxf3qccfmv3", "bc1q[ac-hj-np-z02-9]{58}"},
+                {"bc1p0xlxvlhemja6c4dqv22uapctqupfhlxm9h8z3k2e72q4k9hcz7vqzk5jj0", "bc1p[ac-hj-np-z02-9]{58}"}};
+
+        for (final String[] address : addresses) {
+
+            Assertions.assertTrue(validBitcoinAddress(address[0]), "the example " + address[0] + " should be valid");
+
+            for (int run = 0; run < RUNS; run++) {
+                final String replacement = replacement(replace, "send to ", address[0], " now.");
+                Assertions.assertNotEquals(address[0], replacement);
+                Assertions.assertTrue(replacement.matches(address[1]), address[0] + " -> " + replacement);
+                Assertions.assertTrue(validBitcoinAddress(replacement), address[0] + " -> " + replacement);
+            }
+
+        }
+
+    }
+
+    @Test
+    public void vinReplacementHasAValidCheckDigit() {
+
+        final String replace = "{ \"identifiers\": { \"vin\": { \"vinFilterStrategies\": [ { \"strategy\": \"RANDOM_REPLACE\" } ] } } }";
+
+        Assertions.assertTrue(validVin("1HGCM82633A004352"), "the example VIN should be valid");
+
+        for (int run = 0; run < RUNS; run++) {
+            final String replacement = replacement(replace, "vin ", "1HGCM82633A004352", " ok.");
+            Assertions.assertTrue(replacement.matches("[A-HJ-NPR-Z0-9]{17}"), replacement);
+            Assertions.assertTrue(validVin(replacement), replacement);
+        }
+
+    }
+
+    @Test
     public void passportReplacementIsDetectedAsAPassport() throws Exception {
 
         final String replace = "{ \"identifiers\": { \"passportNumber\": { \"passportNumberFilterStrategies\": [ { \"strategy\": \"RANDOM_REPLACE\" } ] } } }";
@@ -171,6 +255,89 @@ public class RandomReplaceRealisticTest {
         Assertions.assertTrue(matcher.matches(), "'" + identified + "' was not replaced on its own: " + result.getFilteredText());
 
         return matcher.group(1);
+
+    }
+
+    /** The card brand, by the patterns the credit card filter's onlyValidCreditCardNumbers option checks. */
+    private static String brand(final String card) {
+        final String digits = card.replaceAll("[^0-9]", "");
+        if (digits.matches("4[0-9]{12}(?:[0-9]{3})?")) return "visa";
+        if (digits.matches("(?:5[1-5][0-9]{2}|222[1-9]|22[3-9][0-9]|2[3-6][0-9]{2}|27[01][0-9]|2720)[0-9]{12}")) return "mastercard";
+        if (digits.matches("3[47][0-9]{13}")) return "amex";
+        if (digits.matches("3(?:0[0-5]|[68][0-9])[0-9]{11}")) return "diners";
+        if (digits.matches("6(?:011|5[0-9]{2})[0-9]{12}")) return "discover";
+        if (digits.matches("(?:2131|1800|35[0-9]{3})[0-9]{11}")) return "jcb";
+        return "none";
+    }
+
+    /** Checks a Base58Check, bech32, or bech32m address's checksum, independently of the generator. */
+    private static boolean validBitcoinAddress(final String address) {
+
+        if (address.toLowerCase(Locale.ROOT).startsWith("bc1")) {
+
+            final String lower = address.toLowerCase(Locale.ROOT);
+            final String charset = "qpzry9x8gf2tvdw0s3jn54khce6mua7l";
+            final int[] generator = {0x3b6a57b2, 0x26508e6d, 0x1ea119fa, 0x3d4233dd, 0x2a1462b3};
+
+            final List<Integer> values = new ArrayList<>(List.of(3, 3, 0, 2, 3));
+            for (final char c : lower.substring(3).toCharArray()) {
+                values.add(charset.indexOf(c));
+            }
+
+            int checksum = 1;
+            for (final int value : values) {
+                final int top = checksum >>> 25;
+                checksum = ((checksum & 0x1ffffff) << 5) ^ value;
+                for (int i = 0; i < 5; i++) {
+                    if (((top >> i) & 1) == 1) {
+                        checksum ^= generator[i];
+                    }
+                }
+            }
+
+            // Witness version 0 uses bech32; later versions use bech32m.
+            return checksum == (lower.charAt(3) == 'q' ? 1 : 0x2bc830a3);
+
+        }
+
+        final String base58 = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz";
+        BigInteger value = BigInteger.ZERO;
+        for (final char c : address.toCharArray()) {
+            value = value.multiply(BigInteger.valueOf(58)).add(BigInteger.valueOf(base58.indexOf(c)));
+        }
+
+        // A version byte, a 20-byte hash, and a 4-byte checksum.
+        final byte[] magnitude = value.toByteArray();
+        final byte[] decoded = new byte[25];
+        final int length = Math.min(magnitude.length, 25);
+        System.arraycopy(magnitude, magnitude.length - length, decoded, 25 - length, length);
+
+        try {
+            final MessageDigest sha256 = MessageDigest.getInstance("SHA-256");
+            final byte[] hash = sha256.digest(sha256.digest(Arrays.copyOf(decoded, 21)));
+            return Arrays.equals(Arrays.copyOf(hash, 4), Arrays.copyOfRange(decoded, 21, 25));
+        } catch (final Exception ex) {
+            throw new IllegalStateException(ex);
+        }
+
+    }
+
+    /** Checks a VIN's check digit (position 9), independently of the generator. */
+    private static boolean validVin(final String vin) {
+
+        final String letters = "ABCDEFGHJKLMNPRSTUVWXYZ";
+        final int[] letterValues = {1, 2, 3, 4, 5, 6, 7, 8, 1, 2, 3, 4, 5, 7, 9, 2, 3, 4, 5, 6, 7, 8, 9};
+        final int[] weights = {8, 7, 6, 5, 4, 3, 2, 10, 0, 9, 8, 7, 6, 5, 4, 3, 2};
+
+        int sum = 0;
+        for (int i = 0; i < 17; i++) {
+            final char c = vin.charAt(i);
+            final int value = Character.isDigit(c) ? c - '0' : letterValues[letters.indexOf(c)];
+            sum += value * weights[i];
+        }
+
+        final int check = sum % 11;
+        return vin.charAt(8) == (check == 10 ? 'X' : (char) ('0' + check));
 
     }
 

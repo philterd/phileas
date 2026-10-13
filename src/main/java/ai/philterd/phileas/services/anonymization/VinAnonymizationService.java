@@ -54,9 +54,8 @@ public class VinAnonymizationService extends AbstractAnonymizationService {
 
             // REALISTIC_REPLACE
             // A VIN uses digits and the letters A-Z excluding I, O, and Q (which are disallowed to
-            // avoid confusion with 1 and 0). Generate from the VIN character set rather than from
-            // all alphanumeric characters.
-            final VINGenerator vinGenerator = new VINGenerator(random);
+            // avoid confusion with 1 and 0), with a check digit in position 9.
+            final VINGenerator vinGenerator = new VINGenerator(random, true);
 
             return anonymizeRealistic(token, () -> vinGenerator.random());
 

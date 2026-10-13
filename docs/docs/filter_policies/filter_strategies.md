@@ -221,7 +221,9 @@ With `REALISTIC`, the replacement depends on the filter type:
 | Filter types | Replacement |
 |---|---|
 | `firstName`, `surname`, `city`, `county`, `state`, `hospital`, `stateAbbreviation` | A value from a list of names or places. First names and surnames follow the case of the identified text. |
-| `creditCard`, `bitcoinAddress`, `vin` | A random value that is not checked against the type's rules: a credit card number is 16 random digits written as `NNNN-NNNN-NNNN-NNNN` with no Luhn check digit computed, a bitcoin address is 32 random letters and digits, and a VIN is 17 random characters from the VIN character set with no check digit computed. |
+| `creditCard` | A card number that passes the Luhn check, of the same card brand, length, and layout (spaces or hyphens) as the identified number. The leading digits that identify the brand (one to four, or just the first digit for a number of no known brand) are kept and the rest are random. |
+| `bitcoinAddress` | An address of the same form as the identified address, with a valid checksum: a legacy address beginning with the same `1` or `3`, or a segregated witness address beginning with the same `bc1q` or `bc1p` and of the same length. Its hash or witness program is random. |
+| `vin` | 17 characters from the VIN character set with a valid check digit in position 9. |
 | `emailAddress`, `url`, `date`, `ipAddress`, `macAddress`, `streetAddress`, `zipCode`, `age`, `currency` | A generated value of that type. A date keeps the format of the identified date when it is one of the common formats the date filter detects, and is otherwise written as `yyyy-MM-dd`. An age or currency amount keeps its format with its digits replaced. |
 | `ibanCode` | An IBAN with the same country code and spacing, the account number replaced character for character, and valid check digits. |
 | `passportNumber` | A value with the same shape, with a US passport prefix where the identified number has one, so the passport filter detects it. |

@@ -16,8 +16,10 @@
 package ai.philterd.phileas.services.anonymization;
 
 
+import ai.philterd.phileas.data.generators.BitcoinAddressGenerator;
 import java.security.SecureRandom;
 import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
 
 public class BitcoinAddressAnonymizationService extends AbstractAnonymizationService {
@@ -52,8 +54,35 @@ public class BitcoinAddressAnonymizationService extends AbstractAnonymizationSer
         } else {
 
             // REALISTIC_REPLACE
-            return anonymizeRealistic(token, () -> generateAlphanumeric(32));
+            return anonymizeRealistic(token, () -> getAnonymizedBitcoinAddress(token));
 
+        }
+
+    }
+
+    /**
+     * A random address of the same form as the token, with a valid checksum: a legacy address beginning
+     * with the same 1 or 3, or a segregated witness address of the same witness version and program
+     * length. An upper-case segregated witness address stays upper case.
+     */
+    private String getAnonymizedBitcoinAddress(final String token) {
+
+        final BitcoinAddressGenerator generator = new BitcoinAddressGenerator(random);
+        final String lower = token.toLowerCase(Locale.ROOT);
+
+        if (lower.startsWith("bc1")) {
+
+            // A version 0 address is 42 characters for a 20-byte program and 62 for a 32-byte one.
+            final String address = lower.startsWith("bc1p")
+                    ? generator.segwit(1, 32)
+                    : generator.segwit(0, lower.length() > 42 ? 32 : 20);
+
+            return token.equals(token.toUpperCase(Locale.ROOT)) ? address.toUpperCase(Locale.ROOT) : address;
+
+        } else if (token.startsWith("3")) {
+            return generator.legacy(BitcoinAddressGenerator.P2SH_VERSION);
+        } else {
+            return generator.legacy(BitcoinAddressGenerator.P2PKH_VERSION);
         }
 
     }
