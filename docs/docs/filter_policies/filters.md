@@ -76,8 +76,9 @@ Phileas can be configured to look identify sensitive information based on custom
 dictionary is found in the text, Phileas will treat the term as sensitive information and apply the given filter
 strategy.
 
-Custom dictionaries support fuzziness to accommodate for misspellings. The replacement strategy for a custom dictionary
-has a `sensitivityLevel` that controls the amount of allowed fuzziness.
+Custom dictionaries, like the dictionary-backed filters for names and places, can also match misspellings. Set the
+dictionary's `fuzzy` to `true`, and its `sensitivity` to control how close a word must be to a term. See
+[Custom Dictionaries](filters/custom_filters/dictionary.md).
 
 | Type                                                        | Description                                                                                                                                                |
 |-------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------|

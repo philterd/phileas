@@ -737,6 +737,32 @@ public class EndToEndTests {
     }
 
     @Test
+    public void endToEndAnUnknownSensitivityRefusesThePolicy() {
+
+        // https://github.com/philterd/phileas/issues/440: a misspelled sensitivity is refused when the policy
+        // is loaded, whether or not fuzzy matching is on, rather than falling back to another level.
+        final String[][] cases = {
+                {"\"city\": { \"fuzzy\": true, \"sensitivity\": \"meduim\" }", "the city filter"},
+                {"\"city\": { \"fuzzy\": false, \"sensitivity\": \"meduim\" }", "the city filter"},
+                {"\"firstName\": { \"fuzzy\": true, \"sensitivity\": \"meduim\" }", "the firstName filter"},
+                {"\"dictionaries\": [ { \"terms\": [\"Boston\"], \"sensitivity\": \"low\" }, "
+                        + "{ \"terms\": [\"Springfield\"], \"fuzzy\": true, \"sensitivity\": \"meduim\" } ]", "custom dictionary 2"}};
+
+        for (final String[] c : cases) {
+
+            final Policy policy = new com.google.gson.Gson().fromJson("{ \"identifiers\": { " + c[0] + " } }", Policy.class);
+            final PlainTextFilterService service = new PlainTextFilterService(new PhileasConfiguration(new Properties()), contextService, vectorService, null);
+
+            final IllegalArgumentException ex = Assertions.assertThrows(IllegalArgumentException.class,
+                    () -> service.filter(policy, "context", "Springfield"));
+            Assertions.assertEquals("The sensitivity 'meduim' of " + c[1] + " is not valid. Valid values are off, high, "
+                    + "medium, low, and auto.", ex.getMessage(), c[0]);
+
+        }
+
+    }
+
+    @Test
     public void endToEndMalformedConditionRefusesThePolicy() {
 
         // https://github.com/philterd/phileas/issues/438: the policy is refused before any document is

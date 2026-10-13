@@ -837,7 +837,10 @@ public class FilterPolicyLoader {
             LOGGER.info("Policy {} has {} custom dictionaries.", policyKey, policy.getIdentifiers().getCustomDictionaries().size());
 
             // There can be multiple custom dictionary filters because it is a list.
+            int dictionaryNumber = 0;
             for(final CustomDictionary customDictionary : policy.getIdentifiers().getCustomDictionaries()) {
+
+                dictionaryNumber++;
 
                 if(customDictionary.isEnabled()) {
 
@@ -879,9 +882,13 @@ public class FilterPolicyLoader {
                         final boolean capitalized = customDictionary.isCapitalized();
                         LOGGER.info("Custom dictionary contains {} terms.", terms.size());
 
+                        // Parsed whether or not the dictionary is fuzzy, so a misspelled level is refused
+                        // before fuzzy matching is turned on rather than after.
+                        final SensitivityLevel sensitivityLevel = sensitivityLevel(customDictionary.getSensitivity(),
+                                "custom dictionary " + dictionaryNumber);
+
                         if(customDictionary.isFuzzy()) {
 
-                            final SensitivityLevel sensitivityLevel = SensitivityLevel.fromName(customDictionary.getSensitivity());
                             enabledFilters.add(new FuzzyDictionaryFilter(FilterType.CUSTOM_DICTIONARY, filterConfiguration, sensitivityLevel, terms, capitalized, classification));
 
                         } else {
@@ -1218,6 +1225,21 @@ public class FilterPolicyLoader {
     }
 
     /**
+     * Parses a dictionary filter's sensitivity, naming the filter when it is not valid.
+     * @param sensitivity The sensitivity from the policy.
+     * @param filter The filter, such as "the city filter", for the message.
+     * @return The {@link SensitivityLevel}.
+     */
+    private static SensitivityLevel sensitivityLevel(final String sensitivity, final String filter) {
+        try {
+            return SensitivityLevel.fromName(sensitivity);
+        } catch (final IllegalArgumentException ex) {
+            throw new IllegalArgumentException("The sensitivity '" + sensitivity + "' of " + filter + " is not valid. "
+                    + "Valid values are " + SensitivityLevel.VALID_NAMES + ".", ex);
+        }
+    }
+
+    /**
      * Injects a {@link ReplacementValidator} into every MAP_REPLACE strategy in the built filter set.
      * The validator re-scans a generated replacement by running the policy's filters over it; if any
      * filter detects PII the generated value is rejected and the strategy falls back. The re-scan uses
@@ -1235,9 +1257,13 @@ public class FilterPolicyLoader {
                                           final String sensitivity, final boolean capitalized)
             throws IOException {
 
-        if(fuzzy) {
+        // Parsed whether or not the filter is fuzzy, so a misspelled level is refused before fuzzy
+        // matching is turned on rather than after.
+        // Named by its policy key; first names are the one type whose name differs from its key.
+        final String policyKey = filterType == FilterType.FIRST_NAME ? "firstName" : filterType.getType();
+        final SensitivityLevel sensitivityLevel = sensitivityLevel(sensitivity, "the " + policyKey + " filter");
 
-            final SensitivityLevel sensitivityLevel = SensitivityLevel.fromName(sensitivity);
+        if(fuzzy) {
 
             return CollectionUtils.isNotEmpty(terms)
                     ? new FuzzyDictionaryFilter(filterType, filterConfiguration, sensitivityLevel, new LinkedHashSet<>(terms), capitalized)

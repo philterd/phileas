@@ -15,15 +15,15 @@
  */
 package ai.philterd.phileas.model.filtering;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 /**
  * A sensitivity level.
  */
 public enum SensitivityLevel {
 
     AUTO("auto"), OFF("off"), LOW("low"), MEDIUM("medium"), HIGH("high");
+
+    /** The valid names, for messages. */
+    public static final String VALID_NAMES = "off, high, medium, low, and auto";
 
     private final String name;
 
@@ -41,28 +41,21 @@ public enum SensitivityLevel {
     }
 
     /**
-     * Gets a {@link SensitivityLevel} from a name.
+     * Gets a {@link SensitivityLevel} from a name, ignoring case.
      * @param name The name.
-     * @return A corresponding {@link SensitivityLevel}.
+     * @return The corresponding {@link SensitivityLevel}.
+     * @throws IllegalArgumentException if the name is not a sensitivity level, so a misspelled level is refused
+     * rather than silently changing how closely fuzzy matches must agree.
      */
-    public static SensitivityLevel fromName(String name) {
+    public static SensitivityLevel fromName(final String name) {
 
-        final Logger logger = LogManager.getLogger(SensitivityLevel.class);
-
-        if(name.equalsIgnoreCase(AUTO.getName())) {
-            return AUTO;
-        } else if(name.equalsIgnoreCase(OFF.getName())) {
-            return OFF;
-        } else if(name.equalsIgnoreCase(LOW.getName())) {
-            return LOW;
-        } else if(name.equalsIgnoreCase(MEDIUM.getName())) {
-            return MEDIUM;
-        } else if(name.equalsIgnoreCase(HIGH.getName())) {
-            return HIGH;
-        } else {
-            logger.warn("Invalid sensitivity level. Valid are off, low, medium, high. Defaulting to high.");
-            return HIGH;
+        for (final SensitivityLevel level : values()) {
+            if (level.getName().equalsIgnoreCase(name)) {
+                return level;
+            }
         }
+
+        throw new IllegalArgumentException("The sensitivity '" + name + "' is not valid. Valid values are " + VALID_NAMES + ".");
 
     }
 
