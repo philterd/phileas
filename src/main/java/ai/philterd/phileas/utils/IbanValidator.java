@@ -179,37 +179,67 @@ public final class IbanValidator {
     }
 
     /**
+     * The two check digits for an IBAN with the given country code and basic bank account number
+     * (BBAN), per ISO 7064 MOD 97-10: 98 minus the remainder of the BBAN, country code, and {@code 00}
+     * taken modulo 97.
+     *
+     * @param countryCode the two-letter country code, upper case
+     * @param bban the basic bank account number, upper case, with no spaces
+     * @return the two check digits
+     */
+    public static String checkDigits(final String countryCode, final String bban) {
+
+        final int remainder = mod97(bban + countryCode + "00");
+
+        if (remainder < 0) {
+            throw new IllegalArgumentException("An IBAN may contain only digits and upper-case letters.");
+        }
+
+        return String.format("%02d", 98 - remainder);
+
+    }
+
+    /**
      * Verifies the ISO 7064 MOD 97-10 checksum: move the first four characters to the end,
      * map letters to numbers (A=10 ... Z=35), and confirm the resulting integer is congruent
-     * to 1 modulo 97. The remainder is accumulated digit by digit so no big-integer math is
-     * needed.
+     * to 1 modulo 97.
      */
     private static boolean checksumIsValid(final String iban) {
 
-        final String rearranged = iban.substring(4) + iban.substring(0, 4);
+        return mod97(iban.substring(4) + iban.substring(0, 4)) == 1;
+
+    }
+
+    /**
+     * The value modulo 97, with letters mapped to numbers (A=10 ... Z=35). The remainder is
+     * accumulated digit by digit so no big-integer math is needed.
+     *
+     * @return the remainder, or {@code -1} if the value has a character other than a digit or an
+     * upper-case letter
+     */
+    private static int mod97(final String value) {
 
         int remainder = 0;
 
-        for (int i = 0; i < rearranged.length(); i++) {
+        for (int i = 0; i < value.length(); i++) {
 
-            final char c = rearranged.charAt(i);
-            final int value;
+            final char c = value.charAt(i);
+            final int digit;
 
             if (c >= '0' && c <= '9') {
-                value = c - '0';
+                digit = c - '0';
             } else if (c >= 'A' && c <= 'Z') {
-                value = c - 'A' + 10;
+                digit = c - 'A' + 10;
             } else {
-                // Should not happen once the structure pattern has matched, but guard anyway.
-                return false;
+                return -1;
             }
 
             // A letter contributes two decimal digits; everything else contributes one.
-            remainder = (value > 9 ? remainder * 100 + value : remainder * 10 + value) % 97;
+            remainder = (digit > 9 ? remainder * 100 + digit : remainder * 10 + digit) % 97;
 
         }
 
-        return remainder == 1;
+        return remainder;
 
     }
 

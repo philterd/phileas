@@ -20,6 +20,7 @@ import org.apache.commons.text.RandomStringGenerator;
 import java.security.SecureRandom;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
 import java.util.function.Supplier;
 
@@ -90,6 +91,59 @@ public abstract class AbstractAnonymizationService implements AnonymizationServi
         }
 
         return UUID.randomUUID().toString();
+
+    }
+
+    /**
+     * A random value with the token's shape: each digit is replaced with a random digit, each letter
+     * with a random letter of the same case (a letter with no case becomes a lower-case letter), and
+     * every other character, such as a hyphen, space, or parenthesis, is kept.
+     * @param token The token.
+     * @return A random value with the token's shape.
+     */
+    protected String replaceLikeForLike(final String token) {
+
+        final StringBuilder sb = new StringBuilder(token.length());
+
+        // By code point, so a letter outside the Basic Multilingual Plane is replaced rather than kept.
+        token.codePoints().forEach(c -> {
+            if (Character.isDigit(c)) {
+                sb.append((char) ('0' + random.nextInt(10)));
+            } else if (Character.isUpperCase(c)) {
+                sb.append((char) ('A' + random.nextInt(26)));
+            } else if (Character.isLetter(c)) {
+                sb.append((char) ('a' + random.nextInt(26)));
+            } else {
+                sb.appendCodePoint(c);
+            }
+        });
+
+        return sb.toString();
+
+    }
+
+    /**
+     * The value written in the token's case: upper case when the token's letters are all upper case,
+     * capitalized when the token begins with an upper-case letter, and lower case otherwise.
+     * @param token The token whose case to follow.
+     * @param value The value.
+     * @return The value in the token's case.
+     */
+    protected static String matchCase(final String token, final String value) {
+
+        if (value.isEmpty() || token.isEmpty()) {
+            return value;
+        }
+
+        final boolean hasLetter = token.chars().anyMatch(Character::isLetter);
+
+        if (hasLetter && token.equals(token.toUpperCase(Locale.ROOT)) && token.length() > 1) {
+            return value.toUpperCase(Locale.ROOT);
+        } else if (Character.isUpperCase(token.charAt(0))) {
+            return Character.toUpperCase(value.charAt(0)) + value.substring(1).toLowerCase(Locale.ROOT);
+        } else {
+            return value.toLowerCase(Locale.ROOT);
+        }
 
     }
 

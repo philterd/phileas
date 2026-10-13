@@ -161,6 +161,20 @@ public class IbanValidatorTest {
     // Right length and checksum shape but a character in a position the structure forbids
     // (GB requires four letters for the bank code; digits there are invalid).
     @Test
+    public void checkDigitsMatchEveryValidIban() {
+
+        for (final String iban : VALID_IBANS) {
+            Assertions.assertEquals(iban.substring(2, 4), IbanValidator.checkDigits(iban.substring(0, 2), iban.substring(4)), iban);
+        }
+
+    }
+
+    @Test
+    public void checkDigitsRejectsCharactersOutsideAnIban() {
+        Assertions.assertThrows(IllegalArgumentException.class, () -> IbanValidator.checkDigits("GB", "west12345698765432"));
+    }
+
+    @Test
     public void wrongStructureFails() {
         Assertions.assertFalse(IbanValidator.isValid("GB3312KB20201555555555"));
     }

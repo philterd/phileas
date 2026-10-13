@@ -23,6 +23,11 @@ import java.util.UUID;
 
 public class PassportNumberAnonymizationService extends AbstractAnonymizationService {
 
+    /** The two-digit prefixes of the US passport numbers the passport filter detects. */
+    private static final String[] US_PREFIXES = {
+            "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17",
+            "20", "21", "30", "40", "50", "60", "80", "90"};
+
     public PassportNumberAnonymizationService(final SecureRandom random, final AnonymizationMethod anonymizationMethod) {
         super(random, anonymizationMethod);
     }
@@ -66,30 +71,27 @@ public class PassportNumberAnonymizationService extends AbstractAnonymizationSer
         } else {
 
             // REALISTIC_REPLACE
-            return anonymizeRealistic(token, () -> getAnonymizedPassportNumber());
+            return anonymizeRealistic(token, () -> getAnonymizedPassportNumber(token));
 
         }
 
     }
 
-    private String getAnonymizedPassportNumber() {
+    /**
+     * A random passport number with the token's shape. A token that begins with two digits and is not
+     * a nine-digit number is given one of the two-digit prefixes the passport filter detects, so the
+     * replacement is a value that filter would detect.
+     */
+    private String getAnonymizedPassportNumber(final String token) {
 
-        final byte[] macAddr = new byte[6];
-        random.nextBytes(macAddr);
+        final String replaced = replaceLikeForLike(token);
 
-        final StringBuilder sb = new StringBuilder(18);
-
-        for(byte b : macAddr){
-
-            if(!sb.isEmpty()) {
-                sb.append(":");
-            }
-
-            sb.append(String.format("%02x", b));
-
+        if (token.length() > 2 && Character.isDigit(token.charAt(0)) && Character.isDigit(token.charAt(1))
+                && !token.matches("[0-9]{9}")) {
+            return US_PREFIXES[random.nextInt(US_PREFIXES.length)] + replaced.substring(2);
         }
 
-        return sb.toString();
+        return replaced;
 
     }
 

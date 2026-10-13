@@ -99,7 +99,7 @@ public class FirstNameAnonymizationService extends AbstractAnonymizationService 
         } else {
 
             // REALISTIC_REPLACE
-            return anonymizeRealistic(token, () -> dataGenerator.firstNames().random());
+            return anonymizeRealistic(token, () -> matchCase(token, dataGenerator.firstNames().random()));
 
         }
 

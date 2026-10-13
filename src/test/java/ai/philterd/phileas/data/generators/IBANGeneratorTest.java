@@ -17,7 +17,11 @@ package ai.philterd.phileas.data.generators;
 
 import org.junit.jupiter.api.Test;
 
+import ai.philterd.phileas.utils.IbanValidator;
+
 import java.security.SecureRandom;
+import java.util.HashSet;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -28,16 +32,23 @@ public class IBANGeneratorTest {
     @Test
     public void testGenerateIBAN() {
         final IBANGenerator generator = new IBANGenerator(new SecureRandom());
-        final String iban = generator.random();
-        assertNotNull(iban);
-        assertTrue(iban.startsWith("US"));
-        assertEquals(24, iban.length());
+        final Set<String> ibans = new HashSet<>();
+        for (int i = 0; i < 100; i++) {
+            final String iban = generator.random();
+            assertNotNull(iban);
+            assertTrue(iban.startsWith("DE"), iban);
+            assertEquals(22, iban.length(), iban);
+            assertTrue(IbanValidator.isValid(iban), iban);
+            ibans.add(iban);
+        }
+        // The account number varies.
+        assertTrue(ibans.size() > 90);
     }
 
     @Test
     public void testPoolSize() {
         final IBANGenerator generator = new IBANGenerator(new SecureRandom());
-        assertEquals(Long.MAX_VALUE, generator.poolSize());
+        assertEquals(1_000_000_000_000_000_000L, generator.poolSize());
     }
 
 }

@@ -18,12 +18,14 @@ package ai.philterd.phileas.services.anonymization;
 import ai.philterd.phileas.data.DataGenerator;
 import ai.philterd.phileas.data.DefaultDataGenerator;
 import ai.philterd.phileas.utils.CollectionUtils;
+import ai.philterd.phileas.utils.IbanValidator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.security.SecureRandom;
 import java.io.IOException;
 import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
 
 public class IbanCodeAnonymizationService extends AbstractAnonymizationService {
@@ -99,9 +101,29 @@ public class IbanCodeAnonymizationService extends AbstractAnonymizationService {
         } else {
 
             // REALISTIC_REPLACE
-            return anonymizeRealistic(token, () -> dataGenerator.iban().random());
+            return anonymizeRealistic(token, () -> getAnonymizedIban(token));
 
         }
+
+    }
+
+    /**
+     * A random IBAN laid out like the token: the country code and any spaces are kept, each character
+     * of the account number (BBAN) is replaced with a random one of the same kind, and the check
+     * digits are computed, so a replacement for a valid IBAN is also valid. A token that does not
+     * begin with a country code and two digits is replaced with a generated IBAN.
+     */
+    private String getAnonymizedIban(final String token) {
+
+        if (!token.matches("(?s)[A-Za-z]{2}[0-9]{2}.*[A-Za-z0-9].*")) {
+            return dataGenerator.iban().random();
+        }
+
+        final String bban = replaceLikeForLike(token.substring(4));
+        final String compactBban = bban.replaceAll("[^A-Za-z0-9]", "").toUpperCase(Locale.ROOT);
+        final String checkDigits = IbanValidator.checkDigits(token.substring(0, 2).toUpperCase(Locale.ROOT), compactBban);
+
+        return token.substring(0, 2) + checkDigits + bban;
 
     }
 

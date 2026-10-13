@@ -17,10 +17,12 @@ package ai.philterd.phileas.data.generators;
 
 import ai.philterd.phileas.data.DataGenerator;
 
+import ai.philterd.phileas.utils.IbanValidator;
+
 import java.security.SecureRandom;
 
 /**
- * Generates random IBANs.
+ * Generates random IBANs: German IBANs with a random account number and valid check digits.
  */
 public class IBANGenerator implements DataGenerator.Generator<String> {
     private final SecureRandom random;
@@ -35,15 +37,17 @@ public class IBANGenerator implements DataGenerator.Generator<String> {
 
     @Override
     public String random() {
-        final String country = "US";
-        final String checkDigits = String.format("%02d", random.nextInt(100));
-        final String bban = String.format("%020d", (long) (random.nextDouble() * 1e20));
-        return country + checkDigits + bban;
+        // A German IBAN: DE, two check digits, and an 18-digit BBAN.
+        final StringBuilder bban = new StringBuilder(18);
+        for (int i = 0; i < 18; i++) {
+            bban.append(random.nextInt(10));
+        }
+        return "DE" + IbanValidator.checkDigits("DE", bban.toString()) + bban;
     }
 
     @Override
     public long poolSize() {
-        return Long.MAX_VALUE;
+        return 1_000_000_000_000_000_000L;
     }
 
 }

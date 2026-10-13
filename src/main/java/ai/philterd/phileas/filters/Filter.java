@@ -29,6 +29,9 @@ import ai.philterd.phileas.policy.filters.Identifier;
 import java.security.SecureRandom;
 import ai.philterd.phileas.services.anonymization.AbstractAnonymizationService;
 import ai.philterd.phileas.services.anonymization.AgeAnonymizationService;
+import ai.philterd.phileas.services.anonymization.VinAnonymizationService;
+import ai.philterd.phileas.services.anonymization.PhoneNumberAnonymizationService;
+import ai.philterd.phileas.services.anonymization.FirstNameAnonymizationService;
 import ai.philterd.phileas.services.anonymization.AlphanumericAnonymizationService;
 import ai.philterd.phileas.services.anonymization.AnonymizationMethod;
 import ai.philterd.phileas.services.anonymization.AnonymizationService;
@@ -379,6 +382,8 @@ public abstract class Filter {
             return new DateAnonymizationService(random, candidates);
         } else if(filterType == FilterType.EMAIL_ADDRESS) {
             return new EmailAddressAnonymizationService(random, candidates);
+        } else if(filterType == FilterType.FIRST_NAME) {
+            return new FirstNameAnonymizationService(random, candidates);
         } else if(filterType == FilterType.HOSPITAL) {
             return new HospitalAnonymizationService(random, candidates);
         } else if(filterType == FilterType.HOSPITAL_ABBREVIATION) {
@@ -393,6 +398,8 @@ public abstract class Filter {
             return new MacAddressAnonymizationService(random, candidates);
         } else if(filterType == FilterType.PASSPORT_NUMBER) {
             return new PassportNumberAnonymizationService(random, candidates);
+        } else if(filterType == FilterType.PHONE_NUMBER) {
+            return new PhoneNumberAnonymizationService(random, candidates);
         } else if(filterType == FilterType.PERSON) {
             return new PersonsAnonymizationService(random, candidates);
         } else if(filterType == FilterType.LOCATION_STATE) {
@@ -405,6 +412,8 @@ public abstract class Filter {
             return new SurnameAnonymizationService(random, candidates);
         } else if(filterType == FilterType.URL) {
             return new UrlAnonymizationService(random, candidates);
+        } else if(filterType == FilterType.VIN) {
+            return new VinAnonymizationService(random, candidates);
         } else if(filterType == FilterType.ZIP_CODE) {
             return new ZipCodeAnonymizationService(random, candidates);
         } else {

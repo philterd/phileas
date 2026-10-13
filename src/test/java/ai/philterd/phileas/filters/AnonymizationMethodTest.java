@@ -96,6 +96,26 @@ public class AnonymizationMethodTest {
     }
 
     @Test
+    public void likeForLikeKeepsTheShapeAndReplacesEveryLetterAndDigit() {
+
+        final AbstractAnonymizationService service = new AbstractAnonymizationService() {
+            @Override
+            public String anonymize(final String token) {
+                return replaceLikeForLike(token);
+            }
+        };
+
+        // \uD840\uDC00 is U+20000, a CJK letter outside the Basic Multilingual Plane.
+        final String token = "Ab-12 (x)\n\u4E2D\uD840\uDC00\u0663";
+
+        for (int i = 0; i < 50; i++) {
+            final String replaced = service.anonymize(token);
+            Assertions.assertTrue(replaced.matches("[A-Z][a-z]-[0-9]{2} \\([a-z]\\)\\n[a-z]{2}[0-9]"), replaced);
+        }
+
+    }
+
+    @Test
     public void defaultConstructorsAreRealistic() {
 
         Assertions.assertEquals(AnonymizationMethod.REALISTIC, new NumericAnonymizationService().getAnonymizationMethod());

@@ -16,7 +16,6 @@
 package ai.philterd.phileas.services.anonymization;
 
 import ai.philterd.phileas.utils.CollectionUtils;
-import org.apache.commons.lang3.RandomStringUtils;
 
 import java.security.SecureRandom;
 import java.util.List;
@@ -67,54 +66,9 @@ public class AlphanumericAnonymizationService extends AbstractAnonymizationServi
         } else {
 
             // REALISTIC_REPLACE
-            return anonymizeRealistic(token, () -> getAnonymizedAlphanumeric(token));
+            return anonymizeRealistic(token, () -> replaceLikeForLike(token));
 
         }
-
-    }
-
-    private String getAnonymizedAlphanumeric(String token) {
-
-        StringBuilder sb = new StringBuilder();
-
-        for (int i = 0; i < token.length(); i++) {
-
-            final char c = token.charAt(i);
-
-            if (Character.isDigit(c)) {
-
-                sb.append(random.nextInt((9) + 1));
-
-            } else if (Character.isAlphabetic(c)) {
-
-                sb.append(RandomStringUtils.secure().nextAlphanumeric(1));
-
-            } else if (Character.isSpaceChar(c)) {
-
-                sb.append(" ");
-
-            } else if (c == '_') {
-
-                sb.append("_");
-
-            } else if (c == '-') {
-
-                sb.append("-");
-
-            } else if (c == '.') {
-
-                sb.append(".");
-
-            } else {
-
-                // For everything else return a number.
-                sb.append(random.nextInt((9) + 1));
-
-            }
-
-        }
-
-        return sb.toString();
 
     }
 

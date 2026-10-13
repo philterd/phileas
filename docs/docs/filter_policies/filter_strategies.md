@@ -216,6 +216,21 @@ Replaces the identified text with one of the following:
 
 If `anonymizationMethod` is not specified, the default is `REALISTIC`. If an invalid value is given for `anonymizationMethod`, `UUID` will be used as the default.
 
+With `REALISTIC`, the replacement depends on the filter type:
+
+| Filter types | Replacement |
+|---|---|
+| `firstName`, `surname`, `city`, `county`, `state`, `hospital`, `stateAbbreviation` | A value from a list of names or places. First names and surnames follow the case of the identified text. |
+| `creditCard`, `bitcoinAddress`, `vin` | A random value that is not checked against the type's rules: a credit card number is 16 random digits written as `NNNN-NNNN-NNNN-NNNN` with no Luhn check digit computed, a bitcoin address is 32 random letters and digits, and a VIN is 17 random characters from the VIN character set with no check digit computed. |
+| `emailAddress`, `url`, `date`, `ipAddress`, `macAddress`, `streetAddress`, `zipCode`, `age`, `currency` | A generated value of that type. A date keeps the format of the identified date when it is one of the common formats the date filter detects, and is otherwise written as `yyyy-MM-dd`. An age or currency amount keeps its format with its digits replaced. |
+| `ibanCode` | An IBAN with the same country code and spacing, the account number replaced character for character, and valid check digits. |
+| `passportNumber` | A value with the same shape, with a US passport prefix where the identified number has one, so the passport filter detects it. |
+| `phoneNumber` | The same format with each digit replaced, keeping parentheses, spaces, hyphens, dots, and a leading plus sign. |
+| `itin`, `canadaSin` | A value of that type in the same format. An ITIN begins with 9 and has fourth and fifth digits in an IRS-issued range, and a SIN passes the Luhn check. |
+| All other types, including `ssn`, `bankRoutingNumber`, `driversLicense`, `ein`, `phoneNumberExtension`, `trackingNumber`, `pheyes`, custom `identifiers`, custom `dictionaries`, and `sections` | A random value with the same shape: each digit is replaced with a digit and each letter with a letter of the same case, and other characters are kept. The value is not checked against the type's rules, so for example an SSN may begin with 9, and a bank routing number's checksum or a tracking number's carrier prefix may not be valid. |
+
+If a value that differs from the identified text cannot be generated, a random UUID is used instead.
+
 When `anonymizationCandidates` is a non-empty list, its values are used unless `anonymizationMethod` is `UUID`, so a policy that sets `anonymizationCandidates` without an `anonymizationMethod` draws from the list. When `anonymizationMethod` is `FROM_LIST` and `anonymizationCandidates` is empty or not set, a random UUID is used.
 
 An example policy using the `REALISTIC` filter strategy:
