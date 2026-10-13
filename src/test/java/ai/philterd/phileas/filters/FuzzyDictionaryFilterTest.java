@@ -460,6 +460,14 @@ public class FuzzyDictionaryFilterTest extends AbstractFilterTest {
     }
 
     @Test
+    void autoGivesAFuzzyMatchTheConfidenceOfItsDistance() throws Exception {
+        // As the fixed levels do: 0.7 for one edit, 0.5 for two. An exact match is 1.0.
+        Assertions.assertEquals(List.of("Springfield@1.0", "Springfeld@0.7", "Sprngfeld@0.5"),
+                found(springfield(SensitivityLevel.AUTO, false).filter(contextService, getPolicy(), "context", PIECE,
+                        "Springfield and Springfeld and Sprngfeld today")));
+    }
+
+    @Test
     void autoReportsAFuzzyMatchOnlyWhenItIsCapitalized() throws Exception {
         Assertions.assertEquals(List.of("Springfeld@0.7"),
                 found(springfield(SensitivityLevel.AUTO, false).filter(contextService, getPolicy(), "context", PIECE, "From Springfeld and springfeld")));
