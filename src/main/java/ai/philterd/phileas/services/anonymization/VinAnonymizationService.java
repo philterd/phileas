@@ -16,7 +16,6 @@
 package ai.philterd.phileas.services.anonymization;
 
 import ai.philterd.phileas.data.generators.VINGenerator;
-import ai.philterd.phileas.utils.CollectionUtils;
 
 import java.security.SecureRandom;
 import java.util.List;
@@ -45,20 +44,7 @@ public class VinAnonymizationService extends AbstractAnonymizationService {
 
         if (anonymizationMethod == AnonymizationMethod.FROM_LIST) {
 
-            if (CollectionUtils.isNotEmpty(candidates)) {
-
-                String anonymized = candidates.get(random.nextInt(candidates.size()));
-                while (anonymized.equalsIgnoreCase(token)) {
-                    anonymized = candidates.get(random.nextInt(candidates.size()));
-                }
-                return anonymized;
-
-            } else {
-
-                // Provided list was empty - return a random UUID.
-                return UUID.randomUUID().toString();
-
-            }
+            return anonymizeFromList(token);
 
         } else if (anonymizationMethod == AnonymizationMethod.UUID) {
 

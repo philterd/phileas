@@ -231,7 +231,7 @@ With `REALISTIC`, the replacement depends on the filter type:
 
 If a value that differs from the identified text cannot be generated, a random UUID is used instead.
 
-When `anonymizationCandidates` is a non-empty list, its values are used unless `anonymizationMethod` is `UUID`, so a policy that sets `anonymizationCandidates` without an `anonymizationMethod` draws from the list. When `anonymizationMethod` is `FROM_LIST` and `anonymizationCandidates` is empty or not set, a random UUID is used.
+When `anonymizationCandidates` is a non-empty list, its values are used unless `anonymizationMethod` is `UUID`, so a policy that sets `anonymizationCandidates` without an `anonymizationMethod` draws from the list. A candidate equal to the identified text, ignoring case, is never chosen; each other entry in the list is equally likely, so a candidate listed twice is chosen twice as often. When `anonymizationMethod` is `FROM_LIST` and `anonymizationCandidates` is empty or not set, or when every candidate equals the identified text, a random UUID is used instead.
 
 An example policy using the `REALISTIC` filter strategy:
 

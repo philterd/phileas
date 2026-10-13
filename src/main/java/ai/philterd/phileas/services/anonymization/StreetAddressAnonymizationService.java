@@ -17,7 +17,6 @@ package ai.philterd.phileas.services.anonymization;
 
 import ai.philterd.phileas.data.DataGenerator;
 import ai.philterd.phileas.data.DefaultDataGenerator;
-import ai.philterd.phileas.utils.CollectionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -73,20 +72,7 @@ public class StreetAddressAnonymizationService extends AbstractAnonymizationServ
 
         if (anonymizationMethod == AnonymizationMethod.FROM_LIST) {
 
-            if (CollectionUtils.isNotEmpty(candidates)) {
-
-                String anonymized = candidates.get(random.nextInt(candidates.size()));
-                while (anonymized.equalsIgnoreCase(token)) {
-                    anonymized = candidates.get(random.nextInt(candidates.size()));
-                }
-                return anonymized;
-
-            } else {
-
-                // Provided list was empty - return a random UUID.
-                return UUID.randomUUID().toString();
-
-            }
+            return anonymizeFromList(token);
 
         } else if (anonymizationMethod == AnonymizationMethod.UUID) {
 

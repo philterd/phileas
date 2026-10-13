@@ -15,6 +15,7 @@
  */
 package ai.philterd.phileas.services.anonymization;
 
+import ai.philterd.phileas.utils.CollectionUtils;
 import org.apache.commons.text.RandomStringGenerator;
 
 import java.security.SecureRandom;
@@ -61,6 +62,32 @@ public abstract class AbstractAnonymizationService implements AnonymizationServi
 
     public void setAnonymizationMethod(final AnonymizationMethod anonymizationMethod) {
         this.anonymizationMethod = anonymizationMethod;
+    }
+
+    /**
+     * A random candidate that differs from the token, ignoring case, for the {@code FROM_LIST} method.
+     * Each differing candidate is equally likely (a candidate listed twice is twice as likely). When the
+     * candidate list is empty, or no candidate differs from the token, a random UUID is returned
+     * instead, which never reveals the token.
+     * @param token The token being anonymized.
+     * @return A candidate that differs from the token, or a random UUID.
+     */
+    protected String anonymizeFromList(final String token) {
+
+        if (CollectionUtils.isEmpty(candidates)) {
+            return UUID.randomUUID().toString();
+        }
+
+        final List<String> differing = candidates.stream()
+                .filter(candidate -> candidate != null && !candidate.equalsIgnoreCase(token))
+                .toList();
+
+        if (differing.isEmpty()) {
+            return UUID.randomUUID().toString();
+        }
+
+        return differing.get(random.nextInt(differing.size()));
+
     }
 
     /**

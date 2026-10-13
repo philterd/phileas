@@ -659,6 +659,40 @@ public class EndToEndTests {
     }
 
     @Test
+    public void endToEndRandomReplaceFromListOfOnlyTheIdentifiedText() {
+
+        // Every candidate equals the identified text, ignoring case: this used to loop forever. A UUID
+        // is used instead, with or without FROM_LIST given explicitly.
+        Assertions.assertTimeoutPreemptively(java.time.Duration.ofSeconds(30), () -> {
+
+            for (final String method : List.of(", \"anonymizationMethod\": \"FROM_LIST\"", "")) {
+                for (final String candidates : List.of("[ \"123-45-6789\" ]", "[ \"123-45-6789\", \"123-45-6789\", \"123-45-6789\" ]")) {
+                    final String ssn = randomReplace("ssn", method + ", \"anonymizationCandidates\": " + candidates, "the ssn is 123-45-6789.");
+                    Assertions.assertTrue(ssn.matches("the ssn is " + UUID_PATTERN + "\\."), ssn);
+                }
+            }
+
+            // A candidate that differs only in case.
+            final String name = randomReplace("firstName", ", \"anonymizationMethod\": \"FROM_LIST\", \"anonymizationCandidates\": [ \"JOHN\" ]", "hello John there.");
+            Assertions.assertTrue(name.matches("hello " + UUID_PATTERN + " there\\."), name);
+
+        });
+
+    }
+
+    @Test
+    public void endToEndRandomReplaceFromListChoosesACandidateThatDiffers() {
+
+        Assertions.assertTimeoutPreemptively(java.time.Duration.ofSeconds(30), () -> {
+            for (int i = 0; i < 25; i++) {
+                final String ssn = randomReplace("ssn", ", \"anonymizationMethod\": \"FROM_LIST\", \"anonymizationCandidates\": [ \"123-45-6789\", \"000-00-0001\" ]", "the ssn is 123-45-6789.");
+                Assertions.assertEquals("the ssn is 000-00-0001.", ssn);
+            }
+        });
+
+    }
+
+    @Test
     public void endToEndRandomReplaceFromEmptyListIsUuid() throws Exception {
 
         for (final String candidates : List.of("", ", \"anonymizationCandidates\": [ ]")) {

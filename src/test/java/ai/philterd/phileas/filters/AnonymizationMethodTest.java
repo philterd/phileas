@@ -116,6 +116,37 @@ public class AnonymizationMethodTest {
     }
 
     @Test
+    public void fromListChoosesOnlyCandidatesThatDiffer() {
+
+        final List<String> candidates = java.util.Arrays.asList("123-45-6789", null, "000-00-0001", "000-00-0002");
+        final NumericAnonymizationService service = new NumericAnonymizationService(new SecureRandom(), candidates);
+
+        final java.util.Set<String> chosen = new java.util.HashSet<>();
+        for (int i = 0; i < 200; i++) {
+            chosen.add(service.anonymize("123-45-6789"));
+        }
+
+        // Both differing candidates are chosen, and nothing else.
+        Assertions.assertEquals(java.util.Set.of("000-00-0001", "000-00-0002"), chosen);
+
+    }
+
+    @Test
+    public void fromListIsUuidWhenNoCandidateDiffers() {
+
+        final String uuid = "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}";
+
+        Assertions.assertTimeoutPreemptively(java.time.Duration.ofSeconds(10), () -> {
+            for (final List<String> candidates : List.of(List.of("Jane"), List.of("JANE"), List.of("jane", "Jane", "JANE"),
+                    java.util.Arrays.asList("Jane", null), Collections.<String>emptyList())) {
+                final String replaced = new NumericAnonymizationService(new SecureRandom(), candidates).anonymize("jane");
+                Assertions.assertTrue(replaced.matches(uuid), candidates + " gave " + replaced);
+            }
+        });
+
+    }
+
+    @Test
     public void defaultConstructorsAreRealistic() {
 
         Assertions.assertEquals(AnonymizationMethod.REALISTIC, new NumericAnonymizationService().getAnonymizationMethod());
