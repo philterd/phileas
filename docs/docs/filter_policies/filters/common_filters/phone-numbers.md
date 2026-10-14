@@ -14,6 +14,7 @@ This filter has no required parameters.
 |-------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------|
 | `phoneNumberFilterStrategies` | A list of filter strategies.                                                                                                                                                                                 | None                                                     |
 | `region`                      | Default region(s), ISO 3166-1 alpha-2 (for example `"US"`, `"GB"`, `"FR"`), used to interpret phone numbers written without an international `+` country code. A string sets a single region; an array enables detection for each listed region, and the merged results are de-duplicated. Numbers with a `+` prefix are detected regardless of this value. | `"US"`                                                   |
+| `leniency` | libphonenumber matching strictness: `POSSIBLE`, `VALID`, `STRICT_GROUPING`, or `EXACT_GROUPING`. | `"POSSIBLE"` |
 | `enabled`                     | When set to false, the filter will be disabled and not applied                                                                                                                                               | `true`                                                   |
 | `ignored`                     | A list of terms to be ignored by the filter.                                                                                                                                                                 | None                                                     |
 | `windowSize`                  | Sets the size of the window (in terms) surrounding a span to look for contextual terms. If set, this value overrides the value of `span.window.size` in the configuration.                                   | The value of `span.window.size` which is by default `5`. |
@@ -82,3 +83,32 @@ To detect national-format numbers from regions other than the United States, set
 ```
 
 The `region` property requires redaction policy schema 1.2.0.
+
+### Requiring valid phone numbers
+
+Set `leniency` to `VALID` to reject candidates that are merely possible, such as
+short numeric identifiers or years that can be detected under some regions:
+
+```json
+{
+  "identifiers": {
+    "phoneNumber": {
+      "region": ["US", "GB", "DE"],
+      "leniency": "VALID"
+    }
+  }
+}
+```
+
+Omitting `leniency` (or setting it to null) retains the historical `POSSIBLE`
+behavior. Values are case-sensitive; unknown values fail policy preparation.
+`STRICT_GROUPING` and `EXACT_GROUPING` additionally constrain number formatting.
+Validity follows numbering-plan rules; it does not establish whether a number is
+assigned or in service, or whether a valid-looking number is a phone number in context.
+Confidence conditions remain independent of this candidate-validation setting.
+
+Java callers can use
+`phoneNumber.setLeniency(PhoneNumberUtil.Leniency.VALID)`.
+
+The canonical JSON schema is maintained by PhiSQL; schema-validation support for
+this new property requires a corresponding schema update there.
