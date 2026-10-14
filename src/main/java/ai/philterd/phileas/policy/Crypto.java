@@ -43,30 +43,20 @@ public class Crypto {
         this.iv = iv;
     }
 
+    /**
+     * The crypto key, resolving {@code env:NAME} to the environment variable when {@link PolicyEnvironment} allows it.
+     * @throws InvalidPolicyEnvironmentException if the policy may not name the variable.
+     */
     public String getKey() {
-
-        if(key != null && key.startsWith("env:")) {
-
-            final String envVarName = key.substring(4);
-            return System.getenv(envVarName);
-
-        }
-
-        return key;
-
+        return PolicyEnvironment.resolve("crypto key", key);
     }
 
+    /**
+     * The crypto iv, resolving {@code env:NAME} to the environment variable when {@link PolicyEnvironment} allows it.
+     * @throws InvalidPolicyEnvironmentException if the policy may not name the variable.
+     */
     public String getIv() {
-
-        if(iv != null && iv.startsWith("env:")) {
-
-            final String envVarName = iv.substring(4);
-            return System.getenv(envVarName);
-
-        }
-
-        return iv;
-
+        return PolicyEnvironment.resolve("crypto iv", iv);
     }
 
 }

@@ -57,3 +57,11 @@ learned by one instance is available to the others.
 | `incremental.redactions.enabled` | Whether to record an incremental redaction (the document state and its hash after each applied redaction) for each filtered document.    | `true`, `false`   | `false`       |
 
 A file a policy names is checked when the policy is loaded, before any filter is built, and read only if it is a regular file: a device such as `/dev/zero` or a named pipe is refused in every configuration, since reading one never ends or blocks. A refusal throws `InvalidPolicyFileException`, naming where in the policy the file is named, with the same message whether the file is missing, outside the allowed directories, or not a regular file. Without `policy.files.restricted`, a missing file is handled as before: a missing custom dictionary or top-level `ignored` file fails the policy, and a missing `ignoredFiles` or `mappingFiles` file is logged and skipped.
+
+## Environment variables in a policy
+
+A policy can name an environment variable as `env:NAME` for a `crypto` `key` or `iv`, or an `fpe` `key` or `tweak`, and an application that registers `PlaceholderDeserializer` resolves `${NAME}` in any string. An application that lets people author policies should limit which variables those may be, so a policy author cannot use a variable meant for something else, such as another policy's key, as their own.
+
+Set the allowlist once at startup with `PolicyEnvironment.restrictTo(names)`, or with `policy.env.allowed`, a comma-separated list read from an environment variable or system property of that name. An empty list allows no variable. When neither sets it, every variable may be named, as before.
+
+With the allowlist set, a policy naming any other variable throws `InvalidPolicyEnvironmentException` when the policy is loaded, and whenever a key is resolved, without reading the variable, so the message is the same whether or not it exists. `PlaceholderDeserializer` leaves such a placeholder as written. The allowlist applies to the whole process, so every policy may use each listed variable.

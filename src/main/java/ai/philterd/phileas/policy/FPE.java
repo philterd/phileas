@@ -40,30 +40,20 @@ public class FPE {
         this.tweak = tweak;
     }
 
+    /**
+     * The fpe key, resolving {@code env:NAME} to the environment variable when {@link PolicyEnvironment} allows it.
+     * @throws InvalidPolicyEnvironmentException if the policy may not name the variable.
+     */
     public String getKey() {
-
-        if(key != null && key.startsWith("env:")) {
-
-            final String envVarName = key.substring(4);
-            return System.getenv(envVarName);
-
-        }
-
-        return key;
-
+        return PolicyEnvironment.resolve("fpe key", key);
     }
 
+    /**
+     * The fpe tweak, resolving {@code env:NAME} to the environment variable when {@link PolicyEnvironment} allows it.
+     * @throws InvalidPolicyEnvironmentException if the policy may not name the variable.
+     */
     public String getTweak() {
-
-        if(tweak != null && tweak.startsWith("env:")) {
-
-            final String envVarName = tweak.substring(4);
-            return System.getenv(envVarName);
-
-        }
-
-        return tweak;
-
+        return PolicyEnvironment.resolve("fpe tweak", tweak);
     }
 
 }

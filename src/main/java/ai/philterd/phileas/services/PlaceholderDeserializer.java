@@ -15,6 +15,7 @@
  */
 package ai.philterd.phileas.services;
 
+import ai.philterd.phileas.policy.PolicyEnvironment;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
@@ -45,7 +46,8 @@ public class PlaceholderDeserializer implements JsonDeserializer<String> {
             final String placeholder = matcher.group(1);
 
             // See if it's an environment variable.
-            if(System.getenv().containsKey(placeholder)) {
+            // Only a variable a policy may name; any other is left as written, as one that does not exist is.
+            if(PolicyEnvironment.isAllowed(placeholder) && System.getenv().containsKey(placeholder)) {
 
                 deserialized = System.getenv(placeholder);
 

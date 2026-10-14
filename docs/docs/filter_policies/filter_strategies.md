@@ -113,7 +113,7 @@ The `key` is a hex-encoded AES key (for example, 64 hex characters for a 256-bit
 openssl rand -hex 32
 ```
 
-> **Keep the key out of the policy file.** Because policies are configuration files that are often kept in version control, prefix the value with `env:` to read the key from an environment variable at runtime instead of storing it inline. For example, `"key": "env:CRYPTO_KEY"` reads the key from the `CRYPTO_KEY` environment variable. This is the recommended way to supply the key.
+> **Keep the key out of the policy file.** Because policies are configuration files that are often kept in version control, prefix the value with `env:` to read the key from an environment variable at runtime instead of storing it inline. For example, `"key": "env:CRYPTO_KEY"` reads the key from the `CRYPTO_KEY` environment variable. This is the recommended way to supply the key. An application can limit which variables a policy may name; see [Environment variables in a policy](../settings.md#environment-variables-in-a-policy).
 
 > A fresh random nonce is generated for every value, so encrypting the same value twice produces different output (identical values do not produce identical redactions across the corpus), and each value carries an authentication tag that detects tampering. Because the nonce is random, no initialization vector (`iv`) is required; an `iv` in an existing policy is ignored.
 
@@ -180,7 +180,7 @@ The `FPE_ENCRYPT_REPLACE` filter strategy uses format-preserving encryption (FPE
 * [https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-38Gr1-draft.pdf](https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-38Gr1-draft.pdf)
 * [https://nvlpubs.nist.gov/nistpubs/specialpublications/nist.sp.800-38g.pdf](https://nvlpubs.nist.gov/nistpubs/specialpublications/nist.sp.800-38g.pdf)
 
-> **Keep these secrets out of the policy file.** As with the [crypto key](#crypto), prefix either value with `env:` to read it from an environment variable at runtime, for example `"key": "env:FPE_KEY"` and `"tweak": "env:FPE_TWEAK"`. This is the recommended way to supply the `key` and `tweak`.
+> **Keep these secrets out of the policy file.** As with the [crypto key](#crypto), prefix either value with `env:` to read it from an environment variable at runtime, for example `"key": "env:FPE_KEY"` and `"tweak": "env:FPE_TWEAK"`. This is the recommended way to supply the `key` and `tweak`. As with the crypto key, an application can limit which variables a policy may name.
 
 > FF3 can only encrypt values whose format-preservable (alphanumeric) content is between 6 and 56 characters long. When a detected value falls outside this range (for example a 5-digit ZIP code) it cannot be format-preserving encrypted. In that case Phileas falls back to redacting that value (using the `REDACT` placeholder) instead, so the value is still redacted and a single out-of-range value does not affect the rest of the document. Consider applying `FPE_ENCRYPT_REPLACE` to types whose values fall within the supported length range.
 

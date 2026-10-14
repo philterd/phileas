@@ -207,6 +207,16 @@ public class FilterPolicyLoader {
         // ignored files that are otherwise read only when a document is filtered.
         new PolicyFileValidator(policyFiles).validate(policy);
 
+        // Refuse an environment variable the policy may not name: resolving each key through its getter throws.
+        if (policy.getCrypto() != null) {
+            policy.getCrypto().getKey();
+            policy.getCrypto().getIv();
+        }
+        if (policy.getFpe() != null) {
+            policy.getFpe().getKey();
+            policy.getFpe().getTweak();
+        }
+
         // Reject a bad pattern here, where the cost is paid once per policy, rather than on whichever
         // document first reaches it.
         new PolicyPatternValidator(phileasConfiguration.regexTimeoutMs()).validate(policy);
