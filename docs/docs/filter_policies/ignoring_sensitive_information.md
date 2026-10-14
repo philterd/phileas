@@ -35,7 +35,7 @@ In the policy shown below, an ignore list is set at the level of the policy. The
 }
 ```
 
-Terms to be ignored at the policy level can also be read from one or more files located on the local file system. The file must be formatted as one term per line.
+Terms to be ignored at the policy level can also be read from one or more files located on the local file system. The file must be formatted as one term per line. Which files a policy may name, and how large, is governed by the `policy.files` [settings](../settings.md).
 
 ```
 {

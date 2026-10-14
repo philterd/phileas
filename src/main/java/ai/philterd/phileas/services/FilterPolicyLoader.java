@@ -71,10 +71,8 @@ import java.security.SecureRandom;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.io.File;
 import java.io.IOException;
-import java.nio.charset.Charset;
-import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
@@ -92,6 +90,9 @@ public class FilterPolicyLoader {
     private final SecureRandom random;
     private final HttpClient httpClient;
 
+    // Reads the files a policy names, as the configuration allows.
+    private final PolicyFiles policyFiles;
+
     public FilterPolicyLoader(final PhileasConfiguration phileasConfiguration,
                               final SecureRandom random,
                               final HttpClient httpClient) {
@@ -100,6 +101,7 @@ public class FilterPolicyLoader {
         this.random = random;
         this.httpClient = httpClient;
 
+        this.policyFiles = PolicyFiles.of(phileasConfiguration);
     }
 
     /**
@@ -201,6 +203,10 @@ public class FilterPolicyLoader {
                     + "or a custom dictionary of condition names.");
         }
 
+        // Refuse a file the policy may not read here, before any filter is built, including the top-level
+        // ignored files that are otherwise read only when a document is filtered.
+        new PolicyFileValidator(policyFiles).validate(policy);
+
         // Reject a bad pattern here, where the cost is paid once per policy, rather than on whichever
         // document first reaches it.
         new PolicyPatternValidator(phileasConfiguration.regexTimeoutMs()).validate(policy);
@@ -222,6 +228,7 @@ public class FilterPolicyLoader {
             final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                     .withRandom(random)
                     .withRegexTimeoutMs(phileasConfiguration.regexTimeoutMs())
+                    .withPolicyFiles(policyFiles)
                     .withStrategies(policy.getIdentifiers().getAge().getAgeFilterStrategies())
                     .withIgnored(policy.getIdentifiers().getAge().getIgnored())
                     .withIgnoredFiles(policy.getIdentifiers().getAge().getIgnoredFiles())
@@ -246,6 +253,7 @@ public class FilterPolicyLoader {
             final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                     .withRandom(random)
                     .withRegexTimeoutMs(phileasConfiguration.regexTimeoutMs())
+                    .withPolicyFiles(policyFiles)
                     .withStrategies(policy.getIdentifiers().getBankRoutingNumber().getBankRoutingNumberFilterStrategies())
                     .withIgnored(policy.getIdentifiers().getBankRoutingNumber().getIgnored())
                     .withIgnoredFiles(policy.getIdentifiers().getBankRoutingNumber().getIgnoredFiles())
@@ -271,6 +279,7 @@ public class FilterPolicyLoader {
             final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                     .withRandom(random)
                     .withRegexTimeoutMs(phileasConfiguration.regexTimeoutMs())
+                    .withPolicyFiles(policyFiles)
                     .withStrategies(policy.getIdentifiers().getBitcoinAddress().getBitcoinFilterStrategies())
                     .withIgnored(policy.getIdentifiers().getBitcoinAddress().getIgnored())
                     .withIgnoredFiles(policy.getIdentifiers().getBitcoinAddress().getIgnoredFiles())
@@ -296,6 +305,7 @@ public class FilterPolicyLoader {
             final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                     .withRandom(random)
                     .withRegexTimeoutMs(phileasConfiguration.regexTimeoutMs())
+                    .withPolicyFiles(policyFiles)
                     .withStrategies(policy.getIdentifiers().getCreditCard().getCreditCardFilterStrategies())
                     .withIgnored(policy.getIdentifiers().getCreditCard().getIgnored())
                     .withIgnoredFiles(policy.getIdentifiers().getCreditCard().getIgnoredFiles())
@@ -325,6 +335,7 @@ public class FilterPolicyLoader {
             final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                     .withRandom(random)
                     .withRegexTimeoutMs(phileasConfiguration.regexTimeoutMs())
+                    .withPolicyFiles(policyFiles)
                     .withStrategies(policy.getIdentifiers().getCurrency().getCurrencyFilterStrategies())
                     .withIgnored(policy.getIdentifiers().getCurrency().getIgnored())
                     .withIgnoredFiles(policy.getIdentifiers().getCurrency().getIgnoredFiles())
@@ -349,6 +360,7 @@ public class FilterPolicyLoader {
             final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                     .withRandom(random)
                     .withRegexTimeoutMs(phileasConfiguration.regexTimeoutMs())
+                    .withPolicyFiles(policyFiles)
                     .withStrategies(policy.getIdentifiers().getDate().getDateFilterStrategies())
                     .withIgnored(policy.getIdentifiers().getDate().getIgnored())
                     .withIgnoredFiles(policy.getIdentifiers().getDate().getIgnoredFiles())
@@ -376,6 +388,7 @@ public class FilterPolicyLoader {
             final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                     .withRandom(random)
                     .withRegexTimeoutMs(phileasConfiguration.regexTimeoutMs())
+                    .withPolicyFiles(policyFiles)
                     .withStrategies(policy.getIdentifiers().getDriversLicense().getDriversLicenseFilterStrategies())
                     .withIgnored(policy.getIdentifiers().getDriversLicense().getIgnored())
                     .withIgnoredFiles(policy.getIdentifiers().getDriversLicense().getIgnoredFiles())
@@ -401,6 +414,7 @@ public class FilterPolicyLoader {
             final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                     .withRandom(random)
                     .withRegexTimeoutMs(phileasConfiguration.regexTimeoutMs())
+                    .withPolicyFiles(policyFiles)
                     .withStrategies(policy.getIdentifiers().getEmailAddress().getEmailAddressFilterStrategies())
                     .withIgnored(policy.getIdentifiers().getEmailAddress().getIgnored())
                     .withIgnoredFiles(policy.getIdentifiers().getEmailAddress().getIgnoredFiles())
@@ -429,6 +443,7 @@ public class FilterPolicyLoader {
             final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                     .withRandom(random)
                     .withRegexTimeoutMs(phileasConfiguration.regexTimeoutMs())
+                    .withPolicyFiles(policyFiles)
                     .withStrategies(policy.getIdentifiers().getIbanCode().getIbanCodeFilterStrategies())
                     .withIgnored(policy.getIdentifiers().getIbanCode().getIgnored())
                     .withIgnoredFiles(policy.getIdentifiers().getIbanCode().getIgnoredFiles())
@@ -457,6 +472,7 @@ public class FilterPolicyLoader {
             final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                     .withRandom(random)
                     .withRegexTimeoutMs(phileasConfiguration.regexTimeoutMs())
+                    .withPolicyFiles(policyFiles)
                     .withStrategies(policy.getIdentifiers().getIpAddress().getIpAddressFilterStrategies())
                     .withIgnored(policy.getIdentifiers().getIpAddress().getIgnored())
                     .withIgnoredFiles(policy.getIdentifiers().getIpAddress().getIgnoredFiles())
@@ -482,6 +498,7 @@ public class FilterPolicyLoader {
             final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                     .withRandom(random)
                     .withRegexTimeoutMs(phileasConfiguration.regexTimeoutMs())
+                    .withPolicyFiles(policyFiles)
                     .withStrategies(policy.getIdentifiers().getMacAddress().getMacAddressFilterStrategies())
                     .withIgnored(policy.getIdentifiers().getMacAddress().getIgnored())
                     .withIgnoredFiles(policy.getIdentifiers().getMacAddress().getIgnoredFiles())
@@ -507,6 +524,7 @@ public class FilterPolicyLoader {
             final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                     .withRandom(random)
                     .withRegexTimeoutMs(phileasConfiguration.regexTimeoutMs())
+                    .withPolicyFiles(policyFiles)
                     .withStrategies(policy.getIdentifiers().getPassportNumber().getPassportNumberFilterStrategies())
                     .withIgnored(policy.getIdentifiers().getPassportNumber().getIgnored())
                     .withIgnoredFiles(policy.getIdentifiers().getPassportNumber().getIgnoredFiles())
@@ -532,6 +550,7 @@ public class FilterPolicyLoader {
             final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                     .withRandom(random)
                     .withRegexTimeoutMs(phileasConfiguration.regexTimeoutMs())
+                    .withPolicyFiles(policyFiles)
                     .withStrategies(policy.getIdentifiers().getPhoneNumberExtension().getPhoneNumberExtensionFilterStrategies())
                     .withIgnored(policy.getIdentifiers().getPhoneNumberExtension().getIgnored())
                     .withIgnoredFiles(policy.getIdentifiers().getPhoneNumberExtension().getIgnoredFiles())
@@ -555,6 +574,7 @@ public class FilterPolicyLoader {
             final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                     .withRandom(random)
                     .withRegexTimeoutMs(phileasConfiguration.regexTimeoutMs())
+                    .withPolicyFiles(policyFiles)
                     .withStrategies(policy.getIdentifiers().getPhoneNumber().getPhoneNumberFilterStrategies())
                     .withIgnored(policy.getIdentifiers().getPhoneNumber().getIgnored())
                     .withIgnoredFiles(policy.getIdentifiers().getPhoneNumber().getIgnoredFiles())
@@ -584,6 +604,7 @@ public class FilterPolicyLoader {
                     final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                     .withRandom(random)
                     .withRegexTimeoutMs(phileasConfiguration.regexTimeoutMs())
+                    .withPolicyFiles(policyFiles)
                             .withStrategies(section.getSectionFilterStrategies())
                             .withIgnored(section.getIgnored())
                             .withIgnoredFiles(section.getIgnoredFiles())
@@ -613,6 +634,7 @@ public class FilterPolicyLoader {
             final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                     .withRandom(random)
                     .withRegexTimeoutMs(phileasConfiguration.regexTimeoutMs())
+                    .withPolicyFiles(policyFiles)
                     .withStrategies(policy.getIdentifiers().getEin().getEinFilterStrategies())
                     .withIgnored(policy.getIdentifiers().getEin().getIgnored())
                     .withIgnoredFiles(policy.getIdentifiers().getEin().getIgnoredFiles())
@@ -637,6 +659,7 @@ public class FilterPolicyLoader {
             final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                     .withRandom(random)
                     .withRegexTimeoutMs(phileasConfiguration.regexTimeoutMs())
+                    .withPolicyFiles(policyFiles)
                     .withStrategies(policy.getIdentifiers().getItin().getItinFilterStrategies())
                     .withIgnored(policy.getIdentifiers().getItin().getIgnored())
                     .withIgnoredFiles(policy.getIdentifiers().getItin().getIgnoredFiles())
@@ -661,6 +684,7 @@ public class FilterPolicyLoader {
             final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                     .withRandom(random)
                     .withRegexTimeoutMs(phileasConfiguration.regexTimeoutMs())
+                    .withPolicyFiles(policyFiles)
                     .withStrategies(policy.getIdentifiers().getCanadaSin().getCanadaSinFilterStrategies())
                     .withIgnored(policy.getIdentifiers().getCanadaSin().getIgnored())
                     .withIgnoredFiles(policy.getIdentifiers().getCanadaSin().getIgnoredFiles())
@@ -686,6 +710,7 @@ public class FilterPolicyLoader {
             final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                     .withRandom(random)
                     .withRegexTimeoutMs(phileasConfiguration.regexTimeoutMs())
+                    .withPolicyFiles(policyFiles)
                     .withStrategies(policy.getIdentifiers().getSsn().getSsnFilterStrategies())
                     .withIgnored(policy.getIdentifiers().getSsn().getIgnored())
                     .withIgnoredFiles(policy.getIdentifiers().getSsn().getIgnoredFiles())
@@ -711,6 +736,7 @@ public class FilterPolicyLoader {
             final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                     .withRandom(random)
                     .withRegexTimeoutMs(phileasConfiguration.regexTimeoutMs())
+                    .withPolicyFiles(policyFiles)
                     .withStrategies(policy.getIdentifiers().getStateAbbreviation().getStateAbbreviationsFilterStrategies())
                     .withIgnored(policy.getIdentifiers().getStateAbbreviation().getIgnored())
                     .withIgnoredFiles(policy.getIdentifiers().getStateAbbreviation().getIgnoredFiles())
@@ -735,6 +761,7 @@ public class FilterPolicyLoader {
             final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                     .withRandom(random)
                     .withRegexTimeoutMs(phileasConfiguration.regexTimeoutMs())
+                    .withPolicyFiles(policyFiles)
                     .withStrategies(policy.getIdentifiers().getStreetAddress().getStreetAddressFilterStrategies())
                     .withIgnored(policy.getIdentifiers().getStreetAddress().getIgnored())
                     .withIgnoredFiles(policy.getIdentifiers().getStreetAddress().getIgnoredFiles())
@@ -759,6 +786,7 @@ public class FilterPolicyLoader {
             final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                     .withRandom(random)
                     .withRegexTimeoutMs(phileasConfiguration.regexTimeoutMs())
+                    .withPolicyFiles(policyFiles)
                     .withStrategies(policy.getIdentifiers().getTrackingNumber().getTrackingNumberFilterStrategies())
                     .withIgnored(policy.getIdentifiers().getTrackingNumber().getIgnored())
                     .withIgnoredFiles(policy.getIdentifiers().getTrackingNumber().getIgnoredFiles())
@@ -789,6 +817,7 @@ public class FilterPolicyLoader {
             final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                     .withRandom(random)
                     .withRegexTimeoutMs(phileasConfiguration.regexTimeoutMs())
+                    .withPolicyFiles(policyFiles)
                     .withStrategies(policy.getIdentifiers().getUrl().getUrlFilterStrategies())
                     .withIgnored(policy.getIdentifiers().getUrl().getIgnored())
                     .withIgnoredFiles(policy.getIdentifiers().getUrl().getIgnoredFiles())
@@ -816,6 +845,7 @@ public class FilterPolicyLoader {
             final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                     .withRandom(random)
                     .withRegexTimeoutMs(phileasConfiguration.regexTimeoutMs())
+                    .withPolicyFiles(policyFiles)
                     .withStrategies(policy.getIdentifiers().getVin().getVinFilterStrategies())
                     .withIgnored(policy.getIdentifiers().getVin().getIgnored())
                     .withIgnoredFiles(policy.getIdentifiers().getVin().getIgnoredFiles())
@@ -841,6 +871,7 @@ public class FilterPolicyLoader {
             final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                     .withRandom(random)
                     .withRegexTimeoutMs(phileasConfiguration.regexTimeoutMs())
+                    .withPolicyFiles(policyFiles)
                     .withStrategies(policy.getIdentifiers().getZipCode().getZipCodeFilterStrategies())
                     .withIgnored(policy.getIdentifiers().getZipCode().getIgnored())
                     .withIgnoredFiles(policy.getIdentifiers().getZipCode().getIgnoredFiles())
@@ -886,7 +917,12 @@ public class FilterPolicyLoader {
                     // Next, read terms from files, if given.
                     if(CollectionUtils.isNotEmpty(customDictionary.getFiles())) {
                         for (final String file : customDictionary.getFiles()) {
-                            terms.addAll(Files.readAllLines(new File(file).toPath(), Charset.defaultCharset()));
+                            final List<String> lines = policyFiles.readLines("custom dictionary " + dictionaryNumber + "'s files", file);
+                            if (lines == null) {
+                                // As before: a dictionary file that does not exist fails the policy.
+                                throw new NoSuchFileException(file);
+                            }
+                            terms.addAll(lines);
                         }
                     }
 
@@ -896,6 +932,7 @@ public class FilterPolicyLoader {
                     final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                     .withRandom(random)
                     .withRegexTimeoutMs(phileasConfiguration.regexTimeoutMs())
+                    .withPolicyFiles(policyFiles)
                             .withStrategies(customDictionary.getCustomDictionaryFilterStrategies())
                             .withIgnored(customDictionary.getIgnored())
                             .withIgnoredFiles(customDictionary.getIgnoredFiles())
@@ -956,6 +993,7 @@ public class FilterPolicyLoader {
             final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                     .withRandom(random)
                     .withRegexTimeoutMs(phileasConfiguration.regexTimeoutMs())
+                    .withPolicyFiles(policyFiles)
                     .withStrategies(policy.getIdentifiers().getCity().getCityFilterStrategies())
                     .withIgnored(policy.getIdentifiers().getCity().getIgnored())
                     .withIgnoredFiles(policy.getIdentifiers().getCity().getIgnoredFiles())
@@ -984,6 +1022,7 @@ public class FilterPolicyLoader {
             final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                     .withRandom(random)
                     .withRegexTimeoutMs(phileasConfiguration.regexTimeoutMs())
+                    .withPolicyFiles(policyFiles)
                     .withStrategies(policy.getIdentifiers().getCounty().getCountyFilterStrategies())
                     .withIgnored(policy.getIdentifiers().getCounty().getIgnored())
                     .withIgnoredFiles(policy.getIdentifiers().getCounty().getIgnoredFiles())
@@ -1012,6 +1051,7 @@ public class FilterPolicyLoader {
             final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                     .withRandom(random)
                     .withRegexTimeoutMs(phileasConfiguration.regexTimeoutMs())
+                    .withPolicyFiles(policyFiles)
                     .withStrategies(policy.getIdentifiers().getState().getStateFilterStrategies())
                     .withIgnored(policy.getIdentifiers().getState().getIgnored())
                     .withIgnoredFiles(policy.getIdentifiers().getState().getIgnoredFiles())
@@ -1040,6 +1080,7 @@ public class FilterPolicyLoader {
             final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                     .withRandom(random)
                     .withRegexTimeoutMs(phileasConfiguration.regexTimeoutMs())
+                    .withPolicyFiles(policyFiles)
                     .withStrategies(policy.getIdentifiers().getHospital().getHospitalFilterStrategies())
                     .withIgnored(policy.getIdentifiers().getHospital().getIgnored())
                     .withIgnoredFiles(policy.getIdentifiers().getHospital().getIgnoredFiles())
@@ -1067,6 +1108,7 @@ public class FilterPolicyLoader {
             final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                     .withRandom(random)
                     .withRegexTimeoutMs(phileasConfiguration.regexTimeoutMs())
+                    .withPolicyFiles(policyFiles)
                     .withStrategies(policy.getIdentifiers().getFirstName().getFirstNameFilterStrategies())
                     .withIgnored(policy.getIdentifiers().getFirstName().getIgnored())
                     .withIgnoredFiles(policy.getIdentifiers().getFirstName().getIgnoredFiles())
@@ -1095,6 +1137,7 @@ public class FilterPolicyLoader {
             final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                     .withRandom(random)
                     .withRegexTimeoutMs(phileasConfiguration.regexTimeoutMs())
+                    .withPolicyFiles(policyFiles)
                     .withStrategies(policy.getIdentifiers().getSurname().getSurnameFilterStrategies())
                     .withIgnored(policy.getIdentifiers().getSurname().getIgnored())
                     .withIgnoredFiles(policy.getIdentifiers().getSurname().getIgnoredFiles())
@@ -1131,6 +1174,7 @@ public class FilterPolicyLoader {
                     final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                     .withRandom(random)
                     .withRegexTimeoutMs(phileasConfiguration.regexTimeoutMs())
+                    .withPolicyFiles(policyFiles)
                             .withStrategies(identifier.getIdentifierFilterStrategies())
                             .withIgnored(identifier.getIgnored())
                             .withIgnoredFiles(identifier.getIgnoredFiles())
@@ -1173,6 +1217,7 @@ public class FilterPolicyLoader {
                     final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                     .withRandom(random)
                     .withRegexTimeoutMs(phileasConfiguration.regexTimeoutMs())
+                    .withPolicyFiles(policyFiles)
                             .withStrategies(phEye.getPhEyeFilterStrategies())
                             .withIgnored(phEye.getIgnored())
                             .withIgnoredFiles(phEye.getIgnoredFiles())
@@ -1220,6 +1265,7 @@ public class FilterPolicyLoader {
             final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
                     .withRandom(random)
                     .withRegexTimeoutMs(phileasConfiguration.regexTimeoutMs())
+                    .withPolicyFiles(policyFiles)
                     .withStrategies(phEye.getPhEyeFilterStrategies())
                     .withIgnored(phEye.getIgnored())
                     .withIgnoredFiles(phEye.getIgnoredFiles())

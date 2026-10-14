@@ -18,11 +18,12 @@ package ai.philterd.phileas.filters;
 import ai.philterd.phileas.policy.Crypto;
 import ai.philterd.phileas.policy.FPE;
 import ai.philterd.phileas.policy.IgnoredPattern;
+import ai.philterd.phileas.services.PolicyFiles;
 import ai.philterd.phileas.services.generators.ReplacementGenerator;
 import ai.philterd.phileas.services.strategies.AbstractFilterStrategy;
+import ai.philterd.phileas.utils.CollectionUtils;
 import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.binary.Hex;
-import ai.philterd.phileas.utils.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
 
@@ -47,6 +48,7 @@ public class FilterConfiguration {
     private final int windowSize;
     private final int priority;
     private final long regexTimeoutMs;
+    private final PolicyFiles policyFiles;
     private final Map<String, ReplacementGenerator> generators;
     private final String id;
 
@@ -62,7 +64,8 @@ public class FilterConfiguration {
             final int priority,
             final long regexTimeoutMs,
             final Map<String, ReplacementGenerator> generators,
-            final String id
+            final String id,
+            final PolicyFiles policyFiles
     ) {
 
         this.strategies = strategies;
@@ -75,6 +78,7 @@ public class FilterConfiguration {
         this.windowSize = windowSize;
         this.priority = priority;
         this.regexTimeoutMs = regexTimeoutMs;
+        this.policyFiles = policyFiles;
         this.generators = generators != null ? generators : Collections.emptyMap();
         this.id = id;
 
@@ -95,6 +99,7 @@ public class FilterConfiguration {
         private int priority;
         // Defaults so existing builders are protected without changes; a value <= 0 disables the guard.
         private long regexTimeoutMs = 1000;
+        private PolicyFiles policyFiles = PolicyFiles.unrestricted();
         private Map<String, ReplacementGenerator> generators = Collections.emptyMap();
         private String id;
 
@@ -115,7 +120,8 @@ public class FilterConfiguration {
                     priority,
                     regexTimeoutMs,
                     generators,
-                    id
+                    id,
+                    policyFiles
             );
 
         }
@@ -230,6 +236,12 @@ public class FilterConfiguration {
             return this;
         }
 
+        /** How the filter reads the files a policy names. Defaults to {@link PolicyFiles#unrestricted()}. */
+        public FilterConfigurationBuilder withPolicyFiles(final PolicyFiles policyFiles) {
+            this.policyFiles = policyFiles;
+            return this;
+        }
+
         public FilterConfigurationBuilder withRegexTimeoutMs(long regexTimeoutMs) {
             this.regexTimeoutMs = regexTimeoutMs;
             return this;
@@ -281,6 +293,10 @@ public class FilterConfiguration {
 
     public int getPriority() {
         return priority;
+    }
+
+    public PolicyFiles getPolicyFiles() {
+        return policyFiles;
     }
 
     public long getRegexTimeoutMs() {

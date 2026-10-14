@@ -2,6 +2,8 @@ package ai.philterd.phileas;
 
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Properties;
 
 public class PhileasConfiguration {
@@ -49,6 +51,29 @@ public class PhileasConfiguration {
      */
     public long regexTimeoutMs() {
         return Long.parseLong(getProperty("regex.timeout.ms", "1000"));
+    }
+
+    /**
+     * Whether a file a policy names must be inside one of {@link #policyFilesDirectories()}. Defaults to
+     * {@code false}, so a policy may name any regular file.
+     */
+    public boolean policyFilesRestricted() {
+        return Boolean.parseBoolean(getProperty("policy.files.restricted", "false"));
+    }
+
+    /**
+     * The directories a file a policy names must be inside when {@link #policyFilesRestricted()} is on, from the
+     * comma-separated {@code policy.files.directories}. With the restriction on and no directories, a policy may name
+     * no file.
+     */
+    public List<String> policyFilesDirectories() {
+        return Arrays.stream(getProperty("policy.files.directories", "").split(","))
+                .map(String::strip).filter(directory -> !directory.isEmpty()).toList();
+    }
+
+    /** The largest file, in bytes, a policy may name. Zero or less sets no limit. Defaults to {@code 0}. */
+    public long policyFilesMaxBytes() {
+        return Long.parseLong(getProperty("policy.files.max.bytes", "0"));
     }
 
     private String getProperty(final String property, final String defaultValue) {

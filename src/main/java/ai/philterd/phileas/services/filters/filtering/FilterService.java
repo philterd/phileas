@@ -20,6 +20,7 @@ import ai.philterd.phileas.filters.Filter;
 import ai.philterd.phileas.policy.Ignored;
 import ai.philterd.phileas.policy.Policy;
 import ai.philterd.phileas.services.FilterPolicyLoader;
+import ai.philterd.phileas.services.PolicyFiles;
 import ai.philterd.phileas.services.filters.postfilters.IgnoredPatternsFilter;
 import ai.philterd.phileas.services.filters.postfilters.IgnoredTermsFilter;
 import ai.philterd.phileas.services.filters.postfilters.PostFilter;
@@ -62,6 +63,9 @@ public abstract class FilterService {
     // The regex time budget, so the policy's ignored patterns are bounded as the filters' patterns are.
     private final long regexTimeoutMs;
 
+    // Reads the files of ignored terms the policy names, as the configuration allows.
+    private final PolicyFiles policyFiles;
+
     protected FilterService(final PhileasConfiguration phileasConfiguration,
                             final SecureRandom random,
                             final HttpClient httpClient) {
@@ -70,6 +74,7 @@ public abstract class FilterService {
         this.postFilterCache = new ConcurrentHashMap<>();
         this.filterPolicyLoader = new FilterPolicyLoader(phileasConfiguration, random, httpClient);
         this.regexTimeoutMs = phileasConfiguration.regexTimeoutMs();
+        this.policyFiles = PolicyFiles.of(phileasConfiguration);
 
     }
 
@@ -106,7 +111,7 @@ public abstract class FilterService {
 
             // Make a post-filter for each Ignored item in the list.
             for(final Ignored ignored : policy.getIgnored()) {
-                postFilters.add(new IgnoredTermsFilter(ignored));
+                postFilters.add(new IgnoredTermsFilter(ignored, policyFiles));
             }
 
         }

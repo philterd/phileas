@@ -23,12 +23,12 @@ import ai.philterd.phileas.utils.BloomFilter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.io.File;
 import java.io.IOException;
-import java.nio.charset.Charset;
-import java.nio.file.Files;
 import java.util.HashSet;
 import java.util.Set;
+import ai.philterd.phileas.services.PolicyFiles;
+import java.nio.file.NoSuchFileException;
+import java.util.List;
 
 /**
  * Implementation of {@link PostFilter} that removes identified
@@ -43,6 +43,14 @@ public class IgnoredTermsFilter extends PostFilter {
     private final Ignored ignored;
 
     public IgnoredTermsFilter(final Ignored ignored) throws IOException {
+        this(ignored, PolicyFiles.unrestricted());
+    }
+
+    /**
+     * @param ignored The ignored terms and the files of ignored terms.
+     * @param policyFiles How the files a policy names are read.
+     */
+    public IgnoredTermsFilter(final Ignored ignored, final PolicyFiles policyFiles) throws IOException {
 
         this.ignored = ignored;
 
@@ -50,7 +58,12 @@ public class IgnoredTermsFilter extends PostFilter {
         final Set<String> ignoredTermsFromFiles = new HashSet<>();
 
         for(final String file : ignored.getFiles()) {
-            ignoredTermsFromFiles.addAll(Files.readAllLines(new File(file).toPath(), Charset.defaultCharset()));
+            final List<String> lines = policyFiles.readLines("the ignored files", file);
+            if (lines == null) {
+                // As before: an ignored file that does not exist fails the policy.
+                throw new NoSuchFileException(file);
+            }
+            ignoredTermsFromFiles.addAll(lines);
         }
 
         // Runs of whitespace are compared as a single space, so a term also ignores the same words

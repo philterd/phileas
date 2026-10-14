@@ -15,6 +15,10 @@
  */
 package ai.philterd.phileas.filters;
 
+import ai.philterd.phileas.model.conditions.ConditionSupport;
+import ai.philterd.phileas.model.conditions.InvalidConditionException;
+import ai.philterd.phileas.model.conditions.ParsedCondition;
+import ai.philterd.phileas.model.conditions.ParserListener;
 import ai.philterd.phileas.model.filtering.FilterPattern;
 import ai.philterd.phileas.model.filtering.FilterType;
 import ai.philterd.phileas.model.filtering.Filtered;
@@ -24,19 +28,12 @@ import ai.philterd.phileas.model.filtering.Span;
 import ai.philterd.phileas.policy.Crypto;
 import ai.philterd.phileas.policy.FPE;
 import ai.philterd.phileas.policy.IgnoredPattern;
-import ai.philterd.phileas.model.conditions.ConditionSupport;
-import ai.philterd.phileas.model.conditions.InvalidConditionException;
-import ai.philterd.phileas.model.conditions.ParsedCondition;
-import ai.philterd.phileas.model.conditions.ParserListener;
 import ai.philterd.phileas.policy.InvalidPolicyConditionException;
 import ai.philterd.phileas.policy.Policy;
 import ai.philterd.phileas.policy.filters.Identifier;
-import java.security.SecureRandom;
+import ai.philterd.phileas.services.PolicyFiles;
 import ai.philterd.phileas.services.anonymization.AbstractAnonymizationService;
 import ai.philterd.phileas.services.anonymization.AgeAnonymizationService;
-import ai.philterd.phileas.services.anonymization.VinAnonymizationService;
-import ai.philterd.phileas.services.anonymization.PhoneNumberAnonymizationService;
-import ai.philterd.phileas.services.anonymization.FirstNameAnonymizationService;
 import ai.philterd.phileas.services.anonymization.AlphanumericAnonymizationService;
 import ai.philterd.phileas.services.anonymization.AnonymizationMethod;
 import ai.philterd.phileas.services.anonymization.AnonymizationService;
@@ -48,6 +45,7 @@ import ai.philterd.phileas.services.anonymization.CreditCardAnonymizationService
 import ai.philterd.phileas.services.anonymization.CurrencyAnonymizationService;
 import ai.philterd.phileas.services.anonymization.DateAnonymizationService;
 import ai.philterd.phileas.services.anonymization.EmailAddressAnonymizationService;
+import ai.philterd.phileas.services.anonymization.FirstNameAnonymizationService;
 import ai.philterd.phileas.services.anonymization.HospitalAbbreviationAnonymizationService;
 import ai.philterd.phileas.services.anonymization.HospitalAnonymizationService;
 import ai.philterd.phileas.services.anonymization.IbanCodeAnonymizationService;
@@ -56,25 +54,25 @@ import ai.philterd.phileas.services.anonymization.ItinAnonymizationService;
 import ai.philterd.phileas.services.anonymization.MacAddressAnonymizationService;
 import ai.philterd.phileas.services.anonymization.PassportNumberAnonymizationService;
 import ai.philterd.phileas.services.anonymization.PersonsAnonymizationService;
+import ai.philterd.phileas.services.anonymization.PhoneNumberAnonymizationService;
 import ai.philterd.phileas.services.anonymization.StateAbbreviationAnonymizationService;
 import ai.philterd.phileas.services.anonymization.StateAnonymizationService;
 import ai.philterd.phileas.services.anonymization.StreetAddressAnonymizationService;
 import ai.philterd.phileas.services.anonymization.SurnameAnonymizationService;
 import ai.philterd.phileas.services.anonymization.UrlAnonymizationService;
+import ai.philterd.phileas.services.anonymization.VinAnonymizationService;
 import ai.philterd.phileas.services.anonymization.ZipCodeAnonymizationService;
 import ai.philterd.phileas.services.context.ContextService;
 import ai.philterd.phileas.services.generators.ReplacementGenerator;
 import ai.philterd.phileas.services.strategies.AbstractFilterStrategy;
 import ai.philterd.phileas.utils.CollectionUtils;
+import java.security.SecureRandom;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.io.File;
 import java.io.IOException;
-import java.nio.charset.Charset;
-import java.nio.file.Files;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
@@ -146,6 +144,7 @@ public abstract class Filter {
      * as a suspected ReDoS pattern.
      */
     protected long regexTimeoutMs;
+    protected PolicyFiles policyFiles = PolicyFiles.unrestricted();
 
     /** Opaque label from the policy, used only in logs. */
     protected String id;
@@ -178,6 +177,7 @@ public abstract class Filter {
         this.windowSize = filterConfiguration.getWindowSize();
         this.priority = filterConfiguration.getPriority();
         this.regexTimeoutMs = filterConfiguration.getRegexTimeoutMs();
+        this.policyFiles = filterConfiguration.getPolicyFiles();
         this.id = filterConfiguration.getId();
 
         if(this.ignored == null) {
@@ -193,16 +193,16 @@ public abstract class Filter {
         // Add the terms from the ignored files if there are any.
         if(CollectionUtils.isNotEmpty(filterConfiguration.getIgnoredFiles())) {
             for (final String fileName : filterConfiguration.getIgnoredFiles()) {
-                final File file = new File(fileName);
-                if (file.exists()) {
-                    try {
-                        final List<String> words = Files.readAllLines(file.toPath(), Charset.defaultCharset());
+                // Read through PolicyFiles, which refuses a file the policy may not read.
+                try {
+                    final List<String> words = policyFiles.readLines("the " + filterType.getType() + " filter's ignoredFiles", fileName);
+                    if (words != null) {
                         ignored.addAll(words);
-                    } catch (IOException ex) {
-                        LOGGER.error("Filter {} could not process its file of ignored terms: {}", describe(), fileName, ex);
+                    } else {
+                        LOGGER.error("Filter {} has an ignore list file that does not exist: {}", describe(), fileName);
                     }
-                } else {
-                    LOGGER.error("Filter {} has an ignore list file that does not exist: {}", describe(), fileName);
+                } catch (IOException ex) {
+                    LOGGER.error("Filter {} could not process its file of ignored terms: {}", describe(), fileName, ex);
                 }
             }
         }
@@ -329,15 +329,14 @@ public abstract class Filter {
 
         for(final String fileName : mappingFiles) {
 
-            final File file = new File(fileName);
-
-            if(!file.exists()) {
-                LOGGER.error("Mapping file specified in policy does not exist: {}", fileName);
-                continue;
-            }
-
             try {
-                for(final String line : Files.readAllLines(file.toPath(), Charset.defaultCharset())) {
+                // Read through PolicyFiles, which refuses a file the policy may not read.
+                final List<String> lines = policyFiles.readLines("the " + filterType.getType() + " filter's mappingFiles", fileName);
+                if(lines == null) {
+                    LOGGER.error("Mapping file specified in policy does not exist: {}", fileName);
+                    continue;
+                }
+                for(final String line : lines) {
                     if(line.isEmpty()) {
                         continue;
                     }

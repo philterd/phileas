@@ -15,7 +15,7 @@ Within a `CONTEXT`-scoped strategy (`replacementScope` set to `CONTEXT`), a repe
 The lookup table is built from two sources, with inline `mappings` taking precedence over entries loaded from `mappingFiles`:
 
 * `mappings` is an inline object of key/value pairs.
-* `mappingFiles` is a list of local TSV file paths (one tab-delimited key/value pair per row) merged into the table when the policy is loaded.
+* `mappingFiles` is a list of local TSV file paths (one tab-delimited key/value pair per row) merged into the table when the policy is loaded. Which files a policy may name, and how large, is governed by the `policy.files` [settings](../settings.md).
 
 By default keys are matched case-insensitively. Set `caseSensitive` to `true` to match keys exactly.
 
