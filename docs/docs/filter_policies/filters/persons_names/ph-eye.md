@@ -11,7 +11,7 @@ This filter requires the connection properties for the ph-eye service in a `phEy
 
 | Parameter  | Description                                                       | Default Value             |
 |------------|-------------------------------------------------------------------|---------------------------|
-| `endpoint` | The ph-eye service endpoint.                                      | `http://localhost:18080` |
+| `endpoint` | The ph-eye service endpoint.                                      | The `PHEYE_ENDPOINT` environment variable, or `http://philter-ph-eye-1:5000/` when it is not set. |
 | `timeout`  | The ph-eye service connection timeout in seconds.                 | `600`                     |
 | `labels`   | A comma-separated list of labels supported by the ph-eye service. The default `ph-eye-pii-en-*` models are trained on the `name` label; both `name` and `Person` are recognized as person names. | `name`                  |
 
@@ -21,7 +21,7 @@ This filter requires the connection properties for the ph-eye service in a `phEy
 |-------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------|
 | `removePunctuation`     | When set to true, punctuation will be removed prior to analysis.                                                                                                                                             | `false`                                                  |
 | `phEyeFilterStrategies` | A list of filter strategies.                                                                                                                                                                                 | None                                                     |
-| `bearerToken`           | A bearer token for the Ph-Eye service.                                                                                                                                                                       | None                                                     |
+| `bearerToken`           | A bearer token for the Ph-Eye service, sent to `endpoint` in an `Authorization` header. When not set, the `PHEYE_BEARER_TOKEN` environment variable is used, but only when `endpoint` is left out or is the same as `PHEYE_ENDPOINT` (or its default when not set), ignoring a trailing slash. A policy that names a different endpoint sends no token unless it sets `bearerToken`. | None                                                     |
 | `modelPath`             | Path to a local GLiNER model directory for on-device inference. When set, detection runs locally instead of calling the remote `endpoint`. See [Local inference](#local-inference) below.                     | None                                                     |
 | `threshold`             | For local inference, the minimum confidence for a detection: a span is kept only when its score is above this value. Ignored by the remote service. See [Local inference](#local-inference) below.          | `0.5`                                                    |
 | `enabled`               | When set to false, the filter will be disabled and not applied                                                                                                                                               | `true`                                                   |

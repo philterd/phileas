@@ -2,19 +2,24 @@ package ai.philterd.phileas.policy.filters.pheye;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.Collection;
 import java.util.Optional;
 
 public class PhEyeConfiguration {
 
+    private static final String DEFAULT_ENDPOINT = "http://philter-ph-eye-1:5000/";
+
     @SerializedName("endpoint")
     @Expose
-    protected String endpoint = Optional.ofNullable(System.getenv("PHEYE_ENDPOINT")).orElse("http://philter-ph-eye-1:5000/");
+    protected String endpoint = defaultEndpoint();
 
+    // Left null unless the policy sets it. getBearerToken() falls back to PHEYE_BEARER_TOKEN
+    // only for the endpoint that token was issued for (issue #444).
     @SerializedName("bearerToken")
     @Expose
-    protected String bearerToken = System.getenv("PHEYE_BEARER_TOKEN");
+    protected String bearerToken;
 
     @SerializedName("timeout")
     @Expose
@@ -72,8 +77,25 @@ public class PhEyeConfiguration {
         this.labels = labels;
     }
 
+    /**
+     * Gets the bearer token to send to the endpoint. A token the policy sets is always used.
+     * Otherwise the {@code PHEYE_BEARER_TOKEN} environment variable is used, but only when the
+     * endpoint is the default one ({@code PHEYE_ENDPOINT}, ignoring a trailing slash), so the
+     * deployment's token is never sent to an endpoint a policy names.
+     * @return The bearer token, or <code>null</code> if none applies.
+     */
     public String getBearerToken() {
-        return bearerToken;
+
+        if (bearerToken != null) {
+            return bearerToken;
+        }
+
+        if (endpoint != null && StringUtils.stripEnd(endpoint, "/").equals(StringUtils.stripEnd(defaultEndpoint(), "/"))) {
+            return System.getenv("PHEYE_BEARER_TOKEN");
+        }
+
+        return null;
+
     }
 
     public void setBearerToken(String bearerToken) {
@@ -94,6 +116,10 @@ public class PhEyeConfiguration {
 
     public void setThreshold(double threshold) {
         this.threshold = threshold;
+    }
+
+    private static String defaultEndpoint() {
+        return Optional.ofNullable(System.getenv("PHEYE_ENDPOINT")).orElse(DEFAULT_ENDPOINT);
     }
 
 }
