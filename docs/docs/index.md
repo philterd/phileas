@@ -89,7 +89,7 @@ for (String text : texts) {
 
 #### Reusing one warm instance across requests with different context and vector services
 
-The constructor above binds a single `ContextService` and `VectorService` to the instance. When each request needs its own context or vector service (for example a server that scopes the context store per user, or per-request entity-type disambiguation), build the service once with the service-less constructor and pass the per-request `ContextService` and `VectorService` to `filter()`. One warm instance then serves every request, keeping its filter and post-filter caches populated rather than rebuilding them on each request. The instance is safe to call concurrently; supply a thread-safe `Random` (the default is `SecureRandom`) when sharing it across threads.
+The constructor above binds a single `ContextService` and `VectorService` to the instance. When each request needs its own context or vector service (for example a server that scopes the context store per user, or per-request entity-type disambiguation), build the service once with the service-less constructor and pass the per-request `ContextService` and `VectorService` to `filter()`. One warm instance then serves every request, keeping its filter and post-filter caches populated rather than rebuilding them on each request. Those caches are keyed by a SHA-256 hash of the policy, so one instance can serve policies written by different users without one policy being filtered with another's filters. The instance is safe to call concurrently; supply a thread-safe `Random` (the default is `SecureRandom`) when sharing it across threads.
 
 ```
 // Build once and share. No context or vector service is bound to the instance.

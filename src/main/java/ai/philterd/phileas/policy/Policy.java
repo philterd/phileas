@@ -27,7 +27,10 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Collections;
+import java.util.HexFormat;
 import java.util.List;
 import java.util.Map;
 
@@ -107,34 +110,38 @@ public class Policy {
     private transient volatile String cacheKey;
 
     /**
-     * Returns a stable cache key for this policy: an FNV-1a 64-bit hash of its JSON form, computed
-     * once and memoized. Reusing one policy across many filter() calls (for example a per-row Spark or
-     * Kafka UDF) then avoids re-serializing and re-hashing it on every call.
+     * Returns a stable cache key for this policy: a SHA-256 hash of its JSON form, computed once and
+     * memoized. Reusing one policy across many filter() calls (for example a per-row Spark or Kafka UDF)
+     * then avoids re-serializing and re-hashing it on every call.
+     *
+     * <p>The key is a cryptographic hash because a filter cache can be shared by policies from different
+     * authors, and two policies with the same key share one set of built filters, with the dictionaries,
+     * keys and settings of whichever was built first. A key that could be made to collide would let one
+     * policy be filtered with another's filters.
      *
      * <p>A policy is treated as immutable once it has been used for filtering: the key is computed on
      * first use and is not recomputed for that instance, so mutating the policy afterwards (at any
      * level, top-level or nested) does not change its key and is not supported. To change a policy,
      * build a new one.
-     * @return The memoized FNV-1a 64-bit hex key for this policy.
+     * @return The memoized SHA-256 hex key for this policy.
      */
     public String getCacheKey() {
         String key = cacheKey;
         if (key == null) {
-            key = fnv1a64(CACHE_KEY_GSON.toJson(this));
+            key = sha256(CACHE_KEY_GSON.toJson(this));
             cacheKey = key;
         }
         return key;
     }
 
-    private static String fnv1a64(final String input) {
-        final long fnvOffsetBasis = 0xcbf29ce484222325L;
-        final long fnvPrime = 0x100000001b3L;
-        long hash = fnvOffsetBasis;
-        for (final byte b : input.getBytes(StandardCharsets.UTF_8)) {
-            hash ^= (b & 0xff);
-            hash *= fnvPrime;
+    private static String sha256(final String input) {
+        try {
+            return HexFormat.of().formatHex(MessageDigest.getInstance("SHA-256")
+                    .digest(input.getBytes(StandardCharsets.UTF_8)));
+        } catch (final NoSuchAlgorithmException ex) {
+            // Every Java platform is required to provide SHA-256.
+            throw new IllegalStateException(ex);
         }
-        return Long.toHexString(hash);
     }
 
     @Override

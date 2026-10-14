@@ -1,8 +1,12 @@
 package ai.philterd.phileas.policy;
 
+import com.google.gson.Gson;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.util.HexFormat;
 import java.util.List;
 
 /**
@@ -30,6 +34,18 @@ public class PolicyCacheKeyTest {
     @Test
     public void sameContentProducesSameKey() {
         Assertions.assertEquals(new Policy().getCacheKey(), new Policy().getCacheKey());
+    }
+
+    @Test
+    public void keyIsTheSha256OfThePolicyJson() throws Exception {
+        // A filter cache can hold policies from different authors, so the key must be one that cannot be
+        // made to collide: a policy given another's key would be filtered with the other's filters.
+        final Policy policy = new Policy();
+        policy.setIgnored(List.of(new Ignored()));
+        final String expected = HexFormat.of().formatHex(MessageDigest.getInstance("SHA-256")
+                .digest(new Gson().toJson(policy).getBytes(StandardCharsets.UTF_8)));
+        Assertions.assertEquals(expected, policy.getCacheKey());
+        Assertions.assertEquals(64, policy.getCacheKey().length());
     }
 
 }
