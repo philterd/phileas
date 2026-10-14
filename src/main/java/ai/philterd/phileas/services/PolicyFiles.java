@@ -24,7 +24,9 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
+import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
+import java.nio.charset.CodingErrorAction;
 import java.nio.file.Files;
 import java.nio.file.LinkOption;
 import java.nio.file.NoSuchFileException;
@@ -45,6 +47,9 @@ public final class PolicyFiles {
     private static final Logger LOGGER = LogManager.getLogger(PolicyFiles.class);
 
     private static final PolicyFiles UNRESTRICTED = new PolicyFiles(false, List.of(), 0);
+
+    /** The longest array the JVM reliably allocates, a little under {@code Integer.MAX_VALUE}. */
+    private static final long MAX_ARRAY_LENGTH = Integer.MAX_VALUE - 8L;
 
     private final boolean restricted;
     private final List<Path> directories;
@@ -133,18 +138,28 @@ public final class PolicyFiles {
 
         final byte[] bytes;
         try (InputStream in = Files.newInputStream(real)) {
-            if (maxBytes > 0) {
-                bytes = in.readNBytes((int) Math.min(Integer.MAX_VALUE - 8L, maxBytes + 1));
+            if (maxBytes > 0 && maxBytes < MAX_ARRAY_LENGTH) {
+                // One byte past the limit, so a file that grew after the check is still refused.
+                bytes = in.readNBytes((int) maxBytes + 1);
                 if (bytes.length > maxBytes) {
                     throw tooLarge(field, path);
                 }
             } else {
+                // No limit, or one larger than an array can hold: read it all, as Files.readAllLines does.
                 bytes = in.readAllBytes();
             }
         }
 
+        // Decoded strictly, as Files.readAllLines does, so a file that is not valid in the charset fails with a
+        // CharacterCodingException rather than loading with replacement characters.
+        final String text = Charset.defaultCharset().newDecoder()
+                .onMalformedInput(CodingErrorAction.REPORT)
+                .onUnmappableCharacter(CodingErrorAction.REPORT)
+                .decode(ByteBuffer.wrap(bytes))
+                .toString();
+
         final List<String> lines = new ArrayList<>();
-        try (BufferedReader reader = new BufferedReader(new StringReader(new String(bytes, Charset.defaultCharset())))) {
+        try (BufferedReader reader = new BufferedReader(new StringReader(text))) {
             for (String line = reader.readLine(); line != null; line = reader.readLine()) {
                 lines.add(line);
             }

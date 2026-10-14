@@ -166,4 +166,12 @@ public class PolicyFilesTest {
         Assertions.assertEquals("SSN SSN-ONE", service.filter(mapped, "context", "SSN 123-45-6789").getFilteredText());
     }
 
+    @Test
+    public void aFileThatIsNotValidTextFailsAsBefore() throws Exception {
+        // Files.readAllLines failed on bytes not valid in the charset, rather than replacing them.
+        final Path invalid = Files.write(allowed.resolve("invalid.txt"), new byte[]{'o', 'k', '\n', (byte) 0xC3, (byte) 0x28, '\n'});
+        org.junit.jupiter.api.Assumptions.assumeTrue("UTF-8".equals(java.nio.charset.Charset.defaultCharset().name()));
+        Assertions.assertThrows(java.nio.charset.CharacterCodingException.class, () -> restricted(0).readLines("the field", invalid.toString()));
+    }
+
 }
