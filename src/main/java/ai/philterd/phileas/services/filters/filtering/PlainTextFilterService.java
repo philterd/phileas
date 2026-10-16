@@ -160,14 +160,16 @@ public class PlainTextFilterService extends TextFilterService {
 
         final TextFilterResult textFilterResult;
 
-        // Do we need to split the input text due to its size?
-        if (policy.getConfig().getSplitting().isEnabled() && input.length() >= policy.getConfig().getSplitting().getThreshold()) {
+        // Resolve the splitter whenever splitting is enabled, not only when the input is large enough
+        // to split, so an unsupported method fails on the first document rather than the first large one.
+        final SplitService splitService = policy.getConfig().getSplitting().isEnabled()
+                ? SplitFactory.getSplitService(
+                        policy.getConfig().getSplitting().getMethod(),
+                        policy.getConfig().getSplitting().getThreshold())
+                : null;
 
-            // Get the splitter to use from the policy.
-            final SplitService splitService = SplitFactory.getSplitService(
-                    policy.getConfig().getSplitting().getMethod(),
-                    policy.getConfig().getSplitting().getThreshold()
-            );
+        // Do we need to split the input text due to its size?
+        if (splitService != null && input.length() >= policy.getConfig().getSplitting().getThreshold()) {
 
             final int overlap = policy.getConfig().getSplitting().getOverlap();
 
