@@ -21,6 +21,8 @@ public class PdfRedactionOptions {
     private float compressionQuality = 1.0F;
     private float scale = 1.0F;
     private boolean preserveUnredactedPages = false;
+    private int maxPages = PdfLimits.DEFAULT_MAX_PAGES;
+    private long maxPixelsPerPage = PdfLimits.DEFAULT_MAX_PIXELS_PER_PAGE;
 
     public PdfRedactionOptions() {
 
@@ -55,6 +57,22 @@ public class PdfRedactionOptions {
 
     public void setScale(float scale) {
         this.scale = scale;
+    }
+
+    public int getMaxPages() {
+        return maxPages;
+    }
+
+    public void setMaxPages(int maxPages) {
+        this.maxPages = maxPages;
+    }
+
+    public long getMaxPixelsPerPage() {
+        return maxPixelsPerPage;
+    }
+
+    public void setMaxPixelsPerPage(long maxPixelsPerPage) {
+        this.maxPixelsPerPage = maxPixelsPerPage;
     }
 
     public boolean getPreserveUnredactedPages() { return preserveUnredactedPages; }

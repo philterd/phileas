@@ -37,16 +37,30 @@ public class PdfTextExtractor extends PDFTextStripper implements TextExtractor {
     private static final Logger LOGGER = LogManager.getLogger(PdfTextExtractor.class);
 
     private final List<PdfLine> lines;
+    private final int maxPages;
     private int pageNumber;
 
     public PdfTextExtractor() {
+        this(0);
+    }
+
+    /** @param maxPages the most pages a document may have; zero or less sets no limit. */
+    public PdfTextExtractor(final int maxPages) {
         this.lines = new LinkedList<>();
+        this.maxPages = maxPages;
     }
 
     @Override
     public List<PdfLine> getLines(final byte[] document) throws IOException {
 
         final PDDocument pdDocument = Loader.loadPDF(document);
+
+        try {
+            PdfLimits.checkPages(pdDocument, maxPages);
+        } catch (final PdfLimitExceededException e) {
+            pdDocument.close();
+            throw e;
+        }
 
         this.setSortByPosition(true);
         this.setStartPage(0);

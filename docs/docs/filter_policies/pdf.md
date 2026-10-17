@@ -12,7 +12,7 @@ The available options are:
 | `replacementMaxFontSize`   | `float`   | `12`        | The maximum font size for the replacement text. Best efforts will be made to fit the replacement text within the redaction box    |
 | `replacementFontColor`     | `string`  | `white`     | The font color for the replacement. Takes the same values as `redactionColor`                                                     |
 | `scaling`                  | `float`   | `1`         | The scaling factor to use when generating pdf image pages                                                                         |
-| `dpi`                      | `int`     | `150`       | The DPI resolution for the  output pdf image page                                                                                 |
+| `dpi`                      | `int`     | `150`       | The DPI resolution for the output pdf image page. Must be greater than zero. A page that would render to more pixels than the `pdf.max.pixels.per.page` [setting](../settings.md#advanced-settings) allows is refused |
 | `compressionQuality`       | `float`   | `1`         | Sets the compression quality to a value between 0 and 1. See javax.imageio.ImageWriteParam for more details                       |
 | `preserveUnredactedPages`  | `boolean` | `false`     | If `true`, a page with nothing redacted on it (no redacted value and no bounding box) is copied to the output unchanged, with its text. Every other page is rasterized. |
 

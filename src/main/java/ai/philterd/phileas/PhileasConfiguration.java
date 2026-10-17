@@ -1,5 +1,6 @@
 package ai.philterd.phileas;
 
+import ai.philterd.phileas.services.pdf.PdfLimits;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Arrays;
@@ -74,6 +75,22 @@ public class PhileasConfiguration {
     /** The largest file, in bytes, a policy may name. Zero or less sets no limit. Defaults to {@code 0}. */
     public long policyFilesMaxBytes() {
         return Long.parseLong(getProperty("policy.files.max.bytes", "0"));
+    }
+
+    /**
+     * The most pages a PDF may have to be redacted. Zero or less sets no limit. Defaults to
+     * {@link PdfLimits#DEFAULT_MAX_PAGES}.
+     */
+    public int pdfMaxPages() {
+        return Integer.parseInt(getProperty("pdf.max.pages", String.valueOf(PdfLimits.DEFAULT_MAX_PAGES)));
+    }
+
+    /**
+     * The most pixels one PDF page may render to at the policy's DPI. Zero or less sets no limit. Defaults to
+     * {@link PdfLimits#DEFAULT_MAX_PIXELS_PER_PAGE}.
+     */
+    public long pdfMaxPixelsPerPage() {
+        return Long.parseLong(getProperty("pdf.max.pixels.per.page", String.valueOf(PdfLimits.DEFAULT_MAX_PIXELS_PER_PAGE)));
     }
 
     private String getProperty(final String property, final String defaultValue) {

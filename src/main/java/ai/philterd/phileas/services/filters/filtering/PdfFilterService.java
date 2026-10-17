@@ -56,6 +56,8 @@ public class PdfFilterService extends BinaryFilterService {
 
     private final DocumentProcessor unstructuredDocumentProcessor;
     private final TokenCounter tokenCounter;
+    private final int maxPages;
+    private final long maxPixelsPerPage;
 
     // Bound at construction for the no-service overload; null for a warm, per-call instance.
     private final ContextService defaultContextService;
@@ -79,6 +81,9 @@ public class PdfFilterService extends BinaryFilterService {
         super(phileasConfiguration, random, httpClient);
 
         LOGGER.info("Initializing PDF filter service.");
+
+        this.maxPages = phileasConfiguration.pdfMaxPages();
+        this.maxPixelsPerPage = phileasConfiguration.pdfMaxPixelsPerPage();
 
         this.defaultContextService = contextService;
         this.defaultVectorService = vectorService;
@@ -108,6 +113,9 @@ public class PdfFilterService extends BinaryFilterService {
         super(phileasConfiguration, random, httpClient);
 
         LOGGER.info("Initializing PDF filter service.");
+
+        this.maxPages = phileasConfiguration.pdfMaxPages();
+        this.maxPixelsPerPage = phileasConfiguration.pdfMaxPixelsPerPage();
 
         this.defaultContextService = null;
         this.defaultVectorService = null;
@@ -146,7 +154,7 @@ public class PdfFilterService extends BinaryFilterService {
         final List<IncrementalRedaction> incrementalRedactions = new ArrayList<>();
 
         // Get the lines of text from the PDF file.
-        final PdfTextExtractor pdfTextExtractor = new PdfTextExtractor();
+        final PdfTextExtractor pdfTextExtractor = new PdfTextExtractor(maxPages);
         final List<PdfLine> pdfLines = pdfTextExtractor.getLines(input);
 
         // A list of identified spans whose start/end are relative to the whole document.
@@ -205,13 +213,7 @@ public class PdfFilterService extends BinaryFilterService {
 
         // Load the PDF config from the policy and apply to the PdfRedactionOptions that are used when
         // generating the new PDF document from the result of the redaction
-        final Pdf policyPdfConfig = policy.getConfig().getPdf();
-        final PdfRedactionOptions pdfRedactionOptions = new PdfRedactionOptions(
-                policyPdfConfig.getDpi(),
-                policyPdfConfig.getCompressionQuality(),
-                policyPdfConfig.getScale(),
-                policyPdfConfig.getPreserveUnredactedPages()
-        );
+        final PdfRedactionOptions pdfRedactionOptions = redactionOptions(policy.getConfig().getPdf());
 
         final PdfRedactor redacter = new PdfRedactor(policy, spansList, pdfRedactionOptions);
         final byte[] redacted = redacter.process(input, outputMimeType);
@@ -223,18 +225,24 @@ public class PdfFilterService extends BinaryFilterService {
 
     }
 
-    @Override
-    public byte[] apply(final Policy policy, final byte[] input, final List<Span> spans, final MimeType outputMimeType) throws Exception {
-
-        // Load the PDF config from the policy and apply to the PdfRedactionOptions that are used when
-        // generating the new PDF document from the result of the redaction
-        final Pdf policyPdfConfig = policy.getConfig().getPdf();
+    private PdfRedactionOptions redactionOptions(final Pdf policyPdfConfig) {
         final PdfRedactionOptions pdfRedactionOptions = new PdfRedactionOptions(
                 policyPdfConfig.getDpi(),
                 policyPdfConfig.getCompressionQuality(),
                 policyPdfConfig.getScale(),
                 policyPdfConfig.getPreserveUnredactedPages()
         );
+        pdfRedactionOptions.setMaxPages(maxPages);
+        pdfRedactionOptions.setMaxPixelsPerPage(maxPixelsPerPage);
+        return pdfRedactionOptions;
+    }
+
+    @Override
+    public byte[] apply(final Policy policy, final byte[] input, final List<Span> spans, final MimeType outputMimeType) throws Exception {
+
+        // Load the PDF config from the policy and apply to the PdfRedactionOptions that are used when
+        // generating the new PDF document from the result of the redaction
+        final PdfRedactionOptions pdfRedactionOptions = redactionOptions(policy.getConfig().getPdf());
 
         // Redact those terms in the document along with any bounding boxes identified in the policy.
         final PdfRedactor redacter = new PdfRedactor(policy, spans, pdfRedactionOptions);

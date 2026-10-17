@@ -119,6 +119,14 @@ public class PdfRedactor extends PDFTextStripper {
     public byte[] process(final byte[] document, final MimeType outputMimeType) throws IOException {
         final PDDocument pdDocument = Loader.loadPDF(document);
 
+        try {
+            PdfLimits.checkPages(pdDocument, pdfRedactionOptions.getMaxPages());
+            PdfLimits.checkPixels(pdDocument, pdfRedactionOptions.getDpi(), pdfRedactionOptions.getMaxPixelsPerPage());
+        } catch (final PdfLimitExceededException e) {
+            pdDocument.close();
+            throw e;
+        }
+
         setSortByPosition(true);
         setStartPage(0);
         setEndPage(pdDocument.getNumberOfPages());
