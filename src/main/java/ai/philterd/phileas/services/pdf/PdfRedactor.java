@@ -122,6 +122,7 @@ public class PdfRedactor extends PDFTextStripper {
         try {
             PdfLimits.checkPages(pdDocument, pdfRedactionOptions.getMaxPages());
             PdfLimits.checkPixels(pdDocument, pdfRedactionOptions.getDpi(), pdfRedactionOptions.getMaxPixelsPerPage());
+            PdfLimits.checkContent(pdDocument, pdfRedactionOptions.getMaxPixelsPerPage(), pdfRedactionOptions.getMaxStreamBytes());
         } catch (final PdfLimitExceededException e) {
             pdDocument.close();
             throw e;

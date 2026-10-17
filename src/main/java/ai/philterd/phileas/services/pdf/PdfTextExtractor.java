@@ -38,6 +38,8 @@ public class PdfTextExtractor extends PDFTextStripper implements TextExtractor {
 
     private final List<PdfLine> lines;
     private final int maxPages;
+    private final long maxPixelsPerPage;
+    private final long maxStreamBytes;
     private int pageNumber;
 
     public PdfTextExtractor() {
@@ -46,8 +48,19 @@ public class PdfTextExtractor extends PDFTextStripper implements TextExtractor {
 
     /** @param maxPages the most pages a document may have; zero or less sets no limit. */
     public PdfTextExtractor(final int maxPages) {
+        this(maxPages, 0, 0);
+    }
+
+    /**
+     * @param maxPages the most pages a document may have; zero or less sets no limit.
+     * @param maxPixelsPerPage the largest image a page may use, in pixels; zero or less sets no limit.
+     * @param maxStreamBytes the most bytes a compressed stream may decompress to; zero or less sets no limit.
+     */
+    public PdfTextExtractor(final int maxPages, final long maxPixelsPerPage, final long maxStreamBytes) {
         this.lines = new LinkedList<>();
         this.maxPages = maxPages;
+        this.maxPixelsPerPage = maxPixelsPerPage;
+        this.maxStreamBytes = maxStreamBytes;
     }
 
     @Override
@@ -57,6 +70,7 @@ public class PdfTextExtractor extends PDFTextStripper implements TextExtractor {
 
         try {
             PdfLimits.checkPages(pdDocument, maxPages);
+            PdfLimits.checkContent(pdDocument, maxPixelsPerPage, maxStreamBytes);
         } catch (final PdfLimitExceededException e) {
             pdDocument.close();
             throw e;

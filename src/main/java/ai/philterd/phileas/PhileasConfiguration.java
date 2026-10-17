@@ -93,6 +93,14 @@ public class PhileasConfiguration {
         return Long.parseLong(getProperty("pdf.max.pixels.per.page", String.valueOf(PdfLimits.DEFAULT_MAX_PIXELS_PER_PAGE)));
     }
 
+    /**
+     * The most bytes one Flate-compressed stream a PDF page uses may decompress to. Zero or less sets no limit.
+     * Defaults to {@link PdfLimits#DEFAULT_MAX_STREAM_BYTES}.
+     */
+    public long pdfMaxStreamBytes() {
+        return Long.parseLong(getProperty("pdf.max.stream.bytes", String.valueOf(PdfLimits.DEFAULT_MAX_STREAM_BYTES)));
+    }
+
     private String getProperty(final String property, final String defaultValue) {
 
         final String environmentVariableValue = getEnvironmentVariable(property);

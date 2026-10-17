@@ -23,6 +23,7 @@ public class PdfRedactionOptions {
     private boolean preserveUnredactedPages = false;
     private int maxPages = PdfLimits.DEFAULT_MAX_PAGES;
     private long maxPixelsPerPage = PdfLimits.DEFAULT_MAX_PIXELS_PER_PAGE;
+    private long maxStreamBytes = PdfLimits.DEFAULT_MAX_STREAM_BYTES;
 
     public PdfRedactionOptions() {
 
@@ -73,6 +74,14 @@ public class PdfRedactionOptions {
 
     public void setMaxPixelsPerPage(long maxPixelsPerPage) {
         this.maxPixelsPerPage = maxPixelsPerPage;
+    }
+
+    public long getMaxStreamBytes() {
+        return maxStreamBytes;
+    }
+
+    public void setMaxStreamBytes(long maxStreamBytes) {
+        this.maxStreamBytes = maxStreamBytes;
     }
 
     public boolean getPreserveUnredactedPages() { return preserveUnredactedPages; }

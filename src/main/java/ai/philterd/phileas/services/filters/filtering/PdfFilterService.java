@@ -58,6 +58,7 @@ public class PdfFilterService extends BinaryFilterService {
     private final TokenCounter tokenCounter;
     private final int maxPages;
     private final long maxPixelsPerPage;
+    private final long maxStreamBytes;
 
     // Bound at construction for the no-service overload; null for a warm, per-call instance.
     private final ContextService defaultContextService;
@@ -84,6 +85,7 @@ public class PdfFilterService extends BinaryFilterService {
 
         this.maxPages = phileasConfiguration.pdfMaxPages();
         this.maxPixelsPerPage = phileasConfiguration.pdfMaxPixelsPerPage();
+        this.maxStreamBytes = phileasConfiguration.pdfMaxStreamBytes();
 
         this.defaultContextService = contextService;
         this.defaultVectorService = vectorService;
@@ -116,6 +118,7 @@ public class PdfFilterService extends BinaryFilterService {
 
         this.maxPages = phileasConfiguration.pdfMaxPages();
         this.maxPixelsPerPage = phileasConfiguration.pdfMaxPixelsPerPage();
+        this.maxStreamBytes = phileasConfiguration.pdfMaxStreamBytes();
 
         this.defaultContextService = null;
         this.defaultVectorService = null;
@@ -154,7 +157,7 @@ public class PdfFilterService extends BinaryFilterService {
         final List<IncrementalRedaction> incrementalRedactions = new ArrayList<>();
 
         // Get the lines of text from the PDF file.
-        final PdfTextExtractor pdfTextExtractor = new PdfTextExtractor(maxPages);
+        final PdfTextExtractor pdfTextExtractor = new PdfTextExtractor(maxPages, maxPixelsPerPage, maxStreamBytes);
         final List<PdfLine> pdfLines = pdfTextExtractor.getLines(input);
 
         // A list of identified spans whose start/end are relative to the whole document.
@@ -234,6 +237,7 @@ public class PdfFilterService extends BinaryFilterService {
         );
         pdfRedactionOptions.setMaxPages(maxPages);
         pdfRedactionOptions.setMaxPixelsPerPage(maxPixelsPerPage);
+        pdfRedactionOptions.setMaxStreamBytes(maxStreamBytes);
         return pdfRedactionOptions;
     }
 
