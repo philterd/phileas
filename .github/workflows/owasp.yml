@@ -1,27 +1,46 @@
 name: owasp
-on: [workflow_dispatch]
+on:
+  schedule:
+    - cron: '20 5 * * *'
+  workflow_dispatch:
 jobs:
-  build:
+  dependency-check:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      packages: write      
     steps:
-      - uses: actions/checkout@v3
-        with:
-          lfs: true          
-      - name: Cache Maven packages
-        uses: actions/cache@v4
-        with:
-          path: ~/.m2
-          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-          restore-keys: ${{ runner.os }}-m2
+      - uses: actions/checkout@v7
       - name: Set up JDK 25
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           java-version: '25'
-          distribution: 'temurin'
-          architecture: x64
+          distribution: temurin
           cache: maven
-      - name: Build and Test
-        run: mvn --batch-mode --update-snapshots package -Powasp -DnvdApiKey=${{ secrets.NVD_API_KEY }}
+      # The NVD data, outside ~/.m2 so the Maven cache stays small. A new key each run saves the
+      # updated data, so the next run downloads only what changed since.
+      - name: Restore the NVD data
+        uses: actions/cache/restore@v6
+        with:
+          path: ~/dependency-check-data
+          key: nvd-${{ github.run_id }}
+          restore-keys: nvd-
+      # check runs in the verify phase, so package would skip it.
+      - name: Check dependencies
+        run: |
+          if [ -z "$NVD_API_KEY" ]; then echo "::error::The NVD_API_KEY secret is not set."; exit 1; fi
+          mvn --batch-mode --update-snapshots verify -Powasp -DskipTests -DnvdApiKey="$NVD_API_KEY" -DdataDirectory="$HOME/dependency-check-data"
+        env:
+          NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
+      - name: Save the NVD data
+        if: always()
+        uses: actions/cache/save@v6
+        with:
+          path: ~/dependency-check-data
+          key: nvd-${{ github.run_id }}
+      - name: Upload the report
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: dependency-check-report
+          path: target/dependency-check-report.*
+          if-no-files-found: ignore
