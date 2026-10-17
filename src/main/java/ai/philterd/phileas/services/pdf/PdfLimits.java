@@ -60,9 +60,10 @@ public final class PdfLimits {
      * height it declares, or a Flate-compressed stream that decompresses to more than {@code maxStreamBytes}. Both are
      * checked without decoding into memory, before the document is read or rendered, so a small file cannot make
      * PDFBox allocate far more than its size. Zero or less sets no limit. Covers every object each page reaches,
-     * including content streams, images and forms nested in forms, fonts, and annotation appearances. Not covered:
-     * images inline in a content stream, streams with more than one filter, and a JPEG whose image data is larger
-     * than the size its dictionary declares.
+     * including content streams, images and forms nested in forms, fonts, and annotation appearances. Only streams
+     * compressed with Flate alone are inflated. Not covered: streams compressed with LZW or RunLength, or with more
+     * than one filter; images inline in a content stream; a JPEG whose image data is larger than the size its
+     * dictionary declares; and compressed object streams, which PDFBox decodes while parsing, before this runs.
      */
     public static void checkContent(final PDDocument document, final long maxPixelsPerPage, final long maxStreamBytes) {
 
