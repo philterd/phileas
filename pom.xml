@@ -61,7 +61,7 @@
         <maven.failsafe.version>3.5.4</maven.failsafe.version>
         <maven.surefire.version>3.5.4</maven.surefire.version>
         <mockito.version>5.23.0</mockito.version>
-        <pdfbox.version>3.0.7</pdfbox.version>
+        <pdfbox.version>3.0.8</pdfbox.version>
         <phisql.version>1.5.0</phisql.version>
     </properties>
     <repositories>
