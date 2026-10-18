@@ -137,3 +137,6 @@ at least twice the longest span the model reports, so a name at a window's edge 
 window. No policy setting is needed. A policy's [text splitting](../../filter_policies.md#splitting-large-documents) is separate
 and still applies: a PhEye filter divides each piece it receives the same way.
 
+When the PhEye service cannot be reached, or answers with an error status, filtering throws
+`PhEyeUnavailableException`. Its `getEndpoint()` names the service; its message does not, so it can be
+shown to a caller.

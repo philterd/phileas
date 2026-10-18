@@ -120,18 +120,27 @@ public class RemotePhEyeDetector implements PhEyeDetector {
                 EntityUtils.consume(response.getEntity());
 
                 // The request to ph-eye was not successful.
-                LOGGER.error("PhEye request failed with code {}", response.getCode());
-                throw new IOException("Unable to process document. Received error response from ph-eye.");
+                LOGGER.error("PhEye request to {} failed with code {}", phEyeConfiguration.getEndpoint(), response.getCode());
+                throw new PhEyeUnavailableException("The PhEye service answered with status " + response.getCode() + ".",
+                        phEyeConfiguration.getEndpoint(), null);
 
             }
 
         };
 
-        final String responseBody = httpClient.execute(httpPost, responseHandler);
+        final String responseBody;
+        try {
+            responseBody = httpClient.execute(httpPost, responseHandler);
+        } catch (final PhEyeUnavailableException e) {
+            throw e;
+        } catch (final IOException e) {
+            LOGGER.error("Could not reach the PhEye service at {}: {}", phEyeConfiguration.getEndpoint(), e.toString());
+            throw new PhEyeUnavailableException("The PhEye service could not be reached.", phEyeConfiguration.getEndpoint(), e);
+        }
 
         if (responseBody == null) {
             // We received null back which is not expected.
-            throw new IOException("Unable to process document. Received error response from ph-eye.");
+            throw new PhEyeUnavailableException("The PhEye service answered with no body.", phEyeConfiguration.getEndpoint(), null);
         }
 
         final Type listType = new TypeToken<ArrayList<PhEyeSpan>>() {}.getType();
