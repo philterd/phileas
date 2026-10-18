@@ -37,6 +37,14 @@ public class PolicyCacheKeyTest {
     }
 
     @Test
+    public void sameJsonParsedTwiceProducesSameKey() {
+        // A caller that parses a stored policy per request must hit the filter cache every time.
+        final String json = "{\"identifiers\":{\"ssn\":{\"ssnFilterStrategies\":[{\"strategy\":\"REDACT\"}]}}}";
+        final Gson gson = new Gson();
+        Assertions.assertEquals(gson.fromJson(json, Policy.class).getCacheKey(), gson.fromJson(json, Policy.class).getCacheKey());
+    }
+
+    @Test
     public void keyIsTheSha256OfThePolicyJson() throws Exception {
         // A filter cache can hold policies from different authors, so the key must be one that cannot be
         // made to collide: a policy given another's key would be filtered with the other's filters.

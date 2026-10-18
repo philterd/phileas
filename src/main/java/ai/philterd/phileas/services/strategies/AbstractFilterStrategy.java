@@ -38,7 +38,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
-import java.util.UUID;
 import java.util.regex.Pattern;
 
 /** Base for filter strategies: produces the replacement for a detected token. */
@@ -105,7 +104,8 @@ public abstract class AbstractFilterStrategy {
 
     @SerializedName("id")
     @Expose
-    protected String id = UUID.randomUUID().toString();
+    // No generated default: a random one would give each parse of the same policy a different cache key.
+    protected String id;
 
     @SerializedName("strategy")
     @Expose
