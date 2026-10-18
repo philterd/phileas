@@ -127,8 +127,12 @@ so a name anywhere in the text is examined. Words are counted as the model count
 punctuation mark is a word. Text that fits is sent in one call, as it is.
 
 The window size comes from the model. A local model's `max_len` is read from its `gliner_config.json`.
-For the remote PhEye service, which does not report its model's limit, the filter uses 256 words,
-below the smallest limit of the published ph-eye models. Windows overlap by at least 64 words, and by
+The remote PhEye service's limit is read from its `/model` endpoint when the filter is first used, and
+kept for as long as the filter. The service also windows the text it receives by its own limit, so a
+limit that changes afterwards does not cause text to go unexamined. A service without a usable
+`/model`, such as one before ph-eye 1.4.0, is sent windows of 256 words, below the smallest limit of the
+published ph-eye models; when the request fails or the service answers with a server error, 256 words
+are used and `/model` is asked again a minute later. Windows overlap by at least 64 words, and by
 at least twice the longest span the model reports, so a name at a window's edge is found whole by one
 window. No policy setting is needed. A policy's [text splitting](../../filter_policies.md#splitting-large-documents) is separate
 and still applies: a PhEye filter divides each piece it receives the same way.

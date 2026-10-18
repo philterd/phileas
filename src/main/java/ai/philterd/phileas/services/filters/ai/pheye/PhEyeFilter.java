@@ -177,13 +177,14 @@ public class PhEyeFilter extends NerFilter {
      */
     private List<PhEyeSpan> detect(final String text, final String context, final int piece) throws Exception {
 
-        final List<PhEyeWindows.Window> windows = PhEyeWindows.of(text, detector.maxWords(), detector.maxWidth());
+        final int maxWords = detector.maxWords();
+        final List<PhEyeWindows.Window> windows = PhEyeWindows.of(text, maxWords, detector.maxWidth());
 
         if (windows.size() == 1) {
             return detector.detect(text, labels, context, piece);
         }
 
-        LOGGER.debug("Detecting over {} windows of at most {} words.", windows.size(), detector.maxWords());
+        LOGGER.debug("Detecting over {} windows of at most {} words.", windows.size(), maxWords);
 
         final List<PhEyeSpan> spans = new LinkedList<>();
 

@@ -30,6 +30,12 @@ import java.util.List;
  */
 public interface PhEyeDetector extends AutoCloseable {
 
+    /** The {@link #maxWords()} default, below the smallest {@code max_len} of the published ph-eye GLiNER models. */
+    int DEFAULT_MAX_WORDS = 256;
+
+    /** The {@link #maxWidth()} default, the {@code max_width} of the published ph-eye GLiNER models. */
+    int DEFAULT_MAX_WIDTH = 12;
+
     /**
      * Detect entities in the given text.
      *
@@ -48,12 +54,12 @@ public interface PhEyeDetector extends AutoCloseable {
      * returns that instead.
      */
     default int maxWords() {
-        return 256;
+        return DEFAULT_MAX_WORDS;
     }
 
     /** The most words one detected span can cover, the model's {@code max_width}. */
     default int maxWidth() {
-        return 12;
+        return DEFAULT_MAX_WIDTH;
     }
 
     /** Release any held resources (e.g. an ONNX session). The default is a no-op. */
