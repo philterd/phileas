@@ -41,6 +41,21 @@ public interface PhEyeDetector extends AutoCloseable {
      */
     List<PhEyeSpan> detect(String text, Collection<String> labels, String context, int piece) throws Exception;
 
+    /**
+     * The most words of text the model examines in one call; it ignores the rest. {@link PhEyeFilter}
+     * divides longer text into windows of this many words. The default suits every published ph-eye
+     * GLiNER model, the smallest of which reads 296; a detector that knows its model's {@code max_len}
+     * returns that instead.
+     */
+    default int maxWords() {
+        return 256;
+    }
+
+    /** The most words one detected span can cover, the model's {@code max_width}. */
+    default int maxWidth() {
+        return 12;
+    }
+
     /** Release any held resources (e.g. an ONNX session). The default is a no-op. */
     @Override
     default void close() throws Exception {

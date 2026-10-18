@@ -117,3 +117,19 @@ is processed.
    }
 }
 ```
+
+## Long text
+
+A PhEye model examines at most a fixed number of words in one call, its `max_len` (512 for the
+`ph-eye-pii-en-*` models), and ignores the rest. The filter divides longer text into overlapping
+windows that each fit, detects in each, and reports every span once with offsets into the whole text,
+so a name anywhere in the text is examined. Words are counted as the model counts them, so each
+punctuation mark is a word. Text that fits is sent in one call, as it is.
+
+The window size comes from the model. A local model's `max_len` is read from its `gliner_config.json`.
+For the remote PhEye service, which does not report its model's limit, the filter uses 256 words,
+below the smallest limit of the published ph-eye models. Windows overlap by at least 64 words, and by
+at least twice the longest span the model reports, so a name at a window's edge is found whole by one
+window. No policy setting is needed. A policy's [text splitting](../../filter_policies.md#splitting-large-documents) is separate
+and still applies: a PhEye filter divides each piece it receives the same way.
+

@@ -116,7 +116,7 @@ public class PhEyeFilter extends NerFilter {
             formattedInput = input;
         }
 
-        final List<PhEyeSpan> phEyeSpans = detector.detect(formattedInput, labels, context, piece);
+        final List<PhEyeSpan> phEyeSpans = detect(formattedInput, context, piece);
 
         if (CollectionUtils.isNotEmpty(phEyeSpans)) {
 
@@ -168,6 +168,43 @@ public class PhEyeFilter extends NerFilter {
 
         LOGGER.debug("Returning {} NER spans from ph-eye.", spans.size());
         return new Filtered(context, piece, spans);
+
+    }
+
+    /**
+     * Detects over the whole text: in one call when it fits in what the model examines, otherwise one
+     * window at a time, with each span's offsets made relative to the text.
+     */
+    private List<PhEyeSpan> detect(final String text, final String context, final int piece) throws Exception {
+
+        final List<PhEyeWindows.Window> windows = PhEyeWindows.of(text, detector.maxWords(), detector.maxWidth());
+
+        if (windows.size() == 1) {
+            return detector.detect(text, labels, context, piece);
+        }
+
+        LOGGER.debug("Detecting over {} windows of at most {} words.", windows.size(), detector.maxWords());
+
+        final List<PhEyeSpan> spans = new LinkedList<>();
+
+        for (final PhEyeWindows.Window window : windows) {
+
+            final List<PhEyeSpan> found = detector.detect(text.substring(window.start(), window.end()), labels, context, piece);
+
+            if (found != null) {
+                for (final PhEyeSpan span : found) {
+                    final int start = span.getStart() + window.start();
+                    if (window.owns(start)) {
+                        span.setStart(start);
+                        span.setEnd(span.getEnd() + window.start());
+                        spans.add(span);
+                    }
+                }
+            }
+
+        }
+
+        return spans;
 
     }
 
