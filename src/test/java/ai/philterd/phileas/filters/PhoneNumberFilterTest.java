@@ -306,4 +306,198 @@ public class PhoneNumberFilterTest extends AbstractFilterTest {
 
     }
 
+    @Test
+    public void filterPhoneBareCountryCodeAreaCodeOneDashes() throws Exception {
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(new PhoneNumberFilterStrategy()))
+                .withWindowSize(windowSize)
+                .build();
+
+        // libphonenumber rejects this as impossible without a "+" (see phileas#458), so it is found through a "+1" rewrite.
+        final PhoneNumberRulesFilter filter = new PhoneNumberRulesFilter(filterConfiguration);
+
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "the number is 1-112-997-5633 and he was ok.");
+        showSpans(filtered.getSpans());
+
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 14, 28, FilterType.PHONE_NUMBER));
+        Assertions.assertEquals("1-112-997-5633", filtered.getSpans().get(0).getText());
+
+    }
+
+    @Test
+    public void filterPhoneBareCountryCodeAreaCodeOneSpaces() throws Exception {
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(new PhoneNumberFilterStrategy()))
+                .withWindowSize(windowSize)
+                .build();
+
+        final PhoneNumberRulesFilter filter = new PhoneNumberRulesFilter(filterConfiguration);
+
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "the number is 1 112 997 5633 and he was ok.");
+        showSpans(filtered.getSpans());
+
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 14, 28, FilterType.PHONE_NUMBER));
+        Assertions.assertEquals("1 112 997 5633", filtered.getSpans().get(0).getText());
+
+    }
+
+    @Test
+    public void filterPhoneBareCountryCodeAreaCodeOneDots() throws Exception {
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(new PhoneNumberFilterStrategy()))
+                .withWindowSize(windowSize)
+                .build();
+
+        final PhoneNumberRulesFilter filter = new PhoneNumberRulesFilter(filterConfiguration);
+
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "the number is 1.112.997.5633 and he was ok.");
+        showSpans(filtered.getSpans());
+
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 14, 28, FilterType.PHONE_NUMBER));
+        Assertions.assertEquals("1.112.997.5633", filtered.getSpans().get(0).getText());
+
+    }
+
+    @Test
+    public void filterPhoneBareCountryCodeAreaCodeOneParentheses() throws Exception {
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(new PhoneNumberFilterStrategy()))
+                .withWindowSize(windowSize)
+                .build();
+
+        // "(112) 997-5633" is found without the "+1" rewrite, so its span and confidence are kept.
+        final PhoneNumberRulesFilter filter = new PhoneNumberRulesFilter(filterConfiguration);
+
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "the number is 1 (112) 997-5633 and he was ok.");
+        showSpans(filtered.getSpans());
+
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 16, 30, FilterType.PHONE_NUMBER));
+        Assertions.assertEquals("(112) 997-5633", filtered.getSpans().get(0).getText());
+        Assertions.assertEquals(0.95, filtered.getSpans().get(0).getConfidence());
+
+    }
+
+    @Test
+    public void filterPhoneBareCountryCodeAreaCodeOneExtension() throws Exception {
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(new PhoneNumberFilterStrategy()))
+                .withWindowSize(windowSize)
+                .build();
+
+        final PhoneNumberRulesFilter filter = new PhoneNumberRulesFilter(filterConfiguration);
+
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "the number is 1-109-299-5128 x512 and he was ok.");
+        showSpans(filtered.getSpans());
+
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 14, 33, FilterType.PHONE_NUMBER));
+        Assertions.assertEquals("1-109-299-5128 x512", filtered.getSpans().get(0).getText());
+
+    }
+
+    @Test
+    public void filterPhonePlusCountryCodeAreaCodeOne() throws Exception {
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(new PhoneNumberFilterStrategy()))
+                .withWindowSize(windowSize)
+                .build();
+
+        // Found by libphonenumber directly; pins the behavior across libphonenumber upgrades.
+        final PhoneNumberRulesFilter filter = new PhoneNumberRulesFilter(filterConfiguration);
+
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "the number is +1 112-997-5633 and he was ok.");
+        showSpans(filtered.getSpans());
+
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 14, 29, FilterType.PHONE_NUMBER));
+        Assertions.assertEquals("+1 112-997-5633", filtered.getSpans().get(0).getText());
+
+    }
+
+    @Test
+    public void filterPhoneBareCountryCodeValidAreaCode() throws Exception {
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(new PhoneNumberFilterStrategy()))
+                .withWindowSize(windowSize)
+                .build();
+
+        final PhoneNumberRulesFilter filter = new PhoneNumberRulesFilter(filterConfiguration);
+
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "the number is 1-212-997-5633 and he was ok.");
+        showSpans(filtered.getSpans());
+
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 14, 28, FilterType.PHONE_NUMBER));
+        Assertions.assertEquals("1-212-997-5633", filtered.getSpans().get(0).getText());
+
+    }
+
+    @Test
+    public void filterPhoneBareCountryCodeAreaCodeOneNoSeparators() throws Exception {
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(new PhoneNumberFilterStrategy()))
+                .withWindowSize(windowSize)
+                .build();
+
+        // Not found: rewriting to "+1" would shift the offsets, so the bare form without separators is not rewritten.
+        final PhoneNumberRulesFilter filter = new PhoneNumberRulesFilter(filterConfiguration);
+
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "the number is 11129975633 and he was ok.");
+        showSpans(filtered.getSpans());
+
+        Assertions.assertEquals(0, filtered.getSpans().size());
+
+    }
+
+    @Test
+    public void filterPhoneBareCountryCodeAreaCodeOneNotRewrittenForOtherRegions() throws Exception {
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(new PhoneNumberFilterStrategy()))
+                .withWindowSize(windowSize)
+                .build();
+
+        // The "+1" rewrite only applies when a configured region uses country code 1.
+        final PhoneNumberRulesFilter filter = new PhoneNumberRulesFilter(filterConfiguration, List.of("GB"));
+
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "the number is 1-112-997-5633 and he was ok.");
+        showSpans(filtered.getSpans());
+
+        Assertions.assertEquals(0, filtered.getSpans().size());
+
+    }
+
+    @Test
+    public void filterPhoneBareOneBeforeFoundNumberUnchanged() throws Exception {
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(new PhoneNumberFilterStrategy()))
+                .withWindowSize(windowSize)
+                .build();
+
+        // "112-997-5633" is found without the "+1" rewrite, so the rewrite must not widen it to "1 112-997-5633".
+        final PhoneNumberRulesFilter filter = new PhoneNumberRulesFilter(filterConfiguration);
+
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "Item 1 112-997-5633 is here.");
+        showSpans(filtered.getSpans());
+
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 7, 19, FilterType.PHONE_NUMBER));
+        Assertions.assertEquals("112-997-5633", filtered.getSpans().get(0).getText());
+        Assertions.assertEquals(0.95, filtered.getSpans().get(0).getConfidence());
+
+    }
+
 }

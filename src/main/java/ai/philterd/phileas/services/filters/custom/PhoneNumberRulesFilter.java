@@ -41,6 +41,14 @@ public class PhoneNumberRulesFilter extends RulesFilter {
     private final List<String> regions;
     private final Pattern pattern = Pattern.compile("^(\\+\\d{1,2}\\s)?\\(?\\d{3}\\)?[\\s.-]\\d{3}[\\s.-]\\d{4}$");
 
+    // A bare "1" country code followed by a separator and a phone-formatted number, such as "1-112-997-5633".
+    // Without a "+", libphonenumber strips the "1" as the country code and then strips an area code's leading
+    // "1" as a national prefix, leaving too few digits for a possible number, so the match is dropped.
+    private static final Pattern BARE_COUNTRY_CODE = Pattern.compile("(?<![\\d+])1[-. ](?=\\(?\\d{3}\\)?[-. ]\\d{3}[-. ]\\d{4})");
+
+    // The first configured region that uses country code 1, or null when none does.
+    private final String northAmericanRegion;
+
     public PhoneNumberRulesFilter(final FilterConfiguration filterConfiguration) {
         this(filterConfiguration, List.of(PhoneNumber.DEFAULT_REGION));
     }
@@ -51,6 +59,10 @@ public class PhoneNumberRulesFilter extends RulesFilter {
 
         this.phoneUtil = PhoneNumberUtil.getInstance();
         this.regions = (regions == null || regions.isEmpty()) ? List.of(PhoneNumber.DEFAULT_REGION) : regions;
+        this.northAmericanRegion = this.regions.stream()
+                .filter(region -> phoneUtil.getCountryCodeForRegion(region) == 1)
+                .findFirst()
+                .orElse(null);
 
         this.contextualTerms = new HashSet<>();
         this.contextualTerms.add("phone");
@@ -79,9 +91,28 @@ public class PhoneNumberRulesFilter extends RulesFilter {
                 }
             }
 
+            // Also scan a copy of the text in which a bare "1" country code becomes "+1" so numbers such as
+            // "1-112-997-5633" are found the same as "+1 112-997-5633". "1-" and "+1" are the same length, so
+            // offsets in the copy are offsets in the input. This is done once, and only when a configured region
+            // uses country code 1, so a policy for another region does not read these as North American numbers.
+            // A match from the copy is only kept where the input itself had no match, so numbers already found,
+            // such as "112-997-5633" in "Item 1 112-997-5633", keep their span and confidence.
+            if (northAmericanRegion != null) {
+                final String rewritten = BARE_COUNTRY_CODE.matcher(input).replaceAll("+1");
+                if (!rewritten.equals(input)) {
+                    final List<PhoneNumberMatch> inputMatches = new ArrayList<>(allMatches);
+                    for (final PhoneNumberMatch match : phoneUtil.findNumbers(rewritten, northAmericanRegion, PhoneNumberUtil.Leniency.POSSIBLE, Long.MAX_VALUE)) {
+                        if (inputMatches.stream().noneMatch(m -> match.start() < m.end() && m.start() < match.end())) {
+                            allMatches.add(match);
+                        }
+                    }
+                }
+            }
+
             for (final PhoneNumberMatch match : dedupe(allMatches)) {
 
-                final String text = match.rawString();
+                // Taken from the input rather than rawString(), which is the rewritten text for a match found in the copy.
+                final String text = input.substring(match.start(), match.end());
 
                 // Is it formatted like a phone number?
                 double confidence;

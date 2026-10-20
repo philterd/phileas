@@ -4,6 +4,12 @@
 
 This filter identifies phone and fax numbers such as (304) 555-5555, 304-555-5555, and 1-800-123-4567 in text.
 
+### How Phone Numbers Are Detected
+
+Detection uses [libphonenumber](https://github.com/google/libphonenumber) with its *possible number* check, once for each configured `region`. A possible number has a plausible length for its country; it does not have to be a valid, assigned number. This means the filter finds phone-formatted numbers that could not be dialed, such as `(112) 997-5633`, whose area code begins with 1 and so is not a valid North American number. Text that is not phone-formatted but has a possible length, such as `1-12-2020`, may also be found. Detection is probabilistic, so validate the filter's output against your own data.
+
+Without a `+`, libphonenumber reads a leading `1` as the North American country code and then reads an area code's leading `1` as a national prefix, which leaves too few digits for a possible number. So that a number's punctuation does not decide whether it is found, when a configured region uses country code 1 (such as `US` or `CA`) the filter also reads a bare `1` country code followed by a separator as `+1`. With this, `1-112-997-5633`, `1 112 997 5633`, `1.112.997.5633`, and `1-109-299-5128 x512` are found, as `+1 112-997-5633` is. A number written with no separators, such as `11129975633`, is not found. A number already found without this reading, such as `112-997-5633` in `Item 1 112-997-5633`, is unchanged.
+
 ### Required Parameters
 
 This filter has no required parameters.
