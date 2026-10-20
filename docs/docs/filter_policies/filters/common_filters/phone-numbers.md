@@ -106,8 +106,7 @@ short numeric identifiers or years that can be detected under some regions:
 }
 ```
 
-Omitting `leniency` (or setting it to null) retains the default `POSSIBLE`
-behavior. Values are case-sensitive; unknown values fail policy preparation.
+Omitting `leniency` retains the default `POSSIBLE` behavior. Values are case-sensitive; unknown values fail policy preparation.
 `STRICT_GROUPING` and `EXACT_GROUPING` additionally constrain number formatting.
 Validity follows numbering-plan rules; it does not establish whether a number is
 assigned or in service, or whether a valid-looking number is a phone number in context.
@@ -115,3 +114,5 @@ Confidence conditions remain independent of this candidate-validation setting.
 
 Java callers can use
 `phoneNumber.setLeniency(PhoneNumberUtil.Leniency.VALID)`.
+
+The `leniency` property requires redaction policy schema 1.3.0 as bundled with PhiSQL 1.6.0 or later.

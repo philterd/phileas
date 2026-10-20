@@ -111,7 +111,7 @@ public class PhoneNumberRulesFilter extends RulesFilter {
                 final String rewritten = BARE_COUNTRY_CODE.matcher(input).replaceAll("+1");
                 if (!rewritten.equals(input)) {
                     final List<PhoneNumberMatch> inputMatches = new ArrayList<>(allMatches);
-                    for (final PhoneNumberMatch match : phoneUtil.findNumbers(rewritten, northAmericanRegion, PhoneNumberUtil.Leniency.POSSIBLE, Long.MAX_VALUE)) {
+                    for (final PhoneNumberMatch match : phoneUtil.findNumbers(rewritten, northAmericanRegion, leniency, Long.MAX_VALUE)) {
                         if (inputMatches.stream().noneMatch(m -> match.start() < m.end() && m.start() < match.end())) {
                             allMatches.add(match);
                         }

@@ -519,4 +519,26 @@ public class PhoneNumberFilterTest extends AbstractFilterTest {
 
     }
 
+    @Test
+    public void validLeniencyAppliesToBareCountryCodeRewrite() throws Exception {
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(new PhoneNumberFilterStrategy()))
+                .withWindowSize(windowSize)
+                .build();
+
+        // An area code beginning with 1 is not valid in the North American plan, so the "+1" rewrite must not
+        // find "1-112-997-5633" under VALID leniency, while the valid "1-212-997-5633" is still found.
+        final PhoneNumberRulesFilter filter = new PhoneNumberRulesFilter(
+                filterConfiguration, List.of("US"), PhoneNumberUtil.Leniency.VALID);
+
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE,
+                "the numbers are 1-112-997-5633 and 1-212-997-5633.");
+        showSpans(filtered.getSpans());
+
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertEquals("1-212-997-5633", filtered.getSpans().get(0).getText());
+
+    }
+
 }
