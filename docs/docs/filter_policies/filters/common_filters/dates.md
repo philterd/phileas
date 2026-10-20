@@ -10,7 +10,9 @@ This filter identifies dates such as `May 22, 2014` in text. The supported date 
 | MM-dd-yyyy    | 05-10-2020                |
 | M-d-y         | 5-10-2020                 |
 | MMM dd        | May 5 or May 05           |
-| MMMM dd, yyyy | May 5, 2020 or May 5 2020 |
+| MMMM dd, yyyy | May 5, 2020, May 22, 1965, or May 22 1965 |
+
+A date written with a month name, a day of one or two digits, and a four-digit year, such as `March 27, 1965` or `Sep 10 1950`, is detected with its year for any four-digit year. Other month-name forms, such as `March 27th, 1965`, `Mar. 27, 1965`, or `March 27-1965`, are detected with their year when it is from 1900 to 2099 or has two digits. A month name and a four-digit year with no day, such as `March 1965`, is detected for any four-digit year. A number after a month name is not read as a two-digit year when a four-digit year follows it after one or two characters, as in `March 27, 1965`. A year set further apart, as in `March 27 - 1965` or with two spaces after the comma, is not detected with the date. Detection is pattern-based, so validate the output against your own data.
 
 ### Required Parameters
 

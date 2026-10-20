@@ -950,4 +950,85 @@ public class DateFilterTest extends AbstractFilterTest {
 
     }
 
+    private void assertWholeDate(final DateFilter filter, final String date) throws Exception {
+
+        final String input = "It was on " + date + " at the office.";
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, input);
+
+        Assertions.assertEquals(1, filtered.getSpans().size(), date);
+        Assertions.assertEquals(date, filtered.getSpans().get(0).getText(), date);
+        Assertions.assertEquals(10, filtered.getSpans().get(0).getCharacterStart(), date);
+
+    }
+
+    @Test
+    public void filterDateMonthNameYearBefore1970() throws Exception {
+
+        // https://github.com/philterd/phileas/issues/459
+        for (final boolean onlyValidDates : List.of(false, true)) {
+
+            final DateFilter filter = new DateFilter(buildFilterConfiguration(), onlyValidDates, DateSpanValidator.getInstance());
+
+            for (final String date : List.of("March 27, 1965", "Sep 10, 1950", "January 14 1957", "Sep 27, 1966",
+                    "March 3, 1965", "Sep 9, 1950", "January 4 1957", "Feb 10, 1945", "Dec 31 1969",
+                    "March 27th, 1965", "Mar. 27, 1965", "March 27, 1975")) {
+                assertWholeDate(filter, date);
+            }
+
+        }
+
+    }
+
+    @Test
+    public void filterDateMonthNameEveryDay() throws Exception {
+
+        // Every day of the month, with years on either side of 1970.
+        // https://github.com/philterd/phileas/issues/459
+        final DateFilter filter = new DateFilter(buildFilterConfiguration(), false, DateSpanValidator.getInstance());
+
+        for (final int year : List.of(1900, 1950, 1969, 1970, 2025, 2099)) {
+            for (int day = 1; day <= 31; day++) {
+                assertWholeDate(filter, "March " + day + ", " + year);
+                assertWholeDate(filter, "Mar " + day + ", " + year);
+                assertWholeDate(filter, "March " + day + " " + year);
+            }
+        }
+
+    }
+
+    @Test
+    public void filterDateMonthNameEveryYear() throws Exception {
+
+        // https://github.com/philterd/phileas/issues/459
+        final DateFilter filter = new DateFilter(buildFilterConfiguration(), false, DateSpanValidator.getInstance());
+
+        for (int year = 1900; year <= 2099; year++) {
+            assertWholeDate(filter, "September 27, " + year);
+            assertWholeDate(filter, "Sep 27, " + year);
+            assertWholeDate(filter, "September 27 " + year);
+        }
+
+    }
+
+    @Test
+    public void filterDateDayNotReadAsTwoDigitYear() throws Exception {
+
+        // "MMMM yy" must not take the day as a two-digit year when a four-digit year follows it.
+        // https://github.com/philterd/phileas/issues/459
+        final DateFilter filter = new DateFilter(buildFilterConfiguration(), false, DateSpanValidator.getInstance());
+
+        for (final String date : List.of("March 27, 1965", "March 27 1965", "March 27, 2150")) {
+            final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "It was on " + date + " at the office.");
+            Assertions.assertEquals(1, filtered.getSpans().size(), date);
+            Assertions.assertNotEquals("MMMM yy", filtered.getSpans().get(0).getPattern(), date);
+            Assertions.assertEquals(date, filtered.getSpans().get(0).getText(), date);
+        }
+
+        // Without a four-digit year after it, a two-digit number after the month is still matched.
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "It was in March 65 at the office.");
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertTrue(filtered.getSpans().get(0).getText().startsWith("March 65"));
+
+    }
+
 }
