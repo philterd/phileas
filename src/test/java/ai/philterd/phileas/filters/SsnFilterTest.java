@@ -450,4 +450,46 @@ public class SsnFilterTest extends AbstractFilterTest {
 
     }
 
+    @Test
+    public void filterSsnSeparatorsMustMatch() throws Exception {
+
+        // https://github.com/philterd/phileas/issues/460
+        final SsnFilter filter = new SsnFilter(getSsnFilterConfiguration());
+
+        for (final String ssn : List.of("123-45-6789", "123 45 6789", "123456789", "123\u201145\u20116789", "123-45\u20116789", "123-45-\n6789")) {
+            final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "the ssn is " + ssn + ".");
+            Assertions.assertEquals(1, filtered.getSpans().size(), ssn);
+            Assertions.assertEquals(ssn, filtered.getSpans().get(0).getText());
+        }
+
+        for (final String mismatched : List.of("123-456789", "12345-6789", "123 456789", "12345 6789", "123-45 6789", "123 45-6789")) {
+            Assertions.assertEquals(0, filter.filter(contextService, getPolicy(), "context", PIECE, "the value is " + mismatched + ".").getSpans().size(), mismatched);
+        }
+
+    }
+
+    @Test
+    public void filterSsnZipPlus4NotMatched() throws Exception {
+
+        // https://github.com/philterd/phileas/issues/460
+        final SsnFilter filter = new SsnFilter(getSsnFilterConfiguration());
+
+        for (final String zip : List.of("52168-1208", "02965-1837", "12345-6789")) {
+            Assertions.assertEquals(0, filter.filter(contextService, getPolicy(), "context", PIECE, "ships to " + zip + " today.").getSpans().size(), zip);
+        }
+
+    }
+
+    @Test
+    public void filterSsnRunWithMatchingSeparators() throws Exception {
+
+        // https://github.com/philterd/phileas/issues/343 and https://github.com/philterd/phileas/issues/460
+        final SsnFilter filter = new SsnFilter(getSsnFilterConfiguration());
+
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "the ssns are 123-45-6789123456789.");
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertEquals("123-45-6789123456789", filtered.getSpans().get(0).getText());
+
+    }
+
 }

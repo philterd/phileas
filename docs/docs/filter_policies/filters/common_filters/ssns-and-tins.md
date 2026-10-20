@@ -16,6 +16,13 @@ hyphen it also accepts the soft hyphen (U+00AD), the dashes U+2010 through U+201
 the non-breaking hyphen U+2011), the minus sign (U+2212), and the small and fullwidth hyphen-minus
 forms (U+FE58, U+FE63, U+FF0D).
 
+Both separators must be the same kind: both hyphens, both single whitespace characters, or both
+absent. So `123-45-6789`, `123 45 6789`, and `123456789` are detected, but `123-456789`,
+`12345-6789`, and `123 45-6789` are not. This keeps a ZIP+4 code such as `52168-1208` from being
+reported as an SSN. The two hyphens may be different hyphen characters, such as an ASCII hyphen
+and a non-breaking hyphen. The [ITIN](itin.md) and [Canadian SIN](canada-sin.md) filters follow
+the same rule.
+
 An identifier wrapped across a line break is detected when the break follows a hyphen:
 
 ```

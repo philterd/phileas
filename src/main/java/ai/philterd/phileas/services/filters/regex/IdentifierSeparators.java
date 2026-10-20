@@ -46,8 +46,15 @@ public final class IdentifierSeparators {
      */
     public static final String WRAP = "[" + HYPHENS + "]\\h*+(?:\\R\\h*+)?+";
 
-    /** Between the groups of an identifier: a hyphen, wrapped or not, or one horizontal space, or nothing. */
-    public static final String SEPARATOR = "(?:" + WRAP + "|\\h)?";
+    /**
+     * Joins an identifier's three digit groups. Both separators are the same kind: a hyphen, wrapped
+     * or not, one horizontal space, or nothing. Allowing each to be chosen on its own let a ZIP+4 such
+     * as {@code 52168-1208} match as an SSN, with nothing after the first group and a hyphen after the
+     * second. See issue #460.
+     */
+    public static String join(final String first, final String second, final String third) {
+        return first + "(?:" + WRAP + second + WRAP + "|\\h" + second + "\\h|" + second + ")" + third;
+    }
 
     private IdentifierSeparators() {
         // Constants only.

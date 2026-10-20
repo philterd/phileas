@@ -52,11 +52,9 @@ public class CanadaSinFilter extends RegexFilter {
         this.onlyValidPrefixes = onlyValidPrefixes;
 
         // The same separators as the SSN filter: a hyphen (or a substitute for one), optionally
-        // wrapped across a line break after it, or one horizontal space.
-        final String separator = IdentifierSeparators.SEPARATOR;
-
+        // wrapped across a line break after it, one horizontal space, or nothing, the same for both.
         // A match may not begin or end partway through a longer run of digits.
-        final Pattern sinPattern = Pattern.compile("(?<!\\w)\\d{3}" + separator + "\\d{3}" + separator + "\\d{3}(?!\\w)");
+        final Pattern sinPattern = Pattern.compile("(?<!\\w)" + IdentifierSeparators.join("\\d{3}", "\\d{3}", "\\d{3}") + "(?!\\w)");
         final FilterPattern sin1 = new FilterPattern.FilterPatternBuilder(sinPattern, 0.90).build();
 
         this.contextualTerms = new HashSet<>();

@@ -220,4 +220,35 @@ public class ItinFilterTest extends AbstractFilterTest {
 
     }
 
+    @Test
+    public void filterItinSeparatorsMustMatch() throws Exception {
+
+        // https://github.com/philterd/phileas/issues/460
+        final ItinFilter filter = filter(false);
+
+        for (final String itin : List.of("912-70-1234", "912 70 1234", "912701234")) {
+            final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "the itin is " + itin + ".");
+            Assertions.assertEquals(1, filtered.getSpans().size(), itin);
+            Assertions.assertEquals(itin, filtered.getSpans().get(0).getText());
+        }
+
+        for (final String mismatched : List.of("912-701234", "91270-1234", "912 70-1234", "912-70 1234")) {
+            Assertions.assertEquals(0, filter.filter(contextService, getPolicy(), "context", PIECE, "the value is " + mismatched + ".").getSpans().size(), mismatched);
+        }
+
+    }
+
+    @Test
+    public void filterItinZipPlus4NotMatched() throws Exception {
+
+        // A ZIP+4 beginning with 9 matched as an ITIN when the separators could differ.
+        // https://github.com/philterd/phileas/issues/460
+        final ItinFilter filter = filter(false);
+
+        for (final String zip : List.of("90210-1234", "97070-1234", "99501 2345")) {
+            Assertions.assertEquals(0, filter.filter(contextService, getPolicy(), "context", PIECE, "the address ends " + zip + " here.").getSpans().size(), zip);
+        }
+
+    }
+
 }

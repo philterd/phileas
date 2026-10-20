@@ -51,11 +51,9 @@ public class ItinFilter extends RegexFilter {
         this.onlyValidRanges = onlyValidRanges;
 
         // The same separators as the SSN filter: a hyphen (or a substitute for one), optionally
-        // wrapped across a line break after it, or one horizontal space.
-        final String separator = IdentifierSeparators.SEPARATOR;
-
+        // wrapped across a line break after it, one horizontal space, or nothing, the same for both.
         // A match may not begin or end partway through a longer run of digits.
-        final Pattern itinPattern = Pattern.compile("(?<!\\w)9\\d{2}" + separator + "\\d{2}" + separator + "\\d{4}(?!\\w)");
+        final Pattern itinPattern = Pattern.compile("(?<!\\w)" + IdentifierSeparators.join("9\\d{2}", "\\d{2}", "\\d{4}") + "(?!\\w)");
         final FilterPattern itin1 = new FilterPattern.FilterPatternBuilder(itinPattern, 0.90).build();
 
         this.contextualTerms = new HashSet<>();

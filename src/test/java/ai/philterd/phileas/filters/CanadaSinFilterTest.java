@@ -189,4 +189,17 @@ public class CanadaSinFilterTest extends AbstractFilterTest {
 
     }
 
+    @Test
+    public void filterSinSeparatorsMustMatch() throws Exception {
+
+        // 046454286 passes the Luhn check, so these are refused only for their separators.
+        // https://github.com/philterd/phileas/issues/460
+        final CanadaSinFilter filter = filter(false);
+
+        for (final String mismatched : List.of("046454-286", "046-454286", "046 454-286", "046-454 286", "046454 286")) {
+            Assertions.assertEquals(0, filter.filter(contextService, getPolicy(), "context", PIECE, "the value is " + mismatched + ".").getSpans().size(), mismatched);
+        }
+
+    }
+
 }
