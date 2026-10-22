@@ -26,8 +26,10 @@ import ai.philterd.phileas.policy.filters.PhEye;
 import ai.philterd.phileas.policy.filters.Ssn;
 import ai.philterd.phileas.policy.filters.ZipCode;
 import ai.philterd.phileas.policy.filters.pheye.PhEyeConfiguration;
+import ai.philterd.phileas.services.context.DefaultContextService;
 import ai.philterd.phileas.services.strategies.custom.CustomDictionaryFilterStrategy;
 import ai.philterd.phileas.services.strategies.rules.IdentifierFilterStrategy;
+import com.google.gson.Gson;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Assertions;
@@ -464,6 +466,31 @@ public class FilterPolicyLoaderTest {
         // The disabled identifier is excluded from the filter list.
         Assertions.assertEquals(0, filters.size());
         Assertions.assertEquals(1, filterCache.size());
+
+    }
+
+    @Test
+    public void phoneLeniencyFromJsonReachesFilter() throws Exception {
+
+        final FilterPolicyLoader loader = new FilterPolicyLoader(
+                new PhileasConfiguration(new Properties()), new SecureRandom(), null);
+        final Map<String, List<Filter>> filterCache = new HashMap<>();
+        final DefaultContextService contextService = new DefaultContextService();
+        final Gson gson = new Gson();
+        final Policy defaultPolicy = gson.fromJson("""
+                {"identifiers":{"phoneNumber":{"region":["US","GB","DE"]}}}
+                """, Policy.class);
+        final Policy validPolicy = gson.fromJson("""
+                {"identifiers":{"phoneNumber":{"region":["US","GB","DE"],"leniency":"VALID"}}}
+                """, Policy.class);
+
+        final Filter defaultFilter = loader.getFiltersForPolicy(defaultPolicy, filterCache).get(0);
+        final Filter validFilter = loader.getFiltersForPolicy(validPolicy, filterCache).get(0);
+
+        Assertions.assertEquals(1,
+                defaultFilter.filter(contextService, defaultPolicy, "context", 0, "Year 2026").getSpans().size());
+        Assertions.assertTrue(
+                validFilter.filter(contextService, validPolicy, "context", 0, "Year 2026").getSpans().isEmpty());
 
     }
 
