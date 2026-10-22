@@ -1034,6 +1034,120 @@ public class DateFilterTest extends AbstractFilterTest {
     }
 
     @Test
+    public void filterDateMonthNameYearSetApart() throws Exception {
+
+        // https://github.com/philterd/phileas/issues/463
+        for (final boolean onlyValidDates : List.of(false, true)) {
+
+            final DateFilter filter = new DateFilter(buildFilterConfiguration(), onlyValidDates, DateSpanValidator.getInstance());
+
+            for (final int year : List.of(1865, 1899, 1900, 1965, 1975, 2020, 2099, 2100, 2150)) {
+                for (final String separator : List.of(" - ", " -- ", " , ", ",  ", "  ", " \u2013 ", " \u2014 ", "--", " ,")) {
+                    assertWholeDate(filter, "March 27" + separator + year);
+                }
+            }
+
+        }
+
+    }
+
+    @Test
+    public void filterDateMonthNameAnyYear() throws Exception {
+
+        // Ordinal, abbreviated, and delimited forms take any four-digit year.
+        // https://github.com/philterd/phileas/issues/463
+        final DateFilter filter = new DateFilter(buildFilterConfiguration(), false, DateSpanValidator.getInstance());
+
+        for (final int year : List.of(1865, 1899, 1900, 1965, 2099, 2100, 2150)) {
+            for (final String date : List.of("March 27th, ", "Mar. 27, ", "March 27-", "March 1st ", "Mar. 3rd - ",
+                    "March/27/", "March.27.")) {
+                assertWholeDate(filter, date + year);
+            }
+        }
+
+    }
+
+    @Test
+    public void filterDateDayNotReadAsTwoDigitYearWhenSetApart() throws Exception {
+
+        // https://github.com/philterd/phileas/issues/463
+        final DateFilter filter = new DateFilter(buildFilterConfiguration(), false, DateSpanValidator.getInstance());
+
+        for (final String date : List.of("March 27 - 1965", "March 27 -- 1965", "March 27 , 1965", "March 27,  1965",
+                "March 27   1965", "March 27 - 2150")) {
+            final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "It was on " + date + " at the office.");
+            Assertions.assertEquals(1, filtered.getSpans().size(), date);
+            Assertions.assertNotEquals("MMMM yy", filtered.getSpans().get(0).getPattern(), date);
+            Assertions.assertEquals(date, filtered.getSpans().get(0).getText(), date);
+        }
+
+    }
+
+    @Test
+    public void filterDateMonthNameYearSetApartConfidence() throws Exception {
+
+        // A year set further apart is less certain, so its span has a lower confidence. Forms detected
+        // before keep theirs.
+        final DateFilter filter = new DateFilter(buildFilterConfiguration(), false, DateSpanValidator.getInstance());
+
+        final Map<String, Double> confidences = new LinkedHashMap<>();
+        confidences.put("March 27 - 1965", 0.6);
+        confidences.put("March 27,  1965", 0.6);
+        confidences.put("Mar. 3rd - 1865", 0.6);
+        confidences.put("March 27, 1965", 0.75);
+        confidences.put("March 27 1965", 0.75);
+        confidences.put("March 27th, 1965", 0.75);
+        confidences.put("Mar. 27, 1865", 0.75);
+        confidences.put("March 27-1865", 0.75);
+
+        for (final Map.Entry<String, Double> entry : confidences.entrySet()) {
+            final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "It was on " + entry.getKey() + " at the office.");
+            Assertions.assertEquals(1, filtered.getSpans().size(), entry.getKey());
+            Assertions.assertEquals(entry.getKey(), filtered.getSpans().get(0).getText(), entry.getKey());
+            Assertions.assertEquals(entry.getValue(), filtered.getSpans().get(0).getConfidence(), 0.0001, entry.getKey());
+        }
+
+    }
+
+    @Test
+    public void filterDateMonthNameYearSetApartLeftByConfidenceCondition() throws Exception {
+
+        final DateFilterStrategy dateFilterStrategy = new DateFilterStrategy();
+        dateFilterStrategy.setConditions("confidence >= 0.75");
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(dateFilterStrategy))
+                .build();
+
+        final DateFilter filter = new DateFilter(filterConfiguration, false, DateSpanValidator.getInstance());
+
+        final Filtered setApart = filter.filter(contextService, getPolicy(), "context", PIECE, "Shipped May 5 - 1000 units.");
+        Assertions.assertEquals(1, setApart.getSpans().size());
+        Assertions.assertFalse(setApart.getSpans().get(0).isApplied());
+
+        final Filtered exact = filter.filter(contextService, getPolicy(), "context", PIECE, "It was on March 27, 1965 at the office.");
+        Assertions.assertEquals(1, exact.getSpans().size());
+        Assertions.assertTrue(exact.getSpans().get(0).isApplied());
+        Assertions.assertEquals("{{{REDACTED-date}}}", exact.getSpans().get(0).getReplacement());
+
+    }
+
+    @Test
+    public void filterDateMonthNameYearTooFarApart() throws Exception {
+
+        // A year beyond the accepted separators is not taken with the date, and the text between is not
+        // matched as part of it.
+        final DateFilter filter = new DateFilter(buildFilterConfiguration(), false, DateSpanValidator.getInstance());
+
+        for (final String text : List.of("March 27 to 1965", "March 27 -   1965", "March 27    1965")) {
+            final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "It was on " + text + " at the office.");
+            Assertions.assertFalse(filtered.getSpans().isEmpty(), text);
+            Assertions.assertFalse(filtered.getSpans().get(0).getText().contains("1965"), text);
+        }
+
+    }
+
+    @Test
     public void filterDateDayFirstWithComma() throws Exception {
 
         // https://github.com/philterd/phileas/issues/462
