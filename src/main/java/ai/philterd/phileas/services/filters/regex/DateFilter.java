@@ -130,6 +130,10 @@ public class DateFilter extends RegexFilter {
         // These patterns come first so that, for the same text, the span carries the day-first format.
         // See issue #462.
         final String dayFirst = "(?i)\\b(?:0?[1-9]|[12]\\d|3[01])(?:st|nd|rd|th)?";
+        // The month-name alternation carries most of the regex complexity of these patterns, as it does
+        // in the month-first patterns below; matching month names more loosely and checking them in Java
+        // would be a separate change.
+        @SuppressWarnings("java:S5843")
         final String monthName = "(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:tember)?|Oct(?:ober)?|(?:Nov|Dec)(?:ember)?)\\.?";
         filterPatterns.add(new FilterPattern.FilterPatternBuilder(Pattern.compile(dayFirst + " " + monthName + ", \\d{4}\\b"), 0.75).withFormat("dd MMMM, yyyy").withAlwaysValid(true).build());
         for(final String delimiter : delimiters) {
