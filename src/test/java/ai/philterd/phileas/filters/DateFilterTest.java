@@ -1086,31 +1086,22 @@ public class DateFilterTest extends AbstractFilterTest {
     @Test
     public void filterDateMonthNameYearSetApartConfidence() throws Exception {
 
-        // A year set further apart is less certain, so its span has a lower confidence. Forms detected
-        // before keep theirs.
+        // A year set further apart has the same confidence as the span it replaces, so a policy with a
+        // confidence condition redacts at least what it did before.
         final DateFilter filter = new DateFilter(buildFilterConfiguration(), false, DateSpanValidator.getInstance());
 
-        final Map<String, Double> confidences = new LinkedHashMap<>();
-        confidences.put("March 27 - 1965", 0.6);
-        confidences.put("March 27,  1965", 0.6);
-        confidences.put("Mar. 3rd - 1865", 0.6);
-        confidences.put("March 27, 1965", 0.75);
-        confidences.put("March 27 1965", 0.75);
-        confidences.put("March 27th, 1965", 0.75);
-        confidences.put("Mar. 27, 1865", 0.75);
-        confidences.put("March 27-1865", 0.75);
-
-        for (final Map.Entry<String, Double> entry : confidences.entrySet()) {
-            final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "It was on " + entry.getKey() + " at the office.");
-            Assertions.assertEquals(1, filtered.getSpans().size(), entry.getKey());
-            Assertions.assertEquals(entry.getKey(), filtered.getSpans().get(0).getText(), entry.getKey());
-            Assertions.assertEquals(entry.getValue(), filtered.getSpans().get(0).getConfidence(), 0.0001, entry.getKey());
+        for (final String date : List.of("March 27 - 1965", "March 27,  1965", "Mar. 3rd - 1865", "March 27, 1965",
+                "March 27 1965", "March 27th, 1965", "Mar. 27, 1865", "March 27-1865")) {
+            final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "It was on " + date + " at the office.");
+            Assertions.assertEquals(1, filtered.getSpans().size(), date);
+            Assertions.assertEquals(date, filtered.getSpans().get(0).getText(), date);
+            Assertions.assertEquals(0.75, filtered.getSpans().get(0).getConfidence(), 0.0001, date);
         }
 
     }
 
     @Test
-    public void filterDateMonthNameYearSetApartLeftByConfidenceCondition() throws Exception {
+    public void filterDateMonthNameYearSetApartRedactedByConfidenceCondition() throws Exception {
 
         final DateFilterStrategy dateFilterStrategy = new DateFilterStrategy();
         dateFilterStrategy.setConditions("confidence >= 0.75");
@@ -1121,14 +1112,13 @@ public class DateFilterTest extends AbstractFilterTest {
 
         final DateFilter filter = new DateFilter(filterConfiguration, false, DateSpanValidator.getInstance());
 
-        final Filtered setApart = filter.filter(contextService, getPolicy(), "context", PIECE, "Shipped May 5 - 1000 units.");
-        Assertions.assertEquals(1, setApart.getSpans().size());
-        Assertions.assertFalse(setApart.getSpans().get(0).isApplied());
-
-        final Filtered exact = filter.filter(contextService, getPolicy(), "context", PIECE, "It was on March 27, 1965 at the office.");
-        Assertions.assertEquals(1, exact.getSpans().size());
-        Assertions.assertTrue(exact.getSpans().get(0).isApplied());
-        Assertions.assertEquals("{{{REDACTED-date}}}", exact.getSpans().get(0).getReplacement());
+        for (final String date : List.of("March 27 - 1965", "March 27,  1965", "March 27, 1965")) {
+            final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "It was on " + date + " at the office.");
+            Assertions.assertEquals(1, filtered.getSpans().size(), date);
+            Assertions.assertEquals(date, filtered.getSpans().get(0).getText(), date);
+            Assertions.assertTrue(filtered.getSpans().get(0).isApplied(), date);
+            Assertions.assertEquals("{{{REDACTED-date}}}", filtered.getSpans().get(0).getReplacement(), date);
+        }
 
     }
 

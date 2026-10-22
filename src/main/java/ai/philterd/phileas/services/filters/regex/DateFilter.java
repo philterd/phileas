@@ -200,8 +200,8 @@ public class DateFilter extends RegexFilter {
         }
 
         // A year set further from the day, as in "March 27 - 1965". Last, so the patterns above keep the
-        // spans they match, and with a lower confidence because these are less certain.
-        filterPatterns.add(new FilterPattern.FilterPatternBuilder(Pattern.compile("(?i)\\b" + monthName + " \\d{1,2}(?:st|nd|rd|th)?" + yearSeparator + "\\d{4}\\b"), 0.6).withFormat("MMMM dd, yyyy").withAlwaysValid(true).build());
+        // spans they match.
+        filterPatterns.add(new FilterPattern.FilterPatternBuilder(Pattern.compile("(?i)\\b" + monthName + " \\d{1,2}(?:st|nd|rd|th)?" + yearSeparator + "\\d{4}\\b"), 0.75).withFormat("MMMM dd, yyyy").withAlwaysValid(true).build());
 
         return filterPatterns;
 
