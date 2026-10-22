@@ -26,7 +26,9 @@ import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
 import java.time.Period;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import static ai.philterd.phileas.services.strategies.AbstractFilterStrategy.RANDOM_REPLACE;
 
@@ -1028,6 +1030,103 @@ public class DateFilterTest extends AbstractFilterTest {
         final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "It was in March 65 at the office.");
         Assertions.assertEquals(1, filtered.getSpans().size());
         Assertions.assertTrue(filtered.getSpans().get(0).getText().startsWith("March 65"));
+
+    }
+
+    @Test
+    public void filterDateDayFirstWithComma() throws Exception {
+
+        // https://github.com/philterd/phileas/issues/462
+        for (final boolean onlyValidDates : List.of(false, true)) {
+
+            final DateFilter filter = new DateFilter(buildFilterConfiguration(), onlyValidDates, DateSpanValidator.getInstance());
+
+            for (final String date : List.of("27 March, 1965", "27 Mar, 1965", "27th March, 1965", "27 March, 1975",
+                    "3 March, 2020", "3 Mar, 2020", "1st May, 2020", "2nd June, 1950", "3rd Sep, 1969", "22nd Dec, 2099",
+                    "9 January, 1900", "09 January, 1968", "31 Oct, 2025", "27 Mar., 1965")) {
+                assertWholeDate(filter, date);
+            }
+
+        }
+
+    }
+
+    @Test
+    public void filterDateDayFirstEveryDay() throws Exception {
+
+        // Every day of the month, with years on either side of 1970.
+        // https://github.com/philterd/phileas/issues/462
+        final DateFilter filter = new DateFilter(buildFilterConfiguration(), false, DateSpanValidator.getInstance());
+
+        for (final int year : List.of(1900, 1950, 1969, 1970, 2025, 2099)) {
+            for (int day = 1; day <= 31; day++) {
+                assertWholeDate(filter, day + " March, " + year);
+                assertWholeDate(filter, day + " Mar, " + year);
+                assertWholeDate(filter, day + " March " + year);
+                assertWholeDate(filter, day + " Mar " + year);
+                assertWholeDate(filter, day + "-Mar-" + year);
+            }
+        }
+
+    }
+
+    @Test
+    public void filterDateDayFirstWithoutComma() throws Exception {
+
+        // https://github.com/philterd/phileas/issues/462
+        final DateFilter filter = new DateFilter(buildFilterConfiguration(), false, DateSpanValidator.getInstance());
+
+        for (final String date : List.of("27 March 1965", "27 Mar 1965", "27-Mar-1965", "27th March 1965", "3 March 2020",
+                "27/Mar/1965", "27.Mar.1965")) {
+            assertWholeDate(filter, date);
+        }
+
+    }
+
+    @Test
+    public void filterDateDayFirstFormat() throws Exception {
+
+        // A day-first date's span carries a day-first format, not a month-first one such as "MMMM yyyy".
+        // https://github.com/philterd/phileas/issues/462
+        final DateFilter filter = new DateFilter(buildFilterConfiguration(), false, DateSpanValidator.getInstance());
+
+        final Map<String, String> formats = new LinkedHashMap<>();
+        formats.put("27 March, 1965", "dd MMMM, yyyy");
+        formats.put("3 Mar, 2020", "dd MMMM, yyyy");
+        formats.put("27th March, 1965", "dd MMMM, yyyy");
+        formats.put("27 March 1965", "dd MMMM yyyy");
+        formats.put("27 Mar 1965", "dd MMMM yyyy");
+        formats.put("27-Mar-1965", "dd-MMMM-yyyy");
+        formats.put("27/Mar/1965", "dd/MMMM/yyyy");
+        formats.put("27.Mar.1965", "dd.MMMM.yyyy");
+
+        for (final Map.Entry<String, String> entry : formats.entrySet()) {
+            final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "It was on " + entry.getKey() + " at the office.");
+            Assertions.assertEquals(1, filtered.getSpans().size(), entry.getKey());
+            Assertions.assertEquals(entry.getKey(), filtered.getSpans().get(0).getText(), entry.getKey());
+            Assertions.assertEquals(entry.getValue(), filtered.getSpans().get(0).getPattern(), entry.getKey());
+        }
+
+    }
+
+    @Test
+    public void filterDateDayFirstMonthFirstUnchanged() throws Exception {
+
+        // Month-first dates keep their month-first format.
+        // https://github.com/philterd/phileas/issues/462
+        final DateFilter filter = new DateFilter(buildFilterConfiguration(), false, DateSpanValidator.getInstance());
+
+        final Map<String, String> formats = new LinkedHashMap<>();
+        formats.put("March 27, 1965", "MMMM dd, yyyy");
+        formats.put("March 27 1965", "MMMM dd yyyy");
+        formats.put("March 1965", "MMMM yyyy");
+
+        for (final Map.Entry<String, String> entry : formats.entrySet()) {
+            final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "It was on " + entry.getKey() + " at the office.");
+            Assertions.assertEquals(1, filtered.getSpans().size(), entry.getKey());
+            Assertions.assertEquals(entry.getKey(), filtered.getSpans().get(0).getText(), entry.getKey());
+            Assertions.assertEquals(entry.getValue(), filtered.getSpans().get(0).getPattern(), entry.getKey());
+        }
 
     }
 

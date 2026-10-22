@@ -124,6 +124,23 @@ public class DateFilter extends RegexFilter {
 
         final List<FilterPattern> filterPatterns = new LinkedList<>();
 
+        // Day-first month-name dates, such as "27 March, 1965", "3rd Mar 2020", or "27-Mar-1965". The
+        // month-first patterns below also match some of these through their optional leading day, but
+        // carry a month-first format, and none of them allows a comma between the month and the year.
+        // These patterns come first so that, for the same text, the span carries the day-first format.
+        // See issue #462.
+        final String dayFirst = "(?i)\\b(?:0?[1-9]|[12]\\d|3[01])(?:st|nd|rd|th)?";
+        // The month-name alternation carries most of the regex complexity of these patterns, as it does
+        // in the month-first patterns below; matching month names more loosely and checking them in Java
+        // would be a separate change.
+        @SuppressWarnings("java:S5843")
+        final String monthName = "(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:tember)?|Oct(?:ober)?|(?:Nov|Dec)(?:ember)?)\\.?";
+        filterPatterns.add(new FilterPattern.FilterPatternBuilder(Pattern.compile(dayFirst + " " + monthName + ", \\d{4}\\b"), 0.75).withFormat("dd MMMM, yyyy").withAlwaysValid(true).build());
+        for(final String delimiter : delimiters) {
+            final String d = Pattern.quote(delimiter);
+            filterPatterns.add(new FilterPattern.FilterPatternBuilder(Pattern.compile(dayFirst + d + monthName + d + "\\d{4}\\b"), 0.75).withFormat("dd-MMMM-yyyy".replace("-", delimiter)).withAlwaysValid(true).build());
+        }
+
         // These spans do NOT have replaceable delimiters.
         // These dates with the month names are pretty specific so they always pass validation as valid dates.
         // A day may have one or two digits. "MMMM yy" may not take a day followed by a four-digit year as
