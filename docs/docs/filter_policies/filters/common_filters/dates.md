@@ -75,14 +75,16 @@ The following filter strategy options are available for the `SHIFT` filter strat
 
 | Date form | Examples | `TRUNCATE_TO_YEAR` | `SHIFT` | `RELATIVE` |
 |---|---|---|---|---|
-| Numeric, month first | `03/27/1965`, `1965-03-27` | Transformed | Transformed | Transformed |
-| Month name with a day and a four-digit year, in either order | `March 27, 1965`, `Mar. 5th 2020`, `27 March, 1965`, `27-Mar-1965`, `March 27 - 1965` | Transformed | Transformed, in the same form | Transformed |
+| Numeric, with a day | `03/27/1965`, `1965-03-27`, `25/12/1980`, `3/27/65`, `25.12.80` | Transformed | Transformed, in the same form | Transformed |
+| Numeric month and year, no day | `3/1965`, `3/65` | Transformed | Redacted | Transformed, as the first of the month |
+| Month name with a day and a year, in either order | `March 27, 1965`, `Mar. 5th 2020`, `27 March, 1965`, `27-Mar-1965`, `March 27 - 1965`, `March 27th, 65` | Transformed | Transformed, in the same form | Transformed |
 | Month name and a four-digit year, no day | `March 1965` | Transformed | Redacted | Transformed, as the first of the month |
-| Month name with a two-digit year, or a month name and one number | `March 27th, 65`, `March 27` | Redacted | Redacted | Redacted |
-| Numeric, day first | `25/12/1980` | Redacted | Redacted | Redacted |
-| Not a real date | `February 30, 2020` | Redacted | Redacted | Redacted |
+| Month name and one number | `March 27`, `Mar 65` | Redacted | Redacted | Redacted |
+| Not a real date | `February 30, 2020`, `31/02/1980` | Redacted | Redacted | Redacted |
 
-`SHIFT` writes a shifted month-name date in the form of the original: the month as it was written when it does not change, and otherwise spelled out or abbreviated to three letters as the original was (so `Sept 25, 2020` shifted into October becomes `Oct 5, 2020`), in the same case, with the same separators and any period after the month, with an ordinal (`st`, `nd`, `rd`, `th`) recomputed for the new day, and with a leading zero if the day had one. `March 27th, 1965` shifted by 10 days and 1 year becomes `April 6th, 1966`. A month and year with no day is redacted rather than shifted, since a shift of days alone would leave it unchanged. A two-digit year is not transformed because it is ambiguous (`65` could be 1965 or 2065). `May` is written as a full month name, since it cannot be told apart from the abbreviation, so in a document that abbreviates months, `May 5, 2020` shifted into June becomes `June 15, 2020` rather than `Jun 15, 2020`.
+A numeric date with two numbers before the year is read month first when that is a real date, and day first otherwise: `05/12/1980` is May 12, and `25/12/1980` is December 25. A two-digit year is read as the most recent year ending in those digits that is not after the current year, so in 2026 `65` is 1965, `26` is 2026, and `27` is 1927. A date in the near future written with a two-digit year, such as `3/27/27`, is therefore read as a past date. `March 27` and `Mar 65` are redacted because the number could be a day or a two-digit year.
+
+`SHIFT` writes a shifted numeric date with the original's order, delimiter, and year width. Its month and day are zero-padded when the original has a two-digit month and day and a four-digit year, or starts with the year (`03/27/1965`, `1965-03-27`), and are otherwise written with as few digits as needed. So shifted by 10 days, `25/12/1980` becomes `04/01/1981`, `03/27/65` becomes `4/6/65`, and `12/25/99` becomes `1/4/00`. It writes a shifted month-name date in the form of the original: the month as it was written when it does not change, and otherwise spelled out or abbreviated to three letters as the original was (so `Sept 25, 2020` shifted into October becomes `Oct 5, 2020`), in the same case, with the same separators and any period after the month, with an ordinal (`st`, `nd`, `rd`, `th`) recomputed for the new day, and with a leading zero if the day had one. `March 27th, 1965` shifted by 10 days and 1 year becomes `April 6th, 1966`. A month and year with no day is redacted rather than shifted, since a shift of days alone would leave it unchanged. `May` is written as a full month name, since it cannot be told apart from the abbreviation, so in a document that abbreviates months, `May 5, 2020` shifted into June becomes `June 15, 2020` rather than `Jun 15, 2020`.
 
 ### Conditions
 
@@ -127,9 +129,6 @@ The following policy shifts birth dates and redacts every other date:
 
 ### Limitations
 
-* **Day-first numeric dates are not transformed.** `SHIFT`, `TRUNCATE_TO_YEAR`, and `RELATIVE` redact a date such as
-  `25/12/1980` rather than transforming it, whether or not `onlyValidDates` is set. The date is still redacted. Tracked
-  in [philterd/phileas#467](https://github.com/philterd/phileas/issues/467).
 * **A number after a month and day is taken as the year.** A month and day followed by a separator and any four-digit
   number is detected as one date, so in `Dose: Mar 3 - 2000 mg daily.` the dose is redacted with the date and the
   output is `Dose: {{{REDACTED-date}}} mg daily.` An ignored pattern broad enough to skip this would also skip real

@@ -17,6 +17,7 @@ package ai.philterd.phileas.services.strategies.rules;
 
 import java.time.DateTimeException;
 import java.time.LocalDate;
+import java.time.Year;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -32,9 +33,11 @@ import java.util.regex.Pattern;
  * single formatter pattern can both parse and write back. A changed date replaces the month, day, and year
  * in place, so it keeps the form of the original.
  *
- * <p>Only a four-digit year is read. A two-digit year is ambiguous, so such a date is not parsed.</p>
+ * <p>A two-digit year is read with {@link TwoDigitYear#resolve}, but only after a day, as in
+ * {@code March 27th, 65}: a month name and one number, as in {@code March 27}, could be a day or a year, so
+ * it is not parsed.</p>
  */
-final class MonthNameDate {
+final class MonthNameDate implements DateText {
 
     private static final String[] MONTHS = {"January", "February", "March", "April", "May", "June", "July",
             "August", "September", "October", "November", "December"};
@@ -42,12 +45,14 @@ final class MonthNameDate {
     private static final String MONTH = "(?<month>jan(?:uary)?|feb(?:ruary)?|mar(?:ch)?|apr(?:il)?|may|june?|july?"
             + "|aug(?:ust)?|sep(?:tember|t)?|oct(?:ober)?|nov(?:ember)?|dec(?:ember)?)\\.?";
     private static final String DAY = "(?<day>\\d{1,2})(?<ordinal>st|nd|rd|th)?";
-    private static final String YEAR = "(?<year>\\d{4})";
+    private static final String YEAR = "(?<year>\\d{4}|\\d{2})";
+    private static final String FOUR_DIGIT_YEAR = "(?<year>\\d{4})";
     private static final String SEPARATOR = "[\\s,./\\-\\u2013\\u2014]*";
 
-    private static final Pattern MONTH_FIRST = Pattern.compile(MONTH + SEPARATOR + DAY + SEPARATOR + YEAR, Pattern.CASE_INSENSITIVE);
+    // A day and a year need a separator between them, so "March 2765" is a month and year, not March 27, '65.
+    private static final Pattern MONTH_FIRST = Pattern.compile(MONTH + SEPARATOR + DAY + "[\\s,./\\-\\u2013\\u2014]+" + YEAR, Pattern.CASE_INSENSITIVE);
     private static final Pattern DAY_FIRST = Pattern.compile(DAY + SEPARATOR + MONTH + SEPARATOR + YEAR, Pattern.CASE_INSENSITIVE);
-    private static final Pattern MONTH_AND_YEAR = Pattern.compile(MONTH + SEPARATOR + YEAR, Pattern.CASE_INSENSITIVE);
+    private static final Pattern MONTH_AND_YEAR = Pattern.compile(MONTH + SEPARATOR + FOUR_DIGIT_YEAR, Pattern.CASE_INSENSITIVE);
 
     private final String text;
     private final Matcher matcher;
@@ -61,13 +66,19 @@ final class MonthNameDate {
         this.date = date;
     }
 
+    /** Reads a month-name date, taking the current year from the system clock. */
+    static Optional<MonthNameDate> parse(final String text) {
+        return parse(text, Year.now().getValue());
+    }
+
     /**
      * Reads a month-name date.
      * @param text The date's text, such as a span's text.
-     * @return The date, or empty if the text is not a month-name date with a four-digit year, or names a day
-     * the month does not have.
+     * @param currentYear The current year, for reading a two-digit year.
+     * @return The date, or empty if the text is not a month-name date with a two- or four-digit year, or
+     * names a day the month does not have.
      */
-    static Optional<MonthNameDate> parse(final String text) {
+    static Optional<MonthNameDate> parse(final String text, final int currentYear) {
 
         if(text == null) {
             return Optional.empty();
@@ -80,7 +91,10 @@ final class MonthNameDate {
             if(matcher.matches()) {
 
                 final boolean hasDay = form != MONTH_AND_YEAR;
-                final int year = Integer.parseInt(matcher.group("year"));
+                final String yearText = matcher.group("year");
+                final int year = yearText.length() == 2
+                        ? TwoDigitYear.resolve(Integer.parseInt(yearText), currentYear)
+                        : Integer.parseInt(yearText);
                 final int month = monthNumber(matcher.group("month"));
                 final int day = hasDay ? Integer.parseInt(matcher.group("day")) : 1;
 
@@ -99,13 +113,22 @@ final class MonthNameDate {
     }
 
     /** Whether the date has a day. A month and year alone, such as {@code March 1965}, does not. */
-    boolean hasDay() {
+    @Override
+    public boolean hasDay() {
         return hasDay;
     }
 
     /** The date. A month and year alone is the first of the month. */
-    LocalDate date() {
+    @Override
+    public LocalDate date() {
         return date;
+    }
+
+    /** The year as written: two digits for a two-digit year, so {@code March 27th, 65} gives {@code 65}. */
+    @Override
+    public String yearText() {
+        final String yearText = matcher.group("year");
+        return yearText.length() == 2 ? yearText : String.valueOf(date.getYear());
     }
 
     /**
@@ -114,7 +137,8 @@ final class MonthNameDate {
      * @param other The date to write.
      * @return The date's text.
      */
-    String format(final LocalDate other) {
+    @Override
+    public String format(final LocalDate other) {
 
         final List<int[]> positions = new ArrayList<>();
         final List<String> values = new ArrayList<>();
@@ -125,7 +149,9 @@ final class MonthNameDate {
                 : monthText(matcher.group("month"), other.getMonthValue()));
 
         positions.add(new int[]{matcher.start("year"), matcher.end("year")});
-        values.add(String.format(Locale.ROOT, "%04d", other.getYear()));
+        values.add(matcher.group("year").length() == 2
+                ? TwoDigitYear.format(other.getYear())
+                : String.format(Locale.ROOT, "%04d", other.getYear()));
 
         if(hasDay) {
             final int end = matcher.group("ordinal") == null ? matcher.end("day") : matcher.end("ordinal");

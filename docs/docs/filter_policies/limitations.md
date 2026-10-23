@@ -11,5 +11,5 @@ around it.
 | Filter | Known limitations |
 |--------|-------------------|
 | [Driver's License Numbers](filters/common_filters/drivers-license-numbers.md) | [A contextual term can belong to a different value, such as a house number near the word "license"](filters/common_filters/drivers-license-numbers.md#limitations). [A label farther away than `windowSize` words is not seen](filters/common_filters/drivers-license-numbers.md#limitations). |
-| [Dates](filters/common_filters/dates.md) | [Day-first numeric dates such as `25/12/1980` are redacted rather than transformed by `SHIFT`, `TRUNCATE_TO_YEAR`, and `RELATIVE`](filters/common_filters/dates.md#limitations). [A number after a month and day, such as the dose in `Mar 3 - 2000 mg`, is redacted as the year](filters/common_filters/dates.md#limitations). |
+| [Dates](filters/common_filters/dates.md) | [A number after a month and day, such as the dose in `Mar 3 - 2000 mg`, is redacted as the year](filters/common_filters/dates.md#limitations). |
 | [Cities](filters/locations/cities.md) | [The bundled list contains common words, such as "Call" and "Oak", which are redacted as cities](filters/locations/cities.md#limitations). |

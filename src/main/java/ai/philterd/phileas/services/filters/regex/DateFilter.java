@@ -85,9 +85,7 @@ public class DateFilter extends RegexFilter {
                     // The month-first interpretation was not a real date, but the same text is a
                     // valid day-first date (e.g. 25/12/1980), so keep it: the date is redacted rather
                     // than left in the clear. Record the day-first format on the span so its reported
-                    // format is correct. Note the replacement was already computed upstream with the
-                    // month-first format, so a SHIFT/TRUNCATE strategy falls back to redaction for a
-                    // day-first date (it is removed, but not transformed).
+                    // format is correct. The strategies read the date from its text in the same order.
                     LOGGER.debug("Date for pattern {} is valid as day-first.", span.getPattern());
                     span.setPattern(toDayFirstFormat(span.getPattern()));
                     spans.add(span);
@@ -103,7 +101,14 @@ public class DateFilter extends RegexFilter {
 
         } else {
 
-            // We are not worried about invalid dates formatted properly, e.g. 12/35/2019.
+            // We are not worried about invalid dates formatted properly, e.g. 12/35/2019. A date that is
+            // only valid day first still records the day-first format, as with onlyValidDates.
+            for(final Span span : rawSpans) {
+                if(!span.isAlwaysValid() && spanValidator != null && !spanValidator.validate(span) && validatesAsDayFirst(span)) {
+                    span.setPattern(toDayFirstFormat(span.getPattern()));
+                }
+            }
+
             spans.addAll(rawSpans);
 
         }
@@ -182,9 +187,9 @@ public class DateFilter extends RegexFilter {
                     : "(?!\\d)(?:(?!" + d + "\\d)|(?=(?:" + d + anyNumericDate + "){1,8}(?!\\d)(?!" + d + "\\d)))";
 
             // Make a filter pattern for each pattern with each delimiter. The numeric day/month/year
-            // patterns carry a month-first format; day-first dates (e.g. 25/12/1980) that month-first
-            // cannot validate are recovered in the filter() validation step, which retries the same
-            // text as day-first. See toDayFirstFormat / validate().
+            // patterns carry a month-first format; a date that month-first cannot validate (e.g.
+            // 25/12/1980) records its day-first format in filter(). See toDayFirstFormat. The date
+            // strategies read the date from its text, not from this format.
             filterPatterns.add(new FilterPattern.FilterPatternBuilder(Pattern.compile("\\b\\d{4}" + d + "\\d{2}" + d + "\\d{2}" + noMoreDigits), 0.75).withFormat("uuuu-MM-dd".replace("-", delimiter)).build());
             filterPatterns.add(new FilterPattern.FilterPatternBuilder(Pattern.compile("\\b\\d{2}" + d + "\\d{2}" + d + "\\d{4}" + noMoreDigits), 0.75).withFormat("MM-dd-uuuu".replace("-", delimiter)).build());
             filterPatterns.add(new FilterPattern.FilterPatternBuilder(Pattern.compile("\\b\\d{1,2}" + d + "\\d{1,2}" + d + "\\d{2,4}" + noMoreDigits), 75).withFormat("M-d-u".replace("-", delimiter)).build());

@@ -891,9 +891,7 @@ public class DateFilterTest extends AbstractFilterTest {
     @Test
     public void filterDate53() throws Exception {
 
-        // A day-first date under the SHIFT strategy is still redacted. The replacement was computed
-        // upstream with the month-first format, which is not a real date, so SHIFT falls back to
-        // redaction (the date is removed, but not shifted).
+        // A day-first date under the SHIFT strategy is shifted day first. See issue #467.
 
         final DateFilterStrategy dateFilterStrategy = new DateFilterStrategy();
         dateFilterStrategy.setStrategy(AbstractFilterStrategy.SHIFT);
@@ -911,7 +909,7 @@ public class DateFilterTest extends AbstractFilterTest {
 
         Assertions.assertEquals(1, filtered.getSpans().size());
         Assertions.assertEquals("25/12/1980", filtered.getSpans().get(0).getText());
-        Assertions.assertEquals("{{{REDACTED-date}}}", filtered.getSpans().get(0).getReplacement());
+        Assertions.assertEquals("30/12/1980", filtered.getSpans().get(0).getReplacement());
 
     }
 

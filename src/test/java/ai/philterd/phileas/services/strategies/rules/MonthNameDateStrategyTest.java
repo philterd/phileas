@@ -148,9 +148,9 @@ public class MonthNameDateStrategyTest {
     }
 
     @ParameterizedTest(name = "{0}")
-    @ValueSource(strings = {"March 27", "March 27th, 65", "February 30, 2020", "Feb 29, 2021"})
+    @ValueSource(strings = {"March 27", "February 30, 2020", "Feb 29, 2021"})
     public void datesThatCannotBeReadAreRedacted(final String date) throws Exception {
-        // A two-digit year is ambiguous, and a day the month does not have is not a date.
+        // "March 27" could be a day or a two-digit year, and a day the month does not have is not a date.
         for (final String strategy : new String[]{"{\"strategy\":\"TRUNCATE_TO_YEAR\"}", "{\"strategy\":\"SHIFT\",\"shiftDays\":10}", "{\"strategy\":\"RELATIVE\"}"}) {
             Assertions.assertEquals(REDACTED, apply(strategy, date), strategy);
         }

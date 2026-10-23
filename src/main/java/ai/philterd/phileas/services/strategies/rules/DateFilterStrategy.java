@@ -37,6 +37,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.security.SecureRandom;
+import java.time.Clock;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Period;
@@ -49,6 +50,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 public class DateFilterStrategy extends AbstractFilterStrategy {
 
@@ -77,6 +79,11 @@ public class DateFilterStrategy extends AbstractFilterStrategy {
     @SerializedName("futureDates")
     @Expose
     private boolean futureDates = false;
+
+    private transient Clock clock = Clock.systemDefaultZone();
+
+    // The date filter's numeric formats: month, day, and year letters with one delimiter, as in M-d-u.
+    private static final Pattern NUMERIC_FORMAT = Pattern.compile("(?:M{1,2}|d{1,2}|u{1,4})([-/ .])(?:M{1,2}|d{1,2}|u{1,4})(?:\\1(?:M{1,2}|d{1,2}|u{1,4}))?");
 
     /**
      * The date filter adds the date-only strategies and implements neither FPE_ENCRYPT_REPLACE,
@@ -194,97 +201,29 @@ public class DateFilterStrategy extends AbstractFilterStrategy {
 
             replacement = DigestUtils.sha256Hex(token + salt);
 
-        } else if(Strings.CI.equals(strategy, TRUNCATE_TO_YEAR) && isMonthName(filterPattern)) {
-
-            final Optional<MonthNameDate> date = MonthNameDate.parse(token);
-            replacement = date.isPresent() ? String.valueOf(date.get().date().getYear()) : unparsedMonthName(token, label, filterPattern);
-
         } else if(Strings.CI.equals(strategy, TRUNCATE_TO_YEAR)) {
 
-            try {
-
-                final DateTimeFormatter dtf = DateTimeFormatter.ofPattern(filterPattern.getFormat(), Locale.US).withResolverStyle(ResolverStyle.STRICT);
-                final LocalDateTime parsedDate = LocalDate.parse(token, dtf).atStartOfDay();
-
-                replacement = String.valueOf(parsedDate.getYear());
-
-            } catch (DateTimeParseException ex) {
-
-                // The DateTimeParseException message echoes the unparsed date text, so it is not logged.
-                LOGGER.error("Unable to parse date with format {}. Falling back to redaction.", filterPattern.getFormat());
-
-                // This will be thrown if the input date is not a valid date.
-                // Default back to redaction.
-                replacement = getRedactedToken(token, label, filterType);
-
-            }
-
-        } else if(Strings.CI.equals(strategy, SHIFT) && isMonthName(filterPattern)) {
-
-            // A month and year alone is redacted: shifting it by days alone would leave it unchanged.
-            final Optional<MonthNameDate> date = MonthNameDate.parse(token);
-            replacement = date.isPresent() && date.get().hasDay()
-                    ? date.get().format(shift(date.get().date().atStartOfDay()).toLocalDate())
-                    : unparsedMonthName(token, label, filterPattern);
+            // The year as written, so a two-digit year stays two digits.
+            replacement = readsFromText(filterPattern)
+                    ? read(token, filterPattern).map(DateText::yearText).orElseGet(() -> unparsed(token, label, filterPattern))
+                    : truncateToYearWithFormat(token, label, filterPattern);
 
         } else if(Strings.CI.equals(strategy, SHIFT)) {
 
-            // Shift the date given some number of days, months, and/or years.
-
-            try {
-
-                final DateTimeFormatter dtf = DateTimeFormatter.ofPattern(filterPattern.getFormat(), Locale.US).withResolverStyle(ResolverStyle.STRICT);
-                final LocalDateTime parsedDate = LocalDate.parse(token, dtf).atStartOfDay();
-
-                // Shift the date. Only valid dates can be shifted.
-                replacement = shift(parsedDate).format(dtf);
-
-            } catch (DateTimeParseException ex) {
-
-                // The DateTimeParseException message echoes the unparsed date text, so it is not logged.
-                LOGGER.error("Unable to parse date with format {}. Falling back to redaction.", filterPattern.getFormat());
-
-                // This will be thrown if the input date is not a valid date.
-                // Default back to redaction.
-                replacement = getRedactedToken(token, label, filterType);
-
-            }
-
-        } else if(Strings.CI.equals(strategy, RELATIVE) && isMonthName(filterPattern)) {
-
-            // A month and year alone is taken as the first of the month.
-            final Optional<MonthNameDate> date = MonthNameDate.parse(token);
-            replacement = date.isPresent()
-                    ? getReadableDate(date.get().date().atStartOfDay(), LocalDateTime.now(), token, label, filterType)
-                    : unparsedMonthName(token, label, filterPattern);
+            // A month and year alone is redacted: shifting it by days alone would leave it unchanged.
+            replacement = readsFromText(filterPattern)
+                    ? read(token, filterPattern).filter(DateText::hasDay).map(date -> date.format(shift(date.date())))
+                            .orElseGet(() -> unparsed(token, label, filterPattern))
+                    : shiftWithFormat(token, label, filterPattern);
 
         } else if(Strings.CI.equals(strategy, RELATIVE)) {
 
-            // Make the date relative such as "3 months ago."
-
-            try {
-
-                final DateTimeFormatter dtf = new DateTimeFormatterBuilder()
-                        .appendPattern(filterPattern.getFormat())
-                        .parseDefaulting(ChronoField.DAY_OF_MONTH, 1)
-                        .toFormatter();
-
-                final LocalDateTime parsedDate = LocalDate.parse(token, dtf).atStartOfDay();
-                final LocalDateTime currentDate = LocalDateTime.now();
-
-                // Convert the date to a spelled out date.
-                replacement = getReadableDate(parsedDate, currentDate, token, label, filterType);
-
-            } catch (DateTimeParseException ex) {
-
-                // The DateTimeParseException message echoes the unparsed date text, so it is not logged.
-                LOGGER.error("Unable to parse date. Falling back to redaction.");
-
-                // This will be thrown if the input date is not a valid date.
-                // Default back to redaction.
-                replacement = getRedactedToken(token, label, filterType);
-
-            }
+            // Make the date relative such as "3 months ago." A month and year alone is taken as the first
+            // of the month.
+            replacement = readsFromText(filterPattern)
+                    ? read(token, filterPattern).map(date -> getReadableDate(date.date().atStartOfDay(), LocalDateTime.now(clock()), token, label, filterType))
+                            .orElseGet(() -> unparsed(token, label, filterPattern))
+                    : relativeWithFormat(token, label, filterPattern);
 
         } else {
 
@@ -298,7 +237,7 @@ public class DateFilterStrategy extends AbstractFilterStrategy {
     }
 
     /** Shifts a date by the strategy's days, months, and years, or by random amounts with shiftRandom. */
-    private LocalDateTime shift(final LocalDateTime date) {
+    private LocalDate shift(final LocalDate date) {
 
         if(shiftRandom) {
             final int randomShiftDays = RANDOM.nextInt(1, 30);
@@ -311,18 +250,111 @@ public class DateFilterStrategy extends AbstractFilterStrategy {
 
     }
 
+    /** The current year, for reading two-digit years. */
+    private int currentYear() {
+        return LocalDate.now(clock()).getYear();
+    }
+
+    // The field is transient, so a strategy created without its constructor has no clock.
+    private Clock clock() {
+        return clock == null ? Clock.systemDefaultZone() : clock;
+    }
+
+    /** Sets the clock the current date and year are read from. For tests. */
+    void setClock(final Clock clock) {
+        this.clock = clock;
+    }
+
     /**
-     * Whether the span was found by a month-name pattern, whose text is read with {@link MonthNameDate}
-     * rather than with its format.
+     * Whether the span was found by one of the date filter's patterns, whose text is read with
+     * {@link MonthNameDate} or {@link NumericDate} rather than with the pattern's format. A date with any other
+     * format, such as one a caller supplies, is read with its format.
      */
+    private static boolean readsFromText(final FilterPattern filterPattern) {
+        return isMonthName(filterPattern) || isNumeric(filterPattern);
+    }
+
+    /** A month-name pattern's format, such as {@code MMMM dd, yyyy} or {@code dd-MMMM-yyyy}. */
     private static boolean isMonthName(final FilterPattern filterPattern) {
         return filterPattern != null && filterPattern.getFormat() != null && filterPattern.getFormat().contains("MMMM");
     }
 
-    /** Redacts a month-name date the strategy cannot transform, such as one with a two-digit year. */
-    private String unparsedMonthName(final String token, final String label, final FilterPattern filterPattern) {
+    /** A numeric pattern's format, such as {@code MM/dd/uuuu}, {@code M-d-u}, {@code uuuu.MM.dd}, or {@code M/u}. */
+    private static boolean isNumeric(final FilterPattern filterPattern) {
+        return filterPattern != null && filterPattern.getFormat() != null && NUMERIC_FORMAT.matcher(filterPattern.getFormat()).matches();
+    }
+
+    private Optional<? extends DateText> read(final String token, final FilterPattern filterPattern) {
+
+        if(isMonthName(filterPattern)) {
+            return MonthNameDate.parse(token, currentYear());
+        }
+
+        // The pattern's format says whether the month and day are zero-padded, as in MM/dd/uuuu.
+        return NumericDate.parse(token, currentYear(), filterPattern.getFormat().contains("MM"));
+
+    }
+
+    private String truncateToYearWithFormat(final String token, final String label, final FilterPattern filterPattern) {
+
+        try {
+
+            final DateTimeFormatter dtf = DateTimeFormatter.ofPattern(filterPattern.getFormat(), Locale.US).withResolverStyle(ResolverStyle.STRICT);
+            return String.valueOf(LocalDate.parse(token, dtf).getYear());
+
+        } catch (DateTimeParseException ex) {
+
+            // The DateTimeParseException message echoes the unparsed date text, so it is not logged.
+            LOGGER.error("Unable to parse date with format {}. Falling back to redaction.", filterPattern.getFormat());
+            return getRedactedToken(token, label, filterType);
+
+        }
+
+    }
+
+    private String shiftWithFormat(final String token, final String label, final FilterPattern filterPattern) {
+
+        try {
+
+            final DateTimeFormatter dtf = DateTimeFormatter.ofPattern(filterPattern.getFormat(), Locale.US).withResolverStyle(ResolverStyle.STRICT);
+            return shift(LocalDate.parse(token, dtf)).atStartOfDay().format(dtf);
+
+        } catch (DateTimeParseException ex) {
+
+            // The DateTimeParseException message echoes the unparsed date text, so it is not logged.
+            LOGGER.error("Unable to parse date with format {}. Falling back to redaction.", filterPattern.getFormat());
+            return getRedactedToken(token, label, filterType);
+
+        }
+
+    }
+
+    private String relativeWithFormat(final String token, final String label, final FilterPattern filterPattern) {
+
+        try {
+
+            final DateTimeFormatter dtf = new DateTimeFormatterBuilder()
+                    .appendPattern(filterPattern.getFormat())
+                    .parseDefaulting(ChronoField.DAY_OF_MONTH, 1)
+                    .toFormatter();
+
+            return getReadableDate(LocalDate.parse(token, dtf).atStartOfDay(), LocalDateTime.now(clock()), token, label, filterType);
+
+        } catch (DateTimeParseException ex) {
+
+            // The DateTimeParseException message echoes the unparsed date text, so it is not logged.
+            LOGGER.error("Unable to parse date. Falling back to redaction.");
+            return getRedactedToken(token, label, filterType);
+
+        }
+
+    }
+
+    /** Redacts a date the strategy cannot transform, such as an invalid date or a month name and one number. */
+    private String unparsed(final String token, final String label, final FilterPattern filterPattern) {
         // The date's text is not logged.
-        LOGGER.debug("Unable to transform a month-name date with format {}. Falling back to redaction.", filterPattern.getFormat());
+        LOGGER.debug("Unable to transform a date with format {}. Falling back to redaction.",
+                filterPattern == null ? null : filterPattern.getFormat());
         return getRedactedToken(token, label, filterType);
     }
 
