@@ -18,6 +18,8 @@ A month-first date with a day of one or two digits, such as `March 27, 1965`, `S
 
 A day-first date with a month name and a four-digit year, such as `27 March, 1965`, `3 Mar, 2020`, `27th March 1965`, or `27-Mar-1965`, is detected for a day from 1 to 31, with or without an ordinal (`st`, `nd`, `rd`, `th`), and for any four-digit year. The day and month are separated by a single space, `-`, `/`, or `.`, and the month and year by the same delimiter or, after a space, by `, `. Its span carries a day-first format, such as `dd MMMM, yyyy` or `dd-MMMM-yyyy`. Detection is pattern-based, so validate the output against your own data.
 
+A month name may be spelled out or abbreviated to its first three letters, in any case and with or without a period after it: `Jan`, `Feb`, `Mar`, `Apr`, `May`, `Jun`, `Jul`, `Aug`, `Sep`, `Oct`, `Nov`, and `Dec`. September may also be abbreviated `Sept`, as in `Sept 3, 2020` or `3 Sept. 2020`. A word that only begins with a month's abbreviation, such as `Septic`, is not read as a month.
+
 ### Required Parameters
 
 This filter has no required parameters.
@@ -80,7 +82,7 @@ The following filter strategy options are available for the `SHIFT` filter strat
 | Numeric, day first | `25/12/1980` | Redacted | Redacted | Redacted |
 | Not a real date | `February 30, 2020` | Redacted | Redacted | Redacted |
 
-`SHIFT` writes a shifted month-name date in the form of the original: the month spelled out or abbreviated as it was, in the same case, with the same separators and any period after the month, with an ordinal (`st`, `nd`, `rd`, `th`) recomputed for the new day, and with a leading zero if the day had one. `March 27th, 1965` shifted by 10 days and 1 year becomes `April 6th, 1966`. A month and year with no day is redacted rather than shifted, since a shift of days alone would leave it unchanged. A two-digit year is not transformed because it is ambiguous (`65` could be 1965 or 2065). `May` is written as a full month name, since it cannot be told apart from the abbreviation, so in a document that abbreviates months, `May 5, 2020` shifted into June becomes `June 15, 2020` rather than `Jun 15, 2020`.
+`SHIFT` writes a shifted month-name date in the form of the original: the month as it was written when it does not change, and otherwise spelled out or abbreviated to three letters as the original was (so `Sept 25, 2020` shifted into October becomes `Oct 5, 2020`), in the same case, with the same separators and any period after the month, with an ordinal (`st`, `nd`, `rd`, `th`) recomputed for the new day, and with a leading zero if the day had one. `March 27th, 1965` shifted by 10 days and 1 year becomes `April 6th, 1966`. A month and year with no day is redacted rather than shifted, since a shift of days alone would leave it unchanged. A two-digit year is not transformed because it is ambiguous (`65` could be 1965 or 2065). `May` is written as a full month name, since it cannot be told apart from the abbreviation, so in a document that abbreviates months, `May 5, 2020` shifted into June becomes `June 15, 2020` rather than `Jun 15, 2020`.
 
 ### Conditions
 
@@ -124,28 +126,6 @@ The following policy shifts birth dates and redacts every other date:
 ```
 
 ### Limitations
-
-* **`Sept` is not recognized as September.** A date written with it, such as `Sept 3, 2020`, `Sept. 3, 2020`, or
-  `3 Sept 2020`, is left in the output, and in `Sept 3 2020` only `3 2020` is redacted. `Sep` and `September` are
-  recognized. To redact these dates, add a custom [identifier](../custom_filters/identifier.md) for them. Its spans
-  have the type `id`, so they are redacted as `{{{REDACTED-id}}}` with the identifier's strategies, and `SHIFT`,
-  `TRUNCATE_TO_YEAR`, and `RELATIVE` do not apply to them. Tracked in
-  [philterd/phileas#466](https://github.com/philterd/phileas/issues/466).
-
-    ```
-    {
-       "identifiers": {
-          "date": {},
-          "identifiers": [
-             {
-                "classification": "date",
-                "caseSensitive": false,
-                "pattern": "\\b(?:\\d{1,2}(?:st|nd|rd|th)?[ -])?Sept\\.?(?:[ -]\\d{1,2}(?:st|nd|rd|th)?)?,?[ -]\\d{4}\\b"
-             }
-          ]
-       }
-    }
-    ```
 
 * **Day-first numeric dates are not transformed.** `SHIFT`, `TRUNCATE_TO_YEAR`, and `RELATIVE` redact a date such as
   `25/12/1980` rather than transforming it, whether or not `onlyValidDates` is set. The date is still redacted. Tracked

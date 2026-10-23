@@ -40,7 +40,7 @@ final class MonthNameDate {
             "August", "September", "October", "November", "December"};
 
     private static final String MONTH = "(?<month>jan(?:uary)?|feb(?:ruary)?|mar(?:ch)?|apr(?:il)?|may|june?|july?"
-            + "|aug(?:ust)?|sep(?:tember)?|oct(?:ober)?|nov(?:ember)?|dec(?:ember)?)\\.?";
+            + "|aug(?:ust)?|sep(?:tember|t)?|oct(?:ober)?|nov(?:ember)?|dec(?:ember)?)\\.?";
     private static final String DAY = "(?<day>\\d{1,2})(?<ordinal>st|nd|rd|th)?";
     private static final String YEAR = "(?<year>\\d{4})";
     private static final String SEPARATOR = "[\\s,./\\-\\u2013\\u2014]*";
@@ -110,7 +110,7 @@ final class MonthNameDate {
 
     /**
      * Writes another date in this date's form: the same month spelling and case, separators, ordinal, and
-     * day padding.
+     * day padding. The month is written as it was when it does not change.
      * @param other The date to write.
      * @return The date's text.
      */
@@ -120,7 +120,9 @@ final class MonthNameDate {
         final List<String> values = new ArrayList<>();
 
         positions.add(new int[]{matcher.start("month"), matcher.end("month")});
-        values.add(monthText(matcher.group("month"), other.getMonthValue()));
+        values.add(other.getMonthValue() == date.getMonthValue()
+                ? matcher.group("month")
+                : monthText(matcher.group("month"), other.getMonthValue()));
 
         positions.add(new int[]{matcher.start("year"), matcher.end("year")});
         values.add(String.format(Locale.ROOT, "%04d", other.getYear()));
@@ -161,10 +163,14 @@ final class MonthNameDate {
 
     }
 
-    /** The month's name, abbreviated if the original was (May counts as full), in the original's case. */
+    /**
+     * Another month's name, abbreviated to three letters if the original was abbreviated (May counts as
+     * full, and Sept as abbreviated), in the original's case.
+     */
     private static String monthText(final String original, final int month) {
 
-        final boolean abbreviated = original.length() == 3 && !original.equalsIgnoreCase("may");
+        final boolean abbreviated = (original.length() == 3 && !original.equalsIgnoreCase("may"))
+                || original.equalsIgnoreCase("sept");
         final String name = abbreviated ? MONTHS[month - 1].substring(0, 3) : MONTHS[month - 1];
 
         return inCaseOf(original, name);

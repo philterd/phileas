@@ -163,6 +163,54 @@ public class MonthNameDateStrategyTest {
         Assertions.assertEquals("1966-04-06", apply("{\"strategy\":\"SHIFT\",\"shiftDays\":10,\"shiftYears\":1}", "1965-03-27"));
     }
 
+    @ParameterizedTest(name = "{0}")
+    @CsvSource(delimiter = '|', value = {
+            "Sept 3, 2020|2020",
+            "Sept. 3, 2020|2020",
+            "Sept 3rd, 2020|2020",
+            "SEPT 3, 2020|2020",
+            "3 Sept 2020|2020",
+            "3 Sept, 2020|2020",
+            "3-Sept-2020|2020",
+            "Sept 2020|2020",
+            "Sept 3 2020|2020"
+    })
+    public void truncateToYearOnSept(final String date, final String expected) throws Exception {
+        // https://github.com/philterd/phileas/issues/466
+        Assertions.assertEquals(expected, apply("{\"strategy\":\"TRUNCATE_TO_YEAR\"}", date));
+    }
+
+    @ParameterizedTest(name = "{0}")
+    @CsvSource(delimiter = '|', value = {
+            // A month that does not change is written as it was.
+            "Sept 3, 2020|Sept 13, 2021",
+            "Sept. 3rd, 2020|Sept. 13th, 2021",
+            "3 Sept 2020|13 Sept 2021",
+            "3-Sept-2020|13-Sept-2021",
+            "Sept 3 2020|Sept 13 2021",
+            // A month that changes is abbreviated to three letters.
+            "Sept 25, 2020|Oct 5, 2021",
+            "SEPT 25, 2020|OCT 5, 2021",
+            "Aug 25, 2020|Sep 4, 2021",
+            "Aug. 25th, 2020|Sep. 4th, 2021",
+            "August 25, 2020|September 4, 2021",
+            "Sep 3, 2020|Sep 13, 2021"
+    })
+    public void shiftOnSept(final String date, final String expected) throws Exception {
+        Assertions.assertEquals(expected, apply("{\"strategy\":\"SHIFT\",\"shiftDays\":10,\"shiftYears\":1}", date));
+    }
+
+    @Test
+    public void shiftRedactsSeptAndYearAlone() throws Exception {
+        Assertions.assertEquals(REDACTED, apply("{\"strategy\":\"SHIFT\",\"shiftYears\":1}", "Sept 2020"));
+    }
+
+    @ParameterizedTest(name = "{0}")
+    @ValueSource(strings = {"Sept 3, 2020", "Sept. 3, 2020", "Sept 3rd, 2020", "SEPT 3, 2020", "3 Sept 2020", "3-Sept-2020", "Sept 3 2020"})
+    public void relativeOnSeptMatchesTheNumericDate(final String date) throws Exception {
+        Assertions.assertEquals(apply("{\"strategy\":\"RELATIVE\"}", "09/03/2020"), apply("{\"strategy\":\"RELATIVE\"}", date));
+    }
+
     @Test
     public void parseReadsEachOrder() {
         Assertions.assertEquals(LocalDate.of(1965, 3, 27), MonthNameDate.parse("March 27, 1965").orElseThrow().date());

@@ -134,7 +134,7 @@ public class DateFilter extends RegexFilter {
         // in the month-first patterns below; matching month names more loosely and checking them in Java
         // would be a separate change.
         @SuppressWarnings("java:S5843")
-        final String monthName = "(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:tember)?|Oct(?:ober)?|(?:Nov|Dec)(?:ember)?)\\.?";
+        final String monthName = "(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:tember|t)?|Oct(?:ober)?|(?:Nov|Dec)(?:ember)?)\\.?";
         filterPatterns.add(new FilterPattern.FilterPatternBuilder(Pattern.compile(dayFirst + " " + monthName + ", \\d{4}\\b"), 0.75).withFormat("dd MMMM, yyyy").withAlwaysValid(true).build());
         for(final String delimiter : delimiters) {
             final String d = Pattern.quote(delimiter);
@@ -145,14 +145,14 @@ public class DateFilter extends RegexFilter {
         // These dates with the month names are pretty specific so they always pass validation as valid dates.
         // A day may have one or two digits, and "MMMM yy" may not take a day followed by a four-digit
         // year as its year, as in "March 27, 1965" or "March 27 - 1965".
-        filterPatterns.add(new FilterPattern.FilterPatternBuilder(Pattern.compile("(?i)(\\b\\d{1,2}\\D{0,3})?\\b(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:tember)?|Oct(?:ober)?|(Nov|Dec)(?:ember)?) [\\d]{1,2}, [\\d]{4}\\b"), 0.75).withFormat("MMMM dd, yyyy").withAlwaysValid(true).build());
-        filterPatterns.add(new FilterPattern.FilterPatternBuilder(Pattern.compile("(?i)(\\b\\d{1,2}\\D{0,3})?\\b(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:tember)?|Oct(?:ober)?|(Nov|Dec)(?:ember)?) [\\d]{1,2} [\\d]{4}\\b"), 0.75).withFormat("MMMM dd yyyy").withAlwaysValid(true).build());
+        filterPatterns.add(new FilterPattern.FilterPatternBuilder(Pattern.compile("(?i)(\\b\\d{1,2}\\D{0,3})?\\b(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:tember|t)?|Oct(?:ober)?|(Nov|Dec)(?:ember)?) [\\d]{1,2}, [\\d]{4}\\b"), 0.75).withFormat("MMMM dd, yyyy").withAlwaysValid(true).build());
+        filterPatterns.add(new FilterPattern.FilterPatternBuilder(Pattern.compile("(?i)(\\b\\d{1,2}\\D{0,3})?\\b(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:tember|t)?|Oct(?:ober)?|(Nov|Dec)(?:ember)?) [\\d]{1,2} [\\d]{4}\\b"), 0.75).withFormat("MMMM dd yyyy").withAlwaysValid(true).build());
 
         // What may separate a month-first date's day from its year: a comma, one or two hyphens, or an
         // en or em dash, with up to two spaces on either side, or one to three spaces.
         final String yearSeparator = "(?: {0,2}(?:,|-{1,2}|[\\u2013\\u2014]) {0,2}| {1,3})";
-        filterPatterns.add(new FilterPattern.FilterPatternBuilder(Pattern.compile("(?i)(\\b\\d{1,2}\\D{0,3})?\\b(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:tember)?|Oct(?:ober)?|(Nov|Dec)(?:ember)?) [\\d]{2}\\b(?!(?:\\D{1,2}|" + yearSeparator + ")\\d{4}\\b)"), 0.75).withFormat("MMMM yy").withAlwaysValid(true).build());
-        filterPatterns.add(new FilterPattern.FilterPatternBuilder(Pattern.compile("(?i)(\\b\\d{1,2}\\D{0,3})?\\b(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:tember)?|Oct(?:ober)?|(Nov|Dec)(?:ember)?) [\\d]{4}\\b"), 0.75).withFormat("MMMM yyyy").withAlwaysValid(true).build());
+        filterPatterns.add(new FilterPattern.FilterPatternBuilder(Pattern.compile("(?i)(\\b\\d{1,2}\\D{0,3})?\\b(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:tember|t)?|Oct(?:ober)?|(Nov|Dec)(?:ember)?) [\\d]{2}\\b(?!(?:\\D{1,2}|" + yearSeparator + ")\\d{4}\\b)"), 0.75).withFormat("MMMM yy").withAlwaysValid(true).build());
+        filterPatterns.add(new FilterPattern.FilterPatternBuilder(Pattern.compile("(?i)(\\b\\d{1,2}\\D{0,3})?\\b(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:tember|t)?|Oct(?:ober)?|(Nov|Dec)(?:ember)?) [\\d]{4}\\b"), 0.75).withFormat("MMMM yyyy").withAlwaysValid(true).build());
 
         // The spans below DO have replaceable delimiters.
 
@@ -195,7 +195,7 @@ public class DateFilter extends RegexFilter {
                 filterPatterns.add(new FilterPattern.FilterPatternBuilder(Pattern.compile("\\b\\d{1,2}" + d + "\\d{2,4}" + noMoreDigits), 75).withFormat("M-u".replace("-", delimiter)).build());
             }
 
-            filterPatterns.add(new FilterPattern.FilterPatternBuilder(Pattern.compile("(?i)(\\b\\d{1,2}\\D{0,3})?\\b(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:tember)?|Oct(?:ober)?|(Nov|Dec)(?:ember)?)(\\.)?\\D?(\\d{1,2}(\\D?(st|nd|rd|th))?\\D?)(\\D?(\\d{4}|\\d{2}))?\\b"), 0.75).withFormat("MMMM-dd".replaceAll("-", delimiter)).withAlwaysValid(true).build());
+            filterPatterns.add(new FilterPattern.FilterPatternBuilder(Pattern.compile("(?i)(\\b\\d{1,2}\\D{0,3})?\\b(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:tember|t)?|Oct(?:ober)?|(Nov|Dec)(?:ember)?)(\\.)?\\D?(\\d{1,2}(\\D?(st|nd|rd|th))?\\D?)(\\D?(\\d{4}|\\d{2}))?\\b"), 0.75).withFormat("MMMM-dd".replaceAll("-", delimiter)).withAlwaysValid(true).build());
 
         }
 

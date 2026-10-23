@@ -17,6 +17,7 @@ package ai.philterd.phileas.filters;
 
 import ai.philterd.phileas.model.filtering.FilterType;
 import ai.philterd.phileas.model.filtering.Filtered;
+import ai.philterd.phileas.model.filtering.Span;
 import ai.philterd.phileas.services.filters.regex.DateFilter;
 import ai.philterd.phileas.services.strategies.AbstractFilterStrategy;
 import ai.philterd.phileas.services.strategies.rules.DateFilterStrategy;
@@ -1030,6 +1031,38 @@ public class DateFilterTest extends AbstractFilterTest {
         final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "It was in March 65 at the office.");
         Assertions.assertEquals(1, filtered.getSpans().size());
         Assertions.assertTrue(filtered.getSpans().get(0).getText().startsWith("March 65"));
+
+    }
+
+    @Test
+    public void filterDateSeptAbbreviation() throws Exception {
+
+        // https://github.com/philterd/phileas/issues/466
+        for (final boolean onlyValidDates : List.of(false, true)) {
+
+            final DateFilter filter = new DateFilter(buildFilterConfiguration(), onlyValidDates, DateSpanValidator.getInstance());
+
+            for (final String date : List.of("Sept 3, 2020", "Sept. 3, 2020", "Sept 3rd, 2020", "SEPT 3, 2020", "sept 3, 2020",
+                    "3 Sept 2020", "3 Sept, 2020", "3-Sept-2020", "3rd Sept. 2020", "Sept 2020", "Sept 3 2020",
+                    "Sept 3 - 2020", "Sept 30, 1965", "Sep 3, 2020", "Sep. 3, 2020", "September 3, 2020", "3 September 2020")) {
+                assertWholeDate(filter, date);
+            }
+
+        }
+
+    }
+
+    @Test
+    public void filterDateWordBeginningWithSeptIsNotAMonth() throws Exception {
+
+        final DateFilter filter = new DateFilter(buildFilterConfiguration(), false, DateSpanValidator.getInstance());
+
+        for (final String text : List.of("The Septic 2020 tank.", "Septuagint 2020 edition.", "Septa 2020 forms.")) {
+            final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, text);
+            for (final Span span : filtered.getSpans()) {
+                Assertions.assertFalse(span.getText().toLowerCase().contains("sept"), text + ": " + span.getText());
+            }
+        }
 
     }
 
