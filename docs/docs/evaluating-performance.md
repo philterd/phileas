@@ -150,8 +150,8 @@ Now we can calculate the precision and recall metrics.
 * Precision is the number of true positives divided by the number true positives plus false positives.
 * Recall is the number of true positives divided by the number of false negatives plus true positives.
 
-![Calculating the precision and recall](Images/precision.png)
+![Calculating the precision and recall](images/precision.png)
 
 * The F-1 score is the harmonic mean of precision and recall.
 
-![Calculating the F-1 score](Images/f1.png)
+![Calculating the F-1 score](images/f1.png)
