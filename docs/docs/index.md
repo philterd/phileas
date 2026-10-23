@@ -14,7 +14,7 @@ Phileas releases are published to [Maven Central](https://central.sonatype.com/a
 <dependency>
   <groupId>ai.philterd</groupId>
   <artifactId>phileas</artifactId>
-  <version>4.1.0</version>
+  <version>4.5.0</version>
 </dependency>
 ```
 
@@ -37,7 +37,7 @@ To track the latest development build, depend on the current `-SNAPSHOT` version
 <dependency>
   <groupId>ai.philterd</groupId>
   <artifactId>phileas</artifactId>
-  <version>4.2.0-SNAPSHOT</version>
+  <version>4.6.0-SNAPSHOT</version>
 </dependency>
 ```
 
