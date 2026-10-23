@@ -4,6 +4,8 @@ Notable changes to Phileas, most recent first.
 
 Full changelogs for each release are available in the [GitHub releases](https://github.com/philterd/phileas/releases). Issues whose identifiers start with `PHL-` were previously tracked in Jira before the project's issues were managed in GitHub.
 
+## Version 4.6.0 - Not yet released
+
 ## Version 4.5.0 - October 23, 2026
 
 * **Changes detection for existing policies.** About 1,300 names in the city filter's bundled list are also common English words, such as `Call`, `Driver`, `Oak`, `Street`, `Hope`, `Center`, `Phoenix`, and `Mobile`. One of these is now reported as a city only when it begins with a capital letter and either follows `in`, `from`, `to`, `near`, `outside`, `toward`, `towards`, or `via`, or is followed by a comma and a state name or two-letter abbreviation, as in `Born in Phoenix.` or `Mobile, Alabama`. Previously every occurrence was redacted in any case, so `She lives on Oak Street in Austin.` became `She lives on {{{REDACTED-city}}} {{{REDACTED-city}}} in {{{REDACTED-city}}}.` and now becomes `She lives on Oak Street in {{{REDACTED-city}}}.` Such a city written without that context, as in `Phoenix is hot this summer.`, is no longer redacted. Other names in the list are reported as before. The rule applies to exact and fuzzy matches of the bundled list, not to `terms` a policy gives. The list is `city-common-words.txt`, generated from SCOWL, whose copyright notice ships beside it. (issue #452)
