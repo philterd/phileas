@@ -40,6 +40,8 @@ public class Pdf {
     @Expose
     private String replacementFontColor;
 
+    // Ignored, since a redacted page keeps its input size. Kept, with the schema's default, so a policy
+    // that sets it still loads.
     @SerializedName("scale")
     @Expose
     private float scale = 0.25f;
@@ -88,10 +90,14 @@ public class Pdf {
         this.showReplacement = showReplacement;
     }
 
+    /** @deprecated Ignored: a redacted page keeps its input size. */
+    @Deprecated
     public float getScale() {
         return scale;
     }
 
+    /** @deprecated Ignored: a redacted page keeps its input size. */
+    @Deprecated
     public void setScale(float scaling) {
         this.scale = scaling;
     }

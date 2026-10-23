@@ -29,11 +29,20 @@ public class PdfRedactionOptions {
 
     }
 
-    public PdfRedactionOptions(final int dpi, final float compressionQuality, final float scale, final boolean preserveUnredactedPages) {
+    public PdfRedactionOptions(final int dpi, final float compressionQuality, final boolean preserveUnredactedPages) {
         this.dpi = dpi;
         this.compressionQuality = compressionQuality;
-        this.scale = scale;
         this.preserveUnredactedPages = preserveUnredactedPages;
+    }
+
+    /**
+     * @deprecated The scale is ignored: a redacted page keeps its input size. Use
+     * {@link #PdfRedactionOptions(int, float, boolean)}.
+     */
+    @Deprecated
+    public PdfRedactionOptions(final int dpi, final float compressionQuality, final float scale, final boolean preserveUnredactedPages) {
+        this(dpi, compressionQuality, preserveUnredactedPages);
+        this.scale = scale;
     }
 
     public int getDpi() {
@@ -52,10 +61,14 @@ public class PdfRedactionOptions {
         this.compressionQuality = compressionQuality;
     }
 
+    /** @deprecated Ignored: a redacted page keeps its input size. */
+    @Deprecated
     public float getScale() {
         return scale;
     }
 
+    /** @deprecated Ignored: a redacted page keeps its input size. */
+    @Deprecated
     public void setScale(float scale) {
         this.scale = scale;
     }

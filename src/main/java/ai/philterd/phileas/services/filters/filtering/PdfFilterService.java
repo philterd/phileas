@@ -232,7 +232,6 @@ public class PdfFilterService extends BinaryFilterService {
         final PdfRedactionOptions pdfRedactionOptions = new PdfRedactionOptions(
                 policyPdfConfig.getDpi(),
                 policyPdfConfig.getCompressionQuality(),
-                policyPdfConfig.getScale(),
                 policyPdfConfig.getPreserveUnredactedPages()
         );
         pdfRedactionOptions.setMaxPages(maxPages);

@@ -199,7 +199,7 @@ public class PdfRedactor extends PDFTextStripper {
 
             // Loop over input pdf pages, rendering an image of each that requires redaction.
             // If there are no hits for redaction on the page, then the input PDPage is copied directly to the output pdf.
-            // Scaling, DPI and Compression can be tuned to control output quality and size of the resulting pdf.
+            // DPI and compression can be tuned to control output quality and size of the resulting pdf.
             boolean preserveUnredactedPages = pdfRedactionOptions.getPreserveUnredactedPages();
             for (int x = 0; x < pdDocument.getNumberOfPages(); x++) {
                 // A bounding box is only drawn over the text, so its page must be rasterized too.
@@ -228,16 +228,21 @@ public class PdfRedactor extends PDFTextStripper {
                     is.close();
 
                     final PDImageXObject pdImage = JPEGFactory.createFromImage(outputPdfDocument, newBi);
-                    final int outputWidthPixels = Math.round(pdDocument.getPage(x).getMediaBox().getWidth());
-                    final int outputHeightPixels = Math.round(pdDocument.getPage(x).getMediaBox().getHeight());
 
-                    final float scale = pdfRedactionOptions.getScale();
-                    final PDRectangle pdRectangle = new PDRectangle(outputWidthPixels * scale, outputHeightPixels * scale);
-                    final PDPage page = new PDPage(pdRectangle);
+                    // The renderer draws the page's CropBox turned by its rotation, so the output page takes that
+                    // size in points and the image fills it. The DPI sets only the image's resolution.
+                    final PDPage inputPage = pdDocument.getPage(x);
+                    final PDRectangle cropBox = inputPage.getCropBox();
+                    final int rotation = inputPage.getRotation();
+                    final boolean quarterTurn = rotation == 90 || rotation == 270;
+                    final float outputWidth = quarterTurn ? cropBox.getHeight() : cropBox.getWidth();
+                    final float outputHeight = quarterTurn ? cropBox.getWidth() : cropBox.getHeight();
+
+                    final PDPage page = new PDPage(new PDRectangle(outputWidth, outputHeight));
                     outputPdfDocument.addPage(page);
 
                     try (PDPageContentStream contentStream = new PDPageContentStream(outputPdfDocument, page, PDPageContentStream.AppendMode.APPEND, true, true)) {
-                        contentStream.drawImage(pdImage, 0, 0, outputWidthPixels * scale, outputHeightPixels * scale);
+                        contentStream.drawImage(pdImage, 0, 0, outputWidth, outputHeight);
                     }
                 }
 

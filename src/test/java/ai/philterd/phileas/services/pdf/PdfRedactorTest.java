@@ -192,7 +192,6 @@ public class PdfRedactorTest {
 
         final PdfRedactionOptions options = new PdfRedactionOptions();
         options.setDpi(36);
-        options.setScale(0.25f);
 
         final byte[] redacted = new PdfRedactor(new Policy(), List.of(), options)
                 .process(document, MimeType.APPLICATION_PDF);
