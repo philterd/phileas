@@ -192,12 +192,12 @@ public class DateFilter extends RegexFilter {
             // strategies read the date from its text, not from this format.
             filterPatterns.add(new FilterPattern.FilterPatternBuilder(Pattern.compile("\\b\\d{4}" + d + "\\d{2}" + d + "\\d{2}" + noMoreDigits), 0.75).withFormat("uuuu-MM-dd".replace("-", delimiter)).build());
             filterPatterns.add(new FilterPattern.FilterPatternBuilder(Pattern.compile("\\b\\d{2}" + d + "\\d{2}" + d + "\\d{4}" + noMoreDigits), 0.75).withFormat("MM-dd-uuuu".replace("-", delimiter)).build());
-            filterPatterns.add(new FilterPattern.FilterPatternBuilder(Pattern.compile("\\b\\d{1,2}" + d + "\\d{1,2}" + d + "\\d{2,4}" + noMoreDigits), 75).withFormat("M-d-u".replace("-", delimiter)).build());
+            filterPatterns.add(new FilterPattern.FilterPatternBuilder(Pattern.compile("\\b\\d{1,2}" + d + "\\d{1,2}" + d + "\\d{2,4}" + noMoreDigits), 0.75).withFormat("M-d-u".replace("-", delimiter)).build());
 
             // Month-and-year only. Not generated for the "." delimiter, where it would match decimals
             // such as 3.14.
             if(!".".equals(delimiter)) {
-                filterPatterns.add(new FilterPattern.FilterPatternBuilder(Pattern.compile("\\b\\d{1,2}" + d + "\\d{2,4}" + noMoreDigits), 75).withFormat("M-u".replace("-", delimiter)).build());
+                filterPatterns.add(new FilterPattern.FilterPatternBuilder(Pattern.compile("\\b\\d{1,2}" + d + "\\d{2,4}" + noMoreDigits), 0.75).withFormat("M-u".replace("-", delimiter)).build());
             }
 
             filterPatterns.add(new FilterPattern.FilterPatternBuilder(Pattern.compile("(?i)(\\b\\d{1,2}\\D{0,3})?\\b(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:tember|t)?|Oct(?:ober)?|(Nov|Dec)(?:ember)?)(\\.)?\\D?(\\d{1,2}(\\D?(st|nd|rd|th))?\\D?)(\\D?(\\d{4}|\\d{2}))?\\b"), 0.75).withFormat("MMMM-dd".replaceAll("-", delimiter)).withAlwaysValid(true).build());

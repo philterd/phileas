@@ -15,6 +15,7 @@
  */
 package ai.philterd.phileas.filters;
 
+import ai.philterd.phileas.model.filtering.FilterPattern;
 import ai.philterd.phileas.model.filtering.FilterType;
 import ai.philterd.phileas.model.filtering.Filtered;
 import ai.philterd.phileas.model.filtering.Span;
@@ -1327,6 +1328,67 @@ public class DateFilterTest extends AbstractFilterTest {
             Assertions.assertEquals(1, filtered.getSpans().size(), entry.getKey());
             Assertions.assertEquals(entry.getKey(), filtered.getSpans().get(0).getText(), entry.getKey());
             Assertions.assertEquals(entry.getValue(), filtered.getSpans().get(0).getPattern(), entry.getKey());
+        }
+
+    }
+
+    @Test
+    public void filterDateNumericPatternsHaveTheSameConfidence() throws Exception {
+
+        final DateFilter filter = new DateFilter(buildFilterConfiguration(), false, DateSpanValidator.getInstance());
+
+        final Map<String, String> patterns = new LinkedHashMap<>();
+        patterns.put("3/27/1965", "M/d/u");
+        patterns.put("3-27-1965", "M-d-u");
+        patterns.put("3.27.1965", "M.d.u");
+        patterns.put("3/1965", "M/u");
+        patterns.put("3-1965", "M-u");
+        patterns.put("03/27/1965", "MM/dd/uuuu");
+        patterns.put("1965-03-27", "uuuu-MM-dd");
+
+        for (final Map.Entry<String, String> date : patterns.entrySet()) {
+            final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "It was on " + date.getKey() + " at the office.");
+            Assertions.assertEquals(1, filtered.getSpans().size(), date.getKey());
+            Assertions.assertEquals(date.getKey(), filtered.getSpans().get(0).getText(), date.getKey());
+            Assertions.assertEquals(date.getValue(), filtered.getSpans().get(0).getPattern(), date.getKey());
+            Assertions.assertEquals(0.75, filtered.getSpans().get(0).getConfidence(), 0.0001, date.getKey());
+        }
+
+    }
+
+    @Test
+    public void filterDateNumericNotRedactedByHigherConfidenceCondition() throws Exception {
+
+        final DateFilterStrategy dateFilterStrategy = new DateFilterStrategy();
+        dateFilterStrategy.setConditions("confidence > 0.9");
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(dateFilterStrategy))
+                .build();
+
+        final DateFilter filter = new DateFilter(filterConfiguration, false, DateSpanValidator.getInstance());
+
+        for (final String date : List.of("3/27/1965", "3/1965", "03/27/1965", "1965-03-27")) {
+            final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "It was on " + date + " at the office.");
+            Assertions.assertEquals(1, filtered.getSpans().size(), date);
+            Assertions.assertFalse(filtered.getSpans().get(0).isApplied(), date);
+        }
+
+    }
+
+    @Test
+    public void filterDatePatternConfidencesAreAtMostOne() {
+
+        final var filter = new DateFilter(buildFilterConfiguration(), false, DateSpanValidator.getInstance()) {
+            List<FilterPattern> patterns() {
+                return analyzer.getFilterPatterns();
+            }
+        };
+
+        Assertions.assertFalse(filter.patterns().isEmpty());
+
+        for (final FilterPattern pattern : filter.patterns()) {
+            Assertions.assertTrue(pattern.getInitialConfidence() > 0 && pattern.getInitialConfidence() <= 1, pattern.getPattern().pattern());
         }
 
     }
