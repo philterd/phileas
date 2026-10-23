@@ -47,6 +47,7 @@ import java.time.format.ResolverStyle;
 import java.time.temporal.ChronoField;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.Set;
 
 public class DateFilterStrategy extends AbstractFilterStrategy {
@@ -193,6 +194,11 @@ public class DateFilterStrategy extends AbstractFilterStrategy {
 
             replacement = DigestUtils.sha256Hex(token + salt);
 
+        } else if(Strings.CI.equals(strategy, TRUNCATE_TO_YEAR) && isMonthName(filterPattern)) {
+
+            final Optional<MonthNameDate> date = MonthNameDate.parse(token);
+            replacement = date.isPresent() ? String.valueOf(date.get().date().getYear()) : unparsedMonthName(token, label, filterPattern);
+
         } else if(Strings.CI.equals(strategy, TRUNCATE_TO_YEAR)) {
 
             try {
@@ -213,6 +219,14 @@ public class DateFilterStrategy extends AbstractFilterStrategy {
 
             }
 
+        } else if(Strings.CI.equals(strategy, SHIFT) && isMonthName(filterPattern)) {
+
+            // A month and year alone is redacted: shifting it by days alone would leave it unchanged.
+            final Optional<MonthNameDate> date = MonthNameDate.parse(token);
+            replacement = date.isPresent() && date.get().hasDay()
+                    ? date.get().format(shift(date.get().date().atStartOfDay()).toLocalDate())
+                    : unparsedMonthName(token, label, filterPattern);
+
         } else if(Strings.CI.equals(strategy, SHIFT)) {
 
             // Shift the date given some number of days, months, and/or years.
@@ -223,18 +237,7 @@ public class DateFilterStrategy extends AbstractFilterStrategy {
                 final LocalDateTime parsedDate = LocalDate.parse(token, dtf).atStartOfDay();
 
                 // Shift the date. Only valid dates can be shifted.
-                if(shiftRandom) {
-                    // Shifting based on a random days, months, years.
-                    final int randomShiftDays = RANDOM.nextInt(1, 30);
-                    final int randomShiftMonths = RANDOM.nextInt(1, 12);
-                    final int randomShiftYears = -RANDOM.nextInt(1, 3);
-                    final LocalDateTime shiftedDate = parsedDate.plusDays(randomShiftDays).plusMonths(randomShiftMonths).plusYears(randomShiftYears);
-                    replacement = shiftedDate.format(dtf);
-                } else {
-                    // Shifting based on the given days, months, and years given.
-                    final LocalDateTime shiftedDate = parsedDate.plusDays(shiftDays).plusMonths(shiftMonths).plusYears(shiftYears);
-                    replacement = shiftedDate.format(dtf);
-                }
+                replacement = shift(parsedDate).format(dtf);
 
             } catch (DateTimeParseException ex) {
 
@@ -246,6 +249,14 @@ public class DateFilterStrategy extends AbstractFilterStrategy {
                 replacement = getRedactedToken(token, label, filterType);
 
             }
+
+        } else if(Strings.CI.equals(strategy, RELATIVE) && isMonthName(filterPattern)) {
+
+            // A month and year alone is taken as the first of the month.
+            final Optional<MonthNameDate> date = MonthNameDate.parse(token);
+            replacement = date.isPresent()
+                    ? getReadableDate(date.get().date().atStartOfDay(), LocalDateTime.now(), token, label, filterType)
+                    : unparsedMonthName(token, label, filterPattern);
 
         } else if(Strings.CI.equals(strategy, RELATIVE)) {
 
@@ -284,6 +295,35 @@ public class DateFilterStrategy extends AbstractFilterStrategy {
 
         return new Replacement(replacement, salt);
 
+    }
+
+    /** Shifts a date by the strategy's days, months, and years, or by random amounts with shiftRandom. */
+    private LocalDateTime shift(final LocalDateTime date) {
+
+        if(shiftRandom) {
+            final int randomShiftDays = RANDOM.nextInt(1, 30);
+            final int randomShiftMonths = RANDOM.nextInt(1, 12);
+            final int randomShiftYears = -RANDOM.nextInt(1, 3);
+            return date.plusDays(randomShiftDays).plusMonths(randomShiftMonths).plusYears(randomShiftYears);
+        }
+
+        return date.plusDays(shiftDays).plusMonths(shiftMonths).plusYears(shiftYears);
+
+    }
+
+    /**
+     * Whether the span was found by a month-name pattern, whose text is read with {@link MonthNameDate}
+     * rather than with its format.
+     */
+    private static boolean isMonthName(final FilterPattern filterPattern) {
+        return filterPattern != null && filterPattern.getFormat() != null && filterPattern.getFormat().contains("MMMM");
+    }
+
+    /** Redacts a month-name date the strategy cannot transform, such as one with a two-digit year. */
+    private String unparsedMonthName(final String token, final String label, final FilterPattern filterPattern) {
+        // The date's text is not logged.
+        LOGGER.debug("Unable to transform a month-name date with format {}. Falling back to redaction.", filterPattern.getFormat());
+        return getRedactedToken(token, label, filterType);
     }
 
     public String getReadableDate(LocalDateTime parsedDate, LocalDateTime currentDate, String token, String label, FilterType filterType) {
