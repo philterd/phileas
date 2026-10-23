@@ -14,7 +14,7 @@ This filter identifies dates such as `May 22, 2014` in text. The supported date 
 | dd MMMM, yyyy | 5 May, 2020, 22nd May, 1965, or 22 May 1965 |
 | dd-MMMM-yyyy  | 22-May-1965                |
 
-A month-first date with a day of one or two digits, such as `March 27, 1965`, `Sep 10 1950`, `March 27th, 1865`, `Mar. 27, 2150`, or `March 27-1965`, is detected with its year for any four-digit year. Forms with an ordinal, a period, or a delimiter, such as `March 27th, 65`, also take a two-digit year. Between the day and a four-digit year there may be a comma, one or two hyphens, or an en or em dash, with up to two spaces on either side, or one to three spaces, as in `March 27 - 1965` or `March 27,  1965`. The day is then not read as a two-digit year. A year set further apart than these separators allow is not detected with the date. A month name and a four-digit year with no day, such as `March 1965`, is detected for any four-digit year.
+A month-first date with a day of one or two digits, such as `March 27, 1965`, `Sep 10 1950`, `March 27th, 1865`, `Mar. 27, 2150`, or `March 27-1965`, is detected with its year for any four-digit year. Forms with an ordinal, a period, or a delimiter, such as `March 27th, 65`, also take a two-digit year. Between the day and a four-digit year there may be a comma, one or two hyphens, or an en or em dash, with up to two spaces on either side, or one to three spaces, as in `March 27 - 1965` or `March 27,  1965`. The day is then not read as a two-digit year. When one or two characters separate the day and the year, as in `March 27, 2150` or `March 27--2150`, any four-digit year is taken. When three or more do, as in `March 27 - 1965`, a number is taken as the year only if it is from 1800 to 2100 and is not followed by a unit (`mg`, `mcg`, `g`, `kg`, `ml`, `L`, `IU`, `mmol`, `units`, `points`, `items`, `boxes`, `pieces`, `dollars`, `USD`, `%`, `people`, or `patients`, ignoring case except for `g` and `L`), since a number set that far apart is often a quantity: in `Dose: Mar 3 - 2000 mg daily.` and `March 2 -- 3000 boxes`, only the month and day are redacted. A year set further apart than these separators allow is not detected with the date. A month name and a four-digit year with no day, such as `March 1965`, is detected for any four-digit year.
 
 A day-first date with a month name and a four-digit year, such as `27 March, 1965`, `3 Mar, 2020`, `27th March 1965`, or `27-Mar-1965`, is detected for a day from 1 to 31, with or without an ordinal (`st`, `nd`, `rd`, `th`), and for any four-digit year. The day and month are separated by a single space, `-`, `/`, or `.`, and the month and year by the same delimiter or, after a space, by `, `. Its span carries a day-first format, such as `dd MMMM, yyyy` or `dd-MMMM-yyyy`. Detection is pattern-based, so validate the output against your own data.
 
@@ -129,11 +129,11 @@ The following policy shifts birth dates and redacts every other date:
 
 ### Limitations
 
-* **A number after a month and day is taken as the year.** A month and day followed by a separator and any four-digit
-  number is detected as one date, so in `Dose: Mar 3 - 2000 mg daily.` the dose is redacted with the date and the
-  output is `Dose: {{{REDACTED-date}}} mg daily.` An ignored pattern broad enough to skip this would also skip real
-  dates such as `March 27 - 1965`, so there is no workaround. Tracked in
-  [philterd/phileas#468](https://github.com/philterd/phileas/issues/468).
+* **A number close to a month and day, or followed by a word that is not a listed unit, is taken as the year.** With
+  one or two characters between them, any four-digit number is taken, so in `Dose: Mar 3, 2000 mg daily.` the dose is
+  redacted with the date. With three or more, a number from 1800 to 2100 is taken unless a listed unit follows it, so
+  `Mar 3 - 2000 visitors` is redacted whole. A capital `L` after the year is read as liters, so in
+  `March 27 - 1965 L. Smith` the year is left in the output.
 
 ## Example Policy to Redact Dates
 

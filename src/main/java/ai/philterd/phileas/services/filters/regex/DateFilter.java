@@ -205,8 +205,12 @@ public class DateFilter extends RegexFilter {
         }
 
         // A year set further from the day, as in "March 27 - 1965". Last, so the patterns above keep the
-        // spans they match.
-        filterPatterns.add(new FilterPattern.FilterPatternBuilder(Pattern.compile("(?i)\\b" + monthName + " \\d{1,2}(?:st|nd|rd|th)?" + yearSeparator + "\\d{4}\\b"), 0.75).withFormat("MMMM dd, yyyy").withAlwaysValid(true).build());
+        // spans they match. A number set this far apart is often a quantity ("Mar 3 - 2000 mg"), so it is
+        // taken as the year only from 1800 to 2100 and when no unit follows it. "g" and "L" are matched in
+        // that case only, so an initial such as "G." is not read as grams. See issue #468.
+        final String plausibleYear = "(?:1[89]\\d{2}|20\\d{2}|2100)";
+        final String unit = "(?!\\s*(?:(?:mg|mcg|(?-i:g)|kg|ml|(?-i:L)|iu|mmol|units|points|items|boxes|pieces|dollars|usd|people|patients)\\b|%))";
+        filterPatterns.add(new FilterPattern.FilterPatternBuilder(Pattern.compile("(?i)\\b" + monthName + " \\d{1,2}(?:st|nd|rd|th)?" + yearSeparator + plausibleYear + "\\b" + unit), 0.75).withFormat("MMMM dd, yyyy").withAlwaysValid(true).build());
 
         return filterPatterns;
 

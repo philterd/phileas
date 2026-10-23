@@ -1072,12 +1072,66 @@ public class DateFilterTest extends AbstractFilterTest {
 
             final DateFilter filter = new DateFilter(buildFilterConfiguration(), onlyValidDates, DateSpanValidator.getInstance());
 
-            for (final int year : List.of(1865, 1899, 1900, 1965, 1975, 2020, 2099, 2100, 2150)) {
-                for (final String separator : List.of(" - ", " -- ", " , ", ",  ", "  ", " \u2013 ", " \u2014 ", "--", " ,")) {
+            // One or two characters between the day and the year take any four-digit year.
+            for (final int year : List.of(1799, 1865, 1965, 2100, 2150)) {
+                for (final String separator : List.of("  ", "--", " ,", ", ", "-")) {
                     assertWholeDate(filter, "March 27" + separator + year);
                 }
             }
 
+            // Three or more take a year from 1800 to 2100. See issue #468.
+            for (final int year : List.of(1800, 1865, 1899, 1900, 1965, 1975, 2020, 2099, 2100)) {
+                for (final String separator : WIDE_YEAR_SEPARATORS) {
+                    assertWholeDate(filter, "March 27" + separator + year);
+                }
+            }
+
+        }
+
+    }
+
+    private static final List<String> WIDE_YEAR_SEPARATORS = List.of(" - ", " -- ", " , ", ",  ", "   ", " \u2013 ", " \u2014 ");
+
+    @Test
+    public void filterDateMonthNameYearSetApartOutsideTheRangeIsNotTheYear() throws Exception {
+
+        // https://github.com/philterd/phileas/issues/468
+        final DateFilter filter = new DateFilter(buildFilterConfiguration(), false, DateSpanValidator.getInstance());
+
+        for (final int number : List.of(1000, 1200, 1799, 2101, 2150, 3000)) {
+            for (final String separator : WIDE_YEAR_SEPARATORS) {
+                final String text = "It was on March 27" + separator + number + " at the office.";
+                final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, text);
+                Assertions.assertFalse(filtered.getSpans().isEmpty(), text);
+                for (final Span span : filtered.getSpans()) {
+                    Assertions.assertFalse(span.getText().contains(String.valueOf(number)), text + ": " + span.getText());
+                }
+            }
+        }
+
+    }
+
+    @Test
+    public void filterDateMonthNameYearSetApartFollowedByAUnitIsNotTheYear() throws Exception {
+
+        // https://github.com/philterd/phileas/issues/468
+        final DateFilter filter = new DateFilter(buildFilterConfiguration(), false, DateSpanValidator.getInstance());
+
+        for (final String quantity : List.of("2000 mg", "2000 MG", "2000 mcg", "2000 g", "2000 kg", "2000 ml", "2000 mL", "2000 L",
+                "2000 IU", "2000 mmol", "2000 units", "2000 points", "2000 items", "2000 boxes", "2000 pieces", "2000 dollars",
+                "2000 USD", "2000%", "2000 %", "2000 people", "2000 patients")) {
+            final String text = "Dose: Mar 3 - " + quantity + " daily.";
+            final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, text);
+            Assertions.assertFalse(filtered.getSpans().isEmpty(), text);
+            for (final Span span : filtered.getSpans()) {
+                Assertions.assertFalse(span.getText().contains("2000"), text + ": " + span.getText());
+            }
+        }
+
+        // A word that only looks like a unit does not stop the year being taken.
+        for (final String date : List.of("March 27 - 1965 Lake", "March 27 - 1965 G. Smith", "March 27 - 1965 in Ohio", "March 27 - 1965 grams")) {
+            final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "Born " + date + ".");
+            Assertions.assertTrue(filtered.getSpans().stream().anyMatch(span -> span.getText().equals("March 27 - 1965")), date);
         }
 
     }
@@ -1090,10 +1144,14 @@ public class DateFilterTest extends AbstractFilterTest {
         final DateFilter filter = new DateFilter(buildFilterConfiguration(), false, DateSpanValidator.getInstance());
 
         for (final int year : List.of(1865, 1899, 1900, 1965, 2099, 2100, 2150)) {
-            for (final String date : List.of("March 27th, ", "Mar. 27, ", "March 27-", "March 1st ", "Mar. 3rd - ",
-                    "March/27/", "March.27.")) {
+            for (final String date : List.of("March 27th, ", "Mar. 27, ", "March 27-", "March 1st ", "March/27/", "March.27.")) {
                 assertWholeDate(filter, date + year);
             }
+        }
+
+        // A year set further apart is taken from 1800 to 2100. See issue #468.
+        for (final int year : List.of(1865, 1899, 1900, 1965, 2099, 2100)) {
+            assertWholeDate(filter, "Mar. 3rd - " + year);
         }
 
     }
@@ -1105,11 +1163,19 @@ public class DateFilterTest extends AbstractFilterTest {
         final DateFilter filter = new DateFilter(buildFilterConfiguration(), false, DateSpanValidator.getInstance());
 
         for (final String date : List.of("March 27 - 1965", "March 27 -- 1965", "March 27 , 1965", "March 27,  1965",
-                "March 27   1965", "March 27 - 2150")) {
+                "March 27   1965", "March 27 - 2100")) {
             final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "It was on " + date + " at the office.");
             Assertions.assertEquals(1, filtered.getSpans().size(), date);
             Assertions.assertNotEquals("MMMM yy", filtered.getSpans().get(0).getPattern(), date);
             Assertions.assertEquals(date, filtered.getSpans().get(0).getText(), date);
+        }
+
+        // A number outside 1800 to 2100 is not taken as the year (issue #468), but the day is still not read as
+        // a two-digit year.
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "It was on March 27 - 2150 at the office.");
+        Assertions.assertFalse(filtered.getSpans().isEmpty());
+        for (final Span span : filtered.getSpans()) {
+            Assertions.assertNotEquals("MMMM yy", span.getPattern());
         }
 
     }
