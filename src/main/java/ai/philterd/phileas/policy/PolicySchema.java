@@ -17,13 +17,13 @@ package ai.philterd.phileas.policy;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.networknt.schema.JsonSchema;
-import com.networknt.schema.JsonSchemaFactory;
-import com.networknt.schema.SpecVersionDetector;
-import com.networknt.schema.ValidationMessage;
+import com.networknt.schema.Error;
+import com.networknt.schema.Schema;
+import com.networknt.schema.SchemaRegistry;
+import com.networknt.schema.SpecificationVersion;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import java.util.Set;
+import java.util.List;
 
 /**
  * Describes the redaction policy JSON schema that this release of Phileas supports.
@@ -79,10 +79,11 @@ public final class PolicySchema {
             // Build the validator for the draft the schema actually declares (its $schema) rather than
             // assuming one. The redaction policy schema is Draft 2020-12; hardcoding an older draft would
             // silently ignore newer keywords and under-enforce the contract.
-            final JsonSchemaFactory factory = JsonSchemaFactory.getInstance(SpecVersionDetector.detect(schemaNode));
-            final JsonSchema schema = factory.getSchema(schemaNode);
+            final SpecificationVersion version = SpecificationVersion.fromSchemaNode(schemaNode)
+                    .orElseThrow(() -> new IllegalStateException("The policy schema does not declare a known $schema."));
+            final Schema schema = SchemaRegistry.withDefaultDialect(version).getSchema(schemaNode);
 
-            final Set<ValidationMessage> errors = schema.validate(node);
+            final List<Error> errors = schema.validate(node);
 
             return errors.isEmpty();
 
