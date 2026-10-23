@@ -2,8 +2,15 @@
 
 ## Filter
 
-This filter identifies driver's license numbers such as 194784357 in text. Driver's license number formats for all 50 US
-states are supported.
+This filter identifies U.S. driver's license numbers in the formats of all 50 states and the District of Columbia.
+
+Many states issue license numbers that are only digits, such as `194784357`, which cannot be told apart from a house
+number, ZIP code, or amount by their shape. A match that contains no letters is identified only when one of these
+contextual terms appears within `windowSize` words of it, ignoring case and punctuation: `license`, `licence`, `lic`,
+`driver`, `drivers`, or `driver's`. `DL`, `D.L.`, and `DLN` also count, but only in capitals, because lowercase `dl` or
+`dL` is usually the deciliter unit. For example, `194784357` is identified in
+`Driver's license 194784357` and `DL# 194784357` but not in `the number is 194784357`. A match that contains a letter,
+such as `D1234567`, is identified without a contextual term.
 
 ### Required Parameters
 
@@ -16,7 +23,7 @@ This filter has no required parameters.
 | `driversLicenseFilterStrategies` | A list of filter strategies.                                                                                                                                                                                 | None                                                     |
 | `enabled`                        | When set to false, the filter will be disabled and not applied                                                                                                                                               | `true`                                                   |
 | `ignored`                        | A list of terms to be ignored by the filter.                                                                                                                                                                 | None                                                     |
-| `windowSize`                     | Sets the size of the window (in terms) surrounding a span to look for contextual terms. If set, this value overrides the value of `span.window.size` in the configuration.                                   | The value of `span.window.size` which is by default `5`. |
+| `windowSize`                     | Sets the size of the window (in terms) surrounding a span to look for contextual terms. An all-digit match is identified only when a contextual term is in this window. If set, this value overrides the value of `span.window.size` in the configuration. | The value of `span.window.size` which is by default `5`. |
 | `priority`                       | The priority (integer) of this filter. Valid values are any positive integer, where a higher value indicates a higher priority. Priority is used for tie-breaking when two spans may be otherwise identical. | `0`                                                      |
 
 ### Filter Strategies
@@ -46,6 +53,19 @@ Each filter strategy may have one condition. See [Conditions](#conditions) for d
 | `TOKEN`      | Compares the value of the sensitive text.                                | `==`, `!=`, `startswith`           |
 | `CONTEXT`    | Compares the filtering context.                                          | `==` , `!=`                        |
 | `CONFIDENCE` | Compares the confidence in the sensitive text against a threshold value. | `<` , `<=`, `>` , `>=`, `==`, `!=` |
+
+### Limitations
+
+* **A contextual term can belong to a different value.** The rule checks only that a contextual term is near an
+  all-digit match, not that the term describes it. In `Driver's license on file. Address: 1234 Oak Street`, the house
+  number `1234` is within the window of `license` and is redacted as a driver's license number. To avoid this, also
+  enable the [street address](street-address.md) and [ZIP code](zip-codes.md) filters, which identify those values as
+  addresses and ZIP codes instead, or add an `ignoredPatterns` entry for the shapes to skip, such as `\d{4,5}`. An
+  ignored pattern must match the whole value, so `\d{4,5}` does not skip `12345678`, but it does skip a real 4 or
+  5 digit license.
+* **A label farther away than `windowSize` words is not seen.** On a form where `Driver's license` is a heading several
+  lines above the number, the number has no contextual term in its window and is not identified. Increase
+  `windowSize` for such documents, which also lets more unrelated numbers pick up a nearby contextual term.
 
 ## Example Policy
 

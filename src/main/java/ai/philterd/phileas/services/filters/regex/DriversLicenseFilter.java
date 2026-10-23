@@ -29,21 +29,34 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
+import java.util.Set;
 import java.util.regex.Pattern;
 
+/**
+ * Detects U.S. driver's license numbers in the formats of each state.
+ *
+ * <p>Many states use a plain run of digits, which is indistinguishable from a house number, ZIP code,
+ * or amount. A match with no letters is therefore kept only when one of the contextual terms appears
+ * in the window around it. A match containing a letter, such as {@code D1234567}, needs no context.</p>
+ */
 public class DriversLicenseFilter extends RegexFilter {
 
-    private static final HashMap<String, Pattern> driversLicensePatterns = new HashMap<>();
+    // Contextual terms that count only in capitals ("D.L." becomes "DL"), because lowercase "dl" or
+    // "dL" is usually the deciliter unit in clinical text.
+    private static final Set<String> CAPITALIZED_TERMS = Set.of("DL", "DLN");
 
     public DriversLicenseFilter(FilterConfiguration filterConfiguration) {
         super(FilterType.DRIVERS_LICENSE_NUMBER, filterConfiguration);
+
+        final HashMap<String, Pattern> driversLicensePatterns = new HashMap<>();
 
         // https://ntsi.com/drivers-license-format/
         // https://www.mvrdecoder.com/content/drvlicformats.aspx
 
         driversLicensePatterns.put("ALABAMA", Pattern.compile("\\b[\\d]{8}\\b"));        // https://www.mvtrip.alabama.gov/News/ViewArticle/444
         driversLicensePatterns.put("ALASKA", Pattern.compile("\\b[\\d]{7}\\b"));
-        driversLicensePatterns.put("ARIZONA", Pattern.compile("\\b([A-Z][\\d]{8})|([\\d]{9})\\b"));
+        driversLicensePatterns.put("ARIZONA", Pattern.compile("\\b(?:[A-Z][\\d]{8}|[\\d]{9})\\b"));
         driversLicensePatterns.put("ARKANSAS", Pattern.compile("\\b[9][\\d]{7}\\b"));
         driversLicensePatterns.put("CALIFORNIA", Pattern.compile("\\b[A-Z][\\d]{7}\\b"));
         driversLicensePatterns.put("COLORADO", Pattern.compile("\\b[\\d]{2}-[\\d]{3}[\\d]{4}\\b"));
@@ -56,11 +69,11 @@ public class DriversLicenseFilter extends RegexFilter {
         driversLicensePatterns.put("IDAHO", Pattern.compile("\\b[A-Z]{2}[\\d]{6}[A-Z]\\b"));
         driversLicensePatterns.put("ILLINOIS", Pattern.compile("\\b[A-Z][\\d]{11}\\b"));
         driversLicensePatterns.put("INDIANA", Pattern.compile("\\b[\\d]{4}-[\\d]{2}-[\\d]{4}\\b"));
-        driversLicensePatterns.put("IOWA", Pattern.compile("\\b([\\d]{9})|[\\d]{3}[A-Z]{2}[\\d]{4}\\b"));
+        driversLicensePatterns.put("IOWA", Pattern.compile("\\b(?:[\\d]{9}|[\\d]{3}[A-Z]{2}[\\d]{4})\\b"));
         driversLicensePatterns.put("KANSAS", Pattern.compile("\\b[Kk][\\d]{2}-[\\d]{2}-[\\d]{4}\\b"));
         driversLicensePatterns.put("KENTUCKY", Pattern.compile("\\b[A-Z][\\d]{2}-[\\d]{3}-[\\d]{3}\\b"));
         driversLicensePatterns.put("LOUISIANA", Pattern.compile("\\b[00][\\d]{7}\\b"));
-        driversLicensePatterns.put("MAINE", Pattern.compile("\\b([\\d]{7})|[\\d]{7}[Xx]\\b"));
+        driversLicensePatterns.put("MAINE", Pattern.compile("\\b(?:[\\d]{7}|[\\d]{7}[Xx])\\b"));
         driversLicensePatterns.put("MARYLAND", Pattern.compile("\\b[A-Z]-[\\d]{3}-[\\d]{3}-[\\d]{3}-[\\d]{3}\\b"));
         driversLicensePatterns.put("MASSACHUSETTS", Pattern.compile("\\b[Ss][1][\\d]{8}\\b"));
         driversLicensePatterns.put("MICHIGAN", Pattern.compile("\\b[A-Z][\\d]{12}\\b"));
@@ -73,28 +86,33 @@ public class DriversLicenseFilter extends RegexFilter {
         driversLicensePatterns.put("NEW HAMPSHIRE", Pattern.compile("\\b[\\d]{2}[A-Z]{3}[\\d]{5}\\b"));
         driversLicensePatterns.put("NEW JERSEY", Pattern.compile("\\b[A-Z][\\d]{4}-[\\d]{5}-[\\d]{5}\\b"));
         driversLicensePatterns.put("NEW MEXICO", Pattern.compile("\\b[\\d]{9}\\b"));
-        driversLicensePatterns.put("NEW YORK", Pattern.compile("\\b([\\d]{9})|([\\d]{3}-\\d]{3}-\\d]{3})\\b"));
+        driversLicensePatterns.put("NEW YORK", Pattern.compile("\\b(?:[\\d]{9}|[\\d]{3}-[\\d]{3}-[\\d]{3})\\b"));
         driversLicensePatterns.put("NORTH CAROLINA", Pattern.compile("\\b[\\d]{8,12}\\b"));
-        driversLicensePatterns.put("NORTH DAKOTA", Pattern.compile("\\b([A-Z]{3}[\\d]{6})|([A-Z]{3}-[\\d]{2}-[\\d]{4})\\b"));
-        driversLicensePatterns.put("OHIO", Pattern.compile("\\b[A-Z]{2}[\\d}{6}]\\b"));
-        driversLicensePatterns.put("OKLAHOMA", Pattern.compile("\\b([A-Z][\\d]{8})|([A-Z][\\d]{9})\\b"));
+        driversLicensePatterns.put("NORTH DAKOTA", Pattern.compile("\\b(?:[A-Z]{3}[\\d]{6}|[A-Z]{3}-[\\d]{2}-[\\d]{4})\\b"));
+        driversLicensePatterns.put("OHIO", Pattern.compile("\\b[A-Z]{2}[\\d]{6}\\b"));
+        driversLicensePatterns.put("OKLAHOMA", Pattern.compile("\\b(?:[A-Z][\\d]{8}|[A-Z][\\d]{9})\\b"));
         driversLicensePatterns.put("OREGON", Pattern.compile("\\b[\\d]{7}\\b"));
-        driversLicensePatterns.put("PENNSYLVANIA", Pattern.compile("\\b([\\d]{8})|([\\d]{2}[ ][\\d]{3}[ ][\\d]{3})\\b"));
+        driversLicensePatterns.put("PENNSYLVANIA", Pattern.compile("\\b(?:[\\d]{8}|[\\d]{2}[ ][\\d]{3}[ ][\\d]{3})\\b"));
         driversLicensePatterns.put("RHODE ISLAND", Pattern.compile("\\b[\\d]{7}\\b"));
         driversLicensePatterns.put("SOUTH CAROLINA", Pattern.compile("\\b[\\d]{9}\\b"));
         driversLicensePatterns.put("SOUTH DAKOTA", Pattern.compile("\\b[\\d]{8}\\b"));
         driversLicensePatterns.put("TENNESSEE", Pattern.compile("\\b[\\d]{8,9}\\b"));
         driversLicensePatterns.put("TEXAS", Pattern.compile("\\b[\\d]{8}\\b"));
         driversLicensePatterns.put("UTAH", Pattern.compile("\\b[\\d]{4,10}\\b"));
-        driversLicensePatterns.put("VERMONT", Pattern.compile("\\b([\\d]{8})|([\\d]{7}[A-Z])\\b"));
+        driversLicensePatterns.put("VERMONT", Pattern.compile("\\b(?:[\\d]{8}|[\\d]{7}[A-Z])\\b"));
         driversLicensePatterns.put("VIRGINIA", Pattern.compile("\\b[A-Z][\\d]{2}-[\\d]{2}-[\\d]{4}\\b"));
         driversLicensePatterns.put("WASHINGTON", Pattern.compile("\\b[A-Z\\d]{12}\\b"));
-        driversLicensePatterns.put("WEST VIRGINIA", Pattern.compile("\\b([\\d]{7})|([A-Z][\\d]{6})\\b"));
+        driversLicensePatterns.put("WEST VIRGINIA", Pattern.compile("\\b(?:[\\d]{7}|[A-Z][\\d]{6})\\b"));
         driversLicensePatterns.put("WISCONSIN", Pattern.compile("\\b[A-Z][\\d]{13}\\b"));
-        driversLicensePatterns.put("WYOMING", Pattern.compile("\\b([\\d]{9})|([\\d]{6}-[\\d]{3})\\b"));
+        driversLicensePatterns.put("WYOMING", Pattern.compile("\\b(?:[\\d]{9}|[\\d]{6}-[\\d]{3})\\b"));
 
+        // Compared ignoring case against the window's words, which have their punctuation removed,
+        // so "driver's" is "drivers". DL and DLN are in CAPITALIZED_TERMS instead.
         this.contextualTerms = new HashSet<>();
         this.contextualTerms.add("license");
+        this.contextualTerms.add("licence");
+        this.contextualTerms.add("lic");
+        this.contextualTerms.add("driver");
         this.contextualTerms.add("drivers");
 
         final List<FilterPattern> filterPatterns = new LinkedList<>();
@@ -113,7 +131,29 @@ public class DriversLicenseFilter extends RegexFilter {
 
         final List<Span> spans = findSpans(contextService, policy, analyzer, input, context);
 
+        spans.removeIf(span -> !containsLetter(span.getText()) && !hasContextualTerm(span.getWindow()));
+
         return new Filtered(context, Span.dropOverlappingSpans(spans));
+
+    }
+
+    private static boolean containsLetter(final String text) {
+        return text.chars().anyMatch(Character::isLetter);
+    }
+
+    private boolean hasContextualTerm(final String[] window) {
+
+        if(window == null) {
+            return false;
+        }
+
+        for(final String word : window) {
+            if(CAPITALIZED_TERMS.contains(word) || contextualTerms.contains(word.toLowerCase(Locale.ROOT))) {
+                return true;
+            }
+        }
+
+        return false;
 
     }
 

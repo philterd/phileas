@@ -6,6 +6,8 @@ If your data is not exactly like another customer's data then the metrics will n
 
 > This guide walks you through how to evaluate Phileas' performance. If you are just getting started with Phileas please see the Quick Starts instead. Then you can come back here to learn how to evaluate Phileas' performance.
 
+Before evaluating, review the [known limitations](filter_policies/limitations.md) of the filters you plan to use.
+
 ## Guide to Evaluating Performance
 
 We have created this guide to help guide you in evaluating Phileas' performance on your data. The guide involves determining the types of sensitive information you want to redact, configuring those filters, optimizing the configuration, and then capturing the performance metrics.

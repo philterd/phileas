@@ -488,6 +488,10 @@ public abstract class Filter {
 
         }
 
+        // The loop stops at 0 without examining it, so when it reached the start of the text the
+        // window begins at 0 rather than after a whitespace. Otherwise the first character is lost.
+        final int windowStart = spacesSeen <= windowSize ? 0 : finalStart + 1;
+
         spacesSeen = 0;
 
         for(finalEnd = characterEnd; finalEnd != text.length() && spacesSeen <= windowSize; finalEnd++) {
@@ -501,7 +505,7 @@ public abstract class Filter {
 
         }
 
-        final String[] rawTokens = WINDOW_WHITESPACE.split(text.substring(finalStart + 1, finalEnd).trim());
+        final String[] rawTokens = WINDOW_WHITESPACE.split(text.substring(windowStart, finalEnd).trim());
 
         // Strip punctuation from each token and drop any that become empty (for example a token that
         // was only punctuation, or an empty entry produced by splitting). Empty tokens are not real

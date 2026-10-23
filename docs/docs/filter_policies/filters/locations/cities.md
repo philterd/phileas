@@ -48,6 +48,15 @@ Each filter strategy may have one condition. See [Conditions](#conditions) for d
 | `CONTEXT`    | Compares the filtering context.                                          | `==` , `!=`                        |
 | `CONFIDENCE` | Compares the confidence in the sensitive text against a threshold value. | `<` , `<=`, `>` , `>=`, `==`, `!=` |
 
+### Limitations
+
+* **The bundled list contains common words.** It includes small U.S. towns whose names are ordinary English words, and
+  matching ignores case, so words such as `Call`, `Driver`, `Oak`, and `Street` are redacted as cities:
+  `She lives on Oak Street in Austin.` becomes `She lives on {{{REDACTED-city}}} {{{REDACTED-city}}} in
+  {{{REDACTED-city}}}.` Setting `capitalized` does not help unless `fuzzy` is `true`. To avoid this, list the words
+  in `ignored`, or give the cities you need in `terms` so the bundled list is not used. This is tracked in
+  [philterd/phileas#452](https://github.com/philterd/phileas/issues/452).
+
 ## Example Policy
 
 ```

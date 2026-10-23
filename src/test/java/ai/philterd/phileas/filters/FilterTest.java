@@ -144,4 +144,24 @@ public class FilterTest extends AbstractFilterTest {
 
     }
 
+    @Test
+    public void windowReachingTheStartKeepsTheFirstWord() throws Exception {
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withWindowSize(5)
+                .build();
+
+        final AgeFilter filter = new AgeFilter(filterConfiguration);
+
+        final Filtered first = filter.filter(contextService, getPolicy(), "context", PIECE, "patient is 47 years old.");
+        Assertions.assertEquals(1, first.getSpans().size());
+        Assertions.assertArrayEquals(new String[]{"patient", "is", "47", "years", "old"}, first.getSpans().get(0).getWindow());
+
+        // A span at the start of the text keeps its own first character.
+        final Filtered atStart = filter.filter(contextService, getPolicy(), "context", PIECE, "47 years old today.");
+        Assertions.assertEquals(1, atStart.getSpans().size());
+        Assertions.assertArrayEquals(new String[]{"47", "years", "old", "today"}, atStart.getSpans().get(0).getWindow());
+
+    }
+
 }
