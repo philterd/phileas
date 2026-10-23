@@ -20,6 +20,15 @@ This filter has no required parameters.
 | `windowSize`           | Sets the size of the window (in terms) surrounding a span to look for contextual terms. If set, this value overrides the value of `span.window.size` in the configuration.                                   | The value of `span.window.size` which is by default `5`. |
 | `priority`             | The priority (integer) of this filter. Valid values are any positive integer, where a higher value indicates a higher priority. Priority is used for tie-breaking when two spans may be otherwise identical. | `0`                                                      |
 
+### Cities That Are Common Words
+
+About 1,300 names in the bundled list are also common English words, such as `Call`, `Driver`, `Hope`, `Center`, `Phoenix`, and `Mobile`. One of these is reported as a city only when it begins with a capital letter and either:
+
+* follows `in`, `from`, `to`, `near`, `outside`, `toward`, `towards`, or `via`, as in `Born in Phoenix.`, or
+* is followed by a comma and a state name or two-letter state abbreviation, as in `Mobile, Alabama` or `Reading, PA`.
+
+So `Call the clinic with questions.` and `She lives on Oak Street in Austin.` report only `Austin`. Other names in the list, such as `Austin`, are reported wherever they appear, in any case. This applies to exact and fuzzy matches of the bundled list, not to `terms` a policy gives.
+
 ### Filter Strategies
 
 The filter may have zero or more filter strategies. When no filter strategy is given the default strategy of `REDACT` is
@@ -50,12 +59,13 @@ Each filter strategy may have one condition. See [Conditions](#conditions) for d
 
 ### Limitations
 
-* **The bundled list contains common words.** It includes small U.S. towns whose names are ordinary English words, and
-  matching ignores case, so words such as `Call`, `Driver`, `Oak`, and `Street` are redacted as cities:
-  `She lives on Oak Street in Austin.` becomes `She lives on {{{REDACTED-city}}} {{{REDACTED-city}}} in
-  {{{REDACTED-city}}}.` Setting `capitalized` does not help unless `fuzzy` is `true`. To avoid this, list the words
-  in `ignored`, or give the cities you need in `terms` so the bundled list is not used. This is tracked in
-  [philterd/phileas#452](https://github.com/philterd/phileas/issues/452).
+* **A city that is also a common word is missed without a location context.** `Phoenix is hot this summer.`, `in the
+  Phoenix area`, `Hope AR` (no comma), and `lives in phoenix` (lowercase) are not reported. To find such a city
+  wherever it appears, give the cities you need in `terms`, which are matched without this rule.
+* **A capitalized common word after a location word is reported**, as in a title such as `Welcome to Paradise`. List
+  such words in `ignored`.
+* **With `fuzzy`, a capitalized word close to a city name can be reported**, such as `Please` at the start
+  of a sentence.
 
 ## Example Policy
 

@@ -15,7 +15,9 @@
  */
 package ai.philterd.phileas.filters;
 
+import ai.philterd.phileas.filters.rules.dictionary.CityCommonWords;
 import ai.philterd.phileas.filters.rules.dictionary.FuzzyDictionaryFilter;
+import ai.philterd.phileas.filters.rules.dictionary.SetDictionaryFilter;
 import ai.philterd.phileas.model.filtering.FilterType;
 import ai.philterd.phileas.model.filtering.Filtered;
 import ai.philterd.phileas.model.filtering.SensitivityLevel;
@@ -26,7 +28,13 @@ import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static ai.philterd.phileas.services.strategies.AbstractFilterStrategy.RANDOM_REPLACE;
 
@@ -153,6 +161,130 @@ public class CityFilterTest extends AbstractFilterTest {
         showSpans(Span.dropOverlappingSpans(filtered.getSpans()));
         Assertions.assertEquals(2, Span.dropOverlappingSpans(filtered.getSpans()).size());
         Assertions.assertTrue(candidates.contains(Span.dropOverlappingSpans(filtered.getSpans()).get(0).getReplacement()));
+
+    }
+
+    /** The city filter as a policy builds it: exact matching by default, or fuzzy at the default sensitivity. */
+    private List<Filter> cityFilters() throws Exception {
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(new CityFilterStrategy()))
+                .withWindowSize(windowSize)
+                .build();
+
+        return List.of(new SetDictionaryFilter(FilterType.LOCATION_CITY, filterConfiguration),
+                new FuzzyDictionaryFilter(FilterType.LOCATION_CITY, filterConfiguration, SensitivityLevel.AUTO, false));
+
+    }
+
+    private List<String> cities(final Filter filter, final String text) throws Exception {
+        return Span.dropOverlappingSpans(filter.filter(contextService, getPolicy(), "context", PIECE, text).getSpans())
+                .stream().map(Span::getText).toList();
+    }
+
+    @Test
+    public void filterCitiesCommonWordsAreNotCities() throws Exception {
+
+        for (final Filter filter : cityFilters()) {
+
+            final String name = filter.getClass().getSimpleName();
+
+            Assertions.assertEquals(List.of(), cities(filter, "Call the clinic with questions."), name);
+            Assertions.assertEquals(List.of(), cities(filter, "Driver license on file."), name);
+            Assertions.assertEquals(List.of("Austin"), cities(filter, "She lives on Oak Street in Austin."), name);
+            Assertions.assertEquals(List.of(), cities(filter, "We will call the driver on the street near the oak tree."), name);
+            Assertions.assertEquals(List.of(), cities(filter, "The patient has hope and is in good spirits at the center."), name);
+            Assertions.assertEquals(List.of(), cities(filter, "Phoenix is hot this time of year."), name);
+            Assertions.assertEquals(List.of(), cities(filter, "She moved in hope of a job."), name);
+
+        }
+
+    }
+
+    @Test
+    public void filterCitiesCommonWordsInALocationContextAreCities() throws Exception {
+
+        for (final Filter filter : cityFilters()) {
+
+            final String name = filter.getClass().getSimpleName();
+
+            // Fuzzy matching can also report other capitalized words close to a city name, so only the city is checked.
+            for (final String[] c : new String[][] {{"She lives in Call, Texas.", "Call"}, {"Born in Phoenix.", "Phoenix"},
+                    {"Moved from Hope last year.", "Hope"}, {"Drove to Mobile on Monday.", "Mobile"}, {"A farm near Bend.", "Bend"},
+                    {"Just outside Reading.", "Reading"}, {"Heading toward Buffalo.", "Buffalo"}, {"Flew via Phoenix.", "Phoenix"},
+                    {"Seen at the clinic (in Phoenix).", "Phoenix"}, {"LIVES IN PHOENIX.", "PHOENIX"}}) {
+                Assertions.assertTrue(cities(filter, c[0]).contains(c[1]), name + ": " + c[0]);
+            }
+
+            Assertions.assertTrue(cities(filter, "Mobile, Alabama is on the coast.").contains("Mobile"), name);
+            Assertions.assertTrue(cities(filter, "Patient from Reading, PA.").contains("Reading"), name);
+            Assertions.assertEquals(2, cities(filter, "Hope, AR and Hope, Arkansas.").stream().filter("Hope"::equals).count(), name);
+            Assertions.assertTrue(cities(filter, "Buffalo, NY.").contains("Buffalo"), name);
+            Assertions.assertTrue(cities(filter, "PHOENIX, AZ").contains("PHOENIX"), name);
+
+            // A lowercase common word is not a city even after a location word, and a comma alone is not a state.
+            Assertions.assertEquals(List.of(), cities(filter, "lives in phoenix"), name);
+            Assertions.assertEquals(List.of(), cities(filter, "Hope, faith, and charity."), name);
+            Assertions.assertEquals(List.of(), cities(filter, "Call, PAID in full."), name);
+
+        }
+
+    }
+
+    @Test
+    public void filterCitiesOtherNamesNeedNoContext() throws Exception {
+
+        for (final Filter filter : cityFilters()) {
+            final String name = filter.getClass().getSimpleName();
+            Assertions.assertEquals(List.of("Austin"), cities(filter, "Austin is growing."), name);
+            Assertions.assertEquals(List.of("austin"), cities(filter, "drives to work in austin"), name);
+            Assertions.assertEquals(List.of("New Hope"), cities(filter, "Lived on a farm by New Hope."), name);
+        }
+
+    }
+
+    @Test
+    public void filterCitiesGivenTermsNeedNoContext() throws Exception {
+
+        // Terms a policy gives replace the bundled list, and are matched as given.
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(new CityFilterStrategy()))
+                .withWindowSize(windowSize)
+                .build();
+
+        final Set<String> terms = new LinkedHashSet<>(List.of("Call", "Hope"));
+
+        for (final Filter filter : List.<Filter>of(new SetDictionaryFilter(FilterType.LOCATION_CITY, filterConfiguration, terms, null),
+                new FuzzyDictionaryFilter(FilterType.LOCATION_CITY, filterConfiguration, SensitivityLevel.AUTO, terms, false))) {
+            Assertions.assertEquals(List.of("Call"), cities(filter, "Call the clinic with questions."), filter.getClass().getSimpleName());
+        }
+
+    }
+
+    @Test
+    public void cityCommonWordsAreSingleLowercaseBundledCities() throws Exception {
+
+        final Set<String> cities;
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(
+                getClass().getClassLoader().getResourceAsStream("cities.txt"), StandardCharsets.UTF_8))) {
+            cities = reader.lines().map(String::toLowerCase).collect(Collectors.toSet());
+        }
+
+        final List<String> words;
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(
+                getClass().getClassLoader().getResourceAsStream("city-common-words.txt"), StandardCharsets.UTF_8))) {
+            words = reader.lines().filter(line -> !line.startsWith("#")).toList();
+        }
+
+        Assertions.assertFalse(words.isEmpty());
+
+        for (final String word : words) {
+            Assertions.assertTrue(word.matches("[a-z]+"), word);
+            Assertions.assertTrue(cities.contains(word), word);
+            Assertions.assertTrue(CityCommonWords.isCommonWord(word), word);
+        }
+
+        Assertions.assertFalse(CityCommonWords.isCommonWord("Austin"));
 
     }
 

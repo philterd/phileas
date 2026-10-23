@@ -45,6 +45,7 @@ public class SetDictionaryFilter extends DictionaryFilter {
 
     private final Set<String> lowerCaseTerms;
     private int maxNgramSize = 0;
+    private boolean commonWordsNeedContext = false;
 
     /**
      * Creates a new set-based dictionary filter whose terms are loaded from the dictionary file
@@ -64,6 +65,7 @@ public class SetDictionaryFilter extends DictionaryFilter {
         final PredefinedDictionary dictionary = getPredefinedDictionary(filterType);
         this.lowerCaseTerms = dictionary.lowerCaseTerms();
         this.maxNgramSize = dictionary.maxNgramSize();
+        this.commonWordsNeedContext = filterType == FilterType.LOCATION_CITY;
 
     }
 
@@ -125,10 +127,17 @@ public class SetDictionaryFilter extends DictionaryFilter {
                 }
             }
 
-            if (matched) {
+            final int characterStart = position.getStart() + begin;
+            final int characterEnd = position.getStart() + end;
 
-                final int characterStart = position.getStart() + begin;
-                final int characterEnd = position.getStart() + end;
+            // A bundled city name that is also a common word, such as "Call", needs a location context.
+            if (matched && commonWordsNeedContext
+                    && CityCommonWords.isCommonWord(normalizeWhitespace(ngram.substring(begin, end)))
+                    && !CityCommonWords.inLocationContext(text, characterStart, characterEnd)) {
+                matched = false;
+            }
+
+            if (matched) {
 
                 // Get the original token to get the right casing.
                 final String originalToken = text.substring(characterStart, characterEnd);

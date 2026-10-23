@@ -744,8 +744,10 @@ public class EndToEndTests {
         // surname is not checked here: the test classpath's surnames.txt is a much larger list than the one
         // the jar ships, and it contains common words, so it would not reflect the shipped behavior.
         final String sentence = "She went to the store and then she left for home.";
+        // "home" is a city in the bundled list, and as a common word it is a city only after a location word
+        // and capitalized, so it is not redacted here.
         final String[][] cases = {
-                {"city", "She went to the store and then she left for {{{REDACTED-city}}}."},
+                {"city", sentence},
                 {"county", sentence},
                 {"firstName", sentence}};
 

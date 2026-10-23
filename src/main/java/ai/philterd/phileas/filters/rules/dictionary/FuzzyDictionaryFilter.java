@@ -42,6 +42,7 @@ public class FuzzyDictionaryFilter extends DictionaryFilter {
     private final Map<String, Pattern> dictionary;
     private final int maxNgrams;
     private final boolean requireCapitalization;
+    private final boolean commonWordsNeedContext;
 
     public FuzzyDictionaryFilter(final FilterType filterType, final FilterConfiguration filterConfiguration,
                                  final SensitivityLevel sensitivityLevel, final boolean requireCapitalization) throws IOException {
@@ -51,6 +52,7 @@ public class FuzzyDictionaryFilter extends DictionaryFilter {
         this.dictionary = loadData(filterType);
         this.maxNgrams = getMaxNgrams();
         this.requireCapitalization = requireCapitalization;
+        this.commonWordsNeedContext = filterType == FilterType.LOCATION_CITY;
 
     }
 
@@ -77,6 +79,7 @@ public class FuzzyDictionaryFilter extends DictionaryFilter {
         this.dictionary = loadData(terms);
         this.maxNgrams = getMaxNgrams();
         this.requireCapitalization = requireCapitalization;
+        this.commonWordsNeedContext = false;
         this.classification = classification;
 
     }
@@ -97,6 +100,10 @@ public class FuzzyDictionaryFilter extends DictionaryFilter {
 
             for(final String entry : dictionary.keySet()) {
 
+                // A bundled city name that is also a common word, such as "Call", needs a location context,
+                // whether it is matched exactly or as a misspelling.
+                final boolean needsContext = commonWordsNeedContext && CityCommonWords.isCommonWord(normalizeWhitespace(entry));
+
                 // Exact matches: every occurrence, not only the first. Each is remembered, whether or not
                 // the capitalization check reports it, so the fuzzy pass does not report it again.
                 final List<Position> exactMatches = new ArrayList<>();
@@ -113,7 +120,8 @@ public class FuzzyDictionaryFilter extends DictionaryFilter {
 
                     exactMatches.add(new Position(startPosition, endPosition));
 
-                    if (!requireCapitalization || Character.isUpperCase(input.charAt(startPosition))) {
+                    if ((!requireCapitalization || Character.isUpperCase(input.charAt(startPosition)))
+                            && (!needsContext || CityCommonWords.inLocationContext(input, startPosition, endPosition))) {
                         spans.add(createSpan(contextService, input, startPosition, endPosition, 1.0, context, matched, policy));
                     }
 
@@ -150,6 +158,12 @@ public class FuzzyDictionaryFilter extends DictionaryFilter {
                             final int end = position.getStart() + finish;
 
                             if (overlapsAny(exactMatches, start, end)) {
+                                continue;
+                            }
+
+                            // The word itself may be a common-word city close to another, as "Phoenix" is to "Phenix".
+                            if ((needsContext || (commonWordsNeedContext && CityCommonWords.isCommonWord(token.substring(begin, finish))))
+                                    && !CityCommonWords.inLocationContext(input, start, end)) {
                                 continue;
                             }
 
