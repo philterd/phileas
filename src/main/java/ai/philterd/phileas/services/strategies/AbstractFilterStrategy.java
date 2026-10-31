@@ -260,12 +260,10 @@ public abstract class AbstractFilterStrategy {
         // replaceAll: it avoids compiling a Pattern on every call, and (for %v) avoids treating the
         // detected token as a regex replacement string - a token containing '$' or '\' would
         // otherwise throw and abort redaction of the document.
+        // A filter without a classification has no label, so %l becomes empty rather than staying literal.
         String replacement = getValueOrDefault(redactionFormat, DEFAULT_REDACTION)
-                .replace("%t", filterType.getType());
-
-        if(StringUtils.isNotEmpty(label)) {
-            replacement = replacement.replace("%l", label);
-        }
+                .replace("%t", filterType.getType())
+                .replace("%l", StringUtils.defaultString(label));
 
         replacement = replacement.replace("%v", token);
 

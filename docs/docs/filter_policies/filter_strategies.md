@@ -73,7 +73,7 @@ The available redaction variables are:
 | Redaction Variable | Description                                                                                                                                               |
 | ------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `%t`               | Will be replaced with the type of sensitive information. This is to allow you to know the type of sensitive information that was identified and redacted. |
-| `%l`               | Will be replaced by the given classification for the type of sensitive information.                                                                       |
+| `%l`               | Will be replaced by the classification of the filter that found the information: the `classification` of a custom identifier or custom dictionary filter, or the label of a PhEye span. Filters without a classification replace it with an empty string. |
 | `%v`               | Will be replaced by the original value of the sensitive text. With `%v` you can annotate sensitive information instead of masking or removing it.         |
 
 To redact sensitive information by replacing it with the type of sensitive information, the redaction format would be `REDACTED-%t`.

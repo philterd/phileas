@@ -6,6 +6,8 @@ Full changelogs for each release are available in the [GitHub releases](https://
 
 ## Version 4.6.0 - Not yet released
 
+* **Changes output for existing policies.** The `%l` placeholder in a `redactionFormat` is now replaced with a custom identifier filter's `classification`, so identifiers with different classifications (an MRN and an account number, for example) no longer redact to the same text. A filter without a classification now replaces `%l` with an empty string instead of leaving `%l` in the output. A `MAP_REPLACE` generator also gets the identifier's classification as its `{{label}}`. (issue #476)
+
 ## Version 4.5.0 - October 23, 2026
 
 * **Changes detection for existing policies.** About 1,300 names in the city filter's bundled list are also common English words, such as `Call`, `Driver`, `Oak`, `Street`, `Hope`, `Center`, `Phoenix`, and `Mobile`. One of these is now reported as a city only when it begins with a capital letter and either follows `in`, `from`, `to`, `near`, `outside`, `toward`, `towards`, or `via`, or is followed by a comma and a state name or two-letter abbreviation, as in `Born in Phoenix.` or `Mobile, Alabama`. Previously every occurrence was redacted in any case, so `She lives on Oak Street in Austin.` became `She lives on {{{REDACTED-city}}} {{{REDACTED-city}}} in {{{REDACTED-city}}}.` and now becomes `She lives on Oak Street in {{{REDACTED-city}}}.` Such a city written without that context, as in `Phoenix is hot this summer.`, is no longer redacted. Other names in the list are reported as before. The rule applies to exact and fuzzy matches of the bundled list, not to `terms` a policy gives. The list is `city-common-words.txt`, generated from SCOWL, whose copyright notice ships beside it. (issue #452)
