@@ -48,6 +48,9 @@ public class ZipCodeFilterStrategy extends AbstractFilterStrategy {
     public static final String TRUNCATE = "truncate";
     public static final String POPULATION = "population";
     public static final String ZERO_LEADING = "zero_leading";
+    public static final String SAFE_HARBOR = "SAFE_HARBOR";
+
+    private static final int SAFE_HARBOR_POPULATION_THRESHOLD = 20_000;
 
     private final FilterType filterType = FilterType.ZIP_CODE;
 
@@ -58,13 +61,13 @@ public class ZipCodeFilterStrategy extends AbstractFilterStrategy {
     }
 
     /**
-     * The zip code filter adds ZERO_LEADING and implements neither ABBREVIATE, FPE_ENCRYPT_REPLACE,
-     * LAST_4 nor MAP_REPLACE.
+     * The zip code filter adds ZERO_LEADING and SAFE_HARBOR and implements neither ABBREVIATE,
+     * FPE_ENCRYPT_REPLACE, LAST_4 nor MAP_REPLACE.
      */
     @Override
     public Set<String> getAcceptedStrategies() {
         return Set.of(REDACT, RANDOM_REPLACE, STATIC_REPLACE, CRYPTO_REPLACE, HASH_SHA256_REPLACE, MASK,
-                TRUNCATE, ZERO_LEADING);
+                TRUNCATE, ZERO_LEADING, SAFE_HARBOR);
     }
 
     @Override
@@ -204,6 +207,10 @@ public class ZipCodeFilterStrategy extends AbstractFilterStrategy {
 
             replacement = "000" + token.subSequence(3, 5);
 
+        } else if(Strings.CI.equals(strategy, SAFE_HARBOR)) {
+
+            replacement = getSafeHarborReplacement(token);
+
         } else if(Strings.CI.equals(strategy, CRYPTO_REPLACE)) {
 
             replacement = "{{" + Encryption.encrypt(token, crypto) + "}}";
@@ -225,6 +232,16 @@ public class ZipCodeFilterStrategy extends AbstractFilterStrategy {
 
         return new Replacement(replacement, salt);
 
+    }
+
+    private String getSafeHarborReplacement(final String token) {
+        if (token == null || token.length() < 3) {
+            return "000";
+        }
+        final String prefix = token.substring(0, 3);
+        return zipCodeMetadataService.getPopulationForPrefix(prefix) > SAFE_HARBOR_POPULATION_THRESHOLD
+                ? prefix
+                : "000";
     }
 
     public void setTruncateDigits(Integer truncateDigits) {
