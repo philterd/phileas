@@ -541,4 +541,60 @@ public class PhoneNumberFilterTest extends AbstractFilterTest {
 
     }
 
+    @Test
+    public void filterPhoneDoesNotRunIntoTheNextSentence() throws Exception {
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(new PhoneNumberFilterStrategy()))
+                .withWindowSize(windowSize)
+                .build();
+
+        final PhoneNumberRulesFilter filter = new PhoneNumberRulesFilter(filterConfiguration);
+
+        // "123-45-6789. 57" is not one number: the period ends the sentence with the SSN.
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "SSN 123-45-6789. 57-year-old male.");
+        showSpans(filtered.getSpans());
+
+        Assertions.assertEquals(0, filtered.getSpans().size());
+
+    }
+
+    @Test
+    public void filterPhoneAtTheEndOfASentence() throws Exception {
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(new PhoneNumberFilterStrategy()))
+                .withWindowSize(windowSize)
+                .build();
+
+        final PhoneNumberRulesFilter filter = new PhoneNumberRulesFilter(filterConfiguration);
+
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "Call 412.555.0187. 57 people called.");
+        showSpans(filtered.getSpans());
+
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 5, 17, FilterType.PHONE_NUMBER));
+        Assertions.assertEquals("412.555.0187", filtered.getSpans().get(0).getText());
+
+    }
+
+    @Test
+    public void filterPhoneWithDotSeparators() throws Exception {
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(new PhoneNumberFilterStrategy()))
+                .withWindowSize(windowSize)
+                .build();
+
+        final PhoneNumberRulesFilter filter = new PhoneNumberRulesFilter(filterConfiguration);
+
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "Call 412.555.0187 today.");
+        showSpans(filtered.getSpans());
+
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 5, 17, FilterType.PHONE_NUMBER));
+        Assertions.assertEquals(0.95, filtered.getSpans().get(0).getConfidence());
+
+    }
+
 }
