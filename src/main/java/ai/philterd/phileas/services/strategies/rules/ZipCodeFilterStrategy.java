@@ -180,12 +180,7 @@ public class ZipCodeFilterStrategy extends AbstractFilterStrategy {
 
         } else if(Strings.CI.equals(strategy, RANDOM_REPLACE)) {
 
-            AnonymizationService as = anonymizationService;
-            if (this.anonymizationService != null) {
-                as = this.anonymizationService;
-            }
-
-            replacement = getAnonymizedToken(contextService, replacementScope, token, as, filterType.getType());
+            replacement = getAnonymizedToken(contextService, replacementScope, token, anonymizationService, filterType.getType());
 
         } else if(Strings.CI.equals(strategy, STATIC_REPLACE)) {
 
@@ -193,15 +188,7 @@ public class ZipCodeFilterStrategy extends AbstractFilterStrategy {
 
         } else if(Strings.CI.equals(strategy, TRUNCATE)) {
 
-            // A policy sets truncateLeaveCharacters without going through its setter, so keep it
-            // within 1 to 4 here. At least one of the five digits is always replaced.
-            final int leaveCharacters = Math.min(Math.max(getValueOrDefault(truncateLeaveCharacters, 4), 1), 4);
-
-            if(Strings.CI.equals(truncateDirection, LEADING)) {
-                replacement = token.substring(0, leaveCharacters) + StringUtils.repeat(truncateCharacter, Math.min(token.length() - leaveCharacters, 5 - leaveCharacters));
-            } else {
-                replacement = StringUtils.repeat(truncateCharacter, Math.min(token.length() - leaveCharacters, 5 - leaveCharacters)) + token.substring(Math.min(token.length() - leaveCharacters, 5 - leaveCharacters), 5);
-            }
+            replacement = truncate(token);
 
         } else if(Strings.CI.equals(strategy, ZERO_LEADING)) {
 
@@ -232,6 +219,17 @@ public class ZipCodeFilterStrategy extends AbstractFilterStrategy {
 
         return new Replacement(replacement, salt);
 
+    }
+
+    @Override
+    protected String truncate(final String token) {
+        // A policy sets truncateLeaveCharacters without going through its setter, so keep it
+        // within 1 to 4 here. At least one of the five digits is always replaced.
+        final int leaveCharacters = Math.min(Math.max(getValueOrDefault(truncateLeaveCharacters, 4), 1), 4);
+        if (Strings.CI.equals(truncateDirection, LEADING)) {
+            return token.substring(0, leaveCharacters) + StringUtils.repeat(truncateCharacter, Math.min(token.length() - leaveCharacters, 5 - leaveCharacters));
+        }
+        return StringUtils.repeat(truncateCharacter, Math.min(token.length() - leaveCharacters, 5 - leaveCharacters)) + token.substring(Math.min(token.length() - leaveCharacters, 5 - leaveCharacters), 5);
     }
 
     private String getSafeHarborReplacement(final String token) {
