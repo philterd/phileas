@@ -6,6 +6,7 @@ Full changelogs for each release are available in the [GitHub releases](https://
 
 ## Version 4.6.0 - Not yet released
 
+* **Changes detection for existing policies.** The zip code filter no longer identifies five digits joined by a hyphen to a letter or digit before them as a zip code, such as `00847` in the case number `2026-00847` or `48213` in the reference code `FR-48213`. The hyphen was read as a word boundary, so these digits were redacted, and with `validate` set `48213` still was, because it is a real zip code. The non-breaking hyphen and the other hyphens that join digits into one token count too. A zip code after a space or other punctuation, such as `MA 02116`, `02116-1234`, or `(02116)`, is identified as before. In a range written with a hyphen, such as `02116-02118`, only the first zip code is identified; one written with an en dash (`02116–02118`) still gives both. (issue #485)
 * Added the `aba`, `verhoeff`, and `damm` identifier validators, so all eleven validators the redaction policy schema names are now implemented. `aba` checks the 3-7-1 weighted mod 10 checksum of an ABA routing transit number and requires exactly nine digits. `verhoeff` and `damm` check a trailing Verhoeff or Damm check digit. Previously a policy naming one of the three failed to load with `Unsupported identifier validator`. (issue #391)
 
 ## Version 4.5.0 - October 23, 2026

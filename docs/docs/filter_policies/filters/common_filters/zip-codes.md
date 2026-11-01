@@ -4,6 +4,9 @@
 
 This filter identifies zip codes in text.
 
+Five digits joined by a hyphen to a letter or digit before them, as in a case number such as `2026-00847` or a
+reference code such as `FR-48213`, are part of a longer identifier and are not identified as a zip code.
+
 Please note that the information used to map a zip code to a population is derived from publicly available USA census
 data. While population mapping to zip code may be near the actual numbers it will most likely not be exact. Please use
 the `POPULATION` conditional with this in mind.
