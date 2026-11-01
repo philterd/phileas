@@ -121,4 +121,26 @@ public class CurrencyAnonymizationServiceTest {
         Assertions.assertTrue(replacement.endsWith("EUR"));
     }
 
+    @Test
+    void anonymizeCurrencyNameWithNationality() {
+        final AnonymizationService anonymizationService = new CurrencyAnonymizationService();
+        final String token = "235,000 Swedish crowns";
+        final String replacement = anonymizationService.anonymize(token);
+
+        Assertions.assertNotEquals(token, replacement);
+        Assertions.assertFalse(replacement.startsWith("$"));
+        Assertions.assertTrue(replacement.endsWith(" Swedish crowns"));
+    }
+
+    @Test
+    void anonymizeExpandedIsoCode() {
+        final AnonymizationService anonymizationService = new CurrencyAnonymizationService();
+        final String token = "5,000 CHF";
+        final String replacement = anonymizationService.anonymize(token);
+
+        Assertions.assertNotEquals(token, replacement);
+        Assertions.assertFalse(replacement.startsWith("$"));
+        Assertions.assertTrue(replacement.endsWith(" CHF"));
+    }
+
 }

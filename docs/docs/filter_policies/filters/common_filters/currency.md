@@ -2,7 +2,7 @@
 
 ## Filter
 
-This filter identifies monetary amounts in text, such as `$100.00`.
+This filter identifies monetary amounts in text written with a currency symbol (`$`, `€`, `£`, `¥`, `₹`), an ISO 4217 currency code before or after the amount (such as `USD`, `EUR`, `GBP`, `JPY`, `CAD`, `AUD`, `INR`, `CHF`, `SEK`, `NOK`, `DKK`, `PLN`, `CZK`, `HUF`, `RUB`, `TRY`, `RON`, `NZD`, `CNY`, `HKD`, `SGD`, `KRW`, `MXN`, `BRL`, `ZAR`, `BGN`, `ISK`, `UAH`, or `HRK`; `RUB`, `TRY`, and `RON` must be uppercase), or a currency name after the amount with an optional nationality adjective (such as `5,000 euros`, `100 dollars`, `20 pounds`, `235,000 Swedish crowns`, `50,000 Austrian schillings`, or `10,000 French francs`).
 
 ### Required Parameters
 
