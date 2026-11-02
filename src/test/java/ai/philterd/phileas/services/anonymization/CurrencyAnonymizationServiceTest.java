@@ -143,4 +143,15 @@ public class CurrencyAnonymizationServiceTest {
         Assertions.assertTrue(replacement.endsWith(" CHF"));
     }
 
+    @Test
+    void anonymizeIsoMagnitude() {
+        final AnonymizationService anonymizationService = new CurrencyAnonymizationService();
+        final String token = "USD 1.5M";
+        final String replacement = anonymizationService.anonymize(token);
+
+        Assertions.assertNotEquals(token, replacement);
+        Assertions.assertTrue(replacement.startsWith("USD "));
+        Assertions.assertTrue(replacement.endsWith("M"));
+    }
+
 }

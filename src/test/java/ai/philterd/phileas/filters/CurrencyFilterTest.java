@@ -335,13 +335,22 @@ public class CurrencyFilterTest extends AbstractFilterTest {
     @CsvSource(delimiter = '|', value = {
             "Paid 5,000 euros today. | 5,000 euros",
             "The fee is 100 dollars. | 100 dollars",
-            "He owed 20 pounds. | 20 pounds",
+            "He owed 20 British pounds. | 20 British pounds",
+            "He owed 20 pounds sterling. | 20 pounds sterling",
             "He paid 235,000 Swedish crowns. | 235,000 Swedish crowns",
             "He paid 235,000 kronor. | 235,000 kronor",
             "Fined 50,000 Austrian schillings. | 50,000 Austrian schillings",
             "Damages of 10,000 French francs. | 10,000 French francs",
             "Settled for 20,000 Polish złotys. | 20,000 Polish złotys",
-            "Awarded 50,000 Russian rubles. | 50,000 Russian rubles"
+            "Awarded 50,000 Russian rubles. | 50,000 Russian rubles",
+            "Deal valued at USD 1.5M total. | USD 1.5M",
+            "Deal valued at 1.5M USD total. | 1.5M USD",
+            "Deal valued at $1.5M total. | $1.5M",
+            "Grant of EUR 250k approved. | EUR 250k",
+            "Fund reached GBP 2bn last year. | GBP 2bn",
+            "Adjustment of .50 USD applied. | .50 USD",
+            "Adjustment of TRY .50 applied. | TRY .50",
+            "Invoice for USD .50 balance. | USD .50"
     })
     void filterCurrencyNamesSingleSpan(final String input, final String expectedSpan) throws Exception {
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
@@ -355,6 +364,20 @@ public class CurrencyFilterTest extends AbstractFilterTest {
         Assertions.assertEquals(expectedSpan, filtered.getSpans().get(0).getText());
         final int start = input.indexOf(expectedSpan);
         Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), start, start + expectedSpan.length(), FilterType.CURRENCY));
+    }
+
+    @Test
+    void filterIsoCodeOnNextLine() throws Exception {
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(new CurrencyFilterStrategy()))
+                .withWindowSize(windowSize)
+                .build();
+        final CurrencyFilter filter = new CurrencyFilter(filterConfiguration);
+
+        final String input = "Total due is 250.00\nUSD upon receipt.";
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, input);
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertEquals("250.00\nUSD", filtered.getSpans().get(0).getText());
     }
 
     @ParameterizedTest
@@ -378,9 +401,18 @@ public class CurrencyFilterTest extends AbstractFilterTest {
     @ParameterizedTest
     @ValueSource(strings = {
             "In 2026 patient in room 500 took 2 tablets.",
+            "Patient weighs 180 pounds.",
+            "Dentist placed 2 crowns on the molars.",
+            "PATIENT TO TRY 2 TABLETS DAILY.",
+            "PATIENT TO TRY 2.5 MG DAILY.",
+            "PATIENT TO TRY 2.55MG DAILY.",
+            "PATIENT TO TRY 2.5 G DAILY.",
+            "PATIENT TO TRY 1.5 L FLUIDS DAILY.",
+            "APPLY AND RUB 0.5 ML TWICE DAILY.",
             "235,000 Swedish citizens voted in 2024.",
             "The student scored 80 marks on the test.",
             "Please try 2 tablets and rub 5 ml onto the skin.",
+            "Please try 3,000 steps daily.",
             "PATIENT TO TRY 2ND DOSE."
     })
     void filterCurrencyNamesNoFalsePositives(final String input) throws Exception {
