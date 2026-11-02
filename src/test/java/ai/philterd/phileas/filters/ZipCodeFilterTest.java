@@ -365,6 +365,21 @@ public class ZipCodeFilterTest extends AbstractFilterTest {
 
     }
 
+    @ParameterizedTest
+    @ValueSource(booleans = {true, false})
+    public void filterMatchesBothZipCodesOfARange(final boolean requireDelimiter) throws Exception {
+
+        final ZipCodeFilter filter = new ZipCodeFilter(getFilterConfiguration(), requireDelimiter, false);
+
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "Serving ZIP codes 02116-02118 only.");
+
+        showSpans(filtered.getSpans());
+        Assertions.assertEquals(2, filtered.getSpans().size());
+        Assertions.assertEquals("02116", filtered.getSpans().get(0).getText());
+        Assertions.assertEquals("02118", filtered.getSpans().get(1).getText());
+
+    }
+
     @Test
     public void filterDoesNotMatchDigitsJoinedByANonBreakingHyphen() throws Exception {
 
