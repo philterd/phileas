@@ -83,6 +83,31 @@ public class IdentifierValidatorsTest {
     }
 
     @Test
+    public void abaResolves() {
+        Assertions.assertTrue(IdentifierValidators.fromPolicy(new Validator("aba")) instanceof AbaValidator);
+    }
+
+    @Test
+    public void verhoeffResolves() {
+        Assertions.assertTrue(IdentifierValidators.fromPolicy(new Validator("verhoeff")) instanceof VerhoeffValidator);
+    }
+
+    @Test
+    public void dammResolves() {
+        Assertions.assertTrue(IdentifierValidators.fromPolicy(new Validator("damm")) instanceof DammValidator);
+    }
+
+    @Test
+    public void unknownNameErrorListsEveryValidator() {
+        final IllegalArgumentException ex = Assertions.assertThrows(IllegalArgumentException.class,
+                () -> IdentifierValidators.fromPolicy(new Validator("does-not-exist")));
+        for (final String name : java.util.List.of("luhn", "mod11", "mod97", "mod23-letter", "aba", "verhoeff",
+                "damm", "es-cif", "de-steuerid", "de-personalausweis", "bic-structural")) {
+            Assertions.assertTrue(ex.getMessage().contains(name), name);
+        }
+    }
+
+    @Test
     public void unknownNameIsAPolicyError() {
         // A name that is not implemented must fail loudly, never be silently ignored.
         final IllegalArgumentException ex = Assertions.assertThrows(IllegalArgumentException.class,
