@@ -137,6 +137,13 @@ public class DriversLicenseFilter extends RegexFilter {
 
     }
 
+    // A pattern's classification is its state, but states share formats, so the state of the pattern
+    // that matched may not be the state that issued the license. It is not used as a label.
+    @Override
+    protected String getLabel(final FilterPattern filterPattern) {
+        return classification;
+    }
+
     private static boolean containsLetter(final String text) {
         return text.chars().anyMatch(Character::isLetter);
     }

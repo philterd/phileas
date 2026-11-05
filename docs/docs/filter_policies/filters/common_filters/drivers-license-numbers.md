@@ -12,6 +12,9 @@ contextual terms appears within `windowSize` words of it, ignoring case and punc
 `Driver's license 194784357` and `DL# 194784357` but not in `the number is 194784357`. A match that contains a letter,
 such as `D1234567`, is identified without a contextual term.
 
+The `%l` variable in a `redactionFormat` is replaced with an empty string for this filter, not with a state. Many states
+use the same number formats, so the state of the format that matched may not be the state that issued the license.
+
 ### Required Parameters
 
 This filter has no required parameters.

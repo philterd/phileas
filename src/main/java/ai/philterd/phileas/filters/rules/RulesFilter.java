@@ -210,7 +210,7 @@ public abstract class RulesFilter extends Filter {
 
                         // Get the span's replacement.
                         final Replacement replacement = getReplacement(contextService, policy, context, token,
-                                window, initialConfidence, classification, filterPattern);
+                                window, initialConfidence, getLabel(filterPattern), filterPattern);
 
                         // Create the span.
                         final Span span = Span.make(characterStart, characterEnd, getFilterType(), context,
@@ -240,6 +240,15 @@ public abstract class RulesFilter extends Filter {
 
         return postFilter(spans);
         
+    }
+
+    /**
+     * Gets the label a strategy receives for a match, such as for %l in a redaction format.
+     * @param filterPattern The {@link FilterPattern} that matched.
+     * @return The pattern's classification, or the filter's when the pattern has none.
+     */
+    protected String getLabel(final FilterPattern filterPattern) {
+        return filterPattern.getClassification() != null ? filterPattern.getClassification() : classification;
     }
 
     /**

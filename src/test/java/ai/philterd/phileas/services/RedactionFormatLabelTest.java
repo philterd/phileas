@@ -29,8 +29,8 @@ import java.util.Properties;
 import static org.mockito.Mockito.mock;
 
 /**
- * The %l redaction placeholder is replaced with an identifier filter's classification (issue #476),
- * and with nothing for a filter without a classification.
+ * The %l redaction placeholder is replaced with the classification of the filter or pattern that
+ * found the text, and with nothing when there is none.
  */
 class RedactionFormatLabelTest {
 
@@ -88,6 +88,35 @@ class RedactionFormatLabelTest {
         final String json = "{ \"identifiers\": { \"ssn\": { \"ssnFilterStrategies\": " + REDACT_WITH_LABEL + " } } }";
 
         Assertions.assertEquals("SSN {{{REDACTED-ssn-}}} on file.", filter(json, "SSN 078-05-1120 on file."));
+
+    }
+
+    @Test
+    void aTrackingNumberCarrierIsTheLabel() throws Exception {
+
+        final String json = "{ \"identifiers\": { \"trackingNumber\": { \"trackingNumberFilterStrategies\": " + REDACT_WITH_LABEL + " } } }";
+
+        Assertions.assertEquals("Ship {{{REDACTED-tracking-number-ups}}} today.", filter(json, "Ship 1Z999AA10123456784 today."));
+
+    }
+
+    @Test
+    void aPassportNumberCountryIsTheLabel() throws Exception {
+
+        final String json = "{ \"identifiers\": { \"passportNumber\": { \"passportNumberFilterStrategies\": " + REDACT_WITH_LABEL + " } } }";
+
+        Assertions.assertEquals("Passport number {{{REDACTED-passport-number-US}}} on file.",
+                filter(json, "Passport number 123456789 on file."));
+
+    }
+
+    @Test
+    void aDriversLicenseStateIsNotTheLabel() throws Exception {
+
+        final String json = "{ \"identifiers\": { \"driversLicense\": { \"driversLicenseFilterStrategies\": " + REDACT_WITH_LABEL + " } } }";
+
+        Assertions.assertEquals("License {{{REDACTED-drivers-license-number-}}} on file.",
+                filter(json, "License A1234567 on file."));
 
     }
 
