@@ -350,7 +350,16 @@ public class CurrencyFilterTest extends AbstractFilterTest {
             "Fund reached GBP 2bn last year. | GBP 2bn",
             "Adjustment of .50 USD applied. | .50 USD",
             "Adjustment of TRY .50 applied. | TRY .50",
-            "Invoice for USD .50 balance. | USD .50"
+            "Invoice for USD .50 balance. | USD .50",
+            "Paid USD.1,000 today. | USD.1,000",
+            "Paid EUR.2,500.00 today. | EUR.2,500.00",
+            "Paid USD 1,,000 today. | USD 1,,000",
+            "Paid 1,,000 USD today. | 1,,000 USD",
+            "Paid TRY.3,000 today. | TRY.3,000",
+            "Paid RUB,3,000.50 today. | RUB,3,000.50",
+            "Paid CHF 1,,000 today. | CHF 1,,000",
+            "Paid 1,,000 CHF today. | 1,,000 CHF",
+            "Paid .3,000 CHF today. | .3,000 CHF"
     })
     void filterCurrencyNamesSingleSpan(final String input, final String expectedSpan) throws Exception {
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
@@ -413,7 +422,15 @@ public class CurrencyFilterTest extends AbstractFilterTest {
             "The student scored 80 marks on the test.",
             "Please try 2 tablets and rub 5 ml onto the skin.",
             "Please try 3,000 steps daily.",
-            "PATIENT TO TRY 2ND DOSE."
+            "PATIENT TO TRY 2ND DOSE.",
+            "History of CHF 3 years ago.",
+            "2 CHF admissions this year.",
+            "Dyspnea 2/2 CHF exacerbation.",
+            "Age 72\nCHF stable.",
+            "Failed 2 chf clinics.",
+            "TAKE 2 TRY AGAIN TOMORROW.",
+            "APPLY 2 RUB GENTLY.",
+            "SEEN 3 RON SMITH MD."
     })
     void filterCurrencyNamesNoFalsePositives(final String input) throws Exception {
         final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
@@ -423,6 +440,21 @@ public class CurrencyFilterTest extends AbstractFilterTest {
         final CurrencyFilter filter = new CurrencyFilter(filterConfiguration);
 
         Assertions.assertEquals(0, filter.filter(contextService, getPolicy(), "context", PIECE, input).getSpans().size());
+    }
+
+    @ParameterizedTest
+    @CsvSource(delimiter = '|', value = {
+            "DOB 1/2/20 CHF stable. | DOB {{{REDACTED-date}}} CHF stable.",
+            "DOB 1/2/20 TRY again. | DOB {{{REDACTED-date}}} TRY again.",
+            "Call 555-0187 CHF stable. | Call {{{REDACTED-phone-number}}} CHF stable."
+    })
+    void anAmbiguousCodeDoesNotTakePartOfADateOrPhoneNumber(final String input, final String expected) throws Exception {
+        final String policyJson = "{\"identifiers\": {\"date\": {}, \"phoneNumber\": {}, \"currency\": {}}}";
+        final Policy policy = new Gson().fromJson(policyJson, Policy.class);
+        final PlainTextFilterService service = new PlainTextFilterService(
+                new PhileasConfiguration(new Properties()), contextService, new InMemoryVectorService(), null);
+
+        Assertions.assertEquals(expected, service.filter(policy, "context", input).getFilteredText());
     }
 
     @Test
