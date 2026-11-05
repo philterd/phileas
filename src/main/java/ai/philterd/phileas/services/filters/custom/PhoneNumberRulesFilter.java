@@ -48,6 +48,11 @@ public class PhoneNumberRulesFilter extends RulesFilter {
     // "1" as a national prefix, leaving too few digits for a possible number, so the match is dropped.
     private static final Pattern BARE_COUNTRY_CODE = Pattern.compile("(?<![\\d+])1[-. ](?=\\(?\\d{3}\\)?[-. ]\\d{3}[-. ]\\d{4})");
 
+    // A period after a digit and before whitespace, such as the end of "SSN 123-45-6789. 57-year-old male."
+    // libphonenumber accepts "." and whitespace as separators, so without a break here "123-45-6789. 57" is
+    // read as one phone number that runs into the next sentence.
+    private static final Pattern SENTENCE_END = Pattern.compile("(?<=\\d)\\.(?=\\s)");
+
     // The first configured region that uses country code 1, or null when none does.
     private final String northAmericanRegion;
 
@@ -91,13 +96,27 @@ public class PhoneNumberRulesFilter extends RulesFilter {
 
         if(policy.getIdentifiers().hasFilter(filterType)) {
 
+            // Numbers are found in a copy of the input in which a sentence-ending period is replaced by ";",
+            // which libphonenumber does not read as part of a number. The copy is the same length as the input,
+            // so offsets in the copy are offsets in the input. Cutting a run of numbers at the period can change
+            // how libphonenumber splits the rest of the run, so the matches in the input itself that do not run
+            // across a sentence end are kept as well.
+            final String scanned = SENTENCE_END.matcher(input).replaceAll(";");
+
             // Scan once per configured region and merge the results. A "+"-prefixed number is found under
             // every region and a bare national-format number may match in several, so overlapping spans are
             // de-duplicated below, preferring valid numbers over merely-possible ones and longer over shorter.
             final List<PhoneNumberMatch> allMatches = new ArrayList<>();
             for (final String region : regions) {
-                for (final PhoneNumberMatch match : phoneUtil.findNumbers(input, region, leniency, Long.MAX_VALUE)) {
+                for (final PhoneNumberMatch match : phoneUtil.findNumbers(scanned, region, leniency, Long.MAX_VALUE)) {
                     allMatches.add(match);
+                }
+                if (!scanned.equals(input)) {
+                    for (final PhoneNumberMatch match : phoneUtil.findNumbers(input, region, leniency, Long.MAX_VALUE)) {
+                        if (!SENTENCE_END.matcher(input.substring(match.start(), match.end())).find()) {
+                            allMatches.add(match);
+                        }
+                    }
                 }
             }
 
@@ -108,8 +127,8 @@ public class PhoneNumberRulesFilter extends RulesFilter {
             // A match from the copy is only kept where the input itself had no match, so numbers already found,
             // such as "112-997-5633" in "Item 1 112-997-5633", keep their span and confidence.
             if (northAmericanRegion != null) {
-                final String rewritten = BARE_COUNTRY_CODE.matcher(input).replaceAll("+1");
-                if (!rewritten.equals(input)) {
+                final String rewritten = BARE_COUNTRY_CODE.matcher(scanned).replaceAll("+1");
+                if (!rewritten.equals(scanned)) {
                     final List<PhoneNumberMatch> inputMatches = new ArrayList<>(allMatches);
                     for (final PhoneNumberMatch match : phoneUtil.findNumbers(rewritten, northAmericanRegion, leniency, Long.MAX_VALUE)) {
                         if (inputMatches.stream().noneMatch(m -> match.start() < m.end() && m.start() < match.end())) {
@@ -121,7 +140,7 @@ public class PhoneNumberRulesFilter extends RulesFilter {
 
             for (final PhoneNumberMatch match : dedupe(allMatches)) {
 
-                // Taken from the input rather than rawString(), which is the rewritten text for a match found in the copy.
+                // Taken from the input rather than rawString(), which is the rewritten text for a match found in a copy.
                 final String text = input.substring(match.start(), match.end());
 
                 // Is it formatted like a phone number?
