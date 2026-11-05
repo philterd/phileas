@@ -97,7 +97,12 @@ filters identify the same text, the filter with the highest priority will determ
 
 When spans from different filters overlap in part, the earlier span stays whole and the later span is trimmed to the
 text the earlier one does not cover, so none of the text they cover is left in the output. For example,
-`DOB 1/2/20 CAD` gives a date span for `1/2/20` and a currency span for `CAD`. A span that is ignored, or whose
-condition is not met, does not hide a span it overlaps in part. When one span is fully inside another, or the spans
-come from the same filter, one span is kept: the longest, then the one with the highest confidence, then the one with
-the highest priority.
+`DOB 1/2/20 CAD` gives a date span for `1/2/20` and a currency span for `CAD`. When one span is fully inside another,
+or the spans come from the same filter, one span is kept: the longest, then the one with the highest confidence, then
+the one with the highest priority.
+
+A span that is ignored, or whose condition is not met, changes no text, so it does not hide a span from another filter
+that overlaps it. With `ignored` set to `90210 USD` on the currency filter, a zip code filter still redacts `90210` in
+`Zip 90210 USD`. It does hide a shorter span from its own filter. The policy's top-level `ignored` terms apply to spans
+from every filter, and are compared with the whole text of the span left after overlaps are resolved. A term that is
+not the whole text of a span does not stop a shorter span inside that text from being redacted.

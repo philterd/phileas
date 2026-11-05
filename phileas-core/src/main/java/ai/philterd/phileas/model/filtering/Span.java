@@ -453,12 +453,12 @@ public final class Span {
     }
 
     /**
-     * Resolves overlapping spans so that no text covered by a span of one filter is left in the output
-     * because a span of another filter overlaps part of it. Spans are first resolved as by
-     * {@link #dropOverlappingSpans(List)}. A dropped span that partly overlaps a kept span of another
-     * filter is then restored: the earlier of the two stays whole and the later is trimmed to the text
-     * the earlier does not cover. A span that is ignored or not applied changes no text, so it covers
-     * nothing here, and is kept only where it overlaps no other span. The given list and spans are not
+     * Resolves overlapping spans so that a span that changes text is not lost to a span of another
+     * filter. Spans are resolved as by {@link #dropOverlappingSpans(List)}, except that a span that is
+     * ignored or not applied changes no text, so it does not hide a span of another filter. It still
+     * hides a span of its own filter, and is kept only where it overlaps no other span. A dropped span
+     * that partly overlaps a kept span of another filter is restored: the earlier of the two stays whole
+     * and the later is trimmed to the text the earlier does not cover. The given list and spans are not
      * modified.
      * @param spans A list of {@link Span spans} that may or may not contain overlapping spans.
      * @param input The text the span offsets refer to.
@@ -466,18 +466,34 @@ public final class Span {
      */
     public static List<Span> resolveOverlappingSpans(final List<Span> spans, final String input) {
 
-        final List<Span> kept = dropOverlappingSpans(spans);
+        final List<Span> ranked = dropOverlappingSpans(spans);
 
-        if (kept.size() == spans.size()) {
-            return kept;
+        if (ranked.size() == spans.size()) {
+            return ranked;
         }
+
+        final List<Span> unchanging = ranked.stream().filter(span -> !changesText(span)).toList();
+
+        // The spans kept by rank stay, so nothing they cover is lost.
+        final List<Span> kept = new ArrayList<>(ranked.stream().filter(Span::changesText).toList());
 
         final Set<Span> keptSpans = Collections.newSetFromMap(new IdentityHashMap<>());
         keptSpans.addAll(kept);
 
-        final List<Span> candidates = new ArrayList<>();
-        for (final Span span : spans) {
-            if (changesText(span) && (keptSpans.contains(span) || partlyOverlapsAnotherFilter(span, kept))) {
+        final List<Span> dropped = spans.stream()
+                .filter(Span::changesText)
+                .filter(span -> !keptSpans.contains(span))
+                .filter(span -> unchanging.stream().noneMatch(other -> other.getFilterType() == span.getFilterType() && overlaps(span, other)))
+                .toList();
+
+        // A span that overlaps only spans that change no text is free to be kept.
+        kept.addAll(dropOverlappingSpans(dropped.stream()
+                .filter(span -> keptSpans.stream().noneMatch(other -> overlaps(span, other)))
+                .toList()));
+
+        final List<Span> candidates = new ArrayList<>(kept);
+        for (final Span span : dropped) {
+            if (partlyOverlapsAnotherFilter(span, kept)) {
                 candidates.add(span);
             }
         }
@@ -508,8 +524,8 @@ public final class Span {
 
         }
 
-        for (final Span span : kept) {
-            if (!changesText(span) && resolved.stream().noneMatch(other -> overlaps(span, other))) {
+        for (final Span span : unchanging) {
+            if (resolved.stream().noneMatch(other -> overlaps(span, other))) {
                 resolved.add(span);
             }
         }

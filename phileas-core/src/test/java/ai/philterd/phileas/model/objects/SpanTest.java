@@ -480,6 +480,50 @@ public class SpanTest {
 
     }
 
+    private static Span ignored(final int start, final int end, final FilterType filterType, final String input) {
+        return Span.make(start, end, filterType, "context", 0.8, input.substring(start, end), "***", "salt", true, true, new String[0], 0);
+    }
+
+    @Test
+    public void resolveOverlappingSpansKeepsASpanInsideAnIgnoredSpanOfAnotherFilter() {
+
+        final String input = "Zip 90210 USD paid";
+        final List<Span> spans = List.of(ignored(4, 13, FilterType.CURRENCY, input), span(4, 9, FilterType.ZIP_CODE, input));
+
+        final List<Span> result = Span.resolveOverlappingSpans(spans, input);
+
+        Assertions.assertEquals(1, result.size());
+        Assertions.assertEquals(FilterType.ZIP_CODE, result.get(0).getFilterType());
+
+    }
+
+    @Test
+    public void resolveOverlappingSpansLetsAnIgnoredSpanHideASpanOfItsOwnFilter() {
+
+        final String input = "New York City hall";
+        final List<Span> spans = List.of(ignored(0, 13, FilterType.LOCATION_CITY, input), span(4, 8, FilterType.LOCATION_CITY, input));
+
+        final List<Span> result = Span.resolveOverlappingSpans(spans, input);
+
+        Assertions.assertEquals(1, result.size());
+        Assertions.assertTrue(result.get(0).isIgnored());
+
+    }
+
+    @Test
+    public void resolveOverlappingSpansReportsASpanThatChangesNoTextWhenNothingOverlapsIt() {
+
+        final String input = "Zip 90210 and USD 5";
+        final List<Span> spans = List.of(ignored(4, 9, FilterType.ZIP_CODE, input), span(14, 19, FilterType.CURRENCY, input),
+                span(14, 17, FilterType.CURRENCY, input));
+
+        final List<Span> result = Span.resolveOverlappingSpans(spans, input);
+
+        Assertions.assertEquals(2, result.size());
+        Assertions.assertTrue(result.get(0).isIgnored());
+
+    }
+
     @Test
     public void getIdenticalSpans1() {
 

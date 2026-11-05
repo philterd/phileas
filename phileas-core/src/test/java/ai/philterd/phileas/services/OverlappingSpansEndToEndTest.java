@@ -88,6 +88,53 @@ class OverlappingSpansEndToEndTest {
 
     }
 
+    @ParameterizedTest
+    @CsvSource(delimiter = '|', value = {
+            "phoneNumber | ignored | 123-45-6789 57 | ssn | SSN 123-45-6789 57 ok. | SSN {{{REDACTED-ssn}}} 57 ok.",
+            "currency | ignored | 90210 USD | zipCode | Zip 90210 USD paid. | Zip {{{REDACTED-zip-code}}} USD paid."
+    })
+    void anIgnoredSpanDoesNotHideAValueOfAnotherFilterInsideIt(final String filter, final String property, final String term,
+                                                               final String other, final String input, final String expected) throws Exception {
+
+        final String policy = "{\"identifiers\": {\"" + other + "\": {}, \"" + filter + "\": {\"" + property + "\": [\"" + term + "\"]}}}";
+
+        Assertions.assertEquals(expected, filter(policy, input));
+
+    }
+
+    @ParameterizedTest
+    @CsvSource(delimiter = '|', value = {
+            "phoneNumber | phoneNumberFilterStrategies | ssn | SSN 123-45-6789 57 ok. | SSN {{{REDACTED-ssn}}} 57 ok.",
+            "currency | currencyFilterStrategies | zipCode | Zip 90210 USD paid. | Zip {{{REDACTED-zip-code}}} USD paid."
+    })
+    void aSpanWhoseConditionIsNotMetDoesNotHideAValueOfAnotherFilterInsideIt(final String filter, final String strategies, final String other,
+                                                                             final String input, final String expected) throws Exception {
+
+        final String policy = "{\"identifiers\": {\"" + other + "\": {}, \"" + filter + "\": {\"" + strategies + "\": "
+                + "[{\"strategy\": \"REDACT\", \"condition\": \"context == \\\"other\\\"\"}]}}}";
+
+        Assertions.assertEquals(expected, filter(policy, input));
+
+    }
+
+    @Test
+    void anIgnoredTermOnTheShorterSpansOwnFilterStillApplies() throws Exception {
+
+        final String policy = "{\"identifiers\": {\"zipCode\": {\"ignored\": [\"90210\"]}, \"currency\": {}}}";
+
+        Assertions.assertEquals("Zip {{{REDACTED-currency}}} paid.", filter(policy, "Zip 90210 USD paid."));
+
+    }
+
+    @Test
+    void aPolicyLevelIgnoredTermLeavesItsTextAlone() throws Exception {
+
+        final String policy = "{\"ignored\": [{\"terms\": [\"90210 USD\"]}], \"identifiers\": {\"zipCode\": {}, \"currency\": {}}}";
+
+        Assertions.assertEquals("Zip 90210 USD paid.", filter(policy, "Zip 90210 USD paid."));
+
+    }
+
     @Test
     void aSpanInsideAnotherSpanIsStillDropped() throws Exception {
         Assertions.assertEquals("Zip {{{REDACTED-currency}}} paid.", filter(POLICY, "Zip 90210 USD paid."));
