@@ -12,6 +12,7 @@ theme:
     primary: red
 nav:
   - Home: index.md
+  - Modules: modules.md
   - Deidentification:
     - 'Bucketing': 'deidentification/bucketing.md'
     - 'Date Shifting': 'deidentification/date-shifting.md'
@@ -26,6 +27,12 @@ nav:
   - 'Other Features':
     - 'Anonymization': 'other_features/anonymization.md'
     - 'Span Disambiguation': 'other_features/span_disambiguation.md'
+  - 'Local PhEye Inference':
+    - 'Overview': 'local_inference/index.md'
+    - 'How It Works': 'local_inference/how-it-works.md'
+    - 'Model Directory': 'local_inference/model-directory.md'
+    - 'Configuration': 'local_inference/configuration.md'
+    - 'Limitations and Accuracy': 'local_inference/limitations.md'
   - Settings: settings.md
 extra:
   version:

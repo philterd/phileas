@@ -43,6 +43,8 @@ To track the latest development build, depend on the current `-SNAPSHOT` version
 
 Snapshots are development builds: they are mutable and are periodically pruned, so pin a release version for anything you need to reproduce.
 
+`ai.philterd:phileas` includes text and PDF redaction. See [Modules](modules.md) for the other artifacts.
+
 ### Quick Start
 
 Create a `PlainTextFilterService`, using a `PhileasConfiguration`, and call `filter()` on the service:
@@ -68,7 +70,7 @@ A `PlainTextFilterService` is safe to call concurrently: `filter()` may be invok
 
 #### Usage Examples
 
-The [PlainTextFilterServiceTest](https://github.com/philterd/phileas/blob/main/src/test/java/ai/philterd/phileas/services/PlainTextFilterServiceTest.java) and [EndToEndTests](https://github.com/philterd/phileas/blob/main/src/test/java/ai/philterd/phileas/services/EndToEndTests.java) test classes have examples of how to configure Phileas and filter text.
+The [PlainTextFilterServiceTest](https://github.com/philterd/phileas/blob/main/phileas-core/src/test/java/ai/philterd/phileas/services/PlainTextFilterServiceTest.java) and [EndToEndTests](https://github.com/philterd/phileas/blob/main/phileas-core/src/test/java/ai/philterd/phileas/services/EndToEndTests.java) test classes have examples of how to configure Phileas and filter text.
 
 #### Redacting many texts efficiently (prepared policy)
 

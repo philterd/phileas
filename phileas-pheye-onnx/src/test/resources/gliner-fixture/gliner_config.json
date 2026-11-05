@@ -1,0 +1,8 @@
+{
+  "_note": "Minimal GLiNER config for the synthetic parity fixture (model.onnx). Only the fields GlinerConfig reads are meaningful. max_width and the <<ENT>>/<<SEP>> tokens mirror the real ph-eye-pii-en config; the synthetic model derives its output shape from these.",
+  "max_width": 12,
+  "max_len": 384,
+  "ent_token": "<<ENT>>",
+  "sep_token": "<<SEP>>",
+  "words_splitter_type": "whitespace"
+}

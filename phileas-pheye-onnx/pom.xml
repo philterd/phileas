@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>ai.philterd</groupId>
+        <artifactId>phileas-parent</artifactId>
+        <version>4.6.0-SNAPSHOT</version>
+    </parent>
+    <artifactId>phileas-pheye-onnx</artifactId>
+    <name>phileas-pheye-onnx</name>
+    <description>Optional local (on-device) GLiNER inference for the Phileas PhEye filter, via ONNX Runtime.
+    </description>
+    <inceptionYear>2026</inceptionYear>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <release>25</release>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+    <dependencies>
+        <!-- Defines the PhEyeDetector and PhEyeDetectorProvider SPI this module implements.
+             Provided scope: the consuming application already brings phileas. -->
+        <dependency>
+            <groupId>ai.philterd</groupId>
+            <artifactId>phileas-core</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <!-- ONNX Runtime for Java: runs the exported GLiNER model on-device. -->
+        <dependency>
+            <groupId>com.microsoft.onnxruntime</groupId>
+            <artifactId>onnxruntime</artifactId>
+            <version>${onnxruntime.version}</version>
+        </dependency>
+        <!-- DJL HuggingFace tokenizers (Rust-backed): loads the model's tokenizer.json with
+             exact parity to the Python tokenizer, including offset mappings. -->
+        <dependency>
+            <groupId>ai.djl.huggingface</groupId>
+            <artifactId>tokenizers</artifactId>
+            <version>${djl.tokenizers.version}</version>
+        </dependency>
+        <!-- Reading gliner_config.json. -->
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>${gson.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+</project>

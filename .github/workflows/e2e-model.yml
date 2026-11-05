@@ -1,0 +1,32 @@
+name: E2E Model Test
+
+# Downloads the published philterd/ph-eye-pii-en-xsmall model from Hugging Face and runs the
+# local-inference end-to-end test against it. Kept off the per-PR build on purpose: the model is
+# large and the download is network-dependent, so this runs only on demand and nightly.
+on:
+  workflow_dispatch:
+  schedule:
+    # Nightly at an offset minute (UTC). Scheduled runs are best-effort and may be delayed.
+    - cron: "37 5 * * *"
+
+jobs:
+  e2e:
+    name: Download model and run local-inference e2e
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+    env:
+      PHILEAS_DOWNLOAD_MODEL: "1"
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "25"
+          cache: maven
+
+      - name: Run the model-download end-to-end test
+        run: mvn -B test -pl phileas-pheye-onnx -am -Dtest=LocalPhEyeDetectorDownloadE2ETest -Dsurefire.failIfNoSpecifiedTests=false

@@ -121,7 +121,7 @@ Each Phileas release supports exactly one schema version:
 
 Phileas detects names and other free-text entities with NER models served by [Ph-Eye](https://www.github.com/philterd/ph-eye), which Phileas calls over HTTP. A policy can reference one or more Ph-Eye services.
 
-To run a GLiNER model on-device instead, with no Ph-Eye server, add the optional [phileas-pheye-onnx](https://github.com/philterd/phileas-pheye-onnx) module, which performs local inference via ONNX Runtime. Configure a PhEye filter with a local model directory (`modelPath`) and detection runs in-process. Without the module, Phileas uses the remote Ph-Eye service as before.
+To run a GLiNER model on-device instead, with no Ph-Eye server, add the optional [`phileas-pheye-onnx`](https://philterd.github.io/phileas/local_inference/) module, which performs local inference via ONNX Runtime. Configure a PhEye filter with a local model directory (`modelPath`) and detection runs in-process. Without the module, Phileas uses the remote Ph-Eye service as before.
 
 ## Identifier Validation
 
@@ -199,11 +199,11 @@ final BinaryDocumentFilterResult result = filterService.filter(
 
 ## Usage Examples
 
-The [EndToEndTests](https://github.com/philterd/phileas/blob/main/src/test/java/ai/philterd/phileas/services/EndToEndTests.java) and [EndToEndTestsHelper](https://github.com/philterd/phileas/blob/main/src/test/java/ai/philterd/phileas/services/EndToEndTestsHelper.java) test classes show how to configure Phileas, build policies, and filter text and PDFs.
+The [EndToEndTests](https://github.com/philterd/phileas/blob/main/phileas-core/src/test/java/ai/philterd/phileas/services/EndToEndTests.java) and [EndToEndTestsHelper](https://github.com/philterd/phileas/blob/main/phileas-core/src/test/java/ai/philterd/phileas/services/EndToEndTestsHelper.java) test classes show how to configure Phileas, build policies, and filter text. [PdfEndToEndTest](https://github.com/philterd/phileas/blob/main/phileas-pdf/src/test/java/ai/philterd/phileas/services/PdfEndToEndTest.java) does the same for PDFs.
 
 ## Building Phileas
 
-Build with `mvn clean install`.
+Build with `mvn clean install`, which needs Java 25. To build one module and what it depends on, use `-pl` and `-am`, for example `mvn test -pl phileas-pdf -am`.
 
 The benchmark tests (timed redaction workloads) are excluded from the normal build and run separately with the `benchmark` profile, for example `mvn test -Pbenchmark` (optionally with `-Dbenchmark.redactor=mask_all -Dbenchmark.document=all -Dbenchmark.millis=2000`).
 
@@ -218,6 +218,17 @@ Phileas snapshots and releases as of version 2.12.1 are published to Maven Centr
   <version>4.5.0</version>
 </dependency>
 ```
+
+`ai.philterd:phileas` brings in text and PDF redaction. Depend on one of the other modules for less, or for local inference:
+
+| Artifact | Contents |
+|---|---|
+| `ai.philterd:phileas` | `phileas-core` and `phileas-pdf`. |
+| `ai.philterd:phileas-core` | The redaction engine and text redaction, with no PDFBox. |
+| `ai.philterd:phileas-pdf` | PDF redaction. |
+| `ai.philterd:phileas-pheye-onnx` | Optional local PhEye inference. Add it alongside `phileas` or `phileas-core`. |
+
+All modules share one version. See [Modules](https://philterd.github.io/phileas/modules/).
 
 ## Ports
 

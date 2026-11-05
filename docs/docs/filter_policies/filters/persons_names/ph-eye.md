@@ -89,8 +89,8 @@ locally and the `endpoint` is not used. A detection is kept only when its score 
 cutoff and ignores `threshold`.
 
 Local inference is provided by the optional
-[`phileas-pheye-onnx`](https://github.com/philterd/phileas-pheye-onnx) module (ONNX Runtime), which
-is not a dependency of core Phileas. Add it to your build to enable local inference. If `modelPath`
+[`phileas-pheye-onnx`](../../../local_inference/index.md) module (ONNX Runtime), which
+is not a dependency of `ai.philterd:phileas`. Add it to your build to enable local inference. If `modelPath`
 is set but that module is not on the classpath, Phileas fails fast while the policy's filters are
 built (for example when you call `prepare(policy)`, or on the first `filter()` call for the policy),
 rather than silently falling back to the remote service or failing part-way through a document. The

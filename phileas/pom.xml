@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>ai.philterd</groupId>
+        <artifactId>phileas-parent</artifactId>
+        <version>4.6.0-SNAPSHOT</version>
+    </parent>
+    <artifactId>phileas</artifactId>
+    <name>phileas</name>
+    <description>Phileas is a library for identifying and redacting sensitive information from natural language text.
+        This artifact brings in phileas-core and phileas-pdf.
+    </description>
+    <properties>
+        <maven.javadoc.skip>true</maven.javadoc.skip>
+        <maven.source.skip>true</maven.source.skip>
+    </properties>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>placeholder-sources-jar</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                        <configuration>
+                            <classifier>sources</classifier>
+                            <classesDirectory>${project.basedir}/src/main/placeholder</classesDirectory>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>placeholder-javadoc-jar</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                        <configuration>
+                            <classifier>javadoc</classifier>
+                            <classesDirectory>${project.basedir}/src/main/placeholder</classesDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+    <dependencies>
+        <dependency>
+            <groupId>ai.philterd</groupId>
+            <artifactId>phileas-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>ai.philterd</groupId>
+            <artifactId>phileas-pdf</artifactId>
+        </dependency>
+    </dependencies>
+</project>
