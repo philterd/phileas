@@ -22,7 +22,11 @@ import ai.philterd.phileas.services.filters.regex.ZipCodeFilter;
 import ai.philterd.phileas.services.strategies.rules.ZipCodeFilterStrategy;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
+import java.io.IOException;
 import java.util.List;
 
 import static ai.philterd.phileas.services.strategies.AbstractFilterStrategy.RANDOM_REPLACE;
@@ -343,6 +347,95 @@ public class ZipCodeFilterTest extends AbstractFilterTest {
         // With no candidates, the default REALISTIC method replaces the zip code with another zip code.
         Assertions.assertTrue(filtered.getSpans().get(0).getReplacement().matches("\\d{5}"), filtered.getSpans().get(0).getReplacement());
         Assertions.assertNotEquals("90210", filtered.getSpans().get(0).getReplacement());
+
+    }
+
+    @ParameterizedTest
+    @ValueSource(booleans = {true, false})
+    public void filterDoesNotMatchDigitsJoinedByAHyphen(final boolean requireDelimiter) throws Exception {
+
+        final ZipCodeFilter filter = new ZipCodeFilter(getFilterConfiguration(), requireDelimiter, false);
+
+        final String input = "Re: Matter No. 2026-00847\nSend it to Boston, MA 02116.\nReference FR-48213, invoice INV-12345, case 1:26-cv-00847.";
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, input);
+
+        showSpans(filtered.getSpans());
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertEquals("02116", filtered.getSpans().get(0).getText());
+
+    }
+
+    @ParameterizedTest
+    @ValueSource(booleans = {true, false})
+    public void filterMatchesBothZipCodesOfARange(final boolean requireDelimiter) throws Exception {
+
+        final ZipCodeFilter filter = new ZipCodeFilter(getFilterConfiguration(), requireDelimiter, false);
+
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "Serving ZIP codes 02116-02118 only.");
+
+        showSpans(filtered.getSpans());
+        Assertions.assertEquals(2, filtered.getSpans().size());
+        Assertions.assertEquals("02116", filtered.getSpans().get(0).getText());
+        Assertions.assertEquals("02118", filtered.getSpans().get(1).getText());
+
+    }
+
+    @Test
+    public void filterDoesNotMatchDigitsJoinedByANonBreakingHyphen() throws Exception {
+
+        final ZipCodeFilter filter = new ZipCodeFilter(getFilterConfiguration(), true, false);
+
+        final String input = "Reference FR" + (char) 0x2011 + "48213 was filed.";
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, input);
+
+        Assertions.assertEquals(0, filtered.getSpans().size());
+
+    }
+
+    @Test
+    public void filterAndValidateDoesNotMatchARealZipCodeJoinedByAHyphen() throws Exception {
+
+        // 48213 is a real zip code (Detroit), so validation alone does not drop it.
+        final ZipCodeFilter filter = new ZipCodeFilter(getFilterConfiguration(), true, true);
+
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "Reference FR-48213 was filed in Boston, MA 02116.");
+
+        showSpans(filtered.getSpans());
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertEquals("02116", filtered.getSpans().get(0).getText());
+        Assertions.assertTrue(filtered.getSpans().get(0).isApplied());
+
+    }
+
+    @ParameterizedTest
+    @CsvSource(delimiter = '|', value = {
+            "Send it to Boston, MA 02116.|02116",
+            "Send it to Boston, MA 02116-1234.|02116-1234",
+            "Send it to Boston 02116 today.|02116",
+            "zip:02116|02116",
+            "(02116)|02116",
+            "Boston, MA, 02116-1234|02116-1234"
+    })
+    public void filterMatchesZipCodesInOrdinaryUse(final String input, final String zipCode) throws Exception {
+
+        for(final boolean requireDelimiter : new boolean[] {true, false}) {
+
+            final ZipCodeFilter filter = new ZipCodeFilter(getFilterConfiguration(), requireDelimiter, false);
+            final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, input);
+
+            Assertions.assertEquals(1, filtered.getSpans().size(), input);
+            Assertions.assertEquals(zipCode, filtered.getSpans().get(0).getText(), input);
+
+        }
+
+    }
+
+    private FilterConfiguration getFilterConfiguration() throws IOException {
+
+        return new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(new ZipCodeFilterStrategy()))
+                .withWindowSize(windowSize)
+                .build();
 
     }
 

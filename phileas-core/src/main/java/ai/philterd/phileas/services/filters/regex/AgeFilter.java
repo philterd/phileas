@@ -44,7 +44,10 @@ public class AgeFilter extends RegexFilter {
     private static final String NUMBER_WORD =
             "(?:(?:(?:one|a)\\s+)?hundred(?:\\s+(?:and\\s+)?" + ONE_TO_NINETY_NINE + ")?|" + ONE_TO_NINETY_NINE + ")";
 
-    // Optional separator between an "age"/"aged" keyword and its value, e.g. "Age: 47", "Age - 47".
+    // An "age" keyword, as "age", "aged", or "age of" (e.g. "at the age of 39").
+    private static final String AGE_KEYWORD = "\\b(age)(d|\\s+of)?";
+
+    // Optional separator between the keyword and its value, e.g. "Age: 47", "Age - 47".
     // Whitespace sits inside the group to avoid ambiguous backtracking.
     private static final String AGE_SEPARATOR = "\\s*(?:[:=-]\\s*)?";
 
@@ -54,7 +57,7 @@ public class AgeFilter extends RegexFilter {
         final Pattern agePattern1 = Pattern.compile("\\b[0-9.]+[\\s]*(year|years|yrs|yr|yo)(.?)(\\s)*(old)?\\b", Pattern.CASE_INSENSITIVE);
         final FilterPattern age1 = new FilterPattern.FilterPatternBuilder(agePattern1, 0.90).build();
 
-        final Pattern agePattern2 = Pattern.compile("\\b(age)(d)?" + AGE_SEPARATOR + "[0-9.]+\\b", Pattern.CASE_INSENSITIVE);
+        final Pattern agePattern2 = Pattern.compile(AGE_KEYWORD + AGE_SEPARATOR + "[0-9.]+\\b", Pattern.CASE_INSENSITIVE);
         final FilterPattern age2 = new FilterPattern.FilterPatternBuilder(agePattern2, 0.90).build();
 
         final Pattern agePattern3 = Pattern.compile("\\b[0-9.]+[-]*(year|years|yrs|yr|yo)(.?)(-)*(old)?\\b", Pattern.CASE_INSENSITIVE);
@@ -68,8 +71,8 @@ public class AgeFilter extends RegexFilter {
         final Pattern agePattern5 = Pattern.compile("\\b(" + NUMBER_WORD + ")[\\s-]*(year|years|yrs|yr|yo)(.?)[\\s-]*(old)?\\b", Pattern.CASE_INSENSITIVE);
         final FilterPattern age5 = new FilterPattern.FilterPatternBuilder(agePattern5, 0.90).build();
 
-        // Spelled-out ages, e.g. "age thirty-five", "aged thirty-five".
-        final Pattern agePattern6 = Pattern.compile("\\b(age)(d)?" + AGE_SEPARATOR + "(" + NUMBER_WORD + ")\\b", Pattern.CASE_INSENSITIVE);
+        // Spelled-out ages, e.g. "age thirty-five", "aged thirty-five", "age of thirty-five".
+        final Pattern agePattern6 = Pattern.compile(AGE_KEYWORD + AGE_SEPARATOR + "(" + NUMBER_WORD + ")\\b", Pattern.CASE_INSENSITIVE);
         final FilterPattern age6 = new FilterPattern.FilterPatternBuilder(agePattern6, 0.90).build();
 
         this.contextualTerms = new HashSet<>();

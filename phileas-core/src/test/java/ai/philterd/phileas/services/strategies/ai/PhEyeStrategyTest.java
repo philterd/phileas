@@ -355,4 +355,34 @@ public class PhEyeStrategyTest extends AbstractFilterStrategyTest {
 
     }
 
+    @Test
+    public void redactionFormatKeepsDollarSignsAndBackslashesLiteral() throws Exception {
+
+        final AbstractFilterStrategy strategy = getFilterStrategy();
+        strategy.setStrategy(AbstractFilterStrategy.REDACT);
+        strategy.setRedactionFormat("[%t|%l|%v]");
+
+        for (final String token : new String[] {"Bob$1", "$", "a\\b", "C:\\$5"}) {
+            final Replacement replacement = strategy.getReplacement(new DefaultContextService(), "PER", "context", token, WINDOW, new Crypto(), new FPE(), getAnonymizationService(), null);
+            Assertions.assertEquals("[per|per|" + token + "]", replacement.getReplacement());
+        }
+
+        final Replacement replacement = strategy.getReplacement(new DefaultContextService(), "PER$1", "context", "token", WINDOW, new Crypto(), new FPE(), getAnonymizationService(), null);
+        Assertions.assertEquals("[per$1|per$1|token]", replacement.getReplacement());
+
+    }
+
+    @Test
+    public void redactionFormatWithAnEmptyLabelDoesNotLeaveAPlaceholder() throws Exception {
+
+        final AbstractFilterStrategy strategy = getFilterStrategy();
+        strategy.setStrategy(AbstractFilterStrategy.REDACT);
+        strategy.setRedactionFormat("{{{REDACTED-%t-%l}}}");
+
+        final Replacement replacement = strategy.getReplacement(new DefaultContextService(), "", "context", "token", WINDOW, new Crypto(), new FPE(), getAnonymizationService(), null);
+
+        Assertions.assertEquals("{{{REDACTED--}}}", replacement.getReplacement());
+
+    }
+
 }

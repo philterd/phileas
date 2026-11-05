@@ -62,6 +62,7 @@ public class CurrencyAnonymizationService extends AbstractAnonymizationService {
 
         // Replace all digits with other digits.
         final StringBuilder sb = new StringBuilder();
+        boolean containsCurrencyMarker = false;
 
         for (int i = 0; i < token.length(); i++) {
 
@@ -73,6 +74,10 @@ public class CurrencyAnonymizationService extends AbstractAnonymizationService {
 
             } else {
 
+                if (Character.isLetter(c) || Character.getType(c) == Character.CURRENCY_SYMBOL) {
+                    containsCurrencyMarker = true;
+                }
+
                 // For everything else just leave it as is.
                 sb.append(c);
 
@@ -80,26 +85,11 @@ public class CurrencyAnonymizationService extends AbstractAnonymizationService {
 
         }
 
-        final String upperToken = token.toUpperCase();
-        final boolean containsCurrencyMarker = token.indexOf('$') >= 0 || token.indexOf('€') >= 0 ||
-                token.indexOf('£') >= 0 || token.indexOf('¥') >= 0 || token.indexOf('₹') >= 0 ||
-                upperToken.contains("USD") || upperToken.contains("EUR") || upperToken.contains("GBP") ||
-                upperToken.contains("JPY") || upperToken.contains("CAD") || upperToken.contains("AUD") ||
-                upperToken.contains("INR");
-
-        final String anonymized;
-
         if (!containsCurrencyMarker && !sb.toString().startsWith("$")) {
-
-            anonymized = "$" + sb;
-
-        } else {
-
-            anonymized = sb.toString();
-
+            return "$" + sb;
         }
 
-        return anonymized;
+        return sb.toString();
 
     }
 

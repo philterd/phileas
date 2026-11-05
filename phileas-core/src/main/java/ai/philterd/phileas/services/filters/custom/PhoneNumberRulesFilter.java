@@ -48,6 +48,14 @@ public class PhoneNumberRulesFilter extends RulesFilter {
     // "1" as a national prefix, leaving too few digits for a possible number, so the match is dropped.
     private static final Pattern BARE_COUNTRY_CODE = Pattern.compile("(?<![\\d+])1[-. ](?=\\(?\\d{3}\\)?[-. ]\\d{3}[-. ]\\d{4})");
 
+    // A period after a digit and before whitespace, including a non-breaking space. libphonenumber reads
+    // it as a separator, so "123-45-6789. 57" would be one number running into the next sentence.
+    private static final Pattern SENTENCE_END = Pattern.compile("(?<=\\d)\\.(?=[\\s\\u00A0])");
+
+    // The digits a group needs before a period for the period to end a number rather than separate its
+    // groups, as in "412. 555. 0187". Seven is the length of a North American local number.
+    private static final int MIN_DIGITS_BEFORE_SENTENCE_END = 7;
+
     // The first configured region that uses country code 1, or null when none does.
     private final String northAmericanRegion;
 
@@ -91,13 +99,24 @@ public class PhoneNumberRulesFilter extends RulesFilter {
 
         if(policy.getIdentifiers().hasFilter(filterType)) {
 
+            // Numbers are found in a same-length copy of the input with sentence-ending periods replaced by ";",
+            // and in the input itself, because cutting a run of numbers can change how the rest of it is split.
+            final String scanned = SENTENCE_END.matcher(input).replaceAll(";");
+
             // Scan once per configured region and merge the results. A "+"-prefixed number is found under
             // every region and a bare national-format number may match in several, so overlapping spans are
             // de-duplicated below, preferring valid numbers over merely-possible ones and longer over shorter.
             final List<PhoneNumberMatch> allMatches = new ArrayList<>();
             for (final String region : regions) {
-                for (final PhoneNumberMatch match : phoneUtil.findNumbers(input, region, leniency, Long.MAX_VALUE)) {
+                for (final PhoneNumberMatch match : phoneUtil.findNumbers(scanned, region, leniency, Long.MAX_VALUE)) {
                     allMatches.add(match);
+                }
+                if (!scanned.equals(input)) {
+                    for (final PhoneNumberMatch match : phoneUtil.findNumbers(input, region, leniency, Long.MAX_VALUE)) {
+                        if (!crossesSentenceEnd(match, input)) {
+                            allMatches.add(match);
+                        }
+                    }
                 }
             }
 
@@ -108,8 +127,8 @@ public class PhoneNumberRulesFilter extends RulesFilter {
             // A match from the copy is only kept where the input itself had no match, so numbers already found,
             // such as "112-997-5633" in "Item 1 112-997-5633", keep their span and confidence.
             if (northAmericanRegion != null) {
-                final String rewritten = BARE_COUNTRY_CODE.matcher(input).replaceAll("+1");
-                if (!rewritten.equals(input)) {
+                final String rewritten = BARE_COUNTRY_CODE.matcher(scanned).replaceAll("+1");
+                if (!rewritten.equals(scanned)) {
                     final List<PhoneNumberMatch> inputMatches = new ArrayList<>(allMatches);
                     for (final PhoneNumberMatch match : phoneUtil.findNumbers(rewritten, northAmericanRegion, leniency, Long.MAX_VALUE)) {
                         if (inputMatches.stream().noneMatch(m -> match.start() < m.end() && m.start() < match.end())) {
@@ -121,7 +140,7 @@ public class PhoneNumberRulesFilter extends RulesFilter {
 
             for (final PhoneNumberMatch match : dedupe(allMatches)) {
 
-                // Taken from the input rather than rawString(), which is the rewritten text for a match found in the copy.
+                // Taken from the input rather than rawString(), which is the rewritten text for a match found in a copy.
                 final String text = input.substring(match.start(), match.end());
 
                 // Is it formatted like a phone number?
@@ -153,6 +172,29 @@ public class PhoneNumberRulesFilter extends RulesFilter {
         }
 
         return new Filtered(context, spans);
+
+    }
+
+    /**
+     * Whether a match found in the input runs past a period that ends a number, which is one with a whole
+     * number's worth of digits before it. Otherwise the period is one of the number's separators.
+     */
+    private boolean crossesSentenceEnd(final PhoneNumberMatch match, final String input) {
+
+        final String text = input.substring(match.start(), match.end());
+        final String[] groups = SENTENCE_END.split(text, -1);
+
+        for (int i = 0; i < groups.length - 1; i++) {
+            long digits = groups[i].chars().filter(Character::isDigit).count();
+            if (i == 0 && text.startsWith("+")) {
+                digits -= String.valueOf(match.number().getCountryCode()).length();
+            }
+            if (digits >= MIN_DIGITS_BEFORE_SENTENCE_END) {
+                return true;
+            }
+        }
+
+        return false;
 
     }
 
