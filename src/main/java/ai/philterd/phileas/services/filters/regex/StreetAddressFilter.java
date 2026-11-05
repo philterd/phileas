@@ -44,27 +44,29 @@ public class StreetAddressFilter extends RegexFilter {
 
     // Unit / secondary-address designators, folded into the span when present.
     private static final String UNIT =
-            "(?:[,\\s]+(?:Apt|Apartment|Suite|Ste|Unit|Bldg|Building|Floor|Fl|Room|Rm|#)\\.?\\s*#?\\s*[A-Za-z0-9-]+)?";
+            "(?:[, \\t]+(?:Apt|Apartment|Suite|Ste|Unit|Bldg|Building|Floor|Fl|Room|Rm|#)\\.?[ \\t]*#?[ \\t]*[A-Za-z0-9-]+)?";
 
     public StreetAddressFilter(FilterConfiguration filterConfiguration) {
         super(FilterType.STREET_ADDRESS, filterConfiguration);
 
         // A street address: a house number (optionally a range and/or a trailing letter), an optional
         // leading directional, one to five name words (ordinals, saint/abbreviated names, etc.), a
-        // street type, an optional trailing directional, and an optional unit.
+        // street type, an optional trailing directional, and an optional unit. The parts are joined by
+        // spaces and tabs only, so a match does not run from one line into the next (a ZIP code at the
+        // end of a line and "Dear Dr." on the next are not an address).
         final Pattern addressPattern = Pattern.compile(
-                "\\b\\d{1,6}(?:-\\d{1,6})?[A-Za-z]?\\s+" +
-                "(?:" + DIRECTIONAL + "\\s+)?" +
-                "(?:[A-Za-z0-9'.-]+\\s+){1,5}" +
+                "\\b\\d{1,6}(?:-\\d{1,6})?[A-Za-z]?[ \\t]+" +
+                "(?:" + DIRECTIONAL + "[ \\t]+)?" +
+                "(?:[A-Za-z0-9'.-]+[ \\t]+){1,5}" +
                 STREET_TYPE + "\\b\\.?" +
-                "(?:\\s+" + DIRECTIONAL + "\\b)?" +
+                "(?:[ \\t]+" + DIRECTIONAL + "\\b)?" +
                 UNIT,
                 Pattern.CASE_INSENSITIVE);
         final FilterPattern addressFilterPattern = new FilterPattern.FilterPatternBuilder(addressPattern, 0.85).build();
 
-        // A PO box, e.g. "PO Box 1234", "P.O. Box 56", "Post Office Box 789".
+        // A PO box, e.g. "PO Box 1234", "P.O. Box 56", "Post Office Box 789", on one line.
         final Pattern poBoxPattern = Pattern.compile(
-                "\\b(?:P\\.?\\s?O\\.?\\s?Box|Post\\s+Office\\s+Box)\\s+\\d+\\b",
+                "\\b(?:P\\.?[ \\t]?O\\.?[ \\t]?Box|Post[ \\t]+Office[ \\t]+Box)[ \\t]+\\d+\\b",
                 Pattern.CASE_INSENSITIVE);
         final FilterPattern poBoxFilterPattern = new FilterPattern.FilterPatternBuilder(poBoxPattern, 0.85).build();
 

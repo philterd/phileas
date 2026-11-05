@@ -42,6 +42,8 @@ public class IdentifierFilter extends RegexFilter {
     public IdentifierFilter(FilterConfiguration filterConfiguration, String classification, String regex, boolean caseSensitive, int groupNumber, SpanValidator validator) {
         super(FilterType.IDENTIFIER, filterConfiguration);
 
+        // The classification is the label a strategy gets, e.g. for %l in a redaction format.
+        this.classification = classification;
         this.validator = validator;
 
         final Pattern pattern;

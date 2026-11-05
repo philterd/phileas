@@ -15,21 +15,29 @@
  */
 package ai.philterd.phileas.services.strategies.rules;
 
+import ai.philterd.phileas.PhileasConfiguration;
 import ai.philterd.phileas.model.filtering.Replacement;
 import ai.philterd.phileas.policy.Crypto;
 import ai.philterd.phileas.policy.FPE;
+import ai.philterd.phileas.policy.Policy;
 import ai.philterd.phileas.services.anonymization.AbstractAnonymizationService;
 import ai.philterd.phileas.services.anonymization.AnonymizationService;
 import ai.philterd.phileas.services.anonymization.ZipCodeAnonymizationService;
 import ai.philterd.phileas.services.context.ContextService;
 import ai.philterd.phileas.services.context.DefaultContextService;
+import ai.philterd.phileas.services.disambiguation.vector.InMemoryVectorService;
+import ai.philterd.phileas.services.filters.filtering.PlainTextFilterService;
 import ai.philterd.phileas.services.strategies.AbstractFilterStrategy;
 import ai.philterd.phileas.services.strategies.AbstractFilterStrategyTest;
+import com.google.gson.Gson;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.Mockito;
 
 import java.io.IOException;
+import java.util.Properties;
 
 public class ZipCodeFilterStrategyTest extends AbstractFilterStrategyTest {
 
@@ -251,6 +259,79 @@ public class ZipCodeFilterStrategyTest extends AbstractFilterStrategyTest {
         LOGGER.info(replacement);
 
         Assertions.assertEquals("00010", replacement.getReplacement());
+
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+            "03602, 000",
+            "03602-1234, 000",
+            "036021234, 000",
+            "05901, 000",
+            "82190, 000",
+            "20250, 000",
+            "00001, 000",
+            "09865-1234, 000",
+            "57601, 576",
+            "90210, 902",
+            "90210-0110, 902",
+            "902100110, 902"
+    })
+    public void safeHarborReplacement(final String token, final String expected) throws Exception {
+
+        final ZipCodeFilterStrategy strategy = new Gson().fromJson("{ \"strategy\": \"SAFE_HARBOR\" }", ZipCodeFilterStrategy.class);
+        final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
+        final ContextService contextService = new DefaultContextService();
+
+        final Replacement replacement = strategy.getReplacement(contextService, "name", "context", token, WINDOW, new Crypto(), new FPE(), anonymizationService, null);
+
+        Assertions.assertEquals(expected, replacement.getReplacement());
+
+    }
+
+    @Test
+    public void safeHarborShortTokenFailsClosed() throws Exception {
+
+        final ZipCodeFilterStrategy strategy = new ZipCodeFilterStrategy();
+        strategy.setStrategy(ZipCodeFilterStrategy.SAFE_HARBOR);
+
+        final AnonymizationService anonymizationService = Mockito.mock(AnonymizationService.class);
+        final ContextService contextService = new DefaultContextService();
+
+        Assertions.assertEquals("000", strategy.getReplacement(contextService, "name", "context", "90", WINDOW, new Crypto(), new FPE(), anonymizationService, null).getReplacement());
+        Assertions.assertEquals("000", strategy.getReplacement(contextService, "name", "context", "", WINDOW, new Crypto(), new FPE(), anonymizationService, null).getReplacement());
+
+    }
+
+    @Test
+    public void safeHarborEndToEndPolicy() throws Exception {
+
+        final String json = """
+                {
+                   "identifiers": {
+                      "zipCode": {
+                         "requireDelimiter": true,
+                         "zipCodeFilterStrategies": [
+                            {
+                               "strategy": "SAFE_HARBOR"
+                            }
+                         ]
+                      }
+                   }
+                }
+                """;
+
+        final PlainTextFilterService service = new PlainTextFilterService(
+                new PhileasConfiguration(new Properties()),
+                new DefaultContextService(),
+                new InMemoryVectorService(),
+                null);
+
+        final Policy policy = new Gson().fromJson(json, Policy.class);
+        final String input = "Patients in 03602, 03602-1234, 90210, 90210-0110, and 09865 were seen.";
+        final String filtered = service.filter(policy, "context", input).getFilteredText();
+
+        Assertions.assertEquals("Patients in 000, 000, 902, 902, and 000 were seen.", filtered);
 
     }
 

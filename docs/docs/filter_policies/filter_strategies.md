@@ -41,6 +41,7 @@ The filter strategies are described below. Each filter type can specify zero or 
 * [`MAP_REPLACE`](filter_strategies.md#map)
 * [`TRUNCATE`](filter_strategies.md#truncate)
 * [`ZERO_LEADING`](filter_strategies.md#zero_leading)
+* [`SAFE_HARBOR`](filter_strategies.md#safe_harbor)
 * [`ABBREVIATE`](filter_strategies.md#abbreviate)
 
 ### Which Filters Accept Which Strategies
@@ -52,7 +53,7 @@ adds strategies of its own and leaves out some of the common ones.
 | ------ | ------------------- |
 | Every filter except those below | `REDACT`, `RANDOM_REPLACE`, `STATIC_REPLACE`, `MAP_REPLACE`, `CRYPTO_REPLACE`, `FPE_ENCRYPT_REPLACE`, `HASH_SHA256_REPLACE`, `LAST_4`, `MASK`, `TRUNCATE`, `ABBREVIATE` |
 | `date` | `REDACT`, `RANDOM_REPLACE`, `STATIC_REPLACE`, `CRYPTO_REPLACE`, `HASH_SHA256_REPLACE`, `MASK`, `TRUNCATE`, `TRUNCATE_TO_YEAR`, `SHIFT`, `RELATIVE` |
-| `zipCode` | `REDACT`, `RANDOM_REPLACE`, `STATIC_REPLACE`, `CRYPTO_REPLACE`, `HASH_SHA256_REPLACE`, `MASK`, `TRUNCATE`, `ZERO_LEADING` |
+| `zipCode` | `REDACT`, `RANDOM_REPLACE`, `STATIC_REPLACE`, `CRYPTO_REPLACE`, `HASH_SHA256_REPLACE`, `MASK`, `TRUNCATE`, `ZERO_LEADING`, `SAFE_HARBOR` |
 | `pheyes` | `REDACT`, `RANDOM_REPLACE`, `STATIC_REPLACE`, `CRYPTO_REPLACE`, `FPE_ENCRYPT_REPLACE`, `HASH_SHA256_REPLACE`, `MASK`, `TRUNCATE`, `ABBREVIATE` |
 
 Strategy names are not case-sensitive.
@@ -73,7 +74,7 @@ The available redaction variables are:
 | Redaction Variable | Description                                                                                                                                               |
 | ------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `%t`               | Will be replaced with the type of sensitive information. This is to allow you to know the type of sensitive information that was identified and redacted. |
-| `%l`               | Will be replaced by the given classification for the type of sensitive information.                                                                       |
+| `%l`               | Will be replaced by the classification of the filter that found the information: the `classification` of a custom identifier or custom dictionary filter, the carrier of a tracking number (such as `ups`), the country of a passport number (`US`), or the label of a PhEye span. Other filters, including the [driver's license filter](filters/common_filters/drivers-license-numbers.md), replace it with an empty string. |
 | `%v`               | Will be replaced by the original value of the sensitive text. With `%v` you can annotate sensitive information instead of masking or removing it.         |
 
 To redact sensitive information by replacing it with the type of sensitive information, the redaction format would be `REDACTED-%t`.
@@ -416,6 +417,28 @@ The `ZERO_LEADING` filter strategy is only available to zip code filters. An exa
          "zipCodeFilterStrategies": [
             {
                "strategy": "ZERO_LEADING"
+            }
+         ]
+      }
+   }
+}
+```
+
+### The `SAFE_HARBOR` Filter Strategy {id="safe_harbor"}
+
+Available only to zip codes, this strategy applies the HIPAA Safe Harbor zip code rule (45 CFR 164.514(b)(2)(i)(B)). It keeps the first 3 digits when the combined population of all zip codes starting with those 3 digits is greater than 20,000 (for example, `90210` and `90210-0110` become `902`), and replaces the zip code with `000` when the population is 20,000 or fewer or when the prefix is not in the bundled data (for example, `03602` and `03602-1234` become `000`).
+
+Populations come from the bundled 2020 US Census dataset, which is an approximation of USPS zip code populations.
+
+The `SAFE_HARBOR` filter strategy is only available to zip code filters. An example zip code filter using the `SAFE_HARBOR` filter strategy:
+
+```
+{
+   "identifiers": {
+      "zipCode": {
+         "zipCodeFilterStrategies": [
+            {
+               "strategy": "SAFE_HARBOR"
             }
          ]
       }

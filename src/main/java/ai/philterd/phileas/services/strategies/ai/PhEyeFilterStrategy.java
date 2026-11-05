@@ -30,7 +30,6 @@ import ai.philterd.phileas.utils.Encryption;
 import ai.philterd.phileas.utils.FormatPreservingEncryptionException;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.RandomStringUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -113,13 +112,12 @@ public class PhEyeFilterStrategy extends AbstractFilterStrategy {
         if(Strings.CI.equals(strategy, REDACT)) {
 
             // Use the label for the type because a PhEye filter can have any filter type.
-            replacement = getValueOrDefault(redactionFormat, DEFAULT_REDACTION).replaceAll("%t", label.toLowerCase());
-
-            if(StringUtils.isNotEmpty(label)) {
-                replacement = replacement.replaceAll("%l", label.toLowerCase());
-            }
-
-            replacement = replacement.replaceAll("%v", token);
+            // replace() rather than replaceAll(): a '$' or '\' in the token is literal text, not a regex replacement.
+            final String type = label.toLowerCase();
+            replacement = getValueOrDefault(redactionFormat, DEFAULT_REDACTION)
+                    .replace("%t", type)
+                    .replace("%l", type)
+                    .replace("%v", token);
 
         } else if(Strings.CI.equals(strategy, MASK)) {
 
