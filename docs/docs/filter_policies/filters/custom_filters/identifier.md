@@ -95,6 +95,9 @@ load. A validator is never silently skipped.
 | `mod97` | Control derived from the value mod 97. Requires a `variant` parameter: `iban` (ISO 13616 / MOD-97-10, value mod 97 equals 1) or `nir` (French INSEE/NIR, key = 97 - (body mod 97)). For `nir`, a `substitutions` parameter maps Corsica department codes to digits (default `2A` to `19`, `2B` to `18`). |
 | `mod23-letter` | Control letter taken from a 23-entry table indexed by the number mod 23, for the Spanish DNI (8 digits plus a letter) and NIE (leading X/Y/Z plus 7 digits plus a letter). A `substitutions` parameter maps the leading NIE letter to a digit (default `X` to `0`, `Y` to `1`, `Z` to `2`). |
 | `es-cif` | Bespoke validator for the Spanish CIF (organization tax ID): a leading organization-type letter, seven digits, and a control character that is a digit or a letter (table `JABCDEFGHI`) derived from a Luhn-like weighted sum. Takes no parameters. |
+| `aba` | ABA routing transit number checksum: the nine digits are weighted 3, 7, 1, 3, 7, 1, 3, 7, 1 and the weighted sum must be a multiple of 10. Requires exactly nine digits, so a value with eight or ten digits is rejected. Separators (spaces, hyphens) are ignored; takes no parameters. |
+| `verhoeff` | Verhoeff check digit (dihedral group D5 scheme), where the last digit is the check digit. Detects every single-digit error and every transposition of two adjacent digits. Separators (spaces, hyphens) are ignored; takes no parameters. |
+| `damm` | Damm check digit (quasigroup scheme), where the last digit is the check digit. Detects every single-digit error and every transposition of two adjacent digits. Separators (spaces, hyphens) are ignored; takes no parameters. |
 
 > The `luhn` validator implements the standard Luhn algorithm only. La Poste SIRETs are a known
 > exception (they are validated by a digit-sum mod 5 rather than Luhn) and will not pass this check.

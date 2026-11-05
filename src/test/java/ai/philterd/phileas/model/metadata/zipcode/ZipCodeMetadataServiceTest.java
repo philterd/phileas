@@ -46,4 +46,19 @@ public class ZipCodeMetadataServiceTest {
 
     }
 
+    @Test
+    public void getPrefixPopulation() throws IOException {
+
+        final ZipCodeMetadataService zipCodeMetadataService = new ZipCodeMetadataService();
+
+        Assertions.assertEquals(13153, zipCodeMetadataService.getPopulationForPrefix("036"));
+        Assertions.assertEquals(20310, zipCodeMetadataService.getPopulationForPrefix("576"));
+        Assertions.assertEquals(1245296, zipCodeMetadataService.getPopulationForPrefix("902"));
+        Assertions.assertEquals(0, zipCodeMetadataService.getPopulationForPrefix("202"));
+        Assertions.assertEquals(0, zipCodeMetadataService.getPopulationForPrefix("000"));
+        Assertions.assertEquals(0, zipCodeMetadataService.getPopulationForPrefix("90"));
+        Assertions.assertEquals(0, zipCodeMetadataService.getPopulationForPrefix(null));
+
+    }
+
 }

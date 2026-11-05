@@ -4,9 +4,9 @@
 
 This filter identifies zip codes in text.
 
-Please note that the information used to map a zip code to a population is derived from publicly available USA census
-data. While population mapping to zip code may be near the actual numbers it will most likely not be exact. Please use
-the `POPULATION` conditional with this in mind.
+Please note that the information used to map a zip code to a population is derived from publicly available 2020 US
+Census data. This bundled population data is an approximation and will most likely not be exact. Please use the
+`SAFE_HARBOR` strategy and the `POPULATION` conditional with this in mind.
 
 ### Required Parameters
 
@@ -44,21 +44,21 @@ See [Filter Strategies](#filter-strategies) for details.
 | `HASH_SHA256_REPLACE` | Replace the sensitive text with its SHA256 hash value.                                                                                                                                 |
 | `TRUNCATE`            | Replace the sensitive text by removing everything except `x` characters. (Set the number of characters to leave, from 1 to 4, using the `truncateLeaveCharacters` parameter of the filter strategy.) |
 | `ZERO_LEADING`        | Replace the sensitive text by zeroing the first 3 digits.                                                                                                                              |
+| `SAFE_HARBOR`         | Apply the HIPAA Safe Harbor zip code rule: keep the first 3 digits when the population for those 3 digits is greater than 20,000, and replace the zip code with `000` otherwise.       |
 
 ### Conditions
 
 Each filter strategy may have one condition. See [Conditions](#conditions) for details.
 
-Please note that the information used to map a zip code to a population is derived from publicly available USA census
-data. While population mapping to zip code may be near the actual numbers it will most likely not be exact. Please use
-the `POPULATION` conditional with this in mind.
+Please note that the information used to map a zip code to a population is derived from publicly available 2020 US
+Census data and is an approximation. Please use the `POPULATION` conditional with this in mind.
 
 | Conditional  | Description                                                              | Operators                          |
 |--------------|--------------------------------------------------------------------------|------------------------------------|
 | `TOKEN`      | Compares the value of the sensitive text.                                | `==`, `!=`, `startswith`           |
 | `CONTEXT`    | Compares the filtering context.                                          | `==` , `!=`                        |
 | `CONFIDENCE` | Compares the confidence in the sensitive text against a threshold value. | `<` , `<=`, `>` , `>=`, `==`, `!=` |
-| `POPULATION` | Compares the population of the zip code against the 2010 census values.  | `<` , `<=`, `>` , `>=`, `==`, `!=` |
+| `POPULATION` | Compares the population of the zip code against the 2020 US Census values. | `<` , `<=`, `>` , `>=`, `==`, `!=` |
 
 ## Example Policy
 

@@ -79,10 +79,19 @@ public final class IdentifierValidators {
             case "es-cif":
                 return EsCifValidator.getInstance();
 
+            case "aba":
+                return AbaValidator.getInstance();
+
+            case "verhoeff":
+                return VerhoeffValidator.getInstance();
+
+            case "damm":
+                return DammValidator.getInstance();
+
             default:
                 throw new IllegalArgumentException("Unsupported identifier validator '" + name
                         + "'. This build implements: luhn, bic-structural, de-personalausweis, de-steuerid, "
-                        + "mod11, mod97, mod23-letter, es-cif.");
+                        + "mod11, mod97, mod23-letter, es-cif, aba, verhoeff, damm.");
 
         }
 
