@@ -680,7 +680,7 @@ public class AgeFilterTest extends AbstractFilterTest {
     @Test
     public void ageOfNumber() throws Exception {
 
-        // Issue 483: "age of 39" as written in narrative text, alongside the existing "aged 39".
+        // "age of 39" as written in narrative text, alongside the existing "aged 39".
 
         final AgeFilter filter = buildFilter();
 
@@ -700,7 +700,7 @@ public class AgeFilterTest extends AbstractFilterTest {
     @Test
     public void ageOfNumberWithYears() throws Exception {
 
-        // Issue 483: the keyword form wins over the overlapping "39 years" match.
+        // The longer keyword form wins over the overlapping "39 years" match.
 
         final AgeFilter filter = buildFilter();
 
@@ -718,7 +718,7 @@ public class AgeFilterTest extends AbstractFilterTest {
     @Test
     public void ageOfVariants() throws Exception {
 
-        // Issue 483: any case, more than one space, a line break, or a decimal value.
+        // Any case, more than one space, a line break, or a decimal value.
 
         final AgeFilter filter = buildFilter();
 
@@ -739,7 +739,7 @@ public class AgeFilterTest extends AbstractFilterTest {
     @Test
     public void ageOfSurvivesPostFilter() throws Exception {
 
-        // Issue 483: the matched text contains "age", so the post-filter keeps it.
+        // The matched text contains "age", so the post-filter keeps it.
 
         final AgeFilter filter = buildFilter();
 
@@ -754,7 +754,7 @@ public class AgeFilterTest extends AbstractFilterTest {
     @Test
     public void ofAfterAWordEndingInAgeIsNotAnAge() throws Exception {
 
-        // Issue 483: "of" does not loosen the word boundary before the keyword.
+        // "of" does not loosen the word boundary before the keyword.
 
         final AgeFilter filter = buildFilter();
 
