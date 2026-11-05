@@ -22,12 +22,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.HashMap;
+import java.util.Map;
 
 public class ZipCodeMetadataService implements MetadataService<ZipCodeMetadataRequest, ZipCodeMetadataResult> {
 
     private final static String zipCodeCensusFileName = "zip-code-population.csv";
 
     private final HashMap<String, Integer> zipCodesFromCensus;
+    private final Map<String, Integer> prefixPopulationsFromCensus = new HashMap<>();
 
     public ZipCodeMetadataService() throws IOException {
         zipCodesFromCensus = loadZipCodesFromCensus();
@@ -45,6 +47,13 @@ public class ZipCodeMetadataService implements MetadataService<ZipCodeMetadataRe
             return new ZipCodeMetadataResult(population);
         }
 
+    }
+
+    public int getPopulationForPrefix(final String prefix) {
+        if (prefix == null || prefix.length() != 3) {
+            return 0;
+        }
+        return prefixPopulationsFromCensus.getOrDefault(prefix, 0);
     }
 
     private HashMap<String, Integer> loadZipCodesFromCensus() throws IOException {
@@ -66,6 +75,9 @@ public class ZipCodeMetadataService implements MetadataService<ZipCodeMetadataRe
                     final int population = Integer.parseInt(zipCodePopulation[1]);
 
                     zipcodes.put(zipCode, population);
+                    if (zipCode.length() >= 3) {
+                        prefixPopulationsFromCensus.merge(zipCode.substring(0, 3), population, Integer::sum);
+                    }
                 }
 
             }

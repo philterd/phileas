@@ -34,6 +34,13 @@ import java.util.regex.Pattern;
 
 public class ZipCodeFilter extends RegexFilter {
 
+    // Five digits joined by a hyphen to a letter or digit before them, as in a case number like 2026-00847
+    // or a reference code like FR-48213, are part of a longer identifier and not a zip code. See issue #485.
+    // A standalone five-digit number before the hyphen is still allowed, so both ends of a range like
+    // 02116-02118 are found.
+    private static final String NOT_AFTER_HYPHEN = "(?:(?<![\\p{L}\\p{N}][" + IdentifierSeparators.JOINING_HYPHENS + "])"
+            + "|(?<=(?:^|[^" + IdentifierSeparators.JOINING_HYPHENS + "\\p{L}\\p{N}])[0-9]{5}[" + IdentifierSeparators.JOINING_HYPHENS + "]))";
+
     private final boolean validate;
 
     public ZipCodeFilter(FilterConfiguration filterConfiguration, boolean requireDelimiter, boolean validate) {
@@ -49,7 +56,7 @@ public class ZipCodeFilter extends RegexFilter {
         if(requireDelimiter) {
 
             // With delimiter
-            final Pattern zipCodePattern = Pattern.compile("\\b[0-9]{5}(?:-[0-9]{4})?\\b");
+            final Pattern zipCodePattern = Pattern.compile(NOT_AFTER_HYPHEN + "\\b[0-9]{5}(?:-[0-9]{4})?\\b");
             final FilterPattern zipCode = new FilterPattern.FilterPatternBuilder(zipCodePattern, 0.90).build();
 
             this.analyzer = new Analyzer(contextualTerms, zipCode);
@@ -57,7 +64,7 @@ public class ZipCodeFilter extends RegexFilter {
         } else {
 
             // Without delimiter.
-            final Pattern zipCodePattern = Pattern.compile("\\b[0-9]{5}(?:-?[0-9]{4})?\\b");
+            final Pattern zipCodePattern = Pattern.compile(NOT_AFTER_HYPHEN + "\\b[0-9]{5}(?:-?[0-9]{4})?\\b");
             final FilterPattern zipCode = new FilterPattern.FilterPatternBuilder(zipCodePattern, 0.50).build();
 
             this.analyzer = new Analyzer(contextualTerms, zipCode);

@@ -614,7 +614,8 @@ public class SchemaConformanceTest {
      * implementing one fails this test until its entry is removed.
      */
     private static final Map<String, String> EXPECTED_GAPS = Map.of(
-            "ZERO_LEADING", "the zip code strategy is not in the schema's strategy enum");
+            "ZERO_LEADING", "the zip code strategy is not in the schema's strategy enum",
+            "SAFE_HARBOR", "the zip code strategy (philterd/phileas#455) is not in the schema's strategy enum");
 
     /**
      * Identifiers the schema still declares that Phileas has retired, with why. A policy setting one is refused

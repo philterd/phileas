@@ -10,6 +10,8 @@ Detection uses [libphonenumber](https://github.com/google/libphonenumber) with i
 
 Without a `+`, libphonenumber reads a leading `1` as the North American country code and then reads an area code's leading `1` as a national prefix, which leaves too few digits for a possible number. So that a number's punctuation does not decide whether it is found, when a configured region uses country code 1 (such as `US` or `CA`) the filter also reads a bare `1` country code followed by a separator as `+1`. With this, `1-112-997-5633`, `1 112 997 5633`, `1.112.997.5633`, and `1-109-299-5128 x512` are found, as `+1 112-997-5633` is. A number written with no separators, such as `11129975633`, is not found. A number already found without this reading, such as `112-997-5633` in `Item 1 112-997-5633`, is unchanged.
 
+A number does not run across the end of a sentence. A period after a digit and before whitespace ends a number when at least 7 digits come before it, not counting a `+` country code, so `123-45-6789. 57-year-old` gives no phone number and `412-555-0187. 57 people` gives `412-555-0187`. With fewer digits before it, the period is read as a separator, so `412. 555. 0187` is found as one number.
+
 ### Required Parameters
 
 This filter has no required parameters.
