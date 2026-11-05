@@ -9,7 +9,8 @@ Ages labeled with an `age` or `aged` keyword are identified whether or not a sep
 keyword. A colon, an equals sign, or a hyphen is accepted, with or without surrounding whitespace, so
 `Age: 47`, `Age:47`, `Age = 47`, `Age - 47`, and `Age 47` are all identified, as is the spelled-out
 form (`Age: thirty-five`). The whitespace around a separator may include a line break, so `Age:` on
-one line with its value on the next is also identified.
+one line with its value on the next is also identified. The keyword may also be followed by `of`, so
+`at the age of 39` and `age of thirty-nine` are identified, with the span covering `age of 39`.
 
 ### Required Parameters
 

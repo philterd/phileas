@@ -677,4 +677,98 @@ public class AgeFilterTest extends AbstractFilterTest {
 
     }
 
+    @Test
+    public void ageOfNumber() throws Exception {
+
+        // Issue 483: "age of 39" as written in narrative text, alongside the existing "aged 39".
+
+        final AgeFilter filter = buildFilter();
+
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE,
+                "She died at the age of 39. He was aged 39.");
+
+        showSpans(filtered.getSpans());
+
+        Assertions.assertEquals(2, filtered.getSpans().size());
+        Assertions.assertEquals("age of 39", filtered.getSpans().get(0).getText());
+        Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 16, 25, FilterType.AGE));
+        Assertions.assertEquals("aged 39", filtered.getSpans().get(1).getText());
+        Assertions.assertTrue(checkSpan(filtered.getSpans().get(1), 34, 41, FilterType.AGE));
+
+    }
+
+    @Test
+    public void ageOfNumberWithYears() throws Exception {
+
+        // Issue 483: the keyword form wins over the overlapping "39 years" match.
+
+        final AgeFilter filter = buildFilter();
+
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE,
+                "She retired at the age of 39 years.");
+
+        showSpans(filtered.getSpans());
+
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertEquals("age of 39", filtered.getSpans().get(0).getText());
+        Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 19, 28, FilterType.AGE));
+
+    }
+
+    @Test
+    public void ageOfVariants() throws Exception {
+
+        // Issue 483: any case, more than one space, a line break, or a decimal value.
+
+        final AgeFilter filter = buildFilter();
+
+        final List<String> ages = List.of("age of 39", "Age of 39", "AGE OF 39", "age  of 39", "age of\n39",
+                "age of 39.5", "age of thirty-nine", "Age of one hundred and two");
+
+        for(final String age : ages) {
+
+            final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, age);
+
+            Assertions.assertEquals(1, filtered.getSpans().size(), age);
+            Assertions.assertEquals(age, filtered.getSpans().get(0).getText());
+
+        }
+
+    }
+
+    @Test
+    public void ageOfSurvivesPostFilter() throws Exception {
+
+        // Issue 483: the matched text contains "age", so the post-filter keeps it.
+
+        final AgeFilter filter = buildFilter();
+
+        final List<Span> kept = filter.postFilter(
+                filter.filter(contextService, getPolicy(), "context", PIECE, "She died at the age of 39.").getSpans());
+
+        Assertions.assertEquals(1, kept.size());
+        Assertions.assertEquals("age of 39", kept.get(0).getText());
+
+    }
+
+    @Test
+    public void ofAfterAWordEndingInAgeIsNotAnAge() throws Exception {
+
+        // Issue 483: "of" does not loosen the word boundary before the keyword.
+
+        final AgeFilter filter = buildFilter();
+
+        final List<String> texts = List.of("an average of 39 points", "the coverage of 39 percent",
+                "the age of steam", "age of");
+
+        for(final String text : texts) {
+
+            final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, text);
+
+            Assertions.assertEquals(0, filtered.getSpans().size(), text);
+
+        }
+
+    }
+
 }
