@@ -6,6 +6,7 @@ Full changelogs for each release are available in the [GitHub releases](https://
 
 ## Version 4.6.0 - Not yet released
 
+* Added the `SAFE_HARBOR` strategy to the zip code filter, which keeps the first 3 digits when the combined population of zip codes with that prefix is greater than 20,000 in the bundled 2020 US Census data and replaces the zip code with `000` otherwise. (issue #455)
 * Added the `aba`, `verhoeff`, and `damm` identifier validators, so all eleven validators the redaction policy schema names are now implemented. `aba` checks the 3-7-1 weighted mod 10 checksum of an ABA routing transit number and requires exactly nine digits. `verhoeff` and `damm` check a trailing Verhoeff or Damm check digit. Previously a policy naming one of the three failed to load with `Unsupported identifier validator`. (issue #391)
 
 ## Version 4.5.0 - October 23, 2026

@@ -48,6 +48,9 @@ public class ZipCodeFilterStrategy extends AbstractFilterStrategy {
     public static final String TRUNCATE = "truncate";
     public static final String POPULATION = "population";
     public static final String ZERO_LEADING = "zero_leading";
+    public static final String SAFE_HARBOR = "SAFE_HARBOR";
+
+    private static final int SAFE_HARBOR_POPULATION_THRESHOLD = 20_000;
 
     private final FilterType filterType = FilterType.ZIP_CODE;
 
@@ -58,13 +61,13 @@ public class ZipCodeFilterStrategy extends AbstractFilterStrategy {
     }
 
     /**
-     * The zip code filter adds ZERO_LEADING and implements neither ABBREVIATE, FPE_ENCRYPT_REPLACE,
-     * LAST_4 nor MAP_REPLACE.
+     * The zip code filter adds ZERO_LEADING and SAFE_HARBOR and implements neither ABBREVIATE,
+     * FPE_ENCRYPT_REPLACE, LAST_4 nor MAP_REPLACE.
      */
     @Override
     public Set<String> getAcceptedStrategies() {
         return Set.of(REDACT, RANDOM_REPLACE, STATIC_REPLACE, CRYPTO_REPLACE, HASH_SHA256_REPLACE, MASK,
-                TRUNCATE, ZERO_LEADING);
+                TRUNCATE, ZERO_LEADING, SAFE_HARBOR);
     }
 
     @Override
@@ -177,12 +180,7 @@ public class ZipCodeFilterStrategy extends AbstractFilterStrategy {
 
         } else if(Strings.CI.equals(strategy, RANDOM_REPLACE)) {
 
-            AnonymizationService as = anonymizationService;
-            if (this.anonymizationService != null) {
-                as = this.anonymizationService;
-            }
-
-            replacement = getAnonymizedToken(contextService, replacementScope, token, as, filterType.getType());
+            replacement = getAnonymizedToken(contextService, replacementScope, token, anonymizationService, filterType.getType());
 
         } else if(Strings.CI.equals(strategy, STATIC_REPLACE)) {
 
@@ -190,19 +188,15 @@ public class ZipCodeFilterStrategy extends AbstractFilterStrategy {
 
         } else if(Strings.CI.equals(strategy, TRUNCATE)) {
 
-            // A policy sets truncateLeaveCharacters without going through its setter, so keep it
-            // within 1 to 4 here. At least one of the five digits is always replaced.
-            final int leaveCharacters = Math.min(Math.max(getValueOrDefault(truncateLeaveCharacters, 4), 1), 4);
-
-            if(Strings.CI.equals(truncateDirection, LEADING)) {
-                replacement = token.substring(0, leaveCharacters) + StringUtils.repeat(truncateCharacter, Math.min(token.length() - leaveCharacters, 5 - leaveCharacters));
-            } else {
-                replacement = StringUtils.repeat(truncateCharacter, Math.min(token.length() - leaveCharacters, 5 - leaveCharacters)) + token.substring(Math.min(token.length() - leaveCharacters, 5 - leaveCharacters), 5);
-            }
+            replacement = truncate(token);
 
         } else if(Strings.CI.equals(strategy, ZERO_LEADING)) {
 
             replacement = "000" + token.subSequence(3, 5);
+
+        } else if(Strings.CI.equals(strategy, SAFE_HARBOR)) {
+
+            replacement = getSafeHarborReplacement(token);
 
         } else if(Strings.CI.equals(strategy, CRYPTO_REPLACE)) {
 
@@ -225,6 +219,27 @@ public class ZipCodeFilterStrategy extends AbstractFilterStrategy {
 
         return new Replacement(replacement, salt);
 
+    }
+
+    @Override
+    protected String truncate(final String token) {
+        // A policy sets truncateLeaveCharacters without going through its setter, so keep it
+        // within 1 to 4 here. At least one of the five digits is always replaced.
+        final int leaveCharacters = Math.min(Math.max(getValueOrDefault(truncateLeaveCharacters, 4), 1), 4);
+        if (Strings.CI.equals(truncateDirection, LEADING)) {
+            return token.substring(0, leaveCharacters) + StringUtils.repeat(truncateCharacter, Math.min(token.length() - leaveCharacters, 5 - leaveCharacters));
+        }
+        return StringUtils.repeat(truncateCharacter, Math.min(token.length() - leaveCharacters, 5 - leaveCharacters)) + token.substring(Math.min(token.length() - leaveCharacters, 5 - leaveCharacters), 5);
+    }
+
+    private String getSafeHarborReplacement(final String token) {
+        if (token == null || token.length() < 3) {
+            return "000";
+        }
+        final String prefix = token.substring(0, 3);
+        return zipCodeMetadataService.getPopulationForPrefix(prefix) > SAFE_HARBOR_POPULATION_THRESHOLD
+                ? prefix
+                : "000";
     }
 
     public void setTruncateDigits(Integer truncateDigits) {
