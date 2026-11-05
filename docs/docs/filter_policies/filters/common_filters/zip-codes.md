@@ -4,9 +4,11 @@
 
 This filter identifies zip codes in text.
 
-Please note that the information used to map a zip code to a population is derived from publicly available 2020 US
-Census data. This bundled population data is an approximation and will most likely not be exact. Please use the
-`SAFE_HARBOR` strategy and the `POPULATION` conditional with this in mind.
+Five digits joined by a hyphen to a letter or digit before them, as in a case number such as `2026-00847` or a reference code such as `FR-48213`, are part of a longer identifier and are not identified as a zip 
+code. Both zip codes of a range such as `02116-02118` are still identified. 
+
+Please note that the information used to map a zip code to a population is derived from publicly available 2020 US Census data. This bundled population data is an approximation and will most likely not be exact.
+Please use the `SAFE_HARBOR` strategy and the `POPULATION` conditional with this in mind.
 
 ### Required Parameters
 
