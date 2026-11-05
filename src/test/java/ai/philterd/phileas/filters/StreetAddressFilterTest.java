@@ -554,6 +554,34 @@ public class StreetAddressFilterTest extends AbstractFilterTest {
     }
 
     @Test
+    public void filterDoesNotMatchAcrossLineBreaks() throws Exception {
+
+        // A ZIP code at the end of a line and "Dear Dr." on the next line are not an address.
+        assertAddress("Address: 214 Juniper Court, Cedar Falls, IA 50613\n\nDear Dr. Rivera,", "214 Juniper Court");
+
+        for (final String input : List.of("Cedar Falls, IA 50613\nDear Dr. Rivera,", "Cedar Falls, IA 50613\r\nDear Dr. Rivera,",
+                "P.O. Box\n12", "Post Office\nBox 789")) {
+
+            final Filtered filtered = detect(input);
+            showSpans(filtered.getSpans());
+            Assertions.assertEquals(0, filtered.getSpans().size(), input);
+
+        }
+
+    }
+
+    @Test
+    public void filterAddressBlocks() throws Exception {
+
+        // The street line of a multi-line address block is found, and the next line is not folded into it.
+        assertAddress("214 Juniper Court\nCedar Falls, IA 50613", "214 Juniper Court");
+        assertAddress("123-125 Oak Ave, Apt 4B\r\nCedar Falls, IA 50613", "123-125 Oak Ave, Apt 4B");
+        assertAddress("123 N Main St NW\nSpringfield, IL 62704", "123 N Main St NW");
+        assertAddress("12 Pine Rd\nRoom 5 is booked", "12 Pine Rd");
+
+    }
+
+    @Test
     public void filterWithCandidates1() throws Exception {
 
         final List<String> candidates = List.of("candidate1", "candidate2");
