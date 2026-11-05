@@ -40,7 +40,7 @@ import java.util.stream.Stream;
 
 /**
  * A phone number match must not run across the end of a sentence, where it would take the SSN before
- * the period and the number that starts the next sentence (issue #475).
+ * the period and the number that starts the next sentence.
  */
 class PhoneNumberSentenceBoundaryEndToEndTest {
 
@@ -83,12 +83,33 @@ class PhoneNumberSentenceBoundaryEndToEndTest {
                 Arguments.of("SSN, then a sentence that starts with an age",
                         "SSN 123-45-6789. 57-year-old male.",
                         "SSN {{{REDACTED-ssn}}}. {{{REDACTED-age}}} male."),
+                Arguments.of("SSN, then a non-breaking space and a sentence that starts with an age",
+                        "SSN 123-45-6789.\u00A057-year-old male.",
+                        "SSN {{{REDACTED-ssn}}}.\u00A0{{{REDACTED-age}}} male."),
                 Arguments.of("phone number, then a sentence that starts with a number",
                         "Call 412-555-0187. 57 people called.",
                         "Call {{{REDACTED-phone-number}}}. 57 people called."),
                 Arguments.of("phone number with dots",
                         "Call 412.555.0187 today.",
-                        "Call {{{REDACTED-phone-number}}} today.")
+                        "Call {{{REDACTED-phone-number}}} today."),
+                Arguments.of("phone number with a dot and a space between each group",
+                        "Call 412. 555. 0187 today.",
+                        "Call {{{REDACTED-phone-number}}} today."),
+                Arguments.of("phone number with a dot and a space after the area code",
+                        "Call 412. 555-0187 today.",
+                        "Call {{{REDACTED-phone-number}}} today."),
+                Arguments.of("phone number with a dot and a space before the last group",
+                        "Call (412) 555. 0187 today.",
+                        "Call {{{REDACTED-phone-number}}} today."),
+                Arguments.of("phone number with a country code and spaced dots",
+                        "Call +1 412. 555. 0187 today.",
+                        "Call {{{REDACTED-phone-number}}} today."),
+                Arguments.of("international phone number with a spaced dot",
+                        "Call +44 20 7946. 0958 today.",
+                        "Call {{{REDACTED-phone-number}}} today."),
+                Arguments.of("phone number with spaced dots at the end of a sentence",
+                        "Call 412. 555. 0187. Thanks.",
+                        "Call {{{REDACTED-phone-number}}}. Thanks.")
         );
     }
 
