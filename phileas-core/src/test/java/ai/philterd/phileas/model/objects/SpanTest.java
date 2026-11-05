@@ -404,6 +404,82 @@ public class SpanTest {
 
     }
 
+    private static Span span(final int start, final int end, final FilterType filterType, final String input) {
+        return Span.make(start, end, filterType, "context", 0.8, input.substring(start, end), "***", "salt", false, true, new String[0], 0);
+    }
+
+    @Test
+    public void resolveOverlappingSpansTrimsTheLaterSpanOfDifferentFilters() {
+
+        final String input = "DOB 1/2/20 CAD stable.";
+        final List<Span> spans = List.of(span(4, 10, FilterType.DATE, input), span(8, 14, FilterType.CURRENCY, input));
+
+        final List<Span> result = Span.resolveOverlappingSpans(spans, input);
+
+        Assertions.assertEquals(2, result.size());
+        Assertions.assertEquals("1/2/20", result.get(0).getText());
+        Assertions.assertEquals(FilterType.DATE, result.get(0).getFilterType());
+        Assertions.assertEquals("CAD", result.get(1).getText());
+        Assertions.assertEquals(11, result.get(1).getCharacterStart());
+        Assertions.assertEquals(14, result.get(1).getCharacterEnd());
+        Assertions.assertEquals(FilterType.CURRENCY, result.get(1).getFilterType());
+
+    }
+
+    @Test
+    public void resolveOverlappingSpansKeepsTheOverlapOfTheSameFilterAsDropped() {
+
+        final String input = "Age: 69 years";
+        final List<Span> spans = List.of(span(0, 7, FilterType.AGE, input), span(5, 13, FilterType.AGE, input));
+
+        final List<Span> result = Span.resolveOverlappingSpans(spans, input);
+
+        Assertions.assertEquals(1, result.size());
+        Assertions.assertEquals("69 years", result.get(0).getText());
+
+    }
+
+    @Test
+    public void resolveOverlappingSpansDropsASpanInsideAnother() {
+
+        final String input = "Zip 90210 USD paid";
+        final List<Span> spans = List.of(span(4, 9, FilterType.ZIP_CODE, input), span(4, 13, FilterType.CURRENCY, input));
+
+        final List<Span> result = Span.resolveOverlappingSpans(spans, input);
+
+        Assertions.assertEquals(1, result.size());
+        Assertions.assertEquals(FilterType.CURRENCY, result.get(0).getFilterType());
+
+    }
+
+    @Test
+    public void resolveOverlappingSpansDropsARemainderWithNothingToRedact() {
+
+        final String input = "1/2/20 -";
+        final List<Span> spans = List.of(span(0, 6, FilterType.DATE, input), span(4, 8, FilterType.CURRENCY, input));
+
+        final List<Span> result = Span.resolveOverlappingSpans(spans, input);
+
+        Assertions.assertEquals(1, result.size());
+        Assertions.assertEquals(FilterType.DATE, result.get(0).getFilterType());
+
+    }
+
+    @Test
+    public void resolveOverlappingSpansLeavesTheInputAndItsSpansUnchanged() {
+
+        final String input = "DOB 1/2/20 CAD stable.";
+        final Span later = span(8, 14, FilterType.CURRENCY, input);
+        final List<Span> spans = new LinkedList<>(List.of(span(4, 10, FilterType.DATE, input), later));
+
+        Span.resolveOverlappingSpans(spans, input);
+
+        Assertions.assertEquals(2, spans.size());
+        Assertions.assertEquals(8, later.getCharacterStart());
+        Assertions.assertEquals("20 CAD", later.getText());
+
+    }
+
     @Test
     public void getIdenticalSpans1() {
 

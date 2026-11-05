@@ -110,8 +110,8 @@ public class UnstructuredDocumentProcessor implements DocumentProcessor {
             identifiedSpans = spanDisambiguationService.disambiguate(vectorService, context, identifiedSpans);
         }
 
-        // Drop overlapping spans.
-        identifiedSpans = Span.dropOverlappingSpans(identifiedSpans);
+        // Resolve overlapping spans.
+        identifiedSpans = Span.resolveOverlappingSpans(identifiedSpans, input);
 
         // Sort the spans based on the confidence.
         identifiedSpans.sort(Comparator.comparing(Span::getConfidence));
@@ -144,7 +144,7 @@ public class UnstructuredDocumentProcessor implements DocumentProcessor {
         // character-by-character scan (which called Span.doesIndexStartSpan - a linear scan of the
         // span list - for every character of the document, i.e. O(documentLength x spans)) and the
         // per-replacement Span.shiftSpans rebuild of the entire span list. The spans do not overlap
-        // (overlaps were removed earlier by Span.dropOverlappingSpans), so this single left-to-right
+        // (overlaps were resolved earlier by Span.resolveOverlappingSpans), so this single left-to-right
         // pass is safe and preserves the original replacement order. appliedSpans is left unmodified
         // so the Explanation keeps the original span locations.
         final List<Span> orderedSpans = appliedSpans.stream()

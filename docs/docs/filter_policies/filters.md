@@ -94,3 +94,10 @@ strategies, and a priority.
 The priority is an integer value that is used as a tie-breaker when Phileas finds identical PII that fits the criteria
 of more than one filter. For example, you may want to filter SSNs and 9-digit numbers as patient identifiers. If both
 filters identify the same text, the filter with the highest priority will determine how the text is labeled.
+
+When spans from different filters overlap in part, the earlier span stays whole and the later span is trimmed to the
+text the earlier one does not cover, so none of the text they cover is left in the output. For example,
+`DOB 1/2/20 CAD` gives a date span for `1/2/20` and a currency span for `CAD`. A span that is ignored, or whose
+condition is not met, does not hide a span it overlaps in part. When one span is fully inside another, or the spans
+come from the same filter, one span is kept: the longest, then the one with the highest confidence, then the one with
+the highest priority.

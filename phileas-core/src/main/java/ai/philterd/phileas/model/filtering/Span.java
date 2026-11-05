@@ -25,7 +25,10 @@ import org.apache.commons.lang3.Strings;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
+import java.util.IdentityHashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -446,6 +449,120 @@ public final class Span {
         nonOverlappingSpans.sort(Comparator.comparingInt(Span::getCharacterStart));
 
         return nonOverlappingSpans;
+
+    }
+
+    /**
+     * Resolves overlapping spans so that no text covered by a span of one filter is left in the output
+     * because a span of another filter overlaps part of it. Spans are first resolved as by
+     * {@link #dropOverlappingSpans(List)}. A dropped span that partly overlaps a kept span of another
+     * filter is then restored: the earlier of the two stays whole and the later is trimmed to the text
+     * the earlier does not cover. A span that is ignored or not applied changes no text, so it covers
+     * nothing here, and is kept only where it overlaps no other span. The given list and spans are not
+     * modified.
+     * @param spans A list of {@link Span spans} that may or may not contain overlapping spans.
+     * @param input The text the span offsets refer to.
+     * @return A list of {@link Span spans} without overlapping spans, in document order.
+     */
+    public static List<Span> resolveOverlappingSpans(final List<Span> spans, final String input) {
+
+        final List<Span> kept = dropOverlappingSpans(spans);
+
+        if (kept.size() == spans.size()) {
+            return kept;
+        }
+
+        final Set<Span> keptSpans = Collections.newSetFromMap(new IdentityHashMap<>());
+        keptSpans.addAll(kept);
+
+        final List<Span> candidates = new ArrayList<>();
+        for (final Span span : spans) {
+            if (changesText(span) && (keptSpans.contains(span) || partlyOverlapsAnotherFilter(span, kept))) {
+                candidates.add(span);
+            }
+        }
+
+        candidates.sort(Comparator.comparingInt(Span::getCharacterStart)
+                .thenComparing(Comparator.comparingInt(Span::getCharacterEnd).reversed()));
+
+        final List<Span> resolved = new LinkedList<>();
+        int coveredTo = 0;
+
+        for (final Span candidate : candidates) {
+
+            if (candidate.getCharacterEnd() <= coveredTo) {
+                continue;
+            }
+
+            if (candidate.getCharacterStart() >= coveredTo) {
+                resolved.add(candidate);
+                coveredTo = candidate.getCharacterEnd();
+                continue;
+            }
+
+            final Span trimmed = trimStart(candidate, coveredTo, input);
+            if (trimmed != null) {
+                resolved.add(trimmed);
+                coveredTo = candidate.getCharacterEnd();
+            }
+
+        }
+
+        for (final Span span : kept) {
+            if (!changesText(span) && resolved.stream().noneMatch(other -> overlaps(span, other))) {
+                resolved.add(span);
+            }
+        }
+
+        resolved.sort(Comparator.comparingInt(Span::getCharacterStart));
+
+        return resolved;
+
+    }
+
+    private static boolean changesText(final Span span) {
+        return span.isApplied() && !span.isIgnored();
+    }
+
+    private static boolean partlyOverlapsAnotherFilter(final Span span, final List<Span> kept) {
+
+        boolean partlyOverlaps = false;
+
+        for (final Span other : kept) {
+            if (span == other || !overlaps(span, other)) {
+                continue;
+            }
+            if (span.getCharacterStart() >= other.getCharacterStart() && span.getCharacterEnd() <= other.getCharacterEnd()) {
+                return false;
+            }
+            if (span.getFilterType() != other.getFilterType()) {
+                partlyOverlaps = true;
+            }
+        }
+
+        return partlyOverlaps;
+
+    }
+
+    // Returns a copy of the span that starts at the first non-whitespace character at or after start,
+    // or null if what is left has no letter or digit to redact.
+    private static Span trimStart(final Span span, final int start, final String input) {
+
+        int trimmedStart = start;
+        while (trimmedStart < span.getCharacterEnd() && Character.isWhitespace(input.charAt(trimmedStart))) {
+            trimmedStart++;
+        }
+
+        final String text = input.substring(trimmedStart, span.getCharacterEnd());
+        if (text.chars().noneMatch(Character::isLetterOrDigit)) {
+            return null;
+        }
+
+        final Span trimmed = span.copy();
+        trimmed.setCharacterStart(trimmedStart);
+        trimmed.setText(text);
+
+        return trimmed;
 
     }
 
