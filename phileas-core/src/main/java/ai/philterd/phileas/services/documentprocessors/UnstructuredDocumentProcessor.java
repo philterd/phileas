@@ -133,47 +133,39 @@ public class UnstructuredDocumentProcessor implements DocumentProcessor {
         // Define the explanation.
         final Explanation explanation = new Explanation(appliedSpans, identifiedSpans);
 
-        // Used to manipulate the text.
-        final StringBuilder sb = new StringBuilder(input);
-
         final List<IncrementalRedaction> incrementalRedactions = new ArrayList<>();
         final long tokens = tokenCounter.countTokens(input);
 
-        // Apply the replacements in ascending start order, tracking the cumulative offset introduced
-        // by replacements whose length differs from the original span. This replaces the previous
-        // character-by-character scan (which called Span.doesIndexStartSpan - a linear scan of the
-        // span list - for every character of the document, i.e. O(documentLength x spans)) and the
-        // per-replacement Span.shiftSpans rebuild of the entire span list. The spans do not overlap
-        // (overlaps were resolved earlier by Span.resolveOverlappingSpans), so this single left-to-right
-        // pass is safe and preserves the original replacement order. appliedSpans is left unmodified
-        // so the Explanation keeps the original span locations.
+        // Apply the replacements in ascending start order. The spans do not overlap (overlaps were
+        // resolved earlier by Span.resolveOverlappingSpans, and the post filters only shorten spans),
+        // so the output is built in one left-to-right pass: the text before each span, then its
+        // replacement. Replacing each span in place shifted the rest of the text whenever the
+        // replacement's length differed, which made this quadratic in the number of spans.
+        // appliedSpans is left unmodified so the Explanation keeps the original span locations.
         final List<Span> orderedSpans = appliedSpans.stream()
                 .sorted(Comparator.comparingInt(Span::getCharacterStart))
                 .collect(toList());
 
-        int offset = 0;
+        final StringBuilder sb = new StringBuilder(input.length());
+        int copiedTo = 0;
 
         for(final Span span : orderedSpans) {
 
             // Get the replacement. This might be the token itself or an anonymized version.
             final String replacement = span.getReplacement();
 
-            final int start = span.getCharacterStart() + offset;
-            final int end = span.getCharacterEnd() + offset;
-
-            // Do the replacement at the offset-adjusted position.
-            sb.replace(start, end, replacement);
-
-            // A replacement longer than the original shifts later spans right; shorter shifts left.
-            offset += replacement.length() - (span.getCharacterEnd() - span.getCharacterStart());
+            sb.append(input, copiedTo, span.getCharacterStart()).append(replacement);
+            copiedTo = span.getCharacterEnd();
 
             if(incrementalRedactionsEnabled) {
-                // Hash the text at this point.
-                final String snapshot = sb.toString();
+                // Hash the text at this point: the replacements so far and the rest of the input.
+                final String snapshot = sb + input.substring(copiedTo);
                 incrementalRedactions.add(new IncrementalRedaction(DigestUtils.sha256Hex(snapshot), span, snapshot));
             }
 
         }
+
+        sb.append(input, copiedTo, input.length());
 
         return new TextFilterResult(sb.toString(), context, piece, explanation, incrementalRedactions, tokens);
 
