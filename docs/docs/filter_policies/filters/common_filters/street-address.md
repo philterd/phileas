@@ -2,7 +2,7 @@
 
 ## Filter
 
-This filter identifies US street addresses in text, such as `123 Main Street` or `123 Main Street, Suite 100`. An address must be on one line; in a multi-line address block, the street line, such as `123 Main Street`, is found.
+This filter identifies US street addresses in text, such as `123 Main Street` or `123 Main Street, Suite 100`. An address must be on one line; in a multi-line address block, the street line, such as `123 Main Street`, is found. A unit alone on the next line, such as `Apt 4B` below `123 Main Street`, is included in the street's span.
 
 ### Required Parameters
 
