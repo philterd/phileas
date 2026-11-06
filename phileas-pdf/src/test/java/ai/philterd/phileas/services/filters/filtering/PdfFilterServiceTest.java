@@ -96,7 +96,8 @@ public class PdfFilterServiceTest {
 
         final byte[] bytes = pdfFilterService.apply(policy, file,  spans,  MimeType.APPLICATION_PDF);
 
-        final File outputFile = new File("/tmp/output.pdf");// File.createTempFile("output", ".pdf");
+        final File outputFile = File.createTempFile("output", ".pdf");
+        outputFile.deleteOnExit();
         try (FileOutputStream outputStream = new FileOutputStream(outputFile)) {
             outputStream.write(bytes);
         }
