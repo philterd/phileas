@@ -20,6 +20,7 @@ import ai.philterd.phileas.model.filtering.TextFilterResult;
 import ai.philterd.phileas.policy.Identifiers;
 import ai.philterd.phileas.policy.Policy;
 import ai.philterd.phileas.policy.filters.Ssn;
+import ai.philterd.phileas.services.FilterPolicyLoader;
 import ai.philterd.phileas.services.context.DefaultContextService;
 import ai.philterd.phileas.services.disambiguation.vector.InMemoryVectorService;
 import ai.philterd.phileas.services.filters.filtering.PlainTextFilterService;
@@ -31,6 +32,8 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
+import java.security.SecureRandom;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Properties;
 
@@ -121,6 +124,38 @@ class SplitFactoryTest {
     }
 
     @Test
+    void anUnknownMethodRaisesWhenThePolicyIsPrepared() {
+
+        // A per-row caller prepares the policy once, so the error comes before any row is filtered.
+        final IllegalArgumentException ex = Assertions.assertThrows(IllegalArgumentException.class,
+                () -> service().prepare(policy(true, "sentence")));
+
+        Assertions.assertTrue(ex.getMessage().contains("'sentence'"), ex.getMessage());
+
+    }
+
+    @Test
+    void anUnknownMethodIsIgnoredWhenPreparingWithSplittingDisabled() throws Exception {
+
+        final PlainTextFilterService.PreparedPolicy prepared = service().prepare(policy(false, "sentence"));
+
+        Assertions.assertEquals("ssn {{{REDACTED-ssn}}}", prepared.filter("context", "ssn 123-45-6789").getFilteredText());
+
+    }
+
+    @Test
+    void anUnknownMethodRaisesWhenThePolicyFiltersAreBuilt() {
+
+        // PdfFilterService builds a policy's filters the same way and never splits, so it rejects the policy too.
+        final FilterPolicyLoader loader = new FilterPolicyLoader(
+                new PhileasConfiguration(new Properties()), new SecureRandom(), null);
+
+        Assertions.assertThrows(IllegalArgumentException.class,
+                () -> loader.getFiltersForPolicy(policy(true, "sentence"), new HashMap<>()));
+
+    }
+
+    @Test
     void theCharacterAliasFiltersADocumentOverTheThreshold() throws Exception {
 
         final Policy policy = policy(true, "character");
@@ -148,10 +183,13 @@ class SplitFactoryTest {
 
     }
 
-    private TextFilterResult filter(final Policy policy, final String input) throws Exception {
+    private PlainTextFilterService service() {
         return new PlainTextFilterService(new PhileasConfiguration(new Properties()),
-                new DefaultContextService(), new InMemoryVectorService(), null)
-                .filter(policy, "context", input);
+                new DefaultContextService(), new InMemoryVectorService(), null);
+    }
+
+    private TextFilterResult filter(final Policy policy, final String input) throws Exception {
+        return service().filter(policy, "context", input);
     }
 
 }
