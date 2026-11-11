@@ -597,4 +597,63 @@ public class PhoneNumberFilterTest extends AbstractFilterTest {
 
     }
 
+    @Test
+    public void filterPhoneWithSpacedDotsBeforeASentenceThatStartsWithANumber() throws Exception {
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(new PhoneNumberFilterStrategy()))
+                .withWindowSize(windowSize)
+                .build();
+
+        final PhoneNumberRulesFilter filter = new PhoneNumberRulesFilter(filterConfiguration);
+
+        // The period after "0187" ends the number, which has all ten digits, and "57" starts the next sentence.
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "Call 412. 555. 0187. 57 people called.");
+        showSpans(filtered.getSpans());
+
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 5, 19, FilterType.PHONE_NUMBER));
+        Assertions.assertEquals("412. 555. 0187", filtered.getSpans().get(0).getText());
+
+    }
+
+    @Test
+    public void filterPhoneWithASpacedDotAfterTheAreaCodeBeforeASentenceThatStartsWithANumber() throws Exception {
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(new PhoneNumberFilterStrategy()))
+                .withWindowSize(windowSize)
+                .build();
+
+        final PhoneNumberRulesFilter filter = new PhoneNumberRulesFilter(filterConfiguration);
+
+        // The whole number is one span, not only "555-0187" after the area code.
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "Call 412. 555-0187. 57 people called.");
+        showSpans(filtered.getSpans());
+
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 5, 18, FilterType.PHONE_NUMBER));
+        Assertions.assertEquals("412. 555-0187", filtered.getSpans().get(0).getText());
+
+    }
+
+    @Test
+    public void filterPhoneBeforeASentenceThatStartsWithANumber() throws Exception {
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(new PhoneNumberFilterStrategy()))
+                .withWindowSize(windowSize)
+                .build();
+
+        final PhoneNumberRulesFilter filter = new PhoneNumberRulesFilter(filterConfiguration);
+
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "Call 412-555-0187. 57 people called.");
+        showSpans(filtered.getSpans());
+
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 5, 17, FilterType.PHONE_NUMBER));
+        Assertions.assertEquals("412-555-0187", filtered.getSpans().get(0).getText());
+
+    }
+
 }

@@ -109,7 +109,19 @@ class PhoneNumberSentenceBoundaryEndToEndTest {
                         "Call {{{REDACTED-phone-number}}} today."),
                 Arguments.of("phone number with spaced dots at the end of a sentence",
                         "Call 412. 555. 0187. Thanks.",
-                        "Call {{{REDACTED-phone-number}}}. Thanks.")
+                        "Call {{{REDACTED-phone-number}}}. Thanks."),
+                Arguments.of("phone number with spaced dots, then a sentence that starts with a number",
+                        "Call 412. 555. 0187. 57 people called.",
+                        "Call {{{REDACTED-phone-number}}}. 57 people called."),
+                Arguments.of("phone number with a spaced dot after the area code, then a sentence that starts with a number",
+                        "Call 412. 555-0187. 57 people called.",
+                        "Call {{{REDACTED-phone-number}}}. 57 people called."),
+                Arguments.of("phone number with a country code and spaced dots, then a sentence that starts with a number",
+                        "Call +1 412. 555. 0187. 57 people called.",
+                        "Call {{{REDACTED-phone-number}}}. 57 people called."),
+                Arguments.of("international phone number with a spaced dot, then a sentence that starts with a number",
+                        "Call +44 20 7946. 0958. 57 people called.",
+                        "Call {{{REDACTED-phone-number}}}. 57 people called.")
         );
     }
 
