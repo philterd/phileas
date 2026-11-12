@@ -28,10 +28,12 @@ import com.google.i18n.phonenumbers.PhoneNumberMatch;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
 
 import java.util.ArrayList;
+import java.util.BitSet;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 // TODO: This should not extend RulesFilter because it is not a rule-based filter.
@@ -103,6 +105,11 @@ public class PhoneNumberRulesFilter extends RulesFilter {
             // and in the input itself, because cutting a run of numbers can change how the rest of it is split.
             final String scanned = SENTENCE_END.matcher(input).replaceAll(";");
 
+            // A third copy is cut only at a period that follows a whole number's worth of digits counted across
+            // the groups before it, so "412. 555. 0187. 57" is read as "412. 555. 0187" and not cut into its groups.
+            final String cutAtNumberEnds = cutAtNumberEnds(input);
+            final List<PhoneNumberMatch> cutAtNumberEndsMatches = new ArrayList<>();
+
             // Scan once per configured region and merge the results. A "+"-prefixed number is found under
             // every region and a bare national-format number may match in several, so overlapping spans are
             // de-duplicated below, preferring valid numbers over merely-possible ones and longer over shorter.
@@ -117,6 +124,21 @@ public class PhoneNumberRulesFilter extends RulesFilter {
                             allMatches.add(match);
                         }
                     }
+                }
+                if (!cutAtNumberEnds.equals(scanned) && !cutAtNumberEnds.equals(input)) {
+                    for (final PhoneNumberMatch match : phoneUtil.findNumbers(cutAtNumberEnds, region, leniency, Long.MAX_VALUE)) {
+                        cutAtNumberEndsMatches.add(match);
+                    }
+                }
+            }
+
+            // A match from that copy is only kept where it takes in whole every match already found that it
+            // overlaps, as "412. 555-0187" does "555-0187", so numbers found before keep their span otherwise.
+            final List<PhoneNumberMatch> foundMatches = new ArrayList<>(allMatches);
+            for (final PhoneNumberMatch match : cutAtNumberEndsMatches) {
+                if (foundMatches.stream().allMatch(m -> m.end() <= match.start() || match.end() <= m.start()
+                        || (match.start() <= m.start() && m.end() <= match.end()))) {
+                    allMatches.add(match);
                 }
             }
 
@@ -172,6 +194,74 @@ public class PhoneNumberRulesFilter extends RulesFilter {
         }
 
         return new Filtered(context, spans);
+
+    }
+
+    /**
+     * Returns a same-length copy of the input in which a period after a digit and before whitespace is replaced
+     * by ";" when the digits before it, counted back across separators to the start of the number or the last
+     * replaced period, are a whole number's worth. A country code after a "+" is not counted, nor is a leading 1
+     * when a region is North American. In
+     * "412. 555. 0187. 57" only the period after "0187" is replaced.
+     */
+    private String cutAtNumberEnds(final String input) {
+
+        final BitSet sentenceEnds = new BitSet(input.length());
+        final Matcher matcher = SENTENCE_END.matcher(input);
+        while (matcher.find()) {
+            sentenceEnds.set(matcher.start());
+        }
+
+        final char[] chars = input.toCharArray();
+        final StringBuilder digits = new StringBuilder();
+        boolean international = false;
+
+        for (int i = 0; i < chars.length; i++) {
+
+            final char c = chars[i];
+
+            if (Character.isDigit(c)) {
+                digits.append(c);
+            } else if (c == '+' && digits.length() == 0) {
+                international = true;
+            } else if (sentenceEnds.get(i)) {
+                // A leading 1 in a North American region is the country code, since no area code starts with 1.
+                final int countryCodeLength = international ? countryCodeLength(digits)
+                        : (northAmericanRegion != null && digits.length() > 0 && digits.charAt(0) == '1' ? 1 : 0);
+                if (digits.length() - countryCodeLength >= MIN_DIGITS_BEFORE_SENTENCE_END) {
+                    chars[i] = ';';
+                    digits.setLength(0);
+                    international = false;
+                }
+            } else if (!isSeparator(c)) {
+                digits.setLength(0);
+                international = false;
+            }
+
+        }
+
+        return new String(chars);
+
+    }
+
+    private static boolean isSeparator(final char c) {
+        return Character.isWhitespace(c) || c == '\u00A0' || c == '.' || c == '-' || c == '(' || c == ')' || c == '/';
+    }
+
+    /**
+     * The number of leading digits that are a country code. Country codes are prefix-free, so the first
+     * one to three digits that are a known calling code are the country code.
+     */
+    private int countryCodeLength(final CharSequence digits) {
+
+        for (int length = 1; length <= 3 && length <= digits.length(); length++) {
+            final int countryCode = Integer.parseInt(digits.subSequence(0, length).toString());
+            if (phoneUtil.getSupportedCallingCodes().contains(countryCode)) {
+                return length;
+            }
+        }
+
+        return 0;
 
     }
 
