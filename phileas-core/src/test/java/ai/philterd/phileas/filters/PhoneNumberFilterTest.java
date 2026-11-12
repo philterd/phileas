@@ -26,6 +26,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.ParameterizedTest;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
 
 import java.util.List;
@@ -614,6 +616,30 @@ public class PhoneNumberFilterTest extends AbstractFilterTest {
         Assertions.assertEquals(1, filtered.getSpans().size());
         Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 5, 19, FilterType.PHONE_NUMBER));
         Assertions.assertEquals("412. 555. 0187", filtered.getSpans().get(0).getText());
+
+    }
+
+    @ParameterizedTest
+    @CsvSource(delimiter = '|', value = {
+            "Call 1 412. 555. 0187. 57 people called.|1 412. 555. 0187",
+            "Call 1-412. 555. 0187. 57 people called.|1-412. 555. 0187"
+    })
+    public void filterPhoneWithALeadingOneAndSpacedDotsBeforeASentenceThatStartsWithANumber(final String input, final String number) throws Exception {
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(new PhoneNumberFilterStrategy()))
+                .withWindowSize(windowSize)
+                .build();
+
+        final PhoneNumberRulesFilter filter = new PhoneNumberRulesFilter(filterConfiguration);
+
+        // The leading 1 is the country code, so it does not count toward the digits before the period after "0187".
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, input);
+        showSpans(filtered.getSpans());
+
+        Assertions.assertEquals(1, filtered.getSpans().size());
+        Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 5, 5 + number.length(), FilterType.PHONE_NUMBER));
+        Assertions.assertEquals(number, filtered.getSpans().get(0).getText());
 
     }
 
