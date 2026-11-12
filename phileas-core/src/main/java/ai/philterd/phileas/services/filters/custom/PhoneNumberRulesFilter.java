@@ -200,7 +200,8 @@ public class PhoneNumberRulesFilter extends RulesFilter {
     /**
      * Returns a same-length copy of the input in which a period after a digit and before whitespace is replaced
      * by ";" when the digits before it, counted back across separators to the start of the number or the last
-     * replaced period, are a whole number's worth. A country code after a "+" is not counted. In
+     * replaced period, are a whole number's worth. A country code after a "+" is not counted, nor is a leading 1
+     * when a region is North American. In
      * "412. 555. 0187. 57" only the period after "0187" is replaced.
      */
     private String cutAtNumberEnds(final String input) {
@@ -224,7 +225,9 @@ public class PhoneNumberRulesFilter extends RulesFilter {
             } else if (c == '+' && digits.length() == 0) {
                 international = true;
             } else if (sentenceEnds.get(i)) {
-                final int countryCodeLength = international ? countryCodeLength(digits) : 0;
+                // A leading 1 in a North American region is the country code, since no area code starts with 1.
+                final int countryCodeLength = international ? countryCodeLength(digits)
+                        : (northAmericanRegion != null && digits.length() > 0 && digits.charAt(0) == '1' ? 1 : 0);
                 if (digits.length() - countryCodeLength >= MIN_DIGITS_BEFORE_SENTENCE_END) {
                     chars[i] = ';';
                     digits.setLength(0);
