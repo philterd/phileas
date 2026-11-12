@@ -42,17 +42,25 @@ public class StreetAddressFilter extends RegexFilter {
             "|Crossing|Xing|Crescent|Cres|Plaza|Plz|Landing|Lndg|Gardens|Garden|Gdns|Commons|Manor|Mnr|Ridge|Rdg" +
             "|Point|Pt|Grove|Grv|Alley|Aly|Cove|Cv|Bend|Bnd|Loop|Pike|Path|Mews|Row|Run|Walk|Close)";
 
-    // Unit / secondary-address designators and the unit number after them.
+    // Unit / secondary-address designators and the unit number after them. The address pattern is
+    // case-insensitive, so [A-Z] matches lowercase letters too.
     private static final String UNIT_WORD = "(?:Apt|Apartment|Suite|Ste|Unit|Bldg|Building|Floor|Fl|Room|Rm)";
-    private static final String UNIT_NUMBER = "\\.?[ \\t]*#?[ \\t]*[A-Za-z0-9-]+";
+    private static final String UNIT_NUMBER = "\\.?[ \\t]*#?[ \\t]*[A-Z0-9-]+";
 
-    // A unit folded into the span when present: on the street's line, or alone on the next line,
-    // ignoring spaces and tabs around it. "Apt 4B" below the street is folded in, "Room 5 is booked"
-    // is not. On the next line the designator must be a whole word, so "Steve" is not "Ste" "ve".
+    // A unit on the street's line, as in "123 Main St, Apt 4B".
+    private static final String SAME_LINE_UNIT =
+            "[, \\t]+(?:" + UNIT_WORD + "|#)" + UNIT_NUMBER;
+
+    // A unit alone on the next line, ignoring spaces and tabs around it. "Apt 4B" below the street is
+    // folded in, "Room 5 is booked" is not. The designator must be a whole word, so "Steve" is not
+    // "Ste" "ve".
+    private static final String NEXT_LINE_UNIT =
+            "[, \\t]*(?:\\r\\n|[\\r\\n])[ \\t]*(?:" + UNIT_WORD + "(?![A-Z])|#)" + UNIT_NUMBER +
+            "(?=[ \\t]*(?:[\\r\\n]|\\z))";
+
+    // A unit folded into the span when present.
     private static final String UNIT =
-            "(?:[, \\t]+(?:" + UNIT_WORD + "|#)" + UNIT_NUMBER +
-            "|[, \\t]*(?:\\r\\n|[\\r\\n])[ \\t]*(?:" + UNIT_WORD + "(?![A-Za-z])|#)" + UNIT_NUMBER +
-            "(?=[ \\t]*(?:[\\r\\n]|\\z)))?";
+            "(?:" + SAME_LINE_UNIT + "|" + NEXT_LINE_UNIT + ")?";
 
     public StreetAddressFilter(FilterConfiguration filterConfiguration) {
         super(FilterType.STREET_ADDRESS, filterConfiguration);
