@@ -135,6 +135,7 @@ public class EndToEndTestsHelper {
 
         // Copy file to temp directory.
         final File file = File.createTempFile("philter", "ignore");
+        file.deleteOnExit();
         Files.write(file.toPath(), Arrays.asList("90210", "John Smith"), Charset.defaultCharset());
 
         Set<String> ignoredFiles = new HashSet<>();
