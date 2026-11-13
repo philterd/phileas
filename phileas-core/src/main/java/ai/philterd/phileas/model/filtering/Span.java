@@ -32,7 +32,10 @@ import java.util.IdentityHashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.NavigableMap;
 import java.util.Set;
+import java.util.TreeMap;
 
 /**
  * Represents a location in text identified as sensitive information.
@@ -427,19 +430,19 @@ public final class Span {
         // previous O(n^3) pairwise-and-recurse approach, which also used an invalid sort comparator.
         final List<Span> nonOverlappingSpans = new LinkedList<>();
 
+        // The kept spans do not overlap each other, so in order of start their ends never decrease.
+        // A span overlaps a kept span exactly when the kept span starting last before the span's end
+        // ends after the span's start, so one lookup in a map of start to largest end replaces a scan
+        // of every kept span, which made this quadratic in the number of spans.
+        final NavigableMap<Integer, Integer> keptEnds = new TreeMap<>();
+
         for (final Span span : ranked) {
 
-            boolean overlapsKeptSpan = false;
+            final Map.Entry<Integer, Integer> before = keptEnds.lowerEntry(span.getCharacterEnd());
 
-            for (final Span kept : nonOverlappingSpans) {
-                if (overlaps(span, kept)) {
-                    overlapsKeptSpan = true;
-                    break;
-                }
-            }
-
-            if (!overlapsKeptSpan) {
+            if (before == null || before.getValue() <= span.getCharacterStart()) {
                 nonOverlappingSpans.add(span);
+                keptEnds.merge(span.getCharacterStart(), span.getCharacterEnd(), Math::max);
             }
 
         }
@@ -473,6 +476,7 @@ public final class Span {
         }
 
         final List<Span> unchanging = ranked.stream().filter(span -> !changesText(span)).toList();
+        final DisjointSpans unchangingIndex = new DisjointSpans(unchanging);
 
         // The spans kept by rank stay, so nothing they cover is lost.
         final List<Span> kept = new ArrayList<>(ranked.stream().filter(Span::changesText).toList());
@@ -483,17 +487,19 @@ public final class Span {
         final List<Span> dropped = spans.stream()
                 .filter(Span::changesText)
                 .filter(span -> !keptSpans.contains(span))
-                .filter(span -> unchanging.stream().noneMatch(other -> other.getFilterType() == span.getFilterType() && overlaps(span, other)))
+                .filter(span -> unchangingIndex.overlapping(span).stream().noneMatch(other -> other.getFilterType() == span.getFilterType()))
                 .toList();
 
         // A span that overlaps only spans that change no text is free to be kept.
+        final DisjointSpans rankedIndex = new DisjointSpans(kept);
         kept.addAll(dropOverlappingSpans(dropped.stream()
-                .filter(span -> keptSpans.stream().noneMatch(other -> overlaps(span, other)))
+                .filter(span -> rankedIndex.overlapping(span).isEmpty())
                 .toList()));
 
+        final DisjointSpans keptIndex = new DisjointSpans(kept);
         final List<Span> candidates = new ArrayList<>(kept);
         for (final Span span : dropped) {
-            if (partlyOverlapsAnotherFilter(span, kept)) {
+            if (partlyOverlapsAnotherFilter(span, keptIndex.overlapping(span))) {
                 candidates.add(span);
             }
         }
@@ -524,8 +530,11 @@ public final class Span {
 
         }
 
+        // The spans that change no text do not overlap each other, so only the resolved spans
+        // from above can hide one.
+        final DisjointSpans resolvedIndex = new DisjointSpans(resolved);
         for (final Span span : unchanging) {
-            if (resolved.stream().noneMatch(other -> overlaps(span, other))) {
+            if (resolvedIndex.overlapping(span).isEmpty()) {
                 resolved.add(span);
             }
         }
@@ -579,6 +588,50 @@ public final class Span {
         trimmed.setText(text);
 
         return trimmed;
+
+    }
+
+    /**
+     * Spans that do not overlap each other, sorted so that the spans overlapping a given span are
+     * found by a binary search rather than a scan of every span.
+     */
+    private static final class DisjointSpans {
+
+        private final List<Span> sorted;
+
+        private DisjointSpans(final List<Span> spans) {
+            this.sorted = new ArrayList<>(spans);
+            this.sorted.sort(Comparator.comparingInt(Span::getCharacterStart).thenComparingInt(Span::getCharacterEnd));
+        }
+
+        /**
+         * Gets the spans that overlap the given span. Because the spans do not overlap each other,
+         * their ends never decrease in order of start, so these are the spans from the first one
+         * that ends after the given span starts up to the last one that starts before it ends.
+         */
+        private List<Span> overlapping(final Span span) {
+
+            int low = 0;
+            int high = sorted.size();
+            while (low < high) {
+                final int middle = (low + high) >>> 1;
+                if (sorted.get(middle).getCharacterEnd() <= span.getCharacterStart()) {
+                    low = middle + 1;
+                } else {
+                    high = middle;
+                }
+            }
+
+            final List<Span> overlapping = new ArrayList<>();
+            for (int i = low; i < sorted.size() && sorted.get(i).getCharacterStart() < span.getCharacterEnd(); i++) {
+                if (overlaps(span, sorted.get(i))) {
+                    overlapping.add(sorted.get(i));
+                }
+            }
+
+            return overlapping;
+
+        }
 
     }
 
