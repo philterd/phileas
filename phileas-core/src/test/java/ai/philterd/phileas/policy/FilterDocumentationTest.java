@@ -49,7 +49,7 @@ public class FilterDocumentationTest {
     private static final Path FILTER_PAGES = Path.of("..", "docs", "docs", "filter_policies", "filters");
 
     private static final Pattern STRATEGIES_KEY = Pattern.compile("\\b(\\w+FilterStrategies)\\b");
-    private static final Pattern CODE_BLOCK = Pattern.compile("```[a-z]*\\n(.*?)```", Pattern.DOTALL);
+    private static final Pattern CODE_BLOCK = Pattern.compile("```[a-z]*\\R(.*?)```", Pattern.DOTALL);
     private static final Pattern TABLE_KEY = Pattern.compile("^\\|\\s*`([^`]+)`\\s*\\|");
 
     @Test
