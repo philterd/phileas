@@ -87,9 +87,7 @@ final class PolicyPatternValidator {
 
     private void checkIgnoredPatterns(final List<IgnoredPattern> ignoredPatterns, final String owner) {
 
-        // An ignored pattern is matched against the whole of a span's text (IgnoredPattern.matches), where a
-        // pattern that would be quadratic if searched for over a document, such as one beginning with .*, is
-        // linear. Probing it with find() rejected such patterns for a cost they never incur.
+        // Ignored patterns are matched against a whole span's text (IgnoredPattern.matches), so probe them that way.
         for (final IgnoredPattern ignoredPattern : orEmpty(ignoredPatterns)) {
             check("ignored pattern " + name(ignoredPattern) + "on " + owner, ignoredPattern.getPattern(), 0,
                     Application.MATCHES);

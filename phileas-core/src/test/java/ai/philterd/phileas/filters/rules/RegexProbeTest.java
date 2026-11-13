@@ -30,14 +30,14 @@ import java.util.regex.Pattern;
  */
 class RegexProbeTest {
 
-    // https://github.com/philterd/phileas/issues/480: ignores a span that names a court. Anchored to a
-    // span the lookahead scans the text once, but searched for it scans once per start position.
+    // Ignores a span that names a court. Anchored, the lookahead scans the text once; searched for, once
+    // per start position.
     private static final String NAMES_A_COURT = "(?i)(?=.*?\\b(?:court|tribunal|chamber)\\b).*";
 
-    // Exponential however it is applied (issue #356).
+    // Exponential however it is applied.
     private static final String EXPONENTIAL = "(.*a){16}b";
 
-    // A non-atomic repeated group recurses per character (issue #357).
+    // A non-atomic repeated group recurses per character.
     private static final String RECURSIVE = "(?:[a-z]|\\d)*";
 
     // A budget far below what either probe needs for a pattern that is fast, so a rejection is the

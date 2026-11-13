@@ -25,10 +25,8 @@ import java.util.regex.Pattern;
 /**
  * Runs a compiled pattern against canary inputs under a time budget so a pattern that would exhaust
  * the budget or overflow the stack on a document can be rejected when the policy is loaded instead.
- * A pattern is run the way it is applied while filtering, since the cost of a pattern depends on it:
- * a pattern searched for with {@link Matcher#find()} is tried at every position of the canary, so one
- * that begins with {@code .*} costs quadratic time there, while the same pattern anchored to the whole
- * canary with {@link Matcher#matches()}, as an ignored pattern is to a span's text, costs linear time.
+ * A pattern is run the way it is applied while filtering, since that changes its cost: one beginning
+ * with {@code .*} is quadratic when searched for but linear when matched against the whole text.
  * This detects, it does not prove: a pattern that misbehaves only on input unlike any canary passes.
  */
 public final class RegexProbe {

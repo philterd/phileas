@@ -131,9 +131,7 @@ class PolicyPatternValidationTest {
     })
     void acceptIgnoredPatternThatIsCheapOnASpan(final String pattern) throws Exception {
 
-        // https://github.com/philterd/phileas/issues/480: an ignored pattern is anchored to a span's text,
-        // where a pattern beginning with .* is linear. Probed with find() over a document-length canary it
-        // was quadratic and exceeded the budget, so the policy could not be loaded.
+        // Linear when anchored to a span's text, quadratic when searched for in a document.
         final Identifier identifier = new Identifier();
         identifier.setClassification("org");
         identifier.setPattern("[A-Z][a-z]+ (?:Court|Hospital)");
