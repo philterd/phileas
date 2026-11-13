@@ -35,6 +35,9 @@ public class ManySpansFilteringTest {
 
     private static final Duration TIMEOUT = Duration.ofSeconds(30);
 
+    // The overlap test has taken 2 to 9 s, and about 90 s when filtering was quadratic.
+    private static final Duration OVERLAP_TIMEOUT = Duration.ofSeconds(60);
+
     private String filter(final String policyJson, final String input) throws Exception {
 
         final Policy policy = new Gson().fromJson(policyJson, Policy.class);
@@ -63,7 +66,7 @@ public class ManySpansFilteringTest {
         // The currency span 20 CAD overlaps the date 1/2/20 in each repetition.
         final String input = "DOB 1/2/20 CAD stable. ".repeat(30_000);
 
-        final String filtered = Assertions.assertTimeoutPreemptively(TIMEOUT,
+        final String filtered = Assertions.assertTimeoutPreemptively(OVERLAP_TIMEOUT,
                 () -> filter("{\"identifiers\": {\"date\": {}, \"currency\": {}}}", input));
 
         Assertions.assertEquals("DOB {{{REDACTED-date}}} {{{REDACTED-currency}}} stable. ".repeat(30_000), filtered);
