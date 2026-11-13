@@ -16,6 +16,7 @@
 package ai.philterd.phileas.services;
 
 import ai.philterd.phileas.filters.rules.RegexProbe;
+import ai.philterd.phileas.filters.rules.RegexProbe.Application;
 import ai.philterd.phileas.policy.Identifiers;
 import ai.philterd.phileas.policy.IgnoredPattern;
 import ai.philterd.phileas.policy.InvalidPolicyPatternException;
@@ -33,6 +34,8 @@ import java.util.regex.PatternSyntaxException;
  * Compiles and probes every regular expression a policy supplies. A policy-supplied pattern is
  * otherwise only exercised when a document reaches it, so a bad pattern surfaces as a failure of
  * whichever document happens to produce a matching token rather than as a failure of the policy.
+ * Each pattern is probed the way it is applied: identifier and section patterns are searched for in
+ * a document, and ignored patterns are anchored to the whole of a span's text.
  */
 final class PolicyPatternValidator {
 
@@ -56,7 +59,7 @@ final class PolicyPatternValidator {
             for (final Identifier identifier : orEmpty(identifiers.getIdentifiers())) {
                 final int flags = identifier.isCaseSensitive() ? 0 : Pattern.CASE_INSENSITIVE;
                 check("identifier '" + identifier.getClassification() + "' pattern",
-                        identifier.getPattern(), flags);
+                        identifier.getPattern(), flags, Application.FIND);
             }
 
             for (final Section section : orEmpty(identifiers.getSections())) {
@@ -66,7 +69,8 @@ final class PolicyPatternValidator {
                 compile("section end pattern", section.getEndPattern(), 0);
                 if (section.getStartPattern() != null && section.getEndPattern() != null) {
                     check("section pattern",
-                            "(?:" + section.getStartPattern() + ")(.*?)(?:" + section.getEndPattern() + ")", 0);
+                            "(?:" + section.getStartPattern() + ")(.*?)(?:" + section.getEndPattern() + ")", 0,
+                            Application.FIND);
                 }
             }
 
@@ -83,20 +87,23 @@ final class PolicyPatternValidator {
 
     private void checkIgnoredPatterns(final List<IgnoredPattern> ignoredPatterns, final String owner) {
 
+        // Ignored patterns are matched against a whole span's text (IgnoredPattern.matches), so probe them that way.
         for (final IgnoredPattern ignoredPattern : orEmpty(ignoredPatterns)) {
-            check("ignored pattern " + name(ignoredPattern) + "on " + owner, ignoredPattern.getPattern(), 0);
+            check("ignored pattern " + name(ignoredPattern) + "on " + owner, ignoredPattern.getPattern(), 0,
+                    Application.MATCHES);
         }
 
     }
 
-    private void check(final String description, final String regex, final int flags) {
+    private void check(final String description, final String regex, final int flags,
+                       final Application application) {
 
         final Pattern pattern = compile(description, regex, flags);
 
         // With the budget disabled there is no clock to stop a probe that does not finish, so the
         // pattern is compiled but not run. Patterns are still guarded the same way at match time.
         if (pattern != null && regexTimeoutMs > 0) {
-            RegexProbe.probe(pattern, regexTimeoutMs).ifPresent(failure -> {
+            RegexProbe.probe(pattern, regexTimeoutMs, application).ifPresent(failure -> {
                 throw new InvalidPolicyPatternException(String.format(
                         "The %s %s. Pattern: %s", description, failure, regex));
             });

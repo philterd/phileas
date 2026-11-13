@@ -25,6 +25,8 @@ import com.google.gson.Gson;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 import org.junit.jupiter.api.io.TempDir;
 
 import java.nio.file.Files;
@@ -64,6 +66,11 @@ public class PolicyFilesTest {
                 "policy.files.max.bytes", Long.toString(maxBytes)));
     }
 
+    // A path as a JSON string, so the backslashes of a Windows path are escaped.
+    private static String json(final Path path) {
+        return new Gson().toJson(path.toString());
+    }
+
     private static String refused(final PolicyFiles files, final String path) {
         return Assertions.assertThrows(InvalidPolicyFileException.class, () -> files.readLines("the field", path)).getMessage();
     }
@@ -80,18 +87,29 @@ public class PolicyFilesTest {
     }
 
     @Test
-    public void aSymbolicLinkOrTraversalOutOfAnAllowedDirectoryIsRefused() throws Exception {
-        final Path link = Files.createSymbolicLink(allowed.resolve("link.txt"), secret);
-        refused(restricted(0), link.toString());
+    public void aTraversalOutOfAnAllowedDirectoryIsRefused() {
         refused(restricted(0), allowed + "/../outside/secret.txt");
     }
 
+    // Creating a symbolic link on Windows needs administrator rights or Developer Mode.
     @Test
-    public void aFileThatIsNotRegularIsRefusedWhetherOrNotRestricted() throws Exception {
-        refused(restricted(0), "/dev/zero");
-        refused(PolicyFiles.unrestricted(), "/dev/zero");
+    @DisabledOnOs(OS.WINDOWS)
+    public void aSymbolicLinkOutOfAnAllowedDirectoryIsRefused() throws Exception {
+        final Path link = Files.createSymbolicLink(allowed.resolve("link.txt"), secret);
+        refused(restricted(0), link.toString());
+    }
+
+    @Test
+    public void aDirectoryIsRefusedWhetherOrNotRestricted() {
         refused(restricted(0), allowed.toString());
         refused(PolicyFiles.unrestricted(), allowed.toString());
+    }
+
+    @Test
+    @DisabledOnOs(OS.WINDOWS)
+    public void aDeviceIsRefusedWhetherOrNotRestricted() throws Exception {
+        refused(restricted(0), "/dev/zero");
+        refused(PolicyFiles.unrestricted(), "/dev/zero");
         final Path link = Files.createSymbolicLink(allowed.resolve("zero"), Path.of("/dev/zero"));
         refused(restricted(0), link.toString());
     }
@@ -121,7 +139,7 @@ public class PolicyFilesTest {
         final PolicyFiles files = restricted(0);
         final String missing = refused(files, allowed.resolve("missing.txt").toString()).replace(allowed.resolve("missing.txt").toString(), "P");
         Assertions.assertEquals(missing, refused(files, secret.toString()).replace(secret.toString(), "P"));
-        Assertions.assertEquals(missing, refused(files, "/dev/zero").replace("/dev/zero", "P"));
+        Assertions.assertEquals(missing, refused(files, allowed.toString()).replace(allowed.toString(), "P"));
     }
 
     @Test
@@ -132,13 +150,13 @@ public class PolicyFilesTest {
     /** The four places a policy names a file, each pointing at the file outside the allowed directory. */
     @Test
     public void everyFileFieldIsCheckedWhenThePolicyIsLoaded() {
-        final String path = secret.toString();
+        final String path = json(secret);
         final String[][] policies = {
-                {"{\"identifiers\":{\"dictionaries\":[{\"files\":[\"" + path + "\"]}]}}", "identifiers.dictionaries[0].files"},
-                {"{\"identifiers\":{\"ssn\":{\"ignoredFiles\":[\"" + path + "\"]}}}", "identifiers.ssn.ignoredFiles"},
-                {"{\"identifiers\":{\"ssn\":{\"ssnFilterStrategies\":[{\"strategy\":\"MAP_REPLACE\",\"mappingFiles\":[\"" + path + "\"]}]}}}",
+                {"{\"identifiers\":{\"dictionaries\":[{\"files\":[" + path + "]}]}}", "identifiers.dictionaries[0].files"},
+                {"{\"identifiers\":{\"ssn\":{\"ignoredFiles\":[" + path + "]}}}", "identifiers.ssn.ignoredFiles"},
+                {"{\"identifiers\":{\"ssn\":{\"ssnFilterStrategies\":[{\"strategy\":\"MAP_REPLACE\",\"mappingFiles\":[" + path + "]}]}}}",
                         "identifiers.ssn.ssnFilterStrategies[0].mappingFiles"},
-                {"{\"identifiers\":{\"ssn\":{}},\"ignored\":[{\"files\":[\"" + path + "\"]}]}", "ignored[0].files"}};
+                {"{\"identifiers\":{\"ssn\":{}},\"ignored\":[{\"files\":[" + path + "]}]}", "ignored[0].files"}};
 
         final FilterPolicyLoader loader = new FilterPolicyLoader(configuration("policy.files.restricted", "true",
                 "policy.files.directories", allowed.toString()), new SecureRandom(), null);
@@ -157,12 +175,12 @@ public class PolicyFilesTest {
         final PhileasConfiguration restricted = configuration("policy.files.restricted", "true", "policy.files.directories", allowed.toString());
         final PlainTextFilterService service = new PlainTextFilterService(restricted, new DefaultContextService(), new InMemoryVectorService(), null);
 
-        final Policy dictionary = new Gson().fromJson("{\"identifiers\":{\"dictionaries\":[{\"files\":[\"" + terms + "\"]}]}}", Policy.class);
+        final Policy dictionary = new Gson().fromJson("{\"identifiers\":{\"dictionaries\":[{\"files\":[" + json(terms) + "]}]}}", Policy.class);
         Assertions.assertEquals("Ask {{{REDACTED-custom-dictionary}}} today",
                 service.filter(dictionary, "context", "Ask Quorlan today").getFilteredText());
 
         final Policy mapped = new Gson().fromJson("{\"identifiers\":{\"ssn\":{\"ssnFilterStrategies\":[{\"strategy\":\"MAP_REPLACE\","
-                + "\"mappingFiles\":[\"" + mappings + "\"]}]}}}", Policy.class);
+                + "\"mappingFiles\":[" + json(mappings) + "]}]}}}", Policy.class);
         Assertions.assertEquals("SSN SSN-ONE", service.filter(mapped, "context", "SSN 123-45-6789").getFilteredText());
     }
 

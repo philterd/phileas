@@ -25,9 +25,29 @@ import java.util.regex.Pattern;
 /**
  * Runs a compiled pattern against canary inputs under a time budget so a pattern that would exhaust
  * the budget or overflow the stack on a document can be rejected when the policy is loaded instead.
+ * A pattern is run the way it is applied while filtering, since that changes its cost: one beginning
+ * with {@code .*} is quadratic when searched for but linear when matched against the whole text.
  * This detects, it does not prove: a pattern that misbehaves only on input unlike any canary passes.
  */
 public final class RegexProbe {
+
+    /**
+     * How a pattern is applied to text while filtering, and so how the probe runs it.
+     */
+    public enum Application {
+
+        /**
+         * Searched for anywhere in a document with {@link Matcher#find()}, as a filter's own patterns and
+         * the identifier and section patterns a policy supplies are.
+         */
+        FIND,
+
+        /**
+         * Anchored to the whole of a span's text with {@link Matcher#matches()}, as an ignored pattern is.
+         */
+        MATCHES
+
+    }
 
     // A recursive pattern needs a few thousand characters to overflow.
     private static final int CANARY_LENGTH = 16 * 1024;
@@ -41,12 +61,24 @@ public final class RegexProbe {
     }
 
     /**
-     * Probes a pattern with each canary in turn.
+     * Probes a pattern that is searched for with {@link Matcher#find()}. See
+     * {@link #probe(Pattern, long, Application)}.
      * @param pattern The compiled {@link Pattern} to probe.
      * @param budgetMs The time budget for one canary, in milliseconds. Zero or less runs unguarded.
      * @return A description of how the pattern failed, or empty when every canary completed.
      */
     public static Optional<String> probe(final Pattern pattern, final long budgetMs) {
+        return probe(pattern, budgetMs, Application.FIND);
+    }
+
+    /**
+     * Probes a pattern with each canary in turn, applying it as the {@link Application} says.
+     * @param pattern The compiled {@link Pattern} to probe.
+     * @param budgetMs The time budget for one canary, in milliseconds. Zero or less runs unguarded.
+     * @param application How the pattern is applied to text while filtering.
+     * @return A description of how the pattern failed, or empty when every canary completed.
+     */
+    public static Optional<String> probe(final Pattern pattern, final long budgetMs, final Application application) {
 
         for (final String unit : units(pattern.pattern())) {
 
@@ -57,7 +89,11 @@ public final class RegexProbe {
             guarded.startClock();
 
             try {
-                matcher.find();
+                if (application == Application.MATCHES) {
+                    matcher.matches();
+                } else {
+                    matcher.find();
+                }
             } catch (final RegexTimeoutException e) {
                 return Optional.of(String.format("exceeded the %d ms budget on %d characters of \"%s\"",
                         budgetMs, canary.length(), unit));

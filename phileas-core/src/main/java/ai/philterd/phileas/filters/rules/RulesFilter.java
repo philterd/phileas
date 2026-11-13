@@ -32,6 +32,7 @@ import org.apache.commons.lang3.Strings;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -106,6 +107,9 @@ public abstract class RulesFilter extends Filter {
 
         final List<Span> spans = new LinkedList<>();
 
+        // The start and end of each span in spans, packed into one long.
+        final Set<Long> spanRanges = new HashSet<>();
+
         // Is this filter enabled for this policy? If not just return empty list.
         if(policy.getIdentifiers().hasFilter(filterType)) {
 
@@ -127,7 +131,7 @@ public abstract class RulesFilter extends Filter {
                     
                     // Is there already a span encompassing this location?
                     // If so just quit. This means the first match wins.
-                    if(!Span.doesSpanExist(characterStart, characterEnd, spans)) {
+                    if(spanRanges.add(((long) characterStart << 32) | characterEnd)) {
 
                         // Is this term ignored?
                         boolean ignored = isIgnored(token);

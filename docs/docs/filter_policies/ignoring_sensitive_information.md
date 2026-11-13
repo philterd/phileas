@@ -88,8 +88,11 @@ Phileas can ignore information based on a regular expression pattern. An example
 
 Ignore patterns can be specified at the policy level and/or at the level of each type of filter. When set at the policy level, the list of ignored patterns will be applied to _all_ filter types. When set for an individual filter, the list of ignored patterns will be applied _only_ to that filter.
 
+> A `pattern` must match the whole of a span's text, not part of it, so `court` ignores a span that is exactly
+> `court`, and `(?i).*\bcourt\b.*` ignores any span that contains the word.
+>
 > Because a `pattern` is a user-supplied regular expression, it is checked when the policy is loaded: it is compiled,
-> then run against canary inputs under the `regex.timeout.ms`
+> then matched against the whole of each canary input, as it is against a span's text, under the `regex.timeout.ms`
 > [setting](../settings.md#advanced-settings) (default `1000` ms). A pattern that does not compile, exhausts the
 > budget, or exhausts the stack is rejected with an error naming the filter and the pattern, so the policy fails
 > rather than whichever document first produces a token that reaches the pattern. The check is not exhaustive: a

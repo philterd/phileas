@@ -47,6 +47,7 @@ import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import java.io.File;
 import java.nio.charset.Charset;
@@ -985,9 +986,7 @@ public class EndToEndTests {
     }
 
     @Test
-    public void endToEndUsingCustomDictionaryFileFuzzyDictionaryFilter() throws Exception {
-
-        final Path temp = Files.createTempDirectory("philter");
+    public void endToEndUsingCustomDictionaryFileFuzzyDictionaryFilter(@TempDir final Path temp) throws Exception {
 
         final String terms = new String(this.getClass().getResourceAsStream("/customdictionaries/terms1.txt").readAllBytes(), Charset.defaultCharset());
         final File termsFile = Paths.get(temp.toFile().getAbsolutePath(), "terms1.txt").toFile();
@@ -1019,9 +1018,7 @@ public class EndToEndTests {
     }
 
     @Test
-    public void endToEndUsingCustomDictionaryFileBloomFilter() throws Exception {
-
-        final Path temp = Files.createTempDirectory("philter");
+    public void endToEndUsingCustomDictionaryFileBloomFilter(@TempDir final Path temp) throws Exception {
 
         final String terms = new String(this.getClass().getResourceAsStream("/customdictionaries/terms1.txt").readAllBytes(), Charset.defaultCharset());
         final File termsFile = Paths.get(temp.toFile().getAbsolutePath(), "terms1.txt").toFile();
