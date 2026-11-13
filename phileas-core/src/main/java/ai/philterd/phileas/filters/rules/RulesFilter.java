@@ -107,8 +107,7 @@ public abstract class RulesFilter extends Filter {
 
         final List<Span> spans = new LinkedList<>();
 
-        // The start and end of each span in spans, so a repeated match is found without a scan of
-        // every span found so far, which made this quadratic in the number of spans.
+        // The start and end of each span in spans, packed into one long.
         final Set<Long> spanRanges = new HashSet<>();
 
         // Is this filter enabled for this policy? If not just return empty list.

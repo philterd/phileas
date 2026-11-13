@@ -430,10 +430,8 @@ public final class Span {
         // previous O(n^3) pairwise-and-recurse approach, which also used an invalid sort comparator.
         final List<Span> nonOverlappingSpans = new LinkedList<>();
 
-        // The kept spans do not overlap each other, so in order of start their ends never decrease.
-        // A span overlaps a kept span exactly when the kept span starting last before the span's end
-        // ends after the span's start, so one lookup in a map of start to largest end replaces a scan
-        // of every kept span, which made this quadratic in the number of spans.
+        // Kept spans do not overlap, so their ends never decrease in order of start, and only the kept
+        // span starting last before a span's end can overlap it.
         final NavigableMap<Integer, Integer> keptEnds = new TreeMap<>();
 
         for (final Span span : ranked) {

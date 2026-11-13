@@ -136,12 +136,8 @@ public class UnstructuredDocumentProcessor implements DocumentProcessor {
         final List<IncrementalRedaction> incrementalRedactions = new ArrayList<>();
         final long tokens = tokenCounter.countTokens(input);
 
-        // Apply the replacements in ascending start order. The spans do not overlap (overlaps were
-        // resolved earlier by Span.resolveOverlappingSpans, and the post filters only shorten spans),
-        // so the output is built in one left-to-right pass: the text before each span, then its
-        // replacement. Replacing each span in place shifted the rest of the text whenever the
-        // replacement's length differed, which made this quadratic in the number of spans.
-        // appliedSpans is left unmodified so the Explanation keeps the original span locations.
+        // The spans do not overlap (resolveOverlappingSpans, and post filters only shorten spans), so the
+        // output is built in one pass. appliedSpans keeps the original locations for the Explanation.
         final List<Span> orderedSpans = appliedSpans.stream()
                 .sorted(Comparator.comparingInt(Span::getCharacterStart))
                 .collect(toList());

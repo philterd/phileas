@@ -28,9 +28,8 @@ import java.time.Duration;
 import java.util.Properties;
 
 /**
- * Guards against filtering time growing quadratically with the number of spans (issue #496). Before
- * the fix, 60,000 currency spans took minutes; they now take about a second, so the timeouts leave a
- * wide margin for slow machines while still failing if the growth returns.
+ * Fails if filtering time grows quadratically with the number of spans again, which made these inputs
+ * take minutes.
  */
 public class ManySpansFilteringTest {
 
