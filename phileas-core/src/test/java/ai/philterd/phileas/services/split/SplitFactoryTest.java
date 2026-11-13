@@ -16,6 +16,7 @@
 package ai.philterd.phileas.services.split;
 
 import ai.philterd.phileas.PhileasConfiguration;
+import ai.philterd.phileas.filters.Filter;
 import ai.philterd.phileas.model.filtering.TextFilterResult;
 import ai.philterd.phileas.policy.Identifiers;
 import ai.philterd.phileas.policy.Policy;
@@ -35,6 +36,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import java.security.SecureRandom;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 class SplitFactoryTest {
@@ -127,8 +129,10 @@ class SplitFactoryTest {
     void anUnknownMethodRaisesWhenThePolicyIsPrepared() {
 
         // A per-row caller prepares the policy once, so the error comes before any row is filtered.
+        final PlainTextFilterService filterService = service();
+        final Policy policy = policy(true, "sentence");
         final IllegalArgumentException ex = Assertions.assertThrows(IllegalArgumentException.class,
-                () -> service().prepare(policy(true, "sentence")));
+                () -> filterService.prepare(policy));
 
         Assertions.assertTrue(ex.getMessage().contains("'sentence'"), ex.getMessage());
 
@@ -150,8 +154,11 @@ class SplitFactoryTest {
         final FilterPolicyLoader loader = new FilterPolicyLoader(
                 new PhileasConfiguration(new Properties()), new SecureRandom(), null);
 
+        final Policy policy = policy(true, "sentence");
+        final Map<String, List<Filter>> filterCache = new HashMap<>();
+
         Assertions.assertThrows(IllegalArgumentException.class,
-                () -> loader.getFiltersForPolicy(policy(true, "sentence"), new HashMap<>()));
+                () -> loader.getFiltersForPolicy(policy, filterCache));
 
     }
 
