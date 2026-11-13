@@ -34,6 +34,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import java.util.List;
 import java.util.Properties;
@@ -120,6 +121,37 @@ class PolicyPatternValidationTest {
         Assertions.assertTrue(e.getMessage().contains(expected), e.getMessage());
         Assertions.assertTrue(e.getMessage().contains("ignored pattern 'test-ignored' on the Ssn filter"), e.getMessage());
         Assertions.assertTrue(e.getMessage().contains(pattern), e.getMessage());
+
+    }
+
+    @ParameterizedTest(name = "ignored: {0}")
+    @ValueSource(strings = {
+            "(?i)(?=.*?\\b(?:court|tribunal|chamber)\\b).*",
+            "(?i).*\\b(?:court|tribunal|chamber)\\b.*"
+    })
+    void acceptIgnoredPatternThatIsCheapOnASpan(final String pattern) throws Exception {
+
+        // https://github.com/philterd/phileas/issues/480: an ignored pattern is anchored to a span's text,
+        // where a pattern beginning with .* is linear. Probed with find() over a document-length canary it
+        // was quadratic and exceeded the budget, so the policy could not be loaded.
+        final Identifier identifier = new Identifier();
+        identifier.setClassification("org");
+        identifier.setPattern("[A-Z][a-z]+ (?:Court|Hospital)");
+        identifier.setIdentifierFilterStrategies(List.of(new IdentifierFilterStrategy()));
+        identifier.setIgnoredPatterns(List.of(new IgnoredPattern("courts", pattern)));
+
+        final Identifiers identifiers = new Identifiers();
+        identifiers.setIdentifiers(List.of(identifier));
+
+        final Policy policy = new Policy();
+        policy.setIdentifiers(identifiers);
+
+        final TextFilterResult result = filterService().filter(policy, "context",
+                "Treated at Mercy Hospital, then heard by the Supreme Court.");
+
+        // The policy loads, and the pattern ignores the court but not the hospital.
+        Assertions.assertEquals("Treated at {{{REDACTED-id}}}, then heard by the Supreme Court.",
+                result.getFilteredText());
 
     }
 
