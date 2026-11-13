@@ -50,7 +50,18 @@ public class DateAnonymizationService extends AbstractAnonymizationService {
     private static final Pattern DATE_YYYYMMDD_REGEX = Pattern.compile("\\b\\d{4}-\\d{2}-\\d{2}\\b");
     private static final Pattern DATE_MMDDYYYY_REGEX = Pattern.compile("\\b\\d{2}-\\d{2}-\\d{4}\\b");
     private static final Pattern DATE_MDYYYY_REGEX = Pattern.compile("\\b\\d{1,2}-\\d{1,2}-\\d{2,4}\\b");
-    private static final Pattern DATE_MONTH_REGEX = Pattern.compile("(?i)(\\b\\d{1,2}\\D{0,3})?\\b(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:tember|t)?|Oct(?:ober)?|(Nov|Dec)(?:ember)?)\\D?(\\d{1,2}(\\D?(st|nd|rd|th))?\\D?)(\\D?((19[7-9]\\d|20\\d{2})|\\d{2}))?\\b", Pattern.CASE_INSENSITIVE);
+
+    // The parts of DATE_MONTH_REGEX: an optional day before the month ("5 Sep 2020"), the month written out or
+    // abbreviated, then the day with an optional ordinal ("3rd") and an optional year.
+    private static final String DAY_BEFORE_MONTH = "(\\b\\d{1,2}\\D{0,3})?";
+    private static final String MONTH_NAMES =
+            "January|February|March|April|May|June|July|August|September|October|November|December";
+    private static final String MONTH_ABBREVIATIONS = "Jan|Feb|Mar|Apr|Jun|Jul|Aug|Sept|Sep|Oct|Nov|Dec";
+    private static final String DAY_AFTER_MONTH = "(\\d{1,2}(\\D?(st|nd|rd|th))?\\D?)";
+    private static final String YEAR = "(\\D?((19[7-9]\\d|20\\d{2})|\\d{2}))?";
+    private static final Pattern DATE_MONTH_REGEX = Pattern.compile("(?i)" + DAY_BEFORE_MONTH +
+            "\\b(?:" + MONTH_NAMES + "|" + MONTH_ABBREVIATIONS + ")\\.?\\D?" + DAY_AFTER_MONTH + YEAR + "\\b",
+            Pattern.CASE_INSENSITIVE);
 
     @Override
     public String anonymize(final String token) {
