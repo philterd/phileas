@@ -35,6 +35,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.time.temporal.ChronoField;
+import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -545,6 +546,61 @@ public class DateFilterStrategyTest extends AbstractFilterStrategyTest {
         final Replacement replacement = strategy.getReplacement(contextService, "name", "context",  date, WINDOW, new Crypto(), new FPE(), anonymizationService, filterPattern);
 
         Assertions.assertNotEquals(parsedDate.getMonthValue() + "-" + parsedDate.getDayOfMonth() + "-" + parsedDate.getYear(), replacement.getReplacement());
+
+    }
+
+    @Test
+    public void randomShiftWithContextScopeKeepsTheDaysBetweenDates() throws Exception {
+
+        final AnonymizationService anonymizationService = getAnonymizationService();
+        final FilterPattern filterPattern = new FilterPattern.FilterPatternBuilder(Pattern.compile("\\b\\d{4}-\\d{2}-\\d{2}"), 0.75).withFormat("uuuu-MM-dd").build();
+        final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("uuuu-MM-dd");
+
+        final AbstractFilterStrategy strategy = getFilterStrategy();
+        ((DateFilterStrategy)strategy).setShiftRandom(true);
+        strategy.setStrategy(AbstractFilterStrategy.SHIFT);
+        strategy.setReplacementScope(AbstractFilterStrategy.REPLACEMENT_SCOPE_CONTEXT);
+
+        // January 30 and 31 would both become the end of February if a month were added to each.
+        final String[] dates = {"2020-01-05", "2020-01-30", "2020-01-31", "2020-03-15", "2019-12-31"};
+
+        // Each new context chooses its own random shift.
+        for(int i = 0; i < 25; i++) {
+
+            final ContextService contextService = new DefaultContextService();
+
+            final LocalDate first = LocalDate.parse(dates[0], formatter);
+            final LocalDate shiftedFirst = LocalDate.parse(strategy.getReplacement(contextService, "name", "context", dates[0], WINDOW, new Crypto(), new FPE(), anonymizationService, filterPattern).getReplacement(), formatter);
+            Assertions.assertNotEquals(first, shiftedFirst);
+
+            for(final String date : dates) {
+
+                final LocalDate shifted = LocalDate.parse(strategy.getReplacement(contextService, "name", "context", date, WINDOW, new Crypto(), new FPE(), anonymizationService, filterPattern).getReplacement(), formatter);
+                Assertions.assertEquals(ChronoUnit.DAYS.between(first, LocalDate.parse(date, formatter)), ChronoUnit.DAYS.between(shiftedFirst, shifted));
+
+            }
+
+        }
+
+    }
+
+    @Test
+    public void randomShiftWithContextScopeIsKeptInTheContext() throws Exception {
+
+        final AnonymizationService anonymizationService = getAnonymizationService();
+        final ContextService contextService = new DefaultContextService();
+        final FilterPattern filterPattern = new FilterPattern.FilterPatternBuilder(Pattern.compile("\\b\\d{2}-\\d{2}-\\d{4}"), 0.75).withFormat("MM-dd-uuuu").build();
+
+        final AbstractFilterStrategy strategy = getFilterStrategy();
+        ((DateFilterStrategy)strategy).setShiftRandom(true);
+        strategy.setStrategy(AbstractFilterStrategy.SHIFT);
+        strategy.setReplacementScope(AbstractFilterStrategy.REPLACEMENT_SCOPE_CONTEXT);
+
+        final String first = strategy.getReplacement(contextService, "name", "context", "05-09-2020", WINDOW, new Crypto(), new FPE(), anonymizationService, filterPattern).getReplacement();
+        final String second = strategy.getReplacement(contextService, "name", "context", "05-09-2020", WINDOW, new Crypto(), new FPE(), anonymizationService, filterPattern).getReplacement();
+
+        Assertions.assertEquals(first, second);
+        Assertions.assertTrue(contextService.containsToken(DateFilterStrategy.CONTEXT_SHIFT_KEY));
 
     }
 
