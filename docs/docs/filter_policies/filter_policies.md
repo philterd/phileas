@@ -130,9 +130,10 @@ only to input at or over the `threshold`.
 | `overlap`   | Characters each piece shares with the end of the previous piece.                                   | `0`       |
 
 The `method` is one of `newline`, `characters`, or `width`, ignoring case, and `character` is accepted as an alias for
-`characters`. Any other name is an error: when splitting is enabled, filtering a document with that policy throws an
-`IllegalArgumentException` naming the accepted methods, whether or not the document reaches the `threshold`. With
-splitting disabled, `method` is not read.
+`characters`. Any other name is an error: when splitting is enabled, building the policy's filters throws an
+`IllegalArgumentException` naming the accepted methods. `PlainTextFilterService.prepare` throws it, and so does
+filtering a document with that policy, whether or not the document reaches the `threshold`. Redacting a PDF with that
+policy throws it too, although PDFs are not split. With splitting disabled, `method` is not read.
 
 Without an overlap, pieces are contiguous, so a value sitting across a piece boundary is seen only in part by each
 piece and can be missed. With `width` splitting, for example, `May 22, 1999` can be cut after `May 22,`, leaving the
