@@ -46,6 +46,7 @@ import java.time.format.DateTimeFormatterBuilder;
 import java.time.format.DateTimeParseException;
 import java.time.format.ResolverStyle;
 import java.time.temporal.ChronoField;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
@@ -57,6 +58,10 @@ public class DateFilterStrategy extends AbstractFilterStrategy {
     private static final Logger LOGGER = LogManager.getLogger(DateFilterStrategy.class);
 
     private static final SecureRandom RANDOM = new SecureRandom();
+
+    // The context entry that holds a context's random shift, in days. A detected token cannot contain a NUL
+    // character, so the entry cannot collide with a token's replacement.
+    static final String CONTEXT_SHIFT_KEY = "\0date-shift";
 
     private final FilterType filterType = FilterType.DATE;
 
@@ -212,9 +217,9 @@ public class DateFilterStrategy extends AbstractFilterStrategy {
 
             // A month and year alone is redacted: shifting it by days alone would leave it unchanged.
             replacement = readsFromText(filterPattern)
-                    ? read(token, filterPattern).filter(DateText::hasDay).map(date -> date.format(shift(date.date())))
+                    ? read(token, filterPattern).filter(DateText::hasDay).map(date -> date.format(shift(date.date(), contextService)))
                             .orElseGet(() -> unparsed(token, label, filterPattern))
-                    : shiftWithFormat(token, label, filterPattern);
+                    : shiftWithFormat(token, label, filterPattern, contextService);
 
         } else if(Strings.CI.equals(strategy, RELATIVE)) {
 
@@ -236,18 +241,33 @@ public class DateFilterStrategy extends AbstractFilterStrategy {
 
     }
 
-    /** Shifts a date by the strategy's days, months, and years, or by random amounts with shiftRandom. */
-    private LocalDate shift(final LocalDate date) {
+    /**
+     * Shifts a date by the strategy's days, months, and years, or by random amounts with shiftRandom. With
+     * shiftRandom and the CONTEXT replacement scope, the random shift is chosen for the first date the context
+     * sees and kept in the context as a number of days, so every date in the context moves by the same number of
+     * days and keeps its order and the days between it and the others.
+     */
+    private LocalDate shift(final LocalDate date, final ContextService contextService) {
 
-        if(shiftRandom) {
-            final int randomShiftDays = RANDOM.nextInt(1, 30);
-            final int randomShiftMonths = RANDOM.nextInt(1, 12);
-            final int randomShiftYears = -RANDOM.nextInt(1, 3);
-            return date.plusDays(randomShiftDays).plusMonths(randomShiftMonths).plusYears(randomShiftYears);
+        if(!shiftRandom) {
+            return date.plusDays(shiftDays).plusMonths(shiftMonths).plusYears(shiftYears);
         }
 
-        return date.plusDays(shiftDays).plusMonths(shiftMonths).plusYears(shiftYears);
+        if(contextService != null && Strings.CI.equals(replacementScope, REPLACEMENT_SCOPE_CONTEXT)) {
+            // Kept in days rather than months and years: adding a month moves January 30 and January 31 both to
+            // the end of February, so dates a day apart could come out the same.
+            final String days = contextService.computeReplacementIfAbsent(CONTEXT_SHIFT_KEY, filterType.getType(),
+                    () -> String.valueOf(ChronoUnit.DAYS.between(date, randomShift(date))));
+            return date.plusDays(Long.parseLong(days));
+        }
 
+        return randomShift(date);
+
+    }
+
+    /** Shifts a date forward by 1 to 29 days and 1 to 11 months and back by 1 or 2 years, chosen at random. */
+    private static LocalDate randomShift(final LocalDate date) {
+        return date.plusDays(RANDOM.nextInt(1, 30)).plusMonths(RANDOM.nextInt(1, 12)).plusYears(-RANDOM.nextInt(1, 3));
     }
 
     /** The current year, for reading two-digit years. */
@@ -312,12 +332,12 @@ public class DateFilterStrategy extends AbstractFilterStrategy {
 
     }
 
-    private String shiftWithFormat(final String token, final String label, final FilterPattern filterPattern) {
+    private String shiftWithFormat(final String token, final String label, final FilterPattern filterPattern, final ContextService contextService) {
 
         try {
 
             final DateTimeFormatter dtf = DateTimeFormatter.ofPattern(filterPattern.getFormat(), Locale.US).withResolverStyle(ResolverStyle.STRICT);
-            return shift(LocalDate.parse(token, dtf)).atStartOfDay().format(dtf);
+            return shift(LocalDate.parse(token, dtf), contextService).atStartOfDay().format(dtf);
 
         } catch (DateTimeParseException ex) {
 
