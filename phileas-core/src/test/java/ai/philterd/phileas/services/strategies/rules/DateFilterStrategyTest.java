@@ -604,4 +604,39 @@ public class DateFilterStrategyTest extends AbstractFilterStrategyTest {
 
     }
 
+    @Test
+    public void randomShiftMovesTheDateByAtLeastTheMinimum() throws Exception {
+        assertRandomShiftsAtLeastTheMinimum(AbstractFilterStrategy.REPLACEMENT_SCOPE_DOCUMENT);
+    }
+
+    @Test
+    public void randomShiftWithContextScopeMovesTheDateByAtLeastTheMinimum() throws Exception {
+        assertRandomShiftsAtLeastTheMinimum(AbstractFilterStrategy.REPLACEMENT_SCOPE_CONTEXT);
+    }
+
+    // February 28, 2021 can come back unchanged from 29 days and 11 months forward and a year back, and about one draw
+    // in 22 moves a date by fewer than 30 days, so 1,000 draws without the minimum would all but surely fail.
+    private void assertRandomShiftsAtLeastTheMinimum(final String replacementScope) throws Exception {
+
+        final AnonymizationService anonymizationService = getAnonymizationService();
+        final FilterPattern filterPattern = new FilterPattern.FilterPatternBuilder(Pattern.compile("\\b\\d{4}-\\d{2}-\\d{2}"), 0.75).withFormat("uuuu-MM-dd").build();
+        final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("uuuu-MM-dd");
+
+        final AbstractFilterStrategy strategy = getFilterStrategy();
+        ((DateFilterStrategy)strategy).setShiftRandom(true);
+        strategy.setStrategy(AbstractFilterStrategy.SHIFT);
+        strategy.setReplacementScope(replacementScope);
+
+        final LocalDate date = LocalDate.of(2021, 2, 28);
+
+        for(int i = 0; i < 1000; i++) {
+
+            final String replacement = strategy.getReplacement(new DefaultContextService(), "name", "context", date.format(formatter), WINDOW, new Crypto(), new FPE(), anonymizationService, filterPattern).getReplacement();
+            final long days = ChronoUnit.DAYS.between(date, LocalDate.parse(replacement, formatter));
+            Assertions.assertTrue(Math.abs(days) >= DateFilterStrategy.MIN_RANDOM_SHIFT_DAYS, "Shifted by " + days + " days.");
+
+        }
+
+    }
+
 }

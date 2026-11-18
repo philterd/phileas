@@ -69,9 +69,11 @@ The following filter strategy options are available for the `SHIFT` filter strat
 | `shiftDays`   | The number of days to shift the date. Can be a negative or positive integer.                                                                                                                                              | `0`           |
 | `shiftMonths` | The number of months to shift the date. Can be a negative or positive integer.                                                                                                                                            | `0`           |
 | `shiftYears`  | The number of years to shift the date. Can be a negative or positive integer.                                                                                                                                             | `0`           |
-| `shiftRandom` | When `true`, `shiftDays`, `shiftMonths`, and `shiftYears` are ignored and each date is instead shifted forward by 1 to 29 days and 1 to 11 months and back by 1 or 2 years, with each amount chosen at random for each date. | `false`       |
+| `shiftRandom` | When `true`, `shiftDays`, `shiftMonths`, and `shiftYears` are ignored and each date is instead shifted forward by 1 to 29 days and 1 to 11 months and back by 1 or 2 years, with each amount chosen at random for each date. A draw that would move the date by fewer than 30 days is drawn again. | `false`       |
 
 With `shiftRandom` and a `replacementScope` of `CONTEXT`, the random shift is chosen once for each context, for the first date the context sees, and every date in the context is moved by that same number of days. Dates in the context keep their order and the number of days between them, in one document and across documents filtered in the same context. With the default `DOCUMENT` scope, each date is shifted by its own random amount.
+
+The shift is kept in the `ContextService` the document is filtered with, not under the context's name. When using Phileas as a library, give each subject (for example, each patient) its own `ContextService` so each gets its own shift. Filtering every subject with one `ContextService` shifts all of their dates by the same amount, so one known original date reveals the shift for all of them.
 
 `SHIFT`, `TRUNCATE_TO_YEAR`, and `RELATIVE` transform these dates and redact any other date they cannot read:
 

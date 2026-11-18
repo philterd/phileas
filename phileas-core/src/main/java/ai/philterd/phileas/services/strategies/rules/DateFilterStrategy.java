@@ -63,6 +63,9 @@ public class DateFilterStrategy extends AbstractFilterStrategy {
     // character, so the entry cannot collide with a token's replacement.
     static final String CONTEXT_SHIFT_KEY = "\0date-shift";
 
+    // The fewest days a random shift moves a date.
+    static final int MIN_RANDOM_SHIFT_DAYS = 30;
+
     private final FilterType filterType = FilterType.DATE;
 
     @SerializedName("shiftRandom")
@@ -265,9 +268,21 @@ public class DateFilterStrategy extends AbstractFilterStrategy {
 
     }
 
-    /** Shifts a date forward by 1 to 29 days and 1 to 11 months and back by 1 or 2 years, chosen at random. */
+    /**
+     * Shifts a date forward by 1 to 29 days and 1 to 11 months and back by 1 or 2 years, chosen at random. A draw
+     * that moves the date by fewer than {@link #MIN_RANDOM_SHIFT_DAYS} days is drawn again: the amounts can nearly
+     * cancel, and 29 days and 11 months forward and a year back from February 28, 2021 leave it unchanged.
+     */
     private static LocalDate randomShift(final LocalDate date) {
-        return date.plusDays(RANDOM.nextInt(1, 30)).plusMonths(RANDOM.nextInt(1, 12)).plusYears(-RANDOM.nextInt(1, 3));
+
+        LocalDate shifted;
+
+        do {
+            shifted = date.plusDays(RANDOM.nextInt(1, 30)).plusMonths(RANDOM.nextInt(1, 12)).plusYears(-RANDOM.nextInt(1, 3));
+        } while(Math.abs(ChronoUnit.DAYS.between(date, shifted)) < MIN_RANDOM_SHIFT_DAYS);
+
+        return shifted;
+
     }
 
     /** The current year, for reading two-digit years. */
