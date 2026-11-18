@@ -582,6 +582,26 @@ public class StreetAddressFilterTest extends AbstractFilterTest {
     }
 
     @Test
+    public void filterUnitOnTheNextLine() throws Exception {
+
+        // A unit alone on the line below the street is folded into the street's span.
+        assertAddress("123 Main St\nApt 4B\nCedar Falls, IA 50613", "123 Main St\nApt 4B");
+        assertAddress("123 Main St\r\nApt 4B\r\nCedar Falls, IA 50613", "123 Main St\r\nApt 4B");
+        assertAddress("123 Main St,\nApt 4B", "123 Main St,\nApt 4B");
+        assertAddress("123 Main St,\r\nApt 4B", "123 Main St,\r\nApt 4B");
+        assertAddress("12 Pine Rd \n\tSuite 100 \nSpringfield, IL 62704", "12 Pine Rd \n\tSuite 100");
+        assertAddress("12 Pine Rd\n#5", "12 Pine Rd\n#5");
+
+        // Anything else on the unit's line, a word that only starts like a designator, or a second
+        // line break keeps the span on the street's line.
+        assertAddress("12 Pine Rd\nApt 4B, Springfield", "12 Pine Rd");
+        assertAddress("12 Pine Rd\nSteve", "12 Pine Rd");
+        assertAddress("12 Pine Rd\nFlorida", "12 Pine Rd");
+        assertAddress("12 Pine Rd\n\nApt 4B", "12 Pine Rd");
+
+    }
+
+    @Test
     public void filterWithCandidates1() throws Exception {
 
         final List<String> candidates = List.of("candidate1", "candidate2");

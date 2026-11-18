@@ -136,7 +136,7 @@ public class PdfEndToEndTest {
 
         // Write the byte array to a file.
         final File outputFile = File.createTempFile("redact", ".pdf");
-        //outputFile.deleteOnExit();
+        outputFile.deleteOnExit();
         final String output = outputFile.getAbsolutePath();
         LOGGER.info("Writing redacted PDF to {}", output);
         Files.write(new File(output).toPath(), response.getDocument());

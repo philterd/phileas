@@ -36,6 +36,7 @@ import ai.philterd.phileas.services.filters.custom.PhoneNumberRulesFilter;
 import ai.philterd.phileas.services.generators.OllamaReplacementGenerator;
 import ai.philterd.phileas.services.generators.ReplacementGenerator;
 import ai.philterd.phileas.services.generators.ReplacementValidator;
+import ai.philterd.phileas.services.split.SplitFactory;
 import ai.philterd.phileas.services.strategies.AbstractFilterStrategy;
 import ai.philterd.phileas.services.filters.regex.AgeFilter;
 import ai.philterd.phileas.services.filters.regex.BankRoutingNumberFilter;
@@ -220,6 +221,13 @@ public class FilterPolicyLoader {
         // Reject a bad pattern here, where the cost is paid once per policy, rather than on whichever
         // document first reaches it.
         new PolicyPatternValidator(phileasConfiguration.regexTimeoutMs()).validate(policy);
+
+        // Reject an unknown split method here too, so a policy prepared once for per-row callers fails
+        // when it is prepared rather than on its first row.
+        if (policy.getConfig().getSplitting().isEnabled()) {
+            SplitFactory.getSplitService(policy.getConfig().getSplitting().getMethod(),
+                    policy.getConfig().getSplitting().getThreshold());
+        }
 
         final List<Filter> enabledFilters = new LinkedList<>();
 

@@ -22,6 +22,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.security.SecureRandom;
+import java.util.List;
 
 public class DateAnonymizationServiceTest {
 
@@ -50,6 +51,23 @@ public class DateAnonymizationServiceTest {
 
         LOGGER.info("Date: " + replacement);
         Assertions.assertNotEquals(token, replacement);
+
+    }
+
+    @Test
+    public void anonymizeMonthAbbreviationWithPeriod() {
+
+        // https://github.com/philterd/phileas/issues/501
+        AnonymizationService anonymizationService = new DateAnonymizationService();
+
+        for (final String token : List.of("Sep 5, 2020", "Sep. 5, 2020", "Sept. 5, 2020", "Jan. 15, 2019",
+                "Dec. 3rd, 2021", "5 Sep. 2020", "April 1, 2019")) {
+            final String replacement = anonymizationService.anonymize(token);
+            Assertions.assertTrue(replacement.matches("\\p{L}+ \\d{2}, \\d{4}"), token + " -> " + replacement);
+        }
+
+        Assertions.assertTrue(anonymizationService.anonymize("11-18-2018").matches("\\d{2}-\\d{2}-\\d{4}"));
+        Assertions.assertTrue(anonymizationService.anonymize("2018-11-18").matches("\\d{4}-\\d{2}-\\d{2}"));
 
     }
 
