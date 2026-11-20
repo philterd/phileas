@@ -45,4 +45,27 @@ public interface ContextService {
      */
     String computeReplacementIfAbsent(final String token, final String filterType, final Supplier<String> replacementSupplier);
 
+    /**
+     * Atomically returns a value that belongs to the context rather than to a token, generating and
+     * storing one via <code>valueSupplier</code> only if the context has no value for <code>key</code>
+     * yet. The supplier is invoked at most once per key. The date filter keeps a context's random
+     * date shift this way.
+     *
+     * <p>The default implementation stores the value as a token entry through {@link
+     * #computeReplacementIfAbsent(String, String, Supplier)}, with <code>key</code> as the token. An
+     * implementation that evicts, deletes, or lists a context's entries should override this method
+     * to store the value with the context itself, so it is kept for as long as the context is.</p>
+     *
+     * @param key The name of the value. The default implementation keeps it among the tokens, so
+     *            use a key no detected token can be, such as one containing a NUL character.
+     * @param filterType The {@link ai.philterd.phileas.model.filtering.FilterType} the value is kept
+     *                   for. The default implementation stores the entry with it.
+     * @param valueSupplier Supplies a freshly generated value when the context has none for the key.
+     * @return The existing or newly generated value. Never <code>null</code> unless the supplier
+     *         returns <code>null</code>.
+     */
+    default String computeValueIfAbsent(final String key, final String filterType, final Supplier<String> valueSupplier) {
+        return computeReplacementIfAbsent(key, filterType, valueSupplier);
+    }
+
 }

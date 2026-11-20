@@ -38,6 +38,10 @@ import java.time.temporal.ChronoField;
 import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.function.Supplier;
 import java.util.regex.Pattern;
 
 public class DateFilterStrategyTest extends AbstractFilterStrategyTest {
@@ -601,6 +605,47 @@ public class DateFilterStrategyTest extends AbstractFilterStrategyTest {
 
         Assertions.assertEquals(first, second);
         Assertions.assertTrue(contextService.containsToken(DateFilterStrategy.CONTEXT_SHIFT_KEY));
+
+    }
+
+    @Test
+    public void randomShiftWithContextScopeIsKeptAsAContextValue() throws Exception {
+
+        // Keeps context values apart from token entries, as a ContextService that persists contexts would.
+        final Map<String, String> values = new ConcurrentHashMap<>();
+        final List<String> tokens = new CopyOnWriteArrayList<>();
+
+        final ContextService contextService = new DefaultContextService() {
+
+            @Override
+            public String computeReplacementIfAbsent(final String token, final String filterType, final Supplier<String> replacementSupplier) {
+                tokens.add(token);
+                return super.computeReplacementIfAbsent(token, filterType, replacementSupplier);
+            }
+
+            @Override
+            public String computeValueIfAbsent(final String key, final String filterType, final Supplier<String> valueSupplier) {
+                return values.computeIfAbsent(key, k -> valueSupplier.get());
+            }
+
+        };
+
+        final AnonymizationService anonymizationService = getAnonymizationService();
+        final FilterPattern filterPattern = new FilterPattern.FilterPatternBuilder(Pattern.compile("\\b\\d{4}-\\d{2}-\\d{2}"), 0.75).withFormat("uuuu-MM-dd").build();
+        final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("uuuu-MM-dd");
+
+        final AbstractFilterStrategy strategy = getFilterStrategy();
+        ((DateFilterStrategy)strategy).setShiftRandom(true);
+        strategy.setStrategy(AbstractFilterStrategy.SHIFT);
+        strategy.setReplacementScope(AbstractFilterStrategy.REPLACEMENT_SCOPE_CONTEXT);
+
+        final LocalDate first = LocalDate.parse(strategy.getReplacement(contextService, "name", "context", "2020-01-05", WINDOW, new Crypto(), new FPE(), anonymizationService, filterPattern).getReplacement(), formatter);
+        final LocalDate second = LocalDate.parse(strategy.getReplacement(contextService, "name", "context", "2020-03-15", WINDOW, new Crypto(), new FPE(), anonymizationService, filterPattern).getReplacement(), formatter);
+
+        Assertions.assertEquals(String.valueOf(ChronoUnit.DAYS.between(LocalDate.of(2020, 1, 5), first)), values.get(DateFilterStrategy.CONTEXT_SHIFT_KEY));
+        Assertions.assertEquals(ChronoUnit.DAYS.between(LocalDate.of(2020, 1, 5), LocalDate.of(2020, 3, 15)), ChronoUnit.DAYS.between(first, second));
+        Assertions.assertFalse(tokens.contains(DateFilterStrategy.CONTEXT_SHIFT_KEY));
+        Assertions.assertFalse(contextService.containsToken(DateFilterStrategy.CONTEXT_SHIFT_KEY));
 
     }
 
