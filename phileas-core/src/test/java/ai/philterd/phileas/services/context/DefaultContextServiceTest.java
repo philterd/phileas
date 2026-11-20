@@ -101,6 +101,54 @@ public class DefaultContextServiceTest {
         Assertions.assertEquals(1, observed.size(), "every thread must observe the same replacement");
     }
 
+    @Test
+    public void computeValueIfAbsentIsAtomicUnderContention() throws Exception {
+        final DefaultContextService service = new DefaultContextService();
+        final int threads = 32;
+        final AtomicInteger supplierCalls = new AtomicInteger();
+        final Set<String> observed = Collections.newSetFromMap(new ConcurrentHashMap<>());
+        final CountDownLatch start = new CountDownLatch(1);
+        final CountDownLatch done = new CountDownLatch(threads);
+        final ExecutorService pool = Executors.newFixedThreadPool(threads);
+
+        try {
+            for (int i = 0; i < threads; i++) {
+                pool.submit(() -> {
+                    try {
+                        start.await();
+                        observed.add(service.computeValueIfAbsent("\0value", "date", () -> {
+                            supplierCalls.incrementAndGet();
+                            return String.valueOf(System.nanoTime());
+                        }));
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                    } finally {
+                        done.countDown();
+                    }
+                });
+            }
+
+            start.countDown();
+            Assertions.assertTrue(done.await(30, TimeUnit.SECONDS), "threads did not finish in time");
+        } finally {
+            pool.shutdownNow();
+        }
+
+        Assertions.assertEquals(1, supplierCalls.get(), "the value must be generated exactly once");
+        Assertions.assertEquals(1, observed.size(), "every thread must observe the same value");
+    }
+
+    @Test
+    public void computeValueIfAbsentIsStoredAsATokenEntryByDefault() {
+        final DefaultContextService service = new DefaultContextService();
+
+        final String value = service.computeValueIfAbsent("\0value", "date", () -> "42");
+
+        Assertions.assertEquals("42", value);
+        Assertions.assertEquals("42", service.getReplacement("\0value"));
+        Assertions.assertEquals("42", service.computeReplacementIfAbsent("\0value", "date", () -> "should-not-be-used"));
+    }
+
     /**
      * Guards finding #1: concurrent writes of distinct tokens must not lose entries or corrupt
      * the backing map (a plain HashMap can drop entries or spin on concurrent resize).

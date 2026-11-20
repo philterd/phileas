@@ -59,8 +59,8 @@ public class DateFilterStrategy extends AbstractFilterStrategy {
 
     private static final SecureRandom RANDOM = new SecureRandom();
 
-    // The context entry that holds a context's random shift, in days. A detected token cannot contain a NUL
-    // character, so the entry cannot collide with a token's replacement.
+    // The key of the context value that holds a context's random shift, in days. A detected token cannot contain a
+    // NUL character, so the key cannot collide with a token's replacement.
     static final String CONTEXT_SHIFT_KEY = "\0date-shift";
 
     // The fewest days a random shift moves a date.
@@ -259,7 +259,7 @@ public class DateFilterStrategy extends AbstractFilterStrategy {
         if(contextService != null && Strings.CI.equals(replacementScope, REPLACEMENT_SCOPE_CONTEXT)) {
             // Kept in days rather than months and years: adding a month moves January 30 and January 31 both to
             // the end of February, so dates a day apart could come out the same.
-            final String days = contextService.computeReplacementIfAbsent(CONTEXT_SHIFT_KEY, filterType.getType(),
+            final String days = contextService.computeValueIfAbsent(CONTEXT_SHIFT_KEY, filterType.getType(),
                     () -> String.valueOf(ChronoUnit.DAYS.between(date, randomShift(date))));
             return date.plusDays(Long.parseLong(days));
         }
