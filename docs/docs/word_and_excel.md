@@ -109,12 +109,30 @@ Office documents keep copies of text in places other than the visible body.
 * Text and number cells, each detected on its own. A bare number can be an SSN or an account number.
 * Shared strings left behind by redacted cells, which are blanked
 * Print headers and footers
-* Legacy and threaded comments, and threaded comment authors
+* Legacy and threaded comments
 * Text in shapes and text boxes
 * Chart titles and labels, cached chart values, and each chart's embedded workbook
 * Cached formula results
 * Pivot caches
 * Embedded Word and Excel documents, redacted in place
+
+### Authors and document properties
+
+Who wrote and edited a document is cleared whatever the policy, including a policy with no filters, and in embedded
+Word and Excel documents. A chart's embedded workbook is cleared only when `redactCharts` is on; otherwise it is not
+opened. These fields are not run through detection.
+
+| Location | Cleared |
+|---|---|
+| Word comments and tracked changes | Each `w:author` is replaced with `Redacted`, and comment initials are removed. This includes insertions, deletions, moves, and formatting changes. |
+| Word `word/people.xml` | Removed, with the authors' presence identifiers, which are often email addresses or directory IDs. |
+| Excel legacy comments | Each author is replaced with `Redacted`. |
+| Excel threaded-comment persons | Each person's `displayName` is replaced with `Redacted`, and its `userId` and `providerId` are removed. |
+| `docProps/core.xml` | `dc:creator` and `cp:lastModifiedBy` are emptied. |
+| `docProps/app.xml` | `Company` and `Manager` are emptied. |
+
+In Excel, authors are cleared on every worksheet, including when `worksheet` selects one. The text of comments is
+redacted with the policy like any other text.
 
 ## Limitations
 
@@ -122,5 +140,5 @@ Office documents keep copies of text in places other than the visible body.
 * A redacted Excel cell is written as text, and a redacted formula cell loses its formula.
 * Excel cells are detected by their stored value, not as Excel displays them. Excel stores most dates as serial numbers, so a date displayed as `3/14/1985` is scanned as `31120` and is not found by the date filter. A number shown through a display format, such as `123456789` shown as `123-45-6789`, is scanned as `123456789`.
 * Embedded objects other than Word and Excel documents, such as legacy OLE objects, cannot be inspected.
-* Document properties, such as the author in `docProps/core.xml`, are not redacted.
+* Document properties other than those listed under [Authors and document properties](#authors-and-document-properties), such as the title, subject, keywords, and custom properties, are not redacted.
 * Only Word documents and Excel workbooks in the Transitional Office Open XML format, which Word and Excel save by default, are supported. Documents saved as Strict Open XML, and `.doc`, `.xls`, and OpenDocument files, are rejected.

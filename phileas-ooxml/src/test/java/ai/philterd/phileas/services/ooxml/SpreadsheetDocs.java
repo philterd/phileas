@@ -216,14 +216,14 @@ final class SpreadsheetDocs {
         return wb.toBytes();
     }
 
-    private static void addLegacyComment(final Workbook wb, final String cellRef, final String text, final String author) {
+    static void addLegacyComment(final Workbook wb, final String cellRef, final String text, final String author) {
         wb.pkg.rel(wb.sheetPart, REL + "comments", "/xl/comments1.xml");
         wb.pkg.part("/xl/comments1.xml", CT_COMMENTS, "<comments xmlns=\"" + S + "\"><authors><author>" + escape(author)
                 + "</author></authors><commentList><comment ref=\"" + cellRef + "\" authorId=\"0\"><text><r>"
                 + "<t xml:space=\"preserve\">" + escape(text) + "</t></r></text></comment></commentList></comments>");
     }
 
-    private static void addThreadedComment(final Workbook wb, final String cellRef, final String text, final String author) {
+    static void addThreadedComment(final Workbook wb, final String cellRef, final String text, final String author) {
         wb.pkg.rel(wb.workbookPart, REL_PERSON, "/xl/persons/person.xml");
         wb.pkg.part("/xl/persons/person.xml", CT_PERSON, "<personList xmlns=\"" + THREADED + "\" xmlns:x=\"" + S + "\">"
                 + "<person displayName=\"" + escapeAttribute(author) + "\" id=\"" + PERSON_ID

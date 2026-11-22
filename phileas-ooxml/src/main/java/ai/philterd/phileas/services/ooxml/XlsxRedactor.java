@@ -163,6 +163,7 @@ public final class XlsxRedactor {
                         true, null, order);
             }
             pruneUnusedSharedStrings(pkg);
+            AuthorshipCleaner.clearSpreadsheet(pkg);
             return pkg.save();
         }
     }
@@ -298,6 +299,7 @@ public final class XlsxRedactor {
             clearFormulaCachesAndForceRecalc(pkg, worksheet);
         }
         pruneUnusedSharedStrings(pkg);
+        AuthorshipCleaner.clearSpreadsheet(pkg);
         return captured;
     }
 
@@ -597,7 +599,7 @@ public final class XlsxRedactor {
         }
     }
 
-    // Legacy comments (text and authors), threaded comments, and the workbook's threaded-comment persons.
+    // Legacy and threaded comment text. Authors and persons are cleared by AuthorshipCleaner.
     private static void scanComments(final OoxmlPackage pkg, final String worksheet, final TextFilter filter,
                                      final boolean write, final List<OfficeRedactionSpan> captured, final Order order) {
         for (final PackagePart sheet : worksheetParts(pkg, worksheet)) {
@@ -608,11 +610,6 @@ public final class XlsxRedactor {
                 }
                 for (final Element t : descendants(d, S, "t")) {
                     if (ChartRedactor.redactLeaf(t, filter, write, captured, order) && write) {
-                        pkg.markDirty(commentsPart);
-                    }
-                }
-                for (final Element author : descendants(d, S, "author")) {
-                    if (ChartRedactor.redactLeaf(author, filter, write, captured, order) && write) {
                         pkg.markDirty(commentsPart);
                     }
                 }
@@ -627,27 +624,6 @@ public final class XlsxRedactor {
                         pkg.markDirty(threadedPart);
                     }
                 }
-            }
-        }
-        for (final PackagePart personPart : pkg.relatedByType(pkg.mainPart(), REL_PERSON)) {
-            final Document d = pkg.dom(personPart);
-            if (d == null) {
-                continue;
-            }
-            for (final Element person : children(d.getDocumentElement(), THREADED, "person")) {
-                final String original = person.getAttribute("displayName");
-                if (original.isEmpty()) {
-                    continue;
-                }
-                final TextFilterResult result = filter.apply(original);
-                if (result.getFilteredText().equals(original)) {
-                    continue;
-                }
-                if (write) {
-                    person.setAttribute("displayName", result.getFilteredText());
-                    pkg.markDirty(personPart);
-                }
-                OfficeSpanMath.capture(result, original, -1, null, captured, order);
             }
         }
     }

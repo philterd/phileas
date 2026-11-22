@@ -56,9 +56,14 @@ public class WordSavedDocumentTest {
         final Map<String, byte[]> after = TestPackage.entries(output);
         Assertions.assertEquals(before.keySet(), after.keySet());
         for (final String name : new String[]{"word/styles.xml", "word/theme/theme1.xml", "word/settings.xml",
-                "word/fontTable.xml", "word/webSettings.xml", "docProps/core.xml", "docProps/app.xml"}) {
+                "word/fontTable.xml", "word/webSettings.xml", "docProps/app.xml"}) {
             Assertions.assertArrayEquals(before.get(name), after.get(name), name);
         }
+
+        // Word saved the author as creator and last editor; app.xml's Company is already empty, so it is unchanged.
+        final String core = TestPackage.xml(output, "docProps/core.xml");
+        Assertions.assertFalse(core.contains("Test Author"), core);
+        Assertions.assertTrue(core.contains("<cp:revision>2</cp:revision>"), core);
     }
 
 }

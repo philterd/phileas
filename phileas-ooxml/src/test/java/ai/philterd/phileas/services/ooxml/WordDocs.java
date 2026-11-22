@@ -60,7 +60,7 @@ final class WordDocs {
     static final String REL_THREADED = "http://schemas.microsoft.com/office/2018/08/relationships/threadedComment";
     static final String REL_PEOPLE = "http://schemas.microsoft.com/office/2011/relationships/people";
     static final String REL_COMMENTS_EX = "http://schemas.microsoft.com/office/2011/relationships/commentsExtended";
-    static final String W15 = "http://schemas.microsoft.com/office/word/2015/wml";
+    static final String W15 = "http://schemas.microsoft.com/office/word/2012/wordml";
 
     /** Every namespace the raw-XML fixtures use, declared on the document root. */
     static final String DOC_NAMESPACES =

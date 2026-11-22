@@ -121,6 +121,24 @@ final class OoxmlPackage implements AutoCloseable {
         return null;
     }
 
+    /** The part a package-level relationship of this type points to, such as the document properties, or null. */
+    PackagePart packagePartByRelationshipType(final String type) {
+        for (final PackageRelationship rel : opc.getRelationshipsByType(type)) {
+            if (rel.getTargetMode() == TargetMode.EXTERNAL) {
+                continue;
+            }
+            try {
+                final PackagePart part = opc.getPart(rel);
+                if (part != null && !deletedParts.contains(partKey(part))) {
+                    return part;
+                }
+            } catch (final Exception e) {
+                // A dangling relationship has no part.
+            }
+        }
+        return null;
+    }
+
     /** The internal part a relationship of {@code source} points to, or null when it is external or missing. */
     PackagePart related(final PackagePart source, final PackageRelationship rel) {
         if (rel.getTargetMode() == TargetMode.EXTERNAL || isDeleted(rel, source)) {

@@ -186,6 +186,7 @@ public final class WordDocumentRedactor {
                         true, null, order);
             }
             removeThreadedCommentDuplicate(pkg);
+            AuthorshipCleaner.clearWord(pkg);
             return pkg.save();
         }
     }
@@ -228,6 +229,7 @@ public final class WordDocumentRedactor {
         }
         if (write) {
             removeThreadedCommentDuplicate(pkg);
+            AuthorshipCleaner.clearWord(pkg);
         }
         return captured;
     }

@@ -65,6 +65,7 @@ public class OoxmlValidationCorpusTest {
                         + "<w:p><w:r><w:t xml:space=\"preserve\">Line one</w:t><w:br/><w:t>" + EMAIL + "</w:t><w:tab/><w:t>tabbed</w:t></w:r></w:p>"
                         + "<w:tbl><w:tr><w:tc><w:p><w:r><w:t>SSN</w:t></w:r></w:p></w:tc><w:tc><w:p><w:r><w:t>" + SSN
                         + "</w:t></w:r></w:p></w:tc></w:tr></w:tbl><w:p/>"));
+        corpus.put("authorship.docx", AuthorshipClearingTest.word());
         corpus.put("embedded-ole.docx", WordDocs.createWithEmbeddedOleObject(new byte[]{1, 2, 3, 4}, "Body."));
 
         final List<String[]> rows = List.of(
@@ -81,6 +82,7 @@ public class OoxmlValidationCorpusTest {
         corpus.put("typed.xlsx", SpreadsheetDocs.createTyped(List.of(
                 new SpreadsheetDocs.CellSpec[]{SpreadsheetDocs.CellSpec.of("SSN"), SpreadsheetDocs.CellSpec.of("Copy")},
                 new SpreadsheetDocs.CellSpec[]{SpreadsheetDocs.CellSpec.of(SSN), SpreadsheetDocs.CellSpec.formula(SSN, "A2")})));
+        corpus.put("authorship.xlsx", AuthorshipClearingTest.workbook("Sheet1"));
         corpus.put("embedded-document.xlsx", SpreadsheetDocs.createXlsxWithEmbeddedPackage(rows,
                 OoxmlTestFixtures.docx("Embedded " + EMAIL), TestPackage.CT_DOCX));
         return corpus;
