@@ -91,4 +91,20 @@ public class XlsxFormulaCacheTest {
         Assertions.assertFalse(SpreadsheetDocs.fullCalcOnLoad(output));
     }
 
+    @Test
+    public void calcPrIsWrittenAfterExternalReferences() throws Exception {
+        final SpreadsheetDocs.Workbook wb = new SpreadsheetDocs.Workbook(
+                List.<String[]>of(new String[]{"george@example.com"}), "Sheet1");
+        wb.pkg.rel(wb.workbookPart, "rIdExt", TestPackage.R + "/externalLink",
+                "/xl/externalLinks/externalLink1.xml");
+        wb.pkg.part("/xl/externalLinks/externalLink1.xml", "application/vnd.openxmlformats-officedocument.spreadsheetml.externalLink+xml",
+                "<externalLink xmlns=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\"/>");
+        wb.afterSheets.append("<externalReferences><externalReference r:id=\"rIdExt\"/></externalReferences>");
+
+        final byte[] output = XlsxRedactor.redact(wb.toBytes(), FILTER, OoxmlRedactionOptions.defaults()).document();
+
+        final String workbook = TestPackage.xml(output, "xl/workbook.xml");
+        Assertions.assertTrue(workbook.indexOf("<externalReferences") < workbook.indexOf("<calcPr"), workbook);
+    }
+
 }

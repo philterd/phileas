@@ -524,10 +524,13 @@ public final class XlsxRedactor {
         Element calcPr = firstChild(workbook, S, "calcPr");
         if (calcPr == null) {
             calcPr = workbook.getOwnerDocument().createElementNS(S, qualified(workbook, "calcPr"));
-            // calcPr follows definedNames, or the sheets when there are none.
-            Element anchor = firstChild(workbook, S, "definedNames");
-            if (anchor == null) {
-                anchor = firstChild(workbook, S, "sheets");
+            // calcPr follows the last of sheets, functionGroups, externalReferences, and definedNames present.
+            Element anchor = null;
+            for (final String name : List.of("definedNames", "externalReferences", "functionGroups", "sheets")) {
+                anchor = firstChild(workbook, S, name);
+                if (anchor != null) {
+                    break;
+                }
             }
             if (anchor != null) {
                 workbook.insertBefore(calcPr, anchor.getNextSibling());

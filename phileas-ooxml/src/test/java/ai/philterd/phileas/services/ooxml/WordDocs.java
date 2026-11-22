@@ -357,12 +357,17 @@ final class WordDocs {
                 "<c:chartSpace xmlns:c=\"http://schemas.openxmlformats.org/drawingml/2006/chart\" "
                         + "xmlns:a=\"http://schemas.openxmlformats.org/drawingml/2006/main\" "
                         + "xmlns:r=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships\">"
-                        + "<c:chart><c:plotArea><c:layout/><c:barChart><c:barDir val=\"col\"/>"
+                        + "<c:chart><c:plotArea><c:layout/><c:barChart><c:barDir val=\"col\"/><c:grouping val=\"clustered\"/>"
                         + "<c:ser><c:idx val=\"0\"/><c:order val=\"0\"/>"
                         + "<c:tx><c:strRef><c:f>Sheet1!$B$1</c:f><c:strCache><c:ptCount val=\"1\"/><c:pt idx=\"0\"><c:v>" + escape(seriesName) + "</c:v></c:pt></c:strCache></c:strRef></c:tx>"
                         + "<c:cat><c:strRef><c:f>Sheet1!$A$2</c:f><c:strCache><c:ptCount val=\"1\"/><c:pt idx=\"0\"><c:v>" + escape(category) + "</c:v></c:pt></c:strCache></c:strRef></c:cat>"
                         + "<c:val><c:numRef><c:f>Sheet1!$B$2</c:f><c:numCache><c:ptCount val=\"1\"/><c:pt idx=\"0\"><c:v>42</c:v></c:pt></c:numCache></c:numRef></c:val>"
-                        + "</c:ser></c:barChart></c:plotArea></c:chart>"
+                        + "</c:ser><c:axId val=\"111111111\"/><c:axId val=\"222222222\"/></c:barChart>"
+                        + "<c:catAx><c:axId val=\"111111111\"/><c:scaling><c:orientation val=\"minMax\"/></c:scaling><c:delete val=\"0\"/>"
+                        + "<c:axPos val=\"b\"/><c:crossAx val=\"222222222\"/></c:catAx>"
+                        + "<c:valAx><c:axId val=\"222222222\"/><c:scaling><c:orientation val=\"minMax\"/></c:scaling><c:delete val=\"0\"/>"
+                        + "<c:axPos val=\"l\"/><c:crossAx val=\"111111111\"/></c:valAx>"
+                        + "</c:plotArea><c:plotVisOnly val=\"1\"/></c:chart>"
                         + "<c:externalData r:id=\"rIdEmb\"><c:autoUpdate val=\"0\"/></c:externalData></c:chartSpace>");
         pkg.part(DOCUMENT, TestPackage.CT_DOCX_MAIN, documentXml(chartDrawingParagraph(relId)));
         return pkg.toBytes();
@@ -405,12 +410,18 @@ final class WordDocs {
         return "<w:t xml:space=\"preserve\">" + escape(text) + "</w:t>";
     }
 
+    /** Drawing ids, unique within any document the fixtures build. */
+    private static final java.util.concurrent.atomic.AtomicInteger DRAWING_IDS = new java.util.concurrent.atomic.AtomicInteger(100);
+
     /** A paragraph anchoring a DrawingML text box holding {@code boxText}, with optional text around it. */
     static String textBoxParaXml(final String boxText, final String before, final String after) {
         return "<w:p>" + (before == null ? "" : run(before))
-                + "<w:r><w:drawing><wp:inline><a:graphic><a:graphicData "
-                + "uri=\"http://schemas.microsoft.com/office/word/2010/wordprocessingShape\">"
-                + "<wps:wsp><wps:txbx><w:txbxContent>" + paraXml(boxText)
+                + "<w:r><w:drawing><wp:inline distT=\"0\" distB=\"0\" distL=\"0\" distR=\"0\">"
+                + "<wp:extent cx=\"2000000\" cy=\"500000\"/><wp:docPr id=\"" + DRAWING_IDS.incrementAndGet() + "\" name=\"Text Box\"/>"
+                + "<a:graphic><a:graphicData uri=\"http://schemas.microsoft.com/office/word/2010/wordprocessingShape\">"
+                + "<wps:wsp><wps:cNvSpPr txBox=\"1\"/><wps:spPr><a:xfrm><a:off x=\"0\" y=\"0\"/><a:ext cx=\"2000000\" cy=\"500000\"/></a:xfrm>"
+                + "<a:prstGeom prst=\"rect\"><a:avLst/></a:prstGeom></wps:spPr>"
+                + "<wps:txbx><w:txbxContent>" + paraXml(boxText)
                 + "</w:txbxContent></wps:txbx><wps:bodyPr/></wps:wsp>"
                 + "</a:graphicData></a:graphic></wp:inline></w:drawing></w:r>"
                 + (after == null ? "" : run(after)) + "</w:p>";
@@ -418,7 +429,9 @@ final class WordDocs {
 
     /** A paragraph anchoring a legacy VML text box holding {@code boxText}. */
     static String vmlTextBoxParaXml(final String boxText) {
-        return "<w:p><w:r><w:pict><v:shape><v:textbox><w:txbxContent>" + paraXml(boxText)
+        return "<w:p><w:r><w:pict><v:shape id=\"TextBox" + DRAWING_IDS.incrementAndGet()
+                + "\" style=\"width:200pt;height:50pt\" coordsize=\"21600,21600\" path=\"m,l,21600r21600,l21600,xe\">"
+                + "<v:textbox><w:txbxContent>" + paraXml(boxText)
                 + "</w:txbxContent></v:textbox></v:shape></w:pict></w:r></w:p>";
     }
 

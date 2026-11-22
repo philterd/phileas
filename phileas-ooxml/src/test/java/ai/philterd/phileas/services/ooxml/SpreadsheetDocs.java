@@ -387,32 +387,67 @@ final class SpreadsheetDocs {
     // --- pivot caches ---------------------------------------------------------------------------
 
     /**
-     * A workbook with a pivot cache: a definition whose one field's shared items hold {@code sharedItems},
-     * records (an index into a shared item plus an optional inline string), and a minimal pivot table.
+     * A workbook with a pivot cache and a pivot table on column A of the first sheet. The cache's first field
+     * (column A) has {@code sharedItems} as its items, one record per item. With {@code recordInlineString},
+     * a second field (column B) holds values inline in the records, the first record's being that string.
      */
     static byte[] createXlsxWithPivotCache(final List<String[]> rows, final String[] sharedItems, final String recordInlineString) {
         final Workbook wb = new Workbook(rows, "Sheet1");
         final String definition = "/xl/pivotCache/pivotCacheDefinition1.xml";
         final String records = "/xl/pivotCache/pivotCacheRecords1.xml";
+        final String table = "/xl/pivotTables/pivotTable1.xml";
+        final boolean inlineField = recordInlineString != null;
+        final String[] header = rows.isEmpty() ? new String[0] : rows.get(0);
+        final String firstName = header.length > 0 ? header[0] : "Name";
+        final String secondName = header.length > 1 ? header[1] : "Value";
+        final int lastRow = Math.max(rows.size(), 2);
+
         final StringBuilder shared = new StringBuilder();
         for (final String s : sharedItems) {
             shared.append("<s v=\"").append(escapeAttribute(s)).append("\"/>");
         }
+        final StringBuilder recordXml = new StringBuilder();
+        for (int i = 0; i < sharedItems.length; i++) {
+            recordXml.append("<r><x v=\"").append(i).append("\"/>");
+            if (inlineField) {
+                recordXml.append("<s v=\"").append(escapeAttribute(i == 0 ? recordInlineString : "Other")).append("\"/>");
+            }
+            recordXml.append("</r>");
+        }
+
+        final String recordsRelId = wb.pkg.rel(definition, REL + "pivotCacheRecords", records);
         wb.pkg.part(definition, CT_PIVOT_CACHE_DEFINITION,
-                "<pivotCacheDefinition xmlns=\"" + S + "\" xmlns:r=\"" + TestPackage.R + "\" recordCount=\"2\">"
-                        + "<cacheSource type=\"worksheet\"><worksheetSource ref=\"A1:A3\" sheet=\"Sheet1\"/></cacheSource>"
-                        + "<cacheFields count=\"1\">"
-                        + "<cacheField name=\"Name\" numFmtId=\"0\"><sharedItems count=\"" + sharedItems.length + "\">" + shared + "</sharedItems></cacheField>"
+                "<pivotCacheDefinition xmlns=\"" + S + "\" xmlns:r=\"" + TestPackage.R + "\" r:id=\"" + recordsRelId
+                        + "\" recordCount=\"" + sharedItems.length + "\" createdVersion=\"6\" refreshedVersion=\"6\" minRefreshableVersion=\"3\">"
+                        + "<cacheSource type=\"worksheet\"><worksheetSource ref=\"A1:" + (inlineField ? "B" : "A") + lastRow + "\" sheet=\"Sheet1\"/></cacheSource>"
+                        + "<cacheFields count=\"" + (inlineField ? 2 : 1) + "\">"
+                        + "<cacheField name=\"" + escapeAttribute(firstName) + "\" numFmtId=\"0\"><sharedItems count=\"" + sharedItems.length + "\">" + shared + "</sharedItems></cacheField>"
+                        + (inlineField ? "<cacheField name=\"" + escapeAttribute(secondName) + "\" numFmtId=\"0\"><sharedItems/></cacheField>" : "")
                         + "</cacheFields></pivotCacheDefinition>");
-        wb.pkg.rel(definition, REL + "pivotCacheRecords", records);
-        final String inline = recordInlineString == null ? "" : "<r><s v=\"" + escapeAttribute(recordInlineString) + "\"/></r>";
         wb.pkg.part(records, CT_PIVOT_CACHE_RECORDS,
-                "<pivotCacheRecords xmlns=\"" + S + "\" xmlns:r=\"" + TestPackage.R + "\" count=\"2\"><r><x v=\"0\"/></r>" + inline + "</pivotCacheRecords>");
-        wb.pkg.rel(wb.sheetPart, REL + "pivotTable", "/xl/pivotTables/pivotTable1.xml");
-        wb.pkg.part("/xl/pivotTables/pivotTable1.xml", CT_PIVOT_TABLE,
-                "<pivotTableDefinition xmlns=\"" + S + "\" name=\"PivotTable1\" cacheId=\"1\" dataOnRows=\"1\">"
-                        + "<location ref=\"A5:B7\" firstHeaderRow=\"1\" firstDataRow=\"1\" firstDataCol=\"1\"/>"
-                        + "<pivotFields count=\"1\"><pivotField axis=\"axisRow\" showAll=\"0\"><items count=\"1\"><item x=\"0\"/></items></pivotField></pivotFields>"
+                "<pivotCacheRecords xmlns=\"" + S + "\" xmlns:r=\"" + TestPackage.R + "\" count=\"" + sharedItems.length + "\">"
+                        + recordXml + "</pivotCacheRecords>");
+
+        // A row field listing every item, then a grand total, placed to the right of the data.
+        final StringBuilder items = new StringBuilder();
+        final StringBuilder rowItems = new StringBuilder();
+        for (int i = 0; i < sharedItems.length; i++) {
+            items.append("<item x=\"").append(i).append("\"/>");
+            rowItems.append(i == 0 ? "<i><x/></i>" : "<i><x v=\"" + i + "\"/></i>");
+        }
+        wb.pkg.rel(wb.sheetPart, REL + "pivotTable", table);
+        wb.pkg.rel(table, REL + "pivotCacheDefinition", definition);
+        wb.pkg.part(table, CT_PIVOT_TABLE,
+                "<pivotTableDefinition xmlns=\"" + S + "\" name=\"PivotTable1\" cacheId=\"1\" dataCaption=\"Values\""
+                        + " createdVersion=\"6\" updatedVersion=\"6\" minRefreshableVersion=\"3\" outline=\"1\" outlineData=\"1\">"
+                        + "<location ref=\"H1:H" + (sharedItems.length + 2) + "\" firstHeaderRow=\"1\" firstDataRow=\"1\" firstDataCol=\"0\"/>"
+                        + "<pivotFields count=\"" + (inlineField ? 2 : 1) + "\">"
+                        + "<pivotField axis=\"axisRow\" showAll=\"0\"><items count=\"" + (sharedItems.length + 1) + "\">" + items + "<item t=\"default\"/></items></pivotField>"
+                        + (inlineField ? "<pivotField showAll=\"0\"/>" : "")
+                        + "</pivotFields>"
+                        + "<rowFields count=\"1\"><field x=\"0\"/></rowFields>"
+                        + "<rowItems count=\"" + (sharedItems.length + 1) + "\">" + rowItems + "<i t=\"grand\"><x/></i></rowItems>"
+                        + "<colItems count=\"1\"><i/></colItems>"
                         + "</pivotTableDefinition>");
         final String cacheRelId = wb.pkg.rel(wb.workbookPart, REL + "pivotCacheDefinition", definition);
         wb.afterSheets.append("<pivotCaches><pivotCache cacheId=\"1\" r:id=\"").append(cacheRelId).append("\"/></pivotCaches>");
@@ -544,7 +579,8 @@ final class SpreadsheetDocs {
             case BOOLEAN -> "<c r=\"" + ref + "\" t=\"b\">" + v + "</c>";
             case DATE -> "<c r=\"" + ref + "\" t=\"d\">" + v + "</c>";
             case ERROR -> "<c r=\"" + ref + "\" t=\"e\">" + v + "</c>";
-            case FORMULA -> "<c r=\"" + ref + "\"><f>" + escape(spec.formula() == null ? "1+1" : spec.formula()) + "</f>" + v + "</c>";
+            // A cached result that is not a number is a string result (t="str"); Excel rejects it otherwise.
+            case FORMULA -> "<c r=\"" + ref + "\"" + (NUMBER.matcher(spec.value()).matches() ? "" : " t=\"str\"") + "><f>" + escape(spec.formula() == null ? "1+1" : spec.formula()) + "</f>" + v + "</c>";
             default -> inlineCell(ref, spec.value(), true);
         };
     }
