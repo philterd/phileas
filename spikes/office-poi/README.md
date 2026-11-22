@@ -34,6 +34,9 @@ still finds in each output, validation errors, whether LibreOffice renders the t
 text, and whether the two ports read identical paragraph text. `semdiff.py a b` compares two packages
 part by part with namespaces resolved.
 
+`office/` checks the outputs in Microsoft Word and Excel and covers authoring real test documents; see
+[office/OFFICE-TESTING.md](office/OFFICE-TESTING.md).
+
 ## Results (2026-11-22, 43 fixtures)
 
 - Same spans redacted, and no residual PII from either port beyond one value both SSN filters reject.

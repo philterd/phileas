@@ -9,7 +9,10 @@ rm -rf "$S/out" && mkdir -p "$S/out/net" "$S/out/java" "$S/out/lo-net" "$S/out/l
 REPORT=$S/out/report.tsv
 printf "fixture\tnet_spans\tjava_spans\tnet_leaks\tjava_leaks\tnet_detect_after\tjava_detect_after\tin_valid_errs\tnet_valid_errs\tjava_valid_errs\tlo_opens_java\tlo_text_same\tparagraphs_same\tinput_leaks\n" > "$REPORT"
 
-for f in "$S"/fixtures/*; do
+# FIXTURES overrides the input folder, for example a folder of Office-authored documents.
+FIX="${FIXTURES:-$S/fixtures}"
+for f in "$FIX"/*.docx "$FIX"/*.xlsx; do
+  [ -f "$f" ] || continue
   name=$(basename "$f")
   ext="${name##*.}"
   n=$($NET redact $POLICY "$f" "$S/out/net/$name" 2>"$S/out/net/$name.err" | tail -1)
