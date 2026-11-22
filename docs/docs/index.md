@@ -125,4 +125,4 @@ BinaryDocumentFilterResult result = filterService.filter(policy, context, body, 
 
 The `policy` is a `Policy` deserialized from JSON. (See below for more about policies.) The `context` is an arbitrary value you can use to uniquely identify the document being filtered. The `body` is the PDF document bytes. The last argument is the output `MimeType`.
 
-The `result` contains the redacted document along with information about the identified sensitive information.
+The `result` contains the redacted document along with information about the identified sensitive information. To apply different policies to different pages, see [PDF Redaction](filter_policies/pdf.md#different-policies-for-different-pages).

@@ -75,6 +75,7 @@ public class PdfRedactor extends PDFTextStripper {
     private final Map<Integer, List<RedactedRectangle>> rectangles = new HashMap<>();
 
     private final Policy policy;
+    private final List<BoundingBox> boundingBoxes;
     private final List<Span> spans;
     private final PdfRedactionOptions pdfRedactionOptions;
 
@@ -104,8 +105,18 @@ public class PdfRedactor extends PDFTextStripper {
     private final PDColor replacementFontColor;
 
     public PdfRedactor(final Policy policy, final List<Span> spans, final PdfRedactionOptions pdfRedactionOptions) {
+        this(policy, policy.getGraphical().getBoundingBoxes(), spans, pdfRedactionOptions);
+    }
+
+    /**
+     * @param policy The policy whose {@code config.pdf} settings render the output.
+     * @param boundingBoxes The bounding boxes to draw, in place of the policy's.
+     */
+    public PdfRedactor(final Policy policy, final List<BoundingBox> boundingBoxes, final List<Span> spans,
+                       final PdfRedactionOptions pdfRedactionOptions) {
 
         this.policy = policy;
+        this.boundingBoxes = boundingBoxes;
         this.spans = spans;
         this.pdfRedactionOptions = pdfRedactionOptions;
         this.showReplacement = policy.getConfig().getPdf().getShowReplacement();
@@ -137,7 +148,6 @@ public class PdfRedactor extends PDFTextStripper {
         dummy.close();
 
         // Redact the bounding boxes in the output stream.
-        final List<BoundingBox> boundingBoxes = new LinkedList<>(policy.getGraphical().getBoundingBoxes());
         final Set<Integer> boundingBoxPages = new HashSet<>();
         for (final BoundingBox boundingBox : boundingBoxes) {
 
