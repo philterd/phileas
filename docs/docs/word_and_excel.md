@@ -106,7 +106,7 @@ Office documents keep copies of text in places other than the visible body.
 
 **Excel:**
 
-* Text, number, and date cells. A bare number can be an SSN or an account number.
+* Text and number cells, each detected on its own. A bare number can be an SSN or an account number.
 * Shared strings left behind by redacted cells, which are blanked
 * Print headers and footers
 * Legacy and threaded comments, and threaded comment authors
@@ -120,6 +120,7 @@ Office documents keep copies of text in places other than the visible body.
 
 * A Word paragraph that is redacted loses its inline formatting, and hyperlinks and fields in it become plain text. Line breaks and tabs are kept. Paragraphs with nothing redacted are unchanged.
 * A redacted Excel cell is written as text, and a redacted formula cell loses its formula.
+* Excel cells are detected by their stored value, not as Excel displays them. Excel stores most dates as serial numbers, so a date displayed as `3/14/1985` is scanned as `31120` and is not found by the date filter. A number shown through a display format, such as `123456789` shown as `123-45-6789`, is scanned as `123456789`.
 * Embedded objects other than Word and Excel documents, such as legacy OLE objects, cannot be inspected.
 * Document properties, such as the author in `docProps/core.xml`, are not redacted.
 * Only Word documents and Excel workbooks in the Transitional Office Open XML format, which Word and Excel save by default, are supported. Documents saved as Strict Open XML, and `.doc`, `.xls`, and OpenDocument files, are rejected.
