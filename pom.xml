@@ -40,6 +40,7 @@
     <modules>
         <module>phileas-core</module>
         <module>phileas-pdf</module>
+        <module>phileas-ooxml</module>
         <module>phileas-pheye-onnx</module>
         <module>phileas</module>
     </modules>
@@ -74,6 +75,7 @@
         <onnxruntime.version>1.31.0</onnxruntime.version>
         <pdfbox.version>3.0.8</pdfbox.version>
         <phisql.version>1.6.0</phisql.version>
+        <poi.version>6.0.0</poi.version>
     </properties>
     <repositories>
         <repository>
@@ -351,6 +353,11 @@
             <dependency>
                 <groupId>ai.philterd</groupId>
                 <artifactId>phileas-pdf</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>ai.philterd</groupId>
+                <artifactId>phileas-ooxml</artifactId>
                 <version>${project.version}</version>
             </dependency>
         </dependencies>

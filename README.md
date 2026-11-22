@@ -226,6 +226,7 @@ Phileas snapshots and releases as of version 2.12.1 are published to Maven Centr
 | `ai.philterd:phileas` | `phileas-core` and `phileas-pdf`. |
 | `ai.philterd:phileas-core` | The redaction engine and text redaction, with no PDFBox. |
 | `ai.philterd:phileas-pdf` | PDF redaction. |
+| `ai.philterd:phileas-ooxml` | Word (`.docx`) and Excel (`.xlsx`) redaction. Not included in `ai.philterd:phileas`. |
 | `ai.philterd:phileas-pheye-onnx` | Optional local PhEye inference. Add it alongside `phileas` or `phileas-core`. |
 
 All modules share one version. See [Modules](https://philterd.github.io/phileas/modules/).
