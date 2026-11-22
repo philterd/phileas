@@ -1,0 +1,6 @@
+fixtures/
+out/
+java/target/
+java/cp.txt
+dotnet-harness/bin/
+dotnet-harness/obj/
