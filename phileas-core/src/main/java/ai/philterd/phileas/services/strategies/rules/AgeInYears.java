@@ -116,7 +116,7 @@ final class AgeInYears {
             }
         }
 
-        return found ? OptionalDouble.of(hundreds + rest) : OptionalDouble.empty();
+        return found ? OptionalDouble.of((double) hundreds + rest) : OptionalDouble.empty();
 
     }
 
