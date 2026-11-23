@@ -116,6 +116,13 @@ public class UnstructuredDocumentProcessor implements DocumentProcessor {
         // Resolve overlapping spans.
         identifiedSpans = Span.resolveOverlappingSpans(identifiedSpans, input);
 
+        // A span trimmed to the text another span does not cover is replaced by what its filter makes of that text.
+        for(final Span span : identifiedSpans) {
+            if(span.getMatchedText() != null) {
+                span.replaceTrimmedText();
+            }
+        }
+
         // Sort the spans based on the confidence.
         identifiedSpans.sort(Comparator.comparing(Span::getConfidence));
 

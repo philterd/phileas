@@ -131,7 +131,7 @@ public abstract class StandardFilterStrategy extends AbstractFilterStrategy {
 
         } else if(Strings.CI.equals(effectiveStrategy, LAST_4)) {
 
-            replacement = token.substring(token.length() - 4);
+            replacement = token.substring(Math.max(0, token.length() - 4));
 
         } else if(Strings.CI.equals(effectiveStrategy, HASH_SHA256_REPLACE)) {
 

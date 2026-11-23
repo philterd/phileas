@@ -231,6 +231,7 @@ public class PhEyeFilter extends NerFilter {
                     replacement.getReplacement(), replacement.getSalt(), ignored, replacement.isApplied(), window, priority);
 
             span.setColor(replacement.getColor());
+            span.setReplacer(t -> getReplacement(contextService, policy, context, t, window, confidence, classification, null));
 
             return span;
 

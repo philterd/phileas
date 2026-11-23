@@ -177,6 +177,7 @@ public class PhoneNumberRulesFilter extends RulesFilter {
                     }
                 }
 
+                final double finalConfidence = confidence;
                 final String[] window = getWindow(input, match.start(), match.end());
                 final String classification = "";
                 final Replacement replacement = getReplacement(contextService, policy, context, text, window, confidence,
@@ -187,6 +188,8 @@ public class PhoneNumberRulesFilter extends RulesFilter {
                         text, replacement.getReplacement(), replacement.getSalt(), isIgnored, replacement.isApplied(), window, priority);
 
                 span.setColor(replacement.getColor());
+                span.setReplacer(t -> getReplacement(contextService, policy, context, t, window, finalConfidence,
+                        classification, null));
                 spans.add(span);
 
             }

@@ -96,6 +96,12 @@ public final class Span {
     // changes the text. Used for values found only by a cue word, which a validated filter outranks.
     private transient Set<FilterType> yieldsTo = Collections.emptySet();
 
+    // Makes the replacement again when the span's text is trimmed, or null if the span's filter did not set one.
+    private transient Replacer replacer;
+
+    // What the span's filter matched, when the span was trimmed to less than that; otherwise null.
+    private transient String matchedText;
+
     private int lineNumber = 0;
     private int pageNumber = 0;
     private int paragraphNumber = 0;
@@ -184,6 +190,8 @@ public final class Span {
         copy.setClassification(classification);
         copy.setPageAssignment(pageAssignment);
         copy.setYieldsTo(yieldsTo);
+        copy.setReplacer(replacer);
+        copy.setMatchedText(matchedText);
 
         return copy;
 
@@ -207,12 +215,9 @@ public final class Span {
                 final int start = span.getCharacterStart() + shift;
                 final int end = span.getCharacterEnd() + shift;
 
-                final Span shifted = Span.make(start, end, span.filterType, span.context, span.confidence,
-                        span.text, span.replacement, span.salt, span.ignored, span.applied, span.window, span.priority);
-
-                shifted.setColor(span.color);
-                shifted.setClassification(span.classification);
-                shifted.setYieldsTo(span.yieldsTo);
+                final Span shifted = span.copy();
+                shifted.setCharacterStart(start);
+                shifted.setCharacterEnd(end);
                 shiftedSpans.add(shifted);
 
             }
@@ -238,12 +243,9 @@ public final class Span {
                 final int start = span.getCharacterStart() + shift;
                 final int end = span.getCharacterEnd() + shift;
 
-                final Span shifted = Span.make(start, end, span.filterType, span.context, span.confidence,
-                        span.text, span.replacement, span.salt, span.ignored, span.applied, span.window, span.priority);
-
-                shifted.setColor(span.color);
-                shifted.setClassification(span.classification);
-                shifted.setYieldsTo(span.yieldsTo);
+                final Span shifted = span.copy();
+                shifted.setCharacterStart(start);
+                shifted.setCharacterEnd(end);
                 shiftedSpans.add(shifted);
 
         }
@@ -632,6 +634,7 @@ public final class Span {
         final Span trimmed = span.copy();
         trimmed.setCharacterStart(trimmedStart);
         trimmed.setText(text);
+        trimmed.setMatchedText(span.getMatchedText() != null ? span.getMatchedText() : span.getText());
 
         return trimmed;
 
@@ -913,6 +916,45 @@ public final class Span {
      */
     public void setYieldsTo(final Set<FilterType> yieldsTo) {
         this.yieldsTo = yieldsTo == null ? Collections.emptySet() : Set.copyOf(yieldsTo);
+    }
+
+    /**
+     * Makes this span's replacement again from its current text, after resolving overlapping spans trimmed
+     * it, so the replacement corresponds to the text the span reports. The replacement is kept if the
+     * span was not trimmed, its filter set no {@link Replacer}, or a strategy's condition is not met by the
+     * trimmed text, so the text the span covers is still replaced.
+     * @throws Exception Thrown if the replacement cannot be made.
+     */
+    public void replaceTrimmedText() throws Exception {
+
+        if (matchedText == null || replacer == null) {
+            return;
+        }
+
+        final Replacement remade = replacer.replace(text);
+
+        if (remade.isApplied()) {
+            replacement = remade.getReplacement();
+            salt = remade.getSalt();
+            color = remade.getColor();
+        }
+
+    }
+
+    public void setReplacer(final Replacer replacer) {
+        this.replacer = replacer;
+    }
+
+    /**
+     * @return What the span's filter matched, when resolving overlapping spans trimmed the span to less
+     * than that; otherwise <code>null</code>.
+     */
+    public String getMatchedText() {
+        return matchedText;
+    }
+
+    public void setMatchedText(final String matchedText) {
+        this.matchedText = matchedText;
     }
 
     public void setAlwaysValid(boolean alwaysValid) {

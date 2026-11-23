@@ -219,9 +219,10 @@ public abstract class RulesFilter extends Filter {
                         final String[] window = getWindow(input, characterStart, characterEnd);
 
                         // Get the span's replacement.
+                        final String[] strategyWindow = getStrategyWindow(input, characterStart, characterEnd, window);
+                        final double confidence = initialConfidence;
                         final Replacement replacement = getReplacement(contextService, policy, context, token,
-                                getStrategyWindow(input, characterStart, characterEnd, window), initialConfidence,
-                                getLabel(filterPattern), filterPattern);
+                                strategyWindow, confidence, getLabel(filterPattern), filterPattern);
 
                         // Create the span.
                         final Span span = Span.make(characterStart, characterEnd, getFilterType(), context,
@@ -229,6 +230,8 @@ public abstract class RulesFilter extends Filter {
                                 ignored, replacement.isApplied(), window, priority);
 
                         span.setColor(replacement.getColor());
+                        span.setReplacer(t -> getReplacement(contextService, policy, context, t, strategyWindow,
+                                confidence, getLabel(filterPattern), filterPattern));
 
                         // TODO: Add "format" to Span.make() so we don't have to make a separate call here.
                         span.setPattern(filterPattern.getFormat());

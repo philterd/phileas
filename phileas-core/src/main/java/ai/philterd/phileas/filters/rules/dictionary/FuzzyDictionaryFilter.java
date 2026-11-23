@@ -294,6 +294,7 @@ public class FuzzyDictionaryFilter extends DictionaryFilter {
 
         span.setColor(replacement.getColor());
         span.setClassification(classification);
+        span.setReplacer(t -> getReplacement(contextService, policy, context, t, window, confidence, classification, null));
 
         return span;
 

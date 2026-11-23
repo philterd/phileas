@@ -103,24 +103,24 @@ public class IgnoredTermsFilter extends PostFilter {
     @Override
     protected PostFiltered process(final String text, final Span span) {
 
-        String spanText = Filter.normalizeWhitespace(span.getText(text));
-
-        if(!ignored.isCaseSensitive()) {
-            spanText = spanText.toLowerCase();
-        }
-
-        final boolean mightContain = bloomFilter.mightContain(spanText);
-
-        final boolean ignored;
-
-        if(mightContain) {
-            ignored = ignoredTerms.contains(spanText);
-        } else {
-            ignored = false;
-        }
+        // A span trimmed where it overlapped another is also compared with what its filter matched.
+        final boolean ignored = isIgnoredTerm(span.getText(text))
+                || (span.getMatchedText() != null && isIgnoredTerm(span.getMatchedText()));
 
         // Return false if allowed; true if ignored.
         return new PostFiltered(span, ignored);
+
+    }
+
+    private boolean isIgnoredTerm(final String term) {
+
+        String normalized = Filter.normalizeWhitespace(term);
+
+        if(!ignored.isCaseSensitive()) {
+            normalized = normalized.toLowerCase();
+        }
+
+        return bloomFilter.mightContain(normalized) && ignoredTerms.contains(normalized);
 
     }
 

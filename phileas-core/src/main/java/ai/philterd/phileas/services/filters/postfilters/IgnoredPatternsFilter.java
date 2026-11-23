@@ -53,9 +53,13 @@ public class IgnoredPatternsFilter extends PostFilter {
 
         final String spanText = span.getText(text);
 
+        // A span trimmed where it overlapped another is also compared with what its filter matched.
+        final String matchedText = span.getMatchedText();
+
         for(final IgnoredPattern pattern : ignoredPatterns) {
 
-            final boolean ignored = pattern.matches(spanText, regexTimeoutMs);
+            final boolean ignored = pattern.matches(spanText, regexTimeoutMs)
+                    || (matchedText != null && pattern.matches(matchedText, regexTimeoutMs));
 
             if(ignored) {
                 return new PostFiltered(span, true);
