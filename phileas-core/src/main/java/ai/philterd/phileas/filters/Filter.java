@@ -464,7 +464,21 @@ public abstract class Filter {
      * @param text The text containing the token.
      * @return The window of surrounding tokens, including the token itself.
      */
-    public String[] getWindow(final String text, int characterStart, int characterEnd) {
+    public String[] getWindow(final String text, final int characterStart, final int characterEnd) {
+        return window(text, characterStart, characterEnd, true);
+    }
+
+    /**
+     * Get the window of tokens from a token on: the token itself and the tokens after it, without the
+     * tokens before it.
+     * @param text The text containing the token.
+     * @return The token and the tokens after it.
+     */
+    public String[] getWindowFromToken(final String text, final int characterStart, final int characterEnd) {
+        return window(text, characterStart, characterEnd, false);
+    }
+
+    private String[] window(final String text, int characterStart, int characterEnd, final boolean includeBefore) {
 
         if(characterStart < 0) {
             characterStart = 0;
@@ -486,7 +500,7 @@ public abstract class Filter {
 
         // TODO: Make all of this null safe.
 
-        for(finalStart = characterStart; finalStart != 0 && spacesSeen <= windowSize; finalStart--) {
+        for(finalStart = characterStart; includeBefore && finalStart != 0 && spacesSeen <= windowSize; finalStart--) {
 
             if(finalStart < text.length() && Character.isWhitespace(text.charAt(finalStart))) {
 
@@ -499,7 +513,12 @@ public abstract class Filter {
 
         // The loop stops at 0 without examining it, so when it reached the start of the text the
         // window begins at 0 rather than after a whitespace. Otherwise the first character is lost.
-        final int windowStart = spacesSeen <= windowSize ? 0 : finalStart + 1;
+        final int windowStart;
+        if(!includeBefore) {
+            windowStart = characterStart;
+        } else {
+            windowStart = spacesSeen <= windowSize ? 0 : finalStart + 1;
+        }
 
         spacesSeen = 0;
 

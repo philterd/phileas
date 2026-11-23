@@ -164,4 +164,23 @@ public class FilterTest extends AbstractFilterTest {
 
     }
 
+
+    @Test
+    public void windowFromTokenLeavesOutTheTokensBeforeIt() {
+
+        final Filter filter = new AgeFilter(new FilterConfiguration.FilterConfigurationBuilder().withWindowSize(2).build());
+        final String text = "Was age 6 years, now (age 6) months later.";
+        final int start = text.indexOf("age 6)");
+
+        Assertions.assertArrayEquals(new String[]{"years", "now", "age", "6", "months", "later"},
+                filter.getWindow(text, start, start + 5));
+        Assertions.assertArrayEquals(new String[]{"age", "6", "months", "later"},
+                filter.getWindowFromToken(text, start, start + 5));
+
+        // At the end of the text there is nothing after the token.
+        Assertions.assertArrayEquals(new String[]{"later"},
+                filter.getWindowFromToken(text, text.indexOf("later"), text.length() - 1));
+
+    }
+
 }

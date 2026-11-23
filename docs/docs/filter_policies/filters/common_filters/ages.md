@@ -71,8 +71,9 @@ The age compared is the age in years that the identified text gives:
 * An age after an `age` keyword ends at the number, so in `aged 18 months` the identified text is `aged 18`. When the
   word after it is `months`, `month`, `mos`, `mo`, `mths`, or `mth`, the number is read as months, each a twelfth of a
   year; `weeks`, `week`, `wks`, or `wk` as weeks of 7 days; and `days` or `day` as days, with a year of 365 days. So
-  `aged 18 months` compares as 1.5. The word is read from the span's window, so with a `windowSize` of `0` these ages
-  compare as years. The filter does not identify an age written with months, weeks, or days and no keyword, such as
+  `aged 18 months` compares as 1.5. The word is read from the span's window, so with `span.window.size` set to `0` in
+  the configuration these ages compare as years. A filter's `windowSize` of `0` means the configured size, not an empty
+  window. The filter does not identify an age written with months, weeks, or days and no keyword, such as
   `18 months old`.
 * An identified age whose number cannot be read satisfies no comparison, so its strategy is skipped.
 

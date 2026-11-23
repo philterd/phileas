@@ -92,6 +92,35 @@ public class AgeTokenConditionTest {
         Assertions.assertEquals(expected, filter("{ \"identifiers\": { \"age\": {} } }", text));
     }
 
+    private static String unitPolicy(final String condition, final String replacement) {
+        return """
+                {
+                  "identifiers": {
+                    "age": {
+                      "ageFilterStrategies": [
+                        { "condition": "%s", "strategy": "STATIC_REPLACE", "staticReplacement": "%s" },
+                        { "strategy": "STATIC_REPLACE", "staticReplacement": "[AGE]" }
+                      ]
+                    }
+                  }
+                }
+                """.formatted(condition, replacement);
+    }
+
+    // The same keyword and number twice within a window, with different units: each reads the unit after itself.
+    @ParameterizedTest
+    @CsvSource(delimiter = '|', value = {
+            "token < 1  | [INFANT]    | Was age 6 years, now age 6 months.       | Was age [AGE], now [INFANT] months.",
+            "token < 2  | [INFANT]    | aged 18 years, aged 18 months             | [AGE] years, [INFANT] months",
+            "token > 89 | 90 or older | aged 95 years and aged 95 days            | 90 or older years and [AGE] days",
+            "token > 89 | 90 or older | aged 1100 months, earlier aged 1100 days  | 90 or older months, earlier [AGE] days",
+            "token > 89 | 90 or older | aged 1100 days, later aged 1100 months    | [AGE] days, later 90 or older months"
+    })
+    public void eachKeywordAgeReadsTheUnitAfterItself(final String condition, final String replacement,
+                                                     final String text, final String expected) throws Exception {
+        Assertions.assertEquals(expected, filter(unitPolicy(condition, replacement), text), text);
+    }
+
     @Test
     public void aLaterStrategyAppliesToAgesTheConditionDoesNotMatch() throws Exception {
 

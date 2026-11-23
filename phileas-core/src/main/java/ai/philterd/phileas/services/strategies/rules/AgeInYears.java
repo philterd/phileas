@@ -67,7 +67,8 @@ final class AgeInYears {
     /**
      * The age in years that an age span expresses.
      * @param token The span's text.
-     * @param window The window of words around the span, including the span's own words.
+     * @param window The window of words from the span on, as the age filter gives its strategies. The
+     *               first occurrence of the span's words is taken as the span.
      * @return The age in years, or empty when the span has no number that can be read.
      */
     static OptionalDouble of(final String token, final String[] window) {

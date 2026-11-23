@@ -95,6 +95,17 @@ public class AgeFilter extends RegexFilter {
 
     }
 
+    /**
+     * The strategies read the unit of a keyword age, such as {@code aged 18 months}, from the word after the
+     * span, so their window starts at the span. With the full window, an earlier occurrence of the same words
+     * could be read instead.
+     */
+    @Override
+    protected String[] getStrategyWindow(final String input, final int characterStart, final int characterEnd,
+                                         final String[] window) {
+        return getWindowFromToken(input, characterStart, characterEnd);
+    }
+
     @Override
     public List<Span> postFilter(List<Span> spans) {
 

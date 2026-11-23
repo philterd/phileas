@@ -220,7 +220,8 @@ public abstract class RulesFilter extends Filter {
 
                         // Get the span's replacement.
                         final Replacement replacement = getReplacement(contextService, policy, context, token,
-                                window, initialConfidence, getLabel(filterPattern), filterPattern);
+                                getStrategyWindow(input, characterStart, characterEnd, window), initialConfidence,
+                                getLabel(filterPattern), filterPattern);
 
                         // Create the span.
                         final Span span = Span.make(characterStart, characterEnd, getFilterType(), context,
@@ -257,6 +258,20 @@ public abstract class RulesFilter extends Filter {
      * @param filterPattern The {@link FilterPattern} that matched.
      * @return The pattern's classification, or the filter's when the pattern has none.
      */
+    /**
+     * The window given to the filter's strategies when a span's replacement is made. The span keeps the
+     * full window either way. Unless overridden, the strategies get the full window.
+     * @param input The text input.
+     * @param characterStart The start of the span in the input.
+     * @param characterEnd The end of the span in the input.
+     * @param window The span's window.
+     * @return The window for the strategies.
+     */
+    protected String[] getStrategyWindow(final String input, final int characterStart, final int characterEnd,
+                                         final String[] window) {
+        return window;
+    }
+
     /**
      * Whether a match becomes a span. Called for each match before its replacement is made, so a filter
      * that validates matches (a check digit, a cue word) can reject one without side effects. Accepts
