@@ -215,9 +215,7 @@ public class AgeTokenConditionTest {
             "zero years old        | it is zero years old           | 0"
     })
     public void theAgeIsReadInYears(final String token, final String window, final double expected) {
-        final OptionalDouble age = AgeInYears.of(token, window.split(" "));
-        Assertions.assertTrue(age.isPresent(), token);
-        Assertions.assertEquals(expected, age.getAsDouble(), 1e-9, token);
+        assertAge(token, window, expected);
     }
 
     @ParameterizedTest
@@ -233,6 +231,11 @@ public class AgeTokenConditionTest {
             "aged 18          | aged 18                              | 18"
     })
     public void aKeywordAgeTakesTheUnitAfterIt(final String token, final String window, final double expected) {
+        assertAge(token, window, expected);
+    }
+
+    /** Asserts the age in years read from a span, with the window given as space-separated words. */
+    private static void assertAge(final String token, final String window, final double expected) {
         final OptionalDouble age = AgeInYears.of(token, window.split(" "));
         Assertions.assertTrue(age.isPresent(), token);
         Assertions.assertEquals(expected, age.getAsDouble(), 1e-9, token);
