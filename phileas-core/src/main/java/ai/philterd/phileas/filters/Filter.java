@@ -46,7 +46,6 @@ import ai.philterd.phileas.services.anonymization.CurrencyAnonymizationService;
 import ai.philterd.phileas.services.anonymization.DateAnonymizationService;
 import ai.philterd.phileas.services.anonymization.EmailAddressAnonymizationService;
 import ai.philterd.phileas.services.anonymization.FirstNameAnonymizationService;
-import ai.philterd.phileas.services.anonymization.HospitalAbbreviationAnonymizationService;
 import ai.philterd.phileas.services.anonymization.HospitalAnonymizationService;
 import ai.philterd.phileas.services.anonymization.IbanCodeAnonymizationService;
 import ai.philterd.phileas.services.anonymization.IpAddressAnonymizationService;
@@ -417,8 +416,6 @@ public abstract class Filter {
             return new FirstNameAnonymizationService(random, candidates);
         } else if(filterType == FilterType.HOSPITAL) {
             return new HospitalAnonymizationService(random, candidates);
-        } else if(filterType == FilterType.HOSPITAL_ABBREVIATION) {
-            return new HospitalAbbreviationAnonymizationService(random, candidates);
         } else if(filterType == FilterType.IBAN_CODE) {
             return new IbanCodeAnonymizationService(random, candidates);
         } else if(filterType == FilterType.IP_ADDRESS) {

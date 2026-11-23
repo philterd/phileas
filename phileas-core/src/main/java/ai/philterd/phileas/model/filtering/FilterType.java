@@ -38,7 +38,6 @@ public enum FilterType {
     FIRST_NAME("first-name", false),
     HEALTH_PLAN_MEMBER_ID("health-plan-member-id", true),
     HOSPITAL("hospital", false),
-    HOSPITAL_ABBREVIATION("hospital-abbreviation", false),
     IBAN_CODE("iban-code", true),
     IDENTIFIER("id", true),
     IP_ADDRESS("ip-address", true),

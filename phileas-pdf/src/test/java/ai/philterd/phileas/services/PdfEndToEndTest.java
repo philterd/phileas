@@ -323,7 +323,6 @@ public class PdfEndToEndTest {
         identifiers.setCounty(county);
         identifiers.setFirstName(firstName);
         identifiers.setHospital(hospital);
-        identifiers.setHospitalAbbreviation(hospitalAbbreviation);
         identifiers.setState(state);
         identifiers.setSurname(surname);*/
 
