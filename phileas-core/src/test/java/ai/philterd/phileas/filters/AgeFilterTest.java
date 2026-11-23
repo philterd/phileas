@@ -25,6 +25,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -294,7 +295,7 @@ public class AgeFilterTest extends AbstractFilterTest {
         showSpans(filtered.getSpans());
 
         Assertions.assertEquals(1, filtered.getSpans().size());
-        Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 15, 21, FilterType.AGE));
+        Assertions.assertTrue(checkSpan(filtered.getSpans().get(0), 15, 20, FilterType.AGE));
         Assertions.assertNotEquals(filtered.getSpans().get(0).getText(), filtered.getSpans().get(0).getReplacement());
 
         LOGGER.info("Span text: " + filtered.getSpans().get(0).getText());
@@ -441,7 +442,7 @@ public class AgeFilterTest extends AbstractFilterTest {
 
         final AgeFilter filter = new AgeFilter(filterConfiguration);
 
-        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "patient is 161 y/o and");
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, "patient is 101 y/o and");
 
         showSpans(filtered.getSpans());
 
@@ -798,6 +799,52 @@ public class AgeFilterTest extends AbstractFilterTest {
         Assertions.assertEquals(1, filtered.getSpans().size(), text);
         Assertions.assertEquals(expected, filtered.getSpans().get(0).getText(), text);
 
+    }
+
+
+    private List<String> spanTexts(final String text) throws Exception {
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(new AgeFilterStrategy()))
+                .withWindowSize(windowSize)
+                .build();
+
+        return new AgeFilter(filterConfiguration).filter(contextService, getPolicy(), "context", PIECE, text)
+                .getSpans().stream().map(Span::getText).toList();
+
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "the 1990 yo-yo craze",            // A unit that begins another word.
+            "she bought 3 yo-yos",
+            "the bridge is 150 years old",     // Over the 125 ceiling.
+            "a 1990 yr old car",
+            "the 2019 years old",
+            "patient is 126 years old",
+            "patient is 161 y/o and",
+            "one hundred and fifty years old"
+    })
+    public void notAnAge(final String text) throws Exception {
+        Assertions.assertEquals(List.of(), spanTexts(text), text);
+    }
+
+    @ParameterizedTest
+    @CsvSource(delimiter = '|', value = {
+            "patient is 125 years old                | 125 years old",
+            "a 5 yo boy                              | 5 yo",
+            "Patient is 75 yo.                       | 75 yo",
+            "Patient is 61 y/o.                      | 61 y/o",
+            "a 47-year-old woman                     | 47-year-old",
+            "a 47 year-old woman                     | 47 year-old",
+            "the patient is 3.5 years old.           | 3.5 years old",
+            "he is one hundred and two years old     | one hundred and two years old",
+            "the patient is 39yrs. old               | 39yrs. old",
+            "the patient, 47 yo, was seen            | 47 yo",
+            "she turned 30 years-old today           | 30 years-old"
+    })
+    public void anAgeIsDetectedAndEndsAtItsUnit(final String text, final String expected) throws Exception {
+        Assertions.assertEquals(List.of(expected), spanTexts(text), text);
     }
 
 }

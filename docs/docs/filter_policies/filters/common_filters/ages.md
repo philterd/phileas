@@ -12,6 +12,14 @@ form (`Age: thirty-five`). The whitespace around a separator may include a line 
 one line with its value on the next is also identified. The keyword may also be followed by `of`, so
 `at the age of 39` and `age of thirty-nine` are identified, with the span covering `age of 39`.
 
+An age written with a unit (`years`, `yrs`, `yr`, `yo`, or `y/o`) is identified only up to 125, well above
+the longest recorded lifespan, so a year or the age of an object, such as `the 2019 years old` or
+`the bridge is 150 years old`, is not identified as an age. An age after an `age` or `aged` keyword is not
+bounded this way, since a unit after it, as in `aged 1100 months`, can make a large number a real age. A
+unit that begins another word, as `yo` does in `yo-yo`, is not a unit. The identified text ends at the
+unit, or at `old` after it, so punctuation that follows, such as the comma in `47 yo, female`, is not
+part of it.
+
 ### Required Parameters
 
 This filter has no required parameters.

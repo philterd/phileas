@@ -35,7 +35,7 @@ import java.util.regex.Pattern;
  * with a month as a twelfth of a year and a week as seven of a year's 365 days. Any other word, or none, leaves
  * the number in years.</p>
  */
-final class AgeInYears {
+public final class AgeInYears {
 
     private static final Pattern DIGITS = Pattern.compile("[0-9]+(?:\\.[0-9]+)?|\\.[0-9]+");
     private static final Pattern KEYWORD = Pattern.compile("age(?:d|\\s+of)?\\b", Pattern.CASE_INSENSITIVE);
@@ -71,7 +71,7 @@ final class AgeInYears {
      *               first occurrence of the span's words is taken as the span.
      * @return The age in years, or empty when the span has no number that can be read.
      */
-    static OptionalDouble of(final String token, final String[] window) {
+    public static OptionalDouble of(final String token, final String[] window) {
 
         if (token == null) {
             return OptionalDouble.empty();
