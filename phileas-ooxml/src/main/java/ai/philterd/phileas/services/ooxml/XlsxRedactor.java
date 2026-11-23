@@ -113,6 +113,7 @@ public final class XlsxRedactor {
             if (workbook == null || pkg.dom(workbook) == null) {
                 return pkg.save();
             }
+            AuthorshipCleaner.clearSpreadsheet(pkg);
             final List<String> sharedStrings = sharedStrings(pkg);
             int cellIndex = 0;
             boolean anyCellRedacted = false;
@@ -163,7 +164,6 @@ public final class XlsxRedactor {
                         true, null, order);
             }
             pruneUnusedSharedStrings(pkg);
-            AuthorshipCleaner.clearSpreadsheet(pkg);
             return pkg.save();
         }
     }
@@ -233,6 +233,8 @@ public final class XlsxRedactor {
         if (workbook == null || pkg.dom(workbook) == null) {
             return captured;
         }
+        // Before comment text is redacted, so a note's author name is matched as Excel wrote it.
+        AuthorshipCleaner.clearSpreadsheet(pkg);
         final String worksheet = options.getWorksheet();
         final Set<Integer> fullColumns = options.getFullyRedactedColumns();
         final List<String> sharedStrings = sharedStrings(pkg);
@@ -299,7 +301,6 @@ public final class XlsxRedactor {
             clearFormulaCachesAndForceRecalc(pkg, worksheet);
         }
         pruneUnusedSharedStrings(pkg);
-        AuthorshipCleaner.clearSpreadsheet(pkg);
         return captured;
     }
 
@@ -312,6 +313,8 @@ public final class XlsxRedactor {
         if (workbook == null || pkg.dom(workbook) == null) {
             return captured;
         }
+        // As on redaction, so a note's author name is not reported. The package is not saved.
+        AuthorshipCleaner.clearSpreadsheet(pkg);
         final List<String> sharedStrings = sharedStrings(pkg);
         int cellIndex = 0;
         for (final CellRef c : enumerateCells(pkg, worksheet)) {

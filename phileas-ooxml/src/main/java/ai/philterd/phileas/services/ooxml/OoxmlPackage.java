@@ -337,7 +337,8 @@ final class OoxmlPackage implements AutoCloseable {
         }
     }
 
-    private void removeRelationship(final PackagePart source, final String id) {
+    /** Removes a relationship of {@code source}, leaving any part it targets; used for external relationships. */
+    void removeRelationship(final PackagePart source, final String id) {
         final Element element = relationshipElement(source, id);
         if (element != null) {
             element.getParentNode().removeChild(element);
