@@ -1,0 +1,210 @@
+/*
+ *     Copyright 2026 Philterd, LLC @ https://www.philterd.ai
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *          http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package ai.philterd.phileas.services.filters.filtering;
+
+import ai.philterd.phileas.PhileasConfiguration;
+import ai.philterd.phileas.model.filtering.BinaryDocumentFilterResult;
+import ai.philterd.phileas.model.filtering.MimeType;
+import ai.philterd.phileas.model.filtering.Span;
+import ai.philterd.phileas.policy.Policy;
+import ai.philterd.phileas.services.context.DefaultContextService;
+import ai.philterd.phileas.services.disambiguation.vector.InMemoryVectorService;
+import ai.philterd.phileas.services.ooxml.OoxmlRedactionOptions;
+import ai.philterd.phileas.services.ooxml.OoxmlTestFixtures;
+import com.google.gson.Gson;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+
+import java.nio.charset.StandardCharsets;
+import java.security.SecureRandom;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
+
+public class OoxmlFilterServiceTest {
+
+    private static final String EMAIL = "jane.doe@example.com";
+    private static final Policy POLICY = new Gson().fromJson(
+            "{\"identifiers\":{\"emailAddress\":{},\"ssn\":{}}}", Policy.class);
+
+    private static OoxmlFilterService service() {
+        return new OoxmlFilterService(new PhileasConfiguration(new Properties()),
+                new DefaultContextService(), new InMemoryVectorService(), null);
+    }
+
+    @Test
+    public void redactsWordDocument() throws Exception {
+        final byte[] input = OoxmlTestFixtures.docx("Keep this.", "Email " + EMAIL + " now.", "SSN 123-45-6789.");
+
+        final BinaryDocumentFilterResult result = service().filter(POLICY, "ctx", input, MimeType.APPLICATION_DOCX);
+
+        final String document = OoxmlTestFixtures.entry(result.getDocument(), "word/document.xml");
+        Assertions.assertFalse(document.contains(EMAIL));
+        Assertions.assertFalse(document.contains("123-45-6789"));
+        Assertions.assertTrue(document.contains("Keep this."));
+
+        final List<Span> spans = result.getExplanation().appliedSpans();
+        Assertions.assertEquals(2, spans.size());
+        final Span email = spans.get(0);
+        Assertions.assertEquals(1, email.getParagraphNumber());
+        Assertions.assertEquals("Email ".length(), email.getCharacterStart());
+        Assertions.assertEquals(EMAIL, email.getText());
+        Assertions.assertEquals(2, spans.get(1).getParagraphNumber());
+    }
+
+    @Test
+    public void redactsExcelWorkbook() throws Exception {
+        final byte[] input = OoxmlTestFixtures.xlsx(List.of(
+                new String[]{"Name", "Email"},
+                new String[]{"Jane", EMAIL}));
+
+        final BinaryDocumentFilterResult result = service().filter(POLICY, "ctx", input, null);
+
+        Assertions.assertFalse(OoxmlTestFixtures.allXml(result.getDocument()).contains(EMAIL));
+        final List<Span> spans = result.getExplanation().appliedSpans();
+        Assertions.assertEquals(1, spans.size());
+        Assertions.assertEquals(3, spans.get(0).getParagraphNumber()); // the fourth cell
+    }
+
+    @Test
+    public void writesUnchangedPartsBackUnchanged() throws Exception {
+        final byte[] input = OoxmlTestFixtures.docxWithHeader("Plain header", "Email " + EMAIL + ".");
+
+        final byte[] output = service().filter(POLICY, "ctx", input, null).getDocument();
+
+        final Map<String, byte[]> before = OoxmlTestFixtures.entries(input);
+        final Map<String, byte[]> after = OoxmlTestFixtures.entries(output);
+        Assertions.assertEquals(List.copyOf(before.keySet()), List.copyOf(after.keySet()));
+        for (final String name : before.keySet()) {
+            if (name.equals("word/document.xml")) {
+                Assertions.assertFalse(new String(after.get(name), StandardCharsets.UTF_8).contains(EMAIL));
+            } else {
+                Assertions.assertArrayEquals(before.get(name), after.get(name), name);
+            }
+        }
+    }
+
+    @Test
+    public void doesNotAddCorePropertiesOrContentTypeOverrides() throws Exception {
+        // A package whose default content type for .xml is the main part's, which is the case POI's own
+        // save adds a "/.xml" override for.
+        final byte[] input = OoxmlTestFixtures.docxWithMainPartDefaultContentType("Email " + EMAIL + ".");
+
+        final byte[] output = service().filter(POLICY, "ctx", input, null).getDocument();
+
+        final Map<String, byte[]> after = OoxmlTestFixtures.entries(output);
+        Assertions.assertFalse(after.containsKey("docProps/core.xml"));
+        final String contentTypes = new String(after.get("[Content_Types].xml"), StandardCharsets.UTF_8);
+        Assertions.assertFalse(contentTypes.contains("PartName=\"/.xml\""));
+        Assertions.assertArrayEquals(OoxmlTestFixtures.entries(input).get("[Content_Types].xml"), after.get("[Content_Types].xml"));
+    }
+
+    @Test
+    public void applyReappliesSpansByPosition() throws Exception {
+        final OoxmlFilterService service = service();
+        final byte[] input = OoxmlTestFixtures.docx("Email " + EMAIL + " now.");
+        final List<Span> spans = service.filter(POLICY, "ctx", input, null).getExplanation().appliedSpans();
+
+        final byte[] output = service.apply(POLICY, input, spans, MimeType.APPLICATION_DOCX);
+
+        final String document = OoxmlTestFixtures.entry(output, "word/document.xml");
+        Assertions.assertFalse(document.contains(EMAIL));
+        Assertions.assertTrue(document.contains(spans.get(0).getReplacement()));
+    }
+
+    @Test
+    public void applyRedactsHyperlinkTargetsWithThePolicy() throws Exception {
+        final byte[] input = OoxmlTestFixtures.docxWithHyperlink("write to us", "mailto:" + EMAIL);
+
+        final byte[] output = service().apply(POLICY, input, List.of(), null);
+
+        Assertions.assertFalse(OoxmlTestFixtures.allXml(output).contains(EMAIL));
+    }
+
+    @Test
+    public void rejectsAnOutputFormatDifferentFromTheInput() {
+        final byte[] input = OoxmlTestFixtures.docx("Email " + EMAIL + ".");
+        Assertions.assertThrows(IllegalArgumentException.class,
+                () -> service().filter(POLICY, "ctx", input, MimeType.APPLICATION_PDF));
+        Assertions.assertThrows(IllegalArgumentException.class,
+                () -> service().filter(POLICY, "ctx", input, MimeType.APPLICATION_XLSX));
+    }
+
+    @Test
+    public void rejectsAZipThatIsNotAWordOrExcelDocument() {
+        final byte[] notOffice = OoxmlTestFixtures.zip("readme.txt", "Email " + EMAIL);
+        Assertions.assertThrows(IllegalArgumentException.class, () -> service().filter(POLICY, "ctx", notOffice, null));
+        final byte[] notZip = ("Email " + EMAIL).getBytes(StandardCharsets.UTF_8);
+        Assertions.assertThrows(IllegalArgumentException.class, () -> service().filter(POLICY, "ctx", notZip, null));
+    }
+
+    @Test
+    public void warmServiceRequiresPerCallServices() {
+        final OoxmlFilterService warm = new OoxmlFilterService(new PhileasConfiguration(new Properties()), null);
+        final byte[] input = OoxmlTestFixtures.docx("text");
+        Assertions.assertThrows(IllegalStateException.class, () -> warm.filter(POLICY, "ctx", input, null));
+        Assertions.assertDoesNotThrow(() -> warm.filter(POLICY, new DefaultContextService(), new InMemoryVectorService(),
+                "ctx", input, null));
+    }
+
+    @Test
+    public void reportsFullyRedactedColumnsAsSpansThatApplyReapplies() throws Exception {
+        final OoxmlFilterService service = new OoxmlFilterService(new PhileasConfiguration(new Properties()),
+                new DefaultContextService(), new InMemoryVectorService(), new SecureRandom(), null,
+                OoxmlRedactionOptions.defaults().setFullyRedactedColumns(Set.of(1)));
+        final byte[] input = OoxmlTestFixtures.xlsx(List.of(new String[]{"Name"}, new String[]{"Zebulon Quixote"}));
+
+        final List<Span> spans = service.filter(POLICY, "ctx", input, null).getExplanation().appliedSpans();
+
+        Assertions.assertEquals(1, spans.size());
+        Assertions.assertEquals("full-column", spans.get(0).getClassification());
+        Assertions.assertEquals(1, spans.get(0).getParagraphNumber());
+        final byte[] applied = service.apply(POLICY, input, spans, null);
+        Assertions.assertFalse(OoxmlTestFixtures.allXml(applied).contains("Zebulon"));
+    }
+
+    @Test
+    public void filterFailureInAnEmbeddedWorkbookPropagates() {
+        final byte[] workbook = OoxmlTestFixtures.xlsx(List.<String[]>of(new String[]{"cell text"}));
+        final byte[] input = OoxmlTestFixtures.docxWithEmbeddedXlsx("Body text.", workbook);
+        final ai.philterd.phileas.services.ooxml.TextFilter failing = text -> {
+            if (text.equals("cell text")) {
+                throw new IllegalStateException("filter unavailable");
+            }
+            return ai.philterd.phileas.services.ooxml.OoxmlTestFixtures.unchanged(text);
+        };
+
+        Assertions.assertThrows(IllegalStateException.class, () -> ai.philterd.phileas.services.ooxml.WordDocumentRedactor
+                .redact(input, failing, OoxmlRedactionOptions.defaults()));
+    }
+
+    @Test
+    public void sameInputGivesTheSameOutput() throws Exception {
+        final byte[] input = OoxmlTestFixtures.docxWithHeader("Plain header", "Email " + EMAIL + ".");
+        final byte[] first = service().filter(POLICY, "ctx", input, null).getDocument();
+        Thread.sleep(2100); // past the zip format's two-second time resolution
+        final byte[] second = service().filter(POLICY, "ctx", input, null).getDocument();
+        Assertions.assertArrayEquals(first, second);
+    }
+
+    @Test
+    public void rejectsStrictOpenXml() {
+        final byte[] input = OoxmlTestFixtures.strictDocx("Email " + EMAIL + ".");
+        Assertions.assertThrows(IllegalArgumentException.class, () -> service().filter(POLICY, "ctx", input, null));
+    }
+
+}

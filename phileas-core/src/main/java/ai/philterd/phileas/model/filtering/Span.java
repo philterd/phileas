@@ -102,6 +102,9 @@ public final class Span {
 
     private transient String lineHash;
 
+    // The label of the per-page policy assignment that found this span in a PDF, or null.
+    private String pageAssignment;
+
     /**
      * Don't use this constructor.
      * Use <code>span.make()</code> instead.
@@ -175,6 +178,7 @@ public final class Span {
 
         copy.setColor(color);
         copy.setClassification(classification);
+        copy.setPageAssignment(pageAssignment);
 
         return copy;
 
@@ -671,6 +675,7 @@ public final class Span {
                 append(lineNumber).
                 append(pageNumber).
                 append(paragraphNumber).
+                append(pageAssignment).
                 toHashCode();
 
     }
@@ -711,6 +716,7 @@ public final class Span {
                 .append(replacement, span.replacement)
                 .append(salt, span.salt)
                 .append(classification, span.classification)
+                .append(pageAssignment, span.pageAssignment)
                 .isEquals();
 
     }
@@ -882,6 +888,15 @@ public final class Span {
 
     public void setPageNumber(int pageNumber) {
         this.pageNumber = pageNumber;
+    }
+
+    /** The label of the PDF page assignment whose policy found this span, or null when none was used. */
+    public String getPageAssignment() {
+        return pageAssignment;
+    }
+
+    public void setPageAssignment(String pageAssignment) {
+        this.pageAssignment = pageAssignment;
     }
 
     public String getLineHash() {

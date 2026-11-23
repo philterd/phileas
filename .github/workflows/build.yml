@@ -16,6 +16,12 @@ jobs:
           distribution: 'temurin'
       - name: Run the Maven verify phase
         run: mvn --batch-mode --update-snapshots package
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+      - name: Validate Word and Excel output with the Open XML SDK
+        # OoxmlValidationCorpusTest writes each input and its redacted output under target/ooxml-validation.
+        run: dotnet run --project phileas-ooxml/src/test/validator --configuration Release -- phileas-ooxml/target/ooxml-validation
 
   publish-snapshot:
     # Publish a -SNAPSHOT to the Maven Central snapshot repository on every push

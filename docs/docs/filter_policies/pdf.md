@@ -79,3 +79,44 @@ redaction.
 Here SSN boxes are red, date boxes are orange, and every other filter uses the policy-wide gray. The color for a box is
 the strategy's `color` when it sets one, then `config.pdf.redactionColor`, then black. A value that is neither a known
 name nor a 6-digit hex string renders black.
+
+## Different Policies for Different Pages
+
+A PDF that bundles different documents, such as a cover letter followed by medical records, can be redacted with a
+policy per page set in one call. Pass a `PdfPagePolicies` to `PdfFilterService.filter`. The policy passed to `filter` is
+the default: it applies to every page not assigned a policy, so every page is redacted under some policy.
+
+```java
+final Policy defaultPolicy = new Gson().fromJson(defaultPolicyJson, Policy.class);
+final Policy recordsPolicy = new Gson().fromJson(recordsPolicyJson, Policy.class);
+final Policy exhibitsPolicy = new Gson().fromJson(exhibitsPolicyJson, Policy.class);
+
+final PdfPagePolicies pagePolicies = new PdfPagePolicies()
+        .assign("2-5,8", recordsPolicy, "records")
+        .assign("12-", exhibitsPolicy, "exhibits");
+
+final BinaryDocumentFilterResult result = pdfFilterService.filter(defaultPolicy, context, body,
+        MimeType.APPLICATION_PDF, pagePolicies);
+```
+
+Page sets number pages from 1 and accept single pages (`3`), ranges (`2-5`), lists (`1,2,5`), mixes (`2-5,8`), and
+open-ended ranges (`12-`, page 12 to the end). `assign(pages, policy)` without a label uses the page set as the label.
+
+* **Filters.** Each page's text is filtered with the filters, strategies, and post-filters of its policy.
+* **Bounding boxes.** A policy's `graphical.boundingBoxes` are drawn only on pages assigned to that policy. The
+  default policy's boxes are drawn only on unassigned pages.
+* **Context.** One context and one context service are used for the whole document. Where two policies both use a
+  `CONTEXT` replacement scope, a value gets the same replacement on pages under either policy.
+* **Rendering.** `config.pdf` settings (`dpi`, `compressionQuality`, `preserveUnredactedPages`, `redactionColor`, and
+  the replacement text settings) come from the default policy, so the output is rendered one way. A strategy's own
+  `color` still applies.
+* **Spans.** Each span's `pageAssignment` is the label of the assignment whose policy found it, or `default` for an
+  unassigned page. Spans' page numbers refer to the original document. Without `PdfPagePolicies`, `pageAssignment` is
+  `null`.
+* **Validation.** A malformed page set, a page set that overlaps one already assigned, and a label that is blank,
+  already used, or `default` are rejected by `assign` with an `IllegalArgumentException`. An assigned page beyond the
+  document's last page is rejected by `filter`, before anything is redacted, with an `IllegalArgumentException`
+  naming the pages.
+
+`PdfFilterService.apply(policy, input, spans, outputMimeType, pagePolicies)` applies reviewed spans and draws each
+policy's bounding boxes on its pages in the same way.

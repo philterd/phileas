@@ -38,7 +38,17 @@ public enum MimeType {
     /**
      * image/jpeg
      */
-    IMAGE_JPEG("image/jpeg");
+    IMAGE_JPEG("image/jpeg"),
+
+    /**
+     * application/vnd.openxmlformats-officedocument.wordprocessingml.document (.docx)
+     */
+    APPLICATION_DOCX("application/vnd.openxmlformats-officedocument.wordprocessingml.document"),
+
+    /**
+     * application/vnd.openxmlformats-officedocument.spreadsheetml.sheet (.xlsx)
+     */
+    APPLICATION_XLSX("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
 
     private String value;
 
