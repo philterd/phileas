@@ -50,7 +50,10 @@ import ai.philterd.phileas.services.anonymization.HospitalAbbreviationAnonymizat
 import ai.philterd.phileas.services.anonymization.HospitalAnonymizationService;
 import ai.philterd.phileas.services.anonymization.IbanCodeAnonymizationService;
 import ai.philterd.phileas.services.anonymization.IpAddressAnonymizationService;
+import ai.philterd.phileas.services.anonymization.DeaNumberAnonymizationService;
 import ai.philterd.phileas.services.anonymization.ItinAnonymizationService;
+import ai.philterd.phileas.services.anonymization.MbiAnonymizationService;
+import ai.philterd.phileas.services.anonymization.NpiAnonymizationService;
 import ai.philterd.phileas.services.anonymization.MacAddressAnonymizationService;
 import ai.philterd.phileas.services.anonymization.PassportNumberAnonymizationService;
 import ai.philterd.phileas.services.anonymization.PersonsAnonymizationService;
@@ -422,6 +425,12 @@ public abstract class Filter {
             return new IpAddressAnonymizationService(random, candidates);
         } else if(filterType == FilterType.ITIN) {
             return new ItinAnonymizationService(random, candidates);
+        } else if(filterType == FilterType.NPI) {
+            return new NpiAnonymizationService(random, candidates);
+        } else if(filterType == FilterType.DEA_NUMBER) {
+            return new DeaNumberAnonymizationService(random, candidates);
+        } else if(filterType == FilterType.MBI) {
+            return new MbiAnonymizationService(random, candidates);
         } else if(filterType == FilterType.MAC_ADDRESS) {
             return new MacAddressAnonymizationService(random, candidates);
         } else if(filterType == FilterType.PASSPORT_NUMBER) {

@@ -129,6 +129,12 @@ public abstract class RulesFilter extends Filter {
                     final int characterStart = matcher.start(filterPattern.getGroupNumber());
                     final int characterEnd = matcher.end(filterPattern.getGroupNumber());
                     
+                    // A match the filter rejects, such as one failing a check digit, gets no span, so no
+                    // replacement is made or recorded for it.
+                    if(!accepts(input, characterStart, characterEnd, filterPattern)) {
+                        continue;
+                    }
+
                     // Is there already a span encompassing this location?
                     // If so just quit. This means the first match wins.
                     if(spanRanges.add(((long) characterStart << 32) | characterEnd)) {
@@ -251,6 +257,21 @@ public abstract class RulesFilter extends Filter {
      * @param filterPattern The {@link FilterPattern} that matched.
      * @return The pattern's classification, or the filter's when the pattern has none.
      */
+    /**
+     * Whether a match becomes a span. Called for each match before its replacement is made, so a filter
+     * that validates matches (a check digit, a cue word) can reject one without side effects. Accepts
+     * every match unless overridden.
+     * @param input The text input.
+     * @param characterStart The start of the match in the input.
+     * @param characterEnd The end of the match in the input.
+     * @param filterPattern The {@link FilterPattern} that matched.
+     * @return <code>true</code> if the match becomes a span.
+     */
+    protected boolean accepts(final String input, final int characterStart, final int characterEnd,
+                              final FilterPattern filterPattern) {
+        return true;
+    }
+
     protected String getLabel(final FilterPattern filterPattern) {
         return filterPattern.getClassification() != null ? filterPattern.getClassification() : classification;
     }

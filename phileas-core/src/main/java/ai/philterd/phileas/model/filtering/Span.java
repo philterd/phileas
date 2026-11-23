@@ -92,6 +92,10 @@ public final class Span {
     // Whether the span should always pass validation.
     private transient boolean alwaysValid = false;
 
+    // Filter types this span gives way to: it is dropped where it overlaps a span of one of them that
+    // changes the text. Used for values found only by a cue word, which a validated filter outranks.
+    private transient Set<FilterType> yieldsTo = Collections.emptySet();
+
     private int lineNumber = 0;
     private int pageNumber = 0;
     private int paragraphNumber = 0;
@@ -179,6 +183,7 @@ public final class Span {
         copy.setColor(color);
         copy.setClassification(classification);
         copy.setPageAssignment(pageAssignment);
+        copy.setYieldsTo(yieldsTo);
 
         return copy;
 
@@ -207,6 +212,7 @@ public final class Span {
 
                 shifted.setColor(span.color);
                 shifted.setClassification(span.classification);
+                shifted.setYieldsTo(span.yieldsTo);
                 shiftedSpans.add(shifted);
 
             }
@@ -237,6 +243,7 @@ public final class Span {
 
                 shifted.setColor(span.color);
                 shifted.setClassification(span.classification);
+                shifted.setYieldsTo(span.yieldsTo);
                 shiftedSpans.add(shifted);
 
         }
@@ -459,17 +466,20 @@ public final class Span {
 
     /**
      * Resolves overlapping spans so that a span that changes text is not lost to a span of another
-     * filter. Spans are resolved as by {@link #dropOverlappingSpans(List)}, except that a span that is
+     * filter. A span is first dropped where it overlaps a span of a type it yields to (see
+     * {@link #setYieldsTo(Set)}). Spans are resolved as by {@link #dropOverlappingSpans(List)}, except that a span that is
      * ignored or not applied changes no text, so it does not hide a span of another filter. It still
      * hides a span of its own filter, and is kept only where it overlaps no other span. A dropped span
      * that partly overlaps a kept span of another filter is restored: the earlier of the two stays whole
      * and the later is trimmed to the text the earlier does not cover. The given list and spans are not
      * modified.
-     * @param spans A list of {@link Span spans} that may or may not contain overlapping spans.
+     * @param identifiedSpans A list of {@link Span spans} that may or may not contain overlapping spans.
      * @param input The text the span offsets refer to.
      * @return A list of {@link Span spans} without overlapping spans, in document order.
      */
-    public static List<Span> resolveOverlappingSpans(final List<Span> spans, final String input) {
+    public static List<Span> resolveOverlappingSpans(final List<Span> identifiedSpans, final String input) {
+
+        final List<Span> spans = dropYieldingSpans(identifiedSpans);
 
         final List<Span> ranked = dropOverlappingSpans(spans);
 
@@ -549,6 +559,40 @@ public final class Span {
 
     private static boolean changesText(final Span span) {
         return span.isApplied() && !span.isIgnored();
+    }
+
+    /**
+     * The spans without those that overlap a span, changing the text, of a type they yield to (see
+     * {@link #setYieldsTo(Set)}). A span that changes no text does not outrank one of another filter, as
+     * in the rest of the resolution. The given list is not modified.
+     * @param spans A list of {@link Span spans}.
+     * @return The spans that do not yield to another.
+     */
+    public static List<Span> dropYieldingSpans(final List<Span> spans) {
+
+        if (spans.stream().allMatch(span -> span.yieldsTo.isEmpty())) {
+            return spans;
+        }
+
+        final List<Span> kept = new ArrayList<>(spans.size());
+
+        for (final Span span : spans) {
+
+            final boolean yields = !span.yieldsTo.isEmpty() && spans.stream().anyMatch(other ->
+                    other != span
+                            && span.yieldsTo.contains(other.getFilterType())
+                            && changesText(other)
+                            && other.getCharacterStart() < span.getCharacterEnd()
+                            && span.getCharacterStart() < other.getCharacterEnd());
+
+            if (!yields) {
+                kept.add(span);
+            }
+
+        }
+
+        return kept;
+
     }
 
     private static boolean partlyOverlapsAnotherFilter(final Span span, final List<Span> kept) {
@@ -852,6 +896,23 @@ public final class Span {
 
     public boolean isAlwaysValid() {
         return alwaysValid;
+    }
+
+    /**
+     * The filter types this span gives way to where it overlaps a span of one of them.
+     * @return The filter types, empty when it gives way to none.
+     */
+    public Set<FilterType> getYieldsTo() {
+        return yieldsTo;
+    }
+
+    /**
+     * Sets the filter types this span gives way to: when overlaps are resolved, it is dropped where it
+     * overlaps a span of one of these types that changes the text.
+     * @param yieldsTo The filter types.
+     */
+    public void setYieldsTo(final Set<FilterType> yieldsTo) {
+        this.yieldsTo = yieldsTo == null ? Collections.emptySet() : Set.copyOf(yieldsTo);
     }
 
     public void setAlwaysValid(boolean alwaysValid) {
