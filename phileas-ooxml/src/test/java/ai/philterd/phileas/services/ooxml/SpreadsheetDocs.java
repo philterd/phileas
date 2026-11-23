@@ -71,6 +71,8 @@ final class SpreadsheetDocs {
         final List<String[]> rows;
         /** Extra worksheet children inserted after sheetData (for example headerFooter, drawing, legacyDrawing). */
         final StringBuilder afterSheetData = new StringBuilder();
+        /** Extra workbook children inserted before sheets (for example fileSharing). */
+        final StringBuilder beforeSheets = new StringBuilder();
         /** Extra workbook children inserted after sheets (for example pivotCaches). */
         final StringBuilder afterSheets = new StringBuilder();
         /** When set, the first sheet's sheetData element is this XML instead of being built from {@link #rows}. */
@@ -155,7 +157,7 @@ final class SpreadsheetDocs {
                 pkg.rel(workbookPart, "rIdSst", REL + "sharedStrings", "/xl/sharedStrings.xml");
             }
             pkg.part(workbookPart, TestPackage.CT_XLSX_MAIN,
-                    "<workbook xmlns=\"" + S + "\" xmlns:r=\"" + TestPackage.R + "\"><sheets>" + sheets
+                    "<workbook xmlns=\"" + S + "\" xmlns:r=\"" + TestPackage.R + "\">" + beforeSheets + "<sheets>" + sheets
                             + "</sheets>" + afterSheets + "</workbook>");
             pkg.part(sheetPart, CT_WORKSHEET,
                     "<worksheet xmlns=\"" + S + "\" xmlns:r=\"" + TestPackage.R + "\">" + sheetData + afterSheetData + "</worksheet>");
@@ -221,6 +223,16 @@ final class SpreadsheetDocs {
         wb.pkg.part("/xl/comments1.xml", CT_COMMENTS, "<comments xmlns=\"" + S + "\"><authors><author>" + escape(author)
                 + "</author></authors><commentList><comment ref=\"" + cellRef + "\" authorId=\"0\"><text><r>"
                 + "<t xml:space=\"preserve\">" + escape(text) + "</t></r></text></comment></commentList></comments>");
+    }
+
+    /** A legacy comment shaped as Excel writes a note: the author's name and a colon in bold, then the text. */
+    static void addNote(final Workbook wb, final String cellRef, final String author, final String text) {
+        wb.pkg.rel(wb.sheetPart, REL + "comments", "/xl/comments1.xml");
+        wb.pkg.part("/xl/comments1.xml", CT_COMMENTS, "<comments xmlns=\"" + S + "\"><authors><author>" + escape(author)
+                + "</author></authors><commentList><comment ref=\"" + cellRef + "\" authorId=\"0\"><text>"
+                + "<r><rPr><b/><sz val=\"9\"/><rFont val=\"Tahoma\"/></rPr><t>" + escape(author) + ":</t></r>"
+                + "<r><rPr><sz val=\"9\"/><rFont val=\"Tahoma\"/></rPr><t xml:space=\"preserve\">\n" + escape(text)
+                + "</t></r></text></comment></commentList></comments>");
     }
 
     static void addThreadedComment(final Workbook wb, final String cellRef, final String text, final String author) {
