@@ -16,9 +16,11 @@ grammar FilterCondition;
 // (see issue #438).
 expression: condition (AND condition)* EOF;
 
+// A token is compared with a quoted value, or, on the age filter only, with a number (see
+// ConditionSupport).
 condition: (
     'population' COMPARATOR NUMBER
-    | 'token' COMPARATOR WORD
+    | 'token' COMPARATOR (WORD | NUMBER)
     | 'type' COMPARATOR TYPE
     | 'confidence' COMPARATOR NUMBER
     | 'context' COMPARATOR WORD

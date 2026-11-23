@@ -97,4 +97,26 @@ public class PolicySchemaValidationTest {
 
     }
 
+
+    @Test
+    public void validateHealthcareIdentifierPolicies() {
+
+        Assertions.assertTrue(PolicySchema.validate("{\"identifiers\": {\"npi\": {\"npiFilterStrategies\": [{\"strategy\": \"REDACT\"}]}}}"));
+        Assertions.assertTrue(PolicySchema.validate("{\"identifiers\": {\"deaNumber\": {\"deaNumberFilterStrategies\": [{\"strategy\": \"LAST_4\"}]}}}"));
+        Assertions.assertTrue(PolicySchema.validate("{\"identifiers\": {\"mbi\": {\"mbiFilterStrategies\": [{\"strategy\": \"RANDOM_REPLACE\"}]}}}"));
+
+    }
+
+    @Test
+    public void validateCueWordFilterPolicies() {
+
+        Assertions.assertTrue(PolicySchema.validate("{\"identifiers\": {\"healthPlanMemberId\": {\"patterns\": [\"[A-Z]{3}[0-9]{9}\"], \"cueWords\": [\"Plan ID\"], \"defaultCueWords\": false, \"healthPlanMemberIdFilterStrategies\": [{\"strategy\": \"REDACT\"}]}}}"));
+        Assertions.assertTrue(PolicySchema.validate("{\"identifiers\": {\"deviceIdentifier\": {\"windowSize\": 8, \"deviceIdentifierFilterStrategies\": [{\"strategy\": \"MASK\"}]}}}"));
+
+        // defaultCueWords false is only valid with at least one cue word.
+        Assertions.assertFalse(PolicySchema.validate("{\"identifiers\": {\"deviceIdentifier\": {\"defaultCueWords\": false}}}"));
+        Assertions.assertFalse(PolicySchema.validate("{\"identifiers\": {\"deviceIdentifier\": {\"defaultCueWords\": false, \"cueWords\": []}}}"));
+
+    }
+
 }

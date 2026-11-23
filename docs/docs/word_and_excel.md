@@ -126,8 +126,11 @@ opened. These fields are not run through detection.
 |---|---|
 | Word comments and tracked changes | Each `w:author` is replaced with `Redacted`, and comment initials are removed. This includes insertions, deletions, moves, and formatting changes. |
 | Word `word/people.xml` | Removed, with the authors' presence identifiers, which are often email addresses or directory IDs. |
-| Excel legacy comments | Each author is replaced with `Redacted`. |
+| Word attached template | The template relationship and `w:attachedTemplate` in `word/settings.xml` are removed, because the template's path is often in the user's profile. Word attaches the Normal template on open. |
+| Excel legacy comments (notes) | Each author is replaced with `Redacted`. When a note's text starts with its author's name and a colon, as Excel writes it, the name is replaced with `Redacted`. |
 | Excel threaded-comment persons | Each person's `displayName` is replaced with `Redacted`, and its `userId` and `providerId` are removed. |
+| Excel write-reservation user | `userName` on `fileSharing` in `xl/workbook.xml` is replaced with `Redacted`. |
+| Excel shared-workbook revisions | User names on revision headers, in the user list, and on comment revisions are replaced with `Redacted`. |
 | `docProps/core.xml` | `dc:creator` and `cp:lastModifiedBy` are emptied. |
 | `docProps/app.xml` | `Company` and `Manager` are emptied. |
 

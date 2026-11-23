@@ -36,6 +36,11 @@ import ai.philterd.phileas.policy.filters.IbanCode;
 import ai.philterd.phileas.policy.filters.Identifier;
 import ai.philterd.phileas.policy.filters.IpAddress;
 import ai.philterd.phileas.policy.filters.Itin;
+import ai.philterd.phileas.policy.filters.Npi;
+import ai.philterd.phileas.policy.filters.DeaNumber;
+import ai.philterd.phileas.policy.filters.Mbi;
+import ai.philterd.phileas.policy.filters.HealthPlanMemberId;
+import ai.philterd.phileas.policy.filters.DeviceIdentifier;
 import ai.philterd.phileas.policy.filters.MacAddress;
 import ai.philterd.phileas.policy.filters.PassportNumber;
 import ai.philterd.phileas.policy.filters.PhEye;
@@ -115,6 +120,26 @@ public class Identifiers {
     @SerializedName("canadaSin")
     @Expose
     private CanadaSin canadaSin;
+
+    @SerializedName("npi")
+    @Expose
+    private Npi npi;
+
+    @SerializedName("deaNumber")
+    @Expose
+    private DeaNumber deaNumber;
+
+    @SerializedName("mbi")
+    @Expose
+    private Mbi mbi;
+
+    @SerializedName("healthPlanMemberId")
+    @Expose
+    private HealthPlanMemberId healthPlanMemberId;
+
+    @SerializedName("deviceIdentifier")
+    @Expose
+    private DeviceIdentifier deviceIdentifier;
 
     @SerializedName("emailAddress")
     @Expose
@@ -226,7 +251,8 @@ public class Identifiers {
                         driversLicense, ein, emailAddress, firstName, hospital, ibanCode, ipAddress, itin,
                         macAddress, passportNumber, person, phoneNumber,
                         phoneNumberExtension, ssn, state, stateAbbreviation, streetAddress, surname,
-                        trackingNumber, url, vin, zipCode)
+                        trackingNumber, url, vin, zipCode, npi, deaNumber, mbi, healthPlanMemberId,
+                        deviceIdentifier)
                 .filter(Objects::nonNull)
                 .forEach(filters::add);
 
@@ -278,6 +304,16 @@ public class Identifiers {
                 if(this.getItin() != null) { return true; } break;
             case CANADA_SIN:
                 if(this.getCanadaSin() != null) { return true; } break;
+            case NPI:
+                if(this.getNpi() != null) { return true; } break;
+            case DEA_NUMBER:
+                if(this.getDeaNumber() != null) { return true; } break;
+            case MBI:
+                if(this.getMbi() != null) { return true; } break;
+            case HEALTH_PLAN_MEMBER_ID:
+                if(this.getHealthPlanMemberId() != null) { return true; } break;
+            case DEVICE_IDENTIFIER:
+                if(this.getDeviceIdentifier() != null) { return true; } break;
             case EMAIL_ADDRESS:
                 if(this.getEmailAddress() != null) { return true; } break;
             case FIRST_NAME:
@@ -379,6 +415,46 @@ public class Identifiers {
 
     public void setItin(Itin itin) {
         this.itin = itin;
+    }
+
+    public Npi getNpi() {
+        return npi;
+    }
+
+    public void setNpi(Npi npi) {
+        this.npi = npi;
+    }
+
+    public DeaNumber getDeaNumber() {
+        return deaNumber;
+    }
+
+    public void setDeaNumber(DeaNumber deaNumber) {
+        this.deaNumber = deaNumber;
+    }
+
+    public Mbi getMbi() {
+        return mbi;
+    }
+
+    public void setMbi(Mbi mbi) {
+        this.mbi = mbi;
+    }
+
+    public HealthPlanMemberId getHealthPlanMemberId() {
+        return healthPlanMemberId;
+    }
+
+    public void setHealthPlanMemberId(HealthPlanMemberId healthPlanMemberId) {
+        this.healthPlanMemberId = healthPlanMemberId;
+    }
+
+    public DeviceIdentifier getDeviceIdentifier() {
+        return deviceIdentifier;
+    }
+
+    public void setDeviceIdentifier(DeviceIdentifier deviceIdentifier) {
+        this.deviceIdentifier = deviceIdentifier;
     }
 
     public CanadaSin getCanadaSin() {

@@ -38,6 +38,11 @@ import ai.philterd.phileas.policy.filters.IbanCode;
 import ai.philterd.phileas.policy.filters.Identifier;
 import ai.philterd.phileas.policy.filters.IpAddress;
 import ai.philterd.phileas.policy.filters.Itin;
+import ai.philterd.phileas.policy.filters.Npi;
+import ai.philterd.phileas.policy.filters.DeaNumber;
+import ai.philterd.phileas.policy.filters.Mbi;
+import ai.philterd.phileas.policy.filters.HealthPlanMemberId;
+import ai.philterd.phileas.policy.filters.DeviceIdentifier;
 import ai.philterd.phileas.policy.filters.MacAddress;
 import ai.philterd.phileas.policy.filters.PassportNumber;
 import ai.philterd.phileas.policy.filters.PhoneNumber;
@@ -75,6 +80,11 @@ import ai.philterd.phileas.services.strategies.rules.IbanCodeFilterStrategy;
 import ai.philterd.phileas.services.strategies.rules.IdentifierFilterStrategy;
 import ai.philterd.phileas.services.strategies.rules.IpAddressFilterStrategy;
 import ai.philterd.phileas.services.strategies.rules.ItinFilterStrategy;
+import ai.philterd.phileas.services.strategies.rules.NpiFilterStrategy;
+import ai.philterd.phileas.services.strategies.rules.DeaNumberFilterStrategy;
+import ai.philterd.phileas.services.strategies.rules.MbiFilterStrategy;
+import ai.philterd.phileas.services.strategies.rules.HealthPlanMemberIdFilterStrategy;
+import ai.philterd.phileas.services.strategies.rules.DeviceIdentifierFilterStrategy;
 import ai.philterd.phileas.services.strategies.rules.MacAddressFilterStrategy;
 import ai.philterd.phileas.services.strategies.rules.PassportNumberFilterStrategy;
 import ai.philterd.phileas.services.strategies.rules.PhoneNumberExtensionFilterStrategy;
@@ -175,6 +185,21 @@ public abstract class AbstractFilterTest {
         Itin itin = new Itin();
         itin.setItinFilterStrategies(List.of(new ItinFilterStrategy()));
 
+        Npi npi = new Npi();
+        npi.setNpiFilterStrategies(List.of(new NpiFilterStrategy()));
+
+        DeaNumber deaNumber = new DeaNumber();
+        deaNumber.setDeaNumberFilterStrategies(List.of(new DeaNumberFilterStrategy()));
+
+        Mbi mbi = new Mbi();
+        mbi.setMbiFilterStrategies(List.of(new MbiFilterStrategy()));
+
+        HealthPlanMemberId healthPlanMemberId = new HealthPlanMemberId();
+        healthPlanMemberId.setHealthPlanMemberIdFilterStrategies(List.of(new HealthPlanMemberIdFilterStrategy()));
+
+        DeviceIdentifier deviceIdentifier = new DeviceIdentifier();
+        deviceIdentifier.setDeviceIdentifierFilterStrategies(List.of(new DeviceIdentifierFilterStrategy()));
+
         Ssn ssn = new Ssn();
         ssn.setSsnFilterStrategies(List.of(new SsnFilterStrategy()));
 
@@ -247,6 +272,11 @@ public abstract class AbstractFilterTest {
         identifiers.setSections(List.of(section));
         identifiers.setEin(ein);
         identifiers.setItin(itin);
+        identifiers.setNpi(npi);
+        identifiers.setDeaNumber(deaNumber);
+        identifiers.setMbi(mbi);
+        identifiers.setHealthPlanMemberId(healthPlanMemberId);
+        identifiers.setDeviceIdentifier(deviceIdentifier);
         identifiers.setCanadaSin(canadaSin);
         identifiers.setSsn(ssn);
         identifiers.setStateAbbreviation(stateAbbreviation);

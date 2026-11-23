@@ -104,7 +104,9 @@ public class UnstructuredDocumentProcessor implements DocumentProcessor {
                                   final List<PostFilter> postFilters, final String context, final int piece,
                                   final String input, final List<Span> spans) throws Exception {
 
-        List<Span> identifiedSpans = spans;
+        // Drop spans that yield to another first. Disambiguation gives spans covering the same text a single
+        // filter type, which could otherwise be the type of the span that yields.
+        List<Span> identifiedSpans = Span.dropYieldingSpans(spans);
 
         // A policy can turn this off but not on: the service is a no-op when off globally.
         if(disambiguationAllowed(policy)) {

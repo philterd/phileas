@@ -52,6 +52,11 @@ import ai.philterd.phileas.services.filters.regex.IbanCodeFilter;
 import ai.philterd.phileas.services.filters.regex.IdentifierFilter;
 import ai.philterd.phileas.services.filters.regex.IpAddressFilter;
 import ai.philterd.phileas.services.filters.regex.ItinFilter;
+import ai.philterd.phileas.services.filters.regex.DeaNumberFilter;
+import ai.philterd.phileas.services.filters.regex.DeviceIdentifierFilter;
+import ai.philterd.phileas.services.filters.regex.HealthPlanMemberIdFilter;
+import ai.philterd.phileas.services.filters.regex.MbiFilter;
+import ai.philterd.phileas.services.filters.regex.NpiFilter;
 import ai.philterd.phileas.services.filters.regex.MacAddressFilter;
 import ai.philterd.phileas.services.filters.regex.PassportNumberFilter;
 import ai.philterd.phileas.services.filters.regex.PhoneNumberExtensionFilter;
@@ -718,6 +723,137 @@ public class FilterPolicyLoader {
                     .build();
 
             final Filter filter = new CanadaSinFilter(filterConfiguration, policy.getIdentifiers().getCanadaSin().isOnlyValidPrefixes());
+            enabledFilters.add(filter);
+
+        }
+
+        if(policy.getIdentifiers().hasFilter(FilterType.NPI) && policy.getIdentifiers().getNpi().isEnabled()) {
+
+            final int windowSize = policy.getIdentifiers().getNpi().getWindowSizeOrDefault(phileasConfiguration.spanWindowSize());
+
+            final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                    .withRandom(random)
+                    .withRegexTimeoutMs(phileasConfiguration.regexTimeoutMs())
+                    .withPolicyFiles(policyFiles)
+                    .withStrategies(policy.getIdentifiers().getNpi().getNpiFilterStrategies())
+                    .withIgnored(policy.getIdentifiers().getNpi().getIgnored())
+                    .withIgnoredFiles(policy.getIdentifiers().getNpi().getIgnoredFiles())
+                    .withIgnoredPatterns(policy.getIdentifiers().getNpi().getIgnoredPatterns())
+                    .withCrypto(policy.getCrypto())
+                    .withGenerators(replacementGenerators)
+                    .withFPE(policy.getFpe())
+                    .withWindowSize(windowSize)
+                    .withPriority(policy.getIdentifiers().getNpi().getPriority())
+                    .withId(policy.getIdentifiers().getNpi().getId())
+                    .build();
+
+            final Filter filter = new NpiFilter(filterConfiguration);
+            enabledFilters.add(filter);
+
+        }
+
+        if(policy.getIdentifiers().hasFilter(FilterType.DEA_NUMBER) && policy.getIdentifiers().getDeaNumber().isEnabled()) {
+
+            final int windowSize = policy.getIdentifiers().getDeaNumber().getWindowSizeOrDefault(phileasConfiguration.spanWindowSize());
+
+            final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                    .withRandom(random)
+                    .withRegexTimeoutMs(phileasConfiguration.regexTimeoutMs())
+                    .withPolicyFiles(policyFiles)
+                    .withStrategies(policy.getIdentifiers().getDeaNumber().getDeaNumberFilterStrategies())
+                    .withIgnored(policy.getIdentifiers().getDeaNumber().getIgnored())
+                    .withIgnoredFiles(policy.getIdentifiers().getDeaNumber().getIgnoredFiles())
+                    .withIgnoredPatterns(policy.getIdentifiers().getDeaNumber().getIgnoredPatterns())
+                    .withCrypto(policy.getCrypto())
+                    .withGenerators(replacementGenerators)
+                    .withFPE(policy.getFpe())
+                    .withWindowSize(windowSize)
+                    .withPriority(policy.getIdentifiers().getDeaNumber().getPriority())
+                    .withId(policy.getIdentifiers().getDeaNumber().getId())
+                    .build();
+
+            final Filter filter = new DeaNumberFilter(filterConfiguration);
+            enabledFilters.add(filter);
+
+        }
+
+        if(policy.getIdentifiers().hasFilter(FilterType.MBI) && policy.getIdentifiers().getMbi().isEnabled()) {
+
+            final int windowSize = policy.getIdentifiers().getMbi().getWindowSizeOrDefault(phileasConfiguration.spanWindowSize());
+
+            final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                    .withRandom(random)
+                    .withRegexTimeoutMs(phileasConfiguration.regexTimeoutMs())
+                    .withPolicyFiles(policyFiles)
+                    .withStrategies(policy.getIdentifiers().getMbi().getMbiFilterStrategies())
+                    .withIgnored(policy.getIdentifiers().getMbi().getIgnored())
+                    .withIgnoredFiles(policy.getIdentifiers().getMbi().getIgnoredFiles())
+                    .withIgnoredPatterns(policy.getIdentifiers().getMbi().getIgnoredPatterns())
+                    .withCrypto(policy.getCrypto())
+                    .withGenerators(replacementGenerators)
+                    .withFPE(policy.getFpe())
+                    .withWindowSize(windowSize)
+                    .withPriority(policy.getIdentifiers().getMbi().getPriority())
+                    .withId(policy.getIdentifiers().getMbi().getId())
+                    .build();
+
+            final Filter filter = new MbiFilter(filterConfiguration);
+            enabledFilters.add(filter);
+
+        }
+
+        if(policy.getIdentifiers().hasFilter(FilterType.HEALTH_PLAN_MEMBER_ID) && policy.getIdentifiers().getHealthPlanMemberId().isEnabled()) {
+
+            final int windowSize = policy.getIdentifiers().getHealthPlanMemberId().getWindowSizeOrDefault(phileasConfiguration.spanWindowSize());
+
+            final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                    .withRandom(random)
+                    .withRegexTimeoutMs(phileasConfiguration.regexTimeoutMs())
+                    .withPolicyFiles(policyFiles)
+                    .withStrategies(policy.getIdentifiers().getHealthPlanMemberId().getHealthPlanMemberIdFilterStrategies())
+                    .withIgnored(policy.getIdentifiers().getHealthPlanMemberId().getIgnored())
+                    .withIgnoredFiles(policy.getIdentifiers().getHealthPlanMemberId().getIgnoredFiles())
+                    .withIgnoredPatterns(policy.getIdentifiers().getHealthPlanMemberId().getIgnoredPatterns())
+                    .withCrypto(policy.getCrypto())
+                    .withGenerators(replacementGenerators)
+                    .withFPE(policy.getFpe())
+                    .withWindowSize(windowSize)
+                    .withPriority(policy.getIdentifiers().getHealthPlanMemberId().getPriority())
+                    .withId(policy.getIdentifiers().getHealthPlanMemberId().getId())
+                    .build();
+
+            final Filter filter = new HealthPlanMemberIdFilter(filterConfiguration,
+                    policy.getIdentifiers().getHealthPlanMemberId().getPatterns(),
+                    policy.getIdentifiers().getHealthPlanMemberId().getCueWords(),
+                    policy.getIdentifiers().getHealthPlanMemberId().isDefaultCueWords());
+            enabledFilters.add(filter);
+
+        }
+
+        if(policy.getIdentifiers().hasFilter(FilterType.DEVICE_IDENTIFIER) && policy.getIdentifiers().getDeviceIdentifier().isEnabled()) {
+
+            final int windowSize = policy.getIdentifiers().getDeviceIdentifier().getWindowSizeOrDefault(phileasConfiguration.spanWindowSize());
+
+            final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                    .withRandom(random)
+                    .withRegexTimeoutMs(phileasConfiguration.regexTimeoutMs())
+                    .withPolicyFiles(policyFiles)
+                    .withStrategies(policy.getIdentifiers().getDeviceIdentifier().getDeviceIdentifierFilterStrategies())
+                    .withIgnored(policy.getIdentifiers().getDeviceIdentifier().getIgnored())
+                    .withIgnoredFiles(policy.getIdentifiers().getDeviceIdentifier().getIgnoredFiles())
+                    .withIgnoredPatterns(policy.getIdentifiers().getDeviceIdentifier().getIgnoredPatterns())
+                    .withCrypto(policy.getCrypto())
+                    .withGenerators(replacementGenerators)
+                    .withFPE(policy.getFpe())
+                    .withWindowSize(windowSize)
+                    .withPriority(policy.getIdentifiers().getDeviceIdentifier().getPriority())
+                    .withId(policy.getIdentifiers().getDeviceIdentifier().getId())
+                    .build();
+
+            final Filter filter = new DeviceIdentifierFilter(filterConfiguration,
+                    policy.getIdentifiers().getDeviceIdentifier().getPatterns(),
+                    policy.getIdentifiers().getDeviceIdentifier().getCueWords(),
+                    policy.getIdentifiers().getDeviceIdentifier().isDefaultCueWords());
             enabledFilters.add(filter);
 
         }

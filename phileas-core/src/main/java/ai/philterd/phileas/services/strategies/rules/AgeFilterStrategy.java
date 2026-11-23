@@ -15,6 +15,7 @@
  */
 package ai.philterd.phileas.services.strategies.rules;
 
+import ai.philterd.phileas.model.conditions.ConditionSupport;
 import ai.philterd.phileas.model.conditions.ParsedCondition;
 import ai.philterd.phileas.model.conditions.ParserListener;
 import ai.philterd.phileas.model.filtering.FilterPattern;
@@ -31,6 +32,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.List;
+import java.util.OptionalDouble;
 
 public class AgeFilterStrategy extends StandardFilterStrategy {
 
@@ -53,7 +55,11 @@ public class AgeFilterStrategy extends StandardFilterStrategy {
 
         for(ParsedCondition parsedCondition : parsedConditions) {
 
-            if(Strings.CI.equals(TOKEN, parsedCondition.getField())) {
+            if(Strings.CI.equals(TOKEN, parsedCondition.getField()) && ConditionSupport.isNumber(parsedCondition.getValue())) {
+
+                conditionsSatisfied = evaluateAgeCondition(parsedCondition, token, window);
+
+            } else if(Strings.CI.equals(TOKEN, parsedCondition.getField())) {
 
                 conditionsSatisfied = evaluateTokenCondition(parsedCondition, token, window);
 
@@ -89,6 +95,32 @@ public class AgeFilterStrategy extends StandardFilterStrategy {
         }
 
         return conditionsSatisfied;
+
+    }
+
+    /**
+     * Compares the age in years that the token expresses with the condition's number, as in {@code token > 89}.
+     * An age that cannot be read satisfies no comparison.
+     */
+    private static boolean evaluateAgeCondition(final ParsedCondition parsedCondition, final String token, final String[] window) {
+
+        final OptionalDouble age = AgeInYears.of(token, window);
+
+        if(age.isEmpty()) {
+            return false;
+        }
+
+        final int comparison = Double.compare(age.getAsDouble(), Double.parseDouble(parsedCondition.getValue()));
+
+        return switch (parsedCondition.getOperator()) {
+            case GREATER_THAN -> (comparison > 0);
+            case LESS_THAN -> (comparison < 0);
+            case GREATER_THAN_EQUALS -> (comparison >= 0);
+            case LESS_THAN_EQUALS -> (comparison <= 0);
+            case EQUALS -> (comparison == 0);
+            case NOT_EQUALS -> (comparison != 0);
+            default -> false;
+        };
 
     }
 
