@@ -1,5 +1,5 @@
 /*
- *     Copyright 2025 Philterd, LLC @ https://www.philterd.ai
+ *     Copyright 2026 Philterd, LLC @ https://www.philterd.ai
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -56,10 +56,11 @@ public class IncrementalRedactionHistoryTest {
     @Test
     public void spansMustBeInOrderAndNotOverlap() {
 
-        Assertions.assertThrows(IllegalArgumentException.class, () -> new IncrementalRedactionHistory("a 111 b 222 c",
-                List.of(span(8, 11, "222", "[Y]"), span(2, 5, "111", "[X]"))));
-        Assertions.assertThrows(IllegalArgumentException.class, () -> new IncrementalRedactionHistory("a 111 b 222 c",
-                List.of(span(2, 6, "111 ", "[X]"), span(5, 11, " b 222", "[Y]"))));
+        final List<Span> outOfOrder = List.of(span(8, 11, "222", "[Y]"), span(2, 5, "111", "[X]"));
+        final List<Span> overlapping = List.of(span(2, 6, "111 ", "[X]"), span(5, 11, " b 222", "[Y]"));
+
+        Assertions.assertThrows(IllegalArgumentException.class, () -> new IncrementalRedactionHistory("a 111 b 222 c", outOfOrder));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> new IncrementalRedactionHistory("a 111 b 222 c", overlapping));
 
     }
 
