@@ -38,6 +38,10 @@ public class ConditionSupportTest {
         for (final String operator : new String[]{">", "<", ">=", "<=", "==", "!="}) {
             Assertions.assertNull(reason("population " + operator + " 4500", FilterType.ZIP_CODE), operator);
         }
+        for (final String operator : new String[]{">", "<", ">=", "<=", "==", "!="}) {
+            Assertions.assertNull(reason("token " + operator + " 89", FilterType.AGE), operator);
+            Assertions.assertNull(reason("token " + operator + " 89.5", FilterType.AGE), operator);
+        }
     }
 
     @Test
@@ -53,6 +57,11 @@ public class ConditionSupportTest {
         Assertions.assertEquals("population supports >, <, >=, <=, ==, and !=, not startswith.", reason("population startswith 45", FilterType.ZIP_CODE));
         Assertions.assertEquals("population compares with a whole number.", reason("population > 4500.5", FilterType.ZIP_CODE));
         Assertions.assertEquals("no filter evaluates type.", reason("type == PER", FilterType.SSN));
+        Assertions.assertEquals("token compares with a number only on the age filter.", reason("token > 89", FilterType.SSN));
+        Assertions.assertEquals("token compares with a number only on the age filter.", reason("token == 89", FilterType.DATE));
+        Assertions.assertEquals("token supports >, <, >=, <=, ==, and != with a number, not startswith.", reason("token startswith 9", FilterType.AGE));
+        Assertions.assertEquals("token supports >, <, >=, <=, ==, and != with a number, not is.", reason("token is 89", FilterType.AGE));
+        Assertions.assertEquals("token supports ==, !=, startswith, is, and is not, not >.", reason("token > \"89\"", FilterType.AGE));
     }
 
     @Test
