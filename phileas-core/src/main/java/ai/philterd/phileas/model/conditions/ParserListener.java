@@ -43,7 +43,8 @@ public class ParserListener extends FilterConditionBaseListener {
     /** Why a condition may fail to parse, without repeating its text. */
     private static final String REASON = "a condition is a field (token, context, confidence, population, or type), "
             + "an operator, and a value, such as token == \"value\" or confidence > 0.5, and conditions are joined "
-            + "with and. Values compared with token and context must be in double quotes.";
+            + "with and. Values compared with token and context must be in double quotes, except a number compared "
+            + "with the age filter's token.";
 
     private static final BaseErrorListener THROWING_ERROR_LISTENER = new BaseErrorListener() {
 
