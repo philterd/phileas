@@ -44,7 +44,13 @@ public class PdfTextExtractorTest {
             LOGGER.info("{} page number = {}", pdfLine, pdfLine.getPageNumber());
         }
 
-        Assertions.assertEquals(417, lines.size());
+        // Each page is read once, with its zero-based page number.
+        final int[] linesPerPage = new int[7];
+        for (final PdfLine pdfLine : lines) {
+            linesPerPage[pdfLine.getPageNumber()]++;
+        }
+        Assertions.assertArrayEquals(new int[]{37, 25, 25, 25, 40, 50, 13}, linesPerPage);
+        Assertions.assertEquals(7, pdfTextExtractor.getPageCount());
 
     }
 

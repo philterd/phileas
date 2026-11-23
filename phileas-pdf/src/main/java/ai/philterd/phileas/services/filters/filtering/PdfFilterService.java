@@ -25,6 +25,7 @@ import ai.philterd.phileas.model.filtering.Span;
 import ai.philterd.phileas.model.filtering.TextFilterResult;
 import ai.philterd.phileas.policy.Policy;
 import ai.philterd.phileas.policy.config.Pdf;
+import ai.philterd.phileas.policy.graphical.BoundingBox;
 import ai.philterd.phileas.services.context.ContextService;
 import ai.philterd.phileas.services.disambiguation.SpanDisambiguationServiceFactory;
 import ai.philterd.phileas.services.disambiguation.vector.VectorService;
@@ -32,6 +33,7 @@ import ai.philterd.phileas.services.documentprocessors.DocumentProcessor;
 import ai.philterd.phileas.services.documentprocessors.UnstructuredDocumentProcessor;
 import ai.philterd.phileas.services.filters.postfilters.PostFilter;
 import ai.philterd.phileas.services.pdf.PdfLine;
+import ai.philterd.phileas.services.pdf.PdfPagePolicies;
 import ai.philterd.phileas.services.pdf.PdfRedactionOptions;
 import ai.philterd.phileas.services.pdf.PdfRedactor;
 import ai.philterd.phileas.services.pdf.PdfTextExtractor;
@@ -43,8 +45,10 @@ import org.apache.logging.log4j.Logger;
 
 import java.security.SecureRandom;
 import java.util.ArrayList;
+import java.util.IdentityHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -153,12 +157,41 @@ public class PdfFilterService extends BinaryFilterService {
     public BinaryDocumentFilterResult filter(final Policy policy, final ContextService contextService,
                                              final VectorService vectorService, final String context,
                                              final byte[] input, final MimeType outputMimeType) throws Exception {
+        return filter(policy, contextService, vectorService, context, input, outputMimeType, null);
+    }
+
+    /**
+     * Filters a PDF with a policy per page set.
+     * @param policy The policy for pages not in {@code pagePolicies}. Its {@code config.pdf} settings render the output.
+     * @param pagePolicies The policies assigned to page sets, or {@code null} to use {@code policy} for every page.
+     * @throws IllegalArgumentException before redaction if a page set extends beyond the document's last page.
+     */
+    public BinaryDocumentFilterResult filter(final Policy policy, final String context, final byte[] input,
+                                             final MimeType outputMimeType, final PdfPagePolicies pagePolicies) throws Exception {
+        requireBoundServices();
+        return filter(policy, defaultContextService, defaultVectorService, context, input, outputMimeType, pagePolicies);
+    }
+
+    /**
+     * Filters a PDF with a policy per page set. One context and context service are used for the whole document.
+     * @param policy The policy for pages not in {@code pagePolicies}. Its {@code config.pdf} settings render the output.
+     * @param pagePolicies The policies assigned to page sets, or {@code null} to use {@code policy} for every page.
+     * @throws IllegalArgumentException before redaction if a page set extends beyond the document's last page.
+     */
+    public BinaryDocumentFilterResult filter(final Policy policy, final ContextService contextService,
+                                             final VectorService vectorService, final String context,
+                                             final byte[] input, final MimeType outputMimeType,
+                                             final PdfPagePolicies pagePolicies) throws Exception {
 
         final List<IncrementalRedaction> incrementalRedactions = new ArrayList<>();
 
         // Get the lines of text from the PDF file.
         final PdfTextExtractor pdfTextExtractor = new PdfTextExtractor(maxPages, maxPixelsPerPage, maxStreamBytes);
         final List<PdfLine> pdfLines = pdfTextExtractor.getLines(input);
+
+        if (pagePolicies != null) {
+            pagePolicies.validate(pdfTextExtractor.getPageCount());
+        }
 
         // A list of identified spans whose start/end are relative to the whole document.
         final Set<Span> nonRelativeSpans = new LinkedHashSet<>();
@@ -169,23 +202,40 @@ public class PdfFilterService extends BinaryFilterService {
         // Track the line number.
         int lineNumber = 1;
 
-        final List<Filter> filters = filterPolicyLoader.getFiltersForPolicy(policy, filterCache);
-        final List<PostFilter> postFilters = getPostFiltersForPolicy(policy);
+        // The filters and post-filters of each policy, keyed by its assignment (null for the default). All are
+        // loaded before any text is filtered, so an invalid policy fails even on a document with no text.
+        final Map<PdfPagePolicies.Assignment, List<Filter>> filtersByAssignment = new IdentityHashMap<>();
+        final Map<PdfPagePolicies.Assignment, List<PostFilter>> postFiltersByAssignment = new IdentityHashMap<>();
+        filtersByAssignment.put(null, filterPolicyLoader.getFiltersForPolicy(policy, filterCache));
+        postFiltersByAssignment.put(null, getPostFiltersForPolicy(policy));
+        if (pagePolicies != null) {
+            for (final PdfPagePolicies.Assignment assignment : pagePolicies.getAssignments()) {
+                filtersByAssignment.put(assignment, filterPolicyLoader.getFiltersForPolicy(assignment.policy(), filterCache));
+                postFiltersByAssignment.put(assignment, getPostFiltersForPolicy(assignment.policy()));
+            }
+        }
 
         long tokens = 0;
 
-        // If there are no filters in the policy, we don't need to process the text.
-        // This can be the case if the policy contains bounding boxes but no filters.
-        if(!filters.isEmpty()) {
+        // Process each line looking for sensitive information in each line.
+        for (final PdfLine pdfLine : pdfLines) {
 
-            // Process each line looking for sensitive information in each line.
-            for (final PdfLine pdfLine : pdfLines) {
+            // Line page numbers count from 0; page sets count from 1.
+            final PdfPagePolicies.Assignment assignment =
+                    pagePolicies == null ? null : pagePolicies.assignmentFor(pdfLine.getPageNumber() + 1);
+            final Policy linePolicy = assignment == null ? policy : assignment.policy();
+
+            final List<Filter> filters = filtersByAssignment.get(assignment);
+
+            // A policy may have no filters, only bounding boxes, so there is nothing to look for in its text.
+            if (!filters.isEmpty()) {
 
                 final int piece = 0;
                 tokens += tokenCounter.countTokens(pdfLine.getText());
 
                 // Process the text.
-                final TextFilterResult textFilterResult = unstructuredDocumentProcessor.process(contextService, vectorService, policy, filters, postFilters, context, piece, pdfLine.getText());
+                final TextFilterResult textFilterResult = unstructuredDocumentProcessor.process(contextService, vectorService,
+                        linePolicy, filters, postFiltersByAssignment.get(assignment), context, piece, pdfLine.getText());
 
                 // Add the incremental redactions to the list.
                 incrementalRedactions.addAll(textFilterResult.getIncrementalRedactions());
@@ -201,14 +251,18 @@ public class PdfFilterService extends BinaryFilterService {
                     span.setPageNumber(pdfLine.getPageNumber());
                     span.setLineHash(pdfLine.getLineHash());
 
+                    if (pagePolicies != null) {
+                        span.setPageAssignment(assignment == null ? PdfPagePolicies.DEFAULT_ASSIGNMENT : assignment.label());
+                    }
+
                     nonRelativeSpans.add(span);
 
                 }
 
-                lineNumber++;
-                offset += pdfLine.getText().length();
-
             }
+
+            lineNumber++;
+            offset += pdfLine.getText().length();
 
         }
 
@@ -218,13 +272,40 @@ public class PdfFilterService extends BinaryFilterService {
         // generating the new PDF document from the result of the redaction
         final PdfRedactionOptions pdfRedactionOptions = redactionOptions(policy.getConfig().getPdf());
 
-        final PdfRedactor redacter = new PdfRedactor(policy, spansList, pdfRedactionOptions);
+        final PdfRedactor redacter = new PdfRedactor(policy, boundingBoxes(policy, pagePolicies), spansList, pdfRedactionOptions);
         final byte[] redacted = redacter.process(input, outputMimeType);
 
         // TODO: The identified vs the applied will actually be different
         // but we are setting the same here. Fix this at some point.
         final Explanation explanation = new Explanation(spansList, spansList);
         return new BinaryDocumentFilterResult(redacted, context, explanation, tokens, incrementalRedactions);
+
+    }
+
+    // Each policy's bounding boxes on the pages that policy applies to.
+    private static List<BoundingBox> boundingBoxes(final Policy policy, final PdfPagePolicies pagePolicies) {
+
+        if (pagePolicies == null) {
+            return policy.getGraphical().getBoundingBoxes();
+        }
+
+        final List<BoundingBox> boxes = new ArrayList<>();
+
+        for (final BoundingBox box : policy.getGraphical().getBoundingBoxes()) {
+            if (pagePolicies.assignmentFor(box.getPage()) == null) {
+                boxes.add(box);
+            }
+        }
+
+        for (final PdfPagePolicies.Assignment assignment : pagePolicies.getAssignments()) {
+            for (final BoundingBox box : assignment.policy().getGraphical().getBoundingBoxes()) {
+                if (assignment.contains(box.getPage())) {
+                    boxes.add(box);
+                }
+            }
+        }
+
+        return boxes;
 
     }
 
@@ -242,13 +323,23 @@ public class PdfFilterService extends BinaryFilterService {
 
     @Override
     public byte[] apply(final Policy policy, final byte[] input, final List<Span> spans, final MimeType outputMimeType) throws Exception {
+        return apply(policy, input, spans, outputMimeType, null);
+    }
+
+    /**
+     * Applies spans to a PDF, drawing each policy's bounding boxes only on the pages assigned to it.
+     * @param policy The policy for pages not in {@code pagePolicies}. Its {@code config.pdf} settings render the output.
+     * @param pagePolicies The policies assigned to page sets, or {@code null} to use {@code policy} for every page.
+     */
+    public byte[] apply(final Policy policy, final byte[] input, final List<Span> spans, final MimeType outputMimeType,
+                        final PdfPagePolicies pagePolicies) throws Exception {
 
         // Load the PDF config from the policy and apply to the PdfRedactionOptions that are used when
         // generating the new PDF document from the result of the redaction
         final PdfRedactionOptions pdfRedactionOptions = redactionOptions(policy.getConfig().getPdf());
 
         // Redact those terms in the document along with any bounding boxes identified in the policy.
-        final PdfRedactor redacter = new PdfRedactor(policy, spans, pdfRedactionOptions);
+        final PdfRedactor redacter = new PdfRedactor(policy, boundingBoxes(policy, pagePolicies), spans, pdfRedactionOptions);
         return redacter.process(input, outputMimeType);
 
     }

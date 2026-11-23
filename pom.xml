@@ -40,6 +40,7 @@
     <modules>
         <module>phileas-core</module>
         <module>phileas-pdf</module>
+        <module>phileas-ooxml</module>
         <module>phileas-pheye-onnx</module>
         <module>phileas</module>
     </modules>
@@ -63,6 +64,7 @@
         <gson.version>2.14.0</gson.version>
         <httpclient.version>5.6.5</httpclient.version>
         <httpcore.version>5.4.4</httpcore.version>
+        <jackson.version>3.3.0</jackson.version>
         <junit.version>5.11.2</junit.version>
         <junit.pioneer.version>2.3.0</junit.pioneer.version>
         <libphonenumber.version>9.0.42</libphonenumber.version>
@@ -73,7 +75,8 @@
         <mockito.version>5.24.0</mockito.version>
         <onnxruntime.version>1.31.0</onnxruntime.version>
         <pdfbox.version>3.0.8</pdfbox.version>
-        <phisql.version>1.6.0</phisql.version>
+        <phisql.version>1.7.0-SNAPSHOT</phisql.version>
+        <poi.version>6.0.0</poi.version>
     </properties>
     <repositories>
         <repository>
@@ -343,6 +346,14 @@
                 <scope>import</scope>
                 <type>pom</type>
             </dependency>
+            <!-- phisql and json-schema-validator each bring Jackson 3 at a different version. -->
+            <dependency>
+                <groupId>tools.jackson</groupId>
+                <artifactId>jackson-bom</artifactId>
+                <version>${jackson.version}</version>
+                <scope>import</scope>
+                <type>pom</type>
+            </dependency>
             <dependency>
                 <groupId>ai.philterd</groupId>
                 <artifactId>phileas-core</artifactId>
@@ -351,6 +362,11 @@
             <dependency>
                 <groupId>ai.philterd</groupId>
                 <artifactId>phileas-pdf</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>ai.philterd</groupId>
+                <artifactId>phileas-ooxml</artifactId>
                 <version>${project.version}</version>
             </dependency>
         </dependencies>

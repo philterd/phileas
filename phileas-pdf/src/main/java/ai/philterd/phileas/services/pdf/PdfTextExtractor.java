@@ -41,6 +41,7 @@ public class PdfTextExtractor extends PDFTextStripper implements TextExtractor {
     private final long maxPixelsPerPage;
     private final long maxStreamBytes;
     private int pageNumber;
+    private int pageCount;
 
     public PdfTextExtractor() {
         this(0);
@@ -76,6 +77,8 @@ public class PdfTextExtractor extends PDFTextStripper implements TextExtractor {
             throw e;
         }
 
+        pageCount = pdDocument.getNumberOfPages();
+
         this.setSortByPosition(true);
         this.setStartPage(0);
 
@@ -83,7 +86,8 @@ public class PdfTextExtractor extends PDFTextStripper implements TextExtractor {
 
             pageNumber = i;
 
-            this.setStartPage(i);
+            // PDFTextStripper numbers pages from 1.
+            this.setStartPage(i + 1);
             this.setEndPage(i + 1);
 
             final Writer dummy = new OutputStreamWriter(new ByteArrayOutputStream());
@@ -97,6 +101,11 @@ public class PdfTextExtractor extends PDFTextStripper implements TextExtractor {
 
         return lines;
 
+    }
+
+    /** The number of pages in the document last read by {@link #getLines(byte[])}. */
+    public int getPageCount() {
+        return pageCount;
     }
 
     @Override

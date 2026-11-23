@@ -24,6 +24,8 @@ nav:
     - 'Ignoring Sensitive Information': 'filter_policies/ignoring_sensitive_information.md'
     - 'Sample Filter Policies': 'filter_policies/sample_filter_policies.md'
     - 'Known Limitations': 'filter_policies/limitations.md'
+  - 'PDF Redaction': filter_policies/pdf.md
+  - 'Word and Excel Redaction': word_and_excel.md
   - 'Other Features':
     - 'Anonymization': 'other_features/anonymization.md'
     - 'Span Disambiguation': 'other_features/span_disambiguation.md'

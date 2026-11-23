@@ -37,6 +37,9 @@ import ai.philterd.phileas.data.generators.PhoneNumberGenerator;
 import ai.philterd.phileas.data.generators.EINGenerator;
 import ai.philterd.phileas.data.generators.ITINGenerator;
 import ai.philterd.phileas.data.generators.CanadaSINGenerator;
+import ai.philterd.phileas.data.generators.DEANumberGenerator;
+import ai.philterd.phileas.data.generators.MBIGenerator;
+import ai.philterd.phileas.data.generators.NPIGenerator;
 import ai.philterd.phileas.data.generators.SSNGenerator;
 import ai.philterd.phileas.data.generators.StateAbbreviationGenerator;
 import ai.philterd.phileas.data.generators.StateGenerator;
@@ -94,6 +97,21 @@ public class DefaultDataGenerator extends AbstractGenerator<Object> implements D
      * Generator for Canadian SINs.
      */
     public final Generator<String> canadaSin;
+
+    /**
+     * Generator for NPIs.
+     */
+    public final Generator<String> npi;
+
+    /**
+     * Generator for DEA numbers.
+     */
+    public final Generator<String> deaNumber;
+
+    /**
+     * Generator for MBIs.
+     */
+    public final Generator<String> mbi;
 
     /**
      * Generator for phone numbers.
@@ -230,6 +248,9 @@ public class DefaultDataGenerator extends AbstractGenerator<Object> implements D
         this.ein = new EINGenerator(random);
         this.itin = new ITINGenerator(random);
         this.canadaSin = new CanadaSINGenerator(random);
+        this.npi = new NPIGenerator(random);
+        this.deaNumber = new DEANumberGenerator(random);
+        this.mbi = new MBIGenerator(random);
         this.phoneNumbers = new PhoneNumberGenerator(random);
         this.emailAddresses = new EmailAddressGenerator(random, firstNames, surnames);
         this.age = new AgeGenerator(random);
@@ -261,6 +282,9 @@ public class DefaultDataGenerator extends AbstractGenerator<Object> implements D
     @Override public Generator<String> ein() { return ein; }
     @Override public Generator<String> itin() { return itin; }
     @Override public Generator<String> canadaSin() { return canadaSin; }
+    @Override public Generator<String> npi() { return npi; }
+    @Override public Generator<String> deaNumber() { return deaNumber; }
+    @Override public Generator<String> mbi() { return mbi; }
     @Override public Generator<String> phoneNumbers() { return phoneNumbers; }
     @Override public Generator<String> emailAddresses() { return emailAddresses; }
     @Override public Generator<Integer> age() { return age; }

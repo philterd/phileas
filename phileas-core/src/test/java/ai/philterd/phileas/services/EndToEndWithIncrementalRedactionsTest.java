@@ -32,6 +32,8 @@ import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 
 import static ai.philterd.phileas.services.EndToEndTestsHelper.getPolicy;
@@ -68,6 +70,61 @@ public class EndToEndWithIncrementalRedactionsTest {
             LOGGER.info("Incremental Redaction: {}", incrementalRedaction);
             Assertions.assertEquals(DigestUtils.sha256Hex(incrementalRedaction.getIncrementallyRedactedText()), incrementalRedaction.getHash());
         }
+
+    }
+
+    @Test
+    public void incrementalRedactionsKeepTheirTextsAndHashes() throws Exception {
+
+        final Properties properties = new Properties();
+        properties.setProperty("incremental.redactions.enabled", "true");
+
+        final PlainTextFilterService service = new PlainTextFilterService(new PhileasConfiguration(properties), contextService, vectorService, null);
+        final TextFilterResult response = service.filter(getPolicy(), "context", "George Washington whose SSN was 123-45-6789 was the first president of the United States and he lived at 90210.");
+
+        // The texts and hashes from before the texts were built on request.
+        final List<IncrementalRedaction> redactions = response.getIncrementalRedactions();
+        Assertions.assertEquals(2, redactions.size());
+        Assertions.assertEquals("George Washington whose SSN was {{{REDACTED-ssn}}} was the first president of the United States and he lived at 90210.", redactions.get(0).getIncrementallyRedactedText());
+        Assertions.assertEquals("8f444b3c47479e532701a36ce68e45b3d691fa0b16d60415dcb658c418bcfdff", redactions.get(0).getHash());
+        Assertions.assertEquals("123-45-6789", redactions.get(0).getSpan().getText());
+        Assertions.assertEquals("George Washington whose SSN was {{{REDACTED-ssn}}} was the first president of the United States and he lived at {{{REDACTED-zip-code}}}.", redactions.get(1).getIncrementallyRedactedText());
+        Assertions.assertEquals("7450758c6bfb49dd3ded2f495dd66320e4d25f7bd634e106bef89b7bf3cb9fa9", redactions.get(1).getHash());
+        Assertions.assertEquals("90210", redactions.get(1).getSpan().getText());
+
+    }
+
+    @Test
+    public void manyIncrementalRedactions() throws Exception {
+
+        final Properties properties = new Properties();
+        properties.setProperty("incremental.redactions.enabled", "true");
+
+        final int records = 1000;
+        final List<String> lines = new ArrayList<>();
+        for(int i = 0; i < records; i++) {
+            lines.add("Record " + i + " has SSN 123-45-" + String.format("%04d", 1000 + i) + " on file.");
+        }
+        final String input = String.join(" ", lines);
+
+        final PlainTextFilterService service = new PlainTextFilterService(new PhileasConfiguration(properties), contextService, vectorService, null);
+        final TextFilterResult response = service.filter(getPolicy(), "context", input);
+
+        final List<IncrementalRedaction> redactions = response.getIncrementalRedactions();
+        Assertions.assertEquals(records, redactions.size());
+
+        // Each step replaces one more SSN, in order.
+        for(int step = 0; step < records; step++) {
+            final List<String> expected = new ArrayList<>(lines);
+            for(int i = 0; i <= step; i++) {
+                expected.set(i, lines.get(i).replaceFirst("123-45-\\d{4}", "{{{REDACTED-ssn}}}"));
+            }
+            final String text = String.join(" ", expected);
+            Assertions.assertEquals(text, redactions.get(step).getIncrementallyRedactedText(), "step " + step);
+            Assertions.assertEquals(DigestUtils.sha256Hex(text), redactions.get(step).getHash(), "step " + step);
+        }
+
+        Assertions.assertEquals(response.getFilteredText(), redactions.get(records - 1).getIncrementallyRedactedText());
 
     }
 

@@ -83,6 +83,24 @@ public interface DataGenerator {
     Generator<String> canadaSin();
 
     /**
+     * Gets a generator for National Provider Identifiers (NPI).
+     * @return A generator for National Provider Identifiers (NPI).
+     */
+    Generator<String> npi();
+
+    /**
+     * Gets a generator for DEA registration numbers.
+     * @return A generator for DEA registration numbers.
+     */
+    Generator<String> deaNumber();
+
+    /**
+     * Gets a generator for Medicare Beneficiary Identifiers (MBI).
+     * @return A generator for Medicare Beneficiary Identifiers (MBI).
+     */
+    Generator<String> mbi();
+
+    /**
      * Gets a generator for phone numbers.
      * @return A generator for phone numbers.
      */

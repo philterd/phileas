@@ -191,6 +191,8 @@ public class FilterConditionGrammarTest {
         assertParses("token != \"127.0.0.1\"", "token", "!=", "\"127.0.0.1\"");
         assertParses("context == \"my-context\"", "context", "==", "\"my-context\"");
         assertParses("population >= 2500", "population", ">=", "2500");
+        assertParses("token > 89", "token", ">", "89");
+        assertParses("token <= 89.5", "token", "<=", "89.5");
         assertParses("type == loc", "type", "==", "loc");
 
         final List<ParsedCondition> joined = ParserListener.getTerminals("token != \"123-45-6789\" AND context == \"c\" and confidence <= 0.9");

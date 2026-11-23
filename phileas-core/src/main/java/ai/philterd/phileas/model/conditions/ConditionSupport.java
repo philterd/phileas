@@ -18,6 +18,7 @@ package ai.philterd.phileas.model.conditions;
 import ai.philterd.phileas.model.filtering.FilterType;
 
 import java.util.Set;
+import java.util.regex.Pattern;
 
 /**
  * Which conditions the filter strategies evaluate. The condition grammar accepts any field with any operator, but a
@@ -30,6 +31,7 @@ public final class ConditionSupport {
     private static final Set<String> COMPARISONS = Set.of(">", "<", ">=", "<=", "==", "!=");
     private static final Set<String> TOKEN_OPERATORS = Set.of("==", "!=", "startswith", "is", "is not");
     private static final Set<String> DATE_CATEGORIES = Set.of("birthdate", "deathdate", "birthdate or deathdate");
+    private static final Pattern NUMBER = Pattern.compile("[0-9]+(\\.[0-9]+)?");
 
     private ConditionSupport() {
     }
@@ -48,6 +50,13 @@ public final class ConditionSupport {
 
         switch (field) {
             case "token":
+                if (isNumber(condition.getValue())) {
+                    if (filterType != FilterType.AGE) {
+                        return "token compares with a number only on the age filter.";
+                    }
+                    return COMPARISONS.contains(operator) ? null
+                            : "token supports >, <, >=, <=, ==, and != with a number, not " + operator + ".";
+                }
                 if (!TOKEN_OPERATORS.contains(operator)) {
                     return "token supports ==, !=, startswith, is, and is not, not " + operator + ".";
                 }
@@ -74,6 +83,15 @@ public final class ConditionSupport {
                 return "no filter evaluates " + field + ".";
         }
 
+    }
+
+    /**
+     * Whether a condition's value is an unquoted number, as in {@code token > 89}, rather than a quoted value.
+     * @param value The condition's value.
+     * @return <code>true</code> if the value is a number.
+     */
+    public static boolean isNumber(final String value) {
+        return value != null && NUMBER.matcher(value).matches();
     }
 
     private static String unquoted(final String value) {

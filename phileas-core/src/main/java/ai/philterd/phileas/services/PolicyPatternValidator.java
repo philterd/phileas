@@ -21,6 +21,7 @@ import ai.philterd.phileas.policy.Identifiers;
 import ai.philterd.phileas.policy.IgnoredPattern;
 import ai.philterd.phileas.policy.InvalidPolicyPatternException;
 import ai.philterd.phileas.policy.Policy;
+import ai.philterd.phileas.policy.filters.AbstractCueWordFilter;
 import ai.philterd.phileas.policy.filters.AbstractFilter;
 import ai.philterd.phileas.policy.filters.Identifier;
 import ai.philterd.phileas.policy.filters.Section;
@@ -74,6 +75,8 @@ final class PolicyPatternValidator {
                 }
             }
 
+            checkCueWordPatterns(identifiers.getHealthPlanMemberId(), "health plan member ID");
+            checkCueWordPatterns(identifiers.getDeviceIdentifier(), "device identifier");
             for (final AbstractFilter filter : identifiers.getAllFilters()) {
                 checkIgnoredPatterns(filter.getIgnoredPatterns(),
                         "the " + filter.getClass().getSimpleName() + " filter");
@@ -83,6 +86,15 @@ final class PolicyPatternValidator {
 
         checkIgnoredPatterns(policy.getIgnoredPatterns(), "the policy");
 
+    }
+
+    private void checkCueWordPatterns(final AbstractCueWordFilter filter, final String name) {
+        // A cue word filter's patterns are searched for in a document, like an identifier's.
+        if (filter != null) {
+            for (final String pattern : orEmpty(filter.getPatterns())) {
+                check(name + " pattern", pattern, 0, Application.FIND);
+            }
+        }
     }
 
     private void checkIgnoredPatterns(final List<IgnoredPattern> ignoredPatterns, final String owner) {
