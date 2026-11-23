@@ -97,12 +97,7 @@ public class FpeWiringTest {
     /** A policy that enables just one filter, with what that filter requires and an FPE_ENCRYPT_REPLACE strategy. */
     private static Policy policy(final String key, final boolean list, final String strategiesKey, final boolean withFpe) {
 
-        final String required = switch (key) {
-            case "identifiers" -> "\"pattern\": \"[0-9]{4}\", ";
-            case "sections" -> "\"startPattern\": \"START\", \"endPattern\": \"END\", ";
-            case "dictionaries" -> "\"terms\": [ \"ada\" ], ";
-            default -> "";
-        };
+        final String required = required(key);
 
         final String body = "{ " + required + "\"" + strategiesKey + "\": " + STRATEGY + " }";
         final String value = list ? "[ " + body + " ]" : body;
@@ -110,6 +105,16 @@ public class FpeWiringTest {
         return new Gson().fromJson("{ " + (withFpe ? FPE + ", " : "") + "\"identifiers\": { \"" + key + "\": "
                 + value + " } }", Policy.class);
 
+    }
+
+    /** The settings a filter needs before it can be built, as JSON members followed by a comma. */
+    static String required(final String key) {
+        return switch (key) {
+            case "identifiers" -> "\"pattern\": \"[0-9]{4}\", ";
+            case "sections" -> "\"startPattern\": \"START\", \"endPattern\": \"END\", ";
+            case "dictionaries" -> "\"terms\": [ \"ada\" ], ";
+            default -> "";
+        };
     }
 
     private static List<Filter> load(final Policy policy) throws Exception {
