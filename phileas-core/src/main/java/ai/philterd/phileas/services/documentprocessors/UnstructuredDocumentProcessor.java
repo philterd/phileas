@@ -19,6 +19,7 @@ import ai.philterd.phileas.filters.Filter;
 import ai.philterd.phileas.model.filtering.Explanation;
 import ai.philterd.phileas.model.filtering.Filtered;
 import ai.philterd.phileas.model.filtering.IncrementalRedaction;
+import ai.philterd.phileas.model.filtering.IncrementalRedactionHistory;
 import ai.philterd.phileas.model.filtering.Span;
 import ai.philterd.phileas.model.filtering.TextFilterResult;
 import ai.philterd.phileas.policy.Policy;
@@ -145,9 +146,12 @@ public class UnstructuredDocumentProcessor implements DocumentProcessor {
                 .collect(toList());
 
         final StringBuilder sb = new StringBuilder(input.length());
+        final String[] hashes = new String[incrementalRedactionsEnabled ? orderedSpans.size() : 0];
         int copiedTo = 0;
 
-        for(final Span span : orderedSpans) {
+        for(int i = 0; i < orderedSpans.size(); i++) {
+
+            final Span span = orderedSpans.get(i);
 
             // Get the replacement. This might be the token itself or an anonymized version.
             final String replacement = span.getReplacement();
@@ -156,14 +160,21 @@ public class UnstructuredDocumentProcessor implements DocumentProcessor {
             copiedTo = span.getCharacterEnd();
 
             if(incrementalRedactionsEnabled) {
-                // Hash the text at this point: the replacements so far and the rest of the input.
-                final String snapshot = sb + input.substring(copiedTo);
-                incrementalRedactions.add(new IncrementalRedaction(DigestUtils.sha256Hex(snapshot), span, snapshot));
+                // Hash the text at this point: the replacements so far and the rest of the input. The text is
+                // only kept long enough to hash it; each IncrementalRedaction rebuilds it from the history below.
+                hashes[i] = DigestUtils.sha256Hex(sb + input.substring(copiedTo));
             }
 
         }
 
         sb.append(input, copiedTo, input.length());
+
+        if(incrementalRedactionsEnabled && !orderedSpans.isEmpty()) {
+            final IncrementalRedactionHistory history = new IncrementalRedactionHistory(input, orderedSpans);
+            for(int i = 0; i < orderedSpans.size(); i++) {
+                incrementalRedactions.add(new IncrementalRedaction(hashes[i], orderedSpans.get(i), history, i));
+            }
+        }
 
         return new TextFilterResult(sb.toString(), context, piece, explanation, incrementalRedactions, tokens);
 
