@@ -48,6 +48,25 @@ public interface PhEyeDetector extends AutoCloseable {
     List<PhEyeSpan> detect(String text, Collection<String> labels, String context, int piece) throws Exception;
 
     /**
+     * Detect entities in the given text, returning at least every span scoring above {@code threshold}.
+     * {@link PhEyeFilter} applies each label's threshold to the returned spans, so a detector may return
+     * more than it keeps, but must not drop a span scoring above {@code threshold}. The default ignores
+     * the threshold and calls {@link #detect(String, Collection, String, int)}.
+     *
+     * @param text      the (already punctuation-normalized) text to scan
+     * @param labels    the entity labels to detect
+     * @param threshold the lowest threshold the policy configures for the labels, or {@code null} for
+     *                  the detector's own default
+     * @param context   the document context identifier (passed through to a remote PhEye)
+     * @param piece     the piece/window index (passed through to a remote PhEye)
+     * @return the detected spans, or an empty list if none; never {@code null}
+     */
+    default List<PhEyeSpan> detect(String text, Collection<String> labels, Double threshold, String context,
+                                   int piece) throws Exception {
+        return detect(text, labels, context, piece);
+    }
+
+    /**
      * The most words of text the model examines in one call; it ignores the rest. {@link PhEyeFilter}
      * divides longer text into windows of this many words. The default suits every published ph-eye
      * GLiNER model, the smallest of which reads 296; a detector that knows its model's {@code max_len}

@@ -59,7 +59,8 @@ import java.util.function.UnaryOperator;
  */
 public class LocalPhEyeDetector implements PhEyeDetector {
 
-    // Default confidence threshold; the PhEyeFilter applies its own per-label thresholds on top.
+    // The confidence threshold when none is given. PhEyeFilter passes the lowest threshold its policy
+    // configures, and applies each label's threshold to the spans returned.
     private static final double DEFAULT_THRESHOLD = 0.5;
 
     static final String THREADS_ENV = "PHEYE_ONNX_THREADS";
@@ -222,6 +223,14 @@ public class LocalPhEyeDetector implements PhEyeDetector {
     @Override
     public List<PhEyeSpan> detect(final String text, final Collection<String> labels,
                                   final String context, final int piece) throws Exception {
+        return detect(text, labels, null, context, piece);
+    }
+
+    @Override
+    public List<PhEyeSpan> detect(final String text, final Collection<String> labels, final Double threshold,
+                                  final String context, final int piece) throws Exception {
+
+        final double cut = threshold == null ? DEFAULT_THRESHOLD : threshold;
 
         final List<String> labelList = new ArrayList<>(labels);
         if (labelList.isEmpty() || text == null || text.isBlank()) {
@@ -310,7 +319,7 @@ public class LocalPhEyeDetector implements PhEyeDetector {
                 }
                 for (int c = 0; c < labelList.size(); c++) {
                     final double prob = sigmoid(logits[i][k][c]);
-                    if (prob > DEFAULT_THRESHOLD) {
+                    if (prob > cut) {
                         candidates.add(new Candidate(i, end, c, prob));
                     }
                 }

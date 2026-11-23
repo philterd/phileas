@@ -79,6 +79,21 @@ class LocalPhEyeDetectorProviderTest {
     }
 
     @Test
+    void theSharedDetectorPassesTheThresholdOn() throws Exception {
+        final Path dir = FixtureModel.dir();
+        assumeTrue(dir != null, "GLiNER fixture not on the classpath; skipping threshold test.");
+
+        final PhEyeConfiguration configuration = new PhEyeConfiguration("http://localhost:18080");
+        configuration.setModelPath(dir.toString());
+
+        try (final PhEyeDetector detector = new LocalPhEyeDetectorProvider().create(configuration)) {
+            // "Carl" scores about 0.0000454 with the fixture, so it is returned only if the threshold reaches the model.
+            assertEquals(1, detector.detect("Alice Bob Carl", List.of("person"), "ctx", 0).size());
+            assertEquals(2, detector.detect("Alice Bob Carl", List.of("person"), 0.00001, "ctx", 0).size());
+        }
+    }
+
+    @Test
     void policiesNamingTheSameDirectoryShareOneModel(@TempDir final Path temp) throws Exception {
         final Path dir = FixtureModel.dir();
         assumeTrue(dir != null, "GLiNER fixture not on the classpath; skipping shared-detector test.");

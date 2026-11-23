@@ -49,4 +49,4 @@ Tokenizing runs on the CPU in either case. DJL's tokenizer otherwise downloads a
 
 ## Thresholds
 
-Confidence thresholds and replacement strategies are configured on the PhEye filter the same way regardless of where detection runs, so a policy written for remote PhEye keeps the same threshold and strategy settings when you switch it to a local model. Each published model has a recommended confidence threshold; use the value documented on the model you load.
+Confidence thresholds are set on the PhEye filter: per label in `thresholds`, and in `phEyeConfiguration`'s `threshold` (`0.5` by default) for labels without their own value. The detector is given the lowest of these for the requested labels and applies it with no separate floor of its own, then `PhEyeFilter` applies each label's threshold to the detections. See [Thresholds](../filter_policies/filters/persons_names/ph-eye.md#thresholds). The remote service does not use `threshold`, so a label without its own value can be cut differently after a policy moves between a remote and a local model. Each published model has a recommended confidence threshold; use the value documented on the model you load.

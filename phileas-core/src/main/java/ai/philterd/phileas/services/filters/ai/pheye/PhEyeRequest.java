@@ -23,6 +23,8 @@ public class PhEyeRequest {
     private Collection<String> labels;
     private String context;
     private int piece;
+    // The lowest confidence to return; omitted from the request when null, so the model's own default applies.
+    private Double threshold;
     
     public String getText() {
         return text;
@@ -54,6 +56,14 @@ public class PhEyeRequest {
 
     public void setPiece(int piece) {
         this.piece = piece;
+    }
+
+    public Double getThreshold() {
+        return threshold;
+    }
+
+    public void setThreshold(Double threshold) {
+        this.threshold = threshold;
     }
     
 }

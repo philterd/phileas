@@ -23,7 +23,8 @@ This filter requires the connection properties for the ph-eye service in a `phEy
 | `phEyeFilterStrategies` | A list of filter strategies.                                                                                                                                                                                 | None                                                     |
 | `bearerToken`           | A bearer token for the Ph-Eye service, sent to `endpoint` in an `Authorization` header. When not set, the `PHEYE_BEARER_TOKEN` environment variable is used, but only when `endpoint` is left out or is the same as `PHEYE_ENDPOINT` (or its default when not set), ignoring a trailing slash. A policy that names a different endpoint sends no token unless it sets `bearerToken`. | None                                                     |
 | `modelPath`             | Path to a local GLiNER model directory for on-device inference. When set, detection runs locally instead of calling the remote `endpoint`. See [Local inference](#local-inference) below.                     | None                                                     |
-| `threshold`             | For local inference, the minimum confidence for a detection: a span is kept only when its score is above this value. Ignored by the remote service. See [Local inference](#local-inference) below.          | `0.5`                                                    |
+| `threshold`             | For local inference, the confidence a detection of a label without its own value in `thresholds` must score above. Ignored by the remote service. See [Thresholds](#thresholds) below.                 | `0.5`                                                    |
+| `thresholds`            | The confidence a detection must score above, per label, such as `{"name": 0.3}`. Labels match regardless of case. A label's value applies whether it is above or below `threshold`. See [Thresholds](#thresholds) below. | None                                                     |
 | `enabled`               | When set to false, the filter will be disabled and not applied                                                                                                                                               | `true`                                                   |
 | `ignored`               | A list of terms to be ignored by the filter.                                                                                                                                                                 | None                                                     |
 | `windowSize`            | Sets the size of the window (in terms) surrounding a span to look for contextual terms. If set, this value overrides the value of `span.window.size` in the configuration.                                   | The value of `span.window.size` which is by default `5`. |
@@ -79,14 +80,58 @@ Each filter strategy may have one condition. See [Conditions](#conditions) for d
 }
 ```
 
+## Thresholds
+
+A detection is kept only when its score is above its label's threshold. A label's value in `thresholds`
+(on the filter, not in `phEyeConfiguration`) applies to that label, matched regardless of case, whether
+it is above or below `threshold`.
+
+With local inference, a label without its own value uses `phEyeConfiguration`'s `threshold` (`0.5` by
+default). The model is given the lowest threshold of the requested labels, so it does not drop a
+detection that a label's threshold would keep.
+
+With the remote service, `threshold` is not used. Phileas sends the lowest value in `thresholds` for the
+requested labels with each request, so the service returns detections down to that value, and then
+applies each label's value to them. A label without its own value keeps the model's own cutoff, as does
+every label when `thresholds` is not set.
+
+The remote service applies one threshold to every label in a request. When a policy requests labels
+with different values, or some labels without one, every label is detected down to the lowest value
+sent. Phileas applies each label's own value afterwards, but a label without one keeps detections down
+to that lowest value instead of the model's cutoff. To keep the model's cutoff for such a label, detect
+it with a separate `pheyes` filter, or give it its own value.
+
+This policy keeps name detections scoring above 0.3 from a local model, and other labels above 0.5:
+
+```
+{
+   "identifiers": {
+      "pheyes": [
+        {
+          "phEyeConfiguration": {
+              "modelPath": "/models/ph-eye-pii-en-small"
+          },
+          "thresholds": {
+              "name": 0.3
+          },
+          "phEyeFilterStrategies": [
+             {
+                "strategy": "REDACT"
+             }
+          ]
+        }
+      ]
+   }
+}
+```
+
 ## Local inference
 
 By default the filter calls a remote Ph-Eye service over HTTP at its `endpoint`. It can instead run a
 GLiNER model on-device by setting `modelPath` on the `phEyeConfiguration` to a local model directory
 (the ONNX model, the tokenizer, and `gliner_config.json`). When `modelPath` is set, detection runs
-locally and the `endpoint` is not used. A detection is kept only when its score is above the
-`phEyeConfiguration`'s `threshold` (`0.5` by default); the remote service applies its model's own
-cutoff and ignores `threshold`.
+locally and the `endpoint` is not used. See [Thresholds](#thresholds) for the confidence a detection
+must score.
 
 Local inference is provided by the optional
 [`phileas-pheye-onnx`](../../../local_inference/index.md) module (ONNX Runtime), which

@@ -116,6 +116,35 @@ class LocalPhEyeDetectorParityTest {
     }
 
     @Test
+    void theGivenThresholdIsTheCutNotAFixedHalf() throws Exception {
+
+        final Path dir = fixtureDir();
+        assumeTrue(dir != null, "GLiNER fixture model.onnx not on the test classpath; skipping parity test.");
+
+        try (final LocalPhEyeDetector detector = new LocalPhEyeDetector(dir)) {
+
+            // Every span but the two the fixture fires scores sigmoid(-10), about 0.0000454. "Carl" does not
+            // overlap the wider span over "Alice Bob", so it is returned only when the threshold is below its score.
+            assertEquals(List.of("Alice Bob"), texts(detector.detect("Alice Bob Carl", List.of("person"), "ctx", 0)));
+            assertEquals(List.of("Alice Bob"), texts(detector.detect("Alice Bob Carl", List.of("person"), 0.5, "ctx", 0)));
+
+            final List<PhEyeSpan> low = detector.detect("Alice Bob Carl", List.of("person"), 0.00001, "ctx", 0);
+            assertEquals(List.of("Alice Bob", "Carl"), texts(low));
+            assertTrue(low.get(1).getScore() < 0.5, "Carl scores below the old fixed threshold of 0.5");
+
+            // The single-word span scores sigmoid(+6), about 0.9975, so a higher threshold drops it.
+            assertEquals(1, detector.detect("Alice", List.of("person"), 0.99, "ctx", 0).size());
+            assertEquals(0, detector.detect("Alice", List.of("person"), 0.999, "ctx", 0).size());
+
+        }
+
+    }
+
+    private static List<String> texts(final List<PhEyeSpan> spans) {
+        return spans.stream().sorted(java.util.Comparator.comparingInt(PhEyeSpan::getStart)).map(PhEyeSpan::getText).toList();
+    }
+
+    @Test
     void longInputPastTheTokenLimitIsFullyTokenized() throws Exception {
 
         final Path dir = fixtureDir();

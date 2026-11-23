@@ -30,12 +30,14 @@ import org.apache.hc.client5.http.classic.HttpClient;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.ServiceLoader;
+import java.util.TreeMap;
 
 public class PhEyeFilter extends NerFilter {
 
@@ -46,9 +48,12 @@ public class PhEyeFilter extends NerFilter {
     private final Collection<String> labels;
     private final PhEyeDetector detector;
 
-    // The local model's threshold, also applied here so it holds whatever the provider's own cutoff;
-    // null for the remote service.
+    // The local model's threshold, for labels without their own; null for the remote service, whose
+    // model applies its own default to them.
     private final Double localThreshold;
+
+    // The policy's per-label thresholds, matched to a detected label regardless of case.
+    private final Map<String, Double> labelThresholds;
 
     public PhEyeFilter(final FilterConfiguration filterConfiguration,
                        final PhEyeConfiguration phEyeConfiguration,
@@ -63,6 +68,11 @@ public class PhEyeFilter extends NerFilter {
         this.labels = phEyeConfiguration.getLabels();
         this.detector = createDetector(phEyeConfiguration, httpClient);
         this.localThreshold = StringUtils.isNotEmpty(phEyeConfiguration.getModelPath()) ? phEyeConfiguration.getThreshold() : null;
+
+        this.labelThresholds = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+        if (thresholds != null) {
+            this.labelThresholds.putAll(thresholds);
+        }
 
     }
 
@@ -123,11 +133,11 @@ public class PhEyeFilter extends NerFilter {
             for (final PhEyeSpan phEyeSpan : phEyeSpans) {
 
                 // Only interested in spans matching the tag we are looking for, e.g. PER, LOC, or if there are no labels specified.
-                if ((labels.isEmpty() || labels.contains(phEyeSpan.getLabel()))
-                        && (localThreshold == null || phEyeSpan.getScore() > localThreshold)) {
+                if (labels.isEmpty() || labels.contains(phEyeSpan.getLabel())) {
 
-                    // Check the confidence threshold.
-                    if (!thresholds.containsKey(phEyeSpan.getLabel().toUpperCase()) || phEyeSpan.getScore() >= thresholds.get(phEyeSpan.getLabel().toUpperCase())) {
+                    // Keep the span when it scores above its label's threshold.
+                    final Double threshold = thresholdFor(phEyeSpan.getLabel());
+                    if (threshold == null || phEyeSpan.getScore() > threshold) {
 
                         // Get the window of text surrounding the token.
                         final String[] window = getWindow(formattedInput, phEyeSpan.getStart(), phEyeSpan.getEnd());
@@ -172,6 +182,42 @@ public class PhEyeFilter extends NerFilter {
     }
 
     /**
+     * The threshold a span of the label must score above: the label's own threshold in the policy, or else the
+     * local model's threshold. Null for a label without its own threshold on the remote service.
+     */
+    private Double thresholdFor(final String label) {
+        final Double threshold = labelThresholds.get(label);
+        return threshold != null ? threshold : localThreshold;
+    }
+
+    /**
+     * The lowest threshold of the labels detected, which the detector is given so it does not drop a span a
+     * label's threshold would keep. With no labels given, the model chooses them, so every configured threshold
+     * counts. Null when none is configured, so a remote model applies its own default.
+     */
+    private Double lowestThreshold() {
+
+        final List<Double> configured = new ArrayList<>();
+
+        if (labels.isEmpty()) {
+            configured.addAll(labelThresholds.values());
+            if (localThreshold != null) {
+                configured.add(localThreshold);
+            }
+        } else {
+            for (final String label : labels) {
+                final Double threshold = thresholdFor(label);
+                if (threshold != null) {
+                    configured.add(threshold);
+                }
+            }
+        }
+
+        return configured.stream().min(Double::compare).orElse(null);
+
+    }
+
+    /**
      * Detects over the whole text: in one call when it fits in what the model examines, otherwise one
      * window at a time, with each span's offsets made relative to the text.
      */
@@ -180,8 +226,10 @@ public class PhEyeFilter extends NerFilter {
         final int maxWords = detector.maxWords();
         final List<PhEyeWindows.Window> windows = PhEyeWindows.of(text, maxWords, detector.maxWidth());
 
+        final Double lowestThreshold = lowestThreshold();
+
         if (windows.size() == 1) {
-            return detector.detect(text, labels, context, piece);
+            return detector.detect(text, labels, lowestThreshold, context, piece);
         }
 
         LOGGER.debug("Detecting over {} windows of at most {} words.", windows.size(), maxWords);
@@ -190,7 +238,8 @@ public class PhEyeFilter extends NerFilter {
 
         for (final PhEyeWindows.Window window : windows) {
 
-            final List<PhEyeSpan> found = detector.detect(text.substring(window.start(), window.end()), labels, context, piece);
+            final List<PhEyeSpan> found = detector.detect(text.substring(window.start(), window.end()), labels,
+                    lowestThreshold, context, piece);
 
             if (found != null) {
                 for (final PhEyeSpan span : found) {

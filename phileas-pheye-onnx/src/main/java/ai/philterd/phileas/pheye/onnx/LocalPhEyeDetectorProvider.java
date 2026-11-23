@@ -77,6 +77,12 @@ public class LocalPhEyeDetectorProvider implements PhEyeDetectorProvider {
         }
 
         @Override
+        public List<PhEyeSpan> detect(final String text, final Collection<String> labels, final Double threshold,
+                                      final String context, final int piece) throws Exception {
+            return detector.detect(text, labels, threshold, context, piece);
+        }
+
+        @Override
         public int maxWords() {
             return detector.maxWords();
         }

@@ -26,7 +26,7 @@ The detector returns `PhEyeSpan` results. The `PhEyeFilter` then applies its per
 3. Tokenize the prompt and text pre-split, and build a `words_mask` marking the first subtoken of each text word.
 4. Enumerate candidate spans `[i, i+width]` for `width` in `0..max_width-1` (`max_width` is 12 for the PII model).
 5. Run the ONNX model with inputs `input_ids`, `attention_mask`, `words_mask`, `text_lengths`, `span_idx`, and `span_mask`, and read the `logits` output of shape `[words, width, classes]`.
-6. Decode: apply `sigmoid(logits) > threshold`, then perform greedy flat (non-overlapping, highest score first) selection.
+6. Decode: apply `sigmoid(logits) > threshold`, where `threshold` is the lowest threshold the policy configures for the requested labels, then perform greedy flat (non-overlapping, highest score first) selection.
 7. Map the selected word spans back to character offsets and return them as `PhEyeSpan` results.
 
 The span width, maximum length, and prompt tokens come from the model's `gliner_config.json`. See [Model Directory](model-directory.md) for the files this requires, and [Limitations and Accuracy](limitations.md) for the parity status of this port.

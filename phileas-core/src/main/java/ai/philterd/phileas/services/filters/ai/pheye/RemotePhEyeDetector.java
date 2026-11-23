@@ -80,12 +80,20 @@ public class RemotePhEyeDetector implements PhEyeDetector {
     @Override
     public List<PhEyeSpan> detect(final String text, final Collection<String> labels,
                                   final String context, final int piece) throws Exception {
+        return detect(text, labels, null, context, piece);
+    }
+
+    @Override
+    public List<PhEyeSpan> detect(final String text, final Collection<String> labels, final Double threshold,
+                                  final String context, final int piece) throws Exception {
 
         final PhEyeRequest phEyeRequest = new PhEyeRequest();
         phEyeRequest.setText(text);
         phEyeRequest.setContext(context);
         phEyeRequest.setPiece(piece);
         phEyeRequest.setLabels(labels);
+        // The service drops spans below this before returning them; PhEyeFilter applies each label's threshold.
+        phEyeRequest.setThreshold(threshold);
 
         final String json = gson.toJson(phEyeRequest);
 
