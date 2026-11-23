@@ -79,6 +79,19 @@ public class AgeTokenConditionTest {
         Assertions.assertEquals(expected, filter(SAFE_HARBOR_POLICY, text), text);
     }
 
+    @ParameterizedTest
+    @CsvSource(delimiter = '|', value = {
+            "The patient is 93 years old.        | The patient is {{{REDACTED-age}}}.",
+            "The patient is 93 YEARS OLD.        | The patient is {{{REDACTED-age}}}.",
+            "The patient is 93 Years Old.        | The patient is {{{REDACTED-age}}}.",
+            "Patient is 93 YO.                   | Patient is {{{REDACTED-age}}}.",
+            "Patient is 61 Y/O.                  | Patient is {{{REDACTED-age}}}.",
+            "PATIENT IS THIRTY-FIVE YEARS OLD.   | PATIENT IS {{{REDACTED-age}}}."
+    })
+    public void agesInAnyCaseAreRedacted(final String text, final String expected) throws Exception {
+        Assertions.assertEquals(expected, filter("{ \"identifiers\": { \"age\": {} } }", text));
+    }
+
     @Test
     public void aLaterStrategyAppliesToAgesTheConditionDoesNotMatch() throws Exception {
 

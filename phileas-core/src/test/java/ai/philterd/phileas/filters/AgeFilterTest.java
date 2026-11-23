@@ -23,6 +23,8 @@ import ai.philterd.phileas.services.filters.regex.AgeFilter;
 import ai.philterd.phileas.services.strategies.rules.AgeFilterStrategy;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -768,6 +770,33 @@ public class AgeFilterTest extends AbstractFilterTest {
             Assertions.assertEquals(0, filtered.getSpans().size(), text);
 
         }
+
+    }
+
+
+    @ParameterizedTest
+    @CsvSource(delimiter = '|', value = {
+            "The patient is 93 YEARS OLD.        | 93 YEARS OLD",
+            "The patient is 93 Years Old.        | 93 Years Old",
+            "Patient is 93 YO.                   | 93 YO",
+            "Patient is 93 Yo.                   | 93 Yo",
+            "Patient is 61 Y/O.                  | 61 Y/O",
+            "PATIENT IS THIRTY-FIVE YEARS OLD.   | THIRTY-FIVE YEARS OLD",
+            "A 47-YEAR-OLD WOMAN                 | 47-YEAR-OLD"
+    })
+    public void anAgeInUpperOrTitleCaseIsKept(final String text, final String expected) throws Exception {
+
+        final FilterConfiguration filterConfiguration = new FilterConfiguration.FilterConfigurationBuilder()
+                .withStrategies(List.of(new AgeFilterStrategy()))
+                .withWindowSize(windowSize)
+                .build();
+
+        final AgeFilter filter = new AgeFilter(filterConfiguration);
+
+        final Filtered filtered = filter.filter(contextService, getPolicy(), "context", PIECE, text);
+
+        Assertions.assertEquals(1, filtered.getSpans().size(), text);
+        Assertions.assertEquals(expected, filtered.getSpans().get(0).getText(), text);
 
     }
 

@@ -29,6 +29,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.regex.Pattern;
 
 public class AgeFilter extends RegexFilter {
@@ -103,14 +104,17 @@ public class AgeFilter extends RegexFilter {
 
             final List<String> window = Arrays.stream(span.getWindow()).map(String::toLowerCase).toList();
 
+            // Compared in lower case, so "93 YEARS OLD" and "61 Y/O" are kept like "93 years old".
+            final String text = span.getText().toLowerCase(Locale.ROOT);
+
             // Determine between a date and an age.
             // Does it contain 'age' or 'old' or 'yo'? If not, drop it.
             // TODO: Should this list be exposed to the user and customizable?
             if(window.contains("age")
-                    || span.getText().toLowerCase().contains("age")
-                    || span.getText().contains("old")
-                    || span.getText().contains("y/o")
-                    || span.getText().contains("yo")) {
+                    || text.contains("age")
+                    || text.contains("old")
+                    || text.contains("y/o")
+                    || text.contains("yo")) {
 
                 postFilteredSpans.add(span);
 

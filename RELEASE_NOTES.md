@@ -6,6 +6,7 @@ Full changelogs for each release are available in the [GitHub releases](https://
 
 ## Version 4.6.0 - Not yet released
 
+* **Changes detection for existing policies.** The age filter now keeps ages written in upper or title case, such as `93 YEARS OLD`, `93 Years Old`, `93 YO`, and `61 Y/O`. They were found and then dropped, because the check that tells an age from a date compared `old`, `yo`, and `y/o` in the original case, so these ages were left in the text. (issue #528)
 * Using PhiSQL 1.7.0.
 * Moved to Jackson 3 (`tools.jackson`) and `com.networknt:json-schema-validator` 3.0.9. `PolicySchema.validate` behaves as before. Jackson 2's `jackson-databind` and `jackson-core` are no longer dependencies; `com.fasterxml.jackson.core:jackson-annotations` remains, because Jackson 3 uses it. Jackson's version is pinned with its BOM at 3.1.8, the release Spring Boot manages, so Phileas is tested on the Jackson that Spring Boot applications run it on. (issue #513)
 * New `npi`, `deaNumber`, and `mbi` filters detect National Provider Identifiers, DEA registration numbers, and Medicare Beneficiary Identifiers, with span types `npi`, `dea-number`, and `mbi`. An NPI is detected only with a valid NPI check digit and a DEA number only with a valid check digit. An MBI is detected in the format CMS publishes, unformatted or in the card's grouping (`1EG4-TE5-MK73`). `RANDOM_REPLACE` produces values that pass the same checks. (issue #456)
