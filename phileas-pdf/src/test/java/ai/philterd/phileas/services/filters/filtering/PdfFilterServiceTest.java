@@ -17,6 +17,7 @@ import ai.philterd.phileas.services.strategies.AbstractFilterStrategy;
 import ai.philterd.phileas.services.strategies.rules.DateFilterStrategy;
 import ai.philterd.phileas.services.strategies.rules.EmailAddressFilterStrategy;
 import ai.philterd.phileas.services.strategies.rules.ZipCodeFilterStrategy;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -103,6 +104,30 @@ public class PdfFilterServiceTest {
         }
 
         System.out.println("Output written to " + outputFile.getAbsolutePath());
+
+    }
+
+    @Test
+    public void reportsReviewSelection() throws Exception {
+
+        final PdfFilterService pdfFilterService = new PdfFilterService(new PhileasConfiguration(new Properties()),
+                new DefaultContextService(), new InMemoryVectorService(), null);
+
+        final byte[] file;
+        try (InputStream is = getClass().getClassLoader().getResourceAsStream("12-12110 K.pdf")) {
+            file = is.readAllBytes();
+        }
+
+        final Policy sampled = getPolicy();
+        sampled.getConfig().getReview().setSamplingRate(1.0);
+
+        final BinaryDocumentFilterResult notSampledResult = pdfFilterService.filter(getPolicy(), "context", file, MimeType.APPLICATION_PDF);
+        final BinaryDocumentFilterResult sampledResult = pdfFilterService.filter(sampled, "context", file, MimeType.APPLICATION_PDF);
+
+        Assertions.assertFalse(notSampledResult.isReviewSampled());
+        Assertions.assertTrue(sampledResult.isReviewSampled());
+        Assertions.assertFalse(sampledResult.getExplanation().appliedSpans().isEmpty());
+        Assertions.assertEquals(notSampledResult.getExplanation(), sampledResult.getExplanation());
 
     }
 

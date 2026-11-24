@@ -210,6 +210,10 @@ public class FilterPolicyLoader {
                     + "or a custom dictionary of condition names.");
         }
 
+        if (policy.getConfig() != null && policy.getConfig().getReview() != null) {
+            policy.getConfig().getReview().validate();
+        }
+
         // Refuse a file the policy may not read here, before any filter is built, including the top-level
         // ignored files that are otherwise read only when a document is filtered.
         new PolicyFileValidator(policyFiles).validate(policy);

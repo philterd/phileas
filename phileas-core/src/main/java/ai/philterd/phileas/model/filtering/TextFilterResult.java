@@ -39,7 +39,13 @@ public class TextFilterResult extends AbstractFilterResult {
     public TextFilterResult(String filteredText, String context, int piece,
                             Explanation explanation, List<IncrementalRedaction> incrementalRedactions,
                             long tokens) {
-        super(context, explanation, tokens, incrementalRedactions);
+        this(filteredText, context, piece, explanation, incrementalRedactions, tokens, false);
+    }
+
+    public TextFilterResult(String filteredText, String context, int piece,
+                            Explanation explanation, List<IncrementalRedaction> incrementalRedactions,
+                            long tokens, boolean reviewSampled) {
+        super(context, explanation, tokens, incrementalRedactions, reviewSampled);
 
         this.filteredText = filteredText;
         this.piece = piece;

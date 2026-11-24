@@ -207,4 +207,19 @@ public class OoxmlFilterServiceTest {
         Assertions.assertThrows(IllegalArgumentException.class, () -> service().filter(POLICY, "ctx", input, null));
     }
 
+    @Test
+    public void reportsReviewSelection() throws Exception {
+        final byte[] input = OoxmlTestFixtures.docx("Email " + EMAIL + " now.");
+        final Policy sampled = new Gson().fromJson(
+                "{\"identifiers\":{\"emailAddress\":{}},\"config\":{\"review\":{\"samplingRate\":1.0}}}", Policy.class);
+
+        final BinaryDocumentFilterResult notSampledResult = service().filter(POLICY, "ctx", input, MimeType.APPLICATION_DOCX);
+        final BinaryDocumentFilterResult sampledResult = service().filter(sampled, "ctx", input, MimeType.APPLICATION_DOCX);
+
+        Assertions.assertFalse(notSampledResult.isReviewSampled());
+        Assertions.assertTrue(sampledResult.isReviewSampled());
+        Assertions.assertEquals(OoxmlTestFixtures.entry(notSampledResult.getDocument(), "word/document.xml"),
+                OoxmlTestFixtures.entry(sampledResult.getDocument(), "word/document.xml"));
+    }
+
 }

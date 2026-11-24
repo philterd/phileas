@@ -26,6 +26,7 @@ import ai.philterd.phileas.model.filtering.TextFilterResult;
 import ai.philterd.phileas.policy.Policy;
 import ai.philterd.phileas.policy.config.Pdf;
 import ai.philterd.phileas.policy.graphical.BoundingBox;
+import ai.philterd.phileas.services.ReviewSampler;
 import ai.philterd.phileas.services.context.ContextService;
 import ai.philterd.phileas.services.disambiguation.SpanDisambiguationServiceFactory;
 import ai.philterd.phileas.services.disambiguation.vector.VectorService;
@@ -183,6 +184,9 @@ public class PdfFilterService extends BinaryFilterService {
                                              final byte[] input, final MimeType outputMimeType,
                                              final PdfPagePolicies pagePolicies) throws Exception {
 
+        // One draw for the document, with the policy that also sets its rendering, not one per page or page policy.
+        final boolean reviewSampled = ReviewSampler.isSelected(policy);
+
         final List<IncrementalRedaction> incrementalRedactions = new ArrayList<>();
 
         // Get the lines of text from the PDF file.
@@ -278,7 +282,7 @@ public class PdfFilterService extends BinaryFilterService {
         // TODO: The identified vs the applied will actually be different
         // but we are setting the same here. Fix this at some point.
         final Explanation explanation = new Explanation(spansList, spansList);
-        return new BinaryDocumentFilterResult(redacted, context, explanation, tokens, incrementalRedactions);
+        return new BinaryDocumentFilterResult(redacted, context, explanation, tokens, incrementalRedactions, reviewSampled);
 
     }
 

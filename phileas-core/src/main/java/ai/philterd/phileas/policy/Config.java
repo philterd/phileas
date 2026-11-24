@@ -17,6 +17,7 @@ package ai.philterd.phileas.policy;
 
 import ai.philterd.phileas.policy.config.Analysis;
 import ai.philterd.phileas.policy.config.Pdf;
+import ai.philterd.phileas.policy.config.Review;
 import ai.philterd.phileas.policy.config.Splitting;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
@@ -38,6 +39,10 @@ public class Config {
     @SerializedName("analysis")
     @Expose
     private Analysis analysis = new Analysis();
+
+    @SerializedName("review")
+    @Expose
+    private Review review = new Review();
 
     public Splitting getSplitting() {
         return splitting;
@@ -70,4 +75,13 @@ public class Config {
     public void setAnalysis(Analysis analysis) {
         this.analysis = analysis;
     }
+
+    public Review getReview() {
+        return review;
+    }
+
+    public void setReview(Review review) {
+        this.review = review;
+    }
+
 }

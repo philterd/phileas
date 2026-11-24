@@ -24,6 +24,7 @@ import ai.philterd.phileas.model.filtering.MimeType;
 import ai.philterd.phileas.model.filtering.Span;
 import ai.philterd.phileas.model.filtering.TextFilterResult;
 import ai.philterd.phileas.policy.Policy;
+import ai.philterd.phileas.services.ReviewSampler;
 import ai.philterd.phileas.services.context.ContextService;
 import ai.philterd.phileas.services.context.DefaultContextService;
 import ai.philterd.phileas.services.disambiguation.SpanDisambiguationServiceFactory;
@@ -127,6 +128,9 @@ public class OoxmlFilterService extends BinaryFilterService {
                                              final VectorService vectorService, final String context,
                                              final byte[] input, final MimeType outputMimeType) throws Exception {
 
+        // One draw for the document, not one per paragraph or cell.
+        final boolean reviewSampled = ReviewSampler.isSelected(policy);
+
         final OoxmlDocumentType type = documentType(input, outputMimeType);
 
         final List<IncrementalRedaction> incrementalRedactions = new ArrayList<>();
@@ -147,7 +151,7 @@ public class OoxmlFilterService extends BinaryFilterService {
 
         // As with PDF, the identified and applied spans are reported as the same list.
         final Explanation explanation = new Explanation(spans, spans);
-        return new BinaryDocumentFilterResult(result.document(), context, explanation, tokens[0], incrementalRedactions);
+        return new BinaryDocumentFilterResult(result.document(), context, explanation, tokens[0], incrementalRedactions, reviewSampled);
 
     }
 

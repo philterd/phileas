@@ -20,6 +20,7 @@ import ai.philterd.phileas.filters.Filter;
 import ai.philterd.phileas.model.filtering.Span;
 import ai.philterd.phileas.model.filtering.TextFilterResult;
 import ai.philterd.phileas.policy.Policy;
+import ai.philterd.phileas.services.ReviewSampler;
 import ai.philterd.phileas.services.context.ContextService;
 import ai.philterd.phileas.services.disambiguation.SpanDisambiguationServiceFactory;
 import ai.philterd.phileas.services.disambiguation.vector.VectorService;
@@ -158,6 +159,9 @@ public class PlainTextFilterService extends TextFilterService {
                                     final List<PostFilter> postFilters, final String context,
                                     final String input) throws Exception {
 
+        // Drawn once per request, here rather than per chunk, so splitting does not raise the chance of selection.
+        final boolean reviewSampled = ReviewSampler.isSelected(policy);
+
         final TextFilterResult textFilterResult;
 
         // Resolve the splitter whenever splitting is enabled, not only when the input is large enough
@@ -222,7 +226,13 @@ public class PlainTextFilterService extends TextFilterService {
 
         }
 
-        return textFilterResult;
+        if (!reviewSampled) {
+            return textFilterResult;
+        }
+
+        return new TextFilterResult(textFilterResult.getFilteredText(), textFilterResult.getContext(),
+                textFilterResult.getPiece(), textFilterResult.getExplanation(),
+                textFilterResult.getIncrementalRedactions(), textFilterResult.getTokens(), true);
 
     }
 

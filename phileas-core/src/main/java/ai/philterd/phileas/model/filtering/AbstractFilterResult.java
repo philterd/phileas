@@ -23,12 +23,19 @@ public abstract class AbstractFilterResult {
     protected final Explanation explanation;
     protected final long tokens;
     protected final transient List<IncrementalRedaction> incrementalRedactions;
+    protected final boolean reviewSampled;
 
     public AbstractFilterResult(final String context, final Explanation explanation, final long tokens, final List<IncrementalRedaction> incrementalRedactions) {
+        this(context, explanation, tokens, incrementalRedactions, false);
+    }
+
+    public AbstractFilterResult(final String context, final Explanation explanation, final long tokens,
+                                final List<IncrementalRedaction> incrementalRedactions, final boolean reviewSampled) {
         this.context = context;
         this.explanation = explanation;
         this.tokens = tokens;
         this.incrementalRedactions = incrementalRedactions;
+        this.reviewSampled = reviewSampled;
     }
 
     public String getContext() {
@@ -45,6 +52,15 @@ public abstract class AbstractFilterResult {
 
     public List<IncrementalRedaction> getIncrementalRedactions() {
         return incrementalRedactions;
+    }
+
+    /**
+     * Whether the request was selected for human spot review by the policy's {@code config.review.samplingRate}.
+     * Selection does not change the redacted output.
+     * @return <code>true</code> if the request was selected for review.
+     */
+    public boolean isReviewSampled() {
+        return reviewSampled;
     }
 
 }

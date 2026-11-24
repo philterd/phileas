@@ -201,6 +201,32 @@ filters are not ambiguous.
 
 `config.analysis` also accepts `identification`, which is deprecated and has no effect.
 
+### Review Sampling
+
+A policy can select a share of filter requests for human spot review, so a person can check whole documents for
+values that were not detected:
+
+```
+{
+   "config": {
+      "review": {
+         "samplingRate": 0.10
+      }
+   }
+}
+```
+
+`samplingRate` is the probability, from `0.0` to `1.0`, that a request is selected. The default is `0.0`, which selects
+none; `1.0` selects every request. A request is selected when a value drawn uniformly from [0, 1) is below the rate.
+The draw is made once per request, whether the input is split into pieces or is a PDF, Word, or Excel document. No
+count is kept between requests, so the share selected converges on the rate but is not exact over a small number of
+requests. A rate outside `0.0` to `1.0` is refused when the policy is loaded.
+
+Selection does not change the redacted output. It is reported by `isReviewSampled()` on the `TextFilterResult` or
+`BinaryDocumentFilterResult`, and as `reviewSampled` when the result is serialized to JSON. What to do with a selected
+request, such as queuing it for a reviewer, is up to the application. For a PDF filtered with page policies, the rate
+of the policy passed to `filter` applies.
+
 ### Applying a Policy to Text
 
 A policy is applied by passing it to Phileas' filter service along with the text to filter. Using the
