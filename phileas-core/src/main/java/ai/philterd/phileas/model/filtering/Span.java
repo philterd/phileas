@@ -96,6 +96,9 @@ public final class Span {
     // changes the text. Used for values found only by a cue word, which a validated filter outranks.
     private transient Set<FilterType> yieldsTo = Collections.emptySet();
 
+    // The cue word the span's value was found after, or null if it was not found by a cue word.
+    private transient Cue cue;
+
     // Makes the replacement again when the span's text is trimmed, or null if the span's filter did not set one.
     private transient Replacer replacer;
 
@@ -190,6 +193,7 @@ public final class Span {
         copy.setClassification(classification);
         copy.setPageAssignment(pageAssignment);
         copy.setYieldsTo(yieldsTo);
+        copy.setCue(cue);
         copy.setReplacer(replacer);
         copy.setMatchedText(matchedText);
 
@@ -218,6 +222,7 @@ public final class Span {
                 final Span shifted = span.copy();
                 shifted.setCharacterStart(start);
                 shifted.setCharacterEnd(end);
+                shifted.setCue(span.getCue() == null ? null : span.getCue().shift(shift));
                 shiftedSpans.add(shifted);
 
             }
@@ -246,6 +251,7 @@ public final class Span {
                 final Span shifted = span.copy();
                 shifted.setCharacterStart(start);
                 shifted.setCharacterEnd(end);
+                shifted.setCue(span.getCue() == null ? null : span.getCue().shift(shift));
                 shiftedSpans.add(shifted);
 
         }
@@ -468,9 +474,9 @@ public final class Span {
 
     /**
      * Resolves overlapping spans so that a span that changes text is not lost to a span of another
-     * filter. A span is first dropped where it overlaps a span of a type it yields to (see
-     * {@link #setYieldsTo(Set)}). Spans are resolved as by {@link #dropOverlappingSpans(List)}, except that a span that is
-     * ignored or not applied changes no text, so it does not hide a span of another filter. It still
+     * filter. A span is first dropped as by {@link #dropYieldingSpans(List)}. Spans are then resolved as
+     * by {@link #dropOverlappingSpans(List)}, except that a span that is ignored or not applied changes no
+     * text, so it does not hide a span of another filter. It still
      * hides a span of its own filter, and is kept only where it overlaps no other span. A dropped span
      * that partly overlaps a kept span of another filter is restored: the earlier of the two stays whole
      * and the later is trimmed to the text the earlier does not cover. The given list and spans are not
@@ -559,20 +565,27 @@ public final class Span {
 
     }
 
+    /** Whether a span of another filter type was found after a cue word nearer than the given span's. */
+    private static boolean hasNearerCue(final Span other, final Span span) {
+        return span.cue != null && other.cue != null && other.getFilterType() != span.getFilterType()
+                && other.cue.isNearerThan(span.cue);
+    }
+
     private static boolean changesText(final Span span) {
         return span.isApplied() && !span.isIgnored();
     }
 
     /**
      * The spans without those that overlap a span, changing the text, of a type they yield to (see
-     * {@link #setYieldsTo(Set)}). A span that changes no text does not outrank one of another filter, as
-     * in the rest of the resolution. The given list is not modified.
+     * {@link #setYieldsTo(Set)}), or of another filter type found after a nearer cue word (see
+     * {@link #setCue(Cue)}). A span that changes no text does not outrank one of another filter, as in the
+     * rest of the resolution. The given list is not modified.
      * @param spans A list of {@link Span spans}.
      * @return The spans that do not yield to another.
      */
     public static List<Span> dropYieldingSpans(final List<Span> spans) {
 
-        if (spans.stream().allMatch(span -> span.yieldsTo.isEmpty())) {
+        if (spans.stream().allMatch(span -> span.yieldsTo.isEmpty() && span.cue == null)) {
             return spans;
         }
 
@@ -580,9 +593,9 @@ public final class Span {
 
         for (final Span span : spans) {
 
-            final boolean yields = !span.yieldsTo.isEmpty() && spans.stream().anyMatch(other ->
+            final boolean yields = (!span.yieldsTo.isEmpty() || span.cue != null) && spans.stream().anyMatch(other ->
                     other != span
-                            && span.yieldsTo.contains(other.getFilterType())
+                            && (span.yieldsTo.contains(other.getFilterType()) || hasNearerCue(other, span))
                             && changesText(other)
                             && other.getCharacterStart() < span.getCharacterEnd()
                             && span.getCharacterStart() < other.getCharacterEnd());
@@ -916,6 +929,23 @@ public final class Span {
      */
     public void setYieldsTo(final Set<FilterType> yieldsTo) {
         this.yieldsTo = yieldsTo == null ? Collections.emptySet() : Set.copyOf(yieldsTo);
+    }
+
+    /**
+     * The cue word the span's value was found after.
+     * @return The cue word, or null if the value was not found by a cue word.
+     */
+    public Cue getCue() {
+        return cue;
+    }
+
+    /**
+     * Sets the cue word the span's value was found after. When overlaps are resolved, a span of another
+     * filter type found after a nearer cue word takes priority over this one.
+     * @param cue The cue word, or null if the value was not found by a cue word.
+     */
+    public void setCue(final Cue cue) {
+        this.cue = cue;
     }
 
     /**

@@ -18,6 +18,8 @@ A serial number is detected only when a cue word appears within `windowSize` tok
 
 A serial number detected by a cue word gives way to an overlapping value detected by the [MBI](mbi.md), [SSN](ssns-and-tins.md), [NPI](npi.md), [phone number](phone-numbers.md), or [date](dates.md) filter, whatever the filters' `priority`. A value of one of those filters that is left unchanged, for example because no strategy's condition is satisfied, does not take priority.
 
+Where a value found by this filter's cue word overlaps a value found by another cue word filter, such as the [health plan member ID](health-plan-member-ids.md) filter, the value takes the type of the filter whose cue word is nearest before it, whatever the filters' `priority`. So in `Member ID ABC12345 Serial No: SN-998877`, `ABC12345` is a member ID and `SN-998877` is a device identifier. A cue word otherwise reaches past other values within `windowSize` tokens, so in `Member ID: 778899 and 112233` both values are member IDs. Only the cue words of filters in the policy count: without the health plan member ID filter, `ABC12345` in `Serial No: SN-998877 Member ID ABC12345` is a device identifier. As above, a value that is left unchanged does not take priority.
+
 ### Required Parameters
 
 This filter has no required parameters.

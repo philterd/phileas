@@ -57,7 +57,7 @@ public class HealthPlanMemberIdFilter extends CueWordFilter {
     public Filtered filter(ContextService contextService, Policy policy, String context, int piece, String input) throws Exception {
 
         final List<Span> spans = findSpans(contextService, policy, analyzer, input, context);
-        spans.forEach(span -> span.setYieldsTo(YIELDS_TO));
+        spans.forEach(span -> foundByCueWord(input, span));
 
         // The policy's patterns may overlap one another.
         return new Filtered(context, Span.dropOverlappingSpans(spans));

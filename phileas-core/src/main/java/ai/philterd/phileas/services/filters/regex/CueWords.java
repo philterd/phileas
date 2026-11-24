@@ -15,6 +15,8 @@
  */
 package ai.philterd.phileas.services.filters.regex;
 
+import ai.philterd.phileas.model.filtering.Cue;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -70,6 +72,8 @@ public final class CueWords {
 
     }
 
+    private record Token(String text, int start, int end) { }
+
     /**
      * Whether a cue word lies within the given number of tokens before a position in the text.
      * @param input The text.
@@ -78,26 +82,42 @@ public final class CueWords {
      * @return {@code true} if a cue word is there.
      */
     public boolean precede(final String input, final int position, final int windowSize) {
+        return nearest(input, position, windowSize) != null;
+    }
 
-        final List<String> before = lastTokens(input, position, windowSize);
+    /**
+     * The cue word nearest before a position in the text, within the given number of tokens.
+     * @param input The text.
+     * @param position The start of the value.
+     * @param windowSize The number of tokens before the value to look in.
+     * @return The nearest cue word, or null if none is there.
+     */
+    public Cue nearest(final String input, final int position, final int windowSize) {
+
+        final List<Token> before = lastTokens(input, position, windowSize);
+
+        Cue nearest = null;
 
         for(final String[] cueWord : cueWords) {
             for(int start = 0; start + cueWord.length <= before.size(); start++) {
                 if(matchesAt(before, start, cueWord)) {
-                    return true;
+                    final Cue cue = new Cue(before.get(start).start(), before.get(start + cueWord.length - 1).end());
+                    if(nearest == null || cue.isNearerThan(nearest)) {
+                        nearest = cue;
+                    }
                 }
             }
         }
 
-        return false;
+        return nearest;
 
     }
 
-    private static boolean matchesAt(final List<String> tokens, final int start, final String[] cueWord) {
+    private static boolean matchesAt(final List<Token> tokens, final int start, final String[] cueWord) {
 
         for(int i = 0; i < cueWord.length; i++) {
 
-            String token = tokens.get(start + i);
+            String token = tokens.get(start + i).text();
 
             // Opening punctuation, as in "(Member", may come before the cue word.
             if(i == 0) {
@@ -122,8 +142,8 @@ public final class CueWords {
 
     }
 
-    /** The last tokens before the position, at most windowSize of them, lower-cased. */
-    private static List<String> lastTokens(final String input, final int position, final int windowSize) {
+    /** The last tokens before the position, at most windowSize of them, lower-cased, with their offsets. */
+    private static List<Token> lastTokens(final String input, final int position, final int windowSize) {
 
         // Enough text to hold windowSize tokens: walk back over that many runs of non-whitespace.
         int start = position;
@@ -136,23 +156,28 @@ public final class CueWords {
             }
         }
 
-        final List<String> tokens = tokens(input.substring(start, position));
+        final List<Token> tokens = tokens(input.substring(start, position), start);
 
         return tokens.size() <= windowSize ? tokens : tokens.subList(tokens.size() - windowSize, tokens.size());
 
     }
 
-    private static List<String> tokens(final String text) {
+    private static List<Token> tokens(final String text, final int offset) {
 
-        final List<String> tokens = new ArrayList<>();
-        final Matcher matcher = TOKEN.matcher(text.toLowerCase(Locale.ROOT));
+        final List<Token> tokens = new ArrayList<>();
+        // Each token is lower-cased on its own, since lower-casing can change the text's length.
+        final Matcher matcher = TOKEN.matcher(text);
 
         while(matcher.find()) {
-            tokens.add(matcher.group());
+            tokens.add(new Token(matcher.group().toLowerCase(Locale.ROOT), offset + matcher.start(), offset + matcher.end()));
         }
 
         return tokens;
 
+    }
+
+    private static List<String> tokens(final String text) {
+        return tokens(text, 0).stream().map(Token::text).toList();
     }
 
     private static String stripLeadingPunctuation(final String token) {

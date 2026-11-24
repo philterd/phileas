@@ -19,6 +19,7 @@ import ai.philterd.phileas.filters.FilterConfiguration;
 import ai.philterd.phileas.filters.rules.regex.RegexFilter;
 import ai.philterd.phileas.model.filtering.FilterPattern;
 import ai.philterd.phileas.model.filtering.FilterType;
+import ai.philterd.phileas.model.filtering.Span;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -30,7 +31,8 @@ import java.util.regex.Pattern;
 /**
  * A filter whose values have no fixed format, so a value counts only when a cue word comes within
  * {@code windowSize} tokens before it. The policy can replace the default value pattern and add to or
- * replace the default cue words.
+ * replace the default cue words. Where values of two such filters overlap, the one whose cue word is nearer
+ * the value is kept.
  */
 public abstract class CueWordFilter extends RegexFilter {
 
@@ -78,6 +80,15 @@ public abstract class CueWordFilter extends RegexFilter {
      */
     protected boolean followsCueWord(final String input, final int characterStart) {
         return cueWords.precede(input, characterStart, windowSize);
+    }
+
+    /**
+     * Marks a span as found by a cue word: it gives way to an overlapping validated identifier, and to an
+     * overlapping value of another cue word filter whose cue word is nearer.
+     */
+    protected void foundByCueWord(final String input, final Span span) {
+        span.setYieldsTo(YIELDS_TO);
+        span.setCue(cueWords.nearest(input, span.getCharacterStart(), windowSize));
     }
 
 }

@@ -15,6 +15,7 @@
  */
 package ai.philterd.phileas.model.objects;
 
+import ai.philterd.phileas.model.filtering.Cue;
 import ai.philterd.phileas.model.filtering.FilterType;
 import ai.philterd.phileas.model.filtering.Span;
 import nl.jqno.equalsverifier.EqualsVerifier;
@@ -728,6 +729,42 @@ public class SpanTest {
         for(Span span : spans) {
             LOGGER.info(span.toString());
         }
+
+    }
+
+
+    @Test
+    public void shiftingASpanShiftsItsCueWord() {
+
+        final Span span = Span.make(50, 58, FilterType.DEVICE_IDENTIFIER, "context", 0.9, "SN998877", "***", "salt",
+                false, true, new String[0], 0);
+        span.setCue(new Cue(35, 45));
+
+        Assertions.assertEquals(new Cue(985, 995), Span.shiftSpans(950, List.of(span)).get(0).getCue());
+        Assertions.assertEquals(new Cue(985, 995), Span.shiftSpans(950, null, List.of(span)).get(0).getCue());
+
+    }
+
+    @Test
+    public void cueWordsOfSpansFromDifferentPiecesAreCompared() {
+
+        // The member ID was found in a piece at the start of the text, after a cue word at 970.
+        final Span memberId = Span.make(1000, 1008, FilterType.HEALTH_PLAN_MEMBER_ID, "context", 0.9, "SN998877",
+                "***", "salt", false, true, new String[0], 0);
+        memberId.setCue(new Cue(970, 979));
+
+        // The serial number was found in a piece starting at 950, after a cue word at 35 in that piece, so 985 in the text.
+        final Span serial = Span.make(50, 58, FilterType.DEVICE_IDENTIFIER, "context", 0.9, "SN998877", "***", "salt",
+                false, true, new String[0], 0);
+        serial.setCue(new Cue(35, 45));
+
+        final List<Span> spans = new LinkedList<>(List.of(memberId));
+        spans.addAll(Span.shiftSpans(950, List.of(serial)));
+
+        final List<Span> kept = Span.dropYieldingSpans(spans);
+
+        Assertions.assertEquals(1, kept.size());
+        Assertions.assertEquals(FilterType.DEVICE_IDENTIFIER, kept.get(0).getFilterType());
 
     }
 

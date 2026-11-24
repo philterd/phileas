@@ -154,6 +154,104 @@ public class HealthcareIdentifiersEndToEndTest {
 
     }
 
+    // The member ID and device identifier filters with the given priorities. The device identifier filter also takes
+    // "MRN" as a cue word, standing in for another cue word filter.
+    private static String cueWordFilters(final int memberIdPriority, final int devicePriority) {
+        return """
+                {
+                  "identifiers": {
+                    "healthPlanMemberId": { "priority": %d },
+                    "deviceIdentifier": { "priority": %d, "cueWords": [ "MRN" ] }
+                  }
+                }
+                """.formatted(memberIdPriority, devicePriority);
+    }
+
+    @ParameterizedTest
+    @CsvSource(delimiter = '|', value = {
+            "Serial No: SN-998877 Member ID ABC12345 | Serial No: {{{REDACTED-device-identifier}}} Member ID {{{REDACTED-health-plan-member-id}}}",
+            "Member ID ABC12345 Serial No: SN-998877 | Member ID {{{REDACTED-health-plan-member-id}}} Serial No: {{{REDACTED-device-identifier}}}",
+            "Member ID ABC12345, MRN 123456          | Member ID {{{REDACTED-health-plan-member-id}}}, MRN {{{REDACTED-device-identifier}}}",
+            "MRN 123456, Member ID ABC12345          | MRN {{{REDACTED-device-identifier}}}, Member ID {{{REDACTED-health-plan-member-id}}}",
+            "Member ID: 778899 and 112233            | Member ID: {{{REDACTED-health-plan-member-id}}} and {{{REDACTED-health-plan-member-id}}}",
+            "Member ID: 778899 Device ID: 112233     | Member ID: {{{REDACTED-health-plan-member-id}}} Device ID: {{{REDACTED-device-identifier}}}"
+    })
+    public void aValueTakesTheTypeOfItsNearestCueWord(final String text, final String expected) throws Exception {
+
+        // Whichever filter has the higher priority, the nearest cue word decides.
+        Assertions.assertEquals(expected, filter(cueWordFilters(0, 0), text));
+        Assertions.assertEquals(expected, filter(cueWordFilters(5, 0), text));
+        Assertions.assertEquals(expected, filter(cueWordFilters(0, 5), text));
+
+    }
+
+    @Test
+    public void aValueTakesTheTypeOfItsNearestCueWordWithSpanDisambiguation() throws Exception {
+
+        final Properties properties = new Properties();
+        properties.setProperty("span.disambiguation.enabled", "true");
+
+        final Policy policy = new Gson().fromJson(cueWordFilters(0, 0), Policy.class);
+        final PlainTextFilterService service = new PlainTextFilterService(new PhileasConfiguration(properties),
+                new DefaultContextService(), new InMemoryVectorService(), null);
+
+        // Train the vectors so disambiguation favors the member ID type.
+        for (int i = 0; i < 20; i++) {
+            service.filter(policy, "context", "Member ID: XYZ1234567" + (i % 10));
+        }
+
+        Assertions.assertEquals("Member ID {{{REDACTED-health-plan-member-id}}} Serial No: {{{REDACTED-device-identifier}}}",
+                service.filter(policy, "context", "Member ID ABC12345 Serial No: SN-998877").getFilteredText());
+
+    }
+
+    @Test
+    public void aCueWordOfAFilterNotInThePolicyDoesNotCompete() throws Exception {
+
+        final String policy = """
+                { "identifiers": { "healthPlanMemberId": { } } }
+                """;
+
+        Assertions.assertEquals("Member ID {{{REDACTED-health-plan-member-id}}}, MRN {{{REDACTED-health-plan-member-id}}}",
+                filter(policy, "Member ID ABC12345, MRN 123456"));
+
+        Assertions.assertEquals("Member ID {{{REDACTED-health-plan-member-id}}} Serial No: {{{REDACTED-health-plan-member-id}}}",
+                filter(policy, "Member ID ABC12345 Serial No: SN-998877"));
+
+        Assertions.assertEquals("Serial No: {{{REDACTED-device-identifier}}} Member ID {{{REDACTED-device-identifier}}}",
+                filter("{ \"identifiers\": { \"deviceIdentifier\": { } } }", "Serial No: SN-998877 Member ID ABC12345"));
+
+    }
+
+    @Test
+    public void aValueAfterANearerCueWordThatChangesNoTextDoesNotTakePriority() throws Exception {
+
+        // The device identifier strategy's condition is not satisfied, so its value changes no text and the
+        // member ID is kept.
+        final String policy = """
+                {
+                  "identifiers": {
+                    "healthPlanMemberId": { },
+                    "deviceIdentifier": {
+                      "deviceIdentifierFilterStrategies": [ { "strategy": "REDACT", "condition": "context == \\"other\\"" } ]
+                    }
+                  }
+                }
+                """;
+
+        Assertions.assertEquals("Member ID {{{REDACTED-health-plan-member-id}}} Serial No: {{{REDACTED-health-plan-member-id}}}",
+                filter(policy, "Member ID ABC12345 Serial No: SN-998877"));
+
+    }
+
+    @Test
+    public void aValidatedIdentifierStillTakesPriorityOverTheNearestCueWord() throws Exception {
+
+        Assertions.assertEquals("Member ID {{{REDACTED-health-plan-member-id}}} Serial No: {{{REDACTED-ssn}}}",
+                filter(ALL_FILTERS, "Member ID ABC12345 Serial No: 123-45-6789"));
+
+    }
+
     @Test
     public void defaultCueWordsFalseWithNoCueWordsRefusesThePolicy() {
 

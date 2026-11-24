@@ -96,7 +96,7 @@ public class DeviceIdentifierFilter extends CueWordFilter {
         // check digit or character, does not.
         for(final Span span : spans) {
             if(!isUdi(span.getText())) {
-                span.setYieldsTo(YIELDS_TO);
+                foundByCueWord(input, span);
             }
         }
 
