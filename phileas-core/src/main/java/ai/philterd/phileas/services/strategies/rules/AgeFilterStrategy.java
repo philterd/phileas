@@ -32,7 +32,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.List;
-import java.util.OptionalDouble;
 
 public class AgeFilterStrategy extends StandardFilterStrategy {
 
@@ -100,17 +99,21 @@ public class AgeFilterStrategy extends StandardFilterStrategy {
 
     /**
      * Compares the age in years that the token expresses with the condition's number, as in {@code token > 89}.
+     * A token with a run or range of ages, such as {@code aged 39 and 95}, satisfies the comparison when any of
+     * its ages does, so the strategy is not skipped for an age it would replace if that age were written alone.
      * An age that cannot be read satisfies no comparison.
      */
     private static boolean evaluateAgeCondition(final ParsedCondition parsedCondition, final String token, final String[] window) {
 
-        final OptionalDouble age = AgeInYears.of(token, window);
+        final double value = Double.parseDouble(parsedCondition.getValue());
 
-        if(age.isEmpty()) {
-            return false;
-        }
+        return AgeInYears.every(token, window).stream().anyMatch(age -> compareAge(parsedCondition, age, value));
 
-        final int comparison = Double.compare(age.getAsDouble(), Double.parseDouble(parsedCondition.getValue()));
+    }
+
+    private static boolean compareAge(final ParsedCondition parsedCondition, final double age, final double value) {
+
+        final int comparison = Double.compare(age, value);
 
         return switch (parsedCondition.getOperator()) {
             case GREATER_THAN -> (comparison > 0);

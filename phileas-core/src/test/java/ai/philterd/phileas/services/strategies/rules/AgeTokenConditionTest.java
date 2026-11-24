@@ -27,6 +27,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
+import java.util.List;
 import java.util.OptionalDouble;
 import java.util.Properties;
 
@@ -119,6 +120,63 @@ public class AgeTokenConditionTest {
     public void eachKeywordAgeReadsTheUnitAfterItself(final String condition, final String replacement,
                                                      final String text, final String expected) throws Exception {
         Assertions.assertEquals(expected, filter(unitPolicy(condition, replacement), text), text);
+    }
+
+    // https://github.com/philterd/phileas/issues/530: a run or range of ages is one span, and it satisfies a
+    // comparison when any of its ages does, so no age over 89 in a run is left in the text.
+    @ParameterizedTest
+    @CsvSource(delimiter = '|', value = {
+            "The sisters, aged 39 and 95, left.     | The sisters, 90 or older, left.",
+            "Patients ages 95, 41 enrolled.         | Patients 90 or older enrolled.",
+            "Eligible age 18-95.                    | Eligible 90 or older.",
+            "between the ages of 95 and 41          | between the 90 or older",
+            "The sisters, aged 39 and 41, left.     | The sisters, aged 39 and 41, left.",
+            "aged 30 to 40 months                   | aged 30 to 40 months"
+    })
+    public void aRunWithAnAgeOver89IsReplaced(final String text, final String expected) throws Exception {
+        Assertions.assertEquals(expected, filter(SAFE_HARBOR_POLICY, text), text);
+    }
+
+    @ParameterizedTest
+    @CsvSource(delimiter = '|', value = {
+            "token < 18  | aged 15 and 40     | [AGE]",
+            "token < 18  | aged 20 and 40     | aged 20 and 40",
+            "token >= 40 | aged 15 and 40     | [AGE]",
+            "token <= 15 | aged 15 and 40     | [AGE]",
+            "token == 40 | ages 15, 40        | [AGE]",
+            "token != 15 | ages 15, 40        | [AGE]",
+            "token != 15 | ages 15, 15        | ages 15, 15",
+            "token < 1   | aged 6 to 18 months | [AGE] months",
+            "token < 1   | aged 13 to 18 months | aged 13 to 18 months"
+    })
+    public void aRunSatisfiesAComparisonWhenAnyOfItsAgesDoes(final String condition, final String text,
+                                                            final String expected) throws Exception {
+
+        final String policy = """
+                {
+                  "identifiers": {
+                    "age": {
+                      "ageFilterStrategies": [
+                        { "condition": "%s", "strategy": "STATIC_REPLACE", "staticReplacement": "[AGE]" }
+                      ]
+                    }
+                  }
+                }
+                """.formatted(condition);
+
+        Assertions.assertEquals(expected, filter(policy, text), text);
+
+    }
+
+    @Test
+    public void everyAgeInARunIsRead() {
+        Assertions.assertEquals(List.of(39.0, 41.0, 44.0),
+                AgeInYears.every("ages of 39, 41, and 44", null));
+        Assertions.assertEquals(List.of(1.5, 2.0),
+                AgeInYears.every("aged 18 to 24", new String[]{"aged", "18", "to", "24", "months"}));
+        Assertions.assertEquals(List.of(35.0),
+                AgeInYears.every("thirty-five years old", null));
+        Assertions.assertEquals(List.of(), AgeInYears.every("age .", null));
     }
 
     @Test

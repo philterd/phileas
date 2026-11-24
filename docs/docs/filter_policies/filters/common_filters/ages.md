@@ -12,6 +12,24 @@ form (`Age: thirty-five`). The whitespace around a separator may include a line 
 one line with its value on the next is also identified. The keyword may also be followed by `of`, so
 `at the age of 39` and `age of thirty-nine` are identified, with the span covering `age of 39`.
 
+A run or range of ages written with digits after a keyword is identified as one span, so none of its ages is left
+in the text:
+
+* After `age` or `age of`: one age, or a range joined by a hyphen or `to`, as in `age 18-65` and `age 39 to 41`. A
+  comma or `and` does not continue it, so in `age 45, 3 visits` only `age 45` is identified.
+* After `aged`: ages joined by a hyphen, `to`, `and`, or `or`, as in `aged 39-41`, `aged 39 and 41`, and
+  `aged 3, 5 and 7`. A comma joins ages only inside a list that a word or a hyphen closes, so in
+  `aged 39, 2 children` only `aged 39` is identified.
+* After the plural `ages` or `ages of`: ages joined by commas, words, or hyphens, as in `Ages: 39, 41`,
+  `ages 39 to 41`, and `the ages of 39, 41, and 44`.
+* After `age`, `aged`, or `ages` followed by `between` or `from`, with or without a separator: ages joined as after
+  `aged`, as in `age between 18 and 65`, `Age: between 18 and 65`, `aged from 39 to 41`, and
+  `Ages - from 18 to 65`.
+
+Each age after the first in a run or range is identified only up to 125, and an age after a keyword does not end
+right before a hyphen or a slash followed by a digit, so a date such as `age 25-03-2024`, `aged 12-25-2020`, or
+`Age: 12/25/2020` is not identified, in whole or in part, as an age.
+
 An age written with a unit (`years`, `yrs`, `yr`, `yo`, or `y/o`) is identified only up to 125, well above
 the longest recorded lifespan, so a year or the age of an object, such as `the 2019 years old` or
 `the bridge is 150 years old`, is not identified as an age. An age after an `age` or `aged` keyword is not
@@ -83,6 +101,9 @@ The age compared is the age in years that the identified text gives:
   the configuration these ages compare as years. A filter's `windowSize` of `0` means the configured size, not an empty
   window. The filter does not identify an age written with months, weeks, or days and no keyword, such as
   `18 months old`.
+* A run or range of ages, such as `aged 39 and 95` or `ages 18-65`, satisfies a comparison when any of its ages does,
+  and a unit after it applies to each of them. So `aged 39 and 95` satisfies `token > 89`, and the whole span is
+  replaced, rather than the 95 being left in the text because the first age is 39.
 * An identified age whose number cannot be read satisfies no comparison, so its strategy is skipped.
 
 HIPAA Safe Harbor (45 CFR 164.514(b)(2)(i)(C)) requires ages over 89 to be aggregated into a single category of 90 or
