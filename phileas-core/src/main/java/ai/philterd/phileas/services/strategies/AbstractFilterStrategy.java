@@ -131,6 +131,9 @@ public abstract class AbstractFilterStrategy {
     @Expose
     protected String maskLength = SAME;
 
+    /** How many characters {@code TRUNCATE} leaves when the strategy does not set {@code truncateLeaveCharacters}. */
+    public static final int DEFAULT_TRUNCATE_LEAVE_CHARACTERS = 4;
+
     @SerializedName("truncateLeaveCharacters")
     @Expose
     protected Integer truncateLeaveCharacters;
@@ -407,7 +410,7 @@ public abstract class AbstractFilterStrategy {
      * @return The truncated token.
      */
     protected String truncate(final String token) {
-        final int leaveCharacters = Math.min(Math.max(getValueOrDefault(truncateLeaveCharacters, 4), 1),
+        final int leaveCharacters = Math.min(Math.max(getValueOrDefault(truncateLeaveCharacters, DEFAULT_TRUNCATE_LEAVE_CHARACTERS), 1),
                 Math.max(token.length() - 1, 0));
         final String removed = StringUtils.repeat(getValueOrDefault(truncateCharacter, "*"), token.length() - leaveCharacters);
         if (Strings.CI.equals(getValueOrDefault(truncateDirection, LEADING), LEADING)) {
@@ -546,8 +549,12 @@ public abstract class AbstractFilterStrategy {
 
     }
 
+    /**
+     * How many characters {@code TRUNCATE} leaves.
+     * @return The strategy's setting, or {@link #DEFAULT_TRUNCATE_LEAVE_CHARACTERS} when it has none.
+     */
     public Integer getTruncateLeaveCharacters() {
-        return truncateLeaveCharacters;
+        return getValueOrDefault(truncateLeaveCharacters, DEFAULT_TRUNCATE_LEAVE_CHARACTERS);
     }
 
     public String getTruncateCharacter() {

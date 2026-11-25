@@ -225,7 +225,7 @@ public class ZipCodeFilterStrategy extends AbstractFilterStrategy {
     protected String truncate(final String token) {
         // A policy sets truncateLeaveCharacters without going through its setter, so keep it
         // within 1 to 4 here. At least one of the five digits is always replaced.
-        final int leaveCharacters = Math.min(Math.max(getValueOrDefault(truncateLeaveCharacters, 4), 1), 4);
+        final int leaveCharacters = Math.min(Math.max(getValueOrDefault(truncateLeaveCharacters, DEFAULT_TRUNCATE_LEAVE_CHARACTERS), 1), 4);
         if (Strings.CI.equals(truncateDirection, LEADING)) {
             return token.substring(0, leaveCharacters) + StringUtils.repeat(truncateCharacter, Math.min(token.length() - leaveCharacters, 5 - leaveCharacters));
         }

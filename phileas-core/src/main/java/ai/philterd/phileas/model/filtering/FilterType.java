@@ -44,6 +44,7 @@ public enum FilterType {
     ITIN("itin", true),
     MAC_ADDRESS("mac-address", true),
     MBI("mbi", true),
+    MEDICAL_RECORD_NUMBER("medical-record-number", true),
     NPI("npi", true),
     PASSPORT_NUMBER("passport-number", true),
     PH_EYE("pheye", false),

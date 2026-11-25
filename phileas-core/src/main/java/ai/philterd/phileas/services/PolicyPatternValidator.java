@@ -77,6 +77,7 @@ final class PolicyPatternValidator {
 
             checkCueWordPatterns(identifiers.getHealthPlanMemberId(), "health plan member ID");
             checkCueWordPatterns(identifiers.getDeviceIdentifier(), "device identifier");
+            checkCueWordPatterns(identifiers.getMedicalRecordNumber(), "medical record number");
             for (final AbstractFilter filter : identifiers.getAllFilters()) {
                 checkIgnoredPatterns(filter.getIgnoredPatterns(),
                         "the " + filter.getClass().getSimpleName() + " filter");
