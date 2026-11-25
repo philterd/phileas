@@ -42,7 +42,8 @@ import static ai.philterd.phileas.services.rtf.RtfDocs.doc;
 
 /**
  * Redacts a corpus of documents with each setting's values and converts every output to text with LibreOffice,
- * which must read it and find the text redaction kept. Skipped where LibreOffice is not installed.
+ * which must read it and find the text redaction kept. Skipped where LibreOffice is not installed, unless the
+ * environment variable PHILEAS_REQUIRE_LIBREOFFICE is true, as it is in CI, where it fails instead.
  */
 public class RtfOpensInLibreOfficeTest {
 
@@ -74,7 +75,11 @@ public class RtfOpensInLibreOfficeTest {
     @Test
     public void everyOutputOpensInLibreOffice() throws Exception {
 
-        Assumptions.assumeTrue(libreOffice(), "LibreOffice is not installed");
+        if (Boolean.parseBoolean(System.getenv("PHILEAS_REQUIRE_LIBREOFFICE"))) {
+            Assertions.assertTrue(libreOffice(), "LibreOffice is required but soffice did not run");
+        } else {
+            Assumptions.assumeTrue(libreOffice(), "LibreOffice is not installed");
+        }
 
         final Path root = Files.createDirectories(Path.of("target", "rtf-validation"));
         final Path converted = Files.createDirectories(root.resolve("txt"));
