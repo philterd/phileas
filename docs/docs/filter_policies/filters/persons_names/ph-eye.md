@@ -80,6 +80,15 @@ Each filter strategy may have one condition. See [Conditions](#conditions) for d
 }
 ```
 
+## Spans
+
+A span the filter reports has the filter type `person` when the model's label is `name` or `Person`,
+ignoring case, and `other` for any other label. A span's classification is the model's label, as the
+model returned it, for spans from the PhEye service and from a local model alike. A span from a model
+run with `"labels": ["hospital"]` therefore has the type `other` and the classification `hospital`, so
+a caller can tell what the model found. In a `REDACT` strategy's `redactionFormat`, `%t` prints the
+label in lower case.
+
 ## Thresholds
 
 A detection is kept only when its score is above its label's threshold. A label's value in `thresholds`
