@@ -256,7 +256,8 @@ request can be routed for review because something was left in it:
 * `broad` (default): every filter the policy defines, including custom identifiers, dictionaries, and PhEye filters,
   configured as written, plus every other built-in identifier at its defaults. It finds kinds of information the
   policy does not cover. Built-ins that need a model (`person`) or configuration (`identifiers`, `sections`,
-  `dictionaries`, `pheyes`) run only as the policy defines them. A built-in the policy disables runs at its defaults.
+  `dictionaries`, `pheyes`) run only as the policy defines them, as do the `firstName` and `surname` dictionaries,
+  which match common words at their defaults. Any other built-in the policy disables runs at its defaults.
 * `samePolicy`: only the policy's own filters, configured as written. It confirms the policy took effect.
 
 The policy's filters run in the check without their own ignore lists (`ignored`, `ignoredFiles`, `ignoredPatterns`),

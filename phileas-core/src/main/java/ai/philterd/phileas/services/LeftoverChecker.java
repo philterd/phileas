@@ -57,8 +57,10 @@ public final class LeftoverChecker {
     static final Map<String, String> BUILT_IN_FILTERS = new LinkedHashMap<>();
 
     /**
-     * The identifiers that need configuration to run (lists, and model-backed filters), with the key of their
-     * strategies. The check runs them only as the policy defines them.
+     * The identifiers that need configuration to run (lists, and model-backed filters), and the name dictionaries,
+     * with the key of their strategies. The check runs them only as the policy defines them. The name dictionaries
+     * match common words at their defaults (in a test sentence, "My" as a first name and "and" as a surname), which
+     * would make a broad check's findings mostly noise.
      */
     static final Map<String, String> CONFIGURED_FILTERS = new LinkedHashMap<>();
 
@@ -77,7 +79,6 @@ public final class LeftoverChecker {
         BUILT_IN_FILTERS.put("driversLicense", "driversLicenseFilterStrategies");
         BUILT_IN_FILTERS.put("ein", "einFilterStrategies");
         BUILT_IN_FILTERS.put("emailAddress", "emailAddressFilterStrategies");
-        BUILT_IN_FILTERS.put("firstName", "firstNameFilterStrategies");
         BUILT_IN_FILTERS.put("healthPlanMemberId", "healthPlanMemberIdFilterStrategies");
         BUILT_IN_FILTERS.put("hospital", "hospitalFilterStrategies");
         BUILT_IN_FILTERS.put("ibanCode", "ibanCodeFilterStrategies");
@@ -94,17 +95,18 @@ public final class LeftoverChecker {
         BUILT_IN_FILTERS.put("state", "stateFilterStrategies");
         BUILT_IN_FILTERS.put("stateAbbreviation", "stateAbbreviationFilterStrategies");
         BUILT_IN_FILTERS.put("streetAddress", "streetAddressFilterStrategies");
-        BUILT_IN_FILTERS.put("surname", "surnameFilterStrategies");
         BUILT_IN_FILTERS.put("trackingNumber", "trackingNumberFilterStrategies");
         BUILT_IN_FILTERS.put("url", "urlFilterStrategies");
         BUILT_IN_FILTERS.put("vin", "vinFilterStrategies");
         BUILT_IN_FILTERS.put("zipCode", "zipCodeFilterStrategies");
 
         CONFIGURED_FILTERS.put("dictionaries", "customFilterStrategies");
+        CONFIGURED_FILTERS.put("firstName", "firstNameFilterStrategies");
         CONFIGURED_FILTERS.put("identifiers", "identifierFilterStrategies");
         CONFIGURED_FILTERS.put("person", "phEyeFilterStrategies");
         CONFIGURED_FILTERS.put("pheyes", "phEyeFilterStrategies");
         CONFIGURED_FILTERS.put("sections", "sectionFilterStrategies");
+        CONFIGURED_FILTERS.put("surname", "surnameFilterStrategies");
     }
 
     private LeftoverChecker() {

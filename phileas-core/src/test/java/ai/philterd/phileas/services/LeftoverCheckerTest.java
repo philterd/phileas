@@ -79,8 +79,32 @@ public class LeftoverCheckerTest {
                     || List.class.isAssignableFrom(field.getType())) {
                 continue;
             }
+            // The name dictionaries run only as the policy defines them.
+            if (name.value().equals("firstName") || name.value().equals("surname")) {
+                Assertions.assertTrue(LeftoverChecker.CONFIGURED_FILTERS.containsKey(name.value()), name.value());
+                Assertions.assertFalse(LeftoverChecker.BUILT_IN_FILTERS.containsKey(name.value()), name.value());
+                continue;
+            }
             Assertions.assertTrue(LeftoverChecker.BUILT_IN_FILTERS.containsKey(name.value()), name.value());
         }
+    }
+
+    @Test
+    public void broadDoesNotAddTheNameDictionariesButKeepsThePolicys() {
+        final Policy without = new Gson().fromJson("{\"identifiers\":{\"ssn\":{}}}", Policy.class);
+        final JsonObject added = new Gson().toJsonTree(LeftoverChecker.checkPolicy(without, LeftoverCheck.Using.BROAD))
+                .getAsJsonObject().getAsJsonObject("identifiers");
+        Assertions.assertFalse(added.has("firstName"));
+        Assertions.assertFalse(added.has("surname"));
+
+        final Policy with = new Gson().fromJson("{\"identifiers\":{\"firstName\":{},\"surname\":{}}}", Policy.class);
+        final Policy check = LeftoverChecker.checkPolicy(with, LeftoverCheck.Using.BROAD);
+        Assertions.assertEquals("REDACT", check.getIdentifiers().getFirstName().getFirstNameFilterStrategies().get(0).getStrategy());
+        Assertions.assertEquals("REDACT", check.getIdentifiers().getSurname().getSurnameFilterStrategies().get(0).getStrategy());
+
+        // Disabled in the policy, it stays off, unlike a built-in broad adds.
+        final Policy disabled = new Gson().fromJson("{\"identifiers\":{\"firstName\":{\"enabled\":false}}}", Policy.class);
+        Assertions.assertFalse(LeftoverChecker.checkPolicy(disabled, LeftoverCheck.Using.BROAD).getIdentifiers().getFirstName().isEnabled());
     }
 
     @Test

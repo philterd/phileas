@@ -165,7 +165,8 @@ public class LeftoverCheckTest {
         final LeftoverCheckResult broadCheck = broad.getLeftoverCheck();
         Assertions.assertTrue(broadCheck.isPerformed());
         Assertions.assertNull(broadCheck.getReason());
-        Assertions.assertTrue(types(broadCheck).contains(FilterType.SSN), broadCheck.getFindings().toString());
+        // Only the SSN: "My" and "and" are not reported as names, since broad does not add the name dictionaries.
+        Assertions.assertEquals(List.of(FilterType.SSN), types(broadCheck), broadCheck.getFindings().toString());
 
         final LeftoverFinding ssn = broadCheck.getFindings().stream()
                 .filter(finding -> finding.getFilterType() == FilterType.SSN).findFirst().orElseThrow();
